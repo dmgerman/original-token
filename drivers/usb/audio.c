@@ -12353,7 +12353,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,22)
 r_if
 c_cond
 (paren
@@ -12365,7 +12364,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 r_return
 id|dmabuf_mmap
 c_func

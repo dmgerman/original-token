@@ -2297,14 +2297,6 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Find PCI boards here */
 macro_line|#ifdef CONFIG_PCI
-r_if
-c_cond
-(paren
-id|pci_present
-c_func
-(paren
-)paren
-)paren
 (brace
 r_struct
 id|pci_dev
@@ -2367,6 +2359,17 @@ op_ne
 l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|p
+)paren
+)paren
+r_continue
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2494,12 +2497,12 @@ id|val
 suffix:semicolon
 id|board-&gt;baseAddr
 op_assign
-id|p-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|p
+comma
 l_int|2
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|board-&gt;boardType
 op_assign

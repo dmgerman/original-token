@@ -9845,21 +9845,28 @@ id|BOARD_COUNT
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/* found a PCI ISI card! */
 id|ioaddr
 op_assign
-id|dev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|dev
+comma
 l_int|3
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
-multiline_comment|/* i.e at offset 0x1c in the&n;&t;&t;&t;&t;&t;&t;&t;&t;* PCI configuration register&n;&t;&t;&t;&t;&t;&t;&t;&t;* space.&n;&t;&t;&t;&t;&t;&t;&t;&t;*/
-id|ioaddr
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
+multiline_comment|/* i.e at offset 0x1c in the&n;&t;&t;&t;&t;&t;&t;&t;&t;       * PCI configuration register&n;&t;&t;&t;&t;&t;&t;&t;&t;       * space.&n;&t;&t;&t;&t;&t;&t;&t;&t;       */
 id|pciirq
 op_assign
 id|dev-&gt;irq

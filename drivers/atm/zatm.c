@@ -10392,6 +10392,17 @@ id|pci_dev
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pci_dev
+)paren
+)paren
+r_break
+suffix:semicolon
 id|dev
 op_assign
 id|atm_dev_register

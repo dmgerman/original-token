@@ -1814,6 +1814,12 @@ id|block_device
 op_star
 id|s_bdev
 suffix:semicolon
+DECL|member|s_mounts
+r_struct
+id|list_head
+id|s_mounts
+suffix:semicolon
+multiline_comment|/* vfsmount(s) of this one */
 DECL|member|s_dquot
 r_struct
 id|quota_mount_options
@@ -3062,6 +3068,16 @@ id|file_system_type
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|may_umount
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
 DECL|function|vfs_statfs
 r_static
 r_inline
@@ -3203,7 +3219,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|locks_verify_area
-r_extern
+r_static
 r_inline
 r_int
 id|locks_verify_area
@@ -3260,7 +3276,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|locks_verify_truncate
-r_extern
+r_static
 r_inline
 r_int
 id|locks_verify_truncate
@@ -3807,14 +3823,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|fs_may_mount
-c_func
-(paren
-id|kdev_t
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|try_to_free_buffers
 c_func
 (paren
@@ -3846,7 +3854,7 @@ DECL|macro|NR_LIST
 mdefine_line|#define NR_LIST&t;&t;4
 multiline_comment|/*&n; * This is called by bh-&gt;b_end_io() handlers when I/O has completed.&n; */
 DECL|function|mark_buffer_uptodate
-r_extern
+r_static
 r_inline
 r_void
 id|mark_buffer_uptodate
@@ -3889,7 +3897,7 @@ suffix:semicolon
 DECL|macro|atomic_set_buffer_clean
 mdefine_line|#define atomic_set_buffer_clean(bh) test_and_clear_bit(BH_Dirty, &amp;(bh)-&gt;b_state)
 DECL|function|__mark_buffer_clean
-r_extern
+r_static
 r_inline
 r_void
 id|__mark_buffer_clean
@@ -3909,7 +3917,7 @@ id|bh
 suffix:semicolon
 )brace
 DECL|function|mark_buffer_clean
-r_extern
+r_static
 r_inline
 r_void
 id|mark_buffer_clean
@@ -3940,7 +3948,7 @@ suffix:semicolon
 DECL|macro|atomic_set_buffer_protected
 mdefine_line|#define atomic_set_buffer_protected(bh) test_and_set_bit(BH_Protected, &amp;(bh)-&gt;b_state)
 DECL|function|__mark_buffer_protected
-r_extern
+r_static
 r_inline
 r_void
 id|__mark_buffer_protected
@@ -3960,7 +3968,7 @@ id|bh
 suffix:semicolon
 )brace
 DECL|function|mark_buffer_protected
-r_extern
+r_static
 r_inline
 r_void
 id|mark_buffer_protected
@@ -4428,6 +4436,22 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|follow_down
+c_func
+(paren
+r_struct
+id|vfsmount
+op_star
+op_star
+comma
+r_struct
+id|dentry
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|dentry
 op_star
@@ -4714,7 +4738,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|function|brelse
-r_extern
+r_static
 r_inline
 r_void
 id|brelse
@@ -4749,7 +4773,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|function|bforget
-r_extern
+r_static
 r_inline
 r_void
 id|bforget
@@ -5244,14 +5268,6 @@ id|get_empty_super
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_void
-id|remove_vfsmnt
-c_func
-(paren
-id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern

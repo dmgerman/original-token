@@ -7985,6 +7985,14 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+id|pci_set_power_state
+c_func
+(paren
+id|pdev
+comma
+l_int|3
+)paren
+suffix:semicolon
 )brace
 DECL|function|tulip_resume
 r_static
@@ -8003,6 +8011,12 @@ op_star
 id|dev
 op_assign
 id|pdev-&gt;driver_data
+suffix:semicolon
+id|pci_enable_device
+c_func
+(paren
+id|pdev
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -26,6 +26,9 @@ id|tcp_lock
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: Examine ipfilter&squot;s timeouts and conntrack transitions more&n;   closely.  They&squot;re more complex. --RR */
+multiline_comment|/* We steal a bit to indicate no reply yet (can&squot;t use status, because&n;   it&squot;s set before we get into packet handling). */
+DECL|macro|TCP_REPLY_BIT
+mdefine_line|#define TCP_REPLY_BIT 0x1000
 multiline_comment|/* Actually, I believe that neither ipmasq (where this code is stolen&n;   from) nor ipfilter do it exactly right.  A new conntrack machine taking&n;   into account packet loss (which creates uncertainty as to exactly&n;   the conntrack of the connection) is required.  RSN.  --RR */
 DECL|enum|tcp_conntrack
 r_enum
@@ -575,7 +578,12 @@ id|tcp_lock
 suffix:semicolon
 id|state
 op_assign
+(paren
 id|conntrack-&gt;proto.tcp_state
+op_amp
+op_complement
+id|TCP_REPLY_BIT
+)paren
 suffix:semicolon
 id|READ_UNLOCK
 c_func
@@ -681,6 +689,8 @@ id|ctinfo
 r_enum
 id|tcp_conntrack
 id|newconntrack
+comma
+id|oldtcpstate
 suffix:semicolon
 r_struct
 id|tcphdr
@@ -735,6 +745,10 @@ op_amp
 id|tcp_lock
 )paren
 suffix:semicolon
+id|oldtcpstate
+op_assign
+id|conntrack-&gt;proto.tcp_state
+suffix:semicolon
 id|newconntrack
 op_assign
 id|tcp_conntracks
@@ -753,7 +767,10 @@ id|tcph
 )paren
 )braket
 (braket
-id|conntrack-&gt;proto.tcp_state
+id|oldtcpstate
+op_amp
+op_complement
+id|TCP_REPLY_BIT
 )braket
 suffix:semicolon
 multiline_comment|/* Invalid */
@@ -801,6 +818,23 @@ id|conntrack-&gt;proto.tcp_state
 op_assign
 id|newconntrack
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|oldtcpstate
+op_amp
+id|TCP_REPLY_BIT
+)paren
+op_logical_or
+id|ctinfo
+op_ge
+id|IP_CT_IS_REPLY
+)paren
+id|conntrack-&gt;proto.tcp_state
+op_or_assign
+id|TCP_REPLY_BIT
+suffix:semicolon
 id|WRITE_UNLOCK
 c_func
 (paren
@@ -808,6 +842,44 @@ op_amp
 id|tcp_lock
 )paren
 suffix:semicolon
+multiline_comment|/* If only reply is a RST, we can consider ourselves not to&n;&t;   have an established connection: this is a fairly common&n;&t;   problem case, so we can delete the conntrack&n;&t;   immediately.  --RR */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|oldtcpstate
+op_amp
+id|TCP_REPLY_BIT
+)paren
+op_logical_and
+id|tcph-&gt;rst
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|del_timer
+c_func
+(paren
+op_amp
+id|conntrack-&gt;timeout
+)paren
+)paren
+id|conntrack-&gt;timeout
+dot
+id|function
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|conntrack
+)paren
+suffix:semicolon
+)brace
+r_else
 id|ip_ct_refresh
 c_func
 (paren
@@ -815,7 +887,7 @@ id|conntrack
 comma
 id|tcp_timeouts
 (braket
-id|conntrack-&gt;proto.tcp_state
+id|newconntrack
 )braket
 )paren
 suffix:semicolon

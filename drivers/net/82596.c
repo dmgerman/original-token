@@ -4782,6 +4782,10 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|request_region
 c_func
 (paren
@@ -4791,6 +4795,10 @@ id|I596_TOTAL_SIZE
 comma
 l_string|&quot;i596&quot;
 )paren
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign

@@ -1578,6 +1578,7 @@ id|pci_enable_device
 id|net_dev
 )paren
 suffix:semicolon
+multiline_comment|/* XXX check return val */
 id|pci_set_master
 c_func
 (paren

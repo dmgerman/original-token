@@ -118,6 +118,12 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_root
+)paren
+(brace
 id|dput
 c_func
 (paren
@@ -130,6 +136,7 @@ c_func
 id|old_rootmnt
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Replace the fs-&gt;{pwdmnt,pwd} with {mnt,dentry}. Put the old values.&n; * It can block. Requires the big lock held.&n; */
 DECL|function|set_fs_pwd
@@ -185,6 +192,12 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_pwd
+)paren
+(brace
 id|dput
 c_func
 (paren
@@ -197,6 +210,7 @@ c_func
 id|old_pwdmnt
 )paren
 suffix:semicolon
+)brace
 )brace
 r_struct
 id|fs_struct

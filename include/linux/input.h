@@ -662,7 +662,7 @@ macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 DECL|macro|NBITS
 mdefine_line|#define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)
 DECL|macro|BIT
-mdefine_line|#define BIT(x)&t;(1&lt;&lt;((x)%BITS_PER_LONG))
+mdefine_line|#define BIT(x)&t;(1UL&lt;&lt;((x)%BITS_PER_LONG))
 DECL|macro|LONG
 mdefine_line|#define LONG(x) ((x)/BITS_PER_LONG)
 DECL|struct|input_dev

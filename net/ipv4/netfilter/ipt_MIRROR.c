@@ -350,6 +350,8 @@ id|ipt_mirror_target
 comma
 id|ipt_mirror_checkentry
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

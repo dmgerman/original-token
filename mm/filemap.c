@@ -248,13 +248,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/* Initiate completion of any async operations */
-id|sync_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -776,10 +769,6 @@ id|ret
 op_assign
 l_int|0
 comma
-id|loop
-op_assign
-l_int|0
-comma
 id|count
 suffix:semicolon
 id|LIST_HEAD
@@ -819,13 +808,6 @@ r_struct
 id|zone_struct
 op_star
 id|p_zone
-suffix:semicolon
-r_int
-id|maxloop
-op_assign
-l_int|256
-op_rshift
-id|priority
 suffix:semicolon
 r_if
 c_cond
@@ -903,36 +885,7 @@ id|p_zone
 op_assign
 id|page-&gt;zone
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * These two tests are there to make sure we don&squot;t free too&n;&t;&t; * many pages from the &quot;wrong&quot; zone. We free some anyway,&n;&t;&t; * they are the least recently used pages in the system.&n;&t;&t; * When we don&squot;t free them, leave them in &amp;old.&n;&t;&t; */
-id|dispose
-op_assign
-op_amp
-id|old
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p_zone
-op_ne
-id|zone
-op_logical_and
-(paren
-id|loop
-OG
-(paren
-id|maxloop
-op_div
-l_int|4
-)paren
-op_logical_or
-id|p_zone-&gt;free_pages
-OG
-id|p_zone-&gt;pages_high
-)paren
-)paren
-r_goto
-id|dispose_continue
-suffix:semicolon
+multiline_comment|/* This LRU list only contains a few pages from the system,&n;&t;&t; * so we must fail and let swap_out() refill the list if&n;&t;&t; * there aren&squot;t enough freeable pages on the list */
 multiline_comment|/* The page is in use, or was used very recently, put it in&n;&t;&t; * &amp;young to make sure that we won&squot;t try to free it the next&n;&t;&t; * time */
 id|dispose
 op_assign
@@ -954,8 +907,15 @@ id|page-&gt;flags
 r_goto
 id|dispose_continue
 suffix:semicolon
-id|count
-op_decrement
+r_if
+c_cond
+(paren
+id|p_zone-&gt;free_pages
+OG
+id|p_zone-&gt;pages_high
+)paren
+r_goto
+id|dispose_continue
 suffix:semicolon
 r_if
 c_cond
@@ -974,7 +934,10 @@ l_int|1
 r_goto
 id|dispose_continue
 suffix:semicolon
-multiline_comment|/* Page not used -&gt; free it; if that fails -&gt; &amp;old */
+id|count
+op_decrement
+suffix:semicolon
+multiline_comment|/* Page not used -&gt; free it or put it on the old list&n;&t;&t; * so it gets freed first the next time */
 id|dispose
 op_assign
 op_amp
@@ -1257,9 +1220,6 @@ multiline_comment|/* nr_lru_pages needs the spinlock */
 id|nr_lru_pages
 op_decrement
 suffix:semicolon
-id|loop
-op_increment
-suffix:semicolon
 multiline_comment|/* wrong zone?  not looped too often?    roll again... */
 r_if
 c_cond
@@ -1268,9 +1228,7 @@ id|page-&gt;zone
 op_ne
 id|zone
 op_logical_and
-id|loop
-OL
-id|maxloop
+id|count
 )paren
 r_goto
 id|again

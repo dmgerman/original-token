@@ -478,13 +478,6 @@ c_func
 id|get_empty_super
 )paren
 suffix:semicolon
-DECL|variable|remove_vfsmnt
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|remove_vfsmnt
-)paren
-suffix:semicolon
 DECL|variable|getname
 id|EXPORT_SYMBOL
 c_func
@@ -532,6 +525,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__namei
+)paren
+suffix:semicolon
+DECL|variable|follow_down
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|follow_down
 )paren
 suffix:semicolon
 DECL|variable|lookup_dentry
@@ -1016,13 +1016,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dput
-)paren
-suffix:semicolon
-DECL|variable|is_root_busy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|is_root_busy
 )paren
 suffix:semicolon
 DECL|variable|have_submounts
@@ -1597,6 +1590,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_filesystem
+)paren
+suffix:semicolon
+DECL|variable|may_umount
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|may_umount
 )paren
 suffix:semicolon
 multiline_comment|/* executable format registration */

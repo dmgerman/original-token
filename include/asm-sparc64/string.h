@@ -168,7 +168,7 @@ mdefine_line|#define memmove(_to, _from, _n) &bslash;&n;({ &bslash;&n;&t;void *_
 DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
 DECL|function|__constant_memcpy
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -232,7 +232,7 @@ id|to
 suffix:semicolon
 )brace
 DECL|function|__nonconstant_memcpy
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -273,7 +273,7 @@ mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bsla
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|function|__constant_memset
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -396,7 +396,7 @@ id|__kernel_size_t
 )paren
 suffix:semicolon
 DECL|function|__constant_strncmp
-r_extern
+r_static
 r_inline
 r_int
 id|__constant_strncmp

@@ -307,6 +307,10 @@ singleline_comment|//&t;&t;&t;check_region(pci_memaddr, AIRONET4X00_MEM_SIZE)) {
 singleline_comment|//&t;&t;&t;&t;printk(KERN_ERR &quot;aironet4X00 mem addrs not available for maping &bslash;n&quot;);
 singleline_comment|//&t;&t;&t;&t;continue;
 singleline_comment|//&t;&t;}
+r_if
+c_cond
+(paren
+op_logical_neg
 id|request_region
 c_func
 (paren
@@ -316,6 +320,8 @@ id|AIRONET4X00_IO_SIZE
 comma
 l_string|&quot;aironet4x00 ioaddr&quot;
 )paren
+)paren
+r_continue
 suffix:semicolon
 singleline_comment|//&t;&t;request_region(pci_cisaddr, AIRONET4X00_CIS_SIZE, &quot;aironet4x00 cis&quot;);
 singleline_comment|//&t;&t;request_region(pci_memaddr, AIRONET4X00_MEM_SIZE, &quot;aironet4x00 mem&quot;);

@@ -9420,23 +9420,23 @@ id|membase
 op_assign
 id|bus_to_virt
 (paren
-id|pci_dev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pci_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 )paren
 suffix:semicolon
 id|u32
 id|iobase
 op_assign
-id|pci_dev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pci_dev
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_void
 id|setup_dev
@@ -9581,6 +9581,12 @@ r_void
 r_int
 r_char
 id|lat
+suffix:semicolon
+multiline_comment|/* XXX check return value */
+id|pci_enable_device
+(paren
+id|pci_dev
+)paren
 suffix:semicolon
 singleline_comment|// enable bus master accesses
 id|pci_set_master

@@ -567,11 +567,16 @@ comma
 id|version
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pci_enable_device
 c_func
 (paren
 id|pdev
 )paren
+)paren
+r_continue
 suffix:semicolon
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_irq_line
@@ -580,12 +585,12 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -613,6 +618,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+r_continue
+suffix:semicolon
+multiline_comment|/*return (-ENOMEM);*/
+multiline_comment|/* continue; ?? */
+)brace
 id|request_region
 c_func
 (paren
@@ -623,6 +640,7 @@ comma
 id|cardinfo-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* XXX check return */
 r_if
 c_cond
 (paren
@@ -649,6 +667,7 @@ comma
 id|TMS_PCI_IO_EXTENT
 )paren
 suffix:semicolon
+multiline_comment|/* XXX free trdev */
 r_continue
 suffix:semicolon
 multiline_comment|/*return (-ENODEV);*/

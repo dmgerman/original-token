@@ -80,8 +80,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|sk_filter_len
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_int
 id|sk_filter_len

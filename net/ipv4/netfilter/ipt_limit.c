@@ -361,6 +361,8 @@ id|ipt_limit_match
 comma
 id|ipt_limit_checkentry
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

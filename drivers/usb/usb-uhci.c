@@ -13,9 +13,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,44)
 macro_line|#include &lt;linux/pm.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -11751,7 +11749,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,44)
 DECL|function|handle_pm_event
 id|_static
 r_int
@@ -11826,7 +11823,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|alloc_uhci
 id|_static
 r_int
@@ -12304,7 +12300,6 @@ id|devs
 op_assign
 id|s
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,44)
 id|pmdev
 op_assign
 id|pm_register
@@ -12330,7 +12325,6 @@ id|pmdev-&gt;data
 op_assign
 id|s
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -12366,7 +12360,6 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,8)
 r_int
 r_int
 id|io_addr
@@ -12415,40 +12408,6 @@ l_int|1
 )paren
 r_continue
 suffix:semicolon
-macro_line|#else
-r_int
-r_int
-id|io_addr
-op_assign
-id|dev-&gt;base_address
-(braket
-id|i
-)braket
-suffix:semicolon
-r_int
-r_int
-id|io_size
-op_assign
-l_int|0x14
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|io_addr
-op_amp
-l_int|1
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|io_addr
-op_and_assign
-op_complement
-l_int|1
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Is it already in use? */
 r_if
 c_cond
@@ -12687,7 +12646,6 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,8)
 r_if
 c_cond
 (paren
@@ -12700,7 +12658,6 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -12830,13 +12787,11 @@ id|cleanup_module
 r_void
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,44)
 id|pm_unregister_all
 (paren
 id|handle_pm_event
 )paren
 suffix:semicolon
-macro_line|#endif
 id|uhci_cleanup
 (paren
 )paren

@@ -1959,24 +1959,15 @@ id|pdata-&gt;alloc
 )paren
 suffix:semicolon
 multiline_comment|/* Reset/Set WD timer */
-id|del_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|pdata-&gt;watchdog
-)paren
-suffix:semicolon
-id|pdata-&gt;watchdog.expires
-op_assign
+comma
 id|jiffies
 op_plus
 id|VERIFY_TIMEOUT
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|pdata-&gt;watchdog
 )paren
 suffix:semicolon
 r_switch

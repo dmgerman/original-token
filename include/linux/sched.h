@@ -1058,8 +1058,8 @@ suffix:semicolon
 DECL|macro|pid_hashfn
 mdefine_line|#define pid_hashfn(x)&t;((((x) &gt;&gt; 8) ^ (x)) &amp; (PIDHASH_SZ - 1))
 DECL|function|hash_pid
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|hash_pid
 c_func
@@ -1121,8 +1121,8 @@ id|htable
 suffix:semicolon
 )brace
 DECL|function|unhash_pid
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|unhash_pid
 c_func
@@ -1151,8 +1151,8 @@ id|p-&gt;pidhash_next
 suffix:semicolon
 )brace
 DECL|function|find_task_by_pid
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|task_struct
 op_star
@@ -1648,7 +1648,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|function|signal_pending
-r_extern
+r_static
 r_inline
 r_int
 id|signal_pending
@@ -1951,7 +1951,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; *&n; * [Dec 1997 -- Chris Evans]&n; * For correctness, the above considerations need to be extended to&n; * fsuser(). This is done, along with moving fsuser() checks to be&n; * last.&n; *&n; * These will be removed, but in the mean time, when the SECURE_NOROOT &n; * flag is set, uids don&squot;t grant privilege.&n; */
 DECL|function|suser
-r_extern
+r_static
 r_inline
 r_int
 id|suser
@@ -1988,7 +1988,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|fsuser
-r_extern
+r_static
 r_inline
 r_int
 id|fsuser
@@ -2026,7 +2026,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * capable() checks for a particular capability.  &n; * New privilege checks should use this interface, rather than suser() or&n; * fsuser(). See include/linux/capability.h for defined capabilities.&n; */
 DECL|function|capable
-r_extern
+r_static
 r_inline
 r_int
 id|capable
@@ -2491,7 +2491,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|function|add_wait_queue
-r_extern
+r_static
 r_inline
 r_void
 id|add_wait_queue
@@ -2538,7 +2538,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|add_wait_queue_exclusive
-r_extern
+r_static
 r_inline
 r_void
 id|add_wait_queue_exclusive
@@ -2585,7 +2585,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|remove_wait_queue
-r_extern
+r_static
 r_inline
 r_void
 id|remove_wait_queue
@@ -2674,7 +2674,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|task_on_runqueue
-r_extern
+r_static
 r_inline
 r_int
 id|task_on_runqueue
@@ -2695,7 +2695,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|unhash_process
-r_extern
+r_static
 r_inline
 r_void
 id|unhash_process

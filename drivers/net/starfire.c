@@ -1,21 +1,6 @@
 multiline_comment|/* starfire.c: Linux device driver for the Adaptec Starfire network adapter. */
-multiline_comment|/*&n;&t;Written 1998-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License (GPL), incorporated herein by reference.&n;&n;&t;The author may be reached as becker@usra.edu, or&n;&t;Donald Becker&n;&t;312 Severn Ave. #W302&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/starfire.html&n;&t;&n;&t;LK1.1.1 (jgarzik):&n;&t;- Use PCI driver interface&n;&t;- Fix MOD_xxx races&n;&t;- softnet fixups&n;&n;*/
-DECL|variable|versionA
-r_static
-r_const
-r_char
-op_star
-id|versionA
-op_assign
-l_string|&quot;starfire.c:v0.12+LK1.1.1  3/19/2000  Written by Donald Becker and others&bslash;n&quot;
-comma
-DECL|variable|versionB
-op_star
-id|versionB
-op_assign
-l_string|&quot; Undates and info at http://www.beowulf.org/linux/drivers.html&bslash;n&quot;
-suffix:semicolon
-multiline_comment|/* A few user-configurable values.   These may be modified when a driver&n;   module is loaded.*/
+multiline_comment|/*&n;&t;Written 1998-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://www.scyld.com/network/starfire.html&n;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.1 (jgarzik):&n;&t;- Use PCI driver interface&n;&t;- Fix MOD_xxx races&n;&t;- softnet fixups&n;&n;&t;LK1.1.2 (jgarzik):&n;&t;- Merge Becker version 0.15&n;*/
+multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
 multiline_comment|/* Used for tuning interrupt latency vs. overhead. */
 DECL|variable|interrupt_mitigation
 r_static
@@ -150,14 +135,15 @@ DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 DECL|macro|PFX
 mdefine_line|#define PFX &quot;starfire: &quot;
-macro_line|#if !defined(__OPTIMIZE__)  ||  !defined(__KERNEL__)
+macro_line|#if !defined(__OPTIMIZE__)
 macro_line|#warning  You must compile this file with the correct options!
 macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
+multiline_comment|/* Include files, designed to support most kernel versions 2.0.0 and later. */
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -172,13 +158,33 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* Kernel compatibility defines, some common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
-DECL|macro|RUN_AT
-mdefine_line|#define RUN_AT(x) (jiffies + (x))
+multiline_comment|/* These identify the driver base version and may not be removed. */
+DECL|variable|__devinitdata
+r_static
+r_const
+r_char
+id|version1
+(braket
+)braket
+id|__devinitdata
+op_assign
+l_string|&quot;starfire.c:v0.15+LK1.1.2 4/28/2000  Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
+suffix:semicolon
+DECL|variable|__devinitdata
+r_static
+r_const
+r_char
+id|version2
+(braket
+)braket
+id|__devinitdata
+op_assign
+l_string|&quot; Undates and info at http://www.scyld.com/network/starfire.html&bslash;n&quot;
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;&quot;
+l_string|&quot;Donald Becker &lt;becker@scyld.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -247,63 +253,25 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;State the chips and boards this driver is known to work with.&n;Note any similar chips or boards that will not work.&n;&n;This driver skeleton demonstrates the driver for an idealized&n;descriptor-based bus-master PCI chip.&n;&n;II. Board-specific settings&n;&n;No jumpers exist on most PCI boards, so this section is usually empty.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;The Starfire hardware uses multiple fixed-size descriptor queues/rings.  The&n;ring sizes are set fixed by the hardware, but may optionally be wrapped&n;earlier by the END bit in the descriptor.&n;This driver uses that hardware queue size for the Rx ring, where a large&n;number of entries has no ill effect beyond increases the potential backlog.&n;The Tx ring is wrapped with the END bit, since a large hardware Tx queue&n;disables the queue layer priority ordering and we have no mechanism to&n;utilize the hardware two-level priority queue.  When modifying the&n;RX/TX_RING_SIZE pay close attention to page sizes and the ring-empty warning&n;levels.&n;&n;IIIb/c. Transmit/Receive Structure&n;&n;See the Adaptec manual for the many possible structures, and options for&n;each structure.  There are far too many to document here.&n;&n;For transmit this driver uses type 1 transmit descriptors, and relies on&n;automatic minimum-length padding.  It does not use the completion queue&n;consumer index, but instead checks for non-zero status entries.&n;&n;For receive this driver uses type 0 receive descriptors.  The driver&n;allocates full frame size skbuffs for the Rx ring buffers, so all frames&n;should fit in a single descriptor.  The driver does not use the completion&n;queue consumer index, but instead checks for non-zero status entries.&n;&n;When an incoming frame is less than RX_COPYBREAK bytes long, a fresh skbuff&n;is allocated and the frame is copied to the new skbuff.  When the incoming&n;frame is larger, the skbuff is passed directly up the protocol stack.&n;Buffers consumed this way are replaced by newly allocated skbuffs in a later&n;phase of receive.&n;&n;A notable aspect of operation is that unaligned buffers are not permitted by&n;the Starfire hardware.  The IP header at offset 14 in an ethernet frame thus&n;isn&squot;t longword aligned, which may cause problems on some machine&n;e.g. Alphas.  Copied frames are put into the skbuff at an offset of &quot;+2&quot;,&n;16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;IVb. References&n;&n;The Adaptec Starfire manuals.&n;http://cesdis.gsfc.nasa.gov/linux/misc/100mbps.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;&n;IVc. Errata&n;&n;*/
-"&f;"
-multiline_comment|/* This table drives the PCI probe routines.  It&squot;s mostly boilerplate in all&n;   PCI drivers, and will likely be provided by some future kernel.&n;*/
-DECL|enum|pci_flags_bit
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This driver is for the Adaptec 6915 &quot;Starfire&quot; 64 bit PCI Ethernet adapter.&n;&n;II. Board-specific settings&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;The Starfire hardware uses multiple fixed-size descriptor queues/rings.  The&n;ring sizes are set fixed by the hardware, but may optionally be wrapped&n;earlier by the END bit in the descriptor.&n;This driver uses that hardware queue size for the Rx ring, where a large&n;number of entries has no ill effect beyond increases the potential backlog.&n;The Tx ring is wrapped with the END bit, since a large hardware Tx queue&n;disables the queue layer priority ordering and we have no mechanism to&n;utilize the hardware two-level priority queue.  When modifying the&n;RX/TX_RING_SIZE pay close attention to page sizes and the ring-empty warning&n;levels.&n;&n;IIIb/c. Transmit/Receive Structure&n;&n;See the Adaptec manual for the many possible structures, and options for&n;each structure.  There are far too many to document here.&n;&n;For transmit this driver uses type 1 transmit descriptors, and relies on&n;automatic minimum-length padding.  It does not use the completion queue&n;consumer index, but instead checks for non-zero status entries.&n;&n;For receive this driver uses type 0 receive descriptors.  The driver&n;allocates full frame size skbuffs for the Rx ring buffers, so all frames&n;should fit in a single descriptor.  The driver does not use the completion&n;queue consumer index, but instead checks for non-zero status entries.&n;&n;When an incoming frame is less than RX_COPYBREAK bytes long, a fresh skbuff&n;is allocated and the frame is copied to the new skbuff.  When the incoming&n;frame is larger, the skbuff is passed directly up the protocol stack.&n;Buffers consumed this way are replaced by newly allocated skbuffs in a later&n;phase of receive.&n;&n;A notable aspect of operation is that unaligned buffers are not permitted by&n;the Starfire hardware.  The IP header at offset 14 in an ethernet frame thus&n;isn&squot;t longword aligned, which may cause problems on some machine&n;e.g. Alphas.  Copied frames are put into the skbuff at an offset of &quot;+2&quot;,&n;16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;IVb. References&n;&n;The Adaptec Starfire manuals.&n;http://cesdis.gsfc.nasa.gov/linux/misc/100mbps.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;&n;IVc. Errata&n;&n;*/
+DECL|enum|chip_capability_flags
+DECL|enumerator|CanHaveMII
 r_enum
-id|pci_flags_bit
+id|chip_capability_flags
 (brace
-DECL|enumerator|PCI_USES_IO
-DECL|enumerator|PCI_USES_MEM
-DECL|enumerator|PCI_USES_MASTER
-id|PCI_USES_IO
+id|CanHaveMII
 op_assign
 l_int|1
-comma
-id|PCI_USES_MEM
-op_assign
-l_int|2
-comma
-id|PCI_USES_MASTER
-op_assign
-l_int|4
-comma
-DECL|enumerator|PCI_ADDR0
-DECL|enumerator|PCI_ADDR1
-DECL|enumerator|PCI_ADDR2
-DECL|enumerator|PCI_ADDR3
-id|PCI_ADDR0
-op_assign
-l_int|0x10
-op_lshift
-l_int|0
-comma
-id|PCI_ADDR1
-op_assign
-l_int|0x10
-op_lshift
-l_int|1
-comma
-id|PCI_ADDR2
-op_assign
-l_int|0x10
-op_lshift
-l_int|2
-comma
-id|PCI_ADDR3
-op_assign
-l_int|0x10
-op_lshift
-l_int|3
 comma
 )brace
 suffix:semicolon
+DECL|macro|MEM_ADDR_SZ
+mdefine_line|#define MEM_ADDR_SZ 0x80000&t;&t;/* And maps in 0.5MB(!).  */
 macro_line|#if 0
 mdefine_line|#define ADDR_64BITS 1&t;&t;&t;/* This chip uses 64 bit addresses. */
 macro_line|#endif
-DECL|macro|MEM_ADDR_SZ
-mdefine_line|#define MEM_ADDR_SZ 0x80000&t;&t;/* And maps in 0.5MB(!).  */
+DECL|macro|HAS_IP_COPYSUM
+mdefine_line|#define HAS_IP_COPYSUM 1
 DECL|enum|chipset
 r_enum
 id|chipset
@@ -357,46 +325,37 @@ id|starfire_pci_tbl
 )paren
 suffix:semicolon
 multiline_comment|/* A chip capabilities table, matching the CH_xxx entries in xxx_pci_tbl[] above. */
-DECL|enum|chip_capability_flags
-DECL|enumerator|CanHaveMII
-r_enum
-id|chip_capability_flags
-(brace
-id|CanHaveMII
-op_assign
-l_int|1
-comma
-)brace
-suffix:semicolon
 DECL|struct|chip_info
 r_static
 r_struct
 id|chip_info
 (brace
-DECL|member|chip_name
+DECL|member|name
+r_const
 r_char
 op_star
-id|chip_name
+id|name
 suffix:semicolon
 DECL|member|io_size
 r_int
 id|io_size
 suffix:semicolon
-DECL|member|flags
+DECL|member|drv_flags
 r_int
-id|flags
+id|drv_flags
 suffix:semicolon
-DECL|variable|netdrv_tbl
+DECL|variable|__devinitdata
 )brace
 id|netdrv_tbl
 (braket
 )braket
+id|__devinitdata
 op_assign
 (brace
 (brace
 l_string|&quot;Adaptec Starfire 6915&quot;
 comma
-l_int|128
+id|MEM_ADDR_SZ
 comma
 id|CanHaveMII
 )brace
@@ -888,17 +847,20 @@ id|timer_list
 id|timer
 suffix:semicolon
 multiline_comment|/* Media monitoring timer. */
-multiline_comment|/* Frequently used values: keep some adjacent for cache effect. */
 DECL|member|chip_id
+DECL|member|drv_flags
 r_int
 id|chip_id
+comma
+id|drv_flags
 suffix:semicolon
-DECL|member|pdev
+DECL|member|pci_dev
 r_struct
 id|pci_dev
 op_star
-id|pdev
+id|pci_dev
 suffix:semicolon
+multiline_comment|/* Frequently used values: keep some adjacent for cache effect. */
 DECL|member|cur_rx
 DECL|member|dirty_rx
 r_int
@@ -1001,14 +963,6 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* MII device addresses. */
-DECL|member|pad
-id|u32
-id|pad
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Used for 32-byte alignment */
 )brace
 suffix:semicolon
 r_static
@@ -1232,6 +1186,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+"&f;"
 DECL|function|starfire_init_one
 r_static
 r_int
@@ -1262,7 +1217,7 @@ id|irq
 comma
 id|option
 comma
-id|chip_id
+id|chip_idx
 op_assign
 id|ent-&gt;driver_data
 suffix:semicolon
@@ -1275,7 +1230,8 @@ r_static
 r_int
 id|card_idx
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 r_static
 r_int
@@ -1291,10 +1247,47 @@ id|io_size
 op_assign
 id|netdrv_tbl
 (braket
-id|chip_id
+id|chip_idx
 )braket
 dot
 id|io_size
+suffix:semicolon
+id|card_idx
+op_increment
+suffix:semicolon
+id|option
+op_assign
+id|card_idx
+OL
+id|MAX_UNITS
+ques
+c_cond
+id|options
+(braket
+id|card_idx
+)braket
+suffix:colon
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|printed_version
+op_increment
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s&quot;
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
+id|version1
+comma
+id|version2
+)paren
 suffix:semicolon
 id|ioaddr
 op_assign
@@ -1331,7 +1324,9 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;no PCI MEM resources, aborting&bslash;n&quot;
+l_string|&quot;card %d: no PCI MEM resources, aborting&bslash;n&quot;
+comma
+id|card_idx
 )paren
 suffix:semicolon
 r_return
@@ -1364,7 +1359,9 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot alloc etherdev, aborting&bslash;n&quot;
+l_string|&quot;card %d: cannot alloc etherdev, aborting&bslash;n&quot;
+comma
+id|card_idx
 )paren
 suffix:semicolon
 r_return
@@ -1395,7 +1392,9 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;resource 0x%x @ 0x%lx busy, aborting&bslash;n&quot;
+l_string|&quot;card %d: resource 0x%x @ 0x%lx busy, aborting&bslash;n&quot;
+comma
+id|card_idx
 comma
 id|io_size
 comma
@@ -1419,7 +1418,9 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot enable PCI device, aborting&bslash;n&quot;
+l_string|&quot;card %d: cannot enable PCI device, aborting&bslash;n&quot;
+comma
+id|card_idx
 )paren
 suffix:semicolon
 r_goto
@@ -1449,7 +1450,9 @@ id|printk
 (paren
 id|KERN_ERR
 id|PFX
-l_string|&quot;cannot remap 0x%x @ 0x%lx, aborting&bslash;n&quot;
+l_string|&quot;card %d: cannot remap 0x%x @ 0x%lx, aborting&bslash;n&quot;
+comma
+id|card_idx
 comma
 id|io_size
 comma
@@ -1465,49 +1468,8 @@ id|pci_set_master
 id|pdev
 )paren
 suffix:semicolon
-id|option
-op_assign
-id|card_idx
-OL
-id|MAX_UNITS
-ques
-c_cond
-id|options
-(braket
-id|card_idx
-)braket
-suffix:colon
-l_int|0
-suffix:semicolon
-id|card_idx
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|printed_version
-)paren
-(brace
 id|printk
 c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|versionA
-comma
-id|versionB
-)paren
-suffix:semicolon
-id|printed_version
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-id|printk
 (paren
 id|KERN_INFO
 l_string|&quot;%s: %s at 0x%lx, &quot;
@@ -1516,10 +1478,10 @@ id|dev-&gt;name
 comma
 id|netdrv_tbl
 (braket
-id|chip_id
+id|chip_idx
 )braket
 dot
-id|chip_name
+id|name
 comma
 id|ioaddr
 )paren
@@ -1663,22 +1625,32 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
+id|pdev-&gt;driver_data
+op_assign
+id|dev
+suffix:semicolon
 multiline_comment|/* private struct aligned and zeroed by init_etherdev */
 id|np
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 op_assign
 id|pdev
 suffix:semicolon
 id|np-&gt;chip_id
 op_assign
-id|chip_id
+id|chip_idx
 suffix:semicolon
-id|pdev-&gt;driver_data
+multiline_comment|/* save useful data, netdrv_tbl is __devinitdata and might be dropped */
+id|np-&gt;drv_flags
 op_assign
-id|dev
+id|netdrv_tbl
+(braket
+id|chip_idx
+)braket
+dot
+id|drv_flags
 suffix:semicolon
 r_if
 c_cond
@@ -1797,12 +1769,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|netdrv_tbl
-(braket
-id|np-&gt;chip_id
-)braket
-dot
-id|flags
+id|np-&gt;drv_flags
 op_amp
 id|CanHaveMII
 )paren
@@ -1976,7 +1943,7 @@ id|boguscnt
 op_assign
 l_int|1000
 suffix:semicolon
-multiline_comment|/* ??? Must add a busy-wait here. */
+multiline_comment|/* ??? Should we add a busy-wait here? */
 r_do
 id|result
 op_assign
@@ -2094,9 +2061,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Do we ever need to reset the chip??? */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-multiline_comment|/* Do we need to reset the chip??? */
 r_if
 c_cond
 (paren
@@ -2120,7 +2087,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
-id|EBUSY
+id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* Disable the Rx and Tx, and reset the chip. */
@@ -2175,7 +2142,7 @@ op_assign
 id|pci_alloc_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2195,7 +2162,7 @@ op_assign
 id|pci_alloc_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2215,7 +2182,7 @@ op_assign
 id|pci_alloc_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2235,7 +2202,7 @@ op_assign
 id|pci_alloc_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2271,7 +2238,7 @@ id|np-&gt;tx_done_q
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2288,7 +2255,7 @@ id|np-&gt;rx_done_q
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2305,7 +2272,7 @@ id|np-&gt;tx_ring
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2322,7 +2289,7 @@ id|np-&gt;rx_ring
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -2637,6 +2604,12 @@ id|dev-&gt;if_port
 op_assign
 id|np-&gt;default_port
 suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2727,12 +2700,6 @@ op_plus
 id|GenCtrl
 )paren
 suffix:semicolon
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2759,13 +2726,11 @@ id|np-&gt;timer
 suffix:semicolon
 id|np-&gt;timer.expires
 op_assign
-id|RUN_AT
-c_func
-(paren
+id|jiffies
+op_plus
 l_int|3
 op_star
 id|HZ
-)paren
 suffix:semicolon
 id|np-&gt;timer.data
 op_assign
@@ -2841,6 +2806,13 @@ l_int|5
 )paren
 suffix:semicolon
 r_int
+id|negotiated
+op_assign
+id|mii_reg5
+op_amp
+id|np-&gt;advertising
+suffix:semicolon
+r_int
 id|duplex
 comma
 id|new_tx_mode
@@ -2880,13 +2852,13 @@ r_else
 id|duplex
 op_assign
 (paren
-id|mii_reg5
+id|negotiated
 op_amp
 l_int|0x0100
 )paren
 op_logical_or
 (paren
-id|mii_reg5
+id|negotiated
 op_amp
 l_int|0x01C0
 )paren
@@ -2923,8 +2895,8 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Setting %s-duplex based on MII #%d link&quot;
-l_string|&quot; partner capability of %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Setting %s-duplex based on MII #%d&quot;
+l_string|&quot; negotiated capability %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2940,7 +2912,7 @@ id|np-&gt;phys
 l_int|0
 )braket
 comma
-id|mii_reg5
+id|negotiated
 )paren
 suffix:semicolon
 )brace
@@ -3132,11 +3104,9 @@ suffix:semicolon
 macro_line|#endif
 id|np-&gt;timer.expires
 op_assign
-id|RUN_AT
-c_func
-(paren
+id|jiffies
+op_plus
 id|next_tick
-)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -3300,6 +3270,10 @@ multiline_comment|/* Stop and restart the chip&squot;s Tx processes . */
 multiline_comment|/* XXX todo */
 multiline_comment|/* Trigger an immediate transmit demand. */
 multiline_comment|/* XXX todo */
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
 id|np-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
@@ -3422,7 +3396,7 @@ op_assign
 id|pci_map_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|skb-&gt;tail
 comma
@@ -3679,7 +3653,7 @@ op_assign
 id|pci_map_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|skb-&gt;data
 comma
@@ -3706,7 +3680,7 @@ dot
 id|mapping
 )paren
 suffix:semicolon
-multiline_comment|/* Add  |TxDescIntr to generate Tx-done interrupts. */
+multiline_comment|/* Add  &quot;| TxDescIntr&quot; to generate Tx-done interrupts. */
 id|np-&gt;tx_ring
 (braket
 id|entry
@@ -3908,7 +3882,8 @@ id|np
 suffix:semicolon
 r_int
 id|ioaddr
-comma
+suffix:semicolon
+r_int
 id|boguscnt
 op_assign
 id|max_interrupt_work
@@ -4001,7 +3976,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Scavenge the skbuff list based on the Tx-done queue.&n;&t;&t;   There are redundant checks here that may be cleaned up when&n;&t;&t;   after the driver has proven reliable. */
+multiline_comment|/* Scavenge the skbuff list based on the Tx-done queue.&n;&t;&t;   There are redundant checks here that may be cleaned up&n;&t;&t;   after the driver has proven to be reliable. */
 (brace
 r_int
 id|consumer
@@ -4201,7 +4176,7 @@ suffix:semicolon
 id|pci_unmap_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|np-&gt;tx_info
 (braket
@@ -4378,10 +4353,53 @@ id|IntrStatus
 )paren
 )paren
 suffix:semicolon
-r_return
+macro_line|#ifndef final_version
+multiline_comment|/* Code that should never be run!  Remove after testing.. */
+(brace
+r_static
+r_int
+id|stopit
+op_assign
+l_int|10
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
+op_logical_and
+op_decrement
+id|stopit
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Emergency stop, looping startup interrupt.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|irq
+comma
+id|dev
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* This routine is logically part of the interrupt handler, but seperated&n;   for clarity and better register allocation. */
+)brace
+macro_line|#endif
+)brace
+multiline_comment|/* This routine is logically part of the interrupt handler, but separated&n;   for clarity and better register allocation. */
 DECL|function|netdev_rx
 r_static
 r_int
@@ -4619,7 +4637,7 @@ multiline_comment|/* 16 byte align the IP header */
 id|pci_dma_sync_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|np-&gt;rx_info
 (braket
@@ -4692,7 +4710,7 @@ suffix:semicolon
 id|pci_unmap_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|np-&gt;rx_info
 (braket
@@ -4743,6 +4761,58 @@ id|mapping
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef final_version&t;&t;&t;&t;/* Remove after testing. */
+r_if
+c_cond
+(paren
+id|le32_to_cpu
+c_func
+(paren
+id|np-&gt;rx_ring
+(braket
+id|entry
+)braket
+dot
+id|rxaddr
+op_amp
+op_complement
+l_int|3
+)paren
+op_ne
+(paren
+(paren
+r_int
+r_int
+)paren
+id|temp
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Internal fault: The skbuff addresses &quot;
+l_string|&quot;do not match in netdev_rx: %d vs. %p / %p.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|le32_to_cpu
+c_func
+(paren
+id|np-&gt;rx_ring
+(braket
+id|entry
+)braket
+dot
+id|rxaddr
+)paren
+comma
+id|skb-&gt;head
+comma
+id|temp
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifndef final_version&t;&t;&t;&t;/* Remove after testing. */
 multiline_comment|/* You will want this info for the initial debug. */
@@ -5013,7 +5083,7 @@ op_assign
 id|pci_map_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|skb-&gt;tail
 comma
@@ -5311,7 +5381,7 @@ suffix:semicolon
 DECL|function|get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|get_stats
 c_func
@@ -6303,7 +6373,7 @@ suffix:semicolon
 id|i
 OL
 l_int|8
-multiline_comment|/* TX_RING_SIZE */
+multiline_comment|/* TX_RING_SIZE is huge! */
 suffix:semicolon
 id|i
 op_increment
@@ -6470,7 +6540,7 @@ l_int|NULL
 id|pci_unmap_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|np-&gt;rx_info
 (braket
@@ -6553,7 +6623,7 @@ l_int|NULL
 id|pci_unmap_single
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|np-&gt;tx_info
 (braket
@@ -6629,16 +6699,11 @@ c_cond
 op_logical_neg
 id|dev
 )paren
-(brace
-id|printk
+id|BUG
+c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;bug: removing starfire pci dev without driver&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|np
 op_assign
 id|dev-&gt;priv
@@ -6667,7 +6732,7 @@ id|np-&gt;tx_done_q
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -6684,7 +6749,7 @@ id|np-&gt;rx_done_q
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -6701,7 +6766,7 @@ id|np-&gt;tx_ring
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -6718,7 +6783,7 @@ id|np-&gt;rx_ring
 id|pci_free_consistent
 c_func
 (paren
-id|np-&gt;pdev
+id|np-&gt;pci_dev
 comma
 id|PAGE_SIZE
 comma
@@ -6768,23 +6833,12 @@ id|starfire_init
 r_void
 )paren
 (brace
-r_int
-id|rc
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|rc
-op_assign
+r_return
 id|pci_module_init
 (paren
 op_amp
 id|starfire_driver
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-id|rc
 suffix:semicolon
 )brace
 DECL|function|starfire_cleanup
@@ -6817,5 +6871,5 @@ c_func
 id|starfire_cleanup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -O6 -c starfire.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -Wall -Wstrict-prototypes -O6 -c starfire.c&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -O6 -c starfire.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

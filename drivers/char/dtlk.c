@@ -851,6 +851,10 @@ id|mask
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|expires
+suffix:semicolon
 id|TRACE_TEXT
 c_func
 (paren
@@ -919,14 +923,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* there are no exception conditions */
 multiline_comment|/* There won&squot;t be any interrupts, so we set a timer instead. */
-id|del_timer
-c_func
-(paren
-op_amp
-id|dtlk_timer
-)paren
-suffix:semicolon
-id|dtlk_timer.expires
+id|expires
 op_assign
 id|jiffies
 op_plus
@@ -936,11 +933,13 @@ id|HZ
 op_div
 l_int|100
 suffix:semicolon
-id|add_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|dtlk_timer
+comma
+id|expires
 )paren
 suffix:semicolon
 r_return

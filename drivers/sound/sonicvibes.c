@@ -14309,11 +14309,17 @@ r_goto
 id|err_region1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|pci_enable_device
 c_func
 (paren
 id|pcidev
 )paren
+)paren
+r_goto
+id|err_irq
 suffix:semicolon
 multiline_comment|/* initialize codec registers */
 id|outb

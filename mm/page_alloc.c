@@ -1123,14 +1123,24 @@ op_amp
 id|__GFP_WAIT
 )paren
 )paren
-id|swap_out
+(brace
+singleline_comment|//&t;swap_out(6, gfp_mask);
+singleline_comment|//&t;shm_swap(6, gfp_mask, (zone_t *)(zone));
+id|try_to_free_pages
 c_func
 (paren
-l_int|4
-comma
 id|gfp_mask
+comma
+(paren
+id|zone_t
+op_star
+)paren
+(paren
+id|zone
+)paren
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * (If anyone calls gfp from interrupts nonatomically then it&n;&t; * will sooner or later tripped up by a schedule().)&n;&t; *&n;&t; * We are falling back to lower-level zones if allocation&n;&t; * in a higher zone fails.&n;&t; */
 r_for
 c_loop

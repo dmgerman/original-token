@@ -14,7 +14,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * Check whether the specified task has the fd open. Since the task&n; * may not have a files_struct, we must test for p-&gt;files != NULL.&n; */
 DECL|function|fcheck_task
-r_extern
+r_static
 r_inline
 r_struct
 id|file
@@ -59,7 +59,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check whether the specified fd has an open file.&n; */
 DECL|function|fcheck
-r_extern
+r_static
 r_inline
 r_struct
 id|file
@@ -105,7 +105,7 @@ id|file
 suffix:semicolon
 )brace
 DECL|function|frip
-r_extern
+r_static
 r_inline
 r_struct
 id|file
@@ -156,7 +156,7 @@ id|file
 suffix:semicolon
 )brace
 DECL|function|fget
-r_extern
+r_static
 r_inline
 r_struct
 id|file
@@ -220,9 +220,9 @@ r_return
 id|file
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;: &n; * &n; * Since those functions where calling other functions, it was compleatly &n; * bogous to make them all &quot;extern inline&quot;.&n; *&n; * The removal of this pseudo optimization saved me scandaleous:&n; *&n; * &t;&t;3756 (i386 arch) &n; *&n; * precious bytes from my kernel, even without counting all the code compiled&n; * as module!&n; *&n; * I suspect there are many other similar &quot;optimizations&quot; across the&n; * kernel...&n; */
+multiline_comment|/*&n; * 23/12/1998 Marcin Dalecki &lt;dalecki@cs.net.pl&gt;: &n; * &n; * Since those functions where calling other functions, it was completely &n; * bogos to make them all &quot;static inline&quot;.&n; *&n; * The removal of this pseudo optimization saved me scandaleous:&n; *&n; * &t;&t;3756 (i386 arch) &n; *&n; * precious bytes from my kernel, even without counting all the code compiled&n; * as module!&n; *&n; * I suspect there are many other similar &quot;optimizations&quot; across the&n; * kernel...&n; */
 DECL|function|fput
-r_extern
+r_static
 r_inline
 r_void
 id|fput
@@ -263,7 +263,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * Install a file pointer in the fd array.  &n; *&n; * The VFS is full of places where we drop the files lock between&n; * setting the open_fds bitmap and installing the file in the file&n; * array.  At any such point, we are vulnerable to a dup2() race&n; * installing a file in the array before us.  We need to detect this and&n; * fput() the struct file we are about to overwrite in this case.&n; */
 DECL|function|fd_install
-r_extern
+r_static
 r_inline
 r_void
 id|fd_install

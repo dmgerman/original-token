@@ -2,10 +2,56 @@ multiline_comment|/*&n; *&n; * Definitions for mount interface. This describes t
 macro_line|#ifndef _LINUX_MOUNT_H
 DECL|macro|_LINUX_MOUNT_H
 mdefine_line|#define _LINUX_MOUNT_H
+macro_line|#ifdef __KERNEL__
 DECL|struct|vfsmount
 r_struct
 id|vfsmount
 (brace
+DECL|member|mnt_mountpoint
+r_struct
+id|dentry
+op_star
+id|mnt_mountpoint
+suffix:semicolon
+multiline_comment|/* dentry of mountpoint */
+DECL|member|mnt_root
+r_struct
+id|dentry
+op_star
+id|mnt_root
+suffix:semicolon
+multiline_comment|/* root of the mounted tree */
+DECL|member|mnt_parent
+r_struct
+id|vfsmount
+op_star
+id|mnt_parent
+suffix:semicolon
+multiline_comment|/* fs we are mounted on */
+DECL|member|mnt_instances
+r_struct
+id|list_head
+id|mnt_instances
+suffix:semicolon
+multiline_comment|/* other vfsmounts of the same fs */
+DECL|member|mnt_clash
+r_struct
+id|list_head
+id|mnt_clash
+suffix:semicolon
+multiline_comment|/* those who are mounted on (other */
+multiline_comment|/* instances) of the same dentry */
+DECL|member|mnt_sb
+r_struct
+id|super_block
+op_star
+id|mnt_sb
+suffix:semicolon
+multiline_comment|/* pointer to superblock */
+DECL|member|mnt_count
+id|atomic_t
+id|mnt_count
+suffix:semicolon
 DECL|member|mnt_dev
 id|kdev_t
 id|mnt_dev
@@ -23,13 +69,6 @@ op_star
 id|mnt_dirname
 suffix:semicolon
 multiline_comment|/* Name of directory mounted on */
-DECL|member|mnt_sb
-r_struct
-id|super_block
-op_star
-id|mnt_sb
-suffix:semicolon
-multiline_comment|/* pointer to superblock */
 DECL|member|mnt_list
 r_struct
 id|list_head
@@ -37,7 +76,6 @@ id|mnt_list
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* MOUNT_REWRITE: fill these */
 DECL|function|mntget
 r_static
 r_inline
@@ -53,6 +91,13 @@ op_star
 id|mnt
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|mnt-&gt;mnt_count
+)paren
+suffix:semicolon
 r_return
 id|mnt
 suffix:semicolon
@@ -70,6 +115,22 @@ op_star
 id|mnt
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|mnt-&gt;mnt_count
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif /* _LINUX_MOUNT_H */
 eof

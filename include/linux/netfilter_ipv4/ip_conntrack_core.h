@@ -90,8 +90,11 @@ r_struct
 id|list_head
 id|protocol_list
 suffix:semicolon
-multiline_comment|/* Returns TRUE if it dealt with ICMP, and filled in skb-&gt;nfct */
-r_int
+multiline_comment|/* Returns conntrack if it dealt with ICMP, and filled in skb-&gt;nfct */
+r_extern
+r_struct
+id|ip_conntrack
+op_star
 id|icmp_error_track
 c_func
 (paren
@@ -99,6 +102,11 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+comma
+r_enum
+id|ip_conntrack_info
+op_star
+id|ctinfo
 )paren
 suffix:semicolon
 r_extern
@@ -144,6 +152,17 @@ r_struct
 id|ip_conntrack
 op_star
 id|ignored_conntrack
+)paren
+suffix:semicolon
+multiline_comment|/* Confirm a connection */
+r_void
+id|ip_conntrack_confirm
+c_func
+(paren
+r_struct
+id|ip_conntrack
+op_star
+id|ct
 )paren
 suffix:semicolon
 r_extern

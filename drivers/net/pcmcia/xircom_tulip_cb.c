@@ -18831,10 +18831,17 @@ comma
 id|pdev-&gt;slot_name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pci_enable_device
 (paren
 id|pdev
 )paren
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 id|pci_set_master
 (paren

@@ -1751,10 +1751,19 @@ l_string|&quot;Adaptec AHA-1520B&quot;
 comma
 l_int|0x000b
 comma
-l_int|19
+l_int|17
 )brace
 comma
 multiline_comment|/* Adaptec 152x rev B */
+(brace
+l_string|&quot;Adaptec AHA-1520B&quot;
+comma
+l_int|0x0026
+comma
+l_int|17
+)brace
+comma
+multiline_comment|/* Iomega Jaz Jet ISA (AIC6370Q) */
 (brace
 l_string|&quot;Adaptec ASW-B626 BIOS&quot;
 comma

@@ -821,10 +821,17 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* setup various bits in PCI command register */
+r_if
+c_cond
+(paren
 id|pci_enable_device
 (paren
 id|pci_dev
 )paren
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 id|pci_set_master
 c_func

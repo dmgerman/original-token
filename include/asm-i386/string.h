@@ -11,7 +11,7 @@ multiline_comment|/*&n; * This string-include defines all string functions as in
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -79,7 +79,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCPY
 mdefine_line|#define __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -167,7 +167,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCAT
 mdefine_line|#define __HAVE_ARCH_STRCAT
 DECL|function|strcat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -255,7 +255,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCAT
 mdefine_line|#define __HAVE_ARCH_STRNCAT
 DECL|function|strncat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -356,7 +356,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCMP
 mdefine_line|#define __HAVE_ARCH_STRCMP
 DECL|function|strcmp
-r_extern
+r_static
 r_inline
 r_int
 id|strcmp
@@ -430,7 +430,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
-r_extern
+r_static
 r_inline
 r_int
 id|strncmp
@@ -521,7 +521,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCHR
 mdefine_line|#define __HAVE_ARCH_STRCHR
 DECL|function|strchr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -587,7 +587,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRRCHR
 mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|function|strrchr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -663,7 +663,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
 DECL|function|strlen
-r_extern
+r_static
 r_inline
 r_int
 id|strlen
@@ -722,7 +722,7 @@ id|__res
 suffix:semicolon
 )brace
 DECL|function|__memcpy
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -816,7 +816,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This looks horribly ugly, but the compiler can optimize it totally,&n; * as the count is constant.&n; */
 DECL|function|__constant_memcpy
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1439,7 +1439,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
 multiline_comment|/*&n; *&t;This CPU favours 3DNow strongly (eg AMD Athlon)&n; */
 DECL|function|__constant_memcpy3d
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1574,7 +1574,7 @@ mdefine_line|#define struct_cpy(x,y) &t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bs
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1717,7 +1717,7 @@ mdefine_line|#define memcmp __builtin_memcmp
 DECL|macro|__HAVE_ARCH_MEMCHR
 mdefine_line|#define __HAVE_ARCH_MEMCHR
 DECL|function|memchr
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1794,7 +1794,7 @@ id|__res
 suffix:semicolon
 )brace
 DECL|function|__memset_generic
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1861,7 +1861,7 @@ DECL|macro|__constant_count_memset
 mdefine_line|#define __constant_count_memset(s,c,count) __memset_generic((s),(c),(count))
 multiline_comment|/*&n; * memset(x,0,y) is a reasonably common thing to do, so we want to fill&n; * things 32 bits at a time even when we don&squot;t know the size of the&n; * area at compile-time..&n; */
 DECL|function|__constant_c_memset
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1946,7 +1946,7 @@ multiline_comment|/* Added by Gertjan van Wingerde to make minix and sysv module
 DECL|macro|__HAVE_ARCH_STRNLEN
 mdefine_line|#define __HAVE_ARCH_STRNLEN
 DECL|function|strnlen
-r_extern
+r_static
 r_inline
 r_int
 id|strnlen
@@ -2011,7 +2011,7 @@ multiline_comment|/* end of additional stuff */
 DECL|macro|__HAVE_ARCH_STRSTR
 mdefine_line|#define __HAVE_ARCH_STRSTR
 DECL|function|strstr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -2110,7 +2110,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This looks horribly ugly, but the compiler can optimize it totally,&n; * as we by now know that both pattern and count is constant..&n; */
 DECL|function|__constant_c_and_count_memset
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2300,7 +2300,7 @@ multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
-r_extern
+r_static
 r_inline
 r_void
 op_star

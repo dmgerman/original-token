@@ -1375,10 +1375,12 @@ l_int|1
 OL
 id|max_cnt
 )paren
-)paren
+op_logical_and
 id|i
 op_increment
-suffix:semicolon
+OL
+l_int|10
+)paren
 id|mm-&gt;swap_cnt
 op_rshift_assign
 id|i
@@ -1531,9 +1533,6 @@ id|count
 op_assign
 id|SWAP_CLUSTER_MAX
 suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 id|kmem_cache_reap
 c_func
@@ -1550,9 +1549,6 @@ r_do
 r_while
 c_loop
 (paren
-(paren
-id|ret
-op_assign
 id|shrink_mmap
 c_func
 (paren
@@ -1561,7 +1557,6 @@ comma
 id|gfp_mask
 comma
 id|zone
-)paren
 )paren
 )paren
 (brace
@@ -1646,7 +1641,7 @@ id|done
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Then, try to page stuff out..&n;&t;&t; * We use swapcount here because this doesn&squot;t actually&n;&t;&t; * free pages */
+multiline_comment|/* Then, try to page stuff out.. */
 r_while
 c_loop
 (paren
@@ -1784,12 +1779,19 @@ id|i
 op_increment
 )paren
 (brace
+r_int
+id|count
+op_assign
+id|SWAP_CLUSTER_MAX
+suffix:semicolon
 id|zone
 op_assign
 id|pgdat-&gt;node_zones
 op_plus
 id|i
 suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -1821,6 +1823,18 @@ c_func
 id|GFP_KSWAPD
 comma
 id|zone
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|zone-&gt;free_pages
+OL
+id|zone-&gt;pages_low
+op_logical_and
+op_decrement
+id|count
 )paren
 suffix:semicolon
 )brace

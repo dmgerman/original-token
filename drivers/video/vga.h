@@ -245,7 +245,7 @@ mdefine_line|#define VGA_OUTW_WRITE
 macro_line|#endif
 multiline_comment|/*&n; * generic VGA port read/write&n; */
 DECL|function|vga_io_r
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -264,7 +264,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_io_w
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_w
@@ -287,7 +287,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_io_w_fast
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_w_fast
@@ -319,7 +319,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_mm_r
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -343,7 +343,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_mm_w
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_w
@@ -371,7 +371,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_mm_w_fast
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_w_fast
@@ -408,7 +408,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_r
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -444,7 +444,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|vga_w
-r_extern
+r_static
 r_inline
 r_void
 id|vga_w
@@ -485,7 +485,7 @@ id|val
 suffix:semicolon
 )brace
 DECL|function|vga_w_fast
-r_extern
+r_static
 r_inline
 r_void
 id|vga_w_fast
@@ -535,7 +535,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * VGA CRTC register read/write&n; */
 DECL|function|vga_rcrt
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -568,7 +568,7 @@ id|VGA_CRT_DC
 suffix:semicolon
 )brace
 DECL|function|vga_wcrt
-r_extern
+r_static
 r_inline
 r_void
 id|vga_wcrt
@@ -619,7 +619,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rcrt
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -645,7 +645,7 @@ id|VGA_CRT_DC
 suffix:semicolon
 )brace
 DECL|function|vga_io_wcrt
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_wcrt
@@ -687,7 +687,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rcrt
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -720,7 +720,7 @@ id|VGA_CRT_DC
 suffix:semicolon
 )brace
 DECL|function|vga_mm_wcrt
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_wcrt
@@ -772,7 +772,7 @@ macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA sequencer register read/write&n; */
 DECL|function|vga_rseq
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -805,7 +805,7 @@ id|VGA_SEQ_D
 suffix:semicolon
 )brace
 DECL|function|vga_wseq
-r_extern
+r_static
 r_inline
 r_void
 id|vga_wseq
@@ -856,7 +856,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rseq
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -882,7 +882,7 @@ id|VGA_SEQ_D
 suffix:semicolon
 )brace
 DECL|function|vga_io_wseq
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_wseq
@@ -924,7 +924,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rseq
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -957,7 +957,7 @@ id|VGA_SEQ_D
 suffix:semicolon
 )brace
 DECL|function|vga_mm_wseq
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_wseq
@@ -1009,7 +1009,7 @@ macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA graphics controller register read/write&n; */
 DECL|function|vga_rgfx
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1042,7 +1042,7 @@ id|VGA_GFX_D
 suffix:semicolon
 )brace
 DECL|function|vga_wgfx
-r_extern
+r_static
 r_inline
 r_void
 id|vga_wgfx
@@ -1093,7 +1093,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_io_rgfx
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1119,7 +1119,7 @@ id|VGA_GFX_D
 suffix:semicolon
 )brace
 DECL|function|vga_io_wgfx
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_wgfx
@@ -1161,7 +1161,7 @@ suffix:semicolon
 macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 DECL|function|vga_mm_rgfx
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1194,7 +1194,7 @@ id|VGA_GFX_D
 suffix:semicolon
 )brace
 DECL|function|vga_mm_wgfx
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_wgfx
@@ -1246,7 +1246,7 @@ macro_line|#endif /* VGA_OUTW_WRITE */
 )brace
 multiline_comment|/*&n; * VGA attribute controller register read/write&n; */
 DECL|function|vga_rattr
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1279,7 +1279,7 @@ id|VGA_ATT_R
 suffix:semicolon
 )brace
 DECL|function|vga_wattr
-r_extern
+r_static
 r_inline
 r_void
 id|vga_wattr
@@ -1316,7 +1316,7 @@ id|val
 suffix:semicolon
 )brace
 DECL|function|vga_io_rattr
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1342,7 +1342,7 @@ id|VGA_ATT_R
 suffix:semicolon
 )brace
 DECL|function|vga_io_wattr
-r_extern
+r_static
 r_inline
 r_void
 id|vga_io_wattr
@@ -1372,7 +1372,7 @@ id|val
 suffix:semicolon
 )brace
 DECL|function|vga_mm_rattr
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -1405,7 +1405,7 @@ id|VGA_ATT_R
 suffix:semicolon
 )brace
 DECL|function|vga_mm_wattr
-r_extern
+r_static
 r_inline
 r_void
 id|vga_mm_wattr

@@ -226,6 +226,11 @@ id|dentry
 op_star
 id|d_covers
 suffix:semicolon
+DECL|member|d_vfsmnt
+r_struct
+id|list_head
+id|d_vfsmnt
+suffix:semicolon
 DECL|member|d_hash
 r_struct
 id|list_head
@@ -596,7 +601,7 @@ suffix:semicolon
 multiline_comment|/* test whether root is busy without destroying dcache */
 r_extern
 r_int
-id|is_root_busy
+id|d_active_refs
 c_func
 (paren
 r_struct
@@ -806,7 +811,6 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* MOUNT_REWRITE: replace with the check for d_vfsmnt */
 DECL|function|d_mountpoint
 r_static
 id|__inline__
@@ -821,9 +825,13 @@ id|dentry
 )paren
 (brace
 r_return
-id|dentry
-op_ne
-id|dentry-&gt;d_mounts
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_vfsmnt
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */

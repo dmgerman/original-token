@@ -197,6 +197,8 @@ comma
 op_amp
 id|ipt_mac_checkentry
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

@@ -291,12 +291,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|is_root_busy
+id|may_umount
 c_func
 (paren
-id|dentry-&gt;d_mounts
+id|dentry-&gt;d_mounts-&gt;d_sb
 )paren
+op_eq
+l_int|0
 )paren
 (brace
 id|DPRINTK
@@ -318,7 +319,7 @@ id|DPRINTK
 c_func
 (paren
 (paren
-l_string|&quot;autofs: didn&squot;t expire due to is_root_busy: %s&bslash;n&quot;
+l_string|&quot;autofs: didn&squot;t expire due to may_umount: %s&bslash;n&quot;
 comma
 id|ent-&gt;name
 )paren

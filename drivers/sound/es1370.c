@@ -13749,6 +13749,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|pci_enable_device
+c_func
+(paren
+id|pcidev
+)paren
+)paren
+r_goto
+id|err_irq
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_irq
 c_func
 (paren
@@ -13777,12 +13789,6 @@ r_goto
 id|err_irq
 suffix:semicolon
 )brace
-id|pci_enable_device
-c_func
-(paren
-id|pcidev
-)paren
-suffix:semicolon
 multiline_comment|/* initialize codec registers */
 multiline_comment|/* note: setting CTRL_SERR_DIS is reported to break&n;&t; * mic bias setting (by Kim.Berts@fisub.mail.abb.com) */
 id|s-&gt;ctrl

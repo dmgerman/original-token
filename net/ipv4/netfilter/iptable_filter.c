@@ -771,13 +771,13 @@ id|NF_IP_PRI_FILTER
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* Default to no forward for security reasons. */
+multiline_comment|/* Default to forward because I got too much mail already. */
 DECL|variable|forward
 r_static
 r_int
 id|forward
 op_assign
-id|NF_DROP
+id|NF_ACCEPT
 suffix:semicolon
 id|MODULE_PARM
 c_func

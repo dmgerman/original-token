@@ -657,17 +657,9 @@ c_cond
 (paren
 id|i
 )paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;ne2k-pci: cannot enable device&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|i
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2583,8 +2575,6 @@ r_void
 r_int
 id|rc
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|lock_8390_module
 c_func
 (paren
@@ -2610,8 +2600,6 @@ id|unlock_8390_module
 c_func
 (paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|rc

@@ -2354,18 +2354,9 @@ c_func
 id|pdev
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;eepro100: Could not enable PCI device&bslash;n&quot;
-)paren
-suffix:semicolon
 r_goto
 id|err_out_free_mmio_region
 suffix:semicolon
-)brace
 id|pci_set_master
 c_func
 (paren

@@ -520,6 +520,8 @@ id|reject
 comma
 id|check
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

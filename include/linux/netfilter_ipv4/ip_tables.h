@@ -732,6 +732,23 @@ r_int
 id|hook_mask
 )paren
 suffix:semicolon
+multiline_comment|/* Called when entry of this type deleted. */
+DECL|member|destroy
+r_void
+(paren
+op_star
+id|destroy
+)paren
+(paren
+r_void
+op_star
+id|matchinfo
+comma
+r_int
+r_int
+id|matchinfosize
+)paren
+suffix:semicolon
 multiline_comment|/* Set this to THIS_MODULE if you are a module, otherwise NULL */
 DECL|member|me
 r_struct
@@ -831,6 +848,23 @@ comma
 r_int
 r_int
 id|hook_mask
+)paren
+suffix:semicolon
+multiline_comment|/* Called when entry of this type deleted. */
+DECL|member|destroy
+r_void
+(paren
+op_star
+id|destroy
+)paren
+(paren
+r_void
+op_star
+id|targinfo
+comma
+r_int
+r_int
+id|targinfosize
 )paren
 suffix:semicolon
 multiline_comment|/* Set this to THIS_MODULE if you are a module, otherwise NULL */

@@ -439,7 +439,7 @@ mdefine_line|#define&t;START_MOTOR_OFF_TIMER(delay)&t;&t;&t;&bslash;&n;    do {&
 DECL|macro|START_CHECK_CHANGE_TIMER
 mdefine_line|#define&t;START_CHECK_CHANGE_TIMER(delay)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        timer_table[FLOPPY_TIMER].expires = jiffies + (delay);&t;&bslash;&n;        timer_active |= (1 &lt;&lt; FLOPPY_TIMER);&t;&t;&t;&bslash;&n;&t;} while(0)
 DECL|macro|START_TIMEOUT
-mdefine_line|#define&t;START_TIMEOUT()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;timeout_timer );&t;&t;&t;&bslash;&n;        timeout_timer.expires = jiffies + FLOPPY_TIMEOUT;&t;&bslash;&n;        add_timer( &amp;timeout_timer );&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;START_TIMEOUT()&t;&t;&t;&t;&t;     &bslash;&n;    do {&t;&t;&t;&t;&t;&t;     &bslash;&n;        mod_timer(&amp;timeout_timer, jiffies+FLOPPY_TIMEOUT); &bslash;&n;&t;} while(0)
 DECL|macro|STOP_TIMEOUT
 mdefine_line|#define&t;STOP_TIMEOUT()&t;&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;        del_timer( &amp;timeout_timer );&t;&t;&t;&bslash;&n;&t;} while(0)
 DECL|macro|ENABLE_IRQ

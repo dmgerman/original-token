@@ -492,11 +492,16 @@ comma
 id|version
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pci_enable_device
 c_func
 (paren
 id|pdev
 )paren
+)paren
+r_continue
 suffix:semicolon
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_irq_line
@@ -505,22 +510,25 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|pci_ioaddr
 comma
 id|ABYSS_IO_EXTENT
+comma
+l_string|&quot;abyss&quot;
 )paren
 )paren
 (brace
@@ -538,16 +546,24 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|request_region
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|release_region
 c_func
 (paren
 id|pci_ioaddr
 comma
 id|ABYSS_IO_EXTENT
-comma
-l_string|&quot;abyss&quot;
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -574,17 +590,13 @@ comma
 id|ABYSS_IO_EXTENT
 )paren
 suffix:semicolon
+multiline_comment|/* XXX free trdev */
 r_continue
 suffix:semicolon
 multiline_comment|/*return (-ENODEV);*/
 multiline_comment|/* continue; ?? */
 )brace
 multiline_comment|/*&n;&t;&t;  if (load_tms380_module(&quot;abyss.c&quot;)) {&n;&t;&t;  return 0;&n;&t;&t;  }&n;&t;&t;*/
-id|pci_ioaddr
-op_and_assign
-op_complement
-l_int|3
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|pci_ioaddr

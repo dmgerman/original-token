@@ -188,7 +188,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Mountpoints don&squot;t count (either mountee or mounter) */
+multiline_comment|/* Mountpoints don&squot;t count */
 r_if
 c_cond
 (paren
@@ -197,7 +197,30 @@ c_func
 (paren
 id|dentry
 )paren
-op_logical_or
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+(paren
+l_string|&quot;is_tree_busy: mountpoint dentry=%p covers=%p mounts=%p&bslash;n&quot;
+comma
+id|dentry
+comma
+id|dentry-&gt;d_covers
+comma
+id|dentry-&gt;d_mounts
+)paren
+)paren
+suffix:semicolon
+id|adj
+op_increment
+suffix:semicolon
+)brace
+multiline_comment|/* ... and roots - twice as much... */
+r_if
+c_cond
+(paren
 id|dentry
 op_ne
 id|dentry-&gt;d_covers
@@ -218,7 +241,8 @@ id|dentry-&gt;d_mounts
 )paren
 suffix:semicolon
 id|adj
-op_increment
+op_add_assign
+l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/* Ignore autofs&squot;s extra reference */

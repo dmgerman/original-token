@@ -102,16 +102,16 @@ DECL|macro|USB_PID_ACK
 mdefine_line|#define USB_PID_ACK                            0xd2
 DECL|macro|USB_PID_DATA0
 mdefine_line|#define USB_PID_DATA0                          0xc3
-DECL|macro|USB_PID_UNDEF_4
-mdefine_line|#define USB_PID_UNDEF_4                        0xb4
+DECL|macro|USB_PID_PING
+mdefine_line|#define USB_PID_PING                           0xb4&t;/* USB 2.0 */
 DECL|macro|USB_PID_SOF
 mdefine_line|#define USB_PID_SOF                            0xa5
-DECL|macro|USB_PID_UNDEF_6
-mdefine_line|#define USB_PID_UNDEF_6                        0x96
-DECL|macro|USB_PID_UNDEF_7
-mdefine_line|#define USB_PID_UNDEF_7                        0x87
-DECL|macro|USB_PID_UNDEF_8
-mdefine_line|#define USB_PID_UNDEF_8                        0x78
+DECL|macro|USB_PID_NYET
+mdefine_line|#define USB_PID_NYET                           0x96&t;/* USB 2.0 */
+DECL|macro|USB_PID_DATA2
+mdefine_line|#define USB_PID_DATA2                          0x87&t;/* USB 2.0 */
+DECL|macro|USB_PID_SPLIT
+mdefine_line|#define USB_PID_SPLIT                          0x78&t;/* USB 2.0 */
 DECL|macro|USB_PID_IN
 mdefine_line|#define USB_PID_IN                             0x69
 DECL|macro|USB_PID_NAK
@@ -119,13 +119,15 @@ mdefine_line|#define USB_PID_NAK                            0x5a
 DECL|macro|USB_PID_DATA1
 mdefine_line|#define USB_PID_DATA1                          0x4b
 DECL|macro|USB_PID_PREAMBLE
-mdefine_line|#define USB_PID_PREAMBLE                       0x3c
+mdefine_line|#define USB_PID_PREAMBLE                       0x3c&t;/* Token mode */
+DECL|macro|USB_PID_ERR
+mdefine_line|#define USB_PID_ERR                            0x3c&t;/* USB 2.0: handshake mode */
 DECL|macro|USB_PID_SETUP
 mdefine_line|#define USB_PID_SETUP                          0x2d
 DECL|macro|USB_PID_STALL
 mdefine_line|#define USB_PID_STALL                          0x1e
-DECL|macro|USB_PID_UNDEF_F
-mdefine_line|#define USB_PID_UNDEF_F                        0x0f
+DECL|macro|USB_PID_MDATA
+mdefine_line|#define USB_PID_MDATA                          0x0f&t;/* USB 2.0 */
 multiline_comment|/*&n; * Standard requests&n; */
 DECL|macro|USB_REQ_GET_STATUS
 mdefine_line|#define USB_REQ_GET_STATUS&t;&t;0x00
@@ -173,75 +175,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 DECL|macro|USB_MAJOR
 mdefine_line|#define USB_MAJOR 180
-multiline_comment|/* for 2.2-kernels */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
-DECL|function|list_add_tail
-r_static
-id|__inline__
-r_void
-id|list_add_tail
-c_func
-(paren
-r_struct
-id|list_head
-op_star
-r_new
-comma
-r_struct
-id|list_head
-op_star
-id|head
-)paren
-(brace
-id|__list_add
-c_func
-(paren
-r_new
-comma
-id|head-&gt;prev
-comma
-id|head
-)paren
-suffix:semicolon
-)brace
-DECL|macro|LIST_HEAD_INIT
-mdefine_line|#define LIST_HEAD_INIT(name) { &amp;(name), &amp;(name) }
-DECL|typedef|wait_queue_t
-r_typedef
-r_struct
-id|wait_queue
-id|wait_queue_t
-suffix:semicolon
-DECL|typedef|wait_queue_head_t
-r_typedef
-r_struct
-id|wait_queue
-op_star
-id|wait_queue_head_t
-suffix:semicolon
-DECL|macro|DECLARE_WAITQUEUE
-mdefine_line|#define DECLARE_WAITQUEUE(wait, current) &bslash;&n;&t;struct wait_queue wait = { current, NULL }
-DECL|macro|DECLARE_WAIT_QUEUE_HEAD
-mdefine_line|#define DECLARE_WAIT_QUEUE_HEAD(wait)&bslash;&n;&t;wait_queue_head_t wait
-DECL|macro|init_waitqueue_head
-mdefine_line|#define init_waitqueue_head(x) *x=NULL
-DECL|macro|init_MUTEX
-mdefine_line|#define init_MUTEX(x) *(x)=MUTEX
-DECL|macro|DECLARE_MUTEX
-mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name=MUTEX
-DECL|macro|DECLARE_MUTEX_LOCKED
-mdefine_line|#define DECLARE_MUTEX_LOCKED(name) struct semaphore name=MUTEX_LOCKED
-DECL|macro|__set_current_state
-mdefine_line|#define __set_current_state(state_value)                        &bslash;&n;&t;do { current-&gt;state = state_value; } while (0)
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|set_current_state
-mdefine_line|#define set_current_state(state_value)          &bslash;&n;&t;set_mb(current-&gt;state, state_value)
-macro_line|#else
-DECL|macro|set_current_state
-mdefine_line|#define set_current_state(state_value)          &bslash;&n;&t;__set_current_state(state_value)
-macro_line|#endif
-macro_line|#endif 
-singleline_comment|// 2.2.x
 DECL|function|wait_ms
 r_static
 id|__inline__

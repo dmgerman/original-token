@@ -316,6 +316,8 @@ id|target
 comma
 id|checkentry
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

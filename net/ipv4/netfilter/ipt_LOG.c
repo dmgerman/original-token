@@ -1555,6 +1555,8 @@ id|ipt_log_target
 comma
 id|ipt_log_checkentry
 comma
+l_int|NULL
+comma
 id|THIS_MODULE
 )brace
 suffix:semicolon

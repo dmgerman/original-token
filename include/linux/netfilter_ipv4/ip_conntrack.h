@@ -61,6 +61,12 @@ DECL|enumerator|IPS_SEEN_REPLY
 id|IPS_SEEN_REPLY
 op_assign
 l_int|0x02
+comma
+multiline_comment|/* Packet seen leaving box: bit 2 set.  Can be set, not unset. */
+DECL|enumerator|IPS_CONFIRMED
+id|IPS_CONFIRMED
+op_assign
+l_int|0x04
 )brace
 suffix:semicolon
 DECL|struct|ip_conntrack_expect
@@ -118,6 +124,7 @@ id|IP_CT_DIR_MAX
 suffix:semicolon
 multiline_comment|/* Have we seen traffic both ways yet? (bitset) */
 DECL|member|status
+r_volatile
 r_int
 r_int
 id|status

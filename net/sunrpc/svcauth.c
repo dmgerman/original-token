@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/net/sunrpc/svcauth.c&n; *&n; * The generic interface for RPC authentication on the server side.&n; * &n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/net/sunrpc/svcauth.c&n; *&n; * The generic interface for RPC authentication on the server side.&n; * &n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; *&n; * CHANGES&n; * 19-Apr-2000 Chris Evans      - Security fix&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
@@ -466,15 +466,15 @@ op_star
 id|bufp
 op_assign
 id|argp-&gt;buf
+comma
+id|slen
+comma
+id|i
 suffix:semicolon
 r_int
 id|len
 op_assign
 id|argp-&gt;len
-comma
-id|slen
-comma
-id|i
 suffix:semicolon
 r_if
 c_cond
@@ -532,6 +532,8 @@ op_logical_or
 id|len
 op_sub_assign
 id|slen
+op_plus
+l_int|3
 )paren
 OL
 l_int|0

@@ -6539,6 +6539,7 @@ r_goto
 id|err_out_free_pio_region
 suffix:semicolon
 )brace
+multiline_comment|/* XXX check enable_device for failure */
 id|pci_enable_device
 (paren
 id|pdev
@@ -6586,6 +6587,7 @@ comma
 id|YELLOWFIN_SIZE
 )paren
 suffix:semicolon
+multiline_comment|/* XXX check for failure */
 macro_line|#endif
 id|irq
 op_assign

@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -65,7 +65,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCPY
 mdefine_line|#define __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -150,7 +150,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCAT
 mdefine_line|#define __HAVE_ARCH_STRCAT
 DECL|function|strcat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -203,7 +203,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCAT
 mdefine_line|#define __HAVE_ARCH_STRNCAT
 DECL|function|strncat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -285,7 +285,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCHR
 mdefine_line|#define __HAVE_ARCH_STRCHR
 DECL|function|strchr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -341,7 +341,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRPBRK
 mdefine_line|#define __HAVE_ARCH_STRPBRK
 DECL|function|strpbrk
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -420,7 +420,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRSPN
 mdefine_line|#define __HAVE_ARCH_STRSPN
 DECL|function|strspn
-r_extern
+r_static
 r_inline
 r_int
 id|strspn
@@ -517,7 +517,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRTOK
 mdefine_line|#define __HAVE_ARCH_STRTOK
 DECL|function|strtok
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -628,7 +628,7 @@ multiline_comment|/* strstr !! */
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
 DECL|function|strlen
-r_extern
+r_static
 r_inline
 r_int
 id|strlen
@@ -671,7 +671,7 @@ multiline_comment|/* strnlen !! */
 DECL|macro|__HAVE_ARCH_STRCMP
 mdefine_line|#define __HAVE_ARCH_STRCMP
 DECL|function|strcmp
-r_extern
+r_static
 r_inline
 r_int
 id|strcmp
@@ -742,7 +742,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
-r_extern
+r_static
 r_inline
 r_int
 id|strncmp
@@ -841,7 +841,7 @@ DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 multiline_comment|/*&n; * This is really ugly, but its highly optimizatiable by the&n; * compiler and is meant as compensation for gcc&squot;s missing&n; * __builtin_memset(). For the 680[23]0&t;it might be worth considering&n; * the optimal number of misaligned writes compared to the number of&n; * tests&squot;n&squot;branches needed to align the destination address. The&n; * 680[46]0 doesn&squot;t really care due to their copy-back caches.&n; *&t;&t;&t;&t;&t;&t;10/09/96 - Jes Sorensen&n; */
 DECL|function|__memset_g
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1280,7 +1280,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * __memset_page assumes that data is longword aligned. Most, if not&n; * all, of these page sized memsets are performed on page aligned&n; * areas, thus we do not need to check if the destination is longword&n; * aligned. Of course we suffer a serious performance loss if this is&n; * not the case but I think the risk of this ever happening is&n; * extremely small. We spend a lot of time clearing pages in&n; * get_empty_page() so I think it is worth it anyway. Besides, the&n; * 680[46]0 do not really care about misaligned writes due to their&n; * copy-back cache.&n; *&n; * The optimized case for the 680[46]0 is implemented using the move16&n; * instruction. My tests showed that this implementation is 35-45%&n; * faster than the original implementation using movel, the only&n; * caveat is that the destination address must be 16-byte aligned.&n; *                                            01/09/96 - Jes Sorensen&n; */
 DECL|function|__memset_page
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1531,7 +1531,7 @@ DECL|macro|__HAVE_ARCH_MEMCPY
 mdefine_line|#define __HAVE_ARCH_MEMCPY
 multiline_comment|/*&n; * __builtin_memcpy() does not handle page-sized memcpys very well,&n; * thus following the same assumptions as for page-sized memsets, this&n; * function copies page-sized areas using an unrolled loop, without&n; * considering alignment.&n; *&n; * For the 680[46]0 only kernels we use the move16 instruction instead&n; * as it writes through the data-cache, invalidating the cache-lines&n; * touched. In this way we do not use up the entire data-cache (well,&n; * half of it on the 68060) by copying a page. An unrolled loop of two&n; * move16 instructions seem to the fastest. The only caveat is that&n; * both source and destination must be 16-byte aligned, if not we fall&n; * back to the generic memcpy function.  - Jes&n; */
 DECL|function|__memcpy_page
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1701,7 +1701,7 @@ mdefine_line|#define memcpy(to, from, n) &bslash;&n;(__builtin_constant_p(n) ? &
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
-r_extern
+r_static
 r_inline
 r_void
 op_star

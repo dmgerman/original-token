@@ -595,7 +595,7 @@ id|order
 suffix:semicolon
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|function|alloc_pages
-r_extern
+r_static
 r_inline
 r_struct
 id|page
@@ -676,7 +676,7 @@ macro_line|#endif /* !CONFIG_DISCONTIGMEM */
 DECL|macro|alloc_page
 mdefine_line|#define alloc_page(gfp_mask) &bslash;&n;&t;&t;alloc_pages(gfp_mask, 0)
 DECL|function|__get_free_pages
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -727,7 +727,7 @@ mdefine_line|#define __get_free_page(gfp_mask) &bslash;&n;&t;&t;__get_free_pages
 DECL|macro|__get_dma_pages
 mdefine_line|#define __get_dma_pages(gfp_mask, order) &bslash;&n;&t;&t;__get_free_pages((gfp_mask) | GFP_DMA,(order))
 DECL|function|get_zeroed_page
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -793,7 +793,7 @@ id|order
 )paren
 suffix:semicolon
 DECL|function|__free_pages
-r_extern
+r_static
 r_inline
 r_void
 id|__free_pages
@@ -833,7 +833,7 @@ suffix:semicolon
 DECL|macro|__free_page
 mdefine_line|#define __free_page(page) __free_pages(page, 0)
 DECL|function|free_pages
-r_extern
+r_static
 r_inline
 r_void
 id|free_pages
@@ -1324,7 +1324,7 @@ id|pgoff
 )paren
 suffix:semicolon
 DECL|function|do_mmap
-r_extern
+r_static
 r_inline
 r_int
 r_int
