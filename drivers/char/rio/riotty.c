@@ -324,14 +324,11 @@ c_cond
 id|p-&gt;RIOFailed
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;System initialisation failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|pseterr
@@ -349,12 +346,10 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;port open SysPort %d (%s) (mapped:%d)&bslash;n&quot;
 comma
 id|SysPort
@@ -373,7 +368,6 @@ id|SysPort
 op_member_access_from_pointer
 id|Mapped
 )paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Validate that we have received a legitimate request.&n;&t;** Currently, just check that we are opening a port on&n;&t;** a host card that actually exists, and that the port&n;&t;** has been mapped onto a host.&n;&t;*/
 r_if
@@ -385,16 +379,13 @@ id|RIO_PORTS
 )paren
 (brace
 multiline_comment|/* out of range ? */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Illegal port number %d&bslash;n&quot;
 comma
 id|SysPort
-)paren
 )paren
 suffix:semicolon
 id|pseterr
@@ -440,14 +431,11 @@ id|PortP-&gt;Mapped
 (brace
 multiline_comment|/* we aren&squot;t mapped yet! */
 multiline_comment|/*&n;&t;&t;** The system doesn&squot;t know which RTA this port&n;&t;&t;** corresponds to.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;port not mapped into system&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -473,27 +461,59 @@ id|PortP-&gt;gs.tty
 op_assign
 id|tty
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|PortP-&gt;gs.count
+)paren
+id|rio_inc_mod_count
+(paren
+)paren
+suffix:semicolon
 id|PortP-&gt;gs.count
 op_increment
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;%d bytes in tx buffer&bslash;n&quot;
 comma
 id|PortP-&gt;gs.xmit_cnt
 )paren
-)paren
 suffix:semicolon
+id|retval
+op_assign
 id|gs_init_port
 (paren
 op_amp
 id|PortP-&gt;gs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+(brace
+id|PortP-&gt;gs.count
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PortP-&gt;gs.count
+)paren
+id|rio_dec_mod_count
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;** If the host hasn&squot;t been booted yet, then &n;&t;** fail&n;&t;*/
 r_if
 c_cond
@@ -507,14 +527,11 @@ op_ne
 id|RC_RUNNING
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Host not running&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|pseterr
@@ -556,14 +573,11 @@ c_cond
 id|PortP-&gt;WaitUntilBooted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for RTA to boot&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_do
@@ -582,14 +596,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA EINTR in delay &bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -610,14 +621,11 @@ op_le
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for RTA to boot timeout&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -664,27 +672,21 @@ id|RTA_BOOTED
 (brace
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA has been booted&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA never booted&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|pseterr
@@ -704,14 +706,11 @@ suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/* I find the above code a bit hairy. I find the below code&n;           easier to read and shorter. Now, if it works too that would&n;&t;   be great... -- REW &n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Checking if RTA has booted... &bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_while
@@ -737,14 +736,11 @@ op_logical_neg
 id|PortP-&gt;WaitUntilBooted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA never booted&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -771,14 +767,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA_wait_for_boot: EINTR in delay &bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -799,14 +792,11 @@ op_le
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for RTA to boot timeout&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -819,14 +809,11 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA has been booted&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -895,14 +882,11 @@ op_logical_neg
 id|p-&gt;RIOHalted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for RIO_CLOSING to go away&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -914,14 +898,11 @@ op_le
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for not idle closed broken by signal&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -1001,14 +982,11 @@ op_logical_neg
 id|PortP-&gt;Mapped
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Port unmapped while closing!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -1080,18 +1058,11 @@ id|PortP-&gt;firstOpen
 )paren
 (brace
 multiline_comment|/* First time ? */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;First open for this port&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|rio_inc_mod_count
-(paren
 )paren
 suffix:semicolon
 id|PortP-&gt;firstOpen
@@ -1199,16 +1170,13 @@ op_logical_neg
 id|p-&gt;RIOHalted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for PORT_ISOPEN-currently %x&bslash;n&quot;
 comma
 id|PortP-&gt;PortState
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;** 15.10.1998 ARG - ESIL 0759&n;** (Part) fix for port being trashed when opened whilst RTA &quot;disconnected&quot;&n;** Take out the limited wait - now wait for ever or until user&n;** bangs us out.&n;**&n;&t;&t;&t;if (repeat_this -- &lt;= 0) {&n;&t;&t;&t;&t;rio_dprint(RIO_DEBUG_TTY, (&quot;Waiting for open to finish timed out.&bslash;n&quot;));&n;&t;&t;&t;&t;RIOPreemptiveCmd(p, PortP, FCLOSE ); &n;&t;&t;&t;&t;rio_spin_unlock_irqrestore(&amp;PortP-&gt;portSem, flags);&n;&t;&t;&t;&t;return -EINTR;&n;&t;&t;&t;}&n;**&n;*/
@@ -1235,14 +1203,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for open to finish broken by signal&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -1301,14 +1266,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;PORT_ISOPEN found&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1319,14 +1281,11 @@ c_cond
 id|Modem
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Modem - test for carrier&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** ACTION&n;&t;&t;** insert test for carrier here. -- ???&n;&t;&t;** I already see that test here. What&squot;s the deal? -- REW&n;&t;&t;*/
@@ -1334,7 +1293,7 @@ r_if
 c_cond
 (paren
 (paren
-id|tp-&gt;tm.c_cflag
+id|PortP-&gt;gs.tty-&gt;termios-&gt;c_cflag
 op_amp
 id|CLOCAL
 )paren
@@ -1346,48 +1305,39 @@ id|MSVR1_CD
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
-comma
-(paren
-id|PortP
-comma
-id|DBG_OPEN
 comma
 l_string|&quot;open(%d) Modem carr on&bslash;n&quot;
 comma
 id|SysPort
 )paren
-)paren
 suffix:semicolon
-id|tp-&gt;tm.c_state
+multiline_comment|/*&n;&t;&t;&t;tp-&gt;tm.c_state |= CARR_ON;&n;&t;&t;&t;wakeup((caddr_t) &amp;tp-&gt;tm.c_canq);&n;&t;&t;&t;*/
+id|PortP-&gt;State
 op_or_assign
-id|CARR_ON
+id|RIO_CARR_ON
 suffix:semicolon
-id|wakeup
-c_func
+id|wake_up_interruptible
 (paren
-(paren
-id|caddr_t
-)paren
 op_amp
-id|tp-&gt;tm.c_canq
+id|PortP-&gt;gs.open_wait
 )paren
 suffix:semicolon
 )brace
 r_else
 multiline_comment|/* no carrier - wait for DCD */
 (brace
+multiline_comment|/*&n;&t;&t;&t;while (!(PortP-&gt;gs.tty-&gt;termios-&gt;c_state &amp; CARR_ON) &amp;&amp; &n;&t;&t;&t;       !(filp-&gt;f_flags &amp; O_NONBLOCK) &amp;&amp; !p-&gt;RIOHalted )&n;&t;&t;  */
 r_while
 c_loop
 (paren
 op_logical_neg
 (paren
-id|tp-&gt;tm.c_state
+id|PortP-&gt;State
 op_amp
-id|CARR_ON
+id|RIO_CARR_ON
 )paren
 op_logical_and
 op_logical_neg
@@ -1401,30 +1351,21 @@ op_logical_neg
 id|p-&gt;RIOHalted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
-comma
-(paren
-id|PortP
-comma
-id|DBG_OPEN
 comma
 l_string|&quot;open(%d) sleeping for carr on&bslash;n&quot;
 comma
 id|SysPort
 )paren
-)paren
 suffix:semicolon
-id|tp-&gt;tm.c_state
-op_or_assign
-id|WOPEN
-suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;PortP-&gt;gs.tty-&gt;termios-&gt;c_state |= WOPEN;&n;&t;&t;&t;&t;*/
 id|PortP-&gt;State
 op_or_assign
 id|RIO_WOPEN
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1435,7 +1376,7 @@ c_func
 id|caddr_t
 )paren
 op_amp
-id|tp-&gt;tm.c_canq
+id|tp-&gt;tm.c_canqo
 comma
 id|TTIPRI
 op_or
@@ -1444,16 +1385,13 @@ id|PCATCH
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t;&t;** ACTION: verify that this is a good thing&n;&t;&t;&t;&t;&t;** to do here. -- ???&n;&t;&t;&t;&t;&t;** I think it&squot;s OK. -- REW&n;&t;&t;&t;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;open(%d) sleeping for carr broken by signal&bslash;n&quot;
 comma
 id|SysPort
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -1466,11 +1404,7 @@ comma
 id|FCLOSE
 )paren
 suffix:semicolon
-id|tp-&gt;tm.c_state
-op_and_assign
-op_complement
-id|WOPEN
-suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t;tp-&gt;tm.c_state &amp;= ~WOPEN;&n;&t;&t;&t;&t;&t;*/
 id|PortP-&gt;State
 op_and_assign
 op_complement
@@ -1494,6 +1428,7 @@ op_minus
 id|EINTR
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 id|PortP-&gt;State
 op_and_assign
@@ -1504,10 +1439,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|RIOHalted
+id|p-&gt;RIOHalted
 )paren
 r_goto
 id|bombout
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_TTY
+comma
+l_string|&quot;Setting RIO_MOPEN&bslash;n&quot;
+)paren
 suffix:semicolon
 id|PortP-&gt;State
 op_or_assign
@@ -1533,14 +1475,11 @@ r_goto
 id|bombout
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;high level open done&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef STATS
@@ -1566,14 +1505,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Returning from open&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -1649,32 +1585,26 @@ id|rv
 op_assign
 l_int|0
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;port close SysPort %d&bslash;n&quot;
 comma
 id|PortP-&gt;PortNum
 )paren
-)paren
 suffix:semicolon
 multiline_comment|/* PortP = p-&gt;RIOPortp[SysPort]; */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Port is at address 0x%x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|PortP
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* tp = PortP-&gt;TtyP;*/
@@ -1683,19 +1613,16 @@ id|tty
 op_assign
 id|PortP-&gt;gs.tty
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TTY is at address 0x%x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|tty
-)paren
 )paren
 suffix:semicolon
 id|Modem
@@ -1744,14 +1671,11 @@ id|RIO_DELETED
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Close on deleted RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|deleted
@@ -1780,14 +1704,11 @@ r_goto
 id|close_end
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Clear bits&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** clear the open bits for this device&n;&t;*/
@@ -1820,16 +1741,13 @@ id|RIO_MOPEN
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;** The port is still open for the other task -&n;&t;&t;** return, pretending that we are still active.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Channel %d still open !&bslash;n&quot;
 comma
 id|PortP-&gt;PortNum
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;State
@@ -1859,14 +1777,11 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Closing down - everything must go!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;State
@@ -1875,14 +1790,11 @@ op_complement
 id|RIO_DYNOROD
 suffix:semicolon
 multiline_comment|/*&n;&t;** This is where we wait for the port&n;&t;** to drain down before closing. Bye-bye....&n;&t;** (We never meant to do this)&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Timeout 1 starts&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -1931,14 +1843,11 @@ op_assign
 op_minus
 id|EINTR
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for not idle closed broken by signal&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -1955,14 +1864,11 @@ r_goto
 id|close_end
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Calling timeout to flush in closing&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -1990,14 +1896,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RTA EINTR in delay &bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rv
@@ -2058,16 +1961,13 @@ id|RIO_MOPEN
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;** The port has been re-opened for the other task -&n;&t;&t;** return, pretending that we are still active.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Channel %d re-open!&bslash;n&quot;
 comma
 id|PortP-&gt;PortNum
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;State
@@ -2186,14 +2086,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Run out of tries - force the bugger shut!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOPreemptiveCmd
@@ -2209,18 +2106,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Close: PortState:ISOPEN is %d&bslash;n&quot;
 comma
 id|PortP-&gt;PortState
 op_amp
 id|PORT_ISOPEN
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2257,16 +2151,13 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Close: try was %d on completion&bslash;n&quot;
 comma
 r_try
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* RIOPreemptiveCmd(p, PortP, FCLOSE); */
@@ -2323,14 +2214,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Return from close&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2434,14 +2322,11 @@ op_star
 id|PortP
 suffix:semicolon
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RIOHalted set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -2533,14 +2418,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;entering shortcommand.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CHECK
@@ -2576,14 +2458,11 @@ op_amp
 id|RIO_DELETED
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Short command to deleted RTA ignored&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2613,16 +2492,13 @@ op_logical_neg
 id|p-&gt;RIOHalted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting for not in use (%d)&bslash;n&quot;
 comma
 id|retries
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -2683,14 +2559,11 @@ op_amp
 id|RIO_DELETED
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Short command to deleted RTA ignored&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -2723,16 +2596,13 @@ op_logical_neg
 id|p-&gt;RIOHalted
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Waiting to add short command to queue (%d)&bslash;n&quot;
 comma
 id|retries
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -2753,14 +2623,11 @@ op_le
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;out of tries. Failing&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2989,12 +2856,10 @@ suffix:semicolon
 r_int
 id|ioctl_processed
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;port ioctl SysPort %d command 0x%x argument 0x%x %s&bslash;n&quot;
 comma
 id|SysPort
@@ -3010,7 +2875,6 @@ l_string|&quot;Modem&quot;
 suffix:colon
 l_string|&quot;tty&quot;
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3020,16 +2884,13 @@ op_ge
 id|RIO_PORTS
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Bad port number %d&bslash;n&quot;
 comma
 id|SysPort
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3172,12 +3033,10 @@ suffix:semicolon
 r_case
 id|TCRIOTSTATE
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;tbusy/tstop monitoring %sabled&bslash;n&quot;
 comma
 id|arg
@@ -3186,7 +3045,6 @@ c_cond
 l_string|&quot;en&quot;
 suffix:colon
 l_string|&quot;dis&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* MonitorTstate = 0 ;*/
@@ -3218,14 +3076,11 @@ r_case
 id|TCRIOSTATE
 suffix:colon
 multiline_comment|/* current state of Modem input pins */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOSTATE&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3243,14 +3098,11 @@ id|MGET
 op_eq
 id|RIO_FAIL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOSTATE command failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;State
@@ -3287,14 +3139,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Copyout failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -3333,14 +3182,11 @@ r_case
 id|TCRIOMBIC
 suffix:colon
 multiline_comment|/* Clear modem lines */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOMBIS/TCRIOMBIC&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3390,14 +3236,11 @@ id|MBIS
 op_eq
 id|RIO_FAIL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOMBIS command failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3443,14 +3286,11 @@ id|MBIC
 op_eq
 id|RIO_FAIL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOMBIC command failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3474,14 +3314,11 @@ r_case
 id|TCRIOXPON
 suffix:colon
 multiline_comment|/* set Xprint ON string */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOXPON&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3506,14 +3343,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Copyin failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Xprint.XpOn
@@ -3578,14 +3412,11 @@ r_case
 id|TCRIOXPOFF
 suffix:colon
 multiline_comment|/* set Xprint OFF string */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOXPOFF&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3610,14 +3441,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Copyin failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Xprint.XpOff
@@ -3682,14 +3510,11 @@ r_case
 id|TCRIOXPCPS
 suffix:colon
 multiline_comment|/* set Xprint CPS string */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOXPCPS&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3710,16 +3535,13 @@ OL
 id|p-&gt;RIOConf.MinXpCps
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;%d CPS out of range&bslash;n&quot;
 comma
 id|arg
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -3763,14 +3585,11 @@ suffix:semicolon
 r_case
 id|TCRIOXPRINT
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOXPRINT&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3831,14 +3650,11 @@ suffix:semicolon
 r_case
 id|TCRIOIXANYON
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOIXANYON&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -3860,14 +3676,11 @@ suffix:semicolon
 r_case
 id|TCRIOIXANYOFF
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOIXANYOFF&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -3890,14 +3703,11 @@ suffix:semicolon
 r_case
 id|TCRIOIXONON
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOIXONON&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -3919,14 +3729,11 @@ suffix:semicolon
 r_case
 id|TCRIOIXONOFF
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOIXONOFF&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -3950,14 +3757,11 @@ multiline_comment|/*&n;** 15.10.1998 ARG - ESIL 0761 part fix&n;** Added support
 r_case
 id|TCRIOCTSFLOWEN
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOCTSFLOWEN&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -3991,14 +3795,11 @@ suffix:semicolon
 r_case
 id|TCRIOCTSFLOWDIS
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIOCTSFLOWDIS&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -4033,14 +3834,11 @@ suffix:semicolon
 r_case
 id|TCRIORTSFLOWEN
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIORTSFLOWEN&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -4074,14 +3872,11 @@ suffix:semicolon
 r_case
 id|TCRIORTSFLOWDIS
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;TCRIORTSFLOWDIS&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;Config
@@ -4166,14 +3961,11 @@ suffix:colon
 id|ioctl_processed
 op_increment
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;NON POSIX ioctl&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|ttyseth_pv
@@ -4207,14 +3999,11 @@ r_case
 id|TCSETAFP
 suffix:colon
 multiline_comment|/* posix tcsetattr() */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;NON POSIX SYSV ioctl&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|ttyseth_pv
@@ -4302,14 +4091,11 @@ suffix:colon
 r_case
 id|TIOCSETN
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;wait for non-BUSY, semaphore set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;** Wait for drain here, at least as far as the double buffer&n;&t;&t;&t;** being empty.&n;&t;&t;&t;*/
@@ -4523,12 +4309,10 @@ id|tp
 )paren
 suffix:semicolon
 multiline_comment|/* Set new cooking mode */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;RIOIoctl changed %d newcook %d oldcook %d&bslash;n&quot;
 comma
 id|changed
@@ -4536,7 +4320,6 @@ comma
 id|PortP-&gt;CookMode
 comma
 id|oldcook
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef MODEM_SUPPORT
@@ -4627,14 +4410,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TTY
 comma
-(paren
 l_string|&quot;Ioctl changing the PORT settings&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOParam

@@ -144,19 +144,16 @@ id|func_enter
 suffix:semicolon
 multiline_comment|/* Linux doesn&squot;t allow you to disable interrupts during a&n;&t;   &quot;copyin&quot;. (Crash when a pagefault occurs). */
 multiline_comment|/* disable(oldspl); */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Data at user address 0x%x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|rbp-&gt;DataP
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Check that we have set asside enough memory for this&n;&t;*/
@@ -168,14 +165,11 @@ OG
 id|SIXTY_FOUR_K
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA Boot Code Too Large!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -197,14 +191,11 @@ c_cond
 id|p-&gt;RIOBooting
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA Boot Code : BUSY BUSY BUSY!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -276,14 +267,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Bad data copy from user space&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -347,14 +335,11 @@ id|HostP-&gt;Type
 r_case
 id|RIO_AT
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Start ISA card running&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WBYTE
@@ -383,14 +368,11 @@ r_case
 id|RIO_MCA
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t;** MCA handles IRQ vectors differently, so we don&squot;t write &n;&t;&t;&t;&t;** them to this register.&n;&t;&t;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Start MCA card running&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WBYTE
@@ -411,14 +393,9 @@ r_case
 id|RIO_EISA
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t;** EISA is totally different and expects OUTBZs to turn it on.&n;&t;&t;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
-comma
-l_int|NULL
-comma
-id|DBG_DAEMON
 comma
 l_string|&quot;Start EISA card running&bslash;n&quot;
 )paren
@@ -451,14 +428,11 @@ r_case
 id|RIO_PCI
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t;** PCI is much the same as MCA. Everything is once again memory&n;&t;&t;&t;&t;** mapped, so we are writing to memory registers instead of io&n;&t;&t;&t;&t;** ports.&n;&t;&t;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Start PCI card running&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WBYTE
@@ -477,16 +451,13 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Unknown host type %d&bslash;n&quot;
 comma
 id|HostP-&gt;Type
-)paren
 )paren
 suffix:semicolon
 r_break
@@ -590,16 +561,13 @@ id|host
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Attempt to boot host %d&bslash;n&quot;
 comma
 id|host
-)paren
 )paren
 suffix:semicolon
 id|HostP
@@ -610,12 +578,10 @@ id|p-&gt;RIOHosts
 id|host
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Host Type = 0x%x, Mode = 0x%x, IVec = 0x%x&bslash;n&quot;
 comma
 id|HostP-&gt;Type
@@ -623,7 +589,6 @@ comma
 id|HostP-&gt;Mode
 comma
 id|HostP-&gt;Ivec
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -638,18 +603,15 @@ op_ne
 id|RC_WAITING
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;%s %d already running&bslash;n&quot;
 comma
 l_string|&quot;Host&quot;
 comma
 id|host
-)paren
 )paren
 suffix:semicolon
 r_continue
@@ -674,12 +636,10 @@ op_minus
 id|rbp-&gt;Count
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;kernel virtual address for host is 0x%x&bslash;n&quot;
 comma
 (paren
@@ -687,14 +647,11 @@ r_int
 )paren
 id|Cad
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;kernel virtual address for download is 0x%x&bslash;n&quot;
 comma
 (paren
@@ -702,30 +659,23 @@ r_int
 )paren
 id|StartP
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;host loadbase is 0x%x&bslash;n&quot;
 comma
 id|p-&gt;RIOConf.HostLoadBase
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;size of download is 0x%x&bslash;n&quot;
 comma
 id|rbp-&gt;Count
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -736,14 +686,11 @@ OL
 id|rbp-&gt;Count
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Bin too large&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -775,14 +722,11 @@ id|HostP-&gt;Slot
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Copy the data directly from user space to the SRAM.&n;&t;&t;** This ain&squot;t going to be none too clever if the download&n;&t;&t;** code is bigger than this segment.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Copy in code&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** PCI hostcard can&squot;t cope with 32 bit accesses and so need to copy &n;&t;&t;** data to a local buffer, and then dripfeed the card.&n;&t;&t;*/
@@ -810,14 +754,11 @@ op_logical_neg
 id|DownCode
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;No system memory available&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -859,14 +800,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Bad copyin of host data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -922,14 +860,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Bad copyin of host data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -944,14 +879,11 @@ r_return
 id|EFAULT
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Copy completed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;**&t;&t;&t;S T O P !&n;&t;&t;**&n;&t;&t;** Upto this point the code has been fairly rational, and possibly&n;&t;&t;** even straight forward. What follows is a pile of crud that will&n;&t;&t;** magically turn into six bytes of transputer assembler. Normally&n;&t;&t;** you would expect an array or something, but, being me, I have&n;&t;&t;** chosen [been told] to use a technique whereby the startup code&n;&t;&t;** will be correct if we change the loadbase for the code. Which&n;&t;&t;** brings us onto another issue - the loadbase is the *end* of the&n;&t;&t;** code, not the start.&n;&t;&t;**&n;&t;&t;** If I were you I wouldn&squot;t start from here.&n;&t;&t;*/
@@ -1106,28 +1038,22 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;host loadbase is 0x%x&bslash;n&quot;
 comma
 id|p-&gt;RIOConf.HostLoadBase
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;startup offset is 0x%x&bslash;n&quot;
 comma
 id|offset
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Flag what is going on&n;&t;&t;*/
@@ -1149,25 +1075,20 @@ c_func
 id|HostP-&gt;__ParmMapR
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Original parmmap is 0x%x&bslash;n&quot;
 comma
 id|OldParmMap
 )paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** And start it running (I hope).&n;&t;&t;** As there is nothing dodgy or obscure about the&n;&t;&t;** above code, this is guaranteed to work every time.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Host Type = 0x%x, Mode = 0x%x, IVec = 0x%x&bslash;n&quot;
 comma
 id|HostP-&gt;Type
@@ -1176,7 +1097,6 @@ id|HostP-&gt;Mode
 comma
 id|HostP-&gt;Ivec
 )paren
-)paren
 suffix:semicolon
 id|rio_start_card_running
 c_func
@@ -1184,14 +1104,11 @@ c_func
 id|HostP
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Set control port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Now, wait for upto five seconds for the Tp to setup the parmmap&n;&t;&t;** pointer:&n;&t;&t;*/
@@ -1222,12 +1139,10 @@ id|wait_count
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Checkout %d, 0x%x&bslash;n&quot;
 comma
 id|wait_count
@@ -1236,7 +1151,6 @@ id|RWORD
 c_func
 (paren
 id|HostP-&gt;__ParmMapR
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -1262,12 +1176,10 @@ op_eq
 id|OldParmMap
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;parmmap 0x%x&bslash;n&quot;
 comma
 id|RWORD
@@ -1276,16 +1188,12 @@ c_func
 id|HostP-&gt;__ParmMapR
 )paren
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RIO Mesg Run Fail&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 DECL|macro|HOST_DISABLE
@@ -1293,19 +1201,16 @@ mdefine_line|#define&t;HOST_DISABLE &bslash;&n;&t;&t;HostP-&gt;Flags &amp;= ~RUN
 id|HOST_DISABLE
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Running 0x%x&bslash;n&quot;
 comma
 id|RWORD
 c_func
 (paren
 id|HostP-&gt;__ParmMapR
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -1329,19 +1234,16 @@ id|HostP-&gt;__ParmMapR
 )paren
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;ParmMapP : %x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|ParmMapP
-)paren
 )paren
 suffix:semicolon
 id|ParmMapP
@@ -1376,19 +1278,16 @@ l_int|0xFFFF
 )paren
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;ParmMapP : %x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|ParmMapP
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** The links entry should be 0xFFFF; we set it up&n;&t;&t;** with a mask to say how many PHBs to use, and &n;&t;&t;** which links to use.&n;&t;&t;*/
@@ -1408,31 +1307,25 @@ op_ne
 l_int|0xFFFF
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RIO Mesg Run Fail %s&bslash;n&quot;
 comma
 id|HostP-&gt;Name
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Links = 0x%x&bslash;n&quot;
 comma
 id|RWORD
 c_func
 (paren
 id|ParmMapP-&gt;links
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -1448,16 +1341,13 @@ id|RIO_LINK_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** now wait for the card to set all the parmmap-&gt;XXX stuff&n;&t;&t;** this is a wait of upto two seconds....&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Looking for init_done - %d ticks&bslash;n&quot;
 comma
 id|p-&gt;RIOConf.StartupTime
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;timeout_id
@@ -1488,14 +1378,11 @@ id|wait_count
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Waiting for init_done&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|delay
@@ -1507,14 +1394,11 @@ id|HUNDRED_MS
 )paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;OK! init_done!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1536,52 +1420,40 @@ id|ParmMapP-&gt;init_done
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RIO Mesg Run Fail %s&bslash;n&quot;
 comma
 id|HostP-&gt;Name
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Timedout waiting for init_done&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|HOST_DISABLE
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Got init_done&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** It runs! It runs!&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Host ID %x Running&bslash;n&quot;
 comma
 id|HostP-&gt;UniqueNum
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** set the time period between interrupts.&n;&t;&t;*/
@@ -1722,6 +1594,15 @@ id|BaseSysPort
 op_assign
 id|NO_PORT
 suffix:semicolon
+id|HostP-&gt;UnixRups
+(braket
+id|RupN
+)braket
+dot
+id|RupLock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 )brace
 r_for
 c_loop
@@ -1776,6 +1657,17 @@ dot
 id|BaseSysPort
 op_assign
 id|NO_PORT
+suffix:semicolon
+id|HostP-&gt;UnixRups
+(braket
+id|RupN
+op_plus
+id|MAX_RUP
+)braket
+dot
+id|RupLock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;** point the PortP-&gt;Phbs at the real Phbs&n;&t;&t;*/
@@ -1993,14 +1885,11 @@ id|PortN
 suffix:semicolon
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Set the card running... &bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** last thing - show the world that everything is in place&n;&t;&t;*/
@@ -2022,16 +1911,13 @@ suffix:semicolon
 id|p-&gt;RIOSystemUp
 op_increment
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Done everything %x&bslash;n&quot;
 comma
 id|HostP-&gt;Ivec
-)paren
 )paren
 suffix:semicolon
 id|func_exit
@@ -2135,14 +2021,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;No RTA code to download yet&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2203,14 +2086,11 @@ c_func
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;No command blocks to boot RTA! come back later.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2285,12 +2165,10 @@ op_ne
 id|BOOT_REQUEST
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Unexpected command %d on BOOT RUP %d of host %d&bslash;n&quot;
 comma
 id|PktCmdP-&gt;Command
@@ -2300,7 +2178,6 @@ comma
 id|HostP
 op_minus
 id|p-&gt;RIOHosts
-)paren
 )paren
 suffix:semicolon
 id|ShowPacket
@@ -2362,12 +2239,10 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Boot RTA on Host %d Rup %d - %d (0x%x) packets to 0x%x&bslash;n&quot;
 comma
 id|HostP
@@ -2381,7 +2256,6 @@ comma
 id|p-&gt;RIONumBootPkts
 comma
 id|p-&gt;RIOConf.RtaLoadBase
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** If this host is in slave mode, send the RTA an invalid boot&n;&t;&t;** sequence command block to force it to kill the boot. We wait&n;&t;&t;** for half a second before sending this packet to prevent the RTA&n;&t;&t;** attempting to boot too often. The master host should then grab&n;&t;&t;** the RTA and make it its own.&n;&t;&t;*/
@@ -2411,12 +2285,10 @@ c_func
 id|PktCmdP-&gt;Sequence
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Boot block %d on Host %d Rup%d&bslash;n&quot;
 comma
 id|sequence
@@ -2427,7 +2299,6 @@ id|p-&gt;RIOHosts
 comma
 id|Rup
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2437,18 +2308,15 @@ op_ge
 id|p-&gt;RIONumBootPkts
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Got a request for packet %d, max is %d&bslash;n&quot;
 comma
 id|sequence
 comma
 id|p-&gt;RIONumBootPkts
-)paren
 )paren
 suffix:semicolon
 id|ShowPacket
@@ -2640,16 +2508,13 @@ id|p-&gt;RIOBooting
 op_assign
 l_int|0
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA Boot completed - BootInProgress now %d&bslash;n&quot;
 comma
 id|p-&gt;RIOBooting
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Determine type of unit (16/8 port RTA).&n;&t;*/
@@ -2672,12 +2537,10 @@ id|ushort
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RIO: Host %s has booted an RTA(%d) on link %c&bslash;n&quot;
 comma
 id|HostP-&gt;Name
@@ -2694,17 +2557,14 @@ id|PktCmdP-&gt;LinkNum
 op_plus
 l_char|&squot;A&squot;
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RIO: RTA %s has booted an RTA(%d) on link %c&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -2726,19 +2586,15 @@ id|PktCmdP-&gt;LinkNum
 op_plus
 l_char|&squot;A&squot;
 )paren
-)paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;UniqNum is 0x%x&bslash;n&quot;
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2757,14 +2613,11 @@ l_int|0xffffffff
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Illegal RTA Uniq Number&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2826,18 +2679,15 @@ id|MyLink
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA failed to suspend booting on link %c&bslash;n&quot;
 comma
 l_char|&squot;A&squot;
 op_plus
 id|MyLink
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2859,12 +2709,10 @@ l_int|30
 )paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA %x not owned - suspend booting down link %c on unit %x&bslash;n&quot;
 comma
 id|RtaUniq
@@ -2879,7 +2727,6 @@ id|Rup
 )braket
 dot
 id|RtaUniqueNum
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3075,12 +2922,10 @@ op_eq
 id|TYPE_RTA16
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA will be given IDs %d+%d&bslash;n&quot;
 comma
 id|entry
@@ -3091,23 +2936,19 @@ id|entry2
 op_plus
 l_int|1
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA will be given ID %d&bslash;n&quot;
 comma
 id|entry
 op_plus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3116,14 +2957,11 @@ id|TRUE
 suffix:semicolon
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;RTA not configured for this host&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3272,18 +3110,15 @@ op_eq
 id|RtaUniq
 )paren
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Found previous tentative slots (%d+%d)&bslash;n&quot;
 comma
 id|entry
 comma
 id|entry2
-)paren
 )paren
 suffix:semicolon
 r_else
@@ -3291,16 +3126,13 @@ r_continue
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Found previous tentative slot (%d)&bslash;n&quot;
 comma
 id|entry
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3329,16 +3161,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;** There is no SLOT_IN_USE or SLOT_TENTATIVE entry for this RTA&n;&t;** attached to the current host card in the driver table.&n;&t;**&n;&t;** Check if there is a SLOT_IN_USE or SLOT_TENTATIVE entry on another&n;&t;** host for this RTA in the driver table.&n;&t;**&n;&t;** For a SLOT_IN_USE entry on another host, we need to delete the RTA&n;&t;** entry from the other host and add it to this host (using some of&n;&t;** the functions from table.c which do this).&n;&t;** For a SLOT_TENTATIVE entry on another host, we must cope with the&n;&t;** following scenario:&n;&t;**&n;&t;** + Plug 8 port RTA into host A. (This creates SLOT_TENTATIVE entry&n;&t;**   in table)&n;&t;** + Unplug RTA and plug into host B. (We now have 2 SLOT_TENTATIVE&n;&t;**   entries)&n;&t;** + Configure RTA on host B. (This slot now becomes SLOT_IN_USE)&n;&t;** + Unplug RTA and plug back into host A.&n;&t;** + Configure RTA on host A. We now have the same RTA configured&n;&t;**   with different ports on two different hosts.&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Have we seen RTA %x before?&bslash;n&quot;
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 id|found
@@ -3475,12 +3304,10 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA is units %d+%d from host %s&bslash;n&quot;
 comma
 id|rta
@@ -3496,16 +3323,13 @@ id|host
 dot
 id|Name
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA is unit %d from host %s&bslash;n&quot;
 comma
 id|rta
@@ -3518,7 +3342,6 @@ id|host
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 id|found
@@ -3538,16 +3361,13 @@ op_logical_neg
 id|MapP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Look for RTA %x in RIOSavedTable&bslash;n&quot;
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -3565,12 +3385,10 @@ id|rta
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;Check table entry %d (%x)&quot;
 comma
 id|rta
@@ -3581,7 +3399,6 @@ id|rta
 )braket
 dot
 id|RtaUniqueNum
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3675,32 +3492,26 @@ id|p-&gt;RIOSavedTable
 id|entry2
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA is from table entries %d+%d&bslash;n&quot;
 comma
 id|rta
 comma
 id|entry2
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA is from table entry %d&bslash;n&quot;
 comma
 id|rta
-)paren
 )paren
 suffix:semicolon
 r_break
@@ -3841,14 +3652,11 @@ op_amp
 id|SLOT_IN_USE
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA configured on another host - move entry to current host (1)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Mapping
@@ -3955,12 +3763,10 @@ id|entry
 dot
 id|SysPort
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;SysPort %d, Name %s&bslash;n&quot;
 comma
 (paren
@@ -3970,19 +3776,15 @@ id|MapP-&gt;SysPort
 comma
 id|MapP-&gt;Name
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;This RTA has a tentative entry on another host - delete that entry (1)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Mapping
@@ -4118,12 +3920,10 @@ id|entry2
 dot
 id|SysPort
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;SysPort %d, Name %s&bslash;n&quot;
 comma
 (paren
@@ -4142,7 +3942,6 @@ id|entry
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4451,12 +4250,10 @@ suffix:semicolon
 r_int
 id|link
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_BOOT
 comma
-(paren
 l_string|&quot;FillSlot(%d, %d, 0x%x...)&bslash;n&quot;
 comma
 id|entry
@@ -4464,7 +4261,6 @@ comma
 id|entry2
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Mapping

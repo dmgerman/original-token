@@ -582,7 +582,7 @@ r_static
 r_int
 id|multiple
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 DECL|variable|reverse
 r_static
@@ -647,7 +647,7 @@ r_static
 r_int
 id|multiple
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 macro_line|#endif
 id|MODULE_DESCRIPTION
@@ -3358,9 +3358,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* That&squot;s useful. */
-DECL|macro|show_base
-mdefine_line|#define show_base(devname, resname, resptr) printk(KERN_INFO &quot;sb: %s %s base located at %#lx&bslash;n&quot;, devname, resname, (resptr)-&gt;start)
 DECL|function|activate_dev
 r_static
 r_struct

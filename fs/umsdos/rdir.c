@@ -66,6 +66,10 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
+id|d_type
 )paren
 (brace
 r_int
@@ -161,6 +165,8 @@ comma
 id|offset
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 )brace
@@ -181,6 +187,8 @@ comma
 id|offset
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 )brace

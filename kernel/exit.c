@@ -874,9 +874,11 @@ id|fs-&gt;altrootmnt
 )paren
 suffix:semicolon
 )brace
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|fs_cachep
+comma
 id|fs
 )paren
 suffix:semicolon
@@ -1022,9 +1024,11 @@ op_amp
 id|sig-&gt;count
 )paren
 )paren
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|sigact_cachep
+comma
 id|sig
 )paren
 suffix:semicolon

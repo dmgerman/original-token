@@ -165,6 +165,8 @@ comma
 id|nr
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -196,6 +198,8 @@ comma
 id|nr
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -266,6 +270,8 @@ comma
 id|nr
 comma
 id|nr
+comma
+id|DT_CHR
 )paren
 OL
 l_int|0

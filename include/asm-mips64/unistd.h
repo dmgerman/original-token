@@ -2340,9 +2340,11 @@ DECL|macro|__NR_Linux32_mincore
 mdefine_line|#define __NR_Linux32_mincore&t;&t;(__NR_Linux32 + 217)
 DECL|macro|__NR_Linux32_madvise
 mdefine_line|#define __NR_Linux32_madvise&t;&t;(__NR_Linux32 + 218)
+DECL|macro|__NR_Linux32_getdents64
+mdefine_line|#define __NR_Linux32_getdents64&t;&t;(__NR_Linux32 + 219)
 multiline_comment|/*&n; * Offset of the last Linux o32 flavoured syscall&n; */
 DECL|macro|__NR_Linux32_syscalls
-mdefine_line|#define __NR_Linux32_syscalls&t;&t;218
+mdefine_line|#define __NR_Linux32_syscalls&t;&t;219
 multiline_comment|/*&n; * Linux 64-bit syscalls are in the range from 5000 to 5999.&n; */
 DECL|macro|__NR_Linux
 mdefine_line|#define __NR_Linux&t;&t;&t;5000
@@ -2772,9 +2774,11 @@ DECL|macro|__NR_mincore
 mdefine_line|#define __NR_mincore&t;&t;&t;(__NR_Linux + 211)
 DECL|macro|__NR_madvise
 mdefine_line|#define __NR_madvise&t;&t;&t;(__NR_Linux + 212)
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;&t;(__NR_Linux + 213)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;212
+mdefine_line|#define __NR_Linux_syscalls&t;&t;213
 macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

@@ -1583,4 +1583,11 @@ id|sys_madvise
 comma
 l_int|3
 )paren
+id|SYS
+c_func
+(paren
+id|sys_getdents64
+comma
+l_int|3
+)paren
 eof

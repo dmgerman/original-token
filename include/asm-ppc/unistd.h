@@ -402,6 +402,8 @@ DECL|macro|__NR_sys_pciconfig_iobase
 mdefine_line|#define __NR_sys_pciconfig_iobase&t;200
 DECL|macro|__NR_multiplexer
 mdefine_line|#define __NR_multiplexer&t;&t;201
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;202
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__syscall_return

@@ -250,6 +250,8 @@ comma
 id|f-&gt;f_pos
 comma
 id|de-&gt;ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

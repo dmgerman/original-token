@@ -1050,6 +1050,10 @@ c_func
 (paren
 id|de
 )paren
+comma
+id|de-&gt;mode
+op_rshift
+l_int|12
 )paren
 suffix:semicolon
 r_if

@@ -421,24 +421,19 @@ c_cond
 id|Lies
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;LIES! DAMN LIES! %d LIES!&bslash;n&quot;
 comma
 id|Lies
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;%d:%c %d:%c %d:%c %d:%c&bslash;n&quot;
 comma
 id|RBYTE
@@ -535,7 +530,6 @@ l_int|3
 )braket
 dot
 id|Link
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -638,12 +632,10 @@ op_ne
 id|ROUTE_INTERCONNECT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;I have a link from %s %s to unit %d:%d - I don&squot;t like it.&bslash;n&quot;
 comma
 id|MyType
@@ -653,7 +645,6 @@ comma
 id|NewUnit
 comma
 id|NewLink
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -755,12 +746,10 @@ id|NewUnit
 op_eq
 id|ROUTE_NO_ID
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;%s %s (%c) is connected to an unconfigured unit.&bslash;n&quot;
 comma
 id|MyType
@@ -770,7 +759,6 @@ comma
 l_char|&squot;A&squot;
 op_plus
 id|ThisLink
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -833,18 +821,15 @@ op_eq
 id|ThisLink
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;SETTING HOST (%c) TO DISCONNECTED!&bslash;n&quot;
 comma
 id|OldLink
 op_plus
 l_char|&squot;A&squot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Topology
@@ -868,12 +853,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;HOST(%c) WAS NOT CONNECTED TO %s (%c)!&bslash;n&quot;
 comma
 id|OldLink
@@ -892,7 +875,6 @@ comma
 id|ThisLink
 op_plus
 l_char|&squot;A&squot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -942,12 +924,10 @@ op_eq
 id|ThisLink
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;SETTING RTA %s (%c) TO DISCONNECTED!&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -962,7 +942,6 @@ comma
 id|OldLink
 op_plus
 l_char|&squot;A&squot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Mapping
@@ -1000,12 +979,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RTA %s (%c) WAS NOT CONNECTED TO %s (%c)&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -1034,7 +1011,6 @@ id|ThisLink
 op_plus
 l_char|&squot;A&squot;
 )paren
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -1046,12 +1022,10 @@ op_eq
 id|HOST_ID
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;MARKING HOST (%c) CONNECTED TO %s (%c)&bslash;n&quot;
 comma
 id|NewLink
@@ -1063,7 +1037,6 @@ comma
 id|ThisLink
 op_plus
 l_char|&squot;A&squot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Topology
@@ -1094,12 +1067,10 @@ op_le
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;MARKING RTA %s (%c) CONNECTED TO %s (%c)&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -1120,7 +1091,6 @@ comma
 id|ThisLink
 op_plus
 l_char|&squot;A&squot;
-)paren
 )paren
 suffix:semicolon
 id|HostP-&gt;Mapping
@@ -1192,12 +1162,10 @@ op_ne
 id|ROUTE_REQUEST
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unknown command %d received on rup %d host %d ROUTE_RUP&bslash;n&quot;
 comma
 id|RBYTE
@@ -1212,7 +1180,6 @@ comma
 r_int
 )paren
 id|HostP
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1280,16 +1247,13 @@ c_func
 id|RtaUniq
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Received a request for an ID for serial number %x&bslash;n&quot;
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 id|Mod
@@ -1321,12 +1285,10 @@ id|Mod2
 op_assign
 id|Mod1
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Backplane type is %s (all ports)&bslash;n&quot;
 comma
 id|p-&gt;RIOModuleTypes
@@ -1335,7 +1297,6 @@ id|Mod1
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1349,12 +1310,10 @@ c_func
 id|Mod
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Module types are %s (ports 0-3) and %s (ports 4-7)&bslash;n&quot;
 comma
 id|p-&gt;RIOModuleTypes
@@ -1370,7 +1329,6 @@ id|Mod2
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1406,14 +1364,11 @@ c_func
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;No command blocks to route RTA! come back later.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1473,16 +1428,13 @@ id|RtaUniq
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RTA %x tried to get an ID, but does not belong - FOAD it!&bslash;n&quot;
 comma
 id|RtaUniq
-)paren
 )paren
 suffix:semicolon
 id|PktReplyP-&gt;Command
@@ -1531,12 +1483,10 @@ id|ThisUnit
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Entry %d Flags=%s %s UniqueNum=0x%x&bslash;n&quot;
 comma
 id|ThisUnit
@@ -1575,7 +1525,6 @@ id|ThisUnit
 )braket
 dot
 id|RtaUniqueNum
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    ** We have an entry for it.&n;    */
@@ -1628,12 +1577,10 @@ id|ID2
 op_minus
 l_int|1
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Found unit 0x%x at slots %d+%d&bslash;n&quot;
 comma
 id|RtaUniq
@@ -1642,22 +1589,18 @@ id|ThisUnit
 comma
 id|ThisUnit2
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Found unit 0x%x at slot %d&bslash;n&quot;
 comma
 id|RtaUniq
 comma
 id|ThisUnit
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;      ** If we have no knowledge of booting it, then the host has&n;      ** been re-booted, and so we must kill the RTA, so that it&n;      ** will be booted again (potentially with new bins)&n;      ** and it will then re-ask for an ID, which we will service.&n;      */
@@ -1811,12 +1754,10 @@ id|ThisUnit2
 op_plus
 l_int|1
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RTA &squot;%s&squot; has been allocated IDs %d+%d&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -1830,7 +1771,6 @@ id|PktReplyP-&gt;IDNum
 comma
 id|PktReplyP-&gt;IDNum2
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -1839,12 +1779,10 @@ id|PktReplyP-&gt;IDNum2
 op_assign
 id|ROUTE_NO_ID
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RTA &squot;%s&squot; has been allocated ID %d&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -1855,7 +1793,6 @@ dot
 id|Name
 comma
 id|PktReplyP-&gt;IDNum
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1950,14 +1887,11 @@ id|RIO_LOPEN
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Re-opened this port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_lock_irqsave
@@ -2033,14 +1967,11 @@ id|RIO_LOPEN
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Re-opened this port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_lock_irqsave
@@ -2596,18 +2527,15 @@ id|unit
 dot
 id|SysPort
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RIOFixPhbs unit %d sysport %d&bslash;n&quot;
 comma
 id|unit
 comma
 id|PortN
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2715,14 +2643,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Tx pkts not set up yet&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_break
@@ -2797,12 +2722,10 @@ id|dest_port
 )paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;phb dest: Old %x:%x New %x:%x&bslash;n&quot;
 comma
 id|RWORD
@@ -2828,7 +2751,6 @@ comma
 id|dest_unit
 comma
 id|dest_port
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -2898,12 +2820,10 @@ id|last_port
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;last port on host link %d: %d&bslash;n&quot;
 comma
 id|link
@@ -2915,7 +2835,6 @@ l_int|8
 )paren
 op_plus
 l_int|7
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -3005,16 +2924,13 @@ id|UnitId
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unit %d is NOT isolated&bslash;n&quot;
 comma
 id|UnitId
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -3150,12 +3066,10 @@ id|p-&gt;RIOPrintDisabled
 op_eq
 id|DO_PRINT
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RIOMesgIsolated %s&quot;
 comma
 id|HostP-&gt;Mapping
@@ -3164,7 +3078,6 @@ id|UnitId
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -3286,16 +3199,13 @@ id|UnitId
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* &t;rio_dprint(RIO_DEBUG_ROUTE, (&quot;Check to see if unit %d has a route to the host&bslash;n&quot;,UnitId)); */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RIOCheck : UnitID = %d&bslash;n&quot;
 comma
 id|UnitId
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3498,14 +3408,11 @@ suffix:colon
 r_case
 id|RIO_PCI
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unit type: Host&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3514,14 +3421,11 @@ suffix:semicolon
 r_case
 id|RIO_RTA_16
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unit type: 16 port RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3530,14 +3434,11 @@ suffix:semicolon
 r_case
 id|RIO_RTA
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unit type: 8 port RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3545,14 +3446,11 @@ id|TYPE_RTA8
 suffix:semicolon
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Unit type: Unrecognised&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3593,14 +3491,11 @@ c_cond
 id|p-&gt;RIOSignalProcess
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Send SIG-HUP&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;psignal( RIOSignalProcess, SIGHUP );&n;&t;&t;*/
@@ -3790,12 +3685,10 @@ l_string|&quot;RTA&quot;
 suffix:colon
 l_string|&quot;HOST&quot;
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Link between %s &squot;%s&squot; (%c) and %s &squot;%s&squot; (%c) %s.&bslash;n&quot;
 comma
 id|FromType
@@ -3824,7 +3717,6 @@ c_cond
 l_string|&quot;established&quot;
 suffix:colon
 l_string|&quot;disconnected&quot;
-)paren
 )paren
 suffix:semicolon
 id|cprintf
@@ -3958,16 +3850,13 @@ id|unit
 r_int
 id|link
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RIOFreeDisconnect unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    ** If the slot is tentative and does not belong to the&n;    ** second half of a 16 port RTA then scan to see if&n;    ** is disconnected.&n;    */
@@ -4019,16 +3908,13 @@ l_int|1
 suffix:semicolon
 macro_line|#if NEED_TO_FIX_THIS
 multiline_comment|/* Ok so all the links are disconnected. But we may have only just&n;    ** made this slot tentative and not yet received a topology update.&n;    ** Lets check how long ago we made it tentative.&n;    */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Just about to check LBOLT on entry %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -4047,14 +3933,11 @@ op_amp
 id|current_time
 )paren
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;drv_getparm(LBOLT,....) Failed.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|elapse_time
@@ -4066,12 +3949,10 @@ id|TentTime
 id|unit
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;elapse %d = current %d - tent %d (%d usec)&bslash;n&quot;
 comma
 id|elapse_time
@@ -4089,7 +3970,6 @@ c_func
 id|elapse_time
 )paren
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4103,12 +3983,10 @@ OL
 id|WAIT_TO_FINISH
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Skipping slot %d, not timed out yet %d&bslash;n&quot;
 comma
 id|unit
@@ -4117,7 +3995,6 @@ id|drv_hztousec
 c_func
 (paren
 id|elapse_time
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4154,16 +4031,13 @@ id|ID2
 op_minus
 l_int|1
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;RioFreedis second slot %d.&bslash;n&quot;
 comma
 id|nOther
-)paren
 )paren
 suffix:semicolon
 id|bzero
@@ -4266,16 +4140,13 @@ id|unit
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Scanning unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** If the flags are zero then the slot is empty.&n;&t;*/
@@ -4292,14 +4163,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;      This slot is empty.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;    ** If we haven&squot;t allocated the first ID then do it now.&n;&t;    */
@@ -4312,16 +4180,13 @@ op_eq
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Make tentative entry for first unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 op_star
@@ -4344,16 +4209,13 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;** Allocate the second slot and return.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Make tentative entry for second unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 op_star
@@ -4368,14 +4230,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;    ** If we manage to come out of the free slot loop then we&n;    ** need to start all over again looking for tentative slots&n;    ** that we can re-use.&n;    */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Starting to scan for tentative slots&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -4433,16 +4292,13 @@ id|RTA16_SECOND_SLOT
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;    Slot %d looks promising.&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -4454,14 +4310,11 @@ op_star
 id|pID1
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;    No it isn&squot;t, its the 1st half&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_continue
@@ -4507,16 +4360,13 @@ op_eq
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Grab tentative entry for first unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 op_star
@@ -4556,16 +4406,13 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;** Allocate the second slot and return.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Grab tentative/empty  entry for second unit %d&bslash;n&quot;
 comma
 id|unit
-)paren
 )paren
 suffix:semicolon
 op_star
@@ -4601,12 +4448,10 @@ op_star
 id|pID2
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_ROUTE
 comma
-(paren
 l_string|&quot;Swapping IDS %d %d&bslash;n&quot;
 comma
 op_star
@@ -4614,7 +4459,6 @@ id|pID1
 comma
 op_star
 id|pID2
-)paren
 )paren
 suffix:semicolon
 id|tempID

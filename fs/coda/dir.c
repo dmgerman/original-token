@@ -3558,6 +3558,8 @@ comma
 id|offs
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 id|CDEBUG

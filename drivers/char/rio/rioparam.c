@@ -164,16 +164,18 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|func_enter
+(paren
+)paren
+suffix:semicolon
 id|TtyP
 op_assign
 id|PortP-&gt;gs.tty
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;RIOParam: Port:%d cmd:%d Modem:%d SleepFlag:%d Mapped: %d, tty=%p&bslash;n&quot;
 comma
 id|PortP-&gt;PortNum
@@ -188,7 +190,6 @@ id|PortP-&gt;Mapped
 comma
 id|TtyP
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -197,13 +198,15 @@ op_logical_neg
 id|TtyP
 )paren
 (brace
-id|rio_dprint
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Can&squot;t call rioparam with null tty.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -295,14 +298,11 @@ op_logical_or
 id|PortP-&gt;Lock
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;OPEN: Restoring stored/locked params&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|TtyP-&gt;tm.c_iflag
@@ -399,14 +399,11 @@ op_ne
 id|NOT_INUSE
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Port IN_USE for pre-emptive command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -417,14 +414,11 @@ op_logical_neg
 id|res
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Port has no space on transmit queue&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -445,18 +439,20 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|func_exit
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|RIO_FAIL
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;wait for can_add_transmit&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -495,14 +491,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;wait for can_add_transmit broken by signal&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_unlock_irqrestore
@@ -518,6 +511,11 @@ id|pseterr
 c_func
 (paren
 id|EINTR
+)paren
+suffix:semicolon
+id|func_exit
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -541,6 +539,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 id|RIO_SUCCESS
 suffix:semicolon
@@ -562,35 +564,33 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 id|RIO_FAIL
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;can_add_transmit() returns %x&bslash;n&quot;
 comma
 id|res
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Packet is 0x%x&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|PacketP
-)paren
 )paren
 suffix:semicolon
 id|phb_param_ptr
@@ -612,14 +612,11 @@ op_amp
 id|INPCK
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Parity checking on input enabled&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -640,14 +637,11 @@ r_case
 id|CS5
 suffix:colon
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;5 bit data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -661,14 +655,11 @@ r_case
 id|CS6
 suffix:colon
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;6 bit data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -682,14 +673,11 @@ r_case
 id|CS7
 suffix:colon
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;7 bit data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -703,14 +691,11 @@ r_case
 id|CS8
 suffix:colon
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;8 bit data&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -729,14 +714,11 @@ op_amp
 id|CSTOPB
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;2 stop bits&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -746,14 +728,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;1 stop bit&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -769,14 +748,11 @@ op_amp
 id|PARENB
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable parity&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -786,14 +762,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Disable parity&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -809,14 +782,11 @@ op_amp
 id|PARODD
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Odd parity&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -826,14 +796,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Even parity&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor1
@@ -850,14 +817,11 @@ op_amp
 id|IXON
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable start/stop output control&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -875,14 +839,11 @@ op_amp
 id|RIO_IXON
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Force enable start/stop output control&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -891,14 +852,11 @@ id|COR2_IXON
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;IXON has been disabled.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -918,14 +876,11 @@ op_amp
 id|RIO_IXANY
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable any key to restart output&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -934,14 +889,11 @@ id|COR2_IXANY
 suffix:semicolon
 )brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;IXANY has been disabled due to sanity reasons.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -953,14 +905,11 @@ op_amp
 id|IXOFF
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable start/stop input control 2&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -976,14 +925,11 @@ op_amp
 id|HUPCL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Hangup on last close&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -1000,14 +946,11 @@ id|TtyP
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Rx hardware flow control enabled&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -1021,14 +964,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Rx hardware flow control disabled&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor2
@@ -1050,27 +990,21 @@ op_amp
 id|CLOCAL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Local line&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Possible Modem line&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1083,14 +1017,11 @@ op_amp
 id|IGNBRK
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Ignore break condition&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1109,14 +1040,11 @@ id|BRKINT
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Break generates NULL condition&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1126,14 +1054,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Interrupt on&t;break condition&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1145,14 +1070,11 @@ op_amp
 id|INLCR
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map newline to carriage return on input&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1168,14 +1090,11 @@ op_amp
 id|IGNCR
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Ignore carriage return on input&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1191,14 +1110,11 @@ op_amp
 id|ICRNL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map carriage return to newline on input&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1214,14 +1130,11 @@ op_amp
 id|IGNPAR
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Ignore characters with parity errors&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1237,14 +1150,11 @@ op_amp
 id|PARMRK
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Mark parity errors&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Cor4
@@ -1286,14 +1196,11 @@ op_amp
 id|ISTRIP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Strip input characters&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1321,14 +1228,11 @@ op_amp
 id|ONLCR
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map newline to carriage-return, newline on output&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1351,14 +1255,11 @@ op_amp
 id|OCRNL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map carriage return to newline on output&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1385,14 +1286,11 @@ op_eq
 id|TAB3
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Tab delay 3 set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1442,18 +1340,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;** Baud rate bytes&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Mapping of rx/tx baud %x (%x)&bslash;n&quot;
 comma
 id|TtyP-&gt;termios-&gt;c_cflag
 comma
 id|CBAUD
-)paren
 )paren
 suffix:semicolon
 r_switch
@@ -1572,18 +1467,15 @@ multiline_comment|/* e(230400);e(460800); e(921600);  */
 )brace
 multiline_comment|/* XXX MIssing conversion table. XXX */
 multiline_comment|/* &t; (TtyP-&gt;termios-&gt;c_cflag &amp; V_CBAUD); */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;tx baud 0x%x, rx baud 0x%x&bslash;n&quot;
 comma
 id|TxBaud
 comma
 id|RxBaud
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Leftovers&n;&t;*/
@@ -1594,14 +1486,11 @@ id|TtyP-&gt;termios-&gt;c_cflag
 op_amp
 id|CREAD
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable receiver&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef RCV1EN
@@ -1612,14 +1501,11 @@ id|TtyP-&gt;termios-&gt;c_cflag
 op_amp
 id|RCV1EN
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;RCV1EN (?)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1631,14 +1517,11 @@ id|TtyP-&gt;termios-&gt;c_cflag
 op_amp
 id|XMT1EN
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;XMT1EN (?)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1650,14 +1533,11 @@ id|TtyP-&gt;termios-&gt;c_cflag
 op_amp
 id|LOBLK
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;LOBLK - JCL output blocks when not current&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1668,14 +1548,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ISIG
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Input character signal generating enabled&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1685,14 +1562,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ICANON
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Canonical input: erase and kill enabled&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1702,14 +1576,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|XCASE
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Canonical upper/lower presentation&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1719,14 +1590,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ECHO
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable input echo&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1736,14 +1604,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ECHOE
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable echo erase&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1753,14 +1618,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ECHOK
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable echo kill&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1770,14 +1632,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|ECHONL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable echo newline&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1787,14 +1646,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|NOFLSH
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Disable flush after interrupt or quit&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef TOSTOP
@@ -1805,14 +1661,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|TOSTOP
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Send SIGTTOU for background output&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1824,14 +1677,11 @@ id|TtyP-&gt;termios-&gt;c_lflag
 op_amp
 id|XCLUDE
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Exclusive use of this line&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1842,14 +1692,11 @@ id|TtyP-&gt;termios-&gt;c_iflag
 op_amp
 id|IUCLC
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map uppercase to lowercase on input&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1859,14 +1706,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|OPOST
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Enable output post-processing&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1876,14 +1720,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|OLCUC
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Map lowercase to uppercase on output&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1893,14 +1734,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|ONOCR
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;No carriage return output at column 0&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1910,14 +1748,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|ONLRET
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Newline performs carriage return function&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1927,14 +1762,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|OFILL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Use fill characters for delay&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1944,14 +1776,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|OFDEL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Fill character is DEL&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1961,14 +1790,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|NLDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Newline delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1978,14 +1804,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|CRDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Carriage return delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1995,14 +1818,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|TABDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Tab delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -2013,14 +1833,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|BSDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Back-space delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2030,14 +1847,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|VTDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Vertical tab delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2047,14 +1861,11 @@ id|TtyP-&gt;termios-&gt;c_oflag
 op_amp
 id|FFDLY
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;Form-feed delay set&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2078,6 +1889,10 @@ op_amp
 id|PortP-&gt;portSem
 comma
 id|flags
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2218,17 +2033,18 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;add_transmit returned.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** job done.&n;&t;*/
+id|func_exit
+(paren
+)paren
+suffix:semicolon
 r_return
 id|RIO_SUCCESS
 suffix:semicolon
@@ -2320,13 +2136,11 @@ op_amp
 id|PKT_IN_USE
 )paren
 (brace
-id|rio_dprint
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PARAM
 comma
-(paren
 l_string|&quot;add_transmit: Packet has been stolen!&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2423,19 +2237,16 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*************************************************&n;&t;* Put a packet back onto the back of the free list&n;&t;*&n;&t;************************************************/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PFE
 comma
-(paren
 l_string|&quot;put_free_end(PktP=%x)&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|PktP
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2530,14 +2341,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* First packet on the free list this should never happen! */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_PFE
 comma
-(paren
 l_string|&quot;put_free_end(): This should never happen&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -2579,6 +2387,16 @@ id|TPNULL
 )paren
 suffix:semicolon
 )brace
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_CMD
+comma
+l_string|&quot;Before unlock: %p&bslash;n&quot;
+comma
+op_amp
+id|HostP-&gt;HostLock
+)paren
+suffix:semicolon
 id|rio_spin_unlock_irqrestore
 c_func
 (paren

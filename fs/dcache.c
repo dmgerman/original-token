@@ -3943,12 +3943,6 @@ id|kmem_cache_t
 op_star
 id|names_cachep
 suffix:semicolon
-multiline_comment|/* SLAB cache for files_struct structures */
-DECL|variable|files_cachep
-id|kmem_cache_t
-op_star
-id|files_cachep
-suffix:semicolon
 multiline_comment|/* SLAB cache for file structures */
 DECL|variable|filp_cachep
 id|kmem_cache_t
@@ -4010,7 +4004,7 @@ id|bh_cachep
 id|panic
 c_func
 (paren
-l_string|&quot;Cannot create buffer head SLAB cache&bslash;n&quot;
+l_string|&quot;Cannot create buffer head SLAB cache&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4042,40 +4036,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Cannot create names SLAB cache&quot;
-)paren
-suffix:semicolon
-id|files_cachep
-op_assign
-id|kmem_cache_create
-c_func
-(paren
-l_string|&quot;files_cache&quot;
-comma
-r_sizeof
-(paren
-r_struct
-id|files_struct
-)paren
-comma
-l_int|0
-comma
-id|SLAB_HWCACHE_ALIGN
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|files_cachep
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Cannot create files SLAB cache&quot;
 )paren
 suffix:semicolon
 id|filp_cachep

@@ -290,6 +290,8 @@ comma
 l_int|0
 comma
 id|dir-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -319,6 +321,8 @@ comma
 l_int|1
 comma
 id|dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -500,6 +504,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|entry-&gt;ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

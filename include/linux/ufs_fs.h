@@ -280,25 +280,6 @@ id|tv_usec
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * File types&n; */
-DECL|macro|DT_UNKNOWN
-mdefine_line|#define DT_UNKNOWN&t;0
-DECL|macro|DT_FIFO
-mdefine_line|#define DT_FIFO&t;&t;1
-DECL|macro|DT_CHR
-mdefine_line|#define DT_CHR&t;&t;2
-DECL|macro|DT_DIR
-mdefine_line|#define DT_DIR&t;&t;4
-DECL|macro|DT_BLK
-mdefine_line|#define DT_BLK&t;&t;6
-DECL|macro|DT_REG
-mdefine_line|#define DT_REG&t;&t;8
-DECL|macro|DT_LNK
-mdefine_line|#define DT_LNK&t;&t;10
-DECL|macro|DT_SOCK
-mdefine_line|#define DT_SOCK&t;&t;12
-DECL|macro|DT_WHT
-mdefine_line|#define DT_WHT&t;&t;14
 DECL|struct|ufs_dir_entry
 r_struct
 id|ufs_dir_entry

@@ -3815,6 +3815,10 @@ id|ino_t
 id|ino
 comma
 r_int
+r_int
+id|d_type
+comma
+r_int
 id|plus
 )paren
 (brace
@@ -4198,6 +4202,10 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
+id|d_type
 )paren
 (brace
 r_return
@@ -4213,6 +4221,8 @@ comma
 id|offset
 comma
 id|ino
+comma
+id|d_type
 comma
 l_int|0
 )paren
@@ -4241,6 +4251,10 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
+id|d_type
 )paren
 (brace
 r_return
@@ -4256,6 +4270,8 @@ comma
 id|offset
 comma
 id|ino
+comma
+id|d_type
 comma
 l_int|1
 )paren

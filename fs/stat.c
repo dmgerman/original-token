@@ -154,6 +154,19 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG == 32
+r_if
+c_cond
+(paren
+id|inode-&gt;i_size
+OG
+l_int|0x7fffffff
+)paren
+r_return
+op_minus
+id|EOVERFLOW
+suffix:semicolon
+macro_line|#endif&t;
 id|tmp.st_size
 op_assign
 id|inode-&gt;i_size
@@ -278,6 +291,19 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG == 32
+r_if
+c_cond
+(paren
+id|inode-&gt;i_size
+OG
+l_int|0x7fffffff
+)paren
+r_return
+op_minus
+id|EOVERFLOW
+suffix:semicolon
+macro_line|#endif&t;
 id|tmp.st_size
 op_assign
 id|inode-&gt;i_size

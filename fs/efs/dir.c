@@ -353,6 +353,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|inodenum
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 multiline_comment|/* sanity check */

@@ -5517,6 +5517,10 @@ r_if
 c_cond
 (paren
 id|Cmnd-&gt;request_bufflen
+op_logical_and
+id|Cmnd-&gt;sc_data_direction
+op_ne
+id|PCI_DMA_NONE
 )paren
 (brace
 id|dma64_addr_t
@@ -6956,6 +6960,10 @@ r_if
 c_cond
 (paren
 id|Cmnd-&gt;request_bufflen
+op_logical_and
+id|Cmnd-&gt;sc_data_direction
+op_ne
+id|PCI_DMA_NONE
 )paren
 id|pci64_unmap_single
 c_func

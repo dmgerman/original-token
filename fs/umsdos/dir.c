@@ -197,6 +197,8 @@ comma
 id|offset
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 id|d-&gt;stop
@@ -300,6 +302,8 @@ comma
 id|UMSDOS_SPECIAL_DIRFPOS
 comma
 id|UMSDOS_ROOT_INO
+comma
+id|DT_DIR
 )paren
 op_eq
 l_int|0
@@ -767,6 +771,8 @@ comma
 id|cur_f_pos
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

@@ -197,6 +197,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|de-&gt;inode
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

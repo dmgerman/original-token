@@ -673,6 +673,8 @@ comma
 l_int|0
 comma
 id|dir-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 )paren
 (brace
@@ -713,6 +715,8 @@ c_func
 (paren
 id|entry-&gt;key.ParID
 )paren
+comma
+id|DT_DIR
 )paren
 )paren
 (brace
@@ -943,6 +947,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 )paren
 (brace
@@ -1019,6 +1025,8 @@ id|entry-&gt;cnid
 )paren
 op_or
 id|HFS_DBL_HDR
+comma
+id|DT_UNKNOWN
 )paren
 )paren
 (brace

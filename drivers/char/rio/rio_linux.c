@@ -444,6 +444,18 @@ l_int|1
 suffix:semicolon
 macro_line|#ifndef TWO_ZERO
 macro_line|#ifdef MODULE
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Rogier Wolff &lt;R.E.Wolff@bitwizard.nl&gt;, Patrick van de Lageweg &lt;patrick@bitwizard.nl&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;RIO driver&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -997,8 +1009,16 @@ id|rio_inc_mod_count
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 id|func_enter
 (paren
+)paren
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_MOD_COUNT
+comma
+l_string|&quot;rio_inc_mod_count&bslash;n&quot;
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -1007,6 +1027,7 @@ id|func_exit
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|rio_dec_mod_count
 r_void
@@ -1015,8 +1036,16 @@ id|rio_dec_mod_count
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 id|func_enter
 (paren
+)paren
+suffix:semicolon
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_MOD_COUNT
+comma
+l_string|&quot;rio_dec_mod_count&bslash;n&quot;
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -1025,6 +1054,7 @@ id|func_exit
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|rio_set_real_termios
 r_static
@@ -1038,10 +1068,52 @@ id|ptr
 (brace
 r_int
 id|rv
+comma
+id|modem
+suffix:semicolon
+r_struct
+id|tty_struct
+op_star
+id|tty
 suffix:semicolon
 id|func_enter
 c_func
 (paren
+)paren
+suffix:semicolon
+id|tty
+op_assign
+(paren
+(paren
+r_struct
+id|Port
+op_star
+)paren
+id|ptr
+)paren
+op_member_access_from_pointer
+id|gs.tty
+suffix:semicolon
+id|modem
+op_assign
+(paren
+id|MAJOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_eq
+id|RIO_NORMAL_MAJOR0
+)paren
+op_logical_or
+(paren
+id|MAJOR
+c_func
+(paren
+id|tty-&gt;device
+)paren
+op_eq
+id|RIO_NORMAL_MAJOR1
 )paren
 suffix:semicolon
 id|rv
@@ -1058,7 +1130,7 @@ id|ptr
 comma
 id|CONFIG
 comma
-l_int|0
+id|modem
 comma
 l_int|1
 )paren
@@ -1678,7 +1750,10 @@ id|func_enter
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* rio_dec_mod_count (); */
+id|rio_dec_mod_count
+(paren
+)paren
+suffix:semicolon
 id|func_exit
 (paren
 )paren
@@ -1695,15 +1770,48 @@ op_star
 id|ptr
 )paren
 (brace
+r_struct
+id|Port
+op_star
+id|PortP
+suffix:semicolon
 id|func_enter
 (paren
 )paren
+suffix:semicolon
+id|PortP
+op_assign
+(paren
+r_struct
+id|Port
+op_star
+)paren
+id|ptr
 suffix:semicolon
 id|riotclose
 (paren
 id|ptr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|PortP-&gt;gs.count
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;WARNING port count:%d&bslash;n&quot;
+comma
+id|PortP-&gt;gs.count
+)paren
+suffix:semicolon
+id|PortP-&gt;gs.count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|rio_dec_mod_count
 (paren
 )paren
@@ -3171,6 +3279,10 @@ op_assign
 op_amp
 id|rio_real_driver
 suffix:semicolon
+id|port-&gt;portSem
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n;     * Initializing wait queue&n;     */
 id|init_waitqueue_head
 c_func
@@ -3299,6 +3411,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|rio_release_drivers
 r_static
 r_void
@@ -3343,6 +3456,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif 
 macro_line|#ifdef TWO_ZERO
 DECL|macro|PDEV
 mdefine_line|#define PDEV unsigned char pci_bus, unsigned pci_fun
@@ -3812,6 +3926,10 @@ suffix:semicolon
 id|hp-&gt;Mode
 op_assign
 id|RIO_PCI_BOOT_FROM_RAM
+suffix:semicolon
+id|hp-&gt;HostLock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 id|rio_reset_interrupt
 (paren

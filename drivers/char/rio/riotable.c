@@ -105,14 +105,11 @@ id|cptr
 suffix:semicolon
 multiline_comment|/*&n;&t;** We have been sent a new table to install. We need to break&n;&t;** it down into little bits and spread it around a bit to see&n;&t;** what we have got.&n;&t;*/
 multiline_comment|/*&n;&t;** Things to check:&n;&t;** (things marked &squot;xx&squot; aren&squot;t checked any more!)&n;&t;** (1)&t;That there are no booted Hosts/RTAs out there.&n;&t;** (2)&t;That the names are properly formed&n;&t;** (3)&t;That blank entries really are.&n;&t;** xx (4)&t;That hosts mentioned in the table actually exist. xx&n;&t;** (5)&t;That the IDs are unique (per host).&n;&t;** (6)&t;That host IDs are zero&n;&t;** (7)&t;That port numbers are valid&n;&t;** (8)&t;That port numbers aren&squot;t duplicated&n;&t;** (9)&t;That names aren&squot;t duplicated&n;&t;** xx (10) That hosts that actually exist are mentioned in the table. xx&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(1)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -179,14 +176,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(2)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|cptr
@@ -304,14 +298,11 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(3)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -335,16 +326,13 @@ op_logical_or
 id|MapP-&gt;Flags
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;%s pretending to be empty but isn&squot;t&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -359,27 +347,21 @@ r_return
 id|ENXIO
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;!RIO: Daemon: test (3) passes&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(4)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -441,18 +423,15 @@ op_ge
 id|p-&gt;RIONumHosts
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA %s has unknown host unique number 0x%x&bslash;n&quot;
 comma
 id|MapP-&gt;Name
 comma
 id|MapP-&gt;HostUniqueNum
-)paren
 )paren
 suffix:semicolon
 id|MapP-&gt;HostUniqueNum
@@ -467,14 +446,11 @@ multiline_comment|/* MapP-&gt;Name[0]&t;&t; = 0; */
 r_continue
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(5)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -491,16 +467,13 @@ op_logical_neg
 id|MapP-&gt;ID
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIO: RTA %s has been allocated an ID of zero!&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -523,18 +496,15 @@ OG
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIO: RTA %s has been allocated an illegal ID %d&bslash;n&quot;
 comma
 id|MapP-&gt;Name
 comma
 id|MapP-&gt;ID
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -586,12 +556,10 @@ dot
 id|ID
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Dupl. ID number allocated to RTA %s and RTA %s&bslash;n&quot;
 comma
 id|MapP-&gt;Name
@@ -602,7 +570,6 @@ id|SubEnt
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -648,24 +615,19 @@ id|ID
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA %s has duplicate unique number&bslash;n&quot;
 comma
 id|MapP-&gt;Name
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA %s has duplicate unique number&bslash;n&quot;
 comma
 id|p-&gt;RIOConnectTable
@@ -674,7 +636,6 @@ id|SubEnt
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -694,14 +655,11 @@ id|ENXIO
 suffix:semicolon
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(7a)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* (7a) */
@@ -721,12 +679,10 @@ id|PORTS_PER_RTA
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;TTY Port number %d-RTA %s is not a multiple of %d!&bslash;n&quot;
 comma
 (paren
@@ -737,7 +693,6 @@ comma
 id|MapP-&gt;Name
 comma
 id|PORTS_PER_RTA
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -752,14 +707,11 @@ r_return
 id|ENXIO
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(7b)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* (7b) */
@@ -779,12 +731,10 @@ id|RIO_PORTS
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;TTY Port number %d for RTA %s is too big&bslash;n&quot;
 comma
 (paren
@@ -793,7 +743,6 @@ r_int
 id|MapP-&gt;SysPort
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -848,14 +797,11 @@ dot
 id|RtaUniqueNum
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(8)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* (8) */
@@ -880,12 +826,10 @@ id|SysPort
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA %s:same TTY port # as RTA %s (%d)&bslash;n&quot;
 comma
 id|MapP-&gt;Name
@@ -901,7 +845,6 @@ comma
 r_int
 )paren
 id|MapP-&gt;SysPort
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -920,14 +863,11 @@ r_return
 id|ENXIO
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(9)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -957,16 +897,13 @@ id|RTA16_SECOND_SLOT
 )paren
 (brace
 multiline_comment|/* (9) */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA name %s used twice&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -991,14 +928,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* (6) */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: entering(6)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1007,16 +941,13 @@ c_cond
 id|MapP-&gt;ID
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIO:HOST %s has been allocated ID that isn&squot;t zero!&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -1039,16 +970,13 @@ op_ne
 id|NO_PORT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIO: HOST %s has been allocated port numbers!&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -1167,16 +1095,13 @@ id|Entry
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RIONewTable: Copy table for Host entry %d&bslash;n&quot;
 comma
 id|Entry
-)paren
 )paren
 suffix:semicolon
 id|MapP
@@ -1220,16 +1145,13 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Host entry found. Name %s&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 id|bcopy
@@ -1264,16 +1186,13 @@ op_amp
 id|SLOT_IN_USE
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Rta entry found. Name %s&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;** structure assign, then sort out the bits we shouldn&squot;t have done&n;&t;&t;&t;*/
@@ -1311,16 +1230,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;TENTATIVE Rta entry found. Name %s&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1635,12 +1551,10 @@ op_ne
 id|Host
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Default name %s already used&bslash;n&quot;
 comma
 id|p-&gt;RIOHosts
@@ -1649,7 +1563,6 @@ id|Host
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 id|bcopy
@@ -1680,12 +1593,10 @@ op_add_assign
 id|Host1
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Assigning default name %s&bslash;n&quot;
 comma
 id|p-&gt;RIOHosts
@@ -1694,7 +1605,6 @@ id|Host
 )braket
 dot
 id|Name
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1750,14 +1660,11 @@ id|oldspl
 )paren
 suffix:semicolon
 multiline_comment|/* strange but true! */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Generating a table to return to config.rio&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|bzero
@@ -1796,16 +1703,13 @@ id|Host
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Processing host %d&bslash;n&quot;
 comma
 id|Host
-)paren
 )paren
 suffix:semicolon
 id|HostP
@@ -2070,18 +1974,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Delete entry on host %x, rta %x&bslash;n&quot;
 comma
 id|MapP-&gt;HostUniqueNum
 comma
 id|MapP-&gt;RtaUniqueNum
-)paren
 )paren
 suffix:semicolon
 r_for
@@ -2176,18 +2077,15 @@ id|HostP-&gt;Mapping
 id|entry
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Found entry offset %d on host %s&bslash;n&quot;
 comma
 id|entry
 comma
 id|HostP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;** Check all four links of the unit are disconnected&n;&t;&t;&t;&t;*/
@@ -2219,14 +2117,11 @@ op_ne
 id|ROUTE_DISCONNECT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Entry is in use and cannot be deleted!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2284,14 +2179,11 @@ id|p-&gt;RIOPortp
 id|port
 )braket
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Unmap port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|rio_spin_lock_irqsave
@@ -2319,14 +2211,11 @@ id|RIO_LOPEN
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Gob on port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;TxBufferIn
@@ -2410,12 +2299,10 @@ id|TxPktP
 )paren
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Tx packet (%x) destination: Old %x:%x New %x:%x&bslash;n&quot;
 comma
 op_star
@@ -2428,7 +2315,6 @@ comma
 id|dest_unit
 comma
 id|dest_port
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -2448,12 +2334,10 @@ id|dest_port
 )paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Port %d phb destination: Old %x:%x New %x:%x&bslash;n&quot;
 comma
 id|port
@@ -2473,7 +2357,6 @@ comma
 id|dest_unit
 comma
 id|dest_port
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -2502,14 +2385,11 @@ id|flags
 suffix:semicolon
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Entry nulled.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|bzero
@@ -2642,14 +2522,11 @@ id|work_done
 r_return
 l_int|0
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Couldn&squot;t find entry to be deleted&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2691,12 +2568,10 @@ suffix:semicolon
 r_int
 id|link
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Assign entry on host %x, rta %x, ID %d, Sysport %d&bslash;n&quot;
 comma
 id|MapP-&gt;HostUniqueNum
@@ -2709,7 +2584,6 @@ comma
 r_int
 )paren
 id|MapP-&gt;SysPort
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2735,14 +2609,11 @@ id|MAX_RUP
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Bad ID in map entry!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2761,14 +2632,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Rta Unique number zero!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2795,12 +2663,10 @@ id|PORTS_PER_RTA
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Port %d not multiple of %d!&bslash;n&quot;
 comma
 (paren
@@ -2809,7 +2675,6 @@ r_int
 id|MapP-&gt;SysPort
 comma
 id|PORTS_PER_RTA
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2836,19 +2701,16 @@ id|RIO_PORTS
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Port %d not valid!&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|MapP-&gt;SysPort
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2888,14 +2750,11 @@ id|sptr
 l_char|&squot;~&squot;
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Name entry contains non-printing characters!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -2979,16 +2838,13 @@ l_int|1
 r_int
 id|nNewID
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Attempting to get a new ID for rta &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** The idea here is to allow RTA&squot;s to be assigned&n;&t;&t;** before they actually appear on the network.&n;&t;&t;** This allows the addition of RTA&squot;s without having&n;&t;&t;** to plug them in.&n;&t;&t;** What we do is:&n;&t;&t;**  - Find a free ID and allocate it to the RTA.&n;&t;&t;**  - If this map entry is the second half of a&n;&t;&t;**    16 port entry then find the other half and&n;&t;&t;**    make sure the 2 cross reference each other.&n;&t;&t;*/
@@ -3032,16 +2888,13 @@ id|nNewID
 op_plus
 l_int|1
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Allocated ID %d for this new RTA.&bslash;n&quot;
 comma
 id|MapP-&gt;ID
-)paren
 )paren
 suffix:semicolon
 id|HostMapP
@@ -3197,12 +3050,10 @@ id|ID2
 op_assign
 id|MapP-&gt;ID
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Cross referenced id %d to ID %d.&bslash;n&quot;
 comma
 id|MapP-&gt;ID
@@ -3218,7 +3069,6 @@ id|unit
 )braket
 dot
 id|ID
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3246,16 +3096,13 @@ op_amp
 id|SLOT_IN_USE
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Map table slot for ID %d is already in use.&bslash;n&quot;
 comma
 id|MapP-&gt;ID
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -3403,12 +3250,10 @@ id|MapP-&gt;Flags
 op_amp
 id|RTA16_SECOND_SLOT
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Second map of RTA %s added to configuration&bslash;n&quot;
 comma
 id|p-&gt;RIOHosts
@@ -3425,19 +3270,15 @@ l_int|1
 dot
 id|Name
 )paren
-)paren
 suffix:semicolon
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;RTA %s added to configuration&bslash;n&quot;
 comma
 id|MapP-&gt;Name
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3449,16 +3290,13 @@ id|p-&gt;RIOError.Error
 op_assign
 id|UNKNOWN_HOST_NUMBER
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Unknown host %x&bslash;n&quot;
 comma
 id|MapP-&gt;HostUniqueNum
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3528,12 +3366,10 @@ id|HostMapP
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Mapping sysport %d to id %d&bslash;n&quot;
 comma
 (paren
@@ -3542,7 +3378,6 @@ r_int
 id|HostMapP-&gt;SysPort
 comma
 id|HostMapP-&gt;ID
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** We need to tell the UnixRups which sysport the rup corresponds to&n;&t;*/
@@ -3575,12 +3410,10 @@ c_func
 id|HostMapP-&gt;RtaUniqueNum
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Mapping sysport %d-%d&bslash;n&quot;
 comma
 (paren
@@ -3596,7 +3429,6 @@ op_plus
 id|PORTS_PER_RTA
 op_minus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** now map each of its eight ports&n;&t;*/
@@ -3615,11 +3447,10 @@ id|SubEnt
 op_increment
 )paren
 (brace
-id|rio_dprint
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;subent = %d, HostMapP-&gt;SysPort = %d&bslash;n&quot;
 comma
 id|SubEnt
@@ -3628,7 +3459,6 @@ comma
 r_int
 )paren
 id|HostMapP-&gt;SysPort
-)paren
 )paren
 suffix:semicolon
 id|SysPort
@@ -3651,17 +3481,15 @@ id|PORTS_PER_RTA
 op_plus
 id|SubEnt
 suffix:semicolon
-id|rio_dprint
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;c1 p = %p, p-&gt;rioPortp = %p&bslash;n&quot;
 comma
 id|p
 comma
 id|p-&gt;RIOPortp
-)paren
 )paren
 suffix:semicolon
 id|PortP
@@ -3681,14 +3509,11 @@ id|SysPort
 )braket
 suffix:semicolon
 macro_line|#endif
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Map port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Point at all the real neat data structures&n;&t;&t;*/
@@ -4309,12 +4134,10 @@ r_char
 op_star
 id|sptr
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Change name entry on host %x, rta %x, ID %d, Sysport %d&bslash;n&quot;
 comma
 id|MapP-&gt;HostUniqueNum
@@ -4328,7 +4151,6 @@ r_int
 )paren
 id|MapP-&gt;SysPort
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4338,14 +4160,11 @@ OG
 id|MAX_RUP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Bad ID in map entry!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -4384,14 +4203,11 @@ id|sptr
 l_char|&squot;~&squot;
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Name entry contains non-printing characters!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -4536,16 +4352,13 @@ id|p-&gt;RIOError.Error
 op_assign
 id|UNKNOWN_HOST_NUMBER
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_TABLE
 comma
-(paren
 l_string|&quot;Unknown host %x&bslash;n&quot;
 comma
 id|MapP-&gt;HostUniqueNum
-)paren
 )paren
 suffix:semicolon
 r_return

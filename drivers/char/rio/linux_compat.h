@@ -73,8 +73,6 @@ r_extern
 r_int
 id|rio_debug
 suffix:semicolon
-DECL|macro|rio_dprint
-mdefine_line|#define rio_dprint(f, p) do {if (rio_debug &amp; f) printk p;} while (0)
 DECL|macro|RIO_DEBUG_INIT
 mdefine_line|#define RIO_DEBUG_INIT         0x000001
 DECL|macro|RIO_DEBUG_BOOT
@@ -111,6 +109,8 @@ DECL|macro|RIO_DEBUG_SPINLOCK
 mdefine_line|#define RIO_DEBUG_SPINLOCK     0x010000
 DECL|macro|RIO_DEBUG_DELAY
 mdefine_line|#define RIO_DEBUG_DELAY        0x020000
+DECL|macro|RIO_DEBUG_MOD_COUNT
+mdefine_line|#define RIO_DEBUG_MOD_COUNT    0x040000
 multiline_comment|/* Copied over from riowinif.h . This is ugly. The winif file declares&n;also much other stuff which is incompatible with the headers from&n;the older driver. The older driver includes &quot;brates.h&quot; which shadows&n;the definitions from Linux, and is incompatible... */
 multiline_comment|/* RxBaud and TxBaud definitions... */
 DECL|macro|RIO_B0

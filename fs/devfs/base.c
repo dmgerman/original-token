@@ -7678,6 +7678,8 @@ comma
 id|file-&gt;f_pos
 comma
 id|file-&gt;f_dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 suffix:semicolon
 r_if
@@ -7726,6 +7728,8 @@ comma
 id|file-&gt;f_pos
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 suffix:semicolon
 r_if
@@ -7839,6 +7843,10 @@ comma
 id|file-&gt;f_pos
 comma
 id|de-&gt;inode.ino
+comma
+id|de-&gt;mode
+op_rshift
+l_int|12
 )paren
 suffix:semicolon
 r_if

@@ -5116,90 +5116,14 @@ op_star
 id|ptr
 )paren
 (brace
-r_struct
-id|sx_port
-op_star
-id|port
-op_assign
-id|ptr
-suffix:semicolon
+multiline_comment|/*&n;&t;struct sx_port *port = ptr; &n;  */
 id|func_enter
 (paren
 )paren
 suffix:semicolon
-id|sx_setsignals
-(paren
-id|port
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|sx_reconfigure_port
-c_func
-(paren
-id|port
-)paren
-suffix:semicolon
-id|sx_send_command
-(paren
-id|port
-comma
-id|HS_CLOSE
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sx_read_channel_byte
-(paren
-id|port
-comma
-id|hi_hstat
-)paren
-op_ne
-id|HS_IDLE_CLOSED
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sx_send_command
-(paren
-id|port
-comma
-id|HS_FORCE_CLOSED
-comma
-op_minus
-l_int|1
-comma
-id|HS_IDLE_CLOSED
-)paren
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;sx: sent the force_close command, but card didn&squot;t react&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-id|sx_dprintk
-(paren
-id|SX_DEBUG_CLOSE
-comma
-l_string|&quot;sent the force_close command.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* Don&squot;t force the SX card to close. mgetty doesn&squot;t like it !!!!!! -- pvdl */
+multiline_comment|/* For some reson we added this code. Don&squot;t know why anymore ;-( -- pvdl */
+multiline_comment|/*&n;&t;sx_setsignals (port, 0, 0);&n;&t;sx_reconfigure_port(port);&t;&n;&t;sx_send_command (port, HS_CLOSE, 0, 0);&n;&n;&t;if (sx_read_channel_byte (port, hi_hstat) != HS_IDLE_CLOSED) {&n;&t;&t;if (sx_send_command (port, HS_FORCE_CLOSED, -1, HS_IDLE_CLOSED) != 1) {&n;&t;&t;&t;printk (KERN_ERR &n;&t;&t;&t;        &quot;sx: sent the force_close command, but card didn&squot;t react&bslash;n&quot;);&n;&t;&t;} else&n;&t;&t;&t;sx_dprintk (SX_DEBUG_CLOSE, &quot;sent the force_close command.&bslash;n&quot;);&n;&t;}&n;&t;*/
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|func_exit
@@ -9132,6 +9056,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 DECL|function|sx_release_drivers
 r_static
 r_void
@@ -9166,6 +9091,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef TWO_ZERO
 DECL|macro|PDEV
 mdefine_line|#define PDEV unsigned char pci_bus, unsigned pci_fun

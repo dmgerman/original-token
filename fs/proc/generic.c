@@ -1249,6 +1249,8 @@ comma
 id|i
 comma
 id|ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -1281,6 +1283,8 @@ comma
 id|i
 comma
 id|filp-&gt;f_dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -1354,6 +1358,10 @@ comma
 id|filp-&gt;f_pos
 comma
 id|de-&gt;low_ino
+comma
+id|de-&gt;mode
+op_rshift
+l_int|12
 )paren
 OL
 l_int|0

@@ -2629,6 +2629,8 @@ comma
 l_int|0
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -2667,6 +2669,8 @@ comma
 l_int|1
 comma
 id|ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -2826,6 +2830,8 @@ op_plus
 l_int|2
 comma
 id|ino
+comma
+id|DT_LNK
 )paren
 OL
 l_int|0
@@ -2925,6 +2931,8 @@ comma
 id|i
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -2957,6 +2965,8 @@ comma
 id|i
 comma
 id|PROC_ROOT_INO
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -3031,6 +3041,10 @@ id|pid
 comma
 id|p-&gt;type
 )paren
+comma
+id|p-&gt;mode
+op_rshift
+l_int|12
 )paren
 OL
 l_int|0
@@ -4723,6 +4737,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_LNK
 )paren
 OL
 l_int|0
@@ -4829,6 +4845,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0

@@ -598,6 +598,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -641,6 +643,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|inode-&gt;i_hpfs_parent_dir
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -866,6 +870,8 @@ comma
 id|old_pos
 comma
 id|de-&gt;fnode
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

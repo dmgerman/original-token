@@ -88,14 +88,11 @@ id|CmdBlk
 op_star
 id|CmdBlkP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;FOAD RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|CmdBlkP
@@ -112,14 +109,11 @@ op_logical_neg
 id|CmdBlkP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;FOAD RTA: GetCmdBlk failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -200,14 +194,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;FOAD RTA: Failed to queue foad command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -243,14 +234,11 @@ id|CmdBlk
 op_star
 id|CmdBlkP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;ZOMBIE RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|CmdBlkP
@@ -267,14 +255,11 @@ op_logical_neg
 id|CmdBlkP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;ZOMBIE RTA: GetCmdBlk failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -355,14 +340,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;ZOMBIE RTA: Failed to queue zombie command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -413,12 +395,10 @@ suffix:semicolon
 id|uint
 id|Host
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Command RTA 0x%x func 0x%x&bslash;n&quot;
 comma
 id|RtaUnique
@@ -427,7 +407,6 @@ comma
 r_int
 )paren
 id|func
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -605,14 +584,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;RIO_IDENTIFY_RTA copy failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -727,14 +703,11 @@ id|CmdBlk
 op_star
 id|CmdBlkP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;IDENTIFY RTA&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|CmdBlkP
@@ -751,14 +724,11 @@ op_logical_neg
 id|CmdBlkP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;IDENTIFY RTA: GetCmdBlk failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -824,14 +794,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;IDENTIFY RTA: Failed to queue command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -884,14 +851,11 @@ id|CmdBlk
 op_star
 id|CmdBlkP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;KILL HOST NEIGHBOUR&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -920,14 +884,11 @@ op_eq
 id|COPYFAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;RIO_KILL_NEIGHBOUR copy failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOError.Error
@@ -962,14 +923,11 @@ op_logical_neg
 id|CmdBlkP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;UFOAD: GetCmdBlk failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1085,14 +1043,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;UFOAD: Failed queue command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1153,14 +1108,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;UFOAD: Failed queue command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1211,12 +1163,10 @@ id|CmdBlk
 op_star
 id|CmdBlkP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;SUSPEND BOOT ON RTA ID %d, link %c&bslash;n&quot;
 comma
 id|ID
@@ -1224,7 +1174,6 @@ comma
 l_char|&squot;A&squot;
 op_plus
 id|Link
-)paren
 )paren
 suffix:semicolon
 id|CmdBlkP
@@ -1241,14 +1190,11 @@ op_logical_neg
 id|CmdBlkP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;SUSPEND BOOT ON RTA: GetCmdBlk failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1329,14 +1275,11 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;SUSPEND BOOT ON RTA: Failed to queue iwait command&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1548,6 +1491,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|func_enter
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CHECK
 id|CheckHost
 c_func
@@ -1607,18 +1554,15 @@ id|ushort
 id|PORTS_PER_RTA
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Command on rup %d, port %d&bslash;n&quot;
 comma
 id|rup
 comma
 id|SysPort
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CHECK
@@ -1643,32 +1587,24 @@ op_eq
 id|NO_PORT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;OBSCURE ERROR!&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Diagnostics follow. Please WRITE THESE DOWN and report them to Specialix Technical Support&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;CONTROL information: Host number %d, name ``%s&squot;&squot;&bslash;n&quot;
 comma
 id|HostP
@@ -1677,18 +1613,14 @@ id|p-&gt;RIOHosts
 comma
 id|HostP-&gt;Name
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;CONTROL information: Rup number  0x%x&bslash;n&quot;
 comma
 id|rup
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1701,12 +1633,11 @@ id|ushort
 )paren
 id|MAX_RUP
 )paren
-id|rio_dprint
-c_func
+(brace
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;CONTROL information: This is the RUP for RTA ``%s&squot;&squot;&bslash;n&quot;
 comma
 id|HostP-&gt;Mapping
@@ -1716,103 +1647,85 @@ id|Rup
 dot
 id|Name
 )paren
-)paren
 suffix:semicolon
+)brace
 r_else
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;CONTROL information: This is the RUP for link ``%c&squot;&squot; of host ``%s&squot;&squot;&bslash;n&quot;
 comma
+(paren
 l_char|&squot;A&squot;
 op_plus
 id|Rup
 op_minus
 id|MAX_RUP
+)paren
 comma
 id|HostP-&gt;Name
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;PACKET information: Destination 0x%x:0x%x&bslash;n&quot;
 comma
 id|PacketP-&gt;dest_unit
 comma
 id|PacketP-&gt;dest_port
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;PACKET information: Source&t;  0x%x:0x%x&bslash;n&quot;
 comma
 id|PacketP-&gt;src_unit
 comma
 id|PacketP-&gt;src_port
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;PACKET information: Length&t;  0x%x (%d)&bslash;n&quot;
 comma
 id|PacketP-&gt;len
 comma
 id|PacketP-&gt;len
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;PACKET information: Control&t; 0x%x (%d)&bslash;n&quot;
 comma
 id|PacketP-&gt;control
 comma
 id|PacketP-&gt;control
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;PACKET information: Check&t;   0x%x (%d)&bslash;n&quot;
 comma
 id|PacketP-&gt;csum
 comma
 id|PacketP-&gt;csum
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 "&quot;"
 id|COMMAND
 id|information
@@ -1839,7 +1752,6 @@ id|PktCmdP-&gt;PhbNum
 comma
 id|PktCmdP-&gt;Command
 )paren
-)paren
 suffix:semicolon
 r_return
 id|TRUE
@@ -1860,12 +1772,6 @@ id|p-&gt;RIOPortp
 id|SysPort
 )braket
 suffix:semicolon
-macro_line|#if 0
-id|ttyP
-op_assign
-id|PortP-&gt;TtyP
-suffix:semicolon
-macro_line|#endif
 id|rio_spin_lock_irqsave
 c_func
 (paren
@@ -1888,14 +1794,11 @@ id|PktCmdP-&gt;Command
 r_case
 id|BREAK_RECEIVED
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Received a break!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* If the current line disc. is not multi-threading and&n;&t;   &t;&t;&t;the current processor is not the default, reset rup_intr&n;&t;   &t;&t;&t;and return FALSE to ensure that the command packet is&n;&t;   &t;&t;&t;not freed. */
@@ -1906,12 +1809,10 @@ suffix:semicolon
 r_case
 id|COMPLETE
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Command complete on phb %d host %d&bslash;n&quot;
 comma
 id|RBYTE
@@ -1923,7 +1824,6 @@ comma
 id|HostP
 op_minus
 id|p-&gt;RIOHosts
-)paren
 )paren
 suffix:semicolon
 id|subCommand
@@ -1943,12 +1843,10 @@ id|PktCmdP-&gt;SubCommand
 r_case
 id|MEMDUMP
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Memory dump cmd (0x%x) from addr 0x%x&bslash;n&quot;
 comma
 id|RBYTE
@@ -1963,26 +1861,22 @@ c_func
 id|PktCmdP-&gt;SubAddr
 )paren
 )paren
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|READ_REGISTER
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Read register (0x%x)&bslash;n&quot;
 comma
 id|RWORD
 c_func
 (paren
 id|PktCmdP-&gt;SubAddr
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -2016,12 +1910,10 @@ id|subCommand
 )paren
 r_break
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;New status is 0x%x was 0x%x&bslash;n&quot;
 comma
 id|RBYTE
@@ -2031,7 +1923,6 @@ id|PktCmdP-&gt;PortStatus
 )paren
 comma
 id|PortP-&gt;PortState
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2046,14 +1937,11 @@ id|PktCmdP-&gt;PortStatus
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Mark status &amp; wakeup&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;PortState
@@ -2067,18 +1955,13 @@ suffix:semicolon
 multiline_comment|/* What should we do here ...&n;&t;&t;&t;&t;wakeup( &amp;PortP-&gt;PortState );&n;&t;&t;&t;&t;*/
 )brace
 r_else
-(brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;No change&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-)brace
 multiline_comment|/* FALLTHROUGH */
 r_case
 id|MODEM_STATUS
@@ -2108,16 +1991,13 @@ id|MSVR1_HOST
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Modem status unchanged 0x%x&bslash;n&quot;
 comma
 id|PortP-&gt;ModemState
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;** Update ModemState just in case tbusy or tstop states have&n;&t;&t;&t;&t;** changed.&n;&t;&t;&t;&t;*/
@@ -2128,18 +2008,15 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Modem status change from 0x%x to 0x%x&bslash;n&quot;
 comma
 id|PortP-&gt;ModemState
 comma
 id|ReportedModemStatus
-)paren
 )paren
 suffix:semicolon
 id|PortP-&gt;ModemState
@@ -2158,9 +2035,18 @@ multiline_comment|/*&n;&t;&t;&t;&t;** If the device is a modem, then check the m
 r_if
 c_cond
 (paren
+id|PortP-&gt;gs.tty
+op_eq
+l_int|NULL
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
-id|ttyP-&gt;t_cflag
+id|PortP-&gt;gs.tty-&gt;termios-&gt;c_cflag
 op_amp
 id|CLOCAL
 )paren
@@ -2178,6 +2064,13 @@ id|RIO_WOPEN
 )paren
 )paren
 (brace
+id|rio_dprintk
+(paren
+id|RIO_DEBUG_CMD
+comma
+l_string|&quot;Is there a Carrier?&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;** Is there a carrier?&n;&t;&t;&t;*/
 r_if
 c_cond
@@ -2193,48 +2086,39 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_amp
-id|CARR_ON
+id|RIO_CARR_ON
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
-comma
-id|PortP
-comma
-id|DBG_MODEM
 comma
 l_string|&quot;Carrier just came up.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_or_assign
-id|CARR_ON
+id|RIO_CARR_ON
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;** wakeup anyone in WOPEN&n;&t;&t;&t;&t;*/
 r_if
 c_cond
 (paren
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_amp
 (paren
-id|ISOPEN
+id|PORT_ISOPEN
 op_or
-id|WOPEN
+id|RIO_WOPEN
 )paren
 )paren
-id|wakeup
-c_func
+id|wake_up_interruptible
 (paren
-(paren
-id|caddr_t
-)paren
 op_amp
-id|ttyP-&gt;t_canq
+id|PortP-&gt;gs.open_wait
 )paren
 suffix:semicolon
 macro_line|#ifdef STATS
@@ -2250,80 +2134,39 @@ multiline_comment|/*&n;&t;&t;&t;** Has carrier just dropped?&n;&t;&t;&t;*/
 r_if
 c_cond
 (paren
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_amp
-id|CARR_ON
+id|RIO_CARR_ON
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;** send SIGHUP to the process group&n;&t;&t;&t;&t;*/
 r_if
 c_cond
 (paren
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_amp
 (paren
-id|ISOPEN
+id|PORT_ISOPEN
 op_or
-id|WOPEN
+id|RIO_WOPEN
+op_or
+id|RIO_MOPEN
 )paren
 )paren
-(brace
-id|signal
-c_func
+id|tty_hangup
 (paren
-id|ttyP-&gt;t_pgrp
-comma
-id|SIGHUP
+id|PortP-&gt;gs.tty
 )paren
 suffix:semicolon
-id|ttyflush
-c_func
-(paren
-id|ttyP
-comma
-(paren
-id|FREAD
-op_or
-id|FWRITE
-)paren
-)paren
-suffix:semicolon
-)brace
-id|ttyP-&gt;t_state
+id|PortP-&gt;State
 op_and_assign
 op_complement
-id|CARR_ON
+id|RIO_CARR_ON
 suffix:semicolon
-id|wakeup
-c_func
-(paren
-(paren
-id|caddr_t
-)paren
-op_amp
-id|PortP-&gt;TxBufferOut
-)paren
-suffix:semicolon
-id|wakeup
-c_func
-(paren
-(paren
-id|caddr_t
-)paren
-op_amp
-id|PortP-&gt;TxBufferIn
-)paren
-suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-id|PortP
-comma
-id|DBG_MODEM
-comma
-l_string|&quot;Carrier just went down.&bslash;n&quot;
+l_string|&quot;Carrirer just went down&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef STATS
@@ -2341,12 +2184,10 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Unknown command %d on CMD_RUP of host %d&bslash;n&quot;
 comma
 id|RBYTE
@@ -2359,7 +2200,6 @@ id|HostP
 op_minus
 id|p-&gt;RIOHosts
 )paren
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2371,6 +2211,10 @@ op_amp
 id|PortP-&gt;portSem
 comma
 id|flags
+)paren
+suffix:semicolon
+id|func_exit
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2518,23 +2362,6 @@ id|CmdBlkP
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rio_dprint
-c_func
-(paren
-id|RIO_DEBUG_CMD
-comma
-(paren
-l_string|&quot;RIOQueueCmdBlk(Host, Rup %d, 0x%x)&bslash;n&quot;
-comma
-id|Rup
-comma
-(paren
-r_int
-)paren
-id|CmdBlkP
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2550,16 +2377,13 @@ id|LINKS_PER_UNIT
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Illegal rup number %d in RIOQueueCmdBlk&bslash;n&quot;
 comma
 id|Rup
-)paren
 )paren
 suffix:semicolon
 id|RIOFreeCmdBlk
@@ -2633,19 +2457,16 @@ id|TRUE
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;RUP inactive-placing command straight on. Cmd byte is 0x%x&bslash;n&quot;
 comma
 id|CmdBlkP-&gt;Packet.data
 (braket
 l_int|0
 )braket
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Whammy! blat that pack!&n;&t;&t;*/
@@ -2701,14 +2522,11 @@ r_return
 id|RIO_SUCCESS
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;RUP active - en-queing&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2718,14 +2536,11 @@ id|UnixRupP-&gt;CmdsWaitingP
 op_ne
 l_int|NULL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Rup active - command waiting&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2735,14 +2550,11 @@ id|UnixRupP-&gt;CmdPendingP
 op_ne
 l_int|NULL
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Rup active - command pending&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2756,14 +2568,11 @@ id|UnixRupP-&gt;RupP-&gt;txcontrol
 op_ne
 id|TX_RUP_INACTIVE
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Rup active - command rup not ready&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|Base
@@ -2771,12 +2580,10 @@ op_assign
 op_amp
 id|UnixRupP-&gt;CmdsWaitingP
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;First try to queue cmdblk 0x%x at 0x%x&bslash;n&quot;
 comma
 (paren
@@ -2789,7 +2596,6 @@ r_int
 )paren
 id|Base
 )paren
-)paren
 suffix:semicolon
 r_while
 c_loop
@@ -2798,12 +2604,10 @@ op_star
 id|Base
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Command cmdblk 0x%x here&bslash;n&quot;
 comma
 (paren
@@ -2812,7 +2616,6 @@ r_int
 (paren
 op_star
 id|Base
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -2828,12 +2631,10 @@ op_member_access_from_pointer
 id|NextP
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Now try to queue cmd cmdblk 0x%x at 0x%x&bslash;n&quot;
 comma
 (paren
@@ -2846,15 +2647,12 @@ r_int
 )paren
 id|Base
 )paren
-)paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Will queue cmdblk 0x%x at 0x%x&bslash;n&quot;
 comma
 (paren
@@ -2866,7 +2664,6 @@ comma
 r_int
 )paren
 id|Base
-)paren
 )paren
 suffix:semicolon
 op_star
@@ -2980,7 +2777,6 @@ id|RX_RUP_INACTIVE
 r_int
 id|FreeMe
 suffix:semicolon
-multiline_comment|/* rio_dprint(RIO_DEBUG_CMD, (&quot;RIORupCmd( %d, %d )&bslash;n&quot;, HostP-p-&gt;RIOHosts, Rup )); */
 id|PacketP
 op_assign
 (paren
@@ -3020,12 +2816,10 @@ id|PacketP-&gt;dest_port
 r_case
 id|BOOT_RUP
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Incoming Boot %s packet &squot;%x&squot;&bslash;n&quot;
 comma
 id|RBYTE
@@ -3048,7 +2842,6 @@ id|PacketP-&gt;data
 (braket
 l_int|0
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -3124,12 +2917,10 @@ op_eq
 id|MEMDUMP
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Memdump from 0x%x complete&bslash;n&quot;
 comma
 op_star
@@ -3143,7 +2934,6 @@ id|PacketP-&gt;data
 (braket
 l_int|6
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -3222,19 +3012,16 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Unknown RUP %d&bslash;n&quot;
 comma
 id|RBYTE
 c_func
 (paren
 id|PacketP-&gt;dest_port
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -3251,14 +3038,11 @@ c_cond
 id|FreeMe
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Free processed incoming command packet&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|put_free_end
@@ -3289,16 +3073,13 @@ op_eq
 id|PHB_HANDSHAKE_SET
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Handshake rup %d&bslash;n&quot;
 comma
 id|Rup
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -3344,12 +3125,10 @@ id|CmdBlkP-&gt;Packet.dest_port
 op_eq
 id|BOOT_RUP
 )paren
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Free Boot %s Command Block &squot;%x&squot;&bslash;n&quot;
 comma
 id|CmdBlkP-&gt;Packet.len
@@ -3366,21 +3145,17 @@ id|CmdBlkP-&gt;Packet.data
 l_int|0
 )braket
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Command 0x%x completed&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
 id|CmdBlkP
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;** Clear the Rup lock to prevent mutual exclusion.&n;&t;&t;&t;*/
@@ -3463,7 +3238,6 @@ id|TX_RUP_INACTIVE
 multiline_comment|/*&n;&t;&t;&t;** if the pre-function is non-zero, call it.&n;&t;&t;&t;** If it returns RIO_FAIL then don&squot;t&n;&t;&t;&t;** send this command yet!&n;&t;&t;&t;*/
 macro_line|#ifdef CHECK
 id|CheckCmdBlkP
-c_func
 (paren
 id|CmdBlkP
 )paren
@@ -3491,12 +3265,10 @@ id|TRUE
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Not ready to start command 0x%x&bslash;n&quot;
 comma
 (paren
@@ -3504,17 +3276,14 @@ r_int
 )paren
 id|CmdBlkP
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Start new command 0x%x Cmd byte is 0x%x&bslash;n&quot;
 comma
 (paren
@@ -3527,12 +3296,10 @@ id|CmdBlkP-&gt;Packet.data
 l_int|0
 )braket
 )paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;** Whammy! blat that pack!&n;&t;&t;&t;&t;*/
 macro_line|#ifdef CHECK
 id|CheckPacketP
-c_func
 (paren
 (paren
 id|PKT
@@ -3984,14 +3751,11 @@ id|PHB_HANDSHAKE_SET
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;** MAGIC! (Basically, handshake the RX buffer, so that&n;&t;&t;** the RTAs upstream can be re-enabled.)&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Util: Set RX handshake bit&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WWORD
@@ -4075,14 +3839,11 @@ id|PortP
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_CMD
 comma
-(paren
 l_string|&quot;Decrement in use count for port&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_if

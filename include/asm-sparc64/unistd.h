@@ -282,7 +282,8 @@ multiline_comment|/* #define __NR_getmsg          151    SunOS Specific         
 multiline_comment|/* #define __NR_putmsg          152    SunOS Specific                              */
 DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll               153 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      154    ENOSYS under SunOS                          */
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;154 /* Linux specific&t;&t;&t;&t;   */
 multiline_comment|/* #define __NR_nfssvc          155    SunOS Specific                              */
 multiline_comment|/* #define __NR_getdirentries   156    SunOS Specific                              */
 DECL|macro|__NR_statfs

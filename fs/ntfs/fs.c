@@ -906,6 +906,8 @@ op_or
 id|nf-&gt;pl
 comma
 id|inum
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 id|ntfs_free
@@ -1035,6 +1037,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|dir-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 suffix:semicolon
 id|filp-&gt;f_pos
@@ -1060,6 +1064,8 @@ comma
 id|filp-&gt;f_pos
 comma
 l_int|0
+comma
+id|DT_DIR
 )paren
 suffix:semicolon
 id|filp-&gt;f_pos

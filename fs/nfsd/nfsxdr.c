@@ -2204,6 +2204,10 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
+id|d_type
 )paren
 (brace
 id|u32

@@ -2218,6 +2218,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -2296,6 +2298,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ddino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -2391,6 +2395,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|f-&gt;ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

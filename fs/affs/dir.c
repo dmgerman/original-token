@@ -222,6 +222,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -265,6 +267,8 @@ c_func
 (paren
 id|inode
 )paren
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -636,6 +640,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

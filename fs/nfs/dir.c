@@ -1106,6 +1106,8 @@ comma
 id|entry-&gt;prev_cookie
 comma
 id|fileid
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 r_if

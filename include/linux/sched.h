@@ -1467,6 +1467,14 @@ id|gid_t
 suffix:semicolon
 r_extern
 r_void
+id|proc_caches_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_signals
 c_func
 (paren

@@ -313,6 +313,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

@@ -3210,6 +3210,10 @@ suffix:semicolon
 multiline_comment|/* Start sending pkt */
 )brace
 )brace
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -4042,6 +4046,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   ** Update stats&n;&t;&t;&t;&t;&t;&t; */
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 r_for
 c_loop

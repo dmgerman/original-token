@@ -642,16 +642,6 @@ suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
-id|atp_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|de600_probe
 c_func
 (paren
@@ -1258,14 +1248,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_DE620&t;&t;/* D-Link DE-620 adapter */
 (brace
 id|de620_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
-(brace
-id|atp_init
 comma
 l_int|0
 )brace

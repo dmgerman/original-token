@@ -291,6 +291,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Check for a network adapter of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 DECL|function|atp_init
+r_static
 r_int
 id|__init
 id|atp_init
@@ -1149,6 +1150,8 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|netif_start_queue
 c_func
@@ -3237,6 +3240,8 @@ comma
 id|CMR1h_RESET
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3357,15 +3362,11 @@ id|lp-&gt;addr_mode
 )paren
 suffix:semicolon
 )brace
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c atp.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
-macro_line|#ifdef MODULE
+multiline_comment|/* module stuff */
 DECL|variable|io
 r_static
 r_int
 id|io
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|atp_dev
 r_static
@@ -3374,30 +3375,22 @@ id|net_device
 id|atp_dev
 op_assign
 (brace
-l_string|&quot;&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|atp_init
 )brace
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Donald Becker &lt;becker@scyld.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Realtek 8002/8012 Pocket Lan Adapter&quot;
+)paren
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -3407,9 +3400,11 @@ comma
 l_string|&quot;I/O port of the pocket adapter&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|atp_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|atp_init_module
 c_func
 (paren
 r_void
@@ -3439,9 +3434,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|atp_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|atp_cleanup_module
 c_func
 (paren
 r_void
@@ -3455,5 +3452,18 @@ id|atp_dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|atp_init_module
+id|module_init
+c_func
+(paren
+id|atp_init_module
+)paren
+suffix:semicolon
+DECL|variable|atp_cleanup_module
+id|module_exit
+c_func
+(paren
+id|atp_cleanup_module
+)paren
+suffix:semicolon
 eof

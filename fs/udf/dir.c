@@ -146,6 +146,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|dir-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 )paren
 r_return
@@ -755,6 +757,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|filp-&gt;f_dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 )paren
 (brace
@@ -823,6 +827,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|iblock
+comma
+id|DT_UNKNOWN
 )paren
 )paren
 (brace

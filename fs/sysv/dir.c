@@ -260,6 +260,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|sde.inode
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0

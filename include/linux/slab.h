@@ -288,6 +288,16 @@ id|kmem_cache_t
 op_star
 id|bh_cachep
 suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|fs_cachep
+suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|sigact_cachep
+suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 r_extern
 r_int

@@ -3556,7 +3556,7 @@ c_func
 id|sppp_close
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;sppp_open - open a synchronous PPP or Cisco HDLC link&n; *&t;@dev:&t;Network device to activate&n; *&t;&n; *&t;Close down any existing synchronous session and commence&n; *&t;from scratch. In the PPP case this means negotiating LCP/IPCP&n; *&t;and friends, while for Cisco HDLC we simply need to staet sending&n; *&t;keepalives&n; */
+multiline_comment|/**&n; *&t;sppp_open - open a synchronous PPP or Cisco HDLC link&n; *&t;@dev:&t;Network device to activate&n; *&t;&n; *&t;Close down any existing synchronous session and commence&n; *&t;from scratch. In the PPP case this means negotiating LCP/IPCP&n; *&t;and friends, while for Cisco HDLC we simply need to start sending&n; *&t;keepalives&n; */
 DECL|function|sppp_open
 r_int
 id|sppp_open

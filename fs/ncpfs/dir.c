@@ -2022,6 +2022,8 @@ comma
 l_int|0
 comma
 id|inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 )paren
 r_goto
@@ -2055,6 +2057,8 @@ comma
 l_int|1
 comma
 id|dentry-&gt;d_parent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_DIR
 )paren
 )paren
 r_goto
@@ -2322,6 +2326,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|dent-&gt;d_inode-&gt;i_ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 id|dput
@@ -3094,6 +3100,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_UNKNOWN
 )paren
 suffix:semicolon
 r_if

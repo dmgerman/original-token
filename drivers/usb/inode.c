@@ -1352,6 +1352,8 @@ comma
 id|i
 comma
 id|IROOT
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -1384,6 +1386,8 @@ comma
 id|i
 comma
 id|IROOT
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -1453,6 +1457,8 @@ l_int|2
 op_plus
 id|IROOT
 )paren
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0
@@ -1569,6 +1575,8 @@ l_int|0xff
 op_lshift
 l_int|8
 )paren
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0
@@ -1682,6 +1690,8 @@ id|dev-&gt;devnum
 op_amp
 l_int|0xff
 )paren
+comma
+id|DT_UNKNOWN
 )paren
 OL
 l_int|0
@@ -1838,6 +1848,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|ino
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0
@@ -1867,6 +1879,8 @@ comma
 id|filp-&gt;f_pos
 comma
 id|IROOT
+comma
+id|DT_DIR
 )paren
 OL
 l_int|0

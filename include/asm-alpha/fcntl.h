@@ -110,5 +110,9 @@ id|l_pid
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|flock64
+mdefine_line|#define flock64&t;flock
+macro_line|#endif
 macro_line|#endif
 eof

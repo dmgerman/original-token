@@ -1,5 +1,36 @@
 multiline_comment|/* epic100.c: A SMC 83c170 EPIC/100 Fast Ethernet driver for Linux. */
-multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09&n;&n;&t;LK1.1.3:&n;&t;* Major bugfix to 1.09 driver (Francis Romieu)&n;&n;*/
+multiline_comment|/*&n;&t;Written/copyright 1997-2000 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;This driver is for the SMC83c170/175 &quot;EPIC&quot; series, as used on the&n;&t;SMC EtherPower II 9432 PCI adapter, and several CardBus cards.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Information and updates available at&n;&t;http://www.scyld.com/network/epic100.html&n;&n;&t;---------------------------------------------------------------------&n;&t;&n;&t;Linux kernel-specific changes:&n;&t;&n;&t;LK1.1.2 (jgarzik):&n;&t;* Merge becker version 1.09 (4/08/2000)&n;&n;&t;LK1.1.3:&n;&t;* Major bugfix to 1.09 driver (Francis Romieu)&n;&t;&n;&t;LK1.1.4 (jgarzik):&n;&t;* Merge becker test version 1.09 (5/29/2000)&n;&n;*/
+multiline_comment|/* These identify the driver base version and may not be removed. */
+DECL|variable|version
+r_static
+r_const
+r_char
+id|version
+(braket
+)braket
+op_assign
+l_string|&quot;epic100.c:v1.09 5/29/2000 Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
+suffix:semicolon
+DECL|variable|version2
+r_static
+r_const
+r_char
+id|version2
+(braket
+)braket
+op_assign
+l_string|&quot;  http://www.scyld.com/network/epic100.html&bslash;n&quot;
+suffix:semicolon
+DECL|variable|version3
+r_static
+r_const
+r_char
+id|version3
+(braket
+)braket
+op_assign
+l_string|&quot; (unofficial 2.4.x kernel port, version 1.1.4, August 10, 2000)&bslash;n&quot;
+suffix:semicolon
 multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
 DECL|variable|debug
 r_static
@@ -94,10 +125,10 @@ r_static
 r_int
 id|rx_copybreak
 op_assign
-l_int|200
+l_int|0
 suffix:semicolon
 multiline_comment|/* Operational parameters that are set at compile time. */
-multiline_comment|/* Keep the ring sizes a power of two for efficiency.&n;   Making the Tx ring too large decreases the effectiveness of channel&n;   bonding and packet priority.&n;   There are no ill effects from too-large receive rings. */
+multiline_comment|/* Keep the ring sizes a power of two for operational efficiency.&n;   The compiler will convert &lt;unsigned&gt;&squot;%&squot;&lt;2^N&gt; into a bit mask.&n;   Making the Tx ring too large decreases the effectiveness of channel&n;   bonding and packet priority.&n;   There are no ill effects from too-large receive rings. */
 DECL|macro|TX_RING_SIZE
 mdefine_line|#define TX_RING_SIZE&t;16
 DECL|macro|TX_QUEUE_LEN
@@ -121,7 +152,11 @@ macro_line|#warning  You must compile this file with the correct options!
 macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20300  &amp;&amp;  defined(MODVERSIONS)
+macro_line|#include &lt;linux/modversions.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -138,31 +173,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* These identify the driver base version and may not be removed. */
-DECL|variable|__devinitdata
-r_static
-r_char
-id|version
-(braket
-)braket
-id|__devinitdata
-op_assign
-l_string|&quot;epic100.c:v1.09+LK1.1.3 6/17/2000 Written by Donald Becker &lt;becker@scyld.com&gt;&bslash;n&quot;
-suffix:semicolon
-DECL|variable|__devinitdata
-r_static
-r_char
-id|version2
-(braket
-)braket
-id|__devinitdata
-op_assign
-l_string|&quot;  &t;http://www.scyld.com/network/epic100.html&bslash;n&quot;
-suffix:semicolon
-DECL|macro|EPIC100_MODULE_NAME
-mdefine_line|#define EPIC100_MODULE_NAME &quot;epic100&quot;
-DECL|macro|PFX
-mdefine_line|#define PFX EPIC100_MODULE_NAME &quot;: &quot;
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -227,7 +237,7 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the SMC &quot;EPIC/100&quot;, the SMC&n;single-chip Ethernet controllers for PCI.  This chip is used on&n;the SMC EtherPower II boards.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;Note: Kernel versions earlier than 1.3.73 do not support shared PCI&n;interrupt lines.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;IVb. References&n;&n;http://www.smsc.com/main/datasheets/83c171.pdf&n;http://www.smsc.com/main/datasheets/83c175.pdf&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;http://www.national.com/pf/DP/DP83840A.html&n;&n;IVc. Errata&n;&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the SMC &quot;EPIC/100&quot;, the SMC&n;single-chip Ethernet controllers for PCI.  This chip is used on&n;the SMC EtherPower II boards.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;Note: Kernel versions earlier than 1.3.73 do not support shared PCI&n;interrupt lines.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;IVb. References&n;&n;http://www.smsc.com/main/datasheets/83c171.pdf&n;http://www.smsc.com/main/datasheets/83c175.pdf&n;http://scyld.com/expert/NWay.html&n;http://www.national.com/pf/DP/DP83840A.html&n;&n;IVc. Errata&n;&n;*/
 DECL|enum|pci_id_flags_bits
 r_enum
 id|pci_id_flags_bits
@@ -1004,6 +1014,11 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* MII device addresses. */
+DECL|member|advertising
+id|u16
+id|advertising
+suffix:semicolon
+multiline_comment|/* NWay media advertisement */
 DECL|member|mii_phy_cnt
 r_int
 id|mii_phy_cnt
@@ -1355,10 +1370,14 @@ id|KERN_INFO
 l_string|&quot;%s&quot;
 id|KERN_INFO
 l_string|&quot;%s&quot;
+id|KERN_INFO
+l_string|&quot;%s&quot;
 comma
 id|version
 comma
 id|version2
+comma
+id|version3
 )paren
 suffix:semicolon
 r_if
@@ -1486,8 +1505,7 @@ id|dev-&gt;name
 id|printk
 (paren
 id|KERN_ERR
-id|PFX
-l_string|&quot;card %d: I/O region busy&bslash;n&quot;
+l_string|&quot;epic100 %d: I/O region busy&bslash;n&quot;
 comma
 id|card_idx
 )paren
@@ -1523,8 +1541,7 @@ id|dev-&gt;name
 id|printk
 (paren
 id|KERN_ERR
-id|PFX
-l_string|&quot;card %d: I/O region busy&bslash;n&quot;
+l_string|&quot;epic100 %d: I/O region busy&bslash;n&quot;
 comma
 id|card_idx
 )paren
@@ -1580,8 +1597,7 @@ id|ioaddr
 id|printk
 (paren
 id|KERN_ERR
-id|PFX
-l_string|&quot;card %d: ioremap failed&bslash;n&quot;
+l_string|&quot;epic100 %d: ioremap failed&bslash;n&quot;
 comma
 id|card_idx
 )paren
@@ -1910,12 +1926,14 @@ id|ep-&gt;chip_flags
 op_assign
 id|ci-&gt;drv_flags
 suffix:semicolon
-multiline_comment|/* Find the connected MII xcvrs.&n;&t;   Doing this in open() would allow detecting external xcvrs later, but&n;&t;   takes too much time. */
+multiline_comment|/* Find the connected MII xcvrs.&n;&t;   Doing this in open() would allow detecting external xcvrs later, but&n;&t;   takes much time and no cards have external MII. */
 (brace
 r_int
 id|phy
 comma
 id|phy_idx
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1923,10 +1941,6 @@ c_loop
 id|phy
 op_assign
 l_int|1
-comma
-id|phy_idx
-op_assign
-l_int|0
 suffix:semicolon
 id|phy
 OL
@@ -1982,9 +1996,6 @@ c_func
 id|KERN_INFO
 l_string|&quot;%s: MII transceiver #%d control &quot;
 l_string|&quot;%4.4x status %4.4x.&bslash;n&quot;
-id|KERN_INFO
-l_string|&quot;%s:  Autonegotiation advertising %4.4x &quot;
-l_string|&quot;link partner %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2001,9 +2012,31 @@ l_int|0
 )paren
 comma
 id|mii_status
-comma
-id|dev-&gt;name
-comma
+)paren
+suffix:semicolon
+)brace
+)brace
+id|ep-&gt;mii_phy_cnt
+op_assign
+id|phy_idx
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|phy_idx
+op_ne
+l_int|0
+)paren
+(brace
+id|phy
+op_assign
+id|ep-&gt;phys
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|ep-&gt;advertising
+op_assign
 id|mdio_read
 c_func
 (paren
@@ -2013,6 +2046,17 @@ id|phy
 comma
 l_int|4
 )paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Autonegotiation advertising %4.4x link &quot;
+l_string|&quot;partner %4.4x.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|ep-&gt;advertising
 comma
 id|mdio_read
 c_func
@@ -2026,25 +2070,16 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
-)brace
-id|ep-&gt;mii_phy_cnt
-op_assign
-id|phy_idx
-suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
-id|phy_idx
-op_eq
-l_int|0
-op_logical_and
+op_logical_neg
 (paren
 id|ep-&gt;chip_flags
 op_amp
 id|NO_MII
 )paren
-op_eq
-l_int|0
 )paren
 (brace
 id|printk
@@ -3269,6 +3304,9 @@ id|ioaddr
 comma
 id|dev-&gt;irq
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3776,6 +3814,9 @@ l_string|&quot; interrupt %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3784,6 +3825,9 @@ op_plus
 id|COMMAND
 )paren
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3792,6 +3836,9 @@ op_plus
 id|GENCTL
 )paren
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3872,6 +3919,30 @@ l_int|5
 suffix:colon
 l_int|0
 suffix:semicolon
+r_int
+id|negotiated
+op_assign
+id|mii_reg5
+op_amp
+id|ep-&gt;advertising
+suffix:semicolon
+r_int
+id|duplex
+op_assign
+(paren
+id|negotiated
+op_amp
+l_int|0x0100
+)paren
+op_logical_or
+(paren
+id|negotiated
+op_amp
+l_int|0x01C0
+)paren
+op_eq
+l_int|0x0040
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3888,6 +3959,9 @@ l_string|&quot;%s: Media monitor tick, Tx status %8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3906,6 +3980,9 @@ l_string|&quot;IntStatus %4.4x RxStatus %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3914,6 +3991,9 @@ op_plus
 id|INTMASK
 )paren
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3922,6 +4002,9 @@ op_plus
 id|INTSTAT
 )paren
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -3937,29 +4020,8 @@ c_cond
 (paren
 op_logical_neg
 id|ep-&gt;force_fd
-op_logical_and
-id|mii_reg5
-op_ne
-l_int|0xffff
 )paren
 (brace
-r_int
-id|duplex
-op_assign
-(paren
-id|mii_reg5
-op_amp
-l_int|0x0100
-)paren
-op_logical_or
-(paren
-id|mii_reg5
-op_amp
-l_int|0x01C0
-)paren
-op_eq
-l_int|0x0040
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4073,6 +4135,9 @@ l_string|&quot;Tx status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|inw
 c_func
 (paren
@@ -4571,7 +4636,7 @@ c_cond
 (paren
 id|free_count
 OL
-id|TX_RING_SIZE
+id|TX_QUEUE_LEN
 op_div
 l_int|2
 )paren
@@ -4593,7 +4658,7 @@ c_cond
 (paren
 id|free_count
 op_eq
-id|TX_RING_SIZE
+id|TX_QUEUE_LEN
 op_div
 l_int|2
 )paren
@@ -4614,7 +4679,7 @@ c_cond
 (paren
 id|free_count
 OL
-id|TX_RING_SIZE
+id|TX_QUEUE_LEN
 op_minus
 l_int|1
 )paren
@@ -4750,6 +4815,9 @@ id|entry
 comma
 id|ctrl_word
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -4819,12 +4887,18 @@ id|boguscnt
 op_assign
 id|max_interrupt_work
 suffix:semicolon
-id|spin_lock
+r_if
+c_cond
+(paren
+op_logical_neg
+id|spin_trylock
 c_func
 (paren
 op_amp
 id|ep-&gt;lock
 )paren
+)paren
+r_return
 suffix:semicolon
 r_do
 (brace
@@ -4862,13 +4936,16 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: interrupt  interrupt=%#8.8x new &quot;
+l_string|&quot;%s: Interrupt, status=%#8.8x new &quot;
 l_string|&quot;intstat=%#8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|status
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -5174,9 +5251,9 @@ id|cur_tx
 op_minus
 id|dirty_tx
 OL
-id|TX_RING_SIZE
-op_plus
-l_int|2
+id|TX_QUEUE_LEN
+op_minus
+l_int|4
 )paren
 (brace
 multiline_comment|/* The ring is no longer full, clear tbusy. */
@@ -5427,13 +5504,7 @@ l_string|&quot;%s: exiting interrupt, intr_status=%#4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|inl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|INTSTAT
-)paren
+id|status
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -5992,6 +6063,9 @@ l_string|&quot;%s: Shutting down ethercard, status was %2.2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|inl
 c_func
 (paren
@@ -7110,7 +7184,7 @@ op_assign
 (brace
 id|name
 suffix:colon
-id|EPIC100_MODULE_NAME
+l_string|&quot;epic100&quot;
 comma
 id|id_table
 suffix:colon
@@ -7181,5 +7255,4 @@ c_func
 id|epic_cleanup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -Wall -Wstrict-prototypes -O6 -c epic100.c&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -Wall -Wstrict-prototypes -O6 -c epic100.c -o epic_cb.o -I/usr/src/pcmcia/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

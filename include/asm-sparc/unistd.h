@@ -104,7 +104,7 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid             50 /* SunOS calls getgid()                        */
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct                51 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall&t; 52    ENOSYS under SunOS&t;&t;&t;   */
+multiline_comment|/* #define __NR_memory_ordering  52    Linux sparc64 specific&t;&t;&t;   */
 DECL|macro|__NR_getgid32
 mdefine_line|#define __NR_getgid32            53 /* Linux sparc32 specific                      */
 DECL|macro|__NR_ioctl
@@ -302,7 +302,8 @@ multiline_comment|/* #define __NR_getmsg          151    SunOS Specific         
 multiline_comment|/* #define __NR_putmsg          152    SunOS Specific                              */
 DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll               153 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      154    ENOSYS under SunOS                          */
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;154 /* Linux specific&t;&t;&t;&t;   */
 multiline_comment|/* #define __NR_nfssvc          155    SunOS Specific                              */
 multiline_comment|/* #define __NR_getdirentries   156    SunOS Specific                              */
 DECL|macro|__NR_statfs

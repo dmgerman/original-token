@@ -1420,6 +1420,8 @@ DECL|macro|INT_LIMIT
 mdefine_line|#define INT_LIMIT(x)&t;(~((x)1 &lt;&lt; (sizeof(x)*8 - 1)))
 DECL|macro|OFFSET_MAX
 mdefine_line|#define OFFSET_MAX&t;INT_LIMIT(loff_t)
+DECL|macro|OFFT_OFFSET_MAX
+mdefine_line|#define OFFT_OFFSET_MAX&t;INT_LIMIT(off_t)
 macro_line|#endif
 r_extern
 r_struct
@@ -1453,6 +1455,35 @@ r_int
 comma
 r_struct
 id|flock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fcntl_getlk64
+c_func
+(paren
+r_int
+r_int
+comma
+r_struct
+id|flock64
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fcntl_setlk64
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_struct
+id|flock64
 op_star
 )paren
 suffix:semicolon
@@ -2104,6 +2135,25 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * File types&n; */
+DECL|macro|DT_UNKNOWN
+mdefine_line|#define DT_UNKNOWN&t;0
+DECL|macro|DT_FIFO
+mdefine_line|#define DT_FIFO&t;&t;1
+DECL|macro|DT_CHR
+mdefine_line|#define DT_CHR&t;&t;2
+DECL|macro|DT_DIR
+mdefine_line|#define DT_DIR&t;&t;4
+DECL|macro|DT_BLK
+mdefine_line|#define DT_BLK&t;&t;6
+DECL|macro|DT_REG
+mdefine_line|#define DT_REG&t;&t;8
+DECL|macro|DT_LNK
+mdefine_line|#define DT_LNK&t;&t;10
+DECL|macro|DT_SOCK
+mdefine_line|#define DT_SOCK&t;&t;12
+DECL|macro|DT_WHT
+mdefine_line|#define DT_WHT&t;&t;14
 multiline_comment|/*&n; * This is the &quot;filldir&quot; function type, used by readdir() to let&n; * the kernel specify what kind of dirent layout it wants to have.&n; * This allows the kernel to read directories into kernel space or&n; * to have different dirent layouts depending on the binary type.&n; */
 DECL|typedef|filldir_t
 r_typedef
@@ -2125,6 +2175,8 @@ comma
 id|off_t
 comma
 id|ino_t
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|struct|block_device_operations
@@ -3395,22 +3447,6 @@ id|sys_close
 c_func
 (paren
 r_int
-r_int
-)paren
-suffix:semicolon
-multiline_comment|/* yes, it&squot;s really unsigned */
-r_extern
-r_int
-id|do_close
-c_func
-(paren
-r_struct
-id|files_struct
-op_star
-comma
-r_int
-r_int
-comma
 r_int
 )paren
 suffix:semicolon

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/block_dev.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -1853,6 +1854,7 @@ suffix:semicolon
 )brace
 DECL|function|bdev_init
 r_void
+id|__init
 id|bdev_init
 c_func
 (paren
@@ -1925,7 +1927,7 @@ id|bdev_cachep
 id|panic
 c_func
 (paren
-l_string|&quot;cannot create bdev slab cache&quot;
+l_string|&quot;Cannot create bdev_cache SLAB cache&quot;
 )paren
 suffix:semicolon
 )brace

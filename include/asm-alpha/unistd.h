@@ -591,6 +591,8 @@ DECL|macro|__NR_mincore
 mdefine_line|#define __NR_mincore&t;&t;&t;375
 DECL|macro|__NR_pciconfig_iobase
 mdefine_line|#define __NR_pciconfig_iobase&t;&t;376
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;&t;377
 macro_line|#if defined(__GNUC__)
 DECL|macro|_syscall_return
 mdefine_line|#define _syscall_return(type)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (_sc_err ? errno = _sc_ret, _sc_ret = -1L : 0), (type) _sc_ret

@@ -103,6 +103,9 @@ comma
 id|off_t
 comma
 id|ino_t
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|typedef|nfsd_dirop_t

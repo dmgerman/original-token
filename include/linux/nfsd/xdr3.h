@@ -1308,6 +1308,9 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int
@@ -1331,6 +1334,9 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* _LINUX_NFSD_XDR3_H */

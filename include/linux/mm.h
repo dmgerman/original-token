@@ -1071,14 +1071,6 @@ suffix:semicolon
 multiline_comment|/* mmap.c */
 r_extern
 r_void
-id|vma_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|merge_segments
 c_func
 (paren

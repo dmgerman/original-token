@@ -53,6 +53,7 @@ macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;control.h&quot;
 macro_line|#include &quot;cirrus.h&quot;
 macro_line|#include &quot;rioioctl.h&quot;
+macro_line|#include &quot;rio_linux.h&quot;
 DECL|macro|bcopy
 macro_line|#undef bcopy
 DECL|macro|bcopy
@@ -106,14 +107,11 @@ op_logical_neg
 id|p-&gt;RIOPortp
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Allocating and setting up driver data structures&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|RIOAllocDataStructs
@@ -218,16 +216,13 @@ op_amp
 id|ISA_BUS
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;initialising card %d (ISA)&bslash;n&quot;
 comma
 id|p-&gt;RIONumHosts
-)paren
 )paren
 suffix:semicolon
 id|RIOISAinit
@@ -241,16 +236,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;initialising card %d (PCI)&bslash;n&quot;
 comma
 id|p-&gt;RIONumHosts
-)paren
 )paren
 suffix:semicolon
 id|RIOPCIinit
@@ -262,16 +254,13 @@ id|RIO_PCI_DEFAULT_MODE
 )paren
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Total hosts initialised so far : %d&bslash;n&quot;
 comma
 id|p-&gt;RIONumHosts
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef FUTURE_RELEASE
@@ -358,16 +347,13 @@ op_star
 id|p-&gt;RIONumHosts
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Set interrupt handler, intr_tid = 0x%x&bslash;n&quot;
 comma
 id|p-&gt;intr_tid
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -394,14 +380,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIODoAT failed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOFailed
@@ -568,14 +551,11 @@ op_minus
 l_int|1
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Couldn&squot;t map the board in!&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -644,12 +624,10 @@ comma
 id|virtAddr
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Couldn&squot;t match the signature 0x%x 0x%x!&bslash;n&quot;
 comma
 (paren
@@ -658,7 +636,6 @@ r_int
 id|cardp
 comma
 id|off
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -994,12 +971,10 @@ op_lshift
 l_int|24
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Uniquenum 0x%x&bslash;n&quot;
 comma
 id|p-&gt;RIOHosts
@@ -1009,21 +984,17 @@ id|p-&gt;RIONumHosts
 dot
 id|UniqueNum
 )paren
-)paren
 suffix:semicolon
 id|p-&gt;RIONumHosts
 op_increment
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Tests Passed at 0x%x&bslash;n&quot;
 comma
 id|Base
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1074,14 +1045,9 @@ id|McaTpFastLinks
 suffix:colon
 id|McaTpSlowLinks
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;RIOMCAinit(%d)&bslash;n&quot;
 comma
@@ -1140,14 +1106,9 @@ op_eq
 id|McaRIOId
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Potential MCA card in slot %d&bslash;n&quot;
 comma
@@ -1191,14 +1152,9 @@ c_func
 id|McaIrqEnable
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Ivec is %x&bslash;n&quot;
 comma
@@ -1216,14 +1172,9 @@ id|McaIrqMask
 r_case
 id|McaIrq9
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ9&bslash;n&quot;
 )paren
@@ -1233,14 +1184,9 @@ suffix:semicolon
 r_case
 id|McaIrq3
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ3&bslash;n&quot;
 )paren
@@ -1250,14 +1196,9 @@ suffix:semicolon
 r_case
 id|McaIrq4
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ4&bslash;n&quot;
 )paren
@@ -1267,14 +1208,9 @@ suffix:semicolon
 r_case
 id|McaIrq7
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ7&bslash;n&quot;
 )paren
@@ -1284,14 +1220,9 @@ suffix:semicolon
 r_case
 id|McaIrq10
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ10&bslash;n&quot;
 )paren
@@ -1301,14 +1232,9 @@ suffix:semicolon
 r_case
 id|McaIrq11
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ11&bslash;n&quot;
 )paren
@@ -1318,14 +1244,9 @@ suffix:semicolon
 r_case
 id|McaIrq12
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ12&bslash;n&quot;
 )paren
@@ -1335,14 +1256,9 @@ suffix:semicolon
 r_case
 id|McaIrq15
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;IRQ15&bslash;n&quot;
 )paren
@@ -1363,14 +1279,9 @@ op_ne
 id|McaCardEnable
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;McaCardEnable not set - setting!&bslash;n&quot;
 )paren
@@ -1387,20 +1298,13 @@ id|McaCardEnable
 suffix:semicolon
 )brace
 r_else
-(brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;McaCardEnable already set&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t;** Convert the IRQ enable mask into something useful&n;&t;&t;*/
 id|Ivec
 op_assign
@@ -1412,14 +1316,9 @@ id|McaIrqMask
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;** Find the physical address&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;inb(McaMemory) is %x&bslash;n&quot;
 comma
@@ -1442,14 +1341,9 @@ id|McaMemory
 )paren
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;MCA card has Ivec %d Addr %x&bslash;n&quot;
 comma
@@ -1489,29 +1383,22 @@ op_minus
 l_int|1
 )paren
 (brace
-id|rio_dprint
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Couldn&squot;t map %d bytes at %x&bslash;n&quot;
 comma
 id|RIO_MCA_MEM_SIZE
 comma
 id|Paddr
-)paren
 suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Board mapped to vaddr 0x%x&bslash;n&quot;
 comma
@@ -1537,26 +1424,16 @@ op_eq
 id|RIO_SUCCESS
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Board has passed test&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Slot %d. Type %d. Paddr 0x%x. Caddr 0x%x. Mode 0x%x.&bslash;n&quot;
 comma
@@ -1767,14 +1644,9 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;&t;** It failed the test, so ignore it.&n;&t;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_FAIL
 comma
 l_string|&quot;TEST FAILED&bslash;n&quot;
 )paren
@@ -1793,14 +1665,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Slot %d - Paddr zero!&bslash;n&quot;
 comma
@@ -1811,14 +1678,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Slot %d NOT RIO&bslash;n&quot;
 comma
@@ -1836,14 +1698,9 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Slot %d NOT RIO&bslash;n&quot;
 comma
@@ -1913,14 +1770,9 @@ c_cond
 id|EISADone
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;RIOEISAinit() - already done, return.&bslash;n&quot;
 )paren
@@ -1932,14 +1784,9 @@ suffix:semicolon
 id|EISADone
 op_increment
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;RIOEISAinit()&bslash;n&quot;
 )paren
@@ -1982,7 +1829,6 @@ comma
 id|EISA_PRODUCT_IDENT_LO
 )paren
 suffix:semicolon
-multiline_comment|/* rio_dprint(RIO_DEBUG_INIT, NULL,DBG_INIT, &quot;Check EISA slot %d, ID=%x&bslash;n&quot;,EisaSlot,Ident); */
 r_if
 c_cond
 (paren
@@ -1991,14 +1837,9 @@ op_eq
 id|RIO_EISA_IDENT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Found Specialix product&bslash;n&quot;
 )paren
@@ -2017,14 +1858,9 @@ op_ne
 id|RIO_EISA_PRODUCT_CODE
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Not Specialix RIO - Product number %x&bslash;n&quot;
 comma
@@ -2042,14 +1878,9 @@ suffix:semicolon
 multiline_comment|/* next slot */
 )brace
 multiline_comment|/*&n;&t;&t;** Its a Specialix RIO!&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;RIO Revision %d&bslash;n&quot;
 comma
@@ -2123,14 +1954,9 @@ id|EISA_INTERRUPT_MASK
 r_case
 id|EISA_IRQ_3
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 3&bslash;n&quot;
 )paren
@@ -2140,14 +1966,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_4
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 4&bslash;n&quot;
 )paren
@@ -2157,14 +1978,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_5
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 5&bslash;n&quot;
 )paren
@@ -2174,14 +1990,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_6
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 6&bslash;n&quot;
 )paren
@@ -2191,14 +2002,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_7
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 7&bslash;n&quot;
 )paren
@@ -2208,14 +2014,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_9
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 9&bslash;n&quot;
 )paren
@@ -2225,14 +2026,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_10
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 10&bslash;n&quot;
 )paren
@@ -2242,14 +2038,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_11
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 11&bslash;n&quot;
 )paren
@@ -2259,14 +2050,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_12
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 12&bslash;n&quot;
 )paren
@@ -2276,14 +2062,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_14
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 14&bslash;n&quot;
 )paren
@@ -2293,14 +2074,9 @@ suffix:semicolon
 r_case
 id|EISA_IRQ_15
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA IRQ 15&bslash;n&quot;
 )paren
@@ -2310,14 +2086,9 @@ suffix:semicolon
 r_case
 id|EISA_POLLED
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA POLLED&bslash;n&quot;
 )paren
@@ -2326,8 +2097,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
@@ -2507,14 +2277,9 @@ c_func
 id|Ivec
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA host in slot %d has Ivec 0x%x&bslash;n&quot;
 comma
@@ -2550,14 +2315,9 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;EISA card has Ivec %d Addr %x&bslash;n&quot;
 comma
@@ -2574,16 +2334,9 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
-op_or
-id|DBG_FAIL
 comma
 l_string|&quot;Board in slot %d configured for address zero!&bslash;n&quot;
 comma
@@ -2594,14 +2347,9 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;** Tell the memory mapper that we want to talk to it&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;About to map EISA card &bslash;n&quot;
 )paren
@@ -2624,14 +2372,9 @@ op_minus
 l_int|1
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_FAIL
 comma
 l_string|&quot;Couldn&squot;t map %d bytes at %x&bslash;n&quot;
 comma
@@ -2643,14 +2386,9 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Board mapped to vaddr 0x%x&bslash;n&quot;
 comma
@@ -2676,26 +2414,16 @@ op_eq
 id|RIO_SUCCESS
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Board has passed test&bslash;n&quot;
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Slot %d. Ivec %d. Type %d. Paddr 0x%x. Caddr 0x%x. Mode 0x%x.&bslash;n&quot;
 comma
@@ -2992,14 +2720,9 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;** It failed the test, so ignore it.&n;&t;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_FAIL
 comma
 l_string|&quot;TEST FAILED&bslash;n&quot;
 )paren
@@ -3289,16 +3012,13 @@ r_int
 id|Handle
 suffix:semicolon
 multiline_comment|/* Handle to Virtual memory allocated for current PCI host */
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Search for a RIO PCI card - start at slot %d&bslash;n&quot;
 comma
 id|slot
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Initialise the search status&n;&t;*/
@@ -3322,16 +3042,13 @@ id|RIO_SUCCESS
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Currently testing slot %d&bslash;n&quot;
 comma
 id|slot
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -3402,14 +3119,11 @@ l_int|0xffff0000
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Goofed up slot&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* what! */
@@ -3444,12 +3158,10 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;PCI Host at 0x%x, Intr %d&bslash;n&quot;
 comma
 (paren
@@ -3458,7 +3170,6 @@ r_int
 id|Paddr
 comma
 id|Ivec
-)paren
 )paren
 suffix:semicolon
 id|Handle
@@ -3483,12 +3194,10 @@ op_minus
 l_int|1
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Couldn&squot;t map %d bytes at 0x%x&bslash;n&quot;
 comma
 id|RIO_PCI_MEM_SIZE
@@ -3497,7 +3206,6 @@ comma
 r_int
 )paren
 id|Paddr
-)paren
 )paren
 suffix:semicolon
 id|slot
@@ -3564,18 +3272,15 @@ op_eq
 id|RIO_SUCCESS
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
 (paren
 l_string|&quot;Board has passed test&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
@@ -3587,7 +3292,6 @@ comma
 id|Caddr
 comma
 id|Mode
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;** Board has passed its scrub test. Fill in all the&n;&t;&t;&t;&t;** transient stuff.&n;&t;&t;&t;&t;*/
@@ -3855,12 +3559,10 @@ op_lshift
 l_int|24
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Unique no 0x%x.&bslash;n&quot;
 comma
 id|p-&gt;RIOHosts
@@ -3869,7 +3571,6 @@ id|p-&gt;RIONumHosts
 )braket
 dot
 id|UniqueNum
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOLastPCISearch
@@ -3893,16 +3594,13 @@ op_ge
 id|MAX_PCI_SLOT
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;All %d PCI slots have tested for RIO cards !!!&bslash;n&quot;
 comma
 id|MAX_PCI_SLOT
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3934,14 +3632,9 @@ id|host
 op_increment
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
-comma
-l_int|NULL
-comma
-id|DBG_INIT
 comma
 l_string|&quot;Stop host %d&bslash;n&quot;
 comma
@@ -4098,12 +3791,10 @@ suffix:semicolon
 r_int
 id|nbanks
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Reset host type=%d, DpRam=0x%x, slot=%d&bslash;n&quot;
 comma
 id|type
@@ -4114,7 +3805,6 @@ r_int
 id|DpRam
 comma
 id|slot
-)paren
 )paren
 suffix:semicolon
 id|RIOHostReset
@@ -4128,14 +3818,11 @@ id|slot
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;** Scrub the memory. This comes in several banks:&n;&t;** DPsram1&t;- 7000h bytes&n;&t;** DPsram2&t;- 200h  bytes&n;&t;** DPsram3&t;- 7000h bytes&n;&t;** scratch&t;- 1000h bytes&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Setup ram/size arrays&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|size
@@ -4254,12 +3941,10 @@ op_eq
 l_int|3
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Memory: 0x%x(0x%x), 0x%x(0x%x), 0x%x(0x%x)&bslash;n&quot;
 comma
 (paren
@@ -4301,17 +3986,14 @@ id|size
 l_int|2
 )braket
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: 0x%x(0x%x), 0x%x(0x%x), 0x%x(0x%x), 0x%x(0x%x)&bslash;n&quot;
 comma
 (paren
@@ -4365,7 +4047,6 @@ id|size
 (braket
 l_int|3
 )braket
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -4426,18 +4107,15 @@ op_eq
 id|RIO_FAIL
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: RIOScrub band %d, op %d failed&bslash;n&quot;
 comma
 id|bank
 comma
 id|op
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -4446,14 +4124,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;Test completed&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -4617,12 +4292,10 @@ op_ne
 id|oldbyte
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Byte Pre Check 1: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -4636,7 +4309,6 @@ id|ram
 (braket
 id|off
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4678,12 +4350,10 @@ op_ne
 id|oldword
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Word Pre Check: WORD at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -4701,14 +4371,11 @@ id|ram
 id|off
 )braket
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Word Pre Check: BYTE at offset 0x%x is %x BYTE at offset 0x%x is %x&bslash;n&quot;
 comma
 id|off
@@ -4735,7 +4402,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4780,12 +4446,10 @@ id|oldbyte
 )paren
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Byte Pre Check 2: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -4799,7 +4463,6 @@ id|ram
 (braket
 id|off
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4833,12 +4496,10 @@ op_ne
 id|invbyte
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Byte Inv Check: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -4852,7 +4513,6 @@ id|ram
 (braket
 id|off
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4895,12 +4555,10 @@ op_ne
 id|invword
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Word Inv Check: WORD at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -4918,14 +4576,11 @@ id|ram
 id|off
 )braket
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Word Inv Check: BYTE at offset 0x%x is %x BYTE at offset 0x%x is %x&bslash;n&quot;
 comma
 id|off
@@ -4952,7 +4607,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -4990,12 +4644,10 @@ op_ne
 id|newword
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Post Word Check 1: WORD at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5013,14 +4665,11 @@ id|ram
 id|off
 )braket
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Post Word Check 1: BYTE at offset 0x%x is %x BYTE at offset 0x%x is %x&bslash;n&quot;
 comma
 id|off
@@ -5047,7 +4696,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5087,12 +4735,10 @@ op_ne
 id|newbyte
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Post Byte Check: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5106,7 +4752,6 @@ id|ram
 (braket
 id|off
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5148,12 +4793,10 @@ op_ne
 id|newword
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Post Word Check 2: WORD at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5171,14 +4814,11 @@ id|ram
 id|off
 )braket
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: Post Word Check 2: BYTE at offset 0x%x is %x BYTE at offset 0x%x is %x&bslash;n&quot;
 comma
 id|off
@@ -5205,7 +4845,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5299,12 +4938,10 @@ op_ne
 id|swapword
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: SwapWord Check 1: WORD at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5324,14 +4961,11 @@ id|off
 )braket
 )paren
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: SwapWord Check 1: BYTE at offset 0x%x is %x BYTE at offset 0x%x is %x&bslash;n&quot;
 comma
 id|off
@@ -5358,7 +4992,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5414,12 +5047,10 @@ op_ne
 id|newbyte
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: SwapWord Check 2: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5433,7 +5064,6 @@ id|ram
 (braket
 id|off
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5458,12 +5088,10 @@ op_ne
 id|invbyte
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: SwapWord Check 2: BYTE at offset 0x%x should have been=%x, was=%x&bslash;n&quot;
 comma
 id|off
@@ -5481,7 +5109,6 @@ id|off
 op_plus
 l_int|1
 )braket
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -5854,14 +5481,11 @@ op_logical_neg
 id|p-&gt;RIOPortp
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: No memory for port structures&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOFailed
@@ -5884,22 +5508,17 @@ op_star
 id|RIO_PORTS
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: allocated and cleared memory for port structs&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;First RIO port struct @0x%x, size=0x%x bytes&bslash;n&quot;
 comma
 (paren
@@ -5911,7 +5530,6 @@ r_sizeof
 (paren
 r_struct
 id|Port
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -6022,14 +5640,11 @@ op_logical_neg
 id|p-&gt;RIOHosts
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: No memory for host structures&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|p-&gt;RIOFailed
@@ -6052,22 +5667,17 @@ op_star
 id|RIO_HOSTS
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO-init: allocated and cleared memory for host structs&bslash;n&quot;
 )paren
-)paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;First RIO host struct @0x%x, size=0x%x bytes&bslash;n&quot;
 comma
 (paren
@@ -6079,7 +5689,6 @@ r_sizeof
 (paren
 r_struct
 id|Host
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -6548,18 +6157,15 @@ suffix:semicolon
 r_int
 id|host
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIO : Release: %s ID: %s&bslash;n&quot;
 comma
 id|RIORelease
 comma
 id|RIORelID
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -6570,14 +6176,11 @@ op_eq
 l_int|0
 )paren
 (brace
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;&bslash;nNo Hosts configured&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -6619,16 +6222,13 @@ id|HostP-&gt;Type
 r_case
 id|RIO_AT
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;AT BUS : found the card at 0x%x&bslash;n&quot;
 comma
 id|HostP-&gt;PaddrP
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -6939,16 +6539,13 @@ id|Slot
 suffix:semicolon
 (brace
 multiline_comment|/*&n;&t;** Reset the Tpu&n;&t;*/
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIOHostReset: type 0x%x&quot;
 comma
 id|Type
-)paren
 )paren
 suffix:semicolon
 r_switch
@@ -6960,14 +6557,11 @@ id|Type
 r_case
 id|RIO_AT
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot; (RIO_AT)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WBYTE
@@ -7001,14 +6595,11 @@ id|rio_udelay
 l_int|3
 )paren
 suffix:semicolon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot;RIOHostReset: Don&squot;t know if it worked. Try reset again&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|WBYTE
@@ -7162,14 +6753,11 @@ macro_line|#endif
 r_case
 id|RIO_PCI
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot; (RIO_PCI)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 id|DpRamP-&gt;DpControl
@@ -7213,14 +6801,11 @@ suffix:semicolon
 macro_line|#endif
 r_default
 suffix:colon
-id|rio_dprint
-c_func
+id|rio_dprintk
 (paren
 id|RIO_DEBUG_INIT
 comma
-(paren
 l_string|&quot; (UNKNOWN)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_break

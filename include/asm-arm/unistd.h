@@ -422,6 +422,8 @@ DECL|macro|__NR_setfsuid32
 mdefine_line|#define __NR_setfsuid32&t;&t;&t;(__NR_SYSCALL_BASE+215)
 DECL|macro|__NR_setfsgid32
 mdefine_line|#define __NR_setfsgid32&t;&t;&t;(__NR_SYSCALL_BASE+216)
+DECL|macro|__NR_getdents64
+mdefine_line|#define __NR_getdents64&t;&t;&t;(__NR_SYSCALL_BASE+217)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1

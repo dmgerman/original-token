@@ -672,6 +672,9 @@ id|offset
 comma
 id|ino_t
 id|ino
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int
