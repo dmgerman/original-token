@@ -175,7 +175,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * Function prototypes.&n; */
 r_int
-id|svc_create_socket
+id|svc_makesock
 c_func
 (paren
 r_struct
@@ -184,9 +184,8 @@ op_star
 comma
 r_int
 comma
-r_struct
-id|sockaddr_in
-op_star
+r_int
+r_int
 )paren
 suffix:semicolon
 r_void

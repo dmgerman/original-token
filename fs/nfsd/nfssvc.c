@@ -26,10 +26,10 @@ DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_SVC
 DECL|macro|NFSD_BUFSIZE
 mdefine_line|#define NFSD_BUFSIZE&t;&t;(1024 + NFSSVC_MAXBLKSIZE)
-DECL|macro|BLOCKABLE_SIGS
-mdefine_line|#define BLOCKABLE_SIGS&t;(~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
+DECL|macro|ALLOWED_SIGS
+mdefine_line|#define ALLOWED_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGSTOP))
 DECL|macro|SHUTDOWN_SIGS
-mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL)|sigmask(SIGINT)|sigmask(SIGTERM))
+mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGTERM))
 r_extern
 r_struct
 id|svc_program
@@ -57,67 +57,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Make a socket for nfsd&n; */
-r_static
-r_int
-DECL|function|nfsd_makesock
-id|nfsd_makesock
-c_func
-(paren
-r_struct
-id|svc_serv
-op_star
-id|serv
-comma
-r_int
-id|protocol
-comma
-r_int
-r_int
-id|port
-)paren
-(brace
-r_struct
-id|sockaddr_in
-id|sin
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;nfsd: creating socket proto = %d&bslash;n&quot;
-comma
-id|protocol
-)paren
-suffix:semicolon
-id|sin.sin_family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|sin.sin_addr.s_addr
-op_assign
-id|INADDR_ANY
-suffix:semicolon
-id|sin.sin_port
-op_assign
-id|htons
-c_func
-(paren
-id|port
-)paren
-suffix:semicolon
-r_return
-id|svc_create_socket
-c_func
-(paren
-id|serv
-comma
-id|protocol
-comma
-op_amp
-id|sin
-)paren
-suffix:semicolon
-)brace
 r_int
 DECL|function|nfsd_svc
 id|nfsd_svc
@@ -145,6 +84,11 @@ c_func
 l_string|&quot;nfsd: creating service&bslash;n&quot;
 )paren
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -152,9 +96,8 @@ id|nrservs
 OL
 l_int|0
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -166,6 +109,11 @@ id|NFSD_MAXSERVS
 id|nrservs
 op_assign
 id|NFSD_MAXSERVS
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|serv
 op_assign
@@ -187,9 +135,8 @@ id|serv
 op_eq
 l_int|NULL
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -197,7 +144,7 @@ c_cond
 (paren
 id|error
 op_assign
-id|nfsd_makesock
+id|svc_makesock
 c_func
 (paren
 id|serv
@@ -213,7 +160,7 @@ op_logical_or
 (paren
 id|error
 op_assign
-id|nfsd_makesock
+id|svc_makesock
 c_func
 (paren
 id|serv
@@ -265,6 +212,8 @@ id|serv
 )paren
 suffix:semicolon
 multiline_comment|/* Release server */
+id|out
+suffix:colon
 r_return
 id|error
 suffix:semicolon
@@ -294,13 +243,13 @@ id|oldumask
 comma
 id|err
 suffix:semicolon
+multiline_comment|/* Lock module and set up kernel thread */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
 )paren
-suffix:semicolon
-multiline_comment|/* Lock module and set up kernel thread */
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|exit_mm
 c_func
@@ -329,15 +278,6 @@ op_assign
 id|current-&gt;fs-&gt;umask
 suffix:semicolon
 multiline_comment|/* Set umask to 0.  */
-id|siginitsetinv
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-comma
-id|SHUTDOWN_SIGS
-)paren
-suffix:semicolon
 id|current-&gt;fs-&gt;umask
 op_assign
 l_int|0
@@ -361,6 +301,36 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+multiline_comment|/* Block all but the shutdown signals */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|siginitsetinv
+c_func
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+id|SHUTDOWN_SIGS
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Find a socket with data available and call its&n;&t;&t; * recvfrom routine.&n;&t;&t; */
 r_while
 c_loop
@@ -445,7 +415,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Process request with all signals blocked.  */
+multiline_comment|/* Process request with signals blocked.  */
 id|spin_lock_irq
 c_func
 (paren
@@ -459,8 +429,7 @@ c_func
 op_amp
 id|current-&gt;blocked
 comma
-op_complement
-id|BLOCKABLE_SIGS
+id|ALLOWED_SIGS
 )paren
 suffix:semicolon
 id|recalc_sigpending
@@ -482,35 +451,6 @@ c_func
 id|serv
 comma
 id|rqstp
-)paren
-suffix:semicolon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-id|siginitsetinv
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-comma
-id|SHUTDOWN_SIGS
-)paren
-suffix:semicolon
-id|recalc_sigpending
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 )brace

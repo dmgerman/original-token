@@ -235,13 +235,6 @@ c_func
 id|svc_create
 )paren
 suffix:semicolon
-DECL|variable|svc_create_socket
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|svc_create_socket
-)paren
-suffix:semicolon
 DECL|variable|svc_create_thread
 id|EXPORT_SYMBOL
 c_func
@@ -289,6 +282,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|svc_wake_up
+)paren
+suffix:semicolon
+DECL|variable|svc_makesock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|svc_makesock
 )paren
 suffix:semicolon
 multiline_comment|/* RPC statistics */

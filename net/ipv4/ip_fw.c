@@ -87,6 +87,12 @@ id|ip_fw
 op_star
 id|ip_acct_chain
 suffix:semicolon
+DECL|variable|ip_masq_chain
+r_struct
+id|ip_fw
+op_star
+id|ip_masq_chain
+suffix:semicolon
 DECL|variable|chains
 r_static
 r_struct
@@ -109,6 +115,9 @@ id|ip_fw_out_chain
 comma
 op_amp
 id|ip_acct_chain
+comma
+op_amp
+id|ip_masq_chain
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_IP_ACCT || CONFIG_IP_FIREWALL */

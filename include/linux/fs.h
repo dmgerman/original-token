@@ -582,6 +582,7 @@ macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_i.h&gt;
+macro_line|#include &lt;linux/ntfs_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
 macro_line|#include &lt;linux/umsdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
@@ -853,6 +854,11 @@ DECL|member|hpfs_i
 r_struct
 id|hpfs_inode_info
 id|hpfs_i
+suffix:semicolon
+DECL|member|ntfs_i
+r_struct
+id|ntfs_inode_info
+id|ntfs_i
 suffix:semicolon
 DECL|member|msdos_i
 r_struct
@@ -1512,6 +1518,7 @@ suffix:semicolon
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_sb.h&gt;
+macro_line|#include &lt;linux/ntfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/msdos_fs_sb.h&gt;
 macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
@@ -1636,6 +1643,11 @@ DECL|member|hpfs_sb
 r_struct
 id|hpfs_sb_info
 id|hpfs_sb
+suffix:semicolon
+DECL|member|ntfs_sb
+r_struct
+id|ntfs_sb_info
+id|ntfs_sb
 suffix:semicolon
 DECL|member|msdos_sb
 r_struct

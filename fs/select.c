@@ -716,10 +716,6 @@ suffix:semicolon
 )brace
 id|out_nowait
 suffix:colon
-id|current-&gt;timeout
-op_assign
-l_int|0
-suffix:semicolon
 id|unlock_kernel
 c_func
 (paren

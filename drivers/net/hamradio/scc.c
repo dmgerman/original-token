@@ -53,10 +53,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;stdlib.h&gt;
-macro_line|#include &lt;stdio.h&gt;
-macro_line|#include &lt;ctype.h&gt;
-macro_line|#include &lt;time.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#ifdef MODULE

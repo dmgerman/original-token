@@ -3008,10 +3008,18 @@ id|p
 )paren
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;call_verify: auth check failed&bslash;n&quot;
+)paren
+suffix:semicolon
 r_goto
 id|garbage
 suffix:semicolon
 multiline_comment|/* bad verifier, retry */
+)brace
 r_switch
 c_cond
 (paren
@@ -3068,12 +3076,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-l_int|0
-op_logical_and
 id|task-&gt;tk_garb_retry
 op_decrement
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: garbage, retrying %4d&bslash;n&quot;
+comma
+id|task-&gt;tk_pid
+)paren
+suffix:semicolon
 id|task-&gt;tk_action
 op_assign
 id|call_encode

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -19,12 +18,13 @@ macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/sunrpc/svcsock.h&gt;
 macro_line|#include &lt;linux/lockd/lockd.h&gt;
+macro_line|#include &lt;linux/nfs.h&gt;
 DECL|macro|NLMDBG_FACILITY
 mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_SVC
 DECL|macro|LOCKD_BUFSIZE
 mdefine_line|#define LOCKD_BUFSIZE&t;&t;(1024 + NLMSSVC_XDRSIZE)
-DECL|macro|BLOCKABLE_SIGS
-mdefine_line|#define BLOCKABLE_SIGS&t;&t;(~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
+DECL|macro|ALLOWED_SIGS
+mdefine_line|#define ALLOWED_SIGS&t;&t;(sigmask(SIGKILL) | sigmask(SIGSTOP))
 r_extern
 r_struct
 id|svc_program
@@ -400,6 +400,10 @@ id|rqstp-&gt;rq_addr.sin_addr.s_addr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Look up the NFS client handle. The handle is needed for&n;&t;&t; * all but the GRANTED callback RPCs.&n;&t;&t; */
+id|rqstp-&gt;rq_client
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -425,14 +429,7 @@ id|rqstp-&gt;rq_addr
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-id|rqstp-&gt;rq_client
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/* Process request with all signals blocked.  */
+multiline_comment|/* Process request with signals blocked.  */
 id|spin_lock_irq
 c_func
 (paren
@@ -446,8 +443,7 @@ c_func
 op_amp
 id|current-&gt;blocked
 comma
-op_complement
-id|BLOCKABLE_SIGS
+id|ALLOWED_SIGS
 )paren
 suffix:semicolon
 id|recalc_sigpending
@@ -565,67 +561,6 @@ multiline_comment|/* Release module */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Make a socket for lockd&n; * FIXME: Move this to net/sunrpc/svc.c so that we can share this with nfsd.&n; */
-r_static
-r_int
-DECL|function|lockd_makesock
-id|lockd_makesock
-c_func
-(paren
-r_struct
-id|svc_serv
-op_star
-id|serv
-comma
-r_int
-id|protocol
-comma
-r_int
-r_int
-id|port
-)paren
-(brace
-r_struct
-id|sockaddr_in
-id|sin
-suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;lockd: creating socket proto = %d&bslash;n&quot;
-comma
-id|protocol
-)paren
-suffix:semicolon
-id|sin.sin_family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|sin.sin_addr.s_addr
-op_assign
-id|INADDR_ANY
-suffix:semicolon
-id|sin.sin_port
-op_assign
-id|htons
-c_func
-(paren
-id|port
-)paren
-suffix:semicolon
-r_return
-id|svc_create_socket
-c_func
-(paren
-id|serv
-comma
-id|protocol
-comma
-op_amp
-id|sin
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Bring up the lockd process if it&squot;s not already up.&n; */
 r_int
 DECL|function|lockd_up
@@ -722,7 +657,7 @@ c_cond
 (paren
 id|error
 op_assign
-id|lockd_makesock
+id|svc_makesock
 c_func
 (paren
 id|serv
@@ -738,7 +673,7 @@ op_logical_or
 (paren
 id|error
 op_assign
-id|lockd_makesock
+id|svc_makesock
 c_func
 (paren
 id|serv
@@ -891,12 +826,14 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Wait for the lockd process to exit, but since we&squot;re holding&n;&t; * the lockd semaphore, we can&squot;t wait around forever ...&n;&t; */
+id|current-&gt;sigpending
+op_assign
+l_int|0
+suffix:semicolon
 id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
-l_int|5
-op_star
 id|HZ
 suffix:semicolon
 id|interruptible_sleep_on
@@ -927,6 +864,26 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 id|up

@@ -598,9 +598,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|sigset_t
-id|old_set
-suffix:semicolon
 r_int
 id|i
 comma
@@ -633,50 +630,16 @@ comma
 id|port
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: What had been going on before was saving and restoring &n;&t;   current-&gt;signal.  This as opposed to blocking signals?  Do we&n;&t;   still need them to wake up out of schedule?  In any case it &n;&t;   isn&squot;t playing nice and a better way should be found.  */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|port
 )paren
-(brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|old_set
+id|current-&gt;sigpending
 op_assign
-id|current-&gt;blocked
+l_int|0
 suffix:semicolon
-id|sigfillset
-c_func
-(paren
-op_amp
-id|current-&gt;blocked
-)paren
-suffix:semicolon
-id|recalc_sigpending
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -763,10 +726,6 @@ id|current-&gt;sigmask_lock
 comma
 id|flags
 )paren
-suffix:semicolon
-id|current-&gt;blocked
-op_assign
-id|old_set
 suffix:semicolon
 id|recalc_sigpending
 c_func
@@ -880,7 +839,7 @@ OL
 l_int|5
 )paren
 r_goto
-id|dropit
+id|err_short_len
 suffix:semicolon
 id|dir
 op_assign
@@ -928,16 +887,10 @@ id|dir
 op_ne
 l_int|0
 )paren
-(brace
 multiline_comment|/* direction != CALL */
-id|serv-&gt;sv_stats-&gt;rpcbadfmt
-op_increment
-suffix:semicolon
 r_goto
-id|dropit
+id|err_bad_dir
 suffix:semicolon
-multiline_comment|/* drop request */
-)brace
 r_if
 c_cond
 (paren
@@ -1080,7 +1033,7 @@ op_logical_neg
 id|procp-&gt;pc_func
 )paren
 r_goto
-id|err_unknown
+id|err_bad_proc
 suffix:semicolon
 id|rqstp-&gt;rq_server
 op_assign
@@ -1286,9 +1239,14 @@ r_if
 c_cond
 (paren
 id|procp-&gt;pc_encode
-op_ne
+op_eq
 l_int|NULL
 )paren
+r_goto
+id|dropit
+suffix:semicolon
+id|sendit
+suffix:colon
 r_return
 id|svc_send
 c_func
@@ -1313,6 +1271,41 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+id|err_short_len
+suffix:colon
+macro_line|#ifdef RPC_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;svc: short len %d, dropping request&bslash;n&quot;
+comma
+id|argp-&gt;len
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|dropit
+suffix:semicolon
+multiline_comment|/* drop request */
+id|err_bad_dir
+suffix:colon
+macro_line|#ifdef RPC_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;svc: bad direction %d, dropping request&bslash;n&quot;
+comma
+id|dir
+)paren
+suffix:semicolon
+macro_line|#endif
+id|serv-&gt;sv_stats-&gt;rpcbadfmt
+op_increment
+suffix:semicolon
+r_goto
+id|dropit
+suffix:semicolon
+multiline_comment|/* drop request */
 id|err_bad_rpc
 suffix:colon
 id|serv-&gt;sv_stats-&gt;rpcbadfmt
@@ -1354,7 +1347,7 @@ id|xdr_two
 )paren
 suffix:semicolon
 r_goto
-id|error
+id|sendit
 suffix:semicolon
 id|err_bad_auth
 suffix:colon
@@ -1401,7 +1394,7 @@ id|auth_stat
 suffix:semicolon
 multiline_comment|/* status */
 r_goto
-id|error
+id|sendit
 suffix:semicolon
 id|err_bad_prog
 suffix:colon
@@ -1429,7 +1422,7 @@ id|rpc_prog_unavail
 )paren
 suffix:semicolon
 r_goto
-id|error
+id|sendit
 suffix:semicolon
 id|err_bad_vers
 suffix:colon
@@ -1479,9 +1472,9 @@ id|progp-&gt;pg_hivers
 )paren
 suffix:semicolon
 r_goto
-id|error
+id|sendit
 suffix:semicolon
-id|err_unknown
+id|err_bad_proc
 suffix:colon
 macro_line|#ifdef RPC_PARANOIA
 id|printk
@@ -1505,7 +1498,7 @@ id|rpc_proc_unavail
 )paren
 suffix:semicolon
 r_goto
-id|error
+id|sendit
 suffix:semicolon
 id|err_garbage
 suffix:colon
@@ -1528,14 +1521,8 @@ comma
 id|rpc_garbage_args
 )paren
 suffix:semicolon
-id|error
-suffix:colon
-r_return
-id|svc_send
-c_func
-(paren
-id|rqstp
-)paren
+r_goto
+id|sendit
 suffix:semicolon
 )brace
 eof

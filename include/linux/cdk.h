@@ -679,6 +679,12 @@ DECL|macro|P_DTRFOLLOW
 mdefine_line|#define&t;P_DTRFOLLOW&t;0x20
 DECL|macro|P_FAKEDCD
 mdefine_line|#define&t;P_FAKEDCD&t;0x40
+DECL|macro|P_RXIMIN
+mdefine_line|#define&t;P_RXIMIN&t;0x10000
+DECL|macro|P_RXITIME
+mdefine_line|#define&t;P_RXITIME&t;0x20000
+DECL|macro|P_RXTHOLD
+mdefine_line|#define&t;P_RXTHOLD&t;0x40000
 multiline_comment|/*&n; *&t;Define a structure to communicate serial port signal and data state&n; *&t;information.&n; */
 DECL|struct|asysigs
 r_typedef

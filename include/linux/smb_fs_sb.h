@@ -31,6 +31,12 @@ id|smb_mount_data
 op_star
 id|mnt
 suffix:semicolon
+DECL|member|temp_buf
+r_int
+r_char
+op_star
+id|temp_buf
+suffix:semicolon
 multiline_comment|/* Connections are counted. Each time a new socket arrives,&n;&t; * generation is incremented.&n;&t; */
 DECL|member|generation
 r_int

@@ -3608,8 +3608,6 @@ id|dentry
 suffix:semicolon
 r_int
 id|result
-op_assign
-l_int|0
 suffix:semicolon
 id|smb_lock_server
 c_func
@@ -5115,7 +5113,7 @@ id|fattr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Note that we are now returning the name as a reference to avoid&n; * an extra copy, and that the upper/lower casing is done in place.&n; */
+multiline_comment|/*&n; * Note that we are now returning the name as a reference to avoid&n; * an extra copy, and that the upper/lower casing is done in place.&n; *&n; * Bugs Noted:&n; * (1) Pathworks servers may pad the name with extra spaces.&n; */
 r_static
 id|__u8
 op_star
@@ -5807,7 +5805,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1   -- Win NT, Win 95, OS/2&n; *   level 259 -- File name and length only, Win NT, Win 95&n; *&n; * We return a reference to the name string to avoid copying, and perform&n; * any needed upper/lower casing in place.  Note!! Level 259 entries may&n; * not have any space beyond the name, so don&squot;t try to write a null byte!&n; *&n; * Bugs Noted:&n; * (1) Win NT 4.0 appends a null byte to names and counts it in the length!&n; * (2) When using Info Level 1 Win NT 4.0 truncates directory listings &n; * for certain patterns of names and/or lengths. The breakage pattern is&n; * completely reproducible and can be toggled by the addition of a single&n; * file to the directory. (E.g. echo hi &gt;foo breaks, rm -f foo works.)&n; */
+multiline_comment|/*&n; * Interpret a long filename structure using the specified info level:&n; *   level 1   -- Win NT, Win 95, OS/2&n; *   level 259 -- File name and length only, Win NT, Win 95&n; *&n; * We return a reference to the name string to avoid copying, and perform&n; * any needed upper/lower casing in place.  Note!! Level 259 entries may&n; * not have any space beyond the name, so don&squot;t try to write a null byte!&n; *&n; * Bugs Noted:&n; * (1) Win NT 4.0 appends a null byte to names and counts it in the length!&n; */
 r_static
 r_char
 op_star
@@ -6037,6 +6035,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Bugs Noted:&n; * (1) When using Info Level 1 Win NT 4.0 truncates directory listings &n; * for certain patterns of names and/or lengths. The breakage pattern&n; * is completely reproducible and can be toggled by the creation of a&n; * single file. (E.g. echo hi &gt;foo breaks, rm -f foo works.)&n; */
 r_static
 r_int
 DECL|function|smb_proc_readdir_long
@@ -6061,6 +6060,31 @@ op_star
 id|cachep
 )paren
 (brace
+r_char
+op_star
+id|p
+comma
+op_star
+id|mask
+comma
+op_star
+id|lastname
+comma
+op_star
+id|param
+op_assign
+id|server-&gt;temp_buf
+suffix:semicolon
+id|__u16
+id|command
+suffix:semicolon
+r_int
+id|first
+comma
+id|entries
+comma
+id|entries_seen
+suffix:semicolon
 multiline_comment|/* Both NT and OS/2 accept info level 1 (but see note below). */
 r_int
 id|info_level
@@ -6072,23 +6096,6 @@ r_int
 id|max_matches
 op_assign
 l_int|512
-suffix:semicolon
-r_char
-op_star
-id|p
-comma
-op_star
-id|mask
-comma
-op_star
-id|lastname
-suffix:semicolon
-r_int
-id|first
-comma
-id|entries
-comma
-id|entries_seen
 suffix:semicolon
 r_int
 r_char
@@ -6113,9 +6120,6 @@ r_int
 id|resp_param_len
 op_assign
 l_int|0
-suffix:semicolon
-id|__u16
-id|command
 suffix:semicolon
 r_int
 id|ff_resume_key
@@ -6155,17 +6159,6 @@ id|i
 comma
 id|result
 suffix:semicolon
-r_char
-id|param
-(braket
-l_int|12
-op_plus
-id|SMB_MAXPATHLEN
-op_plus
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* too long for the stack! */
 r_static
 r_struct
 id|qstr
@@ -6202,13 +6195,9 @@ suffix:colon
 multiline_comment|/*&n;&t; * Encode the initial path&n;&t; */
 id|mask
 op_assign
-op_amp
-(paren
 id|param
-(braket
+op_plus
 l_int|12
-)braket
-)paren
 suffix:semicolon
 id|mask_len
 op_assign
@@ -6598,35 +6587,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef SMBFS_PARANOIA
-r_if
-c_cond
-(paren
-id|resp_data
-op_plus
-id|resp_data_len
-OG
-id|server-&gt;packet
-op_plus
-id|server-&gt;packet_size
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;s_p_r_l: data past packet end! data=%p, len=%d, packet=%p&bslash;n&quot;
-comma
-id|resp_data
-op_plus
-id|resp_data_len
-comma
-id|resp_data_len
-comma
-id|server-&gt;packet
-op_plus
-id|server-&gt;packet_size
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* parse out some important return info */
 r_if
 c_cond
@@ -7265,9 +7225,11 @@ id|attr
 r_char
 op_star
 id|p
-suffix:semicolon
-r_int
-id|result
+comma
+op_star
+id|param
+op_assign
+id|server-&gt;temp_buf
 suffix:semicolon
 id|__u16
 id|date
@@ -7307,15 +7269,9 @@ id|resp_param_len
 op_assign
 l_int|0
 suffix:semicolon
-r_char
-id|param
-(braket
-id|SMB_MAXPATHLEN
-op_plus
-l_int|20
-)braket
+r_int
+id|result
 suffix:semicolon
-multiline_comment|/* too big for the stack! */
 id|retry
 suffix:colon
 id|WSET
@@ -8278,9 +8234,11 @@ suffix:semicolon
 r_char
 op_star
 id|p
-suffix:semicolon
-r_int
-id|result
+comma
+op_star
+id|param
+op_assign
+id|server-&gt;temp_buf
 suffix:semicolon
 r_int
 r_char
@@ -8306,15 +8264,9 @@ id|resp_param_len
 op_assign
 l_int|0
 suffix:semicolon
-r_char
-id|param
-(braket
-id|SMB_MAXPATHLEN
-op_plus
-l_int|20
-)braket
+r_int
+id|result
 suffix:semicolon
-multiline_comment|/* too long for the stack! */
 r_char
 id|data
 (braket
@@ -8589,7 +8541,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set the modify and access timestamps for a file.&n; *&n; * Incredibly enough, in all of SMB there is no message to allow&n; * setting both attributes and timestamps at once. &n; *&n; * Bugs Noted:&n; * (1) Win 95 doesn&squot;t support the TRANSACT2_SETFILEINFO message &n; * with info level 1 (INFO_STANDARD).&n; * (2) Under the core protocol apparently the only way to set the&n; * timestamp is to open and close the file.&n; */
+multiline_comment|/*&n; * Set the modify and access timestamps for a file.&n; *&n; * Incredibly enough, in all of SMB there is no message to allow&n; * setting both attributes and timestamps at once. &n; *&n; * Bugs Noted:&n; * (1) Win 95 doesn&squot;t support the TRANSACT2_SETFILEINFO message &n; * with info level 1 (INFO_STANDARD).&n; * (2) Win 95 seems not to support setting directory timestamps.&n; * (3) Under the core protocol apparently the only way to set the&n; * timestamp is to open and close the file.&n; */
 r_int
 DECL|function|smb_proc_settime
 id|smb_proc_settime
@@ -8627,7 +8579,7 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
-macro_line|#ifdef SMBFS_DEBUG_TIMESTAMP
+macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
@@ -8772,42 +8724,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if 1 &t;/* temporary */
-r_if
-c_cond
-(paren
-id|result
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;smb_proc_settime: %s/%s failed, open=%d, res=%d, rcls=%d, err=%d&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-comma
-id|smb_is_open
-c_func
-(paren
-id|inode
-)paren
-comma
-id|result
-comma
-id|server-&gt;rcls
-comma
-id|server-&gt;err
-)paren
-suffix:semicolon
-multiline_comment|/* squash errors for now */
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 id|smb_unlock_server
 c_func
 (paren

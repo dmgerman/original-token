@@ -345,6 +345,16 @@ r_int
 r_int
 id|ioaddr2
 suffix:semicolon
+DECL|member|iosize1
+r_int
+r_int
+id|iosize1
+suffix:semicolon
+DECL|member|iosize2
+r_int
+r_int
+id|iosize2
+suffix:semicolon
 DECL|member|iostatus
 r_int
 r_int

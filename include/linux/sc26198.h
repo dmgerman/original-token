@@ -7,16 +7,16 @@ mdefine_line|#define&t;_SC26198_H
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define the number of async ports per sc26198 uart device.&n; */
 DECL|macro|SC26198_PORTS
-mdefine_line|#define&t;SC26198_PORTS&t;8
+mdefine_line|#define&t;SC26198_PORTS&t;&t;8
 multiline_comment|/*&n; *&t;Baud rate timing clocks. All derived from a master 14.7456 MHz clock.&n; */
 DECL|macro|SC26198_MASTERCLOCK
-mdefine_line|#define&t;SC26198_MASTERCLOCK&t;&t;14745600L
+mdefine_line|#define&t;SC26198_MASTERCLOCK&t;14745600L
 DECL|macro|SC26198_DCLK
-mdefine_line|#define&t;SC26198_DCLK&t;&t;&t;(SC26198_MASTERCLOCK)
+mdefine_line|#define&t;SC26198_DCLK&t;&t;(SC26198_MASTERCLOCK)
 DECL|macro|SC26198_CCLK
-mdefine_line|#define&t;SC26198_CCLK&t;&t;&t;(SC26198_MASTERCLOCK / 2)
+mdefine_line|#define&t;SC26198_CCLK&t;&t;(SC26198_MASTERCLOCK / 2)
 DECL|macro|SC26198_BCLK
-mdefine_line|#define&t;SC26198_BCLK&t;&t;&t;(SC26198_MASTERCLOCK / 4)
+mdefine_line|#define&t;SC26198_BCLK&t;&t;(SC26198_MASTERCLOCK / 4)
 multiline_comment|/*&n; *&t;Define internal FIFO sizes for the 26198 ports.&n; */
 DECL|macro|SC26198_TXFIFOSIZE
 mdefine_line|#define&t;SC26198_TXFIFOSIZE&t;16
