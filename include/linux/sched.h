@@ -7,6 +7,7 @@ r_int
 r_int
 id|event
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
@@ -100,7 +101,7 @@ DECL|macro|TASK_EXCLUSIVE
 mdefine_line|#define TASK_EXCLUSIVE&t;&t;32
 DECL|macro|__set_task_state
 mdefine_line|#define __set_task_state(tsk, state_value)&t;&t;&bslash;&n;&t;do { (tsk)-&gt;state = (state_value); } while (0)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|set_task_state
 mdefine_line|#define set_task_state(tsk, state_value)&t;&t;&bslash;&n;&t;set_mb((tsk)-&gt;state, (state_value))
 macro_line|#else
@@ -109,7 +110,7 @@ mdefine_line|#define set_task_state(tsk, state_value)&t;&t;&bslash;&n;&t;__set_t
 macro_line|#endif
 DECL|macro|__set_current_state
 mdefine_line|#define __set_current_state(state_value)&t;&t;&t;&bslash;&n;&t;do { current-&gt;state = (state_value); } while (0)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|set_current_state
 mdefine_line|#define set_current_state(state_value)&t;&t;&bslash;&n;&t;set_mb(current-&gt;state, (state_value))
 macro_line|#else

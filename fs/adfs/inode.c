@@ -133,6 +133,11 @@ id|adfs_writepage
 c_func
 (paren
 r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
 id|dentry
 op_star
 id|dentry
@@ -272,6 +277,10 @@ comma
 id|writepage
 suffix:colon
 id|adfs_writepage
+comma
+id|sync_page
+suffix:colon
+id|block_sync_page
 comma
 id|prepare_write
 suffix:colon

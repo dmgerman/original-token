@@ -35,9 +35,9 @@ singleline_comment|//#define DEBUG_FIFO
 multiline_comment|/************/
 multiline_comment|/* Includes */
 multiline_comment|/************/
+macro_line|#include &lt;linux/config.h&gt;
 singleline_comment|// Uncomment the following if you want it compiled with modversions
 macro_line|#ifdef MODULE
-macro_line|#&t;include &lt;linux/autoconf.h&gt;
 macro_line|#&t;if defined(CONFIG_MODVERSIONS) &amp;&amp; !defined(MODVERSIONS)
 DECL|macro|MODVERSIONS
 macro_line|#&t;&t;define MODVERSIONS
@@ -51,7 +51,6 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

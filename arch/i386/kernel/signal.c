@@ -1502,7 +1502,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;movl %%gs,%w0&quot;
+l_string|&quot;movl %%gs,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -1534,7 +1534,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;movl %%fs,%w0&quot;
+l_string|&quot;movl %%fs,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -42,6 +42,24 @@ DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|macro|__HAVE_ARCH_MEMCHR
 mdefine_line|#define __HAVE_ARCH_MEMCHR
+r_extern
+r_void
+op_star
+id|memchr
+c_func
+(paren
+r_const
+r_void
+op_star
+id|cs
+comma
+r_int
+id|c
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMZERO
 mdefine_line|#define __HAVE_ARCH_MEMZERO
 DECL|macro|__HAVE_ARCH_MEMSET

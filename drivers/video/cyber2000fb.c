@@ -3006,7 +3006,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The following was discovered by a good monitor,&n; * bit twiddling, theorising and but mostly luck.&n; * Strangely, it looks like everyone elses&squot; PLL!&n; *&n; * Clock registers:&n; *   fclock = fpll / div2&n; *   fpll   = fref * mult / div1&n; * where:&n; *   fref = 14.318MHz (69842ps)&n; *   mult = reg0xb0.7:0&n; *   div1 = (reg0xb1.5:0 + 1)&n; *   div2 =  2^(reg0xb1.7:6)&n; *   fpll should be between 115 and 257 MHz&n; *  (8696ps and 3891ps)&n; */
+multiline_comment|/*&n; * The following was discovered by a good monitor,&n; * bit twiddling, theorising and but mostly luck.&n; * Strangely, it looks like everyone elses&squot; PLL!&n; *&n; * Clock registers:&n; *   fclock = fpll / div2&n; *   fpll   = fref * mult / div1&n; * where:&n; *   fref = 14.318MHz (69842ps)&n; *   mult = reg0xb0.7:0&n; *   div1 = (reg0xb1.5:0 + 1)&n; *   div2 =  2^(reg0xb1.7:6)&n; *   fpll should be between 115 and 260 MHz&n; *  (8696ps and 3846ps)&n; */
 r_static
 r_int
 DECL|function|cyber2000fb_decode_clock
@@ -3082,7 +3082,7 @@ id|div1
 comma
 id|mult
 suffix:semicolon
-multiline_comment|/*&n;&t; * Step 1:&n;&t; *   find div2 such that 115MHz &lt; fpll &lt; 257MHz&n;&t; *   and 0 &lt;= div2 &lt; 4&n;&t; */
+multiline_comment|/*&n;&t; * Step 1:&n;&t; *   find div2 such that 115MHz &lt; fpll &lt; 260MHz&n;&t; *   and 0 &lt;= div2 &lt; 4&n;&t; */
 r_if
 c_cond
 (paren
@@ -3136,7 +3136,7 @@ id|new_pll
 op_logical_and
 id|new_pll
 OG
-l_int|3891
+l_int|3846
 )paren
 (brace
 id|pll_ps
@@ -3159,7 +3159,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 macro_line|#if 0
-multiline_comment|/*&n;&t; * Step 2:&n;&t; *  Find fpll&n;&t; *    fpll = fref * mult / div1&n;&t; *&n;&t; * Note!  This just picks any old values at the moment,&n;&t; * and as such I don&squot;t trust it.  It certainly doesn&squot;t&n;&t; * come out with the values below, so the PLL may become&n;&t; * unstable under some circumstances (you don&squot;t want an&n;&t; * FM dot clock)&n;&t; */
+multiline_comment|/*&n;&t; * Step 2:&n;&t; *  Given pll_ps and ref_ps, find:&n;&t; *    pll_ps * 0.995 &lt; pll_ps_calc &lt; pll_ps * 1.005&n;&t; *  where { 0 &lt; div1 &lt; 32, 0 &lt; mult &lt; 256 }&n;&t; *    pll_ps_calc = div1 / (ref_ps * mult)&n;&t; *&n;&t; * Note!  This just picks any old values at the moment,&n;&t; * and as such I don&squot;t trust it.  It certainly doesn&squot;t&n;&t; * come out with the values below, so the PLL may become&n;&t; * unstable under some circumstances (you don&squot;t want an&n;&t; * FM dot clock)&n;&t; */
 r_for
 c_loop
 (paren
@@ -5178,6 +5178,72 @@ comma
 id|cyber2000fb_ioctl
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Enable access to the extended registers&n; *  Bug: this should track the usage of these registers&n; */
+DECL|function|cyber2000fb_enable_extregs
+r_static
+r_void
+id|cyber2000fb_enable_extregs
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|old
+suffix:semicolon
+id|old
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|FUNC_CTL
+)paren
+suffix:semicolon
+id|cyber2000_grphw
+c_func
+(paren
+id|FUNC_CTL
+comma
+id|old
+op_or
+id|FUNC_CTL_EXTREGENBL
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Disable access to the extended registers&n; *  Bug: this should track the usage of these registers&n; */
+DECL|function|cyber2000fb_disable_extregs
+r_static
+r_void
+id|cyber2000fb_disable_extregs
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|old
+suffix:semicolon
+id|old
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|FUNC_CTL
+)paren
+suffix:semicolon
+id|cyber2000_grphw
+c_func
+(paren
+id|FUNC_CTL
+comma
+id|old
+op_amp
+op_complement
+id|FUNC_CTL_EXTREGENBL
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Attach a capture/tv driver to the core CyberX0X0 driver.&n; */
 DECL|function|cyber2000fb_attach
 r_int
 id|cyber2000fb_attach
@@ -5211,6 +5277,14 @@ id|info-&gt;fb_size
 op_assign
 id|current_par.screen_size
 suffix:semicolon
+id|info-&gt;enable_extregs
+op_assign
+id|cyber2000fb_enable_extregs
+suffix:semicolon
+id|info-&gt;disable_extregs
+op_assign
+id|cyber2000fb_disable_extregs
+suffix:semicolon
 id|strncpy
 c_func
 (paren
@@ -5231,6 +5305,7 @@ r_return
 id|current_par.initialised
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Detach a capture/tv driver from the core CyberX0X0 driver.&n; */
 DECL|function|cyber2000fb_detach
 r_void
 id|cyber2000fb_detach
@@ -6501,6 +6576,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: %ldkB VRAM, using %dx%d, %d.%03dkHz, %dHz&bslash;n&quot;
 comma
 id|current_par.dev_name

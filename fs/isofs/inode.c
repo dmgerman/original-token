@@ -4175,6 +4175,10 @@ id|readpage
 suffix:colon
 id|isofs_readpage
 comma
+id|sync_page
+suffix:colon
+id|block_sync_page
+comma
 id|bmap
 suffix:colon
 id|_isofs_bmap

@@ -113,12 +113,12 @@ id|dev
 suffix:semicolon
 multiline_comment|/* USB device handle */
 DECL|member|inEP
-r_char
+r_int
 id|inEP
 suffix:semicolon
 multiline_comment|/* read endpoint */
 DECL|member|outEP
-r_char
+r_int
 id|outEP
 suffix:semicolon
 multiline_comment|/* write endpoint */

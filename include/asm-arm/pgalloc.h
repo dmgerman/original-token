@@ -31,9 +31,9 @@ id|end
 )brace
 multiline_comment|/*&n; * Page table cache stuff&n; */
 macro_line|#ifndef CONFIG_NO_PGT_CACHE
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#error Pgtable caches have to be per-CPU, so that no locking is needed.
-macro_line|#endif&t;/* __SMP__ */
+macro_line|#endif&t;/* CONFIG_SMP */
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct

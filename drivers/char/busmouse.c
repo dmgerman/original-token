@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/mouse.c&n; *&n; * Copyright (C) 1995 - 1998 Russell King&n; *  Protocol taken from busmouse.c&n; *  read() waiting taken from psaux.c&n; *&n; * Medium-level interface for quadrature or bus mice.&n; *&n; * Currently, the majority of kernel busmice drivers in the&n; * kernel common code to talk to userspace.  This driver&n; * attempts to rectify this situation by presenting a&n; * simple and safe interface to the mice and user.&n; *&n; * This driver:&n; *  - is SMP safe&n; *  - handles multiple opens&n; *  - handles the wakeups and locking&n; *  - has optional blocking reads&n; */
+multiline_comment|/*&n; * linux/drivers/char/busmouse.c&n; *&n; * Copyright (C) 1995 - 1998 Russell King &lt;linux@arm.linux.org.uk&gt;&n; *  Protocol taken from original busmouse.c&n; *  read() waiting taken from psaux.c&n; *&n; * Medium-level interface for quadrature or bus mice.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;busmouse.h&quot;
-multiline_comment|/* Uncomment this if your mouse drivers expect the kernel to&n; * return with EAGAIN if the mouse does not have any events&n; * available, even if the mouse is opened in nonblocking mode.&n; *&n; * Should this be on a per-mouse basis?  If so, add an entry to&n; * the struct busmouse structure and add the relevent flag to&n; * the drivers.&n; */
+multiline_comment|/* Uncomment this if your mouse drivers expect the kernel to&n; * return with EAGAIN if the mouse does not have any events&n; * available, even if the mouse is opened in nonblocking mode.&n; * Please report use of this &quot;feature&quot; to the author using the&n; * above address.&n; */
 multiline_comment|/*#define BROKEN_MOUSE*/
 DECL|struct|busmouse_data
 r_struct
@@ -52,10 +52,6 @@ suffix:semicolon
 DECL|member|buttons
 r_char
 id|buttons
-suffix:semicolon
-DECL|member|latch_buttons
-r_char
-id|latch_buttons
 suffix:semicolon
 DECL|member|ready
 r_char
@@ -97,106 +93,7 @@ c_func
 id|mouse_sem
 )paren
 suffix:semicolon
-multiline_comment|/* a mouse driver just has to interface with these functions&n; *  These are !!!OLD!!!  Do not use!!!&n; */
-DECL|function|add_mouse_movement
-r_void
-id|add_mouse_movement
-c_func
-(paren
-r_int
-id|dx
-comma
-r_int
-id|dy
-)paren
-(brace
-r_struct
-id|busmouse_data
-op_star
-id|mse
-op_assign
-id|busmouse_data
-(braket
-id|MINOR_TO_MOUSE
-c_func
-(paren
-l_int|6
-)paren
-)braket
-suffix:semicolon
-id|mse-&gt;dxpos
-op_add_assign
-id|dx
-suffix:semicolon
-id|mse-&gt;dypos
-op_add_assign
-id|dy
-suffix:semicolon
-id|mse-&gt;ready
-op_assign
-l_int|1
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|mse-&gt;wait
-)paren
-suffix:semicolon
-)brace
-DECL|function|add_mouse_buttonchange
-r_int
-id|add_mouse_buttonchange
-c_func
-(paren
-r_int
-id|set
-comma
-r_int
-id|value
-)paren
-(brace
-r_struct
-id|busmouse_data
-op_star
-id|mse
-op_assign
-id|busmouse_data
-(braket
-id|MINOR_TO_MOUSE
-c_func
-(paren
-l_int|6
-)paren
-)braket
-suffix:semicolon
-id|mse-&gt;buttons
-op_assign
-(paren
-id|mse-&gt;buttons
-op_amp
-op_complement
-id|set
-)paren
-op_xor
-id|value
-suffix:semicolon
-id|mse-&gt;ready
-op_assign
-l_int|1
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|mse-&gt;wait
-)paren
-suffix:semicolon
-r_return
-id|mse-&gt;buttons
-suffix:semicolon
-)brace
-multiline_comment|/* New interface.  !!! Use this one !!!&n; * These routines will most probably be called from interrupt.&n; */
+multiline_comment|/**&n; *&t;busmouse_add_movement - notification of a change of mouse position&n; *&t;@mousedev: mouse number&n; *&t;@dx: delta X movement&n; *&t;@dy: delta Y movement&n; *&t;@buttons: new button state&n; *&n; *&t;Updates the mouse position and button information. The mousedev&n; *&t;parameter is the value returned from register_busmouse. The&n; *&t;movement information is updated, and the new button state is&n; *&t;saved.  A waiting user thread is woken.&n; */
 DECL|function|busmouse_add_movementbuttons
 r_void
 id|busmouse_add_movementbuttons
@@ -279,7 +176,6 @@ id|mse-&gt;buttons
 op_assign
 id|buttons
 suffix:semicolon
-singleline_comment|//&t;&t;mse-&gt;latch_buttons |= buttons;
 id|mse-&gt;dxpos
 op_add_assign
 id|dx
@@ -379,6 +275,7 @@ id|POLL_IN
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;busmouse_add_movement - notification of a change of mouse position&n; *&t;@mousedev: mouse number&n; *&t;@dx: delta X movement&n; *&t;@dy: delta Y movement&n; *&n; *&t;Updates the mouse position. The mousedev parameter is the value&n; *&t;returned from register_busmouse. The movement information is&n; *&t;updated, and a waiting user thread is woken.&n; */
 DECL|function|busmouse_add_movement
 r_void
 id|busmouse_add_movement
@@ -417,6 +314,7 @@ id|mse-&gt;buttons
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;busmouse_add_buttons - notification of a change of button state&n; *&t;@mousedev: mouse number&n; *&t;@clear: mask of buttons to clear&n; *&t;@eor: mask of buttons to change&n; *&n; *&t;Updates the button state. The mousedev parameter is the value&n; *&t;returned from register_busmouse. The buttons are updated by:&n; *&t;&t;new_state = (old_state &amp; ~clear) ^ eor&n; *&t;A waiting user thread is woken up.&n; */
 DECL|function|busmouse_add_buttons
 r_void
 id|busmouse_add_buttons
@@ -632,10 +530,6 @@ id|mse
 suffix:semicolon
 r_int
 r_int
-id|flags
-suffix:semicolon
-r_int
-r_int
 id|mousedev
 suffix:semicolon
 r_int
@@ -729,13 +623,11 @@ id|end
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|mse-&gt;ready
@@ -764,13 +656,11 @@ id|mse-&gt;buttons
 op_assign
 l_int|7
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|end
@@ -859,10 +749,6 @@ id|current
 )paren
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|dxpos
 comma
 id|dypos
@@ -880,13 +766,11 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -897,13 +781,11 @@ id|mse-&gt;ready
 )paren
 (brace
 macro_line|#ifdef BROKEN_MOUSE
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -919,13 +801,11 @@ op_amp
 id|O_NONBLOCK
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -965,13 +845,11 @@ id|current
 )paren
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|schedule
@@ -979,13 +857,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|spin_lock_irqsave
+id|spin_lock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -1016,13 +892,11 @@ id|current
 )paren
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1044,7 +918,6 @@ id|buttons
 op_assign
 id|mse-&gt;buttons
 suffix:semicolon
-singleline_comment|//&t;mse-&gt;latch_buttons = mse-&gt;buttons;
 r_if
 c_cond
 (paren
@@ -1108,13 +981,11 @@ id|mse-&gt;dxpos
 op_logical_or
 id|mse-&gt;dypos
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|spin_unlock_irq
 c_func
 (paren
 op_amp
 id|mse-&gt;lock
-comma
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Write out data to the user.  Format is:&n;&t; *   byte 0 - identifer (0x80) and (inverted) mouse buttons&n;&t; *   byte 1 - X delta position +/- 127&n;&t; *   byte 2 - Y delta position +/- 127&n;&t; */

@@ -27,14 +27,10 @@ DECL|macro|IO_BASE
 mdefine_line|#define IO_BASE&t;&t;&t;0xe0000000
 DECL|macro|SCREEN_START
 mdefine_line|#define SCREEN_START&t;&t;0x02000000&t;/* VRAM */
-DECL|macro|SCREEN2_END
-mdefine_line|#define SCREEN2_END&t;&t;0xe0000000
-DECL|macro|SCREEN2_BASE
-mdefine_line|#define SCREEN2_BASE&t;&t;0xd8000000
-DECL|macro|SCREEN1_END
-mdefine_line|#define SCREEN1_END&t;&t;0xd8000000
-DECL|macro|SCREEN1_BASE
-mdefine_line|#define SCREEN1_BASE&t;&t;0xd0000000
+DECL|macro|SCREEN_END
+mdefine_line|#define SCREEN_END&t;&t;0xdfc00000
+DECL|macro|SCREEN_BASE
+mdefine_line|#define SCREEN_BASE&t;&t;0xdf800000
 DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
 DECL|macro|UNCACHEABLE_ADDR

@@ -2,6 +2,7 @@ macro_line|#ifndef __ASM_SH_SYSTEM_H
 DECL|macro|__ASM_SH_SYSTEM_H
 mdefine_line|#define __ASM_SH_SYSTEM_H
 multiline_comment|/*&n; * Copyright (C) 1999, 2000  Niibe Yutaka  &amp;  Kaz Kojima&n; */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; *&t;switch_to() should switch tasks to task nr n, first&n; */
 r_typedef
 r_struct
@@ -15,7 +16,7 @@ DECL|typedef|mm_segment_t
 )brace
 id|mm_segment_t
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#error no SMP SuperH
 macro_line|#else
 DECL|macro|prepare_to_switch
@@ -192,7 +193,7 @@ DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;__cli()
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__sti()
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|__global_cli

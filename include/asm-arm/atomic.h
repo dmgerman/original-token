@@ -2,10 +2,10 @@ multiline_comment|/*&n; * linux/include/asm-arm/atomic.h&n; *&n; * Copyright (c)
 macro_line|#ifndef __ASM_ARM_ATOMIC_H
 DECL|macro|__ASM_ARM_ATOMIC_H
 mdefine_line|#define __ASM_ARM_ATOMIC_H
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 macro_line|#error SMP not supported
 macro_line|#endif
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_ARCH_CO285
 DECL|member|counter
 DECL|typedef|atomic_t

@@ -68,6 +68,8 @@ DECL|macro|CSR3_DXMT2PD
 mdefine_line|#define CSR3_DXMT2PD&t;0x0010
 DECL|macro|CSR3_LAPPEN
 mdefine_line|#define CSR3_LAPPEN&t;0x0020
+DECL|macro|CSR3_DXSUFLO
+mdefine_line|#define CSR3_DXSUFLO&t;0x0040
 DECL|macro|CSR3_IDONM
 mdefine_line|#define CSR3_IDONM&t;0x0100
 DECL|macro|CSR3_TINTM
@@ -82,6 +84,10 @@ DECL|macro|CSR3_BABLM
 mdefine_line|#define CSR3_BABLM&t;0x4000
 DECL|macro|CSR3_MASKALL
 mdefine_line|#define CSR3_MASKALL&t;0x5F00
+DECL|macro|CTRL1
+mdefine_line|#define CTRL1&t;&t;5
+DECL|macro|CTRL1_SPND
+mdefine_line|#define CTRL1_SPND&t;0x0001
 DECL|macro|LADRL
 mdefine_line|#define LADRL&t;&t;8
 DECL|macro|LADRM1
@@ -157,9 +163,9 @@ mdefine_line|#define TMD_ERR&t;&t;0x4000
 DECL|macro|TMD_OWN
 mdefine_line|#define TMD_OWN&t;&t;0x8000
 DECL|macro|TST_RTRY
-mdefine_line|#define TST_RTRY&t;0x0200
+mdefine_line|#define TST_RTRY&t;0x0400
 DECL|macro|TST_LCAR
-mdefine_line|#define TST_LCAR&t;0x0400
+mdefine_line|#define TST_LCAR&t;0x0800
 DECL|macro|TST_LCOL
 mdefine_line|#define TST_LCOL&t;0x1000
 DECL|macro|TST_UFLO
@@ -224,120 +230,6 @@ suffix:semicolon
 r_extern
 r_int
 id|am79c961_probe
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_int
-id|am79c961_probe1
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_int
-id|am79c961_open
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_int
-id|am79c961_sendpacket
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_void
-id|am79c961_interrupt
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_static
-r_void
-id|am79c961_rx
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
-id|dev_priv
-op_star
-id|priv
-)paren
-suffix:semicolon
-r_static
-r_void
-id|am79c961_tx
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
-id|dev_priv
-op_star
-id|priv
-)paren
-suffix:semicolon
-r_static
-r_int
-id|am79c961_close
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_struct
-id|enet_statistics
-op_star
-id|am79c961_getstats
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_static
-r_void
-id|am79c961_setmulticastlist
 (paren
 r_struct
 id|net_device

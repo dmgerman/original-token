@@ -64,6 +64,11 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * This is the list of dirty unwritten pages.&n;&t; */
+DECL|member|read
+r_struct
+id|list_head
+id|read
+suffix:semicolon
 DECL|member|dirty
 r_struct
 id|list_head
@@ -79,9 +84,12 @@ r_struct
 id|list_head
 id|writeback
 suffix:semicolon
+DECL|member|nread
+r_int
+r_int
+id|nread
+comma
 DECL|member|ndirty
-r_int
-r_int
 id|ndirty
 comma
 DECL|member|ncommit

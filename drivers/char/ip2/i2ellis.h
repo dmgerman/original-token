@@ -35,6 +35,7 @@ singleline_comment|//-------------------------------------------------
 singleline_comment|//----------------------
 singleline_comment|// Mandatory Includes:
 singleline_comment|//----------------------
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;ip2types.h&quot;
 macro_line|#include &quot;i2hw.h&quot;       
 singleline_comment|// The hardware definitions

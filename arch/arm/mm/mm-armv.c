@@ -1418,7 +1418,10 @@ id|__init
 id|pagetable_init
 c_func
 (paren
-r_void
+r_struct
+id|meminfo
+op_star
+id|mi
 )paren
 (brace
 r_struct
@@ -1502,7 +1505,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|meminfo.nr_banks
+id|mi-&gt;nr_banks
 suffix:semicolon
 id|i
 op_increment
@@ -1511,7 +1514,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1524,7 +1527,7 @@ r_continue
 suffix:semicolon
 id|p-&gt;physical
 op_assign
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1543,7 +1546,7 @@ id|p-&gt;physical
 suffix:semicolon
 id|p-&gt;length
 op_assign
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1772,7 +1775,10 @@ id|__init
 id|create_memmap_holes
 c_func
 (paren
-r_void
+r_struct
+id|meminfo
+op_star
+id|mi
 )paren
 (brace
 r_int
@@ -1808,7 +1814,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|meminfo.nr_banks
+id|mi-&gt;nr_banks
 suffix:semicolon
 id|i
 op_increment
@@ -1817,7 +1823,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1833,7 +1839,7 @@ op_assign
 id|PFN
 c_func
 (paren
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1926,14 +1932,14 @@ op_assign
 id|PFN
 c_func
 (paren
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
 dot
 id|start
 op_plus
-id|meminfo.bank
+id|mi-&gt;bank
 (braket
 id|i
 )braket
@@ -1949,7 +1955,7 @@ op_ne
 id|PFN
 c_func
 (paren
-id|meminfo.end
+id|mi-&gt;end
 )paren
 )paren
 id|pg

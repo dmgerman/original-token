@@ -207,16 +207,7 @@ r_int
 id|ticks
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;BEEP - %d %d!&bslash;n&quot;
-comma
-id|hz
-comma
-id|ticks
-)paren
-suffix:semicolon
+singleline_comment|//&t;printk(&quot;BEEP - %d %d!&bslash;n&quot;, hz, ticks);
 )brace
 r_static
 r_void

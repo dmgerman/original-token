@@ -154,6 +154,12 @@ r_int
 id|system_serial_high
 suffix:semicolon
 multiline_comment|/* 84 */
+DECL|member|mem_fclk_21285
+r_int
+r_int
+id|mem_fclk_21285
+suffix:semicolon
+multiline_comment|/* 88 */
 DECL|member|s
 )brace
 id|s

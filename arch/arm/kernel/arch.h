@@ -1,13 +1,36 @@
+multiline_comment|/*&n; * The size of struct machine_desc&n; *   (for assembler code)&n; */
+DECL|macro|SIZEOF_MACHINE_DESC
+mdefine_line|#define SIZEOF_MACHINE_DESC&t;40
+macro_line|#ifndef __ASSEMBLY__
 DECL|struct|machine_desc
 r_struct
 id|machine_desc
 (brace
+multiline_comment|/*&n;&t; * Note! The first four elements are used&n;&t; * by assembler code in head-armv.S&n;&t; */
 DECL|member|nr
 r_int
 r_int
 id|nr
 suffix:semicolon
 multiline_comment|/* architecture number&t;*/
+DECL|member|phys_ram
+r_int
+r_int
+id|phys_ram
+suffix:semicolon
+multiline_comment|/* start of physical ram */
+DECL|member|phys_io
+r_int
+r_int
+id|phys_io
+suffix:semicolon
+multiline_comment|/* start of physical io&t;*/
+DECL|member|virt_io
+r_int
+r_int
+id|virt_io
+suffix:semicolon
+multiline_comment|/* start of virtual io&t;*/
 DECL|member|name
 r_const
 r_char
@@ -99,4 +122,26 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Set of macros to define architecture features&n; */
+DECL|macro|MACHINE_START
+mdefine_line|#define MACHINE_START(_type,_name)&t;&t;&bslash;&n;const struct machine_desc __mach_desc_##_type&t;&bslash;&n; __attribute__((__section__(&quot;.arch.info&quot;))) = {&t;&bslash;&n;&t;nr:&t;&t;MACH_TYPE_##_type##,&t;&bslash;&n;&t;name:&t;&t;_name,
+DECL|macro|MAINTAINER
+mdefine_line|#define MAINTAINER(n)
+DECL|macro|BOOT_MEM
+mdefine_line|#define BOOT_MEM(_pram,_pio,_vio)&t;&t;&bslash;&n;&t;phys_ram:&t;_pram,&t;&t;&t;&bslash;&n;&t;phys_io:&t;_pio,&t;&t;&t;&bslash;&n;&t;virt_io:&t;_vio,
+DECL|macro|BOOT_PARAMS
+mdefine_line|#define BOOT_PARAMS(_params)&t;&t;&t;&bslash;&n;&t;param_offset:&t;_params,
+DECL|macro|VIDEO
+mdefine_line|#define VIDEO(_start,_end)&t;&t;&t;&bslash;&n;&t;video_start:&t;_start,&t;&t;&t;&bslash;&n;&t;video_end:&t;_end,
+DECL|macro|DISABLE_PARPORT
+mdefine_line|#define DISABLE_PARPORT(_n)&t;&t;&t;&bslash;&n;&t;reserve_lp##_n##:&t;1,
+DECL|macro|BROKEN_HLT
+mdefine_line|#define BROKEN_HLT&t;&t;&t;&t;&bslash;&n;&t;broken_hlt:&t;1,
+DECL|macro|SOFT_REBOOT
+mdefine_line|#define SOFT_REBOOT&t;&t;&t;&t;&bslash;&n;&t;soft_reboot:&t;1,
+DECL|macro|FIXUP
+mdefine_line|#define FIXUP(_func)&t;&t;&t;&t;&bslash;&n;&t;fixup:&t;&t;_func,
+DECL|macro|MACHINE_END
+mdefine_line|#define MACHINE_END&t;&t;&t;&t;&bslash;&n;};
+macro_line|#endif
 eof

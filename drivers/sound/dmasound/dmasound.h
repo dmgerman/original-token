@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/sound/dmasound.h&n; *&n; *&n; *  Minor numbers for the sound driver.&n; *&n; *  Unfortunately Creative called the codec chip of SB as a DSP. For this&n; *  reason the /dev/dsp is reserved for digitized audio use. There is a&n; *  device for true DSP processors but it will be called something else.&n; *  In v3.0 it&squot;s /dev/sndproc but this could be a temporary solution.&n; */
+multiline_comment|/*&n; *  linux/drivers/sound/dmasound/dmasound.h&n; *&n; *&n; *  Minor numbers for the sound driver.&n; *&n; *  Unfortunately Creative called the codec chip of SB as a DSP. For this&n; *  reason the /dev/dsp is reserved for digitized audio use. There is a&n; *  device for true DSP processors but it will be called something else.&n; *  In v3.0 it&squot;s /dev/sndproc but this could be a temporary solution.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SND_NDEVS
 mdefine_line|#define SND_NDEVS&t;256&t;/* Number of supported devices */
@@ -119,6 +119,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_extern
 r_void
 id|dmasound_deinit
@@ -127,6 +128,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|macro|dmasound_deinit
+mdefine_line|#define dmasound_deinit()&t;do { } while (0)
+macro_line|#endif
 multiline_comment|/*&n;     *  Machine definitions&n;     */
 r_typedef
 r_struct
@@ -212,7 +217,7 @@ id|irqcleanup
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif
 DECL|member|init
 r_void
 (paren

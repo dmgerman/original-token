@@ -160,9 +160,9 @@ DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
 DECL|macro|pmd_clear
 mdefine_line|#define pmd_clear(pmdp)&t;&t;set_pmd(pmdp, __pmd(0))
-multiline_comment|/*&n; * Permanent address of a page.&n; */
+multiline_comment|/*&n; * Permanent address of a page. We never have highmem, so this is trivial.&n; */
 DECL|macro|page_address
-mdefine_line|#define page_address(page)&t;({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
+mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20 - PAGE_SHIFT))
 DECL|macro|pte_page
@@ -205,7 +205,7 @@ id|pte
 suffix:semicolon
 )brace
 DECL|macro|mk_pte
-mdefine_line|#define mk_pte(page,pgprot)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = PHYS_OFFSET + &t;&t;&t;&t;&bslash;&n;&t;&t;&t;  (((page) - mem_map) &lt;&lt; PAGE_SHIFT) +&t;&bslash;&n;&t;&t;&t;   pgprot_val(pgprot);&t;&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define mk_pte(page,pgprot)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = __pa(page_address(page)) +&t;&bslash;&n;&t;&t;&t;   pgprot_val(pgprot);&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * The &quot;pgd_xxx()&quot; functions here are trivial for a folded two-level&n; * setup: the pgd is never bad, and a pmd always exists (as it&squot;s folded&n; * into the pgd entry)&n; */
 DECL|macro|pgd_none
 mdefine_line|#define pgd_none(pgd)&t;&t;(0)

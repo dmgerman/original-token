@@ -772,6 +772,16 @@ id|atyfb_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_FB_ATY128
+(brace
+l_string|&quot;aty128fb&quot;
+comma
+id|aty128fb_init
+comma
+id|aty128fb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_OF
 multiline_comment|/*&n;&t; * Offb must be initialized _after_ all other frame buffer devices&n;&t; * that use PCI probing and PCI resources! [ Geert ]&n;&t; */
 (brace
@@ -780,16 +790,6 @@ comma
 id|offb_init
 comma
 id|offb_setup
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB_ATY128
-(brace
-l_string|&quot;aty128fb&quot;
-comma
-id|aty128fb_init
-comma
-id|aty128fb_setup
 )brace
 comma
 macro_line|#endif

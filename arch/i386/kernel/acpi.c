@@ -4983,6 +4983,10 @@ c_func
 id|ACPI_D0
 )paren
 suffix:semicolon
+id|acpi_sleep_state
+op_assign
+id|ACPI_S0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

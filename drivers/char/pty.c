@@ -1496,10 +1496,17 @@ id|pty_driver.driver_name
 op_assign
 l_string|&quot;pty_master&quot;
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|pty_driver.name
 op_assign
 l_string|&quot;pty/m%d&quot;
 suffix:semicolon
+macro_line|#else
+id|pty_driver.name
+op_assign
+l_string|&quot;pty&quot;
+suffix:semicolon
+macro_line|#endif
 id|pty_driver.major
 op_assign
 id|PTY_MASTER_MAJOR
@@ -1620,10 +1627,17 @@ id|pty_slave_driver.proc_entry
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|pty_slave_driver.name
 op_assign
 l_string|&quot;pty/s%d&quot;
 suffix:semicolon
+macro_line|#else
+id|pty_slave_driver.name
+op_assign
+l_string|&quot;ttyp&quot;
+suffix:semicolon
+macro_line|#endif
 id|pty_slave_driver.subtype
 op_assign
 id|PTY_TYPE_SLAVE
@@ -1923,6 +1937,7 @@ id|i
 op_assign
 id|pty_slave_driver
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|pts_driver
 (braket
 id|i
@@ -1932,6 +1947,17 @@ id|name
 op_assign
 l_string|&quot;pts/%d&quot;
 suffix:semicolon
+macro_line|#else
+id|pts_driver
+(braket
+id|i
+)braket
+dot
+id|name
+op_assign
+l_string|&quot;pts&quot;
+suffix:semicolon
+macro_line|#endif
 id|pts_driver
 (braket
 id|i

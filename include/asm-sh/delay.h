@@ -2,6 +2,7 @@ macro_line|#ifndef __ASM_SH_DELAY_H
 DECL|macro|__ASM_SH_DELAY_H
 mdefine_line|#define __ASM_SH_DELAY_H
 multiline_comment|/*&n; * Copyright (C) 1999  Kaz Kojima&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -89,7 +90,7 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|__udelay_val
 mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
 macro_line|#else

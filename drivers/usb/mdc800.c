@@ -12,27 +12,27 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &t;&t;&quot;0.7.3&quot;
+mdefine_line|#define VERSION &t;&quot;0.7.3&quot;
 DECL|macro|RELEASE_DATE
-mdefine_line|#define RELEASE_DATE &quot;(15/04/2000)&quot;
+mdefine_line|#define RELEASE_DATE &t;&quot;(24/04/2000)&quot;
 multiline_comment|/* Vendor and Product Information */
 DECL|macro|MDC800_VENDOR_ID
 mdefine_line|#define MDC800_VENDOR_ID &t;0x055f
 DECL|macro|MDC800_PRODUCT_ID
 mdefine_line|#define MDC800_PRODUCT_ID&t;0xa800
 multiline_comment|/* Timeouts (msec) */
-DECL|macro|TO_READ_FROM_IRQ
-mdefine_line|#define TO_READ_FROM_IRQ &t;&t;4000
-DECL|macro|TO_GET_READY
-mdefine_line|#define TO_GET_READY&t;&t;&t;2000
 DECL|macro|TO_DOWNLOAD_GET_READY
 mdefine_line|#define TO_DOWNLOAD_GET_READY&t;&t;1500
 DECL|macro|TO_DOWNLOAD_GET_BUSY
 mdefine_line|#define TO_DOWNLOAD_GET_BUSY&t;&t;1500
 DECL|macro|TO_WRITE_GET_READY
-mdefine_line|#define TO_WRITE_GET_READY&t;&t;3000
+mdefine_line|#define TO_WRITE_GET_READY&t;&t;1000
 DECL|macro|TO_DEFAULT_COMMAND
 mdefine_line|#define TO_DEFAULT_COMMAND&t;&t;5000
+DECL|macro|TO_READ_FROM_IRQ
+mdefine_line|#define TO_READ_FROM_IRQ &t;&t;TO_DEFAULT_COMMAND
+DECL|macro|TO_GET_READY
+mdefine_line|#define TO_GET_READY&t;&t;&t;TO_DEFAULT_COMMAND
 multiline_comment|/* Minor Number of the device (create with mknod /dev/mustek c 180 32) */
 DECL|macro|MDC800_DEVICE_MINOR_BASE
 mdefine_line|#define MDC800_DEVICE_MINOR_BASE 32
@@ -917,23 +917,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mdc800-&gt;dev
-op_ne
-l_int|0
-)paren
-(brace
-id|warn
-(paren
-l_string|&quot;only one Mustek MDC800 is supported.&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|dev-&gt;descriptor.idVendor
 op_ne
 id|MDC800_VENDOR_ID
@@ -951,6 +934,23 @@ id|MDC800_PRODUCT_ID
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mdc800-&gt;dev
+op_ne
+l_int|0
+)paren
+(brace
+id|warn
+(paren
+l_string|&quot;only one Mustek MDC800 is supported.&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2144,7 +2144,7 @@ id|interruptible_sleep_on_timeout
 op_amp
 id|mdc800-&gt;write_wait
 comma
-id|TO_DEFAULT_COMMAND
+id|TO_WRITE_GET_READY
 op_star
 id|HZ
 op_div

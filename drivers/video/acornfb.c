@@ -6673,7 +6673,7 @@ l_int|1
 suffix:semicolon
 id|current_par.screen_base
 op_assign
-id|SCREEN2_BASE
+id|SCREEN_BASE
 suffix:semicolon
 id|current_par.screen_base_p
 op_assign
@@ -7068,7 +7068,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Acornfb: %ldkB %cRAM, %s, using %dx%d, %d.%03dkHz, %dHz&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;Acornfb: %ldkB %cRAM, %s, using %dx%d, &quot;
+l_string|&quot;%d.%03dkHz, %dHz&bslash;n&quot;
 comma
 id|current_par.screen_size
 op_div

@@ -865,15 +865,6 @@ id|minproto
 comma
 id|maxproto
 suffix:semicolon
-multiline_comment|/* Super block already completed? */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_unlock
-suffix:semicolon
 id|sbi
 op_assign
 (paren
@@ -975,10 +966,6 @@ op_assign
 op_amp
 id|autofs4_sops
 suffix:semicolon
-id|s-&gt;s_root
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/*&n;&t; * Get the root inode and dentry, but defer checking for errors.&n;&t; */
 id|root_inode
 op_assign
@@ -1015,15 +1002,6 @@ suffix:semicolon
 id|pipe
 op_assign
 l_int|NULL
-suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether somebody else completed the super block.&n;&t; */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_dput
 suffix:semicolon
 r_if
 c_cond
@@ -1132,15 +1110,6 @@ c_func
 id|pipefd
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether somebody else completed the super block.&n;&t; */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_fput
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1182,51 +1151,7 @@ suffix:semicolon
 r_return
 id|s
 suffix:semicolon
-multiline_comment|/*&n;&t; * Success ... somebody else completed the super block for us. &n;&t; */
-id|out_unlock
-suffix:colon
-r_goto
-id|out_dec
-suffix:semicolon
-id|out_fput
-suffix:colon
-r_if
-c_cond
-(paren
-id|pipe
-)paren
-id|fput
-c_func
-(paren
-id|pipe
-)paren
-suffix:semicolon
-id|out_dput
-suffix:colon
-r_if
-c_cond
-(paren
-id|root
-)paren
-id|dput
-c_func
-(paren
-id|root
-)paren
-suffix:semicolon
-r_else
-id|iput
-c_func
-(paren
-id|root_inode
-)paren
-suffix:semicolon
-id|out_dec
-suffix:colon
-r_return
-id|s
-suffix:semicolon
-multiline_comment|/*&n;&t; * Failure ... clear the s_dev slot and clean up.&n;&t; */
+multiline_comment|/*&n;&t; * Failure ... clean up.&n;&t; */
 id|fail_fput
 suffix:colon
 id|printk
@@ -1308,18 +1233,6 @@ suffix:semicolon
 id|buf-&gt;f_bsize
 op_assign
 l_int|1024
-suffix:semicolon
-id|buf-&gt;f_bfree
-op_assign
-l_int|0
-suffix:semicolon
-id|buf-&gt;f_bavail
-op_assign
-l_int|0
-suffix:semicolon
-id|buf-&gt;f_ffree
-op_assign
-l_int|0
 suffix:semicolon
 id|buf-&gt;f_namelen
 op_assign

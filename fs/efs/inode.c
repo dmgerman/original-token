@@ -83,6 +83,10 @@ id|readpage
 suffix:colon
 id|efs_readpage
 comma
+id|sync_page
+suffix:colon
+id|block_sync_page
+comma
 id|bmap
 suffix:colon
 id|_efs_bmap

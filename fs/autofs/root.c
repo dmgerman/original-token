@@ -872,7 +872,7 @@ id|ERR_PTR
 c_func
 (paren
 op_minus
-id|ENOENT
+id|ENAMETOOLONG
 )paren
 suffix:semicolon
 multiline_comment|/* File name too long to exist */
@@ -1088,17 +1088,6 @@ id|sbi
 r_return
 op_minus
 id|EACCES
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_name.len
-OG
-id|NAME_MAX
-)paren
-r_return
-op_minus
-id|ENAMETOOLONG
 suffix:semicolon
 r_if
 c_cond
@@ -1723,17 +1712,6 @@ id|sbi
 r_return
 op_minus
 id|EACCES
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_name.len
-OG
-id|NAME_MAX
-)paren
-r_return
-op_minus
-id|ENAMETOOLONG
 suffix:semicolon
 id|ent
 op_assign

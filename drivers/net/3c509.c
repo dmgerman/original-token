@@ -574,7 +574,7 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 DECL|struct|el3_isapnp_adapters_struct
 r_struct
 id|el3_isapnp_adapters_struct
@@ -805,7 +805,7 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_ISAPNP */
-macro_line|#if defined(CONFIG_ISAPNP) || defined(MODULE)
+macro_line|#if defined(__ISAPNP__) || defined(MODULE)
 DECL|variable|nopnp
 r_static
 r_int
@@ -857,7 +857,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 r_static
 r_int
 id|pnp_cards
@@ -1282,7 +1282,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 r_if
 c_cond
 (paren
@@ -1741,7 +1741,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 r_if
 c_cond
 (paren

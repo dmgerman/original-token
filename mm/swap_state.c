@@ -7,6 +7,18 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|variable|swap_aops
+r_static
+r_struct
+id|address_space_operations
+id|swap_aops
+op_assign
+(brace
+id|sync_page
+suffix:colon
+id|block_sync_page
+)brace
+suffix:semicolon
 DECL|variable|swapper_space
 r_struct
 id|address_space
@@ -25,7 +37,11 @@ multiline_comment|/*&t;  .prev */
 )brace
 comma
 l_int|0
+comma
 multiline_comment|/* nrpages&t;*/
+op_amp
+id|swap_aops
+comma
 )brace
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO

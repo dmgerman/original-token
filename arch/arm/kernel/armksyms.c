@@ -463,6 +463,13 @@ c_func
 id|system_serial_high
 )paren
 suffix:semicolon
+DECL|variable|mem_fclk_21285
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mem_fclk_21285
+)paren
+suffix:semicolon
 DECL|variable|__bug
 id|EXPORT_SYMBOL
 c_func

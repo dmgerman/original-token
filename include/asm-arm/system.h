@@ -20,13 +20,18 @@ r_int
 r_int
 id|system_serial_high
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|mem_fclk_21285
+suffix:semicolon
 multiline_comment|/* The type of machine we&squot;re running on */
 r_extern
 r_int
 r_int
 id|__machine_arch_type
 suffix:semicolon
-multiline_comment|/* see arch/arm/kernel/setup.c for a description of these */
+multiline_comment|/* see arch/arm/kernel/arch.c for a description of these */
 DECL|macro|MACH_TYPE_EBSA110
 mdefine_line|#define MACH_TYPE_EBSA110&t;&t;0
 DECL|macro|MACH_TYPE_RISCPC
@@ -57,10 +62,20 @@ DECL|macro|MACH_TYPE_CLPS7500
 mdefine_line|#define MACH_TYPE_CLPS7500&t;&t;14
 DECL|macro|MACH_TYPE_SHARK
 mdefine_line|#define MACH_TYPE_SHARK&t;&t;&t;15
-DECL|macro|MACH_TYPE_SA1100
-mdefine_line|#define MACH_TYPE_SA1100&t;&t;16
+DECL|macro|MACH_TYPE_BRUTUS
+mdefine_line|#define MACH_TYPE_BRUTUS&t;&t;16
 DECL|macro|MACH_TYPE_PERSONAL_SERVER
 mdefine_line|#define MACH_TYPE_PERSONAL_SERVER&t;17
+DECL|macro|MACH_TYPE_BITSY
+mdefine_line|#define MACH_TYPE_BITSY&t;&t;&t;22
+DECL|macro|MACH_TYPE_THINCLIENT
+mdefine_line|#define MACH_TYPE_THINCLIENT&t;&t;24
+DECL|macro|MACH_TYPE_ASSABET
+mdefine_line|#define MACH_TYPE_ASSABET&t;&t;25
+DECL|macro|MACH_TYPE_VICTOR
+mdefine_line|#define MACH_TYPE_VICTOR&t;&t;26
+DECL|macro|MACH_TYPE_LART
+mdefine_line|#define MACH_TYPE_LART&t;&t;&t;27
 multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; *&n; * In general, you should use machine_is_xxxx() in your code, not:&n; *  -  switch (machine_arch_type) { }&n; *  -  if (machine_arch_type = xxxx)&n; *  -  __machine_arch_type&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
@@ -222,7 +237,7 @@ macro_line|#else
 DECL|macro|machine_is_shark
 macro_line|# define machine_is_shark()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_SA1100
+macro_line|#ifdef CONFIG_SA1100_BRUTUS
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type
@@ -230,13 +245,13 @@ DECL|macro|machine_arch_type
 macro_line|#  define machine_arch_type&t;__machine_arch_type
 macro_line|# else
 DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_SA1100
+macro_line|#  define machine_arch_type&t;MACH_TYPE_BRUTUS
 macro_line|# endif
-DECL|macro|machine_is_sa1100
-macro_line|# define machine_is_sa1100()&t;(machine_arch_type == MACH_TYPE_SA1100)
+DECL|macro|machine_is_brutus
+macro_line|# define machine_is_brutus()&t;(machine_arch_type == MACH_TYPE_BRUTUS)
 macro_line|#else
-DECL|macro|machine_is_sa1100
-macro_line|# define machine_is_sa1100()&t;(0)
+DECL|macro|machine_is_brutus
+macro_line|# define machine_is_brutus()&t;(0)
 macro_line|#endif
 macro_line|#ifdef CONFIG_ARCH_PERSONAL_SERVER
 macro_line|# ifdef machine_arch_type
@@ -253,6 +268,166 @@ macro_line|# define machine_is_personal_server()&t;(machine_arch_type == MACH_TY
 macro_line|#else
 DECL|macro|machine_is_personal_server
 macro_line|# define machine_is_personal_server()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_ITSY
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_ITSY
+macro_line|# endif
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(machine_arch_type == MACH_TYPE_ITSY)
+macro_line|#else
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_EMPEG
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_EMPEG
+macro_line|# endif
+DECL|macro|machine_is_empeg
+macro_line|# define machine_is_empeg()&t;(machine_arch_type == MACH_TYPE_EMPEG)
+macro_line|#else
+DECL|macro|machine_is_empeg
+macro_line|# define machine_is_empeg()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_ASSABET
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_ASSABET
+macro_line|# endif
+DECL|macro|machine_is_assabet
+macro_line|# define machine_is_assabet()&t;(machine_arch_type == MACH_TYPE_ASSABET)
+macro_line|#else
+DECL|macro|machine_is_assabet
+macro_line|# define machine_is_assabet()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_VICTOR
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_VICTOR
+macro_line|# endif
+DECL|macro|machine_is_victor
+macro_line|# define machine_is_victor()&t;(machine_arch_type == MACH_TYPE_VICTOR)
+macro_line|#else
+DECL|macro|machine_is_victor
+macro_line|# define machine_is_victor()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_LART
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_LART
+macro_line|# endif
+DECL|macro|machine_is_lart
+macro_line|# define machine_is_lart()&t;(machine_arch_type == MACH_TYPE_LART)
+macro_line|#else
+DECL|macro|machine_is_lart
+macro_line|# define machine_is_lart()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_BITSY
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_BITSY
+macro_line|# endif
+DECL|macro|machine_is_bitsy
+macro_line|# define machine_is_bitsy()&t;(machine_arch_type == MACH_TYPE_BITSY)
+macro_line|#else
+DECL|macro|machine_is_bitsy
+macro_line|# define machine_is_bitsy()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_TIFON
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_TIFON
+macro_line|# endif
+DECL|macro|machine_is_tifon
+macro_line|# define machine_is_tifon()&t;(machine_arch_type == MACH_TYPE_TIFON)
+macro_line|#else
+DECL|macro|machine_is_tifon
+macro_line|# define machine_is_tifon()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_PLEB
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_PLEB
+macro_line|# endif
+DECL|macro|machine_is_pleb
+macro_line|# define machine_is_pleb()&t;(machine_arch_type == MACH_TYPE_PLEB)
+macro_line|#else
+DECL|macro|machine_is_pleb
+macro_line|# define machine_is_pleb()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_THINCLIENT
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_THINCLIENT
+macro_line|# endif
+DECL|macro|machine_is_thinclient
+macro_line|# define machine_is_thinclient()&t;(machine_arch_type == MACH_TYPE_THINCLIENT)
+macro_line|#else
+DECL|macro|machine_is_thinclient
+macro_line|# define machine_is_thinclient()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_PENNY
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_PENNY
+macro_line|# endif
+DECL|macro|machine_is_penny
+macro_line|# define machine_is_penny()&t;(machine_arch_type == MACH_TYPE_PENNY)
+macro_line|#else
+DECL|macro|machine_is_penny
+macro_line|# define machine_is_penny()&t;(0)
 macro_line|#endif
 macro_line|#ifndef machine_arch_type
 DECL|macro|machine_arch_type

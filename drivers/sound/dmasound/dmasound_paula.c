@@ -1,5 +1,6 @@
-multiline_comment|/*&n; *  linux/drivers/sound/dmasound_paula.c&n; *&n; *  Amiga DMA Sound Driver&n; *&n; *  See linux/drivers/sound/dmasound_core.c for copyright and credits&n; */
+multiline_comment|/*&n; *  linux/drivers/sound/dmasound/dmasound_paula.c&n; *&n; *  Amiga `Paula&squot; DMA Sound Driver&n; *&n; *  See linux/drivers/sound/dmasound/dmasound_core.c for copyright and credits&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -8,6 +9,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;dmasound.h&quot;
 multiline_comment|/*&n;    *&t;The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    *&n;    *&t;FIXME: if amifb is not used, there should be a method to change htotal&n;    */
 r_extern
@@ -177,6 +179,83 @@ op_star
 id|fp
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_HEARTBEAT
+multiline_comment|/*&n;     *  Heartbeat interferes with sound since the 7 kHz low-pass filter and the&n;     *  power LED are controlled by the same line.&n;     */
+macro_line|#ifdef CONFIG_APUS
+DECL|macro|mach_heartbeat
+mdefine_line|#define mach_heartbeat&t;ppc_md.heartbeat
+macro_line|#endif
+DECL|variable|saved_heartbeat
+r_static
+r_void
+(paren
+op_star
+id|saved_heartbeat
+)paren
+(paren
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|function|disable_heartbeat
+r_static
+r_inline
+r_void
+id|disable_heartbeat
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mach_heartbeat
+)paren
+(brace
+id|saved_heartbeat
+op_assign
+id|mach_heartbeat
+suffix:semicolon
+id|mach_heartbeat
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|AmiSetTreble
+c_func
+(paren
+id|dmasound.treble
+)paren
+suffix:semicolon
+)brace
+DECL|function|enable_heartbeat
+r_static
+r_inline
+r_void
+id|enable_heartbeat
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|saved_heartbeat
+)paren
+id|mach_heartbeat
+op_assign
+id|saved_heartbeat
+suffix:semicolon
+)brace
+macro_line|#else /* !CONFIG_HEARTBEAT */
+DECL|macro|disable_heartbeat
+mdefine_line|#define disable_heartbeat()&t;do { } while (0)
+DECL|macro|enable_heartbeat
+mdefine_line|#define enable_heartbeat()&t;do { } while (0)
+macro_line|#endif /* !CONFIG_HEARTBEAT */
 multiline_comment|/*** Mid level stuff *********************************************************/
 r_static
 r_void
@@ -579,6 +658,11 @@ id|custom.dmacon
 op_assign
 id|AMI_AUDIO_OFF
 suffix:semicolon
+id|enable_heartbeat
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|AmiAlloc
 r_static
@@ -824,13 +908,6 @@ id|amiga_audio_period
 op_assign
 id|period
 suffix:semicolon
-id|AmiSetTreble
-c_func
-(paren
-l_int|50
-)paren
-suffix:semicolon
-multiline_comment|/* recommended for newer amiga models */
 )brace
 DECL|function|AmiSetFormat
 r_static
@@ -1200,6 +1277,11 @@ op_assign
 id|start
 suffix:semicolon
 )brace
+id|disable_heartbeat
+c_func
+(paren
+)paren
+suffix:semicolon
 id|custom.aud
 (braket
 l_int|0

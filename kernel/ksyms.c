@@ -885,6 +885,13 @@ c_func
 id|block_prepare_write
 )paren
 suffix:semicolon
+DECL|variable|block_sync_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|block_sync_page
+)paren
+suffix:semicolon
 DECL|variable|cont_prepare_write
 id|EXPORT_SYMBOL
 c_func

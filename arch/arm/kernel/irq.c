@@ -337,18 +337,6 @@ id|triggered
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|noautoenable
-)paren
-(brace
 id|irq_desc
 (braket
 id|irq
@@ -369,7 +357,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock_irqrestore
 c_func
 (paren

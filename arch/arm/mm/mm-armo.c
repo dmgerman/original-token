@@ -554,7 +554,10 @@ id|__init
 id|pagetable_init
 c_func
 (paren
-r_void
+r_struct
+id|meminfo
+op_star
+id|mi
 )paren
 (brace
 id|pte_t
@@ -647,7 +650,10 @@ id|__init
 id|create_memmap_holes
 c_func
 (paren
-r_void
+r_struct
+id|meminfo
+op_star
+id|mi
 )paren
 (brace
 )brace

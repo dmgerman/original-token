@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/sound/dmasound_awacs.c&n; *&n; *  PowerMac DMA Sound Driver&n; *&n; *  See linux/drivers/sound/dmasound_core.c for copyright and credits&n; */
+multiline_comment|/*&n; *  linux/drivers/sound/dmasound/dmasound_awacs.c&n; *&n; *  PowerMac `AWACS&squot; and `Burgundy&squot; DMA Sound Driver&n; *&n; *  See linux/drivers/sound/dmasound/dmasound_core.c for copyright and credits&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

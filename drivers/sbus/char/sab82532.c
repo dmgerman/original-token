@@ -9769,10 +9769,17 @@ id|serial_driver.driver_name
 op_assign
 l_string|&quot;serial&quot;
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEVFS_FS
 id|serial_driver.name
 op_assign
 l_string|&quot;tts/%d&quot;
 suffix:semicolon
+macro_line|#else
+id|serial_driver.name
+op_assign
+l_string|&quot;ttyS&quot;
+suffix:semicolon
+macro_line|#endif
 id|serial_driver.major
 op_assign
 id|TTY_MAJOR

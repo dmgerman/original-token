@@ -2,7 +2,8 @@ macro_line|#ifndef __ASM_SH_SMPLOCK_H
 DECL|macro|__ASM_SH_SMPLOCK_H
 mdefine_line|#define __ASM_SH_SMPLOCK_H
 multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|lock_kernel
 mdefine_line|#define lock_kernel()&t;&t;&t;&t;do { } while(0)
 DECL|macro|unlock_kernel
@@ -78,6 +79,6 @@ mdefine_line|#define release_kernel_lock(task, cpu) &bslash;&n;do { &bslash;&n;&
 multiline_comment|/*&n; * Re-acquire the kernel lock&n; */
 DECL|macro|reacquire_kernel_lock
 mdefine_line|#define reacquire_kernel_lock(task) &bslash;&n;do { &bslash;&n;&t;if (task-&gt;lock_depth &gt;= 0) &bslash;&n;&t;&t;spin_lock(&amp;kernel_flag); &bslash;&n;} while (0)
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* __ASM_SH_SMPLOCK_H */
 eof

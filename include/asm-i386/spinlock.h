@@ -65,19 +65,72 @@ DECL|macro|SPINLOCK_MAGIC_INIT
 mdefine_line|#define SPINLOCK_MAGIC_INIT&t;/* */
 macro_line|#endif
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 SPINLOCK_MAGIC_INIT }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 1 SPINLOCK_MAGIC_INIT }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { *(x) = SPIN_LOCK_UNLOCKED; } while(0)
 multiline_comment|/*&n; * Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
-DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(x)&t;do { barrier(); } while(((volatile spinlock_t *)(x))-&gt;lock)
 DECL|macro|spin_is_locked
-mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
+mdefine_line|#define spin_is_locked(x)&t;(*(volatile char *)(&amp;(x)-&gt;lock) &lt;= 0)
+DECL|macro|spin_unlock_wait
+mdefine_line|#define spin_unlock_wait(x)&t;do { barrier(); } while(spin_is_locked(x))
 DECL|macro|spin_lock_string
-mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; btsl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jc 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;testb $1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot;
-multiline_comment|/*&n; * Sadly, some early PPro chips require the locked access,&n; * otherwise we could just always simply do&n; *&n; * &t;#define spin_unlock_string &bslash;&n; *&t;&t;&quot;movb $0,%0&quot;&n; *&n; * Which is noticeably faster.&n; */
+mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; decb %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;js 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;cmpb $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jle 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot;
+multiline_comment|/*&n; * This works. Despite all the confusion.&n; */
 DECL|macro|spin_unlock_string
-mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;lock ; btrl $0,%0&quot;
+mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;movb $1,%0&quot;
+multiline_comment|/*&n; * Won&squot;t work on i386-SMP. Does anybody care?&n; */
+DECL|function|spin_trylock
+r_static
+r_inline
+r_int
+id|spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+(brace
+r_char
+id|oldval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lock ; cmpxchg %b2,%1&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|oldval
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|__dummy_lock
+c_func
+(paren
+id|lock
+)paren
+)paren
+suffix:colon
+l_string|&quot;q&quot;
+(paren
+l_int|0
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|1
+)paren
+)paren
+suffix:semicolon
+r_return
+id|oldval
+OG
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|spin_lock
 r_extern
 r_inline
@@ -166,7 +219,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|lock-&gt;lock
+id|spin_is_locked
+c_func
+(paren
+id|lock
+)paren
 )paren
 id|BUG
 c_func
@@ -191,8 +248,6 @@ id|lock
 )paren
 suffix:semicolon
 )brace
-DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock) ({ !test_and_set_bit(0,(lock)); })
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
 r_typedef
 r_struct

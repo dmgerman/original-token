@@ -5,6 +5,7 @@ singleline_comment|// macro doesn&squot;t always works on all platforms so we us
 singleline_comment|// If not compiled as a module it just makes fip_firm avaliable then
 singleline_comment|//  __initdata should work as advertized
 singleline_comment|//
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -43,7 +44,6 @@ r_int
 suffix:semicolon
 singleline_comment|// ref into ip2main.c
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#if defined(CONFIG_MODVERSIONS) &amp;&amp; !defined(MODVERSIONS)
 DECL|macro|MODVERSIONS
 macro_line|#&t;define MODVERSIONS

@@ -8,37 +8,6 @@ macro_line|#include &quot;autofs_i.h&quot;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/*&n; * Dummy functions - do we ever actually want to do&n; * something here?&n; */
-DECL|function|autofs_put_inode
-r_static
-r_void
-id|autofs_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-)brace
-DECL|function|autofs_delete_inode
-r_static
-r_void
-id|autofs_delete_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|autofs_put_super
 r_static
 r_void
@@ -166,17 +135,6 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-r_static
-r_void
-id|autofs_write_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
 DECL|variable|autofs_sops
 r_static
 r_struct
@@ -187,18 +145,6 @@ op_assign
 id|read_inode
 suffix:colon
 id|autofs_read_inode
-comma
-id|write_inode
-suffix:colon
-id|autofs_write_inode
-comma
-id|put_inode
-suffix:colon
-id|autofs_put_inode
-comma
-id|delete_inode
-suffix:colon
-id|autofs_delete_inode
 comma
 id|put_super
 suffix:colon
@@ -705,15 +651,6 @@ id|minproto
 comma
 id|maxproto
 suffix:semicolon
-multiline_comment|/* Super block already completed? */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_unlock
-suffix:semicolon
 id|sbi
 op_assign
 (paren
@@ -819,11 +756,6 @@ op_assign
 op_amp
 id|autofs_sops
 suffix:semicolon
-id|s-&gt;s_root
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/*&n;&t; * Get the root inode and dentry, but defer checking for errors.&n;&t; */
 id|root_inode
 op_assign
 id|iget
@@ -846,15 +778,6 @@ id|pipe
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether somebody else completed the super block.&n;&t; */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_dput
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -864,7 +787,7 @@ id|root
 r_goto
 id|fail_iput
 suffix:semicolon
-multiline_comment|/* Can this call block? */
+multiline_comment|/* Can this call block?  - WTF cares? s is locked. */
 r_if
 c_cond
 (paren
@@ -946,15 +869,6 @@ c_func
 id|pipefd
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check whether somebody else completed the super block.&n;&t; */
-r_if
-c_cond
-(paren
-id|s-&gt;s_root
-)paren
-r_goto
-id|out_fput
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -996,51 +910,6 @@ suffix:semicolon
 r_return
 id|s
 suffix:semicolon
-multiline_comment|/*&n;&t; * Success ... somebody else completed the super block for us. &n;&t; */
-id|out_unlock
-suffix:colon
-r_goto
-id|out_dec
-suffix:semicolon
-id|out_fput
-suffix:colon
-r_if
-c_cond
-(paren
-id|pipe
-)paren
-id|fput
-c_func
-(paren
-id|pipe
-)paren
-suffix:semicolon
-id|out_dput
-suffix:colon
-r_if
-c_cond
-(paren
-id|root
-)paren
-id|dput
-c_func
-(paren
-id|root
-)paren
-suffix:semicolon
-r_else
-id|iput
-c_func
-(paren
-id|root_inode
-)paren
-suffix:semicolon
-id|out_dec
-suffix:colon
-r_return
-id|s
-suffix:semicolon
-multiline_comment|/*&n;&t; * Failure ... clear the s_dev slot and clean up.&n;&t; */
 id|fail_fput
 suffix:colon
 id|printk
@@ -1049,17 +918,14 @@ c_func
 l_string|&quot;autofs: pipe file descriptor does not contain proper ops&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * fput() can block, so we clear the super block first.&n;&t; */
 id|fput
 c_func
 (paren
 id|pipe
 )paren
 suffix:semicolon
-multiline_comment|/* fall through */
 id|fail_dput
 suffix:colon
-multiline_comment|/*&n;&t; * dput() can block, so we clear the super block first.&n;&t; */
 id|dput
 c_func
 (paren
@@ -1077,7 +943,6 @@ c_func
 l_string|&quot;autofs: get root dentry failed&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * iput() can block, so we clear the super block first.&n;&t; */
 id|iput
 c_func
 (paren
@@ -1122,18 +987,6 @@ suffix:semicolon
 id|buf-&gt;f_bsize
 op_assign
 l_int|1024
-suffix:semicolon
-id|buf-&gt;f_bfree
-op_assign
-l_int|0
-suffix:semicolon
-id|buf-&gt;f_bavail
-op_assign
-l_int|0
-suffix:semicolon
-id|buf-&gt;f_ffree
-op_assign
-l_int|0
 suffix:semicolon
 id|buf-&gt;f_namelen
 op_assign
@@ -1358,18 +1211,5 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-)brace
-DECL|function|autofs_write_inode
-r_static
-r_void
-id|autofs_write_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
 )brace
 eof

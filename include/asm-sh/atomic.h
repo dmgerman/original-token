@@ -2,7 +2,8 @@ macro_line|#ifndef __ASM_SH_ATOMIC_H
 DECL|macro|__ASM_SH_ATOMIC_H
 mdefine_line|#define __ASM_SH_ATOMIC_H
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; */
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

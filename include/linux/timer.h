@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_TIMER_H
 DECL|macro|_LINUX_TIMER_H
 mdefine_line|#define _LINUX_TIMER_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Old-style timers. Please don&squot;t use for any new code.&n; *&n; * Numbering of these timers should be consecutive to minimize&n; * processing delays. [MJ]&n; */
 DECL|macro|BLANK_TIMER
 mdefine_line|#define BLANK_TIMER&t;0&t;/* Console screen-saver */
@@ -175,7 +176,7 @@ id|timer-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|timer-&gt;running
 op_assign
 l_int|0
@@ -202,7 +203,7 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|timer_exit
 mdefine_line|#define timer_exit(t) do { (t)-&gt;running = 0; mb(); } while (0)
 DECL|macro|timer_set_running

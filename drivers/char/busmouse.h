@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/char/mouse.h&n; *&n; * Copyright (C) 1995 - 1998 Russell King&n; *&n; * Prototypes for generic busmouse interface&n; */
-macro_line|#ifndef MOUSE_H
-DECL|macro|MOUSE_H
-mdefine_line|#define MOUSE_H
+multiline_comment|/*&n; * linux/drivers/char/busmouse.h&n; *&n; * Copyright (C) 1995 - 1998 Russell King&n; *&n; * Prototypes for generic busmouse interface&n; */
+macro_line|#ifndef BUSMOUSE_H
+DECL|macro|BUSMOUSE_H
+mdefine_line|#define BUSMOUSE_H
 DECL|struct|busmouse
 r_struct
 id|busmouse

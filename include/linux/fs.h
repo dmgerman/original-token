@@ -116,6 +116,8 @@ DECL|macro|MS_NODIRATIME
 mdefine_line|#define MS_NODIRATIME&t;2048&t;/* Do not update directory access times */
 DECL|macro|MS_ODD_RENAME
 mdefine_line|#define MS_ODD_RENAME&t;32768&t;/* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
+DECL|macro|S_DEAD
+mdefine_line|#define S_DEAD&t;&t;(1&lt;&lt;16)&t;/* removed, but still open directory */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK&t;(MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|&bslash;&n;&t;&t;&t;MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
@@ -149,6 +151,8 @@ DECL|macro|IS_NOATIME
 mdefine_line|#define IS_NOATIME(inode)&t;__IS_FLG(inode, MS_NOATIME)
 DECL|macro|IS_NODIRATIME
 mdefine_line|#define IS_NODIRATIME(inode)&t;__IS_FLG(inode, MS_NODIRATIME)
+DECL|macro|IS_DEADDIR
+mdefine_line|#define IS_DEADDIR(inode)&t;((inode)-&gt;i_flags &amp; S_DEAD)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
@@ -595,6 +599,10 @@ id|writepage
 )paren
 (paren
 r_struct
+id|file
+op_star
+comma
+r_struct
 id|dentry
 op_star
 comma
@@ -614,6 +622,18 @@ r_struct
 id|dentry
 op_star
 comma
+r_struct
+id|page
+op_star
+)paren
+suffix:semicolon
+DECL|member|sync_page
+r_int
+(paren
+op_star
+id|sync_page
+)paren
+(paren
 r_struct
 id|page
 op_star
@@ -1586,6 +1606,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|last_type
+r_int
+id|last_type
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|FASYNC_MAGIC
@@ -2161,7 +2185,7 @@ id|kdev_t
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * NOTE:&n; * read, write, poll, fsync, readv, writev can be called&n; *   without the big kernel lock held in all filesystems.&n; * fasync can be called at interrupt time.&n; */
+multiline_comment|/*&n; * NOTE:&n; * read, write, poll, fsync, readv, writev can be called&n; *   without the big kernel lock held in all filesystems.&n; */
 DECL|struct|file_operations
 r_struct
 id|file_operations
@@ -4269,16 +4293,30 @@ DECL|macro|LOOKUP_FOLLOW
 mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
 DECL|macro|LOOKUP_DIRECTORY
 mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
-DECL|macro|LOOKUP_SLASHOK
-mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
 DECL|macro|LOOKUP_CONTINUE
-mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
+mdefine_line|#define LOOKUP_CONTINUE&t;&t;(4)
 DECL|macro|LOOKUP_POSITIVE
-mdefine_line|#define LOOKUP_POSITIVE&t;&t;(16)
+mdefine_line|#define LOOKUP_POSITIVE&t;&t;(8)
 DECL|macro|LOOKUP_PARENT
-mdefine_line|#define LOOKUP_PARENT&t;&t;(32)
+mdefine_line|#define LOOKUP_PARENT&t;&t;(16)
 DECL|macro|LOOKUP_NOALT
-mdefine_line|#define LOOKUP_NOALT&t;&t;(64)
+mdefine_line|#define LOOKUP_NOALT&t;&t;(32)
+multiline_comment|/*&n; * Type of the last component on LOOKUP_PARENT&n; */
+DECL|enumerator|LAST_NORM
+DECL|enumerator|LAST_ROOT
+DECL|enumerator|LAST_DOT
+DECL|enumerator|LAST_DOTDOT
+r_enum
+(brace
+id|LAST_NORM
+comma
+id|LAST_ROOT
+comma
+id|LAST_DOT
+comma
+id|LAST_DOTDOT
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * &quot;descriptor&quot; for what we&squot;re up to with a read for sendfile().&n; * This allows us to use the same read code yet&n; * have multiple different users of the data that&n; * we read from a file.&n; *&n; * The simplest case just copies the data to user&n; * mode.&n; */
 r_typedef
 r_struct
@@ -4971,6 +5009,16 @@ op_star
 comma
 r_int
 r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_sync_page
+c_func
+(paren
+r_struct
+id|page
 op_star
 )paren
 suffix:semicolon

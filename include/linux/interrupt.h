@@ -2,6 +2,7 @@ multiline_comment|/* interrupt.h */
 macro_line|#ifndef _LINUX_INTERRUPT_H
 DECL|macro|_LINUX_INTERRUPT_H
 mdefine_line|#define _LINUX_INTERRUPT_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
@@ -391,7 +392,7 @@ id|tasklet_hi_vec
 id|NR_CPUS
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|tasklet_trylock
 mdefine_line|#define tasklet_trylock(t) (!test_and_set_bit(TASKLET_STATE_RUN, &amp;(t)-&gt;state))
 DECL|macro|tasklet_unlock_wait
@@ -668,17 +669,17 @@ r_int
 id|data
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|SMP_TIMER_NAME
 mdefine_line|#define SMP_TIMER_NAME(name) name##__thr
 DECL|macro|SMP_TIMER_DEFINE
 mdefine_line|#define SMP_TIMER_DEFINE(name, task) &bslash;&n;DECLARE_TASKLET(task, name##__thr, 0); &bslash;&n;static void name (unsigned long dummy) &bslash;&n;{ &bslash;&n;&t;tasklet_schedule(&amp;(task)); &bslash;&n;}
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 DECL|macro|SMP_TIMER_NAME
 mdefine_line|#define SMP_TIMER_NAME(name) name
 DECL|macro|SMP_TIMER_DEFINE
 mdefine_line|#define SMP_TIMER_DEFINE(name, task)
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/* Old BH definitions */
 r_extern
 r_struct

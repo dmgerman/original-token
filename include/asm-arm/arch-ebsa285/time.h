@@ -1043,7 +1043,7 @@ suffix:semicolon
 id|setup_arm_irq
 c_func
 (paren
-id|IRQ_ISA_TIMER
+id|irq
 comma
 op_amp
 id|timer_irq

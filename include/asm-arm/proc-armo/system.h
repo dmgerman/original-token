@@ -9,6 +9,7 @@ id|xchg_str
 (braket
 )braket
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 DECL|function|__xchg
 r_extern
@@ -128,7 +129,7 @@ DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;__cli()
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__sti()
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#error SMP not supported
 macro_line|#else
 DECL|macro|cli

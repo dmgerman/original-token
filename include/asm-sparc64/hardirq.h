@@ -41,7 +41,6 @@ mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else /* (__SMP__) */
-macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|function|irqs_running
 r_static
 id|__inline__

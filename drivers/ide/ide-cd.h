@@ -4,6 +4,11 @@ DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+multiline_comment|/*&n; * Apparently older drives have problems with filling out the entire&n; * mode_sense capability structure. Define this to 1 if your drive isn&squot;t&n; * probed correctly.&n; */
+macro_line|#ifndef BROKEN_CAP_PAGE
+DECL|macro|BROKEN_CAP_PAGE
+mdefine_line|#define BROKEN_CAP_PAGE 0
+macro_line|#endif
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
 DECL|macro|VERBOSE_IDE_CD_ERRORS
@@ -525,6 +530,11 @@ DECL|struct|atapi_capabilities_page
 r_struct
 id|atapi_capabilities_page
 (brace
+DECL|member|header
+r_struct
+id|mode_page_header
+id|header
+suffix:semicolon
 macro_line|#if defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|parameters_saveable
 id|__u8
@@ -545,16 +555,19 @@ suffix:colon
 l_int|6
 suffix:semicolon
 macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
+DECL|member|page_code
 id|__u8
 id|page_code
 suffix:colon
 l_int|6
 suffix:semicolon
+DECL|member|reserved1
 id|__u8
 id|reserved1
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|parameters_saveable
 id|__u8
 id|parameters_saveable
 suffix:colon
@@ -1195,7 +1208,15 @@ r_int
 r_int
 id|curspeed
 suffix:semicolon
-multiline_comment|/* Truncate the structure here, so we don&squot;t have headaches reading&n;&t;   from older drives. */
+macro_line|#if !BROKEN_CAP_PAGE
+DECL|member|pad
+r_char
+id|pad
+(braket
+l_int|4
+)braket
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|atapi_mechstat_header

@@ -163,6 +163,7 @@ id|register_devfs_entries
 r_int
 id|drive
 )paren
+id|__init
 suffix:semicolon
 DECL|variable|devfs_handle
 r_static
@@ -15496,6 +15497,7 @@ macro_line|#undef IN
 DECL|function|config_types
 r_static
 r_void
+id|__init
 id|config_types
 c_func
 (paren
@@ -16762,6 +16764,7 @@ suffix:semicolon
 DECL|function|register_devfs_entries
 r_static
 r_void
+id|__init
 id|register_devfs_entries
 (paren
 r_int
@@ -18081,7 +18084,7 @@ suffix:semicolon
 id|DPRINT
 c_func
 (paren
-l_string|&quot;Read linux/drivers/block/README.fd&bslash;n&quot;
+l_string|&quot;Read linux/Documentation/floppy.txt&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

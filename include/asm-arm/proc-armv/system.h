@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/system.h&n; *&n; * Cop
 macro_line|#ifndef __ASM_PROC_SYSTEM_H
 DECL|macro|__ASM_PROC_SYSTEM_H
 mdefine_line|#define __ASM_PROC_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_const
 r_char
@@ -158,7 +159,7 @@ DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;__cli()
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__sti()
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#error SMP not supported
 macro_line|#else
 DECL|macro|cli

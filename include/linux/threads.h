@@ -1,8 +1,9 @@
 macro_line|#ifndef _LINUX_THREADS_H
 DECL|macro|_LINUX_THREADS_H
 mdefine_line|#define _LINUX_THREADS_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * The default limit for the nr of threads is now in&n; * /proc/sys/kernel/max-threads.&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|NR_CPUS
 mdefine_line|#define NR_CPUS&t;32&t;&t;/* Max processors that can be running in SMP */
 macro_line|#else

@@ -110,7 +110,7 @@ id|ptr
 comma
 id|size
 comma
-l_int|3
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -198,7 +198,7 @@ id|sg-&gt;address
 comma
 id|sg-&gt;length
 comma
-l_int|3
+id|direction
 )paren
 suffix:semicolon
 r_return
@@ -266,7 +266,7 @@ id|dma_handle
 comma
 id|size
 comma
-l_int|3
+id|direction
 )paren
 suffix:semicolon
 )brace

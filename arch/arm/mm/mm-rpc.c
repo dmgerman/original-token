@@ -18,7 +18,7 @@ op_assign
 (brace
 multiline_comment|/* VRAM&t;&t;*/
 (brace
-id|SCREEN2_BASE
+id|SCREEN_BASE
 comma
 id|SCREEN_START
 comma

@@ -29,7 +29,8 @@ r_void
 id|pcibios_report_device_errors
 c_func
 (paren
-r_void
+r_int
+id|warn
 )paren
 (brace
 r_struct
@@ -82,11 +83,17 @@ op_amp
 l_int|0xf900
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn
+)paren
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;PCI: %02X:%02X: status %04X on %s&bslash;n&quot;
+l_string|&quot;PCI: %02X:%02X: status %04X &quot;
+l_string|&quot;on %s&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -99,7 +106,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.  The actions we&n; * take are:&n; * - enable only IO&n; * - set memory region to start at zero&n; * - (0x48) enable all memory requests from ISA to be channeled to PCI&n; * - (0x42) disable ping-pong (as per errata)&n; * - (0x40) enable PCI packet retry&n; * - (0x44) Route INTA to IRQ11&n; * - (0x83) don&squot;t use CPU park enable, park on last master, disable GAT bit&n; * - (0x80) default rotating priorities&n; * - (0x81) rotate bank 4&n; */
+multiline_comment|/*&n; * We don&squot;t use this to fix the device, but initialisation of it.&n; * It&squot;s not the correct use for this, but it works.  The actions we&n; * take are:&n; * - enable only IO&n; * - set memory region to start at zero&n; * - (0x48) enable all memory requests from ISA to be channeled to PCI&n; * - (0x42) disable ping-pong (as per errata)&n; * - (0x40) enable PCI packet retry&n; */
 DECL|function|pci_fixup_83c553
 r_static
 r_void
@@ -186,16 +193,7 @@ comma
 l_int|0x22
 )paren
 suffix:semicolon
-id|pci_write_config_word
-c_func
-(paren
-id|dev
-comma
-l_int|0x44
-comma
-l_int|0xb000
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * We used to set the arbiter to &quot;park on last master&quot;&n;&t; * (bit 1 set), but unfortunately the CyberPro does not&n;&t; * park the bus.  We must therefore park on CPU.&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -203,9 +201,10 @@ id|dev
 comma
 l_int|0x83
 comma
-l_int|0x02
+l_int|0x00
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Rotate priorities of each PCI request&n;&t; */
 id|pci_write_config_byte
 c_func
 (paren
@@ -224,6 +223,25 @@ comma
 l_int|0x81
 comma
 l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Route INTA input to IRQ 11, and set&n;&t; * IRQ11 to be level sensitive.&n;&t; */
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+l_int|0x44
+comma
+l_int|0xb000
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x08
+comma
+l_int|0x4d1
 )paren
 suffix:semicolon
 )brace
@@ -263,6 +281,67 @@ id|start
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * Prevent the PCI layer from seeing the resources&n; * allocated to this device.  These resources are&n; * of no consequence to the PCI layer (they are&n; * handled elsewhere).&n; */
+DECL|function|pci_fixup_disable
+r_static
+r_void
+id|__init
+id|pci_fixup_disable
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|PCI_NUM_RESOURCES
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|dev-&gt;resource
+(braket
+id|i
+)braket
+dot
+id|start
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;resource
+(braket
+id|i
+)braket
+dot
+id|end
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;resource
+(braket
+id|i
+)braket
+dot
+id|flags
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * PCI IDE controllers use non-standard I/O port&n; * decoding, respect it.&n; */
 DECL|function|pci_fixup_ide_bases
@@ -354,6 +433,16 @@ id|pcibios_fixups
 )braket
 op_assign
 (brace
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_DEC
+comma
+id|PCI_DEVICE_ID_DEC_21285
+comma
+id|pci_fixup_disable
+)brace
+comma
 (brace
 id|PCI_FIXUP_HEADER
 comma
@@ -1353,6 +1442,15 @@ c_func
 id|PCI_VENDOR_ID_INTERG
 comma
 id|PCI_DEVICE_ID_INTERG_2010
+)paren
+suffix:colon
+r_case
+id|DEV
+c_func
+(paren
+id|PCI_VENDOR_ID_INTERG
+comma
+id|PCI_DEVICE_ID_INTERG_5000
 )paren
 suffix:colon
 r_return

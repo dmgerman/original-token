@@ -75,6 +75,34 @@ l_int|0x3cf
 )paren
 suffix:semicolon
 )brace
+DECL|function|cyber2000_grphr
+r_static
+r_inline
+r_int
+r_int
+id|cyber2000_grphr
+c_func
+(paren
+r_int
+id|reg
+)paren
+(brace
+id|cyber2000_outb
+c_func
+(paren
+id|reg
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+r_return
+id|cyber2000_inb
+c_func
+(paren
+l_int|0x3cf
+)paren
+suffix:semicolon
+)brace
 DECL|function|cyber2000_attrw
 r_static
 r_inline
@@ -384,6 +412,10 @@ DECL|macro|CAP_NEW_CTL1
 mdefine_line|#define CAP_NEW_CTL1&t;&t;0x88
 DECL|macro|CAP_NEW_CTL2
 mdefine_line|#define CAP_NEW_CTL2&t;&t;0x89
+DECL|macro|BM_CTRL0
+mdefine_line|#define BM_CTRL0&t;&t;0x9c
+DECL|macro|BM_CTRL1
+mdefine_line|#define BM_CTRL1&t;&t;0x9d
 DECL|macro|CAP_MODE1
 mdefine_line|#define CAP_MODE1&t;&t;0xa4
 DECL|macro|CAP_MODE1_8BIT
@@ -549,6 +581,10 @@ mdefine_line|#define REG_BANK_J&t;&t;&t;0x04
 DECL|macro|REG_BANK_K
 mdefine_line|#define REG_BANK_K&t;&t;&t;0x05
 multiline_comment|/*&n; * Bus-master&n; */
+DECL|macro|BM_VID_ADDR_LOW
+mdefine_line|#define BM_VID_ADDR_LOW&t;&t;0xbc040
+DECL|macro|BM_VID_ADDR_HIGH
+mdefine_line|#define BM_VID_ADDR_HIGH&t;0xbc044
 DECL|macro|BM_ADDRESS_LOW
 mdefine_line|#define BM_ADDRESS_LOW&t;&t;0xbc080
 DECL|macro|BM_ADDRESS_HIGH
@@ -559,6 +595,8 @@ DECL|macro|BM_CONTROL
 mdefine_line|#define BM_CONTROL&t;&t;0xbc08c
 DECL|macro|BM_CONTROL_ENABLE
 mdefine_line|#define BM_CONTROL_ENABLE&t;&t;0x01&t;/* enable transfer&t;&t;&t;*/
+DECL|macro|BM_CONTROL_IRQEN
+mdefine_line|#define BM_CONTROL_IRQEN&t;&t;0x02&t;/* enable IRQ at end of transfer&t;*/
 DECL|macro|BM_CONTROL_INIT
 mdefine_line|#define BM_CONTROL_INIT&t;&t;&t;0x04&t;/* initialise status &amp; count&t;&t;*/
 DECL|macro|BM_COUNT
@@ -632,6 +670,27 @@ DECL|member|fb_size
 r_int
 r_int
 id|fb_size
+suffix:semicolon
+multiline_comment|/*&n;&t; * Use these to enable the BM or TV registers.&n;&t; */
+DECL|member|enable_extregs
+r_void
+(paren
+op_star
+id|enable_extregs
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|disable_extregs
+r_void
+(paren
+op_star
+id|disable_extregs
+)paren
+(paren
+r_void
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon

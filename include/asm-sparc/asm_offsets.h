@@ -448,36 +448,44 @@ DECL|macro|AOFF_mm_env_end
 mdefine_line|#define AOFF_mm_env_end&t;0x0000006c
 DECL|macro|ASIZ_mm_env_end
 mdefine_line|#define ASIZ_mm_env_end&t;0x00000004
+DECL|macro|AOFF_mm_min_flt
+mdefine_line|#define AOFF_mm_min_flt&t;0x00000070
+DECL|macro|ASIZ_mm_min_flt
+mdefine_line|#define ASIZ_mm_min_flt&t;0x00000004
+DECL|macro|AOFF_mm_maj_flt
+mdefine_line|#define AOFF_mm_maj_flt&t;0x00000074
+DECL|macro|ASIZ_mm_maj_flt
+mdefine_line|#define ASIZ_mm_maj_flt&t;0x00000004
 DECL|macro|AOFF_mm_rss
-mdefine_line|#define AOFF_mm_rss&t;0x00000070
+mdefine_line|#define AOFF_mm_rss&t;0x00000078
 DECL|macro|ASIZ_mm_rss
 mdefine_line|#define ASIZ_mm_rss&t;0x00000004
 DECL|macro|AOFF_mm_total_vm
-mdefine_line|#define AOFF_mm_total_vm&t;0x00000074
+mdefine_line|#define AOFF_mm_total_vm&t;0x0000007c
 DECL|macro|ASIZ_mm_total_vm
 mdefine_line|#define ASIZ_mm_total_vm&t;0x00000004
 DECL|macro|AOFF_mm_locked_vm
-mdefine_line|#define AOFF_mm_locked_vm&t;0x00000078
+mdefine_line|#define AOFF_mm_locked_vm&t;0x00000080
 DECL|macro|ASIZ_mm_locked_vm
 mdefine_line|#define ASIZ_mm_locked_vm&t;0x00000004
 DECL|macro|AOFF_mm_def_flags
-mdefine_line|#define AOFF_mm_def_flags&t;0x0000007c
+mdefine_line|#define AOFF_mm_def_flags&t;0x00000084
 DECL|macro|ASIZ_mm_def_flags
 mdefine_line|#define ASIZ_mm_def_flags&t;0x00000004
 DECL|macro|AOFF_mm_cpu_vm_mask
-mdefine_line|#define AOFF_mm_cpu_vm_mask&t;0x00000080
+mdefine_line|#define AOFF_mm_cpu_vm_mask&t;0x00000088
 DECL|macro|ASIZ_mm_cpu_vm_mask
 mdefine_line|#define ASIZ_mm_cpu_vm_mask&t;0x00000004
 DECL|macro|AOFF_mm_swap_cnt
-mdefine_line|#define AOFF_mm_swap_cnt&t;0x00000084
+mdefine_line|#define AOFF_mm_swap_cnt&t;0x0000008c
 DECL|macro|ASIZ_mm_swap_cnt
 mdefine_line|#define ASIZ_mm_swap_cnt&t;0x00000004
 DECL|macro|AOFF_mm_swap_address
-mdefine_line|#define AOFF_mm_swap_address&t;0x00000088
+mdefine_line|#define AOFF_mm_swap_address&t;0x00000090
 DECL|macro|ASIZ_mm_swap_address
 mdefine_line|#define ASIZ_mm_swap_address&t;0x00000004
 DECL|macro|AOFF_mm_segments
-mdefine_line|#define AOFF_mm_segments&t;0x0000008c
+mdefine_line|#define AOFF_mm_segments&t;0x00000094
 DECL|macro|ASIZ_mm_segments
 mdefine_line|#define ASIZ_mm_segments&t;0x00000004
 DECL|macro|AOFF_thread_uwinmask
@@ -1005,36 +1013,44 @@ DECL|macro|AOFF_mm_env_end
 mdefine_line|#define AOFF_mm_env_end&t;0x00000074
 DECL|macro|ASIZ_mm_env_end
 mdefine_line|#define ASIZ_mm_env_end&t;0x00000004
+DECL|macro|AOFF_mm_min_flt
+mdefine_line|#define AOFF_mm_min_flt&t;0x00000078
+DECL|macro|ASIZ_mm_min_flt
+mdefine_line|#define ASIZ_mm_min_flt&t;0x00000004
+DECL|macro|AOFF_mm_maj_flt
+mdefine_line|#define AOFF_mm_maj_flt&t;0x0000007c
+DECL|macro|ASIZ_mm_maj_flt
+mdefine_line|#define ASIZ_mm_maj_flt&t;0x00000004
 DECL|macro|AOFF_mm_rss
-mdefine_line|#define AOFF_mm_rss&t;0x00000078
+mdefine_line|#define AOFF_mm_rss&t;0x00000080
 DECL|macro|ASIZ_mm_rss
 mdefine_line|#define ASIZ_mm_rss&t;0x00000004
 DECL|macro|AOFF_mm_total_vm
-mdefine_line|#define AOFF_mm_total_vm&t;0x0000007c
+mdefine_line|#define AOFF_mm_total_vm&t;0x00000084
 DECL|macro|ASIZ_mm_total_vm
 mdefine_line|#define ASIZ_mm_total_vm&t;0x00000004
 DECL|macro|AOFF_mm_locked_vm
-mdefine_line|#define AOFF_mm_locked_vm&t;0x00000080
+mdefine_line|#define AOFF_mm_locked_vm&t;0x00000088
 DECL|macro|ASIZ_mm_locked_vm
 mdefine_line|#define ASIZ_mm_locked_vm&t;0x00000004
 DECL|macro|AOFF_mm_def_flags
-mdefine_line|#define AOFF_mm_def_flags&t;0x00000084
+mdefine_line|#define AOFF_mm_def_flags&t;0x0000008c
 DECL|macro|ASIZ_mm_def_flags
 mdefine_line|#define ASIZ_mm_def_flags&t;0x00000004
 DECL|macro|AOFF_mm_cpu_vm_mask
-mdefine_line|#define AOFF_mm_cpu_vm_mask&t;0x00000088
+mdefine_line|#define AOFF_mm_cpu_vm_mask&t;0x00000090
 DECL|macro|ASIZ_mm_cpu_vm_mask
 mdefine_line|#define ASIZ_mm_cpu_vm_mask&t;0x00000004
 DECL|macro|AOFF_mm_swap_cnt
-mdefine_line|#define AOFF_mm_swap_cnt&t;0x0000008c
+mdefine_line|#define AOFF_mm_swap_cnt&t;0x00000094
 DECL|macro|ASIZ_mm_swap_cnt
 mdefine_line|#define ASIZ_mm_swap_cnt&t;0x00000004
 DECL|macro|AOFF_mm_swap_address
-mdefine_line|#define AOFF_mm_swap_address&t;0x00000090
+mdefine_line|#define AOFF_mm_swap_address&t;0x00000098
 DECL|macro|ASIZ_mm_swap_address
 mdefine_line|#define ASIZ_mm_swap_address&t;0x00000004
 DECL|macro|AOFF_mm_segments
-mdefine_line|#define AOFF_mm_segments&t;0x00000094
+mdefine_line|#define AOFF_mm_segments&t;0x0000009c
 DECL|macro|ASIZ_mm_segments
 mdefine_line|#define ASIZ_mm_segments&t;0x00000004
 DECL|macro|AOFF_thread_uwinmask

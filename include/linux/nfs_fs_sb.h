@@ -31,12 +31,24 @@ r_int
 id|rsize
 suffix:semicolon
 multiline_comment|/* read size */
+DECL|member|rpages
+r_int
+r_int
+id|rpages
+suffix:semicolon
+multiline_comment|/* read size (in pages) */
 DECL|member|wsize
 r_int
 r_int
 id|wsize
 suffix:semicolon
 multiline_comment|/* write size */
+DECL|member|wpages
+r_int
+r_int
+id|wpages
+suffix:semicolon
+multiline_comment|/* write size (in pages) */
 DECL|member|dtsize
 r_int
 r_int

@@ -3739,6 +3739,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_else
+id|priv-&gt;restart
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * insert packet followed by a nop&n;&t; */
 id|txaddr

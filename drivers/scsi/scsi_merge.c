@@ -533,7 +533,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    recount_segments()&n; *&n; * Purpose:     Recount the number of scatter-gather segments for this request.&n; *&n; * Arguments:   req     - request that needs recounting.&n; *&n; * Returns:     Count of the number of SG segments for the request.&n; *&n; * Lock status: Irrelevant.&n; *&n; * Notes:&t;This is only used when we have partially completed requests&n; *&t;&t;and the bit that is leftover is of an indeterminate size.&n; *&t;&t;This can come up if you get a MEDIUM_ERROR, for example,&n; *&t;&t;as we will have &quot;completed&quot; all of the sectors up to and&n; *&t;&t;including the bad sector, and the leftover bit is what&n; *&t;&t;we have to do now.  This tends to be a rare occurence, so&n; *&t;&t;we aren&squot;t busting our butts to instantiate separate versions&n; *&t;&t;of this function for the 4 different flag values.  We&n; *&t;&t;probably should, however.&n; */
+multiline_comment|/*&n; * Function:    recount_segments()&n; *&n; * Purpose:     Recount the number of scatter-gather segments for this request.&n; *&n; * Arguments:   req     - request that needs recounting.&n; *&n; * Returns:     Count of the number of SG segments for the request.&n; *&n; * Lock status: Irrelevant.&n; *&n; * Notes:&t;This is only used when we have partially completed requests&n; *&t;&t;and the bit that is leftover is of an indeterminate size.&n; *&t;&t;This can come up if you get a MEDIUM_ERROR, for example,&n; *&t;&t;as we will have &quot;completed&quot; all of the sectors up to and&n; *&t;&t;including the bad sector, and the leftover bit is what&n; *&t;&t;we have to do now.  This tends to be a rare occurrence, so&n; *&t;&t;we aren&squot;t busting our butts to instantiate separate versions&n; *&t;&t;of this function for the 4 different flag values.  We&n; *&t;&t;probably should, however.&n; */
 r_void
 DECL|function|recount_segments
 id|recount_segments
@@ -627,7 +627,7 @@ c_cond
 id|req-&gt;nr_segments
 op_ge
 id|max_segments
-op_logical_and
+op_logical_or
 id|req-&gt;nr_segments
 op_ge
 id|SHpnt-&gt;sg_tablesize
@@ -678,15 +678,9 @@ id|req-&gt;nr_hw_segments
 op_ge
 id|SHpnt-&gt;sg_tablesize
 op_logical_or
-(paren
-id|req-&gt;nr_segments
-op_ge
-id|max_segments
-op_logical_and
 id|req-&gt;nr_segments
 op_ge
 id|SHpnt-&gt;sg_tablesize
-)paren
 )paren
 r_return
 l_int|0
@@ -1340,7 +1334,7 @@ op_minus
 l_int|1
 OG
 id|max_segments
-op_logical_and
+op_logical_or
 id|req-&gt;nr_segments
 op_plus
 id|next-&gt;nr_segments
@@ -1545,7 +1539,7 @@ op_plus
 id|next-&gt;nr_segments
 OG
 id|max_segments
-op_logical_and
+op_logical_or
 id|req-&gt;nr_segments
 op_plus
 id|next-&gt;nr_segments
@@ -1615,7 +1609,7 @@ op_plus
 id|next-&gt;nr_segments
 OG
 id|max_segments
-op_logical_and
+op_logical_or
 id|req-&gt;nr_segments
 op_plus
 id|next-&gt;nr_segments

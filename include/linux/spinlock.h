@@ -1,6 +1,7 @@
 macro_line|#ifndef __LINUX_SPINLOCK_H
 DECL|macro|__LINUX_SPINLOCK_H
 mdefine_line|#define __LINUX_SPINLOCK_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * These are the generic versions of the spinlocks and read-write&n; * locks..&n; */
 DECL|macro|spin_lock_irqsave
 mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);       spin_lock(lock); } while (0)
@@ -38,7 +39,7 @@ DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;&t;&t;do { write_unlock(lock); local_irq_enable();       } while (0)
 DECL|macro|write_unlock_bh
 mdefine_line|#define write_unlock_bh(lock)&t;&t;&t;do { write_unlock(lock); local_bh_enable();        } while (0)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#else /* !SMP */
 DECL|macro|DEBUG_SPINLOCKS

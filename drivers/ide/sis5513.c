@@ -745,7 +745,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;Drvie 0:        Postwrite %s &bslash;t &bslash;t Postwrite %s&bslash;n&quot;
+l_string|&quot;Drive 0:        Postwrite %s &bslash;t &bslash;t Postwrite %s&bslash;n&quot;
 comma
 (paren
 id|reg
@@ -994,7 +994,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;Drvie 1:        Postwrite %s &bslash;t &bslash;t Postwrite %s&bslash;n&quot;
+l_string|&quot;Drive 1:        Postwrite %s &bslash;t &bslash;t Postwrite %s&bslash;n&quot;
 comma
 (paren
 id|reg

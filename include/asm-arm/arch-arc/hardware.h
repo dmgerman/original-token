@@ -25,14 +25,10 @@ mdefine_line|#define IO_BASE&t;&t;&t;0x03000000
 multiline_comment|/*&n; * Screen mapping information&n; */
 DECL|macro|SCREEN_START
 mdefine_line|#define SCREEN_START&t;&t;0x02000000
-DECL|macro|SCREEN2_END
-mdefine_line|#define SCREEN2_END&t;&t;0x02078000
-DECL|macro|SCREEN2_BASE
-mdefine_line|#define SCREEN2_BASE&t;&t;0x02000000
-DECL|macro|SCREEN1_END
-mdefine_line|#define SCREEN1_END&t;&t;0x02000000
-DECL|macro|SCREEN1_BASE
-mdefine_line|#define SCREEN1_BASE&t;&t;0x01f88000
+DECL|macro|SCREEN_END
+mdefine_line|#define SCREEN_END&t;&t;0x02078000
+DECL|macro|SCREEN_BASE
+mdefine_line|#define SCREEN_BASE&t;&t;0x02000000
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * for use with inb/outb&n; */
 DECL|macro|IO_VIDC_BASE

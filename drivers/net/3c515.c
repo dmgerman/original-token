@@ -51,7 +51,6 @@ DECL|macro|RX_RING_SIZE
 mdefine_line|#define RX_RING_SIZE&t;16
 DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;/* Size of each temporary Rx buffer. */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
@@ -1327,7 +1326,7 @@ l_int|10000
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 DECL|struct|corkscrew_isapnp_adapters_struct
 r_struct
 id|corkscrew_isapnp_adapters_struct
@@ -1782,7 +1781,7 @@ id|pnp_cards
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 r_if
 c_cond
 (paren
@@ -2168,7 +2167,7 @@ suffix:semicolon
 )brace
 id|no_pnp
 suffix:colon
-macro_line|#endif /* not CONFIG_ISAPNP */
+macro_line|#endif /* not __ISAPNP__ */
 multiline_comment|/* Check all locations on the ISA bus -- evil! */
 r_for
 c_loop
@@ -2189,7 +2188,7 @@ l_int|0x20
 r_int
 id|irq
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef __ISAPNP__
 multiline_comment|/* Make sure this was not already picked up by isapnp */
 r_if
 c_cond
