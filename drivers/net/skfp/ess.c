@@ -80,6 +80,7 @@ id|fddi_addr
 id|smt_sba_da
 op_assign
 (brace
+(brace
 l_int|0x80
 comma
 l_int|0x01
@@ -92,6 +93,7 @@ l_int|0x80
 comma
 l_int|0x0C
 )brace
+)brace
 suffix:semicolon
 DECL|variable|null_addr
 r_static
@@ -100,6 +102,7 @@ r_struct
 id|fddi_addr
 id|null_addr
 op_assign
+(brace
 (brace
 l_int|0
 comma
@@ -112,6 +115,7 @@ comma
 l_int|0
 comma
 l_int|0
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t;-------------------------------------------------------------&n;&t;GLOBAL VARIABLES:&n;&t;-------------------------------------------------------------&n;*/

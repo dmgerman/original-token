@@ -799,11 +799,11 @@ mdefine_line|#define TIM_R&t;(8*60*HZ)&t;/* 8 minutes (retensioning) */
 DECL|macro|TIM_F
 mdefine_line|#define TIM_F&t;(2*3600*HZ)&t;/* est. 1.2hr for full tape read/write+2 retens */
 DECL|macro|TIMERON
-mdefine_line|#define TIMERON(t)&t;timer_table[QIC02_TAPE_TIMER].expires = jiffies + (t); &bslash;&n;&t;&t;&t;timer_active |= (1&lt;&lt;QIC02_TAPE_TIMER)
+mdefine_line|#define TIMERON(t)&t;mod_timer(&amp;tp_timer, jiffies + (t))
 DECL|macro|TIMEROFF
-mdefine_line|#define TIMEROFF&t;timer_active &amp;= ~(1&lt;&lt;QIC02_TAPE_TIMER)
+mdefine_line|#define TIMEROFF&t;del_timer_sync(&amp;tp_timer);
 DECL|macro|TIMERCONT
-mdefine_line|#define TIMERCONT&t;timer_active |= (1&lt;&lt;QIC02_TAPE_TIMER)
+mdefine_line|#define TIMERCONT&t;add_timer(&amp;tp_timer);
 DECL|typedef|flag
 r_typedef
 r_char

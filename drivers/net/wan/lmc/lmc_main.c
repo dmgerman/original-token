@@ -3466,10 +3466,6 @@ id|pci_ioaddr
 suffix:semicolon
 r_int
 r_int
-id|pci_command
-suffix:semicolon
-r_int
-r_int
 id|pci_irq_line
 suffix:semicolon
 id|u16

@@ -30,7 +30,9 @@ mdefine_line|#define FLOPPY_DMA 0
 macro_line|#include &lt;linux/blk.h&gt;
 multiline_comment|/* Note: FD_MAX_UNITS could be redefined to 2 for the Atari (with&n; * little additional rework in this file). But I&squot;m not yet sure if&n; * some other code depends on the number of floppies... (It is defined&n; * in a public header!)&n; */
 macro_line|#if 0
+DECL|macro|FD_MAX_UNITS
 macro_line|#undef FD_MAX_UNITS
+DECL|macro|FD_MAX_UNITS
 mdefine_line|#define&t;FD_MAX_UNITS&t;2
 macro_line|#endif
 multiline_comment|/* Ditto worries for Arc - DAG */
@@ -434,10 +436,16 @@ DECL|macro|RECALIBRATE_ERRORS
 mdefine_line|#define RECALIBRATE_ERRORS&t;4&t;/* After this many errors the drive&n;&t;&t;&t;&t;&t; * will be recalibrated. */
 DECL|macro|MAX_ERRORS
 mdefine_line|#define MAX_ERRORS&t;&t;&t;8&t;/* After this many errors the driver&n;&t;&t;&t;&t;&t;&t; * will give up. */
+DECL|variable|fd_timer
+r_static
+r_struct
+id|timer_list
+id|fd_timer
+suffix:semicolon
 DECL|macro|START_MOTOR_OFF_TIMER
 mdefine_line|#define&t;START_MOTOR_OFF_TIMER(delay)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;        motor_off_timer.expires = jiffies + (delay);&t;&t;&bslash;&n;        add_timer( &amp;motor_off_timer );&t;&t;&t;&bslash;&n;        MotorOffTrys = 0;&t;&t;&t;&t;&bslash;&n;&t;} while(0)
 DECL|macro|START_CHECK_CHANGE_TIMER
-mdefine_line|#define&t;START_CHECK_CHANGE_TIMER(delay)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        timer_table[FLOPPY_TIMER].expires = jiffies + (delay);&t;&bslash;&n;        timer_active |= (1 &lt;&lt; FLOPPY_TIMER);&t;&t;&t;&bslash;&n;&t;} while(0)
+mdefine_line|#define&t;START_CHECK_CHANGE_TIMER(delay)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;        mod_timer(&amp;fd_timer, jiffies + (delay));&t;&t;&bslash;&n;&t;} while(0)
 DECL|macro|START_TIMEOUT
 mdefine_line|#define&t;START_TIMEOUT()&t;&t;&t;&t;&t;     &bslash;&n;    do {&t;&t;&t;&t;&t;&t;     &bslash;&n;        mod_timer(&amp;timeout_timer, jiffies+FLOPPY_TIMEOUT); &bslash;&n;&t;} while(0)
 DECL|macro|STOP_TIMEOUT
@@ -531,7 +539,9 @@ r_void
 id|check_change
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -1223,7 +1233,9 @@ r_void
 id|check_change
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 r_static
@@ -3493,14 +3505,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|timer_pending
+c_func
 (paren
-id|timer_active
 op_amp
-(paren
-l_int|1
-op_lshift
-id|FLOPPY_TIMER
-)paren
+id|fd_timer
 )paren
 op_logical_and
 id|time_after
@@ -3510,25 +3519,20 @@ id|jiffies
 op_plus
 l_int|5
 comma
-id|timer_table
-(braket
-id|FLOPPY_TIMER
-)braket
-dot
-id|expires
+id|fd_timer.expires
 )paren
 )paren
 multiline_comment|/* If the check for a disk change is done too early after this&n;&t;&t; * last seek command, the WP bit still reads wrong :-((&n;&t;&t; */
-id|timer_table
-(braket
-id|FLOPPY_TIMER
-)braket
-dot
-id|expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|fd_timer
+comma
 id|jiffies
 op_plus
 l_int|5
+)paren
 suffix:semicolon
 r_else
 (brace
@@ -5562,24 +5566,18 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* initialize check_change timer */
-id|timer_table
-(braket
-id|FLOPPY_TIMER
-)braket
-dot
-id|fn
+id|init_timer
+c_func
+(paren
+op_amp
+id|fd_timer
+)paren
+suffix:semicolon
+id|fd_timer.function
 op_assign
 id|check_change
 suffix:semicolon
-id|timer_active
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|FLOPPY_TIMER
-)paren
-suffix:semicolon
+)brace
 macro_line|#ifdef TRACKBUFFER
 id|DMABuffer
 op_assign
@@ -5755,7 +5753,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Just a dummy at the moment */
-DECL|function|floppy_setup
 r_void
 id|floppy_setup
 c_func
@@ -5770,7 +5767,6 @@ id|ints
 )paren
 (brace
 )brace
-DECL|function|floppy_eject
 r_void
 id|floppy_eject
 c_func

@@ -3719,6 +3719,22 @@ op_star
 id|before
 suffix:semicolon
 multiline_comment|/*&n;&t; * For POSIX locks we free all locks on this file for the given task.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_flock
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Notice that something might be grabbing a lock right now.&n;&t;&t; * Consider it as a race won by us - event is async, so even if&n;&t;&t; * we miss the lock added we can trivially consider it as added&n;&t;&t; * after we went through this call.&n;&t;&t; */
+r_return
+suffix:semicolon
+)brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|repeat
 suffix:colon
 id|before
@@ -3771,6 +3787,11 @@ op_amp
 id|fl-&gt;fl_next
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function is called on the last close of an open file.&n; */
 DECL|function|locks_remove_flock
@@ -3803,6 +3824,19 @@ id|file_lock
 op_star
 op_star
 id|before
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_flock
+)paren
+r_return
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|repeat
 suffix:colon
@@ -3923,6 +3957,11 @@ op_amp
 id|fl-&gt;fl_next
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* The following two are for the benefit of lockd.&n; */
 r_void

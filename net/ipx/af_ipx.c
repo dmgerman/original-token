@@ -6207,7 +6207,6 @@ comma
 (paren
 r_int
 r_int
-r_int
 )paren
 id|htonl
 c_func
@@ -6264,6 +6263,10 @@ id|len
 comma
 l_string|&quot;%08lX:%04X  &quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|htonl
 c_func
 (paren
@@ -6315,7 +6318,6 @@ comma
 l_string|&quot;%08lX:%02X%02X%02X%02X%02X%02X:%04X  &quot;
 comma
 (paren
-r_int
 r_int
 r_int
 )paren

@@ -138,7 +138,9 @@ r_static
 r_void
 id|__do_gscd_request
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -479,6 +481,12 @@ r_static
 r_int
 id|AudioEnd_f
 suffix:semicolon
+DECL|variable|gscd_timer
+r_static
+r_struct
+id|timer_list
+id|gscd_timer
+suffix:semicolon
 DECL|variable|gscd_fops
 r_static
 r_struct
@@ -812,6 +820,7 @@ id|q
 id|__do_gscd_request
 c_func
 (paren
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -820,7 +829,9 @@ r_static
 r_void
 id|__do_gscd_request
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -844,7 +855,8 @@ id|CURRENT-&gt;rq_status
 op_eq
 id|RQ_INACTIVE
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
@@ -876,7 +888,8 @@ op_eq
 op_minus
 l_int|1
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -980,6 +993,10 @@ macro_line|#endif
 id|gscd_read_cmd
 (paren
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check the result of the set-mode command.  On success, send the&n; * read-data command.&n; */
@@ -3032,6 +3049,13 @@ c_func
 r_void
 )paren
 (brace
+id|del_timer_async
+c_func
+(paren
+op_amp
+id|gscd_timer
+)paren
+suffix:semicolon
 id|devfs_unregister
 c_func
 (paren
@@ -3041,8 +3065,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;gscd&quot;
-comma
-l_int|0
 comma
 l_int|0
 comma
@@ -3080,6 +3102,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 id|release_region
 (paren
 id|gscd_port

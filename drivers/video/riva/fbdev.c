@@ -1536,7 +1536,7 @@ id|info-&gt;disp
 op_assign
 id|disp
 suffix:semicolon
-macro_line|#warning FIXME: assure that disp-&gt;cmap is completely filled out
+multiline_comment|/* FIXME: assure that disp-&gt;cmap is completely filled out */
 id|disp-&gt;screen_base
 op_assign
 id|rinfo-&gt;fb_base
@@ -2843,7 +2843,7 @@ id|fix-&gt;line_length
 op_assign
 id|p-&gt;line_length
 suffix:semicolon
-macro_line|#warning FIXME: set up MMIO region, export via FB_ACCEL_xxx
+multiline_comment|/* FIXME: set up MMIO region, export via FB_ACCEL_xxx */
 id|fix-&gt;mmio_start
 op_assign
 l_int|0
@@ -3823,7 +3823,7 @@ id|dsp-&gt;type
 op_assign
 id|FB_TYPE_PACKED_PIXELS
 suffix:semicolon
-macro_line|#warning FIXME: verify that the above code sets dsp-&gt;* fields correctly
+multiline_comment|/* FIXME: verify that the above code sets dsp-&gt;* fields correctly */
 id|memcpy
 (paren
 op_amp

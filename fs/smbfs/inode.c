@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/smb_mount.h&gt;
@@ -686,6 +687,11 @@ l_string|&quot;smb_revalidate_inode&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If this is a file opened with write permissions,&n;&t; * the inode will be up-to-date.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -817,6 +823,11 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

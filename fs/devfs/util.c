@@ -1,4 +1,4 @@
-multiline_comment|/*  devfs (Device FileSystem) utilities.&n;&n;    Copyright (C) 1999-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    ChangeLog&n;&n;    19991031   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created.&n;    19991103   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created &lt;_devfs_convert_name&gt; and supported SCSI and IDE CD-ROMs&n;    20000203   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed operations pointer type to void *.&n;    20000621   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed interface to &lt;devfs_register_series&gt;.&n;*/
+multiline_comment|/*  devfs (Device FileSystem) utilities.&n;&n;    Copyright (C) 1999-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    ChangeLog&n;&n;    19991031   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created.&n;    19991103   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Created &lt;_devfs_convert_name&gt; and supported SCSI and IDE CD-ROMs&n;    20000203   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed operations pointer type to void *.&n;    20000621   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Changed interface to &lt;devfs_register_series&gt;.&n;    20000622   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Took account of interface change to &lt;devfs_mk_symlink&gt;.&n;               Took account of interface change to &lt;devfs_mk_dir&gt;.&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
@@ -368,13 +368,9 @@ l_int|NULL
 comma
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|dest
-comma
-l_int|0
 comma
 l_int|NULL
 comma
@@ -439,8 +435,6 @@ l_int|NULL
 comma
 l_string|&quot;tapes&quot;
 comma
-l_int|5
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -503,15 +497,11 @@ id|tape_dir
 comma
 id|name
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|dest
 op_plus
 id|pos
-comma
-l_int|0
 comma
 op_amp
 id|slave

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.152 2000/06/22 17:44:47 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.153 2000/06/26 23:20:24 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7005,11 +7005,6 @@ id|buf.dirent
 op_assign
 id|dirent
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|vfs_readdir
@@ -7039,11 +7034,6 @@ id|buf.count
 suffix:semicolon
 id|out_putf
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -7343,11 +7333,6 @@ id|buf.error
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|vfs_readdir
@@ -7403,11 +7388,6 @@ suffix:semicolon
 )brace
 id|out_putf
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -8771,11 +8751,6 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|user_path_walk
@@ -8847,11 +8822,6 @@ id|nd
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -8878,11 +8848,6 @@ id|nd
 suffix:semicolon
 r_int
 id|error
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|error
 op_assign
@@ -8955,11 +8920,6 @@ id|nd
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -8991,11 +8951,6 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|f
 op_assign
 id|fget
@@ -9011,18 +8966,11 @@ id|f
 )paren
 (brace
 r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|f-&gt;f_dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|f-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -9038,7 +8986,7 @@ op_member_access_from_pointer
 id|revalidate
 c_func
 (paren
-id|dentry
+id|f-&gt;f_dentry
 )paren
 suffix:semicolon
 r_else
@@ -9069,11 +9017,6 @@ id|f
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon

@@ -114,7 +114,7 @@ id|speed_code
 suffix:colon
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;         * *header and *data are guaranteed to be 32-bit DMAable and may be&n;         * overwritten to allow in-place byte swapping.  Neither of these is&n;         * CRCed (the sizes also don&squot;t include CRC), but contain space for at&n;         * least one additional quadlet to allow in-place CRCing.  The memory is&n;         * also guaranteed to have physical mapping (virt_to_bus() is meaningful&n;         * on these pointers).&n;         */
+multiline_comment|/*&n;         * *header and *data are guaranteed to be 32-bit DMAable and may be&n;         * overwritten to allow in-place byte swapping.  Neither of these is&n;         * CRCed (the sizes also don&squot;t include CRC), but contain space for at&n;         * least one additional quadlet to allow in-place CRCing.  The memory is&n;         * also guaranteed to be DMA mappable.&n;         */
 DECL|member|header
 id|quadlet_t
 op_star
@@ -329,7 +329,7 @@ r_int
 id|ackcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Hand over received packet to the core.  The contents of data are expected to&n; * be the full packet but with the CRCs left out (data block follows header&n; * immediately), with the header (i.e. the first four quadlets) in machine byte&n; * order and the data block in big endian.  *data can be safely overwritten&n; * after this call.&n; */
+multiline_comment|/*&n; * Hand over received packet to the core.  The contents of data are expected to&n; * be the full packet but with the CRCs left out (data block follows header&n; * immediately), with the header (i.e. the first four quadlets) in machine byte&n; * order and the data block in big endian.  *data can be safely overwritten&n; * after this call.&n; *&n; * If the packet is a write request, write_acked is to be set to true if it was&n; * ack_complete&squot;d already, false otherwise.  This arg is ignored for any other&n; * packet type.&n; */
 r_void
 id|hpsb_packet_received
 c_func
@@ -345,6 +345,9 @@ id|data
 comma
 r_int
 id|size
+comma
+r_int
+id|write_acked
 )paren
 suffix:semicolon
 macro_line|#endif /* _IEEE1394_CORE_H */

@@ -1784,9 +1784,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
+macro_line|#if 0 /* unused */
 multiline_comment|/* MUST be a multiple of 8 bytes and 8-byte aligned and &lt; 32768 bytes */
 multiline_comment|/* data copied into saa-&gt;dmadebi buffer, caller must re-enable interrupts */
-DECL|function|ibm_block_dram_read
 r_static
 r_void
 id|ibm_block_dram_read
@@ -2036,6 +2036,7 @@ l_int|4
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* unused */
 DECL|function|do_irq_send_data
 r_static
 r_void

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Core support: hpsb_packet management, packet handling and forwarding to&n; *               highlevel or lowlevel code&n; *&n; * Copyright (C) 1999, 2000 Andreas E. Bombe&n; */
+multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Core support: hpsb_packet management, packet handling and forwarding to&n; *               highlevel or lowlevel code&n; *&n; * Copyright (C) 1999, 2000 Andreas E. Bombe&n; *&n; * This code is licensed under the GPL.  See the file COPYING in the root&n; * directory of the kernel sources for details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -2404,6 +2404,9 @@ id|data
 comma
 r_int
 id|size
+comma
+r_int
+id|write_acked
 )paren
 (brace
 r_struct
@@ -2487,6 +2490,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|write_acked
+op_logical_and
 (paren
 (paren
 id|data
@@ -2581,6 +2587,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|write_acked
+op_logical_and
 (paren
 (paren
 id|data
@@ -3097,6 +3106,9 @@ id|data
 comma
 r_int
 id|size
+comma
+r_int
+id|write_acked
 )paren
 (brace
 r_int
@@ -3199,6 +3211,8 @@ comma
 id|data
 comma
 id|size
+comma
+id|write_acked
 )paren
 suffix:semicolon
 r_break

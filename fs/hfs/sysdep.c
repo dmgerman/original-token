@@ -3,6 +3,7 @@ macro_line|#include &quot;hfs.h&quot;
 macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 r_static
 r_int
 id|hfs_revalidate_dentry
@@ -312,6 +313,11 @@ id|inode
 op_member_access_from_pointer
 id|entry
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|entry-&gt;sys_entry
 (braket
 id|HFS_ITYPE_TO_INT
@@ -326,6 +332,11 @@ id|inode-&gt;i_ino
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|iput
 c_func
@@ -360,6 +371,11 @@ r_int
 id|diff
 suffix:semicolon
 multiline_comment|/* fix up inode on a timezone change */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -409,6 +425,11 @@ op_add_assign
 id|diff
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

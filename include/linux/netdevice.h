@@ -1032,8 +1032,8 @@ r_int
 id|new_mtu
 )paren
 suffix:semicolon
-DECL|macro|HAVE_TX_TIMOUT
-mdefine_line|#define HAVE_TX_TIMOUT
+DECL|macro|HAVE_TX_TIMEOUT
+mdefine_line|#define HAVE_TX_TIMEOUT
 DECL|member|tx_timeout
 r_void
 (paren

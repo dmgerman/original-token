@@ -42,6 +42,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_int
+id|rio_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|TTY_DEV
@@ -8619,8 +8627,6 @@ id|tty
 comma
 id|buf
 )paren
-comma
-l_int|0
 comma
 id|driver-&gt;major
 comma

@@ -2,6 +2,8 @@ multiline_comment|/*&n; * video1394.h - driver for OHCI 1394 boards&n; * Copyrig
 macro_line|#ifndef _VIDEO_1394_H
 DECL|macro|_VIDEO_1394_H
 mdefine_line|#define _VIDEO_1394_H
+DECL|macro|VIDEO1394_DRIVER_NAME
+mdefine_line|#define VIDEO1394_DRIVER_NAME &quot;video1394&quot;
 DECL|macro|VIDEO1394_MAX_SIZE
 mdefine_line|#define VIDEO1394_MAX_SIZE 0x400000
 r_enum
@@ -28,11 +30,23 @@ comma
 DECL|enumerator|VIDEO1394_UNLISTEN_CHANNEL
 id|VIDEO1394_UNLISTEN_CHANNEL
 comma
-DECL|enumerator|VIDEO1394_QUEUE_BUFFER
-id|VIDEO1394_QUEUE_BUFFER
+DECL|enumerator|VIDEO1394_LISTEN_QUEUE_BUFFER
+id|VIDEO1394_LISTEN_QUEUE_BUFFER
 comma
-DECL|enumerator|VIDEO1394_WAIT_BUFFER
-id|VIDEO1394_WAIT_BUFFER
+DECL|enumerator|VIDEO1394_LISTEN_WAIT_BUFFER
+id|VIDEO1394_LISTEN_WAIT_BUFFER
+comma
+DECL|enumerator|VIDEO1394_TALK_CHANNEL
+id|VIDEO1394_TALK_CHANNEL
+comma
+DECL|enumerator|VIDEO1394_UNTALK_CHANNEL
+id|VIDEO1394_UNTALK_CHANNEL
+comma
+DECL|enumerator|VIDEO1394_TALK_QUEUE_BUFFER
+id|VIDEO1394_TALK_QUEUE_BUFFER
+comma
+DECL|enumerator|VIDEO1394_TALK_WAIT_BUFFER
+id|VIDEO1394_TALK_WAIT_BUFFER
 )brace
 suffix:semicolon
 DECL|struct|video1394_mmap
@@ -55,6 +69,14 @@ DECL|member|buf_size
 r_int
 id|buf_size
 suffix:semicolon
+DECL|member|packet_size
+r_int
+id|packet_size
+suffix:semicolon
+DECL|member|fps
+r_int
+id|fps
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|video1394_wait
@@ -71,5 +93,5 @@ id|buffer
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 eof

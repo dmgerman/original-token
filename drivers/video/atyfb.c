@@ -2850,6 +2850,7 @@ id|regindex
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_PPC) || defined(CONFIG_PMAC_PBOOK)
 DECL|function|aty_st_lcd
 r_static
 r_void
@@ -2972,6 +2973,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;     *  Generic Mach64 routines&n;     */
 multiline_comment|/*&n;     *  All writes to draw engine registers are automatically routed through a&n;     *  32-bit-wide, 16-entry-deep command FIFO ...&n;     *  Register writes to registers with DWORD offsets less than 40h are not&n;     *  FIFOed.&n;     *  (from Chapter 5 of the Mach64 Programmer&squot;s Guide)&n;     */
 DECL|function|wait_for_fifo

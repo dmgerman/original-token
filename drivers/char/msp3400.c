@@ -192,6 +192,7 @@ id|dolby
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef REGISTER_MIXER
 DECL|variable|mixer
 r_static
 r_int
@@ -200,6 +201,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#endif
 DECL|struct|msp3400c
 r_struct
 id|msp3400c

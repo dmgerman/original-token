@@ -4065,8 +4065,6 @@ l_int|NULL
 comma
 l_string|&quot;scsi&quot;
 comma
-l_int|4
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -8397,8 +8395,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;scsi&quot;
-comma
-l_int|4
 comma
 l_int|NULL
 )paren

@@ -866,10 +866,12 @@ id|tchanid
 comma
 id|ctemp
 suffix:semicolon
+macro_line|#ifndef PCMCIA
 r_int
 r_int
 id|timeout
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef MODULE
 macro_line|#ifndef PCMCIA
 id|dev

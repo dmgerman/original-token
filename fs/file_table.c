@@ -441,6 +441,12 @@ id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;release
 )paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|release
@@ -451,6 +457,12 @@ comma
 id|filp
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|fops_put
 c_func
 (paren
@@ -507,28 +519,16 @@ op_star
 id|file
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|locks_remove_flock
 c_func
 (paren
 id|file
 )paren
 suffix:semicolon
-multiline_comment|/* Still need the */
 id|__fput
 c_func
 (paren
 id|file
-)paren
-suffix:semicolon
-multiline_comment|/* big lock here. */
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|file_list_lock

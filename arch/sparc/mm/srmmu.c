@@ -296,6 +296,7 @@ id|srmmu_nocache_low
 suffix:semicolon
 DECL|variable|srmmu_nocache_used
 r_int
+r_int
 id|srmmu_nocache_used
 suffix:semicolon
 DECL|variable|srmmu_nocache_spinlock
@@ -6295,15 +6296,6 @@ id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace
-DECL|variable|__initdata
-r_static
-r_int
-r_int
-id|end_of_phys_memory
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
 DECL|macro|KERNEL_PTE
 mdefine_line|#define KERNEL_PTE(page_shifted) ((page_shifted)|SRMMU_CACHE|SRMMU_PRIV|SRMMU_VALID)
 multiline_comment|/* Create a third-level SRMMU 16MB page mapping. */
@@ -6999,8 +6991,8 @@ id|buf
 comma
 l_string|&quot;MMU type&bslash;t: %s&bslash;n&quot;
 l_string|&quot;contexts&bslash;t: %d&bslash;n&quot;
-l_string|&quot;nocache total&bslash;t: %d&bslash;n&quot;
-l_string|&quot;nocache used&bslash;t: %d&bslash;n&quot;
+l_string|&quot;nocache total&bslash;t: %lu&bslash;n&quot;
+l_string|&quot;nocache used&bslash;t: %lu&bslash;n&quot;
 comma
 id|srmmu_name
 comma

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
@@ -69,6 +70,11 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cnp
 op_assign
 id|ITOC
@@ -96,6 +102,11 @@ id|p
 comma
 op_amp
 id|len
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

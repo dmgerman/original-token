@@ -1118,6 +1118,13 @@ id|mnt-&gt;mnt_sb
 op_assign
 id|sb
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1247,6 +1254,13 @@ comma
 id|vfsmntlist.prev
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 r_return
@@ -1254,6 +1268,13 @@ id|mnt
 suffix:semicolon
 id|fail
 suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1349,6 +1370,13 @@ id|dev_name
 )paren
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|old_mountpoint
 op_assign
 id|mnt-&gt;mnt_mountpoint
@@ -1455,6 +1483,13 @@ id|mnt-&gt;mnt_clash
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 multiline_comment|/* put the old stuff */
 id|dput
 c_func
@@ -1476,6 +1511,7 @@ id|old_parent
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Called with spinlock held, releases it.&n; */
 DECL|function|remove_vfsmnt
 r_static
 r_void
@@ -1515,6 +1551,13 @@ c_func
 (paren
 op_amp
 id|mnt-&gt;mnt_child
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Now we can work safely */
@@ -2557,6 +2600,11 @@ id|dev
 )paren
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2634,11 +2682,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -4183,6 +4226,13 @@ id|sb
 op_assign
 id|mnt-&gt;mnt_sb
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|remove_vfsmnt
 c_func
 (paren
@@ -4305,6 +4355,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4318,6 +4375,13 @@ OG
 l_int|2
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|mntput
 c_func
 (paren
@@ -4367,6 +4431,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Before checking whether the filesystem is still busy,&n;&t; * make sure the kernel doesn&squot;t hold any quota files open&n;&t; * on the device. If the umount fails, too bad -- there&n;&t; * are no quotas running any more. Just turn them on again.&n;&t; */
 id|DQUOT_OFF
 c_func
@@ -4433,6 +4504,13 @@ id|EBUSY
 suffix:semicolon
 )brace
 multiline_comment|/* Something might grab it again - redo checks */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4446,6 +4524,13 @@ OG
 l_int|2
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|mntput
 c_func
 (paren
@@ -6360,8 +6445,6 @@ l_int|NULL
 comma
 id|ROOT_DEVICE_NAME
 comma
-l_int|0
-comma
 id|MAJOR
 (paren
 id|ROOT_DEV
@@ -6743,8 +6826,6 @@ l_int|NULL
 comma
 l_string|&quot;root&quot;
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|path
@@ -6752,8 +6833,6 @@ op_plus
 l_int|5
 op_plus
 id|path_start
-comma
-l_int|0
 comma
 l_int|NULL
 comma
@@ -7168,6 +7247,13 @@ id|error
 r_goto
 id|out1
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|current-&gt;fs-&gt;lock
+)paren
+suffix:semicolon
 id|root_mnt
 op_assign
 id|mntget
@@ -7182,6 +7268,13 @@ id|dget
 c_func
 (paren
 id|current-&gt;fs-&gt;root
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|current-&gt;fs-&gt;lock
 )paren
 suffix:semicolon
 id|down
@@ -7283,6 +7376,13 @@ op_assign
 id|old_nd.mnt
 suffix:semicolon
 multiline_comment|/* make sure we can reach put_old from new_root */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7306,7 +7406,7 @@ op_eq
 id|tmp
 )paren
 r_goto
-id|out2
+id|out3
 suffix:semicolon
 r_if
 c_cond
@@ -7335,7 +7435,7 @@ id|new_nd.dentry
 )paren
 )paren
 r_goto
-id|out2
+id|out3
 suffix:semicolon
 )brace
 r_else
@@ -7352,7 +7452,14 @@ id|new_nd.dentry
 )paren
 )paren
 r_goto
-id|out2
+id|out3
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
 suffix:semicolon
 id|move_vfsmnt
 c_func
@@ -7448,6 +7555,18 @@ suffix:semicolon
 r_return
 id|error
 suffix:semicolon
+id|out3
+suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
+r_goto
+id|out2
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 DECL|function|change_root
@@ -7486,12 +7605,26 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|current-&gt;fs-&gt;lock
+)paren
+suffix:semicolon
 id|old_rootmnt
 op_assign
 id|mntget
 c_func
 (paren
 id|current-&gt;fs-&gt;rootmnt
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|current-&gt;fs-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/*  First unmount devfs if mounted  */
@@ -7609,7 +7742,12 @@ c_func
 (paren
 l_string|&quot;change_root: old root has d_count=%d&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|old_rootmnt-&gt;mnt_root-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif

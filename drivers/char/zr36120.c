@@ -626,8 +626,8 @@ op_star
 id|i
 )paren
 suffix:semicolon
+macro_line|#if 0 /* unused */
 r_static
-DECL|function|zoran_dump
 r_void
 id|zoran_dump
 c_func
@@ -731,6 +731,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* unused */
 r_static
 DECL|function|reap_states
 r_void

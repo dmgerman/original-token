@@ -46,11 +46,6 @@ id|error
 comma
 id|res
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|do_pipe
@@ -92,11 +87,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|res
 suffix:semicolon
@@ -144,11 +134,6 @@ id|error
 op_assign
 op_minus
 id|EFAULT
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -238,11 +223,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

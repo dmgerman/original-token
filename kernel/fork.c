@@ -1589,6 +1589,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+multiline_comment|/* We don&squot;t need to lock fs - think why ;-) */
 r_if
 c_cond
 (paren
@@ -1604,9 +1605,20 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|fs-&gt;lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 id|fs-&gt;umask
 op_assign
 id|old-&gt;umask
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|old-&gt;lock
+)paren
 suffix:semicolon
 id|fs-&gt;rootmnt
 op_assign
@@ -1674,6 +1686,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|old-&gt;lock
+)paren
+suffix:semicolon
 )brace
 r_return
 id|fs

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 DECL|function|udf_pc_to_char
 r_static
@@ -255,6 +256,11 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -349,6 +355,11 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren
@@ -372,6 +383,11 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SetPageError
 c_func
 (paren

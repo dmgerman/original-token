@@ -40,13 +40,13 @@ mdefine_line|#define O_NOFOLLOW&t;0400000 /* don&squot;t follow links */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD
-mdefine_line|#define F_GETFD&t;&t;1&t;/* get f_flags */
+mdefine_line|#define F_GETFD&t;&t;1&t;/* get close_on_exec */
 DECL|macro|F_SETFD
-mdefine_line|#define F_SETFD&t;&t;2&t;/* set f_flags */
+mdefine_line|#define F_SETFD&t;&t;2&t;/* set/clear close_on_exec */
 DECL|macro|F_GETFL
-mdefine_line|#define F_GETFL&t;&t;3&t;/* more flags (cloexec) */
+mdefine_line|#define F_GETFL&t;&t;3&t;/* get file-&gt;f_flags */
 DECL|macro|F_SETFL
-mdefine_line|#define F_SETFL&t;&t;4
+mdefine_line|#define F_SETFL&t;&t;4&t;/* set file-&gt;f_flags */
 DECL|macro|F_GETLK
 mdefine_line|#define F_GETLK&t;&t;5
 DECL|macro|F_SETLK

@@ -1273,7 +1273,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;proc_read_super: get root inode failed&bslash;n&quot;
+l_string|&quot;shm_read_super: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|iput
@@ -5326,11 +5326,6 @@ comma
 id|shmid
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|dentry
 op_assign
 id|lookup_one
@@ -5433,11 +5428,6 @@ id|dentry
 suffix:semicolon
 id|bad_dentry
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -5839,11 +5829,6 @@ comma
 id|shmid
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|mntget
 c_func
 (paren
@@ -5967,11 +5952,6 @@ op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6018,11 +5998,6 @@ id|mntput
 c_func
 (paren
 id|shm_fs_type.kern_mnt
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -6098,11 +6073,6 @@ comma
 id|SHM_FMT
 comma
 id|id
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|dir
@@ -6197,11 +6167,6 @@ id|unlock_dir
 c_func
 (paren
 id|dir
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

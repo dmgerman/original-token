@@ -599,9 +599,6 @@ op_star
 id|sv
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 r_int
 id|flags
 suffix:semicolon
@@ -609,12 +606,15 @@ multiline_comment|/*&n;&t; *&t;Get the needed I/O space&n;&t; */
 r_if
 c_cond
 (paren
-id|check_region
+op_logical_neg
+id|request_region
 c_func
 (paren
 id|iobase
 comma
 l_int|8
+comma
+l_string|&quot;Comtrol SV11&quot;
 )paren
 )paren
 (brace
@@ -631,16 +631,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|request_region
-c_func
-(paren
-id|iobase
-comma
-l_int|8
-comma
-l_string|&quot;Comtrol SV11&quot;
-)paren
-suffix:semicolon
 id|sv
 op_assign
 (paren

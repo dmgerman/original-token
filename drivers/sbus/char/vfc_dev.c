@@ -3277,8 +3277,6 @@ l_int|NULL
 comma
 l_string|&quot;vfc&quot;
 comma
-l_int|3
-comma
 l_int|NULL
 )paren
 suffix:semicolon

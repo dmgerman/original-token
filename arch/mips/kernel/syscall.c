@@ -101,11 +101,6 @@ id|error
 comma
 id|res
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|do_pipe
@@ -147,11 +142,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|res
 suffix:semicolon
@@ -247,11 +237,6 @@ op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|do_mmap_pgoff
@@ -268,11 +253,6 @@ comma
 id|flags
 comma
 id|pgoff
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|up

@@ -554,8 +554,6 @@ l_int|NULL
 comma
 id|xd_gendisk.major_name
 comma
-l_int|0
-comma
 l_int|NULL
 )paren
 suffix:semicolon

@@ -1544,8 +1544,6 @@ l_int|NULL
 comma
 l_string|&quot;coda&quot;
 comma
-l_int|4
-comma
 l_int|NULL
 )paren
 suffix:semicolon

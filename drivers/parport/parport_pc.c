@@ -2938,6 +2938,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|change_mode
 (paren
 id|port
@@ -2946,6 +2948,19 @@ id|ECR_PPF
 )paren
 suffix:semicolon
 multiline_comment|/* Parallel port FIFO */
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Warning change_mode ECR_PPF failed&bslash;n&quot;
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
@@ -3225,6 +3240,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|change_mode
 (paren
 id|port
@@ -3233,6 +3250,19 @@ id|ECR_ECP
 )paren
 suffix:semicolon
 multiline_comment|/* ECP FIFO */
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Warning change_mode ECR_ECP failed&bslash;n&quot;
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
@@ -3699,6 +3729,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|r
+op_assign
 id|change_mode
 (paren
 id|port
@@ -3707,6 +3739,19 @@ id|ECR_ECP
 )paren
 suffix:semicolon
 multiline_comment|/* ECP FIFO */
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Warning change_mode ECR_ECP failed&bslash;n&quot;
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
 id|port-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_REV_DATA
@@ -6395,7 +6440,7 @@ id|PARPORT_IRQ_NONE
 suffix:semicolon
 )brace
 multiline_comment|/* --- Mode detection ------------------------------------- */
-multiline_comment|/*&n; * Checks for port existence, all ports support SPP MODE&n; */
+multiline_comment|/*&n; * Checks for port existence, all ports support SPP MODE&n; * Returns: &n; *         0           :  No parallel port at this adress&n; *  PARPORT_MODE_PCSPP :  SPP port detected &n; *                        (if the user specified an ioport himself,&n; *                         this shall always be the case!)&n; *&n; */
 DECL|function|parport_SPP_supported
 r_static
 r_int
@@ -6518,7 +6563,8 @@ multiline_comment|/* That didn&squot;t work, but the user thinks there&squot;s a
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;0x%lx: CTR: wrote 0x%02x, read 0x%02x&bslash;n&quot;
+l_string|&quot;parport 0x%lx (WARNING): CTR: &quot;
+l_string|&quot;wrote 0x%02x, read 0x%02x&bslash;n&quot;
 comma
 id|pb-&gt;base
 comma
@@ -6588,11 +6634,13 @@ c_cond
 (paren
 id|user_specified
 )paren
+(brace
 multiline_comment|/* Didn&squot;t work, but the user is convinced this is the&n;&t;&t; * place. */
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;0x%lx: DATA: wrote 0x%02x, read 0x%02x&bslash;n&quot;
+l_string|&quot;parport 0x%lx (WARNING): DATA: &quot;
+l_string|&quot;wrote 0x%02x, read 0x%02x&bslash;n&quot;
 comma
 id|pb-&gt;base
 comma
@@ -6601,6 +6649,16 @@ comma
 id|r
 )paren
 suffix:semicolon
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;parport 0x%lx: You gave this address, &quot;
+l_string|&quot;but there is probably no parallel port there!&bslash;n&quot;
+comma
+id|pb-&gt;base
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* It&squot;s possible that we can&squot;t read the control register or&n;&t; * the data register.  In that case just believe the user. */
 r_if
 c_cond
@@ -7579,6 +7637,8 @@ suffix:semicolon
 id|pb-&gt;modes
 op_or_assign
 id|PARPORT_MODE_ECP
+op_or
+id|PARPORT_MODE_COMPAT
 suffix:semicolon
 r_return
 l_int|1
@@ -12026,6 +12086,7 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* We ought to keep track of which ports are actually ours. */
 r_struct
 id|parport
 op_star

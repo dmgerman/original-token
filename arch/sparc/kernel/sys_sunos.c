@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.125 2000/06/22 11:42:25 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.126 2000/06/26 23:20:24 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -89,11 +89,6 @@ r_int
 id|retval
 comma
 id|ret_type
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -377,11 +372,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -1305,11 +1295,6 @@ id|file
 r_goto
 id|out
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -1409,11 +1394,6 @@ suffix:semicolon
 )brace
 id|out_putf
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -1708,11 +1688,6 @@ id|file
 r_goto
 id|out
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -1813,11 +1788,6 @@ suffix:semicolon
 )brace
 id|out_putf
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren

@@ -4527,8 +4527,6 @@ l_int|NULL
 comma
 l_string|&quot;bpp&quot;
 comma
-l_int|3
-comma
 l_int|NULL
 )paren
 suffix:semicolon

@@ -449,7 +449,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * If we use the IO-APIC for IRQ routing, disable automatic&n; * assignment of PCI IRQ&squot;s.&n; */
 DECL|macro|io_apic_assign_pci_irqs
-mdefine_line|#define io_apic_assign_pci_irqs (mp_irq_entries != 0)
+mdefine_line|#define io_apic_assign_pci_irqs (mp_irq_entries &amp;&amp; !skip_ioapic_setup)
 macro_line|#else  /* !CONFIG_X86_IO_APIC */
 DECL|macro|io_apic_assign_pci_irqs
 mdefine_line|#define io_apic_assign_pci_irqs 0

@@ -1022,6 +1022,16 @@ comma
 l_string|&quot;ed&quot;
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/* handles boot time command line parameters */

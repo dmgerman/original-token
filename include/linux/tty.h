@@ -878,14 +878,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|rs_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|lp_init
 c_func
 (paren

@@ -6,7 +6,7 @@ mdefine_line|#define RAW1394_DEVICE_MAJOR      171
 DECL|macro|RAW1394_DEVICE_NAME
 mdefine_line|#define RAW1394_DEVICE_NAME       &quot;raw1394&quot;
 DECL|macro|RAW1394_KERNELAPI_VERSION
-mdefine_line|#define RAW1394_KERNELAPI_VERSION 2
+mdefine_line|#define RAW1394_KERNELAPI_VERSION 3
 multiline_comment|/* state: opened */
 DECL|macro|RAW1394_REQ_INITIALIZE
 mdefine_line|#define RAW1394_REQ_INITIALIZE    1
@@ -60,48 +60,45 @@ DECL|macro|RAW1394_ERROR_ABORTED
 mdefine_line|#define RAW1394_ERROR_ABORTED     (-1101)
 DECL|macro|RAW1394_ERROR_TIMEOUT
 mdefine_line|#define RAW1394_ERROR_TIMEOUT     (-1102)
+macro_line|#include &lt;asm/types.h&gt;
 DECL|struct|raw1394_request
 r_struct
 id|raw1394_request
 (brace
 DECL|member|type
-r_int
+id|__u32
 id|type
 suffix:semicolon
 DECL|member|error
-r_int
+id|__s32
 id|error
 suffix:semicolon
 DECL|member|misc
-r_int
+id|__u32
 id|misc
 suffix:semicolon
 DECL|member|generation
-r_int
-r_int
+id|__u32
 id|generation
 suffix:semicolon
+DECL|member|length
+id|__u32
+id|length
+suffix:semicolon
 DECL|member|address
-id|octlet_t
+id|__u64
 id|address
 suffix:semicolon
 DECL|member|tag
-r_int
-r_int
+id|__u64
 id|tag
 suffix:semicolon
-DECL|member|length
-r_int
-id|length
-suffix:semicolon
 DECL|member|sendb
-id|quadlet_t
-op_star
+id|__u64
 id|sendb
 suffix:semicolon
 DECL|member|recvb
-id|quadlet_t
-op_star
+id|__u64
 id|recvb
 suffix:semicolon
 )brace
@@ -111,11 +108,11 @@ r_struct
 id|raw1394_khost_list
 (brace
 DECL|member|nodes
-r_int
+id|__u32
 id|nodes
 suffix:semicolon
 DECL|member|name
-r_char
+id|__u8
 id|name
 (braket
 l_int|32

@@ -68,7 +68,7 @@ l_int|0xFFFFFFFF
 )brace
 )brace
 suffix:semicolon
-DECL|variable|RivaTableFIFO
+macro_line|#if 0
 r_static
 r_int
 id|RivaTableFIFO
@@ -122,6 +122,7 @@ l_int|0x80000013
 )brace
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|nv3TablePFIFO
 r_static
 r_int

@@ -6404,6 +6404,7 @@ l_string|&quot;SJCD: cannot unregister device.&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
+(brace
 id|release_region
 c_func
 (paren
@@ -6412,6 +6413,17 @@ comma
 l_int|4
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -6434,8 +6446,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;sjcd&quot;
-comma
-l_int|0
 comma
 l_int|0
 comma

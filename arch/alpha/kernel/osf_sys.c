@@ -479,11 +479,6 @@ id|buf.error
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|vfs_readdir
@@ -526,11 +521,6 @@ id|buf.count
 suffix:semicolon
 id|out_putf
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -823,11 +813,6 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#if 0
 r_if
 c_cond
@@ -936,11 +921,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -1274,11 +1254,6 @@ c_cond
 id|file
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|retval
 op_assign
 id|do_osf_statfs
@@ -1289,11 +1264,6 @@ comma
 id|buffer
 comma
 id|bufsiz
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|fput
@@ -2064,11 +2034,6 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|do_pipe
@@ -2106,11 +2071,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

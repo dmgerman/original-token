@@ -47,10 +47,10 @@ macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
 macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 macro_line|#include &lt;video/fbcon-cfb32.h&gt;
-macro_line|#if defined(CONFIG_FB_OF)
 macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_PPC)
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;video/macmodes.h&gt;
@@ -1880,7 +1880,7 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
-macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
+macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 DECL|member|matrox_name
 r_char
 id|matrox_name

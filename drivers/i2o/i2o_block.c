@@ -6110,6 +6110,16 @@ comma
 l_string|&quot;i2o_block&quot;
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -6350,6 +6360,17 @@ id|printk
 c_func
 (paren
 l_string|&quot;i2o_block: cleanup_module failed&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * free request queue&n;&t; */
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -2383,11 +2383,6 @@ op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|av
 op_assign
 (paren
@@ -2413,11 +2408,6 @@ op_or
 id|MAP_ANONYMOUS
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|up

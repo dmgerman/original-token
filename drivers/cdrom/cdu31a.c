@@ -13108,6 +13108,16 @@ c_func
 l_string|&quot;Unable to register CDU-31a with Uniform cdrom driver&bslash;n&quot;
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13199,6 +13209,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

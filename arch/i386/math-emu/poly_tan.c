@@ -274,9 +274,11 @@ c_func
 (paren
 id|st0_ptr
 comma
+(paren
 l_int|0x41
 op_plus
 id|EXTENDED_Ebias
+)paren
 op_or
 id|SIGN_Negative
 )paren

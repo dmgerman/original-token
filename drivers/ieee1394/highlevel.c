@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Copyright (C) 1999 Andreas E. Bombe&n; */
+multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Copyright (C) 1999 Andreas E. Bombe&n; *&n; * This code is licensed under the GPL.  See the file COPYING in the root&n; * directory of the kernel sources for details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &quot;ieee1394.h&quot;

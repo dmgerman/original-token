@@ -6275,6 +6275,7 @@ id|urb_priv
 op_assign
 id|urb-&gt;hcpriv
 suffix:semicolon
+macro_line|#ifdef ISO_SANITY_CHECK
 r_int
 id|pipe
 op_assign
@@ -6295,6 +6296,7 @@ id|pipe
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_int
 id|n
 comma
@@ -6439,6 +6441,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+macro_line|#ifdef ISO_SANITY_CHECK
 r_if
 c_cond
 (paren
@@ -6452,7 +6455,6 @@ OG
 id|maxsze
 )paren
 (brace
-macro_line|#ifdef ISO_SANITY_CHECK
 id|err
 c_func
 (paren
@@ -6485,8 +6487,9 @@ suffix:semicolon
 r_goto
 id|inval
 suffix:semicolon
-macro_line|#endif
 )brace
+r_else
+macro_line|#endif
 id|ret
 op_assign
 id|alloc_td
@@ -6497,8 +6500,6 @@ comma
 id|UHCI_PTR_DEPTH
 )paren
 suffix:semicolon
-id|inval
-suffix:colon
 r_if
 c_cond
 (paren

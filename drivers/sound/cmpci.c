@@ -497,15 +497,6 @@ id|devs
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|devaudio
-r_static
-r_struct
-id|cm_state
-op_star
-id|devaudio
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|variable|wavetable_mem
 r_static
 r_int
@@ -14111,8 +14102,6 @@ id|CM_EXTENT_SYNTH
 )paren
 suffix:semicolon
 )brace
-id|err_region1
-suffix:colon
 r_if
 c_cond
 (paren
@@ -14128,8 +14117,6 @@ id|CM_EXTENT_MIDI
 )paren
 suffix:semicolon
 )brace
-id|err_region4
-suffix:colon
 id|release_region
 c_func
 (paren

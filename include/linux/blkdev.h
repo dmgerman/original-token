@@ -43,7 +43,12 @@ r_struct
 id|list_head
 id|table
 suffix:semicolon
-multiline_comment|/*&n;&t; * queue free list belongs to&n;&t; */
+DECL|member|free_list
+r_struct
+id|list_head
+op_star
+id|free_list
+suffix:semicolon
 DECL|member|rq_status
 r_volatile
 r_int
@@ -268,9 +273,7 @@ id|q
 suffix:semicolon
 multiline_comment|/*&n; * Default nr free requests per queue&n; */
 DECL|macro|QUEUE_NR_REQUESTS
-mdefine_line|#define QUEUE_NR_REQUESTS&t;512
-DECL|macro|QUEUE_WRITES_MAX
-mdefine_line|#define QUEUE_WRITES_MAX&t;((2 * QUEUE_NR_REQUESTS) / 3)
+mdefine_line|#define QUEUE_NR_REQUESTS&t;256
 DECL|struct|request_queue
 r_struct
 id|request_queue
@@ -280,10 +283,9 @@ DECL|member|request_freelist
 r_struct
 id|list_head
 id|request_freelist
-suffix:semicolon
-DECL|member|queue_requests
-r_int
-id|queue_requests
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * Together with queue_head for cacheline sharing&n;&t; */
 DECL|member|queue_head

@@ -604,7 +604,7 @@ id|i2eChannelCnt
 suffix:semicolon
 singleline_comment|// Ring-buffers of channel structures whose channels have particular needs.
 DECL|member|Fbuf_spinlock
-id|spinlock_t
+id|rwlock_t
 id|Fbuf_spinlock
 suffix:semicolon
 r_volatile
@@ -633,7 +633,7 @@ singleline_comment|// An array of channel pointers
 singleline_comment|// of channels who need to send
 singleline_comment|// flow control packets.
 DECL|member|Dbuf_spinlock
-id|spinlock_t
+id|rwlock_t
 id|Dbuf_spinlock
 suffix:semicolon
 r_volatile
@@ -662,7 +662,7 @@ singleline_comment|// An array of channel pointers
 singleline_comment|// of channels who need to send
 singleline_comment|// data or in-line command packets.
 DECL|member|Bbuf_spinlock
-id|spinlock_t
+id|rwlock_t
 id|Bbuf_spinlock
 suffix:semicolon
 r_volatile
@@ -740,11 +740,11 @@ r_int
 id|debugBypassCount
 suffix:semicolon
 DECL|member|read_fifo_spinlock
-id|spinlock_t
+id|rwlock_t
 id|read_fifo_spinlock
 suffix:semicolon
 DECL|member|write_fifo_spinlock
-id|spinlock_t
+id|rwlock_t
 id|write_fifo_spinlock
 suffix:semicolon
 macro_line|#ifdef&t;CONFIG_DEVFS_FS

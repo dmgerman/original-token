@@ -693,14 +693,6 @@ suffix:semicolon
 multiline_comment|/* FDDI adapters */
 r_extern
 r_int
-id|dfx_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|apfddi_init
 c_func
 (paren
@@ -921,14 +913,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NE3210
 (brace
 id|ne3210_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_DEFXX
-(brace
-id|dfx_probe
 comma
 l_int|0
 )brace

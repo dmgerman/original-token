@@ -483,7 +483,15 @@ r_if
 c_cond
 (paren
 id|file-&gt;f_op
-op_logical_and
+)paren
+(brace
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|file-&gt;f_op-&gt;open
 )paren
 id|err
@@ -498,6 +506,7 @@ comma
 id|file
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -698,8 +707,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;misc&quot;
-comma
-l_int|4
 comma
 l_int|NULL
 )paren

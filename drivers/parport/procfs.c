@@ -852,7 +852,7 @@ suffix:semicolon
 r_char
 id|buffer
 (braket
-l_int|20
+l_int|40
 )braket
 suffix:semicolon
 r_int

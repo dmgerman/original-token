@@ -221,7 +221,22 @@ id|softoss_dev
 )paren
 suffix:semicolon
 multiline_comment|/* Locking */
-macro_line|#include &quot;soundmodule.h&quot;
+r_extern
+r_struct
+id|notifier_block
+op_star
+id|sound_locker
+suffix:semicolon
+r_extern
+r_void
+id|sound_notifier_chain_register
+c_func
+(paren
+r_struct
+id|notifier_block
+op_star
+)paren
+suffix:semicolon
 DECL|variable|sound_locker
 id|EXPORT_SYMBOL
 c_func

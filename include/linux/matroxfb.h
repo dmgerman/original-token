@@ -16,6 +16,8 @@ DECL|macro|MATROXFB_OUTPUT_PRIMARY
 mdefine_line|#define MATROXFB_OUTPUT_PRIMARY&t;&t;0x0000
 DECL|macro|MATROXFB_OUTPUT_SECONDARY
 mdefine_line|#define MATROXFB_OUTPUT_SECONDARY&t;0x0001
+DECL|macro|MATROXFB_OUTPUT_DFP
+mdefine_line|#define MATROXFB_OUTPUT_DFP&t;&t;0x0002
 DECL|member|mode
 id|__u32
 id|mode
@@ -38,6 +40,8 @@ DECL|macro|MATROXFB_OUTPUT_CONN_PRIMARY
 mdefine_line|#define MATROXFB_OUTPUT_CONN_PRIMARY&t;(1 &lt;&lt; MATROXFB_OUTPUT_PRIMARY)
 DECL|macro|MATROXFB_OUTPUT_CONN_SECONDARY
 mdefine_line|#define MATROXFB_OUTPUT_CONN_SECONDARY&t;(1 &lt;&lt; MATROXFB_OUTPUT_SECONDARY)
+DECL|macro|MATROXFB_OUTPUT_CONN_DFP
+mdefine_line|#define MATROXFB_OUTPUT_CONN_DFP&t;(1 &lt;&lt; MATROXFB_OUTPUT_DFP)
 multiline_comment|/* connect these outputs to this framebuffer */
 DECL|macro|MATROXFB_SET_OUTPUT_CONNECTION
 mdefine_line|#define MATROXFB_SET_OUTPUT_CONNECTION&t;_IOW(&squot;n&squot;,0xF8,sizeof(__u32))

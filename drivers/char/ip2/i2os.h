@@ -9,6 +9,7 @@ singleline_comment|// Required Includes
 singleline_comment|//-------------------------------------------------
 macro_line|#include &quot;ip2types.h&quot;
 macro_line|#include &lt;asm/io.h&gt;  /* For inb, etc */
+macro_line|#include &lt;linux/version.h&gt;
 singleline_comment|//------------------------------------
 singleline_comment|// Defines for I/O instructions:
 singleline_comment|//------------------------------------
@@ -59,7 +60,7 @@ macro_line|#endif
 singleline_comment|//#define SAVE_AND_DISABLE_INTS(a,b)&t;spin_lock_irqsave(a,b)
 singleline_comment|//#define RESTORE_INTS(a,b)         &t;spin_unlock_irqrestore(a,b)
 DECL|macro|LOCK_INIT
-mdefine_line|#define LOCK_INIT(a)&t;spin_lock_init(a)
+mdefine_line|#define LOCK_INIT(a)&t;rwlock_init(a)
 DECL|macro|SAVE_AND_DISABLE_INTS
 mdefine_line|#define SAVE_AND_DISABLE_INTS(a,b) { &bslash;&n;&t;/* printk(&quot;get_lock: 0x%x,%4d,%s&bslash;n&quot;,(int)a,__LINE__,__FILE__);*/ &bslash;&n;&t;spin_lock_irqsave(a,b); &bslash;&n;}
 DECL|macro|RESTORE_INTS

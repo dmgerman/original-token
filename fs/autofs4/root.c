@@ -2,6 +2,8 @@ multiline_comment|/* -*- c -*- -------------------------------------------------
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;autofs_i.h&quot;
 r_static
 r_struct
@@ -502,6 +504,13 @@ suffix:semicolon
 multiline_comment|/* status = autofs4_wait(sbi, &amp;dentry-&gt;d_name, NFY_MOUNT); */
 )brace
 multiline_comment|/* If this is an unused directory that isn&squot;t a mount point,&n;&t;   bitch at the daemon and fix it in user space */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -534,6 +543,13 @@ l_string|&quot;try_to_fill_entry: mounting existing dir&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_return
 id|autofs4_wait
 c_func
@@ -549,6 +565,13 @@ op_eq
 l_int|0
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 multiline_comment|/* We don&squot;t update the usages for the autofs daemon itself, this&n;&t;   is necessary for recursive autofs mounts */
 r_if
 c_cond
@@ -685,6 +708,13 @@ id|dentry
 )paren
 suffix:semicolon
 multiline_comment|/* Check for a non-mountpoint directory with no contents */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -723,6 +753,13 @@ id|dentry-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -744,6 +781,13 @@ id|sbi
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Update the usage list */
 r_if
 c_cond
@@ -840,6 +884,11 @@ id|de
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|de-&gt;d_fsdata
 op_assign
 l_int|NULL
@@ -865,6 +914,11 @@ id|inf
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* For dentries of directories in the root dir */
 DECL|variable|autofs4_root_dentry_operations
@@ -1452,22 +1506,6 @@ id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-(paren
-l_string|&quot;autofs_dir_unlink: unlinking %p %.*s, count=%d&bslash;n&quot;
-comma
-id|dentry
-comma
-id|dentry-&gt;d_name.len
-comma
-id|dentry-&gt;d_name.name
-comma
-id|dentry-&gt;d_count
-)paren
-)paren
-suffix:semicolon
 id|d_drop
 c_func
 (paren
@@ -1531,6 +1569,13 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1542,9 +1587,32 @@ op_amp
 id|dentry-&gt;d_subdirs
 )paren
 )paren
+(brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOTEMPTY
+suffix:semicolon
+)brace
+id|list_del
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
 suffix:semicolon
 id|dput
 c_func
@@ -1567,28 +1635,6 @@ id|dir-&gt;i_nlink
 )paren
 id|dir-&gt;i_nlink
 op_decrement
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-(paren
-l_string|&quot;autofs_dir_rmdir: rmdir %p %.*s, count=%d&bslash;n&quot;
-comma
-id|dentry
-comma
-id|dentry-&gt;d_name.len
-comma
-id|dentry-&gt;d_name.name
-comma
-id|dentry-&gt;d_count
-)paren
-)paren
-suffix:semicolon
-id|d_drop
-c_func
-(paren
-id|dentry
-)paren
 suffix:semicolon
 r_return
 l_int|0

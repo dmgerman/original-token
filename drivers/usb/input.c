@@ -1724,8 +1724,6 @@ l_int|NULL
 comma
 l_string|&quot;input&quot;
 comma
-l_int|5
-comma
 l_int|NULL
 )paren
 suffix:semicolon

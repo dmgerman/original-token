@@ -1308,6 +1308,16 @@ id|DEVICE_NAME
 l_string|&quot;: unregister of device failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

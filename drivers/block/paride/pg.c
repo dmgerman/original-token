@@ -824,8 +824,6 @@ l_int|NULL
 comma
 l_string|&quot;pg&quot;
 comma
-l_int|2
-comma
 l_int|NULL
 )paren
 suffix:semicolon

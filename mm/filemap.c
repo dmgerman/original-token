@@ -6479,6 +6479,11 @@ id|vma-&gt;vm_ops-&gt;sync
 r_int
 id|error
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|vma-&gt;vm_ops
@@ -6541,6 +6546,11 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -6588,11 +6598,6 @@ c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -6802,11 +6807,6 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|up
 c_func
 (paren
@@ -7765,12 +7765,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* is this really necessary? */
 id|flush_cache_range
 c_func
 (paren
@@ -7801,11 +7795,6 @@ comma
 id|start
 comma
 id|end
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

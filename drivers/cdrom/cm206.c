@@ -5623,6 +5623,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 r_case
 l_int|3
 suffix:colon

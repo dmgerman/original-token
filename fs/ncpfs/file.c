@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
 DECL|function|min
@@ -652,12 +653,10 @@ id|bufsize
 suffix:semicolon
 id|freepage
 op_assign
-id|kmalloc
+id|vmalloc
 c_func
 (paren
 id|freelen
-comma
-id|GFP_NFS
 )paren
 suffix:semicolon
 r_if
@@ -776,7 +775,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|kfree
+id|vfree
 c_func
 (paren
 id|freepage
@@ -1039,12 +1038,10 @@ l_int|0
 suffix:semicolon
 id|bouncebuffer
 op_assign
-id|kmalloc
+id|vmalloc
 c_func
 (paren
 id|bufsize
-comma
-id|GFP_NFS
 )paren
 suffix:semicolon
 r_if
@@ -1181,7 +1178,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|kfree
+id|vfree
 c_func
 (paren
 id|bouncebuffer

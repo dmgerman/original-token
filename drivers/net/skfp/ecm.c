@@ -1545,9 +1545,13 @@ suffix:semicolon
 (brace
 r_int
 id|port_in
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|port_out
+op_assign
+l_int|0
 suffix:semicolon
 id|RS_SET
 c_func

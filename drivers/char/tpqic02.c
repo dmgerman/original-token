@@ -286,6 +286,12 @@ id|extra_blocks_left
 op_assign
 id|BLOCKS_BEYOND_EW
 suffix:semicolon
+DECL|variable|tp_timer
+r_static
+r_struct
+id|timer_list
+id|tp_timer
+suffix:semicolon
 multiline_comment|/* return_*_eof:&n; *&t;NO:&t;not at EOF,&n; *&t;YES:&t;tell app EOF was reached (return 0).&n; *&n; * return_*_eof==YES &amp;&amp; reported_*_eof==NO  ==&gt;&n; *&t;return current buffer, next time(s) return EOF.&n; *&n; * return_*_eof==YES &amp;&amp; reported_*_eof==YES  ==&gt;&n; *&t;at EOF and application knows it, so we can&n; *&t;move on to the next file.&n; *&n; */
 DECL|variable|return_read_eof
 r_static
@@ -5671,7 +5677,9 @@ r_void
 id|qic02_tape_times_out
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 id|printk
@@ -6031,18 +6039,18 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* start next transfer, account for track-switching time */
-id|timer_table
-(braket
-id|QIC02_TAPE_TIMER
-)braket
-dot
-id|expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|tp_timer
+comma
 id|jiffies
 op_plus
 l_int|6
 op_star
 id|HZ
+)paren
 suffix:semicolon
 id|dma_transfer
 c_func
@@ -10096,21 +10104,14 @@ suffix:semicolon
 multiline_comment|/* prepare timer */
 id|TIMEROFF
 suffix:semicolon
-id|timer_table
-(braket
-id|QIC02_TAPE_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
+id|init_timer
+c_func
+(paren
+op_amp
+id|tp_timer
+)paren
 suffix:semicolon
-id|timer_table
-(braket
-id|QIC02_TAPE_TIMER
-)braket
-dot
-id|fn
+id|tp_timer.function
 op_assign
 id|qic02_tape_times_out
 suffix:semicolon
@@ -10274,8 +10275,6 @@ l_int|NULL
 comma
 l_string|&quot;ntpqic11&quot;
 comma
-l_int|0
-comma
 id|QIC02_TAPE_MAJOR
 comma
 l_int|2
@@ -10295,8 +10294,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;tpqic11&quot;
-comma
-l_int|0
 comma
 id|QIC02_TAPE_MAJOR
 comma
@@ -10318,8 +10315,6 @@ l_int|NULL
 comma
 l_string|&quot;ntpqic24&quot;
 comma
-l_int|0
-comma
 id|QIC02_TAPE_MAJOR
 comma
 l_int|4
@@ -10339,8 +10334,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;tpqic24&quot;
-comma
-l_int|0
 comma
 id|QIC02_TAPE_MAJOR
 comma
@@ -10362,8 +10355,6 @@ l_int|NULL
 comma
 l_string|&quot;ntpqic120&quot;
 comma
-l_int|0
-comma
 id|QIC02_TAPE_MAJOR
 comma
 l_int|6
@@ -10383,8 +10374,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;tpqic120&quot;
-comma
-l_int|0
 comma
 id|QIC02_TAPE_MAJOR
 comma
@@ -10406,8 +10395,6 @@ l_int|NULL
 comma
 l_string|&quot;ntpqic150&quot;
 comma
-l_int|0
-comma
 id|QIC02_TAPE_MAJOR
 comma
 l_int|8
@@ -10427,8 +10414,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;tpqic150&quot;
-comma
-l_int|0
 comma
 id|QIC02_TAPE_MAJOR
 comma

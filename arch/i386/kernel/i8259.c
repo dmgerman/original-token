@@ -1084,6 +1084,11 @@ id|i8259A_irq_type.ack
 op_assign
 id|disable_8259A_irq
 suffix:semicolon
+r_else
+id|i8259A_irq_type.ack
+op_assign
+id|mask_and_ack_8259A
+suffix:semicolon
 id|udelay
 c_func
 (paren

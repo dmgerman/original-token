@@ -3664,8 +3664,6 @@ l_int|NULL
 comma
 l_string|&quot;fb&quot;
 comma
-l_int|0
-comma
 l_int|NULL
 )paren
 suffix:semicolon

@@ -65,9 +65,9 @@ multiline_comment|/* borrowed from hd.c */
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) &bslash;&n;insb(port, buf, nr)
 DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;((timer_table[MCD_TIMER].expires = jiffies + jifs), &bslash;&n;&t;(timer_table[MCD_TIMER].fn = func), &bslash;&n;&t;(timer_active |= 1&lt;&lt;MCD_TIMER))
+mdefine_line|#define SET_TIMER(func, jifs) &t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;mcd_timer.function = func;&t;&t;&bslash;&n;&t;&t;mod_timer(&amp;mcd_timer, jiffies + jifs);&t;&bslash;&n;&t;} while (0)
 DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER&t;&t;timer_active &amp;= ~(1&lt;&lt;MCD_TIMER)
+mdefine_line|#define CLEAR_TIMER&t;&t;del_timer_async(&amp;mcd_timer);
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;&t;104
 DECL|struct|msf

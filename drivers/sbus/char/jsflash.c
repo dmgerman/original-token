@@ -2647,6 +2647,16 @@ c_func
 l_string|&quot;jsfd: cleanup_module failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_sabre.c,v 1.19 2000/04/15 13:07:51 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_sabre.c,v 1.20 2000/06/26 19:40:27 davem Exp $&n; * pci_sabre.c: Sabre specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -2463,7 +2463,6 @@ id|bucket-&gt;flags
 op_or_assign
 id|IBF_PCI
 suffix:semicolon
-multiline_comment|/* XXX We still need to code up support for this in irq.c&n;&t; * XXX It&squot;s easy to code up since only one SIMBA can exist&n;&t; * XXX in a machine and this is where the sync register is. -DaveM&n;&t; */
 r_if
 c_cond
 (paren
@@ -2477,6 +2476,7 @@ id|pcp
 op_assign
 id|pdev-&gt;sysdata
 suffix:semicolon
+multiline_comment|/* When a device lives behind a bridge deeper in the&n;&t;&t; * PCI bus topology than APB, a special sequence must&n;&t;&t; * run to make sure all pending DMA transfers at the&n;&t;&t; * time of IRQ delivery are visible in the coherency&n;&t;&t; * domain by the cpu.  This sequence is to perform&n;&t;&t; * a read on the far side of the non-APB bridge, then&n;&t;&t; * perform a read of Sabre&squot;s DMA write-sync register.&n;&t;&t; *&n;&t;&t; * Currently, the PCI_CONFIG register for the device&n;&t;&t; * is used for this read from the far side of the bridge.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2484,10 +2484,38 @@ id|pdev-&gt;bus-&gt;number
 op_ne
 id|pcp-&gt;pbm-&gt;pci_first_busno
 )paren
+(brace
 id|bucket-&gt;flags
 op_or_assign
 id|IBF_DMA_SYNC
 suffix:semicolon
+id|bucket-&gt;synctab_ent
+op_assign
+id|dma_sync_reg_table_entry
+op_increment
+suffix:semicolon
+id|dma_sync_reg_table
+(braket
+id|bucket-&gt;synctab_ent
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sabre_pci_config_mkaddr
+c_func
+(paren
+id|pcp-&gt;pbm
+comma
+id|pdev-&gt;bus-&gt;number
+comma
+id|pdev-&gt;devfn
+comma
+id|PCI_COMMAND
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 id|__irq
@@ -6257,12 +6285,20 @@ l_int|0
 dot
 id|phys_addr
 suffix:semicolon
+id|pci_dma_wsync
+op_assign
+id|p-&gt;controller_regs
+op_plus
+id|SABRE_WRSYNC
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PCI: Found SABRE, main regs at %016lx&bslash;n&quot;
+l_string|&quot;PCI: Found SABRE, main regs at %016lx, wsync at %016lx&bslash;n&quot;
 comma
 id|p-&gt;controller_regs
+comma
+id|pci_dma_wsync
 )paren
 suffix:semicolon
 multiline_comment|/* Error interrupts are enabled later after the bus scan. */

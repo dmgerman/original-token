@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -59,6 +59,29 @@ r_struct
 id|file
 op_star
 id|filp
+)paren
+suffix:semicolon
+r_static
+r_int
+id|whiteheat_ioctl
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
 )paren
 suffix:semicolon
 r_static
@@ -265,6 +288,10 @@ id|unthrottle
 suffix:colon
 id|whiteheat_unthrottle
 comma
+id|ioctl
+suffix:colon
+id|whiteheat_ioctl
+comma
 id|set_termios
 suffix:colon
 id|whiteheat_set_termios
@@ -289,6 +316,52 @@ id|wait_command
 suffix:semicolon
 multiline_comment|/* for handling sleeping while waiting for a command to finish */
 )brace
+suffix:semicolon
+multiline_comment|/* local function prototypes */
+r_static
+r_inline
+r_void
+id|set_rts
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|rts
+)paren
+suffix:semicolon
+r_static
+r_inline
+r_void
+id|set_dtr
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|dtr
+)paren
+suffix:semicolon
+r_static
+r_inline
+r_void
+id|set_break
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|brk
+)paren
 suffix:semicolon
 DECL|macro|COMMAND_PORT
 mdefine_line|#define COMMAND_PORT&t;&t;4
@@ -320,7 +393,7 @@ suffix:semicolon
 macro_line|#endif
 id|dbg
 (paren
-l_string|&quot;command_port_write_callback&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
 r_if
@@ -350,7 +423,9 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: data read - length = %d, data = &quot;
+l_string|&quot;: &quot;
+id|__FUNCTION__
+l_string|&quot; - length = %d, data = &quot;
 comma
 id|urb-&gt;actual_length
 )paren
@@ -428,7 +503,7 @@ suffix:semicolon
 macro_line|#endif
 id|dbg
 (paren
-l_string|&quot;command_port_write_callback&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
 r_if
@@ -439,7 +514,8 @@ id|urb-&gt;status
 (brace
 id|dbg
 (paren
-l_string|&quot;nonzero urb status: %d&quot;
+id|__FUNCTION__
+l_string|&quot; - nonzero urb status: %d&quot;
 comma
 id|urb-&gt;status
 )paren
@@ -458,7 +534,9 @@ id|printk
 (paren
 id|KERN_DEBUG
 id|__FILE__
-l_string|&quot;: data read - length = %d, data = &quot;
+l_string|&quot;: &quot;
+id|__FUNCTION__
+l_string|&quot; - length = %d, data = &quot;
 comma
 id|urb-&gt;actual_length
 )paren
@@ -558,7 +636,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_send_cmd: %d&quot;
+id|__FUNCTION__
+l_string|&quot; - command %d&quot;
 comma
 id|command
 )paren
@@ -628,11 +707,18 @@ id|usb_submit_urb
 id|port-&gt;write_urb
 )paren
 )paren
+(brace
 id|dbg
 (paren
-l_string|&quot;submit urb failed&quot;
+id|__FUNCTION__
+l_string|&quot; - submit urb failed&quot;
 )paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* wait for the command to complete */
 id|timeout
 op_assign
@@ -669,6 +755,12 @@ op_eq
 id|FALSE
 )paren
 (brace
+id|dbg
+(paren
+id|__FUNCTION__
+l_string|&quot; - command timed out.&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -711,7 +803,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_open port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -724,7 +817,8 @@ id|port-&gt;active
 (brace
 id|dbg
 (paren
-l_string|&quot;device already open&quot;
+id|__FUNCTION__
+l_string|&quot; - device already open&quot;
 )paren
 suffix:semicolon
 r_return
@@ -784,7 +878,8 @@ l_int|NULL
 id|err
 c_func
 (paren
-l_string|&quot;out of memory&quot;
+id|__FUNCTION__
+l_string|&quot; - out of memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -832,7 +927,8 @@ id|port-&gt;read_urb
 id|dbg
 c_func
 (paren
-l_string|&quot;usb_submit_urb(read bulk) failed&quot;
+id|__FUNCTION__
+l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* send an open port command */
@@ -866,13 +962,12 @@ multiline_comment|/* FIXME!!! */
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_open exit&quot;
+id|__FUNCTION__
+l_string|&quot; - exit&quot;
 )paren
 suffix:semicolon
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 DECL|function|whiteheat_close
@@ -899,7 +994,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_close port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -948,6 +1044,46 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|whiteheat_ioctl
+r_static
+r_int
+id|whiteheat_ioctl
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - port %d, cmd 0x%.4x&quot;
+comma
+id|port-&gt;number
+comma
+id|cmd
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOIOCTLCMD
+suffix:semicolon
+)brace
 DECL|function|whiteheat_set_termios
 r_static
 r_void
@@ -970,10 +1106,15 @@ id|cflag
 op_assign
 id|port-&gt;tty-&gt;termios-&gt;c_cflag
 suffix:semicolon
+r_struct
+id|whiteheat_port_settings
+id|port_settings
+suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_set_termios port %d&quot;
+id|__FUNCTION__
+l_string|&quot; -port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -1012,15 +1153,329 @@ id|old_termios-&gt;c_iflag
 id|dbg
 c_func
 (paren
-l_string|&quot;nothing to change...&quot;
+id|__FUNCTION__
+l_string|&quot; - nothing to change...&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* do the parsing of the cflag to see what to set the line to */
-multiline_comment|/* FIXME!! */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|port-&gt;tty
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|port-&gt;tty-&gt;termios
+)paren
+)paren
+(brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - no tty structures&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* get the byte size */
+r_switch
+c_cond
+(paren
+id|cflag
+op_amp
+id|CSIZE
+)paren
+(brace
+r_case
+id|CS5
+suffix:colon
+id|port_settings.bits
+op_assign
+l_int|5
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CS6
+suffix:colon
+id|port_settings.bits
+op_assign
+l_int|6
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CS7
+suffix:colon
+id|port_settings.bits
+op_assign
+l_int|7
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_case
+id|CS8
+suffix:colon
+id|port_settings.bits
+op_assign
+l_int|8
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - data bits = %d&quot;
+comma
+id|port_settings.bits
+)paren
+suffix:semicolon
+multiline_comment|/* determine the parity */
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
+id|PARENB
+)paren
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
+id|PARODD
+)paren
+id|port_settings.parity
+op_assign
+l_char|&squot;o&squot;
+suffix:semicolon
+r_else
+id|port_settings.parity
+op_assign
+l_char|&squot;e&squot;
+suffix:semicolon
+r_else
+id|port_settings.parity
+op_assign
+l_char|&squot;n&squot;
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - parity = %c&quot;
+comma
+id|port_settings.parity
+)paren
+suffix:semicolon
+multiline_comment|/* figure out the stop bits requested */
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
+id|CSTOPB
+)paren
+id|port_settings.stop
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+id|port_settings.stop
+op_assign
+l_int|1
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - stop bits = %d&quot;
+comma
+id|port_settings.stop
+)paren
+suffix:semicolon
+multiline_comment|/* figure out the flow control settings */
+r_if
+c_cond
+(paren
+id|cflag
+op_amp
+id|CRTSCTS
+)paren
+id|port_settings.hflow
+op_assign
+(paren
+id|WHITEHEAT_CTS_FLOW
+op_or
+id|WHITEHEAT_RTS_FLOW
+)paren
+suffix:semicolon
+r_else
+id|port_settings.hflow
+op_assign
+l_int|0
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - hardware flow control = %s %s %s %s&quot;
+comma
+(paren
+id|port_settings.hflow
+op_or
+id|WHITEHEAT_CTS_FLOW
+)paren
+ques
+c_cond
+l_string|&quot;CTS&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+(paren
+id|port_settings.hflow
+op_or
+id|WHITEHEAT_RTS_FLOW
+)paren
+ques
+c_cond
+l_string|&quot;RTS&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+(paren
+id|port_settings.hflow
+op_or
+id|WHITEHEAT_DSR_FLOW
+)paren
+ques
+c_cond
+l_string|&quot;DSR&quot;
+suffix:colon
+l_string|&quot;&quot;
+comma
+(paren
+id|port_settings.hflow
+op_or
+id|WHITEHEAT_DTR_FLOW
+)paren
+ques
+c_cond
+l_string|&quot;DTR&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* determine software flow control */
+r_if
+c_cond
+(paren
+id|I_IXOFF
+c_func
+(paren
+id|port-&gt;tty
+)paren
+)paren
+id|port_settings.sflow
+op_assign
+l_char|&squot;b&squot;
+suffix:semicolon
+r_else
+id|port_settings.sflow
+op_assign
+l_char|&squot;n&squot;
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - software flow control = %c&quot;
+comma
+id|port_settings.sflow
+)paren
+suffix:semicolon
+id|port_settings.xon
+op_assign
+id|START_CHAR
+c_func
+(paren
+id|port-&gt;tty
+)paren
+suffix:semicolon
+id|port_settings.xoff
+op_assign
+id|STOP_CHAR
+c_func
+(paren
+id|port-&gt;tty
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - XON = %2x, XOFF = %2x&quot;
+comma
+id|port_settings.xon
+comma
+id|port_settings.xoff
+)paren
+suffix:semicolon
+multiline_comment|/* get the baud rate wanted */
+id|port_settings.baud
+op_assign
+id|tty_get_baud_rate
+c_func
+(paren
+id|port-&gt;tty
+)paren
+suffix:semicolon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - baud rate = %d&quot;
+comma
+id|port_settings.baud
+)paren
+suffix:semicolon
+multiline_comment|/* handle any settings that aren&squot;t specified in the tty structure */
+id|port_settings.lloop
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* now send the message to the device */
+id|whiteheat_send_cmd
+(paren
+id|port-&gt;serial
+comma
+id|WHITEHEAT_SETUP_PORT
+comma
+(paren
+id|__u8
+op_star
+)paren
+op_amp
+id|port_settings
+comma
+r_sizeof
+(paren
+id|port_settings
+)paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1038,7 +1493,8 @@ id|port
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_throttle port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -1062,7 +1518,8 @@ id|port
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_unthrottle port %d&quot;
+id|__FUNCTION__
+l_string|&quot; - port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -1096,7 +1553,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_startup&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
 id|response
@@ -1155,7 +1612,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;ezusb_writememory failed for loader (%d %04X %p %d)&quot;
+id|__FUNCTION__
+l_string|&quot; - ezusb_writememory failed for loader (%d %04X %p %d)&quot;
 comma
 id|response
 comma
@@ -1241,7 +1699,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;ezusb_writememory failed for first firmware step (%d %04X %p %d)&quot;
+id|__FUNCTION__
+l_string|&quot; - ezusb_writememory failed for first firmware step (%d %04X %p %d)&quot;
 comma
 id|response
 comma
@@ -1315,7 +1774,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;ezusb_writememory failed for second firmware step (%d %04X %p %d)&quot;
+id|__FUNCTION__
+l_string|&quot; - ezusb_writememory failed for second firmware step (%d %04X %p %d)&quot;
 comma
 id|response
 comma
@@ -1366,10 +1826,10 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;whiteheat_shutdown&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
-multiline_comment|/* set up some stuff for our command port */
+multiline_comment|/* free up our private data for our command port */
 id|command_port
 op_assign
 op_amp
@@ -1403,6 +1863,138 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_return
+suffix:semicolon
+)brace
+DECL|function|set_command
+r_static
+r_void
+id|set_command
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|state
+comma
+r_int
+r_char
+id|command
+)paren
+(brace
+r_struct
+id|whiteheat_rdb_set
+id|rdb_command
+suffix:semicolon
+multiline_comment|/* send a set rts command to the port */
+id|rdb_command.port
+op_assign
+id|port-&gt;number
+op_minus
+id|port-&gt;minor
+suffix:semicolon
+id|rdb_command.state
+op_assign
+id|state
+suffix:semicolon
+id|whiteheat_send_cmd
+(paren
+id|port-&gt;serial
+comma
+id|command
+comma
+(paren
+id|__u8
+op_star
+)paren
+op_amp
+id|rdb_command
+comma
+r_sizeof
+(paren
+id|rdb_command
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_rts
+r_static
+r_inline
+r_void
+id|set_rts
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|rts
+)paren
+(brace
+id|set_command
+(paren
+id|port
+comma
+id|rts
+comma
+id|WHITEHEAT_SET_RTS
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_dtr
+r_static
+r_inline
+r_void
+id|set_dtr
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|dtr
+)paren
+(brace
+id|set_command
+(paren
+id|port
+comma
+id|dtr
+comma
+id|WHITEHEAT_SET_DTR
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_break
+r_static
+r_inline
+r_void
+id|set_break
+(paren
+r_struct
+id|usb_serial_port
+op_star
+id|port
+comma
+r_int
+r_char
+id|brk
+)paren
+(brace
+id|set_command
+(paren
+id|port
+comma
+id|brk
+comma
+id|WHITEHEAT_SET_BREAK
+)paren
 suffix:semicolon
 )brace
 eof

@@ -6061,6 +6061,42 @@ id|toc-&gt;capacity
 op_assign
 l_int|0x1fffff
 suffix:semicolon
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|gd-&gt;sizes
+(braket
+id|drive-&gt;select.b.unit
+op_lshift
+id|PARTN_BITS
+)braket
+op_assign
+(paren
+id|toc-&gt;capacity
+op_star
+id|SECTORS_PER_FRAME
+)paren
+op_rshift
+(paren
+id|BLOCK_SIZE_BITS
+op_minus
+l_int|9
+)paren
+suffix:semicolon
+id|drive-&gt;part
+(braket
+l_int|0
+)braket
+dot
+id|nr_sects
+op_assign
+id|toc-&gt;capacity
+op_star
+id|SECTORS_PER_FRAME
+suffix:semicolon
 multiline_comment|/* Remember that we&squot;ve read this stuff. */
 id|CDROM_STATE_FLAGS
 (paren
@@ -7342,10 +7378,6 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|toc
-op_assign
-id|info-&gt;toc
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7358,7 +7390,7 @@ id|drive
 op_member_access_from_pointer
 id|toc_valid
 op_logical_or
-id|toc
+id|info-&gt;toc
 op_eq
 l_int|NULL
 )paren
@@ -7380,6 +7412,10 @@ id|sense
 )paren
 r_return
 id|ret
+suffix:semicolon
+id|toc
+op_assign
+id|info-&gt;toc
 suffix:semicolon
 id|ms_info-&gt;addr.lba
 op_assign
@@ -10179,7 +10215,6 @@ id|ignore
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -10195,6 +10230,7 @@ l_string|&quot;ATAPI CD-ROM Driver&quot;
 )paren
 suffix:semicolon
 DECL|function|ide_cdrom_exit
+r_static
 r_void
 id|__exit
 id|ide_cdrom_exit
@@ -10260,7 +10296,6 @@ id|ide_cdrom_module
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 DECL|function|ide_cdrom_init
 r_int
 id|ide_cdrom_init

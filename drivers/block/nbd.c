@@ -2306,8 +2306,6 @@ l_int|NULL
 comma
 l_string|&quot;nbd&quot;
 comma
-l_int|0
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -2353,6 +2351,16 @@ r_void
 id|devfs_unregister
 (paren
 id|devfs_handle
+)paren
+suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
 )paren
 suffix:semicolon
 r_if

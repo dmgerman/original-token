@@ -1600,8 +1600,6 @@ l_int|NULL
 comma
 l_string|&quot;cosa&quot;
 comma
-l_int|4
-comma
 l_int|NULL
 )paren
 suffix:semicolon

@@ -1562,8 +1562,6 @@ id|dirname
 op_plus
 l_int|3
 comma
-l_int|0
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -1581,8 +1579,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;discs&quot;
-comma
-l_int|5
 comma
 l_int|NULL
 )paren
@@ -1603,15 +1599,11 @@ id|devfs_handle
 comma
 id|symlink
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|dirname
 op_plus
 id|pos
-comma
-l_int|0
 comma
 op_amp
 id|slave

@@ -5,6 +5,9 @@ mdefine_line|#define __PCI_SOCKET_H
 r_struct
 id|pci_socket_ops
 suffix:semicolon
+r_struct
+id|socket_info_t
+suffix:semicolon
 DECL|struct|pci_socket
 r_typedef
 r_struct
@@ -65,6 +68,12 @@ DECL|member|events
 r_int
 r_int
 id|events
+suffix:semicolon
+DECL|member|pcmcia_socket
+r_struct
+id|socket_info_t
+op_star
+id|pcmcia_socket
 suffix:semicolon
 multiline_comment|/* A few words of private data for the low-level driver.. */
 DECL|member|private

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* Symlink caching in the page cache is even more simplistic&n; * and straight-forward than readdir caching.&n; */
 DECL|function|nfs_symlink_filler
 r_static
@@ -55,6 +56,11 @@ r_int
 id|error
 suffix:semicolon
 multiline_comment|/* We place the length at the beginning of the page,&n;&t; * in host byte order, followed by the string.  The&n;&t; * XDR response verification will NULL terminate it.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|NFS_PROTO
@@ -78,6 +84,11 @@ id|u32
 )paren
 op_minus
 l_int|4
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

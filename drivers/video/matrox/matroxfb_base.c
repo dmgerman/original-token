@@ -19,16 +19,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_int
-id|matrox_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
 DECL|variable|default_vmode
 r_static
 r_int
@@ -517,7 +507,7 @@ id|fbcon
 )paren
 )paren
 suffix:semicolon
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -3615,7 +3605,7 @@ id|hw
 )paren
 )paren
 suffix:semicolon
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -3815,7 +3805,11 @@ c_func
 id|output.ph
 )paren
 op_amp
+(paren
 id|MATROXFB_OUTPUT_CONN_PRIMARY
+op_or
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
 )paren
 (brace
 r_if
@@ -3936,7 +3930,11 @@ c_func
 id|output.ph
 )paren
 op_amp
+(paren
 id|MATROXFB_OUTPUT_CONN_PRIMARY
+op_or
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
 )paren
 (brace
 r_if
@@ -4058,7 +4056,11 @@ c_func
 id|output.ph
 )paren
 op_amp
+(paren
 id|MATROXFB_OUTPUT_CONN_PRIMARY
+op_or
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
 )paren
 (brace
 r_if
@@ -4157,7 +4159,7 @@ id|PMINFO
 id|display
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_FB_OF) &amp;&amp; defined(CONFIG_FB_COMPAT_XPMAC)
+macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 r_if
 c_cond
 (paren
@@ -4261,7 +4263,7 @@ id|mmio.base
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_FB_OF &amp;&amp; CONFIG_FB_COMPAT_XPMAC */
+macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 )brace
 )brace
 r_return
@@ -5174,6 +5176,42 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+r_case
+id|MATROXFB_OUTPUT_DFP
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.all
+)paren
+op_amp
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mom.mode
+op_ne
+id|MATROXFB_OUTPUT_MODE_MONITOR
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+multiline_comment|/* mode did not change... */
+r_return
+l_int|0
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -5323,6 +5361,33 @@ id|val
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|MATROXFB_OUTPUT_DFP
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.all
+)paren
+op_amp
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+id|mom.mode
+op_assign
+id|MATROXFB_OUTPUT_MODE_MONITOR
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -5419,6 +5484,39 @@ r_if
 c_cond
 (paren
 id|tmp
+op_amp
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|tmp
+op_amp
+id|MATROXFB_OUTPUT_CONN_SECONDARY
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.sh
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tmp
 op_eq
 id|ACCESS_FBINFO
 c_func
@@ -5501,6 +5599,38 @@ c_func
 (paren
 id|output.sh
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.ph
+)paren
+op_amp
+id|MATROXFB_OUTPUT_CONN_DFP
+)paren
+id|tmp
+op_and_assign
+op_complement
+id|MATROXFB_OUTPUT_CONN_SECONDARY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.ph
+)paren
+op_amp
+id|MATROXFB_OUTPUT_CONN_SECONDARY
+)paren
+id|tmp
+op_and_assign
+op_complement
+id|MATROXFB_OUTPUT_CONN_DFP
 suffix:semicolon
 id|put_user_ret
 c_func
@@ -6703,6 +6833,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* &quot;matrox:maxclk:xxxxM&quot; */
+DECL|variable|dfp
+r_static
+r_int
+id|dfp
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* &quot;matrox:dfp */
 DECL|variable|fontname
 r_static
 r_char
@@ -7288,14 +7426,18 @@ DECL|macro|DEVF_CRTC2
 mdefine_line|#define DEVF_CRTC2&t;&t;0x0800
 DECL|macro|DEVF_MAVEN_CAPABLE
 mdefine_line|#define DEVF_MAVEN_CAPABLE&t;0x1000
+DECL|macro|DEVF_PANELLINK_CAPABLE
+mdefine_line|#define DEVF_PANELLINK_CAPABLE&t;0x2000
 DECL|macro|DEVF_GCORE
 mdefine_line|#define DEVF_GCORE&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2)
+DECL|macro|DEVF_G2CORE
+mdefine_line|#define DEVF_G2CORE&t;(DEVF_GCORE | DEVF_ANY_VXRES | DEVF_MAVEN_CAPABLE | DEVF_PANELLINK_CAPABLE)
 DECL|macro|DEVF_G100
 mdefine_line|#define DEVF_G100&t;(DEVF_GCORE) /* no doc, no vxres... */
 DECL|macro|DEVF_G200
-mdefine_line|#define DEVF_G200&t;(DEVF_GCORE | DEVF_ANY_VXRES | DEVF_MAVEN_CAPABLE)
+mdefine_line|#define DEVF_G200&t;(DEVF_G2CORE)
 DECL|macro|DEVF_G400
-mdefine_line|#define DEVF_G400&t;(DEVF_GCORE | DEVF_ANY_VXRES | DEVF_MAVEN_CAPABLE | DEVF_SUPPORT32MB | DEVF_TEXT16B | DEVF_CRTC2)
+mdefine_line|#define DEVF_G400&t;(DEVF_G2CORE | DEVF_SUPPORT32MB | DEVF_TEXT16B | DEVF_CRTC2)
 DECL|struct|board
 r_static
 r_struct
@@ -8120,6 +8262,36 @@ id|b-&gt;flags
 op_amp
 id|DEVF_MAVEN_CAPABLE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|b-&gt;flags
+op_amp
+id|DEVF_PANELLINK_CAPABLE
+)paren
+(brace
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.all
+)paren
+op_or_assign
+id|MATROXFB_OUTPUT_CONN_DFP
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dfp
+)paren
+id|ACCESS_FBINFO
+c_func
+(paren
+id|output.ph
+)paren
+op_or_assign
+id|MATROXFB_OUTPUT_CONN_DFP
+suffix:semicolon
+)brace
 id|ACCESS_FBINFO
 c_func
 (paren
@@ -9461,7 +9633,7 @@ id|pixclock
 suffix:semicolon
 )brace
 multiline_comment|/* FIXME: Where to move this?! */
-macro_line|#if defined(CONFIG_FB_OF)
+macro_line|#if defined(CONFIG_PPC)
 macro_line|#if defined(CONFIG_FB_COMPAT_XPMAC)
 id|strcpy
 c_func
@@ -9632,7 +9804,7 @@ suffix:semicolon
 multiline_comment|/* Note: mac_vmode_to_var() doesnot set all parameters */
 )brace
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_PPC */
 id|vesafb_defined.xres_virtual
 op_assign
 id|vesafb_defined.xres
@@ -13866,6 +14038,23 @@ op_assign
 id|value
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_opt
+comma
+l_string|&quot;dfp&quot;
+)paren
+)paren
+id|dfp
+op_assign
+id|value
+suffix:semicolon
+r_else
 (brace
 id|strncpy
 c_func
@@ -13942,59 +14131,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_FB_OF)
-DECL|function|matrox_of_init
-r_int
-id|__init
-(def_block
-id|matrox_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-(brace
-id|DBG
-c_func
-(paren
-l_string|&quot;matrox_of_init&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|disabled
-)paren
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|initialized
-)paren
-(brace
-id|initialized
-op_assign
-l_int|1
-suffix:semicolon
-id|matrox_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* failure? */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)def_block
-macro_line|#endif&t;/* CONFIG_FB_OF */
 macro_line|#else
 multiline_comment|/* *************************** init module code **************************** */
 id|MODULE_AUTHOR
@@ -14555,6 +14691,22 @@ c_func
 id|cross4MB
 comma
 l_string|&quot;Specifies that 4MB boundary can be in middle of line. (default=autodetected)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dfp
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|dfp
+comma
+l_string|&quot;Specifies whether to use digital flat panel interface of G200/G400 (0 or 1) (default=0)&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_FB_OF

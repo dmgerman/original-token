@@ -6983,6 +6983,11 @@ id|net_debug
 op_assign
 id|debug
 suffix:semicolon
+macro_line|#else
+id|debug
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 id|dev_cs89x0.irq
 op_assign

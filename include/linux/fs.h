@@ -109,7 +109,7 @@ mdefine_line|#define FS_NO_DCACHE&t;2 /* Only dcache the necessary things. */
 DECL|macro|FS_NO_PRELIM
 mdefine_line|#define FS_NO_PRELIM&t;4 /* prevent preloading of dentries, even if&n;&t;&t;&t;   * FS_NO_DCACHE is not set.&n;&t;&t;&t;   */
 DECL|macro|FS_SINGLE
-mdefine_line|#define FS_SINGLE&t;8 /*&n;&t;&t;&t;   * Filesystem that can have only one superblock;&n;&t;&t;&t;   * kernel-wide vfsmnt is kept in -&gt;kern_mnt.&n;&t;&t;&t;   */
+mdefine_line|#define FS_SINGLE&t;8 /*&n;&t;&t;&t;   * Filesystem that can have only one superblock;&n;&t;&t;&t;   * kernel-wide vfsmnt is placed in -&gt;kern_mnt by&n;&t;&t;&t;   * kern_mount() which must be called _after_&n;&t;&t;&t;   * register_filesystem().&n;&t;&t;&t;   */
 DECL|macro|FS_NOMOUNT
 mdefine_line|#define FS_NOMOUNT&t;16 /* Never mount from userland */
 DECL|macro|FS_LITTER

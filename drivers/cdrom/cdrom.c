@@ -663,8 +663,6 @@ l_int|NULL
 comma
 l_string|&quot;cdroms&quot;
 comma
-l_int|6
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -737,15 +735,11 @@ id|devfs_handle
 comma
 id|vname
 comma
-l_int|0
-comma
 id|DEVFS_FL_DEFAULT
 comma
 id|rname
 op_plus
 id|pos
-comma
-l_int|0
 comma
 op_amp
 id|slave
@@ -12502,8 +12496,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;cdroms&quot;
-comma
-l_int|6
 comma
 l_int|NULL
 )paren

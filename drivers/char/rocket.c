@@ -99,11 +99,6 @@ DECL|macro|TIME_STAT_VERBOSE
 macro_line|#undef TIME_STAT_VERBOSE   /* Undef this if you want a terse log message. */
 DECL|macro|_INLINE_
 mdefine_line|#define _INLINE_ inline
-multiline_comment|/*&n; * Until we get a formal timer assignment&n; */
-macro_line|#ifndef COMTROL_TIMER
-DECL|macro|COMTROL_TIMER
-mdefine_line|#define COMTROL_TIMER 26
-macro_line|#endif
 macro_line|#ifndef NEW_MODULES
 multiline_comment|/*&n; * NB. we must include the kernel idenfication string in to install the module.&n; */
 DECL|variable|kernel_version
@@ -212,6 +207,12 @@ r_int
 id|rp_num_ports_open
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|rocket_timer
+r_static
+r_struct
+id|timer_list
+id|rocket_timer
 suffix:semicolon
 DECL|variable|board1
 r_int
@@ -1697,7 +1698,9 @@ r_void
 id|rp_do_poll
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 id|CONTROLLER_t
@@ -1979,11 +1982,16 @@ c_cond
 id|rp_num_ports_open
 )paren
 (brace
-id|timer_active
-op_or_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|rocket_timer
+comma
+id|jiffies
+op_plus
 l_int|1
-op_lshift
-id|COMTROL_TIMER
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef TIME_STAT
@@ -4186,11 +4194,16 @@ id|cp
 )paren
 suffix:semicolon
 )brace
-id|timer_active
-op_or_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|rocket_timer
+comma
+id|jiffies
+op_plus
 l_int|1
-op_lshift
-id|COMTROL_TIMER
+)paren
 suffix:semicolon
 id|retval
 op_assign
@@ -9718,20 +9731,13 @@ multiline_comment|/*&n;&t; * Set up the timer channel.  If it is already in use 
 r_if
 c_cond
 (paren
-id|timer_table
-(braket
-id|COMTROL_TIMER
-)braket
-dot
-id|fn
+id|rocket_timer.function
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;rocket.o: Timer channel %d already in use!&bslash;n&quot;
-comma
-id|COMTROL_TIMER
+l_string|&quot;rocket.o: Timer already in use!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9739,23 +9745,16 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|timer_table
-(braket
-id|COMTROL_TIMER
-)braket
-dot
-id|fn
+id|init_timer
+c_func
+(paren
+op_amp
+id|rocket_timer
+)paren
+suffix:semicolon
+id|rocket_timer.function
 op_assign
 id|rp_do_poll
-suffix:semicolon
-id|timer_table
-(braket
-id|COMTROL_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Initialize the array of pointers to our own internal state&n;&t; * structures.&n;&t; */
 id|memset
@@ -9988,12 +9987,7 @@ c_func
 l_string|&quot;No rocketport ports found; unloading driver.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|timer_table
-(braket
-id|COMTROL_TIMER
-)braket
-dot
-id|fn
+id|rocket_timer.function
 op_assign
 l_int|0
 suffix:semicolon
@@ -10308,6 +10302,13 @@ id|released_controller
 op_assign
 l_int|0
 suffix:semicolon
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|rocket_timer
+)paren
+suffix:semicolon
 id|retval
 op_assign
 id|tty_unregister_driver
@@ -10491,12 +10492,7 @@ r_int
 id|tmp_buf
 )paren
 suffix:semicolon
-id|timer_table
-(braket
-id|COMTROL_TIMER
-)braket
-dot
-id|fn
+id|rocket_timer.function
 op_assign
 l_int|0
 suffix:semicolon

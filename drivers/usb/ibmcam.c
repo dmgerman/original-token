@@ -13508,7 +13508,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * usb_ibmcam_probe()&n; *&n; * This procedure queries device descriptor and accepts the interface&n; * if it looks like IBM C-it camera.&n; *&n; * History:&n; * 1/22/00  Moved camera init code to ibmcam_open()&n; * 1/27/00  Changed to use static structures, added locking.&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; */
+multiline_comment|/*&n; * usb_ibmcam_probe()&n; *&n; * This procedure queries device descriptor and accepts the interface&n; * if it looks like IBM C-it camera.&n; *&n; * History:&n; * 1/22/00  Moved camera init code to ibmcam_open()&n; * 1/27/00  Changed to use static structures, added locking.&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; * 7/3/00   Fixed endianness bug.&n; */
 DECL|function|usb_ibmcam_probe
 r_static
 r_void
@@ -13532,12 +13532,6 @@ op_star
 id|ibmcam
 op_assign
 l_int|NULL
-suffix:semicolon
-r_const
-r_int
-r_char
-op_star
-id|p_rev
 suffix:semicolon
 r_const
 r_struct
@@ -13607,35 +13601,15 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Check the version/revision */
-id|p_rev
-op_assign
-(paren
-r_const
-r_int
-r_char
-op_star
-)paren
-op_amp
-id|dev-&gt;descriptor.bcdDevice
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
-id|p_rev
-(braket
-l_int|1
-)braket
-op_eq
-l_int|0x00
-op_logical_and
-id|p_rev
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x02
+id|dev-&gt;descriptor.bcdDevice
 )paren
 (brace
+r_case
+l_int|0x0002
+suffix:colon
 r_if
 c_cond
 (paren
@@ -13650,33 +13624,20 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IBM USB camera found (model 1).&bslash;n&quot;
+l_string|&quot;IBM USB camera found (model 1, rev. 0x%04x).&bslash;n&quot;
+comma
+id|dev-&gt;descriptor.bcdDevice
 )paren
 suffix:semicolon
 id|model
 op_assign
 id|IBMCAM_MODEL_1
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|p_rev
-(braket
-l_int|1
-)braket
-op_eq
-l_int|0x03
-op_logical_and
-id|p_rev
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x0A
-)paren
-(brace
+r_break
+suffix:semicolon
+r_case
+l_int|0x030A
+suffix:colon
 r_if
 c_cond
 (paren
@@ -13691,31 +13652,26 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IBM USB camera found (model 2).&bslash;n&quot;
+l_string|&quot;IBM USB camera found (model 2, rev. 0x%04x).&bslash;n&quot;
+comma
+id|dev-&gt;descriptor.bcdDevice
 )paren
 suffix:semicolon
 id|model
 op_assign
 id|IBMCAM_MODEL_2
 suffix:semicolon
-)brace
-r_else
-(brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IBM camera revision=%02x.%02x not supported&bslash;n&quot;
+l_string|&quot;IBM camera with revision 0x%04x is not supported.&bslash;n&quot;
 comma
-id|p_rev
-(braket
-l_int|1
-)braket
-comma
-id|p_rev
-(braket
-l_int|0
-)braket
+id|dev-&gt;descriptor.bcdDevice
 )paren
 suffix:semicolon
 r_return

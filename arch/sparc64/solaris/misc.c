@@ -333,11 +333,6 @@ id|retval
 comma
 id|ret_type
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Do we need it here? */
 id|set_personality
 c_func
@@ -628,11 +623,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|u32

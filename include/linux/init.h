@@ -17,6 +17,17 @@ id|initcall_t
 r_void
 )paren
 suffix:semicolon
+DECL|typedef|exitcall_t
+r_typedef
+r_void
+(paren
+op_star
+id|exitcall_t
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 id|initcall_t
 id|__initcall_start
@@ -25,6 +36,8 @@ id|__initcall_end
 suffix:semicolon
 DECL|macro|__initcall
 mdefine_line|#define __initcall(fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static initcall_t __initcall_##fn __init_call = fn
+DECL|macro|__exitcall
+mdefine_line|#define __exitcall(fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static exitcall_t __exitcall_##fn __exit_call = fn
 multiline_comment|/*&n; * Used for kernel command line parameter setup&n; */
 DECL|struct|kernel_param
 r_struct
@@ -72,6 +85,8 @@ DECL|macro|__initsetup
 mdefine_line|#define __initsetup&t;__attribute__ ((unused,__section__ (&quot;.setup.init&quot;)))
 DECL|macro|__init_call
 mdefine_line|#define __init_call&t;__attribute__ ((unused,__section__ (&quot;.initcall.init&quot;)))
+DECL|macro|__exit_call
+mdefine_line|#define __exit_call&t;__attribute__ ((unused,__section__ (&quot;.exitcall.exit&quot;)))
 multiline_comment|/* For assembly routines */
 DECL|macro|__INIT
 mdefine_line|#define __INIT&t;&t;.section&t;&quot;.text.init&quot;,&quot;ax&quot;
@@ -82,7 +97,7 @@ mdefine_line|#define __INITDATA&t;.section&t;&quot;.data.init&quot;,&quot;aw&quo
 DECL|macro|module_init
 mdefine_line|#define module_init(x)&t;__initcall(x);
 DECL|macro|module_exit
-mdefine_line|#define module_exit(x)&t;/* nothing */
+mdefine_line|#define module_exit(x)&t;__exitcall(x);
 macro_line|#else
 DECL|macro|__init
 mdefine_line|#define __init
@@ -103,10 +118,33 @@ DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
 multiline_comment|/* Not sure what version aliases were introduced in, but certainly in 2.91.66.  */
 macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 91)
+multiline_comment|/* These macros create a dummy inline: gcc 2.9x does not count alias&n; as usage, hence the `unused function&squot; warning when __init functions&n; are declared static. We use the dummy __*_module_inline functions&n; both to kill the warning and check the type of the init/cleanup&n; function. */
+DECL|typedef|__init_module_func_t
+r_typedef
+r_int
+(paren
+op_star
+id|__init_module_func_t
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|typedef|__cleanup_module_func_t
+r_typedef
+r_void
+(paren
+op_star
+id|__cleanup_module_func_t
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|module_init
-mdefine_line|#define module_init(x)&t;int init_module(void) __attribute__((alias(#x)));
+mdefine_line|#define module_init(x) &bslash;&n;&t;int init_module(void) __attribute__((alias(#x))); &bslash;&n;&t;extern inline __init_module_func_t __init_module_inline(void) &bslash;&n;&t;{ return x; }
 DECL|macro|module_exit
-mdefine_line|#define module_exit(x)&t;void cleanup_module(void) __attribute__((alias(#x)));
+mdefine_line|#define module_exit(x) &bslash;&n;&t;void cleanup_module(void) __attribute__((alias(#x))); &bslash;&n;&t;extern inline __cleanup_module_func_t __cleanup_module_inline(void) &bslash;&n;&t;{ return x; }
 macro_line|#else
 DECL|macro|module_init
 mdefine_line|#define module_init(x)&t;int init_module(void) { return x(); }

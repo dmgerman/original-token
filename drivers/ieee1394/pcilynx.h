@@ -18,7 +18,7 @@ mdefine_line|#define PCI_DEVICE_ID_TI_PCILYNX 0x8000
 DECL|macro|MAX_PCILYNX_CARDS
 mdefine_line|#define MAX_PCILYNX_CARDS        4
 DECL|macro|LOCALRAM_SIZE
-mdefine_line|#define LOCALRAM_SIZE            64
+mdefine_line|#define LOCALRAM_SIZE            4096
 DECL|macro|NUM_ISORCV_PCL
 mdefine_line|#define NUM_ISORCV_PCL           4
 DECL|macro|MAX_ISORCV_SIZE
@@ -124,6 +124,7 @@ r_void
 op_star
 id|aux_port
 suffix:semicolon
+macro_line|#ifdef CONFIG_IEEE1394_PCILYNX_PORTS
 DECL|member|aux_intr_seen
 id|atomic_t
 id|aux_intr_seen
@@ -137,6 +138,10 @@ r_void
 op_star
 id|mem_dma_buffer
 suffix:semicolon
+DECL|member|mem_dma_buffer_dma
+id|dma_addr_t
+id|mem_dma_buffer_dma
+suffix:semicolon
 DECL|member|mem_dma_mutex
 r_struct
 id|semaphore
@@ -146,20 +151,27 @@ DECL|member|mem_dma_intr_wait
 id|wait_queue_head_t
 id|mem_dma_intr_wait
 suffix:semicolon
-multiline_comment|/*&n;         * use local RAM of LOCALRAM_SIZE (in kB) for PCLs, which allows for &n;         * LOCALRAM_SIZE * 8 PCLs (each sized 128 bytes);&n;         * the following is an allocation bitmap &n;         */
+macro_line|#endif
+multiline_comment|/*&n;         * use local RAM of LOCALRAM_SIZE bytes for PCLs, which allows for &n;         * LOCALRAM_SIZE * 8 PCLs (each sized 128 bytes);&n;         * the following is an allocation bitmap &n;         */
 DECL|member|pcl_bmap
 id|u8
 id|pcl_bmap
 (braket
 id|LOCALRAM_SIZE
+op_div
+l_int|1024
 )braket
 suffix:semicolon
-macro_line|#ifndef CONFIG_IEEE1394_LYNXRAM
+macro_line|#ifndef CONFIG_IEEE1394_PCILYNX_LOCALRAM
 multiline_comment|/* point to PCLs memory area if needed */
 DECL|member|pcl_mem
 r_void
 op_star
 id|pcl_mem
+suffix:semicolon
+DECL|member|pcl_mem_dma
+id|dma_addr_t
+id|pcl_mem_dma
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* PCLs for local mem / aux transfers */
@@ -197,26 +209,43 @@ r_void
 op_star
 id|rcv_page
 suffix:semicolon
+DECL|member|rcv_page_dma
+id|dma_addr_t
+id|rcv_page_dma
+suffix:semicolon
 DECL|member|rcv_active
 r_int
 id|rcv_active
 suffix:semicolon
-DECL|member|async_pcl_start
-DECL|member|async_pcl
+r_struct
+(brace
+DECL|member|pcl_start
+DECL|member|pcl
 id|pcl_t
-id|async_pcl_start
+id|pcl_start
 comma
-id|async_pcl
+id|pcl
 suffix:semicolon
-DECL|member|async_queue
+DECL|member|queue
 r_struct
 id|hpsb_packet
 op_star
-id|async_queue
+id|queue
 suffix:semicolon
-DECL|member|async_queue_lock
+DECL|member|queue_lock
 id|spinlock_t
-id|async_queue_lock
+id|queue_lock
+suffix:semicolon
+DECL|member|header_dma
+DECL|member|data_dma
+id|dma_addr_t
+id|header_dma
+comma
+id|data_dma
+suffix:semicolon
+DECL|member|async
+)brace
+id|async
 suffix:semicolon
 r_struct
 (brace
@@ -238,6 +267,13 @@ DECL|member|page
 r_void
 op_star
 id|page
+(braket
+id|ISORCV_PAGES
+)braket
+suffix:semicolon
+DECL|member|page_dma
+id|dma_addr_t
+id|page_dma
 (braket
 id|ISORCV_PAGES
 )braket
@@ -1051,12 +1087,14 @@ id|pcl_t
 id|pclid
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,13)
 r_return
-id|lynx-&gt;dev-&gt;base_address
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|lynx-&gt;dev
+comma
 l_int|1
-)braket
+)paren
 op_plus
 id|pclid
 op_star
@@ -1066,24 +1104,6 @@ r_struct
 id|ti_pcl
 )paren
 suffix:semicolon
-macro_line|#else
-r_return
-id|lynx-&gt;dev-&gt;resource
-(braket
-l_int|1
-)braket
-dot
-id|start
-op_plus
-id|pclid
-op_star
-r_sizeof
-(paren
-r_struct
-id|ti_pcl
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#else /* CONFIG_IEEE1394_PCILYNX_LOCALRAM */
 DECL|function|put_pcl
@@ -1215,11 +1235,7 @@ id|pclid
 )paren
 (brace
 r_return
-id|virt_to_bus
-c_func
-(paren
-id|lynx-&gt;pcl_mem
-)paren
+id|lynx-&gt;pcl_mem_dma
 op_plus
 id|pclid
 op_star

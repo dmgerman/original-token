@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#include &lt;linux/notifier.h&gt;
 DECL|variable|sound_locker
 r_struct
 id|notifier_block
@@ -2764,8 +2764,6 @@ id|devfs_find_handle
 l_int|NULL
 comma
 id|name_buf
-comma
-l_int|0
 comma
 l_int|0
 comma

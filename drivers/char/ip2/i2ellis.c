@@ -276,7 +276,7 @@ suffix:semicolon
 singleline_comment|// Used by iiDelayTimer
 DECL|variable|Dl_spinlock
 r_static
-id|spinlock_t
+id|rwlock_t
 id|Dl_spinlock
 suffix:semicolon
 singleline_comment|//********

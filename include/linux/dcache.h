@@ -1,9 +1,9 @@
 macro_line|#ifndef __LINUX_DCACHE_H
 DECL|macro|__LINUX_DCACHE_H
 mdefine_line|#define __LINUX_DCACHE_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Dirent cache data structures&n; *&n; * (C) Copyright 1997 Thomas Schoebel-Theuer,&n; * with heavy changes by Linus Torvalds&n; */
 DECL|macro|IS_ROOT
 mdefine_line|#define IS_ROOT(x) ((x) == (x)-&gt;d_parent)
@@ -191,7 +191,7 @@ r_struct
 id|dentry
 (brace
 DECL|member|d_count
-r_int
+id|atomic_t
 id|d_count
 suffix:semicolon
 DECL|member|d_flags
@@ -392,6 +392,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* the dentry parameter passed to d_hash and d_compare is the parent&n; * directory of the entries to be compared. It is used in case these&n; * functions need any directory specific information for determining&n; * equivalency classes.  Using the dentry itself might not work, as it&n; * might be a negative dentry which has no information associated with&n; * it */
+multiline_comment|/*&n;locking rules:&n;&t;&t;big lock&t;dcache_lock&t;may block&n;d_revalidate:&t;no&t;&t;no&t;&t;yes&n;d_hash&t;&t;no&t;&t;no&t;&t;yes&n;d_compare:&t;no&t;&t;yes&t;&t;no&n;d_delete:&t;no&t;&t;yes&t;&t;no&n;d_release:&t;no&t;&t;no&t;&t;yes&n;d_iput:&t;&t;no&t;&t;no&t;&t;yes&n; */
 multiline_comment|/* d_flags entries */
 DECL|macro|DCACHE_AUTOFS_PENDING
 mdefine_line|#define DCACHE_AUTOFS_PENDING 0x0001    /* autofs: &quot;under construction&quot; */
@@ -399,6 +400,10 @@ DECL|macro|DCACHE_NFSFS_RENAMED
 mdefine_line|#define DCACHE_NFSFS_RENAMED  0x0002    /* this dentry has been &quot;silly&n;&t;&t;&t;&t;&t; * renamed&quot; and has to be&n;&t;&t;&t;&t;&t; * deleted on the last dput()&n;&t;&t;&t;&t;&t; */
 DECL|macro|DCACHE_NFSD_DISCONNECTED
 mdefine_line|#define&t;DCACHE_NFSD_DISCONNECTED 0x0004&t;/* This dentry is not currently connected to the&n;&t;&t;&t;&t;&t; * dcache tree. Its parent will either be itself,&n;&t;&t;&t;&t;&t; * or will have this flag as well.&n;&t;&t;&t;&t;&t; * If this dentry points to a directory, then&n;&t;&t;&t;&t;&t; * s_nfsd_free_path semaphore will be down&n;&t;&t;&t;&t;&t; */
+r_extern
+id|spinlock_t
+id|dcache_lock
+suffix:semicolon
 multiline_comment|/**&n; * d_drop - drop a dentry&n; * @dentry: dentry to drop&n; *&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
 DECL|function|d_drop
 r_static
@@ -413,6 +418,13 @@ op_star
 id|dentry
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|list_del
 c_func
 (paren
@@ -425,6 +437,13 @@ c_func
 (paren
 op_amp
 id|dentry-&gt;d_hash
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
 )paren
 suffix:semicolon
 )brace
@@ -747,9 +766,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* write full pathname into buffer and return start of pathname */
-DECL|macro|d_path
-mdefine_line|#define d_path(dentry, vfsmnt, buffer, buflen) &bslash;&n;&t;__d_path(dentry, vfsmnt, current-&gt;fs-&gt;root, current-&gt;fs-&gt;rootmnt, &bslash;&n;&t;buffer, buflen)
 multiline_comment|/* Allocation counts.. */
 multiline_comment|/**&n; *&t;dget&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference to&n; *&n; *&t;Given a dentry or %NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references.&n; */
 DECL|function|dget
@@ -772,8 +788,12 @@ c_cond
 (paren
 id|dentry
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_count
-op_increment
+)paren
 suffix:semicolon
 r_return
 id|dentry
@@ -804,7 +824,7 @@ suffix:semicolon
 )brace
 r_extern
 r_void
-id|dput
+id|__dput
 c_func
 (paren
 r_struct
@@ -812,6 +832,38 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+DECL|function|dput
+r_static
+id|__inline__
+r_void
+id|dput
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry
+op_logical_and
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_count
+)paren
+)paren
+id|__dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
 DECL|function|d_mountpoint
 r_static
 id|__inline__

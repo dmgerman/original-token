@@ -856,6 +856,13 @@ id|dentry
 op_star
 id|de
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|list_for_each
 c_func
 (paren
@@ -914,6 +921,13 @@ id|flag
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

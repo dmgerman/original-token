@@ -329,9 +329,6 @@ id|slave-&gt;dev
 )paren
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 DECL|function|bond_enslave
 r_static
@@ -566,7 +563,6 @@ suffix:semicolon
 )brace
 )brace
 r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* It is pretty silly, SIOCSIFHWADDR exists to make this. */

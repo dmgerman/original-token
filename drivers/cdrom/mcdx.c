@@ -4321,6 +4321,16 @@ l_string|&quot;cleanup() unregister_blkdev() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 macro_line|#if !MCDX_QUIET
 r_else
 id|xinfo
@@ -4933,6 +4943,16 @@ id|stuffp-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -5148,6 +5168,16 @@ id|xwarn
 c_func
 (paren
 l_string|&quot;cleanup() unregister_blkdev() failed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
 )paren
 suffix:semicolon
 r_return

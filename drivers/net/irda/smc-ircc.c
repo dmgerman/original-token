@@ -239,6 +239,7 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+macro_line|#if 0 /* unused */
 r_static
 r_int
 id|ircc_is_receiving
@@ -250,6 +251,7 @@ op_star
 id|self
 )paren
 suffix:semicolon
+macro_line|#endif /* unused */
 r_static
 r_int
 id|ircc_net_open
@@ -3234,10 +3236,6 @@ r_int
 id|iobase
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -3715,8 +3713,8 @@ id|self-&gt;lock
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0 /* unused */
 multiline_comment|/*&n; * Function ircc_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
-DECL|function|ircc_is_receiving
 r_static
 r_int
 id|ircc_is_receiving
@@ -3782,6 +3780,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
+macro_line|#endif /* unused */
 multiline_comment|/*&n; * Function ircc_net_open (dev)&n; *&n; *    Start the device&n; *&n; */
 DECL|function|ircc_net_open
 r_static
@@ -4019,11 +4018,6 @@ op_star
 id|self
 )paren
 (brace
-r_int
-id|i
-op_assign
-l_int|10
-suffix:semicolon
 id|MESSAGE
 c_func
 (paren
@@ -4062,13 +4056,6 @@ op_star
 id|self
 )paren
 (brace
-r_struct
-id|net_device
-op_star
-id|dev
-op_assign
-id|self-&gt;netdev
-suffix:semicolon
 r_int
 r_int
 id|flags

@@ -491,6 +491,13 @@ id|ESTALE
 suffix:semicolon
 )brace
 multiline_comment|/* now to find a dentry.&n;&t; * If possible, get a well-connected one&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -538,6 +545,13 @@ c_func
 id|result
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -549,6 +563,13 @@ id|result
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|d_alloc_root
@@ -704,6 +725,13 @@ id|tdentry
 )paren
 suffix:semicolon
 multiline_comment|/* tdentry will have been made a &quot;child&quot; of target (the parent of target)&n;&t; * make it an IS_ROOT instead&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 id|list_del
 c_func
 (paren
@@ -714,6 +742,13 @@ suffix:semicolon
 id|tdentry-&gt;d_parent
 op_assign
 id|tdentry
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
 suffix:semicolon
 id|d_rehash
 c_func
@@ -753,6 +788,13 @@ suffix:semicolon
 id|parent
 op_assign
 id|target
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -810,6 +852,13 @@ id|target-&gt;d_name.name
 suffix:semicolon
 macro_line|#endif
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 )brace
 )brace
 r_return
@@ -911,6 +960,13 @@ op_assign
 op_amp
 id|tdentry-&gt;d_inode-&gt;i_dentry
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -975,6 +1031,13 @@ id|pdentry
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1108,7 +1171,14 @@ id|parent
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* Possibly a new dentry has been made for this child-&gt;d_inode in parent by&n;&t; * a lookup.  In this case return that dentry. caller must notice and act accordingly&n;&t; */
+multiline_comment|/* Possibly a new dentry has been made for this child-&gt;d_inode in&n;&t; * parent by a lookup.  In this case return that dentry. caller must&n;&t; * notice and act accordingly&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1155,11 +1225,25 @@ c_func
 id|tmp
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
 )brace
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|dcache_lock
+)paren
+suffix:semicolon
 multiline_comment|/* well, if we can find a name for child in parent, it should be safe to splice it in */
 id|err
 op_assign

@@ -402,6 +402,7 @@ suffix:semicolon
 )brace
 DECL|function|ncp_init_request_s
 r_static
+r_inline
 r_void
 id|ncp_init_request_s
 c_func
@@ -415,21 +416,22 @@ r_int
 id|subfunction
 )paren
 (brace
-id|ncp_init_request
+id|ncp_lock_server
 c_func
 (paren
 id|server
 )paren
 suffix:semicolon
-id|ncp_add_word
-c_func
+id|server-&gt;current_size
+op_assign
+r_sizeof
 (paren
-id|server
-comma
-l_int|0
+r_struct
+id|ncp_request_header
 )paren
+op_plus
+l_int|2
 suffix:semicolon
-multiline_comment|/* preliminary size */
 id|ncp_add_byte
 c_func
 (paren

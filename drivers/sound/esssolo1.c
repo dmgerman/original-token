@@ -702,7 +702,7 @@ id|data
 )paren
 suffix:semicolon
 )brace
-DECL|function|read_ctrl
+macro_line|#if 0 /* unused */
 r_static
 r_int
 r_char
@@ -752,6 +752,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
+macro_line|#endif /* unused */
 DECL|function|write_mixer
 r_static
 r_void

@@ -2058,8 +2058,6 @@ l_int|NULL
 comma
 id|devname
 comma
-l_int|0
-comma
 id|QIC117_TAPE_MAJOR
 comma
 id|i
@@ -2089,8 +2087,6 @@ c_func
 l_int|NULL
 comma
 id|devname
-comma
-l_int|0
 comma
 id|QIC117_TAPE_MAJOR
 comma
@@ -2124,8 +2120,6 @@ l_int|NULL
 comma
 id|devname
 comma
-l_int|0
-comma
 id|QIC117_TAPE_MAJOR
 comma
 id|i
@@ -2157,8 +2151,6 @@ c_func
 l_int|NULL
 comma
 id|devname
-comma
-l_int|0
 comma
 id|QIC117_TAPE_MAJOR
 comma
@@ -2192,8 +2184,6 @@ l_int|NULL
 comma
 id|devname
 comma
-l_int|0
-comma
 id|QIC117_TAPE_MAJOR
 comma
 id|i
@@ -2225,8 +2215,6 @@ c_func
 l_int|NULL
 comma
 id|devname
-comma
-l_int|0
 comma
 id|QIC117_TAPE_MAJOR
 comma

@@ -200,14 +200,6 @@ c_func
 id|saved_root
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;UMSDOS_put_super: freeing saved root, d_count=%d&bslash;n&quot;
-comma
-id|saved_root-&gt;d_count
-)paren
-suffix:semicolon
 id|dput
 c_func
 (paren

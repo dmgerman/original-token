@@ -2858,26 +2858,6 @@ id|info-&gt;xmit_tail
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up serial timers...&n;&t; */
-macro_line|#if 0  /* Works well and stops the machine. */
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
-id|jiffies
-op_plus
-l_int|2
-suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|RS_TIMER
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * and set the speed of the serial port&n;&t; */
 id|change_speed
 c_func
@@ -7581,24 +7561,6 @@ id|SERIAL_BH
 comma
 id|do_serial_bh
 )paren
-suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|fn
-op_assign
-id|rs_timer
-suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
 suffix:semicolon
 id|show_serial_version
 c_func

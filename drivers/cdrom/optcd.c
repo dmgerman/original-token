@@ -8529,8 +8529,6 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
-comma
 id|DEVFS_SPECIAL_BLK
 comma
 l_int|0
@@ -8562,6 +8560,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
+)paren
+suffix:semicolon
 id|release_region
 c_func
 (paren

@@ -73,9 +73,9 @@ mdefine_line|#define MOD_RAW&t;0x04
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) insb(port, buf, nr)
 DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;((timer_table[GSCD_TIMER].expires = jiffies + jifs), &bslash;&n;&t;(timer_table[GSCD_TIMER].fn = func), &bslash;&n;&t;(timer_active |= 1&lt;&lt;GSCD_TIMER))
+mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;((mod_timer(&amp;gscd_timer, jiffies + jifs)), &bslash;&n;&t;(gscd_timer.function = func))
 DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER&t;&t;timer_active &amp;= ~(1&lt;&lt;GSCD_TIMER)
+mdefine_line|#define CLEAR_TIMER&t;&t;del_timer_sync(&amp;gscd_timer)
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;&t;104
 DECL|struct|msf

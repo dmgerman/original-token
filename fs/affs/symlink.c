@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|affs_symlink_readpage
 r_static
 r_int
@@ -89,6 +90,11 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|affs_bread
@@ -103,6 +109,11 @@ c_func
 (paren
 id|inode
 )paren
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -304,10 +315,20 @@ id|i
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|affs_brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|SetPageUptodate

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &quot;ncplib_kernel.h&quot;
@@ -1158,8 +1159,21 @@ id|inode
 op_star
 id|root_inode
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|sock_inode
+suffix:semicolon
+r_struct
+id|socket
+op_star
+id|sock
+suffix:semicolon
 r_int
 id|error
+suffix:semicolon
+r_int
+id|default_bufsize
 suffix:semicolon
 macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
 r_int
@@ -1359,6 +1373,10 @@ id|ncp_filp
 r_goto
 id|out_bad_file
 suffix:semicolon
+id|sock_inode
+op_assign
+id|ncp_filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1366,11 +1384,41 @@ op_logical_neg
 id|S_ISSOCK
 c_func
 (paren
-id|ncp_filp-&gt;f_dentry-&gt;d_inode-&gt;i_mode
+id|sock_inode-&gt;i_mode
 )paren
 )paren
 r_goto
 id|out_bad_file2
+suffix:semicolon
+id|sock
+op_assign
+op_amp
+id|sock_inode-&gt;u.socket_i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sock
+)paren
+r_goto
+id|out_bad_file2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_eq
+id|SOCK_STREAM
+)paren
+id|default_bufsize
+op_assign
+l_int|61440
+suffix:semicolon
+r_else
+id|default_bufsize
+op_assign
+l_int|1024
 suffix:semicolon
 id|sb-&gt;s_blocksize
 op_assign
@@ -1532,18 +1580,20 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* no caching */
+DECL|macro|NCP_PACKET_SIZE
+macro_line|#undef NCP_PACKET_SIZE
+DECL|macro|NCP_PACKET_SIZE
+mdefine_line|#define NCP_PACKET_SIZE 65536
 id|server-&gt;packet_size
 op_assign
 id|NCP_PACKET_SIZE
 suffix:semicolon
 id|server-&gt;packet
 op_assign
-id|ncp_kmalloc
+id|vmalloc
 c_func
 (paren
 id|NCP_PACKET_SIZE
-comma
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -1610,7 +1660,7 @@ c_func
 (paren
 id|server
 comma
-id|NCP_DEFAULT_BUFSIZE
+id|default_bufsize
 comma
 id|NCP_DEFAULT_OPTIONS
 comma
@@ -1642,7 +1692,7 @@ c_func
 (paren
 id|server
 comma
-id|NCP_DEFAULT_BUFSIZE
+id|default_bufsize
 comma
 id|options
 op_amp
@@ -1687,7 +1737,7 @@ c_func
 (paren
 id|server
 comma
-id|NCP_DEFAULT_BUFSIZE
+id|default_bufsize
 comma
 op_amp
 (paren
@@ -1923,12 +1973,10 @@ id|error
 suffix:semicolon
 id|out_free_packet
 suffix:colon
-id|ncp_kfree_s
+id|vfree
 c_func
 (paren
 id|server-&gt;packet
-comma
-id|server-&gt;packet_size
 )paren
 suffix:semicolon
 r_goto
@@ -2138,12 +2186,10 @@ comma
 id|server-&gt;auth.object_name_len
 )paren
 suffix:semicolon
-id|ncp_kfree_s
+id|vfree
 c_func
 (paren
 id|server-&gt;packet
-comma
-id|server-&gt;packet_size
 )paren
 suffix:semicolon
 )brace

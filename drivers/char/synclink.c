@@ -837,8 +837,8 @@ suffix:semicolon
 DECL|macro|MGSL_MAGIC
 mdefine_line|#define MGSL_MAGIC 0x5401
 multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
-DECL|macro|SERIAL_XMIT_SIZE
-mdefine_line|#define SERIAL_XMIT_SIZE 4096
+multiline_comment|/* #define SERIAL_XMIT_SIZE 4096 */
+multiline_comment|/* defined in include/linux/serial.h */
 multiline_comment|/*&n; * These macros define the offsets used in calculating the&n; * I/O address of the specified USC registers.&n; */
 DECL|macro|DCPIN
 mdefine_line|#define DCPIN 2&t;&t;/* Bit 1 of I/O address */
@@ -24670,7 +24670,6 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/* End Of mgsl_memory_test() */
-macro_line|#pragma optimize( &quot;&quot;, off )
 multiline_comment|/* mgsl_load_pci_memory()&n; * &n; * &t;Load a large block of data into the PCI shared memory.&n; * &t;Use this instead of memcpy() or memmove() to move data&n; * &t;into the PCI shared memory.&n; * &n; * Notes:&n; * &n; * &t;This function prevents the PCI9050 interface chip from hogging&n; * &t;the adapter local bus, which can starve the 16C32 by preventing&n; * &t;16C32 bus master cycles.&n; * &n; * &t;The PCI9050 documentation says that the 9050 will always release&n; * &t;control of the local bus after completing the current read&n; * &t;or write operation.&n; * &n; * &t;It appears that as long as the PCI9050 write FIFO is full, the&n; * &t;PCI9050 treats all of the writes as a single burst transaction&n; * &t;and will not release the bus. This causes DMA latency problems&n; * &t;at high speeds when copying large data blocks to the shared&n; * &t;memory.&n; * &n; * &t;This function in effect, breaks the a large shared memory write&n; * &t;into multiple transations by interleaving a shared memory read&n; * &t;which will flush the write FIFO and &squot;complete&squot; the write&n; * &t;transation. This allows any pending DMA request to gain control&n; * &t;of the local bus in a timely fasion.&n; * &n; * Arguments:&n; * &n; * &t;TargetPtr&t;pointer to target address in PCI shared memory&n; * &t;SourcePtr&t;pointer to source buffer for data&n; * &t;count&t;&t;count in bytes of data to copy&n; *&n; * Return Value:&t;None&n; */
 DECL|function|mgsl_load_pci_memory
 r_void
@@ -24744,6 +24743,7 @@ op_assign
 op_star
 (paren
 (paren
+r_volatile
 r_int
 r_int
 op_star
@@ -24774,7 +24774,6 @@ id|PCI_LOAD_INTERVAL
 suffix:semicolon
 )brace
 multiline_comment|/* End Of mgsl_load_pci_memory() */
-macro_line|#pragma optimize( &quot;&quot;, on )
 DECL|function|mgsl_trace_block
 r_void
 id|mgsl_trace_block

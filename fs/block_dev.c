@@ -2763,8 +2763,6 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_int|0
-comma
 id|i
 comma
 id|MINOR

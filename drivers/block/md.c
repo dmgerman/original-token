@@ -3215,6 +3215,13 @@ op_amp
 id|mddev-&gt;all_mddevs
 )paren
 suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+op_amp
+id|mddev-&gt;queue
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -14972,8 +14979,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;md&quot;
-comma
-l_int|0
 comma
 l_int|NULL
 )paren

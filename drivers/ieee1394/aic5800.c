@@ -2904,6 +2904,8 @@ comma
 id|aic-&gt;rcv_page
 comma
 id|rcv_bytes
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

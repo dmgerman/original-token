@@ -1478,9 +1478,9 @@ id|verbose
 (brace
 id|dbg
 (paren
-l_string|&quot;OHCI controller %p state&quot;
+l_string|&quot;OHCI controller %s state&quot;
 comma
-id|controller-&gt;regs
+id|controller-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 singleline_comment|// dumps some of the state we know about
@@ -6684,6 +6684,41 @@ id|ohci-&gt;regs-&gt;roothub.a
 op_amp
 id|RH_A_NDP
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_ports
+OG
+id|MAX_ROOT_PORTS
+)paren
+(brace
+id|err
+(paren
+l_string|&quot;bogus NDP=%d for OHCI %s&quot;
+comma
+id|num_ports
+comma
+id|ohci-&gt;ohci_dev-&gt;slot_name
+)paren
+suffix:semicolon
+id|err
+(paren
+l_string|&quot;rereads as NDP=%d&quot;
+comma
+id|readl
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;roothub.a
+)paren
+op_amp
+id|RH_A_NDP
+)paren
+suffix:semicolon
+multiline_comment|/* retry later; &quot;should not happen&quot; */
+r_return
+l_int|0
+suffix:semicolon
+)brace
 op_star
 (paren
 id|__u8
@@ -6892,6 +6927,20 @@ r_if
 c_cond
 (paren
 id|ohci-&gt;disabled
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* ignore timers firing during PM suspend, etc */
+r_if
+c_cond
+(paren
+(paren
+id|ohci-&gt;hc_control
+op_amp
+id|OHCI_CTRL_HCFS
+)paren
+op_ne
+id|OHCI_USB_OPER
 )paren
 r_return
 suffix:semicolon
@@ -8243,7 +8292,9 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;USB HC reset_hc: %x ;&quot;
+l_string|&quot;USB HC reset_hc %s: ctrl = %x ;&quot;
+comma
+id|ohci-&gt;ohci_dev-&gt;slot_name
 comma
 id|readl
 (paren
@@ -8650,7 +8701,6 @@ id|OHCI_INTR_WDH
 suffix:semicolon
 )brace
 r_else
-(brace
 r_if
 c_cond
 (paren
@@ -8674,6 +8724,7 @@ id|regs-&gt;intrenable
 op_eq
 l_int|0
 )paren
+(brace
 r_return
 suffix:semicolon
 )brace
@@ -8691,10 +8742,18 @@ op_increment
 suffix:semicolon
 id|err
 (paren
-l_string|&quot;OHCI Unrecoverable Error, controller disabled&quot;
+l_string|&quot;OHCI Unrecoverable Error, controller %s disabled&quot;
+comma
+id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 singleline_comment|// e.g. due to PCI Master/Target Abort
+macro_line|#ifndef&t;DEBUG
+singleline_comment|// FIXME: be optimistic, hope that bug won&squot;t repeat often.
+singleline_comment|// Make some non-interrupt context restart the controller.
+singleline_comment|// Count and limit the retries though; either hardware or
+singleline_comment|// software errors can go forever...
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -9047,9 +9106,10 @@ id|ohci
 )paren
 (brace
 id|dbg
-c_func
 (paren
-l_string|&quot;USB HC release ohci&quot;
+l_string|&quot;USB HC release ohci %s&quot;
+comma
+id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 multiline_comment|/* disconnect all devices */
@@ -9064,22 +9124,15 @@ op_amp
 id|ohci-&gt;bus-&gt;root_hub
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ohci-&gt;disabled
+)paren
 id|hc_reset
 (paren
 id|ohci
-)paren
-suffix:semicolon
-id|writel
-(paren
-id|OHCI_USB_RESET
-comma
-op_amp
-id|ohci-&gt;regs-&gt;control
-)paren
-suffix:semicolon
-id|wait_ms
-(paren
-l_int|10
 )paren
 suffix:semicolon
 r_if
@@ -9103,6 +9156,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|ohci-&gt;ohci_dev-&gt;driver_data
+op_assign
+l_int|0
+suffix:semicolon
 id|usb_deregister_bus
 (paren
 id|ohci-&gt;bus
@@ -9208,7 +9265,9 @@ c_func
 (paren
 id|KERN_INFO
 id|__FILE__
-l_string|&quot;: %s&bslash;n&quot;
+l_string|&quot;: pci slot %s, %s&bslash;n&quot;
+comma
+id|dev-&gt;slot_name
 comma
 id|dev-&gt;name
 )paren
@@ -9232,6 +9291,14 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|ohci-&gt;ohci_dev
+op_assign
+id|dev
+suffix:semicolon
+id|dev-&gt;driver_data
+op_assign
+id|ohci
+suffix:semicolon
 id|INIT_LIST_HEAD
 (paren
 op_amp
@@ -9665,9 +9732,9 @@ multiline_comment|/* act as if usb suspend can always be used */
 id|dbg
 c_func
 (paren
-l_string|&quot;USB suspend: %p&quot;
+l_string|&quot;USB suspend: %s&quot;
 comma
-id|ohci-&gt;regs
+id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|ohci-&gt;hc_control
@@ -9720,9 +9787,9 @@ singleline_comment|// lost power
 id|dbg
 c_func
 (paren
-l_string|&quot;USB reset: %p&quot;
+l_string|&quot;USB reset: %s&quot;
 comma
-id|ohci-&gt;regs
+id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|ohci-&gt;disabled
@@ -9777,7 +9844,9 @@ l_int|1
 suffix:semicolon
 id|err
 (paren
-l_string|&quot;can&squot;t restart, %d&quot;
+l_string|&quot;can&squot;t restart %s, %d&quot;
+comma
+id|ohci-&gt;ohci_dev-&gt;slot_name
 comma
 id|temp
 )paren
@@ -9801,9 +9870,9 @@ singleline_comment|// remote wakeup
 id|dbg
 c_func
 (paren
-l_string|&quot;USB resume: %p&quot;
+l_string|&quot;USB resume: %s&quot;
 comma
-id|ohci-&gt;regs
+id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|ohci-&gt;hc_control

@@ -94,6 +94,7 @@ id|fddi_addr
 id|fddi_broadcast
 op_assign
 (brace
+(brace
 l_int|0xff
 comma
 l_int|0xff
@@ -106,6 +107,7 @@ l_int|0xff
 comma
 l_int|0xff
 )brace
+)brace
 suffix:semicolon
 DECL|variable|null_addr
 r_static
@@ -114,6 +116,7 @@ r_struct
 id|fddi_addr
 id|null_addr
 op_assign
+(brace
 (brace
 l_int|0
 comma
@@ -127,6 +130,7 @@ l_int|0
 comma
 l_int|0
 )brace
+)brace
 suffix:semicolon
 DECL|variable|dbeacon_multi
 r_static
@@ -135,6 +139,7 @@ r_struct
 id|fddi_addr
 id|dbeacon_multi
 op_assign
+(brace
 (brace
 l_int|0x01
 comma
@@ -147,6 +152,7 @@ comma
 l_int|0x01
 comma
 l_int|0x00
+)brace
 )brace
 suffix:semicolon
 DECL|variable|my_said

@@ -1924,8 +1924,6 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
-comma
 id|DEVFS_SPECIAL_CHR
 comma
 l_int|0
@@ -1939,8 +1937,6 @@ id|devfs_find_handle
 id|devfs_handle
 comma
 id|name
-comma
-l_int|0
 comma
 l_int|0
 comma
@@ -2057,8 +2053,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;vcc&quot;
-comma
-l_int|3
 comma
 l_int|NULL
 )paren

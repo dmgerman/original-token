@@ -7793,7 +7793,7 @@ id|fd_timeout
 id|printk
 c_func
 (paren
-l_string|&quot;timer_table=%p&bslash;n&quot;
+l_string|&quot;timer_function=%p&bslash;n&quot;
 comma
 id|fd_timeout.function
 )paren
@@ -18068,8 +18068,6 @@ l_int|NULL
 comma
 l_string|&quot;floppy&quot;
 comma
-l_int|0
-comma
 l_int|NULL
 )paren
 suffix:semicolon
@@ -18279,6 +18277,16 @@ c_func
 (paren
 op_amp
 id|fd_timeout
+)paren
+suffix:semicolon
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
+id|MAJOR_NR
+)paren
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.87 2000/05/09 17:40:13 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.88 2000/06/26 19:40:27 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -79,6 +79,29 @@ mdefine_line|#define irq_work(__cpu, __pil)&t;&amp;(__up_workvec[(void)(__cpu), 
 macro_line|#else
 DECL|macro|irq_work
 mdefine_line|#define irq_work(__cpu, __pil)&t;&amp;(cpu_data[(__cpu)].irq_worklists[(__pil)])
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* This is a table of physical addresses used to deal with SA_DMA_SYNC.&n; * It is used for PCI only to synchronize DMA transfers with IRQ delivery&n; * for devices behind busses other than APB on Sabre systems.&n; *&n; * Currently these physical addresses are just config space accesses&n; * to the command register for that device.&n; */
+DECL|variable|pci_dma_wsync
+r_int
+r_int
+id|pci_dma_wsync
+suffix:semicolon
+DECL|variable|dma_sync_reg_table
+r_int
+r_int
+id|dma_sync_reg_table
+(braket
+l_int|256
+)braket
+suffix:semicolon
+DECL|variable|dma_sync_reg_table_entry
+r_int
+r_char
+id|dma_sync_reg_table_entry
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* This is based upon code in the 32-bit Sparc kernel written mostly by&n; * David Redman (djhr@tadpole.co.uk).&n; */
 DECL|macro|MAX_STATIC_ALLOC
@@ -1122,7 +1145,7 @@ op_complement
 id|SA_INTERRUPT
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Check wether we _should_ use DMA Write Sync&n;&t;&t;&t; * (for devices behind bridges behind APB). &n;&t;&t;&t; *&n;&t;&t;&t; * XXX: Not implemented, yet.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Check wether we _should_ use DMA Write Sync&n;&t;&t;&t; * (for devices behind bridges behind APB). &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3082,12 +3105,10 @@ id|idle_volume
 OL
 id|FORWARD_VOLUME
 )paren
-(brace
 id|should_forward
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 id|buddy
 op_lshift_assign
 l_int|26
@@ -3249,6 +3270,34 @@ c_cond
 (paren
 id|flags
 op_amp
+id|IBF_DMA_SYNC
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|upa_readl
+c_func
+(paren
+id|dma_sync_reg_table
+(braket
+id|bp-&gt;synctab_ent
+)braket
+)paren
+suffix:semicolon
+id|upa_readq
+c_func
+(paren
+id|pci_dma_wsync
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
 id|IBF_MULTI
 )paren
 op_eq
@@ -3328,7 +3377,6 @@ id|ap
 op_ne
 l_int|NULL
 )paren
-(brace
 id|ap
 op_member_access_from_pointer
 id|handler
@@ -3345,7 +3393,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* Only the dummy bucket lacks IMAP/ICLR. */

@@ -2219,6 +2219,19 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* If last console is removed, we re-enable picking the first&n;&t; * one that gets registered. Without that, pmac early boot console&n;&t; * would prevent fbcon from taking over.&n;&t; */
+r_if
+c_cond
+(paren
+id|console_drivers
+op_eq
+l_int|NULL
+)paren
+id|preferred_console
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren

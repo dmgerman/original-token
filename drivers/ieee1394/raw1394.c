@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Raw interface to the bus&n; *&n; * Copyright (C) 1999, 2000 Andreas E. Bombe&n; */
+multiline_comment|/*&n; * IEEE 1394 for Linux&n; *&n; * Raw interface to the bus&n; *&n; * Copyright (C) 1999, 2000 Andreas E. Bombe&n; *&n; * This code is licensed under the GPL.  See the file COPYING in the root&n; * directory of the kernel sources for details.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -6,7 +6,11 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,0)
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#endif
 macro_line|#include &quot;ieee1394.h&quot;
 macro_line|#include &quot;ieee1394_types.h&quot;
 macro_line|#include &quot;ieee1394_core.h&quot;
@@ -14,6 +18,13 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;highlevel.h&quot;
 macro_line|#include &quot;ieee1394_transactions.h&quot;
 macro_line|#include &quot;raw1394.h&quot;
+DECL|variable|devfs_handle
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
 DECL|variable|host_info_list
 id|LIST_HEAD
 c_func
@@ -1129,6 +1140,9 @@ l_int|0
 suffix:semicolon
 id|req-&gt;req.recvb
 op_assign
+(paren
+id|u64
+)paren
 id|fi-&gt;iso_buffer
 suffix:semicolon
 id|req-&gt;req.length
@@ -1488,8 +1502,7 @@ suffix:semicolon
 id|req-&gt;req.recvb
 op_assign
 (paren
-id|quadlet_t
-op_star
+id|u64
 )paren
 id|fi-&gt;fcp_buffer
 suffix:semicolon
@@ -1558,7 +1571,7 @@ suffix:semicolon
 )brace
 DECL|function|dev_read
 r_static
-r_int
+id|ssize_t
 id|dev_read
 c_func
 (paren
@@ -1731,6 +1744,10 @@ c_cond
 id|copy_to_user
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.recvb
 comma
 id|req-&gt;data
@@ -2327,6 +2344,10 @@ id|channel
 suffix:semicolon
 id|fi-&gt;iso_buffer
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.recvb
 suffix:semicolon
 id|fi-&gt;iso_buffer_length
@@ -2569,6 +2590,10 @@ c_func
 (paren
 id|req-&gt;data
 comma
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.sendb
 comma
 id|req-&gt;req.length
@@ -2665,6 +2690,10 @@ c_func
 (paren
 id|req-&gt;data
 comma
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.sendb
 comma
 id|req-&gt;req.length
@@ -2920,6 +2949,10 @@ c_func
 op_amp
 id|x
 comma
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.sendb
 comma
 l_int|4
@@ -2990,6 +3023,10 @@ c_func
 (paren
 id|packet-&gt;data
 comma
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.sendb
 comma
 id|req-&gt;req.length
@@ -3093,6 +3130,10 @@ c_func
 (paren
 id|packet-&gt;data
 comma
+(paren
+r_void
+op_star
+)paren
 id|req-&gt;req.sendb
 comma
 id|req-&gt;req.length
@@ -3412,7 +3453,7 @@ suffix:semicolon
 )brace
 DECL|function|dev_write
 r_static
-r_int
+id|ssize_t
 id|dev_write
 c_func
 (paren
@@ -3451,7 +3492,7 @@ id|pending_request
 op_star
 id|req
 suffix:semicolon
-r_int
+id|ssize_t
 id|retval
 op_assign
 l_int|0
@@ -3715,6 +3756,8 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+id|V22_COMPAT_MOD_INC_USE_COUNT
+suffix:semicolon
 id|fi
 op_assign
 id|kmalloc
@@ -3737,6 +3780,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|V22_COMPAT_MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -4047,6 +4092,8 @@ c_func
 id|fi
 )paren
 suffix:semicolon
+id|V22_COMPAT_MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4087,10 +4134,7 @@ id|file_operations
 id|file_ops
 op_assign
 (brace
-id|owner
-suffix:colon
-id|THIS_MODULE
-comma
+id|OWNER_THIS_MODULE
 id|read
 suffix:colon
 id|dev_read
@@ -4151,10 +4195,37 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|devfs_handle
+op_assign
+id|devfs_register
+c_func
+(paren
+l_int|NULL
+comma
+id|RAW1394_DEVICE_NAME
+comma
+id|DEVFS_FL_NONE
+comma
+id|RAW1394_DEVICE_MAJOR
+comma
+l_int|0
+comma
+id|S_IFCHR
+op_or
+id|S_IRUSR
+op_or
+id|S_IWUSR
+comma
+op_amp
+id|file_ops
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|register_chrdev
+id|devfs_register_chrdev
 c_func
 (paren
 id|RAW1394_DEVICE_MAJOR
@@ -4169,7 +4240,7 @@ id|file_ops
 id|HPSB_ERR
 c_func
 (paren
-l_string|&quot;raw1394 failed to allocate device major&quot;
+l_string|&quot;raw1394 failed to register /dev/raw1394 device&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4177,6 +4248,15 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;raw1394: /dev/%s device initialized&bslash;n&quot;
+comma
+id|RAW1394_DEVICE_NAME
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4189,12 +4269,18 @@ c_func
 r_void
 )paren
 (brace
-id|unregister_chrdev
+id|devfs_unregister_chrdev
 c_func
 (paren
 id|RAW1394_DEVICE_MAJOR
 comma
 id|RAW1394_DEVICE_NAME
+)paren
+suffix:semicolon
+id|devfs_unregister
+c_func
+(paren
+id|devfs_handle
 )paren
 suffix:semicolon
 id|hpsb_unregister_highlevel

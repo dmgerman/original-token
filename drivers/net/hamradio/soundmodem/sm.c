@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.1996  Started&n; *        18.10.1996  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.1997  Separately compileable soundcard/modem modules&n; *   0.5  03.03.1997  fixed LPT probing (check_lpt result was interpreted the wrong way round)&n; *   0.6  16.04.1997  init code/data tagged&n; *   0.7  30.07.1997  fixed halfduplex interrupt handlers/hotfix for CS423X&n; *   0.8  14.04.1998  cleanups&n; *   0.9  03.08.1999  adapt to Linus&squot; new __setup/__initcall&n; *                    use parport lowlevel drivers instead of directly writing to a parallel port&n; *                    removed some pre-2.2 kernel compatibility cruft&n; *   0.10 10.08.1999  Check if parport can do SPP and is safe to access during interrupt contexts&n; *   0.11 12.02.2000  adapted to softnet driver interface&n; */
+multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.1996  Started&n; *        18.10.1996  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.1997  Separately compileable soundcard/modem modules&n; *   0.5  03.03.1997  fixed LPT probing (check_lpt result was interpreted the wrong way round)&n; *   0.6  16.04.1997  init code/data tagged&n; *   0.7  30.07.1997  fixed halfduplex interrupt handlers/hotfix for CS423X&n; *   0.8  14.04.1998  cleanups&n; *   0.9  03.08.1999  adapt to Linus&squot; new __setup/__initcall&n; *                    use parport lowlevel drivers instead of directly writing to a parallel port&n; *                    removed some pre-2.2 kernel compatibility cruft&n; *   0.10 10.08.1999  Check if parport can do SPP and is safe to access during interrupt contexts&n; *   0.11 12.02.2000  adapted to softnet driver interface&n; *   0.12 03.07.2000  fix interface name handling&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -33,7 +33,7 @@ op_assign
 id|KERN_INFO
 l_string|&quot;soundmodem: (C) 1996-2000 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;soundmodem: version 0.11 compiled &quot;
+l_string|&quot;soundmodem: version 0.12 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -3291,10 +3291,16 @@ id|sm_device
 op_plus
 id|i
 suffix:semicolon
+r_char
+id|ifname
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|ifname
 comma
 l_string|&quot;sm%d&quot;
 comma
@@ -3481,7 +3487,7 @@ r_struct
 id|sm_state
 )paren
 comma
-id|dev-&gt;name
+id|ifname
 comma
 id|iobase
 (braket

@@ -536,6 +536,10 @@ op_star
 id|proc
 suffix:semicolon
 macro_line|#endif
+DECL|member|use_bus_pm
+r_int
+id|use_bus_pm
+suffix:semicolon
 DECL|typedef|socket_info_t
 )brace
 id|socket_info_t

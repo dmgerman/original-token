@@ -202,6 +202,7 @@ DECL|typedef|XD_SIGNATURE
 )brace
 id|XD_SIGNATURE
 suffix:semicolon
+r_static
 r_int
 id|xd_setup
 (paren
@@ -210,6 +211,7 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE
+r_static
 r_int
 id|xd_manual_geo_init
 (paren

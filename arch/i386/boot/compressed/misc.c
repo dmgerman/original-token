@@ -165,14 +165,22 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
+DECL|variable|real_mode
+r_static
+r_int
+r_char
+op_star
+id|real_mode
+suffix:semicolon
+multiline_comment|/* Pointer to real-mode data */
 DECL|macro|EXT_MEM_K
-mdefine_line|#define EXT_MEM_K (*(unsigned short *)0x90002)
+mdefine_line|#define EXT_MEM_K   (*(unsigned short *)(real_mode + 0x2))
 macro_line|#ifndef STANDARD_MEMORY_BIOS_CALL
 DECL|macro|ALT_MEM_K
-mdefine_line|#define ALT_MEM_K (*(unsigned long *) 0x901e0)
+mdefine_line|#define ALT_MEM_K   (*(unsigned long *)(real_mode + 0x1e0))
 macro_line|#endif
 DECL|macro|SCREEN_INFO
-mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
+mdefine_line|#define SCREEN_INFO (*(struct screen_info *)(real_mode+0))
 r_extern
 r_char
 id|input_data
@@ -283,19 +291,24 @@ DECL|variable|free_mem_end_ptr
 r_static
 r_int
 id|free_mem_end_ptr
-op_assign
-l_int|0x90000
 suffix:semicolon
 DECL|macro|INPLACE_MOVE_ROUTINE
 mdefine_line|#define INPLACE_MOVE_ROUTINE  0x1000
 DECL|macro|LOW_BUFFER_START
 mdefine_line|#define LOW_BUFFER_START      0x2000
-DECL|macro|LOW_BUFFER_END
-mdefine_line|#define LOW_BUFFER_END       0x90000
-DECL|macro|LOW_BUFFER_SIZE
-mdefine_line|#define LOW_BUFFER_SIZE      ( LOW_BUFFER_END - LOW_BUFFER_START )
+DECL|macro|LOW_BUFFER_MAX
+mdefine_line|#define LOW_BUFFER_MAX       0x90000
 DECL|macro|HEAP_SIZE
 mdefine_line|#define HEAP_SIZE             0x3000
+DECL|variable|low_buffer_end
+DECL|variable|low_buffer_size
+r_static
+r_int
+r_int
+id|low_buffer_end
+comma
+id|low_buffer_size
+suffix:semicolon
 DECL|variable|high_loaded
 r_static
 r_int
@@ -1078,7 +1091,7 @@ id|ulg
 )paren
 id|output_data
 op_eq
-id|LOW_BUFFER_END
+id|low_buffer_end
 )paren
 id|output_data
 op_assign
@@ -1387,6 +1400,36 @@ op_star
 )paren
 id|LOW_BUFFER_START
 suffix:semicolon
+id|low_buffer_end
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|real_mode
+OG
+id|LOW_BUFFER_MAX
+ques
+c_cond
+id|LOW_BUFFER_MAX
+suffix:colon
+(paren
+r_int
+r_int
+)paren
+id|real_mode
+)paren
+op_amp
+op_complement
+l_int|0xfff
+suffix:semicolon
+id|low_buffer_size
+op_assign
+id|low_buffer_end
+op_minus
+id|LOW_BUFFER_START
+suffix:semicolon
 id|high_loaded
 op_assign
 l_int|1
@@ -1404,7 +1447,7 @@ c_cond
 (paren
 l_int|0x100000
 op_plus
-id|LOW_BUFFER_SIZE
+id|low_buffer_size
 )paren
 OG
 (paren
@@ -1424,7 +1467,7 @@ op_star
 (paren
 l_int|0x100000
 op_plus
-id|LOW_BUFFER_SIZE
+id|low_buffer_size
 )paren
 suffix:semicolon
 id|mv-&gt;hcount
@@ -1455,21 +1498,17 @@ op_star
 id|mv
 )paren
 (brace
-id|mv-&gt;lcount
-op_assign
-id|bytes_out
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|bytes_out
 OG
-id|LOW_BUFFER_SIZE
+id|low_buffer_size
 )paren
 (brace
 id|mv-&gt;lcount
 op_assign
-id|LOW_BUFFER_SIZE
+id|low_buffer_size
 suffix:semicolon
 r_if
 c_cond
@@ -1480,14 +1519,20 @@ id|mv-&gt;hcount
 op_assign
 id|bytes_out
 op_minus
-id|LOW_BUFFER_SIZE
+id|low_buffer_size
 suffix:semicolon
 )brace
 r_else
+(brace
+id|mv-&gt;lcount
+op_assign
+id|bytes_out
+suffix:semicolon
 id|mv-&gt;hcount
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 DECL|function|decompress_kernel
 r_int
@@ -1498,8 +1543,16 @@ r_struct
 id|moveparams
 op_star
 id|mv
+comma
+r_void
+op_star
+id|rmode
 )paren
 (brace
+id|real_mode
+op_assign
+id|rmode
+suffix:semicolon
 r_if
 c_cond
 (paren

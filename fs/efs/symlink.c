@@ -2,6 +2,7 @@ multiline_comment|/*&n; * symlink.c&n; *&n; * Copyright (c) 1999 Al Smith&n; *&n
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/efs_fs.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|efs_symlink_readpage
 r_static
 r_int
@@ -74,6 +75,11 @@ id|EFS_BLOCKSIZE
 )paren
 r_goto
 id|fail
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* read first 512 bytes of link target */
 id|err
@@ -196,6 +202,11 @@ id|size
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SetPageUptodate
 c_func
 (paren
@@ -219,6 +230,11 @@ l_int|0
 suffix:semicolon
 id|fail
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|SetPageError
 c_func
 (paren

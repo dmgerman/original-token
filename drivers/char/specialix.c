@@ -10490,10 +10490,6 @@ id|pdev
 op_assign
 l_int|NULL
 suffix:semicolon
-r_int
-r_int
-id|tint
-suffix:semicolon
 id|i
 op_assign
 l_int|0

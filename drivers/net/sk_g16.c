@@ -913,14 +913,6 @@ suffix:semicolon
 multiline_comment|/* Failed to find or init driver */
 )brace
 multiline_comment|/* End of SK_init */
-DECL|variable|io
-r_static
-r_int
-id|io
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* 0 == probe */
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -950,6 +942,14 @@ l_string|&quot;0 to probe common ports (unsafe), or the I/O base of the board&qu
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
+DECL|variable|io
+r_static
+r_int
+id|io
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* 0 == probe */
 DECL|function|SK_init_module
 r_static
 r_int

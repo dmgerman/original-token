@@ -498,8 +498,6 @@ DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;hard disk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_hd
-DECL|macro|DEVICE_TIMEOUT
-mdefine_line|#define DEVICE_TIMEOUT HD_TIMER
 DECL|macro|TIMEOUT_VALUE
 mdefine_line|#define TIMEOUT_VALUE (6*HZ)
 DECL|macro|DEVICE_REQUEST
@@ -859,17 +857,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEVICE_TIMEOUT
-DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER &bslash;&n;((timer_table[DEVICE_TIMEOUT].expires = jiffies + TIMEOUT_VALUE), &bslash;&n;(timer_active |= 1&lt;&lt;DEVICE_TIMEOUT))
-DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER &bslash;&n;timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT)
-DECL|macro|SET_INTR
-mdefine_line|#define SET_INTR(x) &bslash;&n;if ((DEVICE_INTR = (x)) != NULL) &bslash;&n;&t;SET_TIMER; &bslash;&n;else &bslash;&n;&t;CLEAR_TIMER;
-macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
-macro_line|#endif /* DEVICE_TIMEOUT */
 macro_line|#ifdef DEVICE_REQUEST
 r_static
 r_void

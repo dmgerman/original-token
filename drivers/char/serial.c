@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, &n; * &t;&t;1998, 1999  Theodore Ts&squot;o&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; *  1/97:  Extended dumb serial ports are a config option now.  &n; *         Saves 4k.   Michael A. Griffith &lt;grif@acm.org&gt;&n; * &n; *  8/97: Fix bug in rs_set_termios with RTS&n; *        Stanislav V. Voronyi &lt;stas@uanet.kharkov.ua&gt;&n; *&n; *  3/98: Change the IRQ detection, use of probe_irq_o*(),&n; *&t;  supress TIOCSERGWILD and TIOCSERSWILD&n; *&t;  Etienne Lorrain &lt;etienne.lorrain@ibm.net&gt;&n; *&n; *  4/98: Added changes to support the ARM architecture proposed by&n; * &t;  Russell King&n; *&n; *  5/99: Updated to include support for the XR16C850 and ST16C654&n; *        uarts.  Stuart MacDonald &lt;stuartm@connecttech.com&gt;&n; *&n; *  8/99: Generalized PCI support added.  Theodore Ts&squot;o&n; * &n; *  3/00: Rid circular buffer of redundant xmit_cnt.  Fix a&n; *&t;  few races on freeing buffers too.&n; *&t;  Alan Modra &lt;alan@linuxcare.com&gt;&n; *&n; *  5/00: Support for the RSA-DV II/S card added.&n; *&t;  Kiyokazu SUTO &lt;suto@ks-and-ks.ne.jp&gt;&n; * &n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; */
+multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, &n; * &t;&t;1998, 1999  Theodore Ts&squot;o&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; *  1/97:  Extended dumb serial ports are a config option now.  &n; *         Saves 4k.   Michael A. Griffith &lt;grif@acm.org&gt;&n; * &n; *  8/97: Fix bug in rs_set_termios with RTS&n; *        Stanislav V. Voronyi &lt;stas@uanet.kharkov.ua&gt;&n; *&n; *  3/98: Change the IRQ detection, use of probe_irq_o*(),&n; *&t;  supress TIOCSERGWILD and TIOCSERSWILD&n; *&t;  Etienne Lorrain &lt;etienne.lorrain@ibm.net&gt;&n; *&n; *  4/98: Added changes to support the ARM architecture proposed by&n; * &t;  Russell King&n; *&n; *  5/99: Updated to include support for the XR16C850 and ST16C654&n; *        uarts.  Stuart MacDonald &lt;stuartm@connecttech.com&gt;&n; *&n; *  8/99: Generalized PCI support added.  Theodore Ts&squot;o&n; * &n; *  3/00: Rid circular buffer of redundant xmit_cnt.  Fix a&n; *&t;  few races on freeing buffers too.&n; *&t;  Alan Modra &lt;alan@linuxcare.com&gt;&n; *&n; *  5/00: Support for the RSA-DV II/S card added.&n; *&t;  Kiyokazu SUTO &lt;suto@ks-and-ks.ne.jp&gt;&n; * &n; *  6/00: Remove old-style timer, use timer_list&n; *        Andrew Morton &lt;andrewm@uow.edu.au&gt;&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; */
 DECL|variable|serial_version
 r_static
 r_char
@@ -189,6 +189,12 @@ DECL|variable|serial_refcount
 r_static
 r_int
 id|serial_refcount
+suffix:semicolon
+DECL|variable|serial_timer
+r_static
+r_struct
+id|timer_list
+id|serial_timer
 suffix:semicolon
 multiline_comment|/* serial subtype definitions */
 macro_line|#ifndef SERIAL_TYPE_NORMAL
@@ -516,7 +522,6 @@ mdefine_line|#define NR_PORTS&t;(sizeof(rs_table)/sizeof(struct serial_state))
 macro_line|#if (defined(ENABLE_SERIAL_PCI) || defined(ENABLE_SERIAL_PNP))
 DECL|macro|NR_PCI_BOARDS
 mdefine_line|#define NR_PCI_BOARDS&t;8
-macro_line|#ifdef MODULE
 multiline_comment|/* We don&squot;t unregister PCI boards right now */
 DECL|variable|serial_pci_board
 r_static
@@ -534,7 +539,6 @@ id|serial_pci_board_idx
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef IS_PCI_REGION_IOPORT
 DECL|macro|IS_PCI_REGION_IOPORT
 mdefine_line|#define IS_PCI_REGION_IOPORT(dev, r) (pci_resource_flags((dev), (r)) &amp; &bslash;&n;&t;&t;&t;&t;      IORESOURCE_IO)
@@ -3262,7 +3266,9 @@ r_void
 id|rs_timer
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 r_static
@@ -3440,22 +3446,16 @@ id|last_strobe
 op_assign
 id|jiffies
 suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|serial_timer
+comma
 id|jiffies
 op_plus
 id|RS_STROBE_TIME
-suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|RS_TIMER
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3506,13 +3506,12 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|serial_timer
+comma
 id|jiffies
 op_plus
 id|IRQ_timeout
@@ -3521,6 +3520,7 @@ l_int|0
 )braket
 op_minus
 l_int|2
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -4841,13 +4841,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up serial timers...&n;&t; */
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
+id|mod_timer
+c_func
+(paren
+op_amp
+id|serial_timer
+comma
 id|jiffies
 op_plus
 l_int|2
@@ -4855,12 +4854,7 @@ op_star
 id|HZ
 op_div
 l_int|100
-suffix:semicolon
-id|timer_active
-op_or_assign
-l_int|1
-op_lshift
-id|RS_TIMER
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the tty-&gt;alt_speed kludge&n;&t; */
 macro_line|#if (LINUX_VERSION_CODE &gt;= 131394) /* Linux 2.1.66 */
@@ -22220,6 +22214,7 @@ suffix:semicolon
 macro_line|#endif /* ENABLE_SERIAL_PNP */
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|rs_init
+r_static
 r_int
 id|__init
 id|rs_init
@@ -22239,12 +22234,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|fn
+id|serial_timer.function
 )paren
 (brace
 id|printk
@@ -22276,23 +22266,27 @@ comma
 id|do_serial_bh
 )paren
 suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|fn
+id|init_timer
+c_func
+(paren
+op_amp
+id|serial_timer
+)paren
+suffix:semicolon
+id|serial_timer.function
 op_assign
 id|rs_timer
 suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
+id|mod_timer
+c_func
+(paren
+op_amp
+id|serial_timer
+comma
+id|jiffies
+op_plus
+id|RS_STROBE_TIME
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -23474,9 +23468,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|function|rs_fini
+r_static
 r_void
+id|__exit
 id|rs_fini
 c_func
 (paren
@@ -23501,6 +23496,13 @@ op_star
 id|info
 suffix:semicolon
 multiline_comment|/* printk(&quot;Unloading %s: version %s&bslash;n&quot;, serial_name, serial_version); */
+id|del_timer_sync
+c_func
+(paren
+op_amp
+id|serial_timer
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -23511,33 +23513,6 @@ id|cli
 c_func
 (paren
 )paren
-suffix:semicolon
-id|timer_active
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|RS_TIMER
-)paren
-suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|fn
-op_assign
-l_int|NULL
-suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
 suffix:semicolon
 id|remove_bh
 c_func
@@ -23831,7 +23806,6 @@ id|pg
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
 DECL|variable|rs_init
 id|module_init
 c_func

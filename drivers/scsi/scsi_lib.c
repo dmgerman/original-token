@@ -78,6 +78,10 @@ id|SCpnt-&gt;request.q
 op_assign
 l_int|NULL
 suffix:semicolon
+id|SCpnt-&gt;request.free_list
+op_assign
+l_int|NULL
+suffix:semicolon
 id|SCpnt-&gt;request.nr_segments
 op_assign
 l_int|0

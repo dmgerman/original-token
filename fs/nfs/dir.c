@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|NFS_PARANOIA
 mdefine_line|#define NFS_PARANOIA 1
 multiline_comment|/* #define NFS_DEBUG_VERBOSE 1 */
@@ -1983,6 +1984,19 @@ r_struct
 id|nfs_fattr
 id|fattr
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dir
+op_assign
+id|dentry-&gt;d_parent
+suffix:semicolon
+id|dir_i
+op_assign
+id|dir-&gt;d_inode
+suffix:semicolon
 multiline_comment|/*&n;&t; * If we don&squot;t have an inode, let&squot;s look at the parent&n;&t; * directory mtime to get a hint about how often we&n;&t; * should validate things..&n;&t; */
 r_if
 c_cond
@@ -2178,22 +2192,16 @@ id|dentry
 suffix:semicolon
 id|out_valid
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 id|out_bad
 suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|list_empty
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_subdirs
-)paren
-)paren
 id|shrink_dcache_parent
 c_func
 (paren
@@ -2241,6 +2249,11 @@ id|nfs_zap_caches
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -2357,12 +2370,24 @@ c_cond
 (paren
 id|dentry-&gt;d_fsdata
 )paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|nfs_fh_free
 c_func
 (paren
 id|dentry-&gt;d_fsdata
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Called when the dentry loses inode.&n; * We use it to clean up silly-renamed files.&n; */
 DECL|function|nfs_dentry_iput
@@ -2407,6 +2432,19 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dir
+op_assign
+id|dentry-&gt;d_parent
+suffix:semicolon
+id|dir_i
+op_assign
+id|dir-&gt;d_inode
+suffix:semicolon
 id|nfs_zap_caches
 c_func
 (paren
@@ -2434,6 +2472,11 @@ id|dir
 comma
 op_amp
 id|dentry-&gt;d_name
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -3362,14 +3405,24 @@ id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Note that a silly-renamed file can be deleted once it&squot;s&n;&t; * no longer in use -- it&squot;s just an ordinary file now.&n;&t; */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_count
+)paren
 op_eq
 l_int|1
 )paren
@@ -3681,7 +3734,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_count
+)paren
 OG
 l_int|1
 )paren
@@ -3696,7 +3754,12 @@ id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|dentry-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4291,7 +4354,12 @@ id|new_dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|new_dentry-&gt;d_name.name
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|new_dentry-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * First check whether the target is busy ... we can&squot;t&n;&t; * safely do _any_ rename if the target is in use.&n;&t; *&n;&t; * For files, make a copy of the dentry and then do a &n;&t; * silly-rename. If the silly-rename succeeds, the&n;&t; * copied dentry is hashed and becomes the new target.&n;&t; */
@@ -4320,7 +4388,12 @@ r_else
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|new_dentry-&gt;d_count
+)paren
 OG
 l_int|1
 )paren
@@ -4391,7 +4464,12 @@ multiline_comment|/* dentry still busy? */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|new_dentry-&gt;d_count
+)paren
 OG
 l_int|1
 )paren
@@ -4406,7 +4484,12 @@ id|new_dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|new_dentry-&gt;d_name.name
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|new_dentry-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4421,7 +4504,12 @@ multiline_comment|/*&n;&t; * ... prune child dentries and writebacks if needed.&
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|old_dentry-&gt;d_count
+)paren
 OG
 l_int|1
 )paren

@@ -802,6 +802,7 @@ op_star
 id|fs
 )paren
 (brace
+multiline_comment|/* No need to hold fs-&gt;lock if we are killing it */
 r_if
 c_cond
 (paren
@@ -1588,11 +1589,6 @@ op_amp
 id|tsk-&gt;real_timer
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fake_volatile
 suffix:colon
 macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
@@ -1603,6 +1599,11 @@ id|code
 )paren
 suffix:semicolon
 macro_line|#endif
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sem_exit
 c_func
 (paren

@@ -431,7 +431,12 @@ op_amp
 id|target_inode-&gt;i_count
 )paren
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nd.dentry-&gt;d_count
+)paren
 )paren
 suffix:semicolon
 id|path_release

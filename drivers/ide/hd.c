@@ -244,6 +244,20 @@ op_lshift
 l_int|6
 )braket
 suffix:semicolon
+DECL|variable|device_timer
+r_static
+r_struct
+id|timer_list
+id|device_timer
+suffix:semicolon
+DECL|macro|SET_TIMER
+mdefine_line|#define SET_TIMER &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;mod_timer(&amp;device_timer, jiffies + TIMEOUT_VALUE);&t;&bslash;&n;&t;} while (0)
+DECL|macro|CLEAR_TIMER
+mdefine_line|#define CLEAR_TIMER del_timer(&amp;device_timer);
+DECL|macro|SET_INTR
+macro_line|#undef SET_INTR
+DECL|macro|SET_INTR
+mdefine_line|#define SET_INTR(x) &bslash;&n;if ((DEVICE_INTR = (x)) != NULL) &bslash;&n;&t;SET_TIMER; &bslash;&n;else &bslash;&n;&t;CLEAR_TIMER;
 macro_line|#if (HD_DELAY &gt; 0)
 DECL|variable|last_req
 r_int
@@ -2286,7 +2300,9 @@ r_void
 id|hd_times_out
 c_func
 (paren
-r_void
+r_int
+r_int
+id|dummy
 )paren
 (brace
 r_int
@@ -2522,13 +2538,11 @@ r_return
 suffix:semicolon
 id|repeat
 suffix:colon
-id|timer_active
-op_and_assign
-op_complement
+id|del_timer
+c_func
 (paren
-l_int|1
-op_lshift
-id|HD_TIMER
+op_amp
+id|device_timer
 )paren
 suffix:semicolon
 id|sti
@@ -3368,13 +3382,11 @@ id|DEVICE_INTR
 op_assign
 l_int|NULL
 suffix:semicolon
-id|timer_active
-op_and_assign
-op_complement
+id|del_timer
+c_func
 (paren
-l_int|1
-op_lshift
-id|HD_TIMER
+op_amp
+id|device_timer
 )paren
 suffix:semicolon
 r_if
@@ -3977,12 +3989,14 @@ op_assign
 op_amp
 id|hd_gendisk
 suffix:semicolon
-id|timer_table
-(braket
-id|HD_TIMER
-)braket
-dot
-id|fn
+id|init_timer
+c_func
+(paren
+op_amp
+id|device_timer
+)paren
+suffix:semicolon
+id|device_timer.function
 op_assign
 id|hd_times_out
 suffix:semicolon

@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; *(C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * &n; * usb-ohci.h&n; * &n; */
-DECL|macro|MODSTR
-mdefine_line|#define MODSTR &quot;ohci: &quot;
 DECL|variable|cc_to_error
 r_static
 r_int
@@ -11,7 +9,6 @@ l_int|16
 op_assign
 (brace
 multiline_comment|/* mapping of the OHCI CC status to error codes */
-macro_line|#ifdef USB_ST_CRC /* status codes */
 multiline_comment|/* No  Error  */
 id|USB_ST_NOERROR
 comma
@@ -61,73 +58,6 @@ multiline_comment|/* Not Access */
 id|USB_ST_NORESPONSE
 )brace
 suffix:semicolon
-macro_line|#else  /* error codes */
-multiline_comment|/* No  Error  */
-l_int|0
-comma
-multiline_comment|/* CRC Error  */
-op_minus
-id|EILSEQ
-comma
-multiline_comment|/* Bit Stuff  */
-op_minus
-id|EPROTO
-comma
-multiline_comment|/* Data Togg  */
-op_minus
-id|EILSEQ
-comma
-multiline_comment|/* Stall      */
-op_minus
-id|EPIPE
-comma
-multiline_comment|/* DevNotResp */
-op_minus
-id|ETIMEDOUT
-comma
-multiline_comment|/* PIDCheck   */
-op_minus
-id|EPROTO
-comma
-multiline_comment|/* UnExpPID   */
-op_minus
-id|EPROTO
-comma
-multiline_comment|/* DataOver   */
-op_minus
-id|EOVERFLOW
-comma
-multiline_comment|/* DataUnder  */
-op_minus
-id|EREMOTEIO
-comma
-multiline_comment|/* reservd    */
-op_minus
-id|ETIMEDOUT
-comma
-multiline_comment|/* reservd    */
-op_minus
-id|ETIMEDOUT
-comma
-multiline_comment|/* BufferOver */
-op_minus
-id|ECOMM
-comma
-multiline_comment|/* BuffUnder  */
-op_minus
-id|ECOMM
-comma
-multiline_comment|/* Not Access */
-op_minus
-id|ETIMEDOUT
-comma
-multiline_comment|/* Not Access */
-op_minus
-id|ETIMEDOUT
-)brace
-suffix:semicolon
-mdefine_line|#define USB_ST_URB_PENDING&t;&t;-EINPROGRESS
-macro_line|#endif
 r_struct
 id|ed
 suffix:semicolon
@@ -922,6 +852,12 @@ DECL|member|rh
 r_struct
 id|virt_root_hub
 id|rh
+suffix:semicolon
+DECL|member|ohci_dev
+r_struct
+id|pci_dev
+op_star
+id|ohci_dev
 suffix:semicolon
 DECL|typedef|ohci_t
 )brace

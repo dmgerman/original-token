@@ -59,6 +59,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_CMPCI
 r_extern
+r_int
 id|init_cmpci
 c_func
 (paren
@@ -1634,8 +1635,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;sound&quot;
-comma
-l_int|0
 comma
 l_int|NULL
 )paren

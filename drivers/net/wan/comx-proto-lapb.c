@@ -2535,20 +2535,13 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|comx_proto_lapb_init
-mdefine_line|#define comx_proto_lapb_init init_module
-macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|comx_proto_lapb_init
 r_int
+id|__init
 id|comx_proto_lapb_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2584,10 +2577,11 @@ id|comx25_protocol
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|comx_proto_lapb_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|comx_proto_lapb_exit
 c_func
 (paren
 r_void
@@ -2606,5 +2600,20 @@ id|comx25_protocol.name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#ifdef MODULE
+DECL|variable|comx_proto_lapb_init
+id|module_init
+c_func
+(paren
+id|comx_proto_lapb_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|comx_proto_lapb_exit
+id|module_exit
+c_func
+(paren
+id|comx_proto_lapb_exit
+)paren
+suffix:semicolon
 eof

@@ -38,13 +38,13 @@ mdefine_line|#define O_LARGEFILE&t;0x40000
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD
-mdefine_line|#define F_GETFD&t;&t;1&t;/* get f_flags */
+mdefine_line|#define F_GETFD&t;&t;1&t;/* get close_on_exec */
 DECL|macro|F_SETFD
-mdefine_line|#define F_SETFD&t;&t;2&t;/* set f_flags */
+mdefine_line|#define F_SETFD&t;&t;2&t;/* set/clear close_on_exec */
 DECL|macro|F_GETFL
-mdefine_line|#define F_GETFL&t;&t;3&t;/* more flags (cloexec) */
+mdefine_line|#define F_GETFL&t;&t;3&t;/* get file-&gt;f_flags */
 DECL|macro|F_SETFL
-mdefine_line|#define F_SETFL&t;&t;4
+mdefine_line|#define F_SETFL&t;&t;4&t;/* set file-&gt;f_flags */
 DECL|macro|F_GETOWN
 mdefine_line|#define F_GETOWN&t;5&t;/*  for sockets. */
 DECL|macro|F_SETOWN

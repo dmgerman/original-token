@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;

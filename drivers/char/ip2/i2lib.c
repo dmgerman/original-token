@@ -1718,7 +1718,7 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-id|spinlock_t
+id|rwlock_t
 op_star
 id|lock_var_p
 op_assign

@@ -270,6 +270,9 @@ r_if
 c_cond
 (paren
 id|error
+op_logical_and
+op_logical_neg
+id|io.size
 )paren
 (brace
 r_return

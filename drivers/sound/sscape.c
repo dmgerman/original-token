@@ -846,7 +846,7 @@ r_return
 id|data
 suffix:semicolon
 )brace
-DECL|function|host_command1
+macro_line|#if 0 /* unused */
 r_static
 r_int
 id|host_command1
@@ -895,6 +895,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* unused */
 DECL|function|host_command2
 r_static
 r_int

@@ -8835,26 +8835,6 @@ comma
 id|do_serial_bh
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|fn
-op_assign
-id|rs_8xx_timer
-suffix:semicolon
-id|timer_table
-(braket
-id|RS_TIMER
-)braket
-dot
-id|expires
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|show_serial_version
 c_func
 (paren

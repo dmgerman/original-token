@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.18 2000/05/09 17:40:15 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.h,v 1.19 2000/06/26 19:40:27 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -48,12 +48,12 @@ r_int
 r_char
 id|flags
 suffix:semicolon
-multiline_comment|/* Unused right now, but we will use it for proper&n;&t; * enable_irq()/disable_irq() nesting.&n;&t; */
-DECL|member|__unused
+multiline_comment|/* This is used to deal with IBF_DMA_SYNC on&n;&t; * Sabre systems.&n;&t; */
+DECL|member|synctab_ent
 multiline_comment|/*0x07*/
 r_int
 r_char
-id|__unused
+id|synctab_ent
 suffix:semicolon
 multiline_comment|/* Reference to handler for this IRQ.  If this is&n;&t; * non-NULL this means it is active and should be&n;&t; * serviced.  Else the pending member is set to one&n;&t; * and later registry of the interrupt checks for&n;&t; * this condition.&n;&t; *&n;&t; * Normally this is just an irq_action structure.&n;&t; * But, on PCI, if multiple interrupt sources behind&n;&t; * a bridge have multiple interrupt sources that share&n;&t; * the same INO bucket, this points to an array of&n;&t; * pointers to four IRQ action structures.&n;&t; */
 DECL|member|irq_info
@@ -78,6 +78,26 @@ id|imap
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+r_int
+id|pci_dma_wsync
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|dma_sync_reg_table
+(braket
+l_int|256
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|dma_sync_reg_table_entry
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* IMAP/ICLR register defines */
 DECL|macro|IMAP_VALID
 mdefine_line|#define IMAP_VALID&t;&t;0x80000000&t;/* IRQ Enabled&t;&t;*/

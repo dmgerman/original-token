@@ -9046,8 +9046,6 @@ l_int|NULL
 comma
 l_string|&quot;capi20&quot;
 comma
-l_int|0
-comma
 id|capi_major
 comma
 l_int|0
@@ -9174,8 +9172,6 @@ l_int|NULL
 comma
 id|devname
 comma
-l_int|0
-comma
 id|capi_rawmajor
 comma
 id|j
@@ -9220,8 +9216,6 @@ c_func
 l_int|NULL
 comma
 l_string|&quot;capi20&quot;
-comma
-l_int|0
 comma
 id|capi_major
 comma
@@ -9311,8 +9305,6 @@ l_int|NULL
 comma
 l_string|&quot;isdn/capi20&quot;
 comma
-l_int|0
-comma
 id|capi_major
 comma
 l_int|0
@@ -9377,8 +9369,6 @@ c_func
 l_int|NULL
 comma
 id|devname
-comma
-l_int|0
 comma
 id|capi_rawmajor
 comma

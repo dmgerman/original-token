@@ -2339,6 +2339,7 @@ multiline_comment|/* awc_event */
 DECL|function|aironet_cs_init
 r_static
 r_int
+id|__init
 id|aironet_cs_init
 c_func
 (paren
@@ -2418,6 +2419,7 @@ suffix:semicolon
 DECL|function|aironet_cs_exit
 r_static
 r_void
+id|__exit
 id|aironet_cs_exit
 c_func
 (paren
@@ -2482,11 +2484,11 @@ c_func
 id|aironet_cs_init
 )paren
 suffix:semicolon
-DECL|variable|aironet_cs_init
+DECL|variable|aironet_cs_exit
 id|module_exit
 c_func
 (paren
-id|aironet_cs_init
+id|aironet_cs_exit
 )paren
 suffix:semicolon
 eof

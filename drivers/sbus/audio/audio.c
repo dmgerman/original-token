@@ -10029,8 +10029,6 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
-comma
 id|DEVFS_SPECIAL_CHR
 comma
 l_int|0
@@ -10176,8 +10174,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;sound&quot;
-comma
-l_int|0
 comma
 l_int|NULL
 )paren

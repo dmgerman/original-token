@@ -1570,6 +1570,7 @@ id|fddi_addr
 id|SMT_SRF_DA
 op_assign
 (brace
+(brace
 l_int|0x80
 comma
 l_int|0x01
@@ -1581,6 +1582,7 @@ comma
 l_int|0x80
 comma
 l_int|0x08
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t; * build SMT header&n;&t; */

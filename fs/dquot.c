@@ -4500,25 +4500,34 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|S_ISREG
 c_func
 (paren
 id|inode-&gt;i_mode
 )paren
-op_logical_or
+op_logical_and
+op_logical_neg
 id|S_ISDIR
 c_func
 (paren
 id|inode-&gt;i_mode
 )paren
-op_logical_or
+op_logical_and
+op_logical_neg
 id|S_ISLNK
 c_func
 (paren
 id|inode-&gt;i_mode
 )paren
 )paren
-(brace
+r_return
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* We don&squot;t want to have quotas on quota files - nasty deadlocks possible */
 r_if
 c_cond
@@ -4529,8 +4538,15 @@ c_func
 id|inode
 )paren
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -4664,7 +4680,11 @@ id|S_QUOTA
 suffix:semicolon
 )brace
 )brace
-)brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Release all quota for the specified inode.&n; *&n; * Note: this is a blocking operation.&n; */
 DECL|function|dquot_drop
@@ -4685,6 +4705,11 @@ id|dquot
 suffix:semicolon
 r_int
 id|cnt
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|inode-&gt;i_flags
 op_and_assign
@@ -4739,6 +4764,11 @@ id|dquot
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note: this is a blocking operation.&n; */
 DECL|function|dquot_alloc_block
@@ -5380,6 +5410,11 @@ id|inode-&gt;i_sb
 r_return
 l_int|0
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Find out if this filesystem uses i_blocks.&n;&t; */
 r_if
 c_cond
@@ -5921,6 +5956,11 @@ id|cnt
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6003,6 +6043,11 @@ id|disc
 suffix:semicolon
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

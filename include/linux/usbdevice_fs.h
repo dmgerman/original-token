@@ -321,6 +321,8 @@ DECL|macro|USBDEVFS_HUB_PORTINFO
 mdefine_line|#define USBDEVFS_HUB_PORTINFO      _IOR(&squot;U&squot;, 19, struct usbdevfs_hub_portinfo)
 DECL|macro|USBDEVFS_RESET
 mdefine_line|#define USBDEVFS_RESET             _IO(&squot;U&squot;, 20)
+DECL|macro|USBDEVFS_CLEAR_HALT
+mdefine_line|#define USBDEVFS_CLEAR_HALT        _IOR(&squot;U&squot;, 21, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/list.h&gt;

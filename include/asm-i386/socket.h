@@ -62,8 +62,8 @@ DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME&t;&t;28
-multiline_comment|/* Nast libc5 fixup - bletch */
-macro_line|#if defined(__KERNEL__)
+multiline_comment|/* Nasty libc5 fixup - bletch */
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 multiline_comment|/* Socket types. */
 DECL|macro|SOCK_STREAM
 mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket&t;*/

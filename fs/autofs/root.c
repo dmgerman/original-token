@@ -2,6 +2,8 @@ multiline_comment|/* -*- linux-c -*- -------------------------------------------
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &quot;autofs_i.h&quot;
 r_static
 r_int
@@ -652,12 +654,29 @@ r_struct
 id|inode
 op_star
 id|dir
-op_assign
-id|dentry-&gt;d_parent-&gt;d_inode
 suffix:semicolon
 r_struct
 id|autofs_sb_info
 op_star
+id|sbi
+suffix:semicolon
+r_struct
+id|autofs_dir_ent
+op_star
+id|ent
+suffix:semicolon
+r_int
+id|res
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dir
+op_assign
+id|dentry-&gt;d_parent-&gt;d_inode
+suffix:semicolon
 id|sbi
 op_assign
 id|autofs_sbi
@@ -665,11 +684,6 @@ c_func
 (paren
 id|dir-&gt;i_sb
 )paren
-suffix:semicolon
-r_struct
-id|autofs_dir_ent
-op_star
-id|ent
 suffix:semicolon
 multiline_comment|/* Pending dentry */
 r_if
@@ -689,11 +703,13 @@ c_func
 id|sbi
 )paren
 )paren
-r_return
+id|res
+op_assign
 l_int|1
 suffix:semicolon
 r_else
-r_return
+id|res
+op_assign
 id|try_to_fill_dentry
 c_func
 (paren
@@ -704,6 +720,14 @@ comma
 id|sbi
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
 )brace
 multiline_comment|/* Negative dentry.. invalidate if &quot;old&quot; */
 r_if
@@ -712,6 +736,12 @@ c_cond
 op_logical_neg
 id|dentry-&gt;d_inode
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 (paren
 id|dentry-&gt;d_time
@@ -721,6 +751,7 @@ op_le
 id|AUTOFS_NEGATIVE_TIMEOUT
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Check for a non-mountpoint directory */
 r_if
 c_cond
@@ -748,11 +779,13 @@ c_func
 id|sbi
 )paren
 )paren
-r_return
+id|res
+op_assign
 l_int|1
 suffix:semicolon
 r_else
-r_return
+id|res
+op_assign
 id|try_to_fill_dentry
 c_func
 (paren
@@ -762,6 +795,14 @@ id|dir-&gt;i_sb
 comma
 id|sbi
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|res
 suffix:semicolon
 )brace
 multiline_comment|/* Update the usage list */
@@ -800,6 +841,11 @@ id|ent
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

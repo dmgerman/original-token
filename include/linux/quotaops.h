@@ -505,11 +505,6 @@ c_cond
 id|dentry-&gt;d_inode-&gt;i_sb-&gt;dq_op
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|dentry-&gt;d_inode-&gt;i_sb-&gt;dq_op
 op_member_access_from_pointer
 id|initialize
@@ -531,11 +526,6 @@ c_func
 id|dentry
 comma
 id|iattr
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

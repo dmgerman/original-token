@@ -3,8 +3,8 @@ macro_line|#ifndef _OHCI1394_H
 DECL|macro|_OHCI1394_H
 mdefine_line|#define _OHCI1394_H
 macro_line|#include &quot;ieee1394_types.h&quot;
-multiline_comment|/* include this for the video frame grabber */
-multiline_comment|/* #include &quot;video1394.h&quot; */
+DECL|macro|IEEE1394_USE_BOTTOM_HALVES
+mdefine_line|#define IEEE1394_USE_BOTTOM_HALVES 0
 DECL|macro|OHCI1394_DRIVER_NAME
 mdefine_line|#define OHCI1394_DRIVER_NAME      &quot;ohci1394&quot;
 macro_line|#ifndef PCI_DEVICE_ID_TI_OHCI1394_LV22
@@ -51,6 +51,18 @@ macro_line|#ifndef PCI_DEVICE_ID_APPLE_UNI_N_FW
 DECL|macro|PCI_DEVICE_ID_APPLE_UNI_N_FW
 mdefine_line|#define PCI_DEVICE_ID_APPLE_UNI_N_FW&t;0x0018
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ALI_OHCI1394_M5251
+DECL|macro|PCI_DEVICE_ID_ALI_OHCI1394_M5251
+mdefine_line|#define PCI_DEVICE_ID_ALI_OHCI1394_M5251 0x5251
+macro_line|#endif
+macro_line|#ifndef PCI_VENDOR_ID_LUCENT
+DECL|macro|PCI_VENDOR_ID_LUCENT
+mdefine_line|#define PCI_VENDOR_ID_LUCENT 0x11c1
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_LUCENT_FW323
+DECL|macro|PCI_DEVICE_ID_LUCENT_FW323
+mdefine_line|#define PCI_DEVICE_ID_LUCENT_FW323 0x5811
+macro_line|#endif
 DECL|macro|MAX_OHCI1394_CARDS
 mdefine_line|#define MAX_OHCI1394_CARDS        4
 DECL|macro|OHCI1394_MAX_AT_REQ_RETRIES
@@ -76,9 +88,9 @@ mdefine_line|#define AR_RESP_SPLIT_BUF_SIZE         4096 /* split packet buffer 
 DECL|macro|IR_NUM_DESC
 mdefine_line|#define IR_NUM_DESC                      16 /* number of IR descriptors */
 DECL|macro|IR_BUF_SIZE
-mdefine_line|#define IR_BUF_SIZE                    6480 /* 6480 bytes/buffer */
+mdefine_line|#define IR_BUF_SIZE                    4096 /* 6480 bytes/buffer */
 DECL|macro|IR_SPLIT_BUF_SIZE
-mdefine_line|#define IR_SPLIT_BUF_SIZE              8192 /* split packet buffer */
+mdefine_line|#define IR_SPLIT_BUF_SIZE              4096 /* split packet buffer */
 DECL|macro|AT_REQ_NUM_DESC
 mdefine_line|#define AT_REQ_NUM_DESC                  32 /* number of AT req descriptors */
 DECL|macro|AT_RESP_NUM_DESC
@@ -157,18 +169,30 @@ r_int
 r_int
 id|split_buf_size
 suffix:semicolon
-DECL|member|prg
+multiline_comment|/* dma block descriptors */
+DECL|member|prg_cpu
 r_struct
 id|dma_cmd
 op_star
 op_star
-id|prg
+id|prg_cpu
 suffix:semicolon
-DECL|member|buf
+DECL|member|prg_bus
+id|dma_addr_t
+op_star
+id|prg_bus
+suffix:semicolon
+multiline_comment|/* dma buffers */
+DECL|member|buf_cpu
 id|quadlet_t
 op_star
 op_star
-id|buf
+id|buf_cpu
+suffix:semicolon
+DECL|member|buf_bus
+id|dma_addr_t
+op_star
+id|buf_bus
 suffix:semicolon
 DECL|member|buf_ind
 r_int
@@ -227,11 +251,18 @@ r_int
 r_int
 id|num_desc
 suffix:semicolon
-DECL|member|prg
+multiline_comment|/* dma block descriptors */
+DECL|member|prg_cpu
 r_struct
 id|at_dma_prg
 op_star
-id|prg
+op_star
+id|prg_cpu
+suffix:semicolon
+DECL|member|prg_bus
+id|dma_addr_t
+op_star
+id|prg_bus
 suffix:semicolon
 DECL|member|prg_ind
 r_int
@@ -252,17 +283,31 @@ id|quadlet_t
 op_star
 id|branchAddrPtr
 suffix:semicolon
-DECL|member|first
+multiline_comment|/* list of packets inserted in the AT FIFO */
+DECL|member|fifo_first
 r_struct
 id|hpsb_packet
 op_star
-id|first
+id|fifo_first
 suffix:semicolon
-DECL|member|last
+DECL|member|fifo_last
 r_struct
 id|hpsb_packet
 op_star
-id|last
+id|fifo_last
+suffix:semicolon
+multiline_comment|/* list of pending packets to be inserted in the AT FIFO */
+DECL|member|pending_first
+r_struct
+id|hpsb_packet
+op_star
+id|pending_first
+suffix:semicolon
+DECL|member|pending_last
+r_struct
+id|hpsb_packet
+op_star
+id|pending_last
 suffix:semicolon
 DECL|member|lock
 id|spinlock_t
@@ -285,100 +330,32 @@ DECL|member|cmdPtr
 r_int
 id|cmdPtr
 suffix:semicolon
-DECL|member|waitq
-id|wait_queue_head_t
-id|waitq
-suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef _VIDEO_1394_H
-DECL|macro|OHCI1394_MAJOR
-mdefine_line|#define OHCI1394_MAJOR 172
-DECL|macro|ISO_CHANNELS
-mdefine_line|#define ISO_CHANNELS 64
-DECL|struct|dma_fbuf_ctx
+multiline_comment|/* video device template */
+DECL|struct|video_template
 r_struct
-id|dma_fbuf_ctx
+id|video_template
 (brace
-DECL|member|ohci
+DECL|member|irq_handler
 r_void
+(paren
 op_star
-id|ohci
-suffix:semicolon
-DECL|member|ctx
+id|irq_handler
+)paren
+(paren
 r_int
-id|ctx
-suffix:semicolon
-DECL|member|channel
-r_int
-id|channel
-suffix:semicolon
-DECL|member|last_buffer
-r_int
-id|last_buffer
-suffix:semicolon
-DECL|member|num_desc
-r_int
-r_int
-id|num_desc
-suffix:semicolon
-DECL|member|buf_size
-r_int
-r_int
-id|buf_size
-suffix:semicolon
-DECL|member|frame_size
-r_int
-r_int
-id|frame_size
-suffix:semicolon
-DECL|member|nb_cmd
-r_int
-r_int
-id|nb_cmd
-suffix:semicolon
-DECL|member|buf
-r_int
-r_char
-op_star
-id|buf
-suffix:semicolon
-DECL|member|prg
-r_struct
-id|dma_cmd
-op_star
-op_star
-id|prg
-suffix:semicolon
-DECL|member|buffer_status
-r_int
-r_int
-op_star
-id|buffer_status
-suffix:semicolon
-DECL|member|ctrlClear
-r_int
-id|ctrlClear
-suffix:semicolon
-DECL|member|ctrlSet
-r_int
-id|ctrlSet
-suffix:semicolon
-DECL|member|cmdPtr
-r_int
-id|cmdPtr
-suffix:semicolon
-DECL|member|ctxMatch
-r_int
-id|ctxMatch
-suffix:semicolon
-DECL|member|waitq
-id|wait_queue_head_t
-id|waitq
+id|card
+comma
+id|quadlet_t
+id|isoRecvEvent
+comma
+id|quadlet_t
+id|isoXmitEvent
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|struct|ti_ohci
 r_struct
 id|ti_ohci
@@ -404,18 +381,26 @@ r_void
 op_star
 id|registers
 suffix:semicolon
-DECL|member|self_id_buffer
-id|quadlet_t
-op_star
-id|self_id_buffer
-suffix:semicolon
 multiline_comment|/* dma buffer for self-id packets */
-DECL|member|csr_config_rom
+DECL|member|selfid_buf_cpu
 id|quadlet_t
 op_star
-id|csr_config_rom
+id|selfid_buf_cpu
+suffix:semicolon
+DECL|member|selfid_buf_bus
+id|dma_addr_t
+id|selfid_buf_bus
 suffix:semicolon
 multiline_comment|/* buffer for csr config rom */
+DECL|member|csr_config_rom_cpu
+id|quadlet_t
+op_star
+id|csr_config_rom_cpu
+suffix:semicolon
+DECL|member|csr_config_rom_bus
+id|dma_addr_t
+id|csr_config_rom_bus
+suffix:semicolon
 DECL|member|max_packet_size
 r_int
 r_int
@@ -462,26 +447,15 @@ DECL|member|IR_channel_lock
 id|spinlock_t
 id|IR_channel_lock
 suffix:semicolon
-DECL|member|nb_iso_ctx
+DECL|member|nb_iso_rcv_ctx
 r_int
-id|nb_iso_ctx
+id|nb_iso_rcv_ctx
 suffix:semicolon
-macro_line|#ifdef _VIDEO_1394_H
-multiline_comment|/* frame buffer context */
-DECL|member|fbuf_context
-r_struct
-id|dma_fbuf_ctx
-op_star
-op_star
-id|fbuf_context
+multiline_comment|/* iso transmit */
+DECL|member|nb_iso_xmit_ctx
+r_int
+id|nb_iso_xmit_ctx
 suffix:semicolon
-DECL|member|current_fbuf_ctx
-r_struct
-id|dma_fbuf_ctx
-op_star
-id|current_fbuf_ctx
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* IEEE-1394 part follows */
 DECL|member|host
 r_struct
@@ -508,8 +482,77 @@ DECL|member|NumBusResets
 r_int
 id|NumBusResets
 suffix:semicolon
+multiline_comment|/* video device */
+DECL|member|video_tmpl
+r_struct
+id|video_template
+op_star
+id|video_tmpl
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|cross_bound
+r_inline
+r_static
+r_int
+id|cross_bound
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|cross
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+id|PAGE_SIZE
+)paren
+(brace
+id|cross
+op_assign
+id|size
+op_div
+id|PAGE_SIZE
+suffix:semicolon
+id|size
+op_sub_assign
+id|cross
+op_star
+id|PAGE_SIZE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|PAGE_SIZE
+op_minus
+id|addr
+op_mod
+id|PAGE_SIZE
+)paren
+OL
+id|size
+)paren
+id|cross
+op_increment
+suffix:semicolon
+r_return
+id|cross
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Register read and write helper functions.&n; */
 DECL|function|reg_write
 r_inline
@@ -745,8 +788,8 @@ DECL|macro|OHCI1394_GUID_ROM
 mdefine_line|#define OHCI1394_GUID_ROM                     0x004
 DECL|macro|OHCI1394_ATRetries
 mdefine_line|#define OHCI1394_ATRetries                    0x008
-DECL|macro|OHCI1394_CSRReadData
-mdefine_line|#define OHCI1394_CSRReadData                  0x00C
+DECL|macro|OHCI1394_CSRData
+mdefine_line|#define OHCI1394_CSRData                      0x00C
 DECL|macro|OHCI1394_CSRCompareData
 mdefine_line|#define OHCI1394_CSRCompareData               0x010
 DECL|macro|OHCI1394_CSRControl
@@ -863,16 +906,24 @@ DECL|macro|OHCI1394_AsRspRcvContextControlClear
 mdefine_line|#define OHCI1394_AsRspRcvContextControlClear  0x1E4
 DECL|macro|OHCI1394_AsRspRcvCommandPtr
 mdefine_line|#define OHCI1394_AsRspRcvCommandPtr           0x1EC
+multiline_comment|/* Isochronous transmit registers */
+multiline_comment|/* Add (32 * n) for context n */
+DECL|macro|OHCI1394_IsoXmitContextControlSet
+mdefine_line|#define OHCI1394_IsoXmitContextControlSet     0x200
+DECL|macro|OHCI1394_IsoXmitContextControlClear
+mdefine_line|#define OHCI1394_IsoXmitContextControlClear   0x204
+DECL|macro|OHCI1394_IsoXmitCommandPtr
+mdefine_line|#define OHCI1394_IsoXmitCommandPtr            0x20C
 multiline_comment|/* Isochronous receive registers */
 multiline_comment|/* Add (32 * n) for context n */
-DECL|macro|OHCI1394_IrRcvContextControlSet
-mdefine_line|#define OHCI1394_IrRcvContextControlSet       0x400
-DECL|macro|OHCI1394_IrRcvContextControlClear
-mdefine_line|#define OHCI1394_IrRcvContextControlClear     0x404
-DECL|macro|OHCI1394_IrRcvCommandPtr
-mdefine_line|#define OHCI1394_IrRcvCommandPtr              0x40C
-DECL|macro|OHCI1394_IrRcvContextMatch
-mdefine_line|#define OHCI1394_IrRcvContextMatch            0x410
+DECL|macro|OHCI1394_IsoRcvContextControlSet
+mdefine_line|#define OHCI1394_IsoRcvContextControlSet      0x400
+DECL|macro|OHCI1394_IsoRcvContextControlClear
+mdefine_line|#define OHCI1394_IsoRcvContextControlClear    0x404
+DECL|macro|OHCI1394_IsoRcvCommandPtr
+mdefine_line|#define OHCI1394_IsoRcvCommandPtr             0x40C
+DECL|macro|OHCI1394_IsoRcvContextMatch
+mdefine_line|#define OHCI1394_IsoRcvContextMatch           0x410
 multiline_comment|/* Interrupts Mask/Events */
 DECL|macro|OHCI1394_reqTxComplete
 mdefine_line|#define OHCI1394_reqTxComplete           0x00000001
@@ -930,5 +981,62 @@ DECL|macro|DMA_SPEED_200
 mdefine_line|#define DMA_SPEED_200                    0x1
 DECL|macro|DMA_SPEED_400
 mdefine_line|#define DMA_SPEED_400                    0x2
+r_void
+id|ohci1394_stop_context
+c_func
+(paren
+r_struct
+id|ti_ohci
+op_star
+id|ohci
+comma
+r_int
+id|reg
+comma
+r_char
+op_star
+id|msg
+)paren
+suffix:semicolon
+r_struct
+id|ti_ohci
+op_star
+id|ohci1394_get_struct
+c_func
+(paren
+r_int
+id|card_num
+)paren
+suffix:semicolon
+r_int
+id|ohci1394_register_video
+c_func
+(paren
+r_struct
+id|ti_ohci
+op_star
+id|ohci
+comma
+r_struct
+id|video_template
+op_star
+id|tmpl
+)paren
+suffix:semicolon
+r_void
+id|ohci1394_unregister_video
+c_func
+(paren
+r_struct
+id|ti_ohci
+op_star
+id|ohci
+comma
+r_struct
+id|video_template
+op_star
+id|tmpl
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

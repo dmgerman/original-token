@@ -121,6 +121,7 @@ id|fddi_addr
 id|SMT_Unknown
 op_assign
 (brace
+(brace
 l_int|0
 comma
 l_int|0
@@ -132,6 +133,7 @@ comma
 l_int|0
 comma
 l_int|0
+)brace
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * external variables&n; */

@@ -155,10 +155,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|add-&gt;next
-op_assign
-id|pp_port_list
-suffix:semicolon
 id|add-&gt;port
 op_assign
 id|port
@@ -168,6 +164,10 @@ id|down
 op_amp
 id|pp_port_list_lock
 )paren
+suffix:semicolon
+id|add-&gt;next
+op_assign
+id|pp_port_list
 suffix:semicolon
 id|pp_port_list
 op_assign
@@ -2586,8 +2586,6 @@ id|devfs_mk_dir
 l_int|NULL
 comma
 l_string|&quot;parports&quot;
-comma
-l_int|0
 comma
 l_int|NULL
 )paren
