@@ -206,11 +206,14 @@ id|arp
 suffix:semicolon
 DECL|member|tries
 DECL|member|lock
+DECL|member|localroute
 r_int
 r_char
 id|tries
 comma
 id|lock
+comma
+id|localroute
 suffix:semicolon
 DECL|member|users
 r_int

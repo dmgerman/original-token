@@ -672,6 +672,9 @@ id|from
 comma
 r_int
 id|len
+comma
+r_int
+id|rt
 )paren
 (brace
 r_struct
@@ -796,6 +799,16 @@ multiline_comment|/* to avoid changing sk-&gt;saddr */
 id|skb-&gt;free
 op_assign
 l_int|1
+suffix:semicolon
+id|skb-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+op_or
+(paren
+id|rt
+op_amp
+id|MSG_DONTROUTE
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now build the IP and MAC header. &n;&t; */
 id|buff
@@ -1083,6 +1096,9 @@ r_if
 c_cond
 (paren
 id|flags
+op_amp
+op_complement
+id|MSG_DONTROUTE
 )paren
 r_return
 op_minus
@@ -1260,6 +1276,8 @@ comma
 id|from
 comma
 id|len
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* The datagram has been sent off.  Release the socket. */
@@ -2074,6 +2092,20 @@ id|AF_INET
 r_return
 op_minus
 id|EAFNOSUPPORT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sin.sin_addr.s_addr
+op_eq
+id|INADDR_ANY
+)paren
+id|sin.sin_addr.s_addr
+op_assign
+id|ip_my_addr
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond

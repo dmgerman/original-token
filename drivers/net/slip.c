@@ -4176,6 +4176,36 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sl_set_dev_mac_address
+r_static
+r_int
+id|sl_set_dev_mac_address
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|addr
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|dev-&gt;dev_addr
+comma
+id|addr
+comma
+l_int|7
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* Perform I/O control on an active SLIP channel. */
 r_static
@@ -4681,7 +4711,7 @@ macro_line|#ifdef HAVE_SET_MAC_ADDR
 macro_line|#ifdef CONFIG_AX25
 id|dev-&gt;set_mac_address
 op_assign
-id|sl_set_mac_address
+id|sl_set_dev_mac_address
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

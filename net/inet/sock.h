@@ -375,6 +375,12 @@ r_int
 r_int
 id|type
 suffix:semicolon
+DECL|member|localroute
+r_int
+r_char
+id|localroute
+suffix:semicolon
+multiline_comment|/* Route locally only */
 macro_line|#ifdef CONFIG_IPX
 DECL|member|ipx_source_addr
 DECL|member|ipx_dest_addr

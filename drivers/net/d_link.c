@@ -142,6 +142,7 @@ DECL|macro|RUNT
 mdefine_line|#define RUNT 60&t;&t;/* Too small Ethernet packet */
 multiline_comment|/**************************************************&n; *                                                *&n; *             End of definition                  *&n; *                                                *&n; **************************************************/
 multiline_comment|/*&n; * Index to functions, as function prototypes.&n; */
+macro_line|#if 0
 multiline_comment|/* For tricking tcp.c to announce a small max window (max 2 fast packets please :-) */
 r_static
 r_int
@@ -155,6 +156,7 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Routines used internally. (See &quot;convenience macros&quot;) */
 r_static
 r_int
@@ -2035,19 +2037,16 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|macro|D_LINK_MIN_WINDOW
+macro_line|#if 0
+multiline_comment|/*&n; *&t;The new router code (coming soon 8-) ) will fix this properly.&n; */
 mdefine_line|#define D_LINK_MIN_WINDOW 1024
-DECL|macro|D_LINK_MAX_WINDOW
 mdefine_line|#define D_LINK_MAX_WINDOW 2048
-DECL|macro|D_LINK_TCP_WINDOW_DIFF
 mdefine_line|#define D_LINK_TCP_WINDOW_DIFF 1024
 multiline_comment|/*&n; * Copied from sock.c&n; *&n; * Sets a lower max receive window in order to achieve &lt;= 2&n; * packets arriving at the adapter in fast succession.&n; * (No way that a DE-600 can cope with an ethernet saturated with its packets :-)&n; *&n; * Since there are only 2 receive buffers in the DE-600&n; * and it takes some time to copy from the adapter,&n; * this is absolutely necessary for any TCP performance whatsoever!&n; *&n; */
-DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_static
 r_int
 r_int
-DECL|function|d_link_rspace
 id|d_link_rspace
 c_func
 (paren
@@ -2125,4 +2124,5 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

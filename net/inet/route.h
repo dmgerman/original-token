@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Reformatted. Added ip_rt_local()&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _ROUTE_H
 DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
@@ -106,6 +106,28 @@ r_struct
 id|rtable
 op_star
 id|ip_rt_route
+c_func
+(paren
+r_int
+r_int
+id|daddr
+comma
+r_struct
+id|options
+op_star
+id|opt
+comma
+r_int
+r_int
+op_star
+id|src_addr
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|rtable
+op_star
+id|ip_rt_local
 c_func
 (paren
 r_int

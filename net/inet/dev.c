@@ -1288,6 +1288,10 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+id|dev-&gt;flags
+op_ne
+l_int|0
+op_logical_and
 op_logical_neg
 id|dev-&gt;tbusy
 )paren

@@ -419,10 +419,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This will do terrible things if len + ipheader + devheader &gt; dev-&gt;mtu */
+multiline_comment|/*&n; *&t;Send a RAW IP packet.&n; */
+DECL|function|raw_sendto
 r_static
 r_int
-DECL|function|raw_sendto
 id|raw_sendto
 c_func
 (paren
@@ -501,11 +501,13 @@ id|addr_len
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Check the flags. */
+multiline_comment|/*&n;&t; *&t;Check the flags. Only MSG_DONTROUTE is permitted.&n;&t; */
 r_if
 c_cond
 (paren
 id|flags
+op_amp
+id|MSG_DONTROUTE
 )paren
 r_return
 op_minus
@@ -544,7 +546,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Get and verify the address. */
+multiline_comment|/*&n;&t; *&t;Get and verify the address. &n;&t; */
 r_if
 c_cond
 (paren
@@ -832,6 +834,16 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+id|skb-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+op_or
+(paren
+id|flags
+op_amp
+id|MSG_DONTROUTE
+)paren
+suffix:semicolon
 id|tmp
 op_assign
 id|sk-&gt;prot
@@ -895,7 +907,6 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/* verify_area(VERIFY_WRITE, from, len);*/
 id|memcpy_fromfs
 c_func
 (paren
@@ -908,7 +919,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* If we are using IPPROTO_RAW, we need to fill in the source address in&n;     the IP header */
+multiline_comment|/*&n;&t; *&t;If we are using IPPROTO_RAW, we need to fill in the source address in&n;&t; *     &t;the IP header &n;&t; */
 r_if
 c_cond
 (paren
@@ -979,9 +990,9 @@ r_return
 id|len
 suffix:semicolon
 )brace
+DECL|function|raw_write
 r_static
 r_int
-DECL|function|raw_write
 id|raw_write
 c_func
 (paren
@@ -1025,9 +1036,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|raw_close
 r_static
 r_void
-DECL|function|raw_close
 id|raw_close
 c_func
 (paren

@@ -2493,7 +2493,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* We have been reset, we may not send again */
-multiline_comment|/*&n;   * We need to grab some memory, and put together an ack,&n;   * and then put it into the queue to be sent.&n;   */
+multiline_comment|/*&n;&t; * We need to grab some memory, and put together an ack,&n;&t; * and then put it into the queue to be sent.&n;&t; */
 id|buff
 op_assign
 id|sk-&gt;prot
@@ -2574,6 +2574,10 @@ suffix:semicolon
 id|buff-&gt;sk
 op_assign
 id|sk
+suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
 suffix:semicolon
 id|t1
 op_assign
@@ -2689,7 +2693,7 @@ id|t1
 )paren
 suffix:semicolon
 multiline_comment|/* this should probably be removed */
-multiline_comment|/* swap the send and the receive. */
+multiline_comment|/*&n;&t; *&t;Swap the send and the receive. &n;&t; */
 id|t1-&gt;dest
 op_assign
 id|th-&gt;source
@@ -2718,7 +2722,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*sk-&gt;prot-&gt;rspace(sk);*/
 id|t1-&gt;window
 op_assign
 id|ntohs
@@ -3019,9 +3022,9 @@ id|th
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine copies from a user buffer into a socket,&n; * and starts the transmit system.&n; */
+DECL|function|tcp_write
 r_static
 r_int
-DECL|function|tcp_write
 id|tcp_write
 c_func
 (paren
@@ -3153,7 +3156,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/* First thing we do is make sure that we are established. */
+multiline_comment|/*&n;&t; *&t;First thing we do is make sure that we are established. &n;&t; */
 r_if
 c_cond
 (paren
@@ -3189,7 +3192,7 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for a connection to finish. */
+multiline_comment|/* &n;&t; *&t;Wait for a connection to finish.&n;&t; */
 r_while
 c_loop
 (paren
@@ -3430,8 +3433,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n; * had better not get here until we&squot;ve seen his SYN and at least one&n; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n; * non-decreasing.  Note that any ioctl to set user_mss must be done&n; * before the exchange of SYN&squot;s.  If the initial ack from the other&n; * end has a window of 0, max_window and thus mss will both be 0.&n; */
-multiline_comment|/* Now we need to check if we have a half built packet. */
+multiline_comment|/*&n;&t; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n;&t; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n;&t; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n;&t; * had better not get here until we&squot;ve seen his SYN and at least one&n;&t; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n;&t; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n;&t; * non-decreasing.  Note that any ioctl to set user_mss must be done&n;&t; * before the exchange of SYN&squot;s.  If the initial ack from the other&n;&t; * end has a window of 0, max_window and thus mss will both be 0.&n;&t; */
+multiline_comment|/* &n;&t; *&t;Now we need to check if we have a half built packet. &n;&t; */
 r_if
 c_cond
 (paren
@@ -3628,7 +3631,7 @@ id|copy
 op_assign
 id|len
 suffix:semicolon
-multiline_comment|/* We should really check the window here also. */
+multiline_comment|/*&n;&t; *&t;We should really check the window here also. &n;&t; */
 id|send_tmp
 op_assign
 l_int|NULL
@@ -3648,14 +3651,14 @@ id|MSG_OOB
 )paren
 )paren
 (brace
-multiline_comment|/* We will release the socket incase we sleep here. */
+multiline_comment|/*&n;&t;&t;&t; *&t;We will release the socket incase we sleep here. &n;&t;&t;&t; */
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* NB: following must be mtu, because mss can be increased.&n;&t;   * mss is always &lt;= mtu */
+multiline_comment|/*&n;&t;&t;&t; *&t;NB: following must be mtu, because mss can be increased.&n;&t;&t;&t; *&t;mss is always &lt;= mtu &n;&t;&t;&t; */
 id|skb
 op_assign
 id|prot
@@ -3687,7 +3690,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* We will release the socket incase we sleep here. */
+multiline_comment|/*&n;&t;&t;&t; *&t;We will release the socket incase we sleep here. &n;&t;&t;&t; */
 id|release_sock
 c_func
 (paren
@@ -3717,7 +3720,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* If we didn&squot;t get any memory, we need to sleep. */
+multiline_comment|/*&n;&t;&t; *&t;If we didn&squot;t get any memory, we need to sleep. &n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3762,7 +3765,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: here is another race condition. */
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: here is another race condition. &n;&t;&t;&t; */
 id|tmp
 op_assign
 id|sk-&gt;wmem_alloc
@@ -3778,7 +3781,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Again we will try to avoid it. */
+multiline_comment|/*&n;&t;&t;&t; *&t;Again we will try to avoid it. &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3869,11 +3872,21 @@ id|skb-&gt;free
 op_assign
 l_int|0
 suffix:semicolon
+id|skb-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+op_or
+(paren
+id|flags
+op_amp
+id|MSG_DONTROUTE
+)paren
+suffix:semicolon
 id|buff
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: we need to optimize this.&n;&t; * Perhaps some hints here would be good.&n;&t; */
+multiline_comment|/*&n;&t;&t; * FIXME: we need to optimize this.&n;&t;&t; * Perhaps some hints here would be good.&n;&t;&t; */
 id|tmp
 op_assign
 id|prot
@@ -4151,7 +4164,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Nagles rule. Turn Nagle off with TCP_NODELAY for highly&n; *&t;interactive fast network servers. It&squot;s meant to be on and&n; *&t;it really improves the throughput though not the echo time&n; *&t;on my slow slip link - Alan&n; */
-multiline_comment|/* Avoid possible race on send_tmp - c/o Johannes Stille */
+multiline_comment|/*&n; *&t;Avoid possible race on send_tmp - c/o Johannes Stille &n; */
 r_if
 c_cond
 (paren
@@ -4185,7 +4198,6 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* -- */
 id|release_sock
 c_func
 (paren
@@ -4206,9 +4218,9 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+DECL|function|tcp_sendto
 r_static
 r_int
-DECL|function|tcp_sendto
 id|tcp_sendto
 c_func
 (paren
@@ -4243,6 +4255,22 @@ id|addr_len
 r_struct
 id|sockaddr_in
 id|sin
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+op_complement
+(paren
+id|MSG_OOB
+op_or
+id|MSG_DONTROUTE
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -4373,8 +4401,8 @@ id|sk-&gt;ack_backlog
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;   * FIXME: we need to put code here to prevent this routine from&n;   * being called.  Being called once in a while is ok, so only check&n;   * if this is the second time in a row.&n;   */
-multiline_comment|/*&n;   * We need to grab some memory, and put together an ack,&n;   * and then put it into the queue to be sent.&n;   */
+multiline_comment|/*&n;&t; * FIXME: we need to put code here to prevent this routine from&n;&t; * being called.  Being called once in a while is ok, so only check&n;&t; * if this is the second time in a row.&n; &t; */
+multiline_comment|/*&n;&t; * We need to grab some memory, and put together an ack,&n;&t; * and then put it into the queue to be sent.&n;&t; */
 id|buff
 op_assign
 id|sk-&gt;prot
@@ -4425,7 +4453,11 @@ id|buff-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-multiline_comment|/* Put in the IP header and routing stuff. */
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
 op_assign
 id|sk-&gt;prot
@@ -4631,10 +4663,10 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * FIXME:&n; * This routine frees used buffers.&n; * It should consider sending an ACK to let the&n; * other end know we now have a bigger window.&n; */
+multiline_comment|/*&n; * &t;FIXME:&n; * &t;This routine frees used buffers.&n; * &t;It should consider sending an ACK to let the&n; * &t;other end know we now have a bigger window.&n; */
+DECL|function|cleanup_rbuf
 r_static
 r_void
-DECL|function|cleanup_rbuf
 id|cleanup_rbuf
 c_func
 (paren
@@ -4692,7 +4724,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * We have to loop through all the buffer headers,&n;   * and try to free up all the space we can.&n;   */
+multiline_comment|/*&n;&t; * We have to loop through all the buffer headers,&n;&t; * and try to free up all the space we can.&n;&t; */
 r_while
 c_loop
 (paren
@@ -4743,7 +4775,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * FIXME:&n;   * At this point we should send an ack if the difference&n;   * in the window, and the amount of space is bigger than&n;   * TCP_WINDOW_DIFF.&n;   */
+multiline_comment|/*&n;&t; * FIXME:&n;&t; * At this point we should send an ack if the difference&n;&t; * in the window, and the amount of space is bigger than&n;&t; * TCP_WINDOW_DIFF.&n;&t; */
 id|DPRINTF
 c_func
 (paren
@@ -4803,11 +4835,11 @@ op_ne
 id|left
 )paren
 (brace
-multiline_comment|/*&n;&t; * This area has caused the most trouble.  The current strategy&n;&t; * is to simply do nothing if the other end has room to send at&n;&t; * least 3 full packets, because the ack from those will auto-&n;&t; * matically update the window.  If the other end doesn&squot;t think&n;&t; * we have much space left, but we have room for atleast 1 more&n;&t; * complete packet than it thinks we do, we will send an ack&n;&t; * immediatedly.  Otherwise we will wait up to .5 seconds in case&n;&t; * the user reads some more.&n;&t; */
+multiline_comment|/*&n;&t;&t; * This area has caused the most trouble.  The current strategy&n;&t;&t; * is to simply do nothing if the other end has room to send at&n;&t;&t; * least 3 full packets, because the ack from those will auto-&n;&t;&t; * matically update the window.  If the other end doesn&squot;t think&n;&t;&t; * we have much space left, but we have room for atleast 1 more&n;&t;&t; * complete packet than it thinks we do, we will send an ack&n;&t;&t; * immediatedly.  Otherwise we will wait up to .5 seconds in case&n;&t;&t; * the user reads some more.&n;&t;&t; */
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
-multiline_comment|/*&n; * It&squot;s unclear whether to use sk-&gt;mtu or sk-&gt;mss here.  They differ only&n; * if the other end is offering a window smaller than the agreed on MSS&n; * (called sk-&gt;mtu here).  In theory there&squot;s no connection between send&n; * and receive, and so no reason to think that they&squot;re going to send&n; * small packets.  For the moment I&squot;m using the hack of reducing the mss&n; * only on the send side, so I&squot;m putting mtu here.&n; */
+multiline_comment|/*&n;&t; * It&squot;s unclear whether to use sk-&gt;mtu or sk-&gt;mss here.  They differ only&n;&t; * if the other end is offering a window smaller than the agreed on MSS&n;&t; * (called sk-&gt;mtu here).  In theory there&squot;s no connection between send&n;&t; * and receive, and so no reason to think that they&squot;re going to send&n;&t; * small packets.  For the moment I&squot;m using the hack of reducing the mss&n;&t; * only on the send side, so I&squot;m putting mtu here.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5757,8 +5789,8 @@ id|copied
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Send a FIN without closing the connection.&n; * Not called at interrupt time.&n; */
-r_void
 DECL|function|tcp_shutdown
+r_void
 id|tcp_shutdown
 c_func
 (paren
@@ -5799,8 +5831,8 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * We need to grab some memory, and put together a FIN,&n;   * and then put it into the queue to be sent.&n;   * FIXME:&n;   *&t;Tim MacKenzie(tym@dibbler.cs.monash.edu.au) 4 Dec &squot;92.&n;   *&t;Most of this is guesswork, so maybe it will work...&n;   */
-multiline_comment|/* If we&squot;ve already sent a FIN, return. */
+multiline_comment|/*&n;&t; * We need to grab some memory, and put together a FIN,&n;&t; * and then put it into the queue to be sent.&n;&t; * FIXME:&n;&t; *&t;Tim MacKenzie(tym@dibbler.cs.monash.edu.au) 4 Dec &squot;92.&n;&t; *&t;Most of this is guesswork, so maybe it will work...&n;&t; */
+multiline_comment|/*&n;&t; *&t;If we&squot;ve already sent a FIN, return. &n;&t; */
 r_if
 c_cond
 (paren
@@ -5830,7 +5862,7 @@ id|sk-&gt;inuse
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Clear out any half completed packets. */
+multiline_comment|/*&n;&t; *&t;Clear out any half completed packets. &n;&t; */
 r_if
 c_cond
 (paren
@@ -5921,6 +5953,10 @@ op_star
 id|t1
 )paren
 suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+suffix:semicolon
 id|t1
 op_assign
 (paren
@@ -5930,7 +5966,7 @@ op_star
 )paren
 id|buff-&gt;data
 suffix:semicolon
-multiline_comment|/* Put in the IP header and routing stuff. */
+multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
 op_assign
 id|prot
@@ -5970,7 +6006,7 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/* Finish anyway, treat this as a send that got lost. */
+multiline_comment|/*&n;  &t;&t; *&t;Finish anyway, treat this as a send that got lost. &n;  &t;&t; */
 id|buff-&gt;free
 op_assign
 l_int|1
@@ -6141,7 +6177,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Can&squot;t just queue this up.&n;   * It should go at the end of the write queue.&n;   */
+multiline_comment|/*&n;&t; * Can&squot;t just queue this up.&n;&t; * It should go at the end of the write queue.&n; &t; */
 r_if
 c_cond
 (paren
@@ -6418,10 +6454,10 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* This routine will send an RST to the other tcp. */
+multiline_comment|/*&n; *&t;This routine will send an RST to the other tcp. &n; */
+DECL|function|tcp_reset
 r_static
 r_void
-DECL|function|tcp_reset
 id|tcp_reset
 c_func
 (paren
@@ -6480,7 +6516,7 @@ id|ndev
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * We need to grab some memory, and put together an RST,&n;   * and then put it into the queue to be sent.&n;   */
+multiline_comment|/*&n; * We need to grab some memory, and put together an RST,&n; * and then put it into the queue to be sent.&n; */
 id|buff
 op_assign
 id|prot
@@ -6534,6 +6570,10 @@ id|buff-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+l_int|0
+suffix:semicolon
 id|t1
 op_assign
 (paren
@@ -6543,7 +6583,7 @@ op_star
 )paren
 id|buff-&gt;data
 suffix:semicolon
-multiline_comment|/* Put in the IP header and routing stuff. */
+multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
 id|tmp
 op_assign
 id|prot
@@ -6637,7 +6677,7 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Swap the send and the receive. */
+multiline_comment|/*&n;&t; *&t;Swap the send and the receive. &n;&t; */
 id|t1-&gt;dest
 op_assign
 id|th-&gt;source
@@ -7393,6 +7433,10 @@ id|newsk-&gt;rmem_alloc
 op_assign
 l_int|0
 suffix:semicolon
+id|newsk-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+suffix:semicolon
 id|newsk-&gt;max_unacked
 op_assign
 id|MAX_WINDOW
@@ -7696,6 +7740,10 @@ suffix:semicolon
 id|buff-&gt;sk
 op_assign
 id|newsk
+suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|newsk-&gt;localroute
 suffix:semicolon
 id|t1
 op_assign
@@ -8048,9 +8096,9 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
+DECL|function|tcp_close
 r_static
 r_void
-DECL|function|tcp_close
 id|tcp_close
 c_func
 (paren
@@ -8096,7 +8144,7 @@ suffix:semicolon
 r_int
 id|tmp
 suffix:semicolon
-multiline_comment|/*&n;   * We need to grab some memory, and put together a FIN,&n;   * and then put it into the queue to be sent.&n;   */
+multiline_comment|/*&n;&t; * We need to grab some memory, and put together a FIN,&t;&n;&t; * and then put it into the queue to be sent.&n;&t; */
 id|DPRINTF
 c_func
 (paren
@@ -8137,7 +8185,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* We need to flush the recv. buffs. */
+multiline_comment|/*&n;&t; *&t;We need to flush the recv. buffs. &n;&t; */
 r_if
 c_cond
 (paren
@@ -8234,7 +8282,7 @@ l_string|&quot;Cleaned.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Get rid off any half-completed packets. */
+multiline_comment|/*&n;&t; *&t;Get rid off any half-completed packets. &n;&t; */
 r_if
 c_cond
 (paren
@@ -8263,8 +8311,7 @@ suffix:colon
 r_case
 id|TCP_LAST_ACK
 suffix:colon
-multiline_comment|/* start a timer. */
-multiline_comment|/* original code was 4 * sk-&gt;rtt.  In converting to the&n;&t;&t; * new rtt representation, we can&squot;t quite use that.&n;&t;&t; * it seems to make most sense to  use the backed off value&n;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; *&t;Start a timer.&n;&t;&t;&t; * original code was 4 * sk-&gt;rtt.  In converting to the&n;&t;&t;&t; * new rtt representation, we can&squot;t quite use that.&n;&t;&t;&t; * it seems to make most sense to  use the backed off value&n;&t;&t;&t; */
 id|reset_timer
 c_func
 (paren
@@ -8401,7 +8448,7 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* This will force it to try again later. */
-multiline_comment|/* Or it would have if someone released the socket&n;&t;&t;&t;   first. Anyway it might work now */
+multiline_comment|/* Or it would have if someone released the socket&n;&t;&t;&t;&t;   first. Anyway it might work now */
 id|release_sock
 c_func
 (paren
@@ -8448,6 +8495,10 @@ op_star
 id|t1
 )paren
 suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+suffix:semicolon
 id|t1
 op_assign
 (paren
@@ -8457,7 +8508,7 @@ op_star
 )paren
 id|buff-&gt;data
 suffix:semicolon
-multiline_comment|/* Put in the IP header and routing stuff. */
+multiline_comment|/*&n;&t;&t;&t; *&t;Put in the IP header and routing stuff. &n;&t;&t;&t; */
 id|tmp
 op_assign
 id|prot
@@ -8625,7 +8676,7 @@ id|t1-&gt;ack
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Ack everything immediately from now on. */
+multiline_comment|/* &n;&t;&t;&t; *&t;Ack everything immediately from now on. &n;&t;&t;&t; */
 id|sk-&gt;delay_acks
 op_assign
 l_int|0
@@ -11737,10 +11788,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This deals with incoming fins. &squot;Linus at 9 O&squot;clock&squot; 8-) */
+multiline_comment|/*&n; *&t;This deals with incoming fins. &squot;Linus at 9 O&squot;clock&squot; 8-) &n; */
+DECL|function|tcp_fin
 r_static
 r_int
-DECL|function|tcp_fin
 id|tcp_fin
 c_func
 (paren
@@ -12093,10 +12144,10 @@ r_return
 id|newsk
 suffix:semicolon
 )brace
-multiline_comment|/* This will initiate an outgoing connection. */
+multiline_comment|/*&n; *&t;This will initiate an outgoing connection. &n; */
+DECL|function|tcp_connect
 r_static
 r_int
-DECL|function|tcp_connect
 id|tcp_connect
 c_func
 (paren
@@ -12239,7 +12290,24 @@ id|sin.sin_addr.s_addr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t want a TCP connection going to a broadcast address */
+multiline_comment|/*&n;  &t; *&t;connect() to INADDR_ANY means loopback (BSD&squot;ism).&n;  &t; */
+r_if
+c_cond
+(paren
+id|sin.sin_addr.s_addr
+op_eq
+id|INADDR_ANY
+)paren
+(brace
+id|sin.sin_addr.s_addr
+op_assign
+id|ip_my_addr
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Don&squot;t want a TCP connection going to a broadcast address &n;&t; */
 r_if
 c_cond
 (paren
@@ -12267,7 +12335,7 @@ op_minus
 id|ENETUNREACH
 suffix:semicolon
 )brace
-multiline_comment|/* Connect back to the same socket: Blows up so disallow it */
+multiline_comment|/*&n;&t; *&t;Connect back to the same socket: Blows up so disallow it &n;&t; */
 r_if
 c_cond
 (paren
@@ -12374,6 +12442,10 @@ id|buff-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
+suffix:semicolon
 id|t1
 op_assign
 (paren
@@ -12383,8 +12455,8 @@ op_star
 )paren
 id|buff-&gt;data
 suffix:semicolon
-multiline_comment|/* Put in the IP header and routing stuff. */
-multiline_comment|/* We need to build the routing stuff fromt the things saved in skb. */
+multiline_comment|/*&n;&t; *&t;Put in the IP header and routing stuff. &n;&t; */
+multiline_comment|/*&n;&t; *&t;We need to build the routing stuff fromt the things saved in skb. &n;&t; */
 id|tmp
 op_assign
 id|sk-&gt;prot
@@ -12595,7 +12667,7 @@ op_assign
 id|MAX_WINDOW
 suffix:semicolon
 )brace
-multiline_comment|/* but not bigger than device MTU */
+multiline_comment|/*&n;&t; *&t;but not bigger than device MTU &n;&t; */
 id|sk-&gt;mtu
 op_assign
 id|min
@@ -12608,7 +12680,7 @@ op_minus
 id|HEADER_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* Put in the TCP options to say MTU. */
+multiline_comment|/*&n;&t; *&t;Put in the TCP options to say MTU. &n;&t; */
 id|ptr
 op_assign
 (paren
@@ -12678,7 +12750,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* This must go first otherwise a really quick response will get reset. */
+multiline_comment|/*&n;&t; *&t;This must go first otherwise a really quick response will get reset. &n;&t; */
 id|sk-&gt;state
 op_assign
 id|TCP_SYN_SENT
@@ -14673,10 +14745,10 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;  * This routine sends a packet with an out of date sequence&n;  * number. It assumes the other end will try to ack it.&n;  */
+multiline_comment|/*&n; * This routine sends a packet with an out of date sequence&n; * number. It assumes the other end will try to ack it.&n; */
+DECL|function|tcp_write_wakeup
 r_static
 r_void
-DECL|function|tcp_write_wakeup
 id|tcp_write_wakeup
 c_func
 (paren
@@ -14779,6 +14851,10 @@ suffix:semicolon
 id|buff-&gt;sk
 op_assign
 id|sk
+suffix:semicolon
+id|buff-&gt;localroute
+op_assign
+id|sk-&gt;localroute
 suffix:semicolon
 id|DPRINTF
 c_func
@@ -14890,7 +14966,7 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Use a previous sequence.&n;   * This should cause the other end to send an ack.&n;   */
+multiline_comment|/*&n;&t; * Use a previous sequence.&n;&t; * This should cause the other end to send an ack.&n;&t; */
 id|t1-&gt;seq
 op_assign
 id|htonl
@@ -14982,7 +15058,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* Send it and free it.&n;   * This will prevent the timer from automatically being restarted.&n;  */
+multiline_comment|/*&t;Send it and free it.&n;   &t;  *&t;This will prevent the timer from automatically being restarted.&n;&t;  */
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|queue_xmit

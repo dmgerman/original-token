@@ -80,6 +80,8 @@ DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1
 DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
+DECL|macro|MSG_DONTROUTE
+mdefine_line|#define MSG_DONTROUTE&t;4
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_SOCKET
 mdefine_line|#define SOL_SOCKET&t;1

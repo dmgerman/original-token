@@ -1802,7 +1802,15 @@ suffix:semicolon
 r_case
 id|SO_DONTROUTE
 suffix:colon
-multiline_comment|/* Still to be implemented */
+id|sk-&gt;localroute
+op_assign
+id|val
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2133,10 +2141,9 @@ suffix:semicolon
 r_case
 id|SO_DONTROUTE
 suffix:colon
-multiline_comment|/* One last option to implement */
 id|val
 op_assign
-l_int|0
+id|sk-&gt;localroute
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3242,6 +3249,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sk-&gt;broadcast
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;localroute
 op_assign
 l_int|0
 suffix:semicolon
