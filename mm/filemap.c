@@ -1282,6 +1282,13 @@ c_func
 (paren
 id|bh
 )paren
+op_logical_or
+op_logical_neg
+id|buffer_uptodate
+c_func
+(paren
+id|bh
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -1359,6 +1366,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|buffer_req
+c_func
+(paren
+id|bh
+)paren
+op_logical_and
 op_logical_neg
 id|buffer_uptodate
 c_func

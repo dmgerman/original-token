@@ -5954,6 +5954,16 @@ c_func
 id|page
 )paren
 suffix:semicolon
+r_case
+id|PROC_MEMORY
+suffix:colon
+r_return
+id|get_mem_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 r_case
 id|PROC_MD

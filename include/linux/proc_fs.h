@@ -84,6 +84,9 @@ comma
 DECL|enumerator|PROC_IOPORTS
 id|PROC_IOPORTS
 comma
+DECL|enumerator|PROC_MEMORY
+id|PROC_MEMORY
+comma
 DECL|enumerator|PROC_PROFILE
 id|PROC_PROFILE
 comma

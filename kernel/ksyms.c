@@ -1513,26 +1513,40 @@ id|enable_hlt
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* IO port handling */
-DECL|variable|check_region
+multiline_comment|/* resource handling */
+DECL|variable|check_resource
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|check_region
+id|check_resource
 )paren
 suffix:semicolon
-DECL|variable|request_region
+DECL|variable|request_resource
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|request_region
+id|request_resource
 )paren
 suffix:semicolon
-DECL|variable|release_region
+DECL|variable|release_resource
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|release_region
+id|release_resource
+)paren
+suffix:semicolon
+DECL|variable|occupy_resource
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|occupy_resource
+)paren
+suffix:semicolon
+DECL|variable|vacate_resource
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|vacate_resource
 )paren
 suffix:semicolon
 multiline_comment|/* process management */

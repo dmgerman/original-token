@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; * &n; *  Removed unnecessary code duplication for little endian machines&n; *  and excessive __inline__s. &n; *        Andi Kleen, 1997&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; * &n; *  Removed unnecessary code duplication for little endian machines&n; *  and excessive __inline__s. &n; *        Andi Kleen, 1997&n; *&n; * Major simplications and cleanup - we only need to do the metadata, because&n; * we can depend on generic_block_fdatasync() to sync the data blocks.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -10,9 +10,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|blocksize
-mdefine_line|#define blocksize (EXT2_BLOCK_SIZE(inode-&gt;i_sb))
+mdefine_line|#define blocksize&t;(EXT2_BLOCK_SIZE(inode-&gt;i_sb))
 DECL|macro|addr_per_block
-mdefine_line|#define addr_per_block (EXT2_ADDR_PER_BLOCK(inode-&gt;i_sb))
+mdefine_line|#define addr_per_block&t;(EXT2_ADDR_PER_BLOCK(inode-&gt;i_sb))
 DECL|function|sync_indirect
 r_static
 r_int
@@ -50,6 +50,7 @@ suffix:semicolon
 id|bh
 op_assign
 id|get_hash_table
+c_func
 (paren
 id|inode-&gt;i_dev
 comma
@@ -92,6 +93,7 @@ id|bh
 )paren
 (brace
 id|brelse
+c_func
 (paren
 id|bh
 )paren
@@ -122,6 +124,7 @@ id|bh
 )paren
 (brace
 id|brelse
+c_func
 (paren
 id|bh
 )paren
@@ -131,6 +134,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|ll_rw_block
+c_func
 (paren
 id|WRITE
 comma
@@ -151,6 +155,7 @@ DECL|function|sync_iblock
 r_static
 r_int
 id|sync_iblock
+c_func
 (paren
 r_struct
 id|inode
@@ -223,6 +228,7 @@ op_star
 id|bh
 op_assign
 id|bread
+c_func
 (paren
 id|inode-&gt;i_dev
 comma
@@ -250,6 +256,7 @@ DECL|function|sync_dindirect
 r_static
 r_int
 id|sync_dindirect
+c_func
 (paren
 r_struct
 id|inode
@@ -282,6 +289,7 @@ suffix:semicolon
 id|rc
 op_assign
 id|sync_iblock
+c_func
 (paren
 id|inode
 comma
@@ -350,6 +358,7 @@ id|rc
 suffix:semicolon
 )brace
 id|brelse
+c_func
 (paren
 id|dind_bh
 )paren
@@ -362,6 +371,7 @@ DECL|function|sync_tindirect
 r_static
 r_int
 id|sync_tindirect
+c_func
 (paren
 r_struct
 id|inode
@@ -394,6 +404,7 @@ suffix:semicolon
 id|rc
 op_assign
 id|sync_iblock
+c_func
 (paren
 id|inode
 comma
@@ -462,6 +473,7 @@ id|rc
 suffix:semicolon
 )brace
 id|brelse
+c_func
 (paren
 id|tind_bh
 )paren
@@ -550,6 +562,7 @@ op_increment
 id|err
 op_or_assign
 id|sync_indirect
+c_func
 (paren
 id|inode
 comma
@@ -563,6 +576,7 @@ suffix:semicolon
 id|err
 op_or_assign
 id|sync_dindirect
+c_func
 (paren
 id|inode
 comma
@@ -576,6 +590,7 @@ suffix:semicolon
 id|err
 op_or_assign
 id|sync_tindirect
+c_func
 (paren
 id|inode
 comma
