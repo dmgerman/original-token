@@ -876,11 +876,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_qlogicpti
-suffix:semicolon
 multiline_comment|/* mailbox command complete status codes */
 DECL|macro|MBOX_COMMAND_COMPLETE
 mdefine_line|#define MBOX_COMMAND_COMPLETE&t;&t;0x4000

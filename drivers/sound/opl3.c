@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n;*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Changes&n; *&t;Thomas Sailer   ioctl code reworked (vmalloc/vfree removed)&n; *&t;Alan Cox&t;modularisation, fixed sound_mem allocs.&n; *&n; * Status&n; *&t;Believed to work. Badly needs rewriting a bit to support multiple&n; *&t;OPL3 devices.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; * hooft@chem.ruu.nl&n; */

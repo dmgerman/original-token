@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/irq.h&n; *&n; * Copyright (C) 1996-1999 Russell king&n; * Copyright (C) 1999 Hugo Fiennes&n; *&n; * Changelog:&n; *   22-08-1998&t;RMK&t;Restructured IRQ routines&n; *   06-01-1999&t;HBF&t;SA1100 twiddles&n; *   12-02-1999&t;NP&t;added ICCR&n; *   17-02-1999&t;NP&t;empeg henry ugly hacks now in a separate file ;)&n; *   11-08-1999&t;PD&t;SA1101 support added&n; *   25-09-1999&t;RMK&t;Merged into main ARM tree, cleaned up&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|function|fixup_irq
 r_static
 r_inline

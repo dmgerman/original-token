@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Device driver for the via-cuda on Apple Powermacs.&n; *&n; * The VIA (versatile interface adapter) interfaces to the CUDA,&n; * a 6805 microprocessor core which controls the ADB (Apple Desktop&n; * Bus) which connects to the keyboard and mouse.  The CUDA also&n; * controls system power and the RTC (real time clock) chip.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * $Id: irq_control.h,v 1.8 1999/09/15 23:58:48 cort Exp 
 macro_line|#ifndef _PPC_IRQ_CONTROL_H
 DECL|macro|_PPC_IRQ_CONTROL_H
 mdefine_line|#define _PPC_IRQ_CONTROL_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/* Structure describing interrupts */

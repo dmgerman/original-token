@@ -2,6 +2,7 @@ macro_line|#ifndef __ASMm68k_ELF_H
 DECL|macro|__ASMm68k_ELF_H
 mdefine_line|#define __ASMm68k_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
 DECL|typedef|elf_greg_t

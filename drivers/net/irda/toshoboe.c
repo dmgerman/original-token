@@ -33,6 +33,7 @@ mdefine_line|#define RX_BUF_SZ &t;4196
 DECL|macro|TX_BUF_SZ
 mdefine_line|#define TX_BUF_SZ&t;4196
 multiline_comment|/* No user servicable parts below here */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

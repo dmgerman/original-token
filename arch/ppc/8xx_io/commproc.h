@@ -2,6 +2,7 @@ multiline_comment|/*&n; * MPC8xx Communication Processor Module.&n; * Copyright 
 macro_line|#ifndef __CPM_8XX__
 DECL|macro|__CPM_8XX__
 mdefine_line|#define __CPM_8XX__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 multiline_comment|/* CPM Command register.&n;*/
 DECL|macro|CPM_CR_RST

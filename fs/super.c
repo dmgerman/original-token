@@ -344,7 +344,16 @@ id|sema_init
 c_func
 (paren
 op_amp
-id|lptr-&gt;mnt_dquot.semaphore
+id|lptr-&gt;mnt_dquot.dqio_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|lptr-&gt;mnt_dquot.dqoff_sem
 comma
 l_int|1
 )paren

@@ -2,6 +2,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/* To have statistics (just packets sent) define this */
 DECL|macro|NETWAVE_STATS
 macro_line|#undef NETWAVE_STATS
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

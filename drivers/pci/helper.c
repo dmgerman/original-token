@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * $Id$&n; *&n; * drivers/pci/helper.c&n; *&n; * Copyright 1999 Jeff Garzik &lt;jgarzik@pobox.com&gt;&n; * This software is free.  See the file COPYING for licensing details.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|function|pci_simple_probe

@@ -342,7 +342,7 @@ multiline_comment|/* lba_capacity value may be bad */
 multiline_comment|/*&n; * read_intr() is the handler for disk read/multread interrupts&n; */
 DECL|function|read_intr
 r_static
-r_void
+id|ide_startstop_t
 id|read_intr
 (paren
 id|ide_drive_t
@@ -387,6 +387,7 @@ id|BAD_R_STAT
 )paren
 )paren
 (brace
+r_return
 id|ide_error
 c_func
 (paren
@@ -396,8 +397,6 @@ l_string|&quot;read_intr&quot;
 comma
 id|stat
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|msect
@@ -447,7 +446,6 @@ id|nsect
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * PIO input can take longish times, so we drop the spinlock.&n;&t; * On SMP, bad things might happen if syscall level code adds&n;&t; * a new request while we do this PIO, so we just freeze all&n;&t; * request queue handling while doing the PIO. FIXME&n;&t; */
 id|idedisk_input_data
 c_func
 (paren
@@ -567,12 +565,18 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_return
+id|ide_started
+suffix:semicolon
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * write_intr() is the handler for disk write interrupts&n; */
 DECL|function|write_intr
 r_static
-r_void
+id|ide_startstop_t
 id|write_intr
 (paren
 id|ide_drive_t
@@ -603,14 +607,10 @@ id|rq
 op_assign
 id|hwgroup-&gt;rq
 suffix:semicolon
-r_int
-id|error
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|OK_STAT
 c_func
 (paren
@@ -626,6 +626,21 @@ comma
 id|drive-&gt;bad_wstat
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: write_intr error1: nr_sectors=%ld, stat=0x%02x&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|rq-&gt;nr_sectors
+comma
+id|stat
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 macro_line|#ifdef DEBUG
 id|printk
@@ -732,24 +747,28 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
-r_goto
-id|out
+r_return
+id|ide_started
 suffix:semicolon
 )brace
-)brace
-r_else
-id|error
-op_assign
-l_int|1
+r_return
+id|ide_stopped
 suffix:semicolon
-id|out
-suffix:colon
-r_if
-c_cond
+)brace
+id|printk
+c_func
 (paren
-id|error
+l_string|&quot;%s: write_intr error2: nr_sectors=%ld, stat=0x%02x&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|rq-&gt;nr_sectors
+comma
+id|stat
 )paren
+suffix:semicolon
+)brace
+r_return
 id|ide_error
 c_func
 (paren
@@ -761,9 +780,9 @@ id|stat
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ide_multwrite() transfers a block of up to mcount sectors of data&n; * to a drive as part of a disk multiple-sector write operation.&n; */
+multiline_comment|/*&n; * ide_multwrite() transfers a block of up to mcount sectors of data&n; * to a drive as part of a disk multiple-sector write operation.&n; *&n; * Returns 0 if successful;  returns 1 if request had to be aborted due to corrupted buffer list.&n; */
 DECL|function|ide_multwrite
-r_void
+r_int
 id|ide_multwrite
 (paren
 id|ide_drive_t
@@ -775,22 +794,30 @@ r_int
 id|mcount
 )paren
 (brace
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+op_assign
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
 op_assign
 op_amp
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|wrq
+id|hwgroup-&gt;wrq
 suffix:semicolon
 r_do
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 r_int
 id|nsect
@@ -848,6 +875,16 @@ id|nsect
 )paren
 suffix:semicolon
 macro_line|#endif
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Is this really necessary? */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 id|rq-&gt;sector
 op_add_assign
@@ -904,7 +941,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|panic
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|printk
 c_func
 (paren
 l_string|&quot;%s: buffer list corrupted&bslash;n&quot;
@@ -912,7 +958,16 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-r_break
+id|ide_end_request
+c_func
+(paren
+l_int|0
+comma
+id|hwgroup
+)paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -925,6 +980,15 @@ op_lshift
 l_int|9
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -932,11 +996,14 @@ c_loop
 id|mcount
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * multwrite_intr() is the handler for disk multwrite interrupts&n; */
 DECL|function|multwrite_intr
 r_static
-r_void
+id|ide_startstop_t
 id|multwrite_intr
 (paren
 id|ide_drive_t
@@ -967,11 +1034,6 @@ id|rq
 op_assign
 op_amp
 id|hwgroup-&gt;wrq
-suffix:semicolon
-r_int
-id|error
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1006,6 +1068,9 @@ c_cond
 id|rq-&gt;nr_sectors
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|ide_multwrite
 c_func
 (paren
@@ -1013,6 +1078,9 @@ id|drive
 comma
 id|drive-&gt;mult_count
 )paren
+)paren
+r_return
+id|ide_stopped
 suffix:semicolon
 id|ide_set_handler
 (paren
@@ -1026,8 +1094,8 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
+id|ide_started
 suffix:semicolon
 )brace
 )brace
@@ -1071,24 +1139,13 @@ id|hwgroup
 )paren
 suffix:semicolon
 )brace
-r_goto
-id|out
+r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 )brace
 )brace
-r_else
-id|error
-op_assign
-l_int|1
-suffix:semicolon
-id|out
-suffix:colon
-r_if
-c_cond
-(paren
-id|error
-)paren
+r_return
 id|ide_error
 c_func
 (paren
@@ -1103,7 +1160,7 @@ suffix:semicolon
 multiline_comment|/*&n; * set_multmode_intr() is invoked on completion of a WIN_SETMULT cmd.&n; */
 DECL|function|set_multmode_intr
 r_static
-r_void
+id|ide_startstop_t
 id|set_multmode_intr
 (paren
 id|ide_drive_t
@@ -1185,11 +1242,14 @@ id|stat
 )paren
 suffix:semicolon
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * set_geometry_intr() is invoked on completion of a WIN_SPECIFY cmd.&n; */
 DECL|function|set_geometry_intr
 r_static
-r_void
+id|ide_startstop_t
 id|set_geometry_intr
 (paren
 id|ide_drive_t
@@ -1219,6 +1279,7 @@ comma
 id|BAD_STAT
 )paren
 )paren
+r_return
 id|ide_error
 c_func
 (paren
@@ -1229,11 +1290,14 @@ comma
 id|stat
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * recal_intr() is invoked on completion of a WIN_RESTORE (recalibrate) cmd.&n; */
 DECL|function|recal_intr
 r_static
-r_void
+id|ide_startstop_t
 id|recal_intr
 (paren
 id|ide_drive_t
@@ -1263,6 +1327,7 @@ comma
 id|BAD_STAT
 )paren
 )paren
+r_return
 id|ide_error
 c_func
 (paren
@@ -1273,11 +1338,14 @@ comma
 id|stat
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_rw_disk() issues READ and WRITE commands to a disk,&n; * using LBA if supported, or CHS otherwise, to address sectors.&n; * It also takes care of issuing special DRIVE_CMDs.&n; */
 DECL|function|do_rw_disk
 r_static
-r_void
+id|ide_startstop_t
 id|do_rw_disk
 (paren
 id|ide_drive_t
@@ -1528,7 +1596,7 @@ id|IS_PDC4030_DRIVE
 )paren
 (brace
 r_extern
-r_void
+id|ide_startstop_t
 id|do_pdc4030_io
 c_func
 (paren
@@ -1540,14 +1608,13 @@ id|request
 op_star
 )paren
 suffix:semicolon
+r_return
 id|do_pdc4030_io
 (paren
 id|drive
 comma
 id|rq
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
@@ -1583,6 +1650,7 @@ id|drive
 )paren
 )paren
 r_return
+id|ide_started
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|ide_set_handler
@@ -1612,6 +1680,7 @@ id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 r_if
@@ -1622,6 +1691,9 @@ op_eq
 id|WRITE
 )paren
 (brace
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
@@ -1646,6 +1718,7 @@ id|drive
 )paren
 )paren
 r_return
+id|ide_started
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 id|OUT_BYTE
@@ -1667,6 +1740,9 @@ c_cond
 id|ide_wait_stat
 c_func
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DATA_READY
@@ -1694,6 +1770,7 @@ l_string|&quot;WRITE&quot;
 )paren
 suffix:semicolon
 r_return
+id|startstop
 suffix:semicolon
 )brace
 r_if
@@ -1714,13 +1791,18 @@ c_cond
 id|drive-&gt;mult_count
 )paren
 (brace
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+op_assign
 id|HWGROUP
 c_func
 (paren
 id|drive
 )paren
-op_member_access_from_pointer
-id|wrq
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Ugh.. this part looks ugly because we MUST set up&n;&t;&t;&t; * the interrupt handler before outputting the first block&n;&t;&t;&t; * of data to be written.  If we hit an error (corrupted buffer list)&n;&t;&t;&t; * in ide_multwrite(), then we need to remove the handler/timer&n;&t;&t;&t; * before returning.  Fortunately, this NEVER happens (right?).&n;&t;&t;&t; */
+id|hwgroup-&gt;wrq
 op_assign
 op_star
 id|rq
@@ -1738,6 +1820,9 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|ide_multwrite
 c_func
 (paren
@@ -1745,7 +1830,45 @@ id|drive
 comma
 id|drive-&gt;mult_count
 )paren
+)paren
+(brace
+r_int
+r_int
+id|flags
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|hwgroup-&gt;handler
+op_assign
+l_int|NULL
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|hwgroup-&gt;timer
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -1773,6 +1896,7 @@ id|SECTOR_WORDS
 suffix:semicolon
 )brace
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 id|printk
@@ -1797,6 +1921,9 @@ c_func
 id|drive
 )paren
 )paren
+suffix:semicolon
+r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 DECL|function|idedisk_open
@@ -2041,7 +2168,7 @@ suffix:semicolon
 )brace
 DECL|function|idedisk_special
 r_static
-r_void
+id|ide_startstop_t
 id|idedisk_special
 (paren
 id|ide_drive_t
@@ -2232,7 +2359,18 @@ comma
 id|special
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
+r_return
+id|IS_PDC4030_DRIVE
+ques
+c_cond
+id|ide_stopped
+suffix:colon
+id|ide_started
+suffix:semicolon
 )brace
 DECL|function|idedisk_pre_reset
 r_static
@@ -3028,13 +3166,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|spinlock
+id|io_request_lock
 comma
 id|flags
 )paren

@@ -1836,7 +1836,6 @@ c_func
 (paren
 id|ide_hwif_t
 op_star
-id|hwif
 )paren
 suffix:semicolon
 id|probe_cmos_for_drives
@@ -2628,27 +2627,6 @@ id|hwgroup-&gt;busy
 op_assign
 l_int|0
 suffix:semicolon
-id|hwgroup-&gt;spinlock
-op_assign
-(paren
-id|spinlock_t
-)paren
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-macro_line|#if (DEBUG_SPINLOCK &gt; 0)
-id|printk
-c_func
-(paren
-l_string|&quot;hwgroup(%s) spinlock is %p&bslash;n&quot;
-comma
-id|hwif-&gt;name
-comma
-op_amp
-id|hwgroup-&gt;spinlock
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME */
-macro_line|#endif
 id|init_timer
 c_func
 (paren

@@ -274,6 +274,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -371,6 +374,9 @@ c_cond
 id|ide_wait_stat
 c_func
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DATA_READY
@@ -1039,7 +1045,7 @@ suffix:semicolon
 multiline_comment|/*&n; * promise_read_intr() is the handler for disk read/multread interrupts&n; */
 DECL|function|promise_read_intr
 r_static
-r_void
+id|ide_startstop_t
 id|promise_read_intr
 (paren
 id|ide_drive_t
@@ -1086,6 +1092,7 @@ id|BAD_R_STAT
 )paren
 )paren
 (brace
+r_return
 id|ide_error
 c_func
 (paren
@@ -1095,8 +1102,6 @@ l_string|&quot;promise_read_intr&quot;
 comma
 id|stat
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|read_again
@@ -1342,6 +1347,7 @@ id|drive-&gt;name
 suffix:semicolon
 macro_line|#endif 
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 id|printk
@@ -1354,6 +1360,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+r_return
 id|ide_error
 c_func
 (paren
@@ -1365,11 +1372,14 @@ id|stat
 )paren
 suffix:semicolon
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * promise_complete_pollfunc()&n; * This is the polling function for waiting (nicely!) until drive stops&n; * being busy. It is invoked at the end of a write, after the previous poll&n; * has finished.&n; *&n; * Once not busy, the end request is called.&n; */
 DECL|function|promise_complete_pollfunc
 r_static
-r_void
+id|ide_startstop_t
 id|promise_complete_pollfunc
 c_func
 (paren
@@ -1437,6 +1447,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 multiline_comment|/* continue polling... */
 )brace
@@ -1453,6 +1464,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+r_return
 id|ide_error
 c_func
 (paren
@@ -1465,8 +1477,6 @@ c_func
 (paren
 )paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|hwgroup-&gt;poll_timeout
@@ -1510,11 +1520,14 @@ id|hwgroup
 )paren
 suffix:semicolon
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * promise_write_pollfunc() is the handler for disk write completion polling.&n; */
 DECL|function|promise_write_pollfunc
 r_static
-r_void
+id|ide_startstop_t
 id|promise_write_pollfunc
 (paren
 id|ide_drive_t
@@ -1571,6 +1584,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 multiline_comment|/* continue polling... */
 )brace
@@ -1587,6 +1601,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+r_return
 id|ide_error
 (paren
 id|drive
@@ -1598,8 +1613,6 @@ c_func
 (paren
 )paren
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now write out last 4 sectors and poll for not BUSY&n;&t; */
@@ -1649,12 +1662,13 @@ c_func
 suffix:semicolon
 macro_line|#endif
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * promise_write() transfers a block of one or more sectors of data to a&n; * drive as part of a disk write operation. All but 4 sectors are transfered&n; * in the first attempt, then the interface is polled (nicely!) for completion&n; * before the final 4 sectors are transfered. There is no interrupt generated&n; * on writes (at least on the DC4030VL-2), we just have to poll for NOT BUSY.&n; */
 DECL|function|promise_write
 r_static
-r_void
+id|ide_startstop_t
 id|promise_write
 (paren
 id|ide_drive_t
@@ -1715,6 +1729,9 @@ OG
 l_int|4
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|ide_multwrite
 c_func
 (paren
@@ -1724,6 +1741,9 @@ id|rq-&gt;nr_sectors
 op_minus
 l_int|4
 )paren
+)paren
+r_return
+id|ide_stopped
 suffix:semicolon
 id|hwgroup-&gt;poll_timeout
 op_assign
@@ -1745,10 +1765,16 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/*&n;&t; * There are 4 or fewer sectors to transfer, do them all in one go&n;&t; * and wait for NOT BUSY.&n;&t; */
+r_if
+c_cond
+(paren
 id|ide_multwrite
 c_func
 (paren
@@ -1756,6 +1782,9 @@ id|drive
 comma
 id|rq-&gt;nr_sectors
 )paren
+)paren
+r_return
+id|ide_stopped
 suffix:semicolon
 id|hwgroup-&gt;poll_timeout
 op_assign
@@ -1795,11 +1824,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * do_pdc4030_io() is called from do_rw_disk, having had the block number&n; * already set up. It issues a READ or WRITE command to the Promise&n; * controller, assuming LBA has been used to set up the block number.&n; */
 DECL|function|do_pdc4030_io
-r_void
+id|ide_startstop_t
 id|do_pdc4030_io
 (paren
 id|ide_drive_t
@@ -1868,13 +1900,12 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+r_return
 id|promise_read_intr
 c_func
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -1915,6 +1946,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 id|udelay
@@ -1945,6 +1977,9 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -1955,6 +1990,9 @@ op_eq
 id|WRITE
 )paren
 (brace
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 id|OUT_BYTE
 c_func
 (paren
@@ -1969,6 +2007,9 @@ c_cond
 id|ide_wait_stat
 c_func
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DATA_READY
@@ -1990,6 +2031,7 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 r_return
+id|startstop
 suffix:semicolon
 )brace
 r_if
@@ -2016,6 +2058,7 @@ op_star
 id|rq
 suffix:semicolon
 multiline_comment|/* scratchpad */
+r_return
 id|promise_write
 c_func
 (paren
@@ -2046,6 +2089,9 @@ c_func
 id|drive
 )paren
 )paren
+suffix:semicolon
+r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 )brace

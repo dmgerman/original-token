@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/irqs.h&n; *&n; * Copyright (C) 1996 Russell King&n; * Copyright (C) 1998 Deborah Wallach (updates for SA1100/Brutus).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SA1101
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS                 95

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Apple Peripheral System Controller (PSC)&n; *&n; *&t;The PSC is used on the AV Macs to control IO functions not handled&n; *&t;by the VIAs (Ethernet, DSP, SCC).&n; *&n; * TO DO:&n; *&n; * Try to figure out what&squot;s going on in pIFR5 and pIFR6. There seem to be&n; * persisant interrupt conditions in those registers and I have no idea what&n; * they are. Granted it doesn&squot;t affect since we&squot;re not enabling any interrupts&n; * on those levels at the moment, but it would be nice to know. I have a feeling&n; * they aren&squot;t actually interrupt lines but data lines (to the DSP?)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * include/asm-arm/arch-ebsa285/irq.h&n; *&n; * Copyright (C) 1996-1998 Russell King&n; *&n; * Changelog:&n; *  22-Aug-1998&t;RMK&t;Restructured IRQ routines&n; *  03-Sep-1998&t;PJB&t;Merged CATS support&n; *  20-Jan-1998&t;RMK&t;Started merge of EBSA286, CATS and NetWinder&n; *  26-Jan-1999&t;PJB&t;Don&squot;t use IACK on CATS&n; *  16-Mar-1999&t;RMK&t;Added autodetect of ISA PICs&n; */
 multiline_comment|/* no need for config.h - arch/arm/kernel/irq.c does this for us */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;

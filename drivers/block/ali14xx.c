@@ -922,7 +922,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;ali14xx: not found&bslash;n&quot;
+l_string|&quot;&bslash;nali14xx: not found&quot;
 )paren
 suffix:semicolon
 r_return
@@ -931,7 +931,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ali14xx: base= 0x%03x, regOn = 0x%02x&bslash;n&quot;
+l_string|&quot;&bslash;nali14xx: base= 0x%03x, regOn = 0x%02x&quot;
 comma
 id|basePort
 comma
@@ -1025,7 +1025,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;ali14xx: Chip initialization failed&bslash;n&quot;
+l_string|&quot;&bslash;nali14xx: Chip initialization failed&quot;
 )paren
 suffix:semicolon
 r_return

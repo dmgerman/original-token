@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/mm/initmem.c&n; *&n; *  Copyright (C) 1999 Ingo Molnar&n; *&n; *  simple boot-time physical memory area allocator and&n; *  free memory collector. It&squot;s used to deal with reserved&n; *  system memory and memory holes as well.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;

@@ -4,7 +4,6 @@ macro_line|#ifndef __ASMPPC_KEYBOARD_H
 DECL|macro|__ASMPPC_KEYBOARD_H
 mdefine_line|#define __ASMPPC_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

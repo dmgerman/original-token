@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ACI_MIXER) || defined(CONFIG_ACI_MIXER_MODULE)
 r_extern
 r_int

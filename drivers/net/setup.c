@@ -921,7 +921,7 @@ id|register_netdev
 c_func
 (paren
 op_amp
-id|sb1000_dev
+id|dummy_dev
 )paren
 suffix:semicolon
 )brace
@@ -982,7 +982,7 @@ id|register_netdev
 c_func
 (paren
 op_amp
-id|sb1000_dev
+id|eql_dev
 )paren
 suffix:semicolon
 )brace
@@ -1036,7 +1036,7 @@ id|register_netdev
 c_func
 (paren
 op_amp
-id|sb1000_dev
+id|bif_dev
 )paren
 suffix:semicolon
 )brace

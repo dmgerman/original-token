@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Miscellaneous procedures for dealing with the PowerMac hardware.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;

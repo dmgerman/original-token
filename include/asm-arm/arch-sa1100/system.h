@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/system.h&n; *&n; * Copyright (c) 1999 Nicolas Pitre &lt;nico@visuaide.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SA1100_VICTOR
 DECL|macro|arch_reset
 mdefine_line|#define arch_reset( x ) {&t;&t;&t;&t;&t;&bslash;&n;&t;/* switch off power supply */&t;&t;&t;&t;&bslash;&n;&t;mdelay(2000); &t;&t;&t;&t;&t;&t;&bslash;&n;&t;GPCR = GPIO_GPIO23;&t;&t;&t;&t;&t;&bslash;&n;&t;while(1);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}

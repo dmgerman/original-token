@@ -1,4 +1,5 @@
 multiline_comment|/* &n; * User address space access functions.&n; * The non inlined parts of asm-i386/uaccess.h are here.&n; *&n; * Copyright 1997 Andi Kleen &lt;ak@muc.de&gt;&n; * Copyright 1997 Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
 macro_line|#ifdef CONFIG_X86_USE_3DNOW_AND_WORKS

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/drivers/video/rivafb.c - nVidia RIVA 128/TNT/TNT
 multiline_comment|/* version number of this driver */
 DECL|macro|RIVAFB_VERSION
 mdefine_line|#define RIVAFB_VERSION &quot;0.6.5&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

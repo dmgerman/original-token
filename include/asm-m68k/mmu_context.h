@@ -1,6 +1,7 @@
 macro_line|#ifndef __M68K_MMU_CONTEXT_H
 DECL|macro|__M68K_MMU_CONTEXT_H
 mdefine_line|#define __M68K_MMU_CONTEXT_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef CONFIG_SUN3
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;pci_syscall.c&n; *&n; * For architectures where we want to allow direct access&n; * to the PCI config stuff - it would probably be preferable&n; * on PCs too, but there people just do it by hand with the&n; * magic northbridge registers..&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

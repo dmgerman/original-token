@@ -87,6 +87,15 @@ id|len
 suffix:semicolon
 r_extern
 r_int
+id|cycx_down
+(paren
+id|cycxhw_t
+op_star
+id|hw
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|cycx_peek
 (paren
 id|cycxhw_t

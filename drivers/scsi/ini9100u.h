@@ -80,12 +80,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*for linux v2.0 */
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ini9100u
-suffix:semicolon
-macro_line|#endif
 DECL|macro|i91u_REVID
 mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03g&quot;
 DECL|macro|INI9100U

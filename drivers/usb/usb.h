@@ -1896,6 +1896,30 @@ id|pipe
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|usb_bulk_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+comma
+r_int
+r_int
+comma
+r_void
+op_star
+comma
+r_int
+comma
+r_int
+r_int
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_void
 op_star
 id|usb_request_bulk
@@ -2181,6 +2205,10 @@ DECL|macro|usb_sndbulkpipe
 mdefine_line|#define usb_sndbulkpipe(dev,endpoint)&t;((PIPE_BULK &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvbulkpipe
 mdefine_line|#define usb_rcvbulkpipe(dev,endpoint)&t;((PIPE_BULK &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
+DECL|macro|usb_sndintpipe
+mdefine_line|#define usb_sndintpipe(dev,endpoint)&t;((PIPE_INTERRUPT &lt;&lt; 30) | __create_pipe(dev,endpoint))
+DECL|macro|usb_rcvintpipe
+mdefine_line|#define usb_rcvintpipe(dev,endpoint)&t;((PIPE_INTERRUPT &lt;&lt; 30) | __create_pipe(dev,endpoint) | USB_DIR_IN)
 DECL|macro|usb_snddefctrl
 mdefine_line|#define usb_snddefctrl(dev)&t;&t;((PIPE_CONTROL &lt;&lt; 30) | __default_pipe(dev))
 DECL|macro|usb_rcvdefctrl

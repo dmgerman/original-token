@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/ioport.c&n; *&n; * IO permission support for ARM.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -851,6 +851,11 @@ id|speed
 op_assign
 l_int|0x00
 suffix:semicolon
+id|byte
+id|reg51h
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 r_int
 id|reg40
@@ -1106,13 +1111,6 @@ id|ide_dma_off_quietly
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Disable the &quot;fast interrupt&quot; prediction.&n;&t; * Instead, always wait for the real interrupt from the drive!&n;&t; */
-(brace
-id|byte
-id|reg51h
-op_assign
-l_int|0
-suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -1130,6 +1128,38 @@ op_amp
 id|reg51h
 )paren
 suffix:semicolon
+macro_line|#ifdef HPT366_FAST_IRQ_PREDICTION
+multiline_comment|/*&n;&t; * Some drives prefer/allow for the method of handling interrupts.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|reg51h
+op_amp
+l_int|0x80
+)paren
+)paren
+id|pci_write_config_byte
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|pci_dev
+comma
+l_int|0x51
+comma
+id|reg51h
+op_or
+l_int|0x80
+)paren
+suffix:semicolon
+macro_line|#else /* ! HPT366_FAST_IRQ_PREDICTION */
+multiline_comment|/*&n;&t; * Disable the &quot;fast interrupt&quot; prediction.&n;&t; * Instead, always wait for the real interrupt from the drive!&n;&t; */
 r_if
 c_cond
 (paren
@@ -1156,7 +1186,7 @@ op_complement
 l_int|0x80
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif /* HPT366_FAST_IRQ_PREDICTION */
 multiline_comment|/*&n;&t; * Preserve existing PIO settings:&n;&t; */
 id|pci_read_config_dword
 c_func

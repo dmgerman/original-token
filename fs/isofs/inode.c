@@ -4129,18 +4129,20 @@ id|inode-&gt;i_dev
 suffix:semicolon
 id|bh_result-&gt;b_blocknr
 op_assign
+id|firstext
+op_plus
+(paren
 (paren
 id|b_off
 op_minus
 id|offset
-op_plus
-id|firstext
 )paren
 op_rshift
 id|ISOFS_BUFFER_BITS
 c_func
 (paren
 id|inode
+)paren
 )paren
 suffix:semicolon
 id|bh_result-&gt;b_state
@@ -5257,12 +5259,6 @@ id|isonum_711
 id|raw_inode-&gt;ext_attr_length
 )paren
 )paren
-op_lshift
-id|inode
-op_member_access_from_pointer
-id|i_sb
-op_member_access_from_pointer
-id|u.isofs_sb.s_log_zone_size
 suffix:semicolon
 multiline_comment|/* Now test for possible Rock Ridge extensions which will override some of&n;   these numbers in the inode structure. */
 r_if

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * file.c&n; *&n; * PURPOSE&n; *  File handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *  E-mail regarding any portion of the Linux UDF file system should be&n; *  directed to the development team mailing list (run by majordomo):&n; *    linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *  This file is distributed under the terms of the GNU General Public&n; *  License (GPL). Copies of the GPL can be obtained from:&n; *    ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *  Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-1999 Dave Boynton&n; *  (C) 1998-1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  10/02/98 dgb  Attempt to integrate into udf.o&n; *  10/07/98      Switched to using generic_readpage, etc., like isofs&n; *                And it works!&n; *  12/06/98 blf  Added udf_file_read. uses generic_file_read for all cases but&n; *                ICB_FLAG_AD_IN_ICB.&n; *  04/06/99      64 bit file handling on 32 bit systems taken from ext2 file.c&n; *  05/12/99      Preliminary file write support&n; */
 macro_line|#include &quot;udfdecl.h&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/ide-geometry.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
@@ -179,12 +180,10 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if 0
 id|drive-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 )brace
 id|BIOS
 op_add_assign

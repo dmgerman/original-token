@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|open_kcore
 r_static
@@ -773,7 +772,7 @@ r_int
 id|num_vma
 comma
 r_int
-id|elf_buflen
+id|dataoff
 )paren
 (brace
 r_struct
@@ -1011,7 +1010,7 @@ id|nhdr-&gt;p_align
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* setup ELF PT_LOAD program header */
+multiline_comment|/* setup ELF PT_LOAD program header for the &n;&t; * virtual range 0xc0000000 -&gt; high_memory */
 id|phdr
 op_assign
 (paren
@@ -1051,7 +1050,7 @@ id|PF_X
 suffix:semicolon
 id|phdr-&gt;p_offset
 op_assign
-id|elf_buflen
+id|dataoff
 suffix:semicolon
 id|phdr-&gt;p_vaddr
 op_assign
@@ -1083,6 +1082,7 @@ id|phdr-&gt;p_align
 op_assign
 id|PAGE_SIZE
 suffix:semicolon
+multiline_comment|/* setup ELF PT_LOAD program headers, one for every kvma range */
 r_for
 c_loop
 (paren
@@ -1143,7 +1143,7 @@ id|m-&gt;addr
 op_minus
 id|PAGE_OFFSET
 op_plus
-id|elf_buflen
+id|dataoff
 suffix:semicolon
 id|phdr-&gt;p_vaddr
 op_assign
@@ -1157,7 +1157,7 @@ op_assign
 id|__pa
 c_func
 (paren
-id|m
+id|m-&gt;addr
 )paren
 suffix:semicolon
 id|phdr-&gt;p_filesz
@@ -1484,10 +1484,28 @@ r_int
 id|elf_buflen
 op_assign
 l_int|0
-comma
+suffix:semicolon
+r_int
 id|num_vma
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|buffer
+comma
+id|buflen
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/* XXX we need to somehow lock vmlist between here&n;&t; * and after elf_kcore_store_hdr() returns.&n;&t; * For now assume that num_vma does not change (TA)&n;&t; */
 id|proc_root_kcore.size
@@ -1611,6 +1629,9 @@ c_func
 id|buffer
 comma
 id|elf_buffer
+op_plus
+op_star
+id|fpos
 comma
 id|tsz
 )paren
@@ -1647,7 +1668,7 @@ op_eq
 l_int|0
 )paren
 r_return
-id|tsz
+id|acc
 suffix:semicolon
 )brace
 multiline_comment|/* where page 0 not mapped, write zeros into buffer */
@@ -1724,7 +1745,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* fill the remainder of the buffer from kernel VM space */
-macro_line|#if defined (__i386__) || defined (__mc68000__)
 id|copy_to_user
 c_func
 (paren
@@ -1736,29 +1756,12 @@ c_func
 op_star
 id|fpos
 op_minus
-id|PAGE_SIZE
+id|elf_buflen
 )paren
 comma
 id|buflen
 )paren
 suffix:semicolon
-macro_line|#else
-id|copy_to_user
-c_func
-(paren
-id|buffer
-comma
-id|__va
-c_func
-(paren
-op_star
-id|fpos
-)paren
-comma
-id|buflen
-)paren
-suffix:semicolon
-macro_line|#endif
 id|acc
 op_add_assign
 id|buflen

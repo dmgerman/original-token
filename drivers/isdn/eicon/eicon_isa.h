@@ -3,6 +3,7 @@ macro_line|#ifndef eicon_isa_h
 DECL|macro|eicon_isa_h
 mdefine_line|#define eicon_isa_h
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Factory defaults for ISA-Cards */
 DECL|macro|EICON_ISA_MEMBASE
 mdefine_line|#define EICON_ISA_MEMBASE 0xd0000

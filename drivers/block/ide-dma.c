@@ -251,7 +251,7 @@ DECL|macro|PRD_ENTRIES
 mdefine_line|#define PRD_ENTRIES&t;(PAGE_SIZE / (2 * PRD_BYTES))
 multiline_comment|/*&n; * dma_intr() is the handler for disk read/write DMA interrupts&n; */
 DECL|function|ide_dma_intr
-r_void
+id|ide_startstop_t
 id|ide_dma_intr
 (paren
 id|ide_drive_t
@@ -368,6 +368,7 @@ id|drive
 suffix:semicolon
 )brace
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 id|printk
@@ -379,12 +380,7 @@ id|drive-&gt;name
 )paren
 suffix:semicolon
 )brace
-id|ide__sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* local CPU only */
+r_return
 id|ide_error
 c_func
 (paren

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: dvma.h,v 1.4 1999/03/27 20:23:41 tsbogend Exp $&n; * i
 macro_line|#ifndef __M68K_DVMA_H
 DECL|macro|__M68K_DVMA_H
 mdefine_line|#define __M68K_DVMA_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SUN3
 multiline_comment|/* sun3 dvma page support */
 multiline_comment|/* memory and pmegs reserved for dvma */

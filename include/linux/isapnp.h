@@ -3,6 +3,7 @@ macro_line|#ifndef LINUX_ISAPNP_H
 DECL|macro|LINUX_ISAPNP_H
 mdefine_line|#define LINUX_ISAPNP_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/*&n; *  Configuration registers (TODO: change by specification)&n; */
 DECL|macro|ISAPNP_CFG_ACTIVATE
 mdefine_line|#define ISAPNP_CFG_ACTIVATE&t;&t;0x30&t;/* byte */

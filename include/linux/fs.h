@@ -2547,14 +2547,12 @@ id|transfer
 )paren
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
 id|iattr
 op_star
-comma
-r_char
 comma
 id|uid_t
 )paren

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sun3ints.h -- Linux/Sun3 interrupt handling code defin
 macro_line|#ifndef SUN3INTS_H
 DECL|macro|SUN3INTS_H
 mdefine_line|#define SUN3INTS_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

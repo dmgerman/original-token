@@ -44,6 +44,35 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX
+r_extern
+id|byte
+id|piix_proc
+suffix:semicolon
+DECL|variable|piix_display_info
+r_int
+(paren
+op_star
+id|piix_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX */
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_extern
 id|byte
@@ -1675,6 +1704,24 @@ suffix:colon
 id|name
 op_assign
 l_string|&quot;trm290&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ide_cmd646
+suffix:colon
+id|name
+op_assign
+l_string|&quot;cmd646&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ide_cy82c693
+suffix:colon
+id|name
+op_assign
+l_string|&quot;cy82c693&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4214,6 +4261,31 @@ id|ali_display_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX
+r_if
+c_cond
+(paren
+(paren
+id|piix_display_info
+)paren
+op_logical_and
+(paren
+id|piix_proc
+)paren
+)paren
+id|create_proc_info_entry
+c_func
+(paren
+l_string|&quot;piix&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+comma
+id|piix_display_info
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX */
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_if
 c_cond
@@ -4295,6 +4367,27 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX
+r_if
+c_cond
+(paren
+(paren
+id|piix_display_info
+)paren
+op_logical_and
+(paren
+id|piix_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/piix&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX */
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_if
 c_cond

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Fast Ethernet Controller (FECC) driver for Motorola MPC8xx.&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * This version of the driver is specific to the FADS implementation,&n; * since the board contains control registers external to the processor&n; * for the control of the LevelOne LXT970 transceiver.  The MPC860T manual&n; * describes connections using the internal parallel port I/O, which&n; * is basically all of Port D.&n; *&n; * Right now, I am very watseful with the buffers.  I allocate memory&n; * pages and then divide them into 2K frame buffers.  This way I know I&n; * have buffers large enough to hold one frame within one buffer descriptor.&n; * Once I get this working, I will use 64 or 128 byte CPM buffers, which&n; * will be much more memory efficient and will easily handle lots of&n; * small packets.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

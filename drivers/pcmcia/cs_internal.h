@@ -2,6 +2,7 @@ multiline_comment|/*&n; * cs_internal.h 1.46 1999/11/08 20:46:49&n; *&n; * The c
 macro_line|#ifndef _LINUX_CS_INTERNAL_H
 DECL|macro|_LINUX_CS_INTERNAL_H
 mdefine_line|#define _LINUX_CS_INTERNAL_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|struct|erase_busy_t
 r_typedef
 r_struct

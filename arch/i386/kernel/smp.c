@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Intel SMP support routines.&n; *&n; *&t;(c) 1995 Alan Cox, Building #3 &lt;alan@redhat.com&gt;&n; *&t;(c) 1998-99 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/sysv/inode.c&n; *&n; *  minix/inode.c&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  xenix/inode.c&n; *  Copyright (C) 1992  Doug Evans&n; *&n; *  coh/inode.c&n; *  Copyright (C) 1993  Pascal Haible, Bruno Haible&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Paul B. Monday&n; *&n; *  sysv/inode.c&n; *  Copyright (C) 1993  Bruno Haible&n; *  Copyright (C) 1997, 1998  Krzysztof G. Baranowski&n; *&n; *  This file contains code for allocating/freeing inodes and for read/writing&n; *  the superblock.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

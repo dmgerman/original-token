@@ -2791,7 +2791,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;idefloppy_pc_intr is the usual interrupt handler which will be called&n; *&t;during a packet command.&n; */
 DECL|function|idefloppy_pc_intr
 r_static
-r_void
+id|ide_startstop_t
 id|idefloppy_pc_intr
 (paren
 id|ide_drive_t
@@ -2988,12 +2988,11 @@ id|KERN_ERR
 l_string|&quot;ide-floppy: I/O error in request sense command&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|idefloppy_retry_pc
@@ -3003,7 +3002,9 @@ id|drive
 suffix:semicolon
 multiline_comment|/* Retry operation */
 r_return
+id|ide_stopped
 suffix:semicolon
+multiline_comment|/* queued, but not started */
 )brace
 id|pc-&gt;error
 op_assign
@@ -3030,6 +3031,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* Command finished - Call the callback function */
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
@@ -3068,12 +3070,11 @@ comma
 id|drive
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
@@ -3112,12 +3113,11 @@ id|KERN_ERR
 l_string|&quot;ide-floppy: CoD != 0 in idefloppy_pc_intr&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -3161,12 +3161,11 @@ suffix:colon
 l_string|&quot;Write&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -3231,6 +3230,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 macro_line|#if IDEFLOPPY_DEBUG_LOG
@@ -3335,10 +3335,13 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 DECL|function|idefloppy_transfer_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idefloppy_transfer_pc
 (paren
 id|ide_drive_t
@@ -3346,6 +3349,9 @@ op_star
 id|drive
 )paren
 (brace
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 id|idefloppy_floppy_t
 op_star
 id|floppy
@@ -3360,6 +3366,9 @@ c_cond
 (paren
 id|ide_wait_stat
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DRQ_STAT
@@ -3377,6 +3386,7 @@ l_string|&quot;ide-floppy: Strange, packet command initiated yet DRQ isn&squot;t
 )paren
 suffix:semicolon
 r_return
+id|startstop
 suffix:semicolon
 )brace
 id|ireason.all
@@ -3401,12 +3411,11 @@ id|KERN_ERR
 l_string|&quot;ide-floppy: (IO,CoD) != (0,1) while issuing a packet command&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|ide_set_handler
@@ -3432,11 +3441,14 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* Send the actual packet */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Issue a packet command&n; */
 DECL|function|idefloppy_issue_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idefloppy_issue_pc
 (paren
 id|ide_drive_t
@@ -3580,6 +3592,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 macro_line|#if IDEFLOPPY_DEBUG_LOG
@@ -3804,6 +3817,9 @@ id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Issue the packet command */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3814,6 +3830,7 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
+r_return
 id|idefloppy_transfer_pc
 (paren
 id|drive
@@ -4338,7 +4355,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;idefloppy_do_request is our request handling function.&t;&n; */
 DECL|function|idefloppy_do_request
 r_static
-r_void
+id|ide_startstop_t
 id|idefloppy_do_request
 (paren
 id|ide_drive_t
@@ -4452,6 +4469,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 r_switch
@@ -4497,6 +4515,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 id|pc
@@ -4553,12 +4572,14 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 id|pc-&gt;rq
 op_assign
 id|rq
 suffix:semicolon
+r_return
 id|idefloppy_issue_pc
 (paren
 id|drive

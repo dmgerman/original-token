@@ -2,6 +2,7 @@ multiline_comment|/*&n; * bus_ops.h 1.8 1999/10/25 20:23:16&n; *&n; * The conten
 macro_line|#ifndef _LINUX_BUS_OPS_H
 DECL|macro|_LINUX_BUS_OPS_H
 mdefine_line|#define _LINUX_BUS_OPS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_VIRTUAL_BUS
 DECL|struct|bus_operations
 r_typedef

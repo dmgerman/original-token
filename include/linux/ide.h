@@ -1152,10 +1152,25 @@ DECL|typedef|ide_hwif_t
 )brace
 id|ide_hwif_t
 suffix:semicolon
+multiline_comment|/*&n; * Status returned from various ide_ functions&n; */
+r_typedef
+r_enum
+(brace
+DECL|enumerator|ide_stopped
+id|ide_stopped
+comma
+multiline_comment|/* no drive operation was started */
+DECL|enumerator|ide_started
+id|ide_started
+multiline_comment|/* a drive operation was started, and a handler was set */
+DECL|typedef|ide_startstop_t
+)brace
+id|ide_startstop_t
+suffix:semicolon
 multiline_comment|/*&n; *  internal ide interrupt handler type&n; */
 DECL|typedef|ide_handler_t
 r_typedef
-r_void
+id|ide_startstop_t
 (paren
 id|ide_handler_t
 )paren
@@ -1181,11 +1196,6 @@ r_typedef
 r_struct
 id|hwgroup_s
 (brace
-DECL|member|spinlock
-id|spinlock_t
-id|spinlock
-suffix:semicolon
-multiline_comment|/* protects &quot;busy&quot; and &quot;handler&quot; */
 DECL|member|handler
 id|ide_handler_t
 op_star
@@ -1193,10 +1203,16 @@ id|handler
 suffix:semicolon
 multiline_comment|/* irq handler, if active */
 DECL|member|busy
+r_volatile
 r_int
 id|busy
 suffix:semicolon
 multiline_comment|/* BOOL: protects all fields below */
+DECL|member|sleeping
+r_int
+id|sleeping
+suffix:semicolon
+multiline_comment|/* BOOL: wake us up on timer expiry */
 DECL|member|drive
 id|ide_drive_t
 op_star
@@ -1570,7 +1586,7 @@ op_star
 suffix:semicolon
 DECL|typedef|ide_do_request_proc
 r_typedef
-r_void
+id|ide_startstop_t
 (paren
 id|ide_do_request_proc
 )paren
@@ -1698,7 +1714,7 @@ op_star
 suffix:semicolon
 DECL|typedef|ide_special_proc
 r_typedef
-r_void
+id|ide_startstop_t
 (paren
 id|ide_special_proc
 )paren
@@ -2001,8 +2017,8 @@ id|byte
 id|stat
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; * The calling function must return afterwards, to restart the request.&n; */
-r_void
+multiline_comment|/*&n; * ide_error() takes action based on the error returned by the controller.&n; * The caller should return immediately after invoking this.&n; */
+id|ide_startstop_t
 id|ide_error
 (paren
 id|ide_drive_t
@@ -2055,9 +2071,31 @@ r_int
 id|byteswap
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after invoking ide_error() -- caller should return.&n; *&n; */
+multiline_comment|/*&n; * This routine busy-waits for the drive status to be not &quot;busy&quot;.&n; * It then checks the status for all of the &quot;good&quot; bits and none&n; * of the &quot;bad&quot; bits, and if all is okay it returns 0.  All other&n; * cases return 1 after doing &quot;*startstop = ide_error()&quot;, and the&n; * caller should return the updated value of &quot;startstop&quot; in this case.&n; * &quot;startstop&quot; is unchanged when the function returns 0;&n; */
 r_int
 id|ide_wait_stat
+(paren
+id|ide_startstop_t
+op_star
+id|startstop
+comma
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|byte
+id|good
+comma
+id|byte
+id|bad
+comma
+r_int
+r_int
+id|timeout
+)paren
+suffix:semicolon
+r_int
+id|ide_wait_noerr
 (paren
 id|ide_drive_t
 op_star
@@ -2109,7 +2147,7 @@ id|drive
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Start a reset operation for an IDE interface.&n; * The caller should return immediately after invoking this.&n; */
-r_void
+id|ide_startstop_t
 id|ide_do_reset
 (paren
 id|ide_drive_t
@@ -2129,8 +2167,8 @@ suffix:semicolon
 multiline_comment|/*&n; * &quot;action&quot; parameter type for ide_do_drive_cmd() below.&n; */
 r_typedef
 r_enum
-DECL|enumerator|ide_wait
 (brace
+DECL|enumerator|ide_wait
 id|ide_wait
 comma
 multiline_comment|/* insert rq at end of list, and wait for it */
@@ -2144,9 +2182,9 @@ comma
 multiline_comment|/* insert rq in front of current request */
 DECL|enumerator|ide_end
 id|ide_end
-)brace
 multiline_comment|/* insert rq at end of list, but don&squot;t wait for it */
 DECL|typedef|ide_action_t
+)brace
 id|ide_action_t
 suffix:semicolon
 multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then the rq is queued at the end of the&n; * request queue, and the function sleeps until it has been processed.&n; * This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the&n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code.&n; */
@@ -2213,6 +2251,31 @@ r_void
 )paren
 suffix:semicolon
 r_int
+id|ide_driveid_update
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_int
+id|ide_ata66_check
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|cmd
+comma
+r_int
+id|nsect
+comma
+r_int
+id|feature
+)paren
+suffix:semicolon
+r_int
 id|ide_config_drive_speed
 (paren
 id|ide_drive_t
@@ -2223,6 +2286,23 @@ id|byte
 id|speed
 )paren
 suffix:semicolon
+r_int
+id|set_transfer
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|cmd
+comma
+r_int
+id|nsect
+comma
+r_int
+id|feature
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in MHz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; */
 r_int
 id|ide_system_bus_speed
@@ -2231,7 +2311,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * ide_multwrite() transfers a block of up to mcount sectors of data&n; * to a drive as part of a disk multwrite operation.&n; */
-r_void
+r_int
 id|ide_multwrite
 (paren
 id|ide_drive_t
@@ -2591,7 +2671,7 @@ id|ide_dma_action_t
 id|func
 )paren
 suffix:semicolon
-r_void
+id|ide_startstop_t
 id|ide_dma_intr
 (paren
 id|ide_drive_t

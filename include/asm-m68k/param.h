@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_PARAM_H
 DECL|macro|_M68K_PARAM_H
 mdefine_line|#define _M68K_PARAM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef HZ
 DECL|macro|HZ
 mdefine_line|#define HZ 100

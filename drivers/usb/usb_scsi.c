@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB scsi like devices&n; * &n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug in&n; * device specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
+multiline_comment|/* Driver for USB SCSI-like devices&n; *&n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -33,6 +33,13 @@ op_assign
 macro_line|#include &quot;usb_scsi_dt.c&quot;
 )brace
 suffix:semicolon
+macro_line|#ifdef REWRITE_PROJECT
+DECL|macro|IRQ_PERIOD
+mdefine_line|#define IRQ_PERIOD&t;&t;255
+macro_line|#else
+DECL|macro|IRQ_PERIOD
+mdefine_line|#define IRQ_PERIOD&t;&t;0&t;/* single IRQ transfer then remove it */
+macro_line|#endif
 multiline_comment|/*&n; * Per device data&n; */
 DECL|variable|my_host_number
 r_static
@@ -80,7 +87,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* from filter initially*/
+multiline_comment|/* from filter initially */
 DECL|member|ifnum
 id|__u8
 id|ifnum
@@ -231,6 +238,12 @@ r_int
 id|irqpipe
 suffix:semicolon
 multiline_comment|/* remember pipe for release_irq */
+DECL|member|mode_xlate
+r_int
+id|mode_xlate
+suffix:semicolon
+multiline_comment|/* if current SCSI command is MODE_6 */
+multiline_comment|/* but is translated to MODE_10 for UFI */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * kernel thread actions&n; */
@@ -415,9 +428,7 @@ r_do
 multiline_comment|/* US_DEBUGP(&quot;Bulk xfer %x(%d)&bslash;n&quot;, (unsigned int)buf, this_xfer); */
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1258,6 +1269,17 @@ suffix:colon
 r_case
 id|MODE_SELECT
 suffix:colon
+id|us-&gt;mode_xlate
+op_assign
+(paren
+id|srb-&gt;cmnd
+(braket
+l_int|0
+)braket
+op_eq
+id|MODE_SENSE
+)paren
+suffix:semicolon
 id|cmd
 (braket
 l_int|0
@@ -1304,6 +1326,10 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+id|us-&gt;mode_xlate
+op_assign
+l_int|0
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1716,7 +1742,7 @@ l_int|1
 suffix:semicolon
 id|us-&gt;irqpipe
 op_assign
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -1735,7 +1761,7 @@ id|us-&gt;irqpipe
 comma
 id|pop_CBI_irq
 comma
-l_int|0
+id|IRQ_PERIOD
 comma
 (paren
 r_void
@@ -1774,6 +1800,22 @@ op_amp
 id|us-&gt;ip_waitq
 )paren
 suffix:semicolon
+macro_line|#ifdef REWRITE_PROJECT
+id|usb_release_irq
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|us-&gt;irq_handle
+comma
+id|us-&gt;irqpipe
+)paren
+suffix:semicolon
+id|us-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2306,9 +2348,7 @@ id|bcb.Length
 suffix:semicolon
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -2410,9 +2450,7 @@ r_do
 (brace
 id|result
 op_assign
-id|us-&gt;pusb_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|us-&gt;pusb_dev
@@ -2820,10 +2858,6 @@ suffix:semicolon
 id|us-&gt;irq_handle
 op_assign
 l_int|NULL
-suffix:semicolon
-id|us-&gt;irqpipe
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -4289,6 +4323,97 @@ l_int|4
 op_assign
 id|saveallocation
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|us-&gt;mode_xlate
+)paren
+(brace
+multiline_comment|/* convert MODE_SENSE_10 return data&n;&t;&t;&t;&t;&t; * format to MODE_SENSE_6 format */
+r_int
+r_char
+op_star
+id|dta
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;srb-&gt;request_buffer
+suffix:semicolon
+id|dta
+(braket
+l_int|0
+)braket
+op_assign
+id|dta
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* data len */
+id|dta
+(braket
+l_int|1
+)braket
+op_assign
+id|dta
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* med type */
+id|dta
+(braket
+l_int|2
+)braket
+op_assign
+id|dta
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* dev-spec prm */
+id|dta
+(braket
+l_int|3
+)braket
+op_assign
+id|dta
+(braket
+l_int|7
+)braket
+suffix:semicolon
+multiline_comment|/* block desc len */
+id|printk
+(paren
+id|KERN_DEBUG
+id|USB_SCSI
+l_string|&quot;new MODE_SENSE_6 data = %.2X %.2X %.2X %.2X&bslash;n&quot;
+comma
+id|dta
+(braket
+l_int|0
+)braket
+comma
+id|dta
+(braket
+l_int|1
+)braket
+comma
+id|dta
+(braket
+l_int|2
+)braket
+comma
+id|dta
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -5126,7 +5251,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     * we are expecting a minimum of 2 endpoints - in and out (bulk)&n;     * an optional interrupt is OK (necessary for CBI protocol)&n;     * we will ignore any others&n;     */
+multiline_comment|/*&n;     * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;     * An optional interrupt is OK (necessary for CBI protocol).&n;     * We will ignore any others.&n;     */
 r_for
 c_loop
 (paren
@@ -5690,7 +5815,7 @@ id|ss-&gt;ip_waitq
 suffix:semicolon
 id|ss-&gt;irqpipe
 op_assign
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|ss-&gt;pusb_dev
@@ -5709,7 +5834,7 @@ id|ss-&gt;irqpipe
 comma
 id|pop_CBI_irq
 comma
-l_int|0
+id|IRQ_PERIOD
 comma
 (paren
 r_void
@@ -5740,6 +5865,23 @@ op_star
 l_int|6
 )paren
 suffix:semicolon
+macro_line|#ifdef REWRITE_PROJECT
+multiline_comment|/* FIXME: Don&squot;t know if this release_irq() call is at the&n;&t;&t;right place/time. */
+id|usb_release_irq
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|ss-&gt;irq_handle
+comma
+id|ss-&gt;irqpipe
+)paren
+suffix:semicolon
+id|ss-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 r_if
@@ -5880,6 +6022,13 @@ op_assign
 id|ss
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;DANGEROUS: USB SCSI driver data integrity not assured !!!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren

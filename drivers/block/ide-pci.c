@@ -59,6 +59,8 @@ DECL|macro|DEVID_AEC6210
 mdefine_line|#define DEVID_AEC6210&t;((ide_pci_devid_t){PCI_VENDOR_ID_ARTOP,   PCI_DEVICE_ID_ARTOP_ATP850UF})
 DECL|macro|DEVID_W82C105
 mdefine_line|#define DEVID_W82C105&t;((ide_pci_devid_t){PCI_VENDOR_ID_WINBOND, PCI_DEVICE_ID_WINBOND_82C105})
+DECL|macro|DEVID_UM8673F
+mdefine_line|#define DEVID_UM8673F&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8673F})
 DECL|macro|DEVID_UM8886A
 mdefine_line|#define DEVID_UM8886A&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8886A})
 DECL|macro|DEVID_UM8886BF
@@ -79,112 +81,11 @@ DECL|macro|DEVID_AMD7409
 mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     0x7409})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define&t;IDE_IGNORE&t;((void *)-1)
-macro_line|#ifdef CONFIG_BLK_DEV_TRM290
-r_extern
-r_void
-id|ide_init_trm290
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_TRM290
-mdefine_line|#define INIT_TRM290&t;&amp;ide_init_trm290
-macro_line|#else
-DECL|macro|INIT_TRM290
-mdefine_line|#define INIT_TRM290&t;IDE_IGNORE
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_OPTI621
-r_extern
-r_void
-id|ide_init_opti621
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_OPTI621
-mdefine_line|#define INIT_OPTI621&t;&amp;ide_init_opti621
-macro_line|#else
-DECL|macro|INIT_OPTI621
-mdefine_line|#define INIT_OPTI621&t;NULL
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_NS87415
-r_extern
-r_void
-id|ide_init_ns87415
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_NS87415
-mdefine_line|#define INIT_NS87415&t;&amp;ide_init_ns87415
-macro_line|#else
-DECL|macro|INIT_NS87415
-mdefine_line|#define INIT_NS87415&t;IDE_IGNORE
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_CMD646
-r_extern
-r_void
-id|ide_init_cmd646
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_CMD646
-mdefine_line|#define INIT_CMD646&t;&amp;ide_init_cmd646
-macro_line|#else
-macro_line|#ifdef __sparc_v9__
-DECL|macro|INIT_CMD646
-mdefine_line|#define INIT_CMD646&t;IDE_IGNORE
-macro_line|#else
-DECL|macro|INIT_CMD646
-mdefine_line|#define INIT_CMD646&t;NULL
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_SL82C105
-r_extern
-r_void
-id|ide_init_sl82c105
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_W82C105
-mdefine_line|#define INIT_W82C105&t;&amp;ide_init_sl82c105
-macro_line|#else
-DECL|macro|INIT_W82C105
-mdefine_line|#define INIT_W82C105&t;IDE_IGNORE
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_RZ1000
-r_extern
-r_void
-id|ide_init_rz1000
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_RZ1000
-mdefine_line|#define INIT_RZ1000&t;&amp;ide_init_rz1000
-macro_line|#else
-DECL|macro|INIT_RZ1000
-mdefine_line|#define INIT_RZ1000&t;IDE_IGNORE
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
+macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
 r_extern
 r_int
 r_int
-id|pci_init_via82cxxx
+id|pci_init_aec6210
 c_func
 (paren
 r_struct
@@ -197,9 +98,8 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|ata66_via82cxxx
+r_void
+id|ide_init_aec6210
 c_func
 (paren
 id|ide_hwif_t
@@ -208,16 +108,7 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ide_init_via82cxxx
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ide_dmacapable_via82cxxx
+id|ide_dmacapable_aec6210
 c_func
 (paren
 id|ide_hwif_t
@@ -227,23 +118,19 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|macro|PCI_VIA82CXXX
-mdefine_line|#define PCI_VIA82CXXX&t;&amp;pci_init_via82cxxx
-DECL|macro|ATA66_VIA82CXXX
-mdefine_line|#define ATA66_VIA82CXXX&t;&amp;ata66_via82cxxx
-DECL|macro|INIT_VIA82CXXX
-mdefine_line|#define INIT_VIA82CXXX&t;&amp;ide_init_via82cxxx
-DECL|macro|DMA_VIA82CXXX
-mdefine_line|#define DMA_VIA82CXXX&t;&amp;ide_dmacapable_via82cxxx
+DECL|macro|PCI_AEC6210
+mdefine_line|#define PCI_AEC6210&t;&amp;pci_init_aec6210
+DECL|macro|INIT_AEC6210
+mdefine_line|#define INIT_AEC6210&t;&amp;ide_init_aec6210
+DECL|macro|DMA_AEC6210
+mdefine_line|#define DMA_AEC6210&t;&amp;ide_dmacapable_aec6210
 macro_line|#else
-DECL|macro|PCI_VIA82CXXX
-mdefine_line|#define PCI_VIA82CXXX&t;NULL
-DECL|macro|ATA66_VIA82CXXX
-mdefine_line|#define ATA66_VIA82CXXX&t;NULL
-DECL|macro|INIT_VIA82CXXX
-mdefine_line|#define INIT_VIA82CXXX&t;NULL
-DECL|macro|DMA_VIA82CXXX
-mdefine_line|#define DMA_VIA82CXXX&t;NULL
+DECL|macro|PCI_AEC6210
+mdefine_line|#define PCI_AEC6210&t;NULL
+DECL|macro|INIT_AEC6210
+mdefine_line|#define INIT_AEC6210&t;NULL
+DECL|macro|DMA_AEC6210
+mdefine_line|#define DMA_AEC6210&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_extern
@@ -310,6 +197,27 @@ mdefine_line|#define INIT_ALI15X3&t;NULL
 DECL|macro|DMA_ALI15X3
 mdefine_line|#define DMA_ALI15X3&t;NULL
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_CMD646
+r_extern
+r_void
+id|ide_init_cmd646
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_CMD646
+mdefine_line|#define INIT_CMD646&t;&amp;ide_init_cmd646
+macro_line|#else
+macro_line|#ifdef __sparc_v9__
+DECL|macro|INIT_CMD646
+mdefine_line|#define INIT_CMD646&t;IDE_IGNORE
+macro_line|#else
+DECL|macro|INIT_CMD646
+mdefine_line|#define INIT_CMD646&t;NULL
+macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_CY82C693
 r_extern
 r_int
@@ -345,93 +253,8 @@ mdefine_line|#define PCI_CY82C693&t;NULL
 DECL|macro|INIT_CY82C693
 mdefine_line|#define INIT_CY82C693&t;NULL
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
-r_extern
-r_int
-r_int
-id|pci_init_pdc202xx
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-comma
-r_const
-r_char
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ata66_pdc202xx
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ide_init_pdc202xx
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|PCI_PDC202XX
-mdefine_line|#define PCI_PDC202XX&t;&amp;pci_init_pdc202xx
-DECL|macro|ATA66_PDC202XX
-mdefine_line|#define ATA66_PDC202XX&t;&amp;ata66_pdc202xx
-DECL|macro|INIT_PDC202XX
-mdefine_line|#define INIT_PDC202XX&t;&amp;ide_init_pdc202xx
-macro_line|#else
-DECL|macro|PCI_PDC202XX
-mdefine_line|#define PCI_PDC202XX&t;NULL
-DECL|macro|ATA66_PDC202XX
-mdefine_line|#define ATA66_PDC202XX&t;NULL
-DECL|macro|INIT_PDC202XX
-mdefine_line|#define INIT_PDC202XX&t;NULL
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_PIIX
-r_extern
-r_void
-id|ide_init_piix
-c_func
-(paren
-id|ide_hwif_t
-op_star
-)paren
-suffix:semicolon
-DECL|macro|INIT_PIIX
-mdefine_line|#define INIT_PIIX&t;&amp;ide_init_piix
-macro_line|#else
-DECL|macro|INIT_PIIX
-mdefine_line|#define INIT_PIIX&t;NULL
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
-r_extern
-r_int
-r_int
-id|pci_init_aec6210
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-comma
-r_const
-r_char
-op_star
-)paren
-suffix:semicolon
-DECL|macro|PCI_AEC6210
-mdefine_line|#define PCI_AEC6210&t;&amp;pci_init_aec6210
-macro_line|#else
-DECL|macro|PCI_AEC6210
-mdefine_line|#define PCI_AEC6210&t;NULL
-macro_line|#endif
+DECL|macro|INIT_CX5530
+mdefine_line|#define INIT_CX5530&t;NULL
 macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 r_extern
 r_int
@@ -543,6 +366,140 @@ mdefine_line|#define INIT_HPT366&t;NULL
 DECL|macro|DMA_HPT366
 mdefine_line|#define DMA_HPT366&t;NULL
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_NS87415
+r_extern
+r_void
+id|ide_init_ns87415
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_NS87415
+mdefine_line|#define INIT_NS87415&t;&amp;ide_init_ns87415
+macro_line|#else
+DECL|macro|INIT_NS87415
+mdefine_line|#define INIT_NS87415&t;IDE_IGNORE
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_OPTI621
+r_extern
+r_void
+id|ide_init_opti621
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_OPTI621
+mdefine_line|#define INIT_OPTI621&t;&amp;ide_init_opti621
+macro_line|#else
+DECL|macro|INIT_OPTI621
+mdefine_line|#define INIT_OPTI621&t;NULL
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
+r_extern
+r_int
+r_int
+id|pci_init_pdc202xx
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ata66_pdc202xx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_pdc202xx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|PCI_PDC202XX
+mdefine_line|#define PCI_PDC202XX&t;&amp;pci_init_pdc202xx
+DECL|macro|ATA66_PDC202XX
+mdefine_line|#define ATA66_PDC202XX&t;&amp;ata66_pdc202xx
+DECL|macro|INIT_PDC202XX
+mdefine_line|#define INIT_PDC202XX&t;&amp;ide_init_pdc202xx
+macro_line|#else
+DECL|macro|PCI_PDC202XX
+mdefine_line|#define PCI_PDC202XX&t;NULL
+DECL|macro|ATA66_PDC202XX
+mdefine_line|#define ATA66_PDC202XX&t;NULL
+DECL|macro|INIT_PDC202XX
+mdefine_line|#define INIT_PDC202XX&t;NULL
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX
+r_extern
+r_int
+r_int
+id|pci_init_piix
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_piix
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|PCI_PIIX
+mdefine_line|#define PCI_PIIX&t;&amp;pci_init_piix
+DECL|macro|INIT_PIIX
+mdefine_line|#define INIT_PIIX&t;&amp;ide_init_piix
+macro_line|#else
+DECL|macro|PCI_PIIX
+mdefine_line|#define PCI_PIIX&t;NULL
+DECL|macro|INIT_PIIX
+mdefine_line|#define INIT_PIIX&t;NULL
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_RZ1000
+r_extern
+r_void
+id|ide_init_rz1000
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_RZ1000
+mdefine_line|#define INIT_RZ1000&t;&amp;ide_init_rz1000
+macro_line|#else
+DECL|macro|INIT_RZ1000
+mdefine_line|#define INIT_RZ1000&t;IDE_IGNORE
+macro_line|#endif
+DECL|macro|INIT_SAMURAI
+mdefine_line|#define INIT_SAMURAI&t;NULL
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_extern
 r_int
@@ -592,10 +549,103 @@ mdefine_line|#define ATA66_SIS5513&t;NULL
 DECL|macro|INIT_SIS5513
 mdefine_line|#define INIT_SIS5513&t;NULL
 macro_line|#endif
-DECL|macro|INIT_SAMURAI
-mdefine_line|#define INIT_SAMURAI&t;NULL
-DECL|macro|INIT_CX5530
-mdefine_line|#define INIT_CX5530&t;NULL
+macro_line|#ifdef CONFIG_BLK_DEV_SL82C105
+r_extern
+r_void
+id|ide_init_sl82c105
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_W82C105
+mdefine_line|#define INIT_W82C105&t;&amp;ide_init_sl82c105
+macro_line|#else
+DECL|macro|INIT_W82C105
+mdefine_line|#define INIT_W82C105&t;IDE_IGNORE
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_TRM290
+r_extern
+r_void
+id|ide_init_trm290
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_TRM290
+mdefine_line|#define INIT_TRM290&t;&amp;ide_init_trm290
+macro_line|#else
+DECL|macro|INIT_TRM290
+mdefine_line|#define INIT_TRM290&t;IDE_IGNORE
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
+r_extern
+r_int
+r_int
+id|pci_init_via82cxxx
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ata66_via82cxxx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_via82cxxx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_via82cxxx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|PCI_VIA82CXXX
+mdefine_line|#define PCI_VIA82CXXX&t;&amp;pci_init_via82cxxx
+DECL|macro|ATA66_VIA82CXXX
+mdefine_line|#define ATA66_VIA82CXXX&t;&amp;ata66_via82cxxx
+DECL|macro|INIT_VIA82CXXX
+mdefine_line|#define INIT_VIA82CXXX&t;&amp;ide_init_via82cxxx
+DECL|macro|DMA_VIA82CXXX
+mdefine_line|#define DMA_VIA82CXXX&t;&amp;ide_dmacapable_via82cxxx
+macro_line|#else
+DECL|macro|PCI_VIA82CXXX
+mdefine_line|#define PCI_VIA82CXXX&t;NULL
+DECL|macro|ATA66_VIA82CXXX
+mdefine_line|#define ATA66_VIA82CXXX&t;NULL
+DECL|macro|INIT_VIA82CXXX
+mdefine_line|#define INIT_VIA82CXXX&t;NULL
+DECL|macro|DMA_VIA82CXXX
+mdefine_line|#define DMA_VIA82CXXX&t;NULL
+macro_line|#endif
 DECL|struct|ide_pci_enablebit_s
 r_typedef
 r_struct
@@ -801,7 +851,7 @@ id|DEVID_PIIX3
 comma
 l_string|&quot;PIIX3&quot;
 comma
-l_int|NULL
+id|PCI_PIIX
 comma
 l_int|NULL
 comma
@@ -837,7 +887,7 @@ id|DEVID_PIIX4
 comma
 l_string|&quot;PIIX4&quot;
 comma
-l_int|NULL
+id|PCI_PIIX
 comma
 l_int|NULL
 comma
@@ -1489,9 +1539,9 @@ id|PCI_AEC6210
 comma
 l_int|NULL
 comma
-l_int|NULL
+id|INIT_AEC6210
 comma
-l_int|NULL
+id|DMA_AEC6210
 comma
 (brace
 (brace
@@ -1544,6 +1594,42 @@ comma
 l_int|0x10
 comma
 l_int|0x10
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_UM8673F
+comma
+l_string|&quot;UM8673F&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
 )brace
 )brace
 comma
@@ -1693,7 +1779,7 @@ l_int|0x00
 comma
 id|OFF_BOARD
 comma
-l_int|256
+l_int|240
 )brace
 comma
 (brace
@@ -3309,6 +3395,14 @@ c_func
 id|d-&gt;devid
 comma
 id|DEVID_UM8886BF
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_UM8673F
 )paren
 )paren
 (brace

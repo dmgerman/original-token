@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/video/cyber2000fb.c&n; *&n; * Integraphics Cyber2000 frame buffer device&n; *&n; * Based on cyberfb.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -106,11 +106,6 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL (0)
 macro_line|#endif
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_isp2x00
-suffix:semicolon
 DECL|macro|QLOGICFC
 mdefine_line|#define QLOGICFC {&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;        detect:                 isp2x00_detect,                            &bslash;&n;        release:                isp2x00_release,                           &bslash;&n;        info:                   isp2x00_info,                              &bslash;&n;        queuecommand:           isp2x00_queuecommand,                      &bslash;&n;        eh_abort_handler:       isp2x00_abort,                             &bslash;&n;        reset:                  isp2x00_reset,                             &bslash;&n;        bios_param:             isp2x00_biosparam,                         &bslash;&n;        can_queue:              QLOGICFC_REQ_QUEUE_LEN,                    &bslash;&n;        this_id:                -1,                                        &bslash;&n;        sg_tablesize:           QLOGICFC_MAX_SG(QLOGICFC_REQ_QUEUE_LEN),   &bslash;&n;&t;cmd_per_lun:&t;&t;QLOGICFC_CMD_PER_LUN, &t;&t;&t;   &bslash;&n;        present:                0,                                         &bslash;&n;        unchecked_isa_dma:      0,                                         &bslash;&n;        use_clustering:         ENABLE_CLUSTERING &t;&t;&t;   &bslash;&n;}
 macro_line|#endif /* _QLOGICFC_H */

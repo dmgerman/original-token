@@ -16,12 +16,18 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Flags for diskquotas on this device */
-DECL|member|semaphore
+DECL|member|dqio_sem
 r_struct
 id|semaphore
-id|semaphore
+id|dqio_sem
 suffix:semicolon
 multiline_comment|/* lock device while I/O in progress */
+DECL|member|dqoff_sem
+r_struct
+id|semaphore
+id|dqoff_sem
+suffix:semicolon
+multiline_comment|/* serialize quota_off() and quota_on() on device */
 DECL|member|files
 r_struct
 id|file
@@ -55,7 +61,7 @@ id|rsquash
 id|MAXQUOTAS
 )braket
 suffix:semicolon
-multiline_comment|/* for quotas treat root as any other user */
+multiline_comment|/* for quotas threat root as any other user */
 )brace
 suffix:semicolon
 DECL|struct|vfsmount

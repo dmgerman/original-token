@@ -165,7 +165,7 @@ id|current_position
 suffix:semicolon
 multiline_comment|/* Pointer into the above buffer */
 DECL|member|callback
-r_void
+id|ide_startstop_t
 (paren
 op_star
 id|callback
@@ -4235,7 +4235,7 @@ suffix:semicolon
 )brace
 DECL|function|idetape_request_sense_callback
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_request_sense_callback
 (paren
 id|ide_drive_t
@@ -4305,6 +4305,9 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;idetape_init_pc initializes a packet command.&n; */
 DECL|function|idetape_init_pc
@@ -4397,7 +4400,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;idetape_retry_pc is called when an error was detected during the&n; *&t;last packet command. We queue a request sense packet command in&n; *&t;the head of the request list.&n; */
 DECL|function|idetape_retry_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_retry_pc
 (paren
 id|ide_drive_t
@@ -4466,11 +4469,14 @@ comma
 id|rq
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;idetape_pc_intr is the usual interrupt handler which will be called&n; *&t;during a packet command. We will transfer some of the data (as&n; *&t;requested by the drive) and will re-point interrupt handler to us.&n; *&t;When data transfer is finished, we will act according to the&n; *&t;algorithm described before idetape_issue_packet_command.&n; *&n; */
 DECL|function|idetape_pc_intr
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_pc_intr
 (paren
 id|ide_drive_t
@@ -4672,22 +4678,20 @@ id|KERN_ERR
 l_string|&quot;ide-tape: I/O error in request sense command&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+r_return
 id|idetape_retry_pc
 (paren
 id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* Retry operation */
-r_return
-suffix:semicolon
 )brace
 id|pc-&gt;error
 op_assign
@@ -4730,6 +4734,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* Allow ide.c to handle other requests */
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 r_if
@@ -4743,6 +4748,7 @@ id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
+r_return
 id|pc
 op_member_access_from_pointer
 id|callback
@@ -4752,8 +4758,6 @@ id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* Command finished - Call the callback function */
-r_return
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
@@ -4797,12 +4801,11 @@ comma
 id|drive
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
@@ -4841,12 +4844,11 @@ id|KERN_ERR
 l_string|&quot;ide-tape: CoD != 0 in idetape_pc_intr&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -4890,12 +4892,11 @@ suffix:colon
 l_string|&quot;Write&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -4960,6 +4961,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 macro_line|#if IDETAPE_DEBUG_LOG
@@ -5064,11 +5066,14 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Packet Command Interface&n; *&n; *&t;The current Packet Command is available in tape-&gt;pc, and will not&n; *&t;change until we finish handling it. Each packet command is associated&n; *&t;with a callback function that will be called when the command is&n; *&t;finished.&n; *&n; *&t;The handling will be done in three stages:&n; *&n; *&t;1.&t;idetape_issue_packet_command will send the packet command to the&n; *&t;&t;drive, and will set the interrupt handler to idetape_pc_intr.&n; *&n; *&t;2.&t;On each interrupt, idetape_pc_intr will be called. This step&n; *&t;&t;will be repeated until the device signals us that no more&n; *&t;&t;interrupts will be issued.&n; *&n; *&t;3.&t;ATAPI Tape media access commands have immediate status with a&n; *&t;&t;delayed process. In case of a successful initiation of a&n; *&t;&t;media access packet command, the DSC bit will be set when the&n; *&t;&t;actual execution of the command is finished. &n; *&t;&t;Since the tape drive will not issue an interrupt, we have to&n; *&t;&t;poll for this event. In this case, we define the request as&n; *&t;&t;&quot;low priority request&quot; by setting rq_status to&n; *&t;&t;IDETAPE_RQ_POSTPONED, &t;set a timer to poll for DSC and exit&n; *&t;&t;the driver.&n; *&n; *&t;&t;ide.c will then give higher priority to requests which&n; *&t;&t;originate from the other device, until will change rq_status&n; *&t;&t;to RQ_ACTIVE.&n; *&n; *&t;4.&t;When the packet command is finished, it will be checked for errors.&n; *&n; *&t;5.&t;In case an error was found, we queue a request sense packet command&n; *&t;&t;in front of the request queue and retry the operation up to&n; *&t;&t;IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;6.&t;In case no error was found, or we decided to give up and not&n; *&t;&t;to retry again, the callback function will be called and then&n; *&t;&t;we will handle the next request.&n; *&n; */
 DECL|function|idetape_transfer_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_transfer_pc
 c_func
 (paren
@@ -5097,11 +5102,18 @@ id|retries
 op_assign
 l_int|100
 suffix:semicolon
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ide_wait_stat
+c_func
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DRQ_STAT
@@ -5119,6 +5131,7 @@ l_string|&quot;ide-tape: Strange, packet command initiated yet DRQ isn&squot;t a
 )paren
 suffix:semicolon
 r_return
+id|startstop
 suffix:semicolon
 )brace
 id|ireason.all
@@ -5203,12 +5216,11 @@ id|KERN_ERR
 l_string|&quot;ide-tape: (IO,CoD) != (0,1) while issuing a packet command&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|ide_set_handler
@@ -5235,10 +5247,13 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* Send the actual packet */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 DECL|function|idetape_issue_packet_command
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_issue_packet_command
 (paren
 id|ide_drive_t
@@ -5373,6 +5388,7 @@ id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
+r_return
 id|pc
 op_member_access_from_pointer
 id|callback
@@ -5380,8 +5396,6 @@ c_func
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#if IDETAPE_DEBUG_LOG
@@ -5607,6 +5621,9 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -5618,6 +5635,7 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
+r_return
 id|idetape_transfer_pc
 c_func
 (paren
@@ -5628,7 +5646,7 @@ suffix:semicolon
 )brace
 DECL|function|idetape_media_access_finished
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_media_access_finished
 (paren
 id|ide_drive_t
@@ -5679,14 +5697,13 @@ comma
 id|tape-&gt;name
 )paren
 suffix:semicolon
+r_return
 id|idetape_retry_pc
 (paren
 id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* Retry operation */
-r_return
-suffix:semicolon
 )brace
 id|pc-&gt;error
 op_assign
@@ -5715,6 +5732,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+r_return
 id|pc-&gt;callback
 (paren
 id|drive
@@ -5724,7 +5742,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;General packet command callback function.&n; */
 DECL|function|idetape_pc_callback
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_pc_callback
 (paren
 id|ide_drive_t
@@ -5762,10 +5780,13 @@ id|drive
 )paren
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 DECL|function|idetape_rw_callback
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_rw_callback
 (paren
 id|ide_drive_t
@@ -5841,6 +5862,9 @@ id|HWGROUP
 id|drive
 )paren
 )paren
+suffix:semicolon
+r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 DECL|function|idetape_create_locate_cmd
@@ -6470,7 +6494,7 @@ suffix:semicolon
 )brace
 DECL|function|idetape_read_position_callback
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_read_position_callback
 (paren
 id|ide_drive_t
@@ -6627,6 +6651,9 @@ id|drive
 )paren
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
 )brace
 DECL|function|idetape_create_read_position_cmd
 r_static
@@ -6663,7 +6690,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;idetape_do_request is our request handling function.&t;&n; */
 DECL|function|idetape_do_request
 r_static
-r_void
+id|ide_startstop_t
 id|idetape_do_request
 (paren
 id|ide_drive_t
@@ -6746,9 +6773,11 @@ multiline_comment|/*&n;&t;&t; *&t;We do not support buffer cache originated requ
 id|printk
 (paren
 id|KERN_NOTICE
-l_string|&quot;ide-tape: %s: Unsupported command in request queue&bslash;n&quot;
+l_string|&quot;ide-tape: %s: Unsupported command in request queue (%d)&bslash;n&quot;
 comma
 id|drive-&gt;name
+comma
+id|rq-&gt;cmd
 )paren
 suffix:semicolon
 id|ide_end_request
@@ -6763,6 +6792,7 @@ id|drive
 suffix:semicolon
 multiline_comment|/* Let the common code handle it */
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Retry a failed packet command&n;&t; */
@@ -6781,14 +6811,13 @@ op_eq
 id|IDETAPE_REQUEST_SENSE_CMD
 )paren
 (brace
+r_return
 id|idetape_issue_packet_command
 (paren
 id|drive
 comma
 id|tape-&gt;failed_pc
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#if IDETAPE_DEBUG_BUGS
@@ -6824,6 +6853,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 macro_line|#endif /* IDETAPE_DEBUG_BUGS */
@@ -6928,19 +6958,25 @@ id|rq-&gt;cmd
 op_eq
 id|IDETAPE_PC_RQ2
 )paren
+(brace
 id|idetape_media_access_finished
 (paren
 id|drive
 )paren
 suffix:semicolon
+r_return
+id|ide_stopped
+suffix:semicolon
+)brace
 r_else
+(brace
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -6962,6 +6998,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 r_switch
@@ -7039,6 +7076,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 r_case
 id|IDETAPE_PC_RQ1
@@ -7066,6 +7104,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 r_default
 suffix:colon
@@ -7086,8 +7125,10 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
+r_return
 id|idetape_issue_packet_command
 (paren
 id|drive

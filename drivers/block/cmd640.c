@@ -2428,6 +2428,8 @@ c_func
 id|index
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_CMD640_ENHANCED */
 multiline_comment|/*&n; * Probe for a cmd640 chipset, and initialize it if found.  Called from ide.c&n; */

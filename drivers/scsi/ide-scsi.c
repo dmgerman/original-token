@@ -1431,7 +1431,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Our interrupt handler.&n; */
 DECL|function|idescsi_pc_intr
 r_static
-r_void
+id|ide_startstop_t
 id|idescsi_pc_intr
 (paren
 id|ide_drive_t
@@ -1591,6 +1591,7 @@ id|drive
 )paren
 suffix:semicolon
 r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 id|bcount
@@ -1628,12 +1629,11 @@ id|KERN_ERR
 l_string|&quot;ide-scsi: CoD != 0 in idescsi_pc_intr&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -1766,6 +1766,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
+id|ide_started
 suffix:semicolon
 )brace
 macro_line|#if IDESCSI_DEBUG_LOG
@@ -1883,10 +1884,13 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 DECL|function|idescsi_transfer_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idescsi_transfer_pc
 (paren
 id|ide_drive_t
@@ -1909,11 +1913,17 @@ suffix:semicolon
 id|byte
 id|ireason
 suffix:semicolon
+id|ide_startstop_t
+id|startstop
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ide_wait_stat
 (paren
+op_amp
+id|startstop
+comma
 id|drive
 comma
 id|DRQ_STAT
@@ -1931,6 +1941,7 @@ l_string|&quot;ide-scsi: Strange, packet command initiated yet DRQ isn&squot;t a
 )paren
 suffix:semicolon
 r_return
+id|startstop
 suffix:semicolon
 )brace
 id|ireason
@@ -1962,12 +1973,11 @@ id|KERN_ERR
 l_string|&quot;ide-scsi: (IO,CoD) != (0,1) while issuing a packet command&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
 id|ide_do_reset
 (paren
 id|drive
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|ide_set_handler
@@ -1998,11 +2008,14 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* Send the actual packet */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Issue a packet command&n; */
 DECL|function|idescsi_issue_pc
 r_static
-r_void
+id|ide_startstop_t
 id|idescsi_issue_pc
 (paren
 id|ide_drive_t
@@ -2210,6 +2223,9 @@ id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Issue the packet command */
+r_return
+id|ide_started
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2220,6 +2236,7 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
+r_return
 id|idescsi_transfer_pc
 (paren
 id|drive
@@ -2230,7 +2247,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;idescsi_do_request is our request handling function.&n; */
 DECL|function|idescsi_do_request
 r_static
-r_void
+id|ide_startstop_t
 id|idescsi_do_request
 (paren
 id|ide_drive_t
@@ -2287,6 +2304,7 @@ op_eq
 id|IDESCSI_PC_RQ
 )paren
 (brace
+r_return
 id|idescsi_issue_pc
 (paren
 id|drive
@@ -2297,8 +2315,6 @@ op_star
 )paren
 id|rq-&gt;buffer
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|printk
@@ -2320,6 +2336,9 @@ id|HWGROUP
 id|drive
 )paren
 )paren
+suffix:semicolon
+r_return
+id|ide_stopped
 suffix:semicolon
 )brace
 DECL|function|idescsi_open

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * High memory handling common code and variables.&n; *&n; * (C) 1999 Andrea Arcangeli, SuSE GmbH, andrea@suse.de&n; *          Gerhard Wichert, Siemens AG, Gerhard.Wichert@pdb.siemens.de&n; *&n; *&n; * Redesigned the x86 32-bit VM architecture to deal with&n; * 64-bit physical space. With current x86 CPUs this&n; * means up to 64 Gigabytes physical RAM.&n; *&n; * Rewrote high memory support to move the page cache into&n; * high memory. Implemented permanent (schedulable) kmaps&n; * based on Linus&squot; idea.&n; *&n; * Copyright (C) 1999 Ingo Molnar &lt;mingo@redhat.com&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/highmem.h&gt;
@@ -888,7 +889,7 @@ c_func
 (paren
 id|p_to
 comma
-id|KM_BOUNCE_WRITE
+id|KM_BOUNCE_READ
 )paren
 suffix:semicolon
 id|memcpy
@@ -916,7 +917,7 @@ c_func
 (paren
 id|vto
 comma
-id|KM_BOUNCE_WRITE
+id|KM_BOUNCE_READ
 )paren
 suffix:semicolon
 )brace
