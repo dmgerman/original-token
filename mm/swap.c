@@ -3926,7 +3926,6 @@ op_increment
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|swap_info
 (braket
@@ -3935,8 +3934,10 @@ id|i
 dot
 id|flags
 op_amp
-id|SWP_USED
+id|SWP_WRITEOK
 )paren
+op_ne
+id|SWP_WRITEOK
 )paren
 r_continue
 suffix:semicolon

@@ -274,8 +274,6 @@ comma
 id|addr
 comma
 id|tsk
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_goto
@@ -418,8 +416,6 @@ comma
 id|addr
 comma
 id|tsk
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_goto
@@ -463,8 +459,6 @@ comma
 id|addr
 comma
 id|tsk
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_goto

@@ -203,7 +203,7 @@ comma
 id|u_MidiControl
 )paren
 suffix:semicolon
-multiline_comment|/* Enable */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Enable&n;&t;&t;&t;&t;&t;&t; */
 id|midi_busy
 op_assign
 l_int|1
@@ -278,7 +278,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Enable Midi xmit interrupts (again) */
+multiline_comment|/*&n;       * Enable Midi xmit interrupts (again)&n;       */
 id|gus_midi_control
 op_or_assign
 id|MIDI_ENABLE_XMIT
@@ -309,7 +309,7 @@ r_int
 id|dev
 )paren
 (brace
-multiline_comment|/* Reset FIFO pointers, disable intrs */
+multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
 id|OUTB
 (paren
 id|MIDI_RESET
@@ -389,7 +389,7 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* OK */
+multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Put to the local queue&n;   */
 r_if
 c_cond
@@ -401,7 +401,7 @@ l_int|256
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Local queue full */
+multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -557,6 +557,11 @@ id|MIDI_XMIT_EMPTY
 )paren
 suffix:semicolon
 )brace
+DECL|macro|MIDI_SYNTH_NAME
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;Gravis Ultrasound Midi&quot;
+DECL|macro|MIDI_SYNTH_CAPS
+mdefine_line|#define MIDI_SYNTH_CAPS&t;SYNTH_CAP_INPUT
+macro_line|#include &quot;midi_synth.h&quot;
 DECL|variable|gus_midi_operations
 r_static
 r_struct
@@ -565,7 +570,7 @@ id|gus_midi_operations
 op_assign
 (brace
 (brace
-l_string|&quot;Gravis UltraSound&quot;
+l_string|&quot;Gravis UltraSound Midi&quot;
 comma
 l_int|0
 comma
@@ -573,6 +578,9 @@ l_int|0
 comma
 id|SNDCARD_GUS
 )brace
+comma
+op_amp
+id|std_midi_synth
 comma
 id|gus_midi_open
 comma
@@ -590,8 +598,10 @@ id|gus_midi_kick
 comma
 l_int|NULL
 comma
-multiline_comment|/* command */
+multiline_comment|/*&n;&t;&t;&t;&t; * command&n;&t;&t;&t;&t; */
 id|gus_midi_buffer_status
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 r_int
@@ -602,6 +612,23 @@ r_int
 id|mem_start
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|num_midis
+op_ge
+id|MAX_MIDI_DEV
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 id|OUTB
 (paren
 id|MIDI_RESET
@@ -609,6 +636,8 @@ comma
 id|u_MidiControl
 )paren
 suffix:semicolon
+id|std_midi_synth.midi_dev
+op_assign
 id|my_dev
 op_assign
 id|num_midis
@@ -719,7 +748,7 @@ op_logical_neg
 id|qlen
 )paren
 (brace
-multiline_comment|/* Disable Midi output interrupts, since no data in the buffer */
+multiline_comment|/*&n;&t;   * Disable Midi output interrupts, since no data in the buffer&n;&t;   */
 id|gus_midi_control
 op_and_assign
 op_complement

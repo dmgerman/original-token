@@ -9,7 +9,11 @@ r_extern
 r_int
 id|sb_dsp_ok
 suffix:semicolon
-multiline_comment|/* Set to 1 after successful initialization */
+multiline_comment|/* Set to 1 atfer successful initialization */
+r_extern
+r_int
+id|sbc_base
+suffix:semicolon
 r_extern
 r_int
 id|sb_midi_mode
@@ -18,7 +22,7 @@ r_extern
 r_int
 id|sb_midi_busy
 suffix:semicolon
-multiline_comment|/* 1 if the process has output to MIDI */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t; * *  * * 1 if the process has output to MIDI&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; */
 r_extern
 r_int
 id|sb_dsp_busy
@@ -32,7 +36,6 @@ r_volatile
 r_int
 id|sb_irq_mode
 suffix:semicolon
-multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT&n;&n;&t;&t;&t;&t;&t; * or IMODE_NONE */
 r_extern
 r_int
 id|sb_duplex_midi
@@ -41,19 +44,18 @@ r_extern
 r_int
 id|sb_intr_active
 suffix:semicolon
-r_extern
-r_int
-id|sbc_base
-suffix:semicolon
 DECL|variable|input_opened
-r_static
 r_int
 id|input_opened
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|midi_input_intr
+DECL|variable|my_dev
 r_static
+r_int
+id|my_dev
+suffix:semicolon
+DECL|variable|midi_input_intr
 r_void
 (paren
 op_star
@@ -67,13 +69,6 @@ r_int
 r_char
 id|data
 )paren
-suffix:semicolon
-DECL|variable|my_dev
-r_static
-r_int
-id|my_dev
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -136,6 +131,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sb_midi_busy
+)paren
+r_return
+id|RET_ERROR
+(paren
+id|EBUSY
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|mode
 op_ne
 id|OPEN_WRITE
@@ -153,7 +159,7 @@ l_int|1
 )paren
 id|printk
 (paren
-l_string|&quot;SoundBlaster: MIDI input not supported with plain SB&bslash;n&quot;
+l_string|&quot;SoundBlaster: Midi input not currently supported&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -233,23 +239,6 @@ c_cond
 op_logical_neg
 id|sb_dsp_command
 (paren
-l_int|0xf2
-)paren
-)paren
-multiline_comment|/* This is undodumented, isn&squot;t it */
-r_return
-id|RET_ERROR
-(paren
-id|EIO
-)paren
-suffix:semicolon
-multiline_comment|/* be nice to DSP */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sb_dsp_command
-(paren
 l_int|0x35
 )paren
 )paren
@@ -259,7 +248,7 @@ id|RET_ERROR
 id|EIO
 )paren
 suffix:semicolon
-multiline_comment|/* Enter the UART mode */
+multiline_comment|/*&n;&t;&t;&t;&t; * Enter the UART mode&n;&t;&t;&t;&t; */
 id|sb_intr_active
 op_assign
 l_int|1
@@ -285,15 +274,11 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* IRQ not free */
+multiline_comment|/*&n;&t;&t;&t;&t; * IRQ not free&n;&t;&t;&t;&t; */
 )brace
 id|input_opened
 op_assign
 l_int|1
-suffix:semicolon
-id|my_dev
-op_assign
-id|dev
 suffix:semicolon
 id|midi_input_intr
 op_assign
@@ -329,7 +314,7 @@ id|sb_reset_dsp
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* The only way to kill the UART mode */
+multiline_comment|/*&n;&t;&t;&t;&t; * The only way to kill the UART mode&n;&t;&t;&t;&t; */
 id|sb_free_irq
 (paren
 )paren
@@ -365,11 +350,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|sb_midi_busy
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Kill all notes after close */
 r_if
 c_cond
 (paren
@@ -414,7 +394,7 @@ id|sb_dsp_command
 id|midi_byte
 )paren
 suffix:semicolon
-multiline_comment|/* UART write */
+multiline_comment|/*&n;&t;&t;&t;&t; * UART write&n;&t;&t;&t;&t; */
 r_return
 l_int|1
 suffix:semicolon
@@ -550,6 +530,11 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|macro|MIDI_SYNTH_NAME
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;SoundBlaster Midi&quot;
+DECL|macro|MIDI_SYNTH_CAPS
+mdefine_line|#define MIDI_SYNTH_CAPS&t;0
+macro_line|#include &quot;midi_synth.h&quot;
 DECL|variable|sb_midi_operations
 r_static
 r_struct
@@ -567,6 +552,9 @@ comma
 id|SNDCARD_SB
 )brace
 comma
+op_amp
+id|std_midi_synth
+comma
 id|sb_midi_open
 comma
 id|sb_midi_close
@@ -581,12 +569,14 @@ id|sb_midi_end_read
 comma
 l_int|NULL
 comma
-multiline_comment|/* Kick */
+multiline_comment|/*&n;&t;&t;&t;&t; * Kick&n;&t;&t;&t;&t; */
 l_int|NULL
 comma
-multiline_comment|/* command */
+multiline_comment|/*&n;&t;&t;&t;&t; * command&n;&t;&t;&t;&t; */
 l_int|NULL
-multiline_comment|/* buffer_status */
+comma
+multiline_comment|/*&n;&t;&t;&t;&t; * buffer_status&n;&t;&t;&t;&t; */
+l_int|NULL
 )brace
 suffix:semicolon
 r_void
@@ -597,6 +587,30 @@ r_int
 id|model
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|num_midis
+op_ge
+id|MAX_MIDI_DEV
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|std_midi_synth.midi_dev
+op_assign
+id|num_midis
+suffix:semicolon
+id|my_dev
+op_assign
+id|num_midis
+suffix:semicolon
 id|midi_devs
 (braket
 id|num_midis

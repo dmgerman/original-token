@@ -68,10 +68,16 @@ mdefine_line|#define ST2_CM&t;&t;0x40&t;&t;/* Control Mark = deleted */
 multiline_comment|/* Bits of FD_ST3 */
 DECL|macro|ST3_HA
 mdefine_line|#define ST3_HA&t;&t;0x04&t;&t;/* Head (Address) */
+DECL|macro|ST3_DS
+mdefine_line|#define ST3_DS&t;&t;0x08&t;&t;/* drive is double-sided */
 DECL|macro|ST3_TZ
 mdefine_line|#define ST3_TZ&t;&t;0x10&t;&t;/* Track Zero signal (1=track 0) */
+DECL|macro|ST3_RY
+mdefine_line|#define ST3_RY&t;&t;0x20&t;&t;/* drive is ready */
 DECL|macro|ST3_WP
 mdefine_line|#define ST3_WP&t;&t;0x40&t;&t;/* Write Protect */
+DECL|macro|ST3_FT
+mdefine_line|#define ST3_FT&t;&t;0x80&t;&t;/* Drive Fault */
 multiline_comment|/* Values for FD_COMMAND */
 DECL|macro|FD_RECALIBRATE
 mdefine_line|#define FD_RECALIBRATE&t;&t;0x07&t;/* move to track 0 */
@@ -93,6 +99,8 @@ DECL|macro|FD_CONFIGURE
 mdefine_line|#define FD_CONFIGURE&t;&t;0x13&t;/* configure FIFO operation */
 DECL|macro|FD_PERPENDICULAR
 mdefine_line|#define FD_PERPENDICULAR&t;0x12&t;/* perpendicular r/w mode */
+DECL|macro|FD_GETSTATUS
+mdefine_line|#define FD_GETSTATUS&t;&t;0x04&t;/* read ST3 */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46

@@ -283,6 +283,7 @@ DECL|macro|PAS_16D
 mdefine_line|#define PAS_16D&t;&t;4
 macro_line|#ifdef DEFINE_TRANSLATIONS
 DECL|variable|I_C_2_PCM_DMA_translate
+r_int
 r_char
 id|I_C_2_PCM_DMA_translate
 (braket
@@ -308,6 +309,7 @@ l_int|7
 )brace
 suffix:semicolon
 DECL|variable|I_C_3_PCM_IRQ_translate
+r_int
 r_char
 id|I_C_3_PCM_IRQ_translate
 (braket
@@ -349,6 +351,7 @@ l_int|11
 )brace
 suffix:semicolon
 DECL|variable|E_C_MPU401_IRQ_translate
+r_int
 r_char
 id|E_C_MPU401_IRQ_translate
 (braket
@@ -384,6 +387,7 @@ l_int|0x07
 )brace
 suffix:semicolon
 DECL|variable|E_C_SB_IRQ_translate
+r_int
 r_char
 id|E_C_SB_IRQ_translate
 (braket
@@ -423,6 +427,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|E_C_SB_DMA_translate
+r_int
 r_char
 id|E_C_SB_DMA_translate
 (braket
@@ -448,6 +453,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|O_M_1_to_card
+r_int
 r_char
 id|O_M_1_to_card
 (braket
@@ -490,6 +496,7 @@ l_int|3
 suffix:semicolon
 macro_line|#else
 r_extern
+r_int
 r_char
 id|I_C_2_PCM_DMA_translate
 (braket
@@ -497,6 +504,7 @@ id|I_C_2_PCM_DMA_translate
 suffix:semicolon
 multiline_comment|/* R W  PCM&t;&t;PCM DMA channel value translations&t;&t;*/
 r_extern
+r_int
 r_char
 id|I_C_3_PCM_IRQ_translate
 (braket
@@ -504,6 +512,7 @@ id|I_C_3_PCM_IRQ_translate
 suffix:semicolon
 multiline_comment|/* R W&t;PCM&t;&t;PCM IRQ level value translation&t;&t;&t;*/
 r_extern
+r_int
 r_char
 id|E_C_MPU401_IRQ_translate
 (braket
@@ -511,6 +520,7 @@ id|E_C_MPU401_IRQ_translate
 suffix:semicolon
 multiline_comment|/* R W&t;MIDI&t;&t;MPU401 emulation IRQ value translation&t;&t;*/
 r_extern
+r_int
 r_char
 id|E_C_SB_IRQ_translate
 (braket
@@ -518,6 +528,7 @@ id|E_C_SB_IRQ_translate
 suffix:semicolon
 multiline_comment|/* R W&t;PCM&t;&t;SB emulation IRQ translate&t;&t;&t;*/
 r_extern
+r_int
 r_char
 id|E_C_SB_DMA_translate
 (braket
@@ -525,6 +536,7 @@ id|E_C_SB_DMA_translate
 suffix:semicolon
 multiline_comment|/* R W&t;PCM&t;&t;SB emulation DMA translate&t;&t;&t;*/
 r_extern
+r_int
 r_char
 id|O_M_1_to_card
 (braket

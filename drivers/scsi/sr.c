@@ -3119,11 +3119,6 @@ id|request
 op_star
 id|req
 suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
 id|req
 op_assign
 op_amp

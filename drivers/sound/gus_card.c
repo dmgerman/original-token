@@ -18,6 +18,18 @@ id|gus_irq
 comma
 id|gus_dma
 suffix:semicolon
+r_extern
+r_int
+id|gus_wave_volume
+suffix:semicolon
+r_extern
+r_int
+id|gus_pcm_volume
+suffix:semicolon
+r_extern
+r_int
+id|have_gus_max
+suffix:semicolon
 r_int
 DECL|function|attach_gus_card
 id|attach_gus_card
@@ -49,7 +61,7 @@ id|gus_wave_detect
 id|hw_config-&gt;io_base
 )paren
 )paren
-multiline_comment|/* Try first the default */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Try first the default&n;&t;&t;&t;&t;&t;&t; */
 (brace
 id|mem_start
 op_assign
@@ -68,6 +80,15 @@ op_assign
 id|gus_midi_init
 (paren
 id|mem_start
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_SEQUENCER
+id|sound_timer_init
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|8
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -99,7 +120,7 @@ id|io_addr
 op_ne
 id|hw_config-&gt;io_base
 )paren
-multiline_comment|/* Already tested */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Already tested&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -138,6 +159,15 @@ id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef EXCLUDE_SEQUENCER
+id|sound_timer_init
+(paren
+id|io_addr
+op_plus
+l_int|8
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
@@ -146,7 +176,7 @@ macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
-multiline_comment|/* Not detected */
+multiline_comment|/*&n;&t;&t;&t;&t; * Not detected&n;&t;&t;&t;&t; */
 )brace
 r_int
 DECL|function|probe_gus
@@ -196,7 +226,7 @@ id|io_addr
 op_ne
 id|hw_config-&gt;io_base
 )paren
-multiline_comment|/* Already tested */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Already tested&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -218,7 +248,7 @@ DECL|function|gusintr
 id|gusintr
 (paren
 r_int
-id|unit
+id|irq
 )paren
 (brace
 r_int
@@ -228,6 +258,18 @@ suffix:semicolon
 macro_line|#ifdef linux
 id|sti
 (paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef EXCLUDE_GUSMAX
+r_if
+c_cond
+(paren
+id|have_gus_max
+)paren
+id|ad1848_interrupt
+(paren
+id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -297,11 +339,12 @@ id|GF1_TIMER2_IRQ
 )paren
 )paren
 (brace
-id|printk
+macro_line|#ifndef EXCLUDE_SEQUENCER
+id|sound_timer_interrupt
 (paren
-l_string|&quot;T&quot;
 )paren
 suffix:semicolon
+macro_line|#else
 id|gus_write8
 (paren
 l_int|0x45
@@ -309,7 +352,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Timer control */
+multiline_comment|/* Stop timers */
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -329,6 +373,64 @@ id|gus_voice_irq
 suffix:semicolon
 )brace
 )brace
+)brace
+macro_line|#endif
+multiline_comment|/*&n; * Some extra code for the 16 bit sampling option&n; */
+macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_GUS16)
+r_int
+DECL|function|probe_gus_db16
+id|probe_gus_db16
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_return
+id|ad1848_detect
+(paren
+id|hw_config-&gt;io_base
+)paren
+suffix:semicolon
+)brace
+r_int
+DECL|function|attach_gus_db16
+id|attach_gus_db16
+(paren
+r_int
+id|mem_start
+comma
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+id|gus_pcm_volume
+op_assign
+l_int|100
+suffix:semicolon
+id|gus_wave_volume
+op_assign
+l_int|90
+suffix:semicolon
+id|ad1848_init
+(paren
+l_string|&quot;GUS 16 bit sampling&quot;
+comma
+id|hw_config-&gt;io_base
+comma
+id|hw_config-&gt;irq
+comma
+id|hw_config-&gt;dma
+comma
+id|hw_config-&gt;dma
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

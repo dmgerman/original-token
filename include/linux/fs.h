@@ -2420,7 +2420,7 @@ r_int
 id|size
 comma
 r_int
-id|prot
+id|share
 )paren
 suffix:semicolon
 r_extern

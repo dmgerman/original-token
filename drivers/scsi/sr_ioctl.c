@@ -46,11 +46,6 @@ id|request
 op_star
 id|req
 suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
 id|req
 op_assign
 op_amp
@@ -72,7 +67,6 @@ l_int|NULL
 id|up
 c_func
 (paren
-op_amp
 id|req-&gt;sem
 )paren
 suffix:semicolon

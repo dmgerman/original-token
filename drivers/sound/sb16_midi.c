@@ -2,12 +2,13 @@ multiline_comment|/*&n; * sound/sb16_midi.c&n; *&n; * The low level driver for t
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#if !defined(EXCLUDE_SB) &amp;&amp; !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_MIDI)
+macro_line|#include &quot;sb.h&quot;
 DECL|macro|DATAPORT
-mdefine_line|#define&t;DATAPORT   (sb16midi_base)&t;/* MPU-401 Data I/O Port on IBM */
+mdefine_line|#define&t;DATAPORT   (sb16midi_base)
 DECL|macro|COMDPORT
-mdefine_line|#define&t;COMDPORT   (sb16midi_base+1)&t;/* MPU-401 Command Port on IBM */
+mdefine_line|#define&t;COMDPORT   (sb16midi_base+1)
 DECL|macro|STATPORT
-mdefine_line|#define&t;STATPORT   (sb16midi_base+1)&t;/* MPU-401 Status Port on IBM */
+mdefine_line|#define&t;STATPORT   (sb16midi_base+1)
 DECL|macro|sb16midi_status
 mdefine_line|#define sb16midi_status()&t;&t;INB(STATPORT)
 DECL|macro|input_avail
@@ -21,15 +22,15 @@ mdefine_line|#define sb16midi_read()&t;&t;INB(DATAPORT)
 DECL|macro|sb16midi_write
 mdefine_line|#define sb16midi_write(byte)&t;OUTB(byte, DATAPORT)
 DECL|macro|OUTPUT_READY
-mdefine_line|#define&t;OUTPUT_READY&t;0x40&t;/* Mask for Data Read Redy Bit */
+mdefine_line|#define&t;OUTPUT_READY&t;0x40
 DECL|macro|INPUT_AVAIL
-mdefine_line|#define&t;INPUT_AVAIL&t;0x80&t;/* Mask for Data Send Ready Bit */
+mdefine_line|#define&t;INPUT_AVAIL&t;0x80
 DECL|macro|MPU_ACK
-mdefine_line|#define&t;MPU_ACK&t;&t;0xFE&t;/* MPU-401 Acknowledge Response */
+mdefine_line|#define&t;MPU_ACK&t;&t;0xFE
 DECL|macro|MPU_RESET
-mdefine_line|#define&t;MPU_RESET&t;0xFF&t;/* MPU-401 Total Reset Command */
+mdefine_line|#define&t;MPU_RESET&t;0xFF
 DECL|macro|UART_MODE_ON
-mdefine_line|#define&t;UART_MODE_ON&t;0x3F&t;/* MPU-401 &quot;Dumb UART Mode&quot; */
+mdefine_line|#define&t;UART_MODE_ON&t;0x3F
 DECL|variable|sb16midi_opened
 r_static
 r_int
@@ -56,6 +57,10 @@ r_static
 r_int
 id|my_dev
 suffix:semicolon
+r_extern
+r_int
+id|sbc_base
+suffix:semicolon
 r_static
 r_int
 id|reset_sb16midi
@@ -78,10 +83,6 @@ r_int
 r_char
 id|data
 )paren
-suffix:semicolon
-r_extern
-r_int
-id|sbc_major
 suffix:semicolon
 r_static
 r_void
@@ -285,7 +286,7 @@ id|timeout
 op_decrement
 )paren
 suffix:semicolon
-multiline_comment|/* Wait */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -309,23 +310,6 @@ id|sb16midi_write
 id|midi_byte
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|sb16midi_command
-id|sb16midi_command
-(paren
-r_int
-id|dev
-comma
-r_int
-r_char
-id|midi_byte
-)paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
@@ -400,8 +384,13 @@ id|dev
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* No data in buffers */
+multiline_comment|/*&n;&t;&t;&t;&t; * No data in buffers&n;&t;&t;&t;&t; */
 )brace
+DECL|macro|MIDI_SYNTH_NAME
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;SoundBlaster 16 Midi&quot;
+DECL|macro|MIDI_SYNTH_CAPS
+mdefine_line|#define MIDI_SYNTH_CAPS&t;SYNTH_CAP_INPUT
+macro_line|#include &quot;midi_synth.h&quot;
 DECL|variable|sb16midi_operations
 r_static
 r_struct
@@ -410,7 +399,7 @@ id|sb16midi_operations
 op_assign
 (brace
 (brace
-l_string|&quot;SoundBlaster MPU-401&quot;
+l_string|&quot;SoundBlaster 16 Midi&quot;
 comma
 l_int|0
 comma
@@ -418,6 +407,9 @@ l_int|0
 comma
 id|SNDCARD_SB16MIDI
 )brace
+comma
+op_amp
+id|std_midi_synth
 comma
 id|sb16midi_open
 comma
@@ -433,9 +425,11 @@ id|sb16midi_end_read
 comma
 id|sb16midi_kick
 comma
-id|sb16midi_command
+l_int|NULL
 comma
 id|sb16midi_buffer_status
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 r_int
@@ -501,7 +495,7 @@ id|timeout
 op_decrement
 )paren
 suffix:semicolon
-multiline_comment|/* Wait */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|sb16midi_cmd
 (paren
 id|UART_MODE_ON
@@ -553,11 +547,30 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_midis
+op_ge
+id|MAX_MIDI_DEV
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
 id|printk
 (paren
 l_string|&quot; &lt;SoundBlaster MPU-401&gt;&quot;
 )paren
 suffix:semicolon
+id|std_midi_synth.midi_dev
+op_assign
 id|my_dev
 op_assign
 id|num_midis
@@ -642,13 +655,13 @@ id|timeout
 op_decrement
 )paren
 suffix:semicolon
-multiline_comment|/* Wait */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|sb16midi_cmd
 (paren
 id|MPU_RESET
 )paren
 suffix:semicolon
-multiline_comment|/* Send MPU-401 RESET Command */
+multiline_comment|/*&n;&t;&t;&t;&t; * Send MPU-401 RESET Command&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;       * Wait at least 25 msec. This method is not accurate so let&squot;s make the&n;       * loop bit longer. Cannot sleep since this is called during boot.&n;       */
 r_for
 c_loop
@@ -701,7 +714,7 @@ id|sb16midi_input_loop
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Flush input before enabling interrupts */
+multiline_comment|/*&n;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t; */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -726,9 +739,12 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
-id|sb16midi_base
-op_assign
-id|hw_config-&gt;io_base
+r_int
+id|i
+suffix:semicolon
+r_extern
+r_int
+id|sbc_major
 suffix:semicolon
 r_if
 c_cond
@@ -740,7 +756,11 @@ l_int|4
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* SB16 not detected */
+multiline_comment|/* Not a SB16 */
+id|sb16midi_base
+op_assign
+id|hw_config-&gt;io_base
+suffix:semicolon
 r_if
 c_cond
 (paren

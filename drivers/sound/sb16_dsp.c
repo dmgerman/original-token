@@ -3,7 +3,7 @@ DECL|macro|DEB
 mdefine_line|#define DEB(x)
 DECL|macro|DEB1
 mdefine_line|#define DEB1(x)
-multiline_comment|/*&n;   #define DEB_DMARES&n; */
+multiline_comment|/*&n; * #define DEB_DMARES&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
@@ -11,10 +11,6 @@ macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB16) &a
 r_extern
 r_int
 id|sbc_base
-comma
-id|sbc_minor
-comma
-id|sbc_major
 suffix:semicolon
 DECL|variable|sb16_dsp_ok
 r_static
@@ -23,7 +19,7 @@ id|sb16_dsp_ok
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set to 1 after successful initialization */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t; * *  * * Set to 1 after successful *&n;&t;&t;&t;&t;&t; * * initialization   */
 DECL|variable|dsp_16bit
 r_static
 r_int
@@ -45,7 +41,7 @@ id|dsp_current_speed
 op_assign
 l_int|8000
 suffix:semicolon
-multiline_comment|/*DSP_DEFAULT_SPEED; */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;&t; * *  * * DSP_DEFAULT_SPEED;  */
 DECL|variable|dsp_busy
 r_static
 r_int
@@ -76,7 +72,7 @@ id|irq_mode
 op_assign
 id|IMODE_NONE
 suffix:semicolon
-multiline_comment|/* IMODE_INPUT, IMODE_OUTPUT or&n;&n;&t;&t;&t;&t;&t;   IMODE_NONE */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t; * *  * * IMODE_INPUT, IMODE_OUTPUT&n;&t;&t;&t;&t;&t; * or * * IMODE_NONE   */
 DECL|variable|my_dev
 r_static
 r_int
@@ -252,7 +248,13 @@ op_assign
 (brace
 l_string|&quot;SoundBlaster 16&quot;
 comma
-id|NOTHING_SPECIAL
+id|DMA_AUTOMODE
+comma
+id|AFMT_U8
+op_or
+id|AFMT_S16_LE
+comma
+l_int|NULL
 comma
 id|sb16_dsp_open
 comma
@@ -329,169 +331,6 @@ id|val
 )paren
 suffix:semicolon
 )brace
-r_static
-r_int
-DECL|function|wait_data_avail
-id|wait_data_avail
-(paren
-r_int
-r_int
-id|t
-)paren
-(brace
-r_int
-id|loopc
-op_assign
-l_int|5000000
-suffix:semicolon
-id|t
-op_add_assign
-id|GET_TIME
-(paren
-)paren
-suffix:semicolon
-r_do
-(brace
-r_if
-c_cond
-(paren
-id|INB
-(paren
-id|DSP_DATA_AVAIL
-)paren
-op_amp
-l_int|0x80
-)paren
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_decrement
-id|loopc
-op_logical_and
-id|GET_TIME
-(paren
-)paren
-OL
-id|t
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;!data_avail l=%d&bslash;n&quot;
-comma
-id|loopc
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|read_dsp
-id|read_dsp
-(paren
-r_int
-id|t
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|wait_data_avail
-(paren
-(paren
-r_int
-r_int
-)paren
-id|t
-)paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_else
-r_return
-id|INB
-(paren
-id|DSP_READ
-)paren
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|dsp_ini2
-id|dsp_ini2
-(paren
-r_void
-)paren
-(brace
-macro_line|#if 0
-multiline_comment|/* sb_setmixer(0x83, sb_getmixer(0x83) | 0x03);       */
-id|sb_dsp_command
-(paren
-l_int|0xe2
-)paren
-suffix:semicolon
-id|sb_dsp_command
-(paren
-l_int|0x76
-)paren
-suffix:semicolon
-multiline_comment|/* E0 ??? */
-id|sb_dsp_command
-(paren
-l_int|0xe2
-)paren
-suffix:semicolon
-id|sb_dsp_command
-(paren
-l_int|0x30
-)paren
-suffix:semicolon
-multiline_comment|/* A0 ??? */
-id|sb_dsp_command
-(paren
-l_int|0xe4
-)paren
-suffix:semicolon
-id|sb_dsp_command
-(paren
-l_int|0xaa
-)paren
-suffix:semicolon
-id|sb_dsp_command
-(paren
-l_int|0xe8
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|read_dsp
-(paren
-l_int|100
-)paren
-op_ne
-l_int|0xaa
-)paren
-id|printk
-(paren
-l_string|&quot;Error dsp_ini2&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;   static char *dsp_getmessage(unsigned char command,int maxn)&n;   {&n;   static char buff[100];&n;   int n=0;&n;&n;   sb_dsp_command(command);&n;   while(n&lt;maxn &amp;&amp; wait_data_avail(2L)) {&n;   buff[++n]=INB(DSP_READ);&n;   if(!buff[n])&n;   break;&n;   }&n;   buff[0]=n;&n;   return buff;&n;   }&n;&n;   static void dsp_showmessage(unsigned char command,int len)&n;   {&n;   int n;&n;   unsigned char *c;&n;   c=dsp_getmessage(command,len);&n;   printk(&quot;DSP C=%x l=%d,lr=%d b=&quot;,command,len,c[0]);&n;   for(n=1;n&lt;=c[0];n++)&n;   if(c[n]&gt;=&squot; &squot; &amp; c[n]&lt;=&squot;z&squot;)&n;   printk(&quot;%c&quot;,c[n]);&n;   else&n;   printk(&quot;|%x|&quot;,c[n]);&n;   printk(&quot;&bslash;n&quot;);&n;   }&n; */
 r_static
 r_int
 DECL|function|dsp_set_speed
@@ -625,11 +464,9 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-r_return
-id|RET_ERROR
-(paren
-id|EINVAL
-)paren
+id|dsp_16bit
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -802,7 +639,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_case
-id|SNDCTL_DSP_SAMPLESIZE
+id|SNDCTL_DSP_SETFMT
 suffix:colon
 r_if
 c_cond
@@ -861,7 +698,7 @@ suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_FILTER
 suffix:colon
-multiline_comment|/* NOT YET IMPLEMENTED */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * NOT YET IMPLEMENTED&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -968,6 +805,10 @@ l_int|0
 r_return
 id|retval
 suffix:semicolon
+id|sb_reset_dsp
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1034,10 +875,6 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
-id|dsp_ini2
-(paren
-)paren
-suffix:semicolon
 id|irq_mode
 op_assign
 id|IMODE_NONE
@@ -1188,10 +1025,12 @@ id|pos
 comma
 id|chan
 op_assign
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 suffix:semicolon
 id|DISABLE_INTR
 (paren
@@ -1239,10 +1078,14 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|sound_dma_automode
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|DMA_AUTOMODE
 op_logical_and
 id|intrflag
 op_logical_and
@@ -1261,7 +1104,7 @@ l_int|1
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* Auto mode on. No need to react */
+multiline_comment|/*&n;&t;&t;&t;&t; * Auto mode on. No need to react&n;&t;&t;&t;&t; */
 )brace
 id|DISABLE_INTR
 (paren
@@ -1395,12 +1238,6 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* sb_dsp_command (0);&n;     sb_dsp_command (0); */
-id|RESTORE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|dsp_count
 op_assign
 id|cnt
@@ -1412,6 +1249,11 @@ suffix:semicolon
 id|intr_active
 op_assign
 l_int|1
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -1481,10 +1323,12 @@ id|pos
 comma
 id|chan
 op_assign
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 suffix:semicolon
 id|DISABLE_INTR
 (paren
@@ -1532,10 +1376,14 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|sound_dma_automode
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|DMA_AUTOMODE
 op_logical_and
 id|intrflag
 op_logical_and
@@ -1554,7 +1402,7 @@ l_int|1
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* Auto mode on. No need to react */
+multiline_comment|/*&n;&t;&t;&t;&t; * Auto mode on. No need to react&n;&t;&t;&t;&t; */
 )brace
 id|DISABLE_INTR
 (paren
@@ -1567,9 +1415,8 @@ c_cond
 id|dma_restart
 )paren
 (brace
-id|sb16_dsp_halt
+id|sb_reset_dsp
 (paren
-id|dev
 )paren
 suffix:semicolon
 id|DMAbuf_start_dma
@@ -1688,12 +1535,6 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* sb_dsp_command (0);&n;     sb_dsp_command (0); */
-id|RESTORE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|dsp_count
 op_assign
 id|cnt
@@ -1705,6 +1546,11 @@ suffix:semicolon
 id|intr_active
 op_assign
 l_int|1
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -1722,10 +1568,12 @@ r_int
 id|bcount
 )paren
 (brace
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|my_dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 op_assign
 id|dsp_16bit
 ques
@@ -1761,10 +1609,12 @@ r_int
 id|bcount
 )paren
 (brace
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|my_dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 op_assign
 id|dsp_16bit
 ques
@@ -1911,6 +1761,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_int|9
+suffix:colon
+id|ival
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|10
 suffix:colon
 id|ival
@@ -1952,6 +1811,12 @@ op_star
 id|hw_config
 )paren
 (brace
+r_extern
+r_int
+id|sbc_major
+comma
+id|sbc_minor
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1962,6 +1827,7 @@ l_int|4
 r_return
 id|mem_start
 suffix:semicolon
+multiline_comment|/* Not a SB16 */
 macro_line|#ifndef SCO
 id|sprintf
 (paren
@@ -1985,49 +1851,48 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_dspdevs
+id|num_audiodevs
 OL
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )paren
 (brace
-id|dsp_devs
+id|audio_devs
 (braket
 id|my_dev
 op_assign
-id|num_dspdevs
+id|num_audiodevs
 op_increment
 )braket
 op_assign
 op_amp
 id|sb16_dsp_operations
 suffix:semicolon
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|my_dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 op_assign
 id|hw_config-&gt;dma
 suffix:semicolon
-id|sound_buffcounts
+id|audio_devs
 (braket
 id|my_dev
 )braket
+op_member_access_from_pointer
+id|buffcount
 op_assign
 l_int|1
 suffix:semicolon
-id|sound_buffsizes
+id|audio_devs
 (braket
 id|my_dev
 )braket
+op_member_access_from_pointer
+id|buffsize
 op_assign
 id|DSP_BUFFSIZE
-suffix:semicolon
-id|sound_dma_automode
-(braket
-id|my_dev
-)braket
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -2059,6 +1924,10 @@ id|address_info
 op_star
 id|sb_config
 suffix:semicolon
+r_extern
+r_int
+id|sbc_major
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2067,7 +1936,7 @@ id|sb16_dsp_ok
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* Already initialized */
+multiline_comment|/* Can&squot;t drive two cards */
 r_if
 c_cond
 (paren
@@ -2091,7 +1960,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* sb_setmixer(OPSW,0xf);&n;     if(sb_getmixer(OPSW)!=0xf)&n;     return 0; */
+multiline_comment|/*&n;   * sb_setmixer(OPSW,0xf); if(sb_getmixer(OPSW)!=0xf) return 0;&n;   */
 r_if
 c_cond
 (paren
@@ -2103,6 +1972,18 @@ id|sb_reset_dsp
 r_return
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sbc_major
+OL
+l_int|4
+)paren
+multiline_comment|/* Set by the plain SB driver */
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Not a SB16 */
 r_if
 c_cond
 (paren
@@ -2173,7 +2054,7 @@ id|hw_config-&gt;dma
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   dsp_showmessage(0xe3,99);&n; */
+multiline_comment|/*&n; * dsp_showmessage(0xe3,99);&n; */
 id|sb16_dsp_ok
 op_assign
 l_int|1
@@ -2200,7 +2081,7 @@ id|INB
 id|DSP_DATA_AVL16
 )paren
 suffix:semicolon
-multiline_comment|/* Interrupt acknowledge */
+multiline_comment|/*&n;&t;&t;&t;&t; * Interrupt acknowledge&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

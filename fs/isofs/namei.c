@@ -34,11 +34,6 @@ id|dlen
 r_register
 r_int
 id|same
-id|__asm__
-c_func
-(paren
-l_string|&quot;ax&quot;
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -164,6 +159,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;

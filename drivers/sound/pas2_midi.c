@@ -134,7 +134,7 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reset input and output FIFO pointers */
+multiline_comment|/*&n;   * Reset input and output FIFO pointers&n;   */
 id|pas_write
 (paren
 id|M_C_RESET_INPUT_FIFO
@@ -166,7 +166,7 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-multiline_comment|/* Enable input available and output FIFO empty interrupts */
+multiline_comment|/*&n;   * Enable input available and output FIFO empty interrupts&n;   */
 id|ctrl
 op_assign
 l_int|0
@@ -195,7 +195,7 @@ id|ctrl
 op_or_assign
 id|M_C_ENA_INPUT_IRQ
 suffix:semicolon
-multiline_comment|/* Enable input */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable input&n;&t;&t;&t;&t;&t; */
 id|input_opened
 op_assign
 l_int|1
@@ -217,7 +217,7 @@ id|ctrl
 op_or_assign
 id|M_C_ENA_OUTPUT_IRQ
 op_or
-multiline_comment|/* Enable output */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable output&n;&t;&t;&t;&t;&t; */
 id|M_C_ENA_OUTPUT_HALF_IRQ
 suffix:semicolon
 )brace
@@ -228,7 +228,7 @@ comma
 id|MIDI_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* Acknowledge any pending interrupts */
+multiline_comment|/*&n;   * Acknowledge any pending interrupts&n;   */
 id|pas_write
 (paren
 l_int|0xff
@@ -270,7 +270,7 @@ r_int
 id|dev
 )paren
 (brace
-multiline_comment|/* Reset FIFO pointers, disable intrs */
+multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
 id|pas_write
 (paren
 id|M_C_RESET_INPUT_FIFO
@@ -335,12 +335,12 @@ template_param
 l_int|13
 )paren
 )paren
-multiline_comment|/* Fifo full */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Fifo&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * full&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Upper layer will call again */
+multiline_comment|/*&n;&t;&t;&t;&t; * Upper layer will call again&n;&t;&t;&t;&t; */
 )brace
 id|ofifo_bytes
 op_increment
@@ -423,7 +423,7 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* OK */
+multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Put to the local queue&n;   */
 r_if
 c_cond
@@ -435,7 +435,7 @@ l_int|256
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Local queue full */
+multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -539,6 +539,11 @@ op_logical_neg
 id|qlen
 suffix:semicolon
 )brace
+DECL|macro|MIDI_SYNTH_NAME
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;Pro Audio Spectrum Midi&quot;
+DECL|macro|MIDI_SYNTH_CAPS
+mdefine_line|#define MIDI_SYNTH_CAPS&t;SYNTH_CAP_INPUT
+macro_line|#include &quot;midi_synth.h&quot;
 DECL|variable|pas_midi_operations
 r_static
 r_struct
@@ -556,6 +561,9 @@ comma
 id|SNDCARD_PAS
 )brace
 comma
+op_amp
+id|std_midi_synth
+comma
 id|pas_midi_open
 comma
 id|pas_midi_close
@@ -572,8 +580,10 @@ id|pas_midi_kick
 comma
 l_int|NULL
 comma
-multiline_comment|/* command */
+multiline_comment|/*&n;&t;&t;&t;&t; * command&n;&t;&t;&t;&t; */
 id|pas_buffer_status
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 r_int
@@ -584,6 +594,25 @@ r_int
 id|mem_start
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|num_midis
+op_ge
+id|MAX_MIDI_DEV
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+id|std_midi_synth.midi_dev
+op_assign
 id|my_dev
 op_assign
 id|num_midis
@@ -635,7 +664,7 @@ id|stat
 op_amp
 id|M_S_INPUT_AVAIL
 )paren
-multiline_comment|/* Input byte available */
+multiline_comment|/*&n;&t;&t;&t;&t; * Input byte available&n;&t;&t;&t;&t; */
 (brace
 id|incount
 op_assign
@@ -646,7 +675,7 @@ id|MIDI_FIFO_STATUS
 op_amp
 l_int|0x0f
 suffix:semicolon
-multiline_comment|/* Input FIFO count */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Input FIFO count&n;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -694,7 +723,7 @@ id|pas_read
 id|MIDI_DATA
 )paren
 suffix:semicolon
-multiline_comment|/* Flush */
+multiline_comment|/*&n;&t;&t;&t;&t; * Flush&n;&t;&t;&t;&t; */
 )brace
 r_if
 c_cond
@@ -809,7 +838,7 @@ comma
 id|MIDI_STATUS
 )paren
 suffix:semicolon
-multiline_comment|/* Acknowledge interrupts */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Acknowledge interrupts&n;&t;&t;&t;&t;&t; */
 )brace
 macro_line|#endif
 macro_line|#endif

@@ -5434,7 +5434,7 @@ r_int
 id|size
 comma
 r_int
-id|prot
+id|share
 )paren
 (brace
 r_struct
@@ -5457,12 +5457,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|prot
-op_amp
-id|PAGE_RW
-)paren
+id|share
 )paren
 (brace
 id|where

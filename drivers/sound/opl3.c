@@ -1,13 +1,13 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
-multiline_comment|/* Major improvements to the FM handling 30AUG92 by Rob Hooft, */
-multiline_comment|/* hooft@chem.ruu.nl */
+multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
+multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_YM3812)
 macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
 DECL|macro|OFFS_4OP
-mdefine_line|#define OFFS_4OP&t;11&t;/* Definitions for the operators OP3 and OP4&n;&t;&t;&t;&t;   * begin here */
+mdefine_line|#define OFFS_4OP&t;11&t;/*&n;&t;&t;&t;&t;   * * * Definitions for the operators OP3 and&n;&t;&t;&t;&t;   * * OP4 * * begin here   */
 DECL|variable|opl3_enabled
 r_static
 r_int
@@ -127,6 +127,20 @@ id|voices
 id|MAX_VOICE
 )braket
 suffix:semicolon
+DECL|variable|voice_alloc
+r_static
+r_struct
+id|voice_alloc_info
+op_star
+id|voice_alloc
+suffix:semicolon
+DECL|variable|chn_info
+r_static
+r_struct
+id|channel_info
+op_star
+id|chn_info
+suffix:semicolon
 DECL|variable|instrmap
 r_static
 r_struct
@@ -155,7 +169,7 @@ id|synth_info
 id|fm_info
 op_assign
 (brace
-l_string|&quot;AdLib&quot;
+l_string|&quot;OPL-2&quot;
 comma
 l_int|0
 comma
@@ -202,7 +216,7 @@ id|fm_model
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* 0=no fm, 1=mono, 2=SB Pro 1, 3=SB Pro 2       */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t; * *  * * 0=no fm, 1=mono, 2=SB Pro 1, 3=SB&n;&t;&t;&t;&t; * Pro 2 * *    */
 r_static
 r_int
 id|store_instr
@@ -257,6 +271,9 @@ id|dev
 comma
 r_int
 id|voice
+comma
+r_int
+id|note
 comma
 r_int
 id|velocity
@@ -364,6 +381,7 @@ id|connection_mask
 op_assign
 l_int|0x3f
 suffix:semicolon
+multiline_comment|/* Connect all possible 4 OP voices */
 id|opl3_command
 (paren
 id|right_address
@@ -373,7 +391,6 @@ comma
 l_int|0x3f
 )paren
 suffix:semicolon
-multiline_comment|/* Select all 4-OP&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * voices */
 r_for
 c_loop
 (paren
@@ -490,6 +507,8 @@ id|voices_4op
 id|i
 )braket
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 l_int|12
@@ -704,7 +723,7 @@ id|already_initialized
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Do avoid duplicate initializations */
+multiline_comment|/*&n;&t;&t;&t;&t; * Do avoid duplicate initializations&n;&t;&t;&t;&t; */
 )brace
 r_if
 c_cond
@@ -726,7 +745,7 @@ op_or
 id|TIMER2_MASK
 )paren
 suffix:semicolon
-multiline_comment|/* Reset timers 1 and 2 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Reset&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * timers&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * and&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 2&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|ioaddr
@@ -736,7 +755,7 @@ comma
 id|IRQ_RESET
 )paren
 suffix:semicolon
-multiline_comment|/* Reset the IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * chicp */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Reset the&n;&t;&t;&t;&t;&t;&t;&t;&t; * IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * * chicp&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|stat1
 op_assign
 id|INB
@@ -744,7 +763,7 @@ id|INB
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* Read status register */
+multiline_comment|/*&n;&t;&t;&t;&t; * Read status register&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -760,7 +779,7 @@ l_int|0x00
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Should be 0x00        */
+multiline_comment|/*&n;&t;&t;&t;&t; * Should be 0x00&n;&t;&t;&t;&t; */
 )brace
 id|opl3_command
 (paren
@@ -771,7 +790,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* Set timer 1 to 0xff */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Set timer 1 to&n;&t;&t;&t;&t;&t;&t;&t; * 0xff&n;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|ioaddr
@@ -783,7 +802,7 @@ op_or
 id|TIMER1_START
 )paren
 suffix:semicolon
-multiline_comment|/* Unmask and start timer 1 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Unmask and start timer 1&n;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Now we have to delay at least 80 msec&n;   */
 r_for
 c_loop
@@ -803,7 +822,7 @@ id|tenmicrosec
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* To be sure */
+multiline_comment|/*&n;&t;&t;&t;&t; * To be sure&n;&t;&t;&t;&t; */
 id|stat2
 op_assign
 id|INB
@@ -811,8 +830,8 @@ id|INB
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* Read status after timers have expired */
-multiline_comment|/* Stop the timers */
+multiline_comment|/*&n;&t;&t;&t;&t; * Read status after timers have expired&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;   * Stop the timers&n;   */
 id|opl3_command
 (paren
 id|ioaddr
@@ -824,7 +843,7 @@ op_or
 id|TIMER2_MASK
 )paren
 suffix:semicolon
-multiline_comment|/* Reset timers 1 and 2 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Reset&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * timers&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * and&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 2&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|ioaddr
@@ -834,7 +853,7 @@ comma
 id|IRQ_RESET
 )paren
 suffix:semicolon
-multiline_comment|/* Reset the IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * chicp */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Reset the&n;&t;&t;&t;&t;&t;&t;&t;&t; * IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * * chicp&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -850,9 +869,9 @@ l_int|0xc0
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* There is no YM3812 */
+multiline_comment|/*&n;&t;&t;&t;&t; * There is no YM3812&n;&t;&t;&t;&t; */
 )brace
-multiline_comment|/* There is a FM chicp in this address. Now set some default values. */
+multiline_comment|/*&n;   * There is a FM chicp in this address. Now set some default values.&n;   */
 r_for
 c_loop
 (paren
@@ -878,7 +897,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Note off */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Note off&n;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|ioaddr
@@ -897,7 +916,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/* Melodic mode. */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Melodic mode.&n;&t;&t;&t;&t;&t;&t;&t; */
 r_return
 l_int|1
 suffix:semicolon
@@ -912,6 +931,9 @@ id|dev
 comma
 r_int
 id|voice
+comma
+r_int
+id|note
 comma
 r_int
 id|velocity
@@ -934,6 +956,13 @@ op_ge
 id|nr_voices
 )paren
 r_return
+l_int|0
+suffix:semicolon
+id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
 l_int|0
 suffix:semicolon
 id|map
@@ -1013,7 +1042,7 @@ id|bender_range
 op_assign
 l_int|200
 suffix:semicolon
-multiline_comment|/* 200 cents = 2 semitones */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * 200 cents = 2 semitones&n;&t;&t;&t;&t;&t; */
 id|voices
 (braket
 id|voice
@@ -1218,7 +1247,7 @@ comma
 op_minus
 l_int|26
 comma
-multiline_comment|/* 0 -   7 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * 0 -   7&n;&t;&t;&t;&t;&t;&t; */
 op_minus
 l_int|24
 comma
@@ -1243,7 +1272,7 @@ comma
 op_minus
 l_int|17
 comma
-multiline_comment|/* 8 -  15 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * 8 -  15&n;&t;&t;&t;&t;&t;&t; */
 op_minus
 l_int|16
 comma
@@ -1268,7 +1297,7 @@ comma
 op_minus
 l_int|12
 comma
-multiline_comment|/* 16 -  23 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * 16 -  23&n;&t;&t;&t;&t;&t;&t; */
 op_minus
 l_int|11
 comma
@@ -1293,7 +1322,7 @@ comma
 op_minus
 l_int|8
 comma
-multiline_comment|/* 24 -  31 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * 24 -  31&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|8
 comma
@@ -1318,7 +1347,7 @@ comma
 op_minus
 l_int|6
 comma
-multiline_comment|/* 32 -  39 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * 32 -  39&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|5
 comma
@@ -1343,7 +1372,7 @@ comma
 op_minus
 l_int|4
 comma
-multiline_comment|/* 40 -  47 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * 40 -  47&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|3
 comma
@@ -1368,7 +1397,7 @@ comma
 op_minus
 l_int|2
 comma
-multiline_comment|/* 48 -  55 */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * 48 -  55&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|2
 comma
@@ -1390,7 +1419,7 @@ l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* 56 -  63 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 56 -  63&n;&t;&t;&t;&t; */
 l_int|0
 comma
 l_int|0
@@ -1407,7 +1436,7 @@ l_int|1
 comma
 l_int|1
 comma
-multiline_comment|/* 64 -  71 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 64 -  71&n;&t;&t;&t;&t; */
 l_int|1
 comma
 l_int|2
@@ -1424,7 +1453,7 @@ l_int|2
 comma
 l_int|2
 comma
-multiline_comment|/* 72 -  79 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 72 -  79&n;&t;&t;&t;&t; */
 l_int|3
 comma
 l_int|3
@@ -1441,7 +1470,7 @@ l_int|3
 comma
 l_int|4
 comma
-multiline_comment|/* 80 -  87 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 80 -  87&n;&t;&t;&t;&t; */
 l_int|4
 comma
 l_int|4
@@ -1458,7 +1487,7 @@ l_int|4
 comma
 l_int|5
 comma
-multiline_comment|/* 88 -  95 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 88 -  95&n;&t;&t;&t;&t; */
 l_int|5
 comma
 l_int|5
@@ -1475,7 +1504,7 @@ l_int|5
 comma
 l_int|5
 comma
-multiline_comment|/* 96 - 103 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 96 - 103&n;&t;&t;&t;&t; */
 l_int|6
 comma
 l_int|6
@@ -1492,7 +1521,7 @@ l_int|6
 comma
 l_int|6
 comma
-multiline_comment|/* 104 - 111 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 104 - 111&n;&t;&t;&t;&t; */
 l_int|6
 comma
 l_int|7
@@ -1509,7 +1538,7 @@ l_int|7
 comma
 l_int|7
 comma
-multiline_comment|/* 112 - 119 */
+multiline_comment|/*&n;&t;&t;&t;&t; * 112 - 119&n;&t;&t;&t;&t; */
 l_int|7
 comma
 l_int|7
@@ -1527,7 +1556,7 @@ comma
 l_int|8
 )brace
 suffix:semicolon
-multiline_comment|/* 120 - 127 */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t; * *  * * 120 - 127   */
 r_static
 r_void
 DECL|function|calc_vol
@@ -1718,7 +1747,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/* 2 OP voice */
+multiline_comment|/*&n;&t;&t;&t;&t; * 2 OP voice&n;&t;&t;&t;&t; */
 id|vol1
 op_assign
 id|instr-&gt;operators
@@ -1746,7 +1775,7 @@ l_int|0x01
 )paren
 )paren
 (brace
-multiline_comment|/* Additive synthesis    */
+multiline_comment|/*&n;&t;&t;&t;&t; * Additive synthesis&n;&t;&t;&t;&t; */
 id|calc_vol
 (paren
 op_amp
@@ -1766,7 +1795,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* FM synthesis */
+multiline_comment|/*&n;&t;&t;&t;&t; * FM synthesis&n;&t;&t;&t;&t; */
 id|calc_vol
 (paren
 op_amp
@@ -1790,7 +1819,7 @@ comma
 id|vol1
 )paren
 suffix:semicolon
-multiline_comment|/* Modulator volume */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -1805,11 +1834,11 @@ comma
 id|vol2
 )paren
 suffix:semicolon
-multiline_comment|/* Carrier volume */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
-multiline_comment|/* 4 OP voice */
+multiline_comment|/*&n;&t;&t;&t;&t; * 4 OP voice&n;&t;&t;&t;&t; */
 r_int
 id|connection
 suffix:semicolon
@@ -1889,7 +1918,7 @@ comma
 id|volume
 )paren
 suffix:semicolon
-multiline_comment|/* Just the OP 4 is carrier */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Just the OP 4 is carrier&n;&t;&t;&t;&t;&t; */
 r_break
 suffix:semicolon
 r_case
@@ -1965,7 +1994,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* Why ?? */
+multiline_comment|/*&n;&t;&t;&t;&t; * Why ??&n;&t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;&t;&t;&t; */
 suffix:semicolon
 )brace
 id|opl3_command
@@ -2111,7 +2140,7 @@ id|note
 op_eq
 l_int|255
 )paren
-multiline_comment|/* Just change the volume */
+multiline_comment|/*&n;&t;&t;&t;&t; * Just change the volume&n;&t;&t;&t;&t; */
 (brace
 id|set_voice_volume
 (paren
@@ -2124,7 +2153,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Kill previous note before playing */
+multiline_comment|/*&n;   * Kill previous note before playing&n;   */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2139,7 +2168,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* Carrier volume to min */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t; * min&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2154,7 +2183,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* Modulator volume to */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2203,7 +2232,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/* Note off */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Note&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * off&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|instr
 op_assign
 id|active_instrument
@@ -2258,7 +2287,7 @@ id|OPL3_PATCH
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Cannot play */
+multiline_comment|/*&n;&t;&t;&t;&t; * Cannot play&n;&t;&t;&t;&t; */
 id|voice_mode
 op_assign
 id|map-&gt;voice_mode
@@ -2298,7 +2327,7 @@ id|instr-&gt;key
 op_ne
 id|OPL3_PATCH
 )paren
-multiline_comment|/* Just 2 OP patch */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Just 2 OP patch&n;&t;&t;&t;&t;&t; */
 (brace
 id|voice_mode
 op_assign
@@ -2335,7 +2364,7 @@ id|connection_mask
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set Sound Characteristics */
+multiline_comment|/*&n;   * Set Sound Characteristics&n;   */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2370,7 +2399,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Attack/Decay */
+multiline_comment|/*&n;   * Set Attack/Decay&n;   */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2405,7 +2434,7 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Sustain/Release */
+multiline_comment|/*&n;   * Set Sustain/Release&n;   */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2440,7 +2469,7 @@ l_int|7
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Wave Select */
+multiline_comment|/*&n;   * Set Wave Select&n;   */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2475,7 +2504,7 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Feedback/Connection */
+multiline_comment|/*&n;   * Set Feedback/Connection&n;   */
 id|fpc
 op_assign
 id|instr-&gt;operators
@@ -2497,7 +2526,7 @@ id|fpc
 op_or_assign
 l_int|0x30
 suffix:semicolon
-multiline_comment|/* Ensure that at least one chn is enabled */
+multiline_comment|/*&n;&t;&t;&t;&t; * Ensure that at least one chn is enabled&n;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2518,7 +2547,7 @@ op_eq
 l_int|4
 )paren
 (brace
-multiline_comment|/* Set Sound Characteristics */
+multiline_comment|/*&n;       * Set Sound Characteristics&n;       */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2557,7 +2586,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Attack/Decay */
+multiline_comment|/*&n;       * Set Attack/Decay&n;       */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2596,7 +2625,7 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Sustain/Release */
+multiline_comment|/*&n;       * Set Sustain/Release&n;       */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2635,7 +2664,7 @@ l_int|7
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Wave Select */
+multiline_comment|/*&n;       * Set Wave Select&n;       */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2674,7 +2703,7 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Set Feedback/Connection */
+multiline_comment|/*&n;       * Set Feedback/Connection&n;       */
 id|fpc
 op_assign
 id|instr-&gt;operators
@@ -2698,7 +2727,7 @@ id|fpc
 op_or_assign
 l_int|0x30
 suffix:semicolon
-multiline_comment|/* Ensure that at least one chn is enabled */
+multiline_comment|/*&n;&t;&t;&t;&t; * Ensure that at least one chn is enabled&n;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2792,14 +2821,14 @@ op_amp
 id|fnum
 )paren
 suffix:semicolon
-multiline_comment|/* Play note */
+multiline_comment|/*&n;   * Play note&n;   */
 id|data
 op_assign
 id|fnum
 op_amp
 l_int|0xff
 suffix:semicolon
-multiline_comment|/* Least significant bits of fnumber */
+multiline_comment|/*&n;&t;&t;&t;&t; * Least significant bits of fnumber&n;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -2901,8 +2930,8 @@ id|f
 comma
 id|octave
 suffix:semicolon
-multiline_comment|/* Converts the note frequency to block and fnum values for the FM chip */
-multiline_comment|/* First try to compute the block -value (octave) where the note belongs */
+multiline_comment|/*&n;   * Converts the note frequency to block and fnum values for the FM chip&n;   */
+multiline_comment|/*&n;   * First try to compute the block -value (octave) where the note belongs&n;   */
 id|f
 op_assign
 id|freq
@@ -3044,7 +3073,7 @@ comma
 id|io_addr
 )paren
 suffix:semicolon
-multiline_comment|/* Select register       */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Select register&n;&t;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3092,7 +3121,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Write to register  */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Write to register&n;&t;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3191,7 +3220,6 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* OP1 volume to min */
 id|opl3_command
 (paren
 id|physical_voices
@@ -3222,7 +3250,6 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* OP2 volume to min */
 r_if
 c_cond
 (paren
@@ -3238,7 +3265,6 @@ id|voice_mode
 op_eq
 l_int|4
 )paren
-multiline_comment|/* 4 OP voice */
 (brace
 id|opl3_command
 (paren
@@ -3270,7 +3296,6 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* OP3 volume to min */
 id|opl3_command
 (paren
 id|physical_voices
@@ -3301,13 +3326,14 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* OP4 volume to min */
 )brace
 id|opl3_kill_note
 (paren
 id|dev
 comma
 id|i
+comma
+l_int|0
 comma
 l_int|64
 )paren
@@ -3319,6 +3345,8 @@ c_cond
 id|opl3_enabled
 )paren
 (brace
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 l_int|18
@@ -3412,7 +3440,7 @@ id|connection_mask
 op_assign
 l_int|0x00
 suffix:semicolon
-multiline_comment|/* Just 2 OP voices */
+multiline_comment|/*&n;&t;&t;&t;&t; * Just 2 OP voices&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3444,6 +3472,8 @@ id|opl3_busy
 op_assign
 l_int|0
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 id|opl3_enabled
@@ -3836,7 +3866,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Not implemented yet */
+multiline_comment|/*&n;       * Not implemented yet&n;       */
 )brace
 r_else
 (brace
@@ -3857,7 +3887,7 @@ op_amp
 l_int|0x01
 )paren
 )paren
-multiline_comment|/* Additive synthesis */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Additive synthesis&n;&t;&t;&t;&t;&t;&t; */
 id|SET_VIBRATO
 (paren
 l_int|2
@@ -3869,17 +3899,14 @@ DECL|macro|SET_VIBRATO
 macro_line|#undef SET_VIBRATO
 r_static
 r_void
-DECL|function|opl3_controller
-id|opl3_controller
+DECL|function|bend_pitch
+id|bend_pitch
 (paren
 r_int
 id|dev
 comma
 r_int
 id|voice
-comma
-r_int
-id|ctrl_num
 comma
 r_int
 id|value
@@ -3901,19 +3928,6 @@ id|physical_voice_info
 op_star
 id|map
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|voice
-OL
-l_int|0
-op_logical_or
-id|voice
-op_ge
-id|nr_voices
-)paren
-r_return
-suffix:semicolon
 id|map
 op_assign
 op_amp
@@ -3934,15 +3948,6 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|ctrl_num
-)paren
-(brace
-r_case
-id|CTRL_PITCH_BENDER
-suffix:colon
 id|voices
 (braket
 id|voice
@@ -3977,7 +3982,7 @@ l_int|0x20
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Not keyed on */
+multiline_comment|/*&n;&t;&t;&t;&t; * Not keyed on&n;&t;&t;&t;&t; */
 id|freq
 op_assign
 id|compute_finetune
@@ -4030,7 +4035,7 @@ id|fnum
 op_amp
 l_int|0xff
 suffix:semicolon
-multiline_comment|/* Least significant bits of fnumber */
+multiline_comment|/*&n;&t;&t;&t;&t; * Least significant bits of fnumber&n;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -4066,7 +4071,7 @@ op_amp
 l_int|0x3
 )paren
 suffix:semicolon
-multiline_comment|/* KEYON|OCTAVE|MS bits&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * of f-num */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * *&n;&t;&t;&t;&t;&t;&t;&t;&t; * KEYON|OCTAVE|MS&n;&t;&t;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t;&t;&t; * * bits * *&n;&t;&t;&t;&t;&t;&t;&t;&t; * of * f-num&n;&t;&t;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|voices
 (braket
 id|voice
@@ -4085,6 +4090,56 @@ op_plus
 id|map-&gt;voice_num
 comma
 id|data
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|opl3_controller
+id|opl3_controller
+(paren
+r_int
+id|dev
+comma
+r_int
+id|voice
+comma
+r_int
+id|ctrl_num
+comma
+r_int
+id|value
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|voice
+OL
+l_int|0
+op_logical_or
+id|voice
+op_ge
+id|nr_voices
+)paren
+r_return
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|ctrl_num
+)paren
+(brace
+r_case
+id|CTRL_PITCH_BENDER
+suffix:colon
+id|bend_pitch
+(paren
+id|dev
+comma
+id|voice
+comma
+id|value
 )paren
 suffix:semicolon
 r_break
@@ -4126,6 +4181,242 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+r_static
+r_void
+DECL|function|opl3_bender
+id|opl3_bender
+(paren
+r_int
+id|dev
+comma
+r_int
+id|voice
+comma
+r_int
+id|value
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|voice
+OL
+l_int|0
+op_logical_or
+id|voice
+op_ge
+id|nr_voices
+)paren
+r_return
+suffix:semicolon
+id|bend_pitch
+(paren
+id|dev
+comma
+id|voice
+comma
+id|value
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|opl3_alloc_voice
+id|opl3_alloc_voice
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chn
+comma
+r_int
+id|note
+comma
+r_struct
+id|voice_alloc_info
+op_star
+id|alloc
+)paren
+(brace
+r_int
+id|i
+comma
+id|p
+comma
+id|avail_voices
+suffix:semicolon
+r_struct
+id|sbi_instrument
+op_star
+id|instr
+suffix:semicolon
+r_int
+id|is4op
+suffix:semicolon
+r_int
+id|instr_no
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chn
+template_param
+l_int|15
+)paren
+id|instr_no
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|instr_no
+op_assign
+id|chn_info
+(braket
+id|chn
+)braket
+dot
+id|pgm_num
+suffix:semicolon
+id|instr
+op_assign
+op_amp
+id|instrmap
+(braket
+id|instr_no
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|instr-&gt;channel
+OL
+l_int|0
+op_logical_or
+multiline_comment|/* Instrument not loaded */
+id|nr_voices
+op_ne
+l_int|12
+)paren
+multiline_comment|/* Not in 4 OP mode */
+id|is4op
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|nr_voices
+op_eq
+l_int|12
+)paren
+multiline_comment|/* 4 OP mode */
+id|is4op
+op_assign
+(paren
+id|instr-&gt;key
+op_eq
+id|OPL3_PATCH
+)paren
+suffix:semicolon
+r_else
+id|is4op
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|is4op
+)paren
+(brace
+id|p
+op_assign
+l_int|0
+suffix:semicolon
+id|avail_voices
+op_assign
+l_int|6
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|nr_voices
+op_eq
+l_int|12
+)paren
+multiline_comment|/* 4 OP mode. Use the &squot;2 OP only&squot; voices first */
+id|p
+op_assign
+l_int|6
+suffix:semicolon
+r_else
+id|p
+op_assign
+l_int|0
+suffix:semicolon
+id|avail_voices
+op_assign
+id|nr_voices
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *    Now try to find a free voice&n; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|avail_voices
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|alloc-&gt;map
+(braket
+id|p
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+id|p
+suffix:semicolon
+)brace
+id|p
+op_assign
+(paren
+id|p
+op_plus
+l_int|1
+)paren
+op_mod
+id|nr_voices
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *    Insert some kind of priority mechanism here.&n; */
+id|printk
+(paren
+l_string|&quot;OPL3: Out of free voices&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* All voices in use. Select the first one. */
+)brace
 DECL|variable|opl3_operations
 r_static
 r_struct
@@ -4135,6 +4426,8 @@ op_assign
 (brace
 op_amp
 id|fm_info
+comma
+l_int|0
 comma
 id|SYNTH_TYPE_FM
 comma
@@ -4167,6 +4460,10 @@ comma
 id|opl3_volume_method
 comma
 id|opl3_patchmgr
+comma
+id|opl3_bender
+comma
+id|opl3_alloc_voice
 )brace
 suffix:semicolon
 r_int
@@ -4199,6 +4496,20 @@ comma
 id|mem_start
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_synths
+op_ge
+id|MAX_SYNTH_DEV
+)paren
+id|printk
+(paren
+l_string|&quot;OPL3 Error: Too many synthesizers&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
 id|synth_devs
 (braket
 id|num_synths
@@ -4208,6 +4519,20 @@ op_assign
 op_amp
 id|opl3_operations
 suffix:semicolon
+id|voice_alloc
+op_assign
+op_amp
+id|opl3_operations.alloc
+suffix:semicolon
+id|chn_info
+op_assign
+op_amp
+id|opl3_operations.chn_info
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
 id|fm_model
 op_assign
 l_int|0
@@ -4231,6 +4556,8 @@ id|fm_model
 op_assign
 l_int|2
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 l_int|18
@@ -4306,7 +4633,7 @@ comma
 id|OPL3_ENABLE
 )paren
 suffix:semicolon
-multiline_comment|/* Enable OPL-3 mode */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Enable&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * OPL-3&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * mode&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|right_address
@@ -4316,7 +4643,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/* Select all 2-OP&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * voices */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Select&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * all&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 2-OP&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * *&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * voices&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
@@ -4329,6 +4656,8 @@ id|fm_model
 op_assign
 l_int|1
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 l_int|9

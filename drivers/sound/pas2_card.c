@@ -1,7 +1,5 @@
 DECL|macro|_PAS2_CARD_C_
 mdefine_line|#define _PAS2_CARD_C_
-DECL|macro|SND_SA_INTERRUPT
-mdefine_line|#define SND_SA_INTERRUPT
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_PAS)
@@ -52,9 +50,9 @@ comma
 l_string|&quot;Pro AudioSpectrum 16D&quot;
 )brace
 suffix:semicolon
-multiline_comment|/* pas_read() and pas_write() are equivalents of INB() and OUTB() */
-multiline_comment|/* These routines perform the I/O address translation required */
-multiline_comment|/* to support other than the default base address */
+multiline_comment|/*&n; * pas_read() and pas_write() are equivalents of INB() and OUTB()&n; */
+multiline_comment|/*&n; * These routines perform the I/O address translation required&n; */
+multiline_comment|/*&n; * to support other than the default base address&n; */
 r_int
 r_char
 DECL|function|pas_read
@@ -138,7 +136,7 @@ comma
 id|INTERRUPT_STATUS
 )paren
 suffix:semicolon
-multiline_comment|/* Clear interrupt */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Clear interrupt&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -310,6 +308,10 @@ id|ok
 op_assign
 l_int|1
 suffix:semicolon
+r_int
+id|int_ptrs
+suffix:semicolon
+multiline_comment|/* scsi/sound interrupt pointers */
 id|pas_irq
 op_assign
 id|hw_config-&gt;irq
@@ -328,7 +330,7 @@ comma
 id|SAMPLE_COUNTER_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* Local timer control&n;&t;&t;&t;&t;&t;&t; * register */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Local timer control *&n;&t;&t;&t;&t;&t;&t; * register&n;&t;&t;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x36
@@ -336,7 +338,7 @@ comma
 id|SAMPLE_RATE_TIMER
 )paren
 suffix:semicolon
-multiline_comment|/* Sample rate timer (16 bit) */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Sample rate timer (16 bit)&n;&t;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
@@ -351,7 +353,7 @@ comma
 id|SAMPLE_COUNTER_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* Local timer control&n;&t;&t;&t;&t;&t;&t; * register */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Local timer control *&n;&t;&t;&t;&t;&t;&t; * register&n;&t;&t;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0x74
@@ -359,7 +361,7 @@ comma
 id|SAMPLE_BUFFER_COUNTER
 )paren
 suffix:semicolon
-multiline_comment|/* Sample count register (16&n;&t;&t;&t;&t;&t;&t; * bit) */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Sample count register (16&n;&t;&t;&t;&t;&t;&t; * * bit)&n;&t;&t;&t;&t;&t;&t; */
 id|pas_write
 (paren
 l_int|0
@@ -404,7 +406,7 @@ op_or
 id|S_M_SB_RESET
 op_or
 id|S_M_MIXER_RESET
-multiline_comment|/* | S_M_OPL3_DUAL_MONO */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * |&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * S_M_OPL3_DUAL_MONO&n;&t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 comma
 id|SERIAL_MIXER
 )paren
@@ -438,12 +440,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|pas_write
+id|int_ptrs
+op_assign
+id|pas_read
 (paren
+id|IO_CONFIGURATION_3
+)paren
+suffix:semicolon
+id|int_ptrs
+op_or_assign
 id|I_C_3_PCM_IRQ_translate
 (braket
 id|pas_irq
 )braket
+op_amp
+l_int|0xf
+suffix:semicolon
+id|pas_write
+(paren
+id|int_ptrs
 comma
 id|IO_CONFIGURATION_3
 )paren
@@ -558,7 +573,7 @@ id|SYSTEM_CONFIGURATION_1
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/* pas_write(S_C_1_PCS_ENABLE, SYSTEM_CONFIGURATION_1);     */
+multiline_comment|/*&n;   * pas_write(S_C_1_PCS_ENABLE, SYSTEM_CONFIGURATION_1);&n;   */
 id|pas_write
 (paren
 id|S_C_1_PCS_ENABLE
@@ -578,7 +593,7 @@ comma
 id|SYSTEM_CONFIGURATION_3
 )paren
 suffix:semicolon
-multiline_comment|/* ??? */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * ???&n;&t;&t;&t;&t;&t;&t; */
 id|pas_write
 (paren
 id|F_F_MIXER_UNMUTE
@@ -588,7 +603,7 @@ comma
 id|FILTER_FREQUENCY
 )paren
 suffix:semicolon
-multiline_comment|/* Sets mute off and&n;&t;&t;&t;&t;&t;&t;&t;&t; * selects filter rate&n;&t;&t;&t;&t;&t;&t;&t;&t; * of 17.897 kHz */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Sets mute&n;&t;&t;&t;&t;&t;&t;&t;&t; * off and *&n;&t;&t;&t;&t;&t;&t;&t;&t; * selects&n;&t;&t;&t;&t;&t;&t;&t;&t; * filter&n;&t;&t;&t;&t;&t;&t;&t;&t; * rate * of&n;&t;&t;&t;&t;&t;&t;&t;&t; * 17.897 kHz&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -655,9 +670,9 @@ r_int
 r_char
 id|irq_dma
 suffix:semicolon
-multiline_comment|/* Turn on Sound Blaster compatibility */
-multiline_comment|/* bit 1 = SB emulation */
-multiline_comment|/* bit 0 = MPU401 emulation (CDPC only :-( ) */
+multiline_comment|/*&n;&t; * Turn on Sound Blaster compatibility&n;&t; */
+multiline_comment|/*&n;&t; * bit 1 = SB emulation&n;&t; */
+multiline_comment|/*&n;&t; * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t; */
 id|pas_write
 (paren
 l_int|0x02
@@ -665,7 +680,7 @@ comma
 id|COMPATIBILITY_ENABLE
 )paren
 suffix:semicolon
-multiline_comment|/* &quot;Emulation address&quot;         */
+multiline_comment|/*&n;&t; * &quot;Emulation address&quot;&n;&t; */
 id|pas_write
 (paren
 (paren
@@ -772,7 +787,7 @@ comma
 id|MASTER_DECODE
 )paren
 suffix:semicolon
-multiline_comment|/* Talk to first board */
+multiline_comment|/*&n;&t;&t;&t;&t; * Talk to first board&n;&t;&t;&t;&t; */
 id|OUTB
 (paren
 id|hw_config-&gt;io_base
@@ -782,7 +797,7 @@ comma
 id|MASTER_DECODE
 )paren
 suffix:semicolon
-multiline_comment|/* Set base address */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Set base address&n;&t;&t;&t;&t;&t;&t;&t; */
 id|translat_code
 op_assign
 id|PAS_DEFAULT_BASE
@@ -796,7 +811,7 @@ comma
 id|WAIT_STATE
 )paren
 suffix:semicolon
-multiline_comment|/* One wait-state */
+multiline_comment|/*&n;&t;&t;&t;&t; * One wait-state&n;&t;&t;&t;&t; */
 id|board_id
 op_assign
 id|pas_read
@@ -849,7 +864,7 @@ id|board_id
 op_ne
 id|foo
 )paren
-multiline_comment|/* Not a PAS2 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Not a PAS2&n;&t;&t;&t;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -957,7 +972,7 @@ id|sb_dsp_disable_midi
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* The SB emulation don&squot;t support&n;&t;&t;&t;&t;&t; * midi */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * The SB emulation don&squot;t support *&n;&t;&t;&t;&t;&t; * midi&n;&t;&t;&t;&t;&t; */
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_YM3812
 id|enable_opl3_mode

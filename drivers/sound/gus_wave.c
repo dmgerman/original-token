@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; *&n; * Copyright by Hannu Savolainen 1993, 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
@@ -133,6 +133,13 @@ id|offset_pending
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|variable|voice_alloc
+r_static
+r_struct
+id|voice_alloc_info
+op_star
+id|voice_alloc
+suffix:semicolon
 r_extern
 r_int
 id|gus_base
@@ -142,35 +149,6 @@ r_int
 id|gus_irq
 comma
 id|gus_dma
-suffix:semicolon
-r_extern
-r_char
-op_star
-id|snd_raw_buf
-(braket
-id|MAX_DSP_DEV
-)braket
-(braket
-id|DSP_BUFFCOUNT
-)braket
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|snd_raw_buf_phys
-(braket
-id|MAX_DSP_DEV
-)braket
-(braket
-id|DSP_BUFFCOUNT
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|snd_raw_count
-(braket
-id|MAX_DSP_DEV
-)braket
 suffix:semicolon
 DECL|variable|gus_mem_size
 r_static
@@ -218,18 +196,6 @@ id|volume_scale
 comma
 id|volume_method
 suffix:semicolon
-DECL|variable|gus_line_vol
-DECL|variable|gus_mic_vol
-r_static
-r_int
-id|gus_line_vol
-op_assign
-l_int|100
-comma
-id|gus_mic_vol
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|gus_recmask
 r_static
 r_int
@@ -256,6 +222,24 @@ id|gus_pcm_volume
 op_assign
 l_int|80
 suffix:semicolon
+DECL|variable|have_gus_max
+r_int
+id|have_gus_max
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|gus_line_vol
+DECL|variable|gus_mic_vol
+r_static
+r_int
+id|gus_line_vol
+op_assign
+l_int|100
+comma
+id|gus_mic_vol
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|mix_image
 r_static
 r_int
@@ -273,11 +257,11 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|GUS_DEV_WAVE
-mdefine_line|#define GUS_DEV_WAVE&t;&t;1&t;/*&n;&t;&t;&t;&t;&t;   * * * Wave table synth   */
+mdefine_line|#define GUS_DEV_WAVE&t;&t;1&t;/* Wave table synth */
 DECL|macro|GUS_DEV_PCM_DONE
-mdefine_line|#define GUS_DEV_PCM_DONE&t;2&t;/*&n;&t;&t;&t;&t;&t;   * * * PCM device, transfer done   */
+mdefine_line|#define GUS_DEV_PCM_DONE&t;2&t;/* PCM device, transfer done */
 DECL|macro|GUS_DEV_PCM_CONTINUE
-mdefine_line|#define GUS_DEV_PCM_CONTINUE&t;3&t;/*&n;&t;&t;&t;&t;&t;   * * * PCM device, transfer the&n;&t;&t;&t;&t;&t;   * second * * * chn   */
+mdefine_line|#define GUS_DEV_PCM_CONTINUE&t;3&t;/* PCM device, transfer done ch. 1/2 */
 DECL|variable|gus_sampling_speed
 r_static
 r_int
@@ -302,21 +286,18 @@ id|dram_sleep_flag
 suffix:semicolon
 multiline_comment|/*&n; * Variables and buffers for PCM output&n; */
 DECL|macro|MAX_PCM_BUFFERS
-mdefine_line|#define MAX_PCM_BUFFERS&t;&t;(32*MAX_REALTIME_FACTOR)&t;/*&n;&t;&t;&t;&t;&t;&t;&t;&t;   * * * Don&squot;t&n;&t;&t;&t;&t;&t;&t;&t;&t;   * * * change&n;&t;&t;&t;&t;&t;&t;&t;&t;   *&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+mdefine_line|#define MAX_PCM_BUFFERS&t;&t;(32*MAX_REALTIME_FACTOR)&t;/* Don&squot;t change */
 DECL|variable|pcm_bsize
+DECL|variable|pcm_nblk
+DECL|variable|pcm_banksize
 r_static
 r_int
 id|pcm_bsize
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Current blocksize&n;&t;&t;&t;&t; */
-DECL|variable|pcm_nblk
 id|pcm_nblk
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Current # of blocks&n;&t;&t;&t;&t; */
-DECL|variable|pcm_banksize
 id|pcm_banksize
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t; * *  * * # bytes allocated for channels   */
 DECL|variable|pcm_datasize
 r_static
 r_int
@@ -325,7 +306,6 @@ id|pcm_datasize
 id|MAX_PCM_BUFFERS
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;&t; * *  * * Actual # of bytes&n;&t;&t;&t;&t;&t;&t; * in blk  *  */
 DECL|variable|pcm_head
 DECL|variable|pcm_tail
 DECL|variable|pcm_qlen
@@ -338,12 +318,17 @@ id|pcm_tail
 comma
 id|pcm_qlen
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;&t;&t; * *  * * DRAM queue&n;&t;&t;&t;&t;&t;&t;&t; *  */
 DECL|variable|pcm_active
 r_static
 r_volatile
 r_int
 id|pcm_active
+suffix:semicolon
+DECL|variable|dma_active
+r_static
+r_volatile
+r_int
+id|dma_active
 suffix:semicolon
 DECL|variable|pcm_opened
 r_static
@@ -396,60 +381,60 @@ op_assign
 (brace
 l_int|44100
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 14&n;&t;&t;&t;&t; */
+multiline_comment|/* 14 */
 l_int|41160
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 15&n;&t;&t;&t;&t; */
+multiline_comment|/* 15 */
 l_int|38587
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 16&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 */
 l_int|36317
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 17&n;&t;&t;&t;&t; */
+multiline_comment|/* 17 */
 l_int|34300
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 18&n;&t;&t;&t;&t; */
+multiline_comment|/* 18 */
 l_int|32494
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 19&n;&t;&t;&t;&t; */
+multiline_comment|/* 19 */
 l_int|30870
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 20&n;&t;&t;&t;&t; */
+multiline_comment|/* 20 */
 l_int|29400
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 21&n;&t;&t;&t;&t; */
+multiline_comment|/* 21 */
 l_int|28063
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 22&n;&t;&t;&t;&t; */
+multiline_comment|/* 22 */
 l_int|26843
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 23&n;&t;&t;&t;&t; */
+multiline_comment|/* 23 */
 l_int|25725
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 24&n;&t;&t;&t;&t; */
+multiline_comment|/* 24 */
 l_int|24696
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 25&n;&t;&t;&t;&t; */
+multiline_comment|/* 25 */
 l_int|23746
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 26&n;&t;&t;&t;&t; */
+multiline_comment|/* 26 */
 l_int|22866
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 27&n;&t;&t;&t;&t; */
+multiline_comment|/* 27 */
 l_int|22050
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 28&n;&t;&t;&t;&t; */
+multiline_comment|/* 28 */
 l_int|21289
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 29&n;&t;&t;&t;&t; */
+multiline_comment|/* 29 */
 l_int|20580
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 30&n;&t;&t;&t;&t; */
+multiline_comment|/* 30 */
 l_int|19916
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * 31&n;&t;&t;&t;&t; */
+multiline_comment|/* 31 */
 l_int|19293
-multiline_comment|/*&n;&t;&t;&t;&t; * 32&n;&t;&t;&t;&t; */
+multiline_comment|/* 32 */
 )brace
 suffix:semicolon
 DECL|variable|samples
@@ -605,9 +590,9 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|INSTANT_RAMP
-mdefine_line|#define&t;INSTANT_RAMP&t;&t;-1&t;/*&n;&t;&t;&t;&t;&t;   * * * Dont use ramping   */
+mdefine_line|#define&t;INSTANT_RAMP&t;&t;-1&t;/* Instant change. No ramping */
 DECL|macro|FAST_RAMP
-mdefine_line|#define FAST_RAMP&t;&t;0&t;/*&n;&t;&t;&t;&t;&t;   * * * Fastest possible ramp   */
+mdefine_line|#define FAST_RAMP&t;&t;0&t;/* Fastest possible ramp */
 r_static
 r_void
 DECL|function|reset_sample_memory
@@ -692,7 +677,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Put silence here&n;&t;&t;&t;&t; */
+multiline_comment|/* Put a silent sample to the beginning */
 id|gus_poke
 (paren
 l_int|1
@@ -774,6 +759,7 @@ r_char
 id|data
 )paren
 (brace
+multiline_comment|/* Writes a byte to the DRAM */
 r_int
 r_int
 id|flags
@@ -855,6 +841,7 @@ r_int
 id|addr
 )paren
 (brace
+multiline_comment|/* Reads a byte from the DRAM */
 r_int
 r_int
 id|flags
@@ -945,6 +932,7 @@ r_int
 id|data
 )paren
 (brace
+multiline_comment|/* Writes to an indirect register (8 bit) */
 r_int
 r_int
 id|flags
@@ -991,6 +979,7 @@ r_int
 id|reg
 )paren
 (brace
+multiline_comment|/* Reads from an indirect register (8 bit). Offset 0x80. */
 r_int
 r_int
 id|flags
@@ -1038,6 +1027,7 @@ r_int
 id|reg
 )paren
 (brace
+multiline_comment|/* Reads from an indirect register (8 bit). No additional offset. */
 r_int
 r_int
 id|flags
@@ -1086,6 +1076,7 @@ r_int
 id|data
 )paren
 (brace
+multiline_comment|/* Writes to an indirect register (16 bit) */
 r_int
 r_int
 id|flags
@@ -1151,6 +1142,7 @@ r_int
 id|reg
 )paren
 (brace
+multiline_comment|/* Reads from an indirect register (16 bit). Offset 0x80. */
 r_int
 r_int
 id|flags
@@ -1223,9 +1215,19 @@ r_int
 id|is16bit
 )paren
 (brace
+multiline_comment|/* Writes an 24 bit memory address */
 r_int
 r_int
 id|hold_address
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1342,6 +1344,11 @@ l_int|0xffff
 )paren
 )paren
 suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1400,6 +1407,8 @@ id|nvoices
 op_assign
 l_int|32
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
 id|nr_voices
 op_assign
 id|nvoices
@@ -1528,7 +1537,7 @@ l_int|0xfc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Don&squot;t&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * start&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * or&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * stop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * *&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * voice&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t touch last two bits */
 id|gus_delay
 (paren
 )paren
@@ -1634,7 +1643,7 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Stop ramp before setting volume&n;&t;&t;&t;&t; */
+multiline_comment|/* Stop ramp before setting volume */
 id|gus_write16
 (paren
 l_int|0x09
@@ -1863,7 +1872,7 @@ l_int|0xfc
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Don&squot;t&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * start&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * or&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * stop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * *&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * ramping&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Leave the last 2 bits alone */
 id|gus_delay
 (paren
 )paren
@@ -2028,7 +2037,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Set current position to 0&n;&t;&t;&t;&t; */
+multiline_comment|/* Set current position to 0 */
 id|gus_write8
 (paren
 l_int|0x00
@@ -2036,7 +2045,7 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Voice off&n;&t;&t;&t;&t; */
+multiline_comment|/* Voice off */
 id|gus_write8
 (paren
 l_int|0x0d
@@ -2044,7 +2053,14 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramping off&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramping off */
+id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|RESTORE_INTR
 (paren
 id|flags
@@ -2282,7 +2298,7 @@ id|flags
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Sustain&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;       * Sustain phase begins. Continue envelope after receiving note off.&n;       */
 )brace
 r_if
 c_cond
@@ -2297,7 +2313,7 @@ op_ge
 l_int|5
 )paren
 (brace
-multiline_comment|/*&n;       * Shoot the voice off&n;       */
+multiline_comment|/* Envelope finished. Shoot the voice down */
 id|gus_voice_init
 (paren
 id|voice
@@ -2392,7 +2408,7 @@ comma
 id|rate
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramping rate&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramping rate */
 id|voices
 (braket
 id|voice
@@ -2417,7 +2433,7 @@ l_int|64
 op_eq
 l_int|0
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * No significant volume change&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* No significant volume change */
 (brace
 id|RESTORE_INTR
 (paren
@@ -2429,7 +2445,7 @@ id|step_envelope
 id|voice
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Continue with the next phase&n;&t;&t;&t;&t; */
+multiline_comment|/* Continue the envelope on the next step */
 r_return
 suffix:semicolon
 )brace
@@ -2470,7 +2486,7 @@ id|gus_rampon
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Increasing, irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Increasing volume, with IRQ */
 )brace
 r_else
 (brace
@@ -2497,7 +2513,7 @@ id|gus_rampon
 l_int|0x60
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Decreasing, irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Decreasing volume, with IRQ */
 )brace
 id|voices
 (braket
@@ -2573,7 +2589,7 @@ l_int|0x03
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Voice already stopped&n;&t;&t;&t;&t; */
+multiline_comment|/* Voice already stopped */
 id|voices
 (braket
 id|voice
@@ -2583,7 +2599,7 @@ id|env_phase
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Will be incremented by step_envelope&n;&t;&t;&t;&t; */
+multiline_comment|/* Will be incremented by step_envelope */
 id|voices
 (braket
 id|voice
@@ -2605,7 +2621,7 @@ l_int|0x09
 op_rshift
 l_int|4
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t; */
+multiline_comment|/* Get current volume */
 id|voices
 (braket
 id|voice
@@ -2679,7 +2695,14 @@ comma
 l_int|0x03
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Hard stop&n;&t;&t;&t;&t; */
+multiline_comment|/* Hard stop */
+id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|RESTORE_INTR
 (paren
 id|flags
@@ -2706,7 +2729,7 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * 8 or 16&n;&t;&t;&t;&t;&t;&t;&t;&t; * bit&n;&t;&t;&t;&t;&t;&t;&t;&t; * samples&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* 8 or 16 bits */
 r_if
 c_cond
 (paren
@@ -2735,6 +2758,9 @@ r_if
 c_cond
 (paren
 (paren
+r_int
+)paren
+(paren
 id|gus_read16
 (paren
 l_int|0x09
@@ -2745,7 +2771,7 @@ l_int|4
 OL
 l_int|100
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Get current volume */
 (brace
 id|gus_voice_off
 (paren
@@ -2784,7 +2810,7 @@ op_or
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Down, once, irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Down, once, with IRQ */
 id|voices
 (braket
 id|voice
@@ -2848,7 +2874,7 @@ id|gus_voice_init
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Turn voice off&n;&t;&t;&t;&t; */
+multiline_comment|/* Turn voice off */
 id|gus_voice_init2
 (paren
 id|i
@@ -2860,25 +2886,25 @@ id|INB
 id|u_Status
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Touch the status register&n;&t;&t;&t;&t; */
+multiline_comment|/* Touch the status register */
 id|gus_look8
 (paren
 l_int|0x41
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending DMA IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending DMA IRQs */
 id|gus_look8
 (paren
 l_int|0x49
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending sample IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending sample IRQs */
 id|gus_read8
 (paren
 l_int|0x0f
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear pending IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear pending IRQs */
 )brace
 r_static
 r_void
@@ -2892,7 +2918,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_register
 r_int
 r_char
 id|dma_image
@@ -2981,7 +3006,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Reset GF1&n;&t;&t;&t;&t; */
+multiline_comment|/* Reset GF1 */
 id|gus_delay
 (paren
 )paren
@@ -2997,7 +3022,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Release Reset&n;&t;&t;&t;&t; */
+multiline_comment|/* Release Reset */
 id|gus_delay
 (paren
 )paren
@@ -3014,7 +3039,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * DMA control&n;&t;&t;&t;&t; */
+multiline_comment|/* DMA control */
 id|gus_write8
 (paren
 l_int|0x45
@@ -3022,7 +3047,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Timer control&n;&t;&t;&t;&t; */
+multiline_comment|/* Timer control */
 id|gus_write8
 (paren
 l_int|0x49
@@ -3030,7 +3055,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Sample control&n;&t;&t;&t;&t; */
+multiline_comment|/* Sample control */
 id|gus_select_max_voices
 (paren
 l_int|24
@@ -3041,48 +3066,48 @@ id|INB
 id|u_Status
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Touch the status register&n;&t;&t;&t;&t; */
+multiline_comment|/* Touch the status register */
 id|gus_look8
 (paren
 l_int|0x41
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending DMA IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending DMA IRQs */
 id|gus_look8
 (paren
 l_int|0x49
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending sample IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending sample IRQs */
 id|gus_read8
 (paren
 l_int|0x0f
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear pending IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear pending IRQs */
 id|gus_reset
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Resets all voices&n;&t;&t;&t;&t; */
+multiline_comment|/* Resets all voices */
 id|gus_look8
 (paren
 l_int|0x41
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending DMA IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending DMA IRQs */
 id|gus_look8
 (paren
 l_int|0x49
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear any pending sample IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear any pending sample IRQs */
 id|gus_read8
 (paren
 l_int|0x0f
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Clear pending IRQs&n;&t;&t;&t;&t; */
+multiline_comment|/* Clear pending IRQs */
 id|gus_write8
 (paren
 l_int|0x4c
@@ -3090,7 +3115,7 @@ comma
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Master reset | DAC enable | IRQ enable&n;&t;&t;&t;&t; */
+multiline_comment|/* Master reset | DAC enable | IRQ enable */
 multiline_comment|/*&n;   * Set up for Digital ASIC&n;   */
 id|OUTB
 (paren
@@ -3105,7 +3130,7 @@ id|mix_image
 op_or_assign
 l_int|0x02
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable line out&n;&t;&t;&t;&t; */
+multiline_comment|/* Disable line out */
 id|OUTB
 (paren
 id|mix_image
@@ -3160,12 +3185,12 @@ id|irq_image
 op_or_assign
 l_int|0x40
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Combine IRQ1 (GF1) and IRQ2 (Midi)&n;&t;&t;&t;&t; */
+multiline_comment|/* Combine IRQ1 (GF1) and IRQ2 (Midi) */
 id|dma_image
 op_assign
 l_int|0x40
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Combine DMA1 (DRAM) and IRQ2 (ADC)&n;&t;&t;&t;&t; */
+multiline_comment|/* Combine DMA1 (DRAM) and IRQ2 (ADC) */
 id|tmp
 op_assign
 id|gus_dma_map
@@ -3197,7 +3222,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Select DMA control&n;&t;&t;&t;&t; */
+multiline_comment|/* Select DMA control */
 id|OUTB
 (paren
 id|dma_image
@@ -3207,7 +3232,7 @@ comma
 id|u_IRQDMAControl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Set DMA address&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set DMA address */
 id|OUTB
 (paren
 id|mix_image
@@ -3217,7 +3242,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Select IRQ control&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Select IRQ control */
 id|OUTB
 (paren
 id|irq_image
@@ -3225,7 +3250,7 @@ comma
 id|u_IRQDMAControl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Set IRQ address&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set IRQ address */
 multiline_comment|/*&n;   * Doing it second time&n;   */
 id|OUTB
 (paren
@@ -3234,7 +3259,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Select DMA control&n;&t;&t;&t;&t; */
+multiline_comment|/* Select DMA control */
 id|OUTB
 (paren
 id|dma_image
@@ -3242,7 +3267,7 @@ comma
 id|u_IRQDMAControl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Set DMA address&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set DMA address */
 id|OUTB
 (paren
 id|mix_image
@@ -3252,7 +3277,7 @@ comma
 id|u_Mixer
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Select IRQ control&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Select IRQ control */
 id|OUTB
 (paren
 id|irq_image
@@ -3260,24 +3285,24 @@ comma
 id|u_IRQDMAControl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Set IRQ address&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set IRQ address */
 id|gus_select_voice
 (paren
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * This disables writes to IRQ/DMA reg&n;&t;&t;&t;&t; */
+multiline_comment|/* This disables writes to IRQ/DMA reg */
 id|mix_image
 op_and_assign
 op_complement
 l_int|0x02
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Enable line out&n;&t;&t;&t;&t; */
+multiline_comment|/* Enable line out */
 id|mix_image
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Enable IRQ&n;&t;&t;&t;&t; */
+multiline_comment|/* Enable IRQ */
 id|OUTB
 (paren
 id|mix_image
@@ -3291,13 +3316,13 @@ id|gus_select_voice
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * This disables writes to IRQ/DMA reg&n;&t;&t;&t;&t; */
+multiline_comment|/* This disables writes to IRQ/DMA reg */
 id|gusintr
 (paren
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Serve pending interrupts&n;&t;&t;&t;&t; */
+multiline_comment|/* Serve pending interrupts */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -3710,7 +3735,7 @@ id|RET_ERROR
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Patch not defined&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Patch not defined */
 )brace
 r_if
 c_cond
@@ -3723,7 +3748,7 @@ op_eq
 op_minus
 l_int|1
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Sample not loaded&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Sample not loaded */
 (brace
 id|printk
 (paren
@@ -3763,7 +3788,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-macro_line|#ifdef FUTURE_VERSION
 DECL|function|guswave_kill_note
 id|guswave_kill_note
 (paren
@@ -3779,19 +3803,6 @@ comma
 r_int
 id|velocity
 )paren
-macro_line|#else
-id|guswave_kill_note
-(paren
-r_int
-id|dev
-comma
-r_int
-id|voice
-comma
-r_int
-id|velocity
-)paren
-macro_line|#endif
 (brace
 r_int
 r_int
@@ -3801,6 +3812,13 @@ id|DISABLE_INTR
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
+l_int|0xffff
 suffix:semicolon
 r_if
 c_cond
@@ -3873,7 +3891,7 @@ id|flags
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Currently disabled&n;&t;&t;&t;&t; */
+multiline_comment|/* Procedure currently disabled */
 r_if
 c_cond
 (paren
@@ -3906,7 +3924,7 @@ l_int|2
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Don&squot;t mix with envelopes&n;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t mix with envelopes */
 r_if
 c_cond
 (paren
@@ -3938,7 +3956,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Back to original volume&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Back to original volume */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -4028,7 +4046,7 @@ id|gus_rampon
 l_int|0x58
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Bidirectional, Down, Loop&n;&t;&t;&t;&t; */
+multiline_comment|/* Bidirectional, dow, loop */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -4383,7 +4401,7 @@ l_int|64
 op_eq
 l_int|0
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Too close&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Close enough to target. */
 (brace
 id|gus_rampoff
 (paren
@@ -4439,7 +4457,7 @@ id|gus_rampon
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramp up, once, no irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramp up, once, no IRQ */
 )brace
 r_else
 (brace
@@ -4466,7 +4484,7 @@ id|gus_rampon
 l_int|0x40
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramp down, once, no irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramp down, once, no irq */
 )brace
 id|RESTORE_INTR
 (paren
@@ -4508,7 +4526,7 @@ id|gus_read8
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Voice status&n;&t;&t;&t;&t; */
+multiline_comment|/* Get voice status */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -4523,7 +4541,7 @@ l_int|0x03
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Voice not started&n;&t;&t;&t;&t; */
+multiline_comment|/* Voice was not running */
 r_if
 c_cond
 (paren
@@ -4575,7 +4593,7 @@ id|gus_read8
 l_int|0x0d
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramping status&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramping status */
 id|RESTORE_INTR
 (paren
 id|flags
@@ -4588,7 +4606,7 @@ id|status
 op_amp
 l_int|0x03
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Sustain phase?&n;&t;&t;&t;&t; */
+multiline_comment|/* Sustain phase? */
 (brace
 id|compute_and_set_volume
 (paren
@@ -4633,36 +4651,6 @@ dot
 id|midi_volume
 )paren
 suffix:semicolon
-macro_line|#if 0&t;&t;&t;&t;/*&n;&t;&t;&t;&t;   * * * Is this really required   */
-id|voices
-(braket
-id|voice
-)braket
-dot
-id|current_volume
-op_assign
-id|gus_read16
-(paren
-l_int|0x09
-)paren
-op_rshift
-l_int|4
-suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t; */
-id|voices
-(braket
-id|voice
-)braket
-dot
-id|env_phase
-op_decrement
-suffix:semicolon
-id|step_envelope
-(paren
-id|voice
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_void
@@ -4797,7 +4785,6 @@ id|value
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef FUTURE_VERSION
 r_case
 id|CTL_EXPRESSION
 suffix:colon
@@ -4805,7 +4792,6 @@ id|value
 op_div_assign
 l_int|128
 suffix:semicolon
-macro_line|#endif
 r_case
 id|CTRL_EXPRESSION
 suffix:colon
@@ -4846,7 +4832,6 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-macro_line|#ifdef FUTURE_VERSION
 r_case
 id|CTL_PAN
 suffix:colon
@@ -4880,7 +4865,6 @@ l_int|100
 op_div
 l_int|16383
 suffix:semicolon
-macro_line|#endif
 r_case
 id|CTRL_MAIN_VOLUME
 suffix:colon
@@ -4914,7 +4898,6 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ignore&n;&t;&t;&t;&t; */
 r_break
 suffix:semicolon
 )brace
@@ -5233,7 +5216,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Should play default patch ???&n;&t;&t;&t;&t; */
+multiline_comment|/* Should play default patch ??? */
 )brace
 id|is16bits
 op_assign
@@ -5253,7 +5236,6 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * 8 or 16&n;&t;&t;&t;&t;&t;&t;&t;&t; * bit&n;&t;&t;&t;&t;&t;&t;&t;&t; * samples&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|voices
 (braket
 id|voice
@@ -5373,7 +5355,7 @@ id|base_note
 op_div
 l_int|100
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * To avoid overflows&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Try to avoid overflows */
 id|note_freq
 op_div_assign
 l_int|100
@@ -5499,7 +5481,7 @@ id|mode
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bits&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bits */
 r_if
 c_cond
 (paren
@@ -5551,7 +5533,6 @@ id|gus_voice_off
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * It may still be running&n;&t;&t;&t;&t; */
 id|gus_rampoff
 (paren
 )paren
@@ -5645,7 +5626,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/* Sample&n;&t;&t;&t;&t;&t;&t;&t;&t; * start=end */
+multiline_comment|/* start=end */
 r_else
 id|gus_write_addr
 (paren
@@ -5684,7 +5665,6 @@ id|mode
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Looping on&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5701,7 +5681,6 @@ id|mode
 op_or_assign
 l_int|0x10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Bidirectional looping on&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5765,7 +5744,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Loop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * start&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop start location */
 id|gus_write_addr
 (paren
 l_int|0x04
@@ -5785,7 +5764,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Loop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * end&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop end location */
 )brace
 r_else
 (brace
@@ -5793,7 +5772,7 @@ id|mode
 op_or_assign
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Loop irq at the end&n;&t;&t;&t;&t; */
+multiline_comment|/* Loop IRQ at the end */
 id|voices
 (braket
 id|voice
@@ -5803,7 +5782,7 @@ id|loop_irq_mode
 op_assign
 id|LMODE_FINISH
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Ramp it down at&n;&t;&t;&t;&t;&t;&t;&t; * the * end&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Ramp down at the end */
 id|voices
 (braket
 id|voice
@@ -5825,7 +5804,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Loop start&n;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop start location */
 id|gus_write_addr
 (paren
 l_int|0x04
@@ -5847,7 +5826,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Loop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * end&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop end location */
 )brace
 id|gus_voice_freq
 (paren
@@ -5873,7 +5852,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * * New guswave_start_note by Andrew J. Robinson attempts to minimize&n; * clicking  * when the note playing on the voice is changed.  It uses volume&n; * ramping. */
+multiline_comment|/*&n; * New guswave_start_note by Andrew J. Robinson attempts to minimize clicking&n; * when the note playing on the voice is changed.  It uses volume&n; * ramping.&n; */
 r_static
 r_int
 DECL|function|guswave_start_note
@@ -6090,6 +6069,9 @@ l_int|0x01
 )paren
 op_logical_or
 (paren
+r_int
+)paren
+(paren
 (paren
 id|gus_read16
 (paren
@@ -6273,6 +6255,8 @@ id|DMAbuf_open_dma
 id|gus_devnum
 )paren
 )paren
+OL
+l_int|0
 )paren
 r_return
 id|err
@@ -6391,7 +6375,7 @@ r_int
 op_amp
 id|patch
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Size of&n;&t;&t;&t;&t;&t;&t;&t;&t; * the header&n;&t;&t;&t;&t;&t;&t;&t;&t; * * info&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Header size */
 r_if
 c_cond
 (paren
@@ -6627,7 +6611,7 @@ op_amp
 op_complement
 l_int|31
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Alignment 32 bytes&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* 32 byte alignment */
 DECL|macro|GUS_BANK_SIZE
 mdefine_line|#define GUS_BANK_SIZE (256*1024)
 r_if
@@ -6688,7 +6672,7 @@ r_int
 r_int
 id|tmp_mem
 op_assign
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Align to 256K*N&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Aling to 256K */
 (paren
 (paren
 id|free_mem_ptr
@@ -6722,7 +6706,7 @@ id|free_mem_ptr
 op_assign
 id|tmp_mem
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * This leaves unusable memory&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* This leaves unusable memory */
 )brace
 )brace
 r_if
@@ -6818,14 +6802,16 @@ c_loop
 (paren
 id|left
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Not all moved&n;&t;&t;&t;&t; */
+multiline_comment|/* Not completely transferred yet */
 (brace
 id|blk_size
 op_assign
-id|sound_buffsizes
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|buffsize
 suffix:semicolon
 r_if
 c_cond
@@ -6861,7 +6847,7 @@ l_int|18
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Have to split the block&n;&t;&t;&t;&t; */
+multiline_comment|/* Split the block */
 id|blk_end
 op_and_assign
 op_complement
@@ -6943,7 +6929,7 @@ id|data
 op_xor_assign
 l_int|0x80
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Convert to signed&n;&t;&t;&t;&t; */
+multiline_comment|/* Convert to signed */
 id|gus_poke
 (paren
 id|target
@@ -6955,7 +6941,7 @@ id|data
 suffix:semicolon
 )brace
 )brace
-macro_line|#else /*&n;         * * * GUS_NO_DMA   */
+macro_line|#else /* GUS_NO_DMA */
 (brace
 r_int
 r_int
@@ -6974,10 +6960,12 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * OK, move now. First in and then out.&n;&t; */
 id|COPY_FROM_USER
 (paren
-id|snd_raw_buf
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|dmap-&gt;raw_buf
 (braket
 l_int|0
 )braket
@@ -7004,15 +6992,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable GF1 DMA&n;&t;&t;&t;&t; */
+multiline_comment|/* Disable GF1 DMA */
 id|DMAbuf_start_dma
 (paren
 id|gus_devnum
 comma
-id|snd_raw_buf_phys
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|dmap-&gt;raw_buf_phys
 (braket
 l_int|0
 )braket
@@ -7030,10 +7020,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -7074,13 +7066,13 @@ op_amp
 l_int|0xffff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * DRAM DMA address&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* DRAM DMA address */
 multiline_comment|/*&n;&t; * Start the DMA transfer&n;&t; */
 id|dma_command
 op_assign
 l_int|0x21
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * IRQ enable, DMA start&n;&t;&t;&t;&t; */
+multiline_comment|/* IRQ enable, DMA start */
 r_if
 c_cond
 (paren
@@ -7092,7 +7084,7 @@ id|dma_command
 op_or_assign
 l_int|0x80
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Invert MSB&n;&t;&t;&t;&t; */
+multiline_comment|/* Invert MSB */
 r_if
 c_cond
 (paren
@@ -7104,14 +7096,16 @@ id|dma_command
 op_or_assign
 l_int|0x40
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit _DATA_&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit _DATA_ */
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -7119,7 +7113,7 @@ id|dma_command
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit DMA channel&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit DMA _channel_ */
 id|gus_write8
 (paren
 l_int|0x41
@@ -7127,7 +7121,7 @@ comma
 id|dma_command
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Let&squot;s go luteet (=bugs)&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Lets bo luteet (=bugs) */
 multiline_comment|/*&n;&t; * Sleep here until the DRAM DMA done interrupt is served&n;&t; */
 id|active_device
 op_assign
@@ -7163,7 +7157,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /*&n;          * * * GUS_NO_DMA   */
+macro_line|#endif /* GUS_NO_DMA */
 multiline_comment|/*&n;       * Now the next part&n;       */
 id|left
 op_sub_assign
@@ -7184,7 +7178,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Stop DMA&n;&t;&t;&t;&t; */
+multiline_comment|/* Stop DMA */
 )brace
 id|free_mem_ptr
 op_add_assign
@@ -7399,7 +7393,7 @@ op_and_assign
 op_complement
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable intr&n;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t allow interrupts */
 id|gus_voice_on
 (paren
 id|p1
@@ -7464,7 +7458,7 @@ op_and_assign
 op_complement
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable intr&n;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t allow interrupts */
 id|gus_voice_mode
 (paren
 id|p1
@@ -7555,7 +7549,7 @@ suffix:semicolon
 r_case
 id|_GUS_VOICEVOL2
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Just update the voice value&n;&t;&t;&t;&t; */
+multiline_comment|/* Just update the software voice level */
 id|voices
 (braket
 id|voice
@@ -7591,7 +7585,7 @@ id|WAVE_ENVELOPES
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * NO-NO&n;&t;&t;&t;&t; */
+multiline_comment|/* NO-NO */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -7633,7 +7627,7 @@ id|WAVE_ENVELOPES
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * NO-NO&n;&t;&t;&t;&t; */
+multiline_comment|/* NJET-NJET */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -7675,7 +7669,7 @@ id|WAVE_ENVELOPES
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * NO-NO&n;&t;&t;&t;&t; */
+multiline_comment|/* NO-NO */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -7691,7 +7685,7 @@ op_and_assign
 op_complement
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable intr&n;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t allow interrupts */
 id|gus_ramp_mode
 (paren
 id|p1
@@ -7721,7 +7715,7 @@ id|WAVE_ENVELOPES
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * NO-NO&n;&t;&t;&t;&t; */
+multiline_comment|/* EI-EI */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -7737,7 +7731,7 @@ op_and_assign
 op_complement
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable intr&n;&t;&t;&t;&t; */
+multiline_comment|/* Don&squot;t allow interrupts */
 id|gus_rampon
 (paren
 id|p1
@@ -7767,7 +7761,7 @@ id|WAVE_ENVELOPES
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * NO-NO&n;&t;&t;&t;&t; */
+multiline_comment|/* NEJ-NEJ */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -8128,7 +8122,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SNDCTL_DSP_SAMPLESIZE
+id|SNDCTL_DSP_SETFMT
 suffix:colon
 r_if
 c_cond
@@ -8179,7 +8173,7 @@ suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_FILTER
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * NOT YET IMPLEMENTED&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* NOT POSSIBLE */
 r_return
 id|IOCTL_OUT
 (paren
@@ -8297,6 +8291,10 @@ l_int|14
 )paren
 suffix:semicolon
 id|pcm_active
+op_assign
+l_int|0
+suffix:semicolon
+id|dma_active
 op_assign
 l_int|0
 suffix:semicolon
@@ -8527,7 +8525,7 @@ id|chn
 op_assign
 l_int|0x03
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ramping and rollover off&n;&t;&t;&t;&t; */
+multiline_comment|/* Ramping and rollover off */
 r_if
 c_cond
 (paren
@@ -8543,7 +8541,7 @@ id|chn
 op_or_assign
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Loop irq&n;&t;&t;&t;&t; */
+multiline_comment|/* Loop IRQ */
 id|voices
 (braket
 id|chn
@@ -8573,7 +8571,7 @@ id|chn
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit data&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit data */
 )brace
 r_else
 id|is16bits
@@ -8603,7 +8601,7 @@ op_minus
 l_int|1
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Last of the DRAM buffers&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Last fragment of the DRAM buffer */
 (brace
 id|mode
 (braket
@@ -8612,7 +8610,7 @@ id|chn
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Enable loop&n;&t;&t;&t;&t; */
+multiline_comment|/* Enable loop */
 id|ramp_mode
 (braket
 id|chn
@@ -8620,7 +8618,7 @@ id|chn
 op_assign
 l_int|0x03
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Disable rollover&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Disable rollover bit */
 )brace
 r_else
 (brace
@@ -8638,7 +8636,7 @@ id|chn
 op_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable rollover bit&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Enable rollover bit */
 )brace
 id|DISABLE_INTR
 (paren
@@ -8667,7 +8665,7 @@ id|gus_voice_balance
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * mono&n;&t;&t;&t;&t; */
+multiline_comment|/* mono */
 r_else
 r_if
 c_cond
@@ -8681,28 +8679,27 @@ id|gus_voice_balance
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * left&n;&t;&t;&t;&t; */
+multiline_comment|/* left */
 r_else
 id|gus_voice_balance
 (paren
 l_int|15
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * right&n;&t;&t;&t;&t; */
+multiline_comment|/* right */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|pcm_active
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Voice not started yet&n;&t;&t;&t;&t; */
+multiline_comment|/* Playback not already active */
 (brace
 multiline_comment|/*&n;&t;   * The playback was not started yet (or there has been a pause).&n;&t;   * Start the voice (again) and ask for a rollover irq at the end of&n;&t;   * this_one block. If this_one one is last of the buffers, use just&n;&t;   * the normal loop with irq.&n;&t;   */
 id|gus_voice_off
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * It could already be running&n;&t;&t;&t;&t; */
 id|gus_rampoff
 (paren
 )paren
@@ -8740,7 +8737,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Starting position&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Starting position */
 id|gus_write_addr
 (paren
 l_int|0x02
@@ -8752,7 +8749,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Loop start&n;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop start */
 r_if
 c_cond
 (paren
@@ -8775,7 +8772,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Loop end location&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop end location */
 )brace
 r_if
 c_cond
@@ -8798,7 +8795,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Loop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * end&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop end location */
 r_else
 id|mode
 (braket
@@ -8807,7 +8804,7 @@ id|chn
 op_or_assign
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Enable loop&n;&t;&t;&t;&t; */
+multiline_comment|/* Enable looping */
 r_if
 c_cond
 (paren
@@ -8819,7 +8816,7 @@ op_ne
 id|pcm_bsize
 )paren
 (brace
-multiline_comment|/*&n;&t;   * Incomplete block. Possibly the last one.&n;&t;   */
+multiline_comment|/*&n;&t;   * Incompletely filled block. Possibly the last one.&n;&t;   */
 r_if
 c_cond
 (paren
@@ -8836,7 +8833,7 @@ op_and_assign
 op_complement
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Disable loop&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Disable looping */
 id|mode
 (braket
 id|chn
@@ -8844,7 +8841,7 @@ id|chn
 op_or_assign
 l_int|0x20
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable loop IRQ&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Enable IRQ at the end */
 id|voices
 (braket
 l_int|0
@@ -8861,7 +8858,7 @@ id|chn
 op_assign
 l_int|0x03
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * No rollover bit&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* No rollover bit */
 )brace
 r_else
 (brace
@@ -8879,7 +8876,7 @@ comma
 id|is16bits
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Loop&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * end&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * location&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Loop end location */
 id|mode
 (braket
 id|chn
@@ -8888,7 +8885,7 @@ op_and_assign
 op_complement
 l_int|0x08
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Disable loop&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Disable looping */
 )brace
 )brace
 id|RESTORE_INTR
@@ -9063,7 +9060,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Disable GF1 DMA&n;&t;&t;&t;&t; */
+multiline_comment|/* Disable GF1 DMA */
 id|DMAbuf_start_dma
 (paren
 id|dev
@@ -9096,10 +9093,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -9140,12 +9139,12 @@ op_amp
 l_int|0xffff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * DRAM DMA address&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* DRAM DMA address */
 id|dma_command
 op_assign
 l_int|0x21
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * IRQ enable, DMA start&n;&t;&t;&t;&t; */
+multiline_comment|/* IRQ enable, DMA start */
 r_if
 c_cond
 (paren
@@ -9157,20 +9156,22 @@ id|dma_command
 op_or_assign
 l_int|0x40
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit _DATA_&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit _DATA_ */
 r_else
 id|dma_command
 op_or_assign
 l_int|0x80
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Invert MSB&n;&t;&t;&t;&t; */
+multiline_comment|/* Invert MSB */
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -9178,7 +9179,7 @@ id|dma_command
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit DMA channel&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit DMA channel */
 id|gus_write8
 (paren
 l_int|0x41
@@ -9186,7 +9187,7 @@ comma
 id|dma_command
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Kick on&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Kickstart */
 r_if
 c_cond
 (paren
@@ -9198,9 +9199,14 @@ op_minus
 l_int|1
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Last channel&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Last channel */
 (brace
 multiline_comment|/*&n;       * Last (right or mono) channel data&n;       */
+id|dma_active
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* DMA started. There is a unacknowledged buffer */
 id|active_device
 op_assign
 id|GUS_DEV_PCM_DONE
@@ -9214,7 +9220,7 @@ op_logical_and
 (paren
 id|pcm_qlen
 OG
-l_int|2
+l_int|0
 op_logical_or
 id|count
 OL
@@ -9229,11 +9235,13 @@ suffix:semicolon
 )brace
 )brace
 r_else
-multiline_comment|/*&n;&t;&t;&t;&t;   * * * Left channel data. The right channel&n;&t;&t;&t;&t;   * is * * * transferred after DMA interrupt   */
+(brace
+multiline_comment|/*&n;&t; * Left channel data. The right channel&n;&t; * is transferred after DMA interrupt&n;&t; */
 id|active_device
 op_assign
 id|GUS_DEV_PCM_CONTINUE
 suffix:semicolon
+)brace
 id|RESTORE_INTR
 (paren
 id|flags
@@ -9342,14 +9350,16 @@ id|mode
 op_assign
 l_int|0xa0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * DMA IRQ enable, invert MSB&n;&t;&t;&t;&t; */
+multiline_comment|/* DMA IRQ enabled, invert MSB */
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -9357,7 +9367,7 @@ id|mode
 op_or_assign
 l_int|0x04
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 16 bit DMA channel&n;&t;&t;&t;&t; */
+multiline_comment|/* 16 bit DMA channel */
 r_if
 c_cond
 (paren
@@ -9369,12 +9379,12 @@ id|mode
 op_or_assign
 l_int|0x02
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Stereo&n;&t;&t;&t;&t; */
+multiline_comment|/* Stereo */
 id|mode
 op_or_assign
 l_int|0x01
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * DMA enable&n;&t;&t;&t;&t; */
+multiline_comment|/* DMA enable */
 id|gus_write8
 (paren
 l_int|0x49
@@ -9430,7 +9440,7 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Set sampling frequency&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set sampling rate */
 r_if
 c_cond
 (paren
@@ -9591,15 +9601,14 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|gus_has_output_drained
-id|gus_has_output_drained
+DECL|function|gus_local_qlen
+id|gus_local_qlen
 (paren
 r_int
 id|dev
 )paren
 (brace
 r_return
-op_logical_neg
 id|pcm_qlen
 suffix:semicolon
 )brace
@@ -9874,6 +9883,12 @@ l_string|&quot;Gravis UltraSound&quot;
 comma
 id|NEEDS_RESTART
 comma
+id|AFMT_U8
+op_or
+id|AFMT_S16_LE
+comma
+l_int|NULL
+comma
 id|gus_sampling_open
 comma
 id|gus_sampling_close
@@ -9892,12 +9907,11 @@ id|gus_sampling_reset
 comma
 id|gus_sampling_reset
 comma
-id|gus_has_output_drained
+id|gus_local_qlen
 comma
 id|gus_copy_from_user
 )brace
 suffix:semicolon
-macro_line|#ifdef FUTURE_VERSION
 r_static
 r_void
 DECL|function|guswave_bender
@@ -9982,7 +9996,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_static
 r_int
 DECL|function|guswave_patchmgr
@@ -10096,7 +10109,7 @@ id|ptr
 dot
 id|key
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Follow link&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Follow link */
 )brace
 )brace
 r_return
@@ -10149,7 +10162,7 @@ id|ptr
 dot
 id|key
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Follow link&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Follow link */
 )brace
 )brace
 id|rec-&gt;parm1
@@ -10226,7 +10239,7 @@ id|pat-&gt;key
 op_assign
 id|GUS_PATCH
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Restore patch type&n;&t;&t;&t;&t; */
+multiline_comment|/* Restore patch type */
 id|rec-&gt;parm1
 op_assign
 id|sample_ptrs
@@ -10234,7 +10247,7 @@ id|sample_ptrs
 id|ptr
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * DRAM address&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* DRAM location */
 id|rec-&gt;parm2
 op_assign
 r_sizeof
@@ -10301,7 +10314,7 @@ id|ptr
 dot
 id|len
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Cannot expand sample&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Cannot expand sample */
 r_return
 id|RET_ERROR
 (paren
@@ -10317,7 +10330,7 @@ id|ptr
 dot
 id|key
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Ensure the link is correct&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Ensure the link is correct */
 id|memcpy
 (paren
 (paren
@@ -10352,7 +10365,7 @@ suffix:semicolon
 r_case
 id|PM_READ_PATCH
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Returns a block of wave data from the DRAM&n;&t;&t;&t;&t; */
+multiline_comment|/* Returns a block of wave data from the DRAM */
 (brace
 r_int
 id|sample
@@ -10411,7 +10424,7 @@ id|RET_ERROR
 id|EINVAL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Invalid offset&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Invalid offset */
 id|n
 op_assign
 id|samples
@@ -10423,7 +10436,7 @@ id|len
 op_minus
 id|offs
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Nr of bytes left&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Num of bytes left */
 r_if
 c_cond
 (paren
@@ -10681,6 +10694,140 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+r_static
+r_int
+DECL|function|guswave_alloc
+id|guswave_alloc
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chn
+comma
+r_int
+id|note
+comma
+r_struct
+id|voice_alloc_info
+op_star
+id|alloc
+)paren
+(brace
+r_int
+id|i
+comma
+id|p
+suffix:semicolon
+id|p
+op_assign
+id|alloc-&gt;ptr
+suffix:semicolon
+multiline_comment|/*&n; * First look for a completely stopped voice&n; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|alloc-&gt;max_voice
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|alloc-&gt;map
+(braket
+id|p
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+id|alloc-&gt;ptr
+op_assign
+id|p
+suffix:semicolon
+r_return
+id|p
+suffix:semicolon
+)brace
+id|p
+op_assign
+(paren
+id|p
+op_plus
+l_int|1
+)paren
+op_mod
+id|alloc-&gt;max_voice
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Then look for a releasing voice&n; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|alloc-&gt;max_voice
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|alloc-&gt;map
+(braket
+id|p
+)braket
+op_eq
+l_int|0xffff
+)paren
+(brace
+id|alloc-&gt;ptr
+op_assign
+id|p
+suffix:semicolon
+r_return
+id|p
+suffix:semicolon
+)brace
+id|p
+op_assign
+(paren
+id|p
+op_plus
+l_int|1
+)paren
+op_mod
+id|alloc-&gt;max_voice
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;GUS: Out of free voices&bslash;n&quot;
+)paren
+suffix:semicolon
+id|alloc-&gt;ptr
+op_assign
+id|p
+suffix:semicolon
+r_return
+id|p
+suffix:semicolon
+)brace
 DECL|variable|guswave_operations
 r_static
 r_struct
@@ -10691,10 +10838,8 @@ op_assign
 op_amp
 id|gus_info
 comma
-macro_line|#ifdef FUTURE_VERSION
 l_int|0
 comma
-macro_line|#endif
 id|SYNTH_TYPE_SAMPLE
 comma
 id|SAMPLE_TYPE_GUS
@@ -10727,9 +10872,9 @@ id|guswave_volume_method
 comma
 id|guswave_patchmgr
 comma
-macro_line|#ifdef FUTURE_VERSION
 id|guswave_bender
-macro_line|#endif
+comma
+id|guswave_alloc
 )brace
 suffix:semicolon
 r_static
@@ -11174,7 +11319,7 @@ id|dynamic_volume_change
 id|voice
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Apply the new&n;&t;&t;&t;&t;&t;&t;&t; * volume&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Apply the new vol */
 r_return
 id|IOCTL_OUT
 (paren
@@ -11493,7 +11638,7 @@ op_amp
 l_int|0x06
 )paren
 )paren
-multiline_comment|/* Should be 0x02? */
+multiline_comment|/* Should be 0x02?? */
 (brace
 multiline_comment|/*&n;&t; * It has the digital ASIC so the card is at least v3.4.&n;&t; * Next try to detect the true model.&n;&t; */
 id|val
@@ -11561,6 +11706,100 @@ id|mixer_type
 op_assign
 id|CS4231
 suffix:semicolon
+macro_line|#ifndef EXCLUDE_GUSMAX
+(brace
+r_int
+r_char
+id|max_config
+op_assign
+l_int|0x40
+suffix:semicolon
+multiline_comment|/* Codec enable */
+r_if
+c_cond
+(paren
+id|dma
+OG
+l_int|3
+)paren
+id|max_config
+op_or_assign
+l_int|0x30
+suffix:semicolon
+multiline_comment|/* 16 bit playback and capture DMAs */
+id|max_config
+op_or_assign
+(paren
+id|gus_base
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x0f
+suffix:semicolon
+multiline_comment|/* Extract the X from 2X0 */
+id|OUTB
+(paren
+id|max_config
+comma
+id|gus_base
+op_plus
+l_int|0x106
+)paren
+suffix:semicolon
+multiline_comment|/* UltraMax control */
+)brace
+r_if
+c_cond
+(paren
+id|ad1848_detect
+(paren
+id|gus_base
+op_plus
+l_int|0x10c
+)paren
+)paren
+(brace
+id|gus_mic_vol
+op_assign
+id|gus_line_vol
+op_assign
+id|gus_pcm_volume
+op_assign
+l_int|100
+suffix:semicolon
+id|gus_wave_volume
+op_assign
+l_int|90
+suffix:semicolon
+id|have_gus_max
+op_assign
+l_int|1
+suffix:semicolon
+id|ad1848_init
+(paren
+l_string|&quot;GUS MAX&quot;
+comma
+id|gus_base
+op_plus
+l_int|0x10c
+comma
+op_minus
+id|irq
+comma
+id|dma
+comma
+id|dma
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+(paren
+l_string|&quot;[Where&squot;s the CS4231?]&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 r_else
@@ -11658,6 +11897,12 @@ l_string|&quot;GUS Error: Too many synthesizers&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
+(brace
+id|voice_alloc
+op_assign
+op_amp
+id|guswave_operations.alloc
+suffix:semicolon
 id|synth_devs
 (braket
 id|num_synths
@@ -11667,6 +11912,7 @@ op_assign
 op_amp
 id|guswave_operations
 suffix:semicolon
+)brace
 id|PERMANENT_MALLOC
 (paren
 r_struct
@@ -11701,49 +11947,48 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_dspdevs
+id|num_audiodevs
 OL
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )paren
 (brace
-id|dsp_devs
+id|audio_devs
 (braket
 id|gus_devnum
 op_assign
-id|num_dspdevs
+id|num_audiodevs
 op_increment
 )braket
 op_assign
 op_amp
 id|gus_sampling_operations
 suffix:semicolon
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|dmachan
 op_assign
 id|dma
 suffix:semicolon
-id|sound_buffcounts
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|buffcount
 op_assign
 l_int|1
 suffix:semicolon
-id|sound_buffsizes
+id|audio_devs
 (braket
 id|gus_devnum
 )braket
+op_member_access_from_pointer
+id|buffsize
 op_assign
 id|DSP_BUFFSIZE
-suffix:semicolon
-id|sound_dma_automode
-(braket
-id|gus_devnum
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -11762,15 +12007,17 @@ id|mixer_type
 r_case
 id|ICS2101
 suffix:colon
-id|gus_line_vol
-op_assign
 id|gus_mic_vol
 op_assign
-id|gus_wave_volume
+id|gus_line_vol
 op_assign
 id|gus_pcm_volume
 op_assign
 l_int|100
+suffix:semicolon
+id|gus_wave_volume
+op_assign
+l_int|90
 suffix:semicolon
 r_return
 id|ics2101_mixer_init
@@ -11781,7 +12028,7 @@ suffix:semicolon
 r_case
 id|CS4231
 suffix:colon
-multiline_comment|/* Available soon */
+multiline_comment|/* Initialized elsewhere (ad1848.c) */
 r_default
 suffix:colon
 r_return
@@ -11888,6 +12135,9 @@ r_if
 c_cond
 (paren
 (paren
+r_int
+)paren
+(paren
 id|gus_read16
 (paren
 l_int|0x09
@@ -11957,7 +12207,7 @@ id|pcm_active
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Requires extensive processing&n;&t;&t;&t;&t; */
+multiline_comment|/* Signal to the play_next_pcm_block routine */
 r_case
 id|LMODE_PCM
 suffix:colon
@@ -11967,6 +12217,10 @@ id|orig_qlen
 op_assign
 id|pcm_qlen
 suffix:semicolon
+r_int
+id|flag
+suffix:semicolon
+multiline_comment|/* 0 or 2 */
 id|pcm_qlen
 op_decrement
 suffix:semicolon
@@ -11993,7 +12247,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Out of data. Just stop the voice&n;&t;&t;&t;&t; */
+multiline_comment|/* Underrun. Just stop the voice */
 id|gus_voice_off
 (paren
 )paren
@@ -12007,22 +12261,48 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * If the queue was full before this interrupt, the DMA transfer was&n; * suspended. Let it continue now.&n; */
 r_if
 c_cond
 (paren
-id|orig_qlen
-op_eq
-id|pcm_nblk
+id|dma_active
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|pcm_qlen
+op_eq
+l_int|0
+)paren
+id|flag
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Underflow */
+r_else
+id|flag
+op_assign
+l_int|0
+suffix:semicolon
+id|dma_active
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+id|flag
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Just notify the dmabuf.c */
 id|DMAbuf_outputintr
 (paren
 id|gus_devnum
 comma
-l_int|0
+id|flag
 )paren
 suffix:semicolon
-)brace
 )brace
 r_break
 suffix:semicolon
@@ -12211,6 +12491,13 @@ id|dev_pending
 comma
 id|voice
 comma
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|note_pending
+comma
 l_int|0
 )paren
 suffix:semicolon
@@ -12356,6 +12643,9 @@ op_amp
 id|voice_bit
 )paren
 op_logical_and
+(paren
+r_int
+)paren
 id|voice
 OL
 id|nr_voices
@@ -12393,6 +12683,9 @@ op_amp
 id|voice_bit
 )paren
 op_logical_and
+(paren
+r_int
+)paren
 id|voice
 OL
 id|nr_voices
@@ -12429,7 +12722,7 @@ id|gus_look8
 l_int|0x41
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Get DMA IRQ Status&n;&t;&t;&t;&t; */
+multiline_comment|/* Get DMA IRQ Status */
 r_if
 c_cond
 (paren
@@ -12437,7 +12730,7 @@ id|status
 op_amp
 l_int|0x40
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * DMA Irq pending&n;&t;&t;&t;&t; */
+multiline_comment|/* DMA interrupt pending */
 r_switch
 c_cond
 (paren
@@ -12469,6 +12762,7 @@ suffix:semicolon
 r_case
 id|GUS_DEV_PCM_CONTINUE
 suffix:colon
+multiline_comment|/* Left channel data transferred */
 id|gus_transfer_output_block
 (paren
 id|pcm_current_dev
@@ -12487,6 +12781,7 @@ suffix:semicolon
 r_case
 id|GUS_DEV_PCM_DONE
 suffix:colon
+multiline_comment|/* Right or mono channel data transferred */
 r_if
 c_cond
 (paren
@@ -12495,13 +12790,39 @@ OL
 id|pcm_nblk
 )paren
 (brace
+r_int
+id|flag
+op_assign
+(paren
+l_int|1
+op_minus
+id|dma_active
+)paren
+op_star
+l_int|2
+suffix:semicolon
+multiline_comment|/* 0 or 2 */
+r_if
+c_cond
+(paren
+id|pcm_qlen
+op_eq
+l_int|0
+)paren
+id|flag
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Underrun */
+id|dma_active
+op_assign
+l_int|0
+suffix:semicolon
 id|DMAbuf_outputintr
 (paren
 id|gus_devnum
 comma
-id|pcm_qlen
-op_eq
-l_int|0
+id|flag
 )paren
 suffix:semicolon
 )brace

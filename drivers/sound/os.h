@@ -17,8 +17,8 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/soundcard.h&gt;
 DECL|typedef|snd_rw_buf
 r_typedef
 r_char
@@ -69,7 +69,7 @@ mdefine_line|#define DEFINE_WAIT_QUEUES(name, flag) static struct wait_queue *na
 DECL|macro|RESET_WAIT_QUEUE
 mdefine_line|#define RESET_WAIT_QUEUE(q, f) {f.aborting = 0;f.mode = WK_NONE;}
 DECL|macro|PROCESS_ABORTING
-mdefine_line|#define PROCESS_ABORTING(q, f) (f.aborting | (current-&gt;signal &amp; ~current-&gt;blocked))
+mdefine_line|#define PROCESS_ABORTING(q, f) (/*f.aborting | */(current-&gt;signal &amp; ~current-&gt;blocked))
 DECL|macro|SET_ABORT_FLAG
 mdefine_line|#define SET_ABORT_FLAG(q, f) f.aborting = 1
 DECL|macro|TIMED_OUT
@@ -105,7 +105,7 @@ DECL|macro|PERMANENT_MALLOC
 mdefine_line|#define PERMANENT_MALLOC(typecast, mem_ptr, size, linux_ptr) &bslash;&n;  {mem_ptr = (typecast)linux_ptr; &bslash;&n;   linux_ptr += (size);}
 multiline_comment|/*&n; * The macro DEFINE_TIMER defines variables for the ACTIVATE_TIMER if&n; * required. The name is the variable/name to be used and the proc is&n; * the procedure to be called when the timer expires.&n; */
 DECL|macro|DEFINE_TIMER
-mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, 0, 0, 0, proc}
+mdefine_line|#define DEFINE_TIMER(name, proc) &bslash;&n;  static struct timer_list name = &bslash;&n;  {NULL, NULL, 0, 0, proc}
 multiline_comment|/*&n; * The ACTIVATE_TIMER requests system to call &squot;proc&squot; after &squot;time&squot; ticks.&n; */
 DECL|macro|ACTIVATE_TIMER
 mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = time; &bslash;&n;  add_timer (&amp;name);}
@@ -113,4 +113,7 @@ DECL|macro|INB
 mdefine_line|#define INB&t;inb
 DECL|macro|OUTB
 mdefine_line|#define OUTB&t;outb
+multiline_comment|/*&n; * SND_SA_INTERRUPT is required. Otherwise the IRQ number is not passed &n; * the handler.&n; */
+DECL|macro|SND_SA_INTERRUPT
+mdefine_line|#define SND_SA_INTERRUPT
 eof

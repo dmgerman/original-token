@@ -6,10 +6,10 @@ macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;pas.h&quot;
 macro_line|#if !defined(EXCLUDE_PAS) &amp;&amp; !defined(EXCLUDE_AUDIO)
 DECL|macro|TRACE
-mdefine_line|#define TRACE(WHAT)&t;&t;/* (WHAT) */
+mdefine_line|#define TRACE(WHAT)&t;&t;/*&n;&t;&t;&t;&t;   * * * (WHAT)   */
 DECL|macro|PAS_PCM_INTRBITS
 mdefine_line|#define PAS_PCM_INTRBITS (0x08)
-multiline_comment|/* Sample buffer timer interrupt enable */
+multiline_comment|/*&n; * Sample buffer timer interrupt enable&n; */
 DECL|macro|PCM_NON
 mdefine_line|#define PCM_NON&t;0
 DECL|macro|PCM_DAC
@@ -33,7 +33,7 @@ id|pcm_channels
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* channels/sample (1 or 2) */
+multiline_comment|/* channels (1 or 2) */
 DECL|variable|pcm_bits
 r_static
 r_int
@@ -125,7 +125,15 @@ l_int|5000
 suffix:semicolon
 id|foo
 op_assign
+(paren
 l_int|1193180
+op_plus
+(paren
+id|arg
+op_div
+l_int|2
+)paren
+)paren
 op_div
 id|arg
 suffix:semicolon
@@ -159,6 +167,100 @@ id|pas_read
 id|FILTER_FREQUENCY
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Set anti-aliasing filters according to sample rate. You reall *NEED*&n; * to enable this feature for all normal recording unless you want to&n; * experiment with aliasing effects.&n; * These filters apply to the selected &quot;recording&quot; source.&n; * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n; * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;*/
+macro_line|#if !defined NO_AUTO_FILTER_SET
+id|tmp
+op_and_assign
+l_int|0xe0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|17897
+)paren
+id|tmp
+op_or_assign
+l_int|0x21
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|15909
+)paren
+id|tmp
+op_or_assign
+l_int|0x22
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|11931
+)paren
+id|tmp
+op_or_assign
+l_int|0x29
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|8948
+)paren
+id|tmp
+op_or_assign
+l_int|0x31
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|5965
+)paren
+id|tmp
+op_or_assign
+l_int|0x39
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|pcm_speed
+op_ge
+l_int|2
+op_star
+l_int|2982
+)paren
+id|tmp
+op_or_assign
+l_int|0x24
+suffix:semicolon
+id|pcm_filter
+op_assign
+id|tmp
+suffix:semicolon
+macro_line|#endif
 id|DISABLE_INTR
 (paren
 id|flags
@@ -282,7 +384,7 @@ id|pcm_set_speed
 id|pcm_speed
 )paren
 suffix:semicolon
-multiline_comment|/* The speed must be reinitialized */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * The speed must be reinitialized&n;&t;&t;&t;&t;&t; */
 )brace
 r_return
 id|pcm_channels
@@ -518,7 +620,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|SNDCTL_DSP_SAMPLESIZE
+id|SNDCTL_DSP_SETFMT
 suffix:colon
 r_if
 c_cond
@@ -569,7 +671,7 @@ suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_FILTER
 suffix:colon
-multiline_comment|/* NOT YET IMPLEMENTED */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * NOT YET IMPLEMENTED&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -705,11 +807,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|DMAbuf_open_dma
 (paren
 id|dev
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|pas_remove_intr
@@ -830,10 +933,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -844,10 +949,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dma_automode
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|DMA_AUTOMODE
 op_logical_and
 id|intrflag
 op_logical_and
@@ -857,7 +966,7 @@ id|pcm_count
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Auto mode on. No need to react */
+multiline_comment|/*&n;&t;&t;&t;&t; * Auto mode on. No need to react&n;&t;&t;&t;&t; */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -895,10 +1004,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -1063,10 +1174,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -1077,10 +1190,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dma_automode
+id|audio_devs
 (braket
 id|my_devnum
 )braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|DMA_AUTOMODE
 op_logical_and
 id|intrflag
 op_logical_and
@@ -1090,7 +1207,7 @@ id|pcm_count
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Auto mode on. No need to react */
+multiline_comment|/*&n;&t;&t;&t;&t; * Auto mode on. No need to react&n;&t;&t;&t;&t; */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -1115,10 +1232,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|dev
 )braket
+op_member_access_from_pointer
+id|dmachan
 OG
 l_int|3
 )paren
@@ -1285,7 +1404,13 @@ op_assign
 (brace
 l_string|&quot;Pro Audio Spectrum&quot;
 comma
-id|NOTHING_SPECIAL
+id|DMA_AUTOMODE
+comma
+id|AFMT_U8
+op_or
+id|AFMT_S16_LE
+comma
+l_int|NULL
 comma
 id|pas_pcm_open
 comma
@@ -1305,12 +1430,9 @@ id|pas_pcm_reset
 comma
 id|pas_pcm_reset
 comma
-multiline_comment|/* halt_xfer */
 l_int|NULL
 comma
-multiline_comment|/* has_output_drained */
 l_int|NULL
-multiline_comment|/* copy_from_user */
 )brace
 suffix:semicolon
 r_int
@@ -1362,109 +1484,51 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_dspdevs
+id|num_audiodevs
 OL
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )paren
 (brace
-id|dsp_devs
+id|audio_devs
 (braket
 id|my_devnum
 op_assign
-id|num_dspdevs
+id|num_audiodevs
 op_increment
 )braket
 op_assign
 op_amp
 id|pas_pcm_operations
 suffix:semicolon
-id|sound_dsp_dmachan
+id|audio_devs
 (braket
 id|my_devnum
 )braket
+op_member_access_from_pointer
+id|dmachan
 op_assign
 id|hw_config-&gt;dma
 suffix:semicolon
-macro_line|#ifndef PAS_NO_AUTODMA
-r_if
-c_cond
-(paren
-id|hw_config-&gt;dma
-OG
-l_int|3
-)paren
-(brace
-id|sound_buffcounts
+id|audio_devs
 (braket
 id|my_devnum
 )braket
+op_member_access_from_pointer
+id|buffcount
 op_assign
 l_int|1
 suffix:semicolon
-id|sound_buffsizes
+id|audio_devs
 (braket
 id|my_devnum
 )braket
+op_member_access_from_pointer
+id|buffsize
 op_assign
 l_int|2
 op_star
-l_int|65536
-suffix:semicolon
-id|sound_dma_automode
-(braket
-id|my_devnum
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|sound_buffcounts
-(braket
-id|my_devnum
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-id|sound_buffsizes
-(braket
-id|my_devnum
-)braket
-op_assign
 id|DSP_BUFFSIZE
 suffix:semicolon
-id|sound_dma_automode
-(braket
-id|my_devnum
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else
-id|sound_buffcounts
-(braket
-id|my_devnum
-)braket
-op_assign
-l_int|2
-suffix:semicolon
-id|sound_buffsizes
-(braket
-id|my_devnum
-)braket
-op_assign
-id|DSP_BUFFSIZE
-suffix:semicolon
-id|sound_dma_automode
-(braket
-id|my_devnum
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 id|printk
@@ -1495,17 +1559,23 @@ id|cause
 op_eq
 l_int|1
 )paren
-multiline_comment|/* PCM buffer done */
+multiline_comment|/*&n;&t;&t;&t;&t; * PCM buffer done&n;&t;&t;&t;&t; */
 (brace
 multiline_comment|/*&n;       * Halt the PCM first. Otherwise we don&squot;t have time to start a new&n;       * block before the PCM chip proceeds to the next sample&n;       */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|sound_dma_automode
+(paren
+id|audio_devs
 (braket
 id|my_devnum
 )braket
+op_member_access_from_pointer
+id|flags
+op_amp
+id|DMA_AUTOMODE
+)paren
 )paren
 (brace
 id|pas_write

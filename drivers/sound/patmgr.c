@@ -145,7 +145,7 @@ id|mbox
 id|dev
 )braket
 )paren
-multiline_comment|/* Killed in action. Inform the client */
+multiline_comment|/*&n;&t;&t;&t;&t; * Killed in action. Inform the client&n;&t;&t;&t;&t; */
 (brace
 id|mbox
 (braket

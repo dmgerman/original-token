@@ -12,22 +12,22 @@ r_static
 r_int
 id|wr_buff_no
 (braket
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
-multiline_comment|/* != -1, if there is a&n;&n;&t;&t;&t;&t;&t;&t; * incomplete output block */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * != -1, if there is&n;&t;&t;&t;&t;&t;&t; * a incomplete output&n;&t;&t;&t;&t;&t;&t; * block in the queue.&n;&t;&t;&t;&t;&t;&t; */
 DECL|variable|wr_buff_size
 DECL|variable|wr_buff_ptr
 r_static
 r_int
 id|wr_buff_size
 (braket
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )braket
 comma
 id|wr_buff_ptr
 (braket
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
 DECL|variable|audio_mode
@@ -35,7 +35,7 @@ r_static
 r_int
 id|audio_mode
 (braket
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
 DECL|macro|AM_NONE
@@ -50,9 +50,133 @@ r_char
 op_star
 id|wr_dma_buf
 (braket
-id|MAX_DSP_DEV
+id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
+DECL|variable|audio_format
+r_static
+r_int
+id|audio_format
+(braket
+id|MAX_AUDIO_DEV
+)braket
+suffix:semicolon
+DECL|variable|local_conversion
+r_static
+r_int
+id|local_conversion
+(braket
+id|MAX_AUDIO_DEV
+)braket
+suffix:semicolon
+r_static
+r_int
+DECL|function|set_format
+id|set_format
+(paren
+r_int
+id|dev
+comma
+r_int
+id|fmt
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fmt
+op_ne
+id|AFMT_QUERY
+)paren
+(brace
+id|local_conversion
+(braket
+id|dev
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|format_mask
+op_amp
+id|fmt
+)paren
+)paren
+multiline_comment|/* Not supported */
+r_if
+c_cond
+(paren
+id|fmt
+op_eq
+id|AFMT_MU_LAW
+)paren
+(brace
+id|fmt
+op_assign
+id|AFMT_U8
+suffix:semicolon
+id|local_conversion
+(braket
+id|dev
+)braket
+op_assign
+id|AFMT_MU_LAW
+suffix:semicolon
+)brace
+r_else
+id|fmt
+op_assign
+id|AFMT_U8
+suffix:semicolon
+multiline_comment|/* This is always supported */
+id|audio_format
+(braket
+id|dev
+)braket
+op_assign
+id|DMAbuf_ioctl
+(paren
+id|dev
+comma
+id|SNDCTL_DSP_SETFMT
+comma
+id|fmt
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|local_conversion
+(braket
+id|dev
+)braket
+)paren
+multiline_comment|/* This shadows the HW format */
+r_return
+id|local_conversion
+(braket
+id|dev
+)braket
+suffix:semicolon
+r_return
+id|audio_format
+(braket
+id|dev
+)braket
+suffix:semicolon
+)brace
 r_int
 DECL|function|audio_open
 id|audio_open
@@ -127,6 +251,13 @@ l_int|0
 r_return
 id|ret
 suffix:semicolon
+id|local_conversion
+(braket
+id|dev
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -134,7 +265,7 @@ id|DMAbuf_ioctl
 (paren
 id|dev
 comma
-id|SNDCTL_DSP_SAMPLESIZE
+id|SNDCTL_DSP_SETFMT
 comma
 id|bits
 comma
@@ -158,6 +289,30 @@ id|ENXIO
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dev_type
+op_eq
+id|SND_DEV_AUDIO
+)paren
+(brace
+id|set_format
+(paren
+id|dev
+comma
+id|AFMT_MU_LAW
+)paren
+suffix:semicolon
+)brace
+r_else
+id|set_format
+(paren
+id|dev
+comma
+id|bits
+)paren
+suffix:semicolon
 id|wr_buff_no
 (braket
 id|dev
@@ -404,13 +559,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-r_int
-id|dev_type
-op_assign
-id|dev
-op_amp
-l_int|0x0f
-suffix:semicolon
 id|dev
 op_assign
 id|dev
@@ -435,7 +583,7 @@ id|dev
 op_eq
 id|AM_READ
 )paren
-multiline_comment|/* Direction changed */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Direction changed&n;&t;&t;&t;&t;&t; */
 (brace
 id|wr_buff_no
 (braket
@@ -459,7 +607,7 @@ c_cond
 op_logical_neg
 id|count
 )paren
-multiline_comment|/* Flush output */
+multiline_comment|/*&n;&t;&t;&t;&t; * Flush output&n;&t;&t;&t;&t; */
 (brace
 r_if
 c_cond
@@ -506,7 +654,7 @@ c_loop
 id|c
 )paren
 (brace
-multiline_comment|/* Perform output blocking */
+multiline_comment|/*&n;&t;&t;&t;&t; * Perform output blocking&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -517,7 +665,7 @@ id|dev
 OL
 l_int|0
 )paren
-multiline_comment|/* There is no incomplete buffers */
+multiline_comment|/*&n;&t;&t;&t;&t; * There is no incomplete buffers&n;&t;&t;&t;&t; */
 (brace
 r_if
 c_cond
@@ -548,12 +696,14 @@ id|dev
 OL
 l_int|0
 )paren
+(brace
 r_return
 id|wr_buff_no
 (braket
 id|dev
 )braket
 suffix:semicolon
+)brace
 id|wr_buff_ptr
 (braket
 id|dev
@@ -601,7 +751,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dsp_devs
+id|audio_devs
 (braket
 id|dev
 )braket
@@ -609,7 +759,7 @@ op_member_access_from_pointer
 id|copy_from_user
 )paren
 (brace
-multiline_comment|/* No device specific copy routine */
+multiline_comment|/*&n;&t;&t;&t;&t; * No device specific copy routine&n;&t;&t;&t;&t; */
 id|COPY_FROM_USER
 (paren
 op_amp
@@ -633,7 +783,7 @@ id|l
 suffix:semicolon
 )brace
 r_else
-id|dsp_devs
+id|audio_devs
 (braket
 id|dev
 )braket
@@ -659,17 +809,20 @@ comma
 id|l
 )paren
 suffix:semicolon
-multiline_comment|/* Insert local processing here */
+multiline_comment|/*&n;       * Insert local processing here&n;       */
 r_if
 c_cond
 (paren
-id|dev_type
+id|local_conversion
+(braket
+id|dev
+)braket
 op_eq
-id|SND_DEV_AUDIO
+id|AFMT_MU_LAW
 )paren
 (brace
 macro_line|#ifdef linux
-multiline_comment|/* This just allows interrupts while the conversion is running */
+multiline_comment|/*&n;&t;   * This just allows interrupts while the conversion is running&n;&t;   */
 id|__asm__
 (paren
 l_string|&quot;sti&quot;
@@ -754,9 +907,11 @@ id|dev
 OL
 l_int|0
 )paren
+(brace
 r_return
 id|err
 suffix:semicolon
+)brace
 id|wr_buff_no
 (braket
 id|dev
@@ -804,13 +959,6 @@ id|dmabuf
 suffix:semicolon
 r_int
 id|buff_no
-suffix:semicolon
-r_int
-id|dev_type
-op_assign
-id|dev
-op_amp
-l_int|0x0f
 suffix:semicolon
 id|dev
 op_assign
@@ -920,17 +1068,20 @@ id|l
 op_assign
 id|c
 suffix:semicolon
-multiline_comment|/* Insert any local processing here. */
+multiline_comment|/*&n;       * Insert any local processing here.&n;       */
 r_if
 c_cond
 (paren
-id|dev_type
+id|local_conversion
+(braket
+id|dev
+)braket
 op_eq
-id|SND_DEV_AUDIO
+id|AFMT_MU_LAW
 )paren
 (brace
 macro_line|#ifdef linux
-multiline_comment|/* This just allows interrupts while the conversion is running */
+multiline_comment|/*&n;&t;   * This just allows interrupts while the conversion is running&n;&t;   */
 id|__asm__
 (paren
 l_string|&quot;sti&quot;
@@ -1008,13 +1159,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|dev_type
-op_assign
-id|dev
-op_amp
-l_int|0x0f
-suffix:semicolon
 id|dev
 op_assign
 id|dev
@@ -1147,23 +1291,45 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
+r_case
+id|SNDCTL_DSP_GETFMTS
 suffix:colon
-(brace
-)brace
-r_if
-c_cond
-(paren
-id|dev_type
-op_eq
-id|SND_DEV_AUDIO
-)paren
 r_return
-id|RET_ERROR
+id|IOCTL_OUT
 (paren
-id|EIO
+id|arg
+comma
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|format_mask
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SNDCTL_DSP_SETFMT
+suffix:colon
+r_return
+id|IOCTL_OUT
+(paren
+id|arg
+comma
+id|set_format
+(paren
+id|dev
+comma
+id|IOCTL_IN
+(paren
+id|arg
+)paren
+)paren
+)paren
+suffix:semicolon
+r_default
+suffix:colon
 r_return
 id|DMAbuf_ioctl
 (paren
@@ -1176,6 +1342,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 r_int
@@ -1186,12 +1354,13 @@ r_int
 id|mem_start
 )paren
 (brace
+multiline_comment|/*&n; * NOTE! This routine could be called several times during boot.&n; */
 r_return
 id|mem_start
 suffix:semicolon
 )brace
 macro_line|#else
-multiline_comment|/* Stub versions */
+multiline_comment|/*&n; * Stub versions&n; */
 r_int
 DECL|function|audio_read
 id|audio_read

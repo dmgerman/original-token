@@ -65,7 +65,6 @@ r_static
 r_int
 DECL|function|scale_vol
 id|scale_vol
-c_func
 (paren
 r_int
 id|vol
@@ -212,7 +211,6 @@ suffix:semicolon
 id|vol
 op_assign
 id|scale_vol
-c_func
 (paren
 id|vol
 )paren
