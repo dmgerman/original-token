@@ -667,7 +667,6 @@ id|block
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|adfs_bmap
 (paren
 r_struct

@@ -127,6 +127,7 @@ id|forse
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Global Data&n; */
+macro_line|#ifdef MODULE
 DECL|variable|fullname
 r_static
 r_char
@@ -145,6 +146,7 @@ id|copyright
 op_assign
 l_string|&quot;(c) 1995-1997 Sangoma Technologies Inc.&quot;
 suffix:semicolon
+macro_line|#endif
 DECL|variable|modname
 r_static
 r_char
@@ -187,7 +189,7 @@ comma
 l_int|0x00
 )brace
 suffix:semicolon
-DECL|variable|oui_802_2
+macro_line|#if 0
 r_static
 r_int
 r_char
@@ -203,6 +205,7 @@ comma
 l_int|0xC2
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Kernel Loadable Module Entry Points&n; */
 multiline_comment|/*&n; *&t;Module &squot;insert&squot; entry point.&n; *&t;o print announcement&n; *&t;o initialize static data&n; *&t;o create /proc/net/router directory and static entries&n; *&n; *&t;Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; *&t;Context:&t;process&n; */

@@ -5361,7 +5361,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
+macro_line|#ifdef CONFIG_PCI_OLD_PROC
 r_case
 id|PROC_PCI
 suffix:colon

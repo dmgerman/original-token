@@ -28,6 +28,16 @@ macro_line|#include &lt;linux/lockd/bind.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/nls.h&gt;
+macro_line|#ifdef CONFIG_CODA_FS
+r_extern
+r_int
+id|init_coda_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|device_setup

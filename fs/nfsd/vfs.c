@@ -4343,9 +4343,8 @@ id|cd.buflen
 op_assign
 op_star
 id|countp
-op_rshift
-l_int|2
 suffix:semicolon
+multiline_comment|/* count of words */
 multiline_comment|/*&n;&t; * Read the directory entries. This silly loop is necessary because&n;&t; * readdir() is not guaranteed to fill up the entire buffer, but&n;&t; * may choose to do less.&n;&t; */
 id|inode
 op_assign

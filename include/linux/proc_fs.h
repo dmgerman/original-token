@@ -566,6 +566,22 @@ l_int|8
 )paren
 )brace
 suffix:semicolon
+DECL|enum|bus_directory_inos
+r_enum
+id|bus_directory_inos
+(brace
+DECL|enumerator|PROC_BUS_PCI
+id|PROC_BUS_PCI
+op_assign
+id|PROC_MCA_LAST
+comma
+DECL|enumerator|PROC_BUS_PCI_DEVICES
+id|PROC_BUS_PCI_DEVICES
+comma
+DECL|enumerator|PROC_BUS_LAST
+id|PROC_BUS_LAST
+)brace
+suffix:semicolon
 multiline_comment|/* Finally, the dynamically allocatable proc entries are reserved: */
 DECL|macro|PROC_DYNAMIC_FIRST
 mdefine_line|#define PROC_DYNAMIC_FIRST 4096
@@ -902,6 +918,12 @@ id|proc_mca
 suffix:semicolon
 r_extern
 r_struct
+id|proc_dir_entry
+op_star
+id|proc_bus
+suffix:semicolon
+r_extern
+r_struct
 id|inode_operations
 id|proc_scsi_inode_operations
 suffix:semicolon
@@ -923,7 +945,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|proc_net_init
+id|proc_bus_pci_init
 c_func
 (paren
 r_void

@@ -127,14 +127,12 @@ multiline_comment|/* status flags */
 DECL|member|wb_args
 r_struct
 id|nfs_writeargs
-op_star
 id|wb_args
 suffix:semicolon
 multiline_comment|/* NFS RPC stuff */
 DECL|member|wb_fattr
 r_struct
 id|nfs_fattr
-op_star
 id|wb_fattr
 suffix:semicolon
 multiline_comment|/* file attributes */
@@ -644,7 +642,7 @@ id|nfs_fhget
 c_func
 (paren
 r_struct
-id|super_block
+id|dentry
 op_star
 comma
 r_struct

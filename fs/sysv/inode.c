@@ -822,10 +822,6 @@ op_assign
 op_amp
 id|sbd2-&gt;s_time
 suffix:semicolon
-id|sb-&gt;sv_block_base
-op_assign
-l_int|0
-suffix:semicolon
 id|sb-&gt;sv_firstinodezone
 op_assign
 l_int|2
@@ -1121,10 +1117,6 @@ id|sb-&gt;sv_sb_state
 op_assign
 op_amp
 id|sbd-&gt;s_state
-suffix:semicolon
-id|sb-&gt;sv_block_base
-op_assign
-l_int|0
 suffix:semicolon
 id|sb-&gt;sv_firstinodezone
 op_assign
@@ -1422,10 +1414,6 @@ op_assign
 op_amp
 id|sbd-&gt;s_state
 suffix:semicolon
-id|sb-&gt;sv_block_base
-op_assign
-l_int|0
-suffix:semicolon
 id|sb-&gt;sv_firstinodezone
 op_assign
 l_int|2
@@ -1722,10 +1710,6 @@ op_assign
 op_amp
 id|sbd-&gt;s_time
 suffix:semicolon
-id|sb-&gt;sv_block_base
-op_assign
-l_int|0
-suffix:semicolon
 id|sb-&gt;sv_firstinodezone
 op_assign
 l_int|2
@@ -1887,6 +1871,10 @@ id|dev
 comma
 id|BLOCK_SIZE
 )paren
+suffix:semicolon
+id|sb-&gt;sv_block_base
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Try to read Xenix superblock */
 r_if

@@ -469,12 +469,12 @@ id|sigaction
 op_star
 id|oact
 comma
+r_int
+id|sigsetsize
+comma
 r_void
 op_star
 id|restorer
-comma
-r_int
-id|sigsetsize
 )paren
 (brace
 r_struct

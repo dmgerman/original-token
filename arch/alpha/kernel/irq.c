@@ -1392,7 +1392,7 @@ l_string|&quot;%2d: %10u %c %s&quot;
 comma
 id|i
 comma
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 l_int|0
 )braket
@@ -2387,7 +2387,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 l_int|0
 )braket
@@ -2512,7 +2512,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 l_int|0
 )braket

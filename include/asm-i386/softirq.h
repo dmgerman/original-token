@@ -337,9 +337,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;(in_bh ? 0 : (local_bh_count[smp_processor_id()]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(in_bh() ? 0 : (local_bh_count[smp_processor_id()]=1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;(local_bh_count[smp_processor_id()] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[smp_processor_id()] = 0)
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;do { } while (0)
 macro_line|#endif&t;/* SMP */

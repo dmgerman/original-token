@@ -5688,6 +5688,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_WAN_ROUTER
+r_extern
+r_void
+id|wanrouter_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func

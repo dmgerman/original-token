@@ -524,6 +524,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_APM
 multiline_comment|/*&n; * this is only used if we have fast gettimeoffset:&n; */
 DECL|function|do_x86_get_fast_time
 r_static
@@ -544,6 +545,7 @@ id|tv
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|do_gettimeoffset
 r_static
 r_int

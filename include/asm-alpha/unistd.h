@@ -303,8 +303,8 @@ DECL|macro|__NR_osf_pid_block
 mdefine_line|#define __NR_osf_pid_block&t;153&t;/* not implemented */
 DECL|macro|__NR_osf_pid_unblock
 mdefine_line|#define __NR_osf_pid_unblock&t;154&t;/* not implemented */
-DECL|macro|__NR_osf_sigaction
-mdefine_line|#define __NR_osf_sigaction&t;156
+DECL|macro|__NR_sigaction
+mdefine_line|#define __NR_sigaction&t;&t;156
 DECL|macro|__NR_osf_sigwaitprim
 mdefine_line|#define __NR_osf_sigwaitprim&t;157&t;/* not implemented */
 DECL|macro|__NR_osf_nfssvc
@@ -351,8 +351,8 @@ DECL|macro|__NR_semop
 mdefine_line|#define __NR_semop&t;&t;206
 DECL|macro|__NR_osf_utsname
 mdefine_line|#define __NR_osf_utsname&t;207
-DECL|macro|__NR_osf_lchown
-mdefine_line|#define __NR_osf_lchown&t;&t;208&t;/* not implemented */
+DECL|macro|__NR_lchown
+mdefine_line|#define __NR_lchown&t;&t;208
 DECL|macro|__NR_osf_shmat
 mdefine_line|#define __NR_osf_shmat&t;&t;209
 DECL|macro|__NR_shmctl

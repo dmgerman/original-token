@@ -1,6 +1,6 @@
 multiline_comment|/*&n;* Sony CDU-31A CDROM interface device driver.&n;*&n;* Corey Minyard (minyard@wf-rch.cirr.com)&n;*&n;* Colossians 3:17&n;*&n;* The Sony interface device driver handles Sony interface CDROM&n;* drives and provides a complete block-level interface as well as an&n;* ioctl() interface compatible with the Sun (as specified in&n;* include/linux/cdrom.h).  With this interface, CDROMs can be&n;* accessed and standard audio CDs can be played back normally.&n;*&n;* WARNING - &t;All autoprobes have been removed from the driver.&n;*&t;&t;You MUST configure the CDU31A via a LILO config&n;*&t;&t;at boot time or in lilo.conf.  I have the&n;*&t;&t;following in my lilo.conf:&n;*&n;*                append=&quot;cdu31a=0x1f88,0,PAS&quot;&n;*&n;*&t;&t;The first number is the I/O base address of the&n;*&t;&t;card.  The second is the interrupt (0 means none).&n; *&t;&t;The third should be &quot;PAS&quot; if on a Pro-Audio&n; *&t;&t;spectrum, or nothing if on something else.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * NEWS FLASH - The driver now supports interrupts but they are&n; * turned off by default.  Use of interrupts is highly encouraged, it&n; * cuts CPU usage down to a reasonable level.  I had DMA in for a while&n; * but PC DMA is just too slow.  Better to just insb() it.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; * DRIVER SPECIAL FEATURES&n; * -----------------------&n; *&n; * This section describes features beyond the normal audio and CD-ROM&n; * functions of the drive.&n; *&n; * 2048 byte buffer mode&n; *&n; * If a disk is mounted with -o block=2048, data is copied straight&n; * from the drive data port to the buffer.  Otherwise, the readahead&n; * buffer must be involved to hold the other 1K of data when a 1K&n; * block operation is done.  Note that with 2048 byte blocks you&n; * cannot execute files from the CD.&n; *&n; * XA compatibility&n; *&n; * The driver should support XA disks for both the CDU31A and CDU33A.&n; * It does this transparently, the using program doesn&squot;t need to set it.&n; *&n; * Multi-Session&n; *&n; * A multi-session disk looks just like a normal disk to the user.&n; * Just mount one normally, and all the data should be there.&n; * A special thanks to Koen for help with this!&n; * &n; * Raw sector I/O&n; *&n; * Using the CDROMREADAUDIO it is possible to read raw audio and data&n; * tracks.  Both operations return 2352 bytes per sector.  On the data&n; * tracks, the first 12 bytes is not returned by the drive and the value&n; * of that data is indeterminate.&n; *&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; * Credits:&n; *    Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt;&n; *         For finding abug in the return of the track numbers.&n; */
 multiline_comment|/* conversion to Uniform cdrom layer.&n;   TOC processing redone for proper multisession support.&n;&n;   TODO: &n;         CDs with form1 and form2 sectors cause problems&n;         with current read-ahead strategy.&n;   Heiko Eissfeldt Sep 97 */
-multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |                      |&n; *      |  JP2     +-----------------+                      |&n; *      |  JP3                                              |&n; *      |  JP4                                              |&n; *      |                                                   +--+&n; *      |                                                   |  +-+&n; *      |                                                   |  | |  External&n; *      |                                                   |  | |  Connector&n; *      |                                                   |  | |&n; *      |                                                   |  +-+&n; *      |                                                   +--+&n; *      |                                                   |&n; *      |                                          +--------+&n; *      |                                          |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; *      Address         Pin 1           Pin 2&n; *      -------         -----           -----&n; *      0x320           Short           Short&n; *      0x330           Short           Open&n; *      0x340           Open            Short&n; *      0x360           Open            Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; *      DMA             Pin 1           Pin 2           Pin 3&n; *      ---             -----           -----           -----&n; *      1               On              Off             On&n; *      2               Off             On              Off&n; *      3               Off             Off             On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; *      IRQ     Pin 1           Pin 2           Pin 3           Pin 4&n; *      ---     -----           -----           -----           -----&n; *      3       Off             Off             On              Off&n; *      4       Off             Off*            Off             On&n; *      5       On              Off             Off             Off&n; *      6       Off             On              Off             Off&n; * &n; *              * The documentation states to set this for interrupt&n; *                4, but I think that is a mistake.&n; *&n; *  It probably a little late to be adding a history, but I guess I&n; *  will start.&n; *&n; *  10/24/95 - Added support for disabling the eject button when the&n; *             drive is open.  Note that there is a small problem&n; *             still here, if the eject button is pushed while the&n; *             drive light is flashing, the drive will return a bad&n; *             status and be reset.  It recovers, though.&n; *&n; *  03/07/97 - Fixed a problem with timers.&n; *&n; *&n; *  18 Spetember 1997 -- Ported to Uniform CD-ROM driver by &n; *                 Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt; with additional&n; *                 changes by Erik Andersen &lt;andersee@debian.org&gt;&n; *&n;*/
+multiline_comment|/*&n; *&n; * Setting up the Sony CDU31A/CDU33A drive interface card.  If&n; * You have another card, you are on your own.&n; * &n; *      +----------+-----------------+----------------------+&n; *      |  JP1     |  34 Pin Conn    |                      |&n; *      |  JP2     +-----------------+                      |&n; *      |  JP3                                              |&n; *      |  JP4                                              |&n; *      |                                                   +--+&n; *      |                                                   |  +-+&n; *      |                                                   |  | |  External&n; *      |                                                   |  | |  Connector&n; *      |                                                   |  | |&n; *      |                                                   |  +-+&n; *      |                                                   +--+&n; *      |                                                   |&n; *      |                                          +--------+&n; *      |                                          |&n; *      +------------------------------------------+&n; * &n; *    JP1 sets the Base Address, using the following settings:&n; * &n; *      Address         Pin 1           Pin 2&n; *      -------         -----           -----&n; *      0x320           Short           Short&n; *      0x330           Short           Open&n; *      0x340           Open            Short&n; *      0x360           Open            Open&n; * &n; *    JP2 and JP3 configure the DMA channel; they must be set the same.&n; * &n; *      DMA             Pin 1           Pin 2           Pin 3&n; *      ---             -----           -----           -----&n; *      1               On              Off             On&n; *      2               Off             On              Off&n; *      3               Off             Off             On&n; * &n; *    JP4 Configures the IRQ:&n; * &n; *      IRQ     Pin 1           Pin 2           Pin 3           Pin 4&n; *      ---     -----           -----           -----           -----&n; *      3       Off             Off             On              Off&n; *      4       Off             Off*            Off             On&n; *      5       On              Off             Off             Off&n; *      6       Off             On              Off             Off&n; * &n; *              * The documentation states to set this for interrupt&n; *                4, but I think that is a mistake.&n; *&n; *  It probably a little late to be adding a history, but I guess I&n; *  will start.&n; *&n; *  10/24/95 - Added support for disabling the eject button when the&n; *             drive is open.  Note that there is a small problem&n; *             still here, if the eject button is pushed while the&n; *             drive light is flashing, the drive will return a bad&n; *             status and be reset.  It recovers, though.&n; *&n; *  03/07/97 - Fixed a problem with timers.&n; *&n; *&n; *  18 Spetember 1997 -- Ported to Uniform CD-ROM driver by &n; *                 Heiko Eissfeldt &lt;heiko@colossus.escape.de&gt; with additional&n; *                 changes by Erik Andersen &lt;andersee@debian.org&gt;&n; *&n; *  24 January 1998 -- Removed the scd_disc_status() function, which was now&n; *                     just dead code left over from the port.&n; *                          Erik Andersen &lt;andersee@debian.org&gt;&n; *&n;*/
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -3488,95 +3488,6 @@ op_mod
 l_int|256
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* Uniform cdrom interface function.&n;   Return the status of the current disc:&n;   If it is recognized as CD-I -&gt; return XA Mode 2 Form 2&n;   If it is recognized as XA   -&gt; return XA Mode 2 Form 1&n;   If there is at least one data track return Mode 1&n;   else return type AUDIO&n; */
-r_static
-r_int
-id|scd_disc_status
-c_func
-(paren
-r_struct
-id|cdrom_device_info
-op_star
-id|cdi
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sony_spun_up
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|sony_get_toc
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* look into the TOC */
-r_if
-c_cond
-(paren
-id|sony_toc.disk_type
-op_eq
-l_int|0x10
-)paren
-multiline_comment|/* this is a CD-I disc */
-r_return
-id|CDS_XA_2_2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sony_toc.disk_type
-op_eq
-l_int|0x20
-)paren
-multiline_comment|/* this is a XA disc */
-r_return
-id|CDS_XA_2_1
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|sony_toc.track_entries
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|sony_toc.tracks
-(braket
-id|i
-)braket
-dot
-id|control
-op_amp
-id|CDROM_DATA_TRACK
-)paren
-r_return
-id|CDS_DATA_1
-suffix:semicolon
-r_return
-id|CDS_AUDIO
-suffix:semicolon
-)brace
-r_else
-r_return
-id|CDS_NO_INFO
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Starts a read operation. Returns 0 on success and 1 on failure. &n;   The read operation used here allows multiple sequential sectors &n;   to be read and status returned for each sector.  The driver will&n;   read the output one at a time as the requests come and abort the&n;   operation if the requested sector is not the next one from the&n;   drive. */
 r_static
 r_int

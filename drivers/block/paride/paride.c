@@ -2246,6 +2246,24 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PT
+(brace
+r_extern
+r_int
+id|pt_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|pt_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* end of paride.c */

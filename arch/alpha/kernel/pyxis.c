@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+multiline_comment|/* NOTE: Herein are back-to-back mb insns.  They are magic.&n;   A plausible explanation is that the i/o controler does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
 r_extern
 r_struct
 id|hwrpb_struct
@@ -400,6 +401,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
 r_if
 c_cond
 (paren
@@ -699,6 +706,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
 id|PYXIS_mcheck_expected
 op_assign
 l_int|0
@@ -1839,6 +1852,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
 r_if
 c_cond
 (paren
@@ -1867,6 +1886,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
 id|draina
 c_func
 (paren
@@ -1939,6 +1964,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* magic */
 id|draina
 c_func
 (paren

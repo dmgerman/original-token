@@ -4129,8 +4129,9 @@ c_func
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This routine gets called during initialization if thing go wrong,&n; * and is used in cleanup_module as well. */
+multiline_comment|/* This routine gets called during initialization if things go wrong,&n; * and is used in cleanup_module as well. */
 DECL|function|cleanup
+r_static
 r_void
 id|cleanup
 c_func

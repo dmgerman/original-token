@@ -49,6 +49,7 @@ l_string|&quot;TeleCommute/BRI&quot;
 suffix:semicolon
 multiline_comment|/* insmod set parameters */
 DECL|variable|io
+r_static
 r_int
 r_int
 id|io
@@ -66,6 +67,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 r_char
 id|irq
@@ -83,6 +85,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|ram
+r_static
 r_int
 r_int
 id|ram
@@ -100,6 +103,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|do_reset
+r_static
 r_int
 id|do_reset
 op_assign

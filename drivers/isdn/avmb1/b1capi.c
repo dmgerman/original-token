@@ -22,18 +22,6 @@ op_assign
 l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
-DECL|variable|portbase
-r_int
-id|portbase
-op_assign
-l_int|0x150
-suffix:semicolon
-DECL|variable|irq
-r_int
-id|irq
-op_assign
-l_int|15
-suffix:semicolon
 DECL|variable|showcapimsgs
 r_int
 id|showcapimsgs
@@ -46,6 +34,21 @@ r_int
 id|loaddebug
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|portbase
+r_static
+r_int
+id|portbase
+op_assign
+l_int|0x150
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|variable|irq
+r_static
+r_int
+id|irq
+op_assign
+l_int|15
 suffix:semicolon
 macro_line|#ifdef HAS_NEW_SYMTAB
 id|MODULE_AUTHOR
@@ -86,6 +89,7 @@ comma
 l_string|&quot;0-1i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* ------------------------------------------------------------- */
 DECL|struct|msgidqueue

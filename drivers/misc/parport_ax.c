@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_ax.c,v 1.2 1997/10/25 17:27:03 philip Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
+multiline_comment|/* $Id: parport_ax.c,v 1.5 1998/01/10 18:28:39 ecd Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -16,27 +17,29 @@ multiline_comment|/*&n; * Define this if you have Devices which don&squot;t supp
 DECL|macro|HAVE_SLOW_DEVICES
 macro_line|#undef HAVE_SLOW_DEVICES
 DECL|macro|DATA
-mdefine_line|#define DATA     0x00
+mdefine_line|#define DATA&t;&t;0x00
 DECL|macro|STATUS
-mdefine_line|#define STATUS   0x01
+mdefine_line|#define STATUS&t;&t;0x01
 DECL|macro|CONTROL
-mdefine_line|#define CONTROL  0x02
+mdefine_line|#define CONTROL&t;&t;0x02
+DECL|macro|EPPREG
+mdefine_line|#define EPPREG&t;&t;0x04
 DECL|macro|CFIFO
-mdefine_line|#define CFIFO&t;0x400
+mdefine_line|#define CFIFO&t;&t;0x400
 DECL|macro|DFIFO
-mdefine_line|#define DFIFO&t;0x400
+mdefine_line|#define DFIFO&t;&t;0x400
 DECL|macro|TFIFO
-mdefine_line|#define TFIFO&t;0x400
-DECL|macro|CNFA
-mdefine_line|#define CNFA&t;0x400
-DECL|macro|CNFB
-mdefine_line|#define CNFB&t;0x401
-DECL|macro|ECR
-mdefine_line|#define ECR&t;0x402
+mdefine_line|#define TFIFO&t;&t;0x400
+DECL|macro|CONFIGA
+mdefine_line|#define CONFIGA&t;&t;0x400
+DECL|macro|CONFIGB
+mdefine_line|#define CONFIGB&t;&t;0x401
+DECL|macro|ECONTROL
+mdefine_line|#define ECONTROL&t;0x402
 r_static
 r_void
-DECL|function|ax_null_intr_func
-id|ax_null_intr_func
+DECL|function|parport_ax_null_intr_func
+id|parport_ax_null_intr_func
 c_func
 (paren
 r_int
@@ -53,14 +56,37 @@ id|regs
 )paren
 (brace
 multiline_comment|/* NULL function - Does nothing */
-r_return
+)brace
+r_void
+DECL|function|parport_ax_write_epp
+id|parport_ax_write_epp
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+comma
+r_int
+r_int
+id|d
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|d
+comma
+id|p-&gt;base
+op_plus
+id|EPPREG
+)paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_static
 r_int
 r_int
-id|ax_read_configb
+DECL|function|parport_ax_read_epp
+id|parport_ax_read_epp
 c_func
 (paren
 r_struct
@@ -79,15 +105,39 @@ c_func
 (paren
 id|p-&gt;base
 op_plus
-id|CNFB
+id|EPPREG
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-r_static
+r_int
+r_int
+DECL|function|parport_ax_read_configb
+id|parport_ax_read_configb
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+r_return
+(paren
+r_int
+r_int
+)paren
+id|inb
+c_func
+(paren
+id|p-&gt;base
+op_plus
+id|CONFIGB
+)paren
+suffix:semicolon
+)brace
 r_void
-DECL|function|ax_write_data
-id|ax_write_data
+DECL|function|parport_ax_write_data
+id|parport_ax_write_data
 c_func
 (paren
 r_struct
@@ -111,11 +161,10 @@ id|DATA
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_read_data
-id|ax_read_data
+DECL|function|parport_ax_read_data
+id|parport_ax_read_data
 c_func
 (paren
 r_struct
@@ -138,10 +187,9 @@ id|DATA
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_write_control
-id|ax_write_control
+DECL|function|parport_ax_write_control
+id|parport_ax_write_control
 c_func
 (paren
 r_struct
@@ -165,11 +213,10 @@ id|CONTROL
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_read_control
-id|ax_read_control
+DECL|function|parport_ax_read_control
+id|parport_ax_read_control
 c_func
 (paren
 r_struct
@@ -192,11 +239,10 @@ id|CONTROL
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_frob_control
-id|ax_frob_control
+DECL|function|parport_ax_frob_control
+id|parport_ax_frob_control
 c_func
 (paren
 r_struct
@@ -252,10 +298,9 @@ r_return
 id|old
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_write_status
-id|ax_write_status
+DECL|function|parport_ax_write_status
+id|parport_ax_write_status
 c_func
 (paren
 r_struct
@@ -279,11 +324,10 @@ id|STATUS
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_read_status
-id|ax_read_status
+DECL|function|parport_ax_read_status
+id|parport_ax_read_status
 c_func
 (paren
 r_struct
@@ -306,10 +350,9 @@ id|STATUS
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_write_econtrol
-id|ax_write_econtrol
+DECL|function|parport_ax_write_econtrol
+id|parport_ax_write_econtrol
 c_func
 (paren
 r_struct
@@ -329,15 +372,14 @@ id|d
 comma
 id|p-&gt;base
 op_plus
-id|ECR
+id|ECONTROL
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_read_econtrol
-id|ax_read_econtrol
+DECL|function|parport_ax_read_econtrol
+id|parport_ax_read_econtrol
 c_func
 (paren
 r_struct
@@ -356,15 +398,14 @@ c_func
 (paren
 id|p-&gt;base
 op_plus
-id|ECR
+id|ECONTROL
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_frob_econtrol
-id|ax_frob_econtrol
+DECL|function|parport_ax_frob_econtrol
+id|parport_ax_frob_econtrol
 c_func
 (paren
 r_struct
@@ -394,7 +435,7 @@ c_func
 (paren
 id|p-&gt;base
 op_plus
-id|ECR
+id|ECONTROL
 )paren
 suffix:semicolon
 id|outb
@@ -413,17 +454,16 @@ id|val
 comma
 id|p-&gt;base
 op_plus
-id|ECR
+id|ECONTROL
 )paren
 suffix:semicolon
 r_return
 id|old
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_change_mode
-id|ax_change_mode
+DECL|function|parport_ax_change_mode
+id|parport_ax_change_mode
 c_func
 (paren
 r_struct
@@ -435,7 +475,7 @@ r_int
 id|m
 )paren
 (brace
-id|ax_frob_econtrol
+id|parport_ax_frob_econtrol
 c_func
 (paren
 id|p
@@ -448,10 +488,9 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_write_fifo
-id|ax_write_fifo
+DECL|function|parport_ax_write_fifo
+id|parport_ax_write_fifo
 c_func
 (paren
 r_struct
@@ -475,11 +514,10 @@ id|DFIFO
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_read_fifo
-id|ax_read_fifo
+DECL|function|parport_ax_read_fifo
+id|parport_ax_read_fifo
 c_func
 (paren
 r_struct
@@ -498,10 +536,9 @@ id|DFIFO
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_disable_irq
-id|ax_disable_irq
+DECL|function|parport_ax_disable_irq
+id|parport_ax_disable_irq
 c_func
 (paren
 r_struct
@@ -555,10 +592,9 @@ id|dma-&gt;dcsr
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_enable_irq
-id|ax_enable_irq
+DECL|function|parport_ax_enable_irq
+id|parport_ax_enable_irq
 c_func
 (paren
 r_struct
@@ -609,10 +645,9 @@ id|dma-&gt;dcsr
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_release_resources
-id|ax_release_resources
+DECL|function|parport_ax_release_resources
+id|parport_ax_release_resources
 c_func
 (paren
 r_struct
@@ -629,7 +664,7 @@ op_ne
 id|PARPORT_IRQ_NONE
 )paren
 (brace
-id|ax_disable_irq
+id|parport_ax_disable_irq
 c_func
 (paren
 id|p
@@ -686,10 +721,9 @@ id|linux_ebus_dma
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
-DECL|function|ax_claim_resources
-id|ax_claim_resources
+DECL|function|parport_ax_claim_resources
+id|parport_ax_claim_resources
 c_func
 (paren
 r_struct
@@ -712,7 +746,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-id|ax_null_intr_func
+id|parport_ax_null_intr_func
 comma
 l_int|0
 comma
@@ -721,7 +755,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ax_enable_irq
+id|parport_ax_enable_irq
 c_func
 (paren
 id|p
@@ -779,10 +813,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_save_state
-id|ax_save_state
+DECL|function|parport_ax_save_state
+id|parport_ax_save_state
 c_func
 (paren
 r_struct
@@ -798,7 +831,7 @@ id|s
 (brace
 id|s-&gt;u.pc.ctr
 op_assign
-id|ax_read_control
+id|parport_ax_read_control
 c_func
 (paren
 id|p
@@ -806,17 +839,16 @@ id|p
 suffix:semicolon
 id|s-&gt;u.pc.ecr
 op_assign
-id|ax_read_econtrol
+id|parport_ax_read_econtrol
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
 )brace
-r_static
 r_void
-DECL|function|ax_restore_state
-id|ax_restore_state
+DECL|function|parport_ax_restore_state
+id|parport_ax_restore_state
 c_func
 (paren
 r_struct
@@ -830,7 +862,7 @@ op_star
 id|s
 )paren
 (brace
-id|ax_write_control
+id|parport_ax_write_control
 c_func
 (paren
 id|p
@@ -838,7 +870,7 @@ comma
 id|s-&gt;u.pc.ctr
 )paren
 suffix:semicolon
-id|ax_write_econtrol
+id|parport_ax_write_econtrol
 c_func
 (paren
 id|p
@@ -847,11 +879,10 @@ id|s-&gt;u.pc.ecr
 )paren
 suffix:semicolon
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_epp_read_block
-id|ax_epp_read_block
+DECL|function|parport_ax_epp_read_block
+id|parport_ax_epp_read_block
 c_func
 (paren
 r_struct
@@ -873,11 +904,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_epp_write_block
-id|ax_epp_write_block
+DECL|function|parport_ax_epp_write_block
+id|parport_ax_epp_write_block
 c_func
 (paren
 r_struct
@@ -899,11 +929,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_ecp_read_block
-id|ax_ecp_read_block
+DECL|function|parport_ax_ecp_read_block
+id|parport_ax_ecp_read_block
 c_func
 (paren
 r_struct
@@ -946,11 +975,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_static
 r_int
 r_int
-DECL|function|ax_ecp_write_block
-id|ax_ecp_write_block
+DECL|function|parport_ax_ecp_write_block
+id|parport_ax_ecp_write_block
 c_func
 (paren
 r_struct
@@ -993,10 +1021,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_static
 r_int
-DECL|function|ax_examine_irq
-id|ax_examine_irq
+DECL|function|parport_ax_examine_irq
+id|parport_ax_examine_irq
 c_func
 (paren
 r_struct
@@ -1010,10 +1037,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_static
 r_void
-DECL|function|ax_inc_use_count
-id|ax_inc_use_count
+DECL|function|parport_ax_inc_use_count
+id|parport_ax_inc_use_count
 c_func
 (paren
 r_void
@@ -1024,10 +1050,9 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-r_static
 r_void
-DECL|function|ax_dec_use_count
-id|ax_dec_use_count
+DECL|function|parport_ax_dec_use_count
+id|parport_ax_dec_use_count
 c_func
 (paren
 r_void
@@ -1038,68 +1063,68 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|variable|ax_ops
+DECL|variable|parport_ax_ops
 r_static
 r_struct
 id|parport_operations
-id|ax_ops
+id|parport_ax_ops
 op_assign
 (brace
-id|ax_write_data
+id|parport_ax_write_data
 comma
-id|ax_read_data
+id|parport_ax_read_data
 comma
-id|ax_write_control
+id|parport_ax_write_control
 comma
-id|ax_read_control
+id|parport_ax_read_control
 comma
-id|ax_frob_control
+id|parport_ax_frob_control
 comma
-id|ax_write_econtrol
+id|parport_ax_write_econtrol
 comma
-id|ax_read_econtrol
+id|parport_ax_read_econtrol
 comma
-id|ax_frob_econtrol
+id|parport_ax_frob_econtrol
 comma
-id|ax_write_status
+id|parport_ax_write_status
 comma
-id|ax_read_status
+id|parport_ax_read_status
 comma
-id|ax_write_fifo
+id|parport_ax_write_fifo
 comma
-id|ax_read_fifo
+id|parport_ax_read_fifo
 comma
-id|ax_change_mode
+id|parport_ax_change_mode
 comma
-id|ax_release_resources
+id|parport_ax_release_resources
 comma
-id|ax_claim_resources
+id|parport_ax_claim_resources
 comma
-id|ax_epp_write_block
+id|parport_ax_epp_write_block
 comma
-id|ax_epp_read_block
+id|parport_ax_epp_read_block
 comma
-id|ax_ecp_write_block
+id|parport_ax_ecp_write_block
 comma
-id|ax_ecp_read_block
+id|parport_ax_ecp_read_block
 comma
-id|ax_save_state
+id|parport_ax_save_state
 comma
-id|ax_restore_state
+id|parport_ax_restore_state
 comma
-id|ax_enable_irq
+id|parport_ax_enable_irq
 comma
-id|ax_disable_irq
+id|parport_ax_disable_irq
 comma
-id|ax_examine_irq
+id|parport_ax_examine_irq
 comma
-id|ax_inc_use_count
+id|parport_ax_inc_use_count
 comma
-id|ax_dec_use_count
+id|parport_ax_dec_use_count
 )brace
 suffix:semicolon
 multiline_comment|/******************************************************&n; *  MODE detection section:&n; */
-multiline_comment|/* Check for ECP&n; *&n; * Old style XT ports alias io ports every 0x400, hence accessing ECR&n; * on these cards actually accesses the CTR.&n; *&n; * Modern cards don&squot;t do this but reading from ECR will return 0xff&n; * regardless of what is written here if the card does NOT support&n; * ECP.&n; *&n; * We will write 0x2c to ECR and 0xcc to CTR since both of these&n; * values are &quot;safe&quot; on the CTR since bits 6-7 of CTR are unused.&n; */
+multiline_comment|/* Check for ECP&n; *&n; * Old style XT ports alias io ports every 0x400, hence accessing ECONTROL&n; * on these cards actually accesses the CTR.&n; *&n; * Modern cards don&squot;t do this but reading from ECONTROL will return 0xff&n; * regardless of what is written here if the card does NOT support&n; * ECP.&n; *&n; * We will write 0x2c to ECONTROL and 0xcc to CTR since both of these&n; * values are &quot;safe&quot; on the CTR since bits 6-7 of CTR are unused.&n; */
 DECL|function|parport_ECR_present
 r_static
 r_int
@@ -1226,7 +1251,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Sure that no ECR register exists */
+multiline_comment|/* Sure that no ECONTROL register exists */
 )brace
 )brace
 r_if
@@ -1324,7 +1349,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-multiline_comment|/* If there is no ECR, we have no hope of supporting ECP. */
+multiline_comment|/* If there is no ECONTROL, we have no hope of supporting ECP. */
 r_if
 c_cond
 (paren
@@ -1338,7 +1363,7 @@ id|PARPORT_MODE_PCECR
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Using LGS chipset it uses ECR register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
+multiline_comment|/*&n;&t; * Using LGS chipset it uses ECONTROL register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
 id|pb-&gt;ops
 op_member_access_from_pointer
 id|write_econtrol
@@ -1653,7 +1678,7 @@ suffix:semicolon
 id|tmpport.ops
 op_assign
 op_amp
-id|ax_ops
+id|parport_ax_ops
 suffix:semicolon
 multiline_comment|/* Enable ECP mode, set bit 2 of the CTR first */
 id|tmpport.ops
@@ -1817,7 +1842,7 @@ comma
 id|dma
 comma
 op_amp
-id|ax_ops
+id|parport_ax_ops
 )paren
 )paren
 )paren
@@ -2008,7 +2033,9 @@ id|p-&gt;flags
 op_or_assign
 id|PARPORT_FLAG_COMA
 suffix:semicolon
-id|ax_write_control
+id|p-&gt;ops
+op_member_access_from_pointer
+id|write_control
 c_func
 (paren
 id|p
@@ -2016,7 +2043,9 @@ comma
 l_int|0x0c
 )paren
 suffix:semicolon
-id|ax_write_data
+id|p-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
 id|p
@@ -2041,13 +2070,28 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|function|init_module
 r_int
-DECL|function|parport_ax_init
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
+id|__initfunc
+c_func
+(paren
+r_int
 id|parport_ax_init
 c_func
 (paren
 r_void
 )paren
+)paren
+macro_line|#endif
 (brace
 r_struct
 id|linux_ebus
@@ -2093,31 +2137,15 @@ id|edev
 suffix:semicolon
 r_return
 id|count
-suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|parport_ax_init
-c_func
-(paren
-)paren
 ques
 c_cond
 l_int|0
 suffix:colon
-l_int|1
-)paren
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 r_void
 DECL|function|cleanup_module
 id|cleanup_module

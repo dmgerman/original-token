@@ -393,4 +393,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_nls_koi8_r
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 eof

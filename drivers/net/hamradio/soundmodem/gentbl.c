@@ -1235,6 +1235,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -1247,6 +1248,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren
@@ -1541,6 +1543,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -1553,6 +1556,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren
@@ -3195,6 +3199,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -3207,6 +3212,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren
@@ -3471,6 +3477,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -3483,6 +3490,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren
@@ -3760,6 +3768,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -3772,6 +3781,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren
@@ -4050,6 +4060,7 @@ l_string|&quot;&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef VERBOSE
 id|fprintf
 c_func
 (paren
@@ -4062,6 +4073,7 @@ comma
 id|max
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 c_func
 (paren

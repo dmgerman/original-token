@@ -245,6 +245,14 @@ id|smb_fattr
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|init_smb_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* linux/fs/smbfs/proc.c */
 id|__u32
 id|smb_len

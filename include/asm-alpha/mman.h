@@ -20,12 +20,12 @@ mdefine_line|#define MAP_FIXED&t;0x100&t;&t;/* Interpret addr exactly */
 DECL|macro|MAP_ANONYMOUS
 mdefine_line|#define MAP_ANONYMOUS&t;0x10&t;&t;/* don&squot;t use a file */
 multiline_comment|/* not used by linux, but here to make sure we don&squot;t clash with OSF/1 defines */
-DECL|macro|MAP_HASSEMAPHORE
-mdefine_line|#define MAP_HASSEMAPHORE 0x0200
-DECL|macro|MAP_INHERIT
-mdefine_line|#define MAP_INHERIT&t;0x0400
-DECL|macro|MAP_UNALIGNED
-mdefine_line|#define MAP_UNALIGNED&t;0x0800
+DECL|macro|_MAP_HASSEMAPHORE
+mdefine_line|#define _MAP_HASSEMAPHORE 0x0200
+DECL|macro|_MAP_INHERIT
+mdefine_line|#define _MAP_INHERIT&t;0x0400
+DECL|macro|_MAP_UNALIGNED
+mdefine_line|#define _MAP_UNALIGNED&t;0x0800
 multiline_comment|/* These are linux-specific */
 DECL|macro|MAP_GROWSDOWN
 mdefine_line|#define MAP_GROWSDOWN&t;0x1000&t;&t;/* stack-like segment */

@@ -66,6 +66,7 @@ macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* Ack! People are making PCI ne2000 clones! Oh the horror, the horror... */
 DECL|member|vendor
 DECL|member|dev_id
+DECL|member|name
 r_static
 r_struct
 (brace
@@ -74,6 +75,10 @@ r_int
 id|vendor
 comma
 id|dev_id
+suffix:semicolon
+r_char
+op_star
+id|name
 suffix:semicolon
 )brace
 DECL|variable|__initdata
@@ -87,36 +92,48 @@ op_assign
 id|PCI_VENDOR_ID_REALTEK
 comma
 id|PCI_DEVICE_ID_REALTEK_8029
+comma
+l_string|&quot;Realtek 8029&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_WINBOND2
 comma
 id|PCI_DEVICE_ID_WINBOND2_89C940
+comma
+l_string|&quot;Winbond 89C940&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_COMPEX
 comma
 id|PCI_DEVICE_ID_COMPEX_RL2000
+comma
+l_string|&quot;Compex ReadyLink 2000&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_KTI
 comma
 id|PCI_DEVICE_ID_KTI_ET32P2
+comma
+l_string|&quot;KTI ET32P2&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_NETVIN
 comma
 id|PCI_DEVICE_ID_NETVIN_NV5000SC
+comma
+l_string|&quot;NetVin NV5000&quot;
 )brace
 comma
 (brace
 id|PCI_VENDOR_ID_VIA
 comma
 id|PCI_DEVICE_ID_VIA_82C926
+comma
+l_string|&quot;VIA 82C926 Amazon&quot;
 )brace
 comma
 (brace
@@ -820,36 +837,14 @@ multiline_comment|/* Try next PCI ID */
 id|printk
 c_func
 (paren
-l_string|&quot;ne.c: PCI BIOS reports %s %s at i/o %#x, irq %d.&bslash;n&quot;
-comma
-id|pci_strvendor
-c_func
-(paren
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|vendor
-)paren
-comma
-id|pci_strdev
-c_func
-(paren
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|vendor
+l_string|&quot;ne.c: PCI BIOS reports %s at i/o %#x, irq %d.&bslash;n&quot;
 comma
 id|pci_clone_list
 (braket
 id|i
 )braket
 dot
-id|dev_id
-)paren
+id|name
 comma
 id|pci_ioaddr
 comma

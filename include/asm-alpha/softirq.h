@@ -259,9 +259,9 @@ suffix:semicolon
 macro_line|#ifndef __SMP__
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;(atomic_read(&amp;__alpha_bh_counter) ? &bslash;&n;&t;&t;&t;&t;0 : &bslash;&n;&t;&t;&t;&t;((atomic_set(&amp;__alpha_bh_counter,1)),1))
+mdefine_line|#define softirq_trylock(cpu)&t;(atomic_read(&amp;__alpha_bh_counter) ? &bslash;&n;&t;&t;&t;&t;0 : &bslash;&n;&t;&t;&t;&t;((atomic_set(&amp;__alpha_bh_counter,1)),1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;(atomic_set(&amp;__alpha_bh_counter, 0))
+mdefine_line|#define softirq_endlock(cpu)&t;(atomic_set(&amp;__alpha_bh_counter, 0))
 macro_line|#else
 macro_line|#error FIXME
 macro_line|#endif /* __SMP__ */

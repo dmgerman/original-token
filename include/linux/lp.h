@@ -2,6 +2,13 @@ macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
 multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; */
+multiline_comment|/* Magic numbers for defining port-device mappings */
+DECL|macro|LP_PARPORT_AUTO
+mdefine_line|#define LP_PARPORT_AUTO -3
+DECL|macro|LP_PARPORT_OFF
+mdefine_line|#define LP_PARPORT_OFF -2
+DECL|macro|LP_PARPORT_UNSPEC
+mdefine_line|#define LP_PARPORT_UNSPEC -1
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -77,30 +84,6 @@ DECL|macro|LP_BUFFER_SIZE
 mdefine_line|#define LP_BUFFER_SIZE 256
 DECL|macro|LP_BASE
 mdefine_line|#define LP_BASE(x)&t;lp_table[(x)].dev-&gt;port-&gt;base
-DECL|macro|r_dtr
-mdefine_line|#define r_dtr(x)&t;inb(LP_BASE(x))
-DECL|macro|r_str
-mdefine_line|#define r_str(x)&t;inb(LP_BASE(x)+1)
-DECL|macro|r_ctr
-mdefine_line|#define r_ctr(x)&t;inb(LP_BASE(x)+2)
-DECL|macro|r_epp
-mdefine_line|#define r_epp(x)&t;inb(LP_BASE(x)+4)
-DECL|macro|r_fifo
-mdefine_line|#define r_fifo(x)&t;inb(LP_BASE(x)+0x400)
-DECL|macro|r_ecr
-mdefine_line|#define r_ecr(x)&t;inb(LP_BASE(x)+0x402)
-DECL|macro|w_dtr
-mdefine_line|#define w_dtr(x,y)&t;outb((y), LP_BASE(x))
-DECL|macro|w_str
-mdefine_line|#define w_str(x,y)&t;outb((y), LP_BASE(x)+1)
-DECL|macro|w_ctr
-mdefine_line|#define w_ctr(x,y)&t;outb((y), LP_BASE(x)+2)
-DECL|macro|w_epp
-mdefine_line|#define w_epp(x,y)&t;outb((y), LP_BASE(x)+4)
-DECL|macro|w_fifo
-mdefine_line|#define w_fifo(x,y)&t;outb((y), LP_BASE(x)+0x400)
-DECL|macro|w_ecr
-mdefine_line|#define w_ecr(x,y)&t;outb((y), LP_BASE(x)+0x402)
 DECL|struct|lp_stats
 r_struct
 id|lp_stats
@@ -166,12 +149,6 @@ r_int
 r_int
 id|wait
 suffix:semicolon
-DECL|member|lp_wait_q
-r_struct
-id|wait_queue
-op_star
-id|lp_wait_q
-suffix:semicolon
 DECL|member|lp_buffer
 r_char
 op_star
@@ -191,11 +168,6 @@ DECL|member|waittime
 r_int
 r_int
 id|waittime
-suffix:semicolon
-DECL|member|should_relinquish
-r_int
-r_int
-id|should_relinquish
 suffix:semicolon
 DECL|member|stats
 r_struct
@@ -233,6 +205,10 @@ mdefine_line|#define LP_DUMMY&t;0x00
 multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It is used only in the lp_init() and lp_reset() routine.&n; */
 DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;50
+DECL|macro|LP_POLLING
+mdefine_line|#define LP_POLLING(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
+DECL|macro|LP_PREEMPTED
+mdefine_line|#define LP_PREEMPTED(minor) (lp_table[(minor)].dev-&gt;port-&gt;waithead != NULL)
 multiline_comment|/*&n; * function prototypes&n; */
 r_extern
 r_int

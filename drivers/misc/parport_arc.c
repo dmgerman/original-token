@@ -1,8 +1,6 @@
-multiline_comment|/* Parallel-port routines for ARC onboard hardware.&n; *&n; * Author: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* Low-level parallel port routines for Archimedes onboard hardware&n; *&n; * Author: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* This driver is for the parallel port hardware found on Acorn&squot;s old&n; * range of Archimedes machines.  The A5000 and newer systems have PC-style&n; * I/O hardware and should use the parport_pc driver instead.&n; *&n; * The Acorn printer port hardware is very simple.  There is a single 8-bit&n; * write-only latch for the data port and control/status bits are handled&n; * with various auxilliary input and output lines.  The port is not&n; * bidirectional, does not support any modes other than SPP, and has only&n; * a subset of the standard printer control lines connected.&n; */
 macro_line|#include &lt;linux/tasks.h&gt;
-macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -10,7 +8,10 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#include &lt;linux/arch/oldlatches.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/arch/oldlatches.h&gt;
+macro_line|#include &lt;asm/arch/irqs.h&gt;
 DECL|macro|DATA_LATCH
 mdefine_line|#define DATA_LATCH    0x3350010
 multiline_comment|/* ARC can&squot;t read from the data latch, so we must use a soft copy. */
@@ -94,11 +95,11 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|variable|arc_ops
+DECL|variable|parport_arc_ops
 r_static
 r_struct
 id|parport_operations
-id|arc_ops
+id|parport_arc_ops
 op_assign
 (brace
 id|arc_write_data
@@ -164,4 +165,101 @@ comma
 id|arc_dec_use_count
 )brace
 suffix:semicolon
+multiline_comment|/* --- Initialisation code -------------------------------- */
+DECL|function|parport_arc_init
+r_int
+id|parport_arc_init
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Archimedes hardware provides only one port, at a fixed address */
+r_struct
+id|parport
+op_star
+id|p
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|DATA_LATCH
+comma
+l_int|4
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p
+op_assign
+id|parport_register_port
+c_func
+(paren
+id|base
+comma
+id|IRQ_PRINTERACK
+comma
+id|PARPORT_DMA_NONE
+comma
+op_amp
+id|parport_arc_ops
+)paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|p-&gt;modes
+op_assign
+id|PARPORT_MODE_ARCSPP
+suffix:semicolon
+id|p-&gt;size
+op_assign
+l_int|4
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Archimedes on-board port, using irq %d&bslash;n&quot;
+comma
+id|p-&gt;irq
+)paren
+suffix:semicolon
+id|parport_proc_register
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|p-&gt;flags
+op_or_assign
+id|PARPORT_FLAG_COMA
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|parport_probe_hook
+)paren
+(paren
+op_star
+id|parport_probe_hook
+)paren
+(paren
+id|p
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 eof

@@ -48,6 +48,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */
 DECL|macro|NFS_INO_REVALIDATE
 mdefine_line|#define NFS_INO_REVALIDATE&t;0x0001&t;&t;/* revalidating attrs */
+DECL|macro|NFS_IS_SNAPSHOT
+mdefine_line|#define NFS_IS_SNAPSHOT&t;&t;0x0010&t;&t;/* a snapshot file */
 multiline_comment|/*&n; * NFS lock info&n; */
 DECL|struct|nfs_lock_info
 r_struct

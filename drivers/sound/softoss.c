@@ -719,7 +719,6 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|devc
-r_static
 id|softsyn_devc
 op_star
 id|devc
@@ -727,6 +726,7 @@ op_assign
 op_amp
 id|sdev_info
 suffix:semicolon
+multiline_comment|/* used in softoss_rs.c */
 DECL|variable|voice_alloc
 r_static
 r_struct

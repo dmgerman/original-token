@@ -3068,10 +3068,10 @@ op_and_assign
 op_complement
 l_int|0xe080
 suffix:semicolon
-multiline_comment|/* An 80486 sets all the reserved bits to 1. */
+multiline_comment|/* An 80486 sets nearly all of the reserved bits to 1. */
 id|S387-&gt;cwd
 op_or_assign
-l_int|0xffff0000
+l_int|0xffff0040
 suffix:semicolon
 id|S387-&gt;swd
 op_assign
@@ -3087,7 +3087,8 @@ op_or_assign
 l_int|0xffff0000
 suffix:semicolon
 id|S387-&gt;fcs
-op_or_assign
+op_and_assign
+op_complement
 l_int|0xf8000000
 suffix:semicolon
 id|S387-&gt;fos

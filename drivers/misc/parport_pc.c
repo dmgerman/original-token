@@ -1,4 +1,5 @@
-multiline_comment|/* Parallel-port routines for PC architecture&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
+multiline_comment|/* Low-level parallel-port routines for PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
+multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP command&n; *&t;base+4&t;&t;EPP&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants below to accomodate this.&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -13,26 +14,14 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
-DECL|macro|ECONTROL
-mdefine_line|#define ECONTROL 0x402
-DECL|macro|CONFIGB
-mdefine_line|#define CONFIGB  0x401
-DECL|macro|CONFIGA
-mdefine_line|#define CONFIGA  0x400
-DECL|macro|EPPREG
-mdefine_line|#define EPPREG   0x4
-DECL|macro|CONTROL
-mdefine_line|#define CONTROL  0x2
-DECL|macro|STATUS
-mdefine_line|#define STATUS   0x1
-DECL|macro|DATA
-mdefine_line|#define DATA     0
-DECL|macro|PC_MAX_PORTS
-mdefine_line|#define PC_MAX_PORTS  8
-DECL|function|pc_null_intr_func
+macro_line|#include &lt;linux/parport_pc.h&gt;
+multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
+DECL|macro|PARPORT_PC_MAX_PORTS
+mdefine_line|#define PARPORT_PC_MAX_PORTS  8
+DECL|function|parport_pc_null_intr_func
 r_static
 r_void
-id|pc_null_intr_func
+id|parport_pc_null_intr_func
 c_func
 (paren
 r_int
@@ -48,14 +37,11 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/* NULL function - Does nothing */
-r_return
-suffix:semicolon
+multiline_comment|/* Null function - does nothing */
 )brace
-macro_line|#if 0
-r_static
+DECL|function|parport_pc_write_epp
 r_void
-id|pc_write_epp
+id|parport_pc_write_epp
 c_func
 (paren
 r_struct
@@ -79,12 +65,10 @@ id|EPPREG
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-DECL|function|pc_read_epp
-r_static
+DECL|function|parport_pc_read_epp
 r_int
 r_int
-id|pc_read_epp
+id|parport_pc_read_epp
 c_func
 (paren
 r_struct
@@ -107,11 +91,10 @@ id|EPPREG
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_read_configb
-r_static
+DECL|function|parport_pc_read_configb
 r_int
 r_int
-id|pc_read_configb
+id|parport_pc_read_configb
 c_func
 (paren
 r_struct
@@ -134,10 +117,9 @@ id|CONFIGB
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_write_data
-r_static
+DECL|function|parport_pc_write_data
 r_void
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 r_struct
@@ -161,11 +143,10 @@ id|DATA
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_read_data
-r_static
+DECL|function|parport_pc_read_data
 r_int
 r_int
-id|pc_read_data
+id|parport_pc_read_data
 c_func
 (paren
 r_struct
@@ -188,10 +169,9 @@ id|DATA
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_write_control
-r_static
+DECL|function|parport_pc_write_control
 r_void
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 r_struct
@@ -215,11 +195,10 @@ id|CONTROL
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_read_control
-r_static
+DECL|function|parport_pc_read_control
 r_int
 r_int
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 r_struct
@@ -242,11 +221,10 @@ id|CONTROL
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_frob_control
-r_static
+DECL|function|parport_pc_frob_control
 r_int
 r_int
-id|pc_frob_control
+id|parport_pc_frob_control
 c_func
 (paren
 r_struct
@@ -302,10 +280,9 @@ r_return
 id|old
 suffix:semicolon
 )brace
-DECL|function|pc_write_status
-r_static
+DECL|function|parport_pc_write_status
 r_void
-id|pc_write_status
+id|parport_pc_write_status
 c_func
 (paren
 r_struct
@@ -329,11 +306,10 @@ id|STATUS
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_read_status
-r_static
+DECL|function|parport_pc_read_status
 r_int
 r_int
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 r_struct
@@ -356,10 +332,9 @@ id|STATUS
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_write_econtrol
-r_static
+DECL|function|parport_pc_write_econtrol
 r_void
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 r_struct
@@ -383,11 +358,10 @@ id|ECONTROL
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_read_econtrol
-r_static
+DECL|function|parport_pc_read_econtrol
 r_int
 r_int
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 r_struct
@@ -410,11 +384,10 @@ id|ECONTROL
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_frob_econtrol
-r_static
+DECL|function|parport_pc_frob_econtrol
 r_int
 r_int
-id|pc_frob_econtrol
+id|parport_pc_frob_econtrol
 c_func
 (paren
 r_struct
@@ -470,10 +443,9 @@ r_return
 id|old
 suffix:semicolon
 )brace
-DECL|function|pc_change_mode
-r_static
+DECL|function|parport_pc_change_mode
 r_void
-id|pc_change_mode
+id|parport_pc_change_mode
 c_func
 (paren
 r_struct
@@ -487,10 +459,9 @@ id|m
 (brace
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_write_fifo
-r_static
+DECL|function|parport_pc_write_fifo
 r_void
-id|pc_write_fifo
+id|parport_pc_write_fifo
 c_func
 (paren
 r_struct
@@ -505,11 +476,10 @@ id|v
 (brace
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_read_fifo
-r_static
+DECL|function|parport_pc_read_fifo
 r_int
 r_int
-id|pc_read_fifo
+id|parport_pc_read_fifo
 c_func
 (paren
 r_struct
@@ -523,10 +493,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_disable_irq
-r_static
+DECL|function|parport_pc_disable_irq
 r_void
-id|pc_disable_irq
+id|parport_pc_disable_irq
 c_func
 (paren
 r_struct
@@ -535,12 +504,20 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/* FIXME */
+id|parport_pc_frob_control
+c_func
+(paren
+id|p
+comma
+l_int|0x10
+comma
+l_int|0
+)paren
+suffix:semicolon
 )brace
-DECL|function|pc_enable_irq
-r_static
+DECL|function|parport_pc_enable_irq
 r_void
-id|pc_enable_irq
+id|parport_pc_enable_irq
 c_func
 (paren
 r_struct
@@ -549,12 +526,20 @@ op_star
 id|p
 )paren
 (brace
-multiline_comment|/* FIXME */
+id|parport_pc_frob_control
+c_func
+(paren
+id|p
+comma
+l_int|0x10
+comma
+l_int|0x10
+)paren
+suffix:semicolon
 )brace
-DECL|function|pc_release_resources
-r_static
+DECL|function|parport_pc_release_resources
 r_void
-id|pc_release_resources
+id|parport_pc_release_resources
 c_func
 (paren
 r_struct
@@ -604,10 +589,9 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_claim_resources
-r_static
+DECL|function|parport_pc_claim_resources
 r_int
-id|pc_claim_resources
+id|parport_pc_claim_resources
 c_func
 (paren
 r_struct
@@ -629,7 +613,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-id|pc_null_intr_func
+id|parport_pc_null_intr_func
 comma
 l_int|0
 comma
@@ -671,10 +655,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pc_save_state
-r_static
+DECL|function|parport_pc_save_state
 r_void
-id|pc_save_state
+id|parport_pc_save_state
 c_func
 (paren
 r_struct
@@ -690,7 +673,7 @@ id|s
 (brace
 id|s-&gt;u.pc.ctr
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|p
@@ -698,17 +681,16 @@ id|p
 suffix:semicolon
 id|s-&gt;u.pc.ecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_restore_state
-r_static
+DECL|function|parport_pc_restore_state
 r_void
-id|pc_restore_state
+id|parport_pc_restore_state
 c_func
 (paren
 r_struct
@@ -722,7 +704,7 @@ op_star
 id|s
 )paren
 (brace
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|p
@@ -730,7 +712,7 @@ comma
 id|s-&gt;u.pc.ctr
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|p
@@ -739,11 +721,10 @@ id|s-&gt;u.pc.ecr
 )paren
 suffix:semicolon
 )brace
-DECL|function|pc_epp_read_block
-r_static
+DECL|function|parport_pc_epp_read_block
 r_int
 r_int
-id|pc_epp_read_block
+id|parport_pc_epp_read_block
 c_func
 (paren
 r_struct
@@ -765,11 +746,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_epp_write_block
-r_static
+DECL|function|parport_pc_epp_write_block
 r_int
 r_int
-id|pc_epp_write_block
+id|parport_pc_epp_write_block
 c_func
 (paren
 r_struct
@@ -791,11 +771,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_ecp_read_block
-r_static
+DECL|function|parport_pc_ecp_read_block
 r_int
 r_int
-id|pc_ecp_read_block
+id|parport_pc_ecp_read_block
 c_func
 (paren
 r_struct
@@ -838,11 +817,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_ecp_write_block
-r_static
+DECL|function|parport_pc_ecp_write_block
 r_int
 r_int
-id|pc_ecp_write_block
+id|parport_pc_ecp_write_block
 c_func
 (paren
 r_struct
@@ -885,10 +863,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_examine_irq
-r_static
+DECL|function|parport_pc_examine_irq
 r_int
-id|pc_examine_irq
+id|parport_pc_examine_irq
 c_func
 (paren
 r_struct
@@ -902,10 +879,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|pc_inc_use_count
-r_static
+DECL|function|parport_pc_inc_use_count
 r_void
-id|pc_inc_use_count
+id|parport_pc_inc_use_count
 c_func
 (paren
 r_void
@@ -916,10 +892,9 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|pc_dec_use_count
-r_static
+DECL|function|parport_pc_dec_use_count
 r_void
-id|pc_dec_use_count
+id|parport_pc_dec_use_count
 c_func
 (paren
 r_void
@@ -930,67 +905,66 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|variable|pc_ops
-r_static
+DECL|variable|parport_pc_ops
 r_struct
 id|parport_operations
-id|pc_ops
+id|parport_pc_ops
 op_assign
 (brace
-id|pc_write_data
+id|parport_pc_write_data
 comma
-id|pc_read_data
+id|parport_pc_read_data
 comma
-id|pc_write_control
+id|parport_pc_write_control
 comma
-id|pc_read_control
+id|parport_pc_read_control
 comma
-id|pc_frob_control
+id|parport_pc_frob_control
 comma
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 comma
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 comma
-id|pc_frob_econtrol
+id|parport_pc_frob_econtrol
 comma
-id|pc_write_status
+id|parport_pc_write_status
 comma
-id|pc_read_status
+id|parport_pc_read_status
 comma
-id|pc_write_fifo
+id|parport_pc_write_fifo
 comma
-id|pc_read_fifo
+id|parport_pc_read_fifo
 comma
-id|pc_change_mode
+id|parport_pc_change_mode
 comma
-id|pc_release_resources
+id|parport_pc_release_resources
 comma
-id|pc_claim_resources
+id|parport_pc_claim_resources
 comma
-id|pc_epp_write_block
+id|parport_pc_epp_write_block
 comma
-id|pc_epp_read_block
+id|parport_pc_epp_read_block
 comma
-id|pc_ecp_write_block
+id|parport_pc_ecp_write_block
 comma
-id|pc_ecp_read_block
+id|parport_pc_ecp_read_block
 comma
-id|pc_save_state
+id|parport_pc_save_state
 comma
-id|pc_restore_state
+id|parport_pc_restore_state
 comma
-id|pc_enable_irq
+id|parport_pc_enable_irq
 comma
-id|pc_disable_irq
+id|parport_pc_disable_irq
 comma
-id|pc_examine_irq
+id|parport_pc_examine_irq
 comma
-id|pc_inc_use_count
+id|parport_pc_inc_use_count
 comma
-id|pc_dec_use_count
+id|parport_pc_dec_use_count
 )brace
 suffix:semicolon
-multiline_comment|/******************************************************&n; *  DMA detection section:&n; */
+multiline_comment|/* --- DMA detection -------------------------------------- */
 multiline_comment|/*&n; * Prepare DMA channels from 0-8 to transmit towards buffer&n; */
 DECL|function|parport_prepare_dma
 r_static
@@ -1311,13 +1285,13 @@ id|dma
 comma
 id|oldstate
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -1328,7 +1302,7 @@ suffix:semicolon
 multiline_comment|/* Configuration MODE */
 id|dma
 op_assign
-id|pc_read_configb
+id|parport_pc_read_configb
 c_func
 (paren
 id|pb
@@ -1336,7 +1310,7 @@ id|pb
 op_amp
 l_int|0x07
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -1613,7 +1587,7 @@ r_return
 id|retv
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; *  MODE detection section:&n; */
+multiline_comment|/* --- Mode detection ------------------------------------- */
 multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; */
 DECL|function|epp_clear_timeout
 r_static
@@ -1635,7 +1609,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 id|pb
@@ -1648,7 +1622,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* To clear timeout some chips require double read */
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 id|pb
@@ -1656,13 +1630,13 @@ id|pb
 suffix:semicolon
 id|r
 op_assign
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_status
+id|parport_pc_write_status
 c_func
 (paren
 id|pb
@@ -1673,7 +1647,7 @@ l_int|0x01
 )paren
 suffix:semicolon
 multiline_comment|/* Some reset by writing 1 */
-id|pc_write_status
+id|parport_pc_write_status
 c_func
 (paren
 id|pb
@@ -1686,7 +1660,7 @@ suffix:semicolon
 multiline_comment|/* Others by writing 0 */
 id|r
 op_assign
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 id|pb
@@ -1715,7 +1689,7 @@ id|pb
 )paren
 (brace
 multiline_comment|/* Do a simple read-write test to make sure the port exists. */
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -1723,7 +1697,7 @@ comma
 l_int|0xc
 )paren
 suffix:semicolon
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|pb
@@ -1734,7 +1708,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc_read_data
+id|parport_pc_read_data
 c_func
 (paren
 id|pb
@@ -1745,7 +1719,7 @@ l_int|0xaa
 r_return
 l_int|0
 suffix:semicolon
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|pb
@@ -1756,7 +1730,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc_read_data
+id|parport_pc_read_data
 c_func
 (paren
 id|pb
@@ -1790,7 +1764,7 @@ id|r
 comma
 id|octr
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -1798,7 +1772,7 @@ id|pb
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1806,7 +1780,7 @@ id|pb
 suffix:semicolon
 id|r
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -1816,7 +1790,7 @@ r_if
 c_cond
 (paren
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1832,7 +1806,7 @@ l_int|0x3
 )paren
 )paren
 (brace
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -1845,7 +1819,7 @@ suffix:semicolon
 multiline_comment|/* Toggle bit 1 */
 id|r
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -1855,7 +1829,7 @@ r_if
 c_cond
 (paren
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1871,7 +1845,7 @@ l_int|0x2
 )paren
 )paren
 (brace
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -1889,7 +1863,7 @@ r_if
 c_cond
 (paren
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1903,7 +1877,7 @@ l_int|0x1
 r_return
 l_int|0
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -1914,7 +1888,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1925,7 +1899,7 @@ l_int|0x35
 r_return
 l_int|0
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -1933,7 +1907,7 @@ comma
 id|oecr
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -1962,7 +1936,7 @@ id|i
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -1983,7 +1957,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Using LGS chipset it uses ECR register, but&n;&t; * it doesn&squot;t support ECP or FIFO MODE&n;&t; */
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2004,7 +1978,7 @@ OL
 l_int|1024
 op_logical_and
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2016,7 +1990,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|pc_write_fifo
+id|parport_pc_write_fifo
 c_func
 (paren
 id|pb
@@ -2024,7 +1998,7 @@ comma
 l_int|0xaa
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2073,12 +2047,12 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* No way to clear timeout */
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
 comma
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2087,12 +2061,12 @@ op_or
 l_int|0x20
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
 comma
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2107,7 +2081,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_read_epp
+id|parport_pc_read_epp
 c_func
 (paren
 id|pb
@@ -2123,7 +2097,7 @@ multiline_comment|/* Wait for possible EPP timeout */
 r_if
 c_cond
 (paren
-id|pc_read_status
+id|parport_pc_read_status
 c_func
 (paren
 id|pb
@@ -2163,7 +2137,7 @@ id|mode
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2183,7 +2157,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Search for SMC style EPP+ECP mode */
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2199,7 +2173,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2236,7 +2210,7 @@ l_int|0
 comma
 id|octr
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2248,7 +2222,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -2259,7 +2233,7 @@ l_int|0x20
 )paren
 suffix:semicolon
 multiline_comment|/* try to tri-state the buffer */
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|pb
@@ -2270,7 +2244,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc_read_data
+id|parport_pc_read_data
 c_func
 (paren
 id|pb
@@ -2281,7 +2255,7 @@ l_int|0x55
 id|ok
 op_increment
 suffix:semicolon
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|pb
@@ -2292,7 +2266,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pc_read_data
+id|parport_pc_read_data
 c_func
 (paren
 id|pb
@@ -2303,7 +2277,7 @@ l_int|0xaa
 id|ok
 op_increment
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -2338,7 +2312,7 @@ id|mode
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2357,7 +2331,7 @@ id|PARPORT_MODE_PCECR
 r_return
 l_int|0
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2373,7 +2347,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2390,7 +2364,8 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************&n; *  IRQ detection section:&n; *&n; * This code is for detecting ECP interrupts (due to problems with the&n; * monolithic interrupt probing routines).&n; *&n; * In short this is a voting system where the interrupt with the most&n; * &quot;votes&quot; is the elected interrupt (it SHOULD work...)&n; *&n; * This is horribly x86-specific at the moment.  I&squot;m not convinced it&n; * belongs at all.&n; */
+multiline_comment|/* --- IRQ detection -------------------------------------- */
+multiline_comment|/* This code is for detecting ECP interrupts (due to problems with the&n; * monolithic interrupt probing routines).&n; *&n; * In short this is a voting system where the interrupt with the most&n; * &quot;votes&quot; is the elected interrupt (it SHOULD work...)&n; *&n; * This is horribly x86-specific at the moment.  I&squot;m not convinced it&n; * belongs at all.&n; */
 DECL|variable|intr_vote
 r_static
 r_int
@@ -2598,13 +2573,13 @@ id|irq
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2616,7 +2591,7 @@ multiline_comment|/* Configuration MODE */
 id|irq
 op_assign
 (paren
-id|pc_read_configb
+id|parport_pc_read_configb
 c_func
 (paren
 id|pb
@@ -2667,7 +2642,7 @@ op_add_assign
 l_int|7
 suffix:semicolon
 )brace
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2698,7 +2673,7 @@ id|i
 comma
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2721,7 +2696,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2730,7 +2705,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 multiline_comment|/* Reset FIFO */
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2753,7 +2728,7 @@ l_int|1024
 op_logical_and
 op_logical_neg
 (paren
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2765,7 +2740,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|pc_write_fifo
+id|parport_pc_write_fifo
 c_func
 (paren
 id|pb
@@ -2781,7 +2756,7 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2811,7 +2786,7 @@ id|irqs
 comma
 id|octr
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2846,12 +2821,12 @@ id|pb-&gt;modes
 op_amp
 id|PARPORT_MODE_PCECR
 )paren
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
 comma
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
@@ -2866,12 +2841,12 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
 comma
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2880,12 +2855,12 @@ op_or
 l_int|0x20
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
 comma
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2901,7 +2876,7 @@ id|pb
 )paren
 suffix:semicolon
 multiline_comment|/*  Device isn&squot;t expecting an EPP read&n;&t; * and generates an IRQ.&n;&t; */
-id|pc_read_epp
+id|parport_pc_read_epp
 c_func
 (paren
 id|pb
@@ -2921,7 +2896,7 @@ c_func
 id|irqs
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -2950,7 +2925,7 @@ id|irqs
 comma
 id|octr
 op_assign
-id|pc_read_control
+id|parport_pc_read_control
 c_func
 (paren
 id|pb
@@ -2985,7 +2960,7 @@ id|pb-&gt;modes
 op_amp
 id|PARPORT_MODE_PCECR
 )paren
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -2993,7 +2968,7 @@ comma
 l_int|0x10
 )paren
 suffix:semicolon
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|pb
@@ -3001,7 +2976,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3009,7 +2984,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3023,7 +2998,7 @@ c_func
 l_int|5
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3037,7 +3012,7 @@ c_func
 l_int|5
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3051,7 +3026,7 @@ c_func
 l_int|25
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3065,7 +3040,7 @@ c_func
 l_int|25
 )paren
 suffix:semicolon
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3099,7 +3074,7 @@ op_assign
 id|PARPORT_IRQ_NONE
 suffix:semicolon
 multiline_comment|/* No interrupt detected */
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|pb
@@ -3171,13 +3146,13 @@ id|PARPORT_MODE_PCECPEPP
 r_int
 id|oecr
 op_assign
-id|pc_read_econtrol
+id|parport_pc_read_econtrol
 c_func
 (paren
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -3193,7 +3168,7 @@ c_func
 id|pb
 )paren
 suffix:semicolon
-id|pc_write_econtrol
+id|parport_pc_write_econtrol
 c_func
 (paren
 id|pb
@@ -3254,6 +3229,7 @@ r_return
 id|pb-&gt;irq
 suffix:semicolon
 )brace
+multiline_comment|/* --- Initialisation code -------------------------------- */
 DECL|function|probe_one_port
 r_static
 r_int
@@ -3300,7 +3276,7 @@ suffix:semicolon
 id|tmpport.ops
 op_assign
 op_amp
-id|pc_ops
+id|parport_pc_ops
 suffix:semicolon
 r_if
 c_cond
@@ -3335,7 +3311,7 @@ comma
 id|dma
 comma
 op_amp
-id|pc_ops
+id|parport_pc_ops
 )paren
 )paren
 )paren
@@ -3604,7 +3580,7 @@ op_or_assign
 id|PARPORT_FLAG_COMA
 suffix:semicolon
 multiline_comment|/* Done probing.  Now put the port into a sensible start-up state. */
-id|pc_write_control
+id|parport_pc_write_control
 c_func
 (paren
 id|p
@@ -3612,7 +3588,7 @@ comma
 l_int|0xc
 )paren
 suffix:semicolon
-id|pc_write_data
+id|parport_pc_write_data
 c_func
 (paren
 id|p
@@ -3711,7 +3687,7 @@ op_logical_and
 op_increment
 id|i
 OL
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )paren
 )paren
 suffix:semicolon
@@ -3756,6 +3732,21 @@ id|PARPORT_DMA_AUTO
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Give any attached devices a chance to gather their thoughts */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+l_int|75
+suffix:semicolon
+id|schedule
+(paren
+)paren
+suffix:semicolon
 r_return
 id|count
 suffix:semicolon
@@ -3766,7 +3757,7 @@ r_static
 r_int
 id|io
 (braket
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 op_plus
 l_int|1
 )braket
@@ -3777,7 +3768,7 @@ l_int|0
 dot
 dot
 dot
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )braket
 op_assign
 l_int|0
@@ -3788,7 +3779,7 @@ r_static
 r_int
 id|dma
 (braket
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )braket
 op_assign
 (brace
@@ -3797,7 +3788,7 @@ l_int|0
 dot
 dot
 dot
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 op_minus
 l_int|1
 )braket
@@ -3810,7 +3801,7 @@ r_static
 r_int
 id|irq
 (braket
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )braket
 op_assign
 (brace
@@ -3819,7 +3810,7 @@ l_int|0
 dot
 dot
 dot
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 op_minus
 l_int|1
 )braket
@@ -3836,7 +3827,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -3850,7 +3841,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )paren
 l_string|&quot;i&quot;
 )paren
@@ -3864,7 +3855,7 @@ l_string|&quot;1-&quot;
 id|__MODULE_STRING
 c_func
 (paren
-id|PC_MAX_PORTS
+id|PARPORT_PC_MAX_PORTS
 )paren
 l_string|&quot;i&quot;
 )paren

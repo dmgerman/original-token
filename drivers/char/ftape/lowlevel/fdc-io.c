@@ -1438,13 +1438,11 @@ id|old_sigmask
 op_assign
 id|current-&gt;blocked
 suffix:semicolon
-id|siginitset
+id|sigfillset
 c_func
 (paren
 op_amp
 id|current-&gt;blocked
-comma
-id|_BLOCK_ALL
 )paren
 suffix:semicolon
 id|recalc_sigpending

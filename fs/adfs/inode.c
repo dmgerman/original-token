@@ -206,7 +206,6 @@ suffix:semicolon
 )brace
 DECL|function|adfs_bmap
 r_int
-r_int
 id|adfs_bmap
 (paren
 r_struct

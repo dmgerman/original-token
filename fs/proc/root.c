@@ -407,6 +407,7 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|proc_net
 DECL|variable|proc_scsi
+DECL|variable|proc_bus
 r_struct
 id|proc_dir_entry
 op_star
@@ -414,6 +415,9 @@ id|proc_net
 comma
 op_star
 id|proc_scsi
+comma
+op_star
+id|proc_bus
 suffix:semicolon
 macro_line|#ifdef CONFIG_MCA
 DECL|variable|proc_mca
@@ -3165,6 +3169,25 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_DEVICETREE
 id|proc_device_tree_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|proc_bus
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;bus&quot;
+comma
+id|S_IFDIR
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+id|proc_bus_pci_init
 c_func
 (paren
 )paren

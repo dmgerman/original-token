@@ -619,12 +619,13 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifdef&t;__SGNXPRO__
-DECL|variable|sgnxpro_mix
+macro_line|#if 0
 r_static
 id|mixer_tab
 id|sgnxpro_mix
 op_assign
 (brace
+multiline_comment|/* not used anywhere */
 id|MIX_ENT
 c_func
 (paren
@@ -878,6 +879,7 @@ l_int|0
 )paren
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 DECL|variable|sb16_mix
 r_static

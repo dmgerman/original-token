@@ -1903,8 +1903,19 @@ id|end
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;NFS: short packet in readdir reply!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;NFS: short readdir reply! &quot;
+l_string|&quot;nr=%d, slots=%d, len=%d&bslash;n&quot;
+comma
+id|nr
+comma
+(paren
+id|end
+op_minus
+id|p
+)paren
+comma
+id|len
 )paren
 suffix:semicolon
 r_break

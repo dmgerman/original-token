@@ -289,14 +289,18 @@ id|current-&gt;fs-&gt;umask
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nfsd_active
+op_increment
+)paren
 id|nfssvc_boot
 op_assign
 id|xtime
 suffix:semicolon
 multiline_comment|/* record boot time */
-id|nfsd_active
-op_increment
-suffix:semicolon
 id|lockd_up
 c_func
 (paren

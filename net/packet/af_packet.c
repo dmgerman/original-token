@@ -24,6 +24,23 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#if defined(CONFIG_DLCI) || defined(CONFIG_DLCI_MODULE)
 macro_line|#include &lt;linux/if_frad.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#include &lt;net/br.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_DLCI
+r_extern
+r_int
+id|dlci_ioctl
+c_func
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;   Old SOCK_PACKET. Do exist programs, which use it?&n;   (not counting tcpdump) - lots of them yes - AC. &n;   &n; */
 DECL|macro|CONFIG_SOCK_PACKET
 mdefine_line|#define CONFIG_SOCK_PACKET&t;1

@@ -9395,6 +9395,10 @@ id|flag
 op_or_assign
 l_int|0xe2000000
 suffix:semicolon
+id|tp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|tp-&gt;tx_ring
 (braket
 id|entry
@@ -9405,10 +9409,6 @@ op_assign
 id|skb-&gt;len
 op_or
 id|flag
-suffix:semicolon
-id|tp-&gt;stats.tx_bytes
-op_add_assign
-id|skb-&gt;len
 suffix:semicolon
 id|tp-&gt;tx_ring
 (braket

@@ -928,11 +928,11 @@ c_cond
 id|flags
 op_amp
 (paren
-id|MAP_HASSEMAPHORE
+id|_MAP_HASSEMAPHORE
 op_or
-id|MAP_INHERIT
+id|_MAP_INHERIT
 op_or
-id|MAP_UNALIGNED
+id|_MAP_UNALIGNED
 )paren
 )paren
 id|printk

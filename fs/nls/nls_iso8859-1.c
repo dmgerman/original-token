@@ -2152,7 +2152,7 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|variable|charset2upper
+macro_line|#if 0
 r_static
 r_int
 r_char
@@ -2708,6 +2708,7 @@ comma
 multiline_comment|/* 0xf8-0xff */
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|inc_use_count
 r_static
 r_void

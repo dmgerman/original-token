@@ -1,10 +1,14 @@
-multiline_comment|/* $Id: parport.h,v 1.3 1997/10/19 18:02:00 phil Exp $ */
+multiline_comment|/* $Id: parport.h,v 1.6 1997/12/29 12:31:05 phil Exp $ */
 macro_line|#ifndef _PARPORT_H_
 DECL|macro|_PARPORT_H_
 mdefine_line|#define _PARPORT_H_
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|PARPORT_NEED_GENERIC_OPS
+mdefine_line|#define PARPORT_NEED_GENERIC_OPS
 multiline_comment|/* Maximum of 8 ports per machine */
 DECL|macro|PARPORT_MAX
 mdefine_line|#define PARPORT_MAX  8 
@@ -51,6 +55,7 @@ id|pc_parport_state
 id|pc
 suffix:semicolon
 multiline_comment|/* ARC has no state. */
+multiline_comment|/* AX uses same state information as PC */
 DECL|member|misc
 r_void
 op_star
@@ -62,37 +67,6 @@ id|u
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Generic operations vector through the dispatch table. */
-DECL|macro|parport_write_data
-mdefine_line|#define parport_write_data(p,x)            (p)-&gt;ops-&gt;write_data(p,x)
-DECL|macro|parport_read_data
-mdefine_line|#define parport_read_data(p)               (p)-&gt;ops-&gt;read_data(p)
-DECL|macro|parport_write_control
-mdefine_line|#define parport_write_control(p,x)         (p)-&gt;ops-&gt;write_control(p,x)
-DECL|macro|parport_read_control
-mdefine_line|#define parport_read_control(p)            (p)-&gt;ops-&gt;read_control(p)
-DECL|macro|parport_frob_control
-mdefine_line|#define parport_frob_control(p,m,v)        (p)-&gt;ops-&gt;frob_control(p,m,v)
-DECL|macro|parport_write_econtrol
-mdefine_line|#define parport_write_econtrol(p,x)        (p)-&gt;ops-&gt;write_econtrol(p,x)
-DECL|macro|parport_read_econtrol
-mdefine_line|#define parport_read_econtrol(p)           (p)-&gt;ops-&gt;read_econtrol(p)
-DECL|macro|parport_frob_econtrol
-mdefine_line|#define parport_frob_econtrol(p,m,v)       (p)-&gt;ops-&gt;frob_econtrol(p,m,v)
-DECL|macro|parport_write_status
-mdefine_line|#define parport_write_status(p,v)          (p)-&gt;ops-&gt;write_status(p,v)
-DECL|macro|parport_read_status
-mdefine_line|#define parport_read_status(p)             (p)-&gt;ops-&gt;read_status(p)
-DECL|macro|parport_write_fifo
-mdefine_line|#define parport_write_fifo(p,v)            (p)-&gt;ops-&gt;write_fifo(p,v)
-DECL|macro|parport_read_fifo
-mdefine_line|#define parport_read_fifo(p)               (p)-&gt;ops-&gt;read_fifo(p)
-DECL|macro|parport_change_mode
-mdefine_line|#define parport_change_mode(p,m)           (p)-&gt;ops-&gt;change_mode(p,m)
-DECL|macro|parport_release_resources
-mdefine_line|#define parport_release_resources(p)       (p)-&gt;ops-&gt;release_resources(p)
-DECL|macro|parport_claim_resources
-mdefine_line|#define parport_claim_resources(p)         (p)-&gt;ops-&gt;claim_resources(p)
 DECL|struct|parport_operations
 r_struct
 id|parport_operations
@@ -692,6 +666,7 @@ op_star
 suffix:semicolon
 DECL|member|flags
 r_int
+r_int
 id|flags
 suffix:semicolon
 DECL|member|next
@@ -713,8 +688,44 @@ op_star
 id|state
 suffix:semicolon
 multiline_comment|/* saved status over preemption */
+DECL|member|wait_q
+r_struct
+id|wait_queue
+op_star
+id|wait_q
+suffix:semicolon
+DECL|member|time
+r_int
+r_int
+r_int
+id|time
+suffix:semicolon
+DECL|member|timeslice
+r_int
+r_int
+r_int
+id|timeslice
+suffix:semicolon
+DECL|member|waiting
+r_int
+r_int
+id|waiting
+suffix:semicolon
+DECL|member|waitprev
+r_struct
+id|pardevice
+op_star
+id|waitprev
+suffix:semicolon
+DECL|member|waitnext
+r_struct
+id|pardevice
+op_star
+id|waitnext
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Directory information for the /proc interface */
 DECL|struct|parport_dir
 r_struct
 id|parport_dir
@@ -732,21 +743,28 @@ id|proc_dir_entry
 op_star
 id|irq
 suffix:semicolon
-multiline_comment|/* IRQ entry /proc/parport/X/irq */
+multiline_comment|/*&t;&t;.../irq           */
 DECL|member|devices
 r_struct
 id|proc_dir_entry
 op_star
 id|devices
 suffix:semicolon
-multiline_comment|/* /proc/parport/X/devices       */
+multiline_comment|/*&t;&t;.../devices       */
 DECL|member|hardware
 r_struct
 id|proc_dir_entry
 op_star
 id|hardware
 suffix:semicolon
-multiline_comment|/* /proc/parport/X/hardware      */
+multiline_comment|/*&t;&t;.../hardware      */
+DECL|member|probe
+r_struct
+id|proc_dir_entry
+op_star
+id|probe
+suffix:semicolon
+multiline_comment|/*&t;&t;.../autoprobe&t;  */
 DECL|member|name
 r_char
 id|name
@@ -754,7 +772,6 @@ id|name
 l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* /proc/parport/&quot;XXXX&quot; */
 )brace
 suffix:semicolon
 multiline_comment|/* A parallel port */
@@ -806,11 +823,17 @@ op_star
 id|cad
 suffix:semicolon
 multiline_comment|/* port owner */
-DECL|member|lurker
+DECL|member|waithead
 r_struct
 id|pardevice
 op_star
-id|lurker
+id|waithead
+suffix:semicolon
+DECL|member|waittail
+r_struct
+id|pardevice
+op_star
+id|waittail
 suffix:semicolon
 DECL|member|next
 r_struct
@@ -845,6 +868,10 @@ op_star
 id|private_data
 suffix:semicolon
 multiline_comment|/* for lowlevel driver */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* parport_register_port registers a new parallel port at the given address (if&n; * one does not already exist) and returns a pointer to it.  This entails&n; * claiming the I/O region, IRQ and DMA.&n; * NULL is returned if initialisation fails. &n; */
@@ -871,6 +898,7 @@ id|ops
 )paren
 suffix:semicolon
 multiline_comment|/* Unregister a port. */
+r_extern
 r_void
 id|parport_unregister_port
 c_func
@@ -885,6 +913,7 @@ multiline_comment|/* parport_in_use returns nonzero if there are devices attache
 DECL|macro|parport_in_use
 mdefine_line|#define parport_in_use(x)  ((x)-&gt;devices != NULL)
 multiline_comment|/* Put a parallel port to sleep; release its hardware resources.  Only possible&n; * if no devices are registered.  */
+r_extern
 r_void
 id|parport_quiesce
 c_func
@@ -966,6 +995,7 @@ id|handle
 )paren
 suffix:semicolon
 multiline_comment|/* parport_unregister unlinks a device from the chain. */
+r_extern
 r_void
 id|parport_unregister_device
 c_func
@@ -977,6 +1007,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* parport_claim tries to gain ownership of the port for a particular driver.&n; * This may fail (return non-zero) if another driver is busy.  If this&n; * driver has registered an interrupt handler, it will be enabled. &n; */
+r_extern
 r_int
 id|parport_claim
 c_func
@@ -987,7 +1018,20 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* parport_claim_or_block is the same, but sleeps if the port cannot be &n;   claimed.  Return value is 1 if it slept, 0 normally and -errno on error.  */
+r_extern
+r_int
+id|parport_claim_or_block
+c_func
+(paren
+r_struct
+id|pardevice
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* parport_release reverses a previous parport_claim.  This can never fail, &n; * though the effects are undefined (except that they are bad) if you didn&squot;t&n; * previously own the port.  Once you have released the port you should make&n; * sure that neither your code nor the hardware on the port tries to initiate&n; * any communication without first re-claiming the port.&n; * If you mess with the port state (enabling ECP for example) you should&n; * clean up before releasing the port. &n; */
+r_extern
 r_void
 id|parport_release
 c_func
@@ -998,6 +1042,78 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+DECL|function|parport_yield
+r_extern
+id|__inline__
+r_int
+r_int
+id|parport_yield
+c_func
+(paren
+r_struct
+id|pardevice
+op_star
+id|dev
+comma
+r_int
+r_int
+id|block
+)paren
+(brace
+r_int
+r_int
+r_int
+id|timeslip
+op_assign
+(paren
+id|jiffies
+op_minus
+id|dev-&gt;time
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;port-&gt;waithead
+op_eq
+l_int|NULL
+)paren
+op_logical_or
+(paren
+id|timeslip
+OL
+id|dev-&gt;timeslice
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+id|parport_release
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+(paren
+id|block
+)paren
+ques
+c_cond
+id|parport_claim_or_block
+c_func
+(paren
+id|dev
+)paren
+suffix:colon
+id|parport_claim
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* The &quot;modes&quot; entry in parport is a bit field representing the following&n; * modes.&n; * Note that LP_ECPEPP is for the SMC EPP+ECP mode which is NOT&n; * 100% compatible with EPP.&n; */
 DECL|macro|PARPORT_MODE_PCSPP
 mdefine_line|#define PARPORT_MODE_PCSPP&t;        0x0001
@@ -1059,7 +1175,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|parport_proc_cleanup
 c_func
 (paren
@@ -1146,5 +1262,74 @@ op_star
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* If PC hardware is the only type supported, we can optimise a bit.  */
+macro_line|#if (defined(CONFIG_PARPORT_PC) || defined(CONFIG_PARPORT_PC_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_AX) || defined(CONFIG_PARPORT_AX_MODULE)) &amp;&amp; !(defined(CONFIG_PARPORT_ARC) || defined(CONFIG_PARPORT_ARC_MODULE)) &amp;&amp; !defined(CONFIG_PARPORT_OTHER)
+DECL|macro|PARPORT_NEED_GENERIC_OPS
+macro_line|#undef PARPORT_NEED_GENERIC_OPS
+macro_line|#include &lt;linux/parport_pc.h&gt;
+DECL|macro|parport_write_data
+mdefine_line|#define parport_write_data(p,x)            parport_pc_write_data(p,x)
+DECL|macro|parport_read_data
+mdefine_line|#define parport_read_data(p)               parport_pc_read_data(p)
+DECL|macro|parport_write_control
+mdefine_line|#define parport_write_control(p,x)         parport_pc_write_control(p,x)
+DECL|macro|parport_read_control
+mdefine_line|#define parport_read_control(p)            parport_pc_read_control(p)
+DECL|macro|parport_frob_control
+mdefine_line|#define parport_frob_control(p,m,v)        parport_pc_frob_control(p,m,v)
+DECL|macro|parport_write_econtrol
+mdefine_line|#define parport_write_econtrol(p,x)        parport_pc_write_econtrol(p,x)
+DECL|macro|parport_read_econtrol
+mdefine_line|#define parport_read_econtrol(p)           parport_pc_read_econtrol(p)
+DECL|macro|parport_frob_econtrol
+mdefine_line|#define parport_frob_econtrol(p,m,v)       parport_pc_frob_econtrol(p,m,v)
+DECL|macro|parport_write_status
+mdefine_line|#define parport_write_status(p,v)          parport_pc_write_status(p,v)
+DECL|macro|parport_read_status
+mdefine_line|#define parport_read_status(p)             parport_pc_read_status(p)
+DECL|macro|parport_write_fifo
+mdefine_line|#define parport_write_fifo(p,v)            parport_pc_write_fifo(p,v)
+DECL|macro|parport_read_fifo
+mdefine_line|#define parport_read_fifo(p)               parport_pc_read_fifo(p)
+DECL|macro|parport_change_mode
+mdefine_line|#define parport_change_mode(p,m)           parport_pc_change_mode(p,m)
+DECL|macro|parport_release_resources
+mdefine_line|#define parport_release_resources(p)       parport_pc_release_resources(p)
+DECL|macro|parport_claim_resources
+mdefine_line|#define parport_claim_resources(p)         parport_pc_claim_resources(p)
+macro_line|#endif
+macro_line|#ifdef PARPORT_NEED_GENERIC_OPS
+multiline_comment|/* Generic operations vector through the dispatch table. */
+DECL|macro|parport_write_data
+mdefine_line|#define parport_write_data(p,x)            (p)-&gt;ops-&gt;write_data(p,x)
+DECL|macro|parport_read_data
+mdefine_line|#define parport_read_data(p)               (p)-&gt;ops-&gt;read_data(p)
+DECL|macro|parport_write_control
+mdefine_line|#define parport_write_control(p,x)         (p)-&gt;ops-&gt;write_control(p,x)
+DECL|macro|parport_read_control
+mdefine_line|#define parport_read_control(p)            (p)-&gt;ops-&gt;read_control(p)
+DECL|macro|parport_frob_control
+mdefine_line|#define parport_frob_control(p,m,v)        (p)-&gt;ops-&gt;frob_control(p,m,v)
+DECL|macro|parport_write_econtrol
+mdefine_line|#define parport_write_econtrol(p,x)        (p)-&gt;ops-&gt;write_econtrol(p,x)
+DECL|macro|parport_read_econtrol
+mdefine_line|#define parport_read_econtrol(p)           (p)-&gt;ops-&gt;read_econtrol(p)
+DECL|macro|parport_frob_econtrol
+mdefine_line|#define parport_frob_econtrol(p,m,v)       (p)-&gt;ops-&gt;frob_econtrol(p,m,v)
+DECL|macro|parport_write_status
+mdefine_line|#define parport_write_status(p,v)          (p)-&gt;ops-&gt;write_status(p,v)
+DECL|macro|parport_read_status
+mdefine_line|#define parport_read_status(p)             (p)-&gt;ops-&gt;read_status(p)
+DECL|macro|parport_write_fifo
+mdefine_line|#define parport_write_fifo(p,v)            (p)-&gt;ops-&gt;write_fifo(p,v)
+DECL|macro|parport_read_fifo
+mdefine_line|#define parport_read_fifo(p)               (p)-&gt;ops-&gt;read_fifo(p)
+DECL|macro|parport_change_mode
+mdefine_line|#define parport_change_mode(p,m)           (p)-&gt;ops-&gt;change_mode(p,m)
+DECL|macro|parport_release_resources
+mdefine_line|#define parport_release_resources(p)       (p)-&gt;ops-&gt;release_resources(p)
+DECL|macro|parport_claim_resources
+mdefine_line|#define parport_claim_resources(p)         (p)-&gt;ops-&gt;claim_resources(p)
+macro_line|#endif
 macro_line|#endif /* _PARPORT_H_ */
 eof

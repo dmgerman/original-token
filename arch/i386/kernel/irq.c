@@ -2131,6 +2131,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * FIXME! This is completely broken.&n; */
 DECL|function|do_ioapic_IRQ
 r_static
@@ -2312,6 +2313,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s (the special&n; * SMP cross-CPU interrupts have their own specific&n; * handlers).&n; *&n; * the biggest change on SMP is the fact that we no more mask&n; * interrupts in hardware, please believe me, this is unavoidable,&n; * the hardware is largely message-oriented, i tried to force our&n; * state-driven irq handling scheme onto the IO-APIC, but no avail.&n; *&n; * so we soft-disable interrupts via &squot;event counters&squot;, the first &squot;incl&squot;&n; * will do the IRQ handling. This also has the nice side effect of increased&n; * overlapping ... i saw no driver problem so far.&n; */
 DECL|function|do_IRQ
 id|asmlinkage
@@ -2368,6 +2370,7 @@ id|do_lowlevel_IRQ
 op_assign
 id|do_8259A_IRQ
 suffix:semicolon
+macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -2381,6 +2384,7 @@ id|do_lowlevel_IRQ
 op_assign
 id|do_ioapic_IRQ
 suffix:semicolon
+macro_line|#endif
 id|do_lowlevel_IRQ
 c_func
 (paren

@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  linux/fs/bad_inode.c&n; *&n; *  Copyright (C) 1997, S
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-multiline_comment|/*&n; * The follow_symlink operation must dput() the base.&n; */
+multiline_comment|/*&n; * The follow_link operation is special: it must behave as a no-op&n; * so that a bad root inode can at least be unmounted. To do this&n; * we must dput() the base and return the dentry with a dget().&n; */
 DECL|function|bad_follow_link
 r_static
 r_struct
@@ -29,11 +29,10 @@ id|base
 )paren
 suffix:semicolon
 r_return
-id|ERR_PTR
+id|dget
 c_func
 (paren
-op_minus
-id|EIO
+id|dent
 )paren
 suffix:semicolon
 )brace
@@ -159,7 +158,13 @@ id|EIO_ERROR
 comma
 multiline_comment|/* permission */
 id|EIO_ERROR
+comma
 multiline_comment|/* smap */
+id|EIO_ERROR
+comma
+multiline_comment|/* update_page */
+id|EIO_ERROR
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * When a filesystem is unable to read an inode due to an I/O error in&n; * its read_inode() function, it can call make_bad_inode() to return a&n; * set of stubs which will return EIO errors as required. &n; *&n; * We only need to do limited initialisation: all other fields are&n; * preinitialised to zero automatically.&n; */

@@ -214,7 +214,6 @@ id|get_options
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* PCI BIOS support */
 DECL|variable|pcibios_present
 id|EXPORT_SYMBOL
 c_func
@@ -283,20 +282,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pcibios_strerror
-)paren
-suffix:semicolon
-DECL|variable|pci_strvendor
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_strvendor
-)paren
-suffix:semicolon
-DECL|variable|pci_strdev
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_strdev
 )paren
 suffix:semicolon
 macro_line|#endif

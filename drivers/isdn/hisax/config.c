@@ -164,6 +164,7 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/* Variables for insmod */
 DECL|variable|type
+r_static
 r_int
 id|type
 (braket
@@ -204,6 +205,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|protocol
+r_static
 r_int
 id|protocol
 (braket
@@ -244,6 +246,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 (braket
@@ -285,6 +288,7 @@ l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_HISAX_16_3&t;/* For Creatix/Teles PnP */
 DECL|variable|io0
+r_static
 r_int
 id|io0
 (braket
@@ -325,6 +329,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|io1
+r_static
 r_int
 id|io1
 (braket
@@ -366,6 +371,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|irq
+r_static
 r_int
 id|irq
 (braket
@@ -406,6 +412,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|mem
+r_static
 r_int
 id|mem
 (braket
@@ -446,6 +453,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|variable|id
+r_static
 r_char
 op_star
 id|id

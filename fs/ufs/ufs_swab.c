@@ -266,6 +266,10 @@ suffix:semicolon
 id|be64_to_cpus
 c_func
 (paren
+(paren
+id|__u64
+op_star
+)paren
 op_amp
 id|usb-&gt;fs_qbmask
 )paren
@@ -273,6 +277,10 @@ suffix:semicolon
 id|be64_to_cpus
 c_func
 (paren
+(paren
+id|__u64
+op_star
+)paren
 op_amp
 id|usb-&gt;fs_qfmask
 )paren

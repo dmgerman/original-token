@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &quot;pcbit.h&quot;
 DECL|variable|mem
+r_static
 r_int
 id|mem
 (braket
@@ -21,6 +22,7 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 (braket
@@ -33,6 +35,7 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|num_boards
+r_static
 r_int
 id|num_boards
 suffix:semicolon

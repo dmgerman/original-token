@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/fs/nfs/write.c&n; *&n; * Writing file data over NFS.&n; *&n; * We do it like this: When a (user) process wishes to write data to an&n; * NFS file, a write request is allocated that contains the RPC task data&n; * plus some info on the page to be written, and added to the inode&squot;s&n; * write chain. If the process writes past the end of the page, an async&n; * RPC call to write the page is scheduled immediately; otherwise, the call&n; * is delayed for a few seconds.&n; *&n; * Just like readahead, no async I/O is performed if wsize &lt; PAGE_SIZE.&n; *&n; * Write requests are kept on the inode&squot;s writeback list. Each entry in&n; * that list references the page (portion) to be written. When the&n; * cache timeout has expired, the RPC task is woken up, and tries to&n; * lock the page. As soon as it manages to do so, the request is moved&n; * from the writeback list to the writelock list.&n; *&n; * Note: we must make sure never to confuse the inode passed in the&n; * write_page request with the one in page-&gt;inode. As far as I understant&n; * it, these are different when doing a swap-out.&n; *&n; * To understand everything that goes one here and in the nfs read code,&n; * one should be aware that a page is locked in exactly one of the following&n; * cases:&n; *&n; *  -&t;A write request is in progress.&n; *  -&t;A user process is in generic_file_write/nfs_update_page&n; *  -&t;A user process is in generic_file_read&n; *&n; * Also note that because of the way pages are invalidated in&n; * nfs_revalidate_inode, the following assertions hold:&n; *&n; *  -&t;If a page is dirty, there will be no read requests (a page will&n; *&t;not be re-read unless invalidated by nfs_revalidate_inode).&n; *  -&t;If the page is not uptodate, there will be no pending write&n; *&t;requests, and no process will be in nfs_update_page.&n; *&n; * FIXME: Interaction with the vmscan routines is not optimal yet.&n; * Either vmscan must be made nfs-savvy, or we need a different page&n; * reclaim concept that supports something like FS-independent&n; * buffer_heads with a b_ops-&gt; field.&n; *&n; * Copyright (C) 1996, 1997, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
-DECL|macro|NFS_NEED_XDR_TYPES
-mdefine_line|#define NFS_NEED_XDR_TYPES
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1152,11 +1150,6 @@ id|bytes
 )paren
 (brace
 r_struct
-id|nfs_wreq
-op_star
-id|wreq
-suffix:semicolon
-r_struct
 id|rpc_clnt
 op_star
 id|clnt
@@ -1166,6 +1159,11 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_struct
+id|nfs_wreq
+op_star
+id|wreq
 suffix:semicolon
 r_struct
 id|rpc_task
@@ -1360,7 +1358,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Schedule a writeback RPC call.&n; * If the server is congested, don&squot;t add to our backlog of queued&n; * requests but call it synchronously.&n; * The function returns true if the page has been unlocked as the&n; * consequence of a synchronous write call.&n; *&n; * FIXME: Here we could walk the inode&squot;s lock list to see whether the&n; * page we&squot;re currently writing to has been write-locked by the caller.&n; * If it is, we could schedule an async write request with a long&n; * delay in order to avoid writing back the page until the lock is&n; * released.&n; */
+multiline_comment|/*&n; * Schedule a writeback RPC call.&n; * If the server is congested, don&squot;t add to our backlog of queued&n; * requests but call it synchronously.&n; * The function returns false if the page has been unlocked as the&n; * consequence of a synchronous write call.&n; *&n; * FIXME: Here we could walk the inode&squot;s lock list to see whether the&n; * page we&squot;re currently writing to has been write-locked by the caller.&n; * If it is, we could schedule an async write request with a long&n; * delay in order to avoid writing back the page until the lock is&n; * released.&n; */
 r_static
 r_inline
 r_int
@@ -2230,13 +2228,13 @@ l_int|NULL
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: %4d nfs_flush inspect %x/%ld @%ld fl %x&bslash;n&quot;
+l_string|&quot;NFS: %4d nfs_flush inspect %s/%s @%ld fl %x&bslash;n&quot;
 comma
 id|req-&gt;wb_task.tk_pid
 comma
-id|req-&gt;wb_inode-&gt;i_dev
+id|req-&gt;wb_dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|req-&gt;wb_inode-&gt;i_ino
+id|req-&gt;wb_dentry-&gt;d_name.name
 comma
 id|req-&gt;wb_page-&gt;offset
 comma
@@ -2352,7 +2350,53 @@ r_return
 id|last
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Cancel all writeback requests, both pending and in progress.&n; *&n; * N.B. This doesn&squot;t seem to wake up the tasks -- are we sure&n; * they will eventually complete? Also, this could overwrite a&n; * failed status code from an already-completed task.&n; */
+multiline_comment|/*&n; * Cancel a write request. We always mark it cancelled,&n; * but if it&squot;s already in progress there&squot;s no point in&n; * calling rpc_exit, and we don&squot;t want to overwrite the&n; * tk_status field.&n; */
+r_static
+r_void
+DECL|function|nfs_cancel_request
+id|nfs_cancel_request
+c_func
+(paren
+r_struct
+id|nfs_wreq
+op_star
+id|req
+)paren
+(brace
+id|req-&gt;wb_flags
+op_or_assign
+id|NFS_WRITE_CANCELLED
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|WB_INPROGRESS
+c_func
+(paren
+id|req
+)paren
+)paren
+(brace
+id|rpc_exit
+c_func
+(paren
+op_amp
+id|req-&gt;wb_task
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|rpc_wake_up_task
+c_func
+(paren
+op_amp
+id|req-&gt;wb_task
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * Cancel all writeback requests, both pending and in progress.&n; */
 r_static
 r_void
 DECL|function|nfs_cancel_dirty
@@ -2394,7 +2438,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* N.B. check for task already finished? */
 r_if
 c_cond
 (paren
@@ -2406,21 +2449,12 @@ id|req-&gt;wb_pid
 op_eq
 id|pid
 )paren
-(brace
-id|req-&gt;wb_flags
-op_or_assign
-id|NFS_WRITE_CANCELLED
-suffix:semicolon
-id|rpc_exit
+id|nfs_cancel_request
 c_func
 (paren
-op_amp
-id|req-&gt;wb_task
-comma
-l_int|0
+id|req
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2662,7 +2696,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      truncate_dirty_pages(%x/%ld, %ld)&bslash;n&quot;
+l_string|&quot;NFS:      truncate_dirty_pages(%d/%ld, %ld)&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma
@@ -2703,17 +2737,10 @@ op_ge
 id|offset
 )paren
 (brace
-id|req-&gt;wb_flags
-op_or_assign
-id|NFS_WRITE_CANCELLED
-suffix:semicolon
-id|rpc_exit
+id|nfs_cancel_request
 c_func
 (paren
-op_amp
-id|req-&gt;wb_task
-comma
-l_int|0
+id|req
 )paren
 suffix:semicolon
 )brace
@@ -2935,77 +2962,8 @@ id|task-&gt;tk_status
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|req-&gt;wb_args
-op_eq
-l_int|0
-)paren
-(brace
-r_int
-id|size
-op_assign
-r_sizeof
-(paren
-r_struct
-id|nfs_writeargs
-)paren
-op_plus
-r_sizeof
-(paren
-r_struct
-id|nfs_fattr
-)paren
-suffix:semicolon
-r_void
-op_star
-id|ptr
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|ptr
-op_assign
-id|kmalloc
-c_func
-(paren
-id|size
-comma
-id|GFP_KERNEL
-)paren
-)paren
-)paren
-r_goto
-id|out_no_args
-suffix:semicolon
-id|req-&gt;wb_args
-op_assign
-(paren
-r_struct
-id|nfs_writeargs
-op_star
-)paren
-id|ptr
-suffix:semicolon
-id|req-&gt;wb_fattr
-op_assign
-(paren
-r_struct
-id|nfs_fattr
-op_star
-)paren
-(paren
-id|req-&gt;wb_args
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Setup the task struct for a writeback call */
-id|req-&gt;wb_args-&gt;fh
+id|req-&gt;wb_args.fh
 op_assign
 id|NFS_FH
 c_func
@@ -3013,17 +2971,17 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
-id|req-&gt;wb_args-&gt;offset
+id|req-&gt;wb_args.offset
 op_assign
 id|page-&gt;offset
 op_plus
 id|req-&gt;wb_offset
 suffix:semicolon
-id|req-&gt;wb_args-&gt;count
+id|req-&gt;wb_args.count
 op_assign
 id|req-&gt;wb_bytes
 suffix:semicolon
-id|req-&gt;wb_args-&gt;buffer
+id|req-&gt;wb_args.buffer
 op_assign
 (paren
 r_void
@@ -3046,8 +3004,10 @@ id|task
 comma
 id|NFSPROC_WRITE
 comma
+op_amp
 id|req-&gt;wb_args
 comma
+op_amp
 id|req-&gt;wb_fattr
 comma
 l_int|0
@@ -3071,33 +3031,6 @@ id|task-&gt;tk_timeout
 op_assign
 l_int|2
 op_star
-id|HZ
-suffix:semicolon
-id|rpc_sleep_on
-c_func
-(paren
-op_amp
-id|write_queue
-comma
-id|task
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-id|out_no_args
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;NFS: can&squot;t alloc args, sleeping&bslash;n&quot;
-)paren
-suffix:semicolon
-id|task-&gt;tk_timeout
-op_assign
 id|HZ
 suffix:semicolon
 id|rpc_sleep_on
@@ -3176,7 +3109,7 @@ comma
 id|req-&gt;wb_flags
 )paren
 suffix:semicolon
-multiline_comment|/* Set the WRITE_COMPLETE flag, but leave INPROGRESS set */
+multiline_comment|/* Set the WRITE_COMPLETE flag, but leave WRITE_INPROGRESS set */
 id|req-&gt;wb_flags
 op_or_assign
 id|NFS_WRITE_COMPLETE
@@ -3232,6 +3165,7 @@ id|nfs_fattr
 op_star
 id|fattr
 op_assign
+op_amp
 id|req-&gt;wb_fattr
 suffix:semicolon
 multiline_comment|/* Update attributes as result of writeback. &n;&t;&t; * Beware: when UDP replies arrive out of order, we&n;&t;&t; * may end up overwriting a previous, bigger file size.&n;&t;&t; */
@@ -3334,23 +3268,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|req-&gt;wb_args
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|req-&gt;wb_args
-)paren
-suffix:semicolon
-id|req-&gt;wb_args
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Now it&squot;s safe to remove the request from the inode&squot;s &n;&t; * writeback list and wake up any tasks sleeping on it.&n;&t; * If the request failed, add it to the failed list.&n;&t; */
 id|remove_write_request
 c_func

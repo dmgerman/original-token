@@ -1,6 +1,5 @@
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

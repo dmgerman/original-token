@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * PCI defines and function prototypes&n; * Copyright 1994, Drew Eckhardt&n; *&n; * For more information, please consult &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; * &n; * Manuals are $25 each or $50 for all three, plus $7 shipping &n; * within the United States, $35 abroad.&n; */
-multiline_comment|/*&t;PROCEDURE TO REPORT NEW PCI DEVICES&n; * We are trying to collect information on new PCI devices, using&n; * the standard PCI identification procedure. If some warning is&n; * displayed at boot time, please report &n; *&t;- /proc/pci&n; *&t;- your exact hardware description. Try to find out&n; *&t;  which device is unknown. It may be you mainboard chipset.&n; *&t;  PCI-CPU bridge or PCI-ISA bridge.&n; *&t;- If you can&squot;t find the actual information in your hardware&n; *&t;  booklet, try to read the references of the chip on the board.&n; *&t;- Send all that to linux-pcisupport@cck.uni-kl.de&n; *&t;  and I&squot;ll add your device to the list as soon as possible&n; *&n; * BEFORE you send a mail, please check the latest linux releases&n; * to be sure it has not been recently added.&n; *&n; *        Thanks&n; *&t;&t;Jens Maurer&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.51 1997/12/27 13:55:23 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult &n; * &n; *&t;PCI BIOS Specification Revision&n; *&t;PCI Local Bus Specification&n; *&t;PCI System Design Guide&n; *&n; *&t;PCI Special Interest Group&n; *&t;M/S HF3-15A&n; *&t;5200 N.E. Elam Young Parkway&n; *&t;Hillsboro, Oregon 97124-6497&n; *&t;+1 (503) 696-2000 &n; *&t;+1 (800) 433-5177&n; * &n; *&t;Manuals are $25 each or $50 for all three, plus $7 shipping &n; *&t;within the United States, $35 abroad.&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -86,7 +85,7 @@ mdefine_line|#define PCI_BASE_ADDRESS_0&t;0x10&t;/* 32 bits */
 DECL|macro|PCI_BASE_ADDRESS_1
 mdefine_line|#define PCI_BASE_ADDRESS_1&t;0x14&t;/* 32 bits */
 DECL|macro|PCI_BASE_ADDRESS_2
-mdefine_line|#define PCI_BASE_ADDRESS_2&t;0x18&t;/* 32 bits */
+mdefine_line|#define PCI_BASE_ADDRESS_2&t;0x18&t;/* 32 bits [htype 0 only] */
 DECL|macro|PCI_BASE_ADDRESS_3
 mdefine_line|#define PCI_BASE_ADDRESS_3&t;0x1c&t;/* 32 bits */
 DECL|macro|PCI_BASE_ADDRESS_4
@@ -114,6 +113,7 @@ mdefine_line|#define  PCI_BASE_ADDRESS_MEM_MASK&t;(~0x0f)
 DECL|macro|PCI_BASE_ADDRESS_IO_MASK
 mdefine_line|#define  PCI_BASE_ADDRESS_IO_MASK&t;(~0x03)
 multiline_comment|/* bit 1 is reserved if address_space = 1 */
+multiline_comment|/* Header type 0 (normal devices) */
 DECL|macro|PCI_CARDBUS_CIS
 mdefine_line|#define PCI_CARDBUS_CIS&t;&t;0x28
 DECL|macro|PCI_SUBSYSTEM_ID
@@ -133,6 +133,78 @@ DECL|macro|PCI_MIN_GNT
 mdefine_line|#define PCI_MIN_GNT&t;&t;0x3e&t;/* 8 bits */
 DECL|macro|PCI_MAX_LAT
 mdefine_line|#define PCI_MAX_LAT&t;&t;0x3f&t;/* 8 bits */
+multiline_comment|/* Header type 1 (PCI-to-PCI bridges) */
+DECL|macro|PCI_PRIMARY_BUS
+mdefine_line|#define PCI_PRIMARY_BUS&t;&t;0x18&t;/* Primary bus number */
+DECL|macro|PCI_SECONDARY_BUS
+mdefine_line|#define PCI_SECONDARY_BUS&t;0x19&t;/* Secondary bus number */
+DECL|macro|PCI_SUBORDINATE_BUS
+mdefine_line|#define PCI_SUBORDINATE_BUS&t;0x1a&t;/* Highest bus number behind the bridge */
+DECL|macro|PCI_SEC_LATENCY_TIMER
+mdefine_line|#define PCI_SEC_LATENCY_TIMER&t;0x1b&t;/* Latency timer for secondary interface */
+DECL|macro|PCI_IO_BASE
+mdefine_line|#define PCI_IO_BASE&t;&t;0x1c&t;/* I/O range behind the bridge */
+DECL|macro|PCI_IO_LIMIT
+mdefine_line|#define PCI_IO_LIMIT&t;&t;0x1d
+DECL|macro|PCI_IO_RANGE_TYPE_MASK
+mdefine_line|#define  PCI_IO_RANGE_TYPE_MASK&t;0x0f&t;/* I/O bridging type */
+DECL|macro|PCI_IO_RANGE_TYPE_16
+mdefine_line|#define  PCI_IO_RANGE_TYPE_16&t;0x00
+DECL|macro|PCI_IO_RANGE_TYPE_32
+mdefine_line|#define  PCI_IO_RANGE_TYPE_32&t;0x01
+DECL|macro|PCI_IO_RANGE_MASK
+mdefine_line|#define  PCI_IO_RANGE_MASK&t;~0x0f
+DECL|macro|PCI_SEC_STATUS
+mdefine_line|#define PCI_SEC_STATUS&t;&t;0x1e&t;/* Secondary status register, only bit 14 used */
+DECL|macro|PCI_MEMORY_BASE
+mdefine_line|#define PCI_MEMORY_BASE&t;&t;0x20&t;/* Memory range behind */
+DECL|macro|PCI_MEMORY_LIMIT
+mdefine_line|#define PCI_MEMORY_LIMIT&t;0x22
+DECL|macro|PCI_MEMORY_RANGE_TYPE_MASK
+mdefine_line|#define  PCI_MEMORY_RANGE_TYPE_MASK 0x0f
+DECL|macro|PCI_MEMORY_RANGE_MASK
+mdefine_line|#define  PCI_MEMORY_RANGE_MASK&t;~0x0f
+DECL|macro|PCI_PREF_MEMORY_BASE
+mdefine_line|#define PCI_PREF_MEMORY_BASE&t;0x24&t;/* Prefetchable memory range behind */
+DECL|macro|PCI_PREF_MEMORY_LIMIT
+mdefine_line|#define PCI_PREF_MEMORY_LIMIT&t;0x26
+DECL|macro|PCI_PREF_RANGE_TYPE_MASK
+mdefine_line|#define  PCI_PREF_RANGE_TYPE_MASK 0x0f
+DECL|macro|PCI_PREF_RANGE_TYPE_32
+mdefine_line|#define  PCI_PREF_RANGE_TYPE_32&t;0x00
+DECL|macro|PCI_PREF_RANGE_TYPE_64
+mdefine_line|#define  PCI_PREF_RANGE_TYPE_64&t;0x01
+DECL|macro|PCI_PREF_RANGE_MASK
+mdefine_line|#define  PCI_PREF_RANGE_MASK&t;~0x0f
+DECL|macro|PCI_PREF_BASE_UPPER32
+mdefine_line|#define PCI_PREF_BASE_UPPER32&t;0x28&t;/* Upper half of prefetchable memory range */
+DECL|macro|PCI_PREF_LIMIT_UPPER32
+mdefine_line|#define PCI_PREF_LIMIT_UPPER32&t;0x2c
+DECL|macro|PCI_IO_BASE_UPPER16
+mdefine_line|#define PCI_IO_BASE_UPPER16&t;0x30&t;/* Upper half of I/O addresses */
+DECL|macro|PCI_IO_LIMIT_UPPER16
+mdefine_line|#define PCI_IO_LIMIT_UPPER16&t;0x32
+multiline_comment|/* 0x34-0x3b is reserved */
+DECL|macro|PCI_ROM_ADDRESS1
+mdefine_line|#define PCI_ROM_ADDRESS1&t;0x38&t;/* Same as PCI_ROM_ADDRESS, but for htype 1 */
+multiline_comment|/* 0x3c-0x3d are same as for htype 0 */
+DECL|macro|PCI_BRIDGE_CONTROL
+mdefine_line|#define PCI_BRIDGE_CONTROL&t;0x3e
+DECL|macro|PCI_BRIDGE_CTL_PARITY
+mdefine_line|#define  PCI_BRIDGE_CTL_PARITY&t;0x01&t;/* Enable parity detection on secondary interface */
+DECL|macro|PCI_BRIDGE_CTL_SERR
+mdefine_line|#define  PCI_BRIDGE_CTL_SERR&t;0x02&t;/* The same for SERR forwarding */
+DECL|macro|PCI_BRIDGE_CTL_NO_ISA
+mdefine_line|#define  PCI_BRIDGE_CTL_NO_ISA&t;0x04&t;/* Disable bridging of ISA ports */
+DECL|macro|PCI_BRIDGE_CTL_VGA
+mdefine_line|#define  PCI_BRIDGE_CTL_VGA&t;0x08&t;/* Forward VGA addresses */
+DECL|macro|PCI_BRIDGE_CTL_MASTER_ABORT
+mdefine_line|#define  PCI_BRIDGE_CTL_MASTER_ABORT 0x20  /* Report master aborts */
+DECL|macro|PCI_BRIDGE_CTL_BUS_RESET
+mdefine_line|#define  PCI_BRIDGE_CTL_BUS_RESET 0x40&t;/* Secondary bus reset */
+DECL|macro|PCI_BRIDGE_CTL_FAST_BACK
+mdefine_line|#define  PCI_BRIDGE_CTL_FAST_BACK 0x80&t;/* Fast Back2Back enabled on secondary interface */
+multiline_comment|/* Device classes and subclasses */
 DECL|macro|PCI_CLASS_NOT_DEFINED
 mdefine_line|#define PCI_CLASS_NOT_DEFINED&t;&t;0x0000
 DECL|macro|PCI_CLASS_NOT_DEFINED_VGA
@@ -1319,7 +1391,6 @@ DECL|macro|PCI_DEVICE_ID_ARK_STINGARK
 mdefine_line|#define PCI_DEVICE_ID_ARK_STINGARK&t;0xa099
 DECL|macro|PCI_DEVICE_ID_ARK_2000MT
 mdefine_line|#define PCI_DEVICE_ID_ARK_2000MT&t;0xa0a1
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:3 = slot&n; *&t;2:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
@@ -1327,6 +1398,7 @@ DECL|macro|PCI_SLOT
 mdefine_line|#define PCI_SLOT(devfn)&t;&t;(((devfn) &gt;&gt; 3) &amp; 0x1f)
 DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * There is one pci_dev structure for each slot-number/function-number&n; * combination:&n; */
 DECL|struct|pci_dev
 r_struct
@@ -1478,38 +1550,6 @@ suffix:semicolon
 multiline_comment|/* max number of subordinate buses */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is used to map a vendor-id/device-id pair into device-specific&n; * information.&n; */
-DECL|struct|pci_dev_info
-r_struct
-id|pci_dev_info
-(brace
-DECL|member|vendor
-r_int
-r_int
-id|vendor
-suffix:semicolon
-multiline_comment|/* vendor id */
-DECL|member|device
-r_int
-r_int
-id|device
-suffix:semicolon
-multiline_comment|/* device id */
-DECL|member|name
-r_const
-r_char
-op_star
-id|name
-suffix:semicolon
-multiline_comment|/* device name */
-DECL|member|bridge_type
-r_int
-r_char
-id|bridge_type
-suffix:semicolon
-multiline_comment|/* bridge type or 0xff */
-)brace
-suffix:semicolon
 r_extern
 r_struct
 id|pci_bus
@@ -1541,7 +1581,6 @@ r_extern
 r_int
 r_int
 id|pci_scan_bus
-c_func
 (paren
 r_struct
 id|pci_bus
@@ -1552,58 +1591,6 @@ r_int
 r_int
 op_star
 id|mem_startp
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|pci_dev_info
-op_star
-id|pci_lookup_dev
-(paren
-r_int
-r_int
-id|vendor
-comma
-r_int
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_const
-r_char
-op_star
-id|pci_strclass
-(paren
-r_int
-r_int
-r_class
-)paren
-suffix:semicolon
-r_extern
-r_const
-r_char
-op_star
-id|pci_strvendor
-(paren
-r_int
-r_int
-id|vendor
-)paren
-suffix:semicolon
-r_extern
-r_const
-r_char
-op_star
-id|pci_strdev
-(paren
-r_int
-r_int
-id|vendor
-comma
-r_int
-r_int
-id|device
 )paren
 suffix:semicolon
 r_extern

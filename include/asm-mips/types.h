@@ -131,6 +131,8 @@ r_int
 id|u64
 suffix:semicolon
 macro_line|#endif
+DECL|macro|BITS_PER_LONG
+mdefine_line|#define BITS_PER_LONG 32
 macro_line|#else
 DECL|typedef|s64
 r_typedef
@@ -144,6 +146,8 @@ r_int
 r_int
 id|u64
 suffix:semicolon
+DECL|macro|BITS_PER_LONG
+mdefine_line|#define BITS_PER_LONG 64
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASM_MIPS_TYPES_H */

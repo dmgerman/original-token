@@ -741,32 +741,6 @@ op_star
 id|sav_skb
 suffix:semicolon
 multiline_comment|/* Ptr to skb, rejected by LL-driver*/
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
-multiline_comment|/* Ptr to orig. header_cache_bind   */
-DECL|member|org_hcb
-r_void
-(paren
-op_star
-id|org_hcb
-)paren
-(paren
-r_struct
-id|hh_cache
-op_star
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_int
-r_int
-comma
-id|__u32
-)paren
-suffix:semicolon
-macro_line|#else
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x2011E)
 multiline_comment|/* Ptr to orig. hard_header_cache   */
 DECL|member|org_hhc
 r_int
@@ -775,36 +749,6 @@ op_star
 id|org_hhc
 )paren
 (paren
-r_struct
-id|dst_entry
-op_star
-id|dst
-comma
-r_struct
-id|dst_entry
-op_star
-id|neigh
-comma
-r_struct
-id|hh_cache
-op_star
-id|hh
-)paren
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* Ptr to orig. hard_header_cache   */
-DECL|member|org_hhc
-r_int
-(paren
-op_star
-id|org_hhc
-)paren
-(paren
-r_struct
-id|dst_entry
-op_star
-id|dst
-comma
 r_struct
 id|neighbour
 op_star
@@ -816,8 +760,6 @@ op_star
 id|hh
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/* Ptr to orig. header_cache_update */
 DECL|member|org_hcu
 r_void

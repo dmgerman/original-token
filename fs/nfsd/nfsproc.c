@@ -29,8 +29,6 @@ id|svc_buf
 suffix:semicolon
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_PROC
-DECL|macro|sleep
-mdefine_line|#define sleep(msec)&t;&t;&bslash;&n;&t;{&t;printk(KERN_NOTICE &quot;nfsd: sleeping %d msecs&bslash;n&quot;, msec); &bslash;&n;&t;&t;current-&gt;state = TASK_INTERRUPTIBLE;&t;&bslash;&n;&t;&t;current-&gt;timeout = jiffies + msec / 10;&t;&bslash;&n;&t;&t;schedule();&t;&bslash;&n;&t;}
 DECL|macro|RETURN
 mdefine_line|#define RETURN(st)&t;return st
 r_static
@@ -1156,35 +1154,6 @@ id|attr-&gt;ia_size
 )paren
 suffix:semicolon
 multiline_comment|/* File already exists. We ignore all attributes except&n;&t;&t; * size, so that creat() behaves exactly like&n;&t;&t; * open(..., O_CREAT|O_TRUNC|O_WRONLY).&n;&t;&t; */
-macro_line|#if 0
-multiline_comment|/* N.B. What is this doing? ignores size?? */
-r_if
-c_cond
-(paren
-(paren
-id|attr-&gt;ia_valid
-op_and_assign
-op_complement
-(paren
-id|ATTR_SIZE
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-id|nfserr
-op_assign
-id|nfsd_setattr
-c_func
-(paren
-id|rqstp
-comma
-id|newfhp
-comma
-id|attr
-)paren
-suffix:semicolon
-macro_line|#endif
 id|attr-&gt;ia_valid
 op_and_assign
 id|ATTR_SIZE
@@ -1771,9 +1740,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READDIR  %p %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READDIR  %d/%ld %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|SVCFH_INO
 c_func
 (paren
 op_amp
@@ -1801,21 +1777,39 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Make sure we&squot;ve room for the NULL ptr &amp; eof flag, and shrink to&n;&t; * client read size */
+multiline_comment|/* Shrink to the client read size */
 r_if
 c_cond
 (paren
-(paren
 id|count
-op_sub_assign
-l_int|8
-)paren
 OG
+(paren
 id|argp-&gt;count
+op_rshift
+l_int|2
+)paren
 )paren
 id|count
 op_assign
 id|argp-&gt;count
+op_rshift
+l_int|2
+suffix:semicolon
+multiline_comment|/* Make sure we&squot;ve room for the NULL ptr &amp; eof flag */
+id|count
+op_sub_assign
+l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+l_int|0
+)paren
+id|count
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Read directory and encode entries on the fly */
 id|nfserr

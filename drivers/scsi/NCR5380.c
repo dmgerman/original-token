@@ -1298,6 +1298,8 @@ r_static
 r_int
 id|probe_irq
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc

@@ -1529,10 +1529,6 @@ id|arg
 (brace
 r_int
 id|val
-op_assign
-l_int|0
-comma
-id|info
 comma
 id|count
 suffix:semicolon
@@ -1946,7 +1942,7 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETCAPS
 suffix:colon
-id|info
+id|val
 op_assign
 l_int|1
 op_or
@@ -1974,7 +1970,7 @@ id|open_mode
 op_eq
 id|OPEN_READWRITE
 )paren
-id|info
+id|val
 op_or_assign
 id|DSP_CAP_DUPLEX
 suffix:semicolon
@@ -1988,7 +1984,7 @@ id|dev
 op_member_access_from_pointer
 id|coproc
 )paren
-id|info
+id|val
 op_or_assign
 id|DSP_CAP_COPROC
 suffix:semicolon
@@ -2003,7 +1999,7 @@ op_member_access_from_pointer
 id|d-&gt;local_qlen
 )paren
 multiline_comment|/* Device has hidden buffers */
-id|info
+id|val
 op_or_assign
 id|DSP_CAP_BATCH
 suffix:semicolon
@@ -2018,7 +2014,7 @@ op_member_access_from_pointer
 id|d-&gt;trigger
 )paren
 multiline_comment|/* Supports SETTRIGGER */
-id|info
+id|val
 op_or_assign
 id|DSP_CAP_TRIGGER
 suffix:semicolon

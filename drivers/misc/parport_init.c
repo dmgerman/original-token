@@ -1,4 +1,4 @@
-multiline_comment|/* Parallel-port initialisation code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+multiline_comment|/* Parallel-port initialisation code.&n; * &n; * Authors: David Campbell &lt;campbell@torque.net&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -299,11 +299,15 @@ c_func
 r_void
 )paren
 (brace
+(paren
+r_void
+)paren
 id|parport_proc_init
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* We can go on without it. */
 r_return
 l_int|0
 suffix:semicolon
@@ -390,6 +394,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|parport_claim
+)paren
+suffix:semicolon
+DECL|variable|parport_claim_or_block
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|parport_claim_or_block
 )paren
 suffix:semicolon
 DECL|variable|parport_release

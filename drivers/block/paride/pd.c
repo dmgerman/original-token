@@ -1,6 +1,7 @@
 multiline_comment|/* &n;        pd.c    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                          Under the terms of the GNU public license.&n;&n;        This is the high-level driver for parallel port IDE hard&n;        drives based on chips supported by the paride module.&n;&n;&t;By default, the driver will autoprobe for a single parallel&n;&t;port IDE drive, but if their individual parameters are&n;        specified, the driver can handle up to 4 drives.&n;&n;        The behaviour of the pd driver can be altered by setting&n;        some parameters from the insmod command line.  The following&n;        parameters are adjustable:&n; &n;&t;    drive0  &t;These four arguments can be arrays of&t;    &n;&t;    drive1&t;1-7 integers as follows:&n;&t;    drive2&n;&t;    drive3&t;&lt;prt&gt;,&lt;pro&gt;,&lt;uni&gt;,&lt;mod&gt;,&lt;geo&gt;,&lt;sby&gt;,&lt;dly&gt;&n;&n;&t;&t;&t;Where,&n;&n;&t;&t;&lt;prt&gt;&t;is the base of the parallel port address for&n;&t;&t;&t;the corresponding drive.  (required)&n;&n;&t;&t;&lt;pro&gt;   is the protocol number for the adapter that&n;&t;&t;&t;supports this drive.  These numbers are&n;                        logged by &squot;paride&squot; when the protocol modules&n;&t;&t;&t;are initialised.  (0 if not given)&n;&n;&t;&t;&lt;uni&gt;   for those adapters that support chained&n;&t;&t;&t;devices, this is the unit selector for the&n;&t;&t;        chain of devices on the given port.  It should&n;&t;&t;&t;be zero for devices that don&squot;t support chaining.&n;&t;&t;&t;(0 if not given)&n;&n;&t;&t;&lt;mod&gt;   this can be -1 to choose the best mode, or one&n;&t;&t;        of the mode numbers supported by the adapter.&n;&t;&t;&t;(-1 if not given)&n;&n;&t;&t;&lt;geo&gt;   this defaults to 0 to indicate that the driver&n;&t;&t;&t;should use the CHS geometry provided by the drive&n;&t;&t;&t;itself.  If set to 1, the driver will provide&n;&t;&t;&t;a logical geometry with 64 heads and 32 sectors&n;&t;&t;&t;per track, to be consistent with most SCSI&n;&t;&t;        drivers.  (0 if not given)&n;&n;&t;&t;&lt;sby&gt;   set this to zero to disable the power saving&n;&t;&t;&t;standby mode, if needed.  (1 if not given)&n;&n;&t;&t;&lt;dly&gt;   some parallel ports require the driver to &n;&t;&t;&t;go more slowly.  -1 sets a default value that&n;&t;&t;&t;should work with the chosen protocol.  Otherwise,&n;&t;&t;&t;set this to a small integer, the larger it is&n;&t;&t;&t;the slower the port i/o.  In some cases, setting&n;&t;&t;&t;this to zero will speed up the device. (default -1)&n;&t;&t;&t;&n;&n;            major       You may use this parameter to overide the&n;                        default major number (45) that this driver&n;                        will use.  Be sure to change the device&n;                        name as well.&n;&n;            name        This parameter is a character string that&n;                        contains the name the kernel will use for this&n;                        device (in /proc output, for instance).&n;&t;&t;&t;(default &quot;pd&quot;)&n;&n;&t;    cluster&t;The driver will attempt to aggregate requests&n;&t;&t;&t;for adjacent blocks into larger multi-block&n;&t;&t;&t;clusters.  The maximum cluster size (in 512&n;&t;&t;&t;byte sectors) is set with this parameter.&n;&t;&t;&t;(default 64)&n;&n;&t;    verbose&t;This parameter controls the amount of logging&n;&t;&t;&t;that is done while the driver probes for&n;&t;&t;&t;devices.  Set it to 0 for a quiet load, or to 1&n;&t;&t;&t;see all the progress messages.  (default 0)&n;&n;            nice        This parameter controls the driver&squot;s use of&n;                        idle CPU time, at the expense of some speed.&n;&n;        If this driver is built into the kernel, you can use kernel&n;        the following command line parameters, with the same values&n;        as the corresponding module parameters listed above:&n;&n;            pd.drive0&n;            pd.drive1&n;            pd.drive2&n;            pd.drive3&n;            pd.cluster&n;            pd.nice&n;&n;        In addition, you can use the parameter pd.disable to disable&n;        the driver entirely.&n; &n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1997.01.24&t;Restored pd_reset()&n;&t;&t;&t;&t;Added eject ioctl&n;&n;*/
 DECL|macro|PD_VERSION
-mdefine_line|#define PD_VERSION      &quot;1.0&quot;
+mdefine_line|#define PD_VERSION      &quot;1.01&quot;
 DECL|macro|PD_MAJOR
 mdefine_line|#define PD_MAJOR&t;45
 DECL|macro|PD_NAME
@@ -212,6 +213,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;&t;/* for the eject ioctl */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifndef MODULE
 macro_line|#include &quot;setup.h&quot;
@@ -471,6 +473,8 @@ DECL|macro|IDE_DOORUNLOCK
 mdefine_line|#define IDE_DOORUNLOCK  &t;0xdf
 DECL|macro|IDE_IDENTIFY
 mdefine_line|#define IDE_IDENTIFY    &t;0xec
+DECL|macro|IDE_EJECT
+mdefine_line|#define IDE_EJECT&t;&t;0xed
 r_int
 id|pd_init
 c_func
@@ -659,6 +663,15 @@ c_func
 (paren
 id|kdev_t
 id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|pd_eject
+c_func
+(paren
+r_int
+id|unit
 )paren
 suffix:semicolon
 DECL|variable|pd_hd
@@ -1487,6 +1500,25 @@ c_cond
 id|cmd
 )paren
 (brace
+r_case
+id|CDROMEJECT
+suffix:colon
+r_if
+c_cond
+(paren
+id|PD.access
+op_eq
+l_int|1
+)paren
+id|pd_eject
+c_func
+(paren
+id|unit
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 r_case
 id|HDIO_GETGEO
 suffix:colon
@@ -2631,7 +2663,61 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;static void pd_reset( int unit )&n;&n;{       pi_connect(PI);&n;&t;WR(1,6,4);&n;        udelay(50);&n;        WR(1,6,0);&n;&t;pi_disconnect(PI);&n;}&n;*/
+DECL|function|pd_reset
+r_static
+r_void
+id|pd_reset
+c_func
+(paren
+r_int
+id|unit
+)paren
+(brace
+id|pi_connect
+c_func
+(paren
+id|PI
+)paren
+suffix:semicolon
+id|WR
+c_func
+(paren
+l_int|1
+comma
+l_int|6
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|50
+)paren
+suffix:semicolon
+id|WR
+c_func
+(paren
+l_int|1
+comma
+l_int|6
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|pi_disconnect
+c_func
+(paren
+id|PI
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|250
+)paren
+suffix:semicolon
+)brace
 DECL|macro|DBMSG
 mdefine_line|#define DBMSG(msg)&t;NULL
 DECL|function|pd_wait_for
@@ -3136,6 +3222,121 @@ id|PI
 )paren
 suffix:semicolon
 )brace
+DECL|function|pd_eject
+r_static
+r_void
+id|pd_eject
+c_func
+(paren
+r_int
+id|unit
+)paren
+(brace
+id|pi_connect
+c_func
+(paren
+id|PI
+)paren
+suffix:semicolon
+id|pd_wait_for
+c_func
+(paren
+id|unit
+comma
+l_int|0
+comma
+id|DBMSG
+c_func
+(paren
+l_string|&quot;before unlock on eject&quot;
+)paren
+)paren
+suffix:semicolon
+id|pd_send_command
+c_func
+(paren
+id|unit
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|IDE_DOORUNLOCK
+)paren
+suffix:semicolon
+id|pd_wait_for
+c_func
+(paren
+id|unit
+comma
+l_int|0
+comma
+id|DBMSG
+c_func
+(paren
+l_string|&quot;after unlock on eject&quot;
+)paren
+)paren
+suffix:semicolon
+id|pd_wait_for
+c_func
+(paren
+id|unit
+comma
+l_int|0
+comma
+id|DBMSG
+c_func
+(paren
+l_string|&quot;before eject&quot;
+)paren
+)paren
+suffix:semicolon
+id|pd_send_command
+c_func
+(paren
+id|unit
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|IDE_EJECT
+)paren
+suffix:semicolon
+id|pd_wait_for
+c_func
+(paren
+id|unit
+comma
+l_int|0
+comma
+id|DBMSG
+c_func
+(paren
+l_string|&quot;after eject&quot;
+)paren
+)paren
+suffix:semicolon
+id|pi_disconnect
+c_func
+(paren
+id|PI
+)paren
+suffix:semicolon
+)brace
 DECL|function|pd_media_check
 r_static
 r_void
@@ -3400,6 +3601,12 @@ id|PD_ID_LEN
 op_plus
 l_int|1
 )braket
+suffix:semicolon
+id|pd_reset
+c_func
+(paren
+id|unit
+)paren
 suffix:semicolon
 id|pi_connect
 c_func

@@ -525,6 +525,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PT
+r_extern
+r_void
+id|pt_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PARIDE_PCD
 r_extern
 r_void
@@ -3092,7 +3108,7 @@ id|plip_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SOUNDMODEM
+macro_line|#ifdef CONFIG_HFMODEM
 (brace
 l_string|&quot;hfmodem=&quot;
 comma
@@ -3188,6 +3204,14 @@ macro_line|#ifdef CONFIG_PARIDE_PF
 l_string|&quot;pf.&quot;
 comma
 id|pf_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PT
+(brace
+l_string|&quot;pt.&quot;
+comma
+id|pt_setup
 )brace
 comma
 macro_line|#endif

@@ -113,8 +113,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* keyboard key bitmap */
-DECL|macro|BITS_PER_LONG
-mdefine_line|#define BITS_PER_LONG (8*sizeof(unsigned long))
 DECL|variable|key_down
 r_static
 r_int
