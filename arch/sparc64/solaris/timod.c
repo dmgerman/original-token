@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timod.c,v 1.7 2000/06/09 07:35:30 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
+multiline_comment|/* $Id: timod.c,v 1.8 2000/07/12 00:51:06 davem Exp $&n; * timod.c: timod emulation.&n; *&n; * Copyright (C) 1998 Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&n; *&n; * Streams &amp; timod emulation based on code&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
@@ -3425,64 +3426,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* copied directly from fs/select.c */
-DECL|function|free_wait
-r_static
-r_void
-id|free_wait
-c_func
-(paren
-id|poll_table
-op_star
-id|p
-)paren
-(brace
-r_struct
-id|poll_table_entry
-op_star
-id|entry
-op_assign
-id|p-&gt;entry
-op_plus
-id|p-&gt;nr
-suffix:semicolon
-id|SOLD
-c_func
-(paren
-l_string|&quot;entry&quot;
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|p-&gt;nr
-OG
-l_int|0
-)paren
-(brace
-id|p-&gt;nr
-op_decrement
-suffix:semicolon
-id|entry
-op_decrement
-suffix:semicolon
-id|remove_wait_queue
-c_func
-(paren
-id|entry-&gt;wait_address
-comma
-op_amp
-id|entry-&gt;wait
-)paren
-suffix:semicolon
-)brace
-id|SOLD
-c_func
-(paren
-l_string|&quot;done&quot;
-)paren
-suffix:semicolon
-)brace
 DECL|function|timod_getmsg
 r_int
 id|timod_getmsg
@@ -3772,53 +3715,12 @@ comma
 op_star
 id|wait
 suffix:semicolon
-r_struct
-id|poll_table_entry
-op_star
-id|entry
-suffix:semicolon
-id|SOLD
+id|poll_initwait
 c_func
 (paren
-l_string|&quot;getting poll_table&quot;
+op_amp
+id|wait_table
 )paren
-suffix:semicolon
-id|entry
-op_assign
-(paren
-r_struct
-id|poll_table_entry
-op_star
-)paren
-id|__get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|entry
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-id|SOLD
-c_func
-(paren
-l_string|&quot;got one&quot;
-)paren
-suffix:semicolon
-id|wait_table.nr
-op_assign
-l_int|0
-suffix:semicolon
-id|wait_table.entry
-op_assign
-id|entry
 suffix:semicolon
 id|wait
 op_assign
@@ -3946,6 +3848,29 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|wait_table.error
+)paren
+(brace
+id|SOLD
+c_func
+(paren
+l_string|&quot;wait-table error&quot;
+)paren
+suffix:semicolon
+id|poll_freewait
+c_func
+(paren
+op_amp
+id|wait_table
+)paren
+suffix:semicolon
+r_return
+id|wait_table.error
+suffix:semicolon
+)brace
 id|SOLD
 c_func
 (paren
@@ -3968,21 +3893,11 @@ id|current-&gt;state
 op_assign
 id|TASK_RUNNING
 suffix:semicolon
-id|free_wait
+id|poll_freewait
 c_func
 (paren
 op_amp
 id|wait_table
-)paren
-suffix:semicolon
-id|free_page
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|entry
 )paren
 suffix:semicolon
 r_if

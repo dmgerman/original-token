@@ -7222,18 +7222,6 @@ id|arg
 )paren
 (brace
 r_struct
-id|cbq_sched_data
-op_star
-id|q
-op_assign
-(paren
-r_struct
-id|cbq_sched_data
-op_star
-)paren
-id|sch-&gt;data
-suffix:semicolon
-r_struct
 id|cbq_class
 op_star
 id|cl
@@ -7255,6 +7243,18 @@ l_int|0
 )paren
 (brace
 macro_line|#ifdef CONFIG_NET_CLS_POLICE
+r_struct
+id|cbq_sched_data
+op_star
+id|q
+op_assign
+(paren
+r_struct
+id|cbq_sched_data
+op_star
+)paren
+id|sch-&gt;data
+suffix:semicolon
 id|spin_lock_bh
 c_func
 (paren

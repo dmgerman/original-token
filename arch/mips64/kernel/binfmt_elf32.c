@@ -43,7 +43,7 @@ id|ELF_NFPREG
 )braket
 suffix:semicolon
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x)&t;((x) == EM_MIPS || (x) == EM_MIPS_RS4_BE)
+mdefine_line|#define elf_check_arch(x)&t;((x)-&gt;e_machine == EM_MIPS || (x)-&gt;e_machine == EM_MIPS_RS4_BE)
 DECL|macro|TASK32_SIZE
 mdefine_line|#define TASK32_SIZE&t;&t;0x80000000UL
 DECL|macro|ELF_ET_DYN_BASE

@@ -1497,31 +1497,23 @@ op_amp
 id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Update rss for the mm_struct (not necessarily current-&gt;mm)&n;&t; */
+multiline_comment|/*&n;&t; * Update rss for the mm_struct (not necessarily current-&gt;mm)&n;&t; * Notice that rss is an unsigned long.&n;&t; */
 r_if
 c_cond
 (paren
 id|mm-&gt;rss
 OG
-l_int|0
+id|freed
 )paren
-(brace
 id|mm-&gt;rss
 op_sub_assign
 id|freed
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mm-&gt;rss
-OL
-l_int|0
-)paren
+r_else
 id|mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Do a quick page-table lookup for a single page. &n; */
 DECL|function|follow_page

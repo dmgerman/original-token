@@ -602,7 +602,7 @@ op_logical_neg
 id|elf_check_arch
 c_func
 (paren
-id|elf-&gt;e_machine
+id|elf
 )paren
 )paren
 (brace

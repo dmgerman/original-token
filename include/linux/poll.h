@@ -130,21 +130,36 @@ id|p
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * For the kernel fd_set we use a fixed set-size for allocation purposes.&n; * This set-size doesn&squot;t necessarily bear any relation to the size the user&n; * uses, but should preferably obviously be larger than any possible user&n; * size (NR_OPEN bits).&n; *&n; * We need 6 bitmaps (in/out/ex for both incoming and outgoing), and we&n; * allocate one page for all the bitmaps. Thus we have 8*PAGE_SIZE bits,&n; * to be divided by 6. And we&squot;d better make sure we round to a full&n; * long-word (in fact, we&squot;ll round to 64 bytes).&n; */
-DECL|macro|KFDS_64BLOCK
-mdefine_line|#define KFDS_64BLOCK ((PAGE_SIZE/(6*64))*64)
-DECL|macro|KFDS_NR
-mdefine_line|#define KFDS_NR (KFDS_64BLOCK*8 &gt; NR_OPEN ? NR_OPEN : KFDS_64BLOCK*8)
-DECL|typedef|kernel_fd_set
-r_typedef
-r_int
-r_int
-id|kernel_fd_set
-(braket
-id|KFDS_NR
-op_div
-id|__NFDBITS
-)braket
+DECL|function|poll_initwait
+r_static
+r_inline
+r_void
+id|poll_initwait
+c_func
+(paren
+id|poll_table
+op_star
+id|pt
+)paren
+(brace
+id|pt-&gt;error
+op_assign
+l_int|0
+suffix:semicolon
+id|pt-&gt;table
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|poll_freewait
+c_func
+(paren
+id|poll_table
+op_star
+id|pt
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Scaleable version of the fd_set.&n; */
 r_typedef
