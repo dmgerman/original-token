@@ -2241,14 +2241,17 @@ id|mask
 op_and_assign
 id|pcibios_irq_mask
 suffix:semicolon
-multiline_comment|/* Find the best IRQ to assign */
+multiline_comment|/*&n;&t; * Find the best IRQ to assign: use the one&n;&t; * reported by the device if possible.&n;&t; */
 id|newirq
 op_assign
-l_int|0
+id|dev-&gt;irq
 suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|newirq
+op_logical_and
 id|assign
 )paren
 (brace
@@ -2326,6 +2329,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
+)brace
 id|DBG
 c_func
 (paren
@@ -2334,7 +2338,6 @@ comma
 id|newirq
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Try to get current IRQ */
 r_if
 c_cond
@@ -2370,6 +2373,27 @@ id|msg
 op_assign
 l_string|&quot;Found&quot;
 suffix:semicolon
+multiline_comment|/* We refuse to override the dev-&gt;irq information. Give a warning! */
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+op_logical_and
+id|dev-&gt;irq
+op_ne
+id|irq
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;IRQ routing conflict in pirq table! Try &squot;pci=autoirq&squot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -2984,13 +3008,6 @@ op_star
 id|dev
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;irq
-)paren
-(brace
 id|u8
 id|pin
 suffix:semicolon
@@ -3018,6 +3035,9 @@ id|dev
 comma
 l_int|1
 )paren
+op_logical_and
+op_logical_neg
+id|dev-&gt;irq
 )paren
 (brace
 r_char
@@ -3067,7 +3087,6 @@ comma
 id|msg
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 eof

@@ -10468,6 +10468,18 @@ id|codec-&gt;device_id
 op_assign
 id|pcidev-&gt;device
 suffix:semicolon
+id|pci_enable_device
+c_func
+(paren
+id|pcidev
+)paren
+suffix:semicolon
+id|pci_set_master
+c_func
+(paren
+id|pcidev
+)paren
+suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -10505,12 +10517,6 @@ c_func
 id|codec-&gt;reg_area_phys
 comma
 l_int|0x8000
-)paren
-suffix:semicolon
-id|pci_set_master
-c_func
-(paren
-id|pcidev
 )paren
 suffix:semicolon
 multiline_comment|/* XXX KERN_INFO */

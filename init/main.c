@@ -2750,6 +2750,11 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+id|start_context_thread
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_initcalls
 c_func
 (paren
@@ -2777,7 +2782,13 @@ c_func
 suffix:semicolon
 multiline_comment|/* Do this last */
 macro_line|#endif
-macro_line|#ifdef CONFIG_HOTPLUG
+multiline_comment|/* Mount the root filesystem.. */
+id|mount_root
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if defined(CONFIG_HOTPLUG) &amp;&amp; defined(CONFIG_NET)
 multiline_comment|/* do this after other &squot;do this last&squot; stuff, because we want&n;&t; * to minimize spurious executions of /sbin/hotplug&n;&t; * during boot-up&n;&t; */
 id|net_notifier_init
 c_func
@@ -2785,12 +2796,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Mount the root filesystem.. */
-id|mount_root
-c_func
-(paren
-)paren
-suffix:semicolon
 id|mount_devfs_fs
 (paren
 )paren

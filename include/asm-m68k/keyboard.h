@@ -4,6 +4,7 @@ macro_line|#ifndef __M68K_KEYBOARD_H
 DECL|macro|__M68K_KEYBOARD_H
 mdefine_line|#define __M68K_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#ifdef CONFIG_Q40
 macro_line|#include &lt;asm/q40_keyboard.h&gt;

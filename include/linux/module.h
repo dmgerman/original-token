@@ -617,7 +617,7 @@ mdefine_line|#define EXPORT_NO_SYMBOLS
 macro_line|#endif /* MODULE */
 macro_line|#ifdef CONFIG_MODULES
 DECL|macro|SET_MODULE_OWNER
-mdefine_line|#define SET_MODULE_OWNER(some_struct) do { some_struct-&gt;owner = THIS_MODULE; } while (0)
+mdefine_line|#define SET_MODULE_OWNER(some_struct) do { (some_struct)-&gt;owner = THIS_MODULE; } while (0)
 macro_line|#else
 DECL|macro|SET_MODULE_OWNER
 mdefine_line|#define SET_MODULE_OWNER(some_struct) do { } while (0)

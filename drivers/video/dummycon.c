@@ -12,6 +12,11 @@ DECL|macro|DUMMY_COLUMNS
 mdefine_line|#define DUMMY_COLUMNS&t;ORIG_VIDEO_COLS
 DECL|macro|DUMMY_ROWS
 mdefine_line|#define DUMMY_ROWS&t;ORIG_VIDEO_LINES
+macro_line|#elif defined(__hppa__)
+DECL|macro|DUMMY_COLUMNS
+mdefine_line|#define DUMMY_COLUMNS&t;80&t;/* fixme ! (mine uses 160x64 at 1280x1024) */
+DECL|macro|DUMMY_ROWS
+mdefine_line|#define DUMMY_ROWS&t;25
 macro_line|#else
 DECL|macro|DUMMY_COLUMNS
 mdefine_line|#define DUMMY_COLUMNS&t;80

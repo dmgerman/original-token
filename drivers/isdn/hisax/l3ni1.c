@@ -25,7 +25,6 @@ macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isdnl3.h&quot;
 macro_line|#include &quot;l3ni1.h&quot;
 macro_line|#include &lt;linux/ctype.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 r_extern
 r_char
 op_star

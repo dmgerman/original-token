@@ -2446,7 +2446,7 @@ op_plus
 l_int|4
 comma
 op_amp
-id|tmp
+id|sz
 )paren
 suffix:semicolon
 id|pci_write_config_dword
@@ -2464,7 +2464,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|l
+id|sz
 )paren
 id|res-&gt;end
 op_assign
@@ -2477,7 +2477,7 @@ r_int
 r_int
 )paren
 op_complement
-id|l
+id|sz
 )paren
 op_lshift
 l_int|32

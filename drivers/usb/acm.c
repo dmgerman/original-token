@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acm.c  Version 0.16&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; *&t;v0.14 - sized down struct acm&n; *&t;v0.15 - fixed flow control again - characters could be lost&n; *&t;v0.16 - added code for modems with swapped data and control interfaces&n; */
+multiline_comment|/*&n; * acm.c  Version 0.18&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 2000 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; *&t;v0.14 - sized down struct acm&n; *&t;v0.15 - fixed flow control again - characters could be lost&n; *&t;v0.16 - added code for modems with swapped data and control interfaces&n; *&t;v0.17 - added new style probing&n; *&t;v0.18 - fixed new style probing for devices with more configurations&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -215,12 +215,6 @@ id|acm_table
 (braket
 id|ACM_TTY_MINORS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* .... */
-)brace
 suffix:semicolon
 DECL|macro|ACM_READY
 mdefine_line|#define ACM_READY(acm)&t;(acm &amp;&amp; acm-&gt;dev &amp;&amp; acm-&gt;used)
@@ -2111,13 +2105,15 @@ comma
 id|ctrlsize
 comma
 id|minor
+comma
+id|i
 suffix:semicolon
 r_int
 r_char
 op_star
 id|buf
 suffix:semicolon
-multiline_comment|/* Since 0 is treated as a wildcard by the USB pattern matching,&n;&t;   we explicitly check bDeviceSubClass and bDeviceProtocol&n;&t;   here. */
+multiline_comment|/*&n; * Since 0 is treated as a wildcard by the USB pattern matching,&n; * we explicitly check bDeviceSubClass and bDeviceProtocol here.&n; */
 r_if
 c_cond
 (paren
@@ -2132,9 +2128,26 @@ l_int|0
 r_return
 l_int|NULL
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|dev-&gt;descriptor.bNumConfigurations
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|cfacm
 op_assign
-id|dev-&gt;actconfig
+id|dev-&gt;config
+op_plus
+id|i
 suffix:semicolon
 id|dbg
 c_func
@@ -2167,8 +2180,7 @@ op_plus
 l_int|1
 )paren
 )paren
-r_return
-l_int|NULL
+r_continue
 suffix:semicolon
 id|ifcom
 op_assign
@@ -2200,7 +2212,7 @@ op_ne
 l_int|10
 op_logical_or
 id|ifdata-&gt;bNumEndpoints
-op_ne
+OL
 l_int|2
 )paren
 (brace
@@ -2237,8 +2249,7 @@ id|ifdata-&gt;bNumEndpoints
 OL
 l_int|2
 )paren
-r_return
-l_int|NULL
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -2260,8 +2271,7 @@ id|ifcom-&gt;bNumEndpoints
 OL
 l_int|1
 )paren
-r_return
-l_int|NULL
+r_continue
 suffix:semicolon
 id|epctrl
 op_assign
@@ -2332,8 +2342,7 @@ l_int|0x80
 op_ne
 l_int|0x80
 )paren
-r_return
-l_int|NULL
+r_continue
 suffix:semicolon
 r_if
 c_cond
@@ -2694,6 +2703,10 @@ op_assign
 id|acm
 suffix:semicolon
 )brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 DECL|function|acm_disconnect
 r_static
 r_void
@@ -2847,25 +2860,18 @@ op_assign
 id|bDeviceClass
 suffix:colon
 l_int|2
-)brace
 comma
-(brace
-id|bInterfaceClass
+id|bDeviceSubClass
 suffix:colon
-l_int|2
+l_int|0
 comma
-id|bInterfaceSubClass
+id|bDeviceProtocol
 suffix:colon
-l_int|2
-comma
-id|bInterfaceProtocol
-suffix:colon
-l_int|1
+l_int|0
 )brace
 comma
 (brace
 )brace
-multiline_comment|/* Terminating entry */
 )brace
 suffix:semicolon
 id|MODULE_DEVICE_TABLE

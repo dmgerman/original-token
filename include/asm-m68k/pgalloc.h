@@ -1,6 +1,7 @@
 macro_line|#ifndef M68K_PGALLOC_H
 DECL|macro|M68K_PGALLOC_H
 mdefine_line|#define M68K_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/virtconvert.h&gt;
 multiline_comment|/*&n; * Cache handling functions&n; */

@@ -936,6 +936,12 @@ r_goto
 id|err_out_free_res
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Reset card. Who knows what dain-bramaged state it was left in. */
 (brace
 r_int
@@ -1526,11 +1532,9 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_if
-c_cond
-(paren
+r_int
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1544,15 +1548,15 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
-)brace
 multiline_comment|/* Set full duplex for the chips that we know about. */
 r_if
 c_cond
@@ -1669,8 +1673,6 @@ id|dev-&gt;irq
 comma
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

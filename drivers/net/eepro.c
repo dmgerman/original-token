@@ -773,12 +773,13 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef PnPWakeup
 multiline_comment|/* XXXX for multiple cards should this only be run once? */
@@ -1501,6 +1502,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is the real probe routine.  Linux has a history of friendly device&n;   probes on the ISA bus.  A good device probe avoids doing writes, and&n;   verifies that the correct device exists and functions.  */
 DECL|function|eepro_probe1
+r_static
 r_int
 id|eepro_probe1
 c_func
@@ -3754,8 +3756,6 @@ c_func
 id|ioaddr
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4359,8 +4359,6 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Update the statistics here. What statistics? */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6817,20 +6815,6 @@ id|irq
 (braket
 id|MAX_EEPRO
 )braket
-op_assign
-(brace
-(braket
-l_int|0
-dot
-dot
-dot
-id|MAX_EEPRO
-op_minus
-l_int|1
-)braket
-op_assign
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|mem
 r_static

@@ -4923,7 +4923,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;HiSax: HW_Flags %x bc0 flg %x bc1 flg %x&bslash;n&quot;
+l_string|&quot;HiSax: HW_Flags %lx bc0 flg %lx bc1 flg %lx&bslash;n&quot;
 comma
 id|cs-&gt;HW_Flags
 comma

@@ -1331,6 +1331,12 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|retval
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1448,7 +1454,12 @@ id|cookie
 )paren
 multiline_comment|/* It&squot;s a good IRQ line! */
 op_logical_and
+(paren
+(paren
+id|retval
+op_assign
 id|request_irq
+c_func
 (paren
 id|dev-&gt;irq
 op_assign
@@ -1459,12 +1470,14 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-id|ei_status.name
+id|dev-&gt;name
 comma
 id|dev
 )paren
+)paren
 op_eq
 l_int|0
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1497,8 +1510,7 @@ id|E33G_GACFR
 suffix:semicolon
 multiline_comment|/* disable interrupts. */
 r_return
-op_minus
-id|EAGAIN
+id|retval
 suffix:semicolon
 )brace
 )brace
@@ -1507,6 +1519,9 @@ r_else
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1516,15 +1531,15 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-id|ei_status.name
+id|dev-&gt;name
 comma
 id|dev
 )paren
 )paren
+)paren
 (brace
 r_return
-op_minus
-id|EAGAIN
+id|retval
 suffix:semicolon
 )brace
 )brace

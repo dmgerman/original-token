@@ -609,6 +609,23 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|stifb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|stifb_setup
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 r_static
 r_struct
 (brace
@@ -850,6 +867,16 @@ id|sisfb_setup
 comma
 macro_line|#endif
 multiline_comment|/*&n;&t; * Generic drivers that are used as fallbacks&n;&t; * &n;&t; * These depend on resource management and must be initialized&n;&t; * _after_ all other frame buffer devices that use resource&n;&t; * management!&n;&t; */
+macro_line|#ifdef CONFIG_FB_STI
+(brace
+l_string|&quot;stifb&quot;
+comma
+id|stifb_init
+comma
+id|stifb_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_OF
 (brace
 l_string|&quot;offb&quot;

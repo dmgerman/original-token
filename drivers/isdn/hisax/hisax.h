@@ -1640,6 +1640,7 @@ DECL|member|Flag
 r_int
 id|Flag
 suffix:semicolon
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|cs
 r_struct
 id|IsdnCardState
@@ -1871,6 +1872,7 @@ r_int
 id|Flags
 suffix:semicolon
 multiline_comment|/* for remembering action done in l4 */
+multiline_comment|/* long req&squot;d for set_bit --RR */
 DECL|member|leased
 r_int
 id|leased

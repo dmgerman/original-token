@@ -913,7 +913,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;arlan_command, %lx lock %x  commandByte %x waiting %x incoming %x &bslash;n&quot;
+l_string|&quot;arlan_command, %lx lock %lx  commandByte %x waiting %x incoming %x &bslash;n&quot;
 comma
 id|jiffies
 comma

@@ -307,6 +307,12 @@ id|adapter_found
 op_assign
 l_int|0
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Do not check any supplied i/o locations. &n;&t;   POS registers usually don&squot;t fail :) */
 multiline_comment|/* MCA cards have POS registers.  &n;&t;   Autodetecting MCA cards is extremely simple. &n;&t;   Just search for the card. */
 r_for
@@ -1373,8 +1379,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1411,8 +1415,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

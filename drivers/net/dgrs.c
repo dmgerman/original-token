@@ -70,6 +70,42 @@ macro_line|#include &quot;dgrs_i82596.h&quot;
 macro_line|#include &quot;dgrs_ether.h&quot;
 macro_line|#include &quot;dgrs_asstruct.h&quot;
 macro_line|#include &quot;dgrs_bcomm.h&quot;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20400
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_device_id
+id|dgrs_pci_tbl
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|SE6_PCI_VENDOR_ID
+comma
+id|SE6_PCI_DEVICE_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|dgrs_pci_tbl
+)paren
+suffix:semicolon
+macro_line|#endif /* LINUX_VERSION_CODE &gt;= 0x20400 */
 multiline_comment|/*&n; *&t;Firmware.  Compiled separately for local compilation,&n; *&t;but #included for Linux distribution.&n; */
 macro_line|#ifndef NOFW
 macro_line|#include &quot;dgrs_firmware.c&quot;
@@ -2021,8 +2057,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -2047,8 +2081,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 (paren
@@ -3911,6 +3943,12 @@ id|dev-&gt;init
 op_assign
 id|dgrs_probe1
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|ether_setup
 c_func
 (paren
@@ -4070,6 +4108,12 @@ suffix:semicolon
 id|devN-&gt;init
 op_assign
 id|dgrs_initclone
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|ether_setup
 c_func

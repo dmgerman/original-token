@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (11/13/2000) Bill Ryder&n; *     Added spinlock protected open code and close code.&n; *     Multiple opens work (sort of - see webpage).&n; *     Cleaned up comments. Removed multiple PID/VID definitions.&n; *     Factorised cts/dtr code&n; *     Made use of __FUNCTION__ in dbg&squot;s&n; *      &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
+multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * See http://reality.sgi.com/bryder_wellington/ftdi_sio for upto date testing info&n; *     and extra documentation&n; *       &n; * (12/3/2000) Bill Ryder&n; *     Added support for 8U232AM device.&n; *     Moved PID and VIDs into header file only.&n; *     Turned on low-latency for the tty (device will do high baudrates)&n; *     Added shutdown routine to close files when device removed.&n; *     More debug and error message cleanups.&n; *     &n; *&n; * (11/13/2000) Bill Ryder&n; *     Added spinlock protected open code and close code.&n; *     Multiple opens work (sort of - see webpage mentioned above).&n; *     Cleaned up comments. Removed multiple PID/VID definitions.&n; *     Factorised cts/dtr code&n; *     Made use of __FUNCTION__ in dbg&squot;s&n; *      &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *      Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *        handled elsewhere in the tty io driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *      Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
 multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementation */
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
+multiline_comment|/* Thanx to gkh and the rest of the usb dev group for all code I have assimilated :-) */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -26,12 +27,6 @@ macro_line|#endif
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-serial.h&quot;
 macro_line|#include &quot;ftdi_sio.h&quot;
-DECL|macro|FTDI_VENDOR_ID
-mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;FTDI_VID
-DECL|macro|FTDI_SIO_SERIAL_CONVERTER_ID
-mdefine_line|#define FTDI_SIO_SERIAL_CONVERTER_ID&t;FTDI_SIO_PID
-DECL|macro|FTDI_8U232AM_PID
-mdefine_line|#define FTDI_8U232AM_PID&t;&t;0x6001
 DECL|variable|id_table_sio
 r_static
 id|__devinitdata
@@ -57,17 +52,113 @@ comma
 multiline_comment|/* Terminating entry */
 )brace
 suffix:semicolon
+multiline_comment|/* THe 8U232AM has the same API as the sio - but it can support MUCH &n;   higher baudrates (921600 at 48MHz/230400 at 12MHz &n;   so .. it&squot;s baudrate setting codes are different */
+DECL|variable|id_table_8U232AM
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_8U232AM
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|FTDI_VID
+comma
+id|idProduct
+suffix:colon
+id|FTDI_8U232AM_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|id_table_combined
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_combined
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|FTDI_VID
+comma
+id|idProduct
+suffix:colon
+id|FTDI_SIO_PID
+)brace
+comma
+(brace
+id|idVendor
+suffix:colon
+id|FTDI_VID
+comma
+id|idProduct
+suffix:colon
+id|FTDI_8U232AM_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
 id|MODULE_DEVICE_TABLE
 (paren
 id|usb
 comma
-id|id_table_sio
+id|id_table_combined
 )paren
+suffix:semicolon
+DECL|struct|ftdi_private
+r_struct
+id|ftdi_private
+(brace
+DECL|member|ftdi_type
+id|ftdi_type_t
+id|ftdi_type
+suffix:semicolon
+DECL|member|last_status_byte
+r_char
+id|last_status_byte
+suffix:semicolon
+multiline_comment|/* device sends this every 40ms when open */
+)brace
 suffix:semicolon
 multiline_comment|/* function prototypes for a FTDI serial converter */
 r_static
 r_int
 id|ftdi_sio_startup
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+suffix:semicolon
+r_static
+r_int
+id|ftdi_8U232AM_startup
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ftdi_sio_shutdown
 (paren
 r_struct
 id|usb_serial
@@ -185,7 +276,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* All of the device info needed for the FTDI SIO serial converter */
+multiline_comment|/* Should rename most ftdi_sio&squot;s to ftdi_ now since there are two devices &n;   which share common code */
 DECL|variable|ftdi_sio_device
 r_struct
 id|usb_serial_device_type
@@ -204,17 +295,14 @@ id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE_NOT
 comma
-multiline_comment|/* this device must not have an interrupt in endpoint */
 id|needs_bulk_in
 suffix:colon
 id|MUST_HAVE
 comma
-multiline_comment|/* this device must have a bulk in endpoint */
 id|needs_bulk_out
 suffix:colon
 id|MUST_HAVE
 comma
-multiline_comment|/* this device must have a bulk out endpoint */
 id|num_interrupt_in
 suffix:colon
 l_int|0
@@ -263,9 +351,93 @@ id|startup
 suffix:colon
 id|ftdi_sio_startup
 comma
+id|shutdown
+suffix:colon
+id|ftdi_sio_shutdown
+comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * ***************************************************************************&n; * FTDI SIO Serial Converter specific driver functions&n; * ***************************************************************************&n; *&n; *    See the webpage http://reality.sgi.com/bryder_wellington/ftdi_sio for upto date&n; *     testing information&n; * &n; *&n; */
+DECL|variable|ftdi_8U232AM_device
+r_struct
+id|usb_serial_device_type
+id|ftdi_8U232AM_device
+op_assign
+(brace
+id|name
+suffix:colon
+l_string|&quot;FTDI 8U232AM&quot;
+comma
+id|id_table
+suffix:colon
+id|id_table_8U232AM
+comma
+id|needs_interrupt_in
+suffix:colon
+id|DONT_CARE
+comma
+id|needs_bulk_in
+suffix:colon
+id|MUST_HAVE
+comma
+id|needs_bulk_out
+suffix:colon
+id|MUST_HAVE
+comma
+id|num_interrupt_in
+suffix:colon
+l_int|0
+comma
+id|num_bulk_in
+suffix:colon
+l_int|1
+comma
+id|num_bulk_out
+suffix:colon
+l_int|1
+comma
+id|num_ports
+suffix:colon
+l_int|1
+comma
+id|open
+suffix:colon
+id|ftdi_sio_open
+comma
+id|close
+suffix:colon
+id|ftdi_sio_close
+comma
+id|write
+suffix:colon
+id|ftdi_sio_write
+comma
+id|read_bulk_callback
+suffix:colon
+id|ftdi_sio_read_bulk_callback
+comma
+id|write_bulk_callback
+suffix:colon
+id|ftdi_sio_write_bulk_callback
+comma
+id|ioctl
+suffix:colon
+id|ftdi_sio_ioctl
+comma
+id|set_termios
+suffix:colon
+id|ftdi_sio_set_termios
+comma
+id|startup
+suffix:colon
+id|ftdi_8U232AM_startup
+comma
+id|shutdown
+suffix:colon
+id|ftdi_sio_shutdown
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * ***************************************************************************&n; * FTDI SIO Serial Converter specific driver functions&n; * ***************************************************************************&n; */
 DECL|macro|WDR_TIMEOUT
 mdefine_line|#define WDR_TIMEOUT (HZ * 5 ) /* default urb timeout */
 multiline_comment|/* utility functions to set and unset dtr and rts */
@@ -397,7 +569,6 @@ id|WDR_TIMEOUT
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* do some startup allocations not currently performed by usb_serial_probe() */
 DECL|function|ftdi_sio_startup
 r_static
 r_int
@@ -409,6 +580,11 @@ op_star
 id|serial
 )paren
 (brace
+r_struct
+id|ftdi_private
+op_star
+id|priv
+suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -421,11 +597,205 @@ dot
 id|write_wait
 )paren
 suffix:semicolon
+id|priv
+op_assign
+id|serial-&gt;port
+op_member_access_from_pointer
+r_private
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|ftdi_private
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|priv
+)paren
+(brace
+id|err
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;- kmalloc(%d) failed.&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|ftdi_private
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|priv-&gt;ftdi_type
+op_assign
+id|sio
+suffix:semicolon
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
+)brace
+DECL|function|ftdi_8U232AM_startup
+r_static
+r_int
+id|ftdi_8U232AM_startup
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+(brace
+r_struct
+id|ftdi_private
+op_star
+id|priv
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|serial-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|write_wait
+)paren
+suffix:semicolon
+id|priv
+op_assign
+id|serial-&gt;port
+op_member_access_from_pointer
+r_private
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|ftdi_private
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|priv
+)paren
+(brace
+id|err
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;- kmalloc(%d) failed.&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|ftdi_private
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|priv-&gt;ftdi_type
+op_assign
+id|F8U232AM
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|ftdi_sio_shutdown
+r_static
+r_void
+id|ftdi_sio_shutdown
+(paren
+r_struct
+id|usb_serial
+op_star
+id|serial
+)paren
+(brace
+id|dbg
+(paren
+id|__FUNCTION__
+)paren
+suffix:semicolon
+multiline_comment|/* Close ports if they are open */
+r_while
+c_loop
+(paren
+id|serial-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|open_count
+OG
+l_int|0
+)paren
+(brace
+id|ftdi_sio_close
+(paren
+op_amp
+id|serial-&gt;port
+(braket
+l_int|0
+)braket
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|serial-&gt;port
+op_member_access_from_pointer
+r_private
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|serial-&gt;port
+op_member_access_from_pointer
+r_private
+)paren
+suffix:semicolon
+id|serial-&gt;port
+op_member_access_from_pointer
+r_private
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 DECL|function|ftdi_sio_open
 r_static
@@ -474,9 +844,6 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; port %d&quot;
-comma
-id|port-&gt;number
 )paren
 suffix:semicolon
 id|spin_lock_irqsave
@@ -511,6 +878,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* do not allow a task to be queued to deliver received data */
+id|port-&gt;tty-&gt;low_latency
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* No error checking for this (will get errors later anyway) */
 multiline_comment|/* See ftdi_sio.h for description of what is reset */
 id|usb_control_msg
 c_func
@@ -540,7 +913,7 @@ comma
 id|WDR_TIMEOUT
 )paren
 suffix:semicolon
-multiline_comment|/* Setup termios */
+multiline_comment|/* Setup termios defaults. According to tty_io.c the &n;&t;&t;   settings are driver specific */
 id|port-&gt;tty-&gt;termios-&gt;c_cflag
 op_assign
 id|B9600
@@ -554,7 +927,6 @@ op_or
 id|CLOCAL
 suffix:semicolon
 multiline_comment|/* ftdi_sio_set_termios  will send usb control messages */
-multiline_comment|/* ftdi_sio_set_termios will set up port according to above list */
 id|ftdi_sio_set_termios
 c_func
 (paren
@@ -564,7 +936,7 @@ op_amp
 id|tmp_termios
 )paren
 suffix:semicolon
-multiline_comment|/* Turn on RTS and DTR since we are not flow controlling*/
+multiline_comment|/* Turn on RTS and DTR since we are not flow controlling by default */
 r_if
 c_cond
 (paren
@@ -590,7 +962,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Error from DTR HIGH urb&quot;
+id|__FUNCTION__
+l_string|&quot; Error from DTR HIGH urb&quot;
 )paren
 suffix:semicolon
 )brace
@@ -619,7 +992,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Error from RTS HIGH urb&quot;
+id|__FUNCTION__
+l_string|&quot; Error from RTS HIGH urb&quot;
 )paren
 suffix:semicolon
 )brace
@@ -673,7 +1047,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* the port was already active - so no initialisation was done */
+multiline_comment|/* the port was already active - so no initialisation is done */
 id|spin_unlock_irqrestore
 (paren
 op_amp
@@ -734,9 +1108,6 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; port %d&quot;
-comma
-id|port-&gt;number
 )paren
 suffix:semicolon
 id|spin_lock_irqsave
@@ -908,6 +1279,25 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Send a HUP if necessary */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|port-&gt;tty-&gt;termios-&gt;c_cflag
+op_amp
+id|CLOCAL
+)paren
+)paren
+(brace
+id|tty_hangup
+c_func
+(paren
+id|port-&gt;tty
+)paren
+suffix:semicolon
+)brace
 )brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -945,11 +1335,22 @@ id|serial
 op_assign
 id|port-&gt;serial
 suffix:semicolon
-r_const
+r_struct
+id|ftdi_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|ftdi_private
+op_star
+)paren
+id|port
+op_member_access_from_pointer
+r_private
+suffix:semicolon
 r_int
 id|data_offset
-op_assign
-l_int|1
 suffix:semicolon
 r_int
 id|rc
@@ -994,6 +1395,34 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|priv-&gt;ftdi_type
+op_eq
+id|sio
+)paren
+(brace
+id|data_offset
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|data_offset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|dbg
+c_func
+(paren
+l_string|&quot;data_offset set to %d&quot;
+comma
+id|data_offset
+)paren
+suffix:semicolon
 multiline_comment|/* only do something if we have a bulk out endpoint */
 r_if
 c_cond
@@ -1008,7 +1437,7 @@ id|first_byte
 op_assign
 id|port-&gt;write_urb-&gt;transfer_buffer
 suffix:semicolon
-multiline_comment|/* Was seeing a race here, got a read callback, then write callback before&n;&t;&t;   hitting interuptible_sleep_on  - so wrapping in add_wait_queue stuff */
+multiline_comment|/* Was seeing a race here, got a read callback, then write callback before&n;&t;&t;   hitting interuptible_sleep_on  - so wrapping in a wait_queue */
 id|add_wait_queue
 c_func
 (paren
@@ -1040,38 +1469,6 @@ id|__FUNCTION__
 l_string|&quot; write in progress - retrying&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-multiline_comment|/* file-&gt;f_flags &amp; O_NONBLOCK */
-)paren
-(brace
-id|remove_wait_queue
-c_func
-(paren
-op_amp
-id|port-&gt;write_wait
-comma
-op_amp
-id|wait
-)paren
-suffix:semicolon
-id|set_current_state
-c_func
-(paren
-id|TASK_RUNNING
-)paren
-suffix:semicolon
-id|rc
-op_assign
-op_minus
-id|EAGAIN
-suffix:semicolon
-r_goto
-id|err
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1108,11 +1505,6 @@ suffix:semicolon
 id|schedule
 c_func
 (paren
-)paren
-suffix:semicolon
-id|set_current_state
-(paren
-id|TASK_INTERRUPTIBLE
 )paren
 suffix:semicolon
 )brace
@@ -1200,11 +1592,19 @@ id|data_offset
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Write the control byte at the front of the packet*/
 id|first_byte
 op_assign
 id|port-&gt;write_urb-&gt;transfer_buffer
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|data_offset
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* Write the control byte at the front of the packet*/
 op_star
 id|first_byte
 op_assign
@@ -1220,11 +1620,12 @@ op_lshift
 l_int|2
 )paren
 suffix:semicolon
+)brace
 id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;Bytes: %d, Control Byte: 0o%03o&quot;
+l_string|&quot; Bytes: %d, First Byte: 0o%03o&quot;
 comma
 id|count
 comma
@@ -1483,6 +1884,20 @@ op_star
 id|urb-&gt;context
 suffix:semicolon
 r_struct
+id|ftdi_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|ftdi_private
+op_star
+)paren
+id|port
+op_member_access_from_pointer
+r_private
+suffix:semicolon
+r_struct
 id|usb_serial
 op_star
 id|serial
@@ -1598,8 +2013,16 @@ l_string|&quot;Just status&quot;
 )paren
 suffix:semicolon
 )brace
+id|priv-&gt;last_status_byte
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+suffix:semicolon
+multiline_comment|/* this has modem control lines */
 multiline_comment|/* TO DO -- check for hung up line and handle appropriately: */
-multiline_comment|/*   send hangup (need to find out how to do this) */
+multiline_comment|/*   send hangup  */
 multiline_comment|/* See acm.c - you do a tty_hangup  - eg tty_hangup(tty) */
 multiline_comment|/* if CD is dropped and the line is not CLOCAL then we should hangup */
 r_if
@@ -1697,6 +2120,451 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* ftdi_sio_serial_read_bulk_callback */
+DECL|function|translate_baudrate_to_ftdi
+id|__u16
+id|translate_baudrate_to_ftdi
+c_func
+(paren
+r_int
+r_int
+id|cflag
+comma
+id|ftdi_type_t
+id|ftdi_type
+)paren
+(brace
+multiline_comment|/* translate_baudrate_to_ftdi */
+id|__u16
+id|urb_value
+op_assign
+id|ftdi_sio_b9600
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ftdi_type
+op_eq
+id|sio
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|cflag
+op_amp
+id|CBAUD
+)paren
+(brace
+r_case
+id|B0
+suffix:colon
+r_break
+suffix:semicolon
+multiline_comment|/* ignored by this */
+r_case
+id|B300
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b300
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 300&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B1200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b1200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 1200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B2400
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b2400
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 2400&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B4800
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b4800
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 4800&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B9600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b9600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 9600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B19200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b19200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 19200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B38400
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b38400
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 38400&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B57600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b57600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 57600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B115200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_sio_b115200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 115200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; FTDI_SIO does not support the baudrate (%d) requested&quot;
+comma
+(paren
+id|cflag
+op_amp
+id|CBAUD
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* it is 8U232AM */
+r_switch
+c_cond
+(paren
+id|cflag
+op_amp
+id|CBAUD
+)paren
+(brace
+r_case
+id|B0
+suffix:colon
+r_break
+suffix:semicolon
+multiline_comment|/* ignored by this */
+r_case
+id|B300
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b300
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 300&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B1200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b1200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 1200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B2400
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b2400
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 2400&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B4800
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b4800
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 4800&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B9600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b9600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 9600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B19200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b19200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 19200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B38400
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b38400
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 38400&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B57600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b57600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 57600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B115200
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b115200
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 115200&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B230400
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b230400
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 230400&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B460800
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b460800
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 460800&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|B921600
+suffix:colon
+id|urb_value
+op_assign
+id|ftdi_8U232AM_48MHz_b921600
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;Set to 921600&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; The baudrate (%d) requested is not implemented&quot;
+comma
+(paren
+id|cflag
+op_amp
+id|CBAUD
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_return
+id|urb_value
+suffix:semicolon
+)brace
 multiline_comment|/* As I understand this - old_termios contains the original termios settings */
 multiline_comment|/*  and tty-&gt;termios contains the new setting to be used */
 multiline_comment|/* */
@@ -1731,6 +2599,20 @@ id|cflag
 op_assign
 id|port-&gt;tty-&gt;termios-&gt;c_cflag
 suffix:semicolon
+r_struct
+id|ftdi_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|ftdi_private
+op_star
+)paren
+id|port
+op_member_access_from_pointer
+r_private
+suffix:semicolon
 id|__u16
 id|urb_value
 suffix:semicolon
@@ -1746,9 +2628,6 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; port %d&quot;
-comma
-id|port-&gt;number
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME -For this cut I don&squot;t care if the line is really changing or &n;&t;   not  - so just do the change regardless  - should be able to &n;&t;   compare old_termios and tty-&gt;termios */
@@ -1916,188 +2795,26 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;FAILED to set databits/stopbits/parity&quot;
+id|__FUNCTION__
+l_string|&quot; FAILED to set databits/stopbits/parity&quot;
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* Now do the baudrate */
-r_switch
-c_cond
+id|urb_value
+op_assign
+id|translate_baudrate_to_ftdi
+c_func
+(paren
 (paren
 id|cflag
 op_amp
 id|CBAUD
 )paren
-(brace
-r_case
-id|B0
-suffix:colon
-r_break
-suffix:semicolon
-multiline_comment|/* Handled below */
-r_case
-id|B300
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b300
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 300&quot;
+comma
+id|priv-&gt;ftdi_type
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B600
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b600
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 600&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B1200
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b1200
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 1200&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B2400
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b2400
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 2400&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B4800
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b4800
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 4800&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B9600
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b9600
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 9600&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B19200
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b19200
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 19200&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B38400
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b38400
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 38400&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B57600
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b57600
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 57600&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|B115200
-suffix:colon
-id|urb_value
-op_assign
-id|ftdi_sio_b115200
-suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;Set to 115200&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|dbg
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot;FTDI_SIO does not support the baudrate requested&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME - how to return an error for this? */
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2148,7 +2865,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;error from disable flowcontrol urb&quot;
+id|__FUNCTION__
+l_string|&quot; error from disable flowcontrol urb&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2178,7 +2896,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Error from DTR LOW urb&quot;
+id|__FUNCTION__
+l_string|&quot; Error from DTR LOW urb&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2207,13 +2926,15 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Error from RTS LOW urb&quot;
+id|__FUNCTION__
+l_string|&quot; Error from RTS LOW urb&quot;
 )paren
 suffix:semicolon
 )brace
 )brace
 r_else
 (brace
+multiline_comment|/* set the baudrate determined before */
 r_if
 c_cond
 (paren
@@ -2251,7 +2972,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;urb failed to set baurdrate&quot;
+id|__FUNCTION__
+l_string|&quot; urb failed to set baurdrate&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2270,7 +2992,7 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;Setting to CRTSCTS flow control&quot;
+l_string|&quot; Setting to CRTSCTS flow control&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2317,13 +3039,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* CHECK Assuming XON/XOFF handled by stack - not by device */
-multiline_comment|/* Disable flow control */
+multiline_comment|/* CHECKME Assuming XON/XOFF handled by tty stack - not by device */
 id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;Turning off hardware flow control&quot;
+l_string|&quot; Turning off hardware flow control&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2403,6 +3124,20 @@ id|serial
 op_assign
 id|port-&gt;serial
 suffix:semicolon
+r_struct
+id|ftdi_private
+op_star
+id|priv
+op_assign
+(paren
+r_struct
+id|ftdi_private
+op_star
+)paren
+id|port
+op_member_access_from_pointer
+r_private
+suffix:semicolon
 id|__u16
 id|urb_value
 op_assign
@@ -2443,9 +3178,21 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;TIOCMGET&quot;
+l_string|&quot; TIOCMGET&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* The MODEM_STATUS_REQUEST works for the sio but not the 232 */
+r_if
+c_cond
+(paren
+id|priv-&gt;ftdi_type
+op_eq
+id|sio
+)paren
+(brace
+multiline_comment|/* TO DECIDE - use the 40ms status packets or not? */
+multiline_comment|/*   PRO: No need to send urb */
+multiline_comment|/*   CON: Could be 40ms out of date */
 multiline_comment|/* Request the status from the device */
 r_if
 c_cond
@@ -2478,24 +3225,36 @@ id|buf
 comma
 l_int|1
 comma
-id|HZ
-op_star
-l_int|5
+id|WDR_TIMEOUT
 )paren
 )paren
 OL
 l_int|0
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;Get not get modem status of device&quot;
+l_string|&quot; Could not get modem status of device - err: %d&quot;
+comma
+id|ret
 )paren
 suffix:semicolon
 r_return
 id|ret
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* This gets updated every 40ms - so just copy it in */
+id|buf
+(braket
+l_int|0
+)braket
+op_assign
+id|priv-&gt;last_status_byte
 suffix:semicolon
 )brace
 r_return
@@ -2576,7 +3335,7 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;TIOCMSET&quot;
+l_string|&quot; TIOCMSET&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2612,18 +3371,15 @@ id|TIOCM_DTR
 )paren
 ques
 c_cond
-id|FTDI_SIO_SET_DTR_HIGH
+id|HIGH
 suffix:colon
-id|FTDI_SIO_SET_DTR_LOW
+id|LOW
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|ret
-op_assign
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -2636,20 +3392,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
 id|urb_value
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
-)paren
 )paren
 OL
 l_int|0
@@ -2658,11 +3401,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Urb to set DTR failed&quot;
+l_string|&quot;Error from DTR set urb (TIOCMSET)&quot;
 )paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 id|urb_value
@@ -2675,18 +3415,15 @@ id|TIOCM_RTS
 )paren
 ques
 c_cond
-id|FTDI_SIO_SET_RTS_HIGH
+id|HIGH
 suffix:colon
-id|FTDI_SIO_SET_RTS_LOW
+id|LOW
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|ret
-op_assign
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -2699,20 +3436,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
 id|urb_value
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
-)paren
 )paren
 OL
 l_int|0
@@ -2721,11 +3445,8 @@ l_int|0
 id|err
 c_func
 (paren
-l_string|&quot;Urb to set RTS failed&quot;
+l_string|&quot;Error from RTS set urb (TIOCMSET)&quot;
 )paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 r_break
@@ -2738,7 +3459,7 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;TIOCMBIS&quot;
+l_string|&quot; TIOCMBIS&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2864,7 +3585,7 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;TIOCMBIC&quot;
+l_string|&quot; TIOCMBIC&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2990,7 +3711,7 @@ id|dbg
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;arg not supported - it was 0x%04x&quot;
+l_string|&quot; arg not supported - it was 0x%04x&quot;
 comma
 id|cmd
 )paren
@@ -3002,13 +3723,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|dbg
-c_func
-(paren
-id|__FUNCTION__
-l_string|&quot; returning 0&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3023,10 +3737,22 @@ id|ftdi_sio_init
 r_void
 )paren
 (brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+)paren
+suffix:semicolon
 id|usb_serial_register
 (paren
 op_amp
 id|ftdi_sio_device
+)paren
+suffix:semicolon
+id|usb_serial_register
+(paren
+op_amp
+id|ftdi_8U232AM_device
 )paren
 suffix:semicolon
 r_return
@@ -3042,10 +3768,22 @@ id|ftdi_sio_exit
 r_void
 )paren
 (brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+)paren
+suffix:semicolon
 id|usb_serial_deregister
 (paren
 op_amp
 id|ftdi_sio_device
+)paren
+suffix:semicolon
+id|usb_serial_deregister
+(paren
+op_amp
+id|ftdi_8U232AM_device
 )paren
 suffix:semicolon
 )brace
@@ -3072,7 +3810,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;USB FTDI SIO driver&quot;
+l_string|&quot;USB FTDI RS232 converters driver&quot;
 )paren
 suffix:semicolon
 eof

@@ -735,6 +735,12 @@ id|pardevice
 op_star
 id|pardev
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|pb-&gt;irq
@@ -4570,8 +4576,6 @@ id|netif_start_queue
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4759,8 +4763,6 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -561,12 +561,13 @@ r_int
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* First check any supplied i/o locations. User knows best. &lt;cough&gt; */
 r_if
@@ -2185,8 +2186,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2224,8 +2223,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * experimental driver for simple i2c audio chips.&n; *&n; * Copyright (c) 2000 Gerd Knorr&n; * based on code by:&n; *   Eric Sandeen (eric_sandeen@bigfoot.com) &n; *   Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; *   Greg Alexander (galexand@acm.org)&n; *&n; * This code is placed under the terms of the GNU General Public License&n; * &n; * OPTIONS:&n; *   debug - set to 1 if you&squot;d like to see debug messages&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

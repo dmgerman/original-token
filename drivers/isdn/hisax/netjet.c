@@ -1,7 +1,6 @@
 multiline_comment|/* $Id: netjet.c,v 1.24 2000/11/24 17:05:38 kai Exp $&n; *&n; * netjet.c     low level stuff for Traverse Technologie NETJet ISDN cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to Traverse Technologie Australia for documents and informations&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;

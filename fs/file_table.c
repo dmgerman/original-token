@@ -104,11 +104,6 @@ op_decrement
 suffix:semicolon
 id|new_one
 suffix:colon
-id|file_list_unlock
-c_func
-(paren
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -144,11 +139,6 @@ suffix:semicolon
 id|f-&gt;f_gid
 op_assign
 id|current-&gt;fsgid
-suffix:semicolon
-id|file_list_lock
-c_func
-(paren
-)paren
 suffix:semicolon
 id|list_add
 c_func

@@ -1117,7 +1117,7 @@ r_int
 r_int
 id|transfer_flags
 suffix:semicolon
-singleline_comment|// USB_DISABLE_SPD | USB_ISO_ASAP | USB_URB_EARLY_COMPLETE
+singleline_comment|// USB_DISABLE_SPD | USB_ISO_ASAP | etc.
 DECL|member|transfer_buffer
 r_void
 op_star

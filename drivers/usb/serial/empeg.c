@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Empeg empeg-car player driver&n; *&n; *&t;Copyright (C) 2000&n; *&t;    Gary Brubaker (xavyer@ix.netcom.com)&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License, as published by&n; *&t;the Free Software Foundation, version 2.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (11/13/2000) gb&n; *&t;Moved tty-&gt;low_latency = 1 from empeg_read_bulk_callback() to empeg_open()&n; *&t;(It only needs to be set once - Doh!)&n; * &n; * (11/11/2000) gb&n; *&t;Updated to work with id_table structure.&n; * &n; * (11/04/2000) gb&n; *&t;Forked this from visor.c, and hacked it up to work with an&n; *&t;Empeg ltd. empeg-car player.  Constructive criticism welcomed.&n; *&t;I would like to say, &squot;Thank You&squot; to Greg Kroah-Hartman for the&n; *&t;use of his code, and for his guidance, advice and patience. :)&n; *&t;A &squot;Thank You&squot; is in order for John Ripley of Empeg ltd for his&n; *&t;advice, and patience too.&n; * &n; */
+multiline_comment|/*&n; * USB Empeg empeg-car player driver&n; *&n; *&t;Copyright (C) 2000&n; *&t;    Gary Brubaker (xavyer@ix.netcom.com)&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License, as published by&n; *&t;the Free Software Foundation, version 2.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (12/03/2000) gb&n; *&t;Added port-&gt;tty-&gt;ldisc.set_termios(port-&gt;tty, NULL) to empeg_open()&n; *      This notifies the tty driver that the termios have changed.&n; * &n; * (11/13/2000) gb&n; *&t;Moved tty-&gt;low_latency = 1 from empeg_read_bulk_callback() to empeg_open()&n; *&t;(It only needs to be set once - Doh!)&n; * &n; * (11/11/2000) gb&n; *&t;Updated to work with id_table structure.&n; * &n; * (11/04/2000) gb&n; *&t;Forked this from visor.c, and hacked it up to work with an&n; *&t;Empeg ltd. empeg-car player.  Constructive criticism welcomed.&n; *&t;I would like to say, &squot;Thank You&squot; to Greg Kroah-Hartman for the&n; *&t;use of his code, and for his guidance, advice and patience. :)&n; *&t;A &squot;Thank You&squot; is in order for John Ripley of Empeg ltd for his&n; *&t;advice, and patience too.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -452,6 +452,17 @@ suffix:semicolon
 id|port-&gt;tty-&gt;termios-&gt;c_cflag
 op_or_assign
 id|CS8
+suffix:semicolon
+multiline_comment|/* gb - 2000/12/03&n;&t; *&n;&t; * Contributed by Borislav Deianov&n;&t; *&n;&t; * Notify the tty driver that the termios have changed!!&n;&t; *&n;&t; */
+id|port-&gt;tty-&gt;ldisc
+dot
+id|set_termios
+c_func
+(paren
+id|port-&gt;tty
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 multiline_comment|/* gb - 2000/11/05&n;&t; *&n;&t; * force low_latency on&n;&t; *&n;&t; * The tty_flip_buffer_push()&squot;s in empeg_read_bulk_callback() will actually&n;&t; * force the data through if low_latency is set.  Otherwise the pushes are&n;&t; * scheduled; this is bad as it opens up the possibility of dropping bytes&n;&t; * on the floor.  We are trying to sustain high data transfer rates; and&n;&t; * don&squot;t want to drop bytes on the floor.&n;&t; * Moral: use low_latency - drop no bytes - life is good. :)&n;&t; *&n;&t; */
 id|port-&gt;tty-&gt;low_latency

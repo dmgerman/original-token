@@ -195,7 +195,7 @@ id|new_driver-&gt;serialize
 )paren
 suffix:semicolon
 multiline_comment|/* Add it to the list of known drivers */
-id|list_add
+id|list_add_tail
 c_func
 (paren
 op_amp
@@ -1759,7 +1759,7 @@ id|id-&gt;bDeviceSubClass
 op_logical_and
 id|id-&gt;bDeviceSubClass
 op_ne
-id|dev-&gt;descriptor.bDeviceClass
+id|dev-&gt;descriptor.bDeviceSubClass
 )paren
 r_continue
 suffix:semicolon

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: dma.c,v 1.7 1994/12/28 03:35:33 root Exp root $&n; * l
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* A note on resource allocation:&n; *&n; * All drivers needing DMA channels, should allocate and release them&n; * through the public routines `request_dma()&squot; and `free_dma()&squot;.&n; *&n; * In order to avoid problems, all processes should allocate resources in&n; * the same sequence and release them in the reverse order.&n; *&n; * So, when allocating DMAs and IRQs, first allocate the IRQ, then the DMA.&n; * When releasing them, first release the DMA, then release the IRQ.&n; * If you don&squot;t, you may cause allocation requests to fail unnecessarily.&n; * This doesn&squot;t really matter now, but it will once we get real semaphores&n; * in the kernel.&n; */

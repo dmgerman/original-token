@@ -129,7 +129,7 @@ l_int|0x01A00000
 op_or
 l_int|0xE000
 suffix:semicolon
-macro_line|#elif defined(__i386__) || defined(__powerpc__) || defined(__hppa__)
+macro_line|#elif defined(__i386__) || defined(__powerpc__)
 DECL|variable|csr0
 r_static
 r_int
@@ -139,7 +139,7 @@ l_int|0x01A00000
 op_or
 l_int|0x8000
 suffix:semicolon
-macro_line|#elif defined(__sparc__)
+macro_line|#elif defined(__sparc__) || defined(__hppa__)
 multiline_comment|/* The UltraSparc PCI controllers will disconnect at every 64-byte&n; * crossing anyways so it makes no sense to tell Tulip to burst&n; * any more than that.&n; */
 DECL|variable|csr0
 r_static

@@ -1,6 +1,7 @@
 macro_line|#ifndef _MOTOROLA_PGTABLE_H
 DECL|macro|_MOTOROLA_PGTABLE_H
 mdefine_line|#define _MOTOROLA_PGTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Definitions for MMU descriptors&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001

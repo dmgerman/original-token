@@ -1584,6 +1584,12 @@ l_int|NULL
 r_goto
 id|err_out
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* IO range check */
 r_if
 c_cond
@@ -1863,6 +1869,9 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 r_struct
 id|dmfe_board_info
 op_star
@@ -1880,9 +1889,8 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1897,10 +1905,14 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
 multiline_comment|/* Allocated Tx/Rx descriptor memory */
 id|db-&gt;desc_pool_ptr
@@ -2131,9 +2143,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-multiline_comment|/* Active System Interface */
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* set and active a timer process */
 id|init_timer
@@ -2664,7 +2673,7 @@ suffix:semicolon
 id|DELAY_5US
 suffix:semicolon
 multiline_comment|/* deleted timer */
-id|del_timer
+id|del_timer_sync
 c_func
 (paren
 op_amp
@@ -2699,8 +2708,6 @@ c_func
 (paren
 id|db-&gt;buf_pool_ptr
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -493,7 +493,7 @@ r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-multiline_comment|/* These two must be ints for set_bit() */
+multiline_comment|/* These two must be longs for set_bit() */
 DECL|member|tx_full
 r_int
 id|tx_full

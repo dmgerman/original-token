@@ -167,6 +167,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|e21_probe1
 c_func
@@ -300,6 +301,12 @@ id|base_addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -366,6 +373,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|e21_probe1
+r_static
 r_int
 id|__init
 id|e21_probe1
@@ -411,12 +419,12 @@ id|ioaddr
 comma
 id|E21_IO_EXTENT
 comma
-l_string|&quot;e2100&quot;
+id|dev-&gt;name
 )paren
 )paren
 r_return
 op_minus
-id|ENODEV
+id|EBUSY
 suffix:semicolon
 multiline_comment|/* First check the station address for the Ctron prefix. */
 r_if
@@ -983,9 +991,15 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|retval
+op_assign
 id|request_irq
 c_func
 (paren
@@ -995,17 +1009,15 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;e2100&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
 )paren
-(brace
+)paren
 r_return
-op_minus
-id|EBUSY
+id|retval
 suffix:semicolon
-)brace
 multiline_comment|/* Set the interrupt line and memory base on the hardware. */
 id|inb
 c_func
@@ -1103,8 +1115,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1510,8 +1520,6 @@ c_func
 (paren
 id|ioaddr
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -1273,6 +1273,7 @@ suffix:semicolon
 multiline_comment|/* reserved for future use */
 DECL|member|critical
 r_int
+r_int
 id|critical
 suffix:semicolon
 multiline_comment|/* critical section flag */

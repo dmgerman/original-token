@@ -800,8 +800,6 @@ op_member_access_from_pointer
 id|writepage
 c_func
 (paren
-l_int|NULL
-comma
 id|page
 )paren
 suffix:semicolon
