@@ -711,6 +711,10 @@ op_logical_or
 id|major
 op_eq
 l_int|8
+op_logical_or
+id|major
+op_eq
+l_int|11
 )paren
 op_logical_and
 (paren

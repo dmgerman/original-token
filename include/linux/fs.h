@@ -7,9 +7,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
-multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; * 0 - unused (nodev)&n; * 1 - /dev/mem&n; * 2 - /dev/fd&n; * 3 - /dev/hd&n; * 4 - /dev/ttyx&n; * 5 - /dev/tty&n; * 6 - /dev/lp&n; * 7 - unnamed pipes&n; * 8 - /dev/sd&n; * 9 - /dev/st&n; */
-DECL|macro|IS_SEEKABLE
-mdefine_line|#define IS_SEEKABLE(x) ((x)&gt;=1 &amp;&amp; (x)&lt;=3 || (x)==8)
+multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unused (nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; */
 DECL|macro|MAY_EXEC
 mdefine_line|#define MAY_EXEC 1
 DECL|macro|MAY_WRITE
@@ -40,24 +38,6 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
-DECL|macro|PIPE_READ_WAIT
-mdefine_line|#define PIPE_READ_WAIT(inode) ((inode).i_wait)
-DECL|macro|PIPE_WRITE_WAIT
-mdefine_line|#define PIPE_WRITE_WAIT(inode) ((inode).i_wait2)
-DECL|macro|PIPE_HEAD
-mdefine_line|#define PIPE_HEAD(inode) ((inode).i_data[0])
-DECL|macro|PIPE_TAIL
-mdefine_line|#define PIPE_TAIL(inode) ((inode).i_data[1])
-DECL|macro|PIPE_READERS
-mdefine_line|#define PIPE_READERS(inode) ((inode).i_data[2])
-DECL|macro|PIPE_WRITERS
-mdefine_line|#define PIPE_WRITERS(inode) ((inode).i_data[3])
-DECL|macro|PIPE_SIZE
-mdefine_line|#define PIPE_SIZE(inode) ((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
-DECL|macro|PIPE_EMPTY
-mdefine_line|#define PIPE_EMPTY(inode) (PIPE_HEAD(inode)==PIPE_TAIL(inode))
-DECL|macro|PIPE_FULL
-mdefine_line|#define PIPE_FULL(inode) (PIPE_SIZE(inode)==(PAGE_SIZE-1))
 DECL|macro|NIL_FILP
 mdefine_line|#define NIL_FILP&t;((struct file *)0)
 DECL|macro|SEL_IN
@@ -206,6 +186,7 @@ suffix:semicolon
 multiline_comment|/* request queue */
 )brace
 suffix:semicolon
+macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
@@ -268,14 +249,6 @@ r_int
 r_int
 id|i_blocks
 suffix:semicolon
-DECL|member|i_data
-r_int
-r_int
-id|i_data
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|member|i_op
 r_struct
 id|inode_operations
@@ -294,13 +267,6 @@ id|wait_queue
 op_star
 id|i_wait
 suffix:semicolon
-DECL|member|i_wait2
-r_struct
-id|wait_queue
-op_star
-id|i_wait2
-suffix:semicolon
-multiline_comment|/* for pipes */
 DECL|member|i_flock
 r_struct
 id|file_lock
@@ -349,6 +315,11 @@ id|i_update
 suffix:semicolon
 r_union
 (brace
+DECL|member|pipe_i
+r_struct
+id|pipe_inode_info
+id|pipe_i
+suffix:semicolon
 DECL|member|minix_i
 r_struct
 id|minix_inode_info

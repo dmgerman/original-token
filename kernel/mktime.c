@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/mktime.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;time.h&gt;
+macro_line|#include &lt;linux/mktime.h&gt;
 multiline_comment|/*&n; * This isn&squot;t the library routine, it is only used in the kernel.&n; * as such, we don&squot;t care about years&lt;1970 etc, but assume everything&n; * is ok. Similarly, TZ etc is happily ignored. We just do everything&n; * as easily as possible. Let&squot;s find something public for the library&n; * routines (although I think minix times is public).&n; */
 multiline_comment|/*&n; * PS. I hate whoever though up the year 1970 - couldn&squot;t they have gotten&n; * a leap-year instead? I also hate Gregorius, pope or no. I&squot;m grumpy.&n; */
 DECL|macro|MINUTE
@@ -205,9 +205,9 @@ id|kernel_mktime
 c_func
 (paren
 r_struct
-id|tm
+id|mktime
 op_star
-id|tm
+id|time
 )paren
 (brace
 r_int
@@ -218,7 +218,7 @@ id|year
 suffix:semicolon
 id|year
 op_assign
-id|tm-&gt;tm_year
+id|time-&gt;year
 op_minus
 l_int|70
 suffix:semicolon
@@ -245,14 +245,14 @@ id|res
 op_add_assign
 id|month
 (braket
-id|tm-&gt;tm_mon
+id|time-&gt;mon
 )braket
 suffix:semicolon
 multiline_comment|/* and (y+2) here. If it wasn&squot;t a leap-year, we have to adjust */
 r_if
 c_cond
 (paren
-id|tm-&gt;tm_mon
+id|time-&gt;mon
 OG
 l_int|1
 op_logical_and
@@ -275,7 +275,7 @@ op_add_assign
 id|DAY
 op_star
 (paren
-id|tm-&gt;tm_mday
+id|time-&gt;day
 op_minus
 l_int|1
 )paren
@@ -284,17 +284,17 @@ id|res
 op_add_assign
 id|HOUR
 op_star
-id|tm-&gt;tm_hour
+id|time-&gt;hour
 suffix:semicolon
 id|res
 op_add_assign
 id|MINUTE
 op_star
-id|tm-&gt;tm_min
+id|time-&gt;min
 suffix:semicolon
 id|res
 op_add_assign
-id|tm-&gt;tm_sec
+id|time-&gt;sec
 suffix:semicolon
 r_return
 id|res

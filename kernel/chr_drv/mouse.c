@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/mouse.c&n; *&n; * Generic mouse open routine by Johan Myreen&n; *&n; * Based on code from Linus&n; *&n; * Teemu Rantanen&squot;s Microsoft Busmouse support and Derrick Cole&squot;s&n; *   changes incorporated into 0.97pl4&n; *   by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)&n; *   See busmouse.c for particulars.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
@@ -27,6 +27,18 @@ c_func
 (paren
 r_int
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|ms_bus_mouse_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+DECL|variable|mse_busmouse_type
+r_int
+id|mse_busmouse_type
 suffix:semicolon
 DECL|function|mouse_open
 r_static
@@ -79,9 +91,37 @@ op_amp
 id|psaux_fops
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+op_eq
+id|MS_BUSMOUSE_MINOR
+)paren
+id|file-&gt;f_op
+op_assign
+op_amp
+id|bus_mouse_fops
+suffix:semicolon
+r_else
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+id|mse_busmouse_type
+op_assign
+(paren
+r_int
+)paren
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_return
 id|file-&gt;f_op
@@ -150,6 +190,19 @@ c_func
 (paren
 id|kmem_start
 )paren
+suffix:semicolon
+id|kmem_start
+op_assign
+id|ms_bus_mouse_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+id|mse_busmouse_type
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|chrdev_fops
 (braket

@@ -2,7 +2,7 @@ macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
 DECL|macro|NR_BLK_DEV
-mdefine_line|#define NR_BLK_DEV&t;10
+mdefine_line|#define NR_BLK_DEV&t;12
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;32
@@ -268,7 +268,21 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif
+macro_line|#elif (MAJOR_NR == 11)
+multiline_comment|/* scsi CD-ROM */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;CD-ROM&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_sr
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sr_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#else
 multiline_comment|/* unknown blk device */
 macro_line|#error &quot;unknown blk device&quot;
 macro_line|#endif

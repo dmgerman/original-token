@@ -72,8 +72,6 @@ r_int
 r_char
 id|current_DOR
 suffix:semicolon
-DECL|macro|immoutb_p
-mdefine_line|#define immoutb_p(val,port) &bslash;&n;__asm__(&quot;outb %0,%1&bslash;n&bslash;tjmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&quot;::&quot;a&quot; ((char) (val)),&quot;i&quot; (port))
 DECL|macro|TYPE
 mdefine_line|#define TYPE(x) ((x)&gt;&gt;2)
 DECL|macro|DRIVE
@@ -1144,6 +1142,25 @@ id|addr
 comma
 id|count
 suffix:semicolon
+r_int
+r_char
+id|dma_code
+suffix:semicolon
+id|dma_code
+op_assign
+id|DMA_WRITE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|command
+op_eq
+id|FD_READ
+)paren
+id|dma_code
+op_assign
+id|DMA_READ
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1242,14 +1259,14 @@ id|tmp_floppy_area
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* mask DMA 2 */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#ifndef HHB_SYSMACROS
-id|immoutb_p
+multiline_comment|/* mask DMA 2 */
+id|outb_p
 c_func
 (paren
 l_int|4
@@ -1261,34 +1278,24 @@ l_int|10
 suffix:semicolon
 multiline_comment|/* output command byte. I don&squot;t know why, but everyone (minix, */
 multiline_comment|/* sanches &amp; canton) output this twice, first to 12 then to 11 */
-id|__asm__
+id|outb_p
 c_func
 (paren
-l_string|&quot;outb %%al,$12&bslash;n&bslash;tjmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&bslash;t&quot;
-l_string|&quot;outb %%al,$11&bslash;n&bslash;tjmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&quot;
-op_scope_resolution
-l_string|&quot;a&quot;
-(paren
-(paren
-r_char
+id|dma_code
+comma
+l_int|12
 )paren
+suffix:semicolon
+id|outb_p
+c_func
 (paren
-(paren
-id|command
-op_eq
-id|FD_READ
-)paren
-ques
-c_cond
-id|DMA_READ
-suffix:colon
-id|DMA_WRITE
-)paren
-)paren
+id|dma_code
+comma
+l_int|11
 )paren
 suffix:semicolon
 multiline_comment|/* 8 low bits of addr */
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 id|addr
@@ -1301,7 +1308,7 @@ op_rshift_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* bits 8-15 of addr */
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 id|addr
@@ -1314,7 +1321,7 @@ op_rshift_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* bits 16-19 of addr */
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 id|addr
@@ -1326,7 +1333,7 @@ multiline_comment|/* low 8 bits of count-1 */
 id|count
 op_decrement
 suffix:semicolon
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 id|count
@@ -1339,7 +1346,7 @@ op_rshift_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* high 8 bits of count-1 */
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 id|count
@@ -1348,7 +1355,7 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* activate DMA 2 */
-id|immoutb_p
+id|outb_p
 c_func
 (paren
 l_int|0

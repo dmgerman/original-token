@@ -306,7 +306,7 @@ id|scsi_dev_init
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;You guesed it.  This sends a command to the selected SCSI host &n;*/
+multiline_comment|/*&n;&t;You guesed it.  This sends a command to the selected SCSI host &n;&n;extern void print_inquiry(unsigned char *data);&n;&n;*/
 r_extern
 r_void
 id|scsi_do_cmd

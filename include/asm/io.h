@@ -1,7 +1,21 @@
 macro_line|#ifndef _ASM_IO_H
 DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
-multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; *&t;&t;Linus&n; */
+multiline_comment|/*&n; * Thanks to James van Artsdalen for a better timing-fix than&n; * the two short jumps: using outb&squot;s to a nonexistent port seems&n; * to guarantee better timings even on fast machines.&n; *&n; * On the other hand, I&squot;d like to be sure of a non-existent port:&n; * I feel a bit unsafe abou using 0x80.&n; *&n; *&t;&t;Linus&n; */
+macro_line|#ifdef SLOW_IO_BY_JUMPING
+DECL|macro|__SLOW_DOWN_IO
+mdefine_line|#define __SLOW_DOWN_IO __asm__ __volatile__(&quot;jmp 1f&bslash;n1:&bslash;tjmp 1f&bslash;n1:&quot;)
+macro_line|#else
+DECL|macro|__SLOW_DOWN_IO
+mdefine_line|#define __SLOW_DOWN_IO __asm__ __volatile__(&quot;inb $0x80,%%al&quot;:::&quot;ax&quot;)
+macro_line|#endif
+macro_line|#ifdef REALLY_SLOW_IO
+DECL|macro|SLOW_DOWN_IO
+mdefine_line|#define SLOW_DOWN_IO { __SLOW_DOWN_IO; __SLOW_DOWN_IO; __SLOW_DOWN_IO; __SLOW_DOWN_IO; }
+macro_line|#else
+DECL|macro|SLOW_DOWN_IO
+mdefine_line|#define SLOW_DOWN_IO __SLOW_DOWN_IO
+macro_line|#endif
 DECL|function|outb
 r_extern
 r_void
@@ -20,52 +34,7 @@ id|port
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;outb %0,%1&quot;
-op_scope_resolution
-l_string|&quot;a&quot;
-(paren
-(paren
-r_char
-)paren
-id|value
-)paren
-comma
-l_string|&quot;d&quot;
-(paren
-(paren
-r_int
-r_int
-)paren
-id|port
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|outb_p
-r_extern
-r_void
-r_inline
-id|outb_p
-c_func
-(paren
-r_char
-id|value
-comma
-r_int
-r_int
-id|port
-)paren
-(brace
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;outb %0,%1&bslash;n&bslash;t&quot;
-macro_line|#ifdef REALLY_SLOW_IO
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;outb %0,$0x80&quot;
+l_string|&quot;outb %%al,%%dx&quot;
 op_scope_resolution
 l_string|&quot;a&quot;
 (paren
@@ -89,7 +58,7 @@ suffix:semicolon
 DECL|function|inb
 r_extern
 r_int
-r_char
+r_int
 r_inline
 id|inb
 c_func
@@ -100,13 +69,13 @@ id|port
 )paren
 (brace
 r_int
-r_char
+r_int
 id|_v
 suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;inb %1,%0&quot;
+l_string|&quot;inb %%dx,%%al&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -121,16 +90,62 @@ r_int
 )paren
 id|port
 )paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 r_return
 id|_v
 suffix:semicolon
 )brace
+DECL|function|outb_p
+r_extern
+r_void
+r_inline
+id|outb_p
+c_func
+(paren
+r_char
+id|value
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;outb %%al,%%dx&quot;
+op_scope_resolution
+l_string|&quot;a&quot;
+(paren
+(paren
+r_char
+)paren
+id|value
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+(paren
+r_int
+r_int
+)paren
+id|port
+)paren
+)paren
+suffix:semicolon
+id|SLOW_DOWN_IO
+suffix:semicolon
+)brace
 DECL|function|inb_p
 r_extern
 r_int
-r_char
+r_int
 r_inline
 id|inb_p
 c_func
@@ -141,19 +156,13 @@ id|port
 )paren
 (brace
 r_int
-r_char
+r_int
 id|_v
 suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;inb %1,%0&bslash;n&bslash;t&quot;
-macro_line|#ifdef REALLY_SLOW_IO
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;outb %0,$0x80&quot;
+l_string|&quot;inb %%dx,%%al&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -168,7 +177,14 @@ r_int
 )paren
 id|port
 )paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
 )paren
+)paren
+suffix:semicolon
+id|SLOW_DOWN_IO
 suffix:semicolon
 r_return
 id|_v

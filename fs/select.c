@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;const.h&gt;
 multiline_comment|/*&n; * Ok, Peter made a complicated, but straightforward multiple_wait() function.&n; * I have rewritten this, taking some shortcuts: This code may not be easy to&n; * follow, but it should be free of race-conditions, and it&squot;s practical. If you&n; * understand what I&squot;m doing here, then you understand how the linux sleep/wakeup&n; * mechanism works.&n; *&n; * Two very simple procedures, select_wait() and free_wait() make all the work.&n; * select_wait() is a inline-function defined in &lt;linux/fs.h&gt;, as all select&n; * functions have to call it to add an entry to the select table.&n; */
 DECL|function|free_wait
 r_static

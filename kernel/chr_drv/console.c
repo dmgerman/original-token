@@ -11,10 +11,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
@@ -610,6 +610,13 @@ DECL|macro|kbdleds
 mdefine_line|#define kbdleds&t;&t;(vt_cons[currcons].vc_kbdleds)
 DECL|macro|vtmode
 mdefine_line|#define vtmode&t;&t;(vt_cons[currcons].vt_mode)
+macro_line|#if defined KBD_NUMERIC_LOCK
+DECL|macro|NUMLED_DEFAULT
+mdefine_line|#define NUMLED_DEFAULT 0x02
+macro_line|#else
+DECL|macro|NUMLED_DEFAULT
+mdefine_line|#define NUMLED_DEFAULT 0
+macro_line|#endif
 DECL|macro|SET
 mdefine_line|#define SET(mode,fg,v) &bslash;&n;&t;(mode) = (v); &bslash;&n;&t;if (currcons == fg_console) &bslash;&n;&t;&t;(fg) = (v)
 DECL|variable|blankinterval
@@ -3783,7 +3790,7 @@ l_int|0
 suffix:semicolon
 id|kleds
 op_assign
-l_int|2
+id|NUMLED_DEFAULT
 suffix:semicolon
 id|kmode
 op_assign
@@ -3815,7 +3822,7 @@ l_int|0
 suffix:semicolon
 id|kbdleds
 op_assign
-l_int|2
+id|NUMLED_DEFAULT
 suffix:semicolon
 id|kbdmode
 op_assign

@@ -7,10 +7,10 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 DECL|macro|QUEUES
 mdefine_line|#define QUEUES&t;(3*(NR_CONSOLES+NR_SERIALS+2*NR_PTYS))

@@ -8,6 +8,18 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+r_extern
+r_int
+id|check_cdrom_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|hash_table
 r_static
 r_struct
@@ -396,7 +408,7 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|MAJOR
@@ -404,11 +416,12 @@ c_func
 (paren
 id|dev
 )paren
-op_ne
-l_int|2
 )paren
-r_return
-suffix:semicolon
+(brace
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* floppy disc */
 r_if
 c_cond
 (paren
@@ -442,6 +455,43 @@ c_func
 (paren
 id|bh
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+r_case
+l_int|11
+suffix:colon
+multiline_comment|/* CDROM */
+id|i
+op_assign
+id|check_cdrom_media_change
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Flushing buffers and inodes for CDROM&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+r_return
+suffix:semicolon
+)brace
 suffix:semicolon
 r_if
 c_cond

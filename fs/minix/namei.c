@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;const.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; MINIX_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use minix_match. No big problem. Match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, minix_match returns 1 for success, 0 for failure.&n; */
@@ -1227,13 +1226,18 @@ op_assign
 op_amp
 id|minix_fifo_inode_operations
 suffix:semicolon
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;i_pipe
 op_assign
 l_int|1
+suffix:semicolon
+id|PIPE_BASE
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+l_int|NULL
 suffix:semicolon
 id|PIPE_HEAD
 c_func
@@ -1593,7 +1597,7 @@ id|dir_block
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
-id|I_DIRECTORY
+id|S_IFDIR
 op_or
 (paren
 id|mode

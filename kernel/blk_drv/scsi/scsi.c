@@ -13,9 +13,12 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ST
 macro_line|#include &quot;st.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+macro_line|#include &quot;sr.h&quot;
+macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/scsi.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
 DECL|macro|INTERNAL_ERROR
-mdefine_line|#define INTERNAL_ERROR (printk (&quot;Internal error in file %s, line %s.&bslash;n&quot;, __FILE__, __LINE__), panic(&quot;&quot;))
+mdefine_line|#define INTERNAL_ERROR (printk (&quot;Internal error in file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__), panic(&quot;&quot;))
 r_static
 r_void
 id|scsi_done
@@ -32,6 +35,17 @@ r_void
 id|update_timeout
 (paren
 r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|print_inquiry
+c_func
+(paren
+r_int
+r_char
+op_star
+id|data
 )paren
 suffix:semicolon
 DECL|variable|time_start
@@ -577,6 +591,52 @@ suffix:semicolon
 macro_line|#endif
 r_break
 suffix:semicolon
+r_case
+id|TYPE_ROM
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Detected scsi CD-ROM at host %d, ID  %d, lun %d &bslash;n&quot;
+comma
+id|host_nr
+comma
+id|dev
+comma
+id|lun
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|maxed
+op_assign
+(paren
+id|NR_SR
+op_ge
+id|MAX_SR
+)paren
+)paren
+)paren
+id|scsi_CDs
+(braket
+id|NR_SR
+)braket
+dot
+id|device
+op_assign
+op_amp
+id|scsi_devices
+(braket
+id|NR_SCSI_DEVICES
+)braket
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 macro_line|#ifdef DEBUG
@@ -623,6 +683,12 @@ id|NR_SCSI_DEVICES
 suffix:semicolon
 macro_line|#endif
 )brace
+id|print_inquiry
+c_func
+(paren
+id|scsi_result
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -631,8 +697,11 @@ id|maxed
 (brace
 id|printk
 (paren
-l_string|&quot;scsi : already have detected maximum number of SCSI %ss Unable to &bslash;n&quot;
-l_string|&quot;add drive at SCSI host %s, ID %d, LUN %d&bslash;n&bslash;r&quot;
+l_string|&quot;Already have detected &quot;
+l_string|&quot;maximum number of SCSI &quot;
+l_string|&quot;%ss Unable to &bslash;n&quot;
+l_string|&quot;add drive at SCSI host &quot;
+l_string|&quot;%s, ID %d, LUN %d&bslash;n&bslash;r&quot;
 comma
 (paren
 id|type
@@ -643,7 +712,16 @@ ques
 c_cond
 l_string|&quot;tape&quot;
 suffix:colon
+(paren
+id|type
+op_eq
+id|TYPE_DISK
+)paren
+ques
+c_cond
 l_string|&quot;disk&quot;
+suffix:colon
+l_string|&quot;CD-ROM&quot;
 comma
 id|scsi_hosts
 (braket
@@ -795,7 +873,18 @@ ques
 c_cond
 l_char|&squot;t&squot;
 suffix:colon
+(paren
+(paren
+id|type
+op_eq
+id|TYPE_ROM
+)paren
+ques
+c_cond
+l_char|&squot;r&squot;
+suffix:colon
 l_char|&squot;d&squot;
+)paren
 comma
 (paren
 id|type
@@ -811,12 +900,26 @@ op_minus
 l_int|1
 macro_line|#endif
 suffix:colon
+(paren
+id|type
+op_eq
+id|TYPE_ROM
+ques
+c_cond
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+id|NR_SR
+macro_line|#else
+op_minus
+l_int|1
+macro_line|#endif
+suffix:colon
 macro_line|#ifdef CONFIG_BLK_DEV_SD
 id|NR_SD
 macro_line|#else
 op_minus
 l_int|1
 macro_line|#endif
+)paren
 comma
 id|host_nr
 comma
@@ -842,9 +945,24 @@ macro_line|#else
 suffix:semicolon
 macro_line|#endif
 r_else
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|TYPE_DISK
+)paren
 macro_line|#ifdef CONFIG_BLK_DEV_SD
 op_increment
 id|NR_SD
+suffix:semicolon
+macro_line|#else
+suffix:semicolon
+macro_line|#endif
+r_else
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+op_increment
+id|NR_SR
 suffix:semicolon
 macro_line|#else
 suffix:semicolon
@@ -872,9 +990,12 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ST
 l_string|&quot;%d tape%s &quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+l_string|&quot;%d CD-ROM drive%s &quot;
+macro_line|#endif
 l_string|&quot;total.&bslash;n&quot;
-comma
 macro_line|#ifdef CONFIG_BLK_DEV_SD
+comma
 id|NR_SD
 comma
 (paren
@@ -887,15 +1008,28 @@ c_cond
 l_string|&quot;s&quot;
 suffix:colon
 l_string|&quot;&quot;
-macro_line|#ifdef CONFIG_BLK_DEV_ST 
-comma
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ST
+comma
 id|NR_ST
 comma
 (paren
 id|NR_ST
+op_ne
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;s&quot;
+suffix:colon
+l_string|&quot;&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+comma
+id|NR_SR
+comma
+(paren
+id|NR_SR
 op_ne
 l_int|1
 )paren
@@ -1851,6 +1985,11 @@ c_cond
 (paren
 (paren
 (paren
+id|last_cmnd
+(braket
+id|host
+)braket
+dot
 id|sense_buffer
 (braket
 l_int|0
@@ -1867,6 +2006,11 @@ l_int|7
 r_switch
 c_cond
 (paren
+id|last_cmnd
+(braket
+id|host
+)braket
+dot
 id|sense_buffer
 (braket
 l_int|2
@@ -1988,6 +2132,8 @@ DECL|macro|MAYREDO
 mdefine_line|#define MAYREDO  1
 DECL|macro|REDO
 mdefine_line|#define REDO&t; 3
+DECL|macro|PENDING
+mdefine_line|#define PENDING  4
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -2385,6 +2531,10 @@ dot
 id|lun
 )paren
 suffix:semicolon
+id|status
+op_assign
+id|PENDING
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2639,6 +2789,9 @@ id|status
 r_case
 id|FINISHED
 suffix:colon
+r_case
+id|PENDING
+suffix:colon
 r_break
 suffix:semicolon
 r_case
@@ -2879,6 +3032,8 @@ DECL|macro|REDO
 macro_line|#undef REDO
 DECL|macro|MAYREDO
 macro_line|#undef MAYREDO
+DECL|macro|PENDING
+macro_line|#undef PENDING
 )brace
 multiline_comment|/*&n;&t;The scsi_abort function interfaces with the abort() function of the host&n;&t;we are aborting, and causes the current command to not complete.  The &n;&t;caller should deal with any error messages or status returned on the &n;&t;next call.&n;&t;&n;&t;This will not be called rentrantly for a given host.&n;*/
 multiline_comment|/*&n;&t;Since we&squot;re nice guys and specified that abort() and reset()&n;&t;can be non-reentrant.  The internal_timeout flags are used for&n;&t;this.&n;*/
@@ -3640,6 +3795,285 @@ c_func
 suffix:semicolon
 multiline_comment|/* init scsi tapes */
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SR
+id|sr_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
+DECL|function|print_inquiry
+r_static
+r_void
+id|print_inquiry
+c_func
+(paren
+r_int
+r_char
+op_star
+id|data
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Vendor:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|8
+suffix:semicolon
+id|i
+OL
+l_int|15
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|data
+(braket
+id|i
+)braket
+op_ge
+l_int|20
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%c&quot;
+comma
+id|data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;  Model:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|16
+suffix:semicolon
+id|i
+OL
+l_int|31
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|data
+(braket
+id|i
+)braket
+op_ge
+l_int|20
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%c&quot;
+comma
+id|data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;  Rev:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|32
+suffix:semicolon
+id|i
+OL
+l_int|35
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|data
+(braket
+id|i
+)braket
+op_ge
+l_int|20
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%c&quot;
+comma
+id|data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|i
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x1f
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Type: %s &quot;
+comma
+id|i
+op_eq
+l_int|0x00
+ques
+c_cond
+l_string|&quot;Direct-Access    &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x01
+ques
+c_cond
+l_string|&quot;Sequential-Access&quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x02
+ques
+c_cond
+l_string|&quot;Printer          &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x03
+ques
+c_cond
+l_string|&quot;Processor        &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x04
+ques
+c_cond
+l_string|&quot;WORM             &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x05
+ques
+c_cond
+l_string|&quot;CD-ROM           &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x06
+ques
+c_cond
+l_string|&quot;Scanner          &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x07
+ques
+c_cond
+l_string|&quot;Optical Device   &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x08
+ques
+c_cond
+l_string|&quot;Medium Changer   &quot;
+suffix:colon
+id|i
+op_eq
+l_int|0x09
+ques
+c_cond
+l_string|&quot;Communications   &quot;
+suffix:colon
+l_string|&quot;Unknown          &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ANSI SCSI revision: %02x&bslash;n&quot;
+comma
+id|data
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x07
+)paren
+suffix:semicolon
+)brace
 eof

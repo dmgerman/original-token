@@ -36,6 +36,8 @@ DECL|macro|CONFIG_BLK_DEV_SD
 macro_line|#undef CONFIG_BLK_DEV_SD
 DECL|macro|CONFIG_BLK_DEV_ST
 macro_line|#undef CONFIG_BLK_DEV_ST
+DECL|macro|CONFIG_BLK_DEV_SR
+macro_line|#undef CONFIG_BLK_DEV_SR
 multiline_comment|/*&n;&t;Choose supported SCSI adapters here.&n;*/
 DECL|macro|CONFIG_SCSI_AHA1542
 macro_line|#undef CONFIG_SCSI_AHA1542
@@ -53,7 +55,7 @@ DECL|macro|CONFIG_SCSI_ULTRASTOR
 macro_line|#undef CONFIG_SCSI_ULTRASTOR
 DECL|macro|CONFIG_SCSI_7000FASST
 macro_line|#undef CONFIG_SCSI_7000FASST
-macro_line|#if defined(CONFIG_BLK_DEV_SD) || defined(CONFIG_BLK_DEV_CD) || &bslash;&n;defined(CONFIG_CHR_DEV_ST)
+macro_line|#if defined(CONFIG_BLK_DEV_SD) || defined(CONFIG_BLK_DEV_SR) || &bslash;&n;defined(CONFIG_CHR_DEV_ST)
 macro_line|#ifndef CONFIG_SCSI
 DECL|macro|CONFIG_SCSI
 mdefine_line|#define CONFIG_SCSI

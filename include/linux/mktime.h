@@ -1,0 +1,35 @@
+macro_line|#ifndef _LINUX_MKTIME_H
+DECL|macro|_LINUX_MKTIME_H
+mdefine_line|#define _LINUX_MKTIME_H
+DECL|struct|mktime
+r_struct
+id|mktime
+(brace
+DECL|member|sec
+r_int
+id|sec
+suffix:semicolon
+DECL|member|min
+r_int
+id|min
+suffix:semicolon
+DECL|member|hour
+r_int
+id|hour
+suffix:semicolon
+DECL|member|day
+r_int
+id|day
+suffix:semicolon
+DECL|member|mon
+r_int
+id|mon
+suffix:semicolon
+DECL|member|year
+r_int
+id|year
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+eof

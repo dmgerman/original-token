@@ -1,8 +1,8 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;time.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/mktime.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -321,17 +321,9 @@ id|kernel_mktime
 c_func
 (paren
 r_struct
-id|tm
+id|mktime
 op_star
-id|tm
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|malloc_grab_pages
-c_func
-(paren
-r_void
+id|time
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SCSI
@@ -426,12 +418,12 @@ r_void
 )paren
 (brace
 r_struct
-id|tm
+id|mktime
 id|time
 suffix:semicolon
 r_do
 (brace
-id|time.tm_sec
+id|time.sec
 op_assign
 id|CMOS_READ
 c_func
@@ -439,7 +431,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|time.tm_min
+id|time.min
 op_assign
 id|CMOS_READ
 c_func
@@ -447,7 +439,7 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
-id|time.tm_hour
+id|time.hour
 op_assign
 id|CMOS_READ
 c_func
@@ -455,7 +447,7 @@ c_func
 l_int|4
 )paren
 suffix:semicolon
-id|time.tm_mday
+id|time.day
 op_assign
 id|CMOS_READ
 c_func
@@ -463,7 +455,7 @@ c_func
 l_int|7
 )paren
 suffix:semicolon
-id|time.tm_mon
+id|time.mon
 op_assign
 id|CMOS_READ
 c_func
@@ -471,7 +463,7 @@ c_func
 l_int|8
 )paren
 suffix:semicolon
-id|time.tm_year
+id|time.year
 op_assign
 id|CMOS_READ
 c_func
@@ -483,7 +475,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|time.tm_sec
+id|time.sec
 op_ne
 id|CMOS_READ
 c_func
@@ -495,40 +487,40 @@ suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_sec
+id|time.sec
 )paren
 suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_min
+id|time.min
 )paren
 suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_hour
+id|time.hour
 )paren
 suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_mday
+id|time.day
 )paren
 suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_mon
+id|time.mon
 )paren
 suffix:semicolon
 id|BCD_TO_BIN
 c_func
 (paren
-id|time.tm_year
+id|time.year
 )paren
 suffix:semicolon
-id|time.tm_mon
+id|time.mon
 op_decrement
 suffix:semicolon
 id|startup_time
@@ -898,11 +890,6 @@ c_func
 )paren
 suffix:semicolon
 id|floppy_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|malloc_grab_pages
 c_func
 (paren
 )paren

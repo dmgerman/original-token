@@ -96,7 +96,6 @@ id|gs
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * flags isn&squot;t even used yet: it&squot;s just there as an example of&n; * what kind of information we might want to give sys_vm86() (or&n; * want it to return to us).&n; */
 DECL|struct|vm86_struct
 r_struct
 id|vm86_struct
@@ -111,7 +110,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|screen_bitmap
+r_int
+r_int
+id|screen_bitmap
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * flags masks&n; */
+DECL|macro|VM86_SCREEN_BITMAP
+mdefine_line|#define VM86_SCREEN_BITMAP 1
 macro_line|#endif
 eof

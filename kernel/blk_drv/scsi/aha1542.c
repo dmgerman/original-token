@@ -523,8 +523,9 @@ id|buffer
 (braket
 )braket
 op_assign
-l_string|&quot;Adaptec 1542&quot;
+l_string|&quot;&quot;
 suffix:semicolon
+multiline_comment|/* looks nicer without anything here */
 r_return
 id|buffer
 suffix:semicolon
@@ -559,6 +560,16 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#ifdef DEBUG
+(brace
+r_int
+id|flag
+op_assign
+id|inb
+c_func
+(paren
+id|INTRFLAGS
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -675,6 +686,8 @@ l_int|1
 dot
 id|status
 )paren
+suffix:semicolon
+)brace
 suffix:semicolon
 macro_line|#endif
 id|aha1542_intr_reset
@@ -793,6 +806,7 @@ l_string|&quot;aha1542_intr_handle: sense:&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG
 r_for
 c_loop
 (paren
@@ -826,6 +840,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;DEB(printk(&quot;aha1542_intr_handle: buf:&quot;));&n;&t;for (i = 0; i &lt; bufflen; i++)&n;&t;  printk(&quot;%02x &quot;, ((unchar *)buff)[i]);&n;&t;printk(&quot;&bslash;n&quot;);&n;*/
 )brace
 id|DEB
@@ -934,6 +949,42 @@ l_int|0
 suffix:semicolon
 )brace
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|cmd
+op_eq
+id|REQUEST_SENSE
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|buff
+comma
+op_amp
+id|ccb.cdb
+(braket
+id|ccb.cdblen
+)braket
+comma
+id|bufflen
+)paren
+suffix:semicolon
+id|done
+c_func
+(paren
+id|aha1542_host
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
@@ -1689,9 +1740,13 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|DEB
+c_func
+(paren
 id|aha1542_stat
 c_func
 (paren
+)paren
 )paren
 suffix:semicolon
 id|setup_mailboxes
@@ -1699,9 +1754,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|DEB
+c_func
+(paren
 id|aha1542_stat
 c_func
 (paren
+)paren
 )paren
 suffix:semicolon
 id|DEB

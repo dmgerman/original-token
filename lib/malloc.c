@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * malloc.c --- a general purpose kernel memory allocator for Linux.&n; * &n; * Written by Theodore Ts&squot;o (tytso@mit.edu), 11/29/91&n; *&n; * This routine is written to be as fast as possible, so that it&n; * can be called from the interrupt level.&n; *&n; * Limitations: maximum size of memory we can allocate using this routine&n; *&t;is 4k, the size of a page in Linux.&n; *&n; * The general game plan is that each page (called a bucket) will only hold&n; * objects of a given size.  When all of the object on a page are released,&n; * the page can be returned to the general free pool.  When malloc() is&n; * called, it looks for the smallest bucket size which will fulfill its&n; * request, and allocate a piece of memory from that bucket pool.&n; *&n; * Each bucket has as its control block a bucket descriptor which keeps &n; * track of how many objects are in use on that page, and the free list&n; * for that page.  Like the buckets themselves, bucket descriptors are&n; * stored on pages requested from get_free_page().  However, unlike buckets,&n; * pages devoted to bucket descriptor pages are never released back to the&n; * system.  Fortunately, a system should probably only need 1 or 2 bucket&n; * descriptor pages, since a page can hold 256 bucket descriptors (which&n; * corresponds to 1 megabyte worth of bucket pages.)  If the kernel is using &n; * that much allocated memory, it&squot;s probably doing something wrong.  :-)&n; *&n; * Note: malloc() and free() both call get_free_page() and free_page()&n; *&t;in sections of code where interrupts are turned off, to allow&n; *&t;malloc() and free() to be safely called from an interrupt routine.&n; *&t;(We will probably need this functionality when networking code,&n; *&t;particularily things like NFS, is added to Linux.)  However, this&n; *&t;presumes that get_free_page() and free_page() are interrupt-level&n; *&t;safe, which they may not be once paging is added.  If this is the&n; *&t;case, we will need to modify malloc() to keep a few unused pages&n; *&t;&quot;pre-allocated&quot; so that it can safely draw upon those pages if&n; * &t;it is called from an interrupt routine.&n; *&n; * &t;Another concern is that get_free_page() should not sleep; if it &n; *&t;does, the code is carefully ordered so as to avoid any race &n; *&t;conditions.  The catch is that if malloc() is called re-entrantly, &n; *&t;there is a chance that unecessary pages will be grabbed from the &n; *&t;system.  Except for the pages for the bucket descriptor page, the &n; *&t;extra pages will eventually get released back to the system, though,&n; *&t;so it isn&squot;t all that bad.&n; */
 multiline_comment|/* I&squot;m going to modify it to keep some free pages around.  Get free page&n;   can sleep, and tcp/ip needs to call malloc at interrupt time  (Or keep&n;   big buffers around for itself.)  I guess I&squot;ll have return from&n;   syscall fill up the free page descriptors. -RAB */
+multiline_comment|/* since the advent of GFP_ATOMIC, I&squot;ve changed the malloc code to&n;   use it and return NULL if it can&squot;t get a page. -RAB */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -174,239 +175,6 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* End of list marker */
-multiline_comment|/* Where to keep the extra pages, and how many. */
-DECL|macro|FREE_PAGES
-mdefine_line|#define FREE_PAGES 20
-DECL|variable|free_pages
-r_static
-r_volatile
-r_int
-r_int
-id|free_pages
-(braket
-id|FREE_PAGES
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-DECL|variable|free_page_ptr
-r_volatile
-r_int
-id|free_page_ptr
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* this -1 is next free page. */
-multiline_comment|/* malloc_free_page makes sure that we have all the free pages we&n;   want around before actually freeing the page. */
-multiline_comment|/* called with interrupts off. */
-r_void
-DECL|function|malloc_free_page
-id|malloc_free_page
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|free_page_ptr
-OL
-id|FREE_PAGES
-)paren
-id|free_pages
-(braket
-id|free_page_ptr
-op_increment
-)braket
-op_assign
-id|addr
-suffix:semicolon
-r_else
-id|free_page
-(paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Fill up the extra page buffer. Should be called quite often to make&n;   sure we have some floating around. */
-r_void
-DECL|function|malloc_grab_pages
-id|malloc_grab_pages
-c_func
-(paren
-r_void
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|free_page_ptr
-OL
-id|FREE_PAGES
-)paren
-(brace
-r_int
-r_int
-id|page
-suffix:semicolon
-id|page
-op_assign
-id|get_free_page
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;malloc_grab_pages: Can&squot;t happen. no memory.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-multiline_comment|/* see if we still need the page. This can only happen if&n;&t;    we get interrupted while we are trying to get some pages,&n;&t;    and we are out of pages.  It shouldn&squot;t happen, but it&n;&t;    could and we had better check for it. */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|free_page_ptr
-OL
-id|FREE_PAGES
-)paren
-(brace
-id|free_pages
-(braket
-id|free_page_ptr
-)braket
-op_assign
-id|page
-suffix:semicolon
-id|free_page_ptr
-op_increment
-suffix:semicolon
-)brace
-r_else
-(brace
-id|free_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* called with interrupts off. */
-r_static
-r_inline
-r_int
-r_int
-DECL|function|malloc_get_free_page
-id|malloc_get_free_page
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|page
-suffix:semicolon
-r_int
-id|page_ptr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|free_page_ptr
-OG
-l_int|0
-)paren
-(brace
-id|page_ptr
-op_assign
-op_decrement
-id|free_page_ptr
-suffix:semicolon
-id|page
-op_assign
-id|free_pages
-(braket
-id|page_ptr
-)braket
-suffix:semicolon
-id|free_pages
-(braket
-id|page_ptr
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;malloc_get_free_page: Calling malloc_grab_pages&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* this routine turns on interrupts.  Maybe we should do a pushflags&n;      pop flags around it. */
-id|malloc_grab_pages
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|page_ptr
-op_assign
-op_decrement
-id|free_page_ptr
-suffix:semicolon
-id|page
-op_assign
-id|free_pages
-(braket
-id|page_ptr
-)braket
-suffix:semicolon
-id|free_pages
-(braket
-id|page_ptr
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * This contains a linked list of free bucket descriptor blocks&n; */
 DECL|variable|free_bucket_desc
 r_static
@@ -426,7 +194,7 @@ multiline_comment|/*&n; * This routine initializes a bucket description page.&n;
 DECL|function|init_bucket_desc
 r_static
 r_inline
-r_void
+r_int
 id|init_bucket_desc
 c_func
 (paren
@@ -453,9 +221,10 @@ r_struct
 id|bucket_desc
 op_star
 )paren
-id|malloc_get_free_page
+id|get_free_page
 c_func
 (paren
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -464,11 +233,8 @@ c_cond
 op_logical_neg
 id|bdesc
 )paren
-id|panic
-c_func
-(paren
-l_string|&quot;Out of memory in init_bucket_desc()&quot;
-)paren
+r_return
+l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -501,7 +267,8 @@ id|bdesc
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This is done last, to avoid race conditions in case &n;&t; * get_free_page() sleeps and this routine gets called again....&n;&t; */
+multiline_comment|/*&n;&t; * This is done last, to avoid race conditions in case&n;&t; * get_free_page() sleeps and this routine gets called again....&n;&t; */
+multiline_comment|/* Get free page will not sleep because of the GFP_ATOMIC */
 id|bdesc-&gt;next
 op_assign
 id|free_bucket_desc
@@ -509,6 +276,11 @@ suffix:semicolon
 id|free_bucket_desc
 op_assign
 id|first
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
 suffix:semicolon
 )brace
 DECL|function|malloc
@@ -573,11 +345,8 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;malloc: bad arg&quot;
-)paren
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Now we search for a bucket descriptor which has free space&n;&t; */
@@ -607,7 +376,7 @@ id|bdesc-&gt;freeptr
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we didn&squot;t find a bucket with free space, then we&squot;ll &n;&t; * allocate a new one.&n;&t; */
+multiline_comment|/*&n;&t; * If we didn&squot;t find a bucket with free space, then we&squot;ll&n;&t; * allocate a new one.&n;&t; */
 r_if
 c_cond
 (paren
@@ -628,11 +397,24 @@ c_cond
 op_logical_neg
 id|free_bucket_desc
 )paren
+r_if
+c_cond
+(paren
 id|init_bucket_desc
 c_func
 (paren
 )paren
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|bdesc
 op_assign
 id|free_bucket_desc
@@ -659,9 +441,10 @@ op_star
 )paren
 id|cp
 op_assign
-id|malloc_get_free_page
+id|get_free_page
 c_func
 (paren
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -670,12 +453,16 @@ c_cond
 op_logical_neg
 id|cp
 )paren
-id|panic
+(brace
+id|sti
 c_func
 (paren
-l_string|&quot;Out of memory in kernel malloc()&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* Set up the chain of free objects */
 r_for
 c_loop
@@ -768,7 +555,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Here is the free routine.  If you know the size of the object that you&n; * are freeing, then free_s() will use that information to speed up the&n; * search for the bucket descriptor.&n; * &n; * We will #define a macro so that &quot;free(x)&quot; is becomes &quot;free_s(x, 0)&quot;&n; */
+multiline_comment|/*&n; * Here is the free routine.  If you know the size of the object that you&n; * are freeing, then free_s() will use that information to speed up the&n; * search for the bucket descriptor.&n; *&n; * We will #define a macro so that &quot;free(x)&quot; is becomes &quot;free_s(x, 0)&quot;&n; */
 DECL|function|free_s
 r_void
 id|free_s
@@ -993,7 +780,7 @@ op_assign
 id|bdesc-&gt;next
 suffix:semicolon
 )brace
-id|malloc_free_page
+id|free_page
 c_func
 (paren
 (paren

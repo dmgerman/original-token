@@ -1344,7 +1344,7 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|i_busy
-op_logical_or
+op_logical_and
 id|inode-&gt;i_nlink
 )paren
 )paren

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/namei.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * Some corrections by tytso.&n; */
-macro_line|#include &lt;const.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -915,7 +914,7 @@ id|current-&gt;umask
 suffix:semicolon
 id|mode
 op_or_assign
-id|I_REGULAR
+id|S_IFREG
 suffix:semicolon
 id|error
 op_assign

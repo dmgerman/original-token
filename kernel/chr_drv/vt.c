@@ -5,11 +5,11 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kd.h&gt;
+macro_line|#include &lt;linux/vt.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
-macro_line|#include &lt;sys/kd.h&gt;
-macro_line|#include &lt;sys/vt.h&gt;
 multiline_comment|/*&n; * console (vt and kd) routines, as defined by usl svr4 manual&n; */
 DECL|variable|vt_cons
 r_struct

@@ -42,6 +42,10 @@ DECL|macro|CONFIG_BLK_DEV_SD
 macro_line|#undef CONFIG_BLK_DEV_SD
 DECL|macro|CONFIG_BLK_DEV_SD
 mdefine_line|#define CONFIG_BLK_DEV_SD
+DECL|macro|CONFIG_BLK_DEV_SR
+macro_line|#undef CONFIG_BLK_DEV_SR
+DECL|macro|CONFIG_BLK_DEV_SR
+mdefine_line|#define CONFIG_BLK_DEV_SR
 DECL|macro|CONFIG_BLK_DEV_ST
 macro_line|#undef CONFIG_BLK_DEV_ST
 DECL|macro|CONFIG_BLK_DEV_ST

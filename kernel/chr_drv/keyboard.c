@@ -28,6 +28,13 @@ DECL|macro|NUMLED
 mdefine_line|#define NUMLED   0x02
 DECL|macro|CAPSLED
 mdefine_line|#define CAPSLED  0x04
+macro_line|#if defined KBD_NUMERIC_LOCK
+DECL|macro|NUMLED_DEFAULT
+mdefine_line|#define NUMLED_DEFAULT NUMLED
+macro_line|#else
+DECL|macro|NUMLED_DEFAULT
+mdefine_line|#define NUMLED_DEFAULT 0
+macro_line|#endif
 DECL|macro|NO_META_BIT
 mdefine_line|#define NO_META_BIT 0x80
 DECL|variable|kapplic
@@ -63,7 +70,7 @@ r_int
 r_char
 id|kleds
 op_assign
-id|NUMLED
+id|NUMLED_DEFAULT
 suffix:semicolon
 DECL|variable|ke0
 r_int
@@ -144,7 +151,7 @@ r_int
 r_char
 id|old_leds
 op_assign
-l_int|2
+id|NUMLED
 suffix:semicolon
 DECL|variable|diacr
 r_static

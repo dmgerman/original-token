@@ -4,9 +4,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;sys/mman.h&gt;
 multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the current handling of page faults in memory.c. the expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) yes&t;w: (no) copy&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) copy&t;w: (no) copy&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&n; * the permissions are encoded as cxwr (copy,exec,write,read)&n; */
 DECL|macro|MTYP
 mdefine_line|#define MTYP(T) ((T) &amp; MAP_TYPE)

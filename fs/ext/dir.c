@@ -100,7 +100,7 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|ext_bmap
+l_int|NULL
 comma
 multiline_comment|/* bmap */
 id|ext_truncate
@@ -134,8 +134,6 @@ id|count
 (brace
 r_int
 r_int
-id|block
-comma
 id|offset
 comma
 id|i
@@ -184,9 +182,9 @@ id|filp-&gt;f_pos
 op_amp
 l_int|1023
 suffix:semicolon
-id|block
+id|bh
 op_assign
-id|ext_bmap
+id|ext_bread
 c_func
 (paren
 id|inode
@@ -196,28 +194,15 @@ id|filp-&gt;f_pos
 )paren
 op_rshift
 id|BLOCK_SIZE_BITS
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|block
-op_logical_or
-op_logical_neg
-(paren
 id|bh
-op_assign
-id|bread
-c_func
-(paren
-id|inode-&gt;i_dev
-comma
-id|block
-comma
-id|BLOCK_SIZE
-)paren
-)paren
 )paren
 (brace
 id|filp-&gt;f_pos
