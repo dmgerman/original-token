@@ -832,6 +832,9 @@ op_star
 id|e
 )paren
 (brace
+r_int
+id|diff
+suffix:semicolon
 r_struct
 id|iphdr
 op_star
@@ -858,15 +861,6 @@ id|user_iph
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|e-&gt;skb-&gt;nh.iph-&gt;check
-op_ne
-id|user_iph-&gt;check
-)paren
-(brace
-r_int
 id|diff
 op_assign
 id|v-&gt;data_len
@@ -998,7 +992,6 @@ id|e-&gt;skb-&gt;nfcache
 op_or_assign
 id|NFC_ALTERED
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

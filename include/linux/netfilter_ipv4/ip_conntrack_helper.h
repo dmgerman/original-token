@@ -16,20 +16,16 @@ r_struct
 id|list_head
 id|list
 suffix:semicolon
-multiline_comment|/* Returns TRUE if it wants to help this connection (tuple is&n;           the tuple of REPLY packets from server). */
-DECL|member|will_help
-r_int
-(paren
-op_star
-id|will_help
-)paren
-(paren
-r_const
+multiline_comment|/* Mask of things we will help (compared against server response) */
+DECL|member|tuple
 r_struct
 id|ip_conntrack_tuple
-op_star
-id|rtuple
-)paren
+id|tuple
+suffix:semicolon
+DECL|member|mask
+r_struct
+id|ip_conntrack_tuple
+id|mask
 suffix:semicolon
 multiline_comment|/* Function to call when data passes; return verdict, or -1 to&n;           invalidate. */
 DECL|member|help
@@ -79,7 +75,7 @@ id|ip_conntrack_helper
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Add an expected connection. */
+multiline_comment|/* Add an expected connection: can only have one per connection */
 r_extern
 r_int
 id|ip_conntrack_expect_related
@@ -95,6 +91,34 @@ r_struct
 id|ip_conntrack_tuple
 op_star
 id|tuple
+comma
+r_const
+r_struct
+id|ip_conntrack_tuple
+op_star
+id|mask
+comma
+r_int
+(paren
+op_star
+id|expectfn
+)paren
+(paren
+r_struct
+id|ip_conntrack
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_conntrack_unexpect_related
+c_func
+(paren
+r_struct
+id|ip_conntrack
+op_star
+id|related_to
 )paren
 suffix:semicolon
 macro_line|#endif /*_IP_CONNTRACK_HELPER_H*/

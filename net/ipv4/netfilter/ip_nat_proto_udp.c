@@ -397,6 +397,12 @@ op_amp
 id|hdr-&gt;dest
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|hdr-&gt;check
+)paren
+multiline_comment|/* 0 is a special case meaning no checksum */
 id|hdr-&gt;check
 op_assign
 id|ip_nat_cheat_check

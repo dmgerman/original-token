@@ -176,6 +176,7 @@ id|conntrack-&gt;status
 op_amp
 id|IPS_SEEN_REPLY
 )paren
+(brace
 id|ip_ct_refresh
 c_func
 (paren
@@ -184,6 +185,17 @@ comma
 id|UDP_STREAM_TIMEOUT
 )paren
 suffix:semicolon
+multiline_comment|/* Also, more likely to be important, and not a probe */
+id|set_bit
+c_func
+(paren
+id|IPS_ASSURED_BIT
+comma
+op_amp
+id|conntrack-&gt;status
+)paren
+suffix:semicolon
+)brace
 r_else
 id|ip_ct_refresh
 c_func

@@ -38,6 +38,7 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_tcp.h&gt;
 macro_line|#ifdef CONFIG_NF_DEBUG
 DECL|macro|IP_NF_ASSERT
 mdefine_line|#define IP_NF_ASSERT(x)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!(x))&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;/* Wooah!  I&squot;m tripping my conntrack in a frenzy of&t;&bslash;&n;&t;&t;   netplay... */&t;&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot;NF_IP_ASSERT: %s:%i(%s)&bslash;n&quot;,&t;&t;&t;&bslash;&n;&t;&t;       __FILE__, __LINE__, __FUNCTION__);&t;&t;&bslash;&n;} while(0)
@@ -94,6 +95,22 @@ l_int|1
 op_lshift
 id|IPS_CONFIRMED_BIT
 )paren
+comma
+multiline_comment|/* Conntrack should never be early-expired. */
+DECL|enumerator|IPS_ASSURED_BIT
+id|IPS_ASSURED_BIT
+op_assign
+l_int|4
+comma
+DECL|enumerator|IPS_ASSURED
+id|IPS_ASSURED
+op_assign
+(paren
+l_int|1
+op_lshift
+id|IPS_ASSURED_BIT
+)paren
+comma
 )brace
 suffix:semicolon
 DECL|struct|ip_conntrack_expect
@@ -106,11 +123,28 @@ r_struct
 id|list_head
 id|list
 suffix:semicolon
-multiline_comment|/* We expect this tuple, but DON&squot;T CARE ABOUT THE SOURCE&n;&t;   per-protocol part. */
+multiline_comment|/* We expect this tuple, with the following mask */
 DECL|member|tuple
+DECL|member|mask
 r_struct
 id|ip_conntrack_tuple
 id|tuple
+comma
+id|mask
+suffix:semicolon
+multiline_comment|/* Function to call after setup and insertion */
+DECL|member|expectfn
+r_int
+(paren
+op_star
+id|expectfn
+)paren
+(paren
+r_struct
+id|ip_conntrack
+op_star
+r_new
+)paren
 suffix:semicolon
 multiline_comment|/* The conntrack we are part of (set iff we&squot;re live) */
 DECL|member|expectant
@@ -193,10 +227,10 @@ suffix:semicolon
 multiline_comment|/* Storage reserved for other modules: */
 r_union
 (brace
-DECL|member|tcp_state
-r_int
-multiline_comment|/*enum tcp_conntrack*/
-id|tcp_state
+DECL|member|tcp
+r_struct
+id|ip_ct_tcp
+id|tcp
 suffix:semicolon
 DECL|member|proto
 )brace

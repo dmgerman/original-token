@@ -218,7 +218,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
+multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;__down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/kernel/semaphore.c&n; */
 DECL|function|down
 r_extern
 r_inline

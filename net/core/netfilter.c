@@ -2441,6 +2441,8 @@ comma
 id|info-&gt;okfn
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|NF_DROP
 suffix:colon

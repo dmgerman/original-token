@@ -16,14 +16,16 @@ r_struct
 id|list_head
 id|list
 suffix:semicolon
-multiline_comment|/* Here&squot;s the protocol and dst we care about. */
-DECL|member|protocol
-id|u_int16_t
-id|protocol
+multiline_comment|/* Mask of things we will help: vs. tuple from server */
+DECL|member|tuple
+r_struct
+id|ip_conntrack_tuple
+id|tuple
 suffix:semicolon
-DECL|member|protocol_dst
-id|u_int16_t
-id|protocol_dst
+DECL|member|mask
+r_struct
+id|ip_conntrack_tuple
+id|mask
 suffix:semicolon
 multiline_comment|/* Helper function: returns verdict */
 DECL|member|help

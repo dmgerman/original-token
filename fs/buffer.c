@@ -3441,6 +3441,12 @@ op_amp
 id|lru_list_lock
 )paren
 suffix:semicolon
+id|touch_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
 r_return
 id|bh
 suffix:semicolon

@@ -597,6 +597,12 @@ op_plus
 id|iph-&gt;ihl
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|udph-&gt;check
+)paren
+multiline_comment|/* 0 is a special case meaning no checksum */
 id|udph-&gt;check
 op_assign
 id|cheat_check
