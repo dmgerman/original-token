@@ -1460,13 +1460,9 @@ c_func
 (paren
 )paren
 )paren
-id|shrink_mmap
-c_func
-(paren
-id|i
-comma
-id|gfp_mask
-)paren
+id|state
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond

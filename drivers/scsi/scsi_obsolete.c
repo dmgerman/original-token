@@ -1661,9 +1661,9 @@ op_rshift
 l_int|1
 )paren
 )paren
-multiline_comment|/* FIXME: last_reset == 0 is allowed&n;                 *  &amp;&amp; !(SCpnt-&gt;host-&gt;last_reset &gt; 0 */
+multiline_comment|/* FIXME: last_reset == 0 is allowed */
 op_logical_and
-id|time_before
+id|time_after
 c_func
 (paren
 id|jiffies

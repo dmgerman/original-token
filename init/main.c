@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bugs.h&gt;
 macro_line|#ifdef CONFIG_PCI
@@ -24,6 +25,9 @@ macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#  include &lt;asm/mtrr.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_APM
+macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
@@ -3745,6 +3749,14 @@ macro_line|#ifdef CONFIG_PARIDE_PG
 l_string|&quot;pg.&quot;
 comma
 id|pg_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_APM
+(brace
+l_string|&quot;apm=&quot;
+comma
+id|apm_setup
 )brace
 comma
 macro_line|#endif

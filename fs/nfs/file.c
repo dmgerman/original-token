@@ -836,48 +836,13 @@ r_return
 op_minus
 id|ENOLCK
 suffix:semicolon
-multiline_comment|/* If unlocking a file region, flush dirty pages (unless we&squot;ve&n;&t; * been killed by a signal, that is). */
-r_if
-c_cond
-(paren
-id|cmd
-op_eq
-id|F_SETLK
-op_logical_and
-id|fl-&gt;fl_type
-op_eq
-id|F_UNLCK
-op_logical_and
-op_logical_neg
-id|signal_pending
-c_func
-(paren
-id|current
-)paren
-)paren
-(brace
+multiline_comment|/*&n;&t; * Flush all pending writes before doing anything&n;&t; * with locks..&n;&t; */
 id|status
 op_assign
-id|nfs_wb_area
+id|nfs_wb_all
 c_func
 (paren
 id|inode
-comma
-multiline_comment|/* current-&gt;pid  ?*/
-id|fl-&gt;fl_start
-comma
-id|fl-&gt;fl_end
-op_eq
-id|NLM_OFFSET_MAX
-ques
-c_cond
-l_int|0
-suffix:colon
-id|fl-&gt;fl_end
-op_minus
-id|fl-&gt;fl_start
-op_plus
-l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -890,7 +855,6 @@ l_int|0
 r_return
 id|status
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -913,7 +877,13 @@ l_int|0
 r_return
 id|status
 suffix:semicolon
-multiline_comment|/* Here, we could turn off write-back of pages in the&n;&t; * locked file region */
+multiline_comment|/*&n;&t; * Make sure we re-validate anything we&squot;ve got cached.&n;&t; * This makes locking act as a cache coherency point.&n;&t; */
+id|NFS_CACHEINV
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

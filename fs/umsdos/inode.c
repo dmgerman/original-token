@@ -158,6 +158,10 @@ l_string|&quot; Notify jacques@solucorp.qc.ca&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|inode-&gt;u.umsdos_i.i_patched
+op_assign
+l_int|0
+suffix:semicolon
 id|fat_put_inode
 (paren
 id|inode
@@ -376,22 +380,6 @@ suffix:semicolon
 )brace
 r_return
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Tells if an Umsdos inode has been &quot;patched&quot; once.&n; * Return != 0 if so.&n; */
-DECL|function|umsdos_isinit
-r_int
-id|umsdos_isinit
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* inode-&gt;u.umsdos_i.i_emd_owner != 0; */
 )brace
 multiline_comment|/*&n; * Connect the proper tables in the inode and add some info.&n; */
 multiline_comment|/* #Specification: inode / umsdos info&n; * The first time an inode is seen (inode-&gt;i_count == 1),&n; * the inode number of the EMD file which controls this inode&n; * is tagged to this inode. It allows operations such as&n; * notify_change to be handled.&n; */
@@ -617,7 +605,7 @@ op_star
 id|inode
 )paren
 (brace
-id|PRINTK
+id|Printk
 (paren
 (paren
 id|KERN_DEBUG
@@ -751,11 +739,13 @@ id|Printk
 c_func
 (paren
 (paren
-l_string|&quot;UMSDOS_notify_change: entering for %s/%s&bslash;n&quot;
+l_string|&quot;UMSDOS_notify_change: entering for %s/%s (%d)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
+comma
+id|inode-&gt;u.umsdos_i.i_patched
 )paren
 )paren
 suffix:semicolon
@@ -1176,7 +1166,7 @@ op_or
 id|ATTR_CTIME
 suffix:semicolon
 multiline_comment|/*&n;&t; * UMSDOS_notify_change is convenient to call here&n;&t; * to update the EMD entry associated with this inode.&n;&t; * But it has the side effect to re&quot;dirt&quot; the inode.&n;&t; */
-multiline_comment|/*      &n; * internal_notify_change (inode, &amp;newattrs);&n; * inode-&gt;i_state &amp;= ~I_DIRTY; / * FIXME: this doesn&squot;t work.  We need to remove ourselves from list on dirty inodes. /mn/ */
+multiline_comment|/*      &n; * UMSDOS_notify_change (inode, &amp;newattrs);&n;&n; * inode-&gt;i_state &amp;= ~I_DIRTY; / * FIXME: this doesn&squot;t work.  We need to remove ourselves from list on dirty inodes. /mn/ */
 )brace
 DECL|variable|umsdos_sops
 r_static
@@ -1279,7 +1269,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS dentry-Beta 0.83 &quot;
+l_string|&quot;UMSDOS dentry-pre 0.84 &quot;
 l_string|&quot;(compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION

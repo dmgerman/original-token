@@ -30,13 +30,6 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;proto.h&quot;
-macro_line|#if 1
-DECL|macro|DBG_SRM
-macro_line|# define DBG_SRM(args)         printk args
-macro_line|#else
-DECL|macro|DBG_SRM
-macro_line|# define DBG_SRM(args)
-macro_line|#endif
 DECL|variable|hwrpb
 r_struct
 id|hwrpb_struct
@@ -256,6 +249,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|alpha_machine_vector
+id|monet_mv
+suffix:semicolon
+r_extern
+r_struct
+id|alpha_machine_vector
 id|noname_mv
 suffix:semicolon
 r_extern
@@ -318,6 +316,62 @@ r_struct
 id|alpha_machine_vector
 id|xlt_mv
 suffix:semicolon
+DECL|macro|alcor_mv
+macro_line|#pragma weak alcor_mv
+DECL|macro|alphabook1_mv
+macro_line|#pragma weak alphabook1_mv
+DECL|macro|avanti_mv
+macro_line|#pragma weak avanti_mv
+DECL|macro|cabriolet_mv
+macro_line|#pragma weak cabriolet_mv
+DECL|macro|dp264_mv
+macro_line|#pragma weak dp264_mv
+DECL|macro|eb164_mv
+macro_line|#pragma weak eb164_mv
+DECL|macro|eb64p_mv
+macro_line|#pragma weak eb64p_mv
+DECL|macro|eb66_mv
+macro_line|#pragma weak eb66_mv
+DECL|macro|eb66p_mv
+macro_line|#pragma weak eb66p_mv
+DECL|macro|jensen_mv
+macro_line|#pragma weak jensen_mv
+DECL|macro|lx164_mv
+macro_line|#pragma weak lx164_mv
+DECL|macro|miata_mv
+macro_line|#pragma weak miata_mv
+DECL|macro|mikasa_mv
+macro_line|#pragma weak mikasa_mv
+DECL|macro|mikasa_primo_mv
+macro_line|#pragma weak mikasa_primo_mv
+DECL|macro|monet_mv
+macro_line|#pragma weak monet_mv
+DECL|macro|noname_mv
+macro_line|#pragma weak noname_mv
+DECL|macro|noritake_mv
+macro_line|#pragma weak noritake_mv
+DECL|macro|noritake_primo_mv
+macro_line|#pragma weak noritake_primo_mv
+DECL|macro|p2k_mv
+macro_line|#pragma weak p2k_mv
+DECL|macro|pc164_mv
+macro_line|#pragma weak pc164_mv
+DECL|macro|rawhide_mv
+macro_line|#pragma weak rawhide_mv
+DECL|macro|ruffian_mv
+macro_line|#pragma weak ruffian_mv
+DECL|macro|sable_mv
+macro_line|#pragma weak sable_mv
+DECL|macro|sable_gamma_mv
+macro_line|#pragma weak sable_gamma_mv
+DECL|macro|sx164_mv
+macro_line|#pragma weak sx164_mv
+DECL|macro|takara_mv
+macro_line|#pragma weak takara_mv
+DECL|macro|xl_mv
+macro_line|#pragma weak xl_mv
+DECL|macro|xlt_mv
+macro_line|#pragma weak xlt_mv
 r_void
 id|__init
 DECL|function|setup_arch
@@ -608,7 +662,6 @@ id|cpu-&gt;type
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ALPHA_GENERIC
 r_if
 c_cond
 (paren
@@ -641,11 +694,20 @@ id|hwrpb-&gt;sys_variation
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|vec
+op_ne
+op_amp
+id|alpha_mv
+)paren
 id|alpha_mv
 op_assign
 op_star
 id|vec
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
 multiline_comment|/* Assume that we&squot;ve booted from SRM if we havn&squot;t booted from MILO.&n;&t;   Detect the later by looking for &quot;MILO&quot; in the system serial nr.  */
 id|alpha_using_srm
 op_assign
@@ -666,43 +728,6 @@ l_int|4
 op_ne
 l_int|0
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* Once we&squot;re sure we can reliably identify systems, we should&n;&t;   simply panic as we do above.  */
-r_if
-c_cond
-(paren
-id|vec
-op_ne
-op_amp
-id|alpha_mv
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;WARNING: Not configured for system type: %s%s%s &quot;
-l_string|&quot;(%ld %ld)&bslash;nContinuing with trepidation...&bslash;n&quot;
-comma
-id|type_name
-comma
-(paren
-op_star
-id|var_name
-ques
-c_cond
-l_string|&quot; variation &quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-comma
-id|var_name
-comma
-id|hwrpb-&gt;sys_type
-comma
-id|hwrpb-&gt;sys_variation
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif
 id|printk
 c_func
@@ -1446,7 +1471,6 @@ r_int
 id|cpu
 )paren
 (brace
-macro_line|#ifdef CONFIG_ALPHA_GENERIC
 r_static
 r_struct
 id|alpha_machine_vector
@@ -1560,9 +1584,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* Yukon */
-op_amp
-id|dp264_mv
+l_int|NULL
 comma
+multiline_comment|/* Tsunami -- see variation.  */
 l_int|NULL
 comma
 multiline_comment|/* Wildfire */
@@ -1667,6 +1691,52 @@ id|eb66_mv
 comma
 op_amp
 id|eb66p_mv
+)brace
+suffix:semicolon
+r_static
+r_struct
+id|alpha_machine_vector
+op_star
+id|tsunami_vecs
+(braket
+)braket
+id|__initlocaldata
+op_assign
+(brace
+l_int|NULL
+comma
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* dp164 */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* warhol */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* windjammer */
+op_amp
+id|monet_mv
+comma
+multiline_comment|/* monet */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* clipper */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* goldrush */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* webbrick */
+op_amp
+id|dp264_mv
+comma
+multiline_comment|/* catamaran */
 )brace
 suffix:semicolon
 multiline_comment|/* ??? Do we need to distinguish between Rawhides?  */
@@ -1877,6 +1947,32 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|ST_DEC_TSUNAMI
+suffix:colon
+r_if
+c_cond
+(paren
+id|member
+OL
+id|N
+c_func
+(paren
+id|tsunami_indices
+)paren
+)paren
+id|vec
+op_assign
+id|tsunami_vecs
+(braket
+id|tsunami_indices
+(braket
+id|member
+)braket
+)braket
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|ST_DEC_1000
 suffix:colon
 id|cpu
@@ -1974,13 +2070,6 @@ suffix:semicolon
 r_return
 id|vec
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* TODO: verify that the system is of the type for which we&n;&t;   were configured.  For now, cop out and return success.  */
-r_return
-op_amp
-id|alpha_mv
-suffix:semicolon
-macro_line|#endif /* GENERIC */
 )brace
 r_static
 r_struct
@@ -1997,7 +2086,6 @@ op_star
 id|name
 )paren
 (brace
-macro_line|#ifdef CONFIG_ALPHA_GENERIC
 r_static
 r_struct
 id|alpha_machine_vector
@@ -2049,6 +2137,9 @@ id|mikasa_mv
 comma
 op_amp
 id|mikasa_primo_mv
+comma
+op_amp
+id|monet_mv
 comma
 op_amp
 id|noname_mv
@@ -2151,28 +2242,6 @@ suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|strcasecmp
-c_func
-(paren
-id|alpha_mv.vector_name
-comma
-id|name
-)paren
-op_eq
-l_int|0
-)paren
-r_return
-op_amp
-id|alpha_mv
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_void

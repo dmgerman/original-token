@@ -2,11 +2,18 @@ macro_line|#ifndef _LINUX_LINKAGE_H
 DECL|macro|_LINUX_LINKAGE_H
 mdefine_line|#define _LINUX_LINKAGE_H
 macro_line|#ifdef __cplusplus
+DECL|macro|CPP_ASMLINKAGE
+mdefine_line|#define CPP_ASMLINKAGE extern &quot;C&quot;
+macro_line|#else
+DECL|macro|CPP_ASMLINKAGE
+mdefine_line|#define CPP_ASMLINKAGE
+macro_line|#endif
+macro_line|#if defined __i386__ &amp;&amp; (__GNUC__ &gt; 2 || __GNUC_MINOR__ &gt; 7)
 DECL|macro|asmlinkage
-mdefine_line|#define asmlinkage extern &quot;C&quot;
+mdefine_line|#define asmlinkage CPP_ASMLINKAGE __attribute__((regparm(0)))
 macro_line|#else
 DECL|macro|asmlinkage
-mdefine_line|#define asmlinkage
+mdefine_line|#define asmlinkage CPP_ASMLINKAGE
 macro_line|#endif
 DECL|macro|SYMBOL_NAME_STR
 mdefine_line|#define SYMBOL_NAME_STR(X) #X

@@ -445,6 +445,7 @@ r_struct
 id|swap_list_t
 id|swap_list
 suffix:semicolon
+id|asmlinkage
 r_int
 id|sys_swapoff
 c_func
@@ -454,6 +455,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
+id|asmlinkage
 r_int
 id|sys_swapon
 c_func

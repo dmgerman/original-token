@@ -20,23 +20,6 @@ macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq.h&quot;
 macro_line|#include &quot;bios32.h&quot;
 macro_line|#include &quot;machvec.h&quot;
-DECL|variable|hwrpb
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
-multiline_comment|/* hwrpb-&gt;sys_variation helpers */
-DECL|macro|MEMBER_ID
-mdefine_line|#define MEMBER_ID(x) (((x)&gt;&gt;10)&amp;0x3f)
-DECL|macro|DP264_ID
-mdefine_line|#define DP264_ID&t;1
-DECL|macro|MONET_ID
-mdefine_line|#define MONET_ID&t;4
-DECL|macro|GOLDRUSH_ID
-mdefine_line|#define GOLDRUSH_ID&t;6
-DECL|macro|WEBBRICK_ID
-mdefine_line|#define WEBBRICK_ID&t;7
 DECL|macro|dev2hose
 mdefine_line|#define dev2hose(d) (bus2hose[(d)-&gt;bus-&gt;number]-&gt;pci_hose_index)
 multiline_comment|/*&n; * HACK ALERT! only CPU#0 is used currently&n; */
@@ -1104,20 +1087,38 @@ comma
 id|DEFAULT_MEM_BASE
 )paren
 suffix:semicolon
-multiline_comment|/* must do map and/or swizzle different on some */
-r_switch
-c_cond
-(paren
-id|MEMBER_ID
+id|common_pci_fixup
 c_func
 (paren
-id|hwrpb-&gt;sys_variation
+id|dp264_map_irq
+comma
+id|common_swizzle
 )paren
+suffix:semicolon
+id|SMC669_Init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+id|__init
+DECL|function|monet_pci_fixup
+id|monet_pci_fixup
+c_func
+(paren
+r_void
 )paren
 (brace
-r_case
-id|MONET_ID
-suffix:colon
+id|layout_all_busses
+c_func
+(paren
+id|DEFAULT_IO_BASE
+comma
+id|DEFAULT_MEM_BASE
+)paren
+suffix:semicolon
 id|common_pci_fixup
 c_func
 (paren
@@ -1128,38 +1129,13 @@ id|monet_swizzle
 suffix:semicolon
 multiline_comment|/* es1888_init(); */
 multiline_comment|/* later? */
-r_break
-suffix:semicolon
-r_case
-id|DP264_ID
-suffix:colon
-r_case
-id|GOLDRUSH_ID
-suffix:colon
-r_case
-id|WEBBRICK_ID
-suffix:colon
-r_default
-suffix:colon
-id|common_pci_fixup
-c_func
-(paren
-id|dp264_map_irq
-comma
-id|common_swizzle
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* end MEMBER_ID switch */
 id|SMC669_Init
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The System Vector&n; */
+multiline_comment|/*&n; * The System Vectors&n; */
 DECL|variable|__initmv
 r_struct
 id|alpha_machine_vector
@@ -1238,4 +1214,77 @@ c_func
 (paren
 id|dp264
 )paren
+r_struct
+id|alpha_machine_vector
+id|monet_mv
+id|__initmv
+op_assign
+(brace
+id|vector_name
+suffix:colon
+l_string|&quot;Monet&quot;
+comma
+id|DO_EV6_MMU
+comma
+id|DO_DEFAULT_RTC
+comma
+id|DO_TSUNAMI_IO
+comma
+id|DO_TSUNAMI_BUS
+comma
+id|machine_check
+suffix:colon
+id|tsunami_machine_check
+comma
+id|max_dma_address
+suffix:colon
+id|ALPHA_MAX_DMA_ADDRESS
+comma
+id|nr_irqs
+suffix:colon
+l_int|64
+comma
+id|irq_probe_mask
+suffix:colon
+id|_PROBE_MASK
+c_func
+(paren
+l_int|64
+)paren
+comma
+id|update_irq_hw
+suffix:colon
+id|dp264_update_irq_hw
+comma
+id|ack_irq
+suffix:colon
+id|generic_ack_irq
+comma
+id|device_interrupt
+suffix:colon
+id|dp264_device_interrupt
+comma
+id|init_arch
+suffix:colon
+id|tsunami_init_arch
+comma
+id|init_irq
+suffix:colon
+id|dp264_init_irq
+comma
+id|init_pit
+suffix:colon
+id|generic_init_pit
+comma
+id|pci_fixup
+suffix:colon
+id|monet_pci_fixup
+comma
+id|kill_arch
+suffix:colon
+id|generic_kill_arch
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* No alpha_mv alias for monet, since we compile it in unconditionally&n;   with DP264; setup_arch knows how to cope.  */
 eof

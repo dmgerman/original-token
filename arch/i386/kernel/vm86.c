@@ -60,7 +60,6 @@ id|regs
 )paren
 suffix:semicolon
 DECL|function|save_v86_state
-id|asmlinkage
 r_struct
 id|pt_regs
 op_star

@@ -4286,6 +4286,7 @@ id|rdentry
 r_goto
 id|out_nfserr
 suffix:semicolon
+multiline_comment|/*&n;&t; * FIXME!!&n;&t; *&n;&t; * This should do a double-lock on both rdentry and the parent&n;&t; */
 id|err
 op_assign
 id|fh_lock_parent

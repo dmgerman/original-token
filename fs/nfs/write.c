@@ -1885,33 +1885,6 @@ id|pid
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write back everything in a specific area for locking purposes..&n; */
-r_int
-DECL|function|nfs_wb_area
-id|nfs_wb_area
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-id|off_t
-id|offset
-comma
-id|off_t
-id|len
-)paren
-(brace
-id|NFS_WB
-c_func
-(paren
-id|inode
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Write back and invalidate. Sometimes we can&squot;t leave the stuff&n; * hanging if we can&squot;t write it out.&n; */
 r_int
 DECL|function|nfs_wbinval

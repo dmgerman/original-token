@@ -3502,13 +3502,6 @@ id|inode-&gt;i_ino
 r_goto
 id|end_rmdir
 suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Prune any child dentries so that this dentry becomes negative.&n;&t; */
 r_if
 c_cond
@@ -3600,13 +3593,6 @@ op_increment
 id|event
 suffix:semicolon
 )brace
-id|up
-c_func
-(paren
-op_amp
-id|inode-&gt;i_sem
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3872,18 +3858,6 @@ id|retval
 op_assign
 op_minus
 id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|S_ISDIR
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-r_goto
-id|end_unlink
 suffix:semicolon
 r_if
 c_cond

@@ -57,7 +57,7 @@ r_void
 multiline_comment|/* special register calling convention */
 )paren
 suffix:semicolon
-r_extern
+id|asmlinkage
 r_void
 id|__down
 c_func
@@ -68,7 +68,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-r_extern
+id|asmlinkage
 r_int
 id|__down_interruptible
 c_func
@@ -79,7 +79,7 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-r_extern
+id|asmlinkage
 r_void
 id|__up
 c_func

@@ -390,7 +390,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Generic mapping function (not visible outside):&n; */
-multiline_comment|/*&n; * Remap an arbitrary physical address space into the kernel virtual&n; * address space. Needed when the kernel wants to access high addresses&n; * directly.&n; */
+multiline_comment|/*&n; * Remap an arbitrary physical address space into the kernel virtual&n; * address space. Needed when the kernel wants to access high addresses&n; * directly.&n; *&n; * NOTE! We need to allow non-page-aligned mappings too: we will obviously&n; * have to convert them into an offset in a page-aligned mapping, but the&n; * caller shouldn&squot;t need to know that small detail.&n; */
 DECL|function|__ioremap
 r_void
 op_star
@@ -418,6 +418,10 @@ r_struct
 id|vm_struct
 op_star
 id|area
+suffix:semicolon
+r_int
+r_int
+id|offset
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t remap the low PCI/ISA area, it&squot;s always mapped..&n;&t; */
 r_if
@@ -458,16 +462,16 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Mappings have to be page-aligned&n;&t; */
-r_if
-c_cond
-(paren
+id|offset
+op_assign
 id|phys_addr
 op_amp
 op_complement
 id|PAGE_MASK
-)paren
-r_return
-l_int|NULL
+suffix:semicolon
+id|phys_addr
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 id|size
 op_assign
@@ -475,6 +479,8 @@ id|PAGE_ALIGN
 c_func
 (paren
 id|size
+op_plus
+id|offset
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t allow mappings that wrap..&n;&t; */
@@ -546,7 +552,19 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|offset
+op_plus
+(paren
+r_char
+op_star
+)paren
 id|addr
+)paren
 suffix:semicolon
 )brace
 DECL|function|iounmap
@@ -570,7 +588,19 @@ r_return
 id|vfree
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|PAGE_MASK
+op_amp
+(paren
+r_int
+r_int
+)paren
 id|addr
+)paren
 )paren
 suffix:semicolon
 )brace

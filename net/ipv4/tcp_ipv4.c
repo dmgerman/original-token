@@ -884,6 +884,8 @@ op_assign
 id|high
 op_minus
 id|low
+op_plus
+l_int|1
 suffix:semicolon
 r_int
 id|rover

@@ -194,51 +194,24 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * The idle loop on a uniprocessor i386..&n; */
-DECL|function|sys_idle
-id|asmlinkage
+DECL|function|cpu_idle
+r_static
 r_int
-id|sys_idle
+id|cpu_idle
 c_func
 (paren
 r_void
+op_star
+id|unused
 )paren
 (brace
 r_int
 r_int
 id|start_idle
 op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|ret
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_ne
-l_int|0
-)paren
-r_goto
-id|out
+id|jiffies
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;priority
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -246,24 +219,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We are locked at this point. So we can safely call&n;&t;&t; *&t;the APM bios knowing only one CPU at a time will do&n;&t;&t; *&t;so.&n;&t;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|start_idle
-)paren
-(brace
-id|check_pgt_cache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|start_idle
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -298,13 +253,6 @@ l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
 )brace
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -312,28 +260,23 @@ id|current-&gt;need_resched
 )paren
 id|start_idle
 op_assign
-l_int|0
+id|jiffies
+suffix:semicolon
+id|current-&gt;policy
+op_assign
+id|SCHED_YIELD
 suffix:semicolon
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
+id|check_pgt_cache
 c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
+)brace
 )brace
 macro_line|#else
 multiline_comment|/*&n; *&t;This is being executed in task 0 &squot;user space&squot;.&n; */
@@ -347,10 +290,7 @@ op_star
 id|unused
 )paren
 (brace
-id|current-&gt;priority
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* endless idle loop with no priority at all */
 r_while
 c_loop
 (paren
@@ -368,38 +308,29 @@ op_logical_and
 op_logical_neg
 id|current-&gt;need_resched
 )paren
-(brace
-id|__asm
+id|__asm__
 c_func
 (paren
 l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
-)brace
-id|check_pgt_cache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|run_task_queue
-c_func
-(paren
-op_amp
-id|tq_scheduler
-)paren
-suffix:semicolon
-multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;counter
+id|current-&gt;policy
 op_assign
-l_int|0
+id|SCHED_YIELD
 suffix:semicolon
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|sys_idle
 id|asmlinkage
 r_int
@@ -430,7 +361,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * This routine reboots the machine by asking the keyboard&n; * controller to pulse the reset-line low. We try that for a while,&n; * and if it doesn&squot;t work, we do some other stupid things.&n; */
 DECL|variable|no_idt
 r_static
@@ -1529,6 +1459,8 @@ id|flags
 (brace
 r_int
 id|retval
+comma
+id|d0
 suffix:semicolon
 id|__asm__
 id|__volatile__
@@ -1541,18 +1473,24 @@ l_string|&quot;cmpl %%esp,%%esi&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent? */
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 multiline_comment|/* parent - jump */
-l_string|&quot;pushl %3&bslash;n&bslash;t&quot;
-multiline_comment|/* push argument */
-l_string|&quot;call *%4&bslash;n&bslash;t&quot;
+multiline_comment|/* Load the argument into eax, and push it.  That way, it does&n;&t;&t; * not matter whether the called function is compiled with&n;&t;&t; * -mregparm or not.  */
+l_string|&quot;movl %4,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;pushl %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;call *%5&bslash;n&bslash;t&quot;
 multiline_comment|/* call fn */
-l_string|&quot;movl %2,%0&bslash;n&bslash;t&quot;
+l_string|&quot;movl %3,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* exit */
 l_string|&quot;int $0x80&bslash;n&quot;
 l_string|&quot;1:&bslash;t&quot;
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=&amp;a&quot;
 (paren
 id|retval
+)paren
+comma
+l_string|&quot;=&amp;S&quot;
+(paren
+id|d0
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -1582,7 +1520,7 @@ op_or
 id|CLONE_VM
 )paren
 suffix:colon
-l_string|&quot;si&quot;
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return

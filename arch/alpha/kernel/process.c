@@ -392,12 +392,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|alpha_use_srm_setup
-)paren
-(brace
 id|reset_for_srm
 c_func
 (paren
@@ -409,7 +403,6 @@ c_func
 id|srm_hae
 )paren
 suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 multiline_comment|/* This has the effect of reseting the VGA video origin.  */
 id|take_over_console
@@ -436,15 +429,9 @@ r_int
 r_char
 id|control
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* I&squot;m not sure if i really need to disable interrupts here. */
-id|save_and_cli
+id|cli
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Reset periodic interrupt frequency.  */
@@ -483,10 +470,9 @@ c_func
 id|RTC_INTR_FLAGS
 )paren
 suffix:semicolon
-id|restore_flags
+id|sti
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
 )brace

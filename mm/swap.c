@@ -80,7 +80,7 @@ op_assign
 l_int|5
 comma
 multiline_comment|/* minimum percent buffer */
-l_int|25
+l_int|10
 comma
 multiline_comment|/* borrow percent buffer */
 l_int|60
@@ -95,7 +95,7 @@ op_assign
 l_int|5
 comma
 multiline_comment|/* minimum percent page cache */
-l_int|30
+l_int|15
 comma
 multiline_comment|/* borrow percent page cache */
 l_int|75

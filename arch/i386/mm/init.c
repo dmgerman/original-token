@@ -1224,7 +1224,7 @@ l_int|0x10000
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If it is an SMP machine we should know now, unless the&n;&t;&t; * configuration is in an EISA/MCA bus machine with an&n;&t;&t; * extended bios data area. &n;&t;&t; *&n;&t;&t; * there is a real-mode segmented pointer pointing to the&n;&t;&t; * 4K EBDA area at 0x40E, calculate and scan it here:&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If it is an SMP machine we should know now, unless the&n;&t;&t; * configuration is in an EISA/MCA bus machine with an&n;&t;&t; * extended bios data area. &n;&t;&t; *&n;&t;&t; * there is a real-mode segmented pointer pointing to the&n;&t;&t; * 4K EBDA area at 0x40E, calculate and scan it here.&n;&t;&t; *&n;&t;&t; * NOTE! There are Linux loaders that will corrupt the EBDA&n;&t;&t; * area, and as such this kind of SMP config may be less&n;&t;&t; * trustworthy, simply because the SMP table may have been&n;&t;&t; * stomped on during early boot.&n;&t;&t; */
 id|address
 op_assign
 op_star
@@ -1249,6 +1249,18 @@ c_func
 id|address
 comma
 l_int|0x1000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp_found_config
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;WARNING: MP table in the EBDA can be UNSAFE, contact linux-smp@vger.rutgers.edu if you experience SMP problems!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

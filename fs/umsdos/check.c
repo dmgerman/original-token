@@ -199,8 +199,7 @@ c_cond
 id|sb
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (has %c_sb=%d, %d)&quot;
 comma
@@ -216,18 +215,15 @@ id|MINOR
 id|sb-&gt;s_dev
 )paren
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (%c_sb is NULL)&quot;
 comma
 id|c
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -254,8 +250,7 @@ c_cond
 id|inode
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*   inode is %lu (i_count=%d)&quot;
@@ -263,7 +258,6 @@ comma
 id|inode-&gt;i_ino
 comma
 id|inode-&gt;i_count
-)paren
 )paren
 suffix:semicolon
 id|check_sb
@@ -280,24 +274,27 @@ id|inode-&gt;i_dentry.next
 )paren
 (brace
 multiline_comment|/* FIXME: does this work ? */
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (has i_dentry)&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (NO i_dentry)&quot;
 )paren
-)paren
 suffix:semicolon
 )brace
+id|printk
+(paren
+l_string|&quot; (i_patched=%d)&quot;
+comma
+id|inode-&gt;u.umsdos_i.i_patched
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -306,11 +303,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is NULL)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -324,11 +319,9 @@ op_amp
 id|umsdos_dir_inode_operations
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_dir_inode_operations)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -342,11 +335,9 @@ op_amp
 id|umsdos_file_inode_operations
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_file_inode_operations)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -360,11 +351,9 @@ op_amp
 id|umsdos_file_inode_operations_no_bmap
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_file_inode_operations_no_bmap)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -378,11 +367,9 @@ op_amp
 id|umsdos_file_inode_operations_readpage
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_file_inode_operations_readpage)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -396,11 +383,9 @@ op_amp
 id|umsdos_rdir_inode_operations
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_rdir_inode_operations)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -414,17 +399,15 @@ op_amp
 id|umsdos_symlink_inode_operations
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (i_op is umsdos_symlink_inode_operations)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
+id|printk
 (paren
 (paren
 l_string|&quot; (i_op is UNKNOWN: %p)&bslash;n&quot;
@@ -437,12 +420,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*   inode is NULL&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -489,14 +470,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;checkd_inode:  inode %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
-)paren
 )paren
 suffix:semicolon
 id|cur
@@ -526,12 +505,10 @@ op_logical_neg
 id|cur
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;checkd_inode: *** NULL reached. exit.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -571,12 +548,10 @@ op_eq
 id|cur-&gt;next
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;checkd_inode: *** cur=cur-&gt;next: normal exit.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -596,12 +571,10 @@ op_logical_neg
 id|ret
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;checkd_inode: *** ret dentry is NULL. exit.&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -649,8 +622,7 @@ id|ret-&gt;d_name.name
 )paren
 )paren
 suffix:semicolon
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;checkd_inode:   i_dentry is %.*s&bslash;n&quot;
@@ -661,7 +633,6 @@ r_int
 id|ret-&gt;d_name.len
 comma
 id|ret-&gt;d_name.name
-)paren
 )paren
 suffix:semicolon
 id|PRINTK
@@ -683,24 +654,20 @@ l_string|&quot;7...&quot;
 )paren
 suffix:semicolon
 macro_line|#if 1
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;checkd_inode: *** finished after count 1 (operator forced)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 macro_line|#endif&t;&t;
 )brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;checkd_inode: *** OVER LIMIT (loop?) !&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -726,8 +693,7 @@ c_cond
 id|parent
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*  parent(%d) dentry: %.*s&bslash;n&quot;
@@ -741,13 +707,11 @@ id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren
-)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*  checking dentry: %.*s&bslash;n&quot;
@@ -759,7 +723,6 @@ id|dentry-&gt;d_name.len
 comma
 id|dentry-&gt;d_name.name
 )paren
-)paren
 suffix:semicolon
 )brace
 id|check_inode
@@ -767,14 +730,12 @@ id|check_inode
 id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*   d_count=%d&quot;
 comma
 id|dentry-&gt;d_count
-)paren
 )paren
 suffix:semicolon
 id|check_sb
@@ -792,23 +753,19 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (d_op is NULL)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 l_string|&quot; (d_op is UNKNOWN: %p)&bslash;n&quot;
 comma
 id|dentry-&gt;d_op
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -834,14 +791,12 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*** check_dentry_path: %.60s&bslash;n&quot;
 comma
 id|desc
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -851,12 +806,10 @@ op_logical_neg
 id|dentry
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*** checking dentry... it is NULL !&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -872,8 +825,7 @@ id|dentry
 )paren
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*** checking dentry... it is ERR(%ld) !&bslash;n&quot;
@@ -882,7 +834,6 @@ id|PTR_ERR
 c_func
 (paren
 id|dentry
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -915,12 +866,10 @@ op_eq
 id|dentry-&gt;d_parent
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_DEBUG
 l_string|&quot;*** end checking dentry (root reached ok)&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 r_break
@@ -940,12 +889,10 @@ l_int|10
 )paren
 (brace
 multiline_comment|/* if infinite loop detected */
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;*** WARNING ! INFINITE LOOP ! check_dentry_path aborted !&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -956,12 +903,10 @@ op_logical_neg
 id|dentry
 )paren
 (brace
-id|Printk
-(paren
+id|printk
 (paren
 id|KERN_ERR
 l_string|&quot;*** WARNING ! NULL dentry ! check_dentry_path aborted !&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
 )brace

@@ -3512,6 +3512,14 @@ comma
 id|devc
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|hw_config-&gt;io_base
+comma
+l_int|16
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

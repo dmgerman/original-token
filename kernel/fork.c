@@ -558,9 +558,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|current-&gt;uid
-op_logical_or
 (paren
 id|nr_tasks
 OL
@@ -568,6 +565,9 @@ id|NR_TASKS
 op_minus
 id|MIN_TASKS_LEFT_FOR_ROOT
 )paren
+op_logical_or
+op_logical_neg
+id|current-&gt;uid
 )paren
 id|tslot
 op_assign

@@ -3497,6 +3497,7 @@ id|idx
 op_assign
 id|tty
 suffix:semicolon
+multiline_comment|/* FIXME: this is broken and&n;&t;probably causes ^D bug. tty-&gt;private_date does not (yet) point&n;&t;to a console, if keypress comes now, await armagedon. &n;&n;&t;also, driver-&gt;table is accessed from interrupt for vt case,&n;&t;and this does not look like atomic access at all. */
 r_if
 c_cond
 (paren

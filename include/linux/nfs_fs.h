@@ -842,20 +842,6 @@ comma
 id|pid_t
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|nfs_wb_area
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-id|off_t
-comma
-id|off_t
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Invalidate write-backs, possibly trying to write them&n; * back first..&n; */
 r_extern
 r_void

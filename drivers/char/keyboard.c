@@ -736,6 +736,23 @@ id|fg_console
 suffix:colon
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty
+op_logical_and
+(paren
+op_logical_neg
+id|tty-&gt;driver_data
+)paren
+)paren
+(brace
+multiline_comment|/* This is to workaround ugly bug in tty_io.c, which&n;                   does not do locking when it should */
+id|tty
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|kbd
 op_assign
 id|kbd_table

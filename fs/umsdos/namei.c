@@ -3344,14 +3344,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Lock the directory, then check whether it&squot;s empty.&n;&t; */
-id|down
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_inode-&gt;i_sem
-)paren
-suffix:semicolon
 multiline_comment|/* check whether the EMD is empty */
 id|ret
 op_assign
@@ -3474,13 +3466,6 @@ l_int|2
 id|ret
 op_assign
 l_int|0
-suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_inode-&gt;i_sem
-)paren
 suffix:semicolon
 r_if
 c_cond
