@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acmacros.h - C macros for the entire subsystem.&n; *       $Revision: 56 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acmacros.h - C macros for the entire subsystem.&n; *       $Revision: 59 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACMACROS_H__
 DECL|macro|__ACMACROS_H__
@@ -46,6 +46,21 @@ DECL|macro|LOW_LIMIT
 mdefine_line|#define LOW_LIMIT(w)                    ((u16) ((w) &amp; 0x0000FFFF))
 DECL|macro|HI_LIMIT
 mdefine_line|#define HI_LIMIT(b)                     ((u8) (((b) &amp; 0x00FF0000) &gt;&gt; 16))
+macro_line|#ifdef _IA16
+DECL|macro|ACPI_GET_ADDRESS
+mdefine_line|#define ACPI_GET_ADDRESS(a)             ((a).lo)
+DECL|macro|ACPI_STORE_ADDRESS
+mdefine_line|#define ACPI_STORE_ADDRESS(a,b)         {(a).hi=0;(a).lo=(b);}
+DECL|macro|ACPI_VALID_ADDRESS
+mdefine_line|#define ACPI_VALID_ADDRESS(a)           ((a).hi &amp;&amp; (a).lo)
+macro_line|#else
+DECL|macro|ACPI_GET_ADDRESS
+mdefine_line|#define ACPI_GET_ADDRESS(a)             (a)
+DECL|macro|ACPI_STORE_ADDRESS
+mdefine_line|#define ACPI_STORE_ADDRESS(a,b)         ((a)=(b))
+DECL|macro|ACPI_VALID_ADDRESS
+mdefine_line|#define ACPI_VALID_ADDRESS(a)           (a)
+macro_line|#endif
 multiline_comment|/*&n;  * Extract a byte of data using a pointer.  Any more than a byte and we&n;  * get into potential aligment issues -- see the STORE macros below&n;  */
 DECL|macro|GET8
 mdefine_line|#define GET8(addr)                      (*(u8*)(addr))
@@ -141,10 +156,17 @@ DECL|macro|ACPI_PCI_FUNCTION
 mdefine_line|#define ACPI_PCI_FUNCTION(a)            (u32) ((((a) &amp; ACPI_PCI_FUNCTION_MASK) &gt;&gt; 16))
 DECL|macro|ACPI_PCI_DEVICE
 mdefine_line|#define ACPI_PCI_DEVICE(a)              (u32) ((((a) &amp; ACPI_PCI_DEVICE_MASK) &gt;&gt; 32))
+macro_line|#ifndef _IA16
 DECL|macro|ACPI_PCI_REGISTER
 mdefine_line|#define ACPI_PCI_REGISTER(a)            (u32) (((a) &amp; ACPI_PCI_REGISTER_MASK))
 DECL|macro|ACPI_PCI_DEVFUN
 mdefine_line|#define ACPI_PCI_DEVFUN(a)              (u32) ((ACPI_PCI_DEVICE(a) &lt;&lt; 16) | ACPI_PCI_FUNCTION(a))
+macro_line|#else
+DECL|macro|ACPI_PCI_REGISTER
+mdefine_line|#define ACPI_PCI_REGISTER(a)            (u32) (((a) &amp; 0x0000FFFF))
+DECL|macro|ACPI_PCI_DEVFUN
+mdefine_line|#define ACPI_PCI_DEVFUN(a)              (u32) ((((a) &amp; 0xFFFF0000) &gt;&gt; 16))
+macro_line|#endif
 multiline_comment|/*&n; * An ACPI_HANDLE (which is actually an ACPI_NAMESPACE_NODE *) can appear in some contexts,&n; * such as on ap_obj_stack, where a pointer to an ACPI_OPERAND_OBJECT can also&n; * appear.  This macro is used to distinguish them.&n; *&n; * The Data_type field is the first field in both structures.&n; */
 DECL|macro|VALID_DESCRIPTOR_TYPE
 mdefine_line|#define VALID_DESCRIPTOR_TYPE(d,t)      (((ACPI_NAMESPACE_NODE *)d)-&gt;data_type == t)

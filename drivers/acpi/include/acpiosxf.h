@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: acpiosd.h - All interfaces to the OS-dependent layer.  These&n; *                   interfaces must be implemented by the OS-dependent&n; *                   front-end to the ACPI subsystem.&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: acpiosxf.h - All interfaces to the OS-dependent layer.  These&n; *                    interfaces must be implemented by the OS-dependent&n; *                    front-end to the ACPI subsystem.&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACPIOSD_H__
 DECL|macro|__ACPIOSD_H__
@@ -6,14 +6,14 @@ mdefine_line|#define __ACPIOSD_H__
 macro_line|#include &quot;acenv.h&quot;
 macro_line|#include &quot;actypes.h&quot;
 multiline_comment|/* Priorities for Acpi_os_queue_for_execution */
-DECL|macro|OSD_PRIORITY_HIGH
-mdefine_line|#define OSD_PRIORITY_HIGH   1
-DECL|macro|OSD_PRIORITY_MED
-mdefine_line|#define OSD_PRIORITY_MED    2
-DECL|macro|OSD_PRIORITY_LO
-mdefine_line|#define OSD_PRIORITY_LO     3
 DECL|macro|OSD_PRIORITY_GPE
-mdefine_line|#define OSD_PRIORITY_GPE    OSD_PRIORITY_HIGH
+mdefine_line|#define OSD_PRIORITY_GPE    1
+DECL|macro|OSD_PRIORITY_HIGH
+mdefine_line|#define OSD_PRIORITY_HIGH   2
+DECL|macro|OSD_PRIORITY_MED
+mdefine_line|#define OSD_PRIORITY_MED    3
+DECL|macro|OSD_PRIORITY_LO
+mdefine_line|#define OSD_PRIORITY_LO     4
 DECL|macro|ACPI_NO_UNIT_LIMIT
 mdefine_line|#define ACPI_NO_UNIT_LIMIT  ((u32) -1)
 DECL|macro|ACPI_MUTEX_SEM

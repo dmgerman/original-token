@@ -1299,7 +1299,31 @@ id|nfs3_anyaccess
 )braket
 op_assign
 (brace
-multiline_comment|/* XXX: should we try to cover read/write here for clients that&n;     * rely on us to do their access checking for special files? */
+multiline_comment|/* Some clients - Solaris 2.6 at least, make an access call&n;&t; * to the server to check for access for things like /dev/null&n;&t; * (which really, the server doesn&squot;t care about).  So&n;&t; * We provide simple access checking for them, looking&n;&t; * mainly at mode bits&n;&t; */
+(brace
+id|NFS3_ACCESS_READ
+comma
+id|MAY_READ
+)brace
+comma
+(brace
+id|NFS3_ACCESS_EXECUTE
+comma
+id|MAY_EXEC
+)brace
+comma
+(brace
+id|NFS3_ACCESS_MODIFY
+comma
+id|MAY_WRITE
+)brace
+comma
+(brace
+id|NFS3_ACCESS_EXTEND
+comma
+id|MAY_WRITE
+)brace
+comma
 (brace
 l_int|0
 comma
@@ -6092,6 +6116,22 @@ id|current-&gt;fsgid
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* only care about readonly exports for files and&n;&t; * directories. links don&squot;t have meaningful write access,&n;&t; * and all else is local to the client&n;&t; */
+r_if
+c_cond
+(paren
+id|S_ISREG
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_or
+id|S_ISDIR
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
 r_if
 c_cond
 (paren

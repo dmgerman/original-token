@@ -1606,6 +1606,15 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page
+)paren
+)paren
 id|delete_from_swap_cache
 c_func
 (paren

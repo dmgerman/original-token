@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: cminit - Common ACPI subsystem initialization&n; *              $Revision: 89 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: cminit - Common ACPI subsystem initialization&n; *              $Revision: 91 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;achware.h&quot;
@@ -22,7 +22,7 @@ id|NATIVE_CHAR
 op_star
 id|register_name
 comma
-id|UINT64
+id|u32
 id|value
 )paren
 (brace
@@ -93,10 +93,7 @@ id|acpi_cm_fadt_register_error
 (paren
 l_string|&quot;PM1_CNT_LEN&quot;
 comma
-(paren
-id|u32
-)paren
-id|acpi_gbl_FADT-&gt;pm1_cnt_len
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -104,7 +101,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xpm1a_evt_blk.address
+)paren
 )paren
 (brace
 id|status
@@ -113,7 +113,7 @@ id|acpi_cm_fadt_register_error
 (paren
 l_string|&quot;PM1a_EVT_BLK&quot;
 comma
-id|acpi_gbl_FADT-&gt;Xpm1a_evt_blk.address
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -121,7 +121,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xpm1a_cnt_blk.address
+)paren
 )paren
 (brace
 id|status
@@ -130,7 +133,7 @@ id|acpi_cm_fadt_register_error
 (paren
 l_string|&quot;PM1a_CNT_BLK&quot;
 comma
-id|acpi_gbl_FADT-&gt;Xpm1a_cnt_blk.address
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -138,7 +141,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xpm_tmr_blk.address
+)paren
 )paren
 (brace
 id|status
@@ -147,7 +153,7 @@ id|acpi_cm_fadt_register_error
 (paren
 l_string|&quot;PM_TMR_BLK&quot;
 comma
-id|acpi_gbl_FADT-&gt;Xpm_tmr_blk.address
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -155,7 +161,10 @@ r_if
 c_cond
 (paren
 (paren
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xpm2_cnt_blk.address
+)paren
 op_logical_and
 op_logical_neg
 id|acpi_gbl_FADT-&gt;pm2_cnt_len
@@ -200,7 +209,10 @@ multiline_comment|/* length of GPE blocks must be a multiple of 2 */
 r_if
 c_cond
 (paren
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xgpe0blk.address
+)paren
 op_logical_and
 (paren
 id|acpi_gbl_FADT-&gt;gpe0blk_len
@@ -225,7 +237,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ACPI_VALID_ADDRESS
+(paren
 id|acpi_gbl_FADT-&gt;Xgpe1_blk.address
+)paren
 op_logical_and
 (paren
 id|acpi_gbl_FADT-&gt;gpe1_blk_len

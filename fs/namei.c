@@ -6990,7 +6990,7 @@ op_ne
 id|nd.mnt
 )paren
 r_goto
-id|out
+id|out_release
 suffix:semicolon
 id|new_dentry
 op_assign
@@ -7048,6 +7048,8 @@ op_amp
 id|nd.dentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
+id|out_release
+suffix:colon
 id|path_release
 c_func
 (paren

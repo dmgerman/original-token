@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: aclocal.h - Internal data types used across the ACPI subsystem&n; *       $Revision: 93 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: aclocal.h - Internal data types used across the ACPI subsystem&n; *       $Revision: 95 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACLOCAL_H__
 DECL|macro|__ACLOCAL_H__
@@ -235,9 +235,13 @@ mdefine_line|#define ANOBJ_END_OF_PEER_LIST      0x02
 DECL|macro|ANOBJ_DATA_WIDTH_32
 mdefine_line|#define ANOBJ_DATA_WIDTH_32         0x04     /* Parent table is 64-bits */
 DECL|macro|ANOBJ_METHOD_ARG
-mdefine_line|#define ANOBJ_METHOD_ARG            0x40
+mdefine_line|#define ANOBJ_METHOD_ARG            0x08
 DECL|macro|ANOBJ_METHOD_LOCAL
-mdefine_line|#define ANOBJ_METHOD_LOCAL          0x80
+mdefine_line|#define ANOBJ_METHOD_LOCAL          0x10
+DECL|macro|ANOBJ_METHOD_NO_RETVAL
+mdefine_line|#define ANOBJ_METHOD_NO_RETVAL      0x20
+DECL|macro|ANOBJ_METHOD_SOME_NO_RETVAL
+mdefine_line|#define ANOBJ_METHOD_SOME_NO_RETVAL 0x40
 multiline_comment|/*&n; * ACPI Table Descriptor.  One per ACPI table&n; */
 DECL|struct|acpi_table_desc
 r_typedef

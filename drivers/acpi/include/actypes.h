@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *       $Revision: 155 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Name: actypes.h - Common data types for the entire ACPI subsystem&n; *       $Revision: 159 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#ifndef __ACTYPES_H__
 DECL|macro|__ACTYPES_H__
@@ -117,6 +117,21 @@ r_int
 r_int
 id|UINT32
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|Lo
+id|UINT32
+id|Lo
+suffix:semicolon
+DECL|member|Hi
+id|UINT32
+id|Hi
+suffix:semicolon
+DECL|typedef|UINT64
+)brace
+id|UINT64
+suffix:semicolon
 DECL|typedef|NATIVE_UINT
 r_typedef
 id|UINT16
@@ -139,7 +154,8 @@ id|ACPI_IO_ADDRESS
 suffix:semicolon
 DECL|typedef|ACPI_PHYSICAL_ADDRESS
 r_typedef
-id|UINT32
+r_void
+op_star
 id|ACPI_PHYSICAL_ADDRESS
 suffix:semicolon
 DECL|macro|ALIGNED_ADDRESS_BOUNDARY
@@ -321,27 +337,35 @@ suffix:semicolon
 multiline_comment|/* Actually a ptr to an Node */
 multiline_comment|/*&n; * Acpi integer width. In ACPI version 1, integers are&n; * 32 bits.  In ACPI version 2, integers are 64 bits.&n; * Note that this pertains to the ACPI integer type only, not&n; * other integers used in the implementation of the ACPI CA&n; * subsystem.&n; */
 macro_line|#ifdef ACPI_NO_INTEGER64_SUPPORT
-multiline_comment|/* 32-bit Integers */
+multiline_comment|/* 32-bit integers only, no 64-bit support */
 DECL|typedef|ACPI_INTEGER
 r_typedef
 id|u32
 id|ACPI_INTEGER
 suffix:semicolon
 DECL|macro|ACPI_INTEGER_MAX
-mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT32_MAX;
+mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT32_MAX
 DECL|macro|ACPI_INTEGER_BIT_SIZE
 mdefine_line|#define ACPI_INTEGER_BIT_SIZE           32
+DECL|macro|ACPI_MAX_BCD_VALUE
+mdefine_line|#define ACPI_MAX_BCD_VALUE              99999999
+DECL|macro|ACPI_MAX_BCD_DIGITS
+mdefine_line|#define ACPI_MAX_BCD_DIGITS             8
 macro_line|#else
-multiline_comment|/* 64-bit Integers */
+multiline_comment|/* 64-bit integers */
 DECL|typedef|ACPI_INTEGER
 r_typedef
 id|UINT64
 id|ACPI_INTEGER
 suffix:semicolon
 DECL|macro|ACPI_INTEGER_MAX
-mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT64_MAX;
+mdefine_line|#define ACPI_INTEGER_MAX                ACPI_UINT64_MAX
 DECL|macro|ACPI_INTEGER_BIT_SIZE
 mdefine_line|#define ACPI_INTEGER_BIT_SIZE           64
+DECL|macro|ACPI_MAX_BCD_VALUE
+mdefine_line|#define ACPI_MAX_BCD_VALUE              9999999999999999
+DECL|macro|ACPI_MAX_BCD_DIGITS
+mdefine_line|#define ACPI_MAX_BCD_DIGITS             16
 macro_line|#endif
 multiline_comment|/*&n; * Constants with special meanings&n; */
 DECL|macro|ACPI_ROOT_OBJECT
@@ -1142,7 +1166,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|mapped_physical_address
-id|UINT64
+id|ACPI_PHYSICAL_ADDRESS
 id|mapped_physical_address
 suffix:semicolon
 DECL|member|mapped_logical_address

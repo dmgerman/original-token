@@ -1134,24 +1134,54 @@ op_assign
 l_int|0x0001
 )brace
 suffix:semicolon
+DECL|enum|sis900_revision_id
+r_enum
+id|sis900_revision_id
+(brace
+DECL|enumerator|SIS630A_900_REV
+DECL|enumerator|SIS630E_900_REV
+id|SIS630A_900_REV
+op_assign
+l_int|0x80
+comma
+id|SIS630E_900_REV
+op_assign
+l_int|0x81
+comma
+DECL|enumerator|SIS630S_900_REV
+DECL|enumerator|SIS630EA1_900_REV
+id|SIS630S_900_REV
+op_assign
+l_int|0x82
+comma
+id|SIS630EA1_900_REV
+op_assign
+l_int|0x83
+)brace
+suffix:semicolon
 DECL|enum|sis630_revision_id
 r_enum
 id|sis630_revision_id
 (brace
-DECL|enumerator|SIS630E_REV
-DECL|enumerator|SIS630EA1_REV
-id|SIS630E_REV
+DECL|enumerator|SIS630A0
+DECL|enumerator|SIS630A1
+id|SIS630A0
 op_assign
-l_int|0x81
+l_int|0x00
 comma
-id|SIS630EA1_REV
+id|SIS630A1
 op_assign
-l_int|0x83
+l_int|0x01
 comma
-DECL|enumerator|SIS630S_REV
-id|SIS630S_REV
+DECL|enumerator|SIS630B0
+DECL|enumerator|SIS630B1
+id|SIS630B0
 op_assign
-l_int|0x82
+l_int|0x10
+comma
+id|SIS630B1
+op_assign
+l_int|0x11
 )brace
 suffix:semicolon
 DECL|macro|FDX_CAPABLE_DUPLEX_UNKNOWN
@@ -1186,7 +1216,11 @@ multiline_comment|/* PCI stuff, should be move to pic.h */
 DECL|macro|PCI_DEVICE_ID_SI_900
 mdefine_line|#define PCI_DEVICE_ID_SI_900&t;0x900   
 DECL|macro|PCI_DEVICE_ID_SI_7016
-mdefine_line|#define PCI_DEVICE_ID_SI_7016&t;0x7016  
+mdefine_line|#define PCI_DEVICE_ID_SI_7016&t;0x7016
+DECL|macro|SIS630_VENDOR_ID
+mdefine_line|#define SIS630_VENDOR_ID        0x0630
+DECL|macro|SIS630_DEVICE_ID
+mdefine_line|#define SIS630_DEVICE_ID        0x1039
 multiline_comment|/* ioctl for accessing MII transceiver */
 DECL|macro|SIOCGMIIPHY
 mdefine_line|#define SIOCGMIIPHY (SIOCDEVPRIVATE)&t;&t;/* Get the PHY in use. */

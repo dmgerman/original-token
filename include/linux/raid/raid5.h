@@ -3,6 +3,129 @@ DECL|macro|_RAID5_H
 mdefine_line|#define _RAID5_H
 macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &lt;linux/raid/xor.h&gt;
+multiline_comment|/*&n; *&n; * Each stripe contains one buffer per disc.  Each buffer can be in&n; * one of a number of states determined by bh_state.  Changes between&n; * these states happen *almost* exclusively under a per-stripe&n; * spinlock.  Some very specific changes can happen in b_end_io, and&n; * these are not protected by the spin lock.&n; *&n; * The bh_state bits that are used to represent these states are:&n; *   BH_Uptodate, BH_Lock&n; *&n; * State Empty == !Uptodate, !Lock&n; *        We have no data, and there is no active request&n; * State Want == !Uptodate, Lock&n; *        A read request is being submitted for this block&n; * State Dirty == Uptodate, Lock&n; *        Some new data is in this buffer, and it is being written out&n; * State Clean == Uptodate, !Lock&n; *        We have valid data which is the same as on disc&n; *&n; * The possible state transitions are:&n; *&n; *  Empty -&gt; Want   - on read or write to get old data for  parity calc&n; *  Empty -&gt; Dirty  - on compute_parity to satisfy write/sync request.(RECONSTRUCT_WRITE)&n; *  Empty -&gt; Clean  - on compute_block when computing a block for failed drive&n; *  Want  -&gt; Empty  - on failed read&n; *  Want  -&gt; Clean  - on successful completion of read request&n; *  Dirty -&gt; Clean  - on successful completion of write request&n; *  Dirty -&gt; Clean  - on failed write&n; *  Clean -&gt; Dirty  - on compute_parity to satisfy write/sync (RECONSTRUCT or RMW)&n; *&n; * The Want-&gt;Empty, Want-&gt;Clean, Dirty-&gt;Clean, transitions&n; * all happen in b_end_io at interrupt time.&n; * Each sets the Uptodate bit before releasing the Lock bit.&n; * This leaves one multi-stage transition:&n; *    Want-&gt;Dirty-&gt;Clean&n; * This is safe because thinking that a Clean buffer is actually dirty&n; * will at worst delay some action, and the stripe will be scheduled&n; * for attention after the transition is complete.&n; *&n; * There is one possibility that is not covered by these states.  That&n; * is if one drive has failed and there is a spare being rebuilt.  We&n; * can&squot;t distinguish between a clean block that has been generated&n; * from parity calculations, and a clean block that has been&n; * successfully written to the spare ( or to parity when resyncing).&n; * To distingush these states we have a stripe bit STRIPE_INSYNC that&n; * is set whenever a write is scheduled to the spare, or to the parity&n; * disc if there is no spare.  A sync request clears this bit, and&n; * when we find it set with no buffers locked, we know the sync is&n; * complete.&n; *&n; * Buffers for the md device that arrive via make_request are attached&n; * to the appropriate stripe in one of two lists linked on b_reqnext.&n; * One list for read requests, one for write.  There should never be&n; * more than one buffer on the two lists together, but we are not&n; * guaranteed of that so we allow for more.&n; *&n; * If a buffer is on the read list when the associated cache buffer is&n; * Uptodate, the data is copied into the read buffer and it&squot;s b_end_io&n; * routine is called.  This may happen in the end_request routine only&n; * if the buffer has just successfully been read.  end_request should&n; * remove the buffers from the list and then set the Uptodate bit on&n; * the buffer.  Other threads may do this only if they first check&n; * that the Uptodate bit is set.  Once they have checked that they may&n; * take buffers off the read queue.&n; *&n; * When a buffer on the write_list is committed for write, it is&n; * marked clean, copied into the cache buffer, which is then marked&n; * dirty, and moved onto a third list, the written list.  Once both&n; * the parity block and the cached buffer are successfully written,&n; * any buffer on a written list can be returned with b_end_io.&n; *&n; * The write_list and read_list lists act as fifos.  They are protected by the&n; * device_lock which can be claimed when a stripe_lock is held.&n; * The device_lock is only for list manipulations and will only be held for a very&n; * short time.  It can be claimed from interrupts.&n; *&n; *&n; * Stripes in the stripe cache can be on one of two lists (or on&n; * neither).  The &quot;inactive_list&quot; contains stripes which are not&n; * currently being used for any request.  They can freely be reused&n; * for another stripe.  The &quot;handle_list&quot; contains stripes that need&n; * to be handled in some way.  Both of these are fifo queues.  Each&n; * stripe is also (potentially) linked to a hash bucket in the hash&n; * table so that it can be found by sector number.  Stripes that are&n; * not hashed must be on the inactive_list, and will normally be at&n; * the front.  All stripes start life this way.&n; *&n; * The inactive_list, handle_list and hash bucket lists are all protected by the&n; * device_lock.&n; *  - stripes on the inactive_list never have their stripe_lock held.&n; *  - stripes have a reference counter. If count==0, they are on a list.&n; *  - If a stripe might need handling, STRIPE_HANDLE is set.&n; *  - When refcount reaches zero, then if STRIPE_HANDLE it is put on&n; *    handle_list else inactive_list&n; *&n; * This, combined with the fact that STRIPE_HANDLE is only ever&n; * cleared while a stripe has a non-zero count means that if the&n; * refcount is 0 and STRIPE_HANDLE is set, then it is on the&n; * handle_list and if recount is 0 and STRIPE_HANDLE is not set, then&n; * the stripe is on inactive_list.&n; *&n; * The possible transitions are:&n; *  activate an unhashed/inactive stripe (get_active_stripe())&n; *     lockdev check-hash unlink-stripe cnt++ clean-stripe hash-stripe unlockdev&n; *  activate a hashed, possibly active stripe (get_active_stripe())&n; *     lockdev check-hash if(!cnt++)unlink-stripe unlockdev&n; *  attach a request to an active stripe (add_stripe_bh())&n; *     lockdev attach-buffer unlockdev&n; *  handle a stripe (handle_stripe())&n; *     lockstripe clrSTRIPE_HANDLE ... (lockdev check-buffers unlockdev) .. change-state .. record io needed unlockstripe schedule io&n; *  release an active stripe (release_stripe())&n; *     lockdev if (!--cnt) { if  STRIPE_HANDLE, add to handle_list else add to inactive-list } unlockdev&n; *&n; * The refcount counts each thread that have activated the stripe,&n; * plus raid5d if it is handling it, plus one for each active request&n; * on a cached buffer.&n; */
+DECL|struct|stripe_head
+r_struct
+id|stripe_head
+(brace
+DECL|member|hash_next
+DECL|member|hash_pprev
+r_struct
+id|stripe_head
+op_star
+id|hash_next
+comma
+op_star
+op_star
+id|hash_pprev
+suffix:semicolon
+multiline_comment|/* hash pointers */
+DECL|member|lru
+r_struct
+id|list_head
+id|lru
+suffix:semicolon
+multiline_comment|/* inactive_list or handle_list */
+DECL|member|raid_conf
+r_struct
+id|raid5_private_data
+op_star
+id|raid_conf
+suffix:semicolon
+DECL|member|bh_cache
+r_struct
+id|buffer_head
+op_star
+id|bh_cache
+(braket
+id|MD_SB_DISKS
+)braket
+suffix:semicolon
+multiline_comment|/* buffered copy */
+DECL|member|bh_read
+r_struct
+id|buffer_head
+op_star
+id|bh_read
+(braket
+id|MD_SB_DISKS
+)braket
+suffix:semicolon
+multiline_comment|/* read request buffers of the MD device */
+DECL|member|bh_write
+r_struct
+id|buffer_head
+op_star
+id|bh_write
+(braket
+id|MD_SB_DISKS
+)braket
+suffix:semicolon
+multiline_comment|/* write request buffers of the MD device */
+DECL|member|bh_written
+r_struct
+id|buffer_head
+op_star
+id|bh_written
+(braket
+id|MD_SB_DISKS
+)braket
+suffix:semicolon
+multiline_comment|/* write request buffers of the MD device that have been scheduled for write */
+DECL|member|sector
+r_int
+r_int
+id|sector
+suffix:semicolon
+multiline_comment|/* sector of this row */
+DECL|member|size
+r_int
+id|size
+suffix:semicolon
+multiline_comment|/* buffers size */
+DECL|member|pd_idx
+r_int
+id|pd_idx
+suffix:semicolon
+multiline_comment|/* parity disk index */
+DECL|member|state
+r_int
+r_int
+id|state
+suffix:semicolon
+multiline_comment|/* state flags */
+DECL|member|count
+id|atomic_t
+id|count
+suffix:semicolon
+multiline_comment|/* nr of active thread/requests */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|sync_redone
+r_int
+id|sync_redone
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Write method&n; */
+DECL|macro|RECONSTRUCT_WRITE
+mdefine_line|#define RECONSTRUCT_WRITE&t;1
+DECL|macro|READ_MODIFY_WRITE
+mdefine_line|#define READ_MODIFY_WRITE&t;2
+multiline_comment|/* not a write method, but a compute_parity mode */
+DECL|macro|CHECK_PARITY
+mdefine_line|#define&t;CHECK_PARITY&t;&t;3
+multiline_comment|/*&n; * Stripe state&n; */
+DECL|macro|STRIPE_ERROR
+mdefine_line|#define STRIPE_ERROR&t;&t;1
+DECL|macro|STRIPE_HANDLE
+mdefine_line|#define STRIPE_HANDLE&t;&t;2
+DECL|macro|STRIPE_SYNCING
+mdefine_line|#define&t;STRIPE_SYNCING&t;&t;3
+DECL|macro|STRIPE_INSYNC
+mdefine_line|#define&t;STRIPE_INSYNC&t;&t;4
 DECL|struct|disk_info
 r_struct
 id|disk_info
@@ -37,199 +160,6 @@ id|used_slot
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|stripe_head
-r_struct
-id|stripe_head
-(brace
-DECL|member|stripe_lock
-id|md_spinlock_t
-id|stripe_lock
-suffix:semicolon
-DECL|member|hash_next
-DECL|member|hash_pprev
-r_struct
-id|stripe_head
-op_star
-id|hash_next
-comma
-op_star
-op_star
-id|hash_pprev
-suffix:semicolon
-multiline_comment|/* hash pointers */
-DECL|member|free_next
-r_struct
-id|stripe_head
-op_star
-id|free_next
-suffix:semicolon
-multiline_comment|/* pool of free sh&squot;s */
-DECL|member|buffer_pool
-r_struct
-id|buffer_head
-op_star
-id|buffer_pool
-suffix:semicolon
-multiline_comment|/* pool of free buffers */
-DECL|member|bh_pool
-r_struct
-id|buffer_head
-op_star
-id|bh_pool
-suffix:semicolon
-multiline_comment|/* pool of free bh&squot;s */
-DECL|member|raid_conf
-r_struct
-id|raid5_private_data
-op_star
-id|raid_conf
-suffix:semicolon
-DECL|member|bh_old
-r_struct
-id|buffer_head
-op_star
-id|bh_old
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* disk image */
-DECL|member|bh_new
-r_struct
-id|buffer_head
-op_star
-id|bh_new
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* buffers of the MD device (present in buffer cache) */
-DECL|member|bh_copy
-r_struct
-id|buffer_head
-op_star
-id|bh_copy
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* copy on write of bh_new (bh_new can change from under us) */
-DECL|member|bh_req
-r_struct
-id|buffer_head
-op_star
-id|bh_req
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* copy of bh_new (only the buffer heads), queued to the lower levels */
-DECL|member|cmd_new
-r_int
-id|cmd_new
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* READ/WRITE for new */
-DECL|member|new
-r_int
-r_new
-(braket
-id|MD_SB_DISKS
-)braket
-suffix:semicolon
-multiline_comment|/* buffer added since the last handle_stripe() */
-DECL|member|sector
-r_int
-r_int
-id|sector
-suffix:semicolon
-multiline_comment|/* sector of this row */
-DECL|member|size
-r_int
-id|size
-suffix:semicolon
-multiline_comment|/* buffers size */
-DECL|member|pd_idx
-r_int
-id|pd_idx
-suffix:semicolon
-multiline_comment|/* parity disk index */
-DECL|member|nr_pending
-id|atomic_t
-id|nr_pending
-suffix:semicolon
-multiline_comment|/* nr of pending cmds */
-DECL|member|state
-r_int
-r_int
-id|state
-suffix:semicolon
-multiline_comment|/* state flags */
-DECL|member|cmd
-r_int
-id|cmd
-suffix:semicolon
-multiline_comment|/* stripe cmd */
-DECL|member|count
-id|atomic_t
-id|count
-suffix:semicolon
-multiline_comment|/* nr of waiters */
-DECL|member|write_method
-r_int
-id|write_method
-suffix:semicolon
-multiline_comment|/* reconstruct-write / read-modify-write */
-DECL|member|phase
-r_int
-id|phase
-suffix:semicolon
-multiline_comment|/* PHASE_BEGIN, ..., PHASE_COMPLETE */
-DECL|member|wait
-id|md_wait_queue_head_t
-id|wait
-suffix:semicolon
-multiline_comment|/* processes waiting for this stripe */
-DECL|member|sync_redone
-r_int
-id|sync_redone
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * Phase&n; */
-DECL|macro|PHASE_BEGIN
-mdefine_line|#define PHASE_BEGIN&t;&t;0
-DECL|macro|PHASE_READ_OLD
-mdefine_line|#define PHASE_READ_OLD&t;&t;1
-DECL|macro|PHASE_WRITE
-mdefine_line|#define PHASE_WRITE&t;&t;2
-DECL|macro|PHASE_READ
-mdefine_line|#define PHASE_READ&t;&t;3
-DECL|macro|PHASE_COMPLETE
-mdefine_line|#define PHASE_COMPLETE&t;&t;4
-multiline_comment|/*&n; * Write method&n; */
-DECL|macro|METHOD_NONE
-mdefine_line|#define METHOD_NONE&t;&t;0
-DECL|macro|RECONSTRUCT_WRITE
-mdefine_line|#define RECONSTRUCT_WRITE&t;1
-DECL|macro|READ_MODIFY_WRITE
-mdefine_line|#define READ_MODIFY_WRITE&t;2
-multiline_comment|/*&n; * Stripe state&n; */
-DECL|macro|STRIPE_LOCKED
-mdefine_line|#define STRIPE_LOCKED&t;&t;0
-DECL|macro|STRIPE_ERROR
-mdefine_line|#define STRIPE_ERROR&t;&t;1
-multiline_comment|/*&n; * Stripe commands&n; */
-DECL|macro|STRIPE_NONE
-mdefine_line|#define STRIPE_NONE&t;&t;0
-DECL|macro|STRIPE_WRITE
-mdefine_line|#define&t;STRIPE_WRITE&t;&t;1
-DECL|macro|STRIPE_READ
-mdefine_line|#define STRIPE_READ&t;&t;2
-DECL|macro|STRIPE_SYNC
-mdefine_line|#define&t;STRIPE_SYNC&t;&t;3
 DECL|struct|raid5_private_data
 r_struct
 id|raid5_private_data
@@ -293,25 +223,6 @@ id|working_disks
 comma
 id|failed_disks
 suffix:semicolon
-DECL|member|next_sector
-r_int
-r_int
-id|next_sector
-suffix:semicolon
-DECL|member|nr_handle
-id|atomic_t
-id|nr_handle
-suffix:semicolon
-DECL|member|next_free_stripe
-r_struct
-id|stripe_head
-op_star
-id|next_free_stripe
-suffix:semicolon
-DECL|member|nr_stripes
-id|atomic_t
-id|nr_stripes
-suffix:semicolon
 DECL|member|resync_parity
 r_int
 id|resync_parity
@@ -320,36 +231,21 @@ DECL|member|max_nr_stripes
 r_int
 id|max_nr_stripes
 suffix:semicolon
-DECL|member|clock
-r_int
-id|clock
-suffix:semicolon
-DECL|member|nr_hashed_stripes
-id|atomic_t
-id|nr_hashed_stripes
-suffix:semicolon
-DECL|member|nr_locked_stripes
-id|atomic_t
-id|nr_locked_stripes
-suffix:semicolon
-DECL|member|nr_pending_stripes
-id|atomic_t
-id|nr_pending_stripes
-suffix:semicolon
-DECL|member|nr_cached_stripes
-id|atomic_t
-id|nr_cached_stripes
-suffix:semicolon
-multiline_comment|/*&n;&t; * Free stripes pool&n;&t; */
-DECL|member|nr_free_sh
-id|atomic_t
-id|nr_free_sh
-suffix:semicolon
-DECL|member|free_sh_list
+DECL|member|handle_list
 r_struct
-id|stripe_head
-op_star
-id|free_sh_list
+id|list_head
+id|handle_list
+suffix:semicolon
+multiline_comment|/* stripes needing handling */
+multiline_comment|/*&n;&t; * Free stripes pool&n;&t; */
+DECL|member|active_stripes
+id|atomic_t
+id|active_stripes
+suffix:semicolon
+DECL|member|inactive_list
+r_struct
+id|list_head
+id|inactive_list
 suffix:semicolon
 DECL|member|wait_for_stripe
 id|md_wait_queue_head_t

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *              $Revision: 69 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: amprep - ACPI AML (p-code) execution - field prep utilities&n; *              $Revision: 72 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acinterp.h&quot;
@@ -19,6 +19,9 @@ id|acpi_aml_decode_field_access_type
 (paren
 id|u32
 id|access
+comma
+id|u16
+id|length
 )paren
 (brace
 r_switch
@@ -30,11 +33,58 @@ id|access
 r_case
 id|ACCESS_ANY_ACC
 suffix:colon
+r_if
+c_cond
+(paren
+id|length
+op_le
+l_int|8
+)paren
+(brace
 r_return
 (paren
 l_int|8
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|length
+op_le
+l_int|16
+)paren
+(brace
+r_return
+(paren
+l_int|16
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|length
+op_le
+l_int|32
+)paren
+(brace
+r_return
+(paren
+l_int|32
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+(paren
+l_int|8
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -168,6 +218,8 @@ op_assign
 id|acpi_aml_decode_field_access_type
 (paren
 id|obj_desc-&gt;field.access
+comma
+id|obj_desc-&gt;field.length
 )paren
 suffix:semicolon
 r_if

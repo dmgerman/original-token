@@ -1,20 +1,11 @@
 multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *&t; Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; *&n; * /proc/sysvipc/shm support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; * BIGMEM support, Andrea Arcangeli &lt;andrea@suse.de&gt;&n; * SMP thread shm, Jean-Luc Boyard &lt;jean-luc.boyard@siemens.fr&gt;&n; * HIGHMEM support, Ingo Molnar &lt;mingo@redhat.com&gt;&n; * Make shmmax, shmall, shmmni sysctl&squot;able, Christoph Rohland &lt;cr@sap.com&gt;&n; * Shared /dev/zero support, Kanoj Sarcar &lt;kanoj@sgi.com&gt;&n; * Move the mm functionality over to mm/shmem.c, Christoph Rohland &lt;cr@sap.com&gt;&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;util.h&quot;
 DECL|struct|shmid_kernel
 r_struct
@@ -362,6 +353,9 @@ id|shp-&gt;shm_lprid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
+id|shp-&gt;shm_nattch
+op_increment
+suffix:semicolon
 id|shm_unlock
 c_func
 (paren
@@ -387,7 +381,7 @@ id|shmd-&gt;vm_file-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * shm_destroy - free the struct shmid_kernel&n; *&n; * @shp: struct to free&n; *&n; * It has to be called with shp and shm_ids.sem locked and will&n; * release them&n; */
+multiline_comment|/*&n; * shm_destroy - free the struct shmid_kernel&n; *&n; * @shp: struct to free&n; *&n; * It has to be called with shp and shm_ids.sem locked&n; */
 DECL|function|shm_destroy
 r_static
 r_void
@@ -399,17 +393,6 @@ op_star
 id|shp
 )paren
 (brace
-r_struct
-id|file
-op_star
-id|file
-op_assign
-id|shp-&gt;shm_file
-suffix:semicolon
-id|shp-&gt;shm_file
-op_assign
-l_int|NULL
-suffix:semicolon
 id|shm_tot
 op_sub_assign
 (paren
@@ -422,31 +405,19 @@ l_int|1
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
-id|shm_unlock
-(paren
-id|shp-&gt;id
-)paren
-suffix:semicolon
 id|shm_rmid
 (paren
 id|shp-&gt;id
 )paren
 suffix:semicolon
+id|fput
+(paren
+id|shp-&gt;shm_file
+)paren
+suffix:semicolon
 id|kfree
 (paren
 id|shp
-)paren
-suffix:semicolon
-id|up
-(paren
-op_amp
-id|shm_ids.sem
-)paren
-suffix:semicolon
-multiline_comment|/* put the file outside the critical path to prevent recursion */
-id|fput
-(paren
-id|file
 )paren
 suffix:semicolon
 )brace
@@ -515,23 +486,21 @@ id|shp-&gt;shm_dtim
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|shp-&gt;shm_nattch
+op_decrement
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|shp-&gt;shm_nattch
+op_eq
+l_int|0
+op_logical_and
 id|shp-&gt;shm_flags
 op_amp
 id|SHM_DEST
-op_logical_and
-id|file_count
-(paren
-id|file
-)paren
-op_eq
-l_int|2
 )paren
 (brace
-multiline_comment|/* shp and the vma have the last&n;                                      references*/
-r_return
 id|shm_destroy
 (paren
 id|shp
@@ -818,6 +787,10 @@ id|shp-&gt;shm_segsz
 op_assign
 id|size
 suffix:semicolon
+id|shp-&gt;shm_nattch
+op_assign
+l_int|0
+suffix:semicolon
 id|shp-&gt;id
 op_assign
 id|shm_buildid
@@ -834,7 +807,7 @@ id|file
 suffix:semicolon
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 op_assign
-id|id
+id|shp-&gt;id
 suffix:semicolon
 id|file-&gt;f_op
 op_assign
@@ -1535,10 +1508,6 @@ c_cond
 id|shp
 op_eq
 l_int|NULL
-op_logical_or
-id|shp-&gt;shm_file
-op_eq
-l_int|NULL
 )paren
 (brace
 r_continue
@@ -1548,22 +1517,16 @@ id|inode
 op_assign
 id|shp-&gt;shm_file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|down
+id|spin_lock
 (paren
 op_amp
-id|inode-&gt;i_sem
+id|inode-&gt;u.shmem_i.lock
 )paren
 suffix:semicolon
 op_star
 id|rss
 op_add_assign
 id|inode-&gt;i_mapping-&gt;nrpages
-suffix:semicolon
-id|spin_lock
-(paren
-op_amp
-id|inode-&gt;u.shmem_i.lock
-)paren
 suffix:semicolon
 op_star
 id|swp
@@ -1574,12 +1537,6 @@ id|spin_unlock
 (paren
 op_amp
 id|inode-&gt;u.shmem_i.lock
-)paren
-suffix:semicolon
-id|up
-(paren
-op_amp
-id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 )brace
@@ -2000,12 +1957,7 @@ id|shp-&gt;shm_lprid
 suffix:semicolon
 id|tbuf.shm_nattch
 op_assign
-id|file_count
-(paren
-id|shp-&gt;shm_file
-)paren
-op_minus
-l_int|1
+id|shp-&gt;shm_nattch
 suffix:semicolon
 id|shm_unlock
 c_func
@@ -2196,23 +2148,9 @@ l_int|0
 r_if
 c_cond
 (paren
-id|file_count
-(paren
-id|shp-&gt;shm_file
-)paren
-op_eq
-l_int|1
+id|shp-&gt;shm_nattch
 )paren
 (brace
-id|shm_destroy
-(paren
-id|shp
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|shp-&gt;shm_flags
 op_or_assign
 id|SHM_DEST
@@ -2221,6 +2159,13 @@ multiline_comment|/* Do not find it any more */
 id|shp-&gt;shm_perm.key
 op_assign
 id|IPC_PRIVATE
+suffix:semicolon
+)brace
+r_else
+id|shm_destroy
+(paren
+id|shp
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock */
@@ -2635,10 +2580,8 @@ id|file
 op_assign
 id|shp-&gt;shm_file
 suffix:semicolon
-id|get_file
-(paren
-id|file
-)paren
+id|shp-&gt;shm_nattch
+op_increment
 suffix:semicolon
 id|shm_unlock
 c_func
@@ -2681,9 +2624,64 @@ op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|fput
+id|down
 (paren
-id|file
+op_amp
+id|shm_ids.sem
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|shp
+op_assign
+id|shm_lock
+c_func
+(paren
+id|shmid
+)paren
+)paren
+)paren
+(brace
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|shp-&gt;shm_nattch
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|shp-&gt;shm_nattch
+op_eq
+l_int|0
+op_logical_and
+id|shp-&gt;shm_flags
+op_amp
+id|SHM_DEST
+)paren
+(brace
+id|shm_destroy
+(paren
+id|shp
+)paren
+suffix:semicolon
+)brace
+id|shm_unlock
+c_func
+(paren
+id|shmid
+)paren
+suffix:semicolon
+id|up
+(paren
+op_amp
+id|shm_ids.sem
 )paren
 suffix:semicolon
 op_star
@@ -2976,12 +2974,7 @@ id|shp-&gt;shm_cprid
 comma
 id|shp-&gt;shm_lprid
 comma
-id|file_count
-(paren
-id|shp-&gt;shm_file
-)paren
-op_minus
-l_int|1
+id|shp-&gt;shm_nattch
 comma
 id|shp-&gt;shm_perm.uid
 comma

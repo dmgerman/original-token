@@ -76,9 +76,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * cmbatt.c&n; */
+multiline_comment|/*&n; * power.c&n; */
 r_int
-id|acpi_cmbatt_init
+id|acpi_power_init
 c_func
 (paren
 r_void

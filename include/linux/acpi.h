@@ -265,6 +265,9 @@ comma
 DECL|enumerator|ACPI_PMTIMER
 id|ACPI_PMTIMER
 comma
+DECL|enumerator|ACPI_BATTERY
+id|ACPI_BATTERY
+comma
 )brace
 suffix:semicolon
 DECL|macro|ACPI_SLP_TYP_DISABLED

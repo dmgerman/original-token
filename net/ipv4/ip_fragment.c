@@ -1163,6 +1163,10 @@ id|qp-&gt;fragments
 op_assign
 l_int|NULL
 suffix:semicolon
+id|qp-&gt;iif
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Initialize a timer for this entry. */
 id|init_timer
 c_func
@@ -1844,6 +1848,11 @@ id|qp-&gt;fragments
 op_assign
 id|skb
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;dev
+)paren
 id|qp-&gt;iif
 op_assign
 id|skb-&gt;dev-&gt;ifindex

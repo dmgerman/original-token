@@ -42,6 +42,9 @@ comma
 DECL|enumerator|INTEL_I840
 id|INTEL_I840
 comma
+DECL|enumerator|INTEL_I850
+id|INTEL_I850
+comma
 DECL|enumerator|VIA_GENERIC
 id|VIA_GENERIC
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: psparse - Parser top level AML parse routines&n; *              $Revision: 69 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: psparse - Parser top level AML parse routines&n; *              $Revision: 71 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 multiline_comment|/*&n; * Parse the AML and build an operation tree as most interpreters,&n; * like Perl, do.  Parsing is done by hand rather than with a YACC&n; * generated parser to tightly constrain stack and dynamic memory&n; * usage.  At the same time, parsing is kept flexible and the code&n; * fairly compact by parsing based on a list of AML opcode&n; * templates in Aml_op_info[]&n; */
 macro_line|#include &quot;acpi.h&quot;
@@ -2301,10 +2301,6 @@ id|mth_desc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ACPI_NAMESPACE_NODE
-op_star
-id|start_node
-suffix:semicolon
 multiline_comment|/* Create and initialize a new parser state */
 id|parser_state
 op_assign
@@ -2415,10 +2411,6 @@ c_cond
 id|method_node
 )paren
 (brace
-id|start_node
-op_assign
-id|method_node
-suffix:semicolon
 id|parser_state-&gt;start_node
 op_assign
 id|method_node
@@ -2427,18 +2419,12 @@ id|walk_state-&gt;walk_type
 op_assign
 id|WALK_METHOD
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|start_node
-)paren
-(brace
 multiline_comment|/* Push start scope on scope stack and make it current  */
 id|status
 op_assign
 id|acpi_ds_scope_stack_push
 (paren
-id|start_node
+id|method_node
 comma
 id|ACPI_TYPE_METHOD
 comma
@@ -2460,7 +2446,6 @@ id|status
 )paren
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* Init arguments if this is a control method */
 multiline_comment|/* TBD: [Restructure] add walkstate as a param */
 id|acpi_ds_method_data_init_args
@@ -2479,6 +2464,10 @@ multiline_comment|/* Setup the current scope */
 id|node
 op_assign
 id|parser_state-&gt;start_op-&gt;node
+suffix:semicolon
+id|parser_state-&gt;start_node
+op_assign
+id|node
 suffix:semicolon
 r_if
 c_cond

@@ -495,6 +495,10 @@ macro_line|#ifndef PCI_DEVICE_ID_INTEL_840_0
 DECL|macro|PCI_DEVICE_ID_INTEL_840_0
 mdefine_line|#define PCI_DEVICE_ID_INTEL_840_0&t;&t;0x1a21
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_INTEL_850_0
+DECL|macro|PCI_DEVICE_ID_INTEL_850_0
+mdefine_line|#define PCI_DEVICE_ID_INTEL_850_0     0x2530
+macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_INTEL_810_DC100_0
 DECL|macro|PCI_DEVICE_ID_INTEL_810_DC100_0
 mdefine_line|#define PCI_DEVICE_ID_INTEL_810_DC100_0 0x7122
@@ -561,6 +565,11 @@ DECL|macro|INTEL_I840_MCHCFG
 mdefine_line|#define INTEL_I840_MCHCFG   0x50
 DECL|macro|INTEL_I840_ERRSTS
 mdefine_line|#define INTEL_I840_ERRSTS&t;0xc8
+multiline_comment|/* intel i850 registers */
+DECL|macro|INTEL_I850_MCHCFG
+mdefine_line|#define INTEL_I850_MCHCFG   0x50
+DECL|macro|INTEL_I850_ERRSTS
+mdefine_line|#define INTEL_I850_ERRSTS   0xc8
 multiline_comment|/* intel i810 registers */
 DECL|macro|I810_GMADDR
 mdefine_line|#define I810_GMADDR 0x10

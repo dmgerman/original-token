@@ -1107,6 +1107,10 @@ id|tq_struct
 op_star
 id|p
 suffix:semicolon
+r_void
+op_star
+id|data
+suffix:semicolon
 id|p
 op_assign
 id|list_entry
@@ -1124,16 +1128,18 @@ id|next
 op_assign
 id|next-&gt;next
 suffix:semicolon
-multiline_comment|/* Debug: force an oops from people who delete entries */
-id|next-&gt;prev-&gt;next
-op_assign
-id|next-&gt;prev-&gt;prev
-op_assign
-l_int|0
-suffix:semicolon
 id|f
 op_assign
 id|p-&gt;routine
+suffix:semicolon
+id|data
+op_assign
+id|p-&gt;data
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
 suffix:semicolon
 id|p-&gt;sync
 op_assign
@@ -1147,7 +1153,7 @@ id|f
 id|f
 c_func
 (paren
-id|p-&gt;data
+id|data
 )paren
 suffix:semicolon
 )brace

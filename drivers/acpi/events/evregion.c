@@ -1,4 +1,4 @@
-multiline_comment|/******************************************************************************&n; *&n; * Module Name: evregion - ACPI Address_space (Op_region) handler dispatch&n; *              $Revision: 90 $&n; *&n; *****************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * Module Name: evregion - ACPI Address_space (Op_region) handler dispatch&n; *              $Revision: 93 $&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *  Copyright (C) 2000 R. Byron Moore&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;acevents.h&quot;
@@ -461,7 +461,7 @@ id|status
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_disassociate_region_from_handler&n; *&n; * PARAMETERS:  Handler_obj     - Handler Object&n; *              Region_obj      - Region Object&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Break the association between the handler and the region&n; *              this is a two way association.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_disassociate_region_from_handler&n; *&n; * PARAMETERS:  Region_obj      - Region Object&n; *              Acpi_ns_is_locked - Namespace Region Already Locked?&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Break the association between the handler and the region&n; *              this is a two way association.&n; *&n; ******************************************************************************/
 r_void
 DECL|function|acpi_ev_disassociate_region_from_handler
 id|acpi_ev_disassociate_region_from_handler
@@ -470,6 +470,9 @@ c_func
 id|ACPI_OPERAND_OBJECT
 op_star
 id|region_obj
+comma
+id|u8
+id|acpi_ns_is_locked
 )paren
 (brace
 id|ACPI_OPERAND_OBJECT
@@ -551,6 +554,18 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Must clear field */
+r_if
+c_cond
+(paren
+id|acpi_ns_is_locked
+)paren
+(brace
+id|acpi_cm_release_mutex
+(paren
+id|ACPI_MTX_NAMESPACE
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; *  Now stop region accesses by executing the _REG method&n;&t;&t;&t; */
 id|acpi_ev_execute_reg_method
 (paren
@@ -559,6 +574,18 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|acpi_ns_is_locked
+)paren
+(brace
+id|acpi_cm_acquire_mutex
+(paren
+id|ACPI_MTX_NAMESPACE
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t;&t; *  Call the setup handler with the deactivate notification&n;&t;&t;&t; */
 id|region_setup
 op_assign
@@ -617,7 +644,7 @@ multiline_comment|/*&n;&t; *  If we get here, the region was not in the handler&
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_associate_region_and_handler&n; *&n; * PARAMETERS:  Handler_obj     - Handler Object&n; *              Region_obj      - Region Object&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Create the association between the handler and the region&n; *              this is a two way association.&n; *&n; ******************************************************************************/
+multiline_comment|/******************************************************************************&n; *&n; * FUNCTION:    Acpi_ev_associate_region_and_handler&n; *&n; * PARAMETERS:  Handler_obj     - Handler Object&n; *              Region_obj      - Region Object&n; *              Acpi_ns_is_locked - Namespace Region Already Locked?&n; *&n; * RETURN:      None&n; *&n; * DESCRIPTION: Create the association between the handler and the region&n; *              this is a two way association.&n; *&n; ******************************************************************************/
 id|ACPI_STATUS
 DECL|function|acpi_ev_associate_region_and_handler
 id|acpi_ev_associate_region_and_handler
@@ -923,6 +950,8 @@ multiline_comment|/*&n;&t; *  Now we have a region and it is for the handler&squ
 id|acpi_ev_disassociate_region_from_handler
 (paren
 id|obj_desc
+comma
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Then connect the region to the new handler&n;&t; */

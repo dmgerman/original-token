@@ -2505,12 +2505,21 @@ id|bh_next
 op_assign
 id|bh-&gt;b_next_free
 suffix:semicolon
+multiline_comment|/* Another device? */
 r_if
 c_cond
 (paren
 id|bh-&gt;b_dev
 op_ne
 id|dev
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* Part of a mapping? */
+r_if
+c_cond
+(paren
+id|bh-&gt;b_page-&gt;mapping
 )paren
 r_continue
 suffix:semicolon
@@ -5731,7 +5740,7 @@ op_ne
 id|head
 )paren
 suffix:semicolon
-multiline_comment|/* Stage 2: lock the buffers, mark them dirty */
+multiline_comment|/* Stage 2: lock the buffers, mark them clean */
 r_do
 (brace
 id|lock_buffer
@@ -5760,7 +5769,7 @@ op_amp
 id|bh-&gt;b_state
 )paren
 suffix:semicolon
-id|set_bit
+id|clear_bit
 c_func
 (paren
 id|BH_Dirty
@@ -8582,7 +8591,7 @@ op_amp
 id|tmp-&gt;b_state
 )paren
 suffix:semicolon
-id|set_bit
+id|clear_bit
 c_func
 (paren
 id|BH_Dirty

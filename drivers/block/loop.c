@@ -1852,7 +1852,7 @@ op_assign
 id|inode-&gt;i_dev
 suffix:semicolon
 id|lo-&gt;lo_flags
-op_assign
+op_or_assign
 id|LO_FLAGS_DO_BMAP
 suffix:semicolon
 id|error

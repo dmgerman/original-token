@@ -1436,7 +1436,7 @@ r_if
 c_cond
 (paren
 id|end
-OL
+op_le
 l_int|0x100000ULL
 )paren
 r_continue
@@ -1566,9 +1566,13 @@ c_func
 (paren
 id|HIGH_MEMORY
 comma
+(paren
 id|mem_size
 op_lshift
 l_int|10
+)paren
+op_minus
+id|HIGH_MEMORY
 comma
 id|E820_RAM
 )paren

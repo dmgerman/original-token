@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  driver.c - ACPI driver&n; *&n; *  Copyright (C) 2000 Andrew Henroid&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; */
+multiline_comment|/*&n; * Changes&n; * David Woodhouse &lt;dwmw2@redhat.com&gt; 2000-12-6&n; * - Fix interruptible_sleep_on() races&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -12,6 +13,11 @@ macro_line|#include &lt;linux/acpi.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;acpi.h&quot;
 macro_line|#include &quot;driver.h&quot;
+macro_line|#ifdef CONFIG_ACPI_KERNEL_CONFIG
+macro_line|#include &lt;asm/efi.h&gt;
+DECL|macro|ACPI_CAN_USE_EFI_STRUCT
+mdefine_line|#define ACPI_CAN_USE_EFI_STRUCT
+macro_line|#endif
 DECL|macro|_COMPONENT
 mdefine_line|#define _COMPONENT&t;OS_DEPENDENT
 id|MODULE_NAME
@@ -625,16 +631,40 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_for
+r_while
 c_loop
 (paren
-suffix:semicolon
-suffix:semicolon
+op_logical_neg
+id|event_status
 )paren
 (brace
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+op_amp
+id|acpi_event_wait
+comma
+op_amp
+id|wait
+)paren
 suffix:semicolon
 singleline_comment|// we need an atomic exchange here
 id|spin_lock_irqsave
@@ -670,16 +700,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|event_status
 )paren
-r_break
+id|schedule
+c_func
+(paren
+)paren
 suffix:semicolon
-singleline_comment|// wait for an event to arrive
-id|interruptible_sleep_on
+id|remove_wait_queue
 c_func
 (paren
 op_amp
 id|acpi_event_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_RUNNING
 )paren
 suffix:semicolon
 r_if
@@ -1515,19 +1557,21 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* arch-specific call to get rsdp ptr */
-id|rsdp_phys
-op_assign
-id|acpi_get_rsdp_ptr
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#ifndef ACPI_CAN_USE_EFI_STRUCT
 r_if
 c_cond
 (paren
 op_logical_neg
+id|ACPI_SUCCESS
+c_func
+(paren
+id|acpi_find_root_pointer
+c_func
+(paren
+op_amp
 id|rsdp_phys
+)paren
+)paren
 )paren
 (brace
 id|printk
@@ -1542,6 +1586,12 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#else
+id|rsdp_phys
+op_assign
+id|efi.acpi
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1651,7 +1701,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|acpi_cmbatt_init
+id|acpi_power_init
 c_func
 (paren
 )paren
@@ -1755,11 +1805,59 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|interruptible_sleep_on
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
+id|add_wait_queue
 c_func
 (paren
 op_amp
 id|acpi_thread_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|list_empty
+c_func
+(paren
+op_amp
+id|acpi_thread_run
+)paren
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|acpi_thread_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_RUNNING
 )paren
 suffix:semicolon
 r_if
