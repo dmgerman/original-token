@@ -373,6 +373,13 @@ c_func
 id|find_vma
 )paren
 suffix:semicolon
+DECL|variable|get_unmapped_area
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_unmapped_area
+)paren
+suffix:semicolon
 multiline_comment|/* filesystem internal functions */
 DECL|variable|in_group_p
 id|EXPORT_SYMBOL

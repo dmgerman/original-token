@@ -691,6 +691,13 @@ op_assign
 id|req-&gt;dl_next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|req-&gt;sk
+)paren
+r_continue
+suffix:semicolon
 id|pos
 op_add_assign
 l_int|128

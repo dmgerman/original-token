@@ -551,7 +551,6 @@ multiline_comment|/* mask = 0 */
 DECL|function|clear_IO_APIC_pin
 r_static
 r_void
-id|__init
 id|clear_IO_APIC_pin
 c_func
 (paren
@@ -629,6 +628,38 @@ id|entry
 op_plus
 l_int|1
 )paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|clear_IO_APIC
+r_static
+r_void
+id|clear_IO_APIC
+(paren
+r_void
+)paren
+(brace
+r_int
+id|pin
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|pin
+op_assign
+l_int|0
+suffix:semicolon
+id|pin
+OL
+id|nr_ioapic_registers
+suffix:semicolon
+id|pin
+op_increment
+)paren
+id|clear_IO_APIC_pin
+c_func
+(paren
+id|pin
 )paren
 suffix:semicolon
 )brace
@@ -2207,6 +2238,9 @@ c_func
 r_int
 r_int
 id|pin
+comma
+r_int
+id|irq
 )paren
 (brace
 r_struct
@@ -2234,24 +2268,27 @@ id|dest_ExtINT
 suffix:semicolon
 id|entry.dest_mode
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/* logical delivery */
+multiline_comment|/* physical delivery */
 id|entry.mask
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* unmask IRQ now */
-multiline_comment|/*&n;&t; * Careful with this one. We do not use &squot;true&squot; logical&n;&t; * delivery, as we set local APICs to LDR == 0. But&n;&t; * 0xff logical destination is special (broadcast).&n;&t; * Any other combination will cause problems.&n;&t; */
-id|entry.dest.logical.logical_dest
+multiline_comment|/*&n;&t; * We use physical delivery to get the timer IRQ&n;&t; * to the boot CPU. &squot;boot_cpu_id&squot; is the physical&n;&t; * APIC ID of the boot CPU.&n;&t; */
+id|entry.dest.physical.physical_dest
 op_assign
-l_int|0xff
+id|boot_cpu_id
 suffix:semicolon
 id|entry.vector
 op_assign
-l_int|0
+id|assign_irq_vector
+c_func
+(paren
+id|irq
+)paren
 suffix:semicolon
-multiline_comment|/* it&squot;s ignored */
 id|entry.polarity
 op_assign
 l_int|0
@@ -2828,8 +2865,6 @@ r_void
 (brace
 r_int
 id|i
-comma
-id|pin
 suffix:semicolon
 r_for
 c_loop
@@ -2950,24 +2985,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Do not trust the IO-APIC being empty at bootup&n;&t; */
-r_for
-c_loop
-(paren
-id|pin
-op_assign
-l_int|0
-suffix:semicolon
-id|pin
-OL
-id|nr_ioapic_registers
-suffix:semicolon
-id|pin
-op_increment
-)paren
-id|clear_IO_APIC_pin
+id|clear_IO_APIC
 c_func
 (paren
-id|pin
 )paren
 suffix:semicolon
 )brace
@@ -2980,6 +3000,13 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * Clear the IO-APIC before rebooting:&n;&t; */
+id|clear_IO_APIC
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Put it back into PIC mode (has an effect only on&n;&t; * certain boards)&n;&t; */
 id|printk
 c_func
 (paren
@@ -4189,6 +4216,8 @@ id|setup_ExtINT_pin
 c_func
 (paren
 id|pin2
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|make_8259A_irq

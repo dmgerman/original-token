@@ -6300,13 +6300,6 @@ id|discard
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FILTER */
-multiline_comment|/*&n;&t; *&t;socket locking is here for SMP purposes as backlog rcv&n;&t; *&t;is currently called with bh processing disabled.&n;&t; */
-id|lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t; * This doesn&squot;t check if the socket has enough room for the packet.&n;&t; * Either process the packet _without_ queueing it and then free it,&n;&t; * or do the check later.&n;&t; */
 id|skb_set_owner_r
 c_func
@@ -6342,12 +6335,6 @@ id|skb-&gt;len
 )paren
 r_goto
 id|reset
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6385,18 +6372,31 @@ id|nsk
 r_goto
 id|discard
 suffix:semicolon
-id|lock_sock
+multiline_comment|/*&n;&t;&t; * Queue it on the new socket if the new socket is active,&n;&t;&t; * otherwise we just shortcircuit this and continue with&n;&t;&t; * the new socket..&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|atomic_read
 c_func
 (paren
-id|nsk
+op_amp
+id|nsk-&gt;sock_readers
 )paren
-suffix:semicolon
-id|release_sock
+)paren
+(brace
+id|__skb_queue_tail
 c_func
 (paren
-id|sk
+op_amp
+id|nsk-&gt;back_log
+comma
+id|skb
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|sk
 op_assign
 id|nsk
@@ -6420,12 +6420,6 @@ id|skb-&gt;len
 r_goto
 id|reset
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6446,12 +6440,6 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Be careful here. If this function gets more complicated and&n;&t; * gcc suffers from register pressure on the x86, sk (in %ebx) &n;&t; * might be destroyed here. This current version compiles correctly,&n;&t; * but you have been warned.&n;&t; */
-id|release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -556,7 +556,7 @@ r_do
 r_int
 id|result
 suffix:semicolon
-id|tsk-&gt;swap_address
+id|tsk-&gt;mm-&gt;swap_address
 op_assign
 id|address
 op_plus
@@ -921,7 +921,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Go through process&squot; page directory.&n;&t; */
 id|address
 op_assign
-id|p-&gt;swap_address
+id|p-&gt;mm-&gt;swap_address
 suffix:semicolon
 multiline_comment|/*&n;&t; * Find the proper vm-area&n;&t; */
 id|vma
@@ -1000,11 +1000,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* We didn&squot;t find anything for the process */
-id|p-&gt;swap_cnt
+id|p-&gt;mm-&gt;swap_cnt
 op_assign
 l_int|0
 suffix:semicolon
-id|p-&gt;swap_address
+id|p-&gt;mm-&gt;swap_address
 op_assign
 l_int|0
 suffix:semicolon
@@ -1149,21 +1149,21 @@ c_cond
 (paren
 id|assign
 )paren
-id|p-&gt;swap_cnt
+id|p-&gt;mm-&gt;swap_cnt
 op_assign
 id|p-&gt;mm-&gt;rss
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;swap_cnt
+id|p-&gt;mm-&gt;swap_cnt
 OG
 id|max_cnt
 )paren
 (brace
 id|max_cnt
 op_assign
-id|p-&gt;swap_cnt
+id|p-&gt;mm-&gt;swap_cnt
 suffix:semicolon
 id|pbest
 op_assign

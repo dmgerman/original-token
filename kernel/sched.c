@@ -2018,6 +2018,7 @@ id|sched_data-&gt;prevstate
 op_assign
 id|prev-&gt;state
 suffix:semicolon
+multiline_comment|/* this is the scheduler proper: */
 (brace
 r_struct
 id|task_struct
@@ -2026,6 +2027,42 @@ id|p
 op_assign
 id|init_task.next_run
 suffix:semicolon
+r_int
+id|c
+op_assign
+op_minus
+l_int|1000
+suffix:semicolon
+multiline_comment|/* Default process to select.. */
+id|next
+op_assign
+id|idle_task
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|prev-&gt;state
+op_eq
+id|TASK_RUNNING
+)paren
+(brace
+id|c
+op_assign
+id|goodness
+c_func
+(paren
+id|prev
+comma
+id|prev
+comma
+id|this_cpu
+)paren
+suffix:semicolon
+id|next
+op_assign
+id|prev
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * This is subtle.&n;&t;&t; * Note how we can enable interrupts here, even&n;&t;&t; * though interrupts can add processes to the run-&n;&t;&t; * queue. This is because any new processes will&n;&t;&t; * be added to the front of the queue, so &quot;p&quot; above&n;&t;&t; * is a safe starting point.&n;&t;&t; * run-queue deletion and re-ordering is protected by&n;&t;&t; * the scheduler lock&n;&t;&t; */
 id|spin_unlock_irq
 c_func
@@ -2034,25 +2071,7 @@ op_amp
 id|runqueue_lock
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-id|prev-&gt;has_cpu
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Note! there may appear new tasks on the run-queue during this, as&n; * interrupts are enabled. However, they will be put on front of the&n; * list, so our list starting at &quot;p&quot; is essentially fixed.&n; */
-multiline_comment|/* this is the scheduler proper: */
-(brace
-r_int
-id|c
-op_assign
-op_minus
-l_int|1000
-suffix:semicolon
-id|next
-op_assign
-id|idle_task
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -2150,7 +2169,6 @@ id|tasklist_lock
 suffix:semicolon
 )brace
 )brace
-)brace
 multiline_comment|/*&n; &t; * maintain the per-process &squot;average timeslice&squot; value.&n; &t; * (this has to be recalculated even if we reschedule to&n; &t; * the same process) Currently this is only used on SMP:&n; &t; */
 macro_line|#ifdef __SMP__
 (brace
@@ -2189,17 +2207,13 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We drop the scheduler lock early (it&squot;s a global spinlock),&n;&t; * thus we have to lock the previous process from getting&n;&t; * rescheduled during switch_to().&n;&t; */
-id|prev-&gt;has_cpu
+id|next-&gt;processor
 op_assign
-l_int|1
+id|this_cpu
 suffix:semicolon
 id|next-&gt;has_cpu
 op_assign
 l_int|1
-suffix:semicolon
-id|next-&gt;processor
-op_assign
-id|this_cpu
 suffix:semicolon
 id|spin_unlock
 c_func
