@@ -68,7 +68,7 @@ multiline_comment|/* Flags for the HCD: */
 multiline_comment|/* bit0: Is this TD allocated? */
 multiline_comment|/* bit1: Is this a dummy (end of list) TD? */
 multiline_comment|/* bit2: do NOT automatically free this TD on completion */
-multiline_comment|/* bit3: this is NOT the last TD in a contiguious TD chain&n;&t;&t; *       on the indicated ED.  (0 means it is the last) */
+multiline_comment|/* bit3: this is the last TD in a contiguious TD chain */
 DECL|member|usb_dev
 r_struct
 id|usb_device
@@ -159,11 +159,11 @@ mdefine_line|#define make_dumb_td(td)&t;((td)-&gt;hcd_flags |= 2)
 DECL|macro|clear_dumb_td
 mdefine_line|#define clear_dumb_td(td)&t;((td)-&gt;hcd_flags &amp;= ~(__u32)2)
 DECL|macro|td_endofchain
-mdefine_line|#define td_endofchain(td)&t;(!((td).hcd_flags &amp; (1 &lt;&lt; 3)))
-DECL|macro|set_td_endofchain
-mdefine_line|#define set_td_endofchain(td)&t;((td)-&gt;hcd_flags &amp;= ~(1 &lt;&lt; 3))
+mdefine_line|#define td_endofchain(td)&t;((td).hcd_flags &amp; (1 &lt;&lt; 3))
 DECL|macro|clear_td_endofchain
-mdefine_line|#define clear_td_endofchain(td)&t;((td)-&gt;hcd_flags |= (1 &lt;&lt; 3))
+mdefine_line|#define clear_td_endofchain(td)&t;((td)-&gt;hcd_flags &amp;= ~(1 &lt;&lt; 3))
+DECL|macro|set_td_endofchain
+mdefine_line|#define set_td_endofchain(td)&t;((td)-&gt;hcd_flags |= (1 &lt;&lt; 3))
 multiline_comment|/*&n; * These control if the IRQ will call ohci_free_td after taking the TDs&n; * off of the donelist (assuming the completion function does not ask&n; * for the TD to be requeued).&n; */
 DECL|macro|can_auto_free
 mdefine_line|#define can_auto_free(td)&t;(!((td).hcd_flags &amp; 4))
@@ -196,6 +196,19 @@ id|__u32
 id|next_ed
 suffix:semicolon
 multiline_comment|/* Next ED */
+multiline_comment|/* driver fields */
+DECL|member|ohci_dev
+r_struct
+id|ohci_device
+op_star
+id|ohci_dev
+suffix:semicolon
+DECL|member|ed_chain
+r_struct
+id|ohci_ed
+op_star
+id|ed_chain
+suffix:semicolon
 )brace
 id|__attribute
 c_func
@@ -217,13 +230,19 @@ mdefine_line|#define ed_tail_td(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;tail_td))
 multiline_comment|/* save the carry &amp; halted flag while setting the head_td */
 DECL|macro|set_ed_head_td
 mdefine_line|#define set_ed_head_td(ed, td)&t;((ed)-&gt;_head_td = cpu_to_le32((td)) &bslash;&n;&t;&t;&t;&t; | ((ed)-&gt;_head_td &amp; cpu_to_le32(3)))
-multiline_comment|/* Control the ED&squot;s halted flag */
+multiline_comment|/* Control the ED&squot;s halted and carry flags */
 DECL|macro|ohci_halt_ed
 mdefine_line|#define ohci_halt_ed(ed)&t;((ed)-&gt;_head_td |= cpu_to_le32(1))
 DECL|macro|ohci_unhalt_ed
 mdefine_line|#define ohci_unhalt_ed(ed)&t;((ed)-&gt;_head_td &amp;= cpu_to_le32(~(__u32)1))
 DECL|macro|ohci_ed_halted
 mdefine_line|#define ohci_ed_halted(ed)&t;((ed)-&gt;_head_td &amp; cpu_to_le32(1))
+DECL|macro|ohci_ed_set_carry
+mdefine_line|#define ohci_ed_set_carry(ed)&t;((ed)-&gt;_head_td |= cpu_to_le32(2))
+DECL|macro|ohci_ed_clr_carry
+mdefine_line|#define ohci_ed_clr_carry(ed)&t;((ed)-&gt;_head_td &amp;= ~cpu_to_le32(2))
+DECL|macro|ohci_ed_carry
+mdefine_line|#define ohci_ed_carry(ed)&t;((le32_to_cpup(&amp;(ed)-&gt;_head_td) &gt;&gt; 1) &amp; 1)
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 DECL|macro|OHCI_ED_MPS
@@ -257,6 +276,10 @@ DECL|macro|OHCI_ED_EN
 mdefine_line|#define OHCI_ED_EN&t;(0xf &lt;&lt; 7)
 DECL|macro|OHCI_ED_FA
 mdefine_line|#define OHCI_ED_FA&t;(0x7f)
+DECL|macro|ed_get_en
+mdefine_line|#define ed_get_en(ed)&t;((le32_to_cpup(&amp;(ed)-&gt;status) &amp; OHCI_ED_EN) &gt;&gt; 7)
+DECL|macro|ed_get_fa
+mdefine_line|#define ed_get_fa(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;status) &amp; OHCI_ED_FA)
 multiline_comment|/* NOTE: bits 27-31 of the status dword are reserved for the HCD */
 multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is being used.&n; */
 DECL|macro|ED_ALLOCATED

@@ -8184,9 +8184,12 @@ id|current-&gt;active_mm
 op_assign
 id|mm
 suffix:semicolon
-id|activate_context
+id|switch_mm
 c_func
 (paren
+id|active_mm
+comma
+id|mm
 )paren
 suffix:semicolon
 )brace

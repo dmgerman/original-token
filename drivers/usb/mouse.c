@@ -1133,13 +1133,6 @@ op_assign
 op_amp
 id|static_mouse_state
 suffix:semicolon
-id|misc_register
-c_func
-(paren
-op_amp
-id|usb_mouse
-)paren
-suffix:semicolon
 id|mouse-&gt;present
 op_assign
 id|mouse-&gt;active
@@ -1161,6 +1154,13 @@ id|mouse-&gt;fasync
 op_assign
 l_int|NULL
 suffix:semicolon
+id|misc_register
+c_func
+(paren
+op_amp
+id|usb_mouse
+)paren
+suffix:semicolon
 id|usb_register
 c_func
 (paren
@@ -1172,7 +1172,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;USB HID boot protocol mouse registered.&bslash;n&quot;
+l_string|&quot;USB HID boot protocol mouse driver registered.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

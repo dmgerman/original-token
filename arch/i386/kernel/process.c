@@ -929,18 +929,21 @@ id|_PAGE_RW
 op_or
 id|_PAGE_PRESENT
 suffix:semicolon
-multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.  We bother with&n;&t; * `SET_PAGE_DIR&squot; because although might be rebooting, but if we change&n;&t; * the way we set root page dir in the future, then we wont break a&n;&t; * seldom used feature ;)&n;&t; */
-id|current-&gt;mm-&gt;pgd
-op_assign
-id|swapper_pg_dir
-suffix:semicolon
-id|current-&gt;active_mm-&gt;pgd
-op_assign
-id|swapper_pg_dir
-suffix:semicolon
-id|activate_context
+multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.&n;&t; */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %0,%%cr3&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|__pa
 c_func
 (paren
+id|swapper_pg_dir
+)paren
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Write 0x1234 to absolute memory location 0x472.  The BIOS reads&n;&t;   this on booting to tell it to &quot;Bypass memory test (also warm&n;&t;   boot)&quot;.  This seems like a fairly standard thing that gets set by&n;&t;   REBOOT.COM programs, and the previous reset routine did this&n;&t;   too. */
@@ -1439,21 +1442,11 @@ id|mm-&gt;segments
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * special case, when we release the LDT from under&n;&t;&t; * the running CPU. Other CPUs cannot possibly use&n;&t;&t; * this LDT as we were getting here through mmput() ...&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|mm
-op_eq
-id|current-&gt;mm
-)paren
-id|load_LDT
+id|clear_LDT
 c_func
 (paren
-id|mm
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Nobody anymore uses the LDT, we can free it:&n;&t;&t; */
 id|vfree
 c_func
 (paren
@@ -1691,7 +1684,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * If new_mm is NULL, we&squot;re being called to set up the LDT for&n; * a clone task: this is easy since the clone is not running yet.&n; * otherwise we copy the old segment into a new segment.&n; *&n; * we do not have to muck with descriptors here, that is&n; * done in __switch_to() and get_mmu_context().&n; */
+multiline_comment|/*&n; * we do not have to muck with descriptors here, that is&n; * done in switch_mm() as needed.&n; */
 DECL|function|copy_segments
 r_void
 id|copy_segments
@@ -1734,11 +1727,6 @@ id|old_mm-&gt;segments
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * default LDT - use the one from init_task&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|new_mm
-)paren
 id|new_mm-&gt;segments
 op_assign
 l_int|NULL
@@ -1746,13 +1734,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|new_mm
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Completely new LDT, we initialize it from the parent:&n;&t;&t; */
+multiline_comment|/*&n;&t; * Completely new LDT, we initialize it from the parent:&n;&t; */
 id|ldt
 op_assign
 id|vmalloc
@@ -1793,7 +1775,6 @@ id|new_mm-&gt;segments
 op_assign
 id|ldt
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
