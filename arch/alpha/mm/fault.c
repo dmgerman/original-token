@@ -235,12 +235,6 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-id|tbis
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren

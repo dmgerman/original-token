@@ -1014,21 +1014,14 @@ id|TCP_SYN_RECV
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * This is now right thanks to a small fix&n;&t;&t; * by Matt Dillon.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|sock_wspace
-c_func
-(paren
-id|sk
-)paren
-OL
-id|sk-&gt;mtu
-op_plus
-l_int|128
-op_plus
-id|sk-&gt;prot-&gt;max_header
+id|sk-&gt;wmem_alloc
+op_star
+l_int|2
+OG
+id|sk-&gt;sndbuf
 )paren
 r_break
 suffix:semicolon

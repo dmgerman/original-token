@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.12  Jul 22, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Original author:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  Maintained by:&t;s0033las@sun10.vsz.bme.hu (Laszlo Peter)&n; *&t;&t;&t;mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  We think version 0.12 should work for most folks.&n; *  User feedback is essential.&n; *&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahead&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.  -ml&n; *  Version 0.11&t;Try to handle more wierd situations.  -ml&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.  -lp&n; *&t;&t;&t;try to be even smarter about the second port.  -lp&n; *&t;&t;&t;tidy up source code formatting.  -ml&n; */
+multiline_comment|/*&n; *  linux/drivers/block/cmd640.c&t;Version 0.13  Jul 23, 1996&n; *&n; *  Copyright (C) 1995-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Original author:&t;abramov@cecmow.enet.dec.com (Igor Abramov)&n; *&n; *  Maintained by:&t;s0033las@sun10.vsz.bme.hu (Laszlo Peter)&n; *&t;&t;&t;mlord@pobox.com (Mark Lord)&n; *&n; *  This file provides support for the advanced features and bugs&n; *  of IDE interfaces using the CMD Technologies 0640 IDE interface chip.&n; *&n; *  These chips are basically fucked by design, and getting this driver&n; *  to work on every motherboard design that uses this screwed chip seems&n; *  bloody well impossible.  However, we&squot;re still trying.&n; *&n; *  We think version 0.12 should work for most folks.&n; *  User feedback is essential.&n; *&n; *&n; *  Version 0.01&t;Initial version, hacked out of ide.c,&n; *&t;&t;&t;and #include&squot;d rather than compiled separately.&n; *&t;&t;&t;This will get cleaned up in a subsequent release.&n; *&n; *  Version 0.02&t;Fixes for vlb initialization code, enable&n; *&t;&t;&t;read-ahead for versions &squot;B&squot; and &squot;C&squot; of chip by&n; *&t;&t;&t;default, some code cleanup.&n; *&n; *  Version 0.03&t;Added reset of secondary interface,&n; *&t;&t;&t;and black list for devices which are not compatible&n; *&t;&t;&t;with read ahead mode. Separate function for setting&n; *&t;&t;&t;readahead is added, possibly it will be called some&n; *&t;&t;&t;day from ioctl processing code.&n; *&n; *  Version 0.04&t;Now configs/compiles separate from ide.c  -ml&n; *&n; *  Version 0.05&t;Major rewrite of interface timing code.&n; *&t;&t;&t;Added new function cmd640_set_mode to set PIO mode&n; *&t;&t;&t;from ioctl call. New drives added to black list.&n; *&n; *  Version 0.06&t;More code cleanup. Readahead is enabled only for&n; *&t;&t;&t;detected hard drives, not included in readahead&n; *&t;&t;&t;black list.&n; *&n; *  Version 0.07&t;Changed to more conservative drive tuning policy.&n; *&t;&t;&t;Unknown drives, which report PIO &lt; 4 are set to&n; *&t;&t;&t;(reported_PIO - 1) if it is supported, or to PIO0.&n; *&t;&t;&t;List of known drives extended by info provided by&n; *&t;&t;&t;CMD at their ftp site.&n; *&n; *  Version 0.08&t;Added autotune/noautotune support.  -ml&n; *&n; *  Version 0.09&t;Try to be smarter about 2nd port enabling.  -ml&n; *  Version 0.10&t;Be nice and don&squot;t reset 2nd port.  -ml&n; *  Version 0.11&t;Try to handle more wierd situations.  -ml&n; *&n; *  Version 0.12&t;Lots of bug fixes from Laszlo Peter&n; *&t;&t;&t;irq unmasking disabled for reliability.  -lp&n; *&t;&t;&t;try to be even smarter about the second port.  -lp&n; *&t;&t;&t;tidy up source code formatting.  -ml&n; *  Version 0.13&t;permit irq unmasking again.  -ml&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -1432,6 +1432,7 @@ op_assign
 op_amp
 id|cmd640_tune_drive
 suffix:semicolon
+macro_line|#if 0
 id|ide_hwifs
 (braket
 l_int|0
@@ -1441,6 +1442,7 @@ id|no_unmask
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1549,6 +1551,7 @@ op_assign
 op_amp
 id|cmd640_tune_drive
 suffix:semicolon
+macro_line|#if 0
 id|ide_hwifs
 (braket
 l_int|1
@@ -1558,6 +1561,7 @@ id|no_unmask
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

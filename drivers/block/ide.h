@@ -599,62 +599,6 @@ DECL|typedef|special_t
 )brace
 id|special_t
 suffix:semicolon
-macro_line|#ifdef __BIG_ENDIAN_BITFIELD
-r_typedef
-r_union
-(brace
-r_int
-id|all
-suffix:colon
-l_int|8
-suffix:semicolon
-multiline_comment|/* all of the bits together */
-r_struct
-(brace
-DECL|member|bit7
-r_int
-id|bit7
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* always 1 */
-DECL|member|lba
-r_int
-id|lba
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* using LBA instead of CHS */
-DECL|member|bit5
-r_int
-id|bit5
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* always 1 */
-DECL|member|unit
-r_int
-id|unit
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* drive select number, 0 or 1 */
-DECL|member|head
-r_int
-id|head
-suffix:colon
-l_int|4
-suffix:semicolon
-multiline_comment|/* always zeros here */
-DECL|member|b
-)brace
-id|b
-suffix:semicolon
-DECL|typedef|select_t
-)brace
-id|select_t
-suffix:semicolon
-macro_line|#else /* __BIG_ENDIAN_BITFIELD */
 r_typedef
 r_union
 (brace
@@ -709,7 +653,6 @@ DECL|typedef|select_t
 )brace
 id|select_t
 suffix:semicolon
-macro_line|#endif /* __BIG_ENDIAN_BITFIELD */
 DECL|struct|ide_drive_s
 r_typedef
 r_struct
@@ -790,13 +733,6 @@ suffix:colon
 l_int|2
 suffix:semicolon
 multiline_comment|/* 1=autotune, 2=noautotune, 0=default */
-DECL|member|ignore_unexp
-r_int
-id|ignore_unexp
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* flag: ignore unexpected_intr&squot;s */
 macro_line|#if FAKE_FDISK_FOR_EZDRIVE
 DECL|member|remap_0_to_1
 r_int
