@@ -63,8 +63,6 @@ suffix:semicolon
 DECL|variable|nr_super_blocks
 r_int
 id|nr_super_blocks
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|max_super_blocks
 r_int
@@ -3046,11 +3044,6 @@ r_int
 )paren
 )paren
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|function|get_unnamed_dev
 id|kdev_t

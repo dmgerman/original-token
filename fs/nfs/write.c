@@ -2067,7 +2067,7 @@ id|req-&gt;wb_page
 op_assign
 id|page
 suffix:semicolon
-id|get_page
+id|page_cache_get
 c_func
 (paren
 id|page

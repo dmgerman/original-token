@@ -19,8 +19,6 @@ DECL|variable|nr_swapfiles
 r_int
 r_int
 id|nr_swapfiles
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|swap_list
 r_struct

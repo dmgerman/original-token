@@ -79,7 +79,7 @@ id|smt_version
 suffix:semicolon
 multiline_comment|/* version id */
 DECL|member|smt_tid
-id|u_long
+id|u_int
 id|smt_tid
 suffix:semicolon
 multiline_comment|/* transaction ID */
@@ -548,47 +548,47 @@ id|st_mac_index
 suffix:semicolon
 multiline_comment|/* n+1 .. n+m */
 DECL|member|st_t_req
-id|u_long
+id|u_int
 id|st_t_req
 suffix:semicolon
 multiline_comment|/* T_Req */
 DECL|member|st_t_neg
-id|u_long
+id|u_int
 id|st_t_neg
 suffix:semicolon
 multiline_comment|/* T_Neg */
 DECL|member|st_t_max
-id|u_long
+id|u_int
 id|st_t_max
 suffix:semicolon
 multiline_comment|/* T_Max */
 DECL|member|st_tvx_value
-id|u_long
+id|u_int
 id|st_tvx_value
 suffix:semicolon
 multiline_comment|/* TVX_Value */
 DECL|member|st_t_min
-id|u_long
+id|u_int
 id|st_t_min
 suffix:semicolon
 multiline_comment|/* T_Min */
 DECL|member|st_sba
-id|u_long
+id|u_int
 id|st_sba
 suffix:semicolon
 multiline_comment|/* synchr. bandwidth alloc */
 DECL|member|st_frame_ct
-id|u_long
+id|u_int
 id|st_frame_ct
 suffix:semicolon
 multiline_comment|/* frame counter */
 DECL|member|st_error_ct
-id|u_long
+id|u_int
 id|st_error_ct
 suffix:semicolon
 multiline_comment|/* error counter */
 DECL|member|st_lost_ct
-id|u_long
+id|u_int
 id|st_lost_ct
 suffix:semicolon
 multiline_comment|/* lost frames counter */
@@ -641,12 +641,12 @@ id|lem_estimate
 suffix:semicolon
 multiline_comment|/* 0x0 .. 0xff */
 DECL|member|lem_reject_ct
-id|u_long
+id|u_int
 id|lem_reject_ct
 suffix:semicolon
 multiline_comment|/* 0x00000000 .. 0xffffffff */
 DECL|member|lem_ct
-id|u_long
+id|u_int
 id|lem_ct
 suffix:semicolon
 multiline_comment|/* 0x00000000 .. 0xffffffff */
@@ -678,12 +678,12 @@ id|mc_index
 suffix:semicolon
 multiline_comment|/* mac index */
 DECL|member|mc_receive_ct
-id|u_long
+id|u_int
 id|mc_receive_ct
 suffix:semicolon
 multiline_comment|/* receive counter */
 DECL|member|mc_transmit_ct
-id|u_long
+id|u_int
 id|mc_transmit_ct
 suffix:semicolon
 multiline_comment|/* transmit counter */
@@ -715,7 +715,7 @@ id|nc_index
 suffix:semicolon
 multiline_comment|/* mac index */
 DECL|member|nc_counter
-id|u_long
+id|u_int
 id|nc_counter
 suffix:semicolon
 multiline_comment|/* not copied counter */
@@ -747,7 +747,7 @@ id|pr_index
 suffix:semicolon
 multiline_comment|/* mac index */
 DECL|member|pr_priority
-id|u_long
+id|u_int
 id|pr_priority
 (braket
 l_int|7
@@ -782,7 +782,7 @@ id|eb_index
 suffix:semicolon
 multiline_comment|/* phy index */
 DECL|member|eb_error_ct
-id|u_long
+id|u_int
 id|eb_error_ct
 suffix:semicolon
 multiline_comment|/* # of eb overflows */
@@ -881,7 +881,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|rdf_reason
-id|u_long
+id|u_int
 id|rdf_reason
 suffix:semicolon
 multiline_comment|/* CLASS/VERSION */
@@ -925,7 +925,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|ref_fc
-id|u_long
+id|u_int
 id|ref_fc
 suffix:semicolon
 multiline_comment|/* 3 bytes 0 + FC */
@@ -995,7 +995,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|res_type
-id|u_long
+id|u_int
 id|res_type
 suffix:semicolon
 multiline_comment|/* recsource type */
@@ -1017,7 +1017,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|sba_cmd
-id|u_long
+id|u_int
 id|sba_cmd
 suffix:semicolon
 multiline_comment|/* command for the SBA */
@@ -1112,7 +1112,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|category
-id|u_long
+id|u_int
 id|category
 suffix:semicolon
 multiline_comment|/* Allocator defined classification */
@@ -1132,7 +1132,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|max_t_neg
-id|u_long
+id|u_int
 id|max_t_neg
 suffix:semicolon
 multiline_comment|/* longest T_NEG for the sync service*/
@@ -1152,7 +1152,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|min_seg_siz
-id|u_long
+id|u_int
 id|min_seg_siz
 suffix:semicolon
 multiline_comment|/* smallest number of bytes per frame*/
@@ -1172,7 +1172,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|allocatable
-id|u_long
+id|u_int
 id|allocatable
 suffix:semicolon
 multiline_comment|/* total sync bw availabel for alloc */
@@ -1229,11 +1229,11 @@ r_struct
 id|smt_p_1048
 (brace
 DECL|member|p1048_flag
-id|u_long
+id|u_int
 id|p1048_flag
 suffix:semicolon
 DECL|member|p1048_cf_state
-id|u_long
+id|u_int
 id|p1048_cf_state
 suffix:semicolon
 )brace
@@ -1246,7 +1246,7 @@ r_struct
 id|smt_p_208c
 (brace
 DECL|member|p208c_flag
-id|u_long
+id|u_int
 id|p208c_flag
 suffix:semicolon
 DECL|member|p208c_pad
@@ -1276,23 +1276,23 @@ r_struct
 id|smt_p_208d
 (brace
 DECL|member|p208d_flag
-id|u_long
+id|u_int
 id|p208d_flag
 suffix:semicolon
 DECL|member|p208d_frame_ct
-id|u_long
+id|u_int
 id|p208d_frame_ct
 suffix:semicolon
 DECL|member|p208d_error_ct
-id|u_long
+id|u_int
 id|p208d_error_ct
 suffix:semicolon
 DECL|member|p208d_lost_ct
-id|u_long
+id|u_int
 id|p208d_lost_ct
 suffix:semicolon
 DECL|member|p208d_ratio
-id|u_long
+id|u_int
 id|p208d_ratio
 suffix:semicolon
 )brace
@@ -1304,19 +1304,19 @@ r_struct
 id|smt_p_208e
 (brace
 DECL|member|p208e_flag
-id|u_long
+id|u_int
 id|p208e_flag
 suffix:semicolon
 DECL|member|p208e_not_copied
-id|u_long
+id|u_int
 id|p208e_not_copied
 suffix:semicolon
 DECL|member|p208e_copied
-id|u_long
+id|u_int
 id|p208e_copied
 suffix:semicolon
 DECL|member|p208e_not_copied_ratio
-id|u_long
+id|u_int
 id|p208e_not_copied_ratio
 suffix:semicolon
 )brace
@@ -1328,11 +1328,11 @@ r_struct
 id|smt_p_208f
 (brace
 DECL|member|p208f_multiple
-id|u_long
+id|u_int
 id|p208f_multiple
 suffix:semicolon
 DECL|member|p208f_nacondition
-id|u_long
+id|u_int
 id|p208f_nacondition
 suffix:semicolon
 DECL|member|p208f_old_una
@@ -1373,7 +1373,7 @@ r_struct
 id|smt_p_2090
 (brace
 DECL|member|p2090_multiple
-id|u_long
+id|u_int
 id|p2090_multiple
 suffix:semicolon
 DECL|member|p2090_availablepaths
@@ -1385,7 +1385,7 @@ id|u_short
 id|p2090_currentpath
 suffix:semicolon
 DECL|member|p2090_requestedpaths
-id|u_long
+id|u_int
 id|p2090_requestedpaths
 suffix:semicolon
 )brace
@@ -1411,7 +1411,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|mib_index
-id|u_long
+id|u_int
 id|mib_index
 suffix:semicolon
 DECL|member|path_pad
@@ -1437,11 +1437,11 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|mib_index
-id|u_long
+id|u_int
 id|mib_index
 suffix:semicolon
 DECL|member|mib_payload
-id|u_long
+id|u_int
 id|mib_payload
 suffix:semicolon
 )brace
@@ -1459,11 +1459,11 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|mib_index
-id|u_long
+id|u_int
 id|mib_index
 suffix:semicolon
 DECL|member|mib_overhead
-id|u_long
+id|u_int
 id|mib_overhead
 suffix:semicolon
 )brace
@@ -1475,7 +1475,7 @@ r_struct
 id|smt_p_4050
 (brace
 DECL|member|p4050_flag
-id|u_long
+id|u_int
 id|p4050_flag
 suffix:semicolon
 DECL|member|p4050_pad
@@ -1495,11 +1495,11 @@ id|u_char
 id|p4050_estimate
 suffix:semicolon
 DECL|member|p4050_reject_ct
-id|u_long
+id|u_int
 id|p4050_reject_ct
 suffix:semicolon
 DECL|member|p4050_ct
-id|u_long
+id|u_int
 id|p4050_ct
 suffix:semicolon
 )brace
@@ -1511,7 +1511,7 @@ r_struct
 id|smt_p_4051
 (brace
 DECL|member|p4051_multiple
-id|u_long
+id|u_int
 id|p4051_multiple
 suffix:semicolon
 DECL|member|p4051_porttype
@@ -1539,11 +1539,11 @@ r_struct
 id|smt_p_4052
 (brace
 DECL|member|p4052_flag
-id|u_long
+id|u_int
 id|p4052_flag
 suffix:semicolon
 DECL|member|p4052_eberrorcount
-id|u_long
+id|u_int
 id|p4052_eberrorcount
 suffix:semicolon
 )brace
@@ -1555,7 +1555,7 @@ r_struct
 id|smt_p_4053
 (brace
 DECL|member|p4053_multiple
-id|u_long
+id|u_int
 id|p4053_multiple
 suffix:semicolon
 DECL|member|p4053_availablepaths
@@ -1567,7 +1567,7 @@ id|u_short
 id|p4053_currentpath
 suffix:semicolon
 DECL|member|p4053_requestedpaths
-id|u_long
+id|u_int
 id|p4053_requestedpaths
 suffix:semicolon
 DECL|member|p4053_mytype
@@ -1595,7 +1595,7 @@ id|para
 suffix:semicolon
 multiline_comment|/* generic parameter header */
 DECL|member|count
-id|u_long
+id|u_int
 id|count
 suffix:semicolon
 DECL|member|timestamp

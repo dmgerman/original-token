@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/raid/md_compatible.h&gt;
 multiline_comment|/*&n; * &squot;md_p.h&squot; holds the &squot;physical&squot; layout of RAID devices&n; * &squot;md_u.h&squot; holds the user &lt;=&gt; kernel API&n; *&n; * &squot;md_k.h&squot; holds kernel internal definitions&n; */
@@ -180,6 +181,22 @@ comma
 id|mdp_disk_t
 op_star
 id|spare
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|md_done_sync
+c_func
+(paren
+id|mddev_t
+op_star
+id|mddev
+comma
+r_int
+id|blocks
+comma
+r_int
+id|ok
 )paren
 suffix:semicolon
 r_extern

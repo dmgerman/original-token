@@ -88,8 +88,6 @@ comma
 r_void
 op_star
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#endif
 r_int

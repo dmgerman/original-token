@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * linux/include/asm-arm/iomd.h&n; *&n; * Copyright (C) 1999 Russell King&n; *&n; * This file contains information out the IOMD ASIC used in the&n; * Acorn RiscPC and subsequently integrated into the CLPS7500 chips.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|__IOMD

@@ -8,7 +8,7 @@ macro_line|#include &quot;map.h&quot;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 DECL|macro|SA1100_STD_IO_MAPPING
-mdefine_line|#define SA1100_STD_IO_MAPPING &bslash;&n; /* virtual     physical    length      domain     r  w  c  b */ &bslash;&n;  { 0xe0000000, 0x20000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA0 IO */ &bslash;&n;  { 0xe4000000, 0x30000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA1 IO */ &bslash;&n;  { 0xe8000000, 0x28000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA0 attr */ &bslash;&n;  { 0xec000000, 0x38000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA1 attr */ &bslash;&n;  { 0xf0000000, 0x2c000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA0 mem */ &bslash;&n;  { 0xf4000000, 0x3c000000, 0x04000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCMCIA1 mem */ &bslash;&n;  { 0xf8000000, 0x80000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCM */ &bslash;&n;  { 0xfa000000, 0x90000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* SCM */ &bslash;&n;  { 0xfc000000, 0xa0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* MER */ &bslash;&n;  { 0xfe000000, 0xb0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }  /* LCD + DMA */
+mdefine_line|#define SA1100_STD_IO_MAPPING &bslash;&n; /* virtual     physical    length      domain     r  w  c  b */ &bslash;&n;  { 0xe0000000, 0x20000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 IO */ &bslash;&n;  { 0xe4000000, 0x30000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 IO */ &bslash;&n;  { 0xe8000000, 0x28000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 attr */ &bslash;&n;  { 0xec000000, 0x38000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 attr */ &bslash;&n;  { 0xf0000000, 0x2c000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA0 mem */ &bslash;&n;  { 0xf4000000, 0x3c000000, 0x04000000, DOMAIN_IO, 1, 1, 0, 0 }, /* PCMCIA1 mem */ &bslash;&n;  { 0xf8000000, 0x80000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* PCM */ &bslash;&n;  { 0xfa000000, 0x90000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* SCM */ &bslash;&n;  { 0xfc000000, 0xa0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }, /* MER */ &bslash;&n;  { 0xfe000000, 0xb0000000, 0x02000000, DOMAIN_IO, 0, 1, 0, 0 }  /* LCD + DMA */
 DECL|variable|__initdata
 r_static
 r_struct
@@ -134,37 +134,13 @@ DECL|variable|__initdata
 r_static
 r_struct
 id|map_desc
-id|thinclient_io_desc
+id|graphicsclient_io_desc
 (braket
 )braket
 id|__initdata
 op_assign
 (brace
-macro_line|#ifdef CONFIG_SA1100_THINCLIENT
-macro_line|#if 1
-multiline_comment|/* ThinClient: only one of those... */
-singleline_comment|//  { 0xd0000000, 0x00000000, 0x01000000, DOMAIN_IO, 1, 1, 0, 0 }, /* Flash bank 0 when JP1 2-4 */
-(brace
-l_int|0xd0000000
-comma
-l_int|0x08000000
-comma
-l_int|0x01000000
-comma
-id|DOMAIN_IO
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* Flash bank 1 when JP1 3-4 */
-macro_line|#else
-multiline_comment|/* GraphicsClient: */
+macro_line|#ifdef CONFIG_SA1100_GRAPHICSCLIENT
 (brace
 l_int|0xd0000000
 comma
@@ -203,6 +179,80 @@ l_int|0
 )brace
 comma
 multiline_comment|/* Flash bank 3 */
+(brace
+l_int|0xdc000000
+comma
+l_int|0x10000000
+comma
+l_int|0x00400000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* CPLD */
+id|SA1100_STD_IO_MAPPING
+macro_line|#endif
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_struct
+id|map_desc
+id|thinclient_io_desc
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_SA1100_THINCLIENT
+macro_line|#if 0
+(brace
+l_int|0xd0000000
+comma
+l_int|0x00000000
+comma
+l_int|0x01000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 0 when JP1 2-4 */
+macro_line|#else
+(brace
+l_int|0xd0000000
+comma
+l_int|0x08000000
+comma
+l_int|0x01000000
+comma
+id|DOMAIN_IO
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* Flash bank 1 when JP1 3-4 */
 macro_line|#endif
 (brace
 l_int|0xdc000000
@@ -338,11 +388,6 @@ l_int|20
 id|__initdata
 op_assign
 (brace
-(brace
-l_int|0
-comma
-)brace
-comma
 )brace
 suffix:semicolon
 DECL|variable|io_desc_size
@@ -451,6 +496,38 @@ id|SIZE
 c_func
 (paren
 id|empeg_io_desc
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|machine_is_graphicsclient
+c_func
+(paren
+)paren
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|io_desc
+comma
+id|graphicsclient_io_desc
+comma
+r_sizeof
+(paren
+id|graphicsclient_io_desc
+)paren
+)paren
+suffix:semicolon
+id|io_desc_size
+op_assign
+id|SIZE
+c_func
+(paren
+id|graphicsclient_io_desc
 )paren
 suffix:semicolon
 )brace

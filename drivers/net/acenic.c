@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; */
+multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; *   Matt Domsch &lt;Matt_Domsch@dell.com&gt;: Detect 1000baseT cards&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -37,8 +37,12 @@ macro_line|#endif
 macro_line|#ifndef PCI_VENDOR_ID_ALTEON
 DECL|macro|PCI_VENDOR_ID_ALTEON
 mdefine_line|#define PCI_VENDOR_ID_ALTEON&t;&t;0x12ae&t;
-DECL|macro|PCI_DEVICE_ID_ALTEON_ACENIC
-mdefine_line|#define PCI_DEVICE_ID_ALTEON_ACENIC&t;0x0001
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE
+DECL|macro|PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE
+mdefine_line|#define PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE  0x0001
+DECL|macro|PCI_DEVICE_ID_ALTEON_ACENIC_COPPER
+mdefine_line|#define PCI_DEVICE_ID_ALTEON_ACENIC_COPPER 0x0002
 macro_line|#endif
 macro_line|#ifndef PCI_DEVICE_ID_3COM_3C985
 DECL|macro|PCI_DEVICE_ID_3COM_3C985
@@ -74,6 +78,13 @@ macro_line|#endif
 macro_line|#ifndef SMP_CACHE_BYTES
 DECL|macro|SMP_CACHE_BYTES
 mdefine_line|#define SMP_CACHE_BYTES&t;L1_CACHE_BYTES
+macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030d)
+DECL|macro|pci_resource_start
+mdefine_line|#define pci_resource_start(dev, bar)&t;dev-&gt;base_address[bar]
+macro_line|#elif (LINUX_VERSION_CODE &lt; 0x02032c)
+DECL|macro|pci_resource_start
+mdefine_line|#define pci_resource_start(dev, bar)&t;dev-&gt;resource[bar].start
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030e)
 DECL|macro|net_device
@@ -396,7 +407,7 @@ id|__initdata
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.42 03/02/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
+l_string|&quot;acenic.c: v0.44 05/11/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
@@ -523,9 +534,17 @@ id|PCI_VENDOR_ID_ALTEON
 )paren
 op_logical_and
 (paren
+(paren
 id|pdev-&gt;device
 op_eq
-id|PCI_DEVICE_ID_ALTEON_ACENIC
+id|PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE
+)paren
+op_logical_or
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_ALTEON_ACENIC_COPPER
+)paren
 )paren
 )paren
 op_logical_and
@@ -831,25 +850,16 @@ id|pdev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Remap the regs into kernel space - this is abuse of&n;&t;&t; * dev-&gt;base_addr since it was means for I/O port&n;&t;&t; * addresses but who gives a damn.&n;&t;&t; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030d)
 id|dev-&gt;base_addr
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
+)paren
 suffix:semicolon
-macro_line|#else
-id|dev-&gt;base_addr
-op_assign
-id|pdev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-suffix:semicolon
-macro_line|#endif
 id|ap-&gt;regs
 op_assign
 (paren
@@ -1782,8 +1792,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
+macro_line|#else
 DECL|variable|ace_module_init
 id|module_init
 c_func
@@ -3279,6 +3288,8 @@ op_amp
 id|regs-&gt;PciState
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n;&t; * I have received reports from people having problems when this&n;&t; * bit is enabled.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3312,6 +3323,7 @@ id|ap-&gt;pci_command
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * Initialize the generic info block and the command+event rings&n;&t; * and the control blocks for the transmit and receive rings&n;&t; * as they need to be setup once and for all.&n;&t; */
 r_if
 c_cond
@@ -6331,14 +6343,15 @@ id|evtcsm
 dot
 id|code
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|code
-op_eq
-id|E_C_LINK_UP
 )paren
 (brace
+r_case
+id|E_C_LINK_UP
+suffix:colon
 id|printk
 c_func
 (paren
@@ -6348,15 +6361,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|code
-op_eq
+r_break
+suffix:semicolon
+r_case
 id|E_C_LINK_DOWN
-)paren
+suffix:colon
 id|printk
 c_func
 (paren
@@ -6366,7 +6375,25 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_else
+r_break
+suffix:semicolon
+r_case
+id|E_C_LINK_10_100
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: 10/100BaseT link &quot;
+l_string|&quot;UP&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
@@ -6379,6 +6406,7 @@ comma
 id|code
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
@@ -11529,5 +11557,5 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__SMP__ -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
 eof

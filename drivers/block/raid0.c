@@ -100,7 +100,7 @@ id|j2
 id|printk
 c_func
 (paren
-l_string|&quot;raid0:   comparing %s(%d) with %s(%d)&bslash;n&quot;
+l_string|&quot;raid0:   comparing %s(%ld) with %s(%ld)&bslash;n&quot;
 comma
 id|partition_name
 c_func
@@ -346,7 +346,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  (%d) is smallest!.&bslash;n&quot;
+l_string|&quot;  (%ld) is smallest!.&bslash;n&quot;
 comma
 id|rdev-&gt;size
 )paren
@@ -1426,9 +1426,6 @@ op_assign
 (brace
 l_string|&quot;raid0&quot;
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special map */
 id|raid0_make_request
 comma
 l_int|NULL
@@ -1440,9 +1437,6 @@ id|raid0_stop
 comma
 id|raid0_status
 comma
-l_int|NULL
-comma
-multiline_comment|/* no ioctls */
 l_int|0
 comma
 l_int|NULL

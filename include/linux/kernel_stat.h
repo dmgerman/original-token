@@ -6,8 +6,10 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (CPU usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
-DECL|macro|DK_NDRIVE
-mdefine_line|#define DK_NDRIVE 4
+DECL|macro|DK_MAX_MAJOR
+mdefine_line|#define DK_MAX_MAJOR 16
+DECL|macro|DK_MAX_DISK
+mdefine_line|#define DK_MAX_DISK 16
 DECL|struct|kernel_stat
 r_struct
 id|kernel_stat
@@ -48,7 +50,10 @@ r_int
 r_int
 id|dk_drive
 (braket
-id|DK_NDRIVE
+id|DK_MAX_MAJOR
+)braket
+(braket
+id|DK_MAX_DISK
 )braket
 suffix:semicolon
 DECL|member|dk_drive_rio
@@ -56,7 +61,10 @@ r_int
 r_int
 id|dk_drive_rio
 (braket
-id|DK_NDRIVE
+id|DK_MAX_MAJOR
+)braket
+(braket
+id|DK_MAX_DISK
 )braket
 suffix:semicolon
 DECL|member|dk_drive_wio
@@ -64,7 +72,10 @@ r_int
 r_int
 id|dk_drive_wio
 (braket
-id|DK_NDRIVE
+id|DK_MAX_MAJOR
+)braket
+(braket
+id|DK_MAX_DISK
 )braket
 suffix:semicolon
 DECL|member|dk_drive_rblk
@@ -72,7 +83,10 @@ r_int
 r_int
 id|dk_drive_rblk
 (braket
-id|DK_NDRIVE
+id|DK_MAX_MAJOR
+)braket
+(braket
+id|DK_MAX_DISK
 )braket
 suffix:semicolon
 DECL|member|dk_drive_wblk
@@ -80,7 +94,10 @@ r_int
 r_int
 id|dk_drive_wblk
 (braket
-id|DK_NDRIVE
+id|DK_MAX_MAJOR
+)braket
+(braket
+id|DK_MAX_DISK
 )braket
 suffix:semicolon
 DECL|member|pgpgin

@@ -90,7 +90,7 @@ mdefine_line|#define u8&t;unsigned char
 DECL|macro|u16
 mdefine_line|#define u16&t;unsigned short
 DECL|macro|u32
-mdefine_line|#define u32&t;unsigned long
+mdefine_line|#define u32&t;unsigned int
 DECL|macro|MAX_TX_QUEUE_LEN
 mdefine_line|#define MAX_TX_QUEUE_LEN&t;20 
 singleline_comment|// number of packets queued by driver
@@ -163,7 +163,8 @@ id|pdev
 suffix:semicolon
 multiline_comment|/* PCI device structure */
 DECL|member|base_addr
-id|u32
+r_int
+r_int
 id|base_addr
 suffix:semicolon
 DECL|member|factory_mac_addr
@@ -186,6 +187,10 @@ DECL|member|SharedMemAddr
 r_void
 op_star
 id|SharedMemAddr
+suffix:semicolon
+DECL|member|SharedMemDMA
+id|dma_addr_t
+id|SharedMemDMA
 suffix:semicolon
 DECL|member|QueueSkb
 id|ulong
@@ -212,14 +217,17 @@ id|MacStat
 suffix:semicolon
 singleline_comment|// receive into this local buffer if no skb available
 singleline_comment|// data will be not valid, because multiple RxDs can
-singleline_comment|// point here at the same time
+singleline_comment|// point here at the same time, it must be at least
+singleline_comment|// MAX_FRAME_SIZE bytes in size
 DECL|member|LocalRxBuffer
 r_int
 r_char
+op_star
 id|LocalRxBuffer
-(braket
-id|MAX_FRAME_SIZE
-)braket
+suffix:semicolon
+DECL|member|LocalRxBufferDMA
+id|dma_addr_t
+id|LocalRxBufferDMA
 suffix:semicolon
 singleline_comment|// Version (required by SMT module).
 DECL|member|smc_version

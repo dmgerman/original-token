@@ -724,8 +724,8 @@ DECL|macro|E_C_LINK_UP
 mdefine_line|#define E_C_LINK_UP&t;&t;0x01
 DECL|macro|E_C_LINK_DOWN
 mdefine_line|#define E_C_LINK_DOWN&t;&t;0x02
-DECL|macro|E_C_LINK_UP_FAST
-mdefine_line|#define E_C_LINK_UP_FAST&t;0x03
+DECL|macro|E_C_LINK_10_100
+mdefine_line|#define E_C_LINK_10_100&t;&t;0x03
 DECL|macro|E_ERROR
 mdefine_line|#define E_ERROR&t;&t;&t;0x07
 DECL|macro|E_C_ERR_INVAL_CMD

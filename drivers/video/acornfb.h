@@ -169,13 +169,6 @@ r_int
 r_int
 id|currcon
 suffix:semicolon
-DECL|member|allow_modeset
-r_int
-r_int
-id|allow_modeset
-suffix:colon
-l_int|1
-suffix:semicolon
 DECL|member|using_vram
 r_int
 r_int

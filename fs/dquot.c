@@ -21,12 +21,8 @@ DECL|variable|nr_dquots
 DECL|variable|nr_free_dquots
 r_int
 id|nr_dquots
-op_assign
-l_int|0
 comma
 id|nr_free_dquots
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|max_dquots
 r_int
@@ -85,8 +81,6 @@ r_struct
 id|dquot
 op_star
 id|inuse_list
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 id|LIST_HEAD

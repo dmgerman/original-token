@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/arxescsi.c&n; *&n; * Copyright (C) 1997-2000 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version as cumana_2.c&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  11-06-1998 &t;&t;0.0.2   Changed to support ARXE 16-bit SCSI card, enabled writing&n; *  &t;&t;&t;&t;by Stefan Hanske&n; *  02-04-2000&t;RMK&t;0.0.3&t;Updated for new error handling code.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/arxescsi.c&n; *&n; * Copyright (C) 1997-2000 Russell King, Stefan Hanske&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version as cumana_2.c&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  11-06-1998 &t;SH&t;0.0.2   Changed to support ARXE 16-bit SCSI card&n; *&t;&t;&t;&t;enabled writing&n; *  01-01-2000&t;SH&t;0.1.0   Added *real* pseudo dma writing&n; *&t;&t;&t;&t;(arxescsi_pseudo_dma_write)&n; *  02-04-2000&t;RMK&t;0.1.1&t;Updated for new error handling code.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -34,9 +34,9 @@ multiline_comment|/*&n; * Version&n; */
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
-mdefine_line|#define VER_MINOR&t;0
+mdefine_line|#define VER_MINOR&t;1
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;3
+mdefine_line|#define VER_PATCH&t;1
 DECL|variable|ecs
 r_static
 r_struct
@@ -217,6 +217,60 @@ id|reg
 )paren
 suffix:semicolon
 )brace
+DECL|function|arxescsi_pseudo_dma_write
+r_void
+id|arxescsi_pseudo_dma_write
+c_func
+(paren
+r_int
+r_char
+op_star
+id|addr
+comma
+r_int
+r_int
+id|io
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;               stmdb   sp!, {r0-r12}&bslash;n&quot;
+l_string|&quot;               mov     r3, %0&bslash;n&quot;
+l_string|&quot;               mov     r1, %1&bslash;n&quot;
+l_string|&quot;               add     r2, r1, #512&bslash;n&quot;
+l_string|&quot;               mov     r4, #256&bslash;n&quot;
+l_string|&quot;.loop_1:       ldmia   r3!, {r6, r8, r10, r12}&bslash;n&quot;
+l_string|&quot;               mov     r5, r6, lsl #16&bslash;n&quot;
+l_string|&quot;               mov     r7, r8, lsl #16&bslash;n&quot;
+l_string|&quot;.loop_2:       ldrb    r0, [r1, #1536]&bslash;n&quot;
+l_string|&quot;               tst     r0, #1&bslash;n&quot;
+l_string|&quot;               beq     .loop_2&bslash;n&quot;
+l_string|&quot;               stmia   r2, {r5-r8}&bslash;n&bslash;t&quot;
+l_string|&quot;               mov     r9, r10, lsl #16&bslash;n&quot;
+l_string|&quot;               mov     r11, r12, lsl #16&bslash;n&quot;
+l_string|&quot;.loop_3:       ldrb    r0, [r1, #1536]&bslash;n&quot;
+l_string|&quot;               tst     r0, #1&bslash;n&quot;
+l_string|&quot;               beq     .loop_3&bslash;n&quot;
+l_string|&quot;               stmia   r2, {r9-r12}&bslash;n&quot;
+l_string|&quot;               subs    r4, r4, #16&bslash;n&quot;
+l_string|&quot;               bne     .loop_1&bslash;n&quot;
+l_string|&quot;               ldmia   sp!, {r0-r12}&bslash;n&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|io
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function: int arxescsi_dma_pseudo(host, SCpnt, direction, transfer)&n; * Purpose : handles pseudo DMA&n; * Params  : host      - host&n; *&t;     SCpnt     - command&n; *&t;     direction - DMA on to/off of card&n; *&t;     transfer  - minimum number of bytes we expect to transfer&n; */
 DECL|function|arxescsi_dma_pseudo
 r_void
@@ -288,6 +342,62 @@ op_eq
 id|DMA_OUT
 )paren
 (brace
+r_int
+r_int
+id|word
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|length
+OG
+l_int|256
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|getb
+c_func
+(paren
+id|io
+comma
+l_int|4
+)paren
+op_amp
+id|STAT_INT
+)paren
+(brace
+id|error
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|arxescsi_pseudo_dma_write
+c_func
+(paren
+id|addr
+comma
+id|io
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+l_int|256
+suffix:semicolon
+id|length
+op_sub_assign
+l_int|256
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
 r_while
 c_loop
 (paren
@@ -296,24 +406,6 @@ OG
 l_int|0
 )paren
 (brace
-r_int
-r_int
-id|word
-suffix:semicolon
-id|word
-op_assign
-op_star
-id|addr
-op_or
-op_star
-(paren
-id|addr
-op_plus
-l_int|1
-)paren
-op_lshift
-l_int|8
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -346,6 +438,20 @@ id|CSTATUS_IRQ
 )paren
 )paren
 r_continue
+suffix:semicolon
+id|word
+op_assign
+op_star
+id|addr
+op_or
+op_star
+(paren
+id|addr
+op_plus
+l_int|1
+)paren
+op_lshift
+l_int|8
 suffix:semicolon
 id|putw
 c_func

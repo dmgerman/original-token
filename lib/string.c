@@ -138,8 +138,6 @@ DECL|variable|___strtok
 r_char
 op_star
 id|___strtok
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifndef __HAVE_ARCH_STRCPY
 DECL|function|strcpy

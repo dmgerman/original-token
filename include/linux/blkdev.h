@@ -582,5 +582,23 @@ DECL|macro|blkdev_next_request
 mdefine_line|#define blkdev_next_request(req) blkdev_entry_to_request((req)-&gt;queue.next)
 DECL|macro|blkdev_prev_request
 mdefine_line|#define blkdev_prev_request(req) blkdev_entry_to_request((req)-&gt;queue.prev)
+r_extern
+r_void
+id|drive_stat_acct
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+id|rw
+comma
+r_int
+r_int
+id|nr_sectors
+comma
+r_int
+id|new_io
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

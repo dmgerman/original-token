@@ -67,8 +67,6 @@ DECL|variable|minolduid
 r_static
 r_int
 id|minolduid
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_KMOD
 r_extern

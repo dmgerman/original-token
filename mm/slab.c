@@ -705,8 +705,6 @@ r_static
 id|kmem_cache_t
 op_star
 id|cache_slabp
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Max number of objs-per-slab for caches which use bufctl&squot;s.&n; * Needed to avoid a possible looping condition in kmem_cache_grow().&n; */
 DECL|variable|bufctl_limit
@@ -714,8 +712,6 @@ r_static
 r_int
 r_int
 id|bufctl_limit
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Initialisation - setup the `cache&squot; cache. */
 DECL|function|kmem_cache_init

@@ -281,8 +281,6 @@ DECL|variable|execute_command
 r_char
 op_star
 id|execute_command
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|root_device_name
 r_char

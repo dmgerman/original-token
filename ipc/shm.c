@@ -720,24 +720,18 @@ DECL|variable|shm_tot
 r_static
 r_int
 id|shm_tot
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* total number of shared memory pages */
 DECL|variable|shm_rss
 r_static
 r_int
 id|shm_rss
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* number of shared memory pages that are in memory */
 DECL|variable|shm_swp
 r_static
 r_int
 id|shm_swp
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* number of shared memory pages that are in swap */
 multiline_comment|/* locks order:&n;&t;pagecache_lock&n;&t;shm_lock()/shm_lockall()&n;&t;kernel lock&n;&t;inode-&gt;i_sem&n;&t;sem_ids.sem&n;&t;mmap_sem&n;&n;  SMP assumptions:&n;  - swap_free() never sleeps&n;  - add_to_swap_cache() never sleeps&n;  - add_to_swap_cache() doesn&squot;t acquire the big kernel lock.&n;  - shm_unuse() is called with the kernel lock acquired.&n; */
@@ -746,22 +740,16 @@ DECL|variable|swap_attempts
 r_static
 id|ulong
 id|swap_attempts
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|swap_successes
 r_static
 id|ulong
 id|swap_successes
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|used_segs
 r_static
 id|ulong
 id|used_segs
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|shm_init
 r_void
@@ -6282,10 +6270,9 @@ id|shp-&gt;id
 suffix:semicolon
 id|page
 op_assign
-id|alloc_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_HIGHUSER
 )paren
 suffix:semicolon
 r_if
@@ -6479,7 +6466,7 @@ id|pte
 suffix:semicolon
 )brace
 multiline_comment|/* pte_val(pte) == SHM_ENTRY (shp, idx) */
-id|get_page
+id|page_cache_get
 c_func
 (paren
 id|pte_page
@@ -6831,7 +6818,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -6895,8 +6882,6 @@ r_static
 r_int
 r_int
 id|swap_id
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* currently being swapped */
 DECL|variable|swap_idx
@@ -6904,8 +6889,6 @@ r_static
 r_int
 r_int
 id|swap_idx
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* next to swap */
 DECL|function|shm_swap
@@ -7192,7 +7175,7 @@ id|idx
 op_assign
 id|pte
 suffix:semicolon
-id|get_page
+id|page_cache_get
 c_func
 (paren
 id|page
@@ -7737,8 +7720,6 @@ r_static
 r_int
 r_int
 id|zswap_idx
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* next to swap */
 DECL|variable|zswap_shp

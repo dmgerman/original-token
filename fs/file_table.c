@@ -15,15 +15,11 @@ multiline_comment|/* sysctl tunables... */
 DECL|variable|nr_files
 r_int
 id|nr_files
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* read only */
 DECL|variable|nr_free_files
 r_int
 id|nr_free_files
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* read only */
 DECL|variable|max_files

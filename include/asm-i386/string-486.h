@@ -1,11 +1,11 @@
 macro_line|#ifndef _I386_STRING_I486_H_
 DECL|macro|_I386_STRING_I486_H_
 mdefine_line|#define _I386_STRING_I486_H_
-multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. &n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; *&t;&t;Revised and optimized for i486/pentium&n; *&t;&t;1994/03/15 by Alberto Vignani/Davide Parodi @crf.it&n; *&n; *&t;Split into 2 CPU specific files by Alan Cox to keep #ifdef noise down.&n; *&n; *&t;1999/10/5&t;Proper register args for newer GCCs and minor bugs&n; *&t;&t;&t;fixed - Petko Manolov (petkan@spct.net)&n; *&t;1999/10/14&t;3DNow memscpy() added - Petkan&n; */
+multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. &n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; *&t;&t;Revised and optimized for i486/pentium&n; *&t;&t;1994/03/15 by Alberto Vignani/Davide Parodi @crf.it&n; *&n; *&t;Split into 2 CPU specific files by Alan Cox to keep #ifdef noise down.&n; *&n; *&t;1999/10/5&t;Proper register args for newer GCCs and minor bugs&n; *&t;&t;&t;fixed - Petko Manolov (petkan@spct.net)&n; *&t;1999/10/14&t;3DNow memscpy() added - Petkan&n; *&t;2000/05/09&t;extern changed to static in function definitions&n; *&t;&t;&t;and a few cleanups - Petkan&n; */
 DECL|macro|__HAVE_ARCH_STRCPY
 mdefine_line|#define __HAVE_ARCH_STRCPY
 DECL|function|strcpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -84,7 +84,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCPY
 mdefine_line|#define __HAVE_ARCH_STRNCPY
 DECL|function|strncpy
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -191,7 +191,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCAT
 mdefine_line|#define __HAVE_ARCH_STRCAT
 DECL|function|strcat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -276,7 +276,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCAT
 mdefine_line|#define __HAVE_ARCH_STRNCAT
 DECL|function|strncat
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -378,7 +378,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCMP
 mdefine_line|#define __HAVE_ARCH_STRCMP
 DECL|function|strcmp
-r_extern
+r_static
 r_inline
 r_int
 id|strcmp
@@ -452,7 +452,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 DECL|function|strncmp
-r_extern
+r_static
 r_inline
 r_int
 id|strncmp
@@ -539,7 +539,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRCHR
 mdefine_line|#define __HAVE_ARCH_STRCHR
 DECL|function|strchr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -602,7 +602,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_STRRCHR
 mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|function|strrchr
-r_extern
+r_static
 r_inline
 r_char
 op_star
@@ -675,106 +675,10 @@ r_return
 id|__res
 suffix:semicolon
 )brace
-DECL|macro|__HAVE_ARCH_STRSPN
-mdefine_line|#define __HAVE_ARCH_STRSPN
-DECL|function|strspn
-r_extern
-r_inline
-r_int
-id|strspn
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_int
-id|d0
-comma
-id|d1
-suffix:semicolon
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;je 1b&bslash;n&quot;
-l_string|&quot;2:&bslash;tdecl %0&quot;
-suffix:colon
-l_string|&quot;=S&quot;
-(paren
-id|__res
-)paren
-comma
-l_string|&quot;=&amp;a&quot;
-(paren
-id|d0
-)paren
-comma
-l_string|&quot;=&amp;c&quot;
-(paren
-id|d1
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-op_minus
-id|cs
-suffix:semicolon
-)brace
 DECL|macro|__HAVE_ARCH_STRCSPN
 mdefine_line|#define __HAVE_ARCH_STRCSPN
 DECL|function|strcspn
-r_extern
+r_static
 r_inline
 r_int
 id|strcspn
@@ -867,208 +771,10 @@ op_minus
 id|cs
 suffix:semicolon
 )brace
-macro_line|#if 0
-mdefine_line|#define __HAVE_ARCH_STRPBRK
-r_extern
-r_inline
-r_char
-op_star
-id|strpbrk
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_int
-id|d0
-comma
-id|d1
-suffix:semicolon
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %0&bslash;n&bslash;t&quot;
-l_string|&quot;jmp 3f&bslash;n&quot;
-l_string|&quot;2:&bslash;txorl %0,%0&bslash;n&quot;
-l_string|&quot;3:&quot;
-suffix:colon
-l_string|&quot;=S&quot;
-(paren
-id|__res
-)paren
-comma
-l_string|&quot;=&amp;a&quot;
-(paren
-id|d0
-)paren
-comma
-l_string|&quot;=&amp;c&quot;
-(paren
-id|d1
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#if 0
-mdefine_line|#define __HAVE_ARCH_STRSTR
-r_extern
-r_inline
-r_char
-op_star
-id|strstr
-c_func
-(paren
-r_const
-r_char
-op_star
-id|cs
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_int
-id|d0
-comma
-id|d1
-suffix:semicolon
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-multiline_comment|/* NOTE! This also sets Z if searchstring=&squot;&squot; */
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;1:&bslash;tmovl %6,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%esi,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repe&bslash;n&bslash;t&quot;
-l_string|&quot;cmpsb&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-multiline_comment|/* also works for empty string, see above */
-l_string|&quot;xchgl %%eax,%%esi&bslash;n&bslash;t&quot;
-l_string|&quot;incl %%esi&bslash;n&bslash;t&quot;
-l_string|&quot;cmpb $0,-1(%%eax)&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;2:&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|__res
-)paren
-comma
-l_string|&quot;=&amp;c&quot;
-(paren
-id|d0
-)paren
-comma
-l_string|&quot;=&amp;S&quot;
-(paren
-id|d1
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-l_int|0xffffffff
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
 DECL|function|strlen
-r_extern
+r_static
 r_inline
 r_int
 id|strlen
@@ -1136,7 +842,7 @@ multiline_comment|/* Added by Gertjan van Wingerde to make minix and sysv module
 DECL|macro|__HAVE_ARCH_STRNLEN
 mdefine_line|#define __HAVE_ARCH_STRNLEN
 DECL|function|strnlen
-r_extern
+r_static
 r_inline
 r_int
 id|strnlen
@@ -1198,129 +904,9 @@ id|__res
 suffix:semicolon
 )brace
 multiline_comment|/* end of additional stuff */
-macro_line|#if 0
-mdefine_line|#define __HAVE_ARCH_STRTOK
-r_extern
-r_inline
-r_char
-op_star
-id|strtok
-c_func
-(paren
-r_char
-op_star
-id|s
-comma
-r_const
-r_char
-op_star
-id|ct
-)paren
-(brace
-r_register
-r_char
-op_star
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;testl %1,%1&bslash;n&bslash;t&quot;
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-l_string|&quot;testl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;je 8f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %0,%1&bslash;n&quot;
-l_string|&quot;1:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movl $-1,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;notl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;decl %%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-multiline_comment|/* empty delimiter-string */
-l_string|&quot;movl %%ecx,%%edx&bslash;n&quot;
-l_string|&quot;2:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;je 2b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmpb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;je 7f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %1,%0&bslash;n&quot;
-l_string|&quot;3:&bslash;tlodsb&bslash;n&bslash;t&quot;
-l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
-l_string|&quot;je 5f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
-l_string|&quot;movl %%edx,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;repne&bslash;n&bslash;t&quot;
-l_string|&quot;scasb&bslash;n&bslash;t&quot;
-l_string|&quot;jne 3b&bslash;n&bslash;t&quot;
-l_string|&quot;decl %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmpb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;je 5f&bslash;n&bslash;t&quot;
-l_string|&quot;movb $0,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;incl %1&bslash;n&bslash;t&quot;
-l_string|&quot;jmp 6f&bslash;n&quot;
-l_string|&quot;5:&bslash;txorl %1,%1&bslash;n&quot;
-l_string|&quot;6:&bslash;tcmpb $0,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;jne 7f&bslash;n&bslash;t&quot;
-l_string|&quot;xorl %0,%0&bslash;n&quot;
-l_string|&quot;7:&bslash;ttestl %0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;jne 8f&bslash;n&bslash;t&quot;
-l_string|&quot;movl %0,%1&bslash;n&quot;
-l_string|&quot;8:&quot;
-suffix:colon
-l_string|&quot;=b&quot;
-(paren
-id|__res
-)paren
-comma
-l_string|&quot;=S&quot;
-(paren
-id|___strtok
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|___strtok
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|s
-)paren
-comma
-l_string|&quot;g&quot;
-(paren
-id|ct
-)paren
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;These ought to get tweaked to do some cache priming.&n; */
 DECL|function|__memcpy_by4
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1414,7 +1000,7 @@ id|to
 suffix:semicolon
 )brace
 DECL|function|__memcpy_by2
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1513,7 +1099,7 @@ id|to
 suffix:semicolon
 )brace
 DECL|function|__memcpy_g
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1624,7 +1210,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
 multiline_comment|/*&n;**      This CPU favours 3DNow strongly (eg AMD K6-II, K6-III, Athlon)&n;*/
 DECL|function|__constant_memcpy3d
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1682,8 +1268,8 @@ id|len
 suffix:semicolon
 )brace
 DECL|function|__memcpy3d
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 op_star
 id|__memcpy3d
@@ -1746,10 +1332,20 @@ multiline_comment|/*&n;**&t;Generic routines&n;*/
 DECL|macro|memcpy
 mdefine_line|#define memcpy(d, s, count) __memcpy(d, s, count)
 macro_line|#endif /* CONFIG_X86_USE_3DNOW */ 
+r_extern
+r_void
+id|__struct_cpy_bug
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|struct_cpy
+mdefine_line|#define struct_cpy(x,y)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (sizeof(*(x)) != sizeof(*(y)))&t;&bslash;&n;&t;&t;__struct_cpy_bug;&t;&t;&bslash;&n;&t;memcpy(x, y, sizeof(*(x)));&t;&t;&bslash;&n;})
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -1896,8 +1492,10 @@ r_return
 id|dest
 suffix:semicolon
 )brace
+DECL|macro|__HAVE_ARCH_MEMCMP
+mdefine_line|#define&t;__HAVE_ARCH_MEMCMP
 DECL|function|memcmp
-r_extern
+r_static
 r_inline
 r_int
 id|memcmp
@@ -1987,7 +1585,7 @@ suffix:semicolon
 DECL|macro|__HAVE_ARCH_MEMCHR
 mdefine_line|#define __HAVE_ARCH_MEMCHR
 DECL|function|memchr
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2072,7 +1670,7 @@ mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|macro|memset
 mdefine_line|#define memset(s,c,count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; (__builtin_constant_p(count) ? &bslash;&n;  __memset_cc((s),(c),(count)) : &bslash;&n;  __memset_cg((s),(c),(count))) : &bslash;&n; (__builtin_constant_p(count) ? &bslash;&n;  __memset_gc((s),(c),(count)) : &bslash;&n;  __memset_gg((s),(c),(count))))
 DECL|function|__memset_cc_by4
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2155,7 +1753,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|__memset_cc_by2
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2241,7 +1839,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|__memset_gc_by4
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2329,7 +1927,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|__memset_gc_by2
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2423,7 +2021,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|__memset_cg
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2506,7 +2104,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|__memset_gg
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -2594,7 +2192,7 @@ multiline_comment|/*&n; * find the first occurrence of byte &squot;c&squot;, or 
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
-r_extern
+r_static
 r_inline
 r_void
 op_star

@@ -526,8 +526,6 @@ suffix:semicolon
 DECL|variable|pps_offset
 r_int
 id|pps_offset
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* pps time offset (us) */
 DECL|variable|pps_jitter
@@ -540,8 +538,6 @@ multiline_comment|/* time dispersion (jitter) (us) */
 DECL|variable|pps_freq
 r_int
 id|pps_freq
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* frequency offset (scaled ppm) */
 DECL|variable|pps_stabil
@@ -568,29 +564,21 @@ multiline_comment|/* interval duration (s) (shift) */
 DECL|variable|pps_jitcnt
 r_int
 id|pps_jitcnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* jitter limit exceeded */
 DECL|variable|pps_calcnt
 r_int
 id|pps_calcnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* calibration intervals */
 DECL|variable|pps_errcnt
 r_int
 id|pps_errcnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* calibration errors */
 DECL|variable|pps_stbcnt
 r_int
 id|pps_stbcnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* stability limit exceeded */
 multiline_comment|/* hook for a loadable hardpps kernel module */

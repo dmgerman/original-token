@@ -62,6 +62,17 @@ DECL|macro|CPU_NAME
 macro_line|#   define CPU_NAME sa1100
 macro_line|#  endif
 macro_line|# endif
+macro_line|# ifdef CONFIG_CPU_ARM720
+macro_line|#  ifdef CPU_NAME
+DECL|macro|MULTI_CPU
+macro_line|#   undef  MULTI_CPU
+DECL|macro|MULTI_CPU
+macro_line|#   define MULTI_CPU
+macro_line|#  else
+DECL|macro|CPU_NAME
+macro_line|#   define CPU_NAME arm720
+macro_line|#  endif
+macro_line|# endif
 macro_line|#endif
 macro_line|#ifndef MULTI_CPU
 DECL|macro|CPU_INCLUDE_NAME

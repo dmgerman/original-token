@@ -122,7 +122,7 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Set of macros to define architecture features&n; */
+multiline_comment|/*&n; * Set of macros to define architecture features.  This is built into&n; * a table by the linker.&n; */
 DECL|macro|MACHINE_START
 mdefine_line|#define MACHINE_START(_type,_name)&t;&t;&bslash;&n;const struct machine_desc __mach_desc_##_type&t;&bslash;&n; __attribute__((__section__(&quot;.arch.info&quot;))) = {&t;&bslash;&n;&t;nr:&t;&t;MACH_TYPE_##_type##,&t;&bslash;&n;&t;name:&t;&t;_name,
 DECL|macro|MAINTAINER

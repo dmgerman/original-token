@@ -70,10 +70,10 @@ op_increment
 r_if
 c_cond
 (paren
-id|fcheck_task
+id|fcheck_files
 c_func
 (paren
-id|p
+id|p-&gt;files
 comma
 id|i
 )paren
@@ -178,10 +178,10 @@ op_increment
 r_if
 c_cond
 (paren
-id|fcheck_task
+id|fcheck_files
 c_func
 (paren
-id|p
+id|p-&gt;files
 comma
 id|i
 )paren

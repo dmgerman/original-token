@@ -1761,16 +1761,6 @@ c_func
 id|GFP_KSWAPD
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|tsk-&gt;need_resched
-)paren
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 id|run_task_queue
 c_func
@@ -1793,6 +1783,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tsk-&gt;need_resched
+op_logical_or
 op_logical_neg
 id|something_to_do
 )paren

@@ -29,8 +29,6 @@ DECL|variable|log_size
 r_int
 r_int
 id|log_size
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|log_wait
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -91,16 +89,12 @@ r_static
 r_int
 r_int
 id|log_start
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|logged_chars
 r_static
 r_int
 r_int
 id|logged_chars
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|console_cmdline
 r_struct

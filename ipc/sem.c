@@ -106,8 +106,6 @@ DECL|variable|used_sems
 r_static
 r_int
 id|used_sems
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|sem_init
 r_void

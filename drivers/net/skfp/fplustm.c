@@ -1779,9 +1779,9 @@ id|t_requ
 )paren
 suffix:semicolon
 )brace
-DECL|function|set_long
+DECL|function|set_int
 r_void
-id|set_long
+id|set_int
 c_func
 (paren
 id|p
@@ -1897,7 +1897,7 @@ multiline_comment|/* lenght of the frame including the FC */
 r_int
 id|i
 suffix:semicolon
-id|u_long
+id|u_int
 op_star
 id|p
 suffix:semicolon
@@ -1916,7 +1916,7 @@ multiline_comment|/* set memory address reg for writes */
 id|p
 op_assign
 (paren
-id|u_long
+id|u_int
 op_star
 )paren
 id|mac
@@ -2020,7 +2020,7 @@ suffix:semicolon
 id|SK_LOC_DECL
 c_func
 (paren
-id|u_long
+id|u_int
 comma
 id|a
 (braket
@@ -2175,7 +2175,7 @@ id|u_long
 id|t_request
 suffix:semicolon
 (brace
-id|u_long
+id|u_int
 id|td
 suffix:semicolon
 r_int
@@ -2199,7 +2199,7 @@ op_or
 (paren
 (paren
 (paren
-id|u_long
+id|u_int
 )paren
 id|len
 op_minus
@@ -2229,7 +2229,7 @@ op_assign
 id|MA
 suffix:semicolon
 multiline_comment|/* 2&squot;s complement */
-id|set_long
+id|set_int
 c_func
 (paren
 (paren
@@ -2293,7 +2293,7 @@ op_or
 (paren
 (paren
 (paren
-id|u_long
+id|u_int
 )paren
 id|len
 op_minus
@@ -2319,7 +2319,7 @@ op_assign
 id|null_addr
 suffix:semicolon
 multiline_comment|/* DA == 0 in beacon frame */
-id|set_long
+id|set_int
 c_func
 (paren
 (paren
@@ -2334,7 +2334,7 @@ r_int
 )paren
 id|BEACON_INFO
 op_lshift
-l_int|24L
+l_int|24
 )paren
 op_plus
 l_int|0
@@ -2389,7 +2389,7 @@ op_or
 (paren
 (paren
 (paren
-id|u_long
+id|u_int
 )paren
 id|len
 op_minus
@@ -2415,7 +2415,7 @@ op_assign
 id|dbeacon_multi
 suffix:semicolon
 multiline_comment|/* multicast */
-id|set_long
+id|set_int
 c_func
 (paren
 (paren
@@ -2430,13 +2430,13 @@ r_int
 )paren
 id|DBEACON_INFO
 op_lshift
-l_int|24L
+l_int|24
 )paren
 op_plus
 l_int|0
 )paren
 suffix:semicolon
-id|set_long
+id|set_int
 c_func
 (paren
 (paren
@@ -2447,10 +2447,10 @@ id|mac-&gt;mac_info
 op_plus
 l_int|4
 comma
-l_int|0L
+l_int|0
 )paren
 suffix:semicolon
-id|set_long
+id|set_int
 c_func
 (paren
 (paren
@@ -2461,7 +2461,7 @@ id|mac-&gt;mac_info
 op_plus
 l_int|8
 comma
-l_int|0L
+l_int|0
 )paren
 suffix:semicolon
 id|copy_tx_mac

@@ -696,8 +696,6 @@ op_assign
 (brace
 l_string|&quot;linear&quot;
 comma
-l_int|NULL
-comma
 id|linear_make_request
 comma
 l_int|NULL
@@ -707,8 +705,6 @@ comma
 id|linear_stop
 comma
 id|linear_status
-comma
-l_int|NULL
 comma
 l_int|0
 comma

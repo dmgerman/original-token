@@ -147,8 +147,6 @@ r_struct
 id|proc_dir_entry
 op_star
 id|bm_dir
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|entries
 r_static
@@ -156,8 +154,6 @@ r_struct
 id|binfmt_entry
 op_star
 id|entries
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|free_id
 r_static

@@ -32,8 +32,6 @@ suffix:semicolon
 DECL|variable|panic_timeout
 r_int
 id|panic_timeout
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|panic_notifier_list
 r_struct

@@ -1,9 +1,9 @@
+multiline_comment|/*&n; * Copyright 1995, Russell King.&n; * Various bits and pieces copyrights include:&n; *  Linus Torvalds (test_bit).&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; *&n; * Please note that the code in this file should never be included&n; * from user space.  Many of these are not implemented in assembler&n; * since they would be too costly.  Also, they require priviledged&n; * instructions (which are not available from user mode) to ensure&n; * that they are atomic.&n; */
 macro_line|#ifndef __ASM_ARM_BITOPS_H
 DECL|macro|__ASM_ARM_BITOPS_H
 mdefine_line|#define __ASM_ARM_BITOPS_H
-multiline_comment|/*&n; * Copyright 1995, Russell King.&n; * Various bits and pieces copyrights include:&n; *  Linus Torvalds (test_bit).&n; */
-multiline_comment|/*&n; * These should be done with inline assembly.&n; * All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
-multiline_comment|/*&n; * Function prototypes to keep gcc -Wall happy&n; */
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * Function prototypes to keep gcc -Wall happy.&n; */
 r_extern
 r_void
 id|set_bit
@@ -271,7 +271,6 @@ r_return
 id|k
 suffix:semicolon
 )brace
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
 DECL|macro|ffs
 mdefine_line|#define ffs(x) generic_ffs(x)
@@ -282,8 +281,6 @@ DECL|macro|hweight16
 mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
 mdefine_line|#define hweight8(x) generic_hweight8(x)
-macro_line|#endif /* __KERNEL__ */
-macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
 mdefine_line|#define ext2_set_bit&t;&t;&t;test_and_set_bit
 DECL|macro|ext2_clear_bit

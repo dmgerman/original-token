@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 3.0 $$Date: 1998/11/02 14:20:59 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file was initially written by&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt; and is maintained by&n; * Ivan Passos &lt;ivan@cyclades.com&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 3.0  1998/11/02 14:20:59  ivan&n; *added nports field on cyclades_card structure;&n; *&n; *Revision 2.5  1998/08/03 16:57:01  ivan&n; *added cyclades_idle_stats structure;&n; * &n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 3.0 $$Date: 1998/11/02 14:20:59 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file was initially written by&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt; and is maintained by&n; * Ivan Passos &lt;ivan@cyclades.com&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 3.1  2000/04/19 18:52:52  ivan&n; *converted address fields to unsigned long and added fields for physical&n; *addresses on cyclades_card structure;&n; *&n; *Revision 3.0  1998/11/02 14:20:59  ivan&n; *added nports field on cyclades_card structure;&n; *&n; *Revision 2.5  1998/08/03 16:57:01  ivan&n; *added cyclades_idle_stats structure;&n; * &n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -1050,11 +1050,23 @@ DECL|struct|cyclades_card
 r_struct
 id|cyclades_card
 (brace
+DECL|member|base_phys
+r_int
+r_int
+id|base_phys
+suffix:semicolon
+DECL|member|ctl_phys
+r_int
+r_int
+id|ctl_phys
+suffix:semicolon
 DECL|member|base_addr
+r_int
 r_int
 id|base_addr
 suffix:semicolon
 DECL|member|ctl_addr
+r_int
 r_int
 id|ctl_addr
 suffix:semicolon

@@ -279,8 +279,6 @@ r_static
 r_int
 r_int
 id|last_pkmap_nr
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|kmap_lock
 r_static

@@ -64,7 +64,7 @@ DECL|macro|SMT_R2_RXD_COUNT
 mdefine_line|#define SMT_R2_RXD_COUNT&t;0&t;
 singleline_comment|// Not used.
 singleline_comment|// -----------------------
-multiline_comment|/*&n; * OS-specific part of the transmit/receive descriptor structure (TXD/RXD).&n; *&n; * Note: The size of these structures must follow this rule:&n; *&n; *&t;size = 8 + n * 16, n &gt;= 0&n; *&n; * NOTE: The size of this structures may not be changed, because&n; *       libskfddi.a depends on it. But the dummy fields can be&n; *       used freely.&n; */
+multiline_comment|/*&n; * OS-specific part of the transmit/receive descriptor structure (TXD/RXD).&n; *&n; * Note: The size of these structures must follow this rule:&n; *&n; *&t;sizeof(struct) + 2*sizeof(void*) == n * 16, n &gt;= 1&n; *&n; * We use the dma_addr fields under Linux to keep track of the&n; * DMA address of the packet data, for later pci_unmap_single. -DaveM&n; */
 DECL|struct|s_txd_os
 r_struct
 id|s_txd_os
@@ -76,9 +76,9 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-DECL|member|dummy
-r_int
-id|dummy
+DECL|member|dma_addr
+id|dma_addr_t
+id|dma_addr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -93,10 +93,15 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-DECL|member|dummy
-r_int
-id|dummy
+DECL|member|dma_addr
+id|dma_addr_t
+id|dma_addr
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * So we do not need to make too many modifications to the generic driver&n; * parts, we take advantage of the AIX byte swapping macro interface.&n; */
+DECL|macro|AIX_REVERSE
+mdefine_line|#define AIX_REVERSE(x)&t;&t;((u32)le32_to_cpu((u32)(x)))
+DECL|macro|MDR_REVERSE
+mdefine_line|#define MDR_REVERSE(x)&t;&t;((u32)le32_to_cpu((u32)(x)))
 eof

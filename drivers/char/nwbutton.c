@@ -20,8 +20,6 @@ DECL|variable|button_press_count
 r_static
 r_int
 id|button_press_count
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* The count of button presses */
 DECL|variable|button_timer
@@ -52,8 +50,6 @@ DECL|variable|bcount
 r_static
 r_int
 id|bcount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* The number of bytes in the buffer */
 DECL|variable|bdelay
@@ -78,8 +74,6 @@ DECL|variable|callback_count
 r_static
 r_int
 id|callback_count
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* The number of callbacks registered */
 DECL|variable|reboot_count

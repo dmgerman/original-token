@@ -137,6 +137,12 @@ DECL|macro|FB_ACCEL_3DFX_BANSHEE
 mdefine_line|#define FB_ACCEL_3DFX_BANSHEE&t;31&t;/* 3Dfx Banshee&t;&t;&t;*/
 DECL|macro|FB_ACCEL_ATI_RAGE128
 mdefine_line|#define FB_ACCEL_ATI_RAGE128&t;32&t;/* ATI Rage128 family&t;&t;*/
+DECL|macro|FB_ACCEL_IGS_CYBER2000
+mdefine_line|#define FB_ACCEL_IGS_CYBER2000&t;33&t;/* CyberPro 2000&t;&t;*/
+DECL|macro|FB_ACCEL_IGS_CYBER2010
+mdefine_line|#define FB_ACCEL_IGS_CYBER2010&t;34&t;/* CyberPro 2010&t;&t;*/
+DECL|macro|FB_ACCEL_IGS_CYBER5000
+mdefine_line|#define FB_ACCEL_IGS_CYBER5000&t;35&t;/* CyberPro 5000&t;&t;*/
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo

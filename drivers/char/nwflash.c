@@ -206,23 +206,17 @@ DECL|variable|flashdebug
 r_static
 r_int
 id|flashdebug
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|//if set - we will display progress msgs
 DECL|variable|gbWriteEnable
 r_static
 r_int
 id|gbWriteEnable
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|gbWriteBase64Enable
 r_static
 r_int
 id|gbWriteBase64Enable
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|gbFlashSize
 id|MSTATIC

@@ -105,28 +105,28 @@ r_struct
 id|s_smt_fp_txd
 (brace
 DECL|member|txd_tbctrl
-id|u_long
+id|u_int
 id|txd_tbctrl
 suffix:semicolon
 multiline_comment|/* transmit buffer control */
 DECL|member|txd_txdscr
-id|u_long
+id|u_int
 id|txd_txdscr
 suffix:semicolon
 multiline_comment|/* transmit frame status word */
 DECL|member|txd_tbadr
-id|u_long
+id|u_int
 id|txd_tbadr
 suffix:semicolon
 multiline_comment|/* physical tx buffer address */
 DECL|member|txd_ntdadr
-id|u_long
+id|u_int
 id|txd_ntdadr
 suffix:semicolon
 multiline_comment|/* physical pointer to the next TxD */
 macro_line|#ifdef&t;ENA_64BIT_SUP
 DECL|member|txd_tbadr_hi
-id|u_long
+id|u_int
 id|txd_tbadr_hi
 suffix:semicolon
 multiline_comment|/* physical tx buffer addr (high dword)*/
@@ -161,28 +161,28 @@ r_struct
 id|s_smt_fp_rxd
 (brace
 DECL|member|rxd_rbctrl
-id|u_long
+id|u_int
 id|rxd_rbctrl
 suffix:semicolon
 multiline_comment|/* receive buffer control */
 DECL|member|rxd_rfsw
-id|u_long
+id|u_int
 id|rxd_rfsw
 suffix:semicolon
 multiline_comment|/* receive frame status word */
 DECL|member|rxd_rbadr
-id|u_long
+id|u_int
 id|rxd_rbadr
 suffix:semicolon
 multiline_comment|/* physical rx buffer address */
 DECL|member|rxd_nrdadr
-id|u_long
+id|u_int
 id|rxd_nrdadr
 suffix:semicolon
 multiline_comment|/* physical pointer to the next RxD */
 macro_line|#ifdef&t;ENA_64BIT_SUP
 DECL|member|rxd_rbadr_hi
-id|u_long
+id|u_int
 id|rxd_rbadr_hi
 suffix:semicolon
 multiline_comment|/* physical tx buffer addr (high dword)*/
@@ -668,15 +668,19 @@ mdefine_line|#define MDR_REV
 DECL|macro|AIX_REVERSE
 mdefine_line|#define&t;AIX_REVERSE(x)&t;&t;((((x)&lt;&lt;24L)&amp;0xff000000L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&lt;&lt; 8L)&amp;0x00ff0000L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&gt;&gt; 8L)&amp;0x0000ff00L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&gt;&gt;24L)&amp;0x000000ffL))
 macro_line|#else
+macro_line|#ifndef AIX_REVERSE
 DECL|macro|AIX_REVERSE
 mdefine_line|#define&t;AIX_REVERSE(x)&t;(x)
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef&t;MDR_REV&t;
 DECL|macro|MDR_REVERSE
 mdefine_line|#define&t;MDR_REVERSE(x)&t;&t;((((x)&lt;&lt;24L)&amp;0xff000000L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&lt;&lt; 8L)&amp;0x00ff0000L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&gt;&gt; 8L)&amp;0x0000ff00L)&t;+&t;&bslash;&n;&t;&t;&t;&t; (((x)&gt;&gt;24L)&amp;0x000000ffL))
 macro_line|#else
+macro_line|#ifndef MDR_REVERSE
 DECL|macro|MDR_REVERSE
 mdefine_line|#define&t;MDR_REVERSE(x)&t;(x)
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

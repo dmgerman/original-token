@@ -1823,6 +1823,11 @@ DECL|enumerator|DEV_PARPORT
 id|DEV_PARPORT
 op_assign
 l_int|3
+comma
+DECL|enumerator|DEV_RAID
+id|DEV_RAID
+op_assign
+l_int|4
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/cdrom */
@@ -1867,6 +1872,20 @@ id|DEV_PARPORT_DEFAULT
 op_assign
 op_minus
 l_int|3
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/raid */
+r_enum
+(brace
+DECL|enumerator|DEV_RAID_SPEED_LIMIT_MIN
+id|DEV_RAID_SPEED_LIMIT_MIN
+op_assign
+l_int|1
+comma
+DECL|enumerator|DEV_RAID_SPEED_LIMIT_MAX
+id|DEV_RAID_SPEED_LIMIT_MAX
+op_assign
+l_int|2
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/parport/default */

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 DECL|macro|IPT_FUNCTION_MAXNAMELEN
-mdefine_line|#define IPT_FUNCTION_MAXNAMELEN 32
+mdefine_line|#define IPT_FUNCTION_MAXNAMELEN 30
 DECL|macro|IPT_TABLE_MAXNAMELEN
 mdefine_line|#define IPT_TABLE_MAXNAMELEN 32
 multiline_comment|/* Yes, Virginia, you have to zero the padding. */
@@ -86,13 +86,14 @@ DECL|struct|ipt_entry_match
 r_struct
 id|ipt_entry_match
 (brace
-multiline_comment|/* Total length */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|match_size
 id|u_int16_t
 id|match_size
 suffix:semicolon
-r_union
-(brace
 multiline_comment|/* Used by userspace */
 DECL|member|name
 r_char
@@ -101,12 +102,31 @@ id|name
 id|IPT_FUNCTION_MAXNAMELEN
 )braket
 suffix:semicolon
+DECL|member|user
+)brace
+id|user
+suffix:semicolon
+r_struct
+(brace
+DECL|member|match_size
+id|u_int16_t
+id|match_size
+suffix:semicolon
 multiline_comment|/* Used inside the kernel */
 DECL|member|match
 r_struct
 id|ipt_match
 op_star
 id|match
+suffix:semicolon
+DECL|member|kernel
+)brace
+id|kernel
+suffix:semicolon
+multiline_comment|/* Total length */
+DECL|member|match_size
+id|u_int16_t
+id|match_size
 suffix:semicolon
 DECL|member|u
 )brace
@@ -126,13 +146,14 @@ DECL|struct|ipt_entry_target
 r_struct
 id|ipt_entry_target
 (brace
-multiline_comment|/* Total length */
+r_union
+(brace
+r_struct
+(brace
 DECL|member|target_size
 id|u_int16_t
 id|target_size
 suffix:semicolon
-r_union
-(brace
 multiline_comment|/* Used by userspace */
 DECL|member|name
 r_char
@@ -141,12 +162,31 @@ id|name
 id|IPT_FUNCTION_MAXNAMELEN
 )braket
 suffix:semicolon
+DECL|member|user
+)brace
+id|user
+suffix:semicolon
+r_struct
+(brace
+DECL|member|target_size
+id|u_int16_t
+id|target_size
+suffix:semicolon
 multiline_comment|/* Used inside the kernel */
 DECL|member|target
 r_struct
 id|ipt_target
 op_star
 id|target
+suffix:semicolon
+DECL|member|kernel
+)brace
+id|kernel
+suffix:semicolon
+multiline_comment|/* Total length */
+DECL|member|target_size
+id|u_int16_t
+id|target_size
 suffix:semicolon
 DECL|member|u
 )brace
@@ -619,7 +659,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* fn returns 0 to continue iteration */
 DECL|macro|IPT_MATCH_ITERATE
-mdefine_line|#define IPT_MATCH_ITERATE(e, fn, args...)&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int __i;&t;&t;&t;&bslash;&n;&t;int __ret = 0;&t;&t;&t;&t;&bslash;&n;&t;struct ipt_entry_match *__m;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__i = sizeof(struct ipt_entry);&t;&bslash;&n;&t;     __i &lt; (e)-&gt;target_offset;&t;&t;&bslash;&n;&t;     __i += __m-&gt;match_size) {&t;&t;&bslash;&n;&t;&t;__m = (void *)(e) + __i;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__ret = fn(__m , ## args);&t;&bslash;&n;&t;&t;if (__ret != 0)&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define IPT_MATCH_ITERATE(e, fn, args...)&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int __i;&t;&t;&t;&bslash;&n;&t;int __ret = 0;&t;&t;&t;&t;&bslash;&n;&t;struct ipt_entry_match *__m;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__i = sizeof(struct ipt_entry);&t;&bslash;&n;&t;     __i &lt; (e)-&gt;target_offset;&t;&t;&bslash;&n;&t;     __i += __m-&gt;u.match_size) {&t;&bslash;&n;&t;&t;__m = (void *)(e) + __i;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__ret = fn(__m , ## args);&t;&bslash;&n;&t;&t;if (__ret != 0)&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* fn returns 0 to continue iteration */
 DECL|macro|IPT_ENTRY_ITERATE
 mdefine_line|#define IPT_ENTRY_ITERATE(entries, size, fn, args...)&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int __i;&t;&t;&t;&t;&t;&bslash;&n;&t;int __ret = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct ipt_entry *__e;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__i = 0; __i &lt; (size); __i += __e-&gt;next_offset) {&t;&bslash;&n;&t;&t;__e = (void *)(entries) + __i;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__ret = fn(__e , ## args);&t;&t;&t;&bslash;&n;&t;&t;if (__ret != 0)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
@@ -1026,7 +1066,7 @@ id|userdata
 )paren
 suffix:semicolon
 DECL|macro|IPT_ALIGN
-mdefine_line|#define IPT_ALIGN(s) (((s) + (__alignof__(struct ipt_match)-1)) &amp; ~(__alignof__(struct ipt_match)-1))
+mdefine_line|#define IPT_ALIGN(s) (((s) + (__alignof__(struct ipt_entry)-1)) &amp; ~(__alignof__(struct ipt_entry)-1))
 macro_line|#endif /*__KERNEL__*/
 macro_line|#endif /* _IPTABLES_H */
 eof

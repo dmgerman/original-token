@@ -6,8 +6,6 @@ macro_line|#include &lt;linux/pm.h&gt;
 DECL|variable|pm_active
 r_int
 id|pm_active
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|pm_devs_lock
 r_static

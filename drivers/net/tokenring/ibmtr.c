@@ -8725,7 +8725,7 @@ id|IPv4_p
 )paren
 id|chksum
 op_assign
-id|csum_partial_copy
+id|csum_partial_copy_generic
 c_func
 (paren
 id|bus_to_virt
@@ -8746,6 +8746,10 @@ suffix:colon
 id|rbuffer_len
 comma
 id|chksum
+comma
+l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_else

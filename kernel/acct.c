@@ -44,16 +44,12 @@ r_static
 r_volatile
 r_int
 id|acct_active
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|acct_needcheck
 r_static
 r_volatile
 r_int
 id|acct_needcheck
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|acct_file
 r_static
@@ -61,8 +57,6 @@ r_struct
 id|file
 op_star
 id|acct_file
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|acct_timer
 r_static

@@ -66,8 +66,18 @@ DECL|macro|MACH_TYPE_BRUTUS
 mdefine_line|#define MACH_TYPE_BRUTUS&t;&t;16
 DECL|macro|MACH_TYPE_PERSONAL_SERVER
 mdefine_line|#define MACH_TYPE_PERSONAL_SERVER&t;17
+DECL|macro|MACH_TYPE_SA1100
+mdefine_line|#define MACH_TYPE_SA1100&t;&t;18&t;/* unused/too general */
+DECL|macro|MACH_TYPE_L7200
+mdefine_line|#define MACH_TYPE_L7200&t;&t;&t;19
+DECL|macro|MACH_TYPE_SA1110
+mdefine_line|#define MACH_TYPE_SA1110&t;&t;20&t;/* unused/too general */
+DECL|macro|MACH_TYPE_INTEGRATOR
+mdefine_line|#define MACH_TYPE_INTEGRATOR&t;&t;21
 DECL|macro|MACH_TYPE_BITSY
 mdefine_line|#define MACH_TYPE_BITSY&t;&t;&t;22
+DECL|macro|MACH_TYPE_IXP1200
+mdefine_line|#define MACH_TYPE_IXP1200&t;&t;23
 DECL|macro|MACH_TYPE_THINCLIENT
 mdefine_line|#define MACH_TYPE_THINCLIENT&t;&t;24
 DECL|macro|MACH_TYPE_ASSABET
@@ -76,7 +86,11 @@ DECL|macro|MACH_TYPE_VICTOR
 mdefine_line|#define MACH_TYPE_VICTOR&t;&t;26
 DECL|macro|MACH_TYPE_LART
 mdefine_line|#define MACH_TYPE_LART&t;&t;&t;27
-multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; *&n; * In general, you should use machine_is_xxxx() in your code, not:&n; *  -  switch (machine_arch_type) { }&n; *  -  if (machine_arch_type = xxxx)&n; *  -  __machine_arch_type&n; */
+DECL|macro|MACH_TYPE_RANGER
+mdefine_line|#define MACH_TYPE_RANGER&t;&t;28
+DECL|macro|MACH_TYPE_GRAPHICSCLIENT
+mdefine_line|#define MACH_TYPE_GRAPHICSCLIENT&t;29
+multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; *&n; * In general, you should use machine_is_xxxx() in your code, not:&n; *  -  switch (machine_arch_type) { }&n; *  -  if (machine_arch_type = xxxx)&n; *  -  __machine_arch_type&n; *&n; * Please note that these are kept in numeric order (ie, the same&n; * order as the list above).&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
@@ -269,7 +283,7 @@ macro_line|#else
 DECL|macro|machine_is_personal_server
 macro_line|# define machine_is_personal_server()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_SA1100_ITSY
+macro_line|#ifdef CONFIG_ARCH_L7200
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type
@@ -277,15 +291,15 @@ DECL|macro|machine_arch_type
 macro_line|#  define machine_arch_type&t;__machine_arch_type
 macro_line|# else
 DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_ITSY
+macro_line|#  define machine_arch_type&t;MACH_TYPE_L7200
 macro_line|# endif
-DECL|macro|machine_is_itsy
-macro_line|# define machine_is_itsy()&t;(machine_arch_type == MACH_TYPE_ITSY)
+DECL|macro|machine_is_l7200
+macro_line|# define machine_is_l7200()&t;(machine_arch_type == MACH_TYPE_L7200)
 macro_line|#else
-DECL|macro|machine_is_itsy
-macro_line|# define machine_is_itsy()&t;(0)
+DECL|macro|machine_is_l7200
+macro_line|# define machine_is_l7200()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_SA1100_EMPEG
+macro_line|#ifdef CONFIG_SA1100_BITSY
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type
@@ -293,13 +307,29 @@ DECL|macro|machine_arch_type
 macro_line|#  define machine_arch_type&t;__machine_arch_type
 macro_line|# else
 DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_EMPEG
+macro_line|#  define machine_arch_type&t;MACH_TYPE_BITSY
 macro_line|# endif
-DECL|macro|machine_is_empeg
-macro_line|# define machine_is_empeg()&t;(machine_arch_type == MACH_TYPE_EMPEG)
+DECL|macro|machine_is_bitsy
+macro_line|# define machine_is_bitsy()&t;(machine_arch_type == MACH_TYPE_BITSY)
 macro_line|#else
-DECL|macro|machine_is_empeg
-macro_line|# define machine_is_empeg()&t;(0)
+DECL|macro|machine_is_bitsy
+macro_line|# define machine_is_bitsy()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_THINCLIENT
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_THINCLIENT
+macro_line|# endif
+DECL|macro|machine_is_thinclient
+macro_line|# define machine_is_thinclient()&t;(machine_arch_type == MACH_TYPE_THINCLIENT)
+macro_line|#else
+DECL|macro|machine_is_thinclient
+macro_line|# define machine_is_thinclient()&t;(0)
 macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_ASSABET
 macro_line|# ifdef machine_arch_type
@@ -349,7 +379,8 @@ macro_line|#else
 DECL|macro|machine_is_lart
 macro_line|# define machine_is_lart()&t;(0)
 macro_line|#endif
-macro_line|#ifdef CONFIG_SA1100_BITSY
+multiline_comment|/*&n; * The following are currently unregistered&n; */
+macro_line|#ifdef CONFIG_SA1100_ITSY
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
 macro_line|#  undef machine_arch_type
@@ -357,13 +388,29 @@ DECL|macro|machine_arch_type
 macro_line|#  define machine_arch_type&t;__machine_arch_type
 macro_line|# else
 DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_BITSY
+macro_line|#  define machine_arch_type&t;MACH_TYPE_ITSY
 macro_line|# endif
-DECL|macro|machine_is_bitsy
-macro_line|# define machine_is_bitsy()&t;(machine_arch_type == MACH_TYPE_BITSY)
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(machine_arch_type == MACH_TYPE_ITSY)
 macro_line|#else
-DECL|macro|machine_is_bitsy
-macro_line|# define machine_is_bitsy()&t;(0)
+DECL|macro|machine_is_itsy
+macro_line|# define machine_is_itsy()&t;(0)
+macro_line|#endif
+macro_line|#ifdef CONFIG_SA1100_EMPEG
+macro_line|# ifdef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  undef machine_arch_type
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;__machine_arch_type
+macro_line|# else
+DECL|macro|machine_arch_type
+macro_line|#  define machine_arch_type&t;MACH_TYPE_EMPEG
+macro_line|# endif
+DECL|macro|machine_is_empeg
+macro_line|# define machine_is_empeg()&t;(machine_arch_type == MACH_TYPE_EMPEG)
+macro_line|#else
+DECL|macro|machine_is_empeg
+macro_line|# define machine_is_empeg()&t;(0)
 macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_TIFON
 macro_line|# ifdef machine_arch_type
@@ -396,22 +443,6 @@ macro_line|# define machine_is_pleb()&t;(machine_arch_type == MACH_TYPE_PLEB)
 macro_line|#else
 DECL|macro|machine_is_pleb
 macro_line|# define machine_is_pleb()&t;(0)
-macro_line|#endif
-macro_line|#ifdef CONFIG_SA1100_THINCLIENT
-macro_line|# ifdef machine_arch_type
-DECL|macro|machine_arch_type
-macro_line|#  undef machine_arch_type
-DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;__machine_arch_type
-macro_line|# else
-DECL|macro|machine_arch_type
-macro_line|#  define machine_arch_type&t;MACH_TYPE_THINCLIENT
-macro_line|# endif
-DECL|macro|machine_is_thinclient
-macro_line|# define machine_is_thinclient()&t;(machine_arch_type == MACH_TYPE_THINCLIENT)
-macro_line|#else
-DECL|macro|machine_is_thinclient
-macro_line|# define machine_is_thinclient()&t;(0)
 macro_line|#endif
 macro_line|#ifdef CONFIG_SA1100_PENNY
 macro_line|# ifdef machine_arch_type

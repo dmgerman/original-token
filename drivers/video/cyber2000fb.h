@@ -1,6 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/video/cyber2000fb.h&n; *&n; * Integraphics Cyber2000 frame buffer device&n; */
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|macro|cyber2000_outb
 mdefine_line|#define cyber2000_outb(dat,reg)&t;writeb(dat, CyberRegs + reg)
 DECL|macro|cyber2000_outw
@@ -13,6 +11,73 @@ DECL|macro|cyber2000_inw
 mdefine_line|#define cyber2000_inw(reg)&t;readw(CyberRegs + reg)
 DECL|macro|cyber2000_inl
 mdefine_line|#define cyber2000_inl(reg)&t;readl(CyberRegs + reg)
+multiline_comment|/*&n; * Internal CyberPro sizes and offsets.&n; */
+DECL|macro|MMIO_OFFSET
+mdefine_line|#define MMIO_OFFSET&t;0x00800000
+DECL|macro|MMIO_SIZE
+mdefine_line|#define MMIO_SIZE&t;0x000c0000
+DECL|macro|NR_PALETTE
+mdefine_line|#define NR_PALETTE&t;256
+macro_line|#if defined(DEBUG) &amp;&amp; defined(CONFIG_DEBUG_LL)
+DECL|function|debug_printf
+r_static
+r_void
+id|debug_printf
+c_func
+(paren
+r_char
+op_star
+id|fmt
+comma
+dot
+dot
+dot
+)paren
+(brace
+r_char
+id|buffer
+(braket
+l_int|128
+)braket
+suffix:semicolon
+id|va_list
+id|ap
+suffix:semicolon
+id|va_start
+c_func
+(paren
+id|ap
+comma
+id|fmt
+)paren
+suffix:semicolon
+id|vsprintf
+c_func
+(paren
+id|buffer
+comma
+id|fmt
+comma
+id|ap
+)paren
+suffix:semicolon
+id|va_end
+c_func
+(paren
+id|ap
+)paren
+suffix:semicolon
+id|printascii
+c_func
+(paren
+id|buffer
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|macro|debug_printf
+mdefine_line|#define debug_printf(x...) do { } while (0)
+macro_line|#endif
 DECL|function|cyber2000_crtcw
 r_static
 r_inline
@@ -177,131 +242,6 @@ l_int|0x3c5
 )paren
 suffix:semicolon
 )brace
-DECL|struct|cyber2000fb_par
-r_struct
-id|cyber2000fb_par
-(brace
-DECL|member|screen_base
-r_char
-op_star
-id|screen_base
-suffix:semicolon
-DECL|member|screen_base_p
-r_int
-r_int
-id|screen_base_p
-suffix:semicolon
-DECL|member|regs_base
-r_int
-r_int
-id|regs_base
-suffix:semicolon
-DECL|member|regs_base_p
-r_int
-r_int
-id|regs_base_p
-suffix:semicolon
-DECL|member|screen_end
-r_int
-r_int
-id|screen_end
-suffix:semicolon
-DECL|member|screen_size
-r_int
-r_int
-id|screen_size
-suffix:semicolon
-DECL|member|palette_size
-r_int
-r_int
-id|palette_size
-suffix:semicolon
-DECL|member|currcon
-r_int
-r_int
-id|currcon
-suffix:semicolon
-DECL|member|dev_name
-r_char
-id|dev_name
-(braket
-l_int|32
-)braket
-suffix:semicolon
-DECL|member|dev
-r_struct
-id|pci_dev
-op_star
-id|dev
-suffix:semicolon
-DECL|member|dev_id
-r_int
-r_int
-id|dev_id
-suffix:semicolon
-DECL|member|initialised
-r_int
-r_int
-id|initialised
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|bus_64bit
-r_int
-r_int
-id|bus_64bit
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;&t; * palette&n;&t; */
-r_struct
-(brace
-DECL|member|red
-id|u8
-id|red
-suffix:semicolon
-DECL|member|green
-id|u8
-id|green
-suffix:semicolon
-DECL|member|blue
-id|u8
-id|blue
-suffix:semicolon
-DECL|member|palette
-)brace
-id|palette
-(braket
-l_int|256
-)braket
-suffix:semicolon
-multiline_comment|/*&n;&t; * colour mapping table&n;&t; */
-r_union
-(brace
-macro_line|#ifdef FBCON_HAS_CFB16
-DECL|member|cfb16
-id|u16
-id|cfb16
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef FBCON_HAS_CFB24
-DECL|member|cfb24
-id|u32
-id|cfb24
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#endif
-DECL|member|c_table
-)brace
-id|c_table
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|macro|PIXFORMAT_8BPP
 mdefine_line|#define PIXFORMAT_8BPP&t;&t;0
 DECL|macro|PIXFORMAT_16BPP
@@ -398,6 +338,16 @@ DECL|macro|CAP_DDA_Y_INIT
 mdefine_line|#define CAP_DDA_Y_INIT&t;&t;0x6c
 DECL|macro|CAP_DDA_Y_INC
 mdefine_line|#define CAP_DDA_Y_INC&t;&t;0x6e
+DECL|macro|MEM_CTL2
+mdefine_line|#define MEM_CTL2&t;&t;0x72
+DECL|macro|MEM_CTL2_SIZE_2MB
+mdefine_line|#define MEM_CTL2_SIZE_2MB&t;&t;0x01
+DECL|macro|MEM_CTL2_SIZE_4MB
+mdefine_line|#define MEM_CTL2_SIZE_4MB&t;&t;0x02
+DECL|macro|MEM_CTL2_SIZE_MASK
+mdefine_line|#define MEM_CTL2_SIZE_MASK&t;&t;0x03
+DECL|macro|MEM_CTL2_64BIT
+mdefine_line|#define MEM_CTL2_64BIT&t;&t;&t;0x04
 DECL|macro|EXT_FIFO_CTL
 mdefine_line|#define EXT_FIFO_CTL&t;&t;0x74
 DECL|macro|CAP_PIP_X_START

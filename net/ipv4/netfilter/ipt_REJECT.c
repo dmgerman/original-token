@@ -303,7 +303,7 @@ c_cond
 id|strcmp
 c_func
 (paren
-id|m-&gt;u.match-&gt;name
+id|m-&gt;u.kernel.match-&gt;name
 comma
 l_string|&quot;icmp&quot;
 )paren

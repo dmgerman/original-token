@@ -15,14 +15,10 @@ multiline_comment|/* The idle threads do not count.. */
 DECL|variable|nr_threads
 r_int
 id|nr_threads
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|nr_running
 r_int
 id|nr_running
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|max_threads
 r_int
@@ -32,15 +28,11 @@ DECL|variable|total_forks
 r_int
 r_int
 id|total_forks
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Handle normal Linux uptimes. */
 DECL|variable|last_pid
 r_int
 id|last_pid
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* SLAB cache for mm_struct&squot;s. */
 DECL|variable|mm_cachep
