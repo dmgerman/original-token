@@ -5330,15 +5330,10 @@ id|ROOT_DEV
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-r_extern
-r_int
-id|initmem_freed
-suffix:semicolon
-DECL|function|do_change_root
-r_static
+DECL|function|change_root
 r_int
 id|__init
-id|do_change_root
+id|change_root
 c_func
 (paren
 id|kdev_t
@@ -5439,7 +5434,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;do_change_root: old root has d_count=%d&bslash;n&quot;
+l_string|&quot;change_root: old root has d_count=%d&bslash;n&quot;
 comma
 id|old_root-&gt;d_count
 )paren
@@ -5663,47 +5658,6 @@ suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
-suffix:semicolon
-)brace
-DECL|function|change_root
-r_int
-id|change_root
-c_func
-(paren
-id|kdev_t
-id|new_root_dev
-comma
-r_const
-r_char
-op_star
-id|put_old
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|initmem_freed
-)paren
-(brace
-id|printk
-(paren
-id|KERN_CRIT
-l_string|&quot;Initmem has been already freed. Staying in initrd&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-r_return
-id|do_change_root
-c_func
-(paren
-id|new_root_dev
-comma
-id|put_old
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif

@@ -1937,4 +1937,12 @@ c_func
 id|get_fast_time
 )paren
 suffix:semicolon
+multiline_comment|/* library functions */
+DECL|variable|strnicmp
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strnicmp
+)paren
+suffix:semicolon
 eof

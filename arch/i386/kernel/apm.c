@@ -17,6 +17,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &quot;desc.h&quot;
 DECL|variable|apm_register_callback
 id|EXPORT_SYMBOL
 c_func
@@ -65,7 +66,7 @@ DECL|macro|APM_CHECK_TIMEOUT
 mdefine_line|#define APM_CHECK_TIMEOUT&t;(HZ)
 multiline_comment|/*&n; * Save a segment register away&n; */
 DECL|macro|savesegment
-mdefine_line|#define savesegment(seg, where)&t;__asm__ __volatile__(&quot;movw %%&quot; #seg &quot;, %0&bslash;n&quot; : &quot;=m&quot; (where))
+mdefine_line|#define savesegment(seg, where)&t;__asm__ __volatile__(&quot;movl %%&quot; #seg &quot;,%0&quot; : &quot;=m&quot; (where))
 multiline_comment|/*&n; * Forward declarations&n; */
 r_static
 r_void
@@ -613,10 +614,10 @@ op_star
 id|esi
 )paren
 (brace
-id|u16
+r_int
+r_int
 id|old_fs
-suffix:semicolon
-id|u16
+comma
 id|old_gs
 suffix:semicolon
 r_int
@@ -651,10 +652,10 @@ macro_line|#endif
 macro_line|#ifdef APM_ZERO_SEGS
 l_string|&quot;pushl %%ds&bslash;n&bslash;t&quot;
 l_string|&quot;pushl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movw %9, %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;movw %9, %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movw %9, %%fs&bslash;n&bslash;t&quot;
-l_string|&quot;movw %9, %%gs&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w9,%%ds&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w9,%%es&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w9,%%fs&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w9,%%gs&bslash;n&bslash;t&quot;
 macro_line|#endif
 l_string|&quot;lcall %%cs:&quot;
 id|SYMBOL_NAME_STR
@@ -788,10 +789,10 @@ op_star
 id|eax
 )paren
 (brace
-id|u16
+r_int
+r_int
 id|old_fs
-suffix:semicolon
-id|u16
+comma
 id|old_gs
 suffix:semicolon
 r_int
@@ -826,10 +827,10 @@ macro_line|#endif
 macro_line|#ifdef APM_ZERO_SEGS
 l_string|&quot;pushl %%ds&bslash;n&bslash;t&quot;
 l_string|&quot;pushl %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movw %5, %%ds&bslash;n&bslash;t&quot;
-l_string|&quot;movw %5, %%es&bslash;n&bslash;t&quot;
-l_string|&quot;movw %5, %%fs&bslash;n&bslash;t&quot;
-l_string|&quot;movw %5, %%gs&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w5,%%ds&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w5,%%es&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w5,%%fs&bslash;n&bslash;t&quot;
+l_string|&quot;movl %w5,%%gs&bslash;n&bslash;t&quot;
 macro_line|#endif
 l_string|&quot;lcall %%cs:&quot;
 id|SYMBOL_NAME_STR
@@ -4013,16 +4014,13 @@ id|buf
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|apm_bios_init
 r_void
+id|__init
 id|apm_bios_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
