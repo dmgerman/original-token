@@ -431,6 +431,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called from proc fs&n; */
 DECL|function|atalk_get_info
+r_static
 r_int
 id|atalk_get_info
 c_func
@@ -449,9 +450,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct
@@ -3768,6 +3766,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Called from proc fs - just make it print the ifaces neatly */
 DECL|function|atalk_if_get_info
+r_static
 r_int
 id|atalk_if_get_info
 c_func
@@ -3786,9 +3785,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct
@@ -3950,6 +3946,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Called from proc fs - just make it print the routes neatly */
 DECL|function|atalk_rt_get_info
+r_static
 r_int
 id|atalk_rt_get_info
 c_func
@@ -3968,9 +3965,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct

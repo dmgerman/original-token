@@ -2175,7 +2175,7 @@ id|instance-&gt;hostdata
 suffix:semicolon
 id|instance-&gt;base
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|instance-&gt;io_port
 op_assign

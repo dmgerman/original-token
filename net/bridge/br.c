@@ -3523,6 +3523,7 @@ multiline_comment|/* (4.6.1.2.3)&t; */
 multiline_comment|/* Vova Oksman: Write the buffer (contents of the Bridge table) */
 multiline_comment|/* to a PROCfs file                                             */
 DECL|function|br_tree_get_info
+r_static
 r_int
 id|br_tree_get_info
 c_func
@@ -3541,9 +3542,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

@@ -213,9 +213,9 @@ mdefine_line|#define NCR53C400_host_buffer 0x3900
 DECL|macro|NCR5380_region_size
 mdefine_line|#define NCR5380_region_size 0x3a00
 DECL|macro|NCR5380_read
-mdefine_line|#define NCR5380_read(reg) (*(NCR5380_map_name + NCR53C400_mem_base + (reg)))
+mdefine_line|#define NCR5380_read(reg) isa_readb(NCR5380_map_name + NCR53C400_mem_base + (reg))
 DECL|macro|NCR5380_write
-mdefine_line|#define NCR5380_write(reg, value) (*(NCR5380_map_name + NCR53C400_mem_base + (reg)) = value)
+mdefine_line|#define NCR5380_write(reg, value) isa_writeb(NCR5380_map_name + NCR53C400_mem_base + (reg), value)
 macro_line|#endif
 DECL|macro|NCR5380_implementation_fields
 mdefine_line|#define NCR5380_implementation_fields &bslash;&n;    NCR5380_map_type NCR5380_map_name

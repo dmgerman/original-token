@@ -4887,6 +4887,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifndef CONFIG_RTNETLINK
 DECL|function|ndisc_get_info
+r_static
 r_int
 id|ndisc_get_info
 c_func
@@ -4905,9 +4906,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

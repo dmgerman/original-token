@@ -27,9 +27,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_extern
@@ -51,9 +48,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_extern
@@ -75,9 +69,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_extern
@@ -99,9 +90,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_extern
@@ -123,9 +111,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 DECL|struct|irda_entry

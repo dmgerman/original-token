@@ -1467,6 +1467,7 @@ id|buf
 suffix:semicolon
 )brace
 DECL|function|bpq_get_info
+r_static
 r_int
 id|bpq_get_info
 c_func
@@ -1485,9 +1486,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct

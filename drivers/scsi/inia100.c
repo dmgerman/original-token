@@ -1423,8 +1423,8 @@ multiline_comment|/* Assign HCS index           */
 id|hreg-&gt;base
 op_assign
 (paren
-id|UCHAR
-op_star
+r_int
+r_int
 )paren
 id|pHCB
 suffix:semicolon

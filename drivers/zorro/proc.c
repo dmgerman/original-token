@@ -338,6 +338,7 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
+r_static
 r_int
 DECL|function|get_zorro_dev_info
 id|get_zorro_dev_info
@@ -357,9 +358,6 @@ id|pos
 comma
 r_int
 id|count
-comma
-r_int
-id|wr
 )paren
 (brace
 id|u_int

@@ -10,17 +10,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 macro_line|#include &quot;udf_sb.h&quot;
-DECL|macro|NBUF
-mdefine_line|#define NBUF&t;32
-DECL|typedef|poll_table
-r_typedef
-r_void
-op_star
-id|poll_table
-suffix:semicolon
 r_static
-r_int
-r_int
+id|loff_t
 id|udf_file_llseek
 c_func
 (paren
@@ -28,8 +19,7 @@ r_struct
 id|file
 op_star
 comma
-r_int
-r_int
+id|loff_t
 comma
 r_int
 )paren
@@ -360,8 +350,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Make sure the offset never goes beyond the 32-bit mark..&n; */
 DECL|function|udf_file_llseek
 r_static
-r_int
-r_int
+id|loff_t
 id|udf_file_llseek
 c_func
 (paren
@@ -370,8 +359,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int
@@ -414,30 +402,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#if BITS_PER_LONG &lt; 64
-r_if
-c_cond
-(paren
-(paren
-(paren
-r_int
-r_int
-r_int
-)paren
-id|offset
-op_rshift
-l_int|32
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -720,13 +684,14 @@ id|inode
 op_assign
 id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-id|Uint32
+id|loff_t
 id|size
 comma
 id|left
 comma
 id|pos
-comma
+suffix:semicolon
+id|Uint32
 id|block
 suffix:semicolon
 r_struct
@@ -1342,18 +1307,17 @@ id|filp
 r_if
 c_cond
 (paren
+(paren
 id|inode-&gt;i_size
-op_eq
-(paren
-id|Uint32
-)paren
-op_minus
-l_int|1
-op_logical_and
-(paren
-id|filp-&gt;f_mode
 op_amp
-id|FMODE_WRITE
+l_int|0xFFFFFFFF00000000UL
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|filp-&gt;f_flags
+op_amp
+id|O_LARGEFILE
 )paren
 )paren
 r_return

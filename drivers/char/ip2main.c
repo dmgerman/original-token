@@ -46,6 +46,7 @@ macro_line|#include &quot;./ip2/i2ellis.h&quot;
 macro_line|#include &quot;./ip2/i2lib.h&quot;
 multiline_comment|/*****************&n; * /proc/ip2mem  *&n; *****************/
 macro_line|#include &lt;linux/proc_fs.h&gt;
+r_static
 r_int
 id|ip2_read_procmem
 c_func
@@ -58,8 +59,6 @@ op_star
 op_star
 comma
 id|off_t
-comma
-r_int
 comma
 r_int
 )paren
@@ -12747,6 +12746,7 @@ multiline_comment|/*                                                            
 multiline_comment|/******************************************************************************/
 DECL|macro|LIMIT
 mdefine_line|#define LIMIT  (PAGE_SIZE - 120)
+r_static
 r_int
 DECL|function|ip2_read_procmem
 id|ip2_read_procmem
@@ -12766,9 +12766,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 id|i2eBordStrPtr

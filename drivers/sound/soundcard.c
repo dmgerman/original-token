@@ -516,9 +516,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|inout
 )paren
 (brace
 r_int
@@ -1677,8 +1674,6 @@ op_star
 id|ppos
 comma
 id|count
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

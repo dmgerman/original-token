@@ -973,6 +973,7 @@ macro_line|#else
 DECL|macro|LONG_FORMAT
 mdefine_line|#define LONG_FORMAT &quot;&bslash;t%16lx&quot;
 macro_line|#endif
+r_static
 r_int
 DECL|function|get_pci_dev_info
 id|get_pci_dev_info
@@ -992,9 +993,6 @@ id|pos
 comma
 r_int
 id|count
-comma
-r_int
-id|wr
 )paren
 (brace
 r_struct

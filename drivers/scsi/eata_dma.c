@@ -6901,10 +6901,6 @@ id|base
 suffix:semicolon
 id|sh-&gt;base
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|base
 suffix:semicolon
 id|sh-&gt;io_port

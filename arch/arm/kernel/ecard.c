@@ -3169,6 +3169,7 @@ id|start
 suffix:semicolon
 )brace
 DECL|function|get_ecard_dev_info
+r_static
 r_int
 id|get_ecard_dev_info
 c_func
@@ -3187,9 +3188,6 @@ id|pos
 comma
 r_int
 id|count
-comma
-r_int
-id|wr
 )paren
 (brace
 id|ecard_t

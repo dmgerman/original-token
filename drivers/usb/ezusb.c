@@ -2529,9 +2529,7 @@ suffix:semicolon
 )brace
 id|ret
 op_assign
-id|usbdev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|usbdev

@@ -2657,6 +2657,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_DECNET_ROUTER */
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|dn_neigh_get_info
+r_static
 r_int
 id|dn_neigh_get_info
 c_func
@@ -2675,9 +2676,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

@@ -70,8 +70,8 @@ id|inode-&gt;i_sb-&gt;s_blocksize
 op_minus
 l_int|1
 )paren
-op_div
-id|inode-&gt;i_sb-&gt;s_blocksize
+op_rshift
+id|inode-&gt;i_sb-&gt;s_blocksize_bits
 suffix:semicolon
 r_if
 c_cond

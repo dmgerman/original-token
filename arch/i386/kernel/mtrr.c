@@ -5814,29 +5814,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_ioctl  */
-DECL|function|mtrr_open
-r_static
-r_int
-id|mtrr_open
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*  End Function mtrr_open  */
 DECL|function|mtrr_close
 r_static
 r_int
@@ -5980,7 +5957,7 @@ multiline_comment|/*  IOctl             */
 l_int|NULL
 comma
 multiline_comment|/*  MMAP              */
-id|mtrr_open
+l_int|NULL
 comma
 multiline_comment|/*  Open              */
 l_int|NULL
@@ -6079,32 +6056,8 @@ DECL|variable|proc_root_mtrr
 r_static
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_root_mtrr
-op_assign
-(brace
-l_int|0
-comma
-l_int|4
-comma
-l_string|&quot;mtrr&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IWUSR
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_mtrr_inode_operations
-)brace
 suffix:semicolon
 DECL|function|compute_ascii
 r_static
@@ -6260,7 +6213,7 @@ id|ascii_buf_bytes
 suffix:semicolon
 )brace
 )brace
-id|proc_root_mtrr.size
+id|proc_root_mtrr-&gt;size
 op_assign
 id|ascii_buf_bytes
 suffix:semicolon
@@ -7520,16 +7473,26 @@ suffix:semicolon
 )brace
 macro_line|#  endif  /*  !__SMP__  */
 macro_line|#  ifdef CONFIG_PROC_FS
-id|proc_register
+id|proc_root_mtrr
+op_assign
+id|create_proc_entry
+c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;mtrr&quot;
+comma
+id|S_IWUSR
+op_or
+id|S_IRUGO
 comma
 op_amp
-id|proc_root_mtrr
+id|proc_root
 )paren
 suffix:semicolon
-macro_line|#  endif
+id|proc_root_mtrr-&gt;ops
+op_assign
+op_amp
+id|proc_mtrr_inode_operations
+suffix:semicolon
 id|init_table
 (paren
 )paren

@@ -65,9 +65,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_extern
@@ -122,7 +119,7 @@ id|ENOMEM
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;ircomm&quot;
@@ -130,11 +127,9 @@ comma
 l_int|0
 comma
 id|proc_irda
-)paren
-op_member_access_from_pointer
-id|get_info
-op_assign
+comma
 id|ircomm_proc_read
+)paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 id|MESSAGE
@@ -1468,7 +1463,7 @@ id|flow
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function ircomm_proc_read (buf, start, offset, len, unused)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function ircomm_proc_read (buf, start, offset, len)&n; *&n; *    &n; *&n; */
 DECL|function|ircomm_proc_read
 r_int
 id|ircomm_proc_read
@@ -1488,9 +1483,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 r_struct

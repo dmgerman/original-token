@@ -3782,8 +3782,8 @@ l_string|&quot;TLAN:  Received interrupt for uncompleted TX frame.&bslash;n&quot
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
-id|priv-&gt;stats-&gt;tx_bytes
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
+id|priv-&gt;stats.tx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon
@@ -4141,8 +4141,8 @@ comma
 id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
-macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
-id|priv-&gt;stats-&gt;rx_bytes
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
+id|priv-&gt;stats.rx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon
@@ -4234,8 +4234,8 @@ comma
 id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
-macro_line|#if LINUX_KERNEL_VERSION &gt; 0x20100
-id|priv-&gt;stats-&gt;rx_bytes
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
+id|priv-&gt;stats.rx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon

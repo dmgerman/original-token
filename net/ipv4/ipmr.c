@@ -6815,6 +6815,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;The /proc interfaces to multicast routing /proc/ip_mr_cache /proc/ip_mr_vif&n; */
 DECL|function|ipmr_vif_info
+r_static
 r_int
 id|ipmr_vif_info
 c_func
@@ -6833,9 +6834,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct
@@ -7061,6 +7059,7 @@ id|len
 suffix:semicolon
 )brace
 DECL|function|ipmr_mfc_info
+r_static
 r_int
 id|ipmr_mfc_info
 c_func
@@ -7079,9 +7078,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_struct

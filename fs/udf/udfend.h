@@ -2,6 +2,7 @@ macro_line|#ifndef __UDF_ENDIAN_H
 DECL|macro|__UDF_ENDIAN_H
 mdefine_line|#define __UDF_ENDIAN_H
 macro_line|#ifndef __KERNEL__ 
+macro_line|#include &lt;sys/types.h&gt;
 macro_line|#if __BYTE_ORDER == 0
 macro_line|#error &quot;__BYTE_ORDER must be defined&quot;
 macro_line|#elif __BYTE_ORDER == __BIG_ENDIAN
@@ -31,7 +32,9 @@ mdefine_line|#define cpu_to_le32(x) (x)
 DECL|macro|cpu_to_le64
 mdefine_line|#define cpu_to_le64(x) (x)
 macro_line|#endif /* __BYTE_ORDER == 0 */
+macro_line|#include &lt;string.h&gt;
 macro_line|#else /* __KERNEL__ */
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#endif /* ! __KERNEL__ */
 DECL|function|lelb_to_cpu

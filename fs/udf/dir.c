@@ -349,7 +349,7 @@ id|block
 comma
 id|iblock
 suffix:semicolon
-r_int
+id|loff_t
 id|nf_pos
 op_assign
 id|filp-&gt;f_pos
@@ -373,7 +373,7 @@ suffix:semicolon
 id|Uint8
 id|lfi
 suffix:semicolon
-r_int
+id|loff_t
 id|size
 op_assign
 (paren

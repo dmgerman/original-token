@@ -5233,7 +5233,7 @@ id|self-&gt;todo_timer
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irttp_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; */
+multiline_comment|/*&n; * Function irttp_proc_read (buf, start, offset, len)&n; *&n; *    Give some info to the /proc file system&n; */
 DECL|function|irttp_proc_read
 r_int
 id|irttp_proc_read
@@ -5253,9 +5253,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 r_struct

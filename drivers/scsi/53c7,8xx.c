@@ -3270,11 +3270,6 @@ id|instance-&gt;base
 op_assign
 (paren
 r_int
-r_char
-op_star
-)paren
-(paren
-r_int
 r_int
 )paren
 id|base
@@ -4883,6 +4878,10 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|host-&gt;base
 )paren
 suffix:semicolon

@@ -5404,7 +5404,7 @@ id|p
 suffix:semicolon
 id|inode
 op_assign
-id|proc_get_inode
+id|iget
 (paren
 id|dir-&gt;i_sb
 comma
@@ -5421,8 +5421,6 @@ id|first_prop
 )paren
 op_plus
 id|aliases_nodes
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -3368,9 +3368,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 r_struct

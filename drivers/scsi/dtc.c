@@ -583,10 +583,6 @@ id|NCR5380_hostdata
 suffix:semicolon
 id|instance-&gt;base
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|base
 suffix:semicolon
 id|NCR5380_init
@@ -1010,7 +1006,7 @@ c_func
 l_int|3
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|d
@@ -1226,7 +1222,7 @@ c_func
 l_int|3
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|base

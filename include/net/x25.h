@@ -856,8 +856,6 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern

@@ -106,9 +106,6 @@ id|offst
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5162,7 +5159,7 @@ id|self-&gt;lap-&gt;daddr
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irlmp_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
+multiline_comment|/*&n; * Function irlmp_proc_read (buf, start, offset, len)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
 DECL|function|irlmp_proc_read
 r_int
 id|irlmp_proc_read
@@ -5182,9 +5179,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 r_struct

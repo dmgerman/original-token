@@ -294,9 +294,7 @@ suffix:semicolon
 )brace
 id|result
 op_assign
-id|hps-&gt;hpscan_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|hps-&gt;hpscan_dev
@@ -541,9 +539,7 @@ id|count
 suffix:semicolon
 id|result
 op_assign
-id|hps-&gt;hpscan_dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|hps-&gt;hpscan_dev

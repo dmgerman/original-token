@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/usb/proc_usb.c&n; * (C) Copyright 1999 Randy Dunlap.&n; * (C) Copyright 1999 Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;. (proc file per device)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; *&n; *************************************************************&n; *&n; * This is a /proc/bus/usb filesystem output module for USB.&n; * It creates /proc/bus/usb/drivers and /proc/bus/usb/devices.&n; *&n; * /proc/bus/usb/devices contains USB topology, device, config, class,&n; * interface, &amp; endpoint data.&n; *&n; * I considered using /proc/bus/usb/devices/device# for each device&n; * as it is attached or detached, but I didn&squot;t like this for some&n; * reason -- maybe it&squot;s just too deep of a directory structure.&n; * I also don&squot;t like looking in multiple places to gather and view&n; * the data.  Having only one file for ./devices also prevents race&n; * conditions that could arise if a program was reading device info&n; * for devices that are being removed (unplugged).  (That is, the&n; * program may find a directory for devnum_12 then try to open it,&n; * but it was just unplugged, so the directory is now deleted.&n; * But programs would just have to be prepared for situations like&n; * this in any plug-and-play environment.)&n; */
+multiline_comment|/*&n; * drivers/usb/proc_usb.c&n; * (C) Copyright 1999 Randy Dunlap.&n; * (C) Copyright 1999 Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;. (proc file per device)&n; * (C) Copyright 1999 Deti Fliegl (new USB architecture)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n; *&n; *************************************************************&n; *&n; * This is a /proc/bus/usb filesystem output module for USB.&n; * It creates /proc/bus/usb/drivers and /proc/bus/usb/devices.&n; *&n; * /proc/bus/usb/devices contains USB topology, device, config, class,&n; * interface, &amp; endpoint data.&n; *&n; * I considered using /proc/bus/usb/devices/device# for each device&n; * as it is attached or detached, but I didn&squot;t like this for some&n; * reason -- maybe it&squot;s just too deep of a directory structure.&n; * I also don&squot;t like looking in multiple places to gather and view&n; * the data.  Having only one file for ./devices also prevents race&n; * conditions that could arise if a program was reading device info&n; * for devices that are being removed (unplugged).  (That is, the&n; * program may find a directory for devnum_12 then try to open it,&n; * but it was just unplugged, so the directory is now deleted.&n; * But programs would just have to be prepared for situations like&n; * this in any plug-and-play environment.)&n; */
 DECL|macro|__KERNEL__
 mdefine_line|#define __KERNEL__&t;1
 macro_line|#include &lt;linux/types.h&gt;
@@ -2610,9 +2610,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -2685,9 +2683,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -3229,9 +3225,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -3298,9 +3292,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -4158,9 +4150,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -4233,9 +4223,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -4729,9 +4717,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev
@@ -4798,9 +4784,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|dev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|dev

@@ -2674,8 +2674,7 @@ id|esp-&gt;ehost-&gt;base
 op_assign
 (paren
 r_int
-r_char
-op_star
+r_int
 )paren
 id|eregs
 suffix:semicolon

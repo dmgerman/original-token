@@ -1659,11 +1659,6 @@ r_int
 r_int
 id|vgastep
 suffix:semicolon
-DECL|member|vgastepdisp
-r_int
-r_int
-id|vgastepdisp
-suffix:semicolon
 DECL|member|textmode
 r_int
 r_int
@@ -30134,12 +30129,14 @@ DECL|macro|DEVF_SUPPORT32MB
 mdefine_line|#define DEVF_SUPPORT32MB&t;0x100
 DECL|macro|DEVF_ANY_VXRES
 mdefine_line|#define DEVF_ANY_VXRES&t;&t;0x200
+DECL|macro|DEVF_TEXT16B
+mdefine_line|#define DEVF_TEXT16B&t;&t;0x400
 DECL|macro|DEVF_G100
 mdefine_line|#define DEVF_G100&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2) /* no doc, no vxres... */
 DECL|macro|DEVF_G200
 mdefine_line|#define DEVF_G200&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2 | DEVF_ANY_VXRES)
 DECL|macro|DEVF_G400
-mdefine_line|#define DEVF_G400&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2 | DEVF_ANY_VXRES | DEVF_SUPPORT32MB)
+mdefine_line|#define DEVF_G400&t;(DEVF_VIDEO64BIT | DEVF_SWAPS | DEVF_CROSS4MB | DEVF_DDC_8_2 | DEVF_ANY_VXRES | DEVF_SUPPORT32MB | DEVF_TEXT16B)
 DECL|struct|board
 r_static
 r_struct
@@ -30825,10 +30822,36 @@ suffix:semicolon
 id|ACCESS_FBINFO
 c_func
 (paren
-id|devflags.vgastepdisp
+id|devflags.text_type_aux
+)paren
+op_assign
+id|FB_AUX_TEXT_MGA_STEP16
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|b-&gt;flags
+op_amp
+id|DEVF_TEXT16B
+)paren
+(brace
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.vgastep
 )paren
 op_assign
 l_int|16
+suffix:semicolon
+id|ACCESS_FBINFO
+c_func
+(paren
+id|devflags.textmode
+)paren
+op_assign
+l_int|1
 suffix:semicolon
 id|ACCESS_FBINFO
 c_func
@@ -30856,14 +30879,6 @@ id|devflags.textmode
 )paren
 op_assign
 l_int|1
-suffix:semicolon
-id|ACCESS_FBINFO
-c_func
-(paren
-id|devflags.vgastepdisp
-)paren
-op_assign
-l_int|64
 suffix:semicolon
 id|ACCESS_FBINFO
 c_func

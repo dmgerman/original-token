@@ -1,9 +1,7 @@
 multiline_comment|/*&n; * super.c&n; *&n; * PURPOSE&n; *  Super block routines for the OSTA-UDF(tm) filesystem.&n; *&n; * DESCRIPTION&n; *  OSTA-UDF(tm) = Optical Storage Technology Association&n; *  Universal Disk Format.&n; *&n; *  This code is based on version 2.00 of the UDF specification,&n; *  and revision 3 of the ECMA 167 standard [equivalent to ISO 13346].&n; *    http://www.osta.org/&n; *    http://www.ecma.ch/&n; *    http://www.iso.org/&n; *&n; * CONTACTS&n; *  E-mail regarding any portion of the Linux UDF file system should be&n; *  directed to the development team mailing list (run by majordomo):&n; *&t;  linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *  This file is distributed under the terms of the GNU General Public&n; *  License (GPL). Copies of the GPL can be obtained from:&n; *    ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *  Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998 Dave Boynton&n; *  (C) 1998-1999 Ben Fennema&n; *&n; * HISTORY&n; *&n; *  09/24/98 dgb  changed to allow compiling outside of kernel, and&n; *                added some debugging.&n; *  10/01/98 dgb  updated to allow (some) possibility of compiling w/2.0.34&n; *  10/16/98      attempting some multi-session support&n; *  10/17/98      added freespace count for &quot;df&quot;&n; *  11/11/98 gr   added novrs option&n; *  11/26/98 dgb  added fileset,anchor mount options&n; *  12/06/98 blf  really hosed things royally. vat/sparing support. sequenced vol descs&n; *                rewrote option handling based on isofs&n; *  12/20/98      find the free space bitmap (if it exists)&n; */
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &quot;udfdecl.h&quot;    
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,6 +16,22 @@ macro_line|#include &quot;udf_sb.h&quot;
 macro_line|#include &quot;udf_i.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|VDS_POS_PRIMARY_VOL_DESC
+mdefine_line|#define VDS_POS_PRIMARY_VOL_DESC&t;0
+DECL|macro|VDS_POS_UNALLOC_SPACE_DESC
+mdefine_line|#define VDS_POS_UNALLOC_SPACE_DESC&t;1
+DECL|macro|VDS_POS_LOGICAL_VOL_DESC
+mdefine_line|#define VDS_POS_LOGICAL_VOL_DESC&t;2
+DECL|macro|VDS_POS_PARTITION_DESC
+mdefine_line|#define VDS_POS_PARTITION_DESC&t;&t;3
+DECL|macro|VDS_POS_IMP_USE_VOL_DESC
+mdefine_line|#define VDS_POS_IMP_USE_VOL_DESC&t;4
+DECL|macro|VDS_POS_VOL_DESC_PTR
+mdefine_line|#define VDS_POS_VOL_DESC_PTR&t;&t;5
+DECL|macro|VDS_POS_TERMINATING_DESC
+mdefine_line|#define VDS_POS_TERMINATING_DESC&t;6
+DECL|macro|VDS_POS_LENGTH
+mdefine_line|#define VDS_POS_LENGTH&t;&t;&t;&t;7
 DECL|variable|error_buf
 r_static
 r_char

@@ -11348,8 +11348,8 @@ macro_line|#ifndef NCR_IOMAPPED
 id|instance-&gt;base
 op_assign
 (paren
-r_char
-op_star
+r_int
+r_int
 )paren
 id|np-&gt;reg
 suffix:semicolon

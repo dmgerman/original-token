@@ -3013,6 +3013,11 @@ suffix:semicolon
 r_struct
 id|proc_dir_entry
 op_star
+id|proc_mca
+suffix:semicolon
+r_struct
+id|proc_dir_entry
+op_star
 id|node
 op_assign
 l_int|NULL
@@ -3034,6 +3039,17 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Should never happen */
+id|proc_mca
+op_assign
+id|proc_mkdir
+c_func
+(paren
+l_string|&quot;mca&quot;
+comma
+op_amp
+id|proc_root
+)paren
+suffix:semicolon
 id|create_proc_read_entry
 c_func
 (paren

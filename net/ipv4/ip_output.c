@@ -3564,9 +3564,7 @@ c_func
 (paren
 l_string|&quot;igmp&quot;
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
+l_int|0
 comma
 id|ip_mc_procinfo
 )paren

@@ -1,8 +1,6 @@
 macro_line|#ifndef __LINUX_UDF_SB_H
 DECL|macro|__LINUX_UDF_SB_H
 mdefine_line|#define __LINUX_UDF_SB_H
-macro_line|#include &lt;linux/udf_167.h&gt;
-macro_line|#include &lt;linux/udf_udf.h&gt;
 multiline_comment|/* Since UDF 1.50 is ISO 13346 based... */
 DECL|macro|UDF_SUPER_MAGIC
 mdefine_line|#define UDF_SUPER_MAGIC&t;0x15013346

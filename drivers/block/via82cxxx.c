@@ -275,8 +275,6 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -294,8 +292,6 @@ op_star
 op_star
 comma
 id|off_t
-comma
-r_int
 comma
 r_int
 )paren
@@ -1627,9 +1623,6 @@ id|offset
 comma
 r_int
 id|count
-comma
-r_int
-id|dummy
 )paren
 (brace
 multiline_comment|/*&n;&t; * print what /proc/via displays,&n;&t; * if required from DISPLAY_APOLLO_TIMINGS&n;&t; */

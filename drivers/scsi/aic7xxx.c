@@ -68,10 +68,6 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 macro_line|#  define FALSE 0
 macro_line|#endif
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-macro_line|#  define KERNEL_VERSION(x,y,z) (((x)&lt;&lt;16)+((y)&lt;&lt;8)+(z))
-macro_line|#endif
 multiline_comment|/*&n; * We need the bios32.h file if we are kernel version 2.1.92 or less.  The&n; * full set of pci_* changes wasn&squot;t in place until 2.1.93&n; */
 macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VERSION(2,1,92)
 macro_line|#  if defined(__sparc_v9__) || defined(__powerpc__)
@@ -28755,11 +28751,6 @@ l_int|0xFF
 suffix:semicolon
 id|host-&gt;base
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
 id|p-&gt;mbase
 suffix:semicolon
 id|host-&gt;irq
@@ -29295,7 +29286,7 @@ r_int
 r_char
 id|devconfig
 suffix:semicolon
-macro_line|#if LINUX_KERNEL_VERSION &gt; KERNEL_VERSION(2,1,92)
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92)
 id|pci_read_config_byte
 c_func
 (paren
@@ -29377,7 +29368,7 @@ id|p-&gt;host_no
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_KERNEL_VERSION &gt; KERNEL_VERSION(2,1,92)
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92)
 id|pci_write_config_byte
 c_func
 (paren
@@ -36520,7 +36511,7 @@ id|devconfig
 )paren
 suffix:semicolon
 macro_line|#endif /* AIC7XXX_STRICT_PCI_SETUP */
-macro_line|#endif /* LINUIX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92) */
+macro_line|#endif /* LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,92) */
 id|temp_p-&gt;unpause
 op_assign
 id|INTEN

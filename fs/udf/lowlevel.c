@@ -399,6 +399,10 @@ c_cond
 (paren
 op_logical_neg
 id|ret
+op_logical_and
+id|block
+op_ne
+l_int|0x7FFFFFFF
 )paren
 multiline_comment|/* Hard Disk */
 (brace

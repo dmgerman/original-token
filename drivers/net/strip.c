@@ -4140,9 +4140,6 @@ id|req_offset
 comma
 r_int
 id|req_len
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

@@ -90,8 +90,6 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 macro_line|#else
@@ -111,11 +109,10 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 (brace
 )brace
+macro_line|#error &quot;Somebody needs to learn C. Badly.&quot;
 macro_line|#endif
 multiline_comment|/*&n; * Support Routines.&n; */
 r_static
@@ -1571,6 +1568,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|h8_get_info
+r_static
 r_int
 id|h8_get_info
 c_func
@@ -1589,9 +1587,6 @@ id|fpos
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_char

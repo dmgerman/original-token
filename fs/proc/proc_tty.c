@@ -751,23 +751,17 @@ id|ent
 )paren
 r_return
 suffix:semicolon
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-id|proc_tty_driver
+id|driver-&gt;driver_name
 comma
-id|ent-&gt;low_ino
+id|proc_tty_driver
 )paren
 suffix:semicolon
 id|driver-&gt;proc_entry
 op_assign
 l_int|0
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|ent
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called by proc_root_init() to initialize the /proc/tty subtree&n; */

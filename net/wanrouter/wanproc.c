@@ -113,9 +113,6 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -137,9 +134,6 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 r_static
@@ -161,41 +155,9 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 suffix:semicolon
 multiline_comment|/* Miscellaneous */
-multiline_comment|/*&n; *&t;Global Data&n; */
-multiline_comment|/*&n; *&t;Names of the proc directory entries &n; */
-DECL|variable|name_root
-r_static
-r_char
-id|name_root
-(braket
-)braket
-op_assign
-id|ROUTER_NAME
-suffix:semicolon
-DECL|variable|name_conf
-r_static
-r_char
-id|name_conf
-(braket
-)braket
-op_assign
-l_string|&quot;config&quot;
-suffix:semicolon
-DECL|variable|name_stat
-r_static
-r_char
-id|name_stat
-(braket
-)braket
-op_assign
-l_string|&quot;status&quot;
-suffix:semicolon
 multiline_comment|/*&n; *&t;Structures for interfacing with the /proc filesystem.&n; *&t;Router creates its own directory /proc/net/router with the folowing&n; *&t;entries:&n; *&t;config&t;&t;device configuration&n; *&t;status&t;&t;global device statistics&n; *&t;&lt;device&gt;&t;entry for each WAN device&n; */
 multiline_comment|/*&n; *&t;Generic /proc/net/router/&lt;file&gt; file and inode operations &n; */
 DECL|variable|router_fops
@@ -417,165 +379,13 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Proc filesystem directory entries.&n; */
 multiline_comment|/*&n; *&t;/proc/net/router &n; */
 DECL|variable|proc_router
 r_static
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_router
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* .low_ino */
-r_sizeof
-(paren
-id|name_root
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* .namelen */
-id|name_root
-comma
-multiline_comment|/* .name */
-l_int|0555
-op_or
-id|S_IFDIR
-comma
-multiline_comment|/* .mode */
-l_int|2
-comma
-multiline_comment|/* .nlink */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *&t;/proc/net/router/config &n; */
-DECL|variable|proc_router_conf
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_router_conf
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* .low_ino */
-r_sizeof
-(paren
-id|name_conf
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* .namelen */
-id|name_conf
-comma
-multiline_comment|/* .name */
-l_int|0444
-op_or
-id|S_IFREG
-comma
-multiline_comment|/* .mode */
-l_int|1
-comma
-multiline_comment|/* .nlink */
-l_int|0
-comma
-multiline_comment|/* .uid */
-l_int|0
-comma
-multiline_comment|/* .gid */
-l_int|0
-comma
-multiline_comment|/* .size */
-op_amp
-id|router_inode
-comma
-multiline_comment|/* .ops */
-op_amp
-id|config_get_info
-comma
-multiline_comment|/* .get_info */
-l_int|NULL
-comma
-multiline_comment|/* .fill_node */
-l_int|NULL
-comma
-multiline_comment|/* .next */
-l_int|NULL
-comma
-multiline_comment|/* .parent */
-l_int|NULL
-comma
-multiline_comment|/* .subdir */
-l_int|NULL
-comma
-multiline_comment|/* .data */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; *&t;/proc/net/router/status &n; */
-DECL|variable|proc_router_stat
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_router_stat
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* .low_ino */
-r_sizeof
-(paren
-id|name_stat
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* .namelen */
-id|name_stat
-comma
-multiline_comment|/* .name */
-l_int|0444
-op_or
-id|S_IFREG
-comma
-multiline_comment|/* .mode */
-l_int|1
-comma
-multiline_comment|/* .nlink */
-l_int|0
-comma
-multiline_comment|/* .uid */
-l_int|0
-comma
-multiline_comment|/* .gid */
-l_int|0
-comma
-multiline_comment|/* .size */
-op_amp
-id|router_inode
-comma
-multiline_comment|/* .ops */
-id|status_get_info
-comma
-multiline_comment|/* .get_info */
-l_int|NULL
-comma
-multiline_comment|/* .fill_node */
-l_int|NULL
-comma
-multiline_comment|/* .next */
-l_int|NULL
-comma
-multiline_comment|/* .parent */
-l_int|NULL
-comma
-multiline_comment|/* .subdir */
-l_int|NULL
-comma
-multiline_comment|/* .data */
-)brace
 suffix:semicolon
 multiline_comment|/* Strings */
 DECL|variable|conf_hdr
@@ -608,15 +418,39 @@ id|wanrouter_proc_init
 r_void
 )paren
 (brace
-r_int
-id|err
+r_struct
+id|proc_dir_entry
+op_star
+id|p
+suffix:semicolon
+id|proc_router
 op_assign
-id|proc_register
+id|proc_mkdir
 c_func
 (paren
-id|proc_net
+id|ROUTER_NAME
 comma
-op_amp
+id|proc_net
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|proc_router
+)paren
+r_goto
+id|fail
+suffix:semicolon
+id|p
+op_assign
+id|proc_create_proc_entry
+c_func
+(paren
+l_string|&quot;config&quot;
+comma
+l_int|0
+comma
 id|proc_router
 )paren
 suffix:semicolon
@@ -624,32 +458,78 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|err
+id|p
 )paren
-(brace
-id|proc_register
+r_goto
+id|fail_config
+suffix:semicolon
+id|p-&gt;ops
+op_assign
+op_amp
+id|router_inode
+suffix:semicolon
+id|p-&gt;info
+op_assign
+id|config_get_info
+suffix:semicolon
+id|p
+op_assign
+id|proc_create_proc_entry
 c_func
 (paren
-op_amp
-id|proc_router
+l_string|&quot;status&quot;
 comma
-op_amp
-id|proc_router_conf
+l_int|0
+comma
+id|proc_router
 )paren
 suffix:semicolon
-id|proc_register
-c_func
+r_if
+c_cond
 (paren
-op_amp
-id|proc_router
-comma
-op_amp
-id|proc_router_stat
+op_logical_neg
+id|p
 )paren
+r_goto
+id|fail_stat
 suffix:semicolon
-)brace
+id|p-&gt;ops
+op_assign
+op_amp
+id|router_inode
+suffix:semicolon
+id|p-&gt;info
+op_assign
+id|status_get_info
+suffix:semicolon
 r_return
-id|err
+l_int|0
+suffix:semicolon
+id|fail_stat
+suffix:colon
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;config&quot;
+comma
+id|proc_router
+)paren
+suffix:semicolon
+id|fail_config
+suffix:colon
+id|remove_proc_entry
+c_func
+(paren
+id|proc_net
+comma
+id|ROUTER_NAME
+)paren
+suffix:semicolon
+id|fail
+suffix:colon
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Clean up router proc interface.&n; */
@@ -660,30 +540,28 @@ id|wanrouter_proc_cleanup
 r_void
 )paren
 (brace
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_router
+l_string|&quot;config&quot;
 comma
-id|proc_router_conf.low_ino
+id|proc_router
 )paren
 suffix:semicolon
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_router
+l_string|&quot;status&quot;
 comma
-id|proc_router_stat.low_ino
+id|proc_router
 )paren
 suffix:semicolon
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
+id|ROUTER_NAME
+comma
 id|proc_net
-comma
-id|proc_router.low_ino
 )paren
 suffix:semicolon
 )brace
@@ -708,66 +586,43 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|memset
+id|wandev-&gt;dent
+op_assign
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|wandev-&gt;dent
+id|wandev-&gt;name
 comma
 l_int|0
 comma
-r_sizeof
+id|proc_router
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
+op_logical_neg
 id|wandev-&gt;dent
 )paren
-)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
-id|wandev-&gt;dent.namelen
-op_assign
-id|strlen
-c_func
-(paren
-id|wandev-&gt;name
-)paren
-suffix:semicolon
-id|wandev-&gt;dent.name
-op_assign
-id|wandev-&gt;name
-suffix:semicolon
-id|wandev-&gt;dent.mode
-op_assign
-l_int|0444
-op_or
-id|S_IFREG
-suffix:semicolon
-id|wandev-&gt;dent.nlink
-op_assign
-l_int|1
-suffix:semicolon
-id|wandev-&gt;dent.ops
+id|wandev-&gt;dent-&gt;ops
 op_assign
 op_amp
 id|wandev_inode
 suffix:semicolon
-id|wandev-&gt;dent.get_info
+id|wandev-&gt;dent-&gt;get_info
 op_assign
-op_amp
 id|wandev_get_info
 suffix:semicolon
-id|wandev-&gt;dent.data
+id|wandev-&gt;dent-&gt;data
 op_assign
 id|wandev
 suffix:semicolon
 r_return
-id|proc_register
-c_func
-(paren
-op_amp
-id|proc_router
-comma
-op_amp
-id|wandev-&gt;dent
-)paren
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Delete directory entry for WAN device.&n; */
@@ -792,13 +647,12 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_router
+id|wandev-&gt;name
 comma
-id|wandev-&gt;dent.low_ino
+id|proc_router
 )paren
 suffix:semicolon
 r_return
@@ -939,8 +793,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|offs
@@ -1031,9 +883,6 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int
@@ -1163,9 +1012,6 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int
@@ -1402,9 +1248,6 @@ id|offs
 comma
 r_int
 id|len
-comma
-r_int
-id|dummy
 )paren
 (brace
 id|wan_device_t

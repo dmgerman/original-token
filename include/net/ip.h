@@ -152,8 +152,6 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Functions provided by ip.c&n; */

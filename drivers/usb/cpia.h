@@ -415,6 +415,7 @@ id|hdrheight
 suffix:semicolon
 multiline_comment|/* Height */
 DECL|member|grabstate
+r_volatile
 r_int
 id|grabstate
 suffix:semicolon
@@ -429,6 +430,16 @@ r_int
 id|curline
 suffix:semicolon
 multiline_comment|/* Line of frame we&squot;re working on */
+DECL|member|scanlength
+r_int
+id|scanlength
+suffix:semicolon
+multiline_comment|/* uncompressed, raw data length of frame */
+DECL|member|bytes_read
+r_int
+id|bytes_read
+suffix:semicolon
+multiline_comment|/* amount of scanlength that has been read from *data */
 DECL|member|wq
 id|wait_queue_head_t
 id|wq
@@ -456,6 +467,16 @@ id|usb_device
 op_star
 id|dev
 suffix:semicolon
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
+suffix:semicolon
+DECL|member|user
+r_int
+id|user
+suffix:semicolon
+multiline_comment|/* user count for exclusive use */
 DECL|member|streaming
 r_int
 id|streaming

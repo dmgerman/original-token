@@ -3922,6 +3922,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|apm_get_info
+r_static
 r_int
 id|apm_get_info
 c_func
@@ -3940,9 +3941,6 @@ id|fpos
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_char

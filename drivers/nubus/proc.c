@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+r_static
 r_int
 DECL|function|get_nubus_dev_info
 id|get_nubus_dev_info
@@ -26,9 +27,6 @@ id|pos
 comma
 r_int
 id|count
-comma
-r_int
-id|wr
 )paren
 (brace
 r_struct

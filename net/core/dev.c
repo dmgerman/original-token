@@ -3696,6 +3696,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Called from the PROCfs module. This now uses the new arbitrary sized /proc/net interface&n; *&t;to create /proc/net/dev&n; */
 DECL|function|dev_get_info
+r_static
 r_int
 id|dev_get_info
 c_func
@@ -3714,9 +3715,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int
@@ -4136,6 +4134,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Print info for /proc/net/wireless (print all entries)&n; * This is a clone of /proc/net/dev (just above)&n; */
 DECL|function|dev_get_wireless_info
+r_static
 r_int
 id|dev_get_wireless_info
 c_func
@@ -4154,9 +4153,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

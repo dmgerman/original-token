@@ -3479,6 +3479,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Called from proc fs&n; */
 DECL|function|aarp_get_info
+r_static
 r_int
 id|aarp_get_info
 c_func
@@ -3497,9 +3498,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 multiline_comment|/* we should dump all our AARP entries */

@@ -12902,10 +12902,6 @@ id|boardp
 id|shp-&gt;base
 op_assign
 (paren
-r_char
-op_star
-)paren
-(paren
 (paren
 id|ulong
 )paren
@@ -12998,10 +12994,6 @@ l_int|0x55AA
 multiline_comment|/*&n;                     * Convert x86 realmode code segment to a linear&n;                     * address by shifting left 4.&n;                     */
 id|shp-&gt;base
 op_assign
-(paren
-id|uchar
-op_star
-)paren
 (paren
 id|boardp-&gt;bios_codeseg
 op_lshift

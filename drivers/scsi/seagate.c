@@ -245,13 +245,13 @@ suffix:semicolon
 DECL|macro|retcode
 mdefine_line|#define retcode(result) (((result) &lt;&lt; 16) | (message &lt;&lt; 8) | status)
 DECL|macro|STATUS
-mdefine_line|#define STATUS ((u8) readb(st0x_cr_sr))
+mdefine_line|#define STATUS ((u8) isa_readb(st0x_cr_sr))
 DECL|macro|DATA
-mdefine_line|#define DATA ((u8) readb(st0x_dr))
+mdefine_line|#define DATA ((u8) isa_readb(st0x_dr))
 DECL|macro|WRITE_CONTROL
-mdefine_line|#define WRITE_CONTROL(d) { writeb((d), st0x_cr_sr); }
+mdefine_line|#define WRITE_CONTROL(d) { isa_writeb((d), st0x_cr_sr); }
 DECL|macro|WRITE_DATA
-mdefine_line|#define WRITE_DATA(d) { writeb((d), st0x_dr); }
+mdefine_line|#define WRITE_DATA(d) { isa_writeb((d), st0x_dr); }
 DECL|function|st0x_setup
 r_void
 id|st0x_setup

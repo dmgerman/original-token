@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * sim710.c - Copyright (C) 1999 Richard Hirst &lt;richard@sleepie.demon.co.uk&gt;&n; *&n; *----------------------------------------------------------------------------&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by &n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *----------------------------------------------------------------------------&n; *&n; * MCA card detection code by Trent McNair.&n; *&n; * Various bits of code in this driver have been copied from 53c7,8xx,c,&n; * which is coyright Drew Eckhardt.  The scripts for the SCSI chip are&n; * compiled with the script compiler written by Drew.&n; *&n; * This is a simple driver for the NCR53c710.  More complex drivers&n; * for this chip (e.g. 53c7xx.c) require that the scsi chip be able to&n; * do DMA block moves between memory and on-chip registers, which can&n; * be a problem if those registers are in the I/O address space.  There&n; * can also be problems on hardware where the registers are memory&n; * mapped, if the design is such that memory-to-memory transfers initiated&n; * by the scsi chip cannot access the chip registers.&n; *&n; * This driver is designed to avoid these problems and is intended to&n; * work with any Intel machines using 53c710 chips, including various&n; * Compaq and NCR machines.  It was initially written for the Tadpole&n; * TP34V VME board which is 68030 based.&n; *&n; * The driver supports boot-time parameters similar to&n; *&t;sim710=addr:0x9000,irq:15&n; * and insmod parameters similar to&n; *&t;sim710=&quot;addr:0x9000 irq:15&quot;&n; *&n; * The complete list of options are:&n; *&n; * addr:0x9000&t;&t;Specifies the base I/O port (or address) of the 53C710.&n; * irq:15&t;&t;Specifies the IRQ number used by the 53c710.&n; * debug:0xffff&t;&t;Generates lots of debug output.&n; * ignore:0x0a&t;&t;Makes the driver ignore SCSI IDs 0 and 2.&n; * nodisc:0x70&t;&t;Prevents disconnects from IDs 6, 5 and 4.&n; * noneg:0x10&t;&t;Prevents SDTR negotiation on ID 4.&n; *&n; * Current limitations:&n; *&n; * o  Async only&n; * o  Severely lacking in error recovery&n; * o  Auto detection of IRQs and chip addresses only on MCA architectures&n; *&n; */
-DECL|macro|LinuxVersionCode
-mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -14,9 +13,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,3,17)
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,17)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#elif LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,93)
+macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,93)
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
@@ -519,7 +518,7 @@ op_star
 id|host
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: void sim710_setup(char *str, int *ints)&n; */
+multiline_comment|/*&n; * Function: int param_setup(char *str)&n; */
 macro_line|#ifdef MODULE
 DECL|macro|ARG_SEP
 mdefine_line|#define ARG_SEP &squot; &squot;
@@ -527,18 +526,15 @@ macro_line|#else
 DECL|macro|ARG_SEP
 mdefine_line|#define ARG_SEP &squot;,&squot;
 macro_line|#endif
-r_void
-DECL|function|sim710_setup
-id|sim710_setup
+r_static
+r_int
+DECL|function|param_setup
+id|param_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_char
@@ -781,6 +777,7 @@ op_minus
 l_int|1
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG
@@ -810,7 +807,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sim710_setup: unexpected boot option &squot;%.*s&squot; ignored&bslash;n&quot;
+l_string|&quot;sim710: unexpected boot option &squot;%.*s&squot; ignored&bslash;n&quot;
 comma
 (paren
 r_int
@@ -847,18 +844,44 @@ op_increment
 id|cur
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,3,13)
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,13)
 macro_line|#ifndef MODULE
 id|__setup
 c_func
 (paren
 l_string|&quot;sim710=&quot;
 comma
-id|sim710_setup
+id|param_setup
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#else
+multiline_comment|/* Old boot param syntax support */
+r_void
+DECL|function|sim710_setup
+id|sim710_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+id|param_setup
+c_func
+(paren
+id|str
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/*&n; * Function: static const char *sbcl_to_phase (int sbcl)&n; */
 r_static
@@ -5351,16 +5374,10 @@ c_cond
 (paren
 id|sim710
 )paren
-id|sim710_setup
+id|param_setup
 c_func
 (paren
 id|sim710
-comma
-(paren
-r_int
-op_star
-)paren
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5984,10 +6001,6 @@ id|base_addr
 suffix:semicolon
 id|host-&gt;base
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|base_addr
 suffix:semicolon
 id|ncr_halt

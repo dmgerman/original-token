@@ -12989,9 +12989,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 multiline_comment|/* Print current values which are not available via other means&n; * eg ifconfig &n; */

@@ -3,52 +3,10 @@ macro_line|#ifndef _LINUX_SERIALP_H
 DECL|macro|_LINUX_SERIALP_H
 mdefine_line|#define _LINUX_SERIALP_H
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
-DECL|struct|async_icount
-r_struct
-id|async_icount
-(brace
-DECL|member|cts
-DECL|member|dsr
-DECL|member|rng
-DECL|member|dcd
-DECL|member|tx
-DECL|member|rx
-id|__u32
-id|cts
-comma
-id|dsr
-comma
-id|rng
-comma
-id|dcd
-comma
-id|tx
-comma
-id|rx
-suffix:semicolon
-DECL|member|frame
-DECL|member|parity
-DECL|member|overrun
-DECL|member|brk
-id|__u32
-id|frame
-comma
-id|parity
-comma
-id|overrun
-comma
-id|brk
-suffix:semicolon
-DECL|member|buf_overrun
-id|__u32
-id|buf_overrun
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|serial_state
 r_struct
 id|serial_state

@@ -2967,7 +2967,7 @@ id|de-&gt;subdir
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t unregoster proc entries that are still being used.. */
+multiline_comment|/* Don&squot;t unregister proc entries that are still being used.. */
 r_if
 c_cond
 (paren
@@ -2975,22 +2975,16 @@ id|de-&gt;count
 )paren
 r_continue
 suffix:semicolon
-id|proc_unregister
-c_func
-(paren
-id|root
-comma
-id|de-&gt;low_ino
-)paren
-suffix:semicolon
 id|table-&gt;de
 op_assign
 l_int|NULL
 suffix:semicolon
-id|kfree
+id|remove_proc_entry
 c_func
 (paren
-id|de
+id|table-&gt;procname
+comma
+id|root
 )paren
 suffix:semicolon
 )brace

@@ -1924,6 +1924,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Generate the /proc/net information for the token ring RIF&n; *&t;routing.&n; */
 macro_line|#ifndef CONFIG_PROC_FS
 DECL|function|rif_get_info
+r_static
 r_int
 id|rif_get_info
 c_func
@@ -1942,14 +1943,12 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 )brace
 macro_line|#else
 DECL|function|rif_get_info
+r_static
 r_int
 id|rif_get_info
 c_func
@@ -1968,9 +1967,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|dummy
 )paren
 (brace
 r_int

@@ -87,8 +87,6 @@ comma
 id|off_t
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -3512,7 +3510,7 @@ l_string|&quot;(), local busy OFF&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * Function irlap_proc_read (buf, start, offset, len, unused)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
+multiline_comment|/*&n; * Function irlap_proc_read (buf, start, offset, len)&n; *&n; *    Give some info to the /proc file system&n; *&n; */
 DECL|function|irlap_proc_read
 r_int
 id|irlap_proc_read
@@ -3532,9 +3530,6 @@ id|offset
 comma
 r_int
 id|len
-comma
-r_int
-id|unused
 )paren
 (brace
 r_struct

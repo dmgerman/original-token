@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * directory.c&n; *&n; * PURPOSE&n; *&t;Directory related functions&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; */
 macro_line|#include &quot;udfdecl.h&quot;
-macro_line|#include &quot;udf_sb.h&quot;
 macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

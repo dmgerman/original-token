@@ -1111,6 +1111,7 @@ multiline_comment|/* number of interfaces */
 DECL|member|dent
 r_struct
 id|proc_dir_entry
+op_star
 id|dent
 suffix:semicolon
 multiline_comment|/* proc filesystem entry */

@@ -318,7 +318,13 @@ DECL|enumerator|KERN_SEM
 id|KERN_SEM
 op_assign
 l_int|43
+comma
 multiline_comment|/* int: sysv semaphore limits */
+DECL|enumerator|KERN_SPARC_STOP_A
+id|KERN_SPARC_STOP_A
+op_assign
+l_int|44
+multiline_comment|/* int: Sparc Stop-A enable */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
