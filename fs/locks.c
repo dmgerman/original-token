@@ -389,7 +389,7 @@ id|fl1-&gt;fl_start
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check whether two locks have the same owner&n; */
+multiline_comment|/*&n; * Check whether two locks have the same owner&n; * N.B. Do we need the test on PID as well as owner?&n; * (Clone tasks should be considered as one &quot;owner&quot;.)&n; */
 r_static
 r_inline
 r_int
@@ -1537,6 +1537,12 @@ id|inode
 op_assign
 id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
+r_void
+op_star
+id|owner
+op_assign
+id|task-&gt;files
+suffix:semicolon
 r_struct
 id|file_lock
 id|file_lock
@@ -1582,7 +1588,7 @@ id|FL_POSIX
 op_logical_and
 id|fl-&gt;fl_owner
 op_eq
-id|task
+id|owner
 )paren
 (brace
 r_int
@@ -2003,6 +2009,12 @@ op_star
 id|inode
 )paren
 (brace
+r_void
+op_star
+id|owner
+op_assign
+id|current-&gt;files
+suffix:semicolon
 r_struct
 id|file_lock
 op_star
@@ -2042,7 +2054,7 @@ c_cond
 (paren
 id|fl-&gt;fl_owner
 op_ne
-id|current
+id|owner
 )paren
 r_return
 (paren
@@ -2117,7 +2129,7 @@ id|FL_ACCESS
 suffix:semicolon
 id|tfl.fl_owner
 op_assign
-id|current
+id|current-&gt;files
 suffix:semicolon
 id|tfl.fl_pid
 op_assign
@@ -2491,7 +2503,7 @@ id|filp
 suffix:semicolon
 id|fl-&gt;fl_owner
 op_assign
-id|current
+id|current-&gt;files
 suffix:semicolon
 id|fl-&gt;fl_pid
 op_assign

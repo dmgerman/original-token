@@ -3441,6 +3441,8 @@ r_return
 id|DMAbuf_poll
 c_func
 (paren
+id|file
+comma
 id|dev
 op_rshift
 l_int|4

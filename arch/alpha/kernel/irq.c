@@ -3794,7 +3794,7 @@ l_int|8
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* For now, AND off and bits we are not interested in.  */
+multiline_comment|/* For now, AND off any bits we are not interested in.  */
 macro_line|#if defined(CONFIG_ALPHA_MIATA)
 multiline_comment|/* HALT (2), timer (6), ISA Bridge (7), 21142/3 (8),&n;&t;   then all the PCI slots/INTXs (12-31).  */
 multiline_comment|/* Maybe HALT should only be used for SRM console boots? */

@@ -151,6 +151,8 @@ id|wait
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|log_wait
 comma

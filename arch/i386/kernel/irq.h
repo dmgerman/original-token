@@ -87,20 +87,11 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
 r_extern
 r_int
 r_int
 id|io_apic_irqs
 suffix:semicolon
-macro_line|#else
-r_extern
-r_const
-r_int
-r_int
-id|io_apic_irqs
-suffix:semicolon
-macro_line|#endif
 DECL|macro|IO_APIC_IRQ
 mdefine_line|#define IO_APIC_IRQ(x) ((1&lt;&lt;x) &amp; io_apic_irqs)
 DECL|macro|MAX_IRQ_SOURCES

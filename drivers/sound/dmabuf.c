@@ -5968,6 +5968,11 @@ r_int
 id|poll_input
 c_func
 (paren
+r_struct
+id|file
+op_star
+id|file
+comma
 r_int
 id|dev
 comma
@@ -6017,6 +6022,8 @@ id|DMA_MAP_MAPPED
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|adev-&gt;in_sleeper
 comma
@@ -6069,6 +6076,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|adev-&gt;in_sleeper
 comma
@@ -6108,6 +6117,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|adev-&gt;in_sleeper
 comma
@@ -6136,6 +6147,11 @@ r_int
 id|poll_output
 c_func
 (paren
+r_struct
+id|file
+op_star
+id|file
+comma
 r_int
 id|dev
 comma
@@ -6185,6 +6201,8 @@ id|DMA_MAP_MAPPED
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|adev-&gt;out_sleeper
 comma
@@ -6218,6 +6236,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|adev-&gt;out_sleeper
 comma
@@ -6261,6 +6281,11 @@ r_int
 id|DMAbuf_poll
 c_func
 (paren
+r_struct
+id|file
+op_star
+id|file
+comma
 r_int
 id|dev
 comma
@@ -6273,6 +6298,8 @@ r_return
 id|poll_input
 c_func
 (paren
+id|file
+comma
 id|dev
 comma
 id|wait
@@ -6281,6 +6308,8 @@ op_or
 id|poll_output
 c_func
 (paren
+id|file
+comma
 id|dev
 comma
 id|wait

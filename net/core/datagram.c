@@ -512,6 +512,11 @@ id|datagram_poll
 c_func
 (paren
 r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
 id|socket
 op_star
 id|sock
@@ -535,6 +540,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 id|sk-&gt;sleep
 comma
 id|wait

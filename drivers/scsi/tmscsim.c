@@ -1,12 +1,12 @@
 multiline_comment|/***********************************************************************&n; *&t;FILE NAME : TMSCSIM.C&t;&t;&t;&t;&t;       *&n; *&t;     BY   : C.L. Huang,  ching@tekram.com.tw&t;&t;       *&n; *&t;Description: Device Driver for Tekram DC-390(T) PCI SCSI       *&n; *&t;&t;     Bus Master Host Adapter&t;&t;&t;       *&n; * (C)Copyright 1995-1996 Tekram Technology Co., Ltd.&t;&t;       *&n; ***********************************************************************/
 multiline_comment|/*&t;Minor enhancements and bugfixes by&t;&t;&t;&t;*&n; *&t;Kurt Garloff &lt;K.Garloff@ping.de&gt;&t;&t;&t;&t;*&n; ***********************************************************************/
-multiline_comment|/*&t;HISTORY:&t;&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; *&t;REV#&t;DATE&t;NAME&t;DESCRIPTION&t;&t;&t;&t;*&n; *&t;1.00  04/24/96&t;CLH&t;First release&t;&t;&t;&t;*&n; *&t;1.01  06/12/96&t;CLH&t;Fixed bug of Media Change for Removable *&n; *&t;&t;&t;&t;Device, scan all LUN. Support Pre2.0.10 *&n; *&t;1.02  06/18/96&t;CLH&t;Fixed bug of Command timeout ...&t;*&n; *&t;1.03  09/25/96&t;KG&t;Added tmscsim_proc_info()&t;&t;*&n; *&t;1.04  10/11/96&t;CLH&t;Updating for support KV 2.0.x&t;&t;*&n; *&t;1.05  10/18/96&t;KG&t;Fixed bug in DC390_abort(null ptr deref)*&n; *&t;1.06  10/25/96&t;KG&t;Fixed module support&t;&t;&t;*&n; *&t;1.07  11/09/96&t;KG&t;Fixed tmscsim_proc_info()&t;&t;*&n; *&t;1.08  11/18/96&t;KG&t;Fixed null ptr in DC390_Disconnect()&t;*&n; *&t;1.09  11/30/96&t;KG&t;Added register the allocated IO space&t;*&n; *&t;1.10  12/05/96&t;CLH&t;Modified tmscsim_proc_info(), and reset *&n; *&t;&t;&t;&t;pending interrupt in DC390_detect()&t;*&n; ***********************************************************************/
+multiline_comment|/*&t;HISTORY:&t;&t;&t;&t;&t;&t;&t;*&n; *&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n; *&t;REV#&t;DATE&t;NAME&t;DESCRIPTION&t;&t;&t;&t;*&n; *&t;1.00  04/24/96&t;CLH&t;First release&t;&t;&t;&t;*&n; *&t;1.01  06/12/96&t;CLH&t;Fixed bug of Media Change for Removable *&n; *&t;&t;&t;&t;Device, scan all LUN. Support Pre2.0.10 *&n; *&t;1.02  06/18/96&t;CLH&t;Fixed bug of Command timeout ...&t;*&n; *&t;1.03  09/25/96&t;KG&t;Added tmscsim_proc_info()&t;&t;*&n; *&t;1.04  10/11/96&t;CLH&t;Updating for support KV 2.0.x&t;&t;*&n; *&t;1.05  10/18/96&t;KG&t;Fixed bug in DC390_abort(null ptr deref)*&n; *&t;1.06  10/25/96&t;KG&t;Fixed module support&t;&t;&t;*&n; *&t;1.07  11/09/96&t;KG&t;Fixed tmscsim_proc_info()&t;&t;*&n; *&t;1.08  11/18/96&t;KG&t;Fixed null ptr in DC390_Disconnect()&t;*&n; *&t;1.09  11/30/96&t;KG&t;Added register the allocated IO space&t;*&n; *&t;1.10  12/05/96&t;CLH&t;Modified tmscsim_proc_info(), and reset *&n; *&t;&t;&t;&t;pending interrupt in DC390_detect()&t;*&n; * &t;1.11  02/05/97&t;KG/CLH&t;Fixeds problem with partitions greater&t;*&n; * &t;&t;&t;&t;than 1GB&t;&t;&t;&t;*&n; * &t;1.12  25/02/98&t;KG&t;Cleaned up ifdefs for 2.1 kernel&t;*&n; ***********************************************************************/
 DECL|macro|DC390_DEBUG
 mdefine_line|#define DC390_DEBUG
 DECL|macro|SCSI_MALLOC
 mdefine_line|#define SCSI_MALLOC
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
+macro_line|# include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -2394,9 +2394,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|pACB-&gt;Gmode2
+op_amp
+id|GREATER_1G
+)paren
+op_logical_and
+(paren
 id|cylinders
 OG
 l_int|1024
+)paren
 )paren
 (brace
 id|heads
@@ -2412,9 +2420,9 @@ op_assign
 id|disk-&gt;capacity
 op_div
 (paren
-l_int|255
+id|heads
 op_star
-l_int|63
+id|sectors
 )paren
 suffix:semicolon
 )brace
@@ -3092,7 +3100,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***********************************************************************&n; * Function : int DC390_reset (Scsi_Cmnd *cmd, ...)&n; *&n; * Purpose : perform a hard reset on the SCSI bus&n; *&n; * Inputs : cmd - command which caused the SCSI RESET&n; *&n; * Returns : 0 on success.&n; ***********************************************************************/
-macro_line|#ifdef&t;VERSION_2_0_0
 DECL|function|DC390_reset
 r_int
 id|DC390_reset
@@ -3106,15 +3113,6 @@ r_int
 r_int
 id|resetFlags
 )paren
-macro_line|#else
-r_int
-id|DC390_reset
-(paren
-id|Scsi_Cmnd
-op_star
-id|cmd
-)paren
-macro_line|#endif
 (brace
 id|USHORT
 id|ioport
@@ -4119,6 +4117,8 @@ comma
 id|DC390_Interrupt
 comma
 id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
 comma
 l_string|&quot;tmscsim&quot;
 comma
@@ -6410,7 +6410,7 @@ c_cond
 id|inout
 )paren
 (brace
-singleline_comment|// Has data been written to the file ?
+multiline_comment|/* Has data been written to the file ? */
 r_return
 id|tmscsim_set_info
 c_func
@@ -6432,7 +6432,7 @@ suffix:semicolon
 id|SPRINTF
 c_func
 (paren
-l_string|&quot;Driver Version 1.10, 1996/12/05&bslash;n&quot;
+l_string|&quot;Driver Version 1.12, 1998/02/25&bslash;n&quot;
 )paren
 suffix:semicolon
 id|save_flags

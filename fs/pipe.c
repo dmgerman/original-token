@@ -918,6 +918,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|filp
+comma
 op_amp
 id|PIPE_WAIT
 c_func
@@ -1018,6 +1020,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|filp
+comma
 op_amp
 id|PIPE_WAIT
 c_func
@@ -1172,6 +1176,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|filp
+comma
 op_amp
 id|PIPE_WAIT
 c_func

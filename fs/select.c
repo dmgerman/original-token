@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|ROUND_UP
@@ -63,6 +64,12 @@ id|entry-&gt;wait_address
 comma
 op_amp
 id|entry-&gt;wait
+)paren
+suffix:semicolon
+id|fput
+c_func
+(paren
+id|entry-&gt;filp
 )paren
 suffix:semicolon
 )brace

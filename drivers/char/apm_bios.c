@@ -2794,6 +2794,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|fp
+comma
 op_amp
 id|process_list
 comma

@@ -1487,6 +1487,8 @@ op_member_access_from_pointer
 id|poll
 c_func
 (paren
+id|file
+comma
 id|sock
 comma
 id|wait

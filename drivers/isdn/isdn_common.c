@@ -4245,6 +4245,8 @@ id|ISDN_MINOR_STATUS
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 (paren
 id|dev-&gt;info_waitq
@@ -4286,6 +4288,8 @@ id|ISDN_MINOR_CTRLMAX
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 (paren
 id|dev-&gt;drv

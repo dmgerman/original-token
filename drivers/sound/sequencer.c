@@ -7524,6 +7524,8 @@ multiline_comment|/* input */
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|midi_sleeper
 comma
@@ -7545,6 +7547,8 @@ multiline_comment|/* output */
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|seq_sleeper
 comma

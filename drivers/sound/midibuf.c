@@ -1728,6 +1728,8 @@ multiline_comment|/* input */
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|input_sleeper
 (braket
@@ -1759,6 +1761,8 @@ multiline_comment|/* output */
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|midi_sleeper
 (braket

@@ -400,6 +400,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 (paren
 id|vcp-&gt;vc_waitq

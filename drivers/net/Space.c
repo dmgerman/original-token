@@ -710,6 +710,14 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#if defined(CONFIG_ULTRA32)
+op_logical_and
+id|ultra32_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_SMC9194)
 op_logical_and

@@ -1,7 +1,7 @@
 multiline_comment|/***********************************************************************&n;;*&t;File Name : TMSCSIM.H&t;&t;&t;&t;&t;       *&n;;*&t;&t;    TEKRAM DC-390(T) PCI SCSI Bus Master Host Adapter  *&n;;*&t;&t;    Device Driver&t;&t;&t;&t;       *&n;;***********************************************************************/
-macro_line|#ifndef TMSCSIM_H
-DECL|macro|TMSCSIM_H
-mdefine_line|#define TMSCSIM_H
+macro_line|#ifndef _TMSCSIM_H
+DECL|macro|_TMSCSIM_H
+mdefine_line|#define _TMSCSIM_H
 DECL|macro|IRQ_NONE
 mdefine_line|#define IRQ_NONE 255
 DECL|typedef|UCHAR
@@ -1462,5 +1462,5 @@ DECL|macro|PCI_CFG2_ENABLE
 mdefine_line|#define PCI_CFG2_ENABLE &t;&t;0x0f0
 DECL|macro|PCI_CFG2_TUPPLE
 mdefine_line|#define PCI_CFG2_TUPPLE(function)&t;&t;&t;&t;&t;&bslash;&n;&t;(PCI_CFG2_ENABLE | (((function) &lt;&lt; 1) &amp; 0xe))
-macro_line|#endif /* TMSCSIM_H */
+macro_line|#endif /* _TMSCSIM_H */
 eof

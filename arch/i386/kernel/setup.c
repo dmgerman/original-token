@@ -1666,11 +1666,11 @@ l_string|&quot;Pentium Pro&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;Pentium II&quot;
+l_string|&quot;Pentium II (Klamath)&quot;
 comma
 l_int|NULL
 comma
-l_string|&quot;Pentium II (0.25 um)&quot;
+l_string|&quot;Pentium II (Deschutes)&quot;
 comma
 l_int|NULL
 comma
@@ -2405,7 +2405,7 @@ l_string|&quot;22&quot;
 comma
 l_string|&quot;mmx&quot;
 comma
-l_string|&quot;cxmmx&quot;
+l_string|&quot;osfxsr&quot;
 comma
 l_string|&quot;25&quot;
 comma

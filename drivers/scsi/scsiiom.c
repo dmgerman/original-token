@@ -777,7 +777,6 @@ r_return
 id|rc
 suffix:semicolon
 )brace
-macro_line|#ifndef  VERSION_ELF_1_2_13
 r_static
 r_void
 DECL|function|DC390_Interrupt
@@ -796,21 +795,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|DC390_Interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|PACB
 id|pACB
@@ -1304,7 +1288,6 @@ id|psgl
 op_assign
 id|pSRB-&gt;pSegmentList
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|pSRB-&gt;SGPhysAddr
 op_assign
 id|virt_to_phys
@@ -1313,15 +1296,6 @@ c_func
 id|psgl-&gt;address
 )paren
 suffix:semicolon
-macro_line|#else
-id|pSRB-&gt;SGPhysAddr
-op_assign
-(paren
-id|ULONG
-)paren
-id|psgl-&gt;address
-suffix:semicolon
-macro_line|#endif
 id|pSRB-&gt;SGToBeXferLen
 op_assign
 (paren
@@ -1597,7 +1571,6 @@ id|psgl
 op_assign
 id|pSRB-&gt;pSegmentList
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|pSRB-&gt;SGPhysAddr
 op_assign
 id|virt_to_phys
@@ -1606,15 +1579,6 @@ c_func
 id|psgl-&gt;address
 )paren
 suffix:semicolon
-macro_line|#else
-id|pSRB-&gt;SGPhysAddr
-op_assign
-(paren
-id|ULONG
-)paren
-id|psgl-&gt;address
-suffix:semicolon
-macro_line|#endif
 id|pSRB-&gt;SGToBeXferLen
 op_assign
 (paren
@@ -1895,7 +1859,6 @@ id|ScsiFifo
 )paren
 suffix:semicolon
 multiline_comment|/* get residual byte */
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|ptr
 op_assign
 (paren
@@ -1907,15 +1870,6 @@ c_func
 id|pSRB-&gt;SGPhysAddr
 )paren
 suffix:semicolon
-macro_line|#else
-id|ptr
-op_assign
-(paren
-id|PUCHAR
-)paren
-id|pSRB-&gt;SGPhysAddr
-suffix:semicolon
-macro_line|#endif
 op_star
 id|ptr
 op_assign
@@ -2856,7 +2810,6 @@ id|psgl
 op_assign
 id|pSRB-&gt;pSegmentList
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|pSRB-&gt;SGPhysAddr
 op_assign
 id|virt_to_phys
@@ -2865,15 +2818,6 @@ c_func
 id|psgl-&gt;address
 )paren
 suffix:semicolon
-macro_line|#else
-id|pSRB-&gt;SGPhysAddr
-op_assign
-(paren
-id|ULONG
-)paren
-id|psgl-&gt;address
-suffix:semicolon
-macro_line|#endif
 id|pSRB-&gt;SGToBeXferLen
 op_assign
 (paren

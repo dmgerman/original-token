@@ -9156,6 +9156,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|filp
+comma
 op_amp
 id|ppp-&gt;read_wait
 comma
@@ -9165,6 +9167,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|filp
+comma
 op_amp
 id|ppp-&gt;write_wait
 comma

@@ -5466,6 +5466,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|tty-&gt;read_wait
 comma
@@ -5475,6 +5477,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|tty-&gt;write_wait
 comma

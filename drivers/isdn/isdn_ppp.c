@@ -2662,6 +2662,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|is-&gt;wq
 comma

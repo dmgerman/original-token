@@ -228,6 +228,11 @@ r_int
 id|DMAbuf_poll
 c_func
 (paren
+r_struct
+id|file
+op_star
+id|file
+comma
 r_int
 id|dev
 comma
@@ -257,19 +262,6 @@ id|DMAbuf_sync
 (paren
 r_int
 id|dev
-)paren
-suffix:semicolon
-r_int
-r_int
-id|DMAbuf_poll
-c_func
-(paren
-r_int
-id|dev
-comma
-id|poll_table
-op_star
-id|wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;System calls for /dev/dsp and /dev/audio (audio.c)&n; */

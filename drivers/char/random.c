@@ -6358,6 +6358,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|random_read_wait
 comma
@@ -6367,6 +6369,8 @@ suffix:semicolon
 id|poll_wait
 c_func
 (paren
+id|file
+comma
 op_amp
 id|random_write_wait
 comma
