@@ -1,5 +1,5 @@
 multiline_comment|/* net/sched/sch_atm.c - ATM VC selection &quot;queueing discipline&quot; */
-multiline_comment|/* Written 1998,1999 by Werner Almesberger, EPFL ICA */
+multiline_comment|/* Written 1998-2000 by Werner Almesberger, EPFL ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -44,6 +44,8 @@ macro_line|#endif
 multiline_comment|/*&n; * The ATM queuing discipline provides a framework for invoking classifiers&n; * (aka &quot;filters&quot;), which in turn select classes of this queuing discipline.&n; * Each class maps the flow(s) it is handling to a given VC. Multiple classes&n; * may share the same VC.&n; *&n; * When creating a class, VCs are specified by passing the number of the open&n; * socket descriptor by which the calling process references the VC. The kernel&n; * keeps the VC open at least until all classes using it are removed.&n; *&n; * In this file, most functions are named atm_tc_* to avoid confusion with all&n; * the atm_* in net/atm. This naming convention differs from what&squot;s used in the&n; * rest of net/sched.&n; *&n; * Known bugs:&n; *  - sometimes messes up the IP stack&n; *  - any manipulations besides the few operations described in the README, are&n; *    untested and likely to crash the system&n; *  - should lock the flow while there is data in the queue (?)&n; */
 DECL|macro|PRIV
 mdefine_line|#define PRIV(sch) ((struct atm_qdisc_data *) (sch)-&gt;data)
+DECL|macro|VCC2FLOW
+mdefine_line|#define VCC2FLOW(vcc) ((struct atm_flow_data *) ((vcc)-&gt;user_back))
 DECL|struct|atm_flow_data
 r_struct
 id|atm_flow_data
@@ -68,6 +70,25 @@ op_star
 id|vcc
 suffix:semicolon
 multiline_comment|/* VCC; NULL if VCC is closed */
+DECL|member|old_pop
+r_void
+(paren
+op_star
+id|old_pop
+)paren
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* chaining */
 DECL|member|sock
 r_struct
 id|socket
@@ -449,6 +470,13 @@ r_struct
 id|atm_qdisc_data
 op_star
 id|p
+id|__attribute__
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 id|PRIV
 c_func
@@ -741,6 +769,10 @@ id|flow-&gt;sock-&gt;file
 )paren
 )paren
 suffix:semicolon
+id|flow-&gt;vcc-&gt;pop
+op_assign
+id|flow-&gt;old_pop
+suffix:semicolon
 id|sockfd_put
 c_func
 (paren
@@ -780,6 +812,45 @@ id|flow
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If flow == &amp;p-&gt;link, the qdisc no longer works at this point and&n;&t; * needs to be removed. (By the caller of atm_tc_put.)&n;&t; */
+)brace
+DECL|function|sch_atm_pop
+r_static
+r_void
+id|sch_atm_pop
+c_func
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|VCC2FLOW
+c_func
+(paren
+id|vcc
+)paren
+op_member_access_from_pointer
+id|old_pop
+c_func
+(paren
+id|vcc
+comma
+id|skb
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+multiline_comment|/* may allow to send more */
 )brace
 DECL|function|atm_tc_change
 r_static
@@ -1441,6 +1512,10 @@ id|sock
 )paren
 suffix:semicolon
 multiline_comment|/* speedup */
+id|flow-&gt;vcc-&gt;user_back
+op_assign
+id|flow
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -1448,6 +1523,14 @@ l_string|&quot;atm_tc_change: vcc %p&bslash;n&quot;
 comma
 id|flow-&gt;vcc
 )paren
+suffix:semicolon
+id|flow-&gt;old_pop
+op_assign
+id|flow-&gt;vcc-&gt;pop
+suffix:semicolon
+id|flow-&gt;vcc-&gt;pop
+op_assign
+id|sch_atm_pop
 suffix:semicolon
 id|flow-&gt;classid
 op_assign
@@ -2255,6 +2338,32 @@ id|flow-&gt;q
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|atm_may_send
+c_func
+(paren
+id|flow-&gt;vcc
+comma
+id|skb-&gt;truesize
+)paren
+)paren
+(brace
+id|flow-&gt;q-&gt;ops
+op_member_access_from_pointer
+id|requeue
+c_func
+(paren
+id|skb
+comma
+id|flow-&gt;q
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|sch-&gt;q.qlen
 op_decrement
 suffix:semicolon
@@ -2421,6 +2530,83 @@ op_decrement
 suffix:semicolon
 r_return
 id|skb
+suffix:semicolon
+)brace
+DECL|function|atm_tc_requeue
+r_static
+r_int
+id|atm_tc_requeue
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|Qdisc
+op_star
+id|sch
+)paren
+(brace
+r_struct
+id|atm_qdisc_data
+op_star
+id|p
+op_assign
+id|PRIV
+c_func
+(paren
+id|sch
+)paren
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|D2PRINTK
+c_func
+(paren
+l_string|&quot;atm_tc_requeue(skb %p,sch %p,[qdisc %p])&bslash;n&quot;
+comma
+id|skb
+comma
+id|sch
+comma
+id|p
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|p-&gt;link.q-&gt;ops
+op_member_access_from_pointer
+id|requeue
+c_func
+(paren
+id|skb
+comma
+id|p-&gt;link.q
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
+)paren
+id|sch-&gt;q.qlen
+op_increment
+suffix:semicolon
+r_else
+(brace
+id|sch-&gt;stats.drops
+op_increment
+suffix:semicolon
+id|p-&gt;link.stats.drops
+op_increment
+suffix:semicolon
+)brace
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|atm_tc_drop
@@ -3161,9 +3347,9 @@ multiline_comment|/* enqueue */
 id|atm_tc_dequeue
 comma
 multiline_comment|/* dequeue */
-id|atm_tc_enqueue
+id|atm_tc_requeue
 comma
-multiline_comment|/* requeue; we&squot;re cheating a little */
+multiline_comment|/* requeue */
 id|atm_tc_drop
 comma
 multiline_comment|/* drop */

@@ -1,8 +1,9 @@
 multiline_comment|/* atmsvc.h - ATM signaling kernel-demon interface definitions */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef _LINUX_ATMSVC_H
 DECL|macro|_LINUX_ATMSVC_H
 mdefine_line|#define _LINUX_ATMSVC_H
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 DECL|macro|ATMSIGD_CTRL
@@ -65,13 +66,11 @@ id|atmsvc_msg_type
 id|type
 suffix:semicolon
 DECL|member|vcc
-r_int
-r_int
+id|atm_kptr_t
 id|vcc
 suffix:semicolon
 DECL|member|listen_vcc
-r_int
-r_int
+id|atm_kptr_t
 id|listen_vcc
 suffix:semicolon
 multiline_comment|/* indicate */
@@ -121,9 +120,11 @@ id|sockaddr_atmsvc
 id|svc
 suffix:semicolon
 multiline_comment|/* SVC address */
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
-multiline_comment|/*&n; * Message contents: see ftp://lrcftp.epfl.ch/pub/linux/atm/docs/isp-*.tar.gz&n; */
+multiline_comment|/*&n; * Message contents: see ftp://icaftp.epfl.ch/pub/linux/atm/docs/isp-*.tar.gz&n; */
 multiline_comment|/*&n; * Some policy stuff for atmsigd and for net/atm/svc.c. Both have to agree on&n; * what PCR is used to request bandwidth from the device driver. net/atm/svc.c&n; * tries to do better than that, but only if there&squot;s no routing decision (i.e.&n; * if signaling only uses one ATM interface).&n; */
 DECL|macro|SELECT_TOP_PCR
 mdefine_line|#define SELECT_TOP_PCR(tp) ((tp).pcr ? (tp).pcr : &bslash;&n;  (tp).max_pcr &amp;&amp; (tp).max_pcr != ATM_MAX_PCR ? (tp).max_pcr : &bslash;&n;  (tp).min_pcr ? (tp).min_pcr : ATM_MAX_PCR)

@@ -688,6 +688,10 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|sock-&gt;file
+op_assign
+id|file
+suffix:semicolon
 id|file-&gt;f_op
 op_assign
 op_amp
@@ -712,10 +716,6 @@ id|fd
 comma
 id|file
 )paren
-suffix:semicolon
-id|sock-&gt;file
-op_assign
-id|file
 suffix:semicolon
 )brace
 id|out
@@ -3238,7 +3238,7 @@ comma
 op_amp
 id|len
 comma
-l_int|1
+l_int|2
 )paren
 OL
 l_int|0
@@ -3278,7 +3278,7 @@ r_goto
 id|out_release
 suffix:semicolon
 )brace
-multiline_comment|/* File flags are inherited via accept(). It looks silly, but we&n;&t; * have to be compatible with another OSes.&n;&t; */
+multiline_comment|/* File flags are not inherited via accept() unlike another OSes. */
 r_if
 c_cond
 (paren

@@ -4,6 +4,8 @@ macro_line|#ifndef LINUX_ATMDEV_H
 DECL|macro|LINUX_ATMDEV_H
 mdefine_line|#define LINUX_ATMDEV_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/atmapi.h&gt;
+macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 DECL|macro|ESI_LEN
 mdefine_line|#define ESI_LEN&t;&t;6
@@ -60,7 +62,9 @@ r_struct
 id|atm_aal_stats
 id|aal5
 suffix:semicolon
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
 DECL|macro|ATM_GETLINKRATE
 mdefine_line|#define ATM_GETLINKRATE&t;_IOW(&squot;a&squot;,ATMIOC_ITF+1,struct atmif_sioc)
@@ -181,6 +185,8 @@ DECL|macro|ATM_VS_BOUND
 mdefine_line|#define ATM_VS_BOUND&t;5&t;/* VC is bound */
 DECL|macro|ATM_VS2TXT_MAP
 mdefine_line|#define ATM_VS2TXT_MAP &bslash;&n;    &quot;IDLE&quot;, &quot;CONNECTED&quot;, &quot;CLOSING&quot;, &quot;LISTEN&quot;, &quot;INUSE&quot;, &quot;BOUND&quot;
+DECL|macro|ATM_VF2TXT_MAP
+mdefine_line|#define ATM_VF2TXT_MAP &bslash;&n;    &quot;ADDR&quot;,&t;&quot;READY&quot;,&t;&quot;PARTIAL&quot;,&t;&quot;REGIS&quot;, &bslash;&n;    &quot;RELEASED&quot;, &quot;HASQOS&quot;,&t;&quot;LISTEN&quot;,&t;&quot;META&quot;, &bslash;&n;    &quot;256&quot;,&t;&quot;512&quot;,&t;&t;&quot;1024&quot;,&t;&t;&quot;2048&quot;, &bslash;&n;    &quot;SESSION&quot;,&t;&quot;HASSAP&quot;,&t;&quot;BOUND&quot;,&t;&quot;CLOSE&quot;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/sched.h&gt; /* wait_queue_head_t */
 macro_line|#include &lt;linux/time.h&gt; /* struct timeval */
@@ -188,6 +194,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt; /* struct sk_buff */
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -210,14 +217,10 @@ DECL|macro|ATM_VF_LISTEN
 mdefine_line|#define ATM_VF_LISTEN&t;64&t;/* socket is used for listening */
 DECL|macro|ATM_VF_META
 mdefine_line|#define ATM_VF_META&t;128&t;/* SVC socket isn&squot;t used for normal data&n;&t;&t;&t;&t;   traffic and doesn&squot;t depend on signaling&n;&t;&t;&t;&t;   to be available */
-DECL|macro|ATM_VF_AQREL
-mdefine_line|#define ATM_VF_AQREL&t;256&t;/* Arequipa VC is being released */
-DECL|macro|ATM_VF_AQDANG
-mdefine_line|#define ATM_VF_AQDANG&t;512&t;/* VC is in Arequipa&squot;s dangling list */
-DECL|macro|ATM_VF_SCRX
-mdefine_line|#define ATM_VF_SCRX&t;ATM_SC_RX /* 1024; allow single-copy in the RX dir. */
-DECL|macro|ATM_VF_SCTX
-mdefine_line|#define ATM_VF_SCTX&t;ATM_SC_TX /* 2048; allow single-copy in the TX dir. */
+multiline_comment|/*  256; unused */
+multiline_comment|/*  512; unused */
+multiline_comment|/* 1024; unused */
+multiline_comment|/* 2048; unused */
 DECL|macro|ATM_VF_SESSION
 mdefine_line|#define ATM_VF_SESSION&t;4096&t;/* VCC is p2mp session control descriptor */
 DECL|macro|ATM_VF_HASSAP
@@ -293,15 +296,6 @@ id|atm_sap
 id|sap
 suffix:semicolon
 multiline_comment|/* SAP */
-DECL|member|tx_quota
-DECL|member|rx_quota
-r_int
-r_int
-id|tx_quota
-comma
-id|rx_quota
-suffix:semicolon
-multiline_comment|/* buffer quotas */
 DECL|member|tx_inuse
 DECL|member|rx_inuse
 id|atomic_t
@@ -427,6 +421,13 @@ id|wait_queue_head_t
 id|wsleep
 suffix:semicolon
 multiline_comment|/* if waiting for write buffer space */
+DECL|member|sk
+r_struct
+id|sock
+op_star
+id|sk
+suffix:semicolon
+multiline_comment|/* socket backpointer */
 DECL|member|prev
 DECL|member|next
 r_struct
@@ -496,7 +497,9 @@ r_void
 op_star
 id|user_back
 suffix:semicolon
-multiline_comment|/* user backlink - not touched */
+multiline_comment|/* user backlink - not touched by */
+multiline_comment|/* native ATM stack. Currently used */
+multiline_comment|/* by CLIP and sch_atm. */
 )brace
 suffix:semicolon
 DECL|struct|atm_dev_addr
@@ -1245,6 +1248,38 @@ comma
 op_amp
 id|vcc-&gt;rx_inuse
 )paren
+suffix:semicolon
+)brace
+DECL|function|atm_may_send
+r_static
+id|__inline__
+r_int
+id|atm_may_send
+c_func
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+r_return
+id|size
+op_plus
+id|atomic_read
+c_func
+(paren
+op_amp
+id|vcc-&gt;tx_inuse
+)paren
+op_plus
+id|ATM_PDU_OVHD
+OL
+id|vcc-&gt;sk-&gt;sndbuf
 suffix:semicolon
 )brace
 r_int

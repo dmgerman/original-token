@@ -251,6 +251,29 @@ DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page local_flush_tlb_page
 DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range local_flush_tlb_range
+DECL|function|flush_tlb_pgtables
+r_extern
+r_inline
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+multiline_comment|/* PPC has hw page tables. */
+)brace
 multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; * Also, when SMP we use the coherency (M) bit of the&n; * BATs and PTEs.  -- Cort&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;do { } while (0)

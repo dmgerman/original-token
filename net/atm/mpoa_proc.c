@@ -686,6 +686,10 @@ id|length
 comma
 l_string|&quot;&bslash;n%-16lu%s%-14lu%-15u&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|ntohl
 c_func
 (paren

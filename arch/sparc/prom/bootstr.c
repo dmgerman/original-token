@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bootstr.c,v 1.19 2000/01/29 01:09:11 anton Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bootstr.c,v 1.20 2000/02/08 20:24:23 davem Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/sun4prom.h&gt;

@@ -1455,5 +1455,27 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|flush_tlb_pgtables
+r_extern
+r_inline
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+)brace
 macro_line|#endif /* _M68K_PGALLOC_H */
 eof

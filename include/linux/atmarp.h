@@ -1,11 +1,12 @@
 multiline_comment|/* atmarp.h - ATM ARP protocol and kernel-demon interface definitions */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef _LINUX_ATMARP_H
 DECL|macro|_LINUX_ATMARP_H
 mdefine_line|#define _LINUX_ATMARP_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 DECL|macro|ATMARP_RETRY_DELAY
 mdefine_line|#define ATMARP_RETRY_DELAY 30&t;&t;/* request next resolution or forget&n;&t;&t;&t;&t;&t;   NAK after 30 sec - should go into&n;&t;&t;&t;&t;&t;   atmclip.h */

@@ -2226,8 +2226,8 @@ id|skb-&gt;len
 suffix:semicolon
 )brace
 macro_line|#else /* no CONFIG_RTNETLINK */
-DECL|macro|dn_rt_msg_fib
-mdefine_line|#define dn_rt_msg_fib(event,f,z,tb_id,nlh,req)
+DECL|macro|dn_rtmsg_fib
+mdefine_line|#define dn_rtmsg_fib(event,f,z,tb_id,nlh,req)
 macro_line|#endif /* CONFIG_RTNETLINK */
 DECL|function|dn_fib_table_insert
 r_static

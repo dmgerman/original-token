@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.41 1999/09/10 15:39:03 jj Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.42 2000/02/08 07:47:03 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H

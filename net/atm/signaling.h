@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/signaling.h - ATM signaling */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef NET_ATM_SIGNALING_H
 DECL|macro|NET_ATM_SIGNALING_H
 mdefine_line|#define NET_ATM_SIGNALING_H
@@ -28,7 +28,6 @@ r_enum
 id|atmsvc_msg_type
 id|type
 comma
-r_const
 r_struct
 id|atm_vcc
 op_star

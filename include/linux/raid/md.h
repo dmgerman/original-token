@@ -3,6 +3,7 @@ macro_line|#ifndef _MD_H
 DECL|macro|_MD_H
 mdefine_line|#define _MD_H
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;

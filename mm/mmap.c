@@ -2339,6 +2339,7 @@ id|last
 OG
 id|first
 )paren
+(brace
 id|clear_page_tables
 c_func
 (paren
@@ -2351,6 +2352,21 @@ op_minus
 id|first
 )paren
 suffix:semicolon
+id|flush_tlb_pgtables
+c_func
+(paren
+id|mm
+comma
+id|first
+op_lshift
+id|PGDIR_SHIFT
+comma
+id|last
+op_lshift
+id|PGDIR_SHIFT
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Munmap is split into 2 main parts -- this part which finds&n; * what needs doing, and the areas themselves, which do the&n; * work.  This now handles partial unmappings.&n; * Jeremy Fitzhardine &lt;jeremy@sw.oz.au&gt;&n; */
 DECL|function|do_munmap

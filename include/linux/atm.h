@@ -1,5 +1,5 @@
 multiline_comment|/* atm.h - general ATM declarations */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 multiline_comment|/*&n; * WARNING: User-space programs should not #include &lt;linux/atm.h&gt; directly.&n; *          Instead, #include &lt;atm.h&gt;&n; */
 macro_line|#ifndef _LINUX_ATM_H
 DECL|macro|_LINUX_ATM_H
@@ -9,6 +9,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmsap.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 multiline_comment|/* general ATM constants */
@@ -73,55 +74,6 @@ DECL|macro|SO_ATMPVC
 mdefine_line|#define SO_ATMPVC&t;__SO_ENCODE(SOL_ATM,4,struct sockaddr_atmpvc)
 multiline_comment|/* &quot;PVC&quot; address (also for SVCs); get only */
 multiline_comment|/*&n; * Note @@@: since the socket layers don&squot;t really distinguish the control and&n; * the data plane but generally seems to be data plane-centric, any layer is&n; * about equally wrong for the SAP. If you have a better idea about this,&n; * please speak up ...&n; */
-multiline_comment|/* socket layer */
-DECL|macro|SO_BCTXOPT
-mdefine_line|#define SO_BCTXOPT&t;__SO_ENCODE(SOL_SOCKET,16,struct atm_buffconst)
-multiline_comment|/* not ATM specific - should go somewhere else */
-DECL|macro|SO_BCRXOPT
-mdefine_line|#define SO_BCRXOPT&t;__SO_ENCODE(SOL_SOCKET,17,struct atm_buffconst)
-multiline_comment|/* for SO_BCTXOPT and SO_BCRXOPT */
-DECL|struct|atm_buffconst
-r_struct
-id|atm_buffconst
-(brace
-DECL|member|buf_fac
-r_int
-r_int
-id|buf_fac
-suffix:semicolon
-multiline_comment|/* buffer alignment factor */
-DECL|member|buf_off
-r_int
-r_int
-id|buf_off
-suffix:semicolon
-multiline_comment|/* buffer alignment offset */
-DECL|member|size_fac
-r_int
-r_int
-id|size_fac
-suffix:semicolon
-multiline_comment|/* buffer size factor */
-DECL|member|size_off
-r_int
-r_int
-id|size_off
-suffix:semicolon
-multiline_comment|/* buffer size offset */
-DECL|member|min_size
-r_int
-r_int
-id|min_size
-suffix:semicolon
-multiline_comment|/* minimum size */
-DECL|member|max_size
-r_int
-r_int
-id|max_size
-suffix:semicolon
-multiline_comment|/* maximum size, 0 = unlimited */
-)brace
-suffix:semicolon
 multiline_comment|/* ATM cell header (for AAL0) */
 multiline_comment|/* BEGIN_CH */
 DECL|macro|ATM_HDR_GFC_MASK
@@ -213,6 +165,115 @@ r_int
 id|max_sdu
 suffix:semicolon
 multiline_comment|/* maximum SDU in bytes */
+multiline_comment|/* extra params for ABR */
+DECL|member|icr
+r_int
+r_int
+id|icr
+suffix:semicolon
+multiline_comment|/* Initial Cell Rate (24-bit) */
+DECL|member|tbe
+r_int
+r_int
+id|tbe
+suffix:semicolon
+multiline_comment|/* Transient Buffer Exposure (24-bit) */
+DECL|member|frtt
+r_int
+r_int
+id|frtt
+suffix:colon
+l_int|24
+suffix:semicolon
+multiline_comment|/* Fixed Round Trip Time (24-bit) */
+DECL|member|rif
+r_int
+r_int
+id|rif
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Rate Increment Factor (4-bit) */
+DECL|member|rdf
+r_int
+r_int
+id|rdf
+suffix:colon
+l_int|4
+suffix:semicolon
+multiline_comment|/* Rate Decrease Factor (4-bit) */
+DECL|member|nrm_pres
+r_int
+r_int
+id|nrm_pres
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* nrm present bit */
+DECL|member|trm_pres
+r_int
+r_int
+id|trm_pres
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* rm present bit */
+DECL|member|adtf_pres
+r_int
+r_int
+id|adtf_pres
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* adtf present bit */
+DECL|member|cdf_pres
+r_int
+r_int
+id|cdf_pres
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* cdf present bit*/
+DECL|member|nrm
+r_int
+r_int
+id|nrm
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Max # of Cells for each forward RM cell (3-bit) */
+DECL|member|trm
+r_int
+r_int
+id|trm
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Time between forward RM cells (3-bit) */
+DECL|member|adtf
+r_int
+r_int
+id|adtf
+suffix:colon
+l_int|10
+suffix:semicolon
+multiline_comment|/* ACR Decrease Time Factor (10-bit) */
+DECL|member|cdf
+r_int
+r_int
+id|cdf
+suffix:colon
+l_int|3
+suffix:semicolon
+multiline_comment|/* Cutoff Decrease Factor (3-bit) */
+DECL|member|spare
+r_int
+r_int
+id|spare
+suffix:colon
+l_int|9
+suffix:semicolon
+multiline_comment|/* spare bits */
 )brace
 suffix:semicolon
 DECL|struct|atm_qos
@@ -225,16 +286,18 @@ id|atm_trafprm
 id|txtp
 suffix:semicolon
 multiline_comment|/* parameters in TX direction */
-DECL|member|rxtp
+DECL|member|__ATM_API_ALIGN
 r_struct
 id|atm_trafprm
 id|rxtp
+id|__ATM_API_ALIGN
 suffix:semicolon
 multiline_comment|/* parameters in RX direction */
-DECL|member|aal
+DECL|member|__ATM_API_ALIGN
 r_int
 r_char
 id|aal
+id|__ATM_API_ALIGN
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -277,9 +340,10 @@ r_int
 id|vci
 suffix:semicolon
 multiline_comment|/* VCI (only 16 bits at UNI) */
-DECL|member|sap_addr
+DECL|member|__ATM_API_ALIGN
 )brace
 id|sap_addr
+id|__ATM_API_ALIGN
 suffix:semicolon
 multiline_comment|/* PVC address */
 )brace
@@ -356,9 +420,10 @@ r_uint32
 id|lij_id
 suffix:semicolon
 multiline_comment|/* LIJ call identifier */
-DECL|member|sas_addr
+DECL|member|__ATM_API_ALIGN
 )brace
 id|sas_addr
+id|__ATM_API_ALIGN
 suffix:semicolon
 multiline_comment|/* SVC address */
 )brace
@@ -423,9 +488,6 @@ id|arg
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|ATM_CREATE_LEAF
-mdefine_line|#define ATM_CREATE_LEAF _IO(&squot;a&squot;,ATMIOC_SPECIAL+2)
-multiline_comment|/* create a point-to-multipoint leaf socket */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/net.h&gt;&t;/* struct net_proto */
 r_void

@@ -307,6 +307,12 @@ r_int
 r_char
 op_star
 id|ip
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 (paren
 r_int
@@ -652,6 +658,12 @@ r_int
 r_char
 op_star
 id|ip
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 (paren
 r_int

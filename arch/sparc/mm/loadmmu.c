@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.54 2000/01/29 01:09:07 anton Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.56 2000/02/08 20:24:21 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -40,6 +40,14 @@ suffix:semicolon
 r_extern
 r_void
 id|ld_mmu_srmmu
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ioport_init
 c_func
 (paren
 r_void
@@ -106,6 +114,11 @@ c_func
 suffix:semicolon
 )brace
 id|btfixup
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ioport_init
 c_func
 (paren
 )paren

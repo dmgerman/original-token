@@ -1,5 +1,4 @@
 multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.185 2000/02/05 21:29:19 acher Exp $&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10268,10 +10267,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|uhci_init
 r_int
 id|__init
 id|uhci_init

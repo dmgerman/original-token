@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/signaling.c - ATM signaling */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* error codes */
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk */
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/atm.h&gt;&t;&t;/* ATM stuff */
 macro_line|#include &lt;linux/atmsap.h&gt;
 macro_line|#include &lt;linux/atmsvc.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
-macro_line|#include &quot;tunable.h&quot;
 macro_line|#include &quot;resources.h&quot;
 macro_line|#include &quot;signaling.h&quot;
 DECL|macro|WAIT_FOR_DEMON
@@ -344,16 +343,23 @@ r_int
 )paren
 id|msg-&gt;type
 comma
+(paren
+r_int
+r_int
+)paren
 id|msg-&gt;vcc
 )paren
 suffix:semicolon
 id|vcc
 op_assign
+op_star
 (paren
 r_struct
 id|atm_vcc
 op_star
+op_star
 )paren
+op_amp
 id|msg-&gt;vcc
 suffix:semicolon
 r_switch
@@ -474,11 +480,14 @@ id|as_indicate
 suffix:colon
 id|vcc
 op_assign
+op_star
 (paren
 r_struct
 id|atm_vcc
 op_star
+op_star
 )paren
+op_amp
 id|msg-&gt;listen_vcc
 suffix:semicolon
 id|DPRINTK
@@ -638,7 +647,6 @@ r_enum
 id|atmsvc_msg_type
 id|type
 comma
-r_const
 r_struct
 id|atm_vcc
 op_star
@@ -724,24 +732,46 @@ id|atmsvc_msg
 )paren
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|msg
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|msg
+)paren
+)paren
+suffix:semicolon
 id|msg-&gt;type
 op_assign
 id|type
 suffix:semicolon
+op_star
+(paren
+r_struct
+id|atm_vcc
+op_star
+op_star
+)paren
+op_amp
 id|msg-&gt;vcc
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|vcc
 suffix:semicolon
+op_star
+(paren
+r_struct
+id|atm_vcc
+op_star
+op_star
+)paren
+op_amp
 id|msg-&gt;listen_vcc
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|listen_vcc
 suffix:semicolon
 id|msg-&gt;reply
@@ -989,47 +1019,13 @@ id|atmdev_ops
 id|sigd_dev_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no dev_close */
-l_int|NULL
-comma
-multiline_comment|/* no open */
+id|close
+suffix:colon
 id|sigd_close
 comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* no ioctl */
-l_int|NULL
-comma
-multiline_comment|/* no getsockopt */
-l_int|NULL
-comma
-multiline_comment|/* no setsockopt */
+id|send
+suffix:colon
 id|sigd_send
-comma
-multiline_comment|/* send */
-l_int|NULL
-comma
-multiline_comment|/* no sg_send */
-l_int|NULL
-comma
-multiline_comment|/* no send_oam */
-l_int|NULL
-comma
-multiline_comment|/* no phy_put */
-l_int|NULL
-comma
-multiline_comment|/* no phy_get */
-l_int|NULL
-comma
-multiline_comment|/* no feedback */
-l_int|NULL
-comma
-multiline_comment|/* no change_qos */
-l_int|NULL
-multiline_comment|/* no free_rx_skb */
 )brace
 suffix:semicolon
 DECL|variable|sigd_dev

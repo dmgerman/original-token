@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/atmarp.h - RFC1577 ATM ARP */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef _ATMCLIP_H
 DECL|macro|_ATMCLIP_H
 mdefine_line|#define _ATMCLIP_H
@@ -67,7 +67,26 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* keep old push fn for detaching */
+multiline_comment|/* keep old push fn for chaining */
+DECL|member|old_pop
+r_void
+(paren
+op_star
+id|old_pop
+)paren
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* keep old pop fn for chaining */
 DECL|member|next
 r_struct
 id|clip_vcc

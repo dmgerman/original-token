@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.186 2000/01/31 20:26:13 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.188 2000/02/08 21:27:14 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -178,26 +178,6 @@ op_assign
 id|len
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* Tiny-grams with PSH set artifically deflate our&n;&t;&t; * ato measurement.&n;&t;&t; *&n;&t;&t; * Mmm... I copied this test from tcp_remember_ack(), but&n;&t;&t; * I did not understand this. Is it to speedup nagling sender?&n;&t;&t; * It does not because classic (non-Minshall) sender nagles&n;&t;&t; * guided by not-acked frames not depending on size.&n;&t;&t; * And it does not help NODELAY sender, because latency&n;&t;&t; * is too high in any case. The only result is timer trashing&n;&t;&t; * and redundant ACKs. Grr... Seems, I missed something.  --ANK&n;&t;&t; *&n;&t;&t; * Let me to comment out this yet... TCP should work&n;&t;&t; * perfectly without this. &t;&t;&t;&t;  --ANK&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|len
-OL
-(paren
-id|tp-&gt;ack.rcv_mss
-op_rshift
-l_int|1
-)paren
-op_logical_and
-id|skb-&gt;h.th-&gt;psh
-)paren
-id|tp-&gt;ack.ato
-op_assign
-id|TCP_ATO_MIN
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 DECL|function|tcp_enter_quickack_mode
@@ -318,6 +298,9 @@ id|tp-&gt;ack.pending
 op_assign
 l_int|1
 suffix:semicolon
+id|tp-&gt;ack.rcv_segs
+op_increment
+suffix:semicolon
 id|now
 op_assign
 id|tcp_time_stamp
@@ -400,6 +383,13 @@ id|TCP_ATO_MIN
 op_div
 l_int|2
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|m
+op_le
+id|tp-&gt;ack.ato
+)paren
 id|tp-&gt;ack.ato
 op_assign
 (paren
@@ -1195,7 +1185,7 @@ c_func
 (paren
 id|seq
 comma
-id|tp-&gt;last_ack_sent
+id|tp-&gt;rcv_wup
 )paren
 )paren
 (brace
@@ -8179,6 +8169,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|NET_INC_STATS_BH
+c_func
+(paren
+id|RcvPruned
+)paren
+suffix:semicolon
 multiline_comment|/* Massive buffer overcommit. */
 r_return
 op_minus
@@ -8604,13 +8600,13 @@ l_int|0
 r_goto
 id|slow_path
 suffix:semicolon
-multiline_comment|/* Predicted packet is in window by definition.&n;&t;&t;&t; * seq == rcv_nxt and last_ack_sent &lt;= rcv_nxt.&n;&t;&t;&t; * Hence, check seq&lt;=last_ack_sent reduces to:&n;&t;&t;&t; */
+multiline_comment|/* Predicted packet is in window by definition.&n;&t;&t;&t; * seq == rcv_nxt and rcv_wup &lt;= rcv_nxt.&n;&t;&t;&t; * Hence, check seq&lt;=rcv_wup reduces to:&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|tp-&gt;rcv_nxt
 op_eq
-id|tp-&gt;last_ack_sent
+id|tp-&gt;rcv_wup
 )paren
 (brace
 id|tp-&gt;ts_recent
@@ -8888,7 +8884,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-macro_line|#if 1/*def CONFIG_TCP_MORE_COARSE_ACKS*/
+macro_line|#ifdef TCP_MORE_COARSE_ACKS
 r_if
 c_cond
 (paren
@@ -9669,12 +9665,6 @@ suffix:semicolon
 id|newtp-&gt;saw_tstamp
 op_assign
 l_int|0
-suffix:semicolon
-id|newtp-&gt;last_ack_sent
-op_assign
-id|req-&gt;rcv_isn
-op_plus
-l_int|1
 suffix:semicolon
 id|newtp-&gt;probes_out
 op_assign
@@ -10964,10 +10954,6 @@ c_func
 (paren
 id|tp
 )paren
-suffix:semicolon
-id|tp-&gt;ack.pingpong
-op_assign
-l_int|1
 suffix:semicolon
 id|tp-&gt;ack.ato
 op_assign

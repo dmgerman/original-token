@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.30 2000/01/28 13:43:14 jj Exp $ */
+multiline_comment|/* $Id: io.h,v 1.31 2000/02/08 05:11:38 jj Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -12,144 +12,6 @@ DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
-DECL|macro|NEW_PCI_DMA_MAP
-mdefine_line|#define NEW_PCI_DMA_MAP
-macro_line|#ifndef NEW_PCI_DMA_MAP
-DECL|macro|PCI_DVMA_HASHSZ
-mdefine_line|#define PCI_DVMA_HASHSZ&t;256
-r_extern
-r_int
-r_int
-id|pci_dvma_v2p_hash
-(braket
-id|PCI_DVMA_HASHSZ
-)braket
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|pci_dvma_p2v_hash
-(braket
-id|PCI_DVMA_HASHSZ
-)braket
-suffix:semicolon
-DECL|macro|pci_dvma_ahashfn
-mdefine_line|#define pci_dvma_ahashfn(addr)&t;(((addr) &gt;&gt; 24) &amp; 0xff)
-DECL|function|virt_to_bus
-r_extern
-id|__inline__
-r_int
-r_int
-id|virt_to_bus
-c_func
-(paren
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|vaddr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|addr
-suffix:semicolon
-r_int
-r_int
-id|off
-suffix:semicolon
-multiline_comment|/* Handle kernel variable pointers... */
-r_if
-c_cond
-(paren
-id|vaddr
-OL
-id|PAGE_OFFSET
-)paren
-id|vaddr
-op_add_assign
-id|PAGE_OFFSET
-op_minus
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|empty_zero_page
-suffix:semicolon
-id|off
-op_assign
-id|pci_dvma_v2p_hash
-(braket
-id|pci_dvma_ahashfn
-c_func
-(paren
-id|vaddr
-op_minus
-id|PAGE_OFFSET
-)paren
-)braket
-suffix:semicolon
-r_return
-id|vaddr
-op_plus
-id|off
-suffix:semicolon
-)brace
-DECL|function|bus_to_virt
-r_extern
-id|__inline__
-r_void
-op_star
-id|bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|paddr
-op_assign
-id|addr
-op_amp
-l_int|0xffffffffUL
-suffix:semicolon
-r_int
-r_int
-id|off
-suffix:semicolon
-id|off
-op_assign
-id|pci_dvma_p2v_hash
-(braket
-id|pci_dvma_ahashfn
-c_func
-(paren
-id|paddr
-)paren
-)braket
-suffix:semicolon
-r_return
-(paren
-r_void
-op_star
-)paren
-(paren
-id|paddr
-op_plus
-id|off
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 r_extern
 r_int
 r_int
@@ -178,7 +40,6 @@ id|addr
 suffix:semicolon
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt bus_to_virt_not_defined_use_pci_map
-macro_line|#endif
 multiline_comment|/* Different PCI controllers we support have their PCI MEM space&n; * mapped to an either 2GB (Psycho) or 4GB (Sabre) aligned area,&n; * so need to chop off the top 33 or 32 bits.&n; */
 r_extern
 r_int

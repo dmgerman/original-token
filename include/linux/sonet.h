@@ -1,5 +1,5 @@
 multiline_comment|/* sonet.h - SONET/SHD physical layer control */
-multiline_comment|/* Written 1995 by Werner Almesberger, EPFL LRC */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef LINUX_SONET_H
 DECL|macro|LINUX_SONET_H
 mdefine_line|#define LINUX_SONET_H
@@ -53,6 +53,12 @@ id|rx_cells
 suffix:semicolon
 multiline_comment|/* cells received */
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|macro|SONET_GETSTAT
 mdefine_line|#define SONET_GETSTAT&t;_IOR(&squot;a&squot;,ATMIOC_PHYTYP,struct sonet_stats)

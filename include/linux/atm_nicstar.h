@@ -3,6 +3,7 @@ macro_line|#ifndef LINUX_ATM_NICSTAR_H
 DECL|macro|LINUX_ATM_NICSTAR_H
 mdefine_line|#define LINUX_ATM_NICSTAR_H
 multiline_comment|/* Note: non-kernel programs including this file must also include&n; * sys/types.h for struct timeval&n; */
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 DECL|macro|NS_GETPSTAT
 mdefine_line|#define NS_GETPSTAT&t;_IOWR(&squot;a&squot;,ATMIOC_SARPRV+1,struct atmif_sioc)

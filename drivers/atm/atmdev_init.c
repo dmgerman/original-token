@@ -32,16 +32,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATM_FORE200
-r_extern
-r_int
-id|fore200_detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_NICSTAR
 r_extern
 r_int
@@ -66,6 +56,16 @@ macro_line|#ifdef CONFIG_ATM_HORIZON
 r_extern
 r_int
 id|hrz_detect
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATM_IA
+r_extern
+r_int
+id|ia_detect
 c_func
 (paren
 r_void
@@ -115,15 +115,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATM_FORE200
-id|devs
-op_add_assign
-id|fore200_detect
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_NICSTAR
 id|devs
 op_add_assign
@@ -146,6 +137,15 @@ macro_line|#ifdef CONFIG_ATM_HORIZON
 id|devs
 op_add_assign
 id|hrz_detect
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATM_IA
+id|devs
+op_add_assign
+id|ia_detect
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io-unit.c,v 1.20 2000/01/15 00:51:27 anton Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: io-unit.c,v 1.21 2000/02/06 22:55:45 zaitcev Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1361,6 +1361,87 @@ r_int
 id|len
 )paren
 (brace
+multiline_comment|/* XXX Somebody please fill this in */
+)brace
+multiline_comment|/* XXX We do not pass sbus device here, bad. */
+DECL|function|iounit_translate_dvma
+r_static
+r_int
+r_int
+id|iounit_translate_dvma
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_struct
+id|sbus_bus
+op_star
+id|sbus
+op_assign
+id|sbus_root
+suffix:semicolon
+multiline_comment|/* They are all the same */
+r_struct
+id|iounit_struct
+op_star
+id|iounit
+op_assign
+(paren
+r_struct
+id|iounit_struct
+op_star
+)paren
+id|sbus-&gt;iommu
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|iopte_t
+op_star
+id|iopte
+suffix:semicolon
+id|i
+op_assign
+(paren
+(paren
+id|addr
+op_minus
+id|IOUNIT_DMA_BASE
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+id|iopte
+op_assign
+(paren
+id|iopte_t
+op_star
+)paren
+(paren
+id|iounit-&gt;page_table
+op_plus
+id|i
+)paren
+suffix:semicolon
+r_return
+(paren
+id|iopte_val
+c_func
+(paren
+op_star
+id|iopte
+)paren
+op_amp
+l_int|0xFFFFFFF0
+)paren
+op_lshift
+l_int|4
+suffix:semicolon
+multiline_comment|/* XXX sun4d guru, help */
 )brace
 macro_line|#endif
 DECL|function|iounit_lockarea
@@ -1487,6 +1568,16 @@ c_func
 id|mmu_unmap_dma_area
 comma
 id|iounit_unmap_dma_area
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|mmu_translate_dvma
+comma
+id|iounit_translate_dvma
 comma
 id|BTFIXUPCALL_NORM
 )paren

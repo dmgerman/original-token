@@ -1,8 +1,9 @@
 multiline_comment|/* atm_tcp.h - Driver-specific declarations of the ATMTCP driver (for use by&n;&t;       driver-specific utilities) */
-multiline_comment|/* Written 1997-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1997-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef LINUX_ATM_TCP_H
 DECL|macro|LINUX_ATM_TCP_H
 mdefine_line|#define LINUX_ATM_TCP_H
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif
@@ -50,8 +51,7 @@ id|type
 suffix:semicolon
 multiline_comment|/* message type; both directions */
 DECL|member|vcc
-r_int
-r_int
+id|atm_kptr_t
 id|vcc
 suffix:semicolon
 multiline_comment|/* both directions */
@@ -72,7 +72,9 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* to kernel only */
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
 multiline_comment|/*&n; * Field usage:&n; * Messge type&t;dir.&t;hdr.v?i&t;type&t;addr&t;qos&t;vcc&t;result&n; * -----------  ----&t;------- ----&t;----&t;---&t;---&t;------&n; * OPEN&t;&t;K-&gt;D&t;Y&t;Y&t;Y&t;Y&t;Y&t;0&n; * OPEN&t;&t;D-&gt;K&t;-&t;Y&t;Y&t;Y&t;Y&t;Y&n; * CLOSE&t;K-&gt;D&t;-&t;-&t;Y&t;-&t;Y&t;0&n; * CLOSE&t;D-&gt;K&t;-&t;-&t;-&t;-&t;Y&t;Y&n; */
 DECL|macro|SIOCSIFATMTCP

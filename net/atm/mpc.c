@@ -24,7 +24,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;lec.h&quot;
 macro_line|#include &quot;mpc.h&quot;
-macro_line|#include &quot;tunable.h&quot;
 macro_line|#include &quot;resources.h&quot;  /* for bind_vcc() */
 multiline_comment|/*&n; * mpc.c: Implementation of MPOA client kernel part &n; */
 macro_line|#if 0
@@ -1315,7 +1314,14 @@ r_static
 r_const
 r_char
 op_star
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 id|mpoa_device_type_string
+c_func
 (paren
 r_char
 id|type
@@ -2805,6 +2811,12 @@ r_int
 r_char
 op_star
 id|ip
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 (paren
 r_int
@@ -3359,50 +3371,13 @@ id|mpc_ops
 op_assign
 (brace
 multiline_comment|/* only send is required */
-l_int|NULL
-comma
-multiline_comment|/* dev_close   */
-l_int|NULL
-comma
-multiline_comment|/* open        */
+id|close
+suffix:colon
 id|mpoad_close
 comma
-multiline_comment|/* close       */
-l_int|NULL
-comma
-multiline_comment|/* ioctl       */
-l_int|NULL
-comma
-multiline_comment|/* getsockopt  */
-l_int|NULL
-comma
-multiline_comment|/* setsockopt  */
+id|send
+suffix:colon
 id|msg_from_mpoad
-comma
-multiline_comment|/* send        */
-l_int|NULL
-comma
-multiline_comment|/* sg_send     */
-l_int|NULL
-comma
-multiline_comment|/* send_oam    */
-l_int|NULL
-comma
-multiline_comment|/* phy_put     */
-l_int|NULL
-comma
-multiline_comment|/* phy_get     */
-l_int|NULL
-comma
-multiline_comment|/* feedback    */
-l_int|NULL
-comma
-multiline_comment|/* change_qos  */
-l_int|NULL
-comma
-multiline_comment|/* free_rx_skb */
-l_int|NULL
-multiline_comment|/* proc_read   */
 )brace
 suffix:semicolon
 DECL|variable|mpc_dev
@@ -4891,6 +4866,12 @@ r_int
 r_char
 op_star
 id|ip
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 (paren
 r_int

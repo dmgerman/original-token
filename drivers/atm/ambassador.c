@@ -4999,7 +4999,7 @@ r_else
 singleline_comment|// moan
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 )brace
@@ -6067,44 +6067,24 @@ id|atmdev_ops
 id|amb_ops
 op_assign
 (brace
-l_int|NULL
-comma
-singleline_comment|// no amb_dev_close
+id|open
+suffix:colon
 id|amb_open
 comma
+id|close
+suffix:colon
 id|amb_close
 comma
-l_int|NULL
-comma
-singleline_comment|// no amb_ioctl,
-l_int|NULL
-comma
-singleline_comment|// no amb_getsockopt,
-l_int|NULL
-comma
-singleline_comment|// no amb_setsockopt,
+id|send
+suffix:colon
 id|amb_send
 comma
+id|sg_send
+suffix:colon
 id|amb_sg_send
 comma
-l_int|NULL
-comma
-singleline_comment|// no send_oam    - not in fact used yet
-l_int|NULL
-comma
-singleline_comment|// no amb_phy_put - not needed in this driver 
-l_int|NULL
-comma
-singleline_comment|// no amb_phy_get - not needed in this driver 
-l_int|NULL
-comma
-singleline_comment|// no feedback    - feedback to the driver!
-l_int|NULL
-comma
-singleline_comment|// no amb_change_qos
-l_int|NULL
-comma
-singleline_comment|// amb_free_rx_skb not used until checked by someone else
+id|proc_read
+suffix:colon
 id|amb_proc_read
 )brace
 suffix:semicolon

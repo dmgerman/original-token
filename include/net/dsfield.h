@@ -1,5 +1,5 @@
 multiline_comment|/* include/net/dsfield.h - Manipulation of the Differentiated Services field */
-multiline_comment|/* Written 1998 by Werner Almesberger, EPFL ICA */
+multiline_comment|/* Written 1998-2000 by Werner Almesberger, EPFL ICA */
 macro_line|#ifndef __NET_DSFIELD_H
 DECL|macro|__NET_DSFIELD_H
 mdefine_line|#define __NET_DSFIELD_H
@@ -183,9 +183,13 @@ op_assign
 id|tmp
 op_amp
 (paren
+(paren
 id|mask
 op_lshift
 l_int|4
+)paren
+op_or
+l_int|0xf00f
 )paren
 )paren
 op_or

@@ -1,6 +1,6 @@
 multiline_comment|/* atmioc.h - ranges for ATM-related ioctl numbers */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC */
-multiline_comment|/*&n; * See http://lrcwww.epfl.ch/linux-atm/magic.html for the complete list of&n; * &quot;magic&quot; ioctl numbers.&n; */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/*&n; * See http://icawww1.epfl.ch/linux-atm/magic.html for the complete list of&n; * &quot;magic&quot; ioctl numbers.&n; */
 macro_line|#ifndef _LINUX_ATMIOC_H
 DECL|macro|_LINUX_ATMIOC_H
 mdefine_line|#define _LINUX_ATMIOC_H

@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
-macro_line|#include &quot;tunable.h&quot;
 DECL|function|atm_charge
 r_int
 id|atm_charge
@@ -39,7 +38,7 @@ op_amp
 id|vcc-&gt;rx_inuse
 )paren
 op_le
-id|vcc-&gt;rx_quota
+id|vcc-&gt;sk-&gt;rcvbuf
 )paren
 r_return
 l_int|1
@@ -105,7 +104,7 @@ op_amp
 id|vcc-&gt;rx_inuse
 )paren
 op_le
-id|vcc-&gt;rx_quota
+id|vcc-&gt;sk-&gt;rcvbuf
 )paren
 (brace
 r_struct

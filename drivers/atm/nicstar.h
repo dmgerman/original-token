@@ -28,8 +28,8 @@ DECL|macro|NS_VPIBITS
 mdefine_line|#define NS_VPIBITS 2&t;&t;/* 0, 1, 2, or 8 */
 DECL|macro|NS_MAX_RCTSIZE
 mdefine_line|#define NS_MAX_RCTSIZE 4096&t;/* Number of entries. 4096 or 16384.&n;                                   Define 4096 only if (all) your card(s)&n;&t;&t;&t;&t;   have 32K x 32bit SRAM, in which case&n;&t;&t;&t;&t;   setting this to 16384 will just waste a&n;&t;&t;&t;&t;   lot of memory.&n;&t;&t;&t;&t;   Setting this to 4096 for a card with&n;&t;&t;&t;&t;   128K x 32bit SRAM will limit the maximum&n;&t;&t;&t;&t;   VCI. */
-DECL|macro|NS_PCI_LATENCY
-mdefine_line|#define NS_PCI_LATENCY 64&t;/* Must be a multiple of 32 */
+multiline_comment|/*#define NS_PCI_LATENCY 64*/
+multiline_comment|/* Must be a multiple of 32 */
 multiline_comment|/* Number of buffers initially allocated */
 DECL|macro|NUM_SB
 mdefine_line|#define NUM_SB 32&t;/* Must be even */
@@ -281,13 +281,13 @@ mdefine_line|#define NS_TBD_VPI_SHIFT 20
 DECL|macro|NS_TBD_VCI_SHIFT
 mdefine_line|#define NS_TBD_VCI_SHIFT 4
 DECL|macro|ns_tbd_mkword_1
-mdefine_line|#define ns_tbd_mkword_1(flags, m, n, buflen) &bslash;&n;        (cpu_to_le32(flags | m &lt;&lt; 23 | n &lt;&lt; 16 | buflen))
+mdefine_line|#define ns_tbd_mkword_1(flags, m, n, buflen) &bslash;&n;      (cpu_to_le32((flags) | (m) &lt;&lt; 23 | (n) &lt;&lt; 16 | (buflen)))
 DECL|macro|ns_tbd_mkword_1_novbr
-mdefine_line|#define ns_tbd_mkword_1_novbr(flags, buflen) &bslash;&n;        (cpu_to_le32(flags | buflen | 0x00810000))
+mdefine_line|#define ns_tbd_mkword_1_novbr(flags, buflen) &bslash;&n;      (cpu_to_le32((flags) | (buflen) | 0x00810000))
 DECL|macro|ns_tbd_mkword_3
-mdefine_line|#define ns_tbd_mkword_3(control, pdulen) &bslash;&n;        (cpu_to_le32(control &lt;&lt; 16 | pdulen))
+mdefine_line|#define ns_tbd_mkword_3(control, pdulen) &bslash;&n;      (cpu_to_le32((control) &lt;&lt; 16 | (pdulen)))
 DECL|macro|ns_tbd_mkword_4
-mdefine_line|#define ns_tbd_mkword_4(gfc, vpi, vci, pt, clp) &bslash;&n;        (cpu_to_le32(gfc &lt;&lt; 28 | vpi &lt;&lt; 20 | vci &lt;&lt; 4 | pt &lt;&lt; 1 | clp)))
+mdefine_line|#define ns_tbd_mkword_4(gfc, vpi, vci, pt, clp) &bslash;&n;      (cpu_to_le32((gfc) &lt;&lt; 28 | (vpi) &lt;&lt; 20 | (vci) &lt;&lt; 4 | (pt) &lt;&lt; 1 | (clp)))
 DECL|macro|NS_TSR_INTENABLE
 mdefine_line|#define NS_TSR_INTENABLE 0x20000000
 DECL|macro|NS_TSR_SCDISVBR
@@ -545,6 +545,7 @@ mdefine_line|#define NS_LGFBQ         0x1FC00
 DECL|macro|NS_LGFBQ_END
 mdefine_line|#define NS_LGFBQ_END     0x1FFFF
 multiline_comment|/* NISCtAR operation registers ************************************************/
+multiline_comment|/* See Section 3.4 of `IDT77211 NICStAR User Manual&squot; from www.idt.com */
 DECL|enum|ns_regs
 r_enum
 id|ns_regs
@@ -554,171 +555,200 @@ id|DR0
 op_assign
 l_int|0x00
 comma
+multiline_comment|/* Data Register 0 R/W*/
 DECL|enumerator|DR1
 id|DR1
 op_assign
 l_int|0x04
 comma
+multiline_comment|/* Data Register 1 W */
 DECL|enumerator|DR2
 id|DR2
 op_assign
 l_int|0x08
 comma
+multiline_comment|/* Data Register 2 W */
 DECL|enumerator|DR3
 id|DR3
 op_assign
 l_int|0x0C
 comma
+multiline_comment|/* Data Register 3 W */
 DECL|enumerator|CMD
 id|CMD
 op_assign
 l_int|0x10
 comma
+multiline_comment|/* Command W */
 DECL|enumerator|CFG
 id|CFG
 op_assign
 l_int|0x14
 comma
+multiline_comment|/* Configuration R/W */
 DECL|enumerator|STAT
 id|STAT
 op_assign
 l_int|0x18
 comma
+multiline_comment|/* Status R/W */
 DECL|enumerator|RSQB
 id|RSQB
 op_assign
 l_int|0x1C
 comma
+multiline_comment|/* Receive Status Queue Base W */
 DECL|enumerator|RSQT
 id|RSQT
 op_assign
 l_int|0x20
 comma
+multiline_comment|/* Receive Status Queue Tail R */
 DECL|enumerator|RSQH
 id|RSQH
 op_assign
 l_int|0x24
 comma
+multiline_comment|/* Receive Status Queue Head W */
 DECL|enumerator|CDC
 id|CDC
 op_assign
 l_int|0x28
 comma
+multiline_comment|/* Cell Drop Counter R/clear */
 DECL|enumerator|VPEC
 id|VPEC
 op_assign
 l_int|0x2C
 comma
+multiline_comment|/* VPI/VCI Lookup Error Count R/clear */
 DECL|enumerator|ICC
 id|ICC
 op_assign
 l_int|0x30
 comma
+multiline_comment|/* Invalid Cell Count R/clear */
 DECL|enumerator|RAWCT
 id|RAWCT
 op_assign
 l_int|0x34
 comma
+multiline_comment|/* Raw Cell Tail R */
 DECL|enumerator|TMR
 id|TMR
 op_assign
 l_int|0x38
 comma
+multiline_comment|/* Timer R */
 DECL|enumerator|TSTB
 id|TSTB
 op_assign
 l_int|0x3C
 comma
+multiline_comment|/* Transmit Schedule Table Base R/W */
 DECL|enumerator|TSQB
 id|TSQB
 op_assign
 l_int|0x40
 comma
+multiline_comment|/* Transmit Status Queue Base W */
 DECL|enumerator|TSQT
 id|TSQT
 op_assign
 l_int|0x44
 comma
+multiline_comment|/* Transmit Status Queue Tail R */
 DECL|enumerator|TSQH
 id|TSQH
 op_assign
 l_int|0x48
 comma
+multiline_comment|/* Transmit Status Queue Head W */
 DECL|enumerator|GP
 id|GP
 op_assign
 l_int|0x4C
 comma
+multiline_comment|/* General Purpose R/W */
 DECL|enumerator|VPM
 id|VPM
 op_assign
 l_int|0x50
+multiline_comment|/* VPI/VCI Mask W */
 )brace
 suffix:semicolon
 multiline_comment|/* NICStAR commands issued to the CMD register ********************************/
+multiline_comment|/* Top 4 bits are command opcode, lower 28 are parameters. */
 DECL|macro|NS_CMD_NO_OPERATION
 mdefine_line|#define NS_CMD_NO_OPERATION         0x00000000
+multiline_comment|/* params always 0 */
 DECL|macro|NS_CMD_OPENCLOSE_CONNECTION
 mdefine_line|#define NS_CMD_OPENCLOSE_CONNECTION 0x20000000
+multiline_comment|/* b19{1=open,0=close} b18-2{SRAM addr} */
 DECL|macro|NS_CMD_WRITE_SRAM
 mdefine_line|#define NS_CMD_WRITE_SRAM           0x40000000
+multiline_comment|/* b18-2{SRAM addr} b1-0{burst size} */
 DECL|macro|NS_CMD_READ_SRAM
 mdefine_line|#define NS_CMD_READ_SRAM            0x50000000
+multiline_comment|/* b18-2{SRAM addr} */
 DECL|macro|NS_CMD_WRITE_FREEBUFQ
 mdefine_line|#define NS_CMD_WRITE_FREEBUFQ       0x60000000
+multiline_comment|/* b0{large buf indicator} */
 DECL|macro|NS_CMD_READ_UTILITY
 mdefine_line|#define NS_CMD_READ_UTILITY         0x80000000
+multiline_comment|/* b8{1=select UTL_CS1} b9{1=select UTL_CS0} b7-0{bus addr} */
 DECL|macro|NS_CMD_WRITE_UTILITY
 mdefine_line|#define NS_CMD_WRITE_UTILITY        0x90000000
+multiline_comment|/* b8{1=select UTL_CS1} b9{1=select UTL_CS0} b7-0{bus addr} */
 DECL|macro|NS_CMD_OPEN_CONNECTION
 mdefine_line|#define NS_CMD_OPEN_CONNECTION (NS_CMD_OPENCLOSE_CONNECTION | 0x00080000)
 DECL|macro|NS_CMD_CLOSE_CONNECTION
 mdefine_line|#define NS_CMD_CLOSE_CONNECTION NS_CMD_OPENCLOSE_CONNECTION
 multiline_comment|/* NICStAR configuration bits *************************************************/
 DECL|macro|NS_CFG_SWRST
-mdefine_line|#define NS_CFG_SWRST          0x80000000
+mdefine_line|#define NS_CFG_SWRST          0x80000000    /* Software Reset */
 DECL|macro|NS_CFG_RXPATH
-mdefine_line|#define NS_CFG_RXPATH         0x20000000
+mdefine_line|#define NS_CFG_RXPATH         0x20000000    /* Receive Path Enable */
 DECL|macro|NS_CFG_SMBUFSIZE_MASK
-mdefine_line|#define NS_CFG_SMBUFSIZE_MASK 0x18000000
+mdefine_line|#define NS_CFG_SMBUFSIZE_MASK 0x18000000    /* Small Receive Buffer Size */
 DECL|macro|NS_CFG_LGBUFSIZE_MASK
-mdefine_line|#define NS_CFG_LGBUFSIZE_MASK 0x06000000
+mdefine_line|#define NS_CFG_LGBUFSIZE_MASK 0x06000000    /* Large Receive Buffer Size */
 DECL|macro|NS_CFG_EFBIE
-mdefine_line|#define NS_CFG_EFBIE          0x01000000
+mdefine_line|#define NS_CFG_EFBIE          0x01000000    /* Empty Free Buffer Queue&n;                                               Interrupt Enable */
 DECL|macro|NS_CFG_RSQSIZE_MASK
-mdefine_line|#define NS_CFG_RSQSIZE_MASK   0x00C00000
+mdefine_line|#define NS_CFG_RSQSIZE_MASK   0x00C00000    /* Receive Status Queue Size */
 DECL|macro|NS_CFG_ICACCEPT
-mdefine_line|#define NS_CFG_ICACCEPT       0x00200000
+mdefine_line|#define NS_CFG_ICACCEPT       0x00200000    /* Invalid Cell Accept */
 DECL|macro|NS_CFG_IGNOREGFC
-mdefine_line|#define NS_CFG_IGNOREGFC      0x00100000
+mdefine_line|#define NS_CFG_IGNOREGFC      0x00100000    /* Ignore General Flow Control */
 DECL|macro|NS_CFG_VPIBITS_MASK
-mdefine_line|#define NS_CFG_VPIBITS_MASK   0x000C0000
+mdefine_line|#define NS_CFG_VPIBITS_MASK   0x000C0000    /* VPI/VCI Bits Size Select */
 DECL|macro|NS_CFG_RCTSIZE_MASK
-mdefine_line|#define NS_CFG_RCTSIZE_MASK   0x00030000
+mdefine_line|#define NS_CFG_RCTSIZE_MASK   0x00030000    /* Receive Connection Table Size */
 DECL|macro|NS_CFG_VCERRACCEPT
-mdefine_line|#define NS_CFG_VCERRACCEPT    0x00008000
+mdefine_line|#define NS_CFG_VCERRACCEPT    0x00008000    /* VPI/VCI Error Cell Accept */
 DECL|macro|NS_CFG_RXINT_MASK
-mdefine_line|#define NS_CFG_RXINT_MASK     0x00007000
+mdefine_line|#define NS_CFG_RXINT_MASK     0x00007000    /* End of Receive PDU Interrupt&n;                                               Handling */
 DECL|macro|NS_CFG_RAWIE
-mdefine_line|#define NS_CFG_RAWIE          0x00000800
+mdefine_line|#define NS_CFG_RAWIE          0x00000800    /* Raw Cell Qu&squot; Interrupt Enable */
 DECL|macro|NS_CFG_RSQAFIE
-mdefine_line|#define NS_CFG_RSQAFIE        0x00000400
+mdefine_line|#define NS_CFG_RSQAFIE        0x00000400    /* Receive Queue Almost Full&n;                                               Interrupt Enable */
 DECL|macro|NS_CFG_RXRM
-mdefine_line|#define NS_CFG_RXRM           0x00000200
+mdefine_line|#define NS_CFG_RXRM           0x00000200    /* Receive RM Cells */
 DECL|macro|NS_CFG_TMRROIE
-mdefine_line|#define NS_CFG_TMRROIE        0x00000080
+mdefine_line|#define NS_CFG_TMRROIE        0x00000080    /* Timer Roll Over Interrupt&n;                                               Enable */
 DECL|macro|NS_CFG_TXEN
-mdefine_line|#define NS_CFG_TXEN           0x00000020
+mdefine_line|#define NS_CFG_TXEN           0x00000020    /* Transmit Operation Enable */
 DECL|macro|NS_CFG_TXIE
-mdefine_line|#define NS_CFG_TXIE           0x00000010
+mdefine_line|#define NS_CFG_TXIE           0x00000010    /* Transmit Status Interrupt&n;                                               Enable */
 DECL|macro|NS_CFG_TXURIE
-mdefine_line|#define NS_CFG_TXURIE         0x00000008
+mdefine_line|#define NS_CFG_TXURIE         0x00000008    /* Transmit Under-run Interrupt&n;                                               Enable */
 DECL|macro|NS_CFG_UMODE
-mdefine_line|#define NS_CFG_UMODE          0x00000004
+mdefine_line|#define NS_CFG_UMODE          0x00000004    /* Utopia Mode (cell/byte) Select */
 DECL|macro|NS_CFG_TSQFIE
-mdefine_line|#define NS_CFG_TSQFIE         0x00000002
+mdefine_line|#define NS_CFG_TSQFIE         0x00000002    /* Transmit Status Queue Full&n;                                               Interrupt Enable */
 DECL|macro|NS_CFG_PHYIE
-mdefine_line|#define NS_CFG_PHYIE          0x00000001
+mdefine_line|#define NS_CFG_PHYIE          0x00000001    /* PHY Interrupt Enable */
 DECL|macro|NS_CFG_SMBUFSIZE_48
 mdefine_line|#define NS_CFG_SMBUFSIZE_48    0x00000000
 DECL|macro|NS_CFG_SMBUFSIZE_96
@@ -767,37 +797,37 @@ DECL|macro|NS_CFG_RXINT_899US
 mdefine_line|#define NS_CFG_RXINT_899US   0x00004000
 multiline_comment|/* NICStAR STATus bits ********************************************************/
 DECL|macro|NS_STAT_SFBQC_MASK
-mdefine_line|#define NS_STAT_SFBQC_MASK 0xFF000000
+mdefine_line|#define NS_STAT_SFBQC_MASK 0xFF000000   /* hi 8 bits Small Buffer Queue Count */
 DECL|macro|NS_STAT_LFBQC_MASK
-mdefine_line|#define NS_STAT_LFBQC_MASK 0x00FF0000
+mdefine_line|#define NS_STAT_LFBQC_MASK 0x00FF0000   /* hi 8 bits Large Buffer Queue Count */
 DECL|macro|NS_STAT_TSIF
-mdefine_line|#define NS_STAT_TSIF       0x00008000
+mdefine_line|#define NS_STAT_TSIF       0x00008000   /* Transmit Status Queue Indicator */
 DECL|macro|NS_STAT_TXICP
-mdefine_line|#define NS_STAT_TXICP      0x00004000
+mdefine_line|#define NS_STAT_TXICP      0x00004000   /* Transmit Incomplete PDU */
 DECL|macro|NS_STAT_TSQF
-mdefine_line|#define NS_STAT_TSQF       0x00001000
+mdefine_line|#define NS_STAT_TSQF       0x00001000   /* Transmit Status Queue Full */
 DECL|macro|NS_STAT_TMROF
-mdefine_line|#define NS_STAT_TMROF      0x00000800
+mdefine_line|#define NS_STAT_TMROF      0x00000800   /* Timer Overflow */
 DECL|macro|NS_STAT_PHYI
-mdefine_line|#define NS_STAT_PHYI       0x00000400
+mdefine_line|#define NS_STAT_PHYI       0x00000400   /* PHY Device Interrupt */
 DECL|macro|NS_STAT_CMDBZ
-mdefine_line|#define NS_STAT_CMDBZ      0x00000200
+mdefine_line|#define NS_STAT_CMDBZ      0x00000200   /* Command Busy */
 DECL|macro|NS_STAT_SFBQF
-mdefine_line|#define NS_STAT_SFBQF      0x00000100
+mdefine_line|#define NS_STAT_SFBQF      0x00000100   /* Small Buffer Queue Full */
 DECL|macro|NS_STAT_LFBQF
-mdefine_line|#define NS_STAT_LFBQF      0x00000080
+mdefine_line|#define NS_STAT_LFBQF      0x00000080   /* Large Buffer Queue Full */
 DECL|macro|NS_STAT_RSQF
-mdefine_line|#define NS_STAT_RSQF       0x00000040
+mdefine_line|#define NS_STAT_RSQF       0x00000040   /* Receive Status Queue Full */
 DECL|macro|NS_STAT_EOPDU
-mdefine_line|#define NS_STAT_EOPDU      0x00000020
+mdefine_line|#define NS_STAT_EOPDU      0x00000020   /* End of PDU */
 DECL|macro|NS_STAT_RAWCF
-mdefine_line|#define NS_STAT_RAWCF      0x00000010
+mdefine_line|#define NS_STAT_RAWCF      0x00000010   /* Raw Cell Flag */
 DECL|macro|NS_STAT_SFBQE
-mdefine_line|#define NS_STAT_SFBQE      0x00000008
+mdefine_line|#define NS_STAT_SFBQE      0x00000008   /* Small Buffer Queue Empty */
 DECL|macro|NS_STAT_LFBQE
-mdefine_line|#define NS_STAT_LFBQE      0x00000004
+mdefine_line|#define NS_STAT_LFBQE      0x00000004   /* Large Buffer Queue Empty */
 DECL|macro|NS_STAT_RSQAF
-mdefine_line|#define NS_STAT_RSQAF      0x00000002
+mdefine_line|#define NS_STAT_RSQAF      0x00000002   /* Receive Status Queue Almost Full */
 DECL|macro|ns_stat_sfbqc_get
 mdefine_line|#define ns_stat_sfbqc_get(stat) (((stat) &amp; NS_STAT_SFBQC_MASK) &gt;&gt; 23)
 DECL|macro|ns_stat_lfbqc_get
@@ -1114,7 +1144,8 @@ id|sram_size
 suffix:semicolon
 multiline_comment|/* In k x 32bit words. 32 or 128 */
 DECL|member|membase
-id|u32
+r_int
+r_int
 id|membase
 suffix:semicolon
 multiline_comment|/* Card&squot;s memory base address */

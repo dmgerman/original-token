@@ -6,6 +6,10 @@ DECL|macro|TCP_DEBUG
 mdefine_line|#define TCP_DEBUG 1
 DECL|macro|TCP_FORMAL_WINDOW
 macro_line|#undef  TCP_FORMAL_WINDOW
+DECL|macro|TCP_MORE_COARSE_ACKS
+mdefine_line|#define TCP_MORE_COARSE_ACKS
+DECL|macro|TCP_LESS_COARSE_ACKS
+macro_line|#undef  TCP_LESS_COARSE_ACKS
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -592,11 +596,11 @@ DECL|macro|TCP_FIN_TIMEOUT
 mdefine_line|#define TCP_FIN_TIMEOUT&t;TCP_TIMEWAIT_LEN
 multiline_comment|/* BSD style FIN_WAIT2 deadlock breaker.&n;&t;&t;&t;&t;  * It used to be 3min, new value is 60sec,&n;&t;&t;&t;&t;  * to combine FIN-WAIT-2 timeout with&n;&t;&t;&t;&t;  * TIME-WAIT timer.&n;&t;&t;&t;&t;  */
 DECL|macro|TCP_DELACK_MAX
-mdefine_line|#define TCP_DELACK_MAX&t;(HZ/2)&t;/* maximal time to delay before sending an ACK */
+mdefine_line|#define TCP_DELACK_MAX&t;(HZ/5)&t;/* maximal time to delay before sending an ACK */
 DECL|macro|TCP_DELACK_MIN
-mdefine_line|#define TCP_DELACK_MIN&t;(2)&t;/* minimal time to delay before sending an ACK,&n;&t;&t;&t;&t; * 2 scheduler ticks, not depending on HZ */
+mdefine_line|#define TCP_DELACK_MIN&t;(2)&t;/* minimal time to delay before sending an ACK,&n;&t;&t;&t;&t; * 2 scheduler ticks, not depending on HZ. */
 DECL|macro|TCP_ATO_MAX
-mdefine_line|#define TCP_ATO_MAX&t;((TCP_DELACK_MAX*4)/5) /* ATO producing TCP_DELACK_MAX */
+mdefine_line|#define TCP_ATO_MAX&t;(HZ/2)&t;/* Clamp ATO estimator at his value. */
 DECL|macro|TCP_ATO_MIN
 mdefine_line|#define TCP_ATO_MIN&t;2
 DECL|macro|TCP_RTO_MAX
@@ -1612,12 +1616,9 @@ op_decrement
 id|tp-&gt;ack.quick
 op_eq
 l_int|0
-op_logical_and
-op_logical_neg
-id|tp-&gt;ack.pingpong
 )paren
 (brace
-multiline_comment|/* Leaving quickack mode we deflate ATO to give peer&n;&t;&t; * a time to adapt to new worse(!) RTO. It is not required&n;&t;&t; * in pingpong mode, when ACKs were delayed in any case.&n;&t;&t; */
+multiline_comment|/* Leaving quickack mode we deflate ATO. */
 id|tp-&gt;ack.ato
 op_assign
 id|TCP_ATO_MIN
@@ -2781,14 +2782,12 @@ OL
 id|cur_win
 )paren
 (brace
-multiline_comment|/* Danger Will Robinson!&n;&t;&t; * Don&squot;t update rcv_wup/rcv_wnd here or else&n;&t;&t; * we will not be able to advertise a zero&n;&t;&t; * window in time.  --DaveM&n;&t;&t; */
+multiline_comment|/* Danger Will Robinson!&n;&t;&t; * Don&squot;t update rcv_wup/rcv_wnd here or else&n;&t;&t; * we will not be able to advertise a zero&n;&t;&t; * window in time.  --DaveM&n;&t;&t; *&n;&t;&t; * Relax Will Robinson.&n;&t;&t; */
 id|new_win
 op_assign
 id|cur_win
 suffix:semicolon
 )brace
-r_else
-(brace
 id|tp-&gt;rcv_wnd
 op_assign
 id|new_win
@@ -2797,7 +2796,6 @@ id|tp-&gt;rcv_wup
 op_assign
 id|tp-&gt;rcv_nxt
 suffix:semicolon
-)brace
 multiline_comment|/* RFC1323 scaling applied */
 id|new_win
 op_rshift_assign

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * &n; * ATM Lan Emulation Daemon vs. driver interface&n;
 macro_line|#ifndef _ATMLEC_H_
 DECL|macro|_ATMLEC_H_
 mdefine_line|#define _ATMLEC_H_
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -127,6 +128,10 @@ DECL|member|mtu
 r_int
 id|mtu
 suffix:semicolon
+DECL|member|is_proxy
+r_int
+id|is_proxy
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|atmlec_msg
@@ -223,13 +228,15 @@ DECL|member|proxy
 )brace
 id|proxy
 suffix:semicolon
-multiline_comment|/* For mapping LE_ARP requests to responses. Filled by   */
+multiline_comment|/* For mapping LE_ARP requests to responses. Filled by */
 DECL|member|content
 )brace
 id|content
 suffix:semicolon
 multiline_comment|/* zeppelin, returned by kernel. Used only when proxying */
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
 DECL|struct|atmlec_ioc
 r_struct

@@ -300,6 +300,103 @@ id|page
 suffix:semicolon
 )brace
 macro_line|#endif /* ! __SMP__ */
+multiline_comment|/* This will change for Cheetah and later chips. */
+DECL|macro|VPTE_BASE
+mdefine_line|#define VPTE_BASE&t;0xfffffffe00000000
+DECL|function|flush_tlb_pgtables
+r_extern
+id|__inline__
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+multiline_comment|/* Note the signed type.  */
+r_int
+id|s
+op_assign
+id|start
+comma
+id|e
+op_assign
+id|end
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+OG
+id|e
+)paren
+multiline_comment|/* Nobody should call us with start below VM hole and end above.&n;&t;&t;   See if it is really true.  */
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* Currently free_pgtables guarantees this.  */
+id|s
+op_and_assign
+id|PMD_MASK
+suffix:semicolon
+id|e
+op_assign
+(paren
+id|e
+op_plus
+id|PMD_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+id|PMD_MASK
+suffix:semicolon
+macro_line|#endif
+id|flush_tlb_range
+c_func
+(paren
+id|mm
+comma
+id|VPTE_BASE
+op_plus
+(paren
+id|s
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|3
+)paren
+)paren
+comma
+id|VPTE_BASE
+op_plus
+(paren
+id|e
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|3
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Page table allocation/freeing. */
 macro_line|#ifdef __SMP__
 multiline_comment|/* Sliiiicck */

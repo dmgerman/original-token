@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/svc.c - ATM SVC sockets */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/net.h&gt;&t;&t;/* struct socket, struct net_proto,&n;&t;&t;&t;&t;   struct proto_ops */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* error codes */
@@ -1188,6 +1188,10 @@ suffix:semicolon
 id|new_vcc-&gt;remote
 op_assign
 id|msg-&gt;svc
+suffix:semicolon
+id|new_vcc-&gt;local
+op_assign
+id|msg-&gt;local
 suffix:semicolon
 id|new_vcc-&gt;sap
 op_assign

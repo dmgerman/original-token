@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.87 1999/12/27 06:37:14 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.88 2000/02/06 22:56:09 zaitcev Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -150,7 +150,7 @@ DECL|macro|mmu_release_scsi_one
 mdefine_line|#define mmu_release_scsi_one(vaddr,len,sbus) BTFIXUP_CALL(mmu_release_scsi_one)(vaddr,len,sbus)
 DECL|macro|mmu_release_scsi_sgl
 mdefine_line|#define mmu_release_scsi_sgl(sg,sz,sbus) BTFIXUP_CALL(mmu_release_scsi_sgl)(sg,sz,sbus)
-multiline_comment|/* mmu_map/unmap is provided by iommu/iounit; mmu_flush/inval probably belongs to CPU... */
+multiline_comment|/*&n; * mmu_map/unmap are provided by iommu/iounit; Invalid to call on IIep.&n; * mmu_flush/inval belong to CPU. Valid on IIep.&n; */
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -171,13 +171,26 @@ id|len
 id|BTFIXUPDEF_CALL
 c_func
 (paren
+r_int
+r_int
+multiline_comment|/*phys*/
+comma
+id|mmu_translate_dvma
+comma
+r_int
+r_int
+id|busa
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
 r_void
 comma
 id|mmu_unmap_dma_area
 comma
 r_int
 r_int
-id|addr
+id|busa
 comma
 r_int
 id|len
@@ -191,7 +204,7 @@ id|mmu_inval_dma_area
 comma
 r_int
 r_int
-id|addr
+id|virt
 comma
 r_int
 id|len
@@ -205,7 +218,7 @@ id|mmu_flush_dma_area
 comma
 r_int
 r_int
-id|addr
+id|virt
 comma
 r_int
 id|len
@@ -214,10 +227,12 @@ DECL|macro|mmu_map_dma_area
 mdefine_line|#define mmu_map_dma_area(va, ba,len) BTFIXUP_CALL(mmu_map_dma_area)(va,ba,len)
 DECL|macro|mmu_unmap_dma_area
 mdefine_line|#define mmu_unmap_dma_area(ba,len) BTFIXUP_CALL(mmu_unmap_dma_area)(ba,len)
+DECL|macro|mmu_translate_dvma
+mdefine_line|#define mmu_translate_dvma(ba)     BTFIXUP_CALL(mmu_translate_dvma)(ba)
 DECL|macro|mmu_inval_dma_area
-mdefine_line|#define mmu_inval_dma_area(va,len) BTFIXUP_CALL(mmu_unmap_dma_area)(va,len)
+mdefine_line|#define mmu_inval_dma_area(va,len) BTFIXUP_CALL(mmu_inval_dma_area)(va,len)
 DECL|macro|mmu_flush_dma_area
-mdefine_line|#define mmu_flush_dma_area(va,len) BTFIXUP_CALL(mmu_unmap_dma_area)(va,len)
+mdefine_line|#define mmu_flush_dma_area(va,len) BTFIXUP_CALL(mmu_flush_dma_area)(va,len)
 id|BTFIXUPDEF_SIMM13
 c_func
 (paren

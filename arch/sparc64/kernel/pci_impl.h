@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_impl.h,v 1.4 1999/12/17 12:32:03 jj Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_impl.h,v 1.5 2000/02/08 05:11:32 jj Exp $&n; * pci_impl.h: Helper definitions for PCI controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef PCI_IMPL_H
 DECL|macro|PCI_IMPL_H
 mdefine_line|#define PCI_IMPL_H
@@ -156,80 +156,6 @@ id|pci_bus
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef NEW_PCI_DMA_MAP
-multiline_comment|/* IOMMU/DVMA initialization. */
-DECL|macro|PCI_DVMA_HASH_NONE
-mdefine_line|#define PCI_DVMA_HASH_NONE&t;~0UL
-DECL|function|set_dvma_hash
-r_static
-id|__inline__
-r_void
-id|set_dvma_hash
-c_func
-(paren
-r_int
-r_int
-id|dvma_offset
-comma
-r_int
-r_int
-id|paddr
-comma
-r_int
-r_int
-id|daddr
-)paren
-(brace
-r_int
-r_int
-id|dvma_addr
-op_assign
-id|dvma_offset
-op_plus
-id|daddr
-suffix:semicolon
-r_int
-r_int
-id|vaddr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|paddr
-)paren
-suffix:semicolon
-id|pci_dvma_v2p_hash
-(braket
-id|pci_dvma_ahashfn
-c_func
-(paren
-id|paddr
-)paren
-)braket
-op_assign
-id|dvma_addr
-op_minus
-id|vaddr
-suffix:semicolon
-id|pci_dvma_p2v_hash
-(braket
-id|pci_dvma_ahashfn
-c_func
-(paren
-id|dvma_addr
-)paren
-)braket
-op_assign
-id|vaddr
-op_minus
-id|dvma_addr
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Configuration space access. */
 r_extern
 id|spinlock_t

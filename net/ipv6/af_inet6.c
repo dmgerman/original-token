@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.52 2000/01/18 08:24:21 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.53 2000/02/04 21:04:08 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1224,6 +1224,31 @@ c_cond
 (paren
 op_logical_neg
 id|sk-&gt;dport
+)paren
+r_return
+op_minus
+id|ENOTCONN
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+l_int|1
+op_lshift
+id|sk-&gt;state
+)paren
+op_amp
+(paren
+id|TCPF_CLOSE
+op_or
+id|TCPF_SYN_SENT
+)paren
+)paren
+op_logical_and
+id|peer
+op_eq
+l_int|1
 )paren
 r_return
 op_minus

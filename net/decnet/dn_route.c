@@ -5115,10 +5115,13 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;DECnet: Routing cache hash table of %u buckets, %dKbytes&bslash;n&quot;
+l_string|&quot;DECnet: Routing cache hash table of %u buckets, %ldKbytes&bslash;n&quot;
 comma
 id|dn_rt_hash_mask
 comma
+(paren
+r_int
+)paren
 (paren
 id|dn_rt_hash_mask
 op_star

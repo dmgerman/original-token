@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Input)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Add changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Put all ack handling code in a common routine.&n; *    Steve Whitehouse:  Put other common bits into dn_nsp_rx()&n; *    Steve Whitehouse:  More checks on skb-&gt;len to catch bogus packets&n; *                       Fixed various race conditions and possible nasties.&n; *    Steve Whitehouse:  Now handles returned conninit frames.&n; *     David S. Miller:  New socket locking&n; *    Steve Whitehouse:  Fixed lockup when socket filtering was enabled.&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Input)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Add changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Put all ack handling code in a common routine.&n; *    Steve Whitehouse:  Put other common bits into dn_nsp_rx()&n; *    Steve Whitehouse:  More checks on skb-&gt;len to catch bogus packets&n; *                       Fixed various race conditions and possible nasties.&n; *    Steve Whitehouse:  Now handles returned conninit frames.&n; *     David S. Miller:  New socket locking&n; *    Steve Whitehouse:  Fixed lockup when socket filtering was enabled.&n; *         Paul Koning:  Fix to push CC sockets into RUN when acks are&n; *                       received.&n; */
 multiline_comment|/******************************************************************************&n;    (c) 1995-1998 E.M. Serrat&t;&t;emserrat@geocities.com&n;    &n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;*******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1490,7 +1490,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy of sock_queue_rcv_skb (from sock.h) with out&n; * bh_lock_sock() (its already held when this is called) which&n; * also allows data and other data to be queued to a socket.&n; */
+multiline_comment|/*&n; * Copy of sock_queue_rcv_skb (from sock.h) without&n; * bh_lock_sock() (its already held when this is called) which&n; * also allows data and other data to be queued to a socket.&n; */
 DECL|function|dn_queue_skb
 r_static
 id|__inline__
@@ -2425,7 +2425,6 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* printk(KERN_DEBUG &quot;dn_nsp_rx: Found a socket&bslash;n&quot;); */
 multiline_comment|/* Reset backoff */
 id|scp-&gt;nsp_rxtshift
 op_assign
@@ -2695,6 +2694,37 @@ id|other
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* both data and ack frames can kick a CC socket into RUN */
+r_if
+c_cond
+(paren
+(paren
+id|scp-&gt;state
+op_eq
+id|DN_CC
+)paren
+op_logical_and
+op_logical_neg
+id|sk-&gt;dead
+)paren
+(brace
+id|scp-&gt;state
+op_assign
+id|DN_RUN
+suffix:semicolon
+id|sk-&gt;state
+op_assign
+id|TCP_ESTABLISHED
+suffix:semicolon
+id|sk
+op_member_access_from_pointer
+id|state_change
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2732,7 +2762,7 @@ comma
 id|other
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If we&squot;ve some sort of data here then call a&n;&t;&t; * suitable routine for dealing with it, otherwise&n;&t;&t; * the packet is an ack and can be discarded. All&n;&t;&t; * data frames can also kick a CC socket into RUN.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we&squot;ve some sort of data here then call a&n;&t;&t; * suitable routine for dealing with it, otherwise&n;&t;&t; * the packet is an ack and can be discarded.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2745,36 +2775,6 @@ op_eq
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
-id|scp-&gt;state
-op_eq
-id|DN_CC
-)paren
-op_logical_and
-op_logical_neg
-id|sk-&gt;dead
-)paren
-(brace
-id|scp-&gt;state
-op_assign
-id|DN_RUN
-suffix:semicolon
-id|sk-&gt;state
-op_assign
-id|TCP_ESTABLISHED
-suffix:semicolon
-id|sk
-op_member_access_from_pointer
-id|state_change
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

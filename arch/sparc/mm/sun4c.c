@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.185 2000/01/15 00:51:32 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.187 2000/02/08 07:46:01 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -2712,20 +2712,56 @@ id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace
+DECL|function|sun4c_translate_dvma
+r_static
+r_int
+r_int
+id|sun4c_translate_dvma
+c_func
+(paren
+r_int
+r_int
+id|busa
+)paren
+(brace
+multiline_comment|/* Fortunately for us, bus_addr == uncached_virt in sun4c. */
+r_int
+r_int
+id|pte
+op_assign
+id|sun4c_get_pte
+c_func
+(paren
+id|busa
+)paren
+suffix:semicolon
+r_return
+(paren
+id|pte
+op_lshift
+id|PAGE_SHIFT
+)paren
+op_plus
+id|PAGE_OFFSET
+suffix:semicolon
+)brace
 DECL|function|sun4c_unmap_dma_area
 r_static
-r_void
+r_int
+r_int
 id|sun4c_unmap_dma_area
 c_func
 (paren
 r_int
 r_int
-id|addr
+id|busa
 comma
 r_int
 id|len
 )paren
 (brace
+multiline_comment|/* Fortunately for us, bus_addr == uncached_virt in sun4c. */
+multiline_comment|/* XXX Implement this */
 )brace
 DECL|function|sun4c_inval_dma_area
 r_static
@@ -2735,7 +2771,7 @@ c_func
 (paren
 r_int
 r_int
-id|addr
+id|virt
 comma
 r_int
 id|len
@@ -2750,7 +2786,7 @@ c_func
 (paren
 r_int
 r_int
-id|addr
+id|virt
 comma
 r_int
 id|len
@@ -13386,6 +13422,16 @@ c_func
 id|mmu_unmap_dma_area
 comma
 id|sun4c_unmap_dma_area
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|mmu_translate_dvma
+comma
+id|sun4c_translate_dvma
 comma
 id|BTFIXUPCALL_NORM
 )paren

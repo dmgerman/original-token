@@ -1,6 +1,7 @@
 macro_line|#ifndef _ATMMPC_H_
 DECL|macro|_ATMMPC_H_
 mdefine_line|#define _ATMMPC_H_
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 macro_line|#include &lt;linux/atm.h&gt;
 DECL|macro|ATMMPC_CTRL
@@ -202,7 +203,9 @@ r_struct
 id|atm_qos
 id|qos
 suffix:semicolon
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
 DECL|struct|llc_snap_hdr
 r_struct

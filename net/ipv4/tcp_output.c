@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.120 2000/01/31 01:21:22 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.121 2000/02/08 21:27:19 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&t;&t;Cacophonix Gaul :&t;draft-minshall-nagle-01&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -182,10 +182,6 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-id|tp-&gt;last_ack_sent
-op_assign
-id|tp-&gt;rcv_nxt
-suffix:semicolon
 id|tcp_dec_quickack_mode
 c_func
 (paren
@@ -193,6 +189,10 @@ id|tp
 )paren
 suffix:semicolon
 id|tp-&gt;ack.pending
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;ack.rcv_segs
 op_assign
 l_int|0
 suffix:semicolon
@@ -1299,7 +1299,9 @@ op_rshift
 l_int|1
 )paren
 comma
-l_int|1
+l_int|68
+op_minus
+id|tp-&gt;tcp_header_len
 )paren
 suffix:semicolon
 multiline_comment|/* And store cached results */
@@ -1602,10 +1604,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|free_space
 OL
-(paren
 id|min
 c_func
 (paren
@@ -1623,8 +1623,14 @@ id|sk
 op_div
 l_int|2
 )paren
-)paren
-op_logical_and
+(brace
+multiline_comment|/* THIS IS _VERY_ GOOD PLACE to play window clamp.&n;&t;&t; * if free_space becomes suspiciously low&n;&t;&t; * verify ratio rmem_alloc/(rcv_nxt - copied_seq),&n;&t;&t; * and if we predict that when free_space will be lower mss,&n;&t;&t; * rmem_alloc will run out of rcvbuf*2, shrink window_clamp.&n;&t;&t; * It will eliminate most of prune events! Very simple,&n;&t;&t; * it is the next thing to do.&t;&t;&t;--ANK&n;&t;&t; *&n;&t;&t; * Provided we found a way to raise it back...  --ANK&n;&t;&t; */
+id|tp-&gt;ack.quick
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|free_space
 OL
@@ -1639,17 +1645,11 @@ l_int|2
 )paren
 )paren
 )paren
-)paren
-(brace
-id|window
-op_assign
+r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* THIS IS _VERY_ GOOD PLACE to play window clamp.&n;&t;&t; * if free_space becomes suspiciously low&n;&t;&t; * verify ratio rmem_alloc/(rcv_nxt - copied_seq),&n;&t;&t; * and if we predict that when free_space will be lower mss,&n;&t;&t; * rmem_alloc will run out of rcvbuf*2, shrink window_clamp.&n;&t;&t; * It will eliminate most of prune events! Very simple,&n;&t;&t; * it is the next thing to do.&t;&t;&t;--ANK&n;&t;&t; */
 )brace
-r_else
-(brace
-multiline_comment|/* Get the largest window that is a nice multiple of mss.&n;&t;&t; * Window clamp already applied above.&n;&t;&t; * If our current window offering is within 1 mss of the&n;&t;&t; * free space we just keep it. This prevents the divide&n;&t;&t; * and multiply from happening most of the time.&n;&t;&t; * We also don&squot;t do any window rounding when the free space&n;&t;&t; * is too small.&n;&t;&t; */
+multiline_comment|/* Get the largest window that is a nice multiple of mss.&n;&t; * Window clamp already applied above.&n;&t; * If our current window offering is within 1 mss of the&n;&t; * free space we just keep it. This prevents the divide&n;&t; * and multiply from happening most of the time.&n;&t; * We also don&squot;t do any window rounding when the free space&n;&t; * is too small.&n;&t; */
 id|window
 op_assign
 id|tp-&gt;rcv_wnd
@@ -1704,7 +1704,6 @@ id|mss
 op_star
 id|mss
 suffix:semicolon
-)brace
 r_return
 id|window
 suffix:semicolon
@@ -4178,17 +4177,9 @@ suffix:semicolon
 multiline_comment|/* Stay within the limit we were given */
 id|timeout
 op_assign
-id|tp-&gt;ack.ato
-suffix:semicolon
-id|timeout
-op_add_assign
 id|jiffies
 op_plus
-(paren
-id|timeout
-op_rshift
-l_int|2
-)paren
+id|tp-&gt;ack.ato
 suffix:semicolon
 multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier. */
 id|spin_lock_bh
@@ -4409,6 +4400,10 @@ l_int|NULL
 id|tp-&gt;ack.pending
 op_assign
 l_int|1
+suffix:semicolon
+id|tp-&gt;ack.ato
+op_assign
+id|TCP_ATO_MAX
 suffix:semicolon
 id|tcp_reset_xmit_timer
 c_func

@@ -1,19 +1,13 @@
 multiline_comment|/* net/atm/raw.c - Raw AAL0 and AAL5 transports */
 multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#ifdef CONFIG_MMU_HACKS
-macro_line|#include &lt;linux/mmuio.h&gt;
-macro_line|#include &lt;linux/uio.h&gt;
-macro_line|#endif
 macro_line|#include &quot;common.h&quot;
 macro_line|#include &quot;protocols.h&quot;
-macro_line|#include &quot;tunable.h&quot;&t;&t;/* tunable parameters */
 macro_line|#if 0
 mdefine_line|#define DPRINTK(format,args...) printk(KERN_DEBUG format,##args)
 macro_line|#else
@@ -78,38 +72,6 @@ op_star
 id|skb
 )paren
 (brace
-macro_line|#ifdef CONFIG_MMU_HACKS
-r_if
-c_cond
-(paren
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|iovcnt
-)paren
-id|unlock_user
-c_func
-(paren
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|iovcnt
-comma
-(paren
-r_struct
-id|iovec
-op_star
-)paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-macro_line|#endif
 id|DPRINTK
 c_func
 (paren

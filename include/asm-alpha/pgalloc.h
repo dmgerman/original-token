@@ -346,6 +346,29 @@ id|mm
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Flush a specified range of user mapping page tables&n; * from TLB.&n; * Although Alpha uses VPTE caches, this can be a nop, as Alpha does&n; * not have finegrained tlb flushing, so it will flush VPTE stuff&n; * during next flush_tlb_range.&n; */
+DECL|function|flush_tlb_pgtables
+r_static
+r_inline
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+)brace
 macro_line|#else /* __SMP__ */
 r_extern
 r_void

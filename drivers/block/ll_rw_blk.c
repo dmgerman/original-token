@@ -3744,4 +3744,11 @@ c_func
 id|blk_queue_headactive
 )paren
 suffix:semicolon
+DECL|variable|generic_make_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_make_request
+)paren
+suffix:semicolon
 eof

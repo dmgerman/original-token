@@ -1,8 +1,9 @@
 multiline_comment|/* atmsap.h - ATM Service Access Point addressing definitions */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef _LINUX_ATMSAP_H
 DECL|macro|_LINUX_ATMSAP_H
 mdefine_line|#define _LINUX_ATMSAP_H
+macro_line|#include &lt;linux/atmapi.h&gt;
 multiline_comment|/*&n; * BEGIN_xx and END_xx markers are used for automatic generation of&n; * documentation. Do not change them.&n; */
 multiline_comment|/*&n; * Layer 2 protocol identifiers&n; */
 multiline_comment|/* BEGIN_L2 */
@@ -180,7 +181,7 @@ DECL|member|itu
 )brace
 id|itu
 suffix:semicolon
-multiline_comment|/* ITU-T ecoding */
+multiline_comment|/* ITU-T encoding */
 DECL|member|user
 r_int
 r_char
@@ -241,15 +242,9 @@ DECL|member|l3
 )brace
 id|l3
 suffix:semicolon
-DECL|member|next
-r_struct
-id|atm_blli
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* next BLLI or NULL (undefined when used in */
-multiline_comment|/* atmsvc_msg) ONLY USED IN OLD-STYLE API */
+DECL|variable|__ATM_API_ALIGN
 )brace
+id|__ATM_API_ALIGN
 suffix:semicolon
 DECL|struct|atm_bhli
 r_struct
@@ -291,13 +286,14 @@ id|atm_bhli
 id|bhli
 suffix:semicolon
 multiline_comment|/* local SAP, high-layer information */
-DECL|member|blli
+DECL|member|__ATM_API_ALIGN
 r_struct
 id|atm_blli
 id|blli
 (braket
 id|ATM_MAX_BLLI
 )braket
+id|__ATM_API_ALIGN
 suffix:semicolon
 multiline_comment|/* local SAP, low-layer info */
 )brace

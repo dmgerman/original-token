@@ -596,6 +596,14 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|sock_init_data
+c_func
+(paren
+l_int|NULL
+comma
+id|sk
+)paren
+suffix:semicolon
 id|sk-&gt;destruct
 op_assign
 id|atm_free_sock
@@ -613,6 +621,10 @@ op_star
 id|vcc
 )paren
 )paren
+suffix:semicolon
+id|vcc-&gt;sk
+op_assign
+id|sk
 suffix:semicolon
 r_if
 c_cond

@@ -162,6 +162,28 @@ r_int
 id|page
 )paren
 suffix:semicolon
+DECL|function|flush_tlb_pgtables
+r_extern
+r_inline
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * Basically we have the same two-level (which is the logical three level&n; * Linux page table layout folded) page tables as the i386.&n; */
 macro_line|#endif /* !__ASSEMBLY__ */
 DECL|macro|pgd_quicklist

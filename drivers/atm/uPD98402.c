@@ -1,5 +1,5 @@
 multiline_comment|/* drivers/atm/uPD98402.c - NEC uPD98402 (PHY) declarations */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt; /* for jiffies */
 macro_line|#include &lt;linux/mm.h&gt;
@@ -610,7 +610,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 )brace

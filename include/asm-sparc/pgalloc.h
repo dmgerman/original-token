@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.2 2000/01/15 00:51:42 anton Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.3 2000/02/03 10:13:31 jj Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -398,6 +398,28 @@ comma
 r_int
 r_int
 )paren
+DECL|function|flush_tlb_pgtables
+r_extern
+id|__inline__
+r_void
+id|flush_tlb_pgtables
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+(brace
+)brace
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all() BTFIXUP_CALL(flush_tlb_all)()
 DECL|macro|flush_tlb_mm

@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/clip.c - RFC1577 Classical IP over ATM */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -26,7 +26,6 @@ macro_line|#include &lt;asm/system.h&gt; /* save/restore_flags */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &quot;common.h&quot;
-macro_line|#include &quot;tunable.h&quot;
 macro_line|#include &quot;resources.h&quot;
 macro_line|#include &quot;ipcommon.h&quot;
 macro_line|#include &lt;net/atmclip.h&gt;
@@ -1007,6 +1006,72 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+DECL|function|clip_pop
+r_static
+r_void
+id|clip_pop
+c_func
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;clip_pop(vcc %p)&bslash;n&quot;
+comma
+id|vcc
+)paren
+suffix:semicolon
+id|CLIP_VCC
+c_func
+(paren
+id|vcc
+)paren
+op_member_access_from_pointer
+id|old_pop
+c_func
+(paren
+id|vcc
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* skb-&gt;dev == NULL in outbound ARP packets */
+r_if
+c_cond
+(paren
+id|atm_may_send
+c_func
+(paren
+id|vcc
+comma
+l_int|0
+)paren
+op_logical_and
+id|skb-&gt;dev
+)paren
+(brace
+id|skb-&gt;dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|clip_neigh_destroy
 r_static
 r_void
@@ -1552,6 +1617,11 @@ id|atmarp_entry
 op_star
 id|entry
 suffix:semicolon
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -1749,6 +1819,8 @@ id|skb
 op_member_access_from_pointer
 id|vcc
 op_assign
+id|vcc
+op_assign
 id|entry-&gt;vccs-&gt;vcc
 suffix:semicolon
 id|DPRINTK
@@ -1758,12 +1830,6 @@ l_string|&quot;using neighbour %p, vcc %p&bslash;n&quot;
 comma
 id|skb-&gt;dst-&gt;neighbour
 comma
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc
 )paren
 suffix:semicolon
@@ -1820,13 +1886,18 @@ c_func
 id|skb-&gt;truesize
 comma
 op_amp
-id|ATM_SKB
+id|vcc-&gt;tx_inuse
+)paren
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+op_logical_neg
+id|atm_may_send
 c_func
 (paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|vcc-&gt;tx_inuse
+id|vcc
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|ATM_SKB
@@ -1847,12 +1918,6 @@ id|skb
 op_member_access_from_pointer
 id|atm_options
 op_assign
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc-&gt;atm_options
 suffix:semicolon
 id|entry-&gt;vccs-&gt;last_use
@@ -1866,20 +1931,8 @@ l_string|&quot;atm_skb(%p)-&gt;vcc(%p)-&gt;dev(%p)&bslash;n&quot;
 comma
 id|skb
 comma
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc
 comma
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc-&gt;dev
 )paren
 suffix:semicolon
@@ -1905,23 +1958,11 @@ suffix:semicolon
 (paren
 r_void
 )paren
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc-&gt;dev-&gt;ops
 op_member_access_from_pointer
 id|send
 c_func
 (paren
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
 id|vcc
 comma
 id|skb
@@ -2062,6 +2103,10 @@ id|clip_vcc-&gt;old_push
 op_assign
 id|vcc-&gt;push
 suffix:semicolon
+id|clip_vcc-&gt;old_pop
+op_assign
+id|vcc-&gt;pop
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -2076,6 +2121,10 @@ suffix:semicolon
 id|vcc-&gt;push
 op_assign
 id|clip_push
+suffix:semicolon
+id|vcc-&gt;pop
+op_assign
+id|clip_pop
 suffix:semicolon
 id|skb_migrate
 c_func
@@ -2490,8 +2539,14 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;tx_queue_len
 op_assign
-l_int|0
+l_int|100
 suffix:semicolon
+multiline_comment|/* &quot;normal&quot; queue */
+multiline_comment|/* When using a &quot;real&quot; qdisc, the qdisc determines the queue */
+multiline_comment|/* length. tx_queue_len is only used for the default case, */
+multiline_comment|/* without any more elaborate queuing. 100 is a reasonable */
+multiline_comment|/* compromise between decent burst-tolerance and protection */
+multiline_comment|/* against memory hogs. */
 id|dev-&gt;flags
 op_assign
 l_int|0
@@ -3152,47 +3207,10 @@ id|atmdev_ops
 id|atmarpd_dev_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no dev_close */
-l_int|NULL
-comma
-multiline_comment|/* no open */
+id|close
+suffix:colon
 id|atmarpd_close
 comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* no ioctl */
-l_int|NULL
-comma
-multiline_comment|/* no getsockopt */
-l_int|NULL
-comma
-multiline_comment|/* no setsockopt */
-l_int|NULL
-comma
-multiline_comment|/* send */
-l_int|NULL
-comma
-multiline_comment|/* no sg_send */
-l_int|NULL
-comma
-multiline_comment|/* no send_oam */
-l_int|NULL
-comma
-multiline_comment|/* no phy_put */
-l_int|NULL
-comma
-multiline_comment|/* no phy_get */
-l_int|NULL
-comma
-multiline_comment|/* no feedback */
-l_int|NULL
-comma
-multiline_comment|/* no change_qos */
-l_int|NULL
-multiline_comment|/* no free_rx_skb */
 )brace
 suffix:semicolon
 DECL|variable|atmarpd_dev

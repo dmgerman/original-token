@@ -9236,18 +9236,10 @@ c_cond
 id|optname
 )paren
 (brace
-r_case
-id|SO_BCTXOPT
-suffix:colon
-singleline_comment|// return the right thing
-r_break
-suffix:semicolon
-r_case
-id|SO_BCRXOPT
-suffix:colon
-singleline_comment|// return the right thing
-r_break
-suffix:semicolon
+singleline_comment|//&t;case SO_BCTXOPT:
+singleline_comment|//&t;  break;
+singleline_comment|//&t;case SO_BCRXOPT:
+singleline_comment|//&t;  break;
 r_default
 suffix:colon
 r_return
@@ -9324,18 +9316,10 @@ c_cond
 id|optname
 )paren
 (brace
-r_case
-id|SO_BCTXOPT
-suffix:colon
-singleline_comment|// not settable
-r_break
-suffix:semicolon
-r_case
-id|SO_BCRXOPT
-suffix:colon
-singleline_comment|// not settable
-r_break
-suffix:semicolon
+singleline_comment|//&t;case SO_BCTXOPT:
+singleline_comment|//&t;  break;
+singleline_comment|//&t;case SO_BCRXOPT:
+singleline_comment|//&t;  break;
 r_default
 suffix:colon
 r_return
@@ -9778,44 +9762,24 @@ id|atmdev_ops
 id|hrz_ops
 op_assign
 (brace
-l_int|NULL
-comma
-singleline_comment|// no hrz_dev_close
+id|open
+suffix:colon
 id|hrz_open
 comma
+id|close
+suffix:colon
 id|hrz_close
 comma
-l_int|NULL
-comma
-singleline_comment|// no hrz_ioctl
-l_int|NULL
-comma
-singleline_comment|// hrz_getsockopt,
-l_int|NULL
-comma
-singleline_comment|// hrz_setsockopt,
+id|send
+suffix:colon
 id|hrz_send
 comma
+id|sg_send
+suffix:colon
 id|hrz_sg_send
 comma
-l_int|NULL
-comma
-singleline_comment|// no send_oam    - not in fact used yet
-l_int|NULL
-comma
-singleline_comment|// no hrz_phy_put - not needed in this driver 
-l_int|NULL
-comma
-singleline_comment|// no hrz_phy_get - not needed in this driver 
-l_int|NULL
-comma
-singleline_comment|// no feedback    - feedback to the driver!
-l_int|NULL
-comma
-singleline_comment|// no hrz_change_qos
-l_int|NULL
-comma
-singleline_comment|// no free_rx_skb
+id|proc_read
+suffix:colon
 id|hrz_proc_read
 )brace
 suffix:semicolon

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#if 0&t;/* P3 from mem.c */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
@@ -23,6 +24,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/pcic.h&gt;
+macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/jsflash.h&gt;&t;&t;/* ioctl arguments. &lt;linux/&gt; ?? */
 DECL|macro|JSFIDSZ
 mdefine_line|#define JSFIDSZ&t;&t;(sizeof(struct jsflash_ident_arg))
@@ -1197,7 +1200,7 @@ r_void
 )paren
 macro_line|#else
 r_int
-multiline_comment|/* __init */
+id|__init
 id|jsflash_init
 c_func
 (paren
@@ -1207,6 +1210,46 @@ macro_line|#endif
 (brace
 r_int
 id|rc
+suffix:semicolon
+r_char
+id|banner
+(braket
+l_int|128
+)braket
+suffix:semicolon
+multiline_comment|/* FIXME: Really autodetect things */
+id|prom_getproperty
+c_func
+(paren
+id|prom_root_node
+comma
+l_string|&quot;banner-name&quot;
+comma
+id|banner
+comma
+l_int|128
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|banner
+comma
+l_string|&quot;JavaStation-NC&quot;
+)paren
+op_logical_and
+id|strcmp
+(paren
+id|banner
+comma
+l_string|&quot;JavaStation-E&quot;
+)paren
+)paren
+r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 multiline_comment|/* extern enum sparc_cpu sparc_cpu_model; */
 multiline_comment|/* in &lt;asm/system.h&gt; */

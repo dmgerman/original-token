@@ -1,5 +1,5 @@
 multiline_comment|/* drivers/atm/eni.h - Efficient Networks ENI155P device driver declarations */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef DRIVER_ATM_ENI_H
 DECL|macro|DRIVER_ATM_ENI_H
 mdefine_line|#define DRIVER_ATM_ENI_H
@@ -20,6 +20,10 @@ DECL|macro|RX_DMA_BUF
 mdefine_line|#define RX_DMA_BUF&t;  8&t;&t;/* burst and skip a few things */
 DECL|macro|TX_DMA_BUF
 mdefine_line|#define TX_DMA_BUF&t;100&t;&t;/* should be enough for 64 kB */
+DECL|macro|DEFAULT_RX_MULT
+mdefine_line|#define DEFAULT_RX_MULT&t;300&t;&t;/* max_sdu*3 */
+DECL|macro|DEFAULT_TX_MULT
+mdefine_line|#define DEFAULT_TX_MULT&t;300&t;&t;/* max_sdu*3 */
 DECL|struct|eni_free
 r_struct
 id|eni_free
@@ -89,6 +93,11 @@ id|sk_buff_head
 id|backlog
 suffix:semicolon
 multiline_comment|/* queue of waiting TX buffers */
+DECL|member|backlog_len
+r_int
+id|backlog_len
+suffix:semicolon
+multiline_comment|/* length of backlog in bytes */
 )brace
 suffix:semicolon
 DECL|struct|eni_vcc
@@ -154,7 +163,7 @@ DECL|member|txing
 r_int
 id|txing
 suffix:semicolon
-multiline_comment|/* number of pending TX cells/PDUs */
+multiline_comment|/* number of pending TX bytes */
 DECL|member|timestamp
 r_struct
 id|timeval
@@ -267,6 +276,11 @@ l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* DMA request scratch area */
+DECL|member|tx_mult
+r_int
+id|tx_mult
+suffix:semicolon
+multiline_comment|/* buffer size multiplier (percent) */
 multiline_comment|/*-------------------------------- RX part */
 DECL|member|serv_read
 id|u32
@@ -313,6 +327,11 @@ id|wait_queue_head_t
 id|rx_wait
 suffix:semicolon
 multiline_comment|/* for close */
+DECL|member|rx_mult
+r_int
+id|rx_mult
+suffix:semicolon
+multiline_comment|/* buffer size multiplier (percent) */
 multiline_comment|/*-------------------------------- statistics */
 DECL|member|lost
 r_int
@@ -365,7 +384,7 @@ suffix:semicolon
 multiline_comment|/* PCI interface type, 0 for FPGA */
 DECL|member|irq
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* IRQ */

@@ -949,6 +949,11 @@ id|caddr_t
 id|pDescrMem
 suffix:semicolon
 multiline_comment|/* Pointer to the descriptor area */
+DECL|member|pDescrMemDMA
+id|dma_addr_t
+id|pDescrMemDMA
+suffix:semicolon
+multiline_comment|/* PCI DMA address of area */
 multiline_comment|/* the port structures with descriptor rings */
 DECL|member|TxPort
 id|TX_PORT

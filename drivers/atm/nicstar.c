@@ -21,6 +21,9 @@ macro_line|#include &quot;nicstarmac.h&quot;
 macro_line|#ifdef CONFIG_ATM_NICSTAR_USE_SUNI
 macro_line|#include &quot;suni.h&quot;
 macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_SUNI */
+macro_line|#ifdef CONFIG_ATM_NICSTAR_USE_IDT77105
+macro_line|#include &quot;idt77105.h&quot;
+macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_IDT77105 */
 multiline_comment|/* Additional code ************************************************************/
 macro_line|#include &quot;nicstarmac.c&quot;
 multiline_comment|/* Configurable parameters ****************************************************/
@@ -74,8 +77,10 @@ DECL|macro|CMD_BUSY
 mdefine_line|#define CMD_BUSY(card) (readl((card)-&gt;membase + STAT) &amp; NS_STAT_CMDBZ)
 DECL|macro|NS_DELAY
 mdefine_line|#define NS_DELAY mdelay(1)
+DECL|macro|ALIGN_BUS_ADDR
+mdefine_line|#define ALIGN_BUS_ADDR(addr, alignment) &bslash;&n;        ((((u32) (addr)) + (((u32) (alignment)) - 1)) &amp; ~(((u32) (alignment)) - 1))
 DECL|macro|ALIGN_ADDRESS
-mdefine_line|#define ALIGN_ADDRESS(addr, alignment) &bslash;&n;        ((((u32) (addr)) + (((u32) (alignment)) - 1)) &amp; ~(((u32) (alignment)) - 1))
+mdefine_line|#define ALIGN_ADDRESS(addr, alignment) &bslash;&n;        bus_to_virt(ALIGN_BUS_ADDR(virt_to_bus(addr), alignment))
 DECL|macro|CEIL
 macro_line|#undef CEIL(d)
 macro_line|#ifndef ATM_SKB
@@ -615,50 +620,33 @@ id|atmdev_ops
 id|atm_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* dev_close */
+id|open
+suffix:colon
 id|ns_open
 comma
-multiline_comment|/* open */
+id|close
+suffix:colon
 id|ns_close
 comma
-multiline_comment|/* close */
+id|ioctl
+suffix:colon
 id|ns_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* getsockopt */
-l_int|NULL
-comma
-multiline_comment|/* setsockopt */
+id|send
+suffix:colon
 id|ns_send
 comma
-multiline_comment|/* send */
-l_int|NULL
-comma
-multiline_comment|/* sg_send */
-l_int|NULL
-comma
-multiline_comment|/* send_oam */
+id|phy_put
+suffix:colon
 id|ns_phy_put
 comma
-multiline_comment|/* phy_put */
+id|phy_get
+suffix:colon
 id|ns_phy_get
 comma
-multiline_comment|/* phy_get */
-l_int|NULL
-comma
-multiline_comment|/* feedback */
-l_int|NULL
-comma
-multiline_comment|/* change_qos */
-l_int|NULL
-comma
-multiline_comment|/* free_rx_skb */
+id|proc_read
+suffix:colon
 id|ns_proc_read
-multiline_comment|/* proc_read */
 )brace
 suffix:semicolon
 DECL|variable|ns_timer
@@ -1046,6 +1034,23 @@ id|cards
 id|i
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATM_NICSTAR_USE_IDT77105
+r_if
+c_cond
+(paren
+id|card-&gt;max_pcr
+op_eq
+id|IDT_25_PCR
+)paren
+(brace
+id|idt77105_stop
+c_func
+(paren
+id|card-&gt;atmdev
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_IDT77105 */
 multiline_comment|/* Stop everything */
 id|writel
 c_func
@@ -1911,15 +1916,16 @@ id|card-&gt;index
 op_assign
 id|i
 suffix:semicolon
+id|card-&gt;atmdev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|card-&gt;pcidev
 op_assign
 id|pcidev
 suffix:semicolon
 id|card-&gt;membase
 op_assign
-(paren
-id|u32
-)paren
 id|pcidev-&gt;resource
 (braket
 l_int|1
@@ -1937,7 +1943,8 @@ macro_line|#endif /* __powerpc__ */
 id|card-&gt;membase
 op_assign
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|ioremap
 c_func
@@ -1952,12 +1959,7 @@ c_cond
 (paren
 id|card-&gt;membase
 op_eq
-(paren
-id|u32
-)paren
-(paren
-l_int|NULL
-)paren
+l_int|0
 )paren
 (brace
 id|printk
@@ -2124,6 +2126,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#ifdef NS_PCI_LATENCY
 r_if
 c_cond
 (paren
@@ -2210,6 +2213,7 @@ id|error
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* NS_PCI_LATENCY */
 multiline_comment|/* Clear timer overflow */
 id|data
 op_assign
@@ -4296,6 +4300,24 @@ multiline_comment|/* Can&squot;t remove the nicstar driver or the suni driver wo
 macro_line|#endif /* MODULE */
 )brace
 macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_SUNI */
+macro_line|#ifdef CONFIG_ATM_NICSTAR_USE_IDT77105
+r_if
+c_cond
+(paren
+id|card-&gt;max_pcr
+op_eq
+id|IDT_25_PCR
+)paren
+(brace
+id|idt77105_init
+c_func
+(paren
+id|card-&gt;atmdev
+)paren
+suffix:semicolon
+multiline_comment|/* Note that for the IDT77105 PHY we don&squot;t need the awful&n;       * module count hack that the SUNI needs because we can&n;       * stop the &squot;105 when the nicstar module is cleaned up.&n;       */
+)brace
+macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_IDT77105 */
 r_if
 c_cond
 (paren
@@ -8469,26 +8491,37 @@ id|skb-&gt;len
 suffix:semicolon
 id|scqe.word_4
 op_assign
-id|cpu_to_le32
+id|ns_tbd_mkword_4
 c_func
 (paren
-(paren
+l_int|0
+comma
 (paren
 id|u32
 )paren
 id|vcc-&gt;vpi
-)paren
-op_lshift
-id|NS_TBD_VPI_SHIFT
-op_or
-(paren
+comma
 (paren
 id|u32
 )paren
 id|vcc-&gt;vci
+comma
+l_int|0
+comma
+id|ATM_SKB
+c_func
+(paren
+id|skb
 )paren
-op_lshift
-id|NS_TBD_VCI_SHIFT
+op_member_access_from_pointer
+id|atm_options
+op_amp
+id|ATM_ATMOPT_CLP
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 id|flags
@@ -9236,6 +9269,8 @@ suffix:semicolon
 id|ns_tsi
 op_star
 id|previous
+op_assign
+l_int|NULL
 comma
 op_star
 id|one_ahead
@@ -12979,7 +13014,9 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* Dump 25.6 Mbps PHY registers */
+multiline_comment|/* Now there&squot;s a 25.6 Mbps PHY driver this code isn&squot;t needed. I left it&n;      here just in case it&squot;s needed for debugging. */
 r_if
 c_cond
 (paren
@@ -13096,6 +13133,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* 0 - Dump 25.6 Mbps PHY registers */
 macro_line|#if 0
 multiline_comment|/* Dump TST */
 r_if
@@ -13355,7 +13393,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 r_if
@@ -14107,7 +14145,7 @@ l_string|&quot;dev-&gt;phy&quot;
 suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 )brace

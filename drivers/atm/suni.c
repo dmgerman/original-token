@@ -1,5 +1,5 @@
 multiline_comment|/* drivers/atm/suni.c - PMC SUNI (PHY) driver */
-multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1086,6 +1086,18 @@ suffix:semicolon
 r_case
 id|SUNI_SETLOOP
 suffix:colon
+(brace
+r_int
+id|int_arg
+op_assign
+(paren
+r_int
+)paren
+(paren
+r_int
+)paren
+id|arg
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1103,10 +1115,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-r_int
-)paren
-id|arg
+id|int_arg
 template_param
 id|SUNI_LM_LOOP
 )paren
@@ -1133,10 +1142,7 @@ id|SUNI_MCT_LLE
 )paren
 op_or
 (paren
-(paren
-r_int
-)paren
-id|arg
+id|int_arg
 op_eq
 id|SUNI_LM_DIAG
 ques
@@ -1147,10 +1153,7 @@ l_int|0
 )paren
 op_or
 (paren
-(paren
-r_int
-)paren
-id|arg
+id|int_arg
 op_eq
 id|SUNI_LM_LOOP
 ques
@@ -1171,14 +1174,12 @@ id|dev
 op_member_access_from_pointer
 id|loop_mode
 op_assign
-(paren
-r_int
-)paren
-id|arg
+id|int_arg
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_case
 id|SUNI_GETLOOP
 suffix:colon
@@ -1211,7 +1212,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 )brace

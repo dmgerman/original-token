@@ -1,6 +1,6 @@
 multiline_comment|/*&n;   md.c : Multiple Devices driver for Linux&n;          Copyright (C) 1998, 1999, 2000 Ingo Molnar&n;&n;     completely rewritten, based on the MD driver code from Marc Zyngier&n;&n;   Changes:&n;&n;   - RAID-1/RAID-5 extensions by Miguel de Icaza, Gadi Oxman, Ingo Molnar&n;   - boot support for linear and striped mode by Harald Hoyer &lt;HarryH@Royal.Net&gt;&n;   - kerneld support by Boris Tobotras &lt;boris@xtalk.msk.su&gt;&n;   - kmod support by: Cyrus Durgin&n;   - RAID0 bugfixes: Mark Anthony Lisher &lt;markal@iname.com&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; either version 2, or (at your option)&n;   any later version.&n;   &n;   You should have received a copy of the GNU General Public License&n;   (for example /usr/src/linux/COPYING); if not, write to the Free&n;   Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  &n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/raid/md.h&gt;
-macro_line|#include &lt;linux/raid/xor.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
@@ -13652,18 +13652,6 @@ op_amp
 id|md_notifier
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MD_HSM
-id|hsm_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MD_TRANSLUCENT
-id|translucent_init
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_MD_LINEAR
 id|linear_init
 (paren
@@ -13927,6 +13915,13 @@ id|MD_EXPORT_SYMBOL
 c_func
 (paren
 id|mddev_map
+)paren
+suffix:semicolon
+DECL|variable|md_check_ordering
+id|MD_EXPORT_SYMBOL
+c_func
+(paren
+id|md_check_ordering
 )paren
 suffix:semicolon
 eof

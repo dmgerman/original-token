@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.14 2000/01/13 00:05:43 davem Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: pci.c,v 1.15 2000/02/08 05:11:29 jj Exp $&n; * pci.c: UltraSparc PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -11,24 +11,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
-macro_line|#ifndef NEW_PCI_DMA_MAP
-DECL|variable|pci_dvma_v2p_hash
-r_int
-r_int
-id|pci_dvma_v2p_hash
-(braket
-id|PCI_DVMA_HASHSZ
-)braket
-suffix:semicolon
-DECL|variable|pci_dvma_p2v_hash
-r_int
-r_int
-id|pci_dvma_p2v_hash
-(braket
-id|PCI_DVMA_HASHSZ
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|variable|pci_memspace_mask
 r_int
 r_int

@@ -299,10 +299,6 @@ id|usb_audio_state
 op_star
 id|state
 suffix:semicolon
-DECL|member|remove_pending
-r_int
-id|remove_pending
-suffix:semicolon
 multiline_comment|/* soundcore stuff */
 DECL|member|dev_audio
 r_int
@@ -3747,13 +3743,6 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|as-&gt;remove_pending
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|urb
 op_eq
 op_amp
@@ -4116,13 +4105,6 @@ id|u-&gt;flags
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|as-&gt;remove_pending
-)paren
-r_return
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6445,13 +6427,6 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|as-&gt;remove_pending
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|urb
 op_eq
 op_amp
@@ -7789,6 +7764,17 @@ id|d-&gt;srate
 op_assign
 id|fmt-&gt;sratehi
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usb_audio: set_format_in: usb_set_interface %u %u&bslash;n&quot;
+comma
+id|alts-&gt;bInterfaceNumber
+comma
+id|fmt-&gt;altsetting
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8327,6 +8313,7 @@ op_eq
 l_int|0x04
 )paren
 (brace
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -8368,6 +8355,7 @@ dot
 id|bSynchAddress
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8457,17 +8445,6 @@ dot
 id|bRefresh
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;datapipe 0x%x syncpipe 0x%x&bslash;n&quot;
-comma
-id|u-&gt;datapipe
-comma
-id|u-&gt;syncpipe
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8489,6 +8466,17 @@ id|fmt-&gt;sratehi
 id|d-&gt;srate
 op_assign
 id|fmt-&gt;sratehi
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usb_audio: set_format_out: usb_set_interface %u %u&bslash;n&quot;
+comma
+id|alts-&gt;bInterfaceNumber
+comma
+id|fmt-&gt;altsetting
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -14325,10 +14313,6 @@ suffix:semicolon
 id|s-&gt;count
 op_increment
 suffix:semicolon
-id|as-&gt;remove_pending
-op_assign
-l_int|0
-suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|up
@@ -19231,6 +19215,47 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|state-&gt;nrchannels
+op_eq
+l_int|1
+op_logical_and
+id|ftr
+(braket
+l_int|0
+)braket
+op_eq
+l_int|7
+op_plus
+id|ftr
+(braket
+l_int|5
+)braket
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;usbaudio: workaround for broken Philips Camera Microphone descriptor enabled&bslash;n&quot;
+)paren
+suffix:semicolon
+id|mchftr
+op_assign
+id|ftr
+(braket
+l_int|6
+)braket
+suffix:semicolon
+id|chftr
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
 id|ftr
 (braket
 l_int|0
@@ -19305,6 +19330,7 @@ l_int|5
 )braket
 )braket
 suffix:semicolon
+)brace
 multiline_comment|/* volume control */
 r_if
 c_cond

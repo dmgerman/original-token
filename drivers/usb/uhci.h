@@ -370,11 +370,15 @@ mdefine_line|#define skel_int128_td&t;&t;skeltd[7]
 DECL|macro|skel_int256_td
 mdefine_line|#define skel_int256_td&t;&t;skeltd[8]
 DECL|macro|UHCI_NUM_SKELQH
-mdefine_line|#define UHCI_NUM_SKELQH&t;&t;2
-DECL|macro|skel_control_qh
-mdefine_line|#define skel_control_qh&t;&t;skelqh[0]
+mdefine_line|#define UHCI_NUM_SKELQH&t;&t;4
+DECL|macro|skel_ls_control_qh
+mdefine_line|#define skel_ls_control_qh&t;skelqh[0]
+DECL|macro|skel_hs_control_qh
+mdefine_line|#define skel_hs_control_qh&t;skelqh[1]
 DECL|macro|skel_bulk_qh
-mdefine_line|#define skel_bulk_qh&t;&t;skelqh[1]
+mdefine_line|#define skel_bulk_qh&t;&t;skelqh[2]
+DECL|macro|skel_term_qh
+mdefine_line|#define skel_term_qh&t;&t;skelqh[3]
 multiline_comment|/*&n; * Search tree for determining where &lt;interval&gt; fits in the&n; * skelqh[] skeleton.&n; *&n; * An interrupt request should be placed into the slowest skelqh[]&n; * which meets the interval/period/frequency requirement.&n; * An interrupt request is allowed to be faster than &lt;interval&gt; but not slower.&n; *&n; * For a given &lt;interval&gt;, this function returns the appropriate/matching&n; * skelqh[] index value.&n; *&n; * NOTE: For UHCI, we don&squot;t really need int256_qh since the maximum interval&n; * is 255 ms.  However, we do need an int1_qh since 1 is a valid interval&n; * and we should meet that frequency when requested to do so.&n; * This will require some change(s) to the UHCI skeleton.&n; */
 DECL|function|__interval_to_skel
 r_static
@@ -587,7 +591,8 @@ id|interrupt_list
 suffix:semicolon
 multiline_comment|/* List of interrupt-active TD&squot;s for this uhci */
 DECL|member|urblist_lock
-id|spinlock_t
+r_struct
+id|s_nested_lock
 id|urblist_lock
 suffix:semicolon
 DECL|member|urb_list
@@ -599,20 +604,11 @@ DECL|member|framelist_lock
 id|spinlock_t
 id|framelist_lock
 suffix:semicolon
-DECL|member|freelist_lock
-id|spinlock_t
-id|freelist_lock
+DECL|member|fsbr
+r_int
+id|fsbr
 suffix:semicolon
-DECL|member|td_free_list
-r_struct
-id|list_head
-id|td_free_list
-suffix:semicolon
-DECL|member|qh_free_list
-r_struct
-id|list_head
-id|qh_free_list
-suffix:semicolon
+multiline_comment|/* Full speed bandwidth reclamation */
 DECL|member|rh
 r_struct
 id|virt_root_hub

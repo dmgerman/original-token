@@ -1,9 +1,10 @@
 multiline_comment|/* atm_zatm.h - Driver-specific declarations of the ZATM driver (for use by&n;&t;&t;driver-specific utilities) */
-multiline_comment|/* Written 1995-1997 by Werner Almesberger, EPFL LRC */
+multiline_comment|/* Written 1995-1999 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef LINUX_ATM_ZATM_H
 DECL|macro|LINUX_ATM_ZATM_H
 mdefine_line|#define LINUX_ATM_ZATM_H
 multiline_comment|/*&n; * Note: non-kernel programs including this file must also include&n; * sys/types.h for struct timeval&n; */
+macro_line|#include &lt;linux/atmapi.h&gt;
 macro_line|#include &lt;linux/atmioc.h&gt;
 DECL|macro|ZATM_GETPOOL
 mdefine_line|#define ZATM_GETPOOL&t;_IOW(&squot;a&squot;,ATMIOC_SARPRV+1,struct atmif_sioc)

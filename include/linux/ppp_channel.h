@@ -1,5 +1,8 @@
+macro_line|#ifndef _PPP_CHANNEL_H_
+DECL|macro|_PPP_CHANNEL_H_
+mdefine_line|#define _PPP_CHANNEL_H_
 multiline_comment|/*&n; * Definitions for the interface between the generic PPP code&n; * and a PPP channel.&n; *&n; * A PPP channel provides a way for the generic PPP code to send&n; * and receive packets over some sort of communications medium.&n; * Packets are stored in sk_buffs and have the 2-byte PPP protocol&n; * number at the start, but not the address and control bytes.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * ==FILEVERSION 990909==&n; */
-multiline_comment|/* $Id: ppp_channel.h,v 1.2 1999/09/15 11:21:53 paulus Exp $ */
+multiline_comment|/* $Id: ppp_channel.h,v 1.3 2000/01/31 01:42:48 davem Exp $ */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 r_struct
@@ -146,4 +149,5 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+macro_line|#endif
 eof

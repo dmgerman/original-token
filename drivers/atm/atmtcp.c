@@ -1,11 +1,22 @@
 multiline_comment|/* drivers/atm/atmtcp.c - ATM over TCP &quot;device&quot; driver */
-multiline_comment|/* Written 1997-1999 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1997-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/atm_tcp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;../../net/atm/protocols.h&quot; /* @@@ fix this */
+r_extern
+r_int
+id|atm_init_aal5
+c_func
+(paren
+r_struct
+id|atm_vcc
+op_star
+id|vcc
+)paren
+suffix:semicolon
+multiline_comment|/* &quot;raw&quot; AAL5 transport */
 DECL|macro|PRIV
 mdefine_line|#define PRIV(dev) ((struct atmtcp_dev_data *) ((dev)-&gt;dev_data))
 DECL|struct|atmtcp_dev_data
@@ -213,12 +224,30 @@ id|new_msg-&gt;type
 op_assign
 id|type
 suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|new_msg-&gt;vcc
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|atm_kptr_t
+)paren
+)paren
+suffix:semicolon
+op_star
+(paren
+r_struct
+id|atm_vcc
+op_star
+op_star
+)paren
+op_amp
 id|new_msg-&gt;vcc
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|vcc
 suffix:semicolon
 id|old_flags
@@ -314,11 +343,14 @@ id|atm_vcc
 op_star
 id|vcc
 op_assign
+op_star
 (paren
 r_struct
 id|atm_vcc
 op_star
+op_star
 )paren
+op_amp
 id|msg-&gt;vcc
 suffix:semicolon
 id|vcc-&gt;vpi
@@ -653,7 +685,7 @@ id|ATM_SETCIRANGE
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 r_if
 c_cond
@@ -1014,6 +1046,12 @@ id|out_vcc
 comma
 id|new_skb
 )paren
+suffix:semicolon
+id|vcc-&gt;stats-&gt;tx
+op_increment
+suffix:semicolon
+id|out_vcc-&gt;stats-&gt;rx
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -1402,6 +1440,12 @@ comma
 id|new_skb
 )paren
 suffix:semicolon
+id|vcc-&gt;stats-&gt;tx
+op_increment
+suffix:semicolon
+id|out_vcc-&gt;stats-&gt;rx
+op_increment
+suffix:semicolon
 id|done
 suffix:colon
 r_if
@@ -1438,45 +1482,29 @@ id|atmdev_ops
 id|atmtcp_v_dev_ops
 op_assign
 (brace
+id|dev_close
+suffix:colon
 id|atmtcp_v_dev_close
 comma
+id|open
+suffix:colon
 id|atmtcp_v_open
 comma
+id|close
+suffix:colon
 id|atmtcp_v_close
 comma
+id|ioctl
+suffix:colon
 id|atmtcp_v_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* no getsockopt */
-l_int|NULL
-comma
-multiline_comment|/* no setsockopt */
+id|send
+suffix:colon
 id|atmtcp_v_send
 comma
-l_int|NULL
-comma
-multiline_comment|/* no direct writes */
-l_int|NULL
-comma
-multiline_comment|/* no send_oam */
-l_int|NULL
-comma
-multiline_comment|/* no phy_put */
-l_int|NULL
-comma
-multiline_comment|/* no phy_get */
-l_int|NULL
-comma
-multiline_comment|/* no feedback */
-l_int|NULL
-comma
-multiline_comment|/* no change_qos */
-l_int|NULL
-comma
-multiline_comment|/* no free_rx_skb */
+id|proc_read
+suffix:colon
 id|atmtcp_v_proc
-multiline_comment|/* proc_read */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Device operations for the ATMTCP control device.&n; */
@@ -1487,48 +1515,13 @@ id|atmdev_ops
 id|atmtcp_c_dev_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no dev_close */
-l_int|NULL
-comma
-multiline_comment|/* no open */
+id|close
+suffix:colon
 id|atmtcp_c_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* no ioctl */
-l_int|NULL
-comma
-multiline_comment|/* no getsockopt */
-l_int|NULL
-comma
-multiline_comment|/* no setsockopt */
+id|send
+suffix:colon
 id|atmtcp_c_send
-comma
-l_int|NULL
-comma
-multiline_comment|/* no sg_send */
-l_int|NULL
-comma
-multiline_comment|/* no send_oam */
-l_int|NULL
-comma
-multiline_comment|/* no phy_put */
-l_int|NULL
-comma
-multiline_comment|/* no phy_get */
-l_int|NULL
-comma
-multiline_comment|/* no feedback */
-l_int|NULL
-comma
-multiline_comment|/* no change_qos */
-l_int|NULL
-comma
-multiline_comment|/* no free_rx_skb */
-l_int|NULL
-multiline_comment|/* no proc_read */
 )brace
 suffix:semicolon
 DECL|variable|atmtcp_control_dev

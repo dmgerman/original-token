@@ -512,6 +512,11 @@ id|__u16
 id|rcv_mss
 suffix:semicolon
 multiline_comment|/* MSS used for delayed ACK decisions */
+DECL|member|rcv_segs
+id|__u32
+id|rcv_segs
+suffix:semicolon
+multiline_comment|/* Number of received segments since last ack */
 DECL|member|ack
 )brace
 id|ack
@@ -800,11 +805,6 @@ r_int
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
-DECL|member|last_ack_sent
-id|__u32
-id|last_ack_sent
-suffix:semicolon
-multiline_comment|/* last ack we sent (RTTM/PAWS)&t;&t;*/
 multiline_comment|/*&t;SACKs data&t;*/
 DECL|member|selective_acks
 r_struct
