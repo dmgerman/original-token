@@ -232,6 +232,15 @@ suffix:semicolon
 )brace
 r_void
 id|__init
+DECL|function|hpsim_pci_fixup
+id|hpsim_pci_fixup
+(paren
+r_void
+)paren
+(brace
+)brace
+r_void
+id|__init
 DECL|function|hpsim_setup
 id|hpsim_setup
 (paren

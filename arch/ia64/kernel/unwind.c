@@ -34,11 +34,22 @@ mdefine_line|#define UNW_DEBUG&t;1
 DECL|macro|UNW_STATS
 mdefine_line|#define UNW_STATS&t;0&t;/* WARNING: this disabled interrupts for long time-spans!! */
 macro_line|#if UNW_DEBUG
+DECL|variable|unw_debug_level
+r_static
+r_int
+id|unw_debug_level
+op_assign
+l_int|1
+suffix:semicolon
+DECL|macro|debug
+macro_line|# define debug(level,format...)&t;if (unw_debug_level &gt; level) printk(format)
 DECL|macro|dprintk
 macro_line|# define dprintk(format...)&t;printk(format)
 DECL|macro|inline
 macro_line|# define inline
 macro_line|#else
+DECL|macro|debug
+macro_line|# define debug(level,format...)
 DECL|macro|dprintk
 macro_line|# define dprintk(format...)
 macro_line|#endif
@@ -7777,19 +7788,21 @@ l_int|0xf
 )paren
 )paren
 op_logical_or
-id|REGION_NUMBER
+id|rgn_index
 c_func
 (paren
 id|info-&gt;ip
 )paren
 op_ne
-id|REGION_KERNEL
+id|RGN_KERNEL
 )paren
 (brace
 multiline_comment|/* don&squot;t let obviously bad addresses pollute the cache */
-id|dprintk
+id|debug
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;unwind: rejecting bad ip=0x%lx&bslash;n&quot;
 comma
 id|info-&gt;ip
@@ -7973,9 +7986,11 @@ op_logical_neg
 id|info-&gt;rp
 )paren
 (brace
-id|dprintk
+id|debug
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;unwind: failed to locate return link (ip=0x%lx)!&bslash;n&quot;
 comma
 id|info-&gt;ip
@@ -8023,9 +8038,11 @@ id|PAGE_SIZE
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * We don&squot;t have unwind info for the gate page, so we consider that part&n;&t;&t; * of user-space for the purpose of unwinding.&n;&t;&t; */
-id|dprintk
+id|debug
 c_func
 (paren
+l_int|1
+comma
 l_string|&quot;unwind: reached user-space (ip=0x%lx)&bslash;n&quot;
 comma
 id|ip

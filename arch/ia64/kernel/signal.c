@@ -1020,9 +1020,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 multiline_comment|/*&n;&t;&t; * strace expects to be notified after sigreturn&n;&t;&t; * returns even though the context to which we return&n;&t;&t; * may not be in the middle of a syscall.  Thus, the&n;&t;&t; * return-value that strace displays for sigreturn is&n;&t;&t; * meaningless.&n;&t;&t; */
 id|retval
@@ -2344,9 +2344,9 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_and
 id|signr
@@ -2679,11 +2679,6 @@ suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sigaddset
 c_func
 (paren

@@ -855,19 +855,19 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;CPU# %lu&bslash;n&quot;
-l_string|&quot;&bslash;tvendor     : %s&bslash;n&quot;
-l_string|&quot;&bslash;tfamily     : %s&bslash;n&quot;
-l_string|&quot;&bslash;tmodel      : %s&bslash;n&quot;
-l_string|&quot;&bslash;trevision   : %u&bslash;n&quot;
-l_string|&quot;&bslash;tarchrev    : %u&bslash;n&quot;
-l_string|&quot;&bslash;tfeatures   :%s&bslash;n&quot;
+l_string|&quot;processor  : %lu&bslash;n&quot;
+l_string|&quot;vendor     : %s&bslash;n&quot;
+l_string|&quot;family     : %s&bslash;n&quot;
+l_string|&quot;model      : %s&bslash;n&quot;
+l_string|&quot;revision   : %u&bslash;n&quot;
+l_string|&quot;archrev    : %u&bslash;n&quot;
+l_string|&quot;features   :%s&bslash;n&quot;
 multiline_comment|/* don&squot;t change this---it _is_ right! */
-l_string|&quot;&bslash;tcpu number : %lu&bslash;n&quot;
-l_string|&quot;&bslash;tcpu regs   : %u&bslash;n&quot;
-l_string|&quot;&bslash;tcpu MHz    : %lu.%06lu&bslash;n&quot;
-l_string|&quot;&bslash;titc MHz    : %lu.%06lu&bslash;n&quot;
-l_string|&quot;&bslash;tBogoMIPS   : %lu.%02lu&bslash;n&bslash;n&quot;
+l_string|&quot;cpu number : %lu&bslash;n&quot;
+l_string|&quot;cpu regs   : %u&bslash;n&quot;
+l_string|&quot;cpu MHz    : %lu.%06lu&bslash;n&quot;
+l_string|&quot;itc MHz    : %lu.%06lu&bslash;n&quot;
+l_string|&quot;BogoMIPS   : %lu.%02lu&bslash;n&bslash;n&quot;
 comma
 id|c
 op_minus

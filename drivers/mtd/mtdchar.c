@@ -1529,6 +1529,7 @@ id|MTD_CHAR_MAJOR
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

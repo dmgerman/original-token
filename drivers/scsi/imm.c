@@ -3373,17 +3373,9 @@ id|cmd-&gt;SCp.this_residual
 op_amp
 l_int|0x01
 )paren
-(brace
 id|cmd-&gt;SCp.this_residual
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;IMM: adjusted buffer for 16 bit transfer&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/* Now check to see if the drive is ready to comunicate */
@@ -4097,17 +4089,9 @@ id|cmd-&gt;SCp.this_residual
 op_amp
 l_int|0x01
 )paren
-(brace
 id|cmd-&gt;SCp.this_residual
 op_increment
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;IMM: adjusted buffer for 16 bit transfer&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Phase 5 - Pre-Data transfer stage */
 r_case
 l_int|5

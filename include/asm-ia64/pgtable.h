@@ -130,6 +130,7 @@ mdefine_line|#define PTRS_PER_PAGE&t;(__IA64_UL(1) &lt;&lt; (PAGE_SHIFT-3))
 macro_line|# ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * All the normal masks have the &quot;page accessed&quot; bits on, as any time&n; * they are used, the page is accessed. They are cleared only by the&n; * page-out routines&n; */
 DECL|macro|PAGE_NONE
@@ -340,6 +341,34 @@ r_return
 id|a.f.reg
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Return the region offset for virtual address ADDRESS.&n; */
+r_extern
+id|__inline__
+r_int
+r_int
+DECL|function|rgn_offset
+id|rgn_offset
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+id|ia64_va
+id|a
+suffix:semicolon
+id|a.l
+op_assign
+id|address
+suffix:semicolon
+r_return
+id|a.f.off
+suffix:semicolon
+)brace
+DECL|macro|RGN_SIZE
+mdefine_line|#define RGN_SIZE&t;(1UL &lt;&lt; 61)
+DECL|macro|RGN_KERNEL
+mdefine_line|#define RGN_KERNEL&t;7
 r_extern
 id|__inline__
 r_int

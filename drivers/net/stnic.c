@@ -462,6 +462,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace

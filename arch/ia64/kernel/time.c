@@ -16,10 +16,9 @@ id|rwlock_t
 id|xtime_lock
 suffix:semicolon
 r_extern
-r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 macro_line|#ifdef CONFIG_IA64_DEBUG_IRQ
 DECL|variable|last_cli_ip
@@ -187,7 +186,9 @@ id|elapsed_cycles
 comma
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 id|last_tick
 op_assign
@@ -277,12 +278,26 @@ id|xtime_lock
 )paren
 suffix:semicolon
 (brace
-multiline_comment|/*&n;&t;&t; * This is revolting. We need to set the xtime.tv_usec&n;&t;&t; * correctly. However, the value in this location is&n;&t;&t; * is value at the last tick.  Discover what&n;&t;&t; * correction gettimeofday would have done, and then&n;&t;&t; * undo it!&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This is revolting. We need to set &quot;xtime&quot;&n;&t;&t; * correctly. However, the value in this location is&n;&t;&t; * the value at the most recent update of wall time.&n;&t;&t; * Discover what correction gettimeofday would have&n;&t;&t; * done, and then undo it!&n;&t;&t; */
 id|tv-&gt;tv_usec
 op_sub_assign
 id|gettimeoffset
 c_func
 (paren
+)paren
+suffix:semicolon
+id|tv-&gt;tv_usec
+op_sub_assign
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
+op_star
+(paren
+l_int|1000000
+op_div
+id|HZ
 )paren
 suffix:semicolon
 r_while

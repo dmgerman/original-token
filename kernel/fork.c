@@ -2700,11 +2700,6 @@ c_func
 id|clone_flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This is a &quot;shadow run&quot; state. The process&n;&t; * is marked runnable, but isn&squot;t actually on&n;&t; * any run queue yet.. (that happens at the&n;&t; * very end).&n;&t; */
-id|p-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 id|p-&gt;run_list.next
 op_assign
 l_int|NULL

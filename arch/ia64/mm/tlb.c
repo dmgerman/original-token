@@ -578,7 +578,7 @@ op_ne
 id|current-&gt;active_mm
 )paren
 (brace
-multiline_comment|/* this doesn&squot;t happen often, if at all, so it&squot;s not worth optimizing for... */
+multiline_comment|/* this does happen, but perhaps it&squot;s not worth optimizing for? */
 id|mm-&gt;context
 op_assign
 l_int|0

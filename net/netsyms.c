@@ -2184,6 +2184,13 @@ c_func
 id|fddi_setup
 )paren
 suffix:semicolon
+DECL|variable|init_fddidev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_fddidev
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_FDDI */
 macro_line|#if 0
 id|EXPORT_SYMBOL

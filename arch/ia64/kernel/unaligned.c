@@ -5963,14 +5963,28 @@ OL
 l_int|5
 )paren
 (brace
+r_char
+id|buf
+(braket
+l_int|200
+)braket
+suffix:semicolon
+multiline_comment|/* comm[] is at most 16 bytes... */
+r_int
+id|len
+suffix:semicolon
 id|last_time
 op_assign
 id|jiffies
 suffix:semicolon
-id|printk
+id|len
+op_assign
+id|sprintf
 c_func
 (paren
-l_string|&quot;%s(%d): unaligned trap accessing %016lx (ip=%016lx)&bslash;n&quot;
+id|buf
+comma
+l_string|&quot;%s(%d): unaligned access to 0x%016lx, ip=0x%016lx&bslash;n&bslash;r&quot;
 comma
 id|current-&gt;comm
 comma
@@ -5983,6 +5997,33 @@ op_plus
 id|ipsr-&gt;ri
 )paren
 suffix:semicolon
+id|tty_write_message
+c_func
+(paren
+id|current-&gt;tty
+comma
+id|buf
+)paren
+suffix:semicolon
+id|buf
+(braket
+id|len
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* drop &squot;&bslash;r&squot; */
+id|printk
+c_func
+(paren
+l_string|&quot;%s&quot;
+comma
+id|buf
+)paren
+suffix:semicolon
+multiline_comment|/* guard against command names containing %s!! */
 )brace
 )brace
 id|DPRINT

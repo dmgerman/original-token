@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_UNISTD_H
 DECL|macro|_ASM_IA64_UNISTD_H
 mdefine_line|#define _ASM_IA64_UNISTD_H
-multiline_comment|/*&n; * IA-64 Linux syscall numbers and inline-functions.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * IA-64 Linux syscall numbers and inline-functions.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;asm/break.h&gt;
 DECL|macro|__BREAK_SYSCALL
 mdefine_line|#define __BREAK_SYSCALL&t;&t;&t;__IA64_BREAK_SYSCALL
@@ -384,6 +384,8 @@ DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t;&t;1211
 DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat&t;&t;&t;1212
+DECL|macro|__NR_clone2
+mdefine_line|#define __NR_clone2&t;&t;&t;1213
 macro_line|#if !defined(__ASSEMBLY__) &amp;&amp; !defined(ASSEMBLER)
 r_extern
 r_int

@@ -383,9 +383,10 @@ id|prev-&gt;active_mm
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We enter with the runqueue spinlock held, but we might end&n; * up unlocking it early, so the caller must not unlock the&n; * runqueue, it&squot;s always done by reschedule_idle().&n; */
+multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We enter with the runqueue spinlock held, but we might end&n; * up unlocking it early, so the caller must not unlock the&n; * runqueue, it&squot;s always done by reschedule_idle().&n; *&n; * This function must be inline as anything that saves and restores&n; * flags has to do so within the same register window on sparc (Anton)&n; */
 DECL|function|reschedule_idle
 r_static
+r_inline
 r_void
 id|reschedule_idle
 c_func

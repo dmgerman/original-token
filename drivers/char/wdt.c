@@ -129,6 +129,38 @@ id|wdt_setup
 )paren
 suffix:semicolon
 macro_line|#endif /* !MODULE */
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io
+comma
+l_string|&quot;WDT io port (default=0x240)&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;WDT irq (default=11)&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Programming support&n; */
 DECL|function|wdt_ctr_mode
 r_static

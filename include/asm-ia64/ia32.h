@@ -804,7 +804,7 @@ mdefine_line|#define IA32_PAGE_OFFSET&t;0xc0000000
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
-mdefine_line|#define ELF_EXEC_PAGESIZE&t;PAGE_SIZE
+mdefine_line|#define ELF_EXEC_PAGESIZE&t;IA32_PAGE_SIZE
 multiline_comment|/*&n; * This is the location that an ET_DYN program is loaded if exec&squot;ed.&n; * Typical use of this is to invoke &quot;./ld.so someprog&quot; to test out a&n; * new version of the loader.  We need to make sure that it is out of&n; * the way of the program that it will &quot;exec&quot;, and that there is&n; * sufficient room for the brk.&n; */
 DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE&t;&t;(IA32_PAGE_OFFSET/3 + 0x1000000)

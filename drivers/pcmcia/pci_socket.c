@@ -797,7 +797,7 @@ suffix:semicolon
 )brace
 r_return
 op_minus
-l_int|1
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|cardbus_remove
@@ -901,13 +901,14 @@ id|socket-&gt;pcmcia_socket
 )paren
 suffix:semicolon
 )brace
-DECL|variable|cardbus_table
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
 id|cardbus_table
 (braket
 )braket
+id|__devinitdata
 op_assign
 (brace
 (brace
@@ -945,6 +946,14 @@ multiline_comment|/* all zeroes */
 )brace
 )brace
 suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|cardbus_table
+)paren
+suffix:semicolon
 DECL|variable|pci_cardbus_driver
 r_static
 r_struct
@@ -981,7 +990,7 @@ suffix:semicolon
 DECL|function|pci_socket_init
 r_static
 r_int
-id|__devinit
+id|__init
 id|pci_socket_init
 c_func
 (paren
@@ -999,7 +1008,7 @@ suffix:semicolon
 DECL|function|pci_socket_exit
 r_static
 r_void
-id|__devexit
+id|__exit
 id|pci_socket_exit
 (paren
 r_void

@@ -107,14 +107,14 @@ l_int|0
 comma
 multiline_comment|/* spacer */
 (brace
-l_string|&quot;IA64_TASK_FLAGS_OFFSET&quot;
+l_string|&quot;IA64_TASK_PTRACE_OFFSET&quot;
 comma
 m_offsetof
 (paren
 r_struct
 id|task_struct
 comma
-id|flags
+id|ptrace
 )paren
 )brace
 comma
@@ -1424,14 +1424,26 @@ l_string|&quot;/*&bslash;n * DO NOT MODIFY&bslash;n *&bslash;n * This file was g
 l_string|&quot;arch/ia64/tools/print_offsets.&bslash;n *&bslash;n */&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* This is stretching things a bit, but entry.S needs the bit number&n;     for PF_PTRACED and it can&squot;t include &lt;linux/sched.h&gt; so this seems&n;     like a reasonably solution.  At least the code won&squot;t break shoudl&n;     PF_PTRACED ever change.  */
+multiline_comment|/* This is stretching things a bit, but entry.S needs the bit number&n;     for PT_PTRACED and it can&squot;t include &lt;linux/sched.h&gt; so this seems&n;     like a reasonably solution.  At least the code won&squot;t break in&n;     subtle ways should PT_PTRACED ever change.  Ditto for&n;     PT_TRACESYS_BIT. */
 id|printf
 (paren
-l_string|&quot;#define PF_PTRACED_BIT&bslash;t&bslash;t&bslash;t%u&bslash;n&bslash;n&quot;
+l_string|&quot;#define PT_PTRACED_BIT&bslash;t&bslash;t&bslash;t%u&bslash;n&quot;
 comma
 id|ffs
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define PT_TRACESYS_BIT&bslash;t&bslash;t&bslash;t%u&bslash;n&bslash;n&quot;
+comma
+id|ffs
+(paren
+id|PT_TRACESYS
 )paren
 op_minus
 l_int|1

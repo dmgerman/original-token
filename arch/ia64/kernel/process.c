@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Architecture-specific setup.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Architecture-specific setup.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__&t;/* see &lt;asm/unistd.h&gt; */
 macro_line|#include &lt;linux/config.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -870,7 +871,7 @@ id|task-&gt;thread
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy the state of an ia-64 thread.&n; *&n; * We get here through the following  call chain:&n; *&n; *&t;&lt;clone syscall&gt;&n; *&t;sys_clone&n; *&t;do_fork&n; *&t;copy_thread&n; *&n; * This means that the stack layout is as follows:&n; *&n; *&t;+---------------------+ (highest addr)&n; *&t;|   struct pt_regs    |&n; *&t;+---------------------+&n; *&t;| struct switch_stack |&n; *&t;+---------------------+&n; *&t;|                     |&n; *&t;|    memory stack     |&n; *&t;|                     | &lt;-- sp (lowest addr)&n; *&t;+---------------------+&n; *&n; * Note: if we get called through kernel_thread() then the memory&n; * above &quot;(highest addr)&quot; is valid kernel stack memory that needs to&n; * be copied as well.&n; *&n; * Observe that we copy the unat values that are in pt_regs and&n; * switch_stack.  Since the interpretation of unat is dependent upon&n; * the address to which the registers got spilled, doing this is valid&n; * only as long as we preserve the alignment of the stack.  Since the&n; * stack is always page aligned, we know this is the case.&n; *&n; * XXX Actually, the above isn&squot;t true when we create kernel_threads().&n; * If we ever needs to create kernel_threads() that preserve the unat&n; * values we&squot;ll need to fix this.  Perhaps an easy workaround would be&n; * to always clear the unat bits in the child thread.&n; */
+multiline_comment|/*&n; * Copy the state of an ia-64 thread.&n; *&n; * We get here through the following  call chain:&n; *&n; *&t;&lt;clone syscall&gt;&n; *&t;sys_clone&n; *&t;do_fork&n; *&t;copy_thread&n; *&n; * This means that the stack layout is as follows:&n; *&n; *&t;+---------------------+ (highest addr)&n; *&t;|   struct pt_regs    |&n; *&t;+---------------------+&n; *&t;| struct switch_stack |&n; *&t;+---------------------+&n; *&t;|                     |&n; *&t;|    memory stack     |&n; *&t;|                     | &lt;-- sp (lowest addr)&n; *&t;+---------------------+&n; *&n; * Note: if we get called through kernel_thread() then the memory&n; * above &quot;(highest addr)&quot; is valid kernel stack memory that needs to&n; * be copied as well.&n; *&n; * Observe that we copy the unat values that are in pt_regs and&n; * switch_stack.  Spilling an integer to address X causes bit N in&n; * ar.unat to be set to the NaT bit of the register, with N=(X &amp;&n; * 0x1ff)/8.  Thus, copying the unat value preserves the NaT bits ONLY&n; * if the pt_regs structure in the parent is congruent to that of the&n; * child, modulo 512.  Since the stack is page aligned and the page&n; * size is at least 4KB, this is always the case, so there is nothing&n; * to worry about.&n; */
 r_int
 DECL|function|copy_thread
 id|copy_thread
@@ -884,7 +885,11 @@ id|clone_flags
 comma
 r_int
 r_int
-id|usp
+id|user_stack_base
+comma
+r_int
+r_int
+id|user_stack_size
 comma
 r_struct
 id|task_struct
@@ -921,11 +926,7 @@ id|stack
 suffix:semicolon
 r_extern
 r_char
-id|ia64_ret_from_syscall_clear_r8
-suffix:semicolon
-r_extern
-r_char
-id|ia64_strace_clear_r8
+id|ia64_ret_from_clone
 suffix:semicolon
 r_struct
 id|pt_regs
@@ -1069,11 +1070,6 @@ comma
 id|rbs_size
 )paren
 suffix:semicolon
-id|child_ptregs-&gt;r8
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* child gets a zero return value */
 r_if
 c_cond
 (paren
@@ -1083,11 +1079,33 @@ c_func
 id|child_ptregs
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|user_stack_base
+)paren
+(brace
 id|child_ptregs-&gt;r12
 op_assign
-id|usp
+id|user_stack_base
+op_plus
+id|user_stack_size
 suffix:semicolon
-multiline_comment|/* user stack pointer */
+id|child_ptregs-&gt;ar_bspstore
+op_assign
+id|user_stack_base
+suffix:semicolon
+id|child_ptregs-&gt;ar_rnat
+op_assign
+l_int|0
+suffix:semicolon
+id|child_ptregs-&gt;loadrs
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 r_else
 (brace
 multiline_comment|/*&n;&t;&t; * Note: we simply preserve the relative position of&n;&t;&t; * the stack pointer here.  There is no need to&n;&t;&t; * allocate a scratch area here, since that will have&n;&t;&t; * been taken care of by the caller of sys_clone()&n;&t;&t; * already.&n;&t;&t; */
@@ -1114,13 +1132,6 @@ id|p
 suffix:semicolon
 multiline_comment|/* set `current&squot; pointer */
 )brace
-r_if
-c_cond
-(paren
-id|p-&gt;flags
-op_amp
-id|PF_TRACESYS
-)paren
 id|child_stack-&gt;b0
 op_assign
 (paren
@@ -1128,17 +1139,7 @@ r_int
 r_int
 )paren
 op_amp
-id|ia64_strace_clear_r8
-suffix:semicolon
-r_else
-id|child_stack-&gt;b0
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|ia64_ret_from_syscall_clear_r8
+id|ia64_ret_from_clone
 suffix:semicolon
 id|child_stack-&gt;ar_bspstore
 op_assign
@@ -1146,7 +1147,7 @@ id|child_rbs
 op_plus
 id|rbs_size
 suffix:semicolon
-multiline_comment|/* copy the thread_struct: */
+multiline_comment|/* copy parts of thread_struct: */
 id|p-&gt;thread.ksp
 op_assign
 (paren
@@ -1157,14 +1158,22 @@ id|child_stack
 op_minus
 l_int|16
 suffix:semicolon
-multiline_comment|/*&n;&t; * NOTE: The calling convention considers all floating point&n;&t; * registers in the high partition (fph) to be scratch.  Since&n;&t; * the only way to get to this point is through a system call,&n;&t; * we know that the values in fph are all dead.  Hence, there&n;&t; * is no need to inherit the fph state from the parent to the&n;&t; * child and all we have to do is to make sure that&n;&t; * IA64_THREAD_FPH_VALID is cleared in the child.&n;&t; *&n;&t; * XXX We could push this optimization a bit further by&n;&t; * clearing IA64_THREAD_FPH_VALID on ANY system call.&n;&t; * However, it&squot;s not clear this is worth doing.  Also, it&n;&t; * would be a slight deviation from the normal Linux system&n;&t; * call behavior where scratch registers are preserved across&n;&t; * system calls (unless used by the system call itself).&n;&t; *&n;&t; * If we wanted to inherit the fph state from the parent to the&n;&t; * child, we would have to do something along the lines of:&n;&t; *&n;&t; *&t;if (ia64_get_fpu_owner() == current &amp;&amp; ia64_psr(regs)-&gt;mfh) {&n;&t; *&t;&t;p-&gt;thread.flags |= IA64_THREAD_FPH_VALID;&n;&t; *&t;&t;ia64_save_fpu(&amp;p-&gt;thread.fph);&n;&t; *&t;} else if (current-&gt;thread.flags &amp; IA64_THREAD_FPH_VALID) {&n;&t; *&t;&t;memcpy(p-&gt;thread.fph, current-&gt;thread.fph, sizeof(p-&gt;thread.fph));&n;&t; *&t;}&n;&t; */
+multiline_comment|/*&n;&t; * NOTE: The calling convention considers all floating point&n;&t; * registers in the high partition (fph) to be scratch.  Since&n;&t; * the only way to get to this point is through a system call,&n;&t; * we know that the values in fph are all dead.  Hence, there&n;&t; * is no need to inherit the fph state from the parent to the&n;&t; * child and all we have to do is to make sure that&n;&t; * IA64_THREAD_FPH_VALID is cleared in the child.&n;&t; *&n;&t; * XXX We could push this optimization a bit further by&n;&t; * clearing IA64_THREAD_FPH_VALID on ANY system call.&n;&t; * However, it&squot;s not clear this is worth doing.  Also, it&n;&t; * would be a slight deviation from the normal Linux system&n;&t; * call behavior where scratch registers are preserved across&n;&t; * system calls (unless used by the system call itself).&n;&t; */
+DECL|macro|THREAD_FLAGS_TO_CLEAR
+macro_line|#&t;define THREAD_FLAGS_TO_CLEAR&t;(IA64_THREAD_FPH_VALID | IA64_THREAD_DBG_VALID)
+DECL|macro|THREAD_FLAGS_TO_SET
+macro_line|#&t;define THREAD_FLAGS_TO_SET&t;0
 id|p-&gt;thread.flags
 op_assign
+(paren
 (paren
 id|current-&gt;thread.flags
 op_amp
 op_complement
-id|IA64_THREAD_FPH_VALID
+id|THREAD_FLAGS_TO_CLEAR
+)paren
+op_or
+id|THREAD_FLAGS_TO_SET
 )paren
 suffix:semicolon
 r_return

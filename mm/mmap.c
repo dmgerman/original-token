@@ -121,7 +121,7 @@ OG
 id|pages
 suffix:semicolon
 )brace
-multiline_comment|/* Remove one vm structure from the inode&squot;s i_mmap ring. */
+multiline_comment|/* Remove one vm structure from the inode&squot;s i_mapping address space. */
 DECL|function|remove_shared_vm_struct
 r_static
 r_inline

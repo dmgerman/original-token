@@ -585,6 +585,11 @@ suffix:semicolon
 multiline_comment|/* release the &squot;pointer lock&squot; */
 id|data
 op_assign
+(paren
+r_struct
+id|smp_call_struct
+op_star
+)paren
 id|smp_call_function_data
 suffix:semicolon
 id|func
@@ -1884,6 +1889,8 @@ c_func
 id|CLONE_VM
 op_or
 id|CLONE_PID
+comma
+l_int|0
 comma
 l_int|0
 comma

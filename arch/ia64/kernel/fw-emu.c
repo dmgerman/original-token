@@ -931,7 +931,7 @@ id|SAL_FREQ_BASE_PLATFORM
 suffix:colon
 id|r9
 op_assign
-l_int|100000000
+l_int|200000000
 suffix:semicolon
 r_break
 suffix:semicolon
