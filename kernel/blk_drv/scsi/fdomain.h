@@ -91,7 +91,7 @@ DECL|macro|FDOMAIN_16X0
 mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; fdomain_16x0_queue,               &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; 1, 6, 0 }
 macro_line|#else
 DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; 0, 6, 0 }
+mdefine_line|#define FDOMAIN_16X0  { &quot;Future Domain TMC-1660/TMC-1680&quot;, &bslash;&n;&t;&t;&t; fdomain_16x0_detect,              &bslash;&n;&t;&t;&t; fdomain_16x0_info,                &bslash;&n;&t;&t;&t; fdomain_16x0_command,             &bslash;&n;&t;&t;&t; NULL,                             &bslash;&n;&t;&t;         fdomain_16x0_abort,               &bslash;&n;&t;&t;&t; fdomain_16x0_reset,               &bslash;&n;&t;&t;&t; 0, 6, 0 ,0}
 macro_line|#endif
 macro_line|#endif
 eof

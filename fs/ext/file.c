@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|NBUF
 mdefine_line|#define&t;NBUF&t;16
 DECL|macro|MIN
@@ -15,42 +16,6 @@ DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
-DECL|function|wait_on_buffer
-r_static
-r_inline
-r_void
-id|wait_on_buffer
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-)paren
-(brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|bh-&gt;b_lock
-)paren
-id|sleep_on
-c_func
-(paren
-op_amp
-id|bh-&gt;b_wait
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 r_static
 r_int
 id|ext_file_read

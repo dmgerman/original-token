@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_STRING_H_
 DECL|macro|_LINUX_STRING_H_
 mdefine_line|#define _LINUX_STRING_H_
+macro_line|#include &lt;linux/types.h&gt;&t;/* for size_t */
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
@@ -1082,12 +1083,12 @@ c_func
 (paren
 r_void
 op_star
-id|dest
+id|to
 comma
 r_const
 r_void
 op_star
-id|src
+id|from
 comma
 r_int
 id|n
@@ -1097,33 +1098,49 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;rep&bslash;n&bslash;t&quot;
-l_string|&quot;movsb&quot;
+l_string|&quot;movl %%edx, %%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;shrl $2,%%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
+l_string|&quot;testb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movsb&bslash;n&quot;
+l_string|&quot;1:&bslash;ttestb $2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;je 2f&bslash;n&bslash;t&quot;
+l_string|&quot;movsw&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
 op_scope_resolution
-l_string|&quot;c&quot;
+l_string|&quot;d&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;S&quot;
-(paren
-id|src
-)paren
-comma
 l_string|&quot;D&quot;
 (paren
-id|dest
+(paren
+r_int
+)paren
+id|to
+)paren
+comma
+l_string|&quot;S&quot;
+(paren
+(paren
+r_int
+)paren
+id|from
 )paren
 suffix:colon
 l_string|&quot;cx&quot;
 comma
-l_string|&quot;si&quot;
-comma
 l_string|&quot;di&quot;
+comma
+l_string|&quot;si&quot;
 )paren
 suffix:semicolon
 r_return
-id|dest
+(paren
+id|to
+)paren
 suffix:semicolon
 )brace
 DECL|function|memmove

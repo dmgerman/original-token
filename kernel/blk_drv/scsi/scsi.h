@@ -319,10 +319,15 @@ id|code
 suffix:semicolon
 multiline_comment|/*&n;&t;Initializes all SCSI devices.  This scans all scsi busses.&n;*/
 r_extern
-r_void
+r_int
+r_int
 id|scsi_dev_init
 (paren
-r_void
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;You guesed it.  This sends a command to the selected SCSI host &n;&n;extern void print_inquiry(unsigned char *data);&n;&n;*/

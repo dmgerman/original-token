@@ -4,12 +4,14 @@ multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my bes
 multiline_comment|/*&n; * As with hd.c, all routines within this file can (and will) be called&n; * by interrupts, so extreme caution is needed. A hardware interrupt&n; * handler may not sleep, or a kernel panic will happen. Thus I cannot&n; * call &quot;floppy-on&quot; directly, but have to set a special timer interrupt&n; * etc.&n; */
 multiline_comment|/*&n; * 28.02.92 - made track-buffering routines, based on the routines written&n; * by entropy@wintermute.wpi.edu (Lawrence Foard). Linus.&n; */
 multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signal detection.&n; */
-multiline_comment|/*&n; * 1992/7/22 -- Hennus Bergman: Added better error reporting, fixed &n; * FDC data overrun bug, added some preliminary stuff for vertical&n; * recording support.&n; * TODO: Errors are still not counted properly.&n; */
+multiline_comment|/*&n; * 1992/7/22 -- Hennus Bergman: Added better error reporting, fixed &n; * FDC data overrun bug, added some preliminary stuff for vertical&n; * recording support.&n; *&n; * 1992/9/17: Added DMA allocation &amp; DMA functions. -- hhb.&n; *&n; * TODO: Errors are still not counted properly.&n; */
 multiline_comment|/* 1992/9/20&n; * Modifications for ``Sector Shifting&squot;&squot; by Rob Hooft (hooft@chem.ruu.nl)&n; * modelled after the freeware MS/DOS program fdformat/88 V1.8 by &n; * Christoph H. Hochst&bslash;&quot;atter.&n; * I have fixed the shift values to the ones I always use. Maybe a new&n; * ioctl() should be created to be able to modify them.&n; * There is a bug in the driver that makes it impossible to format a&n; * floppy as the first thing after bootup.&n; */
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 DECL|macro|FLOPPY_IRQ
 mdefine_line|#define FLOPPY_IRQ 6
+DECL|macro|FLOPPY_DMA
+mdefine_line|#define FLOPPY_DMA 2
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,9 +19,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fdreg.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#ifdef HHB_SYSMACROS
-macro_line|#include &lt;linux/system.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -39,6 +39,21 @@ id|fake_change
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|initial_reset_flag
+r_static
+r_int
+id|initial_reset_flag
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|need_configure
+r_static
+r_int
+id|need_configure
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* for 82077 */
 DECL|variable|recalibrate
 r_static
 r_int
@@ -576,7 +591,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Announce successful media type detection and media information loss after&n; * disk changes.&n; */
+multiline_comment|/*&n; * Announce successful media type detection and media information loss after&n; * disk changes.&n; * Also used to enable/disable printing of overrun warnings.&n; */
 DECL|variable|ftd_msg
 r_static
 id|ftd_msg
@@ -677,7 +692,7 @@ mdefine_line|#define CURRENT_DEVICE (format_status == FORMAT_BUSY ? format_req.d
 multiline_comment|/* Current error count. */
 DECL|macro|CURRENT_ERRORS
 mdefine_line|#define CURRENT_ERRORS (format_status == FORMAT_BUSY ? format_errors : &bslash;&n;    (CURRENT-&gt;errors))
-multiline_comment|/*&n; * Treshold for reporting FDC errors to the console.&n; * Setting this to zero may flood your screen when using&n; * ultra cheap floppies ;-)&n; */
+multiline_comment|/*&n; * Threshold for reporting FDC errors to the console.&n; * Setting this to zero may flood your screen when using&n; * ultra cheap floppies ;-)&n; */
 DECL|variable|min_report_error_cnt
 r_static
 r_int
@@ -1265,124 +1280,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifndef HHB_SYSMACROS
-multiline_comment|/* mask DMA 2 */
-id|outb_p
+id|disable_dma
 c_func
 (paren
-l_int|4
-op_or
-l_int|2
-comma
-l_int|10
+id|FLOPPY_DMA
 )paren
 suffix:semicolon
-multiline_comment|/* output command byte. I don&squot;t know why, but everyone (minix, */
-multiline_comment|/* sanches &amp; canton) output this twice, first to 12 then to 11 */
-id|outb_p
+id|clear_dma_ff
 c_func
 (paren
-id|dma_code
-comma
-l_int|12
+id|FLOPPY_DMA
 )paren
 suffix:semicolon
-id|outb_p
+id|set_dma_mode
 c_func
 (paren
-id|dma_code
-comma
-l_int|11
-)paren
-suffix:semicolon
-multiline_comment|/* 8 low bits of addr */
-id|outb_p
-c_func
-(paren
-id|addr
-comma
-l_int|4
-)paren
-suffix:semicolon
-id|addr
-op_rshift_assign
-l_int|8
-suffix:semicolon
-multiline_comment|/* bits 8-15 of addr */
-id|outb_p
-c_func
-(paren
-id|addr
-comma
-l_int|4
-)paren
-suffix:semicolon
-id|addr
-op_rshift_assign
-l_int|8
-suffix:semicolon
-multiline_comment|/* bits 16-19 of addr */
-id|outb_p
-c_func
-(paren
-id|addr
-comma
-l_int|0x81
-)paren
-suffix:semicolon
-multiline_comment|/* low 8 bits of count-1 */
-id|count
-op_decrement
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|count
-comma
-l_int|5
-)paren
-suffix:semicolon
-id|count
-op_rshift_assign
-l_int|8
-suffix:semicolon
-multiline_comment|/* high 8 bits of count-1 */
-id|outb_p
-c_func
-(paren
-id|count
-comma
-l_int|5
-)paren
-suffix:semicolon
-multiline_comment|/* activate DMA 2 */
-id|outb_p
-c_func
-(paren
-l_int|0
-op_or
-l_int|2
-comma
-l_int|10
-)paren
-suffix:semicolon
-macro_line|#else&t;&t;&t;/* just to show off my macros -- hhb */
-id|DISABLE_DMA
-c_func
-(paren
-id|DMA2
-)paren
-suffix:semicolon
-id|CLEAR_DMA_FF
-c_func
-(paren
-id|DMA2
-)paren
-suffix:semicolon
-id|SET_DMA_MODE
-c_func
-(paren
-id|DMA2
+id|FLOPPY_DMA
 comma
 (paren
 id|command
@@ -1396,29 +1309,28 @@ suffix:colon
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-id|SET_DMA_ADDR
+id|set_dma_addr
 c_func
 (paren
-id|DMA2
+id|FLOPPY_DMA
 comma
 id|addr
 )paren
 suffix:semicolon
-id|SET_DMA_COUNT
+id|set_dma_count
 c_func
 (paren
-id|DMA2
+id|FLOPPY_DMA
 comma
 id|count
 )paren
 suffix:semicolon
-id|ENABLE_DMA
+id|enable_dma
 c_func
 (paren
-id|DMA2
+id|FLOPPY_DMA
 )paren
 suffix:semicolon
-macro_line|#endif
 id|sti
 c_func
 (paren
@@ -1656,17 +1568,59 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|errors
+suffix:semicolon
 id|current_track
 op_assign
 id|NO_TRACK
 suffix:semicolon
-id|CURRENT_ERRORS
+r_if
+c_cond
+(paren
+id|format_status
+op_eq
+id|FORMAT_BUSY
+)paren
+id|errors
+op_assign
 op_increment
+id|format_errors
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|CURRENT
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|DEVICE_NAME
+l_string|&quot;: no current request&bslash;n&quot;
+)paren
+suffix:semicolon
+id|reset
+op_assign
+id|recalibrate
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_else
+id|errors
+op_assign
+op_increment
+id|CURRENT-&gt;errors
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT_ERRORS
+id|errors
 OG
 id|MAX_ERRORS
 )paren
@@ -1687,7 +1641,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT_ERRORS
+id|errors
 OG
 id|MAX_ERRORS
 op_div
@@ -1703,6 +1657,127 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Set perpendicular mode as required, based on data rate, if supported.&n; * 82077 Untested! 1Mbps data rate only possible with 82077-1.&n; * TODO: increase MAX_BUFFER_SECTORS, add floppy_type entries.&n; */
+DECL|function|perpendicular_mode
+r_static
+r_void
+r_inline
+id|perpendicular_mode
+c_func
+(paren
+r_int
+r_char
+id|rate
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fdc_version
+op_eq
+id|FDC_TYPE_82077
+)paren
+(brace
+id|output_byte
+c_func
+(paren
+id|FD_PERPENDICULAR
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rate
+op_amp
+l_int|0x40
+)paren
+(brace
+r_int
+r_char
+id|r
+op_assign
+id|rate
+op_amp
+l_int|0x03
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+op_eq
+l_int|0
+)paren
+id|output_byte
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* perpendicular, 500 kbps */
+r_else
+r_if
+c_cond
+(paren
+id|r
+op_eq
+l_int|3
+)paren
+id|output_byte
+c_func
+(paren
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* perpendicular, 1Mbps */
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|DEVICE_NAME
+l_string|&quot;: Invalid data rate for perpendicular mode!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|reset
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_else
+id|output_byte
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* conventional mode */
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|rate
+op_amp
+l_int|0x40
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|DEVICE_NAME
+l_string|&quot;: perpendicular mode not supported by this FDC.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|reset
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/* perpendicular_mode */
 multiline_comment|/*&n; * This has only been tested for the case fdc_version == FDC_TYPE_STD.&n; * In case you have a 82077 and want to test it, you&squot;ll have to compile&n; * with `FDC_FIFO_UNTESTED&squot; defined. You may also want to add support for&n; * recognizing drives with vertical recording support.&n; */
 DECL|function|configure_fdc_mode
 r_static
@@ -1716,9 +1791,13 @@ r_void
 r_if
 c_cond
 (paren
+id|need_configure
+op_logical_and
+(paren
 id|fdc_version
 op_eq
 id|FDC_TYPE_82077
+)paren
 )paren
 (brace
 multiline_comment|/* Enhanced version with FIFO &amp; vertical recording. */
@@ -1740,7 +1819,7 @@ c_func
 l_int|0x1A
 )paren
 suffix:semicolon
-multiline_comment|/* FIFO on, polling off, 10 byte treshold */
+multiline_comment|/* FIFO on, polling off, 10 byte threshold */
 id|output_byte
 c_func
 (paren
@@ -1748,11 +1827,81 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* precompensation from track 0 upwards */
+id|need_configure
+op_assign
+l_int|0
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|DEVICE_NAME
 l_string|&quot;: FIFO enabled&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cur_spec1
+op_ne
+id|floppy-&gt;spec1
+)paren
+(brace
+id|cur_spec1
+op_assign
+id|floppy-&gt;spec1
+suffix:semicolon
+id|output_byte
+c_func
+(paren
+id|FD_SPECIFY
+)paren
+suffix:semicolon
+id|output_byte
+c_func
+(paren
+id|cur_spec1
+)paren
+suffix:semicolon
+multiline_comment|/* hut etc */
+id|output_byte
+c_func
+(paren
+l_int|6
+)paren
+suffix:semicolon
+multiline_comment|/* Head load time =6ms, DMA */
+)brace
+r_if
+c_cond
+(paren
+id|cur_rate
+op_ne
+id|floppy-&gt;rate
+)paren
+(brace
+multiline_comment|/* use bit 6 of floppy-&gt;rate to indicate perpendicular mode */
+id|perpendicular_mode
+c_func
+(paren
+id|floppy-&gt;rate
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+(paren
+id|cur_rate
+op_assign
+(paren
+id|floppy-&gt;rate
+)paren
+)paren
+op_amp
+op_complement
+l_int|0x40
+comma
+id|FD_DCR
 )paren
 suffix:semicolon
 )brace
@@ -1902,6 +2051,16 @@ op_amp
 id|ST1_OR
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ftd_msg
+(braket
+id|ST0
+op_amp
+id|ST0_DS
+)braket
+)paren
 id|printk
 c_func
 (paren
@@ -2553,127 +2712,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set perpendicular mode as required, based on data rate, if supported.&n; * 80277: 1Mbps data rate only possible with 82077-1.&n; * Untested!! TODO: increase MAX_BUFFER_SECTORS, add floppy_type entries.&n; */
-DECL|function|perpendicular_mode
-r_static
-r_void
-r_inline
-id|perpendicular_mode
-c_func
-(paren
-r_int
-r_char
-id|rate
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fdc_version
-op_eq
-id|FDC_TYPE_82077
-)paren
-(brace
-id|output_byte
-c_func
-(paren
-id|FD_PERPENDICULAR
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rate
-op_amp
-l_int|0x40
-)paren
-(brace
-r_int
-r_char
-id|r
-op_assign
-id|rate
-op_amp
-l_int|0x03
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|r
-op_eq
-l_int|0
-)paren
-id|output_byte
-c_func
-(paren
-l_int|2
-)paren
-suffix:semicolon
-multiline_comment|/* perpendicular, 500 kbps */
-r_else
-r_if
-c_cond
-(paren
-id|r
-op_eq
-l_int|3
-)paren
-id|output_byte
-c_func
-(paren
-l_int|3
-)paren
-suffix:semicolon
-multiline_comment|/* perpendicular, 1Mbps */
-r_else
-(brace
-id|printk
-c_func
-(paren
-id|DEVICE_NAME
-l_string|&quot;: Invalid data rate for perpendicular mode!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|reset
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_else
-id|output_byte
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* conventional mode */
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|rate
-op_amp
-l_int|0x40
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|DEVICE_NAME
-l_string|&quot;: perpendicular mode not supported by FDC.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|reset
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-)brace
-multiline_comment|/* perpendicular_mode */
 multiline_comment|/*&n; * This routine is called when everything should be correctly set up&n; * for the transfer (ie floppy motor is on and the correct floppy is&n; * selected).&n; */
 DECL|function|transfer
 r_static
@@ -2704,72 +2742,11 @@ op_le
 id|MAX_BUFFER_SECTORS
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cur_spec1
-op_ne
-id|floppy-&gt;spec1
-)paren
-(brace
-id|cur_spec1
-op_assign
-id|floppy-&gt;spec1
-suffix:semicolon
-id|output_byte
+id|configure_fdc_mode
 c_func
 (paren
-id|FD_SPECIFY
 )paren
 suffix:semicolon
-id|output_byte
-c_func
-(paren
-id|cur_spec1
-)paren
-suffix:semicolon
-multiline_comment|/* hut etc */
-id|output_byte
-c_func
-(paren
-l_int|6
-)paren
-suffix:semicolon
-multiline_comment|/* Head load time =6ms, DMA */
-)brace
-r_if
-c_cond
-(paren
-id|cur_rate
-op_ne
-id|floppy-&gt;rate
-)paren
-(brace
-multiline_comment|/* use bit 6 of floppy-&gt;rate to indicate perpendicular mode */
-id|perpendicular_mode
-c_func
-(paren
-id|floppy-&gt;rate
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|cur_rate
-op_assign
-(paren
-(paren
-id|floppy-&gt;rate
-)paren
-)paren
-op_amp
-op_complement
-l_int|0x40
-comma
-id|FD_DCR
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2917,6 +2894,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: should limit nr of recalibrates */
 r_else
 id|redo_fd_request
 c_func
@@ -3094,7 +3072,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* reprogram if smart fdc */
+multiline_comment|/* reprogram fdc */
+r_if
+c_cond
+(paren
+id|initial_reset_flag
+)paren
+(brace
+id|initial_reset_flag
+op_assign
+l_int|0
+suffix:semicolon
+id|recalibrate
+op_assign
+l_int|1
+suffix:semicolon
+id|reset
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3158,6 +3157,16 @@ id|recalibrate
 op_assign
 l_int|1
 suffix:semicolon
+id|need_configure
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initial_reset_flag
+)paren
 id|printk
 c_func
 (paren
@@ -3830,7 +3839,7 @@ id|fdc_busy
 id|printk
 c_func
 (paren
-l_string|&quot;FDC access conflict&quot;
+l_string|&quot;FDC access conflict!&quot;
 )paren
 suffix:semicolon
 id|fdc_busy
@@ -5455,7 +5464,7 @@ id|floppy_release
 multiline_comment|/* release */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The version command is not supposed to generate an interrupt, but&n; * my FDC does, except when booting in SVGA screen mode.&n; * When it does generate an interrupt, it doesn&squot;t return any status bytes.&n; * It appears to have something to do with the version command...&n; */
+multiline_comment|/*&n; * The version command is not supposed to generate an interrupt, but&n; * my FDC does, except when booting in SVGA screen mode.&n; * When it does generate an interrupt, it doesn&squot;t return any status bytes.&n; * It appears to have something to do with the version command...&n; *&n; * This should never be called, because of the reset after the version check.&n; */
 DECL|function|ignore_interrupt
 r_static
 r_void
@@ -5465,29 +5474,22 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|result
-c_func
-(paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
 id|printk
 c_func
 (paren
 id|DEVICE_NAME
-l_string|&quot;: weird interrupt ignored&bslash;n&quot;
+l_string|&quot;: weird interrupt ignored (%d)&bslash;n&quot;
+comma
+id|result
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 id|reset
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|CLEAR_INTR
 suffix:semicolon
 multiline_comment|/* ignore only once */
@@ -5633,6 +5635,23 @@ comma
 id|FLOPPY_IRQ
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|FLOPPY_DMA
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to grab DMA%d for the floppy driver&bslash;n&quot;
+comma
+id|FLOPPY_DMA
+)paren
+suffix:semicolon
 multiline_comment|/* Try to determine the floppy controller type */
 id|DEVICE_INTR
 op_assign
@@ -5700,10 +5719,24 @@ id|FDC_TYPE_STD
 suffix:semicolon
 multiline_comment|/* force std fdc type; can&squot;t test other. */
 macro_line|#endif
-id|configure_fdc_mode
+multiline_comment|/* Not all FDCs seem to be able to handle the version command&n;&t; * properly, so force a reset for the standard FDC clones,&n;&t; * to avoid interrupt garbage.&n;&t; */
+r_if
+c_cond
+(paren
+id|fdc_version
+op_eq
+id|FDC_TYPE_STD
+)paren
+(brace
+id|initial_reset_flag
+op_assign
+l_int|1
+suffix:semicolon
+id|reset_floppy
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 eof

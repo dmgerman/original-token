@@ -1307,7 +1307,7 @@ id|apt-&gt;last_used
 op_assign
 id|timer_seq
 suffix:semicolon
-id|sti
+id|cli
 c_func
 (paren
 )paren
@@ -1326,7 +1326,7 @@ id|hash
 op_assign
 id|apt
 suffix:semicolon
-id|cli
+id|sti
 c_func
 (paren
 )paren

@@ -1891,17 +1891,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef MAX_16M
-id|printk
-c_func
-(paren
-l_string|&quot;Adaptec 1542 disabled for kernels without memory limiting to 16MB.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Set the Bus on/off-times as not to ruin floppy performens */
 (brace
 r_static

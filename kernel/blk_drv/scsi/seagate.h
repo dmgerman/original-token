@@ -91,7 +91,7 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, 1, 7, 0}
+mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, 1, 7, 0, 0}
 macro_line|#endif
 multiline_comment|/*&n;&t;defining PARITY causes parity data to be checked&n;*/
 DECL|macro|PARITY

@@ -1694,7 +1694,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 op_star
 id|ino

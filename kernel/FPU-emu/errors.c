@@ -1169,8 +1169,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/********&n;int EmptyError(void)&n;{&n;  EXCEPTION(EX_StackUnder);&n;  return 0;&n;}&n; **********/
-multiline_comment|/****&n;int FullError(void)&n;{&n;  EXCEPTION(EX_StackOver);&n;  reg_move(&amp;CONST_QNaN, st0_ptr);&n;  return 0;&n;}&n; ****/
 multiline_comment|/* Real operation attempted on two operands, one a NaN */
 DECL|function|real_2op_NaN
 r_void

@@ -1497,11 +1497,12 @@ id|tmp
 suffix:semicolon
 id|tmp.exp
 op_add_assign
+op_minus
 id|EXTENDED_Emin
 op_plus
 l_int|64
 suffix:semicolon
-multiline_comment|/* largest exp to be 62 */
+multiline_comment|/* largest exp to be 63 */
 id|round_to_int
 c_func
 (paren
@@ -2220,6 +2221,7 @@ id|tmp
 suffix:semicolon
 id|tmp.exp
 op_add_assign
+op_minus
 id|DOUBLE_Emin
 op_plus
 l_int|52
@@ -2769,11 +2771,12 @@ id|tmp
 suffix:semicolon
 id|tmp.exp
 op_add_assign
+op_minus
 id|SINGLE_Emin
 op_plus
-l_int|53
+l_int|23
 suffix:semicolon
-multiline_comment|/* largest exp to be 52 */
+multiline_comment|/* largest exp to be 22 */
 id|round_to_int
 c_func
 (paren
@@ -4998,11 +5001,12 @@ id|tmp
 suffix:semicolon
 id|tmp.exp
 op_add_assign
+op_minus
 id|EXTENDED_Emin
 op_plus
 l_int|64
 suffix:semicolon
-multiline_comment|/* largest exp to be 62 */
+multiline_comment|/* largest exp to be 63 */
 id|round_to_int
 c_func
 (paren

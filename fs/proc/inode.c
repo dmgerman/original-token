@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|function|proc_put_inode
@@ -18,6 +19,13 @@ op_star
 id|inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+)paren
+r_return
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -44,7 +52,7 @@ id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|sb
@@ -88,11 +96,6 @@ op_star
 id|data
 )paren
 (brace
-r_int
-id|dev
-op_assign
-id|s-&gt;s_dev
-suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -107,16 +110,12 @@ id|s-&gt;s_magic
 op_assign
 id|PROC_SUPER_MAGIC
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-id|dev
-suffix:semicolon
 id|s-&gt;s_op
 op_assign
 op_amp
 id|proc_sops
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|s
@@ -132,7 +131,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dev
+id|s
 comma
 id|PROC_ROOT_INO
 )paren

@@ -459,6 +459,7 @@ l_int|0x7f
 op_eq
 id|rep
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -512,6 +513,7 @@ l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 id|key_table
 (braket
@@ -12290,10 +12292,13 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_extern
 r_int
 r_int
-op_star
-id|pg_dir
+id|pg0
+(braket
+l_int|1024
+)braket
 suffix:semicolon
 id|sti
 c_func
@@ -12301,23 +12306,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* rebooting needs to touch the page at absolute addr 0 */
-id|pg_dir
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|current-&gt;tss.cr3
-suffix:semicolon
-id|pg_dir
+id|pg0
 (braket
-l_int|768
+l_int|0
 )braket
 op_assign
 l_int|7
 suffix:semicolon
-multiline_comment|/* 0xC0000000 */
 r_for
 c_loop
 (paren

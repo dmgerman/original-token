@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
-macro_line|#include &lt;asm/memory.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;timer.h&quot;

@@ -172,10 +172,13 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+r_struct
+id|super_block
+op_star
+id|sb
+suffix:semicolon
 r_int
 id|i
-comma
-id|dev
 suffix:semicolon
 op_star
 id|result
@@ -209,6 +212,10 @@ id|dir
 r_return
 op_minus
 id|ENOENT
+suffix:semicolon
+id|sb
+op_assign
+id|dir-&gt;i_sb
 suffix:semicolon
 r_if
 c_cond
@@ -306,7 +313,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|sb
 comma
 (paren
 id|pid
@@ -340,10 +347,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|dev
-op_assign
-id|dir-&gt;i_dev
-suffix:semicolon
 id|iput
 c_func
 (paren
@@ -543,7 +546,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dev
+id|sb
 comma
 id|ino
 )paren

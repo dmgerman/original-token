@@ -2332,6 +2332,7 @@ id|sys_getrlimit
 c_func
 (paren
 r_int
+r_int
 id|resource
 comma
 r_struct
@@ -2410,6 +2411,7 @@ r_int
 id|sys_setrlimit
 c_func
 (paren
+r_int
 r_int
 id|resource
 comma

@@ -236,6 +236,13 @@ id|present
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t;  true if this host adapter uses unchecked DMA onto an ISA bus.&n;&t;*/
+DECL|member|unchecked_isa_dma
+r_int
+id|unchecked_isa_dma
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|typedef|Scsi_Host
 )brace
 id|Scsi_Host

@@ -3,7 +3,7 @@ multiline_comment|/*&n;     Copyright (C) 1992  Ross Biro&n;&n;     This program
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/memory.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -8730,6 +8730,76 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv skb = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0 /* it&squot;s ok for protocol to be NULL */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|protocol
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv protocol = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opt
+)paren
+multiline_comment|/* it&squot;s ok for opt to be NULL */
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv opt = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv dev = NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|th
 op_assign
 id|skb-&gt;h.th
@@ -8996,6 +9066,45 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv bug sk=NULL redo = 1&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;prot
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tcp.c: tcp_rcv sk-&gt;prot = NULL &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* charge the memory to the socket. */
 r_if
 c_cond
@@ -9193,6 +9302,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|opt
+op_logical_and
+(paren
 id|opt-&gt;security
 op_ne
 l_int|0
@@ -9202,6 +9314,7 @@ op_ne
 l_int|0
 op_logical_or
 id|th-&gt;syn
+)paren
 )paren
 (brace
 id|sk-&gt;err

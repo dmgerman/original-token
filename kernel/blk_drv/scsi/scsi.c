@@ -3731,10 +3731,17 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|scsi_dev_init
-r_void
+r_int
+r_int
 id|scsi_dev_init
 (paren
-r_void
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
 )paren
 (brace
 r_int
@@ -3821,28 +3828,46 @@ c_func
 suffix:semicolon
 multiline_comment|/* scan for scsi devices */
 macro_line|#ifdef CONFIG_BLK_DEV_SD
+id|memory_start
+op_assign
 id|sd_init
 c_func
 (paren
+id|memory_start
+comma
+id|memory_end
 )paren
 suffix:semicolon
 multiline_comment|/* init scsi disks */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ST
+id|memory_start
+op_assign
 id|st_init
 c_func
 (paren
+id|memory_start
+comma
+id|memory_end
 )paren
 suffix:semicolon
 multiline_comment|/* init scsi tapes */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_SR
+id|memory_start
+op_assign
 id|sr_init
 c_func
 (paren
+id|memory_start
+comma
+id|memory_end
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+id|memory_start
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|print_inquiry

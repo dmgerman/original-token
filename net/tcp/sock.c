@@ -7,8 +7,8 @@ macro_line|#include &lt;netinet/in.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sock_ioctl.h&gt;
-macro_line|#include &lt;asm/memory.h&gt;
 macro_line|#include &quot;../kern_sock.h&quot;
 macro_line|#include &quot;timer.h&quot;
 macro_line|#include &quot;ip.h&quot;
@@ -544,6 +544,21 @@ op_star
 id|sk
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk
+)paren
+(brace
+id|PRINTK
+(paren
+l_string|&quot;  print_sk(NULL)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|PRINTK
 (paren
 l_string|&quot;  wmem_alloc = %d&bslash;n&quot;
@@ -697,6 +712,21 @@ op_star
 id|skb
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb
+)paren
+(brace
+id|PRINTK
+(paren
+l_string|&quot;  print_skb(NULL)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|PRINTK
 (paren
 l_string|&quot;  prev = %X, next = %X&bslash;n&quot;
@@ -1439,6 +1469,36 @@ comma
 id|sk1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk1
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sock.c: remove_sock: sk1 == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk1-&gt;prot
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sock.c: remove_sock: sk1-&gt;prot == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* we can&squot;t have this changing out from under us. */
 id|cli
 c_func
@@ -1490,37 +1550,22 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|sk2
+op_logical_and
 id|sk2-&gt;next
 op_ne
 id|sk1
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|sk2
-op_eq
-l_int|NULL
-)paren
-(brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-l_string|&quot;remove_sock: sock  not found.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|sk2
 op_assign
 id|sk2-&gt;next
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|sk2
+)paren
+(brace
 id|sk2-&gt;next
 op_assign
 id|sk1-&gt;next
@@ -1528,6 +1573,26 @@ suffix:semicolon
 id|sti
 c_func
 (paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk1-&gt;num
+op_ne
+l_int|0
+)paren
+id|PRINTK
+(paren
+l_string|&quot;remove_sock: sock  not found.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -7467,6 +7532,36 @@ op_star
 id|sk
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sock.c: release_sock sk == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;prot
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;sock.c: release_sock sk-&gt;prot == NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

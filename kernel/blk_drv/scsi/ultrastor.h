@@ -104,7 +104,7 @@ mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, u
 multiline_comment|/* ??? What should can_queue be set to?  Currently 1... */
 macro_line|#else
 DECL|macro|ULTRASTOR_14F
-mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      0, 0, 0 }
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      0, 0, 0, 1 }
 macro_line|#endif
 DECL|macro|UD_ABORT
 mdefine_line|#define UD_ABORT 0x0001

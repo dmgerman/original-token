@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;   /* For the door lock/unlock commands */
@@ -77,10 +78,8 @@ DECL|variable|bb
 r_static
 r_struct
 id|block_buffer
+op_star
 id|bb
-(braket
-id|MAX_SR
-)braket
 suffix:semicolon
 r_static
 r_int
@@ -840,8 +839,33 @@ id|filp
 r_if
 c_cond
 (paren
-id|filp-&gt;f_mode
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
 )paren
+op_ge
+id|NR_SR
+op_logical_or
+op_logical_neg
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|device
+)paren
+(brace
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+)brace
+multiline_comment|/* No such device */
 id|check_disk_change
 c_func
 (paren
@@ -1573,15 +1597,41 @@ id|MAX_RETRIES
 suffix:semicolon
 )brace
 DECL|function|sr_init
-r_void
+r_int
+r_int
 id|sr_init
 c_func
 (paren
-r_void
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|bb
+op_assign
+(paren
+r_struct
+id|block_buffer
+op_star
+)paren
+id|memory_start
+suffix:semicolon
+id|memory_start
+op_add_assign
+id|NR_SR
+op_star
+r_sizeof
+(paren
+r_struct
+id|block_buffer
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1689,6 +1739,9 @@ id|MAJOR_NR
 op_assign
 op_amp
 id|sr_fops
+suffix:semicolon
+r_return
+id|memory_start
 suffix:semicolon
 )brace
 macro_line|#endif

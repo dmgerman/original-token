@@ -243,6 +243,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|WD7000FASST
-mdefine_line|#define WD7000FASST {&quot;Western Digital 7000FASST&quot;, wd7000fasst_detect,&t;&bslash;&n;&t;&t;wd7000fasst_info, wd7000fasst_command,&t;&t;&bslash;&n;&t;&t;wd7000fasst_queuecommand,&t;&t;&bslash;&n;&t;&t;wd7000fasst_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;wd7000fasst_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;1, 7, 0}
+mdefine_line|#define WD7000FASST {&quot;Western Digital 7000FASST&quot;, wd7000fasst_detect,&t;&bslash;&n;&t;&t;wd7000fasst_info, wd7000fasst_command,&t;&t;&bslash;&n;&t;&t;wd7000fasst_queuecommand,&t;&t;&bslash;&n;&t;&t;wd7000fasst_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;wd7000fasst_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;1, 7, 0, 1}
 macro_line|#endif
 eof

@@ -154,7 +154,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren
@@ -412,7 +412,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren
@@ -485,7 +485,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren
@@ -750,7 +750,7 @@ suffix:semicolon
 id|minix_free_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren

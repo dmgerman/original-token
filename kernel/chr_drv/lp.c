@@ -1,7 +1,6 @@
-multiline_comment|/*&n; $Header: /usr/src/linux/kernel/chr_drv/lp.c,v 1.9 1992/01/06 16:11:19&n;  james_r_wiegand Exp james_r_wiegand $&n;*/
-multiline_comment|/*&n; * Edited by Linus - cleaner interface etc. Still not using interrupts, so&n; * it eats more resources than necessary, but it was easy to code this way...&n; */
-macro_line|#include &lt;linux/sched.h&gt;
+multiline_comment|/*&n; * Copyright (C) 1992 by Jim Weigand, Linus Torvalds, and Michael K. Johnson&n; */
 macro_line|#include &lt;linux/lp.h&gt;
+multiline_comment|/* sched.h is included from lp.h */
 DECL|function|lp_reset
 r_static
 r_int
@@ -21,13 +20,11 @@ c_func
 (paren
 l_int|0
 comma
-id|LP_B
+id|LP_C
 c_func
 (paren
 id|minor
 )paren
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 r_for
@@ -52,13 +49,11 @@ id|LP_PSELECP
 op_or
 id|LP_PINITP
 comma
-id|LP_B
+id|LP_C
 c_func
 (paren
 id|minor
 )paren
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 r_return
@@ -115,13 +110,18 @@ c_func
 id|minor
 )paren
 suffix:semicolon
+id|count
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|need_resched
+)paren
 id|schedule
 c_func
 (paren
 )paren
-suffix:semicolon
-id|count
-op_increment
 suffix:semicolon
 )brace
 r_while
@@ -136,7 +136,7 @@ id|LP_PBUSY
 op_logical_and
 id|count
 OL
-id|LP_TIMEOUT
+id|LP_TIME_CHAR
 )paren
 (brace
 suffix:semicolon
@@ -146,22 +146,15 @@ c_cond
 (paren
 id|count
 op_eq
-id|LP_TIMEOUT
+id|LP_TIME_CHAR
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;lp%d timeout&bslash;n&bslash;r&quot;
-comma
-id|minor
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* we timed out, and the character was /not/ printed */
 )brace
-multiline_comment|/* control port pr_table[0]+2 take strobe high */
+multiline_comment|/* control port takes strobe high */
 id|outb
 c_func
 (paren
@@ -174,13 +167,11 @@ id|LP_PSTROBE
 )paren
 comma
 (paren
-id|LP_B
+id|LP_C
 c_func
 (paren
 id|minor
 )paren
-op_plus
-l_int|2
 )paren
 )paren
 suffix:semicolon
@@ -195,13 +186,11 @@ id|LP_PINITP
 )paren
 comma
 (paren
-id|LP_B
+id|LP_C
 c_func
 (paren
 id|minor
 )paren
-op_plus
-l_int|2
 )paren
 )paren
 suffix:semicolon
@@ -251,6 +240,16 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_int
+r_int
+id|each_cnt
+op_assign
+l_int|0
+comma
+id|old_cnt
+op_assign
+l_int|0
+suffix:semicolon
 r_char
 id|c
 comma
@@ -277,7 +276,6 @@ id|get_fs_byte
 c_func
 (paren
 id|temp
-op_increment
 )paren
 suffix:semicolon
 id|retval
@@ -290,9 +288,147 @@ comma
 id|minor
 )paren
 suffix:semicolon
+multiline_comment|/* only update counting vars if character was printed */
+r_if
+c_cond
+(paren
+id|retval
+)paren
+(brace
 id|count
 op_decrement
 suffix:semicolon
+id|temp
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|retval
+)paren
+(brace
+multiline_comment|/* if printer timed out */
+id|each_cnt
+op_assign
+id|count
+op_minus
+id|old_cnt
+suffix:semicolon
+id|old_cnt
+op_assign
+id|count
+suffix:semicolon
+multiline_comment|/* here we do calculations based on old count&n;&t;&t;&t;   and change the time that we will sleep.&n;&t;&t;&t;   For now this will be hard coded... */
+multiline_comment|/* check for signals before going to sleep */
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+(brace
+r_return
+id|temp
+op_minus
+id|buf
+ques
+c_cond
+id|temp
+op_minus
+id|buf
+suffix:colon
+op_minus
+id|ERESTARTSYS
+suffix:semicolon
+)brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|LP_TIME
+c_func
+(paren
+id|minor
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|LP_COUNT
+c_func
+(paren
+id|minor
+)paren
+op_assign
+id|each_cnt
+suffix:semicolon
+multiline_comment|/* the following is ugly, but should alert me if&n;&t;&t;&t;   something dreadful is going on. It will disappear&n;&t;&t;&t;   in the final versions of the driver. */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|LP_S
+c_func
+(paren
+id|minor
+)paren
+op_amp
+id|LP_BUSY
+)paren
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|LP_TIMEOUT
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|LP_S
+c_func
+(paren
+id|minor
+)paren
+op_amp
+id|LP_BUSY
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;lp%d timeout&bslash;n&bslash;r&quot;
+comma
+id|minor
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -308,6 +444,14 @@ id|minor
 )paren
 op_or_assign
 id|LP_NOPA
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lp%d out of paper&bslash;n&bslash;r&quot;
+comma
+id|minor
+)paren
 suffix:semicolon
 r_return
 id|temp
@@ -349,9 +493,16 @@ c_func
 (paren
 id|minor
 )paren
-op_and_assign
-op_complement
+op_or_assign
 id|LP_SELEC
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lp%d off-line&bslash;n&bslash;r&quot;
+comma
+id|minor
+)paren
 suffix:semicolon
 r_return
 id|temp
@@ -397,6 +548,14 @@ id|minor
 op_or_assign
 id|LP_ERR
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lp%d on fire&bslash;n&bslash;r&quot;
+comma
+id|minor
+)paren
+suffix:semicolon
 r_return
 id|temp
 op_minus
@@ -421,6 +580,7 @@ op_and_assign
 op_complement
 id|LP_SELEC
 suffix:semicolon
+)brace
 )brace
 r_return
 id|temp
@@ -615,8 +775,10 @@ op_assign
 (brace
 id|lp_lseek
 comma
+multiline_comment|/* why not null? */
 id|lp_read
 comma
+multiline_comment|/* why not null? */
 id|lp_write
 comma
 l_int|NULL
@@ -630,7 +792,7 @@ comma
 multiline_comment|/* lp_ioctl */
 l_int|NULL
 comma
-multiline_comment|/* lp_mmap */
+multiline_comment|/* mmap */
 id|lp_open
 comma
 id|lp_release

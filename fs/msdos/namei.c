@@ -912,7 +912,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -988,7 +988,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -1080,7 +1080,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|next-&gt;i_dev
+id|next-&gt;i_sb
 comma
 id|next-&gt;i_ino
 )paren
@@ -1282,7 +1282,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -2154,7 +2154,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -2458,7 +2458,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dir-&gt;i_dev
+id|dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -2693,7 +2693,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|new_dir-&gt;i_dev
+id|new_dir-&gt;i_sb
 comma
 id|new_ino
 )paren
@@ -2816,7 +2816,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|old_dir-&gt;i_dev
+id|old_dir-&gt;i_sb
 comma
 id|old_ino
 )paren
@@ -2962,7 +2962,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|new_dir-&gt;i_dev
+id|new_dir-&gt;i_sb
 comma
 id|new_dir-&gt;i_ino
 )paren
@@ -3027,7 +3027,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|new_dir-&gt;i_dev
+id|new_dir-&gt;i_sb
 comma
 id|ino
 )paren
@@ -3104,7 +3104,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|old_dir-&gt;i_dev
+id|old_dir-&gt;i_sb
 comma
 id|old_ino
 )paren
@@ -3196,7 +3196,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|new_dir-&gt;i_dev
+id|new_dir-&gt;i_sb
 comma
 id|new_ino
 )paren
@@ -3317,7 +3317,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|new_dir-&gt;i_dev
+id|new_dir-&gt;i_sb
 comma
 id|free_ino
 )paren
@@ -3500,7 +3500,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|old_inode-&gt;i_dev
+id|old_inode-&gt;i_sb
 comma
 id|dotdot_ino
 )paren

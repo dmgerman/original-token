@@ -277,6 +277,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1542
-mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;1, 7, 0}
+mdefine_line|#define AHA1542 {&quot;Adaptec 1542&quot;, aha1542_detect,&t;&bslash;&n;&t;&t;aha1542_info, aha1542_command,&t;&t;&bslash;&n;&t;&t;aha1542_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;aha1542_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;aha1542_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;1, 7, 0, 1}
 macro_line|#endif
 eof

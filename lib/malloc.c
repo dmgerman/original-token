@@ -3,6 +3,7 @@ multiline_comment|/* I&squot;m going to modify it to keep some free pages around
 multiline_comment|/* since the advent of GFP_ATOMIC, I&squot;ve changed the malloc code to&n;   use it and return NULL if it can&squot;t get a page. -RAB */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|struct|bucket_desc
 r_struct
@@ -349,6 +350,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|len
+op_assign
+id|bdir-&gt;size
+suffix:semicolon
 multiline_comment|/*&n;&t; * Now we search for a bucket descriptor which has free space&n;&t; */
 id|cli
 c_func
@@ -429,7 +434,7 @@ l_int|0
 suffix:semicolon
 id|bdesc-&gt;bucket_size
 op_assign
-id|bdir-&gt;size
+id|len
 suffix:semicolon
 id|bdesc-&gt;page
 op_assign
@@ -471,7 +476,7 @@ id|i
 op_assign
 id|PAGE_SIZE
 op_div
-id|bdir-&gt;size
+id|len
 suffix:semicolon
 id|i
 OG
@@ -493,11 +498,11 @@ id|cp
 op_assign
 id|cp
 op_plus
-id|bdir-&gt;size
+id|len
 suffix:semicolon
 id|cp
 op_add_assign
-id|bdir-&gt;size
+id|len
 suffix:semicolon
 )brace
 op_star
@@ -551,6 +556,16 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* OK, we&squot;re safe again */
+id|memset
+c_func
+(paren
+id|retval
+comma
+l_int|0
+comma
+id|len
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

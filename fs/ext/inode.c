@@ -5,52 +5,9 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-r_int
-id|sync_dev
-c_func
-(paren
-r_int
-id|dev
-)paren
-suffix:semicolon
-DECL|function|wait_on_buffer
-r_static
-r_inline
-r_void
-id|wait_on_buffer
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-)paren
-(brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|bh-&gt;b_lock
-)paren
-id|sleep_on
-c_func
-(paren
-op_amp
-id|bh-&gt;b_wait
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|ext_put_inode
 r_void
 id|ext_put_inode
@@ -62,6 +19,13 @@ op_star
 id|inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+)paren
+r_return
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -120,7 +84,7 @@ id|brelse
 id|sb-&gt;u.ext_sb.s_firstfreeblock
 )paren
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|sb
@@ -212,7 +176,7 @@ id|s-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|s
@@ -299,7 +263,7 @@ id|s-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|s
@@ -354,7 +318,7 @@ id|s-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|s
@@ -422,7 +386,7 @@ id|s-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
-id|free_super
+id|unlock_super
 (paren
 id|s
 )paren
@@ -432,7 +396,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|free_super
+id|unlock_super
 c_func
 (paren
 id|s
@@ -458,7 +422,7 @@ op_assign
 id|iget
 c_func
 (paren
-id|dev
+id|s
 comma
 id|EXT_ROOT_INO
 )paren
@@ -1137,7 +1101,7 @@ op_assign
 id|ext_new_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 )paren
 suffix:semicolon
 r_if
@@ -1171,7 +1135,7 @@ id|p
 id|ext_free_block
 c_func
 (paren
-id|inode-&gt;i_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren
@@ -1211,6 +1175,11 @@ op_star
 id|block_getblk
 c_func
 (paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
 r_struct
 id|buffer_head
 op_star
@@ -1371,7 +1340,7 @@ op_assign
 id|ext_new_block
 c_func
 (paren
-id|bh-&gt;b_dev
+id|inode-&gt;i_sb
 )paren
 suffix:semicolon
 r_if
@@ -1413,7 +1382,7 @@ id|p
 id|ext_free_block
 c_func
 (paren
-id|bh-&gt;b_dev
+id|inode-&gt;i_sb
 comma
 id|tmp
 )paren
@@ -1565,6 +1534,8 @@ r_return
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 id|block
@@ -1604,6 +1575,8 @@ op_assign
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 id|block
@@ -1617,6 +1590,8 @@ r_return
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 id|block
@@ -1650,6 +1625,8 @@ op_assign
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 id|block
@@ -1664,6 +1641,8 @@ op_assign
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 (paren
@@ -1681,6 +1660,8 @@ r_return
 id|block_getblk
 c_func
 (paren
+id|inode
+comma
 id|bh
 comma
 id|block

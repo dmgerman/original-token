@@ -2421,7 +2421,11 @@ c_cond
 id|sk
 op_eq
 l_int|NULL
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 (paren
 id|daddr
 op_amp
@@ -2450,6 +2454,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+)brace
 id|skb-&gt;sk
 op_assign
 l_int|NULL

@@ -59,6 +59,10 @@ op_xor
 id|b-&gt;sign
 )paren
 suffix:semicolon
+id|dest-&gt;tag
+op_assign
+id|TW_Valid
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -90,11 +94,6 @@ id|st0_ptr
 )paren
 suffix:semicolon
 )brace
-r_else
-id|dest-&gt;tag
-op_assign
-id|TW_Valid
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
