@@ -130,82 +130,6 @@ id|sysctl_arp_dead_res_time
 op_assign
 id|ARP_DEAD_RES_TIME
 suffix:semicolon
-multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache.&n; */
-DECL|struct|arp_table
-r_struct
-id|arp_table
-(brace
-r_union
-(brace
-DECL|member|dst
-r_struct
-id|dst_entry
-id|dst
-suffix:semicolon
-DECL|member|next
-r_struct
-id|arp_table
-op_star
-id|next
-suffix:semicolon
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
-DECL|member|last_updated
-r_int
-r_int
-id|last_updated
-suffix:semicolon
-multiline_comment|/* For expiry &t;&t;&t;*/
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* Control status &t;&t;*/
-DECL|member|ip
-id|u32
-id|ip
-suffix:semicolon
-DECL|member|mask
-id|u32
-id|mask
-suffix:semicolon
-multiline_comment|/* netmask - used for generalised proxy arps (tridge) &t;&t;*/
-DECL|member|hatype
-r_int
-id|hatype
-suffix:semicolon
-DECL|member|ha
-r_int
-r_char
-id|ha
-(braket
-id|MAX_ADDR_LEN
-)braket
-suffix:semicolon
-multiline_comment|/* Hardware address&t;&t;*/
-multiline_comment|/*&n;&t; *&t;The following entries are only used for unresolved hw addresses.&n;&t; */
-DECL|member|timer
-r_struct
-id|timer_list
-id|timer
-suffix:semicolon
-multiline_comment|/* expire timer &t;&t;*/
-DECL|member|retries
-r_int
-id|retries
-suffix:semicolon
-multiline_comment|/* remaining retries&t; &t;*/
-DECL|member|skb
-r_struct
-id|sk_buff_head
-id|skb
-suffix:semicolon
-multiline_comment|/* list of queued packets &t;*/
-)brace
-suffix:semicolon
 macro_line|#if RT_CACHE_DEBUG &gt;= 1
 DECL|macro|ASSERT_BH
 mdefine_line|#define ASSERT_BH() if (!intr_count) printk(KERN_CRIT __FUNCTION__ &quot; called from SPL=0&bslash;n&quot;);
@@ -213,67 +137,31 @@ macro_line|#else
 DECL|macro|ASSERT_BH
 mdefine_line|#define ASSERT_BH()
 macro_line|#endif
-multiline_comment|/*&n; *&t;Interface to generic destionation cache.&n; */
 r_static
 r_void
-id|arp_dst_destroy
+id|arp_neigh_destroy
 c_func
 (paren
 r_struct
-id|dst_entry
+id|neighbour
 op_star
-id|dst
+id|neigh
 )paren
 suffix:semicolon
-DECL|function|arp_dst_check
-r_static
+multiline_comment|/*&n; *&t;Interface to generic neighbour cache.&n; */
+DECL|variable|arp_neigh_ops
 r_struct
-id|dst_entry
-op_star
-id|arp_dst_check
-c_func
-(paren
-r_struct
-id|dst_entry
-op_star
-id|dst
-)paren
-(brace
-r_return
-id|dst
-suffix:semicolon
-)brace
-DECL|function|arp_dst_reroute
-r_static
-r_struct
-id|dst_entry
-op_star
-id|arp_dst_reroute
-c_func
-(paren
-r_struct
-id|dst_entry
-op_star
-id|dst
-)paren
-(brace
-r_return
-id|dst
-suffix:semicolon
-)brace
-DECL|variable|arp_dst_ops
-r_struct
-id|dst_ops
-id|arp_dst_ops
+id|neigh_ops
+id|arp_neigh_ops
 op_assign
 (brace
-id|AF_UNSPEC
+id|AF_INET
 comma
-id|arp_dst_check
+l_int|NULL
 comma
-id|arp_dst_reroute
+id|arp_find
 comma
-id|arp_dst_destroy
+id|arp_neigh_destroy
 )brace
 suffix:semicolon
 DECL|variable|arp_size
@@ -419,7 +307,7 @@ r_char
 op_star
 )paren
 op_assign
-id|entry-&gt;u.dst.dev-&gt;header_cache_update
+id|entry-&gt;u.neigh.dev-&gt;header_cache_update
 suffix:semicolon
 macro_line|#if RT_CACHE_DEBUG &gt;= 1
 r_if
@@ -428,7 +316,7 @@ c_cond
 op_logical_neg
 id|update
 op_logical_and
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 )paren
 (brace
 id|printk
@@ -437,7 +325,7 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;arp_update_hhs: no update callback for %s&bslash;n&quot;
 comma
-id|entry-&gt;u.dst.dev-&gt;name
+id|entry-&gt;u.neigh.dev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -449,7 +337,7 @@ c_loop
 (paren
 id|hh
 op_assign
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 suffix:semicolon
 id|hh
 suffix:semicolon
@@ -462,9 +350,9 @@ c_func
 (paren
 id|hh
 comma
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 comma
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 )paren
 suffix:semicolon
 )brace
@@ -492,7 +380,7 @@ c_loop
 (paren
 id|hh
 op_assign
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 suffix:semicolon
 id|hh
 suffix:semicolon
@@ -539,7 +427,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|entry-&gt;skb
+id|entry-&gt;u.neigh.arp_queue
 )paren
 )paren
 op_ne
@@ -643,24 +531,24 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-id|dst_free
+id|neigh_destroy
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst
+id|entry-&gt;u.neigh
 )paren
 suffix:semicolon
 )brace
-DECL|function|arp_dst_destroy
+DECL|function|arp_neigh_destroy
 r_static
 r_void
-id|arp_dst_destroy
+id|arp_neigh_destroy
 c_func
 (paren
 r_struct
-id|dst_entry
+id|neighbour
 op_star
-id|dst
+id|neigh
 )paren
 (brace
 r_struct
@@ -673,7 +561,7 @@ r_struct
 id|arp_table
 op_star
 )paren
-id|dst
+id|neigh
 suffix:semicolon
 r_struct
 id|hh_cache
@@ -703,9 +591,9 @@ id|entry
 suffix:semicolon
 id|hh
 op_assign
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 suffix:semicolon
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -896,13 +784,13 @@ id|ha
 id|memcpy
 c_func
 (paren
-id|arpreq-&gt;ha
+id|arpreq-&gt;u.neigh.ha
 comma
 id|ha
 comma
 r_sizeof
 (paren
-id|arpreq-&gt;ha
+id|arpreq-&gt;u.neigh.ha
 )paren
 )paren
 suffix:semicolon
@@ -1199,7 +1087,7 @@ c_func
 (paren
 id|retreq-&gt;ip
 comma
-id|retreq-&gt;ha
+id|retreq-&gt;u.neigh.ha
 comma
 id|dev
 comma
@@ -1305,7 +1193,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_static
-r_int
 id|last_index
 suffix:semicolon
 r_if
@@ -1379,11 +1266,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 op_logical_and
 id|now
 op_minus
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 OG
 id|sysctl_arp_timeout
 )paren
@@ -1424,9 +1311,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 op_logical_and
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 OL
 id|oldest_used
 )paren
@@ -1437,7 +1324,7 @@ id|pentry
 suffix:semicolon
 id|oldest_used
 op_assign
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 suffix:semicolon
 )brace
 )brace
@@ -1590,7 +1477,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 (brace
 macro_line|#if RT_CACHE_DEBUG &gt;= 2
@@ -1731,11 +1618,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 op_logical_and
 id|now
 op_minus
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 OG
 id|sysctl_arp_timeout
 )paren
@@ -1776,7 +1663,7 @@ id|device
 op_star
 id|dev
 op_assign
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 suffix:semicolon
 id|entry-&gt;retries
 op_assign
@@ -1817,7 +1704,7 @@ id|dev
 comma
 id|dev-&gt;pa_addr
 comma
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|dev-&gt;dev_addr
 comma
@@ -1934,7 +1821,7 @@ id|device
 op_star
 id|dev
 op_assign
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 suffix:semicolon
 macro_line|#if RT_CACHE_DEBUG &gt;= 2
 id|printk
@@ -1978,7 +1865,7 @@ OG
 id|sysctl_arp_max_tries
 ques
 c_cond
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 suffix:colon
 l_int|NULL
 comma
@@ -2000,7 +1887,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;The host is dead, but someone refers to it.&n;&t;&t; *&t;It is useless to drop this entry just now,&n;&t;&t; *&t;it will be born again, so that&n;&t;&t; *&t;we keep it, but slow down retransmitting&n;&t;&t; *&t;to ARP_DEAD_RES_TIME.&n;&t;&t; */
@@ -2009,7 +1896,7 @@ id|device
 op_star
 id|dev
 op_assign
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 suffix:semicolon
 macro_line|#if RT_CACHE_DEBUG &gt;= 2
 id|printk
@@ -2237,7 +2124,7 @@ r_struct
 id|arp_table
 op_star
 )paren
-id|dst_alloc
+id|neigh_alloc
 c_func
 (paren
 r_sizeof
@@ -2247,8 +2134,12 @@ id|arp_table
 )paren
 comma
 op_amp
-id|arp_dst_ops
+id|arp_neigh_ops
 )paren
+suffix:semicolon
+id|entry-&gt;u.neigh.refcnt
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2296,13 +2187,6 @@ suffix:semicolon
 id|entry-&gt;last_updated
 op_assign
 id|jiffies
-suffix:semicolon
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|entry-&gt;skb
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -2413,7 +2297,7 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_ne
 id|dev
 )paren
@@ -2476,7 +2360,7 @@ id|skb_dequeue
 c_func
 (paren
 op_amp
-id|entry-&gt;skb
+id|entry-&gt;u.neigh.arp_queue
 )paren
 )paren
 op_ne
@@ -2579,7 +2463,7 @@ id|entry-&gt;ip
 op_eq
 id|sip
 op_logical_and
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 )paren
@@ -2620,7 +2504,7 @@ c_cond
 id|memcmp
 c_func
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|sha
 comma
@@ -2633,7 +2517,7 @@ l_int|0
 id|memcpy
 c_func
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|sha
 comma
@@ -2733,14 +2617,14 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|sha
 comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_assign
 id|dev
 suffix:semicolon
@@ -2766,11 +2650,11 @@ id|hash
 op_assign
 id|entry
 suffix:semicolon
-id|dst_release
+id|neigh_release
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst
+id|entry-&gt;u.neigh
 )paren
 suffix:semicolon
 r_return
@@ -2829,7 +2713,7 @@ id|entry-&gt;ip
 op_eq
 id|paddr
 op_logical_and
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 )paren
@@ -3025,7 +2909,7 @@ id|device
 op_star
 id|dev
 op_assign
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 suffix:semicolon
 id|del_timer
 c_func
@@ -3146,7 +3030,7 @@ id|entry-&gt;ip
 op_assign
 id|paddr
 suffix:semicolon
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_assign
 id|dev
 suffix:semicolon
@@ -3165,7 +3049,7 @@ id|skb_queue_tail
 c_func
 (paren
 op_amp
-id|entry-&gt;skb
+id|entry-&gt;u.neigh.arp_queue
 comma
 id|skb
 )paren
@@ -3197,11 +3081,11 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-id|dst_release
+id|neigh_release
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst
+id|entry-&gt;u.neigh
 )paren
 suffix:semicolon
 )brace
@@ -3350,7 +3234,7 @@ op_amp
 id|ATF_COM
 )paren
 (brace
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3359,7 +3243,7 @@ c_func
 (paren
 id|haddr
 comma
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|dev-&gt;addr_len
 )paren
@@ -3400,7 +3284,7 @@ id|entry-&gt;last_updated
 r_if
 c_cond
 (paren
-id|entry-&gt;skb.qlen
+id|entry-&gt;u.neigh.arp_queue.qlen
 OL
 id|ARP_MAX_UNRES_PACKETS
 )paren
@@ -3408,7 +3292,7 @@ id|skb_queue_tail
 c_func
 (paren
 op_amp
-id|entry-&gt;skb
+id|entry-&gt;u.neigh.arp_queue
 comma
 id|skb
 )paren
@@ -3512,7 +3396,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 )paren
@@ -3741,7 +3625,7 @@ op_amp
 id|ATF_COM
 )paren
 (brace
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3750,7 +3634,7 @@ c_func
 (paren
 id|haddr
 comma
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|dev-&gt;addr_len
 )paren
@@ -3775,7 +3659,7 @@ suffix:semicolon
 )brace
 DECL|function|arp_find_neighbour
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|arp_find_neighbour
 c_func
@@ -3897,7 +3781,7 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 suffix:semicolon
 id|end_bh_atomic
@@ -3905,14 +3789,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 op_assign
 id|jiffies
 suffix:semicolon
 r_return
 (paren
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 )paren
 id|entry
@@ -3948,7 +3832,7 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 suffix:semicolon
 id|end_bh_atomic
@@ -3959,7 +3843,7 @@ suffix:semicolon
 r_return
 (paren
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 )paren
 id|entry
@@ -4903,7 +4787,7 @@ op_logical_and
 (paren
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_logical_and
 (paren
 op_logical_neg
@@ -4919,7 +4803,7 @@ id|dev-&gt;type
 )paren
 )paren
 op_logical_or
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 )paren
@@ -4951,7 +4835,7 @@ id|ATF_COM
 )paren
 ques
 c_cond
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 suffix:colon
 id|dev-&gt;dev_addr
 suffix:semicolon
@@ -5485,9 +5369,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_logical_or
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 )paren
@@ -5523,7 +5407,7 @@ id|entry-&gt;mask
 op_ne
 id|mask
 op_logical_or
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_ne
 id|dev
 )paren
@@ -5572,7 +5456,7 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 suffix:semicolon
 r_else
@@ -5614,7 +5498,7 @@ id|entry-&gt;ip
 op_assign
 id|ip
 suffix:semicolon
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_assign
 id|dev
 suffix:semicolon
@@ -5716,7 +5600,7 @@ id|ha
 id|memcpy
 c_func
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 id|ha
 comma
@@ -5732,7 +5616,7 @@ r_else
 id|memset
 c_func
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
 l_int|0
 comma
@@ -5741,7 +5625,7 @@ id|MAX_ADDR_LEN
 suffix:semicolon
 id|entry-&gt;last_updated
 op_assign
-id|entry-&gt;u.dst.lastuse
+id|entry-&gt;u.neigh.lastused
 op_assign
 id|jiffies
 suffix:semicolon
@@ -5769,7 +5653,7 @@ c_func
 (paren
 id|entry-&gt;ip
 comma
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 comma
 id|ha
 )paren
@@ -5789,11 +5673,11 @@ id|entry
 )paren
 suffix:semicolon
 )brace
-id|dst_release
+id|neigh_release
 c_func
 (paren
 op_amp
-id|entry-&gt;u.dst
+id|entry-&gt;u.neigh
 )paren
 suffix:semicolon
 id|end_bh_atomic
@@ -5942,7 +5826,7 @@ id|ATF_PUBL
 ques
 c_cond
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 op_logical_and
@@ -5952,7 +5836,7 @@ id|r-&gt;arp_ha.sa_family
 )paren
 suffix:colon
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 op_logical_or
@@ -5965,7 +5849,7 @@ id|dev
 r_if
 c_cond
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 )paren
 (brace
 id|memcpy
@@ -5973,21 +5857,21 @@ c_func
 (paren
 id|r-&gt;arp_ha.sa_data
 comma
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 comma
-id|entry-&gt;u.dst.dev-&gt;addr_len
+id|entry-&gt;u.neigh.dev-&gt;addr_len
 )paren
 suffix:semicolon
 id|r-&gt;arp_ha.sa_family
 op_assign
-id|entry-&gt;u.dst.dev-&gt;type
+id|entry-&gt;u.neigh.dev-&gt;type
 suffix:semicolon
 id|strncpy
 c_func
 (paren
 id|r-&gt;arp_dev
 comma
-id|entry-&gt;u.dst.dev-&gt;name
+id|entry-&gt;u.neigh.dev-&gt;name
 comma
 r_sizeof
 (paren
@@ -6181,7 +6065,7 @@ id|mask
 )paren
 op_logical_and
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 op_eq
 id|dev
 op_logical_or
@@ -6216,7 +6100,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 )paren
 (brace
 id|arp_free
@@ -6921,7 +6805,7 @@ c_func
 id|ax25_address
 op_star
 )paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 )paren
 )paren
 suffix:semicolon
@@ -6948,7 +6832,7 @@ c_func
 id|ax25_address
 op_star
 )paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 )paren
 )paren
 suffix:semicolon
@@ -6960,7 +6844,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 )paren
 (brace
 r_for
@@ -6982,7 +6866,7 @@ l_int|3
 op_logical_and
 id|j
 OL
-id|entry-&gt;u.dst.dev-&gt;addr_len
+id|entry-&gt;u.neigh.dev-&gt;addr_len
 suffix:semicolon
 id|j
 op_increment
@@ -6997,7 +6881,7 @@ op_assign
 id|hexbuf
 (braket
 (paren
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 (braket
 id|j
 )braket
@@ -7016,7 +6900,7 @@ op_increment
 op_assign
 id|hexbuf
 (braket
-id|entry-&gt;ha
+id|entry-&gt;u.neigh.ha
 (braket
 id|j
 )braket
@@ -7105,10 +6989,10 @@ c_func
 id|entry-&gt;mask
 )paren
 comma
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 ques
 c_cond
-id|entry-&gt;u.dst.dev-&gt;name
+id|entry-&gt;u.neigh.dev-&gt;name
 suffix:colon
 l_string|&quot;*&quot;
 )paren
@@ -7140,27 +7024,27 @@ c_func
 id|entry-&gt;mask
 )paren
 comma
-id|entry-&gt;u.dst.dev
+id|entry-&gt;u.neigh.dev
 ques
 c_cond
-id|entry-&gt;u.dst.dev-&gt;name
+id|entry-&gt;u.neigh.dev-&gt;name
 suffix:colon
 l_string|&quot;*&quot;
 comma
-id|entry-&gt;u.dst.refcnt
+id|entry-&gt;u.neigh.refcnt
 comma
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 ques
 c_cond
-id|entry-&gt;u.dst.hh-&gt;hh_refcnt
+id|entry-&gt;u.neigh.hh-&gt;hh_refcnt
 suffix:colon
 op_minus
 l_int|1
 comma
-id|entry-&gt;u.dst.hh
+id|entry-&gt;u.neigh.hh
 ques
 c_cond
-id|entry-&gt;u.dst.hh-&gt;hh_uptodate
+id|entry-&gt;u.neigh.hh-&gt;hh_uptodate
 suffix:colon
 l_int|0
 )paren

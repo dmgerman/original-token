@@ -378,7 +378,7 @@ DECL|macro|NR_F
 mdefine_line|#define NR_F 6
 multiline_comment|/*&n; * Maximum disk size (in kilobytes). This default is used whenever the&n; * current disk size is unknown.&n; * [Now it is rather a minimum]&n; */
 DECL|macro|MAX_DISK_SIZE
-mdefine_line|#define MAX_DISK_SIZE 2 /* 3984*/
+mdefine_line|#define MAX_DISK_SIZE 4 /* 3984*/
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
@@ -2809,7 +2809,7 @@ id|floppy_sizes
 id|TOMINOR
 c_func
 (paren
-id|current_drive
+id|drive
 )paren
 )braket
 op_assign
@@ -3941,7 +3941,7 @@ op_star
 )paren
 id|handler
 suffix:semicolon
-id|queue_task_irq
+id|queue_task
 c_func
 (paren
 op_amp
@@ -4489,6 +4489,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 id|show_floppy
 c_func
@@ -6921,7 +6922,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* interrupt handler */
+multiline_comment|/* interrupt handler. Note that this can be called externally on the Sparc */
 DECL|function|floppy_interrupt
 r_void
 id|floppy_interrupt
@@ -7350,6 +7351,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|show_floppy
+r_static
 r_void
 id|show_floppy
 c_func
@@ -13803,6 +13805,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* handle obsolete ioctl&squot;s */
 DECL|variable|ioctl_table
+r_static
 r_int
 id|ioctl_table
 (braket
@@ -16946,6 +16949,7 @@ suffix:semicolon
 multiline_comment|/* get_fdc_version */
 multiline_comment|/* lilo configuration */
 DECL|function|floppy_set_flags
+r_static
 r_void
 id|floppy_set_flags
 c_func

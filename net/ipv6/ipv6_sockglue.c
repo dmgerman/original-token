@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.12 1996/10/29 22:45:53 roque Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.8 1997/03/18 18:24:38 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -15,7 +15,7 @@ macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;net/sit.h&gt;
@@ -185,11 +185,9 @@ id|sk-&gt;protocol
 op_ne
 id|IPPROTO_TCP
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -329,13 +327,11 @@ id|val
 OG
 l_int|255
 )paren
-(brace
 id|retv
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_else
 (brace
 id|np-&gt;hop_limit
@@ -359,13 +355,11 @@ id|val
 OG
 l_int|255
 )paren
-(brace
 id|retv
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_else
 (brace
 id|np-&gt;mcast_hops
@@ -435,7 +429,7 @@ id|addr
 )paren
 )paren
 (brace
-id|np-&gt;mc_if
+id|np-&gt;oif
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -472,7 +466,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|np-&gt;mc_if
+id|np-&gt;oif
 op_assign
 id|ifp-&gt;idev-&gt;dev
 suffix:semicolon
@@ -541,6 +535,7 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#if 0
 r_struct
 id|in6_addr
 id|mcast
@@ -599,33 +594,18 @@ id|dc
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_else
 (brace
-r_struct
-id|inet6_dev
-op_star
-id|idev
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|idev
+id|dev
 op_assign
-id|ipv6_dev_by_index
+id|dev_get_by_index
 c_func
 (paren
 id|mreq.ipv6mr_ifindex
 )paren
-)paren
-)paren
-(brace
-id|dev
-op_assign
-id|idev-&gt;dev
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -634,12 +614,10 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -647,7 +625,6 @@ id|optname
 op_eq
 id|IPV6_ADD_MEMBERSHIP
 )paren
-(brace
 id|retv
 op_assign
 id|ipv6_sock_mc_join
@@ -661,9 +638,7 @@ op_amp
 id|mreq.ipv6mr_multiaddr
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|retv
 op_assign
 id|ipv6_sock_mc_drop
@@ -679,7 +654,7 @@ id|mreq.ipv6mr_multiaddr
 suffix:semicolon
 )brace
 )brace
-)brace
+suffix:semicolon
 id|out
 suffix:colon
 r_return
@@ -771,7 +746,7 @@ op_amp
 id|ipv6_dev_notf
 )paren
 suffix:semicolon
-id|ipv6_route_init
+id|ip6_route_init
 c_func
 (paren
 )paren
@@ -805,7 +780,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ipv6_route_cleanup
+id|ip6_route_cleanup
 c_func
 (paren
 )paren
@@ -822,5 +797,4 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O6 -m486 -c ipv6_sockglue.c&quot;&n; * End:&n; */
 eof

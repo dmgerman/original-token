@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.9 1996/12/18 06:46:55 tridge Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init.c,v 1.11 1997/03/18 17:58:24 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -27,6 +27,13 @@ multiline_comment|/* The root node of the prom device tree. */
 DECL|variable|prom_root_node
 r_int
 id|prom_root_node
+suffix:semicolon
+DECL|variable|prom_stdin
+DECL|variable|prom_stdout
+r_int
+id|prom_stdin
+comma
+id|prom_stdout
 suffix:semicolon
 multiline_comment|/* Pointer to the device tree operations structure. */
 DECL|variable|prom_nodeops
@@ -120,26 +127,6 @@ suffix:colon
 id|prom_vers
 op_assign
 id|PROM_V3
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-id|prom_vers
-op_assign
-id|PROM_P1275
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;PROMLIB: Sun IEEE Prom not supported yet&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -248,6 +235,29 @@ id|prom_halt
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|prom_vers
+op_eq
+id|PROM_V2
+op_logical_or
+id|prom_vers
+op_eq
+id|PROM_V3
+)paren
+(brace
+id|prom_stdout
+op_assign
+op_star
+id|romvec-&gt;pv_v2bootargs.fd_stdout
+suffix:semicolon
+id|prom_stdin
+op_assign
+op_star
+id|romvec-&gt;pv_v2bootargs.fd_stdin
 suffix:semicolon
 )brace
 id|prom_meminit

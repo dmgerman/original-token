@@ -2622,6 +2622,8 @@ id|code
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 )paren
 (brace

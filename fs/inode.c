@@ -2062,7 +2062,7 @@ op_decrement
 comma
 id|inode
 op_assign
-id|inode-&gt;i_next
+id|inode-&gt;i_prev
 )paren
 (brace
 r_if

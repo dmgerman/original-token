@@ -219,7 +219,6 @@ id|sock_fasync
 suffix:semicolon
 multiline_comment|/*&n; *&t;The protocol list. Each protocol is registered in here.&n; */
 DECL|variable|net_families
-r_static
 r_struct
 id|net_proto_family
 op_star
@@ -723,6 +722,13 @@ suffix:semicolon
 id|sock-&gt;inode
 op_assign
 id|inode
+suffix:semicolon
+id|init_waitqueue
+c_func
+(paren
+op_amp
+id|sock-&gt;wait
+)paren
 suffix:semicolon
 id|sock-&gt;fasync_list
 op_assign

@@ -37,6 +37,7 @@ macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#include &lt;linux/ipsec.h&gt;
 multiline_comment|/*&n; *&t;SNMP management statistics&n; */
 DECL|variable|ip_statistics
 r_struct
@@ -391,12 +392,34 @@ c_cond
 id|skb1
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ipsec_sk_policy
+c_func
+(paren
+id|raw_sk
+comma
+id|skb1
+)paren
+)paren
+(brace
 id|raw_rcv
 c_func
 (paren
 id|raw_sk
 comma
 id|skb1
+)paren
+suffix:semicolon
+)brace
+r_else
+id|kfree_skb
+c_func
+(paren
+id|skb1
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -534,14 +557,36 @@ id|raw_sk
 op_ne
 l_int|NULL
 )paren
-(brace
 multiline_comment|/* Shift to last raw user */
+(brace
+r_if
+c_cond
+(paren
+id|ipsec_sk_policy
+c_func
+(paren
+id|raw_sk
+comma
+id|skb
+)paren
+)paren
+(brace
 id|raw_rcv
 c_func
 (paren
 id|raw_sk
 comma
 id|skb
+)paren
+suffix:semicolon
+)brace
+r_else
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -944,6 +989,9 @@ id|iph
 comma
 op_amp
 id|rport
+comma
+op_amp
+id|skb
 )paren
 )paren
 OL

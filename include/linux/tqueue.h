@@ -4,6 +4,7 @@ DECL|macro|_LINUX_TQUEUE_H
 mdefine_line|#define _LINUX_TQUEUE_H
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/*&n; * New proposed &quot;bottom half&quot; handlers:&n; * (C) 1994 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; * Advantages:&n; * - Bottom halfs are implemented as a linked list.  You can have as many&n; *   of them, as you want.&n; * - No more scanning of a bit field is required upon call of a bottom half.&n; * - Support for chained bottom half lists.  The run_task_queue() function can be&n; *   used as a bottom half handler.  This is for example useful for bottom&n; *   halfs, which want to be delayed until the next clock tick.&n; *&n; * Problems:&n; * - The queue_task_irq() inline function is only atomic with respect to itself.&n; *   Problems can occur, when queue_task_irq() is called from a normal system&n; *   call, and an interrupt comes in.  No problems occur, when queue_task_irq()&n; *   is called from an interrupt or bottom half, and interrupted, as run_task_queue()&n; *   will not be executed/continued before the last interrupt returns.  If in&n; *   doubt, use queue_task(), not queue_task_irq().&n; * - Bottom halfs are called in the reverse order that they were linked into&n; *   the list.&n; */
 DECL|struct|tq_struct
 r_struct
@@ -61,96 +62,11 @@ comma
 id|tq_disk
 suffix:semicolon
 multiline_comment|/*&n; * To implement your own list of active bottom halfs, use the following&n; * two definitions:&n; *&n; * struct tq_struct *my_bh = NULL;&n; * struct tq_struct run_my_bh = {&n; *&t;0, 0, (void *)(void *) run_task_queue, &amp;my_bh&n; * };&n; *&n; * To activate a bottom half on your list, use:&n; *&n; *     queue_task(tq_pointer, &amp;my_bh);&n; *&n; * To run the bottom halfs on your list put them on the immediate list by:&n; *&n; *     queue_task(&amp;run_my_bh, &amp;tq_immediate);&n; *&n; * This allows you to do deferred procession.  For example, you could&n; * have a bottom half list tq_timer, which is marked active by the timer&n; * interrupt.&n; */
-multiline_comment|/*&n; * queue_task_irq: put the bottom half handler &quot;bh_pointer&quot; on the list&n; * &quot;bh_list&quot;.  You may call this function only from an interrupt&n; * handler or a bottom half handler.&n; */
-DECL|function|queue_task_irq
 r_extern
-id|__inline__
-r_void
-id|queue_task_irq
-c_func
-(paren
-r_struct
-id|tq_struct
-op_star
-id|bh_pointer
-comma
-id|task_queue
-op_star
-id|bh_list
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|bh_pointer-&gt;sync
-)paren
-)paren
-(brace
-id|bh_pointer-&gt;next
-op_assign
-op_star
-id|bh_list
+id|spinlock_t
+id|tqueue_lock
 suffix:semicolon
-op_star
-id|bh_list
-op_assign
-id|bh_pointer
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * queue_task_irq_off: put the bottom half handler &quot;bh_pointer&quot; on the list&n; * &quot;bh_list&quot;.  You may call this function only when interrupts are off.&n; */
-DECL|function|queue_task_irq_off
-r_extern
-id|__inline__
-r_void
-id|queue_task_irq_off
-c_func
-(paren
-r_struct
-id|tq_struct
-op_star
-id|bh_pointer
-comma
-id|task_queue
-op_star
-id|bh_list
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|bh_pointer-&gt;sync
-op_amp
-l_int|1
-)paren
-)paren
-(brace
-id|bh_pointer-&gt;sync
-op_assign
-l_int|1
-suffix:semicolon
-id|bh_pointer-&gt;next
-op_assign
-op_star
-id|bh_list
-suffix:semicolon
-op_star
-id|bh_list
-op_assign
-id|bh_pointer
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * queue_task: as queue_task_irq, but can be called from anywhere.&n; */
+multiline_comment|/*&n; * queue_task&n; */
 DECL|function|queue_task
 r_extern
 id|__inline__
@@ -186,15 +102,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|tqueue_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|bh_pointer-&gt;next
@@ -207,9 +121,12 @@ id|bh_list
 op_assign
 id|bh_pointer
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|tqueue_lock
+comma
 id|flags
 )paren
 suffix:semicolon

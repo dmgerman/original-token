@@ -5,7 +5,12 @@ mdefine_line|#define __SPARC64_SMPLOCK_H
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifndef __SMP__
+DECL|macro|lock_kernel
+mdefine_line|#define lock_kernel()           do { } while(0)
+DECL|macro|unlock_kernel
+mdefine_line|#define unlock_kernel()         do { } while(0)
+macro_line|#else
 DECL|function|ldstub
 r_extern
 id|__inline__

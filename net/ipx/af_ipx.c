@@ -2171,7 +2171,6 @@ id|ipx_interface
 op_star
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t; *&t;We firewall first, ask questions later.&n;&t; */
 r_if
 c_cond
@@ -2186,6 +2185,9 @@ comma
 id|ipx
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -2203,7 +2205,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* See if we should update our network number */
 r_if
 c_cond
@@ -2640,7 +2641,6 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t;&t;&t;&t;&t; *&t;See if we are allowed to firewall forward&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
@@ -2655,6 +2655,9 @@ comma
 id|ipx
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -2672,7 +2675,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 id|ipxrtr_route_skb
 c_func
 (paren
@@ -2738,7 +2740,6 @@ op_ne
 id|ipx-&gt;ipx_dest.net
 )paren
 (brace
-macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t;&t; *&t;See if we are allowed to firewall forward&n;&t;&t; */
 r_if
 c_cond
@@ -2753,6 +2754,9 @@ comma
 id|ipx
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -2770,7 +2774,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* We only route point-to-point packets. */
 r_if
 c_cond
@@ -5280,7 +5283,6 @@ id|ipxhdr
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL&t;
 r_if
 c_cond
 (paren
@@ -5294,6 +5296,9 @@ comma
 id|ipx
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -5312,7 +5317,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|ipxitf_send
 c_func

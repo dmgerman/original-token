@@ -421,6 +421,7 @@ c_func
 id|start_thread
 )paren
 suffix:semicolon
+multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_tcpudp_magic
 id|EXPORT_SYMBOL
 c_func
@@ -440,6 +441,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ip_compute_csum
+)paren
+suffix:semicolon
+DECL|variable|csum_partial_copy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_partial_copy
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are specially called from the uaccess assembly stubs.&n; */

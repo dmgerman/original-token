@@ -2,6 +2,7 @@ multiline_comment|/*&n; * net/dst.h&t;Protocol independent destination cache def
 macro_line|#ifndef _NET_DST_H
 DECL|macro|_NET_DST_H
 mdefine_line|#define _NET_DST_H
+macro_line|#include &lt;net/neighbour.h&gt;
 multiline_comment|/*&n; * 0 - no debugging messages&n; * 1 - rare events and bugs (default)&n; * 2 - trace mode.&n; */
 macro_line|#ifdef  NO_ANK_FIX
 DECL|macro|RT_CACHE_DEBUG
@@ -33,10 +34,12 @@ DECL|member|refcnt
 id|atomic_t
 id|refcnt
 suffix:semicolon
+multiline_comment|/* tree/hash references&t;*/
 DECL|member|use
 id|atomic_t
 id|use
 suffix:semicolon
+multiline_comment|/* client references&t;*/
 DECL|member|dev
 r_struct
 id|device
@@ -81,7 +84,7 @@ id|error
 suffix:semicolon
 DECL|member|neighbour
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neighbour
 suffix:semicolon
@@ -151,6 +154,9 @@ id|check
 r_struct
 id|dst_entry
 op_star
+comma
+id|u32
+id|cookie
 )paren
 suffix:semicolon
 DECL|member|reroute
@@ -164,6 +170,10 @@ id|reroute
 (paren
 r_struct
 id|dst_entry
+op_star
+comma
+r_struct
+id|sk_buff
 op_star
 )paren
 suffix:semicolon
@@ -215,7 +225,7 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|dst-&gt;refcnt
+id|dst-&gt;use
 )paren
 suffix:semicolon
 r_return
@@ -244,7 +254,7 @@ id|atomic_dec
 c_func
 (paren
 op_amp
-id|dst-&gt;refcnt
+id|dst-&gt;use
 )paren
 suffix:semicolon
 )brace
@@ -262,6 +272,9 @@ id|dst_entry
 op_star
 op_star
 id|dst_p
+comma
+id|u32
+id|cookie
 )paren
 (brace
 r_struct
@@ -287,6 +300,8 @@ id|check
 c_func
 (paren
 id|dst
+comma
+id|cookie
 )paren
 suffix:semicolon
 r_return
@@ -312,6 +327,11 @@ id|dst_entry
 op_star
 op_star
 id|dst_p
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -337,6 +357,8 @@ id|reroute
 c_func
 (paren
 id|dst
+comma
+id|skb
 )paren
 suffix:semicolon
 r_return
@@ -366,7 +388,7 @@ c_cond
 (paren
 id|dst-&gt;neighbour
 )paren
-id|dst_release
+id|neigh_release
 c_func
 (paren
 id|dst-&gt;neighbour
@@ -442,7 +464,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dst-&gt;refcnt
+id|dst-&gt;use
 )paren
 (brace
 id|dst_destroy

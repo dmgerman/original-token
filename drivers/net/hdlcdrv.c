@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; */
+multiline_comment|/*&n; *&t;hdlcdrv.c  -- HDLC packet radio network driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *  The driver was derived from Donald Beckers skeleton.c&n; *&t;Written 1993-94 by Donald Becker.&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines &n; *                  (copy_{to,from}_user)&n; *   0.2  21.11.96  various small changes&n; *   0.3  03.03.97  fixed (hopefully) IP not working with ax.25 as a module&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -15,10 +15,10 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 multiline_comment|/* prototypes for ax25_encapsulate and ax25_rebuild_header */
 macro_line|#include &lt;net/ax25.h&gt; 
-macro_line|#endif /* CONFIG_AX25 */
+macro_line|#endif /* CONFIG_AX25 || CONFIG_AX25_MODULE */
 multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
@@ -3318,10 +3318,49 @@ id|bi.data.cs.ptt_keyed
 op_assign
 id|s-&gt;ptt_keyed
 suffix:semicolon
-id|bi.data.cs.stats
+id|bi.data.cs.tx_packets
+op_assign
+id|s-&gt;stats.tx_packets
+suffix:semicolon
+id|bi.data.cs.tx_errors
+op_assign
+id|s-&gt;stats.tx_errors
+suffix:semicolon
+id|bi.data.cs.rx_packets
+op_assign
+id|s-&gt;stats.rx_packets
+suffix:semicolon
+id|bi.data.cs.rx_errors
+op_assign
+id|s-&gt;stats.rx_errors
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|HDLCDRVCTL_OLDGETSTAT
+suffix:colon
+id|bi.data.ocs.ptt
+op_assign
+id|hdlcdrv_ptt
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+id|bi.data.ocs.dcd
+op_assign
+id|s-&gt;hdlcrx.dcd
+suffix:semicolon
+id|bi.data.ocs.ptt_keyed
+op_assign
+id|s-&gt;ptt_keyed
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+id|bi.data.ocs.stats
 op_assign
 id|s-&gt;stats
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -3660,7 +3699,7 @@ op_amp
 id|s-&gt;send_queue
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_AX25
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 id|dev-&gt;hard_header
 op_assign
 id|ax25_encapsulate
@@ -3669,7 +3708,7 @@ id|dev-&gt;rebuild_header
 op_assign
 id|ax25_rebuild_header
 suffix:semicolon
-macro_line|#else /* CONFIG_AX25 */
+macro_line|#else /* CONFIG_AX25 || CONFIG_AX25_MODULE */
 id|dev-&gt;hard_header
 op_assign
 l_int|NULL
@@ -3678,7 +3717,7 @@ id|dev-&gt;rebuild_header
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif /* CONFIG_AX25 */
+macro_line|#endif /* CONFIG_AX25 || CONFIG_AX25_MODULE */
 id|dev-&gt;set_mac_address
 op_assign
 id|hdlcdrv_set_mac_address
@@ -4175,11 +4214,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;hdlcdrv: version 0.2 compiled %s %s&bslash;n&quot;
-comma
+l_string|&quot;hdlcdrv: version 0.3 compiled &quot;
 id|__TIME__
-comma
+l_string|&quot; &quot;
 id|__DATE__
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20115

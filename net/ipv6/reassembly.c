@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.7 1997/03/18 18:24:47 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -16,7 +16,6 @@ macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 DECL|variable|ipv6_frag_queue
 r_static
@@ -154,12 +153,10 @@ op_amp
 id|fq-&gt;timer
 )paren
 )paren
-(brace
 id|expires
 op_assign
 id|fq-&gt;timer.expires
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;We queue the packet even if it&squot;s the last.&n;&t; *&t;It&squot;s a trade off. This allows the reassembly &n;&t; *&t;code to be simpler (=faster) and of the&n;&t; *&t;steps we do for queueing the only unnecessary &n;&t; *&t;one it&squot;s the kmalloc for a struct ipv6_frag.&n;&t; *&t;Feel free to try other alternatives...&n;&t; */
 id|reasm_queue
 c_func
@@ -311,7 +308,6 @@ id|fq-&gt;id
 op_eq
 id|fhdr-&gt;identification
 )paren
-(brace
 r_return
 id|reasm_frag
 c_func
@@ -325,7 +321,6 @@ comma
 id|fhdr
 )paren
 suffix:semicolon
-)brace
 )brace
 id|create_frag_entry
 c_func
@@ -483,7 +478,7 @@ c_func
 (paren
 id|frag-&gt;skb
 comma
-id|ICMPV6_TIME_EXCEEDED
+id|ICMPV6_TIME_EXCEED
 comma
 id|ICMPV6_EXC_FRAGTIME
 comma
@@ -1220,5 +1215,4 @@ r_return
 id|nh
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o reassembly.o reassembly.c&quot;&n; * c-file-style: &quot;Linux&quot;&n; * End:&n; */
 eof

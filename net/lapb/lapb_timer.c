@@ -85,7 +85,11 @@ id|lapb-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
+(paren
+id|HZ
+op_div
 l_int|10
+)paren
 suffix:semicolon
 id|add_timer
 c_func

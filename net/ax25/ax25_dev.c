@@ -185,6 +185,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|ax25_dev
+comma
+l_int|0x00
+comma
+r_sizeof
+(paren
+op_star
+id|ax25_dev
+)paren
+)paren
+suffix:semicolon
 id|ax25_dev-&gt;dev
 op_assign
 id|dev
@@ -277,12 +291,29 @@ id|AX25_VALUES_PACLEN
 op_assign
 id|AX25_DEF_PACLEN
 suffix:semicolon
+macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
+id|ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_PROTOCOL
+)braket
+op_assign
+id|AX25_PROTO_DAMA_SLAVE
+suffix:semicolon
+macro_line|#else
 id|ax25_dev-&gt;values
 (braket
 id|AX25_VALUES_PROTOCOL
 )braket
 op_assign
 id|AX25_DEF_PROTOCOL
+suffix:semicolon
+macro_line|#endif
+id|ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_DS_TIMEOUT
+)braket
+op_assign
+id|AX25_DEF_DS_TIMEOUT
 suffix:semicolon
 id|save_flags
 c_func
@@ -370,6 +401,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
+id|ax25_ds_del_timer
+c_func
+(paren
+id|ax25_dev
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Remove any packet forwarding that points to this device.&n;&t; */
 r_for
 c_loop

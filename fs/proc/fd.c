@@ -467,12 +467,16 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;File handle is invalid if it is out of range, if the process&n;&t; *&t;has no files (Zombie) if the file is closed, or if its inode&n;&t; *&t;is NULL&n;&t; */
 r_if
 c_cond
 (paren
 id|fd
 op_ge
 id|NR_OPEN
+op_logical_or
+op_logical_neg
+id|p-&gt;files
 op_logical_or
 op_logical_neg
 id|p-&gt;files-&gt;fd

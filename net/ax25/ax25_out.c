@@ -235,7 +235,10 @@ id|AX25_VALUES_PROTOCOL
 )paren
 (brace
 r_case
-id|AX25_PROTO_STD
+id|AX25_PROTO_STD_SIMPLEX
+suffix:colon
+r_case
+id|AX25_PROTO_STD_DUPLEX
 suffix:colon
 id|ax25_std_establish_data_link
 c_func
@@ -245,11 +248,23 @@ id|ax25
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef AX25_CONFIG_DAMA_SLAVE
+macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
 r_case
 id|AX25_PROTO_DAMA_SLAVE
 suffix:colon
+r_if
+c_cond
+(paren
+id|ax25_dev-&gt;dama.slave
+)paren
 id|ax25_ds_establish_data_link
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+r_else
+id|ax25_std_establish_data_link
 c_func
 (paren
 id|ax25
@@ -671,7 +686,14 @@ id|ax25-&gt;ax25_dev-&gt;values
 id|AX25_VALUES_PROTOCOL
 )braket
 op_eq
-id|AX25_PROTO_STD
+id|AX25_PROTO_STD_SIMPLEX
+op_logical_or
+id|ax25-&gt;ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_PROTOCOL
+)braket
+op_eq
+id|AX25_PROTO_STD_DUPLEX
 )paren
 (brace
 r_if
@@ -1029,7 +1051,10 @@ id|AX25_VALUES_PROTOCOL
 )paren
 (brace
 r_case
-id|AX25_PROTO_STD
+id|AX25_PROTO_STD_SIMPLEX
+suffix:colon
+r_case
+id|AX25_PROTO_STD_DUPLEX
 suffix:colon
 id|ax25_send_iframe
 c_func
@@ -1310,7 +1335,6 @@ r_char
 op_star
 id|ptr
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -1324,6 +1348,9 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -1340,7 +1367,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 id|skb-&gt;protocol
 op_assign
 id|htons

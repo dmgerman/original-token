@@ -2187,6 +2187,11 @@ DECL|macro|KSTK_EIP
 mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n; &t;if ((tsk)-&gt;tss.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;tss.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;tss.esp0)-&gt;pc;&t; &bslash;&n;        eip; })
 DECL|macro|KSTK_ESP
 mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|#elif defined (__sparc_v9__)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;tpc)
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;tss.kregs-&gt;u_regs[UREG_FP])
 macro_line|#elif defined(__sparc__)
 DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;tss.kregs-&gt;pc)

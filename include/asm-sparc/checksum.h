@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.25 1997/02/19 15:51:19 jj Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.26 1997/03/14 07:54:47 davem Exp $ */
 macro_line|#ifndef __SPARC_CHECKSUM_H
 DECL|macro|__SPARC_CHECKSUM_H
 mdefine_line|#define __SPARC_CHECKSUM_H
@@ -31,6 +31,19 @@ DECL|macro|csum_partial_copy
 mdefine_line|#define csum_partial_copy(src, dst, len, sum) &bslash;&n; &t;&t;       csum_partial_copy_nocheck(src,dst,len,sum)
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser(s, d, l, w)  &bslash;&n;                         csum_partial_copy((char *) (s), (d), (l), (w))
+r_extern
+r_int
+r_int
+id|__csum_partial_copy_sparc_generic
+(paren
+r_const
+r_char
+op_star
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
 r_extern
 id|__inline__
 r_int

@@ -1,9 +1,83 @@
-multiline_comment|/* $Id: system.h,v 1.4 1996/12/28 18:39:56 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.7 1997/03/18 18:02:41 jj Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+DECL|macro|NCPUS
+mdefine_line|#define NCPUS&t;4&t;/* No SMP yet */
+DECL|macro|EMPTY_PGT
+mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
+DECL|macro|EMPTY_PGE
+mdefine_line|#define EMPTY_PGE       (&amp;empty_bad_page_table)
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * Sparc (general) CPU types&n; */
+DECL|enum|sparc_cpu
+r_enum
+id|sparc_cpu
+(brace
+DECL|enumerator|sun4
+id|sun4
+op_assign
+l_int|0x00
+comma
+DECL|enumerator|sun4c
+id|sun4c
+op_assign
+l_int|0x01
+comma
+DECL|enumerator|sun4m
+id|sun4m
+op_assign
+l_int|0x02
+comma
+DECL|enumerator|sun4d
+id|sun4d
+op_assign
+l_int|0x03
+comma
+DECL|enumerator|sun4e
+id|sun4e
+op_assign
+l_int|0x04
+comma
+DECL|enumerator|sun4u
+id|sun4u
+op_assign
+l_int|0x05
+comma
+multiline_comment|/* V8 ploos ploos */
+DECL|enumerator|sun_unknown
+id|sun_unknown
+op_assign
+l_int|0x06
+comma
+DECL|enumerator|ap1000
+id|ap1000
+op_assign
+l_int|0x07
+comma
+multiline_comment|/* almost a sun4m */
+)brace
+suffix:semicolon
+DECL|macro|sparc_cpu_model
+mdefine_line|#define sparc_cpu_model sun4u
+r_extern
+r_int
+r_int
+id|empty_bad_page
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|empty_bad_page_table
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|empty_zero_page
+suffix:semicolon
+macro_line|#endif
 DECL|macro|setipl
 mdefine_line|#define setipl(__new_ipl) &bslash;&n;&t;__asm__ __volatile__(&quot;wrpr&t;%0, %%pil&quot;  : : &quot;r&quot; (__new_ipl) : &quot;memory&quot;)
 DECL|macro|cli
@@ -356,6 +430,27 @@ r_return
 id|x
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+id|__attribute__
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_SYSTEM_H) */
 eof

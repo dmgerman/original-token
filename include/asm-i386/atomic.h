@@ -27,6 +27,7 @@ c_func
 id|atomic_t
 id|i
 comma
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -74,6 +75,7 @@ c_func
 id|atomic_t
 id|i
 comma
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -118,6 +120,7 @@ r_void
 id|atomic_inc
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -157,6 +160,7 @@ r_void
 id|atomic_dec
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -196,6 +200,7 @@ r_int
 id|atomic_dec_and_test
 c_func
 (paren
+r_volatile
 id|atomic_t
 op_star
 id|v
@@ -242,5 +247,10 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* These are x86-specific, used by some header files */
+DECL|macro|atomic_clear_mask
+mdefine_line|#define atomic_clear_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;andl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (~(mask)),&quot;m&quot; (__atomic_fool_gcc(addr)) : &quot;memory&quot;)
+DECL|macro|atomic_set_mask
+mdefine_line|#define atomic_set_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;orl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (mask),&quot;m&quot; (__atomic_fool_gcc(addr)) : &quot;memory&quot;)
 macro_line|#endif
 eof

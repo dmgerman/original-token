@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.4 1997/03/04 16:27:07 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: console.c,v 1.6 1997/03/18 17:59:59 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -114,7 +114,7 @@ comma
 l_int|1
 )paren
 comma
-id|prom_stdin
+id|prom_stdout
 comma
 op_amp
 id|outc
@@ -184,22 +184,59 @@ r_char
 id|c
 )paren
 (brace
-r_while
-c_loop
-(paren
 id|prom_nbputchar
 c_func
 (paren
 id|c
 )paren
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
-r_return
+r_void
+DECL|function|prom_puts
+id|prom_puts
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_int
+id|len
+)paren
+(brace
+id|p1275_cmd
+c_func
+(paren
+l_string|&quot;write&quot;
+comma
+id|P1275_ARG
+c_func
+(paren
+l_int|1
+comma
+id|P1275_ARG_IN_BUF
+)paren
+op_or
+id|P1275_INOUT
+c_func
+(paren
+l_int|3
+comma
+l_int|1
+)paren
+comma
+id|prom_stdout
+comma
+id|s
+comma
+id|P1275_SIZE
+c_func
+(paren
+id|len
+)paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Query for input device type */

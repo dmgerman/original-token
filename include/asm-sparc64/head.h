@@ -1,22 +1,26 @@
-multiline_comment|/* $Id: head.h,v 1.4 1997/02/25 20:00:32 jj Exp $ */
+multiline_comment|/* $Id: head.h,v 1.7 1997/03/18 18:00:36 jj Exp $ */
 macro_line|#ifndef _SPARC64_HEAD_H
 DECL|macro|_SPARC64_HEAD_H
 mdefine_line|#define _SPARC64_HEAD_H
+DECL|macro|KERNBASE
+mdefine_line|#define KERNBASE    0xfffff80000000000
 DECL|macro|BOOT_KERNEL
 mdefine_line|#define BOOT_KERNEL b sparc64_boot; nop; nop; nop; nop; nop; nop; nop;
 DECL|macro|CLEAN_WINDOW
 mdefine_line|#define CLEAN_WINDOW&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;clr&t;%o0;&t;clr&t;%o1;&t;clr&t;%o2;&t;clr&t;%o3;&t;&bslash;&n;&t;clr&t;%o4;&t;clr&t;%o5;&t;clr&t;%o6;&t;clr&t;%o7;&t;&bslash;&n;&t;clr&t;%l0;&t;clr&t;%l1;&t;clr&t;%l2;&t;clr&t;%l3;&t;&bslash;&n;&t;clr&t;%l4;&t;clr&t;%l5;&t;clr&t;%l6;&t;clr&t;%l7;&t;&bslash;&n;&t;rdpr %cleanwin, %g1; &t;&t;add %g1, 1, %g1;&t;&t;&bslash;&n;&t;wrpr %g1, 0x0, %cleanwin;&t;retry;&t;&t;&t;&t;&bslash;&n;&t;nop;&t;&t;nop;&t;&t;nop;&t;&t;nop;
 DECL|macro|TRAP
-mdefine_line|#define TRAP(routine)&t;&t;&t;&t;&t;&bslash;&n;&t;b&t;etrap;&t;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;b&t;rtrap;&t;&t;&t;&t;&t;&bslash;&n;&t; subcc&t;%g0, %o0, %g0;&t;&t;&t;&t;&bslash;&n;&t;nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;
+mdefine_line|#define TRAP(routine)&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;
 DECL|macro|TRAP_ARG
-mdefine_line|#define TRAP_ARG(routine, arg)&t;&t;&t;&t;&bslash;&n;&t;b&t;etrap;&t;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; mov&t;arg, %o1;&t;&t;&t;&t;&bslash;&n;&t;b&t;rtrap;&t;&t;&t;&t;&t;&bslash;&n;&t; subcc&t;%g0, %o0, %g0;&t;&t;&t;&t;&bslash;&n;&t;nop;
-multiline_comment|/* FIXME: Write these actually */
+mdefine_line|#define TRAP_ARG(routine, arg)&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; mov&t;arg, %o1;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;
+DECL|macro|SYSCALL_TRAP
+mdefine_line|#define SYSCALL_TRAP(routine, systbl)&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(systbl), %l7;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; or&t;%l7, %lo(systbl), %l7;&t;&t;&t;&bslash;&n;&t;nop; nop; nop;
 DECL|macro|SUNOS_SYSCALL_TRAP
-mdefine_line|#define SUNOS_SYSCALL_TRAP TRAP(sunos_syscall)
+mdefine_line|#define SUNOS_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sunos_sys_table)
 DECL|macro|LINUX_32BIT_SYSCALL_TRAP
-mdefine_line|#define&t;LINUX_32BIT_SYSCALL_TRAP TRAP(linux32_syscall)
+mdefine_line|#define&t;LINUX_32BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table32)
 DECL|macro|LINUX_64BIT_SYSCALL_TRAP
-mdefine_line|#define LINUX_64BIT_SYSCALL_TRAP TRAP(linux64_syscall)
+mdefine_line|#define LINUX_64BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table64)
+multiline_comment|/* FIXME: Write these actually */
 DECL|macro|NETBSD_SYSCALL_TRAP
 mdefine_line|#define NETBSD_SYSCALL_TRAP TRAP(netbsd_syscall)
 DECL|macro|SOLARIS_SYSCALL_TRAP

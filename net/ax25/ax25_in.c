@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;&t;&t;Modularisation changes.&n; *&t;AX.25 035&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Move DAMA code into own file.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;&t;&t;Modularisation changes.&n; *&t;AX.25 035&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Move DAMA code into own file.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -478,6 +478,41 @@ op_eq
 id|AX25_P_IP
 )paren
 (brace
+multiline_comment|/* working around a TCP bug to keep additional listeners &n;&t;&t; * happy. TCP re-uses the buffer and destroys the original&n;&t;&t; * content.&n;&t;&t; */
+r_struct
+id|sk_buff
+op_star
+id|skbn
+op_assign
+id|skb_copy
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skbn
+op_ne
+l_int|NULL
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|skbn
+suffix:semicolon
+)brace
 id|skb_pull
 c_func
 (paren
@@ -647,6 +682,9 @@ id|skb
 comma
 r_int
 id|type
+comma
+r_int
+id|dama
 )paren
 (brace
 r_int
@@ -681,7 +719,10 @@ id|AX25_VALUES_PROTOCOL
 )paren
 (brace
 r_case
-id|AX25_PROTO_STD
+id|AX25_PROTO_STD_SIMPLEX
+suffix:colon
+r_case
+id|AX25_PROTO_STD_DUPLEX
 suffix:colon
 id|queued
 op_assign
@@ -701,9 +742,29 @@ macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
 r_case
 id|AX25_PROTO_DAMA_SLAVE
 suffix:colon
+r_if
+c_cond
+(paren
+id|dama
+op_logical_or
+id|ax25-&gt;ax25_dev-&gt;dama.slave
+)paren
 id|queued
 op_assign
 id|ax25_ds_frame_in
+c_func
+(paren
+id|ax25
+comma
+id|skb
+comma
+id|type
+)paren
+suffix:semicolon
+r_else
+id|queued
+op_assign
+id|ax25_std_frame_in
 c_func
 (paren
 id|ax25
@@ -838,7 +899,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -852,6 +912,9 @@ comma
 id|skb-&gt;h.raw
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -869,7 +932,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Parse the address header.&n;&t; */
 r_if
 c_cond
@@ -1363,6 +1425,8 @@ comma
 id|skb
 comma
 id|type
+comma
+id|dama
 )paren
 op_eq
 l_int|0
@@ -1809,6 +1873,8 @@ macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
 r_if
 c_cond
 (paren
+id|dama
+op_logical_and
 id|ax25-&gt;ax25_dev-&gt;values
 (braket
 id|AX25_VALUES_PROTOCOL

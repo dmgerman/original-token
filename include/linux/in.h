@@ -66,12 +66,6 @@ op_assign
 l_int|41
 comma
 multiline_comment|/* IPv6-in-IPv4 tunnelling&t;&t;*/
-DECL|enumerator|IPPROTO_ICMPV6
-id|IPPROTO_ICMPV6
-op_assign
-l_int|58
-comma
-multiline_comment|/* ICMPv6&t;&t;&t;&t;*/
 DECL|enumerator|IPPROTO_RAW
 id|IPPROTO_RAW
 op_assign

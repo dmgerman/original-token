@@ -126,19 +126,9 @@ DECL|macro|RTF_THROW
 mdefine_line|#define RTF_THROW&t;0x2000&t;&t;/* Go to next class&t;&t;*/
 DECL|macro|RTF_NOPMTUDISC
 mdefine_line|#define RTF_NOPMTUDISC  0x4000&t;&t;/* Do not send packets with DF&t;*/
-multiline_comment|/* Bad idea. IPv6 should not use broken IPv4 interface */
-DECL|macro|RTF_ADDRCONF
-mdefine_line|#define RTF_ADDRCONF&t;0x0800&t;&t;/* announced on link prefix&t;  */
-DECL|macro|RTF_INVALID
-mdefine_line|#define RTF_INVALID&t;0x1000
-DECL|macro|RTF_DCACHE
-mdefine_line|#define RTF_DCACHE&t;0x2000
-DECL|macro|RTF_DEFAULT
-mdefine_line|#define RTF_DEFAULT&t;0x4000&t;&t;/* Route is a default route&t;  */
-DECL|macro|RTF_NEXTHOP
-mdefine_line|#define RTF_NEXTHOP&t;0x8000&t;&t;/* Non gateway route with nexthop */
 DECL|macro|RTF_MAGIC
-mdefine_line|#define RTF_MAGIC&t;0x10000&t;&t;/* Route added/deleted authomatically,&n;&t;&t;&t;&t;&t; * when interface changes its state.&n;&t;&t;&t;&t;&t; */
+mdefine_line|#define RTF_MAGIC&t;0x8000&t;&t;/* Route added/deleted authomatically,&n;&t;&t;&t;&t;&t; * when interface changes its state.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n; *&t;&lt;linux/ipv6_route.h&gt; uses RTF values &gt;= 64k&n; */
 DECL|macro|RTCF_VALVE
 mdefine_line|#define RTCF_VALVE&t;0x00200000
 DECL|macro|RTCF_MASQ

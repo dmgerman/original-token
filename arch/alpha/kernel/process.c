@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -136,12 +137,14 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|hard_reset_now
+DECL|function|machine_restart
 r_void
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
-r_void
+r_char
+op_star
+id|__unused
 )paren
 (brace
 macro_line|#if defined(CONFIG_ALPHA_SRM) &amp;&amp; defined(CONFIG_ALPHA_ALCOR)
@@ -166,6 +169,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+DECL|function|machine_halt
+r_void
+id|machine_halt
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|machine_power_off
+r_void
+id|machine_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
 )brace
 DECL|function|show_regs
 r_void

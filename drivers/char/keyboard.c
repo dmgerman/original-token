@@ -1,11 +1,3 @@
-r_extern
-r_void
-id|allow_interrupts
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
@@ -4383,11 +4375,6 @@ id|i
 op_increment
 )paren
 (brace
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|inb_p
 c_func
 (paren

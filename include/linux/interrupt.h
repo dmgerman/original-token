@@ -60,6 +60,12 @@ id|atomic_t
 id|intr_count
 suffix:semicolon
 r_extern
+r_volatile
+r_int
+r_char
+id|bh_running
+suffix:semicolon
+r_extern
 r_int
 id|bh_mask_count
 (braket
@@ -268,6 +274,11 @@ c_func
 r_void
 )paren
 (brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -275,7 +286,7 @@ op_amp
 id|intr_count
 )paren
 suffix:semicolon
-id|barrier
+id|sti
 c_func
 (paren
 )paren

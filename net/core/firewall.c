@@ -287,6 +287,12 @@ comma
 r_void
 op_star
 id|arg
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -324,6 +330,8 @@ comma
 id|phdr
 comma
 id|arg
+comma
+id|skb
 )paren
 suffix:semicolon
 r_if
@@ -371,6 +379,12 @@ comma
 r_void
 op_star
 id|arg
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -408,6 +422,8 @@ comma
 id|phdr
 comma
 id|arg
+comma
+id|skb
 )paren
 suffix:semicolon
 r_if
@@ -454,6 +470,12 @@ comma
 r_void
 op_star
 id|arg
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+id|skb
 )paren
 (brace
 r_struct
@@ -491,6 +513,8 @@ comma
 id|phdr
 comma
 id|arg
+comma
+id|skb
 )paren
 suffix:semicolon
 r_if

@@ -33,6 +33,7 @@ macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
+macro_line|#include &lt;linux/ipsec.h&gt;
 DECL|function|ip_ll_header_reserve
 r_static
 r_void
@@ -1182,7 +1183,6 @@ id|ip_id_count
 op_increment
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -1196,6 +1196,9 @@ comma
 id|iph
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 OL
 id|FW_ACCEPT
@@ -1212,6 +1215,55 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_SECURITY&t;
+multiline_comment|/*&n;&t; *&t;Add an IP checksum (must do this before SECurity because&n;&t; *&t;of possible tunneling)&n;&t; */
+id|ip_send_check
+c_func
+(paren
+id|iph
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|PF_SECURITY
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+l_int|4
+comma
+op_amp
+id|skb
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|iph
+op_assign
+id|skb-&gt;nh.iph
+suffix:semicolon
+multiline_comment|/* don&squot;t update tot_len, as the dev-&gt;mtu is already decreased */
 macro_line|#endif
 r_if
 c_cond
@@ -1489,6 +1541,11 @@ c_func
 id|IP_DF
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_SECURITY
+r_int
+id|fw_res
+suffix:semicolon
+macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -1778,7 +1835,6 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -1795,6 +1851,9 @@ comma
 id|iph
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 OL
 id|FW_ACCEPT
@@ -1804,6 +1863,60 @@ id|err
 op_assign
 op_minus
 id|EPERM
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_NET_SECURITY
+r_if
+c_cond
+(paren
+(paren
+id|fw_res
+op_assign
+id|call_out_firewall
+c_func
+(paren
+id|PF_SECURITY
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+l_int|5
+comma
+op_amp
+id|skb
+)paren
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fw_res
+op_ne
+id|FW_QUEUE
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_else
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2301,7 +2414,6 @@ op_minus
 id|EFAULT
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Account for the fragment.&n;&t;&t; */
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -2321,11 +2433,57 @@ comma
 id|iph
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 OL
 id|FW_ACCEPT
 )paren
 (brace
+id|err
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_NET_SECURITY
+r_if
+c_cond
+(paren
+(paren
+id|fw_res
+op_assign
+id|call_out_firewall
+c_func
+(paren
+id|PF_SECURITY
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+l_int|6
+comma
+op_amp
+id|skb
+)paren
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fw_res
+op_ne
+id|FW_QUEUE
+)paren
 id|err
 op_assign
 op_minus

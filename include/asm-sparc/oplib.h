@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.13 1997/01/31 00:16:52 tdyas Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.15 1997/03/18 18:00:18 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -54,6 +54,13 @@ multiline_comment|/* Root node of the prom device tree, this stays constant afte
 r_extern
 r_int
 id|prom_root_node
+suffix:semicolon
+multiline_comment|/* PROM stdin and stdout */
+r_extern
+r_int
+id|prom_stdin
+comma
+id|prom_stdout
 suffix:semicolon
 multiline_comment|/* Pointer to prom structure containing the device tree traversal&n; * and usage utility functions.  Only prom-lib should use these,&n; * users use the interface defined by the library only!&n; */
 r_extern
@@ -214,6 +221,12 @@ id|prom_halt
 c_func
 (paren
 r_void
+)paren
+id|__attribute__
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set the PROM &squot;sync&squot; callback function to the passed function pointer.&n; * When the user gives the &squot;sync&squot; command at the prom prompt while the&n; * kernel is still active, the prom will call this routine.&n; *&n; * XXX The arguments are different on V0 vs. V2-&gt;higher proms, grrr! XXX&n; */

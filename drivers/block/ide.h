@@ -631,9 +631,19 @@ op_assign
 l_int|5
 comma
 DECL|enumerator|ide_dma_begin
+DECL|enumerator|ide_dma_on
 id|ide_dma_begin
 op_assign
 l_int|6
+comma
+id|ide_dma_on
+op_assign
+l_int|7
+comma
+DECL|enumerator|ide_dma_off
+id|ide_dma_off
+op_assign
+l_int|8
 )brace
 DECL|typedef|ide_dma_action_t
 id|ide_dma_action_t
@@ -1613,6 +1623,7 @@ id|ide_fops
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef _IDE_C
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDISK
 r_int
 id|idedisk_init
@@ -1653,6 +1664,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDESCSI */
+macro_line|#endif /* _IDE_C */
 r_int
 id|ide_register_module
 (paren

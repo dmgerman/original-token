@@ -124,6 +124,10 @@ op_member_access_from_pointer
 id|opt
 )paren
 suffix:semicolon
+r_int
+r_int
+id|mtu
+suffix:semicolon
 macro_line|#if defined(CONFIG_FIREWALL) || defined(CONFIG_IP_MASQUERADE)
 r_int
 id|fw_res
@@ -268,6 +272,27 @@ id|dev2
 op_assign
 id|rt-&gt;u.dst.dev
 suffix:semicolon
+id|mtu
+op_assign
+id|dev2-&gt;mtu
+suffix:semicolon
+macro_line|#ifdef CONFIG_NET_SECURITY
+id|call_fw_firewall
+c_func
+(paren
+id|PF_SECURITY
+comma
+id|dev2
+comma
+l_int|NULL
+comma
+op_amp
+id|mtu
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; *&t;In IP you never have to forward a frame on the interface that it &n;&t; *&t;arrived upon. We now generate an ICMP HOST REDIRECT giving the route&n;&t; *&t;we calculated.&n;&t; */
 r_if
 c_cond
@@ -299,7 +324,7 @@ c_cond
 (paren
 id|skb-&gt;len
 OG
-id|dev2-&gt;mtu
+id|mtu
 op_logical_and
 (paren
 id|ntohs
@@ -327,7 +352,7 @@ comma
 id|htonl
 c_func
 (paren
-id|dev2-&gt;mtu
+id|mtu
 )paren
 )paren
 suffix:semicolon
@@ -502,6 +527,9 @@ comma
 id|iph
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 suffix:semicolon
 r_switch
@@ -709,6 +737,9 @@ comma
 id|iph
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 )paren
 OL

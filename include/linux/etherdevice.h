@@ -96,7 +96,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 comma

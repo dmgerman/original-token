@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Modularisation functions.&n; *&t;AX.25 035&t;Frederic(F1OAT)&t;Support for pseudo-digipeating.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split Standard and DAMA code into seperate files.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;Extracted AX25 control block from the&n; *&t;&t;&t;&t;&t;sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;AX.25 032&t;Joerg(DL1BKE)&t;Fixed DAMA timeout bug&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Modularisation functions.&n; *&t;AX.25 035&t;Frederic(F1OAT)&t;Support for pseudo-digipeating.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split Standard and DAMA code into seperate files.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave. We are *required* to start with&n; *&t;&t;&t;&t;&t;standard AX.25 mode.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -86,7 +86,11 @@ id|ax25-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
+(paren
+id|HZ
+op_div
 l_int|10
+)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -128,7 +132,10 @@ id|AX25_VALUES_PROTOCOL
 )paren
 (brace
 r_case
-id|AX25_PROTO_STD
+id|AX25_PROTO_STD_SIMPLEX
+suffix:colon
+r_case
+id|AX25_PROTO_STD_DUPLEX
 suffix:colon
 id|ax25_std_timer
 c_func
@@ -142,7 +149,19 @@ macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
 r_case
 id|AX25_PROTO_DAMA_SLAVE
 suffix:colon
+r_if
+c_cond
+(paren
+id|ax25-&gt;ax25_dev-&gt;dama.slave
+)paren
 id|ax25_ds_timer
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+r_else
+id|ax25_std_timer
 c_func
 (paren
 id|ax25

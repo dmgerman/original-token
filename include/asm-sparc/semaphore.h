@@ -2,6 +2,7 @@ macro_line|#ifndef _SPARC_SEMAPHORE_H
 DECL|macro|_SPARC_SEMAPHORE_H
 mdefine_line|#define _SPARC_SEMAPHORE_H
 multiline_comment|/* Dinky, good for nothing, just barely irq safe, Sparc semaphores. */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|struct|semaphore
 r_struct
@@ -169,5 +170,6 @@ id|sem
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(_SPARC_SEMAPHORE_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.10 1996/12/18 06:46:54 tridge Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.11 1997/03/18 17:58:10 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -68,9 +68,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 r_if
 c_cond
@@ -219,9 +216,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|outc
 op_assign
@@ -467,9 +461,6 @@ suffix:semicolon
 suffix:semicolon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|save_flags
 c_func
@@ -734,9 +725,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|save_flags
 c_func

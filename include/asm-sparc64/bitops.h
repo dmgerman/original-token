@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.6 1996/12/26 15:36:49 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.7 1997/03/14 21:05:38 jj Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -840,7 +840,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -878,7 +878,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -908,7 +908,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -945,7 +945,7 @@ l_int|31
 )paren
 )paren
 comma
-l_string|&quot;r&quot;
+l_string|&quot;2&quot;
 (paren
 id|m
 )paren
@@ -1018,7 +1018,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -1056,7 +1056,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -1086,7 +1086,7 @@ op_mod
 l_int|2
 )braket
 op_mod
-l_int|5
+l_int|6
 comma
 op_mod
 l_int|0
@@ -1123,7 +1123,7 @@ l_int|31
 )paren
 )paren
 comma
-l_string|&quot;r&quot;
+l_string|&quot;2&quot;
 (paren
 id|m
 )paren

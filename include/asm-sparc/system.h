@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.51 1997/01/25 01:33:05 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.53 1997/03/19 14:53:43 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
@@ -8,6 +8,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#endif
 DECL|macro|EMPTY_PGT
 mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
@@ -750,6 +751,27 @@ r_return
 id|x
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+id|__attribute__
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* !(__SPARC_SYSTEM_H) */
 eof

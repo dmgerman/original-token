@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation, provided that none of the source code or runtime&n;  copyright notices are removed or modified.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
 DECL|macro|BusLogic_DriverVersion
-mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.7&quot;
+mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.8&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;23 February 1997&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 March 1997&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3134,7 +3134,7 @@ r_return
 id|FlashPointCount
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_InitializeProbeInfoList initializes the list of I/O Address and Bus&n;  Probe Information to be checked for potential BusLogic SCSI Host Adapters by&n;  interrogating the PCI Configuration Space on PCI machines as well as from the&n;  list of standard BusLogic MultiMaster ISA I/O Addresses.  By default, if both&n;  FlashPoint and PCI MultiMaster Host Adapters are present, this driver will&n;  probe for PCI MultiMaster Host Adapters first unless the BIOS primary disk is&n;  not controlled by the first PCI MultiMaster Host Adapter, in which case&n;  FlashPoint Host Adapters will be probed first.  The Kernel Command Line &n;  options &quot;MultiMasterFirst&quot; and &quot;FlashPointFirst&quot; can be used to force a&n;  particular probe order.&n;*/
+multiline_comment|/*&n;  BusLogic_InitializeProbeInfoList initializes the list of I/O Address and Bus&n;  Probe Information to be checked for potential BusLogic SCSI Host Adapters by&n;  interrogating the PCI Configuration Space on PCI machines as well as from the&n;  list of standard BusLogic MultiMaster ISA I/O Addresses.  By default, if both&n;  FlashPoint and PCI MultiMaster Host Adapters are present, this driver will&n;  probe for FlashPoint Host Adapters first unless the BIOS primary disk is&n;  controlled by the first PCI MultiMaster Host Adapter, in which case&n;  MultiMaster Host Adapters will be probed first.  The Kernel Command Line&n;  options &quot;MultiMasterFirst&quot; and &quot;FlashPointFirst&quot; can be used to force a&n;  particular probe order.&n;*/
 DECL|function|BusLogic_InitializeProbeInfoList
 r_static
 r_void
@@ -3205,14 +3205,6 @@ suffix:semicolon
 r_else
 (brace
 r_int
-id|PCIMultiMasterCount
-op_assign
-id|BusLogic_InitializeMultiMasterProbeInfo
-c_func
-(paren
-)paren
-suffix:semicolon
-r_int
 id|FlashPointCount
 op_assign
 id|BusLogic_InitializeFlashPointProbeInfo
@@ -3220,14 +3212,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+id|PCIMultiMasterCount
+op_assign
+id|BusLogic_InitializeMultiMasterProbeInfo
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|PCIMultiMasterCount
+id|FlashPointCount
 OG
 l_int|0
 op_logical_and
-id|FlashPointCount
+id|PCIMultiMasterCount
 OG
 l_int|0
 )paren
@@ -3239,7 +3239,7 @@ op_assign
 op_amp
 id|BusLogic_ProbeInfoList
 (braket
-l_int|0
+id|FlashPointCount
 )braket
 suffix:semicolon
 id|BusLogic_HostAdapter_T
@@ -3311,12 +3311,12 @@ id|Drive0MapByte
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;If the Map Byte for BIOS Drive 0 indicates that BIOS Drive 0&n;&t;&t;is not controlled by this PCI MultiMaster Host Adapter, then&n;&t;&t;reverse the probe order so that FlashPoint Host Adapters are&n;&t;&t;probed before MultiMaster Host Adapters.&n;&t;      */
+multiline_comment|/*&n;&t;&t;If the Map Byte for BIOS Drive 0 indicates that BIOS Drive 0&n;&t;&t;is controlled by this PCI MultiMaster Host Adapter, then&n;&t;&t;reverse the probe order so that MultiMaster Host Adapters are&n;&t;&t;probed before FlashPoint Host Adapters.&n;&t;      */
 r_if
 c_cond
 (paren
 id|Drive0MapByte.DiskGeometry
-op_eq
+op_ne
 id|BusLogic_BIOS_Disk_Not_Installed
 )paren
 (brace
@@ -3336,23 +3336,13 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
-op_amp
 id|SavedProbeInfo
-(braket
-l_int|0
-)braket
 comma
-op_amp
 id|BusLogic_ProbeInfoList
-(braket
-l_int|0
-)braket
 comma
-id|BusLogic_ProbeInfoCount
-op_star
 r_sizeof
 (paren
-id|BusLogic_ProbeInfo_T
+id|BusLogic_ProbeInfoList
 )paren
 )paren
 suffix:semicolon
@@ -3368,10 +3358,10 @@ comma
 op_amp
 id|SavedProbeInfo
 (braket
-id|MultiMasterCount
+id|FlashPointCount
 )braket
 comma
-id|FlashPointCount
+id|MultiMasterCount
 op_star
 r_sizeof
 (paren
@@ -3385,7 +3375,7 @@ c_func
 op_amp
 id|BusLogic_ProbeInfoList
 (braket
-id|FlashPointCount
+id|MultiMasterCount
 )braket
 comma
 op_amp
@@ -3394,7 +3384,7 @@ id|SavedProbeInfo
 l_int|0
 )braket
 comma
-id|MultiMasterCount
+id|FlashPointCount
 op_star
 r_sizeof
 (paren
@@ -3614,19 +3604,38 @@ id|FlashPoint_Info_T
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|BusLogic_GlobalOptions.Bits.TraceProbe
-)paren
-id|BusLogic_Notice
+id|BusLogic_Error
 c_func
 (paren
-l_string|&quot;BusLogic_Probe(0x%X): FlashPoint Not Found&bslash;n&quot;
+l_string|&quot;BusLogic: FlashPoint Host Adapter detected at &quot;
+l_string|&quot;PCI Bus %d Device %d&bslash;n&quot;
+comma
+id|HostAdapter
+comma
+id|HostAdapter-&gt;Bus
+comma
+id|HostAdapter-&gt;Device
+)paren
+suffix:semicolon
+id|BusLogic_Error
+c_func
+(paren
+l_string|&quot;BusLogic: I/O Address 0x%X PCI Address 0x%X, &quot;
+l_string|&quot;but FlashPoint&bslash;n&quot;
 comma
 id|HostAdapter
 comma
 id|HostAdapter-&gt;IO_Address
+comma
+id|HostAdapter-&gt;PCI_Address
+)paren
+suffix:semicolon
+id|BusLogic_Error
+c_func
+(paren
+l_string|&quot;BusLogic: Probe Function failed to validate it.&bslash;n&quot;
+comma
+id|HostAdapter
 )paren
 suffix:semicolon
 r_return
@@ -9715,6 +9724,13 @@ id|TargetID
 op_assign
 l_bool|false
 suffix:semicolon
+id|HostAdapter-&gt;LastResetCompleted
+(braket
+id|TargetID
+)braket
+op_assign
+id|jiffies
+suffix:semicolon
 multiline_comment|/*&n;&t;    Place CCB back on the Host Adapter&squot;s free list.&n;&t;  */
 id|BusLogic_DeallocateCCB
 c_func
@@ -10693,6 +10709,7 @@ r_sizeof
 id|BusLogic_ScatterGatherSegment_T
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SCSI_OMIT_FLASHPOINT
 r_if
 c_cond
 (paren
@@ -10718,6 +10735,16 @@ id|BusLogic_BusAddress_T
 )paren
 id|CCB-&gt;ScatterGatherList
 suffix:semicolon
+macro_line|#else
+id|CCB-&gt;DataPointer
+op_assign
+id|Virtual_to_Bus
+c_func
+(paren
+id|CCB-&gt;ScatterGatherList
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -12089,13 +12116,22 @@ suffix:semicolon
 id|TargetID
 op_increment
 )paren
-id|HostAdapter-&gt;LastResetTime
+(brace
+id|HostAdapter-&gt;LastResetAttempted
 (braket
 id|TargetID
 )braket
 op_assign
 id|jiffies
 suffix:semicolon
+id|HostAdapter-&gt;LastResetCompleted
+(braket
+id|TargetID
+)braket
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 id|Result
 op_assign
 id|SCSI_RESET_SUCCESS
@@ -12585,7 +12621,7 @@ id|TargetID
 op_assign
 id|CCB
 suffix:semicolon
-id|HostAdapter-&gt;LastResetTime
+id|HostAdapter-&gt;LastResetAttempted
 (braket
 id|TargetID
 )braket
@@ -12739,7 +12775,7 @@ id|TargetID
 op_logical_and
 id|jiffies
 op_minus
-id|HostAdapter-&gt;LastResetTime
+id|HostAdapter-&gt;LastResetCompleted
 (braket
 id|TargetID
 )braket
@@ -12839,7 +12875,7 @@ id|TargetID
 op_logical_or
 id|jiffies
 op_minus
-id|HostAdapter-&gt;LastResetTime
+id|HostAdapter-&gt;LastResetAttempted
 (braket
 id|TargetID
 )braket
@@ -14472,7 +14508,7 @@ l_char|&squot;&bslash;n&squot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_Setup handles processing of Kernel Command Line Arguments.&n;&n;  For the BusLogic driver, a Kernel Command Line Entry comprises the driver&n;  identifier &quot;BusLogic=&quot; optionally followed by a comma-separated sequence of&n;  integers and then optionally followed by a comma-separated sequence of&n;  strings.  Each command line entry applies to one BusLogic Host Adapter.&n;  Multiple command line entries may be used in systems which contain multiple&n;  BusLogic Host Adapters.&n;&n;  The first integer specified is the I/O Address at which the Host Adapter is&n;  located.  If unspecified, it defaults to 0 which means to apply this entry to&n;  the first BusLogic Host Adapter found during the default probe sequence.  If&n;  any I/O Address parameters are provided on the command line, then the default&n;  probe sequence is omitted.&n;&n;  The second integer specified is the Tagged Queue Depth to use for Target&n;  Devices that support Tagged Queuing.  The Queue Depth is the number of SCSI&n;  commands that are allowed to be concurrently presented for execution.  If&n;  unspecified, it defaults to 0 which means to use a value determined&n;  automatically based on the Host Adapter&squot;s Total Queue Depth and the number,&n;  type, speed, and capabilities of the detected Target Devices.  For Host&n;  Adapters that require ISA Bounce Buffers, the Tagged Queue Depth is&n;  automatically set to BusLogic_TaggedQueueDepthBounceBuffers to avoid&n;  excessive preallocation of DMA Bounce Buffer memory.  Target Devices that do&n;  not support Tagged Queuing use a Queue Depth of BusLogic_UntaggedQueueDepth.&n;&n;  The third integer specified is the Bus Settle Time in seconds.  This is&n;  the amount of time to wait between a Host Adapter Hard Reset which initiates&n;  a SCSI Bus Reset and issuing any SCSI Commands.  If unspecified, it defaults&n;  to 0 which means to use the value of BusLogic_DefaultBusSettleTime.&n;&n;  The fourth integer specified is the Local Options.  If unspecified, it&n;  defaults to 0.  Note that Local Options are only applied to a specific Host&n;  Adapter.&n;&n;  The fifth integer specified is the Global Options.  If unspecified, it&n;  defaults to 0.  Note that Global Options are applied across all Host&n;  Adapters.&n;&n;  The string options are used to provide control over Tagged Queuing, Error&n;  Recovery, and Host Adapter Probing.&n;&n;  The Tagged Queuing specification begins with &quot;TQ:&quot; and allows for explicitly&n;  specifying whether Tagged Queuing is permitted on Target Devices that support&n;  it.  The following specification options are available:&n;&n;  TQ:Default&t;&t;Tagged Queuing will be permitted based on the firmware&n;&t;&t;&t;version of the BusLogic Host Adapter and based on&n;&t;&t;&t;whether the Tagged Queue Depth value allows queuing&n;&t;&t;&t;multiple commands.&n;&n;  TQ:Enable&t;&t;Tagged Queuing will be enabled for all Target Devices&n;&t;&t;&t;on this Host Adapter overriding any limitation that&n;&t;&t;&t;would otherwise be imposed based on the Host Adapter&n;&t;&t;&t;firmware version.&n;&n;  TQ:Disable&t;&t;Tagged Queuing will be disabled for all Target Devices&n;&t;&t;&t;on this Host Adapter.&n;&n;  TQ:&lt;Per-Target-Spec&gt;&t;Tagged Queuing will be controlled individually for each&n;&t;&t;&t;Target Device.  &lt;Per-Target-Spec&gt; is a sequence of &quot;Y&quot;,&n;&t;&t;&t;&quot;N&quot;, and &quot;X&quot; characters.  &quot;Y&quot; enabled Tagged Queuing,&n;&t;&t;&t;&quot;N&quot; disables Tagged Queuing, and &quot;X&quot; accepts the&n;&t;&t;&t;default based on the firmware version.  The first&n;&t;&t;&t;character refers to Target Device 0, the second to&n;&t;&t;&t;Target Device 1, and so on; if the sequence of &quot;Y&quot;,&n;&t;&t;&t;&quot;N&quot;, and &quot;X&quot; characters does not cover all the Target&n;&t;&t;&t;Devices, unspecified characters are assumed to be &quot;X&quot;.&n;&n;  Note that explicitly requesting Tagged Queuing may lead to problems; this&n;  facility is provided primarily to allow disabling Tagged Queuing on Target&n;  Devices that do not implement it correctly.&n;&n;  The Error Recovery Strategy specification begins with &quot;ER:&quot; and allows for&n;  explicitly specifying the Error Recovery action to be performed when&n;  ResetCommand is called due to a SCSI Command failing to complete&n;  successfully.  The following specification options are available:&n;&n;  ER:Default&t;&t;Error Recovery will select between the Hard Reset and&n;&t;&t;&t;Bus Device Reset options based on the recommendation&n;&t;&t;&t;of the SCSI Subsystem.&n;&n;  ER:HardReset&t;&t;Error Recovery will initiate a Host Adapter Hard Reset&n;&t;&t;&t;which also causes a SCSI Bus Reset.&n;&n;  ER:BusDeviceReset&t;Error Recovery will send a Bus Device Reset message to&n;&t;&t;&t;the individual Target Device causing the error.  If&n;&t;&t;&t;Error Recovery is again initiated for this Target&n;&t;&t;&t;Device and no SCSI Command to this Target Device has&n;&t;&t;&t;completed successfully since the Bus Device Reset&n;&t;&t;&t;message was sent, then a Hard Reset will be attempted.&n;&n;  ER:None&t;&t;Error Recovery will be suppressed.  This option should&n;&t;&t;&t;only be selected if a SCSI Bus Reset or Bus Device&n;&t;&t;&t;Reset will cause the Target Device to fail completely&n;&t;&t;&t;and unrecoverably.&n;&n;  ER:&lt;Per-Target-Spec&gt;&t;Error Recovery will be controlled individually for each&n;&t;&t;&t;Target Device.  &lt;Per-Target-Spec&gt; is a sequence of &quot;D&quot;,&n;&t;&t;&t;&quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters.  &quot;D&quot; selects Default, &quot;H&quot;&n;&t;&t;&t;selects Hard Reset, &quot;B&quot; selects Bus Device Reset, and&n;&t;&t;&t;&quot;N&quot; selects None.  The first character refers to Target&n;&t;&t;&t;Device 0, the second to Target Device 1, and so on; if&n;&t;&t;&t;the sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters does&n;&t;&t;&t;not cover all the possible Target Devices, unspecified&n;&t;&t;&t;characters are assumed to be &quot;D&quot;.&n;&n;  The Host Adapter Probing specification comprises the following strings:&n;&n;  NoProbe&t;&t;No probing of any kind is to be performed, and hence&n;&t;&t;&t;no BusLogic Host Adapters will be detected.&n;&n;  NoProbeISA&t;&t;No probing of the standard ISA I/O Addresses will&n;&t;&t;&t;be done, and hence only PCI MultiMaster and FlashPoint&n;&t;&t;&t;Host Adapters will be detected.&n;&n;  NoProbePCI&t;&t;No interrogation of PCI Configuration Space will be&n;&t;&t;&t;made, and hence only ISA Multimaster Host Adapters&n;&t;&t;&t;will be detected, as well as PCI Multimaster Host&n;&t;&t;&t;Adapters that have their ISA Compatible I/O Port&n;&t;&t;&t;set to &quot;Primary&quot; or &quot;Alternate&quot;.&n;&n;  NoSortPCI&t;&t;PCI MultiMaster Host Adapters will be enumerated in&n;&t;&t;&t;the order provided by the PCI BIOS, ignoring any&n;&t;&t;&t;setting of the AutoSCSI &quot;Use Bus And Device # For PCI&n;&t;&t;&t;Scanning Seq.&quot; option.&n;&n;  MultiMasterFirst&t;By default, if both FlashPoint and PCI MultiMaster&n;&t;&t;&t;Host Adapters are present, this driver will probe for&n;&t;&t;&t;PCI MultiMaster Host Adapters first unless the BIOS&n;&t;&t;&t;primary disk is not controlled by the first PCI&n;&t;&t;&t;MultiMaster Host Adapter, in which case FlashPoint&n;&t;&t;&t;Host Adapters will be probed first.  This option&n;&t;&t;&t;forces MultiMaster Host Adapters to be probed first.&n;&n;  FlashPointFirst&t;By default, if both FlashPoint and PCI MultiMaster&n;&t;&t;&t;Host Adapters are present, this driver will probe for&n;&t;&t;&t;PCI MultiMaster Host Adapters first unless the BIOS&n;&t;&t;&t;primary disk is not controlled by the first PCI&n;&t;&t;&t;MultiMaster Host Adapter, in which case FlashPoint&n;&t;&t;&t;Host Adapters will be probed first.  This option&n;&t;&t;&t;forces FlashPoint Host Adapters to be probed first.&n;&n;  Debug&t;&t;&t;Sets all the tracing bits in BusLogic_GlobalOptions.&n;&n;*/
+multiline_comment|/*&n;  BusLogic_Setup handles processing of Kernel Command Line Arguments.&n;&n;  For the BusLogic driver, a Kernel Command Line Entry comprises the driver&n;  identifier &quot;BusLogic=&quot; optionally followed by a comma-separated sequence of&n;  integers and then optionally followed by a comma-separated sequence of&n;  strings.  Each command line entry applies to one BusLogic Host Adapter.&n;  Multiple command line entries may be used in systems which contain multiple&n;  BusLogic Host Adapters.&n;&n;  The first integer specified is the I/O Address at which the Host Adapter is&n;  located.  If unspecified, it defaults to 0 which means to apply this entry to&n;  the first BusLogic Host Adapter found during the default probe sequence.  If&n;  any I/O Address parameters are provided on the command line, then the default&n;  probe sequence is omitted.&n;&n;  The second integer specified is the Tagged Queue Depth to use for Target&n;  Devices that support Tagged Queuing.  The Queue Depth is the number of SCSI&n;  commands that are allowed to be concurrently presented for execution.  If&n;  unspecified, it defaults to 0 which means to use a value determined&n;  automatically based on the Host Adapter&squot;s Total Queue Depth and the number,&n;  type, speed, and capabilities of the detected Target Devices.  For Host&n;  Adapters that require ISA Bounce Buffers, the Tagged Queue Depth is&n;  automatically set to BusLogic_TaggedQueueDepthBounceBuffers to avoid&n;  excessive preallocation of DMA Bounce Buffer memory.  Target Devices that do&n;  not support Tagged Queuing use a Queue Depth of BusLogic_UntaggedQueueDepth.&n;&n;  The third integer specified is the Bus Settle Time in seconds.  This is&n;  the amount of time to wait between a Host Adapter Hard Reset which initiates&n;  a SCSI Bus Reset and issuing any SCSI Commands.  If unspecified, it defaults&n;  to 0 which means to use the value of BusLogic_DefaultBusSettleTime.&n;&n;  The fourth integer specified is the Local Options.  If unspecified, it&n;  defaults to 0.  Note that Local Options are only applied to a specific Host&n;  Adapter.&n;&n;  The fifth integer specified is the Global Options.  If unspecified, it&n;  defaults to 0.  Note that Global Options are applied across all Host&n;  Adapters.&n;&n;  The string options are used to provide control over Tagged Queuing, Error&n;  Recovery, and Host Adapter Probing.&n;&n;  The Tagged Queuing specification begins with &quot;TQ:&quot; and allows for explicitly&n;  specifying whether Tagged Queuing is permitted on Target Devices that support&n;  it.  The following specification options are available:&n;&n;  TQ:Default&t;&t;Tagged Queuing will be permitted based on the firmware&n;&t;&t;&t;version of the BusLogic Host Adapter and based on&n;&t;&t;&t;whether the Tagged Queue Depth value allows queuing&n;&t;&t;&t;multiple commands.&n;&n;  TQ:Enable&t;&t;Tagged Queuing will be enabled for all Target Devices&n;&t;&t;&t;on this Host Adapter overriding any limitation that&n;&t;&t;&t;would otherwise be imposed based on the Host Adapter&n;&t;&t;&t;firmware version.&n;&n;  TQ:Disable&t;&t;Tagged Queuing will be disabled for all Target Devices&n;&t;&t;&t;on this Host Adapter.&n;&n;  TQ:&lt;Per-Target-Spec&gt;&t;Tagged Queuing will be controlled individually for each&n;&t;&t;&t;Target Device.  &lt;Per-Target-Spec&gt; is a sequence of &quot;Y&quot;,&n;&t;&t;&t;&quot;N&quot;, and &quot;X&quot; characters.  &quot;Y&quot; enabled Tagged Queuing,&n;&t;&t;&t;&quot;N&quot; disables Tagged Queuing, and &quot;X&quot; accepts the&n;&t;&t;&t;default based on the firmware version.  The first&n;&t;&t;&t;character refers to Target Device 0, the second to&n;&t;&t;&t;Target Device 1, and so on; if the sequence of &quot;Y&quot;,&n;&t;&t;&t;&quot;N&quot;, and &quot;X&quot; characters does not cover all the Target&n;&t;&t;&t;Devices, unspecified characters are assumed to be &quot;X&quot;.&n;&n;  Note that explicitly requesting Tagged Queuing may lead to problems; this&n;  facility is provided primarily to allow disabling Tagged Queuing on Target&n;  Devices that do not implement it correctly.&n;&n;  The Error Recovery Strategy specification begins with &quot;ER:&quot; and allows for&n;  explicitly specifying the Error Recovery action to be performed when&n;  ResetCommand is called due to a SCSI Command failing to complete&n;  successfully.  The following specification options are available:&n;&n;  ER:Default&t;&t;Error Recovery will select between the Hard Reset and&n;&t;&t;&t;Bus Device Reset options based on the recommendation&n;&t;&t;&t;of the SCSI Subsystem.&n;&n;  ER:HardReset&t;&t;Error Recovery will initiate a Host Adapter Hard Reset&n;&t;&t;&t;which also causes a SCSI Bus Reset.&n;&n;  ER:BusDeviceReset&t;Error Recovery will send a Bus Device Reset message to&n;&t;&t;&t;the individual Target Device causing the error.  If&n;&t;&t;&t;Error Recovery is again initiated for this Target&n;&t;&t;&t;Device and no SCSI Command to this Target Device has&n;&t;&t;&t;completed successfully since the Bus Device Reset&n;&t;&t;&t;message was sent, then a Hard Reset will be attempted.&n;&n;  ER:None&t;&t;Error Recovery will be suppressed.  This option should&n;&t;&t;&t;only be selected if a SCSI Bus Reset or Bus Device&n;&t;&t;&t;Reset will cause the Target Device to fail completely&n;&t;&t;&t;and unrecoverably.&n;&n;  ER:&lt;Per-Target-Spec&gt;&t;Error Recovery will be controlled individually for each&n;&t;&t;&t;Target Device.  &lt;Per-Target-Spec&gt; is a sequence of &quot;D&quot;,&n;&t;&t;&t;&quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters.  &quot;D&quot; selects Default, &quot;H&quot;&n;&t;&t;&t;selects Hard Reset, &quot;B&quot; selects Bus Device Reset, and&n;&t;&t;&t;&quot;N&quot; selects None.  The first character refers to Target&n;&t;&t;&t;Device 0, the second to Target Device 1, and so on; if&n;&t;&t;&t;the sequence of &quot;D&quot;, &quot;H&quot;, &quot;B&quot;, and &quot;N&quot; characters does&n;&t;&t;&t;not cover all the possible Target Devices, unspecified&n;&t;&t;&t;characters are assumed to be &quot;D&quot;.&n;&n;  The Host Adapter Probing specification comprises the following strings:&n;&n;  NoProbe&t;&t;No probing of any kind is to be performed, and hence&n;&t;&t;&t;no BusLogic Host Adapters will be detected.&n;&n;  NoProbeISA&t;&t;No probing of the standard ISA I/O Addresses will&n;&t;&t;&t;be done, and hence only PCI MultiMaster and FlashPoint&n;&t;&t;&t;Host Adapters will be detected.&n;&n;  NoProbePCI&t;&t;No interrogation of PCI Configuration Space will be&n;&t;&t;&t;made, and hence only ISA Multimaster Host Adapters&n;&t;&t;&t;will be detected, as well as PCI Multimaster Host&n;&t;&t;&t;Adapters that have their ISA Compatible I/O Port&n;&t;&t;&t;set to &quot;Primary&quot; or &quot;Alternate&quot;.&n;&n;  NoSortPCI&t;&t;PCI MultiMaster Host Adapters will be enumerated in&n;&t;&t;&t;the order provided by the PCI BIOS, ignoring any&n;&t;&t;&t;setting of the AutoSCSI &quot;Use Bus And Device # For PCI&n;&t;&t;&t;Scanning Seq.&quot; option.&n;&n;  MultiMasterFirst&t;By default, if both FlashPoint and PCI MultiMaster&n;&t;&t;&t;Host Adapters are present, this driver will probe for&n;&t;&t;&t;FlashPoint Host Adapters first unless the BIOS primary&n;&t;&t;&t;disk is controlled by the first PCI MultiMaster Host&n;&t;&t;&t;Adapter, in which case MultiMaster Host Adapters will&n;&t;&t;&t;be probed first.  This option forces MultiMaster Host&n;&t;&t;&t;Adapters to be probed first.&n;&n;  FlashPointFirst&t;By default, if both FlashPoint and PCI MultiMaster&n;&t;&t;&t;Host Adapters are present, this driver will probe for&n;&t;&t;&t;FlashPoint Host Adapters first unless the BIOS primary&n;&t;&t;&t;disk is controlled by the first PCI MultiMaster Host&n;&t;&t;&t;Adapter, in which case MultiMaster Host Adapters will&n;&t;&t;&t;be probed first.  This option forces FlashPoint Host&n;&t;&t;&t;Adapters to be probed first.&n;&n;  Debug&t;&t;&t;Sets all the tracing bits in BusLogic_GlobalOptions.&n;&n;*/
 DECL|function|BusLogic_Setup
 r_void
 id|BusLogic_Setup

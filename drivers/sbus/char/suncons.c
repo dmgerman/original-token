@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.50 1997/02/26 08:55:22 ecd Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
+multiline_comment|/* $Id: suncons.c,v 1.53 1997/03/15 07:47:50 davem Exp $&n; *&n; * suncons.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -3698,60 +3698,13 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This routine should be moved to srmmu.c */
-r_static
-id|__inline__
-id|uint
-DECL|function|srmmu_get_pte
-id|srmmu_get_pte
-(paren
 r_int
 r_int
-id|addr
-)paren
-(brace
-r_register
-r_int
-r_int
-id|entry
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;&bslash;n&bslash;tlda [%1] %2,%0&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|entry
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-(paren
-id|addr
-op_amp
-l_int|0xfffff000
-)paren
-op_or
-l_int|0x400
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_M_FLUSH_PROBE
-)paren
-)paren
-suffix:semicolon
-r_return
-id|entry
-suffix:semicolon
-)brace
-id|uint
 DECL|function|get_phys
 id|get_phys
 (paren
-id|uint
+r_int
+r_int
 id|addr
 )paren
 (brace
@@ -3789,6 +3742,13 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
+r_case
+id|sun4u
+suffix:colon
+multiline_comment|/* FIXME: */
+r_return
+l_int|0
+suffix:semicolon
 r_default
 suffix:colon
 id|panic
@@ -3805,7 +3765,8 @@ r_int
 DECL|function|get_iospace
 id|get_iospace
 (paren
-id|uint
+r_int
+r_int
 id|addr
 )paren
 (brace
@@ -3835,6 +3796,13 @@ id|addr
 op_rshift
 l_int|28
 )paren
+suffix:semicolon
+r_case
+id|sun4u
+suffix:colon
+multiline_comment|/* FIXME: */
+r_return
+l_int|0
 suffix:semicolon
 r_default
 suffix:colon
@@ -4751,6 +4719,8 @@ comma
 id|base
 comma
 id|io
+comma
+id|sbdp
 )paren
 suffix:semicolon
 r_break
@@ -5575,8 +5545,7 @@ op_assign
 id|prom_inst2pkg
 c_func
 (paren
-op_star
-id|romvec-&gt;pv_v2bootargs.fd_stdout
+id|prom_stdout
 )paren
 suffix:semicolon
 r_if
@@ -5603,8 +5572,7 @@ op_assign
 id|prom_inst2pkg
 c_func
 (paren
-op_star
-id|romvec-&gt;pv_v2bootargs.fd_stdout
+id|prom_stdout
 )paren
 suffix:semicolon
 id|propl

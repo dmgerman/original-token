@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/watchdog.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;130
@@ -45,14 +46,6 @@ r_int
 id|data
 )paren
 (brace
-r_extern
-r_void
-id|hard_reset_now
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifdef ONLY_TESTING
 id|printk
 c_func
@@ -69,9 +62,10 @@ id|KERN_CRIT
 l_string|&quot;SOFTDOG: Initiating system reboot.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 id|printk

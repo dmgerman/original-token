@@ -1777,7 +1777,7 @@ l_int|1
 op_lshift
 id|event
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -2122,7 +2122,7 @@ op_amp
 id|UART_LSR_DR
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -2528,7 +2528,7 @@ l_string|&quot;scheduling hangup...&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

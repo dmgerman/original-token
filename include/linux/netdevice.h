@@ -47,6 +47,9 @@ DECL|macro|IFF_IP_MASK_OK
 mdefine_line|#define IFF_IP_MASK_OK&t;2
 DECL|macro|IFF_IP_BRD_OK
 mdefine_line|#define IFF_IP_BRD_OK&t;4
+r_struct
+id|neighbour
+suffix:semicolon
 multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
 DECL|struct|dev_mc_list
 r_struct
@@ -770,7 +773,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 comma

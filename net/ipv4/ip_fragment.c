@@ -1770,7 +1770,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tfp-&gt;next
+id|tmp-&gt;next
 op_ne
 l_int|NULL
 )paren

@@ -192,6 +192,10 @@ id|p
 op_ne
 op_amp
 id|misc_list
+op_logical_and
+id|len
+OL
+l_int|4000
 suffix:semicolon
 id|p
 op_assign
@@ -217,8 +221,24 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
+op_star
+id|start
+op_assign
+id|buf
+op_plus
+id|offset
+suffix:semicolon
 r_return
 id|len
+OG
+id|offset
+ques
+c_cond
+id|len
+op_minus
+id|offset
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* PROC_FS */

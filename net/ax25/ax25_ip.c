@@ -375,14 +375,14 @@ id|AX25_VALUES_IPDEFMODE
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;We clone the buffer and release the original thereby&n;&t;&t;&t; *&t;keeping it straight&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Note: we report 1 back so the caller will&n;&t;&t;&t; *&t;not feed the frame direct to the physical device&n;&t;&t;&t; *&t;We don&squot;t want that to happen. (It won&squot;t be upset&n;&t;&t;&t; *&t;as we have pulled the frame from the queue by&n;&t;&t;&t; *&t;freeing it).&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;We copy the buffer and release the original thereby&n;&t;&t;&t; *&t;keeping it straight&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Note: we report 1 back so the caller will&n;&t;&t;&t; *&t;not feed the frame direct to the physical device&n;&t;&t;&t; *&t;We don&squot;t want that to happen. (It won&squot;t be upset&n;&t;&t;&t; *&t;as we have pulled the frame from the queue by&n;&t;&t;&t; *&t;freeing it).&n;&t;&t;&t; *&n;&t;&t;&t; *&t;NB: TCP modifies buffers that are still&n;&t;&t;&t; *&t;on a device queue, thus we use skb_copy()&n;&t;&t;&t; *      instead of using skb_clone() unless this&n;&t;&t;&t; *&t;gets fixed.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|ourskb
 op_assign
-id|skb_clone
+id|skb_copy
 c_func
 (paren
 id|skb

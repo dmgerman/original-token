@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.97  Separately compileable soundcard/modem modules&n; */
+multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.97  Separately compileable soundcard/modem modules&n; *   0.5  03.03.97  fixed LPT probing (check_lpt result was interpreted the wrong way round)&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -147,7 +147,6 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|sm_drvname
-r_static
 r_const
 r_char
 id|sm_drvname
@@ -167,7 +166,7 @@ op_assign
 id|KERN_INFO
 l_string|&quot;soundmodem: (C) 1996 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;soundmodem: version 0.4 compiled &quot;
+l_string|&quot;soundmodem: version 0.5 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -175,7 +174,6 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|sm_modem_tx_table
-r_static
 r_const
 r_struct
 id|modem_tx_info
@@ -226,7 +224,6 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|sm_modem_rx_table
-r_static
 r_const
 r_struct
 id|modem_rx_info
@@ -448,6 +445,7 @@ DECL|macro|SP_MIDI
 mdefine_line|#define SP_MIDI 4
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== port checking routines ========================&n; */
+multiline_comment|/*&n; * returns 0 if ok and != 0 on error;&n; * the same behaviour as par96_check_lpt in baycom.c&n; */
 DECL|function|check_lpt
 r_static
 r_int
@@ -1470,6 +1468,7 @@ l_int|0x1000
 op_minus
 id|LPT_EXTENT
 op_logical_and
+op_logical_neg
 id|check_lpt
 c_func
 (paren

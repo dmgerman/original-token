@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 id|asmlinkage
 r_void
 id|sys_sync
@@ -14,14 +15,6 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* it&squot;s really int */
-r_extern
-r_void
-id|hard_reset_now
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|do_unblank_screen
@@ -221,9 +214,10 @@ l_int|1000
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Should we run the reboot notifier. For the moment Im&n;&t;&t; *&t;choosing not too. It might crash, be corrupt or do&n;&t;&t; *&t;more harm than good for other reasons.&n;&t;&t; */
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

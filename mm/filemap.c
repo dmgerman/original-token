@@ -2350,8 +2350,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|IS_RDONLY
+id|DO_UPDATE_ATIME
 c_func
 (paren
 id|inode
@@ -4259,8 +4258,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|IS_RDONLY
+id|DO_UPDATE_ATIME
 c_func
 (paren
 id|inode

@@ -232,10 +232,54 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */
-DECL|macro|NET_IPV6_FORWARDING
-mdefine_line|#define NET_IPV6_FORWARDING&t;&t;1
-DECL|macro|NET_IPV6_HOPLIMIT
-mdefine_line|#define NET_IPV6_HOPLIMIT&t;&t;2
+r_enum
+(brace
+DECL|enumerator|NET_IPV6_FORWARDING
+id|NET_IPV6_FORWARDING
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_IPV6_HOPLIMIT
+id|NET_IPV6_HOPLIMIT
+comma
+DECL|enumerator|NET_IPV6_ACCEPT_RA
+id|NET_IPV6_ACCEPT_RA
+comma
+DECL|enumerator|NET_IPV6_ACCEPT_REDIRECTS
+id|NET_IPV6_ACCEPT_REDIRECTS
+comma
+DECL|enumerator|NET_IPV6_ND_MAX_MCAST_SOLICIT
+id|NET_IPV6_ND_MAX_MCAST_SOLICIT
+comma
+DECL|enumerator|NET_IPV6_ND_MAX_UCAST_SOLICIT
+id|NET_IPV6_ND_MAX_UCAST_SOLICIT
+comma
+DECL|enumerator|NET_IPV6_ND_RETRANS_TIME
+id|NET_IPV6_ND_RETRANS_TIME
+comma
+DECL|enumerator|NET_IPV6_ND_REACHABLE_TIME
+id|NET_IPV6_ND_REACHABLE_TIME
+comma
+DECL|enumerator|NET_IPV6_ND_DELAY_PROBE_TIME
+id|NET_IPV6_ND_DELAY_PROBE_TIME
+comma
+DECL|enumerator|NET_IPV6_AUTOCONF
+id|NET_IPV6_AUTOCONF
+comma
+DECL|enumerator|NET_IPV6_DAD_TRANSMITS
+id|NET_IPV6_DAD_TRANSMITS
+comma
+DECL|enumerator|NET_IPV6_RTR_SOLICITS
+id|NET_IPV6_RTR_SOLICITS
+comma
+DECL|enumerator|NET_IPV6_RTR_SOLICIT_INTERVAL
+id|NET_IPV6_RTR_SOLICIT_INTERVAL
+comma
+DECL|enumerator|NET_IPV6_RTR_SOLICIT_DELAY
+id|NET_IPV6_RTR_SOLICIT_DELAY
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipx */
 multiline_comment|/* /proc/sys/net/appletalk */
 multiline_comment|/* /proc/sys/net/netrom */
@@ -320,6 +364,9 @@ id|NET_AX25_PACLEN
 comma
 DECL|enumerator|NET_AX25_PROTOCOL
 id|NET_AX25_PROTOCOL
+comma
+DECL|enumerator|NET_AX25_DAMA_SLAVE_TIMEOUT
+id|NET_AX25_DAMA_SLAVE_TIMEOUT
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/rose */

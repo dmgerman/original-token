@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.9 1997/03/04 10:41:59 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.12 1997/03/18 18:24:59 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -16,7 +16,7 @@ macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
@@ -152,7 +152,7 @@ id|sk_reuse
 op_logical_or
 (paren
 id|state
-op_ne
+op_eq
 id|TCP_LISTEN
 )paren
 )paren
@@ -763,9 +763,9 @@ op_star
 id|daddr
 suffix:semicolon
 r_struct
-id|dest_entry
+id|dst_entry
 op_star
-id|dest
+id|dst
 suffix:semicolon
 r_struct
 id|ipv6_pinfo
@@ -776,6 +776,10 @@ r_struct
 id|inet6_ifaddr
 op_star
 id|ifa
+suffix:semicolon
+r_struct
+id|flowi
+id|fl
 suffix:semicolon
 r_int
 id|addr_type
@@ -898,11 +902,9 @@ id|err
 OL
 l_int|0
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 id|ipv6_addr_copy
 c_func
 (paren
@@ -984,38 +986,69 @@ comma
 id|daddr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Check for a route to destination an obtain the&n;&t; *&t;destination cache for it.&n;&t; */
-id|dest
+id|sk-&gt;dummy_th.dest
 op_assign
-id|ipv6_dst_route
+id|usin-&gt;sin6_port
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Check for a route to destination an obtain the&n;&t; *&t;destination cache for it.&n;&t; */
+id|fl.proto
+op_assign
+id|IPPROTO_UDP
+suffix:semicolon
+id|fl.nl_u.ip6_u.daddr
+op_assign
+id|daddr
+suffix:semicolon
+id|fl.nl_u.ip6_u.saddr
+op_assign
+l_int|NULL
+suffix:semicolon
+id|fl.dev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|fl.uli_u.ports.dport
+op_assign
+id|sk-&gt;dummy_th.dest
+suffix:semicolon
+id|fl.uli_u.ports.sport
+op_assign
+id|sk-&gt;dummy_th.source
+suffix:semicolon
+id|dst
+op_assign
+id|ip6_route_output
 c_func
 (paren
-id|daddr
+id|sk
 comma
-l_int|NULL
-comma
-id|sk-&gt;localroute
-ques
-c_cond
-id|RTI_GATEWAY
-suffix:colon
-l_int|0
+op_amp
+id|fl
 )paren
-suffix:semicolon
-id|np-&gt;dest
-op_assign
-id|dest
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dest
-op_eq
-l_int|NULL
+id|dst-&gt;error
 )paren
+(brace
+id|dst_release
+c_func
+(paren
+id|dst
+)paren
+suffix:semicolon
 r_return
-op_minus
-id|ENETUNREACH
+id|dst-&gt;error
+suffix:semicolon
+)brace
+id|ip6_dst_store
+c_func
+(paren
+id|sk
+comma
+id|dst
+)paren
 suffix:semicolon
 multiline_comment|/* get the source adddress used in the apropriate device */
 id|ifa
@@ -1023,12 +1056,7 @@ op_assign
 id|ipv6_get_saddr
 c_func
 (paren
-(paren
-r_struct
-id|rt6_info
-op_star
-)paren
-id|dest
+id|dst
 comma
 id|daddr
 )paren
@@ -1081,10 +1109,6 @@ op_assign
 l_int|0xffffffff
 suffix:semicolon
 )brace
-id|sk-&gt;dummy_th.dest
-op_assign
-id|usin-&gt;sin6_port
-suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
@@ -1130,16 +1154,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
-(brace
-id|ipv6_dst_unlock
+id|dst_release
 c_func
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
 suffix:semicolon
-)brace
+id|ipv6_sock_mc_close
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|release_sock
 c_func
 (paren
@@ -1556,10 +1584,12 @@ id|sk
 suffix:semicolon
 )brace
 r_else
+(brace
 id|sk-&gt;err_soft
 op_assign
 id|err
 suffix:semicolon
+)brace
 )brace
 DECL|function|udpv6_queue_rcv_skb
 r_static
@@ -2239,6 +2269,7 @@ id|discard
 suffix:semicolon
 )brace
 )brace
+suffix:semicolon
 id|len
 op_assign
 id|ulen
@@ -2329,9 +2360,8 @@ multiline_comment|/* deliver */
 r_if
 c_cond
 (paren
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
-(brace
 id|__skb_queue_tail
 c_func
 (paren
@@ -2341,9 +2371,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|udpv6_queue_rcv_skb
 c_func
 (paren
@@ -2352,7 +2380,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2680,6 +2707,10 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
+r_struct
+id|flowi
+id|fl
+suffix:semicolon
 r_int
 id|addr_len
 op_assign
@@ -2714,7 +2745,8 @@ suffix:semicolon
 r_int
 id|hlimit
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 r_int
 id|err
@@ -2792,7 +2824,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 op_logical_and
 id|ipv6_addr_cmp
 c_func
@@ -2804,13 +2836,13 @@ id|np-&gt;daddr
 )paren
 )paren
 (brace
-id|ipv6_dst_unlock
+id|dst_release
 c_func
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
 suffix:semicolon
-id|np-&gt;dest
+id|np-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2954,12 +2986,10 @@ c_cond
 (paren
 id|opt-&gt;srcrt
 )paren
-(brace
 id|udh.daddr
 op_assign
 id|daddr
 suffix:semicolon
-)brace
 )brace
 id|udh.uh.source
 op_assign
@@ -2989,9 +3019,33 @@ id|udh.pl_len
 op_assign
 id|len
 suffix:semicolon
+id|fl.proto
+op_assign
+id|IPPROTO_UDP
+suffix:semicolon
+id|fl.nl_u.ip6_u.daddr
+op_assign
+id|daddr
+suffix:semicolon
+id|fl.nl_u.ip6_u.saddr
+op_assign
+id|saddr
+suffix:semicolon
+id|fl.dev
+op_assign
+id|dev
+suffix:semicolon
+id|fl.uli_u.ports.dport
+op_assign
+id|udh.uh.dest
+suffix:semicolon
+id|fl.uli_u.ports.sport
+op_assign
+id|udh.uh.source
+suffix:semicolon
 id|err
 op_assign
-id|ipv6_build_xmit
+id|ip6_build_xmit
 c_func
 (paren
 id|sk
@@ -3001,23 +3055,16 @@ comma
 op_amp
 id|udh
 comma
-id|daddr
+op_amp
+id|fl
 comma
 id|len
 comma
-id|saddr
-comma
-id|dev
-comma
 id|opt
-comma
-id|IPPROTO_UDP
 comma
 id|hlimit
 comma
 id|msg-&gt;msg_flags
-op_amp
-id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 r_if

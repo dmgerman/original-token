@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.12 1997/03/02 06:14:44 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.16 1997/03/18 18:24:26 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,30 +17,21 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
-macro_line|#include &lt;net/protocol.h&gt;
-macro_line|#include &lt;net/arp.h&gt;
-macro_line|#include &lt;net/rarp.h&gt;
-macro_line|#include &lt;net/route.h&gt;
-macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;net/raw.h&gt;
-macro_line|#include &lt;net/icmp.h&gt;
-macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;net/sit.h&gt;
+macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
-macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
-macro_line|#include &lt;net/sit.h&gt;
-macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_struct
 id|proto_ops
@@ -51,6 +42,85 @@ r_struct
 id|proto_ops
 id|inet6_dgram_ops
 suffix:semicolon
+multiline_comment|/* IPv6 procfs goodies... */
+macro_line|#ifdef CONFIG_PROC_FS
+r_extern
+r_int
+id|raw6_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tcp6_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|udp6_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|afinet6_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|inet6_create
 r_static
 r_int
@@ -274,16 +344,9 @@ op_assign
 op_amp
 id|net_timer
 suffix:semicolon
-id|init_timer
-c_func
-(paren
-op_amp
-id|sk-&gt;timer
-)paren
-suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.hop_limit
 op_assign
-id|ipv6_hop_limit
+id|ipv6_config.hop_limit
 suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.mcast_hops
 op_assign
@@ -1525,6 +1588,132 @@ comma
 id|inet6_create
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|variable|proc_net_raw6
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_net_raw6
+op_assign
+(brace
+id|PROC_NET_RAW6
+comma
+l_int|4
+comma
+l_string|&quot;raw6&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
+id|raw6_get_info
+)brace
+suffix:semicolon
+DECL|variable|proc_net_tcp6
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_net_tcp6
+op_assign
+(brace
+id|PROC_NET_TCP6
+comma
+l_int|4
+comma
+l_string|&quot;tcp6&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
+id|tcp6_get_info
+)brace
+suffix:semicolon
+DECL|variable|proc_net_udp6
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_net_udp6
+op_assign
+(brace
+id|PROC_NET_RAW6
+comma
+l_int|4
+comma
+l_string|&quot;udp6&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
+id|udp6_get_info
+)brace
+suffix:semicolon
+DECL|variable|proc_net_sockstat6
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_net_sockstat6
+op_assign
+(brace
+id|PROC_NET_SOCKSTAT6
+comma
+l_int|9
+comma
+l_string|&quot;sockstat6&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
+comma
+id|afinet6_get_info
+)brace
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -1554,7 +1743,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;IPv6 v0.1 for NET3.037&bslash;n&quot;
+l_string|&quot;IPv6 v0.2 for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1579,10 +1768,15 @@ id|KERN_CRIT
 l_string|&quot;inet6_proto_init: size fault&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#else
+r_return
+suffix:semicolon
+macro_line|#endif
 )brace
 (paren
 r_void
@@ -1601,13 +1795,6 @@ c_func
 )paren
 suffix:semicolon
 id|icmpv6_init
-c_func
-(paren
-op_amp
-id|inet6_family_ops
-)paren
-suffix:semicolon
-id|ndisc_init
 c_func
 (paren
 op_amp
@@ -1636,6 +1823,37 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Create /proc/foo6 entries. */
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_raw6
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_tcp6
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_udp6
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_sockstat6
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef MODULE
 r_return
 l_int|0
@@ -1667,6 +1885,32 @@ c_func
 id|AF_INET6
 )paren
 suffix:semicolon
-)brace
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_net_unregister
+c_func
+(paren
+id|proc_net_raw6.low_ino
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|proc_net_tcp6.low_ino
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|proc_net_udp6.low_ino
+)paren
+suffix:semicolon
+id|proc_net_unregister
+c_func
+(paren
+id|proc_net_sockstat6.low_ino
+)paren
+suffix:semicolon
 macro_line|#endif
+)brace
+macro_line|#endif&t;/* MODULE */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.8 1997/03/04 16:27:33 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.10 1997/03/14 21:05:39 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -183,6 +183,12 @@ id|current_ds
 comma
 id|new_signal
 suffix:semicolon
+DECL|member|kregs
+r_struct
+id|pt_regs
+op_star
+id|kregs
+suffix:semicolon
 DECL|member|core_exec
 r_struct
 id|exec
@@ -203,7 +209,7 @@ mdefine_line|#define SPARC_FLAG_32BIT        0x8    /* task is older 32-bit bina
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffffe00000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },&t;&bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &t;&t;&t;&t;&bslash;&n;   0,          0,          { { 0, 0, }, }, &t;&t;&t;&t;&bslash;&n;/* user_globals */ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, &t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc */ &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0,   0, &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&t;&bslash;&n;/* w_saved */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   SPARC_FLAG_KTHREAD,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ex,     sstk_info, current_ds, */&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, }, USER_DS,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* new_signal */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  0,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* core_exec */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },&t;&bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &t;&t;&t;&t;&bslash;&n;   0,          0,          { { 0, 0, }, }, &t;&t;&t;&t;&bslash;&n;/* user_globals */ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, 0 }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc */ &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0,   0, &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&t;&bslash;&n;/* w_saved */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   SPARC_FLAG_KTHREAD,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ex,     sstk_info, current_ds, */&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, }, USER_DS,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* new_signal, kregs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* core_exec */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc

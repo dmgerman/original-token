@@ -1157,6 +1157,7 @@ op_and_assign
 id|GFP_LEVEL_MASK
 suffix:semicolon
 multiline_comment|/* Sanity check... */
+macro_line|#if 0&t;/* no longer valid */
 r_if
 c_cond
 (paren
@@ -1200,6 +1201,7 @@ id|GFP_ATOMIC
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|save_flags
 c_func
 (paren

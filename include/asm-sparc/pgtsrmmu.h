@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsrmmu.h,v 1.25 1996/12/18 06:56:07 tridge Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.28 1997/03/15 07:47:52 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H
 mdefine_line|#define _SPARC_PGTSRMMU_H
@@ -94,6 +94,7 @@ DECL|macro|SRMMU_FAULT_STATUS
 mdefine_line|#define SRMMU_FAULT_STATUS       0x00000300
 DECL|macro|SRMMU_FAULT_ADDR
 mdefine_line|#define SRMMU_FAULT_ADDR         0x00000400
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Accessing the MMU control register. */
 DECL|function|srmmu_get_mmureg
 r_extern
@@ -654,6 +655,54 @@ id|retval
 suffix:semicolon
 )brace
 r_extern
+id|__inline__
+r_int
+DECL|function|srmmu_get_pte
+id|srmmu_get_pte
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_register
+r_int
+r_int
+id|entry
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tlda [%1] %2,%0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|entry
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+id|addr
+op_amp
+l_int|0xfffff000
+)paren
+op_or
+l_int|0x400
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_FLUSH_PROBE
+)paren
+)paren
+suffix:semicolon
+r_return
+id|entry
+suffix:semicolon
+)brace
+r_extern
 r_int
 r_int
 (paren
@@ -682,5 +731,6 @@ r_int
 id|word
 )paren
 suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC_PGTSRMMU_H) */
 eof

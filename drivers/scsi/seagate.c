@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|variable|proc_scsi_seagate
+r_static
 r_struct
 id|proc_dir_entry
 id|proc_scsi_seagate

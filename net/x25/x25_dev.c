@@ -59,7 +59,6 @@ r_int
 r_int
 id|lci
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -73,6 +72,9 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -90,7 +92,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 id|frametype
 op_assign
 id|skb-&gt;data

@@ -1006,7 +1006,18 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
-multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
+id|smp_message_pass
+c_func
+(paren
+id|MSG_ALL_BUT_SELF
+comma
+id|MSG_RESCHEDULE
+comma
+l_int|0L
+comma
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_MCA
 r_if
 c_cond

@@ -1,25 +1,26 @@
 multiline_comment|/*&n; * drivers/sbus/char/bpp.c&n; *&n; * Copyright (c) 1995 Picture Elements&n; *      Stephen Williams (steve@icarus.com)&n; *      Gus Baldauf (gbaldauf@ix.netcom.com)&n; *&n; * Linux/SPARC port by Peter Zaitcev.&n; * Integration into SPARC tree by Tom Dyas.&n; */
-macro_line|# include  &lt;linux/kernel.h&gt;
-macro_line|# include  &lt;linux/module.h&gt;
-macro_line|# include  &lt;linux/version.h&gt;
-macro_line|# include  &lt;linux/fs.h&gt;
-macro_line|# include  &lt;linux/errno.h&gt;
-macro_line|# include  &lt;linux/sched.h&gt;
-macro_line|# include  &lt;linux/timer.h&gt;
-macro_line|# include  &lt;linux/ioport.h&gt;
-macro_line|# include  &lt;asm/uaccess.h&gt;
-macro_line|# if defined(__i386__)
-macro_line|# include  &lt;asm/io.h&gt;
-macro_line|# include  &lt;asm/system.h&gt;
-macro_line|# include  &lt;asm/segment.h&gt;
-macro_line|# endif
-macro_line|# if defined(__sparc__)
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include  &lt;asm/uaccess.h&gt;
+macro_line|#if defined(__i386__)
+macro_line|# include &lt;asm/io.h&gt;
+macro_line|# include &lt;asm/system.h&gt;
+macro_line|# include &lt;asm/segment.h&gt;
+macro_line|#endif
+macro_line|#if defined(__sparc__)
 macro_line|# include &lt;linux/delay.h&gt;         /* udelay() */
 macro_line|# include &lt;asm/oplib.h&gt;           /* OpenProm Library */
 macro_line|# include &lt;asm/sbus.h&gt;            /* struct linux_sbus *SBus_chain */
 macro_line|# include &lt;asm/io.h&gt;              /* sparc_alloc_io() */
-macro_line|# endif
-macro_line|# include &lt;asm/bpp.h&gt;
+macro_line|#endif
+macro_line|#include &lt;asm/bpp.h&gt;
 DECL|macro|BPP_PROBE_CODE
 mdefine_line|#define BPP_PROBE_CODE 0x55
 DECL|macro|BPP_DELAY
@@ -30,7 +31,7 @@ r_const
 r_int
 id|BPP_MAJOR
 op_assign
-l_int|32
+id|LP_MAJOR
 suffix:semicolon
 DECL|variable|dev_name
 r_static
@@ -1113,6 +1114,8 @@ id|minor
 dot
 id|timer_list.expires
 op_assign
+id|jiffies
+op_plus
 id|snooze_time
 op_plus
 l_int|1
@@ -1654,10 +1657,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Allow only one process to open the device at a time.&n; */
-DECL|function|open
+DECL|function|bpp_open
 r_static
 r_int
-id|open
+id|bpp_open
 c_func
 (paren
 r_struct
@@ -1734,10 +1737,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * When the process closes the device, this method is called to clean&n; * up and reset the hardware. Always leave the device in compatibility&n; * mode as this is a reasonable place to clean up from messes made by&n; * ioctls, or other mayhem.&n; */
-DECL|function|release
+DECL|function|bpp_release
 r_static
 r_void
-id|release
+id|bpp_release
 c_func
 (paren
 r_struct
@@ -2553,10 +2556,10 @@ op_minus
 id|remaining
 suffix:semicolon
 )brace
-DECL|function|read
+DECL|function|bpp_read
 r_static
 r_int
-id|read
+id|bpp_read
 c_func
 (paren
 r_struct
@@ -3223,10 +3226,10 @@ id|remaining
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write to the peripheral. Be sensitive of the current mode. If I&squot;m&n; * in a mode that can be turned around (ECP) then just do&n; * that. Otherwise, terminate and do my writing in compat mode. This&n; * is the safest course as any device can handle it.&n; */
-DECL|function|write
+DECL|function|bpp_write
 r_static
 r_int
-id|write
+id|bpp_write
 c_func
 (paren
 r_struct
@@ -3362,10 +3365,10 @@ r_return
 id|errno
 suffix:semicolon
 )brace
-DECL|function|ioctl
+DECL|function|bpp_ioctl
 r_static
 r_int
-id|ioctl
+id|bpp_ioctl
 c_func
 (paren
 r_struct
@@ -3597,34 +3600,28 @@ id|file_operations
 id|bpp_fops
 op_assign
 (brace
-l_int|0
+l_int|NULL
 comma
-id|read
+multiline_comment|/* bpp_lseek */
+id|bpp_read
 comma
-multiline_comment|/* read */
-id|write
+id|bpp_write
 comma
-multiline_comment|/* write */
-l_int|0
+l_int|NULL
 comma
-l_int|0
+multiline_comment|/* bpp_readdir */
+l_int|NULL
 comma
-id|ioctl
+multiline_comment|/* bpp_select */
+id|bpp_ioctl
 comma
-l_int|0
+l_int|NULL
 comma
-multiline_comment|/* mmap */
-id|open
+multiline_comment|/* bpp_mmap */
+id|bpp_open
 comma
-id|release
+id|bpp_release
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
 )brace
 suffix:semicolon
 macro_line|#if defined(__i386__)

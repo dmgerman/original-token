@@ -3390,6 +3390,10 @@ id|ax_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
 suffix:semicolon
+id|ax_ldisc.name
+op_assign
+l_string|&quot;mkiss&quot;
+suffix:semicolon
 id|ax_ldisc.flags
 op_assign
 l_int|0

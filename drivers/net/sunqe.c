@@ -5486,6 +5486,34 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* We are home free at this point, link the qe&squot;s into&n;&t; * the master list for later module unloading.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|qe_devs
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|ifindex
+op_assign
+id|dev_new_index
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|qecp-&gt;next_module
 op_assign
 id|root_qec_dev

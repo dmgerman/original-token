@@ -22,10 +22,14 @@ DECL|macro|MRT_VERSION
 mdefine_line|#define MRT_VERSION&t;(MRT_BASE+6)&t;/* Get the kernel multicast version&t;*/
 DECL|macro|MRT_ASSERT
 mdefine_line|#define MRT_ASSERT&t;(MRT_BASE+7)&t;/* Activate PIM assert mode&t;&t;*/
+DECL|macro|MRT_PIM
+mdefine_line|#define MRT_PIM&t;&t;(MRT_BASE+8)&t;/* enable PIM code&t;*/
 DECL|macro|SIOCGETVIFCNT
 mdefine_line|#define SIOCGETVIFCNT&t;SIOCPROTOPRIVATE&t;/* IP protocol privates */
 DECL|macro|SIOCGETSGCNT
 mdefine_line|#define SIOCGETSGCNT&t;(SIOCPROTOPRIVATE+1)
+DECL|macro|SIOCGETRPF
+mdefine_line|#define SIOCGETRPF&t;(SIOCPROTOPRIVATE+2)
 DECL|macro|MAXVIFS
 mdefine_line|#define MAXVIFS&t;&t;32&t;
 DECL|typedef|vifbitmap_t
@@ -101,8 +105,19 @@ suffix:semicolon
 DECL|macro|VIFF_TUNNEL
 mdefine_line|#define VIFF_TUNNEL&t;0x1&t;&t;/* IPIP tunnel */
 DECL|macro|VIFF_SRCRT
-mdefine_line|#define VIFF_SRCRT&t;0x02&t;&t;/* NI */
-multiline_comment|/*&n; *&t;Cache manipulation structures for mrouted&n; */
+mdefine_line|#define VIFF_SRCRT&t;0x2&t;&t;/* NI */
+multiline_comment|/* PIM Vif Flags */
+DECL|macro|VIFF_DR
+mdefine_line|#define VIFF_DR                 0x0010          /* designated router    */
+DECL|macro|VIFF_NOMRT
+mdefine_line|#define VIFF_NOMRT              0x0020          /* no neighbor on vif   */
+DECL|macro|VIFF_DOWN
+mdefine_line|#define VIFF_DOWN               0x0040          /* interface is down    */
+DECL|macro|VIFF_DISABLED
+mdefine_line|#define VIFF_DISABLED           0x0080          /* disabled interafce   */
+DECL|macro|VIFF_REGISTER
+mdefine_line|#define VIFF_REGISTER           0x00A0          /* MIssing cap@di.fc.ul.pt */
+multiline_comment|/*&n; *&t;Cache manipulation structures for mrouted and PIMd&n; */
 DECL|struct|mfcctl
 r_struct
 id|mfcctl
@@ -133,6 +148,26 @@ id|MAXVIFS
 )braket
 suffix:semicolon
 multiline_comment|/* Where it is going&t;*/
+DECL|member|mfcc_pkt_cnt
+r_int
+r_int
+id|mfcc_pkt_cnt
+suffix:semicolon
+multiline_comment|/* pkt count for src-grp */
+DECL|member|mfcc_byte_cnt
+r_int
+r_int
+id|mfcc_byte_cnt
+suffix:semicolon
+DECL|member|mfcc_wrong_if
+r_int
+r_int
+id|mfcc_wrong_if
+suffix:semicolon
+DECL|member|mfcc_expire
+r_int
+id|mfcc_expire
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* &n; *&t;Group count retrieval for mrouted&n; */
@@ -201,6 +236,30 @@ r_int
 id|obytes
 suffix:semicolon
 multiline_comment|/* Out bytes */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;To get RPF from unicast routing table (PIM: cap@di.fc.ul.pt)&n; */
+DECL|struct|sioc_rpf_req
+r_struct
+id|sioc_rpf_req
+(brace
+DECL|member|source
+r_int
+r_int
+id|source
+suffix:semicolon
+multiline_comment|/* Source address */
+DECL|member|rpfneighbor
+r_int
+r_int
+id|rpfneighbor
+suffix:semicolon
+multiline_comment|/* RPF */
+DECL|member|iif
+id|vifi_t
+id|iif
+suffix:semicolon
+multiline_comment|/* Incoming Interface */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;This is the format the mroute daemon expects to see IGMP control&n; *&t;data. Magically happens to be like an IP packet as per the original&n; */
@@ -413,6 +472,11 @@ comma
 id|remote
 suffix:semicolon
 multiline_comment|/* Addresses(remote for tunnels)*/
+DECL|member|uptime
+r_int
+r_int
+id|uptime
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|mfc_cache
@@ -475,6 +539,16 @@ DECL|member|mfc_maxvif
 r_int
 id|mfc_maxvif
 suffix:semicolon
+DECL|member|uptime
+r_int
+r_int
+id|uptime
+suffix:semicolon
+DECL|member|expire
+r_int
+r_int
+id|expire
+suffix:semicolon
 DECL|member|mfc_bytes
 r_int
 r_int
@@ -519,8 +593,10 @@ DECL|macro|MFC_ASSERT_THRESH
 mdefine_line|#define MFC_ASSERT_THRESH (3*HZ)&t;&t;/* Maximal freq. of asserts */
 multiline_comment|/*&n; *&t;Pseudo messages used by mrouted&n; */
 DECL|macro|IGMPMSG_NOCACHE
-mdefine_line|#define IGMPMSG_NOCACHE&t;&t;1&t;&t;/* Kernel cache fill request to mrouted */
+mdefine_line|#define IGMPMSG_NOCACHE&t;&t;1&t;&t;/* Kern cache fill request to mrouted */
 DECL|macro|IGMPMSG_WRONGVIF
 mdefine_line|#define IGMPMSG_WRONGVIF&t;2&t;&t;/* For PIM assert processing (unused) */
+DECL|macro|IGMPMSG_WHOLEPKT
+mdefine_line|#define IGMPMSG_WHOLEPKT&t;3&t;&t;/* For PIM Register processing */
 macro_line|#endif
 eof

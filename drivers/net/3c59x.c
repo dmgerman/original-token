@@ -15,6 +15,7 @@ mdefine_line|#define AUTOMEDIA 1
 multiline_comment|/* Allow the use of bus master transfers instead of programmed-I/O for the&n;   Tx process.  Bus master transfers are always disabled by default, but&n;   iff this is set they may be turned on using &squot;options&squot;. */
 DECL|macro|VORTEX_BUS_MASTER
 mdefine_line|#define VORTEX_BUS_MASTER
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -77,6 +78,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef VORTEX_DEBUG
 DECL|variable|vortex_debug
+r_static
 r_int
 id|vortex_debug
 op_assign
@@ -84,6 +86,7 @@ id|VORTEX_DEBUG
 suffix:semicolon
 macro_line|#else
 DECL|variable|vortex_debug
+r_static
 r_int
 id|vortex_debug
 op_assign

@@ -30,6 +30,7 @@ suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
+macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#endif
 macro_line|#endif
@@ -360,6 +361,28 @@ c_func
 id|neigh_tbl_run_bh
 )paren
 suffix:semicolon
+multiline_comment|/*&t;dst_entry&t;*/
+DECL|variable|dst_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dst_alloc
+)paren
+suffix:semicolon
+DECL|variable|__dst_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__dst_free
+)paren
+suffix:semicolon
+DECL|variable|dst_total
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dst_total
+)paren
+suffix:semicolon
 multiline_comment|/* Needed by smbfs.o */
 DECL|variable|__scm_destroy
 id|EXPORT_SYMBOL
@@ -418,6 +441,15 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sklist_insert_socket
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMB_FS_MODULE
+DECL|variable|scm_detach_fds
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scm_detach_fds
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -685,13 +717,6 @@ c_func
 id|dev_lockct
 )paren
 suffix:semicolon
-DECL|variable|ndisc_eth_hook
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|ndisc_eth_hook
-)paren
-suffix:semicolon
 DECL|variable|memcpy_fromiovecend
 id|EXPORT_SYMBOL
 c_func
@@ -931,11 +956,11 @@ c_func
 id|tcp_v4_syn_recv_sock
 )paren
 suffix:semicolon
-DECL|variable|tcp_v4_backlog_rcv
+DECL|variable|tcp_v4_do_rcv
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tcp_v4_backlog_rcv
+id|tcp_v4_do_rcv
 )paren
 suffix:semicolon
 DECL|variable|tcp_v4_connect
@@ -1150,6 +1175,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dev_new_index
+)paren
+suffix:semicolon
+DECL|variable|dev_get_by_index
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_get_by_index
 )paren
 suffix:semicolon
 DECL|variable|eth_type_trans

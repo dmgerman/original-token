@@ -5,8 +5,6 @@ multiline_comment|/*&n; *&t;Generic neighbour manipulation&n; *&n; *&t;authors:&
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/*&n; *&t;flags&n; *&n; */
 DECL|macro|NTF_COMPLETE
 mdefine_line|#define NTF_COMPLETE&t;0x02
@@ -57,6 +55,12 @@ id|ha
 (braket
 id|MAX_ADDR_LEN
 )braket
+suffix:semicolon
+DECL|member|hh
+r_struct
+id|hh_cache
+op_star
+id|hh
 suffix:semicolon
 DECL|member|refcnt
 id|atomic_t
@@ -116,11 +120,6 @@ op_star
 id|h_dest
 comma
 r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
 id|sk_buff
 op_star
 id|skb
@@ -150,16 +149,17 @@ c_func
 r_int
 id|size
 comma
-r_int
-id|priority
+r_struct
+id|neigh_ops
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Neighbour references&n; *&n; *&t;When neighbour pointers are passed to &quot;client&quot; code the&n; *&t;reference count is increased. The count is 0 if the node&n; *&t;is only referenced by the corresponding table.&n; *&n; *&t;Nodes cannot be unlinked from the table if their&n; *&t;reference count != 0.&n; *&n; *&t;i.e. you can&squot;t reclaim a neighbour if it is being used by a&n; *&t;dst_cache or routing entry - hopefully those will react&n; *&t;to memory shortage and GC their unused entries&n; */
-DECL|function|neighbour_unlock
+DECL|function|neigh_release
 r_static
 id|__inline__
 r_void
-id|neighbour_unlock
+id|neigh_release
 c_func
 (paren
 r_struct
@@ -372,6 +372,17 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|neigh_destroy
+c_func
+(paren
+r_struct
+id|neighbour
+op_star
+id|neigh
 )paren
 suffix:semicolon
 DECL|function|neigh_insert

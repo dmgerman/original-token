@@ -9814,6 +9814,13 @@ id|dev
 suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/* We are home free at this point, link us in to the happy&n;&t; * module device list.&n;&t; */
+id|dev-&gt;ifindex
+op_assign
+id|dev_new_index
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hp-&gt;next_module
 op_assign
 id|root_happy_dev

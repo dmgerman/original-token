@@ -282,8 +282,12 @@ DECL|macro|NETDEV_CHANGEADDR
 mdefine_line|#define NETDEV_CHANGEADDR&t;0x0008
 DECL|macro|SYS_DOWN
 mdefine_line|#define SYS_DOWN&t;0x0001&t;/* Notify of system down */
+DECL|macro|SYS_RESTART
+mdefine_line|#define SYS_RESTART&t;SYS_DOWN
 DECL|macro|SYS_HALT
 mdefine_line|#define SYS_HALT&t;0x0002&t;/* Notify of system halt */
+DECL|macro|SYS_POWER_OFF
+mdefine_line|#define SYS_POWER_OFF&t;0x0003&t;/* Notify of system power off */
 multiline_comment|/*&n; *&t;Publically visible notifier objects&n; */
 r_extern
 r_struct

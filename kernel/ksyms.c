@@ -30,6 +30,7 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -146,14 +147,6 @@ c_func
 r_int
 r_int
 id|dmanr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|hard_reset_now
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef MODVERSIONS
@@ -1357,11 +1350,39 @@ c_func
 id|sys_call_table
 )paren
 suffix:semicolon
-DECL|variable|hard_reset_now
+DECL|variable|machine_restart
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|hard_reset_now
+id|machine_restart
+)paren
+suffix:semicolon
+DECL|variable|machine_halt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|machine_halt
+)paren
+suffix:semicolon
+DECL|variable|machine_power_off
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|machine_power_off
+)paren
+suffix:semicolon
+DECL|variable|register_reboot_notifier
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_reboot_notifier
+)paren
+suffix:semicolon
+DECL|variable|unregister_reboot_notifier
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_reboot_notifier
 )paren
 suffix:semicolon
 DECL|variable|_ctype

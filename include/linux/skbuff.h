@@ -213,15 +213,6 @@ DECL|member|mac
 )brace
 id|mac
 suffix:semicolon
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-multiline_comment|/*&n;&t; *&t;Generic &quot;neighbour&quot; information&n;&t; */
-DECL|member|nexthop
-r_struct
-id|neighbour
-op_star
-id|nexthop
-suffix:semicolon
-macro_line|#endif&t;&t;
 DECL|member|dst
 r_struct
 id|dst_entry
@@ -322,6 +313,12 @@ r_int
 id|protocol
 suffix:semicolon
 multiline_comment|/* Packet protocol from driver. &t;&t;*/
+DECL|member|security
+r_int
+r_int
+id|security
+suffix:semicolon
+multiline_comment|/* Security level of packet&t;&t;&t;*/
 DECL|member|truesize
 r_int
 r_int

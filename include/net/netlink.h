@@ -258,6 +258,8 @@ DECL|macro|NETLINK_IPSEC
 mdefine_line|#define NETLINK_IPSEC&t;&t;10&t;/* IPSEC */
 DECL|macro|NETLINK_ROUTE6
 mdefine_line|#define NETLINK_ROUTE6&t;&t;11&t;/* af_inet6 route comm channel */
+DECL|macro|NETLINK_IP6_FW
+mdefine_line|#define NETLINK_IP6_FW&t;&t;13
 multiline_comment|/* Wouldn&squot;t this suffice instead of the confusion at the top of&n;   this file?  i.e. 3 is firewall or ppp... */
 multiline_comment|/* #define MAX_LINKS&t;&t;16 */
 macro_line|#endif

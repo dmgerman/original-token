@@ -140,7 +140,7 @@ DECL|macro|RTF_IFPREFIX
 mdefine_line|#define RTF_IFPREFIX&t;(RTF_UP|RTF_MAGIC|RTF_INTERFACE)
 multiline_comment|/*&n; *&t;Flags not visible at user level.&n; */
 DECL|macro|RTF_INTERNAL
-mdefine_line|#define RTF_INTERNAL&t;0xFFFF0000
+mdefine_line|#define RTF_INTERNAL&t;0xFFFF8000&t;/* to get RTF_MAGIC as well... */
 multiline_comment|/*&n; *&t;Flags saved in FIB.&n; */
 DECL|macro|RTF_FIB
 mdefine_line|#define RTF_FIB&t;&t;(RTF_UP|RTF_GATEWAY|RTF_REJECT|RTF_THROW|RTF_STATIC|&bslash;&n;&t;&t;&t; RTF_XRESOLVE|RTF_NOPMTUDISC|RTF_NOFORWARD|RTF_INTERNAL)

@@ -1,11 +1,3 @@
-r_extern
-r_void
-id|allow_interrupts
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *  linux/fs/buffer.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;buffer.c&squot; implements the buffer-cache functions. Race-conditions have&n; * been avoided by NEVER letting an interrupt change a buffer (except for the&n; * data, of course), but instead letting the caller do it.&n; */
 multiline_comment|/* Some bdflush() changes for the dynamic ramdisk - Paul Gortmaker, 12/94 */
@@ -2856,11 +2848,6 @@ suffix:semicolon
 )brace
 id|repeat
 suffix:colon
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t;   from the lru list */
 multiline_comment|/* First set the candidate pointers to usable buffers.  This&n;&t;   should be quick nearly all of the time. */
 r_if
@@ -3247,11 +3234,6 @@ suffix:semicolon
 multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
 id|repeat
 suffix:colon
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|bh
 op_assign
 id|get_hash_table
@@ -3324,11 +3306,6 @@ id|isize
 )braket
 )paren
 (brace
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|refill_freelist
 c_func
 (paren
@@ -6607,11 +6584,6 @@ l_int|0
 suffix:semicolon
 id|repeat
 suffix:colon
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|bh
 op_assign
 id|lru_list
@@ -7118,11 +7090,6 @@ l_int|0
 suffix:semicolon
 id|repeat
 suffix:colon
-id|allow_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|bh
 op_assign
 id|lru_list

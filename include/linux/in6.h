@@ -136,6 +136,23 @@ DECL|macro|IPV6_PRIORITY_14
 mdefine_line|#define IPV6_PRIORITY_14&t;&t;0x0e00
 DECL|macro|IPV6_PRIORITY_15
 mdefine_line|#define IPV6_PRIORITY_15&t;&t;0x0f00
+multiline_comment|/*&n; *&t;IPV6 extension headers&n; */
+DECL|macro|IPPROTO_HOPOPTS
+mdefine_line|#define IPPROTO_HOPOPTS&t;&t;0&t;/* IPv6 hop-by-hop options&t;*/
+DECL|macro|IPPROTO_ROUTING
+mdefine_line|#define IPPROTO_ROUTING&t;&t;43&t;/* IPv6 routing header&t;&t;*/
+DECL|macro|IPPROTO_FRAGMENT
+mdefine_line|#define IPPROTO_FRAGMENT&t;44&t;/* IPv6 fragmentation header&t;*/
+DECL|macro|IPPROTO_ESP
+mdefine_line|#define IPPROTO_ESP&t;&t;50&t;/* encapsulating security payload */
+DECL|macro|IPPROTO_AH
+mdefine_line|#define IPPROTO_AH&t;&t;51&t;/* authentication header&t;*/
+DECL|macro|IPPROTO_ICMPV6
+mdefine_line|#define IPPROTO_ICMPV6&t;&t;58&t;/* ICMPv6&t;&t;&t;*/
+DECL|macro|IPPROTO_NONE
+mdefine_line|#define IPPROTO_NONE&t;&t;59&t;/* IPv6 no next header&t;&t;*/
+DECL|macro|IPPROTO_DSTOPTS
+mdefine_line|#define IPPROTO_DSTOPTS&t;&t;60&t;/* IPv6 destination options&t;*/
 multiline_comment|/*&n; *&t;IPV6 socket options&n; */
 DECL|macro|IPV6_ADDRFORM
 mdefine_line|#define IPV6_ADDRFORM&t;&t;1

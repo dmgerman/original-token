@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;Declarations of AX.25 type objects.&n; *&n; *&t;Alan
 macro_line|#ifndef _AX25_H
 DECL|macro|_AX25_H
 mdefine_line|#define _AX25_H 
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ax25.h&gt;
 DECL|macro|AX25_SLOWHZ
 mdefine_line|#define AX25_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second - gives us better resolution for 56kbit links */
@@ -129,12 +130,21 @@ DECL|macro|AX25_MODULUS
 mdefine_line|#define AX25_MODULUS &t;&t;8&t;/*  Standard AX.25 modulus */
 DECL|macro|AX25_EMODULUS
 mdefine_line|#define&t;AX25_EMODULUS&t;&t;128&t;/*  Extended AX.25 modulus */
-DECL|macro|AX25_PROTO_STD
-mdefine_line|#define&t;AX25_PROTO_STD&t;&t;0
-DECL|macro|AX25_PROTO_DAMA_SLAVE
-mdefine_line|#define&t;AX25_PROTO_DAMA_SLAVE&t;1
-DECL|macro|AX25_PROTO_DAMA_MASTER
-mdefine_line|#define&t;AX25_PROTO_DAMA_MASTER&t;2
+r_enum
+(brace
+DECL|enumerator|AX25_PROTO_STD_SIMPLEX
+id|AX25_PROTO_STD_SIMPLEX
+comma
+DECL|enumerator|AX25_PROTO_STD_DUPLEX
+id|AX25_PROTO_STD_DUPLEX
+comma
+DECL|enumerator|AX25_PROTO_DAMA_SLAVE
+id|AX25_PROTO_DAMA_SLAVE
+comma
+DECL|enumerator|AX25_PROTO_DAMA_MASTER
+id|AX25_PROTO_DAMA_MASTER
+)brace
+suffix:semicolon
 r_enum
 (brace
 DECL|enumerator|AX25_VALUES_IPDEFMODE
@@ -189,6 +199,10 @@ DECL|enumerator|AX25_VALUES_PROTOCOL
 id|AX25_VALUES_PROTOCOL
 comma
 multiline_comment|/* Std AX.25, DAMA Slave, DAMA Master */
+DECL|enumerator|AX25_VALUES_DS_TIMEOUT
+id|AX25_VALUES_DS_TIMEOUT
+comma
+multiline_comment|/* DAMA Slave timeout */
 DECL|enumerator|AX25_MAX_VALUES
 id|AX25_MAX_VALUES
 multiline_comment|/* THIS MUST REMAIN THE LAST ENTRY OF THIS LIST */
@@ -219,7 +233,9 @@ mdefine_line|#define AX25_DEF_IDLE&t;&t;(20 * 60 * AX25_SLOWHZ)&t;/* Idle=20 min
 DECL|macro|AX25_DEF_PACLEN
 mdefine_line|#define AX25_DEF_PACLEN&t;&t;256&t;&t;&t;/* Paclen=256 */
 DECL|macro|AX25_DEF_PROTOCOL
-mdefine_line|#define&t;AX25_DEF_PROTOCOL&t;AX25_PROTO_STD&t;&t;/* Standard AX.25 */
+mdefine_line|#define&t;AX25_DEF_PROTOCOL&t;AX25_PROTO_STD_SIMPLEX&t;/* Standard AX.25 */
+DECL|macro|AX25_DEF_DS_TIMEOUT
+mdefine_line|#define AX25_DEF_DS_TIMEOUT&t;(3 * 60 * AX25_SLOWHZ)  /* DAMA timeout 3 minutes */
 DECL|struct|ax25_uid_assoc
 r_typedef
 r_struct
@@ -308,6 +324,30 @@ DECL|typedef|ax25_route
 )brace
 id|ax25_route
 suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|slave
+r_char
+id|slave
+suffix:semicolon
+multiline_comment|/* slave_mode?   */
+DECL|member|slave_timer
+r_struct
+id|timer_list
+id|slave_timer
+suffix:semicolon
+multiline_comment|/* timeout timer */
+DECL|member|slave_timeout
+r_int
+r_int
+id|slave_timeout
+suffix:semicolon
+multiline_comment|/* when? */
+DECL|typedef|ax25_dama_info
+)brace
+id|ax25_dama_info
+suffix:semicolon
 macro_line|#ifndef _LINUX_SYSCTL_H
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#endif
@@ -351,6 +391,12 @@ id|values
 id|AX25_MAX_VALUES
 )braket
 suffix:semicolon
+macro_line|#if defined(CONFIG_AX25_DAMA_SLAVE) || defined(CONFIG_AX25_DAMA_MASTER)
+DECL|member|dama
+id|ax25_dama_info
+id|dama
+suffix:semicolon
+macro_line|#endif
 DECL|typedef|ax25_dev
 )brace
 id|ax25_dev
@@ -426,6 +472,13 @@ id|n2
 comma
 id|n2count
 suffix:semicolon
+macro_line|#ifdef CONFIG_AX25_DAMA_SLAVE
+DECL|member|dama_slave
+r_int
+r_char
+id|dama_slave
+suffix:semicolon
+macro_line|#endif
 DECL|member|t1
 DECL|member|t2
 DECL|member|t3
@@ -922,6 +975,24 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|ax25_dev_dama_on
+c_func
+(paren
+id|ax25_dev
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_dev_dama_off
+c_func
+(paren
+id|ax25_dev
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|ax25_dama_on
 c_func
 (paren
@@ -939,6 +1010,24 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* ax25_ds_timer.c */
+r_extern
+r_void
+id|ax25_ds_set_timer
+c_func
+(paren
+id|ax25_dev
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ax25_ds_del_timer
+c_func
+(paren
+id|ax25_dev
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|ax25_ds_timer

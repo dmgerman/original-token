@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.7 1996/09/12 18:44:18 roque Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Extension Header handling for IPv6&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: exthdrs.c,v 1.4 1997/03/18 18:24:29 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -15,10 +15,10 @@ macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 multiline_comment|/*&n; *&t;inbound&n; */
-DECL|function|ipv6_routing_header
+macro_line|#if 0
 r_int
 id|ipv6_routing_header
 c_func
@@ -379,12 +379,10 @@ id|i
 op_eq
 id|IPV6_SRCRT_STRICT
 )paren
-(brace
 id|strict
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|ipv6_forward
 c_func
 (paren
@@ -409,7 +407,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;outbound&n; */
-DECL|function|ipv6opt_bld_rthdr
 r_int
 id|ipv6opt_bld_rthdr
 c_func
@@ -501,7 +498,6 @@ id|hops
 OG
 l_int|1
 )paren
-(brace
 id|memcpy
 c_func
 (paren
@@ -524,7 +520,6 @@ id|in6_addr
 )paren
 )paren
 suffix:semicolon
-)brace
 id|ipv6_addr_copy
 c_func
 (paren
@@ -547,5 +542,5 @@ r_return
 id|NEXTHDR_ROUTING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; * c-file-style: &quot;Linux&quot;&n; * End:&n; */
+macro_line|#endif
 eof

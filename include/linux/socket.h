@@ -301,6 +301,8 @@ DECL|macro|AF_DECNET
 mdefine_line|#define AF_DECNET&t;12&t;/* Reserved for DECnet project&t;*/
 DECL|macro|AF_NETBEUI
 mdefine_line|#define AF_NETBEUI&t;13&t;/* Reserved for 802.2LLC project*/
+DECL|macro|AF_SECURITY
+mdefine_line|#define AF_SECURITY&t;14&t;/* Security callback pseudo AF */
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -334,6 +336,8 @@ DECL|macro|PF_DECNET
 mdefine_line|#define PF_DECNET&t;AF_DECNET
 DECL|macro|PF_NETBEUI
 mdefine_line|#define PF_NETBEUI&t;AF_NETBEUI
+DECL|macro|PF_SECURITY
+mdefine_line|#define PF_SECURITY&t;AF_SECURITY
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */

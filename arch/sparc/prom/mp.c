@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mp.c,v 1.6 1996/09/19 20:27:25 davem Exp $&n; * mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mp.c,v 1.7 1997/03/18 17:58:23 jj Exp $&n; * mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -70,9 +70,6 @@ r_break
 suffix:semicolon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|ret
 op_assign
@@ -186,9 +183,6 @@ suffix:semicolon
 r_case
 id|PROM_V3
 suffix:colon
-r_case
-id|PROM_P1275
-suffix:colon
 id|ret
 op_assign
 (paren
@@ -292,9 +286,6 @@ suffix:semicolon
 r_case
 id|PROM_V3
 suffix:colon
-r_case
-id|PROM_P1275
-suffix:colon
 id|ret
 op_assign
 (paren
@@ -397,9 +388,6 @@ r_break
 suffix:semicolon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|ret
 op_assign

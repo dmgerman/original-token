@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: sit.c,v 1.13 1997/03/18 18:24:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -15,7 +15,6 @@ macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
@@ -148,7 +147,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|sit_get_stats
 c_func
@@ -516,14 +515,11 @@ c_cond
 (paren
 id|back
 )paren
-(brace
 id|back-&gt;next
 op_assign
 id|iter
 suffix:semicolon
-)brace
 r_else
-(brace
 id|sit_mtu_cache
 (braket
 id|i
@@ -531,7 +527,6 @@ id|i
 op_assign
 id|iter
 suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
@@ -591,7 +586,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -618,7 +613,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -775,7 +770,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -802,7 +797,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -890,12 +885,10 @@ id|sit_device
 op_ne
 l_int|0
 )paren
-(brace
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 id|inet_add_protocol
 c_func
 (paren
@@ -1326,7 +1319,7 @@ id|len
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
@@ -1406,13 +1399,11 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
 id|dev
 op_assign
 op_amp
 id|sit_device
 suffix:semicolon
-)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1425,10 +1416,14 @@ id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|stats-&gt;rx_bytes
+op_add_assign
+id|len
 suffix:semicolon
 id|stats-&gt;rx_packets
 op_increment
@@ -1465,7 +1460,7 @@ id|dev
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
@@ -1509,7 +1504,7 @@ id|stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -1530,7 +1525,14 @@ r_struct
 id|nd_neigh
 op_star
 id|neigh
+op_assign
+l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;dst
+)paren
 id|neigh
 op_assign
 (paren
@@ -1538,7 +1540,7 @@ r_struct
 id|nd_neigh
 op_star
 )paren
-id|skb-&gt;nexthop
+id|skb-&gt;dst-&gt;neighbour
 suffix:semicolon
 r_if
 c_cond
@@ -1950,6 +1952,10 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|stats-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|stats-&gt;tx_packets
 op_increment
 suffix:semicolon
@@ -1976,7 +1982,7 @@ suffix:semicolon
 DECL|function|sit_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|sit_get_stats
 c_func
@@ -1990,11 +1996,10 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o sit.o sit.c&quot;&n; * c-file-style: &quot;Linux&quot;&n; * End:&n; */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.2 1997/02/25 12:40:41 jj Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.3 1997/03/18 18:03:20 jj Exp $ */
 macro_line|#ifndef __SPARC64_OPENPROM_H
 DECL|macro|__SPARC64_OPENPROM_H
 mdefine_line|#define __SPARC64_OPENPROM_H
@@ -963,7 +963,7 @@ DECL|member|which_io
 r_int
 id|which_io
 suffix:semicolon
-multiline_comment|/* is this in OBIO space? */
+multiline_comment|/* hi part of physical address */
 DECL|member|phys_addr
 r_int
 id|phys_addr

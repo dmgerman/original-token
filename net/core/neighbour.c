@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 r_static
 r_void
@@ -117,8 +118,10 @@ c_func
 r_int
 id|size
 comma
-r_int
-id|priority
+r_struct
+id|neigh_ops
+op_star
+id|ops
 )paren
 (brace
 r_struct
@@ -133,7 +136,7 @@ c_func
 (paren
 id|size
 comma
-id|priority
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -164,6 +167,10 @@ c_func
 op_amp
 id|neigh-&gt;arp_queue
 )paren
+suffix:semicolon
+id|neigh-&gt;ops
+op_assign
+id|ops
 suffix:semicolon
 r_return
 id|neigh
@@ -311,10 +318,6 @@ suffix:semicolon
 id|neigh-&gt;tbl
 op_assign
 id|tbl
-suffix:semicolon
-id|neigh-&gt;ops
-op_assign
-id|tbl-&gt;neigh_ops
 suffix:semicolon
 id|head
 op_assign
@@ -515,10 +518,6 @@ op_star
 id|neigh
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -558,23 +557,6 @@ id|neigh_purge_send_q
 c_func
 (paren
 id|neigh
-)paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|kfree

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ranges.c,v 1.1 1997/02/25 12:40:28 jj Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: ranges.c,v 1.2 1997/03/18 17:59:57 jj Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -349,9 +349,6 @@ r_void
 id|prom_sbus_ranges_init
 c_func
 (paren
-r_int
-id|parentnd
-comma
 r_struct
 id|linux_sbus
 op_star

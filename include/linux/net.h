@@ -526,6 +526,19 @@ r_int
 id|protocol
 )paren
 suffix:semicolon
+multiline_comment|/* These are counters for the number of different methods of&n;&t;   each we support */
+DECL|member|authentication
+r_int
+id|authentication
+suffix:semicolon
+DECL|member|encryption
+r_int
+id|encryption
+suffix:semicolon
+DECL|member|encrypt_net
+r_int
+id|encrypt_net
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|net_proto
@@ -553,6 +566,14 @@ op_star
 suffix:semicolon
 multiline_comment|/* Bootstrap */
 )brace
+suffix:semicolon
+r_extern
+r_struct
+id|net_proto_family
+op_star
+id|net_families
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_int

@@ -206,6 +206,13 @@ c_func
 id|__down_failed
 )paren
 suffix:semicolon
+DECL|variable|__down_failed_interruptible
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_failed_interruptible
+)paren
+suffix:semicolon
 DECL|variable|__up_wakeup
 id|EXPORT_SYMBOL_NOVERS
 c_func

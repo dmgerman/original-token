@@ -55,7 +55,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#include &quot;pi2.h&quot;
+macro_line|#include &lt;linux/pi2.h&gt;
 macro_line|#include &quot;z8530.h&quot;
 macro_line|#include &lt;net/ax25.h&gt;
 DECL|struct|mbuf

@@ -449,8 +449,6 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -458,6 +456,8 @@ suffix:semicolon
 id|dev-&gt;start
 op_assign
 l_int|1
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|ax25_listen_register
 c_func
@@ -487,8 +487,6 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -496,6 +494,8 @@ suffix:semicolon
 id|dev-&gt;start
 op_assign
 l_int|0
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|ax25_listen_release
 c_func

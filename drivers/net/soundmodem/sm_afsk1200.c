@@ -400,7 +400,7 @@ c_func
 (paren
 id|st-&gt;filt.f
 comma
-id|afsk12_tx_lo_i
+id|afsk12_tx_lo_i_f
 )paren
 suffix:semicolon
 id|sum
@@ -410,7 +410,7 @@ c_func
 (paren
 id|st-&gt;filt.f
 comma
-id|afsk12_tx_lo_q
+id|afsk12_tx_lo_q_f
 )paren
 suffix:semicolon
 id|sum
@@ -420,7 +420,7 @@ c_func
 (paren
 id|st-&gt;filt.f
 comma
-id|afsk12_tx_hi_i
+id|afsk12_tx_hi_i_f
 )paren
 suffix:semicolon
 id|sum
@@ -430,7 +430,7 @@ c_func
 (paren
 id|st-&gt;filt.f
 comma
-id|afsk12_tx_hi_q
+id|afsk12_tx_hi_q_f
 )paren
 suffix:semicolon
 r_return

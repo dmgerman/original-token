@@ -945,10 +945,17 @@ OL
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|errno
+op_ne
+id|ENOENT
+)paren
 id|perror
 c_func
 (paren
-l_string|&quot;mkdep: open&quot;
+id|filename
 )paren
 suffix:semicolon
 r_return

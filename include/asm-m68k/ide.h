@@ -657,7 +657,7 @@ r_int
 id|ide_ack_intr
 (paren
 id|ide_ioreg_t
-id|base_port
+id|status_port
 comma
 id|ide_ioreg_t
 id|irq_port
@@ -711,7 +711,7 @@ r_void
 id|inb
 c_func
 (paren
-id|base_port
+id|status_port
 )paren
 suffix:semicolon
 id|outb

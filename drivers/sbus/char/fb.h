@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fb.h,v 1.21 1997/02/02 02:12:43 ecd Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.23 1997/03/12 23:25:16 ecd Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_
@@ -259,13 +259,13 @@ DECL|struct|cg3_info
 r_struct
 id|cg3_info
 (brace
-DECL|member|bt
+DECL|member|regs
 r_struct
-id|bt_regs
+id|cg3_regs
 op_star
-id|bt
+id|regs
 suffix:semicolon
-multiline_comment|/* brooktree (color) registers */
+multiline_comment|/* brooktree (color) registers, and more */
 DECL|member|cgrdi
 r_int
 id|cgrdi
@@ -1054,6 +1054,10 @@ comma
 id|uint
 comma
 r_int
+comma
+r_struct
+id|linux_sbus_device
+op_star
 )paren
 suffix:semicolon
 r_extern

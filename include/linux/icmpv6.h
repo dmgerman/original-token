@@ -2,24 +2,45 @@ macro_line|#ifndef _LINUX_ICMPV6_H
 DECL|macro|_LINUX_ICMPV6_H
 mdefine_line|#define _LINUX_ICMPV6_H
 macro_line|#include &lt;asm/byteorder.h&gt;
-DECL|struct|icmpv6hdr
+DECL|struct|icmp6hdr
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 (brace
-DECL|member|type
+DECL|member|icmp6_type
 id|__u8
-id|type
+id|icmp6_type
 suffix:semicolon
-DECL|member|code
+DECL|member|icmp6_code
 id|__u8
-id|code
+id|icmp6_code
 suffix:semicolon
-DECL|member|checksum
+DECL|member|icmp6_cksum
 id|__u16
-id|checksum
+id|icmp6_cksum
 suffix:semicolon
 r_union
 (brace
+DECL|member|un_data32
+id|__u32
+id|un_data32
+(braket
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|un_data16
+id|__u16
+id|un_data16
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|un_data8
+id|__u8
+id|un_data8
+(braket
+l_int|4
+)braket
+suffix:semicolon
 DECL|struct|icmpv6_echo
 r_struct
 id|icmpv6_echo
@@ -35,18 +56,6 @@ suffix:semicolon
 DECL|member|u_echo
 )brace
 id|u_echo
-suffix:semicolon
-DECL|member|pointer
-id|__u32
-id|pointer
-suffix:semicolon
-DECL|member|mtu
-id|__u32
-id|mtu
-suffix:semicolon
-DECL|member|unused
-id|__u32
-id|unused
 suffix:semicolon
 DECL|struct|icmpv6_nd_advt
 r_struct
@@ -157,56 +166,60 @@ DECL|member|u_nd_ra
 )brace
 id|u_nd_ra
 suffix:semicolon
-DECL|member|u
+DECL|member|icmp6_dataun
 )brace
-id|u
+id|icmp6_dataun
 suffix:semicolon
 DECL|macro|icmp6_identifier
-mdefine_line|#define icmp6_identifier&t;u.u_echo.identifier
+mdefine_line|#define icmp6_identifier&t;icmp6_dataun.u_echo.identifier
 DECL|macro|icmp6_sequence
-mdefine_line|#define icmp6_sequence&t;&t;u.u_echo.sequence
+mdefine_line|#define icmp6_sequence&t;&t;icmp6_dataun.u_echo.sequence
 DECL|macro|icmp6_pointer
-mdefine_line|#define icmp6_pointer&t;&t;u.pointer
+mdefine_line|#define icmp6_pointer&t;&t;icmp6_dataun.un_data32[0]
 DECL|macro|icmp6_mtu
-mdefine_line|#define icmp6_mtu&t;&t;u.mtu
+mdefine_line|#define icmp6_mtu&t;&t;icmp6_dataun.un_data32[0]
 DECL|macro|icmp6_unused
-mdefine_line|#define icmp6_unused&t;&t;u.unused
+mdefine_line|#define icmp6_unused&t;&t;icmp6_dataun.un_data32[0]
+DECL|macro|icmp6_maxdelay
+mdefine_line|#define icmp6_maxdelay&t;&t;icmp6_dataun.un_data16[0]
 DECL|macro|icmp6_router
-mdefine_line|#define icmp6_router&t;&t;u.u_nd_advt.router
+mdefine_line|#define icmp6_router&t;&t;icmp6_dataun.u_nd_advt.router
 DECL|macro|icmp6_solicited
-mdefine_line|#define icmp6_solicited&t;&t;u.u_nd_advt.solicited
+mdefine_line|#define icmp6_solicited&t;&t;icmp6_dataun.u_nd_advt.solicited
 DECL|macro|icmp6_override
-mdefine_line|#define icmp6_override&t;&t;u.u_nd_advt.override
+mdefine_line|#define icmp6_override&t;&t;icmp6_dataun.u_nd_advt.override
 DECL|macro|icmp6_ndiscreserved
-mdefine_line|#define icmp6_ndiscreserved&t;u.u_nd_advt.reserved
+mdefine_line|#define icmp6_ndiscreserved&t;icmp6_dataun.u_nd_advt.reserved
 DECL|macro|icmp6_hop_limit
-mdefine_line|#define icmp6_hop_limit&t;&t;u.u_nd_ra.hop_limit
+mdefine_line|#define icmp6_hop_limit&t;&t;icmp6_dataun.u_nd_ra.hop_limit
 DECL|macro|icmp6_addrconf_managed
-mdefine_line|#define icmp6_addrconf_managed&t;u.u_nd_ra.managed
+mdefine_line|#define icmp6_addrconf_managed&t;icmp6_dataun.u_nd_ra.managed
 DECL|macro|icmp6_addrconf_other
-mdefine_line|#define icmp6_addrconf_other&t;u.u_nd_ra.other
+mdefine_line|#define icmp6_addrconf_other&t;icmp6_dataun.u_nd_ra.other
 DECL|macro|icmp6_rt_lifetime
-mdefine_line|#define icmp6_rt_lifetime&t;u.u_nd_ra.rt_lifetime
+mdefine_line|#define icmp6_rt_lifetime&t;icmp6_dataun.u_nd_ra.rt_lifetime
 )brace
 suffix:semicolon
 DECL|macro|ICMPV6_DEST_UNREACH
 mdefine_line|#define ICMPV6_DEST_UNREACH&t;&t;1
 DECL|macro|ICMPV6_PKT_TOOBIG
 mdefine_line|#define ICMPV6_PKT_TOOBIG&t;&t;2
-DECL|macro|ICMPV6_TIME_EXCEEDED
-mdefine_line|#define ICMPV6_TIME_EXCEEDED&t;&t;3
-DECL|macro|ICMPV6_PARAMETER_PROB
-mdefine_line|#define ICMPV6_PARAMETER_PROB&t;&t;4
+DECL|macro|ICMPV6_TIME_EXCEED
+mdefine_line|#define ICMPV6_TIME_EXCEED&t;&t;3
+DECL|macro|ICMPV6_PARAMPROB
+mdefine_line|#define ICMPV6_PARAMPROB&t;&t;4
+DECL|macro|ICMPV6_INFOMSG_MASK
+mdefine_line|#define ICMPV6_INFOMSG_MASK&t;&t;0x80
 DECL|macro|ICMPV6_ECHO_REQUEST
 mdefine_line|#define ICMPV6_ECHO_REQUEST&t;&t;128
 DECL|macro|ICMPV6_ECHO_REPLY
 mdefine_line|#define ICMPV6_ECHO_REPLY&t;&t;129
-DECL|macro|ICMPV6_MEMBERSHIP_QUERY
-mdefine_line|#define ICMPV6_MEMBERSHIP_QUERY&t;&t;130
-DECL|macro|ICMPV6_MEMBERSHIP_REPORT
-mdefine_line|#define ICMPV6_MEMBERSHIP_REPORT       &t;131
-DECL|macro|ICMPV6_MEMBERSHIP_REDUCTION
-mdefine_line|#define ICMPV6_MEMBERSHIP_REDUCTION    &t;132
+DECL|macro|ICMPV6_MGM_QUERY
+mdefine_line|#define ICMPV6_MGM_QUERY&t;&t;130
+DECL|macro|ICMPV6_MGM_REPORT
+mdefine_line|#define ICMPV6_MGM_REPORT       &t;131
+DECL|macro|ICMPV6_MGM_REDUCTION
+mdefine_line|#define ICMPV6_MGM_REDUCTION    &t;132
 multiline_comment|/*&n; *&t;Codes for Destination Unreachable&n; */
 DECL|macro|ICMPV6_NOROUTE
 mdefine_line|#define ICMPV6_NOROUTE&t;&t;&t;0

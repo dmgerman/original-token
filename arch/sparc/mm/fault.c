@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.89 1997/03/04 16:26:46 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.91 1997/03/18 17:56:00 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -34,19 +34,6 @@ suffix:semicolon
 r_extern
 r_int
 id|prom_node_root
-suffix:semicolon
-r_extern
-r_void
-id|die_if_kernel
-c_func
-(paren
-r_char
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
 suffix:semicolon
 DECL|variable|romvec
 r_struct
@@ -433,7 +420,31 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_static
+r_void
+id|unhandled_fault
+c_func
+(paren
+r_int
+r_int
+comma
+r_struct
+id|task_struct
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+id|__attribute__
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
 DECL|function|unhandled_fault
+r_static
 r_void
 id|unhandled_fault
 c_func
@@ -587,7 +598,6 @@ id|insn
 op_assign
 (paren
 r_int
-op_star
 )paren
 id|pc
 suffix:semicolon
@@ -616,7 +626,6 @@ id|insn
 op_assign
 (paren
 r_int
-op_star
 )paren
 id|pc
 suffix:semicolon

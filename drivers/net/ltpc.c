@@ -544,7 +544,7 @@ suffix:semicolon
 r_int
 id|timeout
 suffix:semicolon
-multiline_comment|/* ten second or so total */
+multiline_comment|/* twenty second or so total */
 r_for
 c_loop
 (paren
@@ -554,7 +554,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|10000
+l_int|20000
 suffix:semicolon
 id|i
 op_increment

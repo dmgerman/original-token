@@ -9,11 +9,13 @@ DECL|macro|_DEBUG_AVL
 mdefine_line|#define _DEBUG_AVL
 multiline_comment|/*&n; * Use an AVL (Adelson-Velskii and Landis) tree to speed up this search&n; * from O(n) to O(log n), where n is the number of ULAs.&n; * Written by Bruno Haible &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;.&n; * Taken from mmap.c, extensively modified by John Hayes &n; * &lt;hayes@netplumbing.com&gt;&n; */
 DECL|variable|fdb_head
+r_static
 r_struct
 id|fdb
 id|fdb_head
 suffix:semicolon
 DECL|variable|fhp
+r_static
 r_struct
 id|fdb
 op_star
@@ -23,6 +25,7 @@ op_amp
 id|fdb_head
 suffix:semicolon
 DECL|variable|fhpp
+r_static
 r_struct
 id|fdb
 op_star
@@ -39,6 +42,7 @@ id|fdb_inited
 op_assign
 l_int|0
 suffix:semicolon
+r_static
 r_int
 id|addr_cmp
 c_func
@@ -65,6 +69,7 @@ mdefine_line|#define avl_maxheight&t;127
 DECL|macro|heightof
 mdefine_line|#define heightof(tree)&t;((tree) == avl_br_empty ? 0 : (tree)-&gt;fdb_avl_height)
 multiline_comment|/*&n; * Consistency and balancing rules:&n; * 1. tree-&gt;fdb_avl_height == 1+max(heightof(tree-&gt;fdb_avl_left),heightof(tree-&gt;fdb_avl_right))&n; * 2. abs( heightof(tree-&gt;fdb_avl_left) - heightof(tree-&gt;fdb_avl_right) ) &lt;= 1&n; * 3. foreach node in tree-&gt;fdb_avl_left: node-&gt;fdb_avl_key &lt;= tree-&gt;fdb_avl_key,&n; *    foreach node in tree-&gt;fdb_avl_right: node-&gt;fdb_avl_key &gt;= tree-&gt;fdb_avl_key.&n; */
+r_static
 r_int
 DECL|function|fdb_init
 id|fdb_init
@@ -103,10 +108,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|br_avl_find_addr
 r_struct
 id|fdb
 op_star
-DECL|function|br_avl_find_addr
 id|br_avl_find_addr
 c_func
 (paren
@@ -320,10 +325,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#if (0)
 multiline_comment|/*&n; * Rebalance a tree.&n; * After inserting or deleting a node of a tree we have a sequence of subtrees&n; * nodes[0]..nodes[k-1] such that&n; * nodes[0] is the root and nodes[i+1] = nodes[i]-&gt;{fdb_avl_left|fdb_avl_right}.&n; */
+DECL|function|br_avl_rebalance
 r_static
 r_void
-DECL|function|br_avl_rebalance
 id|br_avl_rebalance
 (paren
 r_struct
@@ -688,9 +694,10 @@ id|fdb_head
 suffix:semicolon
 macro_line|#endif /* DEBUG_AVL */
 )brace
+macro_line|#endif /* (0) */
 multiline_comment|/* Insert a node into a tree. */
-r_int
 DECL|function|br_avl_insert
+r_int
 id|br_avl_insert
 (paren
 r_struct
@@ -921,9 +928,11 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if (0)
 multiline_comment|/* Removes a node out of a tree. */
-r_int
 DECL|function|br_avl_remove
+r_static
+r_int
 id|br_avl_remove
 (paren
 r_struct
@@ -1200,6 +1209,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* (0) */
 macro_line|#ifdef DEBUG_AVL
 multiline_comment|/* print a tree */
 DECL|function|printk_avl
@@ -1621,8 +1631,9 @@ suffix:semicolon
 )brace
 macro_line|#endif /* (0) */
 macro_line|#endif /* DEBUG_AVL */
-r_int
 DECL|function|addr_cmp
+r_static
+r_int
 id|addr_cmp
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memory.c,v 1.9 1996/11/13 05:10:09 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.10 1997/03/18 17:58:27 jj Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -576,9 +576,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 multiline_comment|/* Grrr, have to traverse the prom device tree ;( */
 id|node

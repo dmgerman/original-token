@@ -2245,6 +2245,10 @@ id|bi.data.mix.bit_rate
 op_assign
 id|sm-&gt;hdrv.par.bitrate
 suffix:semicolon
+id|bi.data.mix.mixer_type
+op_assign
+id|SM_MIXER_INVALID
+suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -1,4 +1,3 @@
-multiline_comment|/* $Id: kbio.h,v 1.1 1996/12/02 00:06:41 davem Exp $ */
 macro_line|#ifndef __LINUX_KBIO_H
 DECL|macro|__LINUX_KBIO_H
 mdefine_line|#define __LINUX_KBIO_H
@@ -45,6 +44,31 @@ mdefine_line|#define KIOCSLED    _IOW(&squot;k&squot;, 14, unsigned char)
 multiline_comment|/* Get keyboard leds */
 DECL|macro|KIOCGLED
 mdefine_line|#define KIOCGLED    _IOR(&squot;k&squot;, 15, unsigned char)
+multiline_comment|/* Used by KIOC[GS]RATE */
+DECL|struct|kbd_rate
+r_struct
+id|kbd_rate
+(brace
+DECL|member|delay
+r_int
+r_char
+id|delay
+suffix:semicolon
+multiline_comment|/* Delay in Hz before first repeat.&t;*/
+DECL|member|rate
+r_int
+r_char
+id|rate
+suffix:semicolon
+multiline_comment|/* In characters per second (0..50).&t;*/
+)brace
+suffix:semicolon
+multiline_comment|/* Set keyboard rate */
+DECL|macro|KIOCSRATE
+mdefine_line|#define KIOCSRATE   _IOW(&squot;k&squot;, 40, struct kbd_rate)
+multiline_comment|/* Get keyboard rate */
+DECL|macro|KIOCGRATE
+mdefine_line|#define KIOCGRATE   _IOW(&squot;k&squot;, 41, struct kbd_rate)
 multiline_comment|/* Top bit records if the key is up or down */
 DECL|macro|KBD_UP
 mdefine_line|#define KBD_UP      0x80

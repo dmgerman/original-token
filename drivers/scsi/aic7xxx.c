@@ -29,6 +29,7 @@ multiline_comment|/*&n; * To generate the correct addresses for the controller t
 DECL|macro|VIRT_TO_BUS
 mdefine_line|#define VIRT_TO_BUS(a) (unsigned int)virt_to_bus((void *)(a))
 DECL|variable|proc_scsi_aic7xxx
+r_static
 r_struct
 id|proc_dir_entry
 id|proc_scsi_aic7xxx
@@ -2541,6 +2542,7 @@ multiline_comment|/* Do nothing! */
 )brace
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   rcs_version&n; *&n; * Description:&n; *   Return a string containing just the RCS version number from either&n; *   an Id or Revision RCS clause.&n; *-F*************************************************************************/
+r_static
 r_const
 r_char
 op_star

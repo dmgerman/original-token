@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.15 1997/01/16 14:14:42 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.16 1997/03/18 17:53:44 jj Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9,19 +9,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* #define DEBUG_MNA */
-r_extern
-r_void
-id|die_if_kernel
-c_func
-(paren
-r_char
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 DECL|enum|direction
 r_enum
 id|direction

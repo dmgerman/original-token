@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
@@ -3966,11 +3967,13 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_root_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|kmem_cache_sizes_init
 c_func
 (paren

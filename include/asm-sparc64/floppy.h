@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.1 1996/11/20 15:31:07 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.2 1997/03/14 21:05:25 jj Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -6,9 +6,9 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
-macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
+macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/* References:&n; * 1) Netbsd Sun floppy driver.&n; * 2) NCR 82077 controller manual&n; * 3) Intel 82077 controller manual&n; */
 DECL|struct|sun_flpy_controller
@@ -870,11 +870,19 @@ l_int|128
 )braket
 suffix:semicolon
 r_int
-id|tnode
-comma
 id|fd_node
 comma
 id|num_regs
+suffix:semicolon
+r_struct
+id|linux_sbus
+op_star
+id|bus
+suffix:semicolon
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
 suffix:semicolon
 id|use_virtual_dma
 op_assign
@@ -884,128 +892,42 @@ id|FLOPPY_IRQ
 op_assign
 l_int|11
 suffix:semicolon
-multiline_comment|/* Forget it if we aren&squot;t on a machine that could possibly&n;&t; * ever have a floppy drive.&n;&t; */
-r_if
-c_cond
+id|for_all_sbusdev
 (paren
-(paren
-id|sparc_cpu_model
-op_ne
-id|sun4c
-op_logical_and
-id|sparc_cpu_model
-op_ne
-id|sun4m
-)paren
-op_logical_or
-(paren
-(paren
-id|idprom-&gt;id_machtype
-op_eq
-(paren
-id|SM_SUN4C
-op_or
-id|SM_4C_SLC
-)paren
-)paren
-op_logical_or
-(paren
-id|idprom-&gt;id_machtype
-op_eq
-(paren
-id|SM_SUN4C
-op_or
-id|SM_4C_ELC
-)paren
-)paren
-)paren
-)paren
-(brace
-multiline_comment|/* We certainly don&squot;t have a floppy controller. */
-r_goto
-id|no_sun_fdc
-suffix:semicolon
-)brace
-multiline_comment|/* Well, try to find one. */
-id|tnode
-op_assign
-id|prom_getchild
-c_func
-(paren
-id|prom_root_node
-)paren
-suffix:semicolon
-id|fd_node
-op_assign
-id|prom_searchsiblings
-c_func
-(paren
-id|tnode
+id|sdev
 comma
-l_string|&quot;obio&quot;
+id|bus
 )paren
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
-id|fd_node
-op_ne
-l_int|0
-)paren
-(brace
-id|tnode
-op_assign
-id|prom_getchild
+op_logical_neg
+id|strcmp
 c_func
 (paren
-id|fd_node
-)paren
-suffix:semicolon
-id|fd_node
-op_assign
-id|prom_searchsiblings
-c_func
-(paren
-id|tnode
+id|sdev-&gt;prom_name
 comma
 l_string|&quot;SUNW,fdtwo&quot;
 )paren
+)paren
+r_break
 suffix:semicolon
 )brace
-r_else
-(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bus
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 id|fd_node
 op_assign
-id|prom_searchsiblings
-c_func
-(paren
-id|tnode
-comma
-l_string|&quot;fd&quot;
-)paren
+id|sdev-&gt;prom_node
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|fd_node
-op_eq
-l_int|0
-)paren
-(brace
-r_goto
-id|no_sun_fdc
-suffix:semicolon
-)brace
-multiline_comment|/* The sun4m lets us know if the controller is actually usable. */
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4m
-)paren
-(brace
 id|prom_getproperty
 c_func
 (paren
@@ -1034,10 +956,10 @@ l_string|&quot;disabled&quot;
 )paren
 )paren
 (brace
-r_goto
-id|no_sun_fdc
+r_return
+op_minus
+l_int|1
 suffix:semicolon
-)brace
 )brace
 id|num_regs
 op_assign
@@ -1074,12 +996,16 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|prom_apply_obio_ranges
+id|prom_apply_sbus_ranges
 c_func
 (paren
+id|sdev-&gt;my_bus
+comma
 id|fd_regs
 comma
 id|num_regs
+comma
+id|sdev
 )paren
 suffix:semicolon
 id|sun_fdc
@@ -1133,36 +1059,11 @@ id|sun_fdc
 op_assign
 l_int|NULL
 suffix:semicolon
-r_goto
-id|no_sun_fdc
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
-)paren
-(brace
-id|sun_fdops.fd_inb
-op_assign
-id|sun_82072_fd_inb
-suffix:semicolon
-id|sun_fdops.fd_outb
-op_assign
-id|sun_82072_fd_outb
-suffix:semicolon
-id|fdc_status
-op_assign
-op_amp
-id|sun_fdc-&gt;status_82072
-suffix:semicolon
-multiline_comment|/* printk(&quot;AUXIO @0x%p&bslash;n&quot;, auxio_register); */
-multiline_comment|/* P3 */
-)brace
-r_else
-(brace
 id|sun_fdops.fd_inb
 op_assign
 id|sun_82077_fd_inb
@@ -1178,19 +1079,12 @@ id|sun_fdc-&gt;status_82077
 suffix:semicolon
 multiline_comment|/* printk(&quot;DOR @0x%p&bslash;n&quot;, &amp;sun_fdc-&gt;dor_82077); */
 multiline_comment|/* P3 */
-)brace
 multiline_comment|/* Success... */
 r_return
 (paren
 r_int
 )paren
 id|sun_fdc
-suffix:semicolon
-id|no_sun_fdc
-suffix:colon
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 DECL|function|sparc_eject

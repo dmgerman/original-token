@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ross.h,v 1.11 1996/08/29 09:48:40 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ross.h,v 1.12 1997/03/10 09:16:57 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ROSS_H
 DECL|macro|_SPARC_ROSS_H
 mdefine_line|#define _SPARC_ROSS_H
@@ -34,6 +34,7 @@ DECL|macro|HYPERSPARC_ICCR_FTD
 mdefine_line|#define HYPERSPARC_ICCR_FTD     0x00000002
 DECL|macro|HYPERSPARC_ICCR_ICE
 mdefine_line|#define HYPERSPARC_ICCR_ICE     0x00000001
+macro_line|#ifndef __ASSEMBLY__
 DECL|function|get_ross_icr
 r_extern
 id|__inline__
@@ -353,5 +354,6 @@ id|vac_line_size
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC_ROSS_H) */
 eof

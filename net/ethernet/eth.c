@@ -19,35 +19,7 @@ macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-macro_line|#include &lt;linux/in6.h&gt;
-macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/checksum.h&gt;
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-DECL|variable|ndisc_eth_hook
-r_int
-(paren
-op_star
-id|ndisc_eth_hook
-)paren
-(paren
-r_int
-r_char
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_struct
-id|sk_buff
-op_star
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 DECL|function|eth_setup
 r_void
 id|eth_setup
@@ -362,7 +334,39 @@ id|dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+r_struct
+id|neighbour
+op_star
+id|neigh
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Only ARP/IP and NDISC/IPv6 are currently supported&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;dst
+)paren
+id|neigh
+op_assign
+id|skb-&gt;dst-&gt;neighbour
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|neigh
+)paren
+r_return
+id|neigh-&gt;ops
+op_member_access_from_pointer
+id|resolve
+c_func
+(paren
+id|eth-&gt;h_dest
+comma
+id|skb
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -377,7 +381,6 @@ c_func
 id|ETH_P_IP
 )paren
 suffix:colon
-multiline_comment|/*&n;&t;&t; *&t;Try to get ARP to resolve the header.&n;&t;&t; */
 r_return
 id|arp_find
 c_func
@@ -386,58 +389,6 @@ id|eth-&gt;h_dest
 comma
 id|skb
 )paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-r_case
-id|__constant_htons
-c_func
-(paren
-id|ETH_P_IPV6
-)paren
-suffix:colon
-macro_line|#ifdef CONFIG_IPV6
-r_return
-(paren
-id|ndisc_eth_resolv
-c_func
-(paren
-id|eth-&gt;h_dest
-comma
-id|dev
-comma
-id|skb
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|ndisc_eth_hook
-)paren
-r_return
-(paren
-id|ndisc_eth_hook
-c_func
-(paren
-id|eth-&gt;h_dest
-comma
-id|dev
-comma
-id|skb
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
 suffix:semicolon
 macro_line|#endif&t;
 r_default
@@ -649,7 +600,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 comma

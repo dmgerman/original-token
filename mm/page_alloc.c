@@ -518,6 +518,7 @@ id|NR_MEM_LISTS
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -561,6 +562,7 @@ id|GFP_ATOMIC
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|reserved_pages
 op_assign
 l_int|5

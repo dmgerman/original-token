@@ -649,13 +649,13 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|__save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|cli
+id|__cli
 c_func
 (paren
 )paren
@@ -915,7 +915,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

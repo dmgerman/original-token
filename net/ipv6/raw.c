@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.8 1997/02/28 09:56:34 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.11 1997/03/18 18:24:46 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -11,12 +11,10 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
-macro_line|#include &lt;net/ip.h&gt;
-macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
@@ -822,7 +820,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is next to useless... &n; *&t;if we demultiplex in network layer we don&squot;t need the extra call&n; *&t;just to queue the skb... &n; *&t;maybe we could have the network decide uppon an hint if it &n; *&t;should call raw_rcv for demultiplexing&n; */
+multiline_comment|/*&n; *&t;This is next to useless... &n; *&t;if we demultiplex in network layer we don&squot;t need the extra call&n; *&t;just to queue the skb... &n; *&t;maybe we could have the network decide uppon a hint if it &n; *&t;should call raw_rcv for demultiplexing&n; */
 DECL|function|rawv6_rcv
 r_int
 id|rawv6_rcv
@@ -867,29 +865,19 @@ id|sk
 op_assign
 id|skb-&gt;sk
 suffix:semicolon
-macro_line|#if 1
-multiline_comment|/*&n; *&t;It was wrong for IPv4. It breaks NRL too [ANK]&n; *&t;Actually i think this is the option that  does make more &n; *&t;sense with IPv6 nested headers. [Pedro]&n; */
 r_if
 c_cond
 (paren
 id|sk-&gt;ip_hdrincl
 )paren
-(brace
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;nh.raw
 suffix:semicolon
-)brace
-macro_line|#else
-id|skb-&gt;h.raw
-op_assign
-id|skb-&gt;nh.raw
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
 (brace
 id|__skb_queue_tail
@@ -1324,21 +1312,17 @@ c_cond
 (paren
 id|hdr-&gt;daddr
 )paren
-(brace
 id|daddr
 op_assign
 id|hdr-&gt;daddr
 suffix:semicolon
-)brace
 r_else
-(brace
 id|daddr
 op_assign
 id|addr
 op_plus
 l_int|1
 suffix:semicolon
-)brace
 id|hdr-&gt;cksum
 op_assign
 id|csum_ipv6_magic
@@ -1466,6 +1450,10 @@ id|saddr
 op_assign
 l_int|NULL
 suffix:semicolon
+r_struct
+id|flowi
+id|fl
+suffix:semicolon
 r_int
 id|addr_len
 op_assign
@@ -1481,13 +1469,14 @@ id|raw6_opt
 op_star
 id|raw_opt
 suffix:semicolon
-id|u16
-id|proto
-suffix:semicolon
 r_int
 id|hlimit
 op_assign
-l_int|0
+op_minus
+l_int|1
+suffix:semicolon
+id|u16
+id|proto
 suffix:semicolon
 r_int
 id|err
@@ -1593,7 +1582,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 op_logical_and
 id|ipv6_addr_cmp
 c_func
@@ -1605,13 +1594,13 @@ id|np-&gt;daddr
 )paren
 )paren
 (brace
-id|ipv6_dst_unlock
+id|dst_release
 c_func
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
 suffix:semicolon
-id|np-&gt;dest
+id|np-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1752,6 +1741,30 @@ op_assign
 op_amp
 id|sk-&gt;tp_pinfo.tp_raw
 suffix:semicolon
+id|fl.proto
+op_assign
+id|proto
+suffix:semicolon
+id|fl.nl_u.ip6_u.daddr
+op_assign
+id|daddr
+suffix:semicolon
+id|fl.nl_u.ip6_u.saddr
+op_assign
+id|saddr
+suffix:semicolon
+id|fl.dev
+op_assign
+id|dev
+suffix:semicolon
+id|fl.uli_u.icmpt.type
+op_assign
+l_int|0
+suffix:semicolon
+id|fl.uli_u.icmpt.code
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1789,22 +1802,18 @@ id|opt
 op_logical_and
 id|opt-&gt;srcrt
 )paren
-(brace
 id|hdr.daddr
 op_assign
 id|daddr
 suffix:semicolon
-)brace
 r_else
-(brace
 id|hdr.daddr
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 id|err
 op_assign
-id|ipv6_build_xmit
+id|ip6_build_xmit
 c_func
 (paren
 id|sk
@@ -1814,23 +1823,16 @@ comma
 op_amp
 id|hdr
 comma
-id|daddr
+op_amp
+id|fl
 comma
 id|len
 comma
-id|saddr
-comma
-id|dev
-comma
 id|opt
-comma
-id|proto
 comma
 id|hlimit
 comma
 id|msg-&gt;msg_flags
-op_amp
-id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace
@@ -1838,7 +1840,7 @@ r_else
 (brace
 id|err
 op_assign
-id|ipv6_build_xmit
+id|ip6_build_xmit
 c_func
 (paren
 id|sk
@@ -1847,23 +1849,16 @@ id|rawv6_getfrag
 comma
 id|msg-&gt;msg_iov
 comma
-id|daddr
+op_amp
+id|fl
 comma
 id|len
 comma
-id|saddr
-comma
-id|dev
-comma
 id|opt
-comma
-id|proto
 comma
 id|hlimit
 comma
 id|msg-&gt;msg_flags
-op_amp
-id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace
@@ -2075,6 +2070,7 @@ id|optlen
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2187,16 +2183,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
-(brace
-id|ipv6_dst_unlock
+id|dst_release
 c_func
 (paren
-id|np-&gt;dest
+id|np-&gt;dst
 )paren
 suffix:semicolon
-)brace
+id|ipv6_sock_mc_close
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|destroy_sock
 c_func
 (paren
@@ -2326,5 +2326,4 @@ l_int|0
 multiline_comment|/* highestinuse */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o rawv6.o rawv6.c&quot;&n; *  c-file-style: &quot;Linux&quot;&n; * End:&n; */
 eof

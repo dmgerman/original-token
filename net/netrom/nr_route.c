@@ -2992,7 +2992,6 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -3010,6 +3009,9 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -3034,6 +3036,9 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -3041,7 +3046,6 @@ id|FW_ACCEPT
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 id|nr_src
 op_assign
 (paren
@@ -3216,7 +3220,6 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -3234,6 +3237,9 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -3241,7 +3247,6 @@ id|FW_ACCEPT
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 id|dptr
 op_assign
 id|skb_push

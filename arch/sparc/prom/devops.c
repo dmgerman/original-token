@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: devops.c,v 1.6 1996/10/12 12:37:38 davem Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devops.c,v 1.7 1997/03/18 17:58:19 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -75,9 +75,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 id|handle
 op_assign
@@ -190,9 +187,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 (paren
 op_star
@@ -308,9 +302,6 @@ id|PROM_V2
 suffix:colon
 r_case
 id|PROM_V3
-suffix:colon
-r_case
-id|PROM_P1275
 suffix:colon
 (paren
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.4 1997/03/04 16:27:09 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: init.c,v 1.6 1997/03/11 17:37:11 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -212,6 +212,11 @@ id|buffer
 )paren
 )paren
 suffix:semicolon
+id|prom_printf
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -219,7 +224,7 @@ id|strncmp
 (paren
 id|buffer
 comma
-l_string|&quot;OPB &quot;
+l_string|&quot;OBP &quot;
 comma
 l_int|4
 )paren
@@ -241,7 +246,9 @@ l_char|&squot;.&squot;
 (brace
 id|prom_printf
 (paren
-l_string|&quot;Strange OPB version.&bslash;n&quot;
+l_string|&quot;Strange OBP version `%s&squot;.&bslash;n&quot;
+comma
+id|buffer
 )paren
 suffix:semicolon
 id|prom_halt
@@ -249,7 +256,7 @@ id|prom_halt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Version field is expected to be &squot;OPB x.y.z date...&squot; */
+multiline_comment|/* Version field is expected to be &squot;OBP x.y.z date...&squot; */
 id|prom_rev
 op_assign
 id|buffer
@@ -294,6 +301,15 @@ l_int|8
 )braket
 op_minus
 l_char|&squot;0&squot;
+)paren
+suffix:semicolon
+id|prom_printf
+(paren
+l_string|&quot;PROMLIB: Sun IEEE Boot Prom %s&bslash;n&quot;
+comma
+id|buffer
+op_plus
+l_int|4
 )paren
 suffix:semicolon
 id|prom_meminit

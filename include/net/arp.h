@@ -3,6 +3,68 @@ macro_line|#ifndef _ARP_H
 DECL|macro|_ARP_H
 mdefine_line|#define _ARP_H
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;net/neighbour.h&gt;
+multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache.&n; */
+DECL|struct|arp_table
+r_struct
+id|arp_table
+(brace
+r_union
+(brace
+DECL|member|neigh
+r_struct
+id|neighbour
+id|neigh
+suffix:semicolon
+DECL|member|next
+r_struct
+id|arp_table
+op_star
+id|next
+suffix:semicolon
+DECL|member|u
+)brace
+id|u
+suffix:semicolon
+DECL|member|ip
+id|u32
+id|ip
+suffix:semicolon
+DECL|member|last_updated
+r_int
+r_int
+id|last_updated
+suffix:semicolon
+multiline_comment|/* For expiry &t;&t;&t;*/
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Control status &t;&t;*/
+DECL|member|mask
+id|u32
+id|mask
+suffix:semicolon
+multiline_comment|/* netmask - used for generalised proxy arps (tridge) &t;&t;*/
+DECL|member|hatype
+r_int
+id|hatype
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;The following entries are only used for unresolved hw addresses.&n;&t; */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+multiline_comment|/* expire timer &t;&t;*/
+DECL|member|retries
+r_int
+id|retries
+suffix:semicolon
+multiline_comment|/* remaining retries&t; &t;*/
+)brace
+suffix:semicolon
 r_extern
 r_void
 id|arp_init
@@ -64,7 +126,7 @@ op_star
 id|dst
 comma
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 )paren
@@ -190,7 +252,7 @@ id|hh
 suffix:semicolon
 r_extern
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|arp_find_neighbour
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.6 1997/03/03 16:51:54 jj Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.8 1997/03/14 21:05:33 jj Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -30,7 +30,7 @@ mdefine_line|#define __user_ok(addr,size) ((addr) &lt; PAGE_OFFSET)
 DECL|macro|__kernel_ok
 mdefine_line|#define __kernel_ok (get_fs() == KERNEL_DS)
 DECL|macro|__access_ok
-mdefine_line|#define __access_ok(addr,size) (__user_ok((addr) &amp; get_fs(),(size)))
+mdefine_line|#define __access_ok(addr,size) (__user_ok(((unsigned long)(addr)) &amp; get_fs(),(size)))
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) __access_ok((unsigned long)(addr),(size))
 DECL|function|verify_area
@@ -205,7 +205,7 @@ mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;void *__copy_to = (vo
 DECL|macro|copy_to_user_ret
 mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_to_user
-mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((unsigned long)(to),&t;&bslash;&n;&t;&t;    (unsigned long)(from), n)
+mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((void *)(to),&t;&bslash;&n;&t;&t;    (void *)(from), n)
 DECL|macro|__copy_to_user_ret
 mdefine_line|#define __copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_from_user
@@ -213,24 +213,114 @@ mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;void *__copy_from =
 DECL|macro|copy_from_user_ret
 mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_from_user
-mdefine_line|#define __copy_from_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((unsigned long)(to),&t;&bslash;&n;&t;&t;    (unsigned long)(from), n)
+mdefine_line|#define __copy_from_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((void *)(to),&t;&bslash;&n;&t;&t;    (void *)(from), n)
 DECL|macro|__copy_from_user_ret
 mdefine_line|#define __copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
+DECL|function|__clear_user
 r_extern
-r_int
+id|__inline__
+id|__kernel_size_t
 id|__clear_user
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|addr
 comma
-r_int
+id|__kernel_size_t
 id|size
 )paren
+(brace
+id|__kernel_size_t
+id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+"&quot;"
+dot
+id|section
+id|__ex_table
+comma
+macro_line|#alloc
+dot
+id|align
+l_int|4
+dot
+id|word
+l_float|1f
+comma
+l_int|3
+dot
+id|previous
+l_int|1
+suffix:colon
+id|mov
+op_mod
+l_int|2
+comma
+op_mod
+op_mod
+id|o1
+id|call
+id|__bzero
+id|mov
+op_mod
+l_int|1
+comma
+op_mod
+op_mod
+id|o0
+id|mov
+op_mod
+op_mod
+id|o0
+comma
+op_mod
+l_int|0
+l_string|&quot; : &quot;
+op_assign
+id|r
+l_string|&quot; (ret) : &quot;
+id|r
+l_string|&quot; (addr), &quot;
+id|r
+"&quot;"
+(paren
+id|size
+)paren
+suffix:colon
+l_string|&quot;o0&quot;
+comma
+l_string|&quot;o1&quot;
+comma
+l_string|&quot;o2&quot;
+comma
+l_string|&quot;o3&quot;
+comma
+l_string|&quot;o4&quot;
+comma
+l_string|&quot;o5&quot;
+comma
+l_string|&quot;o7&quot;
+comma
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;g5&quot;
+comma
+l_string|&quot;g7&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 DECL|macro|clear_user
-mdefine_line|#define clear_user(addr,n) ({ &bslash;&n;unsigned long __clear_addr = (unsigned long) (addr); &bslash;&n;int __clear_size = (int) (n); &bslash;&n;int __clear_res; &bslash;&n;if(__clear_size &amp;&amp; __access_ok(__clear_addr, __clear_size)) { &bslash;&n;__clear_res = __clear_user(__clear_addr, __clear_size); &bslash;&n;} else __clear_res = __clear_size; &bslash;&n;__clear_res; })
+mdefine_line|#define clear_user(addr,n) ({ &bslash;&n;void *__clear_addr = (void *) (addr); &bslash;&n;__kernel_size_t __clear_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __clear_res; &bslash;&n;if(__clear_size &amp;&amp; __access_ok(__clear_addr, __clear_size)) { &bslash;&n;__clear_res = __clear_user(__clear_addr, __clear_size); &bslash;&n;} else __clear_res = __clear_size; &bslash;&n;__clear_res; })
 DECL|macro|clear_user_ret
 mdefine_line|#define clear_user_ret(addr,size,retval) ({ &bslash;&n;if (clear_user(addr,size)) &bslash;&n;&t;return retval; &bslash;&n;})
 r_extern

@@ -1,10 +1,27 @@
-multiline_comment|/*  $Id: init.c,v 1.2 1997/01/02 14:14:42 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: init.c,v 1.4 1997/03/18 17:59:48 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|show_net_buffers
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|device_scan
+c_func
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|variable|sp_banks
@@ -17,7 +34,7 @@ id|SPARC_PHYS_BANKS
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 DECL|function|__bad_pagetable
-id|pte_t
+id|pmd_t
 op_star
 id|__bad_pagetable
 c_func
@@ -41,7 +58,7 @@ id|PAGE_SIZE
 suffix:semicolon
 r_return
 (paren
-id|pte_t
+id|pmd_t
 op_star
 )paren
 id|EMPTY_PGT
@@ -285,12 +302,13 @@ id|ctx_list
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Context 0 is reserved for PROM and uaccess stuff */
 r_for
 c_loop
 (paren
 id|ctx
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|ctx
 OL
@@ -341,7 +359,7 @@ c_loop
 (paren
 id|ctx
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|ctx
 OL
@@ -384,6 +402,12 @@ id|end_mem
 )paren
 )paren
 (brace
+r_return
+id|device_scan
+(paren
+id|start_mem
+)paren
+suffix:semicolon
 )brace
 r_extern
 r_int
@@ -1009,6 +1033,10 @@ id|printk
 l_string|&quot;Freeing unused kernel memory: %dk freed&bslash;n&quot;
 comma
 (paren
+r_int
+)paren
+(paren
+(paren
 op_amp
 id|__init_end
 op_minus
@@ -1017,6 +1045,7 @@ id|__init_begin
 )paren
 op_rshift
 l_int|10
+)paren
 )paren
 suffix:semicolon
 )brace

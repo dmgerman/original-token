@@ -6517,7 +6517,7 @@ suffix:semicolon
 id|i
 op_assign
 (paren
-id|c
+id|bytes
 op_plus
 r_sizeof
 (paren

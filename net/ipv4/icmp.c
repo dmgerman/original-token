@@ -1552,6 +1552,32 @@ id|sock
 op_star
 id|raw_sk
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Incomplete header ?&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OL
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+op_plus
+l_int|8
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|iph
 op_assign
 (paren
@@ -1724,7 +1750,41 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Throw it at our lower layers&n;&t; *&n;&t; *&t;RFC 1122: 3.2.2 MUST extract the protocol ID from the passed header.&n;&t; *&t;RFC 1122: 3.2.2.1 MUST pass ICMP unreach messages to the transport layer.&n;&t; *&t;RFC 1122: 3.2.2.2 MUST pass ICMP time expired messages to transport layer.&n;&t; */
-multiline_comment|/* Deliver ICMP message to raw sockets. Pretty useless feature?&n;&t; */
+multiline_comment|/*&n;&t; *&t;Check the other end isnt violating RFC 1122. Some routers send&n;&t; *&t;bogus responses to broadcast frames. If you see this message&n;&t; *&t;first check your netmask matches at both ends, if it does then&n;&t; *&t;get the other vendor to fix their kit.&n;&t; */
+r_if
+c_cond
+(paren
+id|__ip_chk_addr
+c_func
+(paren
+id|iph-&gt;daddr
+)paren
+op_eq
+id|IS_BROADCAST
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s sent an invalid ICMP error to a broadcast.&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|iph-&gt;daddr
+)paren
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Deliver ICMP message to raw sockets. Pretty useless feature?&n;&t; */
 multiline_comment|/* Note: See raw.c and net/raw.h, RAWV4_HTABLE_SIZE==MAX_INET_PROTOS */
 id|hash
 op_assign
@@ -1795,7 +1855,7 @@ id|iph-&gt;daddr
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;This can&squot;t change while we are doing it. &n;&t; *&n;&t; *&t;FIXME: Deliver to appropriate raw sockets too.&n;&t; */
+multiline_comment|/*&n;&t; *&t;This can&squot;t change while we are doing it. &n;&t; */
 id|ipprot
 op_assign
 (paren

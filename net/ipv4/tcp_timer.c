@@ -812,7 +812,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
 (brace
 multiline_comment|/* &n;&t;&t; * Try again in second &n;&t;&t; */
@@ -1207,6 +1207,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Clear delay ack timer&n;&t; */
 id|tcp_clear_xmit_timer
 c_func
@@ -1229,7 +1235,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* &n;&t;&t; * remember window where we lost &n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * remember window where we lost&n;&t;&t; * &quot;one half of the current window but at least 2 segments&quot;&n;&t;&t; */
 id|sk-&gt;ssthresh
 op_assign
 id|max
@@ -1295,6 +1301,12 @@ id|tp-&gt;rto
 )paren
 suffix:semicolon
 id|tcp_write_timeout
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|release_sock
 c_func
 (paren
 id|sk
@@ -1369,7 +1381,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 op_logical_and
 id|tp-&gt;syn_wait_queue
 )paren

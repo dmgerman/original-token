@@ -965,14 +965,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|dev
-op_member_access_from_pointer
-id|hard_start_xmit
+id|dev_queue_xmit
 c_func
 (paren
 id|skb
-comma
-id|dev
 )paren
 suffix:semicolon
 )brace

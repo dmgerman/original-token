@@ -139,7 +139,7 @@ op_star
 id|sk
 )paren
 (brace
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 op_increment
 suffix:semicolon
 )brace
@@ -156,7 +156,7 @@ id|sk
 )paren
 (brace
 r_return
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 op_decrement
 suffix:semicolon
 )brace
@@ -173,7 +173,7 @@ id|sk
 )paren
 (brace
 r_return
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 suffix:semicolon
 )brace
 DECL|function|unix_release_addr
@@ -1082,7 +1082,7 @@ id|sk-&gt;protinfo.af_unix.inode
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 op_assign
 l_int|1
 suffix:semicolon
@@ -5287,6 +5287,9 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|mode
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5645,7 +5648,7 @@ l_string|&quot;%p: %08X %08X %08lX %04X %02X %5ld&quot;
 comma
 id|s
 comma
-id|s-&gt;users
+id|s-&gt;sock_readers
 comma
 l_int|0
 comma

@@ -276,7 +276,7 @@ op_assign
 op_amp
 id|dev-&gt;plug
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

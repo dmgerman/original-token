@@ -145,7 +145,7 @@ multiline_comment|/* &n;&t; * only process if socket is not in use&n;&t; */
 r_if
 c_cond
 (paren
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
 (brace
 id|sk-&gt;timer.expires

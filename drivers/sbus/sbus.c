@@ -732,16 +732,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-r_extern
-r_int
-id|sparcaudio_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1735,13 +1725,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_MOSTEK_RTC
 id|rtc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-id|sparcaudio_init
 c_func
 (paren
 )paren

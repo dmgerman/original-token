@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.2 1996/12/26 13:25:24 davem Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.3 1997/03/14 21:05:36 jj Exp $&n; * include/asm-sparc64/dma.h&n; *&n; * Copyright 1996 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
@@ -160,16 +160,6 @@ mdefine_line|#define DMA_ISBROKEN(dma)    ((dma)-&gt;revision == dvmarev1)
 DECL|macro|DMA_ISESC1
 mdefine_line|#define DMA_ISESC1(dma)      ((dma)-&gt;revision == dvmaesc1)
 multiline_comment|/* Main routines in dma.c */
-r_extern
-r_void
-id|dump_dma_regs
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
-)paren
-suffix:semicolon
 r_extern
 r_int
 r_int

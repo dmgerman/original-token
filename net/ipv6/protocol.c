@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET6 protocol dispatch tables.&n; *&n; * Version:&t;$Id: protocol.c,v 1.5 1997/03/18 18:24:44 davem Exp $&n; *&n; * Authors:&t;Pedro Roque&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -132,9 +133,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|prot
-op_member_access_from_pointer
-id|next
+id|prot-&gt;next
 op_assign
 id|inet6_protos
 (braket
@@ -353,5 +352,4 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o protocol.o protocol.c&quot;&n; * End:&n; */
 eof

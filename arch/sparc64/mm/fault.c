@@ -1,4 +1,17 @@
-multiline_comment|/* $Id: fault.c,v 1.3 1997/03/04 16:27:02 jj Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.4 1997/03/11 17:37:07 jj Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+macro_line|#include &lt;asm/head.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ELEMENTS
 mdefine_line|#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
 r_extern
@@ -8,10 +21,6 @@ id|sp_banks
 (braket
 id|SPARC_PHYS_BANKS
 )braket
-suffix:semicolon
-r_extern
-r_int
-id|prom_node_root
 suffix:semicolon
 multiline_comment|/* Nice, simple, prom library does all the sweating for us. ;) */
 DECL|function|prom_probe_memory
@@ -24,7 +33,7 @@ r_void
 (brace
 r_register
 r_struct
-id|linux_mlist_v0
+id|linux_mlist_p1275
 op_star
 id|mlist
 suffix:semicolon
@@ -53,7 +62,7 @@ c_func
 (paren
 )paren
 op_member_access_from_pointer
-id|v0_available
+id|p1275_available
 suffix:semicolon
 id|bytes
 op_assign
@@ -404,6 +413,7 @@ l_int|1
 suffix:colon
 id|insn
 op_assign
+op_star
 (paren
 r_int
 op_star
@@ -433,6 +443,7 @@ l_int|2
 suffix:colon
 id|insn
 op_assign
+op_star
 (paren
 r_int
 op_star
@@ -488,11 +499,11 @@ id|regs
 )paren
 )paren
 suffix:semicolon
-id|regs.pc
+id|regs.tpc
 op_assign
 id|pc
 suffix:semicolon
-id|regs.npc
+id|regs.tnpc
 op_assign
 id|pc
 op_plus
@@ -745,7 +756,7 @@ id|fixup
 op_assign
 id|search_exception_table
 (paren
-id|regs-&gt;pc
+id|regs-&gt;tpc
 comma
 op_amp
 id|g2
@@ -758,7 +769,7 @@ c_func
 (paren
 l_string|&quot;Exception: PC&lt;%016lx&gt; faddr&lt;%016lx&gt;&bslash;n&quot;
 comma
-id|regs-&gt;pc
+id|regs-&gt;tpc
 comma
 id|address
 )paren
@@ -768,20 +779,20 @@ c_func
 (paren
 l_string|&quot;EX_TABLE: insn&lt;%016lx&gt; fixup&lt;%016lx&gt; g2&lt;%016lx&gt;&bslash;n&quot;
 comma
-id|regs-&gt;pc
+id|regs-&gt;tpc
 comma
 id|fixup
 comma
 id|g2
 )paren
 suffix:semicolon
-id|regs-&gt;pc
+id|regs-&gt;tpc
 op_assign
 id|fixup
 suffix:semicolon
-id|regs-&gt;npc
+id|regs-&gt;tnpc
 op_assign
-id|regs-&gt;pc
+id|regs-&gt;tpc
 op_plus
 l_int|4
 suffix:semicolon
@@ -802,22 +813,6 @@ c_cond
 id|from_user
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Fault whee %s [%d]: segfaults at %08lx pc=%08lx&bslash;n&quot;
-comma
-id|tsk-&gt;comm
-comma
-id|tsk-&gt;pid
-comma
-id|address
-comma
-id|regs-&gt;pc
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tsk-&gt;tss.sig_address
 op_assign
 id|address

@@ -90,7 +90,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* Memory accessed from LANCE card must be aligned on 8-byte boundaries.&n;   But we can&squot;t believe that kmalloc()&squot;ed memory satisfies it. -- SAW */
 DECL|macro|LANCE_KMALLOC
 mdefine_line|#define LANCE_KMALLOC(x) &bslash;&n;&t;((void *) (((unsigned long)kmalloc((x)+7, GFP_DMA | GFP_KERNEL)+7) &amp; ~7))
-multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; *      - added PCnetPCI II (79C970A) to chip table&n; *&n; *&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n; *&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@alpha.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; *      - added PCnetPCI II (79C970A) to chip table&n; *      - made 32bit driver standalone&n; *      - changed setting of autoselect bit&n; *&n; *&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n; *&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n; */
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 16 Tx buffers, and 16 Rx buffers.&n;   That translates to 4 and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -312,6 +312,8 @@ DECL|macro|LANCE_MUST_UNRESET
 mdefine_line|#define LANCE_MUST_UNRESET      0x00000008
 DECL|macro|LANCE_HAS_MISSED_FRAME
 mdefine_line|#define LANCE_HAS_MISSED_FRAME  0x00000010
+DECL|macro|PCNET32_POSSIBLE
+mdefine_line|#define PCNET32_POSSIBLE        0x00000020
 multiline_comment|/* A mapping from the chip ID number to the part number and features.&n;   These are from the datasheets -- in real life the &squot;970 version&n;   reportedly has the same ID as the &squot;965. */
 DECL|struct|lance_chip_type
 r_static
@@ -387,6 +389,8 @@ op_plus
 id|LANCE_MUST_REINIT_RING
 op_plus
 id|LANCE_HAS_MISSED_FRAME
+op_plus
+id|PCNET32_POSSIBLE
 )brace
 comma
 multiline_comment|/* Bug: the PCnet/PCI actually uses the PCnet/VLB ID number, so just call&n;&t;&t;it the PCnet32. */
@@ -401,6 +405,8 @@ op_plus
 id|LANCE_MUST_REINIT_RING
 op_plus
 id|LANCE_HAS_MISSED_FRAME
+op_plus
+id|PCNET32_POSSIBLE
 )brace
 comma
 (brace
@@ -414,6 +420,8 @@ op_plus
 id|LANCE_MUST_REINIT_RING
 op_plus
 id|LANCE_HAS_MISSED_FRAME
+op_plus
+id|PCNET32_POSSIBLE
 )brace
 comma
 (brace
@@ -632,7 +640,7 @@ id|lance_need_isa_bounce_buffers
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_PCI)
+macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PCNET32)
 r_if
 c_cond
 (paren
@@ -1269,6 +1277,23 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_PCNET32
+multiline_comment|/*&n;&t; * if pcnet32 is configured and the chip is capable of 32bit mode&n;&t; * leave the card alone&n;&t; */
+r_if
+c_cond
+(paren
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|flags
+op_amp
+id|PCNET32_POSSIBLE
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif    
 id|dev
 op_assign
 id|init_etherdev
@@ -1357,55 +1382,6 @@ dot
 id|name
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_LANCE32
-multiline_comment|/* look if it&squot;s a PCI or VLB chip */
-r_if
-c_cond
-(paren
-id|lance_version
-op_eq
-id|PCNET_PCI
-op_logical_or
-id|lance_version
-op_eq
-id|PCNET_VLB
-op_logical_or
-id|lance_version
-op_eq
-id|PCNET_PCI_II
-)paren
-(brace
-r_extern
-r_void
-id|lance32_probe1
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_const
-r_char
-op_star
-id|chipname
-comma
-r_int
-id|pci_irq_line
-)paren
-suffix:semicolon
-id|lance32_probe1
-(paren
-id|dev
-comma
-id|chipname
-comma
-id|pci_irq_line
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif    
 multiline_comment|/* Make certain the data structures used by the LANCE are aligned and DMAble. */
 id|lp
 op_assign
@@ -2452,9 +2428,20 @@ op_plus
 id|LANCE_ADDR
 )paren
 suffix:semicolon
+multiline_comment|/* set autoselect and clean xmausel */
 id|outw
 c_func
 (paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_BUS_IF
+)paren
+op_amp
+l_int|0xfffe
+op_or
 l_int|0x0002
 comma
 id|ioaddr
@@ -2671,9 +2658,20 @@ op_plus
 id|LANCE_ADDR
 )paren
 suffix:semicolon
+multiline_comment|/* set autoselect and clean xmausel */
 id|outw
 c_func
 (paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|LANCE_BUS_IF
+)paren
+op_amp
+l_int|0xfffe
+op_or
 l_int|0x0002
 comma
 id|ioaddr

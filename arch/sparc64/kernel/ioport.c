@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.1 1996/12/28 18:39:39 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: ioport.c,v 1.2 1997/03/18 17:59:31 jj Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -26,7 +26,7 @@ id|sparc_iobase_vaddr
 op_assign
 id|IOBASE_VADDR
 suffix:semicolon
-multiline_comment|/*&n; * sparc_alloc_io:&n; * Map and allocates an obio device.&n; * Implements a simple linear allocator, you can force the function&n; * to use your own mapping, but in practice this should not be used.&n; *&n; * Input:&n; *  address: the obio address to map&n; *  virtual: if non zero, specifies a fixed virtual address where&n; *           the mapping should take place.&n; *  len:     the length of the mapping&n; *  bus_type: The bus on which this io area sits.&n; *&n; * Returns:&n; *  The virtual address where the mapping actually took place.&n; */
+multiline_comment|/*&n; * sparc_alloc_io:&n; * Map and allocates an obio device.&n; * Implements a simple linear allocator, you can force the function&n; * to use your own mapping, but in practice this should not be used.&n; *&n; * Input:&n; *  address: Physical address to map&n; *  virtual: if non zero, specifies a fixed virtual address where&n; *           the mapping should take place.&n; *  len:     the length of the mapping&n; *  bus_type: Optional high word of physical address.&n; *&n; * Returns:&n; *  The virtual address where the mapping actually took place.&n; */
 DECL|function|sparc_alloc_io
 r_void
 op_star
@@ -65,10 +65,24 @@ r_int
 id|addr
 op_assign
 (paren
+(paren
 r_int
 r_int
 )paren
 id|address
+)paren
+op_plus
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|bus_type
+)paren
+op_lshift
+l_int|32
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -253,8 +267,6 @@ c_func
 id|addr
 comma
 id|vaddr
-comma
-id|bus_type
 comma
 id|rdonly
 )paren

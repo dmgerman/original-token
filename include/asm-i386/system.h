@@ -24,7 +24,7 @@ multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;Keep the lock depth straight. If we switch on an interrupt from&n;&t; *&t;kernel-&gt;user task we need to lose a depth, and if we switch the&n;&t; *&t;other way we need to gain a depth. Same layer switches come out&n;&t; *&t;the same.&n;&t; *&n;&t; *&t;We spot a switch in user mode because the kernel counter is the&n;&t; *&t;same as the interrupt counter depth. (We never switch during the&n;&t; *&t;message/invalidate IPI).&n;&t; *&n;&t; *&t;We fsave/fwait so that an exception goes off at the right time&n;&t; *&t;(as a call from the fsave or fwait in effect) rather than to&n;&t; *&t;the wrong process.&n;&t; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;cli();&bslash;&n;&t;if(prev-&gt;flags&amp;PF_USEDFPU) &bslash;&n;&t;{ &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fnsave %0&quot;:&quot;=m&quot; (prev-&gt;tss.i387.hard)); &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fwait&quot;); &bslash;&n;&t;&t;prev-&gt;flags&amp;=~PF_USEDFPU;&t; &bslash;&n;&t;} &bslash;&n;__asm__(&quot;pushl %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl &quot;SYMBOL_NAME_STR(apic_reg)&quot;,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl 0x20(%%edx), %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $22,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;and  $0x3C,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%ecx,&quot;SYMBOL_NAME_STR(current_set)&quot;(,%%edx)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;popl %%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;next-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (next)); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(prev-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(prev,0); &bslash;&n;&t;&t;loaddebug(prev,1); &bslash;&n;&t;&t;loaddebug(prev,2); &bslash;&n;&t;&t;loaddebug(prev,3); &bslash;&n;&t;&t;loaddebug(prev,6); &bslash;&n;&t;&t;loaddebug(prev,7); &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;if(prev-&gt;flags&amp;PF_USEDFPU) &bslash;&n;&t;{ &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fnsave %0&quot;:&quot;=m&quot; (prev-&gt;tss.i387.hard)); &bslash;&n;&t;&t;__asm__ __volatile__(&quot;fwait&quot;); &bslash;&n;&t;&t;prev-&gt;flags&amp;=~PF_USEDFPU;&t; &bslash;&n;&t;} &bslash;&n;&t;prev-&gt;processor = NO_PROC_ID; &bslash;&n;&t;current_set[this_cpu] = next; &bslash;&n;__asm__(&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;next-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (next)); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(prev-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(prev,0); &bslash;&n;&t;&t;loaddebug(prev,1); &bslash;&n;&t;&t;loaddebug(prev,2); &bslash;&n;&t;&t;loaddebug(prev,3); &bslash;&n;&t;&t;loaddebug(prev,6); &bslash;&n;&t;&t;loaddebug(prev,7); &bslash;&n;&t;} &bslash;&n;} while (0)
 macro_line|#else
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next) do { &bslash;&n;__asm__(&quot;movl %2,&quot;SYMBOL_NAME_STR(current_set)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %1,&quot;SYMBOL_NAME_STR(last_task_used_math)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;next-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;r&quot; (prev), &quot;r&quot; (next)); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(prev-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(prev,0); &bslash;&n;&t;&t;loaddebug(prev,1); &bslash;&n;&t;&t;loaddebug(prev,2); &bslash;&n;&t;&t;loaddebug(prev,3); &bslash;&n;&t;&t;loaddebug(prev,6); &bslash;&n;&t;&t;loaddebug(prev,7); &bslash;&n;&t;} &bslash;&n;} while (0)
@@ -308,16 +308,68 @@ suffix:semicolon
 )brace
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
-DECL|macro|sti
-mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
+multiline_comment|/* interrupt control.. */
+DECL|macro|__sti
+mdefine_line|#define __sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
+DECL|macro|__cli
+mdefine_line|#define __cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|__global_cli
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|cli
-mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
+mdefine_line|#define cli() __global_cli()
+DECL|macro|sti
+mdefine_line|#define sti() __global_sti()
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
+mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
-DECL|macro|iret
-mdefine_line|#define iret() __asm__ __volatile__ (&quot;iret&quot;: : :&quot;memory&quot;)
+mdefine_line|#define restore_flags(x) __global_restore_flags(x)
+macro_line|#else
+DECL|macro|cli
+mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) __save_flags(x)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __restore_flags(x)
+macro_line|#endif
 DECL|macro|_set_gate
 mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %2,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;d&quot; ((char *) (addr)),&quot;a&quot; (KERNEL_CS &lt;&lt; 16) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
 DECL|macro|set_intr_gate

@@ -2,6 +2,7 @@ multiline_comment|/*&n; * hdlcdrv.h  -- HDLC packet radio network driver.&n; * T
 macro_line|#ifndef _HDLCDRV_H
 DECL|macro|_HDLCDRV_H
 mdefine_line|#define _HDLCDRV_H
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
@@ -76,6 +77,31 @@ multiline_comment|/* some driver do not support full duplex, setting */
 multiline_comment|/* this just makes them send even if DCD is on */
 )brace
 suffix:semicolon
+DECL|struct|hdlcdrv_old_channel_state
+r_struct
+id|hdlcdrv_old_channel_state
+(brace
+DECL|member|ptt
+r_int
+id|ptt
+suffix:semicolon
+DECL|member|dcd
+r_int
+id|dcd
+suffix:semicolon
+DECL|member|ptt_keyed
+r_int
+id|ptt_keyed
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+DECL|member|stats
+r_struct
+id|enet_statistics
+id|stats
+suffix:semicolon
+macro_line|#endif
+)brace
+suffix:semicolon
 DECL|struct|hdlcdrv_channel_state
 r_struct
 id|hdlcdrv_channel_state
@@ -92,19 +118,26 @@ DECL|member|ptt_keyed
 r_int
 id|ptt_keyed
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
+DECL|member|tx_packets
+r_int
+r_int
+id|tx_packets
 suffix:semicolon
-macro_line|#else
-DECL|member|stats
-r_struct
-id|net_device_stats
-id|stats
+DECL|member|tx_errors
+r_int
+r_int
+id|tx_errors
 suffix:semicolon
-macro_line|#endif
+DECL|member|rx_packets
+r_int
+r_int
+id|rx_packets
+suffix:semicolon
+DECL|member|rx_errors
+r_int
+r_int
+id|rx_errors
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|hdlcdrv_ioctl
@@ -131,6 +164,11 @@ DECL|member|cs
 r_struct
 id|hdlcdrv_channel_state
 id|cs
+suffix:semicolon
+DECL|member|ocs
+r_struct
+id|hdlcdrv_old_channel_state
+id|ocs
 suffix:semicolon
 DECL|member|calibrate
 r_int
@@ -174,10 +212,12 @@ DECL|macro|HDLCDRVCTL_GETCHANNELPAR
 mdefine_line|#define HDLCDRVCTL_GETCHANNELPAR    10
 DECL|macro|HDLCDRVCTL_SETCHANNELPAR
 mdefine_line|#define HDLCDRVCTL_SETCHANNELPAR    11
-DECL|macro|HDLCDRVCTL_GETSTAT
-mdefine_line|#define HDLCDRVCTL_GETSTAT          20
+DECL|macro|HDLCDRVCTL_OLDGETSTAT
+mdefine_line|#define HDLCDRVCTL_OLDGETSTAT       20
 DECL|macro|HDLCDRVCTL_CALIBRATE
 mdefine_line|#define HDLCDRVCTL_CALIBRATE        21
+DECL|macro|HDLCDRVCTL_GETSTAT
+mdefine_line|#define HDLCDRVCTL_GETSTAT          22
 multiline_comment|/*&n; * these are mainly for debugging purposes&n; */
 DECL|macro|HDLCDRVCTL_GETSAMPLES
 mdefine_line|#define HDLCDRVCTL_GETSAMPLES       30

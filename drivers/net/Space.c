@@ -156,6 +156,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|pcnet32_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|at1700_probe
 c_func
 (paren
@@ -682,6 +692,14 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCNET32
+op_logical_and
+id|pcnet32_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif&t;
 macro_line|#ifdef CONFIG_AT1700
 op_logical_and
 id|at1700_probe

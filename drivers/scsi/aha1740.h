@@ -9,36 +9,36 @@ DECL|macro|MAXEISA
 mdefine_line|#define MAXEISA 8   /* Just took my machine&squot;s specifications.  Adjust to fit.*/
 multiline_comment|/* I just saw an ad, and bumped this from 6 to 8 */
 DECL|macro|SLOTBASE
-mdefine_line|#define&t;SLOTBASE(x)&t;((x &lt;&lt; 12)+ 0xc80 )
-DECL|macro|BASE
-mdefine_line|#define&t;BASE&t;&t;(base)
+mdefine_line|#define&t;SLOTBASE(x)&t;((x &lt;&lt; 12) + 0xc80)
+DECL|macro|SLOTSIZE
+mdefine_line|#define SLOTSIZE&t;0x5c
 multiline_comment|/* EISA configuration registers &amp; values */
 DECL|macro|HID0
-mdefine_line|#define&t;HID0&t;(base + 0x0)
+mdefine_line|#define&t;HID0(base)&t;(base + 0x0)
 DECL|macro|HID1
-mdefine_line|#define&t;HID1&t;(base + 0x1)
+mdefine_line|#define&t;HID1(base)&t;(base + 0x1)
 DECL|macro|HID2
-mdefine_line|#define HID2&t;(base + 0x2)
+mdefine_line|#define HID2(base)&t;(base + 0x2)
 DECL|macro|HID3
-mdefine_line|#define&t;HID3&t;(base + 0x3)
+mdefine_line|#define&t;HID3(base)&t;(base + 0x3)
 DECL|macro|EBCNTRL
-mdefine_line|#define&t;EBCNTRL&t;(base + 0x4)
+mdefine_line|#define&t;EBCNTRL(base)&t;(base + 0x4)
 DECL|macro|PORTADR
-mdefine_line|#define&t;PORTADR&t;(base + 0x40)
+mdefine_line|#define&t;PORTADR(base)&t;(base + 0x40)
 DECL|macro|BIOSADR
-mdefine_line|#define BIOSADR (base + 0x41)
+mdefine_line|#define BIOSADR(base)&t;(base + 0x41)
 DECL|macro|INTDEF
-mdefine_line|#define INTDEF&t;(base + 0x42)
+mdefine_line|#define INTDEF(base)&t;(base + 0x42)
 DECL|macro|SCSIDEF
-mdefine_line|#define SCSIDEF (base + 0x43)
+mdefine_line|#define SCSIDEF(base)&t;(base + 0x43)
 DECL|macro|BUSDEF
-mdefine_line|#define BUSDEF&t;(base + 0x44)
+mdefine_line|#define BUSDEF(base)&t;(base + 0x44)
 DECL|macro|RESV0
-mdefine_line|#define&t;RESV0&t;(base + 0x45)
+mdefine_line|#define&t;RESV0(base)&t;(base + 0x45)
 DECL|macro|RESV1
-mdefine_line|#define RESV1&t;(base + 0x46)
+mdefine_line|#define RESV1(base)&t;(base + 0x46)
 DECL|macro|RESV2
-mdefine_line|#define&t;RESV2&t;(base + 0x47)
+mdefine_line|#define&t;RESV2(base)&t;(base + 0x47)
 DECL|macro|HID_MFG
 mdefine_line|#define&t;HID_MFG&t;&quot;ADP&quot;
 DECL|macro|HID_PRD
@@ -51,19 +51,19 @@ DECL|macro|PORTADDR_ENH
 mdefine_line|#define PORTADDR_ENH 0x80
 multiline_comment|/* READ */
 DECL|macro|G2INTST
-mdefine_line|#define&t;G2INTST&t;(BASE + 0x56)
+mdefine_line|#define&t;G2INTST(base)&t;(base + 0x56)
 DECL|macro|G2STAT
-mdefine_line|#define G2STAT&t;(BASE + 0x57)
+mdefine_line|#define G2STAT(base)&t;(base + 0x57)
 DECL|macro|MBOXIN0
-mdefine_line|#define&t;MBOXIN0&t;(BASE + 0x58)
+mdefine_line|#define&t;MBOXIN0(base)&t;(base + 0x58)
 DECL|macro|MBOXIN1
-mdefine_line|#define&t;MBOXIN1&t;(BASE + 0x59)
+mdefine_line|#define&t;MBOXIN1(base)&t;(base + 0x59)
 DECL|macro|MBOXIN2
-mdefine_line|#define&t;MBOXIN2&t;(BASE + 0x5a)
+mdefine_line|#define&t;MBOXIN2(base)&t;(base + 0x5a)
 DECL|macro|MBOXIN3
-mdefine_line|#define&t;MBOXIN3&t;(BASE + 0x5b)
+mdefine_line|#define&t;MBOXIN3(base)&t;(base + 0x5b)
 DECL|macro|G2STAT2
-mdefine_line|#define G2STAT2&t;(BASE + 0x5c)
+mdefine_line|#define G2STAT2(base)&t;(base + 0x5c)
 DECL|macro|G2INTST_MASK
 mdefine_line|#define G2INTST_MASK&t;&t;0xf0&t;/* isolate the status */
 DECL|macro|G2INTST_CCBGOOD
@@ -90,17 +90,17 @@ DECL|macro|G2STAT2_READY
 mdefine_line|#define G2STAT2_READY&t;0&t;/* Host Ready Bit */
 multiline_comment|/* WRITE (and ReadBack) */
 DECL|macro|MBOXOUT0
-mdefine_line|#define&t;MBOXOUT0&t;(BASE + 0x50)
+mdefine_line|#define&t;MBOXOUT0(base)&t;(base + 0x50)
 DECL|macro|MBOXOUT1
-mdefine_line|#define&t;MBOXOUT1&t;(BASE + 0x51)
+mdefine_line|#define&t;MBOXOUT1(base)&t;(base + 0x51)
 DECL|macro|MBOXOUT2
-mdefine_line|#define&t;MBOXOUT2&t;(BASE + 0x52)
+mdefine_line|#define&t;MBOXOUT2(base)&t;(base + 0x52)
 DECL|macro|MBOXOUT3
-mdefine_line|#define&t;MBOXOUT3&t;(BASE + 0x53)
+mdefine_line|#define&t;MBOXOUT3(base)&t;(base + 0x53)
 DECL|macro|ATTN
-mdefine_line|#define&t;ATTN&t;&t;(BASE + 0x54)
+mdefine_line|#define&t;ATTN(base)&t;(base + 0x54)
 DECL|macro|G2CNTRL
-mdefine_line|#define G2CNTRL&t;&t;(BASE + 0x55)
+mdefine_line|#define G2CNTRL(base)&t;(base + 0x55)
 DECL|macro|ATTN_IMMED
 mdefine_line|#define&t;ATTN_IMMED&t;0x10&t;/* Immediate Command */
 DECL|macro|ATTN_START
@@ -447,15 +447,48 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_int
+id|aha1740_proc_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|hostno
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 DECL|macro|AHA1740_ECBS
 mdefine_line|#define AHA1740_ECBS 32
 DECL|macro|AHA1740_SCATTER
 mdefine_line|#define AHA1740_SCATTER 16
+DECL|macro|AHA1740_CMDLUN
+mdefine_line|#define AHA1740_CMDLUN 1
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_scsi_aha1740
+suffix:semicolon
 DECL|macro|AHA1740
-mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;                   NULL,                                &bslash;&n;&t;&t;   NULL,&t;&t;                &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
+mdefine_line|#define AHA1740 {NULL,&t;NULL,&t;&t;&t;&t;&bslash;&n;                   &amp;proc_scsi_aha1740,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_proc_info,&t;                &bslash;&n;&t;&t;   &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   NULL, &t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;   aha1740_biosparam,                   &bslash;&n;&t;&t;   AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   AHA1740_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   0, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING}
 macro_line|#endif
 eof

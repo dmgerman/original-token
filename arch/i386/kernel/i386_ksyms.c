@@ -5,9 +5,11 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
 r_void
@@ -104,11 +106,26 @@ c_func
 id|__down_failed
 )paren
 suffix:semicolon
+DECL|variable|__down_failed_interruptible
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_failed_interruptible
+)paren
+suffix:semicolon
 DECL|variable|__up_wakeup
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__up_wakeup
+)paren
+suffix:semicolon
+multiline_comment|/* Networking helper routines. */
+DECL|variable|csum_partial_copy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_partial_copy
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__

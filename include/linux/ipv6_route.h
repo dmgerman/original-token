@@ -2,24 +2,22 @@ multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; 
 macro_line|#ifndef _LINUX_IPV6_ROUTE_H
 DECL|macro|_LINUX_IPV6_ROUTE_H
 mdefine_line|#define _LINUX_IPV6_ROUTE_H
-DECL|macro|RTI_DEVRT
-mdefine_line|#define RTI_DEVRT&t;0x00010000&t;/* route lookup, dev must match&t;*/
-DECL|macro|RTI_ALLONLINK
-mdefine_line|#define RTI_ALLONLINK&t;0x00020000&t;/* all destinations on link&t;*/
-DECL|macro|RTI_DCACHE
-mdefine_line|#define RTI_DCACHE&t;RTF_DCACHE&t;/* rt6_info is a dcache entry&t;*/
-DECL|macro|RTI_INVALID
-mdefine_line|#define RTI_INVALID&t;RTF_INVALID&t;/* invalid route/dcache entry&t;*/
-DECL|macro|RTI_DYNAMIC
-mdefine_line|#define RTI_DYNAMIC&t;RTF_DYNAMIC&t;/* rt6_info created dynamicly&t;*/
-DECL|macro|RTI_GATEWAY
-mdefine_line|#define RTI_GATEWAY&t;RTF_GATEWAY
-DECL|macro|RTI_DYNMOD
-mdefine_line|#define RTI_DYNMOD&t;RTF_MODIFIED&t;/* more specific route may exist*/
-DECL|macro|DCF_PMTU
-mdefine_line|#define DCF_PMTU&t;RTF_MSS&t;&t;/* dest cache has valid PMTU&t;*/
-DECL|macro|DCF_INVALID
-mdefine_line|#define DCF_INVALID&t;RTF_INVALID
+DECL|macro|RTF_DEFAULT
+mdefine_line|#define RTF_DEFAULT&t;0x00010000&t;/* default - learned via ND&t;*/
+DECL|macro|RTF_ALLONLINK
+mdefine_line|#define RTF_ALLONLINK&t;0x00020000&t;/* fallback, no routers on link&t;*/
+DECL|macro|RTF_ADDRCONF
+mdefine_line|#define RTF_ADDRCONF&t;0x00040000&t;/* addrconf route - RA&t;&t;*/
+DECL|macro|RTF_LINKRT
+mdefine_line|#define RTF_LINKRT&t;0x00100000&t;/* link specific - device match&t;*/
+DECL|macro|RTF_NONEXTHOP
+mdefine_line|#define RTF_NONEXTHOP&t;0x00200000&t;/* route with no nexthop&t;*/
+DECL|macro|RTF_CACHE
+mdefine_line|#define RTF_CACHE&t;0x01000000&t;/* cache entry&t;&t;&t;*/
+DECL|macro|RTF_FLOW
+mdefine_line|#define RTF_FLOW&t;0x02000000&t;/* flow significant route&t;*/
+DECL|macro|RTF_POLICY
+mdefine_line|#define RTF_POLICY&t;0x04000000&t;/* policy route&t;&t;&t;*/
 DECL|struct|in6_rtmsg
 r_struct
 id|in6_rtmsg
@@ -28,6 +26,11 @@ DECL|member|rtmsg_dst
 r_struct
 id|in6_addr
 id|rtmsg_dst
+suffix:semicolon
+DECL|member|rtmsg_src
+r_struct
+id|in6_addr
+id|rtmsg_src
 suffix:semicolon
 DECL|member|rtmsg_gateway
 r_struct
@@ -38,12 +41,16 @@ DECL|member|rtmsg_type
 id|__u32
 id|rtmsg_type
 suffix:semicolon
-DECL|member|rtmsg_prefixlen
+DECL|member|rtmsg_dst_len
 id|__u16
-id|rtmsg_prefixlen
+id|rtmsg_dst_len
+suffix:semicolon
+DECL|member|rtmsg_src_len
+id|__u16
+id|rtmsg_src_len
 suffix:semicolon
 DECL|member|rtmsg_metric
-id|__u16
+id|__u32
 id|rtmsg_metric
 suffix:semicolon
 DECL|member|rtmsg_info

@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 DECL|variable|wdt_is_open
 r_static
 r_int
@@ -458,9 +459,10 @@ id|KERN_CRIT
 l_string|&quot;Initiating system reboot.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;

@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
-macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -2075,6 +2074,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 op_logical_and
 id|priority
@@ -2258,6 +2259,11 @@ id|skb-&gt;ip_summed
 op_assign
 l_int|0
 suffix:semicolon
+id|skb-&gt;security
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* By default packets are insecure */
 id|skb-&gt;dst
 op_assign
 l_int|NULL
@@ -2790,12 +2796,6 @@ id|skb-&gt;mac.raw
 op_plus
 id|offset
 suffix:semicolon
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-id|n-&gt;nexthop
-op_assign
-id|skb-&gt;nexthop
-suffix:semicolon
-macro_line|#endif
 id|n-&gt;seq
 op_assign
 id|skb-&gt;seq
@@ -2849,13 +2849,13 @@ id|n-&gt;stamp
 op_assign
 id|skb-&gt;stamp
 suffix:semicolon
-id|n-&gt;arp
-op_assign
-id|skb-&gt;arp
-suffix:semicolon
 id|n-&gt;destructor
 op_assign
 l_int|NULL
+suffix:semicolon
+id|n-&gt;security
+op_assign
+id|skb-&gt;security
 suffix:semicolon
 id|IS_SKB
 c_func
@@ -3038,12 +3038,6 @@ id|skb-&gt;cb
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-id|n-&gt;nexthop
-op_assign
-id|skb-&gt;nexthop
-suffix:semicolon
-macro_line|#endif
 id|n-&gt;seq
 op_assign
 id|skb-&gt;seq
@@ -3087,6 +3081,10 @@ suffix:semicolon
 id|n-&gt;destructor
 op_assign
 l_int|NULL
+suffix:semicolon
+id|n-&gt;security
+op_assign
+id|skb-&gt;security
 suffix:semicolon
 id|IS_SKB
 c_func

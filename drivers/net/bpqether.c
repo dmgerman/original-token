@@ -1051,16 +1051,14 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
-id|dev
-op_member_access_from_pointer
-id|hard_start_xmit
+id|dev_queue_xmit
 c_func
 (paren
 id|skb
-comma
-id|dev
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Statistics&n; */

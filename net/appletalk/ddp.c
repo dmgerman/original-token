@@ -1279,29 +1279,15 @@ r_struct
 id|atalk_iface
 op_star
 id|iface
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|iface
 op_assign
-id|atalk_iface_list
+id|dev-&gt;atalk_ptr
 suffix:semicolon
-id|iface
-op_ne
-l_int|NULL
-suffix:semicolon
-id|iface
-op_assign
-id|iface-&gt;next
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|iface-&gt;dev
-op_ne
-id|dev
+id|iface
+op_eq
+l_int|NULL
 op_logical_or
 (paren
 id|iface-&gt;status
@@ -1309,7 +1295,8 @@ op_amp
 id|ATIF_PROBE
 )paren
 )paren
-r_continue
+r_return
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1321,11 +1308,14 @@ op_logical_or
 id|iface-&gt;address.s_node
 op_eq
 id|node
+op_logical_or
+id|node
+op_eq
+id|ATADDR_ANYNODE
 )paren
 r_return
 id|iface
 suffix:semicolon
-)brace
 r_return
 l_int|NULL
 suffix:semicolon
@@ -4510,6 +4500,19 @@ op_member_access_from_pointer
 id|tx_packets
 op_increment
 suffix:semicolon
+(paren
+(paren
+r_struct
+id|net_device_stats
+op_star
+)paren
+id|dev-&gt;priv
+)paren
+op_member_access_from_pointer
+id|tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 multiline_comment|/* printk(&quot;ipddp_xmit called with headroom %d&bslash;n&quot;,skb_headroom(skb)); */
 r_if
 c_cond
@@ -4558,7 +4561,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv
@@ -5361,7 +5364,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -5375,6 +5377,9 @@ comma
 id|ddp
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -5392,7 +5397,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Check the packet is aimed at us */
 r_if
 c_cond
@@ -5468,7 +5472,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FIREWALL
 multiline_comment|/*&n;&t;&t; *&t;Check firewall allows this routing&n;&t;&t; */
 r_if
 c_cond
@@ -5483,6 +5486,9 @@ comma
 id|ddp
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -5500,7 +5506,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 id|ta.s_net
 op_assign
 id|ddp-&gt;deh_dnet
@@ -5723,13 +5728,13 @@ l_int|22
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|estats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev_ipddp.priv
@@ -5762,6 +5767,12 @@ suffix:semicolon
 multiline_comment|/*&t;printk(&quot;passing up ipddp, 0x%02x better be 45&bslash;n&quot;,skb-&gt;data[0]);&n;&t; *&t;printk(&quot;tot_len %d, skb-&gt;len %d&bslash;n&quot;,&n;&t; *&t;&t;ntohs(skb-&gt;h.iph-&gt;tot_len),skb-&gt;len);&n;&t; */
 id|estats-&gt;rx_packets
 op_increment
+suffix:semicolon
+id|estats-&gt;rx_bytes
+op_add_assign
+id|skb-&gt;len
+op_plus
+l_int|13
 suffix:semicolon
 id|netif_rx
 c_func
@@ -6581,7 +6592,6 @@ id|ddp
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -6595,6 +6605,9 @@ comma
 id|ddp
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
@@ -6613,7 +6626,6 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Loopback broadcast packets to non gateway targets (ie routes&n;&t; *&t;to group we are in)&n;&t; */
 r_if
 c_cond

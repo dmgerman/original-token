@@ -1,4 +1,4 @@
-multiline_comment|/* myri_sbus.h: Defines for MyriCOM Gigabit Ethernet SBUS card driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* myri_sbus.h: Defines for MyriCOM MyriNET SBUS card driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _MYRI_SBUS_H
 DECL|macro|_MYRI_SBUS_H
 mdefine_line|#define _MYRI_SBUS_H

@@ -4023,10 +4023,18 @@ id|LastSequencePoint
 id|BusLogic_MaxTargetDevices
 )braket
 suffix:semicolon
-DECL|member|LastResetTime
+DECL|member|LastResetAttempted
 r_int
 r_int
-id|LastResetTime
+id|LastResetAttempted
+(braket
+id|BusLogic_MaxTargetDevices
+)braket
+suffix:semicolon
+DECL|member|LastResetCompleted
+r_int
+r_int
+id|LastResetCompleted
 (braket
 id|BusLogic_MaxTargetDevices
 )braket
@@ -4775,6 +4783,13 @@ DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
 mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
 DECL|macro|BusLogic_InitializeProbeInfoListISA
 mdefine_line|#define BusLogic_InitializeProbeInfoListISA BusLogic_InitializeProbeInfoList
+macro_line|#endif
+multiline_comment|/*&n;  FlashPoint support is only available for the Intel x86 Architecture.&n;*/
+macro_line|#ifndef __i386__
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+macro_line|#undef CONFIG_SCSI_OMIT_FLASHPOINT
+DECL|macro|CONFIG_SCSI_OMIT_FLASHPOINT
+mdefine_line|#define CONFIG_SCSI_OMIT_FLASHPOINT
 macro_line|#endif
 multiline_comment|/*&n;  Define macros for testing the Host Adapter Type.&n;*/
 macro_line|#ifndef CONFIG_SCSI_OMIT_FLASHPOINT

@@ -341,8 +341,32 @@ DECL|macro|R_SPARC_RELATIVE
 mdefine_line|#define&t;R_SPARC_RELATIVE&t;22
 DECL|macro|R_SPARC_UA32
 mdefine_line|#define&t;R_SPARC_UA32&t;&t;23
-DECL|macro|R_SPARC_NUM
-mdefine_line|#define&t;R_SPARC_NUM&t;&t;24
+DECL|macro|R_SPARC_PLT32
+mdefine_line|#define R_SPARC_PLT32&t;&t;24
+DECL|macro|R_SPARC_HIPLT22
+mdefine_line|#define R_SPARC_HIPLT22&t;&t;25
+DECL|macro|R_SPARC_LOPLT10
+mdefine_line|#define R_SPARC_LOPLT10&t;&t;26
+DECL|macro|R_SPARC_PCPLT32
+mdefine_line|#define R_SPARC_PCPLT32&t;&t;27
+DECL|macro|R_SPARC_PCPLT22
+mdefine_line|#define R_SPARC_PCPLT22&t;&t;28
+DECL|macro|R_SPARC_PCPLT10
+mdefine_line|#define R_SPARC_PCPLT10&t;&t;29
+DECL|macro|R_SPARC_10
+mdefine_line|#define R_SPARC_10&t;&t;30
+DECL|macro|R_SPARC_11
+mdefine_line|#define R_SPARC_11&t;&t;31
+DECL|macro|R_SPARC_WDISP16
+mdefine_line|#define R_SPARC_WDISP16&t;&t;40
+DECL|macro|R_SPARC_WDISP19
+mdefine_line|#define R_SPARC_WDISP19&t;&t;41
+DECL|macro|R_SPARC_7
+mdefine_line|#define R_SPARC_7&t;&t;43
+DECL|macro|R_SPARC_5
+mdefine_line|#define R_SPARC_5&t;&t;44
+DECL|macro|R_SPARC_6
+mdefine_line|#define R_SPARC_6&t;&t;45
 multiline_comment|/*&n; * 68k ELF relocation types&n; */
 DECL|macro|R_68K_NONE
 mdefine_line|#define R_68K_NONE&t;0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.8 1997/03/18 18:24:30 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -8,17 +8,9 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -26,15 +18,13 @@ macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
+macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
-macro_line|#include &lt;net/route.h&gt;
-macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
-macro_line|#include &lt;net/inet_common.h&gt;
-macro_line|#include &lt;net/transp_v6.h&gt;
-macro_line|#include &lt;net/ipv6_route.h&gt;
-macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
+macro_line|#include &lt;net/transp_v6.h&gt;
+macro_line|#include &lt;net/ip6_route.h&gt;
+macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *&t;ICMP socket for flow control.&n; */
@@ -129,7 +119,7 @@ id|icmpv6_msg
 (brace
 DECL|member|icmph
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 id|icmph
 suffix:semicolon
 DECL|member|data
@@ -196,7 +186,7 @@ op_star
 id|data
 suffix:semicolon
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 id|icmph
 suffix:semicolon
@@ -226,7 +216,7 @@ op_minus
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 comma
 id|buff
@@ -261,7 +251,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 comma
 id|msg-&gt;csum
@@ -283,7 +273,7 @@ op_plus
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 comma
 id|len
@@ -291,7 +281,7 @@ op_minus
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 comma
 id|csum
@@ -301,12 +291,12 @@ id|icmph
 op_assign
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 )paren
 id|buff
 suffix:semicolon
-id|icmph-&gt;checksum
+id|icmph-&gt;icmp6_cksum
 op_assign
 id|csum_ipv6_magic
 c_func
@@ -424,6 +414,10 @@ r_struct
 id|icmpv6_msg
 id|msg
 suffix:semicolon
+r_struct
+id|flowi
+id|fl
+suffix:semicolon
 r_int
 id|addr_type
 op_assign
@@ -441,7 +435,7 @@ c_cond
 (paren
 id|type
 op_eq
-id|ICMPV6_PARAMETER_PROB
+id|ICMPV6_PARAMPROB
 op_logical_and
 (paren
 id|info
@@ -491,13 +485,11 @@ op_amp
 id|hdr-&gt;daddr
 )paren
 )paren
-(brace
 id|saddr
 op_assign
 op_amp
 id|hdr-&gt;daddr
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Dest addr check&n;&t; */
 r_if
 c_cond
@@ -524,7 +516,7 @@ op_logical_neg
 (paren
 id|type
 op_eq
-id|ICMPV6_PARAMETER_PROB
+id|ICMPV6_PARAMPROB
 op_logical_and
 id|code
 op_eq
@@ -541,10 +533,8 @@ id|info
 )paren
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|saddr
 op_assign
 l_int|NULL
@@ -567,12 +557,10 @@ id|addr_type
 op_amp
 id|IPV6_ADDR_LINKLOCAL
 )paren
-(brace
 id|src_dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Must not send if we know that source is Anycast also.&n;&t; *&t;for now we don&squot;t know that.&n;&t; */
 r_if
 c_cond
@@ -601,15 +589,15 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;ok. kick it. checksum will be provided by the &n;&t; *&t;getfrag_t callback.&n;&t; */
-id|msg.icmph.type
+id|msg.icmph.icmp6_type
 op_assign
 id|type
 suffix:semicolon
-id|msg.icmph.code
+id|msg.icmph.icmp6_code
 op_assign
 id|code
 suffix:semicolon
-id|msg.icmph.checksum
+id|msg.icmph.icmp6_cksum
 op_assign
 l_int|0
 suffix:semicolon
@@ -666,7 +654,7 @@ op_minus
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 op_minus
 id|optlen
@@ -695,14 +683,39 @@ op_add_assign
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 suffix:semicolon
 id|msg.len
 op_assign
 id|len
 suffix:semicolon
-id|ipv6_build_xmit
+id|fl.proto
+op_assign
+id|IPPROTO_ICMPV6
+suffix:semicolon
+id|fl.nl_u.ip6_u.daddr
+op_assign
+op_amp
+id|hdr-&gt;saddr
+suffix:semicolon
+id|fl.nl_u.ip6_u.saddr
+op_assign
+id|saddr
+suffix:semicolon
+id|fl.dev
+op_assign
+id|src_dev
+suffix:semicolon
+id|fl.uli_u.icmpt.type
+op_assign
+id|type
+suffix:semicolon
+id|fl.uli_u.icmpt.code
+op_assign
+id|code
+suffix:semicolon
+id|ip6_build_xmit
 c_func
 (paren
 id|sk
@@ -713,21 +726,16 @@ op_amp
 id|msg
 comma
 op_amp
-id|hdr-&gt;saddr
+id|fl
 comma
 id|len
 comma
-id|saddr
-comma
-id|src_dev
-comma
 l_int|NULL
 comma
-id|IPPROTO_ICMPV6
-comma
-l_int|0
-comma
+op_minus
 l_int|1
+comma
+id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace
@@ -758,13 +766,13 @@ op_assign
 id|skb-&gt;nh.ipv6h
 suffix:semicolon
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 id|icmph
 op_assign
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 )paren
 id|skb-&gt;h.raw
@@ -777,6 +785,10 @@ suffix:semicolon
 r_struct
 id|icmpv6_msg
 id|msg
+suffix:semicolon
+r_struct
+id|flowi
+id|fl
 suffix:semicolon
 r_int
 r_char
@@ -829,18 +841,18 @@ op_add_assign
 r_sizeof
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 )paren
 suffix:semicolon
-id|msg.icmph.type
+id|msg.icmph.icmp6_type
 op_assign
 id|ICMPV6_ECHO_REPLY
 suffix:semicolon
-id|msg.icmph.code
+id|msg.icmph.icmp6_code
 op_assign
 l_int|0
 suffix:semicolon
-id|msg.icmph.checksum
+id|msg.icmph.icmp6_cksum
 op_assign
 l_int|0
 suffix:semicolon
@@ -869,7 +881,32 @@ op_assign
 op_amp
 id|hdr-&gt;saddr
 suffix:semicolon
-id|ipv6_build_xmit
+id|fl.proto
+op_assign
+id|IPPROTO_ICMPV6
+suffix:semicolon
+id|fl.nl_u.ip6_u.daddr
+op_assign
+op_amp
+id|hdr-&gt;saddr
+suffix:semicolon
+id|fl.nl_u.ip6_u.saddr
+op_assign
+id|saddr
+suffix:semicolon
+id|fl.dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+id|fl.uli_u.icmpt.type
+op_assign
+id|ICMPV6_ECHO_REPLY
+suffix:semicolon
+id|fl.uli_u.icmpt.code
+op_assign
+l_int|0
+suffix:semicolon
+id|ip6_build_xmit
 c_func
 (paren
 id|sk
@@ -880,21 +917,16 @@ op_amp
 id|msg
 comma
 op_amp
-id|hdr-&gt;saddr
+id|fl
 comma
 id|len
 comma
-id|saddr
-comma
-id|skb-&gt;dev
-comma
 l_int|NULL
 comma
-id|IPPROTO_ICMPV6
-comma
-l_int|0
-comma
+op_minus
 l_int|1
+comma
+id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace
@@ -1081,6 +1113,7 @@ op_assign
 op_star
 id|pbuff
 suffix:semicolon
+multiline_comment|/* Header length is size in 8-octet units, not&n;&t;&t; * including the first 8 octets.&n;&t;&t; */
 id|hdrlen
 op_assign
 op_star
@@ -1090,10 +1123,8 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
+id|hdrlen
+op_assign
 (paren
 id|hdrlen
 op_plus
@@ -1101,12 +1132,17 @@ l_int|1
 )paren
 op_lshift
 l_int|3
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hdrlen
 OG
 id|len
 )paren
 r_return
 suffix:semicolon
+multiline_comment|/* Now this is right. */
 id|pbuff
 op_add_assign
 id|hdrlen
@@ -1169,7 +1205,6 @@ c_cond
 (paren
 id|ipprot-&gt;err_handler
 )paren
-(brace
 id|ipprot
 op_member_access_from_pointer
 id|err_handler
@@ -1190,7 +1225,6 @@ comma
 id|ipprot
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -1209,10 +1243,8 @@ id|sk
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -1254,8 +1286,6 @@ op_assign
 id|sk-&gt;next
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle icmp messages&n; */
 DECL|function|icmpv6_rcv
@@ -1307,13 +1337,13 @@ op_star
 id|orig_hdr
 suffix:semicolon
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 id|hdr
 op_assign
 (paren
 r_struct
-id|icmpv6hdr
+id|icmp6hdr
 op_star
 )paren
 id|skb-&gt;h.raw
@@ -1321,7 +1351,7 @@ suffix:semicolon
 r_int
 id|ulen
 suffix:semicolon
-multiline_comment|/* perform checksum */
+multiline_comment|/* Perform checksum. */
 r_switch
 c_cond
 (paren
@@ -1385,6 +1415,7 @@ suffix:colon
 )brace
 multiline_comment|/* CHECKSUM_UNNECESSARY */
 )brace
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;length of original packet carried in skb&n;&t; */
 id|ulen
 op_assign
@@ -1404,7 +1435,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|hdr-&gt;type
+id|hdr-&gt;icmp6_type
 )paren
 (brace
 r_case
@@ -1451,12 +1482,13 @@ r_struct
 id|ipv6hdr
 )paren
 )paren
-(brace
-id|rt6_handle_pmtu
+id|rt6_pmtu_discovery
 c_func
 (paren
 op_amp
 id|orig_hdr-&gt;daddr
+comma
+id|dev
 comma
 id|ntohl
 c_func
@@ -1465,23 +1497,22 @@ id|hdr-&gt;icmp6_mtu
 )paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * Drop through to notify&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Drop through to notify&n;&t;&t; */
 r_case
 id|ICMPV6_DEST_UNREACH
 suffix:colon
 r_case
-id|ICMPV6_TIME_EXCEEDED
+id|ICMPV6_TIME_EXCEED
 suffix:colon
 r_case
-id|ICMPV6_PARAMETER_PROB
+id|ICMPV6_PARAMPROB
 suffix:colon
 id|icmpv6_notify
 c_func
 (paren
-id|hdr-&gt;type
+id|hdr-&gt;icmp6_type
 comma
-id|hdr-&gt;code
+id|hdr-&gt;icmp6_code
 comma
 (paren
 r_char
@@ -1538,15 +1569,38 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|ICMPV6_MEMBERSHIP_QUERY
+id|ICMPV6_MGM_QUERY
 suffix:colon
+id|igmp6_event_query
+c_func
+(paren
+id|skb
+comma
+id|hdr
+comma
+id|len
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
-id|ICMPV6_MEMBERSHIP_REPORT
+id|ICMPV6_MGM_REPORT
 suffix:colon
+id|igmp6_event_report
+c_func
+(paren
+id|skb
+comma
+id|hdr
+comma
+id|len
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
-id|ICMPV6_MEMBERSHIP_REDUCTION
+id|ICMPV6_MGM_REDUCTION
 suffix:colon
-multiline_comment|/* forward the packet to the igmp module */
 r_break
 suffix:semicolon
 r_default
@@ -1562,22 +1616,20 @@ multiline_comment|/* informational */
 r_if
 c_cond
 (paren
-id|hdr-&gt;type
+id|hdr-&gt;icmp6_type
 op_amp
 l_int|0x80
 )paren
-(brace
 r_goto
 id|discard_it
 suffix:semicolon
-)brace
 multiline_comment|/* &n;&t;&t; * error of unkown type. &n;&t;&t; * must pass to upper level &n;&t;&t; */
 id|icmpv6_notify
 c_func
 (paren
-id|hdr-&gt;type
+id|hdr-&gt;icmp6_type
 comma
-id|hdr-&gt;code
+id|hdr-&gt;icmp6_code
 comma
 (paren
 r_char
@@ -1599,6 +1651,7 @@ id|protocol
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
 id|discard_it
 suffix:colon
 id|kfree_skb
@@ -1685,7 +1738,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Failed to create the ICMP control socket.&bslash;n&quot;
+l_string|&quot;Failed to create the ICMP6 control socket.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1709,6 +1762,18 @@ c_func
 (paren
 op_amp
 id|icmpv6_protocol
+)paren
+suffix:semicolon
+id|ndisc_init
+c_func
+(paren
+id|ops
+)paren
+suffix:semicolon
+id|igmp6_init
+c_func
+(paren
+id|ops
 )paren
 suffix:semicolon
 )brace
@@ -1845,7 +1910,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|ICMPV6_PARAMETER_PROB
+id|ICMPV6_PARAMPROB
 suffix:colon
 op_star
 id|err
@@ -1864,5 +1929,4 @@ r_return
 id|fatal
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o icmp.o icmp.c&quot;&n; * End:&n; */
 eof

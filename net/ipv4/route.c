@@ -78,6 +78,8 @@ r_struct
 id|dst_entry
 op_star
 id|dst
+comma
+id|u32
 )paren
 suffix:semicolon
 r_static
@@ -91,6 +93,10 @@ r_struct
 id|dst_entry
 op_star
 id|dst
+comma
+r_struct
+id|sk_buff
+op_star
 )paren
 suffix:semicolon
 DECL|variable|ipv4_dst_ops
@@ -614,7 +620,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|rth-&gt;u.dst.refcnt
+id|rth-&gt;u.dst.use
 op_logical_and
 id|now
 op_minus
@@ -1123,7 +1129,7 @@ id|rth-&gt;u.rt_next
 r_if
 c_cond
 (paren
-id|rth-&gt;u.dst.refcnt
+id|rth-&gt;u.dst.use
 op_logical_or
 id|now
 op_minus
@@ -1200,7 +1206,7 @@ id|rt
 )paren
 (brace
 r_struct
-id|dst_entry
+id|neighbour
 op_star
 id|neigh
 suffix:semicolon
@@ -2994,6 +3000,9 @@ r_struct
 id|dst_entry
 op_star
 id|dst
+comma
+id|u32
+id|cookie
 )paren
 (brace
 r_return
@@ -3012,6 +3021,11 @@ r_struct
 id|dst_entry
 op_star
 id|dst
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 (brace
 r_return

@@ -99,7 +99,11 @@ id|neigh-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|100
+(paren
+id|HZ
+op_div
+l_int|1
+)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -828,7 +832,6 @@ op_star
 id|neigh
 )paren
 (brace
-macro_line|#ifdef CONFIG_FIREWALL
 r_if
 c_cond
 (paren
@@ -842,13 +845,15 @@ comma
 id|skb-&gt;data
 comma
 l_int|NULL
+comma
+op_amp
+id|skb
 )paren
 op_ne
 id|FW_ACCEPT
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren

@@ -3,15 +3,10 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-macro_line|#include &lt;asm/contregs.h&gt;
-macro_line|#include &lt;asm/sysen.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
-macro_line|#include &lt;asm/vac-ops.h&gt;
-macro_line|#include &lt;asm/vaddrs.h&gt;
 DECL|variable|dma_chain
 r_struct
 id|Linux_SBus_DMA
@@ -19,6 +14,8 @@ op_star
 id|dma_chain
 suffix:semicolon
 multiline_comment|/* Print out the current values in the DMA control registers */
+r_static
+id|__inline__
 r_void
 DECL|function|dump_dma_regs
 id|dump_dma_regs
@@ -35,6 +32,10 @@ c_func
 (paren
 l_string|&quot;DMA CONTROL&lt;%08lx&gt;  ADDR&lt;%08lx&gt; CNT&lt;%08lx&gt; TEST&lt;%08lx&gt;&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|dregs-&gt;cond_reg
 comma
 (paren

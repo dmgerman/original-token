@@ -75,6 +75,7 @@ id|msdos_put_super
 )paren
 suffix:semicolon
 DECL|variable|msdos_fs_type
+r_static
 r_struct
 id|file_system_type
 id|msdos_fs_type

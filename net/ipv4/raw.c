@@ -443,7 +443,7 @@ c_cond
 id|sk-&gt;ip_recverr
 op_logical_and
 op_logical_neg
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
 (brace
 r_struct
@@ -608,7 +608,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;users
+id|sk-&gt;sock_readers
 )paren
 (brace
 id|__skb_queue_tail

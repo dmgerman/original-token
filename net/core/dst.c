@@ -121,7 +121,7 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|dst-&gt;refcnt
+id|dst-&gt;use
 )paren
 (brace
 id|dstp

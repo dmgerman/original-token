@@ -395,7 +395,7 @@ r_int
 id|ide_ack_intr
 (paren
 id|ide_ioreg_t
-id|base_port
+id|status_port
 comma
 id|ide_ioreg_t
 id|irq_port

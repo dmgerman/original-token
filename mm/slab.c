@@ -1789,6 +1789,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 )paren
 (brace
@@ -2897,6 +2899,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 )paren
 (brace
@@ -3169,6 +3173,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 )paren
 (brace
@@ -3837,6 +3843,8 @@ multiline_comment|/* The test for missing atomic flag is performed here, rather 
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|intr_count
 op_logical_and
 (paren

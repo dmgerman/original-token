@@ -87,7 +87,11 @@ id|sk-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|100
+(paren
+id|HZ
+op_div
+l_int|1
+)paren
 suffix:semicolon
 id|add_timer
 c_func

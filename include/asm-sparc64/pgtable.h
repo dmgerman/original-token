@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.10 1997/03/03 16:51:54 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.13 1997/03/13 16:25:05 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -99,20 +99,26 @@ DECL|macro|__DIRTY_BITS
 mdefine_line|#define __DIRTY_BITS&t;(_PAGE_MODIFIED | _PAGE_WRITE | _PAGE_W)
 DECL|macro|__ACCESS_BITS
 mdefine_line|#define __ACCESS_BITS&t;(_PAGE_ACCESSED | _PAGE_READ | _PAGE_R)
+multiline_comment|/* David: Please FIXME these. I just define them somehow to get it compile. jj */
+DECL|macro|PAGE_NONE
+mdefine_line|#define PAGE_NONE&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_P | _PAGE_G | __ACCESS_BITS)
+DECL|macro|PAGE_SHARED
+mdefine_line|#define PAGE_SHARED&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_G | __ACCESS_BITS | _PAGE_W | _PAGE_WRITE)
+DECL|macro|PAGE_COPY
+mdefine_line|#define PAGE_COPY&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | __ACCESS_BITS)
+DECL|macro|PAGE_READONLY
+mdefine_line|#define PAGE_READONLY&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | __ACCESS_BITS)
+DECL|macro|PAGE_KERNEL
+mdefine_line|#define PAGE_KERNEL&t;__pgprot (_PAGE_VALID | _PAGE_CACHE | _PAGE_P | __ACCESS_BITS | __DIRTY_BITS)
+DECL|macro|PAGE_INVALID
+mdefine_line|#define PAGE_INVALID&t;__pgprot (0)
 DECL|macro|_PFN_MASK
 mdefine_line|#define _PFN_MASK&t;_PAGE_PADDR
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | _PAGE_MODIFIED | _PAGE_ACCESSED)
-DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_CACHE)
-DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | __ACCESS_BITS | &bslash;&n;&t;&t;&t;&t; _PAGE_WRITE | _PAGE_CACHE)
-DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | __ACCESS_BITS | _PAGE_CACHE)
-DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | __ACCESS_BITS | _PAGE_CACHE)
-DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | _PAGE_VALID | _PAGE_W| &bslash;&n;&t;&t;&t;&t; _PAGE_CACHE | _PAGE_P | _PAGE_G)
+multiline_comment|/* FIXME: Define this correctly to io page protection. Has to include side effects. */
+DECL|macro|pg_iobits
+mdefine_line|#define pg_iobits (_PAGE_VALID | _PAGE_P | __ACCESS_BITS | _PAGE_E)
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
 DECL|macro|__P001
@@ -1789,7 +1795,6 @@ id|current-&gt;mm
 (brace
 id|__asm__
 id|__volatile__
-c_func
 (paren
 "&quot;"
 id|rdpr
@@ -1799,14 +1804,14 @@ id|pstate
 comma
 op_mod
 op_mod
-id|g1
+id|o4
 id|wrpr
 op_mod
 op_mod
-id|g1
+id|o4
 comma
 op_mod
-l_int|2
+l_int|1
 comma
 op_mod
 op_mod
@@ -1821,7 +1826,7 @@ id|g7
 id|wrpr
 op_mod
 op_mod
-id|g1
+id|o4
 comma
 l_int|0x0
 comma
@@ -1839,9 +1844,7 @@ op_or
 id|PSTATE_IE
 )paren
 suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;g2&quot;
+l_string|&quot;o4&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3181,12 +3184,167 @@ r_return
 id|pte
 suffix:semicolon
 )brace
+DECL|function|mk_pte_io
+r_extern
+r_inline
+id|pte_t
+id|mk_pte_io
+c_func
+(paren
+r_int
+r_int
+id|page
+comma
+id|pgprot_t
+id|prot
+comma
+r_int
+id|space
+)paren
+multiline_comment|/* FIXME. How is space added to the address??? */
+(brace
+id|pte_t
+id|pte
+suffix:semicolon
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_assign
+(paren
+id|page
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|prot
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
 DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry)&t;&t;(((entry) &amp; 0xff))
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry)&t;((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset)&t;pte_val(mk_swap_pte((type),(offset)))
+DECL|struct|ctx_list
+r_struct
+id|ctx_list
+(brace
+DECL|member|next
+r_struct
+id|ctx_list
+op_star
+id|next
+suffix:semicolon
+DECL|member|prev
+r_struct
+id|ctx_list
+op_star
+id|prev
+suffix:semicolon
+DECL|member|ctx_number
+r_int
+r_int
+id|ctx_number
+suffix:semicolon
+DECL|member|ctx_mm
+r_struct
+id|mm_struct
+op_star
+id|ctx_mm
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ctx_list
+op_star
+id|ctx_list_pool
+suffix:semicolon
+multiline_comment|/* Dynamically allocated */
+r_extern
+r_struct
+id|ctx_list
+id|ctx_free
+suffix:semicolon
+multiline_comment|/* Head of free list */
+r_extern
+r_struct
+id|ctx_list
+id|ctx_used
+suffix:semicolon
+multiline_comment|/* Head of used contexts list */
+DECL|macro|NO_CONTEXT
+mdefine_line|#define NO_CONTEXT     -1
+DECL|function|remove_from_ctx_list
+r_extern
+id|__inline__
+r_void
+id|remove_from_ctx_list
+c_func
+(paren
+r_struct
+id|ctx_list
+op_star
+id|entry
+)paren
+(brace
+id|entry-&gt;next-&gt;prev
+op_assign
+id|entry-&gt;prev
+suffix:semicolon
+id|entry-&gt;prev-&gt;next
+op_assign
+id|entry-&gt;next
+suffix:semicolon
+)brace
+DECL|function|add_to_ctx_list
+r_extern
+id|__inline__
+r_void
+id|add_to_ctx_list
+c_func
+(paren
+r_struct
+id|ctx_list
+op_star
+id|head
+comma
+r_struct
+id|ctx_list
+op_star
+id|entry
+)paren
+(brace
+id|entry-&gt;next
+op_assign
+id|head
+suffix:semicolon
+(paren
+id|entry-&gt;prev
+op_assign
+id|head-&gt;prev
+)paren
+op_member_access_from_pointer
+id|next
+op_assign
+id|entry
+suffix:semicolon
+id|head-&gt;prev
+op_assign
+id|entry
+suffix:semicolon
+)brace
+DECL|macro|add_to_free_ctxlist
+mdefine_line|#define add_to_free_ctxlist(entry) add_to_ctx_list(&amp;ctx_free, entry)
+DECL|macro|add_to_used_ctxlist
+mdefine_line|#define add_to_used_ctxlist(entry) add_to_ctx_list(&amp;ctx_used, entry)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

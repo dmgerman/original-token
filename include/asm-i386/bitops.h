@@ -6,13 +6,9 @@ multiline_comment|/*&n; * These have to be done with inline assembly: that way t
 macro_line|#ifdef __SMP__
 DECL|macro|LOCK_PREFIX
 mdefine_line|#define LOCK_PREFIX &quot;lock ; &quot;
-DECL|macro|SMPVOL
-mdefine_line|#define SMPVOL volatile
 macro_line|#else
 DECL|macro|LOCK_PREFIX
 mdefine_line|#define LOCK_PREFIX &quot;&quot;
-DECL|macro|SMPVOL
-mdefine_line|#define SMPVOL
 macro_line|#endif
 multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
 DECL|struct|__dummy
@@ -43,7 +39,7 @@ c_func
 r_int
 id|nr
 comma
-id|SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -89,7 +85,7 @@ c_func
 r_int
 id|nr
 comma
-id|SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -135,7 +131,7 @@ c_func
 r_int
 id|nr
 comma
-id|SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -172,18 +168,18 @@ id|oldbit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic.&n; */
-DECL|function|test_bit
+DECL|function|__constant_test_bit
 r_extern
 id|__inline__
 r_int
-id|test_bit
+id|__constant_test_bit
 c_func
 (paren
 r_int
 id|nr
 comma
 r_const
-id|SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -205,6 +201,7 @@ op_amp
 (paren
 (paren
 r_const
+r_volatile
 r_int
 r_int
 op_star
@@ -222,6 +219,53 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__test_bit
+r_extern
+id|__inline__
+r_int
+id|__test_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+id|oldbit
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;btl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|oldbit
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|ADDR
+)paren
+comma
+l_string|&quot;ir&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+r_return
+id|oldbit
+suffix:semicolon
+)brace
+DECL|macro|test_bit
+mdefine_line|#define test_bit(nr,addr) &bslash;&n;(__builtin_constant_p(nr) ? &bslash;&n; __constant_test_bit((nr),(addr)) : &bslash;&n; __test_bit((nr),(addr)))
 multiline_comment|/*&n; * Find-bit routines..&n; */
 DECL|function|find_first_zero_bit
 r_extern

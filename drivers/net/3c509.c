@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug
+r_static
 r_int
 id|el3_debug
 op_assign
@@ -35,6 +36,7 @@ id|EL3_DEBUG
 suffix:semicolon
 macro_line|#else
 DECL|variable|el3_debug
+r_static
 r_int
 id|el3_debug
 op_assign

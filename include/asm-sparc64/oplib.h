@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.4 1997/02/25 20:00:34 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.6 1997/03/18 18:01:30 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -47,6 +47,13 @@ multiline_comment|/* Root node of the prom device tree, this stays constant afte
 r_extern
 r_int
 id|prom_root_node
+suffix:semicolon
+multiline_comment|/* PROM stdin and stdout */
+r_extern
+r_int
+id|prom_stdin
+comma
+id|prom_stdout
 suffix:semicolon
 multiline_comment|/* /chosen node of the prom device tree, this stays constant after&n; * initialization is complete.&n; */
 r_extern
@@ -221,6 +228,12 @@ id|prom_halt
 c_func
 (paren
 r_void
+)paren
+id|__attribute__
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set the PROM &squot;sync&squot; callback function to the passed function pointer.&n; * When the user gives the &squot;sync&squot; command at the prom prompt while the&n; * kernel is still active, the prom will call this routine.&n; *&n; */
@@ -457,6 +470,28 @@ id|cpunode
 )paren
 suffix:semicolon
 multiline_comment|/* PROM device tree traversal functions... */
+macro_line|#ifdef PROMLIB_INTERNAL
+multiline_comment|/* Internal version of prom_getchild. */
+r_extern
+r_int
+id|__prom_getchild
+c_func
+(paren
+r_int
+id|parent_node
+)paren
+suffix:semicolon
+multiline_comment|/* Internal version of prom_getsibling. */
+r_extern
+r_int
+id|__prom_getsibling
+c_func
+(paren
+r_int
+id|node
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Get the child node of the given node, or zero if no child exists. */
 r_extern
 r_int

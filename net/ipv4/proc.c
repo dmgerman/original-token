@@ -128,7 +128,7 @@ op_assign
 l_int|128
 suffix:semicolon
 multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and cli().&n; */
-id|start_bh_atomic
+id|SOCKHASH_LOCK
 c_func
 (paren
 )paren
@@ -426,7 +426,7 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-id|end_bh_atomic
+id|SOCKHASH_UNLOCK
 c_func
 (paren
 )paren

@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.47 1997/03/03 16:51:41 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.49 1997/03/15 07:47:45 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -20,6 +21,7 @@ macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -210,19 +212,6 @@ r_char
 op_star
 comma
 id|__kernel_size_t
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|__csum_partial_copy_sparc_generic
-(paren
-r_const
-r_char
-op_star
-comma
-r_char
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -884,13 +873,6 @@ c_func
 id|__memmove
 )paren
 suffix:semicolon
-DECL|variable|__csum_partial_copy_sparc_generic
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__csum_partial_copy_sparc_generic
-)paren
-suffix:semicolon
 multiline_comment|/* Moving data to/from userspace. */
 DECL|variable|__copy_user
 id|EXPORT_SYMBOL
@@ -904,6 +886,15 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__strncpy_from_user
+)paren
+suffix:semicolon
+multiline_comment|/* Networking helper routines. */
+multiline_comment|/* XXX This is NOVERS because C_LABEL_STR doesn&squot;t get the version number. -DaveM */
+DECL|variable|__csum_partial_copy_sparc_generic
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__csum_partial_copy_sparc_generic
 )paren
 suffix:semicolon
 multiline_comment|/* No version information on this, heavily used in inline asm,&n; * and will always be &squot;void __ret_efault(void)&squot;.&n; */

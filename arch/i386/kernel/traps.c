@@ -1103,11 +1103,6 @@ r_int
 id|error_code
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SMP_NMI_INVAL
 id|smp_flush_tlb_rcv
 c_func
@@ -1136,11 +1131,6 @@ l_string|&quot;power saving mode enabled.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif&t;
 macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_debug
 id|asmlinkage
@@ -1373,21 +1363,11 @@ r_int
 id|error_code
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ignore_irq13
 op_assign
 l_int|1
 suffix:semicolon
 id|math_error
-c_func
-(paren
-)paren
-suffix:semicolon
-id|unlock_kernel
 c_func
 (paren
 )paren
@@ -1408,20 +1388,10 @@ r_int
 id|error_code
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;Ignoring P6 Local APIC Spurious Interrupt Bug...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1435,11 +1405,6 @@ c_func
 r_void
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -1457,8 +1422,7 @@ id|last_task_used_math
 op_eq
 id|current
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1526,15 +1490,6 @@ op_or_assign
 id|PF_USEDFPU
 suffix:semicolon
 multiline_comment|/* So we fnsave on switch_to() */
-macro_line|#ifndef __SMP__
-id|out
-suffix:colon
-macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_MATH_EMULATION
 DECL|function|math_emulate
