@@ -869,9 +869,6 @@ id|dentry-&gt;d_inode
 suffix:semicolon
 r_int
 id|error
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
 id|dprintk
 c_func
@@ -912,6 +909,11 @@ id|error
 )paren
 r_return
 id|error
+suffix:semicolon
+id|error
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|atomic_inc
 c_func
