@@ -10,7 +10,7 @@ r_int
 id|elf_greg_t
 suffix:semicolon
 DECL|macro|ELF_NGREG
-mdefine_line|#define ELF_NGREG (sizeof (struct pt_regs) / sizeof(elf_greg_t))
+mdefine_line|#define ELF_NGREG (sizeof (struct user_regs_struct) / sizeof(elf_greg_t))
 DECL|typedef|elf_gregset_t
 r_typedef
 id|elf_greg_t
@@ -42,5 +42,9 @@ DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
+multiline_comment|/* Wow, the &quot;main&quot; arch needs arch dependent functions too.. :) */
+multiline_comment|/* regs is struct pt_regs, pr_reg is elf_gregset_t (which is&n;   now struct_user_regs, they are different) */
+DECL|macro|ELF_CORE_COPY_REGS
+mdefine_line|#define ELF_CORE_COPY_REGS(pr_reg, regs)&t;&t;&bslash;&n;&t;pr_reg[0] = regs-&gt;ebx;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[1] = regs-&gt;ecx;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[2] = regs-&gt;edx;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[3] = regs-&gt;esi;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[4] = regs-&gt;edi;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[5] = regs-&gt;ebp;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[6] = regs-&gt;eax;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[7] = regs-&gt;xds;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[8] = regs-&gt;xes;&t;&t;&t;&t;&bslash;&n;&t;/* fake once used fs and gs selectors? */&t;&bslash;&n;&t;pr_reg[9] = regs-&gt;xds;&t;/* was fs and __fs */&t;&bslash;&n;&t;pr_reg[10] = regs-&gt;xds;&t;/* was gs and __gs */&t;&bslash;&n;&t;pr_reg[11] = regs-&gt;orig_eax;&t;&t;&t;&bslash;&n;&t;pr_reg[12] = regs-&gt;eip;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[13] = regs-&gt;xcs;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[14] = regs-&gt;eflags;&t;&t;&t;&bslash;&n;&t;pr_reg[15] = regs-&gt;esp;&t;&t;&t;&t;&bslash;&n;&t;pr_reg[16] = regs-&gt;xss;
 macro_line|#endif
 eof

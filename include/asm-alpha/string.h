@@ -59,6 +59,18 @@ DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
 DECL|macro|memset
 mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_c_memset((s),(0x0101010101010101UL*(unsigned char)c),(count)) : &bslash;&n; __memset((s),(c),(count)))
+DECL|macro|__HAVE_ARCH_STRCPY
+mdefine_line|#define __HAVE_ARCH_STRCPY
+DECL|macro|__HAVE_ARCH_STRNCPY
+mdefine_line|#define __HAVE_ARCH_STRNCPY
+DECL|macro|__HAVE_ARCH_STRCAT
+mdefine_line|#define __HAVE_ARCH_STRCAT
+DECL|macro|__HAVE_ARCH_STRNCAT
+mdefine_line|#define __HAVE_ARCH_STRNCAT
+DECL|macro|__HAVE_ARCH_STRCHR
+mdefine_line|#define __HAVE_ARCH_STRCHR
+DECL|macro|__HAVE_ARCH_STRRCHR
+mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
 macro_line|#endif /* __KERNEL__ */

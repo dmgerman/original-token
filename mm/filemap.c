@@ -1754,6 +1754,15 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|error
 op_assign
 l_int|0

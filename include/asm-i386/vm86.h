@@ -89,14 +89,6 @@ DECL|member|__null_es
 r_int
 id|__null_es
 suffix:semicolon
-DECL|member|__null_fs
-r_int
-id|__null_fs
-suffix:semicolon
-DECL|member|__null_gs
-r_int
-id|__null_gs
-suffix:semicolon
 DECL|member|orig_eax
 r_int
 id|orig_eax

@@ -2832,7 +2832,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 id|deblock_buffer

@@ -2108,6 +2108,10 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* start with only sending one packet at a time. */
+id|sk-&gt;ssthresh
+op_assign
+l_int|0x7fffffff
+suffix:semicolon
 id|sk-&gt;priority
 op_assign
 l_int|1

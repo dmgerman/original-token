@@ -2,9 +2,6 @@ macro_line|#ifndef _I386_PGTABLE_H
 DECL|macro|_I386_PGTABLE_H
 mdefine_line|#define _I386_PGTABLE_H
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table optimizations.&n; * This works only on an intel Pentium.&n; */
-DECL|macro|USE_PENTIUM_MM
-mdefine_line|#define USE_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
 multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
 DECL|macro|flush_cache_all

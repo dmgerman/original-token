@@ -2980,7 +2980,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_fromfs
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3656,7 +3656,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|memcpy_tofs
+id|copy_to_user
 c_func
 (paren
 id|arg

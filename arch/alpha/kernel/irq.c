@@ -2896,6 +2896,54 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* invert */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_EDGE
+op_assign
+l_int|0UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* all are level */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_HILO
+op_assign
+l_int|0x80000000UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ISA only HI */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_CLEAR
+op_assign
+l_int|0UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* all clear */
 id|enable_irq
 c_func
 (paren

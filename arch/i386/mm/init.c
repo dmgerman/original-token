@@ -19,11 +19,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-multiline_comment|/*&n; * The SMP kernel can&squot;t handle the 4MB page table optimizations yet&n; */
-macro_line|#ifdef __SMP__
-DECL|macro|USE_PENTIUM_MM
-macro_line|#undef USE_PENTIUM_MM
-macro_line|#endif
 r_extern
 r_void
 id|die_if_kernel
@@ -477,7 +472,8 @@ OL
 id|end_mem
 )paren
 (brace
-macro_line|#ifdef USE_PENTIUM_MM
+multiline_comment|/*&n;&t;&t; * The following code enabled 4MB page tables for the&n;&t;&t; * Intel Pentium cpu, unfortunately the SMP kernel can&squot;t&n;&t;&t; * handle the 4MB page table optimizations yet&n;&t;&t; */
+macro_line|#ifndef __SMP__
 multiline_comment|/*&n;&t;&t; * This will create page tables that&n;&t;&t; * span up to the next 4MB virtual&n;&t;&t; * memory boundary, but that&squot;s ok,&n;&t;&t; * we won&squot;t use that memory anyway.&n;&t;&t; */
 r_if
 c_cond
