@@ -7422,7 +7422,7 @@ id|ISTART
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Get the channel the event occured on */
+multiline_comment|/* Get the channel the event occurred on */
 id|channel
 op_assign
 id|eventbuf
@@ -7430,7 +7430,7 @@ id|eventbuf
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/* Get the actual event code that occured */
+multiline_comment|/* Get the actual event code that occurred */
 id|event
 op_assign
 id|eventbuf

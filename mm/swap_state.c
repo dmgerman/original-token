@@ -20,24 +20,10 @@ id|swap_cache_add_total
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|swap_cache_add_success
-r_int
-r_int
-id|swap_cache_add_success
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|swap_cache_del_total
 r_int
 r_int
 id|swap_cache_del_total
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|swap_cache_del_success
-r_int
-r_int
-id|swap_cache_del_success
 op_assign
 l_int|0
 suffix:semicolon
@@ -66,19 +52,15 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Swap cache: add %ld/%ld, delete %ld/%ld, find %ld/%ld&bslash;n&quot;
+l_string|&quot;Swap cache: add %ld, delete %ld, find %ld/%ld&bslash;n&quot;
 comma
 id|swap_cache_add_total
 comma
-id|swap_cache_add_success
-comma
 id|swap_cache_del_total
 comma
-id|swap_cache_del_success
+id|swap_cache_find_success
 comma
 id|swap_cache_find_total
-comma
-id|swap_cache_find_success
 )paren
 suffix:semicolon
 )brace
@@ -216,11 +198,6 @@ comma
 id|page
 )paren
 suffix:semicolon
-macro_line|#ifdef SWAP_CACHE_INFO
-id|swap_cache_add_success
-op_increment
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -694,35 +671,6 @@ id|page
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; * This is a legal case, but warn about it.&n;&t; */
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|page-&gt;count
-)paren
-op_eq
-l_int|1
-)paren
-(brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;VM: Removing page cache on unshared page %08lx&bslash;n&quot;
-comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef DEBUG_SWAP
 id|printk
 c_func
@@ -775,9 +723,6 @@ id|page-&gt;offset
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total
-op_increment
-suffix:semicolon
-id|swap_cache_del_success
 op_increment
 suffix:semicolon
 macro_line|#endif
@@ -890,6 +835,11 @@ id|page
 op_star
 id|found
 suffix:semicolon
+macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_find_total
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -944,9 +894,16 @@ c_func
 id|found
 )paren
 )paren
+(brace
+macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_find_success
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_return
 id|found
 suffix:semicolon
+)brace
 id|__free_page
 c_func
 (paren
@@ -998,6 +955,8 @@ r_struct
 id|page
 op_star
 id|found_page
+op_assign
+l_int|0
 comma
 op_star
 id|new_page
@@ -1023,6 +982,21 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * Make sure the swap entry is still in use.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|swap_duplicate
+c_func
+(paren
+id|entry
+)paren
+)paren
+multiline_comment|/* Account for the swap cache */
+r_goto
+id|out
+suffix:semicolon
 multiline_comment|/*&n;&t; * Look for the page in the swap cache.&n;&t; */
 id|found_page
 op_assign
@@ -1038,7 +1012,7 @@ c_cond
 id|found_page
 )paren
 r_goto
-id|out
+id|out_free_swap
 suffix:semicolon
 id|new_page_addr
 op_assign
@@ -1055,7 +1029,7 @@ op_logical_neg
 id|new_page_addr
 )paren
 r_goto
-id|out
+id|out_free_swap
 suffix:semicolon
 multiline_comment|/* Out of memory */
 id|new_page
@@ -1082,21 +1056,6 @@ c_cond
 (paren
 id|found_page
 )paren
-r_goto
-id|out_free_page
-suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure the swap entry is still in use.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|swap_duplicate
-c_func
-(paren
-id|entry
-)paren
-)paren
-multiline_comment|/* Account for the swap cache */
 r_goto
 id|out_free_page
 suffix:semicolon
@@ -1171,6 +1130,14 @@ id|__free_page
 c_func
 (paren
 id|new_page
+)paren
+suffix:semicolon
+id|out_free_swap
+suffix:colon
+id|swap_free
+c_func
+(paren
+id|entry
 )paren
 suffix:semicolon
 id|out

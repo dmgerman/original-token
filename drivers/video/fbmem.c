@@ -12,9 +12,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
@@ -922,7 +920,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|fbmem_read_proc
 r_static
 r_int
@@ -1041,7 +1038,6 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_static
 id|ssize_t
 DECL|function|fb_read
@@ -3253,7 +3249,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_fbmem
 r_static
 r_struct
@@ -3261,7 +3256,6 @@ id|proc_dir_entry
 op_star
 id|proc_fbmem
 suffix:semicolon
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3277,7 +3271,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_fbmem
 op_assign
 id|create_proc_entry
@@ -3299,7 +3292,6 @@ id|proc_fbmem-&gt;read_proc
 op_assign
 id|fbmem_read_proc
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

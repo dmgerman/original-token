@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; */
+multiline_comment|/*&n; *  scsi.c Copyright (C) 1992 Drew Eckhardt&n; *         Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  generic mid-level SCSI driver&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *  Bug correction thanks go to :&n; *      Rik Faith &lt;faith@cs.unc.edu&gt;&n; *      Tommy Thorn &lt;tthorn&gt;&n; *      Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; *&n; *  Modified by Eric Youngdale eric@aib.com to&n; *  add scatter-gather, multiple outstanding request, and other&n; *  enhancements.&n; *&n; *  Native multichannel, wide scsi, /proc/scsi and hot plugging&n; *  support added by Michael Neuffer &lt;mike@i-connect.net&gt;&n; *&n; *  Major improvements to the timeout, abort, and reset processing,&n; *  as well as performance modifications for large queue depths by&n; *  Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n; *&n; *  Improved compatibility with 2.0 behaviour by Manfred Spraul&n; *  &lt;masp0008@stud.uni-sb.de&gt;&n; */
 multiline_comment|/*&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *&t;&t;NOTE - NOTE - NOTE - NOTE - NOTE - NOTE - NOTE&n; *&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *#########################################################################&n; *&n; * This file contains the &squot;old&squot; scsi error handling.  It is only present&n; * while the new error handling code is being debugged, and while the low&n; * level drivers are being converted to use the new code.  Once the last&n; * driver uses the new code this *ENTIRE* file will be nuked.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -804,6 +804,27 @@ id|result
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;flags
+op_amp
+id|SYNC_RESET
+)paren
+(brace
+multiline_comment|/*&n;        * The behaviou of scsi_reset(SYNC) was changed in 2.1.? .&n;        * The scsi mid-layer does a REDO after every sync reset, the driver&n;        * must not do that any more. In order to prevent old drivers from&n;        * crashing, all scsi_done() calls during sync resets are ignored.&n;        */
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: device driver called scsi_done() &quot;
+l_string|&quot;for a syncronous reset.&bslash;n&quot;
+comma
+id|SCpnt-&gt;host-&gt;host_no
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1703,8 +1724,7 @@ comma
 id|SCSI_RESET_SYNCHRONOUS
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
+multiline_comment|/* fall through to REDO */
 )brace
 )brace
 r_else
@@ -2591,6 +2611,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|reset_flags
+op_amp
+id|SCSI_RESET_SYNCHRONOUS
+)paren
+id|SCpnt-&gt;flags
+op_or_assign
+id|SYNC_RESET
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|host-&gt;host_busy
 )paren
 (brace
@@ -2785,6 +2816,18 @@ id|host-&gt;host_busy
 op_decrement
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|reset_flags
+op_amp
+id|SCSI_RESET_SYNCHRONOUS
+)paren
+id|SCpnt-&gt;flags
+op_and_assign
+op_complement
+id|SYNC_RESET
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func

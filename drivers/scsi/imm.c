@@ -1215,7 +1215,7 @@ op_amp
 l_int|0xb8
 )paren
 suffix:semicolon
-multiline_comment|/* Counter expired - Time out occured */
+multiline_comment|/* Counter expired - Time out occurred */
 id|imm_fail
 c_func
 (paren
@@ -3917,7 +3917,7 @@ id|retv
 comma
 id|x
 suffix:semicolon
-multiline_comment|/* First check for any errors that may of occured&n;     * Here we check for internal errors&n;     */
+multiline_comment|/* First check for any errors that may of occurred&n;     * Here we check for internal errors&n;     */
 r_if
 c_cond
 (paren

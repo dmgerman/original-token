@@ -129,6 +129,10 @@ op_decrement
 id|sp-&gt;users
 )paren
 (brace
+id|sp-&gt;cpu
+op_assign
+id|NO_PROC_ID
+suffix:semicolon
 id|lock_clear_bit
 c_func
 (paren
@@ -137,10 +141,6 @@ comma
 op_amp
 id|sp-&gt;lock
 )paren
-suffix:semicolon
-id|sp-&gt;cpu
-op_assign
-id|NO_PROC_ID
 suffix:semicolon
 r_return
 l_int|1
@@ -257,6 +257,9 @@ op_star
 id|sp
 )paren
 (brace
+r_int
+id|pri
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -276,6 +279,10 @@ id|current-&gt;lock_order
 )paren
 suffix:semicolon
 )brace
+id|pri
+op_assign
+id|sp-&gt;oldpri
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -289,7 +296,7 @@ id|sp
 multiline_comment|/*&n;&t;&t; *&t;Update the debugging lock priority chain. We dumped&n;&t;&t; *&t;our last right to the lock.&n;&t;&t; */
 id|current-&gt;lock_order
 op_assign
-id|sp-&gt;oldpri
+id|sp-&gt;pri
 suffix:semicolon
 )brace
 )brace

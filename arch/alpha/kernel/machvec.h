@@ -3,6 +3,9 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Whee.  TSUNAMI doesn&squot;t have an HAE.  Fix things up for the GENERIC&n;   kernel by defining the HAE address to be that of the cache.  Now&n;   we can read and write it as we like.  ;-)  */
 DECL|macro|TSUNAMI_HAE_ADDRESS
 mdefine_line|#define TSUNAMI_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
+multiline_comment|/* Whee.  POLARIS doesn&squot;t have an HAE.  Fix things up for the GENERIC&n;   kernel by defining the HAE address to be that of the cache.  Now&n;   we can read and write it as we like.  ;-)  */
+DECL|macro|POLARIS_HAE_ADDRESS
+mdefine_line|#define POLARIS_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
 multiline_comment|/* Only a few systems don&squot;t define IACK_SC, handling all interrupts through&n;   the SRM console.  But splitting out that one case from IO() below&n;   seems like such a pain.  Define this to get things to compile.  */
 DECL|macro|JENSEN_IACK_SC
 mdefine_line|#define JENSEN_IACK_SC&t;&t;1
@@ -36,6 +39,8 @@ DECL|macro|DO_MCPCIA_IO
 mdefine_line|#define DO_MCPCIA_IO&t;IO(MCPCIA,mcpcia,mcpcia)
 DECL|macro|DO_PYXIS_IO
 mdefine_line|#define DO_PYXIS_IO&t;IO(PYXIS,pyxis_bw,pyxis)
+DECL|macro|DO_POLARIS_IO
+mdefine_line|#define DO_POLARIS_IO&t;IO(POLARIS,polaris,polaris)
 DECL|macro|DO_T2_IO
 mdefine_line|#define DO_T2_IO&t;IO(T2,t2,t2)
 DECL|macro|DO_TSUNAMI_IO
@@ -52,6 +57,8 @@ DECL|macro|DO_MCPCIA_BUS
 mdefine_line|#define DO_MCPCIA_BUS&t;BUS(mcpcia)
 DECL|macro|DO_PYXIS_BUS
 mdefine_line|#define DO_PYXIS_BUS&t;BUS(pyxis)
+DECL|macro|DO_POLARIS_BUS
+mdefine_line|#define DO_POLARIS_BUS&t;BUS(polaris)
 DECL|macro|DO_T2_BUS
 mdefine_line|#define DO_T2_BUS&t;BUS(t2)
 DECL|macro|DO_TSUNAMI_BUS

@@ -250,8 +250,6 @@ id|flags
 suffix:semicolon
 r_int
 r_int
-id|stat0
-comma
 id|value
 comma
 id|cpu
@@ -289,6 +287,11 @@ id|type1
 )paren
 suffix:semicolon
 macro_line|#if 0
+(brace
+r_int
+r_int
+id|stat0
+suffix:semicolon
 multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
@@ -321,6 +324,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* If Type1 access, must set T2 CFG.  */
 r_if
@@ -515,8 +519,6 @@ id|flags
 suffix:semicolon
 r_int
 r_int
-id|stat0
-comma
 id|cpu
 suffix:semicolon
 r_int
@@ -540,6 +542,11 @@ id|flags
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
 macro_line|#if 0
+(brace
+r_int
+r_int
+id|stat0
+suffix:semicolon
 multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
@@ -572,6 +579,7 @@ id|stat0
 )paren
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/* If Type1 access, must set T2 CFG.  */
 r_if
@@ -1272,10 +1280,6 @@ id|mem_end
 (brace
 r_int
 r_int
-id|t2_err
-suffix:semicolon
-r_int
-r_int
 id|i
 suffix:semicolon
 r_for
@@ -1309,7 +1313,12 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if 0
-multiline_comment|/* &n;&t; * Set up error reporting.&n;&t; */
+(brace
+multiline_comment|/* Set up error reporting.  */
+r_int
+r_int
+id|t2_err
+suffix:semicolon
 id|t2_err
 op_assign
 op_star
@@ -1340,6 +1349,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|printk
 c_func

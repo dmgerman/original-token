@@ -3247,7 +3247,7 @@ r_return
 id|scb-&gt;SCpnt-&gt;use_sg
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------&n; * Initializes the adress of the controller&squot;s mailbox register&n; *  The mailbox register is used to issue commands to the card.&n; *  Format of the mailbox area:&n; *   00 01 command&n; *   01 01 command id&n; *   02 02 # of sectors&n; *   04 04 logical bus address&n; *   08 04 physical buffer address&n; *   0C 01 logical drive #&n; *   0D 01 length of scatter/gather list&n; *   0E 01 reserved&n; *   0F 01 mailbox busy&n; *   10 01 numstatus byte&n; *   11 01 status byte&n; *--------------------------------------------------------------------*/
+multiline_comment|/*--------------------------------------------------------------------&n; * Initializes the address of the controller&squot;s mailbox register&n; *  The mailbox register is used to issue commands to the card.&n; *  Format of the mailbox area:&n; *   00 01 command&n; *   01 01 command id&n; *   02 02 # of sectors&n; *   04 04 logical bus address&n; *   08 04 physical buffer address&n; *   0C 01 logical drive #&n; *   0D 01 length of scatter/gather list&n; *   0E 01 reserved&n; *   0F 01 mailbox busy&n; *   10 01 numstatus byte&n; *   11 01 status byte&n; *--------------------------------------------------------------------*/
 DECL|function|mega_register_mailbox
 r_static
 r_int

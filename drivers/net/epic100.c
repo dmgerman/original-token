@@ -55,10 +55,8 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -74,7 +72,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -179,7 +176,7 @@ id|epic_debug
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the SMC &quot;EPCI/100&quot;, the SMC&n;single-chip Ethernet controllers for PCI.  This chip is used on&n;the SMC EtherPower II boards.&n;&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;Note: Kernel versions earlier than 1.3.73 do not support shared PCI&n;interrupt lines.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;IVb. References&n;&n;http://www.smc.com/components/catalog/smc83c170.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;http://www.national.com/pf/DP/DP83840.html&n;&n;IVc. Errata&n;&n;*/
+multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the SMC &quot;EPIC/100&quot;, the SMC&n;single-chip Ethernet controllers for PCI.  This chip is used on&n;the SMC EtherPower II boards.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS will assign the&n;PCI INTA signal to a (preferably otherwise unused) system IRQ line.&n;Note: Kernel versions earlier than 1.3.73 do not support shared PCI&n;interrupt lines.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;IVb. References&n;&n;http://www.smsc.com/main/datasheets/83c171.pdf&n;http://www.smsc.com/main/datasheets/83c175.pdf&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;http://www.national.com/pf/DP/DP83840A.html&n;&n;IVc. Errata&n;&n;*/
 multiline_comment|/* The rest of these values should never change. */
 r_static
 r_struct
@@ -685,7 +682,7 @@ id|device
 op_star
 id|next_module
 suffix:semicolon
-multiline_comment|/* Rx and Rx rings here so that they remain paragraph aligned. */
+multiline_comment|/* Tx and Rx rings here so that they remain paragraph aligned. */
 DECL|member|rx_ring
 r_struct
 id|epic_rx_desc

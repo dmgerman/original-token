@@ -29,7 +29,7 @@ DECL|macro|NAMEI_RA_SIZE
 mdefine_line|#define NAMEI_RA_SIZE        (NAMEI_RA_CHUNKS * NAMEI_RA_BLOCKS)
 DECL|macro|NAMEI_RA_INDEX
 mdefine_line|#define NAMEI_RA_INDEX(c,b)  (((c) * NAMEI_RA_BLOCKS) + (b))
-multiline_comment|/*&n; * NOTE! unlike strncmp, ext2_match returns 1 for success, 0 for failure.&n; *&n; * Len &lt;= UFS_MAXNAMLEN&squot; is guaranteed by caller.&n; * De != NULL&squot; is guaranteed by caller.&n; */
+multiline_comment|/*&n; * NOTE! unlike strncmp, ufs_match returns 1 for success, 0 for failure.&n; *&n; * len &lt;= UFS_MAXNAMLEN&squot; is guaranteed by caller.&n; * de != NULL&squot; is guaranteed by caller.&n; */
 DECL|function|ufs_match
 r_static
 r_inline

@@ -283,6 +283,8 @@ DECL|macro|IS_ABORTING
 mdefine_line|#define IS_ABORTING     0x10
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x20
+DECL|macro|SYNC_RESET
+mdefine_line|#define SYNC_RESET      0x40
 macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|CONTIGUOUS_BUFFERS

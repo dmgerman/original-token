@@ -56,12 +56,11 @@ id|autofs_sb_info
 op_star
 id|sbi
 op_assign
+id|autofs_sbi
+c_func
 (paren
-r_struct
-id|autofs_sb_info
-op_star
+id|sb
 )paren
-id|sb-&gt;u.generic_sbp
 suffix:semicolon
 r_int
 r_int
@@ -1256,12 +1255,11 @@ id|autofs_sb_info
 op_star
 id|sbi
 op_assign
+id|autofs_sbi
+c_func
 (paren
-r_struct
-id|autofs_sb_info
-op_star
+id|inode-&gt;i_sb
 )paren
-id|inode-&gt;i_sb-&gt;u.generic_sbp
 suffix:semicolon
 multiline_comment|/* Initialize to the default case (stub directory) */
 id|inode-&gt;i_op

@@ -1273,7 +1273,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;mdacon: MDA card not detected.&quot;
+l_string|&quot;mdacon: MDA card not detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

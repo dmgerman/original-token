@@ -190,6 +190,9 @@ macro_line|# define IACK_SC&t;PYXIS_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC&t;TSUNAMI_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;POLARIS_IACK_SC
 macro_line|#else
 multiline_comment|/* This is bogus but necessary to get it to compile on all platforms. */
 DECL|macro|IACK_SC
@@ -1017,8 +1020,6 @@ id|buf
 (brace
 r_int
 id|i
-comma
-id|j
 suffix:semicolon
 r_struct
 id|irqaction
@@ -1045,15 +1046,15 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|j
+id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|j
+id|i
 OL
 id|smp_num_cpus
 suffix:semicolon
-id|j
+id|i
 op_increment
 )paren
 id|p
@@ -1065,7 +1066,7 @@ id|p
 comma
 l_string|&quot;CPU%d       &quot;
 comma
-id|j
+id|i
 )paren
 suffix:semicolon
 op_star

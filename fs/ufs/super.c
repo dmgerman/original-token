@@ -3262,6 +3262,18 @@ l_string|&quot;fs is stable&bslash;n&quot;
 r_break
 suffix:semicolon
 r_case
+id|UFS_FSOSF1
+suffix:colon
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;fs is DEC OSF/1&bslash;n&quot;
+)paren
+)paren
+r_break
+suffix:semicolon
+r_case
 id|UFS_FSACTIVE
 suffix:colon
 id|printk

@@ -37,6 +37,8 @@ id|swap_info
 id|MAX_SWAPFILES
 )braket
 suffix:semicolon
+DECL|macro|SWAPFILE_CLUSTER
+mdefine_line|#define SWAPFILE_CLUSTER 256
 DECL|function|scan_swap_map
 r_static
 r_inline
@@ -54,7 +56,7 @@ r_int
 r_int
 id|offset
 suffix:semicolon
-multiline_comment|/* &n;&t; * We try to cluster swap pages by allocating them&n;&t; * sequentially in swap.  Once we&squot;ve allocated&n;&t; * SWAP_CLUSTER_MAX pages this way, however, we resort to&n;&t; * first-free allocation, starting a new cluster.  This&n;&t; * prevents us from scattering swap pages all over the entire&n;&t; * swap partition, so that we reduce overall disk seek times&n;&t; * between swap pages.  -- sct */
+multiline_comment|/* &n;&t; * We try to cluster swap pages by allocating them&n;&t; * sequentially in swap.  Once we&squot;ve allocated&n;&t; * SWAPFILE_CLUSTER pages this way, however, we resort to&n;&t; * first-free allocation, starting a new cluster.  This&n;&t; * prevents us from scattering swap pages all over the entire&n;&t; * swap partition, so that we reduce overall disk seek times&n;&t; * between swap pages.  -- sct */
 r_if
 c_cond
 (paren
@@ -107,7 +109,7 @@ suffix:semicolon
 )brace
 id|si-&gt;cluster_nr
 op_assign
-id|SWAP_CLUSTER_MAX
+id|SWAPFILE_CLUSTER
 suffix:semicolon
 r_for
 c_loop

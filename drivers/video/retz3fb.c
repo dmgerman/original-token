@@ -4118,7 +4118,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Extended palette adressing ???&n;&t; */
+multiline_comment|/*&n;&t; * Extended palette addressing ???&n;&t; */
 r_switch
 c_cond
 (paren

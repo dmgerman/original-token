@@ -1,7 +1,7 @@
 macro_line|#ifndef _GDTH_IOCTL_H
 DECL|macro|_GDTH_IOCTL_H
 mdefine_line|#define _GDTH_IOCTL_H
-multiline_comment|/* gdth_ioctl.h&n; * $Id: gdth_ioctl.h,v 1.1 1997/02/21 08:07:27 achim Exp $&n; */
+multiline_comment|/* gdth_ioctl.h&n; * $Id: gdth_ioctl.h,v 1.2 1998/12/17 15:42:49 achim Exp $&n; */
 multiline_comment|/* IOCTLs */
 DECL|macro|GDTIOCTL_MASK
 mdefine_line|#define GDTIOCTL_MASK       (&squot;J&squot;&lt;&lt;8)
@@ -22,13 +22,13 @@ mdefine_line|#define GDTIOCTL_LOCKCHN    (GDTIOCTL_MASK | 7) /* lock channel */
 DECL|macro|GDTIOCTL_EVENT
 mdefine_line|#define GDTIOCTL_EVENT      (GDTIOCTL_MASK | 8) /* read controller events */
 DECL|macro|GDTIOCTL_MAGIC
-mdefine_line|#define GDTIOCTL_MAGIC      0x06030f07UL
+mdefine_line|#define GDTIOCTL_MAGIC      0xaffe0001UL
 multiline_comment|/* IOCTL structure (write) */
 r_typedef
 r_struct
 (brace
 DECL|member|magic
-id|ulong
+id|ulong32
 id|magic
 suffix:semicolon
 multiline_comment|/* IOCTL magic */
@@ -127,6 +127,14 @@ DECL|member|handle
 r_int
 id|handle
 suffix:semicolon
+DECL|member|evt
+id|unchar
+id|evt
+(braket
+l_int|34
+)braket
+suffix:semicolon
+multiline_comment|/* event structure */
 DECL|member|event
 )brace
 id|event
@@ -144,12 +152,12 @@ r_typedef
 r_struct
 (brace
 DECL|member|size
-id|ulong
+id|ulong32
 id|size
 suffix:semicolon
 multiline_comment|/* buffer size */
 DECL|member|status
-id|ulong
+id|ulong32
 id|status
 suffix:semicolon
 multiline_comment|/* IOCTL error code */
@@ -258,7 +266,7 @@ DECL|member|evt
 id|unchar
 id|evt
 (braket
-l_int|32
+l_int|34
 )braket
 suffix:semicolon
 multiline_comment|/* event structure */

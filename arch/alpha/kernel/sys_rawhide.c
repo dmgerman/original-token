@@ -570,7 +570,7 @@ c_func
 (paren
 id|DEFAULT_IO_BASE
 comma
-id|DEFAULT_MEM_BASE
+id|RAWHIDE_DEFAULT_MEM_BASE
 )paren
 suffix:semicolon
 id|common_pci_fixup

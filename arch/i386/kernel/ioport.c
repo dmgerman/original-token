@@ -244,6 +244,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|turn_on
+op_logical_and
 op_logical_neg
 id|capable
 c_func
@@ -340,6 +342,18 @@ id|level
 op_assign
 id|regs-&gt;ebx
 suffix:semicolon
+r_int
+r_int
+id|old
+op_assign
+(paren
+id|regs-&gt;eflags
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -351,6 +365,15 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* Trying to gain more privileges? */
+r_if
+c_cond
+(paren
+id|level
+OG
+id|old
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -365,6 +388,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
 id|regs-&gt;eflags
 op_assign
 (paren

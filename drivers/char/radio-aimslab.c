@@ -293,6 +293,11 @@ id|io
 )paren
 suffix:semicolon
 multiline_comment|/* volume steady, off&t;&t;*/
+id|dev-&gt;curvol
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* track the volume state!&t;*/
 r_return
 l_int|0
 suffix:semicolon

@@ -100,6 +100,14 @@ id|sbi-&gt;pipe
 )paren
 suffix:semicolon
 multiline_comment|/* Close the pipe */
+id|autofs_hash_dputall
+c_func
+(paren
+op_amp
+id|sbi-&gt;dirhash
+)paren
+suffix:semicolon
+multiline_comment|/* Remove all dentry pointers */
 )brace
 DECL|function|autofs_write
 r_static

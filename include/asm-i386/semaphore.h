@@ -96,7 +96,7 @@ id|semaphore_wake_lock
 suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
-multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; * Currently this is just the global interrupt lock,&n; * bah. Go for a smaller spinlock some day.&n; *&n; * (On the other hand this shouldn&squot;t be in any critical&n; * path, so..)&n; */
+multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * but on the x86 we need an external synchronizer.&n; */
 DECL|function|wake_one_more
 r_static
 r_inline

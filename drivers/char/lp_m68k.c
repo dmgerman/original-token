@@ -2133,7 +2133,7 @@ l_string|&quot;lp&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * (un-)register for hardware drivers&n; * tab is an inititalised lp_struct, dev the desired minor&n; * if dev &lt; 0, let the driver choose the first free minor&n; * if sucessful return the minor, else -1&n; */
+multiline_comment|/*&n; * (un-)register for hardware drivers&n; * tab is an inititalised lp_struct, dev the desired minor&n; * if dev &lt; 0, let the driver choose the first free minor&n; * if successful return the minor, else -1&n; */
 DECL|function|register_parallel
 r_int
 id|register_parallel

@@ -131,8 +131,8 @@ DECL|macro|__NR_getpagesize
 mdefine_line|#define __NR_getpagesize&t; 64
 DECL|macro|__NR_osf_mremap
 mdefine_line|#define __NR_osf_mremap&t;&t; 65&t;/* not implemented */
-DECL|macro|__NR_osf_vfork
-mdefine_line|#define __NR_osf_vfork&t;&t; 66
+DECL|macro|__NR_vfork
+mdefine_line|#define __NR_vfork&t;&t; 66
 DECL|macro|__NR_stat
 mdefine_line|#define __NR_stat&t;&t; 67
 DECL|macro|__NR_lstat

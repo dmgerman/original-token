@@ -8,12 +8,8 @@ macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * MCPCIA is the internal name for a core logic chipset which provides&n; * PCI access for the RAWHIDE family of systems.&n; *&n; * This file is based on:&n; *&n; * RAWHIDE System Programmer&squot;s Manual&n; * 16-May-96&n; * Rev. 1.4&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  I/O procedures                                                        **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
 multiline_comment|/* MCPCIA ADDRESS BIT DEFINITIONS&n; *&n; *  3 3 3 3|3 3 3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * |1| | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |0|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ &n; *  |                                                                        &bslash;_/ &bslash;_/&n; *  |                                                                         |   |&n; *  +-- IO space, not cached.                                   Byte Enable --+   |&n; *                                                              Transfer Length --+&n; *&n; *&n; *&n; *   Byte      Transfer&n; *   Enable    Length    Transfer  Byte    Address&n; *   adr&lt;6:5&gt;  adr&lt;4:3&gt;  Length    Enable  Adder&n; *   ---------------------------------------------&n; *      00        00      Byte      1110   0x000&n; *      01        00      Byte      1101   0x020&n; *      10        00      Byte      1011   0x040&n; *      11        00      Byte      0111   0x060&n; *&n; *      00        01      Word      1100   0x008&n; *      01        01      Word      1001   0x028 &lt;= Not supported in this code.&n; *      10        01      Word      0011   0x048&n; *&n; *      00        10      Tribyte   1000   0x010&n; *      01        10      Tribyte   0001   0x030&n; *&n; *      10        11      Longword  0000   0x058&n; *&n; *      Note that byte enables are asserted low.&n; *&n; */
-DECL|macro|MCPCIA_MEM_R1_MASK
-mdefine_line|#define MCPCIA_MEM_R1_MASK 0x1fffffff /* SPARSE Mem region 1 mask is 29 bits */
-DECL|macro|MCPCIA_MEM_R2_MASK
-mdefine_line|#define MCPCIA_MEM_R2_MASK 0x07ffffff /* SPARSE Mem region 2 mask is 27 bits */
-DECL|macro|MCPCIA_MEM_R3_MASK
-mdefine_line|#define MCPCIA_MEM_R3_MASK 0x03ffffff /* SPARSE Mem region 3 mask is 26 bits */
+DECL|macro|MCPCIA_MEM_MASK
+mdefine_line|#define MCPCIA_MEM_MASK 0x07ffffff /* SPARSE Mem region mask is 27 bits */
 DECL|macro|MCPCIA_DMA_WIN_BASE_DEFAULT
 mdefine_line|#define MCPCIA_DMA_WIN_BASE_DEFAULT    (2*1024*1024*1024U)
 DECL|macro|MCPCIA_DMA_WIN_SIZE_DEFAULT
@@ -1063,12 +1059,12 @@ id|addr
 op_le
 id|alpha_mv.sm_base_r1
 op_plus
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 )paren
 (brace
 id|mask
 op_assign
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|base
 op_assign
@@ -1079,57 +1075,6 @@ id|hose
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* FIXME FIXME FIXME: SPARSE_MEM_R2 and R3 are not defined?  */
-r_else
-r_if
-c_cond
-(paren
-id|addr
-op_ge
-id|alpha_mv.sm_base_r2
-op_logical_and
-id|addr
-op_le
-id|alpha_mv.sm_base_r2
-op_plus
-id|MCPCIA_MEM_R2_MASK
-)paren
-(brace
-id|mask
-op_assign
-id|MCPCIA_MEM_R2_MASK
-suffix:semicolon
-id|base
-op_assign
-id|MCPCIA_SPARSE_MEM_R2
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|addr
-op_ge
-id|alpha_mv.sm_base_r3
-op_logical_and
-id|addr
-op_le
-id|alpha_mv.sm_base_r3
-op_plus
-id|MCPCIA_MEM_R3_MASK
-)paren
-(brace
-id|mask
-op_assign
-id|MCPCIA_MEM_R3_MASK
-suffix:semicolon
-id|base
-op_assign
-id|MCPCIA_SPARSE_MEM_R3
-suffix:semicolon
-)brace
-macro_line|#endif
 r_else
 (brace
 macro_line|#if 0
@@ -1424,13 +1369,14 @@ id|msb
 op_assign
 id|addr
 op_amp
-l_int|0xE0000000UL
+op_complement
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|temp
 op_assign
 id|addr
 op_amp
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
 c_func
@@ -1522,13 +1468,14 @@ id|msb
 op_assign
 id|addr
 op_amp
-l_int|0xE0000000UL
+op_complement
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|temp
 op_assign
 id|addr
 op_amp
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
 c_func
@@ -1617,11 +1564,12 @@ id|msb
 op_assign
 id|addr
 op_amp
-l_int|0xE0000000
+op_complement
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|addr
 op_and_assign
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
 c_func
@@ -1697,11 +1645,12 @@ id|msb
 op_assign
 id|addr
 op_amp
-l_int|0xE0000000
+op_complement
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|addr
 op_and_assign
-id|MCPCIA_MEM_R1_MASK
+id|MCPCIA_MEM_MASK
 suffix:semicolon
 id|set_hae
 c_func

@@ -673,7 +673,7 @@ l_int|0x00
 op_assign
 id|w
 suffix:semicolon
-id|wmb
+id|mb
 c_func
 (paren
 )paren
@@ -771,7 +771,7 @@ l_int|0x08
 op_assign
 id|w
 suffix:semicolon
-id|wmb
+id|mb
 c_func
 (paren
 )paren
@@ -840,7 +840,7 @@ l_int|0x18
 op_assign
 id|b
 suffix:semicolon
-id|wmb
+id|mb
 c_func
 (paren
 )paren

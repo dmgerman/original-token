@@ -11128,7 +11128,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|time_before_eq
+id|time_after_eq
 c_func
 (paren
 id|jiffies
@@ -11210,7 +11210,7 @@ macro_line|#ifdef HP100_DEBUG
 r_if
 c_cond
 (paren
-id|time_before_eq
+id|time_after_eq
 c_func
 (paren
 id|jiffies

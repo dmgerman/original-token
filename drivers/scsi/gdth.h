@@ -1,7 +1,7 @@
 macro_line|#ifndef _GDTH_H
 DECL|macro|_GDTH_H
 mdefine_line|#define _GDTH_H
-multiline_comment|/*&n; * Header file for the GDT ISA/EISA/PCI Disk Array Controller driver for Linux&n; * &n; * gdth.h Copyright (C) 1995-97 ICP vortex Computersysteme GmbH, Achim Leubner&n; * See gdth.c for further informations and &n; * below for supported controller types&n; *&n; * &lt;achim@vortex.de&gt;&n; *&n; * $Id: gdth.h,v 1.9 1997/11/04 09:55:42 achim Exp $&n; */
+multiline_comment|/*&n; * Header file for the GDT ISA/EISA/PCI Disk Array Controller driver for Linux&n; * &n; * gdth.h Copyright (C) 1995-98 ICP vortex Computersysteme GmbH, Achim Leubner&n; * See gdth.c for further informations and &n; * below for supported controller types&n; *&n; * &lt;achim@vortex.de&gt;&n; *&n; * $Id: gdth.h,v 1.16 1998/12/17 15:54:53 achim Exp $&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifndef NULL
@@ -19,11 +19,11 @@ macro_line|#endif
 multiline_comment|/* defines, macros */
 multiline_comment|/* driver version */
 DECL|macro|GDTH_VERSION_STR
-mdefine_line|#define GDTH_VERSION_STR        &quot;1.02&quot;
+mdefine_line|#define GDTH_VERSION_STR        &quot;1.10&quot;
 DECL|macro|GDTH_VERSION
 mdefine_line|#define GDTH_VERSION            1
 DECL|macro|GDTH_SUBVERSION
-mdefine_line|#define GDTH_SUBVERSION         2
+mdefine_line|#define GDTH_SUBVERSION         10
 multiline_comment|/* protocol version */
 DECL|macro|PROTOCOL_VERSION
 mdefine_line|#define PROTOCOL_VERSION        1
@@ -103,34 +103,57 @@ DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x11RP
 mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x11RP  0x104   /* GDT6111RP/GDT6511RP */
 DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x21RP
 mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x21RP  0x105   /* GDT6121RP/GDT6521RP */
-multiline_comment|/* GDT_MPR, RP1 series, wide/ultra SCSI */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x17RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x17RP1 0x110   /* GDT6117RP1/GDT6517RP1 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x27RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x27RP1 0x111   /* GDT6127RP1/GDT6527RP1 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6537RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6537RP1 0x112   /* GDT6537RP1 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6557RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6557RP1 0x113   /* GDT6557RP1 */
-multiline_comment|/* GDT_MPR, RP1 series, narrow/ultra SCSI */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x11RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x11RP1 0x114   /* GDT6111RP1/GDT6511RP1 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x21RP1
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x21RP1 0x115   /* GDT6121RP1/GDT6521RP1 */
-multiline_comment|/* GDT_MPR, RP2 series, wide/ultra SCSI */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x17RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x17RP2 0x120   /* GDT6117RP2/GDT6517RP2 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x27RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x27RP2 0x121   /* GDT6127RP2/GDT6527RP2 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6537RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6537RP2 0x122   /* GDT6537RP2 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6557RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6557RP2 0x123   /* GDT6557RP2 */
-multiline_comment|/* GDT_MPR, RP2 series, narrow/ultra SCSI */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x11RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x11RP2 0x124   /* GDT6111RP2/GDT6511RP2 */
-DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x21RP2
-mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x21RP2 0x125   /* GDT6121RP2/GDT6521RP2 */
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_VORTEX_GDT6x17RD
+multiline_comment|/* GDT_MPR, RD series, wide/ultra SCSI */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x17RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x17RD  0x110   /* GDT6117RD/GDT6517RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x27RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x27RD  0x111   /* GDT6127RD/GDT6527RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6537RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6537RD  0x112   /* GDT6537RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6557RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6557RD  0x113   /* GDT6557RD */
+multiline_comment|/* GDT_MPR, RD series, narrow/ultra SCSI */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x11RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x11RD  0x114   /* GDT6111RD/GDT6511RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x21RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x21RD  0x115   /* GDT6121RD/GDT6521RD */
+multiline_comment|/* GDT_MPR, RD series, wide/ultra2 SCSI */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x18RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x18RD  0x118   /* GDT6118RD/GDT6518RD/&n;                                                   GDT6618RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x28RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x28RD  0x119   /* GDT6128RD/GDT6528RD/&n;                                                   GDT6628RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x38RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x38RD  0x11A   /* GDT6538RD/GDT6638RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x58RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x58RD  0x11B   /* GDT6558RD/GDT6658RD */
+multiline_comment|/* GDT_MPR, RN series (64-bit PCI), wide/ultra2 SCSI */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x18RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x18RN  0x168   /* GDT7118RN/GDT7518RN/&n;                                                   GDT7618RN */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x28RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x28RN  0x169   /* GDT7128RN/GDT7528RN/&n;                                                   GDT7628RN */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x38RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x38RN  0x16A   /* GDT7538RN/GDT7638RN */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x58RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x58RN  0x16B   /* GDT7558RN/GDT7658RN */
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_VORTEX_GDT6x19RD
+multiline_comment|/* GDT_MPR, RD series, Fibre Channel */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x19RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x19RD  0x210   /* GDT6519RD/GDT6619RD */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT6x29RD
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT6x29RD  0x211   /* GDT6529RD/GDT6629RD */
+multiline_comment|/* GDT_MPR, RN series (64-bit PCI), Fibre Channel */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x19RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x19RN  0x260   /* GDT7519RN/GDT7619RN */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT7x29RN
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT7x29RN  0x261   /* GDT7529RN/GDT7629RN */
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_VORTEX_GDTMAXRP
+multiline_comment|/* GDT_MPR, last device ID */
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDTMAXRP
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDTMAXRP   0x2ff   
 macro_line|#endif
 multiline_comment|/* limits */
 DECL|macro|GDTH_SCRATCH
@@ -142,17 +165,19 @@ mdefine_line|#define GDTH_MAXC_P_L   16                      /* max. cmds per lu
 DECL|macro|MAXOFFSETS
 mdefine_line|#define MAXOFFSETS      128
 DECL|macro|MAXHA
-mdefine_line|#define MAXHA           8
+mdefine_line|#define MAXHA           16
 DECL|macro|MAXID
-mdefine_line|#define MAXID           8
+mdefine_line|#define MAXID           127
 DECL|macro|MAXLUN
 mdefine_line|#define MAXLUN          8
 DECL|macro|MAXBUS
-mdefine_line|#define MAXBUS          5
+mdefine_line|#define MAXBUS          6
 DECL|macro|MAX_HDRIVES
 mdefine_line|#define MAX_HDRIVES     35                      /* max. host drive count */
 DECL|macro|MAX_EVENTS
 mdefine_line|#define MAX_EVENTS      100                     /* event buffer count */
+DECL|macro|MAX_RES_ARGS
+mdefine_line|#define MAX_RES_ARGS    40                      /* device reservation, &n;                                                   must be a multiple of 4 */
 DECL|macro|MAXCYLS
 mdefine_line|#define MAXCYLS         1024
 DECL|macro|HEADS
@@ -176,15 +201,6 @@ DECL|macro|SCREEN_CMND
 mdefine_line|#define SCREEN_CMND     ((Scsi_Cmnd *)-3)
 DECL|macro|SPECIAL_SCP
 mdefine_line|#define SPECIAL_SCP(p)  (p==UNUSED_CMND || p==INTERNAL_CMND || p==SCREEN_CMND)
-multiline_comment|/* device types */
-DECL|macro|EMPTY_DTYP
-mdefine_line|#define EMPTY_DTYP      0
-DECL|macro|CACHE_DTYP
-mdefine_line|#define CACHE_DTYP      1
-DECL|macro|RAW_DTYP
-mdefine_line|#define RAW_DTYP        2
-DECL|macro|SIOP_DTYP
-mdefine_line|#define SIOP_DTYP       3                       /* the SCSI processor */
 multiline_comment|/* controller services */
 DECL|macro|SCSIRAWSERVICE
 mdefine_line|#define SCSIRAWSERVICE  3
@@ -203,15 +219,17 @@ DECL|macro|MSG_REQUEST
 mdefine_line|#define MSG_REQUEST     0                       /* async. event: message */
 multiline_comment|/* cacheservice defines */
 DECL|macro|SECTOR_SIZE
-mdefine_line|#define SECTOR_SIZE     0x200                   /* always 512 bytes per sector */
+mdefine_line|#define SECTOR_SIZE     0x200                   /* always 512 bytes per sec. */
 multiline_comment|/* DPMEM constants */
+DECL|macro|DPMEM_MAGIC
+mdefine_line|#define DPMEM_MAGIC     0xC0FFEE11
 DECL|macro|IC_HEADER_BYTES
 mdefine_line|#define IC_HEADER_BYTES 48
 DECL|macro|IC_QUEUE_BYTES
 mdefine_line|#define IC_QUEUE_BYTES  4
 DECL|macro|DPMEM_COMMAND_OFFSET
 mdefine_line|#define DPMEM_COMMAND_OFFSET    IC_HEADER_BYTES+IC_QUEUE_BYTES*MAXOFFSETS
-multiline_comment|/* service commands */
+multiline_comment|/* cache/raw service commands */
 DECL|macro|GDT_INIT
 mdefine_line|#define GDT_INIT        0                       /* service initialization */
 DECL|macro|GDT_READ
@@ -234,23 +252,42 @@ DECL|macro|GDT_SET_FEAT
 mdefine_line|#define GDT_SET_FEAT    12                      /* set feat. (scatter/gather) */
 DECL|macro|GDT_GET_FEAT
 mdefine_line|#define GDT_GET_FEAT    13                      /* get features */
-DECL|macro|GDT_RESERVE
-mdefine_line|#define GDT_RESERVE     14                      /* reserve dev. to raw service */
 DECL|macro|GDT_WRITE_THR
 mdefine_line|#define GDT_WRITE_THR   16                      /* write through */
+DECL|macro|GDT_READ_THR
+mdefine_line|#define GDT_READ_THR    17                      /* read through */
 DECL|macro|GDT_EXT_INFO
 mdefine_line|#define GDT_EXT_INFO    18                      /* extended info */
 DECL|macro|GDT_RESET
 mdefine_line|#define GDT_RESET       19                      /* controller reset */
+multiline_comment|/* additional raw service commands */
+DECL|macro|GDT_RESERVE
+mdefine_line|#define GDT_RESERVE     14                      /* reserve dev. to raw serv. */
+DECL|macro|GDT_RELEASE
+mdefine_line|#define GDT_RELEASE     15                      /* release device */
+DECL|macro|GDT_RESERVE_ALL
+mdefine_line|#define GDT_RESERVE_ALL 16                      /* reserve all devices */
+DECL|macro|GDT_RELEASE_ALL
+mdefine_line|#define GDT_RELEASE_ALL 17                      /* release all devices */
+DECL|macro|GDT_RESET_BUS
+mdefine_line|#define GDT_RESET_BUS   18                      /* reset bus */
+DECL|macro|GDT_SCAN_START
+mdefine_line|#define GDT_SCAN_START  19                      /* start device scan */
+DECL|macro|GDT_SCAN_END
+mdefine_line|#define GDT_SCAN_END    20                      /* stop device scan */  
 multiline_comment|/* IOCTL command defines */
 DECL|macro|SCSI_CHAN_CNT
 mdefine_line|#define SCSI_CHAN_CNT   5                       /* subfunctions */
+DECL|macro|GET_IOCHAN_DESC
+mdefine_line|#define GET_IOCHAN_DESC 0x5e
 DECL|macro|L_CTRL_PATTERN
 mdefine_line|#define L_CTRL_PATTERN  0x20000000L
 DECL|macro|CACHE_INFO
 mdefine_line|#define CACHE_INFO      4
 DECL|macro|CACHE_CONFIG
 mdefine_line|#define CACHE_CONFIG    5
+DECL|macro|BOARD_INFO
+mdefine_line|#define BOARD_INFO      0x28
 DECL|macro|IO_CHANNEL
 mdefine_line|#define IO_CHANNEL      0x00020000L             /* channels */
 DECL|macro|INVALID_CHANNEL
@@ -293,6 +330,8 @@ DECL|macro|DEFAULT_PRI
 mdefine_line|#define DEFAULT_PRI     0x20
 DECL|macro|IOCTL_PRI
 mdefine_line|#define IOCTL_PRI       0x10
+DECL|macro|HIGH_PRI
+mdefine_line|#define HIGH_PRI        0x08
 multiline_comment|/* data directions */
 DECL|macro|DATA_IN
 mdefine_line|#define DATA_IN         0x01000000L             /* data from target */
@@ -310,7 +349,7 @@ mdefine_line|#define SEMA1REG        0x0c8b                  /* status semaphore
 DECL|macro|LDOORREG
 mdefine_line|#define LDOORREG        0x0c8d                  /* local doorbell */
 DECL|macro|EDENABREG
-mdefine_line|#define EDENABREG       0x0c8e                  /* EISA system doorbell enable */
+mdefine_line|#define EDENABREG       0x0c8e                  /* EISA system doorbell enab. */
 DECL|macro|EDOORREG
 mdefine_line|#define EDOORREG        0x0c8f                  /* EISA system doorbell */
 DECL|macro|MAILBOXREG
@@ -327,7 +366,7 @@ mdefine_line|#define GDTH_MAXSG      32                      /* max. s/g element
 DECL|macro|SECS32
 mdefine_line|#define SECS32          0x1f                    /* round capacity */
 DECL|macro|BIOS_ID_OFFS
-mdefine_line|#define BIOS_ID_OFFS    0x10                    /* offset contr. ID in ISABIOS */
+mdefine_line|#define BIOS_ID_OFFS    0x10                    /* offset contr-ID in ISABIOS */
 DECL|macro|LOCALBOARD
 mdefine_line|#define LOCALBOARD      0                       /* board node always 0 */
 DECL|macro|ASYNCINDEX
@@ -337,38 +376,29 @@ mdefine_line|#define SPEZINDEX       1                       /* cmd index unknow
 DECL|macro|GDT_WR_THROUGH
 mdefine_line|#define GDT_WR_THROUGH  0x100                   /* WRITE_THROUGH supported */
 multiline_comment|/* typedefs */
-macro_line|#pragma pack(1)
+DECL|typedef|ulong32
 r_typedef
-r_struct
-(brace
-DECL|member|buffer
-r_char
-id|buffer
-(braket
-id|GDTH_SCRATCH
-)braket
+id|u32
+id|ulong32
 suffix:semicolon
-multiline_comment|/* scratch buffer */
-DECL|typedef|gdth_scratch_str
-)brace
-id|gdth_scratch_str
-suffix:semicolon
+DECL|macro|PACKED
+mdefine_line|#define PACKED  __attribute__((packed))
 multiline_comment|/* screenservice message */
 r_typedef
 r_struct
 (brace
 DECL|member|msg_handle
-id|ulong
+id|ulong32
 id|msg_handle
 suffix:semicolon
 multiline_comment|/* message handle */
 DECL|member|msg_len
-id|ulong
+id|ulong32
 id|msg_len
 suffix:semicolon
 multiline_comment|/* size of message */
 DECL|member|msg_alen
-id|ulong
+id|ulong32
 id|msg_alen
 suffix:semicolon
 multiline_comment|/* answer length */
@@ -401,6 +431,7 @@ suffix:semicolon
 multiline_comment|/* the message text */
 DECL|typedef|gdth_msg_str
 )brace
+id|PACKED
 id|gdth_msg_str
 suffix:semicolon
 multiline_comment|/* get channel count IOCTL */
@@ -408,12 +439,12 @@ r_typedef
 r_struct
 (brace
 DECL|member|channel_no
-id|ulong
+id|ulong32
 id|channel_no
 suffix:semicolon
 multiline_comment|/* number of channel */
 DECL|member|drive_cnt
-id|ulong
+id|ulong32
 id|drive_cnt
 suffix:semicolon
 multiline_comment|/* number of drives */
@@ -429,14 +460,81 @@ suffix:semicolon
 multiline_comment|/* SCSI processor state */
 DECL|typedef|gdth_getch_str
 )brace
+id|PACKED
 id|gdth_getch_str
+suffix:semicolon
+multiline_comment|/* get raw channel count IOCTL (NEW!) */
+r_typedef
+r_struct
+(brace
+DECL|member|version
+id|ulong32
+id|version
+suffix:semicolon
+multiline_comment|/* version of information (-1UL: newest) */
+DECL|member|list_entries
+id|unchar
+id|list_entries
+suffix:semicolon
+multiline_comment|/* list entry count */
+DECL|member|first_chan
+id|unchar
+id|first_chan
+suffix:semicolon
+multiline_comment|/* first channel number */
+DECL|member|last_chan
+id|unchar
+id|last_chan
+suffix:semicolon
+multiline_comment|/* last channel number */
+DECL|member|chan_count
+id|unchar
+id|chan_count
+suffix:semicolon
+multiline_comment|/* (R) channel count */
+DECL|member|list_offset
+id|ulong32
+id|list_offset
+suffix:semicolon
+multiline_comment|/* offset of list[0] */
+r_struct
+(brace
+DECL|member|proc_id
+id|unchar
+id|proc_id
+suffix:semicolon
+multiline_comment|/* processor id */
+DECL|member|proc_defect
+id|unchar
+id|proc_defect
+suffix:semicolon
+multiline_comment|/* defect ? */
+DECL|member|reserved
+id|unchar
+id|reserved
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|list
+)brace
+id|PACKED
+id|list
+(braket
+id|MAXBUS
+)braket
+suffix:semicolon
+DECL|typedef|gdth_iochan_str
+)brace
+id|PACKED
+id|gdth_iochan_str
 suffix:semicolon
 multiline_comment|/* cache info/config IOCTL */
 r_typedef
 r_struct
 (brace
 DECL|member|version
-id|ulong
+id|ulong32
 id|version
 suffix:semicolon
 multiline_comment|/* firmware version */
@@ -462,41 +560,43 @@ suffix:semicolon
 multiline_comment|/* cache block size */
 DECL|typedef|gdth_cpar_str
 )brace
+id|PACKED
 id|gdth_cpar_str
 suffix:semicolon
 r_typedef
 r_struct
 (brace
 DECL|member|csize
-id|ulong
+id|ulong32
 id|csize
 suffix:semicolon
 multiline_comment|/* cache size */
 DECL|member|read_cnt
-id|ulong
+id|ulong32
 id|read_cnt
 suffix:semicolon
 multiline_comment|/* read/write counter */
 DECL|member|write_cnt
-id|ulong
+id|ulong32
 id|write_cnt
 suffix:semicolon
 DECL|member|tr_hits
-id|ulong
+id|ulong32
 id|tr_hits
 suffix:semicolon
 multiline_comment|/* hits */
 DECL|member|sec_hits
-id|ulong
+id|ulong32
 id|sec_hits
 suffix:semicolon
 DECL|member|sec_miss
-id|ulong
+id|ulong32
 id|sec_miss
 suffix:semicolon
 multiline_comment|/* misses */
 DECL|typedef|gdth_cstat_str
 )brace
+id|PACKED
 id|gdth_cstat_str
 suffix:semicolon
 r_typedef
@@ -512,24 +612,169 @@ id|cstat
 suffix:semicolon
 DECL|typedef|gdth_cinfo_str
 )brace
+id|PACKED
 id|gdth_cinfo_str
+suffix:semicolon
+multiline_comment|/* board info IOCTL */
+r_typedef
+r_struct
+(brace
+DECL|member|ser_no
+id|ulong32
+id|ser_no
+suffix:semicolon
+multiline_comment|/* serial no. */
+DECL|member|oem_id
+id|unchar
+id|oem_id
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* OEM ID */
+DECL|member|ep_flags
+id|ushort
+id|ep_flags
+suffix:semicolon
+multiline_comment|/* eprom flags */
+DECL|member|proc_id
+id|ulong32
+id|proc_id
+suffix:semicolon
+multiline_comment|/* processor ID */
+DECL|member|memsize
+id|ulong32
+id|memsize
+suffix:semicolon
+multiline_comment|/* memory size (bytes) */
+DECL|member|mem_banks
+id|unchar
+id|mem_banks
+suffix:semicolon
+multiline_comment|/* memory banks */
+DECL|member|chan_type
+id|unchar
+id|chan_type
+suffix:semicolon
+multiline_comment|/* channel type */
+DECL|member|chan_count
+id|unchar
+id|chan_count
+suffix:semicolon
+multiline_comment|/* channel count */
+DECL|member|rdongle_pres
+id|unchar
+id|rdongle_pres
+suffix:semicolon
+multiline_comment|/* dongle present? */
+DECL|member|epr_fw_ver
+id|ulong32
+id|epr_fw_ver
+suffix:semicolon
+multiline_comment|/* (eprom) firmware version */
+DECL|member|upd_fw_ver
+id|ulong32
+id|upd_fw_ver
+suffix:semicolon
+multiline_comment|/* (update) firmware version */
+DECL|member|upd_revision
+id|ulong32
+id|upd_revision
+suffix:semicolon
+multiline_comment|/* update revision */
+DECL|member|type_string
+r_char
+id|type_string
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* controller name */
+DECL|member|raid_string
+r_char
+id|raid_string
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* RAID firmware name */
+DECL|member|update_pres
+id|unchar
+id|update_pres
+suffix:semicolon
+multiline_comment|/* update present? */
+DECL|member|xor_pres
+id|unchar
+id|xor_pres
+suffix:semicolon
+multiline_comment|/* XOR engine present? */
+DECL|member|prom_type
+id|unchar
+id|prom_type
+suffix:semicolon
+multiline_comment|/* ROM type (eprom/flash) */
+DECL|member|prom_count
+id|unchar
+id|prom_count
+suffix:semicolon
+multiline_comment|/* number of ROM devices */
+DECL|member|dup_pres
+id|ulong32
+id|dup_pres
+suffix:semicolon
+multiline_comment|/* duplexing module present? */
+DECL|member|chan_pres
+id|ulong32
+id|chan_pres
+suffix:semicolon
+multiline_comment|/* number of expansion chn. */
+DECL|member|mem_pres
+id|ulong32
+id|mem_pres
+suffix:semicolon
+multiline_comment|/* memory expansion inst. ? */
+DECL|member|ft_bus_system
+id|unchar
+id|ft_bus_system
+suffix:semicolon
+multiline_comment|/* fault bus supported? */
+DECL|member|subtype_valid
+id|unchar
+id|subtype_valid
+suffix:semicolon
+multiline_comment|/* board_subtype valid? */
+DECL|member|board_subtype
+id|unchar
+id|board_subtype
+suffix:semicolon
+multiline_comment|/* subtype/hardware level */
+DECL|member|ramparity_pres
+id|unchar
+id|ramparity_pres
+suffix:semicolon
+multiline_comment|/* RAM parity check hardware? */
+DECL|typedef|gdth_binfo_str
+)brace
+id|PACKED
+id|gdth_binfo_str
 suffix:semicolon
 multiline_comment|/* scatter/gather element */
 r_typedef
 r_struct
 (brace
 DECL|member|sg_ptr
-id|ulong
+id|ulong32
 id|sg_ptr
 suffix:semicolon
 multiline_comment|/* address */
 DECL|member|sg_len
-id|ulong
+id|ulong32
 id|sg_len
 suffix:semicolon
 multiline_comment|/* length */
 DECL|typedef|gdth_sg_str
 )brace
+id|PACKED
 id|gdth_sg_str
 suffix:semicolon
 multiline_comment|/* command structure */
@@ -537,12 +782,12 @@ r_typedef
 r_struct
 (brace
 DECL|member|BoardNode
-id|ulong
+id|ulong32
 id|BoardNode
 suffix:semicolon
 multiline_comment|/* board node (always 0) */
 DECL|member|CommandIndex
-id|ulong
+id|ulong32
 id|CommandIndex
 suffix:semicolon
 multiline_comment|/* command number */
@@ -561,22 +806,22 @@ id|DeviceNo
 suffix:semicolon
 multiline_comment|/* number of cache drive */
 DECL|member|BlockNo
-id|ulong
+id|ulong32
 id|BlockNo
 suffix:semicolon
 multiline_comment|/* block number */
 DECL|member|BlockCnt
-id|ulong
+id|ulong32
 id|BlockCnt
 suffix:semicolon
 multiline_comment|/* block count */
 DECL|member|DestAddr
-id|ulong
+id|ulong32
 id|DestAddr
 suffix:semicolon
 multiline_comment|/* dest. addr. (if s/g: -1) */
 DECL|member|sg_canz
-id|ulong
+id|ulong32
 id|sg_canz
 suffix:semicolon
 multiline_comment|/* s/g element count */
@@ -590,6 +835,7 @@ suffix:semicolon
 multiline_comment|/* s/g list */
 DECL|member|cache
 )brace
+id|PACKED
 id|cache
 suffix:semicolon
 multiline_comment|/* cache service cmd. str. */
@@ -601,22 +847,23 @@ id|param_size
 suffix:semicolon
 multiline_comment|/* size of p_param buffer */
 DECL|member|subfunc
-id|ulong
+id|ulong32
 id|subfunc
 suffix:semicolon
 multiline_comment|/* IOCTL function */
 DECL|member|channel
-id|ulong
+id|ulong32
 id|channel
 suffix:semicolon
 multiline_comment|/* device */
 DECL|member|p_param
-id|ulong
+id|ulong32
 id|p_param
 suffix:semicolon
 multiline_comment|/* buffer */
 DECL|member|ioctl
 )brace
+id|PACKED
 id|ioctl
 suffix:semicolon
 multiline_comment|/* IOCTL command structure */
@@ -627,17 +874,18 @@ id|ushort
 id|reserved
 suffix:semicolon
 DECL|member|msg_handle
-id|ulong
+id|ulong32
 id|msg_handle
 suffix:semicolon
 multiline_comment|/* message handle */
 DECL|member|msg_addr
-id|ulong
+id|ulong32
 id|msg_addr
 suffix:semicolon
 multiline_comment|/* message buffer address */
 DECL|member|screen
 )brace
+id|PACKED
 id|screen
 suffix:semicolon
 multiline_comment|/* screen service cmd. str. */
@@ -648,32 +896,32 @@ id|ushort
 id|reserved
 suffix:semicolon
 DECL|member|direction
-id|ulong
+id|ulong32
 id|direction
 suffix:semicolon
 multiline_comment|/* data direction */
 DECL|member|mdisc_time
-id|ulong
+id|ulong32
 id|mdisc_time
 suffix:semicolon
 multiline_comment|/* disc. time (0: no timeout)*/
 DECL|member|mcon_time
-id|ulong
+id|ulong32
 id|mcon_time
 suffix:semicolon
 multiline_comment|/* connect time(0: no to.) */
 DECL|member|sdata
-id|ulong
+id|ulong32
 id|sdata
 suffix:semicolon
 multiline_comment|/* dest. addr. (if s/g: -1) */
 DECL|member|sdlen
-id|ulong
+id|ulong32
 id|sdlen
 suffix:semicolon
 multiline_comment|/* data length (bytes) */
 DECL|member|clen
-id|ulong
+id|ulong32
 id|clen
 suffix:semicolon
 multiline_comment|/* SCSI cmd. length(6,10,12) */
@@ -706,12 +954,12 @@ id|priority
 suffix:semicolon
 multiline_comment|/* only 0 used */
 DECL|member|sense_len
-id|ulong
+id|ulong32
 id|sense_len
 suffix:semicolon
 multiline_comment|/* sense data length */
 DECL|member|sense_data
-id|ulong
+id|ulong32
 id|sense_data
 suffix:semicolon
 multiline_comment|/* sense data addr. */
@@ -723,7 +971,7 @@ id|link_p
 suffix:semicolon
 multiline_comment|/* linked cmds (not supp.) */
 DECL|member|sg_ranz
-id|ulong
+id|ulong32
 id|sg_ranz
 suffix:semicolon
 multiline_comment|/* s/g element count */
@@ -737,6 +985,7 @@ suffix:semicolon
 multiline_comment|/* s/g list */
 DECL|member|raw
 )brace
+id|PACKED
 id|raw
 suffix:semicolon
 multiline_comment|/* raw service cmd. struct. */
@@ -756,7 +1005,7 @@ id|Status
 suffix:semicolon
 multiline_comment|/* command result */
 DECL|member|Info
-id|ulong
+id|ulong32
 id|Info
 suffix:semicolon
 multiline_comment|/* additional information */
@@ -768,6 +1017,7 @@ suffix:semicolon
 multiline_comment|/* request buffer */
 DECL|typedef|gdth_cmd_str
 )brace
+id|PACKED
 id|gdth_cmd_str
 suffix:semicolon
 multiline_comment|/* controller event structure */
@@ -807,11 +1057,12 @@ id|ushort
 id|service
 suffix:semicolon
 DECL|member|index
-id|ulong
+id|ulong32
 id|index
 suffix:semicolon
 DECL|member|driver
 )brace
+id|PACKED
 id|driver
 suffix:semicolon
 r_struct
@@ -829,7 +1080,7 @@ id|ushort
 id|status
 suffix:semicolon
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 suffix:semicolon
 DECL|member|scsi_coord
@@ -841,6 +1092,7 @@ l_int|3
 suffix:semicolon
 DECL|member|async
 )brace
+id|PACKED
 id|async
 suffix:semicolon
 r_struct
@@ -858,7 +1110,7 @@ id|ushort
 id|status
 suffix:semicolon
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 suffix:semicolon
 DECL|member|hostdrive
@@ -878,6 +1130,7 @@ id|sense_key
 suffix:semicolon
 DECL|member|sync
 )brace
+id|PACKED
 id|sync
 suffix:semicolon
 r_struct
@@ -886,7 +1139,7 @@ DECL|member|l1
 DECL|member|l2
 DECL|member|l3
 DECL|member|l4
-id|ulong
+id|ulong32
 id|l1
 comma
 id|l2
@@ -897,6 +1150,7 @@ id|l4
 suffix:semicolon
 DECL|member|test
 )brace
+id|PACKED
 id|test
 suffix:semicolon
 DECL|member|eu
@@ -905,17 +1159,18 @@ id|eu
 suffix:semicolon
 DECL|typedef|gdth_evt_data
 )brace
+id|PACKED
 id|gdth_evt_data
 suffix:semicolon
 r_typedef
 r_struct
 (brace
 DECL|member|first_stamp
-id|ulong
+id|ulong32
 id|first_stamp
 suffix:semicolon
 DECL|member|last_stamp
-id|ulong
+id|ulong32
 id|last_stamp
 suffix:semicolon
 DECL|member|same_count
@@ -944,6 +1199,7 @@ id|event_data
 suffix:semicolon
 DECL|typedef|gdth_evt_str
 )brace
+id|PACKED
 id|gdth_evt_str
 suffix:semicolon
 multiline_comment|/* DPRAM structures */
@@ -967,7 +1223,7 @@ id|ushort
 id|reserved1
 suffix:semicolon
 DECL|member|S_Info
-id|ulong
+id|ulong32
 id|S_Info
 (braket
 l_int|4
@@ -1011,7 +1267,7 @@ id|Service
 suffix:semicolon
 multiline_comment|/* service(for async.events) */
 DECL|member|Info
-id|ulong
+id|ulong32
 id|Info
 (braket
 l_int|2
@@ -1032,6 +1288,7 @@ suffix:semicolon
 multiline_comment|/* service */
 DECL|member|comm_queue
 )brace
+id|PACKED
 id|comm_queue
 (braket
 id|MAXOFFSETS
@@ -1039,7 +1296,7 @@ id|MAXOFFSETS
 suffix:semicolon
 multiline_comment|/* command queue */
 DECL|member|bios_reserved
-id|ulong
+id|ulong32
 id|bios_reserved
 (braket
 l_int|2
@@ -1055,6 +1312,7 @@ suffix:semicolon
 multiline_comment|/* commands */
 DECL|typedef|gdt_dpr_if
 )brace
+id|PACKED
 id|gdt_dpr_if
 suffix:semicolon
 multiline_comment|/* SRAM structure PCI controllers */
@@ -1062,7 +1320,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|magic
-id|ulong
+id|ulong32
 id|magic
 suffix:semicolon
 multiline_comment|/* controller ID from BIOS */
@@ -1105,6 +1363,7 @@ suffix:semicolon
 multiline_comment|/* contr. ID from firmware */
 DECL|typedef|gdt_pci_sram
 )brace
+id|PACKED
 id|gdt_pci_sram
 suffix:semicolon
 multiline_comment|/* SRAM structure EISA controllers (but NOT GDT3000/3020) */
@@ -1135,6 +1394,7 @@ id|padding
 suffix:semicolon
 DECL|typedef|gdt_eisa_sram
 )brace
+id|PACKED
 id|gdt_eisa_sram
 suffix:semicolon
 multiline_comment|/* DPRAM ISA controllers */
@@ -1156,7 +1416,7 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* 15KB - 32Bytes BIOS */
 DECL|member|magic
-id|ulong
+id|ulong32
 id|magic
 suffix:semicolon
 multiline_comment|/* controller (EISA) ID */
@@ -1187,6 +1447,7 @@ suffix:semicolon
 multiline_comment|/* OS code per service */
 DECL|member|dp_sram
 )brace
+id|PACKED
 id|dp_sram
 suffix:semicolon
 DECL|member|bios_area
@@ -1255,10 +1516,12 @@ suffix:semicolon
 multiline_comment|/* IRQ/DRQ configuration */
 DECL|member|io
 )brace
+id|PACKED
 id|io
 suffix:semicolon
 DECL|typedef|gdt2_dpram_str
 )brace
+id|PACKED
 id|gdt2_dpram_str
 suffix:semicolon
 multiline_comment|/* DPRAM PCI controllers */
@@ -1353,10 +1616,12 @@ l_int|3
 suffix:semicolon
 DECL|member|io
 )brace
+id|PACKED
 id|io
 suffix:semicolon
 DECL|typedef|gdt6_dpram_str
 )brace
+id|PACKED
 id|gdt6_dpram_str
 suffix:semicolon
 multiline_comment|/* PLX register structure (new PCI controllers) */
@@ -1406,7 +1671,7 @@ id|service
 suffix:semicolon
 multiline_comment|/* service */
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 (braket
 l_int|2
@@ -1464,6 +1729,7 @@ l_int|0x16
 suffix:semicolon
 DECL|typedef|gdt6c_plx_regs
 )brace
+id|PACKED
 id|gdt6c_plx_regs
 suffix:semicolon
 multiline_comment|/* DPRAM new PCI controllers */
@@ -1500,6 +1766,7 @@ suffix:semicolon
 multiline_comment|/* SRAM structure */
 DECL|typedef|gdt6c_dpram_str
 )brace
+id|PACKED
 id|gdt6c_dpram_str
 suffix:semicolon
 multiline_comment|/* i960 register structure (PCI MPR controllers) */
@@ -1545,7 +1812,7 @@ id|service
 suffix:semicolon
 multiline_comment|/* service */
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 (braket
 l_int|2
@@ -1590,7 +1857,7 @@ l_int|27
 )braket
 suffix:semicolon
 DECL|member|unused7
-id|ulong
+id|ulong32
 id|unused7
 (braket
 l_int|1004
@@ -1599,6 +1866,7 @@ suffix:semicolon
 multiline_comment|/* size: 4 KB */
 DECL|typedef|gdt6m_i960_regs
 )brace
+id|PACKED
 id|gdt6m_i960_regs
 suffix:semicolon
 multiline_comment|/* DPRAM PCI MPR controllers */
@@ -1640,12 +1908,21 @@ suffix:semicolon
 multiline_comment|/* SRAM structure */
 DECL|typedef|gdt6m_dpram_str
 )brace
+id|PACKED
 id|gdt6m_dpram_str
 suffix:semicolon
 multiline_comment|/* PCI resources */
 r_typedef
 r_struct
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015C
+DECL|member|pdev
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+macro_line|#endif
 DECL|member|device_id
 id|ushort
 id|device_id
@@ -1676,11 +1953,6 @@ id|ulong
 id|io_mm
 suffix:semicolon
 multiline_comment|/* IO address mem. mapped */
-DECL|member|bios
-id|ulong
-id|bios
-suffix:semicolon
-multiline_comment|/* BIOS address */
 DECL|member|irq
 id|unchar
 id|irq
@@ -1694,13 +1966,8 @@ multiline_comment|/* controller information structure */
 r_typedef
 r_struct
 (brace
-DECL|member|bus_cnt
-id|unchar
-id|bus_cnt
-suffix:semicolon
-multiline_comment|/* SCSI bus count */
 DECL|member|type
-id|unchar
+id|ushort
 id|type
 suffix:semicolon
 multiline_comment|/* controller class */
@@ -1710,7 +1977,7 @@ id|raw_feat
 suffix:semicolon
 multiline_comment|/* feat. raw service (s/g,..) */
 DECL|member|stype
-id|ulong
+id|ulong32
 id|stype
 suffix:semicolon
 multiline_comment|/* controller subtype */
@@ -1731,7 +1998,7 @@ id|brd
 suffix:semicolon
 multiline_comment|/* DPRAM address */
 DECL|member|brd_phys
-id|ulong
+id|ulong32
 id|brd_phys
 suffix:semicolon
 multiline_comment|/* slot number/BIOS address */
@@ -1748,10 +2015,21 @@ id|pccb
 suffix:semicolon
 multiline_comment|/* address command structure */
 DECL|member|pscratch
-id|gdth_scratch_str
+r_char
 op_star
 id|pscratch
 suffix:semicolon
+multiline_comment|/* scratch (DMA) buffer */
+DECL|member|scratch_busy
+id|unchar
+id|scratch_busy
+suffix:semicolon
+multiline_comment|/* in use? */
+DECL|member|scan_mode
+id|unchar
+id|scan_mode
+suffix:semicolon
+multiline_comment|/* current scan mode */
 DECL|member|irq
 id|unchar
 id|irq
@@ -1768,11 +2046,11 @@ id|status
 suffix:semicolon
 multiline_comment|/* command status */
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 suffix:semicolon
 DECL|member|info2
-id|ulong
+id|ulong32
 id|info2
 suffix:semicolon
 multiline_comment|/* additional info */
@@ -1784,11 +2062,16 @@ suffix:semicolon
 multiline_comment|/* top of request queue */
 r_struct
 (brace
-DECL|member|type
+DECL|member|present
 id|unchar
-id|type
+id|present
 suffix:semicolon
-multiline_comment|/* device type */
+multiline_comment|/* host drive present? */
+DECL|member|lock
+id|unchar
+id|lock
+suffix:semicolon
+multiline_comment|/* drive locked? (hot plug) */
 DECL|member|heads
 id|unchar
 id|heads
@@ -1798,36 +2081,78 @@ DECL|member|secs
 id|unchar
 id|secs
 suffix:semicolon
-DECL|member|lock
-id|unchar
-id|lock
-suffix:semicolon
-multiline_comment|/* drive locked ? (hot plug) */
-DECL|member|hostdrive
-id|ushort
-id|hostdrive
-suffix:semicolon
-multiline_comment|/* host drive number */
 DECL|member|devtype
 id|ushort
 id|devtype
 suffix:semicolon
 multiline_comment|/* further information */
 DECL|member|size
-id|ulong
+id|ulong32
 id|size
 suffix:semicolon
 multiline_comment|/* capacity */
-DECL|member|id
+DECL|member|hdr
 )brace
-id|id
-(braket
-id|MAXBUS
-)braket
+id|hdr
 (braket
 id|MAXID
 )braket
 suffix:semicolon
+multiline_comment|/* host drives */
+r_struct
+(brace
+DECL|member|lock
+id|unchar
+id|lock
+suffix:semicolon
+multiline_comment|/* channel locked? (hot plug) */
+DECL|member|raw
+)brace
+id|raw
+(braket
+id|MAXBUS
+)braket
+suffix:semicolon
+multiline_comment|/* raw devices */
+r_struct
+(brace
+DECL|member|cmnd
+id|Scsi_Cmnd
+op_star
+id|cmnd
+suffix:semicolon
+multiline_comment|/* pending request */
+DECL|member|service
+id|ushort
+id|service
+suffix:semicolon
+multiline_comment|/* service */
+DECL|member|cmd_tab
+)brace
+id|cmd_tab
+(braket
+id|GDTH_MAXCMDS
+)braket
+suffix:semicolon
+multiline_comment|/* table of pend. requests */
+DECL|member|bus_cnt
+id|unchar
+id|bus_cnt
+suffix:semicolon
+multiline_comment|/* SCSI bus count */
+DECL|member|tid_cnt
+id|unchar
+id|tid_cnt
+suffix:semicolon
+multiline_comment|/* Target ID count */
+DECL|member|bus_id
+id|unchar
+id|bus_id
+(braket
+id|MAXBUS
+)braket
+suffix:semicolon
+multiline_comment|/* IOP IDs */
 DECL|member|cmd_cnt
 id|ushort
 id|cmd_cnt
@@ -1848,24 +2173,25 @@ id|ushort
 id|ic_all_size
 suffix:semicolon
 multiline_comment|/* sizeof DPRAM interf. area */
-DECL|member|reserved
-id|unchar
-id|reserved
-suffix:semicolon
-DECL|member|mode
-id|unchar
-id|mode
-suffix:semicolon
-multiline_comment|/* information from /proc */
-DECL|member|param_size
-id|ushort
-id|param_size
-suffix:semicolon
 DECL|member|cpar
 id|gdth_cpar_str
 id|cpar
 suffix:semicolon
 multiline_comment|/* controller cache par. */
+DECL|member|ctr_name
+r_char
+id|ctr_name
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* controller name */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
+DECL|member|smp_lock
+id|spinlock_t
+id|smp_lock
+suffix:semicolon
+macro_line|#endif
 DECL|typedef|gdth_ha_str
 )brace
 id|gdth_ha_str
@@ -1902,10 +2228,6 @@ suffix:semicolon
 DECL|member|cmdext
 id|gdth_cmd_str
 id|cmdext
-suffix:semicolon
-DECL|member|dmaext
-id|gdth_scratch_str
-id|dmaext
 suffix:semicolon
 DECL|typedef|gdth_ext_str
 )brace
@@ -1970,6 +2292,7 @@ l_int|4
 suffix:semicolon
 DECL|typedef|gdth_inq_data
 )brace
+id|PACKED
 id|gdth_inq_data
 suffix:semicolon
 multiline_comment|/* READ_CAPACITY data format */
@@ -1977,15 +2300,16 @@ r_typedef
 r_struct
 (brace
 DECL|member|last_block_no
-id|ulong
+id|ulong32
 id|last_block_no
 suffix:semicolon
 DECL|member|block_length
-id|ulong
+id|ulong32
 id|block_length
 suffix:semicolon
 DECL|typedef|gdth_rdcap_data
 )brace
+id|PACKED
 id|gdth_rdcap_data
 suffix:semicolon
 multiline_comment|/* REQUEST_SENSE data format */
@@ -2005,7 +2329,7 @@ id|unchar
 id|key
 suffix:semicolon
 DECL|member|info
-id|ulong
+id|ulong32
 id|info
 suffix:semicolon
 DECL|member|add_length
@@ -2013,7 +2337,7 @@ id|unchar
 id|add_length
 suffix:semicolon
 DECL|member|cmd_info
-id|ulong
+id|ulong32
 id|cmd_info
 suffix:semicolon
 DECL|member|adsc
@@ -2037,6 +2361,7 @@ l_int|3
 suffix:semicolon
 DECL|typedef|gdth_sense_data
 )brace
+id|PACKED
 id|gdth_sense_data
 suffix:semicolon
 multiline_comment|/* MODE_SENSE data format */
@@ -2063,6 +2388,7 @@ id|bd_length
 suffix:semicolon
 DECL|member|hd
 )brace
+id|PACKED
 id|hd
 suffix:semicolon
 r_struct
@@ -2091,12 +2417,15 @@ l_int|3
 suffix:semicolon
 DECL|member|bd
 )brace
+id|PACKED
 id|bd
 suffix:semicolon
 DECL|typedef|gdth_modep_data
 )brace
+id|PACKED
 id|gdth_modep_data
 suffix:semicolon
+multiline_comment|/* stack frame */
 r_typedef
 r_struct
 (brace
@@ -2107,12 +2436,12 @@ id|b
 l_int|10
 )braket
 suffix:semicolon
-multiline_comment|/* 32 bit compiler ! */
+multiline_comment|/* 32/64 bit compiler ! */
 DECL|typedef|gdth_stackframe
 )brace
+id|PACKED
 id|gdth_stackframe
 suffix:semicolon
-macro_line|#pragma pack()
 multiline_comment|/* function prototyping */
 r_int
 id|gdth_detect
@@ -2199,6 +2528,84 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
+r_int
+id|gdth_bios_param
+c_func
+(paren
+id|Disk
+op_star
+comma
+id|kdev_t
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_scsi_gdth
+suffix:semicolon
+r_int
+id|gdth_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_int
+id|gdth_eh_abort
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+)paren
+suffix:semicolon
+r_int
+id|gdth_eh_device_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+)paren
+suffix:semicolon
+r_int
+id|gdth_eh_bus_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+)paren
+suffix:semicolon
+r_int
+id|gdth_eh_host_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|scp
+)paren
+suffix:semicolon
+DECL|macro|GDTH
+mdefine_line|#define GDTH { proc_dir:        &amp;proc_scsi_gdth,                 &bslash;&n;               proc_info:       gdth_proc_info,                  &bslash;&n;               name:            &quot;GDT SCSI Disk Array Controller&quot;,&bslash;&n;               detect:          gdth_detect,                     &bslash;&n;               release:         gdth_release,                    &bslash;&n;               info:            gdth_info,                       &bslash;&n;               command:         gdth_command,                    &bslash;&n;               queuecommand:    gdth_queuecommand,               &bslash;&n;               eh_abort_handler: gdth_eh_abort,                  &bslash;&n;               eh_device_reset_handler: gdth_eh_device_reset,    &bslash;&n;               eh_bus_reset_handler: gdth_eh_bus_reset,          &bslash;&n;               eh_host_reset_handler: gdth_eh_host_reset,        &bslash;&n;               abort:           gdth_abort,                      &bslash;&n;               reset:           gdth_reset,                      &bslash;&n;               bios_param:      gdth_bios_param,                 &bslash;&n;               can_queue:       GDTH_MAXCMDS,                    &bslash;&n;               this_id:         -1,                              &bslash;&n;               sg_tablesize:    GDTH_MAXSG,                      &bslash;&n;               cmd_per_lun:     GDTH_MAXC_P_L,                   &bslash;&n;               present:         0,                               &bslash;&n;               unchecked_isa_dma: 1,                             &bslash;&n;               use_clustering:  ENABLE_CLUSTERING,               &bslash;&n;               use_new_eh_code: 1       /* use new error code */ }    
+macro_line|#elif LINUX_VERSION_CODE &gt;= 0x010300
 r_int
 id|gdth_bios_param
 c_func
@@ -2238,6 +2645,23 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|GDTH
-mdefine_line|#define GDTH { proc_dir:          &amp;proc_scsi_gdth,                     &bslash;&n;               proc_info:         gdth_proc_info,                      &bslash;&n;               name:              &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;               detect:            gdth_detect,                         &bslash;&n;               release:           gdth_release,                        &bslash;&n;               info:              gdth_info,                           &bslash;&n;               command:           gdth_command,                        &bslash;&n;               queuecommand:      gdth_queuecommand,                   &bslash;&n;               abort:             gdth_abort,                          &bslash;&n;               reset:             gdth_reset,                          &bslash;&n;               bios_param:        gdth_bios_param,                     &bslash;&n;               can_queue:         GDTH_MAXCMDS,                        &bslash;&n;               this_id:           -1,                                  &bslash;&n;               sg_tablesize:      GDTH_MAXSG,                          &bslash;&n;               cmd_per_lun:       GDTH_MAXC_P_L,                       &bslash;&n;               unchecked_isa_dma: 1,                                   &bslash;&n;               use_clustering:    ENABLE_CLUSTERING}
+mdefine_line|#define GDTH { NULL, NULL,                              &bslash;&n;                   &amp;proc_scsi_gdth,                     &bslash;&n;                   gdth_proc_info,                      &bslash;&n;                   &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;                   gdth_detect,                         &bslash;&n;                   gdth_release,                        &bslash;&n;                   gdth_info,                           &bslash;&n;                   gdth_command,                        &bslash;&n;                   gdth_queuecommand,                   &bslash;&n;                   gdth_abort,                          &bslash;&n;                   gdth_reset,                          &bslash;&n;                   NULL,                                &bslash;&n;                   gdth_bios_param,                     &bslash;&n;                   GDTH_MAXCMDS,                        &bslash;&n;                   -1,                                  &bslash;&n;                   GDTH_MAXSG,                          &bslash;&n;                   GDTH_MAXC_P_L,                       &bslash;&n;                   0,                                   &bslash;&n;                   1,                                   &bslash;&n;                   ENABLE_CLUSTERING}
+macro_line|#else
+r_int
+id|gdth_bios_param
+c_func
+(paren
+id|Disk
+op_star
+comma
+r_int
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+DECL|macro|GDTH
+mdefine_line|#define GDTH { NULL, NULL,                              &bslash;&n;                   &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;                   gdth_detect,                         &bslash;&n;                   gdth_release,                        &bslash;&n;                   gdth_info,                           &bslash;&n;                   gdth_command,                        &bslash;&n;                   gdth_queuecommand,                   &bslash;&n;                   gdth_abort,                          &bslash;&n;                   gdth_reset,                          &bslash;&n;                   NULL,                                &bslash;&n;                   gdth_bios_param,                     &bslash;&n;                   GDTH_MAXCMDS,                        &bslash;&n;                   -1,                                  &bslash;&n;                   GDTH_MAXSG,                          &bslash;&n;                   GDTH_MAXC_P_L,                       &bslash;&n;                   0,                                   &bslash;&n;                   1,                                   &bslash;&n;                   ENABLE_CLUSTERING}
+macro_line|#endif
 macro_line|#endif
 eof

@@ -87,7 +87,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.9&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.10&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -33353,6 +33353,14 @@ r_case
 id|AHC_AIC7880
 suffix:colon
 multiline_comment|/* 3840 UW / 3985 UW */
+r_if
+c_cond
+(paren
+id|temp_p-&gt;flags
+op_amp
+id|AHC_MULTI_CHANNEL
+)paren
+(brace
 r_switch
 c_cond
 (paren
@@ -33394,6 +33402,7 @@ r_default
 suffix:colon
 r_break
 suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon
@@ -40774,6 +40783,7 @@ id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/*&n;       * If this a SCSI_RESET_SYNCHRONOUS then the command we were given is&n;       * in need of being re-started, so send it on through to aic7xxx_queue&n;       * and let it set until the delay is over.  This keeps it from dying&n;       * entirely and avoids getting a bogus dead command back through the&n;       * mid-level code due to too many retries.&n;       */
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,132)
 r_if
 c_cond
 (paren
@@ -40797,6 +40807,7 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|p-&gt;flags
 op_and_assign
 op_complement

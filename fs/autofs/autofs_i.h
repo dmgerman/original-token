@@ -182,10 +182,6 @@ DECL|macro|AUTOFS_FIRST_DIR_INO
 mdefine_line|#define AUTOFS_FIRST_DIR_INO (AUTOFS_FIRST_SYMLINK+AUTOFS_MAX_SYMLINKS)
 DECL|macro|AUTOFS_SYMLINK_BITMAP_LEN
 mdefine_line|#define AUTOFS_SYMLINK_BITMAP_LEN ((AUTOFS_MAX_SYMLINKS+31)/32)
-macro_line|#ifndef END_OF_TIME
-DECL|macro|END_OF_TIME
-mdefine_line|#define END_OF_TIME ((time_t)((unsigned long)((time_t)(~0UL)) &gt;&gt; 1))
-macro_line|#endif
 DECL|macro|AUTOFS_SBI_MAGIC
 mdefine_line|#define AUTOFS_SBI_MAGIC 0x6d4a556d
 DECL|struct|autofs_sb_info
@@ -249,6 +245,32 @@ id|AUTOFS_SYMLINK_BITMAP_LEN
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|autofs_sbi
+r_extern
+r_inline
+r_struct
+id|autofs_sb_info
+op_star
+id|autofs_sbi
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+(brace
+r_return
+(paren
+r_struct
+id|autofs_sb_info
+op_star
+)paren
+(paren
+id|sb-&gt;u.generic_sbp
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* autofs_oz_mode(): do we see the man behind the curtain?  (The&n;   processes which do manipulations for us in user space sees the raw&n;   filesystem without &quot;magic&quot;.) */
 DECL|function|autofs_oz_mode
 r_static
@@ -335,6 +357,15 @@ op_star
 comma
 r_struct
 id|autofs_dir_ent
+op_star
+)paren
+suffix:semicolon
+r_void
+id|autofs_hash_dputall
+c_func
+(paren
+r_struct
+id|autofs_dirhash
 op_star
 )paren
 suffix:semicolon

@@ -254,6 +254,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|alpha_machine_vector
+id|webbrick_mv
+suffix:semicolon
+r_extern
+r_struct
+id|alpha_machine_vector
 id|noname_mv
 suffix:semicolon
 r_extern
@@ -285,6 +290,11 @@ r_extern
 r_struct
 id|alpha_machine_vector
 id|ruffian_mv
+suffix:semicolon
+r_extern
+r_struct
+id|alpha_machine_vector
+id|rx164_mv
 suffix:semicolon
 r_extern
 r_struct
@@ -346,6 +356,8 @@ DECL|macro|mikasa_primo_mv
 macro_line|#pragma weak mikasa_primo_mv
 DECL|macro|monet_mv
 macro_line|#pragma weak monet_mv
+DECL|macro|webbrick_mv
+macro_line|#pragma weak webbrick_mv
 DECL|macro|noname_mv
 macro_line|#pragma weak noname_mv
 DECL|macro|noritake_mv
@@ -360,6 +372,8 @@ DECL|macro|rawhide_mv
 macro_line|#pragma weak rawhide_mv
 DECL|macro|ruffian_mv
 macro_line|#pragma weak ruffian_mv
+DECL|macro|rx164_mv
+macro_line|#pragma weak rx164_mv
 DECL|macro|sable_mv
 macro_line|#pragma weak sable_mv
 DECL|macro|sable_gamma_mv
@@ -845,6 +859,10 @@ l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
 comma
 id|initrd_end
 comma
+(paren
+r_int
+r_int
+)paren
 id|memory_end_p
 )paren
 suffix:semicolon
@@ -873,6 +891,23 @@ comma
 id|memory_end_p
 )paren
 suffix:semicolon
+multiline_comment|/* Initialize the timers.  */
+multiline_comment|/* ??? There is some circumstantial evidence that this needs&n;&t;   to be done now rather than later in time_init, which would&n;&t;   be more natural.  Someone please explain or refute.  */
+macro_line|#if defined(CONFIG_RTC)
+id|rtc_init_pit
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|alpha_mv
+dot
+id|init_pit
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* &n;&t; * Give us a default console.  TGA users will see nothing until&n;&t; * chr_dev_init is called, rather late in the boot sequence.&n;&t; */
 macro_line|#ifdef CONFIG_VT
 macro_line|#if defined(CONFIG_VGA_CONSOLE)
@@ -1170,6 +1205,8 @@ comma
 l_string|&quot;LX164&quot;
 comma
 l_string|&quot;SX164&quot;
+comma
+l_string|&quot;RX164&quot;
 )brace
 suffix:semicolon
 DECL|variable|eb164_indices
@@ -1211,6 +1248,8 @@ comma
 l_int|3
 comma
 l_int|3
+comma
+l_int|4
 )brace
 suffix:semicolon
 DECL|variable|alcor_names
@@ -1654,6 +1693,9 @@ id|lx164_mv
 comma
 op_amp
 id|sx164_mv
+comma
+op_amp
+id|rx164_mv
 )brace
 suffix:semicolon
 r_static
@@ -1730,7 +1772,7 @@ id|dp264_mv
 comma
 multiline_comment|/* goldrush */
 op_amp
-id|dp264_mv
+id|webbrick_mv
 comma
 multiline_comment|/* webbrick */
 op_amp
@@ -2163,6 +2205,9 @@ op_amp
 id|ruffian_mv
 comma
 op_amp
+id|rx164_mv
+comma
+op_amp
 id|sable_mv
 comma
 op_amp
@@ -2173,6 +2218,9 @@ id|sx164_mv
 comma
 op_amp
 id|takara_mv
+comma
+op_amp
+id|webbrick_mv
 comma
 op_amp
 id|xl_mv

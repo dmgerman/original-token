@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_tsunami.c&n; *&n; * Code common to all TSUNAMI core logic chips.&n; *&n; * Based on code written by David A. Rusling (david.rusling@reo.mts.dec.com).&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1099,7 +1098,7 @@ macro_line|#endif
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, windows 1,2 and 3 are disabled.  In the future,&n;&t;&t; * we may want to use them to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t;&t; * For now, windows 1,2 and 3 are disabled.  In the future,&n;&t;&t; * we may want to use them to do scatter/gather DMA. &n;&t;&t; *&n;&t;&t; * Window 0 goes at 1 GB and is 1 GB large, mapping to 0.&n;&t;&t; */
 id|pchip-&gt;wsba
 (braket
 l_int|0
@@ -1139,6 +1138,7 @@ id|csr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 id|pchip-&gt;wsba
 (braket
 l_int|1
@@ -1148,6 +1148,50 @@ id|csr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* make the second window at 2Gb for 1Gb mapping to 1Gb */
+id|pchip-&gt;wsba
+(braket
+l_int|1
+)braket
+dot
+id|csr
+op_assign
+l_int|1L
+op_or
+(paren
+(paren
+l_int|0x80000000U
+)paren
+op_amp
+l_int|0xfff00000U
+)paren
+suffix:semicolon
+id|pchip-&gt;wsm
+(braket
+l_int|1
+)braket
+dot
+id|csr
+op_assign
+(paren
+l_int|0x40000000UL
+op_minus
+l_int|1
+)paren
+op_amp
+l_int|0xfff00000UL
+suffix:semicolon
+id|pchip-&gt;tba
+(braket
+l_int|1
+)braket
+dot
+id|csr
+op_assign
+l_int|0x40000000
+suffix:semicolon
+macro_line|#endif
 id|pchip-&gt;wsba
 (braket
 l_int|2
@@ -1412,6 +1456,16 @@ comma
 id|mem_start
 )paren
 suffix:semicolon
+multiline_comment|/* must change this for TYPHOON which may have 4 */
+r_if
+c_cond
+(paren
+id|TSUNAMI_cchip-&gt;csc.csr
+op_amp
+l_int|1L
+op_lshift
+l_int|14
+)paren
 id|tsunami_init_one_pchip
 c_func
 (paren
@@ -1500,6 +1554,16 @@ comma
 id|cpu
 )paren
 suffix:semicolon
+multiline_comment|/* must change this for TYPHOON which may have 4 */
+r_if
+c_cond
+(paren
+id|TSUNAMI_cchip-&gt;csc.csr
+op_amp
+l_int|1L
+op_lshift
+l_int|14
+)paren
 id|tsunami_pci_clr_err_1
 c_func
 (paren

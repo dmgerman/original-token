@@ -123,16 +123,7 @@ multiline_comment|/* Kernel compatibility defines, some common to David Hinds&sq
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#else
+macro_line|#if (LINUX_VERSION_CODE &lt;= 0x20100)
 macro_line|#ifndef __alpha__
 DECL|macro|ioremap
 mdefine_line|#define ioremap(a,b) &bslash;&n;&t;(((a)&lt;0x100000) ? (void *)((u_long)(a)) : vremap(a,b))

@@ -104,7 +104,7 @@ suffix:semicolon
 multiline_comment|/*for linux v1.13 */
 macro_line|#endif
 DECL|macro|i91u_REVID
-mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03b&quot;
+mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03d&quot;
 macro_line|#if LINUX_VERSION_CODE &lt; CVT_LINUX_VERSION(1, 3, 0)
 DECL|macro|INI9100U
 mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_REVID, &bslash;&n;&t;&t;i91u_detect, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_command, &bslash;&n;&t;&t;i91u_queue, &bslash;&n;&t;&t;i91u_abort, &bslash;&n;&t;&t;i91u_reset, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_biosparam, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;7, &bslash;&n;&t;&t;SG_ALL, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;ENABLE_CLUSTERING &bslash;&n;}

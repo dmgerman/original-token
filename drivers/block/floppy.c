@@ -18352,6 +18352,11 @@ op_assign
 id|FDC2
 suffix:semicolon
 macro_line|#endif
+id|fdc
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* reset fdc in case of unexpected interrupt */
 r_if
 c_cond
 (paren

@@ -6,9 +6,9 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */
 DECL|macro|TSUNAMI_DMA_WIN_BASE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT    (1024*1024*1024)
+mdefine_line|#define TSUNAMI_DMA_WIN_BASE_DEFAULT    (1024*1024*1024U)
 DECL|macro|TSUNAMI_DMA_WIN_SIZE_DEFAULT
-mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024)
+mdefine_line|#define TSUNAMI_DMA_WIN_SIZE_DEFAULT    (1024*1024*1024U)
 macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM_SETUP)
 DECL|macro|TSUNAMI_DMA_WIN_BASE
 mdefine_line|#define TSUNAMI_DMA_WIN_BASE&t;&t;alpha_mv.dma_win_base

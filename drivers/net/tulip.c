@@ -195,16 +195,6 @@ DECL|macro|NEW_MULTICAST
 mdefine_line|#define NEW_MULTICAST
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef SA_SHIRQ
 DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, dev_id, pt_regs)
@@ -1725,8 +1715,11 @@ id|pci_command
 comma
 id|new_command
 suffix:semicolon
-id|u32
+r_int
+r_int
 id|pci_ioaddr
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|chip_idx
@@ -1923,7 +1916,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Found %s at I/O %#x.&bslash;n&quot;
+l_string|&quot;Found %s at I/O %#lx.&bslash;n&quot;
 comma
 id|tulip_tbl
 (braket

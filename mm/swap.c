@@ -44,42 +44,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvenate&n; * and age; and the initial age for new pages. &n; *&n; * The &quot;pageout_weight&quot; is strictly a fixedpoint number with the&n; * ten low bits being the fraction (ie 8192 really means &quot;8.0&quot;).&n; */
-DECL|variable|swap_control
-id|swap_control_t
-id|swap_control
-op_assign
-(brace
-l_int|20
-comma
-l_int|3
-comma
-l_int|1
-comma
-l_int|3
-comma
-multiline_comment|/* Page aging */
-l_int|32
-comma
-l_int|4
-comma
-multiline_comment|/* Aging cluster */
-l_int|8192
-comma
-multiline_comment|/* sc_pageout_weight aka PAGEOUT_WEIGHT */
-l_int|8192
-comma
-multiline_comment|/* sc_bufferout_weight aka BUFFEROUT_WEIGHT */
-)brace
-suffix:semicolon
-DECL|variable|swapstats
-id|swapstat_t
-id|swapstats
-op_assign
-(brace
-l_int|0
-)brace
-suffix:semicolon
 DECL|variable|buffer_mem
 id|buffer_mem_t
 id|buffer_mem

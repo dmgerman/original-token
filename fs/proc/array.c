@@ -15,7 +15,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1424,72 +1423,6 @@ comma
 id|i.freeswap
 op_rshift
 l_int|10
-)paren
-suffix:semicolon
-)brace
-DECL|function|get_swapstats
-r_static
-r_int
-id|get_swapstats
-c_func
-(paren
-r_char
-op_star
-id|buffer
-)paren
-(brace
-r_int
-r_int
-op_star
-id|w
-op_assign
-id|swapstats.kswap_wakeups
-suffix:semicolon
-r_return
-id|sprintf
-c_func
-(paren
-id|buffer
-comma
-l_string|&quot;ProcFreeTry:    %8lu&bslash;n&quot;
-l_string|&quot;ProcFreeSucc:   %8lu&bslash;n&quot;
-l_string|&quot;ProcShrinkTry:  %8lu&bslash;n&quot;
-l_string|&quot;ProcShrinkSucc: %8lu&bslash;n&quot;
-l_string|&quot;KswapFreeTry:   %8lu&bslash;n&quot;
-l_string|&quot;KswapFreeSucc:  %8lu&bslash;n&quot;
-l_string|&quot;KswapWakeups:&t;%8lu %lu %lu %lu&bslash;n&quot;
-comma
-id|swapstats.gfp_freepage_attempts
-comma
-id|swapstats.gfp_freepage_successes
-comma
-id|swapstats.gfp_shrink_attempts
-comma
-id|swapstats.gfp_shrink_successes
-comma
-id|swapstats.kswap_freepage_attempts
-comma
-id|swapstats.kswap_freepage_successes
-comma
-id|w
-(braket
-l_int|0
-)braket
-comma
-id|w
-(braket
-l_int|1
-)braket
-comma
-id|w
-(braket
-l_int|2
-)braket
-comma
-id|w
-(braket
-l_int|3
-)braket
 )paren
 suffix:semicolon
 )brace
@@ -5747,16 +5680,6 @@ id|PROC_MEMINFO
 suffix:colon
 r_return
 id|get_meminfo
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_case
-id|PROC_SWAPSTATS
-suffix:colon
-r_return
-id|get_swapstats
 c_func
 (paren
 id|page

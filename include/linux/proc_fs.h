@@ -133,9 +133,6 @@ comma
 multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_FS
 id|PROC_FS
-comma
-DECL|enumerator|PROC_SWAPSTATS
-id|PROC_SWAPSTATS
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

@@ -2537,11 +2537,11 @@ id|instance-&gt;irq
 comma
 id|do_AM53C974_intr
 comma
-id|SA_INTERRUPT
+id|SA_SHIRQ
 comma
 l_string|&quot;AM53C974&quot;
 comma
-l_int|NULL
+id|instance
 )paren
 )paren
 (brace
@@ -10511,7 +10511,7 @@ c_func
 (paren
 id|shp-&gt;irq
 comma
-l_int|NULL
+id|shp
 )paren
 suffix:semicolon
 id|scsi_unregister

@@ -3232,7 +3232,7 @@ op_amp
 id|queue.sleeper
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * If queue.status == 1 we where woken up and&n;                 * have to retry else we simply return.&n;                 * If an interrupt occured we have to clean up the&n;                 * queue&n;                 *&n;                 */
+multiline_comment|/*&n;                 * If queue.status == 1 we where woken up and&n;                 * have to retry else we simply return.&n;                 * If an interrupt occurred we have to clean up the&n;                 * queue&n;                 *&n;                 */
 r_if
 c_cond
 (paren

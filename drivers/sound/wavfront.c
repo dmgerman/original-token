@@ -8,9 +8,24 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
+multiline_comment|/*&n; *&t;This sucks, hopefully it&squot;ll get standardised&n; */
+macro_line|#if defined(__alpha__)
+macro_line|#ifdef __SMP__
+DECL|macro|LOOPS_PER_SEC
+mdefine_line|#define LOOPS_PER_SEC cpu_data[smp_processor_id()].loops_per_sec
+macro_line|#else
+DECL|macro|LOOPS_PER_SEC
+mdefine_line|#define LOOPS_PER_SEC&t;loops_per_sec
+macro_line|#endif
+macro_line|#endif
+macro_line|#if defined(__i386__)
+DECL|macro|LOOPS_PER_SEC
+mdefine_line|#define LOOPS_PER_SEC current_cpu_data.loops_per_sec
+macro_line|#endif
 DECL|macro|MIDI_SYNTH_NAME
 mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;WaveFront MIDI&quot;
 DECL|macro|MIDI_SYNTH_CAPS
@@ -1309,7 +1324,7 @@ op_assign
 id|wait_usecs
 op_star
 (paren
-id|current_cpu_data.loops_per_sec
+id|LOOPS_PER_SEC
 op_div
 l_int|1000000
 )paren

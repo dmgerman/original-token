@@ -394,65 +394,7 @@ suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
 multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
-multiline_comment|/* It is (normally) only counter 0 that presents config problems, so&n;   provide this support function to do the rest of the job.  */
-r_void
-r_inline
-DECL|function|init_pit_rest
-id|init_pit_rest
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#if 0
-multiline_comment|/* Leave refresh timer alone---nobody should depend on a&n;&t;   particular value anyway. */
-id|outb
-c_func
-(paren
-l_int|0x54
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 1: refresh timer */
-id|outb
-c_func
-(paren
-l_int|0x18
-comma
-l_int|0x41
-)paren
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-l_int|0xb6
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 2: speaker */
-id|outb
-c_func
-(paren
-l_int|0x31
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x13
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_RTC
-r_static
-r_inline
 r_void
 DECL|function|rtc_init_pit
 id|rtc_init_pit
@@ -464,7 +406,55 @@ r_int
 r_char
 id|control
 suffix:semicolon
-multiline_comment|/* Setup interval timer if /dev/rtc is being used */
+multiline_comment|/* Turn off RTC interrupts before /dev/rtc is initialized */
+id|control
+op_assign
+id|CMOS_READ
+c_func
+(paren
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|control
+op_and_assign
+op_complement
+(paren
+id|RTC_PIE
+op_or
+id|RTC_AIE
+op_or
+id|RTC_UIE
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|control
+comma
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_INTR_FLAGS
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0x20
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* reserve pit */
+multiline_comment|/* Setup interval timer.  */
 id|outb
 c_func
 (paren
@@ -496,54 +486,29 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* MSB */
-id|request_region
+id|outb
 c_func
 (paren
-l_int|0x40
+l_int|0xb6
 comma
-l_int|0x20
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* pit counter 2: speaker */
+id|outb
+c_func
+(paren
+l_int|0x31
 comma
-l_string|&quot;timer&quot;
+l_int|0x42
 )paren
 suffix:semicolon
-multiline_comment|/* reserve pit */
-multiline_comment|/* Turn off RTC interrupts before /dev/rtc is initialized */
-id|control
-op_assign
-id|CMOS_READ
+id|outb
 c_func
 (paren
-id|RTC_CONTROL
-)paren
-suffix:semicolon
-id|control
-op_and_assign
-op_complement
-(paren
-id|RTC_PIE
-op_or
-id|RTC_AIE
-op_or
-id|RTC_UIE
-)paren
-suffix:semicolon
-id|CMOS_WRITE
-c_func
-(paren
-id|control
+l_int|0x13
 comma
-id|RTC_CONTROL
-)paren
-suffix:semicolon
-id|CMOS_READ
-c_func
-(paren
-id|RTC_INTR_FLAGS
-)paren
-suffix:semicolon
-id|init_pit_rest
-c_func
-(paren
+l_int|0x42
 )paren
 suffix:semicolon
 )brace
@@ -651,6 +616,9 @@ id|RTC_CONTROL
 )paren
 suffix:semicolon
 )brace
+(paren
+r_void
+)paren
 id|CMOS_READ
 c_func
 (paren
@@ -672,7 +640,6 @@ l_string|&quot;timer&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* reserve rtc */
-multiline_comment|/* Turn off the PIT.  */
 id|outb
 c_func
 (paren
@@ -681,7 +648,7 @@ comma
 l_int|0x43
 )paren
 suffix:semicolon
-multiline_comment|/* counter 0: system timer */
+multiline_comment|/* pit counter 0: system timer */
 id|outb
 c_func
 (paren
@@ -698,20 +665,32 @@ comma
 l_int|0x40
 )paren
 suffix:semicolon
-id|init_pit_rest
+id|outb
 c_func
 (paren
+l_int|0xb6
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* pit counter 2: speaker */
+id|outb
+c_func
+(paren
+l_int|0x31
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x13
+comma
+l_int|0x42
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This probably isn&squot;t Right, but it is what the old code did.  */
-macro_line|#if defined(CONFIG_RTC)
-DECL|macro|init_pit
-macro_line|# define init_pit&t;rtc_init_pit
-macro_line|#else
-DECL|macro|init_pit
-macro_line|# define init_pit&t;alpha_mv.init_pit
-macro_line|#endif
 r_void
 DECL|function|time_init
 id|time_init
@@ -757,12 +736,6 @@ suffix:semicolon
 r_int
 r_int
 id|cycle_freq
-suffix:semicolon
-multiline_comment|/* Initialize the timers.  */
-id|init_pit
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 r_do

@@ -1333,7 +1333,7 @@ op_amp
 id|hades_psdm_reg
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Bus error occured while reading the pseudo&n;&t;&t; * DMA register. Time out.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Bus error occurred while reading the pseudo&n;&t;&t; * DMA register. Time out.&n;&t;&t; */
 id|tries
 op_decrement
 suffix:semicolon
