@@ -1410,6 +1410,10 @@ id|jiffies
 OL
 id|timeout
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 id|NCR5380_write
 c_func
@@ -6192,6 +6196,10 @@ op_logical_and
 op_logical_neg
 id|hostdata-&gt;connected
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -6336,6 +6344,10 @@ id|SR_BSY
 op_logical_and
 op_logical_neg
 id|hostdata-&gt;connected
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

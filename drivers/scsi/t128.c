@@ -846,6 +846,10 @@ id|T_STATUS_REG_OFFSET
 op_amp
 id|T_ST_RDY
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#else
 r_while
@@ -860,6 +864,10 @@ id|T_STATUS_REG_OFFSET
 )paren
 op_amp
 id|T_ST_RDY
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -1017,6 +1025,10 @@ id|T_STATUS_REG_OFFSET
 op_amp
 id|T_ST_RDY
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#else
 r_while
@@ -1031,6 +1043,10 @@ id|T_STATUS_REG_OFFSET
 )paren
 op_amp
 id|T_ST_RDY
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_for

@@ -1994,6 +1994,10 @@ c_loop
 (paren
 id|in2000_SCptr
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_for

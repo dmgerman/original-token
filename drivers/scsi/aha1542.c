@@ -3312,6 +3312,10 @@ c_loop
 op_logical_neg
 id|SCpnt-&gt;SCp.Status
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|SCpnt-&gt;result

@@ -2518,6 +2518,10 @@ id|mscp_index
 op_eq
 l_int|0xff
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* else??? */
 r_while
@@ -2550,6 +2554,10 @@ id|mscp_index
 )braket
 op_eq
 l_int|0xff
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* To avoid race conditions, make the code to write to the adapter&n;       atomic.  This simplifies the abort code.  */

@@ -2583,7 +2583,7 @@ suffix:semicolon
 id|outw
 c_func
 (paren
-l_int|0x0d15
+l_int|0x0915
 comma
 id|ioaddr
 op_plus

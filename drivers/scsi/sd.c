@@ -263,6 +263,10 @@ id|target
 dot
 id|device-&gt;busy
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4071,6 +4075,10 @@ op_ne
 l_int|0xfffe
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|the_result
@@ -4233,6 +4241,10 @@ op_ne
 l_int|0xfffe
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|spintime
@@ -4438,6 +4450,10 @@ op_ne
 l_int|0xfffe
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_else

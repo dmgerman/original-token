@@ -2933,6 +2933,10 @@ id|SCpnt-&gt;SCp.phase
 OG
 l_int|0
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* phase counts scbs down to 0 */
 r_return
@@ -3033,8 +3037,12 @@ id|jiffies
 OL
 id|timeout
 )paren
-multiline_comment|/* wait for completion */
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
+multiline_comment|/* wait for completion */
 r_if
 c_cond
 (paren
@@ -3528,8 +3536,12 @@ c_loop
 (paren
 id|icb.phase
 )paren
-multiline_comment|/* wait for completion */
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
+multiline_comment|/* wait for completion */
 id|host-&gt;rev1
 op_assign
 id|icb.primary

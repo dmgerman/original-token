@@ -4755,6 +4755,10 @@ op_ne
 l_int|0xfffe
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_else

@@ -285,7 +285,7 @@ id|stat
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The maximum number of 8390 interrupt serivce routines called per IRQ. */
+multiline_comment|/* The maximum number of 8390 interrupt service routines called per IRQ. */
 DECL|macro|MAX_SERVICE
 mdefine_line|#define MAX_SERVICE 12
 multiline_comment|/* The maximum number of jiffies waited before assuming a Tx failed. */

@@ -1341,6 +1341,10 @@ id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -1608,6 +1612,10 @@ c_loop
 id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_else
@@ -2335,6 +2343,10 @@ c_loop
 id|SCpnt-&gt;request.dev
 op_ne
 l_int|0xfffe
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_else
@@ -5677,6 +5689,10 @@ id|SCpnt-&gt;internal_timeout
 op_amp
 id|IN_ABORT
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -6041,6 +6057,10 @@ c_loop
 id|SCpnt-&gt;internal_timeout
 op_amp
 id|IN_RESET
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

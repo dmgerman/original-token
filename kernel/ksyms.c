@@ -1228,12 +1228,6 @@ c_func
 id|kill_fasync
 )paren
 comma
-id|X
-c_func
-(paren
-id|tty_hung_up_p
-)paren
-comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 multiline_comment|/* Supports loadable scsi drivers */

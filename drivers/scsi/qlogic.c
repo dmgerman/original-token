@@ -1,7 +1,10 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.41&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.43 4/6/95 - kernel 1.2.0+, pcmcia 2.5.4+&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
+multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
+DECL|macro|QL_INT_ACTIVE_HIGH
+mdefine_line|#define QL_INT_ACTIVE_HIGH 2
 multiline_comment|/* Set the following to 1 to enable the use of interrupts.  Note that 0 tends&n;   to be more stable, but slower (or ties up the system more) */
 DECL|macro|QL_USE_IRQ
 mdefine_line|#define QL_USE_IRQ 1
@@ -49,6 +52,10 @@ mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
 multiline_comment|/*----------------------------------------------------------------*/
 macro_line|#ifdef PCMCIA
+DECL|macro|QL_INT_ACTIVE_HIGH
+macro_line|#undef QL_INT_ACTIVE_HIGH
+DECL|macro|QL_INT_ACTIVE_HIGH
+mdefine_line|#define QL_INT_ACTIVE_HIGH 0
 DECL|macro|MODULE
 mdefine_line|#define MODULE
 macro_line|#endif 
@@ -198,7 +205,7 @@ multiline_comment|/* The qlogic card uses two register maps - These macros selec
 DECL|macro|REG0
 mdefine_line|#define REG0 ( outb( inb( qbase + 0xd ) &amp; 0x7f , qbase + 0xd ), outb( 4 , qbase + 0xd ))
 DECL|macro|REG1
-mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb6 , qbase + 0xd ))
+mdefine_line|#define REG1 ( outb( inb( qbase + 0xd ) | 0x80 , qbase + 0xd ), outb( 0xb4 | QL_INT_ACTIVE_HIGH , qbase + 0xd ))
 multiline_comment|/* following is watchdog timeout in microseconds */
 DECL|macro|WATCHDOG
 mdefine_line|#define WATCHDOG 5000000
@@ -845,6 +852,10 @@ id|i
 comma
 id|k
 suffix:semicolon
+id|k
+op_assign
+l_int|0
+suffix:semicolon
 id|i
 op_assign
 id|jiffies
@@ -877,6 +888,10 @@ l_int|4
 op_amp
 l_int|0xe0
 )paren
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -1923,6 +1938,12 @@ op_ne
 l_int|0x20
 )paren
 )paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 id|i
 op_or_assign
 id|inb
@@ -1933,6 +1954,7 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
+)brace
 id|rtrc
 c_func
 (paren
@@ -2254,6 +2276,10 @@ id|qlcmd
 op_ne
 l_int|NULL
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 id|ql_icmd
 c_func
@@ -2538,11 +2564,6 @@ l_int|9
 )paren
 suffix:semicolon
 multiline_comment|/* prescaler */
-id|qlirq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 macro_line|#if QL_RESET_AT_START
 id|outb
 c_func
@@ -2645,7 +2666,9 @@ op_decrement
 id|outb
 c_func
 (paren
-l_int|0xb2
+l_int|0xb0
+op_or
+id|QL_INT_ACTIVE_HIGH
 comma
 id|qbase
 op_plus
@@ -2678,7 +2701,9 @@ multiline_comment|/* find IRQ off */
 id|outb
 c_func
 (paren
-l_int|0xb6
+l_int|0xb4
+op_or
+id|QL_INT_ACTIVE_HIGH
 comma
 id|qbase
 op_plus
@@ -2721,6 +2746,11 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* purge int */
+id|j
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -2731,10 +2761,30 @@ id|i
 op_rshift_assign
 l_int|1
 comma
-id|qlirq
+id|j
 op_increment
 suffix:semicolon
 multiline_comment|/* should check for exactly 1 on */
+id|qlirq
+op_assign
+id|j
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Ql: Using preset IRQ %d&bslash;n&quot;
+comma
+id|qlirq
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2758,22 +2808,6 @@ l_string|&quot;qlogic&quot;
 id|host-&gt;can_queue
 op_assign
 l_int|1
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;Ql: Using preset IRQ of %d&bslash;n&quot;
-comma
-id|qlirq
-)paren
 suffix:semicolon
 macro_line|#endif
 id|request_region
@@ -2829,7 +2863,7 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.41, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
+l_string|&quot;Qlogic Driver version 0.43, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
 comma
 id|qltyp
 comma

@@ -3479,14 +3479,6 @@ op_star
 id|tty
 )paren
 (brace
-id|tty_wait_until_sent
-c_func
-(paren
-id|tty
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|n_tty_flush_buffer
 c_func
 (paren

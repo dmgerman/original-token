@@ -3824,6 +3824,10 @@ id|jiffies
 OL
 id|timeout
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 id|failed
 op_assign
@@ -4314,6 +4318,10 @@ op_logical_and
 id|jiffies
 OL
 id|timeout
+)paren
+id|barrier
+c_func
+(paren
 )paren
 suffix:semicolon
 id|NCR53c7x0_write32

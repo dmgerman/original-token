@@ -24,7 +24,7 @@ multiline_comment|/* Do we perform extra sanity checks on stuff ? */
 multiline_comment|/* #define CONFIG_NE_SANITY */
 multiline_comment|/* Do we implement the read before write bugfix ? */
 multiline_comment|/* #define CONFIG_NE_RW_BUGFIX */
-multiline_comment|/* ---- No user-servicable parts below ---- */
+multiline_comment|/* ---- No user-serviceable parts below ---- */
 r_extern
 r_struct
 id|device
@@ -230,7 +230,7 @@ mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 DECL|macro|NE_RDC_TIMEOUT
-mdefine_line|#define NE_RDC_TIMEOUT&t;0x03&t;/* Max wait in jiffies for Tx RDC */
+mdefine_line|#define NE_RDC_TIMEOUT&t;0x02&t;/* Max wait in jiffies for Tx RDC */
 r_int
 id|ne_probe
 c_func
@@ -2123,10 +2123,6 @@ suffix:semicolon
 id|SLOW_DOWN_IO
 suffix:semicolon
 macro_line|#endif  /* rw_bugfix */
-id|dma_start
-op_assign
-id|jiffies
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -2230,6 +2226,10 @@ id|count
 )paren
 suffix:semicolon
 )brace
+id|dma_start
+op_assign
+id|jiffies
+suffix:semicolon
 macro_line|#ifdef CONFIG_NE_SANITY
 multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here. */
 r_if

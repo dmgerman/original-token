@@ -2881,6 +2881,10 @@ op_logical_neg
 id|abortion_complete
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|aborting

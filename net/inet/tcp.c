@@ -8657,7 +8657,6 @@ l_int|NULL
 (brace
 id|sk-&gt;err
 op_assign
-op_minus
 id|ENOMEM
 suffix:semicolon
 id|newsk-&gt;dead
