@@ -3125,11 +3125,6 @@ r_goto
 id|stop_output
 suffix:semicolon
 )brace
-macro_line|#if 0
-id|scd
-op_assign
-id|scsi_devices
-suffix:semicolon
 id|size
 op_assign
 id|sprintf
@@ -3142,7 +3137,7 @@ comma
 l_string|&quot;Attached devices: %s&bslash;n&quot;
 comma
 (paren
-id|scd
+id|HBA_ptr-&gt;host_queue
 )paren
 ques
 c_cond
@@ -3161,18 +3156,18 @@ id|begin
 op_plus
 id|len
 suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
 id|scd
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|scd-&gt;host
-op_eq
-id|HBA_ptr
+op_assign
+id|HBA_ptr-&gt;host_queue
+suffix:semicolon
+id|scd
+suffix:semicolon
+id|scd
+op_assign
+id|scd-&gt;next
 )paren
 (brace
 id|proc_print_scsidevice
@@ -3228,12 +3223,6 @@ r_goto
 id|stop_output
 suffix:semicolon
 )brace
-id|scd
-op_assign
-id|scd-&gt;next
-suffix:semicolon
-)brace
-macro_line|#endif
 id|stop_output
 suffix:colon
 id|DBG

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Sysctl operations for Coda filesystem&n; * Original version: (C) 1996 P. Braam and M. Callahan&n; * Rewritten for Linux 2.1. (C) 1997 Carnegie Mellon University&n; * &n; * Carnegie Mellon encourages users to contribute improvements to&n; * the Coda project. Contact Peter Braam (coda@cs.cmu.edu).&n; */
 multiline_comment|/* sysctl entries for Coda! */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -12,36 +13,27 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
-macro_line|#include &lt;linux/coda_namecache.h&gt;
+macro_line|#include &lt;linux/coda.h&gt;
+macro_line|#include &lt;linux/coda_linux.h&gt;
+macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_psdev.h&gt;
+macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_sysctl.h&gt;
 r_extern
 r_int
 id|coda_debug
 suffix:semicolon
-r_extern
-r_int
-id|cfsnc_use
-suffix:semicolon
+multiline_comment|/* extern int cfsnc_use; */
 r_extern
 r_int
 id|coda_print_entry
 suffix:semicolon
-r_extern
-r_int
-id|cfsnc_flushme
-suffix:semicolon
+multiline_comment|/* extern int cfsnc_flushme; */
 r_extern
 r_int
 id|cfsnc_procsize
 suffix:semicolon
-r_extern
-r_void
-id|cfsnc_flush
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+multiline_comment|/* extern void cfsnc_flush(void); */
 r_void
 id|coda_sysctl_init
 c_func
@@ -94,15 +86,15 @@ suffix:semicolon
 DECL|macro|FS_CODA
 mdefine_line|#define FS_CODA         1       /* Coda file system */
 DECL|macro|CODA_DEBUG
-mdefine_line|#define CODA_DEBUG  &t;1&t;    /* control debugging */
+mdefine_line|#define CODA_DEBUG  &t; 1&t; /* control debugging */
 DECL|macro|CODA_ENTRY
-mdefine_line|#define CODA_ENTRY&t;    2       /* control enter/leave pattern */
-DECL|macro|CODA_FLUSH
-mdefine_line|#define CODA_FLUSH      3       /* flush the cache on next lookup */
+mdefine_line|#define CODA_ENTRY&t; 2       /* control enter/leave pattern */
+DECL|macro|CODA_TIMEOUT
+mdefine_line|#define CODA_TIMEOUT    3       /* timeout on upcalls to become intrble */
 DECL|macro|CODA_MC
-mdefine_line|#define CODA_MC         4       /* use/do not use the minicache */
-DECL|macro|CODA_PROCSIZE
-mdefine_line|#define CODA_PROCSIZE   5       /* resize the cache on next lookup */
+mdefine_line|#define CODA_MC         4       /* use/do not use the access cache */
+DECL|macro|CODA_HARD
+mdefine_line|#define CODA_HARD       5       /* mount type &quot;hard&quot; or &quot;soft&quot; */
 DECL|variable|coda_table
 r_static
 id|ctl_table
@@ -156,10 +148,10 @@ comma
 (brace
 id|CODA_MC
 comma
-l_string|&quot;minicache&quot;
+l_string|&quot;accesscache&quot;
 comma
 op_amp
-id|cfsnc_use
+id|coda_access_cache
 comma
 r_sizeof
 (paren
@@ -175,12 +167,12 @@ id|coda_dointvec
 )brace
 comma
 (brace
-id|CODA_FLUSH
+id|CODA_TIMEOUT
 comma
-l_string|&quot;flushme&quot;
+l_string|&quot;timeout&quot;
 comma
 op_amp
-id|cfsnc_flushme
+id|coda_timeout
 comma
 r_sizeof
 (paren
@@ -196,12 +188,12 @@ id|coda_dointvec
 )brace
 comma
 (brace
-id|CODA_PROCSIZE
+id|CODA_HARD
 comma
-l_string|&quot;resize&quot;
+l_string|&quot;hard&quot;
 comma
 op_amp
-id|cfsnc_procsize
+id|coda_hard
 comma
 r_sizeof
 (paren

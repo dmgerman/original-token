@@ -9,10 +9,10 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/coda_namecache.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 multiline_comment|/* pioctl ops */
 r_static

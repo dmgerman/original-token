@@ -1,8 +1,5 @@
 multiline_comment|/*&n; *  hosts.c Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to lowlevel SCSI driver interface&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; */
 multiline_comment|/*&n; *  This file contains the medium level SCSI&n; *  host interface initialization, as well as the scsi_hosts array of SCSI&n; *  hosts currently present in the system.&n; */
-multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
-DECL|macro|_SCSI_SYMS_VER_
-mdefine_line|#define _SCSI_SYMS_VER_
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -13,6 +10,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL
 DECL|macro|NULL
@@ -529,7 +529,20 @@ op_or
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|retval-&gt;host_active
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|retval-&gt;host_busy
+op_assign
+l_int|0
+suffix:semicolon
+id|retval-&gt;host_failed
 op_assign
 l_int|0
 suffix:semicolon
@@ -621,6 +634,29 @@ suffix:semicolon
 id|retval-&gt;next
 op_assign
 l_int|NULL
+suffix:semicolon
+id|retval-&gt;in_recovery
+op_assign
+l_int|0
+suffix:semicolon
+id|retval-&gt;ehandler
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Initial value until the thing starts up. */
+id|retval-&gt;eh_notify
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Who we notify when we exit. */
+multiline_comment|/*&n;     * Initialize the fields used for mid-level queueing.&n;     */
+id|retval-&gt;pending_commands
+op_assign
+l_int|NULL
+suffix:semicolon
+id|retval-&gt;host_busy
+op_assign
+id|FALSE
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -948,6 +984,60 @@ comma
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/*&n;         * Now start the error recovery thread for the host.&n;         */
+r_if
+c_cond
+(paren
+id|shpnt-&gt;hostt-&gt;use_new_eh_code
+)paren
+(brace
+r_struct
+id|semaphore
+id|sem
+op_assign
+id|MUTEX_LOCKED
+suffix:semicolon
+id|shpnt-&gt;eh_notify
+op_assign
+op_amp
+id|sem
+suffix:semicolon
+id|kernel_thread
+c_func
+(paren
+(paren
+r_int
+(paren
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+)paren
+id|scsi_error_handler
+comma
+(paren
+r_void
+op_star
+)paren
+id|shpnt
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/*&n;             * Now wait for the kernel error thread to initialize itself&n;             * as it might be needed when we scan the bus.&n;             */
+id|down
+(paren
+op_amp
+id|sem
+)paren
+suffix:semicolon
+id|shpnt-&gt;eh_notify
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 id|printk
 (paren

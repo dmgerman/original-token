@@ -1222,12 +1222,6 @@ id|es-&gt;s_r_blocks_count
 )paren
 op_logical_and
 (paren
-op_logical_neg
-id|fsuser
-c_func
-(paren
-)paren
-op_logical_and
 (paren
 id|sb-&gt;u.ext2_sb.s_resuid
 op_ne
@@ -1244,6 +1238,12 @@ id|in_group_p
 (paren
 id|sb-&gt;u.ext2_sb.s_resgid
 )paren
+)paren
+op_logical_and
+op_logical_neg
+id|fsuser
+c_func
+(paren
 )paren
 )paren
 )paren

@@ -3737,7 +3737,7 @@ l_int|0
 r_if
 c_cond
 (paren
-id|devc-&gt;bits
+id|bits
 op_eq
 id|AFMT_U8
 op_logical_or

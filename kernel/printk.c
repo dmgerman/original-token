@@ -1409,6 +1409,17 @@ l_int|0
 r_if
 c_cond
 (paren
+id|console-&gt;index
+OL
+l_int|0
+)paren
+id|console-&gt;index
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|console-&gt;setup
 op_eq
 l_int|NULL

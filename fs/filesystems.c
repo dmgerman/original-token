@@ -144,6 +144,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_CODA_FS
+id|init_coda_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SMB_FS
 id|init_smb_fs
 c_func

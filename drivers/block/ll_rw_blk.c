@@ -167,9 +167,8 @@ id|dev
 )braket
 )paren
 r_return
-l_int|244
+id|MAX_SECTORS
 suffix:semicolon
-multiline_comment|/* 254? */
 r_return
 id|max_sectors
 (braket
@@ -3038,6 +3037,10 @@ suffix:semicolon
 id|dev-&gt;plug.next
 op_assign
 l_int|NULL
+suffix:semicolon
+id|dev-&gt;plug_tq.sync
+op_assign
+l_int|0
 suffix:semicolon
 id|dev-&gt;plug_tq.routine
 op_assign

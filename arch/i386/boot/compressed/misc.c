@@ -1559,7 +1559,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;Uncompressing Linux...&quot;
+l_string|&quot;Uncompressing Linux... &quot;
 )paren
 suffix:semicolon
 id|gunzip
@@ -1570,7 +1570,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;done.&bslash;nNow booting the kernel&bslash;n&quot;
+l_string|&quot;Ok, booting the kernel.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

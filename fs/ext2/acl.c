@@ -85,18 +85,6 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-multiline_comment|/*&n;&t; * Special case, access is always granted for root&n;&t; */
-r_if
-c_cond
-(paren
-id|fsuser
-c_func
-(paren
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;&t; * If no ACL, checks using the file mode&n;&t; */
 r_else
 r_if
@@ -123,6 +111,7 @@ id|mode
 op_rshift_assign
 l_int|3
 suffix:semicolon
+multiline_comment|/*&n;&t; * Access is always granted for root. We now check last,&n;         * though, for BSD process accounting correctness&n;&t; */
 r_if
 c_cond
 (paren
@@ -136,6 +125,11 @@ id|S_IRWXO
 )paren
 op_eq
 id|mask
+)paren
+op_logical_or
+id|fsuser
+c_func
+(paren
 )paren
 )paren
 r_return

@@ -5,6 +5,7 @@ r_int
 id|init_ntfs_fs
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

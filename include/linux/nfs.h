@@ -79,6 +79,11 @@ id|NFSERR_EXIST
 op_assign
 l_int|17
 comma
+DECL|enumerator|NFSERR_XDEV
+id|NFSERR_XDEV
+op_assign
+l_int|18
+comma
 DECL|enumerator|NFSERR_NODEV
 id|NFSERR_NODEV
 op_assign

@@ -1020,11 +1020,6 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|old_info.entry.uid
@@ -1032,6 +1027,11 @@ op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|old_dir-&gt;i_uid
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
 )paren
 (brace
 multiline_comment|/* Does new_name already exist? */
@@ -1071,11 +1071,6 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|new_info.entry.uid
@@ -1083,6 +1078,11 @@ op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|new_dir-&gt;i_uid
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|PRINTK
@@ -2781,11 +2781,6 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|sdir-&gt;i_uid
@@ -2793,6 +2788,11 @@ op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|dir-&gt;i_uid
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
 )paren
 (brace
 r_if
@@ -3090,11 +3090,6 @@ op_amp
 id|S_ISVTX
 )paren
 op_logical_or
-id|fsuser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|info.entry.uid
@@ -3102,6 +3097,11 @@ op_logical_or
 id|current-&gt;fsuid
 op_eq
 id|dir-&gt;i_uid
+op_logical_or
+id|fsuser
+c_func
+(paren
+)paren
 )paren
 (brace
 r_if

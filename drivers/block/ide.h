@@ -1073,10 +1073,17 @@ op_star
 id|p
 )paren
 suffix:semicolon
+DECL|variable|proc_ide_read_capacity
+id|read_proc_t
+id|proc_ide_read_capacity
+suffix:semicolon
 DECL|variable|proc_ide_read_geometry
 id|read_proc_t
 id|proc_ide_read_geometry
 suffix:semicolon
+multiline_comment|/*&n; * Standard exit stuff:&n; */
+DECL|macro|PROC_IDE_READ_RETURN
+mdefine_line|#define PROC_IDE_READ_RETURN(page,start,off,count,eof,len) &bslash;&n;{&t;&t;&t;&t;&t;&bslash;&n;&t;len -= off;&t;&t;&t;&bslash;&n;&t;if (len &lt; count) {&t;&t;&bslash;&n;&t;&t;*eof = 1;&t;&t;&bslash;&n;&t;&t;if (len &lt;= 0)&t;&t;&bslash;&n;&t;&t;&t;return 0;&t;&bslash;&n;&t;} else&t;&t;&t;&t;&bslash;&n;&t;&t;len = count;&t;&t;&bslash;&n;&t;*start = page + off;&t;&t;&bslash;&n;&t;return len;&t;&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * Subdrivers support.&n; */
 DECL|macro|IDE_SUBDRIVER_VERSION
 mdefine_line|#define IDE_SUBDRIVER_VERSION&t;1

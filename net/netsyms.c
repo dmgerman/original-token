@@ -36,6 +36,7 @@ macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
@@ -130,6 +131,29 @@ id|sock_unregister
 )paren
 suffix:semicolon
 multiline_comment|/* Socket layer support routines */
+DECL|variable|sk_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sk_alloc
+)paren
+suffix:semicolon
+DECL|variable|sk_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sk_free
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+DECL|variable|sk_run_filter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sk_run_filter
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|memcpy_fromiovec
 id|EXPORT_SYMBOL
 c_func
@@ -184,20 +208,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sock_recvmsg
-)paren
-suffix:semicolon
-DECL|variable|sk_alloc
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sk_alloc
-)paren
-suffix:semicolon
-DECL|variable|sk_free
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sk_free
 )paren
 suffix:semicolon
 DECL|variable|sock_wake_async

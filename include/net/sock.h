@@ -39,6 +39,9 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
 macro_line|#include &lt;net/dn.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_FILTER
+macro_line|#include &lt;linux/filter.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
 DECL|struct|unix_opt
@@ -1022,19 +1025,19 @@ r_struct
 id|ucred
 id|peercred
 suffix:semicolon
-multiline_comment|/* What the user has tried to set with the security API */
-DECL|member|authentication
+macro_line|#ifdef CONFIG_FILTER
+multiline_comment|/* Socket Filtering Instructions */
+DECL|member|filter
 r_int
-id|authentication
+id|filter
 suffix:semicolon
-DECL|member|encryption
-r_int
-id|encryption
+DECL|member|filter_data
+r_struct
+id|sock_filter
+op_star
+id|filter_data
 suffix:semicolon
-DECL|member|encrypt_net
-r_int
-id|encrypt_net
-suffix:semicolon
+macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. &n; */
 r_union
 (brace
@@ -2701,6 +2704,72 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+multiline_comment|/*&n; * Run the filter code and then cut skb-&gt;data to correct size returned by&n; * sk_run_filter. If pkt_len is 0 we toss packet. If skb-&gt;len is smaller&n; * than pkt_len we keep whole skb-&gt;data.&n; */
+DECL|function|sk_filter
+r_extern
+id|__inline__
+r_int
+id|sk_filter
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|sock_filter
+op_star
+id|filter
+comma
+r_int
+id|flen
+)paren
+(brace
+r_int
+id|pkt_len
+suffix:semicolon
+id|pkt_len
+op_assign
+id|sk_run_filter
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+comma
+id|filter
+comma
+id|flen
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pkt_len
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Toss Packet */
+r_else
+id|skb_trim
+c_func
+(paren
+id|skb
+comma
+id|pkt_len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_FILTER */
 multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as it&squot;s very short and called for pretty much every&n; *&t;packet ever received.&n; */
 DECL|function|skb_set_owner_w
 r_extern
@@ -2818,6 +2887,33 @@ comma
 id|sk
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+r_if
+c_cond
+(paren
+id|sk-&gt;filter
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk_filter
+c_func
+(paren
+id|skb
+comma
+id|sk-&gt;filter_data
+comma
+id|sk-&gt;filter
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Toss packet */
+)brace
+macro_line|#endif /* CONFIG_FILTER */
 id|skb_queue_tail
 c_func
 (paren

@@ -1565,7 +1565,7 @@ comma
 id|BT848_CAP_CTL
 )paren
 suffix:semicolon
-singleline_comment|// Dithering looks much better in this mode
+multiline_comment|/* Dithering looks much better in this mode */
 r_break
 suffix:semicolon
 r_case
@@ -3382,7 +3382,7 @@ id|BT848_O_CONTROL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Cliprect -&gt; risc table.&n; *&n; *&t;FIXME: This is generating wrong code when we have some kinds of&n; *&t;rectangle lists. I don&squot;t currently understand why.&n; */
+multiline_comment|/*&n; *&t;Cliprect -&gt; risc table.&n; *&n; *&t;FIXME: This is generating wrong code when we have some kinds of&n; *&t;rectangle lists. If you generate overlapped rectangles then it&n; *&t;gets a bit confused. Since we add the frame buffer clip rectangles&n; *&t;we need to fix this. Better yet to rewrite this function.&n; */
 DECL|function|write_risc_data
 r_static
 r_void
@@ -3759,6 +3759,7 @@ id|cur-&gt;next
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;Fixme - we have to handle overlapped rectangles&n;&t;&t; *&t;here, but the overlap might be partial&n;&t;&t; */
 multiline_comment|/* add rect to second (x-sorted) list if rect.y == y  */
 r_if
 c_cond
@@ -4821,7 +4822,7 @@ c_cond
 id|v.mode
 op_ne
 id|VIDEO_MODE_PAL
-op_logical_or
+op_logical_and
 id|v.mode
 op_ne
 id|VIDEO_MODE_NTSC
@@ -5852,6 +5853,37 @@ id|vp.flags
 op_or_assign
 id|VIDEO_AUDIO_MUTABLE
 suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|vp.name
+comma
+l_string|&quot;TV&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+op_amp
+id|v
+comma
+id|arg
+comma
+r_sizeof
+(paren
+id|v
+)paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

@@ -78,6 +78,6 @@ mdefine_line|#define WD7000_Q    16
 DECL|macro|WD7000_SG
 mdefine_line|#define WD7000_SG   16
 DECL|macro|WD7000
-mdefine_line|#define WD7000 { NULL, NULL,            &bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;wd7000_command,&t;&t;&t;&bslash;&n;&t;wd7000_queuecommand,&t;&t;&bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define WD7000 {&t;&t;&t;&t;&t;   &bslash;&n;&t;name:              &quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;detect:            wd7000_detect,                  &bslash;&n;&t;command:           wd7000_command,&t;&t;   &bslash;&n;&t;queuecommand:      wd7000_queuecommand,&t;&t;   &bslash;&n;&t;abort:             wd7000_abort,&t;&t;   &bslash;&n;&t;reset:             wd7000_reset,&t;&t;   &bslash;&n;&t;bios_param:        wd7000_biosparam,               &bslash;&n;&t;can_queue:         WD7000_Q,&t;&t;&t;   &bslash;&n;&t;this_id:           7,&t;&t;&t;&t;   &bslash;&n;&t;sg_tablesize:      WD7000_SG,&t;&t;&t;   &bslash;&n;&t;cmd_per_lun:       1,&t;&t;&t;&t;   &bslash;&n;&t;unchecked_isa_dma: 1,&t;&t;&t;&t;   &bslash;&n;&t;use_clustering:    ENABLE_CLUSTERING}
 macro_line|#endif
 eof

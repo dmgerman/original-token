@@ -3293,6 +3293,17 @@ l_int|0
 suffix:semicolon
 id|tmp.f_namelen
 op_assign
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|options.isvfat
+ques
+c_cond
+l_int|260
+suffix:colon
 l_int|12
 suffix:semicolon
 r_return

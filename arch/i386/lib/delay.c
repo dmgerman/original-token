@@ -4,13 +4,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#endif
-macro_line|#ifdef __SMP__
-DECL|macro|__udelay_val
-mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
-macro_line|#else
-DECL|macro|__udelay_val
-mdefine_line|#define __udelay_val loops_per_sec
-macro_line|#endif
 DECL|function|__delay
 r_void
 id|__delay
@@ -66,7 +59,7 @@ id|xloops
 comma
 l_string|&quot;0&quot;
 (paren
-id|__udelay_val
+id|current_cpu_data.loops_per_sec
 )paren
 suffix:colon
 l_string|&quot;ax&quot;

@@ -912,6 +912,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * FIXME(eric) we need to sync the physical devices here. &n;&t; * This is because some (scsi) controllers have huge amounts of&n;&t; * cache onboard (hundreds of Mb), and we need to instruct&n;&t; * them to commit all of the dirty memory to disk, and we should&n;&t; * not return until this has happened.&n;&t; *&n;&t; * This would need to get implemented by going through the assorted&n;&t; * layers so that each block major number can be synced, and this&n;&t; * would call down into the upper and mid-layer scsi.&n;&t; */
 )brace
 DECL|function|fsync_dev
 r_int

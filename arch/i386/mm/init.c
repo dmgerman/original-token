@@ -426,17 +426,6 @@ DECL|macro|X86_FEATURE_MCA
 mdefine_line|#define X86_FEATURE_MCA&t;&t;0x4000&t;&t;/* Machine Check Architecture */
 DECL|macro|X86_FEATURE_CMOV
 mdefine_line|#define X86_FEATURE_CMOV&t;0x8000&t;&t;/* Cmov/fcomi */
-macro_line|#ifdef GAS_KNOWS_CR4
-DECL|macro|read_cr4
-mdefine_line|#define read_cr4&t;&quot;movl %%cr4,%%eax&quot;
-DECL|macro|write_cr4
-mdefine_line|#define write_cr4&t;&quot;movl %%eax,%%cr4&quot;
-macro_line|#else
-DECL|macro|read_cr4
-mdefine_line|#define read_cr4&t;&quot;.byte 0x0f,0x20,0xe0&quot;
-DECL|macro|write_cr4
-mdefine_line|#define write_cr4&t;&quot;.byte 0x0f,0x22,0xe0&quot;
-macro_line|#endif
 multiline_comment|/*&n; * Save the cr4 feature set we&squot;re using (ie&n; * Pentium 4MB enable and PPro Global page&n; * enable), so that any CPU&squot;s that boot up&n; * after us can get the correct flags.&n; */
 DECL|variable|__initdata
 r_int
@@ -465,10 +454,9 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-id|read_cr4
-l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%cr4,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;orl %0,%%eax&bslash;n&bslash;t&quot;
-id|write_cr4
+l_string|&quot;movl %%eax,%%cr4&bslash;n&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;irg&quot;
@@ -517,22 +505,6 @@ r_int
 id|address
 suffix:semicolon
 multiline_comment|/*&n; * Physical page 0 is special; it&squot;s not touched by Linux since BIOS&n; * and SMM (for laptops with [34]86/SL chips) may need it.  It is read&n; * and write protected to detect null pointer references in the&n; * kernel.&n; * It may also hold the MP configuration table when we are booting SMP.&n; */
-macro_line|#if 0
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-l_int|0
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef __SMP__
 r_if
 c_cond
@@ -576,12 +548,6 @@ multiline_comment|/* Scan the 64K of bios */
 )brace
 multiline_comment|/*&n;&t; *&t;If it is an SMP machine we should know now, unless the configuration&n;&t; *&t;is in an EISA/MCA bus machine with an extended bios data area. I don&squot;t&n;&t; *&t;have such a machine so someone else can fill in the check of the EBDA&n;&t; *&t;here.&n;&t; */
 multiline_comment|/*&t;smp_alloc_memory(8192); */
-macro_line|#endif
-macro_line|#ifdef TEST_VERIFY_AREA
-id|wp_works_ok
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#endif
 id|start_mem
 op_assign
@@ -628,7 +594,7 @@ multiline_comment|/*&n;&t;&t; * If we&squot;re running on a Pentium CPU, we can 
 r_if
 c_cond
 (paren
-id|x86_capability
+id|boot_cpu_data.x86_capability
 op_amp
 id|X86_FEATURE_PSE
 )paren
@@ -643,7 +609,7 @@ c_func
 id|X86_CR4_PSE
 )paren
 suffix:semicolon
-id|wp_works_ok
+id|boot_cpu_data.wp_works_ok
 op_assign
 l_int|1
 suffix:semicolon
@@ -663,7 +629,7 @@ multiline_comment|/* Make it &quot;global&quot; too if supported */
 r_if
 c_cond
 (paren
-id|x86_capability
+id|boot_cpu_data.x86_capability
 op_amp
 id|X86_FEATURE_PGE
 )paren
@@ -958,12 +924,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|wp_works_ok
+id|boot_cpu_data.wp_works_ok
 OL
 l_int|0
 )paren
 (brace
-id|wp_works_ok
+id|boot_cpu_data.wp_works_ok
 op_assign
 l_int|0
 suffix:semicolon
@@ -986,7 +952,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Ok.&bslash;n&quot;
+l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1431,7 +1397,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|wp_works_ok
+id|boot_cpu_data.wp_works_ok
 OL
 l_int|0
 )paren

@@ -2,7 +2,7 @@ macro_line|#ifndef _LINUX_TIMER_H
 DECL|macro|_LINUX_TIMER_H
 mdefine_line|#define _LINUX_TIMER_H
 multiline_comment|/*&n; * DON&squot;T CHANGE THESE!! Most of them are hardcoded into some assembly language&n; * as well as being defined here.&n; */
-multiline_comment|/*&n; * The timers are:&n; *&n; * BLANK_TIMER&t;&t;console screen-saver timer&n; *&n; * BEEP_TIMER&t;&t;console beep timer&n; *&n; * RS_TIMER&t;&t;timer for the RS-232 ports&n; *&n; * SWAP_TIMER&t;&t;timer for the background pageout daemon&n; * &n; * HD_TIMER&t;&t;harddisk timer&n; *&n; * HD_TIMER2&t;&t;(atdisk2 patches)&n; *&n; * FLOPPY_TIMER&t;&t;floppy disk timer (not used right now)&n; * &n; * SCSI_TIMER&t;&t;scsi.c timeout timer&n; *&n; * NET_TIMER&t;&t;tcp/ip timeout timer&n; *&n; * COPRO_TIMER&t;&t;387 timeout for buggy hardware..&n; *&n; * QIC02_TAPE_TIMER&t;timer for QIC-02 tape driver (it&squot;s not hardcoded)&n; *&n; * MCD_TIMER&t;&t;Mitsumi CD-ROM Timer&n; *&n; * GSCD_TIMER&t;&t;Goldstar CD-ROM Timer&n; *&n; */
+multiline_comment|/*&n; * The timers are:&n; *&n; * BLANK_TIMER&t;&t;console screen-saver timer&n; *&n; * BEEP_TIMER&t;&t;console beep timer&n; *&n; * RS_TIMER&t;&t;timer for the RS-232 ports&n; *&n; * SWAP_TIMER&t;&t;timer for the background pageout daemon&n; * &n; * HD_TIMER&t;&t;harddisk timer&n; *&n; * HD_TIMER2&t;&t;(atdisk2 patches)&n; *&n; * FLOPPY_TIMER&t;&t;floppy disk timer (not used right now)&n; * &n; * NET_TIMER&t;&t;tcp/ip timeout timer&n; *&n; * COPRO_TIMER&t;&t;387 timeout for buggy hardware..&n; *&n; * QIC02_TAPE_TIMER&t;timer for QIC-02 tape driver (it&squot;s not hardcoded)&n; *&n; * MCD_TIMER&t;&t;Mitsumi CD-ROM Timer&n; *&n; * GSCD_TIMER&t;&t;Goldstar CD-ROM Timer&n; *&n; */
 DECL|macro|BLANK_TIMER
 mdefine_line|#define BLANK_TIMER&t;0
 DECL|macro|BEEP_TIMER
@@ -15,8 +15,6 @@ DECL|macro|HD_TIMER
 mdefine_line|#define HD_TIMER&t;16
 DECL|macro|FLOPPY_TIMER
 mdefine_line|#define FLOPPY_TIMER&t;17
-DECL|macro|SCSI_TIMER
-mdefine_line|#define SCSI_TIMER &t;18
 DECL|macro|NET_TIMER
 mdefine_line|#define NET_TIMER&t;19
 DECL|macro|SOUND_TIMER

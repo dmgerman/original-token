@@ -145,7 +145,7 @@ macro_line|#endif
 multiline_comment|/* &n; * I hadn&squot;t thought of this with the earlier drivers - but to prevent&n; * macro definition conflicts, we shouldn&squot;t define all of the internal&n; * macros when this is being used solely for the host stub.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 DECL|macro|TRANTOR_T128
-mdefine_line|#define TRANTOR_T128 {NULL, NULL, NULL, NULL, &bslash;&n;&t;&quot;Trantor T128/T128F/T228&quot;, t128_detect, NULL,  &bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, t128_queue_command, t128_abort, t128_reset, NULL, &t;&bslash;&n;&t;t128_biosparam, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ CAN_QUEUE, /* id */ 7, SG_ALL,&t;&t;&t;&bslash;&n;&t;/* cmd per lun */ CMD_PER_LUN , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define TRANTOR_T128 {&t;&t;&t;&t;&t;&bslash;&n;&t;name:           &quot;Trantor T128/T128F/T228&quot;,&t;&bslash;&n;&t;detect:         t128_detect,&t;&t;&t;&bslash;&n;&t;queuecommand:   t128_queue_command,&t;&t;&bslash;&n;&t;abort:          t128_abort,&t;&t;&t;&bslash;&n;&t;reset:          t128_reset,&t;&t;&t;&bslash;&n;&t;bios_param:     t128_biosparam,&t;&t;&t;&bslash;&n;&t;can_queue:      CAN_QUEUE,&t;&t;&t;&bslash;&n;        this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;&t;cmd_per_lun:    CMD_PER_LUN,&t;&t;&t;&bslash;&n;&t;use_clustering: DISABLE_CLUSTERING}
 macro_line|#endif
 macro_line|#ifndef HOSTS_C
 DECL|macro|NCR5380_implementation_fields

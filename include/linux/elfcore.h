@@ -78,12 +78,14 @@ id|pr_cursig
 suffix:semicolon
 multiline_comment|/* Current signal */
 DECL|member|pr_sigpend
-id|sigset_t
+r_int
+r_int
 id|pr_sigpend
 suffix:semicolon
 multiline_comment|/* Set of pending signals */
 DECL|member|pr_sighold
-id|sigset_t
+r_int
+r_int
 id|pr_sighold
 suffix:semicolon
 multiline_comment|/* Set of held signals */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Direcotry operations for Coda filesystem&n; * Original version: (C) 1996 P. Braam and M. Callahan&n; * Rewritten for Linux 2.1. (C) 1997 Carnegie Mellon University&n; * &n; * Carnegie Mellon encourages users to contribute improvements to&n; * the Coda project. Contact Peter Braam (coda@cs.cmu.edu).&n; */
+multiline_comment|/*&n; * Directory operations for Coda filesystem&n; * Original version: (C) 1996 P. Braam and M. Callahan&n; * Rewritten for Linux 2.1. (C) 1997 Carnegie Mellon University&n; * &n; * Carnegie Mellon encourages users to contribute improvements to&n; * the Coda project. Contact Peter Braam (coda@cs.cmu.edu).&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cnode.h&gt;
-macro_line|#include &lt;linux/coda_namecache.h&gt;
+macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* dir inode-ops */
 r_static
 r_int
@@ -207,6 +207,37 @@ id|filldir_t
 id|filldir
 )paren
 suffix:semicolon
+r_int
+id|coda_fsync
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+suffix:semicolon
+DECL|variable|coda_dentry_operations
+r_struct
+id|dentry_operations
+id|coda_dentry_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+comma
+multiline_comment|/* hash */
+l_int|NULL
+comma
+id|coda_dentry_delete
+)brace
+suffix:semicolon
 DECL|variable|coda_dir_inode_operations
 r_struct
 id|inode_operations
@@ -307,9 +338,14 @@ multiline_comment|/* open */
 id|coda_release
 comma
 multiline_comment|/* release */
-l_int|NULL
+id|coda_fsync
 comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* inode operations for directories */
@@ -335,9 +371,6 @@ r_struct
 id|cnode
 op_star
 id|dircnp
-comma
-op_star
-id|savedcnp
 suffix:semicolon
 r_struct
 id|inode
@@ -350,6 +383,12 @@ r_struct
 id|ViceFid
 id|resfid
 suffix:semicolon
+r_int
+id|dropme
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* to indicate entry should not be cached */
 r_int
 id|type
 suffix:semicolon
@@ -442,7 +481,7 @@ id|CFS_MAXNAMLEN
 id|printk
 c_func
 (paren
-l_string|&quot;name too long: lookup, %s (%s)&bslash;n&quot;
+l_string|&quot;name too long: lookup, %s (%*s)&bslash;n&quot;
 comma
 id|coda_f2s
 c_func
@@ -452,6 +491,8 @@ id|dircnp-&gt;c_fid
 comma
 id|str
 )paren
+comma
+id|length
 comma
 id|name
 )paren
@@ -466,7 +507,9 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;lookup: %s in %s&bslash;n&quot;
+l_string|&quot;lookup: %*s in %s&bslash;n&quot;
+comma
+id|length
 comma
 id|name
 comma
@@ -490,24 +533,12 @@ c_func
 id|dir
 )paren
 op_logical_and
-(paren
-id|CFS_CONTROLLEN
-op_eq
-id|length
-)paren
-op_logical_and
-(paren
-id|strncmp
+id|coda_iscontrol
 c_func
 (paren
 id|name
 comma
-id|CFS_CONTROL
-comma
-id|CFS_CONTROLLEN
-)paren
-op_eq
-l_int|0
+id|length
 )paren
 )paren
 (brace
@@ -527,7 +558,7 @@ c_func
 (paren
 id|D_SPECIAL
 comma
-l_string|&quot;Lookup on CTL object; iput of ino %ld, count %d&bslash;n&quot;
+l_string|&quot;Lookup on CTL object; dir ino %ld, count %d&bslash;n&quot;
 comma
 id|dir-&gt;i_ino
 comma
@@ -538,74 +569,6 @@ r_goto
 m_exit
 suffix:semicolon
 )brace
-multiline_comment|/* do we have it already in name cache */
-r_if
-c_cond
-(paren
-(paren
-id|savedcnp
-op_assign
-id|cfsnc_lookup
-c_func
-(paren
-id|dircnp
-comma
-id|name
-comma
-id|length
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|CHECK_CNODE
-c_func
-(paren
-id|savedcnp
-)paren
-suffix:semicolon
-id|res_inode
-op_assign
-id|CTOI
-c_func
-(paren
-id|savedcnp
-)paren
-suffix:semicolon
-id|iget
-c_func
-(paren
-id|res_inode-&gt;i_sb
-comma
-id|res_inode-&gt;i_ino
-)paren
-suffix:semicolon
-id|CDEBUG
-c_func
-(paren
-id|D_INODE
-comma
-l_string|&quot;cache hit for ino: %ld, count: %d!&bslash;n&quot;
-comma
-id|res_inode-&gt;i_ino
-comma
-id|res_inode-&gt;i_count
-)paren
-suffix:semicolon
-r_goto
-m_exit
-suffix:semicolon
-)brace
-id|CDEBUG
-c_func
-(paren
-id|D_INODE
-comma
-l_string|&quot;name not found in cache!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* name not cached */
 id|error
 op_assign
 id|venus_lookup
@@ -643,8 +606,27 @@ c_cond
 (paren
 op_logical_neg
 id|error
+op_logical_or
+(paren
+id|error
+op_eq
+op_minus
+id|CFS_NOCACHE
+)paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|error
+op_eq
+op_minus
+id|CFS_NOCACHE
+)paren
+id|dropme
+op_assign
+l_int|1
+suffix:semicolon
 id|error
 op_assign
 id|coda_cnode_make
@@ -666,50 +648,7 @@ id|error
 )paren
 r_return
 op_minus
-id|EACCES
-suffix:semicolon
-multiline_comment|/* put the thing in the name cache */
-id|savedcnp
-op_assign
-id|ITOC
-c_func
-(paren
-id|res_inode
-)paren
-suffix:semicolon
-id|CHECK_CNODE
-c_func
-(paren
-id|savedcnp
-)paren
-suffix:semicolon
-id|CDEBUG
-c_func
-(paren
-id|D_INODE
-comma
-l_string|&quot;ABOUT to enter into cache.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|cfsnc_enter
-c_func
-(paren
-id|dircnp
-comma
-id|name
-comma
-id|length
-comma
-id|savedcnp
-)paren
-suffix:semicolon
-id|CDEBUG
-c_func
-(paren
-id|D_INODE
-comma
-l_string|&quot;entered in cache&bslash;n&quot;
-)paren
+id|error
 suffix:semicolon
 )brace
 r_else
@@ -727,7 +666,7 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;error for %s(%s)%d&bslash;n&quot;
+l_string|&quot;error for %s(%*s)%d&bslash;n&quot;
 comma
 id|coda_f2s
 c_func
@@ -737,6 +676,8 @@ id|dircnp-&gt;c_fid
 comma
 id|str
 )paren
+comma
+id|length
 comma
 id|name
 comma
@@ -752,7 +693,7 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;lookup: %s is (%s) type %d result %d&bslash;n&quot;
+l_string|&quot;lookup: %s is (%s) type %d result %d, dropme %d&bslash;n&quot;
 comma
 id|name
 comma
@@ -768,9 +709,10 @@ comma
 id|type
 comma
 id|error
+comma
+id|dropme
 )paren
 suffix:semicolon
-multiline_comment|/* at last we have our inode number from Venus, &n;&t;   now allocate storage for&n;&t;   the cnode and do iget, and fill in the attributes */
 m_exit
 suffix:colon
 id|entry-&gt;d_time
@@ -779,7 +721,8 @@ l_int|0
 suffix:semicolon
 id|entry-&gt;d_op
 op_assign
-l_int|NULL
+op_amp
+id|coda_dentry_operations
 suffix:semicolon
 id|d_add
 c_func
@@ -787,6 +730,17 @@ c_func
 id|entry
 comma
 id|res_inode
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dropme
+)paren
+id|d_drop
+c_func
+(paren
+id|entry
 )paren
 suffix:semicolon
 id|EXIT
@@ -817,11 +771,6 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-r_int
-id|mode
-op_assign
-id|inode-&gt;i_mode
-suffix:semicolon
 r_char
 id|str
 (braket
@@ -844,7 +793,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* we should be able to trust what is in the mode&n;           although Venus should be told to return the &n;           correct modes to the kernel */
 r_if
 c_cond
 (paren
@@ -856,46 +804,19 @@ l_int|1
 r_if
 c_cond
 (paren
-id|current-&gt;fsuid
-op_eq
-id|inode-&gt;i_uid
-)paren
-id|mode
-op_rshift_assign
-l_int|6
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|in_group_p
+id|coda_cache_check
 c_func
 (paren
-id|inode-&gt;i_gid
-)paren
-)paren
-id|mode
-op_rshift_assign
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|mode
-op_amp
-id|mask
-op_amp
-l_int|0007
-)paren
-op_eq
+id|inode
+comma
 id|mask
 )paren
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 id|cp
 op_assign
@@ -961,6 +882,23 @@ comma
 id|error
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_eq
+l_int|0
+)paren
+(brace
+id|coda_cache_enter
+c_func
+(paren
+id|inode
+comma
+id|mask
+)paren
+suffix:semicolon
+)brace
 r_return
 id|error
 suffix:semicolon
@@ -1062,6 +1000,27 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|coda_isroot
+c_func
+(paren
+id|dir
+)paren
+op_logical_and
+id|coda_iscontrol
+c_func
+(paren
+id|name
+comma
+id|length
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|dircnp
 op_assign
 id|ITOC
@@ -1208,15 +1167,7 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|dircnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|d_instantiate
 c_func
 (paren
@@ -1313,6 +1264,38 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|len
+OG
+id|CFS_MAXNAMLEN
+)paren
+r_return
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|coda_isroot
+c_func
+(paren
+id|dir
+)paren
+op_logical_and
+id|coda_iscontrol
+c_func
+(paren
+id|name
+comma
+id|len
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|dircnp
 op_assign
 id|ITOC
@@ -1326,17 +1309,6 @@ c_func
 (paren
 id|dircnp
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-id|CFS_MAXNAMLEN
-)paren
-r_return
-op_minus
-id|ENAMETOOLONG
 suffix:semicolon
 id|CDEBUG
 c_func
@@ -1464,15 +1436,7 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|dircnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|dir-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -1540,6 +1504,27 @@ r_int
 id|error
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|coda_isroot
+c_func
+(paren
+id|dir_inode
+)paren
+op_logical_and
+id|coda_iscontrol
+c_func
+(paren
+id|name
+comma
+id|len
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 id|dir_cnp
 op_assign
@@ -1666,24 +1651,8 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|dir_cnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|cnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* &t;      cfsnc_zapfid(&amp;(dir_cnp-&gt;c_fid)); */
+multiline_comment|/* &t;      cfsnc_zapfid(&amp;(cnp-&gt;c_fid)); */
 id|inode-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -1712,9 +1681,9 @@ r_return
 id|error
 suffix:semicolon
 )brace
+DECL|function|coda_symlink
 r_static
 r_int
-DECL|function|coda_symlink
 id|coda_symlink
 c_func
 (paren
@@ -1767,10 +1736,26 @@ l_int|0
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
-id|error
-op_assign
+r_if
+c_cond
+(paren
+id|coda_isroot
+c_func
+(paren
+id|dir_inode
+)paren
+op_logical_and
+id|coda_iscontrol
+c_func
+(paren
+id|name
+comma
+id|len
+)paren
+)paren
+r_return
 op_minus
-id|ENAMETOOLONG
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -1779,11 +1764,10 @@ id|len
 OG
 id|CFS_MAXNAMLEN
 )paren
-(brace
 r_return
-id|error
+op_minus
+id|ENAMETOOLONG
 suffix:semicolon
-)brace
 id|symlen
 op_assign
 id|strlen
@@ -1797,13 +1781,12 @@ c_cond
 (paren
 id|symlen
 OG
-id|CFS_MAXNAMLEN
+id|CFS_MAXPATHLEN
 )paren
-(brace
 r_return
-id|error
+op_minus
+id|ENAMETOOLONG
 suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -1843,14 +1826,12 @@ c_cond
 op_logical_neg
 id|error
 )paren
-(brace
 id|d_drop
 c_func
 (paren
 id|de
 )paren
 suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -1950,21 +1931,7 @@ id|dir-&gt;i_ino
 )paren
 suffix:semicolon
 multiline_comment|/* this file should no longer be in the namecache! */
-id|cfsnc_zapfile
-c_func
-(paren
-id|dircnp
-comma
-(paren
-r_const
-r_char
-op_star
-)paren
-id|name
-comma
-id|len
-)paren
-suffix:semicolon
+multiline_comment|/*         cfsnc_zapfile(dircnp, (const char *)name, len); */
 id|error
 op_assign
 id|venus_remove
@@ -2008,15 +1975,7 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|dircnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|de-&gt;d_inode-&gt;i_nlink
 op_decrement
 suffix:semicolon
@@ -2116,20 +2075,42 @@ r_return
 op_minus
 id|ENAMETOOLONG
 suffix:semicolon
-multiline_comment|/* this directory name should no longer be in the namecache */
-id|cfsnc_zapfile
+id|error
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;d_count
+OG
+l_int|1
+)paren
+(brace
+multiline_comment|/* Attempt to shrink child dentries ... */
+id|shrink_dcache_parent
 c_func
 (paren
-id|dircnp
-comma
-(paren
-r_const
-r_char
-op_star
+id|de
 )paren
-id|name
-comma
-id|len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;d_count
+OG
+l_int|1
+)paren
+r_return
+id|error
+suffix:semicolon
+)brace
+multiline_comment|/* Drop the dentry to force a new lookup */
+id|d_drop
+c_func
+(paren
+id|de
 )paren
 suffix:semicolon
 id|error
@@ -2169,20 +2150,6 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|dircnp-&gt;c_flags
-op_and_assign
-op_complement
-id|C_VATTR
-suffix:semicolon
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|dircnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
@@ -2359,36 +2326,8 @@ id|ENAMETOOLONG
 suffix:semicolon
 )brace
 multiline_comment|/* the old file should go from the namecache */
-id|cfsnc_zapfile
-c_func
-(paren
-id|old_cnp
-comma
-(paren
-r_const
-r_char
-op_star
-)paren
-id|old_name
-comma
-id|old_length
-)paren
-suffix:semicolon
-id|cfsnc_zapfile
-c_func
-(paren
-id|new_cnp
-comma
-(paren
-r_const
-r_char
-op_star
-)paren
-id|new_name
-comma
-id|new_length
-)paren
-suffix:semicolon
+multiline_comment|/*         cfsnc_zapfile(old_cnp, (const char *)old_name, old_length); */
+multiline_comment|/*         cfsnc_zapfile(new_cnp, (const char *)new_name, new_length); */
 multiline_comment|/* cross directory moves */
 r_if
 c_cond
@@ -2771,6 +2710,16 @@ id|flags
 op_assign
 id|f-&gt;f_flags
 suffix:semicolon
+r_int
+r_int
+id|coda_flags
+op_assign
+id|coda_flags_to_cflags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
 id|CDEBUG
@@ -2785,21 +2734,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|O_CREAT
-)paren
-(brace
-id|flags
-op_and_assign
-op_complement
-id|O_EXCL
-suffix:semicolon
-multiline_comment|/* taken care of by coda_create ?? */
-)brace
 id|cnp
 op_assign
 id|ITOC
@@ -2826,7 +2760,7 @@ op_amp
 id|cnp-&gt;c_fid
 )paren
 comma
-id|flags
+id|coda_flags
 comma
 op_amp
 id|ino
@@ -2940,37 +2874,14 @@ id|cnp-&gt;c_ovp
 op_assign
 id|cont_inode
 suffix:semicolon
-id|cnp-&gt;c_odentry.d_inode
-op_assign
-id|cont_inode
-suffix:semicolon
 )brace
 id|cnp-&gt;c_ocount
 op_increment
 suffix:semicolon
 multiline_comment|/* if opened for writing flush cache entry.  */
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-(paren
-id|O_WRONLY
-op_or
-id|O_RDWR
-)paren
-)paren
-(brace
-id|cfsnc_zapfid
-c_func
-(paren
-op_amp
-(paren
-id|cnp-&gt;c_fid
-)paren
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/*         if ( flags &amp; (O_WRONLY | O_RDWR) ) { */
+multiline_comment|/* &t;        cfsnc_zapfid(&amp;(cnp-&gt;c_fid)); */
+multiline_comment|/* &t;}  */
 id|CDEBUG
 c_func
 (paren
@@ -3039,6 +2950,16 @@ r_int
 id|flags
 op_assign
 id|f-&gt;f_flags
+suffix:semicolon
+r_int
+r_int
+id|cflags
+op_assign
+id|coda_flags_to_cflags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
@@ -3119,7 +3040,7 @@ op_amp
 id|cnp-&gt;c_fid
 )paren
 comma
-id|flags
+id|cflags
 )paren
 suffix:semicolon
 id|CDEBUG
@@ -3219,6 +3140,9 @@ suffix:semicolon
 r_int
 id|string_offset
 suffix:semicolon
+r_int
+id|size
+suffix:semicolon
 r_char
 id|debug
 (braket
@@ -3258,6 +3182,8 @@ op_star
 )paren
 id|getdent
 suffix:semicolon
+id|size
+op_assign
 id|count
 op_assign
 id|dents_callback-&gt;count
@@ -3270,7 +3196,7 @@ comma
 r_void
 op_star
 comma
-id|count
+id|size
 )paren
 suffix:semicolon
 r_if
@@ -3546,7 +3472,7 @@ c_func
 (paren
 id|buff
 comma
-id|count
+id|size
 )paren
 suffix:semicolon
 r_return

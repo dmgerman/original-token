@@ -987,7 +987,6 @@ op_assign
 id|clnt
 suffix:semicolon
 multiline_comment|/* Fire up rpciod if not yet running */
-macro_line|#ifdef RPCIOD_RESULT
 r_if
 c_cond
 (paren
@@ -995,17 +994,12 @@ id|rpciod_up
 c_func
 (paren
 )paren
+op_ne
+l_int|0
 )paren
 r_goto
 id|out_no_iod
 suffix:semicolon
-macro_line|#else
-id|rpciod_up
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Keep the super block locked while we try to get &n;&t; * the root fh attributes.&n;&t; */
 id|root_inode
 op_assign
@@ -1094,7 +1088,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef RPCIOD_RESULT
 r_goto
 id|out_shutdown
 suffix:semicolon
@@ -1103,12 +1096,11 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;nfs_read_super: couldn&squot;t start rpciod!&bslash;n&quot;
+l_string|&quot;NFS: couldn&squot;t start rpciod!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|out_shutdown
 suffix:colon
-macro_line|#endif
 id|rpc_shutdown_client
 c_func
 (paren

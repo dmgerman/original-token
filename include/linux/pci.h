@@ -1577,6 +1577,13 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|pci_quirks_init
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_PCI_H */
 eof

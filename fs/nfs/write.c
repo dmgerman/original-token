@@ -2873,10 +2873,10 @@ id|page-&gt;flags
 )paren
 )paren
 (brace
-id|dprintk
+id|printk
 c_func
 (paren
-l_string|&quot;NFS:      page already locked in writeback_lock!&bslash;n&quot;
+l_string|&quot;NFS: page already locked in writeback_lock!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|task-&gt;tk_timeout

@@ -47,7 +47,7 @@ DECL|macro|__access_ok
 mdefine_line|#define __access_ok(type,addr,size) &bslash;&n;&t;(__kernel_ok || __user_ok(addr,size))
 macro_line|#else
 DECL|macro|__access_ok
-mdefine_line|#define __access_ok(type,addr,size) &bslash;&n;&t;(__kernel_ok || (__user_ok(addr,size) &amp;&amp; &bslash;&n;&t;&t;&t; ((type) == VERIFY_READ || wp_works_ok || &bslash;&n;&t;&t;&t;  __verify_write((void *)(addr),(size)))))
+mdefine_line|#define __access_ok(type,addr,size) &bslash;&n;&t;(__kernel_ok || (__user_ok(addr,size) &amp;&amp; &bslash;&n;&t;&t;&t; ((type) == VERIFY_READ || boot_cpu_data.wp_works_ok || &bslash;&n;&t;&t;&t;  __verify_write((void *)(addr),(size)))))
 macro_line|#endif /* CPU */
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) &bslash;&n;&t;__access_ok((type),(unsigned long)(addr),(size))

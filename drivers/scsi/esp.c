@@ -4691,7 +4691,7 @@ id|Scsi_Device
 op_star
 id|SDptr
 op_assign
-id|scsi_devices
+id|esp-&gt;ehost-&gt;host_queue
 suffix:semicolon
 r_while
 c_loop

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *&t;linux/drivers/char/pc_keyb.h&n; *&n; *&t;PC Keyboard And Keyboard Controller&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 multiline_comment|/*&n; *&t;Configuration Switches&n; */
 DECL|macro|KBD_REPORT_ERR
-mdefine_line|#define KBD_REPORT_ERR&t;&t;&t;/* Report keyboard errors */
+macro_line|#undef KBD_REPORT_ERR&t;&t;&t;/* Report keyboard errors */
 DECL|macro|KBD_REPORT_UNKN
 mdefine_line|#define KBD_REPORT_UNKN&t;&t;&t;/* Report unknown scan codes */
 DECL|macro|KBD_REPORT_TIMEOUTS
@@ -94,7 +94,7 @@ DECL|macro|AUX_STAT_OBF
 mdefine_line|#define AUX_STAT_OBF (KBD_STAT_OBF | KBD_STAT_MOUSE_OBF)
 multiline_comment|/*&n; *&t;Controller Mode Register Bits&n; */
 DECL|macro|KBD_MODE_KBD_INT
-mdefine_line|#define KBD_MODE_KBD_INT&t;0x01&t;/* Keyboard data generage IRQ1 */
+mdefine_line|#define KBD_MODE_KBD_INT&t;0x01&t;/* Keyboard data generate IRQ1 */
 DECL|macro|KBD_MODE_MOUSE_INT
 mdefine_line|#define KBD_MODE_MOUSE_INT&t;0x02&t;/* Mouse data generate IRQ12 */
 DECL|macro|KBD_MODE_SYS

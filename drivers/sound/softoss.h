@@ -333,7 +333,7 @@ DECL|member|programs
 r_int
 id|programs
 (braket
-id|MAX_SAMPLE
+id|MAX_PATCH
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Timer parameters&n; */

@@ -477,7 +477,7 @@ multiline_comment|/*&n;&t; * hmm.. This disables high-memory caching, as the XFr
 r_if
 c_cond
 (paren
-id|x86
+id|boot_cpu_data.x86
 OG
 l_int|3
 op_logical_and

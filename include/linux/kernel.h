@@ -193,9 +193,6 @@ mdefine_line|#define pr_debug(fmt,arg...) &bslash;&n;&t;do { } while (0)
 macro_line|#endif
 DECL|macro|pr_info
 mdefine_line|#define pr_info(fmt,arg...) &bslash;&n;&t;printk(KERN_INFO fmt,##arg)
-multiline_comment|/*&n; * &quot;suser()&quot; checks against the effective user id, while &quot;fsuser()&quot;&n; * is used for file permission checking and checks against the fsuid..&n; */
-DECL|macro|fsuser
-mdefine_line|#define fsuser() (current-&gt;fsuid == 0)
 multiline_comment|/*&n; *      Display an IP address in readable format.&n; */
 DECL|macro|NIPQUAD
 mdefine_line|#define NIPQUAD(addr) &bslash;&n;&t;(((addr) &gt;&gt; 0)  &amp; 0xff), &bslash;&n;&t;(((addr) &gt;&gt; 8)  &amp; 0xff), &bslash;&n;&t;(((addr) &gt;&gt; 16) &amp; 0xff), &bslash;&n;&t;(((addr) &gt;&gt; 24) &amp; 0xff)

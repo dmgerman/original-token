@@ -922,6 +922,7 @@ id|nls_table
 op_star
 id|nls
 suffix:semicolon
+macro_line|#ifdef CONFIG_KERNELD
 r_char
 id|buf
 (braket
@@ -931,6 +932,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
+macro_line|#endif
 id|nls
 op_assign
 id|find_nls

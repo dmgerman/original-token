@@ -65,6 +65,11 @@ DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
 DECL|macro|SO_BINDTODEVICE
 mdefine_line|#define SO_BINDTODEVICE&t;&t;25
+multiline_comment|/* Socket filtering */
+DECL|macro|SO_ATTACH_FILTER
+mdefine_line|#define SO_ATTACH_FILTER        26
+DECL|macro|SO_DETACH_FILTER
+mdefine_line|#define SO_DETACH_FILTER        27
 multiline_comment|/* Types of sockets.  */
 DECL|macro|SOCK_DGRAM
 mdefine_line|#define SOCK_DGRAM 1&t;&t;/* Connectionless, unreliable datagrams&n;&t;&t;&t;&t;   of fixed maximum length.  */

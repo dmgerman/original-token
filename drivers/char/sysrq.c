@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.4 1997/07/17 11:54:15 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.7 1997/11/06 15:57:09 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -42,16 +42,6 @@ id|vfsmount
 op_star
 id|vfsmntlist
 suffix:semicolon
-macro_line|#ifdef __sparc__
-r_extern
-r_void
-id|halt_now
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Send a signal to all user processes */
 DECL|function|send_sig_all
 r_static
@@ -144,6 +134,14 @@ id|orig_log_level
 op_assign
 id|console_loglevel
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|key
+)paren
+r_return
+suffix:semicolon
 id|console_loglevel
 op_assign
 l_int|7
@@ -185,9 +183,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_char|&squot;a&squot;
+l_char|&squot;k&squot;
 suffix:colon
-multiline_comment|/* A -- SAK */
+multiline_comment|/* K -- SAK */
 id|printk
 c_func
 (paren
@@ -231,25 +229,6 @@ l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef __sparc__
-r_case
-l_char|&squot;h&squot;
-suffix:colon
-multiline_comment|/* H -- halt immediately */
-id|printk
-c_func
-(paren
-l_string|&quot;Halting&bslash;n&quot;
-)paren
-suffix:semicolon
-id|halt_now
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 r_case
 l_char|&squot;o&squot;
@@ -421,9 +400,9 @@ multiline_comment|/* We probably have killed syslogd */
 r_break
 suffix:semicolon
 r_case
-l_char|&squot;k&squot;
+l_char|&squot;i&squot;
 suffix:colon
-multiline_comment|/* K -- kill all user processes */
+multiline_comment|/* I -- kill all user processes */
 id|printk
 c_func
 (paren
@@ -470,20 +449,42 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+(brace
+)brace
 multiline_comment|/* Unknown: help */
+r_if
+c_cond
+(paren
+id|kbd
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;unRaw sAk Boot &quot;
-macro_line|#ifdef __sparc__
-l_string|&quot;Halt &quot;
-macro_line|#endif
+l_string|&quot;unRaw &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tty
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;saK &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Boot &quot;
 macro_line|#ifdef CONFIG_APM
 l_string|&quot;Off &quot;
 macro_line|#endif
-l_string|&quot;Sync Unmount showPc showTasks showMem loglevel0-8 tErm Kill killalL&bslash;n&quot;
+l_string|&quot;Sync Unmount showPc showTasks showMem loglevel0-8 tErm kIll killalL&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t use &squot;A&squot; as it&squot;s handled specially on the Sparc */
 )brace
 id|console_loglevel
 op_assign

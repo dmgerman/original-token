@@ -4,11 +4,13 @@ DECL|macro|__LINUX_IPDDP_H
 mdefine_line|#define __LINUX_IPDDP_H
 macro_line|#ifdef __KERNEL__
 DECL|macro|SIOCADDIPDDPRT
-mdefine_line|#define SIOCADDIPDDPRT SIOCDEVPRIVATE
+mdefine_line|#define SIOCADDIPDDPRT   (SIOCDEVPRIVATE)
 DECL|macro|SIOCDELIPDDPRT
-mdefine_line|#define SIOCDELIPDDPRT SIOCDEVPRIVATE+1
+mdefine_line|#define SIOCDELIPDDPRT   (SIOCDEVPRIVATE+1)
 DECL|macro|SIOCFINDIPDDPRT
-mdefine_line|#define SIOCFINDIPDDPRT SIOCDEVPRIVATE+2
+mdefine_line|#define SIOCFINDIPDDPRT  (SIOCDEVPRIVATE+2)
+DECL|macro|SIOCPRINTIPDDPRT
+mdefine_line|#define SIOCPRINTIPDDPRT (SIOCDEVPRIVATE+3)
 DECL|struct|ipddp_route
 r_struct
 id|ipddp_route
@@ -43,19 +45,10 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|ipddp_route_head
-r_static
-r_struct
-id|ipddp_route
-op_star
-id|ipddp_route_head
-suffix:semicolon
-DECL|variable|ipddp_route_test
-r_static
-r_struct
-id|ipddp_route
-id|ipddp_route_test
-suffix:semicolon
+DECL|macro|IPDDP_ENCAP
+mdefine_line|#define IPDDP_ENCAP&t;1
+DECL|macro|IPDDP_DECAP
+mdefine_line|#define IPDDP_DECAP&t;2
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* __LINUX_IPDDP_H */
 eof

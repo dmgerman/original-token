@@ -6,6 +6,7 @@ multiline_comment|/*&n; * Some of the public constants are being moved to this f
 macro_line|#include &lt;scsi/scsi.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
@@ -28,34 +29,167 @@ id|scsi_device_types
 id|MAX_SCSI_DEVICE_CODE
 )braket
 suffix:semicolon
-r_extern
-r_void
-id|scsi_make_blocked_list
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_volatile
-r_int
-id|in_scan_scsis
-suffix:semicolon
-r_extern
-r_const
-r_int
-r_char
-id|scsi_command_size
-(braket
-l_int|8
-)braket
-suffix:semicolon
+multiline_comment|/*&n; *  Use these to separate status msg and our bytes&n; *&n; *  These are set by:&n; *&n; *      status byte = set from target device&n; *      msg_byte    = return status from host adapter itself.&n; *      host_byte   = set by low-level driver to indicate status.&n; *      driver_byte = set by mid-level.&n; */
+DECL|macro|status_byte
+mdefine_line|#define status_byte(result) (((result) &gt;&gt; 1) &amp; 0x1f)
+DECL|macro|msg_byte
+mdefine_line|#define msg_byte(result)    (((result) &gt;&gt; 8) &amp; 0xff)
+DECL|macro|host_byte
+mdefine_line|#define host_byte(result)   (((result) &gt;&gt; 16) &amp; 0xff)
+DECL|macro|driver_byte
+mdefine_line|#define driver_byte(result) (((result) &gt;&gt; 24) &amp; 0xff)
+DECL|macro|suggestion
+mdefine_line|#define suggestion(result)  (driver_byte(result) &amp; SUGGEST_MASK)
+DECL|macro|sense_class
+mdefine_line|#define sense_class(sense)  (((sense) &gt;&gt; 4) &amp; 0x7)
+DECL|macro|sense_error
+mdefine_line|#define sense_error(sense)  ((sense) &amp; 0xf)
+DECL|macro|sense_valid
+mdefine_line|#define sense_valid(sense)  ((sense) &amp; 0x80);
+DECL|macro|NEEDS_RETRY
+mdefine_line|#define NEEDS_RETRY     0x2001
+DECL|macro|SUCCESS
+mdefine_line|#define SUCCESS         0x2002
+DECL|macro|FAILED
+mdefine_line|#define FAILED          0x2003
+DECL|macro|QUEUED
+mdefine_line|#define QUEUED          0x2004
+DECL|macro|SOFT_ERROR
+mdefine_line|#define SOFT_ERROR      0x2005
+DECL|macro|ADD_TO_MLQUEUE
+mdefine_line|#define ADD_TO_MLQUEUE  0x2006
+multiline_comment|/*&n; * These are the values that scsi_cmd-&gt;state can take.&n; */
+DECL|macro|SCSI_STATE_TIMEOUT
+mdefine_line|#define SCSI_STATE_TIMEOUT         0x1000
+DECL|macro|SCSI_STATE_FINISHED
+mdefine_line|#define SCSI_STATE_FINISHED        0x1001
+DECL|macro|SCSI_STATE_FAILED
+mdefine_line|#define SCSI_STATE_FAILED          0x1002
+DECL|macro|SCSI_STATE_QUEUED
+mdefine_line|#define SCSI_STATE_QUEUED          0x1003
+DECL|macro|SCSI_STATE_UNUSED
+mdefine_line|#define SCSI_STATE_UNUSED          0x1006
+DECL|macro|SCSI_STATE_DISCONNECTING
+mdefine_line|#define SCSI_STATE_DISCONNECTING   0x1008
+DECL|macro|SCSI_STATE_INITIALIZING
+mdefine_line|#define SCSI_STATE_INITIALIZING    0x1009
+DECL|macro|SCSI_STATE_BHQUEUE
+mdefine_line|#define SCSI_STATE_BHQUEUE         0x100a
+DECL|macro|SCSI_STATE_MLQUEUE
+mdefine_line|#define SCSI_STATE_MLQUEUE         0x100b
+multiline_comment|/*&n; * These are the values that the owner field can take.&n; * They are used as an indication of who the command belongs to.&n; */
+DECL|macro|SCSI_OWNER_HIGHLEVEL
+mdefine_line|#define SCSI_OWNER_HIGHLEVEL      0x100
+DECL|macro|SCSI_OWNER_MIDLEVEL
+mdefine_line|#define SCSI_OWNER_MIDLEVEL       0x101
+DECL|macro|SCSI_OWNER_LOWLEVEL
+mdefine_line|#define SCSI_OWNER_LOWLEVEL       0x102
+DECL|macro|SCSI_OWNER_ERROR_HANDLER
+mdefine_line|#define SCSI_OWNER_ERROR_HANDLER  0x103
+DECL|macro|SCSI_OWNER_BH_HANDLER
+mdefine_line|#define SCSI_OWNER_BH_HANDLER     0x104
+DECL|macro|SCSI_OWNER_NOBODY
+mdefine_line|#define SCSI_OWNER_NOBODY         0x105
 DECL|macro|COMMAND_SIZE
 mdefine_line|#define COMMAND_SIZE(opcode) scsi_command_size[((opcode) &gt;&gt; 5) &amp; 7]
 DECL|macro|IDENTIFY_BASE
 mdefine_line|#define IDENTIFY_BASE       0x80
 DECL|macro|IDENTIFY
 mdefine_line|#define IDENTIFY(can_disconnect, lun)   (IDENTIFY_BASE |&bslash;&n;&t;&t;     ((can_disconnect) ?  0x40 : 0) |&bslash;&n;&t;&t;     ((lun) &amp; 0x07)) 
+multiline_comment|/*&n; * This defines the scsi logging feature.  It is a means by which the&n; * user can select how much information they get about various goings on,&n; * and it can be really useful for fault tracing.  The logging word is divided&n; * into 8 nibbles, each of which describes a loglevel.  The division of things&n; * is somewhat arbitrary, and the division of the word could be changed if it&n; * were really needed for any reason.  The numbers below are the only place where these&n; * are specified.  For a first go-around, 3 bits is more than enough, since this&n; * gives 8 levels of logging (really 7, since 0 is always off).  Cutting to 2 bits&n; * might be wise at some point.&n; */
+DECL|macro|SCSI_LOG_ERROR_SHIFT
+mdefine_line|#define SCSI_LOG_ERROR_SHIFT              0
+DECL|macro|SCSI_LOG_TIMEOUT_SHIFT
+mdefine_line|#define SCSI_LOG_TIMEOUT_SHIFT            3
+DECL|macro|SCSI_LOG_SCAN_SHIFT
+mdefine_line|#define SCSI_LOG_SCAN_SHIFT               6
+DECL|macro|SCSI_LOG_MLQUEUE_SHIFT
+mdefine_line|#define SCSI_LOG_MLQUEUE_SHIFT            9
+DECL|macro|SCSI_LOG_MLCOMPLETE_SHIFT
+mdefine_line|#define SCSI_LOG_MLCOMPLETE_SHIFT         12
+DECL|macro|SCSI_LOG_LLQUEUE_SHIFT
+mdefine_line|#define SCSI_LOG_LLQUEUE_SHIFT            15
+DECL|macro|SCSI_LOG_LLCOMPLETE_SHIFT
+mdefine_line|#define SCSI_LOG_LLCOMPLETE_SHIFT         18
+DECL|macro|SCSI_LOG_HLQUEUE_SHIFT
+mdefine_line|#define SCSI_LOG_HLQUEUE_SHIFT            21
+DECL|macro|SCSI_LOG_HLCOMPLETE_SHIFT
+mdefine_line|#define SCSI_LOG_HLCOMPLETE_SHIFT         24
+DECL|macro|SCSI_LOG_IOCTL_SHIFT
+mdefine_line|#define SCSI_LOG_IOCTL_SHIFT              27
+DECL|macro|SCSI_LOG_ERROR_BITS
+mdefine_line|#define SCSI_LOG_ERROR_BITS               3
+DECL|macro|SCSI_LOG_TIMEOUT_BITS
+mdefine_line|#define SCSI_LOG_TIMEOUT_BITS             3
+DECL|macro|SCSI_LOG_SCAN_BITS
+mdefine_line|#define SCSI_LOG_SCAN_BITS                3
+DECL|macro|SCSI_LOG_MLQUEUE_BITS
+mdefine_line|#define SCSI_LOG_MLQUEUE_BITS             3
+DECL|macro|SCSI_LOG_MLCOMPLETE_BITS
+mdefine_line|#define SCSI_LOG_MLCOMPLETE_BITS          3
+DECL|macro|SCSI_LOG_LLQUEUE_BITS
+mdefine_line|#define SCSI_LOG_LLQUEUE_BITS             3
+DECL|macro|SCSI_LOG_LLCOMPLETE_BITS
+mdefine_line|#define SCSI_LOG_LLCOMPLETE_BITS          3
+DECL|macro|SCSI_LOG_HLQUEUE_BITS
+mdefine_line|#define SCSI_LOG_HLQUEUE_BITS             3
+DECL|macro|SCSI_LOG_HLCOMPLETE_BITS
+mdefine_line|#define SCSI_LOG_HLCOMPLETE_BITS          3
+DECL|macro|SCSI_LOG_IOCTL_BITS
+mdefine_line|#define SCSI_LOG_IOCTL_BITS               3
+macro_line|#if CONFIG_SCSI_LOGGING
+DECL|macro|SCSI_CHECK_LOGGING
+mdefine_line|#define SCSI_CHECK_LOGGING(SHIFT, BITS, LEVEL, CMD)     &bslash;&n;{                                                       &bslash;&n;        unsigned int mask;                              &bslash;&n;                                                        &bslash;&n;        mask = (1 &lt;&lt; (BITS)) - 1;                       &bslash;&n;        if( ((scsi_logging_level &gt;&gt; (SHIFT)) &amp; mask) &gt; (LEVEL) ) &bslash;&n;        {                                               &bslash;&n;                (CMD);                                  &bslash;&n;        }&t;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|SCSI_SET_LOGGING
+mdefine_line|#define SCSI_SET_LOGGING(SHIFT, BITS, LEVEL)            &bslash;&n;{                                                       &bslash;&n;        unsigned int mask;                              &bslash;&n;                                                        &bslash;&n;        mask = ((1 &lt;&lt; (BITS)) - 1) &lt;&lt; SHIFT;            &bslash;&n;        scsi_logging_level = ((scsi_logging_level &amp; ~mask) &bslash;&n;                              | ((LEVEL &lt;&lt; SHIFT) &amp; mask));     &bslash;&n;}
+macro_line|#else
+multiline_comment|/*&n; * With no logging enabled, stub these out so they don&squot;t do anything.&n; */
+DECL|macro|SCSI_SET_LOGGING
+mdefine_line|#define SCSI_SET_LOGGING(SHIFT, BITS, LEVEL)
+DECL|macro|SCSI_CHECK_LOGGING
+mdefine_line|#define SCSI_CHECK_LOGGING(SHIFT, BITS, LEVEL, CMD)
+macro_line|#endif
+multiline_comment|/*&n; * These are the macros that are actually used throughout the code to&n; * log events.  If logging isn&squot;t enabled, they are no-ops and will be&n; * completely absent from the user&squot;s code.&n; *&n; * The &squot;set&squot; versions of the macros are really intended to only be called&n; * from the /proc filesystem, and in production kernels this will be about&n; * all that is ever used.  It could be useful in a debugging environment to&n; * bump the logging level when certain strange events are detected, however.&n; */
+DECL|macro|SCSI_LOG_ERROR_RECOVERY
+mdefine_line|#define SCSI_LOG_ERROR_RECOVERY(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_ERROR_SHIFT, SCSI_LOG_ERROR_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_TIMEOUT
+mdefine_line|#define SCSI_LOG_TIMEOUT(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_TIMEOUT_SHIFT, SCSI_LOG_TIMEOUT_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_SCAN_BUS
+mdefine_line|#define SCSI_LOG_SCAN_BUS(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_SCAN_SHIFT, SCSI_LOG_SCAN_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_MLQUEUE
+mdefine_line|#define SCSI_LOG_MLQUEUE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_MLQUEUE_SHIFT, SCSI_LOG_MLQUEUE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_MLCOMPLETE
+mdefine_line|#define SCSI_LOG_MLCOMPLETE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_MLCOMPLETE_SHIFT, SCSI_LOG_MLCOMPLETE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_LLQUEUE
+mdefine_line|#define SCSI_LOG_LLQUEUE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_LLQUEUE_SHIFT, SCSI_LOG_LLQUEUE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_LLCOMPLETE
+mdefine_line|#define SCSI_LOG_LLCOMPLETE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_LLCOMPLETE_SHIFT, SCSI_LOG_LLCOMPLETE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_HLQUEUE
+mdefine_line|#define SCSI_LOG_HLQUEUE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_HLQUEUE_SHIFT, SCSI_LOG_HLQUEUE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_HLCOMPLETE
+mdefine_line|#define SCSI_LOG_HLCOMPLETE(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_HLCOMPLETE_SHIFT, SCSI_LOG_HLCOMPLETE_BITS, LEVEL,CMD);
+DECL|macro|SCSI_LOG_IOCTL
+mdefine_line|#define SCSI_LOG_IOCTL(LEVEL,CMD)  &bslash;&n;        SCSI_CHECK_LOGGING(SCSI_LOG_IOCTL_SHIFT, SCSI_LOG_IOCTL_BITS, LEVEL,CMD);
+DECL|macro|SCSI_SET_ERROR_RECOVERY_LOGGING
+mdefine_line|#define SCSI_SET_ERROR_RECOVERY_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_ERROR_SHIFT, SCSI_LOG_ERROR_BITS, LEVEL);
+DECL|macro|SCSI_SET_TIMEOUT_LOGGING
+mdefine_line|#define SCSI_SET_TIMEOUT_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_TIMEOUT_SHIFT, SCSI_LOG_TIMEOUT_BITS, LEVEL);
+DECL|macro|SCSI_SET_SCAN_BUS_LOGGING
+mdefine_line|#define SCSI_SET_SCAN_BUS_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_SCAN_SHIFT, SCSI_LOG_SCAN_BITS, LEVEL);
+DECL|macro|SCSI_SET_MLQUEUE_LOGGING
+mdefine_line|#define SCSI_SET_MLQUEUE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_MLQUEUE_SHIFT, SCSI_LOG_MLQUEUE_BITS, LEVEL);
+DECL|macro|SCSI_SET_MLCOMPLETE_LOGGING
+mdefine_line|#define SCSI_SET_MLCOMPLETE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_MLCOMPLETE_SHIFT, SCSI_LOG_MLCOMPLETE_BITS, LEVEL);
+DECL|macro|SCSI_SET_LLQUEUE_LOGGING
+mdefine_line|#define SCSI_SET_LLQUEUE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_LLQUEUE_SHIFT, SCSI_LOG_LLQUEUE_BITS, LEVEL);
+DECL|macro|SCSI_SET_LLCOMPLETE_LOGGING
+mdefine_line|#define SCSI_SET_LLCOMPLETE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_LLCOMPLETE_SHIFT, SCSI_LOG_LLCOMPLETE_BITS, LEVEL);
+DECL|macro|SCSI_SET_HLQUEUE_LOGGING
+mdefine_line|#define SCSI_SET_HLQUEUE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_HLQUEUE_SHIFT, SCSI_LOG_HLQUEUE_BITS, LEVEL);
+DECL|macro|SCSI_SET_HLCOMPLETE_LOGGING
+mdefine_line|#define SCSI_SET_HLCOMPLETE_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_HLCOMPLETE_SHIFT, SCSI_LOG_HLCOMPLETE_BITS, LEVEL);
+DECL|macro|SCSI_SET_IOCTL_LOGGING
+mdefine_line|#define SCSI_SET_IOCTL_LOGGING(LEVEL)  &bslash;&n;        SCSI_SET_LOGGING(SCSI_LOG_IOCTL_SHIFT, SCSI_LOG_IOCTL_BITS, LEVEL);
 multiline_comment|/*&n; *  the return of the status word will be in the following format :&n; *  The low byte is the status returned by the SCSI command, &n; *  with vendor specific bits masked.&n; *  &n; *  The next byte is the message which followed the SCSI status.&n; *  This allows a stos to be used, since the Intel is a little&n; *  endian machine.&n; *  &n; *  The final byte is a host return code, which is one of the following.&n; *  &n; *  IE &n; *  lsb     msb&n; *  status  msg host code   &n; *  &n; *  Our errors returned by OUR driver, NOT SCSI message.  Or&squot;d with&n; *  SCSI message passed back to driver &lt;IF any&gt;.&n; */
 DECL|macro|DID_OK
 mdefine_line|#define DID_OK          0x00 /* NO error                                */
@@ -77,6 +211,8 @@ DECL|macro|DID_RESET
 mdefine_line|#define DID_RESET       0x08 /* Reset by somebody.                      */
 DECL|macro|DID_BAD_INTR
 mdefine_line|#define DID_BAD_INTR    0x09 /* Got an interrupt we weren&squot;t expecting.  */ 
+DECL|macro|DID_PASSTHROUGH
+mdefine_line|#define DID_PASSTHROUGH 0x0a /* Force command past mid-layer            */
 DECL|macro|DRIVER_OK
 mdefine_line|#define DRIVER_OK       0x00 /* Driver status                           */ 
 multiline_comment|/*&n; *  These indicate the error that occurred, and what is available.&n; */
@@ -137,12 +273,345 @@ DECL|macro|IS_ABORTING
 mdefine_line|#define IS_ABORTING     0x10
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x20
-multiline_comment|/*&n; *  The scsi_device struct contains what we know about each given scsi&n; *  device.&n; */
-DECL|struct|scsi_device
+DECL|macro|CONTIGUOUS_BUFFERS
+mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
+multiline_comment|/*&n; * This is the crap from the old error handling code.  We have it in a special&n; * place so that we can more easily delete it later on.&n; */
+macro_line|#include &quot;scsi_obsolete.h&quot;
+multiline_comment|/*&n; * Add some typedefs so that we can prototyope a bunch of the functions.&n; */
+DECL|typedef|Scsi_Device
 r_typedef
 r_struct
 id|scsi_device
+id|Scsi_Device
+suffix:semicolon
+DECL|typedef|Scsi_Cmnd
+r_typedef
+r_struct
+id|scsi_cmnd
+id|Scsi_Cmnd
+suffix:semicolon
+multiline_comment|/*&n; * Here is where we prototype most of the mid-layer.&n; */
+multiline_comment|/*&n; *  Initializes all SCSI devices.  This scans all scsi busses.&n; */
+r_extern
+r_int
+id|scsi_dev_init
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+op_star
+id|scsi_malloc
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_int
+id|scsi_free
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|scsi_logging_level
+suffix:semicolon
+multiline_comment|/* What do we log? */
+r_extern
+r_int
+r_int
+id|scsi_dma_free_sectors
+suffix:semicolon
+multiline_comment|/* How much room do we have left */
+r_extern
+r_int
+r_int
+id|scsi_need_isa_buffer
+suffix:semicolon
+multiline_comment|/* True if some devices need indirection&n;&t;&t;&t;&t;&t;* buffers */
+r_extern
+r_void
+id|scsi_make_blocked_list
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+id|in_scan_scsis
+suffix:semicolon
+r_extern
+r_const
+r_int
+r_char
+id|scsi_command_size
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/*&n; * These are the error handling functions defined in scsi_error.c&n; */
+r_extern
+r_void
+id|scsi_add_timer
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCset
+comma
+r_int
+id|timeout
+comma
+r_void
+(paren
+op_star
+id|complete
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_done
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_delete_timer
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCset
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_error_handler
+c_func
+(paren
+r_void
+op_star
+id|host
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_retry_command
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_finish_command
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_sense_valid
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_decide_disposition
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_block_when_processing_errors
+c_func
+(paren
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_sleep
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *  scsi_abort aborts the current command that is executing on host host.&n; *  The error code, if non zero is returned in the host byte, otherwise &n; *  DID_ABORT is returned in the hostbyte.&n; */
+r_extern
+r_void
+id|scsi_do_cmd
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+r_const
+r_void
+op_star
+id|cmnd
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|bufflen
+comma
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+comma
+r_int
+id|timeout
+comma
+r_int
+id|retries
+)paren
+suffix:semicolon
+r_extern
+id|Scsi_Cmnd
+op_star
+id|scsi_allocate_device
+c_func
+(paren
+r_struct
+id|request
+op_star
+op_star
+comma
+id|Scsi_Device
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+id|Scsi_Cmnd
+op_star
+id|scsi_request_queueable
+c_func
+(paren
+r_struct
+id|request
+op_star
+comma
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_release_command
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|max_scsi_hosts
+suffix:semicolon
+r_extern
+r_void
+id|proc_print_scsidevice
+c_func
+(paren
+id|Scsi_Device
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_command
+c_func
+(paren
+r_int
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_sense
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_driverbyte
+c_func
+(paren
+r_int
+id|scsiresult
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_hostbyte
+c_func
+(paren
+r_int
+id|scsiresult
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *  The scsi_device struct contains what we know about each given scsi&n; *  device.&n; */
+DECL|struct|scsi_device
+r_struct
+id|scsi_device
 (brace
+multiline_comment|/* private: */
+multiline_comment|/*&n;     * This information is private to the scsi mid-layer.  Wrapping it in a&n;     * struct private is a way of marking it in a sort of C++ type of way.&n;     */
 DECL|member|next
 r_struct
 id|scsi_device
@@ -150,6 +619,51 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* Used for linked list */
+DECL|member|prev
+r_struct
+id|scsi_device
+op_star
+id|prev
+suffix:semicolon
+multiline_comment|/* Used for linked list */
+DECL|member|device_wait
+r_struct
+id|wait_queue
+op_star
+id|device_wait
+suffix:semicolon
+multiline_comment|/* Used to wait if&n;                                                      device is busy */
+DECL|member|host
+r_struct
+id|Scsi_Host
+op_star
+id|host
+suffix:semicolon
+DECL|member|device_busy
+r_volatile
+r_int
+r_int
+id|device_busy
+suffix:semicolon
+multiline_comment|/* commands actually active on low-level */
+DECL|member|scsi_request_fn
+r_void
+(paren
+op_star
+id|scsi_request_fn
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Used to jumpstart things after an &n;                                     * ioctl */
+DECL|member|device_queue
+id|Scsi_Cmnd
+op_star
+id|device_queue
+suffix:semicolon
+multiline_comment|/* queue of SCSI Command structures */
+multiline_comment|/* public: */
 DECL|member|id
 DECL|member|lun
 DECL|member|channel
@@ -177,37 +691,6 @@ r_int
 id|access_count
 suffix:semicolon
 multiline_comment|/* Count of open channels/mounts */
-DECL|member|device_wait
-r_struct
-id|wait_queue
-op_star
-id|device_wait
-suffix:semicolon
-multiline_comment|/* Used to wait if device is busy */
-DECL|member|host
-r_struct
-id|Scsi_Host
-op_star
-id|host
-suffix:semicolon
-DECL|member|scsi_request_fn
-r_void
-(paren
-op_star
-id|scsi_request_fn
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* Used to jumpstart things after an &n;&t;&t;&t;&t;     * ioctl */
-DECL|member|device_queue
-r_struct
-id|scsi_cmnd
-op_star
-id|device_queue
-suffix:semicolon
-multiline_comment|/* queue of SCSI Command structures */
 DECL|member|hostdata
 r_void
 op_star
@@ -265,6 +748,12 @@ r_char
 id|queue_depth
 suffix:semicolon
 multiline_comment|/* How deep a queue to use */
+DECL|member|online
+r_int
+id|online
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|writeable
 r_int
 id|writeable
@@ -380,42 +869,15 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Expecting a CHECK_CONDITION/UNIT_ATTN&n;                                     * because we did a bus reset. */
-DECL|typedef|Scsi_Device
-)brace
-id|Scsi_Device
-suffix:semicolon
-multiline_comment|/*&n; *  Use these to separate status msg and our bytes&n; */
-DECL|macro|status_byte
-mdefine_line|#define status_byte(result) (((result) &gt;&gt; 1) &amp; 0x1f)
-DECL|macro|msg_byte
-mdefine_line|#define msg_byte(result)    (((result) &gt;&gt; 8) &amp; 0xff)
-DECL|macro|host_byte
-mdefine_line|#define host_byte(result)   (((result) &gt;&gt; 16) &amp; 0xff)
-DECL|macro|driver_byte
-mdefine_line|#define driver_byte(result) (((result) &gt;&gt; 24) &amp; 0xff)
-DECL|macro|suggestion
-mdefine_line|#define suggestion(result)  (driver_byte(result) &amp; SUGGEST_MASK)
-DECL|macro|sense_class
-mdefine_line|#define sense_class(sense)  (((sense) &gt;&gt; 4) &amp; 0x7)
-DECL|macro|sense_error
-mdefine_line|#define sense_error(sense)  ((sense) &amp; 0xf)
-DECL|macro|sense_valid
-mdefine_line|#define sense_valid(sense)  ((sense) &amp; 0x80);
-multiline_comment|/*&n; *  These are the SCSI devices available on the system.&n; */
-r_extern
-id|Scsi_Device
-op_star
-id|scsi_devices
-suffix:semicolon
-multiline_comment|/*&n; *  Initializes all SCSI devices.  This scans all scsi busses.&n; */
-r_extern
+DECL|member|device_blocked
 r_int
-id|scsi_dev_init
-(paren
-r_void
-)paren
+id|device_blocked
+suffix:colon
+l_int|1
 suffix:semicolon
-macro_line|#include &lt;asm/scatterlist.h&gt;
+multiline_comment|/* Device returned QUEUE_FULL. */
+)brace
+suffix:semicolon
 macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|CONTIGUOUS_BUFFERS
@@ -424,95 +886,6 @@ macro_line|#else
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
 macro_line|#endif
-multiline_comment|/*&n; * These are the return codes for the abort and reset functions.  The mid-level&n; * code uses these to decide what to do next.  Each of the low level abort&n; * and reset functions must correctly indicate what it has done.&n; * The descriptions are written from the point of view of the mid-level code,&n; * so that the return code is telling the mid-level drivers exactly what&n; * the low level driver has already done, and what remains to be done.&n; */
-multiline_comment|/* We did not do anything.  &n; * Wait some more for this command to complete, and if this does not work, &n; * try something more serious. */
-DECL|macro|SCSI_ABORT_SNOOZE
-mdefine_line|#define SCSI_ABORT_SNOOZE 0
-multiline_comment|/* This means that we were able to abort the command.  We have already&n; * called the mid-level done function, and do not expect an interrupt that &n; * will lead to another call to the mid-level done function for this command */
-DECL|macro|SCSI_ABORT_SUCCESS
-mdefine_line|#define SCSI_ABORT_SUCCESS 1
-multiline_comment|/* We called for an abort of this command, and we should get an interrupt &n; * when this succeeds.  Thus we should not restore the timer for this&n; * command in the mid-level abort function. */
-DECL|macro|SCSI_ABORT_PENDING
-mdefine_line|#define SCSI_ABORT_PENDING 2
-multiline_comment|/* Unable to abort - command is currently on the bus.  Grin and bear it. */
-DECL|macro|SCSI_ABORT_BUSY
-mdefine_line|#define SCSI_ABORT_BUSY 3
-multiline_comment|/* The command is not active in the low level code. Command probably&n; * finished. */
-DECL|macro|SCSI_ABORT_NOT_RUNNING
-mdefine_line|#define SCSI_ABORT_NOT_RUNNING 4
-multiline_comment|/* Something went wrong.  The low level driver will indicate the correct&n; * error condition when it calls scsi_done, so the mid-level abort function&n; * can simply wait until this comes through */
-DECL|macro|SCSI_ABORT_ERROR
-mdefine_line|#define SCSI_ABORT_ERROR 5
-multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n; * Anyway, just wait a little more for the command in question, and hope that&n; * it eventually finishes.  If it never finishes, the SCSI device could&n; * hang, so use this with caution. */
-DECL|macro|SCSI_RESET_SNOOZE
-mdefine_line|#define SCSI_RESET_SNOOZE 0
-multiline_comment|/* We do not know how to reset the bus, or we do not want to.  Bummer.&n; * We have given up on this ever completing.  The mid-level code will&n; * request sense information to decide how to proceed from here. */
-DECL|macro|SCSI_RESET_PUNT
-mdefine_line|#define SCSI_RESET_PUNT 1
-multiline_comment|/* This means that we were able to reset the bus.  We have restarted all of&n; * the commands that should be restarted, and we should be able to continue&n; * on normally from here.  We do not expect any interrupts that will return&n; * DID_RESET to any of the other commands in the host_queue, and the mid-level&n; * code does not need to do anything special to keep the commands alive. &n; * If a hard reset was performed then all outstanding commands on the&n; * bus have been restarted. */
-DECL|macro|SCSI_RESET_SUCCESS
-mdefine_line|#define SCSI_RESET_SUCCESS 2
-multiline_comment|/* We called for a reset of this bus, and we should get an interrupt &n; * when this succeeds.  Each command should get its own status&n; * passed up to scsi_done, but this has not happened yet. &n; * If a hard reset was performed, then we expect an interrupt&n; * for *each* of the outstanding commands that will have the&n; * effect of restarting the commands.&n; */
-DECL|macro|SCSI_RESET_PENDING
-mdefine_line|#define SCSI_RESET_PENDING 3
-multiline_comment|/* We did a reset, but do not expect an interrupt to signal DID_RESET.&n; * This tells the upper level code to request the sense info, and this&n; * should keep the command alive. */
-DECL|macro|SCSI_RESET_WAKEUP
-mdefine_line|#define SCSI_RESET_WAKEUP 4
-multiline_comment|/* The command is not active in the low level code. Command probably&n;   finished. */
-DECL|macro|SCSI_RESET_NOT_RUNNING
-mdefine_line|#define SCSI_RESET_NOT_RUNNING 5
-multiline_comment|/* Something went wrong, and we do not know how to fix it. */
-DECL|macro|SCSI_RESET_ERROR
-mdefine_line|#define SCSI_RESET_ERROR 6
-DECL|macro|SCSI_RESET_SYNCHRONOUS
-mdefine_line|#define SCSI_RESET_SYNCHRONOUS&t;&t;0x01
-DECL|macro|SCSI_RESET_ASYNCHRONOUS
-mdefine_line|#define SCSI_RESET_ASYNCHRONOUS&t;&t;0x02
-DECL|macro|SCSI_RESET_SUGGEST_BUS_RESET
-mdefine_line|#define SCSI_RESET_SUGGEST_BUS_RESET&t;0x04
-DECL|macro|SCSI_RESET_SUGGEST_HOST_RESET
-mdefine_line|#define SCSI_RESET_SUGGEST_HOST_RESET&t;0x08
-multiline_comment|/*&n; * This is a bitmask that is ored with one of the above codes.&n; * It tells the mid-level code that we did a hard reset.&n; */
-DECL|macro|SCSI_RESET_BUS_RESET
-mdefine_line|#define SCSI_RESET_BUS_RESET 0x100
-multiline_comment|/*&n; * This is a bitmask that is ored with one of the above codes.&n; * It tells the mid-level code that we did a host adapter reset.&n; */
-DECL|macro|SCSI_RESET_HOST_RESET
-mdefine_line|#define SCSI_RESET_HOST_RESET 0x200
-multiline_comment|/*&n; * Used to mask off bits and to obtain the basic action that was&n; * performed.  &n; */
-DECL|macro|SCSI_RESET_ACTION
-mdefine_line|#define SCSI_RESET_ACTION   0xff
-r_void
-op_star
-id|scsi_malloc
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_int
-id|scsi_free
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|dma_free_sectors
-suffix:semicolon
-multiline_comment|/* How much room do we have left */
-r_extern
-r_int
-r_int
-id|need_isa_buffer
-suffix:semicolon
-multiline_comment|/* True if some devices need indirection&n;&t;&t;&t;&t;&t;* buffers */
 multiline_comment|/*&n; * The Scsi_Cmnd structure is used by scsi.c internally, and for communication&n; * with low level drivers that support multiple outstanding commands.&n; */
 DECL|struct|scsi_pointer
 r_typedef
@@ -572,30 +945,121 @@ DECL|typedef|Scsi_Pointer
 id|Scsi_Pointer
 suffix:semicolon
 DECL|struct|scsi_cmnd
-r_typedef
 r_struct
 id|scsi_cmnd
 (brace
+multiline_comment|/* private: */
+multiline_comment|/*&n;     * This information is private to the scsi mid-layer.  Wrapping it in a&n;     * struct private is a way of marking it in a sort of C++ type of way.&n;     */
 DECL|member|host
 r_struct
 id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
+DECL|member|state
+r_int
+r_int
+id|state
+suffix:semicolon
+DECL|member|owner
+r_int
+r_int
+id|owner
+suffix:semicolon
 DECL|member|device
 id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
+DECL|member|next
+r_struct
+id|scsi_cmnd
+op_star
+id|next
+suffix:semicolon
+DECL|member|reset_chain
+r_struct
+id|scsi_cmnd
+op_star
+id|reset_chain
+suffix:semicolon
+DECL|member|eh_state
+r_int
+id|eh_state
+suffix:semicolon
+multiline_comment|/* Used for state tracking in error handlr */
+DECL|member|done
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Mid-level done function */
+multiline_comment|/*&n;      A SCSI Command is assigned a nonzero serial_number when internal_cmnd&n;      passes it to the driver&squot;s queue command function.  The serial_number&n;      is cleared when scsi_done is entered indicating that the command has&n;      been completed.  If a timeout occurs, the serial number at the moment&n;      of timeout is copied into serial_number_at_timeout.  By subsequently&n;      comparing the serial_number and serial_number_at_timeout fields&n;      during abort or reset processing, we can detect whether the command&n;      has already completed.  This also detects cases where the command has&n;      completed and the SCSI Command structure has already being reused&n;      for another command, so that we can avoid incorrectly aborting or&n;      resetting the new command.&n;      */
+DECL|member|serial_number
+r_int
+r_int
+id|serial_number
+suffix:semicolon
+DECL|member|serial_number_at_timeout
+r_int
+r_int
+id|serial_number_at_timeout
+suffix:semicolon
+DECL|member|retries
+r_int
+id|retries
+suffix:semicolon
+DECL|member|allowed
+r_int
+id|allowed
+suffix:semicolon
+DECL|member|timeout_per_command
+r_int
+id|timeout_per_command
+suffix:semicolon
+DECL|member|timeout_total
+r_int
+id|timeout_total
+suffix:semicolon
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/*&n;     * We handle the timeout differently if it happens when a reset, &n;     * abort, etc are in process. &n;     */
+DECL|member|internal_timeout
+r_int
+r_volatile
+r_char
+id|internal_timeout
+suffix:semicolon
+DECL|member|bh_next
+r_struct
+id|scsi_cmnd
+op_star
+id|bh_next
+suffix:semicolon
+multiline_comment|/* To enumerate the commands waiting &n;                                     to be processed. */
+multiline_comment|/* public: */
 DECL|member|target
-DECL|member|lun
-DECL|member|channel
 r_int
 r_char
 id|target
-comma
+suffix:semicolon
+DECL|member|lun
+r_int
+r_char
 id|lun
-comma
+suffix:semicolon
+DECL|member|channel
+r_int
+r_char
 id|channel
 suffix:semicolon
 DECL|member|cmd_len
@@ -607,24 +1071,6 @@ DECL|member|old_cmd_len
 r_int
 r_char
 id|old_cmd_len
-suffix:semicolon
-DECL|member|next
-DECL|member|prev
-DECL|member|device_next
-DECL|member|reset_chain
-r_struct
-id|scsi_cmnd
-op_star
-id|next
-comma
-op_star
-id|prev
-comma
-op_star
-id|device_next
-comma
-op_star
-id|reset_chain
 suffix:semicolon
 multiline_comment|/* These elements define the operation we are about to perform */
 DECL|member|cmnd
@@ -640,6 +1086,12 @@ r_int
 id|request_bufflen
 suffix:semicolon
 multiline_comment|/* Actual request size */
+DECL|member|eh_timeout
+r_struct
+id|timer_list
+id|eh_timeout
+suffix:semicolon
+multiline_comment|/* Used to time out the command. */
 DECL|member|request_buffer
 r_void
 op_star
@@ -660,7 +1112,7 @@ r_int
 r_int
 id|old_use_sg
 suffix:semicolon
-multiline_comment|/* We save  use_sg here when requesting&n;&t;&t;&t;&t; * sense info */
+multiline_comment|/* We save  use_sg here when requesting&n;                                         * sense info */
 DECL|member|use_sg
 r_int
 r_int
@@ -678,7 +1130,7 @@ r_int
 r_int
 id|abort_reason
 suffix:semicolon
-multiline_comment|/* If the mid-level code requests an&n;&t;&t;&t;&t; * abort, this is the reason. */
+multiline_comment|/* If the mid-level code requests an&n;                                         * abort, this is the reason. */
 DECL|member|bufflen
 r_int
 id|bufflen
@@ -694,18 +1146,18 @@ DECL|member|underflow
 r_int
 id|underflow
 suffix:semicolon
-multiline_comment|/* Return error if less than this amount is &n;&t;&t;&t;&t; * transfered */
+multiline_comment|/* Return error if less than&n;                                           this amount is transfered */
 DECL|member|transfersize
 r_int
 id|transfersize
 suffix:semicolon
-multiline_comment|/* How much we are guaranteed to transfer with&n;&t;&t;&t;&t; * each SCSI transfer (ie, between disconnect /&n;&t;&t;&t;&t; * reconnects.&t; Probably == sector size */
+multiline_comment|/* How much we are guaranteed to&n;                                           transfer with each SCSI transfer&n;                                           (ie, between disconnect / &n;                                           reconnects.&t; Probably == sector&n;                                           size */
 DECL|member|request
 r_struct
 id|request
 id|request
 suffix:semicolon
-multiline_comment|/* A copy of the command we are working on */
+multiline_comment|/* A copy of the command we are&n;                                             working on */
 DECL|member|sense_buffer
 r_int
 r_char
@@ -714,46 +1166,23 @@ id|sense_buffer
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* Sense for this command, if needed */
-multiline_comment|/*&n;      A SCSI Command is assigned a nonzero serial_number when internal_cmnd&n;      passes it to the driver&squot;s queue command function.  The serial_number&n;      is cleared when scsi_done is entered indicating that the command has&n;      been completed.  If a timeout occurs, the serial number at the moment&n;      of timeout is copied into serial_number_at_timeout.  By subsequently&n;      comparing the serial_number and serial_number_at_timeout fields&n;      during abort or reset processing, we can detect whether the command&n;      has already completed.  This also detects cases where the command has&n;      completed and the SCSI Command structure has already being reused&n;      for another command, so that we can avoid incorrectly aborting or&n;      resetting the new command.&n;    */
-DECL|member|serial_number
-r_int
-r_int
-id|serial_number
-suffix:semicolon
-DECL|member|serial_number_at_timeout
-r_int
-r_int
-id|serial_number_at_timeout
-suffix:semicolon
-DECL|member|retries
-r_int
-id|retries
-suffix:semicolon
-DECL|member|allowed
-r_int
-id|allowed
-suffix:semicolon
-DECL|member|timeout_per_command
-DECL|member|timeout_total
-DECL|member|timeout
-r_int
-id|timeout_per_command
-comma
-id|timeout_total
-comma
-id|timeout
-suffix:semicolon
-multiline_comment|/*&n;     *&t;We handle the timeout differently if it happens when a reset, &n;     *&t;abort, etc are in process. &n;     */
-DECL|member|internal_timeout
-r_int
-r_volatile
-r_char
-id|internal_timeout
-suffix:semicolon
+multiline_comment|/* Sense for this command, &n;                                             needed */
 DECL|member|flags
 r_int
 id|flags
+suffix:semicolon
+multiline_comment|/*&n;     * These two flags are used to track commands that are in the&n;     * mid-level queue.  The idea is that a command can be there for&n;     * one of two reasons - either the host is busy or the device is&n;     * busy.  Thus when a command on the host finishes, we only try&n;     * and requeue commands that we might expect to be queueable.&n;     */
+DECL|member|host_wait
+r_int
+id|host_wait
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|device_wait
+r_int
+id|device_wait
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* These variables are for the cdrom only. Once we have variable size &n;     * buffers in the buffer cache, they will go away. */
 DECL|member|this_count
@@ -774,19 +1203,6 @@ id|scsi_cmnd
 op_star
 )paren
 suffix:semicolon
-DECL|member|done
-r_void
-(paren
-op_star
-id|done
-)paren
-(paren
-r_struct
-id|scsi_cmnd
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* Mid-level done function */
 multiline_comment|/*&n;     * The following fields can be written to by the host specific code. &n;     * Everything else should be left alone. &n;     */
 DECL|member|SCp
 id|Scsi_Pointer
@@ -817,186 +1233,37 @@ r_int
 id|pid
 suffix:semicolon
 multiline_comment|/* Process ID, starts at 0 */
-DECL|typedef|Scsi_Cmnd
 )brace
-id|Scsi_Cmnd
 suffix:semicolon
-multiline_comment|/*&n; *  scsi_abort aborts the current command that is executing on host host.&n; *  The error code, if non zero is returned in the host byte, otherwise &n; *  DID_ABORT is returned in the hostbyte.&n; */
+multiline_comment|/*&n; * Definitions and prototypes used for scsi mid-level queue.&n; */
+DECL|macro|SCSI_MLQUEUE_HOST_BUSY
+mdefine_line|#define SCSI_MLQUEUE_HOST_BUSY   0x1055
+DECL|macro|SCSI_MLQUEUE_DEVICE_BUSY
+mdefine_line|#define SCSI_MLQUEUE_DEVICE_BUSY 0x1056
 r_extern
-r_int
-id|scsi_abort
-(paren
-id|Scsi_Cmnd
-op_star
-comma
-r_int
-id|code
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|scsi_do_cmd
+id|scsi_mlqueue_insert
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
-r_const
-r_void
-op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buffer
+id|cmd
 comma
 r_int
-id|bufflen
-comma
-r_void
-(paren
-op_star
-id|done
-)paren
-(paren
-r_struct
-id|scsi_cmnd
-op_star
-)paren
-comma
-r_int
-id|timeout
-comma
-r_int
-id|retries
+id|reason
 )paren
 suffix:semicolon
 r_extern
-id|Scsi_Cmnd
-op_star
-id|allocate_device
-c_func
-(paren
-r_struct
-id|request
-op_star
-op_star
-comma
-id|Scsi_Device
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-id|Scsi_Cmnd
-op_star
-id|request_queueable
-c_func
-(paren
-r_struct
-id|request
-op_star
-comma
-id|Scsi_Device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|scsi_reset
-(paren
-id|Scsi_Cmnd
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|max_scsi_hosts
-suffix:semicolon
-r_extern
-r_void
-id|proc_print_scsidevice
-c_func
-(paren
-id|Scsi_Device
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|print_command
-c_func
-(paren
-r_int
-r_char
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|print_sense
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|print_driverbyte
-c_func
-(paren
-r_int
-id|scsiresult
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|print_hostbyte
-c_func
-(paren
-r_int
-id|scsiresult
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|scsi_mark_host_reset
+id|scsi_mlqueue_finish
 c_func
 (paren
 r_struct
 id|Scsi_Host
 op_star
-id|Host
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|scsi_mark_bus_reset
-c_func
-(paren
-r_struct
-id|Scsi_Host
-op_star
-id|Host
+id|host
 comma
-r_int
-id|channel
+id|Scsi_Device
+op_star
+id|device
 )paren
 suffix:semicolon
 macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
@@ -1240,10 +1507,6 @@ id|next-&gt;host_wait
 )paren
 suffix:semicolon
 )brace
-id|req-&gt;rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -1256,6 +1519,12 @@ c_func
 (paren
 op_amp
 id|SCpnt-&gt;device-&gt;device_wait
+)paren
+suffix:semicolon
+id|scsi_release_command
+c_func
+(paren
+id|SCpnt
 )paren
 suffix:semicolon
 r_return

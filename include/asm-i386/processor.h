@@ -5,61 +5,144 @@ mdefine_line|#define __ASM_I386_PROCESSOR_H
 macro_line|#include &lt;asm/vm86.h&gt;
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * System setup and hardware bug flags..&n; * [Note we don&squot;t test the 386 multiply bug or popad bug]&n; */
-r_extern
+multiline_comment|/*&n; *  CPU type and hardware bug flags. Kept separately for each CPU.&n; *  Members of this structure are referenced in head.S, so think twice&n; *  before touching them. [mj]&n; */
+DECL|struct|cpuinfo_x86
+r_struct
+id|cpuinfo_x86
+(brace
+DECL|member|x86
+id|u8
+id|x86
+suffix:semicolon
+multiline_comment|/* CPU family */
+DECL|member|x86_vendor
+id|u8
+id|x86_vendor
+suffix:semicolon
+multiline_comment|/* CPU vendor */
+DECL|member|x86_model
+id|u8
+id|x86_model
+suffix:semicolon
+DECL|member|x86_mask
+id|u8
+id|x86_mask
+suffix:semicolon
+DECL|member|wp_works_ok
+r_char
+id|wp_works_ok
+suffix:semicolon
+multiline_comment|/* It doesn&squot;t on 386&squot;s */
+DECL|member|hlt_works_ok
+r_char
+id|hlt_works_ok
+suffix:semicolon
+multiline_comment|/* Problems on some 486Dx4&squot;s and old 386&squot;s */
+DECL|member|hard_math
 r_char
 id|hard_math
 suffix:semicolon
-r_extern
+DECL|member|rfu
 r_char
-id|x86
+id|rfu
 suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
+DECL|member|cpuid_level
+r_int
+id|cpuid_level
+suffix:semicolon
+multiline_comment|/* Maximum supported CPUID level, -1=no CPUID */
+DECL|member|x86_capability
+id|u32
+id|x86_capability
+suffix:semicolon
+DECL|member|x86_vendor_id
 r_char
 id|x86_vendor_id
 (braket
-l_int|13
+l_int|16
 )braket
 suffix:semicolon
-r_extern
+DECL|member|x86_model_id
 r_char
-id|x86_model
+id|x86_model_id
+(braket
+l_int|64
+)braket
 suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
-r_char
-id|x86_mask
-suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
-r_int
-id|x86_capability
-suffix:semicolon
-multiline_comment|/* field of flags */
-r_extern
+DECL|member|fdiv_bug
 r_int
 id|fdiv_bug
 suffix:semicolon
+DECL|member|f00f_bug
+r_int
+id|f00f_bug
+suffix:semicolon
+DECL|member|loops_per_sec
+r_int
+r_int
+id|loops_per_sec
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|X86_VENDOR_INTEL
+mdefine_line|#define X86_VENDOR_INTEL 0
+DECL|macro|X86_VENDOR_CYRIX
+mdefine_line|#define X86_VENDOR_CYRIX 1
+DECL|macro|X86_VENDOR_AMD
+mdefine_line|#define X86_VENDOR_AMD 2
+DECL|macro|X86_VENDOR_UMC
+mdefine_line|#define X86_VENDOR_UMC 3
+DECL|macro|X86_VENDOR_NEXGEN
+mdefine_line|#define X86_VENDOR_NEXGEN 4
+DECL|macro|X86_VENDOR_CENTAUR
+mdefine_line|#define X86_VENDOR_CENTAUR 5
+DECL|macro|X86_VENDOR_UNKNOWN
+mdefine_line|#define X86_VENDOR_UNKNOWN 0xff
+r_extern
+r_struct
+id|cpuinfo_x86
+id|boot_cpu_data
+suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+r_struct
+id|cpuinfo_x86
+id|cpu_data
+(braket
+)braket
+suffix:semicolon
+DECL|macro|current_cpu_data
+mdefine_line|#define current_cpu_data cpu_data[smp_processor_id()]
+macro_line|#else
+DECL|macro|cpu_data
+mdefine_line|#define cpu_data &amp;boot_cpu_data
+DECL|macro|current_cpu_data
+mdefine_line|#define current_cpu_data boot_cpu_data
+macro_line|#endif
 r_extern
 r_char
 id|ignore_irq13
 suffix:semicolon
 r_extern
-r_char
-id|wp_works_ok
+r_void
+id|identify_cpu
+c_func
+(paren
+r_struct
+id|cpuinfo_x86
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* doesn&squot;t work on a 386 */
 r_extern
-r_char
-id|hlt_works_ok
+r_void
+id|print_cpu_info
+c_func
+(paren
+r_struct
+id|cpuinfo_x86
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* problems on some 486Dx4&squot;s and old 386&squot;s */
-r_extern
-r_int
-id|have_cpuid
-suffix:semicolon
-multiline_comment|/* We have a CPUID */
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; */
 r_extern
 r_int

@@ -1180,13 +1180,13 @@ multiline_comment|/* Only superuser is allowed to send multicasts */
 r_if
 c_cond
 (paren
+id|nladdr-&gt;nl_groups
+op_logical_and
 op_logical_neg
 id|suser
 c_func
 (paren
 )paren
-op_logical_and
-id|nladdr-&gt;nl_groups
 )paren
 r_return
 op_minus

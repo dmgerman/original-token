@@ -276,7 +276,7 @@ multiline_comment|/* Read the time counter */
 id|__asm__
 c_func
 (paren
-l_string|&quot;.byte 0x0f,0x31&quot;
+l_string|&quot;rdtsc&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1113,7 +1113,7 @@ multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func
 (paren
-l_string|&quot;.byte 0x0f,0x31&quot;
+l_string|&quot;rdtsc&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
@@ -1541,7 +1541,7 @@ multiline_comment|/* Don&squot;t use them if a suspend/resume could&n;          
 r_if
 c_cond
 (paren
-id|x86_capability
+id|boot_cpu_data.x86_capability
 op_amp
 l_int|16
 )paren
@@ -1557,29 +1557,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|strcmp
-c_func
-(paren
-id|x86_vendor_id
-comma
-l_string|&quot;AuthenticAMD&quot;
-)paren
+id|boot_cpu_data.x86_vendor
 op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|x86
+id|X86_VENDOR_AMD
+op_logical_and
+id|boot_cpu_data.x86
 op_eq
 l_int|5
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|x86_model
+op_logical_and
+id|boot_cpu_data.x86_model
 op_eq
 l_int|0
 )paren
@@ -1588,7 +1574,7 @@ multiline_comment|/* turn on cycle counters during power down */
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;.byte 0x0f,0x32 &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;.byte 0x0f,0x30 &bslash;n &quot;
+l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;rdmsr &bslash;n &bslash;&n;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;wrmsr &bslash;n &quot;
 suffix:colon
 suffix:colon
 suffix:colon
@@ -1606,13 +1592,11 @@ l_int|500
 )paren
 suffix:semicolon
 )brace
-)brace
-)brace
 multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func
 (paren
-l_string|&quot;.byte 0x0f,0x31&quot;
+l_string|&quot;rdtsc&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren

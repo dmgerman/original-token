@@ -6474,6 +6474,8 @@ suffix:semicolon
 id|Scsi_Device
 op_star
 id|scd
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ASC_DBG
 c_func
@@ -6754,21 +6756,13 @@ c_loop
 (paren
 id|scd
 op_assign
-id|scsi_devices
+id|scd-&gt;host-&gt;host_queue
 suffix:semicolon
 id|scd
 suffix:semicolon
 id|scd
 op_assign
 id|scd-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|scd-&gt;host
-op_eq
-id|shp
 )paren
 (brace
 id|cp
@@ -6853,7 +6847,6 @@ id|curbuf
 op_add_assign
 id|cnt
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;     * Display EEPROM configuration for the board.&n;     */
 id|cp
@@ -8537,7 +8530,8 @@ op_assign
 id|advansys_select_queue_depths
 suffix:semicolon
 macro_line|#ifdef MODULE
-multiline_comment|/*&n;             * Following v1.3.89, &squot;cmd_per_lun&squot; is no longer needed&n;             * and should be set to zero. But because of a bug introduced&n;             * in v1.3.89 if the driver is compiled as a module and&n;             * &squot;cmd_per_lun&squot; is zero, the Mid-Level SCSI function&n;             * &squot;allocate_device&squot; will panic. To allow the driver to&n;             * work as a module in these kernels set &squot;cmd_per_lun&squot; to 1.&n;             */
+multiline_comment|/*&n;&t;     * FIXME(eric) - this is completely bogus.  We need to&n;&t;     * figure out what exactly the real problem is and deal&n;&t;     * with it.&n;&t;     */
+multiline_comment|/*&n;&t;     * Following v1.3.89, &squot;cmd_per_lun&squot; is no longer needed&n;&t;     * and should be set to zero. But because of a bug introduced&n;&t;     * in v1.3.89 if the driver is compiled as a module and&n;&t;     * &squot;cmd_per_lun&squot; is zero, the Mid-Level SCSI function&n;&t;     * &squot;scsi_allocate_device&squot; will panic. To allow the driver to&n;&t;     * work as a module in these kernels set &squot;cmd_per_lun&squot; to 1.&n;&t;     */
 id|shp-&gt;cmd_per_lun
 op_assign
 l_int|1
@@ -21177,6 +21171,8 @@ r_int
 id|s-&gt;last_reset
 )paren
 suffix:semicolon
+macro_line|#ifdef ERIC_neverdef /* { */
+multiline_comment|/*&n;&t; * This information is private to the mid-layer scsi and the&n;&t; * the low-level drivers shouldn&squot;t even be aware that it is there.&n;&t; */
 id|printk
 c_func
 (paren
@@ -21203,6 +21199,7 @@ r_int
 id|s-&gt;block
 )paren
 suffix:semicolon
+macro_line|#endif /* ERIC_neverdef */ /* } */
 id|printk
 c_func
 (paren

@@ -1111,6 +1111,13 @@ c_func
 id|max_sectors
 )paren
 suffix:semicolon
+DECL|variable|max_readahead
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|max_readahead
+)paren
+suffix:semicolon
 multiline_comment|/* tty routines */
 DECL|variable|tty_hangup
 id|EXPORT_SYMBOL

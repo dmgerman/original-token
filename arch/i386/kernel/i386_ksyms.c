@@ -61,11 +61,11 @@ id|drive_info
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* platform dependent support */
-DECL|variable|x86
+DECL|variable|boot_cpu_data
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|x86
+id|boot_cpu_data
 )paren
 suffix:semicolon
 DECL|variable|EISA_bus
@@ -80,13 +80,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|MCA_bus
-)paren
-suffix:semicolon
-DECL|variable|wp_works_ok
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|wp_works_ok
 )paren
 suffix:semicolon
 DECL|variable|__verify_write

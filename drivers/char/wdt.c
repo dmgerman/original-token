@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Industrial Computer Source WDT500/501 driver for Linux 2.1.x&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@cymru.net&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.cymru.net&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;(c) Copyright 1995    Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; *&t;Release 0.06.&n; *&n; *&t;Fixes&n; *&t;&t;Dave Gregorich&t;:&t;Modularisation and minor bugs&n; *&t;&t;Alan Cox&t;:&t;Added the watchdog ioctl() stuff&n; *&t;&t;Alan Cox&t;:&t;Fixed the reboot problem (as noted by&n; *&t;&t;&t;&t;&t;Matt Crocker).&n; *&t;&t;Alan Cox&t;:&t;Added wdt= boot option&n; */
+multiline_comment|/*&n; *&t;Industrial Computer Source WDT500/501 driver for Linux 2.1.x&n; *&n; *&t;(c) Copyright 1996-1997 Alan Cox &lt;alan@cymru.net&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.cymru.net&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;(c) Copyright 1995    Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;&n; *&n; *&t;Release 0.07.&n; *&n; *&t;Fixes&n; *&t;&t;Dave Gregorich&t;:&t;Modularisation and minor bugs&n; *&t;&t;Alan Cox&t;:&t;Added the watchdog ioctl() stuff&n; *&t;&t;Alan Cox&t;:&t;Fixed the reboot problem (as noted by&n; *&t;&t;&t;&t;&t;Matt Crocker).&n; *&t;&t;Alan Cox&t;:&t;Added wdt= boot option&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -1279,7 +1279,7 @@ id|notifier_chain_unregister
 c_func
 (paren
 op_amp
-id|boot_notifier_list
+id|reboot_notifier_list
 comma
 op_amp
 id|wdt_notifier
@@ -1318,7 +1318,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;WDT500/501-P driver at %X(Interrupt %d)&bslash;n&quot;
+l_string|&quot;WDT500/501-P driver 0.07 at %X (Interrupt %d)&bslash;n&quot;
 comma
 id|io
 comma
@@ -1379,14 +1379,14 @@ id|io
 comma
 l_int|8
 comma
-l_string|&quot;wdt501&quot;
+l_string|&quot;wdt501p&quot;
 )paren
 suffix:semicolon
 id|notifier_chain_register
 c_func
 (paren
 op_amp
-id|boot_notifier_list
+id|reboot_notifier_list
 comma
 op_amp
 id|wdt_notifier

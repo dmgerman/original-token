@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1403,7 +1404,7 @@ id|arg
 )paren
 (brace
 )brace
-multiline_comment|/*&n; *&t;See if we have a TGA card.&n; */
+multiline_comment|/*&n; *&t;See if we have a TGA card.&n; *&t;Just a placeholder at the moment, because of the strange&n; *&t;way the TGA card is initialized. This has to be enabled when&n; *&t;the kernel initializes PCI devices before the console.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1412,9 +1413,17 @@ r_int
 id|con_is_present
 c_func
 (paren
+r_void
 )paren
 )paren
 (brace
+macro_line|#if 0
+r_int
+r_char
+id|pci_bus
+comma
+id|pci_devfn
+suffix:semicolon
 r_int
 id|status
 suffix:semicolon
@@ -1445,6 +1454,10 @@ ques
 c_cond
 l_int|0
 suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#endif
+r_return
 l_int|1
 suffix:semicolon
 )brace

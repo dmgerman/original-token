@@ -87,7 +87,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|SEAGATE_ST0X
-mdefine_line|#define SEAGATE_ST0X  {  NULL, NULL, NULL, NULL, &bslash;&n;&t;&t;&t; NULL, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; NULL, &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define SEAGATE_ST0X  {  detect:         seagate_st0x_detect,&t;&t;&bslash;&n;&t;&t;&t; info:           seagate_st0x_info,&t;&t;&bslash;&n;&t;&t;&t; command:        seagate_st0x_command,&t;&t;&bslash;&n;&t;&t;&t; queuecommand:   seagate_st0x_queue_command,&t;&bslash;&n;&t;&t;&t; abort:          seagate_st0x_abort,&t;&t;&bslash;&n;&t;&t;&t; reset:          seagate_st0x_reset,&t;&t;&bslash;&n;&t;&t;&t; bios_param:     seagate_st0x_biosparam,&t;&bslash;&n;&t;&t;&t; can_queue:      1,&t;&t;&t;&t;&bslash;&n;&t;&t;&t; this_id:        7,&t;&t;&t;&t;&bslash;&n;&t;&t;&t; sg_tablesize:   SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;&t; cmd_per_lun:    1,&t;&t;&t;&t;&bslash;&n;&t;&t;&t; use_clustering: DISABLE_CLUSTERING}
 macro_line|#endif /* ASM */
 macro_line|#endif /* _SEAGATE_H */
 eof

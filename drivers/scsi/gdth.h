@@ -2199,7 +2199,6 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_int
 id|gdth_bios_param
 c_func
@@ -2239,23 +2238,6 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|GDTH
-mdefine_line|#define GDTH { NULL, NULL,                              &bslash;&n;                   &amp;proc_scsi_gdth,                     &bslash;&n;                   gdth_proc_info,                      &bslash;&n;                   &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;                   gdth_detect,                         &bslash;&n;                   gdth_release,                        &bslash;&n;                   gdth_info,                           &bslash;&n;                   gdth_command,                        &bslash;&n;                   gdth_queuecommand,                   &bslash;&n;                   gdth_abort,                          &bslash;&n;                   gdth_reset,                          &bslash;&n;                   NULL,                                &bslash;&n;                   gdth_bios_param,                     &bslash;&n;                   GDTH_MAXCMDS,                        &bslash;&n;                   -1,                                  &bslash;&n;                   GDTH_MAXSG,                          &bslash;&n;                   GDTH_MAXC_P_L,                       &bslash;&n;                   0,                                   &bslash;&n;                   1,                                   &bslash;&n;                   ENABLE_CLUSTERING}
-macro_line|#else
-r_int
-id|gdth_bios_param
-c_func
-(paren
-id|Disk
-op_star
-comma
-r_int
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-DECL|macro|GDTH
-mdefine_line|#define GDTH { NULL, NULL,                              &bslash;&n;                   &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;                   gdth_detect,                         &bslash;&n;                   gdth_release,                        &bslash;&n;                   gdth_info,                           &bslash;&n;                   gdth_command,                        &bslash;&n;                   gdth_queuecommand,                   &bslash;&n;                   gdth_abort,                          &bslash;&n;                   gdth_reset,                          &bslash;&n;                   NULL,                                &bslash;&n;                   gdth_bios_param,                     &bslash;&n;                   GDTH_MAXCMDS,                        &bslash;&n;                   -1,                                  &bslash;&n;                   GDTH_MAXSG,                          &bslash;&n;                   GDTH_MAXC_P_L,                       &bslash;&n;                   0,                                   &bslash;&n;                   1,                                   &bslash;&n;                   ENABLE_CLUSTERING}
-macro_line|#endif
+mdefine_line|#define GDTH { proc_dir:          &amp;proc_scsi_gdth,                     &bslash;&n;               proc_info:         gdth_proc_info,                      &bslash;&n;               name:              &quot;GDT SCSI Disk Array Controller&quot;,    &bslash;&n;               detect:            gdth_detect,                         &bslash;&n;               release:           gdth_release,                        &bslash;&n;               info:              gdth_info,                           &bslash;&n;               command:           gdth_command,                        &bslash;&n;               queuecommand:      gdth_queuecommand,                   &bslash;&n;               abort:             gdth_abort,                          &bslash;&n;               reset:             gdth_reset,                          &bslash;&n;               bios_param:        gdth_bios_param,                     &bslash;&n;               can_queue:         GDTH_MAXCMDS,                        &bslash;&n;               this_id:           -1,                                  &bslash;&n;               sg_tablesize:      GDTH_MAXSG,                          &bslash;&n;               cmd_per_lun:       GDTH_MAXC_P_L,                       &bslash;&n;               unchecked_isa_dma: 1,                                   &bslash;&n;               use_clustering:    ENABLE_CLUSTERING}
 macro_line|#endif
 eof

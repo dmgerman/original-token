@@ -11549,7 +11549,7 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/************************************************************************** &n;* Function : int AM53C974_reset(Scsi_Cmnd *cmd)&n;*&n;* Purpose : reset the SCSI controller and bus&n;*&n;* Inputs : cmd -- which command within the command block was responsible for the reset&n;* &n;* Returns : status (SCSI_ABORT_SUCCESS)&n;**************************************************************************/
+multiline_comment|/************************************************************************** &n;* Function : int AM53C974_reset(Scsi_Cmnd *cmd)&n;*&n;* Purpose : reset the SCSI controller and bus&n;*&n;* Inputs : cmd -- which command within the command block was responsible for the reset&n;* &n;* Returns : status (SCSI_ABORT_SUCCESS)&n;* &n;* FIXME(eric) the reset_flags are ignored.&n;**************************************************************************/
 DECL|function|AM53C974_reset
 r_int
 id|AM53C974_reset
@@ -11558,6 +11558,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 id|AM53C974_local_declare

@@ -104,11 +104,7 @@ r_extern
 r_int
 id|coda_access_cache
 suffix:semicolon
-r_extern
-r_int
-id|cfsnc_use
-suffix:semicolon
-multiline_comment|/*   */
+multiline_comment|/* this file:  heloers */
 r_char
 op_star
 id|coda_f2s
@@ -133,14 +129,106 @@ op_star
 id|i
 )paren
 suffix:semicolon
+r_int
+id|coda_iscontrol
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
 r_void
 id|coda_load_creds
 c_func
 (paren
 r_struct
-id|CodaCred
+id|coda_cred
 op_star
 id|cred
+)paren
+suffix:semicolon
+r_int
+id|coda_mycred
+c_func
+(paren
+r_struct
+id|coda_cred
+op_star
+)paren
+suffix:semicolon
+r_void
+id|coda_vattr_to_iattr
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|coda_vattr
+op_star
+)paren
+suffix:semicolon
+r_void
+id|coda_iattr_to_vattr
+c_func
+(paren
+r_struct
+id|iattr
+op_star
+comma
+r_struct
+id|coda_vattr
+op_star
+)paren
+suffix:semicolon
+r_int
+r_int
+id|coda_flags_to_cflags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_void
+id|print_vattr
+c_func
+(paren
+r_struct
+id|coda_vattr
+op_star
+id|attr
+)paren
+suffix:semicolon
+r_int
+id|coda_cred_ok
+c_func
+(paren
+r_struct
+id|coda_cred
+op_star
+id|cred
+)paren
+suffix:semicolon
+r_int
+id|coda_cred_eq
+c_func
+(paren
+r_struct
+id|coda_cred
+op_star
+id|cred1
+comma
+r_struct
+id|coda_cred
+op_star
+id|cred2
 )paren
 suffix:semicolon
 multiline_comment|/* defined in  file.c */
@@ -216,21 +304,8 @@ op_star
 id|ind
 )paren
 suffix:semicolon
-r_struct
-id|super_block
-op_star
-id|coda_find_super
-c_func
-(paren
-id|kdev_t
-id|device
-)paren
-suffix:semicolon
-DECL|macro|INIT_IN
-mdefine_line|#define INIT_IN(in, op) &bslash;&n;&t;  (in)-&gt;opcode = (op); &bslash;&n;&t;  (in)-&gt;pid = current-&gt;pid; &bslash;&n;          (in)-&gt;pgid = current-&gt;gid; 
-multiline_comment|/* debugging aids */
-DECL|macro|coda_panic
-mdefine_line|#define coda_panic printk
+DECL|macro|NB_SFS_SIZ
+mdefine_line|#define NB_SFS_SIZ 0x895440
 multiline_comment|/* debugging masks */
 DECL|macro|D_SUPER
 mdefine_line|#define D_SUPER     1   /* print results returned by Venus */ 
@@ -252,65 +327,21 @@ DECL|macro|D_PIOCTL
 mdefine_line|#define D_PIOCTL   256
 DECL|macro|D_SPECIAL
 mdefine_line|#define D_SPECIAL  512
-multiline_comment|/* until we are really good, ... */
-DECL|macro|coda_panic
-mdefine_line|#define coda_panic printk
+DECL|macro|D_TIMING
+mdefine_line|#define D_TIMING  1024
+DECL|macro|D_DOWNCALL
+mdefine_line|#define D_DOWNCALL 2048
 DECL|macro|CDEBUG
 mdefine_line|#define CDEBUG(mask, format, a...)                                &bslash;&n;  do {                                                            &bslash;&n;  if (coda_debug &amp; mask) {                                        &bslash;&n;    printk(&quot;(%s,l. %d): &quot;,  __FUNCTION__, __LINE__);              &bslash;&n;    printk(format, ## a); }                                       &bslash;&n;} while (0) ;                            
 DECL|macro|ENTRY
 mdefine_line|#define ENTRY    &bslash;&n;    if(coda_print_entry) printk(&quot;Process %d entered %s&bslash;n&quot;,current-&gt;pid,__FUNCTION__)
 DECL|macro|EXIT
 mdefine_line|#define EXIT    &bslash;&n;    if(coda_print_entry) printk(&quot;Process %d leaving %s&bslash;n&quot;,current-&gt;pid,__FUNCTION__)
-multiline_comment|/* inode to cnode */
-DECL|macro|ITOC
-mdefine_line|#define ITOC(the_inode)  ((struct cnode *)(the_inode)-&gt;u.generic_ip)
-multiline_comment|/* cnode to inode */
-DECL|macro|CTOI
-mdefine_line|#define CTOI(the_cnode)  ((the_cnode)-&gt;c_vnode)
 DECL|macro|CHECK_CNODE
-mdefine_line|#define CHECK_CNODE(c)                                                &bslash;&n;do {                                                                  &bslash;&n;  struct cnode *cnode = (c);                                          &bslash;&n;  if (!cnode)                                                         &bslash;&n;    coda_panic (&quot;%s(%d): cnode is null&bslash;n&quot;, __FUNCTION__, __LINE__);        &bslash;&n;  if (cnode-&gt;c_magic != CODA_CNODE_MAGIC)                             &bslash;&n;    coda_panic (&quot;%s(%d): cnode magic wrong&bslash;n&quot;, __FUNCTION__, __LINE__);    &bslash;&n;  if (!cnode-&gt;c_vnode)                                                &bslash;&n;    coda_panic (&quot;%s(%d): cnode has null inode&bslash;n&quot;, __FUNCTION__, __LINE__); &bslash;&n;  if ( (struct cnode *)cnode-&gt;c_vnode-&gt;u.generic_ip != cnode )           &bslash;&n;    coda_panic(&quot;AAooh, %s(%d) cnode doesn&squot;t link right!&bslash;n&quot;, __FUNCTION__,__LINE__);&bslash;&n;} while (0);
-multiline_comment|/* ioctl stuff */
-multiline_comment|/* this needs to be sorted out XXXX */
-macro_line|#ifdef&t;__linux__
-DECL|macro|IOCPARM_MASK
-mdefine_line|#define IOCPARM_MASK 0x0000ffff
-macro_line|#endif 
+mdefine_line|#define CHECK_CNODE(c)                                                &bslash;&n;do {                                                                  &bslash;&n;  if ( coda_debug ) {&bslash;&n;    struct cnode *cnode = (c);                                          &bslash;&n;  if (!cnode)                                                         &bslash;&n;    printk (&quot;%s(%d): cnode is null&bslash;n&quot;, __FUNCTION__, __LINE__);        &bslash;&n;  if (cnode-&gt;c_magic != CODA_CNODE_MAGIC)                             &bslash;&n;    printk (&quot;%s(%d): cnode magic wrong&bslash;n&quot;, __FUNCTION__, __LINE__);    &bslash;&n;  if (!cnode-&gt;c_vnode)                                                &bslash;&n;    printk (&quot;%s(%d): cnode has null inode&bslash;n&quot;, __FUNCTION__, __LINE__); &bslash;&n;  if ( (struct cnode *)cnode-&gt;c_vnode-&gt;u.generic_ip != cnode )           &bslash;&n;    printk(&quot;AAooh, %s(%d) cnode doesn&squot;t link right!&bslash;n&quot;, __FUNCTION__,__LINE__);&bslash;&n;}} while (0);
 DECL|macro|CODA_ALLOC
-mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; 3000) {                                                    &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;                CDEBUG(D_MALLOC, &quot;kmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);&bslash;&n;     }  else {                                                             &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);}&bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        coda_panic(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;    }                                                                     &bslash;&n;    memset( ptr, 0, size );                                                   &bslash;&n;} while (0)
+mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; 3000) {                                                    &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;                CDEBUG(D_MALLOC, &quot;kmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);&bslash;&n;     }  else {                                                             &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);}&bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        printk(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;    }                                                                     &bslash;&n;    memset( ptr, 0, size );                                                   &bslash;&n;} while (0)
 DECL|macro|CODA_FREE
 mdefine_line|#define CODA_FREE(ptr,size) do {if (size &lt; 3000) { kfree_s((ptr), (size)); CDEBUG(D_MALLOC, &quot;kfreed: %x at %x.&bslash;n&quot;, (int) size, (int) ptr); } else { vfree((ptr)); CDEBUG(D_MALLOC, &quot;vfreed: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);} } while (0)
-multiline_comment|/*&n; * Macros to manipulate the queue &n; */
-DECL|macro|crfree
-mdefine_line|#define crfree(cred) CODA_FREE( (cred), sizeof(struct ucred))
-macro_line|#ifndef INIT_QUEUE
-DECL|struct|queue
-r_struct
-id|queue
-(brace
-DECL|member|forw
-DECL|member|back
-r_struct
-id|queue
-op_star
-id|forw
-comma
-op_star
-id|back
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|INIT_QUEUE
-mdefine_line|#define INIT_QUEUE(head)                     &bslash;&n;do {                                         &bslash;&n;    (head).forw = (struct queue *)&amp;(head);   &bslash;&n;    (head).back = (struct queue *)&amp;(head);   &bslash;&n;} while (0)
-DECL|macro|GETNEXT
-mdefine_line|#define GETNEXT(head) (head).forw
-DECL|macro|EMPTY
-mdefine_line|#define EMPTY(head) ((head).forw == &amp;(head))
-DECL|macro|EOQ
-mdefine_line|#define EOQ(el, head) ((struct queue *)(el) == (struct queue *)&amp;(head))
-DECL|macro|INSQUE
-mdefine_line|#define INSQUE(el, head)                             &bslash;&n;do {                                                 &bslash;&n;&t;(el).forw = ((head).back)-&gt;forw;             &bslash;&n;&t;(el).back = (head).back;                     &bslash;&n;&t;((head).back)-&gt;forw = (struct queue *)&amp;(el); &bslash;&n;&t;(head).back = (struct queue *)&amp;(el);         &bslash;&n;} while (0)
-DECL|macro|REMQUE
-mdefine_line|#define REMQUE(el)                         &bslash;&n;do {                                       &bslash;&n;&t;((el).forw)-&gt;back = (el).back;     &bslash;&n;&t;(el).back-&gt;forw = (el).forw;       &bslash;&n;}  while (0)
-macro_line|#endif INIT_QUEUE
-macro_line|#endif _LINUX_CODA_FS
+macro_line|#endif
 eof

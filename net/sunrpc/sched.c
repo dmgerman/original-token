@@ -1311,6 +1311,8 @@ multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * 
 r_if
 c_cond
 (paren
+l_int|0
+op_logical_and
 id|signalled
 c_func
 (paren
@@ -1735,6 +1737,10 @@ id|HZ
 op_rshift
 l_int|4
 )paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|schedule
 c_func

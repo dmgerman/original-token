@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  NET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARCnet handlers.&n; *&n; * Version:&t;$Id: arcdevice.h,v 1.2 1997/09/05 08:57:56 mj Exp $&n; *&n; * Authors:&t;Avery Pennarun &lt;apenwarr@bond.net&gt;&n; *              David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  NET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARCnet handlers.&n; *&n; * Version:&t;$Id: arcdevice.h,v 1.3 1997/11/09 11:05:05 mj Exp $&n; *&n; * Authors:&t;Avery Pennarun &lt;apenwarr@bond.net&gt;&n; *              David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#ifndef _LINUX_ARCDEVICE_H
 DECL|macro|_LINUX_ARCDEVICE_H
 mdefine_line|#define _LINUX_ARCDEVICE_H
@@ -28,7 +28,7 @@ DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT 20
 multiline_comment|/* Display warnings about the driver being an ALPHA version.&n; */
 DECL|macro|ALPHA_WARNING
-mdefine_line|#define ALPHA_WARNING
+macro_line|#undef ALPHA_WARNING
 multiline_comment|/* New debugging bitflags: each option can be enabled individually.&n; *&n; * These can be set while the driver is running by typing:&n; *&t;ifconfig arc0 down metric 1xxx HOSTNAME&n; *&t;&t;where 1xxx is 1000 + the debug level you want&n; *&t;&t;and HOSTNAME is your hostname/ip address&n; * and then resetting your routes.&n; *&n; * An ioctl() should be used for this instead, someday.&n; *&n; * Note: only debug flags included in the ARCNET_DEBUG_MAX define will&n; *   actually be available.  GCC will (at least, GCC 2.7.0 will) notice&n; *   lines using a BUGLVL not in ARCNET_DEBUG_MAX and automatically optimize&n; *   them out.&n; */
 DECL|macro|D_NORMAL
 mdefine_line|#define D_NORMAL&t;1&t;/* important operational info&t;&t;*/

@@ -267,13 +267,8 @@ macro_line|#else
 DECL|macro|ncr53c8xx_release
 mdefine_line|#define ncr53c8xx_release NULL
 macro_line|#endif
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0)
 DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {NULL,NULL,NULL,NULL,SCSI_NCR_DRIVER_NAME, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
-macro_line|#else
-DECL|macro|NCR53C8XX
-mdefine_line|#define NCR53C8XX {NULL, NULL, SCSI_NCR_DRIVER_NAME, ncr53c8xx_detect,&bslash;&n;    &t;ncr53c8xx_release, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;ncr53c8xx_queue_command, ncr53c8xx_abort, ncr53c8xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ SCSI_NCR_CAN_QUEUE,&bslash;&n;&t;/* id */ 7, SCSI_NCR_SG_TABLESIZE /* SG */, /* cmd per lun */ SCSI_NCR_CMD_PER_LUN, &t;&t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
-macro_line|#endif /* LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,0) */
+mdefine_line|#define NCR53C8XX {     name:           SCSI_NCR_DRIVER_NAME,&t;&bslash;&n;&t;&t;&t;detect:         ncr53c8xx_detect,&t;&bslash;&n;&t;&t;&t;release:        ncr53c8xx_release,&t;&bslash;&n;&t;&t;&t;queuecommand:   ncr53c8xx_queue_command,&bslash;&n;&t;&t;&t;abort:          ncr53c8xx_abort,&t;&bslash;&n;&t;&t;&t;reset:          ncr53c8xx_reset,&t;&bslash;&n;&t;&t;&t;bios_param:     scsicam_bios_param,&t;&bslash;&n;&t;&t;&t;can_queue:      SCSI_NCR_CAN_QUEUE,&t;&bslash;&n;&t;&t;&t;this_id:        7,&t;&t;&t;&bslash;&n;&t;&t;&t;sg_tablesize:   SCSI_NCR_SG_TABLESIZE,&t;&bslash;&n;&t;&t;&t;cmd_per_lun:    SCSI_NCR_CMD_PER_LUN,&t;&bslash;&n;&t;&t;&t;use_clustering: DISABLE_CLUSTERING} 
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/*&n;**&t;IO functions definition for big/little endian support.&n;**&t;For now, the NCR is only supported in little endian addressing mode, &n;**&t;and big endian byte ordering is only supported for the PPC.&n;**&t;MMIO is not used on PPC.&n;*/

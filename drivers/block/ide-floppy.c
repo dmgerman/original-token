@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.8&t;&t;Feb  21, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.8&t;&t;Dec   7, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
 multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; * Ver 0.5   Feb 21 97   Add partitions support.&n; *                       Use the minimum of the LBA and CHS capacities.&n; *                       Avoid hwgroup-&gt;rq == NULL on the last irq.&n; *                       Fix potential null dereferencing with DEBUG_LOG.&n; * Ver 0.8   Dec  7 97   Increase irq timeout from 10 to 50 seconds.&n; *                       Add media write-protect detection.&n; *                       Issue START command only if TEST UNIT READY fails.&n; *                       Add work-around for IOMEGA ZIP revision 21.D.&n; *                       Remove idefloppy_get_capabilities().&n; */
 DECL|macro|IDEFLOPPY_VERSION
 mdefine_line|#define IDEFLOPPY_VERSION &quot;0.8&quot;
@@ -5973,6 +5973,31 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|idefloppy_proc
+r_static
+id|ide_proc_entry_t
+id|idefloppy_proc
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;geometry&quot;
+comma
+id|proc_ide_read_geometry
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
 r_int
 id|idefloppy_init
 (paren
@@ -6047,7 +6072,7 @@ multiline_comment|/* capacity */
 l_int|NULL
 comma
 multiline_comment|/* special */
-l_int|NULL
+id|idefloppy_proc
 multiline_comment|/* proc */
 )brace
 suffix:semicolon

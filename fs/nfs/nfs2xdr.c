@@ -2599,6 +2599,12 @@ id|EEXIST
 )brace
 comma
 (brace
+id|NFSERR_XDEV
+comma
+id|EXDEV
+)brace
+comma
+(brace
 id|NFSERR_NODEV
 comma
 id|ENODEV

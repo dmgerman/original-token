@@ -23,7 +23,7 @@ id|ints
 )paren
 )paren
 (brace
-id|hlt_works_ok
+id|boot_cpu_data.hlt_works_ok
 op_assign
 l_int|0
 suffix:semicolon
@@ -47,7 +47,7 @@ id|ints
 )paren
 )paren
 (brace
-id|hard_math
+id|boot_cpu_data.hard_math
 op_assign
 l_int|0
 suffix:semicolon
@@ -177,7 +177,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hard_math
+id|boot_cpu_data.hard_math
 )paren
 (brace
 macro_line|#ifndef CONFIG_MATH_EMULATION
@@ -344,7 +344,7 @@ l_string|&quot;=m&quot;
 (paren
 op_star
 op_amp
-id|fdiv_bug
+id|boot_cpu_data.fdiv_bug
 )paren
 suffix:colon
 l_string|&quot;m&quot;
@@ -366,7 +366,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|fdiv_bug
+id|boot_cpu_data.fdiv_bug
 )paren
 id|printk
 c_func
@@ -406,7 +406,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|hlt_works_ok
+id|boot_cpu_data.hlt_works_ok
 )paren
 (brace
 id|printk
@@ -450,7 +450,7 @@ multiline_comment|/*&n;&t; * The 386 chips don&squot;t support TLB finegrained i
 r_if
 c_cond
 (paren
-id|x86
+id|boot_cpu_data.x86
 op_eq
 l_int|3
 )paren
@@ -559,7 +559,21 @@ l_string|&quot;Ok.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; *&t;B step AMD K6 before B 9729AIJW have hardware bugs that can cause&n; *&t;misexecution of code under Linux. Owners of such processors should&n; *&t;contact AMD for precise details and a CPU swap.&n; *&n; *&t;See&t;http://www.creaweb.fr/bpc/k6bug_faq.html&n; *&t;&t;http://www.amd.com/K6/k6docs/revgd.html&n; */
+multiline_comment|/*&n; *&t;B step AMD K6 before B 9729AIJW have hardware bugs that can cause&n; *&t;misexecution of code under Linux. Owners of such processors should&n; *&t;contact AMD for precise details and a CPU swap.&n; *&n; *&t;See&t;http://www.chorus.com/~poulot/k6bug.html&n; *&t;&t;http://www.amd.com/K6/k6docs/revgd.html&n; *&n; *&t;The following test is erm.. interesting. AMD neglected to up&n; *&t;the chip setting when fixing the bug but they also tweaked some&n; *&t;performance at the same time..&n; */
+r_extern
+r_void
+id|vide
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;.align 4&bslash;nvide: ret&quot;
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -573,52 +587,151 @@ r_void
 )paren
 )paren
 (brace
-multiline_comment|/* B Step AMD K6 */
 r_if
 c_cond
 (paren
-id|x86_model
+id|boot_cpu_data.x86_vendor
+op_eq
+id|X86_VENDOR_AMD
+op_logical_and
+id|boot_cpu_data.x86_model
 op_eq
 l_int|6
 op_logical_and
-id|x86_mask
+id|boot_cpu_data.x86_mask
 op_eq
 l_int|1
-op_logical_and
-id|memcmp
-c_func
-(paren
-id|x86_vendor_id
-comma
-l_string|&quot;AuthenticAMD&quot;
-comma
-l_int|12
-)paren
-op_eq
-l_int|0
 )paren
 (brace
+r_int
+id|n
+suffix:semicolon
+r_void
+(paren
+op_star
+id|f_vide
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+r_int
+id|d
+comma
+id|d2
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;AMD K6 stepping B detected - system stability may be impaired. Please see.&bslash;n&quot;
+l_string|&quot;AMD K6 stepping B detected - &quot;
+)paren
+suffix:semicolon
+DECL|macro|K6_BUG_LOOP
+mdefine_line|#define K6_BUG_LOOP 1000000
+multiline_comment|/*&n;&t;&t; * It looks like AMD fixed the 2.6.2 bug and improved indirect &n;&t;&t; * calls at the same time.&n;&t;&t; */
+id|n
+op_assign
+id|K6_BUG_LOOP
+suffix:semicolon
+id|f_vide
+op_assign
+id|vide
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;rdtsc&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|d
+)paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|n
+op_decrement
+)paren
+id|f_vide
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;rdtsc&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|d2
+)paren
+)paren
+suffix:semicolon
+id|d
+op_assign
+id|d2
+op_minus
+id|d
+suffix:semicolon
+multiline_comment|/* Knock these two lines out if it debugs out ok */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;K6 BUG %ld %d (Report these if test report is incorrect)&bslash;n&quot;
+comma
+id|d
+comma
+l_int|20
+op_star
+id|K6_BUG_LOOP
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;http://www.creaweb.fr/bpc/k6bug_faq.html&quot;
+l_string|&quot;AMD K6 stepping B detected - &quot;
+)paren
+suffix:semicolon
+multiline_comment|/* -- cut here -- */
+r_if
+c_cond
+(paren
+id|d
+OG
+l_int|20
+op_star
+id|K6_BUG_LOOP
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;system stability may be impaired when more than 32 MB are used.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;probably OK (after B9730xxxx).&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Please see http://www.chorus.com/bpc/k6bug.html&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * All current models of Pentium and Pentium with MMX technology CPUs&n; * have the F0 0F bug, which lets nonpriviledged users lock up the system:&n; */
-r_extern
-r_int
-id|pentium_f00f_bug
-suffix:semicolon
 r_extern
 r_void
 id|trap_init_f00f_bug
@@ -641,27 +754,20 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Pentium and Pentium MMX&n;&t; */
-id|pentium_f00f_bug
+id|boot_cpu_data.f00f_bug
 op_assign
 l_int|0
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|x86
+id|boot_cpu_data.x86
 op_eq
 l_int|5
 op_logical_and
-op_logical_neg
-id|memcmp
-c_func
-(paren
-id|x86_vendor_id
-comma
-l_string|&quot;GenuineIntel&quot;
-comma
-l_int|12
-)paren
+id|boot_cpu_data.x86_vendor
+op_eq
+id|X86_VENDOR_INTEL
 )paren
 (brace
 id|printk
@@ -671,7 +777,7 @@ id|KERN_INFO
 l_string|&quot;Intel Pentium with F0 0F bug - workaround enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|pentium_f00f_bug
+id|boot_cpu_data.f00f_bug
 op_assign
 l_int|1
 suffix:semicolon
@@ -695,6 +801,28 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifndef __SMP__
+id|identify_cpu
+c_func
+(paren
+op_amp
+id|boot_cpu_data
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: &quot;
+)paren
+suffix:semicolon
+id|print_cpu_info
+c_func
+(paren
+op_amp
+id|boot_cpu_data
+)paren
+suffix:semicolon
+macro_line|#endif
 id|check_tlb
 c_func
 (paren
@@ -732,7 +860,7 @@ l_int|1
 op_assign
 l_char|&squot;0&squot;
 op_plus
-id|x86
+id|boot_cpu_data.x86
 suffix:semicolon
 )brace
 eof

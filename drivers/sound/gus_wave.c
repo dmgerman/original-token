@@ -544,6 +544,8 @@ r_struct
 id|patch_info
 op_star
 id|samples
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|sample_ptrs
 r_static
@@ -13670,8 +13672,8 @@ r_return
 id|n
 suffix:semicolon
 )brace
-r_void
 DECL|function|gus_wave_init
+r_void
 id|gus_wave_init
 c_func
 (paren
@@ -13773,6 +13775,7 @@ c_cond
 op_logical_neg
 id|gus_pnp_flag
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -13791,6 +13794,7 @@ id|irq
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -13839,7 +13843,7 @@ id|gus_dma2
 op_assign
 id|dma
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Try to identify the GUS model.&n;&t;   *&n;&t;   *  Versions &lt; 3.6 don&squot;t have the digital ASIC. Try to probe it first.&n;&t; */
+multiline_comment|/*&n;&t; * Try to identify the GUS model.&n;&t; *&n;&t; *  Versions &lt; 3.6 don&squot;t have the digital ASIC. Try to probe it first.&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -13913,7 +13917,7 @@ op_assign
 l_int|0x12345678
 suffix:semicolon
 multiline_comment|/* Interwave &quot;magic&quot; */
-multiline_comment|/*&n;&t;&t;     * It has the digital ASIC so the card is at least v3.4.&n;&t;&t;     * Next try to detect the true model.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * It has the digital ASIC so the card is at least v3.4.&n;&t;&t; * Next try to detect the true model.&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -13933,7 +13937,7 @@ c_func
 id|u_MixSelect
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;     * Value 255 means pre-3.7 which don&squot;t have mixer.&n;&t;&t;     * Values 5 thru 9 mean v3.7 which has a ICS2101 mixer.&n;&t;&t;     * 10 and above is GUS MAX which has the CS4231 codec/mixer.&n;&t;&t;     *&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Value 255 means pre-3.7 which don&squot;t have mixer.&n;&t;&t; * Values 5 thru 9 mean v3.7 which has a ICS2101 mixer.&n;&t;&t; * 10 and above is GUS MAX which has the CS4231 codec/mixer.&n;&t;&t; *&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -14201,6 +14205,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;[Where&squot;s the CS4231?]&quot;
 )paren
 suffix:semicolon
@@ -14216,7 +14221,7 @@ macro_line|#endif
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;     * ASIC not detected so the card must be 2.2 or 2.4.&n;&t;&t;     * There could still be the 16-bit/mixer daughter card.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * ASIC not detected so the card must be 2.2 or 2.4.&n;&t;&t; * There could still be the 16-bit/mixer daughter card.&n;&t;&t; */
 )brace
 r_if
 c_cond
@@ -14319,12 +14324,6 @@ r_struct
 id|patch_info
 op_star
 )paren
-(paren
-id|sound_mem_blocks
-(braket
-id|sound_nblocks
-)braket
-op_assign
 id|vmalloc
 c_func
 (paren
@@ -14340,35 +14339,6 @@ op_star
 id|samples
 )paren
 )paren
-)paren
-suffix:semicolon
-id|sound_mem_sizes
-(braket
-id|sound_nblocks
-)braket
-op_assign
-(paren
-id|MAX_SAMPLE
-op_plus
-l_int|1
-)paren
-op_star
-r_sizeof
-(paren
-op_star
-id|samples
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sound_nblocks
-OL
-l_int|1024
-)paren
-id|sound_nblocks
-op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -14502,6 +14472,7 @@ id|gus_mem_size
 OG
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -14584,8 +14555,10 @@ id|dma2
 OL
 l_int|0
 )paren
+(brace
 r_return
 suffix:semicolon
+)brace
 id|audio_devs
 (braket
 id|gus_devnum
@@ -14631,10 +14604,12 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;GUS: Too many audio devices available&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   *  Mixer dependent initialization.&n;&t; */
+)brace
+multiline_comment|/*&n;&t; *  Mixer dependent initialization.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -14724,8 +14699,8 @@ r_return
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|gus_wave_unload
+r_void
 id|gus_wave_unload
 c_func
 (paren
@@ -14881,10 +14856,27 @@ l_int|4
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|samples
+)paren
+(brace
+id|vfree
+c_func
+(paren
+id|samples
+)paren
+suffix:semicolon
 )brace
+id|samples
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|do_loop_irq
 r_static
 r_void
-DECL|function|do_loop_irq
 id|do_loop_irq
 c_func
 (paren

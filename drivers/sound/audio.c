@@ -71,9 +71,9 @@ id|MAX_AUDIO_DEV
 suffix:semicolon
 DECL|macro|CNV_MU_LAW
 mdefine_line|#define CNV_MU_LAW&t;0x00000001
+DECL|function|set_format
 r_static
 r_int
-DECL|function|set_format
 id|set_format
 c_func
 (paren
@@ -115,6 +115,7 @@ id|fmt
 )paren
 )paren
 multiline_comment|/* Not supported */
+(brace
 r_if
 c_cond
 (paren
@@ -141,6 +142,7 @@ op_assign
 id|AFMT_U8
 suffix:semicolon
 multiline_comment|/* This is always supported */
+)brace
 id|audio_format
 (braket
 id|dev
@@ -183,8 +185,8 @@ id|dev
 )braket
 suffix:semicolon
 )brace
-r_int
 DECL|function|audio_open
+r_int
 id|audio_open
 c_func
 (paren
@@ -284,6 +286,7 @@ id|dev
 op_member_access_from_pointer
 id|coproc
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -325,12 +328,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: Can&squot;t access coprocessor device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
+)brace
 )brace
 id|local_conversion
 (braket
@@ -346,7 +351,6 @@ id|dev_type
 op_eq
 id|SND_DEV_AUDIO
 )paren
-(brace
 id|set_format
 c_func
 (paren
@@ -355,7 +359,6 @@ comma
 id|AFMT_MU_LAW
 )paren
 suffix:semicolon
-)brace
 r_else
 id|set_format
 c_func
@@ -383,9 +386,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|sync_output
 r_static
 r_void
-DECL|function|sync_output
 id|sync_output
 c_func
 (paren
@@ -479,7 +482,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Clean all unused buffer fragments.&n; */
+multiline_comment|/*&n;&t; * Clean all unused buffer fragments.&n;&t; */
 id|p
 op_assign
 id|dmap-&gt;qtail
@@ -539,6 +542,7 @@ id|dmap-&gt;buffsize
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;audio: Buffer error 2&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -562,8 +566,8 @@ op_or_assign
 id|DMA_DIRTY
 suffix:semicolon
 )brace
-r_void
 DECL|function|audio_release
+r_void
 id|audio_release
 c_func
 (paren
@@ -655,9 +659,9 @@ id|mode
 suffix:semicolon
 )brace
 macro_line|#if defined(NO_INLINE_ASM) || !defined(i386)
+DECL|function|translate_bytes
 r_static
 r_void
-DECL|function|translate_bytes
 id|translate_bytes
 c_func
 (paren
@@ -799,8 +803,8 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-r_int
 DECL|function|audio_write
+r_int
 id|audio_write
 c_func
 (paren
@@ -1026,6 +1030,7 @@ id|dmap_out-&gt;buffsize
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;audio: Buffer error 3 (%lx,%d), (%lx, %d)&bslash;n&quot;
 comma
 (paren
@@ -1077,6 +1082,7 @@ id|dmap_out-&gt;raw_buf
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;audio: Buffer error 13 (%lx&lt;%lx)&bslash;n&quot;
 comma
 (paren
@@ -1100,6 +1106,9 @@ op_minus
 id|EDOM
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -1115,7 +1124,13 @@ id|p
 comma
 id|l
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 )brace
 r_else
 id|audio_devs
@@ -1152,7 +1167,7 @@ op_amp
 id|CNV_MU_LAW
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * This just allows interrupts while the conversion is running&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * This just allows interrupts while the conversion is running&n;&t;&t;&t; */
 id|sti
 c_func
 (paren
@@ -1195,8 +1210,8 @@ r_return
 id|count
 suffix:semicolon
 )brace
-r_int
 DECL|function|audio_read
+r_int
 id|audio_read
 c_func
 (paren
@@ -1287,14 +1302,12 @@ op_amp
 id|DMA_DUPLEX
 )paren
 )paren
-(brace
 id|sync_output
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1355,7 +1368,7 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/* Nonblocking mode handling. Return current # of bytes */
+multiline_comment|/*&n;&t;&t;&t; *&t;Nonblocking mode handling. Return current # of bytes&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1399,7 +1412,7 @@ id|l
 op_assign
 id|c
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   * Insert any local processing here.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Insert any local processing here.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1411,7 +1424,7 @@ op_amp
 id|CNV_MU_LAW
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * This just allows interrupts while the conversion is running&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * This just allows interrupts while the conversion is running&n;&t;&t;&t; */
 id|sti
 c_func
 (paren
@@ -1440,6 +1453,9 @@ id|fixit
 op_assign
 id|dmabuf
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -1455,7 +1471,13 @@ id|fixit
 comma
 id|l
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 )brace
 suffix:semicolon
 id|DMAbuf_rmchars
@@ -1483,8 +1505,8 @@ op_minus
 id|c
 suffix:semicolon
 )brace
-r_int
 DECL|function|audio_ioctl
+r_int
 id|audio_ioctl
 c_func
 (paren
@@ -1507,7 +1529,6 @@ id|arg
 r_int
 id|val
 suffix:semicolon
-multiline_comment|/* printk( &quot;audio_ioctl(%x, %x)&bslash;n&quot;,  (int)cmd,  (int)arg); */
 id|dev
 op_assign
 id|dev
@@ -1566,15 +1587,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;/dev/dsp%d: No coprocessor for this device&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/* else&n;&t;&t;&t;printk(KERN_DEBUG&quot;/dev/dsp%d: No coprocessor for this device&bslash;n&quot;, dev); */
 r_return
 op_minus
 id|ENXIO
@@ -1643,8 +1656,6 @@ id|dev
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_POST
@@ -1715,8 +1726,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_DSP_RESET
 suffix:colon
@@ -1735,8 +1744,6 @@ id|dev
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETFMTS
@@ -1757,8 +1764,6 @@ id|dev
 op_member_access_from_pointer
 id|format_mask
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_SETFMT
@@ -2032,8 +2037,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETCAPS
 suffix:colon
@@ -2151,8 +2154,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
 r_case
 id|SOUND_PCM_WRITE_RATE
 suffix:colon
@@ -2242,14 +2243,7 @@ OG
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;sound: SNDCTL_DSP_STEREO called with invalid argument %d&bslash;n&quot;
-comma
-id|n
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;&t;printk(KERN_DENUG &quot;sound: SNDCTL_DSP_STEREO called with invalid argument %d&bslash;n&quot;, n);*/
 r_return
 op_minus
 id|EINVAL
@@ -2428,8 +2422,6 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_DSP_PROFILE
 suffix:colon
@@ -2488,6 +2480,143 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+r_case
+id|SNDCTL_DSP_GETODELAY
+suffix:colon
+(brace
+r_int
+id|count
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|dma_buffparms
+op_star
+id|dmap
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_WRITE
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dmap-&gt;flags
+op_amp
+id|DMA_ALLOC_DONE
+)paren
+)paren
+r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
+l_int|0
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Compute number of bytes that have been played */
+id|count
+op_assign
+id|DMAbuf_get_buffer_pointer
+(paren
+id|dev
+comma
+id|dmap
+comma
+id|DMODE_OUTPUT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+id|dmap-&gt;fragment_size
+op_logical_and
+id|dmap-&gt;qhead
+op_ne
+l_int|0
+)paren
+id|count
+op_add_assign
+id|dmap-&gt;bytes_in_use
+suffix:semicolon
+multiline_comment|/* Pointer wrap not handled yet */
+id|count
+op_add_assign
+id|dmap-&gt;byte_counter
+suffix:semicolon
+multiline_comment|/* Substract current count from the number of bytes written by app */
+id|count
+op_assign
+id|dmap-&gt;user_counter
+op_minus
+id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+l_int|0
+)paren
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_star
+(paren
+r_int
+op_star
+)paren
+id|arg
+op_assign
+id|count
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -2505,8 +2634,8 @@ id|arg
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|audio_init_devices
+r_void
 id|audio_init_devices
 c_func
 (paren
@@ -2516,8 +2645,8 @@ r_void
 multiline_comment|/*&n;&t; * NOTE! This routine could be called several times during boot.&n;&t; */
 )brace
 macro_line|#endif
-r_void
 DECL|function|reorganize_buffers
+r_void
 id|reorganize_buffers
 c_func
 (paren
@@ -2626,20 +2755,7 @@ OL
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: Invalid PCM parameters[%d] sr=%d, nc=%d, sz=%d&bslash;n&quot;
-comma
-id|dev
-comma
-id|sr
-comma
-id|nc
-comma
-id|sz
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_DEBUG &quot;Warning: Invalid PCM parameters[%d] sr=%d, nc=%d, sz=%d&bslash;n&quot;, dev, sr, nc, sz);*/
 id|sr
 op_assign
 id|DSP_DEFAULT_SPEED
@@ -2691,7 +2807,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Compute the fragment size using the default algorithm */
-multiline_comment|/*&n;&t;&t;     * Compute a buffer size for time not exceeding 1 second.&n;&t;&t;     * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;&t;&t;     * of sound (using the current speed, sample size and #channels).&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Compute a buffer size for time not exceeding 1 second.&n;&t;&t; * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;&t;&t; * of sound (using the current speed, sample size and #channels).&n;&t;&t; */
 id|bsz
 op_assign
 id|dmap-&gt;buffsize
@@ -2719,7 +2835,7 @@ op_div_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Needs at least 2 buffers */
-multiline_comment|/*&n; *    Split the computed fragment to smaller parts. After 3.5a9&n; *      the default subdivision is 4 which should give better&n; *      results when recording.&n; */
+multiline_comment|/*&n;&t;&t; *    Split the computed fragment to smaller parts. After 3.5a9&n;&t;&t; *      the default subdivision is 4 which should give better&n;&t;&t; *      results when recording.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2788,7 +2904,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;     * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n;&t;&t;     * the buffer size computation has already been done.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n;&t;&t; * the buffer size computation has already been done.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3020,9 +3136,9 @@ op_or
 id|DMA_EMPTY
 suffix:semicolon
 )brace
+DECL|function|dma_subdivide
 r_static
 r_int
-DECL|function|dma_subdivide
 id|dma_subdivide
 c_func
 (paren
@@ -3146,9 +3262,9 @@ id|fact
 )paren
 suffix:semicolon
 )brace
+DECL|function|dma_set_fragment
 r_static
 r_int
-DECL|function|dma_set_fragment
 id|dma_set_fragment
 c_func
 (paren
@@ -3418,8 +3534,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|dma_ioctl
+r_int
 id|dma_ioctl
 c_func
 (paren
@@ -3776,7 +3892,7 @@ id|info-&gt;fragments
 id|tmp
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|info-&gt;fragments
 op_sub_assign
 id|tmp
@@ -3931,12 +4047,7 @@ id|PCM_ENABLE_OUTPUT
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sound: Device doesn&squot;t have full duplex capability&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* printk(KERN_WARNING &quot;Sound: Device doesn&squot;t have full duplex capability&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -4103,7 +4214,6 @@ id|dmap_out-&gt;dma_mode
 op_assign
 id|DMODE_OUTPUT
 suffix:semicolon
-suffix:semicolon
 id|audio_devs
 (braket
 id|dev
@@ -4127,7 +4237,6 @@ id|dev
 comma
 id|dmap_out
 )paren
-suffix:semicolon
 suffix:semicolon
 )brace
 id|audio_devs
@@ -4182,6 +4291,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Falls through... */
 r_case
 id|SNDCTL_DSP_GETTRIGGER
 suffix:colon
@@ -4201,8 +4311,6 @@ id|dev
 op_member_access_from_pointer
 id|enable_bits
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_SETSYNCRO
@@ -4601,11 +4709,13 @@ l_int|0
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4677,12 +4787,9 @@ id|count
 )paren
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_DSP_POST
 suffix:colon
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4723,11 +4830,8 @@ op_member_access_from_pointer
 id|dmap_out
 )paren
 suffix:semicolon
-suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETBLKSIZE
@@ -4858,8 +4962,6 @@ id|fragment_size
 )paren
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_DSP_SETFRAGMENT
 suffix:colon
@@ -4869,6 +4971,8 @@ id|fact
 suffix:semicolon
 r_int
 id|ret
+op_assign
+l_int|0
 suffix:semicolon
 id|fact
 op_assign
@@ -4879,6 +4983,18 @@ op_star
 )paren
 id|arg
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|open_mode
+op_amp
+id|OPEN_WRITE
+)paren
 id|ret
 op_assign
 id|dma_set_fragment
@@ -4911,6 +5027,16 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
+id|open_mode
+op_ne
+id|OPEN_WRITE
+op_logical_or
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
 id|flags
 op_amp
 id|DMA_DUPLEX
@@ -4923,6 +5049,7 @@ op_member_access_from_pointer
 id|open_mode
 op_amp
 id|OPEN_READ
+)paren
 )paren
 id|ret
 op_assign

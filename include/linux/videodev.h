@@ -421,6 +421,13 @@ DECL|macro|VIDEO_AUDIO_BASS
 mdefine_line|#define VIDEO_AUDIO_BASS&t;8
 DECL|macro|VIDEO_AUDIO_TREBLE
 mdefine_line|#define VIDEO_AUDIO_TREBLE&t;16&t;
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|16
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|video_clip
@@ -568,6 +575,8 @@ DECL|macro|VIDIOCGAUDIO
 mdefine_line|#define VIDIOCGAUDIO&t;&t;_IOR(&squot;v&squot;,16, struct video_audio)&t;/* Get audio info */
 DECL|macro|VIDIOCSAUDIO
 mdefine_line|#define VIDIOCSAUDIO&t;&t;_IOW(&squot;v&squot;,17, struct video_audio)&t;/* Audio source, mute etc */
+DECL|macro|BASE_VIDIOCPRIVATE
+mdefine_line|#define BASE_VIDIOCPRIVATE&t;192&t;&t;/* 192-255 are private */
 DECL|macro|VID_HARDWARE_BT848
 mdefine_line|#define VID_HARDWARE_BT848&t;1
 DECL|macro|VID_HARDWARE_QCAM_BW

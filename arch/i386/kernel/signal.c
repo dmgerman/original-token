@@ -694,7 +694,7 @@ macro_line|#else
 r_if
 c_cond
 (paren
-id|hard_math
+id|boot_cpu_data.hard_math
 )paren
 id|restore_i387_hard
 c_func
@@ -1400,7 +1400,7 @@ id|buf
 suffix:semicolon
 macro_line|#else
 r_return
-id|hard_math
+id|boot_cpu_data.hard_math
 ques
 c_cond
 id|save_i387_hard

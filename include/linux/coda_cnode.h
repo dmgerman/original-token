@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * Cnode definitions for Coda.&n; * Original version: (C) 1996 Peter Braam &n; * Rewritten for Linux 2.1: (C) 1997 Carnegie Mellon University&n; *&n; * Carnegie Mellon encourages users of this code to contribute improvements&n; * to the Coda project. Contact Peter Braam &lt;coda@cs.cmu.edu&gt;.&n; */
-multiline_comment|/* revamped cnode.h file: platform dependent, kernel only! */
 macro_line|#ifndef&t;_CNODE_H_
 DECL|macro|_CNODE_H_
 mdefine_line|#define&t;_CNODE_H_
@@ -17,7 +16,7 @@ id|inode
 op_star
 id|c_vnode
 suffix:semicolon
-multiline_comment|/* linux inode associated with cnode */
+multiline_comment|/*  inode associated with cnode */
 DECL|member|c_fid
 id|ViceFid
 id|c_fid
@@ -55,11 +54,12 @@ op_star
 id|c_ovp
 suffix:semicolon
 multiline_comment|/* open vnode pointer */
-DECL|member|c_odentry
+DECL|member|c_cnhead
 r_struct
-id|dentry
-id|c_odentry
+id|list_head
+id|c_cnhead
 suffix:semicolon
+multiline_comment|/* head of cache entries */
 )brace
 suffix:semicolon
 multiline_comment|/* flags */
@@ -68,16 +68,11 @@ mdefine_line|#define C_VATTR       0x1         /* Validity of vattr in the cnode
 DECL|macro|C_SYMLINK
 mdefine_line|#define C_SYMLINK     0x2         /* Validity of symlink pointer in the cnode */
 DECL|macro|C_DYING
-mdefine_line|#define C_DYING&t;      0x4&t;  /* Set for outstanding cnodes from venus (which died) */
-r_struct
-id|cnode
-op_star
-id|coda_cnode_alloc
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+mdefine_line|#define C_DYING       0x4&t;  /* Set for outstanding cnodes from venus (which died) */
+DECL|macro|C_ZAPFID
+mdefine_line|#define C_ZAPFID      0x8
+DECL|macro|C_ZAPDIR
+mdefine_line|#define C_ZAPDIR      0x10
 r_void
 id|coda_cnode_free
 c_func
@@ -85,7 +80,15 @@ c_func
 r_struct
 id|cnode
 op_star
-id|cinode
+)paren
+suffix:semicolon
+r_struct
+id|cnode
+op_star
+id|coda_cnode_alloc
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_int
@@ -96,32 +99,14 @@ r_struct
 id|inode
 op_star
 op_star
-id|inode
 comma
+r_struct
 id|ViceFid
 op_star
-id|fid
 comma
 r_struct
 id|super_block
 op_star
-id|sb
-)paren
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|coda_fid2inode
-c_func
-(paren
-id|ViceFid
-op_star
-id|fid
-comma
-r_struct
-id|super_block
-op_star
-id|sb
 )paren
 suffix:semicolon
 r_int
@@ -140,5 +125,70 @@ op_star
 id|sb
 )paren
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|coda_fid_to_inode
+c_func
+(paren
+id|ViceFid
+op_star
+id|fid
+comma
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
+multiline_comment|/* inode to cnode */
+DECL|function|ITOC
+r_static
+r_inline
+r_struct
+id|cnode
+op_star
+id|ITOC
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+r_return
+(paren
+(paren
+r_struct
+id|cnode
+op_star
+)paren
+id|inode-&gt;u.generic_ip
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* cnode to inode */
+DECL|function|CTOI
+r_static
+r_inline
+r_struct
+id|inode
+op_star
+id|CTOI
+c_func
+(paren
+r_struct
+id|cnode
+op_star
+id|cnode
+)paren
+(brace
+r_return
+(paren
+id|cnode-&gt;c_vnode
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif&t;
 eof

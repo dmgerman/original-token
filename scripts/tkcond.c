@@ -160,7 +160,7 @@ suffix:semicolon
 r_char
 id|tmpbuf
 (braket
-l_int|10
+l_int|255
 )braket
 suffix:semicolon
 r_for

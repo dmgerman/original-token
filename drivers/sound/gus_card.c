@@ -980,6 +980,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(CONFIG_GUS16)
 r_if
 c_cond
 (paren
@@ -992,6 +993,7 @@ op_amp
 id|config
 )paren
 suffix:semicolon
+macro_line|#endif
 id|unload_gus
 c_func
 (paren

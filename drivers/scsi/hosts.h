@@ -131,7 +131,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The QueueCommand function works in a similar manner&n;     * to the command function.&t; It takes an additional parameter,&n;     * void (* done)(int host, int code) which is passed the host&n;     * # and exit result when the command is complete.&n;     * Host number is the POSITION IN THE hosts array of THIS&n;     * host adapter.&n;     */
+multiline_comment|/*&n;     * The QueueCommand function works in a similar manner&n;     * to the command function.&t; It takes an additional parameter,&n;     * void (* done)(int host, int code) which is passed the host&n;     * # and exit result when the command is complete.&n;     * Host number is the POSITION IN THE hosts array of THIS&n;     * host adapter.&n;     *&n;     * The done() function must only be called after QueueCommand() &n;     * has returned.&n;     */
 DECL|member|queuecommand
 r_int
 (paren
@@ -153,7 +153,64 @@ op_star
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Since the mid level driver handles time outs, etc, we want to&n;     * be able to abort the current command.  Abort returns 0 if the&n;     * abortion was successful.&t; The field SCpnt-&gt;abort reason&n;     * can be filled in with the appropriate reason why we wanted&n;     * the abort in the first place, and this will be used&n;     * in the mid-level code instead of the host_byte().&n;     * If non-zero, the code passed to it&n;     * will be used as the return code, otherwise&n;     * DID_ABORT  should be returned.&n;     *&n;     * Note that the scsi driver should &quot;clean up&quot; after itself,&n;     * resetting the bus, etc.&t;if necessary.&n;     */
+multiline_comment|/*&n;     * This is an error handling strategy routine.  You don&squot;t need to&n;     * define one of these if you don&squot;t want to - there is a default&n;     * routine that is present that should work in most cases.  For those&n;     * driver authors that have the inclination and ability to write their&n;     * own strategy routine, this is where it is specified.  Note - the&n;     * strategy routine is *ALWAYS* run in the context of the kernel eh&n;     * thread.  Thus you are guaranteed to *NOT* be in an interrupt handler&n;     * when you execute this, and you are also guaranteed to *NOT* have any&n;     * other commands being queued while you are in the strategy routine.&n;     * When you return from this function, operations return to normal.&n;     *&n;     * See scsi_error.c scsi_unjam_host for additional comments about what&n;     * this function should and should not be attempting to do.&n;     */
+DECL|member|eh_strategy_handler
+r_int
+(paren
+op_star
+id|eh_strategy_handler
+)paren
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
+DECL|member|eh_abort_handler
+r_int
+(paren
+op_star
+id|eh_abort_handler
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|eh_device_reset_handler
+r_int
+(paren
+op_star
+id|eh_device_reset_handler
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|eh_bus_reset_handler
+r_int
+(paren
+op_star
+id|eh_bus_reset_handler
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+DECL|member|eh_host_reset_handler
+r_int
+(paren
+op_star
+id|eh_host_reset_handler
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Since the mid level driver handles time outs, etc, we want to&n;     * be able to abort the current command.  Abort returns 0 if the&n;     * abortion was successful.&t; The field SCpnt-&gt;abort reason&n;     * can be filled in with the appropriate reason why we wanted&n;     * the abort in the first place, and this will be used&n;     * in the mid-level code instead of the host_byte().&n;     * If non-zero, the code passed to it&n;     * will be used as the return code, otherwise&n;     * DID_ABORT  should be returned.&n;     *&n;     * Note that the scsi driver should &quot;clean up&quot; after itself,&n;     * resetting the bus, etc.&t;if necessary.&n;     *&n;     * NOTE - this interface is depreciated, and will go away.  Use&n;     * the eh_ routines instead.&n;     */
 DECL|member|abort
 r_int
 (paren
@@ -165,7 +222,7 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * The reset function will reset the SCSI bus.  Any executing&n;     * commands should fail with a DID_RESET in the host byte.&n;     * The Scsi_Cmnd  is passed so that the reset routine can figure&n;     * out which host adapter should be reset, and also which command&n;     * within the command block was responsible for the reset in&n;     * the first place.&t; Some hosts do not implement a reset function,&n;     * and these hosts must call scsi_request_sense(SCpnt) to keep&n;     * the command alive.&n;     */
+multiline_comment|/*&n;     * The reset function will reset the SCSI bus.  Any executing&n;     * commands should fail with a DID_RESET in the host byte.&n;     * The Scsi_Cmnd  is passed so that the reset routine can figure&n;     * out which host adapter should be reset, and also which command&n;     * within the command block was responsible for the reset in&n;     * the first place.&t; Some hosts do not implement a reset function,&n;     * and these hosts must call scsi_request_sense(SCpnt) to keep&n;     * the command alive.&n;     *&n;     * NOTE - this interface is depreciated, and will go away.  Use&n;     * the eh_ routines instead.&n;     */
 DECL|member|reset
 r_int
 (paren
@@ -253,6 +310,13 @@ id|use_clustering
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;     * True if this driver uses the new error handling code.  This flag is&n;     * really only temporary until all of the other drivers get converted&n;     * to use the new error handling code.&n;     */
+DECL|member|use_new_eh_code
+r_int
+id|use_new_eh_code
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|typedef|Scsi_Host_Template
 )brace
 id|Scsi_Host_Template
@@ -262,25 +326,100 @@ DECL|struct|Scsi_Host
 r_struct
 id|Scsi_Host
 (brace
+multiline_comment|/* private: */
+multiline_comment|/*&n;     * This information is private to the scsi mid-layer.  Wrapping it in a&n;     * struct private is a way of marking it in a sort of C++ type of way.&n;     */
 DECL|member|next
 r_struct
 id|Scsi_Host
 op_star
 id|next
 suffix:semicolon
+DECL|member|host_queue
+id|Scsi_Device
+op_star
+id|host_queue
+suffix:semicolon
+multiline_comment|/*&n;     * List of commands that have been rejected because either the host&n;     * or the device was busy.  These need to be retried relatively quickly,&n;     * but we need to hold onto it for a short period until the host/device&n;     * is available.&n;     */
+DECL|member|pending_commands
+id|Scsi_Cmnd
+op_star
+id|pending_commands
+suffix:semicolon
+DECL|member|ehandler
+r_struct
+id|task_struct
+op_star
+id|ehandler
+suffix:semicolon
+multiline_comment|/* Error recovery thread. */
+DECL|member|eh_wait
+r_struct
+id|semaphore
+op_star
+id|eh_wait
+suffix:semicolon
+multiline_comment|/* The error recovery thread waits on&n;                                          this. */
+DECL|member|eh_notify
+r_struct
+id|semaphore
+op_star
+id|eh_notify
+suffix:semicolon
+multiline_comment|/* wait for eh to begin */
+DECL|member|eh_action
+r_struct
+id|semaphore
+op_star
+id|eh_action
+suffix:semicolon
+multiline_comment|/* Wait for specific actions on the&n;                                          host. */
+DECL|member|eh_active
+r_int
+r_int
+id|eh_active
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Indicates the eh thread is awake and active if&n;                                          this is true. */
+DECL|member|host_wait
+r_struct
+id|wait_queue
+op_star
+id|host_wait
+suffix:semicolon
+DECL|member|hostt
+id|Scsi_Host_Template
+op_star
+id|hostt
+suffix:semicolon
+DECL|member|host_active
+id|atomic_t
+id|host_active
+suffix:semicolon
+multiline_comment|/* commands checked out */
+DECL|member|host_busy
+r_volatile
+r_int
+r_int
+id|host_busy
+suffix:semicolon
+multiline_comment|/* commands actually active on low-level */
+DECL|member|host_failed
+r_volatile
+r_int
+r_int
+id|host_failed
+suffix:semicolon
+multiline_comment|/* commands that failed. */
+multiline_comment|/* public: */
 DECL|member|extra_bytes
 r_int
 r_int
 id|extra_bytes
 suffix:semicolon
-DECL|member|host_busy
-r_volatile
-r_int
-r_char
-id|host_busy
-suffix:semicolon
 DECL|member|host_no
-r_char
+r_int
+r_int
 id|host_no
 suffix:semicolon
 multiline_comment|/* Used for IOCTL_GET_IDLUN, /proc/scsi et al. */
@@ -288,22 +427,6 @@ DECL|member|last_reset
 r_int
 r_int
 id|last_reset
-suffix:semicolon
-DECL|member|host_wait
-r_struct
-id|wait_queue
-op_star
-id|host_wait
-suffix:semicolon
-DECL|member|host_queue
-id|Scsi_Cmnd
-op_star
-id|host_queue
-suffix:semicolon
-DECL|member|hostt
-id|Scsi_Host_Template
-op_star
-id|hostt
 suffix:semicolon
 multiline_comment|/*&n;     *&t;These three parameters can be used to allow for wide scsi,&n;     *&t;and for host adapters that support multiple busses&n;     *&t;The first two should be set to 1 more than the actual max id&n;     *&t;or lun (i.e. 8 for normal systems).&n;     */
 DECL|member|max_id
@@ -386,6 +509,12 @@ r_int
 r_int
 id|sg_tablesize
 suffix:semicolon
+DECL|member|in_recovery
+r_int
+id|in_recovery
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|unchecked_isa_dma
 r_int
 id|unchecked_isa_dma
@@ -402,6 +531,13 @@ multiline_comment|/*&n;     * True if this host was loaded as a loadable module&
 DECL|member|loaded_as_module
 r_int
 id|loaded_as_module
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;     * Host has rejected a command because it was busy.&n;     */
+DECL|member|host_blocked
+r_int
+id|host_blocked
 suffix:colon
 l_int|1
 suffix:semicolon

@@ -277,6 +277,10 @@ id|nh-&gt;nh_gw
 op_ne
 id|onh-&gt;nh_gw
 op_logical_or
+id|nh-&gt;nh_scope
+op_ne
+id|onh-&gt;nh_scope
+op_logical_or
 macro_line|#ifdef CONFIG_IP_ROUTE_MULTIPATH
 id|nh-&gt;nh_weight
 op_ne

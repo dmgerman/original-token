@@ -164,6 +164,95 @@ id|Scsi_Device
 op_star
 )paren
 suffix:semicolon
+DECL|function|sd_devname
+r_static
+r_void
+id|sd_devname
+c_func
+(paren
+r_int
+r_int
+id|disknum
+comma
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|disknum
+op_le
+l_int|26
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;sd%c&quot;
+comma
+l_char|&squot;a&squot;
+op_plus
+(paren
+id|disknum
+op_rshift
+l_int|4
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+r_int
+id|min1
+suffix:semicolon
+r_int
+r_int
+id|min2
+suffix:semicolon
+multiline_comment|/*&n;         * For larger numbers of disks, we need to go to a new&n;         * naming scheme.&n;         */
+id|min1
+op_assign
+(paren
+id|disknum
+op_rshift
+l_int|4
+)paren
+op_div
+l_int|26
+suffix:semicolon
+id|min2
+op_assign
+(paren
+id|disknum
+op_rshift
+l_int|4
+)paren
+op_mod
+l_int|26
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;sd%c%c&quot;
+comma
+l_char|&squot;a&squot;
+op_plus
+id|min1
+comma
+l_char|&squot;a&squot;
+op_plus
+id|min2
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|variable|sd_template
 r_struct
 id|Scsi_Device_Template
@@ -229,6 +318,22 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|1
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;target=%d, max=%d&bslash;n&quot;
+comma
+id|target
+comma
+id|sd_template.dev_max
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -251,6 +356,28 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
+multiline_comment|/*&n;     * If the device is in error recovery, wait until it is done.&n;     * If the device is offline, then disallow any access to it.&n;     */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|scsi_block_when_processing_errors
+c_func
+(paren
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|device
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Make sure that only one process can do a check_change_disk at one time.&n;     * This is also used to lock out further access when the partition table&n;     * is being re-read.&n;     */
 r_while
 c_loop
@@ -322,6 +449,24 @@ l_int|2
 r_return
 op_minus
 id|EROFS
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * It is possible that the disk changing stuff resulted in the device being taken&n;     * offline.  If this is the case, report this to the user, and don&squot;t pretend that&n;     * the open actually succeeded.&n;     */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|device-&gt;online
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * See if we are requesting a non-existent partition.  Do this&n;     * after checking for disk change.&n;     */
@@ -725,6 +870,12 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+r_char
+id|nbuff
+(braket
+l_int|6
+)braket
+suffix:semicolon
 r_int
 id|this_count
 op_assign
@@ -751,26 +902,48 @@ id|block_sectors
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|sd_devname
 c_func
 (paren
-l_string|&quot;sd%c : rw_intr(%d, %d)&bslash;n&quot;
-comma
-l_char|&squot;a&squot;
-op_plus
 id|MINOR
 c_func
 (paren
 id|SCpnt-&gt;request.rq_dev
 )paren
+op_rshift
+l_int|4
+comma
+id|nbuff
+)paren
+suffix:semicolon
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|1
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;%s : rw_intr(%d, %x [%x %x])&bslash;n&quot;
+comma
+id|nbuff
 comma
 id|SCpnt-&gt;host-&gt;host_no
 comma
 id|result
+comma
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|0
+)braket
+comma
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;      Handle MEDIUM ERRORs that indicate partial success.  Since this is a&n;      relatively rare error condition, no care is taken to avoid unnecessary&n;      additional work such as memcpy&squot;s that could be avoided.&n;    */
 r_if
 c_cond
@@ -976,23 +1149,27 @@ OG
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|1
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : %d sectors remain.&bslash;n&quot;
+l_string|&quot;%s : %ld sectors remain.&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|MINOR
-c_func
-(paren
-id|SCpnt-&gt;request.rq_dev
-)paren
+id|nbuff
 comma
 id|SCpnt-&gt;request.nr_sectors
 )paren
+)paren
 suffix:semicolon
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|1
+comma
 id|printk
 c_func
 (paren
@@ -1000,8 +1177,8 @@ l_string|&quot;use_sg is %d&bslash;n &quot;
 comma
 id|SCpnt-&gt;use_sg
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1040,11 +1217,16 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if 0
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|3
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;:%x %x %d&bslash;n&quot;
+l_string|&quot;:%p %p %d&bslash;n&quot;
 comma
 id|sgpnt
 (braket
@@ -1066,6 +1248,7 @@ id|i
 )braket
 dot
 id|length
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1152,11 +1335,15 @@ op_ne
 id|SCpnt-&gt;request.buffer
 )paren
 (brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|3
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;nosg: %x %x %d&bslash;n&quot;
+l_string|&quot;nosg: %p %p %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.buffer
 comma
@@ -1164,8 +1351,8 @@ id|SCpnt-&gt;buffer
 comma
 id|SCpnt-&gt;bufflen
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1213,22 +1400,20 @@ op_logical_neg
 id|SCpnt-&gt;request.bh
 )paren
 (brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|2
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : handling page request, no buffer&bslash;n&quot;
+l_string|&quot;%s : handling page request, no buffer&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|MINOR
-c_func
-(paren
-id|SCpnt-&gt;request.rq_dev
+id|nbuff
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t; * The SCpnt-&gt;request.nr_sectors field is always done in&n;&t;&t; * 512 byte sectors, even if this really isn&squot;t the case.&n;&t;&t; */
 id|panic
 c_func
@@ -1319,11 +1504,15 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|3
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;err: %x %x %d&bslash;n&quot;
+l_string|&quot;err: %p %p %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.buffer
 comma
@@ -1331,8 +1520,8 @@ id|SCpnt-&gt;buffer
 comma
 id|SCpnt-&gt;bufflen
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1376,11 +1565,15 @@ multiline_comment|/* Free list of scatter-gather pointers */
 )brace
 r_else
 (brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLCOMPLETE
+c_func
+(paren
+l_int|2
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;nosgerr: %x %x %d&bslash;n&quot;
+l_string|&quot;nosgerr: %p %p %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.buffer
 comma
@@ -1388,8 +1581,8 @@ id|SCpnt-&gt;buffer
 comma
 id|SCpnt-&gt;bufflen
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1865,6 +2058,16 @@ id|CURRENT-&gt;rq_dev
 dot
 id|device
 suffix:semicolon
+multiline_comment|/*&n;         * If the host for this device is in error recovery mode, don&squot;t&n;         * do anything at all here.  When the host leaves error recovery&n;         * mode, it will automatically restart things and start queueing&n;         * commands again.&n;         */
+r_if
+c_cond
+(paren
+id|SDev-&gt;host-&gt;in_recovery
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;         * I am not sure where the best place to do this is.  We need&n;         * to hook in a place where we are likely to come if in user&n;         * space.&n;         */
 r_if
 c_cond
@@ -1872,7 +2075,7 @@ c_cond
 id|SDev-&gt;was_reset
 )paren
 (brace
-multiline_comment|/*&n;&t;     * We need to relock the door, but we might&n;&t;     * be in an interrupt handler.  Only do this&n;&t;     * from user space, since we do not want to&n;&t;     * sleep from an interrupt.&n;&t;     */
+multiline_comment|/*&n;&t;     * We need to relock the door, but we might&n;&t;     * be in an interrupt handler.  Only do this&n;&t;     * from user space, since we do not want to&n;&t;     * sleep from an interrupt.  FIXME(eric) - do this&n;             * from the kernel error handling thred.&n;&t;     */
 r_if
 c_cond
 (paren
@@ -1908,7 +2111,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* We have to be careful here. allocate_device will get a free pointer,&n;&t; * but there is no guarantee that it is queueable.  In normal usage,&n;&t; * we want to call this, because other types of devices may have the&n;&t; * host all tied up, and we want to make sure that we have at least&n;&t; * one request pending for this type of device. We can also come&n;&t; * through here while servicing an interrupt, because of the need to&n;&t; * start another command. If we call allocate_device more than once,&n;&t; * then the system can wedge if the command is not queueable. The&n;&t; * request_queueable function is safe because it checks to make sure&n;&t; * that the host is able to take another command before it returns&n;&t; * a pointer.&n;&t; */
+multiline_comment|/* We have to be careful here. scsi_allocate_device will get a free pointer,&n;&t; * but there is no guarantee that it is queueable.  In normal usage,&n;&t; * we want to call this, because other types of devices may have the&n;&t; * host all tied up, and we want to make sure that we have at least&n;&t; * one request pending for this type of device. We can also come&n;&t; * through here while servicing an interrupt, because of the need to&n;&t; * start another command. If we call scsi_allocate_device more than once,&n;&t; * then the system can wedge if the command is not queueable. The&n;&t; * scsi_request_queueable function is safe because it checks to make sure&n;&t; * that the host is able to take another command before it returns&n;&t; * a pointer.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1919,7 +2122,7 @@ l_int|0
 )paren
 id|SCpnt
 op_assign
-id|allocate_device
+id|scsi_allocate_device
 c_func
 (paren
 op_amp
@@ -1951,7 +2154,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* This is a performance enhancement. We dig down into the request&n;&t; * list and try to find a queueable request (i.e. device not busy,&n;&t; * and host able to accept another command. If we find one, then we&n;&t; * queue it. This can make a big difference on systems with more than&n;&t; * one disk drive.  We want to have the interrupts off when monkeying&n;&t; * with the request list, because otherwise the kernel might try to&n;&t; * slip in a request in between somewhere.&n;&t; */
+multiline_comment|/* This is a performance enhancement. We dig down into the request&n;&t; * list and try to find a queueable request (i.e. device not busy,&n;&t; * and host able to accept another command. If we find one, then we&n;&t; * queue it. This can make a big difference on systems with more than&n;&t; * one disk drive.  We want to have the interrupts off when monkeying&n;&t; * with the request list, because otherwise the kernel might try to&n;&t; * slip in a request in between somewhere.&n;         *&n;         * FIXME(eric) - this doesn&squot;t belong at this level.  The device code in&n;         * ll_rw_blk.c should know how to dig down into the device queue to&n;         * figure out what it can deal with, and what it can&squot;t.  Consider&n;         * possibility of pulling entire queue down into scsi layer.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1989,7 +2192,7 @@ id|req
 (brace
 id|SCpnt
 op_assign
-id|request_queueable
+id|scsi_request_queueable
 c_func
 (paren
 id|req
@@ -2103,6 +2306,12 @@ id|cmd
 l_int|10
 )braket
 suffix:semicolon
+r_char
+id|nbuff
+(braket
+l_int|6
+)braket
+suffix:semicolon
 r_int
 id|bounce_size
 comma
@@ -2171,7 +2380,11 @@ id|this_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|1
+comma
 id|printk
 c_func
 (paren
@@ -2181,8 +2394,8 @@ id|devm
 comma
 id|block
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2202,6 +2415,14 @@ id|dev
 dot
 id|device
 op_logical_or
+op_logical_neg
+id|rscsi_disks
+(braket
+id|dev
+)braket
+dot
+id|device-&gt;online
+op_logical_or
 id|block
 op_plus
 id|SCpnt-&gt;request.nr_sectors
@@ -2214,6 +2435,20 @@ dot
 id|nr_sects
 )paren
 (brace
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|2
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;Finishing %ld sectors&bslash;n&quot;
+comma
+id|SCpnt-&gt;request.nr_sectors
+)paren
+)paren
+suffix:semicolon
 id|SCpnt
 op_assign
 id|end_scsi_request
@@ -2224,6 +2459,20 @@ comma
 l_int|0
 comma
 id|SCpnt-&gt;request.nr_sectors
+)paren
+suffix:semicolon
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|2
+comma
+id|printk
+c_func
+(paren
+l_string|&quot;Retry with 0x%p&bslash;n&quot;
+comma
+id|SCpnt
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -2268,22 +2517,32 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
+id|sd_devname
+c_func
+(paren
+id|devm
+comma
+id|nbuff
+)paren
+suffix:semicolon
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|2
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : real dev = /dev/sd%c, block = %d&bslash;n&quot;
+l_string|&quot;%s : real dev = /dev/%d, block = %d&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|devm
+id|nbuff
 comma
 id|dev
 comma
 id|block
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;     * If we have a 1K hardware sectorsize, prevent access to single&n;     * 512 byte sectors.  In theory we could handle this - in fact&n;     * the scsi cdrom driver must be able to handle this because&n;     * we typically use 1K blocksizes, and cdroms typically have&n;     * 2K hardware sectorsizes.  Of course, things are simpler&n;     * with the cdrom, since it is read-only.  For performance&n;     * reasons, the filesystems should be able to handle this&n;     * and not force the scsi disk driver to use bounce buffers&n;     * for this.&n;     */
 r_if
 c_cond
@@ -2650,9 +2909,9 @@ op_eq
 l_int|0
 op_logical_or
 (paren
-id|need_isa_buffer
+id|scsi_need_isa_buffer
 op_logical_and
-id|dma_free_sectors
+id|scsi_dma_free_sectors
 op_le
 l_int|10
 )paren
@@ -2666,9 +2925,9 @@ id|SCpnt-&gt;host-&gt;sg_tablesize
 op_ne
 l_int|0
 op_logical_and
-id|need_isa_buffer
+id|scsi_need_isa_buffer
 op_logical_and
-id|dma_free_sectors
+id|scsi_dma_free_sectors
 op_le
 l_int|10
 )paren
@@ -3093,7 +3352,7 @@ multiline_comment|/* We try to avoid exhausting the DMA pool, since it is&n;&t;&
 r_if
 c_cond
 (paren
-id|dma_free_sectors
+id|scsi_dma_free_sectors
 OL
 (paren
 id|sgpnt
@@ -3331,7 +3590,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dma_free_sectors
+id|scsi_dma_free_sectors
 OG
 l_int|10
 )paren
@@ -3447,7 +3706,7 @@ id|SCpnt-&gt;use_sg
 comma
 id|count
 comma
-id|dma_free_sectors
+id|scsi_dma_free_sectors
 )paren
 suffix:semicolon
 id|printk
@@ -3730,15 +3989,17 @@ l_int|9
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DEBUG
+id|SCSI_LOG_HLQUEUE
+c_func
+(paren
+l_int|2
+comma
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : %s %d/%d 512 byte blocks.&bslash;n&quot;
+l_string|&quot;%s : %s %d/%ld 512 byte blocks.&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|devm
+id|nbuff
 comma
 (paren
 id|SCpnt-&gt;request.cmd
@@ -3755,8 +4016,8 @@ id|this_count
 comma
 id|SCpnt-&gt;request.nr_sectors
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|cmd
 (braket
 l_int|1
@@ -4273,6 +4534,43 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * If the device is offline, don&squot;t send any commands - just pretend as if&n;     * the command failed.  If the device ever comes back online, we can deal with&n;     * it then.  It is only because of unrecoverable errors that we would ever&n;     * take a device offline in the first place.&n;     */
+r_if
+c_cond
+(paren
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|device-&gt;online
+op_eq
+id|FALSE
+)paren
+(brace
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|ready
+op_assign
+l_int|0
+suffix:semicolon
+id|rscsi_disks
+(braket
+id|target
+)braket
+dot
+id|device-&gt;changed
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* This will force a flush, if called from&n;&t;&t;   * check_disk_change */
+)brace
 id|inode.i_rdev
 op_assign
 id|full_dev
@@ -4423,6 +4721,12 @@ id|cmd
 l_int|10
 )braket
 suffix:semicolon
+r_char
+id|nbuff
+(braket
+l_int|6
+)braket
+suffix:semicolon
 r_int
 r_char
 op_star
@@ -4441,10 +4745,37 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
+multiline_comment|/*&n;     * Get the name of the disk, in case we need to log it somewhere.&n;     */
+id|sd_devname
+c_func
+(paren
+id|i
+comma
+id|nbuff
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * If the device is offline, don&squot;t try and read capacity or any of the other&n;     * nicities.&n;     */
+r_if
+c_cond
+(paren
+id|rscsi_disks
+(braket
+id|i
+)braket
+dot
+id|device-&gt;online
+op_eq
+id|FALSE
+)paren
+(brace
+r_return
+id|i
+suffix:semicolon
+)brace
 multiline_comment|/* We need to retry the READ_CAPACITY because a UNIT_ATTENTION is&n;     * considered a fatal error, and many devices report such an error&n;     * just after a scsi bus reset.&n;     */
 id|SCpnt
 op_assign
-id|allocate_device
+id|scsi_allocate_device
 c_func
 (paren
 l_int|NULL
@@ -4601,6 +4932,10 @@ op_amp
 id|sem
 )paren
 suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 id|the_result
 op_assign
@@ -4664,11 +4999,9 @@ id|spintime
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c: Spinning up disk...&quot;
+l_string|&quot;%s: Spinning up disk...&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 )paren
 suffix:semicolon
 id|cmd
@@ -4795,6 +5128,10 @@ c_func
 op_amp
 id|sem
 )paren
+suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 id|spintime
@@ -4999,6 +5336,10 @@ id|sem
 )paren
 suffix:semicolon
 multiline_comment|/* sleep until it is ready */
+id|SCpnt-&gt;request.sem
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 id|the_result
 op_assign
@@ -5018,19 +5359,6 @@ id|retries
 (brace
 suffix:semicolon
 )brace
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
-id|wake_up
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;device-&gt;device_wait
-)paren
-suffix:semicolon
-multiline_comment|/* Wake up a process waiting for device */
 multiline_comment|/*&n;     * The SCSI standard says:&n;     * &quot;READ CAPACITY is necessary for self configuring software&quot;&n;     *  While not mandatory, support of READ CAPACITY is strongly encouraged.&n;     *  We used to die if we couldn&squot;t successfully do a READ CAPACITY.&n;     *  But, now we go on about our way.  The side effects of this are&n;     *&n;     *  1. We can&squot;t know block size with certainty. I have said &quot;512 bytes&n;     *     is it&quot; as this is most common.&n;     *&n;     *  2. Recovery from when some one attempts to read past the end of the&n;     *     raw device will be slower.&n;     */
 r_if
 c_cond
@@ -5040,16 +5368,12 @@ id|the_result
 (brace
 id|printk
 (paren
-l_string|&quot;sd%c : READ CAPACITY failed.&bslash;n&quot;
-l_string|&quot;sd%c : status = %x, message = %02x, host = %d, driver = %02x &bslash;n&quot;
+l_string|&quot;%s : READ CAPACITY failed.&bslash;n&quot;
+l_string|&quot;%s : status = %x, message = %02x, host = %d, driver = %02x &bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 comma
 id|status_byte
 c_func
@@ -5090,11 +5414,9 @@ id|DRIVER_SENSE
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : extended sense code = %1x &bslash;n&quot;
+l_string|&quot;%s : extended sense code = %1x &bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 comma
 id|SCpnt-&gt;sense_buffer
 (braket
@@ -5108,21 +5430,17 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : sense not available. &bslash;n&quot;
+l_string|&quot;%s : sense not available. &bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : block size assumed to be 512 bytes, disk size 1GB.  &bslash;n&quot;
+l_string|&quot;%s : block size assumed to be 512 bytes, disk size 1GB.  &bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 )paren
 suffix:semicolon
 id|rscsi_disks
@@ -5292,11 +5610,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sd%c : sector size 0 reported, assuming 512.&bslash;n&quot;
+l_string|&quot;%s : sector size 0 reported, assuming 512.&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 )paren
 suffix:semicolon
 )brace
@@ -5342,11 +5658,9 @@ l_int|256
 (brace
 id|printk
 (paren
-l_string|&quot;sd%c : unsupported sector size %d.&bslash;n&quot;
+l_string|&quot;%s : unsupported sector size %d.&bslash;n&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-id|i
+id|nbuff
 comma
 id|rscsi_disks
 (braket
@@ -5398,6 +5712,24 @@ op_decrement
 suffix:semicolon
 id|sd_gendisk.nr_real
 op_decrement
+suffix:semicolon
+multiline_comment|/* Wake up a process waiting for device */
+id|wake_up
+c_func
+(paren
+op_amp
+id|SCpnt-&gt;device-&gt;device_wait
+)paren
+suffix:semicolon
+id|scsi_release_command
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|SCpnt
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 id|i
@@ -5555,12 +5887,10 @@ id|sz_quot
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;SCSI device sd%c: hdwr sector= %d bytes.&quot;
+l_string|&quot;SCSI device %s: hdwr sector= %d bytes.&quot;
 l_string|&quot; Sectors= %d [%d MB] [%d.%1d GB]&bslash;n&quot;
 comma
-id|i
-op_plus
-l_char|&squot;a&squot;
+id|nbuff
 comma
 id|hard_sector
 comma
@@ -5807,22 +6137,14 @@ op_amp
 id|sem
 )paren
 suffix:semicolon
+id|SCpnt-&gt;request.sem
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 id|the_result
 op_assign
 id|SCpnt-&gt;result
-suffix:semicolon
-id|SCpnt-&gt;request.rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-multiline_comment|/* Mark as not busy */
-id|wake_up
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;device-&gt;device_wait
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5832,11 +6154,9 @@ id|the_result
 (brace
 id|printk
 (paren
-l_string|&quot;sd%c: test WP failed, assume Write Protected&bslash;n&quot;
+l_string|&quot;%s: test WP failed, assume Write Protected&bslash;n&quot;
 comma
-id|i
-op_plus
-l_char|&squot;a&squot;
+id|nbuff
 )paren
 suffix:semicolon
 id|rscsi_disks
@@ -5873,11 +6193,9 @@ l_int|0
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;sd%c: Write Protect is %s&bslash;n&quot;
+l_string|&quot;%s: Write Protect is %s&bslash;n&quot;
 comma
-id|i
-op_plus
-l_char|&squot;a&squot;
+id|nbuff
 comma
 id|rscsi_disks
 (braket
@@ -5895,6 +6213,24 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* check for write protect */
+multiline_comment|/* Wake up a process waiting for device */
+id|wake_up
+c_func
+(paren
+op_amp
+id|SCpnt-&gt;device-&gt;device_wait
+)paren
+suffix:semicolon
+id|scsi_release_command
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|SCpnt
+op_assign
+l_int|NULL
+suffix:semicolon
 id|rscsi_disks
 (braket
 id|i
@@ -6407,6 +6743,12 @@ op_star
 id|SDp
 )paren
 (brace
+r_char
+id|nbuff
+(braket
+l_int|6
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6423,10 +6765,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|sd_devname
+c_func
+(paren
+id|sd_template.dev_noticed
+op_increment
+comma
+id|nbuff
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Detected scsi %sdisk sd%c at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
+l_string|&quot;Detected scsi %sdisk %s at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
 comma
 id|SDp-&gt;removable
 ques
@@ -6435,12 +6786,7 @@ l_string|&quot;removable &quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
-l_char|&squot;a&squot;
-op_plus
-(paren
-id|sd_template.dev_noticed
-op_increment
-)paren
+id|nbuff
 comma
 id|SDp-&gt;host-&gt;host_no
 comma

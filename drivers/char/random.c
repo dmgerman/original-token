@@ -1251,7 +1251,7 @@ macro_line|#if defined (__i386__)
 r_if
 c_cond
 (paren
-id|x86_capability
+id|boot_cpu_data.x86_capability
 op_amp
 l_int|16
 )paren

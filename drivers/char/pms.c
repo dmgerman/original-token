@@ -5003,6 +5003,22 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Module stuff&n; */
 macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|io_port
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mem_base
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -5017,6 +5033,12 @@ c_func
 id|KERN_INFO
 l_string|&quot;Mediavision Pro Movie Studio driver 0.01&bslash;n&quot;
 )paren
+suffix:semicolon
+id|data_port
+op_assign
+id|io_port
+op_plus
+l_int|1
 suffix:semicolon
 r_if
 c_cond

@@ -63,6 +63,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int
@@ -90,8 +93,11 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|SCSI_DEBUG_MAILBOXES
-mdefine_line|#define SCSI_DEBUG_MAILBOXES 8
+mdefine_line|#define SCSI_DEBUG_MAILBOXES 1
+multiline_comment|/*&n; * Allow the driver to reject commands.  Thus we accept only one, but&n; * and the mid-level will queue the remainder.&n; */
+DECL|macro|SCSI_DEBUG_CANQUEUE
+mdefine_line|#define SCSI_DEBUG_CANQUEUE  255
 DECL|macro|SCSI_DEBUG
-mdefine_line|#define SCSI_DEBUG {NULL, NULL, NULL, scsi_debug_proc_info, &bslash;&n;&t;&t;&quot;SCSI DEBUG&quot;, scsi_debug_detect, NULL, &bslash;&n;&t;&t;NULL, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define SCSI_DEBUG {proc_info:         scsi_debug_proc_info,&t;&bslash;&n;&t;&t;    name:              &quot;SCSI DEBUG&quot;,&t;&t;&bslash;&n;&t;&t;    detect:            scsi_debug_detect,&t;&bslash;&n;&t;&t;    command:           scsi_debug_command,&t;&bslash;&n;&t;&t;    queuecommand:      scsi_debug_queuecommand, &bslash;&n;&t;&t;    abort:             scsi_debug_abort,&t;&bslash;&n;&t;&t;    reset:             scsi_debug_reset,&t;&bslash;&n;&t;&t;    bios_param:        scsi_debug_biosparam,&t;&bslash;&n;&t;&t;    can_queue:         SCSI_DEBUG_CANQUEUE,&t;&bslash;&n;&t;&t;    this_id:           7,&t;&t;&t;&bslash;&n;&t;&t;    sg_tablesize:      SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;    cmd_per_lun:       3,&t;&t;&t;&bslash;&n;&t;&t;    unchecked_isa_dma: 1,&t;&t;&t;&bslash;&n;&t;&t;    use_clustering:    ENABLE_CLUSTERING,&t;&bslash;&n;&t;&t;    use_new_eh_code:   1,&t;&t;&t;&bslash;&n;}
 macro_line|#endif
 eof

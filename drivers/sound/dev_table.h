@@ -16,6 +16,8 @@ DECL|macro|SNDCARD_OPL3SA1_MPU
 mdefine_line|#define SNDCARD_OPL3SA1_MPU&t;&t;40
 DECL|macro|SNDCARD_SOFTOSS
 mdefine_line|#define SNDCARD_SOFTOSS&t;&t;&t;36
+DECL|macro|SNDCARD_VMIDI
+mdefine_line|#define SNDCARD_VMIDI&t;&t;&t;37
 r_void
 id|attach_opl3sa_wss
 (paren
@@ -2348,6 +2350,24 @@ id|unload_softsyn
 )brace
 comma
 macro_line|#endif
+macro_line|#if defined(CONFIG_VMIDI) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_VMIDI_MODULE)
+(brace
+l_string|&quot;VMIDI&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_VMIDI
+comma
+l_string|&quot;Loopback MIDI Device&quot;
+comma
+id|attach_v_midi
+comma
+id|probe_v_midi
+comma
+id|unload_v_midi
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma
@@ -2968,6 +2988,25 @@ id|SNDCARD_ADLIB
 comma
 (brace
 id|FM_MONO
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_VMIDI) &amp;&amp; defined(CONFIG_MIDI)
+(brace
+id|SNDCARD_VMIDI
+comma
+(brace
+l_int|0
 comma
 l_int|0
 comma

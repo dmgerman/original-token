@@ -2471,13 +2471,13 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|dev-&gt;start
+op_logical_or
 op_logical_neg
 id|suser
 c_func
 (paren
 )paren
-op_logical_or
-id|dev-&gt;start
 )paren
 r_return
 op_minus

@@ -67,18 +67,20 @@ DECL|macro|OPT_YM3812_AUTO
 mdefine_line|#define OPT_YM3812_AUTO&t;24
 DECL|macro|OPT_YM3812
 mdefine_line|#define OPT_YM3812&t;25
+DECL|macro|OPT_VMIDI
+mdefine_line|#define OPT_VMIDI   26
 DECL|macro|OPT_LAST
-mdefine_line|#define OPT_LAST&t;25&t;/* Last defined OPT number */
+mdefine_line|#define OPT_LAST&t;27&t;/* Last defined OPT number */
 DECL|macro|DUMMY_OPTS
 mdefine_line|#define DUMMY_OPTS (B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_SB)|B(OPT_PAS)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB)| &bslash;&n;&t;&t;  B(OPT_SPNP)|B(OPT_OPL3SA1)|B(OPT_SOFTOSS))
+mdefine_line|#define ANY_DEVS (B(OPT_SB)|B(OPT_PAS)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI)|B(OPT_ADLIB)| &bslash;&n;&t;&t;  B(OPT_SPNP)|B(OPT_OPL3SA1)|B(OPT_SOFTOSS)|B(OPT_VMIDI))
 DECL|macro|MPU_DEVS
 mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI)|B(OPT_SSCAPE))
 DECL|macro|UART401_DEVS
 mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SPNP)|&bslash;&n;&t;&t;  B(OPT_OPL3SA1))
 DECL|macro|NON_AUDIO_CARDS
-mdefine_line|#define NON_AUDIO_CARDS (B(OPT_ADLIB)|B(OPT_MPU401)|B(OPT_UART6850)|B(OPT_MAUI))
+mdefine_line|#define NON_AUDIO_CARDS (B(OPT_ADLIB)|B(OPT_MPU401)|B(OPT_UART6850)|B(OPT_MAUI)|B(OPT_VMIDI))
 DECL|macro|AUDIO_CARDS
 mdefine_line|#define AUDIO_CARDS (ANY_DEVS &amp; ~NON_AUDIO_CARDS)
 DECL|macro|MIDI_CARDS
@@ -610,6 +612,20 @@ l_int|0
 comma
 l_int|1
 )brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;VMIDI&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
 )brace
 suffix:semicolon
 DECL|variable|questions
@@ -671,6 +687,8 @@ comma
 l_string|&quot;This should not be asked&quot;
 comma
 l_string|&quot;FM synthesizer (YM3812/OPL-3) support&quot;
+comma
+l_string|&quot;Loopback MIDI device support&quot;
 comma
 l_string|&quot;Is the sky really falling&quot;
 )brace
@@ -771,6 +789,8 @@ l_string|&quot;This should not be asked&quot;
 comma
 l_string|&quot;This enables the Yamaha FM synthesizer chip used on many sound&bslash;n&quot;
 l_string|&quot;cards.&bslash;n&quot;
+comma
+l_string|&quot;This enable Loopback virtual MIDI device&bslash;n&quot;
 comma
 l_string|&quot;Is the sky really falling&quot;
 )brace

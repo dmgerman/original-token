@@ -1,7 +1,4 @@
 multiline_comment|/* &n; * ASCII values for a number of symbolic constants, printing functions,&n; * etc.&n; */
-multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
-DECL|macro|_SCSI_SYMS_VER_
-mdefine_line|#define _SCSI_SYMS_VER_
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;

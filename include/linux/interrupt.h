@@ -131,6 +131,9 @@ comma
 DECL|enumerator|NET_BH
 id|NET_BH
 comma
+DECL|enumerator|SCSI_BH
+id|SCSI_BH
+comma
 DECL|enumerator|IMMEDIATE_BH
 id|IMMEDIATE_BH
 comma

@@ -1849,7 +1849,7 @@ op_star
 id|dev_id
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; */
+multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; *&n; * [Dec 1997 -- Chris Evans]&n; * For correctness, the above considerations need to be extended to&n; * fsuser(). This is done, along with moving fsuser() checks to be&n; * last.&n; */
 DECL|function|suser
 r_extern
 r_inline
@@ -1864,6 +1864,36 @@ r_if
 c_cond
 (paren
 id|current-&gt;euid
+op_eq
+l_int|0
+)paren
+(brace
+id|current-&gt;flags
+op_or_assign
+id|PF_SUPERPRIV
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|fsuser
+r_extern
+r_inline
+r_int
+id|fsuser
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;fsuid
 op_eq
 l_int|0
 )paren

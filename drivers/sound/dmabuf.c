@@ -5682,7 +5682,7 @@ r_while
 c_loop
 (paren
 id|dmap-&gt;qlen
-OL
+op_le
 l_int|0
 )paren
 (brace

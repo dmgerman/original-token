@@ -11599,6 +11599,13 @@ c_func
 id|ad1848_unload
 )paren
 suffix:semicolon
+DECL|variable|ad1848_control
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ad1848_control
+)paren
+suffix:semicolon
 DECL|variable|adintr
 id|EXPORT_SYMBOL
 c_func

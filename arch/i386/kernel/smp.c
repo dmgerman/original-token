@@ -1627,7 +1627,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Bus#0 is &quot;
+l_string|&quot;Bus #0 is &quot;
 )paren
 suffix:semicolon
 )brace
@@ -1898,7 +1898,7 @@ l_int|0x9F000
 id|panic
 c_func
 (paren
-l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel trampoline 0x%lx.&bslash;n&quot;
+l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel trampoline 0x%lx.&quot;
 comma
 id|mem_base
 )paren
@@ -1942,89 +1942,46 @@ id|cpu_data
 id|id
 )braket
 suffix:semicolon
-id|c-&gt;hard_math
+op_star
+id|c
 op_assign
-id|hard_math
+id|boot_cpu_data
 suffix:semicolon
-multiline_comment|/* Always assumed same currently */
-id|c-&gt;x86
-op_assign
-id|x86
-suffix:semicolon
-id|c-&gt;x86_model
-op_assign
-id|x86_model
-suffix:semicolon
-id|c-&gt;x86_mask
-op_assign
-id|x86_mask
+id|identify_cpu
+c_func
+(paren
+id|c
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Mask B, Pentium, but not Pentium MMX&n;&t; */
 r_if
 c_cond
 (paren
-id|x86_mask
-op_ge
-l_int|1
+id|c-&gt;x86_vendor
+op_eq
+id|X86_VENDOR_INTEL
 op_logical_and
-id|x86_mask
-op_le
-l_int|4
-op_logical_and
-id|x86
+id|c-&gt;x86
 op_eq
 l_int|5
 op_logical_and
-(paren
-id|x86_model
+id|c-&gt;x86_mask
 op_ge
-l_int|0
+l_int|1
 op_logical_and
-id|x86_model
+id|c-&gt;x86_mask
+op_le
+l_int|4
+op_logical_and
+id|c-&gt;x86_model
 op_le
 l_int|3
 )paren
-)paren
-(brace
 id|smp_b_stepping
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* Remember we have B step Pentia with bugs */
-id|c-&gt;x86_capability
-op_assign
-id|x86_capability
-suffix:semicolon
-id|c-&gt;fdiv_bug
-op_assign
-id|fdiv_bug
-suffix:semicolon
-id|c-&gt;wp_works_ok
-op_assign
-id|wp_works_ok
-suffix:semicolon
-multiline_comment|/* Always assumed the same currently */
-id|c-&gt;hlt_works_ok
-op_assign
-id|hlt_works_ok
-suffix:semicolon
-id|c-&gt;have_cpuid
-op_assign
-id|have_cpuid
-suffix:semicolon
-id|c-&gt;udelay_val
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|c-&gt;x86_vendor_id
-comma
-id|x86_vendor_id
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Architecture specific routine called by the kernel just before init is&n; *&t;fired off. This allows the BP to have everything in order [we hope].&n; *&t;At the end of this all the AP&squot;s will hit the system scheduling and off&n; *&t;we go. Each AP will load the system gdt&squot;s and jump through the kernel&n; *&t;init into idle(). At this point the scheduler will one day take over&n; * &t;and give them jobs to do. smp_callin is a standard routine&n; *&t;we use to track CPU&squot;s as they power up.&n; */
 DECL|function|__initfunc
@@ -2397,7 +2354,7 @@ id|idle
 id|panic
 c_func
 (paren
-l_string|&quot;No idle process for CPU %d&bslash;n&quot;
+l_string|&quot;No idle process for CPU %d&quot;
 comma
 id|i
 )paren
@@ -3093,6 +3050,30 @@ op_assign
 id|i
 suffix:semicolon
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;OK.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU%d: &quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|print_cpu_info
+c_func
+(paren
+op_amp
+id|cpu_data
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -3255,6 +3236,24 @@ id|boot_cpu_id
 )paren
 suffix:semicolon
 multiline_comment|/* Final full version of the data */
+id|printk
+c_func
+(paren
+l_string|&quot;CPU%d: &quot;
+comma
+id|boot_cpu_id
+)paren
+suffix:semicolon
+id|print_cpu_info
+c_func
+(paren
+op_amp
+id|cpu_data
+(braket
+id|boot_cpu_id
+)braket
+)paren
+suffix:semicolon
 id|cpu_present_map
 op_or_assign
 (paren
@@ -3277,14 +3276,30 @@ id|active_kernel_processor
 op_assign
 id|boot_cpu_id
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_found_config
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;SMP motherboard not detected. Using dummy APIC emulation.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;If SMP should be disabled, then really disable it!&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|max_cpus
-op_logical_and
-id|smp_found_config
 )paren
 (brace
 id|smp_found_config
@@ -3298,15 +3313,6 @@ l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|smp_found_config
-)paren
-r_return
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
 id|apic_reg
 op_assign
@@ -3329,7 +3335,7 @@ l_int|NULL
 id|panic
 c_func
 (paren
-l_string|&quot;Unable to map local apic.&bslash;n&quot;
+l_string|&quot;Unable to map local apic.&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3626,6 +3632,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Error: only one processor found.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3683,7 +3690,7 @@ id|cpu_data
 id|i
 )braket
 dot
-id|udelay_val
+id|loops_per_sec
 suffix:semicolon
 )brace
 )brace
@@ -3745,6 +3752,7 @@ id|smp_b_stepping
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;WARNING: SMP operation may be unreliable with B stepping processors.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4666,8 +4674,8 @@ suffix:semicolon
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This part sets up the APIC 32 bit clock in LVTT1, with HZ interrupts&n; * per second. We assume that the caller has already set up the local&n; * APIC at apic_addr.&n; *&n; * The APIC timer is not exactly sync with the external timer chip, it&n; * closely follows bus clocks.&n; */
-DECL|macro|RTDSC
-mdefine_line|#define RTDSC(x)&t;__asm__ __volatile__ (  &quot;.byte 0x0f,0x31&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
+DECL|macro|RDTSC
+mdefine_line|#define RDTSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
 multiline_comment|/*&n; * The timer chip is already set up at HZ interrupts per second here,&n; * but we do not accept timer interrupts yet. We only allow the BP&n; * to calibrate.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -4911,7 +4919,7 @@ id|wait_8254_wraparound
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We wrapped around just now, lets start:&n;&t; */
-id|RTDSC
+id|RDTSC
 c_func
 (paren
 id|t1
@@ -4954,7 +4962,7 @@ c_func
 id|APIC_TMCCT
 )paren
 suffix:semicolon
-id|RTDSC
+id|RDTSC
 c_func
 (paren
 id|t2
@@ -5274,6 +5282,4 @@ suffix:semicolon
 )brace
 DECL|macro|APIC_DIVISOR
 macro_line|#undef APIC_DIVISOR
-DECL|macro|RTDSC
-macro_line|#undef RTDSC
 eof
