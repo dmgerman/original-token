@@ -4549,6 +4549,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+op_minus
 id|err
 suffix:semicolon
 )brace

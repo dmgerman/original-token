@@ -2043,7 +2043,7 @@ comma
 r_char
 op_star
 )paren
-id|d8000
+l_int|0xd8000
 )brace
 suffix:semicolon
 r_typedef

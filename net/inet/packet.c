@@ -442,6 +442,10 @@ id|skb-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
