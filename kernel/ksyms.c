@@ -346,12 +346,6 @@ comma
 id|X
 c_func
 (paren
-id|insert_vm_struct
-)paren
-comma
-id|X
-c_func
-(paren
 id|zeromap_page_range
 )paren
 comma
@@ -359,12 +353,6 @@ id|X
 c_func
 (paren
 id|unmap_page_range
-)paren
-comma
-id|X
-c_func
-(paren
-id|merge_segments
 )paren
 comma
 multiline_comment|/* internal kernel memory management */

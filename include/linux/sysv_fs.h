@@ -1512,6 +1512,25 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|sysv_file_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|sysv_truncate
 c_func
@@ -1638,7 +1657,6 @@ id|file
 op_star
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_extern
 r_int
 id|sysv_mmap
@@ -1663,7 +1681,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_struct
 id|inode_operations

@@ -456,13 +456,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_invalidate
-(paren
-id|sb-&gt;s_dev
-)paren
-suffix:semicolon
-macro_line|#endif
 id|sb-&gt;s_dev
 op_assign
 l_int|0

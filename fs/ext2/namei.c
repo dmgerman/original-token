@@ -744,7 +744,6 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-macro_line|#ifndef DONT_USE_DCACHE
 r_if
 c_cond
 (paren
@@ -752,11 +751,10 @@ op_logical_neg
 (paren
 id|ino
 op_assign
-id|ext2_dcache_lookup
+id|dcache_lookup
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|name
 comma
@@ -765,7 +763,6 @@ id|len
 )paren
 )paren
 (brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -801,12 +798,10 @@ id|ino
 op_assign
 id|de-&gt;inode
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -815,15 +810,12 @@ comma
 id|ino
 )paren
 suffix:semicolon
-macro_line|#endif
 id|brelse
 (paren
 id|bh
 )paren
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1682,14 +1674,14 @@ op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -1698,7 +1690,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mark_buffer_dirty
 c_func
 (paren
@@ -2053,14 +2044,14 @@ op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -2069,7 +2060,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mark_buffer_dirty
 c_func
 (paren
@@ -2481,14 +2471,14 @@ op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -2497,7 +2487,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mark_buffer_dirty
 c_func
 (paren
@@ -3151,7 +3140,9 @@ id|bh
 )paren
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
 )brace
 id|up
@@ -3203,32 +3194,6 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_remove
-c_func
-(paren
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
-comma
-l_string|&quot;.&quot;
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|ext2_dcache_remove
-c_func
-(paren
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
-comma
-l_string|&quot;..&quot;
-comma
-l_int|2
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3247,19 +3212,11 @@ comma
 id|inode-&gt;i_nlink
 )paren
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_remove
-(paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
-comma
-id|de-&gt;name
-comma
-id|de-&gt;name_len
-)paren
+id|inode-&gt;i_version
+op_assign
+op_increment
+id|event
 suffix:semicolon
-macro_line|#endif
 id|inode-&gt;i_nlink
 op_assign
 l_int|0
@@ -3521,7 +3478,9 @@ r_goto
 id|end_unlink
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -3557,19 +3516,6 @@ id|bh
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_remove
-(paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
-comma
-id|de-&gt;name
-comma
-id|de-&gt;name_len
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dir-&gt;i_ctime
 op_assign
 id|dir-&gt;i_mtime
@@ -3986,14 +3932,14 @@ op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -4002,7 +3948,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mark_buffer_dirty
 c_func
 (paren
@@ -4223,14 +4168,14 @@ op_assign
 id|oldinode-&gt;i_ino
 suffix:semicolon
 id|dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|dir-&gt;i_dev
-comma
-id|dir-&gt;i_ino
+id|dir
 comma
 id|de-&gt;name
 comma
@@ -4239,7 +4184,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mark_buffer_dirty
 c_func
 (paren
@@ -4981,23 +4925,10 @@ id|new_de-&gt;inode
 op_assign
 id|old_inode-&gt;i_ino
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_remove
+id|dcache_add
+c_func
 (paren
-id|old_dir-&gt;i_dev
-comma
-id|old_dir-&gt;i_ino
-comma
-id|old_de-&gt;name
-comma
-id|old_de-&gt;name_len
-)paren
-suffix:semicolon
-id|ext2_dcache_add
-(paren
-id|new_dir-&gt;i_dev
-comma
-id|new_dir-&gt;i_ino
+id|new_dir
 comma
 id|new_de-&gt;name
 comma
@@ -5006,7 +4937,6 @@ comma
 id|new_de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|retval
 op_assign
 id|ext2_delete_entry
@@ -5036,10 +4966,14 @@ r_goto
 id|end_rename
 suffix:semicolon
 id|new_dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
 id|old_dir-&gt;i_version
+op_assign
 op_increment
+id|event
 suffix:semicolon
 r_if
 c_cond

@@ -645,12 +645,10 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-id|ext2_dcache_add
+id|dcache_add
+c_func
 (paren
-id|inode-&gt;i_dev
-comma
-id|inode-&gt;i_ino
+id|inode
 comma
 id|de-&gt;name
 comma
@@ -659,7 +657,6 @@ comma
 id|de-&gt;inode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|i
 op_assign
 id|de-&gt;name_len

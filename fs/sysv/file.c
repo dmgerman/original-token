@@ -18,25 +18,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 r_static
 r_int
-id|sysv_file_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_static
-r_int
 id|sysv_file_write
 c_func
 (paren
@@ -80,7 +61,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-l_int|NULL
+id|sysv_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL
@@ -255,7 +236,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|sysv_file_read
-r_static
 r_int
 id|sysv_file_read
 c_func

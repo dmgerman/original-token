@@ -1,23 +1,19 @@
-multiline_comment|/*&n; *&t;fs/msdos/mmap.c&n; *&n; *&t;Written by Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&t;Inspired by fs/nfs/mmap.c (Jaon Tombs 15 Aug 1993)&n; *&n; *&t;msdos mmap handling&n; */
+multiline_comment|/*&n; *  linux/fs/sysv/mmap.c&n; *&n; *  mm/memory.c, mm/mmap.c&n; *  Copyright (C) 1991, 1992, 1993  Linus Torvalds&n; *&n; *  nfs/mmap.c&n; *  Copyright (C) 1993  Jon Tombs&n; *&n; *  fs/msdos/mmap.c&n; *  Copyright (C) 1994  Jacques Gelinas&n; *&n; *  fs/sysv/mmap.c&n; *  Copyright (C) 1994  Bruno Haible&n; *&n; *  SystemV/Coherent mmap handling&n; */
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/sysv_fs.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/mman.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/msdos_fs.h&gt;
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
-DECL|function|msdos_file_mmap_nopage
+DECL|function|sysv_file_mmap_nopage
 r_static
 r_int
 r_int
-id|msdos_file_mmap_nopage
-c_func
+id|sysv_file_mmap_nopage
 (paren
 r_struct
 id|vm_area_struct
@@ -33,32 +29,26 @@ r_int
 id|page
 comma
 r_int
-id|error_code
+id|no_share
 )paren
 (brace
+r_int
+id|remaining
+comma
+id|count
+comma
+id|old_fs
+suffix:semicolon
 r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|area-&gt;vm_inode
+id|file
+id|filp
 suffix:semicolon
-r_int
-r_int
-id|clear
-suffix:semicolon
-r_int
-id|pos
-suffix:semicolon
-r_int
-id|gap
-suffix:semicolon
-multiline_comment|/* distance from eof to pos */
 id|address
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-id|pos
+multiline_comment|/* prepare a file pointer */
+id|filp.f_pos
 op_assign
 id|address
 op_minus
@@ -66,71 +56,29 @@ id|area-&gt;vm_start
 op_plus
 id|area-&gt;vm_offset
 suffix:semicolon
-id|clear
+id|filp.f_reada
 op_assign
 l_int|0
 suffix:semicolon
-id|gap
+id|remaining
 op_assign
-id|inode-&gt;i_size
+id|area-&gt;vm_end
 op_minus
-id|pos
+id|address
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|gap
-op_le
-l_int|0
-)paren
-(brace
-multiline_comment|/* mmaping beyong end of file */
-id|clear
-op_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
-r_else
-(brace
-r_int
-id|cur_read
-suffix:semicolon
-r_int
-id|need_read
-suffix:semicolon
-r_struct
-id|file
-id|filp
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|gap
-OL
+id|remaining
+OG
 id|PAGE_SIZE
 )paren
-(brace
-id|clear
+id|remaining
 op_assign
 id|PAGE_SIZE
-op_minus
-id|gap
 suffix:semicolon
-)brace
-id|filp.f_pos
-op_assign
-id|pos
-suffix:semicolon
-id|need_read
-op_assign
-id|PAGE_SIZE
-op_minus
-id|clear
-suffix:semicolon
-(brace
-r_int
-r_int
-id|cur_fs
+multiline_comment|/* read from the file. page is in kernel space, not user space. */
+id|old_fs
 op_assign
 id|get_fs
 c_func
@@ -138,15 +86,19 @@ c_func
 )paren
 suffix:semicolon
 id|set_fs
+c_func
 (paren
-id|KERNEL_DS
+id|get_ds
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
-id|cur_read
+id|count
 op_assign
-id|msdos_file_read
+id|sysv_file_read
 (paren
-id|inode
+id|area-&gt;vm_inode
 comma
 op_amp
 id|filp
@@ -157,43 +109,41 @@ op_star
 )paren
 id|page
 comma
-id|need_read
+id|remaining
 )paren
 suffix:semicolon
 id|set_fs
+c_func
 (paren
-id|cur_fs
+id|old_fs
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|cur_read
-op_ne
-id|need_read
+id|count
+OL
+l_int|0
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSDOS: Error while reading an mmap file %d &lt;&gt; %d&bslash;n&quot;
-comma
-id|cur_read
-comma
-id|need_read
-)paren
+id|count
+op_assign
+l_int|0
 suffix:semicolon
-)brace
-)brace
+multiline_comment|/* do nothing on I/O error ?? */
+r_else
+id|remaining
+op_sub_assign
+id|count
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|clear
+id|remaining
 OG
 l_int|0
 )paren
-(brace
 id|memset
+c_func
 (paren
 (paren
 r_char
@@ -201,24 +151,22 @@ op_star
 )paren
 id|page
 op_plus
-id|PAGE_SIZE
-op_minus
-id|clear
+id|count
 comma
 l_int|0
 comma
-id|clear
+id|remaining
 )paren
 suffix:semicolon
-)brace
 r_return
 id|page
 suffix:semicolon
 )brace
-DECL|variable|msdos_file_mmap
+DECL|variable|sysv_file_mmap
+r_static
 r_struct
 id|vm_operations_struct
-id|msdos_file_mmap
+id|sysv_file_mmap
 op_assign
 (brace
 l_int|NULL
@@ -227,7 +175,7 @@ multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* close */
-id|msdos_file_mmap_nopage
+id|sysv_file_mmap_nopage
 comma
 multiline_comment|/* nopage */
 l_int|NULL
@@ -241,10 +189,9 @@ comma
 multiline_comment|/* unmap */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is used for a general mmap of an msdos file&n; * Returns 0 if ok, or a negative error code if not.&n; */
-DECL|function|msdos_mmap
+DECL|function|sysv_mmap
 r_int
-id|msdos_mmap
+id|sysv_mmap
 c_func
 (paren
 r_struct
@@ -270,7 +217,7 @@ id|vma-&gt;vm_page_prot
 op_amp
 id|PAGE_RW
 )paren
-multiline_comment|/* only PAGE_COW or read-only supported now */
+multiline_comment|/* only PAGE_COW or read-only supported right now */
 r_return
 op_minus
 id|EINVAL
@@ -337,7 +284,7 @@ suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
 op_amp
-id|msdos_file_mmap
+id|sysv_file_mmap
 suffix:semicolon
 r_return
 l_int|0

@@ -4,8 +4,12 @@ mdefine_line|#define _LINUX_PAGE_H
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;&t;&t;12
+DECL|macro|PGDIR_SHIFT
+mdefine_line|#define PGDIR_SHIFT&t;&t;&t;22
 DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE&t;&t;&t;((unsigned long)1&lt;&lt;PAGE_SHIFT)
+mdefine_line|#define PAGE_SIZE&t;&t;&t;(1UL &lt;&lt; PAGE_SHIFT)
+DECL|macro|PGDIR_SIZE
+mdefine_line|#define PGDIR_SIZE&t;&t;&t;(1UL &lt;&lt; PGDIR_SHIFT)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
@@ -13,6 +17,9 @@ mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
 multiline_comment|/* to mask away the intra-page address bits */
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;&t;&t;(~(PAGE_SIZE-1))
+multiline_comment|/* to mask away the intra-page address bits */
+DECL|macro|PGDIR_MASK
+mdefine_line|#define PGDIR_MASK&t;&t;&t;(~(PGDIR_SIZE-1))
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)

@@ -4,9 +4,6 @@ multiline_comment|/*&n; * Generic Generic NCR5380 driver&n; *&t;&n; * Copyright 
 multiline_comment|/* &n; * TODO : flesh out DMA support, find some one actually using this (I have&n; * &t;a memory mapped Trantor board that works fine)&n; */
 multiline_comment|/*&n; * Options :&n; *&n; * PARITY - enable parity checking.  Not supported.&n; *&n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  With command line overrides - NCR5380=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 2.  With the GENERIC_NCR5380_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tupples.  Ie, for&n; *     one board at the default 0xcc000 address, IRQ5, no dma, I could &n; *     say  -DGENERIC_NCR5380_OVERRIDE={{0xcc000, 5, DMA_NONE}}&n; * &n; * -1 should be specified for no or DMA interrupt, -2 to autoprobe for an &n; * &t;IRQ line if overriden on the command line.&n; */
 multiline_comment|/*&n; * $Log: generic_NCR5380.c,v $&n; */
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_SCSI_GENERIC_NCR5380)
-multiline_comment|/* Standard option */
 DECL|macro|AUTOPROBE_IRQ
 mdefine_line|#define AUTOPROBE_IRQ
 macro_line|#include &lt;asm/system.h&gt;
@@ -423,5 +420,4 @@ id|string
 suffix:semicolon
 )brace
 macro_line|#include &quot;NCR5380.c&quot;
-macro_line|#endif /* defined(CONFIG_SCSI_GENERIC_NCR5380) */
 eof

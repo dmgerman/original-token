@@ -393,7 +393,15 @@ c_cond
 (paren
 id|target
 op_ge
-id|NR_SR
+id|sr_template.nr_dev
+op_logical_or
+op_logical_neg
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|device
 )paren
 r_return
 op_minus

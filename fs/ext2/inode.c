@@ -2731,6 +2731,11 @@ id|inode-&gt;i_blocks
 op_assign
 id|raw_inode-&gt;i_blocks
 suffix:semicolon
+id|inode-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
 id|inode-&gt;u.ext2_i.i_flags
 op_assign
 id|raw_inode-&gt;i_flags

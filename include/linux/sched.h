@@ -1,8 +1,6 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
-DECL|macro|NEW_SWAP
-mdefine_line|#define NEW_SWAP
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
@@ -27,6 +25,11 @@ r_extern
 r_int
 r_int
 id|intr_count
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|event
 suffix:semicolon
 DECL|macro|start_bh_atomic
 mdefine_line|#define start_bh_atomic() &bslash;&n;__asm__ __volatile__(&quot;incl _intr_count&quot;)
@@ -584,7 +587,11 @@ id|swappable
 suffix:colon
 l_int|1
 suffix:semicolon
-macro_line|#ifdef NEW_SWAP
+DECL|member|swap_address
+r_int
+r_int
+id|swap_address
+suffix:semicolon
 DECL|member|old_maj_flt
 r_int
 r_int
@@ -603,17 +610,6 @@ r_int
 id|swap_cnt
 suffix:semicolon
 multiline_comment|/* number of pages to swap on next pass */
-DECL|member|swap_table
-r_int
-id|swap_table
-suffix:semicolon
-multiline_comment|/* current page table */
-DECL|member|swap_page
-r_int
-id|swap_page
-suffix:semicolon
-multiline_comment|/* current page */
-macro_line|#endif NEW_SWAP
 DECL|member|mmap
 r_struct
 id|vm_area_struct
@@ -623,7 +619,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, 0, &bslash;&n;&t;&t;NULL }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;NULL }
 DECL|struct|task_struct
 r_struct
 id|task_struct

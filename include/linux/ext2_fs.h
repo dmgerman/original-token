@@ -15,9 +15,6 @@ macro_line|#undef EXT2FS_CHECK_CACHE
 multiline_comment|/*&n; * Define EXT2FS_PRE_02B_COMPAT to convert ext 2 fs prior to 0.2b&n; */
 DECL|macro|EXT2FS_PRE_02B_COMPAT
 macro_line|#undef EXT2FS_PRE_02B_COMPAT
-multiline_comment|/*&n; * Define DONT_USE_DCACHE to inhibit the directory cache&n; */
-DECL|macro|DONT_USE_DCACHE
-mdefine_line|#define DONT_USE_DCACHE
 multiline_comment|/*&n; * Define EXT2_PREALLOCATE to preallocate data blocks for expanding files&n; */
 DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
@@ -766,72 +763,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifndef DONT_USE_DCACHE
-multiline_comment|/* dcache.c */
-r_extern
-r_void
-id|ext2_dcache_invalidate
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ext2_dcache_lookup
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ext2_dcache_add
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ext2_dcache_remove
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_const
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* dir.c */
 r_extern
 r_int

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -139,6 +140,9 @@ DECL|macro|aha1542_intr_reset
 mdefine_line|#define aha1542_intr_reset(base)  outb(IRST, CONTROL(base))
 DECL|macro|WAIT
 mdefine_line|#define WAIT(port, mask, allof, noneof)&t;&t;&t;&t;&t;&bslash;&n; { register WAITbits;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   register WAITtimeout = WAITnexttimeout;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
+multiline_comment|/* Similar to WAIT, except we use the udelay call to regulate the&n;   amount of time we wait.  */
+DECL|macro|WAITd
+mdefine_line|#define WAITd(port, mask, allof, noneof, timeout)&t;&t;&t;&bslash;&n; { register WAITbits;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   register WAITtimeout = timeout;&t;&t;&t;&t;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     udelay(1000);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     if (--WAITtimeout == 0) goto fail;&t;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
 DECL|function|aha1542_stat
 r_static
 r_void
@@ -421,6 +425,89 @@ l_int|1
 )paren
 suffix:semicolon
 id|aha1542_stat
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Similar to aha1542_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   if the board will respond the the command we are about to send or not */
+DECL|function|aha1542_in1
+r_static
+r_int
+id|aha1542_in1
+c_func
+(paren
+r_int
+r_int
+id|base
+comma
+id|unchar
+op_star
+id|cmdp
+comma
+r_int
+id|len
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|len
+op_decrement
+)paren
+(brace
+id|WAITd
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|base
+)paren
+comma
+id|DF
+comma
+id|DF
+comma
+l_int|0
+comma
+l_int|100
+)paren
+suffix:semicolon
+op_star
+id|cmdp
+op_increment
+op_assign
+id|inb
+c_func
+(paren
+id|DATA
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+)brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+id|fail
+suffix:colon
+id|sti
 c_func
 (paren
 )paren
@@ -3656,7 +3743,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|aha1542_in
+r_if
+c_cond
+(paren
+id|aha1542_in1
 c_func
 (paren
 id|base
@@ -3665,8 +3755,13 @@ id|mbenable_result
 comma
 l_int|2
 )paren
+)paren
+(brace
+r_return
+id|retval
 suffix:semicolon
-id|WAIT
+)brace
+id|WAITd
 c_func
 (paren
 id|INTRFLAGS
@@ -3680,6 +3775,8 @@ comma
 id|HACC
 comma
 l_int|0
+comma
+l_int|100
 )paren
 suffix:semicolon
 id|aha1542_intr_reset
@@ -3952,26 +4049,7 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* 1542C returns 0x44, 1542CF returns 0x45 */
-r_if
-c_cond
-(paren
-id|inquiry_result
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x44
-op_logical_or
-id|inquiry_result
-(braket
-l_int|0
-)braket
-op_eq
-l_int|0x45
-)paren
-(brace
-multiline_comment|/* Detect 1542C  */
+multiline_comment|/* Always call this - boards that do not support extended bios translation&n;     will ignore the command, and we will set the proper default */
 op_star
 id|transl
 op_assign
@@ -3980,8 +4058,6 @@ c_func
 (paren
 id|base_io
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 l_int|0

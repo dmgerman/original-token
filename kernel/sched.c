@@ -149,6 +149,13 @@ id|need_resched
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|event
+r_int
+r_int
+id|event
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Tell us the machine setup..&n; */
 DECL|variable|hard_math
 r_int
@@ -1013,6 +1020,8 @@ c_cond
 id|p-&gt;counter
 OG
 id|current-&gt;counter
+op_plus
+l_int|3
 )paren
 id|need_resched
 op_assign
@@ -1159,6 +1168,8 @@ c_cond
 id|p-&gt;counter
 OG
 id|current-&gt;counter
+op_plus
+l_int|3
 )paren
 id|need_resched
 op_assign

@@ -2229,6 +2229,16 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+id|memory_start
+op_assign
+id|name_cache_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
 id|mem_init
 c_func
 (paren
