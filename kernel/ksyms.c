@@ -519,11 +519,11 @@ c_func
 id|lookup_dentry
 )paren
 suffix:semicolon
-DECL|variable|open_namei
+DECL|variable|__open_namei
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|open_namei
+id|__open_namei
 )paren
 suffix:semicolon
 DECL|variable|sys_close

@@ -398,6 +398,8 @@ op_or
 id|O_APPEND
 comma
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|putname

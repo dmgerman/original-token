@@ -2789,6 +2789,11 @@ id|flags
 comma
 r_int
 id|mode
+comma
+r_struct
+id|dentry
+op_star
+id|base
 )paren
 (brace
 r_struct
@@ -2869,7 +2874,7 @@ l_int|2
 suffix:semicolon
 id|dentry
 op_assign
-id|open_namei
+id|__open_namei
 c_func
 (paren
 id|filename
@@ -2877,6 +2882,8 @@ comma
 id|flag
 comma
 id|mode
+comma
+id|base
 )paren
 suffix:semicolon
 id|error
@@ -3407,6 +3414,8 @@ comma
 id|flags
 comma
 id|mode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_kernel

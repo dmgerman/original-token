@@ -17514,10 +17514,6 @@ id|open_namei
 c_func
 (paren
 id|filename
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -23427,6 +23423,8 @@ comma
 id|flags
 comma
 id|mode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_kernel

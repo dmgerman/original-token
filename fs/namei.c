@@ -2102,11 +2102,11 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;open_namei()&n; *&n; * namei for open - this is in fact almost the whole open-routine.&n; *&n; * Note that the low bits of &quot;flag&quot; aren&squot;t the same as in the open&n; * system call - they are 00 - no permissions needed&n; *&t;&t;&t;  01 - read permission needed&n; *&t;&t;&t;  10 - write permission needed&n; *&t;&t;&t;  11 - read/write permissions needed&n; * which is a lot more logical, and also allows the &quot;no perm&quot; needed&n; * for symlinks (where the permissions are checked later).&n; */
-DECL|function|open_namei
+DECL|function|__open_namei
 r_struct
 id|dentry
 op_star
-id|open_namei
+id|__open_namei
 c_func
 (paren
 r_const
@@ -2119,6 +2119,11 @@ id|flag
 comma
 r_int
 id|mode
+comma
+r_struct
+id|dentry
+op_star
+id|dir
 )paren
 (brace
 r_int
@@ -2143,7 +2148,7 @@ c_func
 (paren
 id|pathname
 comma
-l_int|NULL
+id|dir
 comma
 id|lookup_flags
 c_func
@@ -3898,6 +3903,11 @@ r_const
 r_char
 op_star
 id|name
+comma
+r_struct
+id|dentry
+op_star
+id|base
 )paren
 (brace
 r_int
@@ -3920,7 +3930,7 @@ c_func
 (paren
 id|name
 comma
-l_int|NULL
+id|base
 comma
 l_int|0
 )paren
@@ -4053,6 +4063,8 @@ id|do_unlink
 c_func
 (paren
 id|tmp
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_kernel

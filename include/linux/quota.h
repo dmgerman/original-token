@@ -242,13 +242,13 @@ id|dq_count
 suffix:semicolon
 multiline_comment|/* Reference count */
 multiline_comment|/* fields after this point are cleared when invalidating */
-DECL|member|dq_mnt
+DECL|member|dq_sb
 r_struct
-id|vfsmount
+id|super_block
 op_star
-id|dq_mnt
+id|dq_sb
 suffix:semicolon
-multiline_comment|/* VFS_mount_point this applies to */
+multiline_comment|/* superblock this applies to */
 DECL|member|dq_id
 r_int
 r_int

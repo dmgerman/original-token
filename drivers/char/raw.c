@@ -351,7 +351,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lookup_vfsmnt
+id|get_super
 c_func
 (paren
 id|rdev

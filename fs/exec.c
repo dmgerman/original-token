@@ -3212,10 +3212,6 @@ id|dynloader
 (braket
 l_int|0
 )braket
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -3643,10 +3639,6 @@ id|open_namei
 c_func
 (paren
 id|filename
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -4114,6 +4106,8 @@ op_or
 id|O_NOFOLLOW
 comma
 l_int|0600
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

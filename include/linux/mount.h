@@ -85,12 +85,6 @@ op_star
 id|mnt_dirname
 suffix:semicolon
 multiline_comment|/* Name of directory mounted on */
-DECL|member|mnt_flags
-r_int
-r_int
-id|mnt_flags
-suffix:semicolon
-multiline_comment|/* Flags of this device */
 DECL|member|mnt_sb
 r_struct
 id|super_block
@@ -98,12 +92,6 @@ op_star
 id|mnt_sb
 suffix:semicolon
 multiline_comment|/* pointer to superblock */
-DECL|member|mnt_dquot
-r_struct
-id|quota_mount_options
-id|mnt_dquot
-suffix:semicolon
-multiline_comment|/* Diskquota specific mount options */
 DECL|member|mnt_next
 r_struct
 id|vfsmount
@@ -112,16 +100,6 @@ id|mnt_next
 suffix:semicolon
 multiline_comment|/* pointer to next in linkedlist */
 )brace
-suffix:semicolon
-r_struct
-id|vfsmount
-op_star
-id|lookup_vfsmnt
-c_func
-(paren
-id|kdev_t
-id|dev
-)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Umount options&n; */
 DECL|macro|MNT_FORCE

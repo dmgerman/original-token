@@ -47,8 +47,10 @@ r_int
 id|quota_off
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|super_block
+op_star
+id|sb
 comma
 r_int
 id|type
@@ -546,7 +548,7 @@ suffix:semicolon
 DECL|macro|DQUOT_SYNC
 mdefine_line|#define DQUOT_SYNC(dev)&t;sync_dquots(dev, -1)
 DECL|macro|DQUOT_OFF
-mdefine_line|#define DQUOT_OFF(dev)&t;quota_off(dev, -1)
+mdefine_line|#define DQUOT_OFF(sb)&t;quota_off(sb, -1)
 macro_line|#else
 multiline_comment|/*&n; * NO-OP when quota not configured.&n; */
 DECL|macro|DQUOT_INIT
@@ -566,7 +568,7 @@ mdefine_line|#define DQUOT_FREE_INODE(sb, inode)&t;&t;do { } while(0)
 DECL|macro|DQUOT_SYNC
 mdefine_line|#define DQUOT_SYNC(dev)&t;&t;&t;&t;do { } while(0)
 DECL|macro|DQUOT_OFF
-mdefine_line|#define DQUOT_OFF(dev)&t;&t;&t;&t;do { } while(0)
+mdefine_line|#define DQUOT_OFF(sb)&t;&t;&t;&t;do { } while(0)
 multiline_comment|/*&n; * Special case expands to a simple notify_change.&n; */
 DECL|macro|DQUOT_TRANSFER
 mdefine_line|#define DQUOT_TRANSFER(dentry, iattr) notify_change(dentry, iattr)

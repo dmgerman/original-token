@@ -2032,7 +2032,7 @@ c_func
 suffix:semicolon
 id|dentry
 op_assign
-id|open_namei
+id|__open_namei
 c_func
 (paren
 id|sunname-&gt;sun_path
@@ -2042,6 +2042,8 @@ op_or
 id|O_NOFOLLOW
 comma
 id|S_IFSOCK
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

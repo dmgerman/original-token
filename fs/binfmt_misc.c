@@ -791,10 +791,6 @@ id|open_namei
 c_func
 (paren
 id|iname
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|retval
