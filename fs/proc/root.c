@@ -53,17 +53,12 @@ r_int
 id|buflen
 )paren
 (brace
-r_int
-id|len
-suffix:semicolon
 r_char
 id|tmp
 (braket
 l_int|30
 )braket
 suffix:semicolon
-id|len
-op_assign
 id|sprintf
 c_func
 (paren
@@ -74,29 +69,18 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|buflen
-OL
-id|len
-)paren
-id|len
-op_assign
-id|buflen
-suffix:semicolon
-id|copy_to_user
+r_return
+id|vfs_readlink
 c_func
 (paren
+id|dentry
+comma
 id|buffer
 comma
-id|tmp
+id|buflen
 comma
-id|len
+id|tmp
 )paren
-suffix:semicolon
-r_return
-id|len
 suffix:semicolon
 )brace
 DECL|function|proc_self_follow_link
@@ -139,14 +123,16 @@ id|current-&gt;pid
 )paren
 suffix:semicolon
 r_return
-id|lookup_dentry
+id|vfs_follow_link
 c_func
 (paren
-id|tmp
+id|dentry
 comma
 id|base
 comma
 id|follow
+comma
+id|tmp
 )paren
 suffix:semicolon
 )brace
@@ -157,42 +143,13 @@ id|inode_operations
 id|proc_self_inode_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
+id|readlink
+suffix:colon
 id|proc_self_readlink
 comma
-multiline_comment|/* readlink */
+id|follow_link
+suffix:colon
 id|proc_self_follow_link
-comma
-multiline_comment|/* follow_link */
 )brace
 suffix:semicolon
 DECL|variable|proc_root_self

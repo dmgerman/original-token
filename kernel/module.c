@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
+multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * Rewritten by Richard Henderson &lt;rth@tamu.edu&gt; Dec 1996&n; * Add MOD_INITIALIZING Keith Owens &lt;kaos@ocs.com.au&gt; Nov 1999&n; *&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; */
 macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */
 r_extern
 r_struct
@@ -1401,6 +1401,10 @@ id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the module.  */
+id|mod-&gt;flags
+op_or_assign
+id|MOD_INITIALIZING
+suffix:semicolon
 id|atomic_set
 c_func
 (paren
@@ -1434,6 +1438,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|mod-&gt;flags
+op_and_assign
+op_complement
+id|MOD_INITIALIZING
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -1452,8 +1461,15 @@ id|mod-&gt;uc.usecount
 suffix:semicolon
 multiline_comment|/* And set it running.  */
 id|mod-&gt;flags
-op_or_assign
+op_assign
+(paren
+id|mod-&gt;flags
+op_or
 id|MOD_RUNNING
+)paren
+op_amp
+op_complement
+id|MOD_INITIALIZING
 suffix:semicolon
 id|error
 op_assign
@@ -2041,17 +2057,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mod-&gt;flags
-op_amp
-(paren
-id|MOD_RUNNING
-op_or
-id|MOD_DELETED
+id|mod
 )paren
-)paren
-op_ne
-id|MOD_RUNNING
 )paren
 r_if
 c_cond
@@ -2272,17 +2283,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mod-&gt;flags
-op_amp
-(paren
-id|MOD_RUNNING
-op_or
-id|MOD_DELETED
+id|mod
 )paren
-)paren
-op_ne
-id|MOD_RUNNING
 )paren
 r_if
 c_cond
@@ -2499,17 +2505,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mod-&gt;flags
-op_amp
-(paren
-id|MOD_RUNNING
-op_or
-id|MOD_DELETED
+id|mod
 )paren
-)paren
-op_ne
-id|MOD_RUNNING
 )paren
 r_if
 c_cond
@@ -3280,17 +3281,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mod-&gt;flags
-op_amp
-(paren
-id|MOD_RUNNING
-op_or
-id|MOD_DELETED
+id|mod
 )paren
-)paren
-op_ne
-id|MOD_RUNNING
 )paren
 r_continue
 suffix:semicolon
@@ -3957,6 +3953,20 @@ l_string|&quot; (unused)&quot;
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|mod-&gt;flags
+op_amp
+id|MOD_INITIALIZING
+)paren
+id|safe_copy_cstr
+c_func
+(paren
+l_string|&quot; (initializing)&quot;
+)paren
+suffix:semicolon
+r_else
 id|safe_copy_cstr
 c_func
 (paren
@@ -4129,16 +4139,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mod-&gt;flags
-op_amp
-id|MOD_RUNNING
-)paren
-op_logical_or
-(paren
-id|mod-&gt;flags
-op_amp
-id|MOD_DELETED
+id|mod
 )paren
 )paren
 r_continue
@@ -4383,17 +4387,11 @@ l_int|0
 )paren
 )paren
 op_logical_and
+id|MOD_CAN_QUERY
+c_func
 (paren
-id|mp-&gt;flags
-op_amp
-(paren
-id|MOD_RUNNING
-op_or
-id|MOD_DELETED
+id|mp
 )paren
-)paren
-op_eq
-id|MOD_RUNNING
 op_logical_and
 (paren
 id|mp-&gt;nsyms

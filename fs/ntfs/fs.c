@@ -3836,6 +3836,9 @@ id|ntfs_volume
 op_star
 id|vol
 suffix:semicolon
+id|ntfs_u64
+id|size
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -3889,7 +3892,7 @@ id|sb
 )paren
 comma
 op_amp
-id|fs.f_blocks
+id|size
 )paren
 suffix:semicolon
 r_if
@@ -3903,6 +3906,11 @@ op_minus
 id|error
 suffix:semicolon
 )brace
+id|fs.f_blocks
+op_assign
+id|size
+suffix:semicolon
+multiline_comment|/* volumesize is in clusters */
 id|fs.f_bfree
 op_assign
 id|ntfs_get_free_cluster_count
@@ -3930,11 +3938,26 @@ comma
 id|FILE_MFT
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mft
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+multiline_comment|/* So ... we lie... thus this following cast of loff_t value&n;&t;   is ok here.. */
 id|fs.f_files
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|mft-&gt;i_size
-op_rshift
-id|vol-&gt;mft_recordbits
+op_div
+id|vol-&gt;mft_recordsize
 suffix:semicolon
 id|iput
 c_func

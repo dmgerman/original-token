@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 DECL|variable|currcon
 r_static
 r_int

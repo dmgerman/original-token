@@ -178,6 +178,39 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#if UMS_DEBUG
+multiline_comment|/*&n; * check for wait queue in 2.3.x&n; */
+DECL|function|uq_log
+r_inline
+r_void
+id|uq_log
+(paren
+r_char
+op_star
+id|txt
+comma
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;%s: (%lu) magic=%lu creator=%lu lock=%u&bslash;n&quot;
+comma
+id|txt
+comma
+id|inode-&gt;i_ino
+comma
+id|inode-&gt;u.umsdos_i.dir_info.p.__magic
+comma
+id|inode-&gt;u.umsdos_i.dir_info.p.__creator
+comma
+id|inode-&gt;u.umsdos_i.dir_info.p.lock.lock
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * check a superblock&n; */
 DECL|function|check_sb
 r_void
@@ -792,6 +825,23 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
+DECL|function|uq_log
+r_inline
+r_void
+id|uq_log
+(paren
+r_char
+op_star
+id|txt
+comma
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+)brace
+suffix:semicolon
 DECL|function|check_sb
 r_void
 id|check_sb

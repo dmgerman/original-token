@@ -22,13 +22,9 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-macro_line|#ifdef MODULE
+multiline_comment|/*&n; * We must always allow SHUTDOWN_SIGS.  Even if we are not a module,&n; * the host drivers that we are using may be loaded as modules, and&n; * when we unload these,  we need to ensure that the error handler thread&n; * can be shut down.&n; */
 DECL|macro|SHUTDOWN_SIGS
 mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL)|sigmask(SIGINT)|sigmask(SIGTERM))
-macro_line|#else
-DECL|macro|SHUTDOWN_SIGS
-mdefine_line|#define SHUTDOWN_SIGS&t;(0UL)
-macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|SENSE_TIMEOUT
 mdefine_line|#define SENSE_TIMEOUT SCSI_TIMEOUT
@@ -302,7 +298,7 @@ id|SCset-&gt;eh_timeout
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_delete_timer()&n; *&n; * Purpose:     Delete/cancel timer for a given function.&n; *&n; * Arguments:   SCset   - command that we are canceling timer for.&n; *&n; * Returns:     Amount of time remaining before command would have timed out.&n; *&n; * Notes:       This should be turned into an inline function.&n; */
+multiline_comment|/*&n; * Function:    scsi_delete_timer()&n; *&n; * Purpose:     Delete/cancel timer for a given function.&n; *&n; * Arguments:   SCset   - command that we are canceling timer for.&n; *&n; * Returns:     1 if we were able to detach the timer.  0 if we&n; *              blew it, and the timer function has already started&n; *              to run.&n; *&n; * Notes:       This should be turned into an inline function.&n; */
 DECL|function|scsi_delete_timer
 r_int
 id|scsi_delete_timer
@@ -318,10 +314,6 @@ id|rtn
 suffix:semicolon
 id|rtn
 op_assign
-id|jiffies
-op_minus
-id|SCset-&gt;eh_timeout.expires
-suffix:semicolon
 id|del_timer
 c_func
 (paren
@@ -919,6 +911,15 @@ op_star
 id|scsi_result
 op_assign
 l_int|NULL
+suffix:semicolon
+id|ASSERT_LOCK
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+l_int|1
+)paren
 suffix:semicolon
 id|memcpy
 c_func
@@ -1529,25 +1530,11 @@ op_amp
 id|timer
 )paren
 suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|io_request_lock
-)paren
-suffix:semicolon
 id|down
 c_func
 (paren
 op_amp
 id|sem
-)paren
-suffix:semicolon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|io_request_lock
 )paren
 suffix:semicolon
 id|del_timer
@@ -1577,6 +1564,15 @@ r_struct
 id|Scsi_Host
 op_star
 id|host
+suffix:semicolon
+id|ASSERT_LOCK
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+l_int|1
+)paren
 suffix:semicolon
 id|host
 op_assign
@@ -2128,10 +2124,24 @@ op_assign
 id|SUCCESS
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we had a successful bus reset, mark the command blocks to expect&n;&t; * a condition code of unit attention.&n;&t; */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 id|BUS_RESET_SETTLE_TIME
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if
@@ -2245,10 +2255,24 @@ op_assign
 id|SUCCESS
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we had a successful host reset, mark the command blocks to expect&n;&t; * a condition code of unit attention.&n;&t; */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 id|HOST_RESET_SETTLE_TIME
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if
@@ -2882,7 +2906,7 @@ id|SUCCESS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function:  scsi_restart_operations&n; *&n; * Purpose:     Restart IO operations to the specified host.&n; *&n; * Arguments:   host  - host that we are restarting&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       When we entered the error handler, we blocked all further&n; *              I/O to this device.  We need to &squot;reverse&squot; this process.&n; */
+multiline_comment|/*&n; * Function:  scsi_restart_operations&n; *&n; * Purpose:     Restart IO operations to the specified host.&n; *&n; * Arguments:   host  - host that we are restarting&n; *&n; * Lock status: Assumed that locks are not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       When we entered the error handler, we blocked all further&n; *              I/O to this device.  We need to &squot;reverse&squot; this process.&n; */
 DECL|function|scsi_restart_operations
 id|STATIC
 r_void
@@ -2898,6 +2922,19 @@ id|host
 id|Scsi_Device
 op_star
 id|SDpnt
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|ASSERT_LOCK
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Next free up anything directly waiting upon the host.  This will be&n;&t; * requests for character device operations, and also for ioctls to queued&n;&t; * block devices.&n;&t; */
 id|SCSI_LOG_ERROR_RECOVERY
@@ -2919,7 +2956,16 @@ op_amp
 id|host-&gt;host_wait
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Finally, block devices need an extra kick in the pants.  This is because&n;&t; * the request queueing mechanism may have queued lots of pending requests&n;&t; * and there won&squot;t be a process waiting in a place where we can simply wake&n;&t; * it up.  Thus we simply go through and call the request function to goose&n;&t; * the various top level drivers and get things moving again.&n;&t; */
+multiline_comment|/*&n;&t; * Finally we need to re-initiate requests that may be pending.  We will&n;&t; * have had everything blocked while error handling is taking place, and&n;&t; * now that error recovery is done, we will need to ensure that these&n;&t; * requests are started.&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2934,33 +2980,60 @@ op_assign
 id|SDpnt-&gt;next
 )paren
 (brace
-id|SCSI_LOG_ERROR_RECOVERY
-c_func
-(paren
-l_int|5
-comma
-id|printk
-c_func
-(paren
-l_string|&quot;Calling request function to restart things...&bslash;n&quot;
-)paren
-)paren
+id|request_queue_t
+op_star
+id|q
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|SDpnt-&gt;scsi_request_fn
-op_ne
-l_int|NULL
-)paren
 (paren
-op_star
-id|SDpnt-&gt;scsi_request_fn
-)paren
+id|host-&gt;can_queue
+OG
+l_int|0
+op_logical_and
 (paren
+id|host-&gt;host_busy
+op_ge
+id|host-&gt;can_queue
+)paren
+)paren
+op_logical_or
+(paren
+id|host-&gt;host_blocked
+)paren
+op_logical_or
+(paren
+id|SDpnt-&gt;device_blocked
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+id|q
+op_assign
+op_amp
+id|SDpnt-&gt;request_queue
+suffix:semicolon
+id|q
+op_member_access_from_pointer
+id|request_fn
+c_func
+(paren
+id|q
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:  scsi_unjam_host&n; *&n; * Purpose:     Attempt to fix a host which has a command that failed for&n; *              some reason.&n; *&n; * Arguments:   host    - host that needs unjamming.&n; * &n; * Returns:     Nothing&n; *&n; * Notes:       When we come in here, we *know* that all commands on the&n; *              bus have either completed, failed or timed out.  We also&n; *              know that no further commands are being sent to the host,&n; *              so things are relatively quiet and we have freedom to&n; *              fiddle with things as we wish.&n; *&n; * Additional note:  This is only the *default* implementation.  It is possible&n; *              for individual drivers to supply their own version of this&n; *              function, and if the maintainer wishes to do this, it is&n; *              strongly suggested that this function be taken as a template&n; *              and modified.  This function was designed to correctly handle&n; *              problems for about 95% of the different cases out there, and&n; *              it should always provide at least a reasonable amount of error&n; *              recovery.&n; *&n; * Note3:       Any command marked &squot;FAILED&squot; or &squot;TIMEOUT&squot; must eventually&n; *              have scsi_finish_command() called for it.  We do all of&n; *              the retry stuff here, so when we restart the host after we&n; *              return it should have an empty queue.&n; */
 DECL|function|scsi_unjam_host
@@ -3014,6 +3087,15 @@ id|SCdone
 suffix:semicolon
 r_int
 id|timed_out
+suffix:semicolon
+id|ASSERT_LOCK
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+l_int|1
+)paren
 suffix:semicolon
 id|SCdone
 op_assign
@@ -3872,12 +3954,26 @@ id|SCSI_STATE_TIMEOUT
 (brace
 multiline_comment|/* &n;&t;&t;&t;&t;&t;&t; * If this device uses the soft reset option, and this&n;&t;&t;&t;&t;&t;&t; * is one of the devices acting up, then our only&n;&t;&t;&t;&t;&t;&t; * option is to wait a bit, since the command is&n;&t;&t;&t;&t;&t;&t; * supposedly still running.  &n;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t; * FIXME(eric) - right now we will just end up falling&n;&t;&t;&t;&t;&t;&t; * through to the &squot;take device offline&squot; case.&n;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t; * FIXME(eric) - It is possible that the command completed&n;&t;&t;&t;&t;&t;&t; * *after* the error recovery procedure started, and if this&n;&t;&t;&t;&t;&t;&t; * is the case, we are worrying about nothing here.&n;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Due to the spinlock, we will never get out of this&n;&t;&t;&t;&t;&t;&t; * loop without a proper wait (DB)&n;&t;&t;&t;&t;&t;&t; */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 l_int|1
 op_star
 id|HZ
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_goto
@@ -4126,12 +4222,26 @@ l_string|&quot;scsi_unjam_host: Unable to try hard host reset&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Due to the spinlock, we will never get out of this&n;&t;&t;&t;&t; * loop without a proper wait. (DB)&n;&t;&t;&t;&t; */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 l_int|1
 op_star
 id|HZ
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_goto
@@ -4542,7 +4652,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Flush resources&n;&t; */
+multiline_comment|/*&n;&t; *    Flush resources&n;&t; */
 id|daemonize
 c_func
 (paren
@@ -4691,13 +4801,6 @@ id|host-&gt;eh_active
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Note - if the above fails completely, the action is to take&n;&t;&t; * individual devices offline and flush the queue of any&n;&t;&t; * outstanding requests that may have been pending.  When we&n;&t;&t; * restart, we restart any I/O to any other devices on the bus&n;&t;&t; * which are still online.&n;&t;&t; */
-id|scsi_restart_operations
-c_func
-(paren
-id|host
-)paren
-suffix:semicolon
 multiline_comment|/* The spinlock is really needed up to this point. (DB) */
 id|spin_unlock_irqrestore
 c_func
@@ -4706,6 +4809,13 @@ op_amp
 id|io_request_lock
 comma
 id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Note - if the above fails completely, the action is to take&n;&t;&t; * individual devices offline and flush the queue of any&n;&t;&t; * outstanding requests that may have been pending.  When we&n;&t;&t; * restart, we restart any I/O to any other devices on the bus&n;&t;&t; * which are still online.&n;&t;&t; */
+id|scsi_restart_operations
+c_func
+(paren
+id|host
 )paren
 suffix:semicolon
 )brace

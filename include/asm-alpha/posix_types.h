@@ -31,6 +31,11 @@ r_typedef
 r_int
 id|__kernel_off_t
 suffix:semicolon
+DECL|typedef|__kernel_loff_t
+r_typedef
+r_int
+id|__kernel_loff_t
+suffix:semicolon
 DECL|typedef|__kernel_pid_t
 r_typedef
 r_int
@@ -102,14 +107,6 @@ r_int
 id|__kernel_sigset_t
 suffix:semicolon
 multiline_comment|/* at least 32 bits */
-macro_line|#ifdef __GNUC__
-DECL|typedef|__kernel_loff_t
-r_typedef
-r_int
-r_int
-id|__kernel_loff_t
-suffix:semicolon
-macro_line|#endif
 r_typedef
 r_struct
 (brace

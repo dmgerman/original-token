@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight&n; * Copyright (C) 1999 Xi Graphics&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
+multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight, Inc.&n; * Copyright (C) 1999 Xi Graphics, Inc.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
 DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
 macro_line|#include &lt;linux/config.h&gt;
@@ -22,15 +22,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/agp_backend.h&gt;
-macro_line|#include &quot;agp_backendP.h&quot;
-DECL|variable|agp_bridge
-r_static
-r_struct
-id|agp_bridge_data
-id|agp_bridge
-suffix:semicolon
-DECL|macro|CACHE_FLUSH
-mdefine_line|#define CACHE_FLUSH agp_bridge.cache_flush
+macro_line|#include &quot;agp.h&quot;
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -101,6 +93,20 @@ c_func
 id|agp_backend_release
 )paren
 suffix:semicolon
+r_static
+r_void
+id|flush_cache
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|variable|agp_bridge
+r_static
+r_struct
+id|agp_bridge_data
+id|agp_bridge
+suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_int
@@ -115,99 +121,6 @@ r_static
 id|atomic_t
 id|cpus_waiting
 suffix:semicolon
-macro_line|#endif
-DECL|function|agp_backend_acquire
-r_int
-id|agp_backend_acquire
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-(paren
-id|agp_bridge.agp_in_use
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-(paren
-id|agp_bridge.agp_in_use
-)paren
-)paren
-op_ne
-l_int|1
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-(paren
-id|agp_bridge.agp_in_use
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|agp_backend_release
-r_void
-id|agp_backend_release
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-(paren
-id|agp_bridge.agp_in_use
-)paren
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
-DECL|function|flush_cache
-r_static
-r_void
-id|flush_cache
-c_func
-(paren
-r_void
-)paren
-(brace
-id|asm
-r_volatile
-(paren
-l_string|&quot;wbinvd&quot;
-op_scope_resolution
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef __SMP__
 DECL|function|ipi_handler
 r_static
 r_void
@@ -315,12 +228,100 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|macro|global_cache_flush
+mdefine_line|#define global_cache_flush smp_flush_cache
+macro_line|#else&t;&t;&t;&t;/* __SMP__ */
+DECL|macro|global_cache_flush
+mdefine_line|#define global_cache_flush flush_cache
+macro_line|#endif&t;&t;&t;&t;/* __SMP__ */
+DECL|function|flush_cache
+r_static
+r_void
+id|flush_cache
+c_func
+(paren
+r_void
+)paren
+(brace
+id|asm
+r_volatile
+(paren
+l_string|&quot;wbinvd&quot;
+op_scope_resolution
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|agp_backend_acquire
+r_int
+id|agp_backend_acquire
+c_func
+(paren
+r_void
+)paren
+(brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|agp_bridge.agp_in_use
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|agp_bridge.agp_in_use
+)paren
+op_ne
+l_int|1
+)paren
+(brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|agp_bridge.agp_in_use
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|agp_backend_release
+r_void
+id|agp_backend_release
+c_func
+(paren
+r_void
+)paren
+(brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|agp_bridge.agp_in_use
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 multiline_comment|/* &n; * Basic Page Allocation Routines -&n; * These routines handle page allocation&n; * and by default they reserve the allocated &n; * memory.  They also handle incrementing the&n; * current_memory_agp value, Which is checked&n; * against a maximum value.&n; */
 DECL|function|agp_alloc_page
 r_static
-r_void
-op_star
+r_int
+r_int
 id|agp_alloc_page
 c_func
 (paren
@@ -352,14 +353,13 @@ l_int|NULL
 )paren
 (brace
 r_return
-l_int|NULL
+l_int|0
 suffix:semicolon
 )brace
 id|atomic_inc
 c_func
 (paren
 op_amp
-(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -370,7 +370,6 @@ id|pt
 )braket
 dot
 id|count
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -395,12 +394,14 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-(paren
 id|agp_bridge.current_memory_agp
-)paren
 )paren
 suffix:semicolon
 r_return
+(paren
+r_int
+r_int
+)paren
 id|pt
 suffix:semicolon
 )brace
@@ -410,11 +411,21 @@ r_void
 id|agp_destroy_page
 c_func
 (paren
+r_int
+r_int
+id|page
+)paren
+(brace
 r_void
 op_star
 id|pt
+op_assign
+(paren
+r_void
+op_star
 )paren
-(brace
+id|page
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -422,13 +433,14 @@ id|pt
 op_eq
 l_int|NULL
 )paren
+(brace
 r_return
 suffix:semicolon
+)brace
 id|atomic_dec
 c_func
 (paren
 op_amp
-(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -439,7 +451,6 @@ id|pt
 )braket
 dot
 id|count
-)paren
 )paren
 suffix:semicolon
 id|clear_bit
@@ -490,16 +501,12 @@ id|atomic_dec
 c_func
 (paren
 op_amp
-(paren
 id|agp_bridge.current_memory_agp
-)paren
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* End Basic Page Allocation Routines */
 multiline_comment|/* &n; * Generic routines for handling agp_memory structures -&n; * They use the basic page allocation routines to do the&n; * brunt of the work.&n; */
-DECL|macro|MAXKEY
-mdefine_line|#define MAXKEY (4096 * 32)
 DECL|function|agp_free_key
 r_static
 r_void
@@ -815,8 +822,8 @@ id|agp_destroy_page
 c_func
 (paren
 (paren
-r_void
-op_star
+r_int
+r_int
 )paren
 id|phys_to_virt
 c_func
@@ -884,9 +891,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-(paren
 id|agp_bridge.current_memory_agp
-)paren
 )paren
 op_plus
 id|page_count
@@ -977,10 +982,6 @@ id|memory
 id|i
 )braket
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|agp_alloc_page
 c_func
 (paren
@@ -989,10 +990,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-r_void
-op_star
-)paren
 r_new
 op_member_access_from_pointer
 id|memory
@@ -1000,7 +997,7 @@ id|memory
 id|i
 )braket
 op_eq
-l_int|NULL
+l_int|0
 )paren
 (brace
 multiline_comment|/* Free this structure */
@@ -1088,11 +1085,9 @@ id|U8_APER_SIZE
 suffix:colon
 id|current_size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -1105,11 +1100,9 @@ id|U16_APER_SIZE
 suffix:colon
 id|current_size
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -1122,11 +1115,9 @@ id|U32_APER_SIZE
 suffix:colon
 id|current_size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -1139,11 +1130,9 @@ id|FIXED_APER_SIZE
 suffix:colon
 id|current_size
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-(paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -1575,7 +1564,7 @@ op_ne
 l_int|0x00
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Ok, here we have a AGP device. Disable impossible settings,&n;&t;&t;&t; * and adjust the readqueue to the minimum.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Ok, here we have a AGP device. Disable impossible &n;&t;&t;&t; * settings, and adjust the readqueue to the minimum.&n;&t;&t;&t; */
 id|pci_read_config_dword
 c_func
 (paren
@@ -2052,11 +2041,9 @@ id|U8_APER_SIZE
 suffix:colon
 id|size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2064,11 +2051,9 @@ id|size
 suffix:semicolon
 id|page_order
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2076,11 +2061,9 @@ id|page_order
 suffix:semicolon
 id|num_entries
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2093,11 +2076,9 @@ id|U16_APER_SIZE
 suffix:colon
 id|size
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2105,11 +2086,9 @@ id|size
 suffix:semicolon
 id|page_order
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2117,11 +2096,9 @@ id|page_order
 suffix:semicolon
 id|num_entries
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2134,11 +2111,9 @@ id|U32_APER_SIZE
 suffix:colon
 id|size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2146,11 +2121,9 @@ id|size
 suffix:semicolon
 id|page_order
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2158,11 +2131,9 @@ id|page_order
 suffix:semicolon
 id|num_entries
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2170,7 +2141,7 @@ id|num_entries
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* This case will never really happen */
+multiline_comment|/* This case will never really happen. */
 r_case
 id|FIXED_APER_SIZE
 suffix:colon
@@ -2223,16 +2194,9 @@ id|U8_APER_SIZE
 suffix:colon
 id|agp_bridge.current_size
 op_assign
+id|A_IDX8
+c_func
 (paren
-(paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
-id|agp_bridge.aperture_sizes
-)paren
-op_plus
-id|i
 )paren
 suffix:semicolon
 r_break
@@ -2242,16 +2206,9 @@ id|U16_APER_SIZE
 suffix:colon
 id|agp_bridge.current_size
 op_assign
+id|A_IDX16
+c_func
 (paren
-(paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
-id|agp_bridge.aperture_sizes
-)paren
-op_plus
-id|i
 )paren
 suffix:semicolon
 r_break
@@ -2261,33 +2218,22 @@ id|U32_APER_SIZE
 suffix:colon
 id|agp_bridge.current_size
 op_assign
+id|A_IDX32
+c_func
 (paren
-(paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
-id|agp_bridge.aperture_sizes
-)paren
-op_plus
-id|i
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* This case will never really happen */
+multiline_comment|/* This case will never really &n;&t;&t;&t;&t;&t; * happen. &n;&t;&t;&t;&t;&t; */
 r_case
 id|FIXED_APER_SIZE
 suffix:colon
 r_default
 suffix:colon
-id|size
+id|agp_bridge.current_size
 op_assign
-id|page_order
-op_assign
-id|num_entries
-op_assign
-l_int|0
+id|agp_bridge.current_size
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2624,11 +2570,9 @@ id|U8_APER_SIZE
 suffix:colon
 id|page_order
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2641,11 +2585,9 @@ id|U16_APER_SIZE
 suffix:colon
 id|page_order
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2658,11 +2600,9 @@ id|U32_APER_SIZE
 suffix:colon
 id|page_order
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2675,11 +2615,9 @@ id|FIXED_APER_SIZE
 suffix:colon
 id|page_order
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-(paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2826,11 +2764,9 @@ id|U8_APER_SIZE
 suffix:colon
 id|num_entries
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-(paren
-id|aper_size_info_8
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2843,11 +2779,9 @@ id|U16_APER_SIZE
 suffix:colon
 id|num_entries
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-(paren
-id|aper_size_info_16
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2860,11 +2794,9 @@ id|U32_APER_SIZE
 suffix:colon
 id|num_entries
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-(paren
-id|aper_size_info_32
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -2877,11 +2809,9 @@ id|FIXED_APER_SIZE
 suffix:colon
 id|num_entries
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-(paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -3192,7 +3122,7 @@ id|mode
 suffix:semicolon
 )brace
 multiline_comment|/* End - Generic Agp routines */
-macro_line|#ifdef AGP_BUILD_INTEL_I810
+macro_line|#ifdef CONFIG_AGP_I810
 DECL|variable|intel_i810_sizes
 r_static
 id|aper_size_info_fixed
@@ -3260,8 +3190,7 @@ suffix:semicolon
 multiline_comment|/* device one */
 DECL|member|registers
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 id|registers
 suffix:semicolon
@@ -3302,11 +3231,11 @@ id|smram_miscc
 suffix:semicolon
 id|values
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3421,11 +3350,11 @@ id|i
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 id|pci_read_config_dword
 c_func
@@ -3446,8 +3375,7 @@ id|intel_i810_private.registers
 op_assign
 (paren
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 )paren
 id|ioremap
@@ -3482,6 +3410,7 @@ multiline_comment|/* This will need to be dynamically assigned */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;agpgart: detected 4MB dedicated video ram.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3662,11 +3591,9 @@ id|agp_bridge.current_size
 suffix:semicolon
 id|num_entries
 op_assign
+id|A_SIZE_FIX
+c_func
 (paren
-(paren
-id|aper_size_info_fixed
-op_star
-)paren
 id|temp
 )paren
 op_member_access_from_pointer
@@ -4178,17 +4105,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|intel_i810_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -4215,7 +4135,7 @@ id|intel_i810_free_by_type
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_INTEL_GENERIC
+macro_line|#ifdef CONFIG_AGP_INTEL
 DECL|function|intel_fetch_size
 r_static
 r_int
@@ -4246,13 +4166,13 @@ op_amp
 id|temp
 )paren
 suffix:semicolon
-(paren
-r_void
-op_star
-)paren
 id|values
 op_assign
+id|A_SIZE_16
+c_func
+(paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4364,11 +4284,11 @@ id|previous_size
 suffix:semicolon
 id|previous_size
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-id|aper_size_info_16
-op_star
-)paren
 id|agp_bridge.previous_size
+)paren
 suffix:semicolon
 id|pci_read_config_word
 c_func
@@ -4430,11 +4350,11 @@ id|current_size
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_16
+c_func
 (paren
-id|aper_size_info_16
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 multiline_comment|/* aperture size */
 id|pci_write_config_word
@@ -4731,17 +4651,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|agp_generic_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -4768,7 +4681,7 @@ id|agp_generic_free_by_type
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_VIA_GENERIC
+macro_line|#ifdef CONFIG_AGP_VIA
 DECL|function|via_fetch_size
 r_static
 r_int
@@ -4788,13 +4701,13 @@ id|aper_size_info_8
 op_star
 id|values
 suffix:semicolon
-(paren
-r_void
-op_star
-)paren
 id|values
 op_assign
+id|A_SIZE_8
+c_func
+(paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 id|pci_read_config_byte
 c_func
@@ -4885,11 +4798,11 @@ id|current_size
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-id|aper_size_info_8
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 multiline_comment|/* aperture size */
 id|pci_write_config_byte
@@ -4969,11 +4882,11 @@ id|previous_size
 suffix:semicolon
 id|previous_size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-id|aper_size_info_8
-op_star
-)paren
 id|agp_bridge.previous_size
+)paren
 suffix:semicolon
 id|pci_write_config_dword
 c_func
@@ -5215,17 +5128,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|agp_generic_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -5252,7 +5158,7 @@ id|agp_generic_free_by_type
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_SIS_GENERIC
+macro_line|#ifdef CONFIG_AGP_SIS
 DECL|function|sis_fetch_size
 r_static
 r_int
@@ -5283,13 +5189,13 @@ op_amp
 id|temp_size
 )paren
 suffix:semicolon
-(paren
-r_void
-op_star
-)paren
 id|values
 op_assign
+id|A_SIZE_8
+c_func
+(paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5418,11 +5324,11 @@ id|current_size
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-id|aper_size_info_8
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 id|pci_write_config_byte
 c_func
@@ -5492,11 +5398,11 @@ id|previous_size
 suffix:semicolon
 id|previous_size
 op_assign
+id|A_SIZE_8
+c_func
 (paren
-id|aper_size_info_8
-op_star
-)paren
 id|agp_bridge.previous_size
+)paren
 suffix:semicolon
 id|pci_write_config_byte
 c_func
@@ -5703,17 +5609,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|agp_generic_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -5740,7 +5639,7 @@ id|agp_generic_free_by_type
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_AMD_IRONGATE
+macro_line|#ifdef CONFIG_AGP_AMD
 DECL|struct|_amd_irongate_private
 r_static
 r_struct
@@ -5748,8 +5647,7 @@ id|_amd_irongate_private
 (brace
 DECL|member|registers
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 id|registers
 suffix:semicolon
@@ -5795,13 +5693,13 @@ op_amp
 l_int|0x0000000e
 )paren
 suffix:semicolon
-(paren
-r_void
-op_star
-)paren
 id|values
 op_assign
+id|A_SIZE_32
+c_func
+(paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -5884,11 +5782,11 @@ id|enable_reg
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-id|aper_size_info_32
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 multiline_comment|/* Get the memory mapped registers */
 id|pci_read_config_dword
@@ -5914,8 +5812,7 @@ id|amd_irongate_private.registers
 op_assign
 (paren
 r_volatile
-r_int
-r_char
+id|u8
 op_star
 )paren
 id|ioremap
@@ -6078,11 +5975,11 @@ id|enable_reg
 suffix:semicolon
 id|previous_size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-id|aper_size_info_32
-op_star
-)paren
 id|agp_bridge.previous_size
+)paren
 suffix:semicolon
 id|enable_reg
 op_assign
@@ -6378,17 +6275,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|agp_generic_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -6415,7 +6305,7 @@ id|agp_generic_free_by_type
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_ALI_M1541
+macro_line|#ifdef CONFIG_AGP_ALI
 DECL|function|ali_fetch_size
 r_static
 r_int
@@ -6453,13 +6343,13 @@ op_complement
 l_int|0xfffffff0
 )paren
 suffix:semicolon
-(paren
-r_void
-op_star
-)paren
 id|values
 op_assign
+id|A_SIZE_32
+c_func
+(paren
 id|agp_bridge.aperture_sizes
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -6601,11 +6491,11 @@ id|temp
 suffix:semicolon
 id|previous_size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-id|aper_size_info_32
-op_star
-)paren
 id|agp_bridge.previous_size
+)paren
 suffix:semicolon
 id|pci_read_config_dword
 c_func
@@ -6665,11 +6555,11 @@ id|current_size
 suffix:semicolon
 id|current_size
 op_assign
+id|A_SIZE_32
+c_func
 (paren
-id|aper_size_info_32
-op_star
-)paren
 id|agp_bridge.current_size
+)paren
 suffix:semicolon
 multiline_comment|/* aperture size and gatt addr */
 id|pci_write_config_dword
@@ -6926,17 +6816,10 @@ id|agp_bridge.agp_enable
 op_assign
 id|agp_generic_agp_enable
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|agp_bridge.cache_flush
 op_assign
-id|smp_flush_cache
+id|global_cache_flush
 suffix:semicolon
-macro_line|#else
-id|agp_bridge.cache_flush
-op_assign
-id|flush_cache
-suffix:semicolon
-macro_line|#endif
 id|agp_bridge.create_gatt_table
 op_assign
 id|agp_generic_create_gatt_table
@@ -7022,7 +6905,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Need to test for I810 here */
-macro_line|#ifdef AGP_BUILD_INTEL_I810
+macro_line|#ifdef CONFIG_AGP_I810
 r_if
 c_cond
 (paren
@@ -7068,7 +6951,9 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810, but could not find the secondary device.&bslash;n&quot;
+l_string|&quot;agpgart: Detected an Intel i810,&quot;
+l_string|&quot; but could not find the secondary&quot;
+l_string|&quot; device.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7081,7 +6966,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810 Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel &quot;
+l_string|&quot;i810 Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7124,7 +7011,9 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810 DC100, but could not find the secondary device.&bslash;n&quot;
+l_string|&quot;agpgart: Detected an Intel i810 &quot;
+l_string|&quot;DC100, but could not find the &quot;
+l_string|&quot;secondary device.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7137,7 +7026,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810 DC100 Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel i810 &quot;
+l_string|&quot;DC100 Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7180,7 +7071,9 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810 E, but could not find the secondary device.&bslash;n&quot;
+l_string|&quot;agpgart: Detected an Intel i810 E&quot;
+l_string|&quot;, but could not find the secondary &quot;
+l_string|&quot;device.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7193,7 +7086,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel i810 E Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel i810 E &quot;
+l_string|&quot;Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7361,7 +7256,7 @@ c_cond
 id|dev-&gt;vendor
 )paren
 (brace
-macro_line|#ifdef AGP_BUILD_INTEL_GENERIC
+macro_line|#ifdef CONFIG_AGP_INTEL
 r_case
 id|PCI_VENDOR_ID_INTEL
 suffix:colon
@@ -7381,7 +7276,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel 440LX Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel 440LX&quot;
+l_string|&quot; Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7403,7 +7300,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel 440BX Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel 440BX &quot;
+l_string|&quot;Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7425,7 +7324,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an Intel 440GX Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an Intel 440GX &quot;
+l_string|&quot;Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7452,7 +7353,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Trying generic intel routines for device id: %x&bslash;n&quot;
+l_string|&quot;agpgart: Trying generic intel &quot;
+l_string|&quot;routines for device id: %x&bslash;n&quot;
 comma
 id|dev-&gt;device
 )paren
@@ -7476,7 +7378,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Unsupported intel chipset, you might want to try agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;agpgart: Unsupported intel chipset,&quot;
+l_string|&quot; you might want to try &quot;
+l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7490,7 +7394,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_VIA_GENERIC
+macro_line|#ifdef CONFIG_AGP_VIA
 r_case
 id|PCI_VENDOR_ID_VIA
 suffix:colon
@@ -7510,7 +7414,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected a VIA VP3 Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected a VIA VP3 &quot;
+l_string|&quot;Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7532,7 +7438,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected a VIA MVP3 Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected a VIA MVP3 &quot;
+l_string|&quot;Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7554,7 +7462,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected a VIA Apollo Pro Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected a VIA Apollo &quot;
+l_string|&quot;Pro Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7581,7 +7491,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Trying generic VIA routines for device id: %x&bslash;n&quot;
+l_string|&quot;agpgart: Trying generic VIA routines&quot;
+l_string|&quot; for device id: %x&bslash;n&quot;
 comma
 id|dev-&gt;device
 )paren
@@ -7605,7 +7516,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Unsupported VIA chipset, you might want to try agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;agpgart: Unsupported VIA chipset,&quot;
+l_string|&quot; you might want to try &quot;
+l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7619,7 +7532,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_SIS_GENERIC
+macro_line|#ifdef CONFIG_AGP_SIS
 r_case
 id|PCI_VENDOR_ID_SI
 suffix:colon
@@ -7629,7 +7542,7 @@ c_cond
 id|dev-&gt;device
 )paren
 (brace
-multiline_comment|/* ToDo need to find out the specific devices supported */
+multiline_comment|/* ToDo need to find out the&n;&t;&t;&t; * specific devices supported.&n;&t;&t;&t; */
 r_default
 suffix:colon
 (brace
@@ -7645,7 +7558,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Trying generic SiS routines for device id: %x&bslash;n&quot;
+l_string|&quot;agpgart: Trying generic SiS routines&quot;
+l_string|&quot; for device id: %x&bslash;n&quot;
 comma
 id|dev-&gt;device
 )paren
@@ -7669,7 +7583,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Unsupported SiS chipset, you might want to try agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;agpgart: Unsupported SiS chipset, &quot;
+l_string|&quot;you might want to try &quot;
+l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7683,7 +7599,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_AMD_IRONGATE
+macro_line|#ifdef CONFIG_AGP_AMD
 r_case
 id|PCI_VENDOR_ID_AMD
 suffix:colon
@@ -7703,7 +7619,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an AMD Irongate Chipset.&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an AMD Irongate&quot;
+l_string|&quot; Chipset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7730,7 +7648,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Trying Amd irongate routines for device id: %x&bslash;n&quot;
+l_string|&quot;agpgart: Trying Amd irongate&quot;
+l_string|&quot; routines for device id: %x&bslash;n&quot;
 comma
 id|dev-&gt;device
 )paren
@@ -7754,7 +7673,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Unsupported Amd chipset, you might want to try agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;agpgart: Unsupported Amd chipset,&quot;
+l_string|&quot; you might want to try &quot;
+l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7768,7 +7689,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_ALI_M1541
+macro_line|#ifdef CONFIG_AGP_ALI
 r_case
 id|PCI_VENDOR_ID_AL
 suffix:colon
@@ -7788,7 +7709,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Detected an ALi M1541 Chipset&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Detected an ALi M1541&quot;
+l_string|&quot; Chipset&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge
@@ -7815,7 +7738,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Trying ALi generic routines for device id: %x&bslash;n&quot;
+l_string|&quot;agpgart: Trying ALi generic routines&quot;
+l_string|&quot; for device id: %x&bslash;n&quot;
 comma
 id|dev-&gt;device
 )paren
@@ -7839,7 +7763,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Unsupported ALi chipset, you might want to type agp_try_unsupported=1.&bslash;n&quot;
+l_string|&quot;agpgart: Unsupported ALi chipset,&quot;
+l_string|&quot; you might want to type &quot;
+l_string|&quot;agp_try_unsupported=1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|agp_bridge.type
@@ -7877,11 +7803,11 @@ id|agp
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|agp_maxes_table
+DECL|variable|maxes_table
 r_static
 r_struct
 id|agp_max_table
-id|agp_maxes_table
+id|maxes_table
 (braket
 l_int|9
 )braket
@@ -7983,7 +7909,7 @@ c_loop
 (paren
 id|memory
 OG
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 )braket
@@ -8007,7 +7933,7 @@ op_assign
 (paren
 id|memory
 op_minus
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 op_minus
@@ -8018,14 +7944,14 @@ id|mem
 )paren
 op_div
 (paren
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 )braket
 dot
 id|mem
 op_minus
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 op_minus
@@ -8037,7 +7963,7 @@ id|mem
 suffix:semicolon
 id|result
 op_assign
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 op_minus
@@ -8050,14 +7976,14 @@ op_plus
 id|t
 op_star
 (paren
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 )braket
 dot
 id|agp
 op_minus
-id|agp_maxes_table
+id|maxes_table
 (braket
 id|index
 op_minus
@@ -8071,7 +7997,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Maximum main memory to use for agp memory: %dM&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Maximum main memory to use &quot;
+l_string|&quot;for agp memory: %dM&bslash;n&quot;
 comma
 id|result
 )paren
@@ -8136,37 +8064,37 @@ id|agp_bridge.type
 op_assign
 id|NOT_SUPPORTED
 suffix:semicolon
-macro_line|#ifdef AGP_BUILD_INTEL_GENERIC
+macro_line|#ifdef CONFIG_AGP_INTEL
 id|agp_bridge.intel_generic_setup
 op_assign
 id|intel_generic_setup
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_INTEL_I810
+macro_line|#ifdef CONFIG_AGP_I810
 id|agp_bridge.intel_i810_setup
 op_assign
 id|intel_i810_setup
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_VIA_GENERIC
+macro_line|#ifdef CONFIG_AGP_VIA
 id|agp_bridge.via_generic_setup
 op_assign
 id|via_generic_setup
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_SIS_GENERIC
+macro_line|#ifdef CONFIG_AGP_SIS
 id|agp_bridge.sis_generic_setup
 op_assign
 id|sis_generic_setup
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_AMD_IRONGATE
+macro_line|#ifdef CONFIG_AGP_AMD
 id|agp_bridge.amd_irongate_setup
 op_assign
 id|amd_irongate_setup
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_ALI_M1541
+macro_line|#ifdef CONFIG_AGP_ALI
 id|agp_bridge.ali_generic_setup
 op_assign
 id|ali_generic_setup
@@ -8199,10 +8127,6 @@ id|TRUE
 (brace
 id|agp_bridge.scratch_page
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|agp_alloc_page
 c_func
 (paren
@@ -8211,21 +8135,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-r_void
-op_star
-)paren
-(paren
 id|agp_bridge.scratch_page
-)paren
 op_eq
-l_int|NULL
+l_int|0
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: unable to get memory for scratch page.&bslash;n&quot;
+l_string|&quot;agpgart: unable to get memory for &quot;
+l_string|&quot;scratch page.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8319,7 +8238,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: unable to get memory for graphics translation table.&bslash;n&quot;
+l_string|&quot;agpgart: unable to get memory for graphics &quot;
+l_string|&quot;translation table.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8413,7 +8333,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: Physical address of the agp aperture: 0x%lx&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;agpgart: Physical address of the agp aperture:&quot;
+l_string|&quot; 0x%lx&bslash;n&quot;
 comma
 id|agp_bridge.gart_bus_addr
 )paren
@@ -8421,6 +8343,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;agpgart: Agp aperture is %dM in size.&bslash;n&quot;
 comma
 id|size_value
@@ -8478,8 +8401,8 @@ id|agp_destroy_page
 c_func
 (paren
 (paren
-r_void
-op_star
+r_int
+r_int
 )paren
 id|phys_to_virt
 c_func
@@ -8506,10 +8429,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|agp_init
+r_static
 r_int
-id|init_module
+id|__init
+id|agp_init
 c_func
 (paren
 r_void
@@ -8521,6 +8445,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Linux agpgart interface v%d.%d (c) Jeff Hartmann&bslash;n&quot;
 comma
 id|AGPGART_VERSION_MAJOR
@@ -8575,9 +8500,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|agp_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|agp_cleanup
 c_func
 (paren
 r_void
@@ -8594,5 +8521,18 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|agp_init
+id|module_init
+c_func
+(paren
+id|agp_init
+)paren
+suffix:semicolon
+DECL|variable|agp_cleanup
+id|module_exit
+c_func
+(paren
+id|agp_cleanup
+)paren
+suffix:semicolon
 eof

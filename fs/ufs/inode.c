@@ -3101,8 +3101,14 @@ id|inode-&gt;i_mode
 )paren
 id|inode-&gt;i_op
 op_assign
+id|inode-&gt;i_blocks
+ques
+c_cond
 op_amp
 id|ufs_symlink_inode_operations
+suffix:colon
+op_amp
+id|ufs_fast_symlink_inode_operations
 suffix:semicolon
 r_else
 id|init_special_inode

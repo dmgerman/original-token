@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/linux/nfsd/nfsd.h&n; *&n; * Hodge-podge 
 macro_line|#ifndef LINUX_NFSD_NFSD_H
 DECL|macro|LINUX_NFSD_NFSD_H
 mdefine_line|#define LINUX_NFSD_NFSD_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/dirent.h&gt;

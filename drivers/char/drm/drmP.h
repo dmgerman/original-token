@@ -116,7 +116,6 @@ DECL|macro|NOPAGE_OOM
 mdefine_line|#define NOPAGE_OOM 0
 macro_line|#endif
 multiline_comment|/* Generic cmpxchg added in 2.3.x */
-macro_line|#if CPU != 386
 macro_line|#ifndef __HAVE_ARCH_CMPXCHG
 multiline_comment|/* Include this here so that driver can be&n;                                   used with older kernels. */
 DECL|function|__cmpxchg
@@ -284,10 +283,6 @@ suffix:semicolon
 )brace
 DECL|macro|cmpxchg
 mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t;&bslash;&n;  ((__typeof__(*(ptr)))__cmpxchg((ptr),(unsigned long)(o),&t;&t;&bslash;&n;&t;&t;&t;&t; (unsigned long)(n),sizeof(*(ptr))))
-macro_line|#endif
-macro_line|#else
-multiline_comment|/* Compiling for a 386 proper... */
-macro_line|#error DRI not supported on Intel 80386
 macro_line|#endif
 multiline_comment|/* Macros to make printk easier */
 DECL|macro|DRM_ERROR
@@ -1448,6 +1443,14 @@ c_func
 r_char
 op_star
 id|s
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_cpu_valid
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Device support (fops.c) */

@@ -10,7 +10,47 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#if 1
+DECL|macro|UMSDOS_DIR_LOCK
+mdefine_line|#define UMSDOS_DIR_LOCK
+macro_line|#ifdef UMSDOS_DIR_LOCK
+DECL|function|u_sleep_on
+r_static
+r_inline
+r_void
+id|u_sleep_on
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+)paren
+(brace
+id|sleep_on
+(paren
+op_amp
+id|dir-&gt;u.umsdos_i.dir_info.p
+)paren
+suffix:semicolon
+)brace
+DECL|function|u_wake_up
+r_static
+r_inline
+r_void
+id|u_wake_up
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+)paren
+(brace
+id|wake_up
+(paren
+op_amp
+id|dir-&gt;u.umsdos_i.dir_info.p
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Wait for creation exclusivity.&n; * Return 0 if the dir was already available.&n; * Return 1 if a wait was necessary.&n; * When 1 is return, it means a wait was done. It does not&n; * mean the directory is available.&n; */
 DECL|function|umsdos_waitcreate
 r_static
@@ -31,17 +71,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;u.umsdos_i.u.dir_info.creating
+id|dir-&gt;u.umsdos_i.dir_info.creating
 op_logical_and
-id|dir-&gt;u.umsdos_i.u.dir_info.pid
+id|dir-&gt;u.umsdos_i.dir_info.pid
 op_ne
 id|current-&gt;pid
 )paren
 (brace
-id|sleep_on
+id|PRINTK
 (paren
-op_amp
-id|dir-&gt;u.umsdos_i.u.dir_info.p
+(paren
+l_string|&quot;creating &amp;&amp; dir_info.pid=%lu, current-&gt;pid=%u&bslash;n&quot;
+comma
+id|dir-&gt;u.umsdos_i.dir_info.pid
+comma
+id|current-&gt;pid
+)paren
+)paren
+suffix:semicolon
+id|u_sleep_on
+(paren
+id|dir
 )paren
 suffix:semicolon
 id|ret
@@ -68,13 +118,12 @@ id|dir
 r_while
 c_loop
 (paren
-id|dir-&gt;u.umsdos_i.u.dir_info.looking
+id|dir-&gt;u.umsdos_i.dir_info.looking
 )paren
 (brace
-id|sleep_on
+id|u_sleep_on
 (paren
-op_amp
-id|dir-&gt;u.umsdos_i.u.dir_info.p
+id|dir
 )paren
 suffix:semicolon
 )brace
@@ -103,10 +152,10 @@ op_ne
 l_int|0
 )paren
 suffix:semicolon
-id|dir-&gt;u.umsdos_i.u.dir_info.creating
+id|dir-&gt;u.umsdos_i.dir_info.creating
 op_increment
 suffix:semicolon
-id|dir-&gt;u.umsdos_i.u.dir_info.pid
+id|dir-&gt;u.umsdos_i.dir_info.pid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
@@ -159,17 +208,17 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* We own both now */
-id|dir1-&gt;u.umsdos_i.u.dir_info.creating
+id|dir1-&gt;u.umsdos_i.dir_info.creating
 op_increment
 suffix:semicolon
-id|dir1-&gt;u.umsdos_i.u.dir_info.pid
+id|dir1-&gt;u.umsdos_i.dir_info.pid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
-id|dir2-&gt;u.umsdos_i.u.dir_info.creating
+id|dir2-&gt;u.umsdos_i.dir_info.creating
 op_increment
 suffix:semicolon
-id|dir2-&gt;u.umsdos_i.u.dir_info.pid
+id|dir2-&gt;u.umsdos_i.dir_info.pid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
@@ -210,7 +259,7 @@ op_ne
 l_int|0
 )paren
 suffix:semicolon
-id|dir-&gt;u.umsdos_i.u.dir_info.looking
+id|dir-&gt;u.umsdos_i.dir_info.looking
 op_increment
 suffix:semicolon
 )brace
@@ -225,29 +274,28 @@ op_star
 id|dir
 )paren
 (brace
-id|dir-&gt;u.umsdos_i.u.dir_info.creating
+id|dir-&gt;u.umsdos_i.dir_info.creating
 op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;u.umsdos_i.u.dir_info.creating
+id|dir-&gt;u.umsdos_i.dir_info.creating
 OL
 l_int|0
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: dir-&gt;u.umsdos_i.u.dir_info.creating &lt; 0: %d&quot;
+l_string|&quot;UMSDOS: dir-&gt;u.umsdos_i.dir_info.creating &lt; 0: %d&quot;
 comma
-id|dir-&gt;u.umsdos_i.u.dir_info.creating
+id|dir-&gt;u.umsdos_i.dir_info.creating
 )paren
 suffix:semicolon
 )brace
-id|wake_up
+id|u_wake_up
 (paren
-op_amp
-id|dir-&gt;u.umsdos_i.u.dir_info.p
+id|dir
 )paren
 suffix:semicolon
 )brace
@@ -262,29 +310,28 @@ op_star
 id|dir
 )paren
 (brace
-id|dir-&gt;u.umsdos_i.u.dir_info.looking
+id|dir-&gt;u.umsdos_i.dir_info.looking
 op_decrement
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir-&gt;u.umsdos_i.u.dir_info.looking
+id|dir-&gt;u.umsdos_i.dir_info.looking
 OL
 l_int|0
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: dir-&gt;u.umsdos_i.u.dir_info.looking &lt; 0: %d&quot;
+l_string|&quot;UMSDOS: dir-&gt;u.umsdos_i.dir_info.looking &lt; 0: %d&quot;
 comma
-id|dir-&gt;u.umsdos_i.u.dir_info.looking
+id|dir-&gt;u.umsdos_i.dir_info.looking
 )paren
 suffix:semicolon
 )brace
-id|wake_up
+id|u_wake_up
 (paren
-op_amp
-id|dir-&gt;u.umsdos_i.u.dir_info.p
+id|dir
 )paren
 suffix:semicolon
 )brace
@@ -1305,11 +1352,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Setup a Symbolic link or a (pseudo) hard link&n; * Return a negative error code or 0 if OK.&n; */
 multiline_comment|/* #Specification: symbolic links / strategy&n; * A symbolic link is simply a file which holds a path. It is&n; * implemented as a normal MSDOS file (not very space efficient :-()&n; * &n; * I see two different ways to do this: One is to place the link data&n; * in unused entries of the EMD file; the other is to have a separate&n; * file dedicated to hold all symbolic links data.&n; * &n; * Let&squot;s go for simplicity...&n; */
-r_extern
-r_struct
-id|inode_operations
-id|umsdos_symlink_inode_operations
-suffix:semicolon
 multiline_comment|/*&n; * AV. Should be called with dir-&gt;i_sem down.&n; */
 DECL|function|umsdos_symlink_x
 r_static

@@ -7609,7 +7609,8 @@ r_void
 id|DAC960_RequestFunction0
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7617,7 +7618,8 @@ r_void
 id|DAC960_RequestFunction1
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7625,7 +7627,8 @@ r_void
 id|DAC960_RequestFunction2
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7633,7 +7636,8 @@ r_void
 id|DAC960_RequestFunction3
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7641,7 +7645,8 @@ r_void
 id|DAC960_RequestFunction4
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7649,7 +7654,8 @@ r_void
 id|DAC960_RequestFunction5
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7657,7 +7663,8 @@ r_void
 id|DAC960_RequestFunction6
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -7665,7 +7672,8 @@ r_void
 id|DAC960_RequestFunction7
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static

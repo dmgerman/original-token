@@ -1487,10 +1487,7 @@ id|sh-&gt;use_clustering
 op_assign
 id|sh-&gt;hostt-&gt;use_clustering
 suffix:semicolon
-id|sh-&gt;wish_block
-op_assign
-id|FALSE
-suffix:semicolon
+singleline_comment|//FIXME//      sh-&gt;wish_block = FALSE;
 multiline_comment|/* Store info in HA structure */
 id|ha-&gt;io_addr
 op_assign

@@ -25,6 +25,9 @@ DECL|macro|RLIMIT_MEMLOCK
 mdefine_line|#define RLIMIT_MEMLOCK 9&t;&t;/* max locked-in-memory address space */
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS 10&t;&t;&t;/* Number of limit flavors.  */
+multiline_comment|/*&n; * SuS says limits have to be unsigned.&n; * Which makes a ton more sense anyway.&n; */
+DECL|macro|RLIM_INFINITY
+mdefine_line|#define RLIM_INFINITY&t;(~0UL)
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
 mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ _STK_LIM, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{        0, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ INR_OPEN, INR_OPEN },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;&t;{ MAX_TASKS_PER_USER, MAX_TASKS_PER_USER },&t;&bslash;&n;&t;{ LONG_MAX, LONG_MAX },&t;&t;&t;&t;&bslash;&n;}

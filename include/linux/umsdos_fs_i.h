@@ -31,15 +31,12 @@ DECL|member|pid
 r_int
 id|pid
 suffix:semicolon
-multiline_comment|/* pid of the process owning the creation */
-multiline_comment|/* lock */
+multiline_comment|/* pid of the process owning the creation&n;&t;&t;&t;&t; * lock */
 )brace
 suffix:semicolon
 DECL|struct|umsdos_inode_info
 r_struct
 id|umsdos_inode_info
-(brace
-r_union
 (brace
 DECL|member|msdos_info
 r_struct
@@ -50,10 +47,6 @@ DECL|member|dir_info
 r_struct
 id|dir_locking_info
 id|dir_info
-suffix:semicolon
-DECL|member|u
-)brace
-id|u
 suffix:semicolon
 DECL|member|i_patched
 r_int

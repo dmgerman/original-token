@@ -492,7 +492,7 @@ c_func
 (paren
 id|apm_bios_entry
 )paren
-l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;; cld&bslash;n&bslash;t&quot;
 l_string|&quot;setc %%al&bslash;n&bslash;t&quot;
 l_string|&quot;popl %%ebp&bslash;n&bslash;t&quot;
 l_string|&quot;popl %%edi&bslash;n&bslash;t&quot;
@@ -623,7 +623,7 @@ c_func
 (paren
 id|apm_bios_entry
 )paren
-l_string|&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;; cld&bslash;n&bslash;t&quot;
 l_string|&quot;setc %%bl&bslash;n&bslash;t&quot;
 l_string|&quot;popl %%ebp&bslash;n&bslash;t&quot;
 l_string|&quot;popl %%edi&bslash;n&bslash;t&quot;

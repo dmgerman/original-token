@@ -1,7 +1,7 @@
 macro_line|#ifndef TLAN_H
 DECL|macro|TLAN_H
 mdefine_line|#define TLAN_H
-multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.h&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with tabstop=4, colums&gt;=132&n; *&n; ********************************************************************/
+multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.h&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with tabstop=4, colums&gt;=132&n; *&n; *  &n; *  Dec 10, 1999&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt;&n; *&t;&t;&t;New Maintainer&n; *&n; ********************************************************************/
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;

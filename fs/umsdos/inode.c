@@ -266,6 +266,24 @@ comma
 id|dir-&gt;d_name.name
 )paren
 suffix:semicolon
+id|init_waitqueue_head
+(paren
+op_amp
+id|inode-&gt;u.umsdos_i.dir_info.p
+)paren
+suffix:semicolon
+id|inode-&gt;u.umsdos_i.dir_info.looking
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;u.umsdos_i.dir_info.creating
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;u.umsdos_i.dir_info.pid
+op_assign
+l_int|0
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -1039,7 +1057,6 @@ l_int|NULL
 comma
 multiline_comment|/* remount_fs */
 id|fat_clear_inode
-comma
 multiline_comment|/* clear_inode */
 )brace
 suffix:semicolon
@@ -1109,7 +1126,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;UMSDOS 0.85 &quot;
+l_string|&quot;UMSDOS 0.86 &quot;
 l_string|&quot;(compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION

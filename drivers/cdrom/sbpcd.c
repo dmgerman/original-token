@@ -27776,7 +27776,9 @@ r_void
 id|DO_SBPCD_REQUEST
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|u_int
@@ -32786,14 +32788,17 @@ id|init_done
 suffix:semicolon
 macro_line|#endif MODULE
 )brace
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|DEVICE_REQUEST
+)paren
 suffix:semicolon
 id|read_ahead
 (braket

@@ -80,7 +80,9 @@ r_void
 id|do_ps2esdi_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 r_static
@@ -740,14 +742,17 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* set up some global information - indicating device specific info */
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|DEVICE_REQUEST
+)paren
 suffix:semicolon
 id|read_ahead
 (braket
@@ -1973,7 +1978,9 @@ r_void
 id|do_ps2esdi_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|u_int
@@ -2056,6 +2063,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+id|q
 )paren
 suffix:semicolon
 r_return
@@ -2212,6 +2220,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+id|q
 )paren
 suffix:semicolon
 r_break
@@ -2257,6 +2266,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+id|q
 )paren
 suffix:semicolon
 )brace
@@ -2577,6 +2587,7 @@ r_return
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
@@ -2595,6 +2606,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4355,6 +4367,7 @@ id|MAX_RETRIES
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
@@ -4373,6 +4386,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4592,6 +4606,7 @@ id|MAX_RETRIES
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 r_else
@@ -4610,6 +4625,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4660,6 +4676,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 r_break
@@ -4799,6 +4816,7 @@ suffix:semicolon
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -4818,6 +4836,7 @@ id|CURRENT
 id|do_ps2esdi_request
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

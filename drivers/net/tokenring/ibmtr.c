@@ -659,7 +659,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|pcid
@@ -724,22 +724,10 @@ comma
 id|base_addr
 )paren
 )paren
-(brace
-macro_line|#ifndef MODULE
-macro_line|#ifndef PCMCIA
-id|tr_freedev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 r_else
 r_return
 l_int|0
@@ -798,6 +786,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ibmtr_probe1
 c_func
 (paren
@@ -806,19 +795,6 @@ comma
 id|ioaddr
 )paren
 )paren
-(brace
-macro_line|#ifndef MODULE
-macro_line|#ifndef PCMCIA
-id|tr_freedev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-)brace
-r_else
 r_return
 l_int|0
 suffix:semicolon
@@ -1011,7 +987,7 @@ multiline_comment|/* try ISA */
 multiline_comment|/*&n;&t; *&t;Suboptimize knowing first byte different&n;&t; */
 id|ctemp
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|cd_chanid
@@ -1089,7 +1065,7 @@ r_if
 c_cond
 (paren
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|cd_chanid
@@ -1125,7 +1101,7 @@ op_eq
 id|TR_ISA
 op_logical_and
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|AIPFID
@@ -1523,7 +1499,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1576,7 +1552,7 @@ op_assign
 (paren
 id|__u32
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1691,7 +1667,7 @@ l_int|2
 multiline_comment|/* technical reference states to do this */
 id|temp
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1775,7 +1751,7 @@ macro_line|#endif
 multiline_comment|/* get Adapter type:  &squot;F&squot; = Adapter/A, &squot;E&squot; = 16/4 Adapter II,...*/
 id|ti-&gt;adapter_type
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1786,7 +1762,7 @@ suffix:semicolon
 multiline_comment|/* get Data Rate:  F=4Mb, E=16Mb, D=4Mb &amp; 16Mb ?? */
 id|ti-&gt;data_rate
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1797,7 +1773,7 @@ suffix:semicolon
 multiline_comment|/* Get Early Token Release support?: F=no, E=4Mb, D=16Mb, C=4&amp;16Mb */
 id|ti-&gt;token_release
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1839,7 +1815,7 @@ multiline_comment|/* We need to set or do a bunch of work here based on previous
 multiline_comment|/* Support paging?  What sizes?:  F=no, E=16k, D=32k, C=16 &amp; 32k */
 id|ti-&gt;shared_ram_paging
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1851,7 +1827,7 @@ multiline_comment|/* Available DHB  4Mb size:   F=2048, E=4096, D=4464 */
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1891,7 +1867,7 @@ multiline_comment|/* Available DHB 16Mb size:  F=2048, E=4096, D=8192, C=16384, 
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -1980,7 +1956,7 @@ op_lshift
 (paren
 (paren
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -2268,7 +2244,7 @@ id|rrr_32
 op_assign
 (paren
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -2896,7 +2872,7 @@ id|avail_sram_code
 op_assign
 l_int|0xf
 op_minus
-id|readb
+id|isa_readb
 c_func
 (paren
 id|adapt_info-&gt;mmio
@@ -2922,7 +2898,7 @@ l_int|1
 op_lshift
 (paren
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|adapt_info-&gt;mmio
@@ -3161,7 +3137,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -3171,7 +3147,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DIR_SET_FUNC_ADDR
@@ -3208,7 +3184,7 @@ id|i
 op_increment
 )paren
 (brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|address
@@ -3241,7 +3217,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB
@@ -3287,12 +3263,12 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/* init the spinlock */
-id|ti-&gt;lock
-op_assign
+id|spin_lock_init
+c_func
 (paren
-id|spinlock_t
+op_amp
+id|ti-&gt;lock
 )paren
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 r_if
 c_cond
@@ -3378,7 +3354,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DIR_CLOSE_ADAPTER
@@ -3394,7 +3370,7 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB
@@ -3422,7 +3398,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -3444,7 +3420,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -3549,7 +3525,7 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 (paren
@@ -3601,7 +3577,7 @@ suffix:colon
 multiline_comment|/*  Begin the regular interrupt handler HERE inline to avoid&n;&t;&t;    the extra levels of logic and call depth for the&n;&t;&t;    original solution.   */
 id|status
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -3649,7 +3625,7 @@ multiline_comment|/* Check ISRP EVEN too. */
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 (paren
 id|ti-&gt;mmio
 op_plus
@@ -3707,7 +3683,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;sram
@@ -3758,7 +3734,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|check_reason
@@ -3772,7 +3748,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 (paren
@@ -3789,7 +3765,7 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -3812,7 +3788,7 @@ r_else
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -3841,7 +3817,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;mmio
@@ -3854,7 +3830,7 @@ id|ISRP_EVEN
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -3875,7 +3851,7 @@ op_plus
 id|ISRP_EVEN
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -3924,7 +3900,7 @@ multiline_comment|/* SRB response */
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -3942,7 +3918,7 @@ id|xmit_ret_code
 suffix:semicolon
 id|xmit_ret_code
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4018,7 +3994,7 @@ id|xmit_ret_code
 suffix:semicolon
 id|xmit_ret_code
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4102,7 +4078,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4124,7 +4100,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4146,7 +4122,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4168,7 +4144,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4189,7 +4165,7 @@ l_int|NULL
 suffix:semicolon
 id|open_ret_code
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4208,7 +4184,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -4363,7 +4339,7 @@ l_string|&quot;Adapter initialized and opened.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -4380,7 +4356,7 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -4460,7 +4436,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4483,7 +4459,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4514,7 +4490,7 @@ r_else
 (brace
 id|ti-&gt;exsap_station_id
 op_assign
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;srb
@@ -4561,7 +4537,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4583,7 +4559,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4600,7 +4576,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4623,7 +4599,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4645,7 +4621,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4678,7 +4654,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4695,7 +4671,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4712,7 +4688,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4729,7 +4705,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4746,7 +4722,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4763,7 +4739,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4780,7 +4756,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4797,7 +4773,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4814,7 +4790,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4831,7 +4807,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4863,7 +4839,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -4872,7 +4848,7 @@ id|ti-&gt;srb
 suffix:semicolon
 )brace
 multiline_comment|/* SRB command check */
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -4887,7 +4863,7 @@ op_plus
 id|ISRA_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -4918,7 +4894,7 @@ multiline_comment|/* ASB response */
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -4947,7 +4923,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -4959,7 +4935,7 @@ multiline_comment|/* ASB command check */
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -4978,7 +4954,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -4989,14 +4965,14 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -5025,7 +5001,7 @@ multiline_comment|/* ARB response */
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;arb
@@ -5044,7 +5020,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -5062,7 +5038,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -5104,7 +5080,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -5230,7 +5206,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;arb
@@ -5241,7 +5217,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* ARB command check */
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -5256,7 +5232,7 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|ARB_FREE
@@ -5288,7 +5264,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;ssb
@@ -5304,7 +5280,7 @@ id|XMIT_UI_FRAME
 suffix:colon
 id|retcode
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;ssb
@@ -5337,7 +5313,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;ssb
@@ -5363,7 +5339,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;ssb
@@ -5382,7 +5358,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;ssb
@@ -5391,7 +5367,7 @@ id|ti-&gt;ssb
 suffix:semicolon
 )brace
 multiline_comment|/* SSB command check */
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -5406,7 +5382,7 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|SSB_FREE
@@ -5428,7 +5404,7 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -5526,7 +5502,7 @@ op_logical_neg
 id|ti-&gt;sram
 )paren
 (brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|ti-&gt;sram_base
@@ -5563,7 +5539,7 @@ c_func
 r_int
 r_int
 )paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;mmio
@@ -5584,7 +5560,7 @@ c_func
 r_int
 r_int
 )paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;mmio
@@ -5647,7 +5623,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -5666,7 +5642,7 @@ suffix:semicolon
 macro_line|#endif
 id|hw_encoded_addr
 op_assign
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -5716,7 +5692,7 @@ id|hw_encoded_addr
 suffix:semicolon
 id|ti-&gt;ring_speed
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -5768,7 +5744,7 @@ suffix:semicolon
 macro_line|#endif
 id|ti-&gt;auto_ringspeedsave
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;init_srb
@@ -5810,7 +5786,7 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|encoded_addr
@@ -5916,7 +5892,7 @@ c_cond
 id|ti-&gt;page_mask
 )paren
 (brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|SRPR_ENABLE_PAGING
@@ -5932,7 +5908,7 @@ id|SRPR_EVEN
 suffix:semicolon
 )brace
 macro_line|#endif
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -6007,7 +5983,7 @@ id|ti-&gt;open_status
 op_assign
 id|IN_PROGRESS
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -6080,7 +6056,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -6090,7 +6066,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DLC_OPEN_SAP
@@ -6106,7 +6082,7 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6126,7 +6102,7 @@ id|max_i_field
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|SAP_OPEN_IND_SAP
@@ -6144,7 +6120,7 @@ id|sap_options
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|SAP_OPEN_STATION_CNT
@@ -6160,7 +6136,7 @@ id|station_count
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|type
@@ -6176,7 +6152,7 @@ id|sap_value
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB
@@ -6238,7 +6214,7 @@ l_string|&quot;now opening the board...&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -6253,7 +6229,7 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 op_complement
@@ -6286,7 +6262,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -6296,7 +6272,7 @@ op_plus
 id|i
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DIR_OPEN_ADAPTER
@@ -6312,7 +6288,7 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6340,7 +6316,7 @@ op_eq
 l_int|16
 )paren
 (brace
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6360,7 +6336,7 @@ id|dhb_length
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6380,7 +6356,7 @@ id|num_rcv_buf
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6403,7 +6379,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6423,7 +6399,7 @@ id|dhb_length
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6443,7 +6419,7 @@ id|num_rcv_buf
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6464,7 +6440,7 @@ id|rcv_buf_len
 )paren
 suffix:semicolon
 )brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|NUM_DHB
@@ -6481,7 +6457,7 @@ id|num_dhb
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DLC_MAX_SAP
@@ -6497,7 +6473,7 @@ id|dlc_max_sap
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DLC_MAX_STA
@@ -6518,7 +6494,7 @@ op_assign
 id|ti-&gt;init_srb
 suffix:semicolon
 multiline_comment|/* We use this one in the interrupt handler */
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -6532,7 +6508,7 @@ op_plus
 id|ISRP_EVEN
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB
@@ -6605,7 +6581,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -6635,7 +6611,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -6715,7 +6691,7 @@ id|hdr_len
 suffix:semicolon
 id|xmit_command
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -6729,7 +6705,7 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|xmit_command
@@ -6745,10 +6721,10 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -6773,7 +6749,7 @@ id|station_id
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|llc-&gt;ssap
@@ -6789,10 +6765,10 @@ id|rsap_value
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;srb
@@ -6817,7 +6793,7 @@ id|cmd_corr
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -6849,7 +6825,7 @@ id|XMIT_TEST_CMD
 )paren
 )paren
 (brace
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -6869,7 +6845,7 @@ id|frame_length
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0x0e
@@ -6885,7 +6861,7 @@ id|hdr_length
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|AC
@@ -6893,7 +6869,7 @@ comma
 id|dhb
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|LLC_FRAME
@@ -6917,7 +6893,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|writeb
+id|isa_writeb
 c_func
 (paren
 (paren
@@ -6946,7 +6922,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -6960,7 +6936,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|RESP_IN_ASB
@@ -6978,7 +6954,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *      the token ring packet is copied from sk_buff to the adapter&n;&t; *      buffer identified in the command data received with the interrupt.&n;&t; */
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|hdr_len
@@ -6994,7 +6970,7 @@ id|hdr_length
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|htons
@@ -7014,7 +6990,7 @@ id|frame_length
 )paren
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dhb
@@ -7024,7 +7000,7 @@ comma
 id|ti-&gt;current_skb-&gt;len
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|RESP_IN_ASB
@@ -7158,7 +7134,7 @@ op_plus
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -7179,7 +7155,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;asb
@@ -7203,7 +7179,7 @@ l_string|&quot;ASB not free !!!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|REC_DATA
@@ -7219,10 +7195,10 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -7247,10 +7223,10 @@ id|station_id
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -7277,7 +7253,7 @@ id|rec_buf_addr
 suffix:semicolon
 id|lan_hdr_len
 op_assign
-id|readb
+id|isa_readb
 c_func
 (paren
 id|ti-&gt;arb
@@ -7358,7 +7334,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -7385,7 +7361,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7402,7 +7378,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7419,7 +7395,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7436,7 +7412,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7453,7 +7429,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7472,7 +7448,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7491,7 +7467,7 @@ comma
 (paren
 r_int
 )paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|llc
@@ -7510,7 +7486,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7527,7 +7503,7 @@ op_ne
 id|UI_CMD
 )paren
 (brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DATA_LOST
@@ -7546,7 +7522,7 @@ suffix:semicolon
 id|ti-&gt;tr_stats.rx_dropped
 op_increment
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|RESP_IN_ASB
@@ -7568,7 +7544,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|ti-&gt;arb
@@ -7587,7 +7563,7 @@ r_if
 c_cond
 (paren
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7605,7 +7581,7 @@ id|EXTENDED_SAP
 )paren
 op_logical_and
 (paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7674,7 +7650,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7691,7 +7667,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|llc
@@ -7708,7 +7684,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7725,7 +7701,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7744,7 +7720,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7763,7 +7739,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7782,7 +7758,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7801,7 +7777,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7820,7 +7796,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7837,7 +7813,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7856,7 +7832,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7875,7 +7851,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7894,7 +7870,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7913,7 +7889,7 @@ comma
 (paren
 r_int
 )paren
-id|readb
+id|isa_readb
 c_func
 (paren
 id|trhhdr
@@ -7974,7 +7950,7 @@ suffix:semicolon
 id|ti-&gt;tr_stats.rx_dropped
 op_increment
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DATA_LOST
@@ -7990,7 +7966,7 @@ id|ret_code
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|RESP_IN_ASB
@@ -8048,7 +8024,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|rbuffer
@@ -8082,7 +8058,7 @@ id|IPv4_p
 )paren
 (brace
 multiline_comment|/* Copy the headers without checksumming */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|data
@@ -8201,7 +8177,7 @@ id|chksum
 )paren
 suffix:semicolon
 r_else
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|data
@@ -8216,7 +8192,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|rbuffer
@@ -8248,7 +8224,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 id|rbuffer
@@ -8276,7 +8252,7 @@ id|data
 )paren
 suffix:semicolon
 )brace
-id|writeb
+id|isa_writeb
 c_func
 (paren
 l_int|0
@@ -8292,7 +8268,7 @@ id|ret_code
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|RESP_IN_ASB
@@ -8462,7 +8438,7 @@ id|ti-&gt;current_skb
 op_assign
 id|skb
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|XMIT_UI_FRAME
@@ -8478,7 +8454,7 @@ id|command
 )paren
 )paren
 suffix:semicolon
-id|writew
+id|isa_writew
 c_func
 (paren
 id|ti-&gt;exsap_station_id
@@ -8494,7 +8470,7 @@ id|station_id
 )paren
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB
@@ -8606,7 +8582,7 @@ id|ti-&gt;readlog_pending
 op_assign
 l_int|0
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|DIR_READ_LOG
@@ -8614,7 +8590,7 @@ comma
 id|ti-&gt;srb
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|INT_ENABLE
@@ -8628,7 +8604,7 @@ op_plus
 id|ISRP_EVEN
 )paren
 suffix:semicolon
-id|writeb
+id|isa_writeb
 c_func
 (paren
 id|CMD_IN_SRB

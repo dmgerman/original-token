@@ -1157,6 +1157,10 @@ macro_line|#ifdef CONFIG_ISAPNP&t;&t;&t;
 r_if
 c_cond
 (paren
+id|isapnp
+op_eq
+l_int|1
+op_logical_and
 id|sb_probe_isapnp
 c_func
 (paren
@@ -1182,8 +1186,9 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#endif
-)brace
+r_else
+(brace
+macro_line|#endif&t;&t;&t;
 r_if
 c_cond
 (paren
@@ -1235,6 +1240,9 @@ id|config.card_subtype
 op_assign
 id|type
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1313,6 +1321,7 @@ id|config_mpu
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 id|SOUND_LOCK
 suffix:semicolon
 r_return

@@ -47,12 +47,12 @@ multiline_comment|/* NF3CHR */
 id|S_IFLNK
 comma
 multiline_comment|/* NF3LNK */
-id|S_IFIFO
-comma
-multiline_comment|/* NF3FIFO */
 id|S_IFSOCK
 comma
 multiline_comment|/* NF3SOCK */
+id|S_IFIFO
+comma
+multiline_comment|/* NF3FIFO */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Reserve room in the send buffer&n; */
@@ -1399,7 +1399,7 @@ c_cond
 id|argp-&gt;ftype
 op_ne
 id|NF3SOCK
-op_logical_or
+op_logical_and
 id|argp-&gt;ftype
 op_ne
 id|NF3FIFO

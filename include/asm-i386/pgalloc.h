@@ -5,8 +5,12 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (current_cpu_data.pgd_quick)
+r_extern
+r_int
+r_int
+op_star
+id|pgd_quicklist
+suffix:semicolon
 DECL|macro|pmd_quicklist
 mdefine_line|#define pmd_quicklist (current_cpu_data.pmd_quick)
 DECL|macro|pte_quicklist
@@ -93,10 +97,27 @@ id|pgd_t
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|get_pgd_uptodate
+r_extern
+id|__inline__
+r_void
+id|get_pgd_uptodate
+c_func
+(paren
+id|pgd_t
+op_star
+id|pgd
+)paren
+(brace
 id|memcpy
 c_func
 (paren
-id|ret
+id|pgd
 op_plus
 id|USER_PTRS_PER_PGD
 comma
@@ -115,10 +136,6 @@ r_sizeof
 id|pgd_t
 )paren
 )paren
-suffix:semicolon
-)brace
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|function|get_pgd_fast
@@ -172,19 +189,6 @@ id|pgtable_cache_size
 op_decrement
 suffix:semicolon
 )brace
-r_else
-id|ret
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|get_pgd_slow
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 (paren
 id|pgd_t
@@ -419,9 +423,7 @@ mdefine_line|#define pte_free_kernel(pte)    free_pte_slow(pte)
 DECL|macro|pte_free
 mdefine_line|#define pte_free(pte)&t;   free_pte_slow(pte)
 DECL|macro|pgd_free
-mdefine_line|#define pgd_free(pgd)&t;   free_pgd_slow(pgd)
-DECL|macro|pgd_alloc
-mdefine_line|#define pgd_alloc()&t;     get_pgd_fast()
+mdefine_line|#define pgd_free(pgd)&t;   free_pgd_fast(pgd)
 DECL|function|pte_alloc_kernel
 r_extern
 r_inline
@@ -737,61 +739,23 @@ id|pgd_t
 id|entry
 )paren
 (brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
 id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-macro_line|#ifdef __SMP__
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif&t;
-id|read_lock
+id|mmlist_access_lock
 c_func
 (paren
-op_amp
-id|tasklist_lock
 )paren
 suffix:semicolon
-id|for_each_task
+id|mmlist_set_pgdir
 c_func
 (paren
-id|p
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p-&gt;mm
-)paren
-r_continue
-suffix:semicolon
-op_star
-id|pgd_offset
-c_func
-(paren
-id|p-&gt;mm
-comma
 id|address
-)paren
-op_assign
+comma
 id|entry
-suffix:semicolon
-)brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
 r_for
 c_loop
 (paren
@@ -828,64 +792,11 @@ id|PGDIR_SHIFT
 op_assign
 id|entry
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* To pgd_alloc/pgd_free, one holds master kernel lock and so does our callee, so we can&n;&t;   modify pgd caches of other CPUs as well. -jj */
-r_for
-c_loop
+id|mmlist_access_unlock
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_CPUS
-suffix:semicolon
-id|i
-op_increment
 )paren
-r_for
-c_loop
-(paren
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-id|cpu_data
-(braket
-id|i
-)braket
-dot
-id|pgd_quick
 suffix:semicolon
-id|pgd
-suffix:semicolon
-id|pgd
-op_assign
-(paren
-id|pgd_t
-op_star
-)paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|pgd
-)paren
-id|pgd
-(braket
-id|address
-op_rshift
-id|PGDIR_SHIFT
-)braket
-op_assign
-id|entry
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
 macro_line|#ifndef __SMP__

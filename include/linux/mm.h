@@ -454,10 +454,14 @@ DECL|macro|PG_referenced
 mdefine_line|#define PG_referenced&t;&t; 2
 DECL|macro|PG_uptodate
 mdefine_line|#define PG_uptodate&t;&t; 3
+DECL|macro|PG__unused_00
+mdefine_line|#define PG__unused_00&t;&t; 4
 DECL|macro|PG_decr_after
 mdefine_line|#define PG_decr_after&t;&t; 5
-DECL|macro|PG_DMA
-mdefine_line|#define PG_DMA&t;&t;&t; 7
+DECL|macro|PG_unused_01
+mdefine_line|#define PG_unused_01&t;&t; 6
+DECL|macro|PG__unused_02
+mdefine_line|#define PG__unused_02&t;&t; 7
 DECL|macro|PG_slab
 mdefine_line|#define PG_slab&t;&t;&t; 8
 DECL|macro|PG_swap_cache
@@ -497,7 +501,7 @@ mdefine_line|#define PageReferenced(page)&t;test_bit(PG_referenced, &amp;(page)-
 DECL|macro|PageDecrAfter
 mdefine_line|#define PageDecrAfter(page)&t;test_bit(PG_decr_after, &amp;(page)-&gt;flags)
 DECL|macro|PageDMA
-mdefine_line|#define PageDMA(page)&t;&t;test_bit(PG_DMA, &amp;(page)-&gt;flags)
+mdefine_line|#define PageDMA(page)&t;&t;(contig_page_data.node_zones + ZONE_DMA == (page)-&gt;zone)
 DECL|macro|PageSlab
 mdefine_line|#define PageSlab(page)&t;&t;test_bit(PG_slab, &amp;(page)-&gt;flags)
 DECL|macro|PageSwapCache
@@ -532,7 +536,7 @@ DECL|macro|NOPAGE_SIGBUS
 mdefine_line|#define NOPAGE_SIGBUS&t;(NULL)
 DECL|macro|NOPAGE_OOM
 mdefine_line|#define NOPAGE_OOM&t;((struct page *) (-1))
-multiline_comment|/*&n; * Various page-&gt;flags bits:&n; *&n; * PG_reserved is set for a page which must never be accessed (which&n; * may not even be present).&n; *&n; * PG_DMA is set for those pages which lie in the range of&n; * physical addresses capable of carrying DMA transfers.&n; *&n; * Multiple processes may &quot;see&quot; the same page. E.g. for untouched&n; * mappings of /dev/null, all processes see the same page full of&n; * zeroes, and text pages of executables and shared libraries have&n; * only one copy in memory, at most, normally.&n; *&n; * For the non-reserved pages, page-&gt;count denotes a reference count.&n; *   page-&gt;count == 0 means the page is free.&n; *   page-&gt;count == 1 means the page is used for exactly one purpose&n; *   (e.g. a private data page of one process).&n; *&n; * A page may be used for kmalloc() or anyone else who does a&n; * __get_free_page(). In this case the page-&gt;count is at least 1, and&n; * all other fields are unused but should be 0 or NULL. The&n; * management of this page is the responsibility of the one who uses&n; * it.&n; *&n; * The other pages (we may call them &quot;process pages&quot;) are completely&n; * managed by the Linux memory manager: I/O, buffers, swapping etc.&n; * The following discussion applies only to them.&n; *&n; * A page may belong to an inode&squot;s memory mapping. In this case,&n; * page-&gt;inode is the pointer to the inode, and page-&gt;offset is the&n; * file offset of the page (not necessarily a multiple of PAGE_SIZE).&n; *&n; * A page may have buffers allocated to it. In this case,&n; * page-&gt;buffers is a circular list of these buffer heads. Else,&n; * page-&gt;buffers == NULL.&n; *&n; * For pages belonging to inodes, the page-&gt;count is the number of&n; * attaches, plus 1 if buffers are allocated to the page.&n; *&n; * All pages belonging to an inode make up a doubly linked list&n; * inode-&gt;i_pages, using the fields page-&gt;next and page-&gt;prev. (These&n; * fields are also used for freelist management when page-&gt;count==0.)&n; * There is also a hash table mapping (inode,offset) to the page&n; * in memory if present. The lists for this hash table use the fields&n; * page-&gt;next_hash and page-&gt;pprev_hash.&n; *&n; * All process pages can do I/O:&n; * - inode pages may need to be read from disk,&n; * - inode pages which have been modified and are MAP_SHARED may need&n; *   to be written to disk,&n; * - private pages which have been modified may need to be swapped out&n; *   to swap space and (later) to be read back into memory.&n; * During disk I/O, PG_locked is used. This bit is set before I/O&n; * and reset when I/O completes. page-&gt;wait is a wait queue of all&n; * tasks waiting for the I/O on this page to complete.&n; * PG_uptodate tells whether the page&squot;s contents is valid.&n; * When a read completes, the page becomes uptodate, unless a disk I/O&n; * error happened.&n; *&n; * For choosing which pages to swap out, inode pages carry a&n; * PG_referenced bit, which is set any time the system accesses&n; * that page through the (inode,offset) hash table.&n; *&n; * PG_skip is used on sparc/sparc64 architectures to &quot;skip&quot; certain&n; * parts of the address space.&n; *&n; * PG_error is set to indicate that an I/O error occurred on this page.&n; */
+multiline_comment|/*&n; * Various page-&gt;flags bits:&n; *&n; * PG_reserved is set for a page which must never be accessed (which&n; * may not even be present).&n; *&n; * PG_DMA has been removed, page-&gt;zone now tells exactly wether the&n; * page is suited to do DMAing into.&n; *&n; * Multiple processes may &quot;see&quot; the same page. E.g. for untouched&n; * mappings of /dev/null, all processes see the same page full of&n; * zeroes, and text pages of executables and shared libraries have&n; * only one copy in memory, at most, normally.&n; *&n; * For the non-reserved pages, page-&gt;count denotes a reference count.&n; *   page-&gt;count == 0 means the page is free.&n; *   page-&gt;count == 1 means the page is used for exactly one purpose&n; *   (e.g. a private data page of one process).&n; *&n; * A page may be used for kmalloc() or anyone else who does a&n; * __get_free_page(). In this case the page-&gt;count is at least 1, and&n; * all other fields are unused but should be 0 or NULL. The&n; * management of this page is the responsibility of the one who uses&n; * it.&n; *&n; * The other pages (we may call them &quot;process pages&quot;) are completely&n; * managed by the Linux memory manager: I/O, buffers, swapping etc.&n; * The following discussion applies only to them.&n; *&n; * A page may belong to an inode&squot;s memory mapping. In this case,&n; * page-&gt;inode is the pointer to the inode, and page-&gt;offset is the&n; * file offset of the page (not necessarily a multiple of PAGE_SIZE).&n; *&n; * A page may have buffers allocated to it. In this case,&n; * page-&gt;buffers is a circular list of these buffer heads. Else,&n; * page-&gt;buffers == NULL.&n; *&n; * For pages belonging to inodes, the page-&gt;count is the number of&n; * attaches, plus 1 if buffers are allocated to the page.&n; *&n; * All pages belonging to an inode make up a doubly linked list&n; * inode-&gt;i_pages, using the fields page-&gt;next and page-&gt;prev. (These&n; * fields are also used for freelist management when page-&gt;count==0.)&n; * There is also a hash table mapping (inode,offset) to the page&n; * in memory if present. The lists for this hash table use the fields&n; * page-&gt;next_hash and page-&gt;pprev_hash.&n; *&n; * All process pages can do I/O:&n; * - inode pages may need to be read from disk,&n; * - inode pages which have been modified and are MAP_SHARED may need&n; *   to be written to disk,&n; * - private pages which have been modified may need to be swapped out&n; *   to swap space and (later) to be read back into memory.&n; * During disk I/O, PG_locked is used. This bit is set before I/O&n; * and reset when I/O completes. page-&gt;wait is a wait queue of all&n; * tasks waiting for the I/O on this page to complete.&n; * PG_uptodate tells whether the page&squot;s contents is valid.&n; * When a read completes, the page becomes uptodate, unless a disk I/O&n; * error happened.&n; *&n; * For choosing which pages to swap out, inode pages carry a&n; * PG_referenced bit, which is set any time the system accesses&n; * that page through the (inode,offset) hash table.&n; *&n; * PG_skip is used on sparc/sparc64 architectures to &quot;skip&quot; certain&n; * parts of the address space.&n; *&n; * PG_error is set to indicate that an I/O error occurred on this page.&n; */
 r_extern
 id|mem_map_t
 op_star
@@ -1738,6 +1742,57 @@ DECL|macro|vmlist_modify_lock
 mdefine_line|#define vmlist_modify_lock(mm)&t;&t;vmlist_access_lock(mm)
 DECL|macro|vmlist_modify_unlock
 mdefine_line|#define vmlist_modify_unlock(mm)&t;vmlist_access_unlock(mm)
+r_extern
+id|spinlock_t
+id|mm_lock
+suffix:semicolon
+DECL|macro|mmlist_access_lock
+mdefine_line|#define mmlist_access_lock()&t;&t;spin_lock(&amp;mm_lock)
+DECL|macro|mmlist_access_unlock
+mdefine_line|#define mmlist_access_unlock()&t;&t;spin_unlock(&amp;mm_lock)
+DECL|macro|mmlist_modify_lock
+mdefine_line|#define mmlist_modify_lock()&t;&t;mmlist_access_lock()
+DECL|macro|mmlist_modify_unlock
+mdefine_line|#define mmlist_modify_unlock()&t;&t;mmlist_access_unlock()
+DECL|macro|for_each_mm
+mdefine_line|#define for_each_mm(mm) &bslash;&n;&t;for (mm = list_entry(init_mm.mmlist.next, struct mm_struct, mmlist); &bslash;&n;&t;&t;(mm != &amp;init_mm);  &bslash;&n;&t;&t;(mm = list_entry(mm-&gt;mmlist.next, struct mm_struct, mmlist)))
+DECL|function|mmlist_set_pgdir
+r_static
+r_inline
+r_void
+id|mmlist_set_pgdir
+c_func
+(paren
+r_int
+r_int
+id|address
+comma
+id|pgd_t
+id|entry
+)paren
+(brace
+r_struct
+id|mm_struct
+op_star
+id|mm
+suffix:semicolon
+id|for_each_mm
+c_func
+(paren
+id|mm
+)paren
+op_star
+id|pgd_offset
+c_func
+(paren
+id|mm
+comma
+id|address
+)paren
+op_assign
+id|entry
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

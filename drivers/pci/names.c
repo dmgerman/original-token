@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;PCI Class and Device Name Tables&n; *&n; *&t;Copyright 1993--1999 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

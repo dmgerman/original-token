@@ -1857,6 +1857,11 @@ r_struct
 id|inode_operations
 id|ufs_symlink_inode_operations
 suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|ufs_fast_symlink_inode_operations
+suffix:semicolon
 multiline_comment|/* truncate.c */
 r_extern
 r_void

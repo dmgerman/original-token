@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight&n; * Copyright (C) 1999 Xi Graphics&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
+multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight, Inc.&n; * Copyright (C) 1999 Xi Graphics, Inc.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
 macro_line|#ifndef _AGP_BACKEND_H
 DECL|macro|_AGP_BACKEND_H
 mdefine_line|#define _AGP_BACKEND_H 1
@@ -194,7 +194,7 @@ id|agp_memory
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * void agp_free_memory(agp_memory *curr) :&n; * &n; * This function frees memory associated with&n; * an agp_memory pointer.  It is the only function&n; * that can be called when the backend is not owned&n; * by the caller.  (So it can free memory on client&n; * death.)&n; * &n; * It takes an agp_memory pointer as an argument.&n; * &n; */
+multiline_comment|/*&n; * agp_free_memory :&n; * &n; * This function frees memory associated with&n; * an agp_memory pointer.  It is the only function&n; * that can be called when the backend is not owned&n; * by the caller.  (So it can free memory on client&n; * death.)&n; * &n; * It takes an agp_memory pointer as an argument.&n; * &n; */
 r_extern
 id|agp_memory
 op_star
@@ -206,7 +206,7 @@ comma
 id|u32
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * agp_memory *agp_allocate_memory(size_t page_count, u32 type) :&n; * &n; * This function allocates a group of pages of&n; * a certain type.&n; * &n; * It takes a size_t argument of the number of pages, and&n; * an u32 argument of the type of memory to be allocated.  &n; * Every agp bridge device will allow you to allocate &n; * AGP_NORMAL_MEMORY which maps to physical ram.  Any other&n; * type is device dependant.&n; * &n; * It returns NULL whenever memory is unavailable.&n; * &n; */
+multiline_comment|/*&n; * agp_allocate_memory :&n; * &n; * This function allocates a group of pages of&n; * a certain type.&n; * &n; * It takes a size_t argument of the number of pages, and&n; * an u32 argument of the type of memory to be allocated.  &n; * Every agp bridge device will allow you to allocate &n; * AGP_NORMAL_MEMORY which maps to physical ram.  Any other&n; * type is device dependant.&n; * &n; * It returns NULL whenever memory is unavailable.&n; * &n; */
 r_extern
 r_void
 id|agp_copy_info
@@ -216,7 +216,7 @@ id|agp_kern_info
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * void agp_copy_info(agp_kern_info *info) :&n; * &n; * This function copies information about the&n; * agp bridge device and the state of the agp&n; * backend into an agp_kern_info pointer.&n; * &n; * It takes an agp_kern_info pointer as an&n; * argument.  The caller should insure that&n; * this pointer is valid.&n; * &n; */
+multiline_comment|/*&n; * agp_copy_info :&n; * &n; * This function copies information about the&n; * agp bridge device and the state of the agp&n; * backend into an agp_kern_info pointer.&n; * &n; * It takes an agp_kern_info pointer as an&n; * argument.  The caller should insure that&n; * this pointer is valid.&n; * &n; */
 r_extern
 r_int
 id|agp_bind_memory
@@ -228,7 +228,7 @@ comma
 id|off_t
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * int agp_bind_memory(agp_memory *curr, off_t pg_start) :&n; * &n; * This function binds an agp_memory structure&n; * into the graphics aperture translation table.&n; * &n; * It takes an agp_memory pointer and an offset into&n; * the graphics aperture translation table as arguments&n; * &n; * It returns -EINVAL if the pointer == NULL.&n; * It returns -EBUSY if the area of the table&n; * requested is already in use.&n; * &n; */
+multiline_comment|/*&n; * agp_bind_memory :&n; * &n; * This function binds an agp_memory structure&n; * into the graphics aperture translation table.&n; * &n; * It takes an agp_memory pointer and an offset into&n; * the graphics aperture translation table as arguments&n; * &n; * It returns -EINVAL if the pointer == NULL.&n; * It returns -EBUSY if the area of the table&n; * requested is already in use.&n; * &n; */
 r_extern
 r_int
 id|agp_unbind_memory
@@ -238,7 +238,7 @@ id|agp_memory
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * int agp_unbind_memory(agp_memory *curr) :&n; * &n; * This function removes an agp_memory structure&n; * from the graphics aperture translation table.&n; * &n; * It takes an agp_memory pointer as an argument.&n; * &n; * It returns -EINVAL if this piece of agp_memory&n; * is not currently bound to the graphics aperture&n; * translation table or if the agp_memory &n; * pointer == NULL&n; * &n; */
+multiline_comment|/* &n; * agp_unbind_memory :&n; * &n; * This function removes an agp_memory structure&n; * from the graphics aperture translation table.&n; * &n; * It takes an agp_memory pointer as an argument.&n; * &n; * It returns -EINVAL if this piece of agp_memory&n; * is not currently bound to the graphics aperture&n; * translation table or if the agp_memory &n; * pointer == NULL&n; * &n; */
 r_extern
 r_void
 id|agp_enable
@@ -247,7 +247,7 @@ c_func
 id|u32
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * void agp_enable(u32 mode) :&n; * &n; * This function initializes the agp point-to-point&n; * connection.&n; * &n; * It takes an agp mode register as an argument&n; * &n; */
+multiline_comment|/* &n; * agp_enable :&n; * &n; * This function initializes the agp point-to-point&n; * connection.&n; * &n; * It takes an agp mode register as an argument&n; * &n; */
 r_extern
 r_int
 id|agp_backend_acquire
@@ -256,7 +256,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * int agp_backend_acquire(void) :&n; * &n; * This Function attempts to acquire the agp&n; * backend.&n; * &n; * returns -EBUSY if agp is in use,&n; * returns 0 if the caller owns the agp backend&n; */
+multiline_comment|/*&n; * agp_backend_acquire :&n; * &n; * This Function attempts to acquire the agp&n; * backend.&n; * &n; * returns -EBUSY if agp is in use,&n; * returns 0 if the caller owns the agp backend&n; */
 r_extern
 r_void
 id|agp_backend_release
@@ -265,6 +265,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * void agp_backend_release(void) :&n; * &n; * This Function releases the lock on the agp&n; * backend.&n; * &n; * The caller must insure that the graphics&n; * aperture translation table is read for use&n; * by another entity.  (Ensure that all memory&n; * it bound is unbound.)&n; * &n; */
+multiline_comment|/*&n; * agp_backend_release :&n; * &n; * This Function releases the lock on the agp&n; * backend.&n; * &n; * The caller must insure that the graphics&n; * aperture translation table is read for use&n; * by another entity.  (Ensure that all memory&n; * it bound is unbound.)&n; * &n; */
 macro_line|#endif&t;&t;&t;&t;/* _AGP_BACKEND_H */
 eof

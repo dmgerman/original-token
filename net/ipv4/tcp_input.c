@@ -9695,7 +9695,7 @@ id|sk-&gt;socket
 comma
 l_int|0
 comma
-id|POLL_IN
+id|POLL_OUT
 )paren
 suffix:semicolon
 )brace

@@ -1152,6 +1152,10 @@ op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* SRB save queue lock */
+id|pHCB-&gt;BitAllocFlagLock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* Get total memory needed for SCB */
 id|sz
 op_assign

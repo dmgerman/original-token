@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; *&n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; *&n; *  Jiffies wrap fixes (host-&gt;resetting), 3 Dec 1998 Andrea Arcangeli&n; */
+multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995, 1998, 1999 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@andante.org to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; *&n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; *&n; *  Jiffies wrap fixes (host-&gt;resetting), 3 Dec 1998 Andrea Arcangeli&n; */
 macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
@@ -372,12 +372,6 @@ id|Scsi_Device
 op_star
 id|host_queue
 suffix:semicolon
-multiline_comment|/*&n;     * List of commands that have been rejected because either the host&n;     * or the device was busy.  These need to be retried relatively quickly,&n;     * but we need to hold onto it for a short period until the host/device&n;     * is available.&n;     */
-DECL|member|pending_commands
-id|Scsi_Cmnd
-op_star
-id|pending_commands
-suffix:semicolon
 DECL|member|ehandler
 r_struct
 id|task_struct
@@ -480,19 +474,6 @@ r_int
 r_int
 id|max_channel
 suffix:semicolon
-multiline_comment|/*&n;     * Pointer to a circularly linked list - this indicates the hosts&n;     * that should be locked out of performing I/O while we have an active&n;     * command on this host.&n;     */
-DECL|member|block
-r_struct
-id|Scsi_Host
-op_star
-id|block
-suffix:semicolon
-DECL|member|wish_block
-r_int
-id|wish_block
-suffix:colon
-l_int|1
-suffix:semicolon
 multiline_comment|/* These parameters should be set by the detect routine */
 DECL|member|base
 r_int
@@ -580,6 +561,13 @@ multiline_comment|/*&n;     * Host uses correct SCSI ordering not PC ordering. T
 DECL|member|reverse_ordering
 r_int
 id|reverse_ordering
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;     * Indicates that one or more devices on this host were starved, and&n;     * when the device becomes less busy that we need to feed them.&n;     */
+DECL|member|some_device_starved
+r_int
+id|some_device_starved
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -854,6 +842,18 @@ id|Scsi_Device
 op_star
 )paren
 suffix:semicolon
+DECL|member|init_command
+r_int
+(paren
+op_star
+id|init_command
+)paren
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Used by new queueing code. */
 )brace
 suffix:semicolon
 r_extern

@@ -276,7 +276,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlmsvc_lookup_block f=%p pd=%d %ld-%ld ty=%d&bslash;n&quot;
+l_string|&quot;lockd: nlmsvc_lookup_block f=%p pd=%d %Ld-%Ld ty=%d&bslash;n&quot;
 comma
 id|file
 comma
@@ -318,7 +318,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;       check f=%p pd=%d %ld-%ld ty=%d&bslash;n&quot;
+l_string|&quot;       check f=%p pd=%d %Ld-%Ld ty=%d&bslash;n&quot;
 comma
 id|block-&gt;b_file
 comma
@@ -1021,7 +1021,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlmsvc_lock(%04x/%ld, ty=%d, pi=%d, %ld-%ld, bl=%d)&bslash;n&quot;
+l_string|&quot;lockd: nlmsvc_lock(%04x/%ld, ty=%d, pi=%d, %Ld-%Ld, bl=%d)&bslash;n&quot;
 comma
 id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
@@ -1292,7 +1292,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlmsvc_testlock(%04x/%ld, ty=%d, %ld-%ld)&bslash;n&quot;
+l_string|&quot;lockd: nlmsvc_testlock(%04x/%ld, ty=%d, %Ld-%Ld)&bslash;n&quot;
 comma
 id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
@@ -1328,7 +1328,7 @@ l_int|NULL
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: conflicting lock(ty=%d, %ld-%ld)&bslash;n&quot;
+l_string|&quot;lockd: conflicting lock(ty=%d, %Ld-%Ld)&bslash;n&quot;
 comma
 id|fl-&gt;fl_type
 comma
@@ -1383,7 +1383,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlmsvc_unlock(%04x/%ld, pi=%d, %ld-%ld)&bslash;n&quot;
+l_string|&quot;lockd: nlmsvc_unlock(%04x/%ld, pi=%d, %Ld-%Ld)&bslash;n&quot;
 comma
 id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma
@@ -1461,7 +1461,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;lockd: nlmsvc_cancel(%04x/%ld, pi=%d, %ld-%ld)&bslash;n&quot;
+l_string|&quot;lockd: nlmsvc_cancel(%04x/%ld, pi=%d, %Ld-%Ld)&bslash;n&quot;
 comma
 id|file-&gt;f_file.f_dentry-&gt;d_inode-&gt;i_dev
 comma

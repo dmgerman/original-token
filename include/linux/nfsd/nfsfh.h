@@ -4,6 +4,7 @@ DECL|macro|_LINUX_NFSD_FH_H
 mdefine_line|#define _LINUX_NFSD_FH_H
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifdef __KERNEL__
+macro_line|# include &lt;linux/config.h&gt;
 macro_line|# include &lt;linux/types.h&gt;
 macro_line|# include &lt;linux/string.h&gt;
 macro_line|# include &lt;linux/fs.h&gt;

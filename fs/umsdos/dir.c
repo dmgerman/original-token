@@ -95,12 +95,7 @@ l_int|NULL
 comma
 multiline_comment|/* d_compare */
 id|umsdos_dentry_dput
-comma
 multiline_comment|/* d_delete(struct dentry *) */
-l_int|NULL
-comma
-l_int|NULL
-comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * So  grep *  doesn&squot;t complain in the presence of directories.&n; */
@@ -2799,7 +2794,6 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon

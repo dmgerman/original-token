@@ -2269,7 +2269,9 @@ DECL|function|do_mcd_request
 id|do_mcd_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 macro_line|#ifdef TEST2
@@ -4322,14 +4324,17 @@ id|MAJOR_NR
 op_assign
 id|mcd_blocksizes
 suffix:semicolon
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|DEVICE_REQUEST
+)paren
 suffix:semicolon
 id|read_ahead
 (braket

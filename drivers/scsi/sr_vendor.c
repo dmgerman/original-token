@@ -1,4 +1,4 @@
-multiline_comment|/* -*-linux-c-*-&n; *&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are too new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; * Aug 1997: Ha! Got a SCSI-3 cdrom spec across my fingers. SCSI-3 does&n; *           multisession using the READ TOC command (like SONY).&n; *&n; *           Rearranged stuff here: SCSI-3 is included allways, support&n; *           for NEC/TOSHIBA/HP commands is optional.&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:&t;Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;thomas@cuivre.freenix.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC, PHILIPS: known to&n; *              work with SONY (SCSI3 now)  code.&n; *&n; *   - HP:&t;Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; *&t;&t;HP 6020 writers now supported.&n; */
+multiline_comment|/* -*-linux-c-*-&n;&n; * vendor-specific code for SCSI CD-ROM&squot;s goes here.&n; *&n; * This is needed becauce most of the new features (multisession and&n; * the like) are too new to be included into the SCSI-II standard (to&n; * be exact: there is&squot;nt anything in my draft copy).&n; *&n; * Aug 1997: Ha! Got a SCSI-3 cdrom spec across my fingers. SCSI-3 does&n; *           multisession using the READ TOC command (like SONY).&n; *&n; *           Rearranged stuff here: SCSI-3 is included allways, support&n; *           for NEC/TOSHIBA/HP commands is optional.&n; *&n; *   Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt; &n; *&n; * --------------------------------------------------------------------------&n; *&n; * support for XA/multisession-CD&squot;s&n; * &n; *   - NEC:     Detection and support of multisession CD&squot;s.&n; *     &n; *   - TOSHIBA: Detection and support of multisession CD&squot;s.&n; *              Some XA-Sector tweaking, required for older drives.&n; *&n; *   - SONY:    Detection and support of multisession CD&squot;s.&n; *              added by Thomas Quinot &lt;thomas@cuivre.freenix.fr&gt;&n; *&n; *   - PIONEER, HITACHI, PLEXTOR, MATSHITA, TEAC, PHILIPS: known to&n; *              work with SONY (SCSI3 now)  code.&n; *&n; *   - HP:      Much like SONY, but a little different... (Thomas)&n; *              HP-Writers only ??? Maybe other CD-Writers work with this too ?&n; *              HP 6020 writers now supported.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -9,17 +9,17 @@ macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#if 0
-macro_line|# define DEBUG
+mdefine_line|#define DEBUG
 macro_line|#endif
 multiline_comment|/* here are some constants to sort the vendors into groups */
 DECL|macro|VENDOR_SCSI3
-mdefine_line|#define VENDOR_SCSI3           1   /* default: scsi-3 mmc */
+mdefine_line|#define VENDOR_SCSI3           1&t;/* default: scsi-3 mmc */
 DECL|macro|VENDOR_NEC
 mdefine_line|#define VENDOR_NEC             2
 DECL|macro|VENDOR_TOSHIBA
 mdefine_line|#define VENDOR_TOSHIBA         3
 DECL|macro|VENDOR_WRITER
-mdefine_line|#define VENDOR_WRITER          4   /* pre-scsi3 writers */
+mdefine_line|#define VENDOR_WRITER          4&t;/* pre-scsi3 writers */
 DECL|macro|VENDOR_ID
 mdefine_line|#define VENDOR_ID (scsi_CDs[minor].vendor)
 DECL|function|sr_vendor_init
@@ -101,6 +101,7 @@ c_cond
 (paren
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|vendor
 comma
@@ -119,6 +120,7 @@ c_cond
 (paren
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|model
 comma
@@ -129,6 +131,7 @@ l_int|15
 op_logical_or
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|model
 comma
@@ -139,6 +142,7 @@ l_int|15
 op_logical_or
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|model
 comma
@@ -149,6 +153,7 @@ l_int|15
 op_logical_or
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|model
 comma
@@ -157,10 +162,11 @@ comma
 l_int|16
 )paren
 macro_line|#if 0
-multiline_comment|/* my NEC 3x returns the read-raw data if a read-raw&n;&t;&t;           is followed by a read for the same sector - aeb */
+multiline_comment|/* my NEC 3x returns the read-raw data if a read-raw&n;&t;&t;   is followed by a read for the same sector - aeb */
 op_logical_or
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|model
 comma
@@ -187,6 +193,7 @@ c_cond
 (paren
 op_logical_neg
 id|strncmp
+c_func
 (paren
 id|vendor
 comma
@@ -421,15 +428,17 @@ l_int|0
 )paren
 )paren
 )paren
+(brace
 id|scsi_CDs
 (braket
 id|minor
 )braket
 dot
-id|sector_size
+id|device-&gt;sector_size
 op_assign
 id|blocklength
 suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG
 r_else
 id|printk
@@ -517,13 +526,6 @@ id|CDC_MULTI_SESSION
 r_return
 l_int|0
 suffix:semicolon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|io_request_lock
-)paren
-suffix:semicolon
 id|buffer
 op_assign
 (paren
@@ -537,25 +539,16 @@ c_func
 l_int|512
 )paren
 suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|io_request_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|buffer
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|sector
 op_assign
 l_int|0
@@ -918,7 +911,7 @@ id|sec
 comma
 id|frame
 suffix:semicolon
-multiline_comment|/* we request some disc information (is it a XA-CD ?,&n;&t;&t; * where starts the last session ?) */
+multiline_comment|/* we request some disc information (is it a XA-CD ?,&n;&t;&t;&t; * where starts the last session ?) */
 id|memset
 c_func
 (paren
@@ -1165,6 +1158,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;sr%d: No finished session&bslash;n&quot;
@@ -1286,7 +1280,7 @@ l_int|24
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_SR_VENDOR */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_BLK_DEV_SR_VENDOR */
 r_default
 suffix:colon
 multiline_comment|/* should not happen */
@@ -1368,8 +1362,9 @@ id|scsi_CDs
 id|minor
 )braket
 dot
-id|sector_size
+id|device-&gt;sector_size
 )paren
+(brace
 id|sr_set_blocklength
 c_func
 (paren
@@ -1378,6 +1373,7 @@ comma
 l_int|2048
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -825,14 +825,6 @@ id|retval-&gt;host_failed
 op_assign
 l_int|0
 suffix:semicolon
-id|retval-&gt;block
-op_assign
-l_int|NULL
-suffix:semicolon
-id|retval-&gt;wish_block
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -935,12 +927,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Who we notify when we exit. */
-multiline_comment|/*&n;     * Initialize the fields used for mid-level queueing.&n;     */
-id|retval-&gt;pending_commands
-op_assign
-l_int|NULL
-suffix:semicolon
-id|retval-&gt;host_busy
+id|retval-&gt;host_blocked
 op_assign
 id|FALSE
 suffix:semicolon
@@ -1404,11 +1391,6 @@ c_cond
 l_string|&quot;&quot;
 suffix:colon
 l_string|&quot;s&quot;
-)paren
-suffix:semicolon
-id|scsi_make_blocked_list
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Now attach the high level drivers */

@@ -190,7 +190,7 @@ DECL|macro|ACA_RW
 mdefine_line|#define ACA_RW 0x00
 macro_line|#ifdef ENABLE_PAGING
 DECL|macro|SET_PAGE
-mdefine_line|#define SET_PAGE(x) (writeb(((x&gt;&gt;8)&amp;ti.page_mask), &bslash;&n;  ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN))
+mdefine_line|#define SET_PAGE(x) (isa_writeb(((x&gt;&gt;8)&amp;ti.page_mask), &bslash;&n;  ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN))
 macro_line|#else
 DECL|macro|SET_PAGE
 mdefine_line|#define SET_PAGE(x)

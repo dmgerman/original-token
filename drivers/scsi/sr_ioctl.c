@@ -13,7 +13,7 @@ macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &quot;sr.h&quot;
 macro_line|#if 0
-macro_line|# define DEBUG
+mdefine_line|#define DEBUG
 macro_line|#endif
 multiline_comment|/* The sr_is_xa() seems to trigger firmware bugs with some drives :-(&n; * It is off by default and can be turned on with this module parameter */
 DECL|variable|xa_test
@@ -173,15 +173,6 @@ r_char
 op_star
 id|bounce_buffer
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|SDev
 op_assign
 id|scsi_CDs
@@ -196,8 +187,6 @@ op_assign
 id|scsi_allocate_device
 c_func
 (paren
-l_int|NULL
-comma
 id|scsi_CDs
 (braket
 id|target
@@ -206,15 +195,6 @@ dot
 id|device
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* use ISA DMA buffer if necessary */
@@ -313,12 +293,10 @@ c_func
 id|SDev
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 id|scsi_wait_cmd
 c_func
 (paren
@@ -466,31 +444,12 @@ l_int|10
 )paren
 (brace
 multiline_comment|/* sleep 2 sec and try again */
-multiline_comment|/*&n;&t;&t;     * The spinlock is silly - we should really lock more of this&n;&t;&t;     * function, but the minimal locking required to not lock up&n;&t;&t;     * is around this - scsi_sleep() assumes we hold the spinlock.&n;&t;&t;     */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
 l_int|2
 op_star
 id|HZ
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -643,20 +602,11 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-multiline_comment|/* Wake up a process waiting for device*/
+multiline_comment|/* Wake up a process waiting for device */
 id|wake_up
 c_func
 (paren
@@ -673,15 +623,6 @@ suffix:semicolon
 id|SCpnt
 op_assign
 l_int|NULL
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 r_return
 id|err
@@ -724,9 +665,7 @@ id|scsi_CDs
 id|minor
 )braket
 dot
-id|device
-op_member_access_from_pointer
-id|lun
+id|device-&gt;lun
 )paren
 op_lshift
 l_int|5
@@ -813,9 +752,7 @@ id|cdi-&gt;dev
 )paren
 )braket
 dot
-id|device
-op_member_access_from_pointer
-id|lun
+id|device-&gt;lun
 )paren
 op_lshift
 l_int|5
@@ -892,6 +829,7 @@ id|lock
 (brace
 r_return
 id|scsi_ioctl
+c_func
 (paren
 id|scsi_CDs
 (braket
@@ -1312,6 +1250,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|mcn-&gt;medium_catalog_number
 comma
@@ -1770,6 +1709,7 @@ suffix:semicolon
 id|result
 op_assign
 id|sr_do_ioctl
+c_func
 (paren
 id|target
 comma
@@ -1914,8 +1854,8 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* -----------------------------------------------------------------------&n; * a function to read all sorts of funny cdrom sectors using the READ_CD&n; * scsi-3 mmc command&n; *&n; * lba:     linear block address&n; * format:  0 = data (anything)&n; *          1 = audio&n; *          2 = data (mode 1)&n; *          3 = data (mode 2)&n; *          4 = data (mode 2 form1)&n; *          5 = data (mode 2 form2)&n; * blksize: 2048 | 2336 | 2340 | 2352&n; */
-r_int
 DECL|function|sr_read_cd
+r_int
 id|sr_read_cd
 c_func
 (paren
@@ -2146,8 +2086,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * read sectors with blocksizes other than 2048&n; */
-r_int
 DECL|function|sr_read_sector
+r_int
 id|sr_read_sector
 c_func
 (paren
@@ -2244,8 +2184,9 @@ id|scsi_CDs
 id|minor
 )braket
 dot
-id|sector_size
+id|device-&gt;sector_size
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2266,6 +2207,7 @@ id|blksize
 r_return
 id|rc
 suffix:semicolon
+)brace
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -2405,8 +2347,8 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * read a sector in raw mode to check the sector format&n; * ret: 1 == mode2 (XA), 0 == mode1, &lt;0 == error &n; */
-r_int
 DECL|function|sr_is_xa
+r_int
 id|sr_is_xa
 c_func
 (paren
@@ -2422,10 +2364,6 @@ suffix:semicolon
 r_int
 id|is_xa
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2434,15 +2372,6 @@ id|xa_test
 )paren
 r_return
 l_int|0
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 id|raw_sector
 op_assign
@@ -2457,15 +2386,6 @@ c_func
 l_int|2048
 op_plus
 l_int|512
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2529,15 +2449,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|scsi_free
 c_func
 (paren
@@ -2546,15 +2457,6 @@ comma
 l_int|2048
 op_plus
 l_int|512
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG

@@ -453,12 +453,8 @@ mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (SCSI_DISK_MAJOR(MAJOR_NR))
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_sd  
 DECL|macro|TIMEOUT_VALUE
 mdefine_line|#define TIMEOUT_VALUE (2*HZ)
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_sd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (((MAJOR(device) &amp; SD_MAJOR_MASK) &lt;&lt; (8 - 4)) + (MINOR(device) &gt;&gt; 4))
 DECL|macro|DEVICE_ON
@@ -491,10 +487,6 @@ mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == SCSI_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;CD-ROM&quot;
-DECL|macro|DEVICE_INTR
-mdefine_line|#define DEVICE_INTR do_sr
-DECL|macro|DEVICE_REQUEST
-mdefine_line|#define DEVICE_REQUEST do_sr_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON
@@ -773,7 +765,7 @@ macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
-mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
+mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].request_queue.current_request)
 macro_line|#endif
 macro_line|#ifndef DEVICE_NAME
 DECL|macro|DEVICE_NAME
@@ -807,15 +799,18 @@ macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
 macro_line|#endif /* DEVICE_TIMEOUT */
+macro_line|#ifdef DEVICE_REQUEST
 r_static
 r_void
 (paren
 id|DEVICE_REQUEST
 )paren
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
+macro_line|#endif 
 macro_line|#ifdef DEVICE_INTR
 DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR SET_INTR(NULL)

@@ -11,103 +11,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-r_static
-r_int
-id|nfs_readlink
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_static
-r_struct
-id|dentry
-op_star
-id|nfs_follow_link
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-comma
-r_struct
-id|dentry
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
-DECL|variable|nfs_symlink_inode_operations
-r_struct
-id|inode_operations
-id|nfs_symlink_inode_operations
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* no file-operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-id|nfs_readlink
-comma
-multiline_comment|/* readlink */
-id|nfs_follow_link
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
 multiline_comment|/* Symlink caching in the page cache is even more simplistic&n; * and straight-forward than readdir caching.&n; */
 DECL|function|nfs_symlink_filler
 r_static
@@ -309,7 +212,7 @@ id|page
 )paren
 )paren
 r_goto
-id|followlink_read_error
+id|getlink_read_error
 suffix:semicolon
 op_star
 id|ppage
@@ -339,7 +242,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|followlink_read_error
+id|getlink_read_error
 suffix:colon
 id|page_cache_release
 c_func
@@ -391,13 +294,18 @@ id|page
 op_assign
 l_int|NULL
 suffix:semicolon
-id|u32
-id|len
-suffix:semicolon
-r_char
-op_star
-id|s
+r_int
+id|res
 op_assign
+id|vfs_readlink
+c_func
+(paren
+id|dentry
+comma
+id|buffer
+comma
+id|buflen
+comma
 id|nfs_getlink
 c_func
 (paren
@@ -406,62 +314,14 @@ comma
 op_amp
 id|page
 )paren
-suffix:semicolon
-id|UPDATE_ATIME
-c_func
-(paren
-id|dentry-&gt;d_inode
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|PTR_ERR
-c_func
-(paren
-id|s
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_ERR
-c_func
-(paren
-id|s
+id|page
 )paren
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|len
-op_assign
-id|strlen
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-id|buflen
-)paren
-id|len
-op_assign
-id|buflen
-suffix:semicolon
-id|copy_to_user
-c_func
-(paren
-id|buffer
-comma
-id|s
-comma
-id|len
-)paren
-suffix:semicolon
+(brace
 id|kunmap
 c_func
 (paren
@@ -474,10 +334,9 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|out
-suffix:colon
+)brace
 r_return
-id|len
+id|res
 suffix:semicolon
 )brace
 r_static
@@ -504,21 +363,26 @@ id|follow
 )paren
 (brace
 r_struct
-id|dentry
-op_star
-id|result
-suffix:semicolon
-r_struct
 id|page
 op_star
 id|page
 op_assign
 l_int|NULL
 suffix:semicolon
-r_char
+r_struct
+id|dentry
 op_star
-id|s
+id|res
 op_assign
+id|vfs_follow_link
+c_func
+(paren
+id|dentry
+comma
+id|base
+comma
+id|follow
+comma
 id|nfs_getlink
 c_func
 (paren
@@ -527,37 +391,14 @@ comma
 op_amp
 id|page
 )paren
-suffix:semicolon
-id|UPDATE_ATIME
-c_func
-(paren
-id|dentry-&gt;d_inode
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_ERR
-c_func
-(paren
-id|s
+id|page
 )paren
-)paren
-r_goto
-id|fail
-suffix:semicolon
-id|result
-op_assign
-id|lookup_dentry
-c_func
-(paren
-id|s
-comma
-id|base
-comma
-id|follow
-)paren
-suffix:semicolon
+(brace
 id|kunmap
 c_func
 (paren
@@ -570,18 +411,26 @@ c_func
 id|page
 )paren
 suffix:semicolon
+)brace
 r_return
-id|result
-suffix:semicolon
-id|fail
-suffix:colon
-r_return
-(paren
-r_struct
-id|dentry
-op_star
-)paren
-id|s
+id|res
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
+DECL|variable|nfs_symlink_inode_operations
+r_struct
+id|inode_operations
+id|nfs_symlink_inode_operations
+op_assign
+(brace
+id|readlink
+suffix:colon
+id|nfs_readlink
+comma
+id|follow_link
+suffix:colon
+id|nfs_follow_link
+comma
+)brace
+suffix:semicolon
 eof

@@ -659,7 +659,8 @@ r_void
 id|do_aztcd_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -6412,7 +6413,9 @@ r_void
 id|do_aztcd_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 macro_line|#ifdef AZT_TEST
@@ -8070,14 +8073,17 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|DEVICE_REQUEST
+)paren
 suffix:semicolon
 macro_line|#ifndef AZT_KERNEL_PRIOR_2_1
 id|blksize_size

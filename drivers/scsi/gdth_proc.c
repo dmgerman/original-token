@@ -5739,11 +5739,6 @@ id|scp-&gt;SCp.this_residual
 op_assign
 id|IOCTL_PRI
 suffix:semicolon
-id|GDTH_LOCK_SCSI_DOCMD
-c_func
-(paren
-)paren
-suffix:semicolon
 id|scsi_do_cmd
 c_func
 (paren
@@ -5765,11 +5760,6 @@ op_star
 id|HZ
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|GDTH_UNLOCK_SCSI_DOCMD
-c_func
-(paren
 )paren
 suffix:semicolon
 id|down

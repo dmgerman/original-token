@@ -370,9 +370,7 @@ r_struct
 id|ide_drive_s
 (brace
 DECL|member|queue
-r_struct
-id|request
-op_star
+id|request_queue_t
 id|queue
 suffix:semicolon
 multiline_comment|/* request queue */
@@ -2347,9 +2345,7 @@ id|timeout
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * ide_get_queue() returns the queue which corresponds to a given device.&n; */
-r_struct
-id|request
-op_star
+id|request_queue_t
 op_star
 id|ide_get_queue
 (paren
@@ -2416,14 +2412,18 @@ suffix:semicolon
 r_void
 id|do_ide0_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#if MAX_HWIFS &gt; 1
 r_void
 id|do_ide1_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2431,7 +2431,9 @@ macro_line|#if MAX_HWIFS &gt; 2
 r_void
 id|do_ide2_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2439,7 +2441,9 @@ macro_line|#if MAX_HWIFS &gt; 3
 r_void
 id|do_ide3_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2447,7 +2451,9 @@ macro_line|#if MAX_HWIFS &gt; 4
 r_void
 id|do_ide4_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2455,7 +2461,9 @@ macro_line|#if MAX_HWIFS &gt; 5
 r_void
 id|do_ide5_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2463,7 +2471,9 @@ macro_line|#if MAX_HWIFS &gt; 6
 r_void
 id|do_ide6_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2471,7 +2481,9 @@ macro_line|#if MAX_HWIFS &gt; 7
 r_void
 id|do_ide7_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2479,7 +2491,9 @@ macro_line|#if MAX_HWIFS &gt; 8
 r_void
 id|do_ide8_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2487,7 +2501,9 @@ macro_line|#if MAX_HWIFS &gt; 9
 r_void
 id|do_ide9_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -2553,6 +2553,7 @@ r_int
 id|retries
 suffix:semicolon
 id|Scsi_Cmnd
+op_star
 id|cmd
 suffix:semicolon
 r_struct
@@ -2639,6 +2640,41 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* prepare stusblock */
+id|cmd
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+op_star
+id|cmd
+)paren
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ibmmca: out of memory for inquiry.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2646,7 +2682,7 @@ id|bypass_controller
 )paren
 (brace
 multiline_comment|/* fill the commonly known field for device-inquiry SCSI cmnd */
-id|cmd.cmd_len
+id|cmd-&gt;cmd_len
 op_assign
 l_int|6
 suffix:semicolon
@@ -2654,7 +2690,7 @@ id|memset
 (paren
 op_amp
 (paren
-id|cmd.cmnd
+id|cmd-&gt;cmnd
 )paren
 comma
 l_int|0x0
@@ -2664,10 +2700,10 @@ r_sizeof
 r_char
 )paren
 op_star
-id|cmd.cmd_len
+id|cmd-&gt;cmd_len
 )paren
 suffix:semicolon
-id|cmd.cmnd
+id|cmd-&gt;cmnd
 (braket
 l_int|0
 )braket
@@ -2675,7 +2711,7 @@ op_assign
 id|INQUIRY
 suffix:semicolon
 multiline_comment|/* device inquiry */
-id|cmd.cmnd
+id|cmd-&gt;cmnd
 (braket
 l_int|4
 )braket
@@ -2718,7 +2754,7 @@ id|IM_SUPRESS_EXCEPTION_SHORT
 suffix:semicolon
 id|scb-&gt;u1.scsi_cmd_length
 op_assign
-id|cmd.cmd_len
+id|cmd-&gt;cmd_len
 suffix:semicolon
 id|memcpy
 (paren
@@ -2726,10 +2762,10 @@ id|scb-&gt;u2.scsi_command
 comma
 op_amp
 (paren
-id|cmd.cmnd
+id|cmd-&gt;cmnd
 )paren
 comma
-id|cmd.cmd_len
+id|cmd-&gt;cmd_len
 )paren
 suffix:semicolon
 id|last_scsi_command
@@ -2880,6 +2916,12 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+id|kfree
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 multiline_comment|/*if all three retries failed, return &quot;no device at this ldn&quot; */
 r_if
 c_cond
@@ -6004,7 +6046,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Adapter cathegory: integrated&bslash;n&quot;
+l_string|&quot;Adapter category: integrated&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -6110,7 +6152,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Adapter cathegory: slot-card&bslash;n&quot;
+l_string|&quot;Adapter category: slot-card&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -6188,7 +6230,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;Adapter cathegory: unknown&bslash;n&quot;
+l_string|&quot;Adapter category: unknown&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -6235,7 +6277,7 @@ l_int|7
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Now make sure, the bufferlength is devideable by 4 to avoid&n;    * paging problems of the buffer. */
+multiline_comment|/* Now make sure, the bufferlength is divisible by 4 to avoid&n;    * paging problems of the buffer. */
 r_while
 c_loop
 (paren
@@ -6507,7 +6549,7 @@ c_func
 (paren
 id|MCA_INTEGSCSI
 comma
-l_string|&quot;forced detected SCSI Adapter&quot;
+l_string|&quot;forcibly detected SCSI Adapter&quot;
 )paren
 suffix:semicolon
 id|mca_set_adapter_procfn

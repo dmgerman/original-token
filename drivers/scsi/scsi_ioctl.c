@@ -17,8 +17,8 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|macro|NORMAL_RETRIES
 mdefine_line|#define NORMAL_RETRIES&t;&t;&t;5
-DECL|macro|NORMAL_TIMEOUT
-mdefine_line|#define NORMAL_TIMEOUT&t;&t;&t;(10 * HZ)
+DECL|macro|IOCTL_NORMAL_TIMEOUT
+mdefine_line|#define IOCTL_NORMAL_TIMEOUT&t;&t;&t;(10 * HZ)
 DECL|macro|FORMAT_UNIT_TIMEOUT
 mdefine_line|#define FORMAT_UNIT_TIMEOUT&t;&t;(2 * 60 * 60 * HZ)
 DECL|macro|START_STOP_TIMEOUT
@@ -195,7 +195,7 @@ r_return
 id|temp
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The NORMAL_TIMEOUT and NORMAL_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
+multiline_comment|/*&n;&n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The IOCTL_NORMAL_TIMEOUT and NORMAL_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
 DECL|function|scsi_ioctl_done
 r_static
 r_void
@@ -260,10 +260,6 @@ id|retries
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|result
 suffix:semicolon
 id|Scsi_Cmnd
@@ -273,15 +269,6 @@ suffix:semicolon
 id|Scsi_Device
 op_star
 id|SDpnt
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 id|SCSI_LOG_IOCTL
 c_func
@@ -305,8 +292,6 @@ op_assign
 id|scsi_allocate_device
 c_func
 (paren
-l_int|NULL
-comma
 id|dev
 comma
 l_int|1
@@ -342,29 +327,11 @@ comma
 id|retries
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|down
 c_func
 (paren
 op_amp
 id|sem
-)paren
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|SCpnt-&gt;request.sem
@@ -567,21 +534,6 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|SDpnt-&gt;was_reset
-op_logical_and
-id|SDpnt-&gt;scsi_request_fn
-)paren
-(paren
-op_star
-id|SDpnt-&gt;scsi_request_fn
-)paren
-(paren
-)paren
-suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -589,22 +541,13 @@ op_amp
 id|SDpnt-&gt;device_wait
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This interface is depreciated - users should use the scsi generic (sg)&n; * interface instead, as this is a more flexible approach to performing&n; * generic SCSI commands on a device.&n; *&n; * The structure that we are passed should look like:&n; *&n; * struct sdata {&n; *  unsigned int inlen;&t;     [i] Length of data to be written to device &n; *  unsigned int outlen;     [i] Length of data to be read from device &n; *  unsigned char cmd[x];    [i] SCSI command (6 &lt;= x &lt;= 12).&n; *&t;&t;&t;     [o] Data read from device starts here.&n; *&t;&t;&t;     [o] On error, sense buffer starts here.&n; *  unsigned char wdata[y];  [i] Data written to device starts here.&n; * };&n; * Notes:&n; *   -&t;The SCSI command length is determined by examining the 1st byte&n; *&t;of the given command. There is no way to override this.&n; *   -&t;Data transfers are limited to PAGE_SIZE (4K on i386, 8K on alpha).&n; *   -&t;The length (x + y) must be at least OMAX_SB_LEN bytes long to&n; *&t;accomodate the sense buffer when an error occurs.&n; *&t;The sense buffer is truncated to OMAX_SB_LEN (16) bytes so that&n; *&t;old code will not be surprised.&n; *   -&t;If a Unix error occurs (e.g. ENOMEM) then the user will receive&n; *&t;a negative return and the Unix error code in &squot;errno&squot;. &n; *&t;If the SCSI command succeeds then 0 is returned.&n; *&t;Positive numbers returned are the compacted SCSI error codes (4 &n; *&t;bytes in one int) where the lowest byte is the SCSI status.&n; *&t;See the drivers/scsi/scsi.h file for more information on this.&n; *&n; */
+multiline_comment|/*&n; * This interface is depreciated - users should use the scsi generic (sg)&n; * interface instead, as this is a more flexible approach to performing&n; * generic SCSI commands on a device.&n; *&n; * The structure that we are passed should look like:&n; *&n; * struct sdata {&n; *  unsigned int inlen;      [i] Length of data to be written to device &n; *  unsigned int outlen;     [i] Length of data to be read from device &n; *  unsigned char cmd[x];    [i] SCSI command (6 &lt;= x &lt;= 12).&n; *                           [o] Data read from device starts here.&n; *                           [o] On error, sense buffer starts here.&n; *  unsigned char wdata[y];  [i] Data written to device starts here.&n; * };&n; * Notes:&n; *   -  The SCSI command length is determined by examining the 1st byte&n; *      of the given command. There is no way to override this.&n; *   -  Data transfers are limited to PAGE_SIZE (4K on i386, 8K on alpha).&n; *   -  The length (x + y) must be at least OMAX_SB_LEN bytes long to&n; *      accomodate the sense buffer when an error occurs.&n; *      The sense buffer is truncated to OMAX_SB_LEN (16) bytes so that&n; *      old code will not be surprised.&n; *   -  If a Unix error occurs (e.g. ENOMEM) then the user will receive&n; *      a negative return and the Unix error code in &squot;errno&squot;. &n; *      If the SCSI command succeeds then 0 is returned.&n; *      Positive numbers returned are the compacted SCSI error codes (4 &n; *      bytes in one int) where the lowest byte is the SCSI status.&n; *      See the drivers/scsi/scsi.h file for more information on this.&n; *&n; */
 DECL|macro|OMAX_SB_LEN
-mdefine_line|#define OMAX_SB_LEN 16   /* Old sense buffer length */
+mdefine_line|#define OMAX_SB_LEN 16&t;&t;/* Old sense buffer length */
 DECL|function|scsi_ioctl_send_command
 r_int
 id|scsi_ioctl_send_command
@@ -619,10 +562,6 @@ op_star
 id|sic
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_char
 op_star
 id|buf
@@ -799,15 +738,6 @@ id|buf_needed
 op_assign
 id|MAX_BUF
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|buf
 op_assign
 (paren
@@ -818,15 +748,6 @@ id|scsi_malloc
 c_func
 (paren
 id|buf_needed
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -992,7 +913,7 @@ r_default
 suffix:colon
 id|timeout
 op_assign
-id|NORMAL_TIMEOUT
+id|IOCTL_NORMAL_TIMEOUT
 suffix:semicolon
 id|retries
 op_assign
@@ -1002,22 +923,11 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#ifndef DEBUG_NO_CMD
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|SCpnt
 op_assign
 id|scsi_allocate_device
 c_func
 (paren
-l_int|NULL
-comma
 id|dev
 comma
 l_int|1
@@ -1051,15 +961,6 @@ comma
 id|timeout
 comma
 id|retries
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 id|down
@@ -1170,15 +1071,6 @@ id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -1211,27 +1103,6 @@ c_func
 id|buf
 comma
 id|buf_needed
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SDpnt-&gt;scsi_request_fn
-)paren
-(paren
-op_star
-id|SDpnt-&gt;scsi_request_fn
-)paren
-(paren
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1720,7 +1591,7 @@ id|dev
 comma
 id|scsi_cmd
 comma
-id|NORMAL_TIMEOUT
+id|IOCTL_NORMAL_TIMEOUT
 comma
 id|NORMAL_RETRIES
 )paren
@@ -1794,7 +1665,7 @@ id|dev
 comma
 id|scsi_cmd
 comma
-id|NORMAL_TIMEOUT
+id|IOCTL_NORMAL_TIMEOUT
 comma
 id|NORMAL_RETRIES
 )paren
@@ -1854,7 +1725,7 @@ id|dev
 comma
 id|scsi_cmd
 comma
-id|NORMAL_TIMEOUT
+id|IOCTL_NORMAL_TIMEOUT
 comma
 id|NORMAL_RETRIES
 )paren

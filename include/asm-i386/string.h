@@ -1,6 +1,7 @@
 macro_line|#ifndef _I386_STRING_H_
 DECL|macro|_I386_STRING_H_
 mdefine_line|#define _I386_STRING_H_
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * On a 486 or Pentium, we are better off not using the&n; * byte string operations. But on a 386 or a PPro the&n; * byte string ops are faster than doing it by hand&n; * (MUCH faster on a Pentium).&n; *&n; * Also, the byte strings actually work correctly. Forget&n; * the i486 routines for now as they may be broken..&n; */
 macro_line|#if FIXED_486_STRING &amp;&amp; (CPU == 486 || CPU == 586)
 macro_line|#include &lt;asm/string-486.h&gt;
@@ -37,7 +38,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;testb %%al,%%al&bslash;n&bslash;t&quot;
@@ -111,7 +111,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&quot;
 l_string|&quot;1:&bslash;tdecl %2&bslash;n&bslash;t&quot;
 l_string|&quot;js 2f&bslash;n&bslash;t&quot;
 l_string|&quot;lodsb&bslash;n&bslash;t&quot;
@@ -197,7 +196,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;decl %1&bslash;n&quot;
@@ -289,7 +287,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;decl %1&bslash;n&bslash;t&quot;
@@ -388,7 +385,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;jne 2f&bslash;n&bslash;t&quot;
@@ -468,7 +464,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&quot;
 l_string|&quot;1:&bslash;tdecl %3&bslash;n&bslash;t&quot;
 l_string|&quot;js 2f&bslash;n&bslash;t&quot;
 l_string|&quot;lodsb&bslash;n&bslash;t&quot;
@@ -553,7 +548,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movb %%al,%%ah&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;cmpb %%ah,%%al&bslash;n&bslash;t&quot;
@@ -622,7 +616,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movb %%al,%%ah&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;cmpb %%ah,%%al&bslash;n&bslash;t&quot;
@@ -692,7 +685,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;notl %0&bslash;n&bslash;t&quot;
@@ -760,7 +752,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
 l_string|&quot;testb $2,%b4&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
@@ -1366,7 +1357,7 @@ id|to
 suffix:semicolon
 )brace
 DECL|macro|COMMON
-mdefine_line|#define COMMON(x) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; movsl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1), &quot;=&amp;S&quot; (d2) &bslash;&n;&t;: &quot;0&quot; (n/4),&quot;1&quot; ((long) to),&quot;2&quot; ((long) from) &bslash;&n;&t;: &quot;memory&quot;);
+mdefine_line|#define COMMON(x) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;rep ; movsl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1), &quot;=&amp;S&quot; (d2) &bslash;&n;&t;: &quot;0&quot; (n/4),&quot;1&quot; ((long) to),&quot;2&quot; ((long) from) &bslash;&n;&t;: &quot;memory&quot;);
 (brace
 r_int
 id|d0
@@ -1570,6 +1561,16 @@ multiline_comment|/*&n; *&t;No 3D Now!&n; */
 DECL|macro|memcpy
 mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy((t),(f),(n)) : &bslash;&n; __memcpy((t),(f),(n)))
 macro_line|#endif
+multiline_comment|/*&n; * struct_cpy(x,y), copy structure *x into (matching structure) *y.&n; *&n; * We get link-time errors if the structure sizes do not match.&n; * There is no runtime overhead, it&squot;s all optimized away at&n; * compile time.&n; */
+r_extern
+r_void
+id|__struct_cpy_bug
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|struct_cpy
+mdefine_line|#define struct_cpy(x,y) &t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (sizeof(*(x)) != sizeof(*(y))) &t;&bslash;&n;&t;&t;__struct_cpy_bug;&t;&t;&bslash;&n;&t;memcpy(x, y, sizeof(*(x)));&t;&t;&bslash;&n;})
 DECL|macro|__HAVE_ARCH_MEMMOVE
 mdefine_line|#define __HAVE_ARCH_MEMMOVE
 DECL|function|memmove
@@ -1611,7 +1612,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&quot;
 suffix:colon
@@ -1757,7 +1757,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
@@ -1822,7 +1821,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&quot;
 suffix:colon
@@ -1891,7 +1889,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; stosl&bslash;n&bslash;t&quot;
 l_string|&quot;testb $2,%b3&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
@@ -2124,7 +2121,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|macro|COMMON
-mdefine_line|#define COMMON(x) &bslash;&n;__asm__  __volatile__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep ; stosl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1) &bslash;&n;&t;: &quot;a&quot; (pattern),&quot;0&quot; (count/4),&quot;1&quot; ((long) s) &bslash;&n;&t;: &quot;memory&quot;)
+mdefine_line|#define COMMON(x) &bslash;&n;__asm__  __volatile__( &bslash;&n;&t;&quot;rep ; stosl&quot; &bslash;&n;&t;x &bslash;&n;&t;: &quot;=&amp;c&quot; (d0), &quot;=&amp;D&quot; (d1) &bslash;&n;&t;: &quot;a&quot; (pattern),&quot;0&quot; (count/4),&quot;1&quot; ((long) s) &bslash;&n;&t;: &quot;memory&quot;)
 (brace
 r_int
 id|d0
@@ -2234,7 +2231,6 @@ id|__asm__
 c_func
 (paren
 "&quot;"
-id|cld
 id|repnz
 suffix:semicolon
 id|scasb
@@ -2278,6 +2274,7 @@ r_return
 id|addr
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 macro_line|#endif
 eof

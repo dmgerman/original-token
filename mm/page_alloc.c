@@ -2049,14 +2049,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|p-&gt;flags
-op_assign
-(paren
-l_int|1
-op_lshift
-id|PG_DMA
-)paren
-suffix:semicolon
 id|SetPageReserved
 c_func
 (paren

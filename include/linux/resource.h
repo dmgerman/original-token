@@ -98,9 +98,6 @@ suffix:semicolon
 multiline_comment|/* involuntary &quot; */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * SuS says limits have to be unsigned.&n; *&n; * Which makes a ton more sense anyway.&n; */
-DECL|macro|RLIM_INFINITY
-mdefine_line|#define RLIM_INFINITY&t;(~0UL)
 DECL|struct|rlimit
 r_struct
 id|rlimit

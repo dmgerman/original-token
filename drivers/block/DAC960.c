@@ -4206,7 +4206,8 @@ id|DAC960_MaxControllers
 )braket
 )paren
 (paren
-r_void
+id|request_queue_t
+op_star
 )paren
 op_assign
 (brace
@@ -4274,17 +4275,20 @@ l_bool|false
 suffix:semicolon
 )brace
 multiline_comment|/*&n;    Initialize the I/O Request Function.&n;  */
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MajorNumber
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|RequestFunctions
 (braket
 id|Controller-&gt;ControllerNumber
 )braket
+)paren
 suffix:semicolon
 multiline_comment|/*&n;    Initialize the Disk Partitions array, Partition Sizes array, Block Sizes&n;    array, Max Sectors per Request array, and Max Segments per Request array.&n;  */
 r_for
@@ -4468,14 +4472,15 @@ l_string|&quot;rd&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    Remove the I/O Request Function.&n;  */
-id|blk_dev
-(braket
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MajorNumber
-)braket
-dot
-id|request_fn
-op_assign
-l_int|NULL
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;    Remove the Disk Partitions array, Partition Sizes array, Block Sizes&n;    array, Max Sectors per Request array, and Max Segments per Request array.&n;  */
 id|Controller-&gt;GenericDiskInfo.part
@@ -5075,7 +5080,7 @@ op_plus
 id|Controller-&gt;ControllerNumber
 )braket
 dot
-id|current_request
+id|request_queue.current_request
 suffix:semicolon
 id|IO_Request_T
 op_star
@@ -5514,7 +5519,9 @@ r_void
 id|DAC960_RequestFunction0
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5564,7 +5571,9 @@ r_void
 id|DAC960_RequestFunction1
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5614,7 +5623,9 @@ r_void
 id|DAC960_RequestFunction2
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5664,7 +5675,9 @@ r_void
 id|DAC960_RequestFunction3
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5714,7 +5727,9 @@ r_void
 id|DAC960_RequestFunction4
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5764,7 +5779,9 @@ r_void
 id|DAC960_RequestFunction5
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5814,7 +5831,9 @@ r_void
 id|DAC960_RequestFunction6
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T
@@ -5864,7 +5883,9 @@ r_void
 id|DAC960_RequestFunction7
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|DAC960_Controller_T

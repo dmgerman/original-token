@@ -562,7 +562,6 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movl $-1,%%eax&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%edx,%%edx&bslash;n&bslash;t&quot;
 l_string|&quot;repe; scasl&bslash;n&bslash;t&quot;

@@ -1,8 +1,7 @@
 macro_line|#ifndef LINUX_UMSDOS_FS_H
 DECL|macro|LINUX_UMSDOS_FS_H
 mdefine_line|#define LINUX_UMSDOS_FS_H
-DECL|macro|UMS_DEBUG
-mdefine_line|#define UMS_DEBUG 1&t;/* define for check_* functions */
+multiline_comment|/*#define UMS_DEBUG 1&t;// define for check_* functions */
 multiline_comment|/*#define UMSDOS_DEBUG 1*/
 DECL|macro|UMSDOS_PARANOIA
 mdefine_line|#define UMSDOS_PARANOIA 1

@@ -2078,9 +2078,8 @@ suffix:semicolon
 id|mpnt-&gt;vm_pgoff
 op_assign
 id|area-&gt;vm_pgoff
-suffix:semicolon
-id|area-&gt;vm_pgoff
-op_add_assign
+op_plus
+(paren
 (paren
 id|end
 op_minus
@@ -2088,6 +2087,7 @@ id|area-&gt;vm_start
 )paren
 op_rshift
 id|PAGE_SHIFT
+)paren
 suffix:semicolon
 id|mpnt-&gt;vm_file
 op_assign

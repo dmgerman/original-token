@@ -270,4 +270,30 @@ suffix:semicolon
 multiline_comment|/* parse */
 )brace
 )brace
+multiline_comment|/* drm_cpu_valid returns non-zero if the DRI will run on this CPU, and 0&n; * otherwise. */
+DECL|function|drm_cpu_valid
+r_int
+id|drm_cpu_valid
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined(__i386__)
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+op_eq
+l_int|3
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* No cmpxchg on a 386 */
+macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
+)brace
 eof

@@ -1731,6 +1731,11 @@ r_struct
 id|inode_operations
 id|ext2_symlink_inode_operations
 suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|ext2_fast_symlink_inode_operations
+suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_EXT2_FS_H */
 eof

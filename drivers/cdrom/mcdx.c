@@ -475,7 +475,9 @@ r_void
 id|do_mcdx_request
 c_func
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 multiline_comment|/* already declared in init/main */
@@ -2204,6 +2206,9 @@ r_void
 id|do_mcdx_request
 c_func
 (paren
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 r_int
@@ -4816,14 +4821,17 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|blk_dev
-(braket
+id|blk_init_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
+)paren
+comma
 id|DEVICE_REQUEST
+)paren
 suffix:semicolon
 id|read_ahead
 (braket

@@ -1397,7 +1397,7 @@ id|rq-&gt;rq_dev
 )paren
 )paren
 suffix:semicolon
-id|hwgroup-&gt;drive-&gt;queue
+id|hwgroup-&gt;drive-&gt;queue.current_request
 op_assign
 id|rq-&gt;next
 suffix:semicolon
@@ -1410,7 +1410,7 @@ id|rq-&gt;rq_dev
 )paren
 )braket
 dot
-id|current_request
+id|request_queue.current_request
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2521,7 +2521,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 op_assign
 id|rq-&gt;next
 suffix:semicolon
@@ -2534,7 +2534,7 @@ id|rq-&gt;rq_dev
 )paren
 )braket
 dot
-id|current_request
+id|request_queue.current_request
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -4265,7 +4265,7 @@ id|request
 op_star
 id|rq
 op_assign
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 suffix:semicolon
 r_int
 r_int
@@ -4703,7 +4703,7 @@ r_do
 r_if
 c_cond
 (paren
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 op_logical_and
 (paren
 op_logical_neg
@@ -4796,15 +4796,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bdev-&gt;current_request
-op_ne
-op_amp
-id|bdev-&gt;plug
+op_logical_neg
+id|bdev-&gt;request_queue.plugged
 )paren
+(brace
 id|best
 op_assign
 id|drive
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -5056,16 +5056,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bdev-&gt;current_request
-op_ne
-op_amp
-id|bdev-&gt;plug
+op_logical_neg
+id|bdev-&gt;request_queue.plugged
 )paren
-multiline_comment|/* FIXME: this will do for now */
-id|bdev-&gt;current_request
+(brace
+id|bdev-&gt;request_queue.current_request
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 multiline_comment|/* (broken since patch-2.1.15) */
 r_if
 c_cond
@@ -5252,11 +5251,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bdev-&gt;current_request
-op_eq
-op_amp
-id|bdev-&gt;plug
+id|bdev-&gt;request_queue.plugged
 )paren
+(brace
 multiline_comment|/* FIXME: paranoia */
 id|printk
 c_func
@@ -5266,11 +5263,12 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-id|bdev-&gt;current_request
+)brace
+id|bdev-&gt;request_queue.current_request
 op_assign
 id|hwgroup-&gt;rq
 op_assign
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 suffix:semicolon
 id|spin_unlock
 c_func
@@ -5321,9 +5319,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * ide_get_queue() returns the queue which corresponds to a given device.&n; */
 DECL|function|ide_get_queue
-r_struct
-id|request
-op_star
+id|request_queue_t
 op_star
 id|ide_get_queue
 (paren
@@ -5370,7 +5366,9 @@ DECL|function|do_ide0_request
 r_void
 id|do_ide0_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5389,7 +5387,9 @@ DECL|function|do_ide1_request
 r_void
 id|do_ide1_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5409,7 +5409,9 @@ DECL|function|do_ide2_request
 r_void
 id|do_ide2_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5429,7 +5431,9 @@ DECL|function|do_ide3_request
 r_void
 id|do_ide3_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5449,7 +5453,9 @@ DECL|function|do_ide4_request
 r_void
 id|do_ide4_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5469,7 +5475,9 @@ DECL|function|do_ide5_request
 r_void
 id|do_ide5_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5489,7 +5497,9 @@ DECL|function|do_ide6_request
 r_void
 id|do_ide6_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5509,7 +5519,9 @@ DECL|function|do_ide7_request
 r_void
 id|do_ide7_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5529,7 +5541,9 @@ DECL|function|do_ide8_request
 r_void
 id|do_ide8_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -5549,7 +5563,9 @@ DECL|function|do_ide9_request
 r_void
 id|do_ide9_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 (brace
 id|ide_do_request
@@ -6746,7 +6762,7 @@ id|flags
 suffix:semicolon
 id|cur_rq
 op_assign
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 suffix:semicolon
 r_if
 c_cond
@@ -6764,7 +6780,7 @@ id|rq-&gt;next
 op_assign
 id|cur_rq
 suffix:semicolon
-id|drive-&gt;queue
+id|drive-&gt;queue.current_request
 op_assign
 id|rq
 suffix:semicolon
@@ -8337,14 +8353,15 @@ id|hwif-&gt;major
 )braket
 )paren
 suffix:semicolon
-id|blk_dev
-(braket
+id|blk_cleanup_queue
+c_func
+(paren
+id|BLK_DEFAULT_QUEUE
+c_func
+(paren
 id|hwif-&gt;major
-)braket
-dot
-id|request_fn
-op_assign
-l_int|NULL
+)paren
+)paren
 suffix:semicolon
 id|blk_dev
 (braket

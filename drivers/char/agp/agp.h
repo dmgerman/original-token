@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight&n; * Copyright (C) 1999 Xi Graphics&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
+multiline_comment|/*&n; * AGPGART module version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight, Inc.&n; * Copyright (C) 1999 Xi Graphics, Inc.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
 macro_line|#ifndef _AGP_BACKEND_PRIV_H
 DECL|macro|_AGP_BACKEND_PRIV_H
 mdefine_line|#define _AGP_BACKEND_PRIV_H 1
@@ -264,7 +264,6 @@ id|fetch_size
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* returns the index into the size table */
 DECL|member|configure
 r_int
 (paren
@@ -405,7 +404,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Links to vendor/device specific setup functions */
-macro_line|#ifdef AGP_BUILD_INTEL_GENERIC
+macro_line|#ifdef CONFIG_AGP_INTEL
 DECL|member|intel_generic_setup
 r_void
 (paren
@@ -417,7 +416,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_INTEL_I810
+macro_line|#ifdef CONFIG_AGP_I810
 DECL|member|intel_i810_setup
 r_void
 (paren
@@ -431,7 +430,7 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_VIA_GENERIC
+macro_line|#ifdef CONFIG_AGP_VIA
 DECL|member|via_generic_setup
 r_void
 (paren
@@ -443,7 +442,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_SIS_GENERIC
+macro_line|#ifdef CONFIG_AGP_SIS
 DECL|member|sis_generic_setup
 r_void
 (paren
@@ -455,7 +454,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_AMD_IRONGATE
+macro_line|#ifdef CONFIG_AGP_AMD
 DECL|member|amd_irongate_setup
 r_void
 (paren
@@ -467,7 +466,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AGP_BUILD_ALI_M1541
+macro_line|#ifdef CONFIG_AGP_ALI
 DECL|member|ali_generic_setup
 r_void
 (paren
@@ -493,9 +492,29 @@ DECL|macro|INREG16
 mdefine_line|#define INREG16(mmap, addr)         *(volatile u16 *)(mmap + (addr))
 DECL|macro|INREG8
 mdefine_line|#define INREG8 (mmap, addr)         *(volatile u8 *) (mmap + (addr))
+DECL|macro|CACHE_FLUSH
+mdefine_line|#define CACHE_FLUSH&t;agp_bridge.cache_flush
+DECL|macro|A_SIZE_8
+mdefine_line|#define A_SIZE_8(x)&t;((aper_size_info_8 *) x)
+DECL|macro|A_SIZE_16
+mdefine_line|#define A_SIZE_16(x)&t;((aper_size_info_16 *) x)
+DECL|macro|A_SIZE_32
+mdefine_line|#define A_SIZE_32(x)&t;((aper_size_info_32 *) x)
+DECL|macro|A_SIZE_FIX
+mdefine_line|#define A_SIZE_FIX(x)&t;((aper_size_info_fixed *) x)
+DECL|macro|A_IDX8
+mdefine_line|#define A_IDX8()&t;(A_SIZE_8(agp_bridge.aperture_sizes) + i)
+DECL|macro|A_IDX16
+mdefine_line|#define A_IDX16()&t;(A_SIZE_16(agp_bridge.aperture_sizes) + i)
+DECL|macro|A_IDX32
+mdefine_line|#define A_IDX32()&t;(A_SIZE_32(agp_bridge.aperture_sizes) + i)
+DECL|macro|A_IDXFIX
+mdefine_line|#define A_IDXFIX()&t;(A_SIZE_FIX(agp_bridge.aperture_sizes) + i)
+DECL|macro|MAXKEY
+mdefine_line|#define MAXKEY&t;&t;(4096 * 32)
 macro_line|#ifndef min
 DECL|macro|min
-mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))
+mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
 macro_line|#endif
 DECL|macro|PGE_EMPTY
 mdefine_line|#define PGE_EMPTY(p) (!(p) || (p) == (unsigned long) agp_bridge.scratch_page)

@@ -20,7 +20,7 @@ id|ntfs_volume
 op_star
 id|vol
 comma
-r_int
+id|ntfs_u64
 op_star
 id|vol_size
 )paren

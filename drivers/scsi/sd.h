@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    sd.h Copyright (C) 1992 Drew Eckhardt &n; *      SCSI disk driver header file by&n; *              Drew Eckhardt &n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@aib.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *    sd.h Copyright (C) 1992 Drew Eckhardt &n; *      SCSI disk driver header file by&n; *              Drew Eckhardt &n; *&n; *      &lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale eric@andante.org to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#ifndef _SD_H
 DECL|macro|_SD_H
 mdefine_line|#define _SD_H
@@ -25,11 +25,6 @@ r_int
 id|capacity
 suffix:semicolon
 multiline_comment|/* size in blocks */
-DECL|member|sector_size
-r_int
-id|sector_size
-suffix:semicolon
-multiline_comment|/* size in bytes */
 DECL|member|device
 id|Scsi_Device
 op_star
@@ -59,20 +54,6 @@ r_char
 id|sector_bit_shift
 suffix:semicolon
 multiline_comment|/* power of 2 sectors per FS block */
-DECL|member|ten
-r_int
-id|ten
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* support ten byte read / write */
-DECL|member|remap
-r_int
-id|remap
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* support remapping  */
 DECL|member|has_part_table
 r_int
 id|has_part_table

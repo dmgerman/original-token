@@ -48,6 +48,19 @@ op_minus
 id|EBUSY
 suffix:semicolon
 multiline_comment|/* No exclusive opens */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|drm_cpu_valid
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren

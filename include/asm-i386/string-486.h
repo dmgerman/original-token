@@ -632,7 +632,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movb %%al,%%ah&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;cmpb %%ah,%%al&bslash;n&bslash;t&quot;
@@ -710,7 +709,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -807,7 +805,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -904,7 +901,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -1003,8 +999,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-"&bslash;"
 l_string|&quot;movl %6,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -1240,7 +1234,6 @@ l_string|&quot;movl %0,%1&bslash;n&quot;
 l_string|&quot;1:&bslash;txorl %0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;movl $-1,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;xorl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;movl %4,%%edi&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
@@ -1561,7 +1554,6 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;shrl $1,%%ecx&bslash;n&bslash;t&quot;
 l_string|&quot;jnc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&quot;
@@ -1805,7 +1797,6 @@ id|src
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&quot;
 suffix:colon
@@ -1941,7 +1932,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repe&bslash;n&bslash;t&quot;
 l_string|&quot;cmpsb&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
@@ -2037,7 +2027,6 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;repne&bslash;n&bslash;t&quot;
 l_string|&quot;scasb&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
@@ -2636,7 +2625,6 @@ id|__asm__
 c_func
 (paren
 "&quot;"
-id|cld
 id|repnz
 suffix:semicolon
 id|scasb

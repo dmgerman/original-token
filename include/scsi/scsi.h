@@ -112,8 +112,16 @@ DECL|macro|LOG_SENSE
 mdefine_line|#define LOG_SENSE             0x4d
 DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10        0x55
+DECL|macro|RESERVE_10
+mdefine_line|#define RESERVE_10            0x56
+DECL|macro|RELEASE_10
+mdefine_line|#define RELEASE_10            0x57
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10         0x5a
+DECL|macro|PERSISTENT_RESERVE_IN
+mdefine_line|#define PERSISTENT_RESERVE_IN 0x5e
+DECL|macro|PERSISTENT_RESERVE_OUT
+mdefine_line|#define PERSISTENT_RESERVE_OUT 0x5f
 DECL|macro|MOVE_MEDIUM
 mdefine_line|#define MOVE_MEDIUM           0xa5
 DECL|macro|READ_12

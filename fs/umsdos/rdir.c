@@ -699,7 +699,6 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon

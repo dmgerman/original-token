@@ -272,6 +272,8 @@ DECL|macro|MOD_USED_ONCE
 mdefine_line|#define MOD_USED_ONCE&t;&t;16
 DECL|macro|MOD_JUST_FREED
 mdefine_line|#define MOD_JUST_FREED&t;&t;32
+DECL|macro|MOD_INITIALIZING
+mdefine_line|#define MOD_INITIALIZING&t;64
 multiline_comment|/* Values for query_module&squot;s which.  */
 DECL|macro|QM_MODULES
 mdefine_line|#define QM_MODULES&t;1
@@ -283,6 +285,9 @@ DECL|macro|QM_SYMBOLS
 mdefine_line|#define QM_SYMBOLS&t;4
 DECL|macro|QM_INFO
 mdefine_line|#define QM_INFO&t;&t;5
+multiline_comment|/* Can the module be queried? */
+DECL|macro|MOD_CAN_QUERY
+mdefine_line|#define MOD_CAN_QUERY(mod) (((mod)-&gt;flags &amp; (MOD_RUNNING | MOD_INITIALIZING)) &amp;&amp; !((mod)-&gt;flags &amp; MOD_DELETED))
 multiline_comment|/* When struct module is extended, we must test whether the new member&n;   is present in the header received from insmod before we can use it.  &n;   This function returns true if the member is present.  */
 DECL|macro|mod_member_present
 mdefine_line|#define mod_member_present(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;((unsigned long)(&amp;((struct module *)0L)-&gt;member + 1)&t;&t;&bslash;&n;&t; &lt;= (mod)-&gt;size_of_struct)

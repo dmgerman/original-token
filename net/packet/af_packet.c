@@ -7007,13 +7007,6 @@ id|pro
 )paren
 macro_line|#endif
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-macro_line|#endif
 id|sock_register
 c_func
 (paren

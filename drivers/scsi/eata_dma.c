@@ -6941,10 +6941,7 @@ id|hd-&gt;primary
 op_assign
 id|TRUE
 suffix:semicolon
-id|sh-&gt;wish_block
-op_assign
-id|FALSE
-suffix:semicolon
+singleline_comment|//FIXME//    sh-&gt;wish_block = FALSE;&t;   
 r_if
 c_cond
 (paren

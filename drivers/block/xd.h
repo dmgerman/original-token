@@ -285,7 +285,9 @@ r_static
 r_void
 id|do_xd_request
 (paren
-r_void
+id|request_queue_t
+op_star
+id|q
 )paren
 suffix:semicolon
 r_static

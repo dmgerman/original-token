@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * AGPGART module frontend version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight&n; * Copyright (C) 1999 Xi Graphics&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
+multiline_comment|/*&n; * AGPGART module frontend version 0.99&n; * Copyright (C) 1999 Jeff Hartmann&n; * Copyright (C) 1999 Precision Insight, Inc.&n; * Copyright (C) 1999 Xi Graphics, Inc.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; *&n; * The above copyright notice and this permission notice shall be included&n; * in all copies or substantial portions of the Software.&n; *&n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS&n; * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * JEFF HARTMANN, OR ANY OTHER CONTRIBUTORS BE LIABLE FOR ANY CLAIM, &n; * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR &n; * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE &n; * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,7 +19,6 @@ macro_line|#include &lt;linux/agp_backend.h&gt;
 macro_line|#include &lt;linux/agpgart.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
@@ -1235,9 +1233,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|clear_bit
@@ -1246,9 +1242,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1479,9 +1473,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -1490,9 +1482,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1531,9 +1521,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|controller_priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|clients
@@ -1574,9 +1562,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2095,9 +2081,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 )paren
@@ -2150,9 +2134,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 (brace
@@ -2279,9 +2261,7 @@ c_func
 id|AGP_FF_IS_CONTROLLER
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 (brace
@@ -2389,9 +2369,7 @@ c_func
 id|AGP_FF_IS_CONTROLLER
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 (brace
@@ -2449,9 +2427,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 (brace
@@ -2592,9 +2568,7 @@ c_func
 id|AGP_FF_ALLOW_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|priv-&gt;my_pid
@@ -2624,9 +2598,7 @@ c_func
 id|AGP_FF_ALLOW_CONTROLLER
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2652,9 +2624,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -2663,9 +2633,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -2905,9 +2873,7 @@ c_func
 id|AGP_FF_ALLOW_CONTROLLER
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 )paren
 )paren
@@ -3029,9 +2995,7 @@ c_func
 id|AGP_FF_IS_CONTROLLER
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -3040,9 +3004,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -3223,9 +3185,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|client_priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -3234,9 +3194,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|client_priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3388,9 +3346,7 @@ c_func
 id|AGP_FF_IS_CLIENT
 comma
 op_amp
-(paren
 id|client_priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 id|set_bit
@@ -3399,9 +3355,7 @@ c_func
 id|AGP_FF_IS_VALID
 comma
 op_amp
-(paren
 id|client_priv-&gt;access_flags
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3885,9 +3839,7 @@ c_func
 id|AGP_FF_IS_CONTROLLER
 comma
 op_amp
-(paren
 id|curr_priv-&gt;access_flags
-)paren
 )paren
 )paren
 )paren
@@ -3897,7 +3849,7 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-multiline_comment|/* Use the original pid of the controller, in case it&squot;s threaded */
+multiline_comment|/* Use the original pid of the controller,&n;&t;&t; * in case it&squot;s threaded */
 r_if
 c_cond
 (paren

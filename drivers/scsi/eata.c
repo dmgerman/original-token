@@ -3082,15 +3082,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|sh
-(braket
-id|j
-)braket
-op_member_access_from_pointer
-id|wish_block
-op_assign
-id|TRUE
-suffix:semicolon
+singleline_comment|//FIXME//      sh[j]-&gt;wish_block = TRUE;
 id|sh
 (braket
 id|j

@@ -25,6 +25,7 @@ multiline_comment|/*&n; * This source file contains the symbol table used by scs
 r_extern
 r_void
 id|print_command
+c_func
 (paren
 r_int
 r_char
@@ -210,13 +211,6 @@ c_func
 id|scsi_need_isa_buffer
 )paren
 suffix:semicolon
-DECL|variable|scsi_request_queueable
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|scsi_request_queueable
-)paren
-suffix:semicolon
 DECL|variable|scsi_release_command
 id|EXPORT_SYMBOL
 c_func
@@ -252,7 +246,7 @@ c_func
 id|scsi_ioctl_send_command
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SCSI_LOGGING) /* { */
+macro_line|#if defined(CONFIG_SCSI_LOGGING)&t;/* { */
 DECL|variable|scsi_logging_level
 id|EXPORT_SYMBOL
 c_func
@@ -280,6 +274,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|proc_scsi
+)paren
+suffix:semicolon
+DECL|variable|scsi_io_completion
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_io_completion
+)paren
+suffix:semicolon
+DECL|variable|scsi_end_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_end_request
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
@@ -311,5 +319,5 @@ c_func
 id|scsi_device_types
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_MODULES */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_MODULES */
 eof

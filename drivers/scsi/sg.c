@@ -1754,10 +1754,6 @@ id|ppos
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|mxsize
 comma
 id|cmd_size
@@ -2226,8 +2222,6 @@ op_assign
 id|scsi_allocate_device
 c_func
 (paren
-l_int|NULL
-comma
 id|sdp-&gt;device
 comma
 op_logical_neg
@@ -2312,15 +2306,6 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/*  SCSI_LOG_TIMEOUT(7, printk(&quot;sg_write: do cmd&bslash;n&quot;)); */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
 id|srp-&gt;data.use_sg
@@ -2397,15 +2382,6 @@ id|SG_DEFAULT_RETRIES
 )paren
 suffix:semicolon
 multiline_comment|/* &squot;mxsize&squot; overwrites SCpnt-&gt;bufflen, hence need for b_malloc_len */
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*  SCSI_LOG_TIMEOUT(6, printk(&quot;sg_write: sent scsi cmd to mid-level&bslash;n&quot;)); */
 r_return
 id|count
@@ -5828,6 +5804,13 @@ id|scsi_old_times_out
 )paren
 suffix:semicolon
 macro_line|#else
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
@@ -5835,6 +5818,13 @@ id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* just sleep 1 second and hope ... */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|sg_start_req
