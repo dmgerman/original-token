@@ -676,7 +676,10 @@ r_void
 id|print_banner
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 )paren
 (brace
 id|printk
@@ -687,6 +690,7 @@ comma
 id|fdomain_16x0_info
 c_func
 (paren
+id|shpnt
 )paren
 )paren
 suffix:semicolon
@@ -1748,6 +1752,7 @@ multiline_comment|/* Cannot find valid set of ports */
 id|print_banner
 c_func
 (paren
+l_int|NULL
 )paren
 suffix:semicolon
 id|SCSI_Mode_Cntl_port
@@ -2421,7 +2426,10 @@ op_star
 id|fdomain_16x0_info
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 )paren
 (brace
 r_static
@@ -3455,14 +3463,7 @@ op_logical_and
 (paren
 id|current_SC-&gt;SCp.sent_command
 op_ge
-id|COMMAND_SIZE
-c_func
-(paren
-id|current_SC-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|current_SC-&gt;cmd_len
 )paren
 )paren
 (brace
@@ -4492,6 +4493,7 @@ suffix:semicolon
 id|print_banner
 c_func
 (paren
+id|SCpnt-&gt;host
 )paren
 suffix:semicolon
 r_switch

@@ -983,6 +983,9 @@ DECL|macro|GFP_NOBUFFER
 mdefine_line|#define GFP_NOBUFFER&t;0x04
 DECL|macro|GFP_NFS
 mdefine_line|#define GFP_NFS&t;&t;0x05
+multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
+DECL|macro|GFP_DMA
+mdefine_line|#define GFP_DMA&t;&t;0x80
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
 mdefine_line|#define SHM_SWP_TYPE 0x41

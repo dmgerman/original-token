@@ -32,7 +32,9 @@ op_star
 id|fdomain_16x0_info
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
 )paren
 suffix:semicolon
 r_int
@@ -75,6 +77,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|FDOMAIN_16X0
-mdefine_line|#define FDOMAIN_16X0 { NULL,                             &bslash;&n;&t;&t;       &quot;Future Domain TMC-16x0&quot;,         &bslash;&n;&t;&t;       fdomain_16x0_detect,              &bslash;&n;&t;&t;       NULL,&t;&t;&t;&t; &bslash;&n;&t;&t;       fdomain_16x0_info,                &bslash;&n;&t;&t;       fdomain_16x0_command,             &bslash;&n;&t;&t;       fdomain_16x0_queue,               &bslash;&n;&t;&t;       fdomain_16x0_abort,               &bslash;&n;&t;&t;       fdomain_16x0_reset,               &bslash;&n;&t;&t;       NULL,                             &bslash;&n;&t;&t;       fdomain_16x0_biosparam,           &bslash;&n;&t;&t;       1, &t;&t;&t;&t; &bslash;&n;&t;&t;       6, &t;&t;&t;&t; &bslash;&n;&t;&t;       64, &t;&t;                 &bslash;&n;&t;&t;       1, &t;&t;&t;&t; &bslash;&n;&t;&t;       0, &t;&t;&t;&t; &bslash;&n;&t;&t;       0, &t;&t;&t;&t; &bslash;&n;&t;&t;       DISABLE_CLUSTERING }
+mdefine_line|#define FDOMAIN_16X0 { NULL, NULL,                            &bslash;&n;&t;&t;       NULL,&t;&t;&t;         &bslash;&n;&t;&t;       fdomain_16x0_detect,              &bslash;&n;&t;&t;       NULL,&t;&t;&t;&t; &bslash;&n;&t;&t;       fdomain_16x0_info,                &bslash;&n;&t;&t;       fdomain_16x0_command,             &bslash;&n;&t;&t;       fdomain_16x0_queue,               &bslash;&n;&t;&t;       fdomain_16x0_abort,               &bslash;&n;&t;&t;       fdomain_16x0_reset,               &bslash;&n;&t;&t;       NULL,                             &bslash;&n;&t;&t;       fdomain_16x0_biosparam,           &bslash;&n;&t;&t;       1, &t;&t;&t;&t; &bslash;&n;&t;&t;       6, &t;&t;&t;&t; &bslash;&n;&t;&t;       64, &t;&t;                 &bslash;&n;&t;&t;       1, &t;&t;&t;&t; &bslash;&n;&t;&t;       0, &t;&t;&t;&t; &bslash;&n;&t;&t;       0, &t;&t;&t;&t; &bslash;&n;&t;&t;       DISABLE_CLUSTERING }
 macro_line|#endif
 eof

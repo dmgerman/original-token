@@ -6764,14 +6764,7 @@ id|PHASE_CMDOUT
 suffix:colon
 id|len
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
-id|cmd-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|cmd-&gt;cmd_len
 suffix:semicolon
 id|data
 op_assign

@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993, 1994 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
-multiline_comment|/*&n; * TODO:&n; *&t;1. Cleanup error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Add multiple outstanding requests.&n; *&t;4. See if we can make good use of having more than one command per lun.&n; *&t;5. Test/improve/fix abort &amp; reset functions.&n; *&t;6. Look at command linking.&n; *&t;7. Allow multiple boards to share an IRQ if the bus allows (e.g. EISA).&n; */
-multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&t;BT-946C - PCI bus-master FAST SCSI. (??? Nothing else known.)&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S and 445S.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
+multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993, 1994 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; *&n; *&t;Thanks to the following individuals who have made contributions (of&n; *&t;(code, information, support, or testing) to this driver:&n; *&t;&t;Eric Youngdale&t;&t;Leonard Zubkoff&n; *&t;&t;Tomas Hurka&t;&t;Andrew Walker&n; */
+multiline_comment|/*&n; * TODO:&n; *&t;1. Clean up error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Test/improve/fix abort &amp; reset functions.&n; *&t;4. Look at command linking.&n; *&t;5. Allow multiple boards to share an IRQ if the bus allows (EISA, MCA,&n; *&t;   and PCI).&n; *&t;6. Avoid using the 445S workaround for board revs &gt;= D.&n; *&t;7. Get cmd_per_lun put in the Scsi_Host structure.&n; */
+multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-445C - 445S + enhanced BIOS &amp; firmware options.&n; *&t;BT-946C - PCI bus-master FAST SCSI. (??? Nothing else known.)&n; *&n; *    ??? I believe other boards besides the 445 now have a &quot;C&quot; model, but I&n; *    have no facts on them.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S and 445S.&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.  Their BBS # is (408)492-1984 (maybe BBS&n; *    stands for &quot;Big Brother System&quot;?).&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,11 +20,16 @@ mdefine_line|#define BUSLOGIC_PRIVATE_H&t;/* Get the &quot;private&quot; stuff *
 macro_line|#include &quot;buslogic.h&quot;
 macro_line|#ifndef BUSLOGIC_DEBUG
 DECL|macro|BUSLOGIC_DEBUG
-macro_line|# define BUSLOGIC_DEBUG UD_ABORT
+macro_line|# define BUSLOGIC_DEBUG 0
 macro_line|#endif
+multiline_comment|/* If different port addresses are needed (e.g. to install more than two&n;   cards), you must define BUSLOGIC_PORT_OVERRIDE to be a comma-separated list&n;   of the addresses which will be checked.  This can also be used to resolve a&n;   conflict if the port-probing at a standard port causes problems with&n;   another board. */
+multiline_comment|/* #define BUSLOGIC_PORT_OVERRIDE 0x330, 0x334, 0x130, 0x134, 0x230, 0x234 */
+multiline_comment|/* Define this to be either BIOS_TRANSLATION_DEFAULT or BIOS_TRANSLATION_BIG&n;   if you wish to bypass the test for this, which uses an undocumented port.&n;   The test is believed to fail on at least some AMI BusLogic clones. */
+multiline_comment|/* #define BIOS_TRANSLATION_OVERRIDE BIOS_TRANSLATION_BIG */
 DECL|macro|BUSLOGIC_VERSION
-mdefine_line|#define BUSLOGIC_VERSION &quot;1.00&quot;
+mdefine_line|#define BUSLOGIC_VERSION &quot;1.13&quot;
 multiline_comment|/* Not a random value - if this is too large, the system hangs for a long time&n;   waiting for something to happen if a board is not installed. */
+multiline_comment|/* ??? I don&squot;t really like this as it will wait longer on slow machines.&n;   Perhaps we should base this on the loops_per_second &quot;Bogomips&quot; value? */
 DECL|macro|WAITNEXTTIMEOUT
 mdefine_line|#define WAITNEXTTIMEOUT 3000000
 multiline_comment|/* This is for the scsi_malloc call in buslogic_queuecommand. */
@@ -35,16 +40,12 @@ mdefine_line|#define BUSLOGIC_SG_MALLOC 512
 multiline_comment|/* Since the SG list is malloced, we have to limit the length. */
 DECL|macro|BUSLOGIC_MAX_SG
 mdefine_line|#define BUSLOGIC_MAX_SG (BUSLOGIC_SG_MALLOC / sizeof (struct chain))
-multiline_comment|/* The DMA-Controller.  We need to fool with this because we want to be able to&n;   use an ISA BusLogic without having to have the BIOS enabled. */
-DECL|macro|DMA_MODE_REG
-mdefine_line|#define DMA_MODE_REG 0xD6
-DECL|macro|DMA_MASK_REG
-mdefine_line|#define DMA_MASK_REG 0xD4
-DECL|macro|CASCADE
-mdefine_line|#define&t;CASCADE 0xC0
+multiline_comment|/* ??? Arbitrary.  If we can dynamically allocate the mailbox arrays, I may&n;   bump up this number. */
 DECL|macro|BUSLOGIC_MAILBOXES
-mdefine_line|#define BUSLOGIC_MAILBOXES 16&t;/* ??? Arbitrary? */
-multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330.  If different port&n;   addresses are needed (e.g. to install more than two cards), you must define&n;   BUSLOGIC_PORT_OVERRIDE to be a list of the addresses which will be checked.&n;   This can also be used to resolve a conflict if the port-probing at a&n;   standard port causes problems with another board. */
+mdefine_line|#define BUSLOGIC_MAILBOXES 16
+DECL|macro|BUSLOGIC_NONISA_CMDLUN
+mdefine_line|#define BUSLOGIC_NONISA_CMDLUN 4&t;/* ??? Arbitrary (&gt; 1) */
+multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330. */
 DECL|variable|bases
 r_static
 r_const
@@ -76,14 +77,17 @@ id|hostdata
 (brace
 DECL|member|bus_type
 r_int
-r_char
+r_int
 id|bus_type
 suffix:semicolon
 DECL|member|bios_translation
 r_int
+r_int
 id|bios_translation
+suffix:colon
+l_int|1
 suffix:semicolon
-multiline_comment|/* Mapping bios uses - for compatibility */
+multiline_comment|/* BIOS mapping (for compatibility) */
 DECL|member|last_mbi_used
 r_int
 id|last_mbi_used
@@ -91,6 +95,20 @@ suffix:semicolon
 DECL|member|last_mbo_used
 r_int
 id|last_mbo_used
+suffix:semicolon
+DECL|member|model
+r_char
+id|model
+(braket
+l_int|7
+)braket
+suffix:semicolon
+DECL|member|firmware_rev
+r_char
+id|firmware_rev
+(braket
+l_int|6
+)braket
 suffix:semicolon
 DECL|member|sc
 id|Scsi_Cmnd
@@ -171,18 +189,18 @@ mdefine_line|#define buslogic_printk buslogic_prefix(),printk
 DECL|macro|CHECK
 mdefine_line|#define CHECK(cond) if (cond) ; else goto fail
 DECL|macro|WAIT
-mdefine_line|#define WAIT(port, mask, allof, noneof) &bslash;&n;    CHECK(wait(port, mask, allof, noneof, WAITNEXTTIMEOUT, FALSE))
+mdefine_line|#define WAIT(port, allof, noneof) &bslash;&n;    CHECK(wait(port, allof, noneof, WAITNEXTTIMEOUT, FALSE))
 DECL|macro|WAIT_WHILE
-mdefine_line|#define WAIT_WHILE(port, mask) WAIT(port, mask, 0, mask)
+mdefine_line|#define WAIT_WHILE(port, mask) WAIT(port, 0, mask)
 DECL|macro|WAIT_UNTIL
-mdefine_line|#define WAIT_UNTIL(port, mask) WAIT(port, mask, mask, 0)
+mdefine_line|#define WAIT_UNTIL(port, mask) WAIT(port, mask, 0)
 DECL|macro|WAIT_FAST
-mdefine_line|#define WAIT_FAST(port, mask, allof, noneof) &bslash;&n;    CHECK(wait(port, mask, allof, noneof, 100, TRUE))
+mdefine_line|#define WAIT_FAST(port, allof, noneof) &bslash;&n;    CHECK(wait(port, allof, noneof, 100, TRUE))
 DECL|macro|WAIT_WHILE_FAST
-mdefine_line|#define WAIT_WHILE_FAST(port, mask) WAIT_FAST(port, mask, 0, mask)
+mdefine_line|#define WAIT_WHILE_FAST(port, mask) WAIT_FAST(port, 0, mask)
 DECL|macro|WAIT_UNTIL_FAST
-mdefine_line|#define WAIT_UNTIL_FAST(port, mask) WAIT_FAST(port, mask, mask, 0)
-multiline_comment|/* If delay != 0, we use the udelay call to regulate the amount of time we&n;   wait. */
+mdefine_line|#define WAIT_UNTIL_FAST(port, mask) WAIT_FAST(port, mask, 0)
+multiline_comment|/* If delay != 0, we use the udelay call to regulate the amount of time we&n;   wait.&n;&n;   This is inline as it is always called with constant arguments and hence&n;   will be very well optimized. */
 DECL|function|wait
 r_static
 id|__inline__
@@ -193,10 +211,6 @@ c_func
 r_int
 r_int
 id|port
-comma
-r_int
-r_char
-id|mask
 comma
 r_int
 r_char
@@ -231,8 +245,6 @@ c_func
 (paren
 id|port
 )paren
-op_amp
-id|mask
 suffix:semicolon
 r_if
 c_cond
@@ -296,7 +308,6 @@ l_string|&quot;BusLogic SCSI: &quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#if BUSLOGIC_DEBUG
 DECL|function|buslogic_stat
 r_static
 r_void
@@ -333,7 +344,7 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|printk
+id|buslogic_printk
 c_func
 (paren
 l_string|&quot;status=%02X intrflags=%02X&bslash;n&quot;
@@ -344,10 +355,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|macro|buslogic_stat
-macro_line|# define buslogic_stat(base)
-macro_line|#endif
 multiline_comment|/* This is a bit complicated, but we need to make sure that an interrupt&n;   routine does not send something out while we are in the middle of this.&n;   Fortunately, it is only at boot time that multi-byte messages are ever&n;   sent. */
 DECL|function|buslogic_out
 r_static
@@ -526,105 +533,11 @@ r_return
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/* Only used at boot time, so we do not need to worry about latency as much&n;   here. */
+multiline_comment|/* Only used at boot time, so we do not need to worry about latency as much&n;   here.  This waits a very short period of time.  We use this if we are not&n;   sure whether the board will respond to the command we just sent. */
 DECL|function|buslogic_in
 r_static
 r_int
 id|buslogic_in
-c_func
-(paren
-r_int
-r_int
-id|base
-comma
-r_int
-r_char
-op_star
-id|cmdp
-comma
-r_int
-id|len
-)paren
-(brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|len
-op_decrement
-)paren
-(brace
-id|WAIT_UNTIL
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-comma
-id|DIRRDY
-)paren
-suffix:semicolon
-op_star
-id|cmdp
-op_increment
-op_assign
-id|inb
-c_func
-(paren
-id|DATA_IN
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
-)brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|FALSE
-suffix:semicolon
-id|fail
-suffix:colon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|buslogic_printk
-c_func
-(paren
-l_string|&quot;buslogic_in failed(%u): &quot;
-comma
-id|len
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|buslogic_stat
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-r_return
-id|TRUE
-suffix:semicolon
-)brace
-macro_line|#if 0
-multiline_comment|/* Similar to buslogic_in, except that we wait a very short period of time.&n;   We use this if we know the board is alive and awake, but we are not sure&n;   whether the board will respond the the command we are about to send. */
-r_static
-r_int
-id|buslogic_in_fast
 c_func
 (paren
 r_int
@@ -694,11 +607,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_IO)
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;buslogic_in failed(%u): &quot;
+comma
+id|len
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|buslogic_stat
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|TRUE
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|makecode
 r_static
 r_int
@@ -708,17 +638,138 @@ c_func
 (paren
 r_int
 r_int
-id|hosterr
+id|haerr
 comma
 r_int
 r_int
 id|scsierr
 )paren
 (brace
+r_int
+r_int
+id|hosterr
+suffix:semicolon
+r_const
+r_char
+op_star
+id|errstr
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_ERRORS) &amp;&amp; defined(CONFIG_SCSI_CONSTANTS)
+r_static
+r_const
+r_char
+op_star
+r_const
+id|buslogic_status
+(braket
+)braket
+op_assign
+(brace
+multiline_comment|/* 00 */
+l_string|&quot;Command completed normally&quot;
+comma
+multiline_comment|/* 01-07 */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* 08-09 */
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* 0A */
+l_string|&quot;Linked command completed normally&quot;
+comma
+multiline_comment|/* 0B */
+l_string|&quot;Linked command completed normally, interrupt generated&quot;
+comma
+multiline_comment|/* 0C-0F */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* 10 */
+l_int|NULL
+comma
+multiline_comment|/* 11 */
+l_string|&quot;Selection timed out&quot;
+comma
+multiline_comment|/* 12 */
+l_string|&quot;Data overrun/underrun&quot;
+comma
+multiline_comment|/* 13 */
+l_string|&quot;Unexpected bus free&quot;
+comma
+multiline_comment|/* 14 */
+l_string|&quot;Target bus phase sequence failure&quot;
+comma
+multiline_comment|/* 15 */
+l_string|&quot;First byte of outgoing MB was invalid&quot;
+comma
+multiline_comment|/* 16 */
+l_string|&quot;Invalid CCB Operation Code&quot;
+comma
+multiline_comment|/* 17 */
+l_string|&quot;Linked CCB does not have the same LUN&quot;
+comma
+multiline_comment|/* 18 */
+l_string|&quot;Invalid Target Direction received from Host&quot;
+comma
+multiline_comment|/* 19 */
+l_string|&quot;Duplicate CCB Received in Target Mode&quot;
+comma
+multiline_comment|/* 1A */
+l_string|&quot;Invalid CCB or Segment List Parameter&quot;
+comma
+multiline_comment|/* 1B */
+l_string|&quot;Auto request sense failed&quot;
+comma
+multiline_comment|/* 1C */
+l_string|&quot;SCSI-2 tagged queueing message was rejected by the target&quot;
+comma
+multiline_comment|/* 1D-1F */
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* 20 */
+l_string|&quot;Host adapter hardware failure&quot;
+comma
+multiline_comment|/* 21 */
+l_string|&quot;Target did not respond to SCSI ATN and the HA SCSI bus reset&quot;
+comma
+multiline_comment|/* 22 */
+l_string|&quot;Host adapter asserted a SCSI bus reset&quot;
+comma
+multiline_comment|/* 23 */
+l_string|&quot;Other SCSI devices asserted a SCSI bus reset&quot;
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
-id|hosterr
+id|haerr
 )paren
 (brace
 r_case
@@ -742,7 +793,7 @@ suffix:semicolon
 r_case
 l_int|0x11
 suffix:colon
-multiline_comment|/* Selection time out: the initiator selection or&n;&t;&t;&t;   target reselection was not complete within the SCSI&n;&t;&t;&t;   Time out period. */
+multiline_comment|/* Selection time out: the initiator selection or&n;&t;&t;&t;   target reselection was not complete within the SCSI&n;&t;&t;&t;   time out period. */
 id|hosterr
 op_assign
 id|DID_TIME_OUT
@@ -753,6 +804,14 @@ r_case
 l_int|0x14
 suffix:colon
 multiline_comment|/* Target bus phase sequence failure - An invalid bus&n;&t;&t;&t;   phase or bus phase sequence was requested by the&n;&t;&t;&t;   target.  The host adapter will generate a SCSI&n;&t;&t;&t;   Reset Condition, notifying the host with a RSTS&n;&t;&t;&t;   interrupt. */
+r_case
+l_int|0x21
+suffix:colon
+multiline_comment|/* The target did not respond to SCSI ATN and the host&n;&t;&t;&t;   adapter consequently issued a SCSI bus reset to&n;&t;&t;&t;   clear up the failure. */
+r_case
+l_int|0x22
+suffix:colon
+multiline_comment|/* The host adapter asserted a SCSI bus reset. */
 id|hosterr
 op_assign
 id|DID_RESET
@@ -804,29 +863,9 @@ l_int|0x20
 suffix:colon
 multiline_comment|/* The host adapter hardware failed. */
 r_case
-l_int|0x21
-suffix:colon
-multiline_comment|/* The target did not respond to SCSI ATN and the host&n;&t;&t;&t;   adapter consequently issued a SCSI bus reset to&n;&t;&t;&t;   clear up the failure. */
-r_case
-l_int|0x22
-suffix:colon
-multiline_comment|/* The host adapter asserted a SCSI bus reset. */
-r_case
 l_int|0x23
 suffix:colon
 multiline_comment|/* Other SCSI devices asserted a SCSI bus reset. */
-macro_line|#if BUSLOGIC_DEBUG
-id|buslogic_printk
-c_func
-(paren
-l_string|&quot;%X %X&bslash;n&quot;
-comma
-id|hosterr
-comma
-id|scsierr
-)paren
-suffix:semicolon
-macro_line|#endif
 id|hosterr
 op_assign
 id|DID_ERROR
@@ -836,17 +875,90 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|buslogic_printk
-c_func
-(paren
-l_string|&quot;makecode: unknown hoststatus %X&bslash;n&quot;
-comma
+macro_line|#ifndef CONFIG_SCSI_CONSTANTS
+id|errstr
+op_assign
+l_string|&quot;unknown hoststatus&quot;
+suffix:semicolon
+macro_line|#endif
 id|hosterr
-)paren
+op_assign
+id|DID_ERROR
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_ERRORS)
+macro_line|# ifdef CONFIG_SCSI_CONSTANTS
+r_if
+c_cond
+(paren
+id|hosterr
+op_ne
+id|DID_OK
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|haerr
+OL
+id|ARRAY_SIZE
+c_func
+(paren
+id|buslogic_status
+)paren
+)paren
+id|errstr
+op_assign
+id|buslogic_status
+(braket
+id|haerr
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|errstr
+op_eq
+l_int|NULL
+)paren
+id|errstr
+op_assign
+l_string|&quot;unknown hoststatus&quot;
+suffix:semicolon
+)brace
+macro_line|# else
+r_if
+c_cond
+(paren
+id|hosterr
+op_eq
+id|DID_ERROR
+)paren
+id|errstr
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
+macro_line|# endif
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|errstr
+op_ne
+l_int|NULL
+)paren
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;makecode: %s (%02X)&bslash;n&quot;
+comma
+id|errstr
+comma
+id|haerr
+)paren
+suffix:semicolon
 r_return
 (paren
 id|hosterr
@@ -856,315 +968,6 @@ l_int|16
 op_or
 id|scsierr
 suffix:semicolon
-)brace
-DECL|function|test_port
-r_static
-r_int
-id|test_port
-c_func
-(paren
-r_int
-r_int
-id|base
-comma
-r_struct
-id|Scsi_Host
-op_star
-id|shpnt
-)paren
-(brace
-r_int
-r_int
-id|i
-suffix:semicolon
-r_int
-r_char
-id|inquiry_cmd
-(braket
-)braket
-op_assign
-(brace
-id|CMD_INQUIRY
-)brace
-suffix:semicolon
-r_int
-r_char
-id|inquiry_result
-(braket
-l_int|4
-)braket
-suffix:semicolon
-r_int
-r_char
-op_star
-id|cmdp
-suffix:semicolon
-r_int
-id|len
-suffix:semicolon
-r_volatile
-r_int
-id|debug
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Quick and dirty test for presence of the card. */
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-)paren
-op_eq
-l_int|0xFF
-)paren
-r_return
-id|TRUE
-suffix:semicolon
-multiline_comment|/* Reset the adapter.  I ought to make a hard reset, but it&squot;s not really&n;       necessary. */
-macro_line|#if BUSLOGIC_DEBUG
-id|buslogic_printk
-c_func
-(paren
-l_string|&quot;test_port called&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* In case some other card was probing here, reset interrupts. */
-id|INTR_RESET
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-multiline_comment|/* reset interrupts, so they don&squot;t block */
-id|outb
-c_func
-(paren
-id|RSOFT
-op_or
-id|RINT
-multiline_comment|/* | RSBUS*/
-comma
-id|CONTROL
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Wait a little bit for things to settle down. */
-id|i
-op_assign
-id|jiffies
-op_plus
-l_int|2
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|i
-OG
-id|jiffies
-)paren
-suffix:semicolon
-id|debug
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Expect INREQ and HARDY, any of the others are bad. */
-id|WAIT
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-comma
-id|STATMASK
-comma
-id|INREQ
-op_or
-id|HARDY
-comma
-id|DACT
-op_or
-id|DFAIL
-op_or
-id|CMDINV
-op_or
-id|DIRRDY
-op_or
-id|CPRBSY
-)paren
-suffix:semicolon
-id|debug
-op_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* Shouldn&squot;t have generated any interrupts during reset. */
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|INTERRUPT
-c_func
-(paren
-id|base
-)paren
-)paren
-op_amp
-id|INTRMASK
-)paren
-r_goto
-id|fail
-suffix:semicolon
-multiline_comment|/* Perform a host adapter inquiry instead so we do not need to set up the&n;       mailboxes ahead of time. */
-id|buslogic_out
-c_func
-(paren
-id|base
-comma
-id|inquiry_cmd
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|debug
-op_assign
-l_int|3
-suffix:semicolon
-id|len
-op_assign
-l_int|4
-suffix:semicolon
-id|cmdp
-op_assign
-op_amp
-id|inquiry_result
-(braket
-l_int|0
-)braket
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|len
-op_decrement
-)paren
-(brace
-id|WAIT
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-comma
-id|DIRRDY
-comma
-id|DIRRDY
-comma
-l_int|0
-)paren
-suffix:semicolon
-op_star
-id|cmdp
-op_increment
-op_assign
-id|inb
-c_func
-(paren
-id|DATA_IN
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
-)brace
-id|debug
-op_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* Reading port should reset DIRRDY. */
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-)paren
-op_amp
-id|DIRRDY
-)paren
-r_goto
-id|fail
-suffix:semicolon
-id|debug
-op_assign
-l_int|5
-suffix:semicolon
-multiline_comment|/* When CMDC, command is completed, and we&squot;re though testing. */
-id|WAIT_UNTIL
-c_func
-(paren
-id|INTERRUPT
-c_func
-(paren
-id|base
-)paren
-comma
-id|CMDC
-)paren
-suffix:semicolon
-multiline_comment|/* now initialize adapter. */
-id|debug
-op_assign
-l_int|6
-suffix:semicolon
-multiline_comment|/* Clear interrupts. */
-id|outb
-c_func
-(paren
-id|RINT
-comma
-id|CONTROL
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
-id|debug
-op_assign
-l_int|7
-suffix:semicolon
-r_return
-id|FALSE
-suffix:semicolon
-multiline_comment|/* 0 = ok */
-id|fail
-suffix:colon
-r_return
-id|TRUE
-suffix:semicolon
-multiline_comment|/* 1 = not ok */
 )brace
 DECL|function|buslogic_info
 r_const
@@ -1177,7 +980,7 @@ r_void
 )paren
 (brace
 r_return
-l_string|&quot;BusLogic SCSI Driver version &quot;
+l_string|&quot;BusLogic SCSI driver version &quot;
 id|BUSLOGIC_VERSION
 suffix:semicolon
 )brace
@@ -1311,7 +1114,7 @@ id|base
 op_assign
 id|shpnt-&gt;io_port
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_INTERRUPT)
 id|flag
 op_assign
 id|inb
@@ -1448,10 +1251,21 @@ c_cond
 (paren
 id|flag
 op_amp
-op_complement
-id|IMBL
+(paren
+id|MBOR
+op_or
+id|CMDC
+op_or
+id|RSTS
+)paren
 )paren
 (brace
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Unusual flag:&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1462,7 +1276,7 @@ id|MBOR
 id|printk
 c_func
 (paren
-l_string|&quot;MBOR &quot;
+l_string|&quot; MBOR&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1475,7 +1289,7 @@ id|CMDC
 id|printk
 c_func
 (paren
-l_string|&quot;CMDC &quot;
+l_string|&quot; CMDC&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1493,10 +1307,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RSTS &quot;
+l_string|&quot; RSTS&quot;
 )paren
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|INTR_RESET
 c_func
@@ -1686,7 +1506,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_INTERRUPT)
 r_if
 c_cond
 (paren
@@ -1748,7 +1568,7 @@ id|MBX_COMPLETION_NOT_FOUND
 )paren
 r_continue
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_INTERRUPT)
 id|buslogic_printk
 c_func
 (paren
@@ -1792,7 +1612,7 @@ suffix:semicolon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;tarstat=%02X, hastat=%02X id=%d lun=%d ccb#=%d&bslash;n&quot;
+l_string|&quot;tarstat=%02X, hastat=%02X id=%d lun=%d ccb#=%u&bslash;n&quot;
 comma
 id|ccb
 (braket
@@ -1845,47 +1665,6 @@ comma
 id|BUSLOGIC_SG_MALLOC
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* ??? */
-multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t;   BusLogic automatically fetches it, and there is no guarantee that we&n;&t;   will still have it in the cdb when we come back. */
-r_if
-c_cond
-(paren
-id|ccb
-(braket
-id|mbo
-)braket
-dot
-id|tarstat
-op_eq
-l_int|2
-)paren
-multiline_comment|/* ??? */
-id|memcpy
-c_func
-(paren
-id|sctmp-&gt;sense_buffer
-comma
-op_amp
-id|ccb
-(braket
-id|mbo
-)braket
-dot
-id|cdb
-(braket
-id|ccb
-(braket
-id|mbo
-)braket
-dot
-id|cdblen
-)braket
-comma
-r_sizeof
-id|sctmp-&gt;sense_buffer
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* ??? more error checking left out here */
 r_if
 c_cond
@@ -1894,6 +1673,7 @@ id|mbistatus
 op_ne
 id|MBX_COMPLETION_OK
 )paren
+(brace
 multiline_comment|/* ??? This is surely wrong, but I don&squot;t know what&squot;s right. */
 id|errstatus
 op_assign
@@ -1915,12 +1695,13 @@ dot
 id|tarstat
 )paren
 suffix:semicolon
+)brace
 r_else
 id|errstatus
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_INTERRUPT)
 r_if
 c_cond
 (paren
@@ -1929,9 +1710,7 @@ id|errstatus
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;error: %08X %04X %04X&bslash;n&quot;
-comma
-id|errstatus
+l_string|&quot;error: %04X %04X&bslash;n&quot;
 comma
 id|ccb
 (braket
@@ -2050,6 +1829,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* ??? Why does queuecommand return a value?  scsi.c never looks at it... */
 DECL|function|buslogic_queuecommand
 r_int
 id|buslogic_queuecommand
@@ -2134,7 +1914,7 @@ id|ccb
 op_star
 id|ccb
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 r_if
 c_cond
 (paren
@@ -2169,7 +1949,7 @@ op_eq
 id|REQUEST_SENSE
 )paren
 (brace
-macro_line|#ifndef DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; (BD_COMMAND | BD_ERRORS))
 r_if
 c_cond
 (paren
@@ -2204,7 +1984,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 (brace
 r_int
 id|i
@@ -2504,7 +2284,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 id|buslogic_printk
 c_func
 (paren
@@ -2789,7 +2569,7 @@ id|dataptr
 op_assign
 id|cptr
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 (brace
 r_int
 r_char
@@ -2946,7 +2726,7 @@ id|commlinkid
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 (brace
 r_int
 id|i
@@ -3013,7 +2793,7 @@ c_cond
 id|done
 )paren
 (brace
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 id|buslogic_printk
 c_func
 (paren
@@ -3052,7 +2832,7 @@ r_sizeof
 id|buscmd
 )paren
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 id|buslogic_stat
 c_func
 (paren
@@ -3096,11 +2876,11 @@ op_star
 id|scpnt
 )paren
 (brace
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_COMMAND)
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_command: ..calling buslogic_queuecommand&bslash;n&quot;
+l_string|&quot;buslogic_command: calling buslogic_queuecommand&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3259,7 +3039,6 @@ id|base
 )paren
 suffix:semicolon
 multiline_comment|/* reset interrupts, so they don&squot;t block */
-multiline_comment|/* If this fails, this must be an Adaptec board */
 r_if
 c_cond
 (paren
@@ -3281,38 +3060,7 @@ id|cmd
 )paren
 )paren
 r_goto
-id|must_be_adaptec
-suffix:semicolon
-multiline_comment|/* Wait until host adapter is done messing around, and then check to see&n;       if the command was accepted.  If it failed, this must be an Adaptec&n;       board. */
-id|WAIT_UNTIL
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-comma
-id|HARDY
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inb
-c_func
-(paren
-id|STATUS
-c_func
-(paren
-id|base
-)paren
-)paren
-op_amp
-id|CMDINV
-)paren
-r_goto
-id|must_be_adaptec
+id|fail
 suffix:semicolon
 id|WAIT_UNTIL
 c_func
@@ -3325,6 +3073,10 @@ id|base
 comma
 id|CMDC
 )paren
+suffix:semicolon
+id|ok
+op_assign
+id|TRUE
 suffix:semicolon
 r_while
 c_loop
@@ -3341,32 +3093,14 @@ l_string|&quot;buslogic_detect: failed setting up mailboxes&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|ok
-op_assign
-id|TRUE
-suffix:semicolon
-id|must_be_adaptec
-suffix:colon
 id|INTR_RESET
 c_func
 (paren
 id|base
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ok
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;- must be Adaptec&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* So that the adaptec detect looks&n;&t;&t;&t;&t;&t;   clean */
 r_return
+op_logical_neg
 id|ok
 suffix:semicolon
 )brace
@@ -3395,7 +3129,6 @@ r_char
 op_star
 id|id
 comma
-r_int
 r_char
 op_star
 id|bus_type
@@ -3404,6 +3137,13 @@ r_int
 r_int
 op_star
 id|max_sg
+comma
+r_const
+r_int
+r_char
+op_star
+op_star
+id|bios
 )paren
 (brace
 r_int
@@ -3423,6 +3163,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;getconfig: called&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|i
 op_assign
 id|inb
@@ -3471,6 +3219,9 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|buslogic_in
 c_func
 (paren
@@ -3480,8 +3231,11 @@ id|inquiry_result
 comma
 l_int|3
 )paren
+)paren
+r_goto
+id|fail
 suffix:semicolon
-id|WAIT_UNTIL
+id|WAIT_UNTIL_FAST
 c_func
 (paren
 id|INTERRUPT
@@ -3586,8 +3340,8 @@ l_string|&quot;Unable to determine BusLogic IRQ level.&quot;
 l_string|&quot;  Disabling board.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-id|TRUE
+r_goto
+id|fail
 suffix:semicolon
 )brace
 op_star
@@ -3600,6 +3354,7 @@ l_int|2
 op_amp
 l_int|0x7
 suffix:semicolon
+multiline_comment|/* I expected Adaptec boards to fail on this, but it doesn&squot;t happen... */
 id|inquiry_cmd
 (braket
 l_int|0
@@ -3626,7 +3381,13 @@ id|inquiry_cmd
 comma
 l_int|2
 )paren
-op_logical_or
+)paren
+r_goto
+id|fail
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|buslogic_in
 c_func
 (paren
@@ -3634,13 +3395,16 @@ id|base
 comma
 id|inquiry_result
 comma
-l_int|4
+id|inquiry_cmd
+(braket
+l_int|1
+)braket
 )paren
 )paren
-r_return
-id|TRUE
+r_goto
+id|fail
 suffix:semicolon
-id|WAIT_UNTIL
+id|WAIT_UNTIL_FAST
 c_func
 (paren
 id|INTERRUPT
@@ -3652,19 +3416,30 @@ comma
 id|CMDC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+id|CMDINV
+)paren
+r_goto
+id|fail
+suffix:semicolon
 id|INTR_RESET
 c_func
 (paren
 id|base
 )paren
 suffix:semicolon
-macro_line|#ifdef BUSLOGIC_BUS_TYPE_OVERRIDE
-op_star
-id|bus_type
-op_assign
-id|BUS_TYPE_OVERRIDE
-suffix:semicolon
-macro_line|#else
 op_star
 id|bus_type
 op_assign
@@ -3673,7 +3448,6 @@ id|inquiry_result
 l_int|0
 )braket
 suffix:semicolon
-macro_line|#endif
 id|CHECK
 c_func
 (paren
@@ -3693,31 +3467,28 @@ op_eq
 l_char|&squot;M&squot;
 )paren
 suffix:semicolon
-macro_line|#ifdef BUSLOGIC_BUS_TYPE_OVERRIDE
-r_if
-c_cond
+op_star
+id|bios
+op_assign
 (paren
-id|inquiry_result
-(braket
-l_int|0
-)braket
-op_ne
-id|BUS_TYPE_OVERRIDE
+r_const
+r_int
+r_char
+op_star
 )paren
-id|buslogic_printk
-c_func
 (paren
-l_string|&quot;Overriding bus type %c with %c&bslash;n&quot;
-comma
+(paren
+r_int
+r_int
+)paren
 id|inquiry_result
 (braket
-l_int|0
+l_int|1
 )braket
-comma
-id|BUS_TYPE_OVERRIDE
+op_lshift
+l_int|12
 )paren
 suffix:semicolon
-macro_line|#endif
 op_star
 id|max_sg
 op_assign
@@ -3801,8 +3572,8 @@ l_string|&quot;Unable to determine BusLogic DMA channel.&quot;
 l_string|&quot;  Disabling board.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-id|TRUE
+r_goto
+id|fail
 suffix:semicolon
 )brace
 r_else
@@ -3819,12 +3590,14 @@ l_int|0
 (brace
 id|fail
 suffix:colon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
 l_string|&quot;buslogic_detect: query board settings&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|TRUE
 suffix:semicolon
@@ -3833,23 +3606,7 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-DECL|function|get_translation
-r_static
-r_int
-id|get_translation
-c_func
-(paren
-r_int
-r_int
-id|base
-)paren
-(brace
-multiline_comment|/* ??? Unlike UltraStor, I see no way of determining whether &gt; 1G mapping&n;       has been enabled.  However, it appears that BusLogic uses a mapping&n;       scheme which varies with the disk size when &gt; 1G mapping is enabled.&n;       For disks &lt;= 1G, this mapping is the same regardless of the setting of&n;       &gt; 1G mapping.  Therefore, we should be safe in always assuming that &gt; 1G&n;       mapping has been enabled. */
-r_return
-id|BIOS_TRANSLATION_BIG
-suffix:semicolon
-)brace
-multiline_comment|/* Query the board to find out the model. */
+multiline_comment|/* Query the board.  This acts both as part of the detection sequence and as a&n;   means to get necessary configuration information. */
 DECL|function|buslogic_query
 r_static
 r_int
@@ -3861,34 +3618,84 @@ r_int
 id|base
 comma
 r_int
+r_char
 op_star
 id|trans
+comma
+r_int
+r_char
+op_star
+id|irq
+comma
+r_int
+r_char
+op_star
+id|dma
+comma
+r_int
+r_char
+op_star
+id|id
+comma
+r_char
+op_star
+id|bus_type
+comma
+r_int
+r_int
+op_star
+id|max_sg
+comma
+r_const
+r_int
+r_char
+op_star
+op_star
+id|bios
+comma
+r_char
+op_star
+id|model
+comma
+r_char
+op_star
+id|firmware_rev
 )paren
 (brace
-r_static
-r_const
 r_int
 r_char
 id|inquiry_cmd
 (braket
+l_int|2
 )braket
-op_assign
-(brace
-id|CMD_INQUIRY
-)brace
 suffix:semicolon
 r_int
 r_char
 id|inquiry_result
 (braket
-l_int|4
+l_int|6
 )braket
 suffix:semicolon
 r_int
+r_char
+id|geo
+suffix:semicolon
+r_int
+r_int
 id|i
 suffix:semicolon
-id|i
-op_assign
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;buslogic_query: called&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Quick and dirty test for presence of the card. */
+r_if
+c_cond
+(paren
 id|inb
 c_func
 (paren
@@ -3898,25 +3705,135 @@ c_func
 id|base
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-op_amp
-id|DIRRDY
+op_eq
+l_int|0xFF
 )paren
-id|i
+r_goto
+id|fail
+suffix:semicolon
+multiline_comment|/* Check the GEOMETRY port early for quick bailout on Adaptec boards. */
+id|geo
 op_assign
 id|inb
 c_func
 (paren
-id|DATA_IN
+id|GEOMETRY
 c_func
 (paren
 id|base
 )paren
 )paren
+suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;geometry bits: %02X&bslash;n&quot;
+comma
+id|geo
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Here is where we tell the men from the boys (i.e. Adaptec&squot;s don&squot;t&n;       support the GEOMETRY port, the men do :-) */
+r_if
+c_cond
+(paren
+id|geo
+op_eq
+l_int|0xFF
+)paren
+r_goto
+id|fail
+suffix:semicolon
+multiline_comment|/* In case some other card was probing here, reset interrupts. */
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/* Reset the adapter.  I ought to make a hard reset, but it&squot;s not really&n;       necessary. */
+id|outb
+c_func
+(paren
+id|RSOFT
+op_or
+id|RINT
+multiline_comment|/* | RSBUS*/
+comma
+id|CONTROL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Wait a little bit for things to settle down. */
+id|i
+op_assign
+id|jiffies
+op_plus
+l_int|2
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+OG
+id|jiffies
+)paren
+suffix:semicolon
+multiline_comment|/* Expect INREQ and HARDY, any of the others are bad. */
+id|WAIT
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|base
+)paren
+comma
+id|INREQ
+op_or
+id|HARDY
+comma
+id|DACT
+op_or
+id|DFAIL
+op_or
+id|CMDINV
+op_or
+id|DIRRDY
+op_or
+id|CPRBSY
+)paren
+suffix:semicolon
+multiline_comment|/* Shouldn&squot;t have generated any interrupts during reset. */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|INTERRUPT
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+id|INTRMASK
+)paren
+r_goto
+id|fail
+suffix:semicolon
+multiline_comment|/* Getting the BusLogic firmware revision level is a bit tricky.  We get&n;       the first two digits (d.d) from CMD_INQUIRY and then use two undocumented&n;       commands to get the remaining digit and letter (d.ddl as in 3.31C). */
+id|inquiry_cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|CMD_INQUIRY
 suffix:semicolon
 id|buslogic_out
 c_func
@@ -3925,10 +3842,12 @@ id|base
 comma
 id|inquiry_cmd
 comma
-r_sizeof
-id|inquiry_cmd
+l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|buslogic_in
 c_func
 (paren
@@ -3938,8 +3857,30 @@ id|inquiry_result
 comma
 l_int|4
 )paren
+)paren
+r_goto
+id|fail
 suffix:semicolon
-id|WAIT_UNTIL
+multiline_comment|/* Reading port should reset DIRRDY. */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+id|DIRRDY
+)paren
+r_goto
+id|fail
+suffix:semicolon
+id|WAIT_UNTIL_FAST
 c_func
 (paren
 id|INTERRUPT
@@ -3957,11 +3898,50 @@ c_func
 id|base
 )paren
 suffix:semicolon
-macro_line|#if 1&t;/* ??? Temporary */
+id|firmware_rev
+(braket
+l_int|0
+)braket
+op_assign
+id|inquiry_result
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|1
+)braket
+op_assign
+l_char|&squot;.&squot;
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|2
+)braket
+op_assign
+id|inquiry_result
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|3
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+macro_line|#if 0
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;Inquiry Bytes: %02X %02X %02X %02X&bslash;n&quot;
+l_string|&quot;Inquiry Bytes: %02X(%c) %02X(%c)&bslash;n&quot;
+comma
+id|inquiry_result
+(braket
+l_int|0
+)braket
 comma
 id|inquiry_result
 (braket
@@ -3975,16 +3955,377 @@ l_int|1
 comma
 id|inquiry_result
 (braket
-l_int|2
-)braket
-comma
-id|inquiry_result
-(braket
-l_int|3
+l_int|1
 )braket
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|getconfig
+c_func
+(paren
+id|base
+comma
+id|irq
+comma
+id|dma
+comma
+id|id
+comma
+id|bus_type
+comma
+id|max_sg
+comma
+id|bios
+)paren
+)paren
+r_goto
+id|fail
+suffix:semicolon
+multiline_comment|/* Set up defaults */
+macro_line|#ifdef BIOS_TRANSLATION_OVERRIDE
+op_star
+id|trans
+op_assign
+id|BIOS_TRANSLATION_OVERRIDE
+suffix:semicolon
+macro_line|#else
+op_star
+id|trans
+op_assign
+id|BIOS_TRANSLATION_DEFAULT
+suffix:semicolon
+macro_line|#endif
+id|model
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|model
+(braket
+l_int|6
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ??? Begin undocumented command use.&n;       These may not be supported by clones. */
+r_do
+(brace
+multiline_comment|/* ??? It appears as though AMI BusLogic clones don&squot;t implement this&n;&t;   feature.  As an experiment, if we read a 00 we ignore the GEO_GT_1GB&n;&t;   bit and skip all further undocumented commands. */
+r_if
+c_cond
+(paren
+id|geo
+op_eq
+l_int|0x00
+)paren
+r_break
+suffix:semicolon
+macro_line|#ifndef BIOS_TRANSLATION_OVERRIDE
+op_star
+id|trans
+op_assign
+(paren
+(paren
+id|geo
+op_amp
+id|GEO_GT_1GB
+)paren
+ques
+c_cond
+id|BIOS_TRANSLATION_BIG
+suffix:colon
+id|BIOS_TRANSLATION_DEFAULT
+)paren
+suffix:semicolon
+macro_line|#endif
+id|inquiry_cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|CMD_VER_NO_LAST
+suffix:semicolon
+id|buslogic_out
+c_func
+(paren
+id|base
+comma
+id|inquiry_cmd
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buslogic_in
+c_func
+(paren
+id|base
+comma
+id|inquiry_result
+comma
+l_int|1
+)paren
+)paren
+r_break
+suffix:semicolon
+id|WAIT_UNTIL_FAST
+c_func
+(paren
+id|INTERRUPT
+c_func
+(paren
+id|base
+)paren
+comma
+id|CMDC
+)paren
+suffix:semicolon
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|3
+)braket
+op_assign
+id|inquiry_result
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|4
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|inquiry_cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|CMD_VER_NO_LETTER
+suffix:semicolon
+id|buslogic_out
+c_func
+(paren
+id|base
+comma
+id|inquiry_cmd
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buslogic_in
+c_func
+(paren
+id|base
+comma
+id|inquiry_result
+comma
+l_int|1
+)paren
+)paren
+r_break
+suffix:semicolon
+id|WAIT_UNTIL_FAST
+c_func
+(paren
+id|INTERRUPT
+c_func
+(paren
+id|base
+)paren
+comma
+id|CMDC
+)paren
+suffix:semicolon
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|4
+)braket
+op_assign
+id|inquiry_result
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|firmware_rev
+(braket
+l_int|5
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* Use undocumented command to get model number and revision. */
+id|inquiry_cmd
+(braket
+l_int|0
+)braket
+op_assign
+id|CMD_RET_MODEL_NO
+suffix:semicolon
+id|inquiry_cmd
+(braket
+l_int|1
+)braket
+op_assign
+l_int|6
+suffix:semicolon
+id|buslogic_out
+c_func
+(paren
+id|base
+comma
+id|inquiry_cmd
+comma
+l_int|2
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buslogic_in
+c_func
+(paren
+id|base
+comma
+id|inquiry_result
+comma
+id|inquiry_cmd
+(braket
+l_int|1
+)braket
+)paren
+)paren
+r_break
+suffix:semicolon
+id|WAIT_UNTIL_FAST
+c_func
+(paren
+id|INTERRUPT
+c_func
+(paren
+id|base
+)paren
+comma
+id|CMDC
+)paren
+suffix:semicolon
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|model
+comma
+id|inquiry_result
+comma
+l_int|5
+)paren
+suffix:semicolon
+id|model
+(braket
+l_int|5
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|model
+(braket
+l_int|6
+)braket
+op_assign
+id|inquiry_result
+(braket
+l_int|5
+)braket
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* ??? End undocumented command use. */
+multiline_comment|/* bus_type from getconfig doesn&squot;t differentiate between EISA/VESA.  We&n;       override using the model number here. */
+multiline_comment|/* ??? What bus_type gets returned for PCI? */
+r_switch
+c_cond
+(paren
+op_star
+id|bus_type
+)paren
+(brace
+r_case
+l_char|&squot;E&squot;
+suffix:colon
+r_switch
+c_cond
+(paren
+id|model
+(braket
+l_int|0
+)braket
+)paren
+(brace
+r_case
+l_char|&squot;4&squot;
+suffix:colon
+op_star
+id|bus_type
+op_assign
+l_char|&squot;V&squot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_char|&squot;7&squot;
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+op_star
+id|bus_type
+op_assign
+l_char|&squot;X&squot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -3993,25 +4334,18 @@ l_int|0
 (brace
 id|fail
 suffix:colon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
 l_string|&quot;buslogic_query: query board settings&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|TRUE
 suffix:semicolon
 )brace
-op_star
-id|trans
-op_assign
-id|get_translation
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
 r_return
 id|FALSE
 suffix:semicolon
@@ -4038,14 +4372,11 @@ suffix:semicolon
 r_int
 r_int
 id|base
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_char
 id|id
 suffix:semicolon
-r_int
 r_char
 id|bus_type
 suffix:semicolon
@@ -4054,24 +4385,37 @@ r_int
 id|max_sg
 suffix:semicolon
 r_int
-id|trans
+r_char
+id|bios_translation
+suffix:semicolon
+r_const
+r_int
+r_char
+op_star
+id|bios
+suffix:semicolon
+r_char
+op_star
+id|model
+suffix:semicolon
+r_char
+op_star
+id|firmware_rev
 suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
 id|shpnt
-op_assign
-l_int|NULL
+suffix:semicolon
+r_int
+id|indx
 suffix:semicolon
 r_int
 id|count
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|indx
-suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
@@ -4113,7 +4457,7 @@ id|bases
 id|indx
 )braket
 comma
-l_int|3
+l_int|4
 )paren
 )paren
 (brace
@@ -4138,10 +4482,75 @@ id|bases
 id|indx
 )braket
 suffix:semicolon
+id|model
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|model
+suffix:semicolon
+id|firmware_rev
+op_assign
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|firmware_rev
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_port
+id|buslogic_query
+c_func
+(paren
+id|base
+comma
+op_amp
+id|bios_translation
+comma
+op_amp
+id|irq
+comma
+op_amp
+id|dma
+comma
+op_amp
+id|id
+comma
+op_amp
+id|bus_type
+comma
+op_amp
+id|max_sg
+comma
+op_amp
+id|bios
+comma
+id|model
+comma
+id|firmware_rev
+)paren
+)paren
+r_goto
+id|unregister
+suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
+id|buslogic_stat
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|setup_mailboxes
 c_func
 (paren
 id|base
@@ -4152,7 +4561,14 @@ id|shpnt
 r_goto
 id|unregister
 suffix:semicolon
-multiline_comment|/* Set the Bus on/off-times as not to ruin floppy performance. */
+multiline_comment|/* Set the Bus on/off-times as not to ruin floppy performance.&n;&t;       CMD_BUSOFF_TIME is a noop for EISA boards (and possibly&n;&t;       others???). */
+r_if
+c_cond
+(paren
+id|bus_type
+op_ne
+l_char|&squot;E&squot;
+)paren
 (brace
 multiline_comment|/* The default ON/OFF times for BusLogic adapters is 7/4. */
 r_static
@@ -4212,7 +4628,6 @@ comma
 id|CMDC
 )paren
 suffix:semicolon
-multiline_comment|/* CMD_BUSOFF_TIME is a noop for EISA boards, but as there is&n;&t;&t;   no way to to differentiate EISA from VESA we send it&n;&t;&t;   unconditionally. */
 id|INTR_RESET
 c_func
 (paren
@@ -4265,76 +4680,10 @@ id|base
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|buslogic_query
+id|buslogic_printk
 c_func
 (paren
-id|base
-comma
-op_amp
-id|trans
-)paren
-)paren
-r_goto
-id|unregister
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|getconfig
-c_func
-(paren
-id|base
-comma
-op_amp
-id|irq
-comma
-op_amp
-id|dma
-comma
-op_amp
-id|id
-comma
-op_amp
-id|bus_type
-comma
-op_amp
-id|max_sg
-)paren
-)paren
-r_goto
-id|unregister
-suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
-id|buslogic_stat
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Here is where we tell the men from the boys (i.e. an Adaptec&n;&t;       will fail in setup_mailboxes, the men will not :-) */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|setup_mailboxes
-c_func
-(paren
-id|base
-comma
-id|shpnt
-)paren
-)paren
-r_goto
-id|unregister
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Configuring BusLogic %s HA at port 0x%03X, IRQ %u&quot;
+l_string|&quot;Configuring %s HA at port 0x%03X, IRQ %u&quot;
 comma
 (paren
 id|bus_type
@@ -4350,15 +4699,70 @@ op_eq
 l_char|&squot;E&squot;
 ques
 c_cond
+l_string|&quot;EISA&quot;
+suffix:colon
+(paren
+id|bus_type
+op_eq
+l_char|&squot;M&squot;
+ques
+c_cond
+l_string|&quot;MCA&quot;
+suffix:colon
+(paren
+id|bus_type
+op_eq
+l_char|&squot;P&squot;
+ques
+c_cond
+l_string|&quot;PCI&quot;
+suffix:colon
+(paren
+id|bus_type
+op_eq
+l_char|&squot;V&squot;
+ques
+c_cond
+l_string|&quot;VESA&quot;
+suffix:colon
+(paren
+id|bus_type
+op_eq
+l_char|&squot;X&squot;
+ques
+c_cond
 l_string|&quot;EISA/VESA&quot;
 suffix:colon
-l_string|&quot;MCA&quot;
+l_string|&quot;Unknown&quot;
+)paren
+)paren
+)paren
+)paren
 )paren
 )paren
 comma
 id|base
 comma
 id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bios
+op_ne
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, BIOS 0x%05X&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|bios
 )paren
 suffix:semicolon
 r_if
@@ -4384,7 +4788,58 @@ comma
 id|id
 )paren
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Model Number: %s&quot;
+comma
+(paren
+id|model
+(braket
+l_int|0
+)braket
+ques
+c_cond
+id|model
+suffix:colon
+l_string|&quot;Unknown&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|model
+(braket
+l_int|0
+)braket
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; (revision %d)&quot;
+comma
+id|model
+(braket
+l_int|6
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Firmware revision: %s&bslash;n&quot;
+comma
+id|firmware_rev
+)paren
+suffix:semicolon
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_stat
 c_func
 (paren
@@ -4392,7 +4847,7 @@ id|base
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
@@ -4479,39 +4934,21 @@ r_goto
 id|unregister
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dma
-op_ge
-l_int|5
-)paren
-(brace
-id|outb
-c_func
-(paren
-(paren
-id|dma
-op_minus
-l_int|4
-)paren
-op_or
-id|CASCADE
-comma
-id|DMA_MODE_REG
-)paren
-suffix:semicolon
-id|outb
+multiline_comment|/* The DMA-Controller.  We need to fool with this because we&n;&t;&t;   want to be able to use an ISA BusLogic without having to&n;&t;&t;   have the BIOS enabled. */
+id|set_dma_mode
 c_func
 (paren
 id|dma
-op_minus
-l_int|4
 comma
-id|DMA_MASK_REG
+id|DMA_MODE_CASCADE
 )paren
 suffix:semicolon
-)brace
+id|enable_dma
+c_func
+(paren
+id|dma
+)paren
+suffix:semicolon
 )brace
 id|host
 (braket
@@ -4526,7 +4963,6 @@ id|shpnt-&gt;this_id
 op_assign
 id|id
 suffix:semicolon
-macro_line|#ifdef CONFIG_NO_BUGGY_BUSLOGIC
 multiline_comment|/* Only type &squot;A&squot; (AT/ISA) bus adapters use unchecked DMA. */
 id|shpnt-&gt;unchecked_isa_dma
 op_assign
@@ -4536,13 +4972,64 @@ op_eq
 l_char|&squot;A&squot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_NO_BUGGY_BUSLOGIC
+multiline_comment|/* There is a hardware bug in the BT-445S prior to revision D.&n;&t;       When the BIOS is enabled and you have more than 16MB of memory,&n;&t;       the card mishandles memory transfers over 16MB which (if viewed&n;&t;       as a 24-bit address) overlap with the BIOS address space.  For&n;&t;       example if you have the BIOS located at physical address&n;&t;       0xDC000 and a DMA transfer from the card to RAM starts at&n;&t;       physical address 0x10DC000 then the transfer is messed up.  To&n;&t;       be more precise every fourth byte of the transfer is messed up.&n;&t;       (This analysis courtesy of Tomas Hurka, author of the NeXTSTEP&n;&t;       BusLogic driver.) */
+r_if
+c_cond
+(paren
+id|bus_type
+op_eq
+l_char|&squot;V&squot;
+multiline_comment|/* 445 */
+op_logical_and
+id|firmware_rev
+(braket
+l_int|0
+)braket
+op_le
+l_char|&squot;3&squot;
+multiline_comment|/* S */
+op_logical_and
+id|bios
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* BIOS enabled */
+macro_line|#if 0
+multiline_comment|/* ??? Once LNZ&squot;s forbidden_addr stuff makes it into the higher&n;&t;&t;   level scsi code, we can use this instead. */
+multiline_comment|/* Avoid addresses which &quot;mirror&quot; the BIOS for DMA. */
+id|shpnt-&gt;forbidden_addr
+op_assign
+id|bios
+suffix:semicolon
+id|shpnt-&gt;forbidden_size
+op_assign
+l_int|16
+op_star
+l_int|1024
+suffix:semicolon
 macro_line|#else
-multiline_comment|/* Bugs in the firmware of the 445S with &gt;16M.  This does not seem&n;&t;       to affect Revision E boards with firmware 3.37. */
+multiline_comment|/* Use double-buffering. */
 id|shpnt-&gt;unchecked_isa_dma
 op_assign
-l_int|1
+id|TRUE
 suffix:semicolon
 macro_line|#endif
+)brace
+macro_line|#endif
+multiline_comment|/* Have to keep cmd_per_lun at 1 for ISA machines otherwise lots&n;&t;       of memory gets sucked up for bounce buffers.  */
+multiline_comment|/* ??? Unfortunately, cmd_per_lun is only in the&n;&t;       Scsi_Host_Template structure, not the Scsi_Host structure.&n;&t;       Therefore, this could cause high memory consumption if a system&n;&t;       has multiple BusLogic adapters which are a mix of ISA and&n;&t;       non-ISA. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|shpnt-&gt;unchecked_isa_dma
+)paren
+id|shpnt-&gt;hostt-&gt;cmd_per_lun
+op_assign
+id|BUSLOGIC_NONISA_CMDLUN
+suffix:semicolon
 id|shpnt-&gt;sg_tablesize
 op_assign
 id|max_sg
@@ -4558,15 +5045,15 @@ id|shpnt-&gt;sg_tablesize
 op_assign
 id|BUSLOGIC_MAX_SG
 suffix:semicolon
-multiline_comment|/* ??? If we can dynamically allocate the mailbox arrays, I&squot;ll&n;&t;       probably bump up this number. */
-id|shpnt-&gt;hostt-&gt;can_queue
-op_assign
-id|BUSLOGIC_MAILBOXES
-suffix:semicolon
-multiline_comment|/* No known way to determine BIOS base address, but we don&squot;t&n;&t;       care since we don&squot;t use it anyway. */
+multiline_comment|/* ??? shpnt-&gt;base should really be &quot;const unsigned char *&quot;... */
 id|shpnt-&gt;base
 op_assign
-l_int|NULL
+(paren
+r_int
+r_char
+op_star
+)paren
+id|bios
 suffix:semicolon
 id|shpnt-&gt;io_port
 op_assign
@@ -4588,12 +5075,12 @@ id|shpnt
 op_member_access_from_pointer
 id|bios_translation
 op_assign
-id|trans
+id|bios_translation
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|trans
+id|bios_translation
 op_eq
 id|BIOS_TRANSLATION_BIG
 )paren
@@ -4697,7 +5184,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
@@ -4787,7 +5274,7 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_DETECT)
 id|buslogic_printk
 c_func
 (paren
@@ -4892,7 +5379,7 @@ id|bases
 id|indx
 )braket
 comma
-l_int|3
+l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* Register the IO ports that&n;&t;&t;&t;&t;&t;&t;   we use */
@@ -5466,7 +5953,7 @@ r_int
 r_int
 id|i
 suffix:semicolon
-macro_line|#if BUSLOGIC_DEBUG
+macro_line|#if (BUSLOGIC_DEBUG &amp; BD_RESET)
 id|buslogic_printk
 c_func
 (paren
@@ -5535,9 +6022,8 @@ id|i
 dot
 id|op
 op_assign
-l_int|0x81
+id|CCB_OP_BUS_RESET
 suffix:semicolon
-multiline_comment|/* ??? BUS DEVICE&n;&t;&t;&t;&t;&t;&t;&t;   RESET */
 multiline_comment|/* Now tell the BusLogic to flush all pending commands for this&n;&t;       target. */
 id|buslogic_out
 c_func
@@ -5639,7 +6125,7 @@ comma
 id|BUSLOGIC_SG_MALLOC
 )paren
 suffix:semicolon
-id|printk
+id|buslogic_printk
 c_func
 (paren
 l_string|&quot;Sending DID_RESET for target %d&bslash;n&quot;
@@ -5699,6 +6185,7 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
+multiline_comment|/* ??? This is probably not correct for series &quot;C&quot; boards.  I believe these&n;   support separate mappings for each disk.  We would need to issue a&n;   CMD_READ_FW_LOCAL_RAM command to check for the particular drive being&n;   queried.  Note that series &quot;C&quot; boards can be differentiated by having&n;   HOSTDATA(disk-&gt;device-&gt;host)-&gt;firmware_rev[0] &gt;= &squot;4&squot;. */
 DECL|function|buslogic_biosparam
 r_int
 id|buslogic_biosparam
@@ -5716,14 +6203,11 @@ op_star
 id|ip
 )paren
 (brace
-multiline_comment|/* ??? This truncates.  Should we round up to next MB? */
 r_int
 r_int
-id|mb
+id|size
 op_assign
 id|disk-&gt;capacity
-op_rshift
-l_int|11
 suffix:semicolon
 multiline_comment|/* ip[0] == heads, ip[1] == sectors, ip[2] == cylinders */
 r_if
@@ -5739,19 +6223,31 @@ id|bios_translation
 op_eq
 id|BIOS_TRANSLATION_BIG
 op_logical_and
-id|mb
-OG
-l_int|1024
+id|size
+op_ge
+l_int|0x200000
 )paren
 (brace
+multiline_comment|/* 1GB */
+r_if
+c_cond
+(paren
+id|size
+op_ge
+l_int|0x400000
+)paren
+(brace
+multiline_comment|/* 2GB */
+macro_line|#if 0&t;/* ??? Used in earlier kernels, but disagrees with BusLogic info. */
 r_if
 c_cond
 (paren
 id|mb
-OG
-l_int|4096
+op_ge
+l_int|0x800000
 )paren
 (brace
+multiline_comment|/* 4GB */
 id|ip
 (braket
 l_int|0
@@ -5766,25 +6262,8 @@ l_int|1
 op_assign
 l_int|64
 suffix:semicolon
-id|ip
-(braket
-l_int|2
-)braket
-op_assign
-id|mb
-op_rshift
-l_int|3
-suffix:semicolon
-multiline_comment|/*&t;    if (ip[2] &gt; 1024)&n;&t;&t;ip[2] = 1024; */
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|mb
-OG
-l_int|2048
-)paren
 (brace
 id|ip
 (braket
@@ -5800,15 +6279,23 @@ l_int|1
 op_assign
 l_int|32
 suffix:semicolon
+)brace
+macro_line|#else
 id|ip
 (braket
-l_int|2
+l_int|0
 )braket
 op_assign
-id|mb
-op_rshift
-l_int|2
+l_int|256
 suffix:semicolon
+id|ip
+(braket
+l_int|1
+)braket
+op_assign
+l_int|64
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -5826,15 +6313,6 @@ l_int|1
 op_assign
 l_int|32
 suffix:semicolon
-id|ip
-(braket
-l_int|2
-)braket
-op_assign
-id|mb
-op_rshift
-l_int|1
-suffix:semicolon
 )brace
 )brace
 r_else
@@ -5853,15 +6331,27 @@ l_int|1
 op_assign
 l_int|32
 suffix:semicolon
+)brace
 id|ip
 (braket
 l_int|2
 )braket
 op_assign
-id|mb
+id|size
+op_div
+(paren
+id|ip
+(braket
+l_int|0
+)braket
+op_star
+id|ip
+(braket
+l_int|1
+)braket
+)paren
 suffix:semicolon
-multiline_comment|/*&t;if (ip[2] &gt; 1024)&n;&t;    ip[2] = 1024; */
-)brace
+multiline_comment|/*    if (ip[2] &gt; 1024)&n;&t;ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

@@ -562,6 +562,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|aha1542_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|aha274x_setup
 c_func
 (paren
@@ -1116,6 +1130,14 @@ macro_line|#ifdef CONFIG_SCSI_AHA152X
 l_string|&quot;aha152x=&quot;
 comma
 id|aha152x_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA1542
+(brace
+l_string|&quot;aha1542=&quot;
+comma
+id|aha1542_setup
 )brace
 comma
 macro_line|#endif

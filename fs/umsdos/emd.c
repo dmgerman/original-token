@@ -39,6 +39,14 @@ id|count
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_fs
 (paren
 id|KERNEL_DS
@@ -60,7 +68,7 @@ id|count
 suffix:semicolon
 id|set_fs
 (paren
-id|USER_DS
+id|old_fs
 )paren
 suffix:semicolon
 r_return
@@ -94,6 +102,14 @@ id|count
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_fs
 (paren
 id|KERNEL_DS
@@ -115,7 +131,7 @@ id|count
 suffix:semicolon
 id|set_fs
 (paren
-id|USER_DS
+id|old_fs
 )paren
 suffix:semicolon
 r_return
@@ -149,6 +165,14 @@ id|count
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_fs
 (paren
 id|KERNEL_DS
@@ -170,7 +194,7 @@ id|count
 suffix:semicolon
 id|set_fs
 (paren
-id|USER_DS
+id|old_fs
 )paren
 suffix:semicolon
 r_return
@@ -756,7 +780,7 @@ id|ret
 suffix:semicolon
 )brace
 DECL|macro|CHUNK_SIZE
-mdefine_line|#define CHUNK_SIZE (16*UMSDOS_REC_SIZE)
+mdefine_line|#define CHUNK_SIZE (8*UMSDOS_REC_SIZE)
 DECL|struct|find_buffer
 r_struct
 id|find_buffer

@@ -25,16 +25,6 @@ id|tpnt
 )paren
 suffix:semicolon
 r_extern
-r_const
-r_char
-op_star
-id|NCR53c7xx_info
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|NCR53c7xx_queue_command
 c_func
@@ -63,7 +53,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, &quot;NCR53c{7,8}xx (rel 3)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, NCR53c7xx_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&bslash;&n;        NULL, scsicam_bios_param, &t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ 1, /* id */ 7, 255 /* old SG_ALL */, &t;&t;&bslash;&n;&t;/* cmd per lun */ 1 , 0, 0, DISABLE_CLUSTERING}
+mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 3)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL, NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&bslash;&n;        NULL, scsicam_bios_param, &t;&t;&t;&t;&t;&bslash;&n;&t;/* can queue */ 1, /* id */ 7, 255 /* old SG_ALL */, &t;&t;&bslash;&n;&t;/* cmd per lun */ 1 , 0, 0, DISABLE_CLUSTERING}
 macro_line|#else
 multiline_comment|/* Register addresses, ordered numerically */
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */

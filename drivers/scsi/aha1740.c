@@ -552,28 +552,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|aha1740_info
-r_const
-r_char
-op_star
-id|aha1740_info
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_char
-id|buffer
-(braket
-)braket
-op_assign
-l_string|&quot;Adaptec 174x (EISA)&quot;
-suffix:semicolon
-r_return
-id|buffer
-suffix:semicolon
-)brace
 multiline_comment|/* A &quot;high&quot; level interrupt handler */
 DECL|function|aha1740_intr_handle
 r_void
@@ -1150,14 +1128,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-(paren
-id|COMMAND_SIZE
-c_func
-(paren
-op_star
-id|cmd
-)paren
-)paren
+id|SCpnt-&gt;cmd_len
 suffix:semicolon
 id|i
 op_increment
@@ -1300,12 +1271,7 @@ id|ecbno
 dot
 id|cdblen
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
-op_star
-id|cmd
-)paren
+id|SCpnt-&gt;cmd_len
 suffix:semicolon
 multiline_comment|/* SCSI Command Descriptor Block Length */
 id|direction

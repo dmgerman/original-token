@@ -955,7 +955,10 @@ op_star
 id|seagate_st0x_info
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 )paren
 (brace
 r_static
@@ -1367,14 +1370,7 @@ macro_line|#ifdef LINKED
 multiline_comment|/*&n; * Set linked command bit in control field of SCSI command.&n; */
 id|current_cmnd
 (braket
-id|COMMAND_SIZE
-c_func
-(paren
-id|current_cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|SCpnt-&gt;cmd_len
 )braket
 op_or_assign
 l_int|0x01

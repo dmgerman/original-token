@@ -24,9 +24,20 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* 0==ok, otherwise refer to errno codes */
-DECL|member|flags
+DECL|member|twelve_byte
 r_int
-id|flags
+r_int
+id|twelve_byte
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Force 12 byte command length for group 6 &amp; 7 commands  */
+DECL|member|other_flags
+r_int
+r_int
+id|other_flags
+suffix:colon
+l_int|31
 suffix:semicolon
 multiline_comment|/* for future use */
 DECL|member|sense_buffer

@@ -2099,7 +2099,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* PLIP_ERROR --- wait til other end setteled */
+multiline_comment|/* PLIP_ERROR --- wait til other end settled */
 r_static
 r_int
 DECL|function|plip_error

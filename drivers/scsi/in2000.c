@@ -1751,7 +1751,6 @@ multiline_comment|/* end if auxstatus for WD int */
 multiline_comment|/* end while intrpt active */
 )brace
 DECL|function|in2000_queuecommand
-r_static
 r_int
 id|in2000_queuecommand
 c_func
@@ -2454,7 +2453,6 @@ id|internal_done_flag
 suffix:semicolon
 )brace
 DECL|function|in2000_command
-r_static
 r_int
 id|in2000_command
 c_func
@@ -2488,7 +2486,6 @@ id|internal_done_errcode
 suffix:semicolon
 )brace
 DECL|function|in2000_detect
-r_static
 r_int
 id|in2000_detect
 c_func
@@ -2854,7 +2851,6 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|in2000_abort
-r_static
 r_int
 id|in2000_abort
 c_func
@@ -2925,7 +2921,6 @@ id|time
 suffix:semicolon
 )brace
 DECL|function|in2000_reset
-r_static
 r_int
 id|in2000_reset
 c_func
@@ -3031,7 +3026,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|in2000_biosparam
-r_static
 r_int
 id|in2000_biosparam
 c_func

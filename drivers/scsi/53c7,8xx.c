@@ -8983,14 +8983,7 @@ id|dsa_cmdout
 comma
 l_int|0
 comma
-id|COMMAND_SIZE
-c_func
-(paren
-id|cmd-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|cmd-&gt;cmd_len
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -13581,19 +13574,6 @@ id|cmd-&gt;host-&gt;host_no
 suffix:semicolon
 r_return
 id|SCSI_RESET_SNOOZE
-suffix:semicolon
-)brace
-DECL|function|NCR53c7xx_info
-r_const
-r_char
-op_star
-id|NCR53c7xx_info
-(paren
-r_void
-)paren
-(brace
-r_return
-l_string|&quot;More info here&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The NCR SDMS bios follows Annex A of the SCSI-CAM draft, and &n; * therefore shares the scsicam_bios_param function.&n; */

@@ -65,9 +65,9 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|BUSLOGIC_CMDLUN
-mdefine_line|#define BUSLOGIC_CMDLUN 1&t;/* Do not set this too high.  It sucks&n;&t;&t;&t;&t;   up lots of memory on machines with &gt; 16Mb&n;&t;&t;&t;&t;   because of the huge number of bounce&n;&t;&t;&t;&t;   buffers that need to be allocated.&n;&t;&t;&t;&t;   For boards that use non-ISA bus, we can&n;&t;&t;&t;&t;   bump this in the board detect routine.  &n;&t;&t;&t;&t;   &t;&t;&t;10/8/94 ERY */
+mdefine_line|#define BUSLOGIC_CMDLUN 1&t;/* Do not set this too high.  It sucks&n;&t;&t;&t;&t;   up lots of memory on ISA machines&n;&t;&t;&t;&t;   with &gt; 16MB because of the huge number of&n;&t;&t;&t;&t;   bounce buffers that need to be allocated.&n;&t;&t;&t;&t;   For boards that use non-ISA bus, we can&n;&t;&t;&t;&t;   bump this in the board detect routine.  &n;&t;&t;&t;&t;&t;&t;&t;10/8/94 ERY */
 DECL|macro|BUSLOGIC
-mdefine_line|#define BUSLOGIC { NULL, &t;&t;&t;&bslash;&n;&t;&t;   &quot;BusLogic&quot;,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_detect,&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_info,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no command func */&t;&bslash;&n;&t;&t;   buslogic_queuecommand,&t;&bslash;&n;&t;&t;   buslogic_abort,&t;&t;&bslash;&n;&t;&t;   buslogic_reset,&t;&t;&bslash;&n;&t;&t;   0,&t;/* slave_attach NYI */&t;&bslash;&n;&t;&t;   buslogic_biosparam,&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   BUSLOGIC_CMDLUN,&t;&t;&bslash;&n;&t;&t;   0,&t;&t;&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING&t;&t;&bslash;&n;&t;&t; }
+mdefine_line|#define BUSLOGIC { NULL,&t;&t;&t;&bslash;&n;&t;&t;   &quot;BusLogic&quot;,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_detect,&t;&t;&bslash;&n;&t;&t;   NULL,&t;&t;&t;&bslash;&n;&t;&t;   buslogic_info,&t;&t;&bslash;&n;&t;&t;   0,&t;/* no command func */&t;&bslash;&n;&t;&t;   buslogic_queuecommand,&t;&bslash;&n;&t;&t;   buslogic_abort,&t;&t;&bslash;&n;&t;&t;   buslogic_reset,&t;&t;&bslash;&n;&t;&t;   0,&t;/* slave_attach NYI */&t;&bslash;&n;&t;&t;   buslogic_biosparam,&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   BUSLOGIC_CMDLUN,&t;&t;&bslash;&n;&t;&t;   0,&t;&t;&t;&t;&bslash;&n;&t;&t;   0,&t;/* set by driver */&t;&bslash;&n;&t;&t;   ENABLE_CLUSTERING&t;&t;&bslash;&n;&t;&t; }
 macro_line|#ifdef BUSLOGIC_PRIVATE_H
 multiline_comment|/* ??? These don&squot;t really belong here */
 macro_line|#ifndef TRUE
@@ -88,10 +88,16 @@ DECL|macro|BD_COMMAND
 mdefine_line|#define BD_COMMAND&t;0x0002
 DECL|macro|BD_DETECT
 mdefine_line|#define BD_DETECT&t;0x0004
+DECL|macro|BD_ERRORS
+mdefine_line|#define BD_ERRORS&t;0x0008
 DECL|macro|BD_INTERRUPT
-mdefine_line|#define BD_INTERRUPT&t;0x0008
+mdefine_line|#define BD_INTERRUPT&t;0x0010
+DECL|macro|BD_IO
+mdefine_line|#define BD_IO&t;&t;0x0020
 DECL|macro|BD_RESET
-mdefine_line|#define BD_RESET&t;0x0010
+mdefine_line|#define BD_RESET&t;0x0040
+DECL|macro|BD_UNDOCUMENTED
+mdefine_line|#define BD_UNDOCUMENTED&t;0x0080
 multiline_comment|/* I/O Port interface */
 multiline_comment|/* READ */
 DECL|macro|STATUS
@@ -108,16 +114,16 @@ DECL|macro|CPRBSY
 mdefine_line|#define CPRBSY 0x08&t;&t;/* Command/Parameter Register Busy */
 DECL|macro|DIRRDY
 mdefine_line|#define DIRRDY 0x04&t;&t;/* Data In Register Ready */
+multiline_comment|/* 0x02 is reserved */
 DECL|macro|CMDINV
 mdefine_line|#define CMDINV 0x01&t;&t;/* Command Invalid */
-DECL|macro|STATMASK
-mdefine_line|#define STATMASK 0xFD&t;&t;/* 0x02 is reserved */
 DECL|macro|DATA_IN
 mdefine_line|#define DATA_IN(base) (STATUS(base) + 1)
 DECL|macro|INTERRUPT
 mdefine_line|#define INTERRUPT(base) (STATUS(base) + 2)
 DECL|macro|INTV
 mdefine_line|#define INTV 0x80&t;&t;/* Interrupt Valid */
+multiline_comment|/* 0x70 are reserved */
 DECL|macro|RSTS
 mdefine_line|#define RSTS 0x08&t;&t;/* SCSI Reset State */
 DECL|macro|CMDC
@@ -127,7 +133,17 @@ mdefine_line|#define MBOR 0x02&t;&t;/* Mailbox Out Ready */
 DECL|macro|IMBL
 mdefine_line|#define IMBL 0x01&t;&t;/* Incoming Mailbox Loaded */
 DECL|macro|INTRMASK
-mdefine_line|#define INTRMASK 0x8F&t;&t;/* 0x70 are reserved */
+mdefine_line|#define INTRMASK 0x8F
+multiline_comment|/* This undocumented port returns a bitmask indicating geometry translation. */
+DECL|macro|GEOMETRY
+mdefine_line|#define GEOMETRY(base) (STATUS(base) + 3)
+DECL|macro|GEO_GT_1GB
+mdefine_line|#define GEO_GT_1GB 0x80&t;&t;/* &gt; 1GB under DOS geometry mapping */
+multiline_comment|/* 0x70 are unknown */
+DECL|macro|GEO_XLATION_S_D1
+mdefine_line|#define GEO_XLATION_S_D1 0x0C&t;/* Disk 1 geometry (&quot;S&quot; models only) */
+DECL|macro|GEO_XLATION_S_D0
+mdefine_line|#define GEO_XLATION_S_D0 0x03&t;/* Disk 0 geometry (&quot;S&quot; models only) */
 multiline_comment|/* WRITE */
 DECL|macro|CONTROL
 mdefine_line|#define CONTROL(base) STATUS(base)
@@ -139,6 +155,7 @@ DECL|macro|RINT
 mdefine_line|#define RINT 0x20&t;&t;/* Interrupt Reset */
 DECL|macro|RSBUS
 mdefine_line|#define RSBUS 0x10&t;&t;/* SCSI Bus Reset */
+multiline_comment|/* 0x0F are reserved */
 DECL|macro|COMMAND_PARAMETER
 mdefine_line|#define COMMAND_PARAMETER(base) (STATUS(base) + 1)
 DECL|macro|CMD_TSTCMDCINT
@@ -185,8 +202,18 @@ DECL|macro|CMD_HA_OPTIONS
 mdefine_line|#define CMD_HA_OPTIONS 0x21&t;/* Host Adapter Options */
 DECL|macro|CMD_INITEXTMB
 mdefine_line|#define CMD_INITEXTMB 0x81&t;/* Initialize Extended Mailbox */
+DECL|macro|CMD_VER_NO_LAST
+mdefine_line|#define CMD_VER_NO_LAST 0x84&t;/* Version Number Last Byte (undocumented) */
+DECL|macro|CMD_VER_NO_LETTER
+mdefine_line|#define CMD_VER_NO_LETTER 0x85&t;/* Version Number One Letter (undocumented) */
+DECL|macro|CMD_RET_MODEL_NO
+mdefine_line|#define CMD_RET_MODEL_NO 0x8B&t;/* Return Model Number (undocumented) */
 DECL|macro|CMD_INQEXTSETUP
 mdefine_line|#define CMD_INQEXTSETUP 0x8D&t;/* Inquire Extended Set-up Information */
+DECL|macro|CMD_ROUND_ROBIN
+mdefine_line|#define CMD_ROUND_ROBIN 0x8F&t;/* Enable strict vs. half-assed round-robin&n;&t;&t;&t;&t;   mailbox filling (undocumented) */
+DECL|macro|CMD_READ_FW_LCL_RAM
+mdefine_line|#define CMD_READ_FW_LCL_RAM 0x91/* Read Firmware Local RAM (undocumented) */
 DECL|macro|CMD_WRITE_INQ_BUF
 mdefine_line|#define CMD_WRITE_INQ_BUF 0x9A&t;/* Write Inquiry Data Buffer&n;&t;&t;&t;&t;   (Target Mode Only) */
 DECL|macro|CMD_READ_INQ_BUF

@@ -1685,19 +1685,6 @@ r_return
 id|j
 suffix:semicolon
 )brace
-DECL|function|eata_info
-r_const
-r_char
-op_star
-id|eata_info
-(paren
-r_void
-)paren
-(brace
-r_return
-id|driver_name
-suffix:semicolon
-)brace
 DECL|function|build_sg_list
 r_static
 r_inline
@@ -2329,12 +2316,7 @@ id|cpp-&gt;cdb
 comma
 id|SCpnt-&gt;cmnd
 comma
-id|COMMAND_SIZE
-c_func
-(paren
-op_star
-id|SCpnt-&gt;cmnd
-)paren
+id|SCpnt-&gt;cmd_len
 )paren
 suffix:semicolon
 multiline_comment|/* Send control packet to the board */

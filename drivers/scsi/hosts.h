@@ -32,6 +32,12 @@ id|SHT
 op_star
 id|next
 suffix:semicolon
+multiline_comment|/* Used with loadable modules so that we know when it is safe to unload */
+DECL|member|usage_count
+r_int
+op_star
+id|usage_count
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;The name pointer is a pointer to the name of the SCSI&n;&t;&t;device detected.&n;&t;*/
 DECL|member|name
 r_char
@@ -51,7 +57,7 @@ id|SHT
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Used with loadable modules to unload the host structures */
+multiline_comment|/* Used with loadable modules to unload the host structures.  Note:&n;&t;   there is a default action built into the modules code which may&n;&t;   be sufficient for most host adapters.  Thus you may not have to supply&n;&t;   this at all. */
 DECL|member|release
 r_int
 (paren
@@ -64,7 +70,7 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;The info function will return whatever useful&n;&t;&t;information the developer sees fit.              &n;&t;*/
+multiline_comment|/*&n;&t;&t;The info function will return whatever useful&n;&t;&t;information the developer sees fit.  If not provided, then&n;&t;&t;the name field will be used instead.&n;&t;*/
 DECL|member|info
 r_const
 r_char
@@ -74,7 +80,9 @@ op_star
 id|info
 )paren
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;The command function takes a target, a command (this is a SCSI &n;&t;&t;command formatted as per the SCSI spec, nothing strange), a &n;&t;&t;data buffer pointer, and data buffer length pointer.  The return&n;&t;&t;is a status int, bit fielded as follows : &n;&t;&t;Byte&t;What&n;&t;&t;0&t;SCSI status code&n;&t;&t;1&t;SCSI 1 byte message&n;&t;&t;2 &t;host error return.&n;&t;&t;3&t;mid level error return&n;&t;*/
@@ -213,6 +221,8 @@ DECL|typedef|Scsi_Host_Template
 id|Scsi_Host_Template
 suffix:semicolon
 multiline_comment|/*&n;&t;The scsi_hosts array is&t;the array containing the data for all &n;&t;possible &lt;supported&gt; scsi hosts.   This is similar to the&n;&t;Scsi_Host_Template, except that we have one entry for each&n;&t;actual physical host adapter on the system, stored as a linked&n;&t;list.  Note that if there are 2 aha1542 boards, then there will&n;&t;be two Scsi_Host entries, but only 1 Scsi_Host_Template entries.&n;*/
+DECL|macro|SCSI_HOST_BLOCK
+mdefine_line|#define SCSI_HOST_BLOCK 0x800
 DECL|struct|Scsi_Host
 r_struct
 id|Scsi_Host
@@ -259,6 +269,13 @@ id|Scsi_Host_Template
 op_star
 id|hostt
 suffix:semicolon
+multiline_comment|/* Pointer to a circularly linked list - this indicates the hosts&n;&t;&t;   that should be locked out of performing I/O while we have an active&n;&t;&t;   command on this host. */
+DECL|member|block
+r_struct
+id|Scsi_Host
+op_star
+id|block
+suffix:semicolon
 multiline_comment|/* These parameters should be set by the detect routine */
 DECL|member|base
 r_int
@@ -271,6 +288,11 @@ r_int
 r_int
 r_int
 id|io_port
+suffix:semicolon
+DECL|member|n_io_port
+r_int
+r_char
+id|n_io_port
 suffix:semicolon
 DECL|member|irq
 r_int

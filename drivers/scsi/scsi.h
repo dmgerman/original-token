@@ -702,6 +702,16 @@ id|target
 comma
 id|lun
 suffix:semicolon
+DECL|member|cmd_len
+r_int
+r_char
+id|cmd_len
+suffix:semicolon
+DECL|member|old_cmd_len
+r_int
+r_char
+id|old_cmd_len
+suffix:semicolon
 DECL|member|next
 DECL|member|prev
 r_struct

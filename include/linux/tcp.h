@@ -72,7 +72,7 @@ id|res2
 suffix:colon
 l_int|2
 suffix:semicolon
-macro_line|#elif defined(__mc680x0__)
+macro_line|#elif defined(__mc68000__)
 DECL|member|res2
 id|u16
 id|res2

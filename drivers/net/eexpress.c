@@ -1,5 +1,5 @@
 multiline_comment|/* eexpress.c: Intel EtherExpress device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;&n;        Modularized my Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -27,6 +27,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/* use 0 for production, 1 for verification, 2..7 for debug */
 macro_line|#ifndef NET_DEBUG
@@ -1296,6 +1300,10 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2369,6 +2377,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4099,5 +4111,122 @@ id|WRITE_PTR
 suffix:semicolon
 )brace
 "&f;"
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|dev_eexpress
+r_static
+r_struct
+id|device
+id|dev_eexpress
+op_assign
+(brace
+l_string|&quot;        &quot;
+multiline_comment|/*&quot;eexpress&quot;*/
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|express_probe
+)brace
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|dev_eexpress
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;express: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|dev_eexpress
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|dev_eexpress.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+)paren
+suffix:semicolon
+id|dev_eexpress.priv
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -I/usr/src/linux/drivers/net -Wall -Wstrict-prototypes -O6 -m486 -c eexpress.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

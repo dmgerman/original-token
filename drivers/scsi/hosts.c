@@ -325,6 +325,10 @@ id|retval-&gt;host_busy
 op_assign
 l_int|0
 suffix:semicolon
+id|retval-&gt;block
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -38,15 +38,6 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-r_const
-r_char
-op_star
-id|eata_info
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_int
 id|eata_reset
 c_func
@@ -69,6 +60,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|EATA
-mdefine_line|#define EATA {  NULL, /* Ptr for modules */                    &bslash;&n;                &quot;EISA EATA 2.0A rev. &quot; EATA_VERSION &quot; by &quot;     &bslash;&n;                &quot;Dario_Ballabio@milano.europe.dg.com.&quot;,&bslash;&n;                eata_detect,&t;        &t;               &bslash;&n;                NULL, /* Release */     &t;               &bslash;&n;&t;&t;eata_info,                                     &bslash;&n;&t;&t;NULL,    &t;&t;&t;       &t;       &bslash;&n;&t;&t;eata_queuecommand,&t;&t;&t;       &bslash;&n;&t;&t;eata_abort,&t;&t;&t;&t;       &bslash;&n;&t;&t;eata_reset,&t;&t;&t;&t;       &bslash;&n;&t;        NULL,&t;&t;                               &bslash;&n;&t;&t;eata_bios_param,   &t;&t;&t;       &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */          &bslash;&n;                7,   /* this_id, reset by detect */            &bslash;&n;                0,   /* sg_tablesize, reset by detect */       &bslash;&n;                0,   /* cmd_per_lun, reset by detect */        &bslash;&n;&t;&t;0,   /* number of boards present */            &bslash;&n;                0,   /* unchecked isa dma */                   &bslash;&n;                ENABLE_CLUSTERING                              &bslash;&n;                }
+mdefine_line|#define EATA {  NULL, /* Ptr for modules */                    &bslash;&n;&t;&t;  NULL, /* usage count for modules */&t;       &bslash;&n;                &quot;EISA EATA 2.0A rev. &quot; EATA_VERSION &quot; by &quot;     &bslash;&n;                &quot;Dario_Ballabio@milano.europe.dg.com.&quot;,        &bslash;&n;                eata_detect,&t;        &t;               &bslash;&n;                NULL, /* Release */     &t;               &bslash;&n;&t;&t;NULL,&t;                                       &bslash;&n;&t;&t;NULL,    &t;&t;&t;       &t;       &bslash;&n;&t;&t;eata_queuecommand,&t;&t;&t;       &bslash;&n;&t;&t;eata_abort,&t;&t;&t;&t;       &bslash;&n;&t;&t;eata_reset,&t;&t;&t;&t;       &bslash;&n;&t;        NULL,&t;&t;                               &bslash;&n;&t;&t;eata_bios_param,   &t;&t;&t;       &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */          &bslash;&n;                7,   /* this_id, reset by detect */            &bslash;&n;                0,   /* sg_tablesize, reset by detect */       &bslash;&n;                0,   /* cmd_per_lun, reset by detect */        &bslash;&n;&t;&t;0,   /* number of boards present */            &bslash;&n;                0,   /* unchecked isa dma */                   &bslash;&n;                ENABLE_CLUSTERING                              &bslash;&n;                }
 macro_line|#endif
 eof

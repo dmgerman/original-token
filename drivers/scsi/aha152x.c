@@ -86,14 +86,6 @@ DECL|macro|P_BUSFREE
 mdefine_line|#define P_BUSFREE  1
 DECL|macro|P_PARITY
 mdefine_line|#define P_PARITY   2
-DECL|variable|aha152x_id
-r_static
-r_char
-op_star
-id|aha152x_id
-op_assign
-id|AHA152X_REVID
-suffix:semicolon
 DECL|variable|port_base
 r_static
 r_int
@@ -2130,21 +2122,6 @@ id|INTEN
 suffix:semicolon
 r_return
 l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *  return the name of the thing&n; */
-DECL|function|aha152x_info
-r_const
-r_char
-op_star
-id|aha152x_info
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|aha152x_id
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *  Queue a command and setup interrupts for a free bus.&n; */
@@ -5434,14 +5411,7 @@ c_func
 (paren
 l_string|&quot;DFIFOEMP, outsw (%d words), &quot;
 comma
-id|COMMAND_SIZE
-c_func
-(paren
-id|current_SC-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|current_SC-&gt;cmd_len
 op_rshift
 l_int|1
 )paren
@@ -5461,14 +5431,7 @@ comma
 op_amp
 id|current_SC-&gt;cmnd
 comma
-id|COMMAND_SIZE
-c_func
-(paren
-id|current_SC-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|current_SC-&gt;cmd_len
 op_rshift
 l_int|1
 )paren
@@ -5572,14 +5535,7 @@ c_func
 (paren
 )paren
 comma
-id|COMMAND_SIZE
-c_func
-(paren
-id|current_SC-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|current_SC-&gt;cmd_len
 )paren
 suffix:semicolon
 )brace

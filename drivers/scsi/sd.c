@@ -3910,6 +3910,10 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
+id|SCpnt-&gt;cmd_len
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
@@ -4068,6 +4072,10 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
+id|SCpnt-&gt;cmd_len
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0
@@ -4259,6 +4267,10 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Mark as really busy again */
+id|SCpnt-&gt;cmd_len
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;sense_buffer
 (braket
 l_int|0

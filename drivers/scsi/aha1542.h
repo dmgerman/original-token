@@ -63,6 +63,8 @@ DECL|macro|CMD_BUSON_TIME
 mdefine_line|#define CMD_BUSON_TIME&t;0x07&t;/* Set Bus-On Time */
 DECL|macro|CMD_BUSOFF_TIME
 mdefine_line|#define CMD_BUSOFF_TIME&t;0x08&t;/* Set Bus-Off Time */
+DECL|macro|CMD_DMASPEED
+mdefine_line|#define CMD_DMASPEED&t;0x09&t;/* Set AT Bus Transfer Speed */
 DECL|macro|CMD_RETDEVS
 mdefine_line|#define CMD_RETDEVS&t;0x0a&t;/* Return Installed Devices */
 DECL|macro|CMD_RETCONF
@@ -260,15 +262,6 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
-r_const
-r_char
-op_star
-id|aha1542_info
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_int
 id|aha1542_reset
 c_func
@@ -301,6 +294,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 DECL|macro|AHA1542
-mdefine_line|#define AHA1542 {  NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;Adaptec 1542&quot;, &t;&t;&t;&bslash;&n;&t;&t;     aha1542_detect,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     aha1542_info, &t;&t;&t;&bslash;&n;&t;&t;     aha1542_command,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_queuecommand,&t;&t;&bslash;&n;&t;&t;     aha1542_abort,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_reset,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;                &bslash;&n;&t;&t;     aha1542_biosparam,                 &bslash;&n;&t;&t;     AHA1542_MAILBOXES, &t;&t;&bslash;&n;&t;&t;     7, &t;&t;&t;&t;&bslash;&n;&t;&t;     AHA1542_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;     AHA1542_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;     0, &t;&t;&t;&t;&bslash;&n;&t;&t;     1, &t;&t;&t;&t;&bslash;&n;&t;&t;     ENABLE_CLUSTERING}
+mdefine_line|#define AHA1542 {  NULL, NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     &quot;Adaptec 1542&quot;, &t;&t;&t;&bslash;&n;&t;&t;     aha1542_detect,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t; &t;&t;&t;&bslash;&n;&t;&t;     aha1542_command,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_queuecommand,&t;&t;&bslash;&n;&t;&t;     aha1542_abort,&t;&t;&t;&bslash;&n;&t;&t;     aha1542_reset,&t;&t;&t;&bslash;&n;&t;&t;     NULL,&t;&t;                &bslash;&n;&t;&t;     aha1542_biosparam,                 &bslash;&n;&t;&t;     AHA1542_MAILBOXES, &t;&t;&bslash;&n;&t;&t;     7, &t;&t;&t;&t;&bslash;&n;&t;&t;     AHA1542_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;     AHA1542_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;     0, &t;&t;&t;&t;&bslash;&n;&t;&t;     1, &t;&t;&t;&t;&bslash;&n;&t;&t;     ENABLE_CLUSTERING}
 macro_line|#endif
 eof

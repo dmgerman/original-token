@@ -9380,13 +9380,9 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#ifdef CONFIG_SELECTION
-id|highlight_pointer
+id|clear_selection
 c_func
 (paren
-id|fg_console
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
@@ -9583,11 +9579,12 @@ id|chcount
 )paren
 op_star
 (paren
-l_int|1
-op_plus
 id|mode
-op_ne
-l_int|0
+ques
+c_cond
+l_int|2
+suffix:colon
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -9686,6 +9683,13 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+macro_line|#ifdef CONFIG_SELECTION
+id|clear_selection
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|put_fs_byte
 c_func
 (paren
@@ -9733,27 +9737,9 @@ l_int|2
 suffix:colon
 id|buf
 op_add_assign
-l_int|2
+l_int|4
 suffix:semicolon
-multiline_comment|/* skip the the numnber 9 and console number */
-id|x
-op_assign
-id|get_fs_byte
-c_func
-(paren
-id|buf
-op_increment
-)paren
-suffix:semicolon
-id|y
-op_assign
-id|get_fs_byte
-c_func
-(paren
-id|buf
-op_increment
-)paren
-suffix:semicolon
+multiline_comment|/* ioctl#, console#, x,y */
 id|memcpy_fromfs
 c_func
 (paren
@@ -10781,15 +10767,6 @@ op_ne
 id|currcons
 )paren
 (brace
-id|highlight_pointer
-c_func
-(paren
-id|sel_cons
-comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
 id|clear_selection
 c_func
 (paren
@@ -11403,7 +11380,7 @@ macro_line|#endif /* CONFIG_SELECTION */
 multiline_comment|/*&n; * PIO_FONT support.&n; *&n; * The font loading code goes back to the codepage package by&n; * Joel Hoffman (joel@wam.umd.edu). (He reports that the original&n; * reference is: &quot;From: p. 307 of _Programmer&squot;s Guide to PC &amp; PS/2&n; * Video Systems_ by Richard Wilton. 1987.  Microsoft Press&quot;.)&n; *&n; * Change for certain monochrome monitors by Yury Shevchuck&n; * (sizif@botik.yaroslavl.su).&n; */
 DECL|macro|colourmap
 mdefine_line|#define colourmap ((char *)0xa0000)
-multiline_comment|/* Pauline Middelink reports that we should use 0xA0000 for the bwmap as well.. */
+multiline_comment|/* Pauline Middelink &lt;middelin@polyware.iaf.nl&gt; reports that we&n;   should use 0xA0000 for the bwmap as well.. */
 DECL|macro|blackwmap
 mdefine_line|#define blackwmap ((char *)0xa0000)
 DECL|macro|cmapsz

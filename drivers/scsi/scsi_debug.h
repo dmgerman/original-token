@@ -56,15 +56,6 @@ r_int
 )braket
 )paren
 suffix:semicolon
-r_const
-r_char
-op_star
-id|scsi_debug_info
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_int
 id|scsi_debug_reset
 c_func
@@ -80,6 +71,6 @@ macro_line|#endif
 DECL|macro|SCSI_DEBUG_MAILBOXES
 mdefine_line|#define SCSI_DEBUG_MAILBOXES 8
 DECL|macro|SCSI_DEBUG
-mdefine_line|#define SCSI_DEBUG {NULL, &quot;SCSI DEBUG&quot;, scsi_debug_detect, NULL,&t;&bslash;&n;&t;&t;scsi_debug_info, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define SCSI_DEBUG {NULL, NULL, &quot;SCSI DEBUG&quot;, scsi_debug_detect, NULL,&t;&bslash;&n;&t;&t;NULL, scsi_debug_command,&t;&t;&bslash;&n;&t;&t;scsi_debug_queuecommand,&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_abort,&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_reset,&t;&t;&t;&t;&bslash;&n;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;scsi_debug_biosparam,&t;&t;&t;&t;&bslash;&n;&t;&t;SCSI_DEBUG_MAILBOXES, 7, SG_ALL, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

@@ -848,7 +848,7 @@ c_loop
 (paren
 id|dlock_wait
 op_ne
-id|fl-&gt;fl_wait
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

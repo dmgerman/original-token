@@ -9,7 +9,7 @@ DECL|macro|AHA274X_H_VERSION
 mdefine_line|#define AHA274X_H_VERSION&t;&quot;1.11&quot;
 multiline_comment|/*&n; *  Scsi_Host_Template (see hosts.h) for 274x - some fields&n; *  to do with card config are filled in after the card is&n; *  detected.&n; */
 DECL|macro|AHA274X
-mdefine_line|#define AHA274X&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&quot;,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_command,&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_biosparam,&t;&t;&t;&t;&t;&bslash;&n;&t;AHA274X_MAXSCB,&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;-1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;SG_ALL,&t;&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;1,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;0,&t;&t;&t;/* number of 274x&squot;s present   */&bslash;&n;&t;0,&t;&t;&t;/* no memory DMA restrictions */&bslash;&n;&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define AHA274X&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_command,&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aha274x_biosparam,&t;&t;&t;&t;&t;&bslash;&n;&t;AHA274X_MAXSCB,&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;-1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;SG_ALL,&t;&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;1,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;0,&t;&t;&t;/* number of 274x&squot;s present   */&bslash;&n;&t;0,&t;&t;&t;/* no memory DMA restrictions */&bslash;&n;&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;}
 r_extern
 r_int
 id|aha274x_queue
@@ -86,7 +86,9 @@ op_star
 id|aha274x_info
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
 )paren
 suffix:semicolon
 macro_line|#endif

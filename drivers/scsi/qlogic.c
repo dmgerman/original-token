@@ -1063,14 +1063,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|COMMAND_SIZE
-c_func
-(paren
-id|cmd-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|cmd-&gt;cmd_len
 suffix:semicolon
 id|i
 op_increment
@@ -2762,6 +2755,10 @@ op_star
 id|qlogic_info
 c_func
 (paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
 )paren
 (brace
 r_return

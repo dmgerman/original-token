@@ -42,7 +42,7 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined(__mc680x0__)
+macro_line|#elif defined(__mc68000__)
 id|u8
 id|overflow
 suffix:colon
@@ -172,7 +172,7 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined (__mc680x0__)
+macro_line|#elif defined (__mc68000__)
 id|u8
 id|version
 suffix:colon

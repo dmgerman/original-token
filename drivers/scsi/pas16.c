@@ -1538,28 +1538,5 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : const char *pas16_info(void)&n; *&n; * Purpose : provide further information about this driver.&n; *&n; * Returns : an empty string.&n; */
-DECL|function|pas16_info
-r_const
-r_char
-op_star
-id|pas16_info
-(paren
-r_void
-)paren
-(brace
-r_static
-r_const
-r_char
-id|string
-(braket
-)braket
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
-r_return
-id|string
-suffix:semicolon
-)brace
 macro_line|#include &quot;NCR5380.c&quot;
 eof

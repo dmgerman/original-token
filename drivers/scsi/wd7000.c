@@ -2671,14 +2671,7 @@ id|SCpnt-&gt;host-&gt;hostdata
 suffix:semicolon
 id|cdblen
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
-id|cdb
-(braket
-l_int|0
-)braket
-)paren
+id|SCpnt-&gt;cmd_len
 suffix:semicolon
 id|idlun
 op_assign
@@ -3932,29 +3925,6 @@ id|SCpnt
 (brace
 r_return
 id|SCSI_RESET_PUNT
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *  The info routine in the WD7000 structure isn&squot;t per-adapter, so it can&squot;t&n; *  really return any useful information about an adapter.  Because of this,&n; *  I&squot;m no longer using it to return rev. level.&n; */
-DECL|function|wd7000_info
-r_const
-r_char
-op_star
-id|wd7000_info
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_char
-id|info
-(braket
-)braket
-op_assign
-l_string|&quot;Western Digital WD-7000&quot;
-suffix:semicolon
-r_return
-id|info
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  This was borrowed directly from aha1542.c, but my disks are organized&n; *  this way, so I think it will work OK.  Someone who is ambitious can&n; *  borrow a newer or more complete version from another driver.&n; */

@@ -10,15 +10,6 @@ id|Scsi_Host_Template
 op_star
 )paren
 suffix:semicolon
-r_const
-r_char
-op_star
-id|u14_34f_info
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_int
 id|u14_34f_queuecommand
 c_func
@@ -69,6 +60,6 @@ suffix:semicolon
 DECL|macro|U14_34F_VERSION
 mdefine_line|#define U14_34F_VERSION &quot;1.10.01&quot;
 DECL|macro|ULTRASTOR_14_34F
-mdefine_line|#define ULTRASTOR_14_34F {                                            &bslash;&n;                NULL,                                                 &bslash;&n;                &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; by &quot;      &bslash;&n;                &quot;Dario_Ballabio@milano.europe.dg.com.&quot;,&bslash;&n;                u14_34f_detect,                                       &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_info,                                         &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_queuecommand,                                 &bslash;&n;                u14_34f_abort,                                        &bslash;&n;                u14_34f_reset,                                        &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_biosparam,                                    &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */                 &bslash;&n;                7,   /* this_id, reset by detect */                   &bslash;&n;                0,   /* sg_tablesize, reset by detect */              &bslash;&n;                0,   /* cmd_per_lun, reset by detect */               &bslash;&n;&t;&t;0,   /* number of boards present */                   &bslash;&n;                0,   /* unchecked isa dma, reset by detect */         &bslash;&n;                0,   /* use_clustering, reset by detect */            &bslash;&n;                }
+mdefine_line|#define ULTRASTOR_14_34F {                                            &bslash;&n;                NULL,                                                 &bslash;&n;                NULL,                                                 &bslash;&n;                &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; by &quot;      &bslash;&n;                &quot;Dario_Ballabio@milano.europe.dg.com.&quot;,&bslash;&n;                u14_34f_detect,                                       &bslash;&n;                NULL,                                                 &bslash;&n;                NULL,&t;&t;                                      &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_queuecommand,                                 &bslash;&n;                u14_34f_abort,                                        &bslash;&n;                u14_34f_reset,                                        &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_biosparam,                                    &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */                 &bslash;&n;                7,   /* this_id, reset by detect */                   &bslash;&n;                0,   /* sg_tablesize, reset by detect */              &bslash;&n;                0,   /* cmd_per_lun, reset by detect */               &bslash;&n;&t;&t;0,   /* number of boards present */                   &bslash;&n;                0,   /* unchecked isa dma, reset by detect */         &bslash;&n;                0,   /* use_clustering, reset by detect */            &bslash;&n;                }
 macro_line|#endif
 eof

@@ -62,6 +62,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* support remapping  */
+DECL|member|has_part_table
+r_int
+id|has_part_table
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* has partition table */
 DECL|typedef|Scsi_Disk
 )brace
 id|Scsi_Disk

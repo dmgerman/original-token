@@ -2,13 +2,17 @@ multiline_comment|/*&n; *&t;&t;Swansea University Computer Society NET3&n; *&n; 
 macro_line|#ifndef _LINUX_INET_H
 DECL|macro|_LINUX_INET_H
 mdefine_line|#define _LINUX_INET_H
-macro_line|#ifdef __i386__
+macro_line|#if defined(__i386__)
 DECL|macro|NET16
 mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
-macro_line|#endif
-macro_line|#ifdef __mc680x0__
+macro_line|#elif defined(__mc68000__)
 DECL|macro|NET16
 mdefine_line|#define NET16(x)&t;(x)
+macro_line|#elif defined(__alpha__)
+DECL|macro|NET16
+mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
+macro_line|#else
+macro_line|#error change this to match your machine
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 r_extern
