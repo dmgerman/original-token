@@ -1442,7 +1442,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_OPTIMIZE
+macro_line|#ifdef CONFIG_PCI_QUIRKS
 id|pci_quirks_init
 c_func
 (paren

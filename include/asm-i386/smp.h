@@ -538,6 +538,16 @@ id|regs
 suffix:semicolon
 r_extern
 r_void
+(paren
+op_star
+id|mtrr_hook
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|setup_APIC_clock
 (paren
 r_void

@@ -152,10 +152,11 @@ id|dst_err_ptr
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/* Not used at the moment. It is difficult to imagine for what purpose&n;   it can be used :-) Please, do not forget to verify_area before it --ANK&n; */
 multiline_comment|/*&n; * This combination is currently not used, but possible:&n; */
 r_extern
 id|__inline__
-DECL|function|csum_partial_copy_to_user
 r_int
 r_int
 id|csum_partial_copy_to_user
@@ -203,6 +204,7 @@ id|err_ptr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * These are the old (and unsafe) way of doing checksums, a warning message will be&n; * printed if they are used and an exeption occurs.&n; *&n; * these functions should go away after some time.&n; */
 DECL|macro|csum_partial_copy_fromuser
 mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
@@ -453,14 +455,12 @@ op_rshift
 l_int|16
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
-DECL|function|csum_tcpudp_magic
+DECL|function|csum_tcpudp_nofold
 r_static
 r_inline
 r_int
 r_int
-r_int
-id|csum_tcpudp_magic
+id|csum_tcpudp_nofold
 c_func
 (paren
 r_int
@@ -553,10 +553,57 @@ id|sum
 )paren
 suffix:semicolon
 r_return
+id|sum
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
+DECL|function|csum_tcpudp_magic
+r_static
+r_inline
+r_int
+r_int
+r_int
+id|csum_tcpudp_magic
+c_func
+(paren
+r_int
+r_int
+id|saddr
+comma
+r_int
+r_int
+id|daddr
+comma
+r_int
+r_int
+id|len
+comma
+r_int
+r_int
+id|proto
+comma
+r_int
+r_int
+id|sum
+)paren
+(brace
+r_return
 id|csum_fold
 c_func
 (paren
+id|csum_tcpudp_nofold
+c_func
+(paren
+id|saddr
+comma
+id|daddr
+comma
+id|len
+comma
+id|proto
+comma
 id|sum
+)paren
 )paren
 suffix:semicolon
 )brace

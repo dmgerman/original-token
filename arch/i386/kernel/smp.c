@@ -17,6 +17,9 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef CONFIG_MTRR
+macro_line|#  include &lt;asm/mtrr.h&gt;
+macro_line|#endif
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -2224,6 +2227,13 @@ id|unused
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_MTRR
+multiline_comment|/*  Must be done before calibration delay is computed  */
+id|mtrr_init_secondary_cpu
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|smp_callin
 c_func
 (paren
@@ -2436,7 +2446,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Booting processor %d eip %lx: &quot;
+l_string|&quot;Booting processor %d eip %lx&bslash;n&quot;
 comma
 id|i
 comma
@@ -3259,6 +3269,13 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
+macro_line|#ifdef CONFIG_MTRR
+multiline_comment|/*  Must be done before other processors booted  */
+id|mtrr_init_boot_cpu
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialize the logical to physical cpu number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
 r_for
 c_loop
@@ -3365,7 +3382,8 @@ id|io_apic_irqs
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+r_goto
+id|smp_done
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;If SMP should be disabled, then really disable it!&n;&t; */
@@ -3841,6 +3859,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|smp_done
+suffix:colon
+macro_line|#ifdef CONFIG_MTRR
+multiline_comment|/*  Must be done after other processors booted  */
+id|mtrr_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|send_IPI
 r_void
@@ -4074,6 +4101,15 @@ suffix:colon
 id|irq
 op_assign
 l_int|0x40
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MSG_MTRR_CHANGE
+suffix:colon
+id|irq
+op_assign
+l_int|0x50
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4822,6 +4858,44 @@ c_loop
 (paren
 suffix:semicolon
 suffix:semicolon
+)paren
+suffix:semicolon
+)brace
+DECL|variable|mtrr_hook
+r_void
+(paren
+op_star
+id|mtrr_hook
+)paren
+(paren
+r_void
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|function|smp_mtrr_interrupt
+id|asmlinkage
+r_void
+id|smp_mtrr_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|ack_APIC_irq
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mtrr_hook
+)paren
+(paren
+op_star
+id|mtrr_hook
+)paren
+(paren
 )paren
 suffix:semicolon
 )brace

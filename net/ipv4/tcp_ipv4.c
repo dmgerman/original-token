@@ -3674,7 +3674,7 @@ id|rth
 suffix:semicolon
 id|arg.csum
 op_assign
-id|csum_tcpudp_magic
+id|csum_tcpudp_nofold
 c_func
 (paren
 id|skb-&gt;nh.iph-&gt;daddr

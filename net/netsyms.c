@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
+macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
@@ -25,7 +26,6 @@ macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
-macro_line|#ifdef CONFIG_INET
 r_extern
 r_struct
 id|net_proto_family
@@ -1975,6 +1975,13 @@ c_func
 id|dev_mc_add
 )paren
 suffix:semicolon
+DECL|variable|arp_find
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|arp_find
+)paren
+suffix:semicolon
 DECL|variable|n_tty_ioctl
 id|EXPORT_SYMBOL
 c_func
@@ -1996,14 +2003,6 @@ c_func
 id|kill_fasync
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET
-DECL|variable|arp_find
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|arp_find
-)paren
-suffix:semicolon
 DECL|variable|ip_rcv
 id|EXPORT_SYMBOL
 c_func
@@ -2018,7 +2017,6 @@ c_func
 id|arp_rcv
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|dev_mc_delete
 id|EXPORT_SYMBOL
 c_func
@@ -2067,7 +2065,6 @@ id|dlci_ioctl_hook
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Packet scheduler modules want these. */
-macro_line|#ifdef CONFIG_NET_SCHED
 DECL|variable|qdisc_destroy
 id|EXPORT_SYMBOL
 c_func
@@ -2103,13 +2100,6 @@ c_func
 id|qdisc_create_dflt
 )paren
 suffix:semicolon
-DECL|variable|pfifo_qdisc_ops
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pfifo_qdisc_ops
-)paren
-suffix:semicolon
 DECL|variable|noop_qdisc
 id|EXPORT_SYMBOL
 c_func
@@ -2117,6 +2107,7 @@ c_func
 id|noop_qdisc
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_SCHED
 DECL|variable|register_qdisc
 id|EXPORT_SYMBOL
 c_func

@@ -631,6 +631,11 @@ c_func
 (paren
 id|stop_cpu_interrupt
 )paren
+id|BUILD_SMP_INTERRUPT
+c_func
+(paren
+id|mtrr_interrupt
+)paren
 multiline_comment|/*&n; * every pentium local APIC has two &squot;local interrupts&squot;, with a&n; * soft-definable vector attached to both interrupts, one of&n; * which is a timer interrupt, the other one is error counter&n; * overflow. Linux uses the local APIC timer interrupt to get&n; * a much simpler SMP time architecture:&n; */
 id|BUILD_SMP_TIMER_INTERRUPT
 c_func
@@ -3935,6 +3940,15 @@ c_func
 l_int|0x41
 comma
 id|apic_timer_interrupt
+)paren
+suffix:semicolon
+multiline_comment|/* IPI for MTRR control */
+id|set_intr_gate
+c_func
+(paren
+l_int|0x50
+comma
+id|mtrr_interrupt
 )paren
 suffix:semicolon
 macro_line|#endif&t;

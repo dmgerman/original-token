@@ -85,7 +85,9 @@ mdefine_line|#define MSG_INVALIDATE_TLB&t;0x0001&t;/* Remote processor TLB inval
 DECL|macro|MSG_STOP_CPU
 mdefine_line|#define MSG_STOP_CPU&t;&t;0x0002&t;/* Sent to shut down slave CPU&squot;s&n;&t;&t;&t;&t;&t; * when rebooting&n;&t;&t;&t;&t;&t; */
 DECL|macro|MSG_RESCHEDULE
-mdefine_line|#define MSG_RESCHEDULE&t;&t;0x0003&t;/* Reschedule request from master CPU */
+mdefine_line|#define MSG_RESCHEDULE&t;&t;0x0003&t;/* Reschedule request from master CPU*/
+DECL|macro|MSG_MTRR_CHANGE
+mdefine_line|#define MSG_MTRR_CHANGE         0x0004  /* Change MTRR */
 macro_line|#else
 multiline_comment|/*&n; *&t;These macros fold the SMP functionality into a single CPU system&n; */
 DECL|macro|smp_num_cpus
