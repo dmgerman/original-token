@@ -517,6 +517,13 @@ id|CDC_MULTI_SESSION
 r_return
 l_int|0
 suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 id|buffer
 op_assign
 (paren
@@ -528,6 +535,13 @@ id|scsi_malloc
 c_func
 (paren
 l_int|512
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if

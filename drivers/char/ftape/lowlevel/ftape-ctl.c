@@ -2596,7 +2596,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma_get_offset
+id|vma_get_pgoff
+c_func
 (paren
 id|vma
 )paren
@@ -2612,7 +2613,7 @@ id|EINVAL
 comma
 id|ft_t_err
 comma
-l_string|&quot;offset must be 0&quot;
+l_string|&quot;page offset must be 0&quot;
 )paren
 suffix:semicolon
 )brace

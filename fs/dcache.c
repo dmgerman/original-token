@@ -562,6 +562,13 @@ c_func
 id|dentry
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|parent
+op_ne
+id|dentry
+)paren
 id|dput
 c_func
 (paren

@@ -194,6 +194,12 @@ DECL|macro|RTF_MAJOR
 mdefine_line|#define RTF_MAJOR&t;150
 DECL|macro|RAW_MAJOR
 mdefine_line|#define RAW_MAJOR&t;162
+DECL|macro|USB_ACM_MAJOR
+mdefine_line|#define USB_ACM_MAJOR&t;&t;166
+DECL|macro|USB_ACM_AUX_MAJOR
+mdefine_line|#define USB_ACM_AUX_MAJOR&t;167
+DECL|macro|USB_CHAR_MAJOR
+mdefine_line|#define USB_CHAR_MAJOR&t;&t;180
 DECL|macro|UNIX98_PTY_MASTER_MAJOR
 mdefine_line|#define UNIX98_PTY_MASTER_MAJOR&t;128
 DECL|macro|UNIX98_PTY_MAJOR_COUNT

@@ -103,6 +103,11 @@ DECL|member|radio
 r_int
 id|radio
 suffix:semicolon
+DECL|member|mode
+r_int
+id|mode
+suffix:semicolon
+multiline_comment|/* PAL(0)/SECAM(1) mode (PHILIPS_SECAM only) */
 )brace
 suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------------------- */
@@ -166,6 +171,15 @@ r_int
 r_int
 id|IFPCoff
 suffix:semicolon
+DECL|member|mode
+r_int
+r_char
+id|mode
+suffix:semicolon
+multiline_comment|/* mode change value (tested PHILIPS_SECAM only) */
+multiline_comment|/* 0x01 -&gt; ??? no change ??? */
+multiline_comment|/* 0x02 -&gt; PAL BDGHI / SECAM L */
+multiline_comment|/* 0x04 -&gt; ??? PAL others / SECAM others ??? */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;The floats in the tuner struct are computed at compile time&n; *&t;by gcc and cast back to integers. Thus we don&squot;t violate the&n; *&t;&quot;no float in kernel&quot; rule.&n; */
@@ -288,6 +302,8 @@ comma
 l_int|0xc0
 comma
 l_int|623
+comma
+l_int|0x02
 )brace
 comma
 (brace
@@ -513,6 +529,8 @@ DECL|macro|TUNER_POR
 mdefine_line|#define TUNER_POR       0x80
 DECL|macro|TUNER_FL
 mdefine_line|#define TUNER_FL        0x40
+DECL|macro|TUNER_MODE
+mdefine_line|#define TUNER_MODE      0x38
 DECL|macro|TUNER_AFC
 mdefine_line|#define TUNER_AFC       0x07
 DECL|function|tuner_islocked
@@ -643,6 +661,25 @@ id|config
 op_assign
 id|tun-&gt;UHF
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_eq
+id|TUNER_PHILIPS_SECAM
+op_logical_and
+id|t-&gt;mode
+)paren
+id|config
+op_or_assign
+id|tun-&gt;mode
+suffix:semicolon
+r_else
+id|config
+op_and_assign
+op_complement
+id|tun-&gt;mode
+suffix:semicolon
 id|div
 op_assign
 id|freq
@@ -659,6 +696,84 @@ c_func
 id|t-&gt;bus
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_eq
+id|TUNER_PHILIPS_SECAM
+op_logical_and
+id|freq
+OL
+id|t-&gt;freq
+)paren
+(brace
+multiline_comment|/*&n;&t;     * Philips FI1216MK2 remark from specification :&n;&t;     * for channel selection involving band switching, and to ensure&n;&t;     * smooth tuning to the desired channel without causing&n;&t;     * unnecessary charge pump action, it is recommended to consider&n;&t;     * the difference between wanted channel frequency and the&n;&t;     * current channel frequency.  Unnecessary charge pump action&n;&t;     * will result in very low tuning voltage which may drive the&n;&t;     * oscillator to extreme conditions.&n;&t;     */
+multiline_comment|/*&n;&t;     * Progfou: specification says to send config data before&n;&t;     * frequency in case (wanted frequency &lt; current frequency).&n;&t;     */
+r_if
+c_cond
+(paren
+id|i2c_write
+c_func
+(paren
+id|t-&gt;bus
+comma
+id|t-&gt;addr
+comma
+id|tun-&gt;config
+comma
+id|config
+comma
+l_int|1
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;tuner: i2c i/o error #1&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|i2c_write
+c_func
+(paren
+id|t-&gt;bus
+comma
+id|t-&gt;addr
+comma
+(paren
+id|div
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0x7f
+comma
+id|div
+op_amp
+l_int|0xff
+comma
+l_int|1
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;tuner: i2c i/o error #2&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -719,6 +834,7 @@ c_func
 l_string|&quot;tuner: i2c i/o error #2&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 id|UNLOCK_I2C_BUS
 c_func
@@ -1276,6 +1392,51 @@ op_assign
 op_star
 id|iarg
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|TUNER_SET_MODE
+suffix:colon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_ne
+id|TUNER_PHILIPS_SECAM
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;tuner: trying to change mode for other than TUNER_PHILIPS_SECAM&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;tuner: mode set to %d&bslash;n&quot;
+comma
+op_star
+id|iarg
+)paren
+suffix:semicolon
+id|t-&gt;mode
+op_assign
+op_star
+id|iarg
+suffix:semicolon
+id|set_tv_freq
+c_func
+(paren
+id|t
+comma
+id|t-&gt;freq
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default

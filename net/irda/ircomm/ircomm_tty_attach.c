@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_attach.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jun  5 17:42:00 1999&n; * Modified at:   Tue Oct 19 21:32:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_attach.c&n; * Version:       &n; * Description:   Code for attaching the serial driver to IrCOMM&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jun  5 17:42:00 1999&n; * Modified at:   Sun Oct 31 22:19:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -338,7 +338,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -384,7 +384,7 @@ id|self-&gt;ircomm
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -419,7 +419,7 @@ id|self-&gt;ircomm
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -460,7 +460,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -502,6 +502,17 @@ id|irlmp_unregister_service
 c_func
 (paren
 id|self-&gt;skey
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+id|iriap_close
+c_func
+(paren
+id|self-&gt;iriap
 )paren
 suffix:semicolon
 multiline_comment|/* Remove LM-IAS object */
@@ -802,7 +813,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; * Set default values, but only if the application for some reason &n;&t; * haven&squot;t set them already&n;&t; */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -823,7 +834,7 @@ id|self-&gt;session.data_rate
 op_assign
 l_int|9600
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -845,7 +856,7 @@ op_assign
 id|IRCOMM_WSIZE_8
 suffix:semicolon
 multiline_comment|/* 8N1 */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -986,7 +997,7 @@ r_struct
 id|ircomm_tty_info
 id|info
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1098,7 +1109,7 @@ op_star
 )paren
 id|instance
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1185,7 +1196,7 @@ op_star
 )paren
 id|priv
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1216,6 +1227,17 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* We probably don&squot;t need to make any more queries */
+id|iriap_close
+c_func
+(paren
+id|self-&gt;iriap
+)paren
+suffix:semicolon
+id|self-&gt;iriap
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
@@ -1225,7 +1247,7 @@ op_ne
 id|IAS_SUCCESS
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1246,7 +1268,7 @@ id|value-&gt;type
 r_case
 id|IAS_OCT_SEQ
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1286,7 +1308,7 @@ r_case
 id|IAS_INTEGER
 suffix:colon
 multiline_comment|/* Got LSAP selector */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1306,7 +1328,7 @@ op_minus
 l_int|1
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1338,7 +1360,7 @@ suffix:semicolon
 r_case
 id|IAS_MISSING
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1351,7 +1373,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1407,7 +1429,7 @@ op_star
 )paren
 id|instance
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1505,7 +1527,7 @@ suffix:semicolon
 r_int
 id|clen
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1602,7 +1624,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1630,7 +1652,7 @@ id|ASYNC_CTS_FLOW
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1734,7 +1756,7 @@ op_star
 )paren
 id|data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -1809,7 +1831,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1875,20 +1897,50 @@ id|self-&gt;saddr
 op_assign
 id|info-&gt;saddr
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), busy with a previous query&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|self-&gt;iriap
+op_assign
+id|iriap_open
+c_func
+(paren
+id|LSAP_ANY
+comma
+id|IAS_CLIENT
+comma
+id|self
+comma
+id|ircomm_tty_getvalue_confirm
+)paren
+suffix:semicolon
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-l_string|&quot;IrDA:IrCOMM&quot;
-comma
-l_string|&quot;Parameters&quot;
+id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
-id|ircomm_tty_getvalue_confirm
+l_string|&quot;IrDA:IrCOMM&quot;
 comma
-id|self
+l_string|&quot;Parameters&quot;
 )paren
 suffix:semicolon
 id|ircomm_tty_start_watchdog_timer
@@ -1974,7 +2026,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2028,7 +2080,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2067,6 +2119,38 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|self-&gt;iriap
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), busy with a previous query&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|self-&gt;iriap
+op_assign
+id|iriap_open
+c_func
+(paren
+id|LSAP_ANY
+comma
+id|IAS_CLIENT
+comma
+id|self
+comma
+id|ircomm_tty_getvalue_confirm
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|self-&gt;service_type
 op_eq
 id|IRCOMM_3_WIRE_RAW
@@ -2075,17 +2159,15 @@ id|IRCOMM_3_WIRE_RAW
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-l_string|&quot;IrLPT&quot;
-comma
-l_string|&quot;IrDA:IrLMP:LsapSel&quot;
+id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
-id|ircomm_tty_getvalue_confirm
+l_string|&quot;IrLPT&quot;
 comma
-id|self
+l_string|&quot;IrDA:IrLMP:LsapSel&quot;
 )paren
 suffix:semicolon
 id|ircomm_tty_next_state
@@ -2102,17 +2184,15 @@ r_else
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-l_string|&quot;IrDA:IrCOMM&quot;
-comma
-l_string|&quot;Parameters&quot;
+id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
-id|ircomm_tty_getvalue_confirm
+l_string|&quot;IrDA:IrCOMM&quot;
 comma
-id|self
+l_string|&quot;Parameters&quot;
 )paren
 suffix:semicolon
 id|ircomm_tty_next_state
@@ -2215,7 +2295,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2269,7 +2349,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2297,20 +2377,50 @@ id|event
 r_case
 id|IRCOMM_TTY_GOT_PARAMETERS
 suffix:colon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), busy with a previous query&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|self-&gt;iriap
+op_assign
+id|iriap_open
+c_func
+(paren
+id|LSAP_ANY
+comma
+id|IAS_CLIENT
+comma
+id|self
+comma
+id|ircomm_tty_getvalue_confirm
+)paren
+suffix:semicolon
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-l_string|&quot;IrDA:IrCOMM&quot;
-comma
-l_string|&quot;IrDA:TinyTP:LsapSel&quot;
+id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
-id|ircomm_tty_getvalue_confirm
+l_string|&quot;IrDA:IrCOMM&quot;
 comma
-id|self
+l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 )paren
 suffix:semicolon
 id|ircomm_tty_start_watchdog_timer
@@ -2414,7 +2524,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2468,7 +2578,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2616,7 +2726,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2670,7 +2780,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2817,7 +2927,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2949,7 +3059,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2997,7 +3107,7 @@ op_star
 id|info
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3054,7 +3164,7 @@ id|self-&gt;state
 op_assign
 id|state
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2

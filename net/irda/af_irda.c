@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.7&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Fri Oct  1 19:11:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.7&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Sun Oct 31 19:32:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -884,7 +884,27 @@ c_cond
 op_logical_neg
 id|self
 )paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), lost myself!&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+multiline_comment|/* We probably don&squot;t need to make any more queries */
+id|iriap_close
+c_func
+(paren
+id|self-&gt;iriap
+)paren
+suffix:semicolon
+id|self-&gt;iriap
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Check if request succeeded */
 r_if
@@ -1146,7 +1166,7 @@ id|name
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1165,21 +1185,51 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), busy with a previous query&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|self-&gt;iriap
+op_assign
+id|iriap_open
+c_func
+(paren
+id|LSAP_ANY
+comma
+id|IAS_CLIENT
+comma
+id|self
+comma
+id|irda_get_value_confirm
+)paren
+suffix:semicolon
 multiline_comment|/* Query remote LM-IAS */
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-id|name
-comma
-l_string|&quot;IrDA:TinyTP:LsapSel&quot;
+id|self-&gt;iriap
 comma
 id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 comma
-id|irda_get_value_confirm
+id|name
 comma
-id|self
+l_string|&quot;IrDA:TinyTP:LsapSel&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for answer */
@@ -2586,6 +2636,17 @@ id|irias_delete_object
 c_func
 (paren
 id|self-&gt;ias_obj
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+id|iriap_close
+c_func
+(paren
+id|self-&gt;iriap
 )paren
 suffix:semicolon
 r_if

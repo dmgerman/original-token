@@ -27,7 +27,6 @@ id|mouse_irq
 op_assign
 id|MOUSE_IRQ
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -36,9 +35,10 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#ifndef MODULE
 DECL|function|msmouse_setup
-r_void
+r_static
+r_int
 id|__init
 id|msmouse_setup
 c_func
@@ -46,12 +46,30 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -69,7 +87,19 @@ id|ints
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;msmouse=&quot;
+comma
+id|msmouse_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 DECL|function|ms_mouse_interrupt
 r_static
 r_void
@@ -326,6 +356,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|ms_bus_mouse_init
+r_static
 r_int
 id|__init
 id|ms_bus_mouse_init
@@ -503,7 +534,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ms_bus_mouse_exit
+r_static
 r_void
+id|__exit
 id|ms_bus_mouse_exit
 c_func
 (paren

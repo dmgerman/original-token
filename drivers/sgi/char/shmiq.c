@@ -1114,9 +1114,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
-op_ne
-l_int|0
+id|vma-&gt;vm_pgoff
 )paren
 r_return
 op_minus

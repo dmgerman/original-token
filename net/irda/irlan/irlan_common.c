@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Tue Oct  5 11:36:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Sun Oct 31 19:43:50 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -55,13 +55,6 @@ op_assign
 id|ACCESS_PEER
 suffix:semicolon
 multiline_comment|/* PEER, DIRECT or HOSTED */
-DECL|variable|timeout
-r_static
-r_int
-id|timeout
-op_assign
-id|IRLAN_TIMEOUT
-suffix:semicolon
 DECL|variable|irlan_state
 r_static
 r_char
@@ -232,7 +225,7 @@ id|irlan_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -279,7 +272,7 @@ c_cond
 id|self-&gt;dev.start
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -317,7 +310,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -344,7 +337,7 @@ r_int
 id|timeout
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -389,7 +382,7 @@ suffix:semicolon
 id|__u16
 id|hints
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -441,7 +434,7 @@ id|irlan_proc_read
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -525,7 +518,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -586,7 +579,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -648,7 +641,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -693,7 +686,7 @@ id|irlan_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -892,7 +885,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -942,6 +935,17 @@ id|irlan_close_tsaps
 c_func
 (paren
 id|self
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;client.iriap
+)paren
+id|iriap_close
+c_func
+(paren
+id|self-&gt;client.iriap
 )paren
 suffix:semicolon
 multiline_comment|/* Remove frames queued on the control channel */
@@ -1013,7 +1017,7 @@ id|irlan_cb
 op_star
 id|entry
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1051,7 +1055,7 @@ c_cond
 id|self-&gt;dev.start
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1072,7 +1076,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1154,7 +1158,7 @@ id|tsap_cb
 op_star
 id|tsap
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1222,7 +1226,7 @@ id|self-&gt;max_header_size
 op_assign
 id|max_header_size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1360,7 +1364,7 @@ op_assign
 id|max_header_size
 suffix:semicolon
 multiline_comment|/* TODO: we could set the MTU depending on the max_sdu_size */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1451,7 +1455,7 @@ id|tsap_cb
 op_star
 id|tsap
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1535,7 +1539,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1579,7 +1583,7 @@ r_case
 id|LM_CONNECT_FAILURE
 suffix:colon
 multiline_comment|/* Failed to establish IrLAP connection */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1594,7 +1598,7 @@ r_case
 id|LM_LAP_RESET
 suffix:colon
 multiline_comment|/* IrLAP reset */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1608,7 +1612,7 @@ suffix:semicolon
 r_case
 id|LM_INIT_DISCONNECT
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1664,7 +1668,7 @@ suffix:semicolon
 id|notify_t
 id|notify
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1765,7 +1769,7 @@ op_logical_neg
 id|tsap
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1798,7 +1802,7 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2147,7 +2151,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2228,7 +2232,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2264,7 +2268,7 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2312,7 +2316,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2426,7 +2430,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2561,7 +2565,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2694,7 +2698,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -2841,7 +2845,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3004,7 +3008,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3164,7 +3168,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3308,7 +3312,7 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3638,7 +3642,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3714,7 +3718,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3753,7 +3757,7 @@ l_int|3
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3967,7 +3971,7 @@ id|n
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3993,7 +3997,7 @@ OG
 l_int|254
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4065,7 +4069,7 @@ OG
 l_int|1016
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4108,7 +4112,7 @@ id|n
 op_add_assign
 id|val_len
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -4118,7 +4122,7 @@ comma
 id|name
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4

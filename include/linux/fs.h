@@ -48,7 +48,7 @@ comma
 id|nr_super_blocks
 suffix:semicolon
 DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE  4096&t;/* this can well be larger on a larger system */
+mdefine_line|#define NR_FILE  8192&t;/* this can well be larger on a larger system */
 DECL|macro|NR_RESERVED_FILES
 mdefine_line|#define NR_RESERVED_FILES 10 /* reserved for root */
 DECL|macro|NR_SUPER

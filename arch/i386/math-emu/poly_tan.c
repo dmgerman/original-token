@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997                                         |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@suburbia.net             |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_tan.c                                                               |&n; |                                                                           |&n; | Compute the tan of a FPU_REG, using a polynomial approximation.           |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997,1999                                    |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@melbpc.org.au            |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -242,6 +242,48 @@ c_func
 id|accum
 )paren
 suffix:semicolon
+multiline_comment|/* This is a special case which arises due to rounding. */
+r_if
+c_cond
+(paren
+id|XSIG_LL
+c_func
+(paren
+id|accum
+)paren
+op_eq
+l_int|0xffffffffffffffffLL
+)paren
+(brace
+id|FPU_settag0
+c_func
+(paren
+id|TAG_Valid
+)paren
+suffix:semicolon
+id|significand
+c_func
+(paren
+id|st0_ptr
+)paren
+op_assign
+l_int|0x8a51e04daabda360LL
+suffix:semicolon
+id|setexponent16
+c_func
+(paren
+id|st0_ptr
+comma
+l_int|0x41
+op_plus
+id|EXTENDED_Ebias
+op_or
+id|SIGN_Negative
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|argSignif.lsw
 op_assign
 id|accum.lsw
@@ -759,14 +801,13 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* tan */
+id|adj
+op_assign
 id|mul_32_32
 c_func
 (paren
 id|adj
 comma
-id|adj
-comma
-op_amp
 id|adj
 )paren
 suffix:semicolon
@@ -777,14 +818,13 @@ id|adj
 op_assign
 l_int|0
 suffix:semicolon
+id|adj
+op_assign
 id|mul_32_32
 c_func
 (paren
 l_int|0x898cc517
 comma
-id|adj
-comma
-op_amp
 id|adj
 )paren
 suffix:semicolon

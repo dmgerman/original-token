@@ -112,6 +112,8 @@ mdefine_line|#define module_init(x)&t;int init_module(void) { return x(); }
 DECL|macro|module_exit
 mdefine_line|#define module_exit(x)&t;void cleanup_module(void) { x(); }
 macro_line|#endif
+DECL|macro|__setup
+mdefine_line|#define __setup(str,func) /* nothing */
 macro_line|#endif
 macro_line|#if __GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|macro|__initlocaldata
@@ -120,5 +122,5 @@ macro_line|#else
 DECL|macro|__initlocaldata
 mdefine_line|#define __initlocaldata
 macro_line|#endif
-macro_line|#endif
+macro_line|#endif /* _LINUX_INIT_H */
 eof

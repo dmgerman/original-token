@@ -2462,14 +2462,6 @@ id|flen
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* from mkdir it won&squot;t be verified, from create it will&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_dverified
-)paren
-(brace
 id|err
 op_assign
 id|fh_verify
@@ -2492,7 +2484,6 @@ id|err
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|dentry
 op_assign
 id|fhp-&gt;fh_dentry

@@ -300,13 +300,7 @@ DECL|enumerator|KERN_RANDOM
 id|KERN_RANDOM
 op_assign
 l_int|40
-comma
 multiline_comment|/* Random driver */
-DECL|enumerator|KERN_SHMALL
-id|KERN_SHMALL
-op_assign
-l_int|41
-multiline_comment|/* int: Maximum size of shared memory */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

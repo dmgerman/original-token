@@ -2,6 +2,17 @@ macro_line|#ifndef _LINUX_SHM_H_
 DECL|macro|_LINUX_SHM_H_
 mdefine_line|#define _LINUX_SHM_H_
 macro_line|#include &lt;linux/ipc.h&gt;
+multiline_comment|/*&n; * SHMMAX, SHMMNI and SHMALL are upper limits are defaults which can&n; * be increased by sysctl&n; */
+DECL|macro|SHMMAX
+mdefine_line|#define SHMMAX 0x2000000&t;&t; /* max shared seg size (bytes) */
+DECL|macro|SHMMIN
+mdefine_line|#define SHMMIN 1 /* really PAGE_SIZE */&t; /* min shared seg size (bytes) */
+DECL|macro|SHMMNI
+mdefine_line|#define SHMMNI 128&t;&t;&t; /* max num of segs system wide */
+DECL|macro|SHMALL
+mdefine_line|#define SHMALL (SHMMAX/PAGE_SIZE*SHMMNI) /* max shm system wide (pages) */
+DECL|macro|SHMSEG
+mdefine_line|#define SHMSEG SHMMNI&t;&t;&t; /* max shared segs per process */
 macro_line|#include &lt;asm/shmparam.h&gt;
 DECL|struct|shmid_ds
 r_struct
@@ -67,37 +78,6 @@ op_star
 id|shm_unused3
 suffix:semicolon
 multiline_comment|/* unused */
-)brace
-suffix:semicolon
-DECL|struct|shmid_kernel
-r_struct
-id|shmid_kernel
-(brace
-DECL|member|u
-r_struct
-id|shmid_ds
-id|u
-suffix:semicolon
-multiline_comment|/* the following are private */
-DECL|member|shm_npages
-r_int
-r_int
-id|shm_npages
-suffix:semicolon
-multiline_comment|/* size of segment (pages) */
-DECL|member|shm_pages
-id|pte_t
-op_star
-id|shm_pages
-suffix:semicolon
-multiline_comment|/* array of ptrs to frames -&gt; SHMMAX */
-DECL|member|attaches
-r_struct
-id|vm_area_struct
-op_star
-id|attaches
-suffix:semicolon
-multiline_comment|/* descriptors for attaches */
 )brace
 suffix:semicolon
 multiline_comment|/* permission flag for shmget */

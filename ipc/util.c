@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
+macro_line|#include &quot;util.h&quot;
 macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void

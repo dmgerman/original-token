@@ -13,9 +13,6 @@ macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 r_extern
 r_void
 id|wakeup_bdflush
@@ -42,6 +39,20 @@ r_struct
 id|vfsmount
 op_star
 id|vfsmntlist
+suffix:semicolon
+multiline_comment|/* Machine specific power off function */
+DECL|variable|sysrq_power_off
+r_extern
+r_void
+(paren
+op_star
+id|sysrq_power_off
+)paren
+(paren
+r_void
+)paren
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Send a signal to all user processes */
 DECL|function|send_sig_all
@@ -227,25 +238,30 @@ l_int|NULL
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
 r_case
 l_char|&squot;o&squot;
 suffix:colon
 multiline_comment|/* O -- power off */
+r_if
+c_cond
+(paren
+id|sysrq_power_off
+)paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Power off&bslash;n&quot;
 )paren
 suffix:semicolon
-id|apm_power_off
+id|sysrq_power_off
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
-macro_line|#endif
 r_case
 l_char|&squot;s&squot;
 suffix:colon
@@ -477,9 +493,22 @@ id|printk
 c_func
 (paren
 l_string|&quot;Boot &quot;
-macro_line|#ifdef CONFIG_APM
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sysrq_power_off
+)paren
+id|printk
+c_func
+(paren
 l_string|&quot;Off &quot;
-macro_line|#endif
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
 l_string|&quot;Sync Unmount showPc showTasks showMem loglevel0-8 tErm kIll killalL&bslash;n&quot;
 )paren
 suffix:semicolon

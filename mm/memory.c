@@ -4575,7 +4575,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * do_no_page() tries to create a new page mapping. It aggressively&n; * tries to share with existing pages, but makes a separate copy if&n; * the &quot;write_access&quot; parameter is true in order to avoid the next&n; * page fault.&n; *&n; * As this is called only for pages that do not currently exist, we&n; * do not need to flush old virtual caches or the TLB.&n; *&n; * This is called with the MM semaphore and the kernel lock held.&n; * We need to release the kernel lock as soon as possible..&n; */
+multiline_comment|/*&n; * do_no_page() tries to create a new page mapping. It aggressively&n; * tries to share with existing pages, but makes a separate copy if&n; * the &quot;write_access&quot; parameter is true in order to avoid the next&n; * page fault.&n; *&n; * As this is called only for pages that do not currently exist, we&n; * do not need to flush old virtual caches or the TLB.&n; *&n; * This is called with the MM semaphore held.&n; */
 DECL|function|do_no_page
 r_static
 r_int
@@ -4665,31 +4665,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|new_page
+op_eq
+l_int|NULL
 )paren
+multiline_comment|/* no page was available -- SIGBUS */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* SIGBUS - but we _really_ should know whether it is OOM or SIGBUS */
 r_if
 c_cond
 (paren
 id|new_page
 op_eq
-(paren
-r_struct
-id|page
-op_star
-)paren
-op_minus
-l_int|1
+id|NOPAGE_OOM
 )paren
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* OOM */
 op_increment
 id|tsk-&gt;maj_flt
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.1&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Mon Oct 18 22:15:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.2&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Sat Oct 30 20:25:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -211,7 +211,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function girbil_change_speed (dev, speed)&n; *&n; *    Set the speed for the Girbil type dongle. Warning, this &n; *    function must be called with a process context!&n; *&n; */
+multiline_comment|/*&n; * Function girbil_change_speed (dev, speed)&n; *&n; *    Set the speed for the Girbil type dongle.&n; *&n; */
 DECL|function|girbil_change_speed
 r_static
 r_int
@@ -546,7 +546,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function girbil_reset (driver)&n; *&n; *      This function resets the girbil dongle. Warning, this function &n; *      must be called with a process context!! &n; *&n; *      Algorithm:&n; *    &t;  0. set RTS, and wait at least 5 ms &n; *        1. clear RTS &n; */
+multiline_comment|/*&n; * Function girbil_reset (driver)&n; *&n; *      This function resets the girbil dongle.&n; *&n; *      Algorithm:&n; *    &t;  0. set RTS, and wait at least 5 ms &n; *        1. clear RTS &n; */
 DECL|function|girbil_reset
 r_static
 r_int

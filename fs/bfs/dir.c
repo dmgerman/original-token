@@ -239,9 +239,11 @@ id|block
 op_assign
 id|dir-&gt;iu_sblock
 op_plus
+(paren
 id|f-&gt;f_pos
-op_div
-id|BFS_BSIZE
+op_rshift
+id|BFS_BSIZE_BITS
+)paren
 suffix:semicolon
 id|bh
 op_assign

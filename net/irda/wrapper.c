@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Oct 18 15:51:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Oct 30 17:24:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -24,7 +24,7 @@ id|buf
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|state_outside_frame
 c_func
 (paren
@@ -34,6 +34,11 @@ op_star
 id|dev
 comma
 r_struct
+id|net_device_stats
+op_star
+id|stats
+comma
+r_struct
 id|iobuff_t
 op_star
 id|rx_buff
@@ -43,7 +48,7 @@ id|byte
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|state_begin_frame
 c_func
 (paren
@@ -53,6 +58,11 @@ op_star
 id|dev
 comma
 r_struct
+id|net_device_stats
+op_star
+id|stats
+comma
+r_struct
 id|iobuff_t
 op_star
 id|rx_buff
@@ -62,7 +72,7 @@ id|byte
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|state_link_escape
 c_func
 (paren
@@ -72,6 +82,11 @@ op_star
 id|dev
 comma
 r_struct
+id|net_device_stats
+op_star
+id|stats
+comma
+r_struct
 id|iobuff_t
 op_star
 id|rx_buff
@@ -81,7 +96,7 @@ id|byte
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|state_inside_frame
 c_func
 (paren
@@ -89,6 +104,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -101,7 +121,7 @@ id|byte
 suffix:semicolon
 DECL|variable|state
 r_static
-r_int
+r_void
 (paren
 op_star
 id|state
@@ -113,6 +133,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -475,9 +500,10 @@ suffix:semicolon
 multiline_comment|/* break; */
 )brace
 )brace
-multiline_comment|/*&n; * Function async_bump (buf, len, stats)&n; *&n; *    Got a frame, make a copy of it, and pass it up the stack!&n; *&n; */
+multiline_comment|/*&n; * Function async_bump (buf, len, stats)&n; *&n; *    Got a frame, make a copy of it, and pass it up the stack! We can try&n; *    to inline it since it&squot;s only called from state_inside_frame&n; */
 DECL|function|async_bump
-r_int
+r_inline
+r_void
 id|async_bump
 c_func
 (paren
@@ -485,6 +511,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 id|__u8
 op_star
@@ -494,19 +525,6 @@ r_int
 id|len
 )paren
 (brace
-r_struct
-id|net_device_stats
-op_star
-id|stats
-op_assign
-id|dev
-op_member_access_from_pointer
-id|get_stats
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -533,8 +551,6 @@ id|stats-&gt;rx_dropped
 op_increment
 suffix:semicolon
 r_return
-op_minus
-id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/*  Align IP header to 20 bytes */
@@ -597,14 +613,11 @@ id|stats-&gt;rx_bytes
 op_add_assign
 id|len
 suffix:semicolon
-r_return
-id|skb-&gt;len
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function async_unwrap_char (dev, rx_buff, byte)&n; *&n; *    Parse and de-stuff frame received from the IrDA-port&n; *&n; */
 DECL|function|async_unwrap_char
 r_inline
-r_int
+r_void
 id|async_unwrap_char
 c_func
 (paren
@@ -612,6 +625,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -622,7 +640,6 @@ id|__u8
 id|byte
 )paren
 (brace
-r_return
 (paren
 op_star
 id|state
@@ -633,6 +650,8 @@ id|rx_buff-&gt;state
 (paren
 id|dev
 comma
+id|stats
+comma
 id|rx_buff
 comma
 id|byte
@@ -642,7 +661,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function state_outside_frame (dev, rx_buff, byte)&n; *&n; *    &n; *&n; */
 DECL|function|state_outside_frame
 r_static
-r_int
+r_void
 id|state_outside_frame
 c_func
 (paren
@@ -650,6 +669,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -703,14 +727,11 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function state_begin_frame (idev, byte)&n; *&n; *    Begin of frame detected&n; *&n; */
 DECL|function|state_begin_frame
 r_static
-r_int
+r_void
 id|state_begin_frame
 c_func
 (paren
@@ -718,6 +739,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -728,19 +754,6 @@ id|__u8
 id|byte
 )paren
 (brace
-r_struct
-id|net_device_stats
-op_star
-id|stats
-op_assign
-id|dev
-op_member_access_from_pointer
-id|get_stats
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Time to initialize receive buffer */
 id|rx_buff-&gt;data
 op_assign
@@ -819,14 +832,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function state_link_escape (idev, byte)&n; *&n; *    &n; *&n; */
 DECL|function|state_link_escape
 r_static
-r_int
+r_void
 id|state_link_escape
 c_func
 (paren
@@ -834,6 +844,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -948,14 +963,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function state_inside_frame (idev, byte)&n; *&n; *    Handle bytes received within a frame&n; *&n; */
 DECL|function|state_inside_frame
 r_static
-r_int
+r_void
 id|state_inside_frame
 c_func
 (paren
@@ -963,6 +975,11 @@ r_struct
 id|net_device
 op_star
 id|dev
+comma
+r_struct
+id|net_device_stats
+op_star
+id|stats
 comma
 r_struct
 id|iobuff_t
@@ -973,19 +990,6 @@ id|__u8
 id|byte
 )paren
 (brace
-r_struct
-id|net_device_stats
-op_star
-id|stats
-op_assign
-id|dev
-op_member_access_from_pointer
-id|get_stats
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_int
 id|ret
 op_assign
@@ -1051,6 +1055,8 @@ id|async_bump
 c_func
 (paren
 id|dev
+comma
+id|stats
 comma
 id|rx_buff-&gt;data
 comma
@@ -1135,8 +1141,5 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 eof

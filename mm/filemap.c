@@ -1946,7 +1946,7 @@ multiline_comment|/*&n; * This adds the requested page to the page cache if it i
 DECL|function|page_cache_read
 r_static
 r_inline
-r_void
+r_int
 id|page_cache_read
 c_func
 (paren
@@ -2021,6 +2021,7 @@ c_cond
 id|page
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|page
 op_assign
@@ -2036,6 +2037,8 @@ op_logical_neg
 id|page
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 r_if
 c_cond
@@ -2055,6 +2058,9 @@ id|hash
 )paren
 )paren
 (brace
+r_int
+id|error
+op_assign
 id|inode-&gt;i_op
 op_member_access_from_pointer
 id|readpage
@@ -2072,6 +2078,7 @@ id|page
 )paren
 suffix:semicolon
 r_return
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We arrive here in the unlikely event that someone &n;&t; * raced with us and added our page to the cache first.&n;&t; */
@@ -2082,12 +2089,13 @@ id|page
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read in an entire cluster at once.  A cluster is usually a 64k-&n; * aligned block that includes the address requested in &quot;offset.&quot;&n; */
 DECL|function|read_cluster_nonblocking
 r_static
-r_void
+r_int
 id|read_cluster_nonblocking
 c_func
 (paren
@@ -2101,6 +2109,11 @@ r_int
 id|offset
 )paren
 (brace
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 r_int
 id|filesize
@@ -2146,6 +2159,8 @@ id|filesize
 )paren
 )paren
 (brace
+id|error
+op_assign
 id|page_cache_read
 c_func
 (paren
@@ -2154,8 +2169,18 @@ comma
 id|offset
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_ge
+l_int|0
+)paren
 id|offset
 op_increment
+suffix:semicolon
+r_else
+r_break
 suffix:semicolon
 )brace
 r_return
@@ -3088,6 +3113,9 @@ id|inode-&gt;i_size
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|page_cache_read
 c_func
 (paren
@@ -3101,6 +3129,10 @@ id|ahead
 op_rshift
 id|PAGE_CACHE_SHIFT
 )paren
+OL
+l_int|0
+)paren
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * If we tried to read ahead some pages,&n; * If we tried to read ahead asynchronously,&n; *   Try to force unplug of the device in order to start an asynchronous&n; *   read IO request.&n; * Update the read-ahead context.&n; * Store the length of the current read-ahead window.&n; * Double the current max read ahead size.&n; *   That heuristic avoid to do some large IO for files that are not really&n; *   accessed sequentially.&n; */
@@ -4574,7 +4606,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * filemap_nopage() is invoked via the vma operations vector for a&n; * mapped memory region to read in file data during a page fault.&n; *&n; * The goto&squot;s are kind of ugly, but this streamlines the normal case of having&n; * it in the page cache, and handles the special cases reasonably without&n; * having a lot of duplicated code.&n; *&n; * XXX - at some point, this should return unique values to indicate to&n; *       the caller whether this is EIO, OOM, or SIGBUS.&n; */
+multiline_comment|/*&n; * filemap_nopage() is invoked via the vma operations vector for a&n; * mapped memory region to read in file data during a page fault.&n; *&n; * The goto&squot;s are kind of ugly, but this streamlines the normal case of having&n; * it in the page cache, and handles the special cases reasonably without&n; * having a lot of duplicated code.&n; */
 DECL|function|filemap_nopage
 r_static
 r_struct
@@ -4596,6 +4628,9 @@ r_int
 id|no_share
 )paren
 (brace
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|file
 op_star
@@ -4798,6 +4833,11 @@ id|new_page
 )paren
 suffix:semicolon
 )brace
+r_else
+id|new_page
+op_assign
+id|NOPAGE_OOM
+suffix:semicolon
 id|page_cache_release
 c_func
 (paren
@@ -4827,6 +4867,8 @@ id|pgoff
 OL
 id|size
 )paren
+id|error
+op_assign
 id|read_cluster_nonblocking
 c_func
 (paren
@@ -4836,6 +4878,8 @@ id|pgoff
 )paren
 suffix:semicolon
 r_else
+id|error
+op_assign
 id|page_cache_read
 c_func
 (paren
@@ -4845,8 +4889,30 @@ id|pgoff
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The page we want has now been added to the page cache.&n;&t; * In the unlikely event that someone removed it in the&n;&t; * meantime, we&squot;ll just come back here and read it again.&n;&t; */
+r_if
+c_cond
+(paren
+id|error
+op_ge
+l_int|0
+)paren
 r_goto
 id|retry_find
+suffix:semicolon
+multiline_comment|/*&n;&t; * An error return from page_cache_read can result if the&n;&t; * system is low on memory, or a problem occurs while trying&n;&t; * to schedule I/O.&n;&t; */
+r_if
+c_cond
+(paren
+id|error
+op_eq
+op_minus
+id|ENOMEM
+)paren
+r_return
+id|NOPAGE_OOM
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 id|page_not_uptodate
 suffix:colon

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly.h                                                                   |&n; |                                                                           |&n; |  Header file for the FPU-emu poly*.c source files.                        |&n; |                                                                           |&n; | Copyright (C) 1994                                                        |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; | Declarations and definitions for functions operating on Xsig (12-byte     |&n; | extended-significand) quantities.                                         |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly.h                                                                   |&n; |                                                                           |&n; |  Header file for the FPU-emu poly*.c source files.                        |&n; |                                                                           |&n; | Copyright (C) 1994,1999                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@melbpc.org.au            |&n; |                                                                           |&n; | Declarations and definitions for functions operating on Xsig (12-byte     |&n; | extended-significand) quantities.                                         |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _POLY_H
 DECL|macro|_POLY_H
 mdefine_line|#define _POLY_H
@@ -185,11 +185,13 @@ multiline_comment|/* Macro to access the 8 ms bytes of an Xsig as a long long */
 DECL|macro|XSIG_LL
 mdefine_line|#define XSIG_LL(x)         (*(unsigned long long *)&amp;x.midw)
 multiline_comment|/*&n;   Need to run gcc with optimizations on to get these to&n;   actually be in-line.&n;   */
-multiline_comment|/* Multiply two fixed-point 32 bit numbers. */
+multiline_comment|/* Multiply two fixed-point 32 bit numbers, producing a 32 bit result.&n;   The answer is the ms word of the product. */
+multiline_comment|/* Some versions of gcc make it difficult to stop eax from being clobbered.&n;   Merely specifying that it is used doesn&squot;t work...&n; */
 DECL|function|mul_32_32
 r_extern
 r_inline
-r_void
+r_int
+r_int
 id|mul_32_32
 c_func
 (paren
@@ -202,27 +204,24 @@ r_const
 r_int
 r_int
 id|arg2
-comma
-r_int
-r_int
-op_star
-id|out
 )paren
 (brace
+r_int
+id|retval
+suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;movl %1,%%eax; mull %2; movl %%edx,%0&quot;
+l_string|&quot;mull %2; movl %%edx,%%eax&quot;
 "&bslash;"
 suffix:colon
-l_string|&quot;=g&quot;
+l_string|&quot;=a&quot;
 (paren
-op_star
-id|out
+id|retval
 )paren
 "&bslash;"
 suffix:colon
-l_string|&quot;g&quot;
+l_string|&quot;0&quot;
 (paren
 id|arg1
 )paren
@@ -233,10 +232,11 @@ id|arg2
 )paren
 "&bslash;"
 suffix:colon
-l_string|&quot;ax&quot;
-comma
 l_string|&quot;dx&quot;
 )paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* Add the 12 byte Xsig x2 to Xsig dest, with no checks for overflow. */

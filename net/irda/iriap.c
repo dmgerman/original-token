@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sat Oct  9 17:00:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun Oct 31 22:10:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -66,20 +66,6 @@ op_star
 id|lmp_reasons
 (braket
 )braket
-suffix:semicolon
-r_static
-r_struct
-id|iriap_cb
-op_star
-id|iriap_open
-c_func
-(paren
-id|__u8
-id|slsap
-comma
-r_int
-id|mode
-)paren
 suffix:semicolon
 r_static
 r_void
@@ -316,6 +302,10 @@ c_func
 id|LSAP_IAS
 comma
 id|IAS_SERVER
+comma
+l_int|NULL
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -373,6 +363,13 @@ id|slsap_sel
 comma
 r_int
 id|mode
+comma
+r_void
+op_star
+id|priv
+comma
+id|CONFIRM_CALLBACK
+id|callback
 )paren
 (brace
 r_struct
@@ -544,6 +541,14 @@ suffix:semicolon
 id|self-&gt;mode
 op_assign
 id|mode
+suffix:semicolon
+id|self-&gt;confirm
+op_assign
+id|callback
+suffix:semicolon
+id|self-&gt;priv
+op_assign
+id|priv
 suffix:semicolon
 id|init_timer
 c_func
@@ -898,12 +903,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Close instance only if client */
-id|iriap_close
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
+multiline_comment|/* iriap_close(self); */
 )brace
 r_else
 (brace
@@ -1127,17 +1127,14 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function iriap_getvaluebyclass (addr, name, attr)&n; *&n; *    Retreive all values from attribute in all objects with given class&n; *    name&n; */
 DECL|function|iriap_getvaluebyclass_request
-r_void
+r_int
 id|iriap_getvaluebyclass_request
 c_func
 (paren
-r_char
+r_struct
+id|iriap_cb
 op_star
-id|name
-comma
-r_char
-op_star
-id|attr
+id|self
 comma
 id|__u32
 id|saddr
@@ -1145,12 +1142,13 @@ comma
 id|__u32
 id|daddr
 comma
-id|CONFIRM_CALLBACK
-id|callback
-comma
-r_void
+r_char
 op_star
-id|priv
+id|name
+comma
+r_char
+op_star
+id|attr
 )paren
 (brace
 r_struct
@@ -1158,25 +1156,40 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-r_struct
-id|iriap_cb
-op_star
-id|self
-suffix:semicolon
 r_int
 id|name_len
 comma
 id|attr_len
 suffix:semicolon
 id|__u8
-id|slsap
-op_assign
-id|LSAP_ANY
-suffix:semicolon
-multiline_comment|/* Source LSAP to use */
-id|__u8
 op_star
 id|frame
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IAS_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
 suffix:semicolon
 multiline_comment|/* Client must supply the destination device address */
 r_if
@@ -1186,36 +1199,8 @@ op_logical_neg
 id|daddr
 )paren
 r_return
-suffix:semicolon
-id|self
-op_assign
-id|iriap_open
-c_func
-(paren
-id|slsap
-comma
-id|IAS_CLIENT
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self
-)paren
-r_return
-suffix:semicolon
-id|self-&gt;mode
-op_assign
-id|IAS_CLIENT
-suffix:semicolon
-id|self-&gt;confirm
-op_assign
-id|callback
-suffix:semicolon
-id|self-&gt;priv
-op_assign
-id|priv
+op_minus
+l_int|1
 suffix:semicolon
 id|self-&gt;daddr
 op_assign
@@ -1256,6 +1241,8 @@ op_logical_neg
 id|skb
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|name_len
 op_assign
@@ -1363,6 +1350,9 @@ id|IAP_CALL_REQUEST_GVBC
 comma
 id|skb
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function iriap_getvaluebyclass_confirm (self, skb)&n; *&n; *    Got result from GetValueByClass command. Parse it and return result&n; *    to service user.&n; *&n; */
@@ -3026,6 +3016,16 @@ suffix:semicolon
 r_case
 id|GET_VALUE_BY_CLASS
 suffix:colon
+id|iriap_do_call_event
+c_func
+(paren
+id|self
+comma
+id|IAP_RECV_F_LST
+comma
+id|skb
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3125,23 +3125,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|iriap_do_call_event
-c_func
-(paren
-id|self
-comma
-id|IAP_RECV_F_LST
-comma
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/*  &n;&t;&t; *  We remove LSAPs used by IrIAS as a client since these&n;&t;&t; *  are more difficult to reuse!  &n;&t;&t; */
-id|iriap_close
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
+multiline_comment|/* &t;iriap_close(self); */
 r_break
 suffix:semicolon
 r_default
@@ -3344,12 +3328,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|iriap_close
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
+multiline_comment|/* iriap_close(self); */
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|ias_value_types

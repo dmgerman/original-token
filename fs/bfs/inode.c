@@ -1089,16 +1089,6 @@ id|tmpbuf
 )paren
 r_return
 suffix:semicolon
-id|memset
-c_func
-(paren
-id|tmpbuf
-comma
-l_int|0
-comma
-l_int|400
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren

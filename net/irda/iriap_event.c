@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap_event.c&n; * Version:       0.1&n; * Description:   IAP Finite State Machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun May  9 11:01:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap_event.c&n; * Version:       0.1&n; * Description:   IAP Finite State Machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun Oct 31 22:13:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
@@ -391,20 +391,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|state
-)paren
-(brace
-multiline_comment|/* &t;case S_DISCONNECT: IRDA_DEBUG( 0, &quot;IAP Client = S_DISCONNECT&bslash;n&quot;); break;  */
-multiline_comment|/*  &t;case S_CONNECTING: IRDA_DEBUG( 0, &quot;IAP Client = S_CONNECTING&bslash;n&quot;); break;  */
-multiline_comment|/*  &t;case S_CALL:       IRDA_DEBUG( 0, &quot;IAP Client = S_CALL&bslash;n&quot;);       break;  */
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
 id|self-&gt;client_state
 op_assign
 id|state
@@ -446,16 +432,6 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* &t;switch ( state) { */
-multiline_comment|/* &t;case S_MAKE_CALL:     IRDA_DEBUG( 0, &quot;IAP Call = S_MAKE_CALL&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_CALLING:       IRDA_DEBUG( 0, &quot;IAP Call = S_CALLING&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_OUTSTANDING:   IRDA_DEBUG( 0, &quot;IAP Call = S_OUTSTANDING&bslash;n&quot;);break; */
-multiline_comment|/* &t;case S_REPLYING:      IRDA_DEBUG( 0, &quot;IAP Call = S_REPLYING&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_WAIT_FOR_CALL: IRDA_DEBUG( 0, &quot;IAP Call = S_WAIT_FOR_CALL&bslash;n&quot;); break; */
-multiline_comment|/* &t;case S_WAIT_ACTIVE:   IRDA_DEBUG( 0, &quot;IAP Call = S_WAIT_ACTIVE&bslash;n&quot;); break; */
-multiline_comment|/* &t;default: */
-multiline_comment|/* &t;&t;break; */
-multiline_comment|/* &t;} */
 id|self-&gt;call_state
 op_assign
 id|state
@@ -943,7 +919,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* iriap_call_request( self, 0,0,0); */
+multiline_comment|/* iriap_call_request(self, 0,0,0); */
 id|iriap_next_client_state
 c_func
 (paren
@@ -1135,7 +1111,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;state_s_make_call: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -1148,14 +1125,12 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function state_s_calling (event, skb)&n; *&n; *    S-Calling&n; *&n; */
 DECL|function|state_s_calling
@@ -1414,15 +1389,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|IRDA_DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;state_r_disconnect: &quot;
-l_string|&quot;Could not allocate an sk_buff of length %d&bslash;n&quot;
-comma
-l_int|64
+id|__FUNCTION__
+l_string|&quot;(), unable to malloc!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1483,7 +1454,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;state_r_disconnect: Unknown event %d&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), unknown event %d&bslash;n&quot;
 comma
 id|event
 )paren
@@ -1556,7 +1528,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;state_r_call, unknown event!&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), unknown event!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1754,7 +1727,8 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;state_r_execute: bad pointer self&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), bad pointer self&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

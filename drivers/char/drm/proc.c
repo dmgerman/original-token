@@ -2107,7 +2107,9 @@ l_char|&squot;i&squot;
 suffix:colon
 l_char|&squot;-&squot;
 comma
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 macro_line|#if defined(__i386__)

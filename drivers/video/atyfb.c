@@ -15202,6 +15202,10 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+r_int
+id|off
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 r_if
@@ -15214,23 +15218,33 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_pgoff
+OG
+(paren
+op_complement
+l_int|0UL
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|off
+op_assign
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
+suffix:semicolon
 id|size
 op_assign
 id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_offset
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-r_return
-op_minus
-id|ENXIO
 suffix:semicolon
 multiline_comment|/* To stop the swapper from even considering these pages. */
 id|vma-&gt;vm_flags
@@ -15246,7 +15260,7 @@ c_cond
 (paren
 (paren
 (paren
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_eq
 l_int|0
 )paren
@@ -15260,7 +15274,7 @@ id|fb-&gt;total_vram
 op_logical_or
 (paren
 (paren
-id|vma-&gt;vm_offset
+id|off
 op_eq
 id|fb-&gt;total_vram
 )paren
@@ -15272,10 +15286,17 @@ id|PAGE_SIZE
 )paren
 )paren
 )paren
-id|vma-&gt;vm_offset
+id|off
 op_add_assign
 l_int|0x8000000000000000UL
 suffix:semicolon
+id|vma-&gt;vm_pgoff
+op_assign
+id|off
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+multiline_comment|/* propagate off changes */
 macro_line|#ifdef __sparc_v9__
 multiline_comment|/* Align it as much as desirable */
 (brace
@@ -15293,7 +15314,7 @@ l_int|1
 suffix:semicolon
 id|map_offset
 op_assign
-id|vma-&gt;vm_offset
+id|off
 op_plus
 id|size
 suffix:semicolon
@@ -15325,7 +15346,7 @@ id|i
 dot
 id|voff
 OL
-id|vma-&gt;vm_offset
+id|off
 )paren
 r_continue
 suffix:semicolon
@@ -15469,7 +15490,7 @@ id|max
 dot
 id|voff
 op_minus
-id|vma-&gt;vm_offset
+id|off
 )paren
 op_amp
 (paren
@@ -15593,7 +15614,7 @@ r_int
 r_int
 id|offset
 op_assign
-id|vma-&gt;vm_offset
+id|off
 op_plus
 id|page
 suffix:semicolon

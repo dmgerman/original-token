@@ -1077,6 +1077,16 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* It&squot;s a directory, or we are required to confirm the file&squot;s&n;&t; * location in the tree.&n;&t; */
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfs_fh: need to look harder for %d/%d&bslash;n&quot;
+comma
+id|sb-&gt;s_dev
+comma
+id|fh-&gt;fh_ino
+)paren
+suffix:semicolon
 id|found
 op_assign
 l_int|0
@@ -1509,7 +1519,14 @@ comma
 id|fh-&gt;fh_dirino
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Security: Check that the fh is internally consistant (from &lt;gam3@acm.org&gt;)&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fhp-&gt;fh_dverified
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Security: Check that the fh is internally consistant (from &lt;gam3@acm.org&gt;)&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1547,7 +1564,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Look up the export entry.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Look up the export entry.&n;&t;&t; */
 id|error
 op_assign
 id|nfserr_stale
@@ -1637,7 +1654,7 @@ comma
 id|exp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Look up the dentry using the NFS file handle.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Look up the dentry using the NFS file handle.&n;&t;&t; */
 id|dentry
 op_assign
 id|find_fh_dentry
@@ -1697,6 +1714,25 @@ suffix:semicolon
 id|nfsd_nr_verified
 op_increment
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* just rechecking permissions&n;&t;&t; * (e.g. nfsproc_create calls fh_verify, then nfsd_create does as well)&n;&t;&t; */
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfsd: fh_verify - just checking&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dentry
+op_assign
+id|fhp-&gt;fh_dentry
+suffix:semicolon
+id|exp
+op_assign
+id|fhp-&gt;fh_export
+suffix:semicolon
+)brace
 id|inode
 op_assign
 id|dentry-&gt;d_inode

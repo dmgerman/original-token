@@ -77,7 +77,8 @@ comma
 r_int
 id|airq
 comma
-id|u_long
+r_void
+op_star
 id|shmem
 comma
 r_int
@@ -365,7 +366,8 @@ l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
-id|u_long
+r_void
+op_star
 id|shmems
 (braket
 (paren
@@ -464,7 +466,8 @@ r_int
 op_star
 id|port
 suffix:semicolon
-id|u_long
+r_void
+op_star
 op_star
 id|shmem
 suffix:semicolon
@@ -529,7 +532,13 @@ op_div
 l_int|2048
 )braket
 op_assign
+id|ioremap
+c_func
+(paren
 id|count
+comma
+l_int|2048
+)paren
 suffix:semicolon
 id|BUGLVL
 c_func
@@ -633,7 +642,13 @@ id|shmems
 l_int|0
 )braket
 op_assign
+id|ioremap
+c_func
+(paren
 id|dev-&gt;mem_start
+comma
+l_int|2048
+)paren
 suffix:semicolon
 id|numshmems
 op_assign
@@ -1014,7 +1029,8 @@ id|shmem
 op_increment
 )paren
 (brace
-id|u_long
+r_void
+op_star
 id|ptr
 suffix:semicolon
 id|numprint
@@ -1054,7 +1070,7 @@ c_func
 (paren
 id|D_INIT
 comma
-l_string|&quot;%lXh &quot;
+l_string|&quot;%ph &quot;
 comma
 op_star
 id|shmem
@@ -1062,13 +1078,8 @@ id|shmem
 suffix:semicolon
 id|ptr
 op_assign
-(paren
-id|u_long
-)paren
-(paren
 op_star
 id|shmem
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1315,7 +1326,7 @@ c_func
 (paren
 id|D_INIT
 comma
-l_string|&quot;%lXh &quot;
+l_string|&quot;%ph &quot;
 comma
 op_star
 id|shmem
@@ -1737,18 +1748,14 @@ id|shmem
 op_increment
 )paren
 (brace
-id|u_long
+r_void
+op_star
 id|ptr
 suffix:semicolon
 id|ptr
 op_assign
-(paren
-id|u_long
-)paren
-(paren
 op_star
 id|shmem
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1771,7 +1778,7 @@ c_func
 (paren
 id|D_INIT
 comma
-l_string|&quot;%lXh)&bslash;n&quot;
+l_string|&quot;%ph)&bslash;n&quot;
 comma
 op_star
 id|shmem
@@ -1997,7 +2004,8 @@ comma
 r_int
 id|airq
 comma
-id|u_long
+r_void
+op_star
 id|shmem
 comma
 r_int
@@ -2009,9 +2017,11 @@ id|arcnet_local
 op_star
 id|lp
 suffix:semicolon
-id|u_long
+r_void
+op_star
 id|first_mirror
 comma
+op_star
 id|last_mirror
 suffix:semicolon
 r_int
@@ -2164,10 +2174,18 @@ id|mirror_size
 suffix:semicolon
 id|dev-&gt;mem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|first_mirror
 suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|last_mirror
 op_plus
 id|MIRROR_SIZE

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   IrDA common include file for kernel internal use&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Tue Oct 19 21:12:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   IrDA common include file for kernel internal use&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Sun Oct 31 14:45:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef NET_IRDA_H
 DECL|macro|NET_IRDA_H
 mdefine_line|#define NET_IRDA_H
@@ -133,12 +133,6 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* peer address */
-DECL|member|ias_obj
-r_struct
-id|ias_object
-op_star
-id|ias_obj
-suffix:semicolon
 DECL|member|tsap
 r_struct
 id|tsap_cb
@@ -197,6 +191,18 @@ id|__u32
 id|skey
 suffix:semicolon
 multiline_comment|/* IrLMP service handle */
+DECL|member|ias_obj
+r_struct
+id|ias_object
+op_star
+id|ias_obj
+suffix:semicolon
+DECL|member|iriap
+r_struct
+id|iriap_cb
+op_star
+id|iriap
+suffix:semicolon
 DECL|member|nslots
 r_int
 id|nslots

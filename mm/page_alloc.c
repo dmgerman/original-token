@@ -945,7 +945,7 @@ r_if
 c_cond
 (paren
 id|nr_free_pages
-op_plus
+op_minus
 id|nr_free_highpages
 OG
 id|freepages.min
@@ -966,7 +966,7 @@ r_if
 c_cond
 (paren
 id|nr_free_pages
-op_plus
+op_minus
 id|nr_free_highpages
 op_ge
 id|freepages.high
@@ -1139,6 +1139,21 @@ c_cond
 id|page
 )paren
 (brace
+macro_line|#ifdef CONFIG_HIGHMEM
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|MEM_TYPE_HIGH
+)paren
+id|nr_free_highpages
+op_sub_assign
+l_int|1
+op_lshift
+id|order
+suffix:semicolon
+macro_line|#endif
 id|spin_unlock_irqrestore
 c_func
 (paren

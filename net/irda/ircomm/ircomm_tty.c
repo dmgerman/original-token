@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Tue Oct 19 21:32:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty.c&n; * Version:       1.0&n; * Description:   IrCOMM serial TTY driver&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Jun  6 21:00:56 1999&n; * Modified at:   Sat Oct 30 12:49:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       serial.c and previous IrCOMM work by Takahide Higuchi&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -531,7 +531,7 @@ r_void
 r_int
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -631,7 +631,7 @@ op_amp
 id|ASYNC_INITIALIZED
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -812,7 +812,7 @@ id|tty
 op_assign
 id|self-&gt;tty
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -936,7 +936,7 @@ id|self-&gt;flags
 op_or_assign
 id|ASYNC_NORMAL_ACTIVE
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -964,7 +964,7 @@ id|self-&gt;normal_termios.c_cflag
 op_amp
 id|CLOCAL
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -987,7 +987,7 @@ id|tty-&gt;termios-&gt;c_cflag
 op_amp
 id|CLOCAL
 )paren
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1016,7 +1016,7 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1223,7 +1223,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1272,7 +1272,7 @@ suffix:semicolon
 id|self-&gt;blocked_open
 op_decrement
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1331,7 +1331,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1546,7 +1546,7 @@ id|self-&gt;tty
 op_assign
 id|tty
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -1646,7 +1646,7 @@ id|IRCOMM_3_WIRE
 op_or
 id|IRCOMM_9_WIRE
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1658,7 +1658,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1705,7 +1705,7 @@ id|ret
 )paren
 (brace
 multiline_comment|/* MOD_DEC_USE_COUNT; &quot;info-&gt;tty&quot; will cause this? */
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -1768,7 +1768,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1836,7 +1836,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -1887,7 +1887,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2371,7 +2371,7 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|3
@@ -2720,7 +2720,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -2769,7 +2769,7 @@ id|orig_jiffies
 comma
 id|poll_time
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -2896,7 +2896,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3012,7 +3012,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3094,7 +3094,7 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|1
@@ -3228,7 +3228,7 @@ op_star
 )paren
 id|tty-&gt;driver_data
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3330,7 +3330,7 @@ r_char
 id|ch
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|0
@@ -3504,7 +3504,7 @@ id|IRCOMM_DELTA_CD
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3562,7 +3562,7 @@ id|ASYNC_CALLOUT_NOHUP
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3606,7 +3606,7 @@ op_amp
 id|IRCOMM_CTS
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3652,7 +3652,7 @@ id|IRCOMM_CTS
 )paren
 )paren
 (brace
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3702,7 +3702,7 @@ op_star
 )paren
 id|instance
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -3820,7 +3820,7 @@ suffix:semicolon
 r_int
 id|clen
 suffix:semicolon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|4
@@ -3979,7 +3979,7 @@ id|cmd
 r_case
 id|FLOW_START
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2
@@ -4017,7 +4017,7 @@ multiline_comment|/* If we get here, something is very wrong, better stop */
 r_case
 id|FLOW_STOP
 suffix:colon
-id|DEBUG
+id|IRDA_DEBUG
 c_func
 (paren
 l_int|2

@@ -49,30 +49,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_VIDEO_SAA5249
-r_extern
-r_int
-id|init_saa_5249
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#ifdef CONFIG_VIDEO_CQCAM
-r_extern
-r_int
-id|init_colour_qcams
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_BWQCAM
 r_extern
 r_int

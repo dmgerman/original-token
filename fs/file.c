@@ -719,7 +719,7 @@ op_ge
 id|NR_OPEN
 op_logical_or
 id|nr
-OG
+op_ge
 id|NR_OPEN
 )paren
 r_goto
@@ -781,7 +781,7 @@ r_while
 c_loop
 (paren
 id|nfds
-OL
+op_le
 id|nr
 )paren
 suffix:semicolon

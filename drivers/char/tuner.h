@@ -46,5 +46,7 @@ DECL|macro|TUNER_SET_TVFREQ
 mdefine_line|#define TUNER_SET_TVFREQ             _IOW(&squot;t&squot;,2,int)    /* set tv freq */
 DECL|macro|TUNER_SET_RADIOFREQ
 mdefine_line|#define TUNER_SET_RADIOFREQ          _IOW(&squot;t&squot;,3,int)    /* set radio freq */
+DECL|macro|TUNER_SET_MODE
+mdefine_line|#define TUNER_SET_MODE               _IOW(&squot;t&squot;,4,int)    /* set tuner mode */
 macro_line|#endif
 eof

@@ -19,54 +19,6 @@ multiline_comment|/* Uncomment this if your mouse drivers expect the kernel to&n
 multiline_comment|/*#define BROKEN_MOUSE*/
 r_extern
 r_int
-id|adb_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|logi_busmouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ms_bus_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|atixl_busmouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|amiga_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|atari_mouse_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|sun_mouse_init
 c_func
 (paren
@@ -1622,50 +1574,8 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_LOGIBUSMOUSE
-id|logi_busmouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MS_BUSMOUSE
-id|ms_bus_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATIXL_BUSMOUSE
-id|atixl_busmouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AMIGAMOUSE
-id|amiga_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARIMOUSE
-id|atari_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_MOUSE
 id|sun_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ADBMOUSE
-id|adb_mouse_init
 c_func
 (paren
 )paren

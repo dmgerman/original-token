@@ -484,6 +484,7 @@ l_int|7
 )brace
 suffix:semicolon
 DECL|function|amiga_mouse_init
+r_static
 r_int
 id|__init
 id|amiga_mouse_init
@@ -564,6 +565,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|amiga_mouse_exit
+r_static
 r_void
 id|__exit
 id|amiga_mouse_exit
@@ -579,16 +581,18 @@ id|msedev
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
+DECL|variable|amiga_mouse_init
 id|module_init
 c_func
 (paren
 id|amiga_mouse_init
 )paren
+suffix:semicolon
+DECL|variable|amiga_mouse_exit
 id|module_exit
 c_func
 (paren
 id|amiga_mouse_exit
 )paren
-macro_line|#endif
+suffix:semicolon
 eof

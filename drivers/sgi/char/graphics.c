@@ -985,18 +985,6 @@ id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_offset
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
 multiline_comment|/* 1. Set our special graphic virtualizer  */
 id|vma-&gt;vm_ops
 op_assign

@@ -6,13 +6,14 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/videotext.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|VTX_VER_MAJ
 mdefine_line|#define VTX_VER_MAJ 1
 DECL|macro|VTX_VER_MIN
@@ -3597,43 +3598,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-DECL|function|saa5249_read
+DECL|function|init_saa_5249
 r_static
 r_int
-id|saa5249_read
-c_func
-(paren
-r_struct
-id|video_device
-op_star
-id|v
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-r_int
-id|l
-comma
-r_int
-id|nb
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-DECL|function|init_saa_5249
-r_int
+id|__init
 id|init_saa_5249
-c_func
 (paren
-r_struct
-id|video_init
-op_star
-id|v
+r_void
 )paren
 (brace
 id|printk
@@ -3649,6 +3620,7 @@ comma
 id|VTX_VER_MIN
 )paren
 suffix:semicolon
+r_return
 id|i2c_register_driver
 c_func
 (paren
@@ -3656,10 +3628,38 @@ op_amp
 id|i2c_driver_videotext
 )paren
 suffix:semicolon
-r_return
-l_int|0
+)brace
+DECL|function|cleanup_saa_5249
+r_static
+r_void
+id|__exit
+id|cleanup_saa_5249
+(paren
+r_void
+)paren
+(brace
+id|i2c_unregister_driver
+c_func
+(paren
+op_amp
+id|i2c_driver_videotext
+)paren
 suffix:semicolon
 )brace
+DECL|variable|init_saa_5249
+id|module_init
+c_func
+(paren
+id|init_saa_5249
+)paren
+suffix:semicolon
+DECL|variable|cleanup_saa_5249
+id|module_exit
+c_func
+(paren
+id|cleanup_saa_5249
+)paren
+suffix:semicolon
 DECL|variable|saa_template
 r_static
 r_struct
@@ -3678,8 +3678,9 @@ id|saa5249_open
 comma
 id|saa5249_release
 comma
-id|saa5249_read
+l_int|NULL
 comma
+multiline_comment|/* read */
 id|saa5249_write
 comma
 l_int|NULL
@@ -3687,52 +3688,7 @@ comma
 multiline_comment|/* poll */
 id|saa5249_ioctl
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
+multiline_comment|/* the rest are null */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Routines for loadable modules&n; */
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|init_saa_5249
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|i2c_unregister_driver
-c_func
-(paren
-op_amp
-id|i2c_driver_videotext
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

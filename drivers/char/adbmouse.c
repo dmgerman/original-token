@@ -408,6 +408,7 @@ l_int|7
 )brace
 suffix:semicolon
 DECL|function|adb_mouse_init
+r_static
 r_int
 id|__init
 id|adb_mouse_init
@@ -505,6 +506,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 multiline_comment|/*&n; * XXX this function is misnamed.&n; * It is called if the kernel is booted with the adb_buttons=xxx&n; * option, which is about using ADB keyboard buttons to emulate&n; * mouse buttons. -- paulus&n; */
 DECL|function|adb_mouse_setup
 r_static
@@ -605,25 +607,12 @@ comma
 id|adb_mouse_setup
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+macro_line|#endif /* !MODULE */
+DECL|function|adb_mouse_cleanup
+r_static
 r_void
-)paren
-(brace
-r_return
-id|adb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|adb_mouse_cleanup
 c_func
 (paren
 r_void
@@ -636,5 +625,18 @@ id|msedev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|adb_mouse_init
+id|module_init
+c_func
+(paren
+id|adb_mouse_init
+)paren
+suffix:semicolon
+DECL|variable|adb_mouse_cleanup
+id|module_exit
+c_func
+(paren
+id|adb_mouse_cleanup
+)paren
+suffix:semicolon
 eof

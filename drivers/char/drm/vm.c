@@ -308,7 +308,7 @@ id|address
 op_minus
 id|vma-&gt;vm_start
 suffix:semicolon
-multiline_comment|/* vm_offset should be 0 */
+multiline_comment|/* vm_pgoff should be 0 */
 id|page
 op_assign
 id|offset
@@ -649,13 +649,13 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;start = 0x%lx, end = 0x%lx, offset = 0x%lx&bslash;n&quot;
+l_string|&quot;start = 0x%lx, end = 0x%lx, pgoff = 0x%lx&bslash;n&quot;
 comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
 comma
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 )paren
 suffix:semicolon
 multiline_comment|/* Length must match exact page count */
@@ -742,6 +742,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_int
+r_int
+id|off
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 id|DRM_DEBUG
@@ -753,14 +757,14 @@ id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
 comma
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 )paren
 r_return
 id|drm_mmap_dma
@@ -770,6 +774,29 @@ id|filp
 comma
 id|vma
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_pgoff
+OG
+(paren
+op_complement
+l_int|0UL
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+multiline_comment|/* overflow? */
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|off
+op_assign
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
 multiline_comment|/* A sequential search of a linked list is&n;&t;&t;&t;&t;   fine here because: 1) there will only be&n;&t;&t;&t;&t;   about 5-10 entries in the list and, 2) a&n;&t;&t;&t;&t;   DRI client only has to do this mapping&n;&t;&t;&t;&t;   once, so it doesn&squot;t have to be optimized&n;&t;&t;&t;&t;   for performance, even if the list was a&n;&t;&t;&t;&t;   bit longer. */
 r_for
@@ -799,7 +826,7 @@ c_cond
 (paren
 id|map-&gt;offset
 op_eq
-id|vma-&gt;vm_offset
+id|off
 )paren
 r_break
 suffix:semicolon
@@ -869,7 +896,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
+id|off
 op_ge
 id|__pa
 c_func
@@ -920,7 +947,7 @@ c_func
 (paren
 id|vma-&gt;vm_start
 comma
-id|vma-&gt;vm_offset
+id|off
 comma
 id|vma-&gt;vm_end
 op_minus

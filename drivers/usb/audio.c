@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      audio.c  --  USB Audio Class driver&n; *&n; *      Copyright (C) 1999&n; *          Alan Cox (alan@lxorguk.ukuu.org.uk)&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *&n; * 1999-09-07:  Alan Cox&n; *              Parsing Audio descriptor patch&n; * 1999-09-08:  Thomas Sailer&n; *              Added OSS compatible data io functions; both parts of the&n; *              driver remain to be glued together&n; * 1999-09-10:  Thomas Sailer&n; *              Beautified the driver. Added sample format conversions.&n; *              Still not properly glued with the parsing code.&n; *              The parsing code seems to have its problems btw,&n; *              Since it parses all available configs but doesn&squot;t&n; *              store which iface/altsetting belongs to which config.&n; * 1999-09-20:  Thomas Sailer&n; *              Threw out Alan&squot;s parsing code and implemented my own one.&n; *              You cannot reasonnably linearly parse audio descriptors,&n; *              especially the AudioClass descriptors have to be considered&n; *              pointer lists. Mixer parsing untested, due to lack of device.&n; *              First stab at synch pipe implementation, the Dallas USB DAC&n; *              wants to use an Asynch out pipe. usb_audio_state now basically&n; *              only contains lists of mixer and wave devices. We can therefore&n; *              now have multiple mixer/wave devices per USB device.&n; * 1999-10-31:  Thomas Sailer&n; *              Audio can now be unloaded if it is not in use by any mixer&n; *              or dsp client (formerly you had to disconnect the audio devices&n; *              from the USB port)&n; *              Finally, about three months after ordering, my &quot;Maxxtro SPK222&quot;&n; *              speakers arrived, isn&squot;t disdata a great mail order company 8-)&n; *              Parse class specific endpoint descriptor of the audiostreaming&n; *              interfaces and take the endpoint attributes from there.&n; *              Unbelievably, the Philips USB DAC has a sampling rate range&n; *              of over a decade, yet does not support the sampling rate control!&n; *              No wonder it sounds so bad, has very audible sampling rate&n; *              conversion distortion. Don&squot;t try to listen to it using&n; *              decent headphones!&n; *              &quot;Let&squot;s make things better&quot; -&gt; but please Philips start with your&n; *              own stuff!!!!&n; *&n; *&n; */
+multiline_comment|/*&n; *      audio.c  --  USB Audio Class driver&n; *&n; *      Copyright (C) 1999&n; *          Alan Cox (alan@lxorguk.ukuu.org.uk)&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *&n; * 1999-09-07:  Alan Cox&n; *              Parsing Audio descriptor patch&n; * 1999-09-08:  Thomas Sailer&n; *              Added OSS compatible data io functions; both parts of the&n; *              driver remain to be glued together&n; * 1999-09-10:  Thomas Sailer&n; *              Beautified the driver. Added sample format conversions.&n; *              Still not properly glued with the parsing code.&n; *              The parsing code seems to have its problems btw,&n; *              Since it parses all available configs but doesn&squot;t&n; *              store which iface/altsetting belongs to which config.&n; * 1999-09-20:  Thomas Sailer&n; *              Threw out Alan&squot;s parsing code and implemented my own one.&n; *              You cannot reasonnably linearly parse audio descriptors,&n; *              especially the AudioClass descriptors have to be considered&n; *              pointer lists. Mixer parsing untested, due to lack of device.&n; *              First stab at synch pipe implementation, the Dallas USB DAC&n; *              wants to use an Asynch out pipe. usb_audio_state now basically&n; *              only contains lists of mixer and wave devices. We can therefore&n; *              now have multiple mixer/wave devices per USB device.&n; * 1999-10-31:  Thomas Sailer&n; *              Audio can now be unloaded if it is not in use by any mixer&n; *              or dsp client (formerly you had to disconnect the audio devices&n; *              from the USB port)&n; *              Finally, about three months after ordering, my &quot;Maxxtro SPK222&quot;&n; *              speakers arrived, isn&squot;t disdata a great mail order company 8-)&n; *              Parse class specific endpoint descriptor of the audiostreaming&n; *              interfaces and take the endpoint attributes from there.&n; *              Unbelievably, the Philips USB DAC has a sampling rate range&n; *              of over a decade, yet does not support the sampling rate control!&n; *              No wonder it sounds so bad, has very audible sampling rate&n; *              conversion distortion. Don&squot;t try to listen to it using&n; *              decent headphones!&n; *              &quot;Let&squot;s make things better&quot; -&gt; but please Philips start with your&n; *              own stuff!!!!&n; * 1999-11-02:  It takes the Philips boxes several seconds to acquire synchronisation&n; *              that means they won&squot;t play short sounds. Should probably maintain&n; *              the ISO datastream even if there&squot;s nothing to play.&n; *              Fix counting the total_bytes counter, RealPlayer G2 depends on it.&n; *&n; *&n; */
 multiline_comment|/*&n; * Strategy:&n; *&n; * Alan Cox and Thomas Sailer are starting to dig at opposite ends and&n; * are hoping to meet in the middle, just like tunnel diggers :)&n; * Alan tackles the descriptor parsing, Thomas the actual data IO and the&n; * OSS compatible interface.&n; *&n; * Data IO implementation issues&n; *&n; * A mmap&squot;able ring buffer per direction is implemented, because&n; * almost every OSS app expects it. It is however impractical to&n; * transmit/receive USB data directly into and out of the ring buffer,&n; * due to alignment and synchronisation issues. Instead, the ring buffer&n; * feeds a constant time delay line that handles the USB issues.&n; *&n; * Now we first try to find an alternate setting that exactly matches&n; * the sample format requested by the user. If we find one, we do not&n; * need to perform any sample rate conversions. If there is no matching&n; * altsetting, we choose the closest one and perform sample format&n; * conversions. We never do sample rate conversion; these are too&n; * expensive to be performed in the kernel.&n; *&n; * Current status:&n; * - The IO code seems to work a couple of frames, but then gets&n; *   UHCI into a &quot;complaining&quot; mode, i.e. uhci won&squot;t work again until&n; *   removed and reloaded, it will not even notice disconnect/reconnect&n; *   events.&n; *   It seems to work more stably on OHCI-HCD.&n; *&n; * Generally: Due to the brokenness of the Audio Class spec&n; * it seems generally impossible to write a generic Audio Class driver,&n; * so a reasonable driver should implement the features that are actually&n; * used.&n; *&n; * Parsing implementation issues&n; *&n; * One cannot reasonably parse the AudioClass descriptors linearly.&n; * Therefore the current implementation features routines to look&n; * for a specific descriptor in the descriptor list.&n; *&n; * How does the parsing work? First, all interfaces are searched&n; * for an AudioControl class interface. If found, the config descriptor&n; * that belongs to the current configuration is fetched from the device.&n; * Then the HEADER descriptor is fetched. It contains a list of&n; * all AudioStreaming and MIDIStreaming devices. This list is then walked,&n; * and all AudioStreaming interfaces are classified into input and output&n; * interfaces (according to the endpoint0 direction in altsetting1) (MIDIStreaming&n; * is currently not supported). The input &amp; output list is then used&n; * to group inputs and outputs together and issued pairwise to the&n; * AudioStreaming class parser. Finally, all OUTPUT_TERMINAL descriptors&n; * are walked and issued to the mixer construction routine.&n; *&n; * The AudioStreaming parser simply enumerates all altsettings belonging&n; * to the specified interface. It looks for AS_GENERAL and FORMAT_TYPE&n; * class specific descriptors to extract the sample format/sample rate&n; * data. Only sample format types PCM and PCM8 are supported right now, and&n; * only FORMAT_TYPE_I is handled. The isochronous data endpoint needs to&n; * be the first endpoint of the interface, and the optional synchronisation&n; * isochronous endpoint the second one.&n; *&n; * Mixer construction works as follows: The various TERMINAL and UNIT&n; * descriptors span a tree from the root (OUTPUT_TERMINAL) through the&n; * intermediate nodes (UNITs) to the leaves (INPUT_TERMINAL). We walk&n; * that tree in a depth first manner. FEATURE_UNITs may contribute volume,&n; * bass and treble sliders to the mixer, MIXER_UNITs volume sliders.&n; * The terminal type encoded in the INPUT_TERMINALs feeds a heuristic&n; * to determine &quot;meaningful&quot; OSS slider numbers, however we will see&n; * how well this works in practice. Other features are not used at the&n; * moment, they seem less often used. Also, it seems difficult at least&n; * to construct recording source switches from SELECTOR_UNITs, but&n; * since there are not many USB ADC&squot;s available, we leave that for later.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1272,6 +1272,10 @@ id|pgrem
 comma
 id|rem
 suffix:semicolon
+id|db-&gt;total_bytes
+op_add_assign
+id|size
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1414,6 +1418,10 @@ r_int
 id|pgrem
 comma
 id|rem
+suffix:semicolon
+id|db-&gt;total_bytes
+op_add_assign
+id|size
 suffix:semicolon
 r_for
 c_loop
@@ -20498,7 +20506,9 @@ id|state
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 multiline_comment|/* if there are mute controls, unmute them */
+multiline_comment|/* does not seem to be necessary, and the Dallas chip does not seem to support the &quot;all&quot; channel (255) */
 r_if
 c_cond
 (paren
@@ -20603,6 +20613,7 @@ id|state-&gt;ctrlif
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|usb_audio_recurseunit
 r_static
@@ -22812,13 +22823,34 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|usb_register
 c_func
 (paren
 op_amp
 id|usb_audio_driver
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;USB Audio driver cannot register: &quot;
+l_string|&quot;minor number %d already in use&bslash;n&quot;
+comma
+id|usb_audio_driver.minor
+)paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

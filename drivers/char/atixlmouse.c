@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -50,6 +51,7 @@ r_int
 id|msedev
 suffix:semicolon
 DECL|function|mouse_interrupt
+r_static
 r_void
 id|mouse_interrupt
 c_func
@@ -256,6 +258,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|atixl_busmouse_init
+r_static
 r_int
 id|__init
 id|atixl_busmouse_init
@@ -271,6 +274,21 @@ comma
 id|b
 comma
 id|c
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|ATIXL_MSE_DATA_PORT
+comma
+l_int|3
+)paren
+)paren
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 id|a
 op_assign
@@ -351,6 +369,16 @@ id|ATIXL_MSE_DATA_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Data Interrupts 8+, 1=30hz, 2=50hz, 3=100hz, 4=200hz rate */
+id|request_region
+c_func
+(paren
+id|ATIXL_MSE_DATA_PORT
+comma
+l_int|3
+comma
+l_string|&quot;atixl&quot;
+)paren
+suffix:semicolon
 id|msedev
 op_assign
 id|register_busmouse
@@ -391,30 +419,23 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
+DECL|function|atixl_cleanup
+r_static
+r_void
+id|__exit
+id|atixl_cleanup
 (paren
 r_void
 )paren
 (brace
-r_return
-id|atixl_busmouse_init
+id|release_region
 c_func
 (paren
+id|ATIXL_MSE_DATA_PORT
+comma
+l_int|3
 )paren
 suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
 id|unregister_busmouse
 c_func
 (paren
@@ -422,5 +443,18 @@ id|msedev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|atixl_busmouse_init
+id|module_init
+c_func
+(paren
+id|atixl_busmouse_init
+)paren
+suffix:semicolon
+DECL|variable|atixl_cleanup
+id|module_exit
+c_func
+(paren
+id|atixl_cleanup
+)paren
+suffix:semicolon
 eof

@@ -71,7 +71,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SYSVIPC
 r_extern
 r_int
-id|shmmax
+id|shm_prm
+(braket
+)braket
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __sparc__
@@ -1025,8 +1027,10 @@ comma
 l_string|&quot;shmmax&quot;
 comma
 op_amp
-id|shmmax
+id|shm_prm
 comma
+l_int|3
+op_star
 r_sizeof
 (paren
 r_int

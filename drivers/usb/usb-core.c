@@ -129,6 +129,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_DC2XX
+id|usb_dc2xx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_HUB
 id|usb_hub_init
 c_func

@@ -459,8 +459,10 @@ id|kxdrproc_t
 id|xdr_decode_fhstatus
 comma
 id|MNT_dirpath_sz
+op_lshift
+l_int|2
 comma
-id|MNT_fhstatus_sz
+l_int|0
 )brace
 comma
 )brace

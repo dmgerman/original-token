@@ -1138,11 +1138,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|nfsd_fh_free
-c_func
-(paren
-)paren
-suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren

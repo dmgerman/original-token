@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Bank
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/logibusmouse.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -11,7 +12,6 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -29,7 +29,6 @@ id|mouse_irq
 op_assign
 id|MOUSE_IRQ
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -38,9 +37,10 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#ifndef MODULE
 DECL|function|bmouse_setup
-r_void
+r_static
+r_int
 id|__init
 id|bmouse_setup
 c_func
@@ -48,12 +48,30 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -71,7 +89,19 @@ id|ints
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;logi_busmouse=&quot;
+comma
+id|bmouse_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 DECL|function|mouse_interrupt
 r_static
 r_void
@@ -325,6 +355,7 @@ l_int|7
 )brace
 suffix:semicolon
 DECL|function|logi_busmouse_init
+r_static
 r_int
 id|__init
 id|logi_busmouse_init
@@ -451,26 +482,11 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|logi_busmouse_cleanup
+r_static
 r_void
-)paren
-(brace
-r_return
-id|logi_busmouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
+id|__exit
+id|logi_busmouse_cleanup
 (paren
 r_void
 )paren
@@ -490,5 +506,18 @@ id|LOGIBM_EXTENT
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|logi_busmouse_init
+id|module_init
+c_func
+(paren
+id|logi_busmouse_init
+)paren
+suffix:semicolon
+DECL|variable|logi_busmouse_cleanup
+id|module_exit
+c_func
+(paren
+id|logi_busmouse_cleanup
+)paren
+suffix:semicolon
 eof

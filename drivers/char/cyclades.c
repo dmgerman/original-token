@@ -160,6 +160,10 @@ DECL|macro|Z_FPGA_CHECK
 mdefine_line|#define Z_FPGA_CHECK(card) &bslash;&n;    ((cy_readl(&amp;((struct RUNTIME_9060 *) &bslash;&n;&t;&t; ((card).ctl_addr))-&gt;init_ctrl) &amp; (1&lt;&lt;17)) != 0)
 DECL|macro|ISZLOADED
 mdefine_line|#define ISZLOADED(card)&t;(((ZO_V1==cy_readl(&amp;((struct RUNTIME_9060 *) &bslash;&n;&t;&t;&t;((card).ctl_addr))-&gt;mail_box_0)) || &bslash;&n;&t;&t;&t;Z_FPGA_CHECK(card)) &amp;&amp; &bslash;&n;&t;&t;&t;(ZFIRM_ID==cy_readl(&amp;((struct FIRM_ID *) &bslash;&n;&t;&t;&t;((card).base_addr+ID_ADDRESS))-&gt;signature)))
+macro_line|#ifndef SERIAL_XMIT_SIZE
+DECL|macro|SERIAL_XMIT_SIZE
+mdefine_line|#define&t;SERIAL_XMIT_SIZE&t;(MIN(PAGE_SIZE, 4096))
+macro_line|#endif
 DECL|macro|WAKEUP_CHARS
 mdefine_line|#define WAKEUP_CHARS (SERIAL_XMIT_SIZE-256)
 DECL|macro|STD_COM_FLAGS

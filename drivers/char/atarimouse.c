@@ -221,6 +221,7 @@ l_int|0
 )brace
 suffix:semicolon
 DECL|function|atari_mouse_init
+r_static
 r_int
 id|__init
 id|atari_mouse_init
@@ -281,12 +282,14 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 DECL|macro|MIN_THRESHOLD
 mdefine_line|#define&t;MIN_THRESHOLD 1
 DECL|macro|MAX_THRESHOLD
 mdefine_line|#define&t;MAX_THRESHOLD 20&t;/* more seems not reasonable... */
 DECL|function|atari_mouse_setup
-r_void
+r_static
+r_int
 id|__init
 id|atari_mouse_setup
 c_func
@@ -294,12 +297,30 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|8
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -314,10 +335,12 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;atari_mouse_setup: no arguments!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -335,6 +358,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;atari_mouse_setup: too many arguments&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -352,6 +376,7 @@ id|MAX_THRESHOLD
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;atari_mouse_setup: bad threshold value (ignored)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -401,6 +426,7 @@ id|MAX_THRESHOLD
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;atari_mouse_setup: bad threshold value (ignored)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -417,27 +443,24 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
-)brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
 r_return
-id|atari_mouse_init
-c_func
-(paren
-)paren
+l_int|1
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__setup
 c_func
+(paren
+l_string|&quot;atarimouse=&quot;
+comma
+id|atari_mouse_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
+DECL|function|atari_mouse_cleanup
+r_static
+r_void
+id|__exit
+id|atari_mouse_cleanup
 (paren
 r_void
 )paren
@@ -449,5 +472,18 @@ id|msedev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|atari_mouse_init
+id|module_init
+c_func
+(paren
+id|atari_mouse_init
+)paren
+suffix:semicolon
+DECL|variable|atari_mouse_cleanup
+id|module_exit
+c_func
+(paren
+id|atari_mouse_cleanup
+)paren
+suffix:semicolon
 eof

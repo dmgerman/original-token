@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irport.h&n; * Version:       0.1&n; * Description:   Serial driver for IrDA&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug  3 13:49:59 1997&n; * Modified at:   Mon Oct 18 12:55:07 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irport.h&n; * Version:       0.1&n; * Description:   Serial driver for IrDA&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat Oct 30 19:54:07 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRPORT_H
 DECL|macro|IRPORT_H
 mdefine_line|#define IRPORT_H
@@ -34,15 +34,6 @@ DECL|struct|irport_cb
 r_struct
 id|irport_cb
 (brace
-DECL|member|q
-id|queue_t
-id|q
-suffix:semicolon
-multiline_comment|/* Must be first */
-DECL|member|magic
-id|magic_t
-id|magic
-suffix:semicolon
 DECL|member|netdev
 r_struct
 id|net_device
@@ -54,12 +45,6 @@ DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
-suffix:semicolon
-DECL|member|tty
-r_struct
-id|tty_struct
-op_star
-id|tty
 suffix:semicolon
 DECL|member|irlap
 r_struct
@@ -146,6 +131,19 @@ c_func
 (paren
 r_int
 id|iobase
+)paren
+suffix:semicolon
+r_void
+id|__irport_change_speed
+c_func
+(paren
+r_struct
+id|irport_cb
+op_star
+id|self
+comma
+id|__u32
+id|speed
 )paren
 suffix:semicolon
 r_void

@@ -118,10 +118,8 @@ op_div
 l_int|16
 )braket
 )paren
-id|BUG
-c_func
-(paren
-)paren
+r_return
+id|USB_ST_NOTSUPPORTED
 suffix:semicolon
 id|usb_minors
 (braket
@@ -850,7 +848,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb: too many bus&squot;&bslash;n&quot;
+l_string|&quot;usb: too many buses&bslash;n&quot;
 )paren
 suffix:semicolon
 id|proc_usb_add_bus
@@ -1688,7 +1686,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* If we find another descriptor which is at or below us */
-multiline_comment|/*  in the descriptor heirarchy then return */
+multiline_comment|/*  in the descriptor hierarchy then return */
 r_if
 c_cond
 (paren
@@ -2053,7 +2051,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* If we find another descriptor which is at or below us */
-multiline_comment|/*  in the descriptor heirarchy then return */
+multiline_comment|/*  in the descriptor hierarchy then return */
 r_if
 c_cond
 (paren
@@ -6136,6 +6134,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|usb_inc_dev_use
+)paren
+suffix:semicolon
+DECL|variable|usb_driver_claim_interface
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_driver_claim_interface
+)paren
+suffix:semicolon
+DECL|variable|usb_driver_release_interface
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_driver_release_interface
 )paren
 suffix:semicolon
 DECL|variable|usb_init_root_hub

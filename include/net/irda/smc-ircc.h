@@ -1,4 +1,5 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; *&n; *     Copyright (c) 1998, 1999 Thomas Davis (tadavis@jps.net&gt;&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; * Definitions for the SMC IrCC controller.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; *&n; *     Copyright (c) 1998, 1999 Thomas Davis (tadavis@jps.net&gt;&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; * Definitions for the SMC IrCC controller.&n; *&n; ********************************************************************/
+macro_line|#include &lt;net/irda/irport.h&gt;
 macro_line|#ifndef SMC_IRCC_H
 DECL|macro|SMC_IRCC_H
 mdefine_line|#define SMC_IRCC_H
@@ -221,6 +222,59 @@ DECL|struct|ircc_cb
 r_struct
 id|ircc_cb
 (brace
+DECL|member|netdev
+r_struct
+id|net_device
+op_star
+id|netdev
+suffix:semicolon
+multiline_comment|/* Yes! we are some kind of netdevice */
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+DECL|member|irlap
+r_struct
+id|irlap_cb
+op_star
+id|irlap
+suffix:semicolon
+multiline_comment|/* The link layer we are binded to */
+DECL|member|io
+r_struct
+id|chipio_t
+id|io
+suffix:semicolon
+multiline_comment|/* IrDA controller information */
+DECL|member|tx_buff
+r_struct
+id|iobuff_t
+id|tx_buff
+suffix:semicolon
+multiline_comment|/* Transmit buffer */
+DECL|member|rx_buff
+r_struct
+id|iobuff_t
+id|rx_buff
+suffix:semicolon
+multiline_comment|/* Receive buffer */
+DECL|member|qos
+r_struct
+id|qos_info
+id|qos
+suffix:semicolon
+multiline_comment|/* QoS capabilities for this device */
+DECL|member|irport
+r_struct
+id|irport_cb
+id|irport
+suffix:semicolon
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+multiline_comment|/* Interface flags */
 DECL|member|st_fifo
 r_struct
 id|st_fifo
@@ -239,11 +293,6 @@ r_int
 id|tx_len
 suffix:semicolon
 multiline_comment|/* Number of frames in tx_buff */
-DECL|member|idev
-r_struct
-id|irda_device
-id|idev
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

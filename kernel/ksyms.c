@@ -927,6 +927,13 @@ c_func
 id|posix_unblock_lock
 )paren
 suffix:semicolon
+DECL|variable|locks_mandatory_area
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|locks_mandatory_area
+)paren
+suffix:semicolon
 DECL|variable|dput
 id|EXPORT_SYMBOL
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.h&n; * Version:       0.3&n; * Description:   IrDA module and utilities functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:58:52 1997&n; * Modified at:   Tue Oct  5 10:26:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *&n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charg.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.h&n; * Version:       0.3&n; * Description:   IrDA module and utilities functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:58:52 1997&n; * Modified at:   Sun Oct 31 20:01:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *&n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charg.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRMOD_H
 DECL|macro|IRMOD_H
 mdefine_line|#define IRMOD_H
@@ -32,15 +32,19 @@ comma
 DECL|enumerator|EVENT_IRLPT_START
 id|EVENT_IRLPT_START
 comma
+multiline_comment|/* Obsolete */
 DECL|enumerator|EVENT_IRLPT_STOP
 id|EVENT_IRLPT_STOP
 comma
+multiline_comment|/* Obsolete */
 DECL|enumerator|EVENT_IROBEX_START
 id|EVENT_IROBEX_START
 comma
+multiline_comment|/* Obsolete */
 DECL|enumerator|EVENT_IROBEX_STOP
 id|EVENT_IROBEX_STOP
 comma
+multiline_comment|/* Obsolete */
 DECL|enumerator|EVENT_IRDA_STOP
 id|EVENT_IRDA_STOP
 comma

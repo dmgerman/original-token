@@ -1959,6 +1959,7 @@ id|printer_driver.minor
 )paren
 suffix:semicolon
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 )brace

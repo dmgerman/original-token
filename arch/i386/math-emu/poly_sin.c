@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function and the cosine       |&n; |  function by a polynomial.                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997                                         |&n; |                  W. Metzenthen, 22 Parker St, Ormond, Vic 3163, Australia |&n; |                  E-mail   billm@suburbia.net                              |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  poly_sin.c                                                               |&n; |                                                                           |&n; |  Computation of an approximation of the sin function and the cosine       |&n; |  function by a polynomial.                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1997,1999                                    |&n; |                  W. Metzenthen, 22 Parker St, Ormond, Vic 3163, Australia |&n; |                  E-mail   billm@melbpc.org.au                             |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &quot;exception.h&quot;
 macro_line|#include &quot;reg_constant.h&quot;
 macro_line|#include &quot;fpu_emu.h&quot;
@@ -458,6 +458,18 @@ l_int|0x921fb54442d18469LL
 op_minus
 id|fixed_arg
 suffix:semicolon
+multiline_comment|/* There is a special case which arises due to rounding, to fix here. */
+r_if
+c_cond
+(paren
+id|fixed_arg
+op_eq
+l_int|0xffffffffffffffffLL
+)paren
+id|fixed_arg
+op_assign
+l_int|0
+suffix:semicolon
 id|XSIG_LL
 c_func
 (paren
@@ -653,24 +665,21 @@ l_int|0xffc00000
 )paren
 (brace
 multiline_comment|/* Get about 32 bit precision in these: */
+id|fix_up
+op_sub_assign
 id|mul_32_32
 c_func
 (paren
 l_int|0x898cc517
 comma
 id|argSqrd.msw
-comma
-op_amp
-id|adj
 )paren
-suffix:semicolon
-id|fix_up
-op_sub_assign
-id|adj
 op_div
 l_int|6
 suffix:semicolon
 )brace
+id|fix_up
+op_assign
 id|mul_32_32
 c_func
 (paren
@@ -681,9 +690,6 @@ c_func
 (paren
 id|fixed_arg
 )paren
-comma
-op_amp
-id|fix_up
 )paren
 suffix:semicolon
 id|adj
@@ -833,10 +839,6 @@ comma
 id|fix_up
 comma
 id|argTo4
-suffix:semicolon
-r_int
-r_int
-id|adj
 suffix:semicolon
 r_int
 r_int
@@ -1263,6 +1265,18 @@ l_int|0x921fb54442d18469LL
 op_minus
 id|fixed_arg
 suffix:semicolon
+multiline_comment|/* There is a special case which arises due to rounding, to fix here. */
+r_if
+c_cond
+(paren
+id|fixed_arg
+op_eq
+l_int|0xffffffffffffffffLL
+)paren
+id|fixed_arg
+op_assign
+l_int|0
+suffix:semicolon
 id|exponent
 op_assign
 op_minus
@@ -1533,37 +1547,27 @@ l_int|0xffc00000
 )paren
 (brace
 multiline_comment|/* Get about 32 bit precision in these: */
+id|fix_up.msw
+op_sub_assign
 id|mul_32_32
 c_func
 (paren
 l_int|0x898cc517
 comma
 id|argSqrd.msw
-comma
-op_amp
-id|adj
 )paren
-suffix:semicolon
-id|fix_up.msw
-op_sub_assign
-id|adj
 op_div
 l_int|2
 suffix:semicolon
+id|fix_up.msw
+op_add_assign
 id|mul_32_32
 c_func
 (paren
 l_int|0x898cc517
 comma
 id|argTo4.msw
-comma
-op_amp
-id|adj
 )paren
-suffix:semicolon
-id|fix_up.msw
-op_add_assign
-id|adj
 op_div
 l_int|24
 suffix:semicolon

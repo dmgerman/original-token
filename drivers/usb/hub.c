@@ -2012,13 +2012,34 @@ r_void
 r_int
 id|pid
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|usb_register
 c_func
 (paren
 op_amp
 id|hub_driver
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;USB hub driver cannot register: &quot;
+l_string|&quot;minor number %d already in use&bslash;n&quot;
+comma
+id|hub_driver.minor
+)paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|pid
 op_assign
 id|kernel_thread

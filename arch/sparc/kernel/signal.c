@@ -5578,7 +5578,9 @@ id|map-&gt;vm_end
 comma
 id|str
 comma
-id|map-&gt;vm_offset
+id|map-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
 comma
 id|kdevname
 c_func

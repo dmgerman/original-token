@@ -926,6 +926,11 @@ DECL|member|type
 r_int
 id|type
 suffix:semicolon
+DECL|member|enabled
+r_int
+id|enabled
+suffix:semicolon
+multiline_comment|/* Bus level enable */
 DECL|macro|I2O_TYPE_PCI
 mdefine_line|#define I2O_TYPE_PCI&t;&t;0x01&t;&t;/* PCI I2O controller */&t;
 DECL|member|event_notifer

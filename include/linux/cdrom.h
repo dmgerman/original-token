@@ -732,24 +732,24 @@ mdefine_line|#define READ_BUFFER&t;&t;0x3c
 macro_line|#endif
 multiline_comment|/* Mode page codes for mode sense/set */
 DECL|macro|GPMODE_R_W_ERROR_PAGE
-mdefine_line|#define GPMODE_R_W_ERROR_PAGE&t;    0x1
+mdefine_line|#define GPMODE_R_W_ERROR_PAGE&t;&t;0x01
 DECL|macro|GPMODE_WRITE_PARMS_PAGE
-mdefine_line|#define GPMODE_WRITE_PARMS_PAGE&t;    0x5
+mdefine_line|#define GPMODE_WRITE_PARMS_PAGE&t;&t;0x05
 DECL|macro|GPMODE_AUDIO_CTL_PAGE
-mdefine_line|#define GPMODE_AUDIO_CTL_PAGE&t;    0xe
+mdefine_line|#define GPMODE_AUDIO_CTL_PAGE&t;&t;0x0e
 DECL|macro|GPMODE_POWER_PAGE
-mdefine_line|#define GPMODE_POWER_PAGE&t;    0x1a
+mdefine_line|#define GPMODE_POWER_PAGE&t;&t;0x1a
 DECL|macro|GPMODE_FAULT_FAIL_PAGE
-mdefine_line|#define GPMODE_FAULT_FAIL_PAGE&t;    0x1c
+mdefine_line|#define GPMODE_FAULT_FAIL_PAGE&t;&t;0x1c
 DECL|macro|GPMODE_TO_PROTECT_PAGE
-mdefine_line|#define GPMODE_TO_PROTECT_PAGE&t;    0x1d
+mdefine_line|#define GPMODE_TO_PROTECT_PAGE&t;&t;0x1d
 DECL|macro|GPMODE_CAPABILITIES_PAGE
-mdefine_line|#define GPMODE_CAPABILITIES_PAGE    0x2a
+mdefine_line|#define GPMODE_CAPABILITIES_PAGE&t;0x2a
 DECL|macro|GPMODE_ALL_PAGES
-mdefine_line|#define GPMODE_ALL_PAGES&t;    0x3f
+mdefine_line|#define GPMODE_ALL_PAGES&t;&t;0x3f
 multiline_comment|/* Not in Mt. Fuji, but in ATAPI 2.6 -- depricated now in favor&n; * of MODE_SENSE_POWER_PAGE */
 DECL|macro|GPMODE_CDROM_PAGE
-mdefine_line|#define GPMODE_CDROM_PAGE              0x0d
+mdefine_line|#define GPMODE_CDROM_PAGE&t;&t;0x0d
 multiline_comment|/* DVD struct types */
 DECL|macro|DVD_STRUCT_PHYSICAL
 mdefine_line|#define DVD_STRUCT_PHYSICAL&t;0x00
@@ -826,15 +826,15 @@ suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|start_sector
-id|__u8
+id|__u32
 id|start_sector
 suffix:semicolon
 DECL|member|end_sector
-id|__u8
+id|__u32
 id|end_sector
 suffix:semicolon
 DECL|member|end_sector_l0
-id|__u8
+id|__u32
 id|end_sector_l0
 suffix:semicolon
 )brace

@@ -2949,11 +2949,9 @@ c_func
 l_string|&quot;fat_read_super: Bad fsinfo_offset&bslash;n&quot;
 )paren
 suffix:semicolon
-id|fat_brelse
+id|brelse
 c_func
 (paren
-id|sb
-comma
 id|bh
 )paren
 suffix:semicolon
