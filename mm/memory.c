@@ -1936,7 +1936,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -1952,9 +1951,18 @@ op_eq
 id|READ
 )paren
 )paren
+op_le
+l_int|0
 )paren
 r_goto
 id|out_unlock
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
 suffix:semicolon
 id|page
 op_assign
@@ -1971,14 +1979,18 @@ op_logical_neg
 id|page
 )paren
 (brace
-id|printk
+id|dprintk
 (paren
 id|KERN_ERR
 l_string|&quot;Missing page in map_user_kiobuf&bslash;n&quot;
 )paren
 suffix:semicolon
+id|map
+op_assign
+l_int|NULL
+suffix:semicolon
 r_goto
-id|out_unlock
+id|retry
 suffix:semicolon
 )brace
 id|map
@@ -2004,9 +2016,11 @@ c_func
 id|map
 )paren
 )paren
+(brace
 r_goto
 id|retry
 suffix:semicolon
+)brace
 id|atomic_inc
 c_func
 (paren
@@ -2015,6 +2029,13 @@ id|map-&gt;count
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 id|dprintk
 (paren
 l_string|&quot;Installing page %p %p: %d&bslash;n&quot;
@@ -2097,6 +2118,13 @@ suffix:semicolon
 id|retry
 suffix:colon
 multiline_comment|/* &n;&t; * Undo the locking so far, wait on the page we got to, and try again.&n;&t; */
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 id|unmap_kiobuf
 c_func
 (paren
@@ -2114,6 +2142,12 @@ multiline_comment|/* &n;&t; * Did the release also unlock the page we got stuck 
 r_if
 c_cond
 (paren
+id|map
+)paren
+(brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|PageLocked
 c_func
@@ -2122,7 +2156,7 @@ id|map
 )paren
 )paren
 (brace
-multiline_comment|/* If so, we may well have the page mapped twice in the&n;&t;&t; * IO address range.  Bad news.  Of course, it _might_&n;&t;&t; * just be a coincidence, but if it happens more than&n;&t;&t; * once, chances are we have a double-mapped page. */
+multiline_comment|/* If so, we may well have the page mapped twice&n;&t;&t;&t; * in the IO address range.  Bad news.  Of&n;&t;&t;&t; * course, it _might_ * just be a coincidence,&n;&t;&t;&t; * but if it happens more than * once, chances&n;&t;&t;&t; * are we have a double-mapped page. */
 r_if
 c_cond
 (paren
@@ -2138,13 +2172,14 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Try again...&n;&t; */
+multiline_comment|/*&n;&t;&t; * Try again...&n;&t;&t; */
 id|wait_on_page
 c_func
 (paren
 id|map
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

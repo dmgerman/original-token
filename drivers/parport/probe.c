@@ -978,7 +978,6 @@ id|retval
 op_ne
 id|len
 )paren
-(brace
 id|printk
 (paren
 id|KERN_DEBUG
@@ -991,19 +990,11 @@ comma
 id|len
 )paren
 suffix:semicolon
-r_goto
-id|restore_fs
-suffix:semicolon
-)brace
 multiline_comment|/* Some printer manufacturers mistakenly believe that&n;                   the length field is supposed to be _exclusive_. */
 multiline_comment|/* In addition, there are broken devices out there&n;                   that don&squot;t even finish off with a semi-colon. */
 r_if
 c_cond
 (paren
-id|idlen
-op_eq
-id|len
-op_logical_and
 id|buffer
 (braket
 id|len
@@ -1063,13 +1054,6 @@ op_increment
 op_assign
 l_char|&squot;;&squot;
 suffix:semicolon
-id|buffer
-(braket
-id|len
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
 id|printk
 (paren
 id|KERN_DEBUG
@@ -1083,6 +1067,13 @@ multiline_comment|/* If we get here, I don&squot;t think we&n;                  
 )brace
 id|restore_fs
 suffix:colon
+id|buffer
+(braket
+id|len
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 id|set_fs
 (paren
 id|oldfs
@@ -1106,7 +1097,7 @@ c_cond
 (paren
 id|retval
 OG
-l_int|0
+l_int|2
 )paren
 id|parse_data
 (paren

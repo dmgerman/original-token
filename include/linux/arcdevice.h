@@ -25,7 +25,7 @@ DECL|macro|RECON_THRESHOLD
 mdefine_line|#define RECON_THRESHOLD 30
 multiline_comment|/* Define this to the minimum &quot;timeout&quot; value.  If a transmit takes longer&n; * than TX_TIMEOUT jiffies, Linux will abort the TX and retry.  On a large&n; * network, or one with heavy network traffic, this timeout may need to be&n; * increased.  The larger it is, though, the longer it will be between&n; * necessary transmits - don&squot;t set this too large.&n; */
 DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT 20
+mdefine_line|#define TX_TIMEOUT (20*HZ/100)
 multiline_comment|/* Display warnings about the driver being an ALPHA version.&n; */
 DECL|macro|ALPHA_WARNING
 macro_line|#undef ALPHA_WARNING

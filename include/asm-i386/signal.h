@@ -366,7 +366,7 @@ op_star
 id|set
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;Ir&quot;
 (paren
 id|_sig
 op_minus
@@ -403,7 +403,7 @@ op_star
 id|set
 )paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;Ir&quot;
 (paren
 id|_sig
 op_minus
@@ -490,7 +490,7 @@ op_star
 id|set
 )paren
 comma
-l_string|&quot;ir&quot;
+l_string|&quot;Ir&quot;
 (paren
 id|_sig
 op_minus
