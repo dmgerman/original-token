@@ -133,7 +133,6 @@ DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 DECL|typedef|__kernel_old_uid_t
 r_typedef
 id|__kernel_uid_t
@@ -154,7 +153,6 @@ r_typedef
 id|__kernel_gid_t
 id|__kernel_gid32_t
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __GNUC__
 DECL|macro|__FD_SET

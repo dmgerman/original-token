@@ -488,6 +488,15 @@ id|framebuffer
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* VESA Blanking Levels */
+DECL|macro|VESA_NO_BLANKING
+mdefine_line|#define VESA_NO_BLANKING        0
+DECL|macro|VESA_VSYNC_SUSPEND
+mdefine_line|#define VESA_VSYNC_SUSPEND      1
+DECL|macro|VESA_HSYNC_SUSPEND
+mdefine_line|#define VESA_HSYNC_SUSPEND      2
+DECL|macro|VESA_POWERDOWN
+mdefine_line|#define VESA_POWERDOWN          3
 DECL|struct|fb_monspecs
 r_struct
 id|fb_monspecs
@@ -824,19 +833,43 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+DECL|member|open
+r_int
+id|open
+suffix:semicolon
+multiline_comment|/* Has this been open already ? */
 DECL|macro|FBINFO_FLAG_MODULE
 mdefine_line|#define FBINFO_FLAG_MODULE&t;1&t;/* Low-level driver is a module */
+DECL|member|var
+r_struct
+id|fb_var_screeninfo
+id|var
+suffix:semicolon
+multiline_comment|/* Current var */
+DECL|member|fix
+r_struct
+id|fb_fix_screeninfo
+id|fix
+suffix:semicolon
+multiline_comment|/* Current fix */
+DECL|member|monspecs
+r_struct
+id|fb_monspecs
+id|monspecs
+suffix:semicolon
+multiline_comment|/* Current Monitor specs */
 DECL|member|fbops
 r_struct
 id|fb_ops
 op_star
 id|fbops
 suffix:semicolon
-DECL|member|monspecs
-r_struct
-id|fb_monspecs
-id|monspecs
+DECL|member|screen_base
+r_char
+op_star
+id|screen_base
 suffix:semicolon
+multiline_comment|/* Virtual address */
 DECL|member|disp
 r_struct
 id|display
@@ -917,7 +950,18 @@ suffix:semicolon
 multiline_comment|/* tell fb to (un)blank the screen */
 multiline_comment|/* arg = 0: unblank */
 multiline_comment|/* arg &gt; 0: VESA level (arg-1) */
+DECL|member|pseudo_palette
+r_void
+op_star
+id|pseudo_palette
+suffix:semicolon
+multiline_comment|/* Fake palette of 16 colors and &n;&t;&t;&t;&t;&t;   the cursor&squot;s color for non&n;                                           palette mode */
 multiline_comment|/* From here on everything is device dependent */
+DECL|member|par
+r_void
+op_star
+id|par
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE
@@ -1644,15 +1688,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* VESA Blanking Levels */
-DECL|macro|VESA_NO_BLANKING
-mdefine_line|#define VESA_NO_BLANKING&t;0
-DECL|macro|VESA_VSYNC_SUSPEND
-mdefine_line|#define VESA_VSYNC_SUSPEND&t;1
-DECL|macro|VESA_HSYNC_SUSPEND
-mdefine_line|#define VESA_HSYNC_SUSPEND&t;2
-DECL|macro|VESA_POWERDOWN
-mdefine_line|#define VESA_POWERDOWN&t;&t;3
 DECL|struct|fb_videomode
 r_struct
 id|fb_videomode

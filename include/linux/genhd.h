@@ -138,24 +138,6 @@ r_int
 id|max_p
 suffix:semicolon
 multiline_comment|/* maximum partitions per device */
-DECL|member|max_nr
-r_int
-id|max_nr
-suffix:semicolon
-multiline_comment|/* maximum number of real devices */
-DECL|member|init
-r_void
-(paren
-op_star
-id|init
-)paren
-(paren
-r_struct
-id|gendisk
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* Initialization called before we do our thing */
 DECL|member|part
 r_struct
 id|hd_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.202 2000/01/09 10:46:50 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.203 2000/01/15 00:51:28 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -303,6 +303,10 @@ c_cond
 op_complement
 l_int|0
 suffix:colon
+(paren
+r_int
+r_int
+)paren
 id|__va
 c_func
 (paren
@@ -346,6 +350,10 @@ c_cond
 op_complement
 l_int|0
 suffix:colon
+(paren
+r_int
+r_int
+)paren
 id|__va
 c_func
 (paren
@@ -389,8 +397,7 @@ c_cond
 op_complement
 l_int|0
 suffix:colon
-id|__va
-c_func
+(paren
 (paren
 (paren
 id|pte_val
@@ -403,6 +410,9 @@ id|SRMMU_PTE_PMASK
 )paren
 op_lshift
 l_int|4
+)paren
+op_rshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 )brace
@@ -915,8 +925,9 @@ id|pte_t
 id|srmmu_mk_pte
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 comma
 id|pgprot_t
@@ -929,11 +940,13 @@ c_func
 (paren
 (paren
 (paren
-id|__pa
-c_func
 (paren
 id|page
+op_minus
+id|mem_map
 )paren
+op_lshift
+id|PAGE_SHIFT
 )paren
 op_rshift
 l_int|4
@@ -3722,7 +3735,7 @@ id|tmp
 op_or_assign
 id|SRMMU_PRIV
 suffix:semicolon
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 id|virt_addr
@@ -7171,7 +7184,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Assumptions: The bank given to the kernel from the prom/bootloader&n; * is part of a full bank which is at least 4MB in size and begins at&n; * 0xf0000000 (ie. KERNBASE).&n; */
 DECL|function|map_kernel
 r_static
 r_inline
@@ -7208,14 +7220,16 @@ op_increment
 id|map_spbank
 c_func
 (paren
+id|__va
+c_func
+(paren
 id|sp_banks
 (braket
 id|i
 )braket
 dot
 id|base_addr
-op_plus
-id|PAGE_OFFSET
+)paren
 comma
 id|i
 )paren
@@ -7235,9 +7249,6 @@ op_div
 id|SRMMU_PGDIR_SIZE
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-multiline_comment|/* SUCCESS! */
 )brace
 multiline_comment|/* Paging initialization on the Sparc Reference MMU. */
 r_extern
@@ -7441,9 +7452,11 @@ c_func
 (paren
 id|KERNBASE
 comma
+id|__va
+c_func
+(paren
 id|end_of_phys_memory
-op_plus
-id|PAGE_OFFSET
+)paren
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_SUN_IO
@@ -7487,6 +7500,60 @@ c_func
 (paren
 )paren
 suffix:semicolon
+DECL|macro|BOOTMEM_BROKEN
+mdefine_line|#define BOOTMEM_BROKEN
+macro_line|#ifdef BOOTMEM_BROKEN
+id|srmmu_context_table
+op_assign
+id|__alloc_bootmem
+c_func
+(paren
+id|num_contexts
+op_star
+r_sizeof
+(paren
+id|ctxd_t
+)paren
+op_star
+l_int|2
+comma
+id|SMP_CACHE_BYTES
+comma
+l_int|0UL
+)paren
+suffix:semicolon
+(paren
+r_int
+r_int
+)paren
+id|srmmu_context_table
+op_add_assign
+id|num_contexts
+op_star
+r_sizeof
+(paren
+id|ctxd_t
+)paren
+suffix:semicolon
+(paren
+r_int
+r_int
+)paren
+id|srmmu_context_table
+op_and_assign
+op_complement
+(paren
+id|num_contexts
+op_star
+r_sizeof
+(paren
+id|ctxd_t
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#else
 id|srmmu_context_table
 op_assign
 id|__alloc_bootmem
@@ -7499,11 +7566,17 @@ r_sizeof
 id|ctxd_t
 )paren
 comma
-id|SMP_CACHE_BYTES
+id|num_contexts
+op_star
+r_sizeof
+(paren
+id|ctxd_t
+)paren
 comma
 l_int|0UL
 )paren
 suffix:semicolon
+macro_line|#endif
 id|srmmu_ctx_table_phys
 op_assign
 (paren
@@ -8920,7 +8993,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|hypersparc_flush_page_to_ram
 comma
@@ -9364,7 +9437,7 @@ multiline_comment|/* local flush _only_ */
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|cypress_flush_page_to_ram
 comma
@@ -9744,7 +9817,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|swift_flush_page_to_ram
 comma
@@ -10375,7 +10448,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|turbosparc_flush_page_to_ram
 comma
@@ -10579,7 +10652,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|tsunami_flush_page_to_ram
 comma
@@ -10801,7 +10874,7 @@ suffix:semicolon
 id|BTFIXUPCOPY_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|local_flush_page_to_ram
 )paren
@@ -11107,7 +11180,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|viking_flush_page_to_ram
 comma
@@ -12877,7 +12950,7 @@ c_func
 (paren
 id|local_flush_page_to_ram
 comma
-id|flush_page_to_ram
+id|__flush_page_to_ram
 )paren
 suffix:semicolon
 id|BTFIXUPCOPY_CALL
@@ -12988,7 +13061,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|smp_flush_page_to_ram
 comma

@@ -280,7 +280,7 @@ id|wait_for_request
 suffix:semicolon
 r_extern
 r_void
-id|resetup_one_dev
+id|grok_partitions
 c_func
 (paren
 r_struct
@@ -290,6 +290,12 @@ id|dev
 comma
 r_int
 id|drive
+comma
+r_int
+id|minors
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_extern

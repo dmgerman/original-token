@@ -1877,16 +1877,6 @@ id|byte
 id|speed
 )paren
 (brace
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -1947,7 +1937,7 @@ multiline_comment|/*&n;&t;&t; * clear &quot;ultra enable&quot; bit&n;&t;&t; */
 id|pci_read_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 id|m5229_udma
 comma
@@ -1962,7 +1952,7 @@ suffix:semicolon
 id|pci_write_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 id|m5229_udma
 comma
@@ -2032,7 +2022,7 @@ id|XFER_UDMA_0
 id|pci_read_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 id|m5229_udma
 comma
@@ -2080,7 +2070,7 @@ suffix:semicolon
 id|pci_write_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 id|m5229_udma
 comma
@@ -2098,7 +2088,7 @@ id|XFER_UDMA_3
 id|pci_read_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 l_int|0x4b
 comma
@@ -2113,7 +2103,7 @@ suffix:semicolon
 id|pci_write_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 l_int|0x4b
 comma
@@ -3063,16 +3053,6 @@ op_star
 id|hwif
 )paren
 (brace
-id|ide_hwif_t
-op_star
-id|hwif
-op_assign
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -3349,7 +3329,7 @@ multiline_comment|/*&n;&t; * Ultra66 cable detection (from Host View)&n;&t; * m5
 id|pci_read_config_byte
 c_func
 (paren
-id|hwif-&gt;pci_dev
+id|dev
 comma
 l_int|0x4a
 comma

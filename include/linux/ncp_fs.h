@@ -66,6 +66,52 @@ id|directory_id
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ncp_fs_info_v2
+r_struct
+id|ncp_fs_info_v2
+(brace
+DECL|member|version
+r_int
+id|version
+suffix:semicolon
+DECL|member|mounted_uid
+r_int
+r_int
+id|mounted_uid
+suffix:semicolon
+DECL|member|connection
+r_int
+r_int
+id|connection
+suffix:semicolon
+DECL|member|buffer_size
+r_int
+r_int
+id|buffer_size
+suffix:semicolon
+DECL|member|volume_number
+r_int
+r_int
+id|volume_number
+suffix:semicolon
+DECL|member|directory_id
+id|__u32
+id|directory_id
+suffix:semicolon
+DECL|member|dummy1
+id|__u32
+id|dummy1
+suffix:semicolon
+DECL|member|dummy2
+id|__u32
+id|dummy2
+suffix:semicolon
+DECL|member|dummy3
+id|__u32
+id|dummy3
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ncp_sign_init
 r_struct
 id|ncp_sign_init
@@ -218,20 +264,19 @@ suffix:semicolon
 DECL|macro|NCP_IOC_NCPREQUEST
 mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, struct ncp_ioctl_request)
 DECL|macro|NCP_IOC_GETMOUNTUID
-mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, __kernel_uid_t)
-macro_line|#if 1
-macro_line|#ifdef __KERNEL__
-multiline_comment|/* remove after ncpfs-2.0.13 gets released or at the beginning of kernel-2.1. codefreeze */
-DECL|macro|NCP_IOC_GETMOUNTUID_INT
-mdefine_line|#define&t;NCP_IOC_GETMOUNTUID_INT&t;&t;_IOW(&squot;n&squot;, 2, unsigned int)
-macro_line|#endif
-macro_line|#endif
+mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, __kernel_old_uid_t)
+DECL|macro|NCP_IOC_GETMOUNTUID2
+mdefine_line|#define NCP_IOC_GETMOUNTUID2&t;&t;_IOW(&squot;n&squot;, 2, unsigned long)
 DECL|macro|NCP_IOC_CONN_LOGGED_IN
 mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;n&squot;, 3)
 DECL|macro|NCP_GET_FS_INFO_VERSION
-mdefine_line|#define NCP_GET_FS_INFO_VERSION (1)
+mdefine_line|#define NCP_GET_FS_INFO_VERSION    (1)
 DECL|macro|NCP_IOC_GET_FS_INFO
 mdefine_line|#define NCP_IOC_GET_FS_INFO             _IOWR(&squot;n&squot;, 4, struct ncp_fs_info)
+DECL|macro|NCP_GET_FS_INFO_VERSION_V2
+mdefine_line|#define NCP_GET_FS_INFO_VERSION_V2 (2)
+DECL|macro|NCP_IOC_GET_FS_INFO_V2
+mdefine_line|#define NCP_IOC_GET_FS_INFO_V2&t;&t;_IOWR(&squot;n&squot;, 4, struct ncp_fs_info_v2)
 DECL|macro|NCP_IOC_SIGN_INIT
 mdefine_line|#define NCP_IOC_SIGN_INIT&t;&t;_IOR(&squot;n&squot;, 5, struct ncp_sign_init)
 DECL|macro|NCP_IOC_SIGN_WANTED
@@ -260,8 +305,6 @@ DECL|macro|NCP_IOC_GETDENTRYTTL
 mdefine_line|#define NCP_IOC_GETDENTRYTTL&t;&t;_IOW(&squot;n&squot;, 12, __u32)
 DECL|macro|NCP_IOC_SETDENTRYTTL
 mdefine_line|#define NCP_IOC_SETDENTRYTTL&t;&t;_IOR(&squot;n&squot;, 12, __u32)
-DECL|macro|NCP_IOC_GETMOUNTUID32
-mdefine_line|#define&t;NCP_IOC_GETMOUNTUID32&t;&t;_IOW(&squot;n&squot;, 13, __kernel_uid32_t)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070

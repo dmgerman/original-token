@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: iommu.c,v 1.17 2000/01/08 17:01:18 anton Exp $&n; * iommu.c:  IOMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: iommu.c,v 1.18 2000/01/15 00:51:27 anton Exp $&n; * iommu.c:  IOMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1331,7 +1331,7 @@ id|page
 )paren
 suffix:semicolon
 r_else
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 id|page
@@ -1373,16 +1373,18 @@ c_func
 (paren
 id|ptep
 comma
-id|pte_val
-c_func
-(paren
 id|mk_pte
 c_func
 (paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 comma
 id|dvma_prot
-)paren
 )paren
 )paren
 suffix:semicolon

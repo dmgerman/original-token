@@ -2406,15 +2406,6 @@ id|regs
 )paren
 suffix:semicolon
 r_void
-id|ide_geninit
-(paren
-r_struct
-id|gendisk
-op_star
-id|gd
-)paren
-suffix:semicolon
-r_void
 id|do_ide0_request
 (paren
 id|request_queue_t

@@ -830,8 +830,7 @@ r_sizeof
 id|tmp
 )paren
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|ret
 op_assign
@@ -848,8 +847,7 @@ op_star
 id|data
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/* read the word at location addr in the USER area. */
@@ -885,8 +883,7 @@ id|user
 op_minus
 l_int|3
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|tmp
 op_assign
@@ -968,7 +965,6 @@ id|addr
 )braket
 suffix:semicolon
 )brace
-suffix:semicolon
 id|ret
 op_assign
 id|put_user
@@ -984,8 +980,7 @@ op_star
 id|data
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/* when I and D space are separate, this will have to be fixed. */
@@ -1026,16 +1021,14 @@ r_sizeof
 id|data
 )paren
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|ret
 op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 r_case
 id|PTRACE_POKEUSR
@@ -1065,8 +1058,7 @@ id|user
 op_minus
 l_int|3
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -1093,11 +1085,15 @@ comma
 id|data
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
-multiline_comment|/* We need to be very careful here.  We implicitly&n;&t;&t;     want to modify a portion of the task_struct, and we&n;&t;&t;     have to be selective about what portions we allow someone&n;&t;&t;     to modify. */
+multiline_comment|/* We need to be very careful here.  We implicitly&n;&t;&t;   want to modify a portion of the task_struct, and we&n;&t;&t;   have to be selective about what portions we allow someone&n;&t;&t;   to modify. */
+id|ret
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1139,9 +1135,7 @@ l_int|4
 )braket
 )paren
 (brace
-r_return
-op_minus
-id|EIO
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -1159,9 +1153,7 @@ l_int|5
 )braket
 )paren
 (brace
-r_return
-op_minus
-id|EIO
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -1191,16 +1183,9 @@ op_minus
 l_int|3
 )paren
 (brace
-r_return
-op_minus
-id|EIO
+r_break
 suffix:semicolon
 )brace
-id|ret
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1264,7 +1249,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-suffix:semicolon
 id|addr
 op_sub_assign
 (paren
@@ -1290,18 +1274,8 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
 )brace
-suffix:semicolon
-id|ret
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 r_case
 id|PTRACE_SYSCALL
@@ -1331,8 +1305,7 @@ id|data
 OG
 id|_NSIG
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -1389,8 +1362,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill. &n; * perhaps it should be put in the status that it wants to &n; * exit.&n; */
@@ -1413,8 +1385,7 @@ op_eq
 id|TASK_ZOMBIE
 )paren
 multiline_comment|/* already dead */
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|child-&gt;exit_code
 op_assign
@@ -1450,8 +1421,7 @@ c_func
 id|child
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 r_case
@@ -1478,8 +1448,7 @@ id|data
 OG
 id|_NSIG
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|child-&gt;flags
 op_and_assign
@@ -1541,8 +1510,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 r_case
@@ -1569,8 +1537,7 @@ id|data
 OG
 id|_NSIG
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|child-&gt;flags
 op_and_assign
@@ -1653,8 +1620,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 r_case
@@ -1691,8 +1657,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 r_for
@@ -1750,11 +1715,9 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_case
 id|PTRACE_SETREGS
 suffix:colon
@@ -1793,8 +1756,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 r_for
@@ -1856,11 +1818,9 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_case
 id|PTRACE_GETFPREGS
 suffix:colon
@@ -1894,8 +1854,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 id|ret
@@ -1970,11 +1929,9 @@ id|data
 suffix:semicolon
 )brace
 macro_line|#endif
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_case
 id|PTRACE_SETFPREGS
 suffix:colon
@@ -2008,8 +1965,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 id|child-&gt;used_math
@@ -2067,11 +2023,9 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_default
 suffix:colon
 id|ret
@@ -2079,8 +2033,7 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 id|out

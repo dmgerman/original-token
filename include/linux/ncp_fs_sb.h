@@ -15,7 +15,7 @@ id|ncp_server
 (brace
 DECL|member|m
 r_struct
-id|ncp_mount_data
+id|ncp_mount_data_kernel
 id|m
 suffix:semicolon
 multiline_comment|/* Nearly all of the mount data is of&n;&t;&t;&t;&t;&t;   interest for us later, so we store&n;&t;&t;&t;&t;&t;   it completely. */

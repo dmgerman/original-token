@@ -5107,7 +5107,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bdget
+id|bdev
 )paren
 id|panic
 c_func

@@ -452,47 +452,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Collect the siginfo appropriate to this signal.  */
-r_if
-c_cond
-(paren
-id|sig
-OL
-id|SIGRTMIN
-)paren
-(brace
-multiline_comment|/* XXX: As an extension, support queueing exactly&n;&t;&t;&t;   one non-rt signal if SA_SIGINFO is set, so that&n;&t;&t;&t;   we can get more detailed information about the&n;&t;&t;&t;   cause of the signal.  */
-multiline_comment|/* Deciding not to init these couple of fields is&n;&t;&t;&t;   more expensive that just initializing them.  */
-id|info-&gt;si_signo
-op_assign
-id|sig
-suffix:semicolon
-id|info-&gt;si_errno
-op_assign
-l_int|0
-suffix:semicolon
-id|info-&gt;si_code
-op_assign
-l_int|0
-suffix:semicolon
-id|info-&gt;si_pid
-op_assign
-l_int|0
-suffix:semicolon
-id|info-&gt;si_uid
-op_assign
-l_int|0
-suffix:semicolon
-id|SET_SIGINFO_UID16
-c_func
-(paren
-id|info-&gt;si_uid16
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 r_struct
 id|signal_queue
 op_star
@@ -613,7 +572,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Ok, it wasn&squot;t in the queue.  It must have&n;&t;&t;&t;&t;   been sent either by a non-rt mechanism and&n;&t;&t;&t;&t;   we ran out of queue space.  So zero out the&n;&t;&t;&t;&t;   info.  */
+multiline_comment|/* Ok, it wasn&squot;t in the queue.  It must have&n;&t;&t;&t;   been sent either by a non-rt mechanism and&n;&t;&t;&t;   we ran out of queue space.  So zero out the&n;&t;&t;&t;   info.  */
 id|info-&gt;si_signo
 op_assign
 id|sig
@@ -642,7 +601,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -882,6 +840,13 @@ id|flags
 suffix:semicolon
 r_int
 id|ret
+suffix:semicolon
+r_struct
+id|signal_queue
+op_star
+id|q
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#if DEBUG_SIG
 id|printk
@@ -1135,19 +1100,14 @@ id|t
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/* Support queueing exactly one non-rt signal, so that we&n;&t;   can get more detailed information about the cause of&n;&t;   the signal. */
 r_if
 c_cond
 (paren
 id|sig
 OL
 id|SIGRTMIN
-)paren
-(brace
-multiline_comment|/* Non-real-time signals are not queued.  */
-multiline_comment|/* XXX: As an extension, support queueing exactly one&n;&t;&t;   non-rt signal if SA_SIGINFO is set, so that we can&n;&t;&t;   get more detailed information about the cause of&n;&t;&t;   the signal.  */
-r_if
-c_cond
-(paren
+op_logical_and
 id|sigismember
 c_func
 (paren
@@ -1160,17 +1120,7 @@ id|sig
 r_goto
 id|out
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Real-time signals must be queued if sent by sigqueue, or&n;&t;&t;   some other real-time mechanism.  It is implementation&n;&t;&t;   defined whether kill() does so.  We attempt to do so, on&n;&t;&t;   the principle of least surprise, but since kill is not&n;&t;&t;   allowed to fail with EAGAIN when low on memory we just&n;&t;&t;   make sure at least one signal gets delivered and don&squot;t&n;&t;&t;   pass on the info struct.  */
-r_struct
-id|signal_queue
-op_star
-id|q
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Real-time signals must be queued if sent by sigqueue, or&n;&t;   some other real-time mechanism.  It is implementation&n;&t;   defined whether kill() does so.  We attempt to do so, on&n;&t;   the principle of least surprise, but since kill is not&n;&t;   allowed to fail with EAGAIN when low on memory we just&n;&t;   make sure at least one signal gets delivered and don&squot;t&n;&t;   pass on the info struct.  */
 r_if
 c_cond
 (paren
@@ -1325,7 +1275,6 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 )brace
 id|sigaddset
 c_func

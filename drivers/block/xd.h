@@ -261,9 +261,7 @@ r_static
 r_void
 id|xd_geninit
 (paren
-r_struct
-id|gendisk
-op_star
+r_void
 )paren
 suffix:semicolon
 r_static

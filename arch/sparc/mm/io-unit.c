@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io-unit.c,v 1.19 2000/01/08 17:01:18 anton Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: io-unit.c,v 1.20 2000/01/15 00:51:27 anton Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1253,7 +1253,13 @@ c_func
 id|mk_pte
 c_func
 (paren
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 comma
 id|dvma_prot
 )paren

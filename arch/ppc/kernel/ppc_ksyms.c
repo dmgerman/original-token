@@ -1266,4 +1266,11 @@ c_func
 id|console_drivers
 )paren
 suffix:semicolon
+DECL|variable|do_bottom_half
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_bottom_half
+)paren
+suffix:semicolon
 eof

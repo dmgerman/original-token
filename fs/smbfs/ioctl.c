@@ -70,7 +70,7 @@ id|server-&gt;mnt-&gt;mounted_uid
 )paren
 comma
 (paren
-id|old_uid_t
+id|uid16_t
 op_star
 )paren
 id|arg

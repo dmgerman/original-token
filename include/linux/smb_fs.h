@@ -5,7 +5,7 @@ mdefine_line|#define _LINUX_SMB_FS_H
 macro_line|#include &lt;linux/smb.h&gt;
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|SMB_IOC_GETMOUNTUID
-mdefine_line|#define&t;SMB_IOC_GETMOUNTUID&t;&t;_IOR(&squot;u&squot;, 1, __kernel_uid_t)
+mdefine_line|#define&t;SMB_IOC_GETMOUNTUID&t;&t;_IOR(&squot;u&squot;, 1, __kernel_old_uid_t)
 DECL|macro|SMB_IOC_NEWCONN
 mdefine_line|#define SMB_IOC_NEWCONN                 _IOW(&squot;u&squot;, 2, struct smb_conn_opt)
 multiline_comment|/* __kernel_uid_t can never change, so we have to use __kernel_uid32_t */

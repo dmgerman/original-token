@@ -119,7 +119,6 @@ r_int
 r_int
 id|__kernel_gid32_t
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 DECL|typedef|__kernel_old_uid_t
 r_typedef
 r_int
@@ -132,7 +131,6 @@ r_int
 r_int
 id|__kernel_old_gid_t
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

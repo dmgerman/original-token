@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.184 2000/01/09 09:13:34 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.185 2000/01/15 00:51:32 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -7439,25 +7439,14 @@ r_void
 id|sun4c_flush_page_to_ram_hw
 c_func
 (paren
-r_struct
-id|page
-op_star
+r_int
+r_int
 id|page
 )paren
 (brace
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_int
-r_int
-id|addr
-op_assign
-id|page_address
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 id|save_and_cli
 c_func
@@ -7468,7 +7457,7 @@ suffix:semicolon
 id|sun4c_flush_page_hw
 c_func
 (paren
-id|addr
+id|page
 )paren
 suffix:semicolon
 id|restore_flags
@@ -7979,25 +7968,14 @@ r_void
 id|sun4c_flush_page_to_ram_sw
 c_func
 (paren
-r_struct
-id|page
-op_star
+r_int
+r_int
 id|page
 )paren
 (brace
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_int
-r_int
-id|addr
-op_assign
-id|page_address
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 id|save_and_cli
 c_func
@@ -8008,7 +7986,7 @@ suffix:semicolon
 id|sun4c_flush_page_sw
 c_func
 (paren
-id|addr
+id|page
 )paren
 suffix:semicolon
 id|restore_flags
@@ -12728,7 +12706,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|sun4c_flush_page_to_ram_hw
 comma
@@ -12831,7 +12809,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
 id|sun4c_flush_page_to_ram_sw
 comma

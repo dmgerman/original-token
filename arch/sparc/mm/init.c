@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.72 1999/12/27 06:30:06 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.73 2000/01/15 00:51:26 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -148,19 +148,17 @@ id|mk_pte_phys
 c_func
 (paren
 (paren
-(paren
-(paren
 r_int
 r_int
 )paren
+id|__pa
+c_func
+(paren
 op_amp
 id|empty_bad_page
 )paren
-op_minus
-id|PAGE_OFFSET
 op_plus
 id|phys_base
-)paren
 comma
 id|PAGE_SHARED
 )paren
@@ -376,7 +374,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|macro|DEBUG_BOOTMEM
-macro_line|#undef DEBUG_BOOTMEM
+mdefine_line|#define DEBUG_BOOTMEM
 r_extern
 r_int
 r_int
@@ -408,6 +406,18 @@ l_int|0UL
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+multiline_comment|/* Limit maximum memory until we implement highmem for sparc */
+r_if
+c_cond
+(paren
+id|cmdline_memory_size
+OG
+l_int|0x9000000
+)paren
+id|cmdline_memory_size
+op_assign
+l_int|0x9000000
 suffix:semicolon
 multiline_comment|/* XXX It is a bit ambiguous here, whether we should&n;&t; * XXX treat the user specified mem=xxx as total wanted&n;&t; * XXX physical memory, or as a limit to the upper&n;&t; * XXX physical address we allow.  For now it is the&n;&t; * XXX latter. -DaveM&n;&t; */
 macro_line|#ifdef DEBUG_BOOTMEM
@@ -567,6 +577,13 @@ suffix:semicolon
 multiline_comment|/* Start with page aligned address of last symbol in kernel&n;&t; * image.  &n;&t; */
 id|start_pfn
 op_assign
+(paren
+r_int
+r_int
+)paren
+id|__pa
+c_func
+(paren
 id|PAGE_ALIGN
 c_func
 (paren
@@ -577,8 +594,7 @@ r_int
 op_amp
 id|_end
 )paren
-op_minus
-id|PAGE_OFFSET
+)paren
 suffix:semicolon
 multiline_comment|/* Adjust up to the physical address where the kernel begins. */
 id|start_pfn
@@ -1577,9 +1593,15 @@ op_lshift
 l_int|2
 )paren
 suffix:semicolon
+multiline_comment|/* fix this */
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 id|addr
 op_assign
-id|KERNBASE
+id|__va
+c_func
+(paren
+id|phys_base
+)paren
 suffix:semicolon
 id|last
 op_assign
@@ -1593,8 +1615,9 @@ r_int
 op_amp
 id|_end
 )paren
+op_plus
+id|phys_base
 suffix:semicolon
-multiline_comment|/* fix this */
 r_while
 c_loop
 (paren
@@ -1603,7 +1626,6 @@ OL
 id|last
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_if
 c_cond
 (paren
@@ -1636,43 +1658,12 @@ id|PG_reserved
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif&t;
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
-)braket
-dot
-id|flags
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|PG_reserved
-)paren
-suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
-op_rshift
-l_int|8
-comma
-id|sparc_valid_addr_bitmap
-)paren
-suffix:semicolon
 id|addr
 op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 id|taint_real_pages
 c_func
 (paren
@@ -1967,23 +1958,9 @@ id|p
 suffix:semicolon
 id|page
 op_assign
-(paren
 id|addr
 op_plus
-(paren
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
 id|phys_base
-)paren
-)paren
-op_minus
-id|PAGE_OFFSET
-)paren
 suffix:semicolon
 id|p
 op_assign

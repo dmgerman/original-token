@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.1 1999/12/28 04:13:35 anton Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.2 2000/01/15 00:51:42 anton Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -133,9 +133,8 @@ r_void
 comma
 id|local_flush_page_to_ram
 comma
-r_struct
-id|page
-op_star
+r_int
+r_int
 )paren
 id|BTFIXUPDEF_CALL
 c_func
@@ -152,7 +151,7 @@ r_int
 r_int
 )paren
 DECL|macro|local_flush_page_to_ram
-mdefine_line|#define local_flush_page_to_ram(page) BTFIXUP_CALL(local_flush_page_to_ram)(page)
+mdefine_line|#define local_flush_page_to_ram(addr) BTFIXUP_CALL(local_flush_page_to_ram)(addr)
 DECL|macro|local_flush_sig_insns
 mdefine_line|#define local_flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(local_flush_sig_insns)(mm,insn_addr)
 r_extern
@@ -266,9 +265,8 @@ r_void
 id|smp_flush_page_to_ram
 c_func
 (paren
-r_struct
-id|page
-op_star
+r_int
+r_int
 id|page
 )paren
 suffix:semicolon
@@ -413,11 +411,10 @@ c_func
 (paren
 r_void
 comma
-id|flush_page_to_ram
+id|__flush_page_to_ram
 comma
-r_struct
-id|page
-op_star
+r_int
+r_int
 )paren
 id|BTFIXUPDEF_CALL
 c_func
@@ -433,10 +430,12 @@ comma
 r_int
 r_int
 )paren
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page) BTFIXUP_CALL(flush_page_to_ram)(page)
+DECL|macro|__flush_page_to_ram
+mdefine_line|#define __flush_page_to_ram(addr) BTFIXUP_CALL(__flush_page_to_ram)(addr)
 DECL|macro|flush_sig_insns
 mdefine_line|#define flush_sig_insns(mm,insn_addr) BTFIXUP_CALL(flush_sig_insns)(mm,insn_addr)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)    __flush_page_to_ram(page_address(page))
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct

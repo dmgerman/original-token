@@ -1,9 +1,6 @@
 macro_line|#ifndef __ARCH_M68K_POSIX_TYPES_H
 DECL|macro|__ARCH_M68K_POSIX_TYPES_H
 mdefine_line|#define __ARCH_M68K_POSIX_TYPES_H
-macro_line|#if defined(__KERNEL__)
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * This file is generally used by user-level software, so you need to&n; * be a little careful about namespace pollution etc.  Also, we cannot&n; * assume GCC is being used.&n; */
 DECL|typedef|__kernel_dev_t
 r_typedef
@@ -123,7 +120,6 @@ r_int
 r_int
 id|__kernel_gid32_t
 suffix:semicolon
-macro_line|#if defined(__KERNEL__) &amp;&amp; defined(CONFIG_UID16)
 DECL|typedef|__kernel_old_uid_t
 r_typedef
 r_int
@@ -136,7 +132,6 @@ r_int
 r_int
 id|__kernel_old_gid_t
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

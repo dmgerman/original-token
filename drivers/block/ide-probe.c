@@ -3242,22 +3242,11 @@ op_lshift
 id|PARTN_BITS
 suffix:semicolon
 multiline_comment|/* 1 + max partitions / drive */
-id|gd-&gt;max_nr
-op_assign
-id|units
-suffix:semicolon
-multiline_comment|/* max num real drives */
 id|gd-&gt;nr_real
 op_assign
 id|units
 suffix:semicolon
 multiline_comment|/* current num real drives */
-id|gd-&gt;init
-op_assign
-op_amp
-id|ide_geninit
-suffix:semicolon
-multiline_comment|/* initialization function */
 id|gd-&gt;real_devices
 op_assign
 id|hwif

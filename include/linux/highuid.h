@@ -3,8 +3,7 @@ DECL|macro|_LINUX_HIGHUID_H
 mdefine_line|#define _LINUX_HIGHUID_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/*&n; * general notes:&n; *&n; * CONFIG_UID16 is defined if the given architecture needs to&n; * support backwards compatibility for old system calls.&n; *&n; * kernel code should use uid_t and gid_t at all times when dealing with&n; * kernel-private data.&n; *&n; * old_uid_t and old_gid_t are only used if CONFIG_UID16 is defined.&n; *&n; * uid16_t and gid16_t are used on all architectures. (when dealing&n; * with structures hard coded to 16 bits, such as in filesystems)&n; */
-macro_line|#ifdef CONFIG_UID16
+multiline_comment|/*&n; * general notes:&n; *&n; * CONFIG_UID16 is defined if the given architecture needs to&n; * support backwards compatibility for old system calls.&n; *&n; * kernel code should use uid_t and gid_t at all times when dealing with&n; * kernel-private data.&n; *&n; * old_uid_t and old_gid_t should only be different if CONFIG_UID16 is&n; * defined, else the platform should provide dummy typedefs for them&n; * such that they are equivalent to __kernel_{u,g}id_t.&n; *&n; * uid16_t and gid16_t are used on all architectures. (when dealing&n; * with structures hard coded to 16 bits, such as in filesystems)&n; */
 multiline_comment|/*&n; * This is the &quot;overflow&quot; UID and GID. They are used to signify uid/gid&n; * overflow to old programs when they request uid/gid information but are&n; * using the old 16 bit interfaces.&n; * When you run a libc5 program, it will think that all highuid files or&n; * processes are owned by this uid/gid.&n; * The idea is that it&squot;s better to do so than possibly return 0 in lieu of&n; * 65536, etc.&n; */
 r_extern
 r_int
@@ -18,6 +17,7 @@ DECL|macro|DEFAULT_OVERFLOWUID
 mdefine_line|#define DEFAULT_OVERFLOWUID&t;65534
 DECL|macro|DEFAULT_OVERFLOWGID
 mdefine_line|#define DEFAULT_OVERFLOWGID&t;65534
+macro_line|#ifdef CONFIG_UID16
 multiline_comment|/* prevent uid mod 65536 effect by returning a default value for high UIDs */
 DECL|macro|high2lowuid
 mdefine_line|#define high2lowuid(uid) ((uid) &gt; 65535) ? (old_uid_t)overflowuid : (old_uid_t)(uid)

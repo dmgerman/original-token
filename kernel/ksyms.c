@@ -1315,11 +1315,11 @@ c_func
 id|gendisk_head
 )paren
 suffix:semicolon
-DECL|variable|resetup_one_dev
+DECL|variable|grok_partitions
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|resetup_one_dev
+id|grok_partitions
 )paren
 suffix:semicolon
 DECL|variable|unplug_device
@@ -2275,7 +2275,6 @@ c_func
 id|brw_page
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_UID16
 DECL|variable|fs_overflowuid
 id|EXPORT_SYMBOL
 c_func
@@ -2290,7 +2289,6 @@ c_func
 id|fs_overflowgid
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* all busmice */
 DECL|variable|add_mouse_randomness
 id|EXPORT_SYMBOL

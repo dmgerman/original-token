@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_TYPES_H
 DECL|macro|_LINUX_TYPES_H
 mdefine_line|#define _LINUX_TYPES_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifndef __KERNEL_STRICT_NAMES
@@ -75,6 +76,7 @@ r_typedef
 id|__kernel_gid16_t
 id|gid16_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_UID16
 multiline_comment|/* This is defined by include/asm-{arch}/posix_types.h */
 DECL|typedef|old_uid_t
 r_typedef
@@ -86,6 +88,7 @@ r_typedef
 id|__kernel_old_gid_t
 id|old_gid_t
 suffix:semicolon
+macro_line|#endif /* CONFIG_UID16 */
 multiline_comment|/* libc5 includes this file to define uid_t, thus uid_t can never change&n; * when it is included by non-kernel code&n; */
 macro_line|#else
 DECL|typedef|uid_t

@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef CONFIG_UID16
 multiline_comment|/*&n; * this is where the system-wide overflow UID and GID are defined, for&n; * architectures that now have 32-bit UID/GID but didn&squot;t in the past&n; */
 DECL|variable|overflowuid
 r_int
@@ -25,7 +24,6 @@ id|overflowgid
 op_assign
 id|DEFAULT_OVERFLOWGID
 suffix:semicolon
-macro_line|#endif /* CONFIG_UID16 */
 multiline_comment|/*&n; * the same as above, but for filesystems which can only store a 16-bit&n; * UID and GID. as such, this is needed on all architectures&n; */
 DECL|variable|fs_overflowuid
 r_int

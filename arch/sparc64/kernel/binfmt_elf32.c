@@ -361,6 +361,15 @@ suffix:semicolon
 multiline_comment|/* initial part of arg list */
 )brace
 suffix:semicolon
+macro_line|#include &lt;linux/highuid.h&gt;
+DECL|macro|NEW_TO_OLD_UID
+macro_line|#undef NEW_TO_OLD_UID
+DECL|macro|NEW_TO_OLD_GID
+macro_line|#undef NEW_TO_OLD_GID
+DECL|macro|NEW_TO_OLD_UID
+mdefine_line|#define NEW_TO_OLD_UID(uid) ((uid) &gt; 65535) ? (u16)overflowuid : (u16)(uid)
+DECL|macro|NEW_TO_OLD_GID
+mdefine_line|#define NEW_TO_OLD_GID(gid) ((gid) &gt; 65535) ? (u16)overflowgid : (u16)(gid)
 DECL|macro|elf_addr_t
 mdefine_line|#define elf_addr_t&t;u32
 DECL|macro|elf_caddr_t
