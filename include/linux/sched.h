@@ -940,7 +940,7 @@ DECL|member|self_exec_id
 id|u32
 id|self_exec_id
 suffix:semicolon
-multiline_comment|/* Protection of (de-)allocation: mm, files, fs */
+multiline_comment|/* Protection of (de-)allocation: mm, files, fs, tty */
 DECL|member|alloc_lock
 id|spinlock_t
 id|alloc_lock

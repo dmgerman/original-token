@@ -5563,12 +5563,7 @@ multiline_comment|/* Names for the Pentium II/Celeron processors &n;&t;&t;&t;   
 r_if
 c_cond
 (paren
-id|cpu_models
-(braket
-id|i
-)braket
-dot
-id|x86
+id|c-&gt;x86
 op_eq
 l_int|6
 )paren

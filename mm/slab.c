@@ -1868,6 +1868,12 @@ suffix:semicolon
 r_int
 id|align
 suffix:semicolon
+macro_line|#if SLAB_DEBUG_SUPPORT
+id|flags
+op_or_assign
+id|SLAB_POISON
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Sanity checks... */
 macro_line|#if&t;SLAB_MGMT_CHECKS
 r_if

@@ -3551,10 +3551,17 @@ id|INT_MASK
 )paren
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|card-&gt;lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/* not for us */
+)brace
 singleline_comment|//&t;printk(&quot;Interrupt %X: &quot;, status);
 r_if
 c_cond

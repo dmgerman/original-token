@@ -1454,7 +1454,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1477,7 +1477,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1500,7 +1500,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1523,7 +1523,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1546,7 +1546,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1569,7 +1569,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1592,7 +1592,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break
@@ -1615,7 +1615,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;i91u&quot;
 comma
-l_int|NULL
+id|hreg
 )paren
 suffix:semicolon
 r_break

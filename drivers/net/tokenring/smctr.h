@@ -2858,7 +2858,9 @@ DECL|macro|LINE_SPEED_FULL_DUPLEX
 mdefine_line|#define LINE_SPEED_FULL_DUPLEX      0x8000
 multiline_comment|/*&n; * Definitions for the field:&n; * bic_type (Bus interface chip type)&n; */
 DECL|macro|BIC_NO_CHIP
-mdefine_line|#define BIC_NO_CHIP             0x0000  /* Bus interface chip not implemented */#define BIC_583_CHIP            0x0001  /* 83C583 bus interface chip */
+mdefine_line|#define BIC_NO_CHIP             0x0000  /* Bus interface chip not implemented */
+DECL|macro|BIC_583_CHIP
+mdefine_line|#define BIC_583_CHIP            0x0001  /* 83C583 bus interface chip */
 DECL|macro|BIC_584_CHIP
 mdefine_line|#define BIC_584_CHIP            0x0002  /* 83C584 bus interface chip */
 DECL|macro|BIC_585_CHIP
@@ -3002,7 +3004,9 @@ mdefine_line|#define MAX_8023_SIZE           1500    /* Max 802.3 size of frame.
 DECL|macro|DEFAULT_ERX_VALUE
 mdefine_line|#define DEFAULT_ERX_VALUE       4       /* Number of 16-byte blocks for 790B early Rx. */
 DECL|macro|DEFAULT_ETX_VALUE
-mdefine_line|#define DEFAULT_ETX_VALUE       32      /* Number of bytes for 790B early Tx. */#define DEFAULT_TX_RETRIES      3       /* Number of transmit retries */
+mdefine_line|#define DEFAULT_ETX_VALUE       32      /* Number of bytes for 790B early Tx. */
+DECL|macro|DEFAULT_TX_RETRIES
+mdefine_line|#define DEFAULT_TX_RETRIES      3       /* Number of transmit retries */
 DECL|macro|LPBK_FRAME_SIZE
 mdefine_line|#define LPBK_FRAME_SIZE         1024    /* Default loopback frame for Rx calibration test. */
 DECL|macro|MAX_LOOKAHEAD_SIZE

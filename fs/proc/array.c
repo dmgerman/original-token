@@ -1137,6 +1137,9 @@ suffix:semicolon
 id|pid_t
 id|ppid
 suffix:semicolon
+r_int
+id|tty_nr
+suffix:semicolon
 r_struct
 id|mm_struct
 op_star
@@ -1272,6 +1275,12 @@ op_amp
 id|sigcatch
 )paren
 suffix:semicolon
+id|task_lock
+c_func
+(paren
+id|task
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1286,6 +1295,25 @@ id|tty_pgrp
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|tty_nr
+op_assign
+id|task-&gt;tty
+ques
+c_cond
+id|kdev_t_to_nr
+c_func
+(paren
+id|task-&gt;tty-&gt;device
+)paren
+suffix:colon
+l_int|0
+suffix:semicolon
+id|task_unlock
+c_func
+(paren
+id|task
+)paren
 suffix:semicolon
 multiline_comment|/* scale priority and nice values from timeslices to -20..20 */
 multiline_comment|/* to make it look like a &quot;normal&quot; Unix priority/nice value  */
@@ -1368,16 +1396,7 @@ id|task-&gt;pgrp
 comma
 id|task-&gt;session
 comma
-id|task-&gt;tty
-ques
-c_cond
-id|kdev_t_to_nr
-c_func
-(paren
-id|task-&gt;tty-&gt;device
-)paren
-suffix:colon
-l_int|0
+id|tty_nr
 comma
 id|tty_pgrp
 comma

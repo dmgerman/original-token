@@ -2159,7 +2159,7 @@ id|msg
 l_int|8
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|query
@@ -2676,7 +2676,7 @@ id|msg
 l_int|8
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|buffer

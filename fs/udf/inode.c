@@ -1929,7 +1929,7 @@ id|newblocknum
 comma
 id|newblock
 suffix:semicolon
-r_char
+r_int
 id|etype
 suffix:semicolon
 r_int
@@ -10062,7 +10062,7 @@ id|oextoffset
 comma
 id|adsize
 suffix:semicolon
-r_char
+r_int
 id|type
 suffix:semicolon
 r_struct

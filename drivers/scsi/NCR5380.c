@@ -859,21 +859,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -891,12 +876,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef USLEEP
 multiline_comment|/*&n; * These need tweaking, and would probably work best as per-device &n; * flags initialized differently for disk, tape, cd, etc devices.&n; * People with broken devices are free to experiment as to what gives&n; * the best results for them.&n; *&n; * USLEEP_SLEEP should be a minimum seek time.&n; *&n; * USLEEP_POLL should be a maximum rotational latency.&n; */
@@ -3229,11 +3208,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; * Insert the cmd into the issue queue. Note that REQUEST SENSE &n;&t; * commands are added to the head of the queue since any command will&n;&t; * clear the contingent allegiance condition that exists and the &n;&t; * sense data is only guaranteed to be valid while the condition exists.&n;&t; */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -2378,6 +2378,7 @@ id|hw_config
 )paren
 (brace
 r_static
+r_int
 r_char
 id|interrupt_bits
 (braket
@@ -2418,6 +2419,7 @@ comma
 l_int|0x20
 )brace
 suffix:semicolon
+r_int
 r_char
 id|bits
 suffix:semicolon

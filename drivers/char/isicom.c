@@ -273,6 +273,7 @@ suffix:semicolon
 multiline_comment|/*   baud index mappings from linux defns to isi */
 DECL|variable|linuxb_to_isib
 r_static
+r_int
 r_char
 id|linuxb_to_isib
 (braket

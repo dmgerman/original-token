@@ -12,20 +12,19 @@ id|file
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Check whether the specified task has the fd open. Since the task&n; * may not have a files_struct, we must test for p-&gt;files != NULL.&n; */
-DECL|function|fcheck_task
+DECL|function|fcheck_files
 r_static
 r_inline
 r_struct
 id|file
 op_star
-id|fcheck_task
+id|fcheck_files
 c_func
 (paren
 r_struct
-id|task_struct
+id|files_struct
 op_star
-id|p
+id|files
 comma
 r_int
 r_int
@@ -44,11 +43,11 @@ c_cond
 (paren
 id|fd
 OL
-id|p-&gt;files-&gt;max_fds
+id|files-&gt;max_fds
 )paren
 id|file
 op_assign
-id|p-&gt;files-&gt;fd
+id|files-&gt;fd
 (braket
 id|fd
 )braket
@@ -331,5 +330,15 @@ id|result
 )paren
 suffix:semicolon
 )brace
+r_void
+id|put_files_struct
+c_func
+(paren
+r_struct
+id|files_struct
+op_star
+id|fs
+)paren
+suffix:semicolon
 macro_line|#endif /* __LINUX_FILE_H */
 eof

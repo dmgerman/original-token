@@ -110,9 +110,6 @@ id|page
 r_goto
 id|out_failed
 suffix:semicolon
-id|mm-&gt;swap_cnt
-op_decrement
-suffix:semicolon
 multiline_comment|/* Don&squot;t look at this pte if it&squot;s been accessed recently. */
 r_if
 c_cond
@@ -199,6 +196,9 @@ c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+id|mm-&gt;swap_cnt
+op_decrement
 suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
@@ -324,6 +324,9 @@ c_func
 id|page_table
 )paren
 suffix:semicolon
+id|mm-&gt;swap_cnt
+op_decrement
+suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -439,6 +442,9 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* Put the swap entry into the pte after the page is in swapcache */
+id|mm-&gt;swap_cnt
+op_decrement
+suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -1190,15 +1196,11 @@ suffix:semicolon
 multiline_comment|/* &n;&t; * We make one or two passes through the task list, indexed by &n;&t; * assign = {0, 1}:&n;&t; *   Pass 1: select the swappable task with maximal RSS that has&n;&t; *         not yet been swapped out. &n;&t; *   Pass 2: re-assign rss swap_cnt values, then select as above.&n;&t; *&n;&t; * With this approach, there&squot;s no need to remember the last task&n;&t; * swapped out.  If the swap-out fails, we clear swap_cnt so the &n;&t; * task won&squot;t be selected again until all others have been tried.&n;&t; *&n;&t; * Think of swap_cnt as a &quot;shadow rss&quot; - it tells us which process&n;&t; * we want to page out (always try largest first).&n;&t; */
 id|counter
 op_assign
-(paren
 id|nr_threads
-op_lshift
-l_int|1
-)paren
-op_rshift
+op_div
 (paren
 id|priority
-op_rshift
+op_plus
 l_int|1
 )paren
 suffix:semicolon
@@ -1448,7 +1450,11 @@ r_return
 id|__ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we need to &n; * cluster them so that we get good swap-out behaviour. See&n; * the &quot;free_memory()&quot; macro for details.&n; */
+multiline_comment|/*&n; * We need to make the locks finer granularity, but right&n; * now we need this so that we can do page allocations&n; * without holding the kernel lock etc.&n; *&n; * We want to try to free &quot;count&quot; pages, and we want to &n; * cluster them so that we get good swap-out behaviour.&n; *&n; * Don&squot;t try _too_ hard, though. We don&squot;t want to have bad&n; * latency.&n; */
+DECL|macro|FREE_COUNT
+mdefine_line|#define FREE_COUNT&t;8
+DECL|macro|SWAP_COUNT
+mdefine_line|#define SWAP_COUNT&t;8
 DECL|function|do_try_to_free_pages
 r_static
 r_int
@@ -1466,7 +1472,7 @@ suffix:semicolon
 r_int
 id|count
 op_assign
-id|SWAP_CLUSTER_MAX
+id|FREE_COUNT
 suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 id|kmem_cache_reap
@@ -1568,7 +1574,13 @@ id|done
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Then, try to page stuff out.. */
+multiline_comment|/*&n;&t;&t; * Then, try to page stuff out..&n;&t;&t; *&n;&t;&t; * This will not actually free any pages (they get&n;&t;&t; * put in the swap cache), so we must not count this&n;&t;&t; * as a &quot;count&quot; success.&n;&t;&t; */
+(brace
+r_int
+id|swap_count
+op_assign
+id|SWAP_COUNT
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1576,6 +1588,39 @@ id|swap_out
 c_func
 (paren
 id|priority
+comma
+id|gfp_mask
+)paren
+)paren
+r_if
+c_cond
+(paren
+op_decrement
+id|swap_count
+OL
+l_int|0
+)paren
+r_break
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|priority
+op_ge
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Always end on a shrink_mmap.. */
+r_while
+c_loop
+(paren
+id|shrink_mmap
+c_func
+(paren
+l_int|0
 comma
 id|gfp_mask
 )paren
@@ -1592,16 +1637,6 @@ r_goto
 id|done
 suffix:semicolon
 )brace
-)brace
-r_while
-c_loop
-(paren
-op_decrement
-id|priority
-op_ge
-l_int|0
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

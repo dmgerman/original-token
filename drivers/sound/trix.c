@@ -1119,6 +1119,7 @@ r_char
 id|conf
 suffix:semicolon
 r_static
+r_int
 r_char
 id|irq_translate
 (braket
@@ -1416,7 +1417,7 @@ r_char
 id|conf
 suffix:semicolon
 r_static
-r_char
+r_int
 id|irq_bits
 (braket
 )braket

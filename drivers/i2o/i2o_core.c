@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Core I2O structure managment &n; * &n; * (C) Copyright 1999   Red Hat Software &n; *&n; * Written by Alan Cox, Building Number Three Ltd &n; * &n; * This program is free software; you can redistribute it and/or &n; * modify it under the terms of the GNU General Public License &n; * as published by the Free Software Foundation; either version &n; * 2 of the License, or (at your option) any later version.  &n; * &n; * A lot of the I2O message side code from this is taken from the &n; * Red Creek RCPCI45 adapter driver by Red Creek Communications &n; * &n; * Fixes by: &n; *&t;&t;Philipp Rumpf &n; *&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt; &n; *&t;&t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt; &n; *&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt; &n; * &n; */
+multiline_comment|/* &n; * Core I2O structure managment &n; * &n; * (C) Copyright 1999   Red Hat Software &n; *&n; * Written by Alan Cox, Building Number Three Ltd &n; * &n; * This program is free software; you can redistribute it and/or &n; * modify it under the terms of the GNU General Public License &n; * as published by the Free Software Foundation; either version &n; * 2 of the License, or (at your option) any later version.  &n; * &n; * A lot of the I2O message side code from this is taken from the &n; * Red Creek RCPCI45 adapter driver by Red Creek Communications &n; * &n; * Fixes by: &n; *&t;&t;Philipp Rumpf &n; *&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt; &n; *&t;&t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt; &n; *&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt; &n; *&t;&t;Boji T Kannanthanam &lt;boji.t.kannanthanam@intel.com&gt;&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -99,7 +99,7 @@ r_void
 suffix:semicolon
 r_static
 r_int
-id|i2o_clear_controller
+id|i2o_reset_controller
 c_func
 (paren
 r_struct
@@ -151,24 +151,6 @@ c_func
 r_struct
 id|i2o_controller
 op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|i2o_issue_claim
-c_func
-(paren
-r_struct
-id|i2o_controller
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_int
-comma
-id|u32
 )paren
 suffix:semicolon
 multiline_comment|/* Reply handler */
@@ -306,6 +288,14 @@ r_int
 id|sys_tbl_len
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n; * This spin lock is used to keep a device from being&n; * added and deleted concurrently across CPUs or interrupts.&n; * This can occur when a user creates a device and immediatelly&n; * deletes it before the new_dev_notify() handler is called.&n; */
+DECL|variable|i2o_dev_lock
+r_static
+id|spinlock_t
+id|i2o_dev_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/* &n; * Function table to send to bus specific layers&n; * See &lt;include/linux/i2o.h&gt; for explanation of this&n; */
@@ -583,18 +573,6 @@ id|msg
 l_int|2
 )braket
 suffix:semicolon
-macro_line|#if 0
-id|i2o_report_status
-c_func
-(paren
-id|KERN_INFO
-comma
-l_string|&quot;i2o_core&quot;
-comma
-id|msg
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -603,11 +581,7 @@ id|msg
 l_int|0
 )braket
 op_amp
-(paren
-l_int|1
-op_lshift
-l_int|13
-)paren
+id|MSG_FAIL
 )paren
 singleline_comment|// Fail bit is set
 (brace
@@ -628,115 +602,20 @@ l_int|7
 )braket
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;i2o_report_failure(KERN_INFO, c, &quot;i2o_core&quot;, msg);
-id|printk
+id|i2o_report_status
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;%s: Failed to process the msg:&bslash;n&quot;
+id|KERN_INFO
 comma
-id|c-&gt;name
+l_string|&quot;i2o_core&quot;
+comma
+id|msg
 )paren
 suffix:semicolon
-id|printk
+id|i2o_dump_message
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;  Cmd = 0x%02X, InitiatorTid = %d, TargetTid =% d&bslash;n&quot;
-comma
-(paren
-id|msg
-(braket
-l_int|1
-)braket
-op_rshift
-l_int|24
-)paren
-op_amp
-l_int|0xFF
-comma
-(paren
-id|msg
-(braket
-l_int|1
-)braket
-op_rshift
-l_int|12
-)paren
-op_amp
-l_int|0xFFF
-comma
-id|msg
-(braket
-l_int|1
-)braket
-op_amp
-l_int|0xFFF
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;  FailureCode = 0x%02X&bslash;n  Severity = 0x%02X&bslash;n&quot;
-l_string|&quot;LowestVersion = 0x%02X&bslash;n  HighestVersion = 0x%02X&bslash;n&quot;
-comma
-id|msg
-(braket
-l_int|4
-)braket
-op_rshift
-l_int|24
-comma
-(paren
-id|msg
-(braket
-l_int|4
-)braket
-op_rshift
-l_int|16
-)paren
-op_amp
-l_int|0xFF
-comma
-(paren
-id|msg
-(braket
-l_int|4
-)braket
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xFF
-comma
-id|msg
-(braket
-l_int|4
-)braket
-op_amp
-l_int|0xFF
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;  FailingHostUnit = 0x%04X&bslash;n  FailingIOP = 0x%03X&bslash;n&quot;
-comma
-id|msg
-(braket
-l_int|5
-)braket
-op_rshift
-l_int|16
-comma
-id|msg
-(braket
-l_int|5
-)braket
-op_amp
-l_int|0xFFF
+id|preserved_msg
 )paren
 suffix:semicolon
 multiline_comment|/* If the failed request needs special treatment,&n;&t;&t; * it should be done here. */
@@ -787,6 +666,18 @@ multiline_comment|/* If reply to i2o_post_wait failed, return causes a timeout *
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef DRIVERDEBUG
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+l_string|&quot;i2o_core&quot;
+comma
+id|msg
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -809,17 +700,6 @@ l_int|4
 op_rshift
 l_int|24
 )paren
-(brace
-id|i2o_report_status
-c_func
-(paren
-id|KERN_INFO
-comma
-l_string|&quot;i2o_core: post_wait reply&quot;
-comma
-id|msg
-)paren
-suffix:semicolon
 id|status
 op_assign
 op_minus
@@ -832,7 +712,6 @@ op_amp
 l_int|0xFFFF
 )paren
 suffix:semicolon
-)brace
 r_else
 id|status
 op_assign
@@ -869,7 +748,16 @@ id|msg
 comma
 id|msg
 comma
-id|MSG_FRAME_SIZE
+(paren
+id|msg
+(braket
+l_int|0
+)braket
+op_rshift
+l_int|16
+)paren
+op_lshift
+l_int|2
 )paren
 suffix:semicolon
 id|events
@@ -1583,9 +1471,9 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Deleting controller iop%d&bslash;n&quot;
+l_string|&quot;Deleting controller %s&bslash;n&quot;
 comma
-id|c-&gt;unit
+id|c-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Clear event registration as this can cause weird behavior&n;&t; */
@@ -1638,7 +1526,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O: %d users for controller iop%d&bslash;n&quot;
+l_string|&quot;I2O: %d users for controller %s&bslash;n&quot;
 comma
 id|users
 comma
@@ -1790,25 +1678,11 @@ op_eq
 id|c
 )paren
 (brace
-multiline_comment|/* Ask the IOP to switch to HOLD state */
-r_if
-c_cond
-(paren
-id|i2o_clear_controller
+multiline_comment|/* Ask the IOP to switch to RESET state */
+id|i2o_reset_controller
 c_func
 (paren
 id|c
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Unable to clear iop%d&bslash;n&quot;
-comma
-id|c-&gt;unit
 )paren
 suffix:semicolon
 multiline_comment|/* Release IRQ */
@@ -2066,6 +1940,89 @@ r_return
 id|c
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Issue UTIL_CLAIM or UTIL_RELEASE message&n; */
+DECL|function|i2o_issue_claim
+r_static
+r_int
+id|i2o_issue_claim
+c_func
+(paren
+id|u32
+id|cmd
+comma
+r_struct
+id|i2o_controller
+op_star
+id|c
+comma
+r_int
+id|tid
+comma
+id|u32
+id|type
+)paren
+(brace
+id|u32
+id|msg
+(braket
+l_int|5
+)braket
+suffix:semicolon
+id|msg
+(braket
+l_int|0
+)braket
+op_assign
+id|FIVE_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+suffix:semicolon
+id|msg
+(braket
+l_int|1
+)braket
+op_assign
+id|cmd
+op_lshift
+l_int|24
+op_or
+id|HOST_TID
+op_lshift
+l_int|12
+op_or
+id|tid
+suffix:semicolon
+id|msg
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|msg
+(braket
+l_int|4
+)braket
+op_assign
+id|type
+suffix:semicolon
+r_return
+id|i2o_post_wait
+c_func
+(paren
+id|c
+comma
+id|msg
+comma
+r_sizeof
+(paren
+id|msg
+)paren
+comma
+l_int|60
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Claim a device for use by an OSM&n; */
 DECL|function|i2o_claim_device
 r_int
@@ -2100,7 +2057,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;issue claim called, but dev as owner!&quot;
+l_string|&quot;Device claim called, but dev allready owned by %s!&quot;
+comma
+id|h-&gt;name
 )paren
 suffix:semicolon
 id|spin_unlock
@@ -2121,13 +2080,11 @@ c_cond
 id|i2o_issue_claim
 c_func
 (paren
+id|I2O_CMD_UTIL_CLAIM
+comma
 id|d-&gt;controller
 comma
 id|d-&gt;lct_data.tid
-comma
-id|h-&gt;context
-comma
-l_int|1
 comma
 id|I2O_CLAIM_PRIMARY
 )paren
@@ -2160,7 +2117,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Release a device that the OS is using&n; */
+multiline_comment|/*&n; * Release a device that the OSM is using&n; */
 DECL|function|i2o_release_device
 r_int
 id|i2o_release_device
@@ -2197,6 +2154,15 @@ op_ne
 id|h
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Claim release called, but not owned by %s!&quot;
+comma
+id|h-&gt;name
+)paren
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -2215,13 +2181,11 @@ c_cond
 id|i2o_issue_claim
 c_func
 (paren
+id|I2O_CMD_UTIL_RELEASE
+comma
 id|d-&gt;controller
 comma
 id|d-&gt;lct_data.tid
-comma
-id|h-&gt;context
-comma
-l_int|0
 comma
 id|I2O_CLAIM_PRIMARY
 )paren
@@ -2452,9 +2416,6 @@ id|msg
 l_int|2
 )braket
 op_assign
-(paren
-id|u32
-)paren
 id|init_context
 suffix:semicolon
 id|msg
@@ -2462,9 +2423,6 @@ id|msg
 l_int|3
 )braket
 op_assign
-(paren
-id|u32
-)paren
 id|tr_context
 suffix:semicolon
 id|msg
@@ -2936,6 +2894,13 @@ id|d-&gt;lct_data.class_id
 )paren
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|i2o_dev_lock
+)paren
+suffix:semicolon
 id|i2o_handlers
 (braket
 id|i
@@ -2947,6 +2912,13 @@ c_func
 id|c
 comma
 id|d
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i2o_dev_lock
 )paren
 suffix:semicolon
 )brace
@@ -3056,7 +3028,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: Unknown event (0x%08x)...check config&bslash;n&quot;
+l_string|&quot;%s: No handler for event (0x%08x)&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
@@ -3335,10 +3307,24 @@ id|KERN_INFO
 l_string|&quot;Deleted device!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|i2o_dev_lock
+)paren
+suffix:semicolon
 id|i2o_delete_device
 c_func
 (paren
 id|d
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|i2o_dev_lock
 )paren
 suffix:semicolon
 )brace
@@ -3925,86 +3911,6 @@ c_func
 )paren
 suffix:semicolon
 id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_return
-id|m
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Wait up to timeout seconds for a reply to be available.&n; */
-DECL|function|i2o_wait_reply
-id|u32
-id|i2o_wait_reply
-c_func
-(paren
-r_struct
-id|i2o_controller
-op_star
-id|c
-comma
-r_char
-op_star
-id|why
-comma
-r_int
-id|timeout
-)paren
-(brace
-id|u32
-id|m
-suffix:semicolon
-r_int
-id|time
-op_assign
-id|jiffies
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|m
-op_assign
-id|I2O_REPLY_READ32
-c_func
-(paren
-id|c
-)paren
-)paren
-op_eq
-l_int|0xFFFFFFFF
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|time
-op_ge
-id|timeout
-op_star
-id|HZ
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: timeout waiting for %s reply.&bslash;n&quot;
-comma
-id|c-&gt;name
-comma
-id|why
-)paren
-suffix:semicolon
-r_return
-l_int|0xFFFFFFFF
-suffix:semicolon
-)brace
-id|schedule
 c_func
 (paren
 )paren
@@ -5210,10 +5116,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Unable to quiesce (status=%#10x).&bslash;n&quot;
+l_string|&quot;%s: Unable to quiesce (status=%#x).&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -5233,7 +5140,7 @@ c_func
 id|c
 )paren
 suffix:semicolon
-singleline_comment|// Reread the Status Block
+singleline_comment|// Entered READY state
 r_return
 id|ret
 suffix:semicolon
@@ -5330,10 +5237,11 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Could not enable (status=%#10x).&bslash;n&quot;
+l_string|&quot;%s: Could not enable (status=%#x).&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -5353,6 +5261,7 @@ c_func
 id|c
 )paren
 suffix:semicolon
+singleline_comment|// entered OPERATIONAL state
 r_return
 id|ret
 suffix:semicolon
@@ -5460,10 +5369,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Unable to clear (status=%#10x).&bslash;n&quot;
+l_string|&quot;%s: Unable to clear (status=%#x).&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -5566,7 +5476,6 @@ c_func
 id|iop
 )paren
 suffix:semicolon
-multiline_comment|/* Get a message */
 id|m
 op_assign
 id|i2o_wait_message
@@ -5703,7 +5612,7 @@ id|msg
 l_int|6
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|status
@@ -5792,7 +5701,7 @@ id|status
 l_int|0
 )braket
 op_eq
-l_int|0x01
+id|I2O_CMD_IN_PROGRESS
 )paren
 (brace
 multiline_comment|/* &n;&t;&t; * Once the reset is sent, the IOP goes into the INIT state &n;&t;&t; * which is indeterminate.  We need to wait until the IOP &n;&t;&t; * has rebooted before we can let the system talk to &n;&t;&t; * it. We read the inbound Free_List until a message is &n;&t;&t; * available.  If we can&squot;t read one in the given ammount of &n;&t;&t; * time, we assume the IOP could not reboot properly.  &n;&t;&t; */
@@ -5800,7 +5709,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Reset succeeded...waiting for reboot&bslash;n&quot;
+l_string|&quot;Reset in progress, waiting for reboot&bslash;n&quot;
 )paren
 suffix:semicolon
 id|time
@@ -5878,15 +5787,6 @@ comma
 id|m
 )paren
 suffix:semicolon
-id|dprintk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Reset completed.&bslash;n&quot;
-comma
-id|c-&gt;name
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* If IopReset was rejected or didn&squot;t perform reset, try IopClear */
 id|i2o_status_get
@@ -5903,7 +5803,7 @@ id|status
 l_int|0
 )braket
 op_eq
-l_int|0x02
+id|I2O_CMD_REJECTED
 op_logical_or
 id|c-&gt;status_block-&gt;iop_state
 op_ne
@@ -5926,6 +5826,16 @@ id|c
 )paren
 suffix:semicolon
 )brace
+r_else
+id|dprintk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Reset completed.&bslash;n&quot;
+comma
+id|c-&gt;name
+)paren
+suffix:semicolon
 multiline_comment|/* Enable other IOPs */
 r_for
 c_loop
@@ -6150,7 +6060,7 @@ id|msg
 l_int|6
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|c-&gt;status_block
@@ -6238,27 +6148,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Ok the reply has arrived. Fill in the important stuff */
-id|c-&gt;inbound_size
-op_assign
-(paren
-id|status_block
-(braket
-l_int|12
-)braket
-op_or
-(paren
-id|status_block
-(braket
-l_int|13
-)braket
-op_lshift
-l_int|8
-)paren
-)paren
-op_star
-l_int|4
-suffix:semicolon
 macro_line|#ifdef DRIVERDEBUG
 id|printk
 c_func
@@ -6488,7 +6377,7 @@ id|msg
 l_int|5
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|c-&gt;hrt
@@ -6522,10 +6411,11 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Unable to get HRT (status=%#10x)&bslash;n&quot;
+l_string|&quot;%s: Unable to get HRT (status=%#x)&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -6726,7 +6616,7 @@ id|msg
 l_int|7
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|sys_tbl
@@ -6746,7 +6636,7 @@ id|msg
 l_int|9
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|privmem
@@ -6766,7 +6656,7 @@ id|msg
 l_int|11
 )braket
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|privio
@@ -6798,10 +6688,11 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: Unable to set SysTab (status=%#10x).&bslash;n&quot;
+l_string|&quot;%s: Unable to set SysTab (status=%#x).&bslash;n&quot;
 comma
 id|iop-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -6815,6 +6706,13 @@ comma
 id|iop-&gt;name
 )paren
 suffix:semicolon
+id|i2o_status_get
+c_func
+(paren
+id|iop
+)paren
+suffix:semicolon
+singleline_comment|// Entered READY state
 r_return
 id|ret
 suffix:semicolon
@@ -6881,7 +6779,18 @@ id|niop
 op_assign
 id|iop-&gt;next
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|i2o_activate_controller
+c_func
+(paren
+id|iop
+)paren
+OL
+l_int|0
+)paren
+id|i2o_delete_controller
 c_func
 (paren
 id|iop
@@ -6966,9 +6875,17 @@ id|iop
 OL
 l_int|0
 )paren
+(brace
+id|i2o_delete_controller
+c_func
+(paren
+id|iop
+)paren
+suffix:semicolon
 r_goto
 id|rebuild_sys_tab
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Active IOPs now in OPERATIONAL state */
 multiline_comment|/*&n;&t; * Register for status updates from all IOPs&n;&t; */
@@ -7107,16 +7024,10 @@ id|KERN_INFO
 l_string|&quot;Unable to obtain status of IOP, attempting a reset.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|i2o_reset_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|i2o_status_get
+id|i2o_reset_controller
 c_func
 (paren
 id|iop
@@ -7124,27 +7035,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: IOP not responding.&bslash;n&quot;
-comma
-id|iop-&gt;name
-)paren
-suffix:semicolon
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -7161,12 +7055,6 @@ id|KERN_CRIT
 l_string|&quot;%s: hardware fault&bslash;n&quot;
 comma
 id|iop-&gt;name
-)paren
-suffix:semicolon
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
 )paren
 suffix:semicolon
 r_return
@@ -7204,7 +7092,7 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: already running...trying to reset&bslash;n&quot;
+l_string|&quot;%s: Already running, trying to reset&bslash;n&quot;
 comma
 id|iop-&gt;name
 )paren
@@ -7220,55 +7108,28 @@ c_func
 (paren
 id|iop
 comma
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|m
 )paren
 )paren
 suffix:semicolon
-id|i2o_reset_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|i2o_status_get
+id|i2o_reset_controller
 c_func
 (paren
 id|iop
 )paren
 OL
 l_int|0
-op_logical_or
-id|iop-&gt;status_block-&gt;iop_state
-op_ne
-id|ADAPTER_STATE_RESET
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;%s: Failed to initialize.&bslash;n&quot;
-comma
-id|iop-&gt;name
-)paren
-suffix:semicolon
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -7281,18 +7142,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7318,18 +7171,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -7426,7 +7271,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: IOP reset failed - no free memory.&bslash;n&quot;
+l_string|&quot;%s: Outbound Queue initialization failed - no free memory.&bslash;n&quot;
 comma
 id|c-&gt;name
 )paren
@@ -7550,7 +7395,7 @@ id|status
 l_int|0
 )braket
 OL
-l_int|0x02
+id|I2O_CMD_REJECTED
 )paren
 (brace
 r_if
@@ -7628,7 +7473,7 @@ id|status
 l_int|0
 )braket
 op_ne
-id|I2O_CMD_OUTBOUND_INIT_COMPLETE
+id|I2O_CMD_COMPLETED
 )paren
 (brace
 id|printk
@@ -7707,7 +7552,7 @@ suffix:semicolon
 )brace
 id|m
 op_assign
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|c-&gt;page_frame
@@ -7924,10 +7769,11 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: LCT Get failed (status=%#10x.&bslash;n&quot;
+l_string|&quot;%s: LCT Get failed (status=%#x.&bslash;n&quot;
 comma
 id|c-&gt;name
 comma
+op_minus
 id|ret
 )paren
 suffix:semicolon
@@ -8125,18 +7971,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* In READY state */
 id|dprintk
 c_func
@@ -8158,18 +7996,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 multiline_comment|/* In OPERATIONAL state  */
 id|dprintk
 c_func
@@ -8191,18 +8021,10 @@ id|iop
 OL
 l_int|0
 )paren
-(brace
-id|i2o_delete_controller
-c_func
-(paren
-id|iop
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -8473,7 +8295,7 @@ op_assign
 (paren
 id|u32
 )paren
-id|virt_to_phys
+id|virt_to_bus
 c_func
 (paren
 id|iop-&gt;post_port
@@ -8862,7 +8684,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;POST WAIT TIMEOUT&bslash;n&quot;
+l_string|&quot;%s: POST WAIT TIMEOUT&bslash;n&quot;
+comma
+id|c-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -9038,115 +8862,6 @@ c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;i2o_post_wait reply after timeout!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Issue UTIL_CLAIM or UTIL_RELEASE messages&n; */
-DECL|function|i2o_issue_claim
-r_static
-r_int
-id|i2o_issue_claim
-c_func
-(paren
-r_struct
-id|i2o_controller
-op_star
-id|c
-comma
-r_int
-id|tid
-comma
-r_int
-id|context
-comma
-r_int
-id|onoff
-comma
-id|u32
-id|type
-)paren
-(brace
-id|u32
-id|msg
-(braket
-l_int|5
-)braket
-suffix:semicolon
-id|msg
-(braket
-l_int|0
-)braket
-op_assign
-id|FIVE_WORD_MSG_SIZE
-op_or
-id|SGL_OFFSET_0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|onoff
-)paren
-(brace
-id|msg
-(braket
-l_int|1
-)braket
-op_assign
-id|I2O_CMD_UTIL_CLAIM
-op_lshift
-l_int|24
-op_or
-id|HOST_TID
-op_lshift
-l_int|12
-op_or
-id|tid
-suffix:semicolon
-)brace
-r_else
-id|msg
-(braket
-l_int|1
-)braket
-op_assign
-id|I2O_CMD_UTIL_RELEASE
-op_lshift
-l_int|24
-op_or
-id|HOST_TID
-op_lshift
-l_int|12
-op_or
-id|tid
-suffix:semicolon
-id|msg
-(braket
-l_int|3
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-id|msg
-(braket
-l_int|4
-)braket
-op_assign
-id|type
-suffix:semicolon
-r_return
-id|i2o_post_wait
-c_func
-(paren
-id|c
-comma
-id|msg
-comma
-r_sizeof
-(paren
-id|msg
-)paren
-comma
-l_int|30
 )paren
 suffix:semicolon
 )brace
@@ -10213,165 +9928,273 @@ r_return
 id|size
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Delete rows from a table group.&n; */
-DECL|function|i2o_row_delete_table
-r_int
-id|i2o_row_delete_table
+multiline_comment|/*&n; * Used for error reporting/debugging purposes.&n; * Following fail status are common to all classes.&n; * The preserved message must be handled in the reply handler. &n; */
+DECL|function|i2o_report_fail_status
+r_void
+id|i2o_report_fail_status
 c_func
 (paren
-r_struct
-id|i2o_controller
+id|u8
+id|req_status
+comma
+id|u32
 op_star
-id|iop
-comma
-r_int
-id|tid
-comma
-r_int
-id|group
-comma
-r_int
-id|keycount
-comma
-r_void
-op_star
-id|keys
-comma
-r_int
-id|keyslen
+id|msg
 )paren
 (brace
-id|u16
+r_static
+r_char
 op_star
-id|opblk
-suffix:semicolon
-id|u8
-id|resblk
+id|FAIL_STATUS
 (braket
-l_int|32
 )braket
-suffix:semicolon
-multiline_comment|/* min 8 bytes for header */
-r_int
-id|size
-suffix:semicolon
-id|opblk
 op_assign
-id|kmalloc
+(brace
+l_string|&quot;0x80&quot;
+comma
+multiline_comment|/* not used */
+l_string|&quot;SERVICE_SUSPENDED&quot;
+comma
+multiline_comment|/* 0x81 */
+l_string|&quot;SERVICE_TERMINATED&quot;
+comma
+multiline_comment|/* 0x82 */
+l_string|&quot;CONGESTION&quot;
+comma
+l_string|&quot;FAILURE&quot;
+comma
+l_string|&quot;STATE_ERROR&quot;
+comma
+l_string|&quot;TIME_OUT&quot;
+comma
+l_string|&quot;ROUTING_FAILURE&quot;
+comma
+l_string|&quot;INVALID_VERSION&quot;
+comma
+l_string|&quot;INVALID_OFFSET&quot;
+comma
+l_string|&quot;INVALID_MSG_FLAGS&quot;
+comma
+l_string|&quot;FRAME_TOO_SMALL&quot;
+comma
+l_string|&quot;FRAME_TOO_LARGE&quot;
+comma
+l_string|&quot;INVALID_TARGET_ID&quot;
+comma
+l_string|&quot;INVALID_INITIATOR_ID&quot;
+comma
+l_string|&quot;INVALID_INITIATOR_CONTEX&quot;
+comma
+multiline_comment|/* 0x8F */
+l_string|&quot;UNKNOWN_FAILURE&quot;
+multiline_comment|/* 0xFF */
+)brace
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req_status
+op_eq
+id|I2O_FSC_TRANSPORT_UNKNOWN_FAILURE
+)paren
+id|printk
 c_func
 (paren
-id|keyslen
-op_plus
-l_int|64
+l_string|&quot;TRANSPORT_UNKNOWN_FAILURE (%0#2x)&bslash;n.&quot;
 comma
-id|GFP_KERNEL
+id|req_status
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;TRANSPORT_%s.&bslash;n&quot;
+comma
+id|FAIL_STATUS
+(braket
+id|req_status
+op_amp
+l_int|0x0F
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* Dump some details */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  InitiatorId = %d, TargetId = %d&bslash;n&quot;
+comma
+(paren
+id|msg
+(braket
+l_int|1
+)braket
+op_rshift
+l_int|12
+)paren
+op_amp
+l_int|0xFFF
+comma
+id|msg
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0xFFF
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  LowestVersion = 0x%02X, HighestVersion = 0x%02X&bslash;n&quot;
+comma
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xFF
+comma
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+l_int|0xFF
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  FailingHostUnit = 0x%04X,  FailingIOP = 0x%03X&bslash;n&quot;
+comma
+id|msg
+(braket
+l_int|5
+)braket
+op_rshift
+l_int|16
+comma
+id|msg
+(braket
+l_int|5
+)braket
+op_amp
+l_int|0xFFF
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  Severity:  0x%02X &quot;
+comma
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xFF
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|opblk
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;i2o: no memory for operation buffer.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|opblk
-(braket
-l_int|0
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* operation count */
-id|opblk
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* pad */
-id|opblk
-(braket
-l_int|2
-)braket
-op_assign
-id|I2O_PARAMS_ROW_DELETE
-suffix:semicolon
-id|opblk
-(braket
-l_int|3
-)braket
-op_assign
-id|group
-suffix:semicolon
-id|opblk
+id|msg
 (braket
 l_int|4
 )braket
-op_assign
-id|keycount
-suffix:semicolon
-id|memcpy
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|16
+)paren
+)paren
+id|printk
 c_func
 (paren
-id|opblk
-op_plus
-l_int|5
-comma
-id|keys
-comma
-id|keyslen
+l_string|&quot;(FormatError), &quot;
+l_string|&quot;this msg can never be delivered/processed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|size
-op_assign
-id|i2o_issue_params
+r_if
+c_cond
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|17
+)paren
+)paren
+id|printk
 c_func
 (paren
-id|I2O_CMD_UTIL_PARAMS_SET
-comma
-id|iop
-comma
-id|tid
-comma
-id|opblk
-comma
-l_int|10
-op_plus
-id|keyslen
-comma
-id|resblk
-comma
-r_sizeof
-(paren
-id|resblk
-)paren
+l_string|&quot;(PathError), &quot;
+l_string|&quot;this msg can no longer be delivered/processed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree
+r_if
+c_cond
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|18
+)paren
+)paren
+id|printk
 c_func
 (paren
-id|opblk
+l_string|&quot;(PathState), &quot;
+l_string|&quot;the system state does not allow delivery.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-id|size
+r_if
+c_cond
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|19
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;(Congestion), resources temporarily not available;&quot;
+l_string|&quot;do not retry immediately.&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
+multiline_comment|/*&n; * Used for error reporting/debugging purposes.&n; * Following reply status are common to all classes.&n; */
 DECL|function|i2o_report_common_status
 r_void
 id|i2o_report_common_status
@@ -10381,7 +10204,6 @@ id|u8
 id|req_status
 )paren
 (brace
-multiline_comment|/* the following reply status strings are common to all classes */
 r_static
 r_char
 op_star
@@ -10425,7 +10247,7 @@ id|I2O_REPLY_STATUS_PROGRESS_REPORT
 id|printk
 c_func
 (paren
-l_string|&quot;%0#4x / &quot;
+l_string|&quot;RequestStatus = %0#2x&quot;
 comma
 id|req_status
 )paren
@@ -10434,7 +10256,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s / &quot;
+l_string|&quot;%s&quot;
 comma
 id|REPLY_STATUS
 (braket
@@ -10442,10 +10264,8 @@ id|req_status
 )braket
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
+multiline_comment|/*&n; * Used for error reporting/debugging purposes.&n; * Following detailed status are valid  for executive class, &n; * utility class, DDM class and for transaction error replies.&n; */
 DECL|function|i2o_report_common_dsc
 r_static
 r_void
@@ -10456,7 +10276,6 @@ id|u16
 id|detailed_status
 )paren
 (brace
-multiline_comment|/* The following detailed statuscodes are valid &n;&t;   - for executive class, utility class, DDM class and&n;&t;   - for transaction error replies&n;&t;*/
 r_static
 r_char
 op_star
@@ -10536,7 +10355,7 @@ id|I2O_DSC_DEVICE_NOT_AVAILABLE
 id|printk
 c_func
 (paren
-l_string|&quot;%0#4x.&bslash;n&quot;
+l_string|&quot; / DetailedStatus = %0#4x.&bslash;n&quot;
 comma
 id|detailed_status
 )paren
@@ -10545,15 +10364,13 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s.&bslash;n&quot;
+l_string|&quot; / %s.&bslash;n&quot;
 comma
 id|COMMON_DSC
 (braket
 id|detailed_status
 )braket
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
@@ -10627,7 +10444,7 @@ id|I2O_DSC_INVALID_REQUEST
 id|printk
 c_func
 (paren
-l_string|&quot;%0#4x.&bslash;n&quot;
+l_string|&quot; / %0#4x.&bslash;n&quot;
 comma
 id|detailed_status
 )paren
@@ -10636,15 +10453,13 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s.&bslash;n&quot;
+l_string|&quot; / %s.&bslash;n&quot;
 comma
 id|LAN_DSC
 (braket
 id|detailed_status
 )braket
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
@@ -10823,14 +10638,12 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;%0#2x, &quot;
+l_string|&quot;Cmd = %0#2x, &quot;
 comma
 id|cmd
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
 DECL|function|i2o_report_exec_cmd
@@ -11217,14 +11030,12 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;%02x, &quot;
+l_string|&quot;Cmd = %#02x, &quot;
 comma
 id|cmd
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
 DECL|function|i2o_report_lan_cmd
@@ -11303,16 +11114,14 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;%02x, &quot;
+l_string|&quot;Cmd = %0#2x, &quot;
 comma
 id|cmd
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used for error reporting/debugging purposes&n; */
+multiline_comment|/*&n; * Used for error reporting/debugging purposes.&n; * Report Cmd name, Request status, Detailed Status.&n; */
 DECL|function|i2o_report_status
 r_void
 id|i2o_report_status
@@ -11326,7 +11135,7 @@ comma
 r_const
 r_char
 op_star
-id|module
+id|str
 comma
 id|u32
 op_star
@@ -11397,20 +11206,9 @@ l_string|&quot;%s%s: &quot;
 comma
 id|severity
 comma
-id|module
+id|str
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|h
-op_member_access_from_pointer
-r_class
-)paren
-(brace
-r_case
-id|I2O_CLASS_EXECUTIVE
-suffix:colon
 r_if
 c_cond
 (paren
@@ -11418,7 +11216,6 @@ id|cmd
 OL
 l_int|0x1F
 )paren
-(brace
 singleline_comment|// Utility cmd
 id|i2o_report_util_cmd
 c_func
@@ -11426,19 +11223,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-id|i2o_report_common_status
-c_func
-(paren
-id|req_status
-)paren
-suffix:semicolon
-id|i2o_report_common_dsc
-c_func
-(paren
-id|detailed_status
-)paren
-suffix:semicolon
-)brace
+r_else
 r_if
 c_cond
 (paren
@@ -11450,7 +11235,6 @@ id|cmd
 op_le
 l_int|0xEF
 )paren
-(brace
 singleline_comment|// Executive cmd
 id|i2o_report_exec_cmd
 c_func
@@ -11458,61 +11242,124 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-id|i2o_report_common_status
-c_func
+r_else
+r_if
+c_cond
 (paren
-id|req_status
-)paren
-suffix:semicolon
-id|i2o_report_common_dsc
-c_func
-(paren
-id|detailed_status
-)paren
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-r_case
+id|h
+op_member_access_from_pointer
+r_class
+op_eq
 id|I2O_CLASS_LAN
-suffix:colon
+op_logical_and
+id|cmd
+op_ge
+l_int|0x30
+op_logical_and
+id|cmd
+op_le
+l_int|0x3F
+)paren
 id|i2o_report_lan_cmd
 c_func
 (paren
 id|cmd
 )paren
 suffix:semicolon
+singleline_comment|// LAN cmd
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Cmd = %0#2x, &quot;
+comma
+id|cmd
+)paren
+suffix:semicolon
+singleline_comment|// Other cmds
+r_if
+c_cond
+(paren
+id|msg
+(braket
+l_int|0
+)braket
+op_amp
+id|MSG_FAIL
+)paren
+(brace
+id|i2o_report_fail_status
+c_func
+(paren
+id|req_status
+comma
+id|msg
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|i2o_report_common_status
 c_func
 (paren
 id|req_status
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd
+OL
+l_int|0x1F
+op_logical_or
+(paren
+id|cmd
+op_ge
+l_int|0xA0
+op_logical_and
+id|cmd
+op_le
+l_int|0xEF
+)paren
+)paren
+id|i2o_report_common_dsc
+c_func
+(paren
+id|detailed_status
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|h
+op_member_access_from_pointer
+r_class
+op_eq
+id|I2O_CLASS_LAN
+op_logical_and
+id|cmd
+op_ge
+l_int|0x30
+op_logical_and
+id|cmd
+op_le
+l_int|0x3F
+)paren
 id|i2o_report_lan_dsc
 c_func
 (paren
 id|detailed_status
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/*&n;    &t;&t;case I2O_CLASS_RANDOM_BLOCK_STORAGE:&n;    &t;&t;break;&n;*/
-r_default
-suffix:colon
+r_else
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%02x, %02x / %04x.&bslash;n&quot;
-comma
-id|cmd
-comma
-id|req_status
+l_string|&quot; / DetailedStatus = %0#4x.&bslash;n&quot;
 comma
 id|detailed_status
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Used to dump a message to syslog during debugging */
 DECL|function|i2o_dump_message
@@ -11883,13 +11730,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|i2o_row_add_table
-)paren
-suffix:semicolon
-DECL|variable|i2o_row_delete_table
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|i2o_row_delete_table
 )paren
 suffix:semicolon
 DECL|variable|i2o_issue_params

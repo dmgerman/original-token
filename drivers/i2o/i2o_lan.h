@@ -4,7 +4,7 @@ DECL|macro|_I2O_LAN_H
 mdefine_line|#define _I2O_LAN_H
 multiline_comment|/* Default values for tunable parameters first */
 DECL|macro|I2O_LAN_MAX_BUCKETS_OUT
-mdefine_line|#define I2O_LAN_MAX_BUCKETS_OUT 256
+mdefine_line|#define I2O_LAN_MAX_BUCKETS_OUT 96
 DECL|macro|I2O_LAN_BUCKET_THRESH
 mdefine_line|#define I2O_LAN_BUCKET_THRESH&t;18&t;/* 9 buckets in one message */
 DECL|macro|I2O_LAN_RX_COPYBREAK
@@ -12,9 +12,9 @@ mdefine_line|#define I2O_LAN_RX_COPYBREAK&t;200
 DECL|macro|I2O_LAN_TX_TIMEOUT
 mdefine_line|#define I2O_LAN_TX_TIMEOUT &t;(1*HZ)
 DECL|macro|I2O_LAN_TX_BATCH_MODE
-mdefine_line|#define I2O_LAN_TX_BATCH_MODE&t;1&t;/* 1=on, 0=off */
+mdefine_line|#define I2O_LAN_TX_BATCH_MODE&t;2&t;/* 2=automatic, 1=on, 0=off */
 DECL|macro|I2O_LAN_EVENT_MASK
-mdefine_line|#define I2O_LAN_EVENT_MASK&t;0&t;/* 0=None, 0xFFC00002=All */
+mdefine_line|#define I2O_LAN_EVENT_MASK&t;0;&t;/* 0=None, 0xFFC00002=All */
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030
@@ -262,7 +262,7 @@ DECL|member|m
 id|u32
 id|m
 suffix:semicolon
-multiline_comment|/* IOP address of msg frame */
+multiline_comment|/* IOP address of the batch msg frame */
 DECL|member|i2o_batch_send_task
 r_struct
 id|tq_struct

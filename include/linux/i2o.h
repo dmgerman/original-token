@@ -368,11 +368,6 @@ op_star
 id|page_frame
 suffix:semicolon
 multiline_comment|/* Message buffers */
-DECL|member|inbound_size
-r_int
-id|inbound_size
-suffix:semicolon
-multiline_comment|/* Inbound queue size */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * OSM resgistration block&n; *&n; * Each OSM creates at least one of these and registers it with the&n; * I2O core through i2o_register_handler.  An OSM may want to&n; * register more than one if it wants a fast path to a reply&n; * handler by having a separate initiator context for each &n; * class function.&n; */
@@ -1093,27 +1088,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|i2o_row_delete_table
-c_func
-(paren
-r_struct
-id|i2o_controller
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_int
-comma
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|i2o_issue_params
 c_func
 (paren
@@ -1364,15 +1338,15 @@ DECL|macro|I2O_CMD_BLOCK_MEJECT
 mdefine_line|#define I2O_CMD_BLOCK_MEJECT&t;&t;0x43
 DECL|macro|I2O_PRIVATE_MSG
 mdefine_line|#define I2O_PRIVATE_MSG&t;&t;&t;0xFF
-multiline_comment|/*&n; *&t;Init Outbound Q status &n; */
-DECL|macro|I2O_CMD_OUTBOUND_INIT_IN_PROGRESS
-mdefine_line|#define I2O_CMD_OUTBOUND_INIT_IN_PROGRESS&t;0x01
-DECL|macro|I2O_CMD_OUTBOUND_INIT_REJECTED
-mdefine_line|#define I2O_CMD_OUTBOUND_INIT_REJECTED&t;&t;0x02
-DECL|macro|I2O_CMD_OUTBOUND_INIT_FAILED
-mdefine_line|#define I2O_CMD_OUTBOUND_INIT_FAILED&t;&t;0x03
-DECL|macro|I2O_CMD_OUTBOUND_INIT_COMPLETE
-mdefine_line|#define I2O_CMD_OUTBOUND_INIT_COMPLETE&t;&t;0x04
+multiline_comment|/* Command status values  */
+DECL|macro|I2O_CMD_IN_PROGRESS
+mdefine_line|#define I2O_CMD_IN_PROGRESS&t;0x01
+DECL|macro|I2O_CMD_REJECTED
+mdefine_line|#define I2O_CMD_REJECTED&t;0x02
+DECL|macro|I2O_CMD_FAILED
+mdefine_line|#define I2O_CMD_FAILED&t;&t;0x03
+DECL|macro|I2O_CMD_COMPLETED
+mdefine_line|#define I2O_CMD_COMPLETED&t;0x04
 multiline_comment|/* I2O API function return values */
 DECL|macro|I2O_RTN_NO_ERROR
 mdefine_line|#define I2O_RTN_NO_ERROR&t;&t;&t;0
@@ -1513,6 +1487,39 @@ DECL|macro|I2O_DSC_DEVICE_BUSY
 mdefine_line|#define I2O_DSC_DEVICE_BUSY                    0x001B
 DECL|macro|I2O_DSC_DEVICE_NOT_AVAILABLE
 mdefine_line|#define I2O_DSC_DEVICE_NOT_AVAILABLE           0x001C
+multiline_comment|/* FailureStatusCodes, Table 3-3 Message Failure Codes */
+DECL|macro|I2O_FSC_TRANSPORT_SERVICE_SUSPENDED
+mdefine_line|#define I2O_FSC_TRANSPORT_SERVICE_SUSPENDED             0x81
+DECL|macro|I2O_FSC_TRANSPORT_SERVICE_TERMINATED
+mdefine_line|#define I2O_FSC_TRANSPORT_SERVICE_TERMINATED            0x82
+DECL|macro|I2O_FSC_TRANSPORT_CONGESTION
+mdefine_line|#define I2O_FSC_TRANSPORT_CONGESTION                    0x83
+DECL|macro|I2O_FSC_TRANSPORT_FAILURE
+mdefine_line|#define I2O_FSC_TRANSPORT_FAILURE                       0x84
+DECL|macro|I2O_FSC_TRANSPORT_STATE_ERROR
+mdefine_line|#define I2O_FSC_TRANSPORT_STATE_ERROR                   0x85
+DECL|macro|I2O_FSC_TRANSPORT_TIME_OUT
+mdefine_line|#define I2O_FSC_TRANSPORT_TIME_OUT                      0x86
+DECL|macro|I2O_FSC_TRANSPORT_ROUTING_FAILURE
+mdefine_line|#define I2O_FSC_TRANSPORT_ROUTING_FAILURE               0x87
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_VERSION
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_VERSION               0x88
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_OFFSET
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_OFFSET                0x89
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_MSG_FLAGS
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_MSG_FLAGS             0x8A
+DECL|macro|I2O_FSC_TRANSPORT_FRAME_TOO_SMALL
+mdefine_line|#define I2O_FSC_TRANSPORT_FRAME_TOO_SMALL               0x8B
+DECL|macro|I2O_FSC_TRANSPORT_FRAME_TOO_LARGE
+mdefine_line|#define I2O_FSC_TRANSPORT_FRAME_TOO_LARGE               0x8C
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_TARGET_ID
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_TARGET_ID             0x8D
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_INITIATOR_ID
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_INITIATOR_ID          0x8E
+DECL|macro|I2O_FSC_TRANSPORT_INVALID_INITIATOR_CONTEXT
+mdefine_line|#define I2O_FSC_TRANSPORT_INVALID_INITIATOR_CONTEXT     0x8F
+DECL|macro|I2O_FSC_TRANSPORT_UNKNOWN_FAILURE
+mdefine_line|#define I2O_FSC_TRANSPORT_UNKNOWN_FAILURE               0xFF
 multiline_comment|/* Device Claim Types */
 DECL|macro|I2O_CLAIM_PRIMARY
 mdefine_line|#define&t;I2O_CLAIM_PRIMARY&t;&t;&t;&t;&t;0x01000000
@@ -1566,8 +1573,8 @@ DECL|macro|MSG_MULTI_TRANS
 mdefine_line|#define MSG_MULTI_TRANS&t;0x1000
 DECL|macro|MSG_FAIL
 mdefine_line|#define MSG_FAIL&t;0x2000
-DECL|macro|MSG_LAST
-mdefine_line|#define MSG_LAST&t;0x4000
+DECL|macro|MSG_FINAL
+mdefine_line|#define MSG_FINAL&t;0x4000
 DECL|macro|MSG_REPLY
 mdefine_line|#define MSG_REPLY&t;0x8000
 multiline_comment|/* minimum size msg */

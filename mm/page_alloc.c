@@ -1101,8 +1101,8 @@ op_amp
 id|__GFP_HIGH
 )paren
 )paren
-r_return
-l_int|NULL
+r_goto
+id|fail
 suffix:semicolon
 )brace
 )brace
@@ -1160,6 +1160,8 @@ r_return
 id|page
 suffix:semicolon
 )brace
+id|fail
+suffix:colon
 multiline_comment|/* No luck.. */
 r_return
 l_int|NULL

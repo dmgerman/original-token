@@ -1156,6 +1156,13 @@ id|elf_type
 op_or_assign
 id|MAP_FIXED
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|map_addr
 op_assign
 id|do_mmap
@@ -1190,6 +1197,13 @@ c_func
 (paren
 id|eppnt-&gt;p_vaddr
 )paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -2615,6 +2629,13 @@ op_or_assign
 id|MAP_FIXED
 suffix:semicolon
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|do_mmap
@@ -2653,6 +2674,13 @@ c_func
 id|elf_ppnt-&gt;p_vaddr
 )paren
 )paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -3155,6 +3183,13 @@ id|PER_SVR4
 (brace
 multiline_comment|/* Why this, you ask???  Well SVr4 maps page 0 as read-only,&n;&t;&t;   and some applications &quot;depend&quot; upon this behavior.&n;&t;&t;   Since we do not have the power to recompile these, we&n;&t;&t;   emulate the SVr4 behavior.  Sigh.  */
 multiline_comment|/* N.B. Shouldn&squot;t the size here be PAGE_SIZE?? */
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|do_mmap
@@ -3175,6 +3210,13 @@ op_or
 id|MAP_PRIVATE
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 )brace

@@ -4367,7 +4367,7 @@ r_if
 c_cond
 (paren
 id|sb-&gt;s_type-&gt;fs_flags
-op_logical_and
+op_amp
 id|FS_SINGLE
 )paren
 id|put_filesystem

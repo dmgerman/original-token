@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;&t;April 3rd 2000&n; *&n; *&t;(C) Copyright 1999, 2000 &t;University of Helsinki,&n; *&t;&t;      &t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;Fixes:&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t; &t;&t;Taneli V&#xfffd;h&#xfffd;kangas &lt;Taneli.Vahakangas@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Gigabit Eth environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Fast Ethernet environment (using Intel 82558 DDM)&n; *&n; *&t;TODO:&t;&t;check error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
+multiline_comment|/*&n; *&t;drivers/i2o/i2o_lan.c&n; *&n; * &t;I2O LAN CLASS OSM &t;&t;May  4th 2000&n; *&n; *&t;(C) Copyright 1999, 2000 &t;University of Helsinki,&n; *&t;&t;      &t;&t;&t;Department of Computer Science&n; *&n; * &t;This code is still under development / test.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;Fixes:&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t; &t;&t;Taneli V&#xfffd;h&#xfffd;kangas &lt;Taneli.Vahakangas@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Gigabit Eth environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Fast Ethernet environment (using Intel 82558 DDM)&n; *&n; *&t;TODO:&t;&t;tests for other LAN classes (Token Ring, Fibre Channel)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -48,12 +48,14 @@ id|I2O_LAN_RX_COPYBREAK
 suffix:semicolon
 DECL|variable|tx_batch_mode
 r_static
+id|u8
 id|tx_batch_mode
 op_assign
 id|I2O_LAN_TX_BATCH_MODE
 suffix:semicolon
 DECL|variable|i2o_event_mask
 r_static
+id|u32
 id|i2o_event_mask
 op_assign
 id|I2O_LAN_EVENT_MASK
@@ -400,8 +402,16 @@ suffix:semicolon
 id|u8
 id|le_flag
 suffix:semicolon
-singleline_comment|// To be added to i2o_core.c
-singleline_comment|//&t;i2o_report_failure(KERN_INFO, iop, dev-&gt;name, msg);
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
+id|msg
+)paren
+suffix:semicolon
 multiline_comment|/* If PacketSend failed, free sk_buffs reserved by upper layers */
 r_if
 c_cond
@@ -625,8 +635,16 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-singleline_comment|// To be added to i2o_core.c
-singleline_comment|//&t;i2o_report_transaction_error(KERN_INFO, dev-&gt;name, msg);
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
+id|msg
+)paren
+suffix:semicolon
 multiline_comment|/* If PacketSend was rejected, free sk_buff reserved by upper layers */
 r_if
 c_cond
@@ -886,18 +904,6 @@ l_int|3
 op_amp
 l_int|0x000000FF
 suffix:semicolon
-macro_line|#ifdef DRIVERDEBUG
-id|i2o_report_status
-c_func
-(paren
-id|KERN_INFO
-comma
-id|dev-&gt;name
-comma
-id|msg
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -926,8 +932,19 @@ id|msg
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* Else we get pending transmit request(s) back */
 )brace
+macro_line|#ifdef DRIVERDEBUG
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
+id|msg
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* DDM has handled transmit request(s), free sk_buffs */
 r_while
 c_loop
@@ -1106,18 +1123,6 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DRIVERDEBUG
-id|i2o_report_status
-c_func
-(paren
-id|KERN_INFO
-comma
-id|dev-&gt;name
-comma
-id|msg
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1176,8 +1181,20 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Which DetailedStatusCodes need special treatment? */
+multiline_comment|/* If other DetailedStatusCodes need special code, add it here */
 )brace
+macro_line|#ifdef DRIVERDEBUG
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
+id|msg
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Else we are receiving incoming post. */
 r_while
 c_loop
@@ -1211,15 +1228,18 @@ op_amp
 id|priv-&gt;buckets_out
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Is this enough? If we get erroneous bucket, we can&squot;t assume that skb could&n; * be reused, can we?&n; */
-multiline_comment|/* Should we optimise these ifs away from the fast path? -taneli */
+multiline_comment|/* Sanity checks: Any weird characteristics in bucket? */
 r_if
 c_cond
 (paren
 id|packet-&gt;flags
 op_amp
 l_int|0x0f
+op_logical_or
+op_logical_neg
+id|packet-&gt;flags
+op_amp
+l_int|0x40
 )paren
 (brace
 r_if
@@ -1233,11 +1253,16 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: packet with errors.&bslash;n&quot;
+l_string|&quot;%s: packet with errors, error code=0x%02x.&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|packet-&gt;status
+op_amp
+l_int|0xff
 )paren
 suffix:semicolon
+multiline_comment|/* The following shouldn&squot;t happen, unless parameters in&n;&t;&t;&t; * LAN_OPERATION group are changed during the run time.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1245,7 +1270,6 @@ id|packet-&gt;flags
 op_amp
 l_int|0x0c
 )paren
-multiline_comment|/* This actually means that the hw is b0rken, since we&n;&t;&t;&t;&t;   have asked it to not send fragmented packets. */
 id|printk
 c_func
 (paren
@@ -1255,59 +1279,36 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|bucket
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb
-)paren
-id|dev_kfree_skb_irq
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|packet-&gt;status
+op_logical_neg
+id|packet-&gt;flags
 op_amp
-l_int|0xff
+l_int|0x40
 )paren
-(brace
-multiline_comment|/* Silently discard, unless debugging. */
-id|dprintk
+id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: toasted packet received.&bslash;n&quot;
+l_string|&quot;%s: multiple packets in a bucket not supported!&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|bucket
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-)paren
 id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+id|bucket
+op_increment
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#endif
+multiline_comment|/* Copy short packet to a new skb */
 r_if
 c_cond
 (paren
@@ -1429,6 +1430,7 @@ comma
 id|packet-&gt;len
 )paren
 suffix:semicolon
+multiline_comment|/* Deliver to upper layers */
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1500,7 +1502,7 @@ id|priv-&gt;buckets_out
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* If DDM has already consumed bucket_tresh buckets, post new ones */
+multiline_comment|/* If DDM has already consumed bucket_thresh buckets, post new ones */
 r_if
 c_cond
 (paren
@@ -1603,18 +1605,6 @@ id|i2o_landevs
 id|unit
 )braket
 suffix:semicolon
-macro_line|#ifdef DRIVERDEBUG
-id|i2o_report_status
-c_func
-(paren
-id|KERN_INFO
-comma
-id|dev-&gt;name
-comma
-id|msg
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1645,6 +1635,18 @@ r_return
 suffix:semicolon
 multiline_comment|/* This should NOT be reached */
 )brace
+macro_line|#ifdef DRIVERDEBUG
+id|i2o_report_status
+c_func
+(paren
+id|KERN_INFO
+comma
+id|dev-&gt;name
+comma
+id|msg
+)paren
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -1878,6 +1880,13 @@ id|iop
 op_assign
 id|i2o_dev-&gt;controller
 suffix:semicolon
+id|u32
+id|max_evt_data_size
+op_assign
+id|iop-&gt;status_block-&gt;inbound_frame_size
+op_minus
+l_int|5
+suffix:semicolon
 r_struct
 id|i2o_reply
 (brace
@@ -1917,13 +1926,7 @@ suffix:semicolon
 id|u32
 id|data
 (braket
-(paren
-id|iop-&gt;inbound_size
-op_minus
-l_int|20
-)paren
-op_div
-l_int|4
+id|max_evt_data_size
 )braket
 suffix:semicolon
 multiline_comment|/* max */
@@ -2269,7 +2272,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Event Indicator = 0x%08x.&bslash;n&quot;
+l_string|&quot;0x%08x. No handler.&bslash;n&quot;
 comma
 id|evt-&gt;evt_indicator
 )paren
@@ -2771,7 +2774,7 @@ l_int|4
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// keep posted buckets
+singleline_comment|// Keep posted buckets
 r_if
 c_cond
 (paren
@@ -2932,11 +2935,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * i2o_set_batch_mode(): Set DDM into batch mode.&n; */
-DECL|function|i2o_set_batch_mode
+multiline_comment|/*&n; * i2o_set_ddm_parameters:&n; * These settings are done to ensure proper initial values for DDM.&n; * They can be changed via proc file system or vai configuration utility.&n; */
+DECL|function|i2o_set_ddm_parameters
 r_static
 r_void
-id|i2o_set_batch_mode
+id|i2o_set_ddm_parameters
 c_func
 (paren
 r_struct
@@ -2974,119 +2977,13 @@ suffix:semicolon
 id|u32
 id|val
 suffix:semicolon
-multiline_comment|/* Set defaults LAN_BATCH_CONTROL attributes */
-multiline_comment|/* May be changed via /proc or Configuration Utility */
-id|val
-op_assign
-l_int|0x00000000
-suffix:semicolon
-singleline_comment|// enable batch mode, toggle automatically
-r_if
-c_cond
-(paren
-id|i2o_set_scalar
-c_func
-(paren
-id|iop
-comma
-id|i2o_dev-&gt;lct_data.tid
-comma
-l_int|0x0003
-comma
-l_int|0
-comma
-op_amp
-id|val
-comma
-r_sizeof
-(paren
-id|val
-)paren
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Unable to enter I2O LAN batch mode.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_else
-id|dprintk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: I2O LAN batch mode enabled.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/* Set LAN_OPERATION attributes */
-macro_line|#ifdef DRIVERDEBUG
-multiline_comment|/* Added for testing: this will be removed */
-id|val
-op_assign
-l_int|0x00000003
-suffix:semicolon
-singleline_comment|// 1 = UserFlags
-r_if
-c_cond
-(paren
-id|i2o_set_scalar
-c_func
-(paren
-id|iop
-comma
-id|i2o_dev-&gt;lct_data.tid
-comma
-l_int|0x0004
-comma
-l_int|1
-comma
-op_amp
-id|val
-comma
-r_sizeof
-(paren
-id|val
-)paren
-)paren
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Can&squot;t enable ErrorReporting &amp; BadPacketHandling.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_else
-id|dprintk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: ErrorReporting enabled, &quot;
-l_string|&quot;BadPacketHandling enabled.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif /* DRIVERDEBUG */
-multiline_comment|/*&n;&t; * When PacketOrphanlimit is same as the maximum packet length,&n;&t; * the packets will never be split into two separate buckets&n;&t; */
+multiline_comment|/*&n;&t; * When PacketOrphanlimit is set to the maximum packet length,&n;&t; * the packets will never be split into two separate buckets&n;&t; */
 id|val
 op_assign
 id|dev-&gt;mtu
 op_plus
 id|dev-&gt;hard_header_len
 suffix:semicolon
-singleline_comment|// 2 = PacketOrphanLimit
 r_if
 c_cond
 (paren
@@ -3127,6 +3024,57 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s: PacketOrphanLimit set to %d.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|val
+)paren
+suffix:semicolon
+multiline_comment|/* When RxMaxPacketsBucket = 1, DDM puts only one packet into bucket */
+id|val
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2o_set_scalar
+c_func
+(paren
+id|iop
+comma
+id|i2o_dev-&gt;lct_data.tid
+comma
+l_int|0x0008
+comma
+l_int|4
+comma
+op_amp
+id|val
+comma
+r_sizeof
+(paren
+id|val
+)paren
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Unable to set RxMaxPacketsBucket.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_else
+id|dprintk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: RxMaxPacketsBucket set to &amp;d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3297,7 +3245,7 @@ id|priv-&gt;send_active
 op_assign
 l_int|0
 suffix:semicolon
-id|i2o_set_batch_mode
+id|i2o_set_ddm_parameters
 c_func
 (paren
 id|dev
@@ -3358,6 +3306,11 @@ id|iop
 op_assign
 id|i2o_dev-&gt;controller
 suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 id|netif_stop_queue
 c_func
 (paren
@@ -3402,6 +3355,29 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|priv-&gt;i2o_fbl_tail
+op_ge
+l_int|0
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|priv-&gt;i2o_fbl
+(braket
+id|priv-&gt;i2o_fbl_tail
+op_decrement
+)braket
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|priv-&gt;i2o_fbl
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3427,38 +3403,16 @@ comma
 id|i2o_dev-&gt;lct_data.tid
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|priv-&gt;i2o_fbl_tail
-op_ge
-l_int|0
-)paren
-id|dev_kfree_skb
-c_func
-(paren
-id|priv-&gt;i2o_fbl
-(braket
-id|priv-&gt;i2o_fbl_tail
-op_decrement
-)braket
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|priv-&gt;i2o_fbl
-)paren
-suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * i2o_lan_tx_timeout(): Tx timeout handler.&n; */
@@ -3491,9 +3445,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-DECL|macro|batching
-mdefine_line|#define batching(x, cond) ( (x)-&gt;tx_batch_mode==1 || ((x)-&gt;tx_batch_mode==2 &amp;&amp; (cond)) )
-multiline_comment|/*&n; * Batch send packets. Both i2o_lan_sdu_send and i2o_lan_packet_send&n; * use this. I&squot;m still not pleased. If you come up with&n; * something better, please tell me. -taneli&n; */
+multiline_comment|/*&n; * i2o_lan_batch_send(): Send packets in batch. &n; * Both i2o_lan_sdu_send and i2o_lan_packet_send use this.&n; *&n; * This is a coarse first approximation for the tx_batching.&n; * If you come up with something better, please tell me. -taneli &n; */
 DECL|function|i2o_lan_batch_send
 r_static
 r_void
@@ -3568,6 +3520,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|priv-&gt;send_active
+op_assign
+l_int|0
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
@@ -3575,13 +3531,9 @@ op_amp
 id|priv-&gt;tx_lock
 )paren
 suffix:semicolon
-id|priv-&gt;send_active
-op_assign
-l_int|0
-suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_FC
 multiline_comment|/*&n; * i2o_lan_sdu_send(): Send a packet, MAC header added by the DDM.&n; * Must be supported by Fibre Channel, optional for Ethernet/802.3,&n; * Token Ring, FDDI&n; */
-multiline_comment|/*&n; * This is a coarse first approximation. Needs testing. Any takers? -taneli&n; */
 DECL|function|i2o_lan_sdu_send
 r_static
 r_int
@@ -3658,6 +3610,24 @@ c_func
 op_amp
 id|priv-&gt;tx_out
 )paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * If tx_batch_mode = 0x00 forced to immediate mode&n;&t; * If tx_batch_mode = 0x01 forced to batch mode&n;&t; * If tx_batch_mode = 0x10 switch automatically, current mode immediate&n;&t; * If tx_batch_mode = 0x11 switch automatically, current mode batch&n;&t; *&t;If gap between two packets is &gt; 2 ticks, switch to immediate&n;&t; */
+r_if
+c_cond
+(paren
+id|priv-&gt;tx_batch_mode
+op_rshift
+l_int|1
+)paren
+singleline_comment|// switch automatically
+id|priv-&gt;tx_batch_mode
+op_assign
+id|tickssofar
+ques
+c_cond
+l_int|0x02
+suffix:colon
+l_int|0x03
 suffix:semicolon
 r_if
 c_cond
@@ -3762,6 +3732,10 @@ c_func
 (paren
 l_int|1
 op_lshift
+l_int|30
+op_or
+l_int|1
+op_lshift
 l_int|3
 comma
 id|msg
@@ -3842,13 +3816,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|batching
-c_func
 (paren
-id|priv
-comma
-op_logical_neg
-id|tickssofar
+id|priv-&gt;tx_batch_mode
+op_amp
+l_int|0x01
 )paren
 op_logical_and
 op_logical_neg
@@ -4020,13 +3991,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|batching
-c_func
 (paren
-id|priv
-comma
-op_logical_neg
-id|tickssofar
+id|priv-&gt;tx_batch_mode
+op_amp
+l_int|0x01
 )paren
 op_logical_or
 id|priv-&gt;tx_count
@@ -4092,6 +4060,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif CONFIG_NET_FC
 multiline_comment|/*&n; * i2o_lan_packet_send(): Send a packet as is, including the MAC header.&n; *&n; * Must be supported by Ethernet/802.3, Token Ring, FDDI, optional for&n; * Fibre Channel&n; */
 DECL|function|i2o_lan_packet_send
 r_static
@@ -4169,6 +4138,24 @@ c_func
 op_amp
 id|priv-&gt;tx_out
 )paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * If tx_batch_mode = 0x00 forced to immediate mode&n;&t; * If tx_batch_mode = 0x01 forced to batch mode&n;&t; * If tx_batch_mode = 0x10 switch automatically, current mode immediate&n;&t; * If tx_batch_mode = 0x11 switch automatically, current mode batch&n;&t; *&t;If gap between two packets is &gt; 0 ticks, switch to immediate&n;&t; */
+r_if
+c_cond
+(paren
+id|priv-&gt;tx_batch_mode
+op_rshift
+l_int|1
+)paren
+singleline_comment|// switch automatically
+id|priv-&gt;tx_batch_mode
+op_assign
+id|tickssofar
+ques
+c_cond
+l_int|0x02
+suffix:colon
+l_int|0x03
 suffix:semicolon
 r_if
 c_cond
@@ -4273,6 +4260,10 @@ c_func
 (paren
 l_int|1
 op_lshift
+l_int|30
+op_or
+l_int|1
+op_lshift
 l_int|3
 comma
 id|msg
@@ -4281,6 +4272,8 @@ l_int|3
 )paren
 suffix:semicolon
 singleline_comment|// TransmitControlWord
+singleline_comment|// bit 30: reply as soon as transmission attempt is complete
+singleline_comment|// bit 3: Supress CRC generation
 id|__raw_writel
 c_func
 (paren
@@ -4325,13 +4318,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|batching
-c_func
 (paren
-id|priv
-comma
-op_logical_neg
-id|tickssofar
+id|priv-&gt;tx_batch_mode
+op_amp
+l_int|0x01
 )paren
 op_logical_and
 op_logical_neg
@@ -4466,18 +4456,15 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If tx not in batch mode or frame is full, send immediatelly */
+multiline_comment|/* If tx is in immediate mode or frame is full, send now */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|batching
-c_func
 (paren
-id|priv
-comma
-op_logical_neg
-id|tickssofar
+id|priv-&gt;tx_batch_mode
+op_amp
+l_int|0x01
 )paren
 op_logical_or
 id|priv-&gt;tx_count
@@ -5386,12 +5373,25 @@ id|mc_addr_group
 l_int|64
 )braket
 suffix:semicolon
-singleline_comment|// This isn&squot;t safe yet. Needs to be async.
+singleline_comment|// This isn&squot;t safe yet in SMP. Needs to be async.
+singleline_comment|// Seems to work in uniprocessor environment.
 r_return
 suffix:semicolon
 singleline_comment|//&t;read_lock_bh(&amp;dev_mc_lock);
-singleline_comment|//&t;spin_lock(&amp;dev-&gt;xmit_lock);
-singleline_comment|//&t;dev-&gt;xmit_lock_owner = smp_processor_id();
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+suffix:semicolon
+id|dev-&gt;xmit_lock_owner
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5766,7 +5766,6 @@ id|dev
 r_if
 c_cond
 (paren
-op_logical_neg
 id|in_interrupt
 c_func
 (paren
@@ -5793,14 +5792,12 @@ id|tq_scheduler
 suffix:semicolon
 )brace
 r_else
-(brace
 id|i2o_lan_set_mc_list
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * i2o_lan_change_mtu(): Change maximum transfer unit size.&n; */
 DECL|function|i2o_lan_change_mtu
@@ -5870,12 +5867,12 @@ r_if
 c_cond
 (paren
 id|new_mtu
-OL
-l_int|68
+template_param
+l_int|9000
 op_logical_or
-id|max_pkt_size
-OL
 id|new_mtu
+OG
+id|max_pkt_size
 )paren
 r_return
 op_minus
@@ -5885,6 +5882,52 @@ id|dev-&gt;mtu
 op_assign
 id|new_mtu
 suffix:semicolon
+id|i2o_lan_suspend
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+singleline_comment|// to SUSPENDED state, return buckets
+r_while
+c_loop
+(paren
+id|priv-&gt;i2o_fbl_tail
+op_ge
+l_int|0
+)paren
+singleline_comment|// free buffered buckets
+id|dev_kfree_skb
+c_func
+(paren
+id|priv-&gt;i2o_fbl
+(braket
+id|priv-&gt;i2o_fbl_tail
+op_decrement
+)braket
+)paren
+suffix:semicolon
+id|i2o_lan_reset
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+singleline_comment|// to OPERATIONAL state
+id|i2o_set_ddm_parameters
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+singleline_comment|// reset some parameters
+id|i2o_lan_receive_post
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+singleline_comment|// post new buckets (new size)
 r_return
 l_int|0
 suffix:semicolon
@@ -6268,12 +6311,12 @@ suffix:semicolon
 id|priv-&gt;sgl_max
 op_assign
 (paren
-id|i2o_dev-&gt;controller-&gt;inbound_size
+id|i2o_dev-&gt;controller-&gt;status_block-&gt;inbound_frame_size
 op_minus
-l_int|16
+l_int|4
 )paren
 op_div
-l_int|12
+l_int|3
 suffix:semicolon
 id|atomic_set
 c_func
@@ -6301,6 +6344,8 @@ suffix:semicolon
 id|priv-&gt;tx_batch_mode
 op_assign
 id|tx_batch_mode
+op_amp
+l_int|0x03
 suffix:semicolon
 id|priv-&gt;i2o_event_mask
 op_assign
@@ -6623,10 +6668,10 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;I2O LAN OSM (c) 1999 University of Helsinki.&bslash;n&quot;
+l_string|&quot;I2O LAN OSM (C) 1999 University of Helsinki.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Module params used as global defaults for private values */
+multiline_comment|/* Module params are used as global defaults for private values */
 r_if
 c_cond
 (paren
@@ -7181,7 +7226,7 @@ c_func
 (paren
 id|tx_batch_mode
 comma
-l_string|&quot;0-1&quot;
+l_string|&quot;0-2&quot;
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
@@ -7190,7 +7235,7 @@ c_func
 (paren
 id|tx_batch_mode
 comma
-l_string|&quot;0=Use immediate mode send, 1=Use batch mode send&quot;
+l_string|&quot;0=Send immediatelly, 1=Send in batches, 2=Switch automatically&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
