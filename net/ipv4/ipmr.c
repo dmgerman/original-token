@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -4176,12 +4177,16 @@ id|ipmr_mfc_info
 suffix:semicolon
 macro_line|#endif&t;
 multiline_comment|/*&n; *&t;Setup for IP multicast routing&n; */
-DECL|function|ip_mr_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ip_mr_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|printk

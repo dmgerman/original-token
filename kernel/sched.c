@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -276,21 +277,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Init task must be ok at boot for the ix86 as we will check its signals&n; *&t;via the SMP irq return path.&n; */
-DECL|variable|current_set
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
-op_assign
-(brace
-op_amp
-id|init_task
-comma
-)brace
-suffix:semicolon
 DECL|variable|last_task_used_math
 r_struct
 id|task_struct
@@ -1246,6 +1232,8 @@ macro_line|#endif
 DECL|variable|waitqueue_lock
 id|rwlock_t
 id|waitqueue_lock
+op_assign
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n; * wake_up doesn&squot;t wake up stopped processes - they have to be awakened&n; * with signals or similar.&n; *&n; * Note that we only need a read lock for the wait queue (and thus do not&n; * have to protect against interrupts), as the actual removal from the&n; * queue is handled by the process itself.&n; */
 DECL|function|wake_up
@@ -5927,12 +5915,16 @@ id|tasklist_lock
 )paren
 suffix:semicolon
 )brace
-DECL|function|sched_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sched_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;We have to do a little magic to get the first&n;&t; *&t;process right in SMP mode.&n;&t; */
@@ -5949,46 +5941,10 @@ id|nr
 op_assign
 id|NR_TASKS
 suffix:semicolon
-macro_line|#ifndef __SMP__
-id|current_set
-(braket
-id|cpu
-)braket
-op_assign
-op_amp
-id|init_task
-suffix:semicolon
-macro_line|#else
 id|init_task.processor
 op_assign
 id|cpu
 suffix:semicolon
-multiline_comment|/*&n;&t; * This looks strange, but we don&squot;t necessarily know which CPU&n;&t; * we&squot;re booting on yet, so do them all..&n;&t; */
-r_for
-c_loop
-(paren
-id|cpu
-op_assign
-l_int|0
-suffix:semicolon
-id|cpu
-OL
-id|NR_CPUS
-suffix:semicolon
-id|cpu
-op_increment
-)paren
-(brace
-id|current_set
-(braket
-id|cpu
-)braket
-op_assign
-op_amp
-id|init_task
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Init task array free list and pidhash table. */
 r_while
 c_loop

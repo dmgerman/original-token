@@ -27,7 +27,10 @@ id|mouse_irq
 op_assign
 id|MOUSE_IRQ
 suffix:semicolon
-DECL|function|msmouse_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|msmouse_setup
 c_func
@@ -39,6 +42,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if

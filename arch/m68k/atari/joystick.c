@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
 macro_line|#include &lt;asm/atari_joystick.h&gt;
 macro_line|#include &lt;asm/atari_mouse.h&gt;
@@ -620,12 +621,16 @@ comma
 id|release_joystick
 )brace
 suffix:semicolon
-DECL|function|atari_joystick_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atari_joystick_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|joystick

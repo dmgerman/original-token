@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 DECL|variable|ax25_list
@@ -7185,7 +7186,10 @@ id|ax25_uid_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|ax25_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ax25_proto_init
 c_func
@@ -7194,6 +7198,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|sock_register

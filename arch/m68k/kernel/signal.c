@@ -21,7 +21,7 @@ DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
 id|asmlinkage
 r_int
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 id|pid_t
@@ -34,6 +34,11 @@ id|stat_addr
 comma
 r_int
 id|options
+comma
+r_int
+r_int
+op_star
+id|ru
 )paren
 suffix:semicolon
 id|asmlinkage
@@ -1757,7 +1762,7 @@ multiline_comment|/* check for SIGCHLD: it&squot;s special */
 r_while
 c_loop
 (paren
-id|sys_waitpid
+id|sys_wait4
 c_func
 (paren
 op_minus
@@ -1766,6 +1771,8 @@ comma
 l_int|NULL
 comma
 id|WNOHANG
+comma
+l_int|NULL
 )paren
 OG
 l_int|0

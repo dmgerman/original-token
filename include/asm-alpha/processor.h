@@ -158,14 +158,14 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Allocation and freeing of basic task resources. */
+multiline_comment|/* NOTE: The task struct and the stack go together!  */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct()&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack(p)&t;__get_free_page(GFP_KERNEL)
+mdefine_line|#define alloc_task_struct() &bslash;&n;        ((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
 DECL|macro|free_task_struct
-mdefine_line|#define free_task_struct(p)&t;kfree(p)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_page((page))
+mdefine_line|#define free_task_struct(p)     free_pages((unsigned long)(p),1)
+DECL|macro|init_task
+mdefine_line|#define init_task&t;(init_task_union.task)
+DECL|macro|init_stack
+mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif /* __ASM_ALPHA_PROCESSOR_H */
 eof

@@ -2,6 +2,7 @@ multiline_comment|/*&n;   linear.c : Multiple Devices driver for Linux&n;       
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/md.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;linear.h&quot;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MD_MAJOR
@@ -678,11 +679,15 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifndef MODULE
-DECL|function|linear_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|linear_init
 (paren
 r_void
+)paren
 )paren
 (brace
 id|register_md_personality

@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -3820,7 +3821,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|mcdx_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|mcdx_setup
 c_func
@@ -3832,6 +3836,7 @@ comma
 r_int
 op_star
 id|pi
+)paren
 )paren
 (brace
 r_if
@@ -4935,12 +4940,16 @@ macro_line|#endif
 )brace
 macro_line|#endif MODULE
 multiline_comment|/* Support functions ************************************************/
-DECL|function|mcdx_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|mcdx_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

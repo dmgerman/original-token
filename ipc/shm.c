@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
@@ -192,11 +193,15 @@ id|used_segs
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|shm_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|shm_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -4099,7 +4104,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-multiline_comment|/* continue looping through circular list */
+multiline_comment|/* continue looping through the linked list */
 )brace
 r_while
 c_loop
@@ -4107,16 +4112,15 @@ c_loop
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|shmd
 op_assign
 id|shmd-&gt;vm_next_share
-)paren
-op_eq
-id|shp-&gt;attaches
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|shmd
 )paren
 r_break
 suffix:semicolon

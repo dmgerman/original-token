@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;&t;/* guess what */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -2461,12 +2462,16 @@ id|init_error
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|dsp56k_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|dsp56k_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

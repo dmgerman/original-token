@@ -25,6 +25,7 @@ macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
@@ -5901,7 +5902,10 @@ comma
 id|unix_create
 )brace
 suffix:semicolon
-DECL|function|unix_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|unix_proto_init
 c_func
@@ -5910,6 +5914,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 r_struct

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -313,7 +314,10 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address.&n; */
-DECL|function|sjcd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sjcd_setup
 c_func
@@ -325,6 +329,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -5770,13 +5775,17 @@ DECL|variable|sjcd_version
 id|sjcd_version
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it. Called at boot time.&n; * Probe cdrom, find out version and status.&n; */
-DECL|function|sjcd_init
-r_int
+DECL|function|__initfunc
 (def_block
+id|__initfunc
+c_func
+(paren
+r_int
 id|sjcd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

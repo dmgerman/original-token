@@ -132,7 +132,7 @@ suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;current_set[0] = current = next; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;current = next; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
 r_extern
 r_void
 id|alpha_switch_to
@@ -264,9 +264,9 @@ l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
 l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -330,9 +330,9 @@ l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
 l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

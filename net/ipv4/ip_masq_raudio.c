@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&t;IP_MASQ_RAUDIO  - Real Audio masquerading module&n; *&n; *&n; * Version:&t;@(#)$Id: ip_masq_raudio.c,v 1.5 1997/04/03 08:52:02 davem Exp $&n; *&n; * Author:&t;Nigel Metheringham&n; *&t;&t;[strongly based on ftp module by Juan Jose Ciarlante &amp; Wouter Gadeyne]&n; *&t;&t;[Real Audio information taken from Progressive Networks firewall docs]&n; *&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; * Limitations&n; *&t;The IP Masquerading proxies at present do not have access to a processed&n; *&t;data stream.  Hence for a protocol like the Real Audio control protocol,&n; *&t;which depends on knowing where you are in the data stream, you either&n; *&t;to keep a *lot* of state in your proxy, or you cheat and simplify the&n; *&t;problem [needless to say I did the latter].&n; *&n; *&t;This proxy only handles data in the first packet.  Everything else is&n; *&t;passed transparently.  This means it should work under all normal&n; *&t;circumstances, but it could be fooled by new data formats or a&n; *&t;malicious application!&n; *&n; *&t;At present the &quot;first packet&quot; is defined as a packet starting with&n; *&t;the protocol ID string - &quot;PNA&quot;.&n; *&t;When the link is up there appears to be enough control data&n; *&t;crossing the control link to keep it open even if a long audio&n; *&t;piece is playing.&n; *&n; */
+multiline_comment|/*&n; *&t;&t;IP_MASQ_RAUDIO  - Real Audio masquerading module&n; *&n; *&n; * Version:&t;@(#)$Id: ip_masq_raudio.c,v 1.6 1997/04/29 09:38:26 mj Exp $&n; *&n; * Author:&t;Nigel Metheringham&n; *&t;&t;[strongly based on ftp module by Juan Jose Ciarlante &amp; Wouter Gadeyne]&n; *&t;&t;[Real Audio information taken from Progressive Networks firewall docs]&n; *&n; *&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; * Limitations&n; *&t;The IP Masquerading proxies at present do not have access to a processed&n; *&t;data stream.  Hence for a protocol like the Real Audio control protocol,&n; *&t;which depends on knowing where you are in the data stream, you either&n; *&t;to keep a *lot* of state in your proxy, or you cheat and simplify the&n; *&t;problem [needless to say I did the latter].&n; *&n; *&t;This proxy only handles data in the first packet.  Everything else is&n; *&t;passed transparently.  This means it should work under all normal&n; *&t;circumstances, but it could be fooled by new data formats or a&n; *&t;malicious application!&n; *&n; *&t;At present the &quot;first packet&quot; is defined as a packet starting with&n; *&t;the protocol ID string - &quot;PNA&quot;.&n; *&t;When the link is up there appears to be enough control data&n; *&t;crossing the control link to keep it open even if a long audio&n; *&t;piece is playing.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/ip_masq.h&gt;
@@ -634,12 +635,16 @@ multiline_comment|/* pkt_in */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * &t;ip_masq_raudio initialization&n; */
-DECL|function|ip_masq_raudio_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ip_masq_raudio_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

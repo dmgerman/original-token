@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -215,11 +216,15 @@ id|nmihandler
 l_string|&quot;: rte&quot;
 )paren
 suffix:semicolon
-DECL|function|trap_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|trap_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

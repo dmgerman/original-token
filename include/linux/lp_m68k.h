@@ -76,6 +76,11 @@ DECL|enumerator|LP_MFC
 id|LP_MFC
 op_assign
 l_int|3
+comma
+DECL|enumerator|LP_IOEXT
+id|LP_IOEXT
+op_assign
+l_int|4
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * warning: this structure is in kernel space and has to fit in one page,&n; * i.e. must not be larger than 4k&n; */
@@ -136,11 +141,11 @@ id|lp_is_online
 r_int
 )paren
 suffix:semicolon
-DECL|member|lp_my_interrupt
+DECL|member|lp_dummy
 r_int
 (paren
 op_star
-id|lp_my_interrupt
+id|lp_dummy
 )paren
 (paren
 r_int
@@ -163,13 +168,13 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|lp_open
-r_void
+r_int
 (paren
 op_star
 id|lp_open
 )paren
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* for module use counter */
@@ -180,7 +185,7 @@ op_star
 id|lp_release
 )paren
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* for module use counter */
@@ -264,13 +269,7 @@ id|lp_interrupt
 c_func
 (paren
 r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
+id|dev
 )paren
 suffix:semicolon
 r_int

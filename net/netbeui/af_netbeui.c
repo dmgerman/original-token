@@ -30,6 +30,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|NETBEUI_DEBUG
 macro_line|#undef NETBEUI_DEBUG
 macro_line|#ifdef NETBEUI_DEBUG
@@ -2229,7 +2230,10 @@ id|netbeui_get_info
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Called by proto.c on kernel start up */
-DECL|function|netbeui_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|netbeui_proto_init
 c_func
@@ -2238,6 +2242,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 (paren

@@ -26,6 +26,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_IP_MASQUERADE
 macro_line|#include &lt;net/ip_masq.h&gt;
 macro_line|#endif
@@ -4734,12 +4735,16 @@ id|ip_fw_fwd_procinfo
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-DECL|function|ip_fw_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ip_fw_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/llc_frame.h&gt;
@@ -624,7 +625,10 @@ id|llc_xid_request
 suffix:semicolon
 DECL|macro|ALL_TYPES_8022
 mdefine_line|#define ALL_TYPES_8022 0
-DECL|function|llc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|llc_init
 c_func
@@ -633,6 +637,7 @@ r_struct
 id|net_proto
 op_star
 id|proto
+)paren
 )paren
 (brace
 id|printk

@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
@@ -363,13 +364,17 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Send an ICMP frame.&n; */
 multiline_comment|/*&n; *&t;Initialize the transmit rate limitation mechanism.&n; */
 macro_line|#ifndef CONFIG_NO_ICMP_LIMIT
-DECL|function|xrlim_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xrlim_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3438,7 +3443,10 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|icmp_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|icmp_init
 c_func
@@ -3447,6 +3455,7 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
+)paren
 )paren
 (brace
 r_int

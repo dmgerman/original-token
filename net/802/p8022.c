@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
 DECL|variable|p8022_list
 r_static
@@ -281,7 +282,10 @@ c_func
 id|unregister_8022_client
 )paren
 suffix:semicolon
-DECL|function|p8022_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|p8022_proto_init
 c_func
@@ -290,6 +294,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|p8022_packet_type.type

@@ -436,11 +436,11 @@ id|smp_proc_in_lock
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|function|smp_processor_id
+DECL|function|hard_smp_processor_id
 r_extern
 id|__inline__
 r_int
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 r_void
@@ -467,6 +467,8 @@ r_return
 id|cpuid
 suffix:semicolon
 )brace
+DECL|macro|smp_processor_id
+mdefine_line|#define smp_processor_id() hard_smp_processor_id()
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* Sparc specific messages. */
 DECL|macro|MSG_CROSS_CALL

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -194,7 +195,7 @@ id|tga_fb_height
 comma
 id|tga_fb_stride
 suffix:semicolon
-DECL|variable|fb_offset_presets
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -202,6 +203,7 @@ id|fb_offset_presets
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 id|TGA_8PLANE_FB_OFFSET
@@ -213,7 +215,7 @@ comma
 id|TGA_24PLUSZ_FB_OFFSET
 )brace
 suffix:semicolon
-DECL|variable|deep_presets
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -221,6 +223,7 @@ id|deep_presets
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00014000
@@ -232,7 +235,7 @@ comma
 l_int|0x0001441d
 )brace
 suffix:semicolon
-DECL|variable|rasterop_presets
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -240,6 +243,7 @@ id|rasterop_presets
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00000003
@@ -251,7 +255,7 @@ comma
 l_int|0x00000303
 )brace
 suffix:semicolon
-DECL|variable|mode_presets
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -259,6 +263,7 @@ id|mode_presets
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00002000
@@ -270,7 +275,7 @@ comma
 l_int|0x00002300
 )brace
 suffix:semicolon
-DECL|variable|base_addr_presets
+DECL|variable|__initdata
 r_static
 r_int
 r_int
@@ -278,6 +283,7 @@ id|base_addr_presets
 (braket
 l_int|4
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00000000
@@ -843,9 +849,12 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-DECL|function|con_type_init
 id|con_type_init
 c_func
 (paren
@@ -858,6 +867,7 @@ r_char
 op_star
 op_star
 id|display_desc
+)paren
 )paren
 (brace
 id|can_do_color
@@ -890,12 +900,16 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|con_type_init_finish
 id|con_type_init_finish
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 )brace
@@ -1390,12 +1404,16 @@ id|arg
 (brace
 )brace
 multiline_comment|/*&n; * video init code, called from within the PCI bus probing code;&n; * when TGA console is configured, at the end of the probing code,&n; * we call here to look for a TGA device, and proceed...&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|tga_console_init
 id|tga_console_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -1538,13 +1556,14 @@ id|vt_console_driver
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|variable|PLLbits
+DECL|variable|__initdata
 r_int
 r_char
 id|PLLbits
 (braket
 l_int|7
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x80
@@ -1562,7 +1581,7 @@ comma
 l_int|0xb8
 )brace
 suffix:semicolon
-DECL|variable|bt485_cursor_source
+DECL|variable|__initdata
 r_const
 r_int
 r_int
@@ -1570,6 +1589,7 @@ id|bt485_cursor_source
 (braket
 l_int|64
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0x00000000000000ff
@@ -1710,6 +1730,7 @@ id|bt463_cursor_source
 l_int|256
 )braket
 op_assign
+id|__initdata
 (brace
 l_int|0xffff0000
 comma
@@ -2224,11 +2245,16 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|tga_init_video
 id|tga_init_video
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_int
@@ -3590,11 +3616,16 @@ r_int
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|tga_clear_screen
 id|tga_clear_screen
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_register

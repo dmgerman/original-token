@@ -4053,7 +4053,10 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Driver setup function when linked into the kernel to optionally parse multible&n; * &quot;digi=&quot;-lines and initialize the driver at boot time. No probing.&n; */
-DECL|function|pcxx_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|pcxx_setup
 c_func
@@ -4065,6 +4068,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_struct

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_int
@@ -95,11 +96,15 @@ id|sem_seq
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|sem_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sem_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

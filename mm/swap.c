@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
@@ -104,7 +105,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* General swap control */
 multiline_comment|/* Parse the kernel command line &quot;swap=&quot; option at load time: */
-DECL|function|swap_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|swap_setup
 c_func
@@ -116,6 +120,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int
@@ -204,7 +209,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Parse the kernel command line &quot;buff=&quot; option at load time: */
-DECL|function|buff_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|buff_setup
 c_func
@@ -216,6 +224,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

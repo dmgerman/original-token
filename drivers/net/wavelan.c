@@ -97,14 +97,18 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Translate PSA irq parameter to irq number &n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|wv_psa_to_irq
 id|wv_psa_to_irq
 c_func
 (paren
 id|u_char
 id|irqval
+)paren
 )paren
 (brace
 r_int
@@ -15804,15 +15808,19 @@ suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Probe an i/o address, and if the wavelan is there configure the&n; * device structure&n; * (called by wavelan_probe() &amp; via init_module())&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|wavelan_config
 id|wavelan_config
 c_func
 (paren
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|u_long
@@ -16176,16 +16184,19 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Check for a network adaptor of this type.&n; * Return &squot;0&squot; iff one exists.&n; * (There seem to be different interpretations of&n; * the initial value of dev-&gt;base_addr.&n; * We follow the example in drivers/net/ne.c.)&n; * (called in &quot;Space.c&quot;)&n; * As this function is called outside the wavelan module, it should be&n; * declared extern, but it seem to cause troubles...&n; */
-multiline_comment|/* extern */
+multiline_comment|/*&n; * Check for a network adaptor of this type.&n; * Return &squot;0&squot; iff one exists.&n; * (There seem to be different interpretations of&n; * the initial value of dev-&gt;base_addr.&n; * We follow the example in drivers/net/ne.c.)&n; * (called in &quot;Space.c&quot;)&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|wavelan_probe
 id|wavelan_probe
 c_func
 (paren
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int

@@ -318,10 +318,14 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: unable to read i-node block %lu&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;follow_link&quot;
+comma
+l_string|&quot;Cannot read block %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -669,10 +673,14 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: unable to read i-node block %lu&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;readlink&quot;
+comma
+l_string|&quot;Cannot read block %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren

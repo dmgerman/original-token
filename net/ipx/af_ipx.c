@@ -28,6 +28,7 @@ macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef MODULE
 r_static
 r_void
@@ -9855,13 +9856,17 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; *&n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space.&n; */
-DECL|function|ipx_proto_finito
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ipx_proto_finito
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|ipx_interface

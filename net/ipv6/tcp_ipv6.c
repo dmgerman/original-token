@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.27 1997/04/22 02:53:20 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.31 1997/04/29 21:51:23 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ipv6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
@@ -1922,17 +1923,9 @@ id|th-&gt;ack
 op_assign
 l_int|0
 suffix:semicolon
-id|th-&gt;window
-op_assign
-l_int|2
-suffix:semicolon
 id|th-&gt;syn
 op_assign
 l_int|1
-suffix:semicolon
-id|tp-&gt;window_clamp
-op_assign
-l_int|0
 suffix:semicolon
 id|sk-&gt;mtu
 op_assign
@@ -1954,6 +1947,65 @@ r_struct
 id|tcphdr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;mss
+OL
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;intial ipv6 sk-&gt;mss below 1&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sk-&gt;mss
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Sanity limit */
+)brace
+id|tp-&gt;window_clamp
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* FIXME: shouldn&squot;t ipv6 dst cache have this? */
+id|tcp_select_initial_window
+c_func
+(paren
+id|sock_rspace
+c_func
+(paren
+id|sk
+)paren
+op_div
+l_int|2
+comma
+id|sk-&gt;mss
+comma
+op_amp
+id|tp-&gt;rcv_wnd
+comma
+op_amp
+id|tp-&gt;window_clamp
+comma
+id|sysctl_tcp_window_scaling
+comma
+op_amp
+id|tp-&gt;rcv_wscale
+)paren
+suffix:semicolon
+id|th-&gt;window
+op_assign
+id|htons
+c_func
+(paren
+id|tp-&gt;rcv_wnd
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put in the TCP options to say MTU.&n;&t; */
 id|tmp
 op_assign
@@ -1969,11 +2021,8 @@ comma
 id|sysctl_tcp_timestamps
 comma
 id|sysctl_tcp_window_scaling
-ques
-c_cond
+comma
 id|tp-&gt;rcv_wscale
-suffix:colon
-l_int|0
 )paren
 suffix:semicolon
 id|th-&gt;doff
@@ -2547,6 +2596,7 @@ id|err
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* FIXME: this is substantially similar to the ipv4 code.&n; * Can some kind of merge be done? -- erics&n; */
 DECL|function|tcp_v6_send_synack
 r_static
 r_void
@@ -2564,14 +2614,6 @@ op_star
 id|req
 )paren
 (brace
-r_struct
-id|tcp_opt
-op_star
-id|tp
-op_assign
-op_amp
-id|sk-&gt;tp_pinfo.af_tcp
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -2807,12 +2849,83 @@ l_int|4
 op_plus
 l_int|1
 suffix:semicolon
-id|th-&gt;window
+multiline_comment|/* Don&squot;t offer more than they did.&n;&t; * This way we don&squot;t have to memorize who said what.&n;&t; * FIXME: the selection of initial mss here doesn&squot;t quite&n;&t; * match what happens under IPV4. Figure out the right thing to do.&n;&t; */
+id|req-&gt;mss
 op_assign
-id|ntohs
+id|min
 c_func
 (paren
-id|tp-&gt;rcv_wnd
+id|sk-&gt;mss
+comma
+id|req-&gt;mss
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;mss
+OL
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;initial req-&gt;mss below 1&bslash;n&quot;
+)paren
+suffix:semicolon
+id|req-&gt;mss
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|req-&gt;rcv_wnd
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Set this up on the first call only */
+id|req-&gt;window_clamp
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* FIXME: should be in dst cache */
+id|tcp_select_initial_window
+c_func
+(paren
+id|sock_rspace
+c_func
+(paren
+id|sk
+)paren
+op_div
+l_int|2
+comma
+id|req-&gt;mss
+comma
+op_amp
+id|req-&gt;rcv_wnd
+comma
+op_amp
+id|req-&gt;window_clamp
+comma
+id|req-&gt;wscale_ok
+comma
+op_amp
+id|req-&gt;rcv_wscale
+)paren
+suffix:semicolon
+)brace
+id|th-&gt;window
+op_assign
+id|htons
+c_func
+(paren
+id|req-&gt;rcv_wnd
 )paren
 suffix:semicolon
 id|tmp
@@ -2822,20 +2935,15 @@ c_func
 (paren
 id|skb
 comma
-id|sk-&gt;mss
+id|req-&gt;mss
 comma
 id|req-&gt;sack_ok
 comma
 id|req-&gt;tstamp_ok
 comma
-(paren
 id|req-&gt;snd_wscale
-)paren
-ques
-c_cond
-id|tp-&gt;rcv_wscale
-suffix:colon
-l_int|0
+comma
+id|req-&gt;rcv_wscale
 )paren
 suffix:semicolon
 id|th-&gt;doff
@@ -2952,6 +3060,7 @@ comma
 id|tcp_v6_or_free
 )brace
 suffix:semicolon
+multiline_comment|/* FIXME: this is substantially similar to the ipv4 code.&n; * Can some kind of merge be done? -- erics&n; */
 DECL|function|tcp_v6_conn_request
 r_static
 r_int
@@ -2978,11 +3087,7 @@ id|isn
 (brace
 r_struct
 id|tcp_opt
-op_star
 id|tp
-op_assign
-op_amp
-id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
 r_struct
 id|open_request
@@ -3093,6 +3198,11 @@ suffix:semicolon
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
+id|req-&gt;rcv_wnd
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* So that tcp_send_synack() knows! */
 id|req-&gt;rcv_isn
 op_assign
 id|skb-&gt;seq
@@ -3101,31 +3211,57 @@ id|req-&gt;snt_isn
 op_assign
 id|isn
 suffix:semicolon
+id|tp.tstamp_ok
+op_assign
+id|tp.sack_ok
+op_assign
+id|tp.wscale_ok
+op_assign
+id|tp.snd_wscale
+op_assign
+l_int|0
+suffix:semicolon
+id|tp.in_mss
+op_assign
+l_int|536
+suffix:semicolon
 id|tcp_parse_options
 c_func
 (paren
 id|skb-&gt;h.th
 comma
+op_amp
 id|tp
 )paren
-suffix:semicolon
-id|req_mss
-op_assign
-id|tp-&gt;in_mss
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|req_mss
+id|tp.saw_tstamp
 )paren
-id|req_mss
+id|req-&gt;ts_recent
 op_assign
-l_int|536
+id|tp.rcv_tsval
 suffix:semicolon
 id|req-&gt;mss
 op_assign
-id|req_mss
+id|tp.in_mss
+suffix:semicolon
+id|req-&gt;tstamp_ok
+op_assign
+id|tp.tstamp_ok
+suffix:semicolon
+id|req-&gt;sack_ok
+op_assign
+id|tp.sack_ok
+suffix:semicolon
+id|req-&gt;snd_wscale
+op_assign
+id|tp.snd_wscale
+suffix:semicolon
+id|req-&gt;wscale_ok
+op_assign
+id|tp.wscale_ok
 suffix:semicolon
 id|req-&gt;rmt_port
 op_assign
@@ -3847,6 +3983,10 @@ suffix:semicolon
 id|newtp-&gt;snd_wscale
 op_assign
 id|req-&gt;snd_wscale
+suffix:semicolon
+id|newtp-&gt;wscale_ok
+op_assign
+id|req-&gt;wscale_ok
 suffix:semicolon
 id|newtp-&gt;ts_recent
 op_assign
@@ -5500,10 +5640,16 @@ l_int|5
 op_lshift
 l_int|3
 suffix:semicolon
+multiline_comment|/* FIXME: right thing? */
 id|tp-&gt;rcv_wnd
 op_assign
-l_int|8192
+l_int|0
 suffix:semicolon
+id|tp-&gt;in_mss
+op_assign
+l_int|536
+suffix:semicolon
+multiline_comment|/* tp-&gt;rcv_wnd = 8192; */
 multiline_comment|/* start with only sending one packet at a time. */
 id|tp-&gt;snd_cwnd
 op_assign
@@ -5537,7 +5683,7 @@ l_int|576
 suffix:semicolon
 id|sk-&gt;mss
 op_assign
-l_int|516
+l_int|536
 suffix:semicolon
 id|sk-&gt;dummy_th.doff
 op_assign
@@ -5829,12 +5975,16 @@ l_string|&quot;TCPv6&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
-DECL|function|tcpv6_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|tcpv6_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* register inet6 protocol */

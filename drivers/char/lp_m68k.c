@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
@@ -1983,12 +1984,16 @@ c_func
 id|unregister_parallel
 )paren
 suffix:semicolon
-DECL|function|lp_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|lp_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_extern
@@ -2086,7 +2091,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Currently we do not accept any lp-parameters, but that may change.&n; */
-DECL|function|lp_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|lp_setup
 c_func
@@ -2098,6 +2106,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 )brace

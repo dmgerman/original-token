@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;
@@ -370,7 +371,10 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|hd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|hd_setup
 c_func
@@ -382,6 +386,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int
@@ -4065,12 +4070,16 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|function|hd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|hd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

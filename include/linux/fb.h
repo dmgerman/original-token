@@ -149,6 +149,8 @@ DECL|macro|FB_ACCEL_AMIGABLITT
 mdefine_line|#define FB_ACCEL_AMIGABLITT&t;2&t;/* Amiga Blitter                */
 DECL|macro|FB_ACCEL_CYBERVISION
 mdefine_line|#define FB_ACCEL_CYBERVISION&t;3&t;/* Cybervision64 (S3 Trio64)    */
+DECL|macro|FB_ACCEL_RETINAZ3
+mdefine_line|#define FB_ACCEL_RETINAZ3&t;4&t;/* RetinaZ3 (NCR77C32BLT)       */
 DECL|macro|FB_SYNC_HOR_HIGH_ACT
 mdefine_line|#define FB_SYNC_HOR_HIGH_ACT&t;1&t;/* horizontal sync high active&t;*/
 DECL|macro|FB_SYNC_VERT_HIGH_ACT
@@ -753,6 +755,21 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* tell fb to (un)blank the screen */
+DECL|member|setcmap
+r_int
+(paren
+op_star
+id|setcmap
+)paren
+(paren
+r_struct
+id|fb_cmap
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* tell fb to set the colormap */
 )brace
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -472,7 +473,10 @@ id|reboot_thru_bios
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|reboot_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|reboot_setup
 c_func
@@ -484,6 +488,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_while

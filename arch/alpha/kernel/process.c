@@ -27,21 +27,8 @@ macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
-DECL|variable|init_kernel_stack
-r_static
-r_int
-r_int
-id|init_kernel_stack
-(braket
-l_int|1024
-)braket
-op_assign
-(brace
-id|STACK_MAGIC
-comma
-)brace
-suffix:semicolon
 DECL|variable|init_user_stack
 r_int
 r_int
@@ -94,12 +81,27 @@ id|init_mm
 op_assign
 id|INIT_MM
 suffix:semicolon
-DECL|variable|init_task
-r_struct
-id|task_struct
-id|init_task
+DECL|variable|init_task_union
+r_union
+id|task_union
+id|init_task_union
+id|__attribute__
+c_func
+(paren
+(paren
+id|section
+c_func
+(paren
+l_string|&quot;init_task&quot;
+)paren
+)paren
+)paren
 op_assign
+(brace
+id|task
+suffix:colon
 id|INIT_TASK
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * No need to acquire the kernel lock, we&squot;re entirely local..&n; */
 DECL|function|sys_sethae
@@ -668,9 +670,15 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;kernel_stack_page
-op_plus
 id|stack_offset
+op_plus
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|p
 )paren
 suffix:semicolon
 op_star

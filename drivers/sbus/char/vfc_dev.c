@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/sbus/char/vfc_dev.c&n; *&n; * Driver for the Videopix Frame Grabber.&n; * &n; * In order to use the VFC you need to progeam the video controller&n; * chip. This chip is the Phillips SAA9051.  You need to call their&n; * documentation ordering line to get the docs.&n; *&n; * Their is very little documentation on the VFC itself.  There is&n; * some useful info that can be found in the manuals that come with&n; * the card.  I will hopefully write some better docs at a later date.&n; *&n; * Copyright (C) 1996 Manish Vachharajani (mvachhar@noc.rutgers.edu)&n; * */
+multiline_comment|/*&n; * drivers/sbus/char/vfc_dev.c&n; *&n; * Driver for the Videopix Frame Grabber.&n; * &n; * In order to use the VFC you need to program the video controller&n; * chip. This chip is the Phillips SAA9051.  You need to call their&n; * documentation ordering line to get the docs.&n; *&n; * There is very little documentation on the VFC itself.  There is&n; * some useful info that can be found in the manuals that come with&n; * the card.  I will hopefully write some better docs at a later date.&n; *&n; * Copyright (C) 1996 Manish Vachharajani (mvachhar@noc.rutgers.edu)&n; * */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/uaccess.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -14,11 +15,10 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|VFC_MAJOR
 mdefine_line|#define VFC_MAJOR (60)
 macro_line|#if 0
-mdefine_line|#define VFC_DEBUG
+mdefine_line|#define VFC_IOCTL_DEBUG
 macro_line|#endif
 macro_line|#include &quot;vfc.h&quot;
 macro_line|#include &lt;asm/vfc_ioctls.h&gt;
@@ -411,7 +411,6 @@ id|dev-&gt;busy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* initialize the timer struct */
 r_return
 l_int|0
 suffix:semicolon
@@ -435,10 +434,6 @@ r_int
 id|instance
 )paren
 (brace
-r_struct
-id|linux_prom_registers
-id|reg
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -470,32 +465,16 @@ id|dev-&gt;regs
 op_assign
 l_int|NULL
 suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
-id|reg
-comma
-op_amp
-id|sdev-&gt;reg_addrs
-(braket
-l_int|0
-)braket
-comma
-r_sizeof
-(paren
-r_struct
-id|linux_prom_registers
-)paren
-)paren
-suffix:semicolon
 id|prom_apply_sbus_ranges
 c_func
 (paren
 id|sdev-&gt;my_bus
 comma
 op_amp
-id|reg
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
 comma
 id|sdev-&gt;num_registers
 comma
@@ -507,7 +486,12 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-id|reg.phys_addr
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
 comma
 l_int|0
 comma
@@ -519,14 +503,24 @@ id|vfc_regs
 comma
 id|vfcstr
 comma
-id|reg.which_io
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
 comma
 l_int|0x0
 )paren
 suffix:semicolon
 id|dev-&gt;which_io
 op_assign
-id|reg.which_io
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
 suffix:semicolon
 id|dev-&gt;phys_regs
 op_assign
@@ -535,7 +529,12 @@ r_struct
 id|vfc_regs
 op_star
 )paren
-id|reg.phys_addr
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
 suffix:semicolon
 r_if
 c_cond
@@ -560,7 +559,12 @@ comma
 r_int
 r_int
 )paren
-id|reg.phys_addr
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
 comma
 (paren
 r_int
@@ -740,7 +744,7 @@ suffix:semicolon
 )brace
 DECL|function|vfc_release
 r_static
-r_int
+r_void
 id|vfc_release
 c_func
 (paren
@@ -780,8 +784,6 @@ id|dev
 )paren
 (brace
 r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -792,7 +794,6 @@ id|dev-&gt;busy
 )paren
 (brace
 r_return
-l_int|0
 suffix:semicolon
 )brace
 id|dev-&gt;busy
@@ -802,7 +803,6 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|vfc_debug
@@ -833,6 +833,24 @@ r_char
 op_star
 id|buffer
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -911,6 +929,7 @@ r_sizeof
 r_char
 )paren
 )paren
+suffix:semicolon
 )paren
 (brace
 id|kfree_s
@@ -919,6 +938,11 @@ c_func
 id|buffer
 comma
 id|inout.len
+op_star
+r_sizeof
+(paren
+r_char
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -987,14 +1011,6 @@ id|vfc_unlock_device
 c_func
 (paren
 id|dev
-)paren
-suffix:semicolon
-id|kfree_s
-c_func
-(paren
-id|buffer
-comma
-id|inout.len
 )paren
 suffix:semicolon
 r_break
@@ -1388,14 +1404,11 @@ r_int
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
-macro_line|#if 0
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -1407,7 +1420,6 @@ id|setcmd
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -1631,7 +1643,7 @@ r_int
 )paren
 )paren
 (brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -1647,7 +1659,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2030,7 +2042,7 @@ r_int
 )paren
 )paren
 (brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2042,11 +2054,10 @@ id|dev-&gt;instance
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EFAULT
+id|ret
 suffix:semicolon
 )brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2383,7 +2394,7 @@ op_assign
 id|PAL_NOCOLOR
 suffix:semicolon
 )brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2423,7 +2434,7 @@ r_int
 )paren
 )paren
 (brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2435,8 +2446,7 @@ id|dev-&gt;instance
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EFAULT
+id|ret
 suffix:semicolon
 )brace
 r_return
@@ -2518,7 +2528,7 @@ r_case
 id|VFCGCTRL
 suffix:colon
 macro_line|#if 0
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2556,9 +2566,12 @@ r_int
 )paren
 )paren
 (brace
-r_return
+id|ret
+op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 id|ret
@@ -2627,8 +2640,7 @@ suffix:semicolon
 r_case
 id|VFCHUE
 suffix:colon
-macro_line|#if 0
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2638,7 +2650,6 @@ id|dev-&gt;instance
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2662,7 +2673,7 @@ r_int
 )paren
 )paren
 (brace
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2731,7 +2742,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-id|VFC_DEBUG_PRINTK
+id|VFC_IOCTL_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -2935,7 +2946,6 @@ suffix:semicolon
 DECL|function|vfc_lseek
 r_static
 r_int
-r_int
 id|vfc_lseek
 c_func
 (paren
@@ -2949,8 +2959,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|off_t
 id|offset
 comma
 r_int
@@ -2983,7 +2992,7 @@ comma
 multiline_comment|/* vfc_readdir */
 l_int|NULL
 comma
-multiline_comment|/* vfc_poll */
+multiline_comment|/* vfc_select */
 id|vfc_ioctl
 comma
 id|vfc_mmap

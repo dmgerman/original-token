@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.93 1997/04/11 08:55:40 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.96 1997/05/01 08:53:33 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -28,80 +28,6 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
-multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
-DECL|variable|init_kernel_stack
-r_static
-r_int
-r_int
-id|init_kernel_stack
-(braket
-l_int|1024
-)braket
-op_assign
-(brace
-id|STACK_MAGIC
-comma
-)brace
-suffix:semicolon
-DECL|variable|init_user_stack
-r_int
-r_int
-id|init_user_stack
-(braket
-l_int|1024
-)braket
-op_assign
-(brace
-id|STACK_MAGIC
-comma
-)brace
-suffix:semicolon
-DECL|variable|init_mmap
-r_static
-r_struct
-id|vm_area_struct
-id|init_mmap
-op_assign
-id|INIT_MMAP
-suffix:semicolon
-DECL|variable|init_fs
-r_static
-r_struct
-id|fs_struct
-id|init_fs
-op_assign
-id|INIT_FS
-suffix:semicolon
-DECL|variable|init_files
-r_static
-r_struct
-id|files_struct
-id|init_files
-op_assign
-id|INIT_FILES
-suffix:semicolon
-DECL|variable|init_signals
-r_static
-r_struct
-id|signal_struct
-id|init_signals
-op_assign
-id|INIT_SIGNALS
-suffix:semicolon
-DECL|variable|init_mm
-r_struct
-id|mm_struct
-id|init_mm
-op_assign
-id|INIT_MM
-suffix:semicolon
-DECL|variable|init_task
-r_struct
-id|task_struct
-id|init_task
-op_assign
-id|INIT_TASK
-suffix:semicolon
 r_extern
 r_void
 id|fpsave
@@ -1920,7 +1846,13 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;kernel_stack_page
+(paren
+(paren
+r_int
+r_int
+)paren
+id|p
+)paren
 op_plus
 id|stack_offset
 )paren
@@ -1969,8 +1901,6 @@ l_int|1
 )paren
 suffix:semicolon
 id|p-&gt;tss.ksp
-op_assign
-id|p-&gt;saved_kernel_stack
 op_assign
 (paren
 r_int
@@ -2085,7 +2015,7 @@ c_cond
 (paren
 id|sp
 op_ne
-id|current-&gt;tss.kregs-&gt;u_regs
+id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
@@ -2118,7 +2048,7 @@ r_struct
 id|sparc_stackf
 op_star
 )paren
-id|current-&gt;tss.kregs-&gt;u_regs
+id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket

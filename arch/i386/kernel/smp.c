@@ -211,18 +211,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Processor that is doing the boot up &t;&t;&t;*/
-DECL|variable|kstack_base
-DECL|variable|kstack_end
-r_static
-r_int
-r_char
-op_star
-id|kstack_base
-comma
-op_star
-id|kstack_end
-suffix:semicolon
-multiline_comment|/* Kernel stack list pointers &t;&t;&t;&t;*/
 DECL|variable|smp_activated
 r_static
 r_int
@@ -1825,27 +1813,32 @@ id|trampoline_end
 (braket
 )braket
 suffix:semicolon
+DECL|variable|trampoline_base
+r_static
+r_int
+r_char
+op_star
+id|trampoline_base
+suffix:semicolon
 multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure it&squot;s suitably aligned.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
 r_static
-r_void
-id|install_trampoline
+r_int
+r_int
+id|setup_trampoline
 c_func
 (paren
-r_int
-r_char
-op_star
-id|mp
+r_void
 )paren
 )paren
 (brace
 id|memcpy
 c_func
 (paren
-id|mp
+id|trampoline_base
 comma
 id|trampoline_data
 comma
@@ -1854,8 +1847,15 @@ op_minus
 id|trampoline_data
 )paren
 suffix:semicolon
+r_return
+id|virt_to_phys
+c_func
+(paren
+id|trampoline_base
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;We are called very early to get the low memory for the trampoline/kernel stacks&n; *&t;This has to be done by mm/init.c to parcel us out nice low memory. We allocate&n; *&t;the kernel stacks at 4K, 8K, 12K... currently (0-03FF is preserved for SMM and&n; *&t;other things).&n; */
+multiline_comment|/*&n; *&t;We are called very early to get the low memory for the&n; *&t;SMP bootup trampoline page.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1871,19 +1871,6 @@ id|mem_base
 )paren
 )paren
 (brace
-r_int
-id|size
-op_assign
-(paren
-id|num_processors
-op_minus
-l_int|1
-)paren
-op_star
-id|PAGE_SIZE
-suffix:semicolon
-multiline_comment|/* Number of stacks needed */
-multiline_comment|/*&n;&t; *&t;Our stacks have to be below the 1Mb line, and mem_base on entry&n;&t; *&t;is 4K aligned.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1894,38 +1881,20 @@ c_func
 r_void
 op_star
 )paren
-(paren
 id|mem_base
-op_plus
-id|size
-)paren
 )paren
 op_ge
 l_int|0x9F000
 )paren
-(brace
 id|panic
 c_func
 (paren
-l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel stacks 0x%lx.&bslash;n&quot;
+l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel trampoline 0x%lx.&bslash;n&quot;
 comma
 id|mem_base
 )paren
 suffix:semicolon
-)brace
-id|kstack_base
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|mem_base
-suffix:semicolon
-id|mem_base
-op_add_assign
-id|size
-suffix:semicolon
-id|kstack_end
+id|trampoline_base
 op_assign
 (paren
 r_void
@@ -1935,6 +1904,8 @@ id|mem_base
 suffix:semicolon
 r_return
 id|mem_base
+op_plus
+id|PAGE_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;The bootstrap kernel entry code has set these up. Save them for&n; *&t;a given CPU&n; */
@@ -2239,16 +2210,6 @@ id|unused
 )paren
 )paren
 (brace
-id|trap_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|init_IRQ
-c_func
-(paren
-)paren
-suffix:semicolon
 id|smp_callin
 c_func
 (paren
@@ -2261,7 +2222,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPU&squot;s - they just need to reload everything&n; * from the task structude&n; */
+multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPU&squot;s - they just need to reload everything&n; * from the task structure&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2282,7 +2243,19 @@ op_assign
 op_amp
 id|current-&gt;tss
 suffix:semicolon
-multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * just the stack pointer and the eip.&n;&t; */
+multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; */
+id|asm
+r_volatile
+(paren
+l_string|&quot;lldt %%ax&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|p-&gt;ldt
+)paren
+)paren
+suffix:semicolon
 id|asm
 r_volatile
 (paren
@@ -2314,6 +2287,22 @@ id|p-&gt;eip
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_struct
+(brace
+DECL|member|esp
+r_void
+op_star
+id|esp
+suffix:semicolon
+DECL|member|ss
+r_int
+r_int
+id|ss
+suffix:semicolon
+)brace
+id|stack_start
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2335,10 +2324,6 @@ suffix:semicolon
 id|pgd_t
 id|maincfg
 suffix:semicolon
-r_void
-op_star
-id|stack
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -2356,6 +2341,10 @@ comma
 id|num_starts
 comma
 id|j
+suffix:semicolon
+r_int
+r_int
+id|start_eip
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We need an idle process for each processor.&n;&t; */
 id|kernel_thread
@@ -2410,15 +2399,35 @@ id|i
 op_assign
 id|cpucount
 suffix:semicolon
-multiline_comment|/* This MUST be in the low 1MB range. That&squot;s ok, we&squot;re cool */
-id|stack
+multiline_comment|/* start_eip had better be page-aligned! */
+id|start_eip
+op_assign
+id|setup_trampoline
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Booting processor %d eip %lx: &quot;
+comma
+id|i
+comma
+id|start_eip
+)paren
+suffix:semicolon
+multiline_comment|/* So we see what&squot;s up   */
+id|stack_start.esp
 op_assign
 (paren
 r_void
 op_star
 )paren
 (paren
-l_int|4096
+l_int|1024
+op_plus
+id|PAGE_SIZE
 op_plus
 (paren
 r_char
@@ -2427,23 +2436,6 @@ op_star
 id|idle
 )paren
 suffix:semicolon
-id|install_trampoline
-c_func
-(paren
-id|stack
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Booting processor %d stack %p: &quot;
-comma
-id|i
-comma
-id|stack
-)paren
-suffix:semicolon
-multiline_comment|/* So we set what&squot;s up   */
 multiline_comment|/*&n;&t; *&t;This grunge runs the startup process for&n;&t; *&t;the targeted processor.&n;&t; */
 id|SMP_PRINTK
 c_func
@@ -2489,13 +2481,7 @@ l_int|0x469
 )paren
 )paren
 op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|stack
-)paren
+id|start_eip
 op_rshift
 l_int|4
 suffix:semicolon
@@ -2522,7 +2508,9 @@ l_int|0x467
 )paren
 )paren
 op_assign
-l_int|0
+id|start_eip
+op_amp
+l_int|0xf
 suffix:semicolon
 id|SMP_PRINTK
 c_func
@@ -2862,11 +2850,7 @@ op_or
 id|APIC_DEST_DM_STARTUP
 op_or
 (paren
-id|virt_to_phys
-c_func
-(paren
-id|stack
-)paren
+id|start_eip
 op_rshift
 l_int|12
 )paren
@@ -4983,7 +4967,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n..... CPU clock speed is %ld.%ld MHz.&bslash;n&quot;
+l_string|&quot;&bslash;n..... CPU clock speed is %ld.%04ld MHz.&bslash;n&quot;
 comma
 (paren
 (paren
@@ -5027,7 +5011,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;..... APIC bus clock speed is %ld.%ld MHz.&bslash;n&quot;
+l_string|&quot;..... APIC bus clock speed is %ld.%04ld MHz.&bslash;n&quot;
 comma
 id|calibration_result
 op_div

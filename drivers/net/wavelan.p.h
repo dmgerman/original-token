@@ -42,6 +42,7 @@ macro_line|#include&t;&lt;linux/etherdevice.h&gt;
 macro_line|#include&t;&lt;linux/skbuff.h&gt;
 macro_line|#include&t;&lt;linux/malloc.h&gt;
 macro_line|#include&t;&lt;linux/timer.h&gt;
+macro_line|#include&t;&lt;linux/init.h&gt;
 macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Wireless extensions */
 multiline_comment|/* Wavelan declarations */
 macro_line|#include&t;&quot;i82586.h&quot;

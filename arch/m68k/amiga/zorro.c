@@ -3,10 +3,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#ifdef CONFIG_ZORRO
 multiline_comment|/*&n;    *    Zorro Expansion Device Manufacturers and Products&n;    */
 DECL|struct|Manufacturer
@@ -1635,19 +1636,6 @@ id|END
 id|BEGIN_PROD
 c_func
 (paren
-id|DELACOMP
-)paren
-id|PROD
-c_func
-(paren
-l_string|&quot;RAM Expansion 2000&quot;
-comma
-id|DELACOMP_RAM_2000
-)paren
-id|END
-id|BEGIN_PROD
-c_func
-(paren
 id|VILLAGE_TRONIC
 )paren
 id|PROD
@@ -2812,13 +2800,6 @@ c_func
 l_string|&quot;Masoboshi&quot;
 comma
 id|MASOBOSHI
-)paren
-id|MANUF
-c_func
-(paren
-l_string|&quot;DelaComp&quot;
-comma
-id|DELACOMP
 )paren
 id|MANUF
 c_func
@@ -4273,12 +4254,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;    *    Initialization&n;    */
-DECL|function|zorro_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|zorro_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: devmap.c,v 1.3 1996/09/19 20:27:19 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devmap.c,v 1.4 1997/05/01 01:41:31 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -103,7 +103,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -188,7 +188,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

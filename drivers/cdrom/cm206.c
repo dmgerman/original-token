@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ucdrom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
@@ -5238,13 +5239,17 @@ suffix:colon
 )brace
 )brace
 multiline_comment|/* This function probes for the adapter card. It returns the base&n;   address if it has found the adapter card. One can specify a base &n;   port to probe specifically, or 0 which means span all possible&n;   bases. &n;&n;   Linus says it is too dangerous to use writes for probing, so we&n;   stick with pure reads for a while. Hope that 8 possible ranges,&n;   check_region, 15 bits of one port and 6 of another make things&n;   likely enough to accept the region on the first hit...&n; */
-DECL|function|probe_base_port
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|probe_base_port
 c_func
 (paren
 r_int
 id|base
+)paren
 )paren
 (brace
 r_int
@@ -5373,13 +5378,17 @@ suffix:semicolon
 )brace
 macro_line|#if !defined(MODULE) || defined(AUTO_PROBE_MODULE)
 multiline_comment|/* Probe for irq# nr. If nr==0, probe for all possible irq&squot;s. */
-DECL|function|probe_irq
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|probe_irq
 c_func
 (paren
 r_int
 id|nr
+)paren
 )paren
 (brace
 r_int
@@ -5465,12 +5474,16 @@ id|irq
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|cm206_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|cm206_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|uch
@@ -5964,12 +5977,16 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* for compatible `insmod&squot; parameter passing */
-DECL|function|parse_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|parse_options
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -6109,7 +6126,10 @@ suffix:semicolon
 )brace
 macro_line|#else /* !MODULE */
 multiline_comment|/* This setup function accepts either `auto&squot; or numbers in the range&n; * 3--11 (for irq) or 0x300--0x370 (for base port) or both. */
-DECL|function|cm206_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|cm206_setup
 c_func
@@ -6121,6 +6141,7 @@ comma
 r_int
 op_star
 id|p
+)paren
 )paren
 (brace
 r_int

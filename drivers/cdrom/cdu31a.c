@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -46,11 +47,12 @@ r_int
 id|int_num
 suffix:semicolon
 multiline_comment|/* Interrupt Number (-1 means scan for it,&n;                                   0 means don&squot;t use) */
-DECL|variable|cdu31a_addresses
+DECL|variable|__initdata
 )brace
 id|cdu31a_addresses
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 macro_line|#if 0&t;/* No autoconfig any more. See Note at beginning&n;&t;   of this file. */
@@ -10211,7 +10213,7 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* The different types of disc loading mechanisms supported */
-DECL|variable|load_mech
+DECL|variable|__initdata
 r_static
 r_const
 r_char
@@ -10219,6 +10221,7 @@ op_star
 id|load_mech
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 l_string|&quot;caddy&quot;
@@ -10230,9 +10233,12 @@ comma
 l_string|&quot;unknown&quot;
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
-DECL|function|get_drive_configuration
 id|get_drive_configuration
 c_func
 (paren
@@ -10250,6 +10256,7 @@ r_int
 r_int
 op_star
 id|res_size
+)paren
 )paren
 (brace
 r_int
@@ -10414,8 +10421,11 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Set up base I/O and interrupts, called from main.c.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|cdu31a_setup
 id|cdu31a_setup
 c_func
 (paren
@@ -10426,6 +10436,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -10522,12 +10533,16 @@ r_int
 id|cdu31a_block_size
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|cdu31a_init
 id|cdu31a_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

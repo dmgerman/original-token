@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/amifdreg.h&gt;
@@ -9040,13 +9041,17 @@ op_rshift
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|probe_drives
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|probe_drives
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -9716,12 +9721,16 @@ id|post_write_timer
 suffix:semicolon
 )brace
 )brace
-DECL|function|amiga_floppy_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|amiga_floppy_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

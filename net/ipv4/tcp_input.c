@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.50 1997/04/22 02:53:12 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.51 1997/04/27 19:24:40 schenk Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -944,6 +944,11 @@ c_cond
 (paren
 id|sysctl_tcp_window_scaling
 )paren
+(brace
+id|tp-&gt;wscale_ok
+op_assign
+l_int|1
+suffix:semicolon
 id|tp-&gt;snd_wscale
 op_assign
 op_star
@@ -953,6 +958,7 @@ op_star
 )paren
 id|ptr
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -2576,6 +2582,8 @@ c_func
 (paren
 id|th-&gt;window
 )paren
+op_lshift
+id|tp-&gt;snd_wscale
 suffix:semicolon
 r_if
 c_cond
@@ -4886,7 +4894,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*  Now we have several options: In theory there is &n;&t;&t;&t; *  nothing else in the frame. KA9Q has an option to &n;&t;&t;&t; *  send data with the syn, BSD accepts data with the&n;&t;&t;&t; *  syn up to the [to be] advertised window and &n;&t;&t;&t; *  Solaris 2.1 gives you a protocol error. For now &n;&t;&t;&t; *  we just ignore it, that fits the spec precisely &n;&t;&t;&t; *  and avoids incompatibilities. It would be nice in&n;&t;&t;&t; *  future to drop through and process the data.&n;&t;&t;&t; *&n;&t;&t;&t; *  Now that TTCP is starting to be used we ought to &n;&t;&t;&t; *  queue this data.&n;&t;&t;&t; */
+multiline_comment|/* Now we have several options: In theory there is &n;&t;&t;&t; * nothing else in the frame. KA9Q has an option to &n;&t;&t;&t; * send data with the syn, BSD accepts data with the&n;&t;&t;&t; * syn up to the [to be] advertised window and &n;&t;&t;&t; * Solaris 2.1 gives you a protocol error. For now &n;&t;&t;&t; * we just ignore it, that fits the spec precisely &n;&t;&t;&t; * and avoids incompatibilities. It would be nice in&n;&t;&t;&t; * future to drop through and process the data.&n;&t;&t;&t; *&n;&t;&t;&t; * Now that TTCP is starting to be used we ought to &n;&t;&t;&t; * queue this data.&n;&t;&t;&t; * But, this leaves one open to an easy denial of&n;&t;&t; &t; * service attack, and SYN cookies can&squot;t defend&n;&t;&t;&t; * against this problem. So, we drop the data&n;&t;&t;&t; * in the interest of security over speed.&n;&t;&t;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -4977,10 +4985,6 @@ id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
-id|tp-&gt;rcv_wnd
-op_assign
-l_int|0
-suffix:semicolon
 id|tp-&gt;rcv_wup
 op_assign
 id|skb-&gt;seq
@@ -4994,6 +4998,8 @@ c_func
 (paren
 id|th-&gt;window
 )paren
+op_lshift
+id|tp-&gt;snd_wscale
 suffix:semicolon
 id|tp-&gt;snd_wl1
 op_assign
@@ -5024,6 +5030,31 @@ id|tp
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: need to make room for SACK still */
+r_if
+c_cond
+(paren
+id|tp-&gt;wscale_ok
+op_eq
+l_int|0
+)paren
+(brace
+id|tp-&gt;snd_wscale
+op_assign
+id|tp-&gt;rcv_wscale
+op_assign
+l_int|0
+suffix:semicolon
+id|tp-&gt;window_clamp
+op_assign
+id|min
+c_func
+(paren
+id|tp-&gt;window_clamp
+comma
+l_int|65535
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5565,6 +5596,8 @@ c_func
 (paren
 id|th-&gt;window
 )paren
+op_lshift
+id|tp-&gt;snd_wscale
 suffix:semicolon
 id|tp-&gt;snd_wl1
 op_assign

@@ -12,8 +12,8 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
-macro_line|#if 0
-mdefine_line|#define VFC_DEBUG
+macro_line|#if 0 
+mdefine_line|#define VFC_I2C_DEBUG
 macro_line|#endif
 macro_line|#include &quot;vfc.h&quot;
 macro_line|#include &quot;vfc_i2c.h&quot;
@@ -82,6 +82,17 @@ op_star
 id|dev
 )paren
 (brace
+multiline_comment|/* Used to profile code and eliminate too many delays */
+id|VFC_I2C_DEBUG_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;vfc%d: Delaying&bslash;n&quot;
+comma
+id|dev-&gt;instance
+)paren
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -209,6 +220,12 @@ id|dev-&gt;regs-&gt;i2c_s1
 op_assign
 id|ENABLE_SERIAL
 op_or
+id|SELECT
+c_func
+(paren
+id|S0
+)paren
+op_or
 id|ACK
 suffix:semicolon
 id|vfc_i2c_reset_bus
@@ -232,7 +249,7 @@ op_star
 id|dev
 )paren
 (brace
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -287,7 +304,7 @@ id|dev-&gt;regs-&gt;i2c_s1
 op_assign
 id|CLEAR_I2C_BUS
 suffix:semicolon
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -468,6 +485,8 @@ macro_line|#if 1
 id|dev-&gt;regs-&gt;i2c_s1
 op_assign
 id|SEND_I2C_STOP
+op_or
+id|ACK
 suffix:semicolon
 id|dev-&gt;regs-&gt;i2c_s1
 op_assign
@@ -511,7 +530,7 @@ op_or
 l_int|0x1
 )paren
 suffix:semicolon
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -547,7 +566,7 @@ op_complement
 l_int|0x1
 )paren
 suffix:semicolon
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
@@ -768,11 +787,10 @@ id|dev-&gt;regs-&gt;i2c_reg
 op_assign
 id|NEGATIVE_ACK
 suffix:semicolon
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren
-id|KERN_DEBUG
 l_string|&quot;vfc%d: sending negative ack&bslash;n&quot;
 comma
 id|dev-&gt;instance
@@ -984,6 +1002,15 @@ comma
 id|dev-&gt;instance
 )paren
 suffix:semicolon
+id|dev-&gt;regs-&gt;i2c_s1
+op_assign
+id|SEND_I2C_STOP
+suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 )brace
 id|buf
 op_increment
@@ -1133,7 +1160,7 @@ id|ret
 r_case
 id|XMIT_LAST_BYTE
 suffix:colon
-id|VFC_DEBUG_PRINTK
+id|VFC_I2C_DEBUG_PRINTK
 c_func
 (paren
 (paren

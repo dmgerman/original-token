@@ -4,6 +4,7 @@ mdefine_line|#define MAJOR_NR    Z2RAM_MAJOR
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#if defined(MODULE)
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -877,12 +878,16 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|z2_init
 id|z2_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

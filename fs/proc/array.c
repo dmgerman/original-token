@@ -2147,7 +2147,7 @@ multiline_comment|/*&n;   * See arch/alpha/kernel/ptrace.c for details.&n;   */
 DECL|macro|PT_REG
 macro_line|# define PT_REG(reg)&t;&t;(PAGE_SIZE - sizeof(struct pt_regs)&t;&bslash;&n;&t;&t;&t;&t; + (long)&amp;((struct pt_regs *)0)-&gt;reg)
 DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
+macro_line|# define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + PAGE_SIZE + (unsigned long)(tsk)))
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
 macro_line|#elif defined(__mc68000__)

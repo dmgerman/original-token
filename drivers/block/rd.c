@@ -13,8 +13,10 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 r_extern
 r_void
 id|wait_for_keypress
@@ -734,12 +736,16 @@ multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* This is the registration and initialization section of the ramdisk driver */
-DECL|function|rd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|rd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -933,8 +939,11 @@ macro_line|#endif  /* MODULE */
 multiline_comment|/* End of non-loading portions of the ramdisk driver */
 macro_line|#ifdef RD_LOADER 
 multiline_comment|/*&n; * This routine tries to a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|identify_ramdisk_image
 id|identify_ramdisk_image
 c_func
 (paren
@@ -948,6 +957,7 @@ id|fp
 comma
 r_int
 id|start_block
+)paren
 )paren
 (brace
 r_const
@@ -1408,7 +1418,10 @@ id|nblocks
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine loads in the ramdisk image.&n; */
-DECL|function|rd_load_image
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|rd_load_image
@@ -1419,6 +1432,7 @@ id|device
 comma
 r_int
 id|offset
+)paren
 )paren
 (brace
 r_struct
@@ -1879,11 +1893,16 @@ id|fs
 )paren
 suffix:semicolon
 )brace
-DECL|function|rd_load
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|rd_load
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_if
@@ -1944,12 +1963,16 @@ id|rd_image_start
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|initrd_load
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|initrd_load
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|rd_load_image
@@ -2143,7 +2166,10 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#include &quot;../../lib/inflate.c&quot;
-DECL|function|malloc
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 op_star
@@ -2152,6 +2178,7 @@ c_func
 (paren
 r_int
 id|size
+)paren
 )paren
 (brace
 r_return
@@ -2164,7 +2191,10 @@ id|GFP_KERNEL
 )paren
 suffix:semicolon
 )brace
-DECL|function|free
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|free
@@ -2174,6 +2204,7 @@ r_void
 op_star
 id|where
 )paren
+)paren
 (brace
 id|kfree
 c_func
@@ -2182,7 +2213,10 @@ id|where
 )paren
 suffix:semicolon
 )brace
-DECL|function|gzip_mark
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|gzip_mark
@@ -2193,9 +2227,13 @@ op_star
 op_star
 id|ptr
 )paren
+)paren
 (brace
 )brace
-DECL|function|gzip_release
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|gzip_release
@@ -2206,15 +2244,21 @@ op_star
 op_star
 id|ptr
 )paren
+)paren
 (brace
 )brace
 multiline_comment|/* ===========================================================================&n; * Fill the input buffer. This is called only when the buffer is empty&n; * and at least one byte is really needed.&n; */
-DECL|function|fill_inbuf
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|fill_inbuf
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_if
@@ -2265,12 +2309,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ===========================================================================&n; * Write the output window window[0..outcnt-1] and update crc and bytes_out.&n; * (Used for the decompressed data only.)&n; */
-DECL|function|flush_window
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|flush_window
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 id|ulg
@@ -2366,7 +2415,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|error
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|error
@@ -2375,6 +2427,7 @@ c_func
 r_char
 op_star
 id|x
+)paren
 )paren
 (brace
 id|printk
@@ -2391,9 +2444,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|crd_load
 id|crd_load
 c_func
 (paren
@@ -2406,6 +2462,7 @@ r_struct
 id|file
 op_star
 id|outfp
+)paren
 )paren
 (brace
 r_int

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -373,9 +374,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-DECL|function|con_type_init
 id|con_type_init
 c_func
 (paren
@@ -388,6 +392,7 @@ r_char
 op_star
 op_star
 id|display_desc
+)paren
 )paren
 (brace
 r_if
@@ -728,12 +733,16 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|con_type_init_finish
 id|con_type_init_finish
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 )brace

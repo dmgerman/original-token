@@ -18,17 +18,17 @@ id|kc_lru_time
 suffix:semicolon
 multiline_comment|/* Last time this cache was used */
 DECL|member|kc_first
-r_int
+id|s32
 id|kc_first
 suffix:semicolon
 multiline_comment|/* First cached key */
 DECL|member|kc_last
-r_int
+id|s32
 id|kc_last
 suffix:semicolon
 multiline_comment|/* Last cached key */
 DECL|member|kc_this_key
-r_int
+id|s32
 id|kc_this_key
 suffix:semicolon
 multiline_comment|/* Key of extension block this data block keys are from */
@@ -38,12 +38,12 @@ id|kc_this_seq
 suffix:semicolon
 multiline_comment|/* Sequence number of this extension block */
 DECL|member|kc_next_key
-r_int
+id|s32
 id|kc_next_key
 suffix:semicolon
 multiline_comment|/* Key of next extension block */
 DECL|member|kc_keys
-r_int
+id|s32
 id|kc_keys
 (braket
 id|AFFS_KCSIZE
@@ -68,7 +68,7 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* The 4 key caches */
 DECL|member|ec
-id|__s32
+id|s32
 id|ec
 (braket
 id|EC_SIZE
@@ -88,22 +88,22 @@ r_struct
 id|affs_inode_info
 (brace
 DECL|member|i_protect
-id|__u32
+id|u32
 id|i_protect
 suffix:semicolon
 multiline_comment|/* unused attribute bits */
 DECL|member|i_parent
-id|__s32
+id|s32
 id|i_parent
 suffix:semicolon
 multiline_comment|/* parent ino */
 DECL|member|i_original
-id|__s32
+id|s32
 id|i_original
 suffix:semicolon
 multiline_comment|/* if != 0, this is the key of the original */
 DECL|member|i_data
-id|__s32
+id|s32
 id|i_data
 (braket
 id|AFFS_MAX_PREALLOC

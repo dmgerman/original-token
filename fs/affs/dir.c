@@ -208,7 +208,7 @@ id|j
 comma
 id|namelen
 suffix:semicolon
-r_int
+id|s32
 id|i
 suffix:semicolon
 r_int
@@ -452,10 +452,14 @@ op_eq
 l_int|0xffff
 )paren
 (brace
-id|printk
+id|affs_warning
 c_func
 (paren
-l_string|&quot;AFFS: more than 65535 entries in chain&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;readdir&quot;
+comma
+l_string|&quot;More than 65535 entries in chain&quot;
 )paren
 suffix:semicolon
 id|chain_pos
@@ -596,7 +600,7 @@ id|dir-&gt;i_version
 id|i
 op_assign
 (paren
-r_int
+id|s32
 )paren
 id|filp-&gt;private_data
 suffix:semicolon
@@ -620,7 +624,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: hash_pos=%lu chain_pos=%lu&bslash;n&quot;
+l_string|&quot;AFFS: hash_pos=%d chain_pos=%d&bslash;n&quot;
 comma
 id|hash_pos
 comma
@@ -656,10 +660,14 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: readdir: Can&squot;t get block %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;readdir&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|i
 )paren
@@ -737,7 +745,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: readdir(): filldir(..,&bslash;&quot;%.*s&bslash;&quot;,ino=%lu), i=%lu&bslash;n&quot;
+l_string|&quot;AFFS: readdir(): filldir(..,&bslash;&quot;%.*s&bslash;&quot;,ino=%lu), i=%d&bslash;n&quot;
 comma
 id|namelen
 comma

@@ -22,12 +22,12 @@ id|bm_bh
 suffix:semicolon
 multiline_comment|/* Buffer head if loaded (bm_count &gt; 0) */
 DECL|member|bm_firstblk
-r_int
+id|s32
 id|bm_firstblk
 suffix:semicolon
 multiline_comment|/* Block number of first bit in this map */
 DECL|member|bm_key
-r_int
+id|s32
 id|bm_key
 suffix:semicolon
 multiline_comment|/* Disk block number */
@@ -109,7 +109,7 @@ id|s_partition_size
 suffix:semicolon
 multiline_comment|/* Partition size in blocks. */
 DECL|member|s_root_block
-r_int
+id|s32
 id|s_root_block
 suffix:semicolon
 multiline_comment|/* FFS root block number. */
@@ -125,12 +125,12 @@ id|s_flags
 suffix:semicolon
 multiline_comment|/* See below. */
 DECL|member|s_uid
-r_int
+id|s16
 id|s_uid
 suffix:semicolon
 multiline_comment|/* uid to override */
 DECL|member|s_gid
-r_int
+id|s16
 id|s_gid
 suffix:semicolon
 multiline_comment|/* gid to override */

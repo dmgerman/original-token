@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sm.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
@@ -3103,15 +3104,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-r_static
-macro_line|#endif /* MODULE */
-DECL|function|sm_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|sm_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3830,7 +3832,10 @@ suffix:semicolon
 macro_line|#else /* MODULE */
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * format: sm=io,irq,dma[,dma2[,serio[,pario]]],mode&n; * mode: hw:modem&n; * hw: sbc, wss, wssfdx&n; * modem: afsk1200, fsk9600&n; */
-DECL|function|sm_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sm_setup
 c_func
@@ -3842,6 +3847,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

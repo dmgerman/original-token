@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#ifdef ALIAS_USER_LAND_DEBUG
 macro_line|#include &quot;net_alias.h&quot;
@@ -323,12 +324,16 @@ multiline_comment|/* next */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * ip_alias module initialization&n; */
-DECL|function|ip_alias_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ip_alias_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

@@ -3,6 +3,7 @@ multiline_comment|/*&n; * An implementation of the Slab Allocator as described i
 macro_line|#include&t;&lt;linux/slab.h&gt;
 macro_line|#include&t;&lt;linux/mm.h&gt;
 macro_line|#include&t;&lt;linux/interrupt.h&gt;
+macro_line|#include&t;&lt;linux/init.h&gt;
 macro_line|#include&t;&lt;asm/system.h&gt;
 macro_line|#include&t;&lt;asm/cache.h&gt;
 multiline_comment|/* SLAB_MGMT_CHECKS&t;- define to enable extra checks in&n; *                        kmem_cache_[create|destroy|shrink].&n; *&t;&t;&t;  If you&squot;re not messing around with these funcs, then undef this.&n; * SLAB_HIGH_PACK&t;- define to allow &squot;bufctl&squot;s to be stored within objs that do not&n; *&t;&t;&t;  have a state.  This allows more objs per slab, but removes the&n; *&t;&t;&t;  ability to sanity check an addr on release (if the addr is&n; *                        within any slab, anywhere, kmem_cache_free() will accept it!).&n; * SLAB_DEBUG_SUPPORT&t;- when defined, kmem_cache_create() will honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL and SLAB_RED_ZONE.&n; */
@@ -842,15 +843,19 @@ op_amp
 id|cache_cache
 suffix:semicolon
 multiline_comment|/* Init an internal cache */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
-DECL|function|kmem_own_cache_init
 id|kmem_own_cache_init
 c_func
 (paren
 id|kmem_cache_t
 op_star
 id|cachep
+)paren
 )paren
 (brace
 r_int
@@ -955,8 +960,11 @@ id|cachep-&gt;c_colour
 suffix:semicolon
 )brace
 multiline_comment|/* Initialisation - setup all internal caches */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|kmem_cache_init
 id|kmem_cache_init
 c_func
 (paren
@@ -965,6 +973,7 @@ id|start
 comma
 r_int
 id|end
+)paren
 )paren
 (brace
 multiline_comment|/* sanity */
@@ -1066,12 +1075,16 @@ id|start
 suffix:semicolon
 )brace
 multiline_comment|/* Initialisation - setup general caches */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|kmem_cache_sizes_init
 id|kmem_cache_sizes_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

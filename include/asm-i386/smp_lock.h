@@ -19,7 +19,7 @@ DECL|macro|release_kernel_lock
 mdefine_line|#define release_kernel_lock(task, cpu, depth) &bslash;&n;do { &bslash;&n;&t;if ((depth = (task)-&gt;lock_depth) != 0) { &bslash;&n;&t;&t;__cli(); &bslash;&n;&t;&t;(task)-&gt;lock_depth = 0; &bslash;&n;&t;&t;active_kernel_processor = NO_PROC_ID; &bslash;&n;&t;&t;clear_bit(0,&amp;kernel_flag); &bslash;&n;&t;} &bslash;&n;&t;release_irqlock(cpu); &bslash;&n;&t;__sti(); &bslash;&n;} while (0)
 multiline_comment|/* Re-acquire the kernel lock */
 DECL|macro|reacquire_kernel_lock
-mdefine_line|#define reacquire_kernel_lock(task, cpu, depth) &bslash;&n;do { if (depth) __asm__ __volatile__( &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl $0f,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp __lock_kernel&bslash;n&quot; &bslash;&n;&t;&quot;0:&bslash;t&quot; &bslash;&n;&t;&quot;movl %2,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&quot; &bslash;&n;&t;: &quot;=m&quot; (task-&gt;lock_depth) &bslash;&n;&t;: &quot;d&quot; (cpu), &quot;c&quot; (depth) &bslash;&n;&t;: &quot;ax&quot;); &bslash;&n;} while (0)
+mdefine_line|#define reacquire_kernel_lock(task, cpu, depth) &bslash;&n;do { if (depth) __asm__ __volatile__( &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call __lock_kernel&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %2,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&quot; &bslash;&n;&t;: &quot;=m&quot; (task-&gt;lock_depth) &bslash;&n;&t;: &quot;d&quot; (cpu), &quot;c&quot; (depth)); &bslash;&n;} while (0)
 multiline_comment|/* Locking the kernel */
 DECL|function|lock_kernel
 r_extern
@@ -106,14 +106,7 @@ op_mod
 l_int|0
 id|jne
 l_float|0f
-id|movl
-"$"
-l_float|0f
-comma
-op_mod
-op_mod
-id|eax
-id|jmp
+id|call
 id|__lock_kernel
 l_int|0
 suffix:colon
@@ -126,12 +119,7 @@ suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|current_set
-(braket
-id|cpu
-)braket
-op_member_access_from_pointer
-id|lock_depth
+id|current-&gt;lock_depth
 )paren
 comma
 l_string|&quot;d&quot;
@@ -139,8 +127,6 @@ l_string|&quot;d&quot;
 id|cpu
 )paren
 suffix:colon
-l_string|&quot;ax&quot;
-comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon

@@ -396,12 +396,19 @@ DECL|macro|VFC_CONTROL_CAPTRESET
 mdefine_line|#define VFC_CONTROL_CAPTRESET 0x04000000
 DECL|macro|VFC_STATUS_CAPTURE
 mdefine_line|#define VFC_STATUS_CAPTURE    0x08000000
-macro_line|#ifdef VFC_DEBUG
-DECL|macro|VFC_DEBUG_PRINTK
-mdefine_line|#define VFC_DEBUG_PRINTK(a) printk a
+macro_line|#ifdef VFC_IOCTL_DEBUG
+DECL|macro|VFC_IOCTL_DEBUG_PRINTK
+mdefine_line|#define VFC_IOCTL_DEBUG_PRINTK(a) printk a
 macro_line|#else
-DECL|macro|VFC_DEBUG_PRINTK
-mdefine_line|#define VFC_DEBUG_PRINTK(a)
+DECL|macro|VFC_IOCTL_DEBUG_PRINTK
+mdefine_line|#define VFC_IOCTL_DEBUG_PRINTK(a)
+macro_line|#endif
+macro_line|#ifdef VFC_I2C_DEBUG
+DECL|macro|VFC_I2C_DEBUG_PRINTK
+mdefine_line|#define VFC_I2C_DEBUG_PRINTK(a) printk a
+macro_line|#else
+DECL|macro|VFC_I2C_DEBUG_PRINTK
+mdefine_line|#define VFC_I2C_DEBUG_PRINTK(a)
 macro_line|#endif
 macro_line|#endif /* _LINUX_VFC_H_ */
 eof

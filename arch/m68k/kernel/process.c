@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/m68k/kernel/process.c&n; *&n; *  Copyright (C) 1995  Hamish Macdonald&n; *&n; *  68060 fixes by Jesper Skov&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -148,11 +149,43 @@ c_loop
 suffix:semicolon
 suffix:semicolon
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_resched
+)paren
+macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
+multiline_comment|/* block out HSYNC on the atari (falcon) */
+id|__asm__
+c_func
+(paren
+l_string|&quot;stop #0x2200&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+macro_line|#else /* portable version */
+id|__asm__
+c_func
+(paren
+l_string|&quot;stop #0x2000&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* machine compilation types */ 
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 id|ret
 op_assign
 l_int|0

@@ -59,9 +59,9 @@ l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -159,9 +159,9 @@ l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -257,9 +257,9 @@ l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

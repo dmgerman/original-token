@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for cop_to/from_user */
@@ -177,7 +178,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|init_swap_cache
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|init_swap_cache
@@ -190,6 +194,7 @@ comma
 r_int
 r_int
 id|mem_end
+)paren
 )paren
 (brace
 r_int

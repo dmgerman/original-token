@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -4500,6 +4501,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 DECL|function|do_mount_root
 r_static
 r_void
@@ -4508,6 +4510,19 @@ c_func
 (paren
 r_void
 )paren
+macro_line|#else
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|do_mount_root
+c_func
+(paren
+r_void
+)paren
+)paren
+macro_line|#endif
 (brace
 r_struct
 id|file_system_type
@@ -5057,12 +5072,16 @@ id|ROOT_DEV
 )paren
 suffix:semicolon
 )brace
-DECL|function|mount_root
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|mount_root
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|memset

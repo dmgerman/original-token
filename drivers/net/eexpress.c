@@ -19,6 +19,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -861,7 +862,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Linux interface&n; */
 multiline_comment|/*&n; * checks for presence of EtherExpress card&n; */
-DECL|function|express_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|express_probe
 c_func
@@ -870,6 +874,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -3881,7 +3886,10 @@ id|jiffies
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Sanity check the suspected EtherExpress card&n; * Read hardware address, reset card, size memory and initialize buffer&n; * memory pointers. These are held in dev-&gt;priv, in case someone has more&n; * than one card in a machine.&n; */
-DECL|function|eexp_hw_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|eexp_hw_probe
@@ -3895,6 +3903,7 @@ comma
 r_int
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_int
@@ -4532,7 +4541,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a word from the EtherExpress on-board serial EEPROM.&n; * The EEPROM contains 64 words of 16 bits.&n; */
-DECL|function|eexp_hw_readeeprom
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_int
@@ -4546,6 +4558,7 @@ comma
 r_int
 r_char
 id|location
+)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: segment.c,v 1.3 1996/09/19 20:27:28 davem Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: segment.c,v 1.4 1997/05/01 01:41:33 davem Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -66,7 +66,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

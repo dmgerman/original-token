@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/ps2esdi.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -679,12 +680,16 @@ multiline_comment|/* next */
 )brace
 suffix:semicolon
 multiline_comment|/* initialization routine called by ll_rw_blk.c   */
-DECL|function|ps2esdi_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ps2esdi_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* register the device - pass the name, major number and operations&n;&t;   vector .                                                 */
@@ -752,7 +757,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* ps2esdi_init */
 multiline_comment|/* handles boot time command line parameters */
-DECL|function|tp720_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|tp720_setup
 c_func
@@ -764,6 +772,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 multiline_comment|/* no params, just sets the tp720esdi flag if it exists */
@@ -780,7 +789,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|ed_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ed_setup
 c_func
@@ -792,6 +804,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int
@@ -1030,7 +1043,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/* ps2 esdi specific initialization - called thru the gendisk chain */
-DECL|function|ps2esdi_geninit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ps2esdi_geninit
@@ -1041,8 +1057,9 @@ id|gendisk
 op_star
 id|ignored
 )paren
+)paren
 (brace
-multiline_comment|/*&n;&n;&t;   The first part contains the initialization code&n;&t;   for the ESDI disk subsystem.  All we really do&n;&t;   is search for the POS registers of the controller&n;&t;   to do some simple setup operations.  First, we&n;&t;   must ensure that the controller is installed,&n;&t;   enabled, and configured as PRIMARY.  Then we must&n;&t;   determine the DMA arbitration level being used by&n;&t;   the controller so we can handle data transfer&n;&t;   operations properly.  If all of this works, then&n;&t;   we will set the INIT_FLAG to a non-zero value.&n;&t; */
+multiline_comment|/*&n;&t;   The first part contains the initialization code&n;&t;   for the ESDI disk subsystem.  All we really do&n;&t;   is search for the POS registers of the controller&n;&t;   to do some simple setup operations.  First, we&n;&t;   must ensure that the controller is installed,&n;&t;   enabled, and configured as PRIMARY.  Then we must&n;&t;   determine the DMA arbitration level being used by&n;&t;   the controller so we can handle data transfer&n;&t;   operations properly.  If all of this works, then&n;&t;   we will set the INIT_FLAG to a non-zero value.&n;&t; */
 r_int
 id|slot
 op_assign
@@ -1510,13 +1527,17 @@ id|ps2esdi_blocksizes
 suffix:semicolon
 )brace
 multiline_comment|/* ps2esdi_geninit */
-DECL|function|ps2esdi_get_device_cfg
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ps2esdi_get_device_cfg
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|u_short

@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -13,6 +15,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
 id|asmlinkage
 r_int
 r_int
@@ -171,6 +174,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|local_irq_count
+)paren
+suffix:semicolon
+DECL|variable|__m68k_bh_counter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__m68k_bh_counter
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

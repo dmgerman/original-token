@@ -3,7 +3,7 @@ macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
 multiline_comment|/*&n;     *  Amiboot Version&n;     */
 DECL|macro|AMIBOOT_VERSION
-mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;5.4&quot;
+mdefine_line|#define AMIBOOT_VERSION&t;&t;&quot;5.5&quot;
 multiline_comment|/*&n;     *  Amiga Bootinfo Definitions&n;     *&n;     *  All limits herein are `soft&squot; limits, i.e. they don&squot;t put constraints&n;     *  on the actual parameters in the kernel.&n;     */
 DECL|struct|amiga_bootinfo
 r_struct

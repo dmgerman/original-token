@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 19
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/* Define this if you want slow routines that try to trip errors */
@@ -878,7 +879,10 @@ id|order
 )paren
 suffix:semicolon
 )brace
-DECL|function|kmalloc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|kmalloc_init
 c_func
@@ -888,6 +892,7 @@ id|start_mem
 comma
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 r_int

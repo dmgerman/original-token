@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
@@ -1092,12 +1093,16 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|sysctl_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sysctl_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

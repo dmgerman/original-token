@@ -3364,7 +3364,10 @@ id|parport_ptr
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|lp_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|lp_setup
 c_func
@@ -3376,6 +3379,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 multiline_comment|/* Ugh. */

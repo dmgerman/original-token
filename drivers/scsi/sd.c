@@ -4477,13 +4477,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Spin up drives, as required.  Only do this at boot time */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|MODULE_FLAG
-)paren
-(brace
+multiline_comment|/* Spinup needs to be done for module loads too. */
 r_do
 (brace
 id|retries
@@ -4876,8 +4870,6 @@ l_string|&quot;ready&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* !MODULE_FLAG */
 id|retries
 op_assign
 l_int|3

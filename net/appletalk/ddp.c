@@ -33,6 +33,7 @@ macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|APPLETALK_DEBUG
 macro_line|#undef APPLETALK_DEBUG
 macro_line|#ifdef APPLETALK_DEBUG
@@ -7709,7 +7710,10 @@ id|atalk_if_get_info
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Called by proto.c on kernel start up */
-DECL|function|atalk_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atalk_proto_init
 c_func
@@ -7718,6 +7722,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 (paren

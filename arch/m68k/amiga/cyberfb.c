@@ -6,12 +6,13 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#include &lt;linux/fb.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &quot;s3blit.h&quot;
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
@@ -5743,7 +5744,10 @@ id|this_opt
 suffix:semicolon
 )brace
 multiline_comment|/*&n;    *    Initialization&n;    */
-DECL|function|Cyber_fb_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|fb_info
 op_star
@@ -5753,6 +5757,7 @@ c_func
 r_int
 op_star
 id|mem_start
+)paren
 )paren
 (brace
 r_int

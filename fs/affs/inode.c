@@ -18,6 +18,8 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/* AmigaOS allows file names with up to 30 characters length.&n; * Names longer than that will be silently truncated. If you&n; * want to disallow this, comment out the following #define.&n; * Creating filesystem objects with longer names will then&n; * result in an error (ENAMETOOLONG).&n; */
+multiline_comment|/*#define NO_TRUNCATE */
 r_extern
 r_int
 op_star
@@ -32,6 +34,75 @@ id|sys_tz
 suffix:semicolon
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
+r_static
+r_int
+id|affs_notify_change
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|iattr
+op_star
+id|attr
+)paren
+suffix:semicolon
+r_static
+r_void
+id|affs_put_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_static
+r_void
+id|affs_read_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_static
+r_void
+id|affs_statfs
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_struct
+id|statfs
+op_star
+id|buf
+comma
+r_int
+id|bufsiz
+)paren
+suffix:semicolon
+r_static
+r_void
+id|affs_write_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_static
 r_void
 DECL|function|affs_put_super
 id|affs_put_super
@@ -391,6 +462,7 @@ multiline_comment|/* remount */
 )brace
 suffix:semicolon
 r_int
+r_int
 DECL|function|affs_parent_ino
 id|affs_parent_ino
 c_func
@@ -418,9 +490,14 @@ id|dir-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
+c_func
 (paren
-l_string|&quot;affs_parent_ino: argument is not a directory&bslash;n&quot;
+id|dir-&gt;i_sb
+comma
+l_string|&quot;parent_ino&quot;
+comma
+l_string|&quot;Trying to get parent of non-directory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -467,7 +544,7 @@ r_int
 op_star
 id|reserved
 comma
-r_int
+id|s32
 op_star
 id|root
 comma
@@ -636,7 +713,7 @@ id|value
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: option protect does not take an argument&bslash;n&quot;
+l_string|&quot;AFFS: Option protect does not take an argument&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -672,7 +749,7 @@ id|value
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: option verbose does not take an argument&bslash;n&quot;
+l_string|&quot;AFFS: Option verbose does not take an argument&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -735,7 +812,7 @@ id|value
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: argument for uid option missing&bslash;n&quot;
+l_string|&quot;AFFS: Argument for uid option missing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -830,7 +907,7 @@ id|value
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: argument for gid option missing&bslash;n&quot;
+l_string|&quot;AFFS: Argument for gid option missing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1274,7 +1351,7 @@ l_int|4096
 (brace
 id|printk
 (paren
-l_string|&quot;AFFS: Invalid blocksize (512, 1024, 2048, 4096 allowed).&bslash;n&quot;
+l_string|&quot;AFFS: Invalid blocksize (512, 1024, 2048, 4096 allowed)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1340,6 +1417,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* This function definitely needs to be split up. Some fine day I&squot;ll&n; * hopefully have the guts to do so. Until then: sorry for the mess.&n; */
+r_static
 r_struct
 id|super_block
 op_star
@@ -1377,20 +1455,20 @@ id|dev
 op_assign
 id|s-&gt;s_dev
 suffix:semicolon
-r_int
+id|s32
 id|root_block
 suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-id|__u32
+id|u32
 id|chksum
 suffix:semicolon
-id|__u32
+id|u32
 op_star
 id|bm
 suffix:semicolon
-r_int
+id|s32
 id|ptype
 comma
 id|stype
@@ -1406,7 +1484,7 @@ id|i
 comma
 id|j
 suffix:semicolon
-r_int
+id|s32
 id|key
 suffix:semicolon
 r_int
@@ -1496,7 +1574,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: error parsing options.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Error parsing options&bslash;n&quot;
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -1604,7 +1683,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;affs_read_super: could not determine device size&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Could not determine device size&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1619,7 +1699,7 @@ id|s-&gt;u.affs_sb.s_reserved
 op_assign
 id|reserved
 suffix:semicolon
-multiline_comment|/* Try to find root block. Its location may depend on the block size. */
+multiline_comment|/* Try to find root block. Its location depends on the block size. */
 id|s-&gt;u.affs_sb.s_hashsize
 op_assign
 l_int|0
@@ -1727,7 +1807,7 @@ op_increment
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: Dev %s - trying bs=%d bytes, root at %d, &quot;
+l_string|&quot;AFFS: Dev %s - trying bs=%d bytes, root at %u, &quot;
 l_string|&quot;size=%d blocks, %d reserved&bslash;n&quot;
 comma
 id|kdevname
@@ -1771,7 +1851,8 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: unable to read root block&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot read root block&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -1869,7 +1950,8 @@ id|silent
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Can&squot;t find a valid root block on device %s&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot find a valid root block on device %s&bslash;n&quot;
 comma
 id|kdevname
 c_func
@@ -1941,7 +2023,7 @@ c_func
 (paren
 op_star
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bb-&gt;b_data
@@ -1980,7 +2062,8 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Dircache FS - mounting %s read only.&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;AFFS: Dircache FS - mounting %s read only&bslash;n&quot;
 comma
 id|kdevname
 c_func
@@ -2086,6 +2169,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AFFS: Unknown filesystem on device %s: %08X&bslash;n&quot;
 comma
 id|kdevname
@@ -2119,7 +2203,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Can&squot;t get boot block.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot read boot block&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2145,6 +2230,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;AFFS: Mounting volume &bslash;&quot;%*s&bslash;&quot;: Type=%.3s&bslash;&bslash;%c, Blocksize=%d&bslash;n&quot;
 comma
 id|GET_END_PTR
@@ -2238,7 +2324,8 @@ id|s-&gt;s_blocksize
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Can&squot;t read root block a second time&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot read root block&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2348,7 +2435,8 @@ id|GFP_KERNEL
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Not enough memory.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Not enough memory&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2429,7 +2517,8 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Bitmap invalid - mounting %s read only.&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;AFFS: Bitmap invalid - mounting %s read only&bslash;n&quot;
 comma
 id|kdevname
 c_func
@@ -2493,7 +2582,7 @@ id|bh
 id|bm
 op_assign
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -2532,6 +2621,7 @@ id|num_bm
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AFFS: Not enough bitmap space!?&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2590,6 +2680,7 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;AFFS: Bitmap (%d,key=%lu) invalid - &quot;
 l_string|&quot;mounting %s read only.&bslash;n&quot;
 comma
@@ -2668,7 +2759,7 @@ id|key
 suffix:semicolon
 (paren
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bb-&gt;b_data
@@ -2864,7 +2955,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Can&squot;t read bitmap.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot read bitmap&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2930,7 +3022,8 @@ id|s-&gt;s_blocksize
 id|printk
 c_func
 (paren
-l_string|&quot;AFFS: Can&squot;t read bitmap extension.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;AFFS: Cannot read bitmap extension&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2955,6 +3048,7 @@ id|num_bm
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AFFS: Got only %d bitmap blocks, expected %d&bslash;n&quot;
 comma
 id|mapidx
@@ -3018,6 +3112,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;AFFS: get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3153,6 +3248,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|affs_statfs
 id|affs_statfs
@@ -3239,6 +3335,7 @@ id|bufsiz
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|affs_read_inode
 id|affs_read_inode
@@ -3268,14 +3365,14 @@ id|file_end
 op_star
 id|file_end
 suffix:semicolon
-r_int
+id|s32
 id|block
 suffix:semicolon
 r_int
 r_int
 id|prot
 suffix:semicolon
-r_int
+id|s32
 id|ptype
 comma
 id|stype
@@ -3323,10 +3420,14 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: unable to read i-node block %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;read_inode&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|block
 )paren
@@ -3360,10 +3461,14 @@ op_ne
 id|T_SHORT
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: read_inode(): checksum or type (ptype=%d) error on inode %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;read_inode&quot;
+comma
+l_string|&quot;Checksum or type (ptype=%d) error on inode %d&quot;
 comma
 id|ptype
 comma
@@ -3763,10 +3868,14 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: unable to read i-node block %ld&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;read_inode&quot;
+comma
+l_string|&quot;Cannot read block %lu&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -4002,6 +4111,7 @@ op_amp
 id|affs_symlink_inode_operations
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|affs_write_inode
 id|affs_write_inode
@@ -4023,9 +4133,10 @@ id|file_end
 op_star
 id|file_end
 suffix:semicolon
-r_int
+id|uid_t
 id|uid
-comma
+suffix:semicolon
+id|gid_t
 id|gid
 suffix:semicolon
 id|pr_debug
@@ -4071,18 +4182,16 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: Unable to read block of inode %ld on %s&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;write_inode&quot;
+comma
+l_string|&quot;Cannot read block %lu&quot;
 comma
 id|inode-&gt;i_ino
-comma
-id|kdevname
-c_func
-(paren
-id|inode-&gt;i_dev
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -4295,6 +4404,7 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|affs_notify_change
 id|affs_notify_change
@@ -4440,6 +4550,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_void
 DECL|function|affs_put_inode
 id|affs_put_inode
@@ -4531,7 +4642,7 @@ id|super_block
 op_star
 id|sb
 suffix:semicolon
-r_int
+id|s32
 id|block
 suffix:semicolon
 r_if
@@ -4749,8 +4860,19 @@ id|buffer_head
 op_star
 id|link_bh
 suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|ibh
+suffix:semicolon
 r_int
-id|hash
+id|retval
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|s32
+id|next
 suffix:semicolon
 id|pr_debug
 c_func
@@ -4804,6 +4926,11 @@ id|link_bh
 op_assign
 l_int|NULL
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4813,24 +4940,9 @@ op_logical_or
 op_logical_neg
 id|inode_bh
 )paren
-(brace
-id|affs_brelse
-c_func
-(paren
-id|dir_bh
-)paren
+r_goto
+id|addentry_done
 suffix:semicolon
-id|affs_brelse
-c_func
-(paren
-id|inode_bh
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOSPC
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4859,24 +4971,9 @@ c_cond
 op_logical_neg
 id|link_bh
 )paren
-(brace
-id|affs_brelse
-c_func
-(paren
-id|dir_bh
-)paren
+r_goto
+id|addentry_done
 suffix:semicolon
-id|affs_brelse
-c_func
-(paren
-id|inode_bh
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 )brace
 (paren
 (paren
@@ -4912,6 +5009,11 @@ c_func
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4919,10 +5021,85 @@ id|len
 OG
 l_int|30
 )paren
-multiline_comment|/* truncate name quietly */
+macro_line|#ifdef NO_TRUNCATE
+r_goto
+id|addentry_done
+suffix:semicolon
+macro_line|#else
 id|len
 op_assign
 l_int|30
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Check if name is valid */
+id|retval
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|name
+(braket
+id|i
+)braket
+OL
+l_char|&squot; &squot;
+op_logical_or
+id|name
+(braket
+id|i
+)braket
+op_eq
+l_char|&squot;:&squot;
+op_logical_or
+(paren
+(paren
+r_int
+r_char
+)paren
+id|name
+(braket
+id|i
+)braket
+OG
+l_int|0x7e
+op_logical_and
+(paren
+r_int
+r_char
+)paren
+id|name
+(braket
+id|i
+)braket
+OL
+l_int|0xa0
+)paren
+)paren
+r_goto
+id|addentry_done
+suffix:semicolon
+)brace
+id|retval
+op_assign
+l_int|0
 suffix:semicolon
 id|DIR_END
 c_func
@@ -4991,7 +5168,7 @@ c_func
 id|dir-&gt;i_ino
 )paren
 suffix:semicolon
-id|hash
+id|i
 op_assign
 id|affs_hash_name
 c_func
@@ -5012,13 +5189,99 @@ c_func
 id|dir
 )paren
 )paren
+op_plus
+l_int|6
 suffix:semicolon
+id|next
+op_assign
+id|dir-&gt;i_ino
+suffix:semicolon
+multiline_comment|/* Alas, we have to search the insertion point with a locked sb */
 id|lock_super
 c_func
 (paren
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ibh
+op_assign
+id|affs_bread
+c_func
+(paren
+id|dir-&gt;i_dev
+comma
+id|next
+comma
+id|AFFS_I2BSIZE
+c_func
+(paren
+id|dir
+)paren
+)paren
+)paren
+)paren
+r_goto
+id|addentry_done
+suffix:semicolon
+id|next
+op_assign
+id|htonl
+c_func
+(paren
+(paren
+(paren
+id|s32
+op_star
+)paren
+id|ibh-&gt;b_data
+)paren
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|next
+op_logical_or
+id|next
+OG
+id|inode-&gt;i_ino
+)paren
+r_break
+suffix:semicolon
+id|i
+op_assign
+id|AFFS_I2BSIZE
+c_func
+(paren
+id|dir
+)paren
+op_div
+l_int|4
+op_minus
+l_int|4
+suffix:semicolon
+id|affs_brelse
+c_func
+(paren
+id|ibh
+)paren
+suffix:semicolon
+)brace
 id|DIR_END
 c_func
 (paren
@@ -5029,38 +5292,51 @@ id|inode
 op_member_access_from_pointer
 id|hash_chain
 op_assign
-(paren
-(paren
-r_struct
-id|dir_front
-op_star
-)paren
-id|dir_bh-&gt;b_data
-)paren
-op_member_access_from_pointer
-id|hashtable
-(braket
-id|hash
-)braket
+id|next
 suffix:semicolon
 (paren
 (paren
-r_struct
-id|dir_front
+id|s32
 op_star
 )paren
-id|dir_bh-&gt;b_data
+id|ibh-&gt;b_data
 )paren
-op_member_access_from_pointer
-id|hashtable
 (braket
-id|hash
+id|i
 )braket
 op_assign
 id|ntohl
 c_func
 (paren
 id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+id|affs_fix_checksum
+c_func
+(paren
+id|AFFS_I2BSIZE
+c_func
+(paren
+id|dir
+)paren
+comma
+id|ibh-&gt;b_data
+comma
+l_int|5
+)paren
+suffix:semicolon
+id|mark_buffer_dirty
+c_func
+(paren
+id|ibh
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|affs_brelse
+c_func
+(paren
+id|ibh
 )paren
 suffix:semicolon
 r_if
@@ -5224,6 +5500,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|addentry_done
+suffix:colon
 id|affs_brelse
 c_func
 (paren
@@ -5243,7 +5521,7 @@ id|link_bh
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|retval
 suffix:semicolon
 )brace
 DECL|variable|affs_fs_type
@@ -5295,9 +5573,11 @@ r_void
 )paren
 (brace
 r_return
-id|init_affs_fs
+id|register_filesystem
 c_func
 (paren
+op_amp
+id|affs_fs_type
 )paren
 suffix:semicolon
 )brace

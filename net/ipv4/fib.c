@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -9872,11 +9873,16 @@ r_return
 id|NOTIFY_DONE
 suffix:semicolon
 )brace
-DECL|function|ip_fib_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ip_fib_init
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 r_struct

@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/lapb.h&gt;
 DECL|variable|lapb_list
 r_static
@@ -1337,7 +1338,10 @@ c_func
 id|lapb_data_received
 )paren
 suffix:semicolon
-DECL|function|lapb_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|lapb_proto_init
 c_func
@@ -1346,6 +1350,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|printk

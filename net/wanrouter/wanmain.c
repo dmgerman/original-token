@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/segment.h&gt;&t;/* kernel &lt;-&gt; user copy */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to/from_user */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router API definitions */
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 multiline_comment|/****** Defines and Macros **************************************************/
 macro_line|#ifndef&t;min
 DECL|macro|min
@@ -271,12 +272,16 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|function|wanrouter_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|wanrouter_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

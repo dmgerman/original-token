@@ -8,6 +8,7 @@ macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|snap_list
 r_static
 r_struct
@@ -265,7 +266,10 @@ c_func
 id|unregister_snap_client
 )paren
 suffix:semicolon
-DECL|function|snap_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|snap_proto_init
 c_func
@@ -274,6 +278,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|snap_dl

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/x25.h&gt;
 DECL|variable|min_timer
 r_static
@@ -265,12 +266,16 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|x25_register_sysctl
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|x25_register_sysctl
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|x25_table_header

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -105,7 +106,6 @@ id|saved_command_line
 id|CL_SIZE
 )braket
 suffix:semicolon
-DECL|variable|mach_sched_init
 r_void
 (paren
 op_star
@@ -128,9 +128,9 @@ id|pt_regs
 op_star
 )paren
 )paren
+id|__initdata
 suffix:semicolon
 multiline_comment|/* machine dependent keyboard functions */
-DECL|variable|mach_keyb_init
 r_int
 (paren
 op_star
@@ -139,6 +139,7 @@ id|mach_keyb_init
 (paren
 r_void
 )paren
+id|__initdata
 suffix:semicolon
 DECL|variable|mach_kbdrate
 r_int
@@ -168,7 +169,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* machine dependent irq functions */
-DECL|variable|mach_init_IRQ
 r_void
 (paren
 op_star
@@ -177,6 +177,7 @@ id|mach_init_IRQ
 (paren
 r_void
 )paren
+id|__initdata
 suffix:semicolon
 DECL|variable|mach_default_handler
 r_void
@@ -336,7 +337,6 @@ id|mach_reset
 r_void
 )paren
 suffix:semicolon
-DECL|variable|mach_fb_init
 r_struct
 id|fb_info
 op_star
@@ -348,6 +348,7 @@ id|mach_fb_init
 r_int
 op_star
 )paren
+id|__initdata
 suffix:semicolon
 DECL|variable|mach_max_dma_address
 r_int
@@ -356,7 +357,6 @@ op_assign
 l_int|0x00ffffff
 suffix:semicolon
 multiline_comment|/* default set to the lower 16MB */
-DECL|variable|mach_video_setup
 r_void
 (paren
 op_star
@@ -369,9 +369,9 @@ comma
 r_int
 op_star
 )paren
+id|__initdata
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_FD
-DECL|variable|mach_floppy_init
 r_int
 (paren
 op_star
@@ -380,10 +380,10 @@ id|mach_floppy_init
 (paren
 r_void
 )paren
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|mach_floppy_setup
 r_void
 (paren
 op_star
@@ -396,6 +396,7 @@ comma
 r_int
 op_star
 )paren
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -476,7 +477,10 @@ r_void
 suffix:semicolon
 DECL|macro|MASK_256K
 mdefine_line|#define MASK_256K 0xfffc0000
-DECL|function|m68k_parse_bootinfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|m68k_parse_bootinfo
@@ -487,6 +491,7 @@ r_struct
 id|bi_record
 op_star
 id|record
+)paren
 )paren
 (brace
 r_while
@@ -694,7 +699,10 @@ id|record-&gt;size
 suffix:semicolon
 )brace
 )brace
-DECL|function|setup_arch
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|setup_arch
 c_func
@@ -713,6 +721,7 @@ r_int
 r_int
 op_star
 id|memory_end_p
+)paren
 )paren
 (brace
 r_int
@@ -1580,12 +1589,16 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_FD
-DECL|function|floppy_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|floppy_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -1604,7 +1617,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|floppy_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|floppy_setup
 c_func
@@ -1616,6 +1632,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -1651,13 +1668,17 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|arch_kbd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|arch_kbd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return
@@ -1740,7 +1761,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|video_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|video_setup
 (paren
@@ -1751,6 +1775,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if

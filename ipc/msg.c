@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_int
@@ -130,11 +131,15 @@ id|n_kernelds
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|msg_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|msg_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -480,7 +480,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register spinlock_t *lp asm(&quot;g1&quot;);&t;&bslash;&n;&t;lp = lock;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%psr, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;or&t;%0, %1, %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g2, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;nop; nop; nop;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldstub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;orcc&t;%%g2, 0x0, %%g0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;bne,a&t;2f&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot; ldub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;.text&t;2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;orcc&t;%%g2, 0x0, %%g0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;bne,a&t;2b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot; ldub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;b,a&t;1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (flags)&t;&t;&t;&t;&bslash;&n;&t;: &quot;i&quot; (PSR_PIL), &quot;r&quot; (lock)&t;&t;&bslash;&n;&t;: &quot;g2&quot;, &quot;memory&quot;, &quot;cc&quot;);&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register spinlock_t *lp asm(&quot;g1&quot;);&t;&bslash;&n;&t;lp = lock;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&bslash;&n;&t;&quot;rd&t;%%psr, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;or&t;%0, %1, %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;wr&t;%%g2, 0x0, %%psr&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;nop; nop; nop;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;1:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldstub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;orcc&t;%%g2, 0x0, %%g0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;bne,a&t;2f&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot; ldub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;.text&t;2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;orcc&t;%%g2, 0x0, %%g0&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;bne,a&t;2b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot; ldub&t;[%2], %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&quot;b,a&t;1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;: &quot;=r&quot; (flags)&t;&t;&t;&t;&bslash;&n;&t;: &quot;i&quot; (PSR_PIL), &quot;r&quot; (lp)&t;&t;&bslash;&n;&t;: &quot;g2&quot;, &quot;memory&quot;, &quot;cc&quot;);&t;&t;&bslash;&n;} while(0)
 DECL|function|spin_unlock_irqrestore
 r_extern
 id|__inline__
@@ -563,11 +563,11 @@ suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED { 0 }
 multiline_comment|/* Sort of like atomic_t&squot;s on Sparc, but even more clever.&n; *&n; *&t;------------------------------------&n; *&t;| 16-bit counter   | clock | wlock |  rwlock_t&n; *&t;------------------------------------&n; *&t; 31              16 15    8 7     0&n; *&n; * wlock signifies the one writer is in, the clock protects&n; * counter bumping, however a reader must acquire wlock&n; * before he can bump the counter on a read_lock().&n; * Similarly a writer, once he has the wlock, must await&n; * for the top 24 bits to all clear before he can finish&n; * going in (this includes the clock of course).&n; *&n; * Unfortunately this scheme limits us to ~65,000 cpus.&n; */
-DECL|function|read_lock
+DECL|function|_read_lock
 r_extern
 id|__inline__
 r_void
-id|read_lock
+id|_read_lock
 c_func
 (paren
 id|rwlock_t
@@ -637,11 +637,13 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|read_unlock
+DECL|macro|read_lock
+mdefine_line|#define read_lock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_read_lock(lock); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
+DECL|function|_read_unlock
 r_extern
 id|__inline__
 r_void
-id|read_unlock
+id|_read_unlock
 c_func
 (paren
 id|rwlock_t
@@ -711,6 +713,8 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|macro|read_unlock
+mdefine_line|#define read_unlock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_read_unlock(lock); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
 DECL|function|write_lock
 r_extern
 id|__inline__
@@ -788,17 +792,17 @@ suffix:semicolon
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(rw)&t;do { (rw)-&gt;lock = 0; } while(0)
 DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); read_lock(lock); } while (0)
+mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); _read_lock(lock); } while (0)
 DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;do { read_unlock(lock); __sti(); } while (0)
+mdefine_line|#define read_unlock_irq(lock)&t;do { _read_unlock(lock); __sti(); } while (0)
 DECL|macro|write_lock_irq
 mdefine_line|#define write_lock_irq(lock)&t;do { __cli(); write_lock(lock); } while (0)
 DECL|macro|write_unlock_irq
 mdefine_line|#define write_unlock_irq(lock)&t;do { write_unlock(lock); __sti(); } while (0)
 DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); read_lock(lock); } while (0)
+mdefine_line|#define read_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); _read_lock(lock); } while (0)
 DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { read_unlock(lock); __restore_flags(flags); } while (0)
+mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { _read_unlock(lock); __restore_flags(flags); } while (0)
 DECL|macro|write_lock_irqsave
 mdefine_line|#define write_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_and_cli(flags); write_lock(lock); } while (0)
 DECL|macro|write_unlock_irqrestore

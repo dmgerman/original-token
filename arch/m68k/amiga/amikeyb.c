@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -2371,12 +2372,16 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|amiga_keyb_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|amiga_keyb_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

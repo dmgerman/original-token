@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bios32.c - BIOS32, PCI BIOS functions.&n; *&n; * Sponsored by&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; */
+multiline_comment|/*&n; * bios32.c - BIOS32, PCI BIOS functions.&n; *&n; * Sponsored by&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; * Apr 26, 1997 : Fixed case when there is BIOS32, but not PCI BIOS&n; *&t;(mj@atrey.karlin.mff.cuni.cz)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -431,7 +431,7 @@ multiline_comment|/* Not present */
 id|printk
 c_func
 (paren
-l_string|&quot;bios32_service(%ld) : not present&bslash;n&quot;
+l_string|&quot;bios32_service(0x%lx) : not present&bslash;n&quot;
 comma
 id|service
 )paren
@@ -445,7 +445,7 @@ multiline_comment|/* Shouldn&squot;t happen */
 id|printk
 c_func
 (paren
-l_string|&quot;bios32_service(%ld) : returned 0x%x, mail drew@colorado.edu&bslash;n&quot;
+l_string|&quot;bios32_service(0x%lx) : returned 0x%x, mail drew@colorado.edu&bslash;n&quot;
 comma
 id|service
 comma
@@ -493,17 +493,10 @@ c_func
 (paren
 r_static
 r_int
-r_int
 id|check_pcibios
 c_func
 (paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
+r_void
 )paren
 )paren
 (brace
@@ -722,10 +715,13 @@ comma
 id|pcibios_entry
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 )brace
 r_return
-id|memory_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|pci_bios_find_class
@@ -3842,11 +3838,6 @@ id|bios32_entry
 op_plus
 id|PAGE_OFFSET
 suffix:semicolon
-id|access_pci
-op_assign
-op_amp
-id|pci_bios_access
-suffix:semicolon
 )brace
 )brace
 )brace
@@ -3854,18 +3845,17 @@ r_if
 c_cond
 (paren
 id|bios32_entry
-)paren
-(brace
-id|memory_start
-op_assign
+op_logical_and
 id|check_pcibios
+c_func
 (paren
-id|memory_start
-comma
-id|memory_end
 )paren
+)paren
+id|access_pci
+op_assign
+op_amp
+id|pci_bios_access
 suffix:semicolon
-)brace
 macro_line|#endif
 r_return
 id|memory_start

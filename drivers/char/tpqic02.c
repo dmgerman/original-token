@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -9700,15 +9701,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_get_resources */
-macro_line|#ifdef MODULE
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
-macro_line|#endif
-DECL|function|qic02_tape_init
 r_int
 id|qic02_tape_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

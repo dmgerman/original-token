@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
@@ -17,13 +18,6 @@ macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/lp_intern.h&gt;
-DECL|variable|my_inter
-r_static
-r_int
-id|my_inter
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|minor
 r_static
 r_int
@@ -313,20 +307,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|lp_int_my_interrupt
-r_static
-r_int
-id|lp_int_my_interrupt
-c_func
-(paren
-r_int
-id|dev
-)paren
-(brace
-r_return
-id|my_inter
-suffix:semicolon
-)brace
 DECL|function|lp_int_interrupt
 r_static
 r_void
@@ -346,35 +326,27 @@ op_star
 id|fp
 )paren
 (brace
-id|my_inter
-op_assign
-l_int|1
-suffix:semicolon
 id|lp_interrupt
 c_func
 (paren
-id|irq
-comma
-id|data
-comma
-id|fp
+id|minor
 )paren
-suffix:semicolon
-id|my_inter
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|lp_int_open
 r_static
-r_void
+r_int
 id|lp_int_open
 c_func
 (paren
-r_void
+r_int
+id|dev
 )paren
 (brace
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|lp_int_release
@@ -383,7 +355,8 @@ r_void
 id|lp_int_release
 c_func
 (paren
-r_void
+r_int
+id|dev
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -410,7 +383,7 @@ id|lp_int_pout
 comma
 id|lp_int_online
 comma
-id|lp_int_my_interrupt
+l_int|0
 comma
 l_int|NULL
 comma
@@ -433,12 +406,16 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|function|lp_internal_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|lp_internal_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_AMIGA

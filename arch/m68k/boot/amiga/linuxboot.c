@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/boot/amiga/linuxboot.c -- Generic routine to boot Linux/m68k&n; *&t;&t;&t;&t;&t;      on Amiga, used by both Amiboot and&n; *&t;&t;&t;&t;&t;      Amiga-Lilo.&n; *&n; *&t;Created 1996 by Geert Uytterhoeven&n; *&n; *&n; *  This file is based on the original bootstrap code (bootstrap.c):&n; *&n; *&t;Copyright (C) 1993, 1994 Hamish Macdonald&n; *&t;&t;&t;&t; Greg Harp&n; *&n; *&t;&t;    with work by Michael Rausch&n; *&t;&t;&t;&t; Geert Uytterhoeven&n; *&t;&t;&t;&t; Frank Neumann&n; *&t;&t;&t;&t; Andreas Schwab&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  History:&n; *&t;03 Feb 1997 Implemented kernel decompression (Geert, based on Roman&squot;s&n; *&t;&t;    code for ataboot)&n; *&t;30 Dec 1996 Reverted the CPU detection to the old scheme&n; *&t;&t;    New boot parameter override scheme (Geert)&n; *      27 Nov 1996 Compatibility with bootinfo interface version 1.0 (Geert)&n; *       9 Sep 1996 Rewritten option parsing&n; *&t;&t;    New parameter passing to linuxboot() (linuxboot_args)&n; *&t;&t;    (Geert)&n; *&t;18 Aug 1996 Updated for the new boot information structure (Geert)&n; *&t;10 Jan 1996 The real Linux/m68k boot code moved to linuxboot.[ch]&n; *&t;&t;    (Geert)&n; *&t;11 Jul 1995 Support for ELF kernel (untested!) (Andreas)&n; *&t; 7 Mar 1995 Memory block sizes are rounded to a multiple of 256K&n; *&t;&t;    instead of 1M (Geert)&n; *&t;31 May 1994 Memory thrash problem solved (Geert)&n; *&t;11 May 1994 A3640 MapROM check (Geert)&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/boot/amiga/linuxboot.c -- Generic routine to boot Linux/m68k&n; *&t;&t;&t;&t;&t;      on Amiga, used by both Amiboot and&n; *&t;&t;&t;&t;&t;      Amiga-Lilo.&n; *&n; *&t;Created 1996 by Geert Uytterhoeven&n; *&n; *&n; *  This file is based on the original bootstrap code (bootstrap.c):&n; *&n; *&t;Copyright (C) 1993, 1994 Hamish Macdonald&n; *&t;&t;&t;&t; Greg Harp&n; *&n; *&t;&t;    with work by Michael Rausch&n; *&t;&t;&t;&t; Geert Uytterhoeven&n; *&t;&t;&t;&t; Frank Neumann&n; *&t;&t;&t;&t; Andreas Schwab&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  History:&n; *&t;27 Mar 1997 FPU-less machines couldn&squot;t boot kernels that use bootinfo&n; *&t;&t;    interface version 1.0 (Geert)&n; *&t;03 Feb 1997 Implemented kernel decompression (Geert, based on Roman&squot;s&n; *&t;&t;    code for ataboot)&n; *&t;30 Dec 1996 Reverted the CPU detection to the old scheme&n; *&t;&t;    New boot parameter override scheme (Geert)&n; *      27 Nov 1996 Compatibility with bootinfo interface version 1.0 (Geert)&n; *       9 Sep 1996 Rewritten option parsing&n; *&t;&t;    New parameter passing to linuxboot() (linuxboot_args)&n; *&t;&t;    (Geert)&n; *&t;18 Aug 1996 Updated for the new boot information structure (Geert)&n; *&t;10 Jan 1996 The real Linux/m68k boot code moved to linuxboot.[ch]&n; *&t;&t;    (Geert)&n; *&t;11 Jul 1995 Support for ELF kernel (untested!) (Andreas)&n; *&t; 7 Mar 1995 Memory block sizes are rounded to a multiple of 256K&n; *&t;&t;    instead of 1M (Geert)&n; *&t;31 May 1994 Memory thrash problem solved (Geert)&n; *&t;11 May 1994 A3640 MapROM check (Geert)&n; */
 macro_line|#ifndef __GNUC__
 macro_line|#error GNU CC is required to compile this program
 macro_line|#endif /* __GNUC__ */
@@ -3727,7 +3727,6 @@ id|cpu
 suffix:semicolon
 )brace
 r_else
-(brace
 r_if
 c_cond
 (paren
@@ -3753,7 +3752,6 @@ id|fpu
 op_assign
 id|FPU_68881
 suffix:semicolon
-)brace
 op_star
 id|mmu
 op_assign
@@ -4887,6 +4885,11 @@ op_or_assign
 id|COMPAT_FPU_68060
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|bi.fputype
+)paren
 (brace
 id|Printf
 c_func

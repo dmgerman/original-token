@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -9413,7 +9414,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  unsigned long con_init(unsigned long);&n; *&n; * This routine initializes console interrupts, and does nothing&n; * else. If you want the screen to clear, call tty_write with&n; * the appropriate escape-sequence.&n; *&n; * Reads the information preserved by setup.s to determine the current display&n; * type and sets everything accordingly.&n; */
-DECL|function|con_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|con_init
@@ -9422,6 +9426,7 @@ c_func
 r_int
 r_int
 id|kmem_start
+)paren
 )paren
 (brace
 r_const

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
@@ -3911,12 +3912,16 @@ id|ip_msqhst_procinfo
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;Initialize ip masquerading&n; */
-DECL|function|ip_masq_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ip_masq_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS

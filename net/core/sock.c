@@ -33,6 +33,31 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ipsec.h&gt;
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
+multiline_comment|/* Run time adjustable parameters. */
+DECL|variable|sysctl_wmem_max
+id|__u32
+id|sysctl_wmem_max
+op_assign
+id|SK_WMEM_MAX
+suffix:semicolon
+DECL|variable|sysctl_rmem_max
+id|__u32
+id|sysctl_rmem_max
+op_assign
+id|SK_RMEM_MAX
+suffix:semicolon
+DECL|variable|sysctl_wmem_default
+id|__u32
+id|sysctl_wmem_default
+op_assign
+id|SK_WMEM_MAX
+suffix:semicolon
+DECL|variable|sysctl_rmem_default
+id|__u32
+id|sysctl_rmem_default
+op_assign
+id|SK_RMEM_MAX
+suffix:semicolon
 multiline_comment|/*&n; *&t;This is meant for all protocols to use and covers goings on&n; *&t;at the socket level. Everything here is generic.&n; */
 DECL|function|sock_setsockopt
 r_int
@@ -114,21 +139,10 @@ r_int
 )paren
 )paren
 (brace
-macro_line|#if 1 /* DaveM Debugging */
-id|printk
-c_func
-(paren
-l_string|&quot;sock_setsockopt: optlen is %d, going on anyways.&bslash;n&quot;
-comma
-id|optlen
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
 )brace
 id|err
 op_assign
@@ -239,41 +253,27 @@ r_case
 id|SO_SNDBUF
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t; *&t;The spec isnt clear if ENOBUFS or EINVAL&n;&t;&t;&t; *&t;is best&n;&t;&t;&t; */
+multiline_comment|/* printk(KERN_DEBUG &quot;setting SO_SNDBUF %d&bslash;n&quot;, val); */
 r_if
 c_cond
 (paren
 id|val
 OG
-id|SK_WMEM_MAX
-op_star
-l_int|2
+id|sysctl_wmem_max
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Once this is all 32bit values we can&n;&t;&t;&t; *&t;drop this check.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-id|val
-OG
-l_int|65535
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
+multiline_comment|/* FIXME: the tcp code should be made to work even&n;&t;&t;&t; * with small sndbuf values.&n;&t;&t;&t; */
 id|sk-&gt;sndbuf
 op_assign
 id|max
 c_func
 (paren
 id|val
+op_star
+l_int|2
 comma
 l_int|2048
 )paren
@@ -292,41 +292,27 @@ suffix:semicolon
 r_case
 id|SO_RCVBUF
 suffix:colon
+multiline_comment|/* printk(KERN_DEBUG &quot;setting SO_RCVBUF %d&bslash;n&quot;, val); */
 r_if
 c_cond
 (paren
 id|val
 OG
-id|SK_RMEM_MAX
-op_star
-l_int|2
+id|sysctl_rmem_max
 )paren
-(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
-multiline_comment|/* Can go soon: FIXME */
-r_if
-c_cond
-(paren
-id|val
-OG
-l_int|65535
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
+multiline_comment|/* FIXME: is this lower bound the right one? */
 id|sk-&gt;rcvbuf
 op_assign
 id|max
 c_func
 (paren
 id|val
+op_star
+l_int|2
 comma
 l_int|256
 )paren
@@ -1438,6 +1424,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME: this is insane. We are trying suppose to be controlling how&n; * how much space we have for data bytes, not packet headers.&n; * This really points out that we need a better system for doing the&n; * receive buffer. -- erics&n; * WARNING: This is currently ONLY used in tcp. If you need it else where&n; * this will probably not be what you want. Possibly these two routines&n; * should move over to the ipv4 directory.&n; */
 DECL|function|sock_rspace
 r_int
 r_int
@@ -1461,31 +1448,9 @@ op_ne
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;rmem_alloc
-)paren
-op_ge
-id|sk-&gt;rcvbuf
-op_minus
-l_int|2
-op_star
-id|MIN_WINDOW
-)paren
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/* This used to have some bizzare complications that&n;&t;&t; * to attempt to reserve some amount of space. This doesn&squot;t&n;&t; &t; * make sense, since the number returned here does not&n;&t;&t; * actually reflect allocated space, but rather the amount&n;&t;&t; * of space we committed to. We gamble that we won&squot;t&n;&t;&t; * run out of memory, and returning a smaller number does&n;&t;&t; * not change the gamble. If we loose the gamble tcp still&n;&t;&t; * works, it may just slow down for retransmissions.&n;&t;&t; */
 id|amt
 op_assign
-id|min
-c_func
-(paren
-(paren
 id|sk-&gt;rcvbuf
 op_minus
 id|atomic_read
@@ -1493,14 +1458,6 @@ c_func
 (paren
 op_amp
 id|sk-&gt;rmem_alloc
-)paren
-)paren
-op_div
-l_int|2
-op_minus
-id|MIN_WINDOW
-comma
-id|MAX_WINDOW
 )paren
 suffix:semicolon
 r_if
@@ -1521,6 +1478,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME: this is also insane. See above comment */
 DECL|function|sock_wspace
 r_int
 r_int
@@ -2627,11 +2585,15 @@ id|GFP_KERNEL
 suffix:semicolon
 id|sk-&gt;rcvbuf
 op_assign
-id|SK_RMEM_MAX
+id|sysctl_rmem_default
+op_star
+l_int|2
 suffix:semicolon
 id|sk-&gt;sndbuf
 op_assign
-id|SK_WMEM_MAX
+id|sysctl_wmem_default
+op_star
+l_int|2
 suffix:semicolon
 id|sk-&gt;priority
 op_assign

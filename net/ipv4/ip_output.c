@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
@@ -301,13 +302,10 @@ c_cond
 (paren
 id|sk-&gt;ip_pmtudisc
 op_eq
-id|IP_PMTUDISC_DONT
-op_logical_or
-(paren
-id|sk-&gt;ip_pmtudisc
-op_eq
 id|IP_PMTUDISC_WANT
 op_logical_and
+op_logical_neg
+(paren
 id|rt-&gt;rt_flags
 op_amp
 id|RTF_NOPMTUDISC
@@ -647,13 +645,10 @@ c_cond
 (paren
 id|sk-&gt;ip_pmtudisc
 op_eq
-id|IP_PMTUDISC_DONT
-op_logical_or
-(paren
-id|sk-&gt;ip_pmtudisc
-op_eq
 id|IP_PMTUDISC_WANT
 op_logical_and
+op_logical_neg
+(paren
 id|rt-&gt;rt_flags
 op_amp
 id|RTF_NOPMTUDISC
@@ -1553,15 +1548,9 @@ id|sk-&gt;ip_pmtudisc
 op_eq
 id|IP_PMTUDISC_DONT
 op_logical_or
-(paren
-id|sk-&gt;ip_pmtudisc
-op_eq
-id|IP_PMTUDISC_WANT
-op_logical_and
 id|rt-&gt;rt_flags
 op_amp
 id|RTF_NOPMTUDISC
-)paren
 )paren
 id|df
 op_assign
@@ -3483,12 +3472,16 @@ id|ip_mc_procinfo
 suffix:semicolon
 macro_line|#endif&t;
 multiline_comment|/*&n; *&t;IP registers the packet type and then calls the subprotocol initialisers&n; */
-DECL|function|ip_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ip_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|dev_add_pack

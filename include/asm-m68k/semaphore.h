@@ -1,6 +1,7 @@
 macro_line|#ifndef _M68K_SEMAPHORE_H
 DECL|macro|_M68K_SEMAPHORE_H
 mdefine_line|#define _M68K_SEMAPHORE_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -114,6 +115,7 @@ op_star
 id|sem
 )paren
 (brace
+macro_line|#ifndef CONFIG_RMW_INSNS
 r_int
 r_int
 id|flags
@@ -165,6 +167,42 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#else
+r_int
+id|ret
+comma
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;1:&t;movel&t;%2,%0&bslash;n&quot;
+l_string|&quot;&t;jeq&t;3f&bslash;n&quot;
+l_string|&quot;2:&t;movel&t;%0,%1&bslash;n&quot;
+l_string|&quot;&t;subql&t;#1,%1&bslash;n&quot;
+l_string|&quot;&t;casl&t;%0,%1,%2&bslash;n&quot;
+l_string|&quot;&t;jeq&t;3f&bslash;n&quot;
+l_string|&quot;&t;tstl&t;%0&bslash;n&quot;
+l_string|&quot;&t;jne&t;2b&bslash;n&quot;
+l_string|&quot;3:&quot;
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|ret
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;waking
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|ret
 suffix:semicolon

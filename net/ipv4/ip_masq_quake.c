@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/ip_masq.h&gt;
@@ -957,12 +958,16 @@ multiline_comment|/* pkt_in */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * &t;ip_masq_quake initialization&n; */
-DECL|function|ip_masq_quake_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ip_masq_quake_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

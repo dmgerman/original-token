@@ -1,7 +1,9 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/init.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/auto_fs.h&gt;
+macro_line|#include &quot;autofs_i.h&quot;
 DECL|variable|autofs_fs_type
+r_static
 r_struct
 id|file_system_type
 id|autofs_fs_type
@@ -16,23 +18,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_autofs_fs
-r_int
-id|init_autofs_fs
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|register_filesystem
-c_func
-(paren
-op_amp
-id|autofs_fs_type
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -51,9 +36,11 @@ c_cond
 (paren
 id|status
 op_assign
-id|init_autofs_fs
+id|register_filesystem
 c_func
 (paren
+op_amp
+id|autofs_fs_type
 )paren
 )paren
 op_eq
@@ -85,7 +72,29 @@ id|autofs_fs_type
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#else /* MODULE */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|init_autofs_fs
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_return
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|autofs_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* !MODULE */
 macro_line|#ifdef DEBUG
 DECL|function|autofs_say
 r_void

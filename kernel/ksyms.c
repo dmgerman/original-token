@@ -1337,13 +1337,6 @@ c_func
 id|schedule
 )paren
 suffix:semicolon
-DECL|variable|current_set
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|current_set
-)paren
-suffix:semicolon
 DECL|variable|jiffies
 id|EXPORT_SYMBOL
 c_func

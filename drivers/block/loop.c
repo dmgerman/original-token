@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_LOOP_DES
 macro_line|# /*nodep*/ include &lt;linux/des.h&gt;
@@ -2554,12 +2555,16 @@ macro_line|#ifdef MODULE
 DECL|macro|loop_init
 mdefine_line|#define loop_init init_module
 macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|loop_init
 id|loop_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

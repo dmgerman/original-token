@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: devops.c,v 1.7 1997/03/18 17:58:19 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devops.c,v 1.8 1997/05/01 01:41:31 davem Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -116,7 +116,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -219,7 +219,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -338,7 +338,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

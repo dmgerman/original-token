@@ -608,6 +608,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* ++roman:&n; * &n; * New version of ST-Ram buffer allocation. Instead of using the&n; * 1 MB - 4 KB that remain when the the ST-Ram chunk starts at $1000&n; * (1 MB granularity!), such buffers are reserved like this:&n; *&n; *  - If the kernel resides in ST-Ram anyway, we can take the buffer&n; *    from behind the current kernel data space the normal way&n; *    (incrementing start_mem).&n; *    &n; *  - If the kernel is in TT-Ram, stram_init() initializes start and&n; *    end of the available region. Buffers are allocated from there&n; *    and mem_init() later marks the such used pages as reserved.&n; *    Since each TT-Ram chunk is at least 4 MB in size, I hope there&n; *    won&squot;t be an overrun of the ST-Ram region by normal kernel data&n; *    space.&n; *    &n; * For that, ST-Ram may only be allocated while kernel initialization&n; * is going on, or exactly: before mem_init() is called. There is also&n; * no provision now for freeing ST-Ram buffers. It seems that isn&squot;t&n; * really needed.&n; *&n; * ToDo:&n; * Check the high level scsi code what is done when the&n; * UNCHECKED_ISA_DMA flag is set. It guess, it is just a test for adr&n; * &lt; 16 Mega. There should be call to atari_stram_alloc() instead.&n; *&n; * Also ToDo:&n; * Go through head.S and delete parts no longer needed (transparent&n; * mapping of ST-Ram etc.)&n; * &n; */
 DECL|variable|rsvd_stram_beg
 DECL|variable|rsvd_stram_end
@@ -625,12 +626,16 @@ r_int
 id|stram_end
 suffix:semicolon
 multiline_comment|/* Overall end of ST-Ram */
-DECL|function|atari_stram_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atari_stram_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

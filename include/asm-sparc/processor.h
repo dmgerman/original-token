@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.58 1997/04/25 03:13:16 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.59 1997/05/01 01:42:03 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -406,32 +406,6 @@ mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Allocation and freeing of basic task resources. */
 r_extern
-r_int
-r_int
-(paren
-op_star
-id|alloc_kernel_stack
-)paren
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|free_kernel_stack
-)paren
-(paren
-r_int
-r_int
-id|stack
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|task_struct
 op_star
@@ -456,6 +430,10 @@ op_star
 id|tsk
 )paren
 suffix:semicolon
+DECL|macro|init_task
+mdefine_line|#define init_task&t;(init_task_union.task)
+DECL|macro|init_stack
+mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif
 macro_line|#endif /* __ASM_SPARC_PROCESSOR_H */
 eof

@@ -23,6 +23,36 @@ macro_line|#error PAGE_SIZE must be at least 4096
 macro_line|#endif
 r_static
 r_int
+id|affs_bmap
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|block
+)paren
+suffix:semicolon
+r_static
+r_struct
+id|buffer_head
+op_star
+id|affs_getblock
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+id|s32
+id|block
+)paren
+suffix:semicolon
+r_static
+r_int
 id|affs_file_read_ofs
 c_func
 (paren
@@ -744,7 +774,7 @@ l_int|9
 suffix:semicolon
 )brace
 r_static
-r_int
+id|s32
 id|__inline__
 DECL|function|calc_key
 id|calc_key
@@ -874,6 +904,7 @@ id|index
 )braket
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|affs_bmap
 id|affs_bmap
@@ -893,17 +924,18 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_int
-id|ext
-comma
+id|s32
 id|key
 comma
 id|nkey
 suffix:semicolon
-r_int
+id|s32
 id|ptype
 comma
 id|stype
+suffix:semicolon
+r_int
+id|ext
 suffix:semicolon
 r_int
 id|index
@@ -925,7 +957,7 @@ r_struct
 id|timeval
 id|tv
 suffix:semicolon
-id|__s32
+id|s32
 op_star
 id|keyp
 suffix:semicolon
@@ -950,10 +982,14 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;affs_bmap: block &lt; 0&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;bmap&quot;
+comma
+l_string|&quot;Block &lt; 0&quot;
 )paren
 suffix:semicolon
 r_return
@@ -967,10 +1003,16 @@ op_logical_neg
 id|inode-&gt;u.affs_i.i_ec
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;affs_bmap(): No ext_cache!?&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;bmap&quot;
+comma
+l_string|&quot;No extension cache for open file (inode=%lu)&quot;
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 r_return
@@ -1445,6 +1487,7 @@ r_return
 id|key
 suffix:semicolon
 )brace
+r_static
 r_struct
 id|buffer_head
 op_star
@@ -1457,7 +1500,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
+id|s32
 id|block
 )paren
 (brace
@@ -1481,7 +1524,7 @@ id|key_cache
 op_star
 id|kc
 suffix:semicolon
-r_int
+id|s32
 id|key
 comma
 id|nkey
@@ -1643,10 +1686,14 @@ op_ne
 id|ST_FILE
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: getblock(): inode %d is not a valid %s&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;getblock&quot;
+comma
+l_string|&quot;Inode %d is not a valid %s&quot;
 comma
 id|key
 comma
@@ -1775,10 +1822,14 @@ op_logical_neg
 id|pbh
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: getblock(): cannot get last block in file&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;getblock&quot;
+comma
+l_string|&quot;Cannot get last block in file&quot;
 )paren
 suffix:semicolon
 r_break
@@ -1827,10 +1878,14 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
-id|printk
+id|affs_warning
 c_func
 (paren
-l_string|&quot;AFFS: getblock(): block already allocated&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;getblock&quot;
+comma
+l_string|&quot;Block already allocated&quot;
 )paren
 suffix:semicolon
 id|affs_free_block
@@ -1898,10 +1953,14 @@ op_logical_neg
 id|ebh
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: getblock(): cannot get block %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;getblock&quot;
+comma
+l_string|&quot;Cannot get block %d&quot;
 comma
 id|nkey
 )paren
@@ -2525,7 +2584,6 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This could be made static, regardless of what the former comment said.&n; * You cannot directly read affs directories.&n; */
 r_static
 r_int
 DECL|function|affs_file_read_ofs
@@ -2598,10 +2656,14 @@ op_logical_neg
 id|inode
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;affs_file_read: inode = NULL&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_read_ofs&quot;
+comma
+l_string|&quot;Inode = NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2635,7 +2697,7 @@ id|inode-&gt;i_mode
 id|pr_debug
 c_func
 (paren
-l_string|&quot;affs_file_read: mode = %07o&bslash;n&quot;
+l_string|&quot;affs_file_read: mode = %07o&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -2703,7 +2765,7 @@ c_func
 id|inode
 comma
 (paren
-id|__u32
+id|u32
 )paren
 id|filp-&gt;f_pos
 op_div
@@ -2721,7 +2783,7 @@ suffix:semicolon
 id|offset
 op_assign
 (paren
-id|__u32
+id|u32
 )paren
 id|filp-&gt;f_pos
 op_mod
@@ -2865,6 +2927,16 @@ r_char
 op_star
 id|p
 suffix:semicolon
+multiline_comment|/* Not that I wanted to be POSIX compliant ... */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|count
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|pr_debug
 c_func
 (paren
@@ -2892,10 +2964,14 @@ op_logical_neg
 id|inode
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: file_write(): inode=NULL&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write&quot;
+comma
+l_string|&quot;Inode = NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2926,10 +3002,14 @@ op_logical_neg
 id|ino
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: could not follow link from inode %lu to %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write&quot;
+comma
+l_string|&quot;Could not follow link from inode %lu to %d&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -2957,10 +3037,14 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: file_write(): mode=%07o&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write&quot;
+comma
+l_string|&quot;Trying to write to non-regular file (mode=%07o)&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -3310,13 +3394,26 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|count
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|inode
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: file_write_ofs(): inode=NULL&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write_ofs&quot;
+comma
+l_string|&quot;Inode = NULL&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3351,10 +3448,14 @@ op_logical_neg
 id|ino
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: could not follow link from inode %lu to %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write_ofs&quot;
+comma
+l_string|&quot;Could not follow link from inode %lu to %d&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -3382,10 +3483,14 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: file_write_ofs(): mode=%07o&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;file_write_ofs&quot;
+comma
+l_string|&quot;Trying to write to non-regular file (mode=%07o)&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -3746,17 +3851,17 @@ suffix:semicolon
 r_int
 id|block
 suffix:semicolon
-r_int
+id|s32
 id|key
 suffix:semicolon
-r_int
+id|s32
 op_star
 id|keyp
 suffix:semicolon
-r_int
+id|s32
 id|ekey
 suffix:semicolon
-r_int
+id|s32
 id|ptype
 comma
 id|stype
@@ -3810,10 +3915,14 @@ op_logical_neg
 id|ino
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: truncate(): cannot follow link from %lu to %u&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;truncate&quot;
+comma
+l_string|&quot;Cannot follow link from %lu to %d&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -3957,10 +4066,14 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: truncate(): Cannot extend file&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;truncate&quot;
+comma
+l_string|&quot;Cannot extend file&quot;
 )paren
 suffix:semicolon
 id|inode-&gt;i_size
@@ -4083,10 +4196,14 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: truncate(): Can&squot;t read block %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;truncate&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|ekey
 )paren
@@ -4188,10 +4305,14 @@ id|T_LIST
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: truncate(): bad block (ptype=%d, stype=%d)&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;truncate&quot;
+comma
+l_string|&quot;Bad block (ptype=%d, stype=%d)&quot;
 comma
 id|ptype
 comma
@@ -4674,7 +4795,7 @@ id|filp
 r_int
 id|error
 suffix:semicolon
-r_int
+id|u32
 id|key
 suffix:semicolon
 r_int
@@ -4728,10 +4849,14 @@ op_logical_neg
 id|inode-&gt;u.affs_i.i_ec
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: cache allocation failed&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;open_file&quot;
+comma
+l_string|&quot;Cache allocation failed&quot;
 )paren
 suffix:semicolon
 id|error

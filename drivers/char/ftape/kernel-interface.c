@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ftape.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;tracing.h&quot;
@@ -306,12 +307,16 @@ suffix:semicolon
 DECL|macro|ftape_init
 mdefine_line|#define ftape_init init_module
 macro_line|#endif
-DECL|function|ftape_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ftape_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

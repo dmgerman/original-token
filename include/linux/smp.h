@@ -156,6 +156,8 @@ DECL|macro|smp_num_cpus
 mdefine_line|#define smp_num_cpus&t;&t;&t;1
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id()&t;&t;0
+DECL|macro|hard_smp_processor_id
+mdefine_line|#define hard_smp_processor_id()&t;&t;0
 DECL|macro|smp_message_pass
 mdefine_line|#define smp_message_pass(t,m,d,w)&t;
 DECL|macro|smp_threads_ready

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/p8022tr.h&gt;
 DECL|macro|SNAP_HEADER_LEN
 mdefine_line|#define SNAP_HEADER_LEN&t;8
@@ -314,7 +315,10 @@ c_func
 id|unregister_8022tr_client
 )paren
 suffix:semicolon
-DECL|function|p8022tr_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|p8022tr_proto_init
 c_func
@@ -323,6 +327,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|p8022tr_packet_type.type

@@ -2,15 +2,20 @@ macro_line|#ifndef _ALPHA_SPINLOCK_H
 DECL|macro|_ALPHA_SPINLOCK_H
 mdefine_line|#define _ALPHA_SPINLOCK_H
 macro_line|#ifndef __SMP__
+multiline_comment|/* gcc 2.7.2 can crash initializing an empty structure.  */
+DECL|member|dummy
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
 (brace
+r_int
+id|dummy
+suffix:semicolon
 )brace
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { }
+mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;&t;&t;do { } while(0)
 DECL|macro|spin_lock
@@ -30,15 +35,19 @@ mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;swpipl(flags,7)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;setipl(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
+DECL|member|dummy
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
 (brace
+r_int
+id|dummy
+suffix:semicolon
 )brace
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { }
+mdefine_line|#define RW_LOCK_UNLOCKED { 0 }
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock
@@ -172,13 +181,13 @@ l_string|&quot;&t;or&t;%0,1,%0&bslash;n&quot;
 l_string|&quot;&t;stq_c&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;beq&t;%0,3f&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;ldq&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;subq&t;%2,1,%2&bslash;n&quot;
 l_string|&quot;3:&t;blt&t;%2,4b&bslash;n&quot;
 l_string|&quot;&t;blbs&t;%0,2b&bslash;n&quot;
 l_string|&quot;&t;br&t;1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

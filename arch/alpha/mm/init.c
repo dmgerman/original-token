@@ -551,10 +551,6 @@ id|init_task.tss.flags
 op_assign
 l_int|0
 suffix:semicolon
-id|init_task.kernel_stack_page
-op_assign
-id|INIT_STACK
-suffix:semicolon
 id|load_PCB
 c_func
 (paren
@@ -850,7 +846,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;Freeing unused kernel memory: %dk freed&bslash;n&quot;
+l_string|&quot;Freeing unused kernel memory: %ldk freed&bslash;n&quot;
 comma
 (paren
 op_amp

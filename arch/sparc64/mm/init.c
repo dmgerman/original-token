@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.24 1997/04/17 21:49:41 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.25 1997/04/28 14:57:11 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -3572,6 +3572,23 @@ id|min_free_pages
 op_plus
 id|min_free_pages
 suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;Testing fault handling...&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+(paren
+r_char
+op_star
+)paren
+l_int|0x00000deadbef0000UL
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|free_initmem
 r_void

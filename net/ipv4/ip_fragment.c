@@ -1669,7 +1669,7 @@ r_if
 c_cond
 (paren
 id|next-&gt;offset
-OG
+op_ge
 id|offset
 )paren
 r_break

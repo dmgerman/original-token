@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 id|asmlinkage
 r_void
 id|sys_sync
@@ -33,7 +34,10 @@ id|panic_timeout
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|panic_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|panic_setup
 c_func
@@ -45,6 +49,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if

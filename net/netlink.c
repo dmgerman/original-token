@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1581,12 +1582,16 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|init_netlink
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_netlink
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

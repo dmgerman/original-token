@@ -552,8 +552,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|le16_to_cpu
-c_func
 (paren
 op_star
 (paren
@@ -568,7 +566,11 @@ l_int|510
 )paren
 )paren
 op_ne
+id|cpu_to_le16
+c_func
+(paren
 id|MSDOS_LABEL_MAGIC
+)paren
 )paren
 r_goto
 id|done
@@ -1120,9 +1122,6 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|le16_to_cpu
-c_func
-(paren
 op_star
 (paren
 r_int
@@ -1134,9 +1133,12 @@ l_int|0x1fe
 op_plus
 id|data
 )paren
-)paren
 op_ne
+id|cpu_to_le16
+c_func
+(paren
 id|MSDOS_LABEL_MAGIC
+)paren
 )paren
 (brace
 id|brelse
@@ -1292,9 +1294,6 @@ id|sig
 op_le
 l_int|0x1ae
 op_logical_and
-id|le16_to_cpu
-c_func
-(paren
 op_star
 (paren
 r_int
@@ -1306,9 +1305,12 @@ id|data
 op_plus
 id|sig
 )paren
-)paren
 op_eq
+id|cpu_to_le16
+c_func
+(paren
 l_int|0x55AA
+)paren
 op_logical_and
 (paren
 l_int|1
@@ -1663,9 +1665,6 @@ multiline_comment|/*&n;&t; *  Check for old-style Disk Manager partition table&n
 r_if
 c_cond
 (paren
-id|le16_to_cpu
-c_func
-(paren
 op_star
 (paren
 r_int
@@ -1677,9 +1676,12 @@ id|data
 op_plus
 l_int|0xfc
 )paren
-)paren
 op_eq
+id|cpu_to_le16
+c_func
+(paren
 id|MSDOS_LABEL_MAGIC
+)paren
 )paren
 (brace
 id|p
@@ -2589,8 +2591,7 @@ id|gendisk
 op_star
 id|hd
 comma
-r_int
-r_int
+id|kdev_t
 id|dev
 comma
 r_int
@@ -2676,9 +2677,13 @@ l_int|512
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d: unable to read RDB block %d&bslash;n&quot;
+l_string|&quot;Dev %s: unable to read RDB block %d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|blk
 )paren
@@ -2692,7 +2697,7 @@ c_cond
 (paren
 op_star
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -2720,7 +2725,7 @@ id|checksum_block
 c_func
 (paren
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bh-&gt;b_data
@@ -2738,9 +2743,13 @@ l_int|0x7F
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d: RDB in block %d has bad checksum&bslash;n&quot;
+l_string|&quot;Dev %s: RDB in block %d has bad checksum&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|blk
 )paren
@@ -2815,9 +2824,13 @@ l_int|512
 id|printk
 c_func
 (paren
-l_string|&quot;Dev %d: unable to read partition block %d&bslash;n&quot;
+l_string|&quot;Dev %s: unable to read partition block %d&bslash;n&quot;
 comma
+id|kdevname
+c_func
+(paren
 id|dev
+)paren
 comma
 id|blk
 )paren
@@ -2858,7 +2871,7 @@ id|checksum_block
 c_func
 (paren
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|pb

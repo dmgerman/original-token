@@ -31,6 +31,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|sysctl_netrom_default_path_quality
 r_int
 id|sysctl_netrom_default_path_quality
@@ -5555,7 +5556,10 @@ id|nr_init
 )brace
 )brace
 suffix:semicolon
-DECL|function|nr_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|nr_proto_init
 c_func
@@ -5564,6 +5568,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 r_int

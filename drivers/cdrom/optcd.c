@@ -6,6 +6,7 @@ multiline_comment|/* Includes */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR OPTICS_CDROM_MAJOR
@@ -7852,13 +7853,17 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Driver initialisation */
 multiline_comment|/* Returns 1 if a drive is detected with a version string&n;   starting with &quot;DOLPHIN&quot;. Otherwise 0. */
-DECL|function|version_ok
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|version_ok
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_char
@@ -8151,7 +8156,10 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* Get kernel parameter when used as a kernel driver */
-DECL|function|optcd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|optcd_setup
 c_func
@@ -8163,6 +8171,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -8184,12 +8193,16 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Test for presence of drive and initialize it. Called at boot time&n;   or during module initialisation. */
-DECL|function|optcd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|optcd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

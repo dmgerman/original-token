@@ -95,13 +95,17 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* 8 targets and 8 LUNs */
-DECL|function|init_tags
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|init_tags
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -1619,6 +1623,7 @@ multiline_comment|/* else: nothing to do: the running NCR5380_main() will pick u
 )brace
 DECL|function|NCR5380_all_init
 r_static
+r_inline
 r_void
 id|NCR5380_all_init
 (paren
@@ -1651,7 +1656,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Function : void NCR58380_print_options (struct Scsi_Host *instance)&n; *&n; * Purpose : called by probe code indicating the NCR5380 driver&n; *&t;     options that were selected.&n; *&n; * Inputs : instance, pointer to this instance.  Unused.&n; */
-DECL|function|NCR5380_print_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|NCR5380_print_options
@@ -1660,6 +1668,7 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+)paren
 )paren
 (brace
 id|printk
@@ -2299,7 +2308,10 @@ id|pos
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance)&n; *&n; * Purpose : initializes *instance and corresponding 5380 chip.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
-DECL|function|NCR5380_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|NCR5380_init
@@ -2311,6 +2323,7 @@ id|instance
 comma
 r_int
 id|flags
+)paren
 )paren
 (brace
 r_int

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/isp16.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_static
 r_int
@@ -151,8 +152,11 @@ DECL|macro|ISP16_IN
 mdefine_line|#define ISP16_IN(p) (outb(isp16_ctrl,ISP16_CTRL_PORT), inb(p))
 DECL|macro|ISP16_OUT
 mdefine_line|#define ISP16_OUT(p,b) (outb(isp16_ctrl,ISP16_CTRL_PORT), outb(b,p))
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|isp16_setup
 id|isp16_setup
 c_func
 (paren
@@ -163,6 +167,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -227,12 +232,16 @@ id|str
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  ISP16 initialisation.&n; *&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|isp16_init
 id|isp16_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|u_char
@@ -484,13 +493,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|isp16_detect
 id|isp16_detect
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -514,13 +527,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|isp16_c928__detect
 id|isp16_c928__detect
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|u_char
@@ -715,13 +732,17 @@ r_return
 id|i
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|isp16_c929__detect
 id|isp16_c929__detect
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|u_char
@@ -790,9 +811,12 @@ r_return
 l_int|2
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|isp16_cdi_config
 id|isp16_cdi_config
 c_func
 (paren
@@ -807,6 +831,7 @@ id|irq
 comma
 r_int
 id|dma
+)paren
 )paren
 (brace
 id|u_char

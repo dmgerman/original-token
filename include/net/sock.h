@@ -405,6 +405,10 @@ r_char
 id|tstamp_ok
 comma
 multiline_comment|/* TIMESTAMP seen on SYN packet&t;&t;*/
+DECL|member|wscale_ok
+id|wscale_ok
+comma
+multiline_comment|/* Wscale seen on SYN packet&t;&t;*/
 DECL|member|sack_ok
 id|sack_ok
 suffix:semicolon

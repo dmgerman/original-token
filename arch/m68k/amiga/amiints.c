@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
@@ -217,12 +218,16 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * void amiga_init_IRQ(void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the amiga IRQ handling routines.&n; */
-DECL|function|amiga_init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|amiga_init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

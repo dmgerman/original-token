@@ -23,6 +23,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/*&n; *&t;Lists of aarp entries&n; */
 DECL|struct|aarp_entry
 r_struct
@@ -2585,12 +2586,16 @@ id|aarp_snap_id
 op_assign
 initialization_block
 suffix:semicolon
-DECL|function|aarp_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|aarp_proto_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

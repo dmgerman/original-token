@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
@@ -3874,7 +3875,10 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Called by socket.c on kernel startup.  &n; */
-DECL|function|inet_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|inet_proto_init
 c_func
@@ -3883,6 +3887,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 r_struct

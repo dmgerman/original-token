@@ -2,13 +2,12 @@ multiline_comment|/* asmmacro.h: Assembler macros.&n; *&n; * Copyright (C) 1996 
 macro_line|#ifndef _SPARC_ASMMACRO_H
 DECL|macro|_SPARC_ASMMACRO_H
 mdefine_line|#define _SPARC_ASMMACRO_H
-multiline_comment|/* #define SMP_DEBUG */
 DECL|macro|GET_PROCESSOR_ID
 mdefine_line|#define GET_PROCESSOR_ID(reg) &bslash;&n;&t;rd&t;%tbr, %reg; &bslash;&n;&t;srl&t;%reg, 12, %reg; &bslash;&n;&t;and&t;%reg, 3, %reg;
 DECL|macro|GET_PROCESSOR_MID
-mdefine_line|#define GET_PROCESSOR_MID(reg, tmp) &bslash;&n;&t;GET_PROCESSOR_ID(reg) &bslash;&n;&t;set&t;C_LABEL(mid_xlate), %tmp; &bslash;&n;&t;ldub&t;[%tmp + %reg], %reg;
+mdefine_line|#define GET_PROCESSOR_MID(reg, tmp) &bslash;&n;&t;rd&t;%tbr, %reg; &bslash;&n;&t;sethi&t;C_LABEL(mid_xlate), %tmp; &bslash;&n;&t;srl&t;%reg, 12, %reg; &bslash;&n;&t;or&t;%tmp, %lo(C_LABEL(mid_xlate)), %tmp; &bslash;&n;&t;and&t;%reg, 3, %reg; &bslash;&n;&t;ldub&t;[%tmp + %reg], %reg;
 DECL|macro|GET_PROCESSOR_OFFSET
-mdefine_line|#define GET_PROCESSOR_OFFSET(reg) &bslash;&n;&t;rd&t;%tbr, %reg; &bslash;&n;&t;srl&t;%reg, 10, %reg; &bslash;&n;&t;and&t;%reg, 0xc, %reg;
+mdefine_line|#define GET_PROCESSOR_OFFSET(reg) &bslash;&n;&t;GET_PROCESSOR_ID(reg) &bslash;&n;&t;sll&t;%reg, 2, %reg;
 DECL|macro|PROCESSOR_OFFSET_TO_ID
 mdefine_line|#define PROCESSOR_OFFSET_TO_ID(reg) &bslash;&n;&t;srl&t;%reg, 2, %reg;
 DECL|macro|PROCESSOR_ID_TO_OFFSET

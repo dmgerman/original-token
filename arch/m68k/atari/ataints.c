@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -592,12 +593,16 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * void atari_init_IRQ (void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the atari IRQ handling routines.&n; */
-DECL|function|atari_init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atari_init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

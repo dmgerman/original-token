@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -6005,11 +6006,16 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|ip_rt_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ip_rt_init
 c_func
 (paren
+r_void
+)paren
 )paren
 (brace
 id|ip_fib_init

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#if defined(CONFIG_KERNELD) &amp;&amp; defined(CONFIG_NET)
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -5682,12 +5683,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|proto_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_extern
@@ -5738,12 +5743,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|sock_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sock_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

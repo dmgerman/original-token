@@ -9192,7 +9192,10 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Called at boot time.&n; * &n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there will be no probing at default&n; * addresses in this case.&n; *&n; */
-DECL|function|riscom8_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|riscom8_setup
 c_func
@@ -9204,6 +9207,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

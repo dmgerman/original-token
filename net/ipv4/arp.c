@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -7021,11 +7022,15 @@ id|arp_get_info
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|arp_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|arp_init
 (paren
 r_void
+)paren
 )paren
 (brace
 id|dev_add_pack

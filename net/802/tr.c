@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 r_static
 r_void
@@ -1951,7 +1952,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Called during bootup.  We don&squot;t actually have to initialise&n; *&t;too much for this.&n; */
-DECL|function|rif_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|rif_init
 c_func
@@ -1960,6 +1964,7 @@ r_struct
 id|net_proto
 op_star
 id|unused
+)paren
 )paren
 (brace
 id|rif_timer.expires

@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -554,7 +555,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|gscd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|gscd_setup
 (paren
@@ -565,6 +569,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -2601,11 +2606,15 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|find_drives
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|find_drives
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -2759,12 +2768,16 @@ r_return
 id|drvnum
 suffix:semicolon
 )brace
-DECL|function|init_cd_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|init_cd_drive
 (paren
 r_int
 id|num
+)paren
 )paren
 (brace
 r_char
@@ -3039,11 +3052,15 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Test for presence of drive and initialize it.  Called only at boot time. */
-DECL|function|gscd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|gscd_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return
@@ -3054,11 +3071,15 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is the common initialisation for the GoldStar drive. */
 multiline_comment|/* It is called at boot time AND for module init.           */
-DECL|function|my_gscd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|my_gscd_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

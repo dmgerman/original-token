@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -929,7 +930,10 @@ id|num_gvp11
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|gvp11_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|gvp11_detect
 c_func
@@ -937,6 +941,7 @@ c_func
 id|Scsi_Host_Template
 op_star
 id|tpnt
+)paren
 )paren
 (brace
 r_static

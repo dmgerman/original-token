@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/x25.h&gt;
 DECL|variable|sysctl_x25_restart_request_timeout
 r_int
@@ -5400,7 +5401,10 @@ id|x25_routes_get_info
 )brace
 suffix:semicolon
 macro_line|#endif&t;
-DECL|function|x25_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|x25_proto_init
 c_func
@@ -5409,6 +5413,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 id|sock_register

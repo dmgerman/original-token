@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -8853,7 +8854,10 @@ l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * stridx() returns the offset of c within s,&n; * or -1 if c is &squot;&bslash;0&squot; or not found within s.&n; */
-DECL|function|stridx
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|stridx
@@ -8865,6 +8869,7 @@ id|s
 comma
 r_char
 id|c
+)paren
 )paren
 (brace
 r_char
@@ -8896,7 +8901,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * match_parm() does parsing for ide_setup():&n; *&n; * 1. the first char of s must be &squot;=&squot;.&n; * 2. if the remainder matches one of the supplied keywords,&n; *     the index (1 based) of the keyword is negated and returned.&n; * 3. if the remainder is a series of no more than max_vals numbers&n; *     separated by commas, the numbers are saved in vals[] and a&n; *     count of how many were saved is returned.  Base10 is assumed,&n; *     and base16 is allowed when prefixed with &quot;0x&quot;.&n; * 4. otherwise, zero is returned.&n; */
-DECL|function|match_parm
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|match_parm
@@ -8919,6 +8927,7 @@ id|vals
 comma
 r_int
 id|max_vals
+)paren
 )paren
 (brace
 r_static
@@ -9163,13 +9172,17 @@ suffix:semicolon
 multiline_comment|/* zero = nothing matched */
 )brace
 multiline_comment|/*&n; * ide_setup() gets called VERY EARLY during initialization,&n; * to handle kernel &quot;command line&quot; strings beginning with &quot;hdx=&quot;&n; * or &quot;ide&quot;.  Here is the complete set currently supported:&n; *&n; * &quot;hdx=&quot;  is recognized for all &quot;x&quot; from &quot;a&quot; to &quot;h&quot;, such as &quot;hdc&quot;.&n; * &quot;idex=&quot; is recognized for all &quot;x&quot; from &quot;0&quot; to &quot;3&quot;, such as &quot;ide1&quot;.&n; *&n; * &quot;hdx=noprobe&quot;&t;: drive may be present, but do not probe for it&n; * &quot;hdx=none&quot;&t;&t;: drive is NOT present, ignore cmos and do not probe&n; * &quot;hdx=nowerr&quot;&t;&t;: ignore the WRERR_STAT bit on this drive&n; * &quot;hdx=cdrom&quot;&t;&t;: drive is present, and is a cdrom drive&n; * &quot;hdx=cyl,head,sect&quot;&t;: disk drive is present, with specified geometry&n; * &quot;hdx=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;if possible for this drive only.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; *&n; * &quot;idebus=xx&quot;&t;&t;: inform IDE driver of VESA/PCI bus speed in MHz,&n; *&t;&t;&t;&t;where &quot;xx&quot; is between 20 and 66 inclusive,&n; *&t;&t;&t;&t;used when tuning chipset PIO modes.&n; *&t;&t;&t;&t;For PCI bus, 25 is correct for a P75 system,&n; *&t;&t;&t;&t;30 is correct for P90,P120,P180 systems,&n; *&t;&t;&t;&t;and 33 is used for P100,P133,P166 systems.&n; *&t;&t;&t;&t;If in doubt, use idebus=33 for PCI.&n; *&t;&t;&t;&t;As for VLB, it is safest to not specify it.&n; *&n; * &quot;idex=noprobe&quot;&t;: do not attempt to access/use this interface&n; * &quot;idex=base&quot;&t;&t;: probe for an interface at the addr specified,&n; *&t;&t;&t;&t;where &quot;base&quot; is usually 0x1f0 or 0x170&n; *&t;&t;&t;&t;and &quot;ctl&quot; is assumed to be &quot;base&quot;+0x206&n; * &quot;idex=base,ctl&quot;&t;: specify both base and ctl&n; * &quot;idex=base,ctl,irq&quot;&t;: specify base, ctl, and irq number&n; * &quot;idex=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;for all drives on this interface.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; * &quot;idex=noautotune&quot;&t;: driver will NOT attempt to tune interface speed&n; *&t;&t;&t;&t;This is the default for most chipsets,&n; *&t;&t;&t;&t;except the cmd640.&n; * &quot;idex=serialize&quot;&t;: do not overlap operations on idex and ide(x^1)&n; *&n; * The following are valid ONLY on ide0,&n; * and the defaults for the base,ctl ports must not be altered.&n; *&n; * &quot;ide0=dtc2278&quot;&t;: probe/support DTC2278 interface&n; * &quot;ide0=ht6560b&quot;&t;: probe/support HT6560B interface&n; * &quot;ide0=cmd640_vlb&quot;&t;: *REQUIRED* for VLB cards with the CMD640 chip&n; *&t;&t;&t;  (not for PCI -- automatically detected)&n; * &quot;ide0=qd6580&quot;&t;: probe/support qd6580 interface&n; * &quot;ide0=ali14xx&quot;&t;: probe/support ali14xx chipsets (ALI M1439, M1443, M1445)&n; * &quot;ide0=umc8672&quot;&t;: probe/support umc8672 chipsets&n; */
-DECL|function|ide_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ide_setup
 (paren
 r_char
 op_star
 id|s
+)paren
 )paren
 (brace
 r_int
@@ -10515,7 +10528,10 @@ id|byte
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * ide_probe_pci() scans PCI for a specific vendor/device function,&n; * and invokes the supplied init routine for each instance detected.&n; */
-DECL|function|ide_probe_pci
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ide_probe_pci
@@ -10534,6 +10550,7 @@ id|init
 comma
 r_int
 id|func_adj
+)paren
 )paren
 (brace
 r_int
@@ -10606,12 +10623,16 @@ suffix:semicolon
 macro_line|#endif /* defined(CONFIG_BLK_DEV_RZ1000) || defined(CONFIG_BLK_DEV_TRITON) || defined(CONFIG_BLK_DEV_OPTI621) */
 macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/*&n; * probe_for_hwifs() finds/initializes &quot;known&quot; IDE interfaces&n; *&n; * This routine should ideally be using pcibios_find_class() to find all&n; * PCI IDE interfaces, but that function causes some systems to &quot;go weird&quot;.&n; */
-DECL|function|probe_for_hwifs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|probe_for_hwifs
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
@@ -10733,11 +10754,15 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|ide_init_builtin_drivers
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ide_init_builtin_drivers
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; * Probe for special &quot;known&quot; interface chipsets&n;&t; */
@@ -11991,11 +12016,15 @@ id|ide_unregister
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This is gets invoked once during initialization, to set *everything* up&n; */
-DECL|function|ide_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ide_init
 (paren
 r_void
+)paren
 )paren
 (brace
 id|init_ide_data
@@ -12035,7 +12064,10 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-DECL|function|parse_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|parse_options
@@ -12043,6 +12075,7 @@ id|parse_options
 r_char
 op_star
 id|line
+)paren
 )paren
 (brace
 r_char

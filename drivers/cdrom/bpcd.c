@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -360,13 +361,17 @@ multiline_comment|/* revalidate new media */
 )brace
 suffix:semicolon
 multiline_comment|/* the MicroSolutions protocol uses bits 3,4,5 &amp; 7 of the status port to&n;   deliver a nybble in 4 bit mode.  We use a table lookup to extract the&n;   nybble value.  The following function initialises the table.&n;*/
-DECL|function|init_nyb_map
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|init_nyb_map
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -419,11 +424,15 @@ id|j
 suffix:semicolon
 )brace
 )brace
-DECL|function|bpcd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|bpcd_init
 (paren
 r_void
+)paren
 )paren
 multiline_comment|/* preliminary initialisation */
 (brace
@@ -844,7 +853,10 @@ suffix:semicolon
 )brace
 macro_line|#else 
 multiline_comment|/* bpcd_setup:  process lilo command parameters ...&n;&n;   syntax:&t;bpcd=base[,nybble[,rep]]&n;*/
-DECL|function|bpcd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|bpcd_setup
 c_func
@@ -856,6 +868,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -1449,7 +1462,10 @@ l_int|0x20
 suffix:semicolon
 )brace
 )brace
-DECL|function|probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|probe
@@ -1457,6 +1473,7 @@ c_func
 (paren
 r_int
 id|id
+)paren
 )paren
 (brace
 r_int
@@ -2665,13 +2682,17 @@ l_string|&quot;eject&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|bp_reset
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_reset
 c_func
 (paren
 r_void
+)paren
 )paren
 multiline_comment|/* the ATAPI standard actually specifies the contents of all 7 registers&n;   after a reset, but the specification is ambiguous concerning the last&n;   two bytes, and different drives interpret the standard differently.&n;*/
 (brace
@@ -2794,7 +2815,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|bp_identify
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_identify
@@ -2803,6 +2827,7 @@ c_func
 r_char
 op_star
 id|id
+)paren
 )paren
 (brace
 r_int
@@ -2899,13 +2924,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|bp_port_check
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_port_check
 c_func
 (paren
 r_void
+)paren
 )paren
 multiline_comment|/* check for 8-bit port */
 (brace
@@ -3011,13 +3040,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|bp_locate
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_locate
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3061,7 +3094,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|bp_do_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_do_detect
@@ -3069,6 +3105,7 @@ c_func
 (paren
 r_int
 id|autop
+)paren
 )paren
 (brace
 r_char
@@ -3271,13 +3308,17 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* If you know about some other weird parallel port base address,&n;   add it here ....&n;*/
-DECL|function|bp_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|bp_detect
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

@@ -32,6 +32,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|sysctl_rose_restart_request_timeout
 r_int
 id|sysctl_rose_restart_request_timeout
@@ -5819,7 +5820,10 @@ id|rose_init
 )brace
 )brace
 suffix:semicolon
-DECL|function|rose_proto_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|rose_proto_init
 c_func
@@ -5828,6 +5832,7 @@ r_struct
 id|net_proto
 op_star
 id|pro
+)paren
 )paren
 (brace
 r_int

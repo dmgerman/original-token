@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
@@ -819,7 +820,10 @@ macro_line|#endif&t;
 DECL|macro|LONG_ALIGN
 mdefine_line|#define LONG_ALIGN(x) (((x)+(sizeof(long))-1)&amp;~((sizeof(long))-1))
 multiline_comment|/*&n; * set up the free-area data structures:&n; *   - mark all pages reserved&n; *   - mark all memory queues empty&n; *   - clear the memory bitmaps&n; */
-DECL|function|free_area_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|free_area_init
@@ -832,6 +836,7 @@ comma
 r_int
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 id|mem_map_t
@@ -847,7 +852,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * select nr of pages we try to keep free for important stuff&n;&t; * with a minimum of 16 pages. This is totally arbitrary&n;&t; */
+multiline_comment|/*&n;&t; * select nr of pages we try to keep free for important stuff&n;&t; * with a minimum of 48 pages. This is totally arbitrary&n;&t; */
 id|i
 op_assign
 (paren

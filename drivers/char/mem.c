@@ -495,7 +495,8 @@ id|read
 op_assign
 id|tmp
 suffix:semicolon
-macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
+macro_line|#if defined(__sparc__) || defined(__mc68000__)
+multiline_comment|/* we don&squot;t have page 0 mapped on sparc and m68k.. */
 r_while
 c_loop
 (paren
@@ -664,7 +665,8 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(__sparc__) /* we don&squot;t have page 0 mapped on sparc.. */
+macro_line|#if defined(__sparc__) || defined(__mc68000__)
+multiline_comment|/* we don&squot;t have page 0 mapped on sparc and m68k.. */
 r_while
 c_loop
 (paren

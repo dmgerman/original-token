@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -695,11 +696,15 @@ id|ez_revalidate
 multiline_comment|/* revalidate new media */
 )brace
 suffix:semicolon
-DECL|function|ez_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ez_init
 (paren
 r_void
+)paren
 )paren
 multiline_comment|/* preliminary initialisation */
 (brace
@@ -761,7 +766,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ez_geninit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ez_geninit
@@ -770,6 +778,7 @@ r_struct
 id|gendisk
 op_star
 id|ignored
+)paren
 )paren
 multiline_comment|/* real init */
 (brace
@@ -2000,7 +2009,10 @@ suffix:semicolon
 )brace
 macro_line|#else 
 multiline_comment|/* ez_setup:  process lilo command parameters ...&n;&n;   syntax:&t;ez=base[,irq[,rep[,nybble]]]&n;*/
-DECL|function|ez_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ez_setup
 c_func
@@ -2012,6 +2024,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -3597,13 +3610,17 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* ez_media_check: check for and acknowledge the MC flag */
-DECL|function|ez_media_check
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ez_media_check
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3716,13 +3733,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|ez_identify
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ez_identify
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3868,13 +3889,17 @@ suffix:semicolon
 )brace
 DECL|macro|word_val
 mdefine_line|#define  word_val(n) &t;(ez_scratch[2*n]+256*ez_scratch[2*n+1])
-DECL|function|ez_get_capacity
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ez_get_capacity
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3981,13 +4006,17 @@ id|ez_sectors
 )paren
 suffix:semicolon
 )brace
-DECL|function|ez_standby_off
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ez_standby_off
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|connect
@@ -4033,13 +4062,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|ez_port_check
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ez_port_check
 c_func
 (paren
 r_void
+)paren
 )paren
 multiline_comment|/* check for 8-bit port */
 (brace
@@ -4145,13 +4178,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|ez_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ez_detect
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

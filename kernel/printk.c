@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
 mdefine_line|#define LOG_BUF_LEN&t;8192
@@ -1046,7 +1047,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * The console driver calls this routine during kernel initialization&n; * to register the console printing procedure with printk() and to&n; * print any messages that were printed by the kernel before the&n; * console driver was initialized.&n; */
-DECL|function|register_console
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|register_console
 c_func
@@ -1055,6 +1059,7 @@ r_struct
 id|console
 op_star
 id|console
+)paren
 )paren
 (brace
 r_int

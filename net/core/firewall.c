@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|variable|firewall_sem
 r_struct
@@ -577,12 +578,16 @@ c_func
 id|call_fw_firewall
 )paren
 suffix:semicolon
-DECL|function|fwchain_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|fwchain_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;consolemap.h&quot;
 DECL|variable|translations
@@ -3687,12 +3688,16 @@ suffix:semicolon
 multiline_comment|/* not found */
 )brace
 multiline_comment|/*&n; * This is called at sys_setup time, after memory and the console are&n; * initialized.  It must be possible to call kmalloc(..., GFP_KERNEL)&n; * from this function, hence the call from sys_setup.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|console_map_init
 id|console_map_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|con_set_default_unimap

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/arch/m68k/amiga/amisound.c&n; *&n; * amiga sound driver for Linux/m68k&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|variable|snd_data
@@ -96,13 +97,17 @@ r_static
 id|u_long
 id|clock_constant
 suffix:semicolon
-DECL|function|init_sound
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|init_sound
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|snd_data
@@ -339,9 +344,9 @@ l_int|2
 dot
 id|audvol
 op_assign
-l_int|64
+l_int|32
 suffix:semicolon
-multiline_comment|/* maxvol */
+multiline_comment|/* 50% of maxvol */
 r_if
 c_cond
 (paren

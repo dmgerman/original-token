@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|IOTABLE_SIZE
 mdefine_line|#define IOTABLE_SIZE 128
 DECL|struct|resource_entry_t
@@ -846,7 +847,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Called from init/main.c to reserve IO ports. */
-DECL|function|reserve_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|reserve_setup
 c_func
@@ -858,6 +862,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

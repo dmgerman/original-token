@@ -8,12 +8,13 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/fb.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
-macro_line|#include &lt;linux/fb.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#if !defined(CONFIG_AMIFB_OCS) &amp;&amp; !defined(CONFIG_AMIFB_ECS) &amp;&amp; !defined(CONFIG_AMIFB_AGA)
@@ -7301,7 +7302,10 @@ id|con
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Initialisation&n;&t; */
-DECL|function|amiga_fb_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|fb_info
 op_star
@@ -7311,6 +7315,7 @@ c_func
 r_int
 op_star
 id|mem_start
+)paren
 )paren
 (brace
 r_int

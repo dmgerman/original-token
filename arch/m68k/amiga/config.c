@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -661,12 +662,16 @@ id|unknown
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Setup the Amiga configuration info&n;     */
-DECL|function|config_amiga
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|config_amiga
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* Fill in some default values, if necessary */
@@ -1571,7 +1576,10 @@ r_int
 r_int
 id|jiffy_ticks
 suffix:semicolon
-DECL|function|amiga_sched_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|amiga_sched_init
@@ -1591,6 +1599,7 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -3364,13 +3373,17 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|amiga_debug_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|amiga_debug_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: sit.c,v 1.13 1997/03/18 18:24:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: sit.c,v 1.14 1997/04/29 09:38:52 mj Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/icmp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -861,12 +862,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sit_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|sit_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

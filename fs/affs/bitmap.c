@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/affs/bitmap.c&n; *&n; *  (c) 1996 Hans-Joachim Widmaier&n; *&n; *&n; *  bitmap.c contains the code that handles all bitmap related stuff -&n; *  block allocation, deallocation, calculation of free space.&n; */
+multiline_comment|/*&n; *  linux/fs/affs/bitmap.c&n; *&n; *  (c) 1996 Hans-Joachim Widmaier&n; *&n; *  bitmap.c contains the code that handles all bitmap related stuff -&n; *  block allocation, deallocation, calculation of free space.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -194,7 +194,7 @@ id|super_block
 op_star
 id|sb
 comma
-r_int
+id|s32
 id|block
 )paren
 (brace
@@ -285,10 +285,14 @@ op_ge
 id|sb-&gt;u.affs_sb.s_bm_count
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: free_block(): block %d outside partition.&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;affs_free_block&quot;
+comma
+l_string|&quot;Block %d outside partition&quot;
 comma
 id|block
 )paren
@@ -355,10 +359,14 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: free_block(): Cannot read bitmap block %d&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;affs_free_block&quot;
+comma
+l_string|&quot;Cannot read bitmap block %d&quot;
 comma
 id|bm-&gt;bm_key
 )paren
@@ -382,10 +390,14 @@ op_plus
 l_int|4
 )paren
 )paren
-id|printk
+id|affs_warning
 c_func
 (paren
-l_string|&quot;AFFS: free_block(): block %d is already free.&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;affs_free_block&quot;
+comma
+l_string|&quot;Trying to free block %d which is already free&quot;
 comma
 id|block
 )paren
@@ -402,7 +414,7 @@ op_increment
 suffix:semicolon
 (paren
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bm-&gt;bm_bh-&gt;b_data
@@ -419,7 +431,7 @@ c_func
 (paren
 (paren
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|bm-&gt;bm_bh-&gt;b_data
@@ -473,7 +485,7 @@ id|sb
 suffix:semicolon
 )brace
 r_static
-r_int
+id|s32
 DECL|function|affs_balloc
 id|affs_balloc
 c_func
@@ -487,10 +499,10 @@ r_int
 id|zone_no
 )paren
 (brace
-id|__u32
+id|u32
 id|w
 suffix:semicolon
-id|__u32
+id|u32
 op_star
 id|bm
 suffix:semicolon
@@ -503,7 +515,7 @@ suffix:semicolon
 r_int
 id|fwb
 suffix:semicolon
-r_int
+id|s32
 id|block
 suffix:semicolon
 r_struct
@@ -566,7 +578,7 @@ suffix:semicolon
 id|bm
 op_assign
 (paren
-id|__u32
+id|u32
 op_star
 )paren
 id|zone-&gt;z_bm-&gt;bm_bh-&gt;b_data
@@ -679,10 +691,14 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|printk
+id|affs_warning
 c_func
 (paren
-l_string|&quot;AFFS: balloc(): empty block disappeared somehow&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;balloc&quot;
+comma
+l_string|&quot;Empty block disappeared somehow&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -759,10 +775,14 @@ id|i
 )paren
 )paren
 (brace
-id|printk
+id|affs_warning
 c_func
 (paren
-l_string|&quot;AFFS: balloc(): empty block disappeared&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;balloc&quot;
+comma
+l_string|&quot;Empty block disappeared somehow&quot;
 )paren
 suffix:semicolon
 r_break
@@ -994,10 +1014,14 @@ id|az-&gt;az_count
 op_decrement
 suffix:semicolon
 r_else
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: find_new_zone(): az_count=0, but bm used&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;find_new_zone&quot;
+comma
+l_string|&quot;az_count=0, but bm used&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1200,10 +1224,14 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: find_new_zone(): Cannot read bitmap&bslash;n&quot;
+id|sb
+comma
+l_string|&quot;find_new_zone&quot;
+comma
+l_string|&quot;Cannot read bitmap&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1280,7 +1308,7 @@ r_return
 id|az-&gt;az_free
 suffix:semicolon
 )brace
-r_int
+id|s32
 DECL|function|affs_new_header
 id|affs_new_header
 c_func
@@ -1291,7 +1319,7 @@ op_star
 id|inode
 )paren
 (brace
-r_int
+id|s32
 id|block
 suffix:semicolon
 r_struct
@@ -1389,10 +1417,14 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: balloc(): cannot read block %d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;new_header&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|block
 )paren
@@ -1441,7 +1473,7 @@ r_return
 id|block
 suffix:semicolon
 )brace
-r_int
+id|s32
 DECL|function|affs_new_data
 id|affs_new_data
 c_func
@@ -1481,7 +1513,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-r_int
+id|s32
 id|block
 suffix:semicolon
 id|pr_debug
@@ -1774,10 +1806,14 @@ id|sb-&gt;s_blocksize
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: balloc(): cannot read block %u&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;new_data&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|block
 )paren

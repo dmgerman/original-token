@@ -9,6 +9,22 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+r_static
+r_int
+id|affs_fixup
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
 multiline_comment|/* Simple toupper() for DOS&bslash;1 */
 r_static
 r_inline
@@ -418,7 +434,7 @@ suffix:semicolon
 r_int
 id|intl
 suffix:semicolon
-r_int
+id|s32
 id|key
 suffix:semicolon
 id|pr_debug
@@ -2507,10 +2523,14 @@ op_logical_neg
 id|oldinode
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: link(): original does not exist.&bslash;n&quot;
+id|oldinode-&gt;i_sb
+comma
+l_string|&quot;link&quot;
+comma
+l_string|&quot;Cannot get original from link&quot;
 )paren
 suffix:semicolon
 id|iput
@@ -3470,6 +3490,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|affs_fixup
 id|affs_fixup
@@ -3486,12 +3507,12 @@ op_star
 id|inode
 )paren
 (brace
-r_int
+id|s32
 id|key
 comma
 id|link_key
 suffix:semicolon
-r_int
+id|s32
 id|type
 suffix:semicolon
 r_struct
@@ -3567,10 +3588,14 @@ op_logical_neg
 id|key
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): hard link without original: ino=%lu&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Hard link without original: ino=%lu&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -3683,10 +3708,14 @@ id|key
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): cannot read inode %u&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|key
 )paren
@@ -3703,10 +3732,14 @@ op_logical_neg
 id|ofinode-&gt;u.affs_i.i_hlink
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): first link to %lu (%u) is not a link?&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;First link to %lu (%d) is not a link&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -3747,10 +3780,14 @@ id|inode
 )paren
 )paren
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): cannot read block %u&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|key
 )paren
@@ -3998,11 +4035,14 @@ c_cond
 op_logical_neg
 id|ofinode-&gt;u.affs_i.i_hlink
 )paren
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup() inode %u in link chain is &quot;
-l_string|&quot;not a link&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Inode %d in link chain is not a link&quot;
 comma
 id|key
 )paren
@@ -4033,10 +4073,14 @@ id|link_key
 suffix:semicolon
 )brace
 r_else
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): cannot get inode %u&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Cannot read block %d&quot;
 comma
 id|key
 )paren
@@ -4073,10 +4117,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
+id|affs_error
 c_func
 (paren
-l_string|&quot;AFFS: fixup(): secondary type=%d&bslash;n&quot;
+id|inode-&gt;i_sb
+comma
+l_string|&quot;fixup&quot;
+comma
+l_string|&quot;Bad secondary type (%d)&quot;
 comma
 id|type
 )paren

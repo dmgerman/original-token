@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.8 1997/03/18 18:24:30 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.9 1997/04/29 09:38:42 mj Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
@@ -1666,7 +1667,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|icmpv6_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|icmpv6_init
 c_func
@@ -1675,6 +1679,7 @@ r_struct
 id|net_proto_family
 op_star
 id|ops
+)paren
 )paren
 (brace
 r_struct

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -390,11 +391,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* xd_init: register the block device number and set up pointer tables */
-DECL|function|xd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|xd_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if
@@ -456,7 +461,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* xd_detect: scan the possible BIOS ROM locations for the signature strings */
-DECL|function|xd_detect
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|u_char
 id|xd_detect
@@ -469,6 +477,7 @@ r_int
 r_int
 op_star
 id|address
+)paren
 )paren
 (brace
 id|u_char
@@ -623,7 +632,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* xd_geninit: grab the IRQ and DMA channel, initialise the drives */
 multiline_comment|/* and set up the &quot;raw&quot; device entries in the table */
-DECL|function|xd_geninit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_geninit
@@ -632,6 +644,7 @@ r_struct
 id|gendisk
 op_star
 id|ignored
+)paren
 )paren
 (brace
 id|u_char
@@ -2978,7 +2991,10 @@ id|CSB_ERROR
 )paren
 suffix:semicolon
 )brace
-DECL|function|xd_initdrives
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|u_char
 id|xd_initdrives
@@ -2991,6 +3007,7 @@ id|init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 )paren
 (brace
@@ -3081,7 +3098,10 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|xd_dtc_init_controller
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_dtc_init_controller
@@ -3089,6 +3109,7 @@ id|xd_dtc_init_controller
 r_int
 r_int
 id|address
+)paren
 )paren
 (brace
 r_switch
@@ -3156,13 +3177,17 @@ id|XD_RESET
 suffix:semicolon
 multiline_comment|/* reset the controller */
 )brace
-DECL|function|xd_dtc_init_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_dtc_init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 (brace
 id|u_char
@@ -3451,7 +3476,10 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-DECL|function|xd_wd_init_controller
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_wd_init_controller
@@ -3459,6 +3487,7 @@ id|xd_wd_init_controller
 r_int
 r_int
 id|address
+)paren
 )paren
 (brace
 r_switch
@@ -3555,13 +3584,17 @@ multiline_comment|/* this one doesn&squot;t wrap properly either... */
 multiline_comment|/* outb(0,XD_RESET); */
 multiline_comment|/* reset the controller */
 )brace
-DECL|function|xd_wd_init_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_wd_init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 (brace
 id|u_char
@@ -3798,7 +3831,10 @@ id|drive
 )paren
 suffix:semicolon
 )brace
-DECL|function|xd_seagate_init_controller
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_seagate_init_controller
@@ -3806,6 +3842,7 @@ id|xd_seagate_init_controller
 r_int
 r_int
 id|address
+)paren
 )paren
 (brace
 r_switch
@@ -3890,13 +3927,17 @@ id|XD_RESET
 suffix:semicolon
 multiline_comment|/* reset the controller */
 )brace
-DECL|function|xd_seagate_init_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_seagate_init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 (brace
 id|u_char
@@ -4023,7 +4064,10 @@ id|drive
 suffix:semicolon
 )brace
 multiline_comment|/* Omti support courtesy Dirk Melchers */
-DECL|function|xd_omti_init_controller
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_omti_init_controller
@@ -4031,6 +4075,7 @@ id|xd_omti_init_controller
 r_int
 r_int
 id|address
+)paren
 )paren
 (brace
 r_switch
@@ -4115,13 +4160,17 @@ id|XD_RESET
 suffix:semicolon
 multiline_comment|/* reset the controller */
 )brace
-DECL|function|xd_omti_init_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_omti_init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 (brace
 multiline_comment|/* gets infos from drive */
@@ -4143,13 +4192,17 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/* xd_override_init_drive: this finds disk geometry in a &quot;binary search&quot; style, narrowing in on the &quot;correct&quot; number of heads&n;   etc. by trying values until it gets the highest successful value. Idea courtesy Salvador Abreu (spa@fct.unl.pt). */
-DECL|function|xd_override_init_drive
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_override_init_drive
 (paren
 id|u_char
 id|drive
+)paren
 )paren
 (brace
 id|u_short
@@ -4402,7 +4455,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* xd_setup: initialise from command line parameters */
-DECL|function|xd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|xd_setup
 (paren
@@ -4413,6 +4469,7 @@ comma
 r_int
 op_star
 id|integers
+)paren
 )paren
 (brace
 id|xd_override
@@ -4453,7 +4510,10 @@ l_int|0x01
 suffix:semicolon
 )brace
 multiline_comment|/* xd_setparam: set the drive characteristics */
-DECL|function|xd_setparam
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|xd_setparam
@@ -4478,6 +4538,7 @@ id|wprecomp
 comma
 id|u_char
 id|ecc
+)paren
 )paren
 (brace
 id|u_char

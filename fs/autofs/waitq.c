@@ -1,8 +1,9 @@
 multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/waitq.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/auto_fs.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &quot;autofs_i.h&quot;
 multiline_comment|/* We make this a static variable rather than a part of the superblock; it&n;   is better if we don&squot;t reassign numbers easily even across filesystems */
 DECL|variable|autofs_next_wait_queue
 r_static
@@ -89,6 +90,15 @@ op_assign
 id|nwq
 suffix:semicolon
 )brace
+id|fput
+c_func
+(paren
+id|sbi-&gt;pipe
+comma
+id|sbi-&gt;pipe-&gt;f_inode
+)paren
+suffix:semicolon
+multiline_comment|/* Close the pipe */
 )brace
 DECL|function|autofs_write
 r_static

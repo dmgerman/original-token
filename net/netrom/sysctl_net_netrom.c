@@ -1,6 +1,7 @@
 multiline_comment|/* -*- linux-c -*-&n; * sysctl_net_netrom.c: sysctl interface to net NET/ROM subsystem.&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/netrom directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;net/netrom.h&gt;
 multiline_comment|/*&n; *&t;Values taken from NET/ROM documentation.&n; */
@@ -674,12 +675,16 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-DECL|function|nr_register_sysctl
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|nr_register_sysctl
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|nr_table_header

@@ -260,6 +260,24 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/core */
+r_enum
+(brace
+DECL|enumerator|NET_CORE_WMEM_MAX
+id|NET_CORE_WMEM_MAX
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_CORE_RMEM_MAX
+id|NET_CORE_RMEM_MAX
+comma
+DECL|enumerator|NET_CORE_WMEM_DEFAULT
+id|NET_CORE_WMEM_DEFAULT
+comma
+DECL|enumerator|NET_CORE_RMEM_DEFAULT
+id|NET_CORE_RMEM_DEFAULT
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
 multiline_comment|/* /proc/sys/net/unix */

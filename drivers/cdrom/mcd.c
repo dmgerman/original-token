@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* #define REALLY_SLOW_IO  */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -438,7 +439,10 @@ op_star
 id|result
 )paren
 suffix:semicolon
-DECL|function|mcd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|mcd_setup
 c_func
@@ -450,6 +454,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -4311,12 +4316,16 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
-DECL|function|mcd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|mcd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atarikb.h&gt;
@@ -4194,12 +4195,16 @@ l_int|6
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The original code sometimes left the interrupt line of &n; * the ACIAs low forever. I hope, it is fixed now.&n; *&n; * Martin Rogge, 20 Aug 1995&n; */
-DECL|function|atari_keyb_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atari_keyb_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* setup key map */

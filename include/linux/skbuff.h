@@ -393,6 +393,7 @@ multiline_comment|/* Pending */
 macro_line|#endif
 )brace
 suffix:semicolon
+multiline_comment|/* These are just the default values. This is run time configurable.&n; * FIXME: Probably the config option should go away. -- erics&n; */
 macro_line|#ifdef CONFIG_SKB_LARGE
 DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;65535

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
@@ -723,7 +724,10 @@ id|base-&gt;server
 )paren
 suffix:semicolon
 )brace
-DECL|function|cia_init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|cia_init_IRQ
 c_func
@@ -732,6 +736,7 @@ r_struct
 id|ciabase
 op_star
 id|base
+)paren
 )paren
 (brace
 r_int

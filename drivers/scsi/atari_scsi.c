@@ -74,6 +74,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
@@ -2081,7 +2082,10 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|atari_scsi_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atari_scsi_setup
 c_func
@@ -2093,6 +2097,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 multiline_comment|/* Format of atascsi parameter is:&n;&t; *   atascsi=&lt;can_queue&gt;,&lt;cmd_per_lun&gt;,&lt;sg_tablesize&gt;,&lt;hostid&gt;,&lt;use_tags&gt;&n;&t; * Defaults depend on TT or Falcon, hostid determined at run time.&n;&t; * Negative values mean don&squot;t change.&n;&t; */
@@ -2550,13 +2555,17 @@ r_return
 id|rv
 suffix:semicolon
 )brace
-DECL|function|atari_scsi_reset_boot
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|atari_scsi_reset_boot
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

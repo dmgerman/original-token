@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.42 1997/04/22 01:06:33 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.43 1997/04/27 19:24:43 schenk Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -1490,8 +1490,210 @@ id|tp-&gt;rto
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *      This function returns the amount that we can raise the&n; *      usable window based on the following constraints&n; *  &n; *&t;1. The window can never be shrunk once it is offered (RFC 793)&n; *&t;2. We limit memory per socket&n; */
+multiline_comment|/* This function returns the amount that we can raise the&n; * usable window based on the following constraints&n; *  &n; * 1. The window can never be shrunk once it is offered (RFC 793)&n; * 2. We limit memory per socket&n; *&n; * RFC 1122:&n; * &quot;the suggested [SWS] avoidance algoritm for the receiver is to keep&n; *  RECV.NEXT + RCV.WIN fixed until:&n; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n; *&n; * i.e. don&squot;t raise the right edge of the window until you can raise&n; * it at least MSS bytes.&n; *&n; * Unfortunately, the recomended algorithm breaks header prediction,&n; * since header prediction assumes th-&gt;window stays fixed.&n; *&n; * Strictly speaking, keeping th-&gt;window fixed violates the receiver&n; * side SWS prevention criteria. The problem is that under this rule&n; * a stream of single byte packets will cause the right side of the&n; * window to always advance by a single byte.&n; * &n; * Of course, if the sender implements sender side SWS prevention&n; * then this will not be a problem.&n; * &n; * BSD seems to make the following compromise:&n; * &n; *&t;If the free space is less than the 1/4 of the maximum&n; *&t;space available and the free space is less than 1/2 mss,&n; *&t;then set the window to 0.&n; *&t;Otherwise, just prevent the window from shrinking&n; *&t;and from being larger than the largest representable value.&n; *&n; * This prevents incremental opening of the window in the regime&n; * where TCP is limited by the speed of the reader side taking&n; * data out of the TCP receive queue. It does nothing about&n; * those cases where the window is constrained on the sender side&n; * because the pipeline is full.&n; *&n; * BSD also seems to &quot;accidentally&quot; limit itself to windows that are a&n; * multiple of MSS, at least until the free space gets quite small.&n; * This would appear to be a side effect of the mbuf implementation.&n; * Combining these two algorithms results in the observed behavior&n; * of having a fixed window size at almost all times.&n; *&n; * Below we obtain similar behavior by forcing the offered window to&n; * a multiple of the mss when it is feasible to do so.&n; *&n; * FIXME: In our current implementation the value returned by sock_rpsace(sk)&n; * is the total space we have allocated to the socket to store skbuf&squot;s.&n; * The current design assumes that up to half of that space will be&n; * taken by headers, and the remaining space will be available for TCP data.&n; * This should be accounted for correctly instead.&n; */
 DECL|function|tcp_select_window
+r_int
+r_int
+id|tcp_select_window
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
+r_int
+id|mss
+op_assign
+id|sk-&gt;mss
+suffix:semicolon
+r_int
+id|free_space
+op_assign
+id|sock_rspace
+c_func
+(paren
+id|sk
+)paren
+op_div
+l_int|2
+suffix:semicolon
+r_int
+id|window
+comma
+id|cur_win
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;window_clamp
+)paren
+(brace
+id|free_space
+op_assign
+id|min
+c_func
+(paren
+id|tp-&gt;window_clamp
+comma
+id|free_space
+)paren
+suffix:semicolon
+id|mss
+op_assign
+id|min
+c_func
+(paren
+id|tp-&gt;window_clamp
+comma
+id|mss
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Clamp failure. Water leaking.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mss
+OL
+l_int|1
+)paren
+(brace
+id|mss
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;tcp_select_window: mss fell to 0.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* compute the actual window i.e.&n;&t; * old_window - received_bytes_on_that_win&n;&t; */
+id|cur_win
+op_assign
+id|tp-&gt;rcv_wnd
+op_minus
+(paren
+id|tp-&gt;rcv_nxt
+op_minus
+id|tp-&gt;rcv_wup
+)paren
+suffix:semicolon
+id|window
+op_assign
+id|tp-&gt;rcv_wnd
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cur_win
+OL
+l_int|0
+)paren
+(brace
+id|cur_win
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;TSW: win &lt; 0 w=%d 1=%u 2=%u&bslash;n&quot;
+comma
+id|tp-&gt;rcv_wnd
+comma
+id|tp-&gt;rcv_nxt
+comma
+id|tp-&gt;rcv_wup
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|free_space
+OL
+id|sk-&gt;rcvbuf
+op_div
+l_int|4
+op_logical_and
+id|free_space
+OL
+id|mss
+op_div
+l_int|2
+)paren
+id|window
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Get the largest window that is a nice multiple of mss.&n;&t; * Window clamp already applied above.&n;&t; * If our current window offering is within 1 mss of the&n;&t; * free space we just keep it. This prevents the divide&n;&t; * and multiply from happening most of the time.&n;&t; * We also don&squot;t do any window rounding when the free space&n;&t; * is too small.&n;&t; */
+r_if
+c_cond
+(paren
+id|window
+template_param
+id|mss
+)paren
+id|window
+op_assign
+(paren
+id|free_space
+op_div
+id|mss
+)paren
+op_star
+id|mss
+suffix:semicolon
+multiline_comment|/* Never shrink the offered window */
+r_if
+c_cond
+(paren
+id|window
+OL
+id|cur_win
+)paren
+id|window
+op_assign
+id|cur_win
+suffix:semicolon
+id|tp-&gt;rcv_wnd
+op_assign
+id|window
+suffix:semicolon
+id|tp-&gt;rcv_wup
+op_assign
+id|tp-&gt;rcv_nxt
+suffix:semicolon
+r_return
+id|window
+op_rshift
+id|tp-&gt;rcv_wscale
+suffix:semicolon
+multiline_comment|/* RFC1323 scaling applied */
+)brace
+macro_line|#if 0
+multiline_comment|/* Old algorithm for window selection */
 r_int
 r_int
 id|tcp_select_window
@@ -1562,12 +1764,12 @@ suffix:semicolon
 multiline_comment|/* compute the actual window i.e.&n;&t; * old_window - received_bytes_on_that_win&n;&t; */
 id|cur_win
 op_assign
-id|tp-&gt;rcv_wup
+id|tp-&gt;rcv_wnd
 op_minus
 (paren
 id|tp-&gt;rcv_nxt
 op_minus
-id|tp-&gt;rcv_wnd
+id|tp-&gt;rcv_wup
 )paren
 suffix:semicolon
 id|window
@@ -1600,8 +1802,7 @@ id|tp-&gt;rcv_wup
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * RFC 1122:&n;&t; * &quot;the suggested [SWS] avoidance algoritm for the receiver is to keep&n;&t; *  RECV.NEXT + RCV.WIN fixed until:&n;&t; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n;&t; *&n;&t; * i.e. don&squot;t raise the right edge of the window until you can&squot;t raise&n;&t; * it MSS bytes&n;&t; */
-multiline_comment|/* It would be a good idea if it didn&squot;t break header prediction.&n;&t; * and BSD made the header predition standard...&n;&t; * It expects the same value in the header i.e. th-&gt;window to be&n;&t; * constant&n;&t; */
+multiline_comment|/* RFC 1122:&n;&t; * &quot;the suggested [SWS] avoidance algoritm for the receiver is to keep&n;&t; *  RECV.NEXT + RCV.WIN fixed until:&n;&t; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n;&t; *&n;&t; * i.e. don&squot;t raise the right edge of the window until you can raise&n;&t; * it at least MSS bytes.&n;&t; */
 id|usable
 op_assign
 id|free_space
@@ -1627,7 +1828,7 @@ OL
 id|usable
 )paren
 (brace
-multiline_comment|/*&t;Window is not blocking the sender&n;&t;&t; *&t;and we have enought free space for it&n;&t;&t; */
+multiline_comment|/*&t;Window is not blocking the sender&n;&t;&t; *&t;and we have enough free space for it&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1665,8 +1866,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_if
-c_cond
+r_while
+c_loop
 (paren
 (paren
 id|usable
@@ -1695,6 +1896,7 @@ r_return
 id|window
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|tcp_retrans_try_collapse
 r_static
 r_int
@@ -2676,6 +2878,7 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* WARNING: This routine must only be called when we have already sent&n; * a SYN packet that crossed the incoming SYN that caused this routine&n; * to get called. If this assumption fails then the initial rcv_wnd&n; * and rcv_wscale values will not be correct.&n; */
 DECL|function|tcp_send_synack
 r_int
 id|tcp_send_synack
@@ -2844,9 +3047,10 @@ c_func
 id|skb-&gt;seq
 )paren
 suffix:semicolon
+multiline_comment|/* This is a resend of a previous SYN, now with an ACK.&n;&t; * we must reuse the previously offered window.&n;&t; */
 id|th-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|tp-&gt;rcv_wnd
@@ -2875,12 +3079,9 @@ id|tp-&gt;sack_ok
 comma
 id|tp-&gt;tstamp_ok
 comma
-id|tp-&gt;snd_wscale
-ques
-c_cond
+id|tp-&gt;wscale_ok
+comma
 id|tp-&gt;rcv_wscale
-suffix:colon
-l_int|0
 )paren
 suffix:semicolon
 id|skb-&gt;csum

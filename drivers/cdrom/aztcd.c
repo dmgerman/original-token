@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -4144,7 +4145,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*##########################################################################&n;  Kernel Interface Functions&n;  ##########################################################################&n;*/
-DECL|function|aztcd_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|aztcd_setup
 c_func
@@ -4156,6 +4160,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -6853,12 +6858,16 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
-DECL|function|aztcd_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|aztcd_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

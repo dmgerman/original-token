@@ -32,9 +32,9 @@ l_string|&quot;1:&t;ldq_l %0,%1&bslash;n&quot;
 l_string|&quot;&t;and %0,%2,%0&bslash;n&quot;
 l_string|&quot;&t;stq_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,2f&bslash;n&quot;
-l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
-l_string|&quot;.text&quot;
+l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.11 1997/03/18 17:58:10 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.12 1997/05/01 01:41:30 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -132,7 +132,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -299,7 +299,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -496,7 +496,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -760,7 +760,7 @@ l_string|&quot;r&quot;
 op_amp
 id|current_set
 (braket
-id|smp_processor_id
+id|hard_smp_processor_id
 c_func
 (paren
 )paren

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -6967,7 +6968,10 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the &squot;unit&squot; variable for drive &squot;drive&squot; */
-DECL|function|fd_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|fd_probe
@@ -6975,6 +6979,7 @@ c_func
 (paren
 r_int
 id|drive
+)paren
 )paren
 (brace
 id|UD.connected
@@ -7085,7 +7090,10 @@ suffix:semicolon
 multiline_comment|/* from probe restore operation! */
 )brace
 multiline_comment|/* This function tests the physical presence of a floppy drive (not&n; * whether a disk is inserted). This is done by issuing a restore&n; * command, waiting max. 2 seconds (that should be enough to move the&n; * head across the whole disk) and looking at the state of the &quot;TR00&quot;&n; * signal. This should now be raised if there is a drive connected&n; * (and there is no hardware failure :-) Otherwise, the drive is&n; * declared absent.&n; */
-DECL|function|fd_test_drive_present
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|fd_test_drive_present
@@ -7093,6 +7101,7 @@ c_func
 (paren
 r_int
 id|drive
+)paren
 )paren
 (brace
 r_int
@@ -7286,13 +7295,17 @@ id|ok
 suffix:semicolon
 )brace
 multiline_comment|/* Look how many and which kind of drives are connected. If there are&n; * floppies, additionally start the disk-change and motor-off timers.&n; */
-DECL|function|config_types
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|config_types
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -7863,11 +7876,15 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|function|atari_floppy_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atari_floppy_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -8195,7 +8212,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|atari_floppy_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atari_floppy_setup
 c_func
@@ -8207,6 +8227,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_int

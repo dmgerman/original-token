@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -1811,12 +1812,16 @@ comma
 id|rarp_get_info
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|rarp_init
 id|rarp_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|proc_net_register

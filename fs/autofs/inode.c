@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/auto_fs.h&gt;
+macro_line|#include &quot;autofs_i.h&quot;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -48,18 +48,6 @@ r_struct
 id|autofs_sb_info
 op_star
 id|sbi
-suffix:semicolon
-r_int
-r_int
-id|n
-suffix:semicolon
-id|lock_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
-id|sbi
 op_assign
 (paren
 r_struct
@@ -67,6 +55,29 @@ id|autofs_sb_info
 op_star
 )paren
 id|sb-&gt;u.generic_sbp
+suffix:semicolon
+r_int
+r_int
+id|n
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sbi-&gt;catatonic
+)paren
+id|autofs_catatonic_mode
+c_func
+(paren
+id|sbi
+)paren
+suffix:semicolon
+multiline_comment|/* Free wait queues, close pipe */
+id|lock_super
+c_func
+(paren
+id|sb
+)paren
 suffix:semicolon
 id|autofs_hash_nuke
 c_func
@@ -113,14 +124,6 @@ id|data
 )paren
 suffix:semicolon
 )brace
-id|fput
-c_func
-(paren
-id|sbi-&gt;pipe
-comma
-id|sbi-&gt;pipe-&gt;f_inode
-)paren
-suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
@@ -754,6 +757,10 @@ op_assign
 id|sbi
 suffix:semicolon
 id|sbi-&gt;catatonic
+op_assign
+l_int|0
+suffix:semicolon
+id|sbi-&gt;exp_timeout
 op_assign
 l_int|0
 suffix:semicolon

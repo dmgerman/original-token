@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
@@ -387,7 +388,10 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* This function tests for the presence of an address, specially a&n; * hardware register address. It is called very early in the kernel&n; * initialization process, when the VBR register isn&squot;t set up yet. On&n; * an Atari, it still points to address 0, which is unmapped. So a bus&n; * error would cause another bus error while fetching the exception&n; * vector, and the CPU would do nothing at all. So we needed to set up&n; * a temporary VBR and a vector table for the duration of the test.&n; */
-DECL|function|hwreg_present
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hwreg_present
@@ -397,6 +401,7 @@ r_volatile
 r_void
 op_star
 id|regp
+)paren
 )paren
 (brace
 r_int
@@ -461,6 +466,9 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#if 0
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hwreg_present_bywrite
@@ -474,6 +482,7 @@ comma
 r_int
 r_char
 id|val
+)paren
 )paren
 (brace
 r_int
@@ -583,7 +592,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Basically the same, but writes a value into a word register, protected&n; * by a bus error handler */
-DECL|function|hwreg_write
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|hwreg_write
@@ -597,6 +609,7 @@ comma
 r_int
 r_int
 id|val
+)paren
 )paren
 (brace
 r_int
@@ -665,7 +678,10 @@ id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* ++roman: This is a more elaborate test for an SCC chip, since the plain&n; * Medusa board generates DTACK at the SCC&squot;s standard addresses, but a SCC&n; * board in the Medusa is possible. Also, the addresses where the ST_ESCC&n; * resides generate DTACK without the chip, too.&n; * The method is to write values into the interrupt vector register, that&n; * should be readable without trouble (from channel A!).&n; */
-DECL|function|scc_test
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|scc_test
@@ -675,6 +691,7 @@ r_volatile
 r_char
 op_star
 id|ctla
+)paren
 )paren
 (brace
 r_if
@@ -787,7 +804,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Parse an Atari-specific record in the bootinfo&n;     */
-DECL|function|atari_parse_bootinfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|atari_parse_bootinfo
 c_func
@@ -797,6 +817,7 @@ r_struct
 id|bi_record
 op_star
 id|record
+)paren
 )paren
 (brace
 r_int
@@ -839,12 +860,16 @@ id|unknown
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Setup the Atari configuration info&n;     */
-DECL|function|config_atari
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|config_atari
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|memset
@@ -1928,7 +1953,10 @@ l_string|&quot;d0&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|atari_sched_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|atari_sched_init
@@ -1948,6 +1976,7 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -4330,13 +4359,17 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|atari_debug_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|atari_debug_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_KGDB

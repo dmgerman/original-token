@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: winmacro.h,v 1.18 1997/03/04 16:27:27 jj Exp $&n; * winmacro.h: Window loading-unloading macros.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: winmacro.h,v 1.19 1997/05/01 01:42:05 davem Exp $&n; * winmacro.h: Window loading-unloading macros.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_WINMACRO_H
 DECL|macro|_SPARC_WINMACRO_H
 mdefine_line|#define _SPARC_WINMACRO_H
@@ -42,7 +42,7 @@ DECL|macro|SAVE_BOLIXED_USER_STACK
 mdefine_line|#define SAVE_BOLIXED_USER_STACK(cur_reg, scratch) &bslash;&n;        ld       [%cur_reg + AOFF_task_tss + AOFF_thread_w_saved], %scratch; &bslash;&n;        sll      %scratch, 2, %scratch; &bslash;&n;        add      %scratch, %cur_reg, %scratch; &bslash;&n;        st       %sp, [%scratch + AOFF_task_tss + AOFF_thread_rwbuf_stkptrs]; &bslash;&n;        sub      %scratch, %cur_reg, %scratch; &bslash;&n;        sll      %scratch, 4, %scratch; &bslash;&n;        add      %scratch, %cur_reg, %scratch; &bslash;&n;        STORE_WINDOW(scratch + AOFF_task_tss + AOFF_thread_reg_window); &bslash;&n;        sub      %scratch, %cur_reg, %scratch; &bslash;&n;        srl      %scratch, 6, %scratch; &bslash;&n;        add      %scratch, 1, %scratch; &bslash;&n;        st       %scratch, [%cur_reg + AOFF_task_tss + AOFF_thread_w_saved];
 macro_line|#ifdef __SMP__
 DECL|macro|LOAD_CURRENT
-mdefine_line|#define LOAD_CURRENT(dest_reg, idreg) &bslash;&n;        rd       %tbr, %idreg; &bslash;&n;        srl      %idreg, 10, %idreg; &bslash;&n;&t;and      %idreg, 0xc, %idreg; &bslash;&n;&t;sethi    %hi(C_LABEL(current_set)), %dest_reg; &bslash;&n;&t;or       %dest_reg, %lo(C_LABEL(current_set)), %dest_reg; &bslash;&n;&t;add      %dest_reg, %idreg, %idreg; &bslash;&n;&t;ld       [%idreg], %dest_reg;
+mdefine_line|#define LOAD_CURRENT(dest_reg, idreg) &bslash;&n;        rd       %tbr, %idreg; &bslash;&n;&t;sethi    %hi(C_LABEL(current_set)), %dest_reg; &bslash;&n;        srl      %idreg, 10, %idreg; &bslash;&n;&t;or       %dest_reg, %lo(C_LABEL(current_set)), %dest_reg; &bslash;&n;&t;and      %idreg, 0xc, %idreg; &bslash;&n;&t;ld       [%idreg + %dest_reg], %dest_reg;
 macro_line|#else
 DECL|macro|LOAD_CURRENT
 mdefine_line|#define LOAD_CURRENT(dest_reg, idreg) &bslash;&n;        sethi    %hi(C_LABEL(current_set)), %idreg; &bslash;&n;        ld       [%idreg + %lo(C_LABEL(current_set))], %dest_reg;

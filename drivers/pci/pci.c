@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|variable|pci_root
 r_struct
@@ -3766,7 +3767,10 @@ l_string|&quot;Unknown device&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Turn on/off PCI bridge optimization. This should allow benchmarking.&n; */
-DECL|function|burst_bridge
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|burst_bridge
@@ -3786,6 +3790,7 @@ id|pos
 comma
 r_int
 id|turn_on
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI_OPTIMIZE
@@ -4935,7 +4940,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * pci_malloc() returns initialized memory of size SIZE.  Can be&n; * used only while pci_init() is active.&n; */
-DECL|function|pci_malloc
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 op_star
@@ -4949,6 +4957,7 @@ r_int
 r_int
 op_star
 id|mem_startp
+)paren
 )paren
 (brace
 r_void
@@ -5017,7 +5026,10 @@ r_return
 id|mem
 suffix:semicolon
 )brace
-DECL|function|scan_bus
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_int
@@ -5033,6 +5045,7 @@ r_int
 r_int
 op_star
 id|mem_startp
+)paren
 )paren
 (brace
 r_int
@@ -5690,7 +5703,10 @@ r_return
 id|max
 suffix:semicolon
 )brace
-DECL|function|pci_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|pci_init
@@ -5702,6 +5718,7 @@ comma
 r_int
 r_int
 id|mem_end
+)paren
 )paren
 (brace
 id|mem_start
@@ -5727,7 +5744,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;pci_init: no BIOS32 detected&bslash;n&quot;
+l_string|&quot;pci_init: no PCI BIOS detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

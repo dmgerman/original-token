@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.16 1997/03/19 14:53:16 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.17 1997/05/01 01:41:33 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/string.h&gt;
@@ -9,7 +9,7 @@ macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Macro to restore &quot;current&quot; to the g6 register. */
 DECL|macro|restore_current
-mdefine_line|#define restore_current() __asm__ __volatile__(&quot;ld [%0], %%g6&bslash;n&bslash;t&quot; : : &bslash;&n;&t;&t;&t;  &quot;r&quot; (&amp;current_set[smp_processor_id()]) : &bslash;&n;&t;&t;&t;  &quot;memory&quot;)
+mdefine_line|#define restore_current() __asm__ __volatile__(&quot;ld [%0], %%g6&bslash;n&bslash;t&quot; : : &bslash;&n;&t;&t;&t;  &quot;r&quot; (&amp;current_set[hard_smp_processor_id()]) : &bslash;&n;&t;&t;&t;  &quot;memory&quot;)
 DECL|variable|promlib_buf
 r_static
 r_char

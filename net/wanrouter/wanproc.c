@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
 macro_line|#include &lt;linux/mm.h&gt;&t;&t;/* verify_area(), etc. */
 macro_line|#include &lt;linux/string.h&gt;&t;/* inline mem*, str* functions */
+macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 macro_line|#include &lt;asm/segment.h&gt;&t;/* kernel &lt;-&gt; user copy */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to_user */
@@ -678,11 +679,15 @@ multiline_comment|/* .data */
 suffix:semicolon
 multiline_comment|/*&n; *&t;Interface functions&n; */
 multiline_comment|/*&n; *&t;Initialize router proc interface.&n; */
-DECL|function|wanrouter_proc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|wanrouter_proc_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

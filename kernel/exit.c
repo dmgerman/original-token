@@ -638,6 +638,15 @@ id|scheduler_lock
 )paren
 suffix:semicolon
 macro_line|#endif
+id|charge_uid
+c_func
+(paren
+id|p
+comma
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 id|nr_tasks
 op_decrement
 suffix:semicolon

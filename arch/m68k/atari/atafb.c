@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -14344,16 +14345,20 @@ id|con
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|fb_info
 op_star
-DECL|function|atari_fb_init
 id|atari_fb_init
 c_func
 (paren
 r_int
 op_star
 id|mem_start
+)paren
 )paren
 (brace
 r_int

@@ -1,6 +1,7 @@
 multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-94 by Geert Uytterhoeven&n;**                           (Geert.Uytterhoeven@cs.kuleuven.ac.be)&n;**          - 64-bit aligned allocations for full AGA compatibility&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|struct|chip_desc
 r_struct
@@ -49,8 +50,6 @@ r_int
 r_int
 id|chipavail
 suffix:semicolon
-multiline_comment|/*MILAN*/
-multiline_comment|/*MILAN*/
 DECL|function|amiga_chip_avail
 r_int
 r_int
@@ -74,11 +73,15 @@ r_return
 id|chipavail
 suffix:semicolon
 )brace
-DECL|function|amiga_chip_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|amiga_chip_init
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if defined(CONFIG_SYSVIPC) || defined(CONFIG_KERNELD)
 r_extern
@@ -26,11 +27,15 @@ id|shm_init
 r_void
 )paren
 suffix:semicolon
-DECL|function|ipc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ipc_init
 (paren
 r_void
+)paren
 )paren
 (brace
 id|sem_init
