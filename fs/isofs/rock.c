@@ -21,7 +21,7 @@ mdefine_line|#define CHECK_CE&t;       &t;&t;&t;&bslash;&n;      {cont_extent = 
 DECL|macro|SETUP_ROCK_RIDGE
 mdefine_line|#define SETUP_ROCK_RIDGE(DE,CHR,LEN)&t;      &t;&t;      &t;&bslash;&n;  {LEN= sizeof(struct iso_directory_record) + DE-&gt;name_len[0];&t;&bslash;&n;  if(LEN &amp; 1) LEN++;&t;&t;&t;&t;&t;&t;&bslash;&n;  CHR = ((unsigned char *) DE) + LEN;&t;&t;&t;&t;&bslash;&n;  LEN = *((unsigned char *) DE) - LEN;}
 DECL|macro|MAYBE_CONTINUE
-mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset; &bslash;&n;    struct buffer_head * bh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    if(ISOFS_BUFFER_SIZE(DEV) == 1024) {     &bslash;&n;      block &lt;&lt;= 1;    &bslash;&n;      if (offset &gt;= 1024) block++; &bslash;&n;      offset &amp;= 1023; &bslash;&n;    };     &bslash;&n;    bh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(bh){       &bslash;&n;      memcpy(buffer, bh-&gt;b_data, cont_size); &bslash;&n;      brelse(bh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    };    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
+mdefine_line|#define MAYBE_CONTINUE(LABEL,DEV) &bslash;&n;  {if (buffer) kfree(buffer); &bslash;&n;  if (cont_extent){ &bslash;&n;    int block, offset, offset1; &bslash;&n;    struct buffer_head * bh; &bslash;&n;    buffer = kmalloc(cont_size,GFP_KERNEL); &bslash;&n;    block = cont_extent; &bslash;&n;    offset = cont_offset; &bslash;&n;    offset1 = 0; &bslash;&n;    if(ISOFS_BUFFER_SIZE(DEV) == 1024) {     &bslash;&n;      block &lt;&lt;= 1;    &bslash;&n;      if (offset &gt;= 1024) block++; &bslash;&n;      offset &amp;= 1023; &bslash;&n;      if(offset + cont_size &gt;= 1024) { &bslash;&n;&t;  bh = bread(DEV-&gt;i_dev, block++, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;&t;  memcpy(buffer, bh-&gt;b_data + offset, 1024 - offset); &bslash;&n;          brelse(bh); &bslash;&n;&t;  offset1 = 1024 - offset; &bslash;&n;&t;  offset = 0; &bslash;&n;      }  &bslash;&n;    };     &bslash;&n;    bh = bread(DEV-&gt;i_dev, block, ISOFS_BUFFER_SIZE(DEV)); &bslash;&n;    if(bh){       &bslash;&n;      memcpy(buffer + offset1, bh-&gt;b_data + offset, cont_size - offset1); &bslash;&n;      brelse(bh); &bslash;&n;      chr = (unsigned char *) buffer; &bslash;&n;      len = cont_size; &bslash;&n;      cont_extent = 0; &bslash;&n;      cont_size = 0; &bslash;&n;      cont_offset = 0; &bslash;&n;      goto LABEL; &bslash;&n;    };    &bslash;&n;    printk(&quot;Unable to read rock-ridge attributes&bslash;n&quot;);    &bslash;&n;  }}
 multiline_comment|/* This is the inner layer of the get filename routine, and is called&n;   for each system area and continuation record related to the file */
 DECL|function|find_rock_ridge_relocation
 r_int
@@ -1168,6 +1168,7 @@ comma
 l_char|&squot;F&squot;
 )paren
 suffix:colon
+multiline_comment|/* Some RRIP writers incorrectly place ctime in the TF_CREATE field.&n;&t;   Try and handle this correctly for either case. */
 id|cnt
 op_assign
 l_int|0
@@ -1232,6 +1233,31 @@ id|TF_ACCESS
 )paren
 (brace
 id|inode-&gt;i_atime
+op_assign
+id|iso_date
+c_func
+(paren
+id|rr-&gt;u.TF.times
+(braket
+id|cnt
+op_increment
+)braket
+dot
+id|time
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|rr-&gt;u.TF.flags
+op_amp
+id|TF_ATTRIBUTES
+)paren
+(brace
+id|inode-&gt;i_ctime
 op_assign
 id|iso_date
 c_func

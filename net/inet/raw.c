@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Cleaned up and reformatted for final release&n; *&t;&t;Alan Cox&t;:&t;Added socket option call to proto&n; *&t;&t;Alan Cox&t;:&t;Corrected broadcast check error to EACCES&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;@(#)raw.c&t;1.0.4&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,18 +11,18 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;udp.h&quot;
-DECL|function|min
 r_static
 r_int
 r_int
+DECL|function|min
 id|min
 c_func
 (paren
@@ -49,9 +49,9 @@ r_return
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;raw_err gets called by the icmp module. &n; */
-DECL|function|raw_err
+multiline_comment|/* raw_err gets called by the icmp module. */
 r_void
+DECL|function|raw_err
 id|raw_err
 (paren
 r_int
@@ -170,20 +170,18 @@ l_int|0xff
 dot
 id|errno
 suffix:semicolon
-id|sk
-op_member_access_from_pointer
-id|error_report
+id|wake_up
 c_func
 (paren
-id|sk
+id|sk-&gt;sleep
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This should be the easiest of all, all we do is&bslash;&n; * &t;copy it into a buffer. We do have to diddle the pointer&n; *&t;to get the ip header too.&n; */
-DECL|function|raw_rcv
+multiline_comment|/*&n; * This should be the easiest of all, all we do is&bslash;&n; * copy it into a buffer.&n; */
 r_int
+DECL|function|raw_rcv
 id|raw_rcv
 c_func
 (paren
@@ -319,19 +317,9 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-multiline_comment|/* &n;  &t; *&t;Adjust to get the header back&n;  &t; */
 id|skb-&gt;len
-op_add_assign
-id|skb-&gt;ip_hdr-&gt;ihl
-op_star
-r_sizeof
-(paren
-r_int
-)paren
-suffix:semicolon
-id|skb-&gt;h.iph
 op_assign
-id|skb-&gt;ip_hdr
+id|len
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -385,30 +373,26 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|wake_up
+c_func
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-id|sk
-op_member_access_from_pointer
-id|data_ready
-c_func
-(paren
-id|sk
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send a RAW IP packet (user level IP protocols). Root only&n; *&t;caller provides IP header.&n; */
-DECL|function|raw_sendto
+multiline_comment|/* This will do terrible things if len + ipheader + devheader &gt; dev-&gt;mtu */
 r_static
 r_int
+DECL|function|raw_sendto
 id|raw_sendto
 c_func
 (paren
@@ -657,7 +641,7 @@ id|IS_BROADCAST
 )paren
 r_return
 op_minus
-id|EACCES
+id|ENETUNREACH
 suffix:semicolon
 id|sk-&gt;inuse
 op_assign
@@ -821,6 +805,22 @@ c_func
 suffix:semicolon
 )brace
 )brace
+id|skb-&gt;mem_addr
+op_assign
+id|skb
+suffix:semicolon
+id|skb-&gt;mem_len
+op_assign
+id|len
+op_plus
+r_sizeof
+(paren
+op_star
+id|skb
+)paren
+op_plus
+id|sk-&gt;prot-&gt;max_header
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -855,10 +855,6 @@ comma
 id|sk-&gt;opt
 comma
 id|skb-&gt;mem_len
-comma
-id|sk-&gt;ip_ttl
-comma
-id|sk-&gt;ip_tos
 )paren
 suffix:semicolon
 r_if
@@ -897,6 +893,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+multiline_comment|/* verify_area(VERIFY_WRITE, from, len);*/
 id|memcpy_fromfs
 (paren
 (paren
@@ -917,7 +914,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* If we are using IPPROTO_RAW, we need to fill in the source address in&n;     &t;   the IP header */
+multiline_comment|/* If we are using IPPROTO_RAW, we need to fill in the source address in&n;     the IP header */
 r_if
 c_cond
 (paren
@@ -1028,9 +1025,9 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|function|raw_write
 r_static
 r_int
+DECL|function|raw_write
 id|raw_write
 c_func
 (paren
@@ -1074,9 +1071,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|raw_close
 r_static
 r_void
+DECL|function|raw_close
 id|raw_close
 c_func
 (paren
@@ -1171,9 +1168,9 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-DECL|function|raw_init
 r_static
 r_int
+DECL|function|raw_init
 id|raw_init
 c_func
 (paren
@@ -1280,8 +1277,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This should be easy, if there is something there&n; * we return it, otherwise we block.&n; */
-DECL|function|raw_recvfrom
 r_int
+DECL|function|raw_recvfrom
 id|raw_recvfrom
 c_func
 (paren
@@ -1566,8 +1563,8 @@ id|copied
 )paren
 suffix:semicolon
 )brace
-DECL|function|raw_read
 r_int
+DECL|function|raw_read
 id|raw_read
 (paren
 r_struct
@@ -1661,10 +1658,6 @@ comma
 id|raw_init
 comma
 l_int|NULL
-comma
-id|ip_setsockopt
-comma
-id|ip_getsockopt
 comma
 l_int|128
 comma

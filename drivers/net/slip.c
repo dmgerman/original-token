@@ -17,9 +17,9 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#ifdef CONFIG_AX25
-macro_line|#include &quot;ax25/ax25.h&quot;
+macro_line|#include &quot;ax25.h&quot;
 macro_line|#endif
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;

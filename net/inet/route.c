@@ -38,9 +38,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Dump the contents of a routing table entry. */
-DECL|function|rt_print
 r_static
 r_void
+DECL|function|rt_print
 id|rt_print
 c_func
 (paren
@@ -569,8 +569,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * rewrote rt_add(), as the old one was weird. Linus&n; */
-DECL|function|rt_add
 r_void
+DECL|function|rt_add
 id|rt_add
 c_func
 (paren
@@ -1169,9 +1169,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|rt_kill
 r_static
 r_int
+DECL|function|rt_kill
 id|rt_kill
 c_func
 (paren
@@ -1207,8 +1207,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Called from the PROCfs module. */
-DECL|function|rt_get_info
 r_int
+DECL|function|rt_get_info
 id|rt_get_info
 c_func
 (paren
@@ -1389,8 +1389,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|rt_ioctl
 r_int
+DECL|function|rt_ioctl
 id|rt_ioctl
 c_func
 (paren

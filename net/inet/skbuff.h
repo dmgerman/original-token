@@ -1,10 +1,10 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; * Version:&t;@(#)skbuff.h&t;1.0.4&t;05/20/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;&t;: &t;Volatiles (this makes me unhappy - we want proper asm linked list stuff)&n; *&t;&t;Alan Cox&t;&t;:&t;Declaration for new primitives&n; *&t;&t;Alan Cox&t;&t;:&t;Fraglist support (idea by Donald Becker)&n; *&t;&t;Alan Cox&t;&t;:&t;&squot;users&squot; counter. Combines with datagram changes to avoid skb_peek_copy&n; *&t;&t;&t;&t;&t;&t;being used.&n; *&t;&t;Alan Cox&t;&t;: &t;Extra fields for RAW fixes&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the &squot;struct sk_buff&squot; memory handlers.&n; *&n; * Version:&t;@(#)skbuff.h&t;1.0.4&t;05/20/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;&t;: &t;Volatiles (this makes me unhappy - we want proper asm linked list stuff)&n; *&t;&t;Alan Cox&t;&t;:&t;Declaration for new primitives&n; *&t;&t;Alan Cox&t;&t;:&t;Fraglist support (idea by Donald Becker)&n; *&t;&t;Alan Cox&t;&t;:&t;&squot;users&squot; counter. Combines with datagram changes to avoid skb_peek_copy&n; *&t;&t;&t;&t;&t;&t;being used.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _SKBUFF_H
 DECL|macro|_SKBUFF_H
 mdefine_line|#define _SKBUFF_H
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#ifdef CONFIG_IPX
-macro_line|#include &quot;ipx/ipx.h&quot;
+macro_line|#include &quot;ipx.h&quot;
 macro_line|#endif
 DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
@@ -127,12 +127,6 @@ macro_line|#endif&t;
 DECL|member|h
 )brace
 id|h
-suffix:semicolon
-DECL|member|ip_hdr
-r_struct
-id|iphdr
-op_star
-id|ip_hdr
 suffix:semicolon
 DECL|member|mem_len
 r_int

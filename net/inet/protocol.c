@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;@(#)protocol.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!).&n; *&t;&t;Alan Cox&t;: Final clean up.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;INET protocol dispatch tables.&n; *&n; * Version:&t;@(#)protocol.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Ahah! udp icmp errors don&squot;t work because&n; *&t;&t;&t;&t;  udp_err is never called!&n; *&t;&t;Alan Cox&t;: Added new fields for init and ready for&n; *&t;&t;&t;&t;  proper fragmentation (_NO_ 4K limits!)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,12 +8,12 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
-macro_line|#include &quot;socket/skbuff.h&quot;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;udp.h&quot;
 DECL|variable|tcp_protocol
@@ -136,10 +136,10 @@ op_assign
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|inet_get_protocol
 r_struct
 id|inet_protocol
 op_star
+DECL|function|inet_get_protocol
 id|inet_get_protocol
 c_func
 (paren
@@ -230,8 +230,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|inet_add_protocol
 r_void
+DECL|function|inet_add_protocol
 id|inet_add_protocol
 c_func
 (paren
@@ -324,8 +324,8 @@ id|prot-&gt;next
 suffix:semicolon
 )brace
 )brace
-DECL|function|inet_del_protocol
 r_int
+DECL|function|inet_del_protocol
 id|inet_del_protocol
 c_func
 (paren
@@ -413,7 +413,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We have to worry if the protocol being deleted is&n;&t;&t; * the last one on the list, then we may need to reset&n;&t;&t; * someones copied bit.&n;&t;&t; */
+multiline_comment|/*&n;&t; * We have to worry if the protocol being deleted is&n;&t; * the last one on the list, then we may need to reset&n;&t; * someones copied bit.&n;&t; */
 r_if
 c_cond
 (paren
@@ -426,7 +426,7 @@ op_eq
 id|prot
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * if we are the last one with this protocol and&n;&t;&t;&t; * there is a previous one, reset its copy bit.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * if we are the last one with this protocol and&n;&t;&t; * there is a previous one, reset its copy bit.&n;&t;&t; */
 r_if
 c_cond
 (paren

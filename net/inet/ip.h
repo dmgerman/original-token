@@ -3,7 +3,7 @@ macro_line|#ifndef _IP_H
 DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;sock.h&quot;&t;/* struct sock */
 multiline_comment|/* IP flags. */
 DECL|macro|IP_CE
 mdefine_line|#define IP_CE&t;&t;0x8000&t;&t;/* Flag: &quot;Congestion&quot;&t;&t;*/
@@ -215,12 +215,6 @@ id|opt
 comma
 r_int
 id|len
-comma
-r_int
-id|tos
-comma
-r_int
-id|ttl
 )paren
 suffix:semicolon
 r_extern
@@ -295,55 +289,6 @@ id|sk
 comma
 r_int
 id|all
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_setsockopt
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-id|optlen
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_getsockopt
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-op_star
-id|optlen
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _IP_H */

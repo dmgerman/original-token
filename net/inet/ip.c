@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the &n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it &n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&t;&t;Alan Cox&t;:&t;Reformatted for neatness and final release.&n; *&t;&t;Alan Cox&t;:&t;Tags ip header for RAW sockets, and for accept(). Old&n; *&t;&t;&t;&t;&t;method wasn&squot;t suitable for AX.25&n; *&t;&t;Alan Cox&t;:&t;Most of the ip_options processing logic added.&n; *&n; * To Fix:&n; *&t;&t;RFC791 states that options are a &squot;required&squot; feature of an&n; *&t;&t;IP implementation. We don&squot;t do options at all.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the &n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it &n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&t;&t;Fred Van Kempen :&t;IP fragment support (borrowed from NET2E)&n; *&t;&t;Gerhard Koerting:&t;Forward fragmented frames correctly.&n; *&t;&t;Gerhard Koerting: &t;Fixes to my fix of the above 8-).&n; *&t;&t;Gerhard Koerting:&t;IP interface addressing fix.&n; *&t;&t;Linus Torvalds&t;:&t;More robustness checks&n; *&t;&t;Alan Cox&t;:&t;Even more checks: Still not as robust as it ought to be&n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -10,21 +10,20 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
-multiline_comment|/*&n; *&t;These two can normally be left. In olden times the numerous bugs used to&n; *&t;make forwarding go crazy on some nets and fragmentation fragment your&n; *&t;computer 8-)&n; */
 DECL|macro|CONFIG_IP_FORWARD
-mdefine_line|#define CONFIG_IP_FORWARD&t;&t;/* Forwarding ? */
+mdefine_line|#define CONFIG_IP_FORWARD
 DECL|macro|CONFIG_IP_DEFRAG
-mdefine_line|#define CONFIG_IP_DEFRAG&t;&t;/* Fragmentation ? */
+mdefine_line|#define CONFIG_IP_DEFRAG
 r_extern
 r_int
 id|last_retran
@@ -40,9 +39,8 @@ op_star
 id|sk
 )paren
 suffix:semicolon
-macro_line|#ifdef IP_DEBUG
-DECL|function|ip_print
 r_void
+DECL|function|ip_print
 id|ip_print
 c_func
 (paren
@@ -309,10 +307,8 @@ l_string|&quot;    ----&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/*&n; *&t;Low level user requests to the IP device. NOT that same as IP layer&n; *&t;socket requests (which also do nothing useful at the moment)&n; */
-DECL|function|ip_ioctl
 r_int
+DECL|function|ip_ioctl
 id|ip_ioctl
 c_func
 (paren
@@ -359,10 +355,10 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * &t;These two routines will do routing when we have ip options support &n; * &t;(RFC 791 page 18,19)&n; */
-DECL|function|strict_route
+multiline_comment|/* these two routines will do routining. */
 r_static
 r_void
+DECL|function|strict_route
 id|strict_route
 c_func
 (paren
@@ -378,9 +374,9 @@ id|opt
 )paren
 (brace
 )brace
-DECL|function|loose_route
 r_static
 r_void
+DECL|function|loose_route
 id|loose_route
 c_func
 (paren
@@ -396,9 +392,9 @@ id|opt
 )paren
 (brace
 )brace
-DECL|function|print_ipprot
 r_static
 r_void
+DECL|function|print_ipprot
 id|print_ipprot
 c_func
 (paren
@@ -425,9 +421,9 @@ id|ipprot-&gt;copy
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This routine will check to see if we have lost a gateway. &n; */
-DECL|function|ip_route_check
+multiline_comment|/* This routine will check to see if we have lost a gateway. */
 r_void
+DECL|function|ip_route_check
 id|ip_route_check
 c_func
 (paren
@@ -437,8 +433,8 @@ id|daddr
 )paren
 (brace
 )brace
-multiline_comment|/* &n; *&t;This routine puts the options at the end of an ip header. &n; */
-DECL|function|build_options
+macro_line|#if 0
+multiline_comment|/* this routine puts the options at the end of an ip header. */
 r_static
 r_int
 id|build_options
@@ -460,6 +456,7 @@ r_char
 op_star
 id|ptr
 suffix:semicolon
+multiline_comment|/* currently we don&squot;t support any options. */
 id|ptr
 op_assign
 (paren
@@ -473,15 +470,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* currently we don&squot;t support any options. */
-r_if
-c_cond
-(paren
-id|opt
-op_eq
-l_int|NULL
-)paren
-(brace
 op_star
 id|ptr
 op_assign
@@ -489,37 +477,15 @@ l_int|0
 suffix:semicolon
 r_return
 (paren
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|memcpy
-c_func
-(paren
-id|ptr
-comma
-id|opt-&gt;option_data
-comma
-id|opt-&gt;option_length
-)paren
-suffix:semicolon
-r_return
-(paren
-id|opt-&gt;option_length
-op_plus
-l_int|3
-)paren
-op_div
 l_int|4
+)paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * &t;Take an skb, and fill in the MAC header. &n; */
-DECL|function|ip_send
+macro_line|#endif
+multiline_comment|/* Take an skb, and fill in the MAC header. */
 r_static
 r_int
+DECL|function|ip_send
 id|ip_send
 c_func
 (paren
@@ -628,8 +594,8 @@ id|mac
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine builds the appropriate hardware/IP headers for&n; * the routine.  It assumes that if *dev != NULL then the&n; * protocol knows what it&squot;s doing, otherwise it uses the&n; * routing/ARP tables to select a device struct.&n; */
-DECL|function|ip_build_header
 r_int
+DECL|function|ip_build_header
 id|ip_build_header
 c_func
 (paren
@@ -662,12 +628,6 @@ id|opt
 comma
 r_int
 id|len
-comma
-r_int
-id|ttl
-comma
-r_int
-id|tos
 )paren
 (brace
 r_static
@@ -702,9 +662,6 @@ l_int|0
 suffix:semicolon
 r_int
 id|tmp
-suffix:semicolon
-r_int
-id|optlen
 suffix:semicolon
 r_if
 c_cond
@@ -921,7 +878,7 @@ op_assign
 id|saddr
 suffix:semicolon
 multiline_comment|/* Now build the IP header. */
-multiline_comment|/* If we are using IPPROTO_RAW, then we don&squot;t need an IP header, since&n;&t;   one is being supplied to us by the user */
+multiline_comment|/* If we are using IPPROTO_RAW, then we don&squot;t need an IP header, since&n;     one is being supplied to us by the user */
 r_if
 c_cond
 (paren
@@ -951,7 +908,7 @@ l_int|4
 suffix:semicolon
 id|iph-&gt;tos
 op_assign
-id|tos
+l_int|0
 suffix:semicolon
 id|iph-&gt;frag_off
 op_assign
@@ -959,7 +916,7 @@ l_int|0
 suffix:semicolon
 id|iph-&gt;ttl
 op_assign
-id|ttl
+l_int|32
 suffix:semicolon
 id|iph-&gt;daddr
 op_assign
@@ -986,9 +943,8 @@ id|count
 op_increment
 )paren
 suffix:semicolon
-multiline_comment|/* Setup the IP options. Length is in longs.*/
-id|optlen
-op_assign
+multiline_comment|/* Setup the IP options. */
+macro_line|#ifdef Not_Yet_Avail
 id|build_options
 c_func
 (paren
@@ -997,25 +953,17 @@ comma
 id|opt
 )paren
 suffix:semicolon
-id|iph-&gt;ihl
-op_add_assign
-id|optlen
-suffix:semicolon
+macro_line|#endif
 r_return
 l_int|20
 op_plus
 id|tmp
-op_plus
-l_int|4
-op_star
-id|optlen
 suffix:semicolon
 multiline_comment|/* IP header plus MAC header size */
 )brace
-multiline_comment|/*&n; *&t;Interpret the incoming options&n; */
-DECL|function|do_options
 r_static
 r_int
+DECL|function|do_options
 id|do_options
 c_func
 (paren
@@ -1027,13 +975,7 @@ comma
 r_struct
 id|options
 op_star
-op_star
-id|opt_ptr
-comma
-r_struct
-id|device
-op_star
-id|dev
+id|opt
 )paren
 (brace
 r_int
@@ -1056,113 +998,6 @@ r_sizeof
 r_struct
 id|iphdr
 )paren
-suffix:semicolon
-r_int
-r_char
-op_star
-id|outbuf
-suffix:semicolon
-r_struct
-id|options
-op_star
-id|opt
-suffix:semicolon
-r_int
-id|ol
-suffix:semicolon
-r_int
-id|optsiz
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|iph-&gt;ihl
-op_eq
-l_int|5
-)paren
-(brace
-op_star
-id|opt_ptr
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Allocate a buffer to stuff the options (decoded) and the raw option data into */
-id|ol
-op_assign
-(paren
-id|iph-&gt;ihl
-op_star
-l_int|4
-)paren
-op_minus
-r_sizeof
-(paren
-r_struct
-id|iphdr
-)paren
-suffix:semicolon
-id|opt
-op_assign
-(paren
-r_struct
-id|options
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|ol
-op_plus
-r_sizeof
-(paren
-op_star
-id|opt
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-op_star
-id|opt_ptr
-op_assign
-id|opt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|opt
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|opt-&gt;option_length
-op_assign
-id|ol
-suffix:semicolon
-id|outbuf
-op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|opt
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|opt-&gt;option_data
-op_assign
-id|outbuf
 suffix:semicolon
 multiline_comment|/* Zero out the options. */
 id|opt-&gt;record_route.route_size
@@ -1201,6 +1036,9 @@ id|opt-&gt;tcc
 op_assign
 l_int|0
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* Advance the pointer to start at the options. */
 id|buff
 op_assign
@@ -1214,21 +1052,6 @@ id|iph
 op_plus
 l_int|1
 )paren
-suffix:semicolon
-multiline_comment|/* Copy the data */
-id|memcpy
-c_func
-(paren
-id|outbuf
-comma
-id|buff
-comma
-id|opt-&gt;option_length
-)paren
-suffix:semicolon
-id|buff
-op_assign
-id|outbuf
 suffix:semicolon
 multiline_comment|/* Now start the processing. */
 r_while
@@ -1404,27 +1227,10 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-OL
-l_int|2
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|len
 op_add_assign
-(paren
-id|optsiz
-op_assign
 op_star
 id|buff
-)paren
 suffix:semicolon
 id|opt-&gt;loose_route.route_size
 op_assign
@@ -1462,22 +1268,6 @@ l_int|4
 op_minus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-op_le
-id|optsiz
-)paren
-(brace
-op_star
-id|buff
-op_add_assign
-l_int|4
-suffix:semicolon
-)brace
-multiline_comment|/* Move on a route */
 id|buff
 op_increment
 suffix:semicolon
@@ -1509,25 +1299,6 @@ id|MAX_ROUTE
 (brace
 r_return
 l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-id|opt-&gt;strict_route.pointer
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buff
-op_assign
-id|dev-&gt;pa_addr
 suffix:semicolon
 )brace
 id|opt-&gt;loose_route.route
@@ -1573,27 +1344,10 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-OL
-l_int|2
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|len
 op_add_assign
-(paren
-id|optsiz
-op_assign
 op_star
 id|buff
-)paren
 suffix:semicolon
 id|opt-&gt;strict_route.route_size
 op_assign
@@ -1631,21 +1385,6 @@ l_int|4
 op_minus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-op_le
-id|optsiz
-)paren
-(brace
-op_star
-id|buff
-op_add_assign
-l_int|4
-suffix:semicolon
-)brace
 id|buff
 op_increment
 suffix:semicolon
@@ -1677,25 +1416,6 @@ id|MAX_ROUTE
 (brace
 r_return
 l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-id|opt-&gt;strict_route.pointer
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buff
-op_assign
-id|dev-&gt;pa_addr
 suffix:semicolon
 )brace
 id|opt-&gt;strict_route.route
@@ -1741,27 +1461,10 @@ l_int|0
 r_return
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-OL
-l_int|2
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|len
 op_add_assign
-(paren
-id|optsiz
-op_assign
 op_star
 id|buff
-)paren
 suffix:semicolon
 id|opt-&gt;record_route.route_size
 op_assign
@@ -1799,23 +1502,6 @@ l_int|4
 op_minus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-op_plus
-l_int|4
-op_le
-id|optsiz
-)paren
-(brace
-op_star
-id|buff
-op_add_assign
-l_int|4
-suffix:semicolon
-)brace
 id|buff
 op_increment
 suffix:semicolon
@@ -1847,25 +1533,6 @@ id|MAX_ROUTE
 (brace
 r_return
 l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-op_eq
-id|opt-&gt;record_route.pointer
-)paren
-(brace
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|buff
-op_assign
-id|dev-&gt;pa_addr
 suffix:semicolon
 )brace
 id|opt-&gt;record_route.route
@@ -1918,23 +1585,9 @@ suffix:semicolon
 r_case
 id|IPOPT_TIMESTAMP
 suffix:colon
-multiline_comment|/* FIXME: This one isn&squot;t altered correctly yet */
 id|buff
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-id|buff
-OL
-l_int|2
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|len
 op_add_assign
 op_star
@@ -2163,12 +1816,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;This is a version of ip_compute_csum() optimized for IP headers, which&n; *&t;always checksum on 4 octet boundaries. &n; */
-DECL|function|ip_fast_csum
+multiline_comment|/* This is a version of ip_compute_csum() optimized for IP headers, which&n;   always checksum on 4 octet boundaries. */
 r_static
 r_inline
 r_int
 r_int
+DECL|function|ip_fast_csum
 id|ip_fast_csum
 c_func
 (paren
@@ -2259,9 +1912,9 @@ l_int|0xffff
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine does all the checksum computations that don&squot;t&n; * require anything special (like copying or special headers).&n; */
+r_int
+r_int
 DECL|function|ip_compute_csum
-r_int
-r_int
 id|ip_compute_csum
 c_func
 (paren
@@ -2438,9 +2091,9 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Check the header of an incoming IP datagram.  This version is still used in slhc.c. &n; */
-DECL|function|ip_csum
+multiline_comment|/* Check the header of an incoming IP datagram.  This version is still used in slhc.c. */
 r_int
+DECL|function|ip_csum
 id|ip_csum
 c_func
 (paren
@@ -2465,10 +2118,10 @@ id|iph-&gt;ihl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Generate a checksym for an outgoing IP datagram.  (RFC791, Page 14)&n; */
-DECL|function|ip_send_check
+multiline_comment|/* Generate a checksym for an outgoing IP datagram. */
 r_static
 r_void
+DECL|function|ip_send_check
 id|ip_send_check
 c_func
 (paren
@@ -2509,7 +2162,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* IP fragment queue&t;*/
-multiline_comment|/* &n; *&t;Create a new fragment entry. &n; */
+multiline_comment|/* Create a new fragment entry. */
 DECL|function|ip_frag_create
 r_static
 r_struct
@@ -2889,7 +2542,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Oops- a fragment queue timed out.  Kill it and send an ICMP reply. &n; */
+multiline_comment|/* Oops- a fragment queue timed out.  Kill it and send an ICMP reply. */
 DECL|function|ip_expire
 r_static
 r_void
@@ -3307,7 +2960,7 @@ r_return
 id|qp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;See if a fragment queue is complete. &n; */
+multiline_comment|/* See if a fragment queue is complete. */
 DECL|function|ip_done
 r_static
 r_int
@@ -3381,7 +3034,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Build a new IP datagram from all its fragments. &n; */
+multiline_comment|/* Build a new IP datagram from all its fragments. */
 DECL|function|ip_glue
 r_static
 r_struct
@@ -3591,7 +3244,6 @@ OG
 id|skb-&gt;len
 )paren
 (brace
-multiline_comment|/* In case some fool sends us a silly fragment. */
 id|printk
 c_func
 (paren
@@ -3672,7 +3324,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Process an incoming IP datagram fragment. &n; */
+multiline_comment|/* Process an incoming IP datagram fragment. */
 DECL|function|ip_defrag
 r_static
 r_struct
@@ -3809,7 +3461,7 @@ op_lshift_assign
 l_int|3
 suffix:semicolon
 multiline_comment|/* offset is in 8-byte chunks */
-multiline_comment|/*&n;&t; * If the queue already existed, keep restarting its timer as long&n;&t; * as we still are receiving fragments.  Otherwise, create a fresh&n;&t; * queue entry.&n;&t; */
+multiline_comment|/*&n;    &t; * If the queue already existed, keep restarting its timer as long&n;   &t; * as we still are receiving fragments.  Otherwise, create a fresh&n;    &t; * queue entry.&n;    &t; */
 r_if
 c_cond
 (paren
@@ -3938,7 +3590,7 @@ id|qp-&gt;len
 op_assign
 id|end
 suffix:semicolon
-multiline_comment|/*&n;&t; * Find out which fragments are in front and at the back of us&n;&t; * in the chain of fragments so far.  We must know where to put&n;&t; * this fragment, right?&n;&t; */
+multiline_comment|/*&n;   &t; * Find out which fragments are in front and at the back of us&n;   &t; * in the chain of fragments so far.  We must know where to put&n;   &t; * this fragment, right?&n;   &t; */
 id|prev
 op_assign
 l_int|NULL
@@ -3974,7 +3626,7 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We found where to put this one.&n;&t; * Check for overlap with preceeding fragment, and, if needed,&n;&t; * align things so that any overlaps are eliminated.&n;&t; */
+multiline_comment|/*&n;   &t; * We found where to put this one.&n;   &t; * Check for overlap with preceeding fragment, and, if needed,&n;   &t; * align things so that any overlaps are eliminated.&n;   &t; */
 r_if
 c_cond
 (paren
@@ -4016,7 +3668,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Look for overlap with succeeding segments.&n;&t; * If we can merge fragments, do it.&n;      &t; */
+multiline_comment|/*&n;    &t; * Look for overlap with succeeding segments.&n;    &t; * If we can merge fragments, do it.&n;      &t; */
 r_for
 c_loop
 (paren
@@ -4195,7 +3847,7 @@ id|next-&gt;prev
 op_assign
 id|tfp
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, so we inserted this new fragment into the chain.&n;&t; * Check if we now have a full IP datagram which we can&n;&t; * bump up to the IP layer...&n;&t; */
+multiline_comment|/*&n;    &t; * OK, so we inserted this new fragment into the chain.&n;    &t; * Check if we now have a full IP datagram which we can&n;    &t; * bump up to the IP layer...&n;    &t; */
 r_if
 c_cond
 (paren
@@ -4459,7 +4111,7 @@ id|iph-&gt;daddr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * FIXME:&n;&t;&t; * We should send an ICMP warning message here!&n;&t;&t; */
+multiline_comment|/*&n; &t;&t; * FIXME:&n; &t;&t; * We should send an ICMP warning message here!&n; &t;&t; */
 id|icmp_send
 c_func
 (paren
@@ -4472,18 +4124,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;If it won&squot;t fit then error it. &n;&t; *  &t;NOTE: We don&squot;t send a ICMP here. Suppose the ICMP didn&squot;t fit.... &n;&t; */
-r_if
-c_cond
-(paren
-id|mtu
-OL
-l_int|8
-)paren
-(brace
 r_return
 suffix:semicolon
 )brace
@@ -4710,7 +4350,7 @@ l_int|3
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Added AC : If we are fragmenting a fragment thats not the&n;&t;&t;   last fragment then keep MF on each bit */
+multiline_comment|/* Added AC : If we are fragmenting a fragment thats not the&n; &t;&t;   last fragment then keep MF on each bit */
 r_if
 c_cond
 (paren
@@ -4758,10 +4398,10 @@ multiline_comment|/* &t;&t;printk(&quot;Queued&bslash;n&quot;);*/
 )brace
 )brace
 macro_line|#ifdef CONFIG_IP_FORWARD
-multiline_comment|/* &n; *&t;Forward an IP datagram to its next destination. &n; */
-DECL|function|ip_forward
+multiline_comment|/* Forward an IP datagram to its next destination. */
 r_static
 r_void
+DECL|function|ip_forward
 id|ip_forward
 c_func
 (paren
@@ -4808,7 +4448,7 @@ r_int
 r_int
 id|raddr
 suffix:semicolon
-multiline_comment|/*&n;&t; * Only forward packets that were fired at us when we are in promiscuous&n;&t; * mode. In standard mode we rely on the driver to filter for us.&n;&t; */
+multiline_comment|/*&n;   * Only forward packets that were fired at us when we are in promiscuous&n;   * mode. In standard mode we rely on the driver to filter for us.&n;   */
 r_if
 c_cond
 (paren
@@ -4843,7 +4483,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * According to the RFC, we must first decrease the TTL field. If&n;&t; * that reaches zero, we must reply an ICMP control message telling&n;&t; * that the packet&squot;s lifetime expired. RFC791 page 30.&n;&t; */
+multiline_comment|/*&n;   * According to the RFC, we must first decrease the TTL field. If&n;   * that reaches zero, we must reply an ICMP control message telling&n;   * that the packet&squot;s lifetime expired.&n;   */
 id|iph
 op_assign
 id|skb-&gt;h.iph
@@ -4924,7 +4564,7 @@ c_func
 id|iph
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, the packet is still valid.  Fetch its destination address,&n;&t; * and give it to the IP sender for further processing.&n;&t; */
+multiline_comment|/*&n;   * OK, the packet is still valid.  Fetch its destination address,&n;   * and give it to the IP sender for further processing.&n;   */
 id|rt
 op_assign
 id|rt_route
@@ -4969,7 +4609,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Gosh.  Not only is the packet valid; we even know how to&n;&t; * forward it onto its final destination.  Can we say this&n;&t; * is being plain lucky?&n;&t; * If the router told us that there is no GW, use the dest.&n;&t; * IP address itself- we seem to be connected directly...&n;&t; */
+multiline_comment|/*&n;   * Gosh.  Not only is the packet valid; we even know how to&n;   * forward it onto its final destination.  Can we say this&n;   * is being plain lucky?&n;   * If the router told us that there is no GW, use the dest.&n;   * IP address itself- we seem to be connected directly...&n;   */
 id|raddr
 op_assign
 id|rt-&gt;rt_gateway
@@ -5047,7 +4687,6 @@ id|dev2
 op_assign
 id|rt-&gt;rt_dev
 suffix:semicolon
-multiline_comment|/*&n;&t; * Never forward out on the same interface, its not allowed, its often not pretty either (except for on&n;&t; * source routing)&n;&t; */
 r_if
 c_cond
 (paren
@@ -5057,7 +4696,7 @@ id|dev2
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; * We now allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */
+multiline_comment|/*&n;   * We now allocate a new buffer, and copy the datagram into it.&n;   * If the indicated interface is up and running, kick it.&n;   */
 id|DPRINTF
 c_func
 (paren
@@ -5169,6 +4808,20 @@ id|skb-&gt;len
 op_plus
 id|dev2-&gt;hard_header_len
 suffix:semicolon
+id|skb2-&gt;mem_addr
+op_assign
+id|skb2
+suffix:semicolon
+id|skb2-&gt;mem_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+op_plus
+id|skb2-&gt;len
+suffix:semicolon
 id|skb2-&gt;next
 op_assign
 l_int|NULL
@@ -5253,9 +4906,9 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;This function receives all incoming IP datagrams. &n; */
-DECL|function|ip_rcv
+multiline_comment|/* This function receives all incoming IP datagrams. */
 r_int
+DECL|function|ip_rcv
 id|ip_rcv
 c_func
 (paren
@@ -5304,13 +4957,12 @@ id|inet_protocol
 op_star
 id|ipprot
 suffix:semicolon
+r_static
 r_struct
 id|options
-op_star
 id|opt
-op_assign
-l_int|NULL
 suffix:semicolon
+multiline_comment|/* since we don&squot;t use these yet, and they&n;&t;&t;&t;&t;take up stack space. */
 r_int
 id|brd
 suffix:semicolon
@@ -5432,7 +5084,6 @@ l_int|5
 )paren
 (brace
 multiline_comment|/* Fast path for the typical optionless IP packet. */
-macro_line|#ifdef IP_DEBUG  &t;
 id|ip_print
 c_func
 (paren
@@ -5440,7 +5091,24 @@ id|iph
 )paren
 suffix:semicolon
 multiline_comment|/* Bogus, only for debugging. */
-macro_line|#endif
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|opt
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|opt
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5451,45 +5119,16 @@ id|iph
 comma
 op_amp
 id|opt
-comma
-id|dev
 )paren
 op_ne
 l_int|0
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|opt
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|opt
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/*&t;&t;skb-&gt;ip_options=opt_ptr;*/
-id|kfree
-c_func
-(paren
-id|opt
-)paren
-suffix:semicolon
-id|opt
-op_assign
-l_int|NULL
-suffix:semicolon
 id|opts_p
 op_assign
-l_int|0
-multiline_comment|/*1*/
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -5670,11 +5309,32 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* Point into the IP datagram, just past the header. */
-id|skb-&gt;ip_hdr
+r_if
+c_cond
+(paren
+id|brd
+op_eq
+id|IS_INVBCAST
+)paren
+(brace
+multiline_comment|/*&t;printk(&quot;Invalid broadcast address from %x [target %x] (Probably they have a wrong netmask)&bslash;n&quot;,&n;&t;&t;iph-&gt;saddr,iph-&gt;daddr);*/
+id|skb-&gt;sk
 op_assign
-id|iph
+l_int|NULL
 suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Point into the IP datagram, just past the header. */
 id|skb-&gt;h.raw
 op_add_assign
 id|iph-&gt;ihl
@@ -5691,7 +5351,6 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Find someone to deliver it too */
 r_for
 c_loop
 (paren
@@ -5836,7 +5495,7 @@ id|flag
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Pass on the datagram to each protocol that wants it,&n;&t; * based on the datagram protocol.  We should really&n;&t; * check the protocol handler&squot;s return values here...&n;&t; */
+multiline_comment|/*&n;&t;* Pass on the datagram to each protocol that wants it,&n;&t;* based on the datagram protocol.  We should really&n;&t;* check the protocol handler&squot;s return values here...&n;&t;*/
 id|ipprot
 op_member_access_from_pointer
 id|handler
@@ -5849,6 +5508,7 @@ comma
 id|opts_p
 ques
 c_cond
+op_amp
 id|opt
 suffix:colon
 l_int|0
@@ -5922,8 +5582,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t.&n; * This routine also needs to put in the total length, and&n; * compute the checksum.&n; */
-DECL|function|ip_queue_xmit
 r_void
+DECL|function|ip_queue_xmit
 id|ip_queue_xmit
 c_func
 (paren
@@ -6056,7 +5716,7 @@ OG
 id|dev-&gt;mtu
 )paren
 (brace
-multiline_comment|/*&t;  &t;printk(&quot;Fragment!&bslash;n&quot;);*/
+multiline_comment|/*  &t;printk(&quot;Fragment!&bslash;n&quot;);*/
 id|ip_fragment
 c_func
 (paren
@@ -6092,14 +5752,12 @@ c_func
 id|iph
 )paren
 suffix:semicolon
-macro_line|#ifdef IP_DEBUG
 id|ip_print
 c_func
 (paren
 id|iph
 )paren
 suffix:semicolon
-macro_line|#endif
 id|skb-&gt;next
 op_assign
 l_int|NULL
@@ -6279,8 +5937,8 @@ id|FREE_WRITE
 suffix:semicolon
 )brace
 )brace
-DECL|function|ip_retransmit
 r_void
+DECL|function|ip_retransmit
 id|ip_retransmit
 c_func
 (paren
@@ -6353,13 +6011,13 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The rebuild_header function sees if the ARP is done.&n;&t;&t; * If not it sends a new ARP request, and if so it builds&n;&t;&t; * the header.&n;&t;&t; */
+multiline_comment|/*&n;&t; * The rebuild_header function sees if the ARP is done.&n;&t; * If not it sends a new ARP request, and if so it builds&n;&t; * the header.&n;&t; */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We might get interrupted by an arp reply here and fill&n;&t;&t;&t;   the frame in twice. Because of the technique used this&n;&t;&t;&t;   would be a little sad */
+multiline_comment|/* We might get interrupted by an arp reply here and fill&n;&t;&t;   the frame in twice. Because of the technique used this&n;&t;&t;   would be a little sad */
 r_if
 c_cond
 (paren
@@ -6449,6 +6107,7 @@ comma
 id|sk-&gt;priority
 )paren
 suffix:semicolon
+multiline_comment|/*&t;  else dev-&gt;queue_xmit(skb, dev, SOPRI_NORMAL ); CANNOT HAVE SK=NULL HERE */
 )brace
 id|oops
 suffix:colon
@@ -6513,7 +6172,7 @@ id|sk-&gt;rtt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Backoff function - the subject of much research &n; */
+multiline_comment|/* Backoff function - the subject of much research */
 DECL|function|backoff
 r_int
 id|backoff
@@ -6590,318 +6249,5 @@ l_int|255
 suffix:semicolon
 )brace
 )brace
-)brace
-multiline_comment|/*&n; *&t;Socket option code for IP. This is the end of the line after any TCP,UDP etc options on&n; *&t;an IP socket.&n; */
-DECL|function|ip_setsockopt
-r_int
-id|ip_setsockopt
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-id|optlen
-)paren
-(brace
-r_int
-id|val
-comma
-id|err
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|optval
-op_eq
-l_int|NULL
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|optval
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
-id|val
-op_assign
-id|get_fs_long
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|optval
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|level
-op_ne
-id|SOL_IP
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
-suffix:semicolon
-)brace
-r_switch
-c_cond
-(paren
-id|optname
-)paren
-(brace
-r_case
-id|IP_TOS
-suffix:colon
-r_if
-c_cond
-(paren
-id|val
-l_int|255
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|sk-&gt;ip_tos
-op_assign
-id|val
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-r_case
-id|IP_TTL
-suffix:colon
-r_if
-c_cond
-(paren
-id|val
-OL
-l_int|1
-op_logical_or
-id|val
-OL
-l_int|255
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|sk-&gt;ip_ttl
-op_assign
-id|val
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* IP_OPTIONS and friends go here eventually */
-r_default
-suffix:colon
-r_return
-op_minus
-id|ENOPROTOOPT
-suffix:semicolon
-)brace
-)brace
-DECL|function|ip_getsockopt
-r_int
-id|ip_getsockopt
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-op_star
-id|optlen
-)paren
-(brace
-r_int
-id|val
-comma
-id|err
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|level
-op_ne
-id|SOL_IP
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
-suffix:semicolon
-)brace
-r_switch
-c_cond
-(paren
-id|optname
-)paren
-(brace
-r_case
-id|IP_TOS
-suffix:colon
-id|val
-op_assign
-id|sk-&gt;ip_tos
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|IP_TTL
-suffix:colon
-id|val
-op_assign
-id|sk-&gt;ip_ttl
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-op_minus
-id|ENOPROTOOPT
-suffix:semicolon
-)brace
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|optlen
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
-id|put_fs_long
-c_func
-(paren
-r_sizeof
-(paren
-r_int
-)paren
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|optlen
-)paren
-suffix:semicolon
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|optval
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-(brace
-r_return
-id|err
-suffix:semicolon
-)brace
-id|put_fs_long
-c_func
-(paren
-id|val
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-id|optval
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 eof

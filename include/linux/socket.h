@@ -62,19 +62,11 @@ DECL|macro|AF_UNIX
 mdefine_line|#define AF_UNIX&t;&t;1
 DECL|macro|AF_INET
 mdefine_line|#define AF_INET&t;&t;2
-DECL|macro|AF_AX25
-mdefine_line|#define AF_AX25&t;&t;3
-DECL|macro|AF_IPX
-mdefine_line|#define AF_IPX&t;&t;4
 multiline_comment|/* Protocol families, same as address families. */
 DECL|macro|PF_UNIX
 mdefine_line|#define PF_UNIX&t;&t;AF_UNIX
 DECL|macro|PF_INET
 mdefine_line|#define PF_INET&t;&t;AF_INET
-DECL|macro|PF_AX25
-mdefine_line|#define PF_AX25&t;&t;AF_AX25
-DECL|macro|PF_IPX
-mdefine_line|#define PF_IPX&t;&t;AF_IPX
 multiline_comment|/* Flags we can use with send/ and recv. */
 DECL|macro|MSG_OOB
 mdefine_line|#define MSG_OOB&t;&t;1
@@ -83,14 +75,6 @@ mdefine_line|#define MSG_PEEK&t;2
 multiline_comment|/* Setsockoptions(2) level. */
 DECL|macro|SOL_SOCKET
 mdefine_line|#define SOL_SOCKET&t;1
-DECL|macro|SOL_IP
-mdefine_line|#define SOL_IP&t;&t;2
-DECL|macro|SOL_IPX
-mdefine_line|#define SOL_IPX&t;&t;3
-DECL|macro|SOL_AX25
-mdefine_line|#define SOL_AX25&t;4
-DECL|macro|SOL_TCP
-mdefine_line|#define SOL_TCP&t;&t;5
 multiline_comment|/* For setsockoptions(2) */
 DECL|macro|SO_DEBUG
 mdefine_line|#define SO_DEBUG&t;1
@@ -118,28 +102,6 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
 DECL|macro|SO_LINGER
 mdefine_line|#define SO_LINGER&t;13
-multiline_comment|/* IP options */
-DECL|macro|IP_TOS
-mdefine_line|#define IP_TOS&t;&t;1
-DECL|macro|IPTOS_LOWDELAY
-mdefine_line|#define&t;IPTOS_LOWDELAY&t;&t;0x10
-DECL|macro|IPTOS_THROUGHPUT
-mdefine_line|#define&t;IPTOS_THROUGHPUT&t;0x08
-DECL|macro|IPTOS_RELIABILITY
-mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
-DECL|macro|IP_TTL
-mdefine_line|#define IP_TTL&t;&t;2
-multiline_comment|/* IPX options */
-DECL|macro|IPX_TYPE
-mdefine_line|#define IPX_TYPE&t;1
-multiline_comment|/* AX.25 options */
-DECL|macro|AX25_WINDOW
-mdefine_line|#define AX25_WINDOW&t;1
-multiline_comment|/* TCP options */
-DECL|macro|TCP_MSS
-mdefine_line|#define TCP_MSS&t;&t;1
-DECL|macro|TCP_NODELAY
-mdefine_line|#define TCP_NODELAY&t;2
 multiline_comment|/* The various priorities. */
 DECL|macro|SOPRI_INTERACTIVE
 mdefine_line|#define SOPRI_INTERACTIVE&t;0

@@ -1,27 +1,26 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&t;&t;Alan Cox&t;:&t;Clean up for final release.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PACKET - implements raw packet sockets.&n; *&n; * Version:&t;@(#)packet.c&t;1.0.6&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;verify_area() now used correctly&n; *&t;&t;Alan Cox&t;:&t;new skbuff lists, look ma no backlogs!&n; *&t;&t;Alan Cox&t;:&t;tidied skbuff lists.&n; *&t;&t;Alan Cox&t;:&t;Now uses generic datagram routines I&n; *&t;&t;&t;&t;&t;added. Also fixed the peek/read crash&n; *&t;&t;&t;&t;&t;from all old Linux datagram code.&n; *&t;&t;Alan Cox&t;:&t;Uses the improved datagram code.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;sock.h&quot;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;udp.h&quot;
 macro_line|#include &quot;raw.h&quot;
-multiline_comment|/*&n; *&t;I&squot;m sure there should be one of these, not one every file.&n; */
-DECL|function|min
 r_static
 r_int
 r_int
+DECL|function|min
 id|min
 c_func
 (paren
@@ -48,9 +47,9 @@ r_return
 id|b
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;This should be the easiest of all, all we do is copy it into a buffer. &n; */
-DECL|function|packet_rcv
+multiline_comment|/* This should be the easiest of all, all we do is copy it into a buffer. */
 r_int
+DECL|function|packet_rcv
 id|packet_rcv
 c_func
 (paren
@@ -136,30 +135,26 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|wake_up
+c_func
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
 id|release_sock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-id|sk
-op_member_access_from_pointer
-id|data_ready
-c_func
-(paren
-id|sk
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will do terrible things if len + ipheader + devheader &gt; dev-&gt;mtu &n; *&t;Since only root can use these thats okish...&n; */
-DECL|function|packet_sendto
+multiline_comment|/* This will do terrible things if len + ipheader + devheader &gt; dev-&gt;mtu */
 r_static
 r_int
+DECL|function|packet_sendto
 id|packet_sendto
 c_func
 (paren
@@ -412,6 +407,20 @@ id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/* Fill it in */
+id|skb-&gt;mem_addr
+op_assign
+id|skb
+suffix:semicolon
+id|skb-&gt;mem_len
+op_assign
+id|len
+op_plus
+r_sizeof
+(paren
+op_star
+id|skb
+)paren
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -471,9 +480,9 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|function|packet_write
 r_static
 r_int
+DECL|function|packet_write
 id|packet_write
 c_func
 (paren
@@ -517,9 +526,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|packet_close
 r_static
 r_void
+DECL|function|packet_close
 id|packet_close
 c_func
 (paren
@@ -578,9 +587,9 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-DECL|function|packet_init
 r_static
 r_int
+DECL|function|packet_init
 id|packet_init
 c_func
 (paren
@@ -662,8 +671,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This should be easy, if there is something there&n; * we return it, otherwise we block.&n; */
-DECL|function|packet_recvfrom
 r_int
+DECL|function|packet_recvfrom
 id|packet_recvfrom
 c_func
 (paren
@@ -943,8 +952,8 @@ r_return
 id|copied
 suffix:semicolon
 )brace
-DECL|function|packet_read
 r_int
+DECL|function|packet_read
 id|packet_read
 c_func
 (paren
@@ -1038,11 +1047,6 @@ l_int|NULL
 comma
 id|packet_init
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* No set/get socket options */
 l_int|NULL
 comma
 l_int|128

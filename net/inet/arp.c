@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the Address Resolution Protocol (ARP),&n; *&t;&t;which is used by TCP/IP to map the IP addresses from a host&n; *&t;&t;to a low-level hardware address (like an Ethernet address)&n; *&t;&t;which it can use to talk to that host.&n; *&n; * NOTE:&t;This module will be rewritten completely in the near future,&n; *&t;&t;because I want it to become a multi-address-family address&n; *&t;&t;resolver, like it should be.  It will be put in a separate&n; *&t;&t;directory under &squot;net&squot;, being a protocol of its own. -FvK&n; *&n; * Version:&t;@(#)arp.c&t;1.28&t;20/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Stephen A. Wood, &lt;saw@hallc1.cebaf.gov&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@pvv.unit.no&gt;&n; *&n; * Fixes:&n; *&t;&t;&squot;Mr Linux&squot;&t;:&t;arp problems.&n; *&t;&t;Alan Cox&t;:&t;arp_ioctl now checks memory areas with verify_area.&n; *&t;&t;Alan Cox&t;:&t;Non IP arp message now only appears with debugging on.&n; *&t;&t;Alan Cox&t;: &t;arp queue is volatile (may be altered by arp messages while doing sends) &n; *&t;&t;&t;&t;&t;Generic queue code is urgently needed!&n; *&t;&t;Alan Cox&t;:&t;Deleting your own ip addr now gives EINVAL not a printk message.&n; *&t;&t;Alan Cox&t;:&t;Fix to arp linked list error&n; *&t;&t;Alan Cox&t;:&t;Ignore broadcast arp (Linus&squot; idea 8-))&n; *&t;&t;Alan Cox&t;:&t;arp_send memory leak removed&n; *&t;&t;Alan Cox&t;:&t;generic skbuff code fixes.&n; *&t;&t;Alan Cox&t;:&t;&squot;Bad Packet&squot; only reported on debugging&n; *&t;&t;Alan Cox&t;:&t;Proxy arp.&n; *&t;&t;Alan Cox&t;:&t;skb-&gt;link3 maintained by letting the other xmit queue kill the packet.&n; *&t;&t;Alan Cox&t;:&t;Knows about type 3 devices (AX.25) using an AX.25 protocol ID not the ethernet&n; *&t;&t;&t;&t;&t;one.&n; *&t;&t;Dominik Kubla&t;:&t;Better checking&n; *&t;&t;Tegge&t;&t;:&t;Assorted corrections on cross port stuff&n; *&t;&t;Alan Cox&t;:&t;Heavily reformatted &amp; recommented ready for the big day&n; *&t;&t;Alan Cox&t;:&t;ATF_PERM was backwards! - might be useful now (sigh)&n; *&n; *&n; * To Fix:&n; *&t;&t;&t;&t;:&t;arp response allocates an skbuff to send. However there is a perfectly&n; *&t;&t;&t;&t;&t;good spare skbuff the right size about to be freed (the query). Use the&n; *&t;&t;&t;&t;&t;query for the reply. This avoids an out of memory case _and_ speeds arp&n; *&t;&t;&t;&t;&t;up.&n; *&t;&t;&t;&t;:&t;FREE_READ v FREE_WRITE errors. Not critical as loopback arps don&squot;t occur&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the Address Resolution Protocol (ARP),&n; *&t;&t;which is used by TCP/IP to map the IP addresses from a host&n; *&t;&t;to a low-level hardware address (like an Ethernet address)&n; *&t;&t;which it can use to talk to that host.&n; *&n; * NOTE:&t;This module will be rewritten completely in the near future,&n; *&t;&t;because I want it to become a multi-address-family address&n; *&t;&t;resolver, like it should be.  It will be put in a separate&n; *&t;&t;directory under &squot;net&squot;, being a protocol of its own. -FvK&n; *&n; * Version:&t;@(#)arp.c&t;1.0.15&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Stephen A. Wood, &lt;saw@hallc1.cebaf.gov&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@pvv.unit.no&gt;&n; *&n; * Fixes:&n; *&t;&t;&squot;Mr Linux&squot;&t;:&t;arp problems.&n; *&t;&t;Alan Cox&t;:&t;arp_ioctl now checks memory areas with verify_area.&n; *&t;&t;Alan Cox&t;:&t;Non IP arp message now only appears with debugging on.&n; *&t;&t;Alan Cox&t;: &t;arp queue is volatile (may be altered by arp messages while doing sends) &n; *&t;&t;&t;&t;&t;Generic queue code is urgently needed!&n; *&t;&t;Alan Cox&t;:&t;Deleting your own ip addr now gives EINVAL not a printk message.&n; *&t;&t;Alan Cox&t;:&t;Fix to arp linked list error&n; *&t;&t;Alan Cox&t;:&t;Ignore broadcast arp (Linus&squot; idea 8-))&n; *&t;&t;Alan Cox&t;:&t;arp_send memory leak removed&n; *&t;&t;Alan Cox&t;:&t;generic skbuff code fixes.&n; *&t;&t;Alan Cox&t;:&t;&squot;Bad Packet&squot; only reported on debugging&n; *&t;&t;Alan Cox&t;:&t;Proxy arp.&n; *&t;&t;Alan Cox&t;:&t;skb-&gt;link3 maintained by letting the other xmit queue kill the packet.&n; *&t;&t;Alan Cox&t;:&t;Knows about type 3 devices (AX.25) using an AX.25 protocol ID not the ethernet&n; *&t;&t;&t;&t;&t;one.&n; *&n; * To Fix:&n; *&t;&t;&t;&t;:&t;arp response allocates an skbuff to send. However there is a perfectly&n; *&t;&t;&t;&t;&t;good spare skbuff the right size about to be freed (the query). Use the&n; *&t;&t;&t;&t;&t;query for the reply. This avoids an out of memory case _and_ speeds arp&n; *&t;&t;&t;&t;&t;up.&n; *&t;&t;&t;&t;:&t;FREE_READ v FREE_WRITE errors. Not critical as loopback arps don&squot;t occur&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,19 +13,162 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;inet.h&quot;
-macro_line|#include &quot;devinet.h&quot;
+macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;route.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
-macro_line|#include &quot;sockinet.h&quot;
+macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
-multiline_comment|/*&n; *&t;We will try an ARP the recommended three times before we abandon it. If we&n; *&t;do abandon it all is not lost as the next frame will also try.&n; */
 DECL|macro|ARP_MAX_TRIES
 mdefine_line|#define ARP_MAX_TRIES&t;3
-multiline_comment|/*&n; *&t;The ARP table itself&n; */
+r_static
+r_char
+op_star
+id|unk_print
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_static
+r_char
+op_star
+id|eth_aprint
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|variable|arp_cmds
+r_static
+r_char
+op_star
+id|arp_cmds
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;0x%04X&quot;
+comma
+l_string|&quot;REQUEST&quot;
+comma
+l_string|&quot;REPLY&quot;
+comma
+l_string|&quot;REVERSE REQUEST&quot;
+comma
+l_string|&quot;REVERSE REPLY&quot;
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|macro|ARP_MAX_CMDS
+mdefine_line|#define&t;ARP_MAX_CMDS&t;(sizeof(arp_cmds) / sizeof(arp_cmds[0]))
+r_static
+r_struct
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|print
+r_char
+op_star
+(paren
+op_star
+id|print
+)paren
+(paren
+r_int
+r_char
+op_star
+id|ptr
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+DECL|variable|arp_types
+)brace
+id|arp_types
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;0x%04X&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_string|&quot;10 Mbps Ethernet&quot;
+comma
+id|eth_aprint
+)brace
+comma
+(brace
+l_string|&quot;3 Mbps Ethernet&quot;
+comma
+id|eth_aprint
+)brace
+comma
+(brace
+l_string|&quot;AX.25&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_string|&quot;Pronet&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_string|&quot;Chaos&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_string|&quot;IEEE 802.2 Ethernet (?)&quot;
+comma
+id|eth_aprint
+)brace
+comma
+(brace
+l_string|&quot;Arcnet&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_string|&quot;AppleTalk&quot;
+comma
+id|unk_print
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
+DECL|macro|ARP_MAX_TYPE
+mdefine_line|#define&t;ARP_MAX_TYPE&t;(sizeof(arp_types) / sizeof(arp_types[0]))
 DECL|variable|arp_tables
 r_struct
 id|arp_table
@@ -48,7 +191,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* So we can avoid the proxy arp &n;&t;&t;&t;&t;   overhead with the usual case of&n;&t;&t;&t;&t;   no proxy arps */
-multiline_comment|/*&n; *&t;Every packet awaiting an ARP resolution is stuffed on this&n; *&t;queue until resolved or deleted. Note items in this queue&n; *&t;may be on other (tcp retransmit) queues and we must not&n; *&t;be the one to delete them.&n; */
 DECL|variable|arp_q
 r_struct
 id|sk_buff
@@ -82,10 +224,382 @@ r_int
 id|addr
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;We grab the arp queue, empty it and walk down it adding anything we can&squot;t&n; *&t;resolve back onto the queue. We MUST do things this way as other entries&n; *&t;may (will) get added as we walk the old list.&n; */
-DECL|function|arp_send_q
+multiline_comment|/* Dump the ADDRESS bytes of an unknown hardware type. */
+r_static
+r_char
+op_star
+DECL|function|unk_print
+id|unk_print
+c_func
+(paren
+r_int
+r_char
+op_star
+id|ptr
+comma
+r_int
+id|len
+)paren
+(brace
+r_static
+r_char
+id|buff
+(braket
+l_int|32
+)braket
+suffix:semicolon
+r_char
+op_star
+id|bufp
+op_assign
+id|buff
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|bufp
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|bufp
+comma
+l_string|&quot;%02X &quot;
+comma
+(paren
+op_star
+id|ptr
+op_increment
+op_amp
+l_int|0377
+)paren
+)paren
+suffix:semicolon
+r_return
+id|buff
+suffix:semicolon
+)brace
+multiline_comment|/* Dump the ADDRESS bytes of an Ethernet hardware type. */
+r_static
+r_char
+op_star
+DECL|function|eth_aprint
+id|eth_aprint
+c_func
+(paren
+r_int
+r_char
+op_star
+id|ptr
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+op_ne
+id|ETH_ALEN
+)paren
+r_return
+l_string|&quot;&quot;
+suffix:semicolon
+r_return
+id|eth_print
+c_func
+(paren
+id|ptr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Dump an ARP packet. Not complete yet for non-Ethernet packets. */
 r_static
 r_void
+DECL|function|arp_print
+id|arp_print
+c_func
+(paren
+r_struct
+id|arphdr
+op_star
+id|arp
+)paren
+(brace
+r_int
+id|len
+comma
+id|idx
+suffix:semicolon
+r_int
+r_char
+op_star
+id|ptr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inet_debug
+op_ne
+id|DBG_ARP
+)paren
+r_return
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ARP: &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|arp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;(null)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Print the opcode name. */
+id|len
+op_assign
+id|htons
+c_func
+(paren
+id|arp-&gt;ar_op
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+id|ARP_MAX_CMDS
+)paren
+id|idx
+op_assign
+id|len
+suffix:semicolon
+r_else
+id|idx
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;op &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|arp_cmds
+(braket
+id|idx
+)braket
+comma
+id|len
+)paren
+suffix:semicolon
+multiline_comment|/* Print the ARP header. */
+id|len
+op_assign
+id|htons
+c_func
+(paren
+id|arp-&gt;ar_hrd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+id|ARP_MAX_TYPE
+)paren
+id|idx
+op_assign
+id|len
+suffix:semicolon
+r_else
+id|idx
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;   hrd = &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|arp_types
+(braket
+id|idx
+)braket
+dot
+id|name
+comma
+id|len
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;   pro = 0x%04X&bslash;n&quot;
+comma
+id|htons
+c_func
+(paren
+id|arp-&gt;ar_pro
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;   hlen = %d plen = %d&bslash;n&quot;
+comma
+id|arp-&gt;ar_hln
+comma
+id|arp-&gt;ar_pln
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Print the variable data.&n;   * When ARP gets redone (after the formal introduction of NET-2),&n;   * this part will be redone.  ARP will then be a multi-family address&n;   * resolver, and the code below will be made more general. -FvK&n;   */
+id|ptr
+op_assign
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|arp-&gt;ar_op
+)paren
+op_plus
+r_sizeof
+(paren
+id|u_short
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;   sender HA = %s &quot;
+comma
+id|arp_types
+(braket
+id|idx
+)braket
+dot
+id|print
+c_func
+(paren
+id|ptr
+comma
+id|arp-&gt;ar_hln
+)paren
+)paren
+suffix:semicolon
+id|ptr
+op_add_assign
+id|arp-&gt;ar_hln
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  PA = %s&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|ptr
+)paren
+)paren
+suffix:semicolon
+id|ptr
+op_add_assign
+id|arp-&gt;ar_pln
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;   target HA = %s &quot;
+comma
+id|arp_types
+(braket
+id|idx
+)braket
+dot
+id|print
+c_func
+(paren
+id|ptr
+comma
+id|arp-&gt;ar_hln
+)paren
+)paren
+suffix:semicolon
+id|ptr
+op_add_assign
+id|arp-&gt;ar_hln
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  PA = %s&bslash;n&quot;
+comma
+id|in_ntoa
+c_func
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|ptr
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* This will try to retransmit everything on the queue. */
+r_static
+r_void
+DECL|function|arp_send_q
 id|arp_send_q
 c_func
 (paren
@@ -155,7 +669,14 @@ id|skb-&gt;magic
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* So everyone knows this is _NOT_ on the arp queue */
+id|skb-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|skb-&gt;prev
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* Decrement the &squot;tries&squot; counter. */
 id|cli
 c_func
@@ -263,10 +784,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;Create and send our response to an ARP request. &n; */
-DECL|function|arp_response
+multiline_comment|/* Create and send our response to an ARP request. */
 r_static
 r_int
+DECL|function|arp_response
 id|arp_response
 c_func
 (paren
@@ -457,6 +978,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|skb-&gt;mem_addr
+op_assign
+id|skb
+suffix:semicolon
 id|skb-&gt;len
 op_assign
 r_sizeof
@@ -478,6 +1003,16 @@ id|arp1-&gt;ar_pln
 )paren
 op_plus
 id|dev-&gt;hard_header_len
+suffix:semicolon
+id|skb-&gt;mem_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+op_plus
+id|skb-&gt;len
 suffix:semicolon
 id|hlen
 op_assign
@@ -697,6 +1232,22 @@ id|skb-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;&gt;&gt;&quot;
+)paren
+)paren
+suffix:semicolon
+id|arp_print
+c_func
+(paren
+id|arp2
+)paren
+suffix:semicolon
 multiline_comment|/* Queue the packet for transmission. */
 id|dev
 op_member_access_from_pointer
@@ -714,12 +1265,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This will find an entry in the ARP table by looking at the IP address.&n; */
-DECL|function|arp_lookup
+multiline_comment|/* This will find an entry in the ARP table by looking at the IP address. */
 r_static
 r_struct
 id|arp_table
 op_star
+DECL|function|arp_lookup
 id|arp_lookup
 c_func
 (paren
@@ -848,7 +1399,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will find a proxy in the ARP table by looking at the IP address.&n; */
+multiline_comment|/* This will find a proxy in the ARP table by looking at the IP address. */
 DECL|function|arp_lookup_proxy
 r_static
 r_struct
@@ -959,19 +1510,15 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Delete an ARP mapping entry in the cache.&n; */
-DECL|function|arp_destructor
-r_static
+multiline_comment|/* Delete an ARP mapping entry in the cache. */
 r_void
-id|arp_destructor
+DECL|function|arp_destroy
+id|arp_destroy
 c_func
 (paren
 r_int
 r_int
 id|paddr
-comma
-r_int
-id|force
 )paren
 (brace
 r_struct
@@ -1085,22 +1632,6 @@ op_eq
 id|paddr
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
-id|apt-&gt;flags
-op_amp
-id|ATF_PERM
-)paren
-op_logical_and
-op_logical_neg
-id|force
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
 op_star
 id|lapt
 op_assign
@@ -1150,52 +1681,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Kill an entry - eg for ioctl()&n; */
-DECL|function|arp_destroy
-r_void
-id|arp_destroy
-c_func
-(paren
-r_int
-r_int
-id|paddr
-)paren
-(brace
-id|arp_destructor
-c_func
-(paren
-id|paddr
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Delete a possibly invalid entry (see timer.c)&n; */
-DECL|function|arp_destroy_maybe
-r_void
-id|arp_destroy_maybe
-c_func
-(paren
-r_int
-r_int
-id|paddr
-)paren
-(brace
-id|arp_destructor
-c_func
-(paren
-id|paddr
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * &t;Create an ARP entry.  The caller should check for duplicates!&n; */
-DECL|function|arp_create
+multiline_comment|/* Create an ARP entry.  The caller should check for duplicates! */
 r_static
 r_struct
 id|arp_table
 op_star
+DECL|function|arp_create
 id|arp_create
 c_func
 (paren
@@ -1223,6 +1714,52 @@ suffix:semicolon
 r_int
 r_int
 id|hash
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;ARP: create(%s, &quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|paddr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;%s, &quot;
+comma
+id|eth_print
+c_func
+(paren
+id|addr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;%d, %d)&bslash;n&quot;
+comma
+id|hlen
+comma
+id|htype
+)paren
+)paren
 suffix:semicolon
 id|apt
 op_assign
@@ -1340,8 +1877,8 @@ id|apt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * An ARP REQUEST packet has arrived.&n; * We try to be smart here, and fetch the data of the sender of the&n; * packet- we might need it later, so fetching it now can save us a&n; * broadcast later.&n; * Then, if the packet was meant for us (i.e. the TARGET address was&n; * one of our own IP addresses), we set up and send out an ARP REPLY&n; * packet to the sender.&n; */
-DECL|function|arp_rcv
 r_int
+DECL|function|arp_rcv
 id|arp_rcv
 c_func
 (paren
@@ -1388,9 +1925,25 @@ suffix:semicolon
 r_int
 id|addr_hint
 suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;&lt;&lt;&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|arp
 op_assign
 id|skb-&gt;h.arp
+suffix:semicolon
+id|arp_print
+c_func
+(paren
+id|arp
+)paren
 suffix:semicolon
 multiline_comment|/* If this test doesn&squot;t pass, its not IP. Might be DECNET or friends */
 r_if
@@ -1507,7 +2060,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &t; * As said before, we try to be smart by using the&n;  &t; * info already present in the packet: the sender&squot;s&n;  &t; * IP and hardware address.&n;   &t; */
+multiline_comment|/*&n;   * As said before, we try to be smart by using the&n;   * info already present in the packet: the sender&squot;s&n;   * IP and hardware address.&n;   */
 id|ptr
 op_assign
 (paren
@@ -1711,13 +2264,13 @@ multiline_comment|/*&n;   * A broadcast arp, ignore it&n;   */
 r_if
 c_cond
 (paren
-id|chk_addr
-c_func
 (paren
 id|dst
+op_amp
+l_int|0xFF
 )paren
 op_eq
-id|IS_BROADCAST
+l_int|0xFF
 )paren
 (brace
 id|kfree_skb
@@ -1793,7 +2346,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &t; * Yes, it is for us.&n;  &t; * Allocate, fill in and send an ARP REPLY packet.&n;  &t; */
+multiline_comment|/*&n;   * Yes, it is for us.&n;   * Allocate, fill in and send an ARP REPLY packet.&n;   */
 id|ret
 op_assign
 id|arp_response
@@ -1818,9 +2371,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Create and send an ARP REQUEST packet. &n; */
-DECL|function|arp_send
+multiline_comment|/* Create and send an ARP REQUEST packet. */
 r_void
+DECL|function|arp_send
 id|arp_send
 c_func
 (paren
@@ -1963,6 +2516,10 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
+id|skb-&gt;mem_addr
+op_assign
+id|skb
+suffix:semicolon
 id|skb-&gt;len
 op_assign
 r_sizeof
@@ -1980,6 +2537,16 @@ id|dev-&gt;addr_len
 )paren
 op_plus
 l_int|8
+suffix:semicolon
+id|skb-&gt;mem_len
+op_assign
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
+op_plus
+id|skb-&gt;len
 suffix:semicolon
 id|skb-&gt;arp
 op_assign
@@ -2190,6 +2757,22 @@ comma
 id|arp-&gt;ar_pln
 )paren
 suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;&gt;&gt;&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|arp_print
+c_func
+(paren
+id|arp
+)paren
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|queue_xmit
@@ -2203,9 +2786,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an ARP mapping in the cache. If not found, post a REQUEST.&n; */
-DECL|function|arp_find
+multiline_comment|/* Find an ARP mapping in the cache. If not found, post a REQUEST. */
 r_int
+DECL|function|arp_find
 id|arp_find
 c_func
 (paren
@@ -2232,6 +2815,56 @@ r_struct
 id|arp_table
 op_star
 id|apt
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;ARP: find(haddr=%s, &quot;
+comma
+id|eth_print
+c_func
+(paren
+id|haddr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;paddr=%s, &quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|paddr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;dev=%s, saddr=%s)&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|in_ntoa
+c_func
+(paren
+id|saddr
+)paren
+)paren
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -2297,17 +2930,25 @@ r_if
 c_cond
 (paren
 (paren
+op_logical_neg
+(paren
 id|apt-&gt;flags
 op_amp
 id|ATF_PERM
 )paren
+)paren
 op_logical_or
 (paren
+op_logical_neg
+id|before
+c_func
+(paren
 id|apt-&gt;last_used
-OL
+comma
 id|jiffies
 op_plus
 id|ARP_TIMEOUT
+)paren
 op_logical_and
 id|apt-&gt;hlen
 op_ne
@@ -2353,7 +2994,7 @@ id|apt-&gt;ip
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * This assume haddr are at least 4 bytes.&n;   * If this isn&squot;t true we can use a lookup table, one for every dev.&n;   */
+multiline_comment|/*&n;   * This assume haddr are at least 4 bytes.&n;   * If this isn&squot;t true we can use a lookup table, one for every dev.&n;   * NOTE: this bit of code still looks fishy to me- FvK&n;   */
 op_star
 (paren
 r_int
@@ -2379,9 +3020,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Add an entry to the ARP cache.  Check for dupes!&n; */
-DECL|function|arp_add
+multiline_comment|/* Add an entry to the ARP cache.  Check for dupes! */
 r_void
+DECL|function|arp_add
 id|arp_add
 c_func
 (paren
@@ -2404,6 +3045,52 @@ r_struct
 id|arp_table
 op_star
 id|apt
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;ARP: add(%s, &quot;
+comma
+id|in_ntoa
+c_func
+(paren
+id|addr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;%s, &quot;
+comma
+id|eth_print
+c_func
+(paren
+id|haddr
+)paren
+)paren
+)paren
+suffix:semicolon
+id|DPRINTF
+c_func
+(paren
+(paren
+id|DBG_ARP
+comma
+l_string|&quot;%d, %d)&bslash;n&quot;
+comma
+id|dev-&gt;hard_header_len
+comma
+id|dev-&gt;type
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* This is probably a good check... */
 r_if
@@ -2486,9 +3173,9 @@ id|dev-&gt;type
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Create an ARP entry for a device&squot;s broadcast address.&n; */
-DECL|function|arp_add_broad
+multiline_comment|/* Create an ARP entry for a device&squot;s broadcast address. */
 r_void
+DECL|function|arp_add_broad
 id|arp_add_broad
 c_func
 (paren
@@ -2540,8 +3227,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Queue an IP packet, while waiting for the ARP reply packet. */
-DECL|function|arp_queue
 r_void
+DECL|function|arp_queue
 id|arp_queue
 c_func
 (paren
@@ -2551,16 +3238,6 @@ op_star
 id|skb
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2607,16 +3284,15 @@ id|skb-&gt;magic
 op_assign
 id|ARP_QUEUE_MAGIC
 suffix:semicolon
-id|restore_flags
+id|sti
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Write the contents of the ARP cache to a PROCfs file.&n; * This is not by long perfect, as the internal ARP table doesn&squot;t&n; * have all the info we would like to have.  Oh well, it works for&n; * now, eh? - FvK&n; * Also note, that due to space limits, we cannot generate more than&n; * 4Kbyte worth of data.  This usually is enough, but I have seen&n; * machines die from under me because of a *very* large ARP cache.&n; * This can be simply tested by doing:&n; *&n; *&t;# ping 255.255.255.255&n; *&t;# arp -a&n; *&n; * Perhaps we should redo PROCfs to handle larger buffers?  Michael?&n; */
-DECL|function|arp_get_info
 r_int
+DECL|function|arp_get_info
 id|arp_get_info
 c_func
 (paren
@@ -2807,10 +3483,10 @@ op_minus
 id|buffer
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &t;Set (create) an ARP cache entry. &n; */
-DECL|function|arp_req_set
+multiline_comment|/* Set (create) an ARP cache entry. */
 r_static
 r_int
+DECL|function|arp_req_set
 id|arp_req_set
 c_func
 (paren
@@ -2865,7 +3541,7 @@ r_return
 op_minus
 id|EPFNOSUPPORT
 suffix:semicolon
-multiline_comment|/*&n;  &t; * Find out about the hardware type.&n;  &t; * We have to be compatible with BSD UNIX, so we have to&n;  &t; * assume that a &quot;not set&quot; value (i.e. 0) means Ethernet.&n;  &t; */
+multiline_comment|/*&n;   * Find out about the hardware type.&n;   * We have to be compatible with BSD UNIX, so we have to&n;   * assume that a &quot;not set&quot; value (i.e. 0) means Ethernet.&n;   */
 id|si
 op_assign
 (paren
@@ -2895,19 +3571,6 @@ suffix:semicolon
 id|hlen
 op_assign
 id|ETH_ALEN
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ARPHRD_AX25
-suffix:colon
-id|htype
-op_assign
-id|ARPHRD_AX25
-suffix:semicolon
-id|hlen
-op_assign
-l_int|7
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3031,10 +3694,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Get an ARP cache entry.&n; */
-DECL|function|arp_req_get
+multiline_comment|/* Get an ARP cache entry. */
 r_static
 r_int
+DECL|function|arp_req_get
 id|arp_req_get
 c_func
 (paren
@@ -3157,10 +3820,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Delete an ARP cache entry.&n; */
-DECL|function|arp_req_del
+multiline_comment|/* Delete an ARP cache entry. */
 r_static
 r_int
+DECL|function|arp_req_del
 id|arp_req_del
 c_func
 (paren
@@ -3215,7 +3878,7 @@ op_star
 op_amp
 id|r.arp_pa
 suffix:semicolon
-multiline_comment|/* The system cope with this but splats up a nasty kernel message &n;  &t;   We trap it beforehand and tell the user off */
+multiline_comment|/* The system cope with this but splats up a nasty kernel message &n;     We trap it beforehand and tell the user off */
 r_if
 c_cond
 (paren
@@ -3243,9 +3906,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Handle an ARP layer I/O control request. &n; */
-DECL|function|arp_ioctl
+multiline_comment|/* Handle an ARP layer I/O control request. */
 r_int
+DECL|function|arp_ioctl
 id|arp_ioctl
 c_func
 (paren

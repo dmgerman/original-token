@@ -135,15 +135,6 @@ DECL|member|tcc
 r_int
 id|tcc
 suffix:semicolon
-DECL|member|option_length
-r_int
-id|option_length
-suffix:semicolon
-DECL|member|option_data
-r_void
-op_star
-id|option_data
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|iphdr

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARP protocol module.&n; *&n; * Version:&t;@(#)arp.h&t;1.28&t;24/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the ARP protocol module.&n; *&n; * Version:&t;@(#)arp.h&t;1.0.6&t;05/21/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _ARP_H
 DECL|macro|_ARP_H
 mdefine_line|#define _ARP_H
@@ -12,7 +12,7 @@ DECL|macro|ARP_MAX_TRIES
 mdefine_line|#define ARP_MAX_TRIES&t;3&t;&t;/* max # of tries to send ARP&t;*/
 DECL|macro|ARP_QUEUE_MAGIC
 mdefine_line|#define ARP_QUEUE_MAGIC&t;0x0432447A&t;/* magic # for queues&t;&t;*/
-multiline_comment|/* &n; *&t;This structure defines the ARP mapping cache.&n; */
+multiline_comment|/* This structure defines the ARP mapping cache. */
 DECL|struct|arp_table
 r_struct
 id|arp_table
@@ -34,11 +34,32 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#if 1
 DECL|member|ip
 r_int
 r_int
 id|ip
 suffix:semicolon
+macro_line|#else
+DECL|member|pa
+r_int
+r_char
+id|pa
+(braket
+id|MAX_ADDR_LEN
+)braket
+suffix:semicolon
+DECL|member|plen
+r_int
+r_char
+id|plen
+suffix:semicolon
+DECL|member|ptype
+r_int
+r_char
+id|ptype
+suffix:semicolon
+macro_line|#endif
 DECL|member|ha
 r_int
 r_char
@@ -59,7 +80,7 @@ id|htype
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;This is also used in &quot;sock.c&quot; and &quot;tcp.c&quot; - YUCK! - FvK &n; */
+multiline_comment|/* This is also used in &quot;sock.c&quot; and &quot;tcp.c&quot; - YUCK! - FvK */
 r_extern
 r_struct
 id|sk_buff
@@ -69,16 +90,6 @@ suffix:semicolon
 r_extern
 r_void
 id|arp_destroy
-c_func
-(paren
-r_int
-r_int
-id|paddr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arp_destroy_maybe
 c_func
 (paren
 r_int

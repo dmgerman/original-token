@@ -923,7 +923,6 @@ op_star
 id|list
 suffix:semicolon
 )brace
-macro_line|#ifdef UNUSED_NOW
 multiline_comment|/*&n; *&t;Get a clone of an sk_buff. This is the safe way to peek at&n; *&t;a socket queue without accidents. Its a bit long but most&n; *&t;of it acutally ends up as tiny bits of inline assembler&n; *&t;anyway. Only the memcpy of upto 4K with ints off is not&n; *&t;as nice as I&squot;d like.&n; */
 DECL|function|skb_peek_copy
 r_struct
@@ -1182,7 +1181,6 @@ r_return
 id|newsk
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; *&t;Free an sk_buff. This still knows about things it should&n; *&t;not need to like protocols and sockets.&n; */
 DECL|function|kfree_skb
 r_void
@@ -1322,12 +1320,10 @@ op_logical_neg
 id|skb-&gt;sk-&gt;dead
 )paren
 (brace
-id|skb-&gt;sk
-op_member_access_from_pointer
-id|write_space
+id|wake_up
 c_func
 (paren
-id|skb-&gt;sk
+id|skb-&gt;sk-&gt;sleep
 )paren
 suffix:semicolon
 )brace
@@ -1342,7 +1338,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-(brace
 id|kfree_skbmem
 c_func
 (paren
@@ -1351,7 +1346,6 @@ comma
 id|skb-&gt;mem_len
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; *&t;Allocate a new skbuff. We do this ourselves so we can fill in a few &squot;private&squot;&n; *&t;fields and also do memory statistics to find all the [BEEP] leaks.&n; */
 DECL|function|alloc_skb

@@ -53,10 +53,10 @@ mdefine_line|#define TCPOPT_EOL&t;&t;0
 DECL|macro|TCPOPT_MSS
 mdefine_line|#define TCPOPT_MSS&t;&t;2
 multiline_comment|/*&n; * The next routines deal with comparing 32 bit unsigned ints&n; * and worry about wraparound. The general strategy is to do a&n; * normal compare so long as neither of the numbers is within&n; * 4K of wrapping.  Otherwise we must check for the wrap.&n; */
-DECL|function|before
 r_static
 r_inline
 r_int
+DECL|function|before
 id|before
 (paren
 r_int
@@ -116,7 +116,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;  &t; * Now we know seq1 &gt; seq2.  So all we need to do is check&n;  &t; * to see if seq1 has wrapped.&n;  &t; */
+multiline_comment|/*&n;   * Now we know seq1 &gt; seq2.  So all we need to do is check&n;   * to see if seq1 has wrapped.&n;   */
 r_if
 c_cond
 (paren
@@ -137,10 +137,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|after
 r_static
 r_inline
 r_int
+DECL|function|after
 id|after
 c_func
 (paren
@@ -164,10 +164,10 @@ id|seq1
 suffix:semicolon
 )brace
 multiline_comment|/* is s2&lt;=s1&lt;=s3 ? */
-DECL|function|between
 r_static
 r_inline
 r_int
+DECL|function|between
 id|between
 c_func
 (paren
@@ -207,11 +207,11 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * List all states of a TCP socket that can be viewed as a &quot;connected&quot;&n; * state.  This now includes TCP_SYN_RECV, although I am not yet fully&n; * convinced that this is the solution for the &squot;getpeername(2)&squot;&n; * problem. Thanks to Stephen A. Wood &lt;saw@cebaf.gov&gt;  -FvK&n; */
-DECL|function|tcp_connected
 r_static
 r_inline
 r_const
 r_int
+DECL|function|tcp_connected
 id|tcp_connected
 c_func
 (paren
