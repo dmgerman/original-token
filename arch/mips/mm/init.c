@@ -1057,6 +1057,11 @@ comma
 id|free
 )paren
 suffix:semicolon
+id|show_buffers
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_NET
 id|show_net_buffers
 c_func

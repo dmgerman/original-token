@@ -32,7 +32,7 @@ DECL|macro|__flush_tlb
 mdefine_line|#define __flush_tlb() &bslash;&n;do { unsigned long tmpreg; __asm__ __volatile__(&quot;movl %%cr3,%0&bslash;n&bslash;tmovl %0,%%cr3&quot;:&quot;=r&quot; (tmpreg) : :&quot;memory&quot;); } while (0)
 macro_line|#ifndef CONFIG_X86_INVLPG
 DECL|macro|__flush_tlb_one
-mdefine_line|#define __flush_tlb_one(addr) flush_tlb()
+mdefine_line|#define __flush_tlb_one(addr) __flush_tlb()
 macro_line|#else
 DECL|macro|__flush_tlb_one
 mdefine_line|#define __flush_tlb_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))

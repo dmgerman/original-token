@@ -950,6 +950,15 @@ id|pci_bus
 op_star
 )paren
 suffix:semicolon
+r_int
+id|pcibios_enable_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+)paren
+suffix:semicolon
 r_char
 op_star
 id|pcibios_setup
@@ -1452,6 +1461,16 @@ id|u32
 id|val
 )paren
 suffix:semicolon
+r_int
+id|pci_enable_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
 r_void
 id|pci_set_master
 c_func
@@ -1462,7 +1481,20 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Helper functions (drivers/pci/setup.c) */
+r_int
+id|pci_set_power_state
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|state
+)paren
+suffix:semicolon
+multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */
 r_int
 id|pci_claim_resource
 c_func
@@ -1524,7 +1556,7 @@ id|u8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * simple PCI probing for drivers&n; */
+multiline_comment|/*&n; * simple PCI probing for drivers (drivers/pci/helper.c)&n; */
 r_struct
 id|pci_simple_probe_entry
 suffix:semicolon
@@ -1763,7 +1795,22 @@ op_star
 id|dev
 )paren
 (brace
+)brace
+DECL|function|pci_enable_device
+r_extern
+r_inline
+r_int
+id|pci_enable_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|pci_simple_probe

@@ -20,12 +20,12 @@ DECL|macro|PCI_BIOS_SORT
 mdefine_line|#define PCI_BIOS_SORT 0x200
 DECL|macro|PCI_NO_CHECKS
 mdefine_line|#define PCI_NO_CHECKS 0x400
-DECL|macro|PCI_NO_PEER_FIXUP
-mdefine_line|#define PCI_NO_PEER_FIXUP 0x800
+DECL|macro|PCI_PEER_FIXUP
+mdefine_line|#define PCI_PEER_FIXUP 0x800
 DECL|macro|PCI_ASSIGN_ROMS
 mdefine_line|#define PCI_ASSIGN_ROMS 0x1000
-DECL|macro|PCI_NO_IRQ_SCAN
-mdefine_line|#define PCI_NO_IRQ_SCAN 0x2000
+DECL|macro|PCI_BIOS_IRQ_SCAN
+mdefine_line|#define PCI_BIOS_IRQ_SCAN 0x2000
 r_extern
 r_int
 r_int
@@ -37,6 +37,15 @@ id|pcibios_resource_survey
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_int
+id|pcibios_enable_resources
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
 )paren
 suffix:semicolon
 eof

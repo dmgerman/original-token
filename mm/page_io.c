@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Reads or writes a swap page.&n; * wait=1: start I/O and wait for completion. wait=0: start asynchronous I/O.&n; *&n; * Important prevention of race condition: the caller *must* atomically &n; * create a unique swap cache entry for this swap page before calling&n; * rw_swap_page, and must lock that page.  By ensuring that there is a&n; * single page of memory reserved for the swap entry, the normal VM page&n; * lock on that page also doubles as a lock on swap entries.  Having only&n; * one lock to deal with per swap entry (rather than locking swap and memory&n; * independently) also makes it easier to make certain swapping operations&n; * atomic, which is particularly important when we are trying to ensure &n; * that shared pages stay shared while being swapped.&n; */
 DECL|function|rw_swap_page_base
 r_static
-r_void
+r_int
 id|rw_swap_page_base
 c_func
 (paren
@@ -124,6 +124,7 @@ l_string|&quot;Internal error: bad swap-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Don&squot;t allow too many pending pages in flight.. */
@@ -174,6 +175,7 @@ l_string|&quot;rw_swap_page: weirdness&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -210,6 +212,7 @@ id|entry
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -232,27 +235,7 @@ l_string|&quot;Trying to swap to unused swap-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|PageLocked
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;VM: swap page is unlocked&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -389,6 +372,7 @@ l_string|&quot;rw_swap_page: bad swap file&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|zones_used
@@ -410,6 +394,7 @@ l_string|&quot;rw_swap_page: no swap file or device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -458,10 +443,9 @@ c_cond
 op_logical_neg
 id|wait
 )paren
-(brace
 r_return
+l_int|1
 suffix:semicolon
-)brace
 id|wait_on_page
 c_func
 (paren
@@ -521,6 +505,9 @@ id|page
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * A simple wrapper so the base function doesn&squot;t need to enforce&n; * that all swap pages go through the swap cache! We verify that:&n; *  - the page is locked&n; *  - it&squot;s marked as being swap-cache&n; *  - it&squot;s associated with the swap inode&n; */
 DECL|function|rw_swap_page
@@ -592,6 +579,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|rw_swap_page_base
 c_func
 (paren
@@ -602,6 +593,12 @@ comma
 id|page
 comma
 id|wait
+)paren
+)paren
+id|UnlockPage
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -670,6 +667,10 @@ c_func
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|rw_swap_page_base
 c_func
 (paren
@@ -680,6 +681,12 @@ comma
 id|page
 comma
 id|wait
+)paren
+)paren
+id|UnlockPage
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
 )brace

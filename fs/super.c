@@ -522,7 +522,6 @@ id|lptr
 suffix:semicolon
 )brace
 DECL|function|remove_vfsmnt
-r_static
 r_void
 id|remove_vfsmnt
 c_func
@@ -2350,7 +2349,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find a super_block with no device assigned.&n; */
 DECL|function|get_empty_super
-r_static
 r_struct
 id|super_block
 op_star

@@ -1672,6 +1672,11 @@ op_eq
 l_int|2
 )paren
 (brace
+id|show_buffers
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

@@ -8227,6 +8227,12 @@ comma
 id|USBLEGSUP_DEFAULT
 )paren
 suffix:semicolon
+id|pci_enable_device
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|found_uhci
 c_func

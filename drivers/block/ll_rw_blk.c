@@ -1580,22 +1580,6 @@ id|sector
 op_assign
 id|bh-&gt;b_rsector
 suffix:semicolon
-multiline_comment|/* We&squot;d better have a real physical mapping! */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buffer_mapped
-c_func
-(paren
-id|bh
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* It had better not be a new buffer by the time we see it */
 r_if
 c_cond
@@ -1851,6 +1835,22 @@ r_goto
 id|end_io
 suffix:semicolon
 )brace
+multiline_comment|/* We&squot;d better have a real physical mapping!&n;&t;   Check this bit only if the buffer was dirty and just locked&n;&t;   down by us so at this point flushpage will block and&n;&t;   won&squot;t clear the mapped bit under us. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_mapped
+c_func
+(paren
+id|bh
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* look for a free request. */
 multiline_comment|/* Loop uses two requests, 1 for loop and 1 for the real device.&n;        * Cut max_req in half to avoid running out and deadlocking. */
 r_if
@@ -2841,20 +2841,16 @@ id|i
 op_increment
 )paren
 (brace
-id|clear_bit
+id|mark_buffer_clean
 c_func
 (paren
-id|BH_Dirty
-comma
-op_amp
 id|bh
 (braket
 id|i
 )braket
-op_member_access_from_pointer
-id|b_state
 )paren
 suffix:semicolon
+multiline_comment|/* remeber to refile it */
 id|clear_bit
 c_func
 (paren

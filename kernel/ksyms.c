@@ -26,6 +26,7 @@ macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/iobuf.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -417,6 +418,20 @@ c_func
 id|get_fs_type
 )paren
 suffix:semicolon
+DECL|variable|get_empty_super
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_empty_super
+)paren
+suffix:semicolon
+DECL|variable|remove_vfsmnt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|remove_vfsmnt
+)paren
+suffix:semicolon
 DECL|variable|getname
 id|EXPORT_SYMBOL
 c_func
@@ -570,6 +585,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__mark_inode_dirty
+)paren
+suffix:semicolon
+DECL|variable|free_kiovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|free_kiovec
+)paren
+suffix:semicolon
+DECL|variable|brw_kiovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|brw_kiovec
+)paren
+suffix:semicolon
+DECL|variable|alloc_kiovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alloc_kiovec
 )paren
 suffix:semicolon
 DECL|variable|get_empty_filp
