@@ -1,5 +1,5 @@
 multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx register and scratch ram definitions.&n; *&n; * Copyright (c) 1994, 1995, 1996 Justin T. Gibbs.&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: aic7xxx_reg.h,v 1.2 1996/02/10 06:23:39 deang Exp $&n; *-M*************************************************************************/
-multiline_comment|/*&n; * This header is shared by the sequencer code and the kernel level driver.&n; *&n; * All page numbers refer to the Adaptec AIC-7770 Data Book availible from&n; * Adaptec&squot;s Technical Documents Department 1-800-934-2766&n; */
+multiline_comment|/*&n; * This header is shared by the sequencer code and the kernel level driver.&n; *&n; * All page numbers refer to the Adaptec AIC-7770 Data Book available from&n; * Adaptec&squot;s Technical Documents Department 1-800-934-2766&n; */
 multiline_comment|/*&n; * SCSI Sequence Control (p. 3-11).&n; * Each bit, when set starts a specific SCSI sequence on the bus&n; */
 DECL|macro|SCSISEQ
 mdefine_line|#define SCSISEQ&t;&t;&t;0x000
@@ -88,7 +88,7 @@ DECL|macro|P_STATUS
 mdefine_line|#define&t;&t;P_STATUS&t;0xc0
 DECL|macro|P_MESGIN
 mdefine_line|#define&t;&t;P_MESGIN&t;0xe0
-multiline_comment|/*&n; * SCSI Contol Signal Write Register (p. 3-16).&n; * Writing to this register modifies the control signals on the bus.  Only&n; * those signals that are allowed in the current mode (Initiator/Target) are&n; * asserted.&n; */
+multiline_comment|/*&n; * SCSI Control Signal Write Register (p. 3-16).&n; * Writing to this register modifies the control signals on the bus.  Only&n; * those signals that are allowed in the current mode (Initiator/Target) are&n; * asserted.&n; */
 DECL|macro|SCSISIGO
 mdefine_line|#define SCSISIGO&t;&t;0x003
 DECL|macro|CDO
@@ -123,7 +123,7 @@ DECL|macro|TID
 mdefine_line|#define&t;&t;TID&t;&t;0xf0&t;&t;/* Target ID mask */
 DECL|macro|OID
 mdefine_line|#define&t;&t;OID&t;&t;0x0f&t;&t;/* Our ID mask */
-multiline_comment|/*&n; * SCSI Latched Data (p. 3-19).&n; * Read/Write latchs used to transfer data on the SCSI bus during&n; * Automatic or Manual PIO mode.  SCSIDATH can be used for the&n; * upper byte of a 16bit wide asyncronouse data phase transfer.&n; */
+multiline_comment|/*&n; * SCSI Latched Data (p. 3-19).&n; * Read/Write latches used to transfer data on the SCSI bus during&n; * Automatic or Manual PIO mode.  SCSIDATH can be used for the&n; * upper byte of a 16bit wide asynchronous data phase transfer.&n; */
 DECL|macro|SCSIDATL
 mdefine_line|#define SCSIDATL&t;&t;0x006
 DECL|macro|SCSIDATH
@@ -232,7 +232,7 @@ DECL|macro|SCSIBUSL
 mdefine_line|#define&t;SCSIBUSL&t;&t;0x012
 DECL|macro|SCSIBUSH
 mdefine_line|#define&t;SCSIBUSH&t;&t;0x013
-multiline_comment|/*&n; * SCSI/Host Address (p. 3-30)&n; * These registers hold the host address for the byte about to be&n; * transfered on the SCSI bus.  They are counted up in the same&n; * manner as STCNT is counted down.  SHADDR should always be used&n; * to determine the address of the last byte transfered since HADDR&n; * can be squewed by write ahead.&n; */
+multiline_comment|/*&n; * SCSI/Host Address (p. 3-30)&n; * These registers hold the host address for the byte about to be&n; * transfered on the SCSI bus.  They are counted up in the same&n; * manner as STCNT is counted down.  SHADDR should always be used&n; * to determine the address of the last byte transfered since HADDR&n; * can be skewed by write ahead.&n; */
 DECL|macro|SHADDR
 mdefine_line|#define&t;SHADDR&t;&t;&t;0x014
 DECL|macro|SHADDR0
@@ -290,7 +290,7 @@ DECL|macro|SEQRESET
 mdefine_line|#define&t;&t;SEQRESET&t;0x02
 DECL|macro|LOADRAM
 mdefine_line|#define&t;&t;LOADRAM&t;&t;0x01
-multiline_comment|/*&n; * Sequencer RAM Data (p. 3-34)&n; * Single byte window into the Scratch Ram area starting at the address&n; * specified by SEQADDR0 and SEQADDR1.  To write a full word, simply write&n; * four bytes in sucessesion.  The SEQADDRs will increment after the most&n; * significant byte is written&n; */
+multiline_comment|/*&n; * Sequencer RAM Data (p. 3-34)&n; * Single byte window into the Scratch Ram area starting at the address&n; * specified by SEQADDR0 and SEQADDR1.  To write a full word, simply write&n; * four bytes in succession.  The SEQADDRs will increment after the most&n; * significant byte is written&n; */
 DECL|macro|SEQRAM
 mdefine_line|#define SEQRAM&t;&t;&t;0x061
 multiline_comment|/*&n; * Sequencer Address Registers (p. 3-35)&n; * Only the first bit of SEQADDR1 holds addressing information&n; */
@@ -379,7 +379,7 @@ DECL|macro|STBON
 mdefine_line|#define&t;&t;STBON&t;&t;0x07
 DECL|macro|DFTHRSH_100
 mdefine_line|#define&t;&t;DFTHRSH_100&t;0xc0
-multiline_comment|/*&n; * Host Control (p. 3-47) R/W&n; * Overal host control of the device.&n; */
+multiline_comment|/*&n; * Host Control (p. 3-47) R/W&n; * Overall host control of the device.&n; */
 DECL|macro|HCNTRL
 mdefine_line|#define HCNTRL&t;&t;&t;0x087
 multiline_comment|/*    UNUSED&t;&t;&t;0x80 */
@@ -410,11 +410,11 @@ mdefine_line|#define&t;&t;&t;NO_IDENT&t;0x21&t;/* no IDENTIFY after reconnect*/
 DECL|macro|NO_MATCH
 mdefine_line|#define&t;&t;&t;NO_MATCH&t;0x31&t;/* no cmd match for reconnect */
 DECL|macro|SDTR_MSG
-mdefine_line|#define&t;&t;&t;SDTR_MSG&t;0x41&t;/* SDTR message recieved */
+mdefine_line|#define&t;&t;&t;SDTR_MSG&t;0x41&t;/* SDTR message received */
 DECL|macro|WDTR_MSG
-mdefine_line|#define&t;&t;&t;WDTR_MSG&t;0x51&t;/* WDTR message recieved */
+mdefine_line|#define&t;&t;&t;WDTR_MSG&t;0x51&t;/* WDTR message received */
 DECL|macro|REJECT_MSG
-mdefine_line|#define&t;&t;&t;REJECT_MSG&t;0x61&t;/* Reject message recieved */
+mdefine_line|#define&t;&t;&t;REJECT_MSG&t;0x61&t;/* Reject message received */
 DECL|macro|BAD_STATUS
 mdefine_line|#define&t;&t;&t;BAD_STATUS&t;0x71&t;/* Bad status from target */
 DECL|macro|RESIDUAL
@@ -499,7 +499,7 @@ DECL|macro|SCBAUTO
 mdefine_line|#define&t;&t;SCBAUTO&t;&t;0x80
 DECL|macro|SCBCNT_MASK
 mdefine_line|#define&t;&t;SCBCNT_MASK&t;0x1f
-multiline_comment|/*&n; * Queue In FIFO (p. 3-60)&n; * Input queue for queued SCBs (commands that the seqencer has yet to start)&n; */
+multiline_comment|/*&n; * Queue In FIFO (p. 3-60)&n; * Input queue for queued SCBs (commands that the sequencer has yet to start)&n; */
 DECL|macro|QINFIFO
 mdefine_line|#define QINFIFO&t;&t;&t;0x09b
 multiline_comment|/*&n; * Queue In Count (p. 3-60)&n; * Number of queued SCBs&n; */
@@ -511,7 +511,7 @@ mdefine_line|#define QOUTFIFO&t;&t;0x09d
 multiline_comment|/*&n; * Queue Out Count (p. 3-61)&n; * Number of queued SCBs in the Out FIFO&n; */
 DECL|macro|QOUTCNT
 mdefine_line|#define QOUTCNT&t;&t;&t;0x09e
-multiline_comment|/*&n; * SCB Definition (p. 5-4)&n; * The two reserved bytes at SCBARRAY+1[23] are expected to be set to&n; * zero. Bit 3 in SCBARRAY+0 is used as an internal flag to indicate&n; * whether or not to DMA an SCB from host ram. This flag prevents the&n; * &quot;re-fetching&quot; of transactions that are requed because the target is&n; * busy with another command. We also use bits 6 &amp; 7 to indicate whether&n; * or not to initiate SDTR or WDTR repectively when starting this command.&n; */
+multiline_comment|/*&n; * SCB Definition (p. 5-4)&n; * The two reserved bytes at SCBARRAY+1[23] are expected to be set to&n; * zero. Bit 3 in SCBARRAY+0 is used as an internal flag to indicate&n; * whether or not to DMA an SCB from host ram. This flag prevents the&n; * &quot;re-fetching&quot; of transactions that are requeued because the target is&n; * busy with another command. We also use bits 6 &amp; 7 to indicate whether&n; * or not to initiate SDTR or WDTR respectively when starting this command.&n; */
 DECL|macro|SCBARRAY
 mdefine_line|#define SCBARRAY&t;&t;0x0a0
 DECL|macro|SCB_CONTROL
@@ -641,7 +641,7 @@ multiline_comment|/* These offsets are either to values that are initialized by 
 multiline_comment|/*&n; * 1 byte per target starting at this address for configuration values&n; */
 DECL|macro|TARG_SCRATCH
 mdefine_line|#define TARG_SCRATCH&t;&t;0x020
-multiline_comment|/*&n; * The sequencer will stick the frist byte of any rejected message here so&n; * we can see what is getting thrown away.&n; */
+multiline_comment|/*&n; * The sequencer will stick the first byte of any rejected message here so&n; * we can see what is getting thrown away.&n; */
 DECL|macro|REJBYTE
 mdefine_line|#define REJBYTE&t;&t;&t;0x031
 multiline_comment|/*&n; * Bit vector of targets that have disconnection disabled.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Locatalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;&t;  &lt;iialan@www.linux.org.uk&gt;&n; *&n; *&t;&t;With more than a little assistance from &n; *&t;&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO&n; *&t;&t;ASYNC I/O&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1109,7 +1109,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;If it didnt like our faked request then fail:&n;&t;&t; *&t;This should check against -ENOIOCTLCMD and fall&n;&t;&t; *&t;through. That needs us to fix all the devices up&n;&t;&t; *&t;properly. We can then also dump the localtalk test.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;If it didn&squot;t like our faked request then fail:&n;&t;&t; *&t;This should check against -ENOIOCTLCMD and fall&n;&t;&t; *&t;through. That needs us to fix all the devices up&n;&t;&t; *&t;properly. We can then also dump the localtalk test.&n;&t;&t; */
 r_return
 id|err
 suffix:semicolon
@@ -2345,7 +2345,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;A device event has occured. Watch for devices going down and&n; *&t;delete our use of them (iface and route).&n; */
+multiline_comment|/*&n; *&t;A device event has occurred. Watch for devices going down and&n; *&t;delete our use of them (iface and route).&n; */
 DECL|function|ddp_device_event
 r_static
 r_int
@@ -3686,7 +3686,7 @@ l_int|0xFFFF
 suffix:semicolon
 multiline_comment|/* Use 0xFFFF for 0. 0 itself means none */
 )brace
-multiline_comment|/*&n; *&t;Generic fcntl calls are already dealt with. If we don&squot;t need funny ones&n; *&t;this is the all you need. Async I/O is also seperate.&n; */
+multiline_comment|/*&n; *&t;Generic fcntl calls are already dealt with. If we don&squot;t need funny ones&n; *&t;this is the all you need. Async I/O is also separate.&n; */
 DECL|function|atalk_fcntl
 r_static
 r_int
@@ -4875,7 +4875,7 @@ op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
 )brace
-macro_line|#if 0 &t;/* Netatalk doesnt check this */
+macro_line|#if 0 &t;/* Netatalk doesn&squot;t check this */
 r_if
 c_cond
 (paren
@@ -5239,7 +5239,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependancies..]&n;&t; */
+multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependencies..]&n;&t; */
 op_star
 (paren
 (paren
@@ -6055,7 +6055,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#if 0 &t;/* netatalk doesnt implement this check */
+macro_line|#if 0 &t;/* netatalk doesn&squot;t implement this check */
 r_if
 c_cond
 (paren
@@ -6356,7 +6356,7 @@ op_star
 id|ddp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependancies..&n;&t; */
+multiline_comment|/*&n;&t; *&t;Fix up the length field&t;[Ok this is horrible but otherwise&n;&t; *&t;I end up with unions of bit fields and messy bit field order&n;&t; *&t;compiler/endian dependencies..&n;&t; */
 op_star
 (paren
 (paren

@@ -7,7 +7,7 @@ mdefine_line|#define&t;_CDK_H
 multiline_comment|/*****************************************************************************/
 macro_line|#pragma&t;pack(2)
 multiline_comment|/*&n; *&t;The following set of definitions is used to communicate with the&n; *&t;shared memory interface of the Stallion intelligent multiport serial&n; *&t;boards. The definitions in this file are taken directly from the&n; *&t;document titled &quot;Generic Stackable Interface, Downloader and&n; *&t;Communications Development Kit&quot;.&n; */
-multiline_comment|/*&n; *&t;Define the set of importrant shared memory addresses. These are&n; *&t;required to intialize the board and get things started. All of these&n; *&t;addresses are relative to the start of the shared memory.&n; */
+multiline_comment|/*&n; *&t;Define the set of important shared memory addresses. These are&n; *&t;required to initialize the board and get things started. All of these&n; *&t;addresses are relative to the start of the shared memory.&n; */
 DECL|macro|CDK_SIGADDR
 mdefine_line|#define&t;CDK_SIGADDR&t;0x200
 DECL|macro|CDK_FEATADDR
@@ -414,7 +414,7 @@ DECL|macro|BREAKON
 mdefine_line|#define&t;BREAKON&t;&t;-1
 DECL|macro|BREAKOFF
 mdefine_line|#define&t;BREAKOFF&t;-2
-multiline_comment|/*&n; *&t;Define the port setting structure, and all those defines that go along&n; *&t;with it. Basically this structure defines the charcateristics of this&n; *&t;port: baud rate, chars, parity, input/output char cooking etc.&n; */
+multiline_comment|/*&n; *&t;Define the port setting structure, and all those defines that go along&n; *&t;with it. Basically this structure defines the characteristics of this&n; *&t;port: baud rate, chars, parity, input/output char cooking etc.&n; */
 DECL|struct|asyport
 r_typedef
 r_struct
@@ -826,7 +826,7 @@ DECL|macro|CT_STOPFLOW
 mdefine_line|#define&t;CT_STOPFLOW&t;0x20
 DECL|macro|CT_SENDCHR
 mdefine_line|#define&t;CT_SENDCHR&t;0x40
-multiline_comment|/*&n; *&t;Define the stats structure kept for each port. This is a useful set&n; *&t;of data collected for each port on the slave. The A_GETSTATS command&n; *&t;is used to retrive this data from the slave.&n; */
+multiline_comment|/*&n; *&t;Define the stats structure kept for each port. This is a useful set&n; *&t;of data collected for each port on the slave. The A_GETSTATS command&n; *&t;is used to retrieve this data from the slave.&n; */
 DECL|struct|asystats
 r_typedef
 r_struct
@@ -1030,7 +1030,7 @@ DECL|typedef|cdkctrl_t
 )brace
 id|cdkctrl_t
 suffix:semicolon
-multiline_comment|/*&n; *&t;Each device on the slave passes data to and from the host via a ring&n; *&t;queue in shared memory. Define a ring queue structure to hold the&n; *&t;vital information about each ring queue. Two ring queues will be&n; *&t;allocated for each port, one for reveice data and one for transmit&n; *&t;data.&n; */
+multiline_comment|/*&n; *&t;Each device on the slave passes data to and from the host via a ring&n; *&t;queue in shared memory. Define a ring queue structure to hold the&n; *&t;vital information about each ring queue. Two ring queues will be&n; *&t;allocated for each port, one for receive data and one for transmit&n; *&t;data.&n; */
 DECL|struct|cdkasyrq
 r_typedef
 r_struct
@@ -1060,7 +1060,7 @@ DECL|typedef|cdkasyrq_t
 )brace
 id|cdkasyrq_t
 suffix:semicolon
-multiline_comment|/*&n; *&t;Each asynchronous port is defined in shared memory by the following&n; *&t;structure. It contains a control block to command a device, and also&n; *&t;the neccessary data channel information as well.&n; */
+multiline_comment|/*&n; *&t;Each asynchronous port is defined in shared memory by the following&n; *&t;structure. It contains a control block to command a device, and also&n; *&t;the necessary data channel information as well.&n; */
 DECL|struct|cdkasy
 r_typedef
 r_struct
@@ -1103,7 +1103,7 @@ id|cdkasy_t
 suffix:semicolon
 macro_line|#pragma&t;pack()
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Define the set of ioctls used by the driver to do special things&n; *&t;to the board. These include interrupting it, and initializeing&n; *&t;the driver after board startup and shutdown.&n; */
+multiline_comment|/*&n; *&t;Define the set of ioctls used by the driver to do special things&n; *&t;to the board. These include interrupting it, and initializing&n; *&t;the driver after board startup and shutdown.&n; */
 macro_line|#include &lt;linux/ioctl.h&gt;
 DECL|macro|STL_BINTR
 mdefine_line|#define&t;STL_BINTR&t;_IO(&squot;s&squot;,20)

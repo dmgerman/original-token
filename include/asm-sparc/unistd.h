@@ -2,7 +2,7 @@ multiline_comment|/* $Id: unistd.h,v 1.16 1995/12/29 23:14:26 miguel Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
-multiline_comment|/*&n; * System calls under the Sparc.&n; *&n; * Don&squot;t be scared by the ugly clobbers, it is the only way I can&n; * think of right now to force the arguments into fixed registers&n; * before the trap into the system call with gcc &squot;asm&squot; statements.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * SunOS compatability based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/*&n; * System calls under the Sparc.&n; *&n; * Don&squot;t be scared by the ugly clobbers, it is the only way I can&n; * think of right now to force the arguments into fixed registers&n; * before the trap into the system call with gcc &squot;asm&squot; statements.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * SunOS compatibility based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 DECL|macro|__NR_setup
 mdefine_line|#define __NR_setup                0 /* Used only by init, to get system going.     */
 DECL|macro|__NR_exit

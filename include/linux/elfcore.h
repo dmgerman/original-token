@@ -47,7 +47,7 @@ suffix:semicolon
 DECL|macro|NGREG
 mdefine_line|#define NGREG ELF_NGREG
 macro_line|#endif
-multiline_comment|/*&n; * Definitons to generate Intel SVR4-like core files.&n; * These mostly have the same names as the SVR4 types with &quot;elf_&quot;&n; * tacked on the front to prevent clashes with linux definitions,&n; * and the typedef forms have been avoided.  This is mostly like&n; * the SVR4 structure, but more Linuxy, with things that Linux does&n; * not support and which gdb doesn&squot;t really use excluded.&n; * Fields present but not used are marked with &quot;XXX&quot;.&n; */
+multiline_comment|/*&n; * Definitions to generate Intel SVR4-like core files.&n; * These mostly have the same names as the SVR4 types with &quot;elf_&quot;&n; * tacked on the front to prevent clashes with linux definitions,&n; * and the typedef forms have been avoided.  This is mostly like&n; * the SVR4 structure, but more Linuxy, with things that Linux does&n; * not support and which gdb doesn&squot;t really use excluded.&n; * Fields present but not used are marked with &quot;XXX&quot;.&n; */
 DECL|struct|elf_prstatus
 r_struct
 id|elf_prstatus

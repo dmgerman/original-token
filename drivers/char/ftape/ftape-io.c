@@ -4202,7 +4202,7 @@ id|ENODEV
 suffix:semicolon
 multiline_comment|/* unknown wakeup method */
 )brace
-multiline_comment|/*  If wakeup succeeded we should&squot;t get and error here..&n;&t; */
+multiline_comment|/*  If wakeup succeeded we shouldn&squot;t get and error here..&n;&t; */
 r_if
 c_cond
 (paren

@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/* made this a static array since alpha and intel aren&squot;t.&n;   thomas made it a dynamic array and had to add lots of stuff to other parts&n;   of linux to make sure the pages were contigous and such.  the static array&n;   seems much easier&n;   making it 8k for now.  will change later.&n;      -- Cort&n;   */
+multiline_comment|/* made this a static array since alpha and intel aren&squot;t.&n;   thomas made it a dynamic array and had to add lots of stuff to other parts&n;   of linux to make sure the pages were contiguous and such.  the static array&n;   seems much easier&n;   making it 8k for now.  will change later.&n;      -- Cort&n;   */
 DECL|variable|swapper_pg_dir
 id|pgd_t
 id|swapper_pg_dir

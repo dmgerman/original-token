@@ -967,7 +967,7 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * Data structure for handling LCA machine checks.  Correctable errors&n; * result in a short logout frame, uncorrectably ones in a long one.&n; */
+multiline_comment|/*&n; * Data structure for handling LCA machine checks.  Correctable errors&n; * result in a short logout frame, uncorrectable ones in a long one.&n; */
 DECL|struct|el_lca_mcheck_short
 r_struct
 id|el_lca_mcheck_short

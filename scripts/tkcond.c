@@ -1,4 +1,4 @@
-multiline_comment|/* parser config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * The general idea here is that we want to parse a config.in file and &n; * from this, we generate a wish script which gives us effectively the&n; * same functionality that the original config.in script provided.&n; *&n; * This task is split roughly into 3 parts.  The first parse is the parse&n; * of the input file itself.  The second part is where we analyze the &n; * #ifdef clauses, and attach a linked list of tokens to each of the&n; * menu items.  In this way, each menu item has a complete list of&n; * dependencies that are used to enable/disable the options.&n; * The third part is to take the configuration database we have build,&n; * and build the actual wish script.&n; *&n; * This file contains the code to further process the conditions from&n; * the &quot;ifdef&quot; clauses.&n; *&n; * The conditions are assumed to be one of the folowing formats&n; *&n; * simple_condition:= &quot;$VARIABLE&quot; == y/n/m&n; * simple_condition:= &quot;$VARIABLE != y/n/m&n; *&n; * simple_condition -a simple_condition&n; *&n; * If the input condition contains &squot;(&squot; or &squot;)&squot; it would screw us up, but for now&n; * this is not a problem.&n; */
+multiline_comment|/* parser config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * The general idea here is that we want to parse a config.in file and &n; * from this, we generate a wish script which gives us effectively the&n; * same functionality that the original config.in script provided.&n; *&n; * This task is split roughly into 3 parts.  The first parse is the parse&n; * of the input file itself.  The second part is where we analyze the &n; * #ifdef clauses, and attach a linked list of tokens to each of the&n; * menu items.  In this way, each menu item has a complete list of&n; * dependencies that are used to enable/disable the options.&n; * The third part is to take the configuration database we have build,&n; * and build the actual wish script.&n; *&n; * This file contains the code to further process the conditions from&n; * the &quot;ifdef&quot; clauses.&n; *&n; * The conditions are assumed to be one of the following formats&n; *&n; * simple_condition:= &quot;$VARIABLE&quot; == y/n/m&n; * simple_condition:= &quot;$VARIABLE != y/n/m&n; *&n; * simple_condition -a simple_condition&n; *&n; * If the input condition contains &squot;(&squot; or &squot;)&squot; it would screw us up, but for now&n; * this is not a problem.&n; */
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
@@ -134,7 +134,7 @@ id|cnd
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Walk all of the conditions, and look for choice values.  Convert&n; * the tokens into something more digestable.&n; */
+multiline_comment|/*&n; * Walk all of the conditions, and look for choice values.  Convert&n; * the tokens into something more digestible.&n; */
 DECL|function|fix_choice_cond
 r_void
 id|fix_choice_cond
@@ -228,7 +228,7 @@ id|tok_choice
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;   * Look ahead for what we are comparing this to.  There should&n;&t;   * be one operator inbetween.&n;&t;   */
+multiline_comment|/*&n;&t;   * Look ahead for what we are comparing this to.  There should&n;&t;   * be one operator in between.&n;&t;   */
 id|cond2
 op_assign
 id|cond-&gt;next-&gt;next

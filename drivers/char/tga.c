@@ -1385,7 +1385,7 @@ id|arg
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * video init code, called from withing the PCI bus probing code;&n; * when TGA console is configured, at the end of the probing code,&n; * we call here to look for a TGA device, and proceed...&n; */
+multiline_comment|/*&n; * video init code, called from within the PCI bus probing code;&n; * when TGA console is configured, at the end of the probing code,&n; * we call here to look for a TGA device, and proceed...&n; */
 r_void
 DECL|function|tga_console_init
 id|tga_console_init
@@ -2463,7 +2463,7 @@ comma
 id|TGA_BLOCK_COLOR1_REG
 )paren
 suffix:semicolon
-multiline_comment|/* init video timeing regs for 640x480 @ 60 Hz */
+multiline_comment|/* init video timing regs for 640x480 @ 60 Hz */
 id|TGA_WRITE_REG
 c_func
 (paren

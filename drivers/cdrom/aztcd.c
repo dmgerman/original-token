@@ -2535,7 +2535,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;atzcd multisession %d, lba:0x%08x [%02x:%02x.%02x])&bslash;n&quot;
+l_string|&quot;aztcd multisession %d, lba:0x%08x [%02x:%02x.%02x])&bslash;n&quot;
 comma
 id|ms.xa_flag
 comma

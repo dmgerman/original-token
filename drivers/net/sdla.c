@@ -3137,7 +3137,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;%s: Recieved packet from invalid DLCI %i, ignoring.&quot;
+l_string|&quot;%s: Received packet from invalid DLCI %i, ignoring.&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3346,7 +3346,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;%s: Recieved packet from invalid DLCI %i, ignoring.&quot;
+l_string|&quot;%s: Received packet from invalid DLCI %i, ignoring.&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3616,7 +3616,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: irq %d for unintialiazed device.&bslash;n&quot;
+l_string|&quot;%s: irq %d for uninitialized device.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -5229,7 +5229,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-multiline_comment|/* no sense reading if the CPU isnt&squot; started */
+multiline_comment|/* no sense reading if the CPU isn&squot;t started */
 r_if
 c_cond
 (paren

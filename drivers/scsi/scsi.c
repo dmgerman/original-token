@@ -11673,7 +11673,7 @@ id|SDpnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If this driver attached to the device, and we no longer&n;&t; * have anything attached, release the scso command blocks.&n;&t; */
+multiline_comment|/*&n;&t; * If this driver attached to the device, and we no longer&n;&t; * have anything attached, release the scsi command blocks.&n;&t; */
 r_if
 c_cond
 (paren

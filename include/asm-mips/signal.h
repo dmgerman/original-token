@@ -78,7 +78,7 @@ mdefine_line|#define SIGURG&t;&t;21&t;/* Urgent condition on socket (4.2 BSD).  
 DECL|macro|SIGIO
 mdefine_line|#define SIGIO&t;&t;22&t;/* I/O now possible (4.2 BSD).  */
 DECL|macro|SIGPOLL
-mdefine_line|#define SIGPOLL&t;&t;SIGIO&t;/* Pollable event occured (System V).  */
+mdefine_line|#define SIGPOLL&t;&t;SIGIO&t;/* Pollable event occurred (System V).  */
 DECL|macro|SIGSTOP
 mdefine_line|#define SIGSTOP&t;&t;23&t;/* Stop, unblockable (POSIX).  */
 DECL|macro|SIGTSTP

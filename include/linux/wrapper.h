@@ -56,9 +56,9 @@ mdefine_line|#define vma_get_end(v) v-&gt;vm_end
 DECL|macro|vma_get_page_prot
 mdefine_line|#define vma_get_page_prot(v) v-&gt;vm_page_prot
 DECL|macro|mem_map_reserve
-mdefine_line|#define mem_map_reserve(p) mem_map[p].reserved = 1
+mdefine_line|#define mem_map_reserve(p) set_bit(PG_reserved, &amp;mem_map[p].flags)
 DECL|macro|mem_map_unreserve
-mdefine_line|#define mem_map_unreserve(p) mem_map[p].reserved = 0
+mdefine_line|#define mem_map_unreserve(p) clear_bit(PG_reserved, &amp;mem_map[p].flags)
 DECL|macro|mem_map_inc_count
 mdefine_line|#define mem_map_inc_count(p) mem_map[p].count++
 DECL|macro|mem_map_dec_count

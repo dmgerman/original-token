@@ -6105,7 +6105,7 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* FIXME:&n;     * SG should be allocated more dynamically &n;     */
-multiline_comment|/*&n;     * If we are using a ISA board, we can&squot;t use extended SG,&n;     * because we would need exessive amounts of memory for&n;     * bounce buffers.&n;     */
+multiline_comment|/*&n;     * If we are using a ISA board, we can&squot;t use extended SG,&n;     * because we would need excessive amounts of memory for&n;     * bounce buffers.&n;     */
 r_if
 c_cond
 (paren

@@ -11,7 +11,7 @@ mdefine_line|#define PICA_ASIC_REVISION      0xe0000008
 multiline_comment|/*&n; * The segments of the seven segment LED are mapped&n; * to the control bits as follows:&n; *&n; *         (7)&n; *      ---------&n; *      |       |&n; *  (2) |       | (6)&n; *      |  (1)  |&n; *      ---------&n; *      |       |&n; *  (3) |       | (5)&n; *      |  (4)  |&n; *      --------- . (0)&n; */
 DECL|macro|PICA_LED
 mdefine_line|#define PICA_LED                0xe000f000
-multiline_comment|/*&n; * Some characters for the LED control registers&n; * The original Mips machines seem to have a LED display&n; * with integrated decoder while the Acer machines can&n; * control each of the seven segments and the dot independend.&n; * It&squot;s only a toy, anyway...&n; */
+multiline_comment|/*&n; * Some characters for the LED control registers&n; * The original Mips machines seem to have a LED display&n; * with integrated decoder while the Acer machines can&n; * control each of the seven segments and the dot independently.&n; * It&squot;s only a toy, anyway...&n; */
 DECL|macro|LED_DOT
 mdefine_line|#define LED_DOT                 0x01
 DECL|macro|LED_SPACE
@@ -339,7 +339,7 @@ mdefine_line|#define JAZZ_R4030_CACHE_MTNC   0xE0000030&t;/* Cache Maintenance *
 DECL|macro|JAZZ_R4030_R_FAIL_ADDR
 mdefine_line|#define JAZZ_R4030_R_FAIL_ADDR  0xE0000038&t;/* Remote Failed Address */
 DECL|macro|JAZZ_R4030_M_FAIL_ADDR
-mdefine_line|#define JAZZ_R4030_M_FAIL_ADDR  0xE0000040&t;/* Memory Failed Adresss */
+mdefine_line|#define JAZZ_R4030_M_FAIL_ADDR  0xE0000040&t;/* Memory Failed Address */
 DECL|macro|JAZZ_R4030_CACHE_PTAG
 mdefine_line|#define JAZZ_R4030_CACHE_PTAG   0xE0000048&t;/* I/O Cache Physical Tag */
 DECL|macro|JAZZ_R4030_CACHE_LTAG

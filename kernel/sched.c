@@ -828,7 +828,7 @@ id|p
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is the function that decides how desireable a process is..&n; * You can weigh different processes against each other depending&n; * on what CPU they&squot;ve run on lately etc to try to handle cache&n; * and TLB miss penalties.&n; *&n; * Return values:&n; *&t; -1000: never select this&n; *&t;     0: out of time, recalculate counters (but it might still be&n; *&t;&t;selected)&n; *&t;   +ve: &quot;goodness&quot; value (the larger, the better)&n; *&t; +1000: realtime process, select this.&n; */
+multiline_comment|/*&n; * This is the function that decides how desirable a process is..&n; * You can weigh different processes against each other depending&n; * on what CPU they&squot;ve run on lately etc to try to handle cache&n; * and TLB miss penalties.&n; *&n; * Return values:&n; *&t; -1000: never select this&n; *&t;     0: out of time, recalculate counters (but it might still be&n; *&t;&t;selected)&n; *&t;   +ve: &quot;goodness&quot; value (the larger, the better)&n; *&t; +1000: realtime process, select this.&n; */
 DECL|function|goodness
 r_static
 r_inline
@@ -4079,7 +4079,7 @@ r_return
 id|current-&gt;egid
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This has been replaced by sys_setpriority.  Maybe it should be&n; * moved into the arch depedent tree for those ports that require&n; * it for backward compatibility?&n; */
+multiline_comment|/*&n; * This has been replaced by sys_setpriority.  Maybe it should be&n; * moved into the arch dependent tree for those ports that require&n; * it for backward compatibility?&n; */
 DECL|function|sys_nice
 id|asmlinkage
 r_int

@@ -202,7 +202,7 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC    1
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE  8
-multiline_comment|/* No 64k boundry crossing problems on the Sparc. */
+multiline_comment|/* No 64k boundary crossing problems on the Sparc. */
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s) (0)
 multiline_comment|/* Routines unique to each controller type on a Sun. */
@@ -1157,7 +1157,7 @@ op_assign
 op_amp
 id|sun_fdc-&gt;status_82077
 suffix:semicolon
-multiline_comment|/* This controller detection technique is from the netbsd&n;&t; * Sun floppy driver, origionally Chris Torek of BSDI came&n;&t; * up with this.  It seems to work pretty well.&n;&t; */
+multiline_comment|/* This controller detection technique is from the netbsd&n;&t; * Sun floppy driver, originally Chris Torek of BSDI came&n;&t; * up with this.  It seems to work pretty well.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1194,7 +1194,7 @@ id|sun_fdc-&gt;status_82072
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* P3: The only reliable way which I found for ejection&n;&t; * of boot floppy. AUXIO_FLPY_EJCT is not enougth alone.&n;&t; */
+multiline_comment|/* P3: The only reliable way which I found for ejection&n;&t; * of boot floppy. AUXIO_FLPY_EJCT is not enough alone.&n;&t; */
 id|set_auxio
 c_func
 (paren

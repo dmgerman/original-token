@@ -609,7 +609,7 @@ op_amp
 id|MOD_AUTOCLEAN
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * set autoclean marker from codesize...&n;&t;&t; * set useage count to &quot;zero&quot;&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * set autoclean marker from codesize...&n;&t;&t; * set usage count to &quot;zero&quot;&n;&t;&t; */
 id|codesize
 op_and_assign
 op_complement

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Numerous verify_area() calls&n; *&t;&t;Alan Cox&t;:&t;Set the ACK bit on a reset&n; *&t;&t;Alan Cox&t;:&t;Stopped it crashing if it closed while&n; *&t;&t;&t;&t;&t;sk-&gt;inuse=1 and was trying to connect &n; *&t;&t;&t;&t;&t;(tcp_err()).&n; *&t;&t;Alan Cox&t;:&t;All icmp error handling was broken&n; *&t;&t;&t;&t;&t;pointers passed where wrong and the&n; *&t;&t;&t;&t;&t;socket was looked up backwards. Nobody&n; *&t;&t;&t;&t;&t;tested any icmp error code obviously.&n; *&t;&t;Alan Cox&t;:&t;tcp_err() now handled properly. It &n; *&t;&t;&t;&t;&t;wakes people on errors. select &n; *&t;&t;&t;&t;&t;behaves and the icmp error race&n; *&t;&t;&t;&t;&t;has gone by moving it into sock.c&n; *&t;&t;Alan Cox&t;:&t;tcp_send_reset() fixed to work for &n; *&t;&t;&t;&t;&t;everything not just packets for &n; *&t;&t;&t;&t;&t;unknown sockets.&n; *&t;&t;Alan Cox&t;:&t;tcp option processing.&n; *&t;&t;Alan Cox&t;:&t;Reset tweaked (still not 100%) [Had &n; *&t;&t;&t;&t;&t;syn rule wrong]&n; *&t;&t;Herp Rosmanith  :&t;More reset fixes&n; *&t;&t;Alan Cox&t;:&t;No longer acks invalid rst frames. &n; *&t;&t;&t;&t;&t;Acking any kind of RST is right out.&n; *&t;&t;Alan Cox&t;:&t;Sets an ignore me flag on an rst &n; *&t;&t;&t;&t;&t;receive otherwise odd bits of prattle &n; *&t;&t;&t;&t;&t;escape still&n; *&t;&t;Alan Cox&t;:&t;Fixed another acking RST frame bug. &n; *&t;&t;&t;&t;&t;Should stop LAN workplace lockups.&n; *&t;&t;Alan Cox&t;: &t;Some tidyups using the new skb list &n; *&t;&t;&t;&t;&t;facilities&n; *&t;&t;Alan Cox&t;:&t;sk-&gt;keepopen now seems to work&n; *&t;&t;Alan Cox&t;:&t;Pulls options out correctly on accepts&n; *&t;&t;Alan Cox&t;:&t;Fixed assorted sk-&gt;rqueue-&gt;next errors&n; *&t;&t;Alan Cox&t;:&t;PSH doesn&squot;t end a TCP read. Switched a&n; *&t;&t;&t;&t;&t;bit to skb ops.&n; *&t;&t;Alan Cox&t;:&t;Tidied tcp_data to avoid a potential &n; *&t;&t;&t;&t;&t;nasty.&n; *&t;&t;Alan Cox&t;:&t;Added some better commenting, as the &n; *&t;&t;&t;&t;&t;tcp is hard to follow&n; *&t;&t;Alan Cox&t;:&t;Removed incorrect check for 20 * psh&n; *&t;Michael O&squot;Reilly&t;:&t;ack &lt; copied bug fix.&n; *&t;Johannes Stille&t;&t;:&t;Misc tcp fixes (not all in yet).&n; *&t;&t;Alan Cox&t;:&t;FIN with no memory -&gt; CRASH&n; *&t;&t;Alan Cox&t;:&t;Added socket option proto entries. &n; *&t;&t;&t;&t;&t;Also added awareness of them to accept.&n; *&t;&t;Alan Cox&t;:&t;Added TCP options (SOL_TCP)&n; *&t;&t;Alan Cox&t;:&t;Switched wakeup calls to callbacks, &n; *&t;&t;&t;&t;&t;so the kernel can layer network &n; *&t;&t;&t;&t;&t;sockets.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings.&n; *&t;&t;Alan Cox&t;:&t;Handle FIN (more) properly (we hope).&n; *&t;&t;Alan Cox&t;:&t;RST frames sent on unsynchronised &n; *&t;&t;&t;&t;&t;state ack error.&n; *&t;&t;Alan Cox&t;:&t;Put in missing check for SYN bit.&n; *&t;&t;Alan Cox&t;:&t;Added tcp_select_window() aka NET2E &n; *&t;&t;&t;&t;&t;window non shrink trick.&n; *&t;&t;Alan Cox&t;:&t;Added a couple of small NET2E timer &n; *&t;&t;&t;&t;&t;fixes&n; *&t;&t;Charles Hedrick :&t;TCP fixes&n; *&t;&t;Toomas Tamm&t;:&t;TCP window fixes&n; *&t;&t;Alan Cox&t;:&t;Small URG fix to rlogin ^C ack fight&n; *&t;&t;Charles Hedrick&t;:&t;Rewrote most of it to actually work&n; *&t;&t;Linus&t;&t;:&t;Rewrote tcp_read() and URG handling&n; *&t;&t;&t;&t;&t;completely&n; *&t;&t;Gerhard Koerting:&t;Fixed some missing timer handling&n; *&t;&t;Matthew Dillon  :&t;Reworked TCP machine states as per RFC&n; *&t;&t;Gerhard Koerting:&t;PC/TCP workarounds&n; *&t;&t;Adam Caldwell&t;:&t;Assorted timer/timing errors&n; *&t;&t;Matthew Dillon&t;:&t;Fixed another RST bug&n; *&t;&t;Alan Cox&t;:&t;Move to kernel side addressing changes.&n; *&t;&t;Alan Cox&t;:&t;Beginning work on TCP fastpathing &n; *&t;&t;&t;&t;&t;(not yet usable)&n; *&t;&t;Arnt Gulbrandsen:&t;Turbocharged tcp_check() routine.&n; *&t;&t;Alan Cox&t;:&t;TCP fast path debugging&n; *&t;&t;Alan Cox&t;:&t;Window clamping&n; *&t;&t;Michael Riepe&t;:&t;Bug in tcp_check()&n; *&t;&t;Matt Dillon&t;:&t;More TCP improvements and RST bug fixes&n; *&t;&t;Matt Dillon&t;:&t;Yet more small nasties remove from the&n; *&t;&t;&t;&t;&t;TCP code (Be very nice to this man if &n; *&t;&t;&t;&t;&t;tcp finally works 100%) 8)&n; *&t;&t;Alan Cox&t;:&t;BSD accept semantics. &n; *&t;&t;Alan Cox&t;:&t;Reset on closedown bug.&n; *&t;Peter De Schrijver&t;:&t;ENOTCONN check missing in tcp_sendto().&n; *&t;&t;Michael Pall&t;:&t;Handle select() after URG properly in &n; *&t;&t;&t;&t;&t;all cases.&n; *&t;&t;Michael Pall&t;:&t;Undo the last fix in tcp_read_urg() &n; *&t;&t;&t;&t;&t;(multi URG PUSH broke rlogin).&n; *&t;&t;Michael Pall&t;:&t;Fix the multi URG PUSH problem in &n; *&t;&t;&t;&t;&t;tcp_readable(), select() after URG &n; *&t;&t;&t;&t;&t;works now.&n; *&t;&t;Michael Pall&t;:&t;recv(...,MSG_OOB) never blocks in the &n; *&t;&t;&t;&t;&t;BSD api.&n; *&t;&t;Alan Cox&t;:&t;Changed the semantics of sk-&gt;socket to &n; *&t;&t;&t;&t;&t;fix a race and a signal problem with&n; *&t;&t;&t;&t;&t;accept() and async I/O.&n; *&t;&t;Alan Cox&t;:&t;Relaxed the rules on tcp_sendto().&n; *&t;&t;Yury Shevchuk&t;:&t;Really fixed accept() blocking problem.&n; *&t;&t;Craig I. Hagan  :&t;Allow for BSD compatible TIME_WAIT for&n; *&t;&t;&t;&t;&t;clients/servers which listen in on&n; *&t;&t;&t;&t;&t;fixed ports.&n; *&t;&t;Alan Cox&t;:&t;Cleaned the above up and shrank it to&n; *&t;&t;&t;&t;&t;a sensible code size.&n; *&t;&t;Alan Cox&t;:&t;Self connect lockup fix.&n; *&t;&t;Alan Cox&t;:&t;No connect to multicast.&n; *&t;&t;Ross Biro&t;:&t;Close unaccepted children on master&n; *&t;&t;&t;&t;&t;socket close.&n; *&t;&t;Alan Cox&t;:&t;Reset tracing code.&n; *&t;&t;Alan Cox&t;:&t;Spurious resets on shutdown.&n; *&t;&t;Alan Cox&t;:&t;Giant 15 minute/60 second timer error&n; *&t;&t;Alan Cox&t;:&t;Small whoops in selecting before an &n; *&t;&t;&t;&t;&t;accept.&n; *&t;&t;Alan Cox&t;:&t;Kept the state trace facility since &n; *&t;&t;&t;&t;&t;it&squot;s handy for debugging.&n; *&t;&t;Alan Cox&t;:&t;More reset handler fixes.&n; *&t;&t;Alan Cox&t;:&t;Started rewriting the code based on &n; *&t;&t;&t;&t;&t;the RFC&squot;s for other useful protocol &n; *&t;&t;&t;&t;&t;references see: Comer, KA9Q NOS, and &n; *&t;&t;&t;&t;&t;for a reference on the difference &n; *&t;&t;&t;&t;&t;between specifications and how BSD&n; *&t;&t;&t;&t;&t;works see the 4.4lite source.&n; *&t;&t;A.N.Kuznetsov&t;:&t;Don&squot;t time wait on completion of tidy &n; *&t;&t;&t;&t;&t;close.&n; *&t;&t;Linus Torvalds&t;:&t;Fin/Shutdown &amp; copied_seq changes.&n; *&t;&t;Linus Torvalds&t;:&t;Fixed BSD port reuse to work first syn&n; *&t;&t;Alan Cox&t;:&t;Reimplemented timers as per the RFC &n; *&t;&t;&t;&t;&t;and using multiple timers for sanity. &n; *&t;&t;Alan Cox&t;:&t;Small bug fixes, and a lot of new&n; *&t;&t;&t;&t;&t;comments.&n; *&t;&t;Alan Cox&t;:&t;Fixed dual reader crash by locking&n; *&t;&t;&t;&t;&t;the buffers (much like datagram.c)&n; *&t;&t;Alan Cox&t;:&t;Fixed stuck sockets in probe. A probe&n; *&t;&t;&t;&t;&t;now gets fed up of retrying without&n; *&t;&t;&t;&t;&t;(even a no space) answer.&n; *&t;&t;Alan Cox&t;:&t;Extracted closing code better&n; *&t;&t;Alan Cox&t;:&t;Fixed the closing state machine to&n; *&t;&t;&t;&t;&t;resemble the RFC.&n; *&t;&t;Alan Cox&t;:&t;More &squot;per spec&squot; fixes.&n; *&t;&t;Jorge Cwik&t;:&t;Even faster checksumming.&n; *&t;&t;Alan Cox&t;:&t;tcp_data() doesn&squot;t ack illegal PSH&n; *&t;&t;&t;&t;&t;only frames. At least one pc tcp stack&n; *&t;&t;&t;&t;&t;generates them.&n; *&t;&t;Alan Cox&t;:&t;Cache last socket.&n; *&t;&t;Alan Cox&t;:&t;Per route irtt.&n; *&t;&t;Matt Day&t;:&t;Select() match BSD precisely on error&n; *&t;&t;Alan Cox&t;:&t;New buffers&n; *&t;&t;Marc Tamsky&t;:&t;Various sk-&gt;prot-&gt;retransmits and &n; *&t;&t;&t;&t;&t;sk-&gt;retransmits misupdating fixed.&n; *&t;&t;&t;&t;&t;Fixed tcp_write_timeout: stuck close,&n; *&t;&t;&t;&t;&t;and TCP syn retries gets used now.&n; *&t;&t;Mark Yarvis&t;:&t;In tcp_read_wakeup(), don&squot;t send an&n; *&t;&t;&t;&t;&t;ack if stat is TCP_CLOSED.&n; *&t;&t;Alan Cox&t;:&t;Look up device on a retransmit - routes may&n; *&t;&t;&t;&t;&t;change. Doesn&squot;t yet cope with MSS shrink right&n; *&t;&t;&t;&t;&t;but its a start!&n; *&t;&t;Marc Tamsky&t;:&t;Closing in closing fixes.&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 verifications.&n; *&t;&t;Alan Cox&t;:&t;rcv_saddr errors.&n; *&t;&t;Alan Cox&t;:&t;Block double connect().&n; *&t;&t;Alan Cox&t;:&t;Small hooks for enSKIP.&n; *&t;&t;Alexey Kuznetsov:&t;Path MTU discovery.&n; *&t;&t;Alan Cox&t;:&t;Support soft errors.&n; *&t;&t;Alan Cox&t;:&t;Fix MTU discovery pathalogical case&n; *&t;&t;&t;&t;&t;when the remote claims no mtu!&n; *&t;&t;Marc Tamsky&t;:&t;TCP_CLOSE fix.&n; *&t;&t;Colin (G3TNE)&t;:&t;Send a reset on syn ack replies in &n; *&t;&t;&t;&t;&t;window but wrong (fixes NT lpd problems)&n; *&t;&t;Pedro Roque&t;:&t;Better TCP window handling, delayed ack.&n; *&t;&t;Joerg Reuter&t;:&t;No modification of locked buffers in &n; *&t;&t;&t;&t;&t;tcp_do_retransmit()&n; *&n; * To Fix:&n; *&t;&t;Fast path the code. Two things here - fix the window calculation&n; *&t;&t;so it doesn&squot;t iterate over the queue, also spot packets with no funny&n; *&t;&t;options arriving in order and process directly.&n; *&n; *&t;&t;Rewrite output state machine to use a single queue.&n; *&t;&t;Speed up input assembly algorithm.&n; *&t;&t;RFC1323 - PAWS and window scaling. PAWS is required for IPv6 so we&n; *&t;&t;could do with it working on IPv4&n; *&t;&t;User settable/learned rtt/max window/mtu&n; *&n; *&t;&t;Change the fundamental structure to a single send queue maintained&n; *&t;&t;by TCP (removing the bogus ip stuff [thus fixing mtu drops on&n; *&t;&t;active routes too]). Cut the queue off in tcp_retransmit/&n; *&t;&t;tcp_transmit.&n; *&t;&t;Change the receive queue to assemble as it goes. This lets us&n; *&t;&t;dispose of most of tcp_sequence, half of tcp_ack and chunks of&n; *&t;&t;tcp_data/tcp_read as well as the window shrink crud.&n; *&t;&t;Separate out duplicated code - tcp_alloc_skb, tcp_build_ack&n; *&t;&t;tcp_queue_skb seem obvious routines to extract.&n; *&t;&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; *&n; * Description of States:&n; *&n; *&t;TCP_SYN_SENT&t;&t;sent a connection request, waiting for ack&n; *&n; *&t;TCP_SYN_RECV&t;&t;received a connection request, sent ack,&n; *&t;&t;&t;&t;waiting for final ack in three-way handshake.&n; *&n; *&t;TCP_ESTABLISHED&t;&t;connection established&n; *&n; *&t;TCP_FIN_WAIT1&t;&t;our side has shutdown, waiting to complete&n; *&t;&t;&t;&t;transmission of remaining buffered data&n; *&n; *&t;TCP_FIN_WAIT2&t;&t;all buffered data sent, waiting for remote&n; *&t;&t;&t;&t;to shutdown&n; *&n; *&t;TCP_CLOSING&t;&t;both sides have shutdown but we still have&n; *&t;&t;&t;&t;data we have to finish sending&n; *&n; *&t;TCP_TIME_WAIT&t;&t;timeout to catch resent junk before entering&n; *&t;&t;&t;&t;closed, can only be entered from FIN_WAIT2&n; *&t;&t;&t;&t;or CLOSING.  Required because the other end&n; *&t;&t;&t;&t;may not have gotten our last ACK causing it&n; *&t;&t;&t;&t;to retransmit the data packet (which we ignore)&n; *&n; *&t;TCP_CLOSE_WAIT&t;&t;remote side has shutdown and is waiting for&n; *&t;&t;&t;&t;us to finish writing our data and to shutdown&n; *&t;&t;&t;&t;(we have to close() to move on to LAST_ACK)&n; *&n; *&t;TCP_LAST_ACK&t;&t;out side has shutdown after remote has&n; *&t;&t;&t;&t;shutdown.  There may still be data in our&n; *&t;&t;&t;&t;buffer that we have to finish sending&n; *&t;&t;&n; *&t;TCP_CLOSE&t;&t;socket is finished&n; */
-multiline_comment|/*&n; * RFC1122 status:&n; * NOTE: I&squot;m not going to be doing comments in the code for this one except&n; * for violations and the like.  tcp.c is just too big... If I say something&n; * &quot;does?&quot; or &quot;doesn&squot;t?&quot;, it means I&squot;m not sure, and will have to hash it out&n; * with Alan. -- MS 950903&n; * &n; * Use of PSH (4.2.2.2)&n; *   MAY aggregate data sent without the PSH flag. (does)&n; *   MAY queue data received without the PSH flag. (does)&n; *   SHOULD collapse successive PSH flags when it packetizes data. (doesn&squot;t)&n; *   MAY implement PSH on send calls. (doesn&squot;t, thus:)&n; *     MUST NOT buffer data indefinitely (doesn&squot;t [1 second])&n; *     MUST set PSH on last segment (does)&n; *   MAY pass received PSH to application layer (doesn&squot;t)&n; *   SHOULD send maximum-sized segment whenever possible. (almost always does)&n; * &n; * Window Size (4.2.2.3, 4.2.2.16)&n; *   MUST treat window size as an unsigned number (does)&n; *   SHOULD treat window size as a 32-bit number (does not)&n; *   MUST NOT shrink window once it is offered (does not normally)&n; *   &n; * Urgent Pointer (4.2.2.4)&n; * **MUST point urgent pointer to last byte of urgent data (not right&n; *     after). (doesn&squot;t, to be like BSD)&n; *   MUST inform application layer asynchronously of incoming urgent&n; *     data. (does)&n; *   MUST provide application with means of determining the amount of&n; *     urgent data pending. (does)&n; * **MUST support urgent data sequence of arbitrary length. (doesn&squot;t, but&n; *   it&squot;s sort of tricky to fix, as urg_ptr is a 16-bit quantity)&n; *&t;[Follows BSD 1 byte of urgent data]&n; * &n; * TCP Options (4.2.2.5)&n; *   MUST be able to receive TCP options in any segment. (does)&n; *   MUST ignore unsupported options (does)&n; *   &n; * Maximum Segment Size Option (4.2.2.6)&n; *   MUST implement both sending and receiving MSS. (does)&n; *   SHOULD send an MSS with every SYN where receive MSS != 536 (MAY send&n; *     it always). (does, even when MSS == 536, which is legal)&n; *   MUST assume MSS == 536 if no MSS received at connection setup (does)&n; *   MUST calculate &quot;effective send MSS&quot; correctly:&n; *     min(physical_MTU, remote_MSS+20) - sizeof(tcphdr) - sizeof(ipopts)&n; *     (does - but allows operator override)&n; *  &n; * TCP Checksum (4.2.2.7)&n; *   MUST generate and check TCP checksum. (does)&n; * &n; * Initial Sequence Number Selection (4.2.2.8)&n; *   MUST use the RFC 793 clock selection mechanism.  (doesn&squot;t, but it&squot;s&n; *     OK: RFC 793 specifies a 250KHz clock, while we use 1MHz, which is&n; *     necessary for 10Mbps networks - and harder than BSD to spoof!)&n; * &n; * Simultaneous Open Attempts (4.2.2.10)&n; *   MUST support simultaneous open attempts (does)&n; * &n; * Recovery from Old Duplicate SYN (4.2.2.11)&n; *   MUST keep track of active vs. passive open (does)&n; * &n; * RST segment (4.2.2.12)&n; *   SHOULD allow an RST segment to contain data (does, but doesn&squot;t do&n; *     anything with it, which is standard)&n; * &n; * Closing a Connection (4.2.2.13)&n; *   MUST inform application of whether connectin was closed by RST or&n; *     normal close. (does)&n; *   MAY allow &quot;half-duplex&quot; close (treat connection as closed for the&n; *     local app, even before handshake is done). (does)&n; *   MUST linger in TIME_WAIT for 2 * MSL (does)&n; * &n; * Retransmission Timeout (4.2.2.15)&n; *   MUST implement Jacobson&squot;s slow start and congestion avoidance&n; *     stuff. (does) &n; * &n; * Probing Zero Windows (4.2.2.17)&n; *   MUST support probing of zero windows. (does)&n; *   MAY keep offered window closed indefinitely. (does)&n; *   MUST allow remote window to stay closed indefinitely. (does)&n; * &n; * Passive Open Calls (4.2.2.18)&n; *   MUST NOT let new passive open affect other connections. (doesn&squot;t)&n; *   MUST support passive opens (LISTENs) concurrently. (does)&n; *   &n; * Time to Live (4.2.2.19)&n; *   MUST make TCP TTL configurable. (does - IP_TTL option)&n; * &n; * Event Processing (4.2.2.20)&n; *   SHOULD queue out-of-order segments. (does)&n; *   MUST aggregate ACK segments whenever possible. (does but badly)&n; *   &n; * Retransmission Timeout Calculation (4.2.3.1)&n; *   MUST implement Karn&squot;s algorithm and Jacobson&squot;s algorithm for RTO&n; *     calculation. (does, or at least explains them in the comments 8*b)&n; *  SHOULD initialize RTO to 0 and RTT to 3. (does)&n; * &n; * When to Send an ACK Segment (4.2.3.2)&n; *   SHOULD implement delayed ACK. (does)&n; *   MUST keep ACK delay &lt; 0.5 sec. (does)&n; * &n; * When to Send a Window Update (4.2.3.3)&n; *   MUST implement receiver-side SWS. (does)&n; *   &n; * When to Send Data (4.2.3.4)&n; *   MUST implement sender-side SWS. (does)&n; *   SHOULD implement Nagle algorithm. (does)&n; * &n; * TCP Connection Failures (4.2.3.5)&n; *  MUST handle excessive retransmissions &quot;properly&quot; (see the RFC). (does)&n; *   SHOULD inform application layer of soft errors. (does)&n; *   &n; * TCP Keep-Alives (4.2.3.6)&n; *   MAY provide keep-alives. (does)&n; *   MUST make keep-alives configurable on a per-connection basis. (does)&n; *   MUST default to no keep-alives. (does)&n; * **MUST make keep-alive interval configurable. (doesn&squot;t)&n; * **MUST make default keep-alive interval &gt; 2 hours. (doesn&squot;t)&n; *   MUST NOT interpret failure to ACK keep-alive packet as dead&n; *     connection. (doesn&squot;t)&n; *   SHOULD send keep-alive with no data. (does)&n; * &n; * TCP Multihoming (4.2.3.7)&n; *   MUST get source address from IP layer before sending first&n; *     SYN. (does)&n; *   MUST use same local address for all segments of a connection. (does)&n; * &n; * IP Options (4.2.3.8)&n; *   MUST ignore unsupported IP options. (does)&n; *   MAY support Time Stamp and Record Route. (does)&n; *   MUST allow application to specify a source route. (does)&n; *   MUST allow receieved Source Route option to set route for all future&n; *     segments on this connection. (does not (security issues))&n; * &n; * ICMP messages (4.2.3.9)&n; *   MUST act on ICMP errors. (does)&n; *   MUST slow transmission upon receipt of a Source Quench. (does)&n; *   MUST NOT abort connection upon receipt of soft Destination&n; *     Unreachables (0, 1, 5), Time Exceededs and Parameter&n; *     Problems. (doesn&squot;t)&n; *   SHOULD report soft Destination Unreachables etc. to the&n; *     application. (does)&n; *   SHOULD abort connection upon receipt of hard Destination Unreachable&n; *     messages (2, 3, 4). (does)&n; * &n; * Remote Address Validation (4.2.3.10)&n; *   MUST reject as an error OPEN for invalid remote IP address. (does)&n; *   MUST ignore SYN with invalid source address. (does)&n; *   MUST silently discard incoming SYN for broadcast/multicast&n; *     address. (does) &n; * &n; * Asynchronous Reports (4.2.4.1)&n; * MUST provide mechanism for reporting soft errors to application&n; *     layer. (does)&n; * &n; * Type of Service (4.2.4.2)&n; *   MUST allow application layer to set Type of Service. (does IP_TOS)&n; * &n; * (Whew. -- MS 950903)&n; **/
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Numerous verify_area() calls&n; *&t;&t;Alan Cox&t;:&t;Set the ACK bit on a reset&n; *&t;&t;Alan Cox&t;:&t;Stopped it crashing if it closed while&n; *&t;&t;&t;&t;&t;sk-&gt;inuse=1 and was trying to connect&n; *&t;&t;&t;&t;&t;(tcp_err()).&n; *&t;&t;Alan Cox&t;:&t;All icmp error handling was broken&n; *&t;&t;&t;&t;&t;pointers passed where wrong and the&n; *&t;&t;&t;&t;&t;socket was looked up backwards. Nobody&n; *&t;&t;&t;&t;&t;tested any icmp error code obviously.&n; *&t;&t;Alan Cox&t;:&t;tcp_err() now handled properly. It&n; *&t;&t;&t;&t;&t;wakes people on errors. select&n; *&t;&t;&t;&t;&t;behaves and the icmp error race&n; *&t;&t;&t;&t;&t;has gone by moving it into sock.c&n; *&t;&t;Alan Cox&t;:&t;tcp_send_reset() fixed to work for&n; *&t;&t;&t;&t;&t;everything not just packets for&n; *&t;&t;&t;&t;&t;unknown sockets.&n; *&t;&t;Alan Cox&t;:&t;tcp option processing.&n; *&t;&t;Alan Cox&t;:&t;Reset tweaked (still not 100%) [Had&n; *&t;&t;&t;&t;&t;syn rule wrong]&n; *&t;&t;Herp Rosmanith  :&t;More reset fixes&n; *&t;&t;Alan Cox&t;:&t;No longer acks invalid rst frames.&n; *&t;&t;&t;&t;&t;Acking any kind of RST is right out.&n; *&t;&t;Alan Cox&t;:&t;Sets an ignore me flag on an rst&n; *&t;&t;&t;&t;&t;receive otherwise odd bits of prattle&n; *&t;&t;&t;&t;&t;escape still&n; *&t;&t;Alan Cox&t;:&t;Fixed another acking RST frame bug.&n; *&t;&t;&t;&t;&t;Should stop LAN workplace lockups.&n; *&t;&t;Alan Cox&t;: &t;Some tidyups using the new skb list&n; *&t;&t;&t;&t;&t;facilities&n; *&t;&t;Alan Cox&t;:&t;sk-&gt;keepopen now seems to work&n; *&t;&t;Alan Cox&t;:&t;Pulls options out correctly on accepts&n; *&t;&t;Alan Cox&t;:&t;Fixed assorted sk-&gt;rqueue-&gt;next errors&n; *&t;&t;Alan Cox&t;:&t;PSH doesn&squot;t end a TCP read. Switched a&n; *&t;&t;&t;&t;&t;bit to skb ops.&n; *&t;&t;Alan Cox&t;:&t;Tidied tcp_data to avoid a potential&n; *&t;&t;&t;&t;&t;nasty.&n; *&t;&t;Alan Cox&t;:&t;Added some better commenting, as the&n; *&t;&t;&t;&t;&t;tcp is hard to follow&n; *&t;&t;Alan Cox&t;:&t;Removed incorrect check for 20 * psh&n; *&t;Michael O&squot;Reilly&t;:&t;ack &lt; copied bug fix.&n; *&t;Johannes Stille&t;&t;:&t;Misc tcp fixes (not all in yet).&n; *&t;&t;Alan Cox&t;:&t;FIN with no memory -&gt; CRASH&n; *&t;&t;Alan Cox&t;:&t;Added socket option proto entries.&n; *&t;&t;&t;&t;&t;Also added awareness of them to accept.&n; *&t;&t;Alan Cox&t;:&t;Added TCP options (SOL_TCP)&n; *&t;&t;Alan Cox&t;:&t;Switched wakeup calls to callbacks,&n; *&t;&t;&t;&t;&t;so the kernel can layer network&n; *&t;&t;&t;&t;&t;sockets.&n; *&t;&t;Alan Cox&t;:&t;Use ip_tos/ip_ttl settings.&n; *&t;&t;Alan Cox&t;:&t;Handle FIN (more) properly (we hope).&n; *&t;&t;Alan Cox&t;:&t;RST frames sent on unsynchronised&n; *&t;&t;&t;&t;&t;state ack error.&n; *&t;&t;Alan Cox&t;:&t;Put in missing check for SYN bit.&n; *&t;&t;Alan Cox&t;:&t;Added tcp_select_window() aka NET2E&n; *&t;&t;&t;&t;&t;window non shrink trick.&n; *&t;&t;Alan Cox&t;:&t;Added a couple of small NET2E timer&n; *&t;&t;&t;&t;&t;fixes&n; *&t;&t;Charles Hedrick :&t;TCP fixes&n; *&t;&t;Toomas Tamm&t;:&t;TCP window fixes&n; *&t;&t;Alan Cox&t;:&t;Small URG fix to rlogin ^C ack fight&n; *&t;&t;Charles Hedrick&t;:&t;Rewrote most of it to actually work&n; *&t;&t;Linus&t;&t;:&t;Rewrote tcp_read() and URG handling&n; *&t;&t;&t;&t;&t;completely&n; *&t;&t;Gerhard Koerting:&t;Fixed some missing timer handling&n; *&t;&t;Matthew Dillon  :&t;Reworked TCP machine states as per RFC&n; *&t;&t;Gerhard Koerting:&t;PC/TCP workarounds&n; *&t;&t;Adam Caldwell&t;:&t;Assorted timer/timing errors&n; *&t;&t;Matthew Dillon&t;:&t;Fixed another RST bug&n; *&t;&t;Alan Cox&t;:&t;Move to kernel side addressing changes.&n; *&t;&t;Alan Cox&t;:&t;Beginning work on TCP fastpathing&n; *&t;&t;&t;&t;&t;(not yet usable)&n; *&t;&t;Arnt Gulbrandsen:&t;Turbocharged tcp_check() routine.&n; *&t;&t;Alan Cox&t;:&t;TCP fast path debugging&n; *&t;&t;Alan Cox&t;:&t;Window clamping&n; *&t;&t;Michael Riepe&t;:&t;Bug in tcp_check()&n; *&t;&t;Matt Dillon&t;:&t;More TCP improvements and RST bug fixes&n; *&t;&t;Matt Dillon&t;:&t;Yet more small nasties remove from the&n; *&t;&t;&t;&t;&t;TCP code (Be very nice to this man if&n; *&t;&t;&t;&t;&t;tcp finally works 100%) 8)&n; *&t;&t;Alan Cox&t;:&t;BSD accept semantics.&n; *&t;&t;Alan Cox&t;:&t;Reset on closedown bug.&n; *&t;Peter De Schrijver&t;:&t;ENOTCONN check missing in tcp_sendto().&n; *&t;&t;Michael Pall&t;:&t;Handle select() after URG properly in&n; *&t;&t;&t;&t;&t;all cases.&n; *&t;&t;Michael Pall&t;:&t;Undo the last fix in tcp_read_urg()&n; *&t;&t;&t;&t;&t;(multi URG PUSH broke rlogin).&n; *&t;&t;Michael Pall&t;:&t;Fix the multi URG PUSH problem in&n; *&t;&t;&t;&t;&t;tcp_readable(), select() after URG&n; *&t;&t;&t;&t;&t;works now.&n; *&t;&t;Michael Pall&t;:&t;recv(...,MSG_OOB) never blocks in the&n; *&t;&t;&t;&t;&t;BSD api.&n; *&t;&t;Alan Cox&t;:&t;Changed the semantics of sk-&gt;socket to&n; *&t;&t;&t;&t;&t;fix a race and a signal problem with&n; *&t;&t;&t;&t;&t;accept() and async I/O.&n; *&t;&t;Alan Cox&t;:&t;Relaxed the rules on tcp_sendto().&n; *&t;&t;Yury Shevchuk&t;:&t;Really fixed accept() blocking problem.&n; *&t;&t;Craig I. Hagan  :&t;Allow for BSD compatible TIME_WAIT for&n; *&t;&t;&t;&t;&t;clients/servers which listen in on&n; *&t;&t;&t;&t;&t;fixed ports.&n; *&t;&t;Alan Cox&t;:&t;Cleaned the above up and shrank it to&n; *&t;&t;&t;&t;&t;a sensible code size.&n; *&t;&t;Alan Cox&t;:&t;Self connect lockup fix.&n; *&t;&t;Alan Cox&t;:&t;No connect to multicast.&n; *&t;&t;Ross Biro&t;:&t;Close unaccepted children on master&n; *&t;&t;&t;&t;&t;socket close.&n; *&t;&t;Alan Cox&t;:&t;Reset tracing code.&n; *&t;&t;Alan Cox&t;:&t;Spurious resets on shutdown.&n; *&t;&t;Alan Cox&t;:&t;Giant 15 minute/60 second timer error&n; *&t;&t;Alan Cox&t;:&t;Small whoops in selecting before an&n; *&t;&t;&t;&t;&t;accept.&n; *&t;&t;Alan Cox&t;:&t;Kept the state trace facility since&n; *&t;&t;&t;&t;&t;it&squot;s handy for debugging.&n; *&t;&t;Alan Cox&t;:&t;More reset handler fixes.&n; *&t;&t;Alan Cox&t;:&t;Started rewriting the code based on&n; *&t;&t;&t;&t;&t;the RFC&squot;s for other useful protocol&n; *&t;&t;&t;&t;&t;references see: Comer, KA9Q NOS, and&n; *&t;&t;&t;&t;&t;for a reference on the difference&n; *&t;&t;&t;&t;&t;between specifications and how BSD&n; *&t;&t;&t;&t;&t;works see the 4.4lite source.&n; *&t;&t;A.N.Kuznetsov&t;:&t;Don&squot;t time wait on completion of tidy&n; *&t;&t;&t;&t;&t;close.&n; *&t;&t;Linus Torvalds&t;:&t;Fin/Shutdown &amp; copied_seq changes.&n; *&t;&t;Linus Torvalds&t;:&t;Fixed BSD port reuse to work first syn&n; *&t;&t;Alan Cox&t;:&t;Reimplemented timers as per the RFC&n; *&t;&t;&t;&t;&t;and using multiple timers for sanity.&n; *&t;&t;Alan Cox&t;:&t;Small bug fixes, and a lot of new&n; *&t;&t;&t;&t;&t;comments.&n; *&t;&t;Alan Cox&t;:&t;Fixed dual reader crash by locking&n; *&t;&t;&t;&t;&t;the buffers (much like datagram.c)&n; *&t;&t;Alan Cox&t;:&t;Fixed stuck sockets in probe. A probe&n; *&t;&t;&t;&t;&t;now gets fed up of retrying without&n; *&t;&t;&t;&t;&t;(even a no space) answer.&n; *&t;&t;Alan Cox&t;:&t;Extracted closing code better&n; *&t;&t;Alan Cox&t;:&t;Fixed the closing state machine to&n; *&t;&t;&t;&t;&t;resemble the RFC.&n; *&t;&t;Alan Cox&t;:&t;More &squot;per spec&squot; fixes.&n; *&t;&t;Jorge Cwik&t;:&t;Even faster checksumming.&n; *&t;&t;Alan Cox&t;:&t;tcp_data() doesn&squot;t ack illegal PSH&n; *&t;&t;&t;&t;&t;only frames. At least one pc tcp stack&n; *&t;&t;&t;&t;&t;generates them.&n; *&t;&t;Alan Cox&t;:&t;Cache last socket.&n; *&t;&t;Alan Cox&t;:&t;Per route irtt.&n; *&t;&t;Matt Day&t;:&t;Select() match BSD precisely on error&n; *&t;&t;Alan Cox&t;:&t;New buffers&n; *&t;&t;Marc Tamsky&t;:&t;Various sk-&gt;prot-&gt;retransmits and&n; *&t;&t;&t;&t;&t;sk-&gt;retransmits misupdating fixed.&n; *&t;&t;&t;&t;&t;Fixed tcp_write_timeout: stuck close,&n; *&t;&t;&t;&t;&t;and TCP syn retries gets used now.&n; *&t;&t;Mark Yarvis&t;:&t;In tcp_read_wakeup(), don&squot;t send an&n; *&t;&t;&t;&t;&t;ack if stat is TCP_CLOSED.&n; *&t;&t;Alan Cox&t;:&t;Look up device on a retransmit - routes may&n; *&t;&t;&t;&t;&t;change. Doesn&squot;t yet cope with MSS shrink right&n; *&t;&t;&t;&t;&t;but its a start!&n; *&t;&t;Marc Tamsky&t;:&t;Closing in closing fixes.&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 verifications.&n; *&t;&t;Alan Cox&t;:&t;rcv_saddr errors.&n; *&t;&t;Alan Cox&t;:&t;Block double connect().&n; *&t;&t;Alan Cox&t;:&t;Small hooks for enSKIP.&n; *&t;&t;Alexey Kuznetsov:&t;Path MTU discovery.&n; *&t;&t;Alan Cox&t;:&t;Support soft errors.&n; *&t;&t;Alan Cox&t;:&t;Fix MTU discovery pathological case&n; *&t;&t;&t;&t;&t;when the remote claims no mtu!&n; *&t;&t;Marc Tamsky&t;:&t;TCP_CLOSE fix.&n; *&t;&t;Colin (G3TNE)&t;:&t;Send a reset on syn ack replies in&n; *&t;&t;&t;&t;&t;window but wrong (fixes NT lpd problems)&n; *&t;&t;Pedro Roque&t;:&t;Better TCP window handling, delayed ack.&n; *&t;&t;Joerg Reuter&t;:&t;No modification of locked buffers in&n; *&t;&t;&t;&t;&t;tcp_do_retransmit()&n; *&t;&t;Eric Schenk&t;:&t;Changed receiver side silly window&n; *&t;&t;&t;&t;&t;avoidance algorithm to BSD style&n; *&t;&t;&t;&t;&t;algorithm. This doubles throughput&n; *&t;&t;&t;&t;&t;against machines running Solaris,&n; *&t;&t;&t;&t;&t;and seems to result in general&n; *&t;&t;&t;&t;&t;improvement.&n; *&t;&t;Eric Schenk&t;:&t;Changed receiver side silly window&n; *&t;&t;&t;&t;&t;avoidance algorithm to BSD style&n; *&t;&t;&t;&t;&t;algorithm. This doubles throughput&n; *&t;&t;&t;&t;&t;against machines running Solaris,&n; *&t;&t;&t;&t;&t;and seems to result in general&n; *&t;&t;&t;&t;&t;improvement.&n; *&n; * To Fix:&n; *&t;&t;Fast path the code. Two things here - fix the window calculation&n; *&t;&t;so it doesn&squot;t iterate over the queue, also spot packets with no funny&n; *&t;&t;options arriving in order and process directly.&n; *&n; *&t;&t;Rewrite output state machine to use a single queue.&n; *&t;&t;Speed up input assembly algorithm.&n; *&t;&t;RFC1323 - PAWS and window scaling. PAWS is required for IPv6 so we&n; *&t;&t;could do with it working on IPv4&n; *&t;&t;User settable/learned rtt/max window/mtu&n; *&n; *&t;&t;Change the fundamental structure to a single send queue maintained&n; *&t;&t;by TCP (removing the bogus ip stuff [thus fixing mtu drops on&n; *&t;&t;active routes too]). Cut the queue off in tcp_retransmit/&n; *&t;&t;tcp_transmit.&n; *&t;&t;Change the receive queue to assemble as it goes. This lets us&n; *&t;&t;dispose of most of tcp_sequence, half of tcp_ack and chunks of&n; *&t;&t;tcp_data/tcp_read as well as the window shrink crud.&n; *&t;&t;Separate out duplicated code - tcp_alloc_skb, tcp_build_ack&n; *&t;&t;tcp_queue_skb seem obvious routines to extract.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; *&n; * Description of States:&n; *&n; *&t;TCP_SYN_SENT&t;&t;sent a connection request, waiting for ack&n; *&n; *&t;TCP_SYN_RECV&t;&t;received a connection request, sent ack,&n; *&t;&t;&t;&t;waiting for final ack in three-way handshake.&n; *&n; *&t;TCP_ESTABLISHED&t;&t;connection established&n; *&n; *&t;TCP_FIN_WAIT1&t;&t;our side has shutdown, waiting to complete&n; *&t;&t;&t;&t;transmission of remaining buffered data&n; *&n; *&t;TCP_FIN_WAIT2&t;&t;all buffered data sent, waiting for remote&n; *&t;&t;&t;&t;to shutdown&n; *&n; *&t;TCP_CLOSING&t;&t;both sides have shutdown but we still have&n; *&t;&t;&t;&t;data we have to finish sending&n; *&n; *&t;TCP_TIME_WAIT&t;&t;timeout to catch resent junk before entering&n; *&t;&t;&t;&t;closed, can only be entered from FIN_WAIT2&n; *&t;&t;&t;&t;or CLOSING.  Required because the other end&n; *&t;&t;&t;&t;may not have gotten our last ACK causing it&n; *&t;&t;&t;&t;to retransmit the data packet (which we ignore)&n; *&n; *&t;TCP_CLOSE_WAIT&t;&t;remote side has shutdown and is waiting for&n; *&t;&t;&t;&t;us to finish writing our data and to shutdown&n; *&t;&t;&t;&t;(we have to close() to move on to LAST_ACK)&n; *&n; *&t;TCP_LAST_ACK&t;&t;out side has shutdown after remote has&n; *&t;&t;&t;&t;shutdown.  There may still be data in our&n; *&t;&t;&t;&t;buffer that we have to finish sending&n; *&n; *&t;TCP_CLOSE&t;&t;socket is finished&n; */
+multiline_comment|/*&n; * RFC1122 status:&n; * NOTE: I&squot;m not going to be doing comments in the code for this one except&n; * for violations and the like.  tcp.c is just too big... If I say something&n; * &quot;does?&quot; or &quot;doesn&squot;t?&quot;, it means I&squot;m not sure, and will have to hash it out&n; * with Alan. -- MS 950903&n; *&n; * Use of PSH (4.2.2.2)&n; *   MAY aggregate data sent without the PSH flag. (does)&n; *   MAY queue data received without the PSH flag. (does)&n; *   SHOULD collapse successive PSH flags when it packetizes data. (doesn&squot;t)&n; *   MAY implement PSH on send calls. (doesn&squot;t, thus:)&n; *     MUST NOT buffer data indefinitely (doesn&squot;t [1 second])&n; *     MUST set PSH on last segment (does)&n; *   MAY pass received PSH to application layer (doesn&squot;t)&n; *   SHOULD send maximum-sized segment whenever possible. (almost always does)&n; *&n; * Window Size (4.2.2.3, 4.2.2.16)&n; *   MUST treat window size as an unsigned number (does)&n; *   SHOULD treat window size as a 32-bit number (does not)&n; *   MUST NOT shrink window once it is offered (does not normally)&n; *&n; * Urgent Pointer (4.2.2.4)&n; * **MUST point urgent pointer to last byte of urgent data (not right&n; *     after). (doesn&squot;t, to be like BSD)&n; *   MUST inform application layer asynchronously of incoming urgent&n; *     data. (does)&n; *   MUST provide application with means of determining the amount of&n; *     urgent data pending. (does)&n; * **MUST support urgent data sequence of arbitrary length. (doesn&squot;t, but&n; *   it&squot;s sort of tricky to fix, as urg_ptr is a 16-bit quantity)&n; *&t;[Follows BSD 1 byte of urgent data]&n; *&n; * TCP Options (4.2.2.5)&n; *   MUST be able to receive TCP options in any segment. (does)&n; *   MUST ignore unsupported options (does)&n; *&n; * Maximum Segment Size Option (4.2.2.6)&n; *   MUST implement both sending and receiving MSS. (does)&n; *   SHOULD send an MSS with every SYN where receive MSS != 536 (MAY send&n; *     it always). (does, even when MSS == 536, which is legal)&n; *   MUST assume MSS == 536 if no MSS received at connection setup (does)&n; *   MUST calculate &quot;effective send MSS&quot; correctly:&n; *     min(physical_MTU, remote_MSS+20) - sizeof(tcphdr) - sizeof(ipopts)&n; *     (does - but allows operator override)&n; *&n; * TCP Checksum (4.2.2.7)&n; *   MUST generate and check TCP checksum. (does)&n; *&n; * Initial Sequence Number Selection (4.2.2.8)&n; *   MUST use the RFC 793 clock selection mechanism.  (doesn&squot;t, but it&squot;s&n; *     OK: RFC 793 specifies a 250KHz clock, while we use 1MHz, which is&n; *     necessary for 10Mbps networks - and harder than BSD to spoof!)&n; *&n; * Simultaneous Open Attempts (4.2.2.10)&n; *   MUST support simultaneous open attempts (does)&n; *&n; * Recovery from Old Duplicate SYN (4.2.2.11)&n; *   MUST keep track of active vs. passive open (does)&n; *&n; * RST segment (4.2.2.12)&n; *   SHOULD allow an RST segment to contain data (does, but doesn&squot;t do&n; *     anything with it, which is standard)&n; *&n; * Closing a Connection (4.2.2.13)&n; *   MUST inform application of whether connection was closed by RST or&n; *     normal close. (does)&n; *   MAY allow &quot;half-duplex&quot; close (treat connection as closed for the&n; *     local app, even before handshake is done). (does)&n; *   MUST linger in TIME_WAIT for 2 * MSL (does)&n; *&n; * Retransmission Timeout (4.2.2.15)&n; *   MUST implement Jacobson&squot;s slow start and congestion avoidance&n; *     stuff. (does)&n; *&n; * Probing Zero Windows (4.2.2.17)&n; *   MUST support probing of zero windows. (does)&n; *   MAY keep offered window closed indefinitely. (does)&n; *   MUST allow remote window to stay closed indefinitely. (does)&n; *&n; * Passive Open Calls (4.2.2.18)&n; *   MUST NOT let new passive open affect other connections. (doesn&squot;t)&n; *   MUST support passive opens (LISTENs) concurrently. (does)&n; *&n; * Time to Live (4.2.2.19)&n; *   MUST make TCP TTL configurable. (does - IP_TTL option)&n; *&n; * Event Processing (4.2.2.20)&n; *   SHOULD queue out-of-order segments. (does)&n; *   MUST aggregate ACK segments whenever possible. (does but badly)&n; *&n; * Retransmission Timeout Calculation (4.2.3.1)&n; *   MUST implement Karn&squot;s algorithm and Jacobson&squot;s algorithm for RTO&n; *     calculation. (does, or at least explains them in the comments 8*b)&n; *  SHOULD initialize RTO to 0 and RTT to 3. (does)&n; *&n; * When to Send an ACK Segment (4.2.3.2)&n; *   SHOULD implement delayed ACK. (does)&n; *   MUST keep ACK delay &lt; 0.5 sec. (does)&n; *&n; * When to Send a Window Update (4.2.3.3)&n; *   MUST implement receiver-side SWS. (does)&n; *&n; * When to Send Data (4.2.3.4)&n; *   MUST implement sender-side SWS. (does)&n; *   SHOULD implement Nagle algorithm. (does)&n; *&n; * TCP Connection Failures (4.2.3.5)&n; *  MUST handle excessive retransmissions &quot;properly&quot; (see the RFC). (does)&n; *   SHOULD inform application layer of soft errors. (does)&n; *&n; * TCP Keep-Alives (4.2.3.6)&n; *   MAY provide keep-alives. (does)&n; *   MUST make keep-alives configurable on a per-connection basis. (does)&n; *   MUST default to no keep-alives. (does)&n; * **MUST make keep-alive interval configurable. (doesn&squot;t)&n; * **MUST make default keep-alive interval &gt; 2 hours. (doesn&squot;t)&n; *   MUST NOT interpret failure to ACK keep-alive packet as dead&n; *     connection. (doesn&squot;t)&n; *   SHOULD send keep-alive with no data. (does)&n; *&n; * TCP Multihoming (4.2.3.7)&n; *   MUST get source address from IP layer before sending first&n; *     SYN. (does)&n; *   MUST use same local address for all segments of a connection. (does)&n; *&n; * IP Options (4.2.3.8)&n; *   MUST ignore unsupported IP options. (does)&n; *   MAY support Time Stamp and Record Route. (does)&n; *   MUST allow application to specify a source route. (does)&n; *   MUST allow received Source Route option to set route for all future&n; *     segments on this connection. (does not (security issues))&n; *&n; * ICMP messages (4.2.3.9)&n; *   MUST act on ICMP errors. (does)&n; *   MUST slow transmission upon receipt of a Source Quench. (does)&n; *   MUST NOT abort connection upon receipt of soft Destination&n; *     Unreachables (0, 1, 5), Time Exceededs and Parameter&n; *     Problems. (doesn&squot;t)&n; *   SHOULD report soft Destination Unreachables etc. to the&n; *     application. (does)&n; *   SHOULD abort connection upon receipt of hard Destination Unreachable&n; *     messages (2, 3, 4). (does)&n; *&n; * Remote Address Validation (4.2.3.10)&n; *   MUST reject as an error OPEN for invalid remote IP address. (does)&n; *   MUST ignore SYN with invalid source address. (does)&n; *   MUST silently discard incoming SYN for broadcast/multicast&n; *     address. (does)&n; *&n; * Asynchronous Reports (4.2.4.1)&n; * MUST provide mechanism for reporting soft errors to application&n; *     layer. (does)&n; *&n; * Type of Service (4.2.4.2)&n; *   MUST allow application layer to set Type of Service. (does IP_TOS)&n; *&n; * (Whew. -- MS 950903)&n; **/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -189,7 +189,7 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;This routine closes sockets which have been at least partially&n; *&t;opened, but not yet accepted. Currently it is only called by&n; *&t;tcp_close, and timeout mirrors the value there. &n; */
+multiline_comment|/*&n; *&t;This routine closes sockets which have been at least partially&n; *&t;opened, but not yet accepted. Currently it is only called by&n; *&t;tcp_close, and timeout mirrors the value there.&n; */
 DECL|function|tcp_close_pending
 r_static
 r_void
@@ -243,7 +243,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Enter the time wait state. &n; */
+multiline_comment|/*&n; *&t;Enter the time wait state.&n; */
 DECL|function|tcp_time_wait
 r_void
 id|tcp_time_wait
@@ -339,7 +339,7 @@ op_star
 id|sk
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;This one is _WRONG_. FIXME urgently.&n;&t; */
-macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY&t; 
+macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
 r_struct
 id|iphdr
 op_star
@@ -360,7 +360,7 @@ id|iphdr
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif  
+macro_line|#endif
 id|th
 op_assign
 (paren
@@ -743,7 +743,7 @@ id|amount
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Do until a push or until we are out of data. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Do until a push or until we are out of data.&n;&t; */
 r_do
 (brace
 r_if
@@ -1391,7 +1391,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;This routine computes a TCP checksum. &n; *&n; *&t;Modified January 1995 from a go-faster DOS routine by&n; *&t;Jorge Cwik &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; *&t;This routine computes a TCP checksum.&n; *&n; *&t;Modified January 1995 from a go-faster DOS routine by&n; *&t;Jorge Cwik &lt;jorge@laser.satlink.net&gt;&n; */
 DECL|macro|DEBUG_TCP_CHECK
 macro_line|#undef DEBUG_TCP_CHECK
 DECL|function|tcp_send_check
@@ -1561,10 +1561,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/* &n; *&t;This routine builds a generic TCP header. &n; */
+multiline_comment|/*&n; *&t;This routine builds a generic TCP header.&n; */
 DECL|function|tcp_build_header
-r_extern
-id|__inline
+r_static
+r_inline
 r_int
 id|tcp_build_header
 c_func
@@ -1604,14 +1604,6 @@ id|th
 )paren
 )paren
 suffix:semicolon
-id|th-&gt;seq
-op_assign
-id|htonl
-c_func
-(paren
-id|sk-&gt;write_seq
-)paren
-suffix:semicolon
 id|th-&gt;psh
 op_assign
 (paren
@@ -1625,17 +1617,13 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-id|sk-&gt;ack_backlog
+id|th-&gt;seq
 op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;ack_timed
-op_assign
-l_int|0
+id|htonl
+c_func
+(paren
+id|sk-&gt;write_seq
+)paren
 suffix:semicolon
 id|th-&gt;ack_seq
 op_assign
@@ -1645,20 +1633,16 @@ c_func
 id|sk-&gt;acked_seq
 )paren
 suffix:semicolon
-id|sk-&gt;window
-op_assign
-id|tcp_select_window
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|th-&gt;window
 op_assign
 id|htons
 c_func
 (paren
-id|sk-&gt;window
+id|tcp_select_window
+c_func
+(paren
+id|sk
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1936,7 +1920,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Make sure that we are established. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Make sure that we are established.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1958,7 +1942,7 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t;&t;&t; *&t;Wait for a connection to finish.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Wait for a connection to finish.&n;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -2052,9 +2036,9 @@ id|sk
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n;&t;&t; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n;&t;&t; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n;&t;&t; * had better not get here until we&squot;ve seen his SYN and at least one&n;&t;&t; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n;&t;&t; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n;&t;&t; * non-decreasing.  Note that any ioctl to set user_mss must be done&n;&t;&t; * before the exchange of SYN&squot;s.  If the initial ack from the other&n;&t;&t; * end has a window of 0, max_window and thus mss will both be 0.&n;&t;&t; */
-multiline_comment|/* &n;&t;&t; *&t;Now we need to check if we have a half built packet. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Now we need to check if we have a half built packet.&n;&t;&t; */
 macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
-multiline_comment|/*&n;&t;&t; *&t;FIXME:  I&squot;m almost sure that this fragment is BUG,&n;&t;&t; *&t;&t;but it works... I do not know why 8) --ANK&n;&t;&t; *&n;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t; *&t;It&squot;s difficult. Temprorary hack is to send all&n;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;FIXME:  I&squot;m almost sure that this fragment is BUG,&n;&t;&t; *&t;&t;but it works... I do not know why 8) --ANK&n;&t;&t; *&n;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t; *&t;It&squot;s difficult. Temporary hack is to send all&n;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t; */
 (brace
 r_int
 id|new_mss
@@ -2256,7 +2240,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * We also need to worry about the window.&n;&t; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n;&t; &t; *   host, don&squot;t use it.  This is sender side&n;&t; &t; *   silly window prevention, as specified in RFC1122.&n;&t; &t; *   (Note that this is different than earlier versions of&n;&t;&t; *   SWS prevention, e.g. RFC813.).  What we actually do is &n;&t;&t; *   use the whole MSS.  Since the results in the right&n;&t;&t; *   edge of the packet being outside the window, it will&n;&t;&t; *   be queued for later rather than sent.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We also need to worry about the window.&n;&t; &t; * If window &lt; 1/2 the maximum window we&squot;ve seen from this&n;&t; &t; *   host, don&squot;t use it.  This is sender side&n;&t; &t; *   silly window prevention, as specified in RFC1122.&n;&t; &t; *   (Note that this is different than earlier versions of&n;&t;&t; *   SWS prevention, e.g. RFC813.).  What we actually do is&n;&t;&t; *   use the whole MSS.  Since the results in the right&n;&t;&t; *   edge of the packet being outside the window, it will&n;&t;&t; *   be queued for later rather than sent.&n;&t;&t; */
 id|copy
 op_assign
 id|sk-&gt;window_seq
@@ -2312,7 +2296,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;We should really check the window here also. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We should really check the window here also.&n;&t;&t; */
 id|send_tmp
 op_assign
 l_int|NULL
@@ -2380,7 +2364,7 @@ id|GFP_KERNEL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t; *&t;If we didn&squot;t get any memory, we need to sleep. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;If we didn&squot;t get any memory, we need to sleep.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2900,7 +2884,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send an ack if one is backlogged at this point. &n; *&n; *      This is called for delayed acks also.&n; */
+multiline_comment|/*&n; *&t;Send an ack if one is backlogged at this point.&n; *&n; *&t;This is called for delayed acks also.&n; */
 DECL|function|tcp_read_wakeup
 r_void
 id|tcp_read_wakeup
@@ -3206,7 +3190,7 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &t;FIXME:&n; * &t;This routine frees used buffers.&n; * &t;It should consider sending an ACK to let the&n; * &t;other end know we now have a bigger window.&n; */
+multiline_comment|/*&n; *&t;FIXME:&n; *&t;This routine frees used buffers.&n; *&t;It should consider sending an ACK to let the&n; *&t;other end know we now have a bigger window.&n; */
 DECL|function|cleanup_rbuf
 r_static
 r_void
@@ -3219,29 +3203,26 @@ op_star
 id|sk
 )paren
 (brace
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
 multiline_comment|/*&n;&t; * NOTE! The socket must be locked, so that we don&squot;t get&n;&t; * a messed-up receive queue.&n;&t; */
 r_while
 c_loop
 (paren
-(paren
-id|skb
-op_assign
-id|skb_peek
+op_logical_neg
+id|skb_queue_empty
 c_func
 (paren
 op_amp
 id|sk-&gt;receive_queue
 )paren
 )paren
-op_ne
-l_int|NULL
-)paren
 (brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|sk-&gt;receive_queue.next
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3261,7 +3242,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If we raised the window due to cleaning up, tell the world.. */
+multiline_comment|/*&n;&t; * Tell the world if we raised the window.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3271,19 +3252,14 @@ c_func
 id|sk
 )paren
 )paren
-(brace
-id|sk-&gt;ack_backlog
-op_increment
-suffix:semicolon
-id|tcp_read_wakeup
+id|tcp_send_ack
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; *&t;This routine copies from a sock struct into the user buffer. &n; */
+multiline_comment|/*&n; *&t;This routine copies from a sock struct into the user buffer.&n; */
 DECL|function|tcp_recvmsg
 r_static
 r_int
@@ -3342,7 +3318,7 @@ r_int
 r_int
 id|used
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;This error should be checked. &n;&t; */
+multiline_comment|/*&n;&t; *&t;This error should be checked.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3354,7 +3330,7 @@ r_return
 op_minus
 id|ENOTCONN
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Urgent data needs to be handled specially. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Urgent data needs to be handled specially.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3379,7 +3355,7 @@ comma
 id|addr_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Copying sequence to update. This is volatile to handle&n;&t; *&t;the multi-reader case neatly (memcpy_to/fromfs might be &n;&t; *&t;inline and thus not flush cached variables otherwise).&n;&t; */
+multiline_comment|/*&n;&t; *&t;Copying sequence to update. This is volatile to handle&n;&t; *&t;the multi-reader case neatly (memcpy_to/fromfs might be&n;&t; *&t;inline and thus not flush cached variables otherwise).&n;&t; */
 id|peek_seq
 op_assign
 id|sk-&gt;copied_seq
@@ -3695,11 +3671,11 @@ r_continue
 suffix:semicolon
 id|found_ok_skb
 suffix:colon
-multiline_comment|/*&n;&t;&t; *&t;Lock the buffer. We can be fairly relaxed as&n;&t;&t; *&t;an interrupt will never steal a buffer we are &n;&t;&t; *&t;using unless I&squot;ve missed something serious in&n;&t;&t; *&t;tcp_data.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Lock the buffer. We can be fairly relaxed as&n;&t;&t; *&t;an interrupt will never steal a buffer we are&n;&t;&t; *&t;using unless I&squot;ve missed something serious in&n;&t;&t; *&t;tcp_data.&n;&t;&t; */
 id|skb-&gt;users
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Ok so how much can we use ? &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Ok so how much can we use ?&n;&t;&t; */
 id|used
 op_assign
 id|skb-&gt;len
@@ -3717,7 +3693,7 @@ id|used
 op_assign
 id|len
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Do we have urgent data here? &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Do we have urgent data here?&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3987,7 +3963,7 @@ r_return
 id|copied
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;State processing on a close. This implements the state shift for&n; *&t;sending our FIN frame. Note that we only send a FIN for some &n; *&t;states. A shutdown() may have already sent the FIN, or we may be&n; *&t;closed.&n; */
+multiline_comment|/*&n; *&t;State processing on a close. This implements the state shift for&n; *&t;sending our FIN frame. Note that we only send a FIN for some&n; *&t;states. A shutdown() may have already sent the FIN, or we may be&n; *&t;closed.&n; */
 DECL|function|tcp_close_state
 r_static
 r_int
@@ -4213,7 +4189,7 @@ id|sk-&gt;shutdown
 op_or_assign
 id|SEND_SHUTDOWN
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Clear out any half completed packets. &n;&t; */
+multiline_comment|/*&n;&t; *  Clear out any half completed packets.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4308,7 +4284,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-multiline_comment|/*&n;&t; * We need to grab some memory, and put together a FIN,&t;&n;&t; * and then put it into the queue to be sent.&n;&t; */
+multiline_comment|/*&n;&t; * We need to grab some memory, and put together a FIN,&n;&t; * and then put it into the queue to be sent.&n;&t; */
 id|lock_sock
 c_func
 (paren
@@ -4405,7 +4381,7 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Get rid off any half-completed packets. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Get rid off any half-completed packets.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4525,7 +4501,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will accept the next outstanding connection. &n; */
+multiline_comment|/*&n; *&t;This will accept the next outstanding connection.&n; */
 DECL|function|tcp_accept
 r_static
 r_struct
@@ -4671,7 +4647,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Now all we need to do is return skb-&gt;sk. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Now all we need to do is return skb-&gt;sk.&n;&t; */
 id|newsk
 op_assign
 id|skb-&gt;sk
@@ -4697,7 +4673,7 @@ r_return
 id|newsk
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This will initiate an outgoing connection. &n; */
+multiline_comment|/*&n; *&t;This will initiate an outgoing connection.&n; */
 DECL|function|tcp_connect
 r_static
 r_int
@@ -4815,7 +4791,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Don&squot;t want a TCP connection going to a broadcast address &n;&t; */
+multiline_comment|/*&n;&t; *&t;Don&squot;t want a TCP connection going to a broadcast address&n;&t; */
 r_if
 c_cond
 (paren
@@ -4864,6 +4840,10 @@ id|sk-&gt;rcv_ack_seq
 op_assign
 id|sk-&gt;write_seq
 op_minus
+l_int|1
+suffix:semicolon
+id|sk-&gt;rcv_ack_cnt
+op_assign
 l_int|1
 suffix:semicolon
 id|sk-&gt;err
@@ -5155,7 +5135,7 @@ r_struct
 id|tcphdr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;but not bigger than device MTU &n;&t; */
+multiline_comment|/*&n;&t; *&t;but not bigger than device MTU&n;&t; */
 r_if
 c_cond
 (paren
@@ -5215,7 +5195,7 @@ id|dev
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Put in the TCP options to say MTU. &n;&t; */
+multiline_comment|/*&n;&t; *&t;Put in the TCP options to say MTU.&n;&t; */
 id|ptr
 op_assign
 id|skb_put
@@ -5294,7 +5274,7 @@ comma
 id|buff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;This must go first otherwise a really quick response will get reset. &n;&t; */
+multiline_comment|/*&n;&t; *&t;This must go first otherwise a really quick response will get reset.&n;&t; */
 id|tcp_cache_zap
 c_func
 (paren
@@ -5328,9 +5308,20 @@ id|sk-&gt;rto
 op_assign
 id|TCP_TIMEOUT_INIT
 suffix:semicolon
+id|sk-&gt;delack_timer.function
+op_assign
+id|tcp_delack_timer
+suffix:semicolon
+id|sk-&gt;delack_timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sk
+suffix:semicolon
 id|sk-&gt;retransmit_timer.function
 op_assign
-op_amp
 id|tcp_retransmit_timer
 suffix:semicolon
 id|sk-&gt;retransmit_timer.data
@@ -5356,7 +5347,7 @@ id|sk-&gt;retransmits
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Now works the right way instead of a hacked &n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;initial setting */
+multiline_comment|/* Now works the right way instead of a hacked&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;initial setting */
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|queue_xmit
@@ -5397,7 +5388,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Socket option code for TCP. &n; */
+multiline_comment|/*&n; *&t;Socket option code for TCP.&n; */
 DECL|function|tcp_setsockopt
 r_int
 id|tcp_setsockopt

@@ -307,7 +307,7 @@ id|regs-&gt;cp0_epc
 op_assign
 id|pc
 suffix:semicolon
-multiline_comment|/*&n;&t; * New thread looses kernel priviledges.&n;&t; */
+multiline_comment|/*&n;&t; * New thread loses kernel privileges.&n;&t; */
 id|regs-&gt;cp0_status
 op_assign
 (paren

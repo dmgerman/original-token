@@ -28,7 +28,7 @@ macro_line|#else /* ??? Not defined by linux/mm/kmalloc.c */
 DECL|macro|IDETAPE_ALLOCATION_BLOCK
 mdefine_line|#define IDETAPE_ALLOCATION_BLOCK&t;&t;512
 macro_line|#endif
-multiline_comment|/*&n; *&t;ide-tape currently uses two continous buffers, each of the size of&n; *&t;one stage. By default, those buffers are allocated at initialization&n; *&t;time and never released, since dynamic allocation of pages bigger&n; *&t;than PAGE_SIZE may fail as memory becomes fragmented.&n; *&n; *&t;This results in about 100 KB memory usage when the tape is idle.&n; *&t;Setting IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE to 1 will let ide-tape&n; *&t;to dynamically allocate those buffers, resulting in about 20 KB idle&n; *&t;memory usage.&n; */
+multiline_comment|/*&n; *&t;ide-tape currently uses two continuous buffers, each of the size of&n; *&t;one stage. By default, those buffers are allocated at initialization&n; *&t;time and never released, since dynamic allocation of pages bigger&n; *&t;than PAGE_SIZE may fail as memory becomes fragmented.&n; *&n; *&t;This results in about 100 KB memory usage when the tape is idle.&n; *&t;Setting IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE to 1 will let ide-tape&n; *&t;to dynamically allocate those buffers, resulting in about 20 KB idle&n; *&t;memory usage.&n; */
 DECL|macro|IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE
 mdefine_line|#define&t;IDETAPE_MINIMIZE_IDLE_MEMORY_USAGE&t;0
 multiline_comment|/*&n; *&t;The following are used to debug the driver:&n; *&n; *&t;Setting IDETAPE_DEBUG_LOG to 1 will log driver flow control.&n; *&t;Setting IDETAPE_DEBUG_BUGS to 1 will enable self-sanity checks in&n; *&t;some places.&n; *&n; *&t;Setting them to 0 will restore normal operation mode:&n; *&n; *&t;&t;1.&t;Disable logging normal successful operations.&n; *&t;&t;2.&t;Disable self-sanity checks.&n; *&t;&t;3.&t;Errors will still be logged, of course.&n; *&n; *&t;All the #if DEBUG code will be removed some day, when the driver&n; *&t;is verified to be stable enough. This will make it much more&n; *&t;esthetic.&n; */
@@ -446,7 +446,7 @@ r_struct
 id|request
 id|rq
 suffix:semicolon
-multiline_comment|/* The correspoding request */
+multiline_comment|/* The corresponding request */
 DECL|member|bh
 id|idetape_buffer_head_t
 op_star
@@ -642,7 +642,7 @@ r_char
 op_star
 id|data_buffer
 suffix:semicolon
-multiline_comment|/* The correspoding data buffer (for read/write requests) */
+multiline_comment|/* The corresponding data buffer (for read/write requests) */
 DECL|member|data_buffer_size
 r_int
 id|data_buffer_size

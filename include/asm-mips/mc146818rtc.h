@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Machine dependend access functions for RTC registers.&n; */
+multiline_comment|/*&n; * Machine dependent access functions for RTC registers.&n; */
 macro_line|#ifndef __ASM_MIPS_MC146818RTC_H
 DECL|macro|__ASM_MIPS_MC146818RTC_H
 mdefine_line|#define __ASM_MIPS_MC146818RTC_H

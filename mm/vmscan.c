@@ -186,21 +186,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|page_map-&gt;reserved
+id|PageReserved
+c_func
+(paren
+id|page_map
+)paren
 op_logical_or
-id|page_map-&gt;locked
+id|PageLocked
+c_func
+(paren
+id|page_map
+)paren
 op_logical_or
 (paren
 id|dma
 op_logical_and
 op_logical_neg
-id|page_map-&gt;dma
+id|PageDMA
+c_func
+(paren
+id|page_map
+)paren
 )paren
 )paren
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Deal with page aging.  Pages age from being unused; they&n;&t; * rejuvinate on being accessed.  Only swap old pages (age==0&n;&t; * is oldest). */
+multiline_comment|/* Deal with page aging.  Pages age from being unused; they&n;&t; * rejuvenate on being accessed.  Only swap old pages (age==0&n;&t; * is oldest). */
 r_if
 c_cond
 (paren

@@ -137,7 +137,7 @@ op_star
 id|inode
 )paren
 (brace
-multiline_comment|/* Our task should be extremely simple here. We only have to&n;           look up the infomation somebody else (ncp_iget) put into&n;           the inode tree. The address of this information is the&n;           inode-&gt;i_ino. Just to make sure everything went well, we&n;           check it&squot;s there. */
+multiline_comment|/* Our task should be extremely simple here. We only have to&n;           look up the information somebody else (ncp_iget) put into&n;           the inode tree. The address of this information is the&n;           inode-&gt;i_ino. Just to make sure everything went well, we&n;           check it&squot;s there. */
 r_struct
 id|ncp_inode_info
 op_star

@@ -1108,7 +1108,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Verify options and fill pointers in struct optinos.&n; * Caller should clear *opt, and set opt-&gt;data.&n; * If opt == NULL, then skb-&gt;data should point to IP header.&n; */
+multiline_comment|/*&n; * Verify options and fill pointers in struct options.&n; * Caller should clear *opt, and set opt-&gt;data.&n; * If opt == NULL, then skb-&gt;data should point to IP header.&n; */
 DECL|function|ip_options_compile
 r_int
 id|ip_options_compile

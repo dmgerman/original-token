@@ -1146,7 +1146,7 @@ mdefine_line|#define OPTION_DEBUG_SDTR       0x2000000&t;/* Debug SDTR problem *
 DECL|macro|OPTION_DEBUG_MISMATCH
 mdefine_line|#define OPTION_DEBUG_MISMATCH &t;0x4000000 &t;/* Debug phase mismatches */
 DECL|macro|OPTION_DISCONNECT
-mdefine_line|#define OPTION_DISCONNECT&t;0x8000000&t;/* Allow disconect */
+mdefine_line|#define OPTION_DISCONNECT&t;0x8000000&t;/* Allow disconnect */
 DECL|macro|OPTION_DEBUG_DISCONNECT
 mdefine_line|#define OPTION_DEBUG_DISCONNECT 0x10000000&t;
 DECL|macro|OPTION_ALWAYS_SYNCHRONOUS
@@ -1322,7 +1322,7 @@ l_int|12
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Things in the NCR53c7x0_cmd structure are split into two parts :&n; *&n; * 1.  A fixed portion, for things which are not accessed directly by static NCR&n; *&t;code (ie, are referenced only by the Linux side of the driver,&n; *&t;or only by dynamically genreated code).  &n; *&n; * 2.  The DSA portion, for things which are accessed directly by static NCR&n; *&t;code.&n; *&n; * This is a little ugly, but it &n; * 1.  Avoids conflicts between the NCR code&squot;s picture of the structure, and &n; * &t;Linux code&squot;s idea of what it looks like.&n; *&n; * 2.  Minimizes the pain in the Linux side of the code needed &n; * &t;to calculate real dsa locations for things, etc.&n; * &n; */
+multiline_comment|/*&n; * Things in the NCR53c7x0_cmd structure are split into two parts :&n; *&n; * 1.  A fixed portion, for things which are not accessed directly by static NCR&n; *&t;code (ie, are referenced only by the Linux side of the driver,&n; *&t;or only by dynamically generated code).  &n; *&n; * 2.  The DSA portion, for things which are accessed directly by static NCR&n; *&t;code.&n; *&n; * This is a little ugly, but it &n; * 1.  Avoids conflicts between the NCR code&squot;s picture of the structure, and &n; * &t;Linux code&squot;s idea of what it looks like.&n; *&n; * 2.  Minimizes the pain in the Linux side of the code needed &n; * &t;to calculate real dsa locations for things, etc.&n; * &n; */
 DECL|struct|NCR53c7x0_cmd
 r_struct
 id|NCR53c7x0_cmd
@@ -1393,7 +1393,7 @@ op_star
 id|data_transfer_end
 suffix:semicolon
 multiline_comment|/* Address after end of data transfer o&n;    &t;    &t;    &t;    &t;    &t;   routines */
-multiline_comment|/* &n; * The following three fields were moved from the DSA propper to here&n; * since only dynamically generated NCR code refers to them, meaning&n; * we don&squot;t need dsa_* absolutes, and it is simpler to let the &n; * host code refer to them directly.&n; */
+multiline_comment|/* &n; * The following three fields were moved from the DSA proper to here&n; * since only dynamically generated NCR code refers to them, meaning&n; * we don&squot;t need dsa_* absolutes, and it is simpler to let the &n; * host code refer to them directly.&n; */
 multiline_comment|/* &n; * HARD CODED : residual and saved_residual need to agree with the sizes&n; * used in NCR53c7,8xx.scr.  &n; * &n; * FIXME: we want to consider the case where we have odd-length &n; *&t;scatter/gather buffers and a WIDE transfer, in which case &n; *&t;we&squot;ll need to use the CHAIN MOVE instruction.  Ick.&n; */
 DECL|member|residual
 id|u32

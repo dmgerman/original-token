@@ -338,7 +338,7 @@ id|cdread_buflen
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * extensions for transfering audio frames&n; * currently used by sbpcd.c, cdu31a.c, ide-cd.c&n; */
+multiline_comment|/*&n; * extensions for transferring audio frames&n; * currently used by sbpcd.c, cdu31a.c, ide-cd.c&n; */
 DECL|struct|cdrom_read_audio
 r_struct
 id|cdrom_read_audio

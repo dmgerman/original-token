@@ -173,7 +173,7 @@ DECL|typedef|comstats_t
 )brace
 id|comstats_t
 suffix:semicolon
-multiline_comment|/*&n; *&t;Board stats structure. Returns usefull info about the board.&n; */
+multiline_comment|/*&n; *&t;Board stats structure. Returns useful info about the board.&n; */
 DECL|macro|COM_MAXPANELS
 mdefine_line|#define&t;COM_MAXPANELS&t;8
 r_typedef

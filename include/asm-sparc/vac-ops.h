@@ -25,7 +25,7 @@ DECL|macro|S4CVACVA_LINE
 mdefine_line|#define S4CVACVA_LINE      0x0000fff0
 DECL|macro|S4CVACVA_BIL
 mdefine_line|#define S4CVACVA_BIL       0x0000000f
-multiline_comment|/* The indexing of cache lines creates a problem.  Because the line&n; * field of a virtual address extends past the page offset within&n; * the virtual address it is possible to have what are called&n; * &squot;bad aliases&squot; which will create inconsistancies.  So we must make&n; * sure that within a context that if a physical page is mapped&n; * more than once, that &squot;extra&squot; line bits are the same.  If this is&n; * not the case, and thus is a &squot;bad alias&squot; we must turn off the&n; * cacheable bit in the pte&squot;s of all such pages.&n; */
+multiline_comment|/* The indexing of cache lines creates a problem.  Because the line&n; * field of a virtual address extends past the page offset within&n; * the virtual address it is possible to have what are called&n; * &squot;bad aliases&squot; which will create inconsistencies.  So we must make&n; * sure that within a context that if a physical page is mapped&n; * more than once, that &squot;extra&squot; line bits are the same.  If this is&n; * not the case, and thus is a &squot;bad alias&squot; we must turn off the&n; * cacheable bit in the pte&squot;s of all such pages.&n; */
 DECL|macro|S4CVAC_BADBITS
 mdefine_line|#define S4CVAC_BADBITS     0x0000f000
 multiline_comment|/* The following is true if vaddr1 and vaddr2 would cause&n; * a &squot;bad alias&squot;.&n; */

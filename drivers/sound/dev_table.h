@@ -21,7 +21,7 @@ DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver spesific. Usually 0 */
+multiline_comment|/* Driver specific. Usually 0 */
 DECL|member|card_type
 r_int
 id|card_type
@@ -2897,7 +2897,7 @@ id|dmap
 suffix:semicolon
 r_extern
 r_int
-id|soud_map_buffer
+id|sound_map_buffer
 (paren
 r_int
 id|dev

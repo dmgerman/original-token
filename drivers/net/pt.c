@@ -9,7 +9,7 @@ mdefine_line|#define DEF_A_SPEED&t;4800&t;&t;/* 4800 baud */
 DECL|macro|DEF_A_TXDELAY
 mdefine_line|#define DEF_A_TXDELAY&t;350&t;&t;/* 350 mS */
 DECL|macro|DEF_A_PERSIST
-mdefine_line|#define DEF_A_PERSIST&t;64&t;&t;/* 25% persistance */
+mdefine_line|#define DEF_A_PERSIST&t;64&t;&t;/* 25% persistence */
 DECL|macro|DEF_A_SLOTIME
 mdefine_line|#define DEF_A_SLOTIME&t;10&t;&t;/* 10 mS */
 DECL|macro|DEF_A_SQUELDELAY
@@ -2566,7 +2566,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Link a couple of device structres into the chain&n;     *&n;     * For the A port&n;     * Allocate space for 4 buffers even though we only need 3,&n;     * because one of them may cross a DMA page boundary and&n;     * be rejected by get_dma_buffer().&n;     */
+multiline_comment|/*&n;     * Link a couple of device structures into the chain&n;     *&n;     * For the A port&n;     * Allocate space for 4 buffers even though we only need 3,&n;     * because one of them may cross a DMA page boundary and&n;     * be rejected by get_dma_buffer().&n;     */
 id|register_netdev
 c_func
 (paren
@@ -3247,7 +3247,7 @@ id|lp-&gt;speed
 )paren
 multiline_comment|/* internally clocked */
 (brace
-multiline_comment|/* Repogram BRG from 32x clock for Rx DPLL */
+multiline_comment|/* Reprogram BRG from 32x clock for Rx DPLL */
 multiline_comment|/* BRG off, keep PClk source */
 id|wrtscc
 c_func
@@ -3330,7 +3330,7 @@ op_or
 id|SEARCH
 )paren
 suffix:semicolon
-multiline_comment|/* Enalbe the BRG */
+multiline_comment|/* Enable the BRG */
 id|wrtscc
 c_func
 (paren
@@ -3830,7 +3830,7 @@ id|dev-&gt;base_addr
 op_amp
 l_int|0x3f0
 suffix:semicolon
-multiline_comment|/* These need to be initialsed before scc_init() is called.&n;     */
+multiline_comment|/* These need to be initialised before scc_init() is called.&n;     */
 id|lp-&gt;xtal
 op_assign
 id|XTAL
@@ -4237,7 +4237,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* pt_probe() */
-multiline_comment|/* Open/initialise the board.  This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &squot;should&squot; only be set once at bott, so that there is&n; * a non-reboot way to recover if something goes wrong.&n; * derived from last half of tsync_attach()&n; */
+multiline_comment|/* Open/initialise the board.  This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &squot;should&squot; only be set once at boot, so that there is&n; * a non-reboot way to recover if something goes wrong.&n; * derived from last half of tsync_attach()&n; */
 DECL|function|pt_open
 r_static
 r_int
@@ -5336,7 +5336,7 @@ comma
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* DEFER until DCD transistion or timeout */
+multiline_comment|/* DEFER until DCD transition or timeout */
 id|wrtscc
 c_func
 (paren
@@ -5504,7 +5504,7 @@ id|TxEOM
 )paren
 )paren
 (brace
-multiline_comment|/* Did we underrum */
+multiline_comment|/* Did we underrun */
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
@@ -5614,7 +5614,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;PT: pt_txisr(): Invlaid tstate (%d) for chan %s.&bslash;n&quot;
+l_string|&quot;PT: pt_txisr(): Invalid tstate (%d) for chan %s.&bslash;n&quot;
 comma
 id|lp-&gt;tstate
 comma
@@ -6206,7 +6206,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;PT: %s: Memory squeze, dropping packet.&bslash;n&quot;
+l_string|&quot;PT: %s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -7461,7 +7461,7 @@ multiline_comment|/* slotime has timed out */
 r_case
 id|DEFER
 suffix:colon
-multiline_comment|/* Check DCD - debounce it&n;         * see Intel Micrommunications Handbook, p2-308&n;         */
+multiline_comment|/* Check DCD - debounce it&n;         * see Intel Microcommunications Handbook, p2-308&n;         */
 id|wrtscc
 c_func
 (paren
@@ -7518,7 +7518,7 @@ comma
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* DEFER until DCD transistion or timeout */
+multiline_comment|/* DEFER until DCD transition or timeout */
 id|wrtscc
 c_func
 (paren
@@ -7733,7 +7733,7 @@ id|Rx8
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Check for DCD transistions */
+multiline_comment|/* Check for DCD transitions */
 r_if
 c_cond
 (paren

@@ -1719,7 +1719,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function only checks permission for changing the security level&n; * If the tests are successfull, the actual change is done by&n; * do_sysctl_strategy&n; */
+multiline_comment|/*&n; * This function only checks permission for changing the security level&n; * If the tests are successful, the actual change is done by&n; * do_sysctl_strategy&n; */
 DECL|function|do_securelevel_strategy
 r_static
 r_int

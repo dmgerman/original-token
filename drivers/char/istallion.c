@@ -132,7 +132,7 @@ r_sizeof
 id|stlconf_t
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Code support is offered for boards to use the above 1Mb memory&n; *&t;ranges for those boards which support this (supported on the ONboard&n; *&t;and ECP-EI hardware). The following switch should be enabled. The only&n; *&t;catch is that the kernel functions required to do this are not&n; *&t;normally exported symbols, so you will have to do some extra work&n; *&t;for this to be used in the loadable module form of the driver.&n; *&t;Unfortunately this doesn&squot;t work either if you linke the driver into&n; *&t;the kernel, sincethe memory management code is not set up early&n; *&t;enough (before our initialization routine is run).&n; */
+multiline_comment|/*&n; *&t;Code support is offered for boards to use the above 1Mb memory&n; *&t;ranges for those boards which support this (supported on the ONboard&n; *&t;and ECP-EI hardware). The following switch should be enabled. The only&n; *&t;catch is that the kernel functions required to do this are not&n; *&t;normally exported symbols, so you will have to do some extra work&n; *&t;for this to be used in the loadable module form of the driver.&n; *&t;Unfortunately this doesn&squot;t work either if you linked the driver into&n; *&t;the kernel, since the memory management code is not set up early&n; *&t;enough (before our initialization routine is run).&n; */
 DECL|macro|STLI_HIMEMORY
 mdefine_line|#define&t;STLI_HIMEMORY&t;0
 macro_line|#if STLI_HIMEMORY
@@ -143,7 +143,7 @@ multiline_comment|/*&n; *&t;There is some experimental EISA board detection code
 DECL|macro|STLI_EISAPROBE
 mdefine_line|#define&t;STLI_EISAPROBE&t;0
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registery.&n; */
+multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registry.&n; */
 macro_line|#ifndef&t;STL_SIOMEMMAJOR
 DECL|macro|STL_SIOMEMMAJOR
 mdefine_line|#define&t;STL_SIOMEMMAJOR&t;&t;28
@@ -746,7 +746,7 @@ id|stli_shared
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Per board state flags. Used with the state field of the board struct.&n; *&t;Not really much here... All we need to do is keep track of whether&n; *&t;the board has been detected, and whether it is actully running a slave&n; *&t;or not.&n; */
+multiline_comment|/*&n; *&t;Per board state flags. Used with the state field of the board struct.&n; *&t;Not really much here... All we need to do is keep track of whether&n; *&t;the board has been detected, and whether it is actually running a slave&n; *&t;or not.&n; */
 DECL|macro|BST_FOUND
 mdefine_line|#define&t;BST_FOUND&t;0x1
 DECL|macro|BST_STARTED
@@ -961,7 +961,7 @@ op_assign
 id|STLI_EISAPROBE
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Hardware configuration info for ECP boards. These defines apply&n; *&t;to the directly accessable io ports of the ECP. There is a set of&n; *&t;defines for each ECP board type, ISA, EISA and MCA.&n; */
+multiline_comment|/*&n; *&t;Hardware configuration info for ECP boards. These defines apply&n; *&t;to the directly accessible io ports of the ECP. There is a set of&n; *&t;defines for each ECP board type, ISA, EISA and MCA.&n; */
 DECL|macro|ECP_IOSIZE
 mdefine_line|#define&t;ECP_IOSIZE&t;4
 DECL|macro|ECP_MEMSIZE
@@ -1037,7 +1037,7 @@ DECL|macro|ECP_MCENABLE
 mdefine_line|#define&t;ECP_MCENABLE&t;0x80
 DECL|macro|ECP_MCDISABLE
 mdefine_line|#define&t;ECP_MCDISABLE&t;0x00
-multiline_comment|/*&n; *&t;Hardware configuration info for ONboard and Brumby boards. These&n; *&t;defines apply to the directly accessable io ports of these boards.&n; */
+multiline_comment|/*&n; *&t;Hardware configuration info for ONboard and Brumby boards. These&n; *&t;defines apply to the directly accessible io ports of these boards.&n; */
 DECL|macro|ONB_IOSIZE
 mdefine_line|#define&t;ONB_IOSIZE&t;16
 DECL|macro|ONB_MEMSIZE
@@ -3053,7 +3053,7 @@ op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;On the first open of the device setup the port hardware, and&n; *&t;initialize the per port data structure. Since initializing the port&n; *&t;requires serval commands to the board we will need to wait for any&n; *&t;other open that is already initializing the port.&n; */
+multiline_comment|/*&n; *&t;On the first open of the device setup the port hardware, and&n; *&t;initialize the per port data structure. Since initializing the port&n; *&t;requires several commands to the board we will need to wait for any&n; *&t;other open that is already initializing the port.&n; */
 id|portp-&gt;tty
 op_assign
 id|tty
@@ -5571,7 +5571,7 @@ op_star
 )paren
 id|buf
 suffix:semicolon
-multiline_comment|/*&n; *&t;If copying direct from user space we need to be able to handle page&n; *&t;faults while we are copying. To do this copy as much as we can now&n; *&t;into a kernel buffer. From there we copy it into shared memory. The&n; *&t;big problem is that we do not want shared memory enabled when we are&n; *&t;sleeping (other boards may be serviced while asleep). Something else&n; *&t;to note here is the reading of the tail twice. Since the boards&n; *&t;shared memory can be on an 8-bit bus then we need to be very carefull&n; *&t;reading 16 bit quantities - since both the board (slave) and host&n; *&t;cound be writing and reading at the same time.&n; */
+multiline_comment|/*&n; *&t;If copying direct from user space we need to be able to handle page&n; *&t;faults while we are copying. To do this copy as much as we can now&n; *&t;into a kernel buffer. From there we copy it into shared memory. The&n; *&t;big problem is that we do not want shared memory enabled when we are&n; *&t;sleeping (other boards may be serviced while asleep). Something else&n; *&t;to note here is the reading of the tail twice. Since the boards&n; *&t;shared memory can be on an 8-bit bus then we need to be very careful&n; *&t;reading 16 bit quantities - since both the board (slave) and host&n; *&t;could be writing and reading at the same time.&n; */
 r_if
 c_cond
 (paren
@@ -9972,7 +9972,7 @@ id|tty
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Generic send command routine. This will send a message to the slave,&n; *&t;of the specified type with the specified argument. Must be very&n; *&t;carefull of data that will be copied out from shared memory -&n; *&t;containing command results. The command completion is all done from&n; *&t;a poll routine that does not have user coontext. Therefore you cannot&n; *&t;copy back directly into user space, or to the kernel stack of a&n; *&t;process. This routine does not sleep, so can be called from anywhere.&n; */
+multiline_comment|/*&n; *&t;Generic send command routine. This will send a message to the slave,&n; *&t;of the specified type with the specified argument. Must be very&n; *&t;careful of data that will be copied out from shared memory -&n; *&t;containing command results. The command completion is all done from&n; *&t;a poll routine that does not have user context. Therefore you cannot&n; *&t;copy back directly into user space, or to the kernel stack of a&n; *&t;process. This routine does not sleep, so can be called from anywhere.&n; */
 DECL|function|stli_sendcmd
 r_static
 r_void
@@ -10239,7 +10239,7 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Read data from shared memory. This assumes that the shared memory&n; *&t;is enabled and that interrupts are off. Basically we just empty out&n; *&t;the shared memory buffer into the tty buffer. Must be carefull to&n; *&t;handle the case where we fill up the tty buffer, but still have&n; *&t;more chars to unload.&n; */
+multiline_comment|/*&n; *&t;Read data from shared memory. This assumes that the shared memory&n; *&t;is enabled and that interrupts are off. Basically we just empty out&n; *&t;the shared memory buffer into the tty buffer. Must be careful to&n; *&t;handle the case where we fill up the tty buffer, but still have&n; *&t;more chars to unload.&n; */
 DECL|function|stli_read
 r_static
 r_inline
@@ -11606,7 +11606,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Driver poll routine. This routine polls the boards in use and passes&n; *&t;messages back up to host when neccesary. This is actually very&n; *&t;CPU efficient, since we will always have the kernel poll clock, it&n; *&t;adds only a few cycles when idle (since board service can be&n; *&t;determined very easily), but when loaded generates no interrupts&n; *&t;(with their expensive associated context change).&n; */
+multiline_comment|/*&n; *&t;Driver poll routine. This routine polls the boards in use and passes&n; *&t;messages back up to host when necessary. This is actually very&n; *&t;CPU efficient, since we will always have the kernel poll clock, it&n; *&t;adds only a few cycles when idle (since board service can be&n; *&t;determined very easily), but when loaded generates no interrupts&n; *&t;(with their expensive associated context change).&n; */
 DECL|function|stli_poll
 r_static
 r_void
@@ -12613,7 +12613,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Convert the signals returned from the slave into a local TIOCM type&n; *&t;signals value. We keep them localy in TIOCM format.&n; */
+multiline_comment|/*&n; *&t;Convert the signals returned from the slave into a local TIOCM type&n; *&t;signals value. We keep them locally in TIOCM format.&n; */
 DECL|function|stli_mktiocm
 r_static
 r_int
@@ -15323,7 +15323,7 @@ id|PAGE_IOMEM
 id|printk
 c_func
 (paren
-l_string|&quot;STALLION: failed to map phyiscal address=%x, errno=%d&bslash;n&quot;
+l_string|&quot;STALLION: failed to map physical address=%x, errno=%d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -17142,7 +17142,7 @@ id|brdp
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;First up we reset the board, to get it into a known state. There&n; *&t;is only 2 board types here we need to worry about. Don;t use the&n; *&t;standard board init routine here, it programs up the shared&n; *&t;memopry address, and we don&squot;t know it yet...&n; */
+multiline_comment|/*&n; *&t;First up we reset the board, to get it into a known state. There&n; *&t;is only 2 board types here we need to worry about. Don;t use the&n; *&t;standard board init routine here, it programs up the shared&n; *&t;memory address, and we don&squot;t know it yet...&n; */
 r_if
 c_cond
 (paren

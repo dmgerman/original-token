@@ -1,11 +1,21 @@
 multiline_comment|/*&n; * PERM_OPTIONS are driver options which will be enabled for all NCR boards&n; * in the system at driver initialization time.&n; *&n; * Don&squot;t THINK about touching these in PERM_OPTIONS : &n; *   OPTION_IO_MAPPED &n; * &t;Memory mapped IO does not work under i86 Linux. &n; *&n; *   OPTION_DEBUG_TEST1&n; *&t;Test 1 does bus mastering and interrupt tests, which will help weed &n; *&t;out brain damaged main boards.&n; *&n; * These are development kernel changes.  Code for them included in this&n; * driver release may or may not work.  If you turn them on, you should be &n; * running the latest copy of the development sources from&n; *&n; *&t;ftp://tsx-11.mit.edu/pub/linux/ALPHA/scsi/53c7,8xx&n; *&n; * and be subscribed to the ncr53c810@colorado.edu mailing list.  To&n; * subscribe, send mail to majordomo@colorado.edu with &n; *&n; * &t;subscribe ncr53c810&n; * &n; * in the text.&n; *&n; *&n; *   OPTION_NOASYNC&n; *&t;Don&squot;t negotiate for asynchronous transfers on the first command &n; *&t;when OPTION_ALWAYS_SYNCHRONOUS is set.  Useful for dain bramaged&n; *&t;devices which do something bad rather than sending a MESSAGE &n; *&t;REJECT back to us like they should if they can&squot;t cope.&n; *&n; *   OPTION_SYNCHRONOUS&n; *&t;Enable support for synchronous transfers.  Target negotiated &n; *&t;synchronous transfers will be responded to.  To initiate &n; *&t;a synchronous transfer request,  call &n; *&n; *&t;    request_synchronous (hostno, target) &n; *&n; *&t;from within KGDB.&n; *&n; *   OPTION_ALWAYS_SYNCHRONOUS&n; *&t;Negotiate for synchronous transfers with every target after&n; *&t;driver initialization or a SCSI bus reset.  This is a bit dangerous, &n; *&t;since there are some dain bramaged SCSI devices which will accept&n; *&t;SDTR messages but keep talking asynchronously.&n; *&n; *   OPTION_DISCONNECT&n; *&t;Enable support for disconnect/reconnect.  To change the &n; *&t;default setting on a given host adapter, call&n; *&n; *&t;    request_disconnect (hostno, allow)&n; *&n; *&t;where allow is non-zero to allow, 0 to disallow.&n; * &n; *  If you really want to run 10MHz FAST SCSI-II transfers, you should &n; *  know that the NCR driver currently ignores parity information.  Most&n; *  systems do 5MHz SCSI fine.  I&squot;ve seen a lot that have problems faster&n; *  than 8MHz.  To play it safe, we only request 5MHz transfers.&n; *&n; *  If you&squot;d rather get 10MHz transfers, edit sdtr_message and change &n; *  the fourth byte from 50 to 25.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx_sync
+macro_line|#ifdef CONFIG_SCSI_NCR53C7xx_DISCONNECT
 DECL|macro|PERM_OPTIONS
 mdefine_line|#define PERM_OPTIONS (OPTION_IO_MAPPED|OPTION_DEBUG_TEST1|OPTION_DISCONNECT|&bslash;&n;&t;OPTION_SYNCHRONOUS|OPTION_ALWAYS_SYNCHRONOUS)
 macro_line|#else
 DECL|macro|PERM_OPTIONS
+mdefine_line|#define PERM_OPTIONS (OPTION_IO_MAPPED|OPTION_DEBUG_TEST1|&bslash;&n;&t;OPTION_SYNCHRONOUS|OPTION_ALWAYS_SYNCHRONOUS)
+macro_line|#endif
+macro_line|#else
+macro_line|#ifdef CONFIG_SCSI_NCR53C7xx_DISCONNECT
+DECL|macro|PERM_OPTIONS
 mdefine_line|#define PERM_OPTIONS (OPTION_IO_MAPPED|OPTION_DEBUG_TEST1|OPTION_DISCONNECT|&bslash;&n;&t;OPTION_SYNCHRONOUS)
+macro_line|#else
+DECL|macro|PERM_OPTIONS
+mdefine_line|#define PERM_OPTIONS (OPTION_IO_MAPPED|OPTION_DEBUG_TEST1|OPTION_SYNCHRONOUS)
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * Sponsored by &n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@PoohSticks.ORG&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * For more information, please consult &n; *&n; * NCR53C810 &n; * SCSI I/O Processor&n; * Programmer&squot;s Guide&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810/53C820&n; * PCI-SCSI I/O Processor Design In Guide&n; *&n; * For literature on Symbios Logic Inc. formerly NCR, SCSI, &n; * and Communication products please call (800) 334-5454 or&n; * (719) 536-3300. &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; */
 multiline_comment|/*&n; * Design issues : &n; * The cumulative latency needed to propagate a read/write request &n; * through the file system, buffer cache, driver stacks, SCSI host, and &n; * SCSI device is ultimately the limiting factor in throughput once we &n; * have a sufficiently fast host adapter.&n; *  &n; * So, to maximize performance we want to keep the ratio of latency to data &n; * transfer time to a minimum by&n; * 1.  Minimizing the total number of commands sent (typical command latency&n; *&t;including drive and bus mastering host overhead is as high as 4.5ms)&n; *&t;to transfer a given amount of data.  &n; *&n; *      This is accomplished by placing no arbitrary limit on the number&n; *&t;of scatter/gather buffers supported, since we can transfer 1K&n; *&t;per scatter/gather buffer without Eric&squot;s cluster patches, &n; *&t;4K with.  &n; *&n; * 2.  Minimizing the number of fatal interrupts serviced, since&n; * &t;fatal interrupts halt the SCSI I/O processor.  Basically,&n; *&t;this means offloading the practical maximum amount of processing &n; *&t;to the SCSI chip.&n; * &n; *&t;On the NCR53c810/820/720,  this is accomplished by using &n; *&t;&t;interrupt-on-the-fly signals when commands complete, &n; *&t;&t;and only handling fatal errors and SDTR / WDTR &t;messages &n; *&t;&t;in the host code.&n; *&n; *&t;On the NCR53c710, interrupts are generated as on the NCR53c8x0,&n; *&t;&t;only the lack of a interrupt-on-the-fly facility complicates&n; *&t;&t;things.   Also, SCSI ID registers and commands are &n; *&t;&t;bit fielded rather than binary encoded.&n; *&t;&t;&n; * &t;On the NCR53c700 and NCR53c700-66, operations that are done via &n; *&t;&t;indirect, table mode on the more advanced chips must be&n; *&t;        replaced by calls through a jump table which &n; *&t;&t;acts as a surrogate for the DSA.  Unfortunately, this &n; * &t;&t;will mean that we must service an interrupt for each &n; *&t;&t;disconnect/reconnect.&n; * &n; * 3.  Eliminating latency by pipelining operations at the different levels.&n; * &t;&n; *&t;This driver allows a configurable number of commands to be enqueued&n; *&t;for each target/lun combination (experimentally, I have discovered&n; *&t;that two seems to work best) and will ultimately allow for &n; *&t;SCSI-II tagged queuing.&n; * &t;&n; *&n; * Architecture : &n; * This driver is built around a Linux queue of commands waiting to &n; * be executed, and a shared Linux/NCR array of commands to start.  Commands&n; * are transfered to the array  by the run_process_issue_queue() function &n; * which is called whenever a command completes.&n; *&n; * As commands are completed, the interrupt routine is triggered,&n; * looks for commands in the linked list of completed commands with&n; * valid status, removes these commands from a list of running commands, &n; * calls the done routine, and flags their target/luns as not busy.&n; *&n; * Due to limitations in the intelligence of the NCR chips, certain&n; * concessions are made.  In many cases, it is easier to dynamically &n; * generate/fix-up code rather than calculate on the NCR at run time.  &n; * So, code is generated or fixed up for&n; *&n; * - Handling data transfers, using a variable number of MOVE instructions&n; *&t;interspersed with CALL MSG_IN, WHEN MSGIN instructions.&n; *&n; * &t;The DATAIN and DATAOUT routines&t;are separate, so that an incorrect&n; *&t;direction can be trapped, and space isn&squot;t wasted. &n; *&n; *&t;It may turn out that we&squot;re better off using some sort &n; *&t;of table indirect instruction in a loop with a variable&n; *&t;sized table on the NCR53c710 and newer chips.&n; *&n; * - Checking for reselection (NCR53c710 and better)&n; *&n; * - Handling the details of SCSI context switches (NCR53c710 and better),&n; *&t;such as reprogramming appropriate synchronous parameters, &n; *&t;removing the dsa structure from the NCR&squot;s queue of outstanding&n; *&t;commands, etc.&n; *&n; */
@@ -482,9 +492,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * KNOWN BUGS :&n; * - There is some sort of conflict when the PPP driver is compiled with &n; * &t;support for 16 channels?&n; * &n; * - On systems which predate the 1.3.x initialization order change,&n; *      the NCR driver will cause Cannot get free page messages to appear.  &n; *      These are harmless, but I don&squot;t know of an easy way to avoid them.&n; *&n; * - With OPTION_DISCONNECT, on two systems under unknown circumstances,&n; *&t;we get a PHASE MISMATCH with DSA set to zero (suggests that we &n; *&t;are occurring somewhere in the reselection code) where &n; *&t;DSP=some value DCMD|DBC=same value.  &n; * &t;&n; *&t;Closer inspection suggests that we may be trying to execute&n; *&t;some portion of the DSA?&n; * scsi0 : handling residual transfer (+ 0 bytes from DMA FIFO)&n; * scsi0 : handling residual transfer (+ 0 bytes from DMA FIFO)&n; * scsi0 : no current command : unexpected phase MSGIN.&n; *         DSP=0x1c46cc, DCMD|DBC=0x1c46ac, DSA=0x0&n; *         DSPS=0x0, TEMP=0x1c3e70, DMODE=0x80&n; * scsi0 : DSP-&gt;&n; * 001c46cc : 0x001c46cc 0x00000000&n; * 001c46d4 : 0x001c5ea0 0x000011f8&n; *&n; *&t;Changed the print code in the phase_mismatch handler so&n; *&t;that we call print_lots to try and diagnose this.&n; *&n; */
-multiline_comment|/* &n; * Possible future direction of architecture for max performance :&n; *&n; * We&squot;re using a single start array for the NCR chip.  This is &n; * sub-optimal, because we cannot add a command which would conflict with &n; * an executing command to this start queue, and therefore must insert the &n; * next command for a given I/T/L combination after the first has completed;&n; * incurring our interrupt latency between SCSI commands.&n; *&n; * To allow furthur pipelining of the NCR and host CPU operation, we want &n; * to set things up so that immediately on termination of a command destined &n; * for a given LUN, we get that LUN busy again.  &n; * &n; * To do this, we need to add a 32 bit pointer to which is jumped to &n; * on completion of a command.  If no new command is available, this &n; * would point to the usual DSA issue queue select routine.&n; *&n; * If one were, it would point to a per-NCR53c7x0_cmd select routine &n; * which starts execution immediately, inserting the command at the head &n; * of the start queue if the NCR chip is selected or reselected.&n; *&n; * We would chanage so that we keep a list of outstanding commands &n; * for each unit, rather than a single running_list.  We&squot;d insert &n; * a new command into the right running list; if the NCR didn&squot;t &n; * have something running for that yet, we&squot;d put it in the &n; * start queue as well.  Some magic needs to happen to handle the &n; * race condition between the first command terminating before the &n; * new one is written.&n; *&n; * Potential for profiling : &n; * Call do_gettimeofday(struct timeval *tv) to get 800ns resolution.&n; */
-multiline_comment|/*&n; * TODO : &n; * 1.  To support WIDE transfers, not much needs to happen.  We&n; *&t;should do CHMOVE instructions instead of MOVEs when&n; *&t;we have scatter/gather segments of uneven length.  When&n; * &t;we do this, we need to handle the case where we disconnect&n; *&t;between segments.&n; * &n; * 2.  Currently, when Icky things happen we do a FATAL().  Instead,&n; *     we want to do an integrity check on the parts of the NCR hostdata&n; *     structure which were initialized at boot time; FATAL() if that &n; *     fails, and otherwise try to recover.  Keep track of how many&n; *     times this has happened within a single SCSI command; if it &n; *     gets excessive, then FATAL().&n; *&n; * 3.  Parity checking is currently disabled, and a few things should &n; *     happen here now that we support synchronous SCSI transfers :&n; *     1.  On soft-reset, we shuld set the EPC (Enable Parity Checking)&n; *&t;   and AAP (Assert SATN/ on parity error) bits in SCNTL0.&n; *&t;&n; *     2.  We should enable the parity interrupt in the SIEN0 register.&n; * &n; *     3.  intr_phase_mismatch() needs to believe that message out is &n; *&t;   allways an &quot;acceptable&quot; phase to have a mismatch in.  If &n; *&t;   the old phase was MSG_IN, we should send a MESSAGE PARITY &n; *&t;   error.  If the old phase was something else, we should send&n; *&t;   a INITIATOR_DETECTED_ERROR message.  Note that this could&n; *&t;   cause a RESTORE POINTERS message; so we should handle that &n; *&t;   correctly first.  Instead, we should probably do an &n; *&t;   initiator_abort.&n; *&n; * 4.  MPEE bit of CTEST4 should be set so we get interrupted if &n; *     we detect an error.&n; *&n; *  &n; * 5.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, NCR53c820, or NCR53c825 boards to &n; *     finish development on those platforms.&n; *&n; *     NCR53c820/825/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to modify all &n; *&t;&t;SDID, SCID, etc. registers, and table indirect select code &n; *&t;&t;since these use bit fielded (ie 1&lt;&lt;target) instead of &n; *&t;&t;binary encoded target ids.  Need to accomodate&n; *&t;&t;different register mappings, probably scan through&n; *&t;&t;the SCRIPT code and change the non SFBR register operand&n; *&t;&t;of all MOVE instructions.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, eliminate all table indirect code,&n; *&t;&t;very messy.&n; *&n; * 6.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatible with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 7.  Use vremap() to access memory mapped boards.  &n; */
-multiline_comment|/* &n; * Allow for simultaneous existence of multiple SCSI scripts so we &n; * can have a single driver binary for all of the family.&n; *&n; * - one for NCR53c700 and NCR53c700-66 chips&t;(not yet supported)&n; * - one for rest (only the NCR53c810, 815, 820, and 825 are currently &n; *&t;supported)&n; * &n; * So that we only need two SCSI scripts, we need to modify things so&n; * that we fixup register accesses in READ/WRITE instructions, and &n; * we&squot;ll also have to accomodate the bit vs. binary encoding of IDs&n; * with the 7xx chips.&n; */
+multiline_comment|/* &n; * Possible future direction of architecture for max performance :&n; *&n; * We&squot;re using a single start array for the NCR chip.  This is &n; * sub-optimal, because we cannot add a command which would conflict with &n; * an executing command to this start queue, and therefore must insert the &n; * next command for a given I/T/L combination after the first has completed;&n; * incurring our interrupt latency between SCSI commands.&n; *&n; * To allow further pipelining of the NCR and host CPU operation, we want &n; * to set things up so that immediately on termination of a command destined &n; * for a given LUN, we get that LUN busy again.  &n; * &n; * To do this, we need to add a 32 bit pointer to which is jumped to &n; * on completion of a command.  If no new command is available, this &n; * would point to the usual DSA issue queue select routine.&n; *&n; * If one were, it would point to a per-NCR53c7x0_cmd select routine &n; * which starts execution immediately, inserting the command at the head &n; * of the start queue if the NCR chip is selected or reselected.&n; *&n; * We would change so that we keep a list of outstanding commands &n; * for each unit, rather than a single running_list.  We&squot;d insert &n; * a new command into the right running list; if the NCR didn&squot;t &n; * have something running for that yet, we&squot;d put it in the &n; * start queue as well.  Some magic needs to happen to handle the &n; * race condition between the first command terminating before the &n; * new one is written.&n; *&n; * Potential for profiling : &n; * Call do_gettimeofday(struct timeval *tv) to get 800ns resolution.&n; */
+multiline_comment|/*&n; * TODO : &n; * 1.  To support WIDE transfers, not much needs to happen.  We&n; *&t;should do CHMOVE instructions instead of MOVEs when&n; *&t;we have scatter/gather segments of uneven length.  When&n; * &t;we do this, we need to handle the case where we disconnect&n; *&t;between segments.&n; * &n; * 2.  Currently, when Icky things happen we do a FATAL().  Instead,&n; *     we want to do an integrity check on the parts of the NCR hostdata&n; *     structure which were initialized at boot time; FATAL() if that &n; *     fails, and otherwise try to recover.  Keep track of how many&n; *     times this has happened within a single SCSI command; if it &n; *     gets excessive, then FATAL().&n; *&n; * 3.  Parity checking is currently disabled, and a few things should &n; *     happen here now that we support synchronous SCSI transfers :&n; *     1.  On soft-reset, we should set the EPC (Enable Parity Checking)&n; *&t;   and AAP (Assert SATN/ on parity error) bits in SCNTL0.&n; *&t;&n; *     2.  We should enable the parity interrupt in the SIEN0 register.&n; * &n; *     3.  intr_phase_mismatch() needs to believe that message out is &n; *&t;   always an &quot;acceptable&quot; phase to have a mismatch in.  If &n; *&t;   the old phase was MSG_IN, we should send a MESSAGE PARITY &n; *&t;   error.  If the old phase was something else, we should send&n; *&t;   a INITIATOR_DETECTED_ERROR message.  Note that this could&n; *&t;   cause a RESTORE POINTERS message; so we should handle that &n; *&t;   correctly first.  Instead, we should probably do an &n; *&t;   initiator_abort.&n; *&n; * 4.  MPEE bit of CTEST4 should be set so we get interrupted if &n; *     we detect an error.&n; *&n; *  &n; * 5.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, NCR53c820, or NCR53c825 boards to &n; *     finish development on those platforms.&n; *&n; *     NCR53c820/825/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to modify all &n; *&t;&t;SDID, SCID, etc. registers, and table indirect select code &n; *&t;&t;since these use bit fielded (ie 1&lt;&lt;target) instead of &n; *&t;&t;binary encoded target ids.  Need to accommodate&n; *&t;&t;different register mappings, probably scan through&n; *&t;&t;the SCRIPT code and change the non SFBR register operand&n; *&t;&t;of all MOVE instructions.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, eliminate all table indirect code,&n; *&t;&t;very messy.&n; *&n; * 6.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatible with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 7.  Use vremap() to access memory mapped boards.  &n; */
+multiline_comment|/* &n; * Allow for simultaneous existence of multiple SCSI scripts so we &n; * can have a single driver binary for all of the family.&n; *&n; * - one for NCR53c700 and NCR53c700-66 chips&t;(not yet supported)&n; * - one for rest (only the NCR53c810, 815, 820, and 825 are currently &n; *&t;supported)&n; * &n; * So that we only need two SCSI scripts, we need to modify things so&n; * that we fixup register accesses in READ/WRITE instructions, and &n; * we&squot;ll also have to accommodate the bit vs. binary encoding of IDs&n; * with the 7xx chips.&n; */
 multiline_comment|/*&n; * Use pci_chips_ids to translate in both directions between PCI device ID &n; * and chip numbers.  &n; */
 r_static
 r_struct
@@ -1218,7 +1228,7 @@ r_return
 id|h
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : request_synchronous (int host, int target)&n; * &n; * Purpose : KGDB interface which will allow us to negotiate for &n; * &t;synchronous transfers.  This ill be replaced with a more &n; * &t;integrated function; perhaps a new entry in the scsi_host &n; *&t;structure, accessable via an ioctl() or perhaps /proc/scsi.&n; *&n; * Inputs : host - number of SCSI host; target - number of target.&n; *&n; * Returns : 0 when negotiation has been setup for next SCSI command,&n; *&t;-1 on failure.&n; */
+multiline_comment|/*&n; * Function : request_synchronous (int host, int target)&n; * &n; * Purpose : KGDB interface which will allow us to negotiate for &n; * &t;synchronous transfers.  This ill be replaced with a more &n; * &t;integrated function; perhaps a new entry in the scsi_host &n; *&t;structure, accessible via an ioctl() or perhaps /proc/scsi.&n; *&n; * Inputs : host - number of SCSI host; target - number of target.&n; *&n; * Returns : 0 when negotiation has been setup for next SCSI command,&n; *&t;-1 on failure.&n; */
 r_static
 r_int
 DECL|function|request_synchronous
@@ -1372,7 +1382,7 @@ suffix:semicolon
 id|printk
 (paren
 id|KERN_ALERT
-l_string|&quot;target %d allready doing SDTR&bslash;n&quot;
+l_string|&quot;target %d already doing SDTR&bslash;n&quot;
 comma
 id|target
 )paren
@@ -3390,7 +3400,7 @@ op_plus
 id|max_cmd_size
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * For diagnostic purposes, we don&squot;t really care how fast things blaze.&n; * For profiling, we want to access the 800ns resolution system clock,&n; * using a &squot;C&squot; call on the host processor.&n; *&n; * Therefore, there&squot;s no need for the NCR chip to directly manipulate&n; * this data, and we should put it wherever is most convienient for &n; * Linux.&n; */
+multiline_comment|/* &n; * For diagnostic purposes, we don&squot;t really care how fast things blaze.&n; * For profiling, we want to access the 800ns resolution system clock,&n; * using a &squot;C&squot; call on the host processor.&n; *&n; * Therefore, there&squot;s no need for the NCR chip to directly manipulate&n; * this data, and we should put it wherever is most convenient for &n; * Linux.&n; */
 r_if
 c_cond
 (paren
@@ -5503,7 +5513,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * This is currently a .5 second timeout, since (in theory) no slow &n;&t; * board will take that long.  In practice, we&squot;ve seen one &n;&t; * pentium which ocassionally fails with this, but works with &n;&t; * 10 times as much?&n;&t; */
+multiline_comment|/* &n;&t; * This is currently a .5 second timeout, since (in theory) no slow &n;&t; * board will take that long.  In practice, we&squot;ve seen one &n;&t; * pentium which occasionally fails with this, but works with &n;&t; * 10 times as much?&n;&t; */
 id|timeout
 op_assign
 id|jiffies
@@ -6721,7 +6731,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: loop detected in ncr reonncect list&bslash;n&quot;
+l_string|&quot;scsi%d: loop detected in ncr reconnect list&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
@@ -8402,7 +8412,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;scsi%d : unsupported message, resjecting&bslash;n&quot;
+l_string|&quot;scsi%d : unsupported message, rejecting&bslash;n&quot;
 comma
 id|host-&gt;host_no
 )paren
@@ -12210,7 +12220,7 @@ id|STEST3_800_TE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *allocate_cmd (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Return the first free NCR53c7x0_cmd structure (which are &n; * &t;reused in a LIFO maner to minimize cache thrashing).&n; *&n; * Side effects : If we haven&squot;t yet scheduled allocation of NCR53c7x0_cmd&n; *&t;structures for this device, do so.  Attempt to complete all scheduled&n; *&t;allocations using kmalloc(), putting NCR53c7x0_cmd structures on &n; *&t;the free list.  Teach programmers not to drink and hack.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure allocated on behalf of cmd;&n; *&t;NULL on failure.&n; */
+multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *allocate_cmd (Scsi_Cmnd *cmd)&n; * &n; * Purpose : Return the first free NCR53c7x0_cmd structure (which are &n; * &t;reused in a LIFO manner to minimize cache thrashing).&n; *&n; * Side effects : If we haven&squot;t yet scheduled allocation of NCR53c7x0_cmd&n; *&t;structures for this device, do so.  Attempt to complete all scheduled&n; *&t;allocations using kmalloc(), putting NCR53c7x0_cmd structures on &n; *&t;the free list.  Teach programmers not to drink and hack.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure allocated on behalf of cmd;&n; *&t;NULL on failure.&n; */
 r_static
 r_struct
 id|NCR53c7x0_cmd
@@ -12296,12 +12306,12 @@ id|cmd-&gt;lun
 )paren
 ques
 c_cond
-l_string|&quot;allready allocated&quot;
+l_string|&quot;already allocated&quot;
 suffix:colon
 l_string|&quot;not allocated&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * If we have not yet reserved commands for this I_T_L nexus, and&n; * the device exists (as indicated by permanant Scsi_Cmnd structures&n; * being allocated under 1.3.x, or being outside of scan_scsis in &n; * 1.2.x), do so now.&n; */
+multiline_comment|/*&n; * If we have not yet reserved commands for this I_T_L nexus, and&n; * the device exists (as indicated by permanent Scsi_Cmnd structures&n; * being allocated under 1.3.x, or being outside of scan_scsis in &n; * 1.2.x), do so now.&n; */
 r_if
 c_cond
 (paren
@@ -12811,7 +12821,7 @@ op_plus
 l_int|3
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * New code : so that active pointers work correctly irregardless&n;     * &t;of where the saved data pointer is at, we want to immediately&n;     * &t;enter the dynamic code after selection, and on a non-data&n;     * &t;phase perform a CALL to the non-data phase handler, with&n;     * &t;returns back to this address.&n;     *&n;     * &t;If a phase mismatch is encountered in the middle of a &n;     * &t;Block MOVE instruction, we want to _leave_ that instruction&n;     *&t;unchanged as the current case is, modify a temporary buffer,&n;     *&t;and point the active pointer (TEMP) at that.&n;     *&n;     * &t;Furthermore, we want to implement a saved data pointer, &n;     * &t;set by the SAVE_DATA_POINTERs message.&n;     *&n;     * &t;So, the data transfer segments will change to &n;     *&t;&t;CALL data_transfer, WHEN NOT data phase&n;     *&t;&t;MOVE x, x, WHEN data phase&n;     *&t;&t;( repeat )&n;     *&t;&t;JUMP other_transfer&n;     */
+multiline_comment|/*&n;     * New code : so that active pointers work correctly regardless&n;     * &t;of where the saved data pointer is at, we want to immediately&n;     * &t;enter the dynamic code after selection, and on a non-data&n;     * &t;phase perform a CALL to the non-data phase handler, with&n;     * &t;returns back to this address.&n;     *&n;     * &t;If a phase mismatch is encountered in the middle of a &n;     * &t;Block MOVE instruction, we want to _leave_ that instruction&n;     *&t;unchanged as the current case is, modify a temporary buffer,&n;     *&t;and point the active pointer (TEMP) at that.&n;     *&n;     * &t;Furthermore, we want to implement a saved data pointer, &n;     * &t;set by the SAVE_DATA_POINTERs message.&n;     *&n;     * &t;So, the data transfer segments will change to &n;     *&t;&t;CALL data_transfer, WHEN NOT data phase&n;     *&t;&t;MOVE x, x, WHEN data phase&n;     *&t;&t;( repeat )&n;     *&t;&t;JUMP other_transfer&n;     */
 id|data_transfer_instructions
 op_assign
 id|datain
@@ -12830,7 +12840,7 @@ id|data_transfer_instructions
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;     * The saved data pointer is set up so that a RESTORE POINTERS message &n;     * will start the data transfer over at the beggining.&n;     */
+multiline_comment|/*&n;     * The saved data pointer is set up so that a RESTORE POINTERS message &n;     * will start the data transfer over at the beginning.&n;     */
 id|tmp-&gt;saved_data_pointer
 op_assign
 id|virt_to_bus
@@ -13969,7 +13979,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : int NCR53c7xx_queue_command (Scsi_Cmnd *cmd,&n; *      void (*done)(Scsi_Cmnd *))&n; *&n; * Purpose :  enqueues a SCSI command&n; *&n; * Inputs : cmd - SCSI command, done - function called on completion, with&n; *      a pointer to the command descriptor.&n; *&n; * Returns : 0&n; *&n; * Side effects :&n; *      cmd is added to the per instance driver issue_queue, with major&n; *      twiddling done to the host specific fields of cmd.  If the&n; *      process_issue_queue corouting isn&squot;t running, it is restarted.&n; * &n; * NOTE : we use the host_scribble field of the Scsi_Cmnd structure to &n; *&t;hold our own data, and pervert the ptr field of the SCp field&n; *&t;to create a linked list.&n; */
+multiline_comment|/*&n; * Function : int NCR53c7xx_queue_command (Scsi_Cmnd *cmd,&n; *      void (*done)(Scsi_Cmnd *))&n; *&n; * Purpose :  enqueues a SCSI command&n; *&n; * Inputs : cmd - SCSI command, done - function called on completion, with&n; *      a pointer to the command descriptor.&n; *&n; * Returns : 0&n; *&n; * Side effects :&n; *      cmd is added to the per instance driver issue_queue, with major&n; *      twiddling done to the host specific fields of cmd.  If the&n; *      process_issue_queue coroutine isn&squot;t running, it is restarted.&n; * &n; * NOTE : we use the host_scribble field of the Scsi_Cmnd structure to &n; *&t;hold our own data, and pervert the ptr field of the SCp field&n; *&t;to create a linked list.&n; */
 r_int
 DECL|function|NCR53c7xx_queue_command
 id|NCR53c7xx_queue_command
@@ -14252,7 +14262,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * REQUEST SENSE commands are inserted at the head of the queue &n;     * so that we do not clear the contingent allegience condition&n;     * they may be looking at.&n;     */
+multiline_comment|/*&n;     * REQUEST SENSE commands are inserted at the head of the queue &n;     * so that we do not clear the contingent allegiance condition&n;     * they may be looking at.&n;     */
 r_if
 c_cond
 (paren
@@ -14333,7 +14343,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : void to_schedule_list (struct Scsi_Host *host,&n; * &t;struct NCR53c7x0_hostdata * hostdata, Scsi_Cmnd *cmd)&n; *&n; * Purpose : takes a SCSI command which was just removed from the &n; *&t;issue queue, and deals with it by inserting it in the first&n; *&t;free slot in the schedule list or by terminating it immediately.&n; *&n; * Inputs : &n; *&t;host - SCSI host adater; hostdata - hostdata structure for &n; *&t;this adapter; cmd - a pointer to the command; should have &n; *&t;the host_scribble field initialized to point to a valid &n; *&t;&n; * Side effects : &n; *      cmd is added to the per instance schedule list, with minor &n; *      twiddling done to the host specific fields of cmd.&n; *&n; */
+multiline_comment|/*&n; * Function : void to_schedule_list (struct Scsi_Host *host,&n; * &t;struct NCR53c7x0_hostdata * hostdata, Scsi_Cmnd *cmd)&n; *&n; * Purpose : takes a SCSI command which was just removed from the &n; *&t;issue queue, and deals with it by inserting it in the first&n; *&t;free slot in the schedule list or by terminating it immediately.&n; *&n; * Inputs : &n; *&t;host - SCSI host adapter; hostdata - hostdata structure for &n; *&t;this adapter; cmd - a pointer to the command; should have &n; *&t;the host_scribble field initialized to point to a valid &n; *&t;&n; * Side effects : &n; *      cmd is added to the per instance schedule list, with minor &n; *      twiddling done to the host specific fields of cmd.&n; *&n; */
 r_static
 id|__inline__
 r_void
@@ -14415,7 +14425,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Work arround race condition : if an interrupt fired and we &n;     * got disabled forget about this command.&n;     */
+multiline_comment|/* &n;     * Work around race condition : if an interrupt fired and we &n;     * got disabled forget about this command.&n;     */
 r_if
 c_cond
 (paren
@@ -14712,7 +14722,7 @@ op_star
 id|cmd
 )paren
 (brace
-multiline_comment|/* FIXME : in the future, this needs to accomodate SCSI-II tagged&n;       queuing, and we may be able to play with fairness here a bit.&n;     */
+multiline_comment|/* FIXME : in the future, this needs to accommodate SCSI-II tagged&n;       queuing, and we may be able to play with fairness here a bit.&n;     */
 r_return
 id|hostdata-&gt;busy
 (braket
@@ -14723,7 +14733,7 @@ id|cmd-&gt;lun
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : process_issue_queue (void)&n; *&n; * Purpose : transfer commands from the issue queue to NCR start queue &n; *&t;of each NCR53c7/8xx in the system, avoiding kernel stack &n; *&t;overflows when the scsi_done() function is invoked recursively.&n; * &n; * NOTE : process_issue_queue exits with interrupts *disabled*, so the &n; *&t;caller must renable them if it desires.&n; * &n; * NOTE : process_issue_queue should be called from both &n; *&t;NCR53c7x0_queue_command() and from the interrupt handler &n; *&t;after command completion in case NCR53c7x0_queue_command()&n; * &t;isn&squot;t invoked again but we&squot;ve freed up resources that are&n; *&t;needed.&n; */
+multiline_comment|/*&n; * Function : process_issue_queue (void)&n; *&n; * Purpose : transfer commands from the issue queue to NCR start queue &n; *&t;of each NCR53c7/8xx in the system, avoiding kernel stack &n; *&t;overflows when the scsi_done() function is invoked recursively.&n; * &n; * NOTE : process_issue_queue exits with interrupts *disabled*, so the &n; *&t;caller must reenable them if it desires.&n; * &n; * NOTE : process_issue_queue should be called from both &n; *&t;NCR53c7x0_queue_command() and from the interrupt handler &n; *&t;after command completion in case NCR53c7x0_queue_command()&n; * &t;isn&squot;t invoked again but we&squot;ve freed up resources that are&n; *&t;needed.&n; */
 r_static
 r_void
 DECL|function|process_issue_queue
@@ -15552,7 +15562,7 @@ id|STEST2_800_ROF
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;         * A SCSI gross error may occur when we have &n;&t; *&n;&t; * - A synchronous offset which causes the SCSI FIFO to be overwritten.&n;&t; *&n;&t; * - A REQ which causes the maxmimum synchronous offset programmed in &n;&t; * &t;the SXFER register to be exceeded.&n;&t; *&n;&t; * - A phase change with an outstanding synchronous offset.&n;&t; *&n;&t; * - Residual data in the synchronous data FIFO, with a transfer&n;&t; *&t;other than a synchronous receive is started.$#&n;&t; */
+multiline_comment|/* &n;         * A SCSI gross error may occur when we have &n;&t; *&n;&t; * - A synchronous offset which causes the SCSI FIFO to be overwritten.&n;&t; *&n;&t; * - A REQ which causes the maximum synchronous offset programmed in &n;&t; * &t;the SXFER register to be exceeded.&n;&t; *&n;&t; * - A phase change with an outstanding synchronous offset.&n;&t; *&n;&t; * - Residual data in the synchronous data FIFO, with a transfer&n;&t; *&t;other than a synchronous receive is started.$#&n;&t; */
 multiline_comment|/* XXX Should deduce synchronous transfer rate! */
 id|hostdata-&gt;dsp
 op_assign
@@ -16765,7 +16775,7 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
-multiline_comment|/* FIXME : this probably should change for production kernels; at the &n;   least, counter sould move to a per-host structure. */
+multiline_comment|/* FIXME : this probably should change for production kernels; at the &n;   least, counter should move to a per-host structure. */
 r_static
 r_int
 id|counter
@@ -17712,7 +17722,7 @@ op_assign
 id|ACTION_ABORT_PRINT
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Some SCSI devices will interpret a command as they read the bytes&n;     * off the SCSI bus, and may decide that the command is Bogus before &n;     * they&squot;ve read the entire commad off the bus.&n;     */
+multiline_comment|/*&n;     * Some SCSI devices will interpret a command as they read the bytes&n;     * off the SCSI bus, and may decide that the command is Bogus before &n;     * they&squot;ve read the entire command off the bus.&n;     */
 )brace
 r_else
 r_if
@@ -19139,7 +19149,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* &n; * FIXME : (void *) cast in virt_to_bus should be unecessary, because&n; * &t;it should take const void * as argument.&n; */
+multiline_comment|/* &n; * FIXME : (void *) cast in virt_to_bus should be unnecessary, because&n; * &t;it should take const void * as argument.&n; */
 id|sprintf
 c_func
 (paren
@@ -19979,7 +19989,7 @@ id|Scsi_Cmnd
 op_star
 id|tmp
 suffix:semicolon
-multiline_comment|/*&n;     * When we call scsi_done(), it&squot;s going to wake up anything sleeping on the&n;     * resources which were in use by the aborted commands, and we&squot;ll start to &n;     * get new commands.&n;     *&n;     * We can&squot;t let this happen until after we&squot;ve re-initialized the driver&n;     * structures, and can&squot;t reinitilize those structures until after we&squot;ve &n;     * dealt with their contents.&n;     *&n;     * So, we need to find all of the commands which were running, stick&n;     * them on a linked list of completed commands (we&squot;ll use the host_scribble&n;     * pointer), do our reinitialization, and then call the done function for&n;     * each command.  &n;     */
+multiline_comment|/*&n;     * When we call scsi_done(), it&squot;s going to wake up anything sleeping on the&n;     * resources which were in use by the aborted commands, and we&squot;ll start to &n;     * get new commands.&n;     *&n;     * We can&squot;t let this happen until after we&squot;ve re-initialized the driver&n;     * structures, and can&squot;t reinitialize those structures until after we&squot;ve &n;     * dealt with their contents.&n;     *&n;     * So, we need to find all of the commands which were running, stick&n;     * them on a linked list of completed commands (we&squot;ll use the host_scribble&n;     * pointer), do our reinitialization, and then call the done function for&n;     * each command.  &n;     */
 id|Scsi_Cmnd
 op_star
 id|nuke_list
@@ -20289,7 +20299,7 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * With the current code implementation, if the insn is inside dynamically &n; * generated code, the data pointer will be the instruction preceeding &n; * the next transfer segment.&n; */
+multiline_comment|/*&n; * With the current code implementation, if the insn is inside dynamically &n; * generated code, the data pointer will be the instruction preceding &n; * the next transfer segment.&n; */
 r_if
 c_cond
 (paren
@@ -22231,7 +22241,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : Scsi_Cmnd *return_outstanding_commands (struct Scsi_Host *host,&n; *&t;int free, int issue)&n; *&n; * Purpose : return a linked list (using the SCp.buffer field as next,&n; *&t;so we don&squot;t perturb hostdata.  We don&squot;t use a field of the &n; *&t;NCR53c7x0_cmd structure since we may not have allocated one &n; *&t;for the command causing the reset.) of Scsi_Cmnd structures that &n; *  &t;had propogated bellow the Linux issue queue level.  If free is set, &n; *&t;free the NCR53c7x0_cmd structures which are associated with &n; *&t;the Scsi_Cmnd structures, and clean up any internal &n; *&t;NCR lists that the commands were on.  If issue is set,&n; *&t;also return commands in the issue queue.&n; *&n; * Returns : linked list of commands&n; *&n; * NOTE : the caller should insure that the NCR chip is halted&n; *&t;if the free flag is set. &n; */
+multiline_comment|/*&n; * Function : Scsi_Cmnd *return_outstanding_commands (struct Scsi_Host *host,&n; *&t;int free, int issue)&n; *&n; * Purpose : return a linked list (using the SCp.buffer field as next,&n; *&t;so we don&squot;t perturb hostdata.  We don&squot;t use a field of the &n; *&t;NCR53c7x0_cmd structure since we may not have allocated one &n; *&t;for the command causing the reset.) of Scsi_Cmnd structures that &n; *  &t;had propagated below the Linux issue queue level.  If free is set, &n; *&t;free the NCR53c7x0_cmd structures which are associated with &n; *&t;the Scsi_Cmnd structures, and clean up any internal &n; *&t;NCR lists that the commands were on.  If issue is set,&n; *&t;also return commands in the issue queue.&n; *&n; * Returns : linked list of commands&n; *&n; * NOTE : the caller should insure that the NCR chip is halted&n; *&t;if the free flag is set. &n; */
 r_static
 id|Scsi_Cmnd
 op_star
@@ -22483,7 +22493,7 @@ r_return
 id|list
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int disable (struct Scsi_Host *host)&n; *&n; * Purpose : disables the given NCR host, causing all commands&n; * &t;to return a driver error.  Call this so we can unload the&n; * &t;module during development and try again.  Eventually, &n; * &t;we should be able to find clean workarrounds for these&n; * &t;problems.&n; *&n; * Inputs : host - hostadapter to twiddle&n; *&n; * Returns : 0 on success.&n; */
+multiline_comment|/* &n; * Function : static int disable (struct Scsi_Host *host)&n; *&n; * Purpose : disables the given NCR host, causing all commands&n; * &t;to return a driver error.  Call this so we can unload the&n; * &t;module during development and try again.  Eventually, &n; * &t;we should be able to find clean workarounds for these&n; * &t;problems.&n; *&n; * Inputs : host - hostadapter to twiddle&n; *&n; * Returns : 0 on success.&n; */
 r_static
 r_int
 DECL|function|disable
@@ -23083,7 +23093,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * By copying the event we&squot;re currently examinging with interrupts&n; * disabled, we can do multiple printk(), etc. operations and &n; * still be guaranteed that they&squot;re happening on the same &n; * event structure.&n; */
+multiline_comment|/*&n; * By copying the event we&squot;re currently examining with interrupts&n; * disabled, we can do multiple printk(), etc. operations and &n; * still be guaranteed that they&squot;re happening on the same &n; * event structure.&n; */
 id|cli
 c_func
 (paren

@@ -24,6 +24,8 @@ DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_FH
 mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fhandle)
+DECL|macro|NFS_RENAMED_DIR
+mdefine_line|#define NFS_RENAMED_DIR(inode)&t;&t;((inode)-&gt;u.nfs_i.silly_rename_dir)
 DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
@@ -653,6 +655,16 @@ r_extern
 r_struct
 id|inode_operations
 id|nfs_dir_inode_operations
+suffix:semicolon
+r_extern
+r_void
+id|nfs_sillyrename_cleanup
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
 suffix:semicolon
 r_extern
 r_void

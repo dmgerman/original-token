@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * Definitions for a GoldStar R420 CD-ROM interface&n; *&n; *   Copyright (C) 1995  Oliver Raupach &lt;raupach@nwfs1.rz.fh-hannover.de&gt;&n; *                       Eberhard Moenkeberg &lt;emoenke@gwdg.de&gt;&n; *&n; *  Published under the GPL.&n; *&n; */
-multiline_comment|/* The Interface Card default address is 0x340. This will work fo most&n;   applications. Address selection is accomplished by jumpers PN801-1 to&n;   PN801-4 on the GoldStar Interface Card.&n;   Appropriate settings are: 0x300, 0x310, 0x320, 0x330, 0x340, 0x350, 0x360&n;   0x370, 0x380, 0x390, 0x3A0, 0x3B0, 0x3C0, 0x3D0, 0x3E0, 0x3F0             */
+multiline_comment|/* The Interface Card default address is 0x340. This will work for most&n;   applications. Address selection is accomplished by jumpers PN801-1 to&n;   PN801-4 on the GoldStar Interface Card.&n;   Appropriate settings are: 0x300, 0x310, 0x320, 0x330, 0x340, 0x350, 0x360&n;   0x370, 0x380, 0x390, 0x3A0, 0x3B0, 0x3C0, 0x3D0, 0x3E0, 0x3F0             */
 multiline_comment|/* insert here the I/O port address */
 DECL|macro|GSCD_BASE_ADDR
 mdefine_line|#define GSCD_BASE_ADDR&t;        0x340

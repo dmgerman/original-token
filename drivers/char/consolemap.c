@@ -2374,7 +2374,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Load customizable translation table&n; * arg points to a 256 byte translation table.&n; *&n; * The &quot;old&quot; variants are for translation directly to font (using the&n; * 0xf000-0xf0ff &quot;transparent&quot; Unicodes) whereas the &quot;new&quot; variants set&n; * Unicodes explictly.&n; */
+multiline_comment|/*&n; * Load customizable translation table&n; * arg points to a 256 byte translation table.&n; *&n; * The &quot;old&quot; variants are for translation directly to font (using the&n; * 0xf000-0xf0ff &quot;transparent&quot; Unicodes) whereas the &quot;new&quot; variants set&n; * Unicodes explicitly.&n; */
 DECL|function|con_set_trans_old
 r_int
 id|con_set_trans_old

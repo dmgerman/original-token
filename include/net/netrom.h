@@ -53,7 +53,7 @@ mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;(180 * PR_SLOWHZ)&t;/* Transport Busy 
 DECL|macro|NR_DEFAULT_WINDOW
 mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;4&t;&t;&t;/* Default Window Size&t;*/
 DECL|macro|NR_DEFAULT_OBS
-mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;6&t;&t;&t;/* Default Obscolesence Count */
+mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;6&t;&t;&t;/* Default Obsolescence Count */
 DECL|macro|NR_DEFAULT_QUAL
 mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;10&t;&t;&t;/* Default Neighbour Quality */
 DECL|macro|NR_DEFAULT_TTL

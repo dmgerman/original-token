@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: solerrno.h,v 1.3 1995/11/25 02:32:51 davem Exp $&n; * solerrno.h: Solaris error return codes for compatability.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: solerrno.h,v 1.3 1995/11/25 02:32:51 davem Exp $&n; * solerrno.h: Solaris error return codes for compatibility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SOLERRNO_H
 DECL|macro|_SPARC_SOLERRNO_H
 mdefine_line|#define _SPARC_SOLERRNO_H
@@ -71,7 +71,7 @@ mdefine_line|#define&t;SOL_EDOM           33    /* Argument was out of fct domai
 DECL|macro|SOL_ERANGE
 mdefine_line|#define&t;SOL_ERANGE         34    /* Could not represent math result  */
 DECL|macro|SOL_ENOMSG
-mdefine_line|#define&t;SOL_ENOMSG         35    /* Message of req type doesnt exist */
+mdefine_line|#define&t;SOL_ENOMSG         35    /* Message of req type doesn&squot;t exist */
 DECL|macro|SOL_EIDRM
 mdefine_line|#define&t;SOL_EIDRM          36    /* Identifier has been removed      */
 DECL|macro|SOL_ECHRNG

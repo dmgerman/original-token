@@ -122,7 +122,7 @@ id|IDENT_ADDR
 suffix:semicolon
 )brace
 macro_line|#else /* !__KERNEL__ */
-multiline_comment|/*&n; * Define actual functions in private name-space so it&squot;s easier to&n; * accomodate things like XFree or svgalib that like to define their&n; * own versions of inb etc.&n; */
+multiline_comment|/*&n; * Define actual functions in private name-space so it&squot;s easier to&n; * accommodate things like XFree or svgalib that like to define their&n; * own versions of inb etc.&n; */
 r_extern
 r_void
 id|__sethae

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.33 1996/03/01 07:16:00 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatability support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.33 1996/03/01 07:16:00 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -632,7 +632,7 @@ r_return
 id|current-&gt;mm-&gt;brk
 suffix:semicolon
 )brace
-multiline_comment|/* XXX Completely undocumented, and completely magic...&n; * XXX I belive it is to increase the size of the stack by&n; * XXX argument &squot;increment&squot; and return the new end of stack&n; * XXX area.  Wheee...&n; */
+multiline_comment|/* XXX Completely undocumented, and completely magic...&n; * XXX I believe it is to increase the size of the stack by&n; * XXX argument &squot;increment&squot; and return the new end of stack&n; * XXX area.  Wheee...&n; */
 DECL|function|sunos_sstk
 id|asmlinkage
 r_int
@@ -803,7 +803,7 @@ r_return
 suffix:semicolon
 multiline_comment|/* We don&squot;t do diddly... */
 )brace
-multiline_comment|/* Places into character array, the status of all the pages in the passed&n; * range from &squot;addr&squot; to &squot;addr + len&squot;.  -1 on failure, 0 on success...&n; * The encoding in each character is:&n; * low-bit is zero == Page is not in physical ram right now&n; * low-bit is one  == Page is currently residing in core&n; * All other bits are undefined within the character so there...&n; * Also, if you try to get stats on an area outside of the user vm area&n; * *or* the passed base address is not aligned on a page boundry you&n; * get an error.&n; */
+multiline_comment|/* Places into character array, the status of all the pages in the passed&n; * range from &squot;addr&squot; to &squot;addr + len&squot;.  -1 on failure, 0 on success...&n; * The encoding in each character is:&n; * low-bit is zero == Page is not in physical ram right now&n; * low-bit is one  == Page is currently residing in core&n; * All other bits are undefined within the character so there...&n; * Also, if you try to get stats on an area outside of the user vm area&n; * *or* the passed base address is not aligned on a page boundary you&n; * get an error.&n; */
 DECL|function|sunos_mincore
 id|asmlinkage
 r_int
@@ -1046,7 +1046,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Success... I think... */
 )brace
-multiline_comment|/* This just wants the soft limit (ie. rlim_cur element) of the RLIMIT_NOFILE&n; * resource limit and is for backwards compatability with older sunos&n; * revs.&n; */
+multiline_comment|/* This just wants the soft limit (ie. rlim_cur element) of the RLIMIT_NOFILE&n; * resource limit and is for backwards compatibility with older sunos&n; * revs.&n; */
 DECL|function|sunos_getdtablesize
 id|asmlinkage
 r_int
@@ -1589,7 +1589,7 @@ op_minus
 id|buf.count
 suffix:semicolon
 )brace
-multiline_comment|/* Old sunos getdirentries, severely broken compatability stuff here. */
+multiline_comment|/* Old sunos getdirentries, severely broken compatibility stuff here. */
 DECL|struct|sunos_direntry
 r_struct
 id|sunos_direntry
@@ -3077,7 +3077,7 @@ id|error
 r_return
 id|error
 suffix:semicolon
-multiline_comment|/* Ok, here comes the fun part: Linux&squot;s nfs mount needs a&n;&t; * socket connection to the server, but SunOS mount does not&n;&t; * requiere this, so we use the information on the destination&n;&t; * address to create a socket and bind it to a reserved&n;&t; * port on this system&n;&t; */
+multiline_comment|/* Ok, here comes the fun part: Linux&squot;s nfs mount needs a&n;&t; * socket connection to the server, but SunOS mount does not&n;&t; * require this, so we use the information on the destination&n;&t; * address to create a socket and bind it to a reserved&n;&t; * port on this system&n;&t; */
 id|server_fd
 op_assign
 id|sys_socket

@@ -51,7 +51,7 @@ suffix:semicolon
 )brace
 DECL|macro|__HAVE_ARCH_STRSTR
 mdefine_line|#define __HAVE_ARCH_STRSTR
-multiline_comment|/* Return the first ocurrence of NEEDLE in HAYSTACK.  */
+multiline_comment|/* Return the first occurrence of NEEDLE in HAYSTACK.  */
 r_extern
 r_inline
 r_char

@@ -19,7 +19,7 @@ mdefine_line|#define CONF_DEBUG_TLB
 multiline_comment|/*&n; * Use this to activate extra TLB profiling code&n; * (currently not implemented)&n; */
 DECL|macro|CONF_PROFILE_TLB
 macro_line|#undef CONF_PROFILE_TLB
-multiline_comment|/*&n; * Disable all caching.  Usefull to find trouble with caches in drivers.&n; */
+multiline_comment|/*&n; * Disable all caching.  Useful to find trouble with caches in drivers.&n; */
 DECL|macro|CONF_DISABLE_KSEG0_CACHING
 macro_line|#undef CONF_DISABLE_KSEG0_CACHING
 multiline_comment|/*&n; * Set this to one to enable additional vdma debug code.&n; */

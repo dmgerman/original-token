@@ -174,7 +174,7 @@ macro_line|#else
 DECL|macro|_PATCHKEY
 macro_line|#  define _PATCHKEY(id) ((id&lt;&lt;8)|0xfd)
 macro_line|#endif
-multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
+multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; */
 DECL|struct|patch_info
 r_struct
 id|patch_info
@@ -928,7 +928,7 @@ DECL|member|fragments
 r_int
 id|fragments
 suffix:semicolon
-multiline_comment|/* # of available fragments (partially usend ones not counted) */
+multiline_comment|/* # of available fragments (partially used ones not counted) */
 DECL|member|fragstotal
 r_int
 id|fragstotal
@@ -1234,7 +1234,7 @@ DECL|macro|SOUND_MIXER_IGAIN
 mdefine_line|#define SOUND_MIXER_IGAIN&t;12&t;/* Input gain */
 DECL|macro|SOUND_MIXER_OGAIN
 mdefine_line|#define SOUND_MIXER_OGAIN&t;13&t;/* Output gain */
-multiline_comment|/* &n; * The AD1848 codec and compatibles have three line level inputs&n; * (line, aux1 and aux2). Since each card manufacturer have assigned&n; * different meanings to these inputs, it&squot;s inpractical to assign&n; * specific meanings (line, cd, synth etc.) to them.&n; */
+multiline_comment|/* &n; * The AD1848 codec and compatibles have three line level inputs&n; * (line, aux1 and aux2). Since each card manufacturer have assigned&n; * different meanings to these inputs, it&squot;s impractical to assign&n; * specific meanings (line, cd, synth etc.) to them.&n; */
 DECL|macro|SOUND_MIXER_LINE1
 mdefine_line|#define SOUND_MIXER_LINE1&t;14&t;/* Input source 1  (aux1) */
 DECL|macro|SOUND_MIXER_LINE2
@@ -1537,7 +1537,7 @@ DECL|macro|SEQ_MAIN_VOLUME
 mdefine_line|#define SEQ_MAIN_VOLUME(dev, voice, value) SEQ_CONTROL(dev, voice, CTL_MAIN_VOLUME, (value*16383)/100)
 DECL|macro|SEQ_PANNING
 mdefine_line|#define SEQ_PANNING(dev, voice, pos) SEQ_CONTROL(dev, voice, CTL_PAN, (pos+128) / 2)
-multiline_comment|/*&n; * Timing and syncronization macros&n; */
+multiline_comment|/*&n; * Timing and synchronization macros&n; */
 DECL|macro|_TIMER_EVENT
 mdefine_line|#define _TIMER_EVENT(ev, parm)&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+0] = EV_TIMING; &bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+1] = (ev); &bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t; &t;*(unsigned int *)&amp;_seqbuf[_seqbufptr+4] = (parm); &bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_START_TIMER

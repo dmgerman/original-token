@@ -399,9 +399,9 @@ suffix:semicolon
 multiline_comment|/* words 0-15 */
 multiline_comment|/*&n; * BIOS Control Bits&n; */
 DECL|macro|CFSUPREM
-mdefine_line|#define CFSUPREM&t;0x0001&t;&t;/* support all removeable drives */
+mdefine_line|#define CFSUPREM&t;0x0001&t;&t;/* support all removable drives */
 DECL|macro|CFSUPREMB
-mdefine_line|#define CFSUPREMB&t;0x0002&t;&t;/* support removeable drives for boot only */
+mdefine_line|#define CFSUPREMB&t;0x0002&t;&t;/* support removable drives for boot only */
 DECL|macro|CFBIOSEN
 mdefine_line|#define CFBIOSEN&t;0x0004&t;&t;/* BIOS enabled */
 multiline_comment|/* UNUSED&t;&t;0x0008 */
@@ -492,7 +492,7 @@ mdefine_line|#define UNPAUSE_SEQUENCER(p) &bslash;&n;  outb(p-&gt;unpause, HCNTR
 multiline_comment|/*&n; * Restart the sequencer program from address zero&n; */
 DECL|macro|RESTART_SEQUENCER
 mdefine_line|#define RESTART_SEQUENCER(p) &bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    outb(SEQRESET | FASTMODE, SEQCTL + p-&gt;base);&t;&bslash;&n;  } while (inb(SEQADDR0 + p-&gt;base) != 0 &amp;&amp;&t;&t;&bslash;&n;&t;   inb(SEQADDR1 + p-&gt;base) != 0);&t;&t;&bslash;&n;  UNPAUSE_SEQUENCER(p);
-multiline_comment|/*&n; * If an error occurs during a data transfer phase, run the comand&n; * to completion - it&squot;s easier that way - making a note of the error&n; * condition in this location. This then will modify a DID_OK status&n; * into an appropriate error for the higher-level SCSI code.&n; */
+multiline_comment|/*&n; * If an error occurs during a data transfer phase, run the command&n; * to completion - it&squot;s easier that way - making a note of the error&n; * condition in this location. This then will modify a DID_OK status&n; * into an appropriate error for the higher-level SCSI code.&n; */
 DECL|macro|aic7xxx_error
 mdefine_line|#define aic7xxx_error(cmd)&t;((cmd)-&gt;SCp.Status)
 multiline_comment|/*&n; * Keep track of the targets returned status.&n; */
@@ -722,7 +722,7 @@ comma
 (brace
 id|ILLSADDR
 comma
-l_string|&quot;Illegal Sequencer Address referrenced&quot;
+l_string|&quot;Illegal Sequencer Address referenced&quot;
 )brace
 comma
 (brace
@@ -1082,7 +1082,7 @@ suffix:semicolon
 multiline_comment|/* bus termination high byte (wide cards only) */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Valid SCSIRATE values. (p. 3-17)&n; * Provides a mapping of tranfer periods in ns to the proper value to&n; * stick in the scsiscfr reg to use that transfer rate.&n; */
+multiline_comment|/*&n; * Valid SCSIRATE values. (p. 3-17)&n; * Provides a mapping of transfer periods in ns to the proper value to&n; * stick in the scsiscfr reg to use that transfer rate.&n; */
 r_static
 r_struct
 (brace
@@ -2292,7 +2292,7 @@ suffix:semicolon
 multiline_comment|/* Do nothing! */
 )brace
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   rcs_version&n; *&n; * Description:&n; *   Return a string containing just the RCS version number from either&n; *   an Id or Revison RCS clause.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   rcs_version&n; *&n; * Description:&n; *   Return a string containing just the RCS version number from either&n; *   an Id or Revision RCS clause.&n; *-F*************************************************************************/
 r_const
 r_char
 op_star
@@ -4155,7 +4155,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;   * Go through the entire SCB array now and look for&n;   * commands for this target that are active.  These&n;   * are other (most likely tagged) commands that&n;   * were disconnected when the reset occured.&n;   */
+multiline_comment|/*&n;   * Go through the entire SCB array now and look for&n;   * commands for this target that are active.  These&n;   * are other (most likely tagged) commands that&n;   * were disconnected when the reset occurred.&n;   */
 r_for
 c_loop
 (paren
@@ -6760,7 +6760,7 @@ id|SCB_DEVICE_RESET
 r_int
 id|found
 suffix:semicolon
-multiline_comment|/*&n;           * Go back to async/narrow transfers and renogiate.&n;           */
+multiline_comment|/*&n;           * Go back to async/narrow transfers and renegotiate.&n;           */
 id|aic7xxx_unbusy_target
 c_func
 (paren
@@ -8138,7 +8138,7 @@ id|AIC_NONE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_2840_seeprom&n; *&n; * Description:&n; *   Reads the 2840 serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   See read_seeprom (for the 2940) for the instruction set of the 93C46&n; *   chip.&n; *&n; *   The 2840 interface to the 93C46 serial EEPROM is through the&n; *   STATUS_2840 and SEECTL_2840 registers.  The CS_2840, CK_2840, and&n; *   DO_2840 bits of the SEECTL_2840 register are connected to the chip&n; *   select, clock, and data out lines respectively of the serial EEPROM.&n; *   The DI_2840 bit of the STATUS_2840 is connected to the data in line&n; *   of the serial EEPROM.  The EEPROM_TF bit of STATUS_2840 register is&n; *   useful in that it gives us an 800 nsec timer.  After a read from the&n; *   SEECTL_2840 register the timing flag is cleard and goes high 800 nsec&n; *   later.&n; *&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_2840_seeprom&n; *&n; * Description:&n; *   Reads the 2840 serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   See read_seeprom (for the 2940) for the instruction set of the 93C46&n; *   chip.&n; *&n; *   The 2840 interface to the 93C46 serial EEPROM is through the&n; *   STATUS_2840 and SEECTL_2840 registers.  The CS_2840, CK_2840, and&n; *   DO_2840 bits of the SEECTL_2840 register are connected to the chip&n; *   select, clock, and data out lines respectively of the serial EEPROM.&n; *   The DI_2840 bit of the STATUS_2840 is connected to the data in line&n; *   of the serial EEPROM.  The EEPROM_TF bit of STATUS_2840 register is&n; *   useful in that it gives us an 800 nsec timer.  After a read from the&n; *   SEECTL_2840 register the timing flag is cleared and goes high 800 nsec&n; *   later.&n; *&n; *-F*************************************************************************/
 r_static
 r_int
 DECL|function|read_2840_seeprom
@@ -8680,7 +8680,7 @@ suffix:semicolon
 DECL|macro|CLOCK_PULSE
 macro_line|#undef CLOCK_PULSE
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46 chip is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must preceed&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46 chip is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must precede&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
 r_static
 r_int
 DECL|function|read_seeprom
@@ -10723,7 +10723,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * For the 294x cards, clearing DIAGLEDEN and DIAGLEDON, will&n;   * take the card out of diagnostic mode and make the host adatper&n;   * LED follow bus activity (will not always be on).&n;   */
+multiline_comment|/*&n;   * For the 294x cards, clearing DIAGLEDEN and DIAGLEDON, will&n;   * take the card out of diagnostic mode and make the host adapter&n;   * LED follow bus activity (will not always be on).&n;   */
 id|outb
 c_func
 (paren
@@ -12543,7 +12543,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;           * Read esundry information from PCI BIOS.&n;           */
+multiline_comment|/*&n;           * Read sundry information from PCI BIOS.&n;           */
 id|error
 op_assign
 id|pcibios_read_config_dword
@@ -12621,7 +12621,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Default to 64 PCLKS (is this a good value?) */
-multiline_comment|/* This may also be availble in the SEEPROM?? */
+multiline_comment|/* This may also be available in the SEEPROM?? */
 id|csize_lattime
 op_or_assign
 (paren

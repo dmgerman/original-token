@@ -5501,7 +5501,7 @@ DECL|member|sg_xfer
 id|ulong
 id|sg_xfer
 suffix:semicolon
-multiline_comment|/* scatter-gather tranfer total (512 byte units) */
+multiline_comment|/* scatter-gather transfer total (512 byte units) */
 DECL|member|error
 id|ulong
 id|error
@@ -6576,7 +6576,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;AdvanSys SCSI: advansys_detect() mulitple calls ignored&bslash;n&quot;
+l_string|&quot;AdvanSys SCSI: advansys_detect() multiple calls ignored&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6647,7 +6647,7 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;asdvansys_detect: asc_ioport[%d] %x&bslash;n&quot;
+l_string|&quot;advansys_detect: asc_ioport[%d] %x&bslash;n&quot;
 comma
 id|ioport
 comma

@@ -305,7 +305,7 @@ r_return
 id|cpuid
 suffix:semicolon
 )brace
-multiline_comment|/* Imperical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */
+multiline_comment|/* Empirical PROM processor mailbox constants.  If the per-cpu mailbox&n; * contains something other than one of these then the ipi is from&n; * Linux&squot;s active_kernel_processor.  This facility exists so that&n; * the boot monitor can capture all the other cpus when one catches&n; * a watchdog reset or the user enters the monitor using L1-A keys.&n; */
 DECL|macro|MBOX_STOPCPU
 mdefine_line|#define MBOX_STOPCPU          0xFB
 DECL|macro|MBOX_IDLECPU

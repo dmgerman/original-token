@@ -29,6 +29,13 @@ r_int
 r_int
 id|read_cache_mtime
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is to support the clandestine rename on unlink.&n;&t; * Instead of the directory inode, we might as well keep its&n;&t; * NFS FH, but that requires a kmalloc.&n;&t; */
+DECL|member|silly_rename_dir
+r_struct
+id|inode
+op_star
+id|silly_rename_dir
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -40,7 +40,7 @@ multiline_comment|/* ===========================================================
 DECL|macro|WATCHDOG
 mdefine_line|#define WATCHDOG 5000000
 DECL|macro|SYNC_MODE
-mdefine_line|#define SYNC_MODE 0 &t;&t;/* Synchrounous transfer mode */
+mdefine_line|#define SYNC_MODE 0 &t;&t;/* Synchronous transfer mode */
 macro_line|#if DEBUG
 DECL|macro|NCR53C406A_DEBUG
 macro_line|#undef NCR53C406A_DEBUG
@@ -1109,7 +1109,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* fifo empty and interrupt occured */
+multiline_comment|/* fifo empty and interrupt occurred */
 r_return
 l_int|0
 suffix:semicolon
@@ -3758,7 +3758,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;NCR53c406a: Warning: Unknown interupt occured in command phase!&bslash;n&quot;
+l_string|&quot;NCR53c406a: Warning: Unknown interrupt occurred in command phase!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

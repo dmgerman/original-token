@@ -71,7 +71,7 @@ id|ENOSYS
 suffix:semicolon
 multiline_comment|/* Currently this is a no-op */
 )brace
-multiline_comment|/*&n; * eata_proc_info&n; * inout : decides on the direction of the dataflow and the meaning of the &n; *         variables&n; * buffer: If inout==FALSE data is beeing written to it else read from it&n; * *start: If inout==FALSE start of the valid data in the buffer&n; * offset: If inout==FALSE offset from the beginning of the imaginary file &n; *         from which we start writing into the buffer&n; * length: If inout==FALSE max number of bytes to be written into the buffer &n; *         else number of bytes in the buffer&n; */
+multiline_comment|/*&n; * eata_proc_info&n; * inout : decides on the direction of the dataflow and the meaning of the &n; *         variables&n; * buffer: If inout==FALSE data is being written to it else read from it&n; * *start: If inout==FALSE start of the valid data in the buffer&n; * offset: If inout==FALSE offset from the beginning of the imaginary file &n; *         from which we start writing into the buffer&n; * length: If inout==FALSE max number of bytes to be written into the buffer &n; *         else number of bytes in the buffer&n; */
 DECL|function|eata_pio_proc_info
 r_int
 id|eata_pio_proc_info
@@ -182,7 +182,7 @@ op_eq
 id|TRUE
 )paren
 (brace
-multiline_comment|/* Has data been writen to the file ? */
+multiline_comment|/* Has data been written to the file ? */
 r_return
 id|eata_pio_set_info
 c_func

@@ -70,7 +70,7 @@ id|mddev
 op_member_access_from_pointer
 r_private
 suffix:semicolon
-multiline_comment|/*&n;     Find out the smallest device. This was previously done&n;     at registery time, but since it violates modularity,&n;     I moved it here... Any comment ? ;-)&n;   */
+multiline_comment|/*&n;     Find out the smallest device. This was previously done&n;     at registry time, but since it violates modularity,&n;     I moved it here... Any comment ? ;-)&n;   */
 id|data-&gt;smallest
 op_assign
 id|devices
@@ -201,7 +201,7 @@ id|size
 op_ge
 id|data-&gt;smallest-&gt;size
 )paren
-multiline_comment|/* If we completly fill the slot */
+multiline_comment|/* If we completely fill the slot */
 (brace
 id|data-&gt;hash_table
 (braket

@@ -34,7 +34,7 @@ DECL|macro|MXCC_CTL_PARE
 mdefine_line|#define MXCC_CTL_PARE  0x00000008
 DECL|macro|MXCC_CTL_ECE
 mdefine_line|#define MXCC_CTL_ECE   0x00000004
-multiline_comment|/* The MXCC Error Register:&n; *&n; * --------------------------------------------------------&n; * |ME| RSV|CE|PEW|PEE|ASE|EIV| MOPC|ECODE|PRIV|RSV|HPADDR|&n; * --------------------------------------------------------&n; *  31   30 29  28  27  26  25 24-15  14-7   6  5-3   2-0&n; *&n; * ME: Multiple Errors have occurred&n; * CE: Cache consistancy Error&n; * PEW: Parity Error during a Write operation&n; * PEE: Parity Error involving the External cache&n; * ASE: ASynchronous Error&n; * EIV: This register is toast&n; * MOPC: MXCC Operation Code for instance causing error&n; * ECODE: The Error CODE&n; * PRIV: A privileged mode error? 0=no 1=yes&n; * HPADDR: High PhysicalADDRess bits (35-32)&n; */
+multiline_comment|/* The MXCC Error Register:&n; *&n; * --------------------------------------------------------&n; * |ME| RSV|CE|PEW|PEE|ASE|EIV| MOPC|ECODE|PRIV|RSV|HPADDR|&n; * --------------------------------------------------------&n; *  31   30 29  28  27  26  25 24-15  14-7   6  5-3   2-0&n; *&n; * ME: Multiple Errors have occurred&n; * CE: Cache consistency Error&n; * PEW: Parity Error during a Write operation&n; * PEE: Parity Error involving the External cache&n; * ASE: ASynchronous Error&n; * EIV: This register is toast&n; * MOPC: MXCC Operation Code for instance causing error&n; * ECODE: The Error CODE&n; * PRIV: A privileged mode error? 0=no 1=yes&n; * HPADDR: High PhysicalADDRess bits (35-32)&n; */
 DECL|macro|MXCC_ERR_ME
 mdefine_line|#define MXCC_ERR_ME     0x80000000
 DECL|macro|MXCC_ERR_CE

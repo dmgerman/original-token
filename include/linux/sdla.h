@@ -88,7 +88,7 @@ DECL|macro|SDLA_WINDOW_SIZE
 mdefine_line|#define SDLA_WINDOW_SIZE&t;&t;0x2000
 DECL|macro|SDLA_ADDR_MASK
 mdefine_line|#define SDLA_ADDR_MASK&t;&t;&t;0x1FFF
-multiline_comment|/* largest handlable block of data */
+multiline_comment|/* largest handleable block of data */
 DECL|macro|SDLA_MAX_DATA
 mdefine_line|#define SDLA_MAX_DATA&t;&t;&t;4080
 DECL|macro|SDLA_MAX_MTU

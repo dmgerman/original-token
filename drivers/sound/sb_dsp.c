@@ -313,7 +313,7 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 secods&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
@@ -560,7 +560,7 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Not a DSP interupt&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Not a DSP interrupt&n;&t;&t;&t;&t; */
 )brace
 id|status
 op_assign
@@ -2409,7 +2409,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* !AudioDrive */
-multiline_comment|/* Select correct dma channel&n;&t;     * for 16/8 bit acccess&n;&t;   */
+multiline_comment|/* Select correct dma channel&n;&t;     * for 16/8 bit access&n;&t;   */
 id|audio_devs
 (braket
 id|my_dev
@@ -4592,7 +4592,7 @@ id|cfg
 op_assign
 l_int|0x50
 suffix:semicolon
-multiline_comment|/* Extended mode DMA ebable */
+multiline_comment|/* Extended mode DMA enable */
 r_if
 c_cond
 (paren

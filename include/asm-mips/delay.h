@@ -81,7 +81,7 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The different variants for 32/64 bit are pure paranoia. The typical&n; * range of numbers that apprears for MIPS machines avoids overflows.&n; */
+multiline_comment|/*&n; * The different variants for 32/64 bit are pure paranoia. The typical&n; * range of numbers that appears for MIPS machines avoids overflows.&n; */
 DECL|function|muldiv
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: icn.h,v 1.12 1996/01/22 05:01:22 fritz Exp fritz $&n; *&n; * ISDN lowlevel-module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.h,v $&n; * Revision 1.12  1996/01/22 05:01:22  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.11  1995/12/18  18:25:00  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-setable service-octet.&n; *&n; * Revision 1.10  1995/10/29  21:43:10  fritz&n; * Added support for leased lines.&n; *&n; * Revision 1.9  1995/04/23  13:42:10  fritz&n; * Added some constants for distingushing 1TR6 and DSS1&n; *&n; * Revision 1.8  1995/03/25  23:18:55  fritz&n; * Changed ICN_PORTLEN to reflect correct number of ports.&n; *&n; * Revision 1.7  1995/03/15  12:52:06  fritz&n; * Some cleanup&n; *&n; * Revision 1.6  1995/02/20  03:49:22  fritz&n; * Fixed ICN_MAX_SQUEUE to correctly reflect outstanding bytes, not number&n; * of buffers.&n; *&n; * Revision 1.5  1995/01/29  23:36:50  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.4  1995/01/09  07:41:20  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:14:20  fritz&n; * removed include of linux/asm/string.h for compiling with Linux 1.1.76&n; *&n; * Revision 1.2  1995/01/02  02:15:57  fritz&n; * Misc. Bugfixes&n; *&n; * Revision 1.1  1994/12/14  18:02:38  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: icn.h,v 1.12 1996/01/22 05:01:22 fritz Exp fritz $&n; *&n; * ISDN lowlevel-module for the ICN active ISDN-Card.&n; *&n; * Copyright 1994 by Fritz Elfert (fritz@wuemaus.franken.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: icn.h,v $&n; * Revision 1.12  1996/01/22 05:01:22  fritz&n; * Revert to GPL.&n; *&n; * Revision 1.11  1995/12/18  18:25:00  fritz&n; * Support for ICN-2B Cards.&n; * Change for supporting user-settable service-octet.&n; *&n; * Revision 1.10  1995/10/29  21:43:10  fritz&n; * Added support for leased lines.&n; *&n; * Revision 1.9  1995/04/23  13:42:10  fritz&n; * Added some constants for distinguishing 1TR6 and DSS1&n; *&n; * Revision 1.8  1995/03/25  23:18:55  fritz&n; * Changed ICN_PORTLEN to reflect correct number of ports.&n; *&n; * Revision 1.7  1995/03/15  12:52:06  fritz&n; * Some cleanup&n; *&n; * Revision 1.6  1995/02/20  03:49:22  fritz&n; * Fixed ICN_MAX_SQUEUE to correctly reflect outstanding bytes, not number&n; * of buffers.&n; *&n; * Revision 1.5  1995/01/29  23:36:50  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.4  1995/01/09  07:41:20  fritz&n; * Added GPL-Notice&n; *&n; * Revision 1.3  1995/01/04  05:14:20  fritz&n; * removed include of linux/asm/string.h for compiling with Linux 1.1.76&n; *&n; * Revision 1.2  1995/01/02  02:15:57  fritz&n; * Misc. Bugfixes&n; *&n; * Revision 1.1  1994/12/14  18:02:38  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef icn_h
 DECL|macro|icn_h
 mdefine_line|#define icn_h
@@ -323,7 +323,7 @@ r_int
 r_int
 id|port
 suffix:semicolon
-multiline_comment|/* Base-port-adress                 */
+multiline_comment|/* Base-port-address                 */
 DECL|member|shmem
 id|icn_shmem
 op_star
@@ -371,7 +371,7 @@ DECL|member|ptype
 r_int
 id|ptype
 suffix:semicolon
-multiline_comment|/* Protocoltype (1TR6 or Euro)      */
+multiline_comment|/* Protocol type (1TR6 or Euro)      */
 DECL|member|st_timer
 r_struct
 id|timer_list

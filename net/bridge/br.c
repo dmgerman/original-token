@@ -214,7 +214,7 @@ id|timer_list
 id|tl
 suffix:semicolon
 multiline_comment|/* for 1 second timer... */
-multiline_comment|/*&n; * the following structure is required so that we receive&n; * event notifications when network deviced are enabled and&n; * disabled (ifconfig up and down).&n; */
+multiline_comment|/*&n; * the following structure is required so that we receive&n; * event notifications when network devices are enabled and&n; * disabled (ifconfig up and down).&n; */
 DECL|variable|br_dev_notifier
 r_static
 r_struct
@@ -224,7 +224,7 @@ op_assign
 initialization_block
 suffix:semicolon
 multiline_comment|/** Elements of Procedure (4.6) **/
-multiline_comment|/*&n; * this section of code was gratiously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
+multiline_comment|/*&n; * this section of code was graciously borrowed from the IEEE 802.1d&n; * specification section 4.9.1 starting on pg 69.  It has been&n; * modified somewhat to fit within out framework and structure.  It&n; * implements the spanning tree algorithm that is the heart of the&n; * 802.1d bridging protocol.&n; */
 r_void
 DECL|function|transmit_config
 id|transmit_config

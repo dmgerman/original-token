@@ -686,9 +686,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* currently doing revalidate_disk() */
-DECL|member|removeable
+DECL|member|removable
 r_int
-id|removeable
+id|removable
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -1137,7 +1137,7 @@ id|is_promise2
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* 2nd i/f on promose DC4030 */
+multiline_comment|/* 2nd i/f on promise DC4030 */
 macro_line|#endif /* CONFIG_BLK_DEV_PROMISE */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|member|last_time
@@ -1579,7 +1579,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 macro_line|#ifdef CONFIG_BLK_DEV_IDETAPE
 multiline_comment|/*&n; *&t;Functions in ide-tape.c which are invoked from ide.c:&n; */
-multiline_comment|/*&n; *&t;idetape_identify_device is called during device probing stage to&n; *&t;probe for an ide atapi tape drive and to initialize global variables&n; *&t;in ide-tape.c which provide the link between the character device&n; *&t;and the correspoding block device.&n; *&n; *&t;Returns 1 if an ide tape was detected and is supported.&n; *&t;Returns 0 otherwise.&n; */
+multiline_comment|/*&n; *&t;idetape_identify_device is called during device probing stage to&n; *&t;probe for an ide atapi tape drive and to initialize global variables&n; *&t;in ide-tape.c which provide the link between the character device&n; *&t;and the corresponding block device.&n; *&n; *&t;Returns 1 if an ide tape was detected and is supported.&n; *&t;Returns 0 otherwise.&n; */
 r_int
 id|idetape_identify_device
 (paren

@@ -292,6 +292,12 @@ DECL|member|rcv_ack_seq
 id|__u32
 id|rcv_ack_seq
 suffix:semicolon
+DECL|member|rcv_ack_cnt
+r_int
+r_int
+id|rcv_ack_cnt
+suffix:semicolon
+multiline_comment|/* count of same ack */
 DECL|member|window_seq
 id|__u32
 id|window_seq
@@ -730,10 +736,10 @@ id|timer_list
 id|retransmit_timer
 suffix:semicolon
 multiline_comment|/* TCP retransmit timer */
-DECL|member|ack_timer
+DECL|member|delack_timer
 r_struct
 id|timer_list
-id|ack_timer
+id|delack_timer
 suffix:semicolon
 multiline_comment|/* TCP delayed ack timer */
 DECL|member|ip_xmit_timeout

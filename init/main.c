@@ -1843,7 +1843,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* this should be approx 2 Bo*oMips to start (note initial shift), and will&n;   still work even if initally too large, it will just take slightly longer */
+multiline_comment|/* this should be approx 2 Bo*oMips to start (note initial shift), and will&n;   still work even if initially too large, it will just take slightly longer */
 DECL|variable|loops_per_sec
 r_int
 r_int

@@ -30,7 +30,7 @@ mdefine_line|#define MAP_INHERIT     0x80            /* SunOS doesn&squot;t do t
 DECL|macro|MAP_LOCKED
 mdefine_line|#define MAP_LOCKED      0x100           /* lock the mapping */
 DECL|macro|_MAP_NEW
-mdefine_line|#define _MAP_NEW        0x80000000      /* Binary compatability is fun... */
+mdefine_line|#define _MAP_NEW        0x80000000      /* Binary compatibility is fun... */
 DECL|macro|MAP_GROWSDOWN
 mdefine_line|#define MAP_GROWSDOWN&t;0x0100&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE

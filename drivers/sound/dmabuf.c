@@ -274,7 +274,7 @@ op_div_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* #bits -&gt; #bytes */
-multiline_comment|/*&n;         * Compute a buffer size for time not exeeding 1 second.&n;         * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;         * of sound (using the current speed, sample size and #channels).&n;       */
+multiline_comment|/*&n;         * Compute a buffer size for time not exceeding 1 second.&n;         * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;         * of sound (using the current speed, sample size and #channels).&n;       */
 id|bsz
 op_assign
 id|dsp_dev-&gt;buffsize
@@ -353,7 +353,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;         * The process has specified the buffer sice with SNDCTL_DSP_SETFRAGMENT or&n;         * the buffer sice computation has already been done.&n;       */
+multiline_comment|/*&n;         * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n;         * the buffer size computation has already been done.&n;       */
 r_if
 c_cond
 (paren
@@ -2749,7 +2749,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Loo late to change */
+multiline_comment|/* Too late to change */
 r_return
 op_minus
 id|EINVAL
@@ -2854,7 +2854,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Loo late to change */
+multiline_comment|/* Too late to change */
 r_return
 op_minus
 id|EINVAL
@@ -5159,7 +5159,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n; * Bypass buffering if using mmaped access&n; */
+multiline_comment|/*&n; * Bypass buffering if using mmapped access&n; */
 r_if
 c_cond
 (paren

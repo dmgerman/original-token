@@ -43,7 +43,7 @@ id|nr_async_pages
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvinate&n; * and age; and the initial age for new pages. &n; */
+multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvenate&n; * and age; and the initial age for new pages. &n; */
 DECL|variable|swap_control
 id|swap_control_t
 id|swap_control

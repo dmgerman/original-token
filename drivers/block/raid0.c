@@ -633,7 +633,7 @@ id|size
 op_ge
 id|data-&gt;smallest-&gt;size
 )paren
-multiline_comment|/* If we completly fill the slot */
+multiline_comment|/* If we completely fill the slot */
 (brace
 id|data-&gt;hash_table
 (braket

@@ -79,7 +79,7 @@ r_int
 r_char
 id|zero_dummy
 suffix:semicolon
-multiline_comment|/* hast to be zero */
+multiline_comment|/* has to be zero */
 DECL|member|scb_offset
 r_int
 r_int

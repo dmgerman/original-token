@@ -174,7 +174,7 @@ comma
 suffix:semicolon
 DECL|macro|NR_ISA_ADDRESSES
 mdefine_line|#define&t;NR_ISA_ADDRESSES&t;(sizeof(cy_isa_addresses)/sizeof(unsigned char *))
-multiline_comment|/* This is the per-card data structure containing address, irq, number of&n;   channels, etc. This driver supports a maximum of NR_CARDS cards. If&n;   you need to install more boards, change this constant in the definition&n;   bellow. No other change is necesary to support more boards. */
+multiline_comment|/* This is the per-card data structure containing address, irq, number of&n;   channels, etc. This driver supports a maximum of NR_CARDS cards. If&n;   you need to install more boards, change this constant in the definition&n;   bellow. No other change is necessary to support more boards. */
 DECL|macro|NR_CARDS
 mdefine_line|#define NR_CARDS&t;4
 DECL|variable|cy_card
@@ -11500,7 +11500,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* the code below is responsible to find the boards. Each different&n;       type of board has its own detection routine. If a board is found,&n;       the next cy_card structure available is set by the detection&n;       routine. These funcions are responsible for checking the availability&n;       of cy_card and cy_port data structures and updating the&n;       cy_next_channel. */
+multiline_comment|/* the code below is responsible to find the boards. Each different&n;       type of board has its own detection routine. If a board is found,&n;       the next cy_card structure available is set by the detection&n;       routine. These functions are responsible for checking the availability&n;       of cy_card and cy_port data structures and updating the&n;       cy_next_channel. */
 multiline_comment|/* look for isa boards */
 id|cy_isa_nboard
 op_assign

@@ -1752,7 +1752,7 @@ id|opcode
 comma
 id|rc
 suffix:semicolon
-multiline_comment|/*&n;&t; * Turn off the bits corresponding to registers that are the&n;&t; * target of instructions that set bits in the exception&n;&t; * summary register.  We have some slack doing this because a&n;&t; * register that is the target of a trapping instruction can&n;&t; * be written at most once in the trap shadow.&n;&t; *&n;&t; * Branches, jumps, TRAPBs, EXCBs and calls to PALcode all&n;&t; * bound the trap shadow, so we need not look any further than&n;&t; * up to the first occurance of such an instruction.&n;&t; */
+multiline_comment|/*&n;&t; * Turn off the bits corresponding to registers that are the&n;&t; * target of instructions that set bits in the exception&n;&t; * summary register.  We have some slack doing this because a&n;&t; * register that is the target of a trapping instruction can&n;&t; * be written at most once in the trap shadow.&n;&t; *&n;&t; * Branches, jumps, TRAPBs, EXCBs and calls to PALcode all&n;&t; * bound the trap shadow, so we need not look any further than&n;&t; * up to the first occurrence of such an instruction.&n;&t; */
 r_while
 c_loop
 (paren

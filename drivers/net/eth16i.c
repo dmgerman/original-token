@@ -980,7 +980,7 @@ id|boot
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* To inform initilization that we are in boot probe */
+multiline_comment|/* To inform initialization that we are in boot probe */
 multiline_comment|/*&n;     The MB86985 chip has on register which holds information in which &n;     io address the chip lies. First read this register and compare&n;     it to our current io address and if match then this could&n;     be our chip.&n;  */
 r_if
 c_cond
@@ -2306,7 +2306,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Timeout occured waiting transmit packet received&bslash;n&quot;
+l_string|&quot;Timeout occurred waiting transmit packet received&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2355,7 +2355,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Timeout occured waiting receive packet&bslash;n&quot;
+l_string|&quot;Timeout occurred waiting receive packet&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4020,7 +4020,7 @@ id|PKT_GOOD
 )paren
 )paren
 (brace
-multiline_comment|/* Hmm..something went wrong. Let&squot;s check what error occured */
+multiline_comment|/* Hmm..something went wrong. Let&squot;s check what error occurred */
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
@@ -4150,7 +4150,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Could&squot;n allocate memory for packet (len %d)&bslash;n&quot;
+l_string|&quot;%s: Couldn&squot;t allocate memory for packet (len %d)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4664,7 +4664,7 @@ id|lp-&gt;tx_queue
 )paren
 (brace
 multiline_comment|/* Is there still packets ? */
-multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;   how many packets there is to be sended */
+multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;   how many packets there is to be sent */
 id|outb
 c_func
 (paren

@@ -4386,7 +4386,7 @@ l_int|16
 op_amp
 l_int|0xff
 suffix:semicolon
-multiline_comment|/* sequence nubmer: 24bit */
+multiline_comment|/* sequence number: 24bit */
 id|skb-&gt;data
 (braket
 l_int|6
@@ -4444,7 +4444,7 @@ l_int|1
 op_assign
 l_int|0x03
 suffix:semicolon
-multiline_comment|/* Unumbered information */
+multiline_comment|/* Unnumbered information */
 id|skb-&gt;data
 (braket
 l_int|2

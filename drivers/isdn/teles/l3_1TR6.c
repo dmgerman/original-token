@@ -75,7 +75,7 @@ suffix:semicolon
 )brace
 r_return
 (paren
-l_string|&quot;unkown Message Type PD=N0&quot;
+l_string|&quot;unknown Message Type PD=N0&quot;
 )paren
 suffix:semicolon
 )brace
@@ -139,13 +139,13 @@ suffix:semicolon
 )brace
 r_return
 (paren
-l_string|&quot;unkown Message Type PD=N1&quot;
+l_string|&quot;unknown Message Type PD=N1&quot;
 )paren
 suffix:semicolon
 )brace
 r_return
 (paren
-l_string|&quot;unkown Protokolldiscriminator&quot;
+l_string|&quot;unknown Protokolldiscriminator&quot;
 )paren
 suffix:semicolon
 )brace

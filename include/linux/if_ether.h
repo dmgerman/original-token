@@ -72,7 +72,7 @@ mdefine_line|#define ETH_P_WAN_PPP   0x0007          /* Dummy type for WAN PPP f
 DECL|macro|ETH_P_PPP_MP
 mdefine_line|#define ETH_P_PPP_MP    0x0008          /* Dummy type for PPP MP frames */
 DECL|macro|ETH_P_LOCALTALK
-mdefine_line|#define ETH_P_LOCALTALK 0x0009&t;&t;/* Localtalk pseudeo type &t;*/
+mdefine_line|#define ETH_P_LOCALTALK 0x0009&t;&t;/* Localtalk pseudo type &t;*/
 DECL|macro|ETH_P_PPPTALK
 mdefine_line|#define ETH_P_PPPTALK&t;0x0010&t;&t;/* Dummy type for Atalk over PPP*/
 DECL|macro|ETH_P_TR_802_2

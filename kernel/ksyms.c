@@ -1380,7 +1380,7 @@ id|disk_name
 comma
 multiline_comment|/* for md.c */
 macro_line|#endif
-multiline_comment|/* bimfm_aout */
+multiline_comment|/* binfmt_aout */
 id|X
 c_func
 (paren

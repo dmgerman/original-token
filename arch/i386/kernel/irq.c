@@ -2504,7 +2504,7 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* This bit is a hack because we don&squot;t send timer messages to all processors yet */
-multiline_comment|/* It has to here .. it doesnt work if you put it down the bottom - assembler explodes 8) */
+multiline_comment|/* It has to be here .. it doesn&squot;t work if you put it down the bottom - assembler explodes 8) */
 macro_line|#ifdef __SMP__&t;
 id|set_intr_gate
 c_func

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix tranditionally does this, though.&n; */
+multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
 id|asmlinkage
 r_int

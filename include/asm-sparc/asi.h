@@ -128,7 +128,7 @@ mdefine_line|#define ASI_M_IC_FLCLEAR   0x36
 DECL|macro|ASI_M_DC_FLCLEAR
 mdefine_line|#define ASI_M_DC_FLCLEAR   0x37
 DECL|macro|ASI_M_DCDR
-mdefine_line|#define ASI_M_DCDR         0x39   /* Data Cache Diagnostics Registerl rw, ss */
+mdefine_line|#define ASI_M_DCDR         0x39   /* Data Cache Diagnostics Register rw, ss */
 multiline_comment|/* Sparc V9 TI UltraSparc ASI&squot;s (V8 ploos ploos) */
 multiline_comment|/* ASIs 0x0-0x7f are Supervisor Only.  0x80-0xff are for anyone. */
 multiline_comment|/* You will notice that there are a lot of places where if a normal&n; * ASI is available on the V9, there is also a little-endian version.&n; */

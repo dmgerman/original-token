@@ -220,7 +220,7 @@ r_int
 r_char
 id|outfill
 suffix:semicolon
-multiline_comment|/* # of sec betwen outfill packet */
+multiline_comment|/* # of sec between outfill packet */
 DECL|member|keepalive
 r_int
 r_char

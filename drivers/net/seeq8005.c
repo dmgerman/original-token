@@ -967,7 +967,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#if 0&t;
-multiline_comment|/* &n;&t; * testing the packet buffer memory doesnt work yet&n;&t; * but all other buffer accesses do &n;&t; *&t;&t;&t;- fixing is not a priority&n;&t; */
+multiline_comment|/* &n;&t; * testing the packet buffer memory doesn&squot;t work yet&n;&t; * but all other buffer accesses do &n;&t; *&t;&t;&t;- fixing is not a priority&n;&t; */
 r_if
 c_cond
 (paren

@@ -6,7 +6,7 @@ multiline_comment|/*&n; * Commands for the sysmips(2) call&n; *&n; * sysmips(2) 
 DECL|macro|SETNAME
 mdefine_line|#define SETNAME                    1&t;/* set hostname                  */
 DECL|macro|FLUSH_CACHE
-mdefine_line|#define FLUSH_CACHE&t;&t;   3&t;/* writeback and invalide caches */
+mdefine_line|#define FLUSH_CACHE&t;&t;   3&t;/* writeback and invalidate caches */
 DECL|macro|MIPS_FIXADE
 mdefine_line|#define MIPS_FIXADE                7&t;/* control address error fixing  */
 DECL|macro|MIPS_ATOMIC_SET

@@ -1,4 +1,4 @@
-multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards. &n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:  &n; .   4608 byte packet memory. ( for the 91C92.  Others have more ) &n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ &n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )   &n; .&n; . author:  &n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .   &n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got recieve/xmit handled &n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually useable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc &n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.  &n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree  &n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 + &n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in &n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; ----------------------------------------------------------------------------*/
+multiline_comment|/*------------------------------------------------------------------------&n; . smc9194.c&n; . This is a driver for SMC&squot;s 9000 series of Ethernet cards. &n; .&n; . Copyright (C) 1996 by Erik Stahlman&n; . This software may be used and distributed according to the terms&n; . of the GNU Public License, incorporated herein by reference.&n; .&n; . &quot;Features&quot; of the SMC chip:  &n; .   4608 byte packet memory. ( for the 91C92.  Others have more ) &n; .   EEPROM for configuration&n; .   AUI/TP selection  ( mine has 10Base2/10BaseT select )&n; .&n; . Arguments:&n; . &t;io&t;&t; = for the base address&n; .&t;irq&t; = for the IRQ &n; .&t;ifport = 0 for autodetect, 1 for TP, 2 for AUI ( or 10base2 )   &n; .&n; . author:  &n; . &t;Erik Stahlman&t;&t;&t;&t;( erik@vt.edu )&n; .   &n; . Hardware multicast code from Peter Cammaert ( pc@denkart.be )&n; .&n; . Sources:&n; .    o   SMC databook&n; .    o   skeleton.c by Donald Becker ( becker@cesdis.gsfc.nasa.gov )&n; .    o   ( a LOT of advice from Becker as well )&n; .&n; . History:&n; .&t;12/07/95  Erik Stahlman  written, got receive/xmit handled &n; . &t;01/03/96  Erik Stahlman  worked out some bugs, actually usable!!! :-)&n; .&t;01/06/96  Erik Stahlman&t; cleaned up some, better testing, etc &n; .&t;01/29/96  Erik Stahlman&t; fixed autoirq, added multicast&n; . &t;02/01/96  Erik Stahlman&t; 1. disabled all interrupts in smc_reset&n; .&t;&t;   &t;&t; 2. got rid of post-decrementing bug -- UGH.  &n; .&t;02/13/96  Erik Stahlman  Tried to fix autoirq failure.  Added more&n; .&t;&t;&t;&t; descriptive error messages.&n; .&t;02/15/96  Erik Stahlman  Fixed typo that caused detection failure&n; . &t;02/23/96  Erik Stahlman&t; Modified it to fit into kernel tree  &n; .&t;&t;&t;&t; Added support to change hardware address&n; .&t;&t;&t;&t; Cleared stats on opens&n; .&t;02/26/96  Erik Stahlman&t; Trial support for Kernel 1.2.13&n; .&t;&t;&t;&t; Kludge for automatic IRQ detection&n; .&t;03/04/96  Erik Stahlman&t; Fixed kernel 1.3.70 + &n; .&t;&t;&t;&t; Fixed bug reported by Gardner Buchanan in &n; .&t;&t;&t;&t;   smc_enable, with outw instead of outb&n; .&t;03/06/96  Erik Stahlman  Added hardware multicast from Peter Cammaert&n; ----------------------------------------------------------------------------*/
 DECL|variable|version
 r_static
 r_const
@@ -41,7 +41,7 @@ DECL|macro|request_irq
 mdefine_line|#define request_irq( x, y, z, u, v ) request_irq( x, y, z, u )
 macro_line|#endif
 multiline_comment|/*&n; . Do you want to use this with old kernels.  &n; . WARNING: this is not well tested.  &n;#define SUPPORT_OLD_KERNEL&n;*/
-multiline_comment|/*&n; . Do you want to use 32 bit xfers?  This should work on all chips, as&n; . the chipset is designed to accomodate them.   &n;*/
+multiline_comment|/*&n; . Do you want to use 32 bit xfers?  This should work on all chips, as&n; . the chipset is designed to accommodate them.   &n;*/
 DECL|macro|USE_32_BIT
 mdefine_line|#define USE_32_BIT 1
 multiline_comment|/* &n; .the SMC9194 can be at any of the following port addresses.  To change,&n; .for a slightly different card, you can add it to the array.  Keep in &n; .mind that the array must end in zero.&n;*/
@@ -160,7 +160,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*-----------------------------------------------------------------&n; .&n; .  The driver can be entered at any of the following entry points.&n; . &n; .------------------------------------------------------------------  */
-multiline_comment|/*&n; . This is called by  register_netdev().  It is responsible for &n; . checking the portlist for the SMC9000 series chipset.  If it finds &n; . one, then it will initialize the device, find the hardware information,&n; . and sets up the appropriate device parameters.   &n; . NOTE: Interrupts are *OFF* when this procedure is called.&n; .&n; . NB:This shouldn&squot;t be static since it is refered to externally.&n;*/
+multiline_comment|/*&n; . This is called by  register_netdev().  It is responsible for &n; . checking the portlist for the SMC9000 series chipset.  If it finds &n; . one, then it will initialize the device, find the hardware information,&n; . and sets up the appropriate device parameters.   &n; . NOTE: Interrupts are *OFF* when this procedure is called.&n; .&n; . NB:This shouldn&squot;t be static since it is referred to externally.&n;*/
 r_int
 id|smc_init
 c_func
@@ -295,7 +295,7 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif 
-multiline_comment|/*&n; . This is a seperate procedure to handle the receipt of a packet, to&n; . leave the interrupt code looking slightly cleaner &n;*/
+multiline_comment|/*&n; . This is a separate procedure to handle the receipt of a packet, to&n; . leave the interrupt code looking slightly cleaner &n;*/
 r_inline
 r_static
 r_void
@@ -411,7 +411,7 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* this puts the device in an inactve state */
+multiline_comment|/* this puts the device in an inactive state */
 r_static
 r_void
 id|smc_shutdown
@@ -541,7 +541,7 @@ op_plus
 id|TCR
 )paren
 suffix:semicolon
-multiline_comment|/* set the control register to automatically&n;&t;   release succesfully transmitted packets, to make the best &n;&t;   use out of our limitted memory */
+multiline_comment|/* set the control register to automatically&n;&t;   release successfully transmitted packets, to make the best &n;&t;   use out of our limited memory */
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -651,7 +651,7 @@ id|INT_MASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; . Function: smc_shutdown&n; . Purpose:  closes down the SMC91xxx chip.&n; . Method:   &n; .&t;1. zero the interrupt mask&n; .&t;2. clear the enable recieve flag&n; .&t;3. clear the enable xmit flags&n; .&n; . TODO: &n; .   (1) maybe utilize power down mode.&n; .&t;Why not yet?  Because while the chip will go into power down mode,&n; .&t;the manual says that it will wake up in response to any I/O requests&n; .&t;in the register space.   Empirical results do not show this working.&n;*/
+multiline_comment|/*&n; . Function: smc_shutdown&n; . Purpose:  closes down the SMC91xxx chip.&n; . Method:   &n; .&t;1. zero the interrupt mask&n; .&t;2. clear the enable receive flag&n; .&t;3. clear the enable xmit flags&n; .&n; . TODO: &n; .   (1) maybe utilize power down mode.&n; .&t;Why not yet?  Because while the chip will go into power down mode,&n; .&t;the manual says that it will wake up in response to any I/O requests&n; .&t;in the register space.   Empirical results do not show this working.&n;*/
 DECL|function|smc_shutdown
 r_static
 r_void
@@ -1712,7 +1712,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )  &n; |   Input parameters: &n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return sucess&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check &n; |&n; |   Output: &n; |&t;0 --&gt; there is a device&n; |&t;anything else, error &n; | &n; ---------------------------------------------------------------------------&n;*/
+multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )  &n; |   Input parameters: &n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check &n; |&n; |   Output: &n; |&t;0 --&gt; there is a device&n; |&t;anything else, error &n; | &n; ---------------------------------------------------------------------------&n;*/
 DECL|function|smc_init
 r_int
 id|smc_init
@@ -2169,7 +2169,7 @@ l_int|0xF
 )braket
 )paren
 (brace
-multiline_comment|/* I don&squot;t regonize this chip, so... */
+multiline_comment|/* I don&squot;t recognize this chip, so... */
 id|printk
 c_func
 (paren
@@ -2464,7 +2464,7 @@ op_logical_neg
 id|version_string
 )paren
 (brace
-multiline_comment|/* I shouldnt&squot; get here because this call was done before.... */
+multiline_comment|/* I shouldn&squot;t get here because this call was done before.... */
 r_return
 op_minus
 id|ENODEV
@@ -3628,7 +3628,7 @@ c_func
 (paren
 id|KERN_WARNING
 id|CARDNAME
-l_string|&quot;: Recieve Interrupt&bslash;n&quot;
+l_string|&quot;: Receive Interrupt&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4591,7 +4591,7 @@ c_func
 (paren
 id|KERN_DEBUG
 id|CARDNAME
-l_string|&quot;: Late collision occured on last xmit.&bslash;n&quot;
+l_string|&quot;: Late collision occurred on last xmit.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_window_errors
@@ -4835,7 +4835,7 @@ op_plus
 id|RCR
 )paren
 suffix:semicolon
-multiline_comment|/* BUG?  I never disable promiscuous mode if multicasting was turned on. &n;   Now, I turn off promiscouos mode, but I don&squot;t do anything to multicasting&n;   when promiscuous mode is turned on. &n;*/
+multiline_comment|/* BUG?  I never disable promiscuous mode if multicasting was turned on. &n;   Now, I turn off promiscuous mode, but I don&squot;t do anything to multicasting&n;   when promiscuous mode is turned on. &n;*/
 multiline_comment|/* Here, I am setting this to accept all multicast packets.  &n;&t;   I don&squot;t need to zero the multicast table, because the flag is&n;&t;   checked before the table is &n;&t;*/
 macro_line|#ifdef  SUPPORT_OLD_KERNEL 
 r_else

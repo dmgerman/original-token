@@ -2498,7 +2498,7 @@ id|savectx
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Using this method to free up mmu entries eliminates a lot of&n; * potention races since we have a kernel that incurs tlb&n; * replacement faults.  There may be performance penalties.&n; */
+multiline_comment|/* Using this method to free up mmu entries eliminates a lot of&n; * potential races since we have a kernel that incurs tlb&n; * replacement faults.  There may be performance penalties.&n; */
 DECL|function|sun4c_user_strategy
 r_static
 r_inline
@@ -2835,7 +2835,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* READ THIS:  If you put any diagnostic printing code in any of the kernel&n; *             fault handling code you will lose badly.  This is the most&n; *             delicate piece of code in the entire kernel, atomicity of&n; *             kernel tlb replacement must be guarenteed.  This is why we&n; *             have seperate user and kernel allocation rings to alleviate&n; *             as many bad interactions as possible.&n; *&n; * XXX Someday make this into a fast in-window trap handler to avoid&n; * XXX any and all races.  *High* priority, also for performance.&n; */
+multiline_comment|/* READ THIS:  If you put any diagnostic printing code in any of the kernel&n; *             fault handling code you will lose badly.  This is the most&n; *             delicate piece of code in the entire kernel, atomicity of&n; *             kernel tlb replacement must be guaranteed.  This is why we&n; *             have separate user and kernel allocation rings to alleviate&n; *             as many bad interactions as possible.&n; *&n; * XXX Someday make this into a fast in-window trap handler to avoid&n; * XXX any and all races.  *High* priority, also for performance.&n; */
 DECL|function|sun4c_quick_kernel_fault
 r_static
 r_void

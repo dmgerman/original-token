@@ -204,7 +204,7 @@ id|sk-&gt;nr-&gt;state
 r_case
 id|NR_STATE_0
 suffix:colon
-multiline_comment|/* Magic here: If we listen() and a new link dies before it&n;&t;&t;&t;   is accepted() it isnt &squot;dead&squot; so doesnt get removed. */
+multiline_comment|/* Magic here: If we listen() and a new link dies before it&n;&t;&t;&t;   is accepted() it isn&squot;t &squot;dead&squot; so doesn&squot;t get removed. */
 r_if
 c_cond
 (paren

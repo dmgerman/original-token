@@ -127,7 +127,7 @@ id|IOBASE_LEN
 id|prom_printf
 c_func
 (paren
-l_string|&quot;alloc_io: Mapping ouside IOBASE area&bslash;n&quot;
+l_string|&quot;alloc_io: Mapping outside IOBASE area&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt
@@ -240,7 +240,7 @@ id|offset
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Does DVMA allocations with PAGE_SIZE granulatity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundry restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA see&squot;s a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
+multiline_comment|/* Does DVMA allocations with PAGE_SIZE granularity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundary restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA sees a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
 DECL|function|sparc_dvma_malloc
 r_void
 op_star

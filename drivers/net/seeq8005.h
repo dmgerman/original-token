@@ -94,7 +94,7 @@ mdefine_line|#define SEEQSTAT_FIFO_EMPTY&t;(0x4000)
 DECL|macro|SEEQSTAT_FIFO_DIR
 mdefine_line|#define SEEQSTAT_FIFO_DIR&t;(0x8000)&t;/* 1=read, 0=write */
 DECL|macro|SEEQCFG1_BUFFER_MASK
-mdefine_line|#define SEEQCFG1_BUFFER_MASK&t;(0x000f)&t;/* define what mapps into the BUFFER register */
+mdefine_line|#define SEEQCFG1_BUFFER_MASK&t;(0x000f)&t;/* define what maps into the BUFFER register */
 DECL|macro|SEEQCFG1_BUFFER_MAC0
 mdefine_line|#define SEEQCFG1_BUFFER_MAC0&t;(0x0000)&t;/* MAC station addresses 0-5 */
 DECL|macro|SEEQCFG1_BUFFER_MAC1

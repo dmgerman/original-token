@@ -538,7 +538,7 @@ id|rawp
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;This is a magic hack to spot IPX packets. Older Novell breaks&n;&t; *&t;the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;&t; *&t;layer. We look for FFFF which isnt a used 802.2 SSAP/DSAP. This&n;&t; *&t;won&squot;t work for fault tolerant netware but does for the rest.&n;&t; */
+multiline_comment|/*&n;&t; *&t;This is a magic hack to spot IPX packets. Older Novell breaks&n;&t; *&t;the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;&t; *&t;layer. We look for FFFF which isn&squot;t a used 802.2 SSAP/DSAP. This&n;&t; *&t;won&squot;t work for fault tolerant netware but does for the rest.&n;&t; */
 r_if
 c_cond
 (paren

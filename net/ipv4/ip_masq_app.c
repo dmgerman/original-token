@@ -890,7 +890,7 @@ macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
 id|printk
 c_func
 (paren
-l_string|&quot;masq_fix_ack_seq() : substracted delta (%d) from ack_seq&bslash;n&quot;
+l_string|&quot;masq_fix_ack_seq() : subtracted delta (%d) from ack_seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;delta
 )paren
@@ -913,7 +913,7 @@ macro_line|#if DEBUG_CONFIG_IP_MASQ_APP
 id|printk
 c_func
 (paren
-l_string|&quot;masq_fix_ack_seq() : substracted previous_delta (%d) from ack_seq&bslash;n&quot;
+l_string|&quot;masq_fix_ack_seq() : subtracted previous_delta (%d) from ack_seq&bslash;n&quot;
 comma
 id|ms_seq-&gt;previous_delta
 )paren

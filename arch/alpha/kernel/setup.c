@@ -391,7 +391,7 @@ l_int|1
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-multiline_comment|/* Hack for Jensen... since we&squot;re restricted to 8 or 16 &n;&t; * chars for boot flags depending on the boot mode,&n;&t; * we need some shorthand.  This should do for &n;&t; * installation.  Later we&squot;ll add other abbreviaitions&n;&t; * as well...&n;&t; */
+multiline_comment|/* Hack for Jensen... since we&squot;re restricted to 8 or 16 &n;&t; * chars for boot flags depending on the boot mode,&n;&t; * we need some shorthand.  This should do for &n;&t; * installation.  Later we&squot;ll add other abbreviations&n;&t; * as well...&n;&t; */
 r_if
 c_cond
 (paren

@@ -184,7 +184,7 @@ multiline_comment|/*   NOTE: This mask is for the upper */
 multiline_comment|/*   word of the register. */
 multiline_comment|/*&n; *  IRQChannelReg bits/masks.&n; */
 DECL|macro|HP100_ZERO_WAIT_EN
-mdefine_line|#define HP100_ZERO_WAIT_EN&t;0x80&t;/* 0:No, 1:Yes assers NOWS signal */
+mdefine_line|#define HP100_ZERO_WAIT_EN&t;0x80&t;/* 0:No, 1:Yes asserts NOWS signal */
 DECL|macro|HP100_LEVEL_IRQ
 mdefine_line|#define HP100_LEVEL_IRQ&t;&t;0x10&t;/* 0:Edge, 1:Level type interrupts. */
 multiline_comment|/*   Only valid on EISA cards. */
@@ -269,7 +269,7 @@ mdefine_line|#define HP100_TX_IDLE&t;&t;0x40&t;/* 0:Yes, 1:No currently Txing pk
 DECL|macro|HP100_RX_EN
 mdefine_line|#define HP100_RX_EN&t;&t;0x20&t;/* 0:No, 1:Yes allow receiving of pkts */
 DECL|macro|HP100_TX_EN
-mdefine_line|#define HP100_TX_EN&t;&t;0x10&t;/* 0:No, 1:Yes allow transmiting of pkts */
+mdefine_line|#define HP100_TX_EN&t;&t;0x10&t;/* 0:No, 1:Yes allow transmitting of pkts */
 DECL|macro|HP100_ACC_ERRORED
 mdefine_line|#define HP100_ACC_ERRORED&t;0x08&t;/* 0:No, 1:Yes allow Rx of errored pkts */
 DECL|macro|HP100_ACC_MC

@@ -752,7 +752,7 @@ comma
 (brace
 l_int|0x1e
 comma
-l_string|&quot;Response to Status enuiry&quot;
+l_string|&quot;Response to Status enquiry&quot;
 comma
 l_string|&quot;&quot;
 )brace
@@ -880,7 +880,7 @@ comma
 (brace
 l_int|0x39
 comma
-l_string|&quot;Bearer capability not auhorized&quot;
+l_string|&quot;Bearer capability not authorized&quot;
 comma
 l_string|&quot;&quot;
 )brace
@@ -3320,7 +3320,7 @@ id|nr
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* When not found, give apropriate msg */
+multiline_comment|/* When not found, give appropriate msg */
 r_if
 c_cond
 (paren

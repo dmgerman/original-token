@@ -3494,7 +3494,7 @@ id|tmp-&gt;lun
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;&t;&t; * A successful selection is defined as one that &n;&t;&t;&t; * leaves us with the command connected and &n;&t;&t;&t; * in hostdata-&gt;connected, OR has terminated the&n;&t;&t;&t; * command.&n;&t;&t;&t; *&n;&t;&t;&t; * With successfull commands, we fall through&n;&t;&t;&t; * and see if we can do an information transfer,&n;&t;&t;&t; * with failures we will restart.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * A successful selection is defined as one that &n;&t;&t;&t; * leaves us with the command connected and &n;&t;&t;&t; * in hostdata-&gt;connected, OR has terminated the&n;&t;&t;&t; * command.&n;&t;&t;&t; *&n;&t;&t;&t; * With successful commands, we fall through&n;&t;&t;&t; * and see if we can do an information transfer,&n;&t;&t;&t; * with failures we will restart.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5766,7 +5766,7 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Wait for the target to indicate a valid phase by asserting &n;     * REQ.  Once this happens, we&squot;ll have either a MSGOUT phase &n;     * and can immediately send the ABORT message, or we&squot;ll have some &n;     * other phase and will have to source/sink data.&n;     * &n;     * We really don&squot;t care what value was on the bus or what value&n;     * the target see&squot;s, so we just handshake.&n;     */
+multiline_comment|/* &n;     * Wait for the target to indicate a valid phase by asserting &n;     * REQ.  Once this happens, we&squot;ll have either a MSGOUT phase &n;     * and can immediately send the ABORT message, or we&squot;ll have some &n;     * other phase and will have to source/sink data.&n;     * &n;     * We really don&squot;t care what value was on the bus or what value&n;     * the target sees, so we just handshake.&n;     */
 r_while
 c_loop
 (paren
@@ -7068,7 +7068,7 @@ macro_line|#if (NDEBUG &amp; NDEBUG_C400_PWRITE)
 id|printk
 c_func
 (paren
-l_string|&quot;53C400w:    got it, reading reset interupt reg&bslash;n&quot;
+l_string|&quot;53C400w:    got it, reading reset interrupt reg&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

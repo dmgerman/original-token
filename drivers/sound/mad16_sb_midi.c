@@ -126,7 +126,7 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 secods&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The mad16_sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop

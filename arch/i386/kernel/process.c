@@ -113,7 +113,7 @@ id|hlt_counter
 )paren
 (brace
 macro_line|#ifdef CONFIG_APM
-multiline_comment|/* If the APM BIOS is not enabled, or there&n;&t;&t;&t;&t; is an error calling the idle routine, we&n;&t;&t;&t;&t; should hlt if possible.  We need to check&n;&t;&t;&t;&t; need_resched again because an interrupt&n;&t;&t;&t;&t; may have occured in apm_do_idle(). */
+multiline_comment|/* If the APM BIOS is not enabled, or there&n;&t;&t;&t;&t; is an error calling the idle routine, we&n;&t;&t;&t;&t; should hlt if possible.  We need to check&n;&t;&t;&t;&t; need_resched again because an interrupt&n;&t;&t;&t;&t; may have occurred in apm_do_idle(). */
 id|start_bh_atomic
 c_func
 (paren

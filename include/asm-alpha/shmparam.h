@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASMAXP_SHMPARAM_H
 DECL|macro|_ASMAXP_SHMPARAM_H
 mdefine_line|#define _ASMAXP_SHMPARAM_H
-multiline_comment|/*&n; * Address range for shared memory attaches if no address passed to&n; * shmat().  These ought to be changed to something &gt;4GB so 32-bit&n; * errors are caught more easily.  However, they don&squot;t seem to be used&n; * execept for ELF stuff, so it&squot;s not really critical until we get ELF&n; * support for the Alpha.&n; */
+multiline_comment|/*&n; * Address range for shared memory attaches if no address passed to&n; * shmat().  These ought to be changed to something &gt;4GB so 32-bit&n; * errors are caught more easily.  However, they don&squot;t seem to be used&n; * except for ELF stuff, so it&squot;s not really critical until we get ELF&n; * support for the Alpha.&n; */
 DECL|macro|SHM_RANGE_START
 mdefine_line|#define SHM_RANGE_START&t;0x50000000
 DECL|macro|SHM_RANGE_END

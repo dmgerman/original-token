@@ -749,7 +749,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* file and then later savely to  */
+multiline_comment|/* file and then later safely to  */
 id|proc_readscsi
 c_func
 (paren

@@ -959,7 +959,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check, if a numer contains wilcard-characters, in which case it&n; * is for incoming purposes only.&n; */
+multiline_comment|/*&n; * Check, if a number contains wildcard-characters, in which case it&n; * is for incoming purposes only.&n; */
 r_static
 r_int
 DECL|function|isdn_net_checkwild
@@ -2534,7 +2534,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Generic routine to send out an skbuf.&n; * If lowlevel-device does not support supports skbufs, use&n; * standard send-routine, else sind directly.&n; *&n; * Return: 0 on success, !0 on failure.&n; * Side-effects: ndev-&gt;tbusy is cleared on success.&n; */
+multiline_comment|/*&n; * Generic routine to send out an skbuf.&n; * If lowlevel-device does not support supports skbufs, use&n; * standard send-routine, else send directly.&n; *&n; * Return: 0 on success, !0 on failure.&n; * Side-effects: ndev-&gt;tbusy is cleared on success.&n; */
 r_int
 DECL|function|isdn_net_send_skb
 id|isdn_net_send_skb
@@ -2673,7 +2673,7 @@ id|skb
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* For the other encaps the header has allready been built */
+multiline_comment|/* For the other encaps the header has already been built */
 macro_line|#ifdef CONFIG_ISDN_PPP
 r_if
 c_cond
@@ -3450,7 +3450,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*      This is simply a copy from std. eth.c EXCEPT we pull ETH_HLEN&n; *      instead of dev-&gt;hard_header_len off. This is done, because the&n; *      lowlevel-driver has already pulled of it&squot;s stuff, when we get&n; *      here and this routine only get&squot;s called whit p_encap == ETHER.&n; *      Determine the packet&squot;s protocol ID. The rule here is that we&n; *      assume 802.3 if the type field is short enough to be a length.&n; *      This is normal practice and works for any &squot;now in use&squot; protocol.&n; */
+multiline_comment|/*      This is simply a copy from std. eth.c EXCEPT we pull ETH_HLEN&n; *      instead of dev-&gt;hard_header_len off. This is done because the&n; *      lowlevel-driver has already pulled off its stuff when we get&n; *      here and this routine only gets called with p_encap == ETHER.&n; *      Determine the packet&squot;s protocol ID. The rule here is that we&n; *      assume 802.3 if the type field is short enough to be a length.&n; *      This is normal practice and works for any &squot;now in use&squot; protocol.&n; */
 DECL|function|isdn_net_type_trans
 r_int
 r_int
@@ -3576,7 +3576,7 @@ id|rawp
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;         *      This is a magic hack to spot IPX packets. Older Novell breaks&n;         *      the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;         *      layer. We look for FFFF which isnt a used 802.2 SSAP/DSAP. This&n;         *      won&squot;t work for fault tolerant netware but does for the rest.&n;         */
+multiline_comment|/*&n;         *      This is a magic hack to spot IPX packets. Older Novell breaks&n;         *      the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;         *      layer. We look for FFFF which isn&squot;t a used 802.2 SSAP/DSAP. This&n;         *      won&squot;t work for fault tolerant netware but does for the rest.&n;         */
 r_if
 c_cond
 (paren
@@ -3975,7 +3975,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  receive callback for lovlevel drivers, which support skb&squot;s&n; */
+multiline_comment|/*&n; *  receive callback for lowlevel drivers, which support skb&squot;s&n; */
 r_int
 DECL|function|isdn_net_rcv_skb
 id|isdn_net_rcv_skb
@@ -4199,7 +4199,7 @@ op_minus
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  build an header&n; *  depends on encaps that is beeing used.&n; */
+multiline_comment|/*&n; *  build an header&n; *  depends on encaps that is being used.&n; */
 r_static
 r_int
 DECL|function|isdn_net_header
@@ -4776,7 +4776,7 @@ op_assign
 op_amp
 id|isdn_net_start_xmit
 suffix:semicolon
-multiline_comment|/* &n;&t; *  up till binding we ask the protocol layer to reserve as much&n;&t; *  as we migth need for HL layer&n;         */
+multiline_comment|/* &n;&t; *  up till binding we ask the protocol layer to reserve as much&n;&t; *  as we might need for HL layer&n;         */
 r_for
 c_loop
 (paren
@@ -4851,7 +4851,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * I picked the pattern-matching-functions from an old GNU-tar version (1.10)&n; * It was originaly written and put to PD by rs@mirror.TMC.COM (Rich Salz)&n; */
+multiline_comment|/*&n; * I picked the pattern-matching-functions from an old GNU-tar version (1.10)&n; * It was originally written and put to PD by rs@mirror.TMC.COM (Rich Salz)&n; */
 r_static
 r_int
 DECL|function|isdn_net_Star
@@ -4900,7 +4900,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Shell-type Pattern-matching for incoming caller-Ids&n; * This function gets a string in s and checks, if it matches the pattern&n; * given in p. It returns 1 on success, 0 otherwise.&n; *&n; * Posible Patterns:&n; *&n; * &squot;?&squot;     matches one character&n; * &squot;*&squot;     matches zero or more characters&n; * [xyz]   matches the set of charcters in brackets.&n; * [^xyz]  matches any single character not in the set of characters&n; */
+multiline_comment|/*&n; * Shell-type Pattern-matching for incoming caller-Ids&n; * This function gets a string in s and checks, if it matches the pattern&n; * given in p. It returns 1 on success, 0 otherwise.&n; *&n; * Possible Patterns:&n; *&n; * &squot;?&squot;     matches one character&n; * &squot;*&squot;     matches zero or more characters&n; * [xyz]   matches the set of characters in brackets.&n; * [^xyz]  matches any single character not in the set of characters&n; */
 r_static
 r_int
 DECL|function|isdn_net_wildmat
@@ -5281,7 +5281,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * An incoming call-request has arrived.&n; * Search the interface-chain for an aproppriate interface.&n; * If found, connect the interface to the ISDN-channel and initiate&n; * D- and B-Channel-setup. If secure-flag is set, accept only&n; * configured phone-numbers. If callback-flag is set, initiate&n; * callback-dialing.&n; *&n; * Return-Value: 0 = No appropriate interface for this call.&n; *               1 = Call accepted&n; *               2 = Do callback&n; */
+multiline_comment|/*&n; * An incoming call-request has arrived.&n; * Search the interface-chain for an appropriate interface.&n; * If found, connect the interface to the ISDN-channel and initiate&n; * D- and B-Channel-setup. If secure-flag is set, accept only&n; * configured phone-numbers. If callback-flag is set, initiate&n; * callback-dialing.&n; *&n; * Return-Value: 0 = No appropriate interface for this call.&n; *               1 = Call accepted&n; *               2 = Do callback&n; */
 r_int
 DECL|function|isdn_net_find_icall
 id|isdn_net_find_icall
@@ -5642,7 +5642,7 @@ c_loop
 id|p
 )paren
 (brace
-multiline_comment|/* If last check has trigered as binding-swap, revert it */
+multiline_comment|/* If last check has triggered as binding-swap, revert it */
 r_switch
 c_cond
 (paren
@@ -7453,7 +7453,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set interface-parameters.&n; * Allways set all parameters, so the user-level application is responsible&n; * for not overwriting existing setups. It has to get the current&n; * setup first, if only selected parameters are to be changed.&n; */
+multiline_comment|/*&n; * Set interface-parameters.&n; * Always set all parameters, so the user-level application is responsible&n; * for not overwriting existing setups. It has to get the current&n; * setup first, if only selected parameters are to be changed.&n; */
 DECL|function|isdn_net_setcfg
 r_int
 id|isdn_net_setcfg

@@ -85,7 +85,7 @@ mdefine_line|#define SCMD_GET_D_SIZE     0xA2    /* get the whole disk informati
 multiline_comment|/*&n; * Borrowed from hd.c. Allows to optimize multiple port read commands.&n; */
 DECL|macro|S_READ_DATA
 mdefine_line|#define S_READ_DATA( port, buf, nr )      insb( port, buf, nr )
-multiline_comment|/*&n; * We assume that there are no audio disks with TOC lenght more than this&n; * number (I personally have never seen disks with morethan 20 fragments).&n; */
+multiline_comment|/*&n; * We assume that there are no audio disks with TOC length more than this&n; * number (I personally have never seen disks with more than 20 fragments).&n; */
 DECL|macro|SJCD_MAX_TRACKS
 mdefine_line|#define SJCD_MAX_TRACKS&t;&t;100
 DECL|struct|msf

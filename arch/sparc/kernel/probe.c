@@ -1885,7 +1885,7 @@ l_int|10
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Probe and map in the Auxiliaary I/O register */
+multiline_comment|/* Probe and map in the Auxiliary I/O register */
 r_void
 DECL|function|probe_auxio
 id|probe_auxio
@@ -2030,7 +2030,7 @@ l_int|0
 dot
 id|reg_size
 comma
-l_string|&quot;auxilliaryIO&quot;
+l_string|&quot;auxiliaryIO&quot;
 comma
 id|auxregs
 (braket

@@ -1209,7 +1209,7 @@ id|numChars
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function does all command procesing for interfacing to gdb.  It&n; * returns 1 if you should skip the instruction at the trap address, 0&n; * otherwise.&n; */
+multiline_comment|/*&n; * This function does all command processing for interfacing to gdb.  It&n; * returns 1 if you should skip the instruction at the trap address, 0&n; * otherwise.&n; */
 DECL|function|handle_exception
 r_void
 id|handle_exception

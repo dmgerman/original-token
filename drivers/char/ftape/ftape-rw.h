@@ -131,7 +131,7 @@ r_volatile
 r_int
 id|remaining
 suffix:semicolon
-multiline_comment|/* points to next segment (contigious) to be handled,&n;&t; * or is zero if no read-ahead is allowed.&n;&t; */
+multiline_comment|/* points to next segment (contiguous) to be handled,&n;&t; * or is zero if no read-ahead is allowed.&n;&t; */
 DECL|member|next_segment
 r_volatile
 r_int

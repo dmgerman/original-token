@@ -662,7 +662,7 @@ OG
 l_int|4
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Verify that we can savely get the additional parameters&n;&t;&t; * from the user stack.  Of course I could read the params&n;&t;&t; * from unaligned addresses ...  Consider this a programming&n;&t;&t; * course caliber .45.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Verify that we can safely get the additional parameters&n;&t;&t; * from the user stack.  Of course I could read the params&n;&t;&t; * from unaligned addresses ...  Consider this a programming&n;&t;&t; * course caliber .45.&n;&t;&t; */
 id|usp
 op_assign
 id|regs-&gt;reg29

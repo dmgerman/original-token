@@ -1052,7 +1052,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This almost never occurs, isnt in performance critical paths&n; *&t;and we can thus be relaxed about it&n; */
+multiline_comment|/*&n; *&t;This almost never occurs, isn&squot;t in performance critical paths&n; *&t;and we can thus be relaxed about it&n; */
 DECL|function|dev_lock_wait
 r_extern
 id|__inline__

@@ -405,9 +405,9 @@ mdefine_line|#define&t;TRING_ERROR&t;&t;&t;0x00008000&t;/* error summary */
 DECL|macro|TRING_ETxTO
 mdefine_line|#define&t;TRING_ETxTO&t;&t;&t;0x00004000&t;/* Tx time out */
 DECL|macro|TRING_ELCOLL
-mdefine_line|#define&t;TRING_ELCOLL&t;&t;0x00000200&t;/* late collition */
+mdefine_line|#define&t;TRING_ELCOLL&t;&t;0x00000200&t;/* late collision */
 DECL|macro|TRING_EFCOLL
-mdefine_line|#define&t;TRING_EFCOLL&t;&t;0x00000100&t;/* fatal collition */
+mdefine_line|#define&t;TRING_EFCOLL&t;&t;0x00000100&t;/* fatal collision */
 DECL|macro|TRING_ELCARR
 mdefine_line|#define&t;TRING_ELCARR&t;&t;0x00000800&t;/* carrier lost */
 DECL|macro|TRING_ENCARR
@@ -1763,7 +1763,7 @@ suffix:colon
 l_string|&quot;10baseT&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Set the full duplux match frame. */
+multiline_comment|/* Set the full duplex match frame. */
 id|tio_write
 c_func
 (paren
@@ -5617,7 +5617,7 @@ op_complement
 l_int|3
 suffix:semicolon
 macro_line|#ifdef&t;MODULE
-multiline_comment|/* cmpare requested IRQ/IO address */
+multiline_comment|/* compare requested IRQ/IO address */
 r_if
 c_cond
 (paren

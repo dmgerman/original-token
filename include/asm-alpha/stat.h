@@ -59,10 +59,10 @@ r_int
 r_int
 id|st_ctime
 suffix:semicolon
-DECL|member|st_blkize
+DECL|member|st_blksize
 r_int
 r_int
-id|st_blkize
+id|st_blksize
 suffix:semicolon
 DECL|member|st_blocks
 r_int

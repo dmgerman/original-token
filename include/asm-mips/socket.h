@@ -49,7 +49,7 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
 DECL|macro|SO_BSDCOMPAT
 mdefine_line|#define SO_BSDCOMPAT&t;14
-multiline_comment|/*&n; * Wierd.  There are two ABIs; in the old one SOCK_STREAM and SOCK_DGRAM&n; * have swapped values.  I choose to be compatible with the new one.&n; */
+multiline_comment|/*&n; * Weird.  There are two ABIs; in the old one SOCK_STREAM and SOCK_DGRAM&n; * have swapped values.  I choose to be compatible with the new one.&n; */
 DECL|macro|SOCK_DGRAM
 mdefine_line|#define SOCK_DGRAM&t;1&t;&t;/* datagram (conn.less) socket&t;*/
 DECL|macro|SOCK_STREAM

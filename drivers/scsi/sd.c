@@ -299,7 +299,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Similarily, if the device has the write protect tab set,&n;&t; * have the open fail if the user expects to be able to write&n;&t; * to the thing.&n;&t; */
+multiline_comment|/*&n;&t; * Similarly, if the device has the write protect tab set,&n;&t; * have the open fail if the user expects to be able to write&n;&t; * to the thing.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5082,22 +5082,18 @@ suffix:semicolon
 )brace
 id|mb
 op_assign
-(paren
-id|hard_sector
-op_star
 id|rscsi_disks
 (braket
 id|i
 )braket
 dot
 id|capacity
-)paren
 op_div
-(paren
 l_int|1024
 op_star
+id|hard_sector
+op_div
 l_int|1024
-)paren
 suffix:semicolon
 multiline_comment|/* sz = div(m/100, 10);  this seems to not be in the libr */
 id|m

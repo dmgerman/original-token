@@ -3583,8 +3583,9 @@ c_cond
 id|dma
 op_logical_and
 op_logical_neg
-id|mem_map
-(braket
+id|PageDMA
+c_func
+(paren
 id|MAP_NR
 c_func
 (paren
@@ -3594,9 +3595,9 @@ c_func
 id|page
 )paren
 )paren
-)braket
-dot
-id|dma
+op_plus
+id|mem_map
+)paren
 )paren
 r_goto
 id|check_table

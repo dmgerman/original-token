@@ -71,7 +71,7 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START     KSEG2
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
-multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * Since the Mips has choosen some quite missleading names for the&n; * valid and dirty bits they&squot;re defined here but only their synonyms&n; * will be used.&n; */
+multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * Since the Mips has chosen some quite misleading names for the&n; * valid and dirty bits they&squot;re defined here but only their synonyms&n; * will be used.&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT               (1&lt;&lt;0)  /* implemented in software */
 DECL|macro|_PAGE_COW
@@ -2378,7 +2378,7 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * MIPS doesn&squot;t need any external MMU info: the kernel page tables contain&n; * all the necessary information.  We use this hook though to load the&n; * TLB as early as possible with uptodate information avoiding unecessary&n; * exceptions.&n; */
+multiline_comment|/*&n; * MIPS doesn&squot;t need any external MMU info: the kernel page tables contain&n; * all the necessary information.  We use this hook though to load the&n; * TLB as early as possible with uptodate information avoiding unnecessary&n; * exceptions.&n; */
 r_extern
 r_void
 id|update_mmu_cache

@@ -147,7 +147,7 @@ DECL|macro|EISA_REGS_EN
 mdefine_line|#define EISA_REGS_EN&t;0x20&t;/* Enable EISA ID and Control Registers */
 DECL|macro|EISA_IOB
 mdefine_line|#define EISA_IOB        0x1f&t;/* Compare bits for I/O Base Address */
-multiline_comment|/*&n;** I/O Congiguration/Management Register bit definitions (EWRK3_CMR)&n;*/
+multiline_comment|/*&n;** I/O Configuration/Management Register bit definitions (EWRK3_CMR)&n;*/
 DECL|macro|CMR_RA
 mdefine_line|#define CMR_RA          0x80    /* Read Ahead */
 DECL|macro|CMR_WB

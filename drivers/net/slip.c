@@ -5117,7 +5117,7 @@ id|i
 )braket
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;&t; * unregistred while close proc.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * VSV = if dev-&gt;start==0, then device&n;&t;&t;&t;&t; * unregistered while close proc.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5253,7 +5253,7 @@ id|sl-&gt;flags
 )paren
 )paren
 (brace
-multiline_comment|/* no packets was transmited, do outfill */
+multiline_comment|/* no packets were transmitted, do outfill */
 macro_line|#ifdef CONFIG_SLIP_MODE_SLIP6
 r_int
 r_char

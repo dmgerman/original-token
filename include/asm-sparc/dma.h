@@ -219,7 +219,7 @@ mdefine_line|#define DMA_ST_WRITE     0x00000100        /* write from device to 
 DECL|macro|DMA_ENABLE
 mdefine_line|#define DMA_ENABLE       0x00000200        /* Fire up DMA, handle requests */
 DECL|macro|DMA_PEND_READ
-mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pendind Read */
+mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pending Read */
 DECL|macro|DMA_BCNT_ENAB
 mdefine_line|#define DMA_BCNT_ENAB    0x00002000        /* If on, use the byte counter */
 DECL|macro|DMA_TERM_CNTR

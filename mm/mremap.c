@@ -721,7 +721,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Expand (or shrink) an existing mapping, potentially moving it at the&n; * same time (controlled by the &quot;may_move&quot; flag and available VM space)&n; */
+multiline_comment|/*&n; * Expand (or shrink) an existing mapping, potentially moving it at the&n; * same time (controlled by the MREMAP_MAYMOVE flag and available VM space)&n; */
 DECL|function|sys_mremap
 id|asmlinkage
 r_int
@@ -742,7 +742,8 @@ r_int
 id|new_len
 comma
 r_int
-id|may_move
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -969,13 +970,10 @@ multiline_comment|/*&n;&t; * We weren&squot;t able to just expand or shrink the 
 r_if
 c_cond
 (paren
-op_logical_neg
-id|may_move
+id|flags
+op_amp
+id|MREMAP_MAYMOVE
 )paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
 r_return
 id|move_vma
 c_func
@@ -988,6 +986,10 @@ id|old_len
 comma
 id|new_len
 )paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 eof

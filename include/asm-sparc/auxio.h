@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.10 1996/01/03 03:52:58 davem Exp $&n; * auxio.h:  Definitons and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.10 1996/01/03 03:52:58 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H

@@ -1917,7 +1917,7 @@ op_amp
 l_int|2
 )paren
 (brace
-multiline_comment|/* Add T.70 simplyfied header */
+multiline_comment|/* Add T.70 simplified header */
 macro_line|#ifdef ISDN_DEBUG_MODEM_DUMP
 id|isdn_dumppkt
 c_func
@@ -5606,7 +5606,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * An incoming call-request has arrived.&n; * Search the tty-devices for an aproppriate device and bind&n; * it to the ISDN-Channel.&n; * Return Index to dev-&gt;mdm or -1 if none found.&n; */
+multiline_comment|/*&n; * An incoming call-request has arrived.&n; * Search the tty-devices for an appropriate device and bind&n; * it to the ISDN-Channel.&n; * Return Index to dev-&gt;mdm or -1 if none found.&n; */
 DECL|function|isdn_tty_find_icall
 r_int
 id|isdn_tty_find_icall
@@ -9419,7 +9419,7 @@ op_amp
 l_int|2
 )paren
 (brace
-multiline_comment|/* Add T.70 simplyfied header */
+multiline_comment|/* Add T.70 simplified header */
 macro_line|#ifdef ISDN_DEBUG_MODEM_DUMP
 id|isdn_dumppkt
 c_func
@@ -9573,7 +9573,7 @@ id|ton
 suffix:semicolon
 )brace
 macro_line|#if FUTURE
-multiline_comment|/*&n; * A packet has been output successfully.&n; * Search the tty-devices for an aproppriate device, decrement it&squot;s&n; * counter for outstanding packets, and set CTS if this counter reaches 0.&n; */
+multiline_comment|/*&n; * A packet has been output successfully.&n; * Search the tty-devices for an appropriate device, decrement its&n; * counter for outstanding packets, and set CTS if this counter reaches 0.&n; */
 DECL|function|isdn_tty_bsent
 r_void
 id|isdn_tty_bsent

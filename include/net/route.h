@@ -23,8 +23,8 @@ multiline_comment|/*&n; * Maximal time to live for unused entry.&n; */
 DECL|macro|RT_CACHE_TIMEOUT
 mdefine_line|#define RT_CACHE_TIMEOUT&t;&t;(HZ*300)
 multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&n; * if the difference between last use times is less then this number.&n; */
-DECL|macro|RT_CACHE_BUBBLE_THRESHOULD
-mdefine_line|#define RT_CACHE_BUBBLE_THRESHOULD&t;(HZ*5)
+DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
+mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(HZ*5)
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#ifdef __KERNEL__
 DECL|macro|RTF_LOCAL

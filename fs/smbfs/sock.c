@@ -2064,7 +2064,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*                                                                           */
-multiline_comment|/*  This routine was once taken from nfs, wich is for udp. Here TCP does     */
+multiline_comment|/*  This routine was once taken from nfs, which is for udp. Here TCP does     */
 multiline_comment|/*  most of the ugly stuff for us (thanks, Alan!)                            */
 multiline_comment|/*                                                                           */
 multiline_comment|/*****************************************************************************/

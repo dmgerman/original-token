@@ -5003,7 +5003,7 @@ c_func
 id|KBD_DATA_REG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * Check to see if a timeout error has occured.  This means&n;                 * that transmission was started but did not complete in the&n;                 * normal time cycle.  PERR is set when a parity error occured&n;                 * in the last transmission.&n;                 */
+multiline_comment|/*&n;                 * Check to see if a timeout error has occurred.  This means&n;                 * that transmission was started but did not complete in the&n;                 * normal time cycle.  PERR is set when a parity error occurred&n;                 * in the last transmission.&n;                 */
 r_if
 c_cond
 (paren

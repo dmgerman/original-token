@@ -68,7 +68,7 @@ mdefine_line|#define&t;LE_C0_BABL&t;0x4000&t;/* BAB:  Babble: tx timeout. */
 DECL|macro|LE_C0_CERR
 mdefine_line|#define&t;LE_C0_CERR&t;0x2000&t;/* SQE:  Signal quality error */
 DECL|macro|LE_C0_MISS
-mdefine_line|#define&t;LE_C0_MISS&t;0x1000&t;/* MISS: Missed a packaed */
+mdefine_line|#define&t;LE_C0_MISS&t;0x1000&t;/* MISS: Missed a packet */
 DECL|macro|LE_C0_MERR
 mdefine_line|#define&t;LE_C0_MERR&t;0x0800&t;/* ME:   Memory error */
 DECL|macro|LE_C0_RINT
@@ -86,7 +86,7 @@ mdefine_line|#define&t;LE_C0_RXON&t;0x0020&t;/* Receiver on */
 DECL|macro|LE_C0_TXON
 mdefine_line|#define&t;LE_C0_TXON&t;0x0010&t;/* Transmitter on */
 DECL|macro|LE_C0_TDMD
-mdefine_line|#define&t;LE_C0_TDMD&t;0x0008&t;/* Transmiter demand */
+mdefine_line|#define&t;LE_C0_TDMD&t;0x0008&t;/* Transmitter demand */
 DECL|macro|LE_C0_STOP
 mdefine_line|#define&t;LE_C0_STOP&t;0x0004&t;/* Stop the card */
 DECL|macro|LE_C0_STRT
@@ -125,7 +125,7 @@ mdefine_line|#define LE_T1_ERR       0x40    /* Error summary */
 DECL|macro|LE_T1_EONE
 mdefine_line|#define LE_T1_EONE      0x08    /* Error: one retry needed */
 DECL|macro|LE_T1_EDEF
-mdefine_line|#define LE_T1_EDEF      0x04    /* Error: defered */
+mdefine_line|#define LE_T1_EDEF      0x04    /* Error: deferred */
 DECL|macro|LE_T1_SOP
 mdefine_line|#define LE_T1_SOP       0x02    /* Start of packet */
 DECL|macro|LE_T1_EOP
@@ -133,7 +133,7 @@ mdefine_line|#define LE_T1_EOP       0x01    /* End of packet */
 DECL|macro|LE_T3_BUF
 mdefine_line|#define LE_T3_BUF       0x8000  /* Buffer error */
 DECL|macro|LE_T3_UFL
-mdefine_line|#define LE_T3_UFL       0x4000  /* Error undeflow */
+mdefine_line|#define LE_T3_UFL       0x4000  /* Error underflow */
 DECL|macro|LE_T3_LCOL
 mdefine_line|#define LE_T3_LCOL      0x1000  /* Error late collision */
 DECL|macro|LE_T3_CLOS
@@ -524,7 +524,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Lock out other processes while setting up harware */
+multiline_comment|/* Lock out other processes while setting up hardware */
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -1575,7 +1575,7 @@ id|LE_T3_LCOL
 id|lp-&gt;stats.tx_window_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* buffer errors and underflows turn off the transmiter */
+multiline_comment|/* buffer errors and underflows turn off the transmitter */
 multiline_comment|/* Restart the adapter */
 r_if
 c_cond
@@ -2332,7 +2332,7 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;%s: trasmit timed out, status %04x, resetting&bslash;n&quot;
+l_string|&quot;%s: transmit timed out, status %04x, resetting&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

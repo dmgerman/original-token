@@ -70,7 +70,7 @@ DECL|macro|SND_DEV_STATUS
 mdefine_line|#define SND_DEV_STATUS&t;6&t;/* /dev/sndstat */
 multiline_comment|/* #7 not in use now. Was in 2.4. Free for use after v3.0. */
 DECL|macro|SND_DEV_SEQ2
-mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequecer, level 2 interface */
+mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequencer, level 2 interface */
 DECL|macro|SND_DEV_SNDPROC
 mdefine_line|#define SND_DEV_SNDPROC 9&t;/* /dev/sndproc for programmable devices */
 DECL|macro|SND_DEV_PSS
@@ -156,12 +156,12 @@ r_int
 op_star
 id|osp
 suffix:semicolon
-multiline_comment|/* OS spesific info */
+multiline_comment|/* OS specific info */
 DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver spesific. Usually 0 */
+multiline_comment|/* Driver specific. Usually 0 */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES

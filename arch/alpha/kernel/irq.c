@@ -1609,7 +1609,7 @@ r_int
 r_int
 id|pic
 suffix:semicolon
-multiline_comment|/*&n;&t; * It seems to me that the probability of two or more *device*&n;&t; * interrupts occuring at almost exactly the same time is&n;&t; * pretty low.  So why pay the price of checking for&n;&t; * additional interrupts here if the common case can be&n;&t; * handled so much easier?&n;&t; */
+multiline_comment|/*&n;&t; * It seems to me that the probability of two or more *device*&n;&t; * interrupts occurring at almost exactly the same time is&n;&t; * pretty low.  So why pay the price of checking for&n;&t; * additional interrupts here if the common case can be&n;&t; * handled so much easier?&n;&t; */
 multiline_comment|/* &n;&t; *  The first read of gives you *all* interrupting lines.&n;&t; *  Therefore, read the mask register and and out those lines&n;&t; *  not enabled.  Note that some documentation has 21 and a1 &n;&t; *  write only.  This is not true.&n;&t; */
 id|pic
 op_assign

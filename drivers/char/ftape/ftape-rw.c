@@ -2069,7 +2069,7 @@ l_int|1
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* unforseen situation, don&squot;t generate error */
+multiline_comment|/* unforeseen situation, don&squot;t generate error */
 )brace
 r_else
 (brace

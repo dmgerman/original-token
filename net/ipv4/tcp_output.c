@@ -1,6 +1,41 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+multiline_comment|/*&n; *&t;Get rid of any delayed acks, we sent one already..&n; */
+DECL|function|clear_delayed_acks
+r_static
+id|__inline__
+r_void
+id|clear_delayed_acks
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|sk-&gt;ack_timed
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;ack_backlog
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;bytes_rcv
+op_assign
+l_int|0
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;delack_timer
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;This is the main buffer sending routine. We queue the buffer&n; *&t;having checked it is sane seeming.&n; */
 DECL|function|tcp_send_skb
 r_void
@@ -235,6 +270,12 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*&n;&t;&t; *&t;This is going straight out&n;&t;&t; */
+id|clear_delayed_acks
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -287,14 +328,6 @@ id|skb
 comma
 l_int|0
 )paren
-suffix:semicolon
-id|sk-&gt;ack_backlog
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Set for next retransmit based on expected ACK time.&n;&t;&t; *&t;FIXME: We set this every time which means our &n;&t;&t; *&t;retransmits are really about a window behind.&n;&t;&t; */
 id|tcp_reset_xmit_timer
@@ -822,13 +855,11 @@ comma
 id|skb-&gt;free
 )paren
 suffix:semicolon
-id|sk-&gt;ack_backlog
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
-op_assign
-l_int|0
+id|clear_delayed_acks
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Again we slide the timer wrongly&n;&t;&t;&t; */
 id|tcp_reset_xmit_timer
@@ -935,7 +966,7 @@ multiline_comment|/*&t;&t;   the buffer in this case. &t;&t;&t;    */
 multiline_comment|/*&t;&t;   (the skb_pull() changes skb-&gt;data while we may   */
 multiline_comment|/*&t;&t;   actually try to send the data. Ouch. A side&t;    */
 multiline_comment|/*&t;&t;   effect is that we&squot;ll send some unnecessary data, */
-multiline_comment|/*&t;&t;   but the alternative is disasterous...&t;    */
+multiline_comment|/*&t;&t;   but the alternative is disastrous...&t;    */
 r_if
 c_cond
 (paren
@@ -1226,13 +1257,11 @@ c_func
 id|sk-&gt;acked_seq
 )paren
 suffix:semicolon
-id|sk-&gt;ack_backlog
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
-op_assign
-l_int|0
+id|clear_delayed_acks
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|th-&gt;window
 op_assign
@@ -1921,8 +1950,6 @@ op_assign
 id|htons
 c_func
 (paren
-id|sk-&gt;window
-op_assign
 id|tcp_select_window
 c_func
 (paren
@@ -2473,6 +2500,101 @@ id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Set up the timers for sending a delayed ack..&n; *&n; *      rules for delaying an ack:&n; *      - delay time &lt;= 0.5 HZ&n; *      - must send at least every 2 full sized packets&n; *      - we don&squot;t have a window update to send&n; */
+DECL|function|tcp_send_delayed_ack
+r_void
+id|tcp_send_delayed_ack
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|max_timeout
+)paren
+(brace
+r_int
+r_int
+id|timeout
+comma
+id|now
+suffix:semicolon
+multiline_comment|/* Calculate new timeout */
+id|now
+op_assign
+id|jiffies
+suffix:semicolon
+id|timeout
+op_assign
+id|sk-&gt;ato
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+OG
+id|max_timeout
+)paren
+id|timeout
+op_assign
+id|max_timeout
+suffix:semicolon
+id|timeout
+op_add_assign
+id|now
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;bytes_rcv
+OG
+id|sk-&gt;max_unacked
+)paren
+(brace
+id|timeout
+op_assign
+id|now
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|TIMER_BH
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Use new timeout only if there wasn&squot;t a older one earlier  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|del_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;delack_timer
+)paren
+op_logical_or
+id|timeout
+OL
+id|sk-&gt;delack_timer.expires
+)paren
+id|sk-&gt;delack_timer.expires
+op_assign
+id|timeout
+suffix:semicolon
+id|sk-&gt;ack_backlog
+op_increment
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;delack_timer
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;This routine sends an ack and also updates the window. &n; */
 DECL|function|tcp_send_ack
 r_void
@@ -2516,17 +2638,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* We have been reset, we may not send again */
 multiline_comment|/*&n;&t; *&t;If we have nothing queued for transmit and the transmit timer&n;&t; *&t;is on we are just doing an ACK timeout and need to switch&n;&t; *&t;to a keepalive.&n;&t; */
-id|sk-&gt;ack_backlog
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;bytes_rcv
-op_assign
-l_int|0
-suffix:semicolon
-id|sk-&gt;ack_timed
-op_assign
-l_int|0
+id|clear_delayed_acks
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2596,34 +2712,16 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* &n;&t;&t; *&t;Force it to send an ack. We don&squot;t have to do this&n;&t;&t; *&t;(ACK is unreliable) but it&squot;s much better use of &n;&t;&t; *&t;bandwidth on slow links to send a spare ack than&n;&t;&t; *&t;resend packets. &n;&t;&t; */
-id|sk-&gt;ack_backlog
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;ip_xmit_timeout
-op_ne
-id|TIME_WRITE
-op_logical_and
-id|tcp_connected
-c_func
-(paren
-id|sk-&gt;state
-)paren
-)paren
-(brace
-id|tcp_reset_xmit_timer
+id|tcp_send_delayed_ack
 c_func
 (paren
 id|sk
 comma
-id|TIME_WRITE
-comma
 id|HZ
+op_div
+l_int|2
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -2714,14 +2812,6 @@ id|tcphdr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Fill in the packet and send it&n;  &t; */
-id|sk-&gt;window
-op_assign
-id|tcp_select_window
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2758,7 +2848,11 @@ op_assign
 id|htons
 c_func
 (paren
-id|sk-&gt;window
+id|tcp_select_window
+c_func
+(paren
+id|sk
+)paren
 )paren
 suffix:semicolon
 id|tcp_send_check
@@ -2906,7 +3000,7 @@ id|sk-&gt;write_queue
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;    &t; * We are probing the opening of a window&n;&t;    &t; * but the window size is != 0&n;&t;    &t; * must have been a result SWS advoidance ( sender )&n;&t;    &t; */
+multiline_comment|/*&n;&t;    &t; * We are probing the opening of a window&n;&t;    &t; * but the window size is != 0&n;&t;    &t; * must have been a result SWS avoidance ( sender )&n;&t;    &t; */
 r_struct
 id|iphdr
 op_star

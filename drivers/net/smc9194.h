@@ -59,7 +59,7 @@ mdefine_line|#define RCR_SOFTRESET&t;0x8000 &t;/* resets the chip */&t;
 DECL|macro|RCR_STRIP_CRC
 mdefine_line|#define&t;RCR_STRIP_CRC&t;0x200&t;/* strips CRC */
 DECL|macro|RCR_ENABLE
-mdefine_line|#define RCR_ENABLE&t;0x100&t;/* IFF this is set, we can recieve packets */
+mdefine_line|#define RCR_ENABLE&t;0x100&t;/* IFF this is set, we can receive packets */
 DECL|macro|RCR_ALMUL
 mdefine_line|#define RCR_ALMUL&t;0x4 &t;/* receive all multicast packets */
 DECL|macro|RCR_PROMISC
@@ -287,7 +287,7 @@ mdefine_line|#define SMC_ENABLE_INT(x) {&bslash;&n;&t;&t;unsigned char mask;&bsl
 multiline_comment|/* this disables an interrupt from the interrupt mask register */
 DECL|macro|SMC_DISABLE_INT
 mdefine_line|#define SMC_DISABLE_INT(x) {&bslash;&n;&t;&t;unsigned char mask;&bslash;&n;&t;&t;SMC_SELECT_BANK(2);&bslash;&n;&t;&t;mask = inb( ioaddr + INT_MASK );&bslash;&n;&t;&t;mask &amp;= ~(x);&bslash;&n;&t;&t;outb( mask, ioaddr + INT_MASK ); &bslash;&n;}
-multiline_comment|/*----------------------------------------------------------------------&n; . Define the interrupts that I want to recieve from the card&n; . &n; . I want: &n; .  IM_EPH_INT, for nasty errors&n; .  IM_RCV_INT, for happy recieved packets&n; .  IM_RX_OVRN_INT, because I have to kick the reciever&n; --------------------------------------------------------------------------*/
+multiline_comment|/*----------------------------------------------------------------------&n; . Define the interrupts that I want to receive from the card&n; . &n; . I want: &n; .  IM_EPH_INT, for nasty errors&n; .  IM_RCV_INT, for happy received packets&n; .  IM_RX_OVRN_INT, because I have to kick the receiver&n; --------------------------------------------------------------------------*/
 DECL|macro|SMC_INTERRUPT_MASK
 mdefine_line|#define SMC_INTERRUPT_MASK   (IM_EPH_INT | IM_RX_OVRN_INT | IM_RCV_INT) 
 macro_line|#endif  /* _SMC_9194_H_ */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * jazzdma.c&n; *&n; * Mips Jazz DMA controller support&n; * (C) 1995 Andreas Busse&n; *&n; * NOTE: Some of the argument checkings could be removed when&n; * things have settled down. Also, instead of returning 0xffffffff&n; * on failure of vdma_alloc() one could leave page #0 unused&n; * and return the more usual NULL pointer as logical address.&n; * &n; */
+multiline_comment|/*&n; * jazzdma.c&n; *&n; * Mips Jazz DMA controller support&n; * (C) 1995 Andreas Busse&n; *&n; * NOTE: Some of the argument checking could be removed when&n; * things have settled down. Also, instead of returning 0xffffffff&n; * on failure of vdma_alloc() one could leave page #0 unused&n; * and return the more usual NULL pointer as logical address.&n; * &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;

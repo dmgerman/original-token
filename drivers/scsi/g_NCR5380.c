@@ -276,7 +276,7 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function : generic_NCR5380_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer paramters with ints[0] &n; * &t;equal to the number of ints.&n; */
+multiline_comment|/*&n; * Function : generic_NCR5380_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
 r_void
 id|generic_NCR5380_setup
 (paren
@@ -299,7 +299,7 @@ id|ints
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : generic_NCR53C400_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer paramters with ints[0] &n; * &t;equal to the number of ints.&n; */
+multiline_comment|/*&n; * Function : generic_NCR53C400_setup (char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0] &n; * &t;equal to the number of ints.&n; */
 r_void
 id|generic_NCR53C400_setup
 (paren
@@ -676,7 +676,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef BIOSPARAM
-multiline_comment|/*&n; * Function : int generic_NCR5380_biosparam(Disk * disk, kdev_t dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatable H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : allways 0 (success), initializes ip&n; *&t;&n; */
+multiline_comment|/*&n; * Function : int generic_NCR5380_biosparam(Disk * disk, kdev_t dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatible H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : always 0 (success), initializes ip&n; *&t;&n; */
 multiline_comment|/* &n; * XXX Most SCSI boards use this mapping, I could be incorrect.  Some one&n; * using hard disks on a trantor should verify that this mapping corresponds&n; * to that used by the BIOS / ASPI driver by running the linux fdisk program&n; * and matching the H_C_S coordinates to what DOS uses.&n; */
 r_int
 id|generic_NCR5380_biosparam
@@ -1092,7 +1092,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;53C400r: Got 53C80 interupt and tried to clear it&bslash;n&quot;
+l_string|&quot;53C400r: Got 53C80 interrupt and tried to clear it&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1550,7 +1550,7 @@ id|i
 )paren
 (brace
 macro_line|#if (NDEBUG &amp; NDEBUG_C400_PWRITE)
-id|prink
+id|printk
 c_func
 (paren
 l_string|&quot;53C400w: got 53C80 gated irq (last block)&bslash;n&quot;

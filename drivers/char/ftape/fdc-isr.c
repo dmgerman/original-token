@@ -1109,7 +1109,7 @@ id|buff-&gt;sector_offset
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*  Sector_offset points to the problem area, except if we got&n;&t; *  a data_crc_error. In that case it points one past the failing&n;&t; *  sector.&n;&t; *  Now adjust sector_offset so it allways points one past he&n;&t; *  failing sector. I.e. skip the bad sector.&n;&t; */
+multiline_comment|/*  Sector_offset points to the problem area, except if we got&n;&t; *  a data_crc_error. In that case it points one past the failing&n;&t; *  sector.&n;&t; *  Now adjust sector_offset so it always points one past he&n;&t; *  failing sector. I.e. skip the bad sector.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2072,7 +2072,7 @@ r_int
 r_int
 id|map
 suffix:semicolon
-multiline_comment|/*  This function is to be called after all variables have been&n;&t; *  updated to point past the failing sector.&n;&t; *  If there are any soft errors before the failing sector,&n;&t; *  find the first soft error and return the sector offset.&n;&t; *  Otherwise find the last hard error.&n;&t; *  Note: there should allways be at least one hard or soft error !&n;&t; */
+multiline_comment|/*  This function is to be called after all variables have been&n;&t; *  updated to point past the failing sector.&n;&t; *  If there are any soft errors before the failing sector,&n;&t; *  find the first soft error and return the sector offset.&n;&t; *  Otherwise find the last hard error.&n;&t; *  Note: there should always be at least one hard or soft error !&n;&t; */
 r_if
 c_cond
 (paren
@@ -3185,7 +3185,7 @@ c_func
 op_minus
 l_int|1
 comma
-l_string|&quot;unforseen write error&quot;
+l_string|&quot;unforeseen write error&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3250,7 +3250,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* !FDC_BUSY  */
-multiline_comment|/*  clear interrupt, cause should be gotten by issueing&n;&t;&t; *  a Sense Interrupt Status command.&n;&t;&t; */
+multiline_comment|/*  clear interrupt, cause should be gotten by issuing&n;&t;&t; *  a Sense Interrupt Status command.&n;&t;&t; */
 r_if
 c_cond
 (paren

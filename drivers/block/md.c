@@ -619,7 +619,7 @@ id|dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* Lock the device by inserting a dummy inode. This doesn&squot;t&n;       smeel very good, but I need to be consistent with the&n;       mount stuff, specially with fs_may_mount. If someone have&n;       a better idea, please help ! */
+multiline_comment|/* Lock the device by inserting a dummy inode. This doesn&squot;t&n;       smell very good, but I need to be consistent with the&n;       mount stuff, specially with fs_may_mount. If someone have&n;       a better idea, please help ! */
 id|devices
 (braket
 id|minor
@@ -660,7 +660,7 @@ dot
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* Devices sizes are rounded to a multiple of page (needed for&n;       paging). This is NOT done by fdisk when partitionning,&n;       but that&squot;s a DOS thing anyway... */
+multiline_comment|/* Devices sizes are rounded to a multiple of page (needed for&n;       paging). This is NOT done by fdisk when partitioning,&n;       but that&squot;s a DOS thing anyway... */
 id|devices
 (braket
 id|minor
@@ -1668,7 +1668,7 @@ r_return
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Always succed */
+multiline_comment|/* Always succeed */
 )brace
 DECL|function|md_release
 r_static
@@ -2037,7 +2037,7 @@ id|req
 r_case
 id|REDIRECTED_BHREQ
 suffix:colon
-multiline_comment|/* Allright, redirection was succesful */
+multiline_comment|/* All right, redirection was successful */
 id|req-&gt;rq_status
 op_assign
 id|RQ_INACTIVE
@@ -2055,7 +2055,7 @@ id|REDIRECTED_REQ
 suffix:colon
 r_break
 suffix:semicolon
-multiline_comment|/* Redirected whole request (for swaping) */
+multiline_comment|/* Redirected whole request (for swapping) */
 r_case
 id|REDIRECT_FAILED
 suffix:colon

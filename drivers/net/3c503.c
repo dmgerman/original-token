@@ -2597,7 +2597,7 @@ comma
 id|E33G_CNTRL
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  Here I also try to get data as fast as possible. I am betting that I&n; *  can read one extra byte without clobering anything in the kernel because&n; *  this would only occur on an odd byte-count and allocation of skb-&gt;data&n; *  is word-aligned. Variable &squot;count&squot; is NOT checked. Caller must check&n; *  for a valid count. &n; *  [This is currently quite safe.... but if one day the 3c503 explodes&n; *   you know where to come looking ;)]&n; */
+multiline_comment|/*&n; *  Here I also try to get data as fast as possible. I am betting that I&n; *  can read one extra byte without clobbering anything in the kernel because&n; *  this would only occur on an odd byte-count and allocation of skb-&gt;data&n; *  is word-aligned. Variable &squot;count&squot; is NOT checked. Caller must check&n; *  for a valid count. &n; *  [This is currently quite safe.... but if one day the 3c503 explodes&n; *   you know where to come looking ;)]&n; */
 id|buf
 op_assign
 (paren

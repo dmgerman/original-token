@@ -878,7 +878,7 @@ id|detected_model
 op_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works propably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
+multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works probably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
 id|opl3_command
 (paren
 id|ioaddr

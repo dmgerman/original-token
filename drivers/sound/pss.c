@@ -3147,7 +3147,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * For some reason the card returns 0xff in the WSS status register&n;     * immediately after boot. Propably MIDI+SB emulation algorithm&n;     * downloaded to the ADSP2115 spends some time initializing the card.&n;     * Let&squot;s try to wait until it finishes this task.&n;   */
+multiline_comment|/*&n;     * For some reason the card returns 0xff in the WSS status register&n;     * immediately after boot. Probably MIDI+SB emulation algorithm&n;     * downloaded to the ADSP2115 spends some time initializing the card.&n;     * Let&squot;s try to wait until it finishes this task.&n;   */
 r_for
 c_loop
 (paren

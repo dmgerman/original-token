@@ -335,7 +335,7 @@ DECL|member|rxframes
 r_int
 id|rxframes
 suffix:semicolon
-multiline_comment|/* Number of Frames Actally Received */
+multiline_comment|/* Number of Frames Actually Received */
 DECL|member|rxerrs
 r_int
 id|rxerrs
@@ -439,7 +439,7 @@ DECL|member|command
 r_int
 id|command
 suffix:semicolon
-multiline_comment|/* one of the KISS-Commands devined above */
+multiline_comment|/* one of the KISS-Commands defined above */
 DECL|member|param
 r_int
 id|param

@@ -3039,7 +3039,7 @@ id|my_gscd_init
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This is the common initalisation for the GoldStar drive. */
+multiline_comment|/* This is the common initialisation for the GoldStar drive. */
 multiline_comment|/* It is called at boot time AND for module init.           */
 DECL|function|my_gscd_init
 r_int

@@ -317,7 +317,7 @@ op_star
 id|sa.sin_addr.s_addr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hashing code for alias_info-&gt;hash_tab entries&n; * 4 bytes -&gt; 1/2 byte using xor condimented by af&n; */
+multiline_comment|/*&n; * hashing code for alias_info-&gt;hash_tab entries&n; * 4 bytes -&gt; 1/2 byte using xor complemented by af&n; */
 r_static
 id|__inline__
 r_int
@@ -3585,7 +3585,7 @@ id|flags_off
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * select closest (main or alias) device to &lt;src,dst&gt; addresses given. if no&n; * further info is available, return main_dev (for easier calling arrangment).&n; *&n; * Should be called early at xxx_rcv() time for device selection&n; */
+multiline_comment|/*&n; * select closest (main or alias) device to &lt;src,dst&gt; addresses given. if no&n; * further info is available, return main_dev (for easier calling arrangement).&n; *&n; * Should be called early at xxx_rcv() time for device selection&n; */
 r_struct
 id|device
 op_star

@@ -303,7 +303,7 @@ c_func
 id|__constant_c_memset
 )paren
 comma
-multiline_comment|/*&n;&t; * The following are special because they&squot;re not called&n;&t; * explictly (the C compiler or assembler generates them in&n;&t; * response to division operations).  Fortunately, their&n;&t; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n;&t; * to leave it out of version control.&n;&t; */
+multiline_comment|/*&n;&t; * The following are special because they&squot;re not called&n;&t; * explicitly (the C compiler or assembler generates them in&n;&t; * response to division operations).  Fortunately, their&n;&t; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n;&t; * to leave it out of version control.&n;&t; */
 DECL|macro|bcopy
 macro_line|# undef bcopy
 DECL|macro|memcpy

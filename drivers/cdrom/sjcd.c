@@ -1,4 +1,4 @@
-multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.6&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (H.T.M.v.d.Maarel@marin.nl).&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *  1.6 Removed ISP16 code from this driver.&n; *      Allow only to set io base address on comand line: sjcd=&lt;io_base&gt;&n; *      Changes to Documentation/cdrom/sjcd&n; *      Added cleanup after any error in the initialisation.&n; *&n; */
+multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.6&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (H.T.M.v.d.Maarel@marin.nl).&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *  1.6 Removed ISP16 code from this driver.&n; *      Allow only to set io base address on command line: sjcd=&lt;io_base&gt;&n; *      Changes to Documentation/cdrom/sjcd&n; *      Added cleanup after any error in the initialisation.&n; *&n; */
 DECL|macro|SJCD_VERSION_MAJOR
 mdefine_line|#define SJCD_VERSION_MAJOR 1
 DECL|macro|SJCD_VERSION_MINOR
@@ -1211,7 +1211,7 @@ suffix:semicolon
 )brace
 )brace
 )def_block
-multiline_comment|/*&n; * This is just timout counter, and nothing more. Surprized ? :-)&n; */
+multiline_comment|/*&n; * This is just timeout counter, and nothing more. Surprised ? :-)&n; */
 DECL|variable|sjcd_status_timeout
 r_static
 r_volatile
@@ -1944,7 +1944,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Get the disk lenght info.&n;   */
+multiline_comment|/*&n;   * Get the disk length info.&n;   */
 id|sjcd_send_1_cmd
 c_func
 (paren
@@ -4271,7 +4271,7 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/*&n;       * Previos command is completed.&n;       */
+multiline_comment|/*&n;       * Previous command is completed.&n;       */
 r_if
 c_cond
 (paren
@@ -4686,7 +4686,7 @@ r_goto
 id|ReSwitch
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * Everything seems to be OK. Just read the frame and recalculate&n;       * indecis.&n;       */
+multiline_comment|/*&n;       * Everything seems to be OK. Just read the frame and recalculate&n;       * indices.&n;       */
 id|sjcd_buf_bn
 (braket
 id|sjcd_buf_in
@@ -5154,7 +5154,7 @@ c_loop
 id|CURRENT_IS_VALID
 )paren
 (brace
-multiline_comment|/*&n;     * Who of us are paranoic?&n;     */
+multiline_comment|/*&n;     * Who of us are paranoiac?&n;     */
 r_if
 c_cond
 (paren

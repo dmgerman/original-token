@@ -81,7 +81,7 @@ mdefine_line|#define ERRmoredata 234         /* More data to be returned */
 DECL|macro|ERROR_EAS_DIDNT_FIT
 mdefine_line|#define ERROR_EAS_DIDNT_FIT 275 /* Extended attributes didn&squot;t fit */
 DECL|macro|ERROR_EAS_NOT_SUPPORTED
-mdefine_line|#define ERROR_EAS_NOT_SUPPORTED 282 /* Extended attributes not suppored */
+mdefine_line|#define ERROR_EAS_NOT_SUPPORTED 282 /* Extended attributes not supported */
 multiline_comment|/* Error codes for the ERRSRV class */
 DECL|macro|ERRerror
 mdefine_line|#define ERRerror 1              /* Non specific error code */

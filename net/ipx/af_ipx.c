@@ -4438,7 +4438,7 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;It&squot;s a pitty there&squot;s no concept of carry in C &n;&t; */
+multiline_comment|/*&n;&t; *&t;It&squot;s a pity there&squot;s no concept of carry in C &n;&t; */
 r_if
 c_cond
 (paren
@@ -5803,7 +5803,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%08lX  %08lX  &quot;
+l_string|&quot;%08X  %08X  &quot;
 comma
 id|s-&gt;wmem_alloc
 comma

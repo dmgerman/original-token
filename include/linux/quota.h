@@ -22,7 +22,6 @@ DECL|macro|USRQUOTA
 mdefine_line|#define USRQUOTA  0&t;&t;/* element used for user quotas */
 DECL|macro|GRPQUOTA
 mdefine_line|#define GRPQUOTA  1&t;&t;/* element used for group quotas */
-macro_line|#include &lt;linux/mount.h&gt;
 multiline_comment|/*&n; * Definitions for the default names of the quotas files.&n; */
 DECL|macro|INITQFNAMES
 mdefine_line|#define INITQFNAMES { &bslash;&n;   &quot;user&quot;,      /* USRQUOTA */ &bslash;&n;   &quot;group&quot;,   /* GRPQUOTA */ &bslash;&n;   &quot;undefined&quot;, &bslash;&n;};
@@ -166,7 +165,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * Maximum lenght of a message generated in the quota system,&n; * that needs to be kicked onto the tty.&n; */
+macro_line|#include &lt;linux/mount.h&gt;
+multiline_comment|/*&n; * Maximum length of a message generated in the quota system,&n; * that needs to be kicked onto the tty.&n; */
 DECL|macro|MAX_QUOTA_MESSAGE
 mdefine_line|#define MAX_QUOTA_MESSAGE 75
 DECL|macro|DQ_LOCKED

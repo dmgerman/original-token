@@ -121,14 +121,14 @@ mdefine_line|#define DEMON_INDEX 5&t;&t;&t;/* Caution!  Must be consistent with 
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com FastEtherLink, 3Com&squot;s PCI to&n;10/100baseT adapter.  It also works with the 3c590, a similar product&n;with only a 10Mbs interface.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;physically possible to shared PCI interrupt lines, the 1.2.0 kernel doesn&squot;t&n;support it.&n;&n;III. Driver operation&n;&n;The 3c59x series use an interface that&squot;s very similar to the previous 3c5x9&n;series.  The primary interface is two programmed-I/O FIFOs, with an&n;alternate single-contiguous-region bus-master transfer (see next).&n;&n;One extension that is advertised in a very large font is that the adapters&n;are capable of being bus masters.  Unfortunately this capability is only for&n;a single contiguous region making it less useful than the list of transfer&n;regions available with the DEC Tulip or AMD PCnet.  Given the significant&n;performance impact of taking an extra interrupt for each transfer, using&n;DMA transfers is a win only with large blocks.&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Cameron Spitzer and Terry Murphy of 3Com for providing both&n;3c590 and 3c595 boards.&n;The name &quot;Vortex&quot; is the internal 3Com project name for the PCI ASIC, and&n;the not-yet-released (3/95) EISA version is called &quot;Demon&quot;.  According to&n;Terry these names come from rides at the local amusement park.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) packet sizes!&n;This driver only supports ethernet packets because of the skbuff allocation&n;limit of 4K.&n;*/
 DECL|macro|TCOM_VENDOR_ID
 mdefine_line|#define TCOM_VENDOR_ID&t;0x10B7&t;&t;/* 3Com&squot;s manufacturer&squot;s ID. */
-multiline_comment|/* Operational defintions.&n;   These are not used by other compilation units and thus are not&n;   exported in a &quot;.h&quot; file.&n;&n;   First the windows.  There are eight register windows, with the command&n;   and status registers available in each.&n;   */
+multiline_comment|/* Operational definitions.&n;   These are not used by other compilation units and thus are not&n;   exported in a &quot;.h&quot; file.&n;&n;   First the windows.  There are eight register windows, with the command&n;   and status registers available in each.&n;   */
 DECL|macro|EL3WINDOW
 mdefine_line|#define EL3WINDOW(win_num) outw(SelectWindow + (win_num), ioaddr + EL3_CMD)
 DECL|macro|EL3_CMD
 mdefine_line|#define EL3_CMD 0x0e
 DECL|macro|EL3_STATUS
 mdefine_line|#define EL3_STATUS 0x0e
-multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable.&n;   Note that 11 parameters bits was fine for ethernet, but the new chip&n;   can handle FDDI lenght frames (~4500 octets) and now parameters count&n;   32-bit &squot;Dwords&squot; rather than octets. */
+multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable.&n;   Note that 11 parameters bits was fine for ethernet, but the new chip&n;   can handle FDDI length frames (~4500 octets) and now parameters count&n;   32-bit &squot;Dwords&squot; rather than octets. */
 DECL|enum|vortex_cmd
 r_enum
 id|vortex_cmd
@@ -957,7 +957,7 @@ id|dev
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Unlike the other PCI cards the 59x cards don&squot;t need a large contiguous&n;   memory region, so making the driver a loadable module is feasible.&n;&n;   Unfortuneately maximizing the shared code between the integrated and&n;   module version of the driver results in a complicated set of initialization&n;   procedures.&n;   init_module() -- modules /  tc59x_init()  -- built-in&n;&t;&t;The wrappers for vortex_scan()&n;   vortex_scan()  &t;&t; The common routine that scans for PCI and EISA cards&n;   vortex_found_device() Allocate a device structure when we find a card.&n;&t;&t;&t;&t;&t;Different versions exist for modules and built-in.&n;   vortex_probe1()&t;&t;Fill in the device structure -- this is seperated&n;&t;&t;&t;&t;&t;so that the modules code can put it in dev-&gt;init.&n;*/
+multiline_comment|/* Unlike the other PCI cards the 59x cards don&squot;t need a large contiguous&n;   memory region, so making the driver a loadable module is feasible.&n;&n;   Unfortunately maximizing the shared code between the integrated and&n;   module version of the driver results in a complicated set of initialization&n;   procedures.&n;   init_module() -- modules /  tc59x_init()  -- built-in&n;&t;&t;The wrappers for vortex_scan()&n;   vortex_scan()  &t;&t; The common routine that scans for PCI and EISA cards&n;   vortex_found_device() Allocate a device structure when we find a card.&n;&t;&t;&t;&t;&t;Different versions exist for modules and built-in.&n;   vortex_probe1()&t;&t;Fill in the device structure -- this is separated&n;&t;&t;&t;&t;&t;so that the modules code can put it in dev-&gt;init.&n;*/
 multiline_comment|/* This driver uses &squot;options&squot; to pass the media type, full-duplex flag, etc. */
 multiline_comment|/* Note: this is the only limit on the number of cards supported!! */
 DECL|variable|options
@@ -3454,7 +3454,7 @@ op_amp
 l_int|0x3C
 )paren
 (brace
-multiline_comment|/* A Tx-disabling error occured.  */
+multiline_comment|/* A Tx-disabling error occurred.  */
 r_if
 c_cond
 (paren
@@ -4855,7 +4855,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* Mmmm, we should diable all interrupt sources here. */
+multiline_comment|/* Mmmm, we should disable all interrupt sources here. */
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
@@ -5080,7 +5080,7 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t bother with register 9, an extention of registers 6&amp;7.&n;&t;   If we do use the 6&amp;7 values the atomic update assumption above&n;&t;   is invalid. */
+multiline_comment|/* Don&squot;t bother with register 9, an extension of registers 6&amp;7.&n;&t;   If we do use the 6&amp;7 values the atomic update assumption above&n;&t;   is invalid. */
 id|inw
 c_func
 (paren

@@ -3145,7 +3145,7 @@ OG
 l_int|63
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. If it was a promisc rewquest the&n;&t;&t; *&t;flag is already set. If not we assert it.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. If it was a promisc request the&n;&t;&t; *&t;flag is already set. If not we assert it.&n;&t;&t; */
 id|dev-&gt;flags
 op_or_assign
 id|IFF_PROMISC
@@ -3308,7 +3308,7 @@ id|boguscount
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Disable RX and TX interrupts.  Neccessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
+multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
 id|outb
 c_func
 (paren
@@ -4154,7 +4154,7 @@ id|tx_available
 op_assign
 id|XMT_RAM
 suffix:semicolon
-multiline_comment|/* Disable RX and TX interrupts.  Neccessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
+multiline_comment|/* Disable RX and TX interrupts.  Necessary to avoid&n;&t;&t;   corruption of the HOST_ADDRESS_REG by interrupt&n;&t;&t;   service routines. */
 id|outb
 c_func
 (paren

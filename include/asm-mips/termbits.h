@@ -76,7 +76,7 @@ id|tcflag_t
 id|c_lflag
 suffix:semicolon
 multiline_comment|/* local mode flags */
-multiline_comment|/*&n;&t; * Seems nonexistant in the ABI, but Linux assumes existence ...&n;&t; */
+multiline_comment|/*&n;&t; * Seems nonexistent in the ABI, but Linux assumes existence ...&n;&t; */
 DECL|member|c_line
 id|cc_t
 id|c_line

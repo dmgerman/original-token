@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.9&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS] &n; * -- Please, Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes &n; * ballistic no more driver support will be available from me !!!&n; *************************************************************&n; *&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.9&n; *&n; ****************** H E L P *********************************&n; * If you ever plan to update your CD ROM drive and perhaps&n; * want to sell or simply give away your Mitsumi FX-001[DS] &n; * -- Please, Please --&n; * mail me (heiko@lotte.sax.de).  When my last drive goes &n; * ballistic no more driver support will be available from me !!!&n; *************************************************************&n; *&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensively tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -265,7 +265,7 @@ DECL|struct|s_drive_stuff
 r_struct
 id|s_drive_stuff
 (brace
-multiline_comment|/* waitquenes */
+multiline_comment|/* waitqueues */
 DECL|member|busyq
 r_struct
 id|wait_queue
@@ -330,7 +330,7 @@ id|s_subqcode
 op_star
 id|toc
 suffix:semicolon
-multiline_comment|/* first enty of the toc array */
+multiline_comment|/* first entry of the toc array */
 DECL|member|start
 r_struct
 id|s_subqcode
@@ -2951,7 +2951,7 @@ multiline_comment|/*INFO((&quot;do_request() read error&bslash;n&quot;));*/
 id|xwarn
 c_func
 (paren
-l_string|&quot;do_requst() read error&bslash;n&quot;
+l_string|&quot;do_request() read error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -3101,7 +3101,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* close the door, if necessary (get the door information&n;    from the hardware status register). &n;    If the last eject is too recent, an autoclose wouldn&squot;t probably&n;    be what we want ..., if we can&squot;t read the CD after an autoclose&n;    no further autclose&squot;s will be tried */
+multiline_comment|/* close the door, if necessary (get the door information&n;    from the hardware status register). &n;    If the last eject is too recent, an autoclose wouldn&squot;t probably&n;    be what we want ..., if we can&squot;t read the CD after an autoclose&n;    no further autocloses will be tried */
 r_if
 c_cond
 (paren
@@ -3998,7 +3998,7 @@ comma
 r_int
 id|jifs
 )paren
-multiline_comment|/*&t;This routine is used for sleeping.&n;&t;May be we could use a simple count loop w/ jumps to itself, but &n;&t;I wanna make this independend of cpu speed. [1 jiffie is 1/HZ] sec */
+multiline_comment|/*&t;This routine is used for sleeping.&n;&t;May be we could use a simple count loop w/ jumps to itself, but &n;&t;I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
 (brace
 r_int
 r_int
@@ -4213,7 +4213,7 @@ r_else
 id|xinfo
 c_func
 (paren
-l_string|&quot;intr() irq %d ambigous hw status&bslash;n&quot;
+l_string|&quot;intr() irq %d ambiguous hw status&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -4291,13 +4291,13 @@ r_char
 id|c
 suffix:semicolon
 r_int
-id|disgard
+id|discard
 suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|disgard
+id|discard
 op_assign
 (paren
 id|buffer
@@ -4529,7 +4529,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|disgard
+id|discard
 )paren
 id|bp
 op_increment
@@ -4719,7 +4719,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|disgard
+id|discard
 )paren
 id|bp
 op_increment
@@ -5109,7 +5109,7 @@ id|printk
 c_func
 (paren
 id|MCDX
-l_string|&quot;:: dprintf exeeds limit!!&bslash;n&quot;
+l_string|&quot;:: dprintf exceeds limit!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -5184,7 +5184,7 @@ id|printk
 c_func
 (paren
 id|MCDX
-l_string|&quot;:: dprintf exeeds limit!!&bslash;n&quot;
+l_string|&quot;:: dprintf exceeds limit!!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -6045,7 +6045,7 @@ comma
 r_int
 id|nr_sectors
 )paren
-multiline_comment|/*&t;This seems to do the actually transfer.  But it does more.  It&n;&t;keeps track of errors ocurred and will (if possible) fall back&n;&t;to single speed on error. &n;&t;Return:&t;-1 on timeout or other error&n;&t;&t;&t;else status byte (as in stuff-&gt;st) */
+multiline_comment|/*&t;This seems to do the actually transfer.  But it does more.  It&n;&t;keeps track of errors occurred and will (if possible) fall back&n;&t;to single speed on error. &n;&t;Return:&t;-1 on timeout or other error&n;&t;&t;&t;else status byte (as in stuff-&gt;st) */
 (brace
 r_int
 id|ans
@@ -6097,7 +6097,7 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;XXX Alrady reading 1x -- no chance&bslash;n&quot;
+l_string|&quot;XXX Already reading 1x -- no chance&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -6264,7 +6264,7 @@ id|current-&gt;pid
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* wait for the drive become idle, but first&n;&t;&t;   check for possible occured errors --- the drive&n;&t;&t;   seems to report them asynchronously */
+multiline_comment|/* wait for the drive become idle, but first&n;&t;&t;   check for possible occurred errors --- the drive&n;&t;&t;   seems to report them asynchronously */
 id|current-&gt;timeout
 op_assign
 id|jiffies

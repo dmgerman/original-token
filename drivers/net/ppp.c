@@ -755,7 +755,7 @@ DECL|macro|BUFFER_TYPE_TTY_RD
 mdefine_line|#define BUFFER_TYPE_TTY_RD&t;3  /* tty read buffer&t;    */
 DECL|macro|BUFFER_TYPE_VJ
 mdefine_line|#define BUFFER_TYPE_VJ&t;&t;4  /* vj compression buffer */
-multiline_comment|/* Define this string only once for all macro envocations */
+multiline_comment|/* Define this string only once for all macro invocations */
 DECL|variable|ppp_warning
 r_static
 r_char
@@ -1511,7 +1511,7 @@ comma
 id|szVersion
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE /* slhc module logic has its own copyright announcment */
+macro_line|#ifndef MODULE /* slhc module logic has its own copyright announcement */
 id|printk
 (paren
 id|KERN_INFO
@@ -1527,7 +1527,7 @@ l_string|&quot;PPP Dynamic channel allocation code copyright 1995 &quot;
 l_string|&quot;Caldera, Inc.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Register the tty dicipline&n; */
+multiline_comment|/*&n; * Register the tty discipline&n; */
 (paren
 r_void
 )paren
@@ -2218,7 +2218,7 @@ id|mru
 op_assign
 id|new_mru
 suffix:semicolon
-multiline_comment|/* allow for possible escapement of every character */
+multiline_comment|/* allow for possible escaping of every character */
 id|mtu
 op_assign
 (paren
@@ -6316,7 +6316,7 @@ id|chr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Procedure to encode the data with the proper escapement and send the&n; * data to the remote system.&n; */
+multiline_comment|/*&n; * Procedure to encode the data with the proper escaping and send the&n; * data to the remote system.&n; */
 r_static
 r_void
 DECL|function|ppp_dev_xmit_lower
@@ -12356,7 +12356,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Release the tty registration of the line dicipline so that no new entries&n; * may be created.&n; */
+multiline_comment|/*&n; * Release the tty registration of the line discipline so that no new entries&n; * may be created.&n; */
 id|status
 op_assign
 id|tty_register_ldisc

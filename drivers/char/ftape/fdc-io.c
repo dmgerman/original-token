@@ -129,7 +129,7 @@ r_static
 r_int
 id|fdc_fifo_thr
 suffix:semicolon
-multiline_comment|/* original fifo setting - thresshold */
+multiline_comment|/* original fifo setting - threshold */
 DECL|variable|fdc_lock_state
 r_static
 r_int
@@ -3901,7 +3901,7 @@ id|buff-&gt;sector_count
 )paren
 suffix:semicolon
 macro_line|#ifdef GCC_2_4_5_BUG
-multiline_comment|/*  This seemingly stupid construction confuses the gcc-2.4.5&n;&t; *  code generater enough to create correct code.&n;&t; */
+multiline_comment|/*  This seemingly stupid construction confuses the gcc-2.4.5&n;&t; *  code generator enough to create correct code.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4324,7 +4324,7 @@ c_func
 (paren
 l_int|5
 comma
-l_string|&quot;original fifo state: %sabled, thresshold %d, %slocked&quot;
+l_string|&quot;original fifo state: %sabled, threshold %d, %slocked&quot;
 comma
 (paren
 id|fdc_fifo_state
@@ -4398,7 +4398,7 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*  Enable fifo and set thresshold at xx bytes to allow a&n;&t;&t;&t; *  reasonably large latency and reduce number of dma bursts.&n;&t;&t;&t; */
+multiline_comment|/*  Enable fifo and set threshold at xx bytes to allow a&n;&t;&t;&t; *  reasonably large latency and reduce number of dma bursts.&n;&t;&t;&t; */
 id|fdc_ready_wait
 c_func
 (paren

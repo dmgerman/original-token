@@ -840,6 +840,13 @@ id|del_timer
 c_func
 (paren
 op_amp
+id|sk-&gt;delack_timer
+)paren
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
 id|sk-&gt;retransmit_timer
 )paren
 suffix:semicolon
@@ -2110,6 +2117,13 @@ c_func
 (paren
 op_amp
 id|sk-&gt;timer
+)paren
+suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|sk-&gt;delack_timer
 )paren
 suffix:semicolon
 id|init_timer

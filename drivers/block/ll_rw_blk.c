@@ -1824,6 +1824,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|set_bit
+c_func
+(paren
+id|PG_locked
+comma
+op_amp
 id|mem_map
 (braket
 id|MAP_NR
@@ -1833,25 +1839,13 @@ id|buffer
 )paren
 )braket
 dot
-id|locked
+id|flags
+)paren
 )paren
 id|panic
 (paren
 l_string|&quot;ll_rw_page: page already locked&quot;
 )paren
-suffix:semicolon
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|buffer
-)paren
-)braket
-dot
-id|locked
-op_assign
-l_int|1
 suffix:semicolon
 id|brw_page
 c_func
@@ -2784,7 +2778,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* this MUST preceed hd_init */
+multiline_comment|/* this MUST precede hd_init */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 id|hd_init

@@ -43,7 +43,7 @@ DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 24
 DECL|macro|virtual_dma_init
 mdefine_line|#define virtual_dma_init()                                              &bslash;&n;        if (boot_info.machtype == MACH_ACER_PICA_61 ||                  &bslash;&n;            boot_info.machtype == MACH_MIPS_MAGNUM_4000 ||              &bslash;&n;            boot_info.machtype == MACH_OLIVETTI_M700)                   &bslash;&n;&t;&t;vdma_alloc(PHYSADDR(floppy_track_buffer),               &bslash;&n;&t;&t;&t;   512*2*MAX_BUFFER_SECTORS);
-multiline_comment|/*&n; * And on Mips&squot;s the CMOS info failes also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or whereever a parivular machine has stored this ...&n; */
+multiline_comment|/*&n; * And on Mips&squot;s the CMOS info fails also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or wherever a particular machine has stored this ...&n; */
 DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE 4&t;&t;/* this is wrong for the Olli M700, but who cares... */
 DECL|macro|FLOPPY1_TYPE

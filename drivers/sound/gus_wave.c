@@ -6354,7 +6354,7 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;GUS: Loading saples without DMA&bslash;n&quot;
+l_string|&quot;GUS: Loading samples without DMA&bslash;n&quot;
 )paren
 suffix:semicolon
 id|gus_no_dma

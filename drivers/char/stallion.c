@@ -35,7 +35,7 @@ DECL|macro|BRD_ECHMC
 mdefine_line|#define&t;BRD_ECHMC&t;22
 DECL|macro|BRD_ECHPCI
 mdefine_line|#define&t;BRD_ECHPCI&t;26
-multiline_comment|/*&n; *&t;Define a configuration structure to hold the board configuration.&n; *&t;Need to set this up in the code (for now) with the boards that are&n; *&t;to be configured into the system. This is what needs to be modified&n; *&t;when adding/removing/modifying boards. Each line entry in the&n; *&t;stl_brdconf[] array is a board. Each line contains io/irq/memory&n; *&t;ranges for that board (as well as what type of board it is).&n; *&t;Some examples:&n; *&t;&t;{ BRD_EASYIO, 0x2a0, 0, 0, 10, 0 }&n; *&t;This line would configure an EasyIO board (4 or 8, no difference),&n; *&t;at io addres 2a0 and irq 10.&n; *&t;Another example:&n; *&t;&t;{ BRD_ECH, 0x2a8, 0x280, 0, 12, 0 },&n; *&t;This line will configure an EasyConnection 8/32 board at primary io&n; *&t;addres 2a8, secondary io address 280 and irq 12.&n; *&t;Enter as many lines into this array as you want (only the first 4&n; *&t;will actually be used!). Any combination of EasyIO and EasyConnection&n; *&t;boards can be specified. EasyConnection 8/32 boards can share their&n; *&t;secondary io addresses between each other.&n; *&n; *&t;NOTE: there is no need to put any entries in this table for PCI&n; *&t;boards. They will be found automatically by the driver - provided&n; *&t;PCI BIOS32 support is compiled into the kernel.&n; */
+multiline_comment|/*&n; *&t;Define a configuration structure to hold the board configuration.&n; *&t;Need to set this up in the code (for now) with the boards that are&n; *&t;to be configured into the system. This is what needs to be modified&n; *&t;when adding/removing/modifying boards. Each line entry in the&n; *&t;stl_brdconf[] array is a board. Each line contains io/irq/memory&n; *&t;ranges for that board (as well as what type of board it is).&n; *&t;Some examples:&n; *&t;&t;{ BRD_EASYIO, 0x2a0, 0, 0, 10, 0 }&n; *&t;This line would configure an EasyIO board (4 or 8, no difference),&n; *&t;at io address 2a0 and irq 10.&n; *&t;Another example:&n; *&t;&t;{ BRD_ECH, 0x2a8, 0x280, 0, 12, 0 },&n; *&t;This line will configure an EasyConnection 8/32 board at primary io&n; *&t;address 2a8, secondary io address 280 and irq 12.&n; *&t;Enter as many lines into this array as you want (only the first 4&n; *&t;will actually be used!). Any combination of EasyIO and EasyConnection&n; *&t;boards can be specified. EasyConnection 8/32 boards can share their&n; *&t;secondary io addresses between each other.&n; *&n; *&t;NOTE: there is no need to put any entries in this table for PCI&n; *&t;boards. They will be found automatically by the driver - provided&n; *&t;PCI BIOS32 support is compiled into the kernel.&n; */
 r_typedef
 r_struct
 (brace
@@ -108,7 +108,7 @@ id|stlconf_t
 )paren
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registery.&n; */
+multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registry.&n; */
 macro_line|#ifndef&t;STL_SIOMEMMAJOR
 DECL|macro|STL_SIOMEMMAJOR
 mdefine_line|#define&t;STL_SIOMEMMAJOR&t;&t;28
@@ -298,7 +298,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define a set of structures to hold all the board/panel/port info&n; *&t;for our ports. These will be dynamically allocated as required.&n; */
-multiline_comment|/*&n; *&t;Define a ring queue structure for each port. This will hold the&n; *&t;TX data waiting to be output. Characters are fed into this buffer&n; *&t;from the line discipline (or even direct from user space!) and&n; *&t;then fed into the UARTs during interrupts. Will use a clasic ring&n; *&t;queue here for this. The good thing about this type of ring queue&n; *&t;is that the head and tail pointers can be updated without interrupt&n; *&t;protection - since &quot;write&quot; code only needs to change the head, and&n; *&t;interrupt code only needs to change the tail.&n; */
+multiline_comment|/*&n; *&t;Define a ring queue structure for each port. This will hold the&n; *&t;TX data waiting to be output. Characters are fed into this buffer&n; *&t;from the line discipline (or even direct from user space!) and&n; *&t;then fed into the UARTs during interrupts. Will use a classic ring&n; *&t;queue here for this. The good thing about this type of ring queue&n; *&t;is that the head and tail pointers can be updated without interrupt&n; *&t;protection - since &quot;write&quot; code only needs to change the head, and&n; *&t;interrupt code only needs to change the tail.&n; */
 r_typedef
 r_struct
 (brace
@@ -764,7 +764,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Hardware ID bits for the EasyIO and ECH boards. These defines apply&n; *&t;to the directly accessable io ports of these boards (not the cd1400&n; *&t;uarts - they are in cd1400.h).&n; */
+multiline_comment|/*&n; *&t;Hardware ID bits for the EasyIO and ECH boards. These defines apply&n; *&t;to the directly accessible io ports of these boards (not the cd1400&n; *&t;uarts - they are in cd1400.h).&n; */
 DECL|macro|EIO_8PORTRS
 mdefine_line|#define&t;EIO_8PORTRS&t;0x04
 DECL|macro|EIO_4PORTRS
@@ -9639,7 +9639,7 @@ op_or_assign
 id|SRER_MODEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Setup cd1400 enhanced modes if we can. In particular we want to&n; *&t;handle as much of the flow control as possbile automatically. As&n; *&t;well as saving a few CPU cycles it will also greatly improve flow&n; *&t;control reliablilty.&n; */
+multiline_comment|/*&n; *&t;Setup cd1400 enhanced modes if we can. In particular we want to&n; *&t;handle as much of the flow control as possible automatically. As&n; *&t;well as saving a few CPU cycles it will also greatly improve flow&n; *&t;control reliability.&n; */
 r_if
 c_cond
 (paren
@@ -10456,7 +10456,7 @@ id|sigs
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Enable/Disable the Transmitter and/or Reciever.&n; */
+multiline_comment|/*&n; *&t;Enable/Disable the Transmitter and/or Receiver.&n; */
 DECL|function|stl_enablerxtx
 r_static
 r_void
@@ -10618,7 +10618,7 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Start/stop the Transmitter and/or Reciever.&n; */
+multiline_comment|/*&n; *&t;Start/stop the Transmitter and/or Receiver.&n; */
 DECL|function|stl_startrxtx
 r_static
 r_void
@@ -11057,7 +11057,7 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Map in interrupt vector to this driver. Check that we don&squot;t&n; *&t;already have this vector mapped, we might be sharing this&n; *&t;interrupt accross multiple boards.&n; */
+multiline_comment|/*&n; *&t;Map in interrupt vector to this driver. Check that we don&squot;t&n; *&t;already have this vector mapped, we might be sharing this&n; *&t;interrupt across multiple boards.&n; */
 DECL|function|stl_mapirq
 r_static
 r_int
@@ -12122,7 +12122,7 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Set up the initial board register contents for boards. This varys a&n; *&t;bit between the different board types. So we need to handle each&n; *&t;separately. Also do a check that the supplied IRQ is good.&n; */
+multiline_comment|/*&n; *&t;Set up the initial board register contents for boards. This varies a&n; *&t;bit between the different board types. So we need to handle each&n; *&t;separately. Also do a check that the supplied IRQ is good.&n; */
 r_if
 c_cond
 (paren

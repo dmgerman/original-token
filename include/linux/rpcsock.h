@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  rpcsock.h&t;Declarations for the RPC call interface.&n; *&n; *  Coypright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; *  rpcsock.h&t;Declarations for the RPC call interface.&n; *&n; *  Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#ifndef _LINUX_RPCSOCK_H
 DECL|macro|_LINUX_RPCSOCK_H
 mdefine_line|#define _LINUX_RPCSOCK_H

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * eth82586.h: Intel EtherExpress defines&n; *&n; * Written 1995 by John Sullivan&n; * See eexpress.c for furthur details&n; * documentation and usage to do.&n; */
+multiline_comment|/*&n; * eth82586.h: Intel EtherExpress defines&n; *&n; * Written 1995 by John Sullivan&n; * See eexpress.c for further details&n; * documentation and usage to do.&n; */
 multiline_comment|/*&n; * EtherExpress card register addresses&n; * as offsets from the base IO region (dev-&gt;base_addr)&n; */
 DECL|macro|DATAPORT
 mdefine_line|#define DATAPORT 0x0000
@@ -78,7 +78,7 @@ mdefine_line|#define TX_BUF_SIZE ((24+ETH_FRAME_LEN+31)&amp;~0x1f)
 DECL|macro|RX_BUF_SIZE
 mdefine_line|#define RX_BUF_SIZE ((32+ETH_FRAME_LEN+31)&amp;~0x1f)
 multiline_comment|/*&n; * SCB defines&n; */
-multiline_comment|/* these functions take the SCB status word and test the relavent status bit */
+multiline_comment|/* these functions take the SCB status word and test the relevant status bit */
 DECL|macro|SCB_complete
 mdefine_line|#define SCB_complete(s) ((s&amp;0x8000)!=0)
 DECL|macro|SCB_rxdframe

@@ -205,7 +205,7 @@ r_char
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Similar to the above this is a structure that describes various&n; * CPU dependend features.&n; *&n; * FIXME: This vector isn&squot;t being used yet&n; */
+multiline_comment|/*&n; * Similar to the above this is a structure that describes various&n; * CPU dependent features.&n; *&n; * FIXME: This vector isn&squot;t being used yet&n; */
 DECL|struct|cpu
 r_struct
 id|cpu

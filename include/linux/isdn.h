@@ -108,7 +108,7 @@ mdefine_line|#define ISDN_USAGE_EXCLUSIVE 64 /* This bit is set, if channel is e
 DECL|macro|ISDN_USAGE_OUTGOING
 mdefine_line|#define ISDN_USAGE_OUTGOING 128 /* This bit is set, if channel is outgoing  */
 DECL|macro|ISDN_MODEM_ANZREG
-mdefine_line|#define ISDN_MODEM_ANZREG    20        /* Number of Medem-Registers        */
+mdefine_line|#define ISDN_MODEM_ANZREG    20        /* Number of Modem-Registers        */
 DECL|macro|ISDN_MSNLEN
 mdefine_line|#define ISDN_MSNLEN          20
 r_typedef
@@ -408,7 +408,7 @@ mdefine_line|#define ISDN_NET_CLONE      0x08       /* clone a tmp interface whe
 DECL|macro|ISDN_NET_TMP
 mdefine_line|#define ISDN_NET_TMP        0x10       /* tmp interface until getting an IP */
 DECL|macro|ISDN_NET_DYNAMIC
-mdefine_line|#define ISDN_NET_DYNAMIC    0x20       /* this link is dynamically allocted */
+mdefine_line|#define ISDN_NET_DYNAMIC    0x20       /* this link is dynamically allocated */
 DECL|macro|ISDN_NET_MAGIC
 mdefine_line|#define ISDN_NET_MAGIC      0x49344C02 /* for paranoia-checking             */
 multiline_comment|/* Phone-list-element */
@@ -504,7 +504,7 @@ DECL|member|dialmax
 r_int
 id|dialmax
 suffix:semicolon
-multiline_comment|/* Max. Nuber of Dial-retries       */
+multiline_comment|/* Max. Number of Dial-retries      */
 DECL|member|msn
 r_char
 id|msn
@@ -1053,7 +1053,7 @@ DECL|typedef|atemu
 )brace
 id|atemu
 suffix:semicolon
-multiline_comment|/* Descripion of one ISDN-tty */
+multiline_comment|/* Description of one ISDN-tty */
 r_typedef
 r_struct
 (brace

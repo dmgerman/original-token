@@ -16,7 +16,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;ni65.h&quot;
-multiline_comment|/*&n; * the current setting allows max. perforamnce&n; * for &squot;RCV_PARANOIA_CHECK&squot; read the &squot;known problems&squot; part in &n; * the header of this file&n; */
+multiline_comment|/*&n; * the current setting allows max. performance&n; * for &squot;RCV_PARANOIA_CHECK&squot; read the &squot;known problems&squot; part in &n; * the header of this file&n; */
 DECL|macro|RCV_VIA_SKB
 mdefine_line|#define RCV_VIA_SKB
 DECL|macro|RCV_PARANOIA_CHECK
@@ -2291,7 +2291,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Ooops, receive ring currupted&bslash;n&quot;
+l_string|&quot;%s: Ooops, receive ring corrupted&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren

@@ -36,7 +36,7 @@ l_int|14
 suffix:semicolon
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
-multiline_comment|/*&n; *&t;Programming suppoort&n; */
+multiline_comment|/*&n; *&t;Programming support&n; */
 DECL|function|wdt_ctr_mode
 r_static
 r_void
@@ -739,11 +739,11 @@ comma
 id|wdt_release
 )brace
 suffix:semicolon
-DECL|variable|wdt_mouse
+DECL|variable|wdt_miscdev
 r_static
 r_struct
 id|miscdevice
-id|wdt_mouse
+id|wdt_miscdev
 op_assign
 (brace
 id|WATCHDOG_MINOR
@@ -755,11 +755,11 @@ id|wdt_fops
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501
-DECL|variable|temp_mouse
+DECL|variable|temp_miscdev
 r_static
 r_struct
 id|miscdevice
-id|temp_mouse
+id|temp_miscdev
 op_assign
 (brace
 id|TEMP_MINOR
@@ -821,19 +821,19 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp
-id|wdt_mouse
+id|wdt_miscdev
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501&t;
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp
-id|temp_mouse
+id|temp_miscdev
 )paren
 suffix:semicolon
 macro_line|#endif&t;
@@ -859,11 +859,11 @@ c_func
 r_void
 )paren
 (brace
-id|mouse_deregister
+id|misc_deregister
 c_func
 (paren
 op_amp
-id|wdt_mouse
+id|wdt_miscdev
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501&t;
@@ -871,7 +871,7 @@ id|misc_deregister
 c_func
 (paren
 op_amp
-id|temp_mouse
+id|temp_miscdev
 )paren
 suffix:semicolon
 macro_line|#endif&t;
@@ -942,11 +942,11 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp
-id|wdt_mouse
+id|wdt_miscdev
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501&t;
@@ -954,7 +954,7 @@ id|misc_register
 c_func
 (paren
 op_amp
-id|temp_mouse
+id|temp_miscdev
 )paren
 suffix:semicolon
 macro_line|#endif&t;

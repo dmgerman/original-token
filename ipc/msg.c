@@ -1940,7 +1940,7 @@ id|msqid_ds
 op_star
 id|msq
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the IPC_KERNELD flag is set, the key is forced to IPC_PRIVATE,&n;&t; * and a designated kerneld message queue is created/refered to&n;&t; */
+multiline_comment|/*&n;&t; * If the IPC_KERNELD flag is set, the key is forced to IPC_PRIVATE,&n;&t; * and a designated kerneld message queue is created/referred to&n;&t; */
 r_if
 c_cond
 (paren
@@ -2972,7 +2972,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * There is only one kerneld message queue,&n;&t;&t; * mark it as non-existant&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * There is only one kerneld message queue,&n;&t;&t; * mark it as non-existent&n;&t;&t; */
 r_if
 c_cond
 (paren

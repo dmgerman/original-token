@@ -32,7 +32,7 @@ id|icmp_mib
 id|icmp_statistics
 suffix:semicolon
 multiline_comment|/* An array of errno for error messages from dest unreach. */
-multiline_comment|/* RFC 1122: 3.2.2.1 States that NET_UNREACH, HOS_UNREACH and SR_FAIELD MUST be considered &squot;transient errrs&squot;. */
+multiline_comment|/* RFC 1122: 3.2.2.1 States that NET_UNREACH, HOS_UNREACH and SR_FAIELD MUST be considered &squot;transient errs&squot;. */
 DECL|variable|icmp_err_convert
 r_struct
 id|icmp_err
@@ -133,7 +133,7 @@ l_int|0
 multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;A spare long used to speed up statistics udpating&n; */
+multiline_comment|/*&n; *&t;A spare long used to speed up statistics updating&n; */
 DECL|variable|dummy
 r_int
 r_int

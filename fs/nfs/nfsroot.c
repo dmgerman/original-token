@@ -225,7 +225,7 @@ id|protocol
 )paren
 suffix:semicolon
 multiline_comment|/***************************************************************************&n;&n;&t;&t;&t;Device Handling Subroutines&n;&n; ***************************************************************************/
-multiline_comment|/*&n; * Setup and initialize all network devices. If there is a user-prefered&n; * interface, ignore all other interfaces.&n; */
+multiline_comment|/*&n; * Setup and initialize all network devices. If there is a user-preferred&n; * interface, ignore all other interfaces.&n; */
 DECL|function|root_dev_open
 r_static
 r_int
@@ -6012,7 +6012,7 @@ comma
 id|nfs_data.hostname
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * First connect the UDP socket to a server port, then send the&n;&t; * packet out, and finally check wether the answer is OK.&n;&t; */
+multiline_comment|/*&n;&t; * First connect the UDP socket to a server port, then send the&n;&t; * packet out, and finally check whether the answer is OK.&n;&t; */
 r_if
 c_cond
 (paren

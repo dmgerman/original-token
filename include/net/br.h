@@ -30,7 +30,7 @@ mdefine_line|#define All_ports (No_of_ports + 1)
 multiline_comment|/*&n; * We time out our entries in the FDB after this many seconds.&n; */
 DECL|macro|FDB_TIMEOUT
 mdefine_line|#define FDB_TIMEOUT&t;300
-multiline_comment|/*&n; * the following defines are the initial values used when the &n; * bridge is booted.  These may be overridden when this bridge is&n; * not the root bridge.  These are the reccomended default values &n; * from the 802.1d specification.&n; */
+multiline_comment|/*&n; * the following defines are the initial values used when the &n; * bridge is booted.  These may be overridden when this bridge is&n; * not the root bridge.  These are the recommended default values &n; * from the 802.1d specification.&n; */
 DECL|macro|BRIDGE_MAX_AGE
 mdefine_line|#define BRIDGE_MAX_AGE&t;&t;20
 DECL|macro|BRIDGE_HELLO_TIME

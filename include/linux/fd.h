@@ -175,7 +175,7 @@ suffix:semicolon
 DECL|macro|FDGETDRVTYP
 mdefine_line|#define FDGETDRVTYP _IOR(2, 0x0f, floppy_drive_name)
 multiline_comment|/* get drive type: 5 1/4 or 3 1/2 */
-multiline_comment|/*&n; * Drive parameters (user modifyable)&n; */
+multiline_comment|/*&n; * Drive parameters (user modifiable)&n; */
 DECL|struct|floppy_drive_params
 r_struct
 id|floppy_drive_params
@@ -336,7 +336,7 @@ mdefine_line|#define FDSETDRVPRM _IOW(2, 0x90, struct floppy_drive_params)
 DECL|macro|FDGETDRVPRM
 mdefine_line|#define FDGETDRVPRM _IOR(2, 0x11, struct floppy_drive_params)
 multiline_comment|/* set/get drive parameters */
-multiline_comment|/*&n; * Current drive state (not directly modifyable by user, readonly)&n; */
+multiline_comment|/*&n; * Current drive state (not directly modifiable by user, readonly)&n; */
 DECL|struct|floppy_drive_struct
 r_struct
 id|floppy_drive_struct
@@ -650,7 +650,7 @@ id|floppy_raw_cmd
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* used for chaining of raw cmd&squot;s &n;&t;&t;&t;&t;      * withing the kernel */
+multiline_comment|/* used for chaining of raw cmd&squot;s &n;&t;&t;&t;&t;      * within the kernel */
 DECL|member|length
 r_int
 id|length

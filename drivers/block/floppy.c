@@ -13,7 +13,7 @@ multiline_comment|/*&n; * 1994/8/8 -- Alain Knaff -- Switched to fdpatch driver:
 multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical floppy write&n; * errors to allow safe writing by specialized programs.&n; */
 multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
 multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
-multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependend&n; * features to asm/floppy.h.&n; */
+multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependent&n; * features to asm/floppy.h.&n; */
 DECL|macro|FLOPPY_SANITY_CHECK
 mdefine_line|#define FLOPPY_SANITY_CHECK
 DECL|macro|FLOPPY_SILENT_DCL_CLEAR
@@ -12158,7 +12158,7 @@ id|size
 )paren
 suffix:semicolon
 multiline_comment|/* is this necessary ??? */
-multiline_comment|/* Ralf: Yes; only the l2 cache is completly chipset&n;&t;   controlled */
+multiline_comment|/* Ralf: Yes; only the l2 cache is completely chipset&n;&t;   controlled */
 id|memcpy_tofs
 c_func
 (paren
@@ -14607,7 +14607,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* do the actual eject. Fails on&n;&t;&t;&t; * non-Sparc archtitectures */
+multiline_comment|/* do the actual eject. Fails on&n;&t;&t;&t; * non-Sparc architectures */
 id|ret
 op_assign
 id|fd_eject

@@ -53,7 +53,7 @@ id|max_synthdev
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilites)&n; */
+multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilities)&n; */
 DECL|macro|SEQ_1
 mdefine_line|#define SEQ_1&t;1
 DECL|macro|SEQ_2

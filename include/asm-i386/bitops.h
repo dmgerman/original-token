@@ -190,7 +190,16 @@ id|addr
 )paren
 (brace
 r_return
+(paren
+(paren
 l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
 op_amp
 (paren
 (paren
@@ -207,13 +216,10 @@ id|nr
 op_rshift
 l_int|5
 )braket
-op_rshift
-(paren
-id|nr
-op_amp
-l_int|31
 )paren
 )paren
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find-bit routines..&n; */

@@ -239,7 +239,7 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* unly used if we fail */
+multiline_comment|/* only used if we fail */
 r_if
 c_cond
 (paren
@@ -1410,7 +1410,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We can&squot;t actually handle ufs yet, so we translate UFS mounts to&n; * ext2fs mounts... I wouldn&squot;t mind a USF filesystem, but the UFS&n; * layout is so braindead it&squot;s a major headache doing it..&n; */
+multiline_comment|/*&n; * We can&squot;t actually handle ufs yet, so we translate UFS mounts to&n; * ext2fs mounts... I wouldn&squot;t mind a UFS filesystem, but the UFS&n; * layout is so braindead it&squot;s a major headache doing it..&n; */
 DECL|function|osf_ufs_mount
 r_static
 r_int

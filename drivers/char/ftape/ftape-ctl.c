@@ -3696,7 +3696,7 @@ id|unknown_wake_up
 suffix:semicolon
 id|drive_type.name
 op_assign
-l_string|&quot;Unkown&quot;
+l_string|&quot;Unknown&quot;
 suffix:semicolon
 id|timeout.seek
 op_assign

@@ -2690,7 +2690,7 @@ multiline_comment|/* This mailbox is terminated */
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_reset: resetted ccb %d.&bslash;n&quot;
+l_string|&quot;eata_pio_reset: reset ccb %d.&bslash;n&quot;
 comma
 id|x
 )paren

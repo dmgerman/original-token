@@ -2023,7 +2023,7 @@ DECL|member|cy
 r_int
 id|cy
 suffix:semicolon
-multiline_comment|/* the second escap seq argument */
+multiline_comment|/* the second escape seq argument */
 DECL|member|accp
 r_int
 op_star

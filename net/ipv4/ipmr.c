@@ -23,7 +23,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-multiline_comment|/*&n; *&t;Multicast router conrol variables&n; */
+multiline_comment|/*&n; *&t;Multicast router control variables&n; */
 DECL|variable|vif_table
 r_static
 r_struct

@@ -543,7 +543,7 @@ op_amp
 id|dev-&gt;pa_mask
 )paren
 op_logical_and
-multiline_comment|/* The daddr!=raddr test isnt obvious - what its doing&n;&t;&t;&t;   is avoiding sending a frame the receiver will not &n;&t;&t;&t;   believe anyway.. */
+multiline_comment|/* The daddr!=raddr test isn&squot;t obvious - what its doing&n;&t;&t;&t;   is avoiding sending a frame the receiver will not &n;&t;&t;&t;   believe anyway.. */
 id|iph-&gt;daddr
 op_ne
 id|raddr

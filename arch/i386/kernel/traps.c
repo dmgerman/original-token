@@ -1318,7 +1318,7 @@ r_void
 )paren
 (brace
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n; *&t;SMP is actually simpler than uniprocessor for once. Because&n; *&t;we can&squot;t pull the delayed FPU switching trick Linus does&n; *&t;we simply have to do the restore each context switch and&n; *&t;set the flag. switch_to() will always save the state in&n; *&t;case we swap processors. We also don&squot;t use the coprocessor&n; *&t;timer - IRQ 13 mode isnt used with SMP machines (thank god).&n; *&n; *&t;If this actually works it will be a miracle however&n; */
+multiline_comment|/*&n; *&t;SMP is actually simpler than uniprocessor for once. Because&n; *&t;we can&squot;t pull the delayed FPU switching trick Linus does&n; *&t;we simply have to do the restore each context switch and&n; *&t;set the flag. switch_to() will always save the state in&n; *&t;case we swap processors. We also don&squot;t use the coprocessor&n; *&t;timer - IRQ 13 mode isn&squot;t used with SMP machines (thank god).&n; *&n; *&t;If this actually works it will be a miracle however&n; */
 id|__asm__
 id|__volatile__
 c_func

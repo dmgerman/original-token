@@ -48,6 +48,13 @@ id|core_table
 (braket
 )braket
 comma
+id|unix_table
+(braket
+)braket
+suffix:semicolon
+macro_line|#ifdef CONFIG_NET
+r_extern
+id|ctl_table
 id|ether_table
 (braket
 )braket
@@ -55,11 +62,8 @@ comma
 id|e802_table
 (braket
 )braket
-comma
-id|unix_table
-(braket
-)braket
 suffix:semicolon
+macro_line|#endif
 DECL|variable|net_table
 id|ctl_table
 id|net_table
@@ -82,9 +86,9 @@ id|core_table
 )brace
 comma
 (brace
-id|NET_ETHER
+id|NET_UNIX
 comma
-l_string|&quot;ethernet&quot;
+l_string|&quot;unix&quot;
 comma
 l_int|NULL
 comma
@@ -92,9 +96,10 @@ l_int|0
 comma
 l_int|0555
 comma
-id|ether_table
+id|unix_table
 )brace
 comma
+macro_line|#ifdef CONFIG_NET
 (brace
 id|NET_802
 comma
@@ -110,9 +115,9 @@ id|e802_table
 )brace
 comma
 (brace
-id|NET_UNIX
+id|NET_ETHER
 comma
-l_string|&quot;unix&quot;
+l_string|&quot;ethernet&quot;
 comma
 l_int|NULL
 comma
@@ -120,9 +125,10 @@ l_int|0
 comma
 l_int|0555
 comma
-id|unix_table
+id|ether_table
 )brace
 comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 (brace
 id|NET_IPV4

@@ -1494,7 +1494,7 @@ suffix:semicolon
 multiline_comment|/* The FLEXNET DAMA master implementation refuses to send us ANY */
 multiline_comment|/* I frame for this connection if we send a REJ here, probably   */
 multiline_comment|/* due to it&squot;s frame collector scheme? A simple RR or  RNR will  */
-multiline_comment|/* invoke the retransmission, and in fact REJs are superflous    */
+multiline_comment|/* invoke the retransmission, and in fact REJs are superfluous   */
 multiline_comment|/* in DAMA mode anyway...&t;&t;&t;&t;&t; */
 macro_line|#if 0
 r_if

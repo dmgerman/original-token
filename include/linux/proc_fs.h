@@ -358,7 +358,7 @@ comma
 DECL|enumerator|PROC_SCSI_FILE
 id|PROC_SCSI_FILE
 comma
-multiline_comment|/* I&squot;m asuming here that we */
+multiline_comment|/* I&squot;m assuming here that we */
 DECL|enumerator|PROC_SCSI_LAST
 id|PROC_SCSI_LAST
 op_assign

@@ -2632,8 +2632,8 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_int
-DECL|function|soud_map_buffer
-id|soud_map_buffer
+DECL|function|sound_map_buffer
+id|sound_map_buffer
 (paren
 r_int
 id|dev

@@ -87,7 +87,7 @@ DECL|member|protocol
 r_int
 id|protocol
 suffix:semicolon
-multiline_comment|/* PPP procotol, e.g. PPP_IP */
+multiline_comment|/* PPP protocol, e.g. PPP_IP */
 DECL|member|mode
 r_enum
 id|NPmode

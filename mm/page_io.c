@@ -226,9 +226,14 @@ id|wait
 id|page-&gt;count
 op_increment
 suffix:semicolon
-id|page-&gt;free_after
-op_assign
-l_int|1
+id|set_bit
+c_func
+(paren
+id|PG_freeafter
+comma
+op_amp
+id|page-&gt;flags
+)paren
 suffix:semicolon
 id|nr_async_pages
 op_increment

@@ -169,7 +169,7 @@ OG
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t; &t; * Delay timeout seconds before rebooting the machine. &n;&t;&t; * We can&squot;t use the &quot;normal&quot; timers since we just paniced..&n;&t; &t; */
+multiline_comment|/*&n;&t; &t; * Delay timeout seconds before rebooting the machine. &n;&t;&t; * We can&squot;t use the &quot;normal&quot; timers since we just panicked..&n;&t; &t; */
 id|printk
 c_func
 (paren

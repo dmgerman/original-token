@@ -271,7 +271,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* dito */
+multiline_comment|/* ditto */
 multiline_comment|/* copy data from first fragment */
 id|memcpy
 c_func

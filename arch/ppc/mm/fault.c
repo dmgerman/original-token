@@ -876,7 +876,7 @@ id|rlim_cur
 id|printk
 c_func
 (paren
-l_string|&quot;stack2: vma-&gt;vm_end-addres %x rlim %x&bslash;n&quot;
+l_string|&quot;stack2: vma-&gt;vm_end-address %x rlim %x&bslash;n&quot;
 comma
 id|vma-&gt;vm_end
 op_minus

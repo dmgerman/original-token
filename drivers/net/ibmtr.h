@@ -108,7 +108,7 @@ mdefine_line|#define ISRP_ODD        0x09
 DECL|macro|ADAP_CHK_INT
 mdefine_line|#define ADAP_CHK_INT 0x40 /* Bit 6 - Adapter check.  the adapter has&n;                             encountered a serious problem and has closed&n;                             itself.  Whoa.  */
 DECL|macro|SRB_RESP_INT
-mdefine_line|#define SRB_RESP_INT 0x20 /* Bit 5 - SRB response.  The adapter has accepted&n;                             an SRB request and set the return code withing&n;                             the SRB. */
+mdefine_line|#define SRB_RESP_INT 0x20 /* Bit 5 - SRB response.  The adapter has accepted&n;                             an SRB request and set the return code within&n;                             the SRB. */
 DECL|macro|ASB_FREE_INT
 mdefine_line|#define ASB_FREE_INT 0x10 /* Bit 4 - ASB free.  The adapter has read the ASB&n;                                                                          and this area can be safely reused. This interrupt&n;                                                                          is only used if your application has set the ASB&n;                                                                          free request bit in ISRA_ODD or if an error was&n;                                                                detected in your response. */
 DECL|macro|ARB_CMD_INT
@@ -132,7 +132,7 @@ DECL|macro|CMD_IN_SRB
 mdefine_line|#define CMD_IN_SRB 0x20 /* Bit 5  - Indicates that you have placed a new&n;                           command in the SRB and are ready for the adapter to&n;                           process the command. */
 DECL|macro|RESP_IN_ASB
 mdefine_line|#define RESP_IN_ASB 0x10 /* Bit 4 - Indicates that you have placed a response&n;                                                                    (an ASB) in the shared RAM which is available for&n;                                                                         the adapter&squot;s use. */
-multiline_comment|/* Bit 3 - Indicates that you are ready to ut an SRB in the shared RAM, but that a previous */
+multiline_comment|/* Bit 3 - Indicates that you are ready to put an SRB in the shared RAM, but that a previous */
 multiline_comment|/*         command is still pending.  The adapter will then interrupt you when the previous */
 multiline_comment|/*         command is completed */
 multiline_comment|/* Bit 2 - Indicates that you are ready to put an ASB in the shared RAM, but that a previous */
@@ -194,7 +194,7 @@ DECL|macro|SET_PAGE
 mdefine_line|#define SET_PAGE(x)
 macro_line|#endif
 DECL|enumerator|IN_PROGRESS
-DECL|enumerator|SUCCES
+DECL|enumerator|SUCCESS
 DECL|enumerator|FAILURE
 DECL|enumerator|CLOSED
 DECL|typedef|open_state
@@ -203,7 +203,7 @@ r_enum
 (brace
 id|IN_PROGRESS
 comma
-id|SUCCES
+id|SUCCESS
 comma
 id|FAILURE
 comma

@@ -1647,7 +1647,7 @@ id|FREE_WRITE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Build and send a packet, with as little as one copy&n; *&n; *&t;Doesn&squot;t care much about ip options... option length can be&n; *&t;different for fragment at 0 and other fragments.&n; *&n; *&t;Note that the fragment at the highest offset is sent first,&n; *&t;so the getfrag routine can fill in the TCP/UDP checksum header&n; *&t;field in the last fragment it sends... actually it also helps&n; * &t;the reassemblers, they can put most packets in at the head of&n; *&t;the fragment queue, and they know the total size in advance. This&n; *&t;last feature will measurable improve the Linux fragment handler.&n; *&n; *&t;The callback has five args, an arbitrary pointer (copy of frag),&n; *&t;the source IP address (may depend on the routing table), the &n; *&t;destination adddress (char *), the offset to copy from, and the&n; *&t;length to be copied.&n; * &n; */
+multiline_comment|/*&n; *&t;Build and send a packet, with as little as one copy&n; *&n; *&t;Doesn&squot;t care much about ip options... option length can be&n; *&t;different for fragment at 0 and other fragments.&n; *&n; *&t;Note that the fragment at the highest offset is sent first,&n; *&t;so the getfrag routine can fill in the TCP/UDP checksum header&n; *&t;field in the last fragment it sends... actually it also helps&n; * &t;the reassemblers, they can put most packets in at the head of&n; *&t;the fragment queue, and they know the total size in advance. This&n; *&t;last feature will measurable improve the Linux fragment handler.&n; *&n; *&t;The callback has five args, an arbitrary pointer (copy of frag),&n; *&t;the source IP address (may depend on the routing table), the &n; *&t;destination address (char *), the offset to copy from, and the&n; *&t;length to be copied.&n; * &n; */
 DECL|function|ip_build_xmit
 r_int
 id|ip_build_xmit
@@ -3621,7 +3621,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Join the intial group if multicast.&n; */
+multiline_comment|/*&n; *&t;Join the initial group if multicast.&n; */
 r_if
 c_cond
 (paren

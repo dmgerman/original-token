@@ -212,7 +212,7 @@ r_struct
 id|device
 id|dev
 suffix:semicolon
-multiline_comment|/* Our device stucture&t;&t;*/
+multiline_comment|/* Our device structure&t;&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/************************************************************************/
@@ -878,7 +878,7 @@ r_return
 id|dst
 suffix:semicolon
 )brace
-multiline_comment|/* UnStuffData decodes the data at &quot;src&quot;, up to (but not including) &quot;end&quot;.&n;It writes the decoded data into the buffer pointed to by &quot;dst&quot;, up to a&n;maximum of &quot;dst_length&quot;, and returns the new value of &quot;src&quot; so that a&n;follow-on call can read more data, continuing from where the first left off.&n;&n;There are three types of results:&n;1. The source data runs out before extracting &quot;dst_length&quot; bytes:&n;   UnStuffData returns NULL to indicate failure.&n;2. The source data produces exactly &quot;dst_length&quot; bytes:&n;   UnStuffData returns new_src = end to indicate that all bytes were consumed.&n;3. &quot;dst_length&quot; bytes are extracted, with more remaining.&n;   UnStuffData returns new_src &lt; end to indicate that there are more bytes&n;   to be read.&n;&n;Note: The decoding may be dstructive, in that it may alter the source&n;data in the process of decoding it (this is necessary to allow a follow-on&n;call to resume correctly). */
+multiline_comment|/* UnStuffData decodes the data at &quot;src&quot;, up to (but not including) &quot;end&quot;.&n;It writes the decoded data into the buffer pointed to by &quot;dst&quot;, up to a&n;maximum of &quot;dst_length&quot;, and returns the new value of &quot;src&quot; so that a&n;follow-on call can read more data, continuing from where the first left off.&n;&n;There are three types of results:&n;1. The source data runs out before extracting &quot;dst_length&quot; bytes:&n;   UnStuffData returns NULL to indicate failure.&n;2. The source data produces exactly &quot;dst_length&quot; bytes:&n;   UnStuffData returns new_src = end to indicate that all bytes were consumed.&n;3. &quot;dst_length&quot; bytes are extracted, with more remaining.&n;   UnStuffData returns new_src &lt; end to indicate that there are more bytes&n;   to be read.&n;&n;Note: The decoding may be destructive, in that it may alter the source&n;data in the process of decoding it (this is necessary to allow a follow-on&n;call to resume correctly). */
 DECL|function|UnStuffData
 r_static
 id|__u8
@@ -1791,7 +1791,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* If some data left, send it */
-multiline_comment|/* Must disable interrupts because othewise the write_wakeup might&n;&t;&t; * happen before we&squot;ve had a chance to update the tx_left and&n;&t;&t; *  tx_head fields&n; &t;&t; */
+multiline_comment|/* Must disable interrupts because otherwise the write_wakeup might&n;&t;&t; * happen before we&squot;ve had a chance to update the tx_left and&n;&t;&t; *  tx_head fields&n; &t;&t; */
 id|intstat
 op_assign
 id|DisableInterrupts
@@ -3388,7 +3388,7 @@ op_assign
 id|ptr
 op_increment
 suffix:semicolon
-multiline_comment|/* Check for SRIP key, and skip over it */
+multiline_comment|/* Check for STRIP key, and skip over it */
 r_if
 c_cond
 (paren
@@ -4389,7 +4389,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;This routine is called by DDI when the&n; *&t;(dyamically assigned) device is registered&n; */
+multiline_comment|/* &n; *&t;This routine is called by DDI when the&n; *&t;(dynamically assigned) device is registered&n; */
 DECL|function|strip_dev_init
 r_static
 r_int

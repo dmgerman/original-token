@@ -92,7 +92,7 @@ mdefine_line|#define NET_MODE_PROM&t;&t;0x08&t;/* promiscuous */
 DECL|macro|NET_MODE_HC
 mdefine_line|#define NET_MODE_HC&t;&t;0x10&t;/* is a hop coordinator */
 DECL|macro|NET_MODE_HC_VALID
-mdefine_line|#define NET_MODE_HC_VALID&t;0x20&t;/* hc addres is valid */
+mdefine_line|#define NET_MODE_HC_VALID&t;0x20&t;/* hc address is valid */
 DECL|macro|NET_MODE_HCAP
 mdefine_line|#define NET_MODE_HCAP&t;&t;0x40&t;/* hc is also ap */
 DECL|macro|NET_MODE_HC_KNOWN
@@ -102,13 +102,13 @@ r_int
 r_char
 id|rts_lo
 suffix:semicolon
-multiline_comment|/* rts threshhold */
+multiline_comment|/* rts threshold */
 DECL|member|rts_hi
 r_int
 r_char
 id|rts_hi
 suffix:semicolon
-multiline_comment|/* rts threshhold */
+multiline_comment|/* rts threshold */
 DECL|member|retry
 r_int
 r_char
@@ -237,7 +237,7 @@ mdefine_line|#define CCA_PKT_DET_BSY&t;&t;0x01&t;/* busy if packet is detected *
 DECL|macro|CCA_VIRT_CARR
 mdefine_line|#define CCA_VIRT_CARR&t;&t;0x02&t;/* use virtual carrier */
 DECL|macro|CCA_RSSI_BSY
-mdefine_line|#define CCA_RSSI_BSY&t;&t;0x04&t;/* busy if rssi &gt; thresshold */
+mdefine_line|#define CCA_RSSI_BSY&t;&t;0x04&t;/* busy if rssi &gt; threshold */
 DECL|macro|CCA_DATA_BSY
 mdefine_line|#define CCA_DATA_BSY&t;&t;0x08&t;/* busy if valid data &gt; XXX usec */
 DECL|member|dwell_hi
@@ -263,7 +263,7 @@ r_int
 r_char
 id|rssi
 suffix:semicolon
-multiline_comment|/* rssi threshhold */
+multiline_comment|/* rssi threshold */
 DECL|member|hc_rssi
 r_int
 r_char

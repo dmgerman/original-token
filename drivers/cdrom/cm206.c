@@ -724,7 +724,7 @@ op_amp
 id|ds_toc_ready
 )paren
 (brace
-multiline_comment|/* do something appropiate */
+multiline_comment|/* do something appropriate */
 )brace
 multiline_comment|/* couldn&squot;t see why this interrupt, maybe due to init */
 r_else

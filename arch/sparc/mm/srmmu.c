@@ -4041,7 +4041,7 @@ l_int|4
 op_or
 id|SRMMU_ET_PTE
 suffix:semicolon
-multiline_comment|/* I need to test whether this is consistant over all&n;&t; * sun4m&squot;s.  The bus_type represents the upper 4 bits of&n;&t; * 36-bit physical address on the I/O space lines...&n;&t; */
+multiline_comment|/* I need to test whether this is consistent over all&n;&t; * sun4m&squot;s.  The bus_type represents the upper 4 bits of&n;&t; * 36-bit physical address on the I/O space lines...&n;&t; */
 id|tmp
 op_or_assign
 (paren
@@ -6775,7 +6775,7 @@ id|SWIFT_DE
 )paren
 suffix:semicolon
 multiline_comment|/* I &amp; D caches on */
-multiline_comment|/* The Swift branch folding logic is completely broken.  At&n;&t; * trap time, if things are just right, if can mistakedly&n;&t; * thing that a trap is coming from kernel mode when in fact&n;&t; * it is coming from user mode (it misexecutes the branch in&n;&t; * the trap code).  So you see things like crashme completely&n;&t; * hosing your machine which is completely unacceptable.  Turn&n;&t; * this crap off... nice job Fujitsu.&n;&t; */
+multiline_comment|/* The Swift branch folding logic is completely broken.  At&n;&t; * trap time, if things are just right, if can mistakenly&n;&t; * thing that a trap is coming from kernel mode when in fact&n;&t; * it is coming from user mode (it misexecutes the branch in&n;&t; * the trap code).  So you see things like crashme completely&n;&t; * hosing your machine which is completely unacceptable.  Turn&n;&t; * this crap off... nice job Fujitsu.&n;&t; */
 id|mreg
 op_and_assign
 op_complement

@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
-multiline_comment|/*&n; *&t;Why isnt this somewhere standard ??&n; */
+multiline_comment|/*&n; *&t;Why isn&squot;t this somewhere standard ??&n; */
 DECL|function|max
 r_extern
 id|__inline
@@ -2414,8 +2414,8 @@ comma
 id|stack
 )paren
 suffix:semicolon
-multiline_comment|/* So we set whats up   */
-multiline_comment|/*&t;&t;&t;&t;&n;&t;&t;&t; *&t;This gunge runs the startup process for&n;&t;&t;&t; *&t;the targeted processor.&n;&t;&t;&t; */
+multiline_comment|/* So we set what&squot;s up   */
+multiline_comment|/*&t;&t;&t;&t;&n;&t;&t;&t; *&t;This grunge runs the startup process for&n;&t;&t;&t; *&t;the targeted processor.&n;&t;&t;&t; */
 id|SMP_PRINTK
 c_func
 (paren

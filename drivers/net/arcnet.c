@@ -34,7 +34,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 multiline_comment|/**************************************************************************/
-multiline_comment|/* Normally, the ARCnet device needs to be assigned a name (default arc0). &n; * Ethernet devices have a fucntion to automatically try eth0, eth1, etc&n; * until a free name is found.  To name the ARCnet device using an &quot;eth?&quot;&n; * device name, define this option.&n; */
+multiline_comment|/* Normally, the ARCnet device needs to be assigned a name (default arc0). &n; * Ethernet devices have a function to automatically try eth0, eth1, etc&n; * until a free name is found.  To name the ARCnet device using an &quot;eth?&quot;&n; * device name, define this option.&n; */
 DECL|macro|CONFIG_ARCNET_ETHNAME
 macro_line|#undef CONFIG_ARCNET_ETHNAME
 multiline_comment|/* On a fast computer, the buffer copy from memory to the ARCnet card during&n; * a transmit can hog the bus just a little too long.  SLOW_XMIT_COPY&n; * replaces the fast memcpy() with a slower for() loop that seems to solve&n; * my problems with ftape.&n; *&n; * Probably a better solution would be to use memcpy_toio (more portable&n; * anyway) and modify that routine to support REALLY_SLOW_IO-style&n; * defines; ARCnet probably is not the only driver that can screw up an&n; * ftape DMA transfer.&n; *&n; * Turn this off if you don&squot;t have timing-sensitive DMA (ie. a tape drive)&n; * and would like the little bit of speed back.  It&squot;s on by default because&n; * - trust me - it&squot;s very difficult to figure out that you need it!&n; */

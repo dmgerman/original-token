@@ -119,7 +119,7 @@ r_int
 r_int
 id|hwbug_bitmask
 suffix:semicolon
-multiline_comment|/* First the module type values. To find out which you have, just load&n; * the mmu control register from ASI_M_MMUREG alternate adress space and&n; * shift the value right 28 bits.&n; */
+multiline_comment|/* First the module type values. To find out which you have, just load&n; * the mmu control register from ASI_M_MMUREG alternate address space and&n; * shift the value right 28 bits.&n; */
 multiline_comment|/* IMPL field means the company which produced the chip. */
 DECL|macro|MBUS_VIKING
 mdefine_line|#define MBUS_VIKING        0x4   /* bleech, Texas Instruments Module */

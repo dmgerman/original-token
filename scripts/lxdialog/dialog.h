@@ -469,7 +469,7 @@ id|init
 )paren
 suffix:semicolon
 r_int
-id|dialog_guage
+id|dialog_gauge
 (paren
 r_const
 r_char
@@ -491,7 +491,7 @@ r_int
 id|percent
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is the base for fictious keys, which activate&n; * the buttons.&n; *&n; * Mouse-generated keys are the following:&n; *   -- the first 32 are used as numbers, in addition to &squot;0&squot;-&squot;9&squot;&n; *   -- the lowercase are used to signal mouse-enter events (M_EVENT + &squot;o&squot;)&n; *   -- uppercase chars are used to invoke the button (M_EVENT + &squot;O&squot;)&n; */
+multiline_comment|/*&n; * This is the base for fictitious keys, which activate&n; * the buttons.&n; *&n; * Mouse-generated keys are the following:&n; *   -- the first 32 are used as numbers, in addition to &squot;0&squot;-&squot;9&squot;&n; *   -- the lowercase are used to signal mouse-enter events (M_EVENT + &squot;o&squot;)&n; *   -- uppercase chars are used to invoke the button (M_EVENT + &squot;O&squot;)&n; */
 DECL|macro|M_EVENT
 mdefine_line|#define M_EVENT (KEY_MAX+1)
 multiline_comment|/*&n; * The `flag&squot; parameter in checklist is used to select between&n; * radiolist and checklist&n; */

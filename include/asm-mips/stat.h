@@ -69,10 +69,10 @@ id|st_ctime
 comma
 id|st_res3
 suffix:semicolon
-DECL|member|st_blkize
+DECL|member|st_blksize
 r_int
 r_int
-id|st_blkize
+id|st_blksize
 suffix:semicolon
 DECL|member|st_blocks
 r_int

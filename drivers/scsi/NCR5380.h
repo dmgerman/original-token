@@ -405,7 +405,7 @@ id|bytes_write
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* byytes written */
+multiline_comment|/* bytes written */
 DECL|member|pendingr
 r_int
 id|pendingr

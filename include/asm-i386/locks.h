@@ -193,7 +193,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* We got the lock */
 )brace
-multiline_comment|/*&n; *&t;These wrap the locking primtives up for usage&n; */
+multiline_comment|/*&n; *&t;These wrap the locking primitives up for usage&n; */
 DECL|function|spinlock
 r_extern
 id|__inline__
@@ -330,7 +330,7 @@ op_star
 id|sp
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;A testlock doesnt update the lock chain so we&n;&t; *&t;must not update it on free&n;&t; */
+multiline_comment|/*&n;&t; *&t;A testlock doesn&squot;t update the lock chain so we&n;&t; *&t;must not update it on free&n;&t; */
 id|prim_spin_unlock
 c_func
 (paren

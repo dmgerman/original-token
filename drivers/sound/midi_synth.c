@@ -2921,7 +2921,7 @@ id|i
 )paren
 )paren
 (brace
-multiline_comment|/*&n; * Hardware leve buffer is full. Abort the sysex message.&n; */
+multiline_comment|/*&n; * Hardware level buffer is full. Abort the sysex message.&n; */
 r_int
 id|timeout
 op_assign

@@ -3,7 +3,7 @@ macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H
 multiline_comment|/* openprom.h:  Prom structures and defines for access to the OPENBOOT&n; *              prom routines and data areas.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
-multiline_comment|/* Imperical constants... */
+multiline_comment|/* Empirical constants... */
 DECL|macro|KADB_DEBUGGER_BEGVM
 mdefine_line|#define KADB_DEBUGGER_BEGVM     0xffc00000    /* Where kern debugger is in virt-mem */
 DECL|macro|LINUX_OPPROM_BEGVM

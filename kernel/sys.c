@@ -2910,7 +2910,7 @@ id|error
 suffix:semicolon
 )brace
 macro_line|#ifndef __alpha__
-multiline_comment|/*&n; * Move these to arch dependent dir since they are for&n; * backward compatiblity only?&n; */
+multiline_comment|/*&n; * Move these to arch dependent dir since they are for&n; * backward compatibility only?&n; */
 DECL|function|sys_uname
 id|asmlinkage
 r_int

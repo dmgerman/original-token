@@ -74,9 +74,9 @@ mdefine_line|#define WIN_SETIDLE1&t;&t;0xE3
 DECL|macro|WIN_SETIDLE2
 mdefine_line|#define WIN_SETIDLE2&t;&t;0x97
 DECL|macro|WIN_DOORLOCK
-mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removeable drives */
+mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removable drives */
 DECL|macro|WIN_DOORUNLOCK
-mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xdf&t;/* unlock door on removeable drives */
+mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xdf&t;/* unlock door on removable drives */
 DECL|macro|WIN_MULTREAD
 mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read sectors using multiple mode */
 DECL|macro|WIN_MULTWRITE

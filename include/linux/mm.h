@@ -11,6 +11,7 @@ r_int
 id|high_memory
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#ifdef __KERNEL__
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
@@ -370,61 +371,14 @@ r_struct
 id|page
 (brace
 DECL|member|count
-r_int
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|dirty
+DECL|member|flags
 r_int
-id|dirty
-suffix:colon
-l_int|16
-comma
-DECL|member|age
-id|age
-suffix:colon
-l_int|8
-comma
-DECL|member|uptodate
-id|uptodate
-suffix:colon
-l_int|1
-comma
-DECL|member|error
-id|error
-suffix:colon
-l_int|1
-comma
-DECL|member|referenced
-id|referenced
-suffix:colon
-l_int|1
-comma
-DECL|member|locked
-id|locked
-suffix:colon
-l_int|1
-comma
-DECL|member|free_after
-id|free_after
-suffix:colon
-l_int|1
-comma
-DECL|member|dma
-id|dma
-suffix:colon
-l_int|1
-comma
-DECL|member|unused
-id|unused
-suffix:colon
-l_int|1
-comma
-DECL|member|reserved
-id|reserved
-suffix:colon
-l_int|1
+id|flags
 suffix:semicolon
+multiline_comment|/* atomic flags, some possibly updated asynchronously */
 DECL|member|wait
 r_struct
 id|wait_queue
@@ -478,10 +432,53 @@ id|buffer_head
 op_star
 id|buffers
 suffix:semicolon
+DECL|member|dirty
+r_int
+id|dirty
+suffix:colon
+l_int|16
+comma
+DECL|member|age
+id|age
+suffix:colon
+l_int|8
+suffix:semicolon
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
 suffix:semicolon
+multiline_comment|/* Page flag bit values */
+DECL|macro|PG_locked
+mdefine_line|#define PG_locked&t; 0
+DECL|macro|PG_error
+mdefine_line|#define PG_error&t; 1
+DECL|macro|PG_referenced
+mdefine_line|#define PG_referenced&t; 2
+DECL|macro|PG_uptodate
+mdefine_line|#define PG_uptodate&t; 3
+DECL|macro|PG_freeafter
+mdefine_line|#define PG_freeafter&t; 4
+DECL|macro|PG_DMA
+mdefine_line|#define PG_DMA&t;&t; 5
+DECL|macro|PG_reserved
+mdefine_line|#define PG_reserved&t;31
+multiline_comment|/* Make it prettier to test the above... */
+DECL|macro|PageLocked
+mdefine_line|#define PageLocked(page)&t;(test_bit(PG_locked, &amp;(page)-&gt;flags))
+DECL|macro|PageError
+mdefine_line|#define PageError(page)&t;&t;(test_bit(PG_error, &amp;(page)-&gt;flags))
+DECL|macro|PageReferenced
+mdefine_line|#define PageReferenced(page)&t;(test_bit(PG_referenced, &amp;(page)-&gt;flags))
+DECL|macro|PageDirty
+mdefine_line|#define PageDirty(page)&t;&t;(test_bit(PG_dirty, &amp;(page)-&gt;flags))
+DECL|macro|PageUptodate
+mdefine_line|#define PageUptodate(page)&t;(test_bit(PG_uptodate, &amp;(page)-&gt;flags))
+DECL|macro|PageFreeafter
+mdefine_line|#define PageFreeafter(page)&t;(test_bit(PG_freeafter, &amp;(page)-&gt;flags))
+DECL|macro|PageDMA
+mdefine_line|#define PageDMA(page)&t;&t;(test_bit(PG_DMA, &amp;(page)-&gt;flags))
+DECL|macro|PageReserved
+mdefine_line|#define PageReserved(page)&t;(test_bit(PG_reserved, &amp;(page)-&gt;flags))
 r_extern
 id|mem_map_t
 op_star
@@ -1192,26 +1189,22 @@ id|result
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|task-&gt;mm
+)paren
+(brace
 r_struct
 id|vm_area_struct
 op_star
 id|tree
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|task-&gt;mm
-)paren
-r_return
-l_int|NULL
+op_assign
+id|task-&gt;mm-&gt;mmap_avl
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|tree
-op_assign
-id|task-&gt;mm-&gt;mmap_avl
 suffix:semicolon
 suffix:semicolon
 )paren
@@ -1223,8 +1216,7 @@ id|tree
 op_eq
 id|avl_empty
 )paren
-r_return
-id|result
+r_break
 suffix:semicolon
 r_if
 c_cond
@@ -1234,6 +1226,10 @@ OG
 id|addr
 )paren
 (brace
+id|result
+op_assign
+id|tree
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1241,12 +1237,7 @@ id|tree-&gt;vm_start
 op_le
 id|addr
 )paren
-r_return
-id|tree
-suffix:semicolon
-id|result
-op_assign
-id|tree
+r_break
 suffix:semicolon
 id|tree
 op_assign
@@ -1259,6 +1250,10 @@ op_assign
 id|tree-&gt;vm_avl_right
 suffix:semicolon
 )brace
+)brace
+r_return
+id|result
+suffix:semicolon
 )brace
 multiline_comment|/* Look up the first VMA which intersects the interval start_addr..end_addr-1,&n;   NULL if none.  Assume start_addr &lt; end_addr. */
 DECL|function|find_vma_intersection

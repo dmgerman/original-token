@@ -747,7 +747,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* XXX FIx this SHIT... UP and MP sun4m configurations&n;&t;&t; * XXX have completely different layouts for the counter&n;&t;&t; * XXX registers. AIEEE!!!&n;&t;&t; */
+multiline_comment|/* XXX Fix this SHIT... UP and MP sun4m configurations&n;&t;&t; * XXX have completely different layouts for the counter&n;&t;&t; * XXX registers. AIEEE!!!&n;&t;&t; */
 r_int
 id|reg_count
 suffix:semicolon

@@ -115,7 +115,7 @@ DECL|member|hub_status
 r_int
 id|hub_status
 suffix:semicolon
-multiline_comment|/* login to hub was successfull? */
+multiline_comment|/* login to hub was successful? */
 DECL|member|mac1_mode
 id|u_char
 id|mac1_mode
@@ -1310,7 +1310,7 @@ op_and_assign
 op_complement
 l_int|0x1fff
 suffix:semicolon
-multiline_comment|/* 8k aligment */
+multiline_comment|/* 8k alignment */
 r_if
 c_cond
 (paren

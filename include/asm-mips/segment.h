@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/segment.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; *&n; * Note that the quad functions are only being used for the 64 bit kernel and&n; * therefore it isn&squot;t really important that they will be misscompiled for&n; * 32-bit kernels.&n; */
+multiline_comment|/*&n; * include/asm-mips/segment.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; *&n; * Note that the quad functions are only being used for the 64 bit kernel and&n; * therefore it isn&squot;t really important that they will be miscompiled for&n; * 32-bit kernels.&n; */
 macro_line|#ifndef __ASM_MIPS_SEGMENT_H
 DECL|macro|__ASM_MIPS_SEGMENT_H
 mdefine_line|#define __ASM_MIPS_SEGMENT_H

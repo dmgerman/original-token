@@ -155,7 +155,7 @@ DECL|macro|PF_INET6
 mdefine_line|#define PF_INET6&t;AF_INET6
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
-multiline_comment|/* Maximum queue length specificable by listen.  */
+multiline_comment|/* Maximum queue length specifiable by listen.  */
 DECL|macro|SOMAXCONN
 mdefine_line|#define SOMAXCONN&t;128
 multiline_comment|/* Flags we can use with send/ and recv. */

@@ -113,7 +113,7 @@ multiline_comment|/* CTL_VM names: */
 DECL|macro|VM_SWAPCTL
 mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */
 DECL|macro|VM_KSWAPD
-mdefine_line|#define VM_KSWAPD&t;2&t;/* struct: control background pagout */
+mdefine_line|#define VM_KSWAPD&t;2&t;/* struct: control background pageout */
 DECL|macro|VM_FREEPG
 mdefine_line|#define VM_FREEPG&t;3&t;/* struct: Set free page thresholds */
 DECL|macro|VM_BDFLUSH

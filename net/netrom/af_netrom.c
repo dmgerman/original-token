@@ -597,7 +597,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Deferred destroy.&n; */
 r_void
-id|nr_destory_socket
+id|nr_destroy_socket
 c_func
 (paren
 r_struct

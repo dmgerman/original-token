@@ -30,7 +30,7 @@ r_int
 r_int
 id|scratch2
 suffix:semicolon
-multiline_comment|/*&n;&t; * The GCC generated code for handling carry bits makes&n;&t; * it strongly desireable to do this in assembler!&n;&t; */
+multiline_comment|/*&n;&t; * The GCC generated code for handling carry bits makes&n;&t; * it strongly desirable to do this in assembler!&n;&t; */
 id|__asm__
 c_func
 (paren
