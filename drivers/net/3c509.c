@@ -804,6 +804,17 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* __ISAPNP__ */
+r_if
+c_cond
+(paren
+id|dev
+)paren
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* First check all slots of the EISA bus.  The next slot address to&n;&t;   probe is kept in &squot;eisa_addr&squot; to support multiple probe() calls. */
 r_if
 c_cond
@@ -2060,6 +2071,12 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 id|memcpy
 c_func
@@ -2475,9 +2492,8 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -2492,13 +2508,15 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
-)paren
-(brace
-r_return
-op_minus
-id|EAGAIN
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
 id|EL3WINDOW
 c_func
 (paren
@@ -2842,12 +2860,9 @@ id|EL3_STATUS
 )paren
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Always succeed */
 )brace
 r_static
 r_void
@@ -4829,8 +4844,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

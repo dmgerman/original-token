@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the TDA9875 chip&n; * (The TDA9875 is used on the Diamond DTV2000 french version &n; * Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Guillaume Delvit based on Gerd Knorr source and&n; * Eric Sandeen &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * Contributors:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; (0.2)&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * &n; *  Revision  0.2 - resource allocation fixes in tda9875_attach (08/14/2000)&n; *  Revision: 0.1 - original version&n; */
+multiline_comment|/*&n; * For the TDA9875 chip&n; * (The TDA9875 is used on the Diamond DTV2000 french version &n; * Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Guillaume Delvit based on Gerd Knorr source and&n; * Eric Sandeen &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * &n; *  Revision: 0.1 - original version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,11 +12,7 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;bttv.h&quot;
 macro_line|#include &quot;audiochip.h&quot;
-multiline_comment|/* This driver ID is brand new, so define it if it&squot;s not in i2c-id.h yet */
-macro_line|#ifndef I2C_DRIVERID_TDA9875
-DECL|macro|I2C_DRIVERID_TDA9875
-mdefine_line|#define I2C_DRIVERID_TDA9875  28
-macro_line|#endif
+macro_line|#include &quot;id.h&quot;
 id|MODULE_PARM
 c_func
 (paren
@@ -181,6 +177,11 @@ r_int
 id|bass
 comma
 id|treble
+suffix:semicolon
+DECL|member|c
+r_struct
+id|i2c_client
+id|c
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -947,14 +948,14 @@ c_func
 l_string|&quot;In tda9875_attach&bslash;n&quot;
 )paren
 suffix:semicolon
-id|client
+id|t
 op_assign
 id|kmalloc
 c_func
 (paren
 r_sizeof
 op_star
-id|client
+id|t
 comma
 id|GFP_KERNEL
 )paren
@@ -963,11 +964,28 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|client
+id|t
 )paren
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|t
+comma
+l_int|0
+comma
+r_sizeof
+op_star
+id|t
+)paren
+suffix:semicolon
+id|client
+op_assign
+op_amp
+id|t-&gt;c
 suffix:semicolon
 id|memcpy
 c_func
@@ -995,46 +1013,6 @@ suffix:semicolon
 id|client-&gt;data
 op_assign
 id|t
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-op_star
-id|t
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|t
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|client
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|t
-comma
-l_int|0
-comma
-r_sizeof
-op_star
-id|t
-)paren
 suffix:semicolon
 id|do_tda9875_init
 c_func
@@ -1143,12 +1121,6 @@ id|kfree
 c_func
 (paren
 id|t
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|client
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

@@ -1571,9 +1571,14 @@ macro_line|#if defined (__i386__)
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
+id|test_bit
+c_func
+(paren
 id|X86_FEATURE_TSC
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 )paren
 (brace
 id|__u32

@@ -241,10 +241,6 @@ r_void
 )paren
 (brace
 r_int
-id|points
-op_assign
-l_int|0
-comma
 id|maxpoints
 op_assign
 l_int|0
@@ -281,6 +277,8 @@ c_cond
 (paren
 id|p-&gt;pid
 )paren
+(brace
+r_int
 id|points
 op_assign
 id|badness
@@ -305,6 +303,7 @@ id|maxpoints
 op_assign
 id|points
 suffix:semicolon
+)brace
 )brace
 )brace
 id|read_unlock

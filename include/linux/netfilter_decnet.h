@@ -40,5 +40,70 @@ DECL|macro|NF_DN_ROUTE
 mdefine_line|#define NF_DN_ROUTE&t;&t;6
 DECL|macro|NF_DN_NUMHOOKS
 mdefine_line|#define NF_DN_NUMHOOKS&t;&t;7
+DECL|enum|nf_dn_hook_priorities
+r_enum
+id|nf_dn_hook_priorities
+(brace
+DECL|enumerator|NF_DN_PRI_FIRST
+id|NF_DN_PRI_FIRST
+op_assign
+id|INT_MIN
+comma
+DECL|enumerator|NF_DN_PRI_CONNTRACK
+id|NF_DN_PRI_CONNTRACK
+op_assign
+op_minus
+l_int|200
+comma
+DECL|enumerator|NF_DN_PRI_MANGLE
+id|NF_DN_PRI_MANGLE
+op_assign
+op_minus
+l_int|150
+comma
+DECL|enumerator|NF_DN_PRI_NAT_DST
+id|NF_DN_PRI_NAT_DST
+op_assign
+op_minus
+l_int|100
+comma
+DECL|enumerator|NF_DN_PRI_FILTER
+id|NF_DN_PRI_FILTER
+op_assign
+l_int|0
+comma
+DECL|enumerator|NF_DN_PRI_NAT_SRC
+id|NF_DN_PRI_NAT_SRC
+op_assign
+l_int|100
+comma
+DECL|enumerator|NF_DN_PRI_DNRTMSG
+id|NF_DN_PRI_DNRTMSG
+op_assign
+l_int|200
+comma
+DECL|enumerator|NF_DN_PRI_LAST
+id|NF_DN_PRI_LAST
+op_assign
+id|INT_MAX
+comma
+)brace
+suffix:semicolon
+DECL|struct|nf_dn_rtmsg
+r_struct
+id|nf_dn_rtmsg
+(brace
+DECL|member|nfdn_ifindex
+r_int
+id|nfdn_ifindex
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|NFDN_RTMSG
+mdefine_line|#define NFDN_RTMSG(r) ((unsigned char *)(r) + NLMSG_ALIGN(sizeof(struct nf_dn_rtmsg)))
+DECL|macro|DNRMG_L1_GROUP
+mdefine_line|#define DNRMG_L1_GROUP 0x01
+DECL|macro|DNRMG_L2_GROUP
+mdefine_line|#define DNRMG_L2_GROUP 0x02
 macro_line|#endif /*__LINUX_DECNET_NETFILTER_H*/
 eof

@@ -1088,5 +1088,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|struct|x25_skb_cb
+r_struct
+id|x25_skb_cb
+(brace
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|X25_SKB_CB
+mdefine_line|#define X25_SKB_CB(s) ((struct x25_skb_cb *) ((s)-&gt;cb))
 macro_line|#endif
 eof

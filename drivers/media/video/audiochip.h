@@ -12,6 +12,23 @@ mdefine_line|#define AUDC_SET_RADIO        _IO(&squot;m&squot;,2)
 multiline_comment|/* select from TV,radio,extern,MUTE */
 DECL|macro|AUDC_SET_INPUT
 mdefine_line|#define AUDC_SET_INPUT        _IOW(&squot;m&squot;,17,int)
+multiline_comment|/* audio inputs */
+DECL|macro|AUDIO_TUNER
+mdefine_line|#define AUDIO_TUNER        0x00
+DECL|macro|AUDIO_RADIO
+mdefine_line|#define AUDIO_RADIO        0x01
+DECL|macro|AUDIO_EXTERN
+mdefine_line|#define AUDIO_EXTERN       0x02
+DECL|macro|AUDIO_INTERN
+mdefine_line|#define AUDIO_INTERN       0x03
+DECL|macro|AUDIO_OFF
+mdefine_line|#define AUDIO_OFF          0x04 
+DECL|macro|AUDIO_ON
+mdefine_line|#define AUDIO_ON           0x05
+DECL|macro|AUDIO_MUTE
+mdefine_line|#define AUDIO_MUTE         0x80
+DECL|macro|AUDIO_UNMUTE
+mdefine_line|#define AUDIO_UNMUTE       0x81
 multiline_comment|/* all the stuff below is obsolete and just here for reference.  I&squot;ll&n; * remove it once the driver is tested and works fine.&n; *&n; * Instead creating alot of tiny API&squot;s for all kinds of different&n; * chips, we&squot;ll just pass throuth the v4l ioctl structs (v4l2 not&n; * yet...).  It is a bit less flexible, but most/all used i2c chips&n; * make sense in v4l context only.  So I think that&squot;s acceptable...&n; */
 macro_line|#if 0
 multiline_comment|/* TODO (if it is ever [to be] accessible in the V4L[2] spec):&n; *   maybe fade? (back/front)&n; * notes:&n; * NEWCHANNEL and SWITCH_MUTE are here because the MSP3400 has a special&n; * routine to go through when it tunes in to a new channel before turning&n; * back on the sound.&n; * Either SET_RADIO, NEWCHANNEL, and SWITCH_MUTE or SET_INPUT need to be&n; * implemented (MSP3400 uses SET_RADIO to select inputs, and SWITCH_MUTE for&n; * channel-change mute -- TEA6300 et al use SET_AUDIO to select input [TV, &n; * radio, external, or MUTE]).  If both methods are implemented, you get a&n; * cookie for doing such a good job! :)&n; */

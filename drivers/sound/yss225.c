@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|__initdata
 r_int
 r_char

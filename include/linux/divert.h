@@ -211,6 +211,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-macro_line|#endif __KERNEL__
+macro_line|#endif 
 macro_line|#endif&t;/* _LINUX_DIVERT_H */
 eof

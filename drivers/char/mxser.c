@@ -99,7 +99,7 @@ r_enum
 DECL|enumerator|MXSER_BOARD_C168_ISA
 id|MXSER_BOARD_C168_ISA
 op_assign
-l_int|1
+l_int|0
 comma
 DECL|enumerator|MXSER_BOARD_C104_ISA
 id|MXSER_BOARD_C104_ISA

@@ -23,9 +23,14 @@ r_void
 )paren
 (brace
 r_return
-id|boot_cpu_data.x86_capability
-op_amp
+id|test_bit
+c_func
+(paren
 id|X86_FEATURE_MMX
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -218,5 +223,5 @@ mdefine_line|#define MD_DECLARE_WAIT_QUEUE_HEAD(x) DECLARE_WAIT_QUEUE_HEAD(x)
 DECL|macro|md_init_waitqueue_head
 mdefine_line|#define md_init_waitqueue_head init_waitqueue_head
 multiline_comment|/* END */
-macro_line|#endif _MD_COMPATIBLE_H
+macro_line|#endif 
 eof

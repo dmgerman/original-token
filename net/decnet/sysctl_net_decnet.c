@@ -41,6 +41,12 @@ id|decnet_dr_count
 op_assign
 l_int|3
 suffix:semicolon
+DECL|variable|decnet_log_martians
+r_int
+id|decnet_log_martians
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern
 r_int

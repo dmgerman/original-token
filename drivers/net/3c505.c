@@ -3575,18 +3575,15 @@ id|adapter-&gt;rx_active
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * device is now officially open!&n;&t; */
-id|netif_wake_queue
+id|netif_start_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Always succeed */
 )brace
 multiline_comment|/******************************************************&n; *&n; * send a packet to the adapter&n; *&n; ******************************************************/
 DECL|function|send_packet
@@ -4383,8 +4380,6 @@ c_func
 id|DMA_BUFFER_SIZE
 )paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -5276,6 +5271,12 @@ r_int
 id|cookie
 op_assign
 l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  setup adapter structure&n;&t; */
 id|dev-&gt;base_addr

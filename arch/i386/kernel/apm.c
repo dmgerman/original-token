@@ -5340,8 +5340,6 @@ op_amp
 id|apm_bios_fops
 )brace
 suffix:semicolon
-DECL|macro|APM_INIT_ERROR_RETURN
-mdefine_line|#define APM_INIT_ERROR_RETURN&t;return -1
 multiline_comment|/*&n; * Just start the APM thread. We do NOT want to do APM BIOS&n; * calls from anything but the APM thread, if for no other reason&n; * than the fact that we don&squot;t trust the APM BIOS. This way,&n; * most common APM BIOS problems that lead to protection errors&n; * etc will have at least some level of being contained...&n; *&n; * In short, if something bad happens, at least we have a choice&n; * of just killing the apm thread..&n; */
 DECL|function|apm_init
 r_static
@@ -5368,7 +5366,9 @@ id|KERN_INFO
 l_string|&quot;apm: BIOS not found.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 id|printk
@@ -5417,7 +5417,9 @@ id|KERN_INFO
 l_string|&quot;apm: no 32 bit BIOS support&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Fix for the Compaq Contura 3/25c which reports BIOS version 0.1&n;&t; * but is reportedly a 1.0 BIOS.&n;&t; */
@@ -5518,7 +5520,9 @@ id|KERN_NOTICE
 l_string|&quot;apm: disabled on user request.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 r_if
@@ -5541,7 +5545,9 @@ id|KERN_NOTICE
 l_string|&quot;apm: disabled - APM is not SMP safe.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 r_if
@@ -5560,7 +5566,9 @@ id|KERN_NOTICE
 l_string|&quot;apm: overridden by ACPI.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 id|pm_active
@@ -5892,7 +5900,8 @@ id|KERN_NOTICE
 l_string|&quot;apm: disabled - APM is not SMP safe (power off active).&bslash;n&quot;
 )paren
 suffix:semicolon
-id|APM_INIT_ERROR_RETURN
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|misc_register

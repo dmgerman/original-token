@@ -541,15 +541,16 @@ id|dev
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -746,7 +747,7 @@ id|ioaddr
 comma
 id|EL16_IO_EXTENT
 comma
-l_string|&quot;3c507&quot;
+id|dev-&gt;name
 )paren
 )paren
 r_return
@@ -863,7 +864,7 @@ id|el16_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;3c507&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
@@ -1271,8 +1272,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2100,8 +2099,6 @@ id|MISC_CTRL
 suffix:semicolon
 multiline_comment|/* We always physically use the IRQ line, so we don&squot;t do free_irq(). */
 multiline_comment|/* Update the statistics here. */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3349,12 +3346,6 @@ r_static
 r_struct
 id|net_device
 id|dev_3c507
-op_assign
-(brace
-id|init
-suffix:colon
-id|el16_probe
-)brace
 suffix:semicolon
 DECL|variable|io
 r_static
@@ -3414,6 +3405,10 @@ suffix:semicolon
 id|dev_3c507.irq
 op_assign
 id|irq
+suffix:semicolon
+id|dev_3c507.init
+op_assign
+id|el16_probe
 suffix:semicolon
 r_if
 c_cond

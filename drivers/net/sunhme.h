@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: sunhme.h,v 1.30 2000/02/18 13:49:26 davem Exp $&n; * sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.h,v 1.31 2000/11/12 10:23:30 davem Exp $&n; * sunhme.h: Definitions for Sparc HME/BigMac 10/100baseT ethernet driver.&n; *           Also known as the &quot;Happy Meal&quot;.&n; *&n; * Copyright (C) 1996, 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _SUNHME_H
 DECL|macro|_SUNHME_H
 mdefine_line|#define _SUNHME_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 multiline_comment|/* Happy Meal global registers. */
 DECL|macro|GREG_SWRESET
 mdefine_line|#define GREG_SWRESET&t;0x000UL&t;/* Software Reset  */
@@ -1283,6 +1284,7 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* PROM ranges, if any. */
+macro_line|#ifdef CONFIG_SBUS
 DECL|member|ranges
 r_struct
 id|linux_prom_ranges
@@ -1291,6 +1293,7 @@ id|ranges
 l_int|8
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|member|nranges
 r_int
 id|nranges

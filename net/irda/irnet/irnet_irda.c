@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;IrNET protocol module : Synchronous PPP over an IrDA socket.&n; *&n; *&t;&t;Jean II - HPL `00 - &lt;jt@hpl.hp.com&gt;&n; *&n; * This file implement the IRDA interface of IrNET.&n; * Basically, we sit on top of IrTTP. We set up IrTTP, IrIAS properly,&n; * and exchange frames with IrTTP.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;irnet_irda.h&quot;&t;&t;/* Private header */
 multiline_comment|/************************* CONTROL CHANNEL *************************/
 multiline_comment|/*&n; * When ppp is not active, /dev/irnet act as a control channel.&n; * Writting allow to set up the IrDA destination of the IrNET channel,&n; * and any application may be read events happening on IrNET...&n; */

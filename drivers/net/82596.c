@@ -4520,7 +4520,7 @@ suffix:semicolon
 r_char
 id|eth_addr
 (braket
-l_int|6
+l_int|8
 )braket
 suffix:semicolon
 r_static

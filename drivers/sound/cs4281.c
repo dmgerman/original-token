@@ -82,7 +82,6 @@ mdefine_line|#define PCI_DEVICE_ID_CRYSTAL_CS4281  0x6005
 macro_line|#endif
 DECL|macro|CS4281_MAGIC
 mdefine_line|#define CS4281_MAGIC  ((PCI_DEVICE_ID_CRYSTAL_CS4281&lt;&lt;16) | PCI_VENDOR_ID_CIRRUS)
-macro_line|#include &lt;linux/version.h&gt;
 singleline_comment|// Turn on/off debugging compilation by using 1/0 respectively for CSDEBUG
 singleline_comment|//
 DECL|macro|CSDEBUG_INTERFACE

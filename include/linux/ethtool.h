@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ethtool.h,v 1.1 2000/11/10 05:44:33 davem Exp $&n; * ethtool.h: Defines for Linux ethtool.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ethtool.h,v 1.2 2000/11/12 10:05:57 davem Exp $&n; * ethtool.h: Defines for Linux ethtool.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
 macro_line|#ifndef _LINUX_ETHTOOL_H
 DECL|macro|_LINUX_ETHTOOL_H
 mdefine_line|#define _LINUX_ETHTOOL_H
@@ -147,6 +147,8 @@ DECL|macro|PORT_MII
 mdefine_line|#define PORT_MII&t;&t;0x02
 DECL|macro|PORT_FIBRE
 mdefine_line|#define PORT_FIBRE&t;&t;0x03
+DECL|macro|PORT_BNC
+mdefine_line|#define PORT_BNC&t;&t;0x04
 multiline_comment|/* Which tranceiver to use. */
 DECL|macro|XCVR_INTERNAL
 mdefine_line|#define XCVR_INTERNAL&t;&t;0x00

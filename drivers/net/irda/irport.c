@@ -868,9 +868,8 @@ suffix:semicolon
 id|dev-&gt;watchdog_timeo
 op_assign
 id|HZ
-op_div
-l_int|20
 suffix:semicolon
+multiline_comment|/* Allow time enough for speed change */
 id|dev-&gt;open
 op_assign
 id|irport_net_open

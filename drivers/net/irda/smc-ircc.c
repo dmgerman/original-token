@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.4&n; * Description:   Driver for the SMC Infrared Communications Controller&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Tue Feb 22 10:05:06 2000&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli&n; *     Copyright (c) 1998-1999 Thomas Davis, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     SIO&squot;s: SMC FDC37N869, FDC37C669, FDC37N958&n; *     Applicable Models : Fujitsu Lifebook 635t, Sony PCG-505TX&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.4&n; * Description:   Driver for the SMC Infrared Communications Controller&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Tue Feb 22 10:05:06 2000&n; * Modified by:   Dag Brattli &lt;dag@brattli.net&gt;&n; * &n; *     Copyright (c) 1999-2000 Dag Brattli&n; *     Copyright (c) 1998-1999 Thomas Davis, &n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     SIO&squot;s: SMC FDC37N869, FDC37C669, FDC37N958&n; *     Applicable Models : Fujitsu Lifebook 635t, Sony PCG-505TX&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1001,6 +1001,10 @@ suffix:semicolon
 id|irport-&gt;qos.min_turn_time.bits
 op_assign
 l_int|0x07
+suffix:semicolon
+id|irport-&gt;qos.window_size.bits
+op_assign
+l_int|0x01
 suffix:semicolon
 id|irda_qos_bits_to_value
 c_func
@@ -2075,6 +2079,20 @@ c_cond
 id|speed
 )paren
 (brace
+r_default
+suffix:colon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unknown baud rate of %d&bslash;n&quot;
+comma
+id|speed
+)paren
+suffix:semicolon
+multiline_comment|/* FALLTHROUGH */
 r_case
 l_int|9600
 suffix:colon
@@ -2183,21 +2201,6 @@ l_string|&quot;(), handling baud of 4000000&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), unknown baud rate of %d&bslash;n&quot;
-comma
-id|speed
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 id|register_bank
@@ -2560,7 +2563,7 @@ op_logical_neg
 id|skb-&gt;len
 )paren
 (brace
-id|smc_ircc_change_speed
+id|ircc_change_speed
 c_func
 (paren
 id|self
@@ -2622,7 +2625,7 @@ id|mtt
 r_int
 id|bofs
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * Compute who many BOFS (STA or PA&squot;s) we need to waste the&n;&t;&t; * min turn time given the speed of the link.&n;&t;&t; */
+multiline_comment|/* &n;&t;&t; * Compute how many BOFs (STA or PA&squot;s) we need to waste the&n;&t;&t; * min turn time given the speed of the link.&n;&t;&t; */
 id|bofs
 op_assign
 id|mtt
@@ -3249,7 +3252,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircc_dma_receive_complete (self)&n; *&n; *    Finished with receiving frames&n; *&n; *    &n; */
+multiline_comment|/*&n; * Function ircc_dma_receive_complete (self)&n; *&n; *    Finished with receiving frames&n; *&n; */
 DECL|function|ircc_dma_receive_complete
 r_static
 r_void

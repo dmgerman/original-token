@@ -1513,6 +1513,9 @@ suffix:semicolon
 id|processor.mpc_featureflag
 op_assign
 id|boot_cpu_data.x86_capability
+(braket
+l_int|0
+)braket
 suffix:semicolon
 id|processor.mpc_reserved
 (braket

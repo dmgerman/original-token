@@ -1,4 +1,5 @@
 multiline_comment|/* Recently Update by v1.09.50 */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sis_301.h&quot;
 macro_line|#ifndef CONFIG_FB_SIS_LINUXBIOS
 DECL|function|SetCRT2Group

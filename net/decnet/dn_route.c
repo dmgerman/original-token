@@ -3272,10 +3272,10 @@ id|key.scope
 op_assign
 id|RT_SCOPE_UNIVERSE
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_ROUTE_FWMASK
+macro_line|#ifdef CONFIG_DECNET_ROUTE_FWMARK
 id|key.fwmark
 op_assign
-id|skb-&gt;fwmark
+id|skb-&gt;nfmark
 suffix:semicolon
 macro_line|#else
 id|key.fwmark
@@ -3639,7 +3639,7 @@ op_eq
 l_int|0
 )paren
 op_logical_and
-macro_line|#ifdef CONFIG_DECNET_ROUTE_FWMASK
+macro_line|#ifdef CONFIG_DECNET_ROUTE_FWMARK
 (paren
 id|rt-&gt;key.fwmark
 op_eq

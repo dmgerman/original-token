@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
+multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (11/13/2000) Bill Ryder&n; *     Added spinlock protected open code and close code.&n; *     Multiple opens work (sort of - see webpage).&n; *     Cleaned up comments. Removed multiple PID/VID definitions.&n; *     Factorised cts/dtr code&n; *     Made use of __FUNCTION__ in dbg&squot;s&n; *      &n; * (11/01/2000) Adam J. Richter&n; *&t;usb_device_id table support&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
 multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementation */
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
@@ -27,15 +27,17 @@ macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-serial.h&quot;
 macro_line|#include &quot;ftdi_sio.h&quot;
 DECL|macro|FTDI_VENDOR_ID
-mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;0x0403
+mdefine_line|#define FTDI_VENDOR_ID&t;&t;&t;FTDI_VID
 DECL|macro|FTDI_SIO_SERIAL_CONVERTER_ID
-mdefine_line|#define FTDI_SIO_SERIAL_CONVERTER_ID&t;0x8372
-DECL|variable|id_table
+mdefine_line|#define FTDI_SIO_SERIAL_CONVERTER_ID&t;FTDI_SIO_PID
+DECL|macro|FTDI_8U232AM_PID
+mdefine_line|#define FTDI_8U232AM_PID&t;&t;0x6001
+DECL|variable|id_table_sio
 r_static
 id|__devinitdata
 r_struct
 id|usb_device_id
-id|id_table
+id|id_table_sio
 (braket
 )braket
 op_assign
@@ -43,11 +45,11 @@ op_assign
 (brace
 id|idVendor
 suffix:colon
-id|FTDI_VENDOR_ID
+id|FTDI_VID
 comma
 id|idProduct
 suffix:colon
-id|FTDI_SIO_SERIAL_CONVERTER_ID
+id|FTDI_SIO_PID
 )brace
 comma
 (brace
@@ -59,7 +61,7 @@ id|MODULE_DEVICE_TABLE
 (paren
 id|usb
 comma
-id|id_table
+id|id_table_sio
 )paren
 suffix:semicolon
 multiline_comment|/* function prototypes for a FTDI serial converter */
@@ -196,7 +198,7 @@ l_string|&quot;FTDI SIO&quot;
 comma
 id|id_table
 suffix:colon
-id|id_table
+id|id_table_sio
 comma
 id|needs_interrupt_in
 suffix:colon
@@ -263,9 +265,138 @@ id|ftdi_sio_startup
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * ***************************************************************************&n; * FTDI SIO Serial Converter specific driver functions&n; * ***************************************************************************&n; *&n; * Bill Ryder bryder@sgi.com of Silicon Graphics, Inc. did the FTDI_SIO code&n; * Thanx to FTDI for so kindly providing details of the protocol required&n; *   to talk to the device - http://www.ftdi.co.uk&n; *&n; * Tested as at this version - other stuff might work&n; * 23 March 2000&n; *     Works:&n; *      Baudrates - 9600, 38400,19200, 57600, 115200  &n; *      TIOCMBIC - TIOCM_DTR / TIOCM_RTS &n; *      TIOCMBIS - TIOCM_DTR / TIOCM_RTS &n; *      TIOCMSET - DTR on/RTSon  / DTR off, RTS off &n; *      no parity:CS8 even parity:CS7 odd parity:CS7 &n; *      CRTSCTS flow control &n; *     &n; *      Pilot-xfer zillions of times&n; *  &n; *      cu works with dir option &n; *&n; *   Not Tested (ie might not work): &n; *      xon/xoff flow control &n; *      ppp (modem handling in general) &n; *&n; *   KNOWN BUGS:&n; *    Multiple Opens&n; *    ==============&n; *      Seems to have problem when opening an already open port, &n; *      Get I/O error on first attempt, then it lets you in. &n; *      Need to do proper usage counting - keep registered callbacks for first opener.&n; *     &n; *     Reproduce with: &n; *       cu -l /dev/ttyUSB0 dir &n; *       whilst cu is running do:&n; *        stty -a &lt; /dev/ttyUSB0  &n; *&n; *     from stty get: &squot;bash: /dev/ttyUSB0: Invalid argument &squot; &n; *     from cu get &n; *        write: Invalid argument &n; *    &n; *    Initialisation Problem&n; *    ======================&n; *    Pilot transfer required me to run the serial_loopback program before it would work.&n; *    Still working on this. See the webpage http://reality.sgi.com/bryder_wellington/ftdi_sio&n; *&n; */
+multiline_comment|/*&n; * ***************************************************************************&n; * FTDI SIO Serial Converter specific driver functions&n; * ***************************************************************************&n; *&n; *    See the webpage http://reality.sgi.com/bryder_wellington/ftdi_sio for upto date&n; *     testing information&n; * &n; *&n; */
 DECL|macro|WDR_TIMEOUT
 mdefine_line|#define WDR_TIMEOUT (HZ * 5 ) /* default urb timeout */
+multiline_comment|/* utility functions to set and unset dtr and rts */
+DECL|macro|HIGH
+mdefine_line|#define HIGH 1
+DECL|macro|LOW
+mdefine_line|#define LOW 0
+DECL|function|set_rts
+r_static
+r_int
+id|set_rts
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_int
+id|high_or_low
+)paren
+(brace
+r_static
+r_char
+id|buf
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_int
+id|ftdi_high_or_low
+op_assign
+(paren
+id|high_or_low
+ques
+c_cond
+id|FTDI_SIO_SET_RTS_HIGH
+suffix:colon
+id|FTDI_SIO_SET_RTS_LOW
+)paren
+suffix:semicolon
+r_return
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|pipe
+comma
+id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
+comma
+id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
+comma
+id|ftdi_high_or_low
+comma
+l_int|0
+comma
+id|buf
+comma
+l_int|0
+comma
+id|WDR_TIMEOUT
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_dtr
+r_static
+r_int
+id|set_dtr
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_int
+id|high_or_low
+)paren
+(brace
+r_static
+r_char
+id|buf
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_int
+id|ftdi_high_or_low
+op_assign
+(paren
+id|high_or_low
+ques
+c_cond
+id|FTDI_SIO_SET_DTR_HIGH
+suffix:colon
+id|FTDI_SIO_SET_DTR_LOW
+)paren
+suffix:semicolon
+r_return
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|pipe
+comma
+id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
+comma
+id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
+comma
+id|ftdi_high_or_low
+comma
+l_int|0
+comma
+id|buf
+comma
+l_int|0
+comma
+id|WDR_TIMEOUT
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* do some startup allocations not currently performed by usb_serial_probe() */
 DECL|function|ftdi_sio_startup
 r_static
@@ -325,6 +456,11 @@ op_assign
 id|port-&gt;serial
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Used for spinlock */
+r_int
 id|result
 suffix:semicolon
 r_char
@@ -337,33 +473,44 @@ multiline_comment|/* Needed for the usb_control_msg I think */
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_open port %d&quot;
+id|__FUNCTION__
+l_string|&quot; port %d&quot;
 comma
 id|port-&gt;number
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME - multiple concurrent opens cause trouble */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+op_increment
+id|port-&gt;open_count
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|port-&gt;active
 )paren
 (brace
-id|err
-(paren
-l_string|&quot;port already open&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 id|port-&gt;active
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* FIXME - For multiple open this should increment */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* See ftdi_sio.h for description of what is reset */
 id|usb_control_msg
 c_func
@@ -406,6 +553,8 @@ id|HUPCL
 op_or
 id|CLOCAL
 suffix:semicolon
+multiline_comment|/* ftdi_sio_set_termios  will send usb control messages */
+multiline_comment|/* ftdi_sio_set_termios will set up port according to above list */
 id|ftdi_sio_set_termios
 c_func
 (paren
@@ -415,57 +564,11 @@ op_amp
 id|tmp_termios
 )paren
 suffix:semicolon
-multiline_comment|/* Disable flow control */
-r_if
-c_cond
-(paren
-id|usb_control_msg
-c_func
-(paren
-id|serial-&gt;dev
-comma
-id|usb_sndctrlpipe
-c_func
-(paren
-id|serial-&gt;dev
-comma
-l_int|0
-)paren
-comma
-id|FTDI_SIO_SET_FLOW_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_FLOW_CTRL_REQUEST_TYPE
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|err
-c_func
-(paren
-l_string|&quot;error from flowcontrol urb&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 multiline_comment|/* Turn on RTS and DTR since we are not flow controlling*/
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -478,22 +581,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_DTR_HIGH
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|HIGH
 )paren
 OL
 l_int|0
@@ -509,7 +597,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -522,22 +610,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_RTS_HIGH
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|HIGH
 )paren
 OL
 l_int|0
@@ -597,6 +670,19 @@ comma
 id|result
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* the port was already active - so no initialisation was done */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 r_return
 (paren
 l_int|0
@@ -640,12 +726,44 @@ id|buf
 l_int|1
 )braket
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_close port %d&quot;
+id|__FUNCTION__
+l_string|&quot; port %d&quot;
 comma
 id|port-&gt;number
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+op_decrement
+id|port-&gt;open_count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;open_count
+op_le
+l_int|0
+)paren
+(brace
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -702,7 +820,7 @@ multiline_comment|/* drop DTR */
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -715,22 +833,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_DTR_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 OL
 l_int|0
@@ -747,7 +850,7 @@ multiline_comment|/* drop RTS */
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -760,22 +863,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_RTS_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 OL
 l_int|0
@@ -789,6 +877,7 @@ l_string|&quot;Error from RTS LOW urb&quot;
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Note change no line is hupcl is off */
 multiline_comment|/* shutdown our bulk reads and writes */
 id|usb_unlink_urb
 (paren
@@ -803,6 +892,24 @@ suffix:semicolon
 id|port-&gt;active
 op_assign
 l_int|0
+suffix:semicolon
+id|port-&gt;open_count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 multiline_comment|/* ftdi_sio_close */
@@ -861,7 +968,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_serial_write port %d, %d bytes&quot;
+id|__FUNCTION__
+l_string|&quot; port %d, %d bytes&quot;
 comma
 id|port-&gt;number
 comma
@@ -928,7 +1036,8 @@ id|EINPROGRESS
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio - write in progress - retrying&quot;
+id|__FUNCTION__
+l_string|&quot; write in progress - retrying&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1093,6 +1202,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;Bytes: %d, Control Byte: 0o%03o&quot;
 comma
 id|count
@@ -1169,7 +1279,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;write returning: %d&quot;
+id|__FUNCTION__
+l_string|&quot; write returning: %d&quot;
 comma
 id|count
 op_minus
@@ -1384,7 +1495,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio read callback&quot;
+id|__FUNCTION__
 )paren
 suffix:semicolon
 r_if
@@ -1419,8 +1530,6 @@ l_string|&quot;ftdi_sio_read_bulk_callback&quot;
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* TO DO -- check for hung up line and handle appropriately: */
-multiline_comment|/*   send hangup (need to find out how to do this) */
 r_if
 c_cond
 (paren
@@ -1468,6 +1577,10 @@ l_string|&quot;Just status&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* TO DO -- check for hung up line and handle appropriately: */
+multiline_comment|/*   send hangup (need to find out how to do this) */
+multiline_comment|/* See acm.c - you do a tty_hangup  - eg tty_hangup(tty) */
+multiline_comment|/* if CD is dropped and the line is not CLOCAL then we should hangup */
 r_if
 c_cond
 (paren
@@ -1600,7 +1713,7 @@ suffix:semicolon
 id|__u16
 id|urb_value
 suffix:semicolon
-multiline_comment|/* Will hold the new flags */
+multiline_comment|/* will hold the new flags */
 r_char
 id|buf
 (braket
@@ -1611,7 +1724,8 @@ multiline_comment|/* Perhaps I should dynamically alloc this? */
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_set_termios port %d&quot;
+id|__FUNCTION__
+l_string|&quot; port %d&quot;
 comma
 id|port-&gt;number
 )paren
@@ -1955,6 +2069,7 @@ suffix:colon
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;FTDI_SIO does not support the baudrate requested&quot;
 )paren
 suffix:semicolon
@@ -2020,7 +2135,7 @@ multiline_comment|/* Drop RTS and DTR */
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -2033,22 +2148,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_DTR_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 OL
 l_int|0
@@ -2064,7 +2164,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -2077,22 +2177,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-(paren
-r_int
-)paren
-id|FTDI_SIO_SET_RTS_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 OL
 l_int|0
@@ -2163,6 +2248,7 @@ id|CRTSCTS
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;Setting to CRTSCTS flow control&quot;
 )paren
 suffix:semicolon
@@ -2215,6 +2301,7 @@ multiline_comment|/* Disable flow control */
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;Turning off hardware flow control&quot;
 )paren
 suffix:semicolon
@@ -2315,7 +2402,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_ioctl - cmd 0x%04x&quot;
+id|__FUNCTION__
+l_string|&quot; cmd 0x%04x&quot;
 comma
 id|cmd
 )paren
@@ -2333,6 +2421,7 @@ suffix:colon
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;TIOCMGET&quot;
 )paren
 suffix:semicolon
@@ -2380,6 +2469,7 @@ l_int|0
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;Get not get modem status of device&quot;
 )paren
 suffix:semicolon
@@ -2464,6 +2554,7 @@ multiline_comment|/* Turns on and off the lines as specified by the mask */
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;TIOCMSET&quot;
 )paren
 suffix:semicolon
@@ -2625,6 +2716,7 @@ multiline_comment|/* turns on (Sets) the lines as specified by the mask */
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;TIOCMBIS&quot;
 )paren
 suffix:semicolon
@@ -2665,7 +2757,7 @@ c_cond
 (paren
 id|ret
 op_assign
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -2678,19 +2770,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-id|FTDI_SIO_SET_DTR_HIGH
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|HIGH
 )paren
 )paren
 OL
@@ -2722,7 +2802,7 @@ c_cond
 (paren
 id|ret
 op_assign
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -2735,19 +2815,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-id|FTDI_SIO_SET_RTS_HIGH
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|HIGH
 )paren
 )paren
 OL
@@ -2774,6 +2842,7 @@ multiline_comment|/* turns off (Clears) the lines as specified by the mask */
 id|dbg
 c_func
 (paren
+id|__FUNCTION__
 l_string|&quot;TIOCMBIC&quot;
 )paren
 suffix:semicolon
@@ -2814,7 +2883,7 @@ c_cond
 (paren
 id|ret
 op_assign
-id|usb_control_msg
+id|set_dtr
 c_func
 (paren
 id|serial-&gt;dev
@@ -2827,19 +2896,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-id|FTDI_SIO_SET_DTR_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 )paren
 OL
@@ -2871,7 +2928,7 @@ c_cond
 (paren
 id|ret
 op_assign
-id|usb_control_msg
+id|set_rts
 c_func
 (paren
 id|serial-&gt;dev
@@ -2884,19 +2941,7 @@ comma
 l_int|0
 )paren
 comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST
-comma
-id|FTDI_SIO_SET_MODEM_CTRL_REQUEST_TYPE
-comma
-id|FTDI_SIO_SET_RTS_LOW
-comma
-l_int|0
-comma
-id|buf
-comma
-l_int|0
-comma
-id|WDR_TIMEOUT
+id|LOW
 )paren
 )paren
 OL
@@ -2923,7 +2968,8 @@ multiline_comment|/* This is not an error - turns out the higher layers will do 
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio ioctl arg not supported - it was 0x%04x&quot;
+id|__FUNCTION__
+l_string|&quot;arg not supported - it was 0x%04x&quot;
 comma
 id|cmd
 )paren
@@ -2938,7 +2984,8 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;ftdi_sio_ioctl returning 0&quot;
+id|__FUNCTION__
+l_string|&quot; returning 0&quot;
 )paren
 suffix:semicolon
 r_return

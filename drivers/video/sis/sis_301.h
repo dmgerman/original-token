@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;initdef.h&quot;
 DECL|variable|SetFlag
 DECL|variable|RVBHCFACT

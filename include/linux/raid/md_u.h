@@ -237,5 +237,5 @@ DECL|typedef|mdu_param_t
 )brace
 id|mdu_param_t
 suffix:semicolon
-macro_line|#endif _MD_U_H
+macro_line|#endif 
 eof

@@ -30,6 +30,10 @@ DECL|macro|TUNER_ALPS_TSBE5_PAL
 mdefine_line|#define TUNER_ALPS_TSBE5_PAL &t;12
 DECL|macro|TUNER_ALPS_TSBC5_PAL
 mdefine_line|#define TUNER_ALPS_TSBC5_PAL &t;13
+DECL|macro|TUNER_TEMIC_4006FH5_PAL
+mdefine_line|#define TUNER_TEMIC_4006FH5_PAL&t;14
+DECL|macro|TUNER_ALPS_TSHC6_NTSC
+mdefine_line|#define TUNER_ALPS_TSHC6_NTSC &t;15
 DECL|macro|NOTUNER
 mdefine_line|#define NOTUNER 0
 DECL|macro|PAL

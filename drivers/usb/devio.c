@@ -2918,9 +2918,9 @@ id|len1
 OG
 id|PAGE_SIZE
 )paren
-id|len1
-op_assign
-id|PAGE_SIZE
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond

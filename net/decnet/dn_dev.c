@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Device Layer&n; *&n; * Authors:     Steve Whitehouse &lt;SteveW@ACM.org&gt;&n; *              Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *          Steve Whitehouse : Devices now see incoming frames so they&n; *                             can mark on who it came from.&n; *          Steve Whitehouse : Fixed bug in creating neighbours. Each neighbour&n; *                             can now have a device specific setup func.&n; *          Steve Whitehouse : Added /proc/sys/net/decnet/conf/&lt;dev&gt;/&n; *          Steve Whitehouse : Fixed bug which sometimes killed timer&n; *          Steve Whitehouse : Multiple ifaddr support&n; *          Steve Whitehouse : SIOCGIFCONF is now a compile time option&n; *          Steve Whitehouse : /proc/sys/net/decnet/conf/&lt;sys&gt;/forwarding&n; *          Steve Whitehouse : Removed timer1 - its a user space issue now&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Device Layer&n; *&n; * Authors:     Steve Whitehouse &lt;SteveW@ACM.org&gt;&n; *              Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *          Steve Whitehouse : Devices now see incoming frames so they&n; *                             can mark on who it came from.&n; *          Steve Whitehouse : Fixed bug in creating neighbours. Each neighbour&n; *                             can now have a device specific setup func.&n; *          Steve Whitehouse : Added /proc/sys/net/decnet/conf/&lt;dev&gt;/&n; *          Steve Whitehouse : Fixed bug which sometimes killed timer&n; *          Steve Whitehouse : Multiple ifaddr support&n; *          Steve Whitehouse : SIOCGIFCONF is now a compile time option&n; *          Steve Whitehouse : /proc/sys/net/decnet/conf/&lt;sys&gt;/forwarding&n; *          Steve Whitehouse : Removed timer1 - its a user space issue now&n; *         Patrick Caulfield : Fixed router hello message format&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -3716,7 +3716,7 @@ op_star
 id|ptr
 op_increment
 op_assign
-l_int|0
+id|dn_db-&gt;parms.priority
 suffix:semicolon
 multiline_comment|/* Priority */
 op_star
@@ -3773,6 +3773,10 @@ l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* Name: Reserved */
+id|ptr
+op_add_assign
+l_int|7
+suffix:semicolon
 id|i2
 op_assign
 id|ptr
@@ -3811,7 +3815,7 @@ c_func
 id|skb
 comma
 (paren
-l_int|26
+l_int|27
 op_plus
 op_star
 id|i2

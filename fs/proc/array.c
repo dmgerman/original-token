@@ -1407,16 +1407,11 @@ l_int|0
 comma
 multiline_comment|/* you might want to shift this left 3 */
 id|task-&gt;rlim
-ques
-c_cond
-id|task-&gt;rlim
 (braket
 id|RLIMIT_RSS
 )braket
 dot
 id|rlim_cur
-suffix:colon
-l_int|0
 comma
 id|mm
 ques

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; *      2000-09-04&t;Henner Eisen    Prevented x25_output() skb leakage.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; *&t;2000-09-04&t;Henner Eisen&t;Prevented x25_output() skb leakage.&n; *&t;2000-10-27&t;Henner Eisen&t;MSG_DONTWAIT for fragment allocation.&n; *&t;2000-11-10&t;Henner Eisen&t;x25_send_iframe(): re-queued frames&n; *&t;&t;&t;&t;&t;needed cleaned seq-number fields.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -63,7 +63,7 @@ r_return
 id|bytes
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is where all X.25 information frames pass;&n; */
+multiline_comment|/*&n; *&t;This is where all X.25 information frames pass.&n; *&n; *      Returns the amount of user data bytes sent on success&n; *      or a negative error code on failure.&n; */
 DECL|function|x25_output
 r_int
 id|x25_output
@@ -102,6 +102,23 @@ comma
 id|header_len
 comma
 id|max_len
+suffix:semicolon
+r_int
+id|sent
+op_assign
+l_int|0
+comma
+id|noblock
+op_assign
+id|X25_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|flags
+op_amp
+id|MSG_DONTWAIT
 suffix:semicolon
 id|header_len
 op_assign
@@ -184,7 +201,7 @@ id|max_len
 comma
 l_int|0
 comma
-l_int|0
+id|noblock
 comma
 op_amp
 id|err
@@ -194,23 +211,37 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_int
-id|unsent
-op_assign
-id|skb-&gt;len
+r_if
+c_cond
+(paren
+id|err
+op_eq
 op_minus
-id|header_len
+id|EWOULDBLOCK
+op_logical_and
+id|noblock
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
+r_return
+id|sent
+suffix:semicolon
+)brace
 id|SOCK_DEBUG
 c_func
 (paren
 id|sk
 comma
-l_string|&quot;x25_output: framgent allocation failed, err=%d, %d bytes unsent&bslash;n&quot;
+l_string|&quot;x25_output: fragment allocation failed, err=%d, %d bytes sent&bslash;n&quot;
 comma
 id|err
 comma
-id|unsent
+id|sent
 )paren
 suffix:semicolon
 r_return
@@ -320,6 +351,10 @@ comma
 id|skbn
 )paren
 suffix:semicolon
+id|sent
+op_add_assign
+id|len
+suffix:semicolon
 )brace
 id|kfree_skb
 c_func
@@ -339,9 +374,15 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|sent
+op_assign
+id|skb-&gt;len
+op_minus
+id|header_len
+suffix:semicolon
 )brace
 r_return
-l_int|0
+id|sent
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;This procedure is passed a buffer descriptor for an iframe. It builds&n; *&t;the rest of the control part of the frame and then writes it out.&n; */
@@ -381,7 +422,7 @@ id|skb-&gt;data
 (braket
 l_int|2
 )braket
-op_or_assign
+op_assign
 (paren
 id|sk-&gt;protinfo.x25-&gt;vs
 op_lshift
@@ -389,6 +430,13 @@ l_int|1
 )paren
 op_amp
 l_int|0xFE
+suffix:semicolon
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
+op_and_assign
+id|X25_EXT_M_BIT
 suffix:semicolon
 id|skb-&gt;data
 (braket
@@ -406,6 +454,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|skb-&gt;data
+(braket
+l_int|2
+)braket
+op_and_assign
+id|X25_STD_M_BIT
+suffix:semicolon
 id|skb-&gt;data
 (braket
 l_int|2

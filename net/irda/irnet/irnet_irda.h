@@ -3,6 +3,7 @@ macro_line|#ifndef IRNET_IRDA_H
 DECL|macro|IRNET_IRDA_H
 mdefine_line|#define IRNET_IRDA_H
 multiline_comment|/***************************** INCLUDES *****************************/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;irnet.h&quot;&t;&t;/* Module global include */
 multiline_comment|/************************ CONSTANTS &amp; MACROS ************************/
 multiline_comment|/*&n; * Name of the service (socket name) used by IrNET&n; */

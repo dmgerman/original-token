@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/sound.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;audiochip.h&quot;
+macro_line|#include &quot;id.h&quot;
 DECL|macro|DEV_MAX
 mdefine_line|#define DEV_MAX  4
 DECL|variable|debug
@@ -179,15 +180,24 @@ id|i2c_driver
 id|driver
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;tv card mixer driver&quot;
 comma
-l_int|42
-multiline_comment|/* I2C_DRIVERID_FIXME */
+id|id
+suffix:colon
+id|I2C_DRIVERID_TVMIXER
 comma
+id|flags
+suffix:colon
 id|I2C_DF_DUMMY
 comma
+id|attach_adapter
+suffix:colon
 id|tvmixer_adapters
 comma
+id|detach_client
+suffix:colon
 id|tvmixer_clients
 comma
 )brace
@@ -1312,6 +1322,58 @@ op_star
 id|adap
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;tvmixer: adapter %s&bslash;n&quot;
+comma
+id|adap-&gt;name
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|I2C_CLIENT_MAX
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|adap-&gt;clients
+(braket
+id|i
+)braket
+)paren
+r_continue
+suffix:semicolon
+id|tvmixer_clients
+c_func
+(paren
+id|adap-&gt;clients
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

@@ -5487,6 +5487,16 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vname_cc
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_for
 c_loop
 (paren

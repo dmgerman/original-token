@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-27-08&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; *&t;2000-04-09&t;Henner Eisen&t;Set sock-&gt;state in x25_accept(). &n; *&t;&t;&t;&t;&t;Fixed x25_output() related skb leakage.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-03-11&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-03-22&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-08-27&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; *&t;2000-09-04&t;Henner Eisen&t;Set sock-&gt;state in x25_accept(). &n; *&t;&t;&t;&t;&t;Fixed x25_output() related skb leakage.&n; *&t;2000-10-02&t;Henner Eisen&t;Made x25_kick() single threaded per socket.&n; *&t;2000-10-27&t;Henner Eisen    MSG_DONTWAIT for fragment allocation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -1802,6 +1802,10 @@ id|sk-&gt;protocol
 op_assign
 id|protocol
 suffix:semicolon
+id|sk-&gt;backlog_rcv
+op_assign
+id|x25_process_rx_frame
+suffix:semicolon
 id|x25-&gt;t21
 op_assign
 id|sysctl_x25_call_request_timeout
@@ -3485,6 +3489,16 @@ l_int|NULL
 r_return
 id|err
 suffix:semicolon
+id|X25_SKB_CB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|flags
+op_assign
+id|msg-&gt;msg_flags
+suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -3841,7 +3855,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|err
+id|len
 op_assign
 id|x25_output
 c_func
@@ -3854,13 +3868,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|err
+id|len
+OL
+l_int|0
 )paren
 (brace
-id|len
-op_assign
-id|err
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -3868,8 +3880,34 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.x25-&gt;qbitincl
+)paren
+(brace
+id|len
+op_increment
+suffix:semicolon
 )brace
+)brace
+)brace
+multiline_comment|/*&n;&t; * lock_sock() is currently only used to serialize this x25_kick()&n;&t; * against input-driven x25_kick() calls. It currently only blocks&n;&t; * incoming packets for this socket and does not protect against&n;&t; * any other socket state changes and is not called from anywhere&n;&t; * else. As x25_kick() cannot block and as long as all socket&n;&t; * operations are BKL-wrapped, we don&squot;t need take to care about&n;&t; * purging the backlog queue in x25_release().&n;&t; *&n;&t; * Using lock_sock() to protect all socket operations entirely&n;&t; * (and making the whole x25 stack SMP aware) unfortunately would&n;&t; * require major changes to {send,recv}msg and skb allocation methods.&n;&t; * -&gt; 2.5 ;)&n;&t; */
+id|lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|x25_kick
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|release_sock
 c_func
 (paren
 id|sk

@@ -1,4 +1,4 @@
-multiline_comment|/*  Generic MTRR (Memory Type Range Register) driver.&n;&n;    Copyright (C) 1997-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    Source: &quot;Pentium Pro Family Developer&squot;s Manual, Volume 3:&n;    Operating System Writer&squot;s Guide&quot; (Intel document number 242692),&n;    section 11.11.7&n;&n;    ChangeLog&n;&n;    Prehistory Martin Tischh&#xfffd;user &lt;martin@ikcbarka.fzk.de&gt;&n;&t;       Initial register-setting code (from proform-1.0).&n;    19971216   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Original version for /proc/mtrr interface, SMP-safe.&n;  v1.0&n;    19971217   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for ioctls()&squot;s.&n;&t;       Added sample code in Documentation/mtrr.txt&n;  v1.1&n;    19971218   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Disallow overlapping regions.&n;    19971219   Jens Maurer &lt;jmaurer@menuett.rhein-main.de&gt;&n;               Register-setting fixups.&n;  v1.2&n;    19971222   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.75.&n;  v1.3&n;    19971229   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Register-setting fixups and conformity with Intel conventions.&n;    19971229   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Cosmetic changes and wrote this ChangeLog ;-)&n;    19980106   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.78.&n;  v1.4&n;    19980119   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Included passive-release enable code (elsewhere in PCI setup).&n;  v1.5&n;    19980131   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Replaced global kernel lock with private spinlock.&n;  v1.6&n;    19980201   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wait for other CPUs to complete changes.&n;  v1.7&n;    19980202   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix in definition of &lt;set_mtrr&gt; for UP.&n;  v1.8&n;    19980319   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.90.&n;    19980323   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Move SMP BIOS fixup before secondary CPUs call &lt;calibrate_delay&gt;&n;  v1.9&n;    19980325   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixed test for overlapping regions: confused by adjacent regions&n;    19980326   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wbinvd in &lt;set_mtrr_prepare&gt;.&n;    19980401   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for non-SMP compilation.&n;    19980418   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Fixed-MTRR synchronisation for SMP and use atomic operations&n;&t;       instead of spinlocks.&n;    19980418   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Differentiate different MTRR register classes for BIOS fixup.&n;  v1.10&n;    19980419   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;&t;       Bug fix in variable MTRR synchronisation.&n;  v1.11&n;    19980419   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixups for kernel 2.1.97.&n;  v1.12&n;    19980421   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Safer synchronisation across CPUs when changing MTRRs.&n;  v1.13&n;    19980423   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Bugfix for SMP systems without MTRR support.&n;  v1.14&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Trap calls to &lt;mtrr_add&gt; and &lt;mtrr_del&gt; on non-MTRR machines.&n;  v1.15&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Use atomic bitops for setting SMP change mask.&n;  v1.16&n;    19980428   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed spurious diagnostic message.&n;  v1.17&n;    19980429   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved register-setting macros into this file.&n;&t;       Moved setup code from init/main.c to i386-specific areas.&n;  v1.18&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved MTRR detection outside conditionals in &lt;mtrr_init&gt;.&n;  v1.19&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Documentation improvement: mention Pentium II and AGP.&n;  v1.20&n;    19980521   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Only manipulate interrupt enable flag on local CPU.&n;&t;       Allow enclosed uncachable regions.&n;  v1.21&n;    19980611   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Always define &lt;main_lock&gt;.&n;  v1.22&n;    19980901   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed module support in order to tidy up code.&n;&t;       Added sanity check for &lt;mtrr_add&gt;/&lt;mtrr_del&gt; before &lt;mtrr_init&gt;.&n;&t;       Created addition queue for prior to SMP commence.&n;  v1.23&n;    19980902   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Ported patch to kernel 2.1.120-pre3.&n;  v1.24&n;    19980910   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed sanity checks and addition queue: Linus prefers an OOPS.&n;  v1.25&n;    19981001   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixed harmless compiler warning in include/asm-i386/mtrr.h&n;&t;       Fixed version numbering and history for v1.23 -&gt; v1.24.&n;  v1.26&n;    19990118   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Added devfs support.&n;  v1.27&n;    19990123   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Changed locking to spin with reschedule.&n;&t;       Made use of new &lt;smp_call_function&gt;.&n;  v1.28&n;    19990201   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Extended the driver to be able to use Cyrix style ARRs.&n;    19990204   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Restructured Cyrix support.&n;  v1.29&n;    19990204   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Refined ARR support: enable MAPEN in set_mtrr_prepare()&n;&t;       and disable MAPEN in set_mtrr_done().&n;    19990205   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Minor cleanups.&n;  v1.30&n;    19990208   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Protect plain 6x86s (and other processors without the&n;               Page Global Enable feature) against accessing CR4 in&n;               set_mtrr_prepare() and set_mtrr_done().&n;    19990210   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Turned &lt;set_mtrr_up&gt; and &lt;get_mtrr&gt; into function pointers.&n;  v1.31&n;    19990212   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Major rewrite of cyrix_arr_init(): do not touch ARRs,&n;               leave them as the BIOS have set them up.&n;               Enable usage of all 8 ARRs.&n;               Avoid multiplications by 3 everywhere and other&n;               code clean ups/speed ups.&n;    19990213   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Set up other Cyrix processors identical to the boot cpu.&n;               Since Cyrix don&squot;t support Intel APIC, this is l&squot;art pour l&squot;art.&n;               Weigh ARRs by size:&n;               If size &lt;= 32M is given, set up ARR# we were given.&n;               If size &gt;  32M is given, set up ARR7 only if it is free,&n;               fail otherwise.&n;    19990214   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Also check for size &gt;= 256K if we are to set up ARR7,&n;               mtrr_add() returns the value it gets from set_mtrr()&n;    19990218   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Remove Cyrix &quot;coma bug&quot; workaround from here.&n;               Moved to linux/arch/i386/kernel/setup.c and&n;               linux/include/asm-i386/bugs.h&n;    19990228   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Added MTRRIOC_KILL_ENTRY ioctl(2)&n;&t;       Trap for counter underflow in &lt;mtrr_file_del&gt;.&n;&t;       Trap for 4 MiB aligned regions for PPro, stepping &lt;= 7.&n;    19990301   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Created &lt;get_free_region&gt; hook.&n;    19990305   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Temporarily disable AMD support now MTRR capability flag is set.&n;  v1.32&n;    19990308   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Adjust my changes (19990212-19990218) to Richard Gooch&squot;s&n;&t;       latest changes. (19990228-19990305)&n;  v1.33&n;    19990309   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixed typo in &lt;printk&gt; message.&n;    19990310   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Support K6-II/III based on Alan Cox&squot;s &lt;alan@redhat.com&gt; patches.&n;  v1.34&n;    19990511   Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;&n;&t;       Support Centaur C6 MCR&squot;s.&n;    19990512   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Minor cleanups.&n;  v1.35&n;    19990707   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Check whether ARR3 is protected in cyrix_get_free_region()&n;               and mtrr_del(). The code won&squot;t attempt to delete or change it&n;               from now on if the BIOS protected ARR3. It silently skips ARR3&n;               in cyrix_get_free_region() or returns with an error code from&n;               mtrr_del().&n;    19990711   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Reset some bits in the CCRs in cyrix_arr_init() to disable SMM&n;               if ARR3 isn&squot;t protected. This is needed because if SMM is active&n;               and ARR3 isn&squot;t protected then deleting and setting ARR3 again&n;               may lock up the processor. With SMM entirely disabled, it does&n;               not happen.&n;    19990812   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Rearrange switch() statements so the driver accomodates to&n;               the fact that the AMD Athlon handles its MTRRs the same way&n;               as Intel does.&n;    19990814   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Double check for Intel in mtrr_add()&squot;s big switch() because&n;&t;       that revision check is only valid for Intel CPUs.&n;    19990819   Alan Cox &lt;alan@redhat.com&gt;&n;               Tested Zoltan&squot;s changes on a pre production Athlon - 100%&n;               success.&n;    19991008   Manfred Spraul &lt;manfreds@colorfullife.com&gt;&n;    &t;       replaced spin_lock_reschedule() with a normal semaphore.&n;  v1.36&n;    20000221   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Compile fix if procfs and devfs not enabled.&n;&t;       Formatting changes.&n;*/
+multiline_comment|/*  Generic MTRR (Memory Type Range Register) driver.&n;&n;    Copyright (C) 1997-2000  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    Source: &quot;Pentium Pro Family Developer&squot;s Manual, Volume 3:&n;    Operating System Writer&squot;s Guide&quot; (Intel document number 242692),&n;    section 11.11.7&n;&n;    ChangeLog&n;&n;    Prehistory Martin Tischh&#xfffd;user &lt;martin@ikcbarka.fzk.de&gt;&n;&t;       Initial register-setting code (from proform-1.0).&n;    19971216   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Original version for /proc/mtrr interface, SMP-safe.&n;  v1.0&n;    19971217   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for ioctls()&squot;s.&n;&t;       Added sample code in Documentation/mtrr.txt&n;  v1.1&n;    19971218   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Disallow overlapping regions.&n;    19971219   Jens Maurer &lt;jmaurer@menuett.rhein-main.de&gt;&n;               Register-setting fixups.&n;  v1.2&n;    19971222   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.75.&n;  v1.3&n;    19971229   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Register-setting fixups and conformity with Intel conventions.&n;    19971229   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Cosmetic changes and wrote this ChangeLog ;-)&n;    19980106   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.78.&n;  v1.4&n;    19980119   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Included passive-release enable code (elsewhere in PCI setup).&n;  v1.5&n;    19980131   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Replaced global kernel lock with private spinlock.&n;  v1.6&n;    19980201   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wait for other CPUs to complete changes.&n;  v1.7&n;    19980202   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix in definition of &lt;set_mtrr&gt; for UP.&n;  v1.8&n;    19980319   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.90.&n;    19980323   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Move SMP BIOS fixup before secondary CPUs call &lt;calibrate_delay&gt;&n;  v1.9&n;    19980325   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixed test for overlapping regions: confused by adjacent regions&n;    19980326   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wbinvd in &lt;set_mtrr_prepare&gt;.&n;    19980401   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for non-SMP compilation.&n;    19980418   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Fixed-MTRR synchronisation for SMP and use atomic operations&n;&t;       instead of spinlocks.&n;    19980418   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Differentiate different MTRR register classes for BIOS fixup.&n;  v1.10&n;    19980419   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;&t;       Bug fix in variable MTRR synchronisation.&n;  v1.11&n;    19980419   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixups for kernel 2.1.97.&n;  v1.12&n;    19980421   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Safer synchronisation across CPUs when changing MTRRs.&n;  v1.13&n;    19980423   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Bugfix for SMP systems without MTRR support.&n;  v1.14&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Trap calls to &lt;mtrr_add&gt; and &lt;mtrr_del&gt; on non-MTRR machines.&n;  v1.15&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Use atomic bitops for setting SMP change mask.&n;  v1.16&n;    19980428   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed spurious diagnostic message.&n;  v1.17&n;    19980429   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved register-setting macros into this file.&n;&t;       Moved setup code from init/main.c to i386-specific areas.&n;  v1.18&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved MTRR detection outside conditionals in &lt;mtrr_init&gt;.&n;  v1.19&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Documentation improvement: mention Pentium II and AGP.&n;  v1.20&n;    19980521   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Only manipulate interrupt enable flag on local CPU.&n;&t;       Allow enclosed uncachable regions.&n;  v1.21&n;    19980611   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Always define &lt;main_lock&gt;.&n;  v1.22&n;    19980901   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed module support in order to tidy up code.&n;&t;       Added sanity check for &lt;mtrr_add&gt;/&lt;mtrr_del&gt; before &lt;mtrr_init&gt;.&n;&t;       Created addition queue for prior to SMP commence.&n;  v1.23&n;    19980902   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Ported patch to kernel 2.1.120-pre3.&n;  v1.24&n;    19980910   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed sanity checks and addition queue: Linus prefers an OOPS.&n;  v1.25&n;    19981001   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixed harmless compiler warning in include/asm-i386/mtrr.h&n;&t;       Fixed version numbering and history for v1.23 -&gt; v1.24.&n;  v1.26&n;    19990118   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Added devfs support.&n;  v1.27&n;    19990123   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Changed locking to spin with reschedule.&n;&t;       Made use of new &lt;smp_call_function&gt;.&n;  v1.28&n;    19990201   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Extended the driver to be able to use Cyrix style ARRs.&n;    19990204   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Restructured Cyrix support.&n;  v1.29&n;    19990204   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Refined ARR support: enable MAPEN in set_mtrr_prepare()&n;&t;       and disable MAPEN in set_mtrr_done().&n;    19990205   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Minor cleanups.&n;  v1.30&n;    19990208   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Protect plain 6x86s (and other processors without the&n;               Page Global Enable feature) against accessing CR4 in&n;               set_mtrr_prepare() and set_mtrr_done().&n;    19990210   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Turned &lt;set_mtrr_up&gt; and &lt;get_mtrr&gt; into function pointers.&n;  v1.31&n;    19990212   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Major rewrite of cyrix_arr_init(): do not touch ARRs,&n;               leave them as the BIOS have set them up.&n;               Enable usage of all 8 ARRs.&n;               Avoid multiplications by 3 everywhere and other&n;               code clean ups/speed ups.&n;    19990213   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Set up other Cyrix processors identical to the boot cpu.&n;               Since Cyrix don&squot;t support Intel APIC, this is l&squot;art pour l&squot;art.&n;               Weigh ARRs by size:&n;               If size &lt;= 32M is given, set up ARR# we were given.&n;               If size &gt;  32M is given, set up ARR7 only if it is free,&n;               fail otherwise.&n;    19990214   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Also check for size &gt;= 256K if we are to set up ARR7,&n;               mtrr_add() returns the value it gets from set_mtrr()&n;    19990218   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Remove Cyrix &quot;coma bug&quot; workaround from here.&n;               Moved to linux/arch/i386/kernel/setup.c and&n;               linux/include/asm-i386/bugs.h&n;    19990228   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Added MTRRIOC_KILL_ENTRY ioctl(2)&n;&t;       Trap for counter underflow in &lt;mtrr_file_del&gt;.&n;&t;       Trap for 4 MiB aligned regions for PPro, stepping &lt;= 7.&n;    19990301   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Created &lt;get_free_region&gt; hook.&n;    19990305   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Temporarily disable AMD support now MTRR capability flag is set.&n;  v1.32&n;    19990308   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Adjust my changes (19990212-19990218) to Richard Gooch&squot;s&n;&t;       latest changes. (19990228-19990305)&n;  v1.33&n;    19990309   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixed typo in &lt;printk&gt; message.&n;    19990310   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Support K6-II/III based on Alan Cox&squot;s &lt;alan@redhat.com&gt; patches.&n;  v1.34&n;    19990511   Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;&n;&t;       Support Centaur C6 MCR&squot;s.&n;    19990512   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Minor cleanups.&n;  v1.35&n;    19990707   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Check whether ARR3 is protected in cyrix_get_free_region()&n;               and mtrr_del(). The code won&squot;t attempt to delete or change it&n;               from now on if the BIOS protected ARR3. It silently skips ARR3&n;               in cyrix_get_free_region() or returns with an error code from&n;               mtrr_del().&n;    19990711   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Reset some bits in the CCRs in cyrix_arr_init() to disable SMM&n;               if ARR3 isn&squot;t protected. This is needed because if SMM is active&n;               and ARR3 isn&squot;t protected then deleting and setting ARR3 again&n;               may lock up the processor. With SMM entirely disabled, it does&n;               not happen.&n;    19990812   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;               Rearrange switch() statements so the driver accomodates to&n;               the fact that the AMD Athlon handles its MTRRs the same way&n;               as Intel does.&n;    19990814   Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt;&n;&t;       Double check for Intel in mtrr_add()&squot;s big switch() because&n;&t;       that revision check is only valid for Intel CPUs.&n;    19990819   Alan Cox &lt;alan@redhat.com&gt;&n;               Tested Zoltan&squot;s changes on a pre production Athlon - 100%&n;               success.&n;    19991008   Manfred Spraul &lt;manfreds@colorfullife.com&gt;&n;    &t;       replaced spin_lock_reschedule() with a normal semaphore.&n;  v1.36&n;    20000221   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Compile fix if procfs and devfs not enabled.&n;&t;       Formatting changes.&n;  v1.37&n;    20001109   H. Peter Anvin &lt;hpa@zytor.com&gt;&n;&t;       Use the new centralized CPU feature detects.&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -35,11 +35,63 @@ macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|MTRR_VERSION
-mdefine_line|#define MTRR_VERSION            &quot;1.36 (20000221)&quot;
+mdefine_line|#define MTRR_VERSION            &quot;1.37 (20001109)&quot;
 DECL|macro|TRUE
 mdefine_line|#define TRUE  1
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
+multiline_comment|/*&n; * The code assumes all processors support the same MTRR&n; * interface.  This is generally a good assumption, but could&n; * potentially be a problem.&n; */
+DECL|enum|mtrr_if_type
+r_enum
+id|mtrr_if_type
+(brace
+DECL|enumerator|MTRR_IF_NONE
+id|MTRR_IF_NONE
+comma
+multiline_comment|/* No MTRRs supported */
+DECL|enumerator|MTRR_IF_INTEL
+id|MTRR_IF_INTEL
+comma
+multiline_comment|/* Intel (P6) standard MTRRs */
+DECL|enumerator|MTRR_IF_AMD_K6
+id|MTRR_IF_AMD_K6
+comma
+multiline_comment|/* AMD pre-Athlon MTRRs */
+DECL|enumerator|MTRR_IF_CYRIX_ARR
+id|MTRR_IF_CYRIX_ARR
+comma
+multiline_comment|/* Cyrix ARRs */
+DECL|enumerator|MTRR_IF_CENTAUR_MCR
+id|MTRR_IF_CENTAUR_MCR
+comma
+multiline_comment|/* Centaur MCRs */
+DECL|variable|mtrr_if
+)brace
+id|mtrr_if
+op_assign
+id|MTRR_IF_NONE
+suffix:semicolon
+DECL|variable|mtrr_if_name
+r_static
+id|__initdata
+r_char
+op_star
+id|mtrr_if_name
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;none&quot;
+comma
+l_string|&quot;Intel&quot;
+comma
+l_string|&quot;AMD K6&quot;
+comma
+l_string|&quot;Cyrix ARR&quot;
+comma
+l_string|&quot;Centaur MCR&quot;
+)brace
+suffix:semicolon
 DECL|macro|MTRRcap_MSR
 mdefine_line|#define MTRRcap_MSR     0x0fe
 DECL|macro|MTRRdefType_MSR
@@ -205,49 +257,31 @@ id|__cli
 (paren
 )paren
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-)paren
-(brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-op_ge
-l_int|6
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* Athlon and post-Athlon CPUs */
-multiline_comment|/* else fall through */
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
+id|mtrr_if
 op_ne
-l_int|6
+id|MTRR_IF_INTEL
+op_logical_and
+id|mtrr_if
+op_ne
+id|MTRR_IF_CYRIX_ARR
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
-multiline_comment|/*break;*/
-)brace
 multiline_comment|/*  Save value of CR4 and clear Page Global Enable (bit 7)  */
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
+id|test_bit
+c_func
+(paren
 id|X86_FEATURE_PGE
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 )paren
 id|asm
 r_volatile
@@ -290,21 +324,14 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
+op_eq
+id|MTRR_IF_INTEL
 )paren
 (brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
 multiline_comment|/*  Disable MTRRs, and set the default type to uncached  */
 id|rdmsr
 (paren
@@ -326,11 +353,10 @@ comma
 id|ctxt-&gt;deftype_hi
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
+)brace
+r_else
+(brace
+multiline_comment|/* Cyrix ARRs - everything else were excluded at the top */
 id|tmp
 op_assign
 id|getCx86
@@ -355,8 +381,6 @@ id|ctxt-&gt;ccr3
 op_assign
 id|tmp
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function set_mtrr_prepare  */
@@ -376,35 +400,16 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-)paren
-(brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-op_ge
-l_int|6
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* Athlon and post-Athlon CPUs */
-multiline_comment|/* else fall through */
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
+id|mtrr_if
 op_ne
-l_int|6
+id|MTRR_IF_INTEL
+op_logical_and
+id|mtrr_if
+op_ne
+id|MTRR_IF_CYRIX_ARR
 )paren
 (brace
 id|__restore_flags
@@ -414,8 +419,6 @@ id|ctxt-&gt;flags
 suffix:semicolon
 r_return
 suffix:semicolon
-)brace
-multiline_comment|/*break;*/
 )brace
 multiline_comment|/*  Flush caches and TLBs  */
 id|asm
@@ -429,21 +432,15 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*  Restore MTRRdefType  */
-r_switch
+r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
+op_eq
+id|MTRR_IF_INTEL
 )paren
 (brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
+multiline_comment|/* Intel (P6) standard MTRRs */
 id|wrmsr
 (paren
 id|MTRRdefType_MSR
@@ -453,19 +450,16 @@ comma
 id|ctxt-&gt;deftype_hi
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
+)brace
+r_else
+(brace
+multiline_comment|/* Cyrix ARRs - everything else was excluded at the top */
 id|setCx86
 (paren
 id|CX86_CCR3
 comma
 id|ctxt-&gt;ccr3
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 multiline_comment|/*  Enable caches  */
@@ -489,9 +483,14 @@ multiline_comment|/*  Restore value of CR4  */
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
+id|test_bit
+c_func
+(paren
 id|X86_FEATURE_PGE
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 )paren
 id|asm
 r_volatile
@@ -534,98 +533,52 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 )paren
 (brace
 r_case
-id|X86_VENDOR_AMD
+id|MTRR_IF_INTEL
 suffix:colon
-r_if
-c_cond
+id|rdmsr
 (paren
-id|boot_cpu_data.x86
-OL
-l_int|6
+id|MTRRcap_MSR
+comma
+id|config
+comma
+id|dummy
 )paren
+suffix:semicolon
+r_return
+(paren
+id|config
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+r_case
+id|MTRR_IF_AMD_K6
+suffix:colon
 r_return
 l_int|2
 suffix:semicolon
-multiline_comment|/* pre-Athlon CPUs */
-multiline_comment|/* else fall through */
 r_case
-id|X86_VENDOR_INTEL
+id|MTRR_IF_CYRIX_ARR
 suffix:colon
-id|rdmsr
-(paren
-id|MTRRcap_MSR
-comma
-id|config
-comma
-id|dummy
-)paren
-suffix:semicolon
-r_return
-(paren
-id|config
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-multiline_comment|/*break;*/
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
-multiline_comment|/*  Cyrix have 8 ARRs  */
 r_return
 l_int|8
 suffix:semicolon
 r_case
-id|X86_VENDOR_CENTAUR
+id|MTRR_IF_CENTAUR_MCR
 suffix:colon
-multiline_comment|/*  and Centaur has 8 MCR&squot;s  */
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|5
-)paren
-(brace
 r_return
 l_int|8
 suffix:semicolon
-)brace
-multiline_comment|/*  the cyrix III has intel compatible MTRR */
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|6
-)paren
-(brace
-id|rdmsr
-(paren
-id|MTRRcap_MSR
-comma
-id|config
-comma
-id|dummy
-)paren
-suffix:semicolon
-r_return
-(paren
-id|config
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*break;*/
-)brace
+r_default
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*  End Function get_num_var_ranges  */
 multiline_comment|/*  Returns non-zero if we have the write-combining memory type  */
@@ -646,41 +599,11 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 )paren
 (brace
 r_case
-id|X86_VENDOR_AMD
-suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-OL
-l_int|6
-)paren
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* pre-Athlon CPUs */
-multiline_comment|/* else fall through */
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|5
-)paren
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* C6 */
-multiline_comment|/* CyrixIII is Intel like */
-r_case
-id|X86_VENDOR_INTEL
+id|MTRR_IF_INTEL
 suffix:colon
 id|rdmsr
 (paren
@@ -702,18 +625,27 @@ l_int|10
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*break;*/
+r_return
+l_int|1
+suffix:semicolon
 r_case
-id|X86_VENDOR_CYRIX
+id|MTRR_IF_AMD_K6
+suffix:colon
+r_case
+id|MTRR_IF_CENTAUR_MCR
+suffix:colon
+r_case
+id|MTRR_IF_CYRIX_ARR
 suffix:colon
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*break;*/
-)brace
+r_default
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*  End Function have_wrcomb  */
 DECL|function|intel_get_mtrr
@@ -3829,39 +3761,24 @@ id|lsize
 comma
 id|last
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 )paren
 (brace
 r_case
-id|X86_VENDOR_AMD
+id|MTRR_IF_NONE
 suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-OL
-l_int|6
-)paren
-(brace
-multiline_comment|/* pre-Athlon CPUs */
-multiline_comment|/* Apply the K6 block alignment and size rules&n;&t;     In order&n;&t;&t;o Uncached or gathering only&n;&t;&t;o 128K or bigger block&n;&t;&t;o Power of 2 block&n;&t;&t;o base suitably aligned to the power&n;&t;    */
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* No MTRRs whatsoever */
+r_case
+id|MTRR_IF_AMD_K6
+suffix:colon
+multiline_comment|/* Apply the K6 block alignment and size rules&n;&t;   In order&n;&t;   o Uncached or gathering only&n;&t;   o 128K or bigger block&n;&t;   o Power of 2 block&n;&t;   o base suitably aligned to the power&n;&t;*/
 r_if
 c_cond
 (paren
@@ -3906,42 +3823,32 @@ id|EINVAL
 suffix:semicolon
 r_break
 suffix:semicolon
-)brace
-multiline_comment|/*  Else fall through  */
 r_case
-id|X86_VENDOR_INTEL
+id|MTRR_IF_INTEL
 suffix:colon
-multiline_comment|/*  Double check for Intel, we may run on Athlon  */
+multiline_comment|/*  For Intel PPro stepping &lt;= 7, must be 4 MiB aligned  */
 r_if
 c_cond
 (paren
 id|boot_cpu_data.x86_vendor
 op_eq
 id|X86_VENDOR_INTEL
-)paren
-(brace
-multiline_comment|/*  For Intel PPro stepping &lt;= 7, must be 4 MiB aligned  */
-r_if
-c_cond
-(paren
-(paren
+op_logical_and
 id|boot_cpu_data.x86
 op_eq
 l_int|6
-)paren
 op_logical_and
-(paren
 id|boot_cpu_data.x86_model
 op_eq
 l_int|1
-)paren
 op_logical_and
-(paren
 id|boot_cpu_data.x86_mask
 op_le
 l_int|7
 )paren
-op_logical_and
+(brace
+r_if
+c_cond
 (paren
 id|base
 op_amp
@@ -3953,7 +3860,6 @@ l_int|22
 )paren
 op_minus
 l_int|1
-)paren
 )paren
 )paren
 (brace
@@ -3971,12 +3877,12 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*  Fall through  */
+multiline_comment|/* Fall through */
 r_case
-id|X86_VENDOR_CYRIX
+id|MTRR_IF_CYRIX_ARR
 suffix:colon
 r_case
-id|X86_VENDOR_CENTAUR
+id|MTRR_IF_CENTAUR_MCR
 suffix:colon
 r_if
 c_cond
@@ -4016,13 +3922,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 op_eq
-id|X86_VENDOR_CENTAUR
-op_logical_and
-id|boot_cpu_data.x86
-op_eq
-l_int|5
+id|MTRR_IF_CENTAUR_MCR
 )paren
 (brace
 r_if
@@ -4144,7 +4046,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*break;*/
 )brace
 r_if
 c_cond
@@ -4506,16 +4407,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
-)paren
+id|mtrr_if
+op_eq
+id|MTRR_IF_NONE
 )paren
 r_return
 op_minus
-id|ENODEV
+id|ENXIO
 suffix:semicolon
 id|max
 op_assign
@@ -4653,9 +4551,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 op_eq
-id|X86_VENDOR_CYRIX
+id|MTRR_IF_CYRIX_ARR
 )paren
 (brace
 r_if
@@ -7036,7 +6934,7 @@ suffix:semicolon
 multiline_comment|/*  End Function centaur_mcr_init  */
 DECL|function|mtrr_setup
 r_static
-r_void
+r_int
 id|__init
 id|mtrr_setup
 c_func
@@ -7044,46 +6942,24 @@ c_func
 r_void
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;mtrr: v%s Richard Gooch (rgooch@atnf.csiro.au)&bslash;n&quot;
-comma
-id|MTRR_VERSION
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-)paren
-(brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-OL
-l_int|6
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_MTRR
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 )paren
 (brace
-multiline_comment|/* pre-Athlon CPUs */
-id|get_mtrr
+multiline_comment|/* Intel (P6) standard MTRRs */
+id|mtrr_if
 op_assign
-id|amd_get_mtrr
+id|MTRR_IF_INTEL
 suffix:semicolon
-id|set_mtrr_up
-op_assign
-id|amd_set_mtrr_up
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/*   Else fall through  */
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
 id|get_mtrr
 op_assign
 id|intel_get_mtrr
@@ -7092,11 +6968,54 @@ id|set_mtrr_up
 op_assign
 id|intel_set_mtrr_up
 suffix:semicolon
-r_break
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_K6_MTRR
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
+)paren
+(brace
+multiline_comment|/* Pre-Athlon (K6) AMD CPU MTRRs */
+id|mtrr_if
+op_assign
+id|MTRR_IF_AMD_K6
 suffix:semicolon
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
+id|get_mtrr
+op_assign
+id|amd_get_mtrr
+suffix:semicolon
+id|set_mtrr_up
+op_assign
+id|amd_set_mtrr_up
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_CYRIX_ARR
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
+)paren
+(brace
+multiline_comment|/* Cyrix ARRs */
+id|mtrr_if
+op_assign
+id|MTRR_IF_CYRIX_ARR
+suffix:semicolon
 id|get_mtrr
 op_assign
 id|cyrix_get_arr
@@ -7109,19 +7028,31 @@ id|get_free_region
 op_assign
 id|cyrix_get_free_region
 suffix:semicolon
-r_break
+id|cyrix_arr_init
+c_func
+(paren
+)paren
 suffix:semicolon
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
+)brace
+r_else
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-op_eq
-l_int|5
+id|test_bit
+c_func
+(paren
+id|X86_FEATURE_CENTAUR_MCR
+comma
+op_amp
+id|boot_cpu_data.x86_capability
+)paren
 )paren
 (brace
+multiline_comment|/* Centaur MCRs */
+id|mtrr_if
+op_assign
+id|MTRR_IF_CENTAUR_MCR
+suffix:semicolon
 id|get_mtrr
 op_assign
 id|centaur_get_mcr
@@ -7130,27 +7061,40 @@ id|set_mtrr_up
 op_assign
 id|centaur_set_mcr_up
 suffix:semicolon
-)brace
-r_if
-c_cond
+id|centaur_mcr_init
+c_func
 (paren
-id|boot_cpu_data.x86
-op_eq
-l_int|6
 )paren
+suffix:semicolon
+)brace
+r_else
 (brace
-id|get_mtrr
+multiline_comment|/* No supported MTRR interface */
+id|mtrr_if
 op_assign
-id|intel_get_mtrr
-suffix:semicolon
-id|set_mtrr_up
-op_assign
-id|intel_set_mtrr_up
+id|MTRR_IF_NONE
 suffix:semicolon
 )brace
-r_break
+id|printk
+(paren
+l_string|&quot;mtrr: v%s Richard Gooch (rgooch@atnf.csiro.au)&bslash;n&quot;
+l_string|&quot;mtrr: detected mtrr type: %s&bslash;n&quot;
+comma
+id|MTRR_VERSION
+comma
+id|mtrr_if_name
+(braket
+id|mtrr_if
+)braket
+)paren
 suffix:semicolon
-)brace
+r_return
+(paren
+id|mtrr_if
+op_ne
+id|MTRR_IF_NONE
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_setup  */
 macro_line|#ifdef CONFIG_SMP
@@ -7190,91 +7134,26 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|mtrr_setup
 (paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
 )paren
 )paren
 r_return
 suffix:semicolon
-id|mtrr_setup
-(paren
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-)paren
-(brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-OL
-l_int|6
+id|mtrr_if
+op_eq
+id|MTRR_IF_INTEL
 )paren
-r_break
-suffix:semicolon
-multiline_comment|/*  Pre-Athlon CPUs  */
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
+(brace
+multiline_comment|/* Only for Intel MTRRs */
 id|get_mtrr_state
 (paren
 op_amp
 id|smp_mtrr_state
 )paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
-id|cyrix_arr_init
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
-multiline_comment|/* C6 and Cyrix III have different ones */
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|5
-)paren
-(brace
-id|centaur_mcr_init
-(paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-op_eq
-l_int|6
-)paren
-(brace
-id|get_mtrr_state
-c_func
-(paren
-op_amp
-id|smp_mtrr_state
-)paren
-suffix:semicolon
-)brace
-r_break
 suffix:semicolon
 )brace
 )brace
@@ -7373,48 +7252,25 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
-)paren
-)paren
-r_return
-suffix:semicolon
 r_switch
 c_cond
 (paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
 )paren
 (brace
 r_case
-id|X86_VENDOR_AMD
+id|MTRR_IF_INTEL
 suffix:colon
-multiline_comment|/*  Just for robustness: pre-Athlon CPUs cannot do SMP  */
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-OL
-l_int|6
-)paren
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
+multiline_comment|/* Intel (P6) standard MTRRs */
 id|intel_mtrr_init_secondary_cpu
+c_func
 (paren
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|X86_VENDOR_CYRIX
+id|MTRR_IF_CYRIX_ARR
 suffix:colon
 multiline_comment|/* This is _completely theoretical_!&n;&t; * I assume here that one day Cyrix will support Intel APIC.&n;&t; * In reality on non-Intel CPUs we won&squot;t even get to this routine.&n;&t; * Hopefully no one will plug two Cyrix processors in a dual P5 board.&n;&t; *  :-)&n;&t; */
 id|cyrix_arr_init_secondary
@@ -7425,12 +7281,11 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+multiline_comment|/* I see no MTRRs I can support in SMP mode... */
 id|printk
 (paren
 l_string|&quot;mtrr: SMP support incomplete for this vendor&bslash;n&quot;
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 )brace
@@ -7445,42 +7300,16 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/* mtrr_setup() should already have been called from mtrr_init_boot_cpu() */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
+id|mtrr_if
+op_eq
+id|MTRR_IF_INTEL
 )paren
 (brace
-r_case
-id|X86_VENDOR_AMD
-suffix:colon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86
-OL
-l_int|6
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/*  Pre-Athlon CPUs  */
-r_case
-id|X86_VENDOR_INTEL
-suffix:colon
 id|finalize_mtrr_state
 (paren
 op_amp
@@ -7492,49 +7321,22 @@ id|mtrr_state_warn
 id|smp_changes_mask
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 )brace
-macro_line|#else  /*  CONFIG_SMP  */
-id|mtrr_setup
-(paren
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-)paren
-(brace
-r_case
-id|X86_VENDOR_CYRIX
-suffix:colon
-id|cyrix_arr_init
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|X86_VENDOR_CENTAUR
-suffix:colon
+macro_line|#else
 r_if
 c_cond
 (paren
-id|boot_cpu_data.x86
-op_eq
-l_int|5
-)paren
-(brace
-id|centaur_mcr_init
+op_logical_neg
+id|mtrr_setup
+c_func
 (paren
 )paren
+)paren
+r_return
+l_int|0
 suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif  /*  !CONFIG_SMP  */
+multiline_comment|/* MTRRs not supported? */
+macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_root_mtrr
 op_assign
@@ -7597,4 +7399,5 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_init  */
+multiline_comment|/*&n; * Local Variables:&n; * mode:c&n; * c-file-style:&quot;k&amp;r&quot;&n; * c-basic-offset:4&n; * End:&n; */
 eof

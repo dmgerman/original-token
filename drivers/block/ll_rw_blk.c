@@ -2107,6 +2107,11 @@ op_star
 id|req
 op_assign
 l_int|NULL
+comma
+op_star
+id|freereq
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|rw_ahead
@@ -2235,6 +2240,8 @@ id|rw
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now we acquire the request spinlock, we have to be mega careful&n;&t; * not to schedule or do something nonatomic&n;&t; */
+id|again
+suffix:colon
 id|spin_lock_irq
 c_func
 (paren
@@ -2489,6 +2496,22 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|freereq
+)paren
+(brace
+id|req
+op_assign
+id|freereq
+suffix:semicolon
+id|freereq
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 (paren
 id|req
 op_assign
@@ -2519,7 +2542,7 @@ id|rw_ahead
 r_goto
 id|end_io
 suffix:semicolon
-id|req
+id|freereq
 op_assign
 id|__get_request_wait
 c_func
@@ -2529,35 +2552,9 @@ comma
 id|rw
 )paren
 suffix:semicolon
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|io_request_lock
-)paren
+r_goto
+id|again
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|q-&gt;head_active
-)paren
-(brace
-id|head
-op_assign
-op_amp
-id|q-&gt;queue_head
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|q-&gt;plugged
-)paren
-id|head
-op_assign
-id|head-&gt;next
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/* fill up the request-info, and add it to the queue */
 id|req-&gt;cmd
@@ -2643,6 +2640,17 @@ id|q-&gt;request_fn
 )paren
 (paren
 id|q
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|freereq
+)paren
+id|blkdev_release_request
+c_func
+(paren
+id|freereq
 )paren
 suffix:semicolon
 id|spin_unlock_irq
@@ -3644,7 +3652,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_ISP16_CDI
+macro_line|#endif
 macro_line|#if defined(CONFIG_IDE) &amp;&amp; defined(CONFIG_BLK_DEV_IDE)
 id|ide_init
 c_func
@@ -3751,56 +3759,56 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CDU31A
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_ACSI
 id|acsi_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_ATARI_ACSI
+macro_line|#endif
 macro_line|#ifdef CONFIG_MCD
 id|mcd_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_MCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_MCDX
 id|mcdx_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_MCDX
+macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD
 id|sbpcd_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_AZTCD
 id|aztcd_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_AZTCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_CDU535
 id|sony535_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_CDU535
+macro_line|#endif
 macro_line|#ifdef CONFIG_GSCD
 id|gscd_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_GSCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_CM206
 id|cm206_init
 c_func
@@ -3814,14 +3822,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_OPTCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_SJCD
 id|sjcd_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SJCD
+macro_line|#endif
 macro_line|#ifdef CONFIG_APBLOCK
 id|ap_init
 c_func
@@ -3870,7 +3878,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -353,5 +353,5 @@ op_or
 id|sb-&gt;events_lo
 suffix:semicolon
 )brace
-macro_line|#endif _MD_P_H
+macro_line|#endif 
 eof

@@ -283,5 +283,5 @@ r_void
 suffix:semicolon
 DECL|macro|MD_BUG
 mdefine_line|#define MD_BUG(x...) { printk(&quot;md: bug in file %s, line %d&bslash;n&quot;, __FILE__, __LINE__); md_print_devices(); }
-macro_line|#endif _MD_H
+macro_line|#endif 
 eof

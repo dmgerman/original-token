@@ -433,6 +433,12 @@ id|adapter_found
 op_assign
 l_int|0
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Do not check any supplied i/o locations. &n;&t;   POS registers usually don&squot;t fail :) */
 multiline_comment|/* MCA cards have POS registers.  &n;&t;   Autodetecting MCA cards is extremely simple. &n;&t;   Just search for the card. */
 r_for
@@ -985,9 +991,8 @@ l_int|300
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Grab the IRQ&n;&t; */
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -998,10 +1003,15 @@ id|mc32_interrupt
 comma
 l_int|0
 comma
-id|cardname
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
 (brace
 id|printk
@@ -1015,19 +1025,10 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|i
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the device structure. */
-r_if
-c_cond
-(paren
-id|dev-&gt;priv
-op_eq
-l_int|NULL
-)paren
-(brace
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -1063,7 +1064,6 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-)brace
 id|memset
 c_func
 (paren
@@ -1080,11 +1080,6 @@ id|mc32_local
 suffix:semicolon
 id|lp
 op_assign
-(paren
-r_struct
-id|mc32_local
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|lp-&gt;slot
@@ -2847,8 +2842,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4231,8 +4224,6 @@ id|lp
 )paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4562,12 +4553,6 @@ r_static
 r_struct
 id|net_device
 id|this_device
-op_assign
-(brace
-id|init
-suffix:colon
-id|mc32_probe
-)brace
 suffix:semicolon
 multiline_comment|/**&n; *&t;init_module:&n; *&n; *&t;Probe and locate a 3c527 card. This really should probe and locate&n; *&t;all the 3c527 cards in the machine not just one of them. Yes you can&n; *&t;insmod multiple modules for now but its a hack.&n; */
 DECL|function|init_module
@@ -4580,6 +4565,10 @@ r_void
 (brace
 r_int
 id|result
+suffix:semicolon
+id|this_device.init
+op_assign
+id|mc32_probe
 suffix:semicolon
 r_if
 c_cond

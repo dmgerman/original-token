@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.99 2000/11/10 05:44:33 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.100 2000/11/12 10:23:30 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; *&n; * Changes :&n; * 2000/11/11 Willy Tarreau &lt;willy AT meta-x.org&gt;&n; *   - port to non-sparc architectures. Tested only on x86 and&n; *     only currently works with QFE PCI cards.&n; *   - ability to specify the MAC address at module load time by passing this&n; *     argument : macaddr=0x00,0x10,0x20,0x30,0x40,0x50&n; */
 DECL|variable|version
 r_static
 r_char
@@ -28,25 +28,46 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifndef __sparc_v9__
 macro_line|#include &lt;asm/io-unit.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#endif
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#ifdef __sparc__
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#endif
+macro_line|#endif
 macro_line|#include &quot;sunhme.h&quot;
+DECL|variable|macaddr
+r_static
+r_int
+id|macaddr
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* accept MAC address of the form macaddr=0x08,0x00,0x20,0x30,0x40,0x50 */
+id|MODULE_PARM
+c_func
+(paren
+id|macaddr
+comma
+l_string|&quot;6i&quot;
+)paren
+suffix:semicolon
 DECL|variable|root_happy_dev
 r_static
 r_struct
@@ -56,6 +77,7 @@ id|root_happy_dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_SBUS
 DECL|variable|qfe_sbus_list
 r_static
 r_struct
@@ -65,6 +87,7 @@ id|qfe_sbus_list
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 DECL|variable|qfe_pci_list
 r_static
@@ -838,12 +861,27 @@ DECL|macro|hme_dma_sync
 mdefine_line|#define hme_dma_sync(__hp, __addr, __size, __dir) &bslash;&n;&t;pci_dma_sync_single((__hp)-&gt;happy_dev, (__addr), (__size), (__dir))
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef SBUS_DMA_BIDIRECTIONAL
 DECL|macro|DMA_BIDIRECTIONAL
-mdefine_line|#define DMA_BIDIRECTIONAL&t;SBUS_DMA_BIDIRECTIONAL
+macro_line|#&t;define DMA_BIDIRECTIONAL&t;SBUS_DMA_BIDIRECTIONAL
+macro_line|#else
+DECL|macro|DMA_BIDIRECTIONAL
+macro_line|#&t;define DMA_BIDIRECTIONAL&t;0
+macro_line|#endif
+macro_line|#ifdef SBUS_DMA_FROMDEVICE
 DECL|macro|DMA_FROMDEVICE
-mdefine_line|#define DMA_FROMDEVICE&t;&t;SBUS_DMA_FROMDEVICE
+macro_line|#&t;define DMA_FROMDEVICE&t;&t;SBUS_DMA_FROMDEVICE
+macro_line|#else
 DECL|macro|DMA_TODEVICE
-mdefine_line|#define DMA_TODEVICE&t;&t;SBUS_DMA_TODEVICE
+macro_line|#&t;define DMA_TODEVICE&t;&t;1
+macro_line|#endif
+macro_line|#ifdef SBUS_DMA_TODEVICE
+DECL|macro|DMA_TODEVICE
+macro_line|#&t;define DMA_TODEVICE&t;&t;SBUS_DMA_TODEVICE
+macro_line|#else
+DECL|macro|DMA_FROMDEVICE
+macro_line|#&t;define DMA_FROMDEVICE&t;&t;2
+macro_line|#endif
 multiline_comment|/* Oh yes, the MIF BitBang is mighty fun to program.  BitBucket is more like it. */
 DECL|function|BB_PUT_BIT
 r_static
@@ -9721,6 +9759,7 @@ l_string|&quot;done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SBUS
 DECL|function|quattro_sbus_interrupt
 r_static
 r_void
@@ -9946,6 +9985,7 @@ l_string|&quot;done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|happy_meal_open
 r_static
 r_int
@@ -10029,6 +10069,7 @@ l_string|&quot;EAGAIN&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
 id|printk
 c_func
 (paren
@@ -10042,6 +10083,17 @@ id|dev-&gt;irq
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;happy_meal(SBUS): Can&squot;t order irq %d to go.&bslash;n&quot;
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EAGAIN
@@ -10167,6 +10219,7 @@ macro_line|#else
 DECL|macro|SXD
 mdefine_line|#define SXD(x)
 macro_line|#endif
+macro_line|#ifdef CONFIG_SBUS
 DECL|function|happy_meal_tx_timeout
 r_static
 r_void
@@ -10257,6 +10310,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|happy_meal_start_xmit
 r_static
 r_int
@@ -12087,7 +12141,70 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* Quattro local-mac-address... */
+multiline_comment|/* If user did not specify a MAC address specifically, use&n;&t; * the Quattro local-mac-address property...&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|macaddr
+(braket
+id|i
+)braket
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|6
+)paren
+(brace
+multiline_comment|/* a mac address was given */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+id|macaddr
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -12106,6 +12223,7 @@ l_string|&quot;local-mac-address&quot;
 op_eq
 l_int|6
 )paren
+(brace
 id|prom_getproperty
 c_func
 (paren
@@ -12118,7 +12236,9 @@ comma
 l_int|6
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|memcpy
 c_func
 (paren
@@ -12129,6 +12249,7 @@ comma
 l_int|6
 )paren
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -12754,11 +12875,16 @@ id|qp
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef __sparc__
 r_struct
 id|pcidev_cookie
 op_star
 id|pcp
 suffix:semicolon
+r_int
+id|node
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|happy_meal
 op_star
@@ -12770,8 +12896,6 @@ id|hpreg_base
 suffix:semicolon
 r_int
 id|i
-comma
-id|node
 comma
 id|qfe_slot
 op_assign
@@ -12785,6 +12909,7 @@ l_int|64
 )braket
 suffix:semicolon
 multiline_comment|/* Now make sure pci_dev cookie is there. */
+macro_line|#ifdef __sparc__
 id|pcp
 op_assign
 id|pdev-&gt;sysdata
@@ -12833,6 +12958,17 @@ id|prom_name
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+macro_line|#warning This needs to be corrected... -DaveM
+id|strcpy
+c_func
+(paren
+id|prom_name
+comma
+l_string|&quot;qfe&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13232,6 +13368,71 @@ comma
 l_int|0x8000
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|macaddr
+(braket
+id|i
+)braket
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|6
+)paren
+(brace
+multiline_comment|/* a mac address was given */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+id|macaddr
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#ifdef __sparc__
 r_if
 c_cond
 (paren
@@ -13250,6 +13451,7 @@ l_string|&quot;local-mac-address&quot;
 op_eq
 l_int|6
 )paren
+(brace
 id|prom_getproperty
 c_func
 (paren
@@ -13262,7 +13464,9 @@ comma
 l_int|6
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|memcpy
 c_func
 (paren
@@ -13273,6 +13477,20 @@ comma
 l_int|6
 )paren
 suffix:semicolon
+)brace
+macro_line|#else
+id|memset
+c_func
+(paren
+id|dev-&gt;dev_addr
+comma
+l_int|0
+comma
+l_int|6
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 r_for
 c_loop
 (paren
@@ -13354,6 +13572,7 @@ op_plus
 l_int|0x7000UL
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
 id|hp-&gt;hm_revision
 op_assign
 id|prom_getintdefault
@@ -13377,6 +13596,13 @@ id|hp-&gt;hm_revision
 op_assign
 l_int|0xa0
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* works with this on non-sparc hosts */
+id|hp-&gt;hm_revision
+op_assign
+l_int|0x20
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Now enable the feature flags we can. */
 r_if
 c_cond

@@ -680,28 +680,7 @@ id|mac
 (braket
 id|NS_MAX_CARDS
 )braket
-op_assign
-(brace
-l_int|NULL
-macro_line|#if NS_MAX_CARDS &gt; 1
-comma
-l_int|NULL
-macro_line|#endif /* NS_MAX_CARDS &gt; 1 */
-macro_line|#if NS_MAX_CARDS &gt; 2
-comma
-l_int|NULL
-macro_line|#endif /* NS_MAX_CARDS &gt; 2 */
-macro_line|#if NS_MAX_CARDS &gt; 3
-comma
-l_int|NULL
-macro_line|#endif /* NS_MAX_CARDS &gt; 3 */
-macro_line|#if NS_MAX_CARDS &gt; 4
-comma
-l_int|NULL
-macro_line|#endif /* NS_MAX_CARDS &gt; 4 */
-)brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
@@ -716,7 +695,6 @@ id|NS_MAX_CARDS
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
 multiline_comment|/* Functions*******************************************************************/
 macro_line|#ifdef MODULE
 DECL|function|init_module

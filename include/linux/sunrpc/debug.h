@@ -66,7 +66,7 @@ macro_line|#ifdef RPC_DEBUG&t;&t;&t;
 DECL|macro|ifdebug
 macro_line|# define ifdebug(fac)&t;&t;if (rpc_debug &amp; RPCDBG_##fac)
 DECL|macro|dfprintk
-macro_line|# define dfprintk(fac, args...)&t;do { ifdebug(fac) printk(## args); } while(0)
+macro_line|# define dfprintk(fac, args...)&t;do { ifdebug(fac) printk(args); } while(0)
 DECL|macro|RPC_IFDEBUG
 macro_line|# define RPC_IFDEBUG(x)&t;&t;x
 macro_line|#else

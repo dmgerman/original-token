@@ -1,4 +1,5 @@
 multiline_comment|/* Recently Update by v1.09.50 */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sis_300.h&quot;
 macro_line|#if defined(ALLOC_PRAGMA)
 macro_line|#pragma alloc_text(PAGE,SiSSetMode)

@@ -946,7 +946,7 @@ op_logical_neg
 id|skb-&gt;len
 )paren
 (brace
-id|toshoboe_change_speed
+id|toshoboe_setbaud
 c_func
 (paren
 id|self

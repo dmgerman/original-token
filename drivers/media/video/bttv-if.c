@@ -1,11 +1,11 @@
-multiline_comment|/*&n;    bttv-if.c  --  interfaces to other kernel modules&n;&t;all the i2c code is here&n;&t;also the gpio interface exported by bttv (used by lirc)&n;&n;&n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97,98 Ralph  Metzler (rjkm@thp.uni-koeln.de)&n;                           &amp; Marcus Metzler (mocm@thp.uni-koeln.de)&n;    (c) 1999,2000 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;    &n;*/
+multiline_comment|/*&n;    bttv-if.c  --  interfaces to other kernel modules&n;&t;all the i2c code is here&n;&t;also the gpio interface exported by bttv (used by lirc)&n;&n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97,98 Ralph  Metzler (rjkm@thp.uni-koeln.de)&n;                           &amp; Marcus Metzler (mocm@thp.uni-koeln.de)&n;    (c) 1999,2000 Gerd Knorr &lt;kraxel@goldbach.in-berlin.de&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;    &n;*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__ 1
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;bttv.h&quot;
+macro_line|#include &quot;bttvp.h&quot;
 macro_line|#include &quot;tuner.h&quot;
 DECL|variable|bttv_get_cardinfo
 id|EXPORT_SYMBOL
@@ -201,6 +201,19 @@ comma
 id|BT848_GPIO_OUT_EN
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bttv_gpio
+)paren
+id|bttv_gpio_tracking
+c_func
+(paren
+id|btv
+comma
+l_string|&quot;extern enable&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -327,6 +340,19 @@ op_complement
 id|mask
 comma
 id|BT848_GPIO_DATA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bttv_gpio
+)paren
+id|bttv_gpio_tracking
+c_func
+(paren
+id|btv
+comma
+l_string|&quot;extern write&quot;
 )paren
 suffix:semicolon
 r_return
@@ -667,15 +693,6 @@ id|i
 )braket
 op_eq
 l_int|NULL
-op_logical_or
-id|btv-&gt;i2c_clients
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|driver-&gt;id
-op_eq
-id|client-&gt;driver-&gt;id
 )paren
 (brace
 id|btv-&gt;i2c_clients
@@ -787,21 +804,12 @@ op_increment
 r_if
 c_cond
 (paren
-l_int|NULL
-op_ne
 id|btv-&gt;i2c_clients
 (braket
 id|i
 )braket
-op_logical_and
-id|btv-&gt;i2c_clients
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|driver-&gt;id
 op_eq
-id|client-&gt;driver-&gt;id
+id|client
 )paren
 (brace
 id|btv-&gt;i2c_clients
@@ -910,21 +918,33 @@ id|i2c_algo_bit_data
 id|bttv_i2c_algo_template
 op_assign
 (brace
-l_int|NULL
-comma
+id|setsda
+suffix:colon
 id|bttv_bit_setsda
 comma
+id|setscl
+suffix:colon
 id|bttv_bit_setscl
 comma
+id|getsda
+suffix:colon
 id|bttv_bit_getsda
 comma
+id|getscl
+suffix:colon
 id|bttv_bit_getscl
 comma
+id|udelay
+suffix:colon
+l_int|40
+comma
+id|mdelay
+suffix:colon
 l_int|10
 comma
-l_int|10
-comma
-l_int|100
+id|timeout
+suffix:colon
+l_int|200
 comma
 )brace
 suffix:semicolon
@@ -934,23 +954,29 @@ id|i2c_adapter
 id|bttv_i2c_adap_template
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;bt848&quot;
 comma
+id|id
+suffix:colon
 id|I2C_HW_B_BT848
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
+id|inc_use
+suffix:colon
 id|bttv_inc_use
 comma
+id|dec_use
+suffix:colon
 id|bttv_dec_use
 comma
+id|client_register
+suffix:colon
 id|attach_inform
 comma
+id|client_unregister
+suffix:colon
 id|detach_inform
-comma
-l_int|NULL
 comma
 )brace
 suffix:semicolon
@@ -960,18 +986,15 @@ id|i2c_client
 id|bttv_i2c_client_template
 op_assign
 (brace
-l_string|&quot;bttv internal&quot;
+id|name
+suffix:colon
+l_string|&quot;bttv internal use only&quot;
 comma
+id|id
+suffix:colon
 op_minus
 l_int|1
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* read I2C */
@@ -1005,7 +1028,7 @@ c_cond
 (paren
 l_int|0
 op_ne
-id|btv-&gt;i2c_ok
+id|btv-&gt;i2c_rc
 )paren
 r_return
 op_minus
@@ -1162,7 +1185,7 @@ c_cond
 (paren
 l_int|0
 op_ne
-id|btv-&gt;i2c_ok
+id|btv-&gt;i2c_rc
 )paren
 r_return
 op_minus

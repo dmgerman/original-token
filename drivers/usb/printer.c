@@ -2110,6 +2110,8 @@ id|usblp_check_status
 c_func
 (paren
 id|usblp
+comma
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif

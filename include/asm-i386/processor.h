@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/sigcontext.h&gt;
+macro_line|#include &lt;asm/cpufeature.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
@@ -62,6 +63,9 @@ multiline_comment|/* Maximum supported CPUID level, -1=no CPUID */
 DECL|member|x86_capability
 id|__u32
 id|x86_capability
+(braket
+id|NCAPINTS
+)braket
 suffix:semicolon
 DECL|member|x86_vendor_id
 r_char
@@ -143,70 +147,6 @@ mdefine_line|#define X86_VENDOR_TRANSMETA 7
 DECL|macro|X86_VENDOR_UNKNOWN
 mdefine_line|#define X86_VENDOR_UNKNOWN 0xff
 multiline_comment|/*&n; * capabilities of CPUs&n; */
-DECL|macro|X86_FEATURE_FPU
-mdefine_line|#define X86_FEATURE_FPU&t;&t;0x00000001&t;/* onboard FPU */
-DECL|macro|X86_FEATURE_VME
-mdefine_line|#define X86_FEATURE_VME&t;&t;0x00000002&t;/* Virtual Mode Extensions */
-DECL|macro|X86_FEATURE_DE
-mdefine_line|#define X86_FEATURE_DE&t;&t;0x00000004&t;/* Debugging Extensions */
-DECL|macro|X86_FEATURE_PSE
-mdefine_line|#define X86_FEATURE_PSE&t;&t;0x00000008&t;/* Page Size Extensions */
-DECL|macro|X86_FEATURE_TSC
-mdefine_line|#define X86_FEATURE_TSC&t;&t;0x00000010&t;/* Time Stamp Counter */
-DECL|macro|X86_FEATURE_MSR
-mdefine_line|#define X86_FEATURE_MSR&t;&t;0x00000020&t;/* Model-Specific Registers, RDMSR, WRMSR */
-DECL|macro|X86_FEATURE_PAE
-mdefine_line|#define X86_FEATURE_PAE&t;&t;0x00000040&t;/* Physical Address Extensions */
-DECL|macro|X86_FEATURE_MCE
-mdefine_line|#define X86_FEATURE_MCE&t;&t;0x00000080&t;/* Machine Check Exceptions */
-DECL|macro|X86_FEATURE_CX8
-mdefine_line|#define X86_FEATURE_CX8&t;&t;0x00000100&t;/* CMPXCHG8 instruction */
-DECL|macro|X86_FEATURE_APIC
-mdefine_line|#define X86_FEATURE_APIC&t;0x00000200&t;/* onboard APIC */
-DECL|macro|X86_FEATURE_10
-mdefine_line|#define X86_FEATURE_10&t;&t;0x00000400
-DECL|macro|X86_FEATURE_SEP
-mdefine_line|#define X86_FEATURE_SEP&t;&t;0x00000800&t;/* Fast System Call */ 
-DECL|macro|X86_FEATURE_MTRR
-mdefine_line|#define X86_FEATURE_MTRR&t;0x00001000&t;/* Memory Type Range Registers */
-DECL|macro|X86_FEATURE_PGE
-mdefine_line|#define X86_FEATURE_PGE&t;&t;0x00002000&t;/* Page Global Enable */
-DECL|macro|X86_FEATURE_MCA
-mdefine_line|#define X86_FEATURE_MCA&t;&t;0x00004000&t;/* Machine Check Architecture */
-DECL|macro|X86_FEATURE_CMOV
-mdefine_line|#define X86_FEATURE_CMOV&t;0x00008000&t;/* CMOV instruction (FCMOVCC and FCOMI too if FPU present) */
-DECL|macro|X86_FEATURE_PAT
-mdefine_line|#define X86_FEATURE_PAT&t;&t;0x00010000&t;/* Page Attribute Table */
-DECL|macro|X86_FEATURE_PSE36
-mdefine_line|#define X86_FEATURE_PSE36&t;0x00020000&t;/* 36-bit PSEs */
-DECL|macro|X86_FEATURE_PN
-mdefine_line|#define X86_FEATURE_PN&t;&t;0x00040000
-DECL|macro|X86_FEATURE_19
-mdefine_line|#define X86_FEATURE_19&t;&t;0x00080000
-DECL|macro|X86_FEATURE_20
-mdefine_line|#define X86_FEATURE_20&t;&t;0x00100000
-DECL|macro|X86_FEATURE_21
-mdefine_line|#define X86_FEATURE_21&t;&t;0x00200000
-DECL|macro|X86_FEATURE_22
-mdefine_line|#define X86_FEATURE_22&t;&t;0x00400000
-DECL|macro|X86_FEATURE_MMX
-mdefine_line|#define X86_FEATURE_MMX&t;&t;0x00800000&t;/* Multimedia Extensions */
-DECL|macro|X86_FEATURE_FXSR
-mdefine_line|#define X86_FEATURE_FXSR&t;0x01000000&t;/* FXSAVE and FXRSTOR instructions (fast save and restore of FPU context), and CR4.OSFXSR (OS uses these instructions) available */
-DECL|macro|X86_FEATURE_XMM
-mdefine_line|#define X86_FEATURE_XMM&t;&t;0x02000000      /* Streaming SIMD Extensions */
-DECL|macro|X86_FEATURE_26
-mdefine_line|#define X86_FEATURE_26&t;&t;0x04000000
-DECL|macro|X86_FEATURE_27
-mdefine_line|#define X86_FEATURE_27&t;&t;0x08000000
-DECL|macro|X86_FEATURE_28
-mdefine_line|#define X86_FEATURE_28&t;&t;0x10000000
-DECL|macro|X86_FEATURE_29
-mdefine_line|#define X86_FEATURE_29&t;&t;0x20000000
-DECL|macro|X86_FEATURE_30
-mdefine_line|#define X86_FEATURE_30&t;&t;0x40000000
-DECL|macro|X86_FEATURE_AMD3D
-mdefine_line|#define X86_FEATURE_AMD3D&t;0x80000000
 r_extern
 r_struct
 id|cpuinfo_x86
@@ -237,21 +177,21 @@ DECL|macro|current_cpu_data
 mdefine_line|#define current_cpu_data boot_cpu_data
 macro_line|#endif
 DECL|macro|cpu_has_pge
-mdefine_line|#define cpu_has_pge &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PGE)
+mdefine_line|#define cpu_has_pge &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PGE,  &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_pse
-mdefine_line|#define cpu_has_pse &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PSE)
+mdefine_line|#define cpu_has_pse &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PSE,  &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_pae
-mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PAE)
+mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PAE,  &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_tsc
-mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_TSC)
+mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(test_bit(X86_FEATURE_TSC,  &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_de
-mdefine_line|#define cpu_has_de &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_DE)
+mdefine_line|#define cpu_has_de &bslash;&n;&t;&t;(test_bit(X86_FEATURE_DE,   &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_vme
-mdefine_line|#define cpu_has_vme &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_VME)
+mdefine_line|#define cpu_has_vme &bslash;&n;&t;&t;(test_bit(X86_FEATURE_VME,  &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_fxsr
-mdefine_line|#define cpu_has_fxsr &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_FXSR)
+mdefine_line|#define cpu_has_fxsr &bslash;&n;&t;&t;(test_bit(X86_FEATURE_FXSR, &amp;boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_xmm
-mdefine_line|#define cpu_has_xmm &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_XMM)
+mdefine_line|#define cpu_has_xmm &bslash;&n;&t;&t;(test_bit(X86_FEATURE_XMM,  &amp;boot_cpu_data.x86_capability))
 r_extern
 r_char
 id|ignore_irq13
@@ -284,7 +224,42 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Generic CPUID function&n; */
+multiline_comment|/*&n; * EFLAGS bits&n; */
+DECL|macro|X86_EFLAGS_CF
+mdefine_line|#define X86_EFLAGS_CF&t;0x00000001 /* Carry Flag */
+DECL|macro|X86_EFLAGS_PF
+mdefine_line|#define X86_EFLAGS_PF&t;0x00000004 /* Parity Flag */
+DECL|macro|X86_EFLAGS_AF
+mdefine_line|#define X86_EFLAGS_AF&t;0x00000010 /* Auxillary carry Flag */
+DECL|macro|X86_EFLAGS_ZF
+mdefine_line|#define X86_EFLAGS_ZF&t;0x00000040 /* Zero Flag */
+DECL|macro|X86_EFLAGS_SF
+mdefine_line|#define X86_EFLAGS_SF&t;0x00000080 /* Sign Flag */
+DECL|macro|X86_EFLAGS_TF
+mdefine_line|#define X86_EFLAGS_TF&t;0x00000100 /* Trap Flag */
+DECL|macro|X86_EFLAGS_IF
+mdefine_line|#define X86_EFLAGS_IF&t;0x00000200 /* Interrupt Flag */
+DECL|macro|X86_EFLAGS_DF
+mdefine_line|#define X86_EFLAGS_DF&t;0x00000400 /* Direction Flag */
+DECL|macro|X86_EFLAGS_OF
+mdefine_line|#define X86_EFLAGS_OF&t;0x00000800 /* Overflow Flag */
+DECL|macro|X86_EFLAGS_IOPL
+mdefine_line|#define X86_EFLAGS_IOPL&t;0x00003000 /* IOPL mask */
+DECL|macro|X86_EFLAGS_NT
+mdefine_line|#define X86_EFLAGS_NT&t;0x00004000 /* Nested Task */
+DECL|macro|X86_EFLAGS_RF
+mdefine_line|#define X86_EFLAGS_RF&t;0x00010000 /* Resume Flag */
+DECL|macro|X86_EFLAGS_VM
+mdefine_line|#define X86_EFLAGS_VM&t;0x00020000 /* Virtual Mode */
+DECL|macro|X86_EFLAGS_AC
+mdefine_line|#define X86_EFLAGS_AC&t;0x00040000 /* Alignment Check */
+DECL|macro|X86_EFLAGS_VIF
+mdefine_line|#define X86_EFLAGS_VIF&t;0x00080000 /* Virtual Interrupt Flag */
+DECL|macro|X86_EFLAGS_VIP
+mdefine_line|#define X86_EFLAGS_VIP&t;0x00100000 /* Virtual Interrupt Pending */
+DECL|macro|X86_EFLAGS_ID
+mdefine_line|#define X86_EFLAGS_ID&t;0x00200000 /* CPUID detection flag */
+multiline_comment|/*&n; * Generic CPUID function&n; */
 DECL|function|cpuid
 r_extern
 r_inline
@@ -346,6 +321,239 @@ l_string|&quot;a&quot;
 id|op
 )paren
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * CPUID functions returning a single datum&n; */
+DECL|function|cpuid_eax
+r_extern
+r_inline
+r_int
+r_int
+id|cpuid_eax
+c_func
+(paren
+r_int
+r_int
+id|op
+)paren
+(brace
+r_int
+r_int
+id|eax
+comma
+id|ebx
+comma
+id|ecx
+comma
+id|edx
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|edx
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|op
+)paren
+)paren
+suffix:semicolon
+r_return
+id|eax
+suffix:semicolon
+)brace
+DECL|function|cpuid_ebx
+r_extern
+r_inline
+r_int
+r_int
+id|cpuid_ebx
+c_func
+(paren
+r_int
+r_int
+id|op
+)paren
+(brace
+r_int
+r_int
+id|eax
+comma
+id|ebx
+comma
+id|ecx
+comma
+id|edx
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|edx
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|op
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ebx
+suffix:semicolon
+)brace
+DECL|function|cpuid_ecx
+r_extern
+r_inline
+r_int
+r_int
+id|cpuid_ecx
+c_func
+(paren
+r_int
+r_int
+id|op
+)paren
+(brace
+r_int
+r_int
+id|eax
+comma
+id|ebx
+comma
+id|ecx
+comma
+id|edx
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|edx
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|op
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ecx
+suffix:semicolon
+)brace
+DECL|function|cpuid_edx
+r_extern
+r_inline
+r_int
+r_int
+id|cpuid_edx
+c_func
+(paren
+r_int
+r_int
+id|op
+)paren
+(brace
+r_int
+r_int
+id|eax
+comma
+id|ebx
+comma
+id|ecx
+comma
+id|edx
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|edx
+)paren
+suffix:colon
+l_string|&quot;a&quot;
+(paren
+id|op
+)paren
+)paren
+suffix:semicolon
+r_return
+id|edx
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Intel CPU features in CR4&n; */

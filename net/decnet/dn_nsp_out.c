@@ -386,7 +386,7 @@ id|sk
 comma
 id|len
 comma
-id|GFP_KERNEL
+id|sk-&gt;allocation
 )paren
 )paren
 op_eq
@@ -1634,7 +1634,7 @@ id|sk
 comma
 l_int|3
 comma
-id|GFP_KERNEL
+id|sk-&gt;allocation
 )paren
 )paren
 op_eq
@@ -2603,7 +2603,7 @@ id|NSP_CI
 )paren
 ques
 c_cond
-id|GFP_KERNEL
+id|sk-&gt;allocation
 suffix:colon
 id|GFP_ATOMIC
 )paren

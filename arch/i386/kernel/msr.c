@@ -959,10 +959,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|test_bit
+c_func
 (paren
-id|c-&gt;x86_capability
-op_amp
 id|X86_FEATURE_MSR
+comma
+op_amp
+id|c-&gt;x86_capability
 )paren
 )paren
 r_return

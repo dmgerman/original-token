@@ -15,6 +15,8 @@ DECL|macro|NETLINK_ROUTE6
 mdefine_line|#define NETLINK_ROUTE6&t;&t;11&t;/* af_inet6 route comm channel */
 DECL|macro|NETLINK_IP6_FW
 mdefine_line|#define NETLINK_IP6_FW&t;&t;13
+DECL|macro|NETLINK_DNRTMSG
+mdefine_line|#define NETLINK_DNRTMSG&t;&t;14&t;/* DECnet routing messages */
 DECL|macro|NETLINK_TAPBASE
 mdefine_line|#define NETLINK_TAPBASE&t;&t;16&t;/* 16 to 31 are ethertap */
 DECL|macro|MAX_LINKS

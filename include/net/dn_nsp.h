@@ -279,12 +279,48 @@ op_star
 id|err
 )paren
 suffix:semicolon
+DECL|macro|NSP_REASON_OK
+mdefine_line|#define NSP_REASON_OK 0&t;&t;/* No error */
 DECL|macro|NSP_REASON_NR
-mdefine_line|#define NSP_REASON_NR 1
-DECL|macro|NSP_REASON_DC
-mdefine_line|#define NSP_REASON_DC 42
+mdefine_line|#define NSP_REASON_NR 1&t;&t;/* No resources */
+DECL|macro|NSP_REASON_UN
+mdefine_line|#define NSP_REASON_UN 2&t;&t;/* Unrecognised node name */
+DECL|macro|NSP_REASON_SD
+mdefine_line|#define NSP_REASON_SD 3&t;&t;/* Node shutting down */
+DECL|macro|NSP_REASON_ID
+mdefine_line|#define NSP_REASON_ID 4&t;&t;/* Invalid destination end user */
+DECL|macro|NSP_REASON_ER
+mdefine_line|#define NSP_REASON_ER 5&t;&t;/* End user lacks resources */
+DECL|macro|NSP_REASON_OB
+mdefine_line|#define NSP_REASON_OB 6&t;&t;/* Object too busy */
+DECL|macro|NSP_REASON_US
+mdefine_line|#define NSP_REASON_US 7&t;&t;/* Unspecified error */
+DECL|macro|NSP_REASON_TP
+mdefine_line|#define NSP_REASON_TP 8&t;&t;/* Third-Party abort */
+DECL|macro|NSP_REASON_EA
+mdefine_line|#define NSP_REASON_EA 9&t;&t;/* End user has aborted the link */
+DECL|macro|NSP_REASON_IF
+mdefine_line|#define NSP_REASON_IF 10&t;/* Invalid node name format */
+DECL|macro|NSP_REASON_LS
+mdefine_line|#define NSP_REASON_LS 11&t;/* Local node shutdown */
+DECL|macro|NSP_REASON_LL
+mdefine_line|#define NSP_REASON_LL 32&t;/* Node lacks logical-link resources */
+DECL|macro|NSP_REASON_LE
+mdefine_line|#define NSP_REASON_LE 33&t;/* End user lacks logical-link resources */
+DECL|macro|NSP_REASON_UR
+mdefine_line|#define NSP_REASON_UR 34&t;/* Unacceptable RQSTRID or PASSWORD field */
+DECL|macro|NSP_REASON_UA
+mdefine_line|#define NSP_REASON_UA 36&t;/* Unacceptable ACCOUNT field */
+DECL|macro|NSP_REASON_TM
+mdefine_line|#define NSP_REASON_TM 38&t;/* End user timed out logical link */
+DECL|macro|NSP_REASON_NU
+mdefine_line|#define NSP_REASON_NU 39&t;/* Node unreachable */
 DECL|macro|NSP_REASON_NL
-mdefine_line|#define NSP_REASON_NL 41
+mdefine_line|#define NSP_REASON_NL 41&t;/* No-link message */
+DECL|macro|NSP_REASON_DC
+mdefine_line|#define NSP_REASON_DC 42&t;/* Disconnect confirm */
+DECL|macro|NSP_REASON_IO
+mdefine_line|#define NSP_REASON_IO 43&t;/* Image data field overflow */
 DECL|macro|NSP_DISCINIT
 mdefine_line|#define NSP_DISCINIT 0x38
 DECL|macro|NSP_DISCCONF

@@ -2,7 +2,12 @@ multiline_comment|/*&n; * sysctl.h: General linux system control interface&n; *&
 macro_line|#ifndef _LINUX_SYSCTL_H
 DECL|macro|_LINUX_SYSCTL_H
 mdefine_line|#define _LINUX_SYSCTL_H
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+r_struct
+id|file
+suffix:semicolon
 DECL|macro|CTL_MAXNAME
 mdefine_line|#define CTL_MAXNAME 10
 DECL|struct|__sysctl_args

@@ -1701,6 +1701,12 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|cards_found
 op_assign
 id|corkscrew_scan
@@ -2482,6 +2488,15 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -2663,16 +2678,24 @@ id|dev
 op_ne
 l_int|0
 )paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#else&t;&t;&t;&t;/* not a MODULE */
-r_if
-c_cond
+(brace
+id|kfree
+c_func
 (paren
 id|dev
 )paren
-(brace
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#else&t;&t;&t;&t;/* not a MODULE */
 multiline_comment|/* Caution: quad-word alignment required for rings! */
 id|dev-&gt;priv
 op_assign
@@ -2702,7 +2725,6 @@ id|corkscrew_private
 )paren
 )paren
 suffix:semicolon
-)brace
 id|dev
 op_assign
 id|init_etherdev
@@ -4466,8 +4488,6 @@ id|ioaddr
 op_plus
 id|EL3_CMD
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -7860,8 +7880,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

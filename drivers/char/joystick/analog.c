@@ -16,15 +16,13 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Option parsing.&n; */
-id|MODULE_PARM
+id|MODULE_DESCRIPTION
 c_func
 (paren
-id|js
-comma
-l_string|&quot;1-16s&quot;
+l_string|&quot;Analog joystick and gamepad driver for Linux&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Option parsing.&n; */
 DECL|macro|ANALOG_PORTS
 mdefine_line|#define ANALOG_PORTS&t;&t;16
 DECL|variable|js
@@ -43,6 +41,28 @@ id|analog_options
 (braket
 id|ANALOG_PORTS
 )braket
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|js
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|ANALOG_PORTS
+)paren
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|js
+comma
+l_string|&quot;Analog joystick options&quot;
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Times, feature definitions.&n; */
 DECL|macro|ANALOG_RUDDER

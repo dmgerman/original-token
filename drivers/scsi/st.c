@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Tue Aug 15 16:56:35 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n;&n;   Reminder: write_lock_irqsave() can be replaced by write_lock() when the old SCSI&n;   error handling will be discarded.&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Mon Nov 13 21:01:09 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n;&n;   Reminder: write_lock_irqsave() can be replaced by write_lock() when the old SCSI&n;   error handling will be discarded.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4896,7 +4896,7 @@ id|SRpnt-&gt;sr_sense_buffer
 l_int|6
 )braket
 )paren
-op_eq
+op_ne
 l_int|0
 )paren
 )paren
@@ -13206,7 +13206,7 @@ id|MTBSFM
 r_if
 c_cond
 (paren
-id|fileno
+id|STps-&gt;drv_file
 op_ge
 l_int|0
 )paren
@@ -13215,11 +13215,6 @@ op_assign
 id|fileno
 op_plus
 id|undone
-suffix:semicolon
-r_else
-id|STps-&gt;drv_file
-op_assign
-id|fileno
 suffix:semicolon
 id|STps-&gt;drv_block
 op_assign
@@ -13336,7 +13331,7 @@ r_else
 r_if
 c_cond
 (paren
-id|blkno
+id|STps-&gt;drv_block
 op_ge
 l_int|0
 )paren
@@ -13345,14 +13340,6 @@ op_assign
 id|blkno
 op_plus
 id|undone
-suffix:semicolon
-r_else
-id|STps-&gt;drv_block
-op_assign
-(paren
-op_minus
-l_int|1
-)paren
 suffix:semicolon
 )brace
 id|STps-&gt;eof

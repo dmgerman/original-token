@@ -7079,6 +7079,9 @@ suffix:colon
 r_case
 id|SIOCSIFNAME
 suffix:colon
+r_case
+id|SIOCETHTOOL
+suffix:colon
 r_if
 c_cond
 (paren
@@ -7146,7 +7149,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
 id|cmd
 op_ge
 id|SIOCDEVPRIVATE
@@ -7156,11 +7158,6 @@ op_le
 id|SIOCDEVPRIVATE
 op_plus
 l_int|15
-)paren
-op_logical_or
-id|cmd
-op_eq
-id|SIOCETHTOOL
 )paren
 (brace
 id|dev_load

@@ -918,10 +918,12 @@ op_star
 id|child
 op_assign
 id|kmalloc
+c_func
 (paren
 r_sizeof
 (paren
 id|ax25_param_table
+)paren
 comma
 id|GFP_ATOMIC
 )paren

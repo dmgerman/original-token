@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the STS-Thompson TDA7432 audio processor chip&n; * &n; * Handles audio functions: volume, balance, tone, loudness&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Eric Sandeen &lt;eric_sandeen@bigfoot.com&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug    - set to 1 if you&squot;d like to see debug messages&n; *            set to 2 if you&squot;d like to be inundated with debug messages&n; *&n; * loudness - set between 0 and 15 for varying degrees of loudness effect&n; *&n; * TODO:&n; *  Implement tone controls&n; *&n; *  Revision: 0.3 - Fixed silly reversed volume controls.  :)&n; *  Revision: 0.2 - Cleaned up #defines&n; *&t;&t;&t;fixed volume control&n; *                  Added I2C_DRIVERID_TDA7432&n; *&t;&t;&t;added loudness insmod control&n; *  Revision: 0.1 - initial version&n; *&n; *  Changes:&n; *  Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/14/2000&n; *  - resource allocation fixes in tda7432_attach&n; */
+multiline_comment|/*&n; * For the STS-Thompson TDA7432 audio processor chip&n; * &n; * Handles audio functions: volume, balance, tone, loudness&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Eric Sandeen &lt;eric_sandeen@bigfoot.com&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug    - set to 1 if you&squot;d like to see debug messages&n; *            set to 2 if you&squot;d like to be inundated with debug messages&n; *&n; * loudness - set between 0 and 15 for varying degrees of loudness effect&n; *&n; * TODO:&n; *  Implement tone controls&n; *&n; *  Revision: 0.3 - Fixed silly reversed volume controls.  :)&n; *  Revision: 0.2 - Cleaned up #defines&n; *&t;&t;&t;fixed volume control&n; *                  Added I2C_DRIVERID_TDA7432&n; *&t;&t;&t;added loudness insmod control&n; *  Revision: 0.1 - initial version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,11 +12,7 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/i2c-algo-bit.h&gt;
 macro_line|#include &quot;bttv.h&quot;
 macro_line|#include &quot;audiochip.h&quot;
-multiline_comment|/* This driver ID is brand new, so define it if it&squot;s not in i2c-id.h yet */
-macro_line|#ifndef I2C_DRIVERID_TDA7432
-DECL|macro|I2C_DRIVERID_TDA7432
-mdefine_line|#define I2C_DRIVERID_TDA7432&t;27
-macro_line|#endif
+macro_line|#include &quot;id.h&quot;
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -224,6 +220,11 @@ suffix:semicolon
 DECL|member|loud
 r_int
 id|loud
+suffix:semicolon
+DECL|member|c
+r_struct
+id|i2c_client
+id|c
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -741,14 +742,14 @@ c_func
 l_string|&quot;tda7432: In tda7432_attach&bslash;n&quot;
 )paren
 suffix:semicolon
-id|client
+id|t
 op_assign
 id|kmalloc
 c_func
 (paren
 r_sizeof
 op_star
-id|client
+id|t
 comma
 id|GFP_KERNEL
 )paren
@@ -757,11 +758,28 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|client
+id|t
 )paren
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|t
+comma
+l_int|0
+comma
+r_sizeof
+op_star
+id|t
+)paren
+suffix:semicolon
+id|client
+op_assign
+op_amp
+id|t-&gt;c
 suffix:semicolon
 id|memcpy
 c_func
@@ -789,46 +807,6 @@ suffix:semicolon
 id|client-&gt;data
 op_assign
 id|t
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-op_star
-id|t
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|t
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|client
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|t
-comma
-l_int|0
-comma
-r_sizeof
-op_star
-id|t
-)paren
 suffix:semicolon
 id|do_tda7432_init
 c_func
@@ -937,12 +915,6 @@ id|kfree
 c_func
 (paren
 id|t
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|client
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT

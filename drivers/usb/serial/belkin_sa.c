@@ -135,21 +135,134 @@ r_int
 id|break_state
 )paren
 suffix:semicolon
-multiline_comment|/* All of the device info needed for the Belkin serial converter */
-DECL|variable|belkin_sa_vendor_id
+DECL|variable|id_table_combined
 r_static
-id|__u16
-id|belkin_sa_vendor_id
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|id_table_combined
+(braket
+)braket
 op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
 id|BELKIN_SA_VID
-suffix:semicolon
-DECL|variable|belkin_sa_product_id
-r_static
-id|__u16
-id|belkin_sa_product_id
-op_assign
+comma
+id|idProduct
+suffix:colon
 id|BELKIN_SA_PID
+)brace
+comma
+(brace
+id|idVendor
+suffix:colon
+id|BELKIN_OLD_VID
+comma
+id|idProduct
+suffix:colon
+id|BELKIN_OLD_PID
+)brace
+comma
+(brace
+id|idVendor
+suffix:colon
+id|PERACOM_VID
+comma
+id|idProduct
+suffix:colon
+id|PERACOM_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
 suffix:semicolon
+DECL|variable|belkin_sa_table
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|belkin_sa_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|BELKIN_SA_VID
+comma
+id|idProduct
+suffix:colon
+id|BELKIN_SA_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|belkin_old_table
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|belkin_old_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|BELKIN_OLD_VID
+comma
+id|idProduct
+suffix:colon
+id|BELKIN_OLD_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+DECL|variable|peracom_table
+r_static
+id|__devinitdata
+r_struct
+id|usb_device_id
+id|peracom_table
+(braket
+)braket
+op_assign
+(brace
+(brace
+id|idVendor
+suffix:colon
+id|PERACOM_VID
+comma
+id|idProduct
+suffix:colon
+id|PERACOM_PID
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+(paren
+id|usb
+comma
+id|id_table_combined
+)paren
+suffix:semicolon
+multiline_comment|/* All of the device info needed for the Belkin serial converter */
 DECL|variable|belkin_sa_device
 r_struct
 id|usb_serial_device_type
@@ -160,18 +273,11 @@ id|name
 suffix:colon
 l_string|&quot;Belkin F5U103 USB Serial Adapter&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|belkin_sa_vendor_id
+id|belkin_sa_table
 comma
-multiline_comment|/* the Belkin vendor ID */
-id|idProduct
-suffix:colon
-op_amp
-id|belkin_sa_product_id
-comma
-multiline_comment|/* the Belkin F5U103 product id */
+multiline_comment|/* the Belkin F5U103 device */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE
@@ -239,20 +345,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* This driver also supports the &quot;old&quot; school Belkin single port adaptor */
-DECL|variable|belkin_old_vendor_id
-r_static
-id|__u16
-id|belkin_old_vendor_id
-op_assign
-id|BELKIN_OLD_VID
-suffix:semicolon
-DECL|variable|belkin_old_product_id
-r_static
-id|__u16
-id|belkin_old_product_id
-op_assign
-id|BELKIN_OLD_PID
-suffix:semicolon
 DECL|variable|belkin_old_device
 r_struct
 id|usb_serial_device_type
@@ -263,18 +355,11 @@ id|name
 suffix:colon
 l_string|&quot;Belkin USB Serial Adapter&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|belkin_old_vendor_id
+id|belkin_old_table
 comma
-multiline_comment|/* the Belkin vendor ID */
-id|idProduct
-suffix:colon
-op_amp
-id|belkin_old_product_id
-comma
-multiline_comment|/* the Belkin product id */
+multiline_comment|/* the old Belkin device */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE
@@ -342,20 +427,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* this driver also works for the Peracom single port adapter */
-DECL|variable|peracom_vendor_id
-r_static
-id|__u16
-id|peracom_vendor_id
-op_assign
-id|PERACOM_VID
-suffix:semicolon
-DECL|variable|peracom_product_id
-r_static
-id|__u16
-id|peracom_product_id
-op_assign
-id|PERACOM_PID
-suffix:semicolon
 DECL|variable|peracom_device
 r_struct
 id|usb_serial_device_type
@@ -366,18 +437,11 @@ id|name
 suffix:colon
 l_string|&quot;Peracom single port USB Serial Adapter&quot;
 comma
-id|idVendor
+id|id_table
 suffix:colon
-op_amp
-id|peracom_vendor_id
+id|peracom_table
 comma
-multiline_comment|/* the Peracom vendor ID */
-id|idProduct
-suffix:colon
-op_amp
-id|peracom_product_id
-comma
-multiline_comment|/* the Peracom product id */
+multiline_comment|/* the Peracom device */
 id|needs_interrupt_in
 suffix:colon
 id|MUST_HAVE
@@ -901,11 +965,6 @@ id|usb_serial
 op_star
 id|serial
 suffix:semicolon
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
 r_int
 r_char
 op_star
@@ -1167,6 +1226,8 @@ id|old_termios-&gt;c_cflag
 suffix:semicolon
 id|__u16
 id|urb_value
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Will hold the new flags */
 multiline_comment|/* Set the baud rate */

@@ -83,7 +83,7 @@ id|init_task
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes.&n; *&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
+multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes.&n; *&n; * The runqueue_lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; *&n; * If both locks are to be concurrently held, the runqueue_lock&n; * nests inside the tasklist_lock.&n; */
 DECL|variable|__cacheline_aligned
 id|spinlock_t
 id|runqueue_lock
@@ -91,7 +91,7 @@ id|__cacheline_aligned
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/* second */
+multiline_comment|/* inner */
 DECL|variable|__cacheline_aligned
 id|rwlock_t
 id|tasklist_lock
@@ -99,7 +99,7 @@ id|__cacheline_aligned
 op_assign
 id|RW_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/* third */
+multiline_comment|/* outer */
 r_static
 id|LIST_HEAD
 c_func
@@ -345,7 +345,7 @@ id|prev-&gt;active_mm
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We enter with the runqueue spinlock held, but we might end&n; * up unlocking it early, so the caller must not unlock the&n; * runqueue, it&squot;s always done by reschedule_idle().&n; *&n; * This function must be inline as anything that saves and restores&n; * flags has to do so within the same register window on sparc (Anton)&n; */
+multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We `are called with the runqueue spinlock held and we must&n; * not claim the tasklist_lock.&n; */
 r_static
 id|FASTCALL
 c_func
@@ -2585,18 +2585,18 @@ r_goto
 id|out_nounlock
 suffix:semicolon
 multiline_comment|/*&n;&t; * We play safe to avoid deadlocks.&n;&t; */
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|runqueue_lock
-)paren
-suffix:semicolon
-id|read_lock
+id|read_lock_irq
 c_func
 (paren
 op_amp
 id|tasklist_lock
+)paren
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|runqueue_lock
 )paren
 suffix:semicolon
 id|p
@@ -2778,18 +2778,18 @@ l_int|1
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-id|spin_unlock_irq
+id|spin_unlock
 c_func
 (paren
 op_amp
 id|runqueue_lock
+)paren
+suffix:semicolon
+id|read_unlock_irq
+c_func
+(paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 id|out_nounlock

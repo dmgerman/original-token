@@ -772,7 +772,6 @@ id|irtty_set_packet_mode
 suffix:semicolon
 macro_line|#endif
 DECL|function|irda_init
-r_static
 r_int
 id|__init
 id|irda_init

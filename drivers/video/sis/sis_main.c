@@ -3,6 +3,7 @@ DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
 DECL|macro|SISFBDEBUG
 macro_line|#undef  SISFBDEBUG
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
