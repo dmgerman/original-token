@@ -1977,7 +1977,7 @@ suffix:semicolon
 )brace
 id|thisname.nodename
 (braket
-id|__NEW_UTS_LEN
+id|i
 )braket
 op_assign
 l_int|0

@@ -443,7 +443,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Loading %d bytes into ram disk... 0000k&quot;
+l_string|&quot;Loading %d bytes into ram disk&bslash;n&quot;
 comma
 id|nblocks
 op_lshift
@@ -536,12 +536,21 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nblocks
+op_decrement
+op_amp
+l_int|15
+)paren
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;010&bslash;010&bslash;010&bslash;010&bslash;010%4dk&quot;
-comma
-id|i
+l_string|&quot;.&quot;
 )paren
 suffix:semicolon
 id|cp
@@ -551,9 +560,6 @@ suffix:semicolon
 id|block
 op_increment
 suffix:semicolon
-id|nblocks
-op_decrement
-suffix:semicolon
 id|i
 op_increment
 suffix:semicolon
@@ -561,7 +567,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;010&bslash;010&bslash;010&bslash;010&bslash;010done &bslash;n&quot;
+l_string|&quot;&bslash;ndone&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ROOT_DEV

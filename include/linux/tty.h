@@ -403,13 +403,13 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|flush
+id|flush_input
 c_func
 (paren
 r_struct
-id|tty_queue
+id|tty_struct
 op_star
-id|queue
+id|tty
 )paren
 suffix:semicolon
 r_extern

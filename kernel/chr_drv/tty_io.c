@@ -835,6 +835,12 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|flush_input
+c_func
+(paren
+id|tty
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -870,6 +876,12 @@ comma
 id|SIGQUIT
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|flush_input
+c_func
+(paren
+id|tty
 )paren
 suffix:semicolon
 r_continue

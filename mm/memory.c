@@ -2676,12 +2676,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|inode
+op_logical_or
 id|inode-&gt;i_count
 OL
 l_int|2
-op_logical_or
-op_logical_neg
-id|inode
 )paren
 r_return
 l_int|0

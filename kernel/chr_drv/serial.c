@@ -167,13 +167,6 @@ op_lshift
 id|TIMER
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|tty-&gt;stopped
-)paren
-(brace
 r_do
 (brace
 r_if
@@ -215,7 +208,6 @@ id|line
 op_eq
 id|PORT_16550A
 op_logical_and
-"&bslash;"
 id|i
 OL
 l_int|14
@@ -226,13 +218,8 @@ c_func
 (paren
 id|tty-&gt;write_q
 )paren
-op_logical_and
-"&bslash;"
-op_logical_neg
-id|tty-&gt;stopped
 )paren
 suffix:semicolon
-)brace
 id|timer_table
 (braket
 id|TIMER
