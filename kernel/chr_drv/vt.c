@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 multiline_comment|/*&n; * console (vt and kd) routines, as defined by usl svr4 manual&n; */
@@ -379,6 +380,25 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|vt_cons
+(braket
+id|console
+)braket
+dot
+id|vt_mode
+op_eq
+(paren
+r_int
+r_char
+)paren
+id|arg
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|vt_cons
 (braket
 id|console
@@ -386,8 +406,48 @@ id|console
 dot
 id|vt_mode
 op_assign
+(paren
+r_int
+r_char
+)paren
 id|arg
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|console
+op_ne
+id|fg_console
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|arg
+op_eq
+id|KD_TEXT
+)paren
+id|unblank_screen
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+(brace
+id|timer_active
+op_and_assign
+l_int|1
+op_lshift
+id|BLANK_TIMER
+suffix:semicolon
+id|blank_screen
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
