@@ -105,10 +105,10 @@ DECL|macro|MBX_CSR_ADDR
 mdefine_line|#define MBX_CSR_ADDR&t;&t;((uint)0xfa100000)
 DECL|macro|MBX_CSR_SIZE
 mdefine_line|#define MBX_CSR_SIZE&t;&t;((uint)(1 * 1024 * 1024))
-DECL|macro|MBX_IMAP_ADDR
-mdefine_line|#define MBX_IMAP_ADDR&t;&t;((uint)0xfa200000)
-DECL|macro|MBX_IMAP_SIZE
-mdefine_line|#define MBX_IMAP_SIZE&t;&t;((uint)(64 * 1024))
+DECL|macro|IMAP_ADDR
+mdefine_line|#define IMAP_ADDR&t;&t;((uint)0xfa200000)
+DECL|macro|IMAP_SIZE
+mdefine_line|#define IMAP_SIZE&t;&t;((uint)(64 * 1024))
 DECL|macro|PCI_CSR_ADDR
 mdefine_line|#define PCI_CSR_ADDR&t;&t;((uint)0xfa210000)
 DECL|macro|PCI_CSR_SIZE

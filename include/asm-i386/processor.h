@@ -787,8 +787,10 @@ id|mm
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * FPU lazy state save handling..&n; */
+DECL|macro|save_fpu
+mdefine_line|#define save_fpu(tsk) do { &bslash;&n;&t;asm volatile(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;:&quot;=m&quot; (tsk-&gt;tss.i387)); &bslash;&n;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;stts(); &bslash;&n;} while (0)
 DECL|macro|unlazy_fpu
-mdefine_line|#define unlazy_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;asm volatile(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;:&quot;=m&quot; (tsk-&gt;tss.i387)); &bslash;&n;&t;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;stts(); &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define unlazy_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) &bslash;&n;&t;&t;save_fpu(tsk); &bslash;&n;} while (0)
 DECL|macro|clear_fpu
 mdefine_line|#define clear_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;stts(); &bslash;&n;&t;} &bslash;&n;} while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */

@@ -12,7 +12,7 @@ DECL|macro|L1_CACHE_ALIGN
 mdefine_line|#define        L1_CACHE_ALIGN(x)       (((x)+(L1_CACHE_BYTES-1))&amp;~(L1_CACHE_BYTES-1))
 DECL|macro|L1_CACHE_PAGES
 mdefine_line|#define L1_CACHE_PAGES&t;&t;8
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#if defined(__KERNEL__) &amp;&amp; !defined(__ASSEMBLY__)
 DECL|function|unlock_dcache
 r_static
 r_inline

@@ -15,6 +15,7 @@ multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 15
 multiline_comment|/*&n; * 1995/8/26 -- Andreas Busse -- added Mips support.&n; */
 multiline_comment|/*&n; * 1995/10/18 -- Ralf Baechle -- Portability cleanup; move machine dependent&n; * features to asm/floppy.h.&n; */
 multiline_comment|/*&n; * 1998/06/07 -- Alan Cox -- Merged the 2.0.34 fixes for resource allocation&n; * failures.&n; */
+multiline_comment|/*&n; * 1998/09/20 -- David Weinehall -- Added slow-down code for buggy PS/2-drives.&n; */
 DECL|macro|FLOPPY_SANITY_CHECK
 mdefine_line|#define FLOPPY_SANITY_CHECK
 DECL|macro|FLOPPY_SILENT_DCL_CLEAR
@@ -83,6 +84,13 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt; /* CMOS defines */
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+DECL|variable|slow_floppy
+r_static
+r_int
+id|slow_floppy
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -5438,6 +5446,19 @@ l_int|1
 op_div
 id|NOMINAL_DTR
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|slow_floppy
+)paren
+(brace
+id|srt
+op_assign
+id|srt
+op_div
+l_int|4
+suffix:semicolon
+)brace
 id|SUPBOUND
 c_func
 (paren
@@ -17745,6 +17766,29 @@ c_cond
 (paren
 id|str
 )paren
+(brace
+multiline_comment|/*&n;&t; * PS/2 floppies have much slower step rates than regular floppies.&n;&t; * It&squot;s been recommended that take about 1/4 of the default speed&n;&t; * in some more extreme cases.&n;&t; */
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|str
+comma
+l_string|&quot;slow&quot;
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|slow_floppy
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -17874,6 +17918,7 @@ suffix:semicolon
 )brace
 r_return
 suffix:semicolon
+)brace
 )brace
 )brace
 r_if

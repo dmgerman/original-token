@@ -185,6 +185,10 @@ DECL|enumerator|KERN_PPC_POWERSAVE_NAP
 id|KERN_PPC_POWERSAVE_NAP
 comma
 multiline_comment|/* use nap mode for power saving */
+DECL|enumerator|KERN_PPC_L2CR
+id|KERN_PPC_L2CR
+comma
+multiline_comment|/* l2cr register on PPC */
 DECL|enumerator|KERN_MODPROBE
 id|KERN_MODPROBE
 comma

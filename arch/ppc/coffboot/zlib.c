@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-0.95&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - changed functions not used outside this file to &quot;local&quot;&n; * - added minCompression parameter to deflateInit2&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp&n; *&n; * $Id: zlib.c,v 1.1 1997/07/31 07:16:14 paulus Exp $&n; */
+multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-0.95&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - changed functions not used outside this file to &quot;local&quot;&n; * - added minCompression parameter to deflateInit2&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp&n; *&n; * $Id: zlib.c,v 1.2 1998/09/03 17:40:53 cort Exp $&n; */
 multiline_comment|/*+++++*/
 multiline_comment|/* zutil.h -- internal interface and configuration of the compression library&n; * Copyright (C) 1995 Jean-loup Gailly.&n; * For conditions of distribution and use, see copyright notice in zlib.h&n; */
 multiline_comment|/* WARNING: this file should *not* be used by applications. It is&n;   part of the implementation of the compression library and is&n;   subject to change. Applications should only use zlib.h.&n; */
@@ -87,7 +87,7 @@ DECL|macro|MAX_MATCH
 mdefine_line|#define MAX_MATCH  258
 multiline_comment|/* The minimum and maximum match lengths */
 multiline_comment|/* functions */
-macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|zmemcpy
 mdefine_line|#define zmemcpy memcpy
 DECL|macro|zmemzero

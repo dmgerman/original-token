@@ -1572,16 +1572,21 @@ op_amp
 id|DR_STEP
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * The TF error should be masked out only if the current&n;&t;&t; * process is not traced and if the TRAP flag has been set&n;&t;&t; * previously by a tracing process (condition detected by&n;&t;&t; * the PF_DTRACE flag); remember that the i386 TRAP flag&n;&t;&t; * can be modified by the process itself in user mode,&n;&t;&t; * allowing programs to debug themselves without the ptrace()&n;&t;&t; * interface.&n;&t;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|tsk-&gt;flags
 op_amp
+(paren
+id|PF_DTRACE
+op_or
 id|PF_PTRACED
 )paren
+)paren
 op_eq
-l_int|0
+id|PF_DTRACE
 )paren
 r_goto
 id|clear_TF
@@ -1726,7 +1731,7 @@ id|task
 op_assign
 id|current
 suffix:semicolon
-id|unlazy_fpu
+id|save_fpu
 c_func
 (paren
 id|task

@@ -1240,12 +1240,24 @@ id|blocks
 OG
 id|size
 )paren
+(brace
 id|blocks
 op_assign
 id|size
 op_minus
 id|block
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|blocks
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* We do this in a two stage process.  We first try to request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try to wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk.&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches. */
 r_do
 (brace

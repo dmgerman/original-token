@@ -18,9 +18,9 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#include &quot;fbcon-afb.h&quot;
-macro_line|#include &quot;fbcon-ilbm.h&quot;
-macro_line|#include &quot;fbcon-mfb.h&quot;
+macro_line|#include &lt;video/fbcon-afb.h&gt;
+macro_line|#include &lt;video/fbcon-ilbm.h&gt;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#if !defined(CONFIG_FB_AMIGA_OCS) &amp;&amp; !defined(CONFIG_FB_AMIGA_ECS) &amp;&amp; !defined(CONFIG_FB_AMIGA_AGA)
@@ -819,7 +819,7 @@ r_volatile
 id|u_short
 id|amiga_audio_min_period
 suffix:semicolon
-multiline_comment|/*&n;&t; * Since we can&squot;t read the palette on OCS/ECS, and since reading one&n;&t; * single color palette entry require 5 expensive custom chip bus accesses&n;&t; * on AGA, we keep a copy of the current palette.&n;&t; */
+multiline_comment|/*&n;&t; * Since we can&squot;t read the palette on OCS/ECS, and since reading one&n;&t; * single color palette entry requires 5 expensive custom chip bus accesses&n;&t; * on AGA, we keep a copy of the current palette.&n;&t; * Note that the entries are always 24 bit!&n;&t; */
 macro_line|#if defined(CONFIG_FB_AMIGA_AGA)
 DECL|member|red
 DECL|member|green
@@ -2966,13 +2966,13 @@ DECL|macro|vbstop2hw
 mdefine_line|#define vbstop2hw(vbstop)&t;(div2(vbstop))
 multiline_comment|/* colour */
 DECL|macro|rgb2hw8_high
-mdefine_line|#define rgb2hw8_high(red, green, blue) &bslash;&n;&t;(((red)&lt;&lt;4 &amp; 0xf00) | ((green) &amp; 0x0f0) | ((blue)&gt;&gt;4 &amp; 0x00f))
+mdefine_line|#define rgb2hw8_high(red, green, blue) &bslash;&n;&t;(((red &amp; 0xf0)&lt;&lt;4) | (green &amp; 0xf0) | ((blue &amp; 0xf0)&gt;&gt;4))
 DECL|macro|rgb2hw8_low
-mdefine_line|#define rgb2hw8_low(red, green, blue) &bslash;&n;&t;(((red)&lt;&lt;8 &amp; 0xf00) | ((green)&lt;&lt;4 &amp; 0x0f0) | ((blue) &amp; 0x00f))
+mdefine_line|#define rgb2hw8_low(red, green, blue) &bslash;&n;&t;(((red &amp; 0x0f)&lt;&lt;8) | ((green &amp; 0x0f)&lt;&lt;4) | (blue &amp; 0x0f))
 DECL|macro|rgb2hw4
-mdefine_line|#define rgb2hw4(red, green, blue) &bslash;&n;&t;(((red)&lt;&lt;8 &amp; 0xf00) | ((green)&lt;&lt;4 &amp; 0x0f0) | ((blue) &amp; 0x00f))
+mdefine_line|#define rgb2hw4(red, green, blue) &bslash;&n;&t;(((red &amp; 0xf0)&lt;&lt;4) | (green &amp; 0xf0) | ((blue &amp; 0xf0)&gt;&gt;4))
 DECL|macro|rgb2hw2
-mdefine_line|#define rgb2hw2(red, green, blue) &bslash;&n;&t;(((red)&lt;&lt;10 &amp; 0xc00) | ((green)&lt;&lt;6 &amp; 0x0c0) | ((blue)&lt;&lt;2 &amp; 0x00c))
+mdefine_line|#define rgb2hw2(red, green, blue) &bslash;&n;&t;(((red &amp; 0xc0)&lt;&lt;4) | (green &amp; 0xc0) | ((blue &amp; 0xc0)&gt;&gt;4))
 multiline_comment|/* sprpos/sprctl (sprite positioning) */
 DECL|macro|spr2hw_pos
 mdefine_line|#define spr2hw_pos(start_v, start_h) &bslash;&n;&t;(((start_v)&lt;&lt;7&amp;0xff00) | ((start_h)&gt;&gt;3&amp;0x00ff))
@@ -5516,14 +5516,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|ami_getcolreg
@@ -5682,14 +5674,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -7332,14 +7316,6 @@ id|currcon
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|ami_getcolreg
@@ -7481,14 +7457,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|ami_setcolreg
@@ -7512,14 +7480,6 @@ id|con
 dot
 id|var.bits_per_pixel
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -11249,6 +11209,15 @@ op_star
 id|info
 )paren
 (brace
+r_int
+id|len
+comma
+id|tr
+comma
+id|tg
+comma
+id|tb
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11265,6 +11234,34 @@ l_int|255
 r_return
 l_int|1
 suffix:semicolon
+id|len
+op_assign
+l_int|8
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|currentpar.bplcon0
+op_amp
+id|BPC0_SHRES
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|regno
+OG
+l_int|3
+)paren
+r_return
+l_int|1
+suffix:semicolon
+id|len
+op_assign
+l_int|2
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -11278,36 +11275,106 @@ l_int|31
 r_return
 l_int|1
 suffix:semicolon
+id|len
+op_assign
+l_int|4
+suffix:semicolon
+)brace
+id|tr
+op_assign
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_rshift
+(paren
+l_int|8
+op_minus
+id|len
+)paren
+suffix:semicolon
+id|tg
+op_assign
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_rshift
+(paren
+l_int|8
+op_minus
+id|len
+)paren
+suffix:semicolon
+id|tb
+op_assign
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+op_rshift
+(paren
+l_int|8
+op_minus
+id|len
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|len
+OL
+l_int|16
+)paren
+(brace
+id|tr
+op_or_assign
+id|tr
+op_lshift
+id|len
+suffix:semicolon
+id|tg
+op_or_assign
+id|tg
+op_lshift
+id|len
+suffix:semicolon
+id|tb
+op_or_assign
+id|tb
+op_lshift
+id|len
+suffix:semicolon
+id|len
+op_lshift_assign
+l_int|1
+suffix:semicolon
 )brace
 op_star
 id|red
 op_assign
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|red
+id|tr
 suffix:semicolon
 op_star
 id|green
 op_assign
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|green
+id|tg
 suffix:semicolon
 op_star
 id|blue
 op_assign
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|blue
+id|tb
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -11341,12 +11408,6 @@ op_star
 id|info
 )paren
 (brace
-macro_line|#if defined(CONFIG_FB_AMIGA_AGA)
-id|u_short
-id|bplcon3
-op_assign
-id|currentpar.bplcon3
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11365,7 +11426,27 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|currentpar.bplcon0
+op_amp
+id|BPC0_SHRES
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|regno
+OG
+l_int|3
+)paren
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
@@ -11376,34 +11457,47 @@ l_int|31
 r_return
 l_int|1
 suffix:semicolon
+)brace
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_assign
+id|red
+suffix:semicolon
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_assign
+id|green
+suffix:semicolon
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+op_assign
+id|blue
+suffix:semicolon
 multiline_comment|/*&n;&t; * Update the corresponding Hardware Color Register, unless it&squot;s Color&n;&t; * Register 0 and the screen is blanked.&n;&t; *&n;&t; * VBlank is switched off to protect bplcon3 or ecs_palette[] from&n;&t; * being changed by ami_do_blank() during the VBlank.&n;&t; */
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|red
-op_assign
-id|red
-suffix:semicolon
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|green
-op_assign
-id|green
-suffix:semicolon
-id|palette
-(braket
-id|regno
-)braket
-dot
-id|blue
-op_assign
-id|blue
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11420,6 +11514,11 @@ c_cond
 id|IS_AGA
 )paren
 (brace
+id|u_short
+id|bplcon3
+op_assign
+id|currentpar.bplcon3
+suffix:semicolon
 id|VBlankOff
 c_func
 (paren
@@ -11497,7 +11596,6 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-(brace
 macro_line|#if defined(CONFIG_FB_AMIGA_ECS)
 r_if
 c_cond
@@ -11666,7 +11764,6 @@ comma
 id|blue
 )paren
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0
@@ -12404,7 +12501,6 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-(brace
 macro_line|#if defined(CONFIG_FB_AMIGA_ECS)
 r_if
 c_cond
@@ -12535,7 +12631,6 @@ comma
 id|blue
 )paren
 suffix:semicolon
-)brace
 id|is_blanked
 op_assign
 id|do_blank

@@ -23,11 +23,11 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb16.h&quot;
-macro_line|#include &quot;fbcon-cfb32.h&quot;
-macro_line|#include &quot;macmodes.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+macro_line|#include &lt;video/fbcon-cfb32.h&gt;
+macro_line|#include &lt;video/macmodes.h&gt;
 macro_line|#include &quot;controlfb.h&quot;
 DECL|variable|currcon
 r_static
@@ -168,6 +168,30 @@ DECL|member|total_vram
 r_int
 r_int
 id|total_vram
+suffix:semicolon
+r_union
+(brace
+macro_line|#ifdef FBCON_HAS_CFB16
+DECL|member|cfb16
+id|u16
+id|cfb16
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB32
+DECL|member|cfb32
+id|u32
+id|cfb32
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+DECL|member|fbcon_cmap
+)brace
+id|fbcon_cmap
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -885,12 +909,7 @@ op_ne
 id|FB_ACTIVATE_NOW
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Not activating, in control_set_var.&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* printk(&quot;Not activating, in control_set_var.&bslash;n&quot;); */
 id|control_par_to_var
 c_func
 (paren
@@ -974,16 +993,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;Original bpp is %d, new bpp %d.&bslash;n&quot;
-comma
-id|p-&gt;var.bits_per_pixel
-comma
-id|var-&gt;bits_per_pixel
-)paren
-suffix:semicolon
+multiline_comment|/* printk(&quot;Original bpp is %d, new bpp %d.&bslash;n&quot;, p-&gt;var.bits_per_pixel, var-&gt;bits_per_pixel); */
 multiline_comment|/* OK, we&squot;re getting here at the right times... */
 id|p-&gt;par
 op_assign
@@ -1193,14 +1203,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|controlfb_getcolreg
@@ -1380,9 +1382,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|disp-&gt;var
-comma
 id|kspc
 comma
 id|controlfb_setcolreg
@@ -1481,14 +1480,6 @@ id|currcon
 )braket
 dot
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -1734,6 +1725,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|p-&gt;palette
 (braket
 id|regno
@@ -1744,6 +1746,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|p-&gt;palette
 (braket
 id|regno
@@ -1754,12 +1767,28 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
 id|p-&gt;palette
 (braket
 id|regno
 )braket
 dot
 id|blue
+op_lshift
+l_int|8
+)paren
+op_or
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -1804,19 +1833,30 @@ op_star
 )paren
 id|info
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|regno
 OG
 l_int|255
-op_logical_or
-id|regno
-OL
-l_int|0
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|p-&gt;palette
 (braket
@@ -1891,10 +1931,18 @@ id|regno
 OL
 l_int|16
 )paren
+r_switch
+c_cond
+(paren
+id|p-&gt;var.bits_per_pixel
+)paren
 (brace
+macro_line|#ifdef FBCON_HAS_CFB16
+r_case
+l_int|16
+suffix:colon
 macro_line|#if 0
-macro_line|#ifdef FBCON_HAS_CFB16
-id|fbcon_cfb16_cmap
+id|p-&gt;fbcon_cmap.cfb16
 (braket
 id|regno
 )braket
@@ -1913,32 +1961,8 @@ l_int|5
 op_or
 id|blue
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef FBCON_HAS_CFB32
-id|fbcon_cfb32_cmap
-(braket
-id|regno
-)braket
-op_assign
-(paren
-id|red
-op_lshift
-l_int|16
-)paren
-op_or
-(paren
-id|green
-op_lshift
-l_int|8
-)paren
-op_or
-id|blue
-suffix:semicolon
-multiline_comment|/* I think. */
-macro_line|#endif
 macro_line|#else
-macro_line|#ifdef FBCON_HAS_CFB16
-id|fbcon_cfb16_cmap
+id|p-&gt;fbcon_cmap.cfb16
 (braket
 id|regno
 )braket
@@ -1958,24 +1982,36 @@ op_or
 id|regno
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
-id|fbcon_cfb32_cmap
+r_case
+l_int|32
+suffix:colon
+macro_line|#if 0
+id|p-&gt;fbcon_cmap.cfb32
 (braket
 id|regno
 )braket
 op_assign
 (paren
-id|regno
-op_lshift
-l_int|24
-)paren
-op_or
-(paren
-id|regno
+id|red
 op_lshift
 l_int|16
 )paren
 op_or
+(paren
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
+id|blue
+suffix:semicolon
+macro_line|#else
+id|i
+op_assign
 (paren
 id|regno
 op_lshift
@@ -1984,8 +2020,23 @@ l_int|8
 op_or
 id|regno
 suffix:semicolon
-multiline_comment|/* I think. */
+id|p-&gt;fbcon_cmap.cfb32
+(braket
+id|regno
+)braket
+op_assign
+(paren
+id|i
+op_lshift
+l_int|16
+)paren
+op_or
+id|i
+suffix:semicolon
+multiline_comment|/* I think */
 macro_line|#endif
+r_break
+suffix:semicolon
 macro_line|#endif
 )brace
 r_return
@@ -2037,14 +2088,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|controlfb_setcolreg
@@ -2079,14 +2122,6 @@ c_func
 (paren
 id|size
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -2302,6 +2337,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Monitor sense value = 0x%x, &quot;
 comma
 id|p-&gt;sense
@@ -2500,6 +2536,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;fb%d: control display adapter&bslash;n&quot;
 comma
 id|GET_FB_IDX
@@ -2792,16 +2829,22 @@ id|default_red
 (braket
 id|i
 )braket
+op_lshift
+l_int|8
 comma
 id|default_grn
 (braket
 id|i
 )braket
+op_lshift
+l_int|8
 comma
 id|default_blu
 (braket
 id|i
 )braket
+op_lshift
+l_int|8
 comma
 l_int|0
 comma
@@ -3004,6 +3047,7 @@ id|bank1
 comma
 id|bank2
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -3019,7 +3063,8 @@ l_string|&quot;Warning: only using first control display device.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* danj: I have a feeling this no longer applies - if we somehow *&n;&t;&t; * had two of them, they&squot;d be two framebuffers, right?           */
+multiline_comment|/* danj: I have a feeling this no longer applies - if we somehow *&n;&t;&t; * had two of them, they&squot;d be two framebuffers, right?&n;&t;&t; * Yep. - paulus&n;&t;&t; */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3028,13 +3073,16 @@ op_ne
 l_int|2
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;expecting 2 address for control (got %d)&quot;
 comma
 id|dp-&gt;n_addrs
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|p
@@ -3059,6 +3107,20 @@ op_eq
 l_int|0
 )paren
 r_return
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|p
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Map in frame buffer and registers */
 r_for
@@ -4533,7 +4595,7 @@ ques
 c_cond
 id|FB_VISUAL_PSEUDOCOLOR
 suffix:colon
-id|FB_VISUAL_TRUECOLOR
+id|FB_VISUAL_DIRECTCOLOR
 suffix:semicolon
 id|p-&gt;fix.line_length
 op_assign
@@ -4686,33 +4748,66 @@ op_assign
 id|SCROLL_YREDRAW
 suffix:semicolon
 )brace
+r_switch
+c_cond
+(paren
+id|par-&gt;cmode
+)paren
+(brace
+macro_line|#ifdef FBCON_HAS_CFB8
+r_case
+id|CMODE_8
+suffix:colon
 id|disp-&gt;dispsw
 op_assign
-(paren
-id|par-&gt;cmode
-op_eq
-id|CMODE_32
-)paren
-ques
-c_cond
-op_amp
-id|fbcon_cfb32
-suffix:colon
-(paren
-(paren
-id|par-&gt;cmode
-op_eq
-id|CMODE_16
-)paren
-ques
-c_cond
-op_amp
-id|fbcon_cfb16
-suffix:colon
 op_amp
 id|fbcon_cfb8
-)paren
 suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB16
+r_case
+id|CMODE_16
+suffix:colon
+id|disp-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb16
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|p-&gt;fbcon_cmap.cfb16
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB32
+r_case
+id|CMODE_32
+suffix:colon
+id|disp-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb32
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|p-&gt;fbcon_cmap.cfb32
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+id|disp-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_dummy
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 DECL|function|control_init_info
 r_static

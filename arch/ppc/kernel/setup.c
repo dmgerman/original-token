@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.95 1998/07/20 19:03:47 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.103 1998/09/18 09:14:56 paulus Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -21,16 +22,12 @@ macro_line|#include &lt;asm/amigappc.h&gt;
 macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/bootx.h&gt;
 multiline_comment|/* APUS defs */
 r_extern
 r_int
 r_int
 id|m68k_machtype
-suffix:semicolon
-r_extern
-r_struct
-id|mem_info
-id|ramdisk
 suffix:semicolon
 r_extern
 r_int
@@ -49,6 +46,28 @@ id|_end
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_APUS
+DECL|variable|ramdisk
+r_struct
+id|mem_info
+id|ramdisk
+suffix:semicolon
+DECL|variable|isa_io_base
+r_int
+r_int
+id|isa_io_base
+suffix:semicolon
+DECL|variable|isa_mem_base
+r_int
+r_int
+id|isa_mem_base
+suffix:semicolon
+DECL|variable|pci_dram_offset
+r_int
+r_int
+id|pci_dram_offset
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* END APUS defs */
 r_extern
 r_char
@@ -127,6 +146,11 @@ suffix:semicolon
 DECL|variable|_prep_type
 r_int
 id|_prep_type
+suffix:semicolon
+r_extern
+id|boot_infos_t
+op_star
+id|boot_infos
 suffix:semicolon
 multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
 macro_line|#ifndef CONFIG_MBX
@@ -768,7 +792,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 DECL|function|ide_init_hwif_ports
 r_void
 id|ide_init_hwif_ports
@@ -840,6 +864,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+DECL|variable|ide_init_hwif_ports
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_init_hwif_ports
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|function|cpu_temp
 r_int
@@ -1229,10 +1260,6 @@ r_int
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|cr
-suffix:semicolon
 macro_line|#ifdef __SMP__
 r_extern
 r_int
@@ -1437,94 +1464,6 @@ op_plus
 id|buffer
 comma
 l_string|&quot;750&bslash;n&quot;
-)paren
-suffix:semicolon
-id|cr
-op_assign
-id|_get_L2CR
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cr
-op_amp
-(paren
-l_int|0x1
-op_lshift
-l_int|28
-)paren
-)paren
-id|cr
-op_assign
-l_int|256
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|cr
-op_amp
-(paren
-l_int|0x2
-op_lshift
-l_int|28
-)paren
-)paren
-id|cr
-op_assign
-l_int|512
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|cr
-op_amp
-(paren
-l_int|0x3
-op_lshift
-l_int|28
-)paren
-)paren
-id|cr
-op_assign
-l_int|1024
-suffix:semicolon
-r_else
-id|cr
-op_assign
-l_int|0
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|len
-op_plus
-id|buffer
-comma
-l_string|&quot;on-chip l2&bslash;t: &quot;
-l_string|&quot;%ld KB (%s)&bslash;n&quot;
-comma
-id|cr
-comma
-(paren
-id|_get_L2CR
-c_func
-(paren
-)paren
-op_amp
-l_int|0x80000000
-)paren
-ques
-c_cond
-l_string|&quot;on&quot;
-suffix:colon
-l_string|&quot;off&quot;
 )paren
 suffix:semicolon
 id|len
@@ -1779,6 +1718,7 @@ id|bp
 suffix:semicolon
 r_extern
 id|RESIDUAL
+op_star
 id|res
 suffix:semicolon
 id|bp
@@ -1787,7 +1727,6 @@ op_assign
 id|bd_t
 op_star
 )paren
-op_amp
 id|res
 suffix:semicolon
 id|len
@@ -2099,7 +2038,30 @@ r_char
 op_star
 id|model
 suffix:semicolon
+multiline_comment|/* boot loader will tell us if we&squot;re APUS */
+r_if
+c_cond
+(paren
+id|r3
+op_eq
+l_int|0x61707573
+)paren
+(brace
+id|_machine
+op_assign
+id|_MACH_apus
+suffix:semicolon
+id|have_of
+op_assign
+l_int|0
+suffix:semicolon
+id|r3
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* prep boot loader tells us if we&squot;re prep or not */
+r_else
 r_if
 c_cond
 (paren
@@ -2123,29 +2085,6 @@ op_assign
 id|_MACH_prep
 suffix:semicolon
 id|have_of
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* boot loader will tell us if we&squot;re APUS */
-r_else
-r_if
-c_cond
-(paren
-id|r3
-op_eq
-l_int|0x61707573
-)paren
-(brace
-id|_machine
-op_assign
-id|_MACH_apus
-suffix:semicolon
-id|have_of
-op_assign
-l_int|0
-suffix:semicolon
-id|r3
 op_assign
 l_int|0
 suffix:semicolon
@@ -2255,6 +2194,72 @@ id|cmd_line
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|boot_infos
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* booted by BootX - check for ramdisk */
+r_if
+c_cond
+(paren
+id|boot_infos-&gt;kernelParamsOffset
+op_ne
+l_int|0
+)paren
+id|strncpy
+c_func
+(paren
+id|cmd_line
+comma
+(paren
+r_char
+op_star
+)paren
+id|boot_infos
+op_plus
+id|boot_infos-&gt;kernelParamsOffset
+comma
+r_sizeof
+(paren
+id|cmd_line
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|boot_infos-&gt;ramDisk
+)paren
+(brace
+id|initrd_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|boot_infos
+op_plus
+id|boot_infos-&gt;ramDisk
+suffix:semicolon
+id|initrd_end
+op_assign
+id|initrd_start
+op_plus
+id|boot_infos-&gt;ramDiskSize
+suffix:semicolon
+id|initrd_below_start_ok
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+)brace
+r_else
 (brace
 r_struct
 id|device_node
@@ -2306,6 +2311,13 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+id|cmd_line
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|chosen
 op_assign
 id|find_devices
@@ -2636,11 +2648,6 @@ macro_line|#ifdef CONFIG_APUS&t;&t;
 r_case
 id|_MACH_apus
 suffix:colon
-id|setup_pci_ptrs
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Parse bootinfo. The bootinfo is located right after&n;                   the kernel bss */
 id|parse_bootinfo
 c_func
@@ -2964,6 +2971,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strstr
+c_func
+(paren
+id|cmd_line
+comma
+l_string|&quot;xmon&quot;
+)paren
+)paren
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_XMON */
 multiline_comment|/* reboot on panic */
 id|panic_timeout
@@ -3138,7 +3162,7 @@ id|memory_end_p
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_default
 suffix:colon
 id|printk

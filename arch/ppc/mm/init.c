@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.115 1998/08/04 20:48:38 davem Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.123 1998/09/19 19:03:55 geert Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;&t;&t;/* for initrd_* */
 macro_line|#endif
@@ -25,6 +26,8 @@ macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/bootx.h&gt;
 multiline_comment|/* APUS includes */
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -137,6 +140,11 @@ id|memory
 (braket
 id|NUM_MEMINFO
 )braket
+suffix:semicolon
+r_extern
+id|boot_infos_t
+op_star
+id|boot_infos
 suffix:semicolon
 r_void
 id|MMU_init
@@ -985,7 +993,12 @@ id|p-&gt;comm
 comma
 id|p-&gt;pid
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|p-&gt;mm-&gt;count
+)paren
 comma
 id|p-&gt;mm-&gt;context
 comma
@@ -3620,24 +3633,6 @@ id|tot
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* On some APUS systems, memory grows downwards, i.e.,&n;&t;&t;   24MB will be 8MB aligned. Handle that properly by&n;&t;&t;   mapping first 8MB, then 16MB. */
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|bl
-op_star
-l_int|2
-)paren
-op_minus
-l_int|1
-)paren
-op_amp
-id|mem_base
-)paren
-r_break
-suffix:semicolon
 )brace
 id|setbat
 c_func
@@ -4242,6 +4237,15 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|first_cpu_booted
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 macro_line|#ifndef CONFIG_8xx
 r_if
 c_cond
@@ -4403,7 +4407,7 @@ l_int|0xfff00000
 comma
 l_int|0xfff00000
 comma
-l_int|0x00010000
+l_int|0x00020000
 comma
 id|RAM_PAGE
 )paren
@@ -4482,7 +4486,7 @@ id|PCI_CSR_SIZE
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 )brace
-multiline_comment|/*&n; * Find some memory for setup_arch to return.&n; * We use the last chunk of available memory as the area&n; * that setup_arch returns, making sure that there are at&n; * least 32 pages unused before this for MMU_get_page to use.&n; */
+multiline_comment|/*&n; * Find some memory for setup_arch to return.&n; * We use the largest chunk of available memory as the area&n; * that setup_arch returns, making sure that there are at&n; * least 32 pages unused before this for MMU_get_page to use.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -4498,6 +4502,8 @@ r_void
 (brace
 r_int
 id|i
+comma
+id|rn
 suffix:semicolon
 r_int
 r_int
@@ -4510,10 +4516,6 @@ r_int
 id|start
 comma
 id|end
-suffix:semicolon
-id|free
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4553,6 +4555,49 @@ r_return
 id|avail_start
 suffix:semicolon
 )brace
+id|rn
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+OL
+id|phys_avail.n_regions
+suffix:semicolon
+op_increment
+id|i
+)paren
+r_if
+c_cond
+(paren
+id|phys_avail.regions
+(braket
+id|i
+)braket
+dot
+id|size
+OG
+id|phys_avail.regions
+(braket
+id|rn
+)braket
+dot
+id|size
+)paren
+id|rn
+op_assign
+id|i
+suffix:semicolon
+id|free
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4562,9 +4607,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|phys_avail.n_regions
-op_minus
-l_int|1
+id|rn
 suffix:semicolon
 op_increment
 id|i
@@ -4612,7 +4655,7 @@ c_func
 (paren
 id|phys_avail.regions
 (braket
-id|i
+id|rn
 )braket
 dot
 id|address
@@ -4947,6 +4990,49 @@ id|phys_avail.n_regions
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+multiline_comment|/* if we are booted from BootX with an initial ramdisk,&n;&t;   make sure the ramdisk pages aren&squot;t reserved. */
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|a
+op_assign
+id|initrd_start
+suffix:semicolon
+id|a
+OL
+id|initrd_end
+suffix:semicolon
+id|a
+op_add_assign
+id|PAGE_SIZE
+)paren
+id|clear_bit
+c_func
+(paren
+id|PG_reserved
+comma
+op_amp
+id|mem_map
+(braket
+id|MAP_NR
+c_func
+(paren
+id|a
+)paren
+)braket
+dot
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 multiline_comment|/* free the prom&squot;s memory - no-op on prep */
 r_for
 c_loop
@@ -5540,6 +5626,14 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|boot_infos
+op_eq
+l_int|0
+)paren
+(brace
 multiline_comment|/* record which bits the prom is using */
 id|get_mem_prop
 c_func
@@ -5550,6 +5644,15 @@ op_amp
 id|phys_avail
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* booted from BootX - it&squot;s all available (after klimit) */
+id|phys_avail
+op_assign
+id|phys_mem
+suffix:semicolon
+)brace
 id|prom_mem
 op_assign
 id|phys_mem
@@ -5817,12 +5920,61 @@ r_void
 )paren
 (brace
 r_int
-r_int
-id|kstart
-comma
-id|ksize
+id|shadow
+op_assign
+l_int|0
 suffix:semicolon
-multiline_comment|/* Add the chunk that ADOS does not see.  This may also&n;&t; * include a ROM mapping which we reclaim. The top 512KB is&n;&t; * removed again below.  &n;&t; * Do it by aligning the size to the nearest 2MB limit upwards.&n;&t; */
+multiline_comment|/* The memory size reported by ADOS excludes the 512KB&n;&t;   reserved for PPC exception registers and possibly 512KB&n;&t;   containing a shadow of the ADOS ROM. */
+(brace
+r_int
+r_int
+id|size
+op_assign
+id|memory
+(braket
+l_int|0
+)braket
+dot
+id|size
+suffix:semicolon
+multiline_comment|/* If 2MB aligned, size was probably user&n;                   specified. We can&squot;t tell anything about shadowing&n;                   in this case so skip shadow assignment. */
+r_if
+c_cond
+(paren
+l_int|0
+op_ne
+(paren
+id|size
+op_amp
+l_int|0x1fffff
+)paren
+)paren
+(brace
+multiline_comment|/* Align to 512KB to ensure correct handling&n;&t;&t;&t;   of both memfile and system specified&n;&t;&t;&t;   sizes. */
+id|size
+op_assign
+(paren
+(paren
+id|size
+op_plus
+l_int|0x0007ffff
+)paren
+op_amp
+l_int|0xfff80000
+)paren
+suffix:semicolon
+multiline_comment|/* If memory is 1MB aligned, assume&n;                           shadowing. */
+id|shadow
+op_assign
+op_logical_neg
+(paren
+id|size
+op_amp
+l_int|0x80000
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Add the chunk that ADOS does not see. by aligning&n;                   the size to the nearest 2MB limit upwards.  */
 id|memory
 (braket
 l_int|0
@@ -5832,11 +5984,6 @@ id|size
 op_assign
 (paren
 (paren
-id|memory
-(braket
-l_int|0
-)braket
-dot
 id|size
 op_plus
 l_int|0x001fffff
@@ -5844,6 +5991,15 @@ l_int|0x001fffff
 op_amp
 l_int|0xffe00000
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* Now register the memory block. */
+(brace
+r_int
+r_int
+id|kstart
+comma
+id|ksize
 suffix:semicolon
 id|append_mem_piece
 c_func
@@ -5898,17 +6054,16 @@ id|kstart
 comma
 id|ksize
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Remove the upper HARDWARE_MAPPED_SIZE bytes where the address&n;&t; * range 0xfff00000-0xfffx0000 is mapped to.&n;&t; * We do it this way to ensure that the memory registered in the&n;&t; * system has a power-of-two size.&n;&t; */
-id|remove_mem_piece
-c_func
-(paren
-op_amp
-id|phys_avail
-comma
-(paren
+)brace
+multiline_comment|/* Remove the memory chunks that are controlled by special&n;           Phase5 hardware. */
+(brace
+r_int
+r_int
+id|top
+op_assign
 id|memory
 (braket
 l_int|0
@@ -5922,16 +6077,52 @@ l_int|0
 )braket
 dot
 id|size
-op_minus
-id|HARDWARE_MAPPED_SIZE
+suffix:semicolon
+multiline_comment|/* Remove the upper 512KB if it contains a shadow of&n;&t;&t;   the ADOS ROM. FIXME: It might be possible to&n;&t;&t;   disable this shadow HW. Check the booter&n;&t;&t;   (ppc_boot.c) */
+r_if
+c_cond
+(paren
+id|shadow
 )paren
+(brace
+id|top
+op_sub_assign
+id|HARDWARE_MAPPED_SIZE
+suffix:semicolon
+id|remove_mem_piece
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|top
 comma
 id|HARDWARE_MAPPED_SIZE
 comma
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME:APUS: Only handles one block of memory! Problem is&n;&t; * that the VTOP/PTOV code in head.S would be a mess if it had&n;&t; * to handle more than one block.&n;&t; */
+)brace
+multiline_comment|/* Remove the upper 512KB where the PPC exception&n;                   vectors are mapped. */
+id|top
+op_sub_assign
+id|HARDWARE_MAPPED_SIZE
+suffix:semicolon
+id|remove_mem_piece
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|top
+comma
+id|HARDWARE_MAPPED_SIZE
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME:APUS: Only handles one block of memory! Problem is&n;&t;   that the VTOP/PTOV code in head.S would be a mess if it had&n;&t;   to handle more than one block.  */
 r_return
 id|__va
 c_func

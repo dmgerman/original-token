@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This driver is partly based on the original TGA console driver&n; *&n; *&t;Copyright (C) 1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register on 24-plane cards?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -16,9 +16,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb32.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 multiline_comment|/* TGA hardware description (minimal) */
 multiline_comment|/*&n; * Offsets within Memory Space&n; */
 DECL|macro|TGA_ROM_OFFSET
@@ -1040,6 +1040,14 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
+DECL|variable|fbcon_cfb32_cmap
+r_static
+id|u32
+id|fbcon_cfb32_cmap
+(braket
+l_int|16
+)braket
+suffix:semicolon
 DECL|variable|fb_fix
 r_static
 r_struct
@@ -1768,14 +1776,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|tgafb_getcolreg
@@ -1823,14 +1823,7 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
-l_int|1
-op_lshift
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var.bits_per_pixel
+l_int|256
 )paren
 comma
 id|cmap
@@ -1904,14 +1897,7 @@ id|con
 dot
 id|cmap
 comma
-l_int|1
-op_lshift
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var.bits_per_pixel
+l_int|256
 comma
 l_int|0
 )paren
@@ -1937,14 +1923,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|tgafb_setcolreg
@@ -1953,6 +1931,13 @@ id|info
 )paren
 suffix:semicolon
 macro_line|#if 1
+r_if
+c_cond
+(paren
+id|tga_type
+op_ne
+l_int|0
+)paren
 id|tga_update_palette
 c_func
 (paren
@@ -3530,16 +3515,16 @@ id|TGA_CURSOR_BASE_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* finally, enable video scan &amp; cursor&n;       (and pray for the monitor... :-) */
+multiline_comment|/* finally, enable video scan&n;       (and pray for the monitor... :-) */
 id|TGA_WRITE_REG
 c_func
 (paren
-l_int|0x05
+l_int|0x01
 comma
 id|TGA_VALID_REG
 )paren
 suffix:semicolon
-multiline_comment|/* SCANNING and CURSOR */
+multiline_comment|/* SCANNING */
 id|fb_var.xres
 op_assign
 id|fb_var.xres_virtual
@@ -3840,6 +3825,11 @@ op_assign
 op_amp
 id|fbcon_cfb32
 suffix:semicolon
+id|disp.dispsw_data
+op_assign
+op_amp
+id|fbcon_cfb32_cmap
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -3847,7 +3837,8 @@ r_default
 suffix:colon
 id|disp.dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 )brace
 id|disp.scrollmode
@@ -3982,14 +3973,6 @@ id|currcon
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|tgafb_getcolreg
@@ -4051,7 +4034,37 @@ op_star
 id|info
 )paren
 (brace
-multiline_comment|/* Nothing */
+multiline_comment|/* Should also do stuff here for vesa blanking  -tor */
+r_if
+c_cond
+(paren
+id|blank
+OG
+l_int|0
+)paren
+(brace
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x03
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* SCANNING and BLANK */
+)brace
+r_else
+(brace
+id|TGA_WRITE_REG
+c_func
+(paren
+l_int|0x01
+comma
+id|TGA_VALID_REG
+)paren
+suffix:semicolon
+multiline_comment|/* SCANNING */
+)brace
 )brace
 multiline_comment|/*&n;     *  Read a single color register and split it into&n;     *  colors/transparent. Return != 0 for invalid regno.&n;     */
 DECL|function|tgafb_getcolreg
@@ -4098,6 +4111,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -4108,6 +4132,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -4118,12 +4153,28 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
 id|palette
 (braket
 id|regno
 )braket
 dot
 id|blue
+op_lshift
+l_int|8
+)paren
+op_or
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -4166,6 +4217,18 @@ l_int|255
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|palette
 (braket
@@ -4226,25 +4289,6 @@ op_or
 id|blue
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* How to set a single color register?? */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#if 1
-multiline_comment|/*&n;     *&t;FIXME: since I don&squot;t know how to set a single arbitrary color register,&n;     *  all color palette registers have to be updated&n;     */
-DECL|function|tga_update_palette
-r_static
-r_void
-id|tga_update_palette
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4257,7 +4301,7 @@ multiline_comment|/* 8-plane */
 id|BT485_WRITE
 c_func
 (paren
-l_int|0x00
+id|regno
 comma
 id|BT485_ADDR_PAL_WRITE
 )paren
@@ -4270,29 +4314,9 @@ comma
 id|TGA_RAMDAC_SETUP_REG
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|256
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 id|TGA_WRITE_REG
 c_func
 (paren
-id|palette
-(braket
-id|i
-)braket
-dot
 id|red
 op_or
 (paren
@@ -4307,11 +4331,6 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-id|palette
-(braket
-id|i
-)braket
-dot
 id|green
 op_or
 (paren
@@ -4326,11 +4345,6 @@ suffix:semicolon
 id|TGA_WRITE_REG
 c_func
 (paren
-id|palette
-(braket
-id|i
-)braket
-dot
 id|blue
 op_or
 (paren
@@ -4343,9 +4357,25 @@ id|TGA_RAMDAC_REG
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* How to set a single color register on 24-plane cards?? */
+r_return
+l_int|0
+suffix:semicolon
 )brace
-r_else
+macro_line|#if 1
+multiline_comment|/*&n;     *&t;FIXME: since I don&squot;t know how to set a single arbitrary color register&n;     *  on 24-plane cards, all color palette registers have to be updated&n;     */
+DECL|function|tga_update_palette
+r_static
+r_void
+id|tga_update_palette
+c_func
+(paren
+r_void
+)paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|BT463_LOAD_ADDR
 c_func
 (paren
@@ -4438,7 +4468,6 @@ id|TGA_RAMDAC_REG
 suffix:semicolon
 )brace
 )brace
-)brace
 macro_line|#endif
 DECL|function|do_install_cmap
 r_static
@@ -4485,14 +4514,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|tgafb_setcolreg
@@ -4507,23 +4528,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
-l_int|1
-op_lshift
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var.bits_per_pixel
+l_int|256
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -4533,6 +4539,13 @@ id|info
 )paren
 suffix:semicolon
 macro_line|#if 1
+r_if
+c_cond
+(paren
+id|tga_type
+op_ne
+l_int|0
+)paren
 id|tga_update_palette
 c_func
 (paren

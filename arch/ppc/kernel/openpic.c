@@ -266,7 +266,6 @@ id|mask
 suffix:semicolon
 )brace
 DECL|function|openpic_writefield
-r_static
 r_inline
 r_void
 id|openpic_writefield
@@ -432,7 +431,8 @@ r_void
 id|openpic_init
 c_func
 (paren
-r_void
+r_int
+id|main_pic
 )paren
 )paren
 (brace
@@ -693,6 +693,12 @@ c_func
 l_string|&quot;not set&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|main_pic
+)paren
+(brace
 multiline_comment|/* Initialize timer interrupts */
 r_for
 c_loop
@@ -886,6 +892,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;     *  Reset the OpenPIC&n;     */
 DECL|function|openpic_reset

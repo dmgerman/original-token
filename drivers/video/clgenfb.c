@@ -13,13 +13,12 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb16.h&quot;
-macro_line|#include &quot;fbcon-cfb24.h&quot;
-macro_line|#include &quot;fbcon-cfb32.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+macro_line|#include &lt;video/fbcon-cfb24.h&gt;
+macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 macro_line|#include &quot;clgenfb.h&quot;
 DECL|macro|CLGEN_VERSION
 mdefine_line|#define CLGEN_VERSION &quot;1.4 ?&quot;
@@ -28,25 +27,6 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG if(0)
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
-multiline_comment|/* zorro IDs */
-DECL|macro|ZORRO_PROD_HELFRICH_SD64_RAM
-mdefine_line|#define ZORRO_PROD_HELFRICH_SD64_RAM&t;&t;&t;&t;0x08930A00
-DECL|macro|ZORRO_PROD_HELFRICH_SD64_REG
-mdefine_line|#define ZORRO_PROD_HELFRICH_SD64_REG&t;&t;&t;&t;0x08930B00
-DECL|macro|ZORRO_PROD_HELFRICH_PICCOLO_RAM
-mdefine_line|#define ZORRO_PROD_HELFRICH_PICCOLO_RAM&t;&t;&t;&t;0x08930500
-DECL|macro|ZORRO_PROD_HELFRICH_PICCOLO_REG
-mdefine_line|#define ZORRO_PROD_HELFRICH_PICCOLO_REG&t;&t;&t;&t;0x08930600
-DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM
-mdefine_line|#define ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM&t;0x08770B00
-DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG
-mdefine_line|#define ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG&t;0x08770C00
-DECL|macro|ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM
-mdefine_line|#define ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM&t;&t;&t;0x08910200
-DECL|macro|ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG
-mdefine_line|#define ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG&t;&t;&t;0x08910100
-DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3
-mdefine_line|#define ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3&t;&t;&t;0x08771800
 multiline_comment|/* board types */
 DECL|macro|BT_NONE
 mdefine_line|#define BT_NONE     0
@@ -223,6 +203,39 @@ DECL|member|currentmode
 r_struct
 id|clgenfb_par
 id|currentmode
+suffix:semicolon
+r_union
+(brace
+macro_line|#ifdef FBCON_HAS_CFB16
+DECL|member|cfb16
+id|u16
+id|cfb16
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB24
+DECL|member|cfb24
+id|u32
+id|cfb24
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB32
+DECL|member|cfb32
+id|u32
+id|cfb32
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+DECL|member|fbcon_cmap
+)brace
+id|fbcon_cmap
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -769,16 +782,19 @@ id|info
 )paren
 suffix:semicolon
 r_static
-r_struct
-id|display_switch
-op_star
-id|clgen_get_dispsw
+r_void
+id|clgen_set_dispsw
 c_func
 (paren
 r_const
 r_void
 op_star
 id|par
+comma
+r_struct
+id|display
+op_star
+id|disp
 comma
 r_struct
 id|fb_info_gen
@@ -814,7 +830,7 @@ id|clgen_pan_display
 comma
 id|clgen_blank
 comma
-id|clgen_get_dispsw
+id|clgen_set_dispsw
 )brace
 suffix:semicolon
 multiline_comment|/* Text console acceleration */
@@ -2138,6 +2154,30 @@ id|_par-&gt;visual
 op_assign
 id|FB_VISUAL_PSEUDOCOLOR
 suffix:semicolon
+id|_par-&gt;var.red.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.red.length
+op_assign
+l_int|6
+suffix:semicolon
+id|_par-&gt;var.green.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.green.length
+op_assign
+l_int|6
+suffix:semicolon
+id|_par-&gt;var.blue.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.blue.length
+op_assign
+l_int|6
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2152,6 +2192,30 @@ suffix:semicolon
 id|_par-&gt;visual
 op_assign
 id|FB_VISUAL_DIRECTCOLOR
+suffix:semicolon
+id|_par-&gt;var.red.offset
+op_assign
+l_int|10
+suffix:semicolon
+id|_par-&gt;var.red.length
+op_assign
+l_int|5
+suffix:semicolon
+id|_par-&gt;var.green.offset
+op_assign
+l_int|5
+suffix:semicolon
+id|_par-&gt;var.green.length
+op_assign
+l_int|5
+suffix:semicolon
+id|_par-&gt;var.blue.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.blue.length
+op_assign
+l_int|5
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2168,6 +2232,30 @@ id|_par-&gt;visual
 op_assign
 id|FB_VISUAL_DIRECTCOLOR
 suffix:semicolon
+id|_par-&gt;var.red.offset
+op_assign
+l_int|16
+suffix:semicolon
+id|_par-&gt;var.red.length
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.green.offset
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.green.length
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.blue.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.blue.length
+op_assign
+l_int|8
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2183,9 +2271,57 @@ id|_par-&gt;visual
 op_assign
 id|FB_VISUAL_DIRECTCOLOR
 suffix:semicolon
+id|_par-&gt;var.red.offset
+op_assign
+l_int|16
+suffix:semicolon
+id|_par-&gt;var.red.length
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.green.offset
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.green.length
+op_assign
+l_int|8
+suffix:semicolon
+id|_par-&gt;var.blue.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.blue.length
+op_assign
+l_int|8
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|_par-&gt;var.red.msb_right
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.green.msb_right
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.blue.msb_right
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.transp.offset
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.transp.length
+op_assign
+l_int|0
+suffix:semicolon
+id|_par-&gt;var.transp.msb_right
+op_assign
+l_int|0
+suffix:semicolon
 id|_par-&gt;type
 op_assign
 id|FB_TYPE_PACKED_PIXELS
@@ -3362,11 +3498,11 @@ c_func
 (paren
 l_int|1
 comma
-l_int|0xff
+l_int|0x3f
 comma
-l_int|0xff
+l_int|0x3f
 comma
-l_int|0xff
+l_int|0x3f
 )paren
 suffix:semicolon
 multiline_comment|/* foreground: white */
@@ -4638,10 +4774,6 @@ c_cond
 id|regno
 OG
 l_int|255
-op_logical_or
-id|regno
-OL
-l_int|0
 )paren
 r_return
 (paren
@@ -4676,25 +4808,64 @@ op_star
 id|red
 op_assign
 (paren
-id|u_int
-)paren
 id|bred
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|bred
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|bred
+op_rshift
+l_int|2
+)paren
 suffix:semicolon
 op_star
 id|green
 op_assign
 (paren
-id|u_int
-)paren
 id|bgreen
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|bgreen
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|bgreen
+op_rshift
+l_int|2
+)paren
 suffix:semicolon
 op_star
 id|blue
 op_assign
 (paren
-id|u_int
-)paren
 id|bblue
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|bblue
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|bblue
+op_rshift
+l_int|2
+)paren
 suffix:semicolon
 op_star
 id|transp
@@ -4740,10 +4911,6 @@ c_cond
 id|regno
 OG
 l_int|255
-op_logical_or
-id|regno
-OL
-l_int|0
 )paren
 r_return
 (paren
@@ -4765,23 +4932,17 @@ c_func
 (paren
 id|regno
 comma
-(paren
 id|red
-op_amp
-l_int|0xff
-)paren
+op_rshift
+l_int|10
 comma
-(paren
 id|green
-op_amp
-l_int|0xff
-)paren
+op_rshift
+l_int|10
 comma
-(paren
 id|blue
-op_amp
-l_int|0xff
-)paren
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 r_return
@@ -6156,11 +6317,11 @@ c_func
 (paren
 l_int|1
 comma
-l_int|0xff
+l_int|0x3f
 comma
-l_int|0xff
+l_int|0x3f
 comma
-l_int|0xff
+l_int|0x3f
 )paren
 suffix:semicolon
 multiline_comment|/* foreground: white */
@@ -6171,7 +6332,7 @@ l_int|2
 comma
 l_int|0x00
 comma
-l_int|0x80
+l_int|0x20
 comma
 l_int|0x00
 )paren
@@ -6183,9 +6344,9 @@ l_int|3
 comma
 l_int|0x00
 comma
-l_int|0x80
+l_int|0x20
 comma
-l_int|0x80
+l_int|0x20
 )paren
 suffix:semicolon
 id|WClut
@@ -6193,7 +6354,7 @@ c_func
 (paren
 l_int|4
 comma
-l_int|0x80
+l_int|0x20
 comma
 l_int|0x00
 comma
@@ -6205,11 +6366,11 @@ c_func
 (paren
 l_int|5
 comma
-l_int|0x80
+l_int|0x20
 comma
 l_int|0x00
 comma
-l_int|0x80
+l_int|0x20
 )paren
 suffix:semicolon
 id|WClut
@@ -6217,9 +6378,9 @@ c_func
 (paren
 l_int|6
 comma
-l_int|0x80
+l_int|0x20
 comma
-l_int|0x40
+l_int|0x10
 comma
 l_int|0x00
 )paren
@@ -6229,11 +6390,11 @@ c_func
 (paren
 l_int|7
 comma
-l_int|0x80
+l_int|0x20
 comma
-l_int|0x80
+l_int|0x20
 comma
-l_int|0x80
+l_int|0x20
 )paren
 suffix:semicolon
 id|WClut
@@ -6241,11 +6402,11 @@ c_func
 (paren
 l_int|8
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0x40
+l_int|0x10
 )paren
 suffix:semicolon
 id|WClut
@@ -6253,11 +6414,11 @@ c_func
 (paren
 l_int|9
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0xc0
+l_int|0x30
 )paren
 suffix:semicolon
 id|WClut
@@ -6265,11 +6426,11 @@ c_func
 (paren
 l_int|10
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0x40
+l_int|0x10
 )paren
 suffix:semicolon
 id|WClut
@@ -6277,11 +6438,11 @@ c_func
 (paren
 l_int|11
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0xc0
+l_int|0x30
 )paren
 suffix:semicolon
 id|WClut
@@ -6289,11 +6450,11 @@ c_func
 (paren
 l_int|12
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0x40
+l_int|0x10
 )paren
 suffix:semicolon
 id|WClut
@@ -6301,11 +6462,11 @@ c_func
 (paren
 l_int|13
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0x40
+l_int|0x10
 comma
-l_int|0xc0
+l_int|0x30
 )paren
 suffix:semicolon
 id|WClut
@@ -6313,11 +6474,11 @@ c_func
 (paren
 l_int|14
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0x40
+l_int|0x10
 )paren
 suffix:semicolon
 id|WClut
@@ -6325,11 +6486,11 @@ c_func
 (paren
 l_int|15
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0xc0
+l_int|0x30
 comma
-l_int|0xc0
+l_int|0x30
 )paren
 suffix:semicolon
 multiline_comment|/* the rest a grey ramp */
@@ -6357,10 +6518,16 @@ c_func
 id|i
 comma
 id|i
+op_rshift
+l_int|2
 comma
 id|i
+op_rshift
+l_int|2
 comma
 id|i
+op_rshift
+l_int|2
 )paren
 suffix:semicolon
 )brace
@@ -6711,18 +6878,21 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|clgen_get_dispsw
+DECL|function|clgen_set_dispsw
 r_static
-r_struct
-id|display_switch
-op_star
-id|clgen_get_dispsw
+r_void
+id|clgen_set_dispsw
 c_func
 (paren
 r_const
 r_void
 op_star
 id|par
+comma
+r_struct
+id|display
+op_star
+id|disp
 comma
 r_struct
 id|fb_info_gen
@@ -6741,6 +6911,18 @@ id|clgenfb_par
 op_star
 )paren
 id|par
+suffix:semicolon
+r_struct
+id|clgenfb_info
+op_star
+id|info2
+op_assign
+(paren
+r_struct
+id|clgenfb_info
+op_star
+)paren
+id|info
 suffix:semicolon
 id|printk
 c_func
@@ -6764,9 +6946,12 @@ c_func
 l_string|&quot;monochrome&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 op_amp
 id|fbcon_mfb
+suffix:semicolon
+r_break
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB8
@@ -6779,9 +6964,12 @@ c_func
 l_string|&quot;8 bit color depth&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 op_amp
 id|fbcon_clgen_8
+suffix:semicolon
+r_break
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB16
@@ -6794,9 +6982,16 @@ c_func
 l_string|&quot;16 bit color depth&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 op_amp
 id|fbcon_cfb16
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|info2-&gt;fbcon_cmap.cfb16
+suffix:semicolon
+r_break
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB24
@@ -6809,9 +7004,16 @@ c_func
 l_string|&quot;24 bit color depth&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 op_amp
 id|fbcon_cfb24
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|info2-&gt;fbcon_cmap.cfb24
+suffix:semicolon
+r_break
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
@@ -6824,9 +7026,16 @@ c_func
 l_string|&quot;32 bit color depth&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 op_amp
 id|fbcon_cfb32
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|info2-&gt;fbcon_cmap.cfb32
+suffix:semicolon
+r_break
 suffix:semicolon
 macro_line|#endif
 r_default
@@ -6837,8 +7046,11 @@ c_func
 l_string|&quot;unsupported color depth&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|disp-&gt;dispsw
+op_assign
 l_int|NULL
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -6874,27 +7086,51 @@ id|width
 (brace
 id|sx
 op_mul_assign
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|sy
 op_mul_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|dx
 op_mul_assign
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|dy
 op_mul_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|width
 op_mul_assign
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|height
 op_mul_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|fb_info
 op_assign
@@ -6997,19 +7233,35 @@ id|p-&gt;fb_info
 suffix:semicolon
 id|sx
 op_mul_assign
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|sy
 op_mul_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|width
 op_mul_assign
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|height
 op_mul_assign
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 id|col
 op_assign
@@ -8747,7 +8999,7 @@ op_assign
 id|val
 suffix:semicolon
 )brace
-multiline_comment|/*** WClut - set CLUT entry (range: 0..255 is automat. shifted to 0..63) ***/
+multiline_comment|/*** WClut - set CLUT entry (range: 0..63) ***/
 DECL|function|WClut
 r_void
 id|WClut
@@ -8815,33 +9067,21 @@ id|fb_info-&gt;regs
 id|data
 )braket
 op_assign
-(paren
 id|red
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 id|fb_info-&gt;regs
 (braket
 id|data
 )braket
 op_assign
-(paren
 id|green
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 id|fb_info-&gt;regs
 (braket
 id|data
 )braket
 op_assign
-(paren
 id|blue
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -8851,37 +9091,25 @@ id|fb_info-&gt;regs
 id|data
 )braket
 op_assign
-(paren
 id|blue
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 id|fb_info-&gt;regs
 (braket
 id|data
 )braket
 op_assign
-(paren
 id|green
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 id|fb_info-&gt;regs
 (braket
 id|data
 )braket
 op_assign
-(paren
 id|red
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*** RClut - read CLUT entry and convert to 0..255 range ***/
+multiline_comment|/*** RClut - read CLUT entry (range 0..63) ***/
 DECL|function|RClut
 r_void
 id|RClut
@@ -8952,8 +9180,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 op_star
 id|green
@@ -8962,8 +9188,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 op_star
 id|blue
@@ -8972,8 +9196,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 )brace
 r_else
@@ -8985,8 +9207,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 op_star
 id|green
@@ -8995,8 +9215,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 op_star
 id|red
@@ -9005,8 +9223,6 @@ id|fb_info-&gt;regs
 (braket
 id|data
 )braket
-op_lshift
-l_int|2
 suffix:semicolon
 )brace
 )brace

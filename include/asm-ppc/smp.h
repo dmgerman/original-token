@@ -11,6 +11,10 @@ r_int
 r_int
 id|cpu_present_map
 suffix:semicolon
+r_extern
+r_int
+id|first_cpu_booted
+suffix:semicolon
 multiline_comment|/* per processor PPC parameters we need. */
 DECL|struct|cpuinfo_PPC
 r_struct
@@ -165,23 +169,6 @@ id|wait
 suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#else /* !(__SMP__) */
-macro_line|#ifndef __ASSEMBLY__
-DECL|function|cpu_logical_map
-r_extern
-id|__inline__
-r_int
-id|cpu_logical_map
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-r_return
-id|cpu
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID               0xFF            /* No processor magic marker */

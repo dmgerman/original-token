@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -252,13 +253,6 @@ c_func
 id|do_lost_interrupts
 )paren
 suffix:semicolon
-DECL|variable|__ppc_bh_counter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__ppc_bh_counter
-)paren
-suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -278,6 +272,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|local_irq_count
+)paren
+suffix:semicolon
+DECL|variable|local_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_bh_count
 )paren
 suffix:semicolon
 DECL|variable|isa_io_base
@@ -510,6 +511,13 @@ c_func
 id|strncmp
 )paren
 suffix:semicolon
+DECL|variable|strnicmp
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strnicmp
+)paren
+suffix:semicolon
 DECL|variable|memset
 id|EXPORT_SYMBOL
 c_func
@@ -685,6 +693,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|iounmap
+)paren
+suffix:semicolon
+DECL|variable|ide_insw
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_insw
+)paren
+suffix:semicolon
+DECL|variable|ide_outsw
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_outsw
 )paren
 suffix:semicolon
 DECL|variable|start_thread

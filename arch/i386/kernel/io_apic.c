@@ -1375,6 +1375,7 @@ r_int
 id|idx
 )paren
 (brace
+macro_line|#if 0
 r_int
 r_int
 id|irq
@@ -1403,6 +1404,11 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * There are broken mptables which register ISA+high-active+level IRQs,&n; * these are illegal and are converted here to ISA+high-active+edge&n; * IRQ sources. Careful, ISA+low-active+level is another broken entry&n; * type, it represents PCI IRQs &squot;embedded into an ISA bus&squot;, they have&n; * to be accepted. Yes, ugh.&n; */
 DECL|function|MPBIOS_polarity
@@ -1755,6 +1761,7 @@ r_int
 id|idx
 )paren
 (brace
+macro_line|#if 0
 r_int
 id|bus
 op_assign
@@ -1813,6 +1820,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* broken */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3610,15 +3618,9 @@ id|pos
 dot
 id|mpc_irqflag
 op_assign
-(paren
-l_int|1
-op_lshift
-l_int|2
-)paren
-op_or
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/* High-active edge */
+multiline_comment|/* default */
 id|mp_irqs
 (braket
 id|pos

@@ -39,10 +39,10 @@ DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|MSR_
-mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_FE0|MSR_FE1|MSR_IP|MSR_RI
+mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_IP|MSR_RI
 macro_line|#else
 DECL|macro|MSR_
-mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_FE0|MSR_FE1|MSR_RI
+mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_RI
 macro_line|#endif
 DECL|macro|MSR_KERNEL
 mdefine_line|#define MSR_KERNEL      MSR_|MSR_IR|MSR_DR
@@ -104,6 +104,8 @@ DECL|macro|_MACH_mbx
 mdefine_line|#define _MACH_mbx      8 /* Motorola MBX board */
 DECL|macro|_MACH_apus
 mdefine_line|#define _MACH_apus    16 /* amiga with phase5 powerup */
+DECL|macro|_MACH_fads
+mdefine_line|#define _MACH_fads    32 /* Motorola FADS board */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -314,6 +316,16 @@ mdefine_line|#define is_chrp (0)
 DECL|macro|have_of
 mdefine_line|#define have_of (0)
 macro_line|#endif /* CONFIG_MBX */
+macro_line|#ifdef CONFIG_FADS
+DECL|macro|_machine
+mdefine_line|#define _machine (_MACH_fads)
+DECL|macro|is_prep
+mdefine_line|#define is_prep (0)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (0)
+DECL|macro|have_of
+mdefine_line|#define have_of (0)
+macro_line|#endif /* CONFIG_FADS */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|_machine
 mdefine_line|#define _machine (_MACH_apus)

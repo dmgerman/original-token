@@ -14,10 +14,10 @@ macro_line|#include &lt;linux/dio.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/blinken.h&gt;
 macro_line|#include &lt;asm/hwtest.h&gt;
-macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#include &quot;fbcon-cfb2.h&quot;
-macro_line|#include &quot;fbcon-cfb4.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
+macro_line|#include &lt;video/fbcon-cfb2.h&gt;
+macro_line|#include &lt;video/fbcon-cfb4.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|variable|disp

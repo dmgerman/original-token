@@ -54,7 +54,7 @@ DECL|macro|init_new_context
 mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
 multiline_comment|/*&n; * We&squot;re finished using the context for an address space.&n; */
 DECL|macro|destroy_context
-mdefine_line|#define destroy_context(mm)     ((mm)-&gt;context = NO_CONTEXT)
+mdefine_line|#define destroy_context(mm)     do { } while (0)
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
 DECL|function|activate_context
 r_extern

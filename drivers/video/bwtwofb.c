@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwofb.c,v 1.1 1998/07/21 14:50:48 jj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
+multiline_comment|/* $Id: bwtwofb.c,v 1.5 1998/08/23 14:20:40 mj Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,12 +14,12 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
-macro_line|#include &quot;sbusfb.h&quot;
+macro_line|#include &lt;video/sbusfb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef __sparc_v9__
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 macro_line|#endif
-macro_line|#include &quot;fbcon-mfb.h&quot;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
 multiline_comment|/* OBio addresses for the bwtwo registers */
 DECL|macro|BWTWO_REGISTER_OFFSET
 mdefine_line|#define BWTWO_REGISTER_OFFSET 0x400000
@@ -131,6 +131,8 @@ DECL|macro|BWTWO_SR_ID_MONO_ECL
 mdefine_line|#define BWTWO_SR_ID_MONO_ECL&t;0x03
 DECL|macro|BWTWO_SR_ID_MSYNC
 mdefine_line|#define BWTWO_SR_ID_MSYNC&t;0x04
+DECL|macro|BWTWO_SR_ID_NOCONN
+mdefine_line|#define BWTWO_SR_ID_NOCONN&t;0x0a
 multiline_comment|/* Control Register Constants */
 DECL|macro|BWTWO_CTL_ENABLE_INTS
 mdefine_line|#define BWTWO_CTL_ENABLE_INTS   0x80
@@ -239,7 +241,6 @@ id|y_margin
 id|p-&gt;screen_base
 op_add_assign
 (paren
-(paren
 id|y_margin
 op_minus
 id|fb-&gt;y_margin
@@ -248,13 +249,14 @@ op_star
 id|p-&gt;line_length
 op_plus
 (paren
+(paren
 id|x_margin
 op_minus
 id|fb-&gt;x_margin
 )paren
-)paren
 op_rshift
 l_int|3
+)paren
 suffix:semicolon
 )brace
 DECL|variable|__initdata
@@ -635,7 +637,7 @@ r_int
 r_int
 id|phys
 op_assign
-id|SUN4_300_BWTWO_PHYSADDR
+id|sun4_bwtwo_physaddr
 suffix:semicolon
 macro_line|#else
 r_int
@@ -806,6 +808,12 @@ id|bw2regs_66hz
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|BWTWO_SR_ID_NOCONN
+suffix:colon
+r_return
+l_int|NULL
+suffix:semicolon
 r_default
 suffix:colon
 id|prom_printf
@@ -914,15 +922,15 @@ l_int|0
 suffix:semicolon
 id|disp-&gt;screen_base
 op_add_assign
-(paren
 id|fix-&gt;line_length
 op_star
 id|fb-&gt;y_margin
 op_plus
+(paren
 id|fb-&gt;x_margin
-)paren
 op_rshift
 l_int|3
+)paren
 suffix:semicolon
 id|fb-&gt;dispsw
 op_assign

@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  linux/drivers/video/macmodes.c -- Standard MacOS vide
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &quot;macmodes.h&quot;
+macro_line|#include &lt;video/macmodes.h&gt;
 DECL|struct|mac_mode
 r_struct
 id|mac_mode
@@ -1357,9 +1357,8 @@ id|cmode
 )paren
 (brace
 r_int
+r_int
 id|i
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1477,7 +1476,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|var-&gt;vmode
+op_amp
+id|FB_VMODE_MASK
+)paren
 op_ne
 id|mode-&gt;vmode
 )paren

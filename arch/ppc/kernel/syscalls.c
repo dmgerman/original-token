@@ -925,7 +925,15 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*flags &amp;= ~(MAP_EXECUTABLE | MAP_DENYWRITE);*/
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|do_mmap

@@ -13,10 +13,10 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#include &quot;fbcon-cfb2.h&quot;
-macro_line|#include &quot;fbcon-cfb4.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
+macro_line|#include &lt;video/fbcon-cfb2.h&gt;
+macro_line|#include &lt;video/fbcon-cfb4.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 DECL|macro|MAX_VIDC20_PALETTE
 mdefine_line|#define MAX_VIDC20_PALETTE&t;256
 DECL|macro|MAX_VIDC_PALETTE
@@ -858,6 +858,9 @@ op_star
 id|info
 )paren
 (brace
+r_int
+id|t
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -868,8 +871,7 @@ id|current_par.palette_size
 r_return
 l_int|1
 suffix:semicolon
-op_star
-id|red
+id|t
 op_assign
 id|current_par.palette.vidc20
 (braket
@@ -879,7 +881,17 @@ dot
 id|d.red
 suffix:semicolon
 op_star
-id|green
+id|red
+op_assign
+(paren
+id|t
+op_lshift
+l_int|8
+)paren
+op_or
+id|t
+suffix:semicolon
+id|t
 op_assign
 id|current_par.palette.vidc20
 (braket
@@ -889,7 +901,17 @@ dot
 id|d.green
 suffix:semicolon
 op_star
-id|blue
+id|green
+op_assign
+(paren
+id|t
+op_lshift
+l_int|8
+)paren
+op_or
+id|t
+suffix:semicolon
+id|t
 op_assign
 id|current_par.palette.vidc20
 (braket
@@ -899,7 +921,17 @@ dot
 id|d.blue
 suffix:semicolon
 op_star
-id|trans
+id|blue
+op_assign
+(paren
+id|t
+op_lshift
+l_int|8
+)paren
+op_or
+id|t
+suffix:semicolon
+id|t
 op_assign
 id|current_par.palette.vidc20
 (braket
@@ -907,6 +939,23 @@ id|regno
 )braket
 dot
 id|d.ext
+suffix:semicolon
+id|t
+op_or_assign
+id|t
+op_lshift
+l_int|4
+suffix:semicolon
+op_star
+id|transp
+op_assign
+(paren
+id|t
+op_lshift
+l_int|8
+)paren
+op_or
+id|t
 suffix:semicolon
 r_return
 l_int|0
@@ -948,6 +997,18 @@ id|current_par.palette_size
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|current_par.palette.vidc20
 (braket
@@ -1053,14 +1114,6 @@ id|fb_get_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -1202,14 +1255,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -1579,14 +1624,6 @@ c_func
 (paren
 id|current_par.palette_size
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-l_int|0
-)braket
-dot
-id|var
 comma
 l_int|1
 comma

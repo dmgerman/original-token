@@ -1,11 +1,18 @@
 multiline_comment|/* Minimal serial functions needed to send messages out the serial&n; * port on the MBX console.&n; *&n; * The MBX uxes SMC1 for the serial port.  We reset the port and use&n; * only the first BD that EPPC-Bug set up as a character FIFO.&n; *&n; * Later versions (at least 1.4, maybe earlier) of the MBX EPPC-Bug&n; * use COM1 instead of SMC1 as the console port.  This kinda sucks&n; * for the rest of the kernel, so here we force the use of SMC1 again.&n; * I f**ked around for a day trying to figure out how to make EPPC-Bug&n; * use SMC1, but gave up and decided to fix it here.&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_FADS
+macro_line|#include &lt;asm/fads.h&gt;
+macro_line|#endif
 macro_line|#include &quot;../8xx_io/commproc.h&quot;
+macro_line|#ifdef CONFIG_MBX
 DECL|macro|MBX_CSR1
 mdefine_line|#define MBX_CSR1&t;((volatile u_char *)0xfa100000)
 DECL|macro|CSR1_COMEN
 mdefine_line|#define CSR1_COMEN&t;(u_char)0x02
+macro_line|#endif
 DECL|variable|cpmp
 r_static
 id|cpm8xx_t
@@ -23,7 +30,7 @@ op_amp
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpm
@@ -107,6 +114,7 @@ op_or
 id|SMCMR_TEN
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
 r_if
 c_cond
 (paren
@@ -123,7 +131,7 @@ multiline_comment|/* Enable SDMA.&n;&t;&t;*/
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_siu_conf.sc_sdcr
@@ -278,6 +286,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#endif
 multiline_comment|/* SMC1 is used as console port.&n;&t;&t;*/
 id|tbdf
 op_assign
@@ -324,7 +333,9 @@ op_amp
 id|CPM_CR_FLG
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
 )brace
+macro_line|#endif
 multiline_comment|/* Make the first buffer the only buffer.&n;&t;*/
 id|tbdf-&gt;cbd_sc
 op_or_assign

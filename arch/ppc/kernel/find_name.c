@@ -61,11 +61,9 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-m_exit
-(paren
+r_return
 op_minus
 l_int|1
-)paren
 suffix:semicolon
 )brace
 r_for
@@ -194,9 +192,11 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;%s&quot;
+l_string|&quot;%s%s&quot;
 comma
 id|last
+comma
+id|s
 )paren
 suffix:semicolon
 )brace

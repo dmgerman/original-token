@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * $Id: bitops.h,v 1.9 1998/07/26 03:05:28 davem Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
-macro_line|#ifndef _ASM_PPC_BITOPS_H_
-DECL|macro|_ASM_PPC_BITOPS_H_
-mdefine_line|#define _ASM_PPC_BITOPS_H_
+multiline_comment|/*&n; * $Id: bitops.h,v 1.10 1998/08/16 21:56:53 geert Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
+macro_line|#ifndef _PPC_BITOPS_H
+DECL|macro|_PPC_BITOPS_H
+mdefine_line|#define _PPC_BITOPS_H
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 r_extern
@@ -1219,5 +1219,5 @@ DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) ext2_test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit
 mdefine_line|#define minix_find_first_zero_bit(addr,size) ext2_find_first_zero_bit(addr,size)
-macro_line|#endif /* _ASM_PPC_BITOPS_H */
+macro_line|#endif /* _PPC_BITOPS_H */
 eof

@@ -15,10 +15,10 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &quot;s3blit.h&quot;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb16.h&quot;
+macro_line|#include &lt;video/s3blit.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb16.h&gt;
 macro_line|#ifdef CYBERFBDEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(fmt, args...) printk(KERN_DEBUG &quot;%s: &quot; fmt, __FUNCTION__ , ## args)
@@ -273,7 +273,7 @@ id|Cyber_colour_table
 l_int|256
 )braket
 (braket
-l_int|4
+l_int|3
 )braket
 suffix:semicolon
 DECL|variable|CyberMem
@@ -1549,16 +1549,6 @@ l_int|2
 op_assign
 id|i
 suffix:semicolon
-id|Cyber_colour_table
-(braket
-id|i
-)braket
-(braket
-l_int|3
-)braket
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Just clear the thing for the biggest mode.&n;&t; *&n;&t; * ++Andre, TODO: determine size first, then clear all memory&n;&t; *                (the 3D penguin might need texture memory :-) )&n;&t; */
 id|memset
@@ -1856,10 +1846,16 @@ id|Cyber_setcolreg
 l_int|255
 comma
 l_int|56
+op_lshift
+l_int|8
 comma
 l_int|100
+op_lshift
+l_int|8
 comma
 l_int|160
+op_lshift
+l_int|8
 comma
 l_int|0
 comma
@@ -1973,7 +1969,7 @@ suffix:semicolon
 r_else
 id|fix-&gt;visual
 op_assign
-id|FB_VISUAL_DIRECTCOLOR
+id|FB_VISUAL_TRUECOLOR
 suffix:semicolon
 id|fix-&gt;xpanstep
 op_assign
@@ -2300,7 +2296,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Set a single color register. The values supplied are already&n; *    rounded down to the hardware&squot;s capabilities (according to the&n; *    entries in the var structure). Return != 0 for invalid regno.&n; */
+multiline_comment|/*&n; *    Set a single color register. Return != 0 for invalid regno.&n; */
 DECL|function|Cyber_setcolreg
 r_static
 r_int
@@ -2354,6 +2350,18 @@ r_char
 id|regno
 )paren
 suffix:semicolon
+id|red
+op_rshift_assign
+l_int|10
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|10
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|10
+suffix:semicolon
 id|Cyber_colour_table
 (braket
 id|regno
@@ -2363,8 +2371,6 @@ l_int|0
 )braket
 op_assign
 id|red
-op_amp
-l_int|0xff
 suffix:semicolon
 id|Cyber_colour_table
 (braket
@@ -2375,8 +2381,6 @@ l_int|1
 )braket
 op_assign
 id|green
-op_amp
-l_int|0xff
 suffix:semicolon
 id|Cyber_colour_table
 (braket
@@ -2387,31 +2391,13 @@ l_int|2
 )braket
 op_assign
 id|blue
-op_amp
-l_int|0xff
-suffix:semicolon
-id|Cyber_colour_table
-(braket
-id|regno
-)braket
-(braket
-l_int|3
-)braket
-op_assign
-id|transp
 suffix:semicolon
 id|wb_64
 c_func
 (paren
 l_int|0x3c9
 comma
-(paren
 id|red
-op_amp
-l_int|0xff
-)paren
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 id|wb_64
@@ -2419,13 +2405,7 @@ c_func
 (paren
 l_int|0x3c9
 comma
-(paren
 id|green
-op_amp
-l_int|0xff
-)paren
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 id|wb_64
@@ -2433,13 +2413,7 @@ c_func
 (paren
 l_int|0x3c9
 comma
-(paren
 id|blue
-op_amp
-l_int|0xff
-)paren
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 r_return
@@ -2480,6 +2454,9 @@ op_star
 id|info
 )paren
 (brace
+r_int
+id|t
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2492,8 +2469,7 @@ r_return
 l_int|1
 )paren
 suffix:semicolon
-op_star
-id|red
+id|t
 op_assign
 id|Cyber_colour_table
 (braket
@@ -2504,7 +2480,27 @@ l_int|0
 )braket
 suffix:semicolon
 op_star
-id|green
+id|red
+op_assign
+(paren
+id|t
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|t
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|t
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+id|t
 op_assign
 id|Cyber_colour_table
 (braket
@@ -2515,7 +2511,27 @@ l_int|1
 )braket
 suffix:semicolon
 op_star
-id|blue
+id|green
+op_assign
+(paren
+id|t
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|t
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|t
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+id|t
 op_assign
 id|Cyber_colour_table
 (braket
@@ -2526,15 +2542,30 @@ l_int|2
 )braket
 suffix:semicolon
 op_star
+id|blue
+op_assign
+(paren
+id|t
+op_lshift
+l_int|10
+)paren
+op_or
+(paren
+id|t
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|t
+op_rshift
+l_int|2
+)paren
+suffix:semicolon
+op_star
 id|transp
 op_assign
-id|Cyber_colour_table
-(braket
-id|regno
-)braket
-(braket
-l_int|3
-)braket
+l_int|0
 suffix:semicolon
 r_return
 (paren
@@ -2655,8 +2686,6 @@ id|i
 (braket
 l_int|0
 )braket
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 id|wb_64
@@ -2671,8 +2700,6 @@ id|i
 (braket
 l_int|1
 )braket
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 id|wb_64
@@ -2687,8 +2714,6 @@ id|i
 (braket
 l_int|2
 )braket
-op_rshift
-l_int|2
 )paren
 suffix:semicolon
 )brace
@@ -3673,14 +3698,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|fbhw-&gt;setcolreg
@@ -3704,14 +3721,6 @@ id|con
 dot
 id|var.bits_per_pixel
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -4082,7 +4091,8 @@ r_default
 suffix:colon
 id|display-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4336,14 +4346,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|fbhw-&gt;getcolreg
@@ -4502,14 +4504,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -5107,14 +5101,6 @@ id|currcon
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|fbhw-&gt;getcolreg
@@ -5337,7 +5323,11 @@ id|u_short
 (paren
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -5351,7 +5341,11 @@ id|u_short
 (paren
 id|dy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -5365,7 +5359,11 @@ id|u_short
 (paren
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -5440,7 +5438,11 @@ id|u_short
 (paren
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -5454,7 +5456,11 @@ id|u_short
 (paren
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren

@@ -59,7 +59,7 @@ id|cpmp
 suffix:semicolon
 multiline_comment|/* Pointer to comm processor */
 id|uint
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 id|uint
@@ -67,7 +67,7 @@ id|size
 )paren
 suffix:semicolon
 id|uint
-id|mbx_cpm_hostalloc
+id|m8xx_cpm_hostalloc
 c_func
 (paren
 id|uint
@@ -75,7 +75,7 @@ id|size
 )paren
 suffix:semicolon
 r_void
-id|mbx_cpm_setbrg
+id|m8xx_cpm_setbrg
 c_func
 (paren
 id|uint
@@ -134,7 +134,20 @@ DECL|macro|BD_SC_OV
 mdefine_line|#define BD_SC_OV&t;((ushort)0x0002)&t;/* Overrun */
 DECL|macro|BD_SC_CD
 mdefine_line|#define BD_SC_CD&t;((ushort)0x0001)&t;/* ?? */
-multiline_comment|/* Define enough so I can at least use the MBX serial port as a UART.&n; * The MBX uses SMC1 as the host serial port.&n; */
+multiline_comment|/* Parameter RAM offsets.&n;*/
+DECL|macro|PROFF_SCC1
+mdefine_line|#define PROFF_SCC1&t;((uint)0x0000)
+DECL|macro|PROFF_SCC2
+mdefine_line|#define PROFF_SCC2&t;((uint)0x0100)
+DECL|macro|PROFF_SCC3
+mdefine_line|#define PROFF_SCC3&t;((uint)0x0200)
+DECL|macro|PROFF_SMC1
+mdefine_line|#define PROFF_SMC1&t;((uint)0x0280)
+DECL|macro|PROFF_SCC4
+mdefine_line|#define PROFF_SCC4&t;((uint)0x0300)
+DECL|macro|PROFF_SMC2
+mdefine_line|#define PROFF_SMC2&t;((uint)0x0380)
+multiline_comment|/* Define enough so I can at least use the serial port as a UART.&n; */
 DECL|struct|smc_uart
 r_typedef
 r_struct
@@ -249,10 +262,6 @@ DECL|typedef|smc_uart_t
 )brace
 id|smc_uart_t
 suffix:semicolon
-DECL|macro|PROFF_SMC1
-mdefine_line|#define PROFF_SMC1&t;((uint)0x0280)&t;/* Offset in Parameter RAM */
-DECL|macro|PROFF_SMC2
-mdefine_line|#define PROFF_SMC2&t;((uint)0x0380)
 multiline_comment|/* Function code bits.&n;*/
 DECL|macro|SMC_EB
 mdefine_line|#define SMC_EB&t;((u_char)0x10)&t;/* Set big endian byte order */
@@ -285,7 +294,7 @@ multiline_comment|/* SMC Event and Mask register.&n;*/
 DECL|macro|SMCM_TXE
 mdefine_line|#define&t;SMCM_TXE&t;((unsigned char)0x10)
 DECL|macro|SMCM_BSY
-mdefine_line|#define&t;SMCM_BSY&t;((unsigned char)0x14)
+mdefine_line|#define&t;SMCM_BSY&t;((unsigned char)0x04)
 DECL|macro|SMCM_TX
 mdefine_line|#define&t;SMCM_TX&t;&t;((unsigned char)0x02)
 DECL|macro|SMCM_RX
@@ -466,6 +475,15 @@ DECL|macro|SCC_GSMRL_MODE_HDLC
 mdefine_line|#define SCC_GSMRL_MODE_HDLC&t;((uint)0x00000000)
 DECL|macro|SCC_TODR_TOD
 mdefine_line|#define SCC_TODR_TOD&t;&t;((ushort)0x8000)
+multiline_comment|/* SCC Event and Mask register.&n;*/
+DECL|macro|SCCM_TXE
+mdefine_line|#define&t;SCCM_TXE&t;((unsigned char)0x10)
+DECL|macro|SCCM_BSY
+mdefine_line|#define&t;SCCM_BSY&t;((unsigned char)0x04)
+DECL|macro|SCCM_TX
+mdefine_line|#define&t;SCCM_TX&t;&t;((unsigned char)0x02)
+DECL|macro|SCCM_RX
+mdefine_line|#define&t;SCCM_RX&t;&t;((unsigned char)0x01)
 DECL|struct|scc_param
 r_typedef
 r_struct
@@ -795,8 +813,6 @@ DECL|typedef|scc_enet_t
 )brace
 id|scc_enet_t
 suffix:semicolon
-DECL|macro|PROFF_SCC1
-mdefine_line|#define PROFF_SCC1&t;((uint)0x0000)&t;/* Offset in Parameter RAM */
 multiline_comment|/* Bits in parallel I/O port registers that have to be set/cleared&n; * to configure the pins for SCC1 use.  The TCLK and RCLK seem unique&n; * to the MBX860 board.  Any two of the four available clocks could be&n; * used, and the MPC860 cookbook manual has an example using different&n; * clock pins.&n; */
 DECL|macro|PA_ENET_RXD
 mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0001)
@@ -913,6 +929,145 @@ DECL|macro|BD_ENET_TX_CSL
 mdefine_line|#define BD_ENET_TX_CSL&t;&t;((ushort)0x0001)
 DECL|macro|BD_ENET_TX_STATS
 mdefine_line|#define BD_ENET_TX_STATS&t;((ushort)0x03ff)&t;/* All status bits */
+multiline_comment|/* SCC as UART&n;*/
+DECL|struct|scc_uart
+r_typedef
+r_struct
+id|scc_uart
+(brace
+DECL|member|scc_genscc
+id|sccp_t
+id|scc_genscc
+suffix:semicolon
+DECL|member|scc_res1
+id|uint
+id|scc_res1
+suffix:semicolon
+multiline_comment|/* Reserved */
+DECL|member|scc_res2
+id|uint
+id|scc_res2
+suffix:semicolon
+multiline_comment|/* Reserved */
+DECL|member|scc_maxidl
+id|ushort
+id|scc_maxidl
+suffix:semicolon
+multiline_comment|/* Maximum idle chars */
+DECL|member|scc_idlc
+id|ushort
+id|scc_idlc
+suffix:semicolon
+multiline_comment|/* temp idle counter */
+DECL|member|scc_brkcr
+id|ushort
+id|scc_brkcr
+suffix:semicolon
+multiline_comment|/* Break count register */
+DECL|member|scc_parec
+id|ushort
+id|scc_parec
+suffix:semicolon
+multiline_comment|/* receive parity error counter */
+DECL|member|scc_frmec
+id|ushort
+id|scc_frmec
+suffix:semicolon
+multiline_comment|/* receive framing error counter */
+DECL|member|scc_nosec
+id|ushort
+id|scc_nosec
+suffix:semicolon
+multiline_comment|/* receive noise counter */
+DECL|member|scc_brkec
+id|ushort
+id|scc_brkec
+suffix:semicolon
+multiline_comment|/* receive break condition counter */
+DECL|member|scc_brkln
+id|ushort
+id|scc_brkln
+suffix:semicolon
+multiline_comment|/* last received break length */
+DECL|member|scc_uaddr1
+id|ushort
+id|scc_uaddr1
+suffix:semicolon
+multiline_comment|/* UART address character 1 */
+DECL|member|scc_uaddr2
+id|ushort
+id|scc_uaddr2
+suffix:semicolon
+multiline_comment|/* UART address character 2 */
+DECL|member|scc_rtemp
+id|ushort
+id|scc_rtemp
+suffix:semicolon
+multiline_comment|/* Temp storage */
+DECL|member|scc_toseq
+id|ushort
+id|scc_toseq
+suffix:semicolon
+multiline_comment|/* Transmit out of sequence char */
+DECL|member|scc_char1
+id|ushort
+id|scc_char1
+suffix:semicolon
+multiline_comment|/* control character 1 */
+DECL|member|scc_char2
+id|ushort
+id|scc_char2
+suffix:semicolon
+multiline_comment|/* control character 2 */
+DECL|member|scc_char3
+id|ushort
+id|scc_char3
+suffix:semicolon
+multiline_comment|/* control character 3 */
+DECL|member|scc_char4
+id|ushort
+id|scc_char4
+suffix:semicolon
+multiline_comment|/* control character 4 */
+DECL|member|scc_char5
+id|ushort
+id|scc_char5
+suffix:semicolon
+multiline_comment|/* control character 5 */
+DECL|member|scc_char6
+id|ushort
+id|scc_char6
+suffix:semicolon
+multiline_comment|/* control character 6 */
+DECL|member|scc_char7
+id|ushort
+id|scc_char7
+suffix:semicolon
+multiline_comment|/* control character 7 */
+DECL|member|scc_char8
+id|ushort
+id|scc_char8
+suffix:semicolon
+multiline_comment|/* control character 8 */
+DECL|member|scc_rccm
+id|ushort
+id|scc_rccm
+suffix:semicolon
+multiline_comment|/* receive control character mask */
+DECL|member|scc_rccr
+id|ushort
+id|scc_rccr
+suffix:semicolon
+multiline_comment|/* receive control character register */
+DECL|member|scc_rlbc
+id|ushort
+id|scc_rlbc
+suffix:semicolon
+multiline_comment|/* receive last break character */
+DECL|typedef|scc_uart_t
+)brace
+id|scc_uart_t
+suffix:semicolon
 multiline_comment|/* SCC Event and Mask registers when it is used as a UART.&n;*/
 DECL|macro|UART_SCCM_GLR
 mdefine_line|#define UART_SCCM_GLR&t;&t;((ushort)0x1000)
@@ -936,6 +1091,57 @@ DECL|macro|UART_SCCM_TX
 mdefine_line|#define UART_SCCM_TX&t;&t;((ushort)0x0002)
 DECL|macro|UART_SCCM_RX
 mdefine_line|#define UART_SCCM_RX&t;&t;((ushort)0x0001)
+multiline_comment|/* The SCC PMSR when used as a UART.&n;*/
+DECL|macro|SCU_PMSR_FLC
+mdefine_line|#define SCU_PMSR_FLC&t;&t;((ushort)0x8000)
+DECL|macro|SCU_PMSR_SL
+mdefine_line|#define SCU_PMSR_SL&t;&t;((ushort)0x4000)
+DECL|macro|SCU_PMSR_CL
+mdefine_line|#define SCU_PMSR_CL&t;&t;((ushort)0x3000)
+DECL|macro|SCU_PMSR_UM
+mdefine_line|#define SCU_PMSR_UM&t;&t;((ushort)0x0c00)
+DECL|macro|SCU_PMSR_FRZ
+mdefine_line|#define SCU_PMSR_FRZ&t;&t;((ushort)0x0200)
+DECL|macro|SCU_PMSR_RZS
+mdefine_line|#define SCU_PMSR_RZS&t;&t;((ushort)0x0100)
+DECL|macro|SCU_PMSR_SYN
+mdefine_line|#define SCU_PMSR_SYN&t;&t;((ushort)0x0080)
+DECL|macro|SCU_PMSR_DRT
+mdefine_line|#define SCU_PMSR_DRT&t;&t;((ushort)0x0040)
+DECL|macro|SCU_PMSR_PEN
+mdefine_line|#define SCU_PMSR_PEN&t;&t;((ushort)0x0010)
+DECL|macro|SCU_PMSR_RPM
+mdefine_line|#define SCU_PMSR_RPM&t;&t;((ushort)0x000c)
+DECL|macro|SCU_PMSR_REVP
+mdefine_line|#define SCU_PMSR_REVP&t;&t;((ushort)0x0008)
+DECL|macro|SCU_PMSR_TPM
+mdefine_line|#define SCU_PMSR_TPM&t;&t;((ushort)0x0003)
+DECL|macro|SCU_PMSR_TEVP
+mdefine_line|#define SCU_PMSR_TEVP&t;&t;((ushort)0x0003)
+multiline_comment|/* CPM Transparent mode SCC.&n; */
+DECL|struct|scc_trans
+r_typedef
+r_struct
+id|scc_trans
+(brace
+DECL|member|st_genscc
+id|sccp_t
+id|st_genscc
+suffix:semicolon
+DECL|member|st_cpres
+id|uint
+id|st_cpres
+suffix:semicolon
+multiline_comment|/* Preset CRC */
+DECL|member|st_cmask
+id|uint
+id|st_cmask
+suffix:semicolon
+multiline_comment|/* Constant mask for CRC */
+DECL|typedef|scc_trans_t
+)brace
+id|scc_trans_t
+suffix:semicolon
 multiline_comment|/* CPM interrupts.  There are nearly 32 interrupts generated by CPM&n; * channels or devices.  All of these are presented to the PPC core&n; * as a single interrupt.  The CPM interrupt handler dispatches its&n; * own handlers, in a similar fashion to the PPC core handler.  We&n; * use the table as defined in the manuals (i.e. no special high&n; * priority and SCC1 == SCCa, etc...).&n; */
 DECL|macro|CPMVEC_NR
 mdefine_line|#define CPMVEC_NR&t;&t;32

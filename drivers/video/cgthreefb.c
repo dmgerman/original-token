@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthreefb.c,v 1.1 1998/07/21 14:50:47 jj Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgthreefb.c,v 1.3 1998/09/04 15:43:43 jj Exp $&n; * cgthreefb.c: CGthree frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,9 +13,9 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
-macro_line|#include &quot;sbusfb.h&quot;
+macro_line|#include &lt;video/sbusfb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 multiline_comment|/* Control Register Constants */
 DECL|macro|CG3_CR_ENABLE_INTS
 mdefine_line|#define CG3_CR_ENABLE_INTS      0x80
@@ -203,6 +203,11 @@ r_struct
 id|fb_info_sbusfb
 op_star
 id|fb
+comma
+r_struct
+id|display
+op_star
+id|p
 comma
 r_int
 id|index

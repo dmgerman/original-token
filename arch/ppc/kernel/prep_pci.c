@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.20 1998/06/19 16:48:45 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.22 1998/08/05 20:11:15 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -585,6 +585,114 @@ DECL|variable|__prepdata
 r_static
 r_char
 id|ibm8xx_pci_IRQ_routes
+(braket
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - unused */
+l_int|13
+comma
+multiline_comment|/* Line 1 */
+l_int|10
+comma
+multiline_comment|/* Line 2 */
+l_int|15
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+comma
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * a 6015 ibm board&n; * -- Cort&n; */
+DECL|variable|__prepdata
+r_static
+r_char
+id|ibm6015_pci_IRQ_map
+(braket
+l_int|23
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 -  */
+l_int|1
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|2
+comma
+multiline_comment|/* Slot 13 -  */
+l_int|2
+comma
+multiline_comment|/* Slot 14 -  */
+l_int|1
+comma
+multiline_comment|/* Slot 15 -  */
+l_int|1
+comma
+multiline_comment|/* Slot 16 -  */
+l_int|0
+comma
+multiline_comment|/* Slot 17 -  */
+l_int|2
+comma
+multiline_comment|/* Slot 18 -  */
+l_int|0
+comma
+multiline_comment|/* Slot 19 -  */
+l_int|0
+comma
+multiline_comment|/* Slot 20 -  */
+l_int|0
+comma
+multiline_comment|/* Slot 21 -  */
+l_int|2
+comma
+multiline_comment|/* Slot 22 -  */
+)brace
+suffix:semicolon
+DECL|variable|__prepdata
+r_static
+r_char
+id|ibm6015_pci_IRQ_routes
 (braket
 )braket
 id|__prepdata
@@ -1417,7 +1525,20 @@ r_int
 r_char
 id|pl_id
 suffix:semicolon
-r_if
+multiline_comment|/*&n;&t;&t; * my carolina is 0xf0&n;&t;&t; * 6015 has 0xfc&n;&t;&t; * -- Cort&n;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;IBM ID: %08x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+l_int|0x0852
+)paren
+)paren
+suffix:semicolon
+r_switch
 c_cond
 (paren
 id|inb
@@ -1425,10 +1546,11 @@ c_func
 (paren
 l_int|0x0852
 )paren
-op_eq
-l_int|0xFF
 )paren
 (brace
+r_case
+l_int|0xff
+suffix:colon
 id|Motherboard_map_name
 op_assign
 l_string|&quot;IBM 850/860 Portable&bslash;n&quot;
@@ -1441,9 +1563,27 @@ id|Motherboard_routes
 op_assign
 id|Nobis_pci_IRQ_routes
 suffix:semicolon
-)brace
-r_else
-(brace
+r_break
+suffix:semicolon
+r_case
+l_int|0xfc
+suffix:colon
+id|Motherboard_map_name
+op_assign
+l_string|&quot;IBM 6015&quot;
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|ibm6015_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|ibm6015_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|Motherboard_map_name
 op_assign
 l_string|&quot;IBM 8xx (Carolina)&quot;
@@ -1455,6 +1595,8 @@ suffix:semicolon
 id|Motherboard_routes
 op_assign
 id|ibm8xx_pci_IRQ_routes
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/*printk(&quot;Changing IRQ mode&bslash;n&quot;);*/

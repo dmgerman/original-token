@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.16 1998/06/16 23:34:10 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  $Id: signal.c,v 1.20 1998/09/28 16:47:09 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/signal.c&quot;&n; *    Copyright (C) 1991, 1992 Linus Torvalds&n; *    1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -354,6 +354,50 @@ id|do_exit
 c_func
 (paren
 id|SIGSEGV
+)paren
+suffix:semicolon
+)brace
+id|asmlinkage
+r_int
+DECL|function|sys_sigaltstack
+id|sys_sigaltstack
+c_func
+(paren
+r_const
+id|stack_t
+op_star
+id|uss
+comma
+id|stack_t
+op_star
+id|uoss
+)paren
+(brace
+r_struct
+id|pt_regs
+op_star
+id|regs
+op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+op_amp
+id|uss
+suffix:semicolon
+r_return
+id|do_sigaltstack
+c_func
+(paren
+id|uss
+comma
+id|uoss
+comma
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
 )brace

@@ -1,13 +1,13 @@
-multiline_comment|/*&n; * Makes a prep bootable image which can be dd&squot;d onto&n; * a disk device to make a bootdisk.  Will take&n; * as input a elf executable, strip off the header&n; * and write out a boot image as:&n; * 1) default - strips elf header&n; *      suitable as a network boot image&n; * 2) -pbp - strips elf header and writes out prep boot partition image&n; *      cat or dd onto disk for booting&n; * 3) -asm - strips elf header and writes out as asm data&n; *      useful for generating data for a compressed image&n; *                  -- Cort&n; */
+multiline_comment|/*&n; * Makes a prep bootable image which can be dd&squot;d onto&n; * a disk device to make a bootdisk.  Will take&n; * as input a elf executable, strip off the header&n; * and write out a boot image as:&n; * 1) default - strips elf header&n; *      suitable as a network boot image&n; * 2) -pbp - strips elf header and writes out prep boot partition image&n; *      cat or dd onto disk for booting&n; * 3) -asm - strips elf header and writes out as asm data&n; *      useful for generating data for a compressed image&n; *                  -- Cort&n; *&n; * Modified for x86 hosted builds by Matt Porter &lt;porter@neta.com&gt;&n; */
 macro_line|#ifdef linux
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/stat.h&gt;
+multiline_comment|/*#include &lt;asm/stat.h&gt;*/
 multiline_comment|/*#include &lt;asm/byteorder.h&gt;*/
 multiline_comment|/* the byte swap funcs don&squot;t work here -- Cort */
 macro_line|#else
 macro_line|#include &lt;unistd.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#endif
+macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;errno.h&gt;
 DECL|macro|cpu_to_le32
@@ -626,6 +626,21 @@ id|block
 )paren
 suffix:semicolon
 multiline_comment|/* set entry point and boot image size skipping over elf header */
+macro_line|#ifdef __i386__
+op_star
+id|entry
+op_assign
+l_int|0x400
+multiline_comment|/*+65536*/
+suffix:semicolon
+op_star
+id|length
+op_assign
+id|info.st_size
+op_plus
+l_int|0x400
+suffix:semicolon
+macro_line|#else
 op_star
 id|entry
 op_assign
@@ -647,6 +662,7 @@ op_plus
 l_int|0x400
 )paren
 suffix:semicolon
+macro_line|#endif /* __i386__ */
 multiline_comment|/* sets magic number for msdos partition (used by linux) */
 id|block
 (braket
@@ -714,6 +730,12 @@ l_int|1
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* This has to be 0 on the PowerStack? */
+macro_line|#ifdef __i386__
+id|pe-&gt;beginning_sector
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 id|pe-&gt;beginning_sector
 op_assign
 id|cpu_to_le32
@@ -722,7 +744,20 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* __i386__ */
 macro_line|#endif    
+macro_line|#ifdef __i386__
+id|pe-&gt;number_of_sectors
+op_assign
+l_int|2
+op_star
+l_int|18
+op_star
+l_int|80
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#else
 id|pe-&gt;number_of_sectors
 op_assign
 id|cpu_to_le32
@@ -737,6 +772,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif /* __i386__ */
 id|write
 c_func
 (paren

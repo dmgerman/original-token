@@ -161,6 +161,16 @@ r_int
 id|on
 )paren
 suffix:semicolon
+r_extern
+r_int
+(paren
+op_star
+id|adb_reset_bus
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Values for adb_request flags */
 DECL|macro|ADBREQ_REPLY
 mdefine_line|#define ADBREQ_REPLY&t;1&t;/* expect reply */

@@ -18,6 +18,13 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/8xx_immap.h&gt;
+macro_line|#ifdef CONFIG_MBX
+macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_FADS
+macro_line|#include &lt;asm/fads.h&gt;
+macro_line|#endif
 macro_line|#include &quot;commproc.h&quot;
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 macro_line|#include &lt;linux/console.h&gt;
@@ -43,7 +50,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;0.01&quot;
+l_string|&quot;0.02&quot;
 suffix:semicolon
 r_static
 id|DECLARE_TASK_QUEUE
@@ -106,6 +113,9 @@ DECL|macro|smc_scc_num
 mdefine_line|#define smc_scc_num&t;hub6
 DECL|macro|SCC_NUM_BASE
 mdefine_line|#define SCC_NUM_BASE&t;2
+multiline_comment|/* The index into the CPM registers for the first SCC in the table.&n;*/
+DECL|macro|SCC_IDX_BASE
+mdefine_line|#define SCC_IDX_BASE&t;1
 DECL|variable|rs_table
 r_static
 r_struct
@@ -146,6 +156,36 @@ l_int|1
 )brace
 comma
 multiline_comment|/* SMC1 ttyS0 */
+(brace
+l_int|0
+comma
+l_int|0
+comma
+id|PROFF_SCC2
+comma
+id|CPMVEC_SCC2
+comma
+l_int|0
+comma
+l_int|2
+)brace
+comma
+multiline_comment|/* SCC2 ttyS2 */
+(brace
+l_int|0
+comma
+l_int|0
+comma
+id|PROFF_SCC3
+comma
+id|CPMVEC_SCC3
+comma
+l_int|0
+comma
+l_int|3
+)brace
+comma
+multiline_comment|/* SCC3 ttyS3 */
 )brace
 suffix:semicolon
 DECL|macro|NR_PORTS
@@ -596,7 +636,7 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
 id|sccp-&gt;scc_sccm
@@ -711,7 +751,7 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
 id|sccp-&gt;scc_sccm
@@ -1528,6 +1568,11 @@ id|smc_t
 op_star
 id|smcp
 suffix:semicolon
+r_volatile
+id|scc_t
+op_star
+id|sccp
+suffix:semicolon
 id|info
 op_assign
 (paren
@@ -1556,32 +1601,10 @@ id|cpmp-&gt;cp_smc
 id|idx
 )braket
 suffix:semicolon
-)brace
-r_else
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;SCC UART Interrupt....not ready&quot;
-)paren
-suffix:semicolon
-)brace
 id|events
 op_assign
 id|smcp-&gt;smc_smce
 suffix:semicolon
-macro_line|#ifdef SERIAL_DEBUG_INTR
-id|printk
-c_func
-(paren
-l_string|&quot;rs_interrupt_single(%d, %x)...&quot;
-comma
-id|info-&gt;state-&gt;smc_scc_num
-comma
-id|events
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1612,6 +1635,66 @@ id|smcp-&gt;smc_smce
 op_assign
 id|events
 suffix:semicolon
+)brace
+r_else
+(brace
+id|sccp
+op_assign
+op_amp
+id|cpmp-&gt;cp_scc
+(braket
+id|idx
+op_minus
+id|SCC_IDX_BASE
+)braket
+suffix:semicolon
+id|events
+op_assign
+id|sccp-&gt;scc_scce
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|events
+op_amp
+id|SCCM_RX
+)paren
+id|receive_chars
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|events
+op_amp
+id|SCCM_TX
+)paren
+id|transmit_chars
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|sccp-&gt;scc_scce
+op_assign
+id|events
+suffix:semicolon
+)brace
+macro_line|#ifdef SERIAL_DEBUG_INTR
+id|printk
+c_func
+(paren
+l_string|&quot;rs_interrupt_single(%d, %x)...&quot;
+comma
+id|info-&gt;state-&gt;smc_scc_num
+comma
+id|events
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef modem_control
 id|check_modem_status
 c_func
@@ -1828,6 +1911,11 @@ id|smc_uart_t
 op_star
 id|up
 suffix:semicolon
+r_volatile
+id|scc_uart_t
+op_star
+id|scup
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -1983,6 +2071,7 @@ id|cpmp-&gt;cp_dparam
 id|state-&gt;port
 )braket
 suffix:semicolon
+macro_line|#if 0
 id|up-&gt;smc_mrblr
 op_assign
 l_int|1
@@ -1993,6 +2082,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* wait forever for next char */
+macro_line|#else
+id|up-&gt;smc_mrblr
+op_assign
+id|RX_BUF_SIZE
+suffix:semicolon
+id|up-&gt;smc_maxidl
+op_assign
+id|RX_BUF_SIZE
+suffix:semicolon
+macro_line|#endif
 id|up-&gt;smc_brkcr
 op_assign
 l_int|1
@@ -2008,12 +2107,57 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
+id|scup
+op_assign
+(paren
+id|scc_uart_t
+op_star
+)paren
+op_amp
+id|cpmp-&gt;cp_dparam
+(braket
+id|state-&gt;port
+)braket
+suffix:semicolon
+macro_line|#if 0
+id|scup-&gt;scc_genscc.scc_mrblr
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* receive buffer length */
+id|scup-&gt;scc_maxidl
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* wait forever for next char */
+macro_line|#else
+id|scup-&gt;scc_genscc.scc_mrblr
+op_assign
+id|RX_BUF_SIZE
+suffix:semicolon
+id|scup-&gt;scc_maxidl
+op_assign
+id|RX_BUF_SIZE
+suffix:semicolon
+macro_line|#endif
 id|sccp-&gt;scc_sccm
 op_or_assign
+(paren
+id|UART_SCCM_TX
+op_or
 id|UART_SCCM_RX
+)paren
+suffix:semicolon
+id|sccp-&gt;scc_gsmrl
+op_or_assign
+(paren
+id|SCC_GSMRL_ENR
+op_or
+id|SCC_GSMRL_ENT
+)paren
 suffix:semicolon
 )brace
 id|info-&gt;flags
@@ -2174,13 +2318,26 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
 id|sccp-&gt;scc_sccm
 op_and_assign
 op_complement
+(paren
+id|UART_SCCM_TX
+op_or
 id|UART_SCCM_RX
+)paren
+suffix:semicolon
+id|sccp-&gt;scc_gsmrl
+op_and_assign
+op_complement
+(paren
+id|SCC_GSMRL_ENR
+op_or
+id|SCC_GSMRL_ENT
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2229,12 +2386,16 @@ id|cflag
 comma
 id|cval
 comma
+id|scval
+comma
 id|prev_mode
 suffix:semicolon
 r_int
 id|i
 comma
 id|bits
+comma
+id|sbits
 comma
 id|idx
 suffix:semicolon
@@ -2269,6 +2430,10 @@ id|info-&gt;tty-&gt;termios-&gt;c_cflag
 suffix:semicolon
 multiline_comment|/* Character length programmed into the mode register is the&n;&t; * sum of: 1 start bit, number of data bits, 0 or 1 parity bit,&n;&t; * 1 or 2 stop bits, minus 1.&n;&t; * The value &squot;bits&squot; counts this for us.&n;&t; */
 id|cval
+op_assign
+l_int|0
+suffix:semicolon
+id|scval
 op_assign
 l_int|0
 suffix:semicolon
@@ -2327,6 +2492,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|sbits
+op_assign
+id|bits
+op_minus
+l_int|5
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2340,6 +2511,10 @@ op_or_assign
 id|SMCMR_SL
 suffix:semicolon
 multiline_comment|/* Two stops */
+id|scval
+op_or_assign
+id|SCU_PMSR_SL
+suffix:semicolon
 id|bits
 op_increment
 suffix:semicolon
@@ -2356,6 +2531,10 @@ id|cval
 op_or_assign
 id|SMCMR_PEN
 suffix:semicolon
+id|scval
+op_or_assign
+id|SCU_PMSR_PEN
+suffix:semicolon
 id|bits
 op_increment
 suffix:semicolon
@@ -2370,10 +2549,20 @@ op_amp
 id|PARODD
 )paren
 )paren
+(brace
 id|cval
 op_or_assign
 id|SMCMR_PM_EVEN
 suffix:semicolon
+id|scval
+op_or_assign
+(paren
+id|SCU_PMSR_REVP
+op_or
+id|SCU_PMSR_TEVP
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Determine divisor based on baud rate */
 id|i
 op_assign
@@ -2696,16 +2885,21 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
-id|sccp-&gt;scc_sccm
-op_and_assign
-op_complement
-id|UART_SCCM_RX
+id|sccp-&gt;scc_pmsr
+op_assign
+(paren
+id|sbits
+op_lshift
+l_int|12
+)paren
+op_or
+id|scval
 suffix:semicolon
 )brace
-id|mbx_cpm_setbrg
+id|m8xx_cpm_setbrg
 c_func
 (paren
 id|info-&gt;state-&gt;smc_scc_num
@@ -5725,13 +5919,18 @@ id|cpmp-&gt;cp_scc
 (braket
 id|idx
 op_minus
-id|SCC_NUM_BASE
+id|SCC_IDX_BASE
 )braket
 suffix:semicolon
 id|sccp-&gt;scc_sccm
 op_and_assign
 op_complement
 id|UART_SCCM_RX
+suffix:semicolon
+id|sccp-&gt;scc_gsmrl
+op_and_assign
+op_complement
+id|SCC_GSMRL_ENR
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Before we drop DTR, make sure the UART transmitter&n;&t;&t; * has completely drained; this is especially&n;&t;&t; * important if there is a transmit FIFO!&n;&t;&t; */
@@ -8112,6 +8311,8 @@ r_int
 id|i
 comma
 id|j
+comma
+id|idx
 suffix:semicolon
 id|ushort
 id|chan
@@ -8135,6 +8336,21 @@ r_volatile
 id|smc_uart_t
 op_star
 id|up
+suffix:semicolon
+r_volatile
+id|scc_t
+op_star
+id|scp
+suffix:semicolon
+r_volatile
+id|scc_uart_t
+op_star
+id|sup
+suffix:semicolon
+r_volatile
+id|immap_t
+op_star
+id|immap
 suffix:semicolon
 id|init_bh
 c_func
@@ -8383,6 +8599,15 @@ op_assign
 id|cpmp
 suffix:semicolon
 multiline_comment|/* Get pointer to Communication Processor */
+id|immap
+op_assign
+(paren
+id|immap_t
+op_star
+)paren
+id|IMAP_ADDR
+suffix:semicolon
+multiline_comment|/* and to internal registers */
 multiline_comment|/* Configure SMCs Tx/Rx instead of port B parallel I/O.&n;&t;*/
 id|cp-&gt;cp_pbpar
 op_or_assign
@@ -8398,10 +8623,70 @@ op_and_assign
 op_complement
 l_int|0x00000cc0
 suffix:semicolon
+multiline_comment|/* Configure SCC2 and SCC3 instead of port A parallel I/O.&n;&t; */
+macro_line|#ifndef CONFIG_MBX
+multiline_comment|/* The &quot;standard&quot; configuration through the 860.&n;&t;*/
+id|immap-&gt;im_ioport.iop_papar
+op_or_assign
+l_int|0x003c
+suffix:semicolon
+id|immap-&gt;im_ioport.iop_padir
+op_and_assign
+op_complement
+l_int|0x003c
+suffix:semicolon
+id|immap-&gt;im_ioport.iop_paodr
+op_and_assign
+op_complement
+l_int|0x003c
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* On the MBX, SCC3 is through Port D.&n;&t;*/
+id|immap-&gt;im_ioport.iop_papar
+op_or_assign
+l_int|0x000c
+suffix:semicolon
+multiline_comment|/* SCC2 on port A */
+id|immap-&gt;im_ioport.iop_padir
+op_and_assign
+op_complement
+l_int|0x000c
+suffix:semicolon
+id|immap-&gt;im_ioport.iop_paodr
+op_and_assign
+op_complement
+l_int|0x000c
+suffix:semicolon
+id|immap-&gt;im_ioport.iop_pdpar
+op_or_assign
+l_int|0x0030
+suffix:semicolon
+multiline_comment|/* SCC3 on port D */
+macro_line|#endif
+multiline_comment|/* Since we don&squot;t yet do modem control, connect the port C pins&n;&t; * as general purpose I/O.  This will assert CTS and CD for the&n;&t; * SCC ports.&n;&t; */
+id|immap-&gt;im_ioport.iop_pcdir
+op_or_assign
+l_int|0x03c6
+suffix:semicolon
+id|immap-&gt;im_ioport.iop_pcpar
+op_and_assign
+op_complement
+l_int|0x03c6
+suffix:semicolon
 multiline_comment|/* Wire BRG1 to SMC1 and BRG2 to SMC2.&n;&t;*/
 id|cp-&gt;cp_simode
 op_assign
 l_int|0x10000000
+suffix:semicolon
+multiline_comment|/* Connect SCC2 and SCC3 to NMSI.  Connect BRG3 to SCC2 and&n;&t; * BRG4 to SCC3.&n;&t; */
+id|cp-&gt;cp_sicr
+op_and_assign
+op_complement
+l_int|0x00ffff00
+suffix:semicolon
+id|cp-&gt;cp_sicr
+op_or_assign
+l_int|0x001b1200
 suffix:semicolon
 r_for
 c_loop
@@ -8601,31 +8886,10 @@ op_star
 )paren
 id|info
 suffix:semicolon
-multiline_comment|/* Right now, assume we are using SMCs.&n;&t;&t;&t;*/
-id|sp
-op_assign
-op_amp
-id|cp-&gt;cp_smc
-(braket
-id|state-&gt;smc_scc_num
-)braket
-suffix:semicolon
-id|up
-op_assign
-(paren
-id|smc_uart_t
-op_star
-)paren
-op_amp
-id|cp-&gt;cp_dparam
-(braket
-id|state-&gt;port
-)braket
-suffix:semicolon
 multiline_comment|/* We need to allocate a transmit and receive buffer&n;&t;&t;&t; * descriptors from dual port ram, and a character&n;&t;&t;&t; * buffer area from host mem.&n;&t;&t;&t; */
 id|dp_addr
 op_assign
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 r_sizeof
@@ -8639,7 +8903,7 @@ suffix:semicolon
 multiline_comment|/* Allocate space for FIFOs in the host memory.&n;&t;&t;&t;*/
 id|mem_addr
 op_assign
-id|mbx_cpm_hostalloc
+id|m8xx_cpm_hostalloc
 c_func
 (paren
 id|RX_NUM_FIFO
@@ -8659,10 +8923,6 @@ id|cp-&gt;cp_dpmem
 (braket
 id|dp_addr
 )braket
-suffix:semicolon
-id|up-&gt;smc_rbase
-op_assign
-id|dp_addr
 suffix:semicolon
 id|info-&gt;rx_cur
 op_assign
@@ -8731,9 +8991,75 @@ id|BD_SC_EMPTY
 op_or
 id|BD_SC_INTRPT
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|idx
+op_assign
+id|state-&gt;smc_scc_num
+)paren
+OL
+id|SCC_NUM_BASE
+)paren
+(brace
+id|sp
+op_assign
+op_amp
+id|cp-&gt;cp_smc
+(braket
+id|idx
+)braket
+suffix:semicolon
+id|up
+op_assign
+(paren
+id|smc_uart_t
+op_star
+)paren
+op_amp
+id|cp-&gt;cp_dparam
+(braket
+id|state-&gt;port
+)braket
+suffix:semicolon
+id|up-&gt;smc_rbase
+op_assign
+id|dp_addr
+suffix:semicolon
+)brace
+r_else
+(brace
+id|scp
+op_assign
+op_amp
+id|cp-&gt;cp_scc
+(braket
+id|idx
+op_minus
+id|SCC_IDX_BASE
+)braket
+suffix:semicolon
+id|sup
+op_assign
+(paren
+id|scc_uart_t
+op_star
+)paren
+op_amp
+id|cp-&gt;cp_dparam
+(braket
+id|state-&gt;port
+)braket
+suffix:semicolon
+id|sup-&gt;scc_genscc.scc_rbase
+op_assign
+id|dp_addr
+suffix:semicolon
+)brace
 id|dp_addr
 op_assign
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 r_sizeof
@@ -8747,7 +9073,7 @@ suffix:semicolon
 multiline_comment|/* Allocate space for FIFOs in the host memory.&n;&t;&t;&t;*/
 id|mem_addr
 op_assign
-id|mbx_cpm_hostalloc
+id|m8xx_cpm_hostalloc
 c_func
 (paren
 id|TX_NUM_FIFO
@@ -8767,10 +9093,6 @@ id|cp-&gt;cp_dpmem
 (braket
 id|dp_addr
 )braket
-suffix:semicolon
-id|up-&gt;smc_tbase
-op_assign
-id|dp_addr
 suffix:semicolon
 id|info-&gt;tx_cur
 op_assign
@@ -8837,7 +9159,19 @@ op_or
 id|BD_SC_INTRPT
 )paren
 suffix:semicolon
-multiline_comment|/* Set up the uart parameters in the parameter ram.&n;&t;&t;&t;*/
+r_if
+c_cond
+(paren
+id|idx
+OL
+id|SCC_NUM_BASE
+)paren
+(brace
+id|up-&gt;smc_tbase
+op_assign
+id|dp_addr
+suffix:semicolon
+multiline_comment|/* Set up the uart parameters in the&n;&t;&t;&t;&t; * parameter ram.&n;&t;&t;&t;&t; */
 id|up-&gt;smc_rfcr
 op_assign
 id|SMC_EB
@@ -8846,23 +9180,20 @@ id|up-&gt;smc_tfcr
 op_assign
 id|SMC_EB
 suffix:semicolon
-multiline_comment|/* Set this to 1 for now, so we get single character&n;&t;&t;&t; * interrupts.  Using idle charater time requires&n;&t;&t;&t; * some additional tuning.&n;&t;&t;&t; */
+multiline_comment|/* Set this to 1 for now, so we get single&n;&t;&t;&t;&t; * character interrupts.  Using idle charater&n;&t;&t;&t;&t; * time requires some additional tuning.&n;&t;&t;&t;&t; */
 id|up-&gt;smc_mrblr
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* receive buffer length */
 id|up-&gt;smc_maxidl
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* wait forever for next char */
 id|up-&gt;smc_brkcr
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* number of break chars */
-multiline_comment|/* Send the CPM an initialize command.&n;&t;&t;&t;*/
+multiline_comment|/* Send the CPM an initialize command.&n;&t;&t;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -8899,7 +9230,7 @@ op_amp
 id|CPM_CR_FLG
 )paren
 suffix:semicolon
-multiline_comment|/* Set UART mode, 8 bit, no parity, one stop.&n;&t;&t;&t; * Enable receive and transmit.&n;&t;&t;&t; */
+multiline_comment|/* Set UART mode, 8 bit, no parity, one stop.&n;&t;&t;&t;&t; * Enable receive and transmit.&n;&t;&t;&t;&t; */
 id|sp-&gt;smc_smcmr
 op_assign
 id|smcr_mk_clen
@@ -8910,7 +9241,7 @@ l_int|9
 op_or
 id|SMCMR_SM_UART
 suffix:semicolon
-multiline_comment|/* Disable all interrupts and clear all pending&n;&t;&t;&t; * events.&n;&t;&t;&t; */
+multiline_comment|/* Disable all interrupts and clear all pending&n;&t;&t;&t;&t; * events.&n;&t;&t;&t;&t; */
 id|sp-&gt;smc_smcm
 op_assign
 l_int|0
@@ -8919,6 +9250,169 @@ id|sp-&gt;smc_smce
 op_assign
 l_int|0xff
 suffix:semicolon
+)brace
+r_else
+(brace
+id|sup-&gt;scc_genscc.scc_tbase
+op_assign
+id|dp_addr
+suffix:semicolon
+multiline_comment|/* Set up the uart parameters in the&n;&t;&t;&t;&t; * parameter ram.&n;&t;&t;&t;&t; */
+id|sup-&gt;scc_genscc.scc_rfcr
+op_assign
+id|SMC_EB
+suffix:semicolon
+id|sup-&gt;scc_genscc.scc_tfcr
+op_assign
+id|SMC_EB
+suffix:semicolon
+multiline_comment|/* Set this to 1 for now, so we get single&n;&t;&t;&t;&t; * character interrupts.  Using idle charater&n;&t;&t;&t;&t; * time requires some additional tuning.&n;&t;&t;&t;&t; */
+id|sup-&gt;scc_genscc.scc_mrblr
+op_assign
+l_int|1
+suffix:semicolon
+id|sup-&gt;scc_maxidl
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_brkcr
+op_assign
+l_int|1
+suffix:semicolon
+id|sup-&gt;scc_parec
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_frmec
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_nosec
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_brkec
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_uaddr1
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_uaddr2
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_toseq
+op_assign
+l_int|0
+suffix:semicolon
+id|sup-&gt;scc_char1
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char2
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char3
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char4
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char5
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char6
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char7
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_char8
+op_assign
+l_int|0x8000
+suffix:semicolon
+id|sup-&gt;scc_rccm
+op_assign
+l_int|0xc0ff
+suffix:semicolon
+multiline_comment|/* Send the CPM an initialize command.&n;&t;&t;&t;&t;*/
+r_if
+c_cond
+(paren
+id|state-&gt;smc_scc_num
+op_eq
+l_int|2
+)paren
+id|chan
+op_assign
+id|CPM_CR_CH_SCC2
+suffix:semicolon
+r_else
+id|chan
+op_assign
+id|CPM_CR_CH_SCC3
+suffix:semicolon
+id|cp-&gt;cp_cpcr
+op_assign
+id|mk_cr_cmd
+c_func
+(paren
+id|chan
+comma
+id|CPM_CR_INIT_TRX
+)paren
+op_or
+id|CPM_CR_FLG
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|cp-&gt;cp_cpcr
+op_amp
+id|CPM_CR_FLG
+)paren
+suffix:semicolon
+multiline_comment|/* Set UART mode, 8 bit, no parity, one stop.&n;&t;&t;&t;&t; * Enable receive and transmit.&n;&t;&t;&t;&t; */
+id|scp-&gt;scc_gsmrh
+op_assign
+l_int|0
+suffix:semicolon
+id|scp-&gt;scc_gsmrl
+op_assign
+(paren
+id|SCC_GSMRL_MODE_UART
+op_or
+id|SCC_GSMRL_TDCR_16
+op_or
+id|SCC_GSMRL_RDCR_16
+)paren
+suffix:semicolon
+multiline_comment|/* Disable all interrupts and clear all pending&n;&t;&t;&t;&t; * events.&n;&t;&t;&t;&t; */
+id|scp-&gt;scc_sccm
+op_assign
+l_int|0
+suffix:semicolon
+id|scp-&gt;scc_scce
+op_assign
+l_int|0xffff
+suffix:semicolon
+id|scp-&gt;scc_dsr
+op_assign
+l_int|0x7e7e
+suffix:semicolon
+id|scp-&gt;scc_pmsr
+op_assign
+l_int|0x3000
+suffix:semicolon
+)brace
 multiline_comment|/* Install interrupt handler.&n;&t;&t;&t;*/
 id|cpm_install_handler
 c_func
@@ -8931,7 +9425,7 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/* Set up the baud rate generator.&n;&t;&t;&t;*/
-id|mbx_cpm_setbrg
+id|m8xx_cpm_setbrg
 c_func
 (paren
 id|state-&gt;smc_scc_num
@@ -9063,7 +9557,7 @@ multiline_comment|/* Enable SMC1 instead of Port B I/O */
 multiline_comment|/* Allocate space for two buffer descriptors in the DP ram.&n;&t;*/
 id|dp_addr
 op_assign
-id|mbx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 r_sizeof
@@ -9077,7 +9571,7 @@ suffix:semicolon
 multiline_comment|/* Allocate space for two 2 byte FIFOs in the host memory.&n;&t;*/
 id|mem_addr
 op_assign
-id|mbx_cpm_hostalloc
+id|m8xx_cpm_hostalloc
 c_func
 (paren
 l_int|4
@@ -9212,7 +9706,7 @@ op_or
 id|SMCMR_SM_UART
 suffix:semicolon
 multiline_comment|/* Set up the baud rate generator.&n;&t;*/
-id|mbx_cpm_setbrg
+id|m8xx_cpm_setbrg
 c_func
 (paren
 id|ser-&gt;smc_scc_num

@@ -11,16 +11,11 @@ r_void
 op_star
 id|ihandle
 suffix:semicolon
-macro_line|#ifndef FB_MAX
-DECL|macro|FB_MAX
-mdefine_line|#define FB_MAX&t;8&t;/* I don&squot;t want to include the whole console stuff */
-macro_line|#endif
 r_extern
 r_char
 op_star
 id|prom_display_paths
 (braket
-id|FB_MAX
 )braket
 suffix:semicolon
 r_extern
@@ -233,12 +228,14 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Prototypes */
+r_extern
 r_void
 m_abort
 (paren
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|prom_init
 c_func
@@ -250,6 +247,18 @@ comma
 id|prom_entry
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|prom_print
+c_func
+(paren
+r_const
+r_char
+op_star
+id|msg
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|finish_device_tree
 c_func
@@ -257,6 +266,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|device_node
 op_star
@@ -269,6 +279,7 @@ op_star
 id|name
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|device_node
 op_star
@@ -281,6 +292,7 @@ op_star
 id|type
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|device_node
 op_star
@@ -293,6 +305,7 @@ op_star
 id|path
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|device_node
 op_star
@@ -310,6 +323,7 @@ op_star
 id|compat
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|device_node
 op_star
@@ -319,6 +333,7 @@ c_func
 id|phandle
 )paren
 suffix:semicolon
+r_extern
 r_int
 r_char
 op_star
@@ -340,6 +355,7 @@ op_star
 id|lenp
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|print_properties
 c_func
@@ -350,6 +366,7 @@ op_star
 id|node
 )paren
 suffix:semicolon
+r_extern
 r_int
 id|call_rtas
 c_func

@@ -6,7 +6,13 @@ mdefine_line|#define __ASMPPC_IDE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_APUS
 macro_line|#include &lt;linux/hdreg.h&gt;
+DECL|macro|ide_init_hwif_ports
+mdefine_line|#define ide_init_hwif_ports m68k_ide_init_hwif_ports 
 macro_line|#include &lt;asm-m68k/ide.h&gt;
+DECL|macro|ide_init_hwif_ports
+macro_line|#undef ide_init_hwif_ports
+DECL|macro|insw
+macro_line|#undef insw
 r_void
 id|ide_init_hwif_ports
 c_func
@@ -53,8 +59,6 @@ r_int
 id|ns
 )paren
 suffix:semicolon
-DECL|macro|insw
-macro_line|#undef insw
 DECL|macro|insw
 mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac &amp;&amp; _machine != _MACH_apus )&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
 DECL|macro|outsw

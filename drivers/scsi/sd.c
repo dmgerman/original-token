@@ -2491,6 +2491,8 @@ id|sd_devname
 c_func
 (paren
 id|devm
+op_rshift
+l_int|4
 comma
 id|nbuff
 )paren

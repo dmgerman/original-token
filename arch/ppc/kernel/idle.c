@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.48 1998/07/30 11:29:22 davem Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.50 1998/08/18 16:19:25 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -96,13 +96,11 @@ suffix:semicolon
 multiline_comment|/* endless loop with no priority at all */
 id|current-&gt;priority
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 id|current-&gt;counter
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 id|check_pgt_cache
 c_func
@@ -149,6 +147,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren

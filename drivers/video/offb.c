@@ -18,9 +18,9 @@ macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;macmodes.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/macmodes.h&gt;
 DECL|variable|currcon
 r_static
 r_int
@@ -679,11 +679,12 @@ op_star
 id|display
 suffix:semicolon
 r_int
+r_int
 id|oldbpp
 op_assign
-op_minus
-l_int|1
-comma
+l_int|0
+suffix:semicolon
+r_int
 id|err
 suffix:semicolon
 r_int
@@ -916,14 +917,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|offb_getcolreg
@@ -1105,14 +1098,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|offb_setcolreg
@@ -1208,6 +1193,19 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_S3TRIO */
+macro_line|#ifdef CONFIG_FB_IMSTT
+r_extern
+r_void
+id|imsttfb_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_CT65550
 r_extern
 r_void
@@ -1234,6 +1232,19 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_CONTROL */
+macro_line|#ifdef CONFIG_FB_VALKYRIE
+r_extern
+r_void
+id|valkyrie_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_VALKYRIE */
 macro_line|#ifdef CONFIG_FB_PLATINUM
 r_extern
 r_void
@@ -1266,12 +1277,14 @@ op_star
 id|dp
 suffix:semicolon
 r_int
-id|dpy
-comma
 id|i
 comma
 op_star
 id|pp
+suffix:semicolon
+r_int
+r_int
+id|dpy
 comma
 id|len
 suffix:semicolon
@@ -1381,6 +1394,32 @@ id|dp
 r_continue
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_S3TRIO */
+macro_line|#ifdef CONFIG_FB_IMSTT
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;IMS,tt128mb&quot;
+comma
+l_int|11
+)paren
+)paren
+(brace
+id|imsttfb_of_init
+c_func
+(paren
+id|dp
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_FB_CT65550
 r_if
 c_cond
@@ -1429,6 +1468,30 @@ r_continue
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_CONTROL */
+macro_line|#ifdef CONFIG_FB_VALKYRIE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;valkyrie&quot;
+)paren
+)paren
+(brace
+id|valkyrie_of_init
+c_func
+(paren
+id|dp
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_FB_VALKYRIE */
 macro_line|#ifdef CONFIG_FB_PLATINUM
 r_if
 c_cond
@@ -1445,14 +1508,6 @@ l_int|8
 )paren
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;jonh: offb_init sees device node %s&bslash;n&quot;
-comma
-id|dp-&gt;name
-)paren
-suffix:semicolon
 id|platinum_of_init
 c_func
 (paren
@@ -1476,6 +1531,29 @@ id|fb_info_offb
 )paren
 comma
 id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info
+op_eq
+l_int|0
+)paren
+r_continue
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|info
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|info
+)paren
 )paren
 suffix:semicolon
 id|fix
@@ -1812,6 +1890,24 @@ id|i
 dot
 id|address
 suffix:semicolon
+multiline_comment|/* kludge for valkyrie */
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;valkyrie&quot;
+)paren
+op_eq
+l_int|0
+)paren
+id|address
+op_add_assign
+l_int|0x1000
+suffix:semicolon
 )brace
 id|fix-&gt;smem_start
 op_assign
@@ -2052,7 +2148,8 @@ suffix:semicolon
 macro_line|#else
 id|disp-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 macro_line|#endif
 id|disp-&gt;scrollmode
@@ -2411,14 +2508,6 @@ id|currcon
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|offb_getcolreg
@@ -2632,6 +2721,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|info2-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|info2-&gt;palette
 (braket
 id|regno
@@ -2642,6 +2742,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|info2-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|info2-&gt;palette
 (braket
 id|regno
@@ -2652,12 +2763,28 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
 id|info2-&gt;palette
 (braket
 id|regno
 )braket
 dot
 id|blue
+op_lshift
+l_int|8
+)paren
+op_or
+id|info2-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -2715,6 +2842,18 @@ l_int|255
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|info2-&gt;palette
 (braket
@@ -2832,14 +2971,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|offb_setcolreg
@@ -2863,14 +2994,6 @@ id|con
 dot
 id|var.bits_per_pixel
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/drivers/video/mdacon.c -- Low level MDA based console driver&n; *&n; *&t;(c) 1998 Andrew Apted &lt;ajapted@netspace.net.au&gt;&n; *&n; *  This file is based on the VGA console driver (vgacon.c):&n; *&t;&n; *&t;Created 28 Sep 1997 by Geert Uytterhoeven&n; *&n; *&t;Rewritten by Martin Mares &lt;mj@ucw.cz&gt;, July 1998&n; *&n; *  and on the old console.c, vga.c and vesa_blank.c drivers:&n; *&n; *&t;Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;    1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

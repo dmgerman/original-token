@@ -22,10 +22,10 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb16.h&quot;
-macro_line|#include &quot;macmodes.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+macro_line|#include &lt;video/macmodes.h&gt;
 DECL|variable|currcon
 r_static
 r_int
@@ -113,6 +113,15 @@ r_int
 r_char
 op_star
 id|save_framebuffer
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB16
+DECL|member|fbcon_cfb16_cmap
+id|u16
+id|fbcon_cfb16_cmap
+(braket
+l_int|16
+)braket
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -810,14 +819,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|chipsfb_getcolreg
@@ -961,9 +962,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|disp-&gt;var
-comma
 id|kspc
 comma
 id|chipsfb_setcolreg
@@ -1091,9 +1089,6 @@ c_func
 (paren
 op_amp
 id|old_disp-&gt;cmap
-comma
-op_amp
-id|old_disp-&gt;var
 comma
 l_int|1
 comma
@@ -1356,6 +1351,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|p-&gt;palette
 (braket
 id|regno
@@ -1366,6 +1372,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|p-&gt;palette
 (braket
 id|regno
@@ -1376,12 +1393,28 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
 id|p-&gt;palette
 (braket
 id|regno
 )braket
 dot
 id|blue
+op_lshift
+l_int|8
+)paren
+op_or
+id|p-&gt;palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -1435,6 +1468,18 @@ l_int|255
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|p-&gt;palette
 (braket
@@ -1517,7 +1562,7 @@ id|regno
 OL
 l_int|16
 )paren
-id|fbcon_cfb16_cmap
+id|p-&gt;fbcon_cfb16_cmap
 (braket
 id|regno
 )braket
@@ -1586,14 +1631,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|chipsfb_setcolreg
@@ -1602,29 +1639,32 @@ id|info
 )paren
 suffix:semicolon
 r_else
-id|fb_set_cmap
-c_func
-(paren
-id|fb_default_cmap
-c_func
-(paren
-l_int|1
-op_lshift
+(brace
+r_int
+id|size
+op_assign
 id|fb_display
 (braket
 id|con
 )braket
 dot
 id|var.bits_per_pixel
+op_eq
+l_int|16
+ques
+c_cond
+l_int|32
+suffix:colon
+l_int|256
+suffix:semicolon
+id|fb_set_cmap
+c_func
+(paren
+id|fb_default_cmap
+c_func
+(paren
+id|size
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -1634,11 +1674,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
-multiline_comment|/* from drivers/macintosh/pmac-cons.h */
-DECL|macro|VMODE_800_600_60
-mdefine_line|#define VMODE_800_600_60&t;10&t;/* 800x600, 60Hz */
-macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
+)brace
 DECL|function|chips_set_bitdepth
 r_static
 r_void
@@ -1769,6 +1805,10 @@ id|disp-&gt;dispsw
 op_assign
 op_amp
 id|fbcon_cfb16
+suffix:semicolon
+id|disp-&gt;dispsw_data
+op_assign
+id|p-&gt;fbcon_cfb16_cmap
 suffix:semicolon
 macro_line|#else
 id|disp-&gt;dispsw
@@ -1961,20 +2001,6 @@ id|p
 r_int
 id|i
 suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|p-&gt;fix
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|p-&gt;fix
-)paren
-)paren
-suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -2016,20 +2042,6 @@ suffix:semicolon
 id|p-&gt;fix.line_length
 op_assign
 l_int|800
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|p-&gt;var
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|p-&gt;var
-)paren
-)paren
 suffix:semicolon
 id|p-&gt;var.xres
 op_assign
@@ -2091,20 +2103,6 @@ op_assign
 id|p-&gt;var.vsync_len
 op_assign
 l_int|8
-suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|p-&gt;disp
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|p-&gt;disp
-)paren
-)paren
 suffix:semicolon
 id|p-&gt;disp.var
 op_assign
@@ -2512,6 +2510,20 @@ op_eq
 l_int|0
 )paren
 r_return
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|p
+)paren
+)paren
 suffix:semicolon
 id|addr
 op_assign

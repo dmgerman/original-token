@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * $Id: residual.c,v 1.10 1998/07/09 22:23:18 cort Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
+multiline_comment|/*&n; * $Id: residual.c,v 1.12 1998/08/27 23:15:56 paulus Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;IBM Power Personal Systems Architecture&n; *&t;Residual Data&n; * &t;Document Number: PPS-AR-FW0001&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/pnp.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#if 0
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
+DECL|variable|PnP_BASE_TYPES
 r_const
 r_char
 op_star
@@ -59,6 +60,7 @@ l_string|&quot;ServiceProcessor&quot;
 )brace
 suffix:semicolon
 multiline_comment|/* Device Sub Type Codes */
+DECL|variable|PnP_SUB_TYPES
 r_const
 r_int
 r_char
@@ -174,6 +176,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* Device Interface Type Codes */
+DECL|variable|PnP_INTERFACES
 r_const
 r_int
 r_char
@@ -384,6 +387,7 @@ multiline_comment|/* 10/5/95                            */
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|function|PnP_SUB_TYPE_STR
 r_static
 r_const
 r_int
@@ -460,6 +464,7 @@ l_string|&quot;Unknown !&quot;
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|PnP_INTERFACE_STR
 r_static
 r_const
 r_int
@@ -550,6 +555,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|printsmallvendor
 r_static
 r_void
 id|printsmallvendor
@@ -574,6 +580,7 @@ id|decomp
 l_int|4
 )braket
 suffix:semicolon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;S14_Pack.S14_Data.S14_PPCPack
 r_switch
 c_cond
@@ -728,8 +735,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+DECL|macro|p
 macro_line|#undef p
 )brace
+DECL|function|printsmallpacket
 r_static
 r_void
 id|printsmallpacket
@@ -814,6 +823,7 @@ suffix:semicolon
 r_case
 id|IRQFormat
 suffix:colon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;S4_Pack
 id|printk
 c_func
@@ -870,12 +880,14 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+DECL|macro|p
 macro_line|#undef p
 r_break
 suffix:semicolon
 r_case
 id|DMAFormat
 suffix:colon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;S5_Pack
 id|printk
 c_func
@@ -887,6 +899,7 @@ comma
 id|p.DMAInfo
 )paren
 suffix:semicolon
+DECL|macro|p
 macro_line|#undef p
 r_break
 suffix:semicolon
@@ -915,6 +928,7 @@ suffix:semicolon
 r_case
 id|IOPort
 suffix:colon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;S8_Pack
 id|printk
 c_func
@@ -958,12 +972,14 @@ comma
 id|p.IONum
 )paren
 suffix:semicolon
+DECL|macro|p
 macro_line|#undef p
 r_break
 suffix:semicolon
 r_case
 id|FixedIOPort
 suffix:colon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;S9_Pack
 id|printk
 c_func
@@ -1005,6 +1021,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+DECL|macro|p
 macro_line|#undef p&t;&t; 
 r_break
 suffix:semicolon
@@ -1060,6 +1077,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+DECL|function|printlargevendor
 r_static
 r_void
 id|printlargevendor
@@ -1183,6 +1201,7 @@ comma
 op_star
 id|t
 suffix:semicolon
+DECL|macro|p
 mdefine_line|#define p pkt-&gt;L4_Pack.L4_Data.L4_PPCPack
 r_switch
 c_cond
@@ -1954,9 +1973,11 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+DECL|macro|p
 macro_line|#undef p
 )brace
 )brace
+DECL|function|printlargepacket
 r_static
 r_void
 id|printlargepacket
@@ -1970,9 +1991,6 @@ r_int
 id|size
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2012,6 +2030,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+DECL|function|printpackets
 r_static
 r_void
 id|printpackets
@@ -2027,9 +2046,6 @@ op_star
 id|cat
 )paren
 (brace
-id|PnP_TAG_PACKET
-id|tmp
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2131,6 +2147,7 @@ id|END_TAG
 )paren
 suffix:semicolon
 )brace
+DECL|function|print_residual_device_info
 r_void
 id|print_residual_device_info
 c_func
@@ -2141,18 +2158,12 @@ r_void
 r_int
 id|i
 suffix:semicolon
-r_union
-id|_PnP_TAG_PACKET
-op_star
-id|pkt
-suffix:semicolon
 id|PPC_DEVICE
 op_star
 id|dev
 suffix:semicolon
+DECL|macro|did
 mdefine_line|#define did dev-&gt;DeviceId
-r_return
-suffix:semicolon
 multiline_comment|/* make sure we have residual data first */
 r_if
 c_cond
@@ -2465,6 +2476,11 @@ comma
 id|s
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;AllocatedOffset
+)paren
 id|printpackets
 c_func
 (paren
@@ -2482,6 +2498,11 @@ comma
 l_string|&quot;allocated&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;PossibleOffset
+)paren
 id|printpackets
 c_func
 (paren
@@ -2499,6 +2520,11 @@ comma
 l_string|&quot;possible&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;CompatibleOffset
+)paren
 id|printpackets
 c_func
 (paren
@@ -2518,6 +2544,7 @@ l_string|&quot;compatible&quot;
 suffix:semicolon
 )brace
 )brace
+DECL|function|printVPD
 r_static
 r_void
 id|printVPD
@@ -2526,6 +2553,7 @@ c_func
 r_void
 )paren
 (brace
+DECL|macro|vpd
 mdefine_line|#define vpd res-&gt;VitalProductData
 r_int
 id|ps
@@ -3243,7 +3271,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;
-macro_line|#endif /* 0 */
 multiline_comment|/* Returns the device index in the residual data, &n;   any of the search items may be set as -1 for wildcard,&n;   DevID number field (second halfword) is big endian ! &n;&n;   Examples:&n;   - search for the Interrupt controller (8259 type), 2 methods:&n;     1) i8259 = residual_find_device(~0, &n;                                     NULL, &n;&t;&t;&t;&t;     SystemPeripheral, &n;&t;&t;&t;&t;     ProgrammableInterruptController, &n;&t;&t;&t;&t;     ISA_PIC, &n;&t;&t;&t;&t;     0);&n;     2) i8259 = residual_find_device(~0, &quot;PNP0000&quot;, -1, -1, -1, 0) &n;&n;   - search for the first two serial devices, whatever their type)&n;     iserial1 = residual_find_device(~0,NULL,&n;                                     CommunicationsDevice,&n;&t;&t;&t;&t;     RS232Device,&n;&t;&t;&t;&t;     -1, 0)&n;     iserial2 = residual_find_device(~0,NULL,&n;                                     CommunicationsDevice,&n;&t;&t;&t;&t;     RS232Device,&n;&t;&t;&t;&t;     -1, 1)&n;   - but search for typical COM1 and COM2 is not easy due to the&n;     fact that the interface may be anything and the name &quot;PNP0500&quot; or &n;     &quot;PNP0501&quot;. Quite bad. &n;&n;*/
 multiline_comment|/* devid are easier to uncompress than to compress, so to minimize bloat&n;in this rarely used area we unencode and compare */
 multiline_comment|/* in residual data number is big endian in the device table and&n;little endian in the heap, so we use two parameters to avoid writing&n;two very similar functions */
@@ -3548,6 +3575,136 @@ l_int|0xffff
 comma
 id|DevID
 )paren
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|n
+op_decrement
+)paren
+)paren
+r_return
+id|res-&gt;Devices
+op_plus
+id|i
+suffix:semicolon
+DECL|macro|Dev
+macro_line|#undef Dev
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|residual_find_device_id
+id|PPC_DEVICE
+op_star
+id|residual_find_device_id
+c_func
+(paren
+r_int
+r_int
+id|BusMask
+comma
+r_int
+r_int
+id|DevID
+comma
+r_int
+id|BaseType
+comma
+r_int
+id|SubType
+comma
+r_int
+id|Interface
+comma
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|res-&gt;ResidualLength
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|res-&gt;ActualNumDevices
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+DECL|macro|Dev
+mdefine_line|#define Dev res-&gt;Devices[i].DeviceId
+r_if
+c_cond
+(paren
+(paren
+id|Dev.BusId
+op_amp
+id|BusMask
+)paren
+op_logical_and
+(paren
+id|BaseType
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|Dev.BaseType
+op_eq
+id|BaseType
+)paren
+op_logical_and
+(paren
+id|SubType
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|Dev.SubType
+op_eq
+id|SubType
+)paren
+op_logical_and
+(paren
+id|Interface
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|Dev.Interface
+op_eq
+id|Interface
+)paren
+op_logical_and
+(paren
+id|DevID
+op_eq
+l_int|0xffff
+op_logical_or
+(paren
+id|Dev.DevId
+op_amp
+l_int|0xffff
+)paren
+op_eq
+id|DevID
 )paren
 op_logical_and
 op_logical_neg

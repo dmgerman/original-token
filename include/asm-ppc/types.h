@@ -1,12 +1,6 @@
 macro_line|#ifndef _PPC_TYPES_H
 DECL|macro|_PPC_TYPES_H
 mdefine_line|#define _PPC_TYPES_H
-DECL|typedef|umode_t
-r_typedef
-r_int
-r_int
-id|umode_t
-suffix:semicolon
 multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
 DECL|typedef|__s8
 r_typedef
@@ -62,6 +56,12 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
+DECL|typedef|umode_t
+r_typedef
+r_int
+r_int
+id|umode_t
+suffix:semicolon
 DECL|typedef|s8
 r_typedef
 r_int

@@ -189,6 +189,7 @@ suffix:semicolon
 DECL|function|mtrr_del
 r_static
 id|__inline__
+r_int
 id|mtrr_del
 (paren
 r_int

@@ -5,7 +5,15 @@ mdefine_line|#define _ASM_IRQ_H
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* for is_prep() */
 macro_line|#ifndef CONFIG_8xx
 macro_line|#ifdef CONFIG_APUS
+DECL|macro|enable_irq
+mdefine_line|#define enable_irq m68k_enable_irq
+DECL|macro|disable_irq
+mdefine_line|#define disable_irq m68k_disable_irq
 macro_line|#include &lt;asm-m68k/irq.h&gt;
+DECL|macro|enable_irq
+macro_line|#undef enable_irq
+DECL|macro|disable_irq
+macro_line|#undef disable_irq
 macro_line|#else /* CONFIG_APUS */
 multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be powermac&n; * at present (G3 powermacs have 64).&n; */
 DECL|macro|NR_IRQS
@@ -114,11 +122,13 @@ DECL|macro|SIU_LEVEL7
 mdefine_line|#define&t;SIU_LEVEL7&t;15
 multiline_comment|/* The internal interrupts we can configure as we see fit.&n; * My personal preference is CPM at level 2, which puts it above the&n; * MBX PCI/ISA/IDE interrupts.&n; */
 DECL|macro|PIT_INTERRUPT
-mdefine_line|#define PIT_INTERRUPT&t;SIU_LEVEL0
+mdefine_line|#define PIT_INTERRUPT&t;&t;SIU_LEVEL0
 DECL|macro|CPM_INTERRUPT
-mdefine_line|#define CPM_INTERRUPT&t;SIU_LEVEL2
+mdefine_line|#define CPM_INTERRUPT&t;&t;SIU_LEVEL2
+DECL|macro|PCMCIA_INTERRUPT
+mdefine_line|#define PCMCIA_INTERRUPT&t;SIU_LEVEL6
 DECL|macro|DEC_INTERRUPT
-mdefine_line|#define DEC_INTERRUPT&t;SIU_LEVEL7
+mdefine_line|#define DEC_INTERRUPT&t;&t;SIU_LEVEL7
 multiline_comment|/* Some internal interrupt registers use an 8-bit mask for the interrupt&n; * level instead of a number.&n; */
 DECL|macro|mk_int_int_mask
 mdefine_line|#define&t;mk_int_int_mask(IL) (1 &lt;&lt; (7 - (IL/2)))
@@ -137,6 +147,10 @@ mdefine_line|#define COMM_L_INT&t;SIU_IRQ6&t;/* MBX Comm expansion connector pin
 DECL|macro|STOP_ABRT_INT
 mdefine_line|#define STOP_ABRT_INT&t;SIU_IRQ7&t;/* Stop/Abort header pin */
 macro_line|#endif /* CONFIG_MBX */
+macro_line|#ifdef CONFIG_FADS
+DECL|macro|FEC_INTERRUPT
+mdefine_line|#define FEC_INTERRUPT&t;SIU_LEVEL1&t;/* FEC interrupt */
+macro_line|#endif
 multiline_comment|/* always the same on MBX -- Cort */
 DECL|function|irq_cannonicalize
 r_static

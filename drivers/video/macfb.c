@@ -18,10 +18,10 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/macintosh.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 multiline_comment|/* conditionalize these ?? */
-macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#include &quot;fbcon-cfb2.h&quot;
-macro_line|#include &quot;fbcon-cfb4.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
+macro_line|#include &lt;video/fbcon-cfb2.h&gt;
+macro_line|#include &lt;video/fbcon-cfb4.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|variable|macfb_defined
@@ -744,7 +744,8 @@ r_default
 suffix:colon
 id|display-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -850,14 +851,6 @@ id|fb_get_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -1031,14 +1024,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma

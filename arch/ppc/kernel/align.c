@@ -1318,6 +1318,9 @@ id|current-&gt;tss.fpr
 (braket
 id|reg
 )braket
+comma
+op_amp
+id|current-&gt;tss.fpscr
 )paren
 suffix:semicolon
 multiline_comment|/* current-&gt;tss.fpr[reg] = data.f; */
@@ -1362,6 +1365,9 @@ id|reg
 comma
 op_amp
 id|data.f
+comma
+op_amp
+id|current-&gt;tss.fpscr
 )paren
 suffix:semicolon
 multiline_comment|/* data.f = current-&gt;tss.fpr[reg]; */

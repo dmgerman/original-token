@@ -1,7 +1,7 @@
 macro_line|#ifndef _PPC_BYTEORDER_H
 DECL|macro|_PPC_BYTEORDER_H
 mdefine_line|#define _PPC_BYTEORDER_H
-multiline_comment|/*&n; *  $Id: byteorder.h,v 1.13 1998/08/03 19:05:11 geert Exp $&n; */
+multiline_comment|/*&n; *  $Id: byteorder.h,v 1.14 1998/08/12 05:07:12 paulus Exp $&n; */
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifdef __GNUC__
 DECL|function|ld_le16
@@ -33,6 +33,12 @@ id|val
 suffix:colon
 l_string|&quot;r&quot;
 (paren
+id|addr
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
 id|addr
 )paren
 )paren
@@ -109,6 +115,12 @@ id|val
 suffix:colon
 l_string|&quot;r&quot;
 (paren
+id|addr
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
 id|addr
 )paren
 )paren

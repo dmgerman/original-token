@@ -12,13 +12,14 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &quot;fbcon-mfb.h&quot;
-macro_line|#include &quot;fbcon-cfb2.h&quot;
-macro_line|#include &quot;fbcon-cfb4.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;fbcon-cfb16.h&quot;
-macro_line|#include &quot;fbcon-cfb24.h&quot;
-macro_line|#include &quot;fbcon-cfb32.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-mfb.h&gt;
+macro_line|#include &lt;video/fbcon-cfb2.h&gt;
+macro_line|#include &lt;video/fbcon-cfb4.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/fbcon-cfb16.h&gt;
+macro_line|#include &lt;video/fbcon-cfb24.h&gt;
+macro_line|#include &lt;video/fbcon-cfb32.h&gt;
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 multiline_comment|/*&n;     *  RAM we reserve for the frame buffer. This defines the maximum screen&n;     *  size&n;     *&n;     *  The default can be overridden if the driver is compiled as a module&n;     */
@@ -83,6 +84,40 @@ id|palette
 (braket
 l_int|256
 )braket
+suffix:semicolon
+r_static
+r_union
+(brace
+macro_line|#ifdef FBCON_HAS_CFB16
+DECL|member|cfb16
+id|u16
+id|cfb16
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB24
+DECL|member|cfb24
+id|u32
+id|cfb24
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef FBCON_HAS_CFB32
+DECL|member|cfb32
+id|u32
+id|cfb32
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
+DECL|variable|fbcon_cmap
+)brace
+id|fbcon_cmap
 suffix:semicolon
 DECL|variable|vfb_name
 r_static
@@ -1136,6 +1171,10 @@ op_assign
 op_amp
 id|fbcon_cfb16
 suffix:semicolon
+id|display-&gt;dispsw_data
+op_assign
+id|fbcon_cmap.cfb16
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -1147,6 +1186,10 @@ id|display-&gt;dispsw
 op_assign
 op_amp
 id|fbcon_cfb24
+suffix:semicolon
+id|display-&gt;dispsw_data
+op_assign
+id|fbcon_cmap.cfb24
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1160,6 +1203,10 @@ op_assign
 op_amp
 id|fbcon_cfb32
 suffix:semicolon
+id|display-&gt;dispsw_data
+op_assign
+id|fbcon_cmap.cfb32
+suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
@@ -1167,7 +1214,8 @@ r_default
 suffix:colon
 id|display-&gt;dispsw
 op_assign
-l_int|NULL
+op_amp
+id|fbcon_dummy
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1410,14 +1458,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|vfb_getcolreg
@@ -1576,14 +1616,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -1926,14 +1958,6 @@ id|currcon
 )braket
 dot
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -2408,6 +2432,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -2418,6 +2453,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -2428,12 +2474,28 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
 id|palette
 (braket
 id|regno
 )braket
 dot
 id|blue
+op_lshift
+l_int|8
+)paren
+op_or
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -2476,6 +2538,18 @@ l_int|255
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|palette
 (braket
@@ -2553,14 +2627,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|vfb_setcolreg
@@ -2584,14 +2650,6 @@ id|con
 dot
 id|var.bits_per_pixel
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma

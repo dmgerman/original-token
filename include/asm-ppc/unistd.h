@@ -355,19 +355,31 @@ mdefine_line|#define __NR_rt_sigprocmask&t;174
 DECL|macro|__NR_rt_sigpending
 mdefine_line|#define __NR_rt_sigpending&t;175
 DECL|macro|__NR_rt_sigtimedwait
-mdefine_line|#define __NR_rt_sigtimedwait   176
+mdefine_line|#define __NR_rt_sigtimedwait&t;176
 DECL|macro|__NR_rt_sigqueueinfo
-mdefine_line|#define __NR_rt_sigqueueinfo   177
+mdefine_line|#define __NR_rt_sigqueueinfo&t;177
 DECL|macro|__NR_rt_sigsuspend
-mdefine_line|#define __NR_rt_sigsuspend     178
+mdefine_line|#define __NR_rt_sigsuspend&t;178
 DECL|macro|__NR_pread
-mdefine_line|#define __NR_pread             179
+mdefine_line|#define __NR_pread&t;&t;179
 DECL|macro|__NR_pwrite
-mdefine_line|#define __NR_pwrite            180
+mdefine_line|#define __NR_pwrite&t;&t;180
 DECL|macro|__NR_chown
-mdefine_line|#define __NR_chown             181
+mdefine_line|#define __NR_chown&t;&t;181
 DECL|macro|__NR_getcwd
-mdefine_line|#define __NR_getcwd            182
+mdefine_line|#define __NR_getcwd&t;&t;182
+DECL|macro|__NR_capget
+mdefine_line|#define __NR_capget&t;&t;183
+DECL|macro|__NR_capset
+mdefine_line|#define __NR_capset&t;&t;184
+DECL|macro|__NR_sigaltstack
+mdefine_line|#define __NR_sigaltstack&t;185
+DECL|macro|__NR_sendfile
+mdefine_line|#define __NR_sendfile&t;&t;186
+DECL|macro|__NR_streams1
+mdefine_line|#define __NR_streams1&t;&t;187&t;/* some people actually want it */
+DECL|macro|__NR_streams2
+mdefine_line|#define __NR_streams2&t;&t;188&t;/* some people actually want it */
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__syscall_return

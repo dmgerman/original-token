@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: pci.c,v 1.36 1998/08/02 23:22:11 paulus Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.38 1998/08/31 06:28:02 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -822,6 +822,7 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * Use our old hard-coded kludge to figure out what&n;&t;&t;&t; * irq this device uses.  This is necessary on things&n;&t;&t;&t; * without residual data. -- Cort&n;&t;&t;&t; */
 r_int
 r_char
 id|d
@@ -842,6 +843,31 @@ id|d
 )braket
 )braket
 suffix:semicolon
+macro_line|#if 0&t;&t;&t;
+multiline_comment|/*&n;&t;&t;&t; * If we have residual data and if it knows about this&n;&t;&t;&t; * device ask it what the irq is.&n;&t;&t;&t; *  -- Cort&n;&t;&t;&t; */
+id|ppcd
+op_assign
+id|residual_find_device_id
+c_func
+(paren
+op_complement
+l_int|0L
+comma
+id|dev-&gt;device
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 )brace
 r_break
 suffix:semicolon

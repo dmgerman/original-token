@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: promcon.c,v 1.10 1998/07/24 15:31:53 jj Exp $&n; * Console driver utilizing PROM sun terminal emulation&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek  (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: promcon.c,v 1.12 1998/08/23 20:19:01 mj Exp $&n; * Console driver utilizing PROM sun terminal emulation&n; *&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek  (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -980,20 +980,6 @@ op_plus
 l_int|1
 comma
 id|conp-&gt;vc_num
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|conp-&gt;vc_num
-op_eq
-id|fg_console
-)paren
-id|update_screen
-c_func
-(paren
-id|fg_console
 )paren
 suffix:semicolon
 )brace

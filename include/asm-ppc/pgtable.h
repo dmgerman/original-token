@@ -2505,6 +2505,24 @@ op_star
 id|memavailp
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Set cache mode of (kernel space) address range. &n; */
+r_extern
+r_void
+id|kernel_set_cachemode
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|cmode
+)paren
+suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)

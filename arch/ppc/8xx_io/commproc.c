@@ -7,7 +7,12 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_FADS
+macro_line|#include &lt;asm/fads.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
@@ -102,8 +107,8 @@ op_star
 )paren
 suffix:semicolon
 r_void
-DECL|function|mbx_cpm_reset
-id|mbx_cpm_reset
+DECL|function|m8xx_cpm_reset
+id|m8xx_cpm_reset
 c_func
 (paren
 id|uint
@@ -130,7 +135,7 @@ op_assign
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 suffix:semicolon
 id|commproc
 op_assign
@@ -162,7 +167,7 @@ id|CPM_CR_FLG
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Set SDMA Bus Request priority 5.&n;&t;*/
+multiline_comment|/* Set SDMA Bus Request priority 5.&n;&t; * On 860T, this also enables FEC priority 6.  I am not sure&n;&t; * this is what we realy want for some applications, but the&n;&t; * manual recommends it.&n;&t; * Bit 25, FAM can also be set to use FEC aggressive mode (860T).&n;&t;*/
 id|imp-&gt;im_siu_conf.sc_sdcr
 op_assign
 l_int|1
@@ -233,7 +238,7 @@ multiline_comment|/* Initialize the CPM interrupt controller.&n;&t;*/
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cicr
@@ -265,7 +270,7 @@ suffix:semicolon
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cimr
@@ -314,7 +319,7 @@ suffix:semicolon
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cicr
@@ -352,7 +357,7 @@ r_volatile
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_civr
@@ -367,7 +372,7 @@ r_volatile
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_civr
@@ -412,7 +417,7 @@ r_else
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cimr
@@ -430,7 +435,7 @@ multiline_comment|/* After servicing the interrupt, we have to remove the status
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cisr
@@ -535,7 +540,7 @@ suffix:semicolon
 id|immap_t
 op_star
 )paren
-id|MBX_IMAP_ADDR
+id|IMAP_ADDR
 )paren
 op_member_access_from_pointer
 id|im_cpic.cpic_cimr
@@ -549,8 +554,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Allocate some memory from the dual ported ram.  We may want to&n; * enforce alignment restrictions, but right now everyone is a good&n; * citizen.&n; */
 id|uint
-DECL|function|mbx_cpm_dpalloc
-id|mbx_cpm_dpalloc
+DECL|function|m8xx_cpm_dpalloc
+id|m8xx_cpm_dpalloc
 c_func
 (paren
 id|uint
@@ -588,8 +593,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* We also own one page of host buffer space for the allocation of&n; * UART &quot;fifos&quot; and the like.&n; */
 id|uint
-DECL|function|mbx_cpm_hostalloc
-id|mbx_cpm_hostalloc
+DECL|function|m8xx_cpm_hostalloc
+id|m8xx_cpm_hostalloc
 c_func
 (paren
 id|uint
@@ -625,12 +630,14 @@ r_return
 id|retloc
 suffix:semicolon
 )brace
-multiline_comment|/* Set a baud rate generator.  This needs lots of work.  There are&n; * four BRGs, any of which can be wired to any channel.&n; * The internal baud rate clock is the system clock divided by 16.&n; * I need to find a way to get this system clock frequency, which is&n; * part of the VPD.......&n; */
+multiline_comment|/* Set a baud rate generator.  This needs lots of work.  There are&n; * four BRGs, any of which can be wired to any channel.&n; * The internal baud rate clock is the system clock divided by 16.&n; * This assumes the baudrate is 16x oversampled by the uart.&n; */
 DECL|macro|BRG_INT_CLK
-mdefine_line|#define BRG_INT_CLK&t;(40000000/16)
+mdefine_line|#define BRG_INT_CLK&t;(((bd_t *)res)-&gt;bi_intfreq * 1000000)
+DECL|macro|BRG_UART_CLK
+mdefine_line|#define BRG_UART_CLK&t;(BRG_INT_CLK/16)
 r_void
-DECL|function|mbx_cpm_setbrg
-id|mbx_cpm_setbrg
+DECL|function|m8xx_cpm_setbrg
+id|m8xx_cpm_setbrg
 c_func
 (paren
 id|uint
@@ -664,7 +671,7 @@ id|bp
 op_assign
 (paren
 (paren
-id|BRG_INT_CLK
+id|BRG_UART_CLK
 op_div
 id|rate
 )paren

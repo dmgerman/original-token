@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tcxfb.c,v 1.1 1998/07/21 14:50:44 jj Exp $&n; * tcxfb.c: TCX 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: tcxfb.c,v 1.6 1998/09/04 15:43:46 jj Exp $&n; * tcxfb.c: TCX 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,9 +13,9 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
-macro_line|#include &quot;sbusfb.h&quot;
+macro_line|#include &lt;video/sbusfb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 multiline_comment|/* THC definitions */
 DECL|macro|TCX_THC_MISC_REV_SHIFT
 mdefine_line|#define TCX_THC_MISC_REV_SHIFT       16
@@ -396,6 +396,11 @@ id|fb_info_sbusfb
 op_star
 id|fb
 comma
+r_struct
+id|display
+op_star
+id|p
+comma
 r_int
 id|index
 comma
@@ -473,6 +478,10 @@ op_lshift
 l_int|24
 suffix:semicolon
 )brace
+id|bt-&gt;addr
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|tcx_restore_palette
 r_static
@@ -960,6 +969,10 @@ id|phys_addr
 suffix:semicolon
 r_int
 id|lowdepth
+comma
+id|i
+comma
+id|j
 suffix:semicolon
 macro_line|#ifndef FBCON_HAS_CFB8
 r_return
@@ -1298,6 +1311,75 @@ id|fb-&gt;physbase
 op_assign
 l_int|0
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|13
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+multiline_comment|/* tcx_mmap_map has to be sorted by voff, while&n;&t;&t;   order of phys registers from PROM differs a little&n;&t;&t;   bit. Here is the correction */
+r_switch
+c_cond
+(paren
+id|i
+)paren
+(brace
+r_case
+l_int|10
+suffix:colon
+id|j
+op_assign
+l_int|12
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|11
+suffix:colon
+r_case
+l_int|12
+suffix:colon
+id|j
+op_assign
+id|i
+op_minus
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|j
+op_assign
+id|i
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|tcx_mmap_map
+(braket
+id|i
+)braket
+dot
+id|poff
+op_assign
+id|fb-&gt;sbdp-&gt;reg_addrs
+(braket
+id|j
+)braket
+dot
+id|phys_addr
+suffix:semicolon
+)brace
 id|fb-&gt;mmap_map
 op_assign
 id|tcx_mmap_map

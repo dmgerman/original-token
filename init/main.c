@@ -2396,6 +2396,12 @@ comma
 l_int|0x2400
 )brace
 comma
+(brace
+l_string|&quot;edb&quot;
+comma
+l_int|0x2440
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_PARIDE_PD
 (brace
@@ -3101,7 +3107,13 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_PS2
 (brace
-l_string|&quot;ed=&quot;
+l_string|&quot;eda=&quot;
+comma
+id|ed_setup
+)brace
+comma
+(brace
+l_string|&quot;edb=&quot;
 comma
 id|ed_setup
 )brace

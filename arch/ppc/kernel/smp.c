@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.28 1998/08/04 04:47:45 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.33 1998/09/25 04:32:30 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -141,6 +141,12 @@ id|prof_counter
 (braket
 id|NR_CPUS
 )braket
+suffix:semicolon
+DECL|variable|first_cpu_booted
+r_int
+id|first_cpu_booted
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|start_secondary
@@ -396,12 +402,6 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;recv after msg check&bslash;n&quot;
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -605,13 +605,6 @@ r_void
 )paren
 (brace
 r_extern
-r_int
-r_int
-id|secondary_entry
-(braket
-)braket
-suffix:semicolon
-r_extern
 r_struct
 id|task_struct
 op_star
@@ -622,8 +615,6 @@ id|NR_CPUS
 suffix:semicolon
 r_int
 id|i
-comma
-id|timeout
 suffix:semicolon
 r_struct
 id|task_struct
@@ -634,6 +625,17 @@ id|printk
 c_func
 (paren
 l_string|&quot;Entering SMP Mode...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|first_cpu_booted
+op_assign
+l_int|1
+suffix:semicolon
+id|dcbf
+c_func
+(paren
+op_amp
+id|first_cpu_booted
 )paren
 suffix:semicolon
 r_for
@@ -810,9 +812,7 @@ id|dcbf
 c_func
 (paren
 (paren
-r_volatile
-r_int
-r_int
+r_void
 op_star
 )paren
 op_amp
@@ -823,6 +823,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* setup entry point of secondary processor */
+multiline_comment|/*&t;*(volatile unsigned long *)(0xf2800000)&n;&t;&t;= (unsigned long)secondary_entry-KERNELBASE;*/
 op_star
 (paren
 r_volatile
@@ -834,13 +835,7 @@ op_star
 l_int|0xf2800000
 )paren
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|secondary_entry
-op_minus
-id|KERNELBASE
+l_int|0x100
 suffix:semicolon
 id|eieio
 c_func
@@ -867,10 +862,28 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * wait to see if the secondary made a callin (is actually up).&n;&t; * udelay() isn&squot;t accurate here since we haven&squot;t yet called&n;&t; * calibrate_delay() so use this value that I found through&n;&t; * experimentation.  -- Cort&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1000
+suffix:semicolon
+id|i
+op_logical_and
+op_logical_neg
+id|cpu_callin_map
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|i
+op_decrement
+)paren
 id|udelay
 c_func
 (paren
-l_int|1
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -910,7 +923,7 @@ id|decrementer_count
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* interrupt secondary to start decr&squot;s again */
+multiline_comment|/* interrupt secondary to start decr&squot;s on both cpus */
 id|smp_message_pass
 c_func
 (paren

@@ -2687,6 +2687,24 @@ op_and_assign
 op_complement
 id|PF_TRACESYS
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|child-&gt;flags
+op_amp
+id|PF_DTRACE
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* Spurious delayed TF traps may occur */
+id|child-&gt;flags
+op_or_assign
+id|PF_DTRACE
+suffix:semicolon
+)brace
 id|tmp
 op_assign
 id|get_stack_long

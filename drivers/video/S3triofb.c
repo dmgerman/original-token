@@ -21,9 +21,9 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
 macro_line|#include &lt;asm/vc_ioctl.h&gt;
 macro_line|#endif
-macro_line|#include &quot;fbcon.h&quot;
-macro_line|#include &quot;fbcon-cfb8.h&quot;
-macro_line|#include &quot;s3blit.h&quot;
+macro_line|#include &lt;video/fbcon.h&gt;
+macro_line|#include &lt;video/fbcon-cfb8.h&gt;
+macro_line|#include &lt;video/s3blit.h&gt;
 DECL|macro|mem_in8
 mdefine_line|#define mem_in8(addr)           in_8((void *)(addr))
 DECL|macro|mem_in16
@@ -962,14 +962,6 @@ c_func
 (paren
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 id|kspc
 comma
 id|s3trio_getcolreg
@@ -1128,14 +1120,6 @@ id|fb_set_cmap
 c_func
 (paren
 id|cmap
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 id|kspc
 comma
@@ -3221,14 +3205,6 @@ id|currcon
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|currcon
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|s3trio_getcolreg
@@ -3421,6 +3397,17 @@ suffix:semicolon
 op_star
 id|red
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|red
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -3431,6 +3418,17 @@ suffix:semicolon
 op_star
 id|green
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -3441,6 +3439,17 @@ suffix:semicolon
 op_star
 id|blue
 op_assign
+(paren
+id|palette
+(braket
+id|regno
+)braket
+dot
+id|blue
+op_lshift
+l_int|8
+)paren
+op_or
 id|palette
 (braket
 id|regno
@@ -3448,11 +3457,16 @@ id|regno
 dot
 id|blue
 suffix:semicolon
+op_star
+id|transp
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Set a single color register. The values supplied are already&n;     *  rounded down to the hardware&squot;s capabilities (according to the&n;     *  entries in the var structure). Return != 0 for invalid regno.&n;     */
+multiline_comment|/*&n;     *  Set a single color register. Return != 0 for invalid regno.&n;     */
 DECL|function|s3trio_setcolreg
 r_static
 r_int
@@ -3489,6 +3503,18 @@ l_int|255
 )paren
 r_return
 l_int|1
+suffix:semicolon
+id|red
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|green
+op_rshift_assign
+l_int|8
+suffix:semicolon
+id|blue
+op_rshift_assign
+l_int|8
 suffix:semicolon
 id|palette
 (braket
@@ -3632,14 +3658,6 @@ id|con
 dot
 id|cmap
 comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
-comma
 l_int|1
 comma
 id|s3trio_setcolreg
@@ -3662,14 +3680,6 @@ id|con
 dot
 id|var.bits_per_pixel
 )paren
-comma
-op_amp
-id|fb_display
-(braket
-id|con
-)braket
-dot
-id|var
 comma
 l_int|1
 comma
@@ -4284,7 +4294,11 @@ id|u_short
 (paren
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -4298,7 +4312,11 @@ id|u_short
 (paren
 id|dy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -4312,7 +4330,11 @@ id|u_short
 (paren
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -4387,7 +4409,11 @@ id|u_short
 (paren
 id|sy
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
@@ -4401,7 +4427,11 @@ id|u_short
 (paren
 id|height
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 comma
 (paren
