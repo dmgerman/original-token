@@ -35,7 +35,7 @@ id|sp-&gt;lock
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Failed, but thats cos we own it!&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Failed, but that&squot;s cos we own it!&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -96,7 +96,7 @@ id|sp-&gt;spins
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; *&t;Someone wrote the line, we go &squot;I&squot; and get&n;&t;&t; *&t;the cache entry. Now try and regrab&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Someone wrote the line, we go &squot;I&squot; and get&n;&t;&t; *&t;the cache entry. Now try to regrab&n;&t;&t; */
 )brace
 id|sp-&gt;users
 op_increment
@@ -309,7 +309,7 @@ op_star
 id|sp
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;We do no sanity checks, its legal to optimistically&n;&t; *&t;get a lower lock.&n;&t; */
+multiline_comment|/*&n;&t; *&t;We do no sanity checks, it&squot;s legal to optimistically&n;&t; *&t;get a lower lock.&n;&t; */
 id|prim_spin_lock_nb
 c_func
 (paren

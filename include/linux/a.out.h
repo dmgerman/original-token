@@ -166,7 +166,7 @@ mdefine_line|#define SEGMENT_SIZE PAGE_SIZE
 macro_line|#endif
 macro_line|#ifdef linux
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#ifdef __i386__
+macro_line|#if defined(__i386__) || defined(__mc68000__)
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE&t;1024
 macro_line|#else

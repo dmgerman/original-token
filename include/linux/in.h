@@ -230,7 +230,7 @@ mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f0
 DECL|macro|MULTICAST
 mdefine_line|#define MULTICAST(x)&t;(((x) &amp; htonl(0xf0000000)) == htonl(0xe0000000))
 macro_line|#endif
-multiline_comment|/*&n; *&t;IPv6 definitions as we start to include them. This is just&n; *&t;a beginning dont get excited 8)&n; */
+multiline_comment|/*&n; *&t;IPv6 definitions as we start to include them. This is just&n; *&t;a beginning -- don&squot;t get excited 8)&n; */
 DECL|struct|in_addr6
 r_struct
 id|in_addr6

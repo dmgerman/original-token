@@ -718,7 +718,7 @@ c_cond
 (paren
 id|val
 op_amp
-l_int|3
+l_int|7
 )paren
 OG
 l_int|4
@@ -1083,7 +1083,7 @@ id|route_src
 op_assign
 id|rt-&gt;rt_src
 suffix:semicolon
-id|ATOMIC_DECR
+id|atomic_dec
 c_func
 (paren
 op_amp
@@ -1230,7 +1230,7 @@ id|dev
 op_assign
 id|rt-&gt;rt_dev
 suffix:semicolon
-id|ATOMIC_DECR
+id|atomic_dec
 c_func
 (paren
 op_amp

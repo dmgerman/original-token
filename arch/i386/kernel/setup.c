@@ -815,6 +815,18 @@ comma
 l_string|&quot;DX/4&quot;
 comma
 l_string|&quot;DX/4-WB&quot;
+comma
+l_string|&quot;10&quot;
+comma
+l_string|&quot;11&quot;
+comma
+l_string|&quot;12&quot;
+comma
+l_string|&quot;13&quot;
+comma
+l_string|&quot;Am5x85-WT&quot;
+comma
+l_string|&quot;Am5x86-WB&quot;
 )brace
 suffix:semicolon
 r_if
@@ -1439,7 +1451,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;&bslash;nbogomips:&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;&bslash;nbogomips&bslash;t: %lu.%02lu&bslash;n&quot;
 comma
 id|CD
 c_func

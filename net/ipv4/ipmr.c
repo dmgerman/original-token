@@ -1178,7 +1178,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Unsolicited update - thats ok add anyway.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Unsolicited update - that&squot;s ok, add anyway.&n;&t; */
 id|cache
 op_assign
 id|ipmr_cache_alloc
@@ -1249,7 +1249,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Socket options and virtual interface manipulation. The whole&n; *&t;virtual interface system is a complete heap, but unfortunately&n; *&t;thats how BSD mrouted happens to think. Maybe one day with a proper&n; *&t;MOSPF/PIM router set up we can clean this up.&n; */
+multiline_comment|/*&n; *&t;Socket options and virtual interface manipulation. The whole&n; *&t;virtual interface system is a complete heap, but unfortunately&n; *&t;that&squot;s how BSD mrouted happens to think. Maybe one day with a proper&n; *&t;MOSPF/PIM router set up we can clean this up.&n; */
 DECL|function|ip_mroute_setsockopt
 r_int
 id|ip_mroute_setsockopt
@@ -1602,7 +1602,7 @@ op_amp
 id|IFF_MULTICAST
 )paren
 (brace
-multiline_comment|/* Most ethernet cards dont know&n;&t;&t;&t;&t;&t;&t;   how to do this yet.. */
+multiline_comment|/* Most ethernet cards don&squot;t know&n;&t;&t;&t;&t;&t;&t;   how to do this yet.. */
 id|dev-&gt;flags
 op_or_assign
 id|IFF_ALLMULTI

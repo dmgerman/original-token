@@ -350,7 +350,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 multiline_comment|/*&n;     * See if we are requesting a non-existent partition.  Do this&n;     * after checking for disk change.&n;     */
 r_if
 c_cond
@@ -902,9 +901,7 @@ id|length
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Free list of scatter-gather pointers */
 id|scsi_free
 c_func
@@ -965,9 +962,7 @@ id|SCpnt-&gt;bufflen
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/*&n;&t; * If multiple sectors are requested in one buffer, then&n;&t; * they will have been finished off by the first command.&n;&t; * If not, then we have a multi-buffer command.&n;&t; */
 r_if
 c_cond
@@ -1121,9 +1116,7 @@ id|length
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|scsi_free
 c_func
 (paren
@@ -1166,7 +1159,6 @@ id|SCpnt-&gt;bufflen
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/*&n;     * Now, if we were good little boys and girls, Santa left us a request&n;     * sense buffer.  We can extract information from this, so we&n;     * can choose a block to remap, etc.&n;     */
 r_if
 c_cond
@@ -1541,7 +1533,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-suffix:semicolon
 id|INIT_SCSI_REQUEST
 suffix:semicolon
 id|SDev
@@ -1633,7 +1624,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* This is a performance enhancement. We dig down into the request &n;&t; * list and try and find a queueable request (i.e. device not busy, &n;&t; * and host able to accept another command. If we find one, then we &n;&t; * queue it. This can make a big difference on systems with more than &n;&t; * one disk drive.  We want to have the interrupts off when monkeying &n;&t; * with the request list, because otherwise the kernel might try and &n;&t; * slip in a request in between somewhere. &n;&t; */
+multiline_comment|/* This is a performance enhancement. We dig down into the request &n;&t; * list and try to find a queueable request (i.e. device not busy, &n;&t; * and host able to accept another command. If we find one, then we &n;&t; * queue it. This can make a big difference on systems with more than &n;&t; * one disk drive.  We want to have the interrupts off when monkeying &n;&t; * with the request list, because otherwise the kernel might try to &n;&t; * slip in a request in between somewhere. &n;&t; */
 r_if
 c_cond
 (paren
@@ -1706,7 +1697,6 @@ op_assign
 id|req-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1734,7 +1724,6 @@ op_assign
 id|req-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -1742,7 +1731,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1760,7 +1748,6 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* While */
 )brace
 DECL|function|requeue_sd_request
@@ -2189,7 +2176,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2257,7 +2243,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2455,7 +2440,6 @@ r_else
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 id|this_count
 op_add_assign
 (paren
@@ -2473,7 +2457,6 @@ op_assign
 id|bh-&gt;b_reqnext
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#if 0
 r_if
 c_cond
@@ -2746,7 +2729,7 @@ id|count
 dot
 id|address
 suffix:semicolon
-multiline_comment|/* We try and avoid exhausting the DMA pool, since it is &n;&t;&t;     * easier to control usage here. In other places we might &n;&t;&t;     * have a more pressing need, and we would be screwed if &n;&t;&t;     * we ran out */
+multiline_comment|/* We try to avoid exhausting the DMA pool, since it is &n;&t;&t;     * easier to control usage here. In other places we might &n;&t;&t;     * have a more pressing need, and we would be screwed if &n;&t;&t;     * we ran out */
 r_if
 c_cond
 (paren
@@ -2801,7 +2784,6 @@ id|length
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* If we start running low on DMA buffers, we abort the &n;&t;&t;     * scatter-gather operation, and free all of the memory &n;&t;&t;     * we have allocated.  We want to ensure that all scsi &n;&t;&t;     * operations are able to do at least a non-scatter/gather&n;&t;&t;     * operation */
 r_if
 c_cond
@@ -2865,7 +2847,6 @@ id|length
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 id|this_count
 op_assign
 id|SCpnt-&gt;request.current_nr_sectors
@@ -2902,9 +2883,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* Only cluster buffers if we know that we can supply DMA &n;&t;&t; * buffers large enough to satisfy the request. Do not cluster&n;&t;&t; * a new request if this would mean that we suddenly need to &n;&t;&t; * start using DMA bounce buffers */
 r_if
 c_cond
@@ -3029,7 +3008,6 @@ op_assign
 id|SCpnt-&gt;use_sg
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3069,7 +3047,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* If we are allowed another sg chain, then increment &n;&t;&t;     * counter so we can insert it.  Otherwise we will end &n;&t;&t;     up truncating */
 r_if
 c_cond
@@ -3082,10 +3059,8 @@ id|SCpnt-&gt;use_sg
 op_increment
 suffix:semicolon
 )brace
-suffix:semicolon
 multiline_comment|/* contiguous buffers */
 )brace
-suffix:semicolon
 multiline_comment|/* for loop */
 multiline_comment|/* This is actually how many we are going to transfer */
 id|this_count
@@ -3149,7 +3124,6 @@ op_assign
 id|bh-&gt;b_reqnext
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3209,7 +3183,6 @@ l_string|&quot;Ooops&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3269,10 +3242,8 @@ id|length
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 multiline_comment|/* Able to malloc sgpnt */
 )brace
-suffix:semicolon
 multiline_comment|/* Host adapter capable of scatter-gather */
 multiline_comment|/* Now handle the possibility of DMA to addresses &gt; 16Mb */
 r_if
@@ -3376,7 +3347,6 @@ l_string|&quot;Ran out of DMA buffers.&quot;
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3401,9 +3371,7 @@ l_int|9
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -3500,7 +3468,6 @@ op_rshift
 l_int|1
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3527,7 +3494,6 @@ op_lshift
 l_int|1
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3877,7 +3843,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3944,7 +3909,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* This will force a flush, if called from&n;&t;&t;   * check_disk_change */
 )brace
-suffix:semicolon
 multiline_comment|/* &n;     * for removable scsi disk ( FLOPTICAL ) we have to recognise the&n;     * presence of disk in the drive. This is kept in the Scsi_Disk&n;     * struct and tested at open !  Daniel Roche ( dan@lectra.fr ) &n;     */
 id|rscsi_disks
 (braket
@@ -4453,7 +4417,6 @@ l_string|&quot;.&quot;
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 r_while
 c_loop
@@ -4499,7 +4462,6 @@ l_string|&quot;ready&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 multiline_comment|/* !MODULE_FLAG */
 id|retries
 op_assign
@@ -5022,7 +4984,6 @@ r_return
 id|i
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 (brace
 multiline_comment|/*&n;&t; * The msdos fs needs to know the hardware sector size&n;&t; * So I have created this table. See ll_rw_blk.c&n;&t; * Jacques Gelinas (Jacques@solucorp.qc.ca)&n;&t; */
@@ -6220,7 +6181,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-suffix:semicolon
 id|DEVICE_BUSY
 op_assign
 l_int|1
@@ -6324,7 +6284,6 @@ op_assign
 l_int|1024
 suffix:semicolon
 )brace
-suffix:semicolon
 macro_line|#ifdef MAYBE_REINIT
 id|MAYBE_REINIT
 suffix:semicolon
@@ -6520,7 +6479,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 id|dpnt-&gt;has_part_table
 op_assign
 l_int|0

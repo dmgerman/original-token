@@ -1025,6 +1025,8 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|poll_aux_status
 c_func
 (paren
@@ -1061,8 +1063,6 @@ suffix:semicolon
 id|aux_ready
 op_assign
 l_int|0
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

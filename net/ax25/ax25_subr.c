@@ -1044,7 +1044,7 @@ id|type
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Send a &squot;DM&squot; to an unknown connection attempt, or an invalid caller.&n; *&n; *&t;Note: src here is the sender, thus its the target of the DM&n; */
+multiline_comment|/*&n; *&t;Send a &squot;DM&squot; to an unknown connection attempt, or an invalid caller.&n; *&n; *&t;Note: src here is the sender, thus it&squot;s the target of the DM&n; */
 DECL|function|ax25_return_dm
 r_void
 id|ax25_return_dm

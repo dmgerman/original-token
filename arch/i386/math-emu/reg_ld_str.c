@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_ld_str.c                                                             |&n; |                                                                           |&n; | All of the functions which transfer data between user memory and FPU_REGs.|&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  reg_ld_str.c                                                             |&n; |                                                                           |&n; | All of the functions which transfer data between user memory and FPU_REGs.|&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1996                                         |&n; |                  W. Metzenthen, 22 Parker St, Ormond, Vic 3163, Australia |&n; |                  E-mail   billm@jacobi.maths.monash.edu.au                |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;fpu_system.h&quot;
@@ -1696,6 +1696,9 @@ id|TW_Valid
 )paren
 (brace
 r_int
+id|precision_loss
+suffix:semicolon
+r_int
 id|exp
 suffix:semicolon
 id|FPU_REG
@@ -1725,9 +1728,6 @@ id|DOUBLE_Emin
 )paren
 multiline_comment|/* It may be a denormal */
 (brace
-r_int
-id|precision_loss
-suffix:semicolon
 multiline_comment|/* A denormal will always underflow. */
 macro_line|#ifndef PECULIAR_486
 multiline_comment|/* An 80486 is supposed to be able to generate&n;&t;     a denormal exception here, but... */
@@ -1872,6 +1872,10 @@ op_amp
 l_int|0x000007ff
 )paren
 (brace
+id|precision_loss
+op_assign
+l_int|1
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1973,11 +1977,6 @@ c_cond
 id|increment
 )paren
 (brace
-id|set_precision_flag_up
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2034,13 +2033,12 @@ l_int|0x00000800
 suffix:semicolon
 )brace
 )brace
-r_else
-id|set_precision_flag_down
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
+r_else
+id|precision_loss
+op_assign
+l_int|0
+suffix:semicolon
 id|l
 (braket
 l_int|0
@@ -2141,6 +2139,29 @@ multiline_comment|/* + INF */
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|precision_loss
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|increment
+)paren
+id|set_precision_flag_up
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+id|set_precision_flag_down
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Add the exponent */
 id|l
 (braket
@@ -2494,6 +2515,9 @@ id|TW_Valid
 )paren
 (brace
 r_int
+id|precision_loss
+suffix:semicolon
+r_int
 id|exp
 suffix:semicolon
 id|FPU_REG
@@ -2522,9 +2546,6 @@ OL
 id|SINGLE_Emin
 )paren
 (brace
-r_int
-id|precision_loss
-suffix:semicolon
 multiline_comment|/* A denormal will always underflow. */
 macro_line|#ifndef PECULIAR_486
 multiline_comment|/* An 80486 is supposed to be able to generate&n;&t;     a denormal exception here, but... */
@@ -2673,6 +2694,10 @@ id|sigl
 op_assign
 id|tmp.sigl
 suffix:semicolon
+id|precision_loss
+op_assign
+l_int|1
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2800,11 +2825,6 @@ c_cond
 id|increment
 )paren
 (brace
-id|set_precision_flag_up
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2846,11 +2866,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|set_precision_flag_down
-c_func
-(paren
-)paren
-suffix:semicolon
 id|tmp.sigh
 op_and_assign
 l_int|0xffffff00
@@ -2858,6 +2873,11 @@ suffix:semicolon
 multiline_comment|/* Finish the truncation */
 )brace
 )brace
+r_else
+id|precision_loss
+op_assign
+l_int|0
+suffix:semicolon
 id|templ
 op_assign
 (paren
@@ -2923,6 +2943,31 @@ l_int|0x7f800000
 suffix:semicolon
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+id|precision_loss
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|increment
+)paren
+id|set_precision_flag_up
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+id|set_precision_flag_down
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Add the exponent */
 id|templ
 op_or_assign
 (paren
@@ -2937,6 +2982,7 @@ l_int|0xff
 op_lshift
 l_int|23
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else

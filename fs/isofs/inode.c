@@ -275,7 +275,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -299,7 +298,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -323,7 +321,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -724,7 +721,6 @@ id|vpnt
 op_increment
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1190,9 +1186,7 @@ op_rshift_assign
 l_int|1
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|set_blocksize
 c_func
 (paren
@@ -1241,16 +1235,17 @@ id|iso_blknum
 op_increment
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;isofs.inode: iso_blknum=%d&bslash;n&quot;
-comma
+r_int
+id|b
+op_assign
 id|iso_blknum
+op_lshift
+(paren
+id|ISOFS_BLOCK_BITS
+op_minus
+id|blocksize_bits
 )paren
 suffix:semicolon
-macro_line|#endif 0
 r_if
 c_cond
 (paren
@@ -1263,13 +1258,7 @@ c_func
 (paren
 id|dev
 comma
-id|iso_blknum
-op_lshift
-(paren
-id|ISOFS_BLOCK_BITS
-op_minus
-id|blocksize_bits
-)paren
+id|b
 comma
 id|opt.blocksize
 )paren
@@ -1284,7 +1273,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;isofs_read_super: bread failed, dev &quot;
-l_string|&quot;%s iso_blknum %d&bslash;n&quot;
+l_string|&quot;%s iso_blknum %d block %d&bslash;n&quot;
 comma
 id|kdevname
 c_func
@@ -1293,6 +1282,8 @@ id|dev
 )paren
 comma
 id|iso_blknum
+comma
+id|b
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1391,7 +1382,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1446,7 +1436,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 id|brelse
 c_func
 (paren
@@ -1492,7 +1481,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1531,7 +1519,6 @@ id|out
 suffix:semicolon
 macro_line|#endif
 )brace
-suffix:semicolon
 id|s-&gt;u.isofs_sb.s_nzones
 op_assign
 id|isonum_733
@@ -1589,7 +1576,6 @@ id|out
 suffix:semicolon
 macro_line|#endif
 )brace
-suffix:semicolon
 id|s-&gt;u.isofs_sb.s_nzones
 op_assign
 id|isonum_733
@@ -3681,7 +3667,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-suffix:semicolon
 id|memcpy
 c_func
 (paren

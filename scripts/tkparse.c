@@ -2822,7 +2822,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Input file is now parsed.  Next we need to go through and attach&n;   * the correct conditions to each of the actual menu items and kill&n;   * the if/else/endif tokens from the list.  We also flag the menu items&n;   * that have other things that depend upon it&squot;s setting.&n;   */
+multiline_comment|/*&n;   * Input file is now parsed.  Next we need to go through and attach&n;   * the correct conditions to each of the actual menu items and kill&n;   * the if/else/endif tokens from the list.  We also flag the menu items&n;   * that have other things that depend upon its setting.&n;   */
 id|fix_conditionals
 c_func
 (paren

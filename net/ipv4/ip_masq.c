@@ -1982,7 +1982,7 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;  *&t;Check if it&squot;s an masqueraded port, look it up,&n;  *&t;and send it on it&squot;s way...&n;  *&n;  *&t;Better not have many hosts using the designated portrange&n;  *&t;as &squot;normal&squot; ports, or you&squot;ll be spending many time in&n;  *&t;this function.&n;  */
+multiline_comment|/*&n;  *&t;Check if it&squot;s an masqueraded port, look it up,&n;  *&t;and send it on its way...&n;  *&n;  *&t;Better not have many hosts using the designated portrange&n;  *&t;as &squot;normal&squot; ports, or you&squot;ll be spending many time in&n;  *&t;this function.&n;  */
 DECL|function|ip_fw_demasquerade
 r_int
 id|ip_fw_demasquerade
@@ -2354,10 +2354,6 @@ op_eq
 id|IPPROTO_UDP
 )paren
 (brace
-r_int
-r_int
-id|timeout
-suffix:semicolon
 id|recalc_check
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&t;&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided &n; *&t;as is and at no charge.&t;&t;&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header &n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network &n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&t;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -149,10 +149,33 @@ r_char
 id|val
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ipxcfg_auto_create_interfaces
+op_ne
+id|val
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|val
+)paren
+(brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+)brace
+r_else
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 id|ipxcfg_auto_create_interfaces
 op_assign
 id|val
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -933,6 +956,8 @@ id|intrfc
 )paren
 suffix:semicolon
 multiline_comment|/* sockets still dangling&n;&t; * - must be closed from user space&n;&t; */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2528,6 +2553,8 @@ id|ipx_primary_net
 op_assign
 id|intrfc
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3531,8 +3558,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|ipxitf_ioctl
-id|ipxitf_ioctl
+DECL|function|ipxitf_ioctl_real
+id|ipxitf_ioctl_real
 c_func
 (paren
 r_int
@@ -3935,6 +3962,41 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+)brace
+r_static
+r_int
+DECL|function|ipxitf_ioctl
+id|ipxitf_ioctl
+c_func
+(paren
+r_int
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|arg
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|ret
+op_assign
+id|ipxitf_ioctl_real
+(paren
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
 )brace
 multiline_comment|/*******************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;            *&n;*&t;            &t;&t;&t;Routing tables for the IPX socket layer&t;&t;&t;&t;            *&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;    *&n;&bslash;*******************************************************************************************************************/
 r_static
@@ -4793,7 +4855,7 @@ c_cond
 id|sk-&gt;no_check
 op_logical_or
 id|intrfc-&gt;if_dlink_type
-op_ne
+op_eq
 id|IPX_FRAME_8023
 )paren
 (brace

@@ -10,8 +10,16 @@ DECL|macro|TX_2X_PAGES
 mdefine_line|#define TX_2X_PAGES 12
 DECL|macro|TX_1X_PAGES
 mdefine_line|#define TX_1X_PAGES 6
+multiline_comment|/* Should always use two Tx slots to get back-to-back transmits. */
+DECL|macro|EI_PINGPONG
+mdefine_line|#define EI_PINGPONG
+macro_line|#ifdef EI_PINGPONG
 DECL|macro|TX_PAGES
-mdefine_line|#define TX_PAGES (ei_status.pingpong ? TX_2X_PAGES : TX_1X_PAGES)
+mdefine_line|#define TX_PAGES TX_2X_PAGES
+macro_line|#else
+DECL|macro|TX_PAGES
+mdefine_line|#define TX_PAGES TX_1X_PAGES
+macro_line|#endif
 DECL|macro|ETHER_ADDR_LEN
 mdefine_line|#define ETHER_ADDR_LEN 6
 multiline_comment|/* The 8390 specific per-packet-header format. */
@@ -272,13 +280,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Remote DMA Active */
-DECL|member|pingpong
-r_int
-id|pingpong
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Using the ping-pong driver */
 DECL|member|tx_start_page
 DECL|member|rx_start_page
 DECL|member|stop_page

@@ -1150,10 +1150,10 @@ id|DBG_INTR
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|800
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -1192,10 +1192,10 @@ id|DBG_INTR
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|800
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -1505,10 +1505,10 @@ id|DBG_QUEUE
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|250
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -1936,10 +1936,10 @@ id|DBG_QUEUE
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|200
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2013,10 +2013,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2067,10 +2067,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2193,10 +2193,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2247,10 +2247,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2282,6 +2282,7 @@ id|Scsi_Cmnd
 op_star
 id|cmd
 comma
+r_int
 r_int
 id|dummy
 )paren
@@ -2382,10 +2383,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2527,10 +2528,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2556,10 +2557,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2649,10 +2650,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2718,7 +2719,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;eata_pio_reset: resetted ccb %d.&bslash;n&quot;
+l_string|&quot;eata_pio_reset: reset ccb %d.&bslash;n&quot;
 comma
 id|x
 )paren
@@ -2801,10 +2802,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -2836,10 +2837,10 @@ id|DBG_ABNORM
 op_logical_and
 id|DBG_DELAY
 comma
-id|DEL2
+id|DELAY
 c_func
 (paren
-l_int|500
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -4043,7 +4044,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Couldn&squot;t allocate IRQ %d, Sorry.&quot;
+l_string|&quot;Couldn&squot;t allocate IRQ %d, Sorry.&bslash;n&quot;
 comma
 id|gc-&gt;IRQ
 )paren

@@ -39,7 +39,7 @@ r_int
 r_int
 id|udelay_val
 suffix:semicolon
-multiline_comment|/* thats it */
+multiline_comment|/* that&squot;s it */
 )brace
 suffix:semicolon
 r_extern

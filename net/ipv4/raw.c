@@ -564,7 +564,7 @@ c_func
 id|fraglen
 )paren
 suffix:semicolon
-multiline_comment|/* This is right as you cant frag&n;&t;&t;&t;&t;&t;   RAW packets */
+multiline_comment|/* This is right as you can&squot;t frag&n;&t;&t;&t;&t;&t;   RAW packets */
 multiline_comment|/*&n;&t; &t; *&t;Deliberate breach of modularity to keep &n;&t; &t; *&t;ip_build_xmit clean (well less messy).&n;&t;&t; */
 id|iph-&gt;id
 op_assign

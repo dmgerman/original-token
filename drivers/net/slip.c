@@ -28,7 +28,7 @@ macro_line|#include &quot;slip.h&quot;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
-macro_line|#include &quot;slhc.h&quot;
+macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|macro|SLIP_VERSION

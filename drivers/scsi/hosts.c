@@ -380,7 +380,7 @@ id|sh-&gt;extra_bytes
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/* We call this when we come across a new host adapter. We only do this&n; * once we are 100% sure that we want to use this host adapter -  it is a&n; * pain to reverse this, so we try and avoid it &n; */
+multiline_comment|/* We call this when we come across a new host adapter. We only do this&n; * once we are 100% sure that we want to use this host adapter -  it is a&n; * pain to reverse this, so we try to avoid it &n; */
 DECL|function|scsi_register
 r_struct
 id|Scsi_Host

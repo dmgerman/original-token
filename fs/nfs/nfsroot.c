@@ -760,7 +760,7 @@ op_star
 id|tha
 suffix:semicolon
 multiline_comment|/* s for &quot;source&quot;, t for &quot;target&quot; */
-multiline_comment|/* If this test doesn&squot;t pass, its not IP, or we should ignore it anyway */
+multiline_comment|/* If this test doesn&squot;t pass, it&squot;s not IP, or we should ignore it anyway */
 r_if
 c_cond
 (paren
@@ -2801,11 +2801,11 @@ op_star
 id|ext
 )paren
 (brace
+macro_line|#ifdef NFSROOT_BOOTP_DEBUG
 id|u8
 op_star
 id|c
 suffix:semicolon
-macro_line|#ifdef NFSROOT_BOOTP_DEBUG
 id|printk
 c_func
 (paren

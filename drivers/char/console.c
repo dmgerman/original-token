@@ -3666,7 +3666,7 @@ suffix:semicolon
 r_case
 l_int|11
 suffix:colon
-multiline_comment|/* ANSI X3.64-1979 (SCO-ish?)&n;&t;&t;&t;&t;  * Select first alternate font, let&squot;s&n;&t;&t;&t;&t;  * chars &lt; 32 be displayed as ROM chars.&n;&t;&t;&t;&t;  */
+multiline_comment|/* ANSI X3.64-1979 (SCO-ish?)&n;&t;&t;&t;&t;  * Select first alternate font, lets&n;&t;&t;&t;&t;  * chars &lt; 32 be displayed as ROM chars.&n;&t;&t;&t;&t;  */
 id|translate
 op_assign
 id|set_translate

@@ -141,5 +141,48 @@ DECL|macro|RTC_IRQP_READ
 mdefine_line|#define RTC_IRQP_READ&t;0x0b&t;&t;/* Read periodic IRQ rate (Hz)&t;*/
 DECL|macro|RTC_IRQP_SET
 mdefine_line|#define RTC_IRQP_SET&t;0x0c&t;&t;/* Set periodic IRQ rate (Hz)&t;*/
+multiline_comment|/*&n; * The struct used to pass data via the above ioctl. Similar to the&n; * struct tm in &lt;time.h&gt;, but it needs to be here so that the kernel &n; * source is self contained, allowing cross-compiles, etc. etc.&n; */
+DECL|struct|rtc_time
+r_struct
+id|rtc_time
+(brace
+DECL|member|tm_sec
+r_int
+id|tm_sec
+suffix:semicolon
+DECL|member|tm_min
+r_int
+id|tm_min
+suffix:semicolon
+DECL|member|tm_hour
+r_int
+id|tm_hour
+suffix:semicolon
+DECL|member|tm_mday
+r_int
+id|tm_mday
+suffix:semicolon
+DECL|member|tm_mon
+r_int
+id|tm_mon
+suffix:semicolon
+DECL|member|tm_year
+r_int
+id|tm_year
+suffix:semicolon
+DECL|member|tm_wday
+r_int
+id|tm_wday
+suffix:semicolon
+DECL|member|tm_yday
+r_int
+id|tm_yday
+suffix:semicolon
+DECL|member|tm_isdst
+r_int
+id|tm_isdst
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif /* _MC146818RTC_H */
 eof

@@ -538,7 +538,10 @@ DECL|macro|D_DMA_RUNNING
 mdefine_line|#define D_DMA_RUNNING      1
 multiline_comment|/* defines for hostdata-&gt;level2 */
 multiline_comment|/* NOTE: only the first 3 are implemented so far */
-multiline_comment|/*  (The first 8 bits are reserved for compatibility. They function&n;#define L2_SELECT    2  /* start with SEL_ATN_XFER, but never resume it */
+DECL|macro|L2_NONE
+mdefine_line|#define L2_NONE      1  /* no combination commands - we get lots of ints */
+DECL|macro|L2_SELECT
+mdefine_line|#define L2_SELECT    2  /* start with SEL_ATN_XFER, but never resume it */
 DECL|macro|L2_BASIC
 mdefine_line|#define L2_BASIC     3  /* resume after STATUS ints &amp; RDP messages */
 DECL|macro|L2_DATA

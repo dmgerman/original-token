@@ -1,5 +1,5 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;    Paul Gortmaker&t;: Allow users with bad cards to avoid full probe.&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
 DECL|variable|version
 r_static
@@ -207,6 +207,21 @@ l_int|0x24
 )brace
 comma
 multiline_comment|/* Connect Int&squot;nl */
+(brace
+l_string|&quot;ET-100&quot;
+comma
+l_string|&quot;ET-200&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x45
+comma
+l_int|0x54
+)brace
+)brace
+comma
+multiline_comment|/* YANG and YA clone */
 (brace
 l_int|0
 comma
@@ -700,6 +715,8 @@ r_int
 id|neX000
 comma
 id|ctron
+comma
+id|bad_card
 suffix:semicolon
 r_int
 id|reg0
@@ -848,6 +865,23 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+multiline_comment|/* A user with a poor card that fails to ack the reset, or that&n;       does not have a valid 0x57,0x57 signature can still use this&n;       without having to recompile. Specifying an i/o address along&n;       with an otherwise unused dev-&gt;mem_end value of &quot;0xBAD&quot; will &n;       cause the driver to skip these parts of the probe. */
+id|bad_card
+op_assign
+(paren
+(paren
+id|dev-&gt;base_addr
+op_ne
+l_int|0
+)paren
+op_logical_and
+(paren
+id|dev-&gt;mem_end
+op_eq
+l_int|0xbad
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Reset card. Who knows what dain-bramaged state it was left in. */
 (brace
 r_int
@@ -904,6 +938,23 @@ op_div
 l_int|100
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|bad_card
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; (warning: no reset ack)&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_else
+(brace
 id|printk
 c_func
 (paren
@@ -913,6 +964,7 @@ suffix:semicolon
 r_return
 id|ENODEV
 suffix:semicolon
+)brace
 )brace
 id|outb_p
 c_func
@@ -1261,6 +1313,8 @@ r_if
 c_cond
 (paren
 id|neX000
+op_logical_or
+id|bad_card
 )paren
 (brace
 id|name

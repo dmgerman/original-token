@@ -1414,7 +1414,7 @@ id|size
 op_minus
 id|block
 suffix:semicolon
-multiline_comment|/* We do this in a two stage process.  We first try and request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try and wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk.&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches. */
+multiline_comment|/* We do this in a two stage process.  We first try to request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try to wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk.&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches. */
 r_do
 (brace
 id|bhrequest

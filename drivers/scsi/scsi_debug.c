@@ -2209,7 +2209,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi_debug_queuecommand: done cant be NULL&bslash;n&quot;
+l_string|&quot;scsi_debug_queuecommand: done can&squot;t be NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef IMMEDIATE

@@ -1176,6 +1176,11 @@ op_and_assign
 op_complement
 id|PF_USEDFPU
 suffix:semicolon
+id|stts
+c_func
+(paren
+)paren
+suffix:semicolon
 id|force_sig
 c_func
 (paren
@@ -1189,16 +1194,6 @@ op_assign
 l_int|16
 suffix:semicolon
 id|task-&gt;tss.error_code
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * Give the process a clean slate next time they use&n;&t; * the FPU (and if they haven&squot;t accepted the SIGFPE before&n;&t; * that, it&squot;s their problem..)&n;&t; */
-id|stts
-c_func
-(paren
-)paren
-suffix:semicolon
-id|task-&gt;used_math
 op_assign
 l_int|0
 suffix:semicolon

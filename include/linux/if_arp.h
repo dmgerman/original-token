@@ -215,6 +215,8 @@ DECL|macro|ARPD_UPDATE
 mdefine_line|#define ARPD_UPDATE&t;0x01
 DECL|macro|ARPD_LOOKUP
 mdefine_line|#define ARPD_LOOKUP&t;0x02
+DECL|macro|ARPD_FLUSH
+mdefine_line|#define ARPD_FLUSH&t;0x03
 DECL|struct|arpd_request
 r_struct
 id|arpd_request
@@ -230,11 +232,22 @@ id|__u32
 id|ip
 suffix:semicolon
 multiline_comment|/* ip address of entry */
-DECL|member|mask
-id|__u32
-id|mask
+DECL|member|dev
+r_int
+r_int
+id|dev
 suffix:semicolon
-multiline_comment|/* netmask - used for proxy */
+multiline_comment|/* Device entry is tied to */
+DECL|member|stamp
+r_int
+r_int
+id|stamp
+suffix:semicolon
+DECL|member|updated
+r_int
+r_int
+id|updated
+suffix:semicolon
 DECL|member|ha
 r_int
 r_char
@@ -244,36 +257,6 @@ id|MAX_ADDR_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* Hardware address */
-DECL|member|last_used
-r_int
-r_int
-id|last_used
-suffix:semicolon
-multiline_comment|/* For expiry */
-DECL|member|last_updated
-r_int
-r_int
-id|last_updated
-suffix:semicolon
-multiline_comment|/* For expiry */
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* Control status */
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/* Device entry is tied to */
-DECL|member|loc
-r_int
-id|loc
-suffix:semicolon
-multiline_comment|/* Debugging call location */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IF_ARP_H */

@@ -1,4 +1,4 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  errors.c                                                                 |&n; |                                                                           |&n; |  The error handling functions for wm-FPU-emu                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994                                              |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  errors.c                                                                 |&n; |                                                                           |&n; |  The error handling functions for wm-FPU-emu                              |&n; |                                                                           |&n; | Copyright (C) 1992,1993,1994,1996                                         |&n; |                  W. Metzenthen, 22 Parker St, Ormond, Vic 3163, Australia |&n; |                  E-mail   billm@jacobi.maths.monash.edu.au                |&n; |                                                                           |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 multiline_comment|/*---------------------------------------------------------------------------+&n; | Note:                                                                     |&n; |    The file contains code which accesses user memory.                     |&n; |    Emulator static data may change when user memory is accessed, due to   |&n; |    other processes using the emulator while swapping is in progress.      |&n; +---------------------------------------------------------------------------*/
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -205,6 +205,7 @@ r_void
 id|emu_printall
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -880,10 +881,15 @@ c_func
 id|i
 )paren
 suffix:semicolon
+r_char
+id|tagi
+op_assign
+id|r-&gt;tag
+suffix:semicolon
 r_switch
 c_cond
 (paren
-id|r-&gt;tag
+id|tagi
 )paren
 (brace
 r_case
@@ -989,8 +995,14 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Whoops! Error in errors.c      &quot;
+l_string|&quot;Whoops! Error in errors.c: tag%d is %d &quot;
+comma
+id|i
+comma
+id|tagi
 )paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1008,85 +1020,11 @@ r_int
 (paren
 r_int
 )paren
-id|r-&gt;tag
+id|tagi
 )braket
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef OBSOLETE
-id|printk
-c_func
-(paren
-l_string|&quot;[data] %c .%04lx %04lx %04lx %04lx e%+-6ld &quot;
-comma
-id|FPU_loaded_data.sign
-ques
-c_cond
-l_char|&squot;-&squot;
-suffix:colon
-l_char|&squot;+&squot;
-comma
-(paren
-r_int
-)paren
-(paren
-id|FPU_loaded_data.sigh
-op_rshift
-l_int|16
-)paren
-comma
-(paren
-r_int
-)paren
-(paren
-id|FPU_loaded_data.sigh
-op_amp
-l_int|0xFFFF
-)paren
-comma
-(paren
-r_int
-)paren
-(paren
-id|FPU_loaded_data.sigl
-op_rshift
-l_int|16
-)paren
-comma
-(paren
-r_int
-)paren
-(paren
-id|FPU_loaded_data.sigl
-op_amp
-l_int|0xFFFF
-)paren
-comma
-id|FPU_loaded_data.exp
-op_minus
-id|EXP_BIAS
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|tag_desc
-(braket
-(paren
-r_int
-)paren
-(paren
-r_int
-)paren
-id|FPU_loaded_data.tag
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif OBSOLETE
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 )brace
@@ -1425,8 +1363,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif PRINT_MESSAGES
-multiline_comment|/*&n;       * The 80486 generates an interrupt on the next non-control FPU&n;       * instruction. So we need some means of flagging it.&n;       * We use the ES (Error Summary) bit for this, assuming that&n;       * this is the way a real FPU does it (until I can check it out),&n;       * if not, then some method such as the following kludge might&n;       * be needed.&n;       */
-multiline_comment|/*      regs[0].tag |= TW_FPU_Interrupt; */
+multiline_comment|/*&n;       * The 80486 generates an interrupt on the next non-control FPU&n;       * instruction. So we need some means of flagging it.&n;       * We use the ES (Error Summary) bit for this.&n;       */
 )brace
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
@@ -2032,12 +1969,7 @@ id|CW_Precision
 suffix:semicolon
 )brace
 r_return
-op_logical_neg
-(paren
-id|control_word
-op_amp
-id|CW_Overflow
-)paren
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|arith_underflow
@@ -2134,12 +2066,7 @@ id|CW_Precision
 suffix:semicolon
 )brace
 r_return
-op_logical_neg
-(paren
-id|control_word
-op_amp
-id|CW_Underflow
-)paren
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|stack_overflow

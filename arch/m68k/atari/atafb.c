@@ -7108,7 +7108,7 @@ op_minus
 id|hde_off
 suffix:semicolon
 r_else
-multiline_comment|/* cant use this in ste_mode, because hbb is +1 off */
+multiline_comment|/* can&squot;t use this in ste_mode, because hbb is +1 off */
 id|var-&gt;right_margin
 op_assign
 id|prescale

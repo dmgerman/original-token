@@ -451,7 +451,7 @@ r_int
 id|empty_zero_page
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * The page copied most is the COW empty_zero_page.  Since we&n;&t;&t; * know it&squot;s contents we can avoid the writeback reading of&n;&t;&t; * the page.  Speeds up the standard case a lot.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The page copied most is the COW empty_zero_page.  Since we&n;&t;&t; * know its contents we can avoid the writeback reading of&n;&t;&t; * the page.  Speeds up the standard case a lot.&n;&t;&t; */
 id|__zeropage
 c_func
 (paren

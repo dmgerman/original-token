@@ -359,7 +359,7 @@ DECL|member|nrefill
 r_int
 id|nrefill
 suffix:semicolon
-multiline_comment|/* Number of clean buffers to try and obtain&n;&t;&t;&t;&t;each time we call refill */
+multiline_comment|/* Number of clean buffers to try to obtain&n;&t;&t;&t;&t;each time we call refill */
 DECL|member|nref_dirt
 r_int
 id|nref_dirt
@@ -2742,7 +2742,7 @@ l_int|100
 r_return
 suffix:semicolon
 multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
-multiline_comment|/* We are going to try and locate this much memory */
+multiline_comment|/* We are going to try to locate this much memory */
 id|needed
 op_assign
 id|bdf_prm.b_un.nrefill
@@ -2831,7 +2831,7 @@ suffix:semicolon
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* OK, we cannot grow the buffer cache, now try and get some&n;&t;   from the lru list */
+multiline_comment|/* OK, we cannot grow the buffer cache, now try to get some&n;&t;   from the lru list */
 multiline_comment|/* First set the candidate pointers to usable buffers.  This&n;&t;   should be quick nearly all of the time. */
 id|repeat0
 suffix:colon
@@ -4316,13 +4316,7 @@ id|size
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: bread: READ error on device %s&bslash;n&quot;
-comma
-id|kdevname
-c_func
-(paren
-id|dev
-)paren
+l_string|&quot;VFS: bread: impossible error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8783,7 +8777,7 @@ id|bdflush_done
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * Here we attempt to write back old buffers.  We also try and flush inodes &n; * and supers as well, since this function is essentially &quot;update&quot;, and &n; * otherwise there would be no way of ensuring that these quantities ever &n; * get written back.  Ideally, we would have a timestamp on the inodes&n; * and superblocks so that we could write back only the old ones as well&n; */
+multiline_comment|/* &n; * Here we attempt to write back old buffers.  We also try to flush inodes &n; * and supers as well, since this function is essentially &quot;update&quot;, and &n; * otherwise there would be no way of ensuring that these quantities ever &n; * get written back.  Ideally, we would have a timestamp on the inodes&n; * and superblocks so that we could write back only the old ones as well&n; */
 DECL|function|sync_old_buffers
 id|asmlinkage
 r_int

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/vga.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&t;&t;&t;1995  Jay Estabrook&n; */
-multiline_comment|/*&n; *&t;vga.c&n; *&n; * This module exports the console low-level io support for VGA&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin &n; * Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; * Colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;vga.c&n; *&n; * This module exports the console low-level io support for VGA&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin &n; * Feb-Sep 1995 &lt;peter.anvin@linux.org&gt;&n; *&n; * Colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; * if 512 char mode is already enabled don&squot;t re-enable it,&n; * because it causes screen to flicker, by Mitja Horvat&n; * 5-May-96 &lt;mitja.horvat@guest.arnes.si&gt;&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -1084,6 +1084,12 @@ id|ch512
 )paren
 (brace
 macro_line|#ifdef CAN_LOAD_EGA_FONTS
+r_static
+r_int
+id|ch512enabled
+op_assign
+l_int|0
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -1719,13 +1725,26 @@ id|gr_port_val
 )paren
 suffix:semicolon
 multiline_comment|/* map starts at b800:0 or b000:0 */
+multiline_comment|/* if 512 char mode is already enabled don&squot;t re-enable it. */
 r_if
 c_cond
 (paren
+(paren
 id|set
+)paren
+op_logical_and
+(paren
+id|ch512
+op_ne
+id|ch512enabled
+)paren
 )paren
 multiline_comment|/* attribute controller */
 (brace
+id|ch512enabled
+op_assign
+id|ch512
+suffix:semicolon
 multiline_comment|/* 256-char: enable intensity bit&n;&t;       512-char: disable intensity bit */
 id|inb_p
 c_func

@@ -6104,7 +6104,7 @@ comma
 id|SCpnt-&gt;host
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now try and pick up the pieces.  Restart all commands&n;&t; * that are currently active on the bus, and reset all of&n;&t; * the datastructures.  We have some time to kill while&n;&t; * things settle down, so print a nice message.&n;&t; */
+multiline_comment|/*&n;&t; * Now try to pick up the pieces.  Restart all commands&n;&t; * that are currently active on the bus, and reset all of&n;&t; * the datastructures.  We have some time to kill while&n;&t; * things settle down, so print a nice message.&n;&t; */
 id|printk
 c_func
 (paren

@@ -1563,9 +1563,6 @@ op_star
 id|file
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 id|DEB
 (paren
 id|printk
@@ -1704,6 +1701,10 @@ suffix:colon
 r_case
 id|SND_DEV_SEQ2
 suffix:colon
+(brace
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1725,11 +1726,16 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_MIDI
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
+(brace
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1751,6 +1757,7 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_AUDIO
 r_case
@@ -1762,6 +1769,10 @@ suffix:colon
 r_case
 id|SND_DEV_AUDIO
 suffix:colon
+(brace
+r_int
+id|retval
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1783,6 +1794,7 @@ id|retval
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 macro_line|#endif
 r_default
 suffix:colon

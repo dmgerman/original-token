@@ -2958,7 +2958,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;&t; * try and find a queueable request (i.e. device not busy, and host able to&n;&t; * accept another command.  If we find one, then we queue it. This can&n;&t; * make a big difference on systems with more than one disk drive.  We want&n;&t; * to have the interrupts off when monkeying with the request list, because&n;&t; * otherwise the kernel might try and slip in a request in between somewhere. */
+multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;&t; * try to find a queueable request (i.e. device not busy, and host able to&n;&t; * accept another command.  If we find one, then we queue it. This can&n;&t; * make a big difference on systems with more than one disk drive.  We want&n;&t; * to have the interrupts off when monkeying with the request list, because&n;&t; * otherwise the kernel might try to slip in a request in between somewhere. */
 r_if
 c_cond
 (paren
@@ -3879,7 +3879,7 @@ id|count
 dot
 id|address
 suffix:semicolon
-multiline_comment|/* We try and avoid exhausting the DMA pool, since it is easier&n;&t;&t;     * to control usage here.  In other places we might have a more&n;&t;&t;     * pressing need, and we would be screwed if we ran out */
+multiline_comment|/* We try to avoid exhausting the DMA pool, since it is easier&n;&t;&t;     * to control usage here.  In other places we might have a more&n;&t;&t;     * pressing need, and we would be screwed if we ran out */
 r_if
 c_cond
 (paren

@@ -909,7 +909,7 @@ r_goto
 id|no_sun_fdc
 suffix:semicolon
 )brace
-multiline_comment|/* Well, try and find one. */
+multiline_comment|/* Well, try to find one. */
 id|tnode
 op_assign
 id|prom_getchild

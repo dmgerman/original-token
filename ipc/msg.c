@@ -697,7 +697,8 @@ multiline_comment|/*&n; * Take care of missing kerneld, especially in case of mu
 DECL|macro|KERNELD_TIMEOUT
 mdefine_line|#define KERNELD_TIMEOUT 1 * (HZ)
 DECL|macro|DROP_TIMER
-mdefine_line|#define DROP_TIMER if ((msgflg &amp; IPC_KERNELD) &amp;&amp; kd_timer.next &amp;&amp; kd_timer.prev) del_timer(&amp;kd_timer)
+mdefine_line|#define DROP_TIMER del_timer(&amp;kd_timer)
+multiline_comment|/*#define DROP_TIMER if ((msgflg &amp; IPC_KERNELD) &amp;&amp; kd_timer.next &amp;&amp; kd_timer.prev) del_timer(&amp;kd_timer)*/
 DECL|function|kd_timeout
 r_static
 r_void
@@ -856,6 +857,18 @@ id|msgflg
 r_struct
 id|timer_list
 id|kd_timer
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 r_struct
 id|msqid_ds
@@ -1046,10 +1059,14 @@ id|msqid
 op_div
 id|MSGMNI
 )paren
+(brace
+id|DROP_TIMER
+suffix:semicolon
 r_return
 op_minus
 id|EIDRM
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1073,10 +1090,14 @@ comma
 id|S_IRUGO
 )paren
 )paren
+(brace
+id|DROP_TIMER
+suffix:semicolon
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1231,10 +1252,14 @@ op_amp
 id|MSG_NOERROR
 )paren
 )paren
+(brace
+id|DROP_TIMER
+suffix:semicolon
 r_return
 op_minus
 id|E2BIG
 suffix:semicolon
+)brace
 id|msgsz
 op_assign
 (paren
@@ -1448,6 +1473,8 @@ c_func
 (paren
 id|nmsg
 )paren
+suffix:semicolon
+id|DROP_TIMER
 suffix:semicolon
 r_return
 id|msgsz

@@ -112,7 +112,7 @@ r_int
 r_int
 id|smp_invalidate_needed
 suffix:semicolon
-multiline_comment|/* Used for the invalidate map thats also checked in the spinlock */
+multiline_comment|/* Used for the invalidate map that&squot;s also checked in the spinlock */
 DECL|variable|cpu_data
 r_struct
 id|cpuinfo_x86
@@ -1671,7 +1671,7 @@ id|trampoline_data
 op_assign
 initialization_block
 suffix:semicolon
-multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure its suitably aligned.&n; */
+multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure it&squot;s suitably aligned.&n; */
 DECL|function|install_trampoline
 r_static
 r_void
@@ -3693,7 +3693,7 @@ id|active_kernel_processor
 suffix:semicolon
 )brace
 multiline_comment|/*&t;printk(&quot;SMI-&quot;);*/
-multiline_comment|/*&n;&t; *&t;The assignment is safe because its volatile so the compiler cannot reorder it,&n;&t; *&t;because the i586 has strict memory ordering and because only the kernel lock holder&n;&t; *&t;may issue a tlb flush. If you break any one of those three change this to an atomic&n;&t; *&t;bus locked or.&n;&t; */
+multiline_comment|/*&n;&t; *&t;The assignment is safe because it&squot;s volatile so the compiler cannot reorder it,&n;&t; *&t;because the i586 has strict memory ordering and because only the kernel lock holder&n;&t; *&t;may issue a tlb flush. If you break any one of those three change this to an atomic&n;&t; *&t;bus locked or.&n;&t; */
 id|smp_invalidate_needed
 op_assign
 id|cpu_present_map
@@ -3708,7 +3708,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Processors spinning on the lock will see this IRQ late. The smp_invalidate_needed map will&n;&t; *&t;ensure they dont do a spurious flush tlb or miss one.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Processors spinning on the lock will see this IRQ late. The smp_invalidate_needed map will&n;&t; *&t;ensure they don&squot;t do a spurious flush tlb or miss one.&n;&t; */
 id|save_flags
 c_func
 (paren

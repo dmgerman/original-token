@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/amiga/amiflop.c&n; *&n; *  Copyright (C) 1993  Greg Harp&n; *  Portions of this driver are based on code contributed by Brad Pepers&n; *  &n; *  revised 28.5.95 by Joerg Dorchain&n; *  - now no bugs(?) any more for both HD &amp; DD&n; *  - added support for 40 Track 5.25&quot; drives, 80-track hopefully behaves&n; *    like 3.5&quot; dd (no way to test - are there any 5.25&quot; drives out there&n; *    that work on an A4000?)&n; *  - wrote formatting routine (maybe dirty, but works)&n; *&n; *  june/july 1995 added ms-dos support by Joerg Dorchain&n; *  (portions based on messydos.device and various contributors)&n; *  - currently only 9 and 18 sector disks&n; *&n; *  - fixed a bug with the internal trackbuffer when using multiple &n; *    disks the same time&n; *  - made formatting a bit safer&n; *  - added command line and machine based default for &quot;silent&quot; df0&n; *&n; *  december 1995 adapted for 1.2.13pl4 by Joerg Dorchain&n; *  - works but I think its inefficient. (look in redo_fd_request)&n; *    But the changes were very efficient. (only three and a half lines)&n; *&n; *  january 1995 added special ioctl for tracking down read/write problems&n; *  - usage ioctl(d, RAW_TRACK, ptr); the raw track buffer (MFM-encoded data&n; *    is copied to area. (area should be large enough since no checking is&n; *    done - 30K is currently sufficient). return the actual size of the&n; *    trackbuffer&n; *  - replaced udelays() by a timer (CIAA timer B) for the waits &n; *    needed for the disk mechanic.&n; *&n; *  revised Marts 3rd, 1996 by Jes Sorensen for use in the 1.3.28 kernel.&n; *  - Minor changes to accept the kdev_t.&n; *  - Replaced some more udelays with ms_delays. Udelay is just a loop,&n; *    and so the delay will be different depending on the given&n; *    processor :-(&n; *  - The driver could use a major cleanup because of the new&n; *    major/minor handling that came with kdev_t. It seems to work for&n; *    the time being, but I can&squot;t guarantee that it will stay like&n; *    that when we start using 16 (24?) bit minors.&n; */
+multiline_comment|/*&n; *  linux/amiga/amiflop.c&n; *&n; *  Copyright (C) 1993  Greg Harp&n; *  Portions of this driver are based on code contributed by Brad Pepers&n; *  &n; *  revised 28.5.95 by Joerg Dorchain&n; *  - now no bugs(?) any more for both HD &amp; DD&n; *  - added support for 40 Track 5.25&quot; drives, 80-track hopefully behaves&n; *    like 3.5&quot; dd (no way to test - are there any 5.25&quot; drives out there&n; *    that work on an A4000?)&n; *  - wrote formatting routine (maybe dirty, but works)&n; *&n; *  june/july 1995 added ms-dos support by Joerg Dorchain&n; *  (portions based on messydos.device and various contributors)&n; *  - currently only 9 and 18 sector disks&n; *&n; *  - fixed a bug with the internal trackbuffer when using multiple &n; *    disks the same time&n; *  - made formatting a bit safer&n; *  - added command line and machine based default for &quot;silent&quot; df0&n; *&n; *  december 1995 adapted for 1.2.13pl4 by Joerg Dorchain&n; *  - works but I think it&squot;s inefficient. (look in redo_fd_request)&n; *    But the changes were very efficient. (only three and a half lines)&n; *&n; *  january 1995 added special ioctl for tracking down read/write problems&n; *  - usage ioctl(d, RAW_TRACK, ptr); the raw track buffer (MFM-encoded data&n; *    is copied to area. (area should be large enough since no checking is&n; *    done - 30K is currently sufficient). return the actual size of the&n; *    trackbuffer&n; *  - replaced udelays() by a timer (CIAA timer B) for the waits &n; *    needed for the disk mechanic.&n; *&n; *  revised Marts 3rd, 1996 by Jes Sorensen for use in the 1.3.28 kernel.&n; *  - Minor changes to accept the kdev_t.&n; *  - Replaced some more udelays with ms_delays. Udelay is just a loop,&n; *    and so the delay will be different depending on the given&n; *    processor :-(&n; *  - The driver could use a major cleanup because of the new&n; *    major/minor handling that came with kdev_t. It seems to work for&n; *    the time being, but I can&squot;t guarantee that it will stay like&n; *    that when we start using 16 (24?) bit minors.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -3217,7 +3217,7 @@ r_int
 r_int
 id|crc
 suffix:semicolon
-multiline_comment|/* on 68000 we got an alignment problem, &n;                           but this compiler solves it  by adding silently &n;                           adding a pad byte so data wont fit&n;                           and this cost about 3h to discover.... */
+multiline_comment|/* on 68000 we got an alignment problem, &n;                           but this compiler solves it  by adding silently &n;                           adding a pad byte so data won&squot;t fit&n;                           and this cost about 3h to discover.... */
 DECL|member|gap1
 r_int
 r_char
@@ -9429,4 +9429,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
+multiline_comment|/*&n; * This is just a dummy function to keep fs/super.c happy.&n; */
+DECL|function|floppy_eject
+r_void
+id|floppy_eject
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

@@ -19,7 +19,7 @@ macro_line|#include &quot;ftape-ctl.h&quot;
 macro_line|#include &quot;ftape-rw.h&quot;
 macro_line|#include &quot;fdc-io.h&quot;
 multiline_comment|/*      Global vars.&n; */
-multiline_comment|/* Allocating a 96Kb DMAable buffer in one chunk wont work due to&n; * memory fragmentation.  To avoid this, it is broken up into&n; * NR_BUFFERS chunks of 32Kbyte. --khp&n; */
+multiline_comment|/* Allocating a 96Kb DMAable buffer in one chunk won&squot;t work due to&n; * memory fragmentation.  To avoid this, it is broken up into&n; * NR_BUFFERS chunks of 32Kbyte. --khp&n; */
 DECL|variable|tape_buffer
 id|byte
 op_star

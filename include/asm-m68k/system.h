@@ -105,6 +105,8 @@ DECL|macro|cli
 mdefine_line|#define cli() __asm__ __volatile__ (&quot;oriw  #0x0700,%/sr&quot;: : : &quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
+DECL|macro|mb
+mdefine_line|#define mb()  __asm__ __volatile__ (&quot;&quot;   : : :&quot;memory&quot;)
 DECL|macro|save_flags
 mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;movew %/sr,%0&quot;:&quot;=d&quot; (x) : /* no input */ :&quot;memory&quot;)
 DECL|macro|restore_flags

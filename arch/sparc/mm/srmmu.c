@@ -8847,7 +8847,7 @@ id|num_contexts
 id|prom_printf
 c_func
 (paren
-l_string|&quot;Something wrong, cant find cpu node in paging_init.&bslash;n&quot;
+l_string|&quot;Something wrong, can&squot;t find cpu node in paging_init.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt

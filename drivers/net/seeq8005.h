@@ -180,7 +180,7 @@ mdefine_line|#define SEEQCFG2_ADDR_LEN&t;(0x0100)&t;/* 1= 2byte addresses */
 DECL|macro|SEEQCFG2_REC_CRC
 mdefine_line|#define SEEQCFG2_REC_CRC&t;(0x0200)&t;/* 0= received packets will have CRC stripped from them */
 DECL|macro|SEEQCFG2_XMIT_NO_CRC
-mdefine_line|#define SEEQCFG2_XMIT_NO_CRC&t;(0x0400)&t;/* dont xmit CRC with each packet (user supplies it) */
+mdefine_line|#define SEEQCFG2_XMIT_NO_CRC&t;(0x0400)&t;/* don&squot;t xmit CRC with each packet (user supplies it) */
 DECL|macro|SEEQCFG2_LOOPBACK
 mdefine_line|#define SEEQCFG2_LOOPBACK&t;(0x0800)
 DECL|macro|SEEQCFG2_CTRLO

@@ -9,13 +9,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Originally by Anonymous (as far as I know...)&n; * Linux version by Bas Laarhoven &lt;bas@vimec.nl&gt;&n; * 0.99.14 version by Jon Tombs &lt;jon@gtex02.us.es&gt;,&n; *&n; * Heavily modified by Bjorn Ekwall &lt;bj0rn@blox.se&gt; May 1994 (C)&n; * This source is covered by the GNU GPL, the same as all kernel sources.&n; *&n; * Features:&n; *&t;- Supports stacked modules (removable only of there are no dependents).&n; *&t;- Supports table of symbols defined by the modules.&n; *&t;- Supports /proc/ksyms, showing value, name and owner of all&n; *&t;  the symbols defined by all modules (in stack order).&n; *&t;- Added module dependencies information into /proc/modules&n; *&t;- Supports redefines of all symbols, for streams-like behaviour.&n; *&t;- Compatible with older versions of insmod.&n; *&n; * New addition in December 1994: (Bjorn Ekwall, idea from Jacques Gelinas)&n; *&t;- Externally callable function:&n; *&n; *&t;&t;&quot;int register_symtab(struct symbol_table *)&quot;&n; *&n; *&t;  This function can be called from within the kernel,&n; *&t;  and ALSO from loadable modules.&n; *&t;  The goal is to assist in modularizing the kernel even more,&n; *&t;  and finally: reducing the number of entries in ksyms.c&n; *&t;  since every subsystem should now be able to decide and&n; *&t;  control exactly what symbols it wants to export, locally!&n; *&n; * On 1-Aug-95:  &lt;Matti.Aarnio@utu.fi&gt;  altered code to use same style as&n; *&t;&t; do  /proc/net/XXX  &quot;files&quot;.  Namely allow more than 4kB&n; *&t;&t; (or what the block size is) output.&n; *&n; *&t;- Use dummy syscall functions for users who disable all&n; *&t;  module support. Similar to kernel/sys.c (Paul Gortmaker)&n; */
 macro_line|#ifdef CONFIG_MODULES&t;&t;/* a *big* #ifdef block... */
-macro_line|#ifdef DEBUG_MODULE
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(a) printk a
-macro_line|#else
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(a) /* */
-macro_line|#endif
 DECL|variable|kernel_module
 r_static
 r_struct
@@ -405,9 +398,8 @@ op_assign
 id|mp
 suffix:semicolon
 multiline_comment|/* link it in */
-id|PRINTK
+id|pr_debug
 c_func
-(paren
 (paren
 l_string|&quot;module `%s&squot; (%lu pages @ 0x%08lx) created&bslash;n&quot;
 comma
@@ -424,7 +416,6 @@ r_int
 r_int
 )paren
 id|mp-&gt;addr
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -556,9 +547,8 @@ l_int|0
 r_return
 id|error
 suffix:semicolon
-id|PRINTK
+id|pr_debug
 c_func
-(paren
 (paren
 l_string|&quot;initializing module `%s&squot;, %d (0x%x) bytes&bslash;n&quot;
 comma
@@ -567,7 +557,6 @@ comma
 id|codesize
 comma
 id|codesize
-)paren
 )paren
 suffix:semicolon
 id|memcpy_fromfs
@@ -699,9 +688,8 @@ r_int
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|pr_debug
 c_func
-(paren
 (paren
 l_string|&quot;module init entry = 0x%08lx, cleanup entry = 0x%08lx&bslash;n&quot;
 comma
@@ -716,7 +704,6 @@ r_int
 r_int
 )paren
 id|rt.cleanup
-)paren
 )paren
 suffix:semicolon
 id|mp-&gt;cleanup

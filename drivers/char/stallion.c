@@ -1466,7 +1466,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Free up all allocated resources used by the ports. This includes&n; *&t;memory and interrupts. As part of this process we will also do&n; *&t;a hangup on every open port - to try and flush out any processes&n; *&t;hanging onto ports.&n; */
+multiline_comment|/*&n; *&t;Free up all allocated resources used by the ports. This includes&n; *&t;memory and interrupts. As part of this process we will also do&n; *&t;a hangup on every open port - to try to flush out any processes&n; *&t;hanging onto ports.&n; */
 id|i
 op_assign
 id|tty_unregister_driver
@@ -10973,7 +10973,7 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Try and find and initialize all the ports on a panel. We don&squot;t care&n; *&t;what sort of board these ports are on - since the port io registers&n; *&t;are almost identical when dealing with ports.&n; */
+multiline_comment|/*&n; *&t;Try to find and initialize all the ports on a panel. We don&squot;t care&n; *&t;what sort of board these ports are on - since the port io registers&n; *&t;are almost identical when dealing with ports.&n; */
 DECL|function|stl_initports
 r_static
 r_int
@@ -13263,7 +13263,7 @@ id|brdp
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PCI
-multiline_comment|/*&n; *&t;If the PCI BIOS support is compiled in then lets go looking for&n; *&t;ECH-PCI boards.&n; */
+multiline_comment|/*&n; *&t;If the PCI BIOS support is compiled in then let&squot;s go looking for&n; *&t;ECH-PCI boards.&n; */
 id|stl_findpcibrds
 c_func
 (paren

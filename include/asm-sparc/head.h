@@ -63,7 +63,7 @@ mdefine_line|#define TRAP_ENTRY_INTERRUPT(int_level) &bslash;&n;        mov int_
 multiline_comment|/* NMI&squot;s (Non Maskable Interrupts) are special, you can&squot;t keep them&n; * from coming in, and basically if you get one, the shows over. ;(&n; * On the sun4c they are usually asynchronous memory errors, on the&n; * the sun4m they could be either due to mem errors or a software&n; * initiated interrupt from the prom/kern on an SMP box saying &quot;I&n; * command you to do CPU tricks, read your mailbox for more info.&quot;&n; */
 DECL|macro|NMI_TRAP
 mdefine_line|#define NMI_TRAP &bslash;&n;        rd %wim, %l3; b linux_trap_nmi_sun4c; mov %psr, %l0; nop;
-multiline_comment|/* Window overflows/underflows are special and we need to try and be as&n; * efficient as possible here....&n; */
+multiline_comment|/* Window overflows/underflows are special and we need to try to be as&n; * efficient as possible here....&n; */
 DECL|macro|WINDOW_SPILL
 mdefine_line|#define WINDOW_SPILL &bslash;&n;        rd %psr, %l0; rd %wim, %l3; b spill_window_entry; andcc %l0, PSR_PS, %g0;
 DECL|macro|WINDOW_FILL

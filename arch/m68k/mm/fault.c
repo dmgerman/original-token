@@ -266,13 +266,11 @@ id|regs
 )paren
 (brace
 multiline_comment|/* User memory access */
-id|send_sig
+id|force_sig
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return

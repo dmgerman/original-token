@@ -128,9 +128,6 @@ id|EINTR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * FIXME. We don&squot;t currently restore emulator state&n; */
-DECL|macro|restore_i387_soft
-mdefine_line|#define restore_i387_soft(x) do { } while (0)
 DECL|function|restore_i387_hard
 r_static
 r_inline
@@ -484,9 +481,6 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * FIXME. We currently don&squot;t save 387 state if we use emulation&n; */
-DECL|macro|save_i387_soft
-mdefine_line|#define save_i387_soft(x) NULL
 DECL|function|save_i387_hard
 r_static
 r_inline

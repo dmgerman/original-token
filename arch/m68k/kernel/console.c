@@ -9338,7 +9338,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-multiline_comment|/* Contrived structure to try and emulate original need_wrap behaviour&n;    * Problems caused when we have need_wrap set on &squot;&bslash;n&squot; character */
+multiline_comment|/* Contrived structure to try to emulate original need_wrap behaviour&n;    * Problems caused when we have need_wrap set on &squot;&bslash;n&squot; character */
 r_while
 c_loop
 (paren

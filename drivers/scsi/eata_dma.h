@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/07/18                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/05/05                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -9,7 +9,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 5
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;8a&quot;
+mdefine_line|#define VER_SUB   &quot;8d&quot;
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
@@ -46,6 +46,12 @@ DECL|macro|DBG_INTR2
 mdefine_line|#define DBG_INTR2       0       /* Trace interrupt service routine.     */
 DECL|macro|DBG_INTR3
 mdefine_line|#define DBG_INTR3       0       /* Trace get_board_data interrupts.     */
+DECL|macro|DBG_REQSENSE
+mdefine_line|#define DBG_REQSENSE    0       /* Trace request sense commands         */     
+DECL|macro|DBG_RESET
+mdefine_line|#define DBG_RESET       0       /* Trace reset calls                    */     
+DECL|macro|DBG_STATUS
+mdefine_line|#define DBG_STATUS      0       /* Trace status generation              */
 DECL|macro|DBG_PROC
 mdefine_line|#define DBG_PROC        0       /* Debug proc-fs related statistics     */
 DECL|macro|DBG_PROC_WRITE
@@ -121,6 +127,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int

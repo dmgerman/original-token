@@ -8564,7 +8564,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Try and get ARP to resolve the header.&n;&t; */
+multiline_comment|/*&n;&t; * Try to get ARP to resolve the header.&n;&t; */
 macro_line|#ifdef CONFIG_INET&t; 
 id|BUGMSG
 c_func
@@ -10303,7 +10303,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Try and get ARP to resolve the header.&n;&t; */
+multiline_comment|/*&n;&t; * Try to get ARP to resolve the header.&n;&t; */
 macro_line|#ifdef CONFIG_INET&t; 
 r_return
 id|arp_find

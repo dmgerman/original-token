@@ -2644,7 +2644,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* don&squot;t return with a partial count ! */
-multiline_comment|/*  If we&squot;re reading the `last&squot; segment(s) on tape, make sure we don&squot;t&n;&t;&t; *  get more than 29 Kb from it (As it only contains this much).&n;&t;&t; *  This works only for sequential access, so random access should&n;&t;&t; *  stay away from this `last&squot; segment.&n;&t;&t; *  Note: ftape_seg_pos points to the next segment what will be&n;&t;&t; *        read, so it&squot;s one too hight here!&n;&t;&t; */
+multiline_comment|/*  If we&squot;re reading the `last&squot; segment(s) on tape, make sure we don&squot;t&n;&t;&t; *  get more than 29 Kb from it (As it only contains this much).&n;&t;&t; *  This works only for sequential access, so random access should&n;&t;&t; *  stay away from this `last&squot; segment.&n;&t;&t; *  Note: ftape_seg_pos points to the next segment that will be&n;&t;&t; *        read, so it&squot;s one too high here!&n;&t;&t; */
 r_if
 c_cond
 (paren

@@ -768,6 +768,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;drive_stat_acct: cmd not R/W?&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1119,15 +1120,18 @@ id|bh-&gt;b_state
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* This may well happen - the kernel calls bread()&n;                           without checking the size of the device, e.g.,&n;                           when mounting a device. */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;attempt to access beyond end of device&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: rw=%d, want=%d, limit=%d&bslash;n&quot;
 comma
 id|kdevname
@@ -1294,7 +1298,9 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;make_request: bad block dev cmd, must be R/W/RA/WA&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;make_request: bad block dev cmd,&quot;
+l_string|&quot; must be R/W/RA/WA&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unlock_buffer
@@ -1676,7 +1682,6 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-suffix:semicolon
 id|dev
 op_assign
 l_int|NULL
@@ -1720,6 +1725,7 @@ id|dev-&gt;request_fn
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ll_rw_block: Trying to read nonexistent block-device %s (%ld)&bslash;n&quot;
 comma
 id|kdevname
@@ -1825,6 +1831,7 @@ id|correct_size
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;ll_rw_block: device %s: &quot;
 l_string|&quot;only %d-char blocks implemented (%lu)&bslash;n&quot;
 comma
@@ -1973,6 +1980,7 @@ id|b_dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;Can&squot;t write to read-only device %s&bslash;n&quot;
 comma
 id|kdevname
@@ -2198,7 +2206,9 @@ id|request_fn
 id|printk
 c_func
 (paren
-l_string|&quot;ll_rw_swap_file: trying to swap nonexistent block-device&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;ll_rw_swap_file: trying to swap to&quot;
+l_string|&quot; nonexistent block-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2231,6 +2241,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;Can&squot;t swap to read-only device %s&bslash;n&quot;
 comma
 id|kdevname
@@ -2347,6 +2358,7 @@ l_int|9
 (brace
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;Bad md_map in ll_rw_page_size&bslash;n&quot;
 )paren
 suffix:semicolon

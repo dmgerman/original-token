@@ -1318,7 +1318,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;With an ioctl arg may well be a user mode pointer, but we don&squot;t know what to do&n; *&t;with it - thats up to the protocol still.&n; */
+multiline_comment|/*&n; *&t;With an ioctl arg may well be a user mode pointer, but we don&squot;t know what to do&n; *&t;with it - that&squot;s up to the protocol still.&n; */
 DECL|function|sock_ioctl
 r_int
 id|sock_ioctl

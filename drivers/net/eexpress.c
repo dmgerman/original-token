@@ -4108,7 +4108,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * This should never happen. It is called when some higher&n; * routine detects the CU has stopped, to try and restart&n; * it from the last packet we knew we were working on,&n; * or the idle loop if we had finished for the time.&n; */
+multiline_comment|/* &n; * This should never happen. It is called when some higher&n; * routine detects the CU has stopped, to try to restart&n; * it from the last packet we knew we were working on,&n; * or the idle loop if we had finished for the time.&n; */
 DECL|function|eexp_hw_txrestart
 r_static
 r_void

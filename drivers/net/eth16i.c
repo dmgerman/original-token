@@ -1036,7 +1036,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     Now it seems that we have found a ethernet chip in this particular&n;     ioaddr. The MB86985 chip has this feature, that when you read a &n;     certain register it will increase it&squot;s io base address to next&n;     configurable slot. Now when we have found the chip, first thing is&n;     to make sure that the chip&squot;s ioaddr will hold still here.&n;  */
+multiline_comment|/* &n;     Now it seems that we have found a ethernet chip in this particular&n;     ioaddr. The MB86985 chip has this feature, that when you read a &n;     certain register it will increase its io base address to next&n;     configurable slot. Now when we have found the chip, first thing is&n;     to make sure that the chip&squot;s ioaddr will hold still here.&n;  */
 id|eth16i_select_regbank
 c_func
 (paren

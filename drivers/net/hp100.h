@@ -140,7 +140,7 @@ mdefine_line|#define HP100_BM_WRITE&t;&t;0x0800&t;/* 0:Slave, 1:Bus Master for T
 DECL|macro|HP100_BM_READ
 mdefine_line|#define HP100_BM_READ&t;&t;0x0400&t;/* 0:Slave, 1:Bus Master for Rx data */
 DECL|macro|HP100_TRI_INT
-mdefine_line|#define HP100_TRI_INT&t;&t;0x0200&t;/* 0:Dont, 1:Do tri-state the int */
+mdefine_line|#define HP100_TRI_INT&t;&t;0x0200&t;/* 0:Don&squot;t, 1:Do tri-state the int */
 DECL|macro|HP100_MEM_EN
 mdefine_line|#define HP100_MEM_EN&t;&t;0x0040&t;/* Config program set this to */
 multiline_comment|/*   0:Disable, 1:Enable mem map. */

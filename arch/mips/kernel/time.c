@@ -585,7 +585,7 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
-multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically its a hack, so don&squot;t look&n;&t;   closely for now.. */
+multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 id|smp_message_pass
 c_func
 (paren

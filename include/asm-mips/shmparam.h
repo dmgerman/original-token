@@ -27,7 +27,7 @@ DECL|macro|SHMMNI
 mdefine_line|#define SHMMNI (1&lt;&lt;_SHM_ID_BITS)&t;/* max num of segs system wide */
 DECL|macro|SHMALL
 mdefine_line|#define SHMALL&t;&t;&t;&t;/* max shm system wide (pages) */ &bslash;&n;&t;(1&lt;&lt;(_SHM_IDX_BITS+_SHM_ID_BITS))
-multiline_comment|/*&n; * This constant is very large but the ABI in it&squot;s wisdom says ...&n; */
+multiline_comment|/*&n; * This constant is very large but the ABI in its wisdom says ...&n; */
 DECL|macro|SHMLBA
 mdefine_line|#define&t;SHMLBA 0x40000&t;&t;&t;/* attach addr a multiple of this */
 DECL|macro|SHMSEG

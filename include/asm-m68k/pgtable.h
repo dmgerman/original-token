@@ -4,7 +4,6 @@ mdefine_line|#define _M68K_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the m68k page table tree.&n; */
 DECL|macro|__flush_tlb
 mdefine_line|#define __flush_tlb() &bslash;&n;do { &t;&bslash;&n;&t;if (m68k_is040or060) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;.word 0xf510&bslash;n&quot;::); /* pflushan */ &bslash;&n;&t;else &bslash;&n;&t;&t;__asm__ __volatile__(&quot;pflusha&bslash;n&quot;::); &bslash;&n;} while (0)
-macro_line|#if 1
 DECL|function|__flush_tlb_one
 r_static
 r_inline
@@ -64,10 +63,6 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|macro|__flush_tlb_one
-mdefine_line|#define __flush_tlb_one(addr) __flush_tlb()
-macro_line|#endif
 DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() __flush_tlb()
 DECL|macro|flush_tlb_all
@@ -2738,14 +2733,13 @@ id|pte
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * I don&squot;t know what is going on here, but since these were changed,&n; * swapping haven&squot;t been working on the 68040.&n; */
-macro_line|#if 0
+multiline_comment|/*&n; * I don&squot;t know what is going on here, but since these were changed,&n; * swapping hasn&squot;t been working on the 68040.&n; */
+DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry)  (((entry) &gt;&gt; 2) &amp; 0x7f)
+macro_line|#if 0
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 9)
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 9))
 macro_line|#else
-DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry)  (((entry) &amp; 0x1fc) &gt;&gt; 2)
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
 DECL|macro|SWP_ENTRY

@@ -1412,7 +1412,7 @@ l_int|0xffff
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Could writing twice fix problems with GUS_VOICE_POS() ? Lets try... */
+multiline_comment|/* Could writing twice fix problems with GUS_VOICE_POS() ? Let&squot;s try... */
 id|gus_delay
 (paren
 )paren
@@ -12767,7 +12767,7 @@ l_int|NULL
 (brace
 id|printk
 (paren
-l_string|&quot;GUS Error: Cant allocate memory for instrument tables&bslash;n&quot;
+l_string|&quot;GUS Error: Can&squot;t allocate memory for instrument tables&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,6 +1,28 @@
 macro_line|#ifndef _LINUX_MATH_EMU_H
 DECL|macro|_LINUX_MATH_EMU_H
 mdefine_line|#define _LINUX_MATH_EMU_H
+r_void
+id|restore_i387_soft
+c_func
+(paren
+r_struct
+id|_fpstate
+op_star
+id|buf
+)paren
+suffix:semicolon
+r_struct
+id|_fpstate
+op_star
+id|save_i387_soft
+c_func
+(paren
+r_struct
+id|_fpstate
+op_star
+id|buf
+)paren
+suffix:semicolon
 DECL|struct|fpu_reg
 r_struct
 id|fpu_reg

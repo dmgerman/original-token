@@ -724,6 +724,12 @@ op_or
 id|get_user
 c_func
 (paren
+(paren
+r_const
+r_int
+r_char
+op_star
+)paren
 id|buf
 op_increment
 )paren
@@ -922,6 +928,12 @@ op_or
 id|get_user
 c_func
 (paren
+(paren
+r_const
+r_int
+r_char
+op_star
+)paren
 id|buf
 op_increment
 )paren

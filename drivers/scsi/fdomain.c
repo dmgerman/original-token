@@ -1434,7 +1434,7 @@ multiline_comment|/* 2k FIFO */
 )brace
 )brace
 macro_line|#else
-multiline_comment|/* That should have worked, but appears to&n;&t;&t;&t;&t;   have problems.  Lets assume it is an&n;&t;&t;&t;&t;   18c30 if the RAM is disabled. */
+multiline_comment|/* That should have worked, but appears to&n;&t;&t;&t;&t;   have problems.  Let&squot;s assume it is an&n;&t;&t;&t;&t;   18c30 if the RAM is disabled. */
 r_if
 c_cond
 (paren

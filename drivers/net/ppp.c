@@ -47,7 +47,7 @@ mdefine_line|#define skb_data(skb)&t;     ((__u8 *) (skb)-&gt;data)
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#include &quot;slhc.h&quot;
+macro_line|#include &lt;net/slhc_vj.h&gt;
 DECL|macro|fcstab
 mdefine_line|#define fcstab&t;ppp_crc16_table&t;&t;/* Name of the table in the kernel */
 macro_line|#include &lt;linux/ppp_defs.h&gt;

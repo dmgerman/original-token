@@ -15128,7 +15128,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;The per-board operations structure is all setup, so now lets go&n; *&t;and get the board operational. Firstly initialize board configuration&n; *&t;registers. Then if we are using the higher 1Mb support then set up&n; *&t;the memory mapping info so we can get at the boards shared memory.&n; */
+multiline_comment|/*&n; *&t;The per-board operations structure is all set up, so now let&squot;s go&n; *&t;and get the board operational. Firstly initialize board configuration&n; *&t;registers. Then if we are using the higher 1Mb support then set up&n; *&t;the memory mapping info so we can get at the boards shared memory.&n; */
 id|EBRDINIT
 c_func
 (paren
@@ -15713,7 +15713,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;The per-board operations structure is all setup, so now lets go&n; *&t;and get the board operational. Firstly initialize board configuration&n; *&t;registers. Then if we are using the higher 1Mb support then set up&n; *&t;the memory mapping info so we can get at the boards shared memory.&n; */
+multiline_comment|/*&n; *&t;The per-board operations structure is all set up, so now let&squot;s go&n; *&t;and get the board operational. Firstly initialize board configuration&n; *&t;registers. Then if we are using the higher 1Mb support then set up&n; *&t;the memory mapping info so we can get at the boards shared memory.&n; */
 id|EBRDINIT
 c_func
 (paren

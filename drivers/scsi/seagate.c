@@ -676,7 +676,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* If the user specified the controller type from the command line,&n;&t; controller_type will be non-zero, so don&squot;t try and detect one */
+multiline_comment|/* If the user specified the controller type from the command line,&n;&t; controller_type will be non-zero, so don&squot;t try to detect one */
 r_if
 c_cond
 (paren

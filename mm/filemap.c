@@ -2586,6 +2586,11 @@ r_return
 id|new_page
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|page
+)paren
 id|flush_page_to_ram
 c_func
 (paren

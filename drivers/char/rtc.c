@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; */
 DECL|macro|RTC_VERSION
-mdefine_line|#define RTC_VERSION&t;&t;&quot;1.05&quot;
+mdefine_line|#define RTC_VERSION&t;&t;&quot;1.06&quot;
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_BASE
@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;time.h&gt;
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this.&n; */
 DECL|macro|RTC_MINOR
 mdefine_line|#define RTC_MINOR&t;135
@@ -131,7 +130,7 @@ r_void
 id|get_rtc_time
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 id|rtc_tm
 )paren
@@ -140,7 +139,7 @@ r_void
 id|get_rtc_alm_time
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 id|alm_tm
 )paren
@@ -154,7 +153,6 @@ r_int
 id|data
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|set_rtc_irq_bit
 c_func
@@ -164,7 +162,6 @@ r_char
 id|bit
 )paren
 suffix:semicolon
-r_inline
 r_void
 id|mask_rtc_irq_bit
 c_func
@@ -174,6 +171,8 @@ r_char
 id|bit
 )paren
 suffix:semicolon
+r_static
+r_inline
 r_int
 r_char
 id|rtc_is_updating
@@ -706,18 +705,7 @@ c_func
 )paren
 r_return
 op_minus
-id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rtc_freq
-op_eq
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
+id|EACCES
 suffix:semicolon
 r_if
 c_cond
@@ -801,12 +789,12 @@ id|RTC_ALM_READ
 suffix:colon
 multiline_comment|/* Read the present alarm time */
 (brace
-multiline_comment|/*&n;&t;&t;&t; * This returns a struct tm. Reading &gt;= 0xc0 means&n;&t;&t;&t; * &quot;don&squot;t care&quot; or &quot;match all&quot;. Only the tm_hour,&n;&t;&t;&t; * tm_min, and tm_sec values are filled in.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This returns a struct rtc_time. Reading &gt;= 0xc0&n;&t;&t;&t; * means &quot;don&squot;t care&quot; or &quot;match all&quot;. Only the tm_hour,&n;&t;&t;&t; * tm_min, and tm_sec values are filled in.&n;&t;&t;&t; */
 r_int
 id|retval
 suffix:semicolon
 r_struct
-id|tm
+id|rtc_time
 id|alm_tm
 suffix:semicolon
 id|retval
@@ -818,7 +806,7 @@ id|VERIFY_WRITE
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -826,7 +814,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -852,7 +840,7 @@ c_func
 (paren
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -863,7 +851,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -876,7 +864,7 @@ id|RTC_ALM_SET
 suffix:colon
 multiline_comment|/* Store a time into the alarm */
 (brace
-multiline_comment|/*&n;&t;&t;&t; * This expects a struct tm. Writing 0xff means&n;&t;&t;&t; * &quot;don&squot;t care&quot; or &quot;match all&quot;. Only the tm_hour,&n;&t;&t;&t; * tm_min and tm_sec are used.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This expects a struct rtc_time. Writing 0xff means&n;&t;&t;&t; * &quot;don&squot;t care&quot; or &quot;match all&quot;. Only the tm_hour,&n;&t;&t;&t; * tm_min and tm_sec are used.&n;&t;&t;&t; */
 r_int
 id|retval
 suffix:semicolon
@@ -889,7 +877,7 @@ comma
 id|sec
 suffix:semicolon
 r_struct
-id|tm
+id|rtc_time
 id|alm_tm
 suffix:semicolon
 id|retval
@@ -901,7 +889,7 @@ id|VERIFY_READ
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -909,7 +897,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -931,7 +919,7 @@ id|alm_tm
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -939,7 +927,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -1078,7 +1066,7 @@ r_int
 id|retval
 suffix:semicolon
 r_struct
-id|tm
+id|rtc_time
 id|rtc_tm
 suffix:semicolon
 id|retval
@@ -1090,7 +1078,7 @@ id|VERIFY_WRITE
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -1098,7 +1086,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -1124,7 +1112,7 @@ c_func
 (paren
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -1135,7 +1123,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -1152,7 +1140,7 @@ r_int
 id|retval
 suffix:semicolon
 r_struct
-id|tm
+id|rtc_time
 id|rtc_tm
 suffix:semicolon
 r_int
@@ -1194,7 +1182,7 @@ c_func
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 id|retval
 op_assign
@@ -1205,7 +1193,7 @@ id|VERIFY_READ
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -1213,7 +1201,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -1235,7 +1223,7 @@ id|rtc_tm
 comma
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 )paren
 id|arg
@@ -1243,7 +1231,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|tm
+id|rtc_time
 )paren
 )paren
 suffix:semicolon
@@ -1705,7 +1693,7 @@ c_func
 )paren
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 r_while
 c_loop
@@ -1725,20 +1713,12 @@ multiline_comment|/*&n;&t;&t;&t; * Check that the input was really a power of 2.
 r_if
 c_cond
 (paren
-(paren
-id|arg
-op_ne
-l_int|0
-)paren
-op_logical_and
-(paren
 id|arg
 op_ne
 (paren
 l_int|1
 op_lshift
 id|tmp
-)paren
 )paren
 )paren
 r_return
@@ -1770,32 +1750,6 @@ id|RTC_FREQ_SELECT
 op_amp
 l_int|0xf0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|arg
-op_eq
-l_int|0
-)paren
-(brace
-id|CMOS_WRITE
-c_func
-(paren
-id|val
-comma
-id|RTC_FREQ_SELECT
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|val
 op_or_assign
 (paren
@@ -2181,15 +2135,26 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|rtc_freq
-op_assign
+multiline_comment|/* Initialize periodic freq. to CMOS reset default, which is 1024Hz */
+id|CMOS_WRITE
+c_func
+(paren
+(paren
+(paren
 id|CMOS_READ
 c_func
 (paren
 id|RTC_FREQ_SELECT
 )paren
 op_amp
-l_int|0x0F
+l_int|0xF0
+)paren
+op_or
+l_int|0x06
+)paren
+comma
+id|RTC_FREQ_SELECT
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2199,22 +2164,7 @@ id|flags
 suffix:semicolon
 id|rtc_freq
 op_assign
-(paren
-id|rtc_freq
-ques
-c_cond
-(paren
-l_int|65536
-op_div
-(paren
-l_int|1
-op_lshift
-id|rtc_freq
-)paren
-)paren
-suffix:colon
-l_int|0
-)paren
+l_int|1024
 suffix:semicolon
 r_return
 l_int|0
@@ -2336,7 +2286,7 @@ op_star
 id|p
 suffix:semicolon
 r_struct
-id|tm
+id|rtc_time
 id|tm
 suffix:semicolon
 r_int
@@ -2541,7 +2491,7 @@ comma
 l_string|&quot;DST_enable&bslash;t: %s&bslash;n&quot;
 l_string|&quot;BCD&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;24hr&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;sqare_wave&bslash;t: %s&bslash;n&quot;
+l_string|&quot;square_wave&bslash;t: %s&bslash;n&quot;
 l_string|&quot;alarm_IRQ&bslash;t: %s&bslash;n&quot;
 l_string|&quot;update_IRQ&bslash;t: %s&bslash;n&quot;
 l_string|&quot;periodic_IRQ&bslash;t: %s&bslash;n&quot;
@@ -2643,6 +2593,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Returns true if a clock update is in progress&n; */
 DECL|function|rtc_is_updating
+r_static
 r_inline
 r_int
 r_char
@@ -2699,7 +2650,7 @@ id|get_rtc_time
 c_func
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 id|rtc_tm
 )paren
@@ -2869,7 +2820,7 @@ id|rtc_tm-&gt;tm_year
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Account for differences between how the RTC uses the values&n;&t; * and how they are defined in a struct tm;&n;&t; */
+multiline_comment|/*&n;&t; * Account for differences between how the RTC uses the values&n;&t; * and how they are defined in a struct rtc_time;&n;&t; */
 r_if
 c_cond
 (paren
@@ -2891,7 +2842,7 @@ id|get_rtc_alm_time
 c_func
 (paren
 r_struct
-id|tm
+id|rtc_time
 op_star
 id|alm_tm
 )paren
@@ -2989,7 +2940,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles the interrupt enable/disable bits.&n; */
 DECL|function|mask_rtc_irq_bit
-r_inline
 r_void
 id|mask_rtc_irq_bit
 c_func
@@ -3057,7 +3007,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|set_rtc_irq_bit
-r_inline
 r_void
 id|set_rtc_irq_bit
 c_func

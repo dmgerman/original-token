@@ -333,7 +333,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#ifdef CONFIG_ISDN_PPP
 macro_line|#ifdef CONFIG_ISDN_PPP_VJ
-macro_line|#  include &quot;/usr/src/linux/drivers/net/slhc.h&quot;
+macro_line|#  include &lt;net/slhc_vj.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/if_ppp.h&gt;

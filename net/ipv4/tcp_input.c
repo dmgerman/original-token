@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * FIXES&n; *&t;&t;Pedro Roque&t;:&t;Double ACK bug&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
-multiline_comment|/*&n; *&t;Policy code extracted so its now separate&n; */
+multiline_comment|/*&n; *&t;Policy code extracted so it&squot;s now separate&n; */
 multiline_comment|/*&n; *&t;Called each time to estimate the delayed ack timeout. This is&n; *&t;how it should be done so a fast link isn&squot;t impacted by ack delay.&n; */
 DECL|function|tcp_delack_estimator
 r_extern
@@ -1021,7 +1021,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Make sure we can accept more.  This will prevent a&n;&t; *&t;flurry of syns from eating up all our memory.&n;&t; *&n;&t; *&t;BSD does some funnies here and allows 3/2 times the&n;&t; *&t;set backlog as a fudge factor. Thats just too gross.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Make sure we can accept more.  This will prevent a&n;&t; *&t;flurry of syns from eating up all our memory.&n;&t; *&n;&t; *&t;BSD does some funnies here and allows 3/2 times the&n;&t; *&t;set backlog as a fudge factor. That&squot;s just too gross.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1645,7 +1645,7 @@ id|tcphdr
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SKIP
-multiline_comment|/*&n;&t; *&t;SKIP devices set their MTU to 65535. This is so they can take packets&n;&t; *&t;unfragmented to security process then fragment. They could lie to the&n;&t; *&t;TCP layer about a suitable MTU, but its easier to let skip sort it out&n;&t; *&t;simply because the final package we want unfragmented is going to be&n;&t; *&n;&t; *&t;[IPHDR][IPSP][Security data][Modified TCP data][Security data]&n;&t; */
+multiline_comment|/*&n;&t; *&t;SKIP devices set their MTU to 65535. This is so they can take packets&n;&t; *&t;unfragmented to security process then fragment. They could lie to the&n;&t; *&t;TCP layer about a suitable MTU, but it&squot;s easier to let skip sort it out&n;&t; *&t;simply because the final package we want unfragmented is going to be&n;&t; *&n;&t; *&t;[IPHDR][IPSP][Security data][Modified TCP data][Security data]&n;&t; */
 r_if
 c_cond
 (paren
@@ -1916,7 +1916,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Dead, cant ack any more so why bother */
+multiline_comment|/* Dead, can&squot;t ack any more so why bother */
 multiline_comment|/*&n;&t; *&t;We have dropped back to keepalive timeouts. Thus we have&n;&t; *&t;no retransmits pending.&n;&t; */
 r_if
 c_cond
@@ -4869,7 +4869,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t;&t; *&t;Retransmitted SYN for our socket. This is uninteresting. If sk-&gt;state==TCP_LISTEN&n;&t;&t; *&t;then its a new connection&n;&t;&t; */
+multiline_comment|/* &n;&t;&t; *&t;Retransmitted SYN for our socket. This is uninteresting. If sk-&gt;state==TCP_LISTEN&n;&t;&t; *&t;then it&squot;s a new connection&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4932,7 +4932,7 @@ id|len
 )paren
 )paren
 (brace
-multiline_comment|/* Reset the ack - its an ack from a &n;&t;&t;&t;&t;&t;   different connection  [ th-&gt;rst is checked in tcp_send_reset()] */
+multiline_comment|/* Reset the ack - it&squot;s an ack from a &n;&t;&t;&t;&t;&t;   different connection  [ th-&gt;rst is checked in tcp_send_reset()] */
 id|tcp_statistics.TcpAttemptFails
 op_increment
 suffix:semicolon

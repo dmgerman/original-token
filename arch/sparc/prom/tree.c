@@ -305,7 +305,7 @@ id|buffer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Acquire an integer property and return it&squot;s value.  Returns -1&n; * on failure.&n; */
+multiline_comment|/* Acquire an integer property and return its value.  Returns -1&n; * on failure.&n; */
 r_int
 DECL|function|prom_getint
 id|prom_getint

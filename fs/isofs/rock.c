@@ -1207,7 +1207,7 @@ comma
 l_char|&squot;F&squot;
 )paren
 suffix:colon
-multiline_comment|/* Some RRIP writers incorrectly place ctime in the TF_CREATE field.&n;&t;   Try and handle this correctly for either case. */
+multiline_comment|/* Some RRIP writers incorrectly place ctime in the TF_CREATE field.&n;&t;   Try to handle this correctly for either case. */
 id|cnt
 op_assign
 l_int|0

@@ -2168,7 +2168,7 @@ op_ge
 l_int|0
 )paren
 (brace
-multiline_comment|/* Schedule CONNECT-Message to any tty, waiting for it and&n;&t;&t;&t;&t; * set DCD-bit of it&squot;s modem-status.&n;&t;&t;&t;&t; */
+multiline_comment|/* Schedule CONNECT-Message to any tty, waiting for it and&n;&t;&t;&t;&t; * set DCD-bit of its modem-status.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

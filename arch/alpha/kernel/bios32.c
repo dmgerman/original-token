@@ -1328,7 +1328,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The SRM console *disables* the IDE interface, this code ensures its&n; * enabled.&n; *&n; * This code bangs on a control register of the 87312 Super I/O chip&n; * that implements parallel port/serial ports/IDE/FDI.  Depending on&n; * the motherboard, the Super I/O chip can be configured through a&n; * pair of registers that are located either at I/O ports 0x26e/0x26f&n; * or 0x398/0x399.  Unfortunately, autodetecting which base address is&n; * in use works only once (right after a reset).  The Super I/O chip&n; * has the additional quirk that configuration register data must be&n; * written twice (I believe this is a safety feature to prevent&n; * accidental modification---fun, isn&squot;t it?).&n; */
+multiline_comment|/*&n; * The SRM console *disables* the IDE interface, this code ensures it&squot;s&n; * enabled.&n; *&n; * This code bangs on a control register of the 87312 Super I/O chip&n; * that implements parallel port/serial ports/IDE/FDI.  Depending on&n; * the motherboard, the Super I/O chip can be configured through a&n; * pair of registers that are located either at I/O ports 0x26e/0x26f&n; * or 0x398/0x399.  Unfortunately, autodetecting which base address is&n; * in use works only once (right after a reset).  The Super I/O chip&n; * has the additional quirk that configuration register data must be&n; * written twice (I believe this is a safety feature to prevent&n; * accidental modification---fun, isn&squot;t it?).&n; */
 DECL|function|enable_ide
 r_static
 r_inline
@@ -1665,7 +1665,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;&t;&t; * if its a VGA, enable its BIOS ROM at C0000&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * if it&squot;s a VGA, enable its BIOS ROM at C0000&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2682,7 +2682,7 @@ id|pirq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * if its a VGA, enable its BIOS ROM at C0000&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * if it&squot;s a VGA, enable its BIOS ROM at C0000&n;&t;&t; */
 r_if
 c_cond
 (paren

@@ -705,6 +705,7 @@ op_star
 id|filp
 )paren
 (brace
+macro_line|#if PTY_SLAVE_WAITS_ON_OPEN
 r_struct
 id|wait_queue
 id|wait
@@ -715,6 +716,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#endif
 r_int
 id|retval
 suffix:semicolon

@@ -86,7 +86,6 @@ suffix:semicolon
 multiline_comment|/* Opaque pointer, used by&n;&t;&t;&t;&t;&t; * any address resolution module,&n;&t;&t;&t;&t;&t; * not only ARP.&n;&t;&t;&t;&t;&t; */
 DECL|member|hh_refcnt
 r_int
-r_int
 id|hh_refcnt
 suffix:semicolon
 multiline_comment|/* number of users */
@@ -763,12 +762,16 @@ r_extern
 r_struct
 id|device
 op_star
-id|ip_dev_check
+id|ip_dev_bynet
 c_func
 (paren
 r_int
 r_int
 id|daddr
+comma
+r_int
+r_int
+id|mask
 )paren
 suffix:semicolon
 r_extern
@@ -981,7 +984,7 @@ r_extern
 r_int
 id|dev_lockct
 suffix:semicolon
-multiline_comment|/*&n; *&t;These two dont currently need to be interrupt safe&n; *&t;but they may do soon. Do it properly anyway.&n; */
+multiline_comment|/*&n; *&t;These two don&squot;t currently need to be interrupt-safe&n; *&t;but they may do soon. Do it properly anyway.&n; */
 DECL|function|dev_lock_list
 r_extern
 id|__inline__

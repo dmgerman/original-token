@@ -607,7 +607,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* return if no SCSI interface found */
-multiline_comment|/* Mediavision has some new model boards that return ID bits&n;     * that indicate a SCSI interface, but they&squot;re not (LMS).  We&squot;ll&n;     * put in an additional test to try and weed them out.&n;     */
+multiline_comment|/* Mediavision has some new model boards that return ID bits&n;     * that indicate a SCSI interface, but they&squot;re not (LMS).  We&squot;ll&n;     * put in an additional test to try to weed them out.&n;     */
 id|outb
 c_func
 (paren

@@ -12,7 +12,7 @@ multiline_comment|/* Breakpoints are enter through trap table entry 126.  So in 
 DECL|macro|DEBUG_BP_TRAP
 mdefine_line|#define DEBUG_BP_TRAP     126
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* The debug vector is passed in %o1 at boot time.  It is a pointer to&n; * a structure in the debuggers address space.  Here is it&squot;s format.&n; */
+multiline_comment|/* The debug vector is passed in %o1 at boot time.  It is a pointer to&n; * a structure in the debuggers address space.  Here is its format.&n; */
 DECL|typedef|debugger_funct
 r_typedef
 r_int

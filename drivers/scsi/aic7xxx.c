@@ -14292,7 +14292,7 @@ id|aic7xxx_scb
 op_star
 id|active_scbp
 suffix:semicolon
-multiline_comment|/*&n;       * Send a Bus Device Reset Message:&n;       * The target we select to send the message to may be entirely&n;       * different than the target pointed to by the scb that timed&n;       * out.  If the command is in the QINFIFO or the waiting for&n;       * selection list, its not tying up the bus and isn&squot;t responsible&n;       * for the delay so we pick off the active command which should&n;       * be the SCB selected by SCBPTR.  If its disconnected or active,&n;       * we device reset the target scbp points to.  Although it may&n;       * be that this target is not responsible for the delay, it may&n;       * may also be that we&squot;re timing out on a command that just takes&n;       * too much time, so we try the bus device reset there first.&n;       */
+multiline_comment|/*&n;       * Send a Bus Device Reset Message:&n;       * The target we select to send the message to may be entirely&n;       * different than the target pointed to by the scb that timed&n;       * out.  If the command is in the QINFIFO or the waiting for&n;       * selection list, it&squot;s not tying up the bus and isn&squot;t responsible&n;       * for the delay so we pick off the active command which should&n;       * be the SCB selected by SCBPTR.  If it&squot;s disconnected or active,&n;       * we device reset the target scbp points to.  Although it may&n;       * be that this target is not responsible for the delay, it may&n;       * also be that we&squot;re timing out on a command that just takes&n;       * too much time, so we try the bus device reset there first.&n;       */
 id|active_scb
 op_assign
 id|inb

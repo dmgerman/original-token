@@ -45,7 +45,7 @@ op_assign
 op_amp
 id|dummy
 suffix:semicolon
-multiline_comment|/* These tables only apply for interrupts greater than 15..&n; * &n; * any intr value below 0x10 is considered to be a soft-int&n; * this may be useful or it may not.. but thats how I&squot;ve done it.&n; * and it won&squot;t clash with what OBP is telling us about devices.&n; *&n; * take an encoded intr value and lookup if its valid&n; * then get the mask bits that match from irq_mask&n; */
+multiline_comment|/* These tables only apply for interrupts greater than 15..&n; * &n; * any intr value below 0x10 is considered to be a soft-int&n; * this may be useful or it may not.. but that&squot;s how I&squot;ve done it.&n; * and it won&squot;t clash with what OBP is telling us about devices.&n; *&n; * take an encoded intr value and lookup if it&squot;s valid&n; * then get the mask bits that match from irq_mask&n; */
 DECL|variable|irq_xlate
 r_static
 r_int

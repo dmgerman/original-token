@@ -4089,6 +4089,7 @@ id|ippp_table
 id|lp-&gt;ppp_minor
 )braket
 suffix:semicolon
+macro_line|#if defined(CONFIG_ISDN_PPP_VJ) || defined(CONFIG_ISDN_MPP)
 r_struct
 id|ippp_struct
 op_star
@@ -4099,7 +4100,8 @@ id|ippp_table
 id|lp-&gt;netdev-&gt;local.ppp_minor
 )braket
 suffix:semicolon
-multiline_comment|/* If packet is to be resent, it has already been processed and&n;         * therefore it&squot;s first bytes are already initialized. In this case&n;         * send it immediately ...&n;         */
+macro_line|#endif
+multiline_comment|/* If packet is to be resent, it has already been processed and&n;         * therefore its first bytes are already initialized. In this case&n;         * send it immediately ...&n;         */
 r_if
 c_cond
 (paren

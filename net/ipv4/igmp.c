@@ -483,7 +483,7 @@ op_xor
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Inlined as its only called once.&n; */
+multiline_comment|/*&n; *&t;Inlined as it&squot;s only called once.&n; */
 DECL|function|igmp_start_timer
 r_static
 r_void

@@ -1103,7 +1103,7 @@ id|dev-&gt;priv
 op_assign
 id|ti
 suffix:semicolon
-multiline_comment|/* this seems like the logical use of the&n;                         field ... lets try some empirical tests&n;                         using the token-info structure -- that&n;                         should fit with out future hope of multiple&n;                         adapter support as well /dwm   */
+multiline_comment|/* this seems like the logical use of the&n;                         field ... let&squot;s try some empirical tests&n;                         using the token-info structure -- that&n;                         should fit with out future hope of multiple&n;                         adapter support as well /dwm   */
 r_switch
 c_cond
 (paren

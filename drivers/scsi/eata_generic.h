@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993,94,95 Michael Neuffer&t;&t;&t;*&n;*********************************************************&n;* last change: 95/11/07&t;&t;&t;&t;&t;*&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 95/05/05                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_GENERIC_H
 DECL|macro|_EATA_GENERIC_H
 mdefine_line|#define _EATA_GENERIC_H
@@ -58,17 +58,17 @@ mdefine_line|#define NEC_ID2         0xa3
 DECL|macro|NEC_ID3
 mdefine_line|#define NEC_ID3         0x82
 DECL|macro|EATA_CP_SIZE
-mdefine_line|#define EATA_CP_SIZE&t;44
+mdefine_line|#define EATA_CP_SIZE&t; 44
 DECL|macro|MAX_PCI_DEVICES
-mdefine_line|#define MAX_PCI_DEVICES 32&t;       /* Maximum # Of Devices Per Bus&t; */
+mdefine_line|#define MAX_PCI_DEVICES  32&t;       /* Maximum # Of Devices Per Bus&t; */
 DECL|macro|MAX_METHOD_2
-mdefine_line|#define MAX_METHOD_2&t;16&t;       /* Max Devices For Method 2&t; */
+mdefine_line|#define MAX_METHOD_2&t; 16&t;       /* Max Devices For Method 2&t; */
 DECL|macro|MAX_PCI_BUS
-mdefine_line|#define MAX_PCI_BUS&t;16&t;       /* Maximum # Of Busses Allowed&t; */
+mdefine_line|#define MAX_PCI_BUS&t; 16&t;       /* Maximum # Of Busses Allowed&t; */
 DECL|macro|SG_SIZE
-mdefine_line|#define SG_SIZE&t;&t;64 
+mdefine_line|#define SG_SIZE&t;&t; 64 
 DECL|macro|SG_SIZE_BIG
-mdefine_line|#define SG_SIZE_BIG&t;252&t;       /* max. 8096 elements, 64k */
+mdefine_line|#define SG_SIZE_BIG&t; 252&t;       /* max. 8096 elements, 64k */
 DECL|macro|TYPE_DISK_QUEUE
 mdefine_line|#define TYPE_DISK_QUEUE  16
 DECL|macro|TYPE_TAPE_QUEUE
@@ -78,19 +78,27 @@ mdefine_line|#define TYPE_ROM_QUEUE   4
 DECL|macro|TYPE_OTHER_QUEUE
 mdefine_line|#define TYPE_OTHER_QUEUE 2
 DECL|macro|FREE
-mdefine_line|#define FREE&t;   0
+mdefine_line|#define FREE&t;         0
 DECL|macro|OK
-mdefine_line|#define OK&t;   0
+mdefine_line|#define OK&t;         0
 DECL|macro|NO_TIMEOUT
-mdefine_line|#define NO_TIMEOUT 0
+mdefine_line|#define NO_TIMEOUT       0
 DECL|macro|USED
-mdefine_line|#define USED&t;   1
+mdefine_line|#define USED&t;         1
 DECL|macro|TIMEOUT
-mdefine_line|#define TIMEOUT&t;   2
+mdefine_line|#define TIMEOUT&t;         2
 DECL|macro|RESET
-mdefine_line|#define RESET&t;   4
+mdefine_line|#define RESET&t;         4
 DECL|macro|LOCKED
-mdefine_line|#define LOCKED&t;   8
+mdefine_line|#define LOCKED&t;         8
+DECL|macro|ABORTED
+mdefine_line|#define ABORTED          16
+DECL|macro|READ
+mdefine_line|#define READ             0
+DECL|macro|WRITE
+mdefine_line|#define WRITE            1
+DECL|macro|OTHER
+mdefine_line|#define OTHER            2
 DECL|macro|HD
 mdefine_line|#define HD(cmd)&t; ((hostdata *)&amp;(cmd-&gt;host-&gt;hostdata))
 DECL|macro|CD
@@ -98,9 +106,7 @@ mdefine_line|#define CD(cmd)&t; ((struct eata_ccb *)(cmd-&gt;host_scribble))
 DECL|macro|SD
 mdefine_line|#define SD(host) ((hostdata *)&amp;(host-&gt;hostdata))
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) { __u32 i; i = jiffies + (x * HZ); while (jiffies &lt; i) barrier(); }
-DECL|macro|DEL2
-mdefine_line|#define DEL2(x)&t; { __u32 i; for (i = 0; i &lt; 0xffff * x; i++); }
+mdefine_line|#define DELAY(x) { __u32 i; ulong flags;          &bslash;&n;                   save_flags(flags); sti();      &bslash;&n;                   i = jiffies + (x * HZ);        &bslash;&n;                   while (jiffies &lt; i) barrier(); &bslash;&n;                   restore_flags(flags); }
 multiline_comment|/***********************************************&n; *    EATA Command &amp; Register definitions      *&n; ***********************************************/
 DECL|macro|PCI_REG_DPTconfig
 mdefine_line|#define PCI_REG_DPTconfig&t; 0x40&t; 
@@ -152,12 +158,12 @@ DECL|macro|EATA_FORCE_IO
 mdefine_line|#define EATA_FORCE_IO            0x07
 DECL|macro|HA_WCOMMAND
 mdefine_line|#define HA_WCOMMAND    0x07&t;   /* command register offset&t;*/
-DECL|macro|HA_WCOMMAND2
-mdefine_line|#define HA_WCOMMAND2   0x06&t;   /* immediate command offset&t;*/
-DECL|macro|HA_WSUBCODE
-mdefine_line|#define HA_WSUBCODE    0x05 
-DECL|macro|HA_WSUBLUN
-mdefine_line|#define HA_WSUBLUN     0x04 
+DECL|macro|HA_WIFC
+mdefine_line|#define HA_WIFC        0x06&t;   /* immediate command offset  */
+DECL|macro|HA_WCODE
+mdefine_line|#define HA_WCODE       0x05 
+DECL|macro|HA_WCODE2
+mdefine_line|#define HA_WCODE2      0x04 
 DECL|macro|HA_WDMAADDR
 mdefine_line|#define HA_WDMAADDR    0x02&t;   /* DMA address LSB offset&t;*/  
 DECL|macro|HA_RAUXSTAT
@@ -166,6 +172,8 @@ DECL|macro|HA_RSTATUS
 mdefine_line|#define HA_RSTATUS     0x07&t;   /* status register offset&t;*/
 DECL|macro|HA_RDATA
 mdefine_line|#define HA_RDATA       0x00&t;   /* data register (16bit)&t;*/
+DECL|macro|HA_WDATA
+mdefine_line|#define HA_WDATA       0x00&t;   /* data register (16bit)&t;*/
 DECL|macro|HA_ABUSY
 mdefine_line|#define HA_ABUSY       0x01&t;   /* aux busy bit&t;&t;*/
 DECL|macro|HA_AIRQ
@@ -195,8 +203,8 @@ DECL|macro|HA_ERR_SEL_TO
 mdefine_line|#define HA_ERR_SEL_TO&t; 0x01&t;/* Selection Timeout&t;&t;&t;*/
 DECL|macro|HA_ERR_CMD_TO
 mdefine_line|#define HA_ERR_CMD_TO&t; 0x02&t;/* Command Timeout&t;&t;&t;*/
-DECL|macro|HA_ERR_RESET
-mdefine_line|#define HA_ERR_RESET&t; 0x03&t;/* SCSI Bus Reset Received&t;&t;*/
+DECL|macro|HA_BUS_RESET
+mdefine_line|#define HA_BUS_RESET&t; 0x03&t;/* SCSI Bus Reset Received&t;&t;*/
 DECL|macro|HA_INIT_POWERUP
 mdefine_line|#define HA_INIT_POWERUP&t; 0x04&t;/* Initial Controller Power-up&t;&t;*/
 DECL|macro|HA_UNX_BUSPHASE
@@ -594,11 +602,16 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* HBA is EISA&t;&t;&t;&t;*/
+DECL|member|RAIDNUM
+id|__u8
+id|RAIDNUM
+suffix:semicolon
+multiline_comment|/* unique HBA identifier                  */
 DECL|member|unused
 id|__u8
 id|unused
 (braket
-l_int|478
+l_int|474
 )braket
 suffix:semicolon
 )brace
@@ -927,6 +940,14 @@ DECL|member|EATA_revision
 id|__u8
 id|EATA_revision
 suffix:semicolon
+DECL|member|firmware_revision
+id|__u32
+id|firmware_revision
+suffix:semicolon
+DECL|member|HBA_number
+id|__u8
+id|HBA_number
+suffix:semicolon
 DECL|member|bustype
 id|__u8
 id|bustype
@@ -947,8 +968,20 @@ id|__u8
 id|primary
 suffix:semicolon
 multiline_comment|/* true if primary&t;       */
-DECL|member|broken_INQUIRY
+DECL|member|more_support
 id|__u8
+id|more_support
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* HBA supports MORE flag     */
+DECL|member|immediate_support
+id|immediate_support
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* HBA supports IMMEDIATE CMDs*/
+DECL|member|broken_INQUIRY
 id|broken_INQUIRY
 suffix:colon
 l_int|1
@@ -993,6 +1026,13 @@ l_int|12
 l_int|4
 )braket
 suffix:semicolon
+DECL|member|all_lat
+id|__u32
+id|all_lat
+(braket
+l_int|4
+)braket
+suffix:semicolon
 multiline_comment|/* state of Target (RESET,..) */
 DECL|member|t_state
 id|__u8
@@ -1015,6 +1055,13 @@ id|MAXCHANNEL
 id|MAXTARGET
 )braket
 suffix:semicolon
+DECL|member|resetlevel
+id|__u8
+id|resetlevel
+(braket
+id|MAXCHANNEL
+)braket
+suffix:semicolon
 DECL|member|last_ccb
 id|__u32
 id|last_ccb
@@ -1031,19 +1078,24 @@ id|cppadlen
 suffix:semicolon
 multiline_comment|/* pad length of cp in words  */
 DECL|member|queuesize
-r_int
+id|__u16
 id|queuesize
 suffix:semicolon
+DECL|member|sgsize
+id|__u16
+id|sgsize
+suffix:semicolon
+multiline_comment|/* # of entries in the SG list*/
+DECL|member|devflags
+id|__u16
+id|devflags
+suffix:semicolon
+multiline_comment|/* bits set for detected devices */
 DECL|member|hostid
 id|__u8
 id|hostid
 suffix:semicolon
 multiline_comment|/* SCSI ID of HBA&t;       */
-DECL|member|devflags
-id|__u8
-id|devflags
-suffix:semicolon
-multiline_comment|/* bits set for detected devices */
 DECL|member|moresupport
 id|__u8
 id|moresupport

@@ -45,6 +45,7 @@ mdefine_line|#define&t;TW_NaN&t;&t;Const(6)&t;/* Not a Number */
 DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/sigcontext.h&gt;&t;/* for struct _fpstate */
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n;#define RE_ENTRANT_CHECKING&n; */

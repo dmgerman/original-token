@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -9,7 +9,6 @@ id|version
 op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -53,35 +52,21 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef EI_PINGPONG
-DECL|variable|ei_pingpong
-r_static
-r_int
-id|ei_pingpong
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
-DECL|variable|ei_pingpong
-r_static
-r_int
-id|ei_pingpong
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Max number of packets received at one Intr.&n;   Currently this may only be examined by a kernel debugger. */
-DECL|variable|high_water_mark
-r_static
-r_int
-id|high_water_mark
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Index to functions. */
 r_static
 r_void
 id|ei_tx_intr
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ei_tx_err
 c_func
 (paren
 r_struct
@@ -283,6 +268,8 @@ r_int
 id|length
 comma
 id|send_length
+comma
+id|output_page
 suffix:semicolon
 multiline_comment|/*&n; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n; *  existing code does anyway. If it has been too long since the&n; *  last Tx, we assume the board has died and kick it.&n; */
 r_if
@@ -371,6 +358,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Note that if the Tx posted a TX_ERR interrupt, then the&n;&t;&t; * error will have been handled from the interrupt handler.&n;&t;&t; * and not here.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -528,15 +516,8 @@ id|length
 suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_local-&gt;pingpong
-)paren
-(brace
-r_int
-id|output_page
-suffix:semicolon
+macro_line|#ifdef EI_PINGPONG
+multiline_comment|/*&n;     * We have two Tx slots available for use. Find the first free&n;     * slot, and then perform some sanity checks. With two Tx bufs,&n;     * you get very close to transmitting back-to-back packets. With&n;     * only one Tx buf, the transmitter sits idle while you reload the&n;     * card, leaving a substantial gap between each transmitted packet.&n;     */
 r_if
 c_cond
 (paren
@@ -590,7 +571,7 @@ id|output_page
 op_assign
 id|ei_local-&gt;tx_start_page
 op_plus
-l_int|6
+id|TX_1X_PAGES
 suffix:semicolon
 id|ei_local-&gt;tx2
 op_assign
@@ -631,7 +612,7 @@ id|ei_debug
 id|printk
 c_func
 (paren
-l_string|&quot;%s: No Tx buffers free. irq=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
+l_string|&quot;%s: No Tx buffers free! irq=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -666,6 +647,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * Okay, now upload the packet and trigger a send if the transmitter&n;     * isn&squot;t already sending. If it is busy, the interrupt handler will&n;     * trigger the send later, upon receiving a Tx done interrupt.&n;     */
 id|ei_block_output
 c_func
 (paren
@@ -710,27 +692,31 @@ id|output_page
 op_eq
 id|ei_local-&gt;tx_start_page
 )paren
+(brace
 id|ei_local-&gt;tx1
 op_assign
 op_minus
 l_int|1
-comma
+suffix:semicolon
 id|ei_local-&gt;lasttx
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_else
+(brace
 id|ei_local-&gt;tx2
 op_assign
 op_minus
 l_int|1
-comma
+suffix:semicolon
 id|ei_local-&gt;lasttx
 op_assign
 op_minus
 l_int|2
 suffix:semicolon
+)brace
 )brace
 r_else
 id|ei_local-&gt;txqueue
@@ -744,10 +730,8 @@ op_logical_and
 id|ei_local-&gt;tx2
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* No pingpong, just a single Tx buffer. */
+macro_line|#else&t;/* EI_PINGPONG */
+multiline_comment|/*&n;     * Only one Tx buffer in use. You need two Tx bufs to come close to&n;     * back-to-back transmits. Expect a 20 -&gt; 25% performance hit on&n;     * reasonable hardware if you only use one Tx buffer.&n;     */
 id|ei_block_output
 c_func
 (paren
@@ -782,7 +766,7 @@ id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-)brace
+macro_line|#endif&t;/* EI_PINGPONG */
 multiline_comment|/* Turn 8390 interrupts back on. */
 id|ei_local-&gt;irqlock
 op_assign
@@ -1078,6 +1062,21 @@ c_cond
 (paren
 id|interrupts
 op_amp
+id|ENISR_TX_ERR
+)paren
+(brace
+id|ei_tx_err
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|interrupts
+op_amp
 id|ENISR_COUNTERS
 )paren
 (brace
@@ -1115,27 +1114,6 @@ id|outb_p
 c_func
 (paren
 id|ENISR_COUNTERS
-comma
-id|e8390_base
-op_plus
-id|EN0_ISR
-)paren
-suffix:semicolon
-multiline_comment|/* Ack intr. */
-)brace
-multiline_comment|/* Ignore the transmit errs and reset intr for now. */
-r_if
-c_cond
-(paren
-id|interrupts
-op_amp
-id|ENISR_TX_ERR
-)paren
-(brace
-id|outb_p
-c_func
-(paren
-id|ENISR_TX_ERR
 comma
 id|e8390_base
 op_plus
@@ -1263,6 +1241,155 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * A transmitter error has happened. Most likely excess collisions (which&n; * is a fairly normal condition). If the error is one where the Tx will&n; * have been aborted, we try and send another one right away, instead of&n; * letting the failed packet sit and collect dust in the Tx buffer. This&n; * is a much better solution as it avoids kernel based Tx timeouts, and&n; * an unnecessary card reset.&n; */
+DECL|function|ei_tx_err
+r_static
+r_void
+id|ei_tx_err
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|e8390_base
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+r_char
+id|txsr
+op_assign
+id|inb_p
+c_func
+(paren
+id|e8390_base
+op_plus
+id|EN0_TSR
+)paren
+suffix:semicolon
+r_int
+r_char
+id|tx_was_aborted
+op_assign
+id|txsr
+op_amp
+(paren
+id|ENTSR_ABT
+op_plus
+id|ENTSR_FU
+)paren
+suffix:semicolon
+macro_line|#ifdef VERBOSE_ERROR_DUMP
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: transmitter error (%#2x): &quot;
+comma
+id|dev-&gt;name
+comma
+id|txsr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_ABT
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;excess-collisions &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_ND
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;non-deferral &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_CRS
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;lost-carrier &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_FU
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;FIFO-underrun &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_CDH
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;lost-heartbeat &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb_p
+c_func
+(paren
+id|ENISR_TX_ERR
+comma
+id|e8390_base
+op_plus
+id|EN0_ISR
+)paren
+suffix:semicolon
+multiline_comment|/* Ack intr. */
+r_if
+c_cond
+(paren
+id|tx_was_aborted
+)paren
+id|ei_tx_intr
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. */
 DECL|function|ei_tx_intr
 r_static
@@ -1315,12 +1442,8 @@ id|EN0_ISR
 )paren
 suffix:semicolon
 multiline_comment|/* Ack intr. */
-r_if
-c_cond
-(paren
-id|ei_local-&gt;pingpong
-)paren
-(brace
+macro_line|#ifdef EI_PINGPONG
+multiline_comment|/*&n;     * There are two Tx buffers, see which one finished, and trigger&n;     * the send of another one if it exists.&n;     */
 id|ei_local-&gt;txqueue
 op_decrement
 suffix:semicolon
@@ -1510,9 +1633,8 @@ comma
 id|ei_local-&gt;lasttx
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
+macro_line|#else&t;/* EI_PINGPONG */
+multiline_comment|/*&n;     *  Single Tx buffer: mark it free so another packet can be loaded.&n;     */
 id|ei_local-&gt;txing
 op_assign
 l_int|0
@@ -1521,7 +1643,7 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-)brace
+macro_line|#endif
 multiline_comment|/* Minimize Tx latency: update the statistics after we restart TXing. */
 r_if
 c_cond
@@ -1636,12 +1758,15 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
+r_char
 id|rxing_page
 comma
 id|this_frame
 comma
 id|next_frame
-comma
+suffix:semicolon
+r_int
+r_int
 id|current_offset
 suffix:semicolon
 r_int
@@ -2094,19 +2219,6 @@ id|EN0_BOUNDARY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If any worth-while packets have been received, netif_rx()&n;       has done a mark_bh(NET_BH) for us and will work on them&n;       when we get to the bottom-half routine. */
-multiline_comment|/* Record the maximum Rx packet queue. */
-r_if
-c_cond
-(paren
-id|rx_pkt_count
-OG
-id|high_water_mark
-)paren
-id|high_water_mark
-op_assign
-id|rx_pkt_count
-suffix:semicolon
 multiline_comment|/* We used to also ack ENISR_OVER here, but that would sometimes mask&n;    a real overrun, leaving the 8390 in a stopped state with rec&squot;vr off. */
 id|outb_p
 c_func
@@ -2529,10 +2641,6 @@ id|ei_device
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-id|ei_local-&gt;pingpong
-op_assign
-id|ei_pingpong
 suffix:semicolon
 )brace
 id|dev-&gt;hard_start_xmit

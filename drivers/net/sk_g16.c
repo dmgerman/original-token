@@ -34,7 +34,7 @@ DECL|macro|SK_BOOT_ROM
 mdefine_line|#define SK_BOOT_ROM     1              /* 1=BootROM on 0=off */
 DECL|macro|SK_ADDR
 mdefine_line|#define SK_ADDR         0xcc000
-multiline_comment|/* &n; * In POS3 are bits A14-A19 of the address bus. These bits can be set&n; * to choose the RAM address. Thats why we only can choose the RAM address&n; * in 16KB steps.&n; */
+multiline_comment|/* &n; * In POS3 are bits A14-A19 of the address bus. These bits can be set&n; * to choose the RAM address. That&squot;s why we only can choose the RAM address&n; * in 16KB steps.&n; */
 DECL|macro|POS_ADDR
 mdefine_line|#define POS_ADDR       (rom_addr&gt;&gt;14)  /* Do not change this line */
 multiline_comment|/* &n; * SK_G16 I/O PORT&squot;s + IRQ&squot;s + Boot_ROM locations&n; * ----------------------------------------------&n; */
@@ -3309,7 +3309,7 @@ id|TX_MORE
 )paren
 multiline_comment|/* Collisions occurred ? */
 (brace
-multiline_comment|/* &n;         * Here I have a problem.&n;         * I only know that there must be one or up to 15 collisions.&n;         * Thats why TX_MORE is set, because after 16 attempts TX_RTRY&n;         * will be set which means couldn&squot;t send packet aborted transfer.&n;         *&n;         * First I did not have this in but then I thought at minimum&n;         * we see that something was not ok.&n;         * If anyone knows something better than this to handle this&n;         * please report it. (see Email addresses in the README file)&n;         */
+multiline_comment|/* &n;         * Here I have a problem.&n;         * I only know that there must be one or up to 15 collisions.&n;         * That&squot;s why TX_MORE is set, because after 16 attempts TX_RTRY&n;         * will be set which means couldn&squot;t send packet aborted transfer.&n;         *&n;         * First I did not have this in but then I thought at minimum&n;         * we see that something was not ok.&n;         * If anyone knows something better than this to handle this&n;         * please report it. (see Email addresses in the README file)&n;         */
 id|p-&gt;stats.collisions
 op_increment
 suffix:semicolon

@@ -448,10 +448,6 @@ id|smp_process_available
 )paren
 )paren
 (brace
-suffix:semicolon
-)brace
-macro_line|#if 0&t;
-(brace
 r_while
 c_loop
 (paren
@@ -498,7 +494,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif&t;
 id|smp_process_available
 op_increment
 suffix:semicolon
@@ -865,6 +860,28 @@ r_return
 op_minus
 l_int|1000
 suffix:semicolon
+macro_line|#ifdef PAST_2_0&t;&t;
+multiline_comment|/* This process is locked to a processor group */
+r_if
+c_cond
+(paren
+id|p-&gt;processor_mask
+op_logical_and
+op_logical_neg
+(paren
+id|p-&gt;processor_mask
+op_amp
+(paren
+l_int|1
+op_lshift
+id|this_cpu
+)paren
+)paren
+r_return
+op_minus
+l_int|1000
+suffix:semicolon
+macro_line|#endif&t;&t;
 macro_line|#endif
 multiline_comment|/*&n;&t; * Realtime process, select the first one on the&n;&t; * runqueue (taking priorities within processes&n;&t; * into account).&n;&t; */
 r_if
@@ -1117,7 +1134,7 @@ op_assign
 id|NO_PROC_ID
 suffix:semicolon
 DECL|macro|idle_task
-mdefine_line|#define idle_task (task[this_cpu])
+mdefine_line|#define idle_task (task[cpu_number_map[this_cpu]])
 macro_line|#else
 mdefine_line|#define idle_task (&amp;init_task)
 macro_line|#endif&t;

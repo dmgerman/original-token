@@ -2270,7 +2270,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Added AC : If we are fragmenting a fragment thats not the&n;&t;&t; *&t;&t;   last fragment then keep MF on each bit&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Added AC : If we are fragmenting a fragment that&squot;s not the&n;&t;&t; *&t;&t;   last fragment then keep MF on each bit&n;&t;&t; */
 r_if
 c_cond
 (paren

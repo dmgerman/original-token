@@ -1349,7 +1349,7 @@ op_assign
 id|cnd-&gt;next
 )paren
 (brace
-multiline_comment|/*&n;&t;   * Now search the condition list for a known configuration variable&n;&t;   * that has conditions of it&squot;s own.&n;&t;   */
+multiline_comment|/*&n;&t;   * Now search the condition list for a known configuration variable&n;&t;   * that has conditions of its own.&n;&t;   */
 r_if
 c_cond
 (paren

@@ -4195,7 +4195,7 @@ id|intr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* lets start up the reception */
+multiline_comment|/* let&squot;s start up the reception */
 r_switch
 c_cond
 (paren
@@ -4570,7 +4570,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* lets start up the reception */
+multiline_comment|/* let&squot;s start up the reception */
 id|memset
 c_func
 (paren

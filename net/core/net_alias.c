@@ -3637,7 +3637,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if not aliased, dont bother any more&n;   */
+multiline_comment|/*&n;   * if not aliased, don&squot;t bother any more&n;   */
 r_if
 c_cond
 (paren
@@ -3884,7 +3884,7 @@ l_int|NULL
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * if not aliased, dont bother any more&n;   */
+multiline_comment|/*&n;   * if not aliased, don&squot;t bother any more&n;   */
 r_if
 c_cond
 (paren

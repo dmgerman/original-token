@@ -3,9 +3,6 @@ DECL|macro|__ARCH_M68K_ATOMIC__
 mdefine_line|#define __ARCH_M68K_ATOMIC__
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; */
 multiline_comment|/*&n; * We do not have SMP m68k systems, so we don&squot;t have to deal with that.&n; */
-multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
-DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)
 DECL|typedef|atomic_t
 r_typedef
 r_int
@@ -32,27 +29,16 @@ c_func
 (paren
 l_string|&quot;addl %1,%0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
-)paren
 suffix:colon
-l_string|&quot;ir&quot;
+l_string|&quot;m&quot;
 (paren
-id|i
+op_star
+id|v
 )paren
 comma
-l_string|&quot;0&quot;
+l_string|&quot;id&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|i
 )paren
 )paren
 suffix:semicolon
@@ -76,29 +62,18 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;subl  %1,%0&quot;
+l_string|&quot;subl %1,%0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
+suffix:colon
+l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
+op_star
 id|v
-)paren
-)paren
-suffix:colon
-l_string|&quot;ir&quot;
-(paren
-id|i
 )paren
 comma
-l_string|&quot;0&quot;
+l_string|&quot;id&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|i
 )paren
 )paren
 suffix:semicolon
@@ -121,22 +96,11 @@ c_func
 (paren
 l_string|&quot;addql #1,%0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
-)paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
+op_star
 id|v
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -159,22 +123,11 @@ c_func
 (paren
 l_string|&quot;subql #1,%0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
-)paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
+op_star
 id|v
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -198,29 +151,17 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;subql #1,%0; seq %1&quot;
+l_string|&quot;subql #1,%1; seq %0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
-)paren
-comma
 l_string|&quot;=d&quot;
 (paren
 id|c
 )paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
+op_star
 id|v
-)paren
 )paren
 )paren
 suffix:semicolon

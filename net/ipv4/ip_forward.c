@@ -543,7 +543,7 @@ op_amp
 id|dev-&gt;pa_mask
 )paren
 op_logical_and
-multiline_comment|/* The daddr!=raddr test isn&squot;t obvious - what its doing&n;&t;&t;&t;   is avoiding sending a frame the receiver will not &n;&t;&t;&t;   believe anyway.. */
+multiline_comment|/* The daddr!=raddr test isn&squot;t obvious - what it&squot;s doing&n;&t;&t;&t;   is avoiding sending a frame the receiver will not &n;&t;&t;&t;   believe anyway.. */
 id|iph-&gt;daddr
 op_ne
 id|raddr
@@ -610,7 +610,7 @@ id|IFF_UP
 )paren
 (brace
 macro_line|#ifdef CONFIG_IP_MASQUERADE
-multiline_comment|/*&n;&t;&t; * If this fragment needs masquerading, make it so...&n;&t;&t; * (Dont masquerade de-masqueraded fragments)&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If this fragment needs masquerading, make it so...&n;&t;&t; * (Don&squot;t masquerade de-masqueraded fragments)&n;&t;&t; */
 r_if
 c_cond
 (paren

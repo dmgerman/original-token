@@ -385,6 +385,16 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|hydra_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -748,6 +758,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
 op_logical_and
 id|ariadne_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_HYDRA&t;&t;/* Hydra Systems Amiganet Ethernet board */
+op_logical_and
+id|hydra_probe
 c_func
 (paren
 id|dev

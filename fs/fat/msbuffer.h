@@ -116,8 +116,8 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* These macros exist to avoid modifying all the code */
 multiline_comment|/* They should be removed one day I guess */
-multiline_comment|/* The versioning mechanism of the modules system define those macros */
-multiline_comment|/* This remove some warnings */
+multiline_comment|/* The versioning mechanism of the modules system defines those macros */
+multiline_comment|/* This removes some warnings */
 macro_line|#ifdef brelse
 DECL|macro|brelse
 macro_line|#undef brelse

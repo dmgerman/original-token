@@ -7774,5 +7774,16 @@ id|DMABuffer
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+multiline_comment|/*&n; * This is just a dummy function to keep fs/super.c happy.&n; */
+DECL|function|floppy_eject
+r_void
+id|floppy_eject
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 macro_line|#endif
 eof

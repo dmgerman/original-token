@@ -1414,7 +1414,7 @@ r_char
 id|flags
 )paren
 (brace
-multiline_comment|/* #Specification: symbolic links / strategy&n;&t;&t;A symbolic link is simply a file which hold a path. It is&n;&t;&t;implemented as a normal MSDOS file (not very space efficient :-()&n;&n;&t;&t;I see 2 different way to do it. One is to place the link data&n;&t;&t;in unused entry of the EMD file. The other is to have a separate&n;&t;&t;file dedicated to hold all symbolic links data.&n;&n;&t;&t;Lets go for simplicity...&n;&t;*/
+multiline_comment|/* #Specification: symbolic links / strategy&n;&t;&t;A symbolic link is simply a file which hold a path. It is&n;&t;&t;implemented as a normal MSDOS file (not very space efficient :-()&n;&n;&t;&t;I see 2 different way to do it. One is to place the link data&n;&t;&t;in unused entry of the EMD file. The other is to have a separate&n;&t;&t;file dedicated to hold all symbolic links data.&n;&n;&t;&t;Let&squot;s go for simplicity...&n;&t;*/
 r_struct
 id|inode
 op_star

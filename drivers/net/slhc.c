@@ -26,7 +26,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#include &quot;slhc.h&quot;
+macro_line|#include &lt;net/slhc_vj.h&gt;
 macro_line|#ifdef __alpha__
 macro_line|# include &lt;asm/unaligned.h&gt;
 macro_line|#endif

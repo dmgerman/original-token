@@ -249,7 +249,7 @@ id|im_dst
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Thats all usermode folks&n; */
+multiline_comment|/*&n; *&t;That&squot;s all usermode folks&n; */
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct

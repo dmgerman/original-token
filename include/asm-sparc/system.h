@@ -85,7 +85,7 @@ id|romvec
 suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() romvec-&gt;pv_halt()
-multiline_comment|/* When a context switch happens we must flush all user windows so that&n; * the windows of the current process are flushed onto it&squot;s stack. This&n; * way the windows are all clean for the next process and the stack&n; * frames are up to date.&n; */
+multiline_comment|/* When a context switch happens we must flush all user windows so that&n; * the windows of the current process are flushed onto its stack. This&n; * way the windows are all clean for the next process and the stack&n; * frames are up to date.&n; */
 r_extern
 r_void
 id|flush_user_windows

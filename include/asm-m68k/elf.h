@@ -19,8 +19,6 @@ id|elf_gregset_t
 id|ELF_NGREG
 )braket
 suffix:semicolon
-multiline_comment|/* XXX temporary */
-multiline_comment|/*&n;typedef unsigned long elf_fpregset_t;&n;*/
 DECL|typedef|elf_fpregset_t
 r_typedef
 r_struct

@@ -1776,7 +1776,7 @@ op_star
 id|errcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as its very short and called for pretty much every&n; *&t;packet ever received.&n; */
+multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as it&squot;s very short and called for pretty much every&n; *&t;packet ever received.&n; */
 DECL|function|sock_queue_rcv_skb
 r_extern
 id|__inline__

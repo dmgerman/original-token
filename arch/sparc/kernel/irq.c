@@ -225,7 +225,7 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * Dave Redman (djhr@tadpole.co.uk)&n; *&n; * There used to be extern calls and hard coded values here.. very sucky!&n; * instead, because some of the devices attach very early, I do something&n; * equally sucky but at least we&squot;ll never try to free statically allocated&n; * space or call kmalloc before kmalloc_init :(.&n; * &n; * In fact its the timer10 that attaches first.. then timer14&n; * then kmalloc_init is called.. then the tty interrupts attach.&n; * hmmm....&n; *&n; */
+multiline_comment|/*&n; * Dave Redman (djhr@tadpole.co.uk)&n; *&n; * There used to be extern calls and hard coded values here.. very sucky!&n; * instead, because some of the devices attach very early, I do something&n; * equally sucky but at least we&squot;ll never try to free statically allocated&n; * space or call kmalloc before kmalloc_init :(.&n; * &n; * In fact it&squot;s the timer10 that attaches first.. then timer14&n; * then kmalloc_init is called.. then the tty interrupts attach.&n; * hmmm....&n; *&n; */
 DECL|macro|MAX_STATIC_ALLOC
 mdefine_line|#define MAX_STATIC_ALLOC&t;4
 DECL|variable|static_irqaction

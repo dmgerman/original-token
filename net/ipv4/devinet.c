@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;&t;/* For CONFIG_IP_CLASSLESS */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -127,10 +128,12 @@ id|device
 op_star
 id|dev
 suffix:semicolon
+macro_line|#ifndef CONFIG_IP_CLASSLESS
 r_int
 r_int
 id|mask
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* &n;&t; *&t;Accept both `all ones&squot; and `all zeros&squot; as BROADCAST. &n;&t; *&t;(Support old BSD in other words). This old BSD &n;&t; *&t;support will go very soon as it messes other things&n;&t; *&t;up.&n;&t; *&t;Also accept `loopback broadcast&squot; as BROADCAST.&n;&t; */
 r_if
 c_cond
@@ -154,6 +157,7 @@ l_int|0x7FFFFFFFL
 r_return
 id|IS_BROADCAST
 suffix:semicolon
+macro_line|#ifndef  CONFIG_IP_CLASSLESS
 id|mask
 op_assign
 id|ip_get_mask
@@ -181,6 +185,30 @@ l_int|0x7F000000L
 r_return
 id|IS_MYADDR
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|addr
+op_amp
+id|htonl
+c_func
+(paren
+l_int|0x7F000000L
+)paren
+)paren
+op_eq
+id|htonl
+c_func
+(paren
+l_int|0x7F000000L
+)paren
+)paren
+r_return
+id|IS_MYADDR
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;OK, now check the interface addresses. We could&n;&t; *&t;speed this by keeping a dev and a dev_up chain.&n;&t; */
 r_for
 c_loop
@@ -304,6 +332,7 @@ r_return
 id|IS_BROADCAST
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_IP_CLASSLESS
 multiline_comment|/*&n;&t; &t; *&t;Nope. Check for Network broadcast. &n;&t; &t; */
 r_if
 c_cond
@@ -353,6 +382,7 @@ r_return
 id|IS_BROADCAST
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -423,17 +453,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an interface that can handle addresses for a certain address. &n; *&n; *&t;This needs optimising, since it&squot;s relatively trivial to collapse&n; *&t;the two loops into one.&n; */
-DECL|function|ip_dev_check
+multiline_comment|/*&n; *&t;Find an interface that can handle addresses for a certain address. &n; */
+DECL|function|ip_dev_bynet
 r_struct
 id|device
 op_star
-id|ip_dev_check
+id|ip_dev_bynet
 c_func
 (paren
 r_int
 r_int
 id|addr
+comma
+r_int
+r_int
+id|mask
 )paren
 (brace
 r_struct
@@ -441,6 +475,18 @@ id|device
 op_star
 id|dev
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|best_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+id|__u32
+id|best_mask
+op_assign
+id|mask
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -470,63 +516,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
 id|dev-&gt;flags
 op_amp
 id|IFF_POINTOPOINT
 )paren
-)paren
-r_continue
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
 id|addr
-op_ne
+op_eq
 id|dev-&gt;pa_dstaddr
 )paren
-r_continue
-suffix:semicolon
 r_return
 id|dev
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|dev_base
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_POINTOPOINT
-)paren
-r_continue
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -540,12 +547,42 @@ id|dev-&gt;pa_addr
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mask
+op_eq
+id|dev-&gt;pa_mask
+)paren
 r_return
 id|dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|best_dev
+op_logical_and
+(paren
+id|best_mask
+op_amp
+id|dev-&gt;pa_mask
+)paren
+op_ne
+id|best_mask
+)paren
+r_continue
+suffix:semicolon
+id|best_dev
+op_assign
+id|dev
+suffix:semicolon
+id|best_mask
+op_assign
+id|dev-&gt;pa_mask
+suffix:semicolon
 )brace
 r_return
-l_int|NULL
+id|best_dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Find the first device with a given source address.&n; */

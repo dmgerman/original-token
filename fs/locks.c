@@ -2419,7 +2419,7 @@ id|ERESTARTSYS
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Try to avoid deadlocks due to pathalogical programs that&n;&t;&t;&t; * mix calls to flock() and fcntl(). Return EAGAIN, because&n;&t;&t;&t; * EDEADLOCK isn&squot;t a documented return value for flock().&n;&t;&t;&t; */
+multiline_comment|/* Try to avoid deadlocks due to pathological programs that&n;&t;&t;&t; * mix calls to flock() and fcntl(). Return EAGAIN, because&n;&t;&t;&t; * EDEADLOCK isn&squot;t a documented return value for flock().&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

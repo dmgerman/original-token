@@ -799,6 +799,14 @@ id|vma-&gt;vm_page_prot
 )paren
 )paren
 suffix:semicolon
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
 op_increment
 id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon

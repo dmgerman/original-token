@@ -812,6 +812,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: paper-out&bslash;n&quot;
 comma
 id|dev
@@ -849,6 +850,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: off-line&bslash;n&quot;
 comma
 id|dev
@@ -885,6 +887,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: on fire&bslash;n&quot;
 comma
 id|dev
@@ -1133,6 +1136,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: out of paper&bslash;n&quot;
 comma
 id|dev
@@ -1199,6 +1203,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: off-line&bslash;n&quot;
 comma
 id|dev
@@ -1265,6 +1270,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;lp%d: on fire&bslash;n&quot;
 comma
 id|dev
@@ -1884,6 +1890,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp_init: lp using polling driver&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1948,6 +1955,7 @@ id|lp_irq
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp_init: lp using interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1956,6 +1964,7 @@ macro_line|#if WHICH_DRIVER == PREFER_INTERRUPT
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;lp_init: lp using polling driver&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1963,7 +1972,8 @@ macro_line|#else
 id|printk
 c_func
 (paren
-l_string|&quot;lp_init: cant get interrupt, and polling driver not configured&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;lp_init: can&squot;t get interrupt, and polling driver not configured&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -640,7 +640,7 @@ id|sock
 op_star
 id|sk
 )paren
-multiline_comment|/* Not static as its used by the timer */
+multiline_comment|/* Not static as it&squot;s used by the timer */
 (brace
 r_struct
 id|sk_buff
@@ -3724,7 +3724,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Initially we don&squot;t know who its for */
+multiline_comment|/* Initially we don&squot;t know who it&squot;s for */
 multiline_comment|/*&n;&t; *&t;skb-&gt;data points to the netrom frame start&n;&t; */
 id|src
 op_assign
@@ -3818,7 +3818,7 @@ id|dev
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t; * Find an existing socket connection, based on circuit ID, if its&n;&t; * a Connect Request base it on their circuit ID.&n;&t; */
+multiline_comment|/*&n;&t; * Find an existing socket connection, based on circuit ID, if it&squot;s&n;&t; * a Connect Request base it on their circuit ID.&n;&t; */
 r_if
 c_cond
 (paren

@@ -4678,7 +4678,7 @@ r_int
 id|clocks
 )paren
 (brace
-multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do it&squot;s best and to convert between the HW and&n;     * actual timebases.&n;   */
+multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do its best and to convert between the HW and&n;     * actual timebases.&n;   */
 r_return
 (paren
 (paren

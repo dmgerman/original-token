@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file contains the driver for an XT hard disk controller&n; * (at least the DTC 5150X) for Linux.&n; *&n; * Author: Pat Mackinlay, pat@it.com.au&n; * Date: 29/09/92&n; * &n; * Revised: 01/01/93, ...&n; *&n; * Ref: DTC 5150X Controller Specification (thanks to Kevin Fowler,&n; *   kevinf@agora.rain.com)&n; * Also thanks to: Salvador Abreu, Dave Thaler, Risto Kankkunen and&n; *   Wim Van Dorst.&n; *&n; * Revised: 04/04/94 by Risto Kankkunen&n; *   Moved the detection code from xd_init() to xd_geninit() as it needed&n; *   interrupts enabled and Linus didn&squot;t want to enable them in that first&n; *   phase. xd_geninit() is the place to do these kinds of things anyway,&n; *   he says.&n; */
+multiline_comment|/*&n; * This file contains the driver for an XT hard disk controller&n; * (at least the DTC 5150X) for Linux.&n; *&n; * Author: Pat Mackinlay, pat@it.com.au&n; * Date: 29/09/92&n; * &n; * Revised: 01/01/93, ...&n; *&n; * Ref: DTC 5150X Controller Specification (thanks to Kevin Fowler,&n; *   kevinf@agora.rain.com)&n; * Also thanks to: Salvador Abreu, Dave Thaler, Risto Kankkunen and&n; *   Wim Van Dorst.&n; *&n; * Revised: 04/04/94 by Risto Kankkunen&n; *   Moved the detection code from xd_init() to xd_geninit() as it needed&n; *   interrupts enabled and Linus didn&squot;t want to enable them in that first&n; *   phase. xd_geninit() is the place to do these kinds of things anyway,&n; *   he says.&n; *&n; * Modularized: 04/10/96 by Todd Fries, tfries@umr.edu&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -42,6 +42,19 @@ l_string|&quot;n unknown&quot;
 )brace
 comma
 multiline_comment|/* Pat Mackinlay, pat@it.com.au */
+(brace
+l_int|0x000B
+comma
+l_string|&quot;CRD18A   Not an IBM rom. (C) Copyright Data Technology Corp. 05/31/88&quot;
+comma
+id|xd_dtc_init_controller
+comma
+id|xd_dtc_init_drive
+comma
+l_string|&quot; DTC 5150X&quot;
+)brace
+comma
+multiline_comment|/* Todd Fries, tfries@umr.edu */
 (brace
 l_int|0x000B
 comma
@@ -267,9 +280,15 @@ multiline_comment|/* Number of partitions per real */
 id|XD_MAXDRIVES
 comma
 multiline_comment|/* maximum number of real */
+macro_line|#ifdef MODULE
+l_int|NULL
+comma
+multiline_comment|/* called from init_module */
+macro_line|#else
 id|xd_geninit
 comma
 multiline_comment|/* init function */
+macro_line|#endif
 id|xd
 comma
 multiline_comment|/* hd struct */
@@ -4697,4 +4716,91 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|error
+op_assign
+id|xd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;XD: Loaded as a module.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|xd_geninit
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|gendisk
+)paren
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+)paren
+suffix:semicolon
+)brace
+r_return
+id|error
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;xd&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof

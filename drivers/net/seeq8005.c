@@ -2699,7 +2699,7 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/*&n; * I _could_ do upto 6 addresses here, but wont (yet?)&n; */
+multiline_comment|/*&n; * I _could_ do up to 6 addresses here, but won&squot;t (yet?)&n; */
 macro_line|#if 0
 r_int
 id|ioaddr

@@ -1957,7 +1957,7 @@ op_logical_or
 id|info-&gt;tty-&gt;stopped
 )paren
 (brace
-multiline_comment|/* Thats peculiar... */
+multiline_comment|/* That&squot;s peculiar... */
 id|info-&gt;zs_channel-&gt;control
 op_assign
 id|RES_Tx_P
