@@ -84,6 +84,24 @@ op_assign
 l_int|103
 comma
 multiline_comment|/* Protocol Independent Multicast&t;*/
+DECL|enumerator|IPPROTO_ESP
+id|IPPROTO_ESP
+op_assign
+l_int|50
+comma
+multiline_comment|/* Encapsulation Security Payload protocol */
+DECL|enumerator|IPPROTO_AH
+id|IPPROTO_AH
+op_assign
+l_int|51
+comma
+multiline_comment|/* Authentication Header protocol       */
+DECL|enumerator|IPPROTO_COMP
+id|IPPROTO_COMP
+op_assign
+l_int|108
+comma
+multiline_comment|/* Compression Header protocol */
 DECL|enumerator|IPPROTO_RAW
 id|IPPROTO_RAW
 op_assign

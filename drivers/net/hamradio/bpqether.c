@@ -21,7 +21,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
@@ -1844,7 +1844,7 @@ c_cond
 (paren
 id|odev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|buf

@@ -98,17 +98,5 @@ r_int
 id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
-r_extern
-r_int
-id|icmp_chkaddr
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
 macro_line|#endif&t;/* _ICMP_H */
 eof

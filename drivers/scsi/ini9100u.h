@@ -1,4 +1,4 @@
-multiline_comment|/**************************************************************************&n; * Initio 9100 device driver for Linux.&n; *&n; * Copyright (c) 1994-1998 Initio Corporation&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * --------------------------------------------------------------------------&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer,&n; *    without modification, immediately at the beginning of the file.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote products&n; *    derived from this software without specific prior written permission.&n; *&n; * Where this Software is combined with software released under the terms of &n; * the GNU Public License (&quot;GPL&quot;) and the terms of the GPL would require the &n; * combined work to also be released under the terms of the GPL, the terms&n; * and conditions of this License will apply in addition to those of the&n; * GPL with the exception of any terms or conditions of this License that&n; * conflict with, or are expressly prohibited by, the GPL.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; *************************************************************************&n; *&n; * Module: ini9100u.h&n; * Description: INI-9100U/UW LINUX device driver header&n; * Revision History:&n; * 06/18/96 Harry Chen, Initial Version 1.00A (Beta)&n; * 06/23/98 hc&t;- v1.01k&n; *&t;&t;- Get it work for kernel version &gt;= 2.1.75&n; * 12/09/98 bv&t;- v1.03a&n; *&t;&t;- Removed unused code&n; * 12/13/98 bv&t;- v1.03b&n; *&t;&t;- Add spinlocks to HCS structure.&n;*******************************************************************************/
+multiline_comment|/**************************************************************************&n; * Initio 9100 device driver for Linux.&n; *&n; * Copyright (c) 1994-1998 Initio Corporation&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * --------------------------------------------------------------------------&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer,&n; *    without modification, immediately at the beginning of the file.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote products&n; *    derived from this software without specific prior written permission.&n; *&n; * Where this Software is combined with software released under the terms of &n; * the GNU Public License (&quot;GPL&quot;) and the terms of the GPL would require the &n; * combined work to also be released under the terms of the GPL, the terms&n; * and conditions of this License will apply in addition to those of the&n; * GPL with the exception of any terms or conditions of this License that&n; * conflict with, or are expressly prohibited by, the GPL.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; *************************************************************************&n; *&n; * Module: ini9100u.h&n; * Description: INI-9100U/UW LINUX device driver header&n; * Revision History:&n; * 06/18/96 Harry Chen, Initial Version 1.00A (Beta)&n; * 06/23/98 hc&t;- v1.01k&n; *&t;&t;- Get it work for kernel version &gt;= 2.1.75&n; * 12/09/98 bv&t;- v1.03a&n; *&t;&t;- Removed unused code&n; * 12/13/98 bv&t;- v1.03b&n; *&t;&t;- Add spinlocks to HCS structure.&n; * 21/01/99 bv&t;- v1.03e&n; *&t;&t;- Added PCI_ID structure&n; **************************************************************************/
 macro_line|#ifndef&t;CVT_LINUX_VERSION
 DECL|macro|CVT_LINUX_VERSION
 mdefine_line|#define&t;CVT_LINUX_VERSION(V,P,S)&t;(((V) * 65536) + ((P) * 256) + (S))
@@ -104,7 +104,7 @@ suffix:semicolon
 multiline_comment|/*for linux v1.13 */
 macro_line|#endif
 DECL|macro|i91u_REVID
-mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03d&quot;
+mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03g&quot;
 macro_line|#if LINUX_VERSION_CODE &lt; CVT_LINUX_VERSION(1, 3, 0)
 DECL|macro|INI9100U
 mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_REVID, &bslash;&n;&t;&t;i91u_detect, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_command, &bslash;&n;&t;&t;i91u_queue, &bslash;&n;&t;&t;i91u_abort, &bslash;&n;&t;&t;i91u_reset, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_biosparam, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;7, &bslash;&n;&t;&t;SG_ALL, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;ENABLE_CLUSTERING &bslash;&n;}
@@ -171,7 +171,7 @@ mdefine_line|#define SENSE_SIZE&t;&t;14
 DECL|macro|INI_VENDOR_ID
 mdefine_line|#define INI_VENDOR_ID   0x1101&t;/* Initio&squot;s PCI vendor ID       */
 DECL|macro|DMX_VENDOR_ID
-mdefine_line|#define DMX_VENDOR_ID   0x134a&t;/* Domex&squot;s PCI vendor ID       */
+mdefine_line|#define DMX_VENDOR_ID&t;0x134a&t;/* Domex&squot;s PCI vendor ID&t;*/
 DECL|macro|I950_DEVICE_ID
 mdefine_line|#define I950_DEVICE_ID&t;0x9500&t;/* Initio&squot;s inic-950 product ID   */
 DECL|macro|I940_DEVICE_ID
@@ -180,6 +180,28 @@ DECL|macro|I935_DEVICE_ID
 mdefine_line|#define I935_DEVICE_ID&t;0x9401&t;/* Initio&squot;s inic-935 product ID   */
 DECL|macro|I920_DEVICE_ID
 mdefine_line|#define I920_DEVICE_ID&t;0x0002&t;/* Initio&squot;s other product ID      */
+multiline_comment|/************************************************************************/
+multiline_comment|/*              Vendor ID/Device ID Pair Structure&t;&t;&t;*/
+multiline_comment|/************************************************************************/
+DECL|struct|PCI_ID_Struc
+r_typedef
+r_struct
+id|PCI_ID_Struc
+(brace
+DECL|member|vendor_id
+r_int
+r_int
+id|vendor_id
+suffix:semicolon
+DECL|member|device_id
+r_int
+r_int
+id|device_id
+suffix:semicolon
+DECL|typedef|PCI_ID
+)brace
+id|PCI_ID
+suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/*              Scatter-Gather Element Structure                        */
 multiline_comment|/************************************************************************/

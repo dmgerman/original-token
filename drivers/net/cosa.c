@@ -1,5 +1,5 @@
-multiline_comment|/* $Id: cosa.c,v 1.24 1999/05/28 17:28:34 kas Exp $ */
-multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; * &n; * &t;5/25/1999 : Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt;&n; * &t;&t;fixed a deadlock in cosa_sppp_open &n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* $Id: cosa.c,v 1.26 1999/07/09 15:02:37 kas Exp $ */
+multiline_comment|/*&n; *  Copyright (C) 1995-1997  Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*&n; * The driver for the SRP and COSA synchronous serial cards.&n; *&n; * HARDWARE INFO&n; *&n; * Both cards are developed at the Institute of Computer Science,&n; * Masaryk University (http://www.ics.muni.cz/). The hardware is&n; * developed by Jiri Novotny &lt;novotny@ics.muni.cz&gt;. More information&n; * and the photo of both cards is available at&n; * http://www.pavoucek.cz/cosa.html. The card documentation, firmwares&n; * and other goods can be downloaded from ftp://ftp.ics.muni.cz/pub/cosa/.&n; * For Linux-specific utilities, see below in the &quot;Software info&quot; section.&n; * If you want to order the card, contact Jiri Novotny.&n; *&n; * The SRP (serial port?, the Czech word &quot;srp&quot; means &quot;sickle&quot;) card&n; * is a 2-port intelligent (with its own 8-bit CPU) synchronous serial card&n; * with V.24 interfaces up to 80kb/s each.&n; *&n; * The COSA (communication serial adapter?, the Czech word &quot;kosa&quot; means&n; * &quot;scythe&quot;) is a next-generation sync/async board with two interfaces&n; * - currently any of V.24, X.21, V.35 and V.36 can be selected.&n; * It has a 16-bit SAB80166 CPU and can do up to 10 Mb/s per channel.&n; * The 8-channels version is in development.&n; *&n; * Both types have downloadable firmware and communicate via ISA DMA.&n; * COSA can be also a bus-mastering device.&n; *&n; * SOFTWARE INFO&n; *&n; * The homepage of the Linux driver is at http://www.fi.muni.cz/~kas/cosa/.&n; * The CVS tree of Linux driver can be viewed there, as well as the&n; * firmware binaries and user-space utilities for downloading the firmware&n; * into the card and setting up the card.&n; *&n; * The Linux driver (unlike the present *BSD drivers :-) can work even&n; * for the COSA and SRP in one computer and allows each channel to work&n; * in one of the three modes (character device, Cisco HDLC, Sync PPP).&n; *&n; * AUTHOR&n; *&n; * The Linux driver was written by Jan &quot;Yenya&quot; Kasprzak &lt;kas@fi.muni.cz&gt;.&n; *&n; * You can mail me bugfixes and even success reports. I am especially&n; * interested in the SMP and/or muliti-channel success/failure reports&n; * (I wonder if I did the locking properly :-).&n; *&n; * THE AUTHOR USED THE FOLLOWING SOURCES WHEN PROGRAMMING THE DRIVER&n; *&n; * The COSA/SRP NetBSD driver by Zdenek Salvet and Ivos Cernohlavek&n; * The skeleton.c by Donald Becker&n; * The SDL Riscom/N2 driver by Mike Natale&n; * The Comtrol Hostess SV11 driver by Alan Cox&n; * The Sync PPP/Cisco HDLC layer (syncppp.c) ported to Linux by Alan Cox&n; */
 multiline_comment|/*&n; *     5/25/1999 : Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt;&n; *             fixed a deadlock in cosa_sppp_open&n; */
 "&f;"
@@ -25,6 +25,18 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;syncppp.h&quot;
 macro_line|#include &quot;cosa.h&quot;
+multiline_comment|/* Linux version stuff */
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,1)
+DECL|typedef|wait_queue_head_t
+r_typedef
+r_struct
+id|wait_queue
+op_star
+id|wait_queue_head_t
+suffix:semicolon
+DECL|macro|DECLARE_WAITQUEUE
+mdefine_line|#define DECLARE_WAITQUEUE(wait, current) &bslash;&n;&t;struct wait_queue wait = { current, NULL }
+macro_line|#endif
 multiline_comment|/* Maximum length of the identification string. */
 DECL|macro|COSA_MAX_ID_STRING
 mdefine_line|#define COSA_MAX_ID_STRING&t;128
@@ -1400,7 +1412,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cosa v1.04 (c) 1997-8 Jan Kasprzak &lt;kas@fi.muni.cz&gt;&bslash;n&quot;
+l_string|&quot;cosa v1.06 (c) 1997-8 Jan Kasprzak &lt;kas@fi.muni.cz&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
@@ -5801,26 +5813,10 @@ c_func
 (paren
 id|cosa
 comma
-l_int|0
-)paren
-suffix:semicolon
-id|cosa_putdata8
-c_func
-(paren
-id|cosa
-comma
 id|status
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_IO
-id|debug_data_cmd
-c_func
-(paren
-id|cosa
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|debug_data_cmd
 c_func
 (paren
@@ -7588,7 +7584,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* ---------- Interrupt routines ---------- */
 multiline_comment|/*&n; * There are three types of interrupt:&n; * At the beginning of transmit - this handled is in tx_interrupt(),&n; * at the beginning of receive - it is in rx_interrupt() and&n; * at the end of transmit/receive - it is the eot_interrupt() function.&n; * These functions are multiplexed by cosa_interrupt() according to the&n; * COSA status byte. I have moved the rx/tx/eot interrupt handling into&n; * separate functions to make it more readable. These functions are inline,&n; * so there should be no overhead of function call.&n; * &n; * In the COSA bus-master mode, we need to tell the card the address of a&n; * buffer. Unfortunately, COSA may be too slow for us, so we must busy-wait.&n; * It&squot;s time to use the bottom half :-(&n; */
-multiline_comment|/*&n; * Transmit interrupt routine - called when COSA is willing to obtain&n; * data from the OS. The most tricky part of the routine is selection&n; * of channel we (OS) want to send packet for. For SRP we should probably&n; * use the round-robin approach. The newer COSA firmwares have a simple&n; * flow-control - in the status word has bits 2 and 3 set to 1 means that the&n; * channel 0 or 1 doesn&squot;t want to receive data.&n; */
+multiline_comment|/*&n; * Transmit interrupt routine - called when COSA is willing to obtain&n; * data from the OS. The most tricky part of the routine is selection&n; * of channel we (OS) want to send packet for. For SRP we should probably&n; * use the round-robin approach. The newer COSA firmwares have a simple&n; * flow-control - in the status word has bits 2 and 3 set to 1 means that the&n; * channel 0 or 1 doesn&squot;t want to receive data.&n; *&n; * It seems there is a bug in COSA firmware (need to trace it further):&n; * When the driver status says that the kernel has no more data for transmit&n; * (e.g. at the end of TX DMA) and then the kernel changes its mind&n; * (e.g. new packet is queued to hard_start_xmit()), the card issues&n; * the TX interrupt but does not mark the channel as ready-to-transmit.&n; * The fix seems to be to push the packet to COSA despite its request.&n; * We first try to obey the card&squot;s opinion, and then fall back to forced TX.&n; */
 DECL|function|tx_interrupt
 r_static
 r_inline
@@ -7656,28 +7652,25 @@ id|cosa-&gt;rxtx
 )paren
 )paren
 (brace
-multiline_comment|/* flow control */
+multiline_comment|/* flow control, see the comment above */
 r_int
 id|i
 op_assign
 l_int|0
 suffix:semicolon
-r_do
-(brace
 r_if
 c_cond
 (paren
-id|i
-op_increment
-OG
-id|cosa-&gt;nchannels
+op_logical_neg
+id|cosa-&gt;txbitmap
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: No channel wants data in TX IRQ&bslash;n&quot;
+l_string|&quot;%s: No channel wants data &quot;
+l_string|&quot;in TX IRQ. Expect DMA timeout.&quot;
 comma
 id|cosa-&gt;name
 )paren
@@ -7709,7 +7702,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
 id|cosa-&gt;txchan
+op_increment
+suffix:semicolon
+id|i
 op_increment
 suffix:semicolon
 r_if
@@ -7723,10 +7725,8 @@ id|cosa-&gt;txchan
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
+r_if
+c_cond
 (paren
 op_logical_neg
 (paren
@@ -7739,7 +7739,12 @@ id|cosa-&gt;txchan
 )paren
 )paren
 )paren
-op_logical_or
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_complement
 id|status
 op_amp
 (paren
@@ -7752,7 +7757,34 @@ id|DRIVER_TXMAP_SHIFT
 )paren
 )paren
 )paren
+r_break
 suffix:semicolon
+multiline_comment|/* in second pass, accept first ready-to-TX channel */
+r_if
+c_cond
+(paren
+id|i
+OG
+id|cosa-&gt;nchannels
+)paren
+(brace
+multiline_comment|/* Can be safely ignored */
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Forcing TX &quot;
+l_string|&quot;to not-ready channel %d&bslash;n&quot;
+comma
+id|cosa-&gt;name
+comma
+id|cosa-&gt;txchan
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 id|cosa-&gt;txsize
 op_assign
 id|cosa-&gt;chan
@@ -8459,6 +8491,12 @@ id|IRQBIT
 comma
 op_amp
 id|cosa-&gt;rxtx
+)paren
+suffix:semicolon
+id|put_driver_status_nolock
+c_func
+(paren
+id|cosa
 )paren
 suffix:semicolon
 id|cosa-&gt;rxsize

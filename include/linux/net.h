@@ -136,17 +136,15 @@ r_int
 r_char
 id|passcred
 suffix:semicolon
-DECL|member|tli
-r_int
-r_char
-id|tli
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SOCK_INODE
 mdefine_line|#define SOCK_INODE(S)&t;((S)-&gt;inode)
 r_struct
 id|scm_cookie
+suffix:semicolon
+r_struct
+id|vm_area_struct
 suffix:semicolon
 DECL|struct|proto_ops
 r_struct
@@ -155,24 +153,6 @@ id|proto_ops
 DECL|member|family
 r_int
 id|family
-suffix:semicolon
-DECL|member|dup
-r_int
-(paren
-op_star
-id|dup
-)paren
-(paren
-r_struct
-id|socket
-op_star
-id|newsock
-comma
-r_struct
-id|socket
-op_star
-id|oldsock
-)paren
 suffix:semicolon
 DECL|member|release
 r_int
@@ -185,11 +165,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peer
 )paren
 suffix:semicolon
 DECL|member|bind
@@ -507,6 +482,29 @@ op_star
 id|scm
 )paren
 suffix:semicolon
+DECL|member|mmap
+r_int
+(paren
+op_star
+id|mmap
+)paren
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|socket
+op_star
+id|sock
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|net_proto_family
@@ -573,14 +571,6 @@ op_star
 suffix:semicolon
 multiline_comment|/* Bootstrap */
 )brace
-suffix:semicolon
-r_extern
-r_struct
-id|net_proto_family
-op_star
-id|net_families
-(braket
-)braket
 suffix:semicolon
 r_extern
 r_int
@@ -752,6 +742,21 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
+DECL|macro|SOCKOPS_WRAPPED
+mdefine_line|#define SOCKOPS_WRAPPED(name) name
+DECL|macro|SOCKOPS_WRAP
+mdefine_line|#define SOCKOPS_WRAP(name, fam)
+macro_line|#else
+DECL|macro|SOCKOPS_WRAPPED
+mdefine_line|#define SOCKOPS_WRAPPED(name) __unlocked_##name
+DECL|macro|SOCKCALL_WRAP
+mdefine_line|#define SOCKCALL_WRAP(name, call, parms, args)&t;&t;&bslash;&n;static int __lock_##name##_##call  parms&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret;&t;&t;&t;&t;&t;&bslash;&n;&t;lock_kernel();&t;&t;&t;&t;&t;&bslash;&n;&t;ret = __unlocked_##name##_ops.call  args ;&bslash;&n;&t;unlock_kernel();&t;&t;&t;&t;&bslash;&n;&t;return ret;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|SOCKCALL_UWRAP
+mdefine_line|#define SOCKCALL_UWRAP(name, call, parms, args)&t;&t;&bslash;&n;static unsigned int __lock_##name##_##call  parms&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret;&t;&t;&t;&t;&t;&bslash;&n;&t;lock_kernel();&t;&t;&t;&t;&t;&bslash;&n;&t;ret = __unlocked_##name##_ops.call  args ;&bslash;&n;&t;unlock_kernel();&t;&t;&t;&t;&bslash;&n;&t;return ret;&t;&t;&t;&t;&t;&bslash;&n;}
+DECL|macro|SOCKOPS_WRAP
+mdefine_line|#define SOCKOPS_WRAP(name, fam)&t;&t;&t;&t;&t;&bslash;&n;SOCKCALL_WRAP(name, release, (struct socket *sock), (sock))&t;&bslash;&n;SOCKCALL_WRAP(name, bind, (struct socket *sock, struct sockaddr *uaddr, int addr_len), &bslash;&n;&t;      (sock, uaddr, addr_len))&t;&t;&t;&t;&bslash;&n;SOCKCALL_WRAP(name, connect, (struct socket *sock, struct sockaddr * uaddr, &bslash;&n;&t;&t;&t;      int addr_len, int flags), &t;&bslash;&n;&t;      (sock, uaddr, addr_len, flags))&t;&t;&t;&bslash;&n;SOCKCALL_WRAP(name, socketpair, (struct socket *sock1, struct socket *sock2), &bslash;&n;&t;      (sock1, sock2))&t;&t;&t;&t;&t;&bslash;&n;SOCKCALL_WRAP(name, accept, (struct socket *sock, struct socket *newsock, &bslash;&n;&t;&t;&t; int flags), (sock, newsock, flags)) &bslash;&n;SOCKCALL_WRAP(name, getname, (struct socket *sock, struct sockaddr *uaddr, &bslash;&n;&t;&t;&t; int *addr_len, int peer), (sock, uaddr, addr_len, peer)) &bslash;&n;SOCKCALL_UWRAP(name, poll, (struct file *file, struct socket *sock, struct poll_table_struct *wait), &bslash;&n;&t;      (file, sock, wait)) &bslash;&n;SOCKCALL_WRAP(name, ioctl, (struct socket *sock, unsigned int cmd, &bslash;&n;&t;&t;&t; unsigned long arg), (sock, cmd, arg)) &bslash;&n;SOCKCALL_WRAP(name, listen, (struct socket *sock, int len), (sock, len)) &bslash;&n;SOCKCALL_WRAP(name, shutdown, (struct socket *sock, int flags), (sock, flags)) &bslash;&n;SOCKCALL_WRAP(name, setsockopt, (struct socket *sock, int level, int optname, &bslash;&n;&t;&t;&t; char *optval, int optlen), (sock, level, optname, optval, optlen)) &bslash;&n;SOCKCALL_WRAP(name, getsockopt, (struct socket *sock, int level, int optname, &bslash;&n;&t;&t;&t; char *optval, int *optlen), (sock, level, optname, optval, optlen)) &bslash;&n;SOCKCALL_WRAP(name, fcntl, (struct socket *sock, unsigned int cmd, &bslash;&n;&t;&t;&t; unsigned long arg), (sock, cmd, arg)) &bslash;&n;SOCKCALL_WRAP(name, sendmsg, (struct socket *sock, struct msghdr *m, int len, struct scm_cookie *scm), &bslash;&n;&t;      (sock, m, len, scm)) &bslash;&n;SOCKCALL_WRAP(name, recvmsg, (struct socket *sock, struct msghdr *m, int len, int flags, struct scm_cookie *scm), &bslash;&n;&t;      (sock, m, len, flags, scm)) &bslash;&n;SOCKCALL_WRAP(name, mmap, (struct file *file, struct socket *sock, struct vm_area_struct *vma), &bslash;&n;&t;      (file, sock, vma)) &bslash;&n;&t;      &bslash;&n;static struct proto_ops name##_ops = {&t;&bslash;&n;&t;fam,&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&bslash;&n;&t;__lock_##name##_release,&t;&bslash;&n;&t;__lock_##name##_bind,&t;&t;&bslash;&n;&t;__lock_##name##_connect,&t;&bslash;&n;&t;__lock_##name##_socketpair,&t;&bslash;&n;&t;__lock_##name##_accept,&t;&t;&bslash;&n;&t;__lock_##name##_getname,&t;&bslash;&n;&t;__lock_##name##_poll,&t;&t;&bslash;&n;&t;__lock_##name##_ioctl,&t;&t;&bslash;&n;&t;__lock_##name##_listen,&t;&t;&bslash;&n;&t;__lock_##name##_shutdown,&t;&bslash;&n;&t;__lock_##name##_setsockopt,&t;&bslash;&n;&t;__lock_##name##_getsockopt,&t;&bslash;&n;&t;__lock_##name##_fcntl,&t;&t;&bslash;&n;&t;__lock_##name##_sendmsg,&t;&bslash;&n;&t;__lock_##name##_recvmsg,&t;&bslash;&n;&t;__lock_##name##_mmap,&t;&t;&bslash;&n;};
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_NET_H */
 eof

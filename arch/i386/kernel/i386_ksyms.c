@@ -544,6 +544,13 @@ c_func
 id|mca_find_unused_adapter
 )paren
 suffix:semicolon
+DECL|variable|mca_is_adapter_used
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_is_adapter_used
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|screen_info

@@ -1,7 +1,21 @@
-multiline_comment|/*&n; *&t;$Id: compat.c,v 1.1 1998/02/16 10:35:50 mj Exp $&n; *&n; *&t;PCI Bus Services -- Function For Backward Compatibility&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: compat.c,v 1.1 1998/02/16 10:35:50 mj Exp $&n; *&n; *&t;PCI Bus Services -- Function For Backward Compatibility&n; *&n; *&t;Copyright 1998, 1999 Martin Mares &lt;mj@ucw.cz&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+r_int
+DECL|function|pcibios_present
+id|pcibios_present
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+op_logical_neg
+op_logical_neg
+id|pci_devices
+suffix:semicolon
+)brace
 r_int
 DECL|function|pcibios_find_class
 id|pcibios_find_class
@@ -164,4 +178,63 @@ r_return
 id|PCIBIOS_DEVICE_NOT_FOUND
 suffix:semicolon
 )brace
+DECL|macro|PCI_OP
+mdefine_line|#define PCI_OP(rw,size,type)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;int pcibios_##rw##_config_##size (unsigned char bus, unsigned char dev_fn,&t;&bslash;&n;&t;&t;&t;&t;  unsigned char where, unsigned type val)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct pci_dev *dev = pci_find_slot(bus, dev_fn);&t;&t;&t;&bslash;&n;&t;if (!dev) return PCIBIOS_DEVICE_NOT_FOUND;&t;&t;&t;&t;&bslash;&n;&t;return pci_##rw##_config_##size(dev, where, val);&t;&t;&t;&bslash;&n;}
+id|PCI_OP
+c_func
+(paren
+id|read
+comma
+id|byte
+comma
+r_char
+op_star
+)paren
+id|PCI_OP
+c_func
+(paren
+id|read
+comma
+id|word
+comma
+r_int
+op_star
+)paren
+id|PCI_OP
+c_func
+(paren
+id|read
+comma
+id|dword
+comma
+r_int
+op_star
+)paren
+id|PCI_OP
+c_func
+(paren
+id|write
+comma
+id|byte
+comma
+r_char
+)paren
+id|PCI_OP
+c_func
+(paren
+id|write
+comma
+id|word
+comma
+r_int
+)paren
+id|PCI_OP
+c_func
+(paren
+id|write
+comma
+id|dword
+comma
+r_int
+)paren
 eof

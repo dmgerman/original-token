@@ -24,6 +24,8 @@ DECL|macro|ARPHRD_APPLETLK
 mdefine_line|#define&t;ARPHRD_APPLETLK&t;8&t;&t;/* APPLEtalk&t;&t;&t;*/
 DECL|macro|ARPHRD_DLCI
 mdefine_line|#define ARPHRD_DLCI&t;15&t;&t;/* Frame Relay DLCI&t;&t;*/
+DECL|macro|ARPHRD_ATM
+mdefine_line|#define ARPHRD_ATM&t;19&t;&t;/* ATM &t;&t;&t;&t;*/
 DECL|macro|ARPHRD_METRICOM
 mdefine_line|#define ARPHRD_METRICOM&t;23&t;&t;/* Metricom STRIP (new IANA id)&t;*/
 multiline_comment|/* Dummy types for non ARP hardware */
@@ -102,6 +104,12 @@ DECL|macro|ARPOP_RREQUEST
 mdefine_line|#define&t;ARPOP_RREQUEST&t;3&t;&t;/* RARP request&t;&t;&t;*/
 DECL|macro|ARPOP_RREPLY
 mdefine_line|#define&t;ARPOP_RREPLY&t;4&t;&t;/* RARP reply&t;&t;&t;*/
+DECL|macro|ARPOP_InREQUEST
+mdefine_line|#define&t;ARPOP_InREQUEST&t;8&t;&t;/* InARP request&t;&t;*/
+DECL|macro|ARPOP_InREPLY
+mdefine_line|#define&t;ARPOP_InREPLY&t;9&t;&t;/* InARP reply&t;&t;&t;*/
+DECL|macro|ARPOP_NAK
+mdefine_line|#define&t;ARPOP_NAK&t;10&t;&t;/* (ATM)ARP NAK&t;&t;&t;*/
 multiline_comment|/* ARP ioctl request. */
 DECL|struct|arpreq
 r_struct

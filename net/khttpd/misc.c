@@ -65,15 +65,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sock-&gt;sk-&gt;state
-op_ne
-id|TCP_ESTABLISHED
-)paren
-r_return
-suffix:semicolon
 id|len
 op_assign
 l_int|1
@@ -225,18 +216,6 @@ c_func
 id|Req-&gt;sock
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* 2.3.11 quirk - needed for 2.3.13 ?? */
-id|lock_sock
-c_func
-(paren
-id|Req-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -248,24 +227,12 @@ id|Req-&gt;sleep
 )paren
 )paren
 suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|Req-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 id|sock_release
 c_func
 (paren
 id|Req-&gt;sock
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* 2.3.13 quirk */
 )brace
 multiline_comment|/* ... and the file-pointer ... */
 r_if
@@ -397,14 +364,6 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sock-&gt;sk-&gt;state
-op_eq
-id|TCP_ESTABLISHED
-)paren
-(brace
 id|oldfs
 op_assign
 id|get_fs
@@ -452,12 +411,6 @@ l_string|&quot;SendBuffer&quot;
 suffix:semicolon
 r_return
 id|len
-suffix:semicolon
-)brace
-r_else
-r_return
-op_minus
-id|ECONNRESET
 suffix:semicolon
 )brace
 DECL|function|SendBuffer_async

@@ -1227,7 +1227,14 @@ comma
 id|NLM_NEVER
 )paren
 suffix:semicolon
-multiline_comment|/* Now add block to block list of the conflicting lock */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|block-&gt;b_call.a_args.lock.fl.fl_prevblock
+)paren
+(brace
+multiline_comment|/* Now add block to block list of the conflicting lock&n;&t;&t;   if we haven&squot;t done so. */
 id|dprintk
 c_func
 (paren
@@ -1243,6 +1250,7 @@ op_amp
 id|block-&gt;b_call.a_args.lock.fl
 )paren
 suffix:semicolon
+)brace
 id|up
 c_func
 (paren
@@ -1571,10 +1579,14 @@ id|block-&gt;b_next
 r_if
 c_cond
 (paren
+id|nlm_compare_locks
+c_func
+(paren
 op_amp
 id|block-&gt;b_call.a_args.lock.fl
-op_eq
+comma
 id|fl
+)paren
 )paren
 (brace
 id|svc_wake_up

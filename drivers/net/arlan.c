@@ -6493,7 +6493,7 @@ op_amp
 id|priv-&gt;timer
 )paren
 suffix:semicolon
-id|init_mutex
+id|init_MUTEX
 c_func
 (paren
 op_amp

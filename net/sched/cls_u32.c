@@ -25,8 +25,6 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
-DECL|macro|BUG_TRAP
-mdefine_line|#define BUG_TRAP(x) if (!(x)) { printk(&quot;Assertion (&quot; #x &quot;) failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 DECL|struct|tc_u_knode
 r_struct
 id|tc_u_knode
@@ -2185,7 +2183,7 @@ comma
 id|police
 )paren
 suffix:semicolon
-id|sch_tree_lock
+id|sch_tree_unlock
 c_func
 (paren
 id|q

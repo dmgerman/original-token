@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&t;More hacks to be able to switch protocols on and off by Christoph Lameter&n; *&t;&lt;clameter@debian.org&gt;&n; *&t;Software and more Documentation for the bridge is available from ftp.debian.org&n; *&t;in the bridgex package&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;Yury Shevchuk&t;:&t;Bridge with non bridging ports&n; *&t;Jean-Rene Peulve: jr.peulve@aix.pacwan.net &t;&t;Jan/Feb 98&n; *&t;&t;&t;support Linux 2.0&n; *&t;&t;&t;Handle Receive config bpdu&n; *&t;&t;&t;kick mark_bh to send Spanning Tree pdus&n; *&t;&t;&t;bridgeId comparison using htonl()&n; *&t;&t;&t;make STP interoperable with other vendors&n; *&t;&t;&t;wrong test in root_selection()&n; *&t;&t;&t;add more STP debug info &n; *&t;&t;&t;some performance improvments&n; *&t;&t;&t;do not clear bridgeId.mac  while setting priority&n; *&t;&t;&t;do not reset port priority when starting bridge&n; *&t;&t;&t;make port priority from user value and port number&n; *&t;&t;&t;maintains user port state out of device state&n; *&t;&t;&t;broacast/multicast storm limitation&n; *&t;&t;&t;forwarding statistics&n; *&t;&t;&t;stop br_tick when bridge is turn off&n; *&t;&t;&t;add local MACs in avl_tree to forward up stack&n; *&t;&t;&t;fake receive on right port for IP/ARP &n; *&t;&t;&t;ages tree even if packet does not cross bridge&n; *&t;&t;&t;add BRCMD_DISPLAY_FDB (ioctl for now)&n; *&n; *&t;Alan Cox:&t;Merged Jean-Rene&squot;s stuff, reformatted stuff a bit&n; *&t;&t;&t;so blame me first if its broken ;)&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&t;More hacks to be able to switch protocols on and off by Christoph Lameter&n; *&t;&lt;clameter@debian.org&gt;&n; *&t;Software and more Documentation for the bridge is available from ftp.debian.org&n; *&t;in the bridgex package&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;Yury Shevchuk&t;:&t;Bridge with non bridging ports&n; *&t;Jean-Rene Peulve: jr.peulve@aix.pacwan.net &t;&t;Jan/Feb 98&n; *&t;&t;&t;support Linux 2.0&n; *&t;&t;&t;Handle Receive config bpdu&n; *&t;&t;&t;kick mark_bh to send Spanning Tree pdus&n; *&t;&t;&t;bridgeId comparison using htonl()&n; *&t;&t;&t;make STP interoperable with other vendors&n; *&t;&t;&t;wrong test in root_selection()&n; *&t;&t;&t;add more STP debug info &n; *&t;&t;&t;some performance improvments&n; *&t;&t;&t;do not clear bridgeId.mac  while setting priority&n; *&t;&t;&t;do not reset port priority when starting bridge&n; *&t;&t;&t;make port priority from user value and port number&n; *&t;&t;&t;maintains user port state out of device state&n; *&t;&t;&t;broacast/multicast storm limitation&n; *&t;&t;&t;forwarding statistics&n; *&t;&t;&t;stop br_tick when bridge is turn off&n; *&t;&t;&t;add local MACs in avl_tree to forward up stack&n; *&t;&t;&t;fake receive on right port for IP/ARP &n; *&t;&t;&t;ages tree even if packet does not cross bridge&n; *&t;&t;&t;add BRCMD_DISPLAY_FDB (ioctl for now)&n; *&n; *&t;Alan Cox:&t;Merged Jean-Rene&squot;s stuff, reformatted stuff a bit&n; *&t;&t;&t;so blame me first if its broken ;)&n; *&n; *&t;Robert Pintarelli:&t;fixed bug in bpdu time values&n; *&t;&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1222,6 +1222,7 @@ r_else
 (brace
 id|config_bpdu.message_age
 op_assign
+(paren
 id|message_age_timer
 (braket
 id|bridge_info.root_port
@@ -1230,21 +1231,30 @@ dot
 id|value
 op_plus
 id|Message_age_increment
+)paren
+op_lshift
+l_int|8
 suffix:semicolon
 multiline_comment|/* (4.6.1.3.2(6)) */
 )brace
 id|config_bpdu.max_age
 op_assign
 id|bridge_info.max_age
+op_lshift
+l_int|8
 suffix:semicolon
 multiline_comment|/* (4.6.1.3.2(7)) */
 id|config_bpdu.hello_time
 op_assign
 id|bridge_info.hello_time
+op_lshift
+l_int|8
 suffix:semicolon
 id|config_bpdu.forward_delay
 op_assign
 id|bridge_info.forward_delay
+op_lshift
+l_int|8
 suffix:semicolon
 id|config_bpdu.top_change_ack
 op_assign
@@ -1558,19 +1568,27 @@ multiline_comment|/* (4.6.3)&t; */
 id|bridge_info.max_age
 op_assign
 id|config-&gt;max_age
+op_rshift
+l_int|8
 suffix:semicolon
 multiline_comment|/* (4.6.3.3)&t; */
 id|bridge_info.hello_time
 op_assign
 id|config-&gt;hello_time
+op_rshift
+l_int|8
 suffix:semicolon
 id|bridge_info.forward_delay
 op_assign
 id|config-&gt;forward_delay
+op_rshift
+l_int|8
 suffix:semicolon
 id|bridge_info.top_change
 op_assign
 id|config-&gt;top_change
+op_rshift
+l_int|8
 suffix:semicolon
 )brace
 DECL|function|config_bpdu_generation

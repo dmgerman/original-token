@@ -722,7 +722,7 @@ r_int
 id|amount
 )paren
 (brace
-multiline_comment|/* Pause for amount*10 milliseconds */
+multiline_comment|/* Pause for amount jiffies */
 r_int
 r_int
 id|the_time
@@ -731,7 +731,6 @@ id|jiffies
 op_plus
 id|amount
 suffix:semicolon
-multiline_comment|/* 0.01 seconds per jiffy */
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 r_while
 c_loop
@@ -2424,7 +2423,7 @@ c_func
 (paren
 id|seconds
 op_star
-l_int|100
+id|HZ
 )paren
 suffix:semicolon
 id|TUL_RD

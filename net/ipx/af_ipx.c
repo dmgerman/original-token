@@ -27,7 +27,6 @@ macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#ifdef MODULE
@@ -2415,40 +2414,6 @@ id|ipx_interface
 op_star
 id|i
 suffix:semicolon
-multiline_comment|/* We firewall first, ask questions later. */
-r_if
-c_cond
-(paren
-id|call_in_firewall
-c_func
-(paren
-id|PF_IPX
-comma
-id|skb-&gt;dev
-comma
-id|ipx
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* See if we should update our network number */
 r_if
 c_cond
@@ -2728,28 +2693,6 @@ id|ipx-&gt;ipx_dest.net
 op_assign
 id|ifcs-&gt;if_netnum
 suffix:semicolon
-multiline_comment|/* See if we are allowed to firewall forward */
-r_if
-c_cond
-(paren
-id|call_fw_firewall
-c_func
-(paren
-id|PF_IPX
-comma
-id|skb-&gt;dev
-comma
-id|ipx
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_eq
-id|FW_ACCEPT
-)paren
-(brace
 id|skb2
 op_assign
 id|skb_clone
@@ -2760,20 +2703,12 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb2
-)paren
-(brace
 id|ipxrtr_route_skb
 c_func
 (paren
 id|skb2
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 )brace
 multiline_comment|/* Reset network number in packet */
@@ -2815,40 +2750,6 @@ op_ne
 id|ipx-&gt;ipx_dest.net
 )paren
 (brace
-multiline_comment|/* See if we are allowed to firewall forward */
-r_if
-c_cond
-(paren
-id|call_fw_firewall
-c_func
-(paren
-id|PF_IPX
-comma
-id|skb-&gt;dev
-comma
-id|ipx
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* We only route point-to-point packets. */
 r_if
 c_cond
@@ -3383,7 +3284,7 @@ suffix:semicolon
 )brace
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|idef-&gt;ipx_device
@@ -3842,7 +3743,7 @@ suffix:semicolon
 )brace
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|idef-&gt;ipx_device
@@ -4328,7 +4229,7 @@ id|ifr.ifr_addr
 suffix:semicolon
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|ifr.ifr_name
@@ -5468,40 +5369,6 @@ id|ipxhdr
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|call_out_firewall
-c_func
-(paren
-id|PF_IPX
-comma
-id|skb-&gt;dev
-comma
-id|ipx
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-id|EPERM
-)paren
-suffix:semicolon
-)brace
 r_return
 (paren
 id|ipxitf_send
@@ -7295,11 +7162,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peer
 )paren
 (brace
 r_struct
@@ -8108,21 +7970,6 @@ r_int
 id|flags
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|newsock-&gt;sk
-)paren
-(brace
-id|sk_free
-c_func
-(paren
-id|newsock-&gt;sk
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 r_return
 (paren
 op_minus
@@ -9615,12 +9462,14 @@ DECL|variable|ipx_dgram_ops
 r_static
 r_struct
 id|proto_ops
+id|SOCKOPS_WRAPPED
+c_func
+(paren
 id|ipx_dgram_ops
+)paren
 op_assign
 (brace
 id|PF_IPX
-comma
-id|sock_no_dup
 comma
 id|ipx_release
 comma
@@ -9651,7 +9500,18 @@ comma
 id|ipx_sendmsg
 comma
 id|ipx_recvmsg
+comma
+id|sock_no_mmap
 )brace
+suffix:semicolon
+macro_line|#include &lt;linux/smp_lock.h&gt;
+id|SOCKOPS_WRAP
+c_func
+(paren
+id|ipx_dgram
+comma
+id|PF_IPX
+)paren
 suffix:semicolon
 multiline_comment|/* Called by protocol.c on kernel start up */
 DECL|variable|ipx_8023_packet_type

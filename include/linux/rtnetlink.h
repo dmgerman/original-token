@@ -424,31 +424,52 @@ r_enum
 DECL|enumerator|RTAX_UNSPEC
 id|RTAX_UNSPEC
 comma
+DECL|macro|RTAX_UNSPEC
+mdefine_line|#define RTAX_UNSPEC RTAX_UNSPEC
 DECL|enumerator|RTAX_LOCK
 id|RTAX_LOCK
 comma
+DECL|macro|RTAX_LOCK
+mdefine_line|#define RTAX_LOCK RTAX_LOCK
 DECL|enumerator|RTAX_MTU
 id|RTAX_MTU
 comma
+DECL|macro|RTAX_MTU
+mdefine_line|#define RTAX_MTU RTAX_MTU
 DECL|enumerator|RTAX_WINDOW
 id|RTAX_WINDOW
 comma
+DECL|macro|RTAX_WINDOW
+mdefine_line|#define RTAX_WINDOW RTAX_WINDOW
 DECL|enumerator|RTAX_RTT
 id|RTAX_RTT
 comma
-DECL|enumerator|RTAX_HOPS
-id|RTAX_HOPS
+DECL|macro|RTAX_RTT
+mdefine_line|#define RTAX_RTT RTAX_RTT
+DECL|enumerator|RTAX_RTTVAR
+id|RTAX_RTTVAR
 comma
+DECL|macro|RTAX_RTTVAR
+mdefine_line|#define RTAX_RTTVAR RTAX_RTTVAR
 DECL|enumerator|RTAX_SSTHRESH
 id|RTAX_SSTHRESH
 comma
+DECL|macro|RTAX_SSTHRESH
+mdefine_line|#define RTAX_SSTHRESH RTAX_SSTHRESH
 DECL|enumerator|RTAX_CWND
 id|RTAX_CWND
 comma
+DECL|macro|RTAX_CWND
+mdefine_line|#define RTAX_CWND RTAX_CWND
+DECL|enumerator|RTAX_ADVMSS
+id|RTAX_ADVMSS
+comma
+DECL|macro|RTAX_ADVMSS
+mdefine_line|#define RTAX_ADVMSS RTAX_ADVMSS
 )brace
 suffix:semicolon
 DECL|macro|RTAX_MAX
-mdefine_line|#define RTAX_MAX RTAX_CWND
+mdefine_line|#define RTAX_MAX RTAX_ADVMSS
 multiline_comment|/*********************************************************&n; *&t;&t;Interface address.&n; ****/
 DECL|struct|ifaddrmsg
 r_struct
@@ -1001,6 +1022,21 @@ id|echo
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|rtnetlink_put_metrics
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+op_star
+id|metrics
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__rta_fill
 c_func
@@ -1071,6 +1107,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|macro|ASSERT_RTNL
+mdefine_line|#define ASSERT_RTNL() do { if (down_trylock(&amp;rtnl_sem) == 0)  { up(&amp;rtnl_sem); &bslash;&n;printk(&quot;RTNL: assertion failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); } &bslash;&n;&t;&t;   } while(0);
+DECL|macro|BUG_TRAP
+mdefine_line|#define BUG_TRAP(x) if (!(x)) { printk(&quot;KERNEL: assertion (&quot; #x &quot;) failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* __LINUX_RTNETLINK_H */
 eof

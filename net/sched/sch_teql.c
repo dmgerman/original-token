@@ -154,7 +154,7 @@ id|sch-&gt;stats.packets
 op_increment
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 id|__skb_unlink
@@ -176,7 +176,7 @@ id|sch-&gt;stats.drops
 op_increment
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_DROP
 suffix:semicolon
 )brace
 r_static
@@ -218,7 +218,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 r_static

@@ -215,6 +215,10 @@ DECL|member|type
 id|__u8
 id|type
 suffix:semicolon
+DECL|member|dead
+id|__u8
+id|dead
+suffix:semicolon
 DECL|member|probes
 id|atomic_t
 id|probes
@@ -228,7 +232,28 @@ r_int
 r_char
 id|ha
 (braket
+(paren
 id|MAX_ADDR_LEN
+op_plus
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
+)paren
+op_amp
+op_complement
+(paren
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|1
+)paren
 )braket
 suffix:semicolon
 DECL|member|hh
@@ -433,6 +458,24 @@ DECL|member|key_len
 r_int
 id|key_len
 suffix:semicolon
+DECL|member|hash
+id|__u32
+(paren
+op_star
+id|hash
+)paren
+(paren
+r_const
+r_void
+op_star
+id|pkey
+comma
+r_const
+r_struct
+id|net_device
+op_star
+)paren
+suffix:semicolon
 DECL|member|constructor
 r_int
 (paren
@@ -481,6 +524,11 @@ id|sk_buff
 op_star
 id|skb
 )paren
+suffix:semicolon
+DECL|member|id
+r_char
+op_star
+id|id
 suffix:semicolon
 DECL|member|parms
 r_struct
@@ -542,6 +590,11 @@ r_struct
 id|neigh_parms
 op_star
 id|parms_list
+suffix:semicolon
+DECL|member|kmem_cachep
+id|kmem_cache_t
+op_star
+id|kmem_cachep
 suffix:semicolon
 DECL|member|stats
 r_struct
@@ -677,6 +730,7 @@ id|neighbour
 op_star
 id|neigh
 comma
+r_const
 id|u8
 op_star
 id|lladdr
@@ -989,7 +1043,7 @@ op_star
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Neighbour references&n; *&n; *&t;When neighbour pointers are passed to &quot;client&quot; code the&n; *&t;reference count is increased. The count is 0 if the node&n; *&t;is only referenced by the corresponding table.&n; */
+multiline_comment|/*&n; *&t;Neighbour references&n; */
 DECL|function|neigh_release
 r_extern
 id|__inline__
@@ -1012,10 +1066,6 @@ c_func
 op_amp
 id|neigh-&gt;refcnt
 )paren
-op_logical_and
-id|neigh-&gt;tbl
-op_eq
-l_int|NULL
 )paren
 id|neigh_destroy
 c_func
@@ -1055,6 +1105,8 @@ r_return
 id|neigh
 suffix:semicolon
 )brace
+DECL|macro|neigh_hold
+mdefine_line|#define neigh_hold(n)&t;atomic_inc(&amp;(n)-&gt;refcnt)
 DECL|function|neigh_confirm
 r_extern
 id|__inline__

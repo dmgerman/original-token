@@ -2,11 +2,7 @@ multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.24 1998/10/11 15:13:04 mj Exp $&n
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;asm/page.h&gt;
 DECL|struct|pci_device_info
 r_struct
 id|pci_device_info
@@ -94,10 +90,10 @@ macro_line|#include &quot;devlist.h&quot;
 suffix:semicolon
 DECL|macro|VENDORS
 mdefine_line|#define VENDORS (sizeof(pci_vendor_list)/sizeof(struct pci_vendor_info))
-DECL|function|pci_namedevice
+DECL|function|pci_name_device
 r_void
 id|__init
-id|pci_namedevice
+id|pci_name_device
 c_func
 (paren
 r_struct
@@ -118,6 +114,36 @@ r_int
 id|i
 op_assign
 id|VENDORS
+suffix:semicolon
+r_char
+op_star
+id|name
+op_assign
+id|dev-&gt;name
+suffix:semicolon
+id|name
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;PCI&lt;%02x:%02x.%d&gt;&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -142,17 +168,13 @@ op_decrement
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* Coulding find either the vendor nor the device */
+multiline_comment|/* Couldn&squot;t find either the vendor nor the device */
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|name
 comma
-l_string|&quot;PCI&lt;%d:%04x&gt; %04x:%04x&quot;
-comma
-id|dev-&gt;bus-&gt;number
-comma
-id|dev-&gt;devfn
+l_string|&quot; %04x:%04x&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -205,13 +227,9 @@ multiline_comment|/* Ok, found the vendor, but unknown device */
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|name
 comma
-l_string|&quot;PCI&lt;%d:%04x&gt; %04x:%04x (%s)&quot;
-comma
-id|dev-&gt;bus-&gt;number
-comma
-id|dev-&gt;devfn
+l_string|&quot; %04x:%04x (%s)&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -230,14 +248,14 @@ r_char
 op_star
 id|n
 op_assign
-id|dev-&gt;name
+id|name
 op_plus
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|name
 comma
-l_string|&quot;%s %s&quot;
+l_string|&quot; %s %s&quot;
 comma
 id|vendor_p-&gt;name
 comma

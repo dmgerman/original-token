@@ -16,13 +16,8 @@ DECL|macro|RTO_ONLINK
 mdefine_line|#define RTO_ONLINK&t;0x01
 DECL|macro|RTO_TPROXY
 mdefine_line|#define RTO_TPROXY&t;0x80000000
-macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
-DECL|macro|RTO_CONN
-mdefine_line|#define RTO_CONN&t;RTO_TPROXY
-macro_line|#else
 DECL|macro|RTO_CONN
 mdefine_line|#define RTO_CONN&t;0
-macro_line|#endif
 DECL|struct|rt_key
 r_struct
 id|rt_key

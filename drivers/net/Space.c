@@ -746,6 +746,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|sis900_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|hplance_probe
 c_func
 (paren
@@ -926,6 +937,18 @@ c_func
 r_struct
 id|net_device
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Fibre Channel adapters */
+r_extern
+r_int
+id|iph5526_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 suffix:semicolon
 DECL|struct|devprobe
@@ -1145,6 +1168,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_RTL8139
 (brace
 id|rtl8139_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SIS900
+(brace
+id|sis900_probe
 comma
 l_int|0
 )brace
@@ -2259,6 +2290,67 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* Pad device name to IFNAMSIZ=16. F.e. __PAD6 is tring of 9 zeros. */
+DECL|macro|__PAD6
+mdefine_line|#define __PAD6 &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+DECL|macro|__PAD5
+mdefine_line|#define __PAD5 __PAD6 &quot;&bslash;0&quot;
+DECL|macro|__PAD4
+mdefine_line|#define __PAD4 __PAD5 &quot;&bslash;0&quot;
+DECL|macro|__PAD3
+mdefine_line|#define __PAD3 __PAD4 &quot;&bslash;0&quot;
+DECL|macro|__PAD2
+mdefine_line|#define __PAD2 __PAD3 &quot;&bslash;0&quot;
+macro_line|#ifdef CONFIG_NET_FC
+DECL|function|fcif_probe
+r_static
+r_int
+id|fcif_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev-&gt;base_addr
+op_eq
+op_minus
+l_int|1
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|1
+macro_line|#ifdef CONFIG_IPHASE5526
+op_logical_and
+id|iph5526_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+op_logical_and
+l_int|1
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* -ENODEV or -EAGAIN would be more accurate. */
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif  /* CONFIG_NET_FC */
 macro_line|#ifdef CONFIG_ETHERTAP
 DECL|variable|tap0_dev
 r_static
@@ -2268,6 +2360,7 @@ id|tap0_dev
 op_assign
 (brace
 l_string|&quot;tap0&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2317,6 +2410,7 @@ id|sdla0_dev
 op_assign
 (brace
 l_string|&quot;sdla0&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -2365,7 +2459,8 @@ id|net_device
 id|dev_ltpc
 op_assign
 (brace
-l_string|&quot;lt0&bslash;0   &quot;
+l_string|&quot;lt0&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -2414,6 +2509,7 @@ id|cops2_dev
 op_assign
 (brace
 l_string|&quot;lt2&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -2446,6 +2542,7 @@ id|cops1_dev
 op_assign
 (brace
 l_string|&quot;lt1&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -2479,6 +2576,7 @@ id|cops0_dev
 op_assign
 (brace
 l_string|&quot;lt0&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -2528,7 +2626,8 @@ id|net_device
 id|dev_ipddp
 op_assign
 (brace
-l_string|&quot;ipddp0&bslash;0   &quot;
+l_string|&quot;ipddp0&quot;
+id|__PAD6
 comma
 l_int|0
 comma
@@ -2578,6 +2677,7 @@ id|eth7_dev
 op_assign
 (brace
 l_string|&quot;eth7&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2611,6 +2711,7 @@ id|eth6_dev
 op_assign
 (brace
 l_string|&quot;eth6&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2645,6 +2746,7 @@ id|eth5_dev
 op_assign
 (brace
 l_string|&quot;eth5&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2679,6 +2781,7 @@ id|eth4_dev
 op_assign
 (brace
 l_string|&quot;eth4&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2713,6 +2816,7 @@ id|eth3_dev
 op_assign
 (brace
 l_string|&quot;eth3&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2747,6 +2851,7 @@ id|eth2_dev
 op_assign
 (brace
 l_string|&quot;eth2&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2781,6 +2886,7 @@ id|eth1_dev
 op_assign
 (brace
 l_string|&quot;eth1&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -2815,6 +2921,7 @@ id|eth0_dev
 op_assign
 (brace
 l_string|&quot;eth0&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -3161,6 +3268,7 @@ id|dummy_dev
 op_assign
 (brace
 l_string|&quot;dummy&quot;
+id|__PAD5
 comma
 l_int|0x0
 comma
@@ -3210,6 +3318,7 @@ id|eql_dev
 op_assign
 (brace
 l_string|&quot;eql&quot;
+id|__PAD3
 comma
 multiline_comment|/* Master device for IP traffic load &n;&t;&t;&t;&t;   balancing */
 l_int|0x0
@@ -3337,6 +3446,7 @@ id|tr7_dev
 op_assign
 (brace
 l_string|&quot;tr7&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3369,6 +3479,7 @@ id|tr6_dev
 op_assign
 (brace
 l_string|&quot;tr6&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3402,6 +3513,7 @@ id|tr5_dev
 op_assign
 (brace
 l_string|&quot;tr5&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3435,6 +3547,7 @@ id|tr4_dev
 op_assign
 (brace
 l_string|&quot;tr4&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3468,6 +3581,7 @@ id|tr3_dev
 op_assign
 (brace
 l_string|&quot;tr3&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3501,6 +3615,7 @@ id|tr2_dev
 op_assign
 (brace
 l_string|&quot;tr2&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3534,6 +3649,7 @@ id|tr1_dev
 op_assign
 (brace
 l_string|&quot;tr1&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3567,6 +3683,7 @@ id|tr0_dev
 op_assign
 (brace
 l_string|&quot;tr0&quot;
+id|__PAD3
 comma
 l_int|0
 comma
@@ -3606,6 +3723,7 @@ id|fddi7_dev
 op_assign
 (brace
 l_string|&quot;fddi7&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3638,6 +3756,7 @@ id|fddi6_dev
 op_assign
 (brace
 l_string|&quot;fddi6&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3671,6 +3790,7 @@ id|fddi5_dev
 op_assign
 (brace
 l_string|&quot;fddi5&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3704,6 +3824,7 @@ id|fddi4_dev
 op_assign
 (brace
 l_string|&quot;fddi4&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3737,6 +3858,7 @@ id|fddi3_dev
 op_assign
 (brace
 l_string|&quot;fddi3&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3770,6 +3892,7 @@ id|fddi2_dev
 op_assign
 (brace
 l_string|&quot;fddi2&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3803,6 +3926,7 @@ id|fddi1_dev
 op_assign
 (brace
 l_string|&quot;fddi1&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3836,6 +3960,7 @@ id|fddi0_dev
 op_assign
 (brace
 l_string|&quot;fddi0&quot;
+id|__PAD5
 comma
 l_int|0
 comma
@@ -3875,6 +4000,7 @@ id|hip3_dev
 op_assign
 (brace
 l_string|&quot;hip3&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -3907,6 +4033,7 @@ id|hip2_dev
 op_assign
 (brace
 l_string|&quot;hip2&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -3940,6 +4067,7 @@ id|hip1_dev
 op_assign
 (brace
 l_string|&quot;hip1&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -3973,6 +4101,7 @@ id|hip0_dev
 op_assign
 (brace
 l_string|&quot;hip0&quot;
+id|__PAD4
 comma
 l_int|0
 comma
@@ -4023,6 +4152,7 @@ id|bif_dev
 op_assign
 (brace
 l_string|&quot;bif&quot;
+id|__PAD3
 comma
 l_int|0x0
 comma
@@ -4052,6 +4182,126 @@ macro_line|#   undef       NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define      NEXT_DEV        (&amp;bif_dev)
 macro_line|#endif
+macro_line|#ifdef CONFIG_NET_FC
+DECL|variable|fc1_dev
+r_static
+r_struct
+id|net_device
+id|fc1_dev
+op_assign
+(brace
+l_string|&quot;fc1&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|fcif_probe
+)brace
+suffix:semicolon
+DECL|variable|fc0_dev
+r_static
+r_struct
+id|net_device
+id|fc0_dev
+op_assign
+(brace
+l_string|&quot;fc0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|fc1_dev
+comma
+id|fcif_probe
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef       NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define      NEXT_DEV        (&amp;fc0_dev)
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_SB1000
+r_extern
+r_int
+id|sb1000_probe
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|sb1000_dev
+r_static
+r_struct
+id|net_device
+id|sb1000_dev
+op_assign
+(brace
+l_string|&quot;cm0&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|sb1000_probe
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef       NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define      NEXT_DEV        (&amp;sb1000_dev)
+macro_line|#endif
 r_extern
 r_int
 id|loopback_init
@@ -4070,6 +4320,7 @@ id|loopback_dev
 op_assign
 (brace
 l_string|&quot;lo&quot;
+id|__PAD2
 comma
 multiline_comment|/* Software Loopback interface&t;&t;*/
 l_int|0x0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.16 1999/04/22 10:07:27 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.18 1999/08/20 11:00:53 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -101,6 +101,10 @@ r_struct
 id|udp_mib
 id|udp_stats_in6
 suffix:semicolon
+r_extern
+id|atomic_t
+id|inet6_sock_nr
+suffix:semicolon
 DECL|struct|ip6_ra_chain
 r_struct
 id|ip6_ra_chain
@@ -140,6 +144,10 @@ r_struct
 id|ip6_ra_chain
 op_star
 id|ip6_ra_chain
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|ip6_ra_lock
 suffix:semicolon
 multiline_comment|/*&n;   This structure is prepared by protocol, when parsing&n;   ancillary data and passed to IPv6.&n; */
 DECL|struct|ipv6_txoptions

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.17 1999/04/22 10:07:41 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.18 1999/08/20 11:06:19 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef &t;CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -18,13 +19,6 @@ DECL|macro|RT6_DEBUG
 mdefine_line|#define RT6_DEBUG 2
 DECL|macro|CONFIG_IPV6_SUBTREES
 macro_line|#undef CONFIG_IPV6_SUBTREES
-macro_line|#if RT6_DEBUG &gt;= 1
-DECL|macro|BUG_TRAP
-mdefine_line|#define BUG_TRAP(x) ({ if (!(x)) { printk(&quot;Assertion (&quot; #x &quot;) failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); } })
-macro_line|#else
-DECL|macro|BUG_TRAP
-mdefine_line|#define BUG_TRAP(x) do { ; } while (0)
-macro_line|#endif
 macro_line|#if RT6_DEBUG &gt;= 3
 DECL|macro|RT6_TRACE
 mdefine_line|#define RT6_TRACE(x...) printk(KERN_DEBUG x)
@@ -36,6 +30,12 @@ DECL|variable|rt6_stats
 r_struct
 id|rt6_statistics
 id|rt6_stats
+suffix:semicolon
+DECL|variable|fib6_node_kmem
+r_static
+id|kmem_cache_t
+op_star
+id|fib6_node_kmem
 suffix:semicolon
 DECL|enum|fib_walk_state_t
 r_enum
@@ -90,6 +90,12 @@ op_star
 id|arg
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|variable|fib6_walker_lock
+id|rwlock_t
+id|fib6_walker_lock
+op_assign
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_SUBTREES
 DECL|macro|FWS_INIT
@@ -529,22 +535,17 @@ c_cond
 (paren
 id|fn
 op_assign
-id|kmalloc
+id|kmem_cache_alloc
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|fib6_node
-)paren
+id|fib6_node_kmem
 comma
-id|GFP_ATOMIC
+id|SLAB_ATOMIC
 )paren
 )paren
 op_ne
 l_int|NULL
 )paren
-(brace
 id|memset
 c_func
 (paren
@@ -559,10 +560,6 @@ id|fib6_node
 )paren
 )paren
 suffix:semicolon
-id|rt6_stats.fib_nodes
-op_increment
-suffix:semicolon
-)brace
 r_return
 id|fn
 suffix:semicolon
@@ -580,12 +577,11 @@ op_star
 id|fn
 )paren
 (brace
-id|rt6_stats.fib_nodes
-op_decrement
-suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|fib6_node_kmem
+comma
 id|fn
 )paren
 suffix:semicolon
@@ -828,7 +824,7 @@ c_loop
 id|fn
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We wlaked to the bottom of tree.&n;&t; *&t;Create new leaf node without children.&n;&t; */
+multiline_comment|/*&n;&t; *&t;We walked to the bottom of tree.&n;&t; *&t;Create new leaf node without children.&n;&t; */
 id|ln
 op_assign
 id|node_alloc
@@ -1360,28 +1356,17 @@ id|RTF_CACHE
 )paren
 )paren
 )paren
-(brace
-id|del_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|ip6_fib_timer
-)paren
-suffix:semicolon
-id|ip6_fib_timer.expires
-op_assign
+comma
 id|jiffies
 op_plus
 id|ip6_rt_gc_interval
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|ip6_fib_timer
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; *&t;Add routing information to the routing tree.&n; *&t;&lt;destination addr&gt;/&lt;source addr&gt;&n; *&t;with source addr info in sub-trees&n; */
 DECL|function|fib6_add
@@ -1450,9 +1435,8 @@ id|fn
 op_eq
 l_int|NULL
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_SUBTREES
 r_if
@@ -1697,6 +1681,8 @@ id|rt
 )paren
 suffix:semicolon
 )brace
+id|out
+suffix:colon
 r_if
 c_cond
 (paren
@@ -2711,6 +2697,13 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_SUBTREES
 )brace
 macro_line|#endif
+id|read_lock
+c_func
+(paren
+op_amp
+id|fib6_walker_lock
+)paren
+suffix:semicolon
 id|FOR_WALKERS
 c_func
 (paren
@@ -2871,6 +2864,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|fib6_walker_lock
+)paren
+suffix:semicolon
 id|node_free
 c_func
 (paren
@@ -2959,6 +2959,13 @@ id|rt6_stats.fib_rt_entries
 op_decrement
 suffix:semicolon
 multiline_comment|/* Adjust walkers */
+id|read_lock
+c_func
+(paren
+op_amp
+id|fib6_walker_lock
+)paren
+suffix:semicolon
 id|FOR_WALKERS
 c_func
 (paren
@@ -3002,6 +3009,13 @@ id|FWS_U
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|fib6_walker_lock
+)paren
+suffix:semicolon
 id|rt-&gt;u.next
 op_assign
 l_int|NULL
@@ -3084,7 +3098,7 @@ id|BUG_TRAP
 c_func
 (paren
 id|rt-&gt;u.dst.obsolete
-OG
+op_le
 l_int|0
 )paren
 suffix:semicolon
@@ -3710,21 +3724,11 @@ id|c.arg
 op_assign
 id|arg
 suffix:semicolon
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fib6_walk
 c_func
 (paren
 op_amp
 id|c.w
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -3855,7 +3859,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|rt-&gt;u.dst.use
+id|rt-&gt;u.dst.__refcnt
 )paren
 op_eq
 l_int|0
@@ -3936,6 +3940,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|fib6_gc_lock
+r_static
+id|spinlock_t
+id|fib6_gc_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|function|fib6_run_gc
 r_void
 id|fib6_run_gc
@@ -3954,6 +3965,14 @@ op_ne
 op_complement
 l_int|0UL
 )paren
+(brace
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|fib6_gc_lock
+)paren
+suffix:semicolon
 id|gc_args.timeout
 op_assign
 (paren
@@ -3961,14 +3980,60 @@ r_int
 )paren
 id|dummy
 suffix:semicolon
+)brace
 r_else
+(brace
+id|local_bh_disable
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|fib6_gc_lock
+)paren
+)paren
+(brace
+id|mod_timer
+c_func
+(paren
+op_amp
+id|ip6_fib_timer
+comma
+id|jiffies
+op_plus
+id|HZ
+)paren
+suffix:semicolon
+id|local_bh_enable
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|gc_args.timeout
 op_assign
 id|ip6_rt_gc_interval
 suffix:semicolon
+)brace
 id|gc_args.more
 op_assign
 l_int|0
+suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|rt6_lock
+)paren
 suffix:semicolon
 id|fib6_clean_tree
 c_func
@@ -3983,6 +4048,31 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|rt6_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gc_args.more
+)paren
+id|mod_timer
+c_func
+(paren
+op_amp
+id|ip6_fib_timer
+comma
+id|jiffies
+op_plus
+id|ip6_rt_gc_interval
+)paren
+suffix:semicolon
+r_else
+(brace
 id|del_timer
 c_func
 (paren
@@ -3994,26 +4084,55 @@ id|ip6_fib_timer.expires
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|gc_args.more
-)paren
-(brace
-id|ip6_fib_timer.expires
-op_assign
-id|jiffies
-op_plus
-id|ip6_rt_gc_interval
-suffix:semicolon
-id|add_timer
+)brace
+id|spin_unlock_bh
 c_func
 (paren
 op_amp
-id|ip6_fib_timer
+id|fib6_gc_lock
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|fib6_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fib6_node_kmem
+)paren
+id|fib6_node_kmem
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;fib6_nodes&quot;
+comma
+r_sizeof
+(paren
+r_struct
+id|fib6_node
+)paren
+comma
+l_int|0
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|function|fib6_gc_cleanup

@@ -83,6 +83,10 @@ id|name
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+id|rwlock_t
+id|inet_protocol_lock
+suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 DECL|struct|inet6_protocol
 r_struct
@@ -172,6 +176,10 @@ op_star
 id|name
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|inet6_protocol_lock
 suffix:semicolon
 macro_line|#endif
 r_extern

@@ -25,7 +25,6 @@ macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCINQ/OUTQ */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/x25.h&gt;
 DECL|variable|x25_route_list
 r_static
@@ -458,7 +457,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|dev_get_by_name
 c_func
 (paren
 id|devname
@@ -493,6 +492,12 @@ macro_line|#endif
 )paren
 r_return
 id|dev
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -620,6 +625,9 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -681,7 +689,8 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|x25_add_route
 c_func
 (paren
@@ -692,6 +701,15 @@ id|x25_route.sigdigits
 comma
 id|dev
 )paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 r_case
 id|SIOCDELRT
@@ -748,7 +766,8 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|x25_del_route
 c_func
 (paren
@@ -759,6 +778,15 @@ id|x25_route.sigdigits
 comma
 id|dev
 )paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 r_default
 suffix:colon

@@ -509,6 +509,9 @@ op_amp
 id|dircnp-&gt;c_fid
 )paren
 comma
+(paren
+r_int
+)paren
 id|length
 comma
 id|name
@@ -528,10 +531,13 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;name %s, len %d in ino %ld, fid %s&bslash;n&quot;
+l_string|&quot;name %s, len %ld in ino %ld, fid %s&bslash;n&quot;
 comma
 id|name
 comma
+(paren
+r_int
+)paren
 id|length
 comma
 id|dir-&gt;i_ino
@@ -715,6 +721,9 @@ op_amp
 id|dircnp-&gt;c_fid
 )paren
 comma
+(paren
+r_int
+)paren
 id|length
 comma
 id|name
@@ -2350,13 +2359,16 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;old: %s, (%d length, %d strlen), new: %s&quot;
-l_string|&quot;(%d length, %d strlen).old:d_count: %d, new:d_count: %d&bslash;n&quot;
+l_string|&quot;old: %s, (%d length, %ld strlen), new: %s&quot;
+l_string|&quot;(%d length, %ld strlen).old:d_count: %d, new:d_count: %d&bslash;n&quot;
 comma
 id|old_name
 comma
 id|old_length
 comma
+(paren
+r_int
+)paren
 id|strlen
 c_func
 (paren
@@ -2367,6 +2379,9 @@ id|new_name
 comma
 id|new_length
 comma
+(paren
+r_int
+)paren
 id|strlen
 c_func
 (paren
@@ -2789,6 +2804,9 @@ l_string|&quot;venus: dev %d, inode %ld, out-&gt;result %d&bslash;n&quot;
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 comma
 id|error
@@ -2808,6 +2826,9 @@ l_string|&quot;cache file dev %d, ino %ld&bslash;n&quot;
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 )paren
 suffix:semicolon
@@ -2925,15 +2946,12 @@ c_func
 (paren
 id|D_FILE
 comma
-l_string|&quot;cache ino: %ld, count %d, ops %x&bslash;n&quot;
+l_string|&quot;cache ino: %ld, count %d, ops %p&bslash;n&quot;
 comma
 id|cnp-&gt;c_ovp-&gt;i_ino
 comma
 id|cnp-&gt;c_ovp-&gt;i_count
 comma
-(paren
-r_int
-)paren
 (paren
 id|cnp-&gt;c_ovp-&gt;i_op
 )paren

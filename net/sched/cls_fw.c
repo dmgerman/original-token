@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -124,11 +125,20 @@ id|fw_filter
 op_star
 id|f
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FIREWALL
+macro_line|#ifdef CONFIG_NETFILTER
 id|u32
 id|id
 op_assign
-id|skb-&gt;fwmark
+(paren
+id|skb-&gt;nfreason
+op_eq
+id|NF_REASON_FOR_CLS_FW
+ques
+c_cond
+id|skb-&gt;nfmark
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#else
 id|u32

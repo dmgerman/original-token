@@ -61,6 +61,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|atmdev_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|device_init
 r_void
 id|__init
@@ -124,6 +132,16 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 id|net_dev_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATM
+(paren
+r_void
+)paren
+id|atmdev_init
 c_func
 (paren
 )paren

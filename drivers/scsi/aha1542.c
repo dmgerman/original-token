@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber&t;&lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        18-Jul-99&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -146,7 +146,34 @@ op_star
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * LILO params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]&n; *&n; * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:&n; *&t;&t;&t;0x130, 0x134, 0x230, 0x234, 0x330, 0x334&n; *&t;   &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus&n; *&t;&t;    when transferring data.  1542A power-on default is 11us,&n; *&t;&t;    valid values are in range: 2..15 (decimal)&n; *&t;   &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while&n; *&t;&t;    it is transferring data (not to monopolize the bus).&n; *&t;&t;    Power-on default is 4us, valid range: 1..64 microseconds.&n; *&t;   &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),&n; *&t;&t;    but experimenter can alter it with this.&n; *&t;&t;    Valid values: 5, 6, 7, 8, 10 (MB/s)&n; *&t;&t;    Factory default is 5 MB/s.&n; */
+multiline_comment|/*&n; * LILO/Module params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]&n; *&n; * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:&n; *&t;&t;&t;0x130, 0x134, 0x230, 0x234, 0x330, 0x334&n; *&t;   &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus&n; *&t;&t;    when transferring data.  1542A power-on default is 11us,&n; *&t;&t;    valid values are in range: 2..15 (decimal)&n; *&t;   &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while&n; *&t;&t;    it is transferring data (not to monopolize the bus).&n; *&t;&t;    Power-on default is 4us, valid range: 1..64 microseconds.&n; *&t;   &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),&n; *&t;&t;    but experimenter can alter it with this.&n; *&t;&t;    Valid values: 5, 6, 7, 8, 10 (MB/s)&n; *&t;&t;    Factory default is 5 MB/s.&n; */
+macro_line|#if defined(MODULE)
+DECL|variable|aha1542
+r_int
+id|aha1542
+(braket
+)braket
+op_assign
+(brace
+l_int|0x330
+comma
+l_int|11
+comma
+l_int|4
+comma
+op_minus
+l_int|1
+)brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|aha1542
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|BIOS_TRANSLATION_1632
 mdefine_line|#define BIOS_TRANSLATION_1632 0  /* Used by some old 1542A boards */
 DECL|macro|BIOS_TRANSLATION_6432
@@ -4094,12 +4121,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|mbenable_result
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x08
+)paren
+op_logical_and
+(paren
 id|mbenable_result
 (braket
 l_int|1
 )braket
 op_amp
 l_int|0x03
+)paren
 )paren
 (brace
 id|retval
@@ -4328,11 +4366,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* called from init/main.c */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|aha1542_setup
 r_void
+id|__init
 id|aha1542_setup
 c_func
 (paren
@@ -4343,7 +4379,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_const
@@ -4702,6 +4737,55 @@ op_assign
 op_amp
 id|proc_scsi_aha1542
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|bases
+(braket
+l_int|0
+)braket
+op_assign
+l_int|4
+suffix:semicolon
+id|bases
+(braket
+l_int|1
+)braket
+op_assign
+id|aha1542
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|bases
+(braket
+l_int|2
+)braket
+op_assign
+id|aha1542
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|bases
+(braket
+l_int|3
+)braket
+op_assign
+id|aha1542
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|bases
+(braket
+l_int|4
+)braket
+op_assign
+id|aha1542
+(braket
+l_int|3
+)braket
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

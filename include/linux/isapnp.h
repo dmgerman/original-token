@@ -3,26 +3,6 @@ macro_line|#ifndef LINUX_ISAPNP_H
 DECL|macro|LINUX_ISAPNP_H
 mdefine_line|#define LINUX_ISAPNP_H
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|ISAPNP_NOTSET
-mdefine_line|#define ISAPNP_NOTSET&t;(~0)
-DECL|macro|ISAPNP_AUTO
-mdefine_line|#define ISAPNP_AUTO&t;&t;((~0)-1)
-DECL|macro|ISAPNP_FLAG_WRITEABLE
-mdefine_line|#define ISAPNP_FLAG_WRITEABLE&t;(1&lt;&lt;0)
-DECL|macro|ISAPNP_FLAG_CACHEABLE
-mdefine_line|#define ISAPNP_FLAG_CACHEABLE&t;(1&lt;&lt;1)
-DECL|macro|ISAPNP_FLAG_RANGELENGTH
-mdefine_line|#define ISAPNP_FLAG_RANGELENGTH&t;(1&lt;&lt;2)
-DECL|macro|ISAPNP_FLAG_SHADOWABLE
-mdefine_line|#define ISAPNP_FLAG_SHADOWABLE&t;(1&lt;&lt;4)
-DECL|macro|ISAPNP_FLAG_EXPANSIONROM
-mdefine_line|#define ISAPNP_FLAG_EXPANSIONROM&t;(1&lt;&lt;5)
-DECL|macro|ISAPNP_TYPE_8BIT
-mdefine_line|#define ISAPNP_TYPE_8BIT&t;&t;0
-DECL|macro|ISAPNP_TYPE_16BIT
-mdefine_line|#define ISAPNP_TYPE_16BIT&t;&t;1
-DECL|macro|ISAPNP_TYPE_8AND16BIT
-mdefine_line|#define ISAPNP_TYPE_8AND16BIT&t;2
 multiline_comment|/*&n; *  Configuration registers (TODO: change by specification)&n; */
 DECL|macro|ISAPNP_CFG_ACTIVATE
 mdefine_line|#define ISAPNP_CFG_ACTIVATE&t;&t;0x30&t;/* byte */
@@ -78,10 +58,16 @@ suffix:semicolon
 multiline_comment|/* size of range */
 DECL|member|flags
 r_int
-r_int
+r_char
 id|flags
 suffix:semicolon
 multiline_comment|/* port flags */
+DECL|member|pad
+r_int
+r_char
+id|pad
+suffix:semicolon
+multiline_comment|/* pad */
 DECL|member|res
 r_struct
 id|isapnp_resources
@@ -110,10 +96,16 @@ suffix:semicolon
 multiline_comment|/* bitmaks for IRQ lines */
 DECL|member|flags
 r_int
-r_int
+r_char
 id|flags
 suffix:semicolon
 multiline_comment|/* IRQ flags */
+DECL|member|pad
+r_int
+r_char
+id|pad
+suffix:semicolon
+multiline_comment|/* pad */
 DECL|member|res
 r_struct
 id|isapnp_resources
@@ -140,24 +132,12 @@ r_char
 id|map
 suffix:semicolon
 multiline_comment|/* bitmask for DMA channels */
-DECL|member|type
-r_int
-r_char
-id|type
-suffix:semicolon
-multiline_comment|/* DMA type */
 DECL|member|flags
 r_int
 r_char
 id|flags
 suffix:semicolon
 multiline_comment|/* DMA flags */
-DECL|member|speed
-r_int
-r_char
-id|speed
-suffix:semicolon
-multiline_comment|/* DMA speed */
 DECL|member|res
 r_struct
 id|isapnp_resources
@@ -204,16 +184,16 @@ suffix:semicolon
 multiline_comment|/* size of range */
 DECL|member|flags
 r_int
-r_int
+r_char
 id|flags
 suffix:semicolon
 multiline_comment|/* memory flags */
-DECL|member|type
+DECL|member|pad
 r_int
-r_int
-id|type
+r_char
+id|pad
 suffix:semicolon
-multiline_comment|/* memory type */
+multiline_comment|/* pad */
 DECL|member|res
 r_struct
 id|isapnp_resources
@@ -341,7 +321,7 @@ suffix:semicolon
 multiline_comment|/* next resource */
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined(CONFIG_ISAPNP) || (defined(CONFIG_ISAPNP_MODULE) &amp;&amp; defined(MODULE))
 multiline_comment|/* lowlevel configuration */
 r_int
 id|isapnp_present
@@ -517,6 +497,25 @@ r_struct
 id|pci_dev
 op_star
 id|from
+)paren
+suffix:semicolon
+multiline_comment|/* misc */
+r_void
+id|isapnp_resource_change
+c_func
+(paren
+r_struct
+id|resource
+op_star
+id|resource
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
 )paren
 suffix:semicolon
 multiline_comment|/* init/main.c */
@@ -790,6 +789,28 @@ id|from
 (brace
 r_return
 l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|isapnp_resource_change
+r_extern
+r_void
+id|isapnp_resource_change
+c_func
+(paren
+r_struct
+id|resource
+op_star
+id|resource
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ISAPNP */

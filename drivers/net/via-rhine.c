@@ -162,6 +162,10 @@ macro_line|#if defined(__i386__)  &amp;&amp;  !defined(VIA_USE_MEMORY)
 DECL|macro|VIA_USE_IO
 mdefine_line|#define VIA_USE_IO
 macro_line|#endif
+macro_line|#if defined(__alpha__)
+DECL|macro|VIA_USE_IO
+mdefine_line|#define VIA_USE_IO
+macro_line|#endif
 macro_line|#ifdef VIA_USE_IO
 DECL|macro|readb
 macro_line|#undef readb

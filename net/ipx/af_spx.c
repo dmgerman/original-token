@@ -9,7 +9,6 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 DECL|variable|ipx_operations
 r_static
 r_struct
@@ -17,11 +16,11 @@ id|proto_ops
 op_star
 id|ipx_operations
 suffix:semicolon
-DECL|variable|spx_operations
+DECL|variable|spx_ops
 r_static
 r_struct
 id|proto_ops
-id|spx_operations
+id|spx_ops
 suffix:semicolon
 DECL|variable|connids
 r_static
@@ -282,7 +281,7 @@ suffix:colon
 id|sock-&gt;ops
 op_assign
 op_amp
-id|spx_operations
+id|spx_ops
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -545,11 +544,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peer
 )paren
 (brace
 r_struct
@@ -818,25 +812,6 @@ id|skb
 suffix:semicolon
 r_int
 id|err
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|newsock-&gt;sk
-op_ne
-l_int|NULL
-)paren
-(brace
-id|spx_destroy_socket
-c_func
-(paren
-id|newsock-&gt;sk
-)paren
-suffix:semicolon
-)brace
-id|newsock-&gt;sk
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -3917,16 +3892,18 @@ id|err
 )paren
 suffix:semicolon
 )brace
-DECL|variable|spx_operations
+DECL|variable|spx_ops
 r_static
 r_struct
 id|proto_ops
-id|spx_operations
+id|SOCKOPS_WRAPPED
+c_func
+(paren
+id|spx_ops
+)paren
 op_assign
 (brace
 id|PF_IPX
-comma
-id|sock_no_dup
 comma
 id|spx_release
 comma
@@ -3958,7 +3935,18 @@ comma
 id|spx_sendmsg
 comma
 id|spx_recvmsg
+comma
+id|sock_no_mmap
 )brace
+suffix:semicolon
+macro_line|#include &lt;linux/smp_lock.h&gt;
+id|SOCKOPS_WRAP
+c_func
+(paren
+id|spx
+comma
+id|PF_IPX
+)paren
 suffix:semicolon
 DECL|variable|spx_family_ops
 r_static

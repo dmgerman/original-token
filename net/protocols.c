@@ -118,6 +118,9 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ATM
+macro_line|#include &lt;linux/atm.h&gt;
+macro_line|#endif
 macro_line|#ifdef NEED_LLC
 DECL|macro|NEED_802
 mdefine_line|#define NEED_802
@@ -185,6 +188,22 @@ id|rif_init
 comma
 multiline_comment|/* RIF for Token ring&t;&t;*/
 macro_line|#endif  
+macro_line|#ifdef CONFIG_ATM
+(brace
+l_string|&quot;ATMPVC&quot;
+comma
+id|atmpvc_proto_init
+)brace
+comma
+multiline_comment|/* ATM PVCs */
+(brace
+l_string|&quot;ATMSVC&quot;
+comma
+id|atmsvc_proto_init
+)brace
+comma
+multiline_comment|/* ATM SVCs */
+macro_line|#endif
 macro_line|#ifdef NEED_LLC
 (brace
 l_string|&quot;802.2LLC&quot;

@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-1999&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.98  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.98  Massive rework by Thomas Sailer&n; *                  Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.98  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.99  Adapted to new lowlevel parport driver interface&n; *   0.5  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *&n; */
+multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-1999&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.98  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.98  Massive rework by Thomas Sailer&n; *                  Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.98  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.99  Adapted to new lowlevel parport driver interface&n; *   0.5  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *   0.6  10.08.99  Check if parport can do SPP and is safe to access during interrupt contexts&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -1272,6 +1272,7 @@ macro_line|#endif /* BAYCOM_DEBUG */
 multiline_comment|/* ---------------------------------------------------------------------- */
 multiline_comment|/*&n; *    eppconfig_path should be setable  via /proc/sys.&n; */
 DECL|variable|eppconfig_path
+r_static
 r_char
 id|eppconfig_path
 (braket
@@ -4527,6 +4528,39 @@ id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+op_complement
+id|pp-&gt;modes
+)paren
+op_amp
+(paren
+id|PARPORT_MODE_TRISTATE
+op_or
+id|PARPORT_MODE_PCSPP
+op_or
+id|PARPORT_MODE_SAFEININT
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: parport at 0x%lx cannot be used&bslash;n&quot;
+comma
+id|bc_drvname
+comma
+id|pp-&gt;base
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -4614,45 +4648,6 @@ suffix:semicolon
 r_return
 op_minus
 id|EBUSY
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pp-&gt;modes
-op_amp
-id|PARPORT_MODE_TRISTATE
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: parport at 0x%lx does not support bidirectional data transfer&bslash;n&quot;
-comma
-id|bc_drvname
-comma
-id|pp-&gt;base
-)paren
-suffix:semicolon
-id|parport_release
-c_func
-(paren
-id|bc-&gt;pdev
-)paren
-suffix:semicolon
-id|parport_unregister_device
-c_func
-(paren
-id|bc-&gt;pdev
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
 suffix:semicolon
 )brace
 id|dev-&gt;irq
@@ -6420,14 +6415,68 @@ l_int|0x378
 comma
 )brace
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;baycom operating mode&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;baycom io base address&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Baycom epp amateur radio modem driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifndef MODULE
+DECL|function|init_baycomepp
 r_static
-macro_line|#endif
-DECL|function|init_module
 r_int
 id|__init
-id|init_module
+id|init_baycomepp
 c_func
 (paren
 r_void
@@ -6692,67 +6741,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|mode
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_PORTS
-)paren
-l_string|&quot;s&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|mode
-comma
-l_string|&quot;baycom operating mode&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|iobase
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_PORTS
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|iobase
-comma
-l_string|&quot;baycom io base address&quot;
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Baycom epp amateur radio modem driver&quot;
-)paren
-suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_baycomepp
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_baycomepp
 c_func
 (paren
 r_void
@@ -6840,7 +6833,22 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#else /* MODULE */
+DECL|variable|init_baycomepp
+id|module_init
+c_func
+(paren
+id|init_baycomepp
+)paren
+suffix:semicolon
+DECL|variable|cleanup_baycomepp
+id|module_exit
+c_func
+(paren
+id|cleanup_baycomepp
+)paren
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
 multiline_comment|/*&n; * format: baycom_epp=io,mode&n; * mode: fpga config options&n; */
 DECL|function|baycom_epp_setup
 r_static
@@ -6864,7 +6872,7 @@ suffix:semicolon
 r_int
 id|ints
 (braket
-l_int|11
+l_int|2
 )braket
 suffix:semicolon
 r_if
@@ -6883,6 +6891,8 @@ id|get_options
 c_func
 (paren
 id|str
+comma
+l_int|2
 comma
 id|ints
 )paren
@@ -6930,13 +6940,6 @@ c_func
 l_string|&quot;baycom_epp=&quot;
 comma
 id|baycom_epp_setup
-)paren
-suffix:semicolon
-DECL|variable|init_module
-id|__initcall
-c_func
-(paren
-id|init_module
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */

@@ -3508,7 +3508,7 @@ c_func
 (paren
 id|D_UPCALL
 comma
-l_string|&quot;Proc %d wake Venus for(opc,uniq) =(%d,%d) msg at %x.zzz.&bslash;n&quot;
+l_string|&quot;Proc %d wake Venus for(opc,uniq) =(%d,%d) msg at %p.zzz.&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
@@ -3516,9 +3516,6 @@ id|req-&gt;uc_opcode
 comma
 id|req-&gt;uc_unique
 comma
-(paren
-r_int
-)paren
 id|req
 )paren
 suffix:semicolon
@@ -3579,18 +3576,12 @@ c_func
 (paren
 id|D_UPCALL
 comma
-l_string|&quot;..process %d woken up by Venus for req at 0x%x, data at %x&bslash;n&quot;
+l_string|&quot;..process %d woken up by Venus for req at %p, data at %p&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
-(paren
-r_int
-)paren
 id|req
 comma
-(paren
-r_int
-)paren
 id|req-&gt;uc_data
 )paren
 suffix:semicolon

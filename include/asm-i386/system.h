@@ -187,7 +187,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) ((struct __xchg_dummy *)(x))
-multiline_comment|/*&n; * Note: no &quot;lock&quot; prefix even on SMP: xchg always implies lock anyway&n; */
+multiline_comment|/*&n; * Note: no &quot;lock&quot; prefix even on SMP: xchg always implies lock anyway&n; * Note 2: xchg has side effect, so that attribute volatile is necessary,&n; *&t;  but generally the primitive is invalid, *ptr is output argument. --ANK&n; */
 DECL|function|__xchg
 r_static
 r_inline
@@ -218,6 +218,7 @@ r_case
 l_int|1
 suffix:colon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;xchgb %b0,%1&quot;
@@ -251,6 +252,7 @@ r_case
 l_int|2
 suffix:colon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;xchgw %w0,%1&quot;
@@ -284,6 +286,7 @@ r_case
 l_int|4
 suffix:colon
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;xchgl %0,%1&quot;

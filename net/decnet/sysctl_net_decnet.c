@@ -1027,7 +1027,11 @@ c_func
 (paren
 id|decnet_ether_address
 comma
+id|dn_ntohs
+c_func
+(paren
 id|decnet_address
+)paren
 )paren
 suffix:semicolon
 id|dn_dev_devices_on
@@ -1183,7 +1187,11 @@ c_func
 (paren
 id|decnet_ether_address
 comma
+id|dn_ntohs
+c_func
+(paren
 id|decnet_address
+)paren
 )paren
 suffix:semicolon
 id|dn_dev_devices_on
@@ -1480,7 +1488,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|devname
@@ -1630,7 +1638,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|devname

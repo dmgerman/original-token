@@ -1,5 +1,8 @@
-multiline_comment|/* &n;net-3-driver for the SKNET MCA-based cards&n;&n;This is an extension to the Linux operating system, and is covered by the&n;same Gnu Public License that covers that work.&n;&n;Copyright 1999 by Alfred Arnold (alfred@ccac.rwth-aachen.de, aarnold@elsa.de)&n;&n;This driver is based both on the 3C523 driver and the SK_G16 driver.&n;&n;paper sources:&n;  &squot;PC Hardware: Aufbau, Funktionsweise, Programmierung&squot; by &n;  Hans-Peter Messmer for the basic Microchannel stuff&n;  &n;  &squot;Linux Geraetetreiber&squot; by Allesandro Rubini, Kalle Dalheimer&n;  for help on Ethernet driver programming&n;&n;  &squot;Ethernet/IEEE 802.3 Family 1992 World Network Data Book/Handbook&squot; by AMD&n;  for documentation on the AM7990 LANCE&n;&n;  &squot;SKNET Personal Technisches Manual&squot;, Version 1.2 by Schneider&amp;Koch&n;  for documentation on the Junior board&n;&n;  &squot;SK-NET MC2+ Technical Manual&quot;, Version 1.1 by Schneider&amp;Koch for&n;  documentation on the MC2 bord&n;  &n;  A big thank you to the S&amp;K support for providing me so quickly with&n;  documentation!&n;&n;  Also see http://www.syskonnect.com/&n;&n;  Missing things:&n;&n;  -&gt; set debug level via ioctl instead of compile-time switches&n;  -&gt; I didn&squot;t follow the development of the 2.1.x kernels, so my&n;     assumptions about which things changed with which kernel version &n;     are probably nonsense&n;&n;History:&n;  May 16th, 1999&n;  &t;startup&n;  May 22st, 1999&n;&t;added private structure, methods&n;        begun building data structures in RAM&n;  May 23nd, 1999&n;&t;can receive frames, send frames&n;  May 24th, 1999&n;        modularized intialization of LANCE&n;        loadable as module&n;&t;still Tx problem :-(&n;  May 26th, 1999&n;  &t;MC2 works&n;  &t;support for multiple devices&n;  &t;display media type for MC2+&n;  May 28th, 1999&n;&t;fixed problem in GetLANCE leaving interrupts turned off&n;        increase TX queue to 4 packets to improve send performance&n;  May 29th, 1999&n;&t;a few corrections in statistics, caught rcvr overruns &n;        reinitialization of LANCE/board in critical situations&n;        MCA info implemented&n;&t;implemented LANCE multicast filter&n;  Jun 6th, 1999&n;&t;additions for Linux 2.2&n;&n; *************************************************************************/
+multiline_comment|/* &n;net-3-driver for the SKNET MCA-based cards&n;&n;This is an extension to the Linux operating system, and is covered by the&n;same Gnu Public License that covers that work.&n;&n;Copyright 1999 by Alfred Arnold (alfred@ccac.rwth-aachen.de, aarnold@elsa.de)&n;&n;This driver is based both on the 3C523 driver and the SK_G16 driver.&n;&n;paper sources:&n;  &squot;PC Hardware: Aufbau, Funktionsweise, Programmierung&squot; by &n;  Hans-Peter Messmer for the basic Microchannel stuff&n;  &n;  &squot;Linux Geraetetreiber&squot; by Allesandro Rubini, Kalle Dalheimer&n;  for help on Ethernet driver programming&n;&n;  &squot;Ethernet/IEEE 802.3 Family 1992 World Network Data Book/Handbook&squot; by AMD&n;  for documentation on the AM7990 LANCE&n;&n;  &squot;SKNET Personal Technisches Manual&squot;, Version 1.2 by Schneider&amp;Koch&n;  for documentation on the Junior board&n;&n;  &squot;SK-NET MC2+ Technical Manual&quot;, Version 1.1 by Schneider&amp;Koch for&n;  documentation on the MC2 bord&n;  &n;  A big thank you to the S&amp;K support for providing me so quickly with&n;  documentation!&n;&n;  Also see http://www.syskonnect.com/&n;&n;  Missing things:&n;&n;  -&gt; set debug level via ioctl instead of compile-time switches&n;  -&gt; I didn&squot;t follow the development of the 2.1.x kernels, so my&n;     assumptions about which things changed with which kernel version &n;     are probably nonsense&n;&n;History:&n;  May 16th, 1999&n;  &t;startup&n;  May 22st, 1999&n;&t;added private structure, methods&n;        begun building data structures in RAM&n;  May 23nd, 1999&n;&t;can receive frames, send frames&n;  May 24th, 1999&n;        modularized intialization of LANCE&n;        loadable as module&n;&t;still Tx problem :-(&n;  May 26th, 1999&n;  &t;MC2 works&n;  &t;support for multiple devices&n;  &t;display media type for MC2+&n;  May 28th, 1999&n;&t;fixed problem in GetLANCE leaving interrupts turned off&n;        increase TX queue to 4 packets to improve send performance&n;  May 29th, 1999&n;&t;a few corrections in statistics, caught rcvr overruns &n;        reinitialization of LANCE/board in critical situations&n;        MCA info implemented&n;&t;implemented LANCE multicast filter&n;  Jun 6th, 1999&n;&t;additions for Linux 2.2&n;  Aug 2nd, 1999&n;&t;small fixes (David Weinehall)&n;&n; *************************************************************************/
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,10 +15,6 @@ macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -3142,7 +3141,7 @@ id|priv-&gt;stat
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* we don&squot;t support runtime reconfiguration, since am MCA card can&n;   be unambigously identified by its POS registers. */
+multiline_comment|/* we don&squot;t support runtime reconfiguration, since an MCA card can&n;   be unambigously identified by its POS registers. */
 DECL|function|skmca_config
 r_static
 r_int
@@ -3461,8 +3460,6 @@ op_amp
 id|medium
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* this should work, but it doesn&squot;t with 2.2.9 :-( &n;       somehow &squot;mca_is_adapter_used()&squot; is missing in kernel syms... */
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020200
 multiline_comment|/* slot already in use ? */
 r_if
@@ -3491,7 +3488,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* were we looking for something different ? */
 r_if

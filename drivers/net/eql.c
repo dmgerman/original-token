@@ -1319,7 +1319,7 @@ suffix:semicolon
 multiline_comment|/* for &quot;clarity&quot; */
 id|slave_dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 (paren
 id|srq.slave_name
 )paren
@@ -1549,7 +1549,7 @@ suffix:semicolon
 multiline_comment|/* for &quot;clarity&quot; */
 id|slave_dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 (paren
 id|srq.slave_name
 )paren
@@ -1683,7 +1683,7 @@ id|dev-&gt;priv
 suffix:semicolon
 id|slave_dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 (paren
 id|sc.slave_name
 )paren
@@ -1854,7 +1854,7 @@ id|dev-&gt;priv
 suffix:semicolon
 id|slave_dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 (paren
 id|sc.slave_name
 )paren

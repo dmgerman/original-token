@@ -36,7 +36,7 @@ mdefine_line|#define  PCI_STATUS_CAP_LIST&t;0x10&t;/* Support Capability List */
 DECL|macro|PCI_STATUS_66MHZ
 mdefine_line|#define  PCI_STATUS_66MHZ&t;0x20&t;/* Support 66 Mhz PCI 2.1 bus */
 DECL|macro|PCI_STATUS_UDF
-mdefine_line|#define  PCI_STATUS_UDF&t;&t;0x40&t;/* Support User Definable Features */
+mdefine_line|#define  PCI_STATUS_UDF&t;&t;0x40&t;/* Support User Definable Features [obsolete] */
 DECL|macro|PCI_STATUS_FAST_BACK
 mdefine_line|#define  PCI_STATUS_FAST_BACK&t;0x80&t;/* Accept fast-back to back */
 DECL|macro|PCI_STATUS_PARITY
@@ -111,7 +111,7 @@ mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_MASK 0x06
 DECL|macro|PCI_BASE_ADDRESS_MEM_TYPE_32
 mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_32&t;0x00&t;/* 32 bit address */
 DECL|macro|PCI_BASE_ADDRESS_MEM_TYPE_1M
-mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_1M&t;0x02&t;/* Below 1M */
+mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_1M&t;0x02&t;/* Below 1M [obsolete] */
 DECL|macro|PCI_BASE_ADDRESS_MEM_TYPE_64
 mdefine_line|#define  PCI_BASE_ADDRESS_MEM_TYPE_64&t;0x04&t;/* 64 bit address */
 DECL|macro|PCI_BASE_ADDRESS_MEM_PREFETCH
@@ -196,7 +196,8 @@ DECL|macro|PCI_IO_BASE_UPPER16
 mdefine_line|#define PCI_IO_BASE_UPPER16&t;0x30&t;/* Upper half of I/O addresses */
 DECL|macro|PCI_IO_LIMIT_UPPER16
 mdefine_line|#define PCI_IO_LIMIT_UPPER16&t;0x32
-multiline_comment|/* 0x34-0x3b is reserved */
+multiline_comment|/* 0x34 same as for htype 0 */
+multiline_comment|/* 0x35-0x3b is reserved */
 DECL|macro|PCI_ROM_ADDRESS1
 mdefine_line|#define PCI_ROM_ADDRESS1&t;0x38&t;/* Same as PCI_ROM_ADDRESS, but for htype 1 */
 multiline_comment|/* 0x3c-0x3d are same as for htype 0 */
@@ -291,8 +292,128 @@ DECL|macro|PCI_CAP_ID_PM
 mdefine_line|#define  PCI_CAP_ID_PM&t;&t;0x01&t;/* Power Management */
 DECL|macro|PCI_CAP_ID_AGP
 mdefine_line|#define  PCI_CAP_ID_AGP&t;&t;0x02&t;/* Accelerated Graphics Port */
+DECL|macro|PCI_CAP_ID_VPD
+mdefine_line|#define  PCI_CAP_ID_VPD&t;&t;0x03&t;/* Vital Product Data */
+DECL|macro|PCI_CAP_ID_SLOTID
+mdefine_line|#define  PCI_CAP_ID_SLOTID&t;0x04&t;/* Slot Identification */
+DECL|macro|PCI_CAP_ID_MSI
+mdefine_line|#define  PCI_CAP_ID_MSI&t;&t;0x05&t;/* Message Signalled Interrupts */
+DECL|macro|PCI_CAP_ID_CHSWP
+mdefine_line|#define  PCI_CAP_ID_CHSWP&t;0x06&t;/* CompactPCI HotSwap */
 DECL|macro|PCI_CAP_LIST_NEXT
 mdefine_line|#define PCI_CAP_LIST_NEXT&t;1&t;/* Next capability in the list */
+DECL|macro|PCI_CAP_FLAGS
+mdefine_line|#define PCI_CAP_FLAGS&t;&t;2&t;/* Capability defined flags (16 bits) */
+DECL|macro|PCI_CAP_SIZEOF
+mdefine_line|#define PCI_CAP_SIZEOF&t;&t;4
+multiline_comment|/* Power Management Registers */
+DECL|macro|PCI_PM_CAP_VER_MASK
+mdefine_line|#define  PCI_PM_CAP_VER_MASK&t;0x0007&t;/* Version */
+DECL|macro|PCI_PM_CAP_PME_CLOCK
+mdefine_line|#define  PCI_PM_CAP_PME_CLOCK&t;0x0008&t;/* PME clock required */
+DECL|macro|PCI_PM_CAP_AUX_POWER
+mdefine_line|#define  PCI_PM_CAP_AUX_POWER&t;0x0010&t;/* Auxilliary power support */
+DECL|macro|PCI_PM_CAP_DSI
+mdefine_line|#define  PCI_PM_CAP_DSI&t;&t;0x0020&t;/* Device specific initialization */
+DECL|macro|PCI_PM_CAP_D1
+mdefine_line|#define  PCI_PM_CAP_D1&t;&t;0x0200&t;/* D1 power state support */
+DECL|macro|PCI_PM_CAP_D2
+mdefine_line|#define  PCI_PM_CAP_D2&t;&t;0x0400&t;/* D2 power state support */
+DECL|macro|PCI_PM_CAP_PME
+mdefine_line|#define  PCI_PM_CAP_PME&t;&t;0x0800&t;/* PME pin supported */
+DECL|macro|PCI_PM_CTRL
+mdefine_line|#define PCI_PM_CTRL&t;&t;4&t;/* PM control and status register */
+DECL|macro|PCI_PM_CTRL_STATE_MASK
+mdefine_line|#define  PCI_PM_CTRL_STATE_MASK&t;0x0003&t;/* Current power state (D0 to D3) */
+DECL|macro|PCI_PM_CTRL_PME_ENABLE
+mdefine_line|#define  PCI_PM_CTRL_PME_ENABLE&t;0x0100&t;/* PME pin enable */
+DECL|macro|PCI_PM_CTRL_DATA_SEL_MASK
+mdefine_line|#define  PCI_PM_CTRL_DATA_SEL_MASK&t;0x1e00&t;/* Data select (??) */
+DECL|macro|PCI_PM_CTRL_DATA_SCALE_MASK
+mdefine_line|#define  PCI_PM_CTRL_DATA_SCALE_MASK&t;0x6000&t;/* Data scale (??) */
+DECL|macro|PCI_PM_CTRL_PME_STATUS
+mdefine_line|#define  PCI_PM_CTRL_PME_STATUS&t;0x8000&t;/* PME pin status */
+DECL|macro|PCI_PM_PPB_EXTENSIONS
+mdefine_line|#define PCI_PM_PPB_EXTENSIONS&t;6&t;/* PPB support extensions (??) */
+DECL|macro|PCI_PM_PPB_B2_B3
+mdefine_line|#define  PCI_PM_PPB_B2_B3&t;0x40&t;/* Stop clock when in D3hot (??) */
+DECL|macro|PCI_PM_BPCC_ENABLE
+mdefine_line|#define  PCI_PM_BPCC_ENABLE&t;0x80&t;/* Bus power/clock control enable (??) */
+DECL|macro|PCI_PM_DATA_REGISTER
+mdefine_line|#define PCI_PM_DATA_REGISTER&t;7&t;/* (??) */
+DECL|macro|PCI_PM_SIZEOF
+mdefine_line|#define PCI_PM_SIZEOF&t;&t;8
+multiline_comment|/* AGP registers */
+DECL|macro|PCI_AGP_VERSION
+mdefine_line|#define PCI_AGP_VERSION&t;&t;2&t;/* BCD version number */
+DECL|macro|PCI_AGP_RFU
+mdefine_line|#define PCI_AGP_RFU&t;&t;3&t;/* Rest of capability flags */
+DECL|macro|PCI_AGP_STATUS
+mdefine_line|#define PCI_AGP_STATUS&t;&t;4&t;/* Status register */
+DECL|macro|PCI_AGP_STATUS_RQ_MASK
+mdefine_line|#define  PCI_AGP_STATUS_RQ_MASK&t;0xff000000&t;/* Maximum number of requests - 1 */
+DECL|macro|PCI_AGP_STATUS_SBA
+mdefine_line|#define  PCI_AGP_STATUS_SBA&t;0x0200&t;/* Sideband addressing supported */
+DECL|macro|PCI_AGP_STATUS_64BIT
+mdefine_line|#define  PCI_AGP_STATUS_64BIT&t;0x0020&t;/* 64-bit addressing supported */
+DECL|macro|PCI_AGP_STATUS_FW
+mdefine_line|#define  PCI_AGP_STATUS_FW&t;0x0010&t;/* FW transfers supported */
+DECL|macro|PCI_AGP_STATUS_RATE4
+mdefine_line|#define  PCI_AGP_STATUS_RATE4&t;0x0004&t;/* 4x transfer rate supported */
+DECL|macro|PCI_AGP_STATUS_RATE2
+mdefine_line|#define  PCI_AGP_STATUS_RATE2&t;0x0002&t;/* 2x transfer rate supported */
+DECL|macro|PCI_AGP_STATUS_RATE1
+mdefine_line|#define  PCI_AGP_STATUS_RATE1&t;0x0001&t;/* 1x transfer rate supported */
+DECL|macro|PCI_AGP_COMMAND
+mdefine_line|#define PCI_AGP_COMMAND&t;&t;8&t;/* Control register */
+DECL|macro|PCI_AGP_COMMAND_RQ_MASK
+mdefine_line|#define  PCI_AGP_COMMAND_RQ_MASK 0xff000000  /* Master: Maximum number of requests */
+DECL|macro|PCI_AGP_COMMAND_SBA
+mdefine_line|#define  PCI_AGP_COMMAND_SBA&t;0x0200&t;/* Sideband addressing enabled */
+DECL|macro|PCI_AGP_COMMAND_AGP
+mdefine_line|#define  PCI_AGP_COMMAND_AGP&t;0x0100&t;/* Allow processing of AGP transactions */
+DECL|macro|PCI_AGP_COMMAND_64BIT
+mdefine_line|#define  PCI_AGP_COMMAND_64BIT&t;0x0020 &t;/* Allow processing of 64-bit addresses */
+DECL|macro|PCI_AGP_COMMAND_FW
+mdefine_line|#define  PCI_AGP_COMMAND_FW&t;0x0010 &t;/* Force FW transfers */
+DECL|macro|PCI_AGP_COMMAND_RATE4
+mdefine_line|#define  PCI_AGP_COMMAND_RATE4&t;0x0004&t;/* Use 4x rate */
+DECL|macro|PCI_AGP_COMMAND_RATE2
+mdefine_line|#define  PCI_AGP_COMMAND_RATE2&t;0x0002&t;/* Use 4x rate */
+DECL|macro|PCI_AGP_COMMAND_RATE1
+mdefine_line|#define  PCI_AGP_COMMAND_RATE1&t;0x0001&t;/* Use 4x rate */
+DECL|macro|PCI_AGP_SIZEOF
+mdefine_line|#define PCI_AGP_SIZEOF&t;&t;12
+multiline_comment|/* Slot Identification */
+DECL|macro|PCI_SID_ESR
+mdefine_line|#define PCI_SID_ESR&t;&t;2&t;/* Expansion Slot Register */
+DECL|macro|PCI_SID_ESR_NSLOTS
+mdefine_line|#define  PCI_SID_ESR_NSLOTS&t;0x1f&t;/* Number of expansion slots available */
+DECL|macro|PCI_SID_ESR_FIC
+mdefine_line|#define  PCI_SID_ESR_FIC&t;0x20&t;/* First In Chassis Flag */
+DECL|macro|PCI_SID_CHASSIS_NR
+mdefine_line|#define PCI_SID_CHASSIS_NR&t;3&t;/* Chassis Number */
+multiline_comment|/* Message Signalled Interrupts registers */
+DECL|macro|PCI_MSI_FLAGS
+mdefine_line|#define PCI_MSI_FLAGS&t;&t;2&t;/* Various flags */
+DECL|macro|PCI_MSI_FLAGS_64BIT
+mdefine_line|#define  PCI_MSI_FLAGS_64BIT&t;0x80&t;/* 64-bit addresses allowed */
+DECL|macro|PCI_MSI_FLAGS_QSIZE
+mdefine_line|#define  PCI_MSI_FLAGS_QSIZE&t;0x70&t;/* Message queue size configured */
+DECL|macro|PCI_MSI_FLAGS_QMASK
+mdefine_line|#define  PCI_MSI_FLAGS_QMASK&t;0x0e&t;/* Maximum queue size available */
+DECL|macro|PCI_MSI_FLAGS_ENABLE
+mdefine_line|#define  PCI_MSI_FLAGS_ENABLE&t;0x01&t;/* MSI feature enabled */
+DECL|macro|PCI_MSI_RFU
+mdefine_line|#define PCI_MSI_RFU&t;&t;3&t;/* Rest of capability flags */
+DECL|macro|PCI_MSI_ADDRESS_LO
+mdefine_line|#define PCI_MSI_ADDRESS_LO&t;4&t;/* Lower 32 bits */
+DECL|macro|PCI_MSI_ADDRESS_HI
+mdefine_line|#define PCI_MSI_ADDRESS_HI&t;8&t;/* Upper 32 bits (if PCI_MSI_FLAGS_64BIT set) */
+DECL|macro|PCI_MSI_DATA_32
+mdefine_line|#define PCI_MSI_DATA_32&t;&t;8&t;/* 16 bits of data for 32-bit devices */
+DECL|macro|PCI_MSI_DATA_64
+mdefine_line|#define PCI_MSI_DATA_64&t;&t;12&t;/* 16 bits of data for 64-bit devices */
 multiline_comment|/* Device classes and subclasses */
 DECL|macro|PCI_CLASS_NOT_DEFINED
 mdefine_line|#define PCI_CLASS_NOT_DEFINED&t;&t;0x0000
@@ -597,6 +718,8 @@ DECL|macro|PCI_DEVICE_ID_DEC_21153
 mdefine_line|#define PCI_DEVICE_ID_DEC_21153&t;&t;0x0025
 DECL|macro|PCI_DEVICE_ID_DEC_21154
 mdefine_line|#define PCI_DEVICE_ID_DEC_21154&t;&t;0x0026
+DECL|macro|PCI_DEVICE_ID_DEC_21285
+mdefine_line|#define PCI_DEVICE_ID_DEC_21285&t;&t;0x1065
 DECL|macro|PCI_DEVICE_ID_COMPAQ_42XX
 mdefine_line|#define PCI_DEVICE_ID_COMPAQ_42XX&t;0x0046
 DECL|macro|PCI_VENDOR_ID_CIRRUS
@@ -906,6 +1029,16 @@ DECL|macro|PCI_VENDOR_ID_X
 mdefine_line|#define PCI_VENDOR_ID_X&t;&t;&t;0x1061
 DECL|macro|PCI_DEVICE_ID_X_AGX016
 mdefine_line|#define PCI_DEVICE_ID_X_AGX016&t;&t;0x0001
+DECL|macro|PCI_VENDOR_ID_MYLEX
+mdefine_line|#define PCI_VENDOR_ID_MYLEX&t;&t;0x1069
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V2
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V2&t;0x0001
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V3
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V3&t;0x0002
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V4
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V4&t;0x0010
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V5
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V5&t;0x0020
 DECL|macro|PCI_VENDOR_ID_PICOP
 mdefine_line|#define PCI_VENDOR_ID_PICOP&t;&t;0x1066
 DECL|macro|PCI_DEVICE_ID_PICOP_PT86C52X
@@ -932,6 +1065,8 @@ DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1022
 mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP1022&t;0x1022
 DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP2100
 mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP2100&t;0x2100
+DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP2200
+mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP2200&t;0x2200
 DECL|macro|PCI_VENDOR_ID_CYRIX
 mdefine_line|#define PCI_VENDOR_ID_CYRIX&t;&t;0x1078
 DECL|macro|PCI_DEVICE_ID_CYRIX_5510
@@ -1792,6 +1927,8 @@ DECL|macro|PCI_DEVICE_ID_INTEL_82430
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82430&t;0x0486
 DECL|macro|PCI_DEVICE_ID_INTEL_82434
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82434&t;0x04a3
+DECL|macro|PCI_DEVICE_ID_INTEL_I960
+mdefine_line|#define PCI_DEVICE_ID_INTEL_I960&t;0x0960
 DECL|macro|PCI_DEVICE_ID_INTEL_82092AA_0
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82092AA_0&t;0x1221
 DECL|macro|PCI_DEVICE_ID_INTEL_82092AA_1
@@ -1838,6 +1975,10 @@ DECL|macro|PCI_DEVICE_ID_INTEL_82371AB_2
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82371AB_2&t;0x7112
 DECL|macro|PCI_DEVICE_ID_INTEL_82371AB_3
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82371AB_3&t;0x7113
+DECL|macro|PCI_VENDOR_ID_COMPUTONE
+mdefine_line|#define PCI_VENDOR_ID_COMPUTONE&t;&t;0x8e0e
+DECL|macro|PCI_DEVICE_ID_COMPUTONE_IP2EX
+mdefine_line|#define PCI_DEVICE_ID_COMPUTONE_IP2EX&t;0x0291
 DECL|macro|PCI_DEVICE_ID_INTEL_82443LX_0
 mdefine_line|#define PCI_DEVICE_ID_INTEL_82443LX_0&t;0x7180
 DECL|macro|PCI_DEVICE_ID_INTEL_82443LX_1
@@ -1964,6 +2105,12 @@ DECL|macro|PCI_DEVICE_ID_ARK_STINGARK
 mdefine_line|#define PCI_DEVICE_ID_ARK_STINGARK&t;0xa099
 DECL|macro|PCI_DEVICE_ID_ARK_2000MT
 mdefine_line|#define PCI_DEVICE_ID_ARK_2000MT&t;0xa0a1
+DECL|macro|PCI_VENDOR_ID_INTERPHASE
+mdefine_line|#define PCI_VENDOR_ID_INTERPHASE&t;&t;0x107e
+DECL|macro|PCI_DEVICE_ID_INTERPHASE_5526
+mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_5526&t;0x0004
+DECL|macro|PCI_DEVICE_ID_INTERPHASE_55x6
+mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_55x6&t;0x0005
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:3 = slot&n; *&t;2:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
@@ -1983,43 +2130,7 @@ DECL|macro|DEVICE_COUNT_DMA
 mdefine_line|#define DEVICE_COUNT_DMA&t;2
 DECL|macro|DEVICE_COUNT_RESOURCE
 mdefine_line|#define DEVICE_COUNT_RESOURCE&t;12
-DECL|macro|DEVICE_IRQ_NOTSET
-mdefine_line|#define DEVICE_IRQ_NOTSET&t;0xffffffff
-DECL|macro|DEVICE_IRQ_AUTO
-mdefine_line|#define DEVICE_IRQ_AUTO&t;&t;0xfffffffe
-DECL|macro|DEVICE_DMA_NOTSET
-mdefine_line|#define DEVICE_DMA_NOTSET&t;0xff
-DECL|macro|DEVICE_DMA_AUTO
-mdefine_line|#define DEVICE_DMA_AUTO&t;&t;0xfe
-DECL|macro|DEVICE_IRQ_FLAG_HIGHEDGE
-mdefine_line|#define DEVICE_IRQ_FLAG_HIGHEDGE&t;(1&lt;&lt;0)
-DECL|macro|DEVICE_IRQ_FLAG_LOWEDGE
-mdefine_line|#define DEVICE_IRQ_FLAG_LOWEDGE&t;&t;(1&lt;&lt;1)
-DECL|macro|DEVICE_IRQ_FLAG_HIGHLEVEL
-mdefine_line|#define DEVICE_IRQ_FLAG_HIGHLEVEL&t;(1&lt;&lt;2)
-DECL|macro|DEVICE_IRQ_FLAG_LOWLEVEL
-mdefine_line|#define DEVICE_IRQ_FLAG_LOWLEVEL&t;(1&lt;&lt;3)
-DECL|macro|DEVICE_DMA_TYPE_8BIT
-mdefine_line|#define DEVICE_DMA_TYPE_8BIT&t;&t;0
-DECL|macro|DEVICE_DMA_TYPE_8AND16BIT
-mdefine_line|#define DEVICE_DMA_TYPE_8AND16BIT&t;1
-DECL|macro|DEVICE_DMA_TYPE_16BIT
-mdefine_line|#define DEVICE_DMA_TYPE_16BIT&t;&t;2
-DECL|macro|DEVICE_DMA_FLAG_MASTER
-mdefine_line|#define DEVICE_DMA_FLAG_MASTER&t;&t;(1&lt;&lt;0)
-DECL|macro|DEVICE_DMA_FLAG_BYTE
-mdefine_line|#define DEVICE_DMA_FLAG_BYTE&t;&t;(1&lt;&lt;1)
-DECL|macro|DEVICE_DMA_FLAG_WORD
-mdefine_line|#define DEVICE_DMA_FLAG_WORD&t;&t;(1&lt;&lt;2)
-DECL|macro|DEVICE_DMA_SPEED_COMPATIBLE
-mdefine_line|#define DEVICE_DMA_SPEED_COMPATIBLE&t;0
-DECL|macro|DEVICE_DMA_SPEED_TYPEA
-mdefine_line|#define DEVICE_DMA_SPEED_TYPEA&t;&t;1
-DECL|macro|DEVICE_DMA_SPEED_TYPEB
-mdefine_line|#define DEVICE_DMA_SPEED_TYPEB&t;&t;2
-DECL|macro|DEVICE_DMA_SPEED_TYPEF
-mdefine_line|#define DEVICE_DMA_SPEED_TYPEF&t;&t;3
-multiline_comment|/*&n; * There is one pci_dev structure for each slot-number/function-number&n; * combination:&n; */
+multiline_comment|/*&n; * The pci_dev structure is used to describe both PCI and ISAPnP devices.&n; */
 DECL|struct|pci_dev
 r_struct
 id|pci_dev
@@ -2084,6 +2195,16 @@ r_int
 r_int
 id|device
 suffix:semicolon
+DECL|member|subsystem_vendor
+r_int
+r_int
+id|subsystem_vendor
+suffix:semicolon
+DECL|member|subsystem_device
+r_int
+r_int
+id|subsystem_device
+suffix:semicolon
 DECL|member|class
 r_int
 r_int
@@ -2126,20 +2247,12 @@ id|device_compatible
 id|DEVICE_COUNT_COMPATIBLE
 )braket
 suffix:semicolon
-DECL|member|name
-r_char
-id|name
-(braket
-l_int|48
-)braket
-suffix:semicolon
-multiline_comment|/*&n;&t; * In theory, the irq level can be read from configuration&n;&t; * space and all would be fine.  However, old PCI chips don&squot;t&n;&t; * support these registers and return 0 instead.  For example,&n;&t; * the Vision864-P rev 0 chip can uses INTA, but returns 0 in&n;&t; * the interrupt line and pin registers.  pci_init()&n;&t; * initializes this field with the value at PCI_INTERRUPT_LINE&n;&t; * and it is the job of pcibios_fixup() to change it if&n;&t; * necessary.  The field must not be 0 unless the device&n;&t; * cannot generate interrupts at all.&n;&t; */
+multiline_comment|/*&n;&t; * Instead of touching interrupt line and base address registers&n;&t; * directly, use the values stored here. They might be different!&n;&t; */
 DECL|member|irq
 r_int
 r_int
 id|irq
 suffix:semicolon
-multiline_comment|/*&n;&t; * Base registers for this device, can be adjusted by&n;&t; * pcibios_fixup() as necessary.&n;&t; */
 DECL|member|resource
 r_struct
 id|resource
@@ -2148,6 +2261,7 @@ id|resource
 id|DEVICE_COUNT_RESOURCE
 )braket
 suffix:semicolon
+multiline_comment|/* I/O and memory regions + expansion ROMs */
 DECL|member|dma_resource
 r_struct
 id|resource
@@ -2164,11 +2278,14 @@ id|irq_resource
 id|DEVICE_COUNT_IRQ
 )braket
 suffix:semicolon
-DECL|member|rom_address
-r_int
-r_int
-id|rom_address
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|48
+)braket
 suffix:semicolon
+multiline_comment|/* Device name */
 DECL|member|prepare
 r_int
 (paren
@@ -2210,6 +2327,18 @@ id|dev
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|PCI_ROM_RESOURCE
+mdefine_line|#define PCI_ROM_RESOURCE 6
+DECL|macro|PCI_NUM_RESOURCES
+mdefine_line|#define PCI_NUM_RESOURCES 7
+DECL|macro|PCI_REGION_EXISTS
+mdefine_line|#define PCI_REGION_EXISTS(dev, r) (dev)-&gt;resource[r].start
+DECL|macro|PCI_REGION_IS_IO
+mdefine_line|#define PCI_REGION_IS_IO(dev, r) (PCI_REGION_EXISTS(dev,r) &amp;&amp; ((dev)-&gt;resource[r].flags &amp; PCI_BASE_ADDRESS_SPACE_IO))
+DECL|macro|PCI_REGION_IS_MEM
+mdefine_line|#define PCI_REGION_IS_MEM(dev, r) (PCI_REGION_EXISTS(dev,r) &amp;&amp; !((dev)-&gt;resource[r].flags &amp; PCI_BASE_ADDRESS_SPACE_IO))
+DECL|macro|PCI_REGION_FLAG_MASK
+mdefine_line|#define PCI_REGION_FLAG_MASK 0x0f&t;/* These bits of resource flags tell us the PCI region flags */
 DECL|struct|pci_bus
 r_struct
 id|pci_bus
@@ -2235,6 +2364,13 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* chain of all PCI buses */
+DECL|member|ops
+r_struct
+id|pci_ops
+op_star
+id|ops
+suffix:semicolon
+multiline_comment|/* configuration access functions */
 DECL|member|self
 r_struct
 id|pci_dev
@@ -2337,6 +2473,7 @@ suffix:semicolon
 r_extern
 r_struct
 id|pci_bus
+op_star
 id|pci_root
 suffix:semicolon
 multiline_comment|/* root bus */
@@ -2347,7 +2484,7 @@ op_star
 id|pci_devices
 suffix:semicolon
 multiline_comment|/* list of all devices */
-multiline_comment|/*&n; * Error values that may be returned by the PCI bios.&n; */
+multiline_comment|/*&n; * Error values that may be returned by PCI functions.&n; */
 DECL|macro|PCIBIOS_SUCCESSFUL
 mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
 DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
@@ -2363,21 +2500,125 @@ mdefine_line|#define PCIBIOS_SET_FAILED&t;&t;0x88
 DECL|macro|PCIBIOS_BUFFER_TOO_SMALL
 mdefine_line|#define PCIBIOS_BUFFER_TOO_SMALL&t;0x89
 multiline_comment|/* Low-level architecture-dependent routines */
+DECL|struct|pci_ops
+r_struct
+id|pci_ops
+(brace
+DECL|member|read_byte
 r_int
-id|pcibios_present
 (paren
-r_void
+op_star
+id|read_byte
 )paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u8
+op_star
+id|val
+)paren
+suffix:semicolon
+DECL|member|read_word
+r_int
+(paren
+op_star
+id|read_word
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u16
+op_star
+id|val
+)paren
+suffix:semicolon
+DECL|member|read_dword
+r_int
+(paren
+op_star
+id|read_dword
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u32
+op_star
+id|val
+)paren
+suffix:semicolon
+DECL|member|write_byte
+r_int
+(paren
+op_star
+id|write_byte
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u8
+id|val
+)paren
+suffix:semicolon
+DECL|member|write_word
+r_int
+(paren
+op_star
+id|write_word
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u16
+id|val
+)paren
+suffix:semicolon
+DECL|member|write_dword
+r_int
+(paren
+op_star
+id|write_dword
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+id|where
+comma
+id|u32
+id|val
+)paren
+suffix:semicolon
+)brace
 suffix:semicolon
 r_void
 id|pcibios_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|pcibios_fixup
 c_func
 (paren
 r_void
@@ -2401,6 +2642,16 @@ op_star
 id|str
 )paren
 suffix:semicolon
+multiline_comment|/* Backward compatibility, don&squot;t use in new code! */
+r_int
+id|pcibios_present
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|pci_present
+mdefine_line|#define pci_present pcibios_present
 r_int
 id|pcibios_read_config_byte
 (paren
@@ -2524,7 +2775,6 @@ r_int
 id|val
 )paren
 suffix:semicolon
-multiline_comment|/* Don&squot;t use these in new code, use pci_find_... instead */
 r_int
 id|pcibios_find_class
 (paren
@@ -2581,32 +2831,23 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_void
-id|pci_quirks_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-r_int
+r_struct
+id|pci_bus
+op_star
 id|pci_scan_bus
 c_func
 (paren
-r_struct
-id|pci_bus
-op_star
-id|bus
-)paren
-suffix:semicolon
-r_struct
-id|pci_bus
-op_star
-id|pci_scan_peer_bridge
-c_func
-(paren
 r_int
 id|bus
+comma
+r_struct
+id|pci_ops
+op_star
+id|ops
+comma
+r_void
+op_star
+id|sysdata
 )paren
 suffix:semicolon
 r_int
@@ -2638,6 +2879,16 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_void
+id|pci_name_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -2650,6 +2901,33 @@ comma
 r_int
 r_int
 id|device
+comma
+r_struct
+id|pci_dev
+op_star
+id|from
+)paren
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pci_find_subsys
+(paren
+r_int
+r_int
+id|vendor
+comma
+r_int
+r_int
+id|device
+comma
+r_int
+r_int
+id|ss_vendor
+comma
+r_int
+r_int
+id|ss_device
 comma
 r_struct
 id|pci_dev
@@ -2688,8 +2966,6 @@ id|devfn
 suffix:semicolon
 DECL|macro|PCI_ANY_ID
 mdefine_line|#define PCI_ANY_ID (~0)
-DECL|macro|pci_present
-mdefine_line|#define pci_present pcibios_present
 r_int
 id|pci_read_config_byte
 c_func
@@ -2699,7 +2975,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u8
@@ -2716,7 +2992,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u16
@@ -2733,7 +3009,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u32
@@ -2750,7 +3026,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u8
@@ -2766,7 +3042,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u16
@@ -2782,7 +3058,7 @@ id|pci_dev
 op_star
 id|dev
 comma
-id|u8
+r_int
 id|where
 comma
 id|u32
@@ -2816,7 +3092,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|macro|_PCI_NOP
-mdefine_line|#define _PCI_NOP(o,s,t) &bslash;&n;&t;extern inline int pcibios_##o##_config_##s## (u8 bus, u8 dfn, u8 where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; } &bslash;&n;&t;extern inline int pci_##o##_config_##s## (struct pci_dev *dev, u8 where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; }
+mdefine_line|#define _PCI_NOP(o,s,t) &bslash;&n;&t;extern inline int pcibios_##o##_config_##s## (u8 bus, u8 dfn, u8 where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; } &bslash;&n;&t;extern inline int pci_##o##_config_##s## (struct pci_dev *dev, int where, t val) &bslash;&n;&t;&t;{ return PCIBIOS_FUNC_NOT_SUPPORTED; }
 DECL|macro|_PCI_NOP_ALL
 mdefine_line|#define _PCI_NOP_ALL(o,x)&t;_PCI_NOP(o,byte,u8 x) &bslash;&n;&t;&t;&t;&t;_PCI_NOP(o,word,u16 x) &bslash;&n;&t;&t;&t;&t;_PCI_NOP(o,dword,u32 x)
 id|_PCI_NOP_ALL
@@ -2905,6 +3181,62 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif /* !CONFIG_PCI */
+multiline_comment|/*&n; *  The world is not perfect and supplies us with broken PCI devices.&n; *  For at least a part of these bugs we need a work-around, so both&n; *  generic (drivers/pci/quirks.c) and per-architecture code can define&n; *  fixup hooks to be called for particular buggy devices.&n; */
+DECL|struct|pci_fixup
+r_struct
+id|pci_fixup
+(brace
+DECL|member|pass
+r_int
+id|pass
+suffix:semicolon
+DECL|member|vendor
+DECL|member|device
+id|u16
+id|vendor
+comma
+id|device
+suffix:semicolon
+multiline_comment|/* You can use PCI_ANY_ID here of course */
+DECL|member|hook
+r_void
+(paren
+op_star
+id|hook
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|pci_fixup
+id|pcibios_fixups
+(braket
+)braket
+suffix:semicolon
+DECL|macro|PCI_FIXUP_HEADER
+mdefine_line|#define PCI_FIXUP_HEADER&t;1&t;&t;/* Called immediately after reading configuration header */
+DECL|macro|PCI_FIXUP_FINAL
+mdefine_line|#define PCI_FIXUP_FINAL&t;&t;2&t;&t;/* Final phase of device fixups */
+r_void
+id|pci_fixup_device
+c_func
+(paren
+r_int
+id|pass
+comma
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_PCI_H */
 eof

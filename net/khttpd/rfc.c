@@ -16,7 +16,6 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &quot;prototypes.h&quot;
 macro_line|#include &quot;structure.h&quot;
 macro_line|#include &quot;sysctl.h&quot;
@@ -180,7 +179,7 @@ op_assign
 op_star
 id|I
 suffix:semicolon
-id|strcpy
+id|strncpy
 c_func
 (paren
 id|MimeTypes
@@ -196,6 +195,20 @@ dot
 id|type
 comma
 id|Type
+comma
+(paren
+l_int|64
+op_minus
+r_sizeof
+(paren
+id|__u32
+)paren
+op_minus
+r_sizeof
+(paren
+id|__kernel_size_t
+)paren
+)paren
 )paren
 suffix:semicolon
 id|MimeTypes
@@ -1259,12 +1272,17 @@ id|Endval
 )paren
 r_continue
 suffix:semicolon
-id|strcpy
+id|strncpy
 c_func
 (paren
 id|Head-&gt;FileName
 comma
 id|sysctl_khttpd_docroot
+comma
+r_sizeof
+(paren
+id|Head-&gt;FileName
+)paren
 )paren
 suffix:semicolon
 id|PrefixLen

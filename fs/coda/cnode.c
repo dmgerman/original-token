@@ -474,6 +474,9 @@ c_func
 l_string|&quot;Coda: unknown weird fid: ino %ld, fid %s.&quot;
 l_string|&quot;Tell Peter.&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ino
 comma
 id|coda_f2s
@@ -501,6 +504,9 @@ id|D_UPCALL
 comma
 l_string|&quot;Added %ld ,%s to volroothead&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|ino
 comma
 id|coda_f2s
@@ -904,6 +910,9 @@ l_string|&quot;coda_fid_to_inode: null from iget, sb %p, nr %ld.&bslash;n&quot;
 comma
 id|sb
 comma
+(paren
+r_int
+)paren
 id|nr
 )paren
 suffix:semicolon

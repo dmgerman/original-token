@@ -442,6 +442,37 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|waiter-&gt;fl_prevblock
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;locks_insert_block: remove duplicated lock &quot;
+l_string|&quot;(pid=%d %ld-%ld type=%d)&bslash;n&quot;
+comma
+id|waiter-&gt;fl_pid
+comma
+id|waiter-&gt;fl_start
+comma
+id|waiter-&gt;fl_end
+comma
+id|waiter-&gt;fl_type
+)paren
+suffix:semicolon
+id|locks_delete_block
+c_func
+(paren
+id|waiter-&gt;fl_prevblock
+comma
+id|waiter
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|blocker-&gt;fl_prevblock
 op_eq
 l_int|NULL

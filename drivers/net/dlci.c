@@ -1513,7 +1513,7 @@ suffix:semicolon
 multiline_comment|/* validate slave device */
 id|slave
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|dlci-&gt;devname
@@ -1948,7 +1948,7 @@ suffix:semicolon
 multiline_comment|/* validate slave device */
 id|master
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|dlci-&gt;devname

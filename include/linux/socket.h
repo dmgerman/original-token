@@ -336,8 +336,8 @@ DECL|macro|AF_NETBEUI
 mdefine_line|#define AF_NETBEUI&t;13&t;/* Reserved for 802.2LLC project*/
 DECL|macro|AF_SECURITY
 mdefine_line|#define AF_SECURITY&t;14&t;/* Security callback pseudo AF */
-DECL|macro|pseudo_AF_KEY
-mdefine_line|#define pseudo_AF_KEY   15      /* PF_KEY key management API */
+DECL|macro|AF_KEY
+mdefine_line|#define AF_KEY&t;&t;15      /* PF_KEY key management API */
 DECL|macro|AF_NETLINK
 mdefine_line|#define AF_NETLINK&t;16
 DECL|macro|AF_ROUTE
@@ -390,7 +390,7 @@ mdefine_line|#define PF_NETBEUI&t;AF_NETBEUI
 DECL|macro|PF_SECURITY
 mdefine_line|#define PF_SECURITY&t;AF_SECURITY
 DECL|macro|PF_KEY
-mdefine_line|#define PF_KEY          pseudo_AF_KEY
+mdefine_line|#define PF_KEY&t;&t;AF_KEY
 DECL|macro|PF_NETLINK
 mdefine_line|#define PF_NETLINK&t;AF_NETLINK
 DECL|macro|PF_ROUTE
@@ -423,8 +423,8 @@ DECL|macro|MSG_TRYHARD
 mdefine_line|#define MSG_TRYHARD     4       /* Synonym for MSG_DONTROUTE for DECnet */
 DECL|macro|MSG_CTRUNC
 mdefine_line|#define MSG_CTRUNC&t;8
-DECL|macro|MSG_PROXY
-mdefine_line|#define MSG_PROXY&t;0x10&t;/* Supply or ask second address. */
+DECL|macro|MSG_PROBE
+mdefine_line|#define MSG_PROBE&t;0x10&t;/* Do not send. Only probe path f.e. for MTU */
 DECL|macro|MSG_TRUNC
 mdefine_line|#define MSG_TRUNC&t;0x20
 DECL|macro|MSG_DONTWAIT
@@ -437,20 +437,16 @@ DECL|macro|MSG_FIN
 mdefine_line|#define MSG_FIN         0x200
 DECL|macro|MSG_SYN
 mdefine_line|#define MSG_SYN&t;&t;0x400
-DECL|macro|MSG_URG
-mdefine_line|#define MSG_URG&t;&t;0x800
+DECL|macro|MSG_CONFIRM
+mdefine_line|#define MSG_CONFIRM&t;0x800&t;/* Confirm path validity */
 DECL|macro|MSG_RST
 mdefine_line|#define MSG_RST&t;&t;0x1000
 DECL|macro|MSG_ERRQUEUE
-mdefine_line|#define MSG_ERRQUEUE&t;0x2000
+mdefine_line|#define MSG_ERRQUEUE&t;0x2000&t;/* Fetch message from error queue */
 DECL|macro|MSG_NOSIGNAL
-mdefine_line|#define MSG_NOSIGNAL&t;0x4000
-DECL|macro|MSG_CTLIGNORE
-mdefine_line|#define MSG_CTLIGNORE   0x80000000
+mdefine_line|#define MSG_NOSIGNAL&t;0x4000&t;/* Do not generate SIGPIPE */
 DECL|macro|MSG_EOF
 mdefine_line|#define MSG_EOF         MSG_FIN
-DECL|macro|MSG_CTLFLAGS
-mdefine_line|#define MSG_CTLFLAGS&t;(MSG_OOB|MSG_URG|MSG_FIN|MSG_SYN|MSG_RST)
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0

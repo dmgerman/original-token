@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;7&t;23.4.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;8&t;28.7.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPL - &lt;jt@hpl.hp.com&gt;&n; */
 macro_line|#ifndef _LINUX_WIRELESS_H
 DECL|macro|_LINUX_WIRELESS_H
 mdefine_line|#define _LINUX_WIRELESS_H
@@ -12,8 +12,8 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;6
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; */
+mdefine_line|#define WIRELESS_EXT&t;8
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; *&n; * V7 to V8&n; * --------&n; *&t;- Changed my e-mail address&n; *&t;- More 802.11 support (nickname, rate, rts, frag)&n; *&t;- List index in frequencies&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -52,9 +52,9 @@ DECL|macro|SIOCGIWSPY
 mdefine_line|#define SIOCGIWSPY&t;0x8B11&t;&t;/* get spy info (quality of link) */
 multiline_comment|/* Access Point manipulation */
 DECL|macro|SIOCSIWAP
-mdefine_line|#define SIOCSIWAP&t;0x8B14&t;&t;/* set access point hardware addresses */
+mdefine_line|#define SIOCSIWAP&t;0x8B14&t;&t;/* set access point MAC addresses */
 DECL|macro|SIOCGIWAP
-mdefine_line|#define SIOCGIWAP&t;0x8B15&t;&t;/* get access point hardware addresses */
+mdefine_line|#define SIOCGIWAP&t;0x8B15&t;&t;/* get access point MAC addresses */
 DECL|macro|SIOCGIWAPLIST
 mdefine_line|#define SIOCGIWAPLIST&t;0x8B17&t;&t;/* get list of access point in range */
 multiline_comment|/* 802.11 specific support */
@@ -62,13 +62,30 @@ DECL|macro|SIOCSIWESSID
 mdefine_line|#define SIOCSIWESSID&t;0x8B1A&t;&t;/* set ESSID (network name) */
 DECL|macro|SIOCGIWESSID
 mdefine_line|#define SIOCGIWESSID&t;0x8B1B&t;&t;/* get ESSID */
-multiline_comment|/* As the ESSID is a string up to 32 bytes long, it doesn&squot;t fit within the&n; * &squot;iwreq&squot; structure, so we need to use the &squot;data&squot; member to point to a&n; * string in user space, like it is done for RANGE...&n; * The &quot;flags&quot; member indicate if the ESSID is active or not.&n; */
+DECL|macro|SIOCSIWNICKN
+mdefine_line|#define SIOCSIWNICKN&t;0x8B1C&t;&t;/* set node name/nickname */
+DECL|macro|SIOCGIWNICKN
+mdefine_line|#define SIOCGIWNICKN&t;0x8B1D&t;&t;/* get node name/nickname */
+multiline_comment|/* As the ESSID and NICKN are strings up to 32 bytes long, it doesn&squot;t fit&n; * within the &squot;iwreq&squot; structure, so we need to use the &squot;data&squot; member to&n; * point to a string in user space, like it is done for RANGE...&n; * The &quot;flags&quot; member indicate if the ESSID is active or not (promiscuous).&n; */
+multiline_comment|/* Other parameters usefull in 802.11 and some other devices */
+DECL|macro|SIOCSIWRATE
+mdefine_line|#define SIOCSIWRATE&t;0x8B20&t;&t;/* set default bit rate (bps) */
+DECL|macro|SIOCGIWRATE
+mdefine_line|#define SIOCGIWRATE&t;0x8B21&t;&t;/* get default bit rate (bps) */
+DECL|macro|SIOCSIWRTS
+mdefine_line|#define SIOCSIWRTS&t;0x8B22&t;&t;/* set RTS/CTS threshold (bytes) */
+DECL|macro|SIOCGIWRTS
+mdefine_line|#define SIOCGIWRTS&t;0x8B23&t;&t;/* get RTS/CTS threshold (bytes) */
+DECL|macro|SIOCSIWFRAG
+mdefine_line|#define SIOCSIWFRAG&t;0x8B24&t;&t;/* set fragmentation thr (bytes) */
+DECL|macro|SIOCGIWFRAG
+mdefine_line|#define SIOCGIWFRAG&t;0x8B25&t;&t;/* get fragmentation thr (bytes) */
 multiline_comment|/* ------------------------- IOCTL STUFF ------------------------- */
 multiline_comment|/* The first and the last (range) */
 DECL|macro|SIOCIWFIRST
 mdefine_line|#define SIOCIWFIRST&t;0x8B00
 DECL|macro|SIOCIWLAST
-mdefine_line|#define SIOCIWLAST&t;0x8B1B
+mdefine_line|#define SIOCIWLAST&t;0x8B25
 multiline_comment|/* Even : get (world access), odd : set (root access) */
 DECL|macro|IW_IS_SET
 mdefine_line|#define IW_IS_SET(cmd)&t;(!((cmd) &amp; 0x1))
@@ -98,18 +115,21 @@ multiline_comment|/* Maximum frequencies in the range struct */
 DECL|macro|IW_MAX_FREQUENCIES
 mdefine_line|#define IW_MAX_FREQUENCIES&t;16
 multiline_comment|/* Note : if you have something like 80 frequencies,&n; * don&squot;t increase this constant and don&squot;t fill the frequency list.&n; * The user will be able to set by channel anyway... */
+multiline_comment|/* Maximum bit rates in the range struct */
+DECL|macro|IW_MAX_BITRATES
+mdefine_line|#define IW_MAX_BITRATES&t;&t;8
 multiline_comment|/* Maximum of address that you may set with SPY */
 DECL|macro|IW_MAX_SPY
 mdefine_line|#define IW_MAX_SPY&t;&t;8
 multiline_comment|/* Maximum of address that you may get in the&n;   list of access points in range */
 DECL|macro|IW_MAX_AP
 mdefine_line|#define IW_MAX_AP&t;&t;8
-multiline_comment|/* Maximum size of the ESSID string */
+multiline_comment|/* Maximum size of the ESSID and NICKN strings */
 DECL|macro|IW_ESSID_MAX_SIZE
 mdefine_line|#define IW_ESSID_MAX_SIZE&t;32
 multiline_comment|/****************************** TYPES ******************************/
 multiline_comment|/* --------------------------- SUBTYPES --------------------------- */
-multiline_comment|/*&n; *&t;A frequency&n; *&t;For numbers lower than 10^9, we encode the number in &squot;mant&squot; and&n; *&t;set &squot;exp&squot; to 0&n; *&t;For number greater than 10^9, we divide it by a power of 10.&n; *&t;The power of 10 is in &squot;exp&squot;, the result is in &squot;mant&squot;.&n; */
+multiline_comment|/*&n; *&t;A frequency&n; *&t;For numbers lower than 10^9, we encode the number in &squot;m&squot; and&n; *&t;set &squot;e&squot; to 0&n; *&t;For number greater than 10^9, we divide it by the lowest power&n; *&t;of 10 to get &squot;m&squot; lower than 10^9, with &squot;m&squot;= f / (10^&squot;e&squot;)...&n; *&t;The power of 10 is in &squot;e&squot;, the result of the division is in &squot;m&squot;.&n; */
 DECL|struct|iw_freq
 r_struct
 id|iw_freq
@@ -124,6 +144,11 @@ id|__u16
 id|e
 suffix:semicolon
 multiline_comment|/* Exponent */
+DECL|member|i
+id|__u8
+id|i
+suffix:semicolon
+multiline_comment|/* List index (when in range struct) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Quality of the link&n; */
@@ -192,6 +217,23 @@ suffix:semicolon
 multiline_comment|/* Data/key used for algorithm */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;Generic format for parameters&n; */
+DECL|struct|iw_param
+r_struct
+id|iw_param
+(brace
+DECL|member|value
+id|__s32
+id|value
+suffix:semicolon
+multiline_comment|/* The value of the parameter itself */
+DECL|member|fixed
+id|__u8
+id|fixed
+suffix:semicolon
+multiline_comment|/* Hardware should not use auto select */
+)brace
+suffix:semicolon
 multiline_comment|/* ------------------------ WIRELESS STATS ------------------------ */
 multiline_comment|/*&n; * Wireless statistics (used for /proc/net/wireless)&n; */
 DECL|struct|iw_statistics
@@ -232,7 +274,7 @@ id|ifrn_name
 id|IFNAMSIZ
 )braket
 suffix:semicolon
-multiline_comment|/* if name, e.g. &quot;en0&quot; */
+multiline_comment|/* if name, e.g. &quot;eth0&quot; */
 DECL|member|ifr_ifrn
 )brace
 id|ifr_ifrn
@@ -283,7 +325,31 @@ DECL|member|sensitivity
 id|__u32
 id|sensitivity
 suffix:semicolon
+multiline_comment|/* Obsolete, but compatible */
+DECL|member|sens
+r_struct
+id|iw_param
+id|sens
+suffix:semicolon
 multiline_comment|/* signal level threshold */
+DECL|member|bitrate
+r_struct
+id|iw_param
+id|bitrate
+suffix:semicolon
+multiline_comment|/* default bit rate */
+DECL|member|rts
+r_struct
+id|iw_param
+id|rts
+suffix:semicolon
+multiline_comment|/* RTS threshold threshold */
+DECL|member|frag
+r_struct
+id|iw_param
+id|frag
+suffix:semicolon
+multiline_comment|/* Fragmentation threshold */
 DECL|member|ap_addr
 r_struct
 id|sockaddr
@@ -331,6 +397,7 @@ id|__u32
 id|throughput
 suffix:semicolon
 multiline_comment|/* To give an idea... */
+multiline_comment|/* In theory this value should be the maximum benchmarked&n;&t; * TCP/IP throughput, because with most of these devices the&n;&t; * bit rate is meaningless (overhead an co) to estimate how&n;&t; * fast the connection will go and pick the fastest one.&n;&t; * I suggest people to play with Netperf or any benchmark...&n;&t; */
 multiline_comment|/* NWID (or domain id) */
 DECL|member|min_nwid
 id|__u32
@@ -365,7 +432,7 @@ multiline_comment|/* list */
 multiline_comment|/* Note : this frequency list doesn&squot;t need to fit channel numbers */
 multiline_comment|/* signal level threshold range */
 DECL|member|sensitivity
-id|__u32
+id|__s32
 id|sensitivity
 suffix:semicolon
 multiline_comment|/* Quality of link &amp; SNR stuff */
@@ -382,6 +449,42 @@ id|iw_encoding
 id|max_encoding
 suffix:semicolon
 multiline_comment|/* Encoding max range */
+multiline_comment|/* Rates */
+DECL|member|num_bitrates
+id|__u8
+id|num_bitrates
+suffix:semicolon
+multiline_comment|/* Number of entries in the list */
+DECL|member|bitrate
+id|__s32
+id|bitrate
+(braket
+id|IW_MAX_BITRATES
+)braket
+suffix:semicolon
+multiline_comment|/* list, in bps */
+multiline_comment|/* RTS threshold */
+DECL|member|min_rts
+id|__s32
+id|min_rts
+suffix:semicolon
+multiline_comment|/* Minimal RTS threshold */
+DECL|member|max_rts
+id|__s32
+id|max_rts
+suffix:semicolon
+multiline_comment|/* Maximal RTS threshold */
+multiline_comment|/* Frag threshold */
+DECL|member|min_frag
+id|__s32
+id|min_frag
+suffix:semicolon
+multiline_comment|/* Minimal frag threshold */
+DECL|member|max_frag
+id|__s32
+id|max_frag
+suffix:semicolon
+multiline_comment|/* Maximal frag threshold */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private ioctl interface information&n; */

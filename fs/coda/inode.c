@@ -752,9 +752,9 @@ comma
 id|cii-&gt;c_flags
 )paren
 suffix:semicolon
-id|inode-&gt;u.generic_ip
+id|inode-&gt;u.coda_i.c_magic
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|clear_inode
 c_func

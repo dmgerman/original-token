@@ -3,6 +3,7 @@ multiline_comment|/*&n; * This function is used through-out the kernel (includin
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -35,6 +36,14 @@ r_int
 id|panic_timeout
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|panic_notifier_list
+r_struct
+id|notifier_block
+op_star
+id|panic_notifier_list
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|function|panic_setup
 r_static
@@ -182,6 +191,17 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|panic_notifier_list
+comma
+l_int|0
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

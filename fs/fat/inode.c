@@ -1662,6 +1662,10 @@ l_string|&quot;blocksize&quot;
 r_if
 c_cond
 (paren
+op_logical_neg
+id|value
+op_logical_or
+op_logical_neg
 op_star
 id|value
 )paren
@@ -1670,8 +1674,27 @@ op_assign
 l_int|0
 suffix:semicolon
 r_else
+(brace
+op_star
+id|blksize
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|value
+comma
+op_amp
+id|value
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
+(paren
+op_star
+id|value
+op_logical_or
 (paren
 op_star
 id|blksize
@@ -1688,12 +1711,10 @@ id|blksize
 op_ne
 l_int|2048
 )paren
-(brace
-id|printk
-(paren
-l_string|&quot;MSDOS FS: Invalid blocksize &quot;
-l_string|&quot;(512, 1024, or 2048)&bslash;n&quot;
 )paren
+id|ret
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -2831,7 +2852,7 @@ id|sb
 op_member_access_from_pointer
 id|fat_length
 op_assign
-id|CF_LE_W
+id|CF_LE_L
 c_func
 (paren
 id|b-&gt;fat32_length

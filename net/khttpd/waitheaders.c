@@ -97,18 +97,16 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* If the connection is lost, remove from queue */
-id|lock_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
+op_logical_and
+id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
+op_ne
+id|TCP_CLOSE_WAIT
 )paren
 (brace
 r_struct
@@ -128,12 +126,6 @@ suffix:semicolon
 id|CurrentRequest-&gt;Next
 op_assign
 l_int|NULL
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
 suffix:semicolon
 id|CleanUpRequest
 c_func
@@ -156,16 +148,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
+op_logical_neg
+id|skb_queue_empty
 c_func
 (paren
 op_amp
 (paren
-id|sk-&gt;rmem_alloc
+id|sk-&gt;receive_queue
 )paren
 )paren
-OG
-l_int|0
 )paren
 multiline_comment|/* Do we have data ? */
 (brace
@@ -173,12 +164,6 @@ r_struct
 id|http_request
 op_star
 id|Next
-suffix:semicolon
-id|release_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
 suffix:semicolon
 multiline_comment|/* Decode header */
 r_if
@@ -271,13 +256,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-r_else
-id|release_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 id|Prev
 op_assign
 op_amp
@@ -517,6 +495,23 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+(brace
+multiline_comment|/* WONDERFUL. NO COMMENTS. --ANK */
+id|Request-&gt;IsForUserspace
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

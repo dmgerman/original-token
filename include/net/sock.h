@@ -46,10 +46,16 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_IRDA) || defined(CONFIG_IRDA_MODULE)
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_ATM) || defined(CONFIG_ATM_MODULE)
+r_struct
+id|atm_vcc
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_FILTER
 macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;net/dst.h&gt;
 DECL|macro|MIN_WRITE_SPACE
 mdefine_line|#define MIN_WRITE_SPACE&t;2048
 multiline_comment|/* The AF_UNIX specific socket options */
@@ -57,19 +63,6 @@ DECL|struct|unix_opt
 r_struct
 id|unix_opt
 (brace
-DECL|member|family
-r_int
-id|family
-suffix:semicolon
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|locks
-r_int
-id|locks
-suffix:semicolon
 DECL|member|addr
 r_struct
 id|unix_address
@@ -107,68 +100,19 @@ op_star
 id|gc_tree
 suffix:semicolon
 DECL|member|inflight
-r_int
+id|atomic_t
 id|inflight
 suffix:semicolon
-DECL|member|user_count
-id|atomic_t
-id|user_count
+DECL|member|lock
+id|rwlock_t
+id|lock
+suffix:semicolon
+DECL|member|peer_wait
+id|wait_queue_head_t
+id|peer_wait
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_NETLINK
-r_struct
-id|netlink_callback
-suffix:semicolon
-DECL|struct|netlink_opt
-r_struct
-id|netlink_opt
-(brace
-DECL|member|pid
-id|pid_t
-id|pid
-suffix:semicolon
-DECL|member|groups
-r_int
-id|groups
-suffix:semicolon
-DECL|member|dst_pid
-id|pid_t
-id|dst_pid
-suffix:semicolon
-DECL|member|dst_groups
-r_int
-id|dst_groups
-suffix:semicolon
-DECL|member|handler
-r_int
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_int
-id|unit
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-DECL|member|locks
-id|atomic_t
-id|locks
-suffix:semicolon
-DECL|member|cb
-r_struct
-id|netlink_callback
-op_star
-id|cb
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Once the IPX ncpd patches are in these are going into protinfo. */
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 DECL|struct|ipx_opt
@@ -399,6 +343,74 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_INET) || defined (CONFIG_INET_MODULE)
+DECL|struct|inet_opt
+r_struct
+id|inet_opt
+(brace
+DECL|member|ttl
+r_int
+id|ttl
+suffix:semicolon
+multiline_comment|/* TTL setting */
+DECL|member|tos
+r_int
+id|tos
+suffix:semicolon
+multiline_comment|/* TOS */
+DECL|member|cmsg_flags
+r_int
+id|cmsg_flags
+suffix:semicolon
+DECL|member|opt
+r_struct
+id|ip_options
+op_star
+id|opt
+suffix:semicolon
+DECL|member|hdrincl
+r_int
+r_char
+id|hdrincl
+suffix:semicolon
+multiline_comment|/* Include headers ? */
+DECL|member|mc_ttl
+id|__u8
+id|mc_ttl
+suffix:semicolon
+multiline_comment|/* Multicasting TTL */
+DECL|member|mc_loop
+id|__u8
+id|mc_loop
+suffix:semicolon
+multiline_comment|/* Loopback */
+DECL|member|recverr
+id|__u8
+id|recverr
+suffix:semicolon
+DECL|member|pmtudisc
+id|__u8
+id|pmtudisc
+suffix:semicolon
+DECL|member|mc_index
+r_int
+id|mc_index
+suffix:semicolon
+multiline_comment|/* Multicast device index */
+DECL|member|mc_addr
+id|__u32
+id|mc_addr
+suffix:semicolon
+DECL|member|mc_list
+r_struct
+id|ip_mc_socklist
+op_star
+id|mc_list
+suffix:semicolon
+multiline_comment|/* Group array */
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This defines a selective acknowledgement block. */
 DECL|struct|tcp_sack_block
 r_struct
@@ -568,6 +580,11 @@ id|__u16
 id|snd_cwnd_cnt
 suffix:semicolon
 multiline_comment|/* Linear increase counter&t;&t;*/
+DECL|member|snd_cwnd_clamp
+id|__u16
+id|snd_cwnd_clamp
+suffix:semicolon
+multiline_comment|/* Do not allow snd_cwnd to grow above this */
 DECL|member|dup_acks
 id|__u8
 id|dup_acks
@@ -690,7 +707,7 @@ id|ts_recent
 suffix:semicolon
 multiline_comment|/* Time stamp to echo next&t;&t;*/
 DECL|member|ts_recent_stamp
-id|__u32
+r_int
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
@@ -768,10 +785,14 @@ r_int
 id|syn_backlog
 suffix:semicolon
 multiline_comment|/* Backlog of received SYNs */
+DECL|member|write_pending
+r_int
+id|write_pending
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
-multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;ax25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;rose;&n; * &t;&t;&t;x25;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;&t;netrom;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; */
+multiline_comment|/*&n; * The idea is to start moving to a newer struct gradualy&n; * &n; * IMHO the newer struct should have the following format:&n; * &n; *&t;struct sock {&n; *&t;&t;sockmem [mem, proto, callbacks]&n; *&n; *&t;&t;union or struct {&n; *&t;&t;&t;ax25;&n; *&t;&t;} ll_pinfo;&n; *&t;&n; *&t;&t;union {&n; *&t;&t;&t;ipv4;&n; *&t;&t;&t;ipv6;&n; *&t;&t;&t;ipx;&n; *&t;&t;&t;netrom;&n; *&t;&t;&t;rose;&n; * &t;&t;&t;x25;&n; *&t;&t;} net_pinfo;&n; *&n; *&t;&t;union {&n; *&t;&t;&t;tcp;&n; *&t;&t;&t;udp;&n; *&t;&t;&t;spx;&n; *&t;&t;&t;netrom;&n; *&t;&t;} tp_pinfo;&n; *&n; *&t;}&n; *&n; * The idea failed because IPv6 transition asssumes dual IP/IPv6 sockets.&n; * So, net_pinfo is IPv6 are really, and protinfo unifies all another&n; * private areas.&n; */
 multiline_comment|/* Define this to get the sk-&gt;debug debugging facility. */
 DECL|macro|SOCK_DEBUGGING
 mdefine_line|#define SOCK_DEBUGGING
@@ -809,20 +830,6 @@ DECL|struct|sock
 r_struct
 id|sock
 (brace
-multiline_comment|/* Local port binding hash linkage. */
-DECL|member|bind_next
-r_struct
-id|sock
-op_star
-id|bind_next
-suffix:semicolon
-DECL|member|bind_pprev
-r_struct
-id|sock
-op_star
-op_star
-id|bind_pprev
-suffix:semicolon
 multiline_comment|/* Socket demultiplex comparisons on incoming packets. */
 DECL|member|daddr
 id|__u32
@@ -864,6 +871,19 @@ op_star
 op_star
 id|pprev
 suffix:semicolon
+DECL|member|bind_next
+r_struct
+id|sock
+op_star
+id|bind_next
+suffix:semicolon
+DECL|member|bind_pprev
+r_struct
+id|sock
+op_star
+op_star
+id|bind_pprev
+suffix:semicolon
 DECL|member|state
 r_volatile
 r_int
@@ -896,6 +916,11 @@ DECL|member|nonagle
 id|nonagle
 suffix:semicolon
 multiline_comment|/* Disable Nagle algorithm?&t;&t;*/
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
+multiline_comment|/* Reference count&t;&t;&t;*/
 DECL|member|lock
 id|socket_lock_t
 id|lock
@@ -919,6 +944,10 @@ op_star
 id|dst_cache
 suffix:semicolon
 multiline_comment|/* Destination cache&t;&t;&t;*/
+DECL|member|dst_lock
+id|rwlock_t
+id|dst_lock
+suffix:semicolon
 DECL|member|rmem_alloc
 id|atomic_t
 id|rmem_alloc
@@ -1040,6 +1069,10 @@ suffix:semicolon
 DECL|member|backlog
 )brace
 id|backlog
+suffix:semicolon
+DECL|member|callback_lock
+id|rwlock_t
+id|callback_lock
 suffix:semicolon
 multiline_comment|/* Error queue, rarely used. */
 DECL|member|error_queue
@@ -1168,6 +1201,13 @@ r_struct
 id|unix_opt
 id|af_unix
 suffix:semicolon
+macro_line|#if defined(CONFIG_INET) || defined (CONFIG_INET_MODULE)
+DECL|member|af_inet
+r_struct
+id|inet_opt
+id|af_inet
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 DECL|member|af_at
 r_struct
@@ -1229,6 +1269,7 @@ macro_line|#ifdef CONFIG_NETLINK
 DECL|member|af_netlink
 r_struct
 id|netlink_opt
+op_star
 id|af_netlink
 suffix:semicolon
 macro_line|#endif
@@ -1238,6 +1279,14 @@ r_struct
 id|econet_opt
 op_star
 id|af_econet
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_ATM) || defined(CONFIG_ATM_MODULE)
+DECL|member|af_atm
+r_struct
+id|atm_vcc
+op_star
+id|af_atm
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_IRDA) || defined(CONFIG_IRDA_MODULE)
@@ -1252,73 +1301,12 @@ DECL|member|protinfo
 )brace
 id|protinfo
 suffix:semicolon
-multiline_comment|/* IP &squot;private area&squot; or will be eventually. */
-DECL|member|ip_ttl
-r_int
-id|ip_ttl
+multiline_comment|/* This part is used for the timeout functions. */
+DECL|member|timer_lock
+id|spinlock_t
+id|timer_lock
 suffix:semicolon
-multiline_comment|/* TTL setting */
-DECL|member|ip_tos
-r_int
-id|ip_tos
-suffix:semicolon
-multiline_comment|/* TOS */
-DECL|member|ip_cmsg_flags
-r_int
-id|ip_cmsg_flags
-suffix:semicolon
-DECL|member|opt
-r_struct
-id|ip_options
-op_star
-id|opt
-suffix:semicolon
-DECL|member|ip_hdrincl
-r_int
-r_char
-id|ip_hdrincl
-suffix:semicolon
-multiline_comment|/* Include headers ? */
-DECL|member|ip_mc_ttl
-id|__u8
-id|ip_mc_ttl
-suffix:semicolon
-multiline_comment|/* Multicasting TTL */
-DECL|member|ip_mc_loop
-id|__u8
-id|ip_mc_loop
-suffix:semicolon
-multiline_comment|/* Loopback */
-DECL|member|ip_recverr
-id|__u8
-id|ip_recverr
-suffix:semicolon
-DECL|member|ip_pmtudisc
-id|__u8
-id|ip_pmtudisc
-suffix:semicolon
-DECL|member|ip_mc_index
-r_int
-id|ip_mc_index
-suffix:semicolon
-multiline_comment|/* Multicast device index */
-DECL|member|ip_mc_addr
-id|__u32
-id|ip_mc_addr
-suffix:semicolon
-DECL|member|ip_mc_list
-r_struct
-id|ip_mc_socklist
-op_star
-id|ip_mc_list
-suffix:semicolon
-multiline_comment|/* Group array */
-multiline_comment|/* This part is used for the timeout functions (timer.c). */
-DECL|member|timeout
-r_int
-id|timeout
-suffix:semicolon
-multiline_comment|/* What are we waiting for? */
+multiline_comment|/* Required until timer in core is repaired */
 DECL|member|timer
 r_struct
 id|timer_list
@@ -1477,6 +1465,22 @@ r_int
 id|addr_len
 )paren
 suffix:semicolon
+DECL|member|disconnect
+r_int
+(paren
+op_star
+id|disconnect
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|flags
+)paren
+suffix:semicolon
 DECL|member|accept
 r_struct
 id|sock
@@ -1493,6 +1497,10 @@ id|sk
 comma
 r_int
 id|flags
+comma
+r_int
+op_star
+id|err
 )paren
 suffix:semicolon
 DECL|member|retransmit
@@ -1837,22 +1845,6 @@ id|highestinuse
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|TIME_WRITE
-mdefine_line|#define TIME_WRITE&t;1&t;/* Not yet used */
-DECL|macro|TIME_RETRANS
-mdefine_line|#define TIME_RETRANS&t;2&t;/* Retransmit timer */
-DECL|macro|TIME_DACK
-mdefine_line|#define TIME_DACK&t;3&t;/* Delayed ack timer */
-DECL|macro|TIME_CLOSE
-mdefine_line|#define TIME_CLOSE&t;4
-DECL|macro|TIME_KEEPOPEN
-mdefine_line|#define TIME_KEEPOPEN&t;5
-DECL|macro|TIME_DESTROY
-mdefine_line|#define TIME_DESTROY&t;6
-DECL|macro|TIME_DONE
-mdefine_line|#define TIME_DONE&t;7&t;/* Used to absorb those last few packets */
-DECL|macro|TIME_PROBE0
-mdefine_line|#define TIME_PROBE0&t;8
 multiline_comment|/* About 10 seconds */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
@@ -1865,32 +1857,10 @@ DECL|macro|RCV_SHUTDOWN
 mdefine_line|#define RCV_SHUTDOWN&t;1
 DECL|macro|SEND_SHUTDOWN
 mdefine_line|#define SEND_SHUTDOWN&t;2
-multiline_comment|/* Per-protocol hash table implementations use this to make sure&n; * nothing changes.&n; */
-r_extern
-id|rwlock_t
-id|sockhash_lock
-suffix:semicolon
-DECL|macro|SOCKHASH_LOCK_READ
-mdefine_line|#define SOCKHASH_LOCK_READ()&t;&t;read_lock_bh(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_UNLOCK_READ
-mdefine_line|#define SOCKHASH_UNLOCK_READ()&t;&t;read_unlock_bh(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_LOCK_WRITE
-mdefine_line|#define SOCKHASH_LOCK_WRITE()&t;&t;write_lock_bh(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_UNLOCK_WRITE
-mdefine_line|#define SOCKHASH_UNLOCK_WRITE()&t;&t;write_unlock_bh(&amp;sockhash_lock)
-multiline_comment|/* The following variants must _only_ be used when you know you&n; * can only be executing in a BH context.&n; */
-DECL|macro|SOCKHASH_LOCK_READ_BH
-mdefine_line|#define SOCKHASH_LOCK_READ_BH()&t;&t;read_lock(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_UNLOCK_READ_BH
-mdefine_line|#define SOCKHASH_UNLOCK_READ_BH()&t;read_unlock(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_LOCK_WRITE_BH
-mdefine_line|#define SOCKHASH_LOCK_WRITE_BH()&t;write_lock(&amp;sockhash_lock)
-DECL|macro|SOCKHASH_UNLOCK_WRITE_BH
-mdefine_line|#define SOCKHASH_UNLOCK_WRITE_BH()&t;write_unlock(&amp;sockhash_lock)
 multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; */
 r_extern
 r_void
-id|lock_sock
+id|__lock_sock
 c_func
 (paren
 r_struct
@@ -1901,7 +1871,7 @@ id|sk
 suffix:semicolon
 r_extern
 r_void
-id|release_sock
+id|__release_sock
 c_func
 (paren
 r_struct
@@ -1910,6 +1880,10 @@ op_star
 id|sk
 )paren
 suffix:semicolon
+DECL|macro|lock_sock
+mdefine_line|#define lock_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;lock.users != 0) &bslash;&n;&t;&t;__lock_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 1; &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
+DECL|macro|release_sock
+mdefine_line|#define release_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;if ((__sk)-&gt;backlog.tail != NULL) &bslash;&n;&t;&t;__release_sock(__sk); &bslash;&n;&t;wake_up(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
 multiline_comment|/* BH context may only use the following locking interface. */
 DECL|macro|bh_lock_sock
 mdefine_line|#define bh_lock_sock(__sk)&t;spin_lock(&amp;((__sk)-&gt;lock.slock))
@@ -2007,17 +1981,6 @@ id|sk
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|destroy_sock
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|sk_buff
 op_star
@@ -2077,6 +2040,17 @@ suffix:semicolon
 r_extern
 r_void
 id|sock_rfree
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sock_cfree
 c_func
 (paren
 r_struct
@@ -2225,27 +2199,9 @@ suffix:semicolon
 multiline_comment|/*&n; * Functions to fill in entries in struct proto_ops when a protocol&n; * does not implement a particular function.&n; */
 r_extern
 r_int
-id|sock_no_dup
-c_func
-(paren
-r_struct
-id|socket
-op_star
-comma
-r_struct
-id|socket
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|sock_no_release
 c_func
 (paren
-r_struct
-id|socket
-op_star
-comma
 r_struct
 id|socket
 op_star
@@ -2486,6 +2442,27 @@ comma
 r_struct
 id|scm_cookie
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sock_no_mmap
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|socket
+op_star
+id|sock
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Default socket callbacks and setup code&n; */
@@ -2755,6 +2732,420 @@ id|sk-&gt;omem_alloc
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FILTER */
+multiline_comment|/*&n; * Socket reference counting postulates.&n; *&n; * * Each user of socket SHOULD hold a reference count.&n; * * Each access point to socket (an hash table bucket, reference from a list,&n; *   running timer, skb in flight MUST hold a reference count.&n; * * When reference count hits 0, it means it will never increase back.&n; * * When reference count hits 0, it means that no references from&n; *   outside exist to this socket and current process on current CPU&n; *   is last user and may/should destroy this socket.&n; * * sk_free is called from any context: process, BH, IRQ. When&n; *   it is called, socket has no references from outside -&gt; sk_free&n; *   may release descendant resources allocated by the socket, but&n; *   to the time when it is called, socket is NOT referenced by any&n; *   hash tables, lists etc.&n; * * Packets, delivered from outside (from network or from another process)&n; *   and enqueued on receive/error queues SHOULD NOT grab reference count,&n; *   when they sit in queue. Otherwise, packets will leak to hole, when&n; *   socket is looked up by one cpu and unhasing is made by another CPU.&n; *   It is true for udp/raw, netlink (leak to receive and error queues), tcp&n; *   (leak to backlog). Packet socket does all the processing inside&n; *   ptype_lock, so that it has not this race condition. UNIX sockets&n; *   use separate SMP lock, so that they are prone too.&n; */
+multiline_comment|/* Grab socket reference count. This operation is valid only&n;   when sk is ALREADY grabbed f.e. it is found in hash table&n;   or a list and the lookup is made under lock preventing hash table&n;   modifications.&n; */
+DECL|function|sock_hold
+r_extern
+id|__inline__
+r_void
+id|sock_hold
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|sk-&gt;refcnt
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Ungrab socket in the context, which assumes that socket refcnt&n;   cannot hit zero, f.e. it is true in context of any socketcall.&n; */
+DECL|function|__sock_put
+r_extern
+id|__inline__
+r_void
+id|__sock_put
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|sk-&gt;refcnt
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Ungrab socket and destroy it, if it was the last reference. */
+DECL|function|sock_put
+r_extern
+id|__inline__
+r_void
+id|sock_put
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|sk-&gt;refcnt
+)paren
+)paren
+id|sk_free
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_struct
+id|dst_entry
+op_star
+DECL|function|__sk_dst_get
+id|__sk_dst_get
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_return
+id|sk-&gt;dst_cache
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_struct
+id|dst_entry
+op_star
+DECL|function|sk_dst_get
+id|sk_dst_get
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|dst_entry
+op_star
+id|dst
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+id|dst
+op_assign
+id|sk-&gt;dst_cache
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dst
+)paren
+id|dst_hold
+c_func
+(paren
+id|dst
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+r_return
+id|dst
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_void
+DECL|function|__sk_dst_set
+id|__sk_dst_set
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|dst_entry
+op_star
+id|dst
+)paren
+(brace
+r_struct
+id|dst_entry
+op_star
+id|old_dst
+suffix:semicolon
+id|old_dst
+op_assign
+id|sk-&gt;dst_cache
+suffix:semicolon
+id|sk-&gt;dst_cache
+op_assign
+id|dst
+suffix:semicolon
+id|dst_release
+c_func
+(paren
+id|old_dst
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_void
+DECL|function|sk_dst_set
+id|sk_dst_set
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|dst_entry
+op_star
+id|dst
+)paren
+(brace
+id|write_lock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+id|__sk_dst_set
+c_func
+(paren
+id|sk
+comma
+id|dst
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_void
+DECL|function|__sk_dst_reset
+id|__sk_dst_reset
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|dst_entry
+op_star
+id|old_dst
+suffix:semicolon
+id|old_dst
+op_assign
+id|sk-&gt;dst_cache
+suffix:semicolon
+id|sk-&gt;dst_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+id|dst_release
+c_func
+(paren
+id|old_dst
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_void
+DECL|function|sk_dst_reset
+id|sk_dst_reset
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|write_lock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+id|__sk_dst_reset
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_lock
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_struct
+id|dst_entry
+op_star
+DECL|function|__sk_dst_check
+id|__sk_dst_check
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+id|u32
+id|cookie
+)paren
+(brace
+r_struct
+id|dst_entry
+op_star
+id|dst
+op_assign
+id|sk-&gt;dst_cache
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dst
+op_logical_and
+id|dst-&gt;obsolete
+op_logical_and
+id|dst-&gt;ops
+op_member_access_from_pointer
+id|check
+c_func
+(paren
+id|dst
+comma
+id|cookie
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|sk-&gt;dst_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+id|dst
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_struct
+id|dst_entry
+op_star
+DECL|function|sk_dst_check
+id|sk_dst_check
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+id|u32
+id|cookie
+)paren
+(brace
+r_struct
+id|dst_entry
+op_star
+id|dst
+op_assign
+id|sk_dst_get
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dst
+op_logical_and
+id|dst-&gt;obsolete
+op_logical_and
+id|dst-&gt;ops
+op_member_access_from_pointer
+id|check
+c_func
+(paren
+id|dst
+comma
+id|cookie
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|sk_dst_reset
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+id|dst
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * &t;Queue a received datagram if it will fit. Stream and sequenced&n; *&t;protocols can&squot;t normally use this as they need to fit buffers in&n; *&t;and play with them.&n; *&n; * &t;Inlined as it&squot;s very short and called for pretty much every&n; *&t;packet ever received.&n; */
 DECL|function|skb_set_owner_w
 r_extern
@@ -2774,6 +3165,12 @@ op_star
 id|sk
 )paren
 (brace
+id|sock_hold
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
@@ -2828,6 +3225,39 @@ id|sk-&gt;rmem_alloc
 )paren
 suffix:semicolon
 )brace
+DECL|function|skb_set_owner_c
+r_extern
+id|__inline__
+r_void
+id|skb_set_owner_c
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|sock_hold
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|skb-&gt;sk
+op_assign
+id|sk
+suffix:semicolon
+id|skb-&gt;destructor
+op_assign
+id|sock_cfree
+suffix:semicolon
+)brace
 DECL|function|sock_queue_rcv_skb
 r_extern
 id|__inline__
@@ -2846,13 +3276,6 @@ op_star
 id|skb
 )paren
 (brace
-macro_line|#ifdef CONFIG_FILTER
-r_struct
-id|sk_filter
-op_star
-id|filter
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;&t;   number of warnings when compiling with -W --ANK&n;&t; */
 r_if
 c_cond
@@ -2879,6 +3302,29 @@ macro_line|#ifdef CONFIG_FILTER
 r_if
 c_cond
 (paren
+id|sk-&gt;filter
+)paren
+(brace
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|sk_filter
+op_star
+id|filter
+suffix:semicolon
+multiline_comment|/* It would be deadlock, if sock_queue_rcv_skb is used&n;&t;&t;   with socket lock! We assume that users of this&n;&t;&t;   function are lock free.&n;&t;&t; */
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|filter
 op_assign
@@ -2895,11 +3341,27 @@ comma
 id|filter
 )paren
 )paren
-r_return
+id|err
+op_assign
 op_minus
 id|EPERM
 suffix:semicolon
+id|bh_unlock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+id|err
+suffix:semicolon
 multiline_comment|/* Toss packet */
+)brace
 macro_line|#endif /* CONFIG_FILTER */
 id|skb_set_owner_r
 c_func
@@ -3127,44 +3589,6 @@ op_ge
 id|MIN_WRITE_SPACE
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Declarations from timer.c &n; */
-r_extern
-r_struct
-id|sock
-op_star
-id|timer_base
-suffix:semicolon
-r_extern
-r_void
-id|net_delete_timer
-(paren
-r_struct
-id|sock
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|net_reset_timer
-(paren
-r_struct
-id|sock
-op_star
-comma
-r_int
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|net_timer
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 DECL|function|gfp_any
 r_extern
 id|__inline__
@@ -3188,8 +3612,7 @@ id|GFP_KERNEL
 suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
-macro_line|#if 1
-DECL|macro|NETDEBUG
+macro_line|#if 0
 mdefine_line|#define NETDEBUG(x)&t;do { } while (0)
 macro_line|#else
 DECL|macro|NETDEBUG

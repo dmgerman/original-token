@@ -64,11 +64,64 @@ mdefine_line|#define IORESOURCE_RANGELENGTH&t;0x00008000
 DECL|macro|IORESOURCE_SHADOWABLE
 mdefine_line|#define IORESOURCE_SHADOWABLE&t;0x00010000
 DECL|macro|IORESOURCE_UNSET
-mdefine_line|#define IORESOURCE_UNSET&t;0x00020000
+mdefine_line|#define IORESOURCE_UNSET&t;0x20000000
 DECL|macro|IORESOURCE_AUTO
-mdefine_line|#define IORESOURCE_AUTO&t;&t;0x00040000
+mdefine_line|#define IORESOURCE_AUTO&t;&t;0x40000000
 DECL|macro|IORESOURCE_BUSY
 mdefine_line|#define IORESOURCE_BUSY&t;&t;0x80000000&t;/* Driver has marked this resource busy */
+multiline_comment|/* ISA PnP IRQ specific bits (IORESOURCE_BITS) */
+DECL|macro|IORESOURCE_IRQ_HIGHEDGE
+mdefine_line|#define IORESOURCE_IRQ_HIGHEDGE&t;&t;(1&lt;&lt;0)
+DECL|macro|IORESOURCE_IRQ_LOWEDGE
+mdefine_line|#define IORESOURCE_IRQ_LOWEDGE&t;&t;(1&lt;&lt;1)
+DECL|macro|IORESOURCE_IRQ_HIGHLEVEL
+mdefine_line|#define IORESOURCE_IRQ_HIGHLEVEL&t;(1&lt;&lt;2)
+DECL|macro|IORESOURCE_IRQ_LOWLEVEL
+mdefine_line|#define IORESOURCE_IRQ_LOWLEVEL&t;&t;(1&lt;&lt;3)
+multiline_comment|/* ISA PnP DMA specific bits (IORESOURCE_BITS) */
+DECL|macro|IORESOURCE_DMA_TYPE_MASK
+mdefine_line|#define IORESOURCE_DMA_TYPE_MASK&t;(3&lt;&lt;0)
+DECL|macro|IORESOURCE_DMA_8BIT
+mdefine_line|#define IORESOURCE_DMA_8BIT&t;&t;(0&lt;&lt;0)
+DECL|macro|IORESOURCE_DMA_8AND16BIT
+mdefine_line|#define IORESOURCE_DMA_8AND16BIT&t;(1&lt;&lt;0)
+DECL|macro|IORESOURCE_DMA_16BIT
+mdefine_line|#define IORESOURCE_DMA_16BIT&t;&t;(2&lt;&lt;0)
+DECL|macro|IORESOURCE_DMA_MASTER
+mdefine_line|#define IORESOURCE_DMA_MASTER&t;&t;(1&lt;&lt;2)
+DECL|macro|IORESOURCE_DMA_BYTE
+mdefine_line|#define IORESOURCE_DMA_BYTE&t;&t;(1&lt;&lt;3)
+DECL|macro|IORESOURCE_DMA_WORD
+mdefine_line|#define IORESOURCE_DMA_WORD&t;&t;(1&lt;&lt;4)
+DECL|macro|IORESOURCE_DMA_SPEED_MASK
+mdefine_line|#define IORESOURCE_DMA_SPEED_MASK&t;(3&lt;&lt;6)
+DECL|macro|IORESOURCE_DMA_COMPATIBLE
+mdefine_line|#define IORESOURCE_DMA_COMPATIBLE&t;(0&lt;&lt;6)
+DECL|macro|IORESOURCE_DMA_TYPEA
+mdefine_line|#define IORESOURCE_DMA_TYPEA&t;&t;(1&lt;&lt;6)
+DECL|macro|IORESOURCE_DMA_TYPEB
+mdefine_line|#define IORESOURCE_DMA_TYPEB&t;&t;(2&lt;&lt;6)
+DECL|macro|IORESOURCE_DMA_TYPEF
+mdefine_line|#define IORESOURCE_DMA_TYPEF&t;&t;(3&lt;&lt;6)
+multiline_comment|/* ISA PnP memory I/O specific bits (IORESOURCE_BITS) */
+DECL|macro|IORESOURCE_MEM_WRITEABLE
+mdefine_line|#define IORESOURCE_MEM_WRITEABLE&t;(1&lt;&lt;0)&t;/* dup: IORESOURCE_READONLY */
+DECL|macro|IORESOURCE_MEM_CACHEABLE
+mdefine_line|#define IORESOURCE_MEM_CACHEABLE&t;(1&lt;&lt;1)&t;/* dup: IORESOURCE_CACHEABLE */
+DECL|macro|IORESOURCE_MEM_RANGELENGTH
+mdefine_line|#define IORESOURCE_MEM_RANGELENGTH&t;(1&lt;&lt;2)&t;/* dup: IORESOURCE_RANGELENGTH */
+DECL|macro|IORESOURCE_MEM_TYPE_MASK
+mdefine_line|#define IORESOURCE_MEM_TYPE_MASK&t;(3&lt;&lt;3)
+DECL|macro|IORESOURCE_MEM_8BIT
+mdefine_line|#define IORESOURCE_MEM_8BIT&t;&t;(0&lt;&lt;3)
+DECL|macro|IORESOURCE_MEM_16BIT
+mdefine_line|#define IORESOURCE_MEM_16BIT&t;&t;(1&lt;&lt;3)
+DECL|macro|IORESOURCE_MEM_8AND16BIT
+mdefine_line|#define IORESOURCE_MEM_8AND16BIT&t;(2&lt;&lt;3)
+DECL|macro|IORESOURCE_MEM_SHADOWABLE
+mdefine_line|#define IORESOURCE_MEM_SHADOWABLE&t;(1&lt;&lt;5)&t;/* dup: IORESOURCE_SHADOWABLE */
+DECL|macro|IORESOURCE_MEM_EXPANSIONROM
+mdefine_line|#define IORESOURCE_MEM_EXPANSIONROM&t;(1&lt;&lt;6)
 multiline_comment|/* PC/ISA/whatever - the normal PC address spaces: IO and memory */
 r_extern
 r_struct
@@ -122,6 +175,38 @@ r_struct
 id|resource
 op_star
 r_new
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|allocate_resource
+c_func
+(paren
+r_struct
+id|resource
+op_star
+id|root
+comma
+r_struct
+id|resource
+op_star
+r_new
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|min
+comma
+r_int
+r_int
+id|max
+comma
+r_int
+r_int
+id|align
 )paren
 suffix:semicolon
 multiline_comment|/* Convenience shorthand with allocation */

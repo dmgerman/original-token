@@ -106,8 +106,6 @@ DECL|macro|GRAPHDEV_MAJOR
 mdefine_line|#define GRAPHDEV_MAJOR&t;29&t;/* SparcLinux &amp; Linux/68k /dev/fb */
 DECL|macro|SHMIQ_MAJOR
 mdefine_line|#define SHMIQ_MAJOR&t;85&t;/* Linux/mips, SGI /dev/shmiq */
-DECL|macro|USEMA_MAJOR
-mdefine_line|#define USEMA_MAJOR&t;86&t;/* Linux/MIPS, SGI /dev/usema */
 DECL|macro|CM206_CDROM_MAJOR
 mdefine_line|#define CM206_CDROM_MAJOR 32
 DECL|macro|IDE2_MAJOR
@@ -130,6 +128,8 @@ DECL|macro|NBD_MAJOR
 mdefine_line|#define NBD_MAJOR&t;43   /* Network block device&t;*/
 DECL|macro|RISCOM8_NORMAL_MAJOR
 mdefine_line|#define RISCOM8_NORMAL_MAJOR 48
+DECL|macro|DAC960_MAJOR
+mdefine_line|#define DAC960_MAJOR&t;48&t;/* 48..55 */
 DECL|macro|RISCOM8_CALLOUT_MAJOR
 mdefine_line|#define RISCOM8_CALLOUT_MAJOR 49
 DECL|macro|MKISS_MAJOR

@@ -882,10 +882,6 @@ op_amp
 id|bh-&gt;b_count
 )paren
 suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -1723,10 +1719,6 @@ id|bh-&gt;b_count
 )paren
 )paren
 r_continue
-suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
 suffix:semicolon
 id|clear_bit
 c_func
@@ -2817,10 +2809,6 @@ op_amp
 id|bh-&gt;b_state
 )paren
 suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2919,10 +2907,6 @@ id|dev_id
 id|bh-&gt;b_list
 op_assign
 id|BUF_CLEAN
-suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
 suffix:semicolon
 id|bh-&gt;b_end_io
 op_assign
@@ -3302,27 +3286,9 @@ c_cond
 (paren
 id|bh
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|buffer_dirty
-c_func
-(paren
-id|bh
-)paren
-)paren
-(brace
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|isize
 op_assign
 id|BUFSIZE_INDEX
@@ -4676,10 +4642,6 @@ suffix:semicolon
 id|bh-&gt;b_list
 op_assign
 id|BUF_CLEAN
-suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
 suffix:semicolon
 id|bh-&gt;b_end_io
 op_assign
@@ -9660,10 +9622,6 @@ id|bh
 r_continue
 suffix:semicolon
 multiline_comment|/* OK, now we are committed to write it out. */
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -10111,10 +10069,6 @@ id|bh-&gt;b_dev
 suffix:semicolon
 id|written
 op_increment
-suffix:semicolon
-id|bh-&gt;b_flushtime
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * For the loop major we can try to do asynchronous writes,&n;&t;&t;&t;&t; * but we have to guarantee that we&squot;re making some progress..&n;&t;&t;&t;&t; */
 id|atomic_inc

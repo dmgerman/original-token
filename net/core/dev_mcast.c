@@ -252,6 +252,13 @@ suffix:semicolon
 id|dev-&gt;mc_count
 op_decrement
 suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_mc_lock
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -265,13 +272,6 @@ id|dmi
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;We have altered the list, so the card&n;&t;&t;&t; *&t;loaded filter is now wrong. Fix it&n;&t;&t;&t; */
-id|write_unlock_bh
-c_func
-(paren
-op_amp
-id|dev_mc_lock
-)paren
-suffix:semicolon
 id|dev_mc_upload
 c_func
 (paren
@@ -336,7 +336,6 @@ comma
 op_star
 id|dmi1
 suffix:semicolon
-multiline_comment|/* RED-PEN: does gfp_any() work now? It requires&n;&t;   true local_bh_disable rather than global.&n;&t; */
 id|dmi1
 op_assign
 (paren
@@ -353,10 +352,7 @@ op_star
 id|dmi
 )paren
 comma
-id|gfp_any
-c_func
-(paren
-)paren
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|write_lock_bh

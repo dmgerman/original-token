@@ -268,7 +268,7 @@ r_return
 id|edev
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Find an Econet device given its `dev&squot; pointer.  This is IRQ safe.&n; */
+multiline_comment|/*&n; *&t;Find an Econet device given its `dev&squot; pointer.  This is IRQ safe.&n; *&n; *&t;Against what is it safe? --ANK&n; */
 DECL|function|edev_get
 r_static
 r_struct
@@ -986,9 +986,11 @@ id|ARPHRD_ECONET
 (brace
 multiline_comment|/* Real hardware Econet.  We&squot;re not worthy etc. */
 macro_line|#ifdef CONFIG_ECONET_NATIVE
-id|dev_lock_list
+id|atomic_inc
 c_func
 (paren
+op_amp
+id|dev-&gt;refcnt
 )paren
 suffix:semicolon
 id|skb
@@ -1192,15 +1194,16 @@ r_goto
 id|out_free
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Now send it&n;&t;&t; */
-id|dev_unlock_list
-c_func
-(paren
-)paren
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1216,9 +1219,15 @@ id|skb
 suffix:semicolon
 id|out_unlock
 suffix:colon
-id|dev_unlock_list
+r_if
+c_cond
+(paren
+id|dev
+)paren
+id|dev_put
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1280,15 +1289,36 @@ id|in_device
 op_star
 id|idev
 op_assign
+id|in_dev_get
+c_func
 (paren
-r_struct
-id|in_device
-op_star
+id|dev
 )paren
-id|dev-&gt;ip_ptr
 suffix:semicolon
 r_int
 r_int
+id|network
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev
+)paren
+(brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;ifa_list
+)paren
 id|network
 op_assign
 id|ntohl
@@ -1300,6 +1330,20 @@ op_amp
 l_int|0xffffff00
 suffix:semicolon
 multiline_comment|/* !!! */
+id|read_unlock
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+)paren
+suffix:semicolon
+id|in_dev_put
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
+)brace
 id|udpdest.sin_addr.s_addr
 op_assign
 id|htonl
@@ -1785,11 +1829,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peersock
 )paren
 (brace
 r_struct
@@ -2163,7 +2202,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|dev_get_by_name
 c_func
 (paren
 id|ifr.ifr_name
@@ -2221,6 +2260,22 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Magic up a new one. */
+id|printk
+c_func
+(paren
+l_string|&quot;Get fascist grenade!!!&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Note to author: please, remove this spinlock.&n;&t;&t;&t;   You do not change edevlist from interrupts,&n;&t;&t;&t;   so that such aggressive protection is redundant.&n;&n;&t;&t;&t;   BTW not all scans of edev_list are protected.&n;&t;&t;&t; */
 id|edev
 op_assign
 id|kmalloc
@@ -2256,6 +2311,12 @@ op_amp
 id|edevlist_lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -2307,6 +2368,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2345,6 +2412,12 @@ op_amp
 id|edevlist_lock
 comma
 id|flags
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -2387,6 +2460,12 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2413,6 +2492,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
@@ -2718,12 +2803,14 @@ DECL|variable|econet_ops
 r_static
 r_struct
 id|proto_ops
+id|SOCKOPS_WRAPPED
+c_func
+(paren
 id|econet_ops
+)paren
 op_assign
 (brace
 id|PF_ECONET
-comma
-id|sock_no_dup
 comma
 id|econet_release
 comma
@@ -2754,7 +2841,18 @@ comma
 id|econet_sendmsg
 comma
 id|econet_recvmsg
+comma
+id|sock_no_mmap
 )brace
+suffix:semicolon
+macro_line|#include &lt;linux/smp_lock.h&gt;
+id|SOCKOPS_WRAP
+c_func
+(paren
+id|econet
+comma
+id|PF_ECONET
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Find the listening socket, if any, for the given data.&n; */
 DECL|function|ec_listening_socket

@@ -58,6 +58,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|notifier_block
+op_star
+id|panic_notifier_list
+suffix:semicolon
 id|NORET_TYPE
 r_void
 id|panic

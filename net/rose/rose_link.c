@@ -21,7 +21,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/rose.h&gt;
 r_static
 r_void
@@ -1142,6 +1142,7 @@ r_char
 op_star
 id|dptr
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1172,6 +1173,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren

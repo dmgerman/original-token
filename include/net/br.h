@@ -43,7 +43,7 @@ multiline_comment|/* broacast/multicast storm limitation. This per source. */
 DECL|macro|MAX_MCAST_PER_PERIOD
 mdefine_line|#define MAX_MCAST_PER_PERIOD    4
 DECL|macro|MCAST_HOLD_TIME
-mdefine_line|#define MCAST_HOLD_TIME&t;&t;10&t;/* in jiffies unit (10ms increment) */
+mdefine_line|#define MCAST_HOLD_TIME&t;&t;(10*HZ/100)
 DECL|macro|Default_path_cost
 mdefine_line|#define Default_path_cost 10
 multiline_comment|/*&n; * minimum increment possible to avoid underestimating age, allows for BPDU&n; * transmission time&n; */

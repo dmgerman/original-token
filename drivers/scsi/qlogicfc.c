@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * QLogic ISP2100 SCSI-FCP&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
+multiline_comment|/*&n; * QLogic ISP2x00 SCSI-FCP&n; * Written by Erik H. Moe, ehm@cris.com&n; * Copyright 1995, Erik H. Moe&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; */
 multiline_comment|/* Renamed and updated to 1.3.x by Michael Griffith &lt;grif@cs.ucr.edu&gt; */
-multiline_comment|/* This is a version of the isp1020 driver which was modified by&n; * Chris Loveland &lt;cwl@iol.unh.edu&gt; to support the isp2100&n; */
+multiline_comment|/* This is a version of the isp1020 driver which was modified by&n; * Chris Loveland &lt;cwl@iol.unh.edu&gt; to support the isp2100 and isp2200&n; */
 multiline_comment|/*&n; * $Date: 1995/09/22 02:23:15 $&n; * $Revision: 0.5 $&n; *&n; * $Log: isp1020.c,v $&n; * Revision 0.5  1995/09/22  02:23:15  root&n; * do auto request sense&n; *&n; * Revision 0.4  1995/08/07  04:44:33  root&n; * supply firmware with driver.&n; * numerous bug fixes/general cleanup of code.&n; *&n; * Revision 0.3  1995/07/16  16:15:39  root&n; * added reset/abort code.&n; *&n; * Revision 0.2  1995/06/29  03:14:19  root&n; * fixed biosparam.&n; * added queue protocol.&n; *&n; * Revision 0.1  1995/06/25  01:55:45  root&n; * Initial release.&n; *&n; */
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,18 +18,18 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicfc.h&quot;
 multiline_comment|/* Configuration section **************************************************** */
-multiline_comment|/* Set the following macro to 1 to reload the ISP2100&squot;s firmware.  This is&n;   version 1.15.19 of the firmware. */
+multiline_comment|/* Set the following macro to 1 to reload the ISP2x00&squot;s firmware.  This is&n;   version 1.15.37 of the isp2100&squot;s firmware and version 2.00.16 of the &n;   isp2200&squot;s firmware. &n;*/
 DECL|macro|RELOAD_FIRMWARE
 mdefine_line|#define RELOAD_FIRMWARE&t;&t;1
 DECL|macro|USE_NVRAM_DEFAULTS
 mdefine_line|#define USE_NVRAM_DEFAULTS      1
-DECL|macro|ISP2100_PORTDB
-mdefine_line|#define ISP2100_PORTDB          1
+DECL|macro|ISP2x00_PORTDB
+mdefine_line|#define ISP2x00_PORTDB          1
 multiline_comment|/* Set the following to 1 to include fabric support, fabric support is &n; * currently not as well tested as the other aspects of the driver */
-DECL|macro|ISP2100_FABRIC
-mdefine_line|#define ISP2100_FABRIC          0
+DECL|macro|ISP2x00_FABRIC
+mdefine_line|#define ISP2x00_FABRIC          0
 multiline_comment|/*  Macros used for debugging */
-multiline_comment|/*&n;#define DEBUG_ISP2100&t;&t;1&n;#define DEBUG_ISP2100_INT&t;1&n;#define DEBUG_ISP2100_INTR&t;1&n;#define DEBUG_ISP2100_SETUP&t;1&n;&n;#define DEBUG_ISP2100_FABRIC    1&n;*/
+multiline_comment|/*&n;#define DEBUG_ISP2x00&t;&t;1&n;#define DEBUG_ISP2x00_INT&t;1&n;#define DEBUG_ISP2x00_INTR&t;1&n;#define DEBUG_ISP2x00_SETUP&t;1&n;&n;#define DEBUG_ISP2x00_FABRIC    1&n;*/
 multiline_comment|/* #define TRACE_ISP             1 */
 DECL|macro|DEFAULT_LOOP_COUNT
 mdefine_line|#define DEFAULT_LOOP_COUNT&t;10000000
@@ -80,18 +80,18 @@ macro_line|#else
 DECL|macro|TRACE
 mdefine_line|#define TRACE(w, i, a)
 macro_line|#endif
-macro_line|#if DEBUG_ISP2100_FABRIC
+macro_line|#if DEBUG_ISP2x00_FABRIC
 DECL|macro|DEBUG_FABRIC
 mdefine_line|#define DEBUG_FABRIC(x)&t;x
 macro_line|#else
 DECL|macro|DEBUG_FABRIC
 mdefine_line|#define DEBUG_FABRIC(x)
-macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2100_FABRIC */
-macro_line|#if DEBUG_ISP2100
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2x00_FABRIC */
+macro_line|#if DEBUG_ISP2x00
 DECL|macro|ENTER
-mdefine_line|#define ENTER(x)&t;printk(&quot;isp2100 : entering %s()&bslash;n&quot;, x);
+mdefine_line|#define ENTER(x)&t;printk(&quot;isp2x00 : entering %s()&bslash;n&quot;, x);
 DECL|macro|LEAVE
-mdefine_line|#define LEAVE(x)&t;printk(&quot;isp2100 : leaving %s()&bslash;n&quot;, x);
+mdefine_line|#define LEAVE(x)&t;printk(&quot;isp2x00 : leaving %s()&bslash;n&quot;, x);
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(x)&t;x
 macro_line|#else
@@ -101,12 +101,12 @@ DECL|macro|LEAVE
 mdefine_line|#define LEAVE(x)
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(x)
-macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2100 */
-macro_line|#if DEBUG_ISP2100_INTR
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2x00 */
+macro_line|#if DEBUG_ISP2x00_INTR
 DECL|macro|ENTER_INTR
-mdefine_line|#define ENTER_INTR(x)&t;printk(&quot;isp2100 : entering %s()&bslash;n&quot;, x);
+mdefine_line|#define ENTER_INTR(x)&t;printk(&quot;isp2x00 : entering %s()&bslash;n&quot;, x);
 DECL|macro|LEAVE_INTR
-mdefine_line|#define LEAVE_INTR(x)&t;printk(&quot;isp2100 : leaving %s()&bslash;n&quot;, x);
+mdefine_line|#define LEAVE_INTR(x)&t;printk(&quot;isp2x00 : leaving %s()&bslash;n&quot;, x);
 DECL|macro|DEBUG_INTR
 mdefine_line|#define DEBUG_INTR(x)&t;x
 macro_line|#else
@@ -116,7 +116,7 @@ DECL|macro|LEAVE_INTR
 mdefine_line|#define LEAVE_INTR(x)
 DECL|macro|DEBUG_INTR
 mdefine_line|#define DEBUG_INTR(x)
-macro_line|#endif&t;&t;&t;&t;/* DEBUG ISP2100_INTR */
+macro_line|#endif&t;&t;&t;&t;/* DEBUG ISP2x00_INTR */
 macro_line|#if BITS_PER_LONG &gt; 32
 DECL|macro|virt_to_bus_low32
 mdefine_line|#define virt_to_bus_low32(x)   ((u32) (0xffffffff &amp; virt_to_bus(x)))
@@ -136,14 +136,12 @@ mdefine_line|#define bus_to_virt_low32(x)   bus_to_virt(x)
 DECL|macro|bus_to_virt_high32
 mdefine_line|#define bus_to_virt_high32(x)  0x0
 macro_line|#endif
-DECL|macro|ISP2100_REV_ID
-mdefine_line|#define ISP2100_REV_ID&t;1
+DECL|macro|ISP2100_REV_ID1
+mdefine_line|#define ISP2100_REV_ID1&t;       1
 DECL|macro|ISP2100_REV_ID3
 mdefine_line|#define ISP2100_REV_ID3        3
-DECL|macro|MAX_TARGETS
-mdefine_line|#define MAX_TARGETS&t;16
-DECL|macro|MAX_LUNS
-mdefine_line|#define MAX_LUNS&t;8
+DECL|macro|ISP2200_REV_ID5
+mdefine_line|#define ISP2200_REV_ID5        5
 multiline_comment|/* host configuration and control registers */
 DECL|macro|HOST_HCCR
 mdefine_line|#define HOST_HCCR&t;0xc0&t;/* host command and control */
@@ -223,6 +221,10 @@ DECL|macro|CHANGE_NOTIFICATION
 mdefine_line|#define CHANGE_NOTIFICATION             0x8015
 DECL|macro|SCSI_COMMAND_COMPLETE
 mdefine_line|#define SCSI_COMMAND_COMPLETE           0x8020
+DECL|macro|POINT_TO_POINT_UP
+mdefine_line|#define POINT_TO_POINT_UP               0x8030
+DECL|macro|CONNECTION_MODE
+mdefine_line|#define CONNECTION_MODE                 0x8036
 DECL|struct|Entry_header
 r_struct
 id|Entry_header
@@ -308,9 +310,9 @@ DECL|member|target_id
 id|u_char
 id|target_id
 suffix:semicolon
-DECL|member|rsvd1
+DECL|member|expanded_lun
 id|u_short
-id|rsvd1
+id|expanded_lun
 suffix:semicolon
 DECL|member|control_flags
 id|u_short
@@ -385,9 +387,9 @@ DECL|member|target_id
 id|u_char
 id|target_id
 suffix:semicolon
-DECL|member|rsvd1
+DECL|member|expanded_lun
 id|u_short
-id|rsvd1
+id|expanded_lun
 suffix:semicolon
 DECL|member|control_flags
 id|u_short
@@ -442,56 +444,6 @@ DECL|macro|CFLAG_READ
 mdefine_line|#define CFLAG_READ&t;&t;0x20
 DECL|macro|CFLAG_WRITE
 mdefine_line|#define CFLAG_WRITE&t;&t;0x40
-DECL|struct|Ext_Command_Entry
-r_struct
-id|Ext_Command_Entry
-(brace
-DECL|member|hdr
-r_struct
-id|Entry_header
-id|hdr
-suffix:semicolon
-DECL|member|handle
-id|u_int
-id|handle
-suffix:semicolon
-DECL|member|target_lun
-id|u_char
-id|target_lun
-suffix:semicolon
-DECL|member|target_id
-id|u_char
-id|target_id
-suffix:semicolon
-DECL|member|cdb_length
-id|u_short
-id|cdb_length
-suffix:semicolon
-DECL|member|control_flags
-id|u_short
-id|control_flags
-suffix:semicolon
-DECL|member|rsvd
-id|u_short
-id|rsvd
-suffix:semicolon
-DECL|member|time_out
-id|u_short
-id|time_out
-suffix:semicolon
-DECL|member|segment_cnt
-id|u_short
-id|segment_cnt
-suffix:semicolon
-DECL|member|cdb
-id|u_char
-id|cdb
-(braket
-l_int|44
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 macro_line|#if BITS_PER_LONG &gt; 32
 DECL|struct|Continuation_Entry
 r_struct
@@ -562,9 +514,9 @@ DECL|member|modifier
 id|u_char
 id|modifier
 suffix:semicolon
-DECL|member|rsvd
+DECL|member|expanded_lun
 id|u_char
-id|rsvd
+id|expanded_lun
 suffix:semicolon
 DECL|member|rsvds
 id|u_char
@@ -1306,6 +1258,50 @@ DECL|member|res_queue_addr_high
 id|u_int
 id|res_queue_addr_high
 suffix:semicolon
+multiline_comment|/* the rest of this structure only applies to the isp2200 */
+DECL|member|lun_enables
+id|u_short
+id|lun_enables
+suffix:semicolon
+DECL|member|cmd_resource_cnt
+id|u_char
+id|cmd_resource_cnt
+suffix:semicolon
+DECL|member|notify_resource_cnt
+id|u_char
+id|notify_resource_cnt
+suffix:semicolon
+DECL|member|timeout
+id|u_short
+id|timeout
+suffix:semicolon
+DECL|member|reserved3
+id|u_short
+id|reserved3
+suffix:semicolon
+DECL|member|add_firm_opts
+id|u_short
+id|add_firm_opts
+suffix:semicolon
+DECL|member|res_accum_timer
+id|u_char
+id|res_accum_timer
+suffix:semicolon
+DECL|member|irq_delay_timer
+id|u_char
+id|irq_delay_timer
+suffix:semicolon
+DECL|member|special_options
+id|u_short
+id|special_options
+suffix:semicolon
+DECL|member|reserved4
+id|u_short
+id|reserved4
+(braket
+l_int|13
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The result queue can be quite a bit smaller since continuation entries&n; * do not show up there:&n; */
@@ -1313,7 +1309,7 @@ DECL|macro|RES_QUEUE_LEN
 mdefine_line|#define RES_QUEUE_LEN&t;&t;((QLOGICFC_REQ_QUEUE_LEN + 1) / 8 - 1)
 DECL|macro|QUEUE_ENTRY_LEN
 mdefine_line|#define QUEUE_ENTRY_LEN&t;&t;64
-macro_line|#if ISP2100_FABRIC
+macro_line|#if ISP2x00_FABRIC
 DECL|macro|QLOGICFC_MAX_ID
 mdefine_line|#define QLOGICFC_MAX_ID    0xff
 macro_line|#else
@@ -1331,9 +1327,9 @@ DECL|macro|AS_LOOP_GOOD
 mdefine_line|#define AS_LOOP_GOOD           1
 DECL|macro|AS_REDO_PORTDB
 mdefine_line|#define AS_REDO_PORTDB         2
-DECL|struct|isp2100_hostdata
+DECL|struct|isp2x00_hostdata
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 (brace
 DECL|member|revision
 id|u_char
@@ -1345,7 +1341,7 @@ id|pci_dev
 op_star
 id|pci_dev
 suffix:semicolon
-multiline_comment|/* result and request queues (shared with isp2100): */
+multiline_comment|/* result and request queues (shared with isp2x00): */
 DECL|member|req_in_ptr
 id|u_int
 id|req_in_ptr
@@ -1465,7 +1461,7 @@ DECL|macro|RES_QUEUE_DEPTH
 mdefine_line|#define RES_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, RES_QUEUE_LEN)
 r_static
 r_void
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 r_struct
@@ -1475,7 +1471,7 @@ op_star
 suffix:semicolon
 r_static
 r_void
-id|isp2100_disable_irqs
+id|isp2x00_disable_irqs
 c_func
 (paren
 r_struct
@@ -1485,7 +1481,7 @@ op_star
 suffix:semicolon
 r_static
 r_int
-id|isp2100_init
+id|isp2x00_init
 c_func
 (paren
 r_struct
@@ -1495,7 +1491,7 @@ op_star
 suffix:semicolon
 r_static
 r_int
-id|isp2100_reset_hardware
+id|isp2x00_reset_hardware
 c_func
 (paren
 r_struct
@@ -1505,7 +1501,7 @@ op_star
 suffix:semicolon
 r_static
 r_int
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 r_struct
@@ -1519,7 +1515,7 @@ id|u_short
 suffix:semicolon
 r_static
 r_int
-id|isp2100_return_status
+id|isp2x00_return_status
 c_func
 (paren
 r_struct
@@ -1529,7 +1525,7 @@ op_star
 suffix:semicolon
 r_static
 r_void
-id|isp2100_intr_handler
+id|isp2x00_intr_handler
 c_func
 (paren
 r_int
@@ -1544,7 +1540,7 @@ op_star
 suffix:semicolon
 r_static
 r_void
-id|do_isp2100_intr_handler
+id|do_isp2x00_intr_handler
 c_func
 (paren
 r_int
@@ -1559,7 +1555,7 @@ op_star
 suffix:semicolon
 r_static
 r_int
-id|isp2100_make_portdb
+id|isp2x00_make_portdb
 c_func
 (paren
 r_struct
@@ -1567,10 +1563,10 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-macro_line|#if ISP2100_FABRIC
+macro_line|#if ISP2x00_FABRIC
 r_static
 r_int
-id|isp2100_init_fabric
+id|isp2x00_init_fabric
 c_func
 (paren
 r_struct
@@ -1588,7 +1584,7 @@ macro_line|#endif
 macro_line|#if USE_NVRAM_DEFAULTS
 r_static
 r_int
-id|isp2100_get_nvram_defaults
+id|isp2x00_get_nvram_defaults
 c_func
 (paren
 r_struct
@@ -1602,7 +1598,7 @@ op_star
 suffix:semicolon
 r_static
 id|u_short
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 r_struct
@@ -1613,10 +1609,10 @@ id|u_short
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if DEBUG_ISP2100
+macro_line|#if DEBUG_ISP2x00
 r_static
 r_void
-id|isp2100_print_scsi_cmd
+id|isp2x00_print_scsi_cmd
 c_func
 (paren
 id|Scsi_Cmnd
@@ -1624,10 +1620,10 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if DEBUG_ISP2100_INTR
+macro_line|#if DEBUG_ISP2x00_INTR
 r_static
 r_void
-id|isp2100_print_status_entry
+id|isp2x00_print_status_entry
 c_func
 (paren
 r_struct
@@ -1636,18 +1632,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|proc_scsi_isp2100
+DECL|variable|proc_scsi_isp2x00
 r_static
 r_struct
 id|proc_dir_entry
-id|proc_scsi_isp2100
+id|proc_scsi_isp2x00
 op_assign
 (brace
 id|PROC_SCSI_QLOGICFC
 comma
 l_int|7
 comma
-l_string|&quot;isp2100&quot;
+l_string|&quot;isp2x00&quot;
 comma
 id|S_IFDIR
 op_or
@@ -1658,11 +1654,11 @@ comma
 l_int|2
 )brace
 suffix:semicolon
-DECL|function|isp2100_enable_irqs
+DECL|function|isp2x00_enable_irqs
 r_static
 r_inline
 r_void
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 r_struct
@@ -1684,11 +1680,11 @@ id|PCI_INTER_CTL
 )paren
 suffix:semicolon
 )brace
-DECL|function|isp2100_disable_irqs
+DECL|function|isp2x00_disable_irqs
 r_static
 r_inline
 r_void
-id|isp2100_disable_irqs
+id|isp2x00_disable_irqs
 c_func
 (paren
 r_struct
@@ -1708,9 +1704,9 @@ id|PCI_INTER_CTL
 )paren
 suffix:semicolon
 )brace
-DECL|function|isp2100_detect
+DECL|function|isp2x00_detect
 r_int
-id|isp2100_detect
+id|isp2x00_detect
 c_func
 (paren
 id|Scsi_Host_Template
@@ -1734,7 +1730,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -1745,16 +1741,40 @@ id|pdev
 op_assign
 l_int|NULL
 suffix:semicolon
+r_int
+r_int
+id|device_ids
+(braket
+l_int|2
+)braket
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_detect&quot;
+l_string|&quot;isp2x00_detect&quot;
 )paren
+suffix:semicolon
+id|device_ids
+(braket
+l_int|0
+)braket
+op_assign
+id|PCI_DEVICE_ID_QLOGIC_ISP2100
+suffix:semicolon
+id|device_ids
+(braket
+l_int|1
+)braket
+op_assign
+id|PCI_DEVICE_ID_QLOGIC_ISP2200
 suffix:semicolon
 id|tmpt-&gt;proc_dir
 op_assign
 op_amp
-id|proc_scsi_isp2100
+id|proc_scsi_isp2x00
 suffix:semicolon
 r_if
 c_cond
@@ -1777,6 +1797,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|2
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -1788,7 +1823,10 @@ c_func
 (paren
 id|PCI_VENDOR_ID_QLOGIC
 comma
-id|PCI_DEVICE_ID_QLOGIC_ISP2100
+id|device_ids
+(braket
+id|i
+)braket
 comma
 id|pdev
 )paren
@@ -1805,7 +1843,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 )paren
 )paren
 suffix:semicolon
@@ -1823,7 +1861,7 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -1838,7 +1876,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 )paren
 )paren
 suffix:semicolon
@@ -1853,7 +1891,7 @@ suffix:semicolon
 multiline_comment|/* set up the control block */
 id|hostdata-&gt;control_block.version
 op_assign
-l_int|0x0f
+l_int|0x1
 suffix:semicolon
 id|hostdata-&gt;control_block.firm_opts
 op_assign
@@ -1877,7 +1915,7 @@ l_int|5
 suffix:semicolon
 id|hostdata-&gt;control_block.retry_cnt
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|hostdata-&gt;control_block.node_name
 (braket
@@ -1970,13 +2008,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isp2100_init
+id|isp2x00_init
 c_func
 (paren
 id|host
 )paren
 op_logical_or
-id|isp2100_reset_hardware
+id|isp2x00_reset_hardware
 c_func
 (paren
 id|host
@@ -2004,7 +2042,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-id|do_isp2100_intr_handler
+id|do_isp2x00_intr_handler
 comma
 id|SA_INTERRUPT
 op_or
@@ -2109,7 +2147,7 @@ op_plus
 id|HOST_HCCR
 )paren
 suffix:semicolon
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 id|host
@@ -2152,7 +2190,7 @@ id|AS_LOOP_DOWN
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc%d : loop is not up&bslash;n&quot;
+l_string|&quot;qlogicfc%d : link is not up&bslash;n&quot;
 comma
 id|hostdata-&gt;host_id
 )paren
@@ -2162,8 +2200,9 @@ id|hosts
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* this busy loop should not be needed but the isp2100 seems to need &n;&t;   some time before recognizing it is attached to a fabric */
-macro_line|#if ISP2100_FABRIC
+)brace
+multiline_comment|/* this busy loop should not be needed but the isp2x00 seems to need &n;&t;   some time before recognizing it is attached to a fabric */
+macro_line|#if ISP2x00_FABRIC
 r_for
 c_loop
 (paren
@@ -2189,17 +2228,17 @@ macro_line|#endif
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_detect&quot;
+l_string|&quot;isp2x00_detect&quot;
 )paren
 suffix:semicolon
 r_return
 id|hosts
 suffix:semicolon
 )brace
-DECL|function|isp2100_make_portdb
+DECL|function|isp2x00_make_portdb
 r_static
 r_int
-id|isp2100_make_portdb
+id|isp2x00_make_portdb
 c_func
 (paren
 r_struct
@@ -2229,11 +2268,11 @@ l_int|1
 )braket
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
-id|isp2100_disable_irqs
+id|isp2x00_disable_irqs
 c_func
 (paren
 id|host
@@ -2256,12 +2295,12 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
-macro_line|#if ISP2100_FABRIC
+macro_line|#if ISP2x00_FABRIC
 r_for
 c_loop
 (paren
@@ -2307,7 +2346,7 @@ l_int|3
 op_assign
 l_int|0
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -2326,6 +2365,9 @@ op_ne
 id|MBOX_COMMAND_COMPLETE
 )paren
 (brace
+id|DEBUG_FABRIC
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -2340,6 +2382,7 @@ id|param
 l_int|0
 )braket
 )paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2351,7 +2394,7 @@ l_int|0
 op_assign
 id|MBOX_GET_INIT_SCSI_ID
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -2491,7 +2534,7 @@ l_int|8
 op_amp
 l_int|0xff00
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -2722,8 +2765,8 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-macro_line|#if ISP2100_FABRIC
-id|isp2100_init_fabric
+macro_line|#if ISP2x00_FABRIC
+id|isp2x00_init_fabric
 c_func
 (paren
 id|host
@@ -2961,7 +3004,7 @@ dot
 id|loop_id
 suffix:semicolon
 )brace
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 id|host
@@ -2971,16 +3014,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if ISP2100_FABRIC
+macro_line|#if ISP2x00_FABRIC
 DECL|macro|FABRIC_PORT
 mdefine_line|#define FABRIC_PORT          0x7e
 DECL|macro|FABRIC_CONTROLLER
 mdefine_line|#define FABRIC_CONTROLLER    0x7f
 DECL|macro|FABRIC_SNS
 mdefine_line|#define FABRIC_SNS           0x80
-DECL|function|isp2100_init_fabric
+DECL|function|isp2x00_init_fabric
 r_int
-id|isp2100_init_fabric
+id|isp2x00_init_fabric
 c_func
 (paren
 r_struct
@@ -3035,7 +3078,7 @@ l_int|608
 )braket
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -3043,7 +3086,7 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -3079,7 +3122,7 @@ id|FABRIC_PORT
 op_lshift
 l_int|8
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -3298,7 +3341,7 @@ op_amp
 id|req
 )paren
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -3499,7 +3542,7 @@ op_amp
 id|req
 )paren
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -3813,7 +3856,7 @@ id|u_short
 id|port_id
 )paren
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -3886,6 +3929,44 @@ id|loop_id
 )paren
 )paren
 suffix:semicolon
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_PORT_LOGOUT
+suffix:semicolon
+id|param
+(braket
+l_int|1
+)braket
+op_assign
+id|loop_id
+op_lshift
+l_int|8
+suffix:semicolon
+id|param
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|param
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|isp2x00_mbox_command
+c_func
+(paren
+id|host
+comma
+id|param
+)paren
+suffix:semicolon
 )brace
 )brace
 r_if
@@ -3924,10 +4005,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;/* ISP2100_FABRIC */
-DECL|function|isp2100_release
+macro_line|#endif&t;&t;&t;&t;/* ISP2x00_FABRIC */
+DECL|function|isp2x00_release
 r_int
-id|isp2100_release
+id|isp2x00_release
 c_func
 (paren
 r_struct
@@ -3937,21 +4018,21 @@ id|host
 )paren
 (brace
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_release&quot;
+l_string|&quot;isp2x00_release&quot;
 )paren
 suffix:semicolon
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -3985,18 +4066,18 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_release&quot;
+l_string|&quot;isp2x00_release&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|isp2100_info
+DECL|function|isp2x00_info
 r_const
 r_char
 op_star
-id|isp2100_info
+id|isp2x00_info
 c_func
 (paren
 r_struct
@@ -4013,21 +4094,21 @@ l_int|80
 )braket
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_info&quot;
+l_string|&quot;isp2x00_info&quot;
 )paren
 suffix:semicolon
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -4037,7 +4118,9 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;QLogic ISP2100 SCSI on PCI bus %02x device %02x irq %d base 0x%lx&quot;
+l_string|&quot;QLogic ISP%04x SCSI on PCI bus %02x device %02x irq %d base 0x%lx&quot;
+comma
+id|hostdata-&gt;pci_dev-&gt;device
 comma
 id|hostdata-&gt;pci_dev-&gt;bus-&gt;number
 comma
@@ -4051,7 +4134,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_info&quot;
+l_string|&quot;isp2x00_info&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4059,9 +4142,9 @@ id|buf
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The middle SCSI layer ensures that queuecommand never gets invoked&n; * concurrently with itself or the interrupt handler (though the&n; * interrupt handler may call this routine as part of&n; * request-completion handling).&n; */
-DECL|function|isp2100_queuecommand
+DECL|function|isp2x00_queuecommand
 r_int
-id|isp2100_queuecommand
+id|isp2x00_queuecommand
 c_func
 (paren
 id|Scsi_Cmnd
@@ -4119,14 +4202,14 @@ op_star
 id|host
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_queuecommand&quot;
+l_string|&quot;isp2x00_queuecommand&quot;
 )paren
 suffix:semicolon
 id|host
@@ -4137,7 +4220,7 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -4149,7 +4232,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-id|isp2100_print_scsi_cmd
+id|isp2x00_print_scsi_cmd
 c_func
 (paren
 id|Cmnd
@@ -4168,7 +4251,7 @@ id|hostdata-&gt;adapter_state
 op_assign
 id|AS_LOOP_GOOD
 suffix:semicolon
-id|isp2100_make_portdb
+id|isp2x00_make_portdb
 c_func
 (paren
 id|host
@@ -4660,7 +4743,11 @@ id|cmd-&gt;target_lun
 op_assign
 id|Cmnd-&gt;lun
 suffix:semicolon
-macro_line|#if ISP2100_PORTDB
+id|cmd-&gt;expanded_lun
+op_assign
+id|Cmnd-&gt;lun
+suffix:semicolon
+macro_line|#if ISP2x00_PORTDB
 id|cmd-&gt;target_id
 op_assign
 id|hostdata-&gt;port_db
@@ -5274,7 +5361,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_queuecommand&quot;
+l_string|&quot;isp2x00_queuecommand&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5283,9 +5370,9 @@ suffix:semicolon
 )brace
 DECL|macro|ASYNC_EVENT_INTERRUPT
 mdefine_line|#define ASYNC_EVENT_INTERRUPT&t;0x01
-DECL|function|do_isp2100_intr_handler
+DECL|function|do_isp2x00_intr_handler
 r_void
-id|do_isp2100_intr_handler
+id|do_isp2x00_intr_handler
 c_func
 (paren
 r_int
@@ -5314,7 +5401,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|isp2100_intr_handler
+id|isp2x00_intr_handler
 c_func
 (paren
 id|irq
@@ -5334,9 +5421,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-DECL|function|isp2100_intr_handler
+DECL|function|isp2x00_intr_handler
 r_void
-id|isp2100_intr_handler
+id|isp2x00_intr_handler
 c_func
 (paren
 r_int
@@ -5369,7 +5456,7 @@ op_assign
 id|dev_id
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -5388,14 +5475,14 @@ suffix:semicolon
 id|ENTER_INTR
 c_func
 (paren
-l_string|&quot;isp2100_intr_handler&quot;
+l_string|&quot;isp2x00_intr_handler&quot;
 )paren
 suffix:semicolon
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -5510,10 +5597,13 @@ id|status
 r_case
 id|LOOP_UP
 suffix:colon
+r_case
+id|POINT_TO_POINT_UP
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc%d : loop is up&bslash;n&quot;
+l_string|&quot;qlogicfc%d : link is up&bslash;n&quot;
 comma
 id|hostdata-&gt;host_id
 )paren
@@ -5530,7 +5620,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc%d : loop is down&bslash;n&quot;
+l_string|&quot;qlogicfc%d : link is down&bslash;n&quot;
 comma
 id|hostdata-&gt;host_id
 )paren
@@ -5538,6 +5628,25 @@ suffix:semicolon
 id|hostdata-&gt;adapter_state
 op_assign
 id|AS_LOOP_DOWN
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CONNECTION_MODE
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;received CONNECTION_MODE irq %x&bslash;n&quot;
+comma
+id|inw
+c_func
+(paren
+id|host-&gt;io_port
+op_plus
+id|MBOX1
+)paren
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5812,7 +5921,7 @@ suffix:semicolon
 id|DEBUG_INTR
 c_func
 (paren
-id|isp2100_print_status_entry
+id|isp2x00_print_status_entry
 c_func
 (paren
 id|sts
@@ -5838,7 +5947,7 @@ id|sts-&gt;handle
 (brace
 id|Cmnd-&gt;result
 op_assign
-id|isp2100_return_status
+id|isp2x00_return_status
 c_func
 (paren
 id|sts
@@ -5890,7 +5999,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; * if we get back an error indicating the port&n;&t;&t;&t;&t; * is not there or if the loop is down and &n;&t;&t;&t;&t; * this is a device that used to be there &n;&t;&t;&t;&t; * allow the command to timeout.&n;&t;&t;&t;&t; * the device may well be back in a couple of&n;&t;&t;&t;&t; * seconds.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * if we get back an error indicating the port&n;&t;&t;&t;&t; * is not there or if the link is down and &n;&t;&t;&t;&t; * this is a device that used to be there &n;&t;&t;&t;&t; * allow the command to timeout.&n;&t;&t;&t;&t; * the device may well be back in a couple of&n;&t;&t;&t;&t; * seconds.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6156,14 +6265,14 @@ suffix:semicolon
 id|LEAVE_INTR
 c_func
 (paren
-l_string|&quot;isp2100_intr_handler&quot;
+l_string|&quot;isp2x00_intr_handler&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|isp2100_return_status
+DECL|function|isp2x00_return_status
 r_static
 r_int
-id|isp2100_return_status
+id|isp2x00_return_status
 c_func
 (paren
 r_struct
@@ -6177,7 +6286,7 @@ id|host_status
 op_assign
 id|DID_ERROR
 suffix:semicolon
-macro_line|#if DEBUG_ISP2100_INTR
+macro_line|#if DEBUG_ISP2x00_INTR
 r_static
 r_char
 op_star
@@ -6207,11 +6316,11 @@ comma
 l_string|&quot;DID_BAD_INTR&quot;
 )brace
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2100_INTR */
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2x00_INTR */
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_return_status&quot;
+l_string|&quot;isp2x00_return_status&quot;
 )paren
 suffix:semicolon
 id|DEBUG
@@ -6356,7 +6465,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_return_status&quot;
+l_string|&quot;isp2x00_return_status&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6373,9 +6482,9 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-DECL|function|isp2100_abort
+DECL|function|isp2x00_abort
 r_int
-id|isp2100_abort
+id|isp2x00_abort
 c_func
 (paren
 id|Scsi_Cmnd
@@ -6398,7 +6507,7 @@ op_star
 id|host
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -6410,7 +6519,7 @@ suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_abort&quot;
+l_string|&quot;isp2x00_abort&quot;
 )paren
 suffix:semicolon
 id|host
@@ -6421,7 +6530,7 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -6464,7 +6573,7 @@ r_return
 id|SUCCESS
 suffix:semicolon
 )brace
-id|isp2100_disable_irqs
+id|isp2x00_disable_irqs
 c_func
 (paren
 id|host
@@ -6477,7 +6586,7 @@ l_int|0
 op_assign
 id|MBOX_ABORT_IOCB
 suffix:semicolon
-macro_line|#if ISP2100_PORTDB
+macro_line|#if ISP2x00_PORTDB
 id|param
 (braket
 l_int|1
@@ -6539,7 +6648,7 @@ id|i
 op_rshift
 l_int|16
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -6623,7 +6732,7 @@ l_int|0
 op_assign
 id|MBOX_GET_FIRMWARE_STATE
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -6658,7 +6767,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 id|host
@@ -6667,16 +6776,16 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_abort&quot;
+l_string|&quot;isp2x00_abort&quot;
 )paren
 suffix:semicolon
 r_return
 id|return_status
 suffix:semicolon
 )brace
-DECL|function|isp2100_reset
+DECL|function|isp2x00_reset
 r_int
-id|isp2100_reset
+id|isp2x00_reset
 c_func
 (paren
 id|Scsi_Cmnd
@@ -6700,7 +6809,7 @@ op_star
 id|host
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -6712,7 +6821,7 @@ suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_reset&quot;
+l_string|&quot;isp2x00_reset&quot;
 )paren
 suffix:semicolon
 id|host
@@ -6723,7 +6832,7 @@ id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -6742,13 +6851,13 @@ l_int|1
 op_assign
 l_int|3
 suffix:semicolon
-id|isp2100_disable_irqs
+id|isp2x00_disable_irqs
 c_func
 (paren
 id|host
 )paren
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -6785,7 +6894,7 @@ op_assign
 id|SCSI_RESET_ERROR
 suffix:semicolon
 )brace
-id|isp2100_enable_irqs
+id|isp2x00_enable_irqs
 c_func
 (paren
 id|host
@@ -6794,7 +6903,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_reset&quot;
+l_string|&quot;isp2x00_reset&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6802,9 +6911,9 @@ id|return_status
 suffix:semicolon
 suffix:semicolon
 )brace
-DECL|function|isp2100_biosparam
+DECL|function|isp2x00_biosparam
 r_int
-id|isp2100_biosparam
+id|isp2x00_biosparam
 c_func
 (paren
 id|Disk
@@ -6828,7 +6937,7 @@ suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_biosparam&quot;
+l_string|&quot;isp2x00_biosparam&quot;
 )paren
 suffix:semicolon
 id|ip
@@ -6902,17 +7011,17 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_biosparam&quot;
+l_string|&quot;isp2x00_biosparam&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|isp2100_reset_hardware
+DECL|function|isp2x00_reset_hardware
 r_static
 r_int
-id|isp2100_reset_hardware
+id|isp2x00_reset_hardware
 c_func
 (paren
 r_struct
@@ -6928,7 +7037,7 @@ l_int|8
 )braket
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -6938,14 +7047,14 @@ suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_reset_hardware&quot;
+l_string|&quot;isp2x00_reset_hardware&quot;
 )paren
 suffix:semicolon
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -7029,7 +7138,7 @@ comma
 id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
-macro_line|#if DEBUG_ISP2100
+macro_line|#if DEBUG_ISP2x00
 id|printk
 c_func
 (paren
@@ -7158,7 +7267,7 @@ id|MBOX7
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2100 */
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2x00 */
 id|DEBUG
 c_func
 (paren
@@ -7176,6 +7285,54 @@ macro_line|#if RELOAD_FIRMWARE
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+op_star
+id|risc_code
+op_assign
+l_int|NULL
+suffix:semicolon
+r_int
+r_int
+id|risc_code_len
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hostdata-&gt;pci_dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_QLOGIC_ISP2100
+)paren
+(brace
+id|risc_code
+op_assign
+id|risc_code2100
+suffix:semicolon
+id|risc_code_len
+op_assign
+id|risc_code_length2100
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|hostdata-&gt;pci_dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_QLOGIC_ISP2200
+)paren
+(brace
+id|risc_code
+op_assign
+id|risc_code2200
+suffix:semicolon
+id|risc_code_len
+op_assign
+id|risc_code_length2200
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -7185,7 +7342,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|risc_code_length01
+id|risc_code_len
 suffix:semicolon
 id|i
 op_increment
@@ -7212,12 +7369,12 @@ id|param
 l_int|2
 )braket
 op_assign
-id|risc_code01
+id|risc_code
 (braket
 id|i
 )braket
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7265,7 +7422,7 @@ l_int|1
 op_assign
 id|risc_code_addr01
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7322,7 +7479,7 @@ l_int|1
 op_assign
 id|risc_code_addr01
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7337,7 +7494,7 @@ l_int|0
 op_assign
 id|MBOX_ABOUT_FIRMWARE
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7406,7 +7563,7 @@ macro_line|#ifdef USE_NVRAM_DEFAULTS
 r_if
 c_cond
 (paren
-id|isp2100_get_nvram_defaults
+id|isp2x00_get_nvram_defaults
 c_func
 (paren
 id|host
@@ -7651,7 +7808,7 @@ op_amp
 l_int|0xffff
 )paren
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7694,7 +7851,7 @@ l_int|0
 op_assign
 id|MBOX_GET_FIRMWARE_STATE
 suffix:semicolon
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 id|host
@@ -7733,7 +7890,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_reset_hardware&quot;
+l_string|&quot;isp2x00_reset_hardware&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7741,10 +7898,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef USE_NVRAM_DEFAULTS
-DECL|function|isp2100_get_nvram_defaults
+DECL|function|isp2x00_get_nvram_defaults
 r_static
 r_int
-id|isp2100_get_nvram_defaults
+id|isp2x00_get_nvram_defaults
 c_func
 (paren
 r_struct
@@ -7764,7 +7921,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7779,7 +7936,7 @@ l_int|1
 suffix:semicolon
 id|value
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7792,7 +7949,7 @@ id|control_block-&gt;node_name
 l_int|0
 )braket
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7805,7 +7962,7 @@ id|control_block-&gt;node_name
 l_int|1
 )braket
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7818,7 +7975,7 @@ id|control_block-&gt;node_name
 l_int|2
 )braket
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7831,7 +7988,7 @@ id|control_block-&gt;node_name
 l_int|3
 )braket
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7841,7 +7998,7 @@ l_int|12
 suffix:semicolon
 id|control_block-&gt;hard_addr
 op_assign
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 id|host
@@ -7854,10 +8011,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|isp2100_init
+DECL|function|isp2x00_init
 r_static
 r_int
-id|isp2100_init
+id|isp2x00_init
 c_func
 (paren
 r_struct
@@ -7870,7 +8027,7 @@ id|u_int
 id|io_base
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 suffix:semicolon
@@ -7891,14 +8048,14 @@ suffix:semicolon
 id|ENTER
 c_func
 (paren
-l_string|&quot;isp2100_init&quot;
+l_string|&quot;isp2x00_init&quot;
 )paren
 suffix:semicolon
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|sh-&gt;hostdata
@@ -7986,12 +8143,16 @@ c_cond
 id|pdev-&gt;device
 op_ne
 id|PCI_DEVICE_ID_QLOGIC_ISP2100
+op_logical_and
+id|pdev-&gt;device
+op_ne
+id|PCI_DEVICE_ID_QLOGIC_ISP2200
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc%d : 0x%04x does not match ISP2100 device id&bslash;n&quot;
+l_string|&quot;qlogicfc%d : 0x%04x does not match ISP2100 or ISP2200 device id&bslash;n&quot;
 comma
 id|hostdata-&gt;host_id
 comma
@@ -8063,16 +8224,20 @@ c_cond
 (paren
 id|revision
 op_ne
-id|ISP2100_REV_ID
+id|ISP2100_REV_ID1
 op_logical_and
 id|revision
 op_ne
 id|ISP2100_REV_ID3
+op_logical_and
+id|revision
+op_ne
+id|ISP2200_REV_ID5
 )paren
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc%d : new isp2100 revision ID (%d)&bslash;n&quot;
+l_string|&quot;qlogicfc%d : new isp2x00 revision ID (%d)&bslash;n&quot;
 comma
 id|hostdata-&gt;host_id
 comma
@@ -8094,7 +8259,7 @@ suffix:semicolon
 id|LEAVE
 c_func
 (paren
-l_string|&quot;isp2100_init&quot;
+l_string|&quot;isp2x00_init&quot;
 )paren
 suffix:semicolon
 r_return
@@ -8104,9 +8269,9 @@ suffix:semicolon
 macro_line|#if USE_NVRAM_DEFAULTS
 DECL|macro|NVRAM_DELAY
 mdefine_line|#define NVRAM_DELAY() udelay(10)&t;/* 10 microsecond delay */
-DECL|function|isp2100_read_nvram_word
+DECL|function|isp2x00_read_nvram_word
 id|u_short
-id|isp2100_read_nvram_word
+id|isp2x00_read_nvram_word
 c_func
 (paren
 r_struct
@@ -8351,10 +8516,10 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;/* USE_NVRAM_DEFAULTS */
 multiline_comment|/*&n; * currently, this is only called during initialization or abort/reset,&n; * at which times interrupts are disabled, so polling is OK, I guess...&n; */
-DECL|function|isp2100_mbox_command
+DECL|function|isp2x00_mbox_command
 r_static
 r_int
-id|isp2100_mbox_command
+id|isp2x00_mbox_command
 c_func
 (paren
 r_struct
@@ -8372,13 +8537,13 @@ r_int
 id|loop_count
 suffix:semicolon
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 id|hostdata
 op_assign
 (paren
 r_struct
-id|isp2100_hostdata
+id|isp2x00_hostdata
 op_star
 )paren
 id|host-&gt;hostdata
@@ -8759,7 +8924,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|isp2100_intr_handler
+id|isp2x00_intr_handler
 c_func
 (paren
 id|host-&gt;irq
@@ -8965,10 +9130,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if DEBUG_ISP2100_INTR
-DECL|function|isp2100_print_status_entry
+macro_line|#if DEBUG_ISP2x00_INTR
+DECL|function|isp2x00_print_status_entry
 r_void
-id|isp2100_print_status_entry
+id|isp2x00_print_status_entry
 c_func
 (paren
 r_struct
@@ -9033,11 +9198,11 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif                         /* DEBUG_ISP2100_INTR */
-macro_line|#if DEBUG_ISP2100
-DECL|function|isp2100_print_scsi_cmd
+macro_line|#endif                         /* DEBUG_ISP2x00_INTR */
+macro_line|#if DEBUG_ISP2x00
+DECL|function|isp2x00_print_scsi_cmd
 r_void
-id|isp2100_print_scsi_cmd
+id|isp2x00_print_scsi_cmd
 c_func
 (paren
 id|Scsi_Cmnd
@@ -9098,7 +9263,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2100 */
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_ISP2x00 */
 macro_line|#ifdef MODULE
 DECL|variable|driver_template
 id|Scsi_Host_Template

@@ -22,8 +22,6 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-DECL|macro|BUG_TRAP
-mdefine_line|#define BUG_TRAP(x) if (!(x)) { printk(&quot;Assertion (&quot; #x &quot;) failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 macro_line|#ifdef CONFIG_RTNETLINK
 r_static
 r_int
@@ -83,7 +81,7 @@ id|event
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&n;   Short review.&n;   -------------&n;&n;   This file consists of two interrelated parts:&n;&n;   1. queueing disciplines manager frontend.&n;   2. traffic classes manager frontend.&n;&n;   Generally, queueing discipline (&quot;qdisc&quot;) is a black box,&n;   which is able to enqueue packets and to dequeue them (when&n;   device is ready to send something) in order and at times&n;   determined by algorithm hidden in it.&n;&n;   qdisc&squot;s are divided to two categories:&n;   - &quot;queues&quot;, which have no internal structure visible from outside.&n;   - &quot;schedulers&quot;, which split all the packets to &quot;traffic classes&quot;,&n;     using &quot;packet classifiers&quot; (look at cls_api.c)&n;&n;   In turn, classes may have child qdiscs (as rule, queues)&n;   attached to them etc. etc. etc.&n;&n;   The goal of the routines in this file is to translate&n;   information supplied by user in the form of handles&n;   to more intelligible for kernel form, to make some sanity&n;   checks and part of work, which is common to all qdiscs&n;   and to provide rtnetlink notifications.&n;&n;   All real intelligent work is done inside qdisc modules.&n;&n;&n;&n;   Every discipline has two major routines: enqueue and dequeue.&n;&n;   ---dequeue&n;&n;   dequeue usually returns a skb to send. It is allowed to return NULL,&n;   but it does not mean that queue is empty, it just means that&n;   discipline does not want to send anything this time.&n;   Queue is really empty if q-&gt;q.qlen == 0.&n;   For complicated disciplines with multiple queues q-&gt;q is not&n;   real packet queue, but however q-&gt;q.qlen must be valid.&n;&n;   ---enqueue&n;&n;   enqueue returns number of enqueued packets i.e. this number is 1,&n;   if packet was enqueued successfully and &lt;1 if something (not&n;   necessary THIS packet) was dropped.&n;&n;   Auxiliary routines:&n;&n;   ---requeue&n;&n;   requeues once dequeued packet. It is used for non-standard or&n;   just buggy devices, which can defer output even if dev-&gt;tbusy=0.&n;&n;   ---reset&n;&n;   returns qdisc to initial state: purge all buffers, clear all&n;   timers, counters (except for statistics) etc.&n;&n;   ---init&n;&n;   initializes newly created qdisc.&n;&n;   ---destroy&n;&n;   destroys resources allocated by init and during lifetime of qdisc.&n;&n;   ---change&n;&n;   changes qdisc parameters.&n; */
+multiline_comment|/*&n;&n;   Short review.&n;   -------------&n;&n;   This file consists of two interrelated parts:&n;&n;   1. queueing disciplines manager frontend.&n;   2. traffic classes manager frontend.&n;&n;   Generally, queueing discipline (&quot;qdisc&quot;) is a black box,&n;   which is able to enqueue packets and to dequeue them (when&n;   device is ready to send something) in order and at times&n;   determined by algorithm hidden in it.&n;&n;   qdisc&squot;s are divided to two categories:&n;   - &quot;queues&quot;, which have no internal structure visible from outside.&n;   - &quot;schedulers&quot;, which split all the packets to &quot;traffic classes&quot;,&n;     using &quot;packet classifiers&quot; (look at cls_api.c)&n;&n;   In turn, classes may have child qdiscs (as rule, queues)&n;   attached to them etc. etc. etc.&n;&n;   The goal of the routines in this file is to translate&n;   information supplied by user in the form of handles&n;   to more intelligible for kernel form, to make some sanity&n;   checks and part of work, which is common to all qdiscs&n;   and to provide rtnetlink notifications.&n;&n;   All real intelligent work is done inside qdisc modules.&n;&n;&n;&n;   Every discipline has two major routines: enqueue and dequeue.&n;&n;   ---dequeue&n;&n;   dequeue usually returns a skb to send. It is allowed to return NULL,&n;   but it does not mean that queue is empty, it just means that&n;   discipline does not want to send anything this time.&n;   Queue is really empty if q-&gt;q.qlen == 0.&n;   For complicated disciplines with multiple queues q-&gt;q is not&n;   real packet queue, but however q-&gt;q.qlen must be valid.&n;&n;   ---enqueue&n;&n;   enqueue returns 0, if packet was enqueued successfully.&n;   If packet (this one or another one) was dropped, it returns&n;   not zero error code.&n;   NET_XMIT_DROP &t;- this packet dropped&n;     Expected action: do not backoff, but wait until queue will clear.&n;   NET_XMIT_CN&t; &t;- probably this packet enqueued, but another one dropped.&n;     Expected action: backoff or ignore&n;   NET_XMIT_POLICED&t;- dropped by police.&n;     Expected action: backoff or error to real-time apps.&n;&n;   Auxiliary routines:&n;&n;   ---requeue&n;&n;   requeues once dequeued packet. It is used for non-standard or&n;   just buggy devices, which can defer output even if dev-&gt;tbusy=0.&n;&n;   ---reset&n;&n;   returns qdisc to initial state: purge all buffers, clear all&n;   timers, counters (except for statistics) etc.&n;&n;   ---init&n;&n;   initializes newly created qdisc.&n;&n;   ---destroy&n;&n;   destroys resources allocated by init and during lifetime of qdisc.&n;&n;   ---change&n;&n;   changes qdisc parameters.&n; */
 multiline_comment|/* Protects list of registered TC modules. It is pure SMP lock. */
 DECL|variable|qdisc_mod_lock
 r_static
@@ -1920,7 +1918,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get_by_index
+id|__dev_get_by_index
 c_func
 (paren
 id|tcm-&gt;tcm_ifindex
@@ -2256,7 +2254,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get_by_index
+id|__dev_get_by_index
 c_func
 (paren
 id|tcm-&gt;tcm_ifindex
@@ -3555,7 +3553,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get_by_index
+id|__dev_get_by_index
 c_func
 (paren
 id|tcm-&gt;tcm_ifindex
@@ -4575,6 +4573,12 @@ l_int|0
 op_assign
 id|t
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|skb-&gt;len
 suffix:semicolon
@@ -4633,11 +4637,15 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%08x %08x&bslash;n&quot;
+l_string|&quot;%08x %08x %08x %08x&bslash;n&quot;
 comma
 id|psched_tick_per_us
 comma
 id|psched_us_per_tick
+comma
+l_int|1000000
+comma
+id|HZ
 )paren
 suffix:semicolon
 id|len
@@ -5317,6 +5325,14 @@ id|INIT_QDISC
 c_func
 (paren
 id|prio
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_SCH_ATM
+id|INIT_QDISC
+c_func
+(paren
+id|atm
 )paren
 suffix:semicolon
 macro_line|#endif

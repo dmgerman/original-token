@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Firewall&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fw.c,v 1.12 1999/06/09 08:29:32 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Firewall&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fw.c,v 1.14 1999/08/20 11:06:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -192,6 +192,12 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+DECL|variable|ip6_fw_lock
+id|rwlock_t
+id|ip6_fw_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 DECL|function|ip6_rule_add
 r_static
 r_void
@@ -209,9 +215,11 @@ id|ip6_fw_rule
 op_star
 id|next
 suffix:semicolon
-id|start_bh_atomic
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|ip6_fw_lock
 )paren
 suffix:semicolon
 id|ip6_fw_rule_cnt
@@ -238,9 +246,11 @@ id|next-&gt;prev
 op_assign
 id|rl
 suffix:semicolon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|ip6_fw_lock
 )paren
 suffix:semicolon
 )brace
@@ -264,9 +274,11 @@ comma
 op_star
 id|prev
 suffix:semicolon
-id|start_bh_atomic
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|ip6_fw_lock
 )paren
 suffix:semicolon
 id|ip6_fw_rule_cnt
@@ -288,9 +300,11 @@ id|prev-&gt;next
 op_assign
 id|next
 suffix:semicolon
-id|end_bh_atomic
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|ip6_fw_lock
 )paren
 suffix:semicolon
 )brace

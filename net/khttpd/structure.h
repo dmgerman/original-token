@@ -174,32 +174,5 @@ suffix:semicolon
 multiline_comment|/* Padding for cache-lines */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&n;struct khttpd_delayed_release is used to build a list of all struct sockets&n;that were passed to userspace. It seems to be required that they are not destroyed&n;immediatly, so they have a timeout-counter.&n;&n;*/
-r_struct
-id|khttpd_delayed_release
-suffix:semicolon
-DECL|struct|khttpd_delayed_release
-r_struct
-id|khttpd_delayed_release
-(brace
-DECL|member|sock
-r_struct
-id|socket
-op_star
-id|sock
-suffix:semicolon
-DECL|member|timeout
-r_int
-r_int
-id|timeout
-suffix:semicolon
-DECL|member|Next
-r_struct
-id|khttpd_delayed_release
-op_star
-id|Next
-suffix:semicolon
-)brace
-suffix:semicolon
 macro_line|#endif
 eof

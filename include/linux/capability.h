@@ -115,6 +115,7 @@ multiline_comment|/* Allow modification of S_IMMUTABLE and S_APPEND file attribu
 DECL|macro|CAP_LINUX_IMMUTABLE
 mdefine_line|#define CAP_LINUX_IMMUTABLE  9
 multiline_comment|/* Allows binding to TCP/UDP sockets below 1024 */
+multiline_comment|/* Allows binding to ATM VCIs below 32 */
 DECL|macro|CAP_NET_BIND_SERVICE
 mdefine_line|#define CAP_NET_BIND_SERVICE 10
 multiline_comment|/* Allow broadcasting, listen to multicast */
@@ -131,6 +132,7 @@ multiline_comment|/* Allow setting promiscuous mode */
 multiline_comment|/* Allow clearing driver statistics */
 multiline_comment|/* Allow multicasting */
 multiline_comment|/* Allow read/write of device-specific registers */
+multiline_comment|/* Allow activation of ATM control sockets */
 DECL|macro|CAP_NET_ADMIN
 mdefine_line|#define CAP_NET_ADMIN        12
 multiline_comment|/* Allow use of RAW sockets */

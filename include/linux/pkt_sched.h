@@ -604,5 +604,38 @@ comma
 suffix:semicolon
 DECL|macro|TCA_CBQ_MAX
 mdefine_line|#define TCA_CBQ_MAX&t;TCA_CBQ_POLICE
+multiline_comment|/* ATM  section */
+r_enum
+(brace
+DECL|enumerator|TCA_ATM_UNSPEC
+id|TCA_ATM_UNSPEC
+comma
+DECL|enumerator|TCA_ATM_FD
+id|TCA_ATM_FD
+comma
+multiline_comment|/* file/socket descriptor */
+DECL|enumerator|TCA_ATM_PTR
+id|TCA_ATM_PTR
+comma
+multiline_comment|/* pointer to descriptor - later */
+DECL|enumerator|TCA_ATM_HDR
+id|TCA_ATM_HDR
+comma
+multiline_comment|/* LL header */
+DECL|enumerator|TCA_ATM_EXCESS
+id|TCA_ATM_EXCESS
+comma
+multiline_comment|/* excess traffic class (0 for CLP)  */
+DECL|enumerator|TCA_ATM_ADDR
+id|TCA_ATM_ADDR
+comma
+multiline_comment|/* PVC address (for output only) */
+DECL|enumerator|TCA_ATM_STATE
+id|TCA_ATM_STATE
+multiline_comment|/* VC state (ATM_VS_*; for output only) */
+)brace
+suffix:semicolon
+DECL|macro|TCA_ATM_MAX
+mdefine_line|#define TCA_ATM_MAX&t;TCA_ATM_STATE
 macro_line|#endif
 eof

@@ -21,7 +21,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;net/x25.h&gt;
 DECL|variable|x25_neigh_list
 r_static
@@ -804,36 +803,6 @@ op_star
 id|neigh
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|call_fw_firewall
-c_func
-(paren
-id|PF_X25
-comma
-id|skb-&gt;dev
-comma
-id|skb-&gt;data
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -1390,9 +1359,23 @@ id|dev
 op_eq
 l_int|NULL
 )paren
+(brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|x25_subscr.extended
 op_assign
@@ -1481,9 +1464,23 @@ id|dev
 op_eq
 l_int|NULL
 )paren
+(brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond

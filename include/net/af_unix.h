@@ -54,7 +54,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|UNIX_HASH_SIZE
-mdefine_line|#define UNIX_HASH_SIZE&t;16
+mdefine_line|#define UNIX_HASH_SIZE&t;256
 r_extern
 id|unix_socket
 op_star
@@ -64,6 +64,14 @@ id|UNIX_HASH_SIZE
 op_plus
 l_int|1
 )braket
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|unix_table_lock
+suffix:semicolon
+r_extern
+id|atomic_t
+id|unix_tot_inflight
 suffix:semicolon
 DECL|macro|forall_unix_sockets
 mdefine_line|#define forall_unix_sockets(i, s) for (i=0; i&lt;=UNIX_HASH_SIZE; i++) &bslash;&n;                                    for (s=unix_socket_table[i]; s; s=s-&gt;next)
@@ -110,16 +118,19 @@ op_star
 id|fp
 suffix:semicolon
 multiline_comment|/* Passed files&t;&t;*/
-DECL|member|attr
-r_int
-id|attr
-suffix:semicolon
-multiline_comment|/* Special attributes&t;*/
 )brace
 suffix:semicolon
 DECL|macro|UNIXCB
 mdefine_line|#define UNIXCB(skb) &t;(*(struct unix_skb_parms*)&amp;((skb)-&gt;cb))
 DECL|macro|UNIXCREDS
 mdefine_line|#define UNIXCREDS(skb)&t;(&amp;UNIXCB((skb)).creds)
+DECL|macro|unix_state_rlock
+mdefine_line|#define unix_state_rlock(s)&t;read_lock(&amp;(s)-&gt;protinfo.af_unix.lock)
+DECL|macro|unix_state_runlock
+mdefine_line|#define unix_state_runlock(s)&t;read_unlock(&amp;(s)-&gt;protinfo.af_unix.lock)
+DECL|macro|unix_state_wlock
+mdefine_line|#define unix_state_wlock(s)&t;write_lock(&amp;(s)-&gt;protinfo.af_unix.lock)
+DECL|macro|unix_state_wunlock
+mdefine_line|#define unix_state_wunlock(s)&t;write_unlock(&amp;(s)-&gt;protinfo.af_unix.lock)
 macro_line|#endif
 eof

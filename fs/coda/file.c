@@ -568,15 +568,15 @@ c_func
 (paren
 id|D_FILE
 comma
-l_string|&quot;ops at %x result %d, count %d, position: %d&bslash;n&quot;
+l_string|&quot;ops at %p result %d, count %ld, position: %d&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|cont_file.f_op
 comma
 id|result
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 (paren
@@ -1217,6 +1217,9 @@ id|n
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 )paren
 suffix:semicolon
@@ -1230,13 +1233,13 @@ c_func
 (paren
 id|D_FILE
 comma
-l_string|&quot;ino: %ld, ops at %x&bslash;n&quot;
-comma
-id|ino
+l_string|&quot;ino: %ld, ops at %p&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
+id|ino
+comma
 (paren
 op_star
 id|ind

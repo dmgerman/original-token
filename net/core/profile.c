@@ -479,19 +479,10 @@ id|len
 OL
 l_int|0
 )paren
-(brace
 id|len
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;Yep, guys... our template for proc_*_read is crappy :-)&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1261,11 +1252,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef __alpha__
 id|alpha_tick
 c_func
@@ -1341,11 +1327,6 @@ c_func
 (paren
 op_amp
 id|net_prof_total.entered
-)paren
-suffix:semicolon
-id|end_bh_atomic
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

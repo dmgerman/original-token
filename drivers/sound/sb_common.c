@@ -331,6 +331,12 @@ op_amp
 l_int|4
 )paren
 multiline_comment|/* MPU401 interrupt */
+r_if
+c_cond
+(paren
+id|devc-&gt;midi_irq_cookie
+)paren
+(brace
 id|uart401intr
 c_func
 (paren
@@ -341,6 +347,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 r_if
 c_cond
@@ -3573,7 +3580,6 @@ id|devc-&gt;irq
 OG
 l_int|0
 )paren
-suffix:semicolon
 id|free_irq
 c_func
 (paren

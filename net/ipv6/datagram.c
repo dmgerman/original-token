@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.17 1999/04/22 10:07:40 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.18 1999/08/20 11:06:17 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -701,7 +701,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_cmsg_flags
+id|sk-&gt;protinfo.af_inet.cmsg_flags
 )paren
 id|ip_cmsg_recv
 c_func
@@ -1352,13 +1352,10 @@ id|src_info-&gt;ipi6_addr
 )paren
 )paren
 (brace
-r_struct
-id|inet6_ifaddr
-op_star
-id|ifp
-suffix:semicolon
-id|ifp
-op_assign
+r_if
+c_cond
+(paren
+op_logical_neg
 id|ipv6_chk_addr
 c_func
 (paren
@@ -1366,16 +1363,7 @@ op_amp
 id|src_info-&gt;ipi6_addr
 comma
 l_int|NULL
-comma
-l_int|0
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ifp
-op_eq
-l_int|NULL
 )paren
 (brace
 id|err

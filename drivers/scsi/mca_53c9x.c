@@ -800,7 +800,7 @@ suffix:semicolon
 id|mca_mark_as_unused
 c_func
 (paren
-id|esp-&gt;eregs-&gt;slot
+id|esp-&gt;slot
 )paren
 suffix:semicolon
 r_return

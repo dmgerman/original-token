@@ -415,7 +415,7 @@ id|lp
 suffix:semicolon
 id|lp-&gt;dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|device

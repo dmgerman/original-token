@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.56 1999/05/29 23:20:42 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.60 1999/08/23 07:02:01 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;The functions in this file will not compile correctly with gcc 2.4.x&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -22,6 +22,9 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef CONFIG_ATM
+macro_line|#include &lt;linux/atmdev.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; *&t;Resource tracking variables&n; */
 DECL|variable|net_skbcount
 r_static
@@ -85,7 +88,7 @@ op_star
 id|here
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;skput:over: %p:%d put:%d dev:%s&quot;
@@ -103,6 +106,15 @@ id|skb-&gt;dev-&gt;name
 suffix:colon
 l_string|&quot;&lt;NULL&gt;&quot;
 )paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|skb_under_panic
@@ -123,7 +135,7 @@ op_star
 id|here
 )paren
 (brace
-id|panic
+id|printk
 c_func
 (paren
 l_string|&quot;skput:under: %p:%d put:%d dev:%s&quot;
@@ -141,6 +153,15 @@ id|skb-&gt;dev-&gt;name
 suffix:colon
 l_string|&quot;&lt;NULL&gt;&quot;
 )paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|show_net_buffers
@@ -268,12 +289,21 @@ id|KERN_ERR
 l_string|&quot;alloc_skb called nonatomically &quot;
 l_string|&quot;from interrupt %p&bslash;n&quot;
 comma
-id|__builtin_return_address
+id|NET_CALLER
 c_func
 (paren
+id|size
+)paren
+)paren
+suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
 l_int|0
-)paren
-)paren
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|gfp_mask
@@ -350,9 +380,16 @@ op_amp
 id|net_allocs
 )paren
 suffix:semicolon
+multiline_comment|/* XXX: does not include slab overhead */
 id|skb-&gt;truesize
 op_assign
 id|size
+op_plus
+r_sizeof
+(paren
+r_struct
+id|sk_buff
+)paren
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -393,6 +430,18 @@ id|skb-&gt;cloned
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_ATM
+id|ATM_SKB
+c_func
+(paren
+id|skb
+)paren
+op_member_access_from_pointer
+id|iovcnt
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|atomic_set
 c_func
 (paren
@@ -514,11 +563,25 @@ id|skb-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FIREWALL
-id|skb-&gt;fwmark
+id|skb-&gt;rx_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+id|skb-&gt;nfmark
+op_assign
+id|skb-&gt;nfreason
+op_assign
+id|skb-&gt;nfcache
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|skb-&gt;nf_debug
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|memset
 c_func
@@ -605,6 +668,7 @@ c_cond
 (paren
 id|skb-&gt;list
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -612,13 +676,23 @@ id|KERN_WARNING
 l_string|&quot;Warning: kfree_skb passed an skb still &quot;
 l_string|&quot;on a list (from %p).&bslash;n&quot;
 comma
-id|__builtin_return_address
+id|NET_CALLER
 c_func
 (paren
-l_int|0
+id|skb
 )paren
 )paren
 suffix:semicolon
+op_star
+(paren
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|dst_release
 c_func
 (paren
@@ -637,6 +711,19 @@ id|destructor
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|skb-&gt;rx_dev
+)paren
+(brace
+id|dev_put
+c_func
+(paren
+id|skb-&gt;rx_dev
 )paren
 suffix:semicolon
 )brace
@@ -746,6 +833,10 @@ c_func
 (paren
 id|n-&gt;dst
 )paren
+suffix:semicolon
+id|n-&gt;rx_dev
+op_assign
+l_int|NULL
 suffix:semicolon
 id|n-&gt;cloned
 op_assign
@@ -893,6 +984,10 @@ id|n-&gt;dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+id|n-&gt;rx_dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|n-&gt;priority
 op_assign
 id|skb-&gt;priority
@@ -973,11 +1068,25 @@ id|n-&gt;security
 op_assign
 id|skb-&gt;security
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FIREWALL
-id|n-&gt;fwmark
+macro_line|#ifdef CONFIG_NETFILTER
+id|n-&gt;nfmark
 op_assign
-id|skb-&gt;fwmark
+id|skb-&gt;nfmark
 suffix:semicolon
+id|n-&gt;nfreason
+op_assign
+id|skb-&gt;nfreason
+suffix:semicolon
+id|n-&gt;nfcache
+op_assign
+id|skb-&gt;nfcache
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|n-&gt;nf_debug
+op_assign
+id|skb-&gt;nf_debug
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_return
 id|n
@@ -1008,26 +1117,19 @@ r_int
 r_int
 id|offset
 suffix:semicolon
-r_int
-id|headroom
-op_assign
-id|skb_headroom
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Allocate the copy buffer&n;&t; */
 id|n
 op_assign
 id|alloc_skb
 c_func
 (paren
-id|skb-&gt;truesize
+(paren
+id|skb-&gt;end
+op_minus
+id|skb-&gt;data
+)paren
 op_plus
 id|newheadroom
-op_minus
-id|headroom
 comma
 id|GFP_ATOMIC
 )paren
@@ -1099,6 +1201,10 @@ id|n-&gt;dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+id|n-&gt;rx_dev
+op_assign
+l_int|NULL
+suffix:semicolon
 id|n-&gt;dst
 op_assign
 id|dst_clone
@@ -1171,11 +1277,25 @@ id|n-&gt;security
 op_assign
 id|skb-&gt;security
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_FIREWALL
-id|n-&gt;fwmark
+macro_line|#ifdef CONFIG_NETFILTER
+id|n-&gt;nfmark
 op_assign
-id|skb-&gt;fwmark
+id|skb-&gt;nfmark
 suffix:semicolon
+id|n-&gt;nfreason
+op_assign
+id|skb-&gt;nfreason
+suffix:semicolon
+id|n-&gt;nfcache
+op_assign
+id|skb-&gt;nfcache
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|n-&gt;nf_debug
+op_assign
+id|skb-&gt;nf_debug
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_return
 id|n

@@ -130,6 +130,14 @@ DECL|member|users
 r_int
 id|users
 suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|tm_running
 r_char
 id|tm_running
@@ -154,7 +162,7 @@ id|ip_check_mc
 c_func
 (paren
 r_struct
-id|net_device
+id|in_device
 op_star
 id|dev
 comma

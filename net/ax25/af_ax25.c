@@ -27,7 +27,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
@@ -3173,11 +3173,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peer
 )paren
 (brace
 r_struct
@@ -4437,26 +4432,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t; * sys_accept has already allocated a struct sock. we need to free it, &n;&t; * since we want to use the one provided by ax25_make_new.&n;&t; */
-r_if
-c_cond
-(paren
-id|newsock-&gt;sk
-op_ne
-l_int|NULL
-)paren
-(brace
-id|sk_free
-c_func
-(paren
-id|newsock-&gt;sk
-)paren
-suffix:semicolon
-id|newsock-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6794,12 +6769,14 @@ DECL|variable|ax25_proto_ops
 r_static
 r_struct
 id|proto_ops
+id|SOCKOPS_WRAPPED
+c_func
+(paren
 id|ax25_proto_ops
+)paren
 op_assign
 (brace
 id|PF_AX25
-comma
-id|sock_no_dup
 comma
 id|ax25_release
 comma
@@ -6830,7 +6807,18 @@ comma
 id|ax25_sendmsg
 comma
 id|ax25_recvmsg
+comma
+id|sock_no_mmap
 )brace
+suffix:semicolon
+macro_line|#include &lt;linux/smp_lock.h&gt;
+id|SOCKOPS_WRAP
+c_func
+(paren
+id|ax25_proto
+comma
+id|PF_AX25
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Called by socket.c on kernel start up&n; */
 DECL|variable|ax25_packet_type

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.43 1999/07/02 11:26:44 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.45 1999/08/20 11:06:32 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -23,6 +23,7 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
+macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 DECL|variable|udp_stats_in6
 r_struct
@@ -46,9 +47,11 @@ r_int
 id|snum
 )paren
 (brace
-id|SOCKHASH_LOCK_WRITE
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_if
@@ -391,9 +394,11 @@ id|sk-&gt;num
 op_assign
 id|snum
 suffix:semicolon
-id|SOCKHASH_UNLOCK_WRITE
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_return
@@ -401,9 +406,11 @@ l_int|0
 suffix:semicolon
 id|fail
 suffix:colon
-id|SOCKHASH_UNLOCK_WRITE
+id|write_unlock_bh
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_return
@@ -440,9 +447,11 @@ l_int|1
 )paren
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK_WRITE
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_if
@@ -492,9 +501,17 @@ op_assign
 id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK_WRITE
+id|sock_hold
 c_func
 (paren
+id|sk
+)paren
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 )brace
@@ -510,9 +527,11 @@ op_star
 id|sk
 )paren
 (brace
-id|SOCKHASH_LOCK_WRITE
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_if
@@ -542,10 +561,18 @@ suffix:semicolon
 id|sk-&gt;prot-&gt;inuse
 op_decrement
 suffix:semicolon
-)brace
-id|SOCKHASH_UNLOCK_WRITE
+id|__sock_put
 c_func
 (paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 )brace
@@ -603,9 +630,11 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|SOCKHASH_LOCK_READ
+id|read_lock
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_for
@@ -646,17 +675,6 @@ op_logical_and
 id|sk-&gt;family
 op_eq
 id|PF_INET6
-)paren
-op_logical_and
-op_logical_neg
-(paren
-id|sk-&gt;dead
-op_logical_and
-(paren
-id|sk-&gt;state
-op_eq
-id|TCP_CLOSE
-)paren
 )paren
 )paren
 (brace
@@ -814,9 +832,22 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|SOCKHASH_UNLOCK_READ
+r_if
+c_cond
+(paren
+id|result
+)paren
+id|sock_hold
 c_func
 (paren
+id|result
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_return
@@ -936,8 +967,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|usin-&gt;sin6_family
-op_logical_and
 id|usin-&gt;sin6_family
 op_ne
 id|AF_INET6
@@ -1430,28 +1459,7 @@ r_int
 id|timeout
 )paren
 (brace
-id|bh_lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/* See for explanation: raw_close in ipv4/raw.c */
-id|sk-&gt;state
-op_assign
-id|TCP_CLOSE
-suffix:semicolon
-id|udp_v6_unhash
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-id|sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
-id|destroy_sock
+id|inet_sock_release
 c_func
 (paren
 id|sk
@@ -1674,6 +1682,73 @@ id|skb-&gt;csum
 )paren
 )paren
 (brace
+multiline_comment|/* Clear queue. */
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|MSG_PEEK
+)paren
+(brace
+r_int
+id|clear
+op_assign
+l_int|0
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue.lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
+)paren
+(brace
+id|__skb_unlink
+c_func
+(paren
+id|skb
+comma
+op_amp
+id|sk-&gt;receive_queue
+)paren
+suffix:semicolon
+id|clear
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;receive_queue.lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|clear
+)paren
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Error for blocking case is chosen to masquerade&n;&t;&t;&t;   as some normal condition.&n;&t;&t;&t; */
 id|err
 op_assign
@@ -1896,7 +1971,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_cmsg_flags
+id|sk-&gt;protinfo.af_inet.cmsg_flags
 )paren
 id|ip_cmsg_recv
 c_func
@@ -2100,7 +2175,8 @@ op_logical_and
 op_logical_neg
 id|sk-&gt;net_pinfo.af_inet6.recverr
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2110,8 +2186,12 @@ op_logical_and
 id|sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
+op_logical_and
+op_logical_neg
+id|sk-&gt;net_pinfo.af_inet6.recverr
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -2153,6 +2233,14 @@ suffix:semicolon
 id|sk
 op_member_access_from_pointer
 id|error_report
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|sock_put
 c_func
 (paren
 id|sk
@@ -2336,22 +2424,9 @@ id|s-&gt;next
 r_if
 c_cond
 (paren
-(paren
 id|s-&gt;num
 op_eq
 id|num
-)paren
-op_logical_and
-op_logical_neg
-(paren
-id|s-&gt;dead
-op_logical_and
-(paren
-id|s-&gt;state
-op_eq
-id|TCP_CLOSE
-)paren
-)paren
 )paren
 (brace
 r_struct
@@ -2516,6 +2591,13 @@ suffix:semicolon
 r_int
 id|dif
 suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|udp_hash_lock
+)paren
+suffix:semicolon
 id|sk
 op_assign
 id|udp_hash
@@ -2674,6 +2756,13 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|udp_hash_lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|udpv6_rcv
 r_int
@@ -3088,6 +3177,26 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+l_int|0
+multiline_comment|/*sk-&gt;user_callback &amp;&amp;&n;&t;    sk-&gt;user_callback(sk-&gt;user_data, skb) == 0*/
+)paren
+(brace
+id|udp_stats_in6.UdpInDatagrams
+op_increment
+suffix:semicolon
+id|sock_put
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* deliver */
 id|udpv6_queue_rcv_skb
 c_func
@@ -3095,6 +3204,12 @@ c_func
 id|sk
 comma
 id|skb
+)paren
+suffix:semicolon
+id|sock_put
+c_func
+(paren
+id|sk
 )paren
 suffix:semicolon
 r_return
@@ -3482,22 +3597,6 @@ id|udphdr
 r_return
 op_minus
 id|EMSGSIZE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|msg-&gt;msg_flags
-op_amp
-op_complement
-(paren
-id|MSG_DONTROUTE
-op_or
-id|MSG_DONTWAIT
-)paren
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 id|fl.fl6_flowlabel
 op_assign
@@ -4034,6 +4133,10 @@ l_string|&quot;UDPv6&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
+DECL|macro|LINE_LEN
+mdefine_line|#define LINE_LEN 190
+DECL|macro|LINE_FMT
+mdefine_line|#define LINE_FMT &quot;%-190s&bslash;n&quot;
 DECL|function|get_udp6_sock
 r_static
 r_void
@@ -4131,7 +4234,7 @@ c_func
 id|tmpbuf
 comma
 l_string|&quot;%4d: %08X%08X%08X%08X:%04X %08X%08X%08X%08X:%04X &quot;
-l_string|&quot;%02X %08X:%08X %02X:%08lX %08X %5d %8d %ld&quot;
+l_string|&quot;%02X %08X:%08X %02X:%08lX %08X %5d %8d %ld %d %p&quot;
 comma
 id|i
 comma
@@ -4205,11 +4308,6 @@ l_int|0
 comma
 id|sp-&gt;socket-&gt;inode-&gt;i_uid
 comma
-id|timer_active
-ques
-c_cond
-id|sp-&gt;timeout
-suffix:colon
 l_int|0
 comma
 id|sp-&gt;socket
@@ -4218,6 +4316,15 @@ c_cond
 id|sp-&gt;socket-&gt;inode-&gt;i_ino
 suffix:colon
 l_int|0
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sp-&gt;refcnt
+)paren
+comma
+id|sp
 )paren
 suffix:semicolon
 )brace
@@ -4267,7 +4374,9 @@ suffix:semicolon
 r_char
 id|tmpbuf
 (braket
-l_int|150
+id|LINE_LEN
+op_plus
+l_int|2
 )braket
 suffix:semicolon
 r_if
@@ -4275,7 +4384,9 @@ c_cond
 (paren
 id|offset
 OL
-l_int|149
+id|LINE_LEN
+op_plus
+l_int|1
 )paren
 id|len
 op_add_assign
@@ -4284,7 +4395,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%-148s&bslash;n&quot;
+id|LINE_FMT
 comma
 l_string|&quot;  sl  &quot;
 multiline_comment|/* 6 */
@@ -4302,11 +4413,15 @@ multiline_comment|/*----*/
 multiline_comment|/*144 */
 id|pos
 op_assign
-l_int|149
+id|LINE_LEN
+op_plus
+l_int|1
 suffix:semicolon
-id|SOCKHASH_LOCK_READ
+id|read_lock
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 r_for
@@ -4360,7 +4475,9 @@ r_continue
 suffix:semicolon
 id|pos
 op_add_assign
-l_int|149
+id|LINE_LEN
+op_plus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4390,7 +4507,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-148s&bslash;n&quot;
+id|LINE_FMT
 comma
 id|tmpbuf
 )paren
@@ -4411,9 +4528,11 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|SOCKHASH_UNLOCK_READ
+id|read_unlock
 c_func
 (paren
+op_amp
+id|udp_hash_lock
 )paren
 suffix:semicolon
 id|begin
@@ -4477,6 +4596,9 @@ multiline_comment|/* close */
 id|udpv6_connect
 comma
 multiline_comment|/* connect */
+id|udp_disconnect
+comma
+multiline_comment|/* disconnect */
 l_int|NULL
 comma
 multiline_comment|/* accept */

@@ -6229,38 +6229,10 @@ id|BAND_NUM
 )paren
 )paren
 (brace
-multiline_comment|/* frequency in units of 250 kHz (as read in the offset register) */
-r_int
-id|bands
-(braket
-)braket
-op_assign
-(brace
-l_int|0x30
-comma
-l_int|0x58
-comma
-l_int|0x64
-comma
-l_int|0x7A
-comma
-l_int|0x80
-comma
-l_int|0xA8
-comma
-l_int|0xD0
-comma
-l_int|0xF0
-comma
-l_int|0xF8
-comma
-l_int|0x150
-)brace
-suffix:semicolon
 multiline_comment|/* Get frequency offset. */
 id|freq
 op_assign
-id|bands
+id|channel_bands
 (braket
 id|frequency-&gt;m
 )braket
@@ -7060,6 +7032,12 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* index in the table */
+r_int
+id|c
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Channel number */
 multiline_comment|/* Read the frequency table. */
 id|fee_read
 c_func
@@ -7119,6 +7097,52 @@ l_int|16
 )paren
 )paren
 (brace
+multiline_comment|/* Compute approximate channel number */
+r_while
+c_loop
+(paren
+(paren
+(paren
+(paren
+id|channel_bands
+(braket
+id|c
+)braket
+op_rshift
+l_int|1
+)paren
+op_minus
+l_int|24
+)paren
+OL
+id|freq
+)paren
+op_logical_and
+(paren
+id|c
+OL
+id|NELS
+c_func
+(paren
+id|channel_bands
+)paren
+)paren
+)paren
+(brace
+id|c
+op_increment
+suffix:semicolon
+)brace
+id|list
+(braket
+id|i
+)braket
+dot
+id|i
+op_assign
+id|c
+suffix:semicolon
+multiline_comment|/* Set the list index */
 multiline_comment|/* put in the list */
 id|list
 (braket
@@ -7875,23 +7899,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_int
-id|bands
-(braket
-)braket
-op_assign
-(brace
-l_float|915e6
-comma
-l_float|2.425e8
-comma
-l_float|2.46e8
-comma
-l_float|2.484e8
-comma
-l_float|2.4305e8
-)brace
-suffix:semicolon
 id|psa_read
 c_func
 (paren
@@ -7934,7 +7941,7 @@ l_int|4
 (brace
 id|wrq-&gt;u.freq.m
 op_assign
-id|bands
+id|fixed_bands
 (braket
 id|psa.psa_subband
 )braket
@@ -7961,24 +7968,10 @@ r_case
 id|SIOCSIWSENS
 suffix:colon
 multiline_comment|/* Set the level threshold. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-)brace
+multiline_comment|/* We should complain loudly if wrq-&gt;u.sens.fixed = 0, because we&n;       * can&squot;t set auto mode... */
 id|psa.psa_thr_pre_set
 op_assign
-id|wrq-&gt;u.sensitivity
+id|wrq-&gt;u.sens.value
 op_amp
 l_int|0x3F
 suffix:semicolon
@@ -8079,11 +8072,15 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|wrq-&gt;u.sensitivity
+id|wrq-&gt;u.sens.value
 op_assign
 id|psa.psa_thr_pre_set
 op_amp
 l_int|0x3F
+suffix:semicolon
+id|wrq-&gt;u.sens.fixed
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8561,6 +8558,18 @@ id|range.max_qual.noise
 op_assign
 id|MMR_SILENCE_LVL
 suffix:semicolon
+id|range.num_bitrates
+op_assign
+l_int|1
+suffix:semicolon
+id|range.bitrate
+(braket
+l_int|0
+)braket
+op_assign
+l_int|2000000
+suffix:semicolon
+multiline_comment|/* 2 Mb/s */
 multiline_comment|/* Copy structure to the user buffer. */
 r_if
 c_cond

@@ -34,7 +34,6 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_PROC_FS
 r_extern
@@ -2693,7 +2692,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|atreq.ifr_name
@@ -3730,7 +3729,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|rt.rt_dev
@@ -4396,11 +4395,6 @@ r_struct
 id|socket
 op_star
 id|sock
-comma
-r_struct
-id|socket
-op_star
-id|peer
 )paren
 (brace
 r_struct
@@ -5080,21 +5074,6 @@ r_int
 id|flags
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|newsock-&gt;sk
-)paren
-(brace
-id|sk_free
-c_func
-(paren
-id|newsock-&gt;sk
-)paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 r_return
 (paren
 op_minus
@@ -5426,39 +5405,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|call_in_firewall
-c_func
-(paren
-id|PF_APPLETALK
-comma
-id|skb-&gt;dev
-comma
-id|ddp
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Check the packet is aimed at us */
 r_if
 c_cond
@@ -5537,40 +5483,6 @@ id|KERN_DEBUG
 l_string|&quot;AppleTalk: didn&squot;t forward broadcast packet received from PPP iface&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * Check firewall allows this routing&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|call_fw_firewall
-c_func
-(paren
-id|PF_APPLETALK
-comma
-id|skb-&gt;dev
-comma
-id|ddp
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -5791,7 +5703,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 l_string|&quot;ipddp0&quot;
@@ -6747,40 +6659,6 @@ id|ddp
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|call_out_firewall
-c_func
-(paren
-id|PF_APPLETALK
-comma
-id|skb-&gt;dev
-comma
-id|ddp
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-id|EPERM
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Loopback broadcast packets to non gateway targets (ie routes&n;&t; * to group we are in)&n;&t; */
 r_if
 c_cond
@@ -7718,12 +7596,14 @@ DECL|variable|atalk_dgram_ops
 r_static
 r_struct
 id|proto_ops
+id|SOCKOPS_WRAPPED
+c_func
+(paren
 id|atalk_dgram_ops
+)paren
 op_assign
 (brace
 id|PF_APPLETALK
-comma
-id|sock_no_dup
 comma
 id|atalk_release
 comma
@@ -7754,7 +7634,18 @@ comma
 id|atalk_sendmsg
 comma
 id|atalk_recvmsg
+comma
+id|sock_no_mmap
 )brace
+suffix:semicolon
+macro_line|#include &lt;linux/smp_lock.h&gt;
+id|SOCKOPS_WRAP
+c_func
+(paren
+id|atalk_dgram
+comma
+id|PF_APPLETALK
+)paren
 suffix:semicolon
 DECL|variable|ddp_notifier
 r_static

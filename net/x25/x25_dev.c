@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -26,7 +25,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/x25.h&gt;
 DECL|function|x25_receive_data
 r_static
@@ -58,37 +57,6 @@ r_int
 r_int
 id|lci
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|call_in_firewall
-c_func
-(paren
-id|PF_X25
-comma
-id|skb-&gt;dev
-comma
-id|skb-&gt;data
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|frametype
 op_assign
 id|skb-&gt;data

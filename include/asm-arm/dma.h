@@ -266,7 +266,7 @@ macro_line|#ifndef NO_DMA
 DECL|macro|NO_DMA
 mdefine_line|#define NO_DMA&t;255
 macro_line|#endif
-macro_line|#ifdef CONFIG_PCI_QUIRKS
+macro_line|#ifdef CONFIG_PCI
 r_extern
 r_int
 id|isa_dma_bridge_buggy

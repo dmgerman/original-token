@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.42 1999/06/12 13:11:34 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.44 1999/08/20 11:05:19 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,8 +12,7 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
-macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 multiline_comment|/* Fragment cache limits. We will commit 256K at one time. Should we&n; * cross that limit we will prune down to 192K. This should cope with&n; * even the most extreme cases without allowing an attacker to measurably&n; * harm machine performance.&n; */
 DECL|variable|sysctl_ipfrag_high_thresh
 r_int
@@ -1340,6 +1339,12 @@ id|skb-&gt;security
 op_assign
 id|qp-&gt;fragments-&gt;skb-&gt;security
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+id|skb-&gt;nf_debug
+op_assign
+id|qp-&gt;fragments-&gt;skb-&gt;nf_debug
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Done with all fragments. Fixup the new IP header. */
 id|iph
 op_assign

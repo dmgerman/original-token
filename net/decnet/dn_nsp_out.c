@@ -68,7 +68,7 @@ comma
 l_int|64
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * If sk == NULL, then we assume that we are supposed to be making&n; * a routing layer skb. If sk != NULL, then we are supposed to be&n; * creating an skb for the NSP layer. The dn_send_skb() function will&n; * recognise skbs on the same basis. &n; *&n; * The eventual aim is for each socket to have a cached header size&n; * for its outgoing packets, and to set hdr from this when sk != NULL.&n; */
+multiline_comment|/*&n; * If sk == NULL, then we assume that we are supposed to be making&n; * a routing layer skb. If sk != NULL, then we are supposed to be&n; * creating an skb for the NSP layer.&n; *&n; * The eventual aim is for each socket to have a cached header size&n; * for its outgoing packets, and to set hdr from this when sk != NULL.&n; */
 DECL|function|dn_alloc_skb
 r_struct
 id|sk_buff
@@ -128,13 +128,22 @@ c_func
 id|ETH_P_DNA_RT
 )paren
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
 id|skb-&gt;pkt_type
 op_assign
 id|PACKET_OUTGOING
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk
+)paren
+id|skb_set_owner_w
+c_func
+(paren
+id|skb
+comma
+id|sk
+)paren
 suffix:semicolon
 id|skb_reserve
 c_func
@@ -375,19 +384,6 @@ op_eq
 l_int|NULL
 )paren
 r_continue
-suffix:semicolon
-id|skb-&gt;destructor
-op_assign
-id|sock_wfree
-suffix:semicolon
-id|atomic_add
-c_func
-(paren
-id|skb-&gt;truesize
-comma
-op_amp
-id|sk-&gt;wmem_alloc
-)paren
 suffix:semicolon
 op_star
 id|size
@@ -767,7 +763,7 @@ id|skb2-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb2
@@ -869,7 +865,7 @@ id|skb2-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb2
@@ -1119,7 +1115,7 @@ id|skb2-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb2
@@ -1478,7 +1474,7 @@ id|sk-&gt;protinfo.dn.ackxmt_dat
 op_assign
 id|sk-&gt;protinfo.dn.numdat_rcv
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb
@@ -1529,7 +1525,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* printk(KERN_DEBUG &quot;dn_send_oth_ack&bslash;n&quot;); */
 id|msg
 op_assign
 (paren
@@ -1580,7 +1575,7 @@ id|sk-&gt;protinfo.dn.ackxmt_oth
 op_assign
 id|sk-&gt;protinfo.dn.numoth_rcv
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb
@@ -1661,7 +1656,7 @@ id|msg-&gt;dstaddr
 op_assign
 id|scp-&gt;addrrem
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb
@@ -1859,7 +1854,7 @@ id|aux
 )paren
 suffix:semicolon
 )brace
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb
@@ -2047,7 +2042,7 @@ id|scp-&gt;discdata_out.opt_optl
 )paren
 suffix:semicolon
 )brace
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb
@@ -2407,20 +2402,6 @@ op_assign
 l_int|0x0000
 suffix:semicolon
 multiline_comment|/* Remote Node will assign it*/
-r_if
-c_cond
-(paren
-id|msgflg
-op_eq
-id|NSP_CI
-)paren
-id|sk-&gt;protinfo.dn.addrloc
-op_assign
-id|dn_alloc_port
-c_func
-(paren
-)paren
-suffix:semicolon
 id|msg-&gt;srcaddr
 op_assign
 id|sk-&gt;protinfo.dn.addrloc
@@ -2697,7 +2678,7 @@ id|cb-&gt;rt_flags
 op_assign
 id|DN_RT_F_RQR
 suffix:semicolon
-id|dn_send_skb
+id|dn_nsp_send
 c_func
 (paren
 id|skb

@@ -17,6 +17,10 @@ id|UDP_HTABLE_SIZE
 )braket
 suffix:semicolon
 r_extern
+id|rwlock_t
+id|udp_hash_lock
+suffix:semicolon
+r_extern
 r_int
 id|udp_port_rover
 suffix:semicolon
@@ -178,16 +182,18 @@ r_int
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* CONFIG_IP_TRANSPARENT_PROXY */
 r_extern
 r_int
-id|udp_chkaddr
+id|udp_disconnect
 c_func
 (paren
 r_struct
-id|sk_buff
+id|sock
 op_star
-id|skb
+id|sk
+comma
+r_int
+id|flags
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _UDP_H */

@@ -59,7 +59,7 @@ DECL|macro|DN_DEV_S_OF
 mdefine_line|#define DN_DEV_S_OF  6 /* Off                      */
 DECL|macro|DN_DEV_S_HA
 mdefine_line|#define DN_DEV_S_HA  7 /* Halt                     */
-multiline_comment|/*&n; * The dn_dev_parms structure contains the set of parameters&n; * for each device (hence inclusion in the dn_dev structure)&n; * and an array is used to store the default types of supported&n; * device (in dn_dev.c).&n; *&n; * The type field matches the ARPHRD_ constants and is used in&n; * searching the list for supported devices when new devices&n; * come up.&n; *&n; * The mode field is used to find out if a device is broadcast,&n; * multipoint, or pointopoint. Please note that DECnet thinks&n; * different ways about devices to the rest of the kernel&n; * so the normal IFF_xxx flags are invalid here. For devices&n; * which can be any combination of the previously mentioned&n; * attributes, you can set this on a per device basis by&n; * installing an up() routine.&n; *&n; * The device state field, defines the initial state in which the&n; * device will come up. In the dn_dev structure, it is the actual&n; * state.&n; *&n; * The cost field is used in the routing algorithm.&n; *&n; * Timers:&n; * t1 - Routing timer, send routing messages when it expires&n; * t2 - Rate limit timer, min time between routing and hello messages&n; * t3 - Hello timer, send hello messages when it expires&n; *&n; * Callbacks:&n; * up() - Called to initialize device, return value can veto use of&n; *        device with DECnet.&n; * down() - Called to turn device off when it goes down&n; * timer1() - Called when timer 1 goes off&n; * timer3() - Called when timer 3 goes off&n; * setsrc() - Called for each incomming frame to set previous hop info&n; * neigh_setup() - Called to do device specific setup of neighbours&n; * &n; * sysctl - Hook for sysctl things&n; *&n; */
+multiline_comment|/*&n; * The dn_dev_parms structure contains the set of parameters&n; * for each device (hence inclusion in the dn_dev structure)&n; * and an array is used to store the default types of supported&n; * device (in dn_dev.c).&n; *&n; * The type field matches the ARPHRD_ constants and is used in&n; * searching the list for supported devices when new devices&n; * come up.&n; *&n; * The mode field is used to find out if a device is broadcast,&n; * multipoint, or pointopoint. Please note that DECnet thinks&n; * different ways about devices to the rest of the kernel&n; * so the normal IFF_xxx flags are invalid here. For devices&n; * which can be any combination of the previously mentioned&n; * attributes, you can set this on a per device basis by&n; * installing an up() routine.&n; *&n; * The device state field, defines the initial state in which the&n; * device will come up. In the dn_dev structure, it is the actual&n; * state.&n; *&n; * The cost field is used in the routing algorithm.&n; *&n; * Timers:&n; * t1 - Routing timer, send routing messages when it expires&n; * t2 - Rate limit timer, min time between routing and hello messages&n; * t3 - Hello timer, send hello messages when it expires&n; *&n; * Callbacks:&n; * up() - Called to initialize device, return value can veto use of&n; *        device with DECnet.&n; * down() - Called to turn device off when it goes down&n; * timer1() - Called when timer 1 goes off&n; * timer3() - Called when timer 3 goes off&n; * &n; * sysctl - Hook for sysctl things&n; *&n; */
 DECL|struct|dn_dev_parms
 r_struct
 id|dn_dev_parms
@@ -175,31 +175,6 @@ id|timer3
 (paren
 r_struct
 id|net_device
-op_star
-)paren
-suffix:semicolon
-DECL|member|setsrc
-r_int
-(paren
-op_star
-id|setsrc
-)paren
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-DECL|member|neigh_setup
-r_int
-(paren
-op_star
-id|neigh_setup
-)paren
-(paren
-r_struct
-id|neighbour
 op_star
 )paren
 suffix:semicolon

@@ -4264,6 +4264,27 @@ c_cond
 id|devc-&gt;submodel
 )paren
 (brace
+multiline_comment|/* APPARENTLY NOT 1869 &n;&t;&t;case SUBMDL_ES1869:&n;*/
+r_case
+id|SUBMDL_ES1887
+suffix:colon
+r_case
+id|SUBMDL_ES1888
+suffix:colon
+id|devc-&gt;caps
+op_or_assign
+id|SB_CAP_ES18XX_RATE
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* AAS: info stolen from ALSA: these boards have different clocks */
+r_switch
+c_cond
+(paren
+id|devc-&gt;submodel
+)paren
+(brace
 r_case
 id|SUBMDL_ES1869
 suffix:colon

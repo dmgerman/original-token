@@ -477,7 +477,7 @@ id|fl
 suffix:semicolon
 id|fl
 op_assign
-id|fl-&gt;fl_next
+id|fl-&gt;fl_nextlink
 )paren
 (brace
 id|inode

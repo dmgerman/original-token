@@ -19,8 +19,6 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
-DECL|macro|BUG_TRAP
-mdefine_line|#define BUG_TRAP(x) if (!(x)) { printk(&quot;Assertion (&quot; #x &quot;) failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 multiline_comment|/* Main transmission queue. */
 DECL|variable|qdisc_head
 r_struct
@@ -73,6 +71,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+multiline_comment|/* Dequeue packet */
 r_if
 c_cond
 (paren
@@ -91,7 +90,26 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Dequeue packet and release queue */
+r_if
+c_cond
+(paren
+id|spin_trylock
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+)paren
+(brace
+multiline_comment|/* Remember that the driver is grabbed by us. */
+id|dev-&gt;xmit_lock_owner
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* And release queue */
 id|spin_unlock
 c_func
 (paren
@@ -110,25 +128,6 @@ c_func
 id|skb
 comma
 id|dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|spin_trylock
-c_func
-(paren
-op_amp
-id|dev-&gt;xmit_lock
-)paren
-)paren
-(brace
-multiline_comment|/* Remember that the driver is grabbed by us. */
-id|dev-&gt;xmit_lock_owner
-op_assign
-id|smp_processor_id
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -188,6 +187,17 @@ op_amp
 id|dev-&gt;xmit_lock
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|dev-&gt;queue_lock
+)paren
+suffix:semicolon
+id|q
+op_assign
+id|dev-&gt;qdisc
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -227,13 +237,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|dev-&gt;queue_lock
-)paren
-suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -248,17 +251,6 @@ id|NET_BH
 suffix:semicolon
 )brace
 multiline_comment|/* Device kicked us out :(&n;&t;&t;   This is possible in three cases:&n;&n;&t;&t;   0. driver is locked&n;&t;&t;   1. fastroute is enabled&n;&t;&t;   2. device cannot determine busy state&n;&t;&t;      before start of transmission (f.e. dialout)&n;&t;&t;   3. device is buggy (ppp)&n;&t;&t; */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|dev-&gt;queue_lock
-)paren
-suffix:semicolon
-id|q
-op_assign
-id|dev-&gt;qdisc
-suffix:semicolon
 id|q-&gt;ops
 op_member_access_from_pointer
 id|requeue
@@ -275,7 +267,7 @@ l_int|1
 suffix:semicolon
 )brace
 r_return
-id|dev-&gt;qdisc-&gt;q.qlen
+id|q-&gt;q.qlen
 suffix:semicolon
 )brace
 r_static
@@ -484,13 +476,6 @@ id|dev
 op_assign
 id|q-&gt;dev
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|qdisc_runqueue_lock
-)paren
-suffix:semicolon
 id|res
 op_assign
 op_minus
@@ -507,6 +492,13 @@ id|dev-&gt;queue_lock
 )paren
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -527,6 +519,13 @@ l_int|0
 )paren
 multiline_comment|/* NOTHING */
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -535,13 +534,6 @@ id|dev-&gt;queue_lock
 )paren
 suffix:semicolon
 )brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|qdisc_runqueue_lock
-)paren
-suffix:semicolon
 multiline_comment|/* If qdisc is not empty add it to the tail of list */
 r_if
 c_cond
@@ -551,7 +543,7 @@ id|res
 id|qdisc_continue_run
 c_func
 (paren
-id|q
+id|dev-&gt;qdisc
 )paren
 suffix:semicolon
 )brace
@@ -697,13 +689,6 @@ id|dev
 op_assign
 id|q-&gt;dev
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|qdisc_runqueue_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -715,6 +700,13 @@ id|dev-&gt;queue_lock
 )paren
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 id|q
 op_assign
 id|dev-&gt;qdisc
@@ -736,6 +728,13 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -744,13 +743,6 @@ id|dev-&gt;queue_lock
 )paren
 suffix:semicolon
 )brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|qdisc_runqueue_lock
-)paren
-suffix:semicolon
 id|qdisc_continue_run
 c_func
 (paren
@@ -806,7 +798,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_CN
 suffix:semicolon
 )brace
 r_static
@@ -868,7 +860,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_CN
 suffix:semicolon
 )brace
 DECL|variable|noop_qdisc_ops
@@ -1063,7 +1055,7 @@ id|qdisc-&gt;q.qlen
 op_increment
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 id|qdisc-&gt;stats.drops
@@ -1076,7 +1068,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_DROP
 suffix:semicolon
 )brace
 r_static
@@ -1211,7 +1203,7 @@ id|qdisc-&gt;q.qlen
 op_increment
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1877,6 +1869,13 @@ op_amp
 id|dev-&gt;queue_lock
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 id|qdisc
 op_assign
 id|dev-&gt;qdisc
@@ -1890,13 +1889,6 @@ id|qdisc_reset
 c_func
 (paren
 id|qdisc
-)paren
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|qdisc_runqueue_lock
 )paren
 suffix:semicolon
 r_if
@@ -1926,6 +1918,13 @@ c_func
 (paren
 op_amp
 id|dev-&gt;queue_lock
+)paren
+suffix:semicolon
+id|spin_unlock_wait
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
 )paren
 suffix:semicolon
 )brace

@@ -131,6 +131,12 @@ r_int
 r_int
 id|mss
 suffix:semicolon
+DECL|member|seg_size
+r_int
+r_int
+id|seg_size
+suffix:semicolon
+multiline_comment|/* Running total of current segment */
 DECL|member|conndata_in
 r_struct
 id|optdata_dn
@@ -527,15 +533,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|dn_alloc_port
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 DECL|macro|DN_ASCBUF_LEN

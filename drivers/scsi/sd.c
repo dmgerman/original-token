@@ -48,7 +48,7 @@ DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5
 multiline_comment|/*&n; *  Time out in seconds for disks and Magneto-opticals (which are slower).&n; */
 DECL|macro|SD_TIMEOUT
-mdefine_line|#define SD_TIMEOUT (15 * HZ)
+mdefine_line|#define SD_TIMEOUT (30 * HZ)
 DECL|macro|SD_MOD_TIMEOUT
 mdefine_line|#define SD_MOD_TIMEOUT (75 * HZ)
 DECL|macro|CLUSTERABLE_DEVICE

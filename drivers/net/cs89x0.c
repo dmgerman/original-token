@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs89x0.c:v1.02 11/26/96 Russell Nelson &lt;nelson@crynwr.com&gt;&bslash;n&quot;
+l_string|&quot;cs89x0.c:v1.03 11/26/96 Russell Nelson &lt;nelson@crynwr.com&gt;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* ======================= configure the driver here ======================= */
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
@@ -1229,7 +1229,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;ncs89x0: EEPROM checksum bad, relyong on command line&bslash;n&quot;
+l_string|&quot;&bslash;ncs89x0: EEPROM checksum bad, relying on command line&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4143,6 +4143,18 @@ id|lp-&gt;send_cmd
 op_assign
 id|TX_AFTER_ALL
 suffix:semicolon
+multiline_comment|/* transmit cycle is done, although&n;&t;&t;&t;&t;   frame wasn&squot;t transmitted - this&n;&t;&t;&t;&t;   avoids having to wait for the upper&n;&t;&t;&t;&t;   layers to timeout on us, in the&n;&t;&t;&t;&t;   event of a tx underrun */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+multiline_comment|/* Inform upper layers. */
 )brace
 r_break
 suffix:semicolon

@@ -11,8 +11,17 @@ macro_line|#ifdef __KERNEL__
 macro_line|#ifdef CONFIG_NET_PROFILE
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#endif
+DECL|macro|NET_XMIT_SUCCESS
+mdefine_line|#define NET_XMIT_SUCCESS&t;0
+DECL|macro|NET_XMIT_DROP
+mdefine_line|#define NET_XMIT_DROP&t;&t;1&t;/* skb dropped&t;&t;&t;*/
+DECL|macro|NET_XMIT_CN
+mdefine_line|#define NET_XMIT_CN&t;&t;2&t;/* congestion notification&t;*/
+DECL|macro|NET_XMIT_POLICED
+mdefine_line|#define NET_XMIT_POLICED&t;3&t;/* skb is shot by police&t;*/
+DECL|macro|net_xmit_errno
+mdefine_line|#define net_xmit_errno(e)&t;((e) != NET_XMIT_CN ? -ENOBUFS : 0)
 macro_line|#endif
-multiline_comment|/*&n; *&t;For future expansion when we will have different priorities. &n; */
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7&t;&t;/* Largest hardware address length */
 multiline_comment|/*&n; *&t;Compute the worst case header length according to the protocols&n; *&t;used.&n; */
@@ -427,19 +436,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|member|destructor
-r_void
-(paren
-op_star
-id|destructor
-)paren
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Interface index. Unique device identifier&t;*/
 DECL|member|ifindex
 r_int
@@ -669,9 +665,48 @@ DECL|member|queue_lock
 id|spinlock_t
 id|queue_lock
 suffix:semicolon
+multiline_comment|/* Number of references to this device */
 DECL|member|refcnt
 id|atomic_t
 id|refcnt
+suffix:semicolon
+multiline_comment|/* The flag marking that device is unregistered, but held by an user */
+DECL|member|deadbeaf
+r_int
+id|deadbeaf
+suffix:semicolon
+multiline_comment|/* New style devices allow asynchronous destruction;&n;&t;   netdevice_unregister for old style devices blocks until&n;&t;   the last user will dereference this device.&n;&t; */
+DECL|member|new_style
+r_int
+id|new_style
+suffix:semicolon
+multiline_comment|/* Called after device is detached from network. */
+DECL|member|uninit
+r_void
+(paren
+op_star
+id|uninit
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Called after last user reference disappears. */
+DECL|member|destructor
+r_void
+(paren
+op_star
+id|destructor
+)paren
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open
@@ -954,14 +989,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_FASTROUTE
-multiline_comment|/* Really, this semaphore may be necessary and for not fastroute code;&n;&t;   f.e. SMP??&n;&t; */
 DECL|member|tx_semaphore
+r_int
 r_int
 id|tx_semaphore
 suffix:semicolon
 DECL|macro|NETDEV_FASTROUTE_HMASK
 mdefine_line|#define NETDEV_FASTROUTE_HMASK 0xF
 multiline_comment|/* Semi-private data. Keep it at the end of device struct. */
+DECL|member|fastpath_lock
+id|rwlock_t
+id|fastpath_lock
+suffix:semicolon
 DECL|member|fastpath
 r_struct
 id|dst_entry
@@ -1094,10 +1133,34 @@ id|pt
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|dev_get
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|net_device
 op_star
-id|dev_get
+id|dev_get_by_name
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|net_device
+op_star
+id|__dev_get_by_name
 c_func
 (paren
 r_const
@@ -1240,6 +1303,17 @@ r_struct
 id|net_device
 op_star
 id|dev_get_by_index
+c_func
+(paren
+r_int
+id|ifindex
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|net_device
+op_star
+id|__dev_get_by_index
 c_func
 (paren
 r_int
@@ -1410,81 +1484,6 @@ r_extern
 r_int
 id|netdev_nit
 suffix:semicolon
-multiline_comment|/* Locking protection for page faults during outputs to devices unloaded during the fault */
-r_extern
-id|atomic_t
-id|dev_lockct
-suffix:semicolon
-multiline_comment|/*&n; *&t;These two don&squot;t currently need to be atomic&n; *&t;but they may do soon. Do it properly anyway.&n; */
-DECL|function|dev_lock_list
-r_extern
-id|__inline__
-r_void
-id|dev_lock_list
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|dev_lockct
-)paren
-suffix:semicolon
-)brace
-DECL|function|dev_unlock_list
-r_extern
-id|__inline__
-r_void
-id|dev_unlock_list
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|dev_lockct
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;This almost never occurs, isn&squot;t in performance critical paths&n; *&t;and we can thus be relaxed about it. &n; *&n; *&t;FIXME: What if this is being run as a real time process ??&n; *&t;&t;Linus: We need a way to force a yield here ?&n; *&n; *&t;FIXME: Though dev_lockct is atomic varible, locking procedure&n; *&t;&t;is not atomic.&n; */
-DECL|function|dev_lock_wait
-r_extern
-id|__inline__
-r_void
-id|dev_lock_wait
-c_func
-(paren
-r_void
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|dev_lockct
-)paren
-)paren
-(brace
-id|current-&gt;policy
-op_or_assign
-id|SCHED_YIELD
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-)brace
 DECL|function|dev_init_buffers
 r_extern
 id|__inline__
@@ -1500,6 +1499,51 @@ id|dev
 (brace
 multiline_comment|/* DO NOTHING */
 )brace
+r_extern
+r_int
+id|netdev_finish_unregister
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|function|dev_put
+r_extern
+id|__inline__
+r_void
+id|dev_put
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|dev-&gt;refcnt
+)paren
+)paren
+id|netdev_finish_unregister
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+DECL|macro|__dev_put
+mdefine_line|#define __dev_put(dev) atomic_dec(&amp;(dev)-&gt;refcnt)
+DECL|macro|dev_hold
+mdefine_line|#define dev_hold(dev) atomic_inc(&amp;(dev)-&gt;refcnt)
 multiline_comment|/* These functions live elsewhere (drivers/net/net_init.c, but related) */
 r_extern
 r_void
@@ -1536,7 +1580,29 @@ id|dev
 suffix:semicolon
 r_extern
 r_void
+id|fc_setup
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|tr_freedev
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|fc_freedev
 c_func
 (paren
 r_struct
@@ -1598,6 +1664,28 @@ suffix:semicolon
 r_extern
 r_void
 id|unregister_trdev
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|register_fcdev
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|unregister_fcdev
 c_func
 (paren
 r_struct

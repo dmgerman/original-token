@@ -2446,11 +2446,6 @@ op_amp
 id|IFF_UP
 )paren
 (brace
-id|dev_lock_wait
-c_func
-(paren
-)paren
-suffix:semicolon
 (paren
 r_void
 )paren
@@ -2458,11 +2453,6 @@ id|dev_close
 c_func
 (paren
 id|sl-&gt;dev
-)paren
-suffix:semicolon
-id|dev_unlock_list
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

@@ -1190,6 +1190,15 @@ op_star
 id|hw_config
 )paren
 suffix:semicolon
+r_int
+id|intchk_mpu401
+c_func
+(paren
+r_void
+op_star
+id|dev_id
+)paren
+suffix:semicolon
 r_void
 id|mpuintr
 c_func

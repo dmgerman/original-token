@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;$Id: raw.c,v 1.42 1999/07/02 11:26:26 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&t;&t;Alan Cox&t;:&t;Cleaned up old debugging&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addresses&n; *&t;Arnt Gulbrandsen&t;:&t;Fixed MSG_DONTROUTE in raw sockets.&n; *&t;&t;Alan Cox&t;:&t;BSD style RAW socket demultiplexing.&n; *&t;&t;Alan Cox&t;:&t;Beginnings of mrouted support.&n; *&t;&t;Alan Cox&t;:&t;Added IP_HDRINCL option.&n; *&t;&t;Alan Cox&t;:&t;Skip broadcast check if BSDism set.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;RAW - implementation of IP &quot;raw&quot; sockets.&n; *&n; * Version:&t;$Id: raw.c,v 1.43 1999/08/20 11:05:57 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area() fixed up&n; *&t;&t;Alan Cox&t;:&t;ICMP error handling&n; *&t;&t;Alan Cox&t;:&t;EMSGSIZE if you send too big a packet&n; *&t;&t;Alan Cox&t;: &t;Now uses generic datagrams and shared skbuff&n; *&t;&t;&t;&t;&t;library. No more peek crashes, no more backlogs&n; *&t;&t;Alan Cox&t;:&t;Checks sk-&gt;broadcast.&n; *&t;&t;Alan Cox&t;:&t;Uses skb_free_datagram/skb_copy_datagram&n; *&t;&t;Alan Cox&t;:&t;Raw passes ip options too&n; *&t;&t;Alan Cox&t;:&t;Setsocketopt added&n; *&t;&t;Alan Cox&t;:&t;Fixed error return for broadcasts&n; *&t;&t;Alan Cox&t;:&t;Removed wake_up calls&n; *&t;&t;Alan Cox&t;:&t;Use ttl/tos&n; *&t;&t;Alan Cox&t;:&t;Cleaned up old debugging&n; *&t;&t;Alan Cox&t;:&t;Use new kernel side addresses&n; *&t;Arnt Gulbrandsen&t;:&t;Fixed MSG_DONTROUTE in raw sockets.&n; *&t;&t;Alan Cox&t;:&t;BSD style RAW socket demultiplexing.&n; *&t;&t;Alan Cox&t;:&t;Beginnings of mrouted support.&n; *&t;&t;Alan Cox&t;:&t;Added IP_HDRINCL option.&n; *&t;&t;Alan Cox&t;:&t;Skip broadcast check if BSDism set.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt; 
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -21,17 +21,8 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
+macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#ifdef CONFIG_IP_MROUTE
-DECL|variable|mroute_socket
-r_struct
-id|sock
-op_star
-id|mroute_socket
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 DECL|variable|raw_v4_htable
 r_struct
 id|sock
@@ -40,6 +31,12 @@ id|raw_v4_htable
 (braket
 id|RAWV4_HTABLE_SIZE
 )braket
+suffix:semicolon
+DECL|variable|raw_v4_lock
+id|rwlock_t
+id|raw_v4_lock
+op_assign
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|raw_v4_hash
 r_static
@@ -71,9 +68,11 @@ l_int|1
 )paren
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK_WRITE
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 r_if
@@ -123,9 +122,17 @@ op_assign
 id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK_WRITE
+id|sock_hold
 c_func
 (paren
+id|sk
+)paren
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 )brace
@@ -141,9 +148,11 @@ op_star
 id|sk
 )paren
 (brace
-id|SOCKHASH_LOCK_WRITE
+id|write_lock_bh
 c_func
 (paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 r_if
@@ -173,16 +182,22 @@ suffix:semicolon
 id|sk-&gt;prot-&gt;inuse
 op_decrement
 suffix:semicolon
-)brace
-id|SOCKHASH_UNLOCK_WRITE
+id|__sock_put
 c_func
 (paren
+id|sk
+)paren
+suffix:semicolon
+)brace
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 )brace
 DECL|function|__raw_v4_lookup
-r_static
-id|__inline__
 r_struct
 id|sock
 op_star
@@ -242,17 +257,6 @@ id|num
 op_logical_and
 op_logical_neg
 (paren
-id|s-&gt;dead
-op_logical_and
-(paren
-id|s-&gt;state
-op_eq
-id|TCP_CLOSE
-)paren
-)paren
-op_logical_and
-op_logical_neg
-(paren
 id|s-&gt;daddr
 op_logical_and
 id|s-&gt;daddr
@@ -286,64 +290,6 @@ multiline_comment|/* gotcha */
 )brace
 r_return
 id|s
-suffix:semicolon
-)brace
-DECL|function|raw_v4_lookup
-r_struct
-id|sock
-op_star
-id|raw_v4_lookup
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-r_int
-id|num
-comma
-r_int
-r_int
-id|raddr
-comma
-r_int
-r_int
-id|laddr
-comma
-r_int
-id|dif
-)paren
-(brace
-id|SOCKHASH_LOCK_READ
-c_func
-(paren
-)paren
-suffix:semicolon
-id|sk
-op_assign
-id|__raw_v4_lookup
-c_func
-(paren
-id|sk
-comma
-id|num
-comma
-id|raddr
-comma
-id|laddr
-comma
-id|dif
-)paren
-suffix:semicolon
-id|SOCKHASH_UNLOCK_READ
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|sk
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;0 - deliver&n; *&t;1 - block&n; */
@@ -421,9 +367,11 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|SOCKHASH_LOCK_READ_BH
+id|read_lock
 c_func
 (paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 r_if
@@ -529,28 +477,19 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+multiline_comment|/* Not releasing hash table! */
 r_if
 c_cond
 (paren
 id|clone
 )paren
 (brace
-id|SOCKHASH_UNLOCK_READ_BH
-c_func
-(paren
-)paren
-suffix:semicolon
 id|raw_rcv
 c_func
 (paren
 id|sk
 comma
 id|clone
-)paren
-suffix:semicolon
-id|SOCKHASH_LOCK_READ_BH
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -562,9 +501,22 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|SOCKHASH_UNLOCK_READ_BH
+r_if
+c_cond
+(paren
+id|sk
+)paren
+id|sock_hold
 c_func
 (paren
+id|sk
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 r_return
@@ -616,7 +568,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sk-&gt;ip_recverr
+id|sk-&gt;protinfo.af_inet.recverr
 op_logical_and
 id|sk-&gt;state
 op_ne
@@ -714,7 +666,7 @@ id|ICMP_FRAG_NEEDED
 id|harderr
 op_assign
 (paren
-id|sk-&gt;ip_pmtudisc
+id|sk-&gt;protinfo.af_inet.pmtudisc
 op_ne
 id|IP_PMTUDISC_DONT
 )paren
@@ -736,7 +688,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_recverr
+id|sk-&gt;protinfo.af_inet.recverr
 )paren
 id|ip_icmp_error
 c_func
@@ -765,7 +717,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_recverr
+id|sk-&gt;protinfo.af_inet.recverr
 op_logical_or
 id|harderr
 )paren
@@ -1160,22 +1112,6 @@ r_return
 op_minus
 id|EOPNOTSUPP
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|msg-&gt;msg_flags
-op_amp
-op_complement
-(paren
-id|MSG_DONTROUTE
-op_or
-id|MSG_DONTWAIT
-)paren
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Get and verify the address. &n;&t; */
 r_if
 c_cond
@@ -1336,7 +1272,7 @@ id|ipc.opt
 )paren
 id|ipc.opt
 op_assign
-id|sk-&gt;opt
+id|sk-&gt;protinfo.af_inet.opt
 suffix:semicolon
 r_if
 c_cond
@@ -1353,7 +1289,7 @@ multiline_comment|/* Linux does not mangle headers on raw sockets,&n;&t;&t; * so
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_hdrincl
+id|sk-&gt;protinfo.af_inet.hdrincl
 )paren
 r_goto
 id|done
@@ -1384,7 +1320,7 @@ op_assign
 id|RT_TOS
 c_func
 (paren
-id|sk-&gt;ip_tos
+id|sk-&gt;protinfo.af_inet.tos
 )paren
 op_or
 id|sk-&gt;localroute
@@ -1418,7 +1354,7 @@ id|ipc.oif
 )paren
 id|ipc.oif
 op_assign
-id|sk-&gt;ip_mc_index
+id|sk-&gt;protinfo.af_inet.mc_index
 suffix:semicolon
 r_if
 c_cond
@@ -1428,7 +1364,7 @@ id|rfh.saddr
 )paren
 id|rfh.saddr
 op_assign
-id|sk-&gt;ip_mc_addr
+id|sk-&gt;protinfo.af_inet.mc_addr
 suffix:semicolon
 )brace
 id|err
@@ -1474,6 +1410,18 @@ id|sk-&gt;broadcast
 r_goto
 id|done
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|msg-&gt;msg_flags
+op_amp
+id|MSG_CONFIRM
+)paren
+r_goto
+id|do_confirm
+suffix:semicolon
+id|back_from_confirm
+suffix:colon
 id|rfh.iov
 op_assign
 id|msg-&gt;msg_iov
@@ -1499,7 +1447,7 @@ c_func
 (paren
 id|sk
 comma
-id|sk-&gt;ip_hdrincl
+id|sk-&gt;protinfo.af_inet.hdrincl
 ques
 c_cond
 id|raw_getrawfrag
@@ -1548,6 +1496,37 @@ id|err
 suffix:colon
 id|len
 suffix:semicolon
+id|do_confirm
+suffix:colon
+id|dst_confirm
+c_func
+(paren
+op_amp
+id|rt-&gt;u.dst
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|msg-&gt;msg_flags
+op_amp
+id|MSG_PROBE
+)paren
+op_logical_or
+id|len
+)paren
+r_goto
+id|back_from_confirm
+suffix:semicolon
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
 )brace
 DECL|function|raw_close
 r_static
@@ -1564,24 +1543,7 @@ r_int
 id|timeout
 )paren
 (brace
-id|bh_lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/* Observation: when raw_close is called, processes have&n;&t;   no access to socket anymore. But net still has.&n;&t;   Step one, detach it from networking:&n;&n;&t;   A. Remove from hash tables.&n;&t; */
-id|sk-&gt;state
-op_assign
-id|TCP_CLOSE
-suffix:semicolon
-id|raw_v4_unhash
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;   B. Raw sockets may have direct kernel refereneces. Kill them.&n;&t; */
+multiline_comment|/*&n;&t; * Raw sockets may have direct kernel refereneces. Kill them.&n;&t; */
 id|ip_ra_control
 c_func
 (paren
@@ -1592,19 +1554,12 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* In this point socket cannot receive new packets anymore */
-multiline_comment|/* But we still have packets pending on receive&n;&t;   queue and probably, our own packets waiting in device queues.&n;&t;   sock_destroy will drain receive queue, but transmitted&n;&t;   packets will delay socket destruction.&n;&t;   Set sk-&gt;dead=1 in order to prevent wakeups, when these&n;&t;   packet will be freed.&n;&t; */
-id|sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
-id|destroy_sock
+id|inet_sock_release
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/* That&squot;s all. No races here. */
 )brace
 multiline_comment|/* This gets rid of all the nasties in af_inet. -DaveM */
 DECL|function|raw_bind
@@ -1695,29 +1650,10 @@ op_ne
 id|RTN_BROADCAST
 )paren
 (brace
-macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
-multiline_comment|/* Superuser may bind to any address to allow transparent proxying. */
-r_if
-c_cond
-(paren
-id|chk_addr_ret
-op_ne
-id|RTN_UNICAST
-op_logical_or
-op_logical_neg
-id|capable
-c_func
-(paren
-id|CAP_NET_ADMIN
-)paren
-)paren
-(brace
-macro_line|#endif
 r_return
 op_minus
 id|EADDRNOTAVAIL
 suffix:semicolon
-)brace
 )brace
 id|sk-&gt;rcv_saddr
 op_assign
@@ -1743,17 +1679,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Use device */
-id|dst_release
+id|sk_dst_reset
 c_func
 (paren
-id|xchg
-c_func
-(paren
-op_amp
-id|sk-&gt;dst_cache
-comma
-l_int|NULL
-)paren
+id|sk
 )paren
 suffix:semicolon
 r_return
@@ -1951,7 +1880,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;ip_cmsg_flags
+id|sk-&gt;protinfo.af_inet.cmsg_flags
 )paren
 id|ip_cmsg_recv
 c_func
@@ -2400,19 +2329,11 @@ id|sp-&gt;rcv_saddr
 suffix:semicolon
 id|destp
 op_assign
-id|ntohs
-c_func
-(paren
-id|sp-&gt;dport
-)paren
+l_int|0
 suffix:semicolon
 id|srcp
 op_assign
-id|ntohs
-c_func
-(paren
-id|sp-&gt;sport
-)paren
+id|sp-&gt;num
 suffix:semicolon
 id|timer_active
 op_assign
@@ -2446,7 +2367,7 @@ c_func
 id|tmpbuf
 comma
 l_string|&quot;%4d: %08X:%04X %08X:%04X&quot;
-l_string|&quot; %02X %08X:%08X %02X:%08lX %08X %5d %8d %ld&quot;
+l_string|&quot; %02X %08X:%08X %02X:%08lX %08X %5d %8d %ld %d %p&quot;
 comma
 id|i
 comma
@@ -2484,11 +2405,6 @@ l_int|0
 comma
 id|sp-&gt;socket-&gt;inode-&gt;i_uid
 comma
-id|timer_active
-ques
-c_cond
-id|sp-&gt;timeout
-suffix:colon
 l_int|0
 comma
 id|sp-&gt;socket
@@ -2497,6 +2413,15 @@ c_cond
 id|sp-&gt;socket-&gt;inode-&gt;i_ino
 suffix:colon
 l_int|0
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|sp-&gt;refcnt
+)paren
+comma
+id|sp
 )paren
 suffix:semicolon
 )brace
@@ -2573,9 +2498,11 @@ id|pos
 op_assign
 l_int|128
 suffix:semicolon
-id|SOCKHASH_LOCK_READ
+id|read_lock
 c_func
 (paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 r_for
@@ -2680,9 +2607,11 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|SOCKHASH_UNLOCK_READ
+id|read_unlock
 c_func
 (paren
+op_amp
+id|raw_v4_lock
 )paren
 suffix:semicolon
 id|begin
@@ -2746,6 +2675,9 @@ multiline_comment|/* close */
 id|udp_connect
 comma
 multiline_comment|/* connect */
+id|udp_disconnect
+comma
+multiline_comment|/* disconnect */
 l_int|NULL
 comma
 multiline_comment|/* accept */

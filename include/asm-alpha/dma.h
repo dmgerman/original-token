@@ -1039,7 +1039,7 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* From PCI */
-macro_line|#ifdef CONFIG_PCI_QUIRKS
+macro_line|#ifdef CONFIG_PCI
 r_extern
 r_int
 id|isa_dma_bridge_buggy

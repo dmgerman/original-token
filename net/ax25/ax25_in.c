@@ -15,7 +15,7 @@ macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;&t;&t;&t;/* For ip_rcv */
 macro_line|#include &lt;net/arp.h&gt;&t;&t;&t;/* For arp_rcv */
@@ -804,37 +804,6 @@ id|dev
 )paren
 op_eq
 l_int|NULL
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|call_in_firewall
-c_func
-(paren
-id|PF_AX25
-comma
-id|skb-&gt;dev
-comma
-id|skb-&gt;h.raw
-comma
-l_int|NULL
-comma
-op_amp
-id|skb
-)paren
-op_ne
-id|FW_ACCEPT
 )paren
 (brace
 id|kfree_skb

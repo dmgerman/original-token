@@ -231,7 +231,7 @@ c_func
 (paren
 id|D_PSDEV
 comma
-l_string|&quot;(process,opc,uniq)=(%d,%ld,%ld), count %d&bslash;n&quot;
+l_string|&quot;(process,opc,uniq)=(%d,%ld,%ld), count %ld&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
@@ -239,6 +239,9 @@ id|hdr.opcode
 comma
 id|hdr.unique
 comma
+(paren
+r_int
+)paren
 id|count
 )paren
 suffix:semicolon
@@ -522,10 +525,13 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;psdev_write: too much cnt: %d, cnt: %d, opc: %ld, uniq: %ld.&bslash;n&quot;
+l_string|&quot;psdev_write: too much cnt: %d, cnt: %ld, opc: %ld, uniq: %ld.&bslash;n&quot;
 comma
 id|req-&gt;uc_outSize
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 id|hdr.opcode
@@ -570,17 +576,17 @@ c_func
 (paren
 id|D_PSDEV
 comma
-l_string|&quot;Found! Count %d for (opc,uniq)=(%ld,%ld), upc_req at %x&bslash;n&quot;
+l_string|&quot;Found! Count %ld for (opc,uniq)=(%ld,%ld), upc_req at %p&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 id|hdr.opcode
 comma
 id|hdr.unique
 comma
-(paren
-r_int
-)paren
 op_amp
 id|req
 )paren
@@ -643,8 +649,11 @@ c_func
 (paren
 id|D_PSDEV
 comma
-l_string|&quot;count %d&bslash;n&quot;
+l_string|&quot;count %ld&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|count
 )paren
 suffix:semicolon
@@ -712,8 +721,11 @@ id|req-&gt;uc_inSize
 (brace
 id|printk
 (paren
-l_string|&quot;psdev_read: Venus read %d bytes of %d in message&bslash;n&quot;
+l_string|&quot;psdev_read: Venus read %ld bytes of %d in message&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|count
 comma
 id|req-&gt;uc_inSize

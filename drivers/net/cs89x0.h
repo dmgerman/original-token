@@ -502,9 +502,9 @@ mdefine_line|#define TX_CMD_PORT&t;0x0004
 DECL|macro|TX_NOW
 mdefine_line|#define TX_NOW&t;&t;0x0000       /*  Tx packet after   5 bytes copied */
 DECL|macro|TX_AFTER_381
-mdefine_line|#define TX_AFTER_381&t;0x0020       /*  Tx packet after 381 bytes copied */
+mdefine_line|#define TX_AFTER_381&t;0x0040       /*  Tx packet after 381 bytes copied */
 DECL|macro|TX_AFTER_ALL
-mdefine_line|#define TX_AFTER_ALL&t;0x0060       /*  Tx packet after all bytes copied */
+mdefine_line|#define TX_AFTER_ALL&t;0x00c0       /*  Tx packet after all bytes copied */
 DECL|macro|TX_LEN_PORT
 mdefine_line|#define TX_LEN_PORT&t;0x0006
 DECL|macro|ISQ_PORT

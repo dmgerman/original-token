@@ -739,6 +739,11 @@ DECL|enumerator|NET_IPV4_IGMP_MAX_MEMBERSHIPS
 id|NET_IPV4_IGMP_MAX_MEMBERSHIPS
 op_assign
 l_int|65
+comma
+DECL|enumerator|NET_TCP_TW_RECYCLE
+id|NET_TCP_TW_RECYCLE
+op_assign
+l_int|66
 )brace
 suffix:semicolon
 r_enum
@@ -817,6 +822,16 @@ DECL|enumerator|NET_IPV4_ROUTE_MTU_EXPIRES
 id|NET_IPV4_ROUTE_MTU_EXPIRES
 op_assign
 l_int|15
+comma
+DECL|enumerator|NET_IPV4_ROUTE_MIN_PMTU
+id|NET_IPV4_ROUTE_MIN_PMTU
+op_assign
+l_int|16
+comma
+DECL|enumerator|NET_IPV4_ROUTE_MIN_ADVMSS
+id|NET_IPV4_ROUTE_MIN_ADVMSS
+op_assign
+l_int|17
 )brace
 suffix:semicolon
 r_enum
@@ -891,6 +906,11 @@ DECL|enumerator|NET_IPV4_CONF_LOG_MARTIANS
 id|NET_IPV4_CONF_LOG_MARTIANS
 op_assign
 l_int|11
+comma
+DECL|enumerator|NET_IPV4_CONF_TAG
+id|NET_IPV4_CONF_TAG
+op_assign
+l_int|12
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */
@@ -953,6 +973,11 @@ DECL|enumerator|NET_IPV6_ROUTE_MTU_EXPIRES
 id|NET_IPV6_ROUTE_MTU_EXPIRES
 op_assign
 l_int|8
+comma
+DECL|enumerator|NET_IPV6_ROUTE_MIN_ADVMSS
+id|NET_IPV6_ROUTE_MIN_ADVMSS
+op_assign
+l_int|9
 )brace
 suffix:semicolon
 r_enum
@@ -2043,6 +2068,10 @@ suffix:semicolon
 r_extern
 id|ctl_handler
 id|sysctl_intvec
+suffix:semicolon
+r_extern
+id|ctl_handler
+id|sysctl_jiffies
 suffix:semicolon
 r_extern
 r_int

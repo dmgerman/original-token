@@ -537,7 +537,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get_by_index
+id|__dev_get_by_index
 c_func
 (paren
 id|t-&gt;tcm_ifindex
@@ -1858,6 +1858,12 @@ op_amp
 id|qdisc_tree_lock
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|skb-&gt;len
 suffix:semicolon
@@ -2186,6 +2192,12 @@ c_func
 (paren
 op_amp
 id|qdisc_tree_lock
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return

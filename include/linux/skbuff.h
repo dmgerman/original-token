@@ -21,6 +21,13 @@ DECL|macro|CHECKSUM_HW
 mdefine_line|#define CHECKSUM_HW 1
 DECL|macro|CHECKSUM_UNNECESSARY
 mdefine_line|#define CHECKSUM_UNNECESSARY 2
+macro_line|#ifdef __i386__
+DECL|macro|NET_CALLER
+mdefine_line|#define NET_CALLER(arg) (*(((void**)&amp;arg)-1))
+macro_line|#else
+DECL|macro|NET_CALLER
+mdefine_line|#define NET_CALLER(arg) __builtin_return_address(0)
+macro_line|#endif
 DECL|struct|sk_buff_head
 r_struct
 id|sk_buff_head
@@ -94,6 +101,12 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we arrived on/are leaving by&t;&t;*/
+DECL|member|rx_dev
+r_struct
+id|net_device
+op_star
+id|rx_dev
+suffix:semicolon
 multiline_comment|/* Transport layer header */
 r_union
 (brace
@@ -321,13 +334,31 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Destruct function&t;&t;*/
-macro_line|#ifdef CONFIG_IP_FIREWALL
-DECL|member|fwmark
-id|__u32
-id|fwmark
+macro_line|#ifdef CONFIG_NETFILTER
+multiline_comment|/* Can be used for communication between hooks. */
+DECL|member|nfmark
+r_int
+r_int
+id|nfmark
 suffix:semicolon
-multiline_comment|/* Label made by fwchains, used by pktsched&t;*/
+multiline_comment|/* Reason for doing this to the packet (see netfilter.h) */
+DECL|member|nfreason
+id|__u32
+id|nfreason
+suffix:semicolon
+multiline_comment|/* Cache info */
+DECL|member|nfcache
+id|__u32
+id|nfcache
+suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+DECL|member|nf_debug
+r_int
+r_int
+id|nf_debug
+suffix:semicolon
 macro_line|#endif
+macro_line|#endif /*CONFIG_NETFILTER*/
 macro_line|#if defined(CONFIG_SHAPER) || defined(CONFIG_SHAPER_MODULE)
 DECL|member|shapelatency
 id|__u32
@@ -913,6 +944,63 @@ id|skb-&gt;users
 op_ne
 l_int|1
 )paren
+suffix:semicolon
+)brace
+DECL|function|skb_share_check
+r_extern
+id|__inline__
+r_struct
+id|sk_buff
+op_star
+id|skb_share_check
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|pri
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb_shared
+c_func
+(paren
+id|skb
+)paren
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|nskb
+suffix:semicolon
+id|nskb
+op_assign
+id|skb_clone
+c_func
+(paren
+id|skb
+comma
+id|pri
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+id|nskb
+suffix:semicolon
+)brace
+r_return
+id|skb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy shared buffers into a new sk_buff. We effectively do COW on&n; *&t;packets to handle cases where we have a local reader and forward&n; *&t;and a couple of other messy ones. The normal one is tcpdumping&n; *&t;a packet thats being forwarded.&n; */
@@ -2355,6 +2443,46 @@ c_loop
 id|skb
 op_assign
 id|skb_dequeue
+c_func
+(paren
+id|list
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+DECL|function|__skb_queue_purge
+r_extern
+id|__inline__
+r_void
+id|__skb_queue_purge
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|__skb_dequeue
 c_func
 (paren
 id|list

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional work by Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt; for initial&n; * Alpha and trace dump support.&n; */
+multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998, 1999 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional work by Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt; for initial&n; * Alpha and trace dump support.&n; */
 DECL|macro|PKT_COPY_THRESHOLD
 mdefine_line|#define PKT_COPY_THRESHOLD 300
 macro_line|#include &lt;linux/module.h&gt;
@@ -45,18 +45,27 @@ mdefine_line|#define PCI_VENDOR_ID_NETGEAR&t;&t;0x1385
 DECL|macro|PCI_DEVICE_ID_NETGEAR_GA620
 mdefine_line|#define PCI_DEVICE_ID_NETGEAR_GA620&t;0x620a
 macro_line|#endif
+multiline_comment|/*&n; * They used the DEC vendor ID by mistake&n; */
+macro_line|#ifndef PCI_DEVICE_ID_FARALLON_PN9000SX
+DECL|macro|PCI_DEVICE_ID_FARALLON_PN9000SX
+mdefine_line|#define PCI_DEVICE_ID_FARALLON_PN9000SX 0x1a
+macro_line|#endif
+macro_line|#ifndef PCI_VENDOR_ID_SGI_ACENIC
+DECL|macro|PCI_DEVICE_ID_SGI_ACENIC
+mdefine_line|#define PCI_DEVICE_ID_SGI_ACENIC      0x0009
+macro_line|#endif
 multiline_comment|/*&n; * This driver currently supports Tigon I and Tigon II based cards&n; * including the Alteon AceNIC and the 3Com 3C985. The driver should&n; * also work on the NetGear GA620, however I have not been able to&n; * test that myself.&n; *&n; * This card is really neat, it supports receive hardware checksumming&n; * and jumbo frames (up to 9000 bytes) and does a lot of work in the&n; * firmware. Also the programming interface is quite neat, except for&n; * the parts dealing with the i2c eeprom on the card ;-)&n; *&n; * Using jumbo frames:&n; *&n; * To enable jumbo frames, simply specify an mtu between 1500 and 9000&n; * bytes to ifconfig. Jumbo frames can be enabled or disabled at any time&n; * by running `ifconfig eth&lt;X&gt; mtu &lt;MTU&gt;&squot; with &lt;X&gt; being the Ethernet&n; * interface number and &lt;MTU&gt; being the MTU value.&n; *&n; * Module parameters:&n; *&n; * When compiled as a loadable module, the driver allows for a number&n; * of module parameters to be specified. The driver supports the&n; * following module parameters:&n; *&n; *  trace=&lt;val&gt; - Firmware trace level. This requires special traced&n; *                firmware to replace the firmware supplied with&n; *                the driver - for debugging purposes only.&n; *&n; *  link=&lt;val&gt;  - Link state. Normally you want to use the default link&n; *                parameters set by the driver. This can be used to&n; *                override these in case your switch doesn&squot;t negotiate&n; *                the link properly. Valid values are:&n; *         0x0001 - Force half duplex link.&n; *         0x0002 - Do not negotiate line speed with the other end.&n; *         0x0010 - 10Mbit/sec link.&n; *         0x0020 - 100Mbit/sec link.&n; *         0x0040 - 1000Mbit/sec link.&n; *         0x0100 - Do not negotiate flow control.&n; *         0x0200 - Enable RX flow control Y&n; *         0x0400 - Enable TX flow control Y (Tigon II NICs only).&n; *                Default value is 0x0270, ie. enable link+flow&n; *                control negotiation. Negotiating the highest&n; *                possible link speed with RX flow control enabled.&n; *&n; *                When disabling link speed negotiation, only one link&n; *                speed is allowed to be specified!&n; *&n; *  tx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive before&n; *                interrupting the host, from the time the first&n; *                packet arrives.&n; *&n; *  rx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive in the transmit ring,&n; *                before interrupting the host, after transmitting the&n; *                first packet in the ring.&n; *&n; *  max_tx_desc=&lt;val&gt; - maximum number of transmit descriptors&n; *                (packets) transmitted before interrupting the host.&n; *&n; *  max_rx_desc=&lt;val&gt; - maximum number of receive descriptors&n; *                (packets) received before interrupting the host.&n; *&n; *  tx_ratio=&lt;val&gt; - 7 bit value (0 - 63) specifying the split in 64th&n; *                increments of the NIC&squot;s on board memory to be used for&n; *                transmit and receive buffers. For the 1MB NIC app. 800KB&n; *                is available, on the 1/2MB NIC app. 300KB is available.&n; *                68KB will always be available as a minimum for both&n; *                directions. The default value is a 50/50 split.&n; *&n; * If you use more than one NIC, specify the parameters for the&n; * individual NICs with a comma, ie. trace=0,0x00001fff,0 you want to&n; * run tracing on NIC #2 but not on NIC #1 and #3.&n; *&n; * TODO:&n; *&n; * - Proper multicast support.&n; * - NIC dump support.&n; * - More tuning parameters.&n; *&n; * The mini ring is not used under Linux and I am not sure it makes sense&n; * to actually use it.&n; */
 multiline_comment|/*&n; * Default values for tuning parameters&n; */
 DECL|macro|DEF_TX_RATIO
 mdefine_line|#define DEF_TX_RATIO&t;31
 DECL|macro|DEF_TX_COAL
-mdefine_line|#define DEF_TX_COAL&t;TICKS_PER_SEC / 500
+mdefine_line|#define DEF_TX_COAL&t;1000
 DECL|macro|DEF_TX_MAX_DESC
-mdefine_line|#define DEF_TX_MAX_DESC&t;7
+mdefine_line|#define DEF_TX_MAX_DESC&t;40
 DECL|macro|DEF_RX_COAL
-mdefine_line|#define DEF_RX_COAL&t;TICKS_PER_SEC / 10000
+mdefine_line|#define DEF_RX_COAL&t;1000
 DECL|macro|DEF_RX_MAX_DESC
-mdefine_line|#define DEF_RX_MAX_DESC&t;2
+mdefine_line|#define DEF_RX_MAX_DESC&t;20
 DECL|macro|DEF_TRACE
 mdefine_line|#define DEF_TRACE&t;0
 DECL|macro|DEF_STAT
@@ -160,7 +169,7 @@ id|__initdata
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.32 03/15/99  Jes Sorensen (Jes.Sorensen@cern.ch)&bslash;n&quot;
+l_string|&quot;acenic.c: v0.33a 08/16/99  Jes Sorensen (Jes.Sorensen@cern.ch)&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
 r_static
@@ -326,6 +335,37 @@ op_logical_and
 id|pdev-&gt;device
 op_eq
 id|PCI_DEVICE_ID_NETGEAR_GA620
+)paren
+)paren
+op_logical_and
+multiline_comment|/*&n;&t;&t; * Farallon used the DEC vendor ID on their cards by&n;&t;&t; * mistake for a while&n;&t;&t; */
+op_logical_neg
+(paren
+(paren
+id|pdev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_DEC
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_FARALLON_PN9000SX
+)paren
+)paren
+op_logical_and
+op_logical_neg
+(paren
+(paren
+id|pdev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_SGI
+)paren
+op_logical_and
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_SGI_ACENIC
 )paren
 )paren
 )paren
@@ -604,6 +644,60 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s: NetGear GA620 &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_DEC
+suffix:colon
+r_if
+c_cond
+(paren
+id|pdev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_FARALLON_PN9000SX
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|ap-&gt;name
+comma
+l_string|&quot;Farallon PN9000-SX &quot;
+l_string|&quot;Gigabit Ethernet&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Farallon PN9000-SX &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_case
+id|PCI_VENDOR_ID_SGI
+suffix:colon
+id|sprintf
+c_func
+(paren
+id|ap-&gt;name
+comma
+l_string|&quot;SGI AceNIC Gigabit Ethernet&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: SGI AceNIC &quot;
 comma
 id|dev-&gt;name
 )paren
@@ -1853,8 +1947,6 @@ id|ace_info
 )paren
 comma
 id|GFP_KERNEL
-op_or
-id|GFP_DMA
 )paren
 )paren
 )paren
@@ -4476,6 +4568,8 @@ comma
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n;&t;&t; * This was never actually enabled in the RX descriptors&n;&t;&t; * anyway - it requires a bit more testing before enabling&n;&t;&t; * it again.&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; * If the checksum is correct and this is not a&n;&t;&t; * fragment, tell the stack that the data is correct.&n;&t;&t; */
 r_if
 c_cond
@@ -4522,6 +4616,7 @@ id|skb-&gt;ip_summed
 op_assign
 id|CHECKSUM_NONE
 suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren

@@ -12,12 +12,8 @@ id|neighbour
 id|n
 suffix:semicolon
 DECL|member|addr
-r_int
-r_char
+id|dn_address
 id|addr
-(braket
-id|ETH_ALEN
-)braket
 suffix:semicolon
 DECL|member|flags
 r_int

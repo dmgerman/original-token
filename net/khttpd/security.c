@@ -675,12 +675,14 @@ comma
 l_int|255
 )paren
 suffix:semicolon
-id|strcat
+id|strncpy
 c_func
 (paren
 id|String
 comma
 l_string|&quot;Dynamic strings are : -&quot;
+comma
+l_int|255
 )paren
 suffix:semicolon
 id|Temp
@@ -721,12 +723,26 @@ comma
 id|max
 )paren
 suffix:semicolon
-id|strcat
+id|max
+op_assign
+l_int|253
+op_minus
+id|strlen
+c_func
+(paren
+id|String
+)paren
+op_minus
+l_int|3
+suffix:semicolon
+id|strncat
 c_func
 (paren
 id|String
 comma
 l_string|&quot;- -&quot;
+comma
+id|max
 )paren
 suffix:semicolon
 id|Temp

@@ -208,10 +208,6 @@ DECL|macro|IPPROTO_ROUTING
 mdefine_line|#define IPPROTO_ROUTING&t;&t;43&t;/* IPv6 routing header&t;&t;*/
 DECL|macro|IPPROTO_FRAGMENT
 mdefine_line|#define IPPROTO_FRAGMENT&t;44&t;/* IPv6 fragmentation header&t;*/
-DECL|macro|IPPROTO_ESP
-mdefine_line|#define IPPROTO_ESP&t;&t;50&t;/* encapsulating security payload */
-DECL|macro|IPPROTO_AH
-mdefine_line|#define IPPROTO_AH&t;&t;51&t;/* authentication header&t;*/
 DECL|macro|IPPROTO_ICMPV6
 mdefine_line|#define IPPROTO_ICMPV6&t;&t;58&t;/* ICMPv6&t;&t;&t;*/
 DECL|macro|IPPROTO_NONE

@@ -41,7 +41,7 @@ DECL|member|if_name
 r_char
 id|if_name
 (braket
-l_int|8
+l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* &quot;sl0&bslash;0&quot; .. &quot;sl99999&bslash;0&quot;&t;*/

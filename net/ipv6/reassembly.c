@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.13 1999/06/09 08:29:40 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 fragment reassembly&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: reassembly.c,v 1.15 1999/08/20 11:06:27 davem Exp $&n; *&n; *&t;Based on: net/ipv4/ip_fragment.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/* &n; *&t;Fixes:&t;&n; *&t;Andi Kleen&t;Make it work with multiple hosts.&n; *&t;&t;&t;More RFC compliance.&n; *&n; *      Horst von Brand Add missing #include &lt;linux/string.h&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -50,6 +50,13 @@ c_func
 (paren
 l_int|0
 )paren
+suffix:semicolon
+DECL|variable|ip6_frag_lock
+r_static
+id|spinlock_t
+id|ip6_frag_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|struct|ipv6_frag
 r_struct
@@ -404,6 +411,13 @@ id|frag_queue
 op_star
 id|fq
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -438,8 +452,17 @@ id|ip6_frag_mem
 op_le
 id|sysctl_ip6frag_low_thresh
 )paren
+(brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -465,6 +488,13 @@ op_amp
 id|ip6_frag_mem
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
 )paren
 suffix:semicolon
 )brace
@@ -594,6 +624,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -641,6 +678,12 @@ id|fq-&gt;daddr
 )paren
 )paren
 (brace
+id|u8
+op_star
+id|ret
+op_assign
+l_int|NULL
+suffix:semicolon
 id|reasm_queue
 c_func
 (paren
@@ -664,7 +707,8 @@ op_or
 id|LAST_IN
 )paren
 )paren
-r_return
+id|ret
+op_assign
 id|reasm_frag
 c_func
 (paren
@@ -673,8 +717,15 @@ comma
 id|skbp
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 r_return
-l_int|NULL
+id|ret
 suffix:semicolon
 )brace
 )brace
@@ -686,6 +737,13 @@ comma
 id|nhptr
 comma
 id|fhdr
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
 )paren
 suffix:semicolon
 r_return
@@ -814,6 +872,13 @@ op_star
 )paren
 id|data
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 id|frag
 op_assign
 id|fq-&gt;fragments
@@ -832,6 +897,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -887,12 +959,25 @@ comma
 id|dev
 )paren
 suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 )brace
 id|fq_free
 c_func
 (paren
 id|fq
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip6_frag_lock
 )paren
 suffix:semicolon
 )brace

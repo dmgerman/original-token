@@ -4753,7 +4753,7 @@ id|TQUEUE_BH
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__ia64__)
 multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */
 DECL|function|sys_alarm
 id|asmlinkage
@@ -4821,6 +4821,8 @@ r_return
 id|oldalarm
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * The Alpha uses getxpid, getxuid, and getxgid instead.  Maybe this&n; * should be moved into arch/i386 instead?&n; */
 DECL|function|sys_getpid
 id|asmlinkage

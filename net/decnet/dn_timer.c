@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Socket Timer Functions&n; *&n; * Author:      Steve Whitehouse &lt;SteveW@ACM.org&gt;&n; *&n; *&n; * Changes:&n; *       Steve Whitehouse      : Made keepalive timer part of the same&n; *                               timer idea.&n; *       Steve Whitehouse      : Added checks for sk-&gt;sock_readers&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Socket Timer Functions&n; *&n; * Author:      Steve Whitehouse &lt;SteveW@ACM.org&gt;&n; *&n; *&n; * Changes:&n; *       Steve Whitehouse      : Made keepalive timer part of the same&n; *                               timer idea.&n; *       Steve Whitehouse      : Added checks for sk-&gt;sock_readers&n; *       David S. Miller       : New socket locking&n; *       Steve Whitehouse      : Timer grabs socket ref.&n; */
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -71,32 +71,11 @@ op_star
 id|sk
 )paren
 (brace
-r_int
-r_int
-id|cpuflags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|cpuflags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|del_timer
 c_func
 (paren
 op_amp
 id|sk-&gt;timer
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|cpuflags
 )paren
 suffix:semicolon
 )brace
@@ -131,6 +110,12 @@ op_assign
 op_amp
 id|sk-&gt;protinfo.dn
 suffix:semicolon
+id|sock_hold
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|bh_lock_sock
 c_func
 (paren
@@ -164,7 +149,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The persist timer is the standard slow timer used for retransmits&n;&t; * in both connection establishment and disconnection as well as&n;&t; * in the RUN state. The different states are catered for by changing&n;&t; * the function pointer in the socket. Setting the timer to a value&n;&t; * of zero turns it off. We allow the persist_fxn to turn the&n;&t; * timer off in a permant way by returning non-zero, so that&n;&t; * timer based routines may remove sockets.&n;&t; */
+multiline_comment|/*&n;&t; * The persist timer is the standard slow timer used for retransmits&n;&t; * in both connection establishment and disconnection as well as&n;&t; * in the RUN state. The different states are catered for by changing&n;&t; * the function pointer in the socket. Setting the timer to a value&n;&t; * of zero turns it off. We allow the persist_fxn to turn the&n;&t; * timer off in a permant way by returning non-zero, so that&n;&t; * timer based routines may remove sockets. This is why we have a&n;&t; * sock_hold()/sock_put() around the timer to prevent the socket&n;&t; * going away in the middle.&n;&t; */
 r_if
 c_cond
 (paren
@@ -259,6 +244,12 @@ suffix:semicolon
 id|out
 suffix:colon
 id|bh_unlock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|sock_put
 c_func
 (paren
 id|sk
@@ -374,21 +365,6 @@ op_assign
 op_amp
 id|sk-&gt;protinfo.dn
 suffix:semicolon
-r_int
-r_int
-id|cpuflags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|cpuflags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -432,12 +408,6 @@ id|scp-&gt;delack_timer
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|cpuflags
-)paren
-suffix:semicolon
 )brace
 DECL|function|dn_stop_fast_timer
 r_void
@@ -458,21 +428,6 @@ op_assign
 op_amp
 id|sk-&gt;protinfo.dn
 suffix:semicolon
-r_int
-r_int
-id|cpuflags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|cpuflags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -491,11 +446,5 @@ id|scp-&gt;delack_timer
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|cpuflags
-)paren
-suffix:semicolon
 )brace
 eof

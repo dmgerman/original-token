@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Version:&t;$Id: arp.c,v 1.78 1999/06/09 10:10:36 davem Exp $&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses) into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the Ethernet assumptions in &n; *&t;&t;&t;&t;&t;Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP &n; *&t;&t;&t;&t;&t;logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and &n; *&t;&t;&t;&t;&t;generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; *&t;&t;Manuel Rodriguez:&t;Gratuitous ARP.&n; *              Jonathan Layes  :       Added arpd support through kerneld &n; *                                      message queue (960314)&n; *&t;&t;Mike Shaver&t;:&t;/proc/sys/net/ipv4/arp_* support&n; *&t;&t;Mike McLagan    :&t;Routing by source&n; *&t;&t;Stuart Cheshire&t;:&t;Metricom and grat arp fixes&n; *&t;&t;&t;&t;&t;*** FOR 2.1 clean this up ***&n; *&t;&t;Lawrence V. Stefani: (08/12/96) Added FDDI support.&n; *&t;&t;Alan Cox &t;:&t;Took the AP1000 nasty FDDI hack and&n; *&t;&t;&t;&t;&t;folded into the mainstream FDDI code.&n; *&t;&t;&t;&t;&t;Ack spit, Linus how did you allow that&n; *&t;&t;&t;&t;&t;one in...&n; *&t;&t;Jes Sorensen&t;:&t;Make FDDI work again in 2.1.x and&n; *&t;&t;&t;&t;&t;clean up the APFDDI &amp; gen. FDDI bits.&n; *&t;&t;Alexey Kuznetsov:&t;new arp state machine;&n; *&t;&t;&t;&t;&t;now it is in net/core/neighbour.c.&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Version:&t;$Id: arp.c,v 1.80 1999/08/20 11:04:54 davem Exp $&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses) into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the Ethernet assumptions in &n; *&t;&t;&t;&t;&t;Florian&squot;s code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP &n; *&t;&t;&t;&t;&t;logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&t;&t;Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; *&t;&t;Alan Cox&t;:&t;Drop data when a device is downed.&n; *&t;&t;Alan Cox&t;:&t;Use init_timer().&n; *&t;&t;Alan Cox&t;:&t;Double lock fixes.&n; *&t;&t;Martin Seine&t;:&t;Move the arphdr structure&n; *&t;&t;&t;&t;&t;to if_arp.h for compatibility.&n; *&t;&t;&t;&t;&t;with BSD based programs.&n; *&t;&t;Andrew Tridgell :       Added ARP netmask code and&n; *&t;&t;&t;&t;&t;re-arranged proxy handling.&n; *&t;&t;Alan Cox&t;:&t;Changed to use notifiers.&n; *&t;&t;Niibe Yutaka&t;:&t;Reply for this device or proxies only.&n; *&t;&t;Alan Cox&t;:&t;Don&squot;t proxy across hardware types!&n; *&t;&t;Jonathan Naylor :&t;Added support for NET/ROM.&n; *&t;&t;Mike Shaver     :       RFC1122 checks.&n; *&t;&t;Jonathan Naylor :&t;Only lookup the hardware address for&n; *&t;&t;&t;&t;&t;the correct hardware type.&n; *&t;&t;Germano Caronni&t;:&t;Assorted subtle races.&n; *&t;&t;Craig Schlenter :&t;Don&squot;t modify permanent entry &n; *&t;&t;&t;&t;&t;during arp_rcv.&n; *&t;&t;Russ Nelson&t;:&t;Tidied up a few bits.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes to caching and behaviour,&n; *&t;&t;&t;&t;&t;eg intelligent arp probing and &n; *&t;&t;&t;&t;&t;generation&n; *&t;&t;&t;&t;&t;of host down events.&n; *&t;&t;Alan Cox&t;:&t;Missing unlock in device events.&n; *&t;&t;Eckes&t;&t;:&t;ARP ioctl control errors.&n; *&t;&t;Alexey Kuznetsov:&t;Arp free fix.&n; *&t;&t;Manuel Rodriguez:&t;Gratuitous ARP.&n; *              Jonathan Layes  :       Added arpd support through kerneld &n; *                                      message queue (960314)&n; *&t;&t;Mike Shaver&t;:&t;/proc/sys/net/ipv4/arp_* support&n; *&t;&t;Mike McLagan    :&t;Routing by source&n; *&t;&t;Stuart Cheshire&t;:&t;Metricom and grat arp fixes&n; *&t;&t;&t;&t;&t;*** FOR 2.1 clean this up ***&n; *&t;&t;Lawrence V. Stefani: (08/12/96) Added FDDI support.&n; *&t;&t;Alan Cox &t;:&t;Took the AP1000 nasty FDDI hack and&n; *&t;&t;&t;&t;&t;folded into the mainstream FDDI code.&n; *&t;&t;&t;&t;&t;Ack spit, Linus how did you allow that&n; *&t;&t;&t;&t;&t;one in...&n; *&t;&t;Jes Sorensen&t;:&t;Make FDDI work again in 2.1.x and&n; *&t;&t;&t;&t;&t;clean up the APFDDI &amp; gen. FDDI bits.&n; *&t;&t;Alexey Kuznetsov:&t;new arp state machine;&n; *&t;&t;&t;&t;&t;now it is in net/core/neighbour.c.&n; */
 multiline_comment|/* RFC1122 Status:&n;   2.3.2.1 (ARP Cache Validation):&n;     MUST provide mechanism to flush stale cache entries (OK)&n;     SHOULD be able to configure cache timeout (OK)&n;     MUST throttle ARP retransmits (OK)&n;   2.3.2.2 (ARP Packet Queue):&n;     SHOULD save at least one packet from each &quot;conversation&quot; with an&n;       unresolved IP address.  (OK)&n;   950727 -- MS&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -36,6 +36,9 @@ macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_ATM_CLIP
+macro_line|#include &lt;net/atmclip.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
@@ -56,6 +59,23 @@ id|buf
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;Interface to generic neighbour cache.&n; */
+r_static
+id|u32
+id|arp_hash
+c_func
+(paren
+r_const
+r_void
+op_star
+id|pkey
+comma
+r_const
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 r_static
 r_int
 id|arp_constructor
@@ -226,6 +246,8 @@ l_int|4
 comma
 l_int|4
 comma
+id|arp_hash
+comma
 id|arp_constructor
 comma
 l_int|NULL
@@ -233,6 +255,8 @@ comma
 l_int|NULL
 comma
 id|parp_redo
+comma
+l_string|&quot;arp_cache&quot;
 comma
 (brace
 l_int|NULL
@@ -384,6 +408,70 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|arp_hash
+r_static
+id|u32
+id|arp_hash
+c_func
+(paren
+r_const
+r_void
+op_star
+id|pkey
+comma
+r_const
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|u32
+id|hash_val
+suffix:semicolon
+id|hash_val
+op_assign
+op_star
+(paren
+id|u32
+op_star
+)paren
+id|pkey
+suffix:semicolon
+id|hash_val
+op_xor_assign
+(paren
+id|hash_val
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+id|hash_val
+op_xor_assign
+id|hash_val
+op_rshift
+l_int|8
+suffix:semicolon
+id|hash_val
+op_xor_assign
+id|hash_val
+op_rshift
+l_int|3
+suffix:semicolon
+id|hash_val
+op_assign
+(paren
+id|hash_val
+op_xor
+id|dev-&gt;ifindex
+)paren
+op_amp
+id|NEIGH_HASHMASK
+suffix:semicolon
+r_return
+id|hash_val
+suffix:semicolon
+)brace
 DECL|function|arp_constructor
 r_static
 r_int
@@ -418,7 +506,11 @@ id|in_device
 op_star
 id|in_dev
 op_assign
-id|dev-&gt;ip_ptr
+id|in_dev_get
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -447,6 +539,12 @@ id|in_dev-&gt;arp_parms
 id|neigh-&gt;parms
 op_assign
 id|in_dev-&gt;arp_parms
+suffix:semicolon
+id|in_dev_put
+c_func
+(paren
+id|in_dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1191,6 +1289,16 @@ op_assign
 id|__neigh_lookup
 c_func
 (paren
+macro_line|#ifdef CONFIG_ATM_CLIP
+id|dev-&gt;type
+op_eq
+id|ARPHRD_ATM
+ques
+c_cond
+op_amp
+id|clip_tbl
+suffix:colon
+macro_line|#endif
 op_amp
 id|arp_tbl
 comma
@@ -1719,7 +1827,11 @@ id|in_device
 op_star
 id|in_dev
 op_assign
-id|dev-&gt;ip_ptr
+id|in_dev_get
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_struct
 id|neighbour
@@ -1756,6 +1868,26 @@ l_int|4
 )paren
 r_goto
 id|out
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|skb
+op_assign
+id|skb_share_check
+c_func
+(paren
+id|skb
+comma
+id|GFP_ATOMIC
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_goto
+id|out_of_mem
 suffix:semicolon
 r_switch
 c_cond
@@ -1956,7 +2088,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
-multiline_comment|/* Undertsand only these message types */
+multiline_comment|/* Understand only these message types */
 r_if
 c_cond
 (paren
@@ -2326,6 +2458,12 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|in_dev_put
+c_func
+(paren
+id|in_dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2475,6 +2613,19 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|in_dev
+)paren
+id|in_dev_put
+c_func
+(paren
+id|in_dev
+)paren
+suffix:semicolon
+id|out_of_mem
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon
@@ -2642,16 +2793,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;ip_ptr
+id|__in_dev_get
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
+id|__in_dev_get
+c_func
 (paren
-(paren
-r_struct
-id|in_device
-op_star
-)paren
-id|dev-&gt;ip_ptr
+id|dev
 )paren
 op_member_access_from_pointer
 id|cnf.proxy_arp
@@ -3112,16 +3264,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;ip_ptr
+id|__in_dev_get
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
+id|__in_dev_get
+c_func
 (paren
-(paren
-r_struct
-id|in_device
-op_star
-)paren
-id|dev-&gt;ip_ptr
+id|dev
 )paren
 op_member_access_from_pointer
 id|cnf.proxy_arp
@@ -3444,7 +3597,7 @@ c_cond
 (paren
 id|dev
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|r.arp_dev
@@ -4214,7 +4367,11 @@ comma
 multiline_comment|/* All devices */
 id|arp_rcv
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+l_int|1
 comma
 l_int|NULL
 )brace

@@ -2,21 +2,6 @@ multiline_comment|/*&n; *&t;inet6 interface/address list definitions&n; *&t;Linu
 macro_line|#ifndef _NET_IF_INET6_H
 DECL|macro|_NET_IF_INET6_H
 mdefine_line|#define _NET_IF_INET6_H
-multiline_comment|/* These flags match corresponding IFA_F_* flags but ADDR_INVALID,&n;   which is invisible externally.&n; */
-DECL|macro|ADDR_PERMANENT
-mdefine_line|#define ADDR_PERMANENT&t;0x80
-DECL|macro|DAD_COMPLETE
-mdefine_line|#define DAD_COMPLETE&t;0x00
-DECL|macro|DAD_INCOMPLETE
-mdefine_line|#define DAD_INCOMPLETE&t;0x40
-DECL|macro|DAD_STATUS
-mdefine_line|#define DAD_STATUS&t;0x40
-DECL|macro|ADDR_STATUS
-mdefine_line|#define ADDR_STATUS&t;0x21
-DECL|macro|ADDR_DEPRECATED
-mdefine_line|#define ADDR_DEPRECATED 0x20
-DECL|macro|ADDR_INVALID
-mdefine_line|#define ADDR_INVALID&t;0x01
 DECL|macro|IF_RA_RCVD
 mdefine_line|#define IF_RA_RCVD&t;0x20
 DECL|macro|IF_RS_SENT
@@ -51,6 +36,10 @@ suffix:semicolon
 DECL|member|refcnt
 id|atomic_t
 id|refcnt
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|member|probes
 id|__u8
@@ -89,6 +78,10 @@ op_star
 id|if_next
 suffix:semicolon
 multiline_comment|/* next addr in inet6_dev */
+DECL|member|dead
+r_int
+id|dead
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|ipv6_mc_socklist
@@ -127,23 +120,17 @@ r_struct
 id|in6_addr
 id|mca_addr
 suffix:semicolon
-DECL|member|dev
+DECL|member|idev
 r_struct
-id|net_device
+id|inet6_dev
 op_star
-id|dev
+id|idev
 suffix:semicolon
 DECL|member|next
 r_struct
 id|ifmcaddr6
 op_star
 id|next
-suffix:semicolon
-DECL|member|if_next
-r_struct
-id|ifmcaddr6
-op_star
-id|if_next
 suffix:semicolon
 DECL|member|mca_timer
 r_struct
@@ -245,9 +232,17 @@ DECL|member|lock
 id|rwlock_t
 id|lock
 suffix:semicolon
+DECL|member|refcnt
+id|atomic_t
+id|refcnt
+suffix:semicolon
 DECL|member|if_flags
 id|__u32
 id|if_flags
+suffix:semicolon
+DECL|member|dead
+r_int
+id|dead
 suffix:semicolon
 DECL|member|nd_parms
 r_struct

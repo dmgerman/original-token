@@ -1290,12 +1290,6 @@ id|ext2_super_block
 op_star
 id|es
 suffix:semicolon
-op_star
-id|err
-op_assign
-op_minus
-id|ENOSPC
-suffix:semicolon
 macro_line|#ifdef EXT2FS_DEBUG
 r_static
 r_int
@@ -1308,6 +1302,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+op_star
+id|err
+op_assign
+op_minus
+id|ENOSPC
+suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb

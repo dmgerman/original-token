@@ -1327,6 +1327,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_VWSND
+id|init_vwsnd
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

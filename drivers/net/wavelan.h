@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;WaveLAN ISA driver&n; *&n; *&t;&t;Jean II - HPLB &sq
 macro_line|#ifndef _WAVELAN_H
 DECL|macro|_WAVELAN_H
 mdefine_line|#define&t;_WAVELAN_H
+multiline_comment|/************************** MAGIC NUMBERS ***************************/
 multiline_comment|/* Detection of the WaveLAN card is done by reading the MAC&n; * address from the card and checking it.  If you have a non-AT&amp;T&n; * product (OEM, like DEC RoamAbout, Digital Ocean, or Epson),&n; * you might need to modify this part to accommodate your hardware.&n; */
 DECL|variable|MAC_ADDRESSES
 r_const
@@ -58,6 +59,57 @@ DECL|macro|WAVELAN_MTU
 mdefine_line|#define WAVELAN_MTU&t;&t;1500&t;/* Maximum size of WaveLAN packet */
 DECL|macro|MAXDATAZ
 mdefine_line|#define&t;MAXDATAZ&t;&t;(WAVELAN_ADDR_SIZE + WAVELAN_ADDR_SIZE + 2 + WAVELAN_MTU)
+multiline_comment|/*&n; * Constants used to convert channels to frequencies&n; */
+multiline_comment|/* Frequency available in the 2.0 modem, in units of 250 kHz&n; * (as read in the offset register of the dac area).&n; * Used to map channel numbers used by `wfreqsel&squot; to frequencies&n; */
+DECL|variable|channel_bands
+r_const
+r_int
+id|channel_bands
+(braket
+)braket
+op_assign
+(brace
+l_int|0x30
+comma
+l_int|0x58
+comma
+l_int|0x64
+comma
+l_int|0x7A
+comma
+l_int|0x80
+comma
+l_int|0xA8
+comma
+l_int|0xD0
+comma
+l_int|0xF0
+comma
+l_int|0xF8
+comma
+l_int|0x150
+)brace
+suffix:semicolon
+multiline_comment|/* Frequencies of the 1.0 modem (fixed frequencies).&n; * Use to map the PSA `subband&squot; to a frequency&n; * Note : all frequencies apart from the first one need to be multiplied by 10&n; */
+DECL|variable|fixed_bands
+r_const
+r_int
+id|fixed_bands
+(braket
+)braket
+op_assign
+(brace
+l_float|915e6
+comma
+l_float|2.425e8
+comma
+l_float|2.46e8
+comma
+l_float|2.484e8
+comma
+l_float|2.4305e8
+)brace
+suffix:semicolon
 multiline_comment|/*************************** PC INTERFACE ****************************/
 multiline_comment|/*&n; * Host Adaptor structure.&n; * (base is board port address).&n; */
 DECL|typedef|hacs_u

@@ -277,12 +277,6 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;That&squot;s all usermode folks&n; */
 macro_line|#ifdef __KERNEL__
 r_extern
-r_struct
-id|sock
-op_star
-id|mroute_socket
-suffix:semicolon
-r_extern
 r_int
 id|ip_mroute_setsockopt
 c_func
@@ -333,41 +327,6 @@ comma
 r_int
 r_int
 id|arg
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mroute_close
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ipmr_forward
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-id|is_frag
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_mr_find_tunnel
-c_func
-(paren
-id|__u32
-comma
-id|__u32
 )paren
 suffix:semicolon
 r_extern
@@ -439,6 +398,8 @@ suffix:semicolon
 multiline_comment|/* Physical interface index&t;*/
 )brace
 suffix:semicolon
+DECL|macro|VIFF_STATIC
+mdefine_line|#define VIFF_STATIC 0x8000
 DECL|struct|mfc_cache
 r_struct
 id|mfc_cache
@@ -465,73 +426,83 @@ id|vifi_t
 id|mfc_parent
 suffix:semicolon
 multiline_comment|/* Source interface&t;&t;*/
-DECL|member|mfc_timer
-r_struct
-id|timer_list
-id|mfc_timer
-suffix:semicolon
-multiline_comment|/* Expiry timer&t;&t;&t;*/
 DECL|member|mfc_flags
 r_int
 id|mfc_flags
 suffix:semicolon
 multiline_comment|/* Flags on line&t;&t;*/
-DECL|member|mfc_unresolved
+r_union
+(brace
+r_struct
+(brace
+DECL|member|expires
+r_int
+r_int
+id|expires
+suffix:semicolon
+DECL|member|unresolved
 r_struct
 id|sk_buff_head
-id|mfc_unresolved
+id|unresolved
 suffix:semicolon
 multiline_comment|/* Unresolved buffers&t;&t;*/
-DECL|member|mfc_queuelen
-r_int
-id|mfc_queuelen
+DECL|member|unres
+)brace
+id|unres
 suffix:semicolon
-multiline_comment|/* Unresolved buffer counter&t;*/
-DECL|member|mfc_last_assert
+r_struct
+(brace
+DECL|member|last_assert
 r_int
 r_int
-id|mfc_last_assert
+id|last_assert
 suffix:semicolon
-DECL|member|mfc_minvif
+DECL|member|minvif
 r_int
-id|mfc_minvif
+id|minvif
 suffix:semicolon
-DECL|member|mfc_maxvif
+DECL|member|maxvif
 r_int
-id|mfc_maxvif
+id|maxvif
 suffix:semicolon
-DECL|member|mfc_bytes
+DECL|member|bytes
 r_int
 r_int
-id|mfc_bytes
+id|bytes
 suffix:semicolon
-DECL|member|mfc_pkt
+DECL|member|pkt
 r_int
 r_int
-id|mfc_pkt
+id|pkt
 suffix:semicolon
-DECL|member|mfc_wrong_if
+DECL|member|wrong_if
 r_int
 r_int
-id|mfc_wrong_if
+id|wrong_if
 suffix:semicolon
-DECL|member|mfc_ttls
+DECL|member|ttls
 r_int
 r_char
-id|mfc_ttls
+id|ttls
 (braket
 id|MAXVIFS
 )braket
 suffix:semicolon
 multiline_comment|/* TTL thresholds&t;&t;*/
+DECL|member|res
+)brace
+id|res
+suffix:semicolon
+DECL|member|mfc_un
+)brace
+id|mfc_un
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|MFC_QUEUED
-mdefine_line|#define MFC_QUEUED&t;&t;1
-DECL|macro|MFC_RESOLVED
-mdefine_line|#define MFC_RESOLVED&t;&t;2
+DECL|macro|MFC_STATIC
+mdefine_line|#define MFC_STATIC&t;&t;1
 DECL|macro|MFC_NOTIFY
-mdefine_line|#define MFC_NOTIFY&t;&t;4
+mdefine_line|#define MFC_NOTIFY&t;&t;2
 DECL|macro|MFC_LINES
 mdefine_line|#define MFC_LINES&t;&t;64
 macro_line|#ifdef __BIG_ENDIAN

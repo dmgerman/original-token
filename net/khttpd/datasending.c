@@ -99,22 +99,11 @@ id|CurrentRequest-&gt;sock-&gt;sk
 op_ne
 l_int|NULL
 )paren
+multiline_comment|/* It&squot;s impossible */
 (brace
-id|lock_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 id|Space
 op_assign
 id|sock_wspace
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
-id|release_sock
 c_func
 (paren
 id|CurrentRequest-&gt;sock-&gt;sk
@@ -151,7 +140,7 @@ OG
 l_int|0
 )paren
 (brace
-multiline_comment|/* This part does a redundant data-copy. To bad for now. &n;&t;&t;&t;   In the future, we might want to nick the data right out&n;&t;&t;&t;   of the page-cache&n;&t;&t;&t;*/
+multiline_comment|/* This part does a redundant data-copy. To bad for now. &n;&t;&t;&t;   In the future, we might want to nick the data right out&n;&t;&t;&t;   of the page-cache&n;&n;&t;&t;&t;   WHY DO YOU NOT USE SENDFILE?&n;&t;&t;&t;*/
 id|CurrentRequest-&gt;filp-&gt;f_pos
 op_assign
 id|CurrentRequest-&gt;BytesSent
@@ -239,12 +228,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|lock_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 multiline_comment|/* &n;&t;&t;   If end-of-file or closed connection: Finish this request &n;&t;&t;   by moving it to the &quot;logging&quot; queue. &n;&t;&t;*/
 r_if
 c_cond
@@ -259,6 +242,10 @@ op_logical_or
 id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
 op_ne
 id|TCP_ESTABLISHED
+op_logical_and
+id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
+op_ne
+id|TCP_CLOSE_WAIT
 )paren
 )paren
 (brace
@@ -271,19 +258,25 @@ id|Next
 op_assign
 id|CurrentRequest-&gt;Next
 suffix:semicolon
+id|lock_sock
+c_func
+(paren
+id|CurrentRequest-&gt;sock-&gt;sk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
 op_eq
 id|TCP_ESTABLISHED
+op_logical_or
+id|CurrentRequest-&gt;sock-&gt;sk-&gt;state
+op_eq
+id|TCP_CLOSE_WAIT
 )paren
 (brace
 id|CurrentRequest-&gt;sock-&gt;sk-&gt;nonagle
-op_assign
-l_int|0
-suffix:semicolon
-id|CurrentRequest-&gt;sock-&gt;sk-&gt;linger
 op_assign
 l_int|0
 suffix:semicolon
@@ -337,12 +330,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|release_sock
-c_func
-(paren
-id|CurrentRequest-&gt;sock-&gt;sk
-)paren
-suffix:semicolon
 id|Prev
 op_assign
 op_amp

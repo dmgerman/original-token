@@ -1040,7 +1040,7 @@ id|sch-&gt;stats.packets
 op_increment
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 id|sfq_drop
@@ -1050,7 +1050,7 @@ id|sch
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_CN
 suffix:semicolon
 )brace
 r_static
@@ -1231,7 +1231,7 @@ op_minus
 l_int|1
 )paren
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 id|sch-&gt;stats.drops
 op_increment
@@ -1243,7 +1243,7 @@ id|sch
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NET_XMIT_CN
 suffix:semicolon
 )brace
 r_static

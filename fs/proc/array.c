@@ -142,6 +142,12 @@ id|dump.u_dsize
 op_assign
 id|max_mapnr
 suffix:semicolon
+macro_line|#if defined (__i386__)
+id|dump.start_code
+op_assign
+id|PAGE_OFFSET
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __alpha__
 id|dump.start_data
 op_assign
@@ -1407,6 +1413,10 @@ id|i.sharedram
 comma
 id|i.bufferram
 comma
+(paren
+r_int
+r_int
+)paren
 id|atomic_read
 c_func
 (paren
@@ -2321,6 +2331,85 @@ r_return
 id|pc
 suffix:semicolon
 )brace
+macro_line|#elif defined(__mips__)
+multiline_comment|/*&n;&t; * The same comment as on the Alpha applies here, too ...&n;&t; */
+(brace
+r_int
+r_int
+id|schedule_frame
+suffix:semicolon
+r_int
+r_int
+id|pc
+suffix:semicolon
+id|pc
+op_assign
+id|thread_saved_pc
+c_func
+(paren
+op_amp
+id|p-&gt;tss
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+id|interruptible_sleep_on
+op_logical_and
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+id|add_timer
+)paren
+(brace
+id|schedule_frame
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+r_int
+)paren
+id|p-&gt;tss.reg30
+)paren
+(braket
+l_int|16
+)braket
+suffix:semicolon
+r_return
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|schedule_frame
+)paren
+(braket
+l_int|11
+)braket
+suffix:semicolon
+)brace
+r_return
+id|pc
+suffix:semicolon
+)brace
 macro_line|#elif defined(__mc68000__)
 (brace
 r_int
@@ -2807,6 +2896,15 @@ DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)  ((tsk)-&gt;thread.kregs-&gt;pc)
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)  ((tsk)-&gt;thread.kregs-&gt;u_regs[UREG_FP])
+macro_line|#elif defined(__mips__)
+DECL|macro|PT_REG
+macro_line|# define PT_REG(reg)&t;&t;((long)&amp;((struct pt_regs *)0)-&gt;reg &bslash;&n;&t;&t;&t;&t; - sizeof(struct pt_regs))
+DECL|macro|KSTK_TOS
+mdefine_line|#define KSTK_TOS(tsk) ((unsigned long)(tsk) + KERNEL_STACK_SIZE - 32)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(KSTK_TOS(tsk) + PT_REG(cp0_epc)))
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)&t;(*(unsigned long *)(KSTK_TOS(tsk) + PT_REG(regs[29])))
 macro_line|#endif
 multiline_comment|/* Gcc optimizes away &quot;strlen(x)&quot; for constant x */
 DECL|macro|ADDBUF
@@ -6178,6 +6276,30 @@ id|PROC_RTC
 suffix:colon
 r_return
 id|get_rtc_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_DS1286
+r_case
+id|PROC_RTC
+suffix:colon
+r_return
+id|get_ds1286_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_DS1286
+r_case
+id|PROC_RTC
+suffix:colon
+r_return
+id|get_ds1286_status
 c_func
 (paren
 id|page

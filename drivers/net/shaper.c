@@ -1684,7 +1684,7 @@ id|net_device
 op_star
 id|them
 op_assign
-id|dev_get
+id|__dev_get_by_name
 c_func
 (paren
 id|ss-&gt;ss_name

@@ -17,7 +17,6 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
-macro_line|#include &lt;net/rarp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -587,21 +586,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|msg-&gt;msg_flags
-op_amp
-id|MSG_CTLFLAGS
-)paren
-r_goto
-id|error
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

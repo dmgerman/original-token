@@ -50,27 +50,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|EZUSB_CONTROL
 mdefine_line|#define EZUSB_CONTROL        _IOWR(&squot;E&squot;, 0, struct ezusb_ctrltransfer)
-DECL|struct|ezusb_interrupttransfer
-r_struct
-id|ezusb_interrupttransfer
-(brace
-DECL|member|ep
-r_int
-r_int
-id|ep
-suffix:semicolon
-DECL|member|data
-r_int
-r_char
-id|data
-(braket
-l_int|64
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|EZUSB_INTERRUPT
-mdefine_line|#define EZUSB_INTERRUPT      _IOWR(&squot;E&squot;, 1, struct ezusb_interrupttransfer)
 DECL|struct|ezusb_bulktransfer
 r_struct
 id|ezusb_bulktransfer
@@ -96,6 +75,86 @@ DECL|macro|EZUSB_BULK
 mdefine_line|#define EZUSB_BULK           _IOWR(&squot;E&squot;, 2, struct ezusb_bulktransfer)
 DECL|macro|EZUSB_RESETEP
 mdefine_line|#define EZUSB_RESETEP        _IOR(&squot;E&squot;, 3, unsigned int)
+DECL|struct|ezusb_setinterface
+r_struct
+id|ezusb_setinterface
+(brace
+DECL|member|interface
+r_int
+r_int
+id|interface
+suffix:semicolon
+DECL|member|altsetting
+r_int
+r_int
+id|altsetting
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|EZUSB_SETINTERFACE
+mdefine_line|#define EZUSB_SETINTERFACE   _IOR(&squot;E&squot;, 4, struct ezusb_setinterface)
+DECL|struct|ezusb_isotransfer
+r_struct
+id|ezusb_isotransfer
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|pktsz
+r_int
+r_int
+id|pktsz
+suffix:semicolon
+DECL|member|framesperint
+r_int
+r_int
+id|framesperint
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ezusb_isodata
+r_struct
+id|ezusb_isodata
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|bufqueued
+r_int
+r_int
+id|bufqueued
+suffix:semicolon
+DECL|member|buffree
+r_int
+r_int
+id|buffree
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|EZUSB_STARTISO
+mdefine_line|#define EZUSB_STARTISO       _IOR(&squot;E&squot;, 8, struct ezusb_isotransfer)
+DECL|macro|EZUSB_STOPISO
+mdefine_line|#define EZUSB_STOPISO        _IOR(&squot;E&squot;, 9, unsigned int)
+DECL|macro|EZUSB_ISODATA
+mdefine_line|#define EZUSB_ISODATA        _IOWR(&squot;E&squot;, 10, struct ezusb_isodata)
+DECL|macro|EZUSB_PAUSEISO
+mdefine_line|#define EZUSB_PAUSEISO       _IOR(&squot;E&squot;, 11, unsigned int)
+DECL|macro|EZUSB_RESUMEISO
+mdefine_line|#define EZUSB_RESUMEISO      _IOR(&squot;E&squot;, 12, unsigned int)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#endif /* _LINUX_EZUSB_H */
 eof

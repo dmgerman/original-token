@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_par.c  -- baycom par96 and picpar radio modem driver.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are par96 and picpar.&n; *  iobase   base address of the port; common values are 0x378, 0x278, 0x3bc&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  split into separate files for ser12/par96&n; *   0.6  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; */
+multiline_comment|/*&n; *&t;baycom_par.c  -- baycom par96 and picpar radio modem driver.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are par96 and picpar.&n; *  iobase   base address of the port; common values are 0x378, 0x278, 0x3bc&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  split into separate files for ser12/par96&n; *   0.6  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *   0.7  10.08.99  Check if parport can do SPP and is safe to access during interrupt contexts&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -1093,6 +1093,35 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+op_complement
+id|pp-&gt;modes
+)paren
+op_amp
+(paren
+id|PARPORT_MODE_PCSPP
+op_or
+id|PARPORT_MODE_SAFEININT
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;baycom_par: parport at 0x%lx cannot be used&bslash;n&quot;
+comma
+id|pp-&gt;base
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -1806,14 +1835,68 @@ l_int|0x378
 comma
 )brace
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;baycom operating mode; eg. par96 or picpar&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|NR_PORTS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;baycom io base address&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Baycom par96 and picpar amateur radio modem driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifndef MODULE
+DECL|function|init_baycompar
 r_static
-macro_line|#endif
-DECL|function|init_module
 r_int
 id|__init
-id|init_module
+id|init_baycompar
 c_func
 (paren
 r_void
@@ -2006,67 +2089,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-id|MODULE_PARM
-c_func
-(paren
-id|mode
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_PORTS
-)paren
-l_string|&quot;s&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|mode
-comma
-l_string|&quot;baycom operating mode; eg. par96 or picpar&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|iobase
-comma
-l_string|&quot;1-&quot;
-id|__MODULE_STRING
-c_func
-(paren
-id|NR_PORTS
-)paren
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM_DESC
-c_func
-(paren
-id|iobase
-comma
-l_string|&quot;baycom io base address&quot;
-)paren
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Baycom par96 and picpar amateur radio modem driver&quot;
-)paren
-suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_baycompar
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_baycompar
 c_func
 (paren
 r_void
@@ -2142,7 +2169,22 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#else /* MODULE */
+DECL|variable|init_baycompar
+id|module_init
+c_func
+(paren
+id|init_baycompar
+)paren
+suffix:semicolon
+DECL|variable|cleanup_baycompar
+id|module_exit
+c_func
+(paren
+id|cleanup_baycompar
+)paren
+suffix:semicolon
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifndef MODULE
 multiline_comment|/*&n; * format: baycom_par=io,mode&n; * mode: par96,picpar&n; */
 DECL|function|baycom_par_setup
 r_static
@@ -2166,7 +2208,7 @@ suffix:semicolon
 r_int
 id|ints
 (braket
-l_int|11
+l_int|2
 )braket
 suffix:semicolon
 r_if
@@ -2185,6 +2227,8 @@ id|get_options
 c_func
 (paren
 id|str
+comma
+l_int|2
 comma
 id|ints
 )paren
@@ -2232,13 +2276,6 @@ c_func
 l_string|&quot;baycom_par=&quot;
 comma
 id|baycom_par_setup
-)paren
-suffix:semicolon
-DECL|variable|init_module
-id|__initcall
-c_func
-(paren
-id|init_module
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */

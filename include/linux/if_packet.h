@@ -89,6 +89,115 @@ DECL|macro|PACKET_ADD_MEMBERSHIP
 mdefine_line|#define PACKET_ADD_MEMBERSHIP&t;&t;1
 DECL|macro|PACKET_DROP_MEMBERSHIP
 mdefine_line|#define PACKET_DROP_MEMBERSHIP&t;&t;2
+DECL|macro|PACKET_RECV_OUTPUT
+mdefine_line|#define PACKET_RECV_OUTPUT&t;&t;3
+multiline_comment|/* Value 4 is still used by obsolete turbo-packet. */
+DECL|macro|PACKET_RX_RING
+mdefine_line|#define PACKET_RX_RING&t;&t;&t;5
+DECL|macro|PACKET_STATISTICS
+mdefine_line|#define PACKET_STATISTICS&t;&t;6
+DECL|struct|tpacket_stats
+r_struct
+id|tpacket_stats
+(brace
+DECL|member|tp_packets
+r_int
+r_int
+id|tp_packets
+suffix:semicolon
+DECL|member|tp_drops
+r_int
+r_int
+id|tp_drops
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|tpacket_hdr
+r_struct
+id|tpacket_hdr
+(brace
+DECL|member|tp_status
+r_int
+r_int
+id|tp_status
+suffix:semicolon
+DECL|macro|TP_STATUS_KERNEL
+mdefine_line|#define TP_STATUS_KERNEL&t;0
+DECL|macro|TP_STATUS_USER
+mdefine_line|#define TP_STATUS_USER&t;&t;1
+DECL|macro|TP_STATUS_COPY
+mdefine_line|#define TP_STATUS_COPY&t;&t;2
+DECL|macro|TP_STATUS_LOSING
+mdefine_line|#define TP_STATUS_LOSING&t;4
+DECL|member|tp_len
+r_int
+r_int
+id|tp_len
+suffix:semicolon
+DECL|member|tp_snaplen
+r_int
+r_int
+id|tp_snaplen
+suffix:semicolon
+DECL|member|tp_mac
+r_int
+r_int
+id|tp_mac
+suffix:semicolon
+DECL|member|tp_net
+r_int
+r_int
+id|tp_net
+suffix:semicolon
+DECL|member|tp_sec
+r_int
+r_int
+id|tp_sec
+suffix:semicolon
+DECL|member|tp_usec
+r_int
+r_int
+id|tp_usec
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|TPACKET_ALIGNMENT
+mdefine_line|#define TPACKET_ALIGNMENT&t;16
+DECL|macro|TPACKET_ALIGN
+mdefine_line|#define TPACKET_ALIGN(x)&t;(((x)+TPACKET_ALIGNMENT-1)&amp;~(TPACKET_ALIGNMENT-1))
+DECL|macro|TPACKET_HDRLEN
+mdefine_line|#define TPACKET_HDRLEN&t;&t;(TPACKET_ALIGN(sizeof(struct tpacket_hdr)) + sizeof(struct sockaddr_ll))
+multiline_comment|/*&n;   Frame structure:&n;&n;   - Start. Frame must be aligned to TPACKET_ALIGNMENT=16&n;   - struct tpacket_hdr&n;   - pad to TPACKET_ALIGNMENT=16&n;   - struct sockaddr_ll&n;   - Gap, chosen so that packet data (Start+tp_net) alignes to TPACKET_ALIGNMENT=16&n;   - Start+tp_mac: [ Optional MAC header ]&n;   - Start+tp_net: Packet data, aligned to TPACKET_ALIGNMENT=16.&n;   - Pad to align to TPACKET_ALIGNMENT=16&n; */
+DECL|struct|tpacket_req
+r_struct
+id|tpacket_req
+(brace
+DECL|member|tp_block_size
+r_int
+r_int
+id|tp_block_size
+suffix:semicolon
+multiline_comment|/* Minimal size of contiguous block */
+DECL|member|tp_block_nr
+r_int
+r_int
+id|tp_block_nr
+suffix:semicolon
+multiline_comment|/* Number of blocks */
+DECL|member|tp_frame_size
+r_int
+r_int
+id|tp_frame_size
+suffix:semicolon
+multiline_comment|/* Size of frame */
+DECL|member|tp_frame_nr
+r_int
+r_int
+id|tp_frame_nr
+suffix:semicolon
+multiline_comment|/* Total number of frames */
+)brace
+suffix:semicolon
 DECL|struct|packet_mreq
 r_struct
 id|packet_mreq

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.7 1999/03/17 02:34:57 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.9 1999/08/23 06:30:34 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -303,6 +303,10 @@ op_assign
 op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 suffix:semicolon
+multiline_comment|/* Oops! It was missing, syn_recv_sock decreases it. */
+id|tp-&gt;syn_backlog
+op_increment
+suffix:semicolon
 id|sk
 op_assign
 id|tp-&gt;af_specific
@@ -319,6 +323,12 @@ comma
 id|dst
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk
+)paren
+(brace
 id|req-&gt;sk
 op_assign
 id|sk
@@ -332,6 +342,29 @@ comma
 id|req
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|tp-&gt;syn_backlog
+op_decrement
+suffix:semicolon
+id|req
+op_member_access_from_pointer
+r_class
+op_member_access_from_pointer
+id|destructor
+c_func
+(paren
+id|req
+)paren
+suffix:semicolon
+id|tcp_openreq_free
+c_func
+(paren
+id|req
+)paren
+suffix:semicolon
+)brace
 r_return
 id|sk
 suffix:semicolon
@@ -595,7 +628,7 @@ id|req-&gt;af.v4_req.rmt_addr
 comma
 id|req-&gt;af.v4_req.loc_addr
 comma
-id|sk-&gt;ip_tos
+id|sk-&gt;protinfo.af_inet.tos
 op_or
 id|RTO_CONN
 comma
@@ -621,13 +654,11 @@ suffix:semicolon
 id|tcp_select_initial_window
 c_func
 (paren
-id|sock_rspace
+id|tcp_full_space
 c_func
 (paren
 id|sk
 )paren
-op_div
-l_int|2
 comma
 id|req-&gt;mss
 comma

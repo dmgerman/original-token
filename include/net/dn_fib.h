@@ -348,6 +348,17 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|dn_fib_resolve
+c_func
+(paren
+r_struct
+id|dn_fib_res
+op_star
+id|res
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_RTNETLINK
 r_extern
 r_int
@@ -403,26 +414,6 @@ r_struct
 id|netlink_callback
 op_star
 id|cb
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dn_fib_rtm_getroute
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|nlmsghdr
-op_star
-id|nlh
-comma
-r_void
-op_star
-id|arg
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_RTNETLINK */

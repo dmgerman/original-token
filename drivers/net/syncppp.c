@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/pkt_sched.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;syncppp.h&quot;
 DECL|macro|MAXALIVECNT
@@ -2861,10 +2862,6 @@ r_struct
 id|in_ifaddr
 op_star
 id|ifa
-comma
-op_star
-op_star
-id|ifap
 suffix:semicolon
 id|u32
 id|addr
@@ -2883,34 +2880,39 @@ c_cond
 (paren
 id|in_dev
 op_assign
-id|dev-&gt;ip_ptr
+id|in_dev_get
+c_func
+(paren
+id|dev
+)paren
 )paren
 op_ne
 l_int|NULL
 )paren
 (brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|in_dev-&gt;lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
-id|ifap
-op_assign
-op_amp
-id|in_dev-&gt;ifa_list
-suffix:semicolon
-(paren
 id|ifa
 op_assign
-op_star
-id|ifap
-)paren
+id|in_dev-&gt;ifa_list
+suffix:semicolon
+id|ifa
 op_ne
 l_int|NULL
 suffix:semicolon
-id|ifap
+id|ifa
 op_assign
-op_amp
 id|ifa-&gt;ifa_next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2936,6 +2938,20 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|in_dev-&gt;lock
+)paren
+suffix:semicolon
+id|in_dev_put
+c_func
+(paren
+id|in_dev
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* I hope both addr and mask are in the net order */
 id|sppp_cisco_send
@@ -3211,7 +3227,7 @@ suffix:semicolon
 multiline_comment|/* Control is high priority so it doesnt get queued behind data */
 id|skb-&gt;priority
 op_assign
-l_int|1
+id|TC_PRIO_CONTROL
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -3443,7 +3459,7 @@ id|skb-&gt;len
 suffix:semicolon
 id|skb-&gt;priority
 op_assign
-l_int|1
+id|TC_PRIO_CONTROL
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
