@@ -3481,6 +3481,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|remove_inode_hash
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|get_unused_fd
 c_func

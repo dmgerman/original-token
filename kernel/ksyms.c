@@ -1879,6 +1879,13 @@ c_func
 id|insert_inode_hash
 )paren
 suffix:semicolon
+DECL|variable|remove_inode_hash
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|remove_inode_hash
+)paren
+suffix:semicolon
 DECL|variable|make_bad_inode
 id|EXPORT_SYMBOL
 c_func
