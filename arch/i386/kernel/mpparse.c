@@ -1633,11 +1633,11 @@ suffix:semicolon
 id|reserve_bootmem
 c_func
 (paren
+id|virt_to_phys
+c_func
 (paren
-r_int
-r_int
-)paren
 id|mpf
+)paren
 comma
 id|PAGE_SIZE
 )paren

@@ -1930,6 +1930,13 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
+id|blk_size
+(braket
+id|dev-&gt;major
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
 id|check_partition
 c_func
 (paren
