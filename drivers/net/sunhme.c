@@ -10144,6 +10144,7 @@ l_string|&quot;done&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifndef __sparc_v9__
 DECL|function|sun4c_happy_meal_interrupt
 r_static
 r_void
@@ -10384,6 +10385,7 @@ l_string|&quot;done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|happy_meal_open
 r_static
 r_int
@@ -10419,6 +10421,7 @@ l_string|&quot;happy_meal_open: &quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -10472,20 +10475,8 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __sparc_v9__
 r_else
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4u
-)paren
-(brace
-r_struct
-id|devid_cookie
-id|dcookie
-suffix:semicolon
+macro_line|#else
 macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
@@ -10525,9 +10516,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;happy_meal(PCI: Can&squot;t order irq %d to go.&bslash;n&quot;
+l_string|&quot;happy_meal(PCI: Can&squot;t order irq %s to go.&bslash;n&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|dev-&gt;irq
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -10535,85 +10530,10 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-r_goto
-id|v9_done
-suffix:semicolon
 )brace
-macro_line|#endif
-id|dcookie.real_dev_id
-op_assign
-id|dev
-suffix:semicolon
-id|dcookie.imap
-op_assign
-id|dcookie.iclr
-op_assign
-l_int|0
-suffix:semicolon
-id|dcookie.pil
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|dcookie.bus_cookie
-op_assign
-id|hp-&gt;happy_sbus_dev-&gt;my_bus
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|happy_meal_interrupt
-comma
-(paren
-id|SA_SHIRQ
-op_or
-id|SA_SBUS
-op_or
-id|SA_DCOOKIE
-)paren
-comma
-l_string|&quot;HAPPY MEAL&quot;
-comma
-op_amp
-id|dcookie
-)paren
-)paren
-(brace
-id|HMD
-c_func
-(paren
-(paren
-l_string|&quot;EAGAIN&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;happy_meal(SBUS): Can&squot;t order irq %d to go.&bslash;n&quot;
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
-macro_line|#ifdef CONFIG_PCI
-id|v9_done
-suffix:colon
-macro_line|#endif
-)brace
-macro_line|#endif
 r_else
-(brace
+macro_line|#endif
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10648,16 +10568,19 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;happy meal: Can&squot;t order irq %d to go.&bslash;n&quot;
+l_string|&quot;happy_meal(SBUS): Can&squot;t order irq %s to go.&bslash;n&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|dev-&gt;irq
+)paren
 )paren
 suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 )brace
 id|HMD
 c_func
@@ -12767,8 +12690,6 @@ id|sdev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 suffix:semicolon
 id|dev-&gt;dma
 op_assign

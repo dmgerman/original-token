@@ -2788,9 +2788,9 @@ id|econet_bind
 comma
 id|sock_no_connect
 comma
-l_int|NULL
+id|sock_no_socketpair
 comma
-l_int|NULL
+id|sock_no_accept
 comma
 id|econet_getname
 comma

@@ -708,6 +708,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+(paren
 id|pdev
 op_assign
 id|pci_find_device
@@ -720,13 +721,8 @@ comma
 id|pdev
 )paren
 )paren
+)paren
 (brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
 r_int
 r_int
 id|pci_ioaddr

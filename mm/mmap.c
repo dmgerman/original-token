@@ -698,6 +698,26 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+multiline_comment|/* Make sure we don&squot;t allow writing to an append-only file.. */
+r_if
+c_cond
+(paren
+id|IS_APPEND
+c_func
+(paren
+id|file-&gt;f_dentry-&gt;d_inode
+)paren
+op_logical_and
+(paren
+id|file-&gt;f_mode
+op_amp
+l_int|2
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
 multiline_comment|/* make sure there are no mandatory locks on the file. */
 r_if
 c_cond

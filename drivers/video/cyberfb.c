@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/video/cyberfb.c -- CyberVision64 frame buffer device&n; *&n; *    Copyright (C) 1996 Martin Apel&n; *                       Geert Uytterhoeven&n; *&n; *&n; * This file is based on the Amiga frame buffer device (amifb.c):&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * History:&n; *   - 22 Dec 95: Original version by Martin Apel&n; *   - 05 Jan 96: Geert: integration into the current source tree&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

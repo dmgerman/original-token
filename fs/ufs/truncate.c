@@ -1185,6 +1185,7 @@ id|i
 op_ge
 id|uspi-&gt;s_apb
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1251,6 +1252,7 @@ id|ind_ubh
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

@@ -100,4 +100,9 @@ r_int
 id|sense
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     *  Addresses in NVRAM where video mode and pixel size are stored.&n;     */
+DECL|macro|NV_VMODE
+mdefine_line|#define NV_VMODE&t;&t;0x140f
+DECL|macro|NV_CMODE
+mdefine_line|#define NV_CMODE&t;&t;0x1410
 eof

@@ -3114,6 +3114,8 @@ comma
 id|dstat
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 id|cp
 op_assign
@@ -4236,6 +4238,31 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Mace feature AUTO_STRIP_RCV is on by default, dropping the&n;&t;&t; * FCS on frames with 802.3 headers. This means that Ethernet &n;&t;&t; * frames have 8 extra octets at the end, while 802.3 frames &n;&t;&t; * have only 4. We need to correctly account for this. */
+r_if
+c_cond
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|data
+op_plus
+l_int|12
+)paren
+OL
+l_int|1536
+)paren
+multiline_comment|/* 802.3 header */
+id|nb
+op_sub_assign
+l_int|4
+suffix:semicolon
+r_else
+multiline_comment|/* Ethernet header; mace includes FCS */
 id|nb
 op_sub_assign
 l_int|8

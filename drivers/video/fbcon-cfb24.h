@@ -1,5 +1,4 @@
 multiline_comment|/*&n;     *  24 bpp packed pixel (cfb24)&n;     */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_CFB24) || defined(CONFIG_FBCON_CFB24_MODULE)
 DECL|macro|FBCON_HAS_CFB24
@@ -162,6 +161,22 @@ id|xx
 comma
 r_int
 id|yy
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|fbcon_cfb24_clear_margins
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_struct
+id|display
+op_star
+id|p
 )paren
 suffix:semicolon
 eof

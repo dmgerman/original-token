@@ -580,6 +580,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|bmac_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|cs89x0_probe
 c_func
 (paren
@@ -1501,6 +1511,14 @@ op_assign
 macro_line|#ifdef CONFIG_MACE
 (brace
 id|mace_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BMAC
+(brace
+id|bmac_probe
 comma
 l_int|0
 )brace

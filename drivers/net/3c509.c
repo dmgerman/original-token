@@ -2090,6 +2090,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3295,6 +3299,10 @@ id|pkt_len
 op_plus
 l_int|5
 )paren
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 r_if
 c_cond

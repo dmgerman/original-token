@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/drivers/video/fbcon.h -- Low level frame buffer
 macro_line|#ifndef __VIDEO_FBCON_H
 DECL|macro|__VIDEO_FBCON_H
 mdefine_line|#define __VIDEO_FBCON_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
 DECL|struct|display_switch
@@ -228,20 +229,29 @@ suffix:semicolon
 multiline_comment|/* 1 at (1 &lt;&lt; (width - 1)) if width is supported */
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_FBCON_FONTWIDTH8_ONLY
+multiline_comment|/* fontwidth w is supported by dispsw */
+DECL|macro|FONTWIDTH
+mdefine_line|#define FONTWIDTH(w)&t;(1 &lt;&lt; ((8) - 1))
+multiline_comment|/* fontwidths w1-w2 inclusive are supported by dispsw */
+DECL|macro|FONTWIDTHRANGE
+mdefine_line|#define FONTWIDTHRANGE(w1,w2)&t;FONTWIDTH(8)
+macro_line|#else
 multiline_comment|/* fontwidth w is supported by dispsw */
 DECL|macro|FONTWIDTH
 mdefine_line|#define FONTWIDTH(w)&t;(1 &lt;&lt; ((w) - 1))
 multiline_comment|/* fontwidths w1-w2 inclusive are supported by dispsw */
 DECL|macro|FONTWIDTHRANGE
 mdefine_line|#define FONTWIDTHRANGE(w1,w2)&t;(FONTWIDTH(w2+1) - FONTWIDTH(w1))
+macro_line|#endif
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
 multiline_comment|/* Color */
 DECL|macro|attr_fgcol
-mdefine_line|#define attr_fgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;inverse ? 12 : 8)) &amp; 0x0f)
+mdefine_line|#define attr_fgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;fgshift)) &amp; 0x0f)
 DECL|macro|attr_bgcol
-mdefine_line|#define attr_bgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;inverse ? 8 : 12)) &amp; 0x0f)
+mdefine_line|#define attr_bgcol(p,s)    &bslash;&n;&t;(((s) &gt;&gt; ((p)-&gt;bgshift)) &amp; 0x0f)
 DECL|macro|attr_bgcol_ec
-mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;inverse ? 8 : 12)) &amp; 0x0f)
+mdefine_line|#define&t;attr_bgcol_ec(p,conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; ((p)-&gt;bgshift)) &amp; 0x0f)
 multiline_comment|/* Monochrome */
 DECL|macro|attr_bold
 mdefine_line|#define attr_bold(p,s) &bslash;&n;&t;((s) &amp; 0x200)

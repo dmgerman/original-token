@@ -2,6 +2,7 @@ multiline_comment|/*&n; *   u14-34f.h - used by the low-level driver for UltraSt
 macro_line|#ifndef _U14_34F_H
 DECL|macro|_U14_34F_H
 mdefine_line|#define _U14_34F_H
+macro_line|#include &lt;scsi/scsicam.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 r_int
 id|u14_34f_detect
@@ -87,7 +88,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|U14_34F_VERSION
-mdefine_line|#define U14_34F_VERSION &quot;4.32.00&quot;
+mdefine_line|#define U14_34F_VERSION &quot;4.33.00&quot;
 DECL|macro|LinuxVersionCode
 mdefine_line|#define LinuxVersionCode(v, p, s) (((v)&lt;&lt;16)+((p)&lt;&lt;8)+(s))
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,101)

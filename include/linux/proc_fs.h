@@ -293,6 +293,9 @@ comma
 DECL|enumerator|PROC_NET_AX25_CALLS
 id|PROC_NET_AX25_CALLS
 comma
+DECL|enumerator|PROC_NET_BMAC
+id|PROC_NET_BMAC
+comma
 DECL|enumerator|PROC_NET_NR_NODES
 id|PROC_NET_NR_NODES
 comma

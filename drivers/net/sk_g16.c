@@ -2940,6 +2940,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|p-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 )brace
 id|dev_kfree_skb
 c_func
@@ -3696,6 +3700,10 @@ id|rmdp-&gt;u.s.status
 suffix:semicolon
 id|p-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|p-&gt;stats.rx_bytes
+op_add_assign
+id|len
 suffix:semicolon
 id|p-&gt;rmdnum
 op_increment

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.91 1998/05/23 13:10:21 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.92 1998/06/19 13:22:44 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -679,7 +679,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Function to create two new tcp segments.  Shrinks the given segment&n; * to the specified size and appends a new segment with the rest of the&n; * packet to the list. This won&squot;t be called frenquently, I hope... &n; * Remember, these are still header-less SKB&squot;s at this point.&n; */
+multiline_comment|/* Function to create two new TCP segments.  Shrinks the given segment&n; * to the specified size and appends a new segment with the rest of the&n; * packet to the list.  This won&squot;t be called frequently, I hope. &n; * Remember, these are still headerless SKBs at this point.&n; */
 DECL|function|tcp_fragment
 r_static
 r_int
@@ -1061,7 +1061,7 @@ id|sent_pkts
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Anything on the transmit queue that fits the window can&n;&t;&t; * be added providing we are:&n;&t;&t; *&n;&t;&t; * a) following SWS avoidance [and Nagle algorithm]&n;&t;&t; * b) not exceeding our congestion window.&n;&t;&t; * c) not retransmiting [Nagle]&n;&t;&t; */
+multiline_comment|/* Anything on the transmit queue that fits the window can&n;&t;&t; * be added providing we are:&n;&t;&t; *&n;&t;&t; * a) following SWS avoidance [and Nagle algorithm]&n;&t;&t; * b) not exceeding our congestion window.&n;&t;&t; * c) not retransmitting [Nagle]&n;&t;&t; */
 r_while
 c_loop
 (paren
@@ -1180,7 +1180,7 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This function returns the amount that we can raise the&n; * usable window based on the following constraints&n; *  &n; * 1. The window can never be shrunk once it is offered (RFC 793)&n; * 2. We limit memory per socket&n; *&n; * RFC 1122:&n; * &quot;the suggested [SWS] avoidance algoritm for the receiver is to keep&n; *  RECV.NEXT + RCV.WIN fixed until:&n; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n; *&n; * i.e. don&squot;t raise the right edge of the window until you can raise&n; * it at least MSS bytes.&n; *&n; * Unfortunately, the recomended algorithm breaks header prediction,&n; * since header prediction assumes th-&gt;window stays fixed.&n; *&n; * Strictly speaking, keeping th-&gt;window fixed violates the receiver&n; * side SWS prevention criteria. The problem is that under this rule&n; * a stream of single byte packets will cause the right side of the&n; * window to always advance by a single byte.&n; * &n; * Of course, if the sender implements sender side SWS prevention&n; * then this will not be a problem.&n; * &n; * BSD seems to make the following compromise:&n; * &n; *&t;If the free space is less than the 1/4 of the maximum&n; *&t;space available and the free space is less than 1/2 mss,&n; *&t;then set the window to 0.&n; *&t;Otherwise, just prevent the window from shrinking&n; *&t;and from being larger than the largest representable value.&n; *&n; * This prevents incremental opening of the window in the regime&n; * where TCP is limited by the speed of the reader side taking&n; * data out of the TCP receive queue. It does nothing about&n; * those cases where the window is constrained on the sender side&n; * because the pipeline is full.&n; *&n; * BSD also seems to &quot;accidentally&quot; limit itself to windows that are a&n; * multiple of MSS, at least until the free space gets quite small.&n; * This would appear to be a side effect of the mbuf implementation.&n; * Combining these two algorithms results in the observed behavior&n; * of having a fixed window size at almost all times.&n; *&n; * Below we obtain similar behavior by forcing the offered window to&n; * a multiple of the mss when it is feasible to do so.&n; *&n; * Note, we don&squot;t &quot;adjust&quot; for TIMESTAMP or SACK option bytes.&n; */
+multiline_comment|/* This function returns the amount that we can raise the&n; * usable window based on the following constraints&n; *  &n; * 1. The window can never be shrunk once it is offered (RFC 793)&n; * 2. We limit memory per socket&n; *&n; * RFC 1122:&n; * &quot;the suggested [SWS] avoidance algorithm for the receiver is to keep&n; *  RECV.NEXT + RCV.WIN fixed until:&n; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n; *&n; * i.e. don&squot;t raise the right edge of the window until you can raise&n; * it at least MSS bytes.&n; *&n; * Unfortunately, the recommended algorithm breaks header prediction,&n; * since header prediction assumes th-&gt;window stays fixed.&n; *&n; * Strictly speaking, keeping th-&gt;window fixed violates the receiver&n; * side SWS prevention criteria. The problem is that under this rule&n; * a stream of single byte packets will cause the right side of the&n; * window to always advance by a single byte.&n; * &n; * Of course, if the sender implements sender side SWS prevention&n; * then this will not be a problem.&n; * &n; * BSD seems to make the following compromise:&n; * &n; *&t;If the free space is less than the 1/4 of the maximum&n; *&t;space available and the free space is less than 1/2 mss,&n; *&t;then set the window to 0.&n; *&t;Otherwise, just prevent the window from shrinking&n; *&t;and from being larger than the largest representable value.&n; *&n; * This prevents incremental opening of the window in the regime&n; * where TCP is limited by the speed of the reader side taking&n; * data out of the TCP receive queue. It does nothing about&n; * those cases where the window is constrained on the sender side&n; * because the pipeline is full.&n; *&n; * BSD also seems to &quot;accidentally&quot; limit itself to windows that are a&n; * multiple of MSS, at least until the free space gets quite small.&n; * This would appear to be a side effect of the mbuf implementation.&n; * Combining these two algorithms results in the observed behavior&n; * of having a fixed window size at almost all times.&n; *&n; * Below we obtain similar behavior by forcing the offered window to&n; * a multiple of the mss when it is feasible to do so.&n; *&n; * Note, we don&squot;t &quot;adjust&quot; for TIMESTAMP or SACK option bytes.&n; */
 DECL|function|__tcp_select_window
 id|u32
 id|__tcp_select_window
@@ -1821,7 +1821,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This retransmits one SKB.  Policy decisions and retransmit queue&n; * state updates are done by the caller.  Returns non-zero if an&n; * error occured which prevented the send.&n; */
+multiline_comment|/* This retransmits one SKB.  Policy decisions and retransmit queue&n; * state updates are done by the caller.  Returns non-zero if an&n; * error occurred which prevented the send.&n; */
 DECL|function|tcp_retransmit_skb
 r_int
 id|tcp_retransmit_skb
@@ -1984,7 +1984,7 @@ suffix:semicolon
 id|tp-&gt;retrans_out
 op_increment
 suffix:semicolon
-multiline_comment|/* Make a copy, if the first transmission SKB clone we made&n;&t; * is still in somebodies hands, else make a clone.&n;&t; */
+multiline_comment|/* Make a copy, if the first transmission SKB clone we made&n;&t; * is still in somebody&squot;s hands, else make a clone.&n;&t; */
 id|TCP_SKB_CB
 c_func
 (paren
@@ -3496,7 +3496,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;intial sk-&gt;mss below 1&bslash;n&quot;
+l_string|&quot;initial sk-&gt;mss below 1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|mss

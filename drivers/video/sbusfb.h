@@ -98,6 +98,59 @@ id|fhc
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|fb_info_bwtwo
+r_struct
+id|fb_info_bwtwo
+(brace
+DECL|member|regs
+r_struct
+id|bw2_regs
+op_star
+id|regs
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|fb_info_cgthree
+r_struct
+id|fb_info_cgthree
+(brace
+DECL|member|regs
+r_struct
+id|cg3_regs
+op_star
+id|regs
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|fb_info_tcx
+r_struct
+id|fb_info_tcx
+(brace
+DECL|member|bt
+r_struct
+id|bt_regs
+op_star
+id|bt
+suffix:semicolon
+DECL|member|thc
+r_struct
+id|tcx_thc
+op_star
+id|thc
+suffix:semicolon
+DECL|member|tec
+r_struct
+id|tcx_tec
+op_star
+id|tec
+suffix:semicolon
+DECL|member|cplane
+id|u32
+op_star
+id|cplane
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|cg_cursor
 r_struct
 id|cg_cursor
@@ -235,6 +288,21 @@ DECL|member|cg6
 r_struct
 id|fb_info_cgsix
 id|cg6
+suffix:semicolon
+DECL|member|bw2
+r_struct
+id|fb_info_bwtwo
+id|bw2
+suffix:semicolon
+DECL|member|cg3
+r_struct
+id|fb_info_cgthree
+id|cg3
+suffix:semicolon
+DECL|member|tcx
+r_struct
+id|fb_info_tcx
+id|tcx
 suffix:semicolon
 DECL|member|s
 )brace
@@ -453,6 +521,10 @@ r_struct
 id|fb_info_sbusfb
 op_star
 comma
+r_struct
+id|display
+op_star
+comma
 r_int
 comma
 r_int
@@ -565,16 +637,12 @@ id|fb_info_sbusfb
 op_star
 )paren
 suffix:semicolon
-DECL|macro|attr_fg_col
-mdefine_line|#define attr_fg_col(s)    &bslash;&n;&t;(((s) &gt;&gt; 8) &amp; 0x0f)
-DECL|macro|attr_bg_col
-mdefine_line|#define attr_bg_col(s)    &bslash;&n;&t;(((s) &gt;&gt; 12) &amp; 0x0f)
-DECL|macro|attr_bg_col_ec
-mdefine_line|#define attr_bg_col_ec(conp) &bslash;&n;&t;(((conp)-&gt;vc_video_erase_char &gt;&gt; 12) &amp; 0x0f)
 DECL|macro|sbusfbinfod
 mdefine_line|#define sbusfbinfod(disp) ((struct fb_info_sbusfb *)(disp-&gt;fb_info))
 DECL|macro|sbusfbinfo
 mdefine_line|#define sbusfbinfo(info) ((struct fb_info_sbusfb *)(info))
 DECL|macro|CM
 mdefine_line|#define CM(i, j) [3*(i)+(j)]
+DECL|macro|SBUSFBINIT_SIZECHANGE
+mdefine_line|#define SBUSFBINIT_SIZECHANGE ((char *)-1)
 eof

@@ -1,5 +1,4 @@
 multiline_comment|/*&n;     *  Amiga interleaved bitplanes (ilbm)&n;     */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_ILBM) || defined(CONFIG_FBCON_ILBM_MODULE)  
 DECL|macro|FBCON_HAS_ILBM

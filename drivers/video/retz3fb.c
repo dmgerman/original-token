@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Linux/drivers/video/retz3fb.c -- RetinaZ3 frame buffer device&n; *&n; *    Copyright (C) 1997 Jes Sorensen&n; *&n; * This file is based on the CyberVision64 frame buffer device and&n; * the generic Cirrus Logic driver.&n; *&n; * cyberfb.c: Copyright (C) 1996 Martin Apel,&n; *                               Geert Uytterhoeven&n; * clgen.c:   Copyright (C) 1996 Frank Neumann&n; *&n; * History:&n; *   - 22 Jan 97: Initial work&n; *   - 14 Feb 97: Screen initialization works somewhat, still only&n; *                8-bit packed pixel is supported.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

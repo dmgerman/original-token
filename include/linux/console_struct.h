@@ -2,6 +2,7 @@ multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure describing s
 multiline_comment|/*&n; * You can set here how should the cursor look by default.&n; * In case you set CONFIG_SOFTCURSOR, this might be really interesting.&n; */
 DECL|macro|CUR_DEFAULT
 mdefine_line|#define CUR_DEFAULT CUR_UNDERLINE
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -102,7 +103,7 @@ r_int
 r_int
 id|vc_hi_font_mask
 suffix:semicolon
-multiline_comment|/* [#] Attribute set for upper 256 chars or font or 0 if not supported */
+multiline_comment|/* [#] Attribute set for upper 256 chars of font or 0 if not supported */
 DECL|member|vc_x
 DECL|member|vc_y
 r_int
@@ -437,6 +438,18 @@ op_star
 id|vc_display_fg
 suffix:semicolon
 multiline_comment|/* [!] Ptr to var holding fg console for this display */
+DECL|member|vc_uni_pagedir
+r_int
+r_int
+id|vc_uni_pagedir
+suffix:semicolon
+DECL|member|vc_uni_pagedir_loc
+r_int
+r_int
+op_star
+id|vc_uni_pagedir_loc
+suffix:semicolon
+multiline_comment|/* [!] Location of uni_pagedir variable for this console */
 multiline_comment|/* additional information is in vt_kern.h */
 )brace
 suffix:semicolon

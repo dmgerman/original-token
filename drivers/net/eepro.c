@@ -4648,6 +4648,10 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|length
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4992,6 +4996,10 @@ id|skb
 suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|rcv_size
 suffix:semicolon
 )brace
 r_else

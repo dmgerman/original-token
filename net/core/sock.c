@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
@@ -300,8 +301,9 @@ id|val
 OG
 id|sysctl_wmem_max
 )paren
-r_return
-l_int|0
+id|val
+op_assign
+id|sysctl_wmem_max
 suffix:semicolon
 id|sk-&gt;sndbuf
 op_assign
@@ -337,8 +339,9 @@ id|val
 OG
 id|sysctl_rmem_max
 )paren
-r_return
-l_int|0
+id|val
+op_assign
+id|sysctl_rmem_max
 suffix:semicolon
 multiline_comment|/* FIXME: is this lower bound the right one? */
 id|sk-&gt;rcvbuf
@@ -1240,12 +1243,16 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-DECL|function|sk_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sk_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|sk_cachep

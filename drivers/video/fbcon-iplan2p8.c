@@ -1782,7 +1782,7 @@ op_plus
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -1925,7 +1925,8 @@ suffix:semicolon
 id|u8
 op_star
 id|cdat
-comma
+suffix:semicolon
+id|u16
 id|c
 suffix:semicolon
 r_int
@@ -2040,6 +2041,8 @@ op_assign
 op_star
 id|s
 op_increment
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|cdat
 op_assign

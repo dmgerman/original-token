@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.9 1998/04/30 16:24:24 freitag Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 input&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&t;Ian P. Morris&t;&t;&lt;I.P.Morris@soton.ac.uk&gt;&n; *&n; *&t;$Id: ip6_input.c,v 1.10 1998/07/15 05:05:34 davem Exp $&n; *&n; *&t;Based in linux/net/ipv4/ip_input.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -107,20 +107,6 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* New header structures */
-DECL|struct|ipv6_tlvtype
-r_struct
-id|ipv6_tlvtype
-(brace
-DECL|member|type
-id|u8
-id|type
-suffix:semicolon
-DECL|member|len
-id|u8
-id|len
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|tlvtype_proc
 r_struct
 id|tlvtype_proc
@@ -171,7 +157,6 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|ip6_dstopt_unknown
-r_static
 r_int
 id|ip6_dstopt_unknown
 c_func
@@ -202,7 +187,7 @@ op_assign
 id|__u8
 op_star
 )paren
-id|skb-&gt;h.raw
+id|hdr
 op_minus
 (paren
 id|__u8

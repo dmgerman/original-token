@@ -7,6 +7,7 @@ DECL|macro|ATAFB_EXT
 mdefine_line|#define ATAFB_EXT
 DECL|macro|ATAFB_FALCON
 mdefine_line|#define ATAFB_FALCON
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

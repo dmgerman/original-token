@@ -1120,6 +1120,14 @@ id|netlink_opt
 id|af_netlink
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_ECONET) || defined(CONFIG_ECONET_MODULE)
+DECL|member|af_econet
+r_struct
+id|econet_opt
+op_star
+id|af_econet
+suffix:semicolon
+macro_line|#endif
 DECL|member|protinfo
 )brace
 id|protinfo

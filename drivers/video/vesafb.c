@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * framebuffer driver for VBE 2.0 compliant graphic boards&n; *&n; * switching to graphics mode happens at boot time (while&n; * running in real mode, see arch/i386/video.S).&n; *&n; * (c) 1998 Gerd Knorr &lt;kraxel@cs.tu-berlin.de&gt;&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

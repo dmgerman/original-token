@@ -1221,6 +1221,32 @@ id|dp
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FB_CT65550 */
+macro_line|#ifdef CONFIG_FB_CONTROL
+r_extern
+r_void
+id|control_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_CONTROL */
+macro_line|#ifdef CONFIG_FB_PLATINUM
+r_extern
+r_void
+id|platinum_of_init
+c_func
+(paren
+r_struct
+id|device_node
+op_star
+id|dp
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_FB_PLATINUM */
 multiline_comment|/*&n;     *  Initialisation&n;     */
 DECL|function|__initfunc
 id|__initfunc
@@ -1379,6 +1405,64 @@ r_continue
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_FB_CT65550 */
+macro_line|#ifdef CONFIG_FB_CONTROL
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;control&quot;
+)paren
+)paren
+(brace
+id|control_of_init
+c_func
+(paren
+id|dp
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_FB_CONTROL */
+macro_line|#ifdef CONFIG_FB_PLATINUM
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|dp-&gt;name
+comma
+l_string|&quot;platinum&quot;
+comma
+l_int|8
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;jonh: offb_init sees device node %s&bslash;n&quot;
+comma
+id|dp-&gt;name
+)paren
+suffix:semicolon
+id|platinum_of_init
+c_func
+(paren
+id|dp
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_FB_PLATINUM */
 )brace
 id|info
 op_assign

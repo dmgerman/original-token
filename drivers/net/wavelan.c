@@ -654,7 +654,7 @@ comma
 r_int
 id|o
 comma
-multiline_comment|/* Offset in psa */
+multiline_comment|/* Offset in PSA */
 id|u_char
 op_star
 id|b
@@ -1149,7 +1149,7 @@ c_func
 id|u_long
 id|ioaddr
 )paren
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 (brace
 r_int
 id|temp
@@ -1207,7 +1207,7 @@ c_func
 id|u_long
 id|ioaddr
 comma
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 r_int
 id|delay
 comma
@@ -1271,7 +1271,7 @@ c_func
 id|u_long
 id|ioaddr
 comma
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 id|u_short
 id|o
 comma
@@ -1403,7 +1403,7 @@ c_func
 id|u_long
 id|ioaddr
 comma
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 id|u_short
 id|o
 comma
@@ -1456,7 +1456,7 @@ multiline_comment|/* Read the protected register. */
 id|printk
 c_func
 (paren
-l_string|&quot;Protected 2 : %02X-%02X&bslash;n&quot;
+l_string|&quot;Protected 2:  %02X-%02X&bslash;n&quot;
 comma
 id|mmc_in
 c_func
@@ -1567,7 +1567,7 @@ id|MMW_FEE_CTRL_PRWRITE
 )paren
 suffix:semicolon
 macro_line|#ifdef DOESNT_SEEM_TO_WORK&t;/* disabled */
-multiline_comment|/* Or use : */
+multiline_comment|/* or use: */
 id|mmc_out
 c_func
 (paren
@@ -2733,7 +2733,7 @@ id|tx_status
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Hack for reconfiguration... */
+multiline_comment|/* Hack for reconfiguration */
 r_if
 c_cond
 (paren
@@ -2825,7 +2825,7 @@ id|TXBLOCKZ
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Hack for reconfiguration... */
+multiline_comment|/* Hack for reconfiguration */
 r_if
 c_cond
 (paren
@@ -3182,7 +3182,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;##### WaveLAN psa contents: #####&bslash;n&quot;
+l_string|&quot;##### WaveLAN PSA contents: #####&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -4126,7 +4126,7 @@ id|SCB_ST_CX
 )paren
 ques
 c_cond
-l_string|&quot;cmd completion interrupt,&quot;
+l_string|&quot;command completion interrupt,&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -4148,7 +4148,7 @@ id|SCB_ST_CNA
 )paren
 ques
 c_cond
-l_string|&quot;cmd unit not active,&quot;
+l_string|&quot;command unit not active,&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -4159,7 +4159,7 @@ id|SCB_ST_RNR
 )paren
 ques
 c_cond
-l_string|&quot;rcv unit not ready,&quot;
+l_string|&quot;receiving unit not ready,&quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren
@@ -4627,7 +4627,7 @@ id|KERN_DEBUG
 l_string|&quot;ru:&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Not implemented yet...&n;   */
+multiline_comment|/*&n;   * Not implemented yet&n;   */
 id|printk
 c_func
 (paren
@@ -5322,7 +5322,7 @@ id|dev
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef DEBUG_BASIC_SHOW
-multiline_comment|/* Now, let&squot;s go for the basic stuff */
+multiline_comment|/* Now, let&squot;s go for the basic stuff. */
 id|printk
 c_func
 (paren
@@ -5443,14 +5443,13 @@ r_int
 r_int
 id|freq
 suffix:semicolon
-multiline_comment|/* Ask the EEPROM to read the frequency from the first area */
+multiline_comment|/* Ask the EEPROM to read the frequency from the first area. */
 id|fee_read
 c_func
 (paren
 id|ioaddr
 comma
 l_int|0x00
-multiline_comment|/* 1st area - frequency... */
 comma
 op_amp
 id|freq
@@ -5924,9 +5923,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef WIRELESS_EXT&t;/* if wireless extension exists in the kernel */
+macro_line|#ifdef WIRELESS_EXT&t;/* if wireless extensions exist in the kernel */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Frequency setting (for hardware able of it)&n; * It&squot;s a bit complicated and you don&squot;t really want to look into it...&n; * (called in wavelan_ioctl)&n; */
+multiline_comment|/*&n; * Frequency setting (for hardware capable of it)&n; * It&squot;s a bit complicated and you don&squot;t really want to look into it.&n; * (called in wavelan_ioctl)&n; */
 r_static
 r_inline
 r_int
@@ -5937,7 +5936,7 @@ c_func
 id|u_long
 id|ioaddr
 comma
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 id|iw_freq
 op_star
 id|frequency
@@ -5962,7 +5961,7 @@ id|i
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Setting by frequency */
-multiline_comment|/* Theoretically, you may set any frequency between&n;   * the two limits with a 0.5 MHz precision. In practice,&n;   * I don&squot;t want you to have trouble with local&n;   * regulations. */
+multiline_comment|/* Theoretically, you may set any frequency between&n;   * the two limits with a 0.5 MHz precision. In practice,&n;   * I don&squot;t want you to have trouble with local regulations.&n;   */
 r_if
 c_cond
 (paren
@@ -6092,7 +6091,6 @@ c_func
 id|ioaddr
 comma
 l_int|0x71
-multiline_comment|/* frequency table */
 comma
 id|table
 comma
@@ -6227,7 +6225,7 @@ id|dac_verify
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* Corresponding gain (in the power adjust value table)&n;       * see AT&amp;T WaveLAN Data Manual, REF 407-024689/E, page 3-8&n;       * &amp; WCIN062D.DOC, page 6.2.9 */
+multiline_comment|/* Corresponding gain (in the power adjust value table)&n;       * See AT&amp;T WaveLAN Data Manual, REF 407-024689/E, page 3-8&n;       * and WCIN062D.DOC, page 6.2.9. */
 r_int
 r_int
 id|power_limit
@@ -6257,7 +6255,7 @@ r_int
 id|power_adjust
 suffix:semicolon
 multiline_comment|/* Correct value */
-multiline_comment|/* Search for the gain */
+multiline_comment|/* Search for the gain. */
 id|power_band
 op_assign
 l_int|0
@@ -6589,7 +6587,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* We now should verify here that the writing of the EEPROM was OK. */
+multiline_comment|/* We now should verify here that the writing of the EEPROM went OK. */
 multiline_comment|/* Reread the first area. */
 id|fee_read
 c_func
@@ -6694,7 +6692,7 @@ op_or
 id|MMW_FEE_CTRL_DWLD
 )paren
 suffix:semicolon
-multiline_comment|/* Wait until the download is finished */
+multiline_comment|/* Wait until the download is finished. */
 id|fee_wait
 c_func
 (paren
@@ -6705,7 +6703,7 @@ comma
 l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* We must now download the power adjust value (gain) to&n;       * the synthesizers (from the EEPROM - area 7 - DAC) */
+multiline_comment|/* We must now download the power adjust value (gain) to&n;       * the synthesizers (from the EEPROM - area 7 - DAC). */
 id|mmc_out
 c_func
 (paren
@@ -6740,7 +6738,7 @@ op_or
 id|MMW_FEE_CTRL_DWLD
 )paren
 suffix:semicolon
-multiline_comment|/* Wait until the download is finished */
+multiline_comment|/* Wait for the download to finish. */
 id|fee_wait
 c_func
 (paren
@@ -6823,7 +6821,7 @@ suffix:semicolon
 multiline_comment|/* Bah, never get there... */
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Give the list of available frequencies&n; */
+multiline_comment|/*&n; * Give the list of available frequencies.&n; */
 r_static
 r_inline
 r_int
@@ -6834,12 +6832,12 @@ c_func
 id|u_long
 id|ioaddr
 comma
-multiline_comment|/* i/o port of the card */
+multiline_comment|/* I/O port of the card */
 id|iw_freq
 op_star
 id|list
 comma
-multiline_comment|/* List of frequency to fill */
+multiline_comment|/* List of frequencies to fill */
 r_int
 id|max
 )paren
@@ -6862,7 +6860,7 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* index in the table */
-multiline_comment|/* Read the frequency table */
+multiline_comment|/* Read the frequency table. */
 id|fee_read
 c_func
 (paren
@@ -6876,7 +6874,7 @@ comma
 l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* Check all frequencies */
+multiline_comment|/* Check all frequencies. */
 id|i
 op_assign
 l_int|0
@@ -7186,7 +7184,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* HISTOGRAM */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Perform ioctl:  configuration and information&n; * This is here that are treated the wireless extensions (iwconfig)&n; */
+multiline_comment|/*&n; * Perform ioctl for configuration and information.&n; * It is here that the wireless extensions are treated (iwconfig).&n; */
 r_static
 r_int
 DECL|function|wavelan_ioctl
@@ -7266,7 +7264,7 @@ id|cmd
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Disable interrupts &amp; save flags */
+multiline_comment|/* Disable interrupts and save flags. */
 id|x
 op_assign
 id|wv_splhi
@@ -7290,7 +7288,7 @@ c_func
 (paren
 id|wrq-&gt;u.name
 comma
-l_string|&quot;Wavelan&quot;
+l_string|&quot;WaveLAN&quot;
 )paren
 suffix:semicolon
 r_break
@@ -7305,7 +7303,7 @@ c_cond
 id|wrq-&gt;u.nwid.on
 )paren
 (brace
-multiline_comment|/* Set NWID in psa */
+multiline_comment|/* Set NWID in psa. */
 id|psa.psa_nwid
 (braket
 l_int|0
@@ -7362,7 +7360,7 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/* Set NWID in mmc */
+multiline_comment|/* Set NWID in mmc. */
 id|m.w.mmw_netw_id_l
 op_assign
 id|wrq-&gt;u.nwid.nwid
@@ -7629,14 +7627,13 @@ r_int
 r_int
 id|freq
 suffix:semicolon
-multiline_comment|/* Ask the EEPROM to read the frequency from the first area */
+multiline_comment|/* Ask the EEPROM to read the frequency from the first area. */
 id|fee_read
 c_func
 (paren
 id|ioaddr
 comma
 l_int|0x00
-multiline_comment|/* 1st area - frequency... */
 comma
 op_amp
 id|freq
@@ -8453,7 +8450,7 @@ l_string|&quot;gethisto&quot;
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* Verify the user buffer */
+multiline_comment|/* Verify the user buffer. */
 id|ret
 op_assign
 id|verify_area
@@ -8650,7 +8647,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;SetSpy - Set of new addresses is: &bslash;n&quot;
+l_string|&quot;SetSpy:  set of new addresses is: &bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -9048,7 +9045,7 @@ macro_line|#ifdef HISTOGRAM
 r_case
 id|SIOCSIPHISTO
 suffix:colon
-multiline_comment|/* Verif if the user is root */
+multiline_comment|/* Verify that the user is root. */
 r_if
 c_cond
 (paren
@@ -9713,7 +9710,7 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* signal level, noise level, signal quality */
 multiline_comment|/* Read signal level, silence level and signal quality bytes. */
-multiline_comment|/* Note: in the PCMCIA hardware, these are part of the frame. It seems&n;       * that for the ISA hardware, it&squot;s nowhere to be found in the frame,&n;       * so I&squot;m obliged to do this (it has a side effect on /proc/net/wireless).&n;       * Any ideas? */
+multiline_comment|/* Note: in the PCMCIA hardware, these are part of the frame.  It seems&n;       * that for the ISA hardware, it&squot;s nowhere to be found in the frame,&n;       * so I&squot;m obliged to do this (it has a side effect on /proc/net/wireless).&n;       * Any ideas?&n;       */
 id|mmc_out
 c_func
 (paren
@@ -10463,7 +10460,7 @@ macro_line|#endif
 multiline_comment|/*********************** PACKET TRANSMISSION ***********************/
 multiline_comment|/*&n; * This part deals with sending packets through the WaveLAN.&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This routine fills in the appropriate registers and memory&n; * locations on the WaveLAN card and starts the card off on&n; * the transmit.&n; *&n; * The principle:&n; * Each block contains a transmit command, a NOP command,&n; * a transmit block descriptor and a buffer.&n; * The CU reads the transmit block which points to the tbd,&n; * reads the tbd and the content of the buffer.&n; * When it has finished with it, it goes to the next command&n; * which in our case is the NOP. The NOP points on itself,&n; * so the CU stops here.&n; * When we add the next block, we modify the previous nop&n; * to make it point on the new tx command.&n; * Simple, isn&squot;t it?&n; *&n; * (called in wavelan_packet_xmit())&n; */
+multiline_comment|/*&n; * This routine fills in the appropriate registers and memory&n; * locations on the WaveLAN card and starts the card off on&n; * the transmit.&n; *&n; * The principle:&n; * Each block contains a transmit command, a NOP command,&n; * a transmit block descriptor and a buffer.&n; * The CU read the transmit block which point to the tbd,&n; * read the tbd and the content of the buffer.&n; * When it has finish with it, it goes to the next command&n; * which in our case is the NOP. The NOP points on itself,&n; * so the CU stop here.&n; * When we add the next block, we modify the previous nop&n; * to make it point on the new tx command.&n; * Simple, isn&squot;t it ?&n; *&n; * (called in wavelan_packet_xmit())&n; */
 r_static
 r_inline
 r_void
@@ -10991,7 +10988,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This routine is called when we want to send a packet (NET3 callback)&n; * In this routine, we check if the hardware is ready to accept&n; * the packet. We also prevent reentrance. Then, we call the function&n; * to send the packet.&n; */
+multiline_comment|/*&n; * This routine is called when we want to send a packet (NET3 callback)&n; * In this routine, we check if the harware is ready to accept&n; * the packet.  We also prevent reentrance.  Then we call the function&n; * to send the packet.&n; */
 r_static
 r_int
 DECL|function|wavelan_packet_xmit
@@ -11272,7 +11269,7 @@ id|psa.psa_encryption_select
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set to standard values&n;       * 0x04 for AT,&n;       * 0x01 for MCA,&n;       * 0x04 for PCMCIA and 2.00 card (AT&amp;T 407-024689/E document)&n;       */
+multiline_comment|/* Set to standard values:&n;       * 0x04 for AT,&n;       * 0x01 for MCA,&n;       * 0x04 for PCMCIA and 2.00 card (AT&amp;T 407-024689/E document)&n;       */
 r_if
 c_cond
 (paren
@@ -11299,7 +11296,7 @@ op_or_assign
 l_int|1
 suffix:semicolon
 macro_line|#ifdef USE_PSA_CONFIG
-multiline_comment|/* Write the psa */
+multiline_comment|/* Write the psa. */
 id|psa_write
 c_func
 (paren
@@ -11584,7 +11581,7 @@ id|m
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The following code starts the modem of the 2.00 frequency&n;   * selectable cards at power on. It&squot;s not strictly needed for the&n;   * following boots.&n;   * The original patch was by Joe Finney for the PCMCIA driver, but&n;   * I&squot;ve cleaned it up a bit and added documentation.&n;   * Thanks to Loeke Brederveld from Lucent for the info.&n;   */
+multiline_comment|/* The following code starts the modem of the 2.00 frequency&n;   * selectable cards at power on.  It&squot;s not strictly needed for the&n;   * following boots.&n;   * The original patch was by Joe Finney for the PCMCIA driver, but&n;   * I&squot;ve cleaned it up a bit and added documentation.&n;   * Thanks to Loeke Brederveld from Lucent for the info.&n;   */
 multiline_comment|/* Attempt to recognise 2.00 cards (2.4 GHz frequency selectable)&n;   * Does it work for everybody, especially old cards? */
 multiline_comment|/* Note: WFREQSEL verifies that it is able to read a sensible&n;   * frequency from from EEPROM (address 0x00) and that&n;   * MMR_FEE_STATUS_ID is 0xA (Xilinx version) or 0xB (Ariadne version).&n;   * My test is more crude but does work. */
 r_if

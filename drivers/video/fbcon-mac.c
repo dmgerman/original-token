@@ -1412,7 +1412,7 @@ op_plus
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight

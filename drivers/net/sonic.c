@@ -1669,6 +1669,10 @@ suffix:semicolon
 id|lp-&gt;cur_tx
 op_increment
 suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|length
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2488,6 +2492,10 @@ suffix:semicolon
 multiline_comment|/* pass the packet to upper layers */
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 )brace
 r_else

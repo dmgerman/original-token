@@ -2171,6 +2171,10 @@ c_func
 id|rcv-&gt;skb
 )paren
 suffix:semicolon
+id|nl-&gt;enet_stats.rx_bytes
+op_add_assign
+id|rcv-&gt;length.h
+suffix:semicolon
 id|nl-&gt;enet_stats.rx_packets
 op_increment
 suffix:semicolon
@@ -2977,6 +2981,10 @@ id|snd-&gt;checksum
 )paren
 r_return
 id|TIMEOUT
+suffix:semicolon
+id|nl-&gt;enet_stats.tx_bytes
+op_add_assign
+id|snd-&gt;skb-&gt;len
 suffix:semicolon
 id|dev_kfree_skb
 c_func

@@ -370,6 +370,10 @@ DECL|macro|KD_FONT_FLAG_GLOBAL
 mdefine_line|#define KD_FONT_FLAG_GLOBAL&t;&t;1&t;/* Change on _all_ consoles */
 DECL|macro|KD_FONT_FLAG_DONT_RECALC
 mdefine_line|#define KD_FONT_FLAG_DONT_RECALC &t;2&t;/* Don&squot;t recalculate hw charcell size [compat] */
+macro_line|#ifdef __KERNEL__
+DECL|macro|KD_FONT_FLAG_NEW
+mdefine_line|#define KD_FONT_FLAG_NEW&t;&t;0x80000000&t;/* Indicate new KDFONTOP interface, which should be more strict */
+macro_line|#endif
 multiline_comment|/* note: 0x4B00-0x4B4E all have had a value at some time;&n;   don&squot;t reuse for the time being */
 multiline_comment|/* note: 0x4B60-0x4B6D, 0x4B70-0x4B72 used above */
 macro_line|#endif /* _LINUX_KD_H */

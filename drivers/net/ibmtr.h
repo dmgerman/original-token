@@ -9,6 +9,8 @@ DECL|macro|TR_BUSY_INTERVAL
 mdefine_line|#define TR_BUSY_INTERVAL (HZ/5) /* 5 on PC = 200 ms */
 DECL|macro|TR_SPIN_INTERVAL
 mdefine_line|#define TR_SPIN_INTERVAL (3*HZ) /* 3 seconds before init timeout */
+DECL|macro|TR_RETRIES
+mdefine_line|#define TR_RETRIES 6            /* number of open retries */ 
 DECL|macro|TR_ISA
 mdefine_line|#define TR_ISA 1
 DECL|macro|TR_MCA
@@ -422,6 +424,11 @@ suffix:semicolon
 DECL|member|func_addr
 id|__u32
 id|func_addr
+suffix:semicolon
+DECL|member|retry_count
+r_int
+r_int
+id|retry_count
 suffix:semicolon
 )brace
 suffix:semicolon

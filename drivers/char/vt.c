@@ -240,8 +240,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Generates sound of some count for some number of clock ticks&n; * [count = 1193180 / frequency]&n; *&n; * If freq is 0, will turn off sound, else will turn it on for that time.&n; * If msec is 0, will return immediately, else will sleep for msec time, then&n; * turn sound off.&n; *&n; * We use the BEEP_TIMER vector since we&squot;re using the same method to&n; * generate sound, and we&squot;ll overwrite any beep in progress. That may&n; * be something to fix later, if we like.&n; *&n; * We also return immediately, which is what was implied within the X&n; * comments - KDMKTONE doesn&squot;t put the process to sleep.&n; */
-multiline_comment|/* FIXME: This should go to arch-dependent code */
+multiline_comment|/*&n; * Generates sound of some frequency for some number of clock ticks&n; *&n; * If freq is 0, will turn off sound, else will turn it on for that time.&n; * If msec is 0, will return immediately, else will sleep for msec time, then&n; * turn sound off.&n; *&n; * We also return immediately, which is what was implied within the X&n; * comments - KDMKTONE doesn&squot;t put the process to sleep.&n; */
+macro_line|#if defined(__i386__) || defined(__alpha__) || defined(__powerpc__) || defined(__mips__)
 r_static
 r_void
 DECL|function|kd_nosound
@@ -428,6 +428,23 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#else
+r_void
+DECL|function|_kd_mksound
+id|_kd_mksound
+c_func
+(paren
+r_int
+r_int
+id|hz
+comma
+r_int
+r_int
+id|ticks
+)paren
+(brace
+)brace
+macro_line|#endif
 DECL|variable|kd_mksound
 r_void
 (paren
@@ -1778,15 +1795,6 @@ r_case
 id|GIO_FONTX
 suffix:colon
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cfdarg.chardata
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|op.op
 op_assign
 id|KD_FONT_OP_GET
@@ -1973,6 +1981,8 @@ r_return
 id|con_set_unimap
 c_func
 (paren
+id|fg_console
+comma
 id|tmp.entry_ct
 comma
 id|tmp.entries
@@ -1985,6 +1995,8 @@ r_return
 id|con_get_unimap
 c_func
 (paren
+id|fg_console
+comma
 id|tmp.entry_ct
 comma
 op_amp
@@ -4239,7 +4251,7 @@ id|op
 suffix:semicolon
 id|op.op
 op_assign
-id|KD_FONT_SET_DEFAULT
+id|KD_FONT_OP_SET_DEFAULT
 suffix:semicolon
 id|op.data
 op_assign
@@ -4267,6 +4279,7 @@ suffix:semicolon
 id|con_set_default_unimap
 c_func
 (paren
+id|fg_console
 )paren
 suffix:semicolon
 r_return
@@ -4321,6 +4334,10 @@ id|KD_FONT_OP_GET
 r_return
 op_minus
 id|EPERM
+suffix:semicolon
+id|op.flags
+op_or_assign
+id|KD_FONT_FLAG_NEW
 suffix:semicolon
 id|i
 op_assign
@@ -4501,6 +4518,8 @@ suffix:semicolon
 id|con_clear_unimap
 c_func
 (paren
+id|fg_console
+comma
 op_amp
 id|ui
 )paren
@@ -5238,33 +5257,6 @@ id|new_console
 r_int
 r_char
 id|old_vc_mode
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|new_console
-op_eq
-id|fg_console
-)paren
-op_logical_or
-(paren
-id|vt_dont_switch
-)paren
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|vc_cons_allocated
-c_func
-(paren
-id|new_console
-)paren
-)paren
-r_return
 suffix:semicolon
 id|last_console
 op_assign

@@ -136,6 +136,13 @@ r_return
 id|inverse_translate
 c_func
 (paren
+id|vc_cons
+(braket
+id|sel_cons
+)braket
+dot
+id|d
+comma
 id|screen_glyph
 c_func
 (paren

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * linux/drivers/char/vc_screen.c&n; *&n; * Provide access to virtual console memory.&n; * /dev/vcs0: the screen as it is being viewed right now (possibly scrolled)&n; * /dev/vcsN: the screen of /dev/ttyN (1 &lt;= N &lt;= 63)&n; *            [minor: N]&n; *&n; * /dev/vcsaN: idem, but including attributes, and prefixed with&n; *&t;the 4 bytes lines,columns,x,y (as screendump used to give)&n; *            [minor: N+128]&n; *&n; * This replaces screendump and part of selection, so that the system&n; * administrator can control access using file system permissions.&n; *&n; * aeb@cwi.nl - efter Friedas begravelse - 950211&n; *&n; * machek@k332.feld.cvut.cz - modified not to send characters to wrong console&n; *&t; - fixed some fatal off-by-one bugs (0-- no longer == -1 -&gt; looping and looping and looping...)&n; *&t; - making it shorter - scr_readw are macros which expand in PRETTY long code&n; */
+multiline_comment|/*&n; * linux/drivers/char/vc_screen.c&n; *&n; * Provide access to virtual console memory.&n; * /dev/vcs0: the screen as it is being viewed right now (possibly scrolled)&n; * /dev/vcsN: the screen of /dev/ttyN (1 &lt;= N &lt;= 63)&n; *            [minor: N]&n; *&n; * /dev/vcsaN: idem, but including attributes, and prefixed with&n; *&t;the 4 bytes lines,columns,x,y (as screendump used to give).&n; *&t;Attribute/character pair is in native endianity.&n; *            [minor: N+128]&n; *&n; * This replaces screendump and part of selection, so that the system&n; * administrator can control access using file system permissions.&n; *&n; * aeb@cwi.nl - efter Friedas begravelse - 950211&n; *&n; * machek@k332.feld.cvut.cz - modified not to send characters to wrong console&n; *&t; - fixed some fatal off-by-one bugs (0-- no longer == -1 -&gt; looping and looping and looping...)&n; *&t; - making it shorter - scr_readw are macros which expand in PRETTY long code&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -20,52 +21,6 @@ DECL|macro|addr
 macro_line|#undef addr
 DECL|macro|HEADER_SIZE
 mdefine_line|#define HEADER_SIZE&t;4
-r_static
-r_int
-r_int
-DECL|function|func_scr_readw
-id|func_scr_readw
-c_func
-(paren
-r_int
-r_int
-op_star
-id|org
-)paren
-(brace
-r_return
-id|scr_readw
-c_func
-(paren
-id|org
-)paren
-suffix:semicolon
-)brace
-r_static
-r_void
-DECL|function|func_scr_writew
-id|func_scr_writew
-c_func
-(paren
-r_int
-r_int
-id|val
-comma
-r_int
-r_int
-op_star
-id|org
-)paren
-(brace
-id|scr_writew
-c_func
-(paren
-id|val
-comma
-id|org
-)paren
-suffix:semicolon
-)brace
 r_static
 r_int
 DECL|function|vcs_size
@@ -233,7 +188,7 @@ id|file-&gt;f_pos
 suffix:semicolon
 )brace
 DECL|macro|RETURN
-mdefine_line|#define RETURN( x ) { enable_bh( CONSOLE_BH ); return x; }
+mdefine_line|#define RETURN(x) { enable_bh(CONSOLE_BH); return x; }
 r_static
 id|ssize_t
 DECL|function|vcs_read
@@ -437,9 +392,11 @@ l_int|0
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 op_increment
 )paren
@@ -570,9 +527,11 @@ suffix:semicolon
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 op_increment
 )paren
@@ -592,9 +551,11 @@ suffix:semicolon
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 op_increment
 )paren
@@ -619,9 +580,11 @@ l_int|1
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 op_increment
 )paren
@@ -654,9 +617,11 @@ macro_line|#ifdef __BIG_ENDIAN
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_rshift
@@ -670,9 +635,11 @@ macro_line|#else
 id|put_user
 c_func
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp
@@ -932,13 +899,17 @@ id|buf
 op_increment
 )paren
 suffix:semicolon
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp
@@ -1081,15 +1052,19 @@ op_increment
 )paren
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 id|c
 op_or
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp
@@ -1100,9 +1075,11 @@ id|org
 )paren
 suffix:semicolon
 macro_line|#else
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 (paren
 id|c
 op_lshift
@@ -1110,9 +1087,11 @@ l_int|8
 )paren
 op_or
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp
@@ -1154,9 +1133,11 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 id|w
 comma
 id|org
@@ -1200,13 +1181,17 @@ op_increment
 )paren
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp
@@ -1223,13 +1208,17 @@ id|org
 )paren
 suffix:semicolon
 macro_line|#else
-id|func_scr_writew
+id|vcs_scr_writew
 c_func
 (paren
+id|currcons
+comma
 (paren
-id|func_scr_readw
+id|vcs_scr_readw
 c_func
 (paren
+id|currcons
+comma
 id|org
 )paren
 op_amp

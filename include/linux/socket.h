@@ -396,6 +396,8 @@ DECL|macro|PF_PACKET
 mdefine_line|#define PF_PACKET&t;AF_PACKET
 DECL|macro|PF_ASH
 mdefine_line|#define PF_ASH&t;&t;AF_ASH
+DECL|macro|PF_ECONET
+mdefine_line|#define PF_ECONET&t;AF_ECONET
 DECL|macro|PF_ATMSVC
 mdefine_line|#define PF_ATMSVC&t;AF_ATMSVC
 DECL|macro|PF_SNA

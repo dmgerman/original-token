@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;We&squot;ve been given MAC frame buffer info by the booter. Now go set it up&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/macmodes.c -- Standard MacOS video modes&n; *&n; *&t;Copyright (C) 1998 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

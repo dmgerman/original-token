@@ -7,9 +7,8 @@ DECL|macro|IBMPC_MAP
 mdefine_line|#define IBMPC_MAP 2
 DECL|macro|USER_MAP
 mdefine_line|#define USER_MAP 3
-r_extern
-r_int
-id|hashtable_contents_valid
+r_struct
+id|vc_data
 suffix:semicolon
 r_extern
 r_int
@@ -17,6 +16,11 @@ r_char
 id|inverse_translate
 c_func
 (paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
 r_int
 id|glyph
 )paren
@@ -37,6 +41,11 @@ r_int
 id|conv_uni_to_pc
 c_func
 (paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
 r_int
 id|ucs
 )paren

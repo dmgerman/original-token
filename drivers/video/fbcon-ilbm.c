@@ -467,7 +467,7 @@ op_plus
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -649,7 +649,7 @@ id|rows
 comma
 id|i
 suffix:semicolon
-id|u8
+id|u16
 id|c1
 comma
 id|c2
@@ -728,6 +728,8 @@ op_assign
 op_star
 id|s
 op_increment
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|dest
 op_assign
@@ -855,6 +857,8 @@ id|s
 (braket
 l_int|0
 )braket
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|c2
 op_assign
@@ -862,6 +866,8 @@ id|s
 (braket
 l_int|1
 )braket
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|c3
 op_assign
@@ -869,6 +875,8 @@ id|s
 (braket
 l_int|2
 )braket
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|c4
 op_assign
@@ -876,6 +884,8 @@ id|s
 (braket
 l_int|3
 )braket
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|dest
 op_assign

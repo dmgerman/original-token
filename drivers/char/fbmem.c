@@ -2377,6 +2377,22 @@ macro_line|#elif defined(__alpha__)
 multiline_comment|/* Caching is off in the I/O space quadrant by design.  */
 macro_line|#elif defined(__sparc__)
 multiline_comment|/* Should never get here, all fb drivers should have their own&n;&t;   mmap routines */
+macro_line|#elif defined(__i386__)
+r_if
+c_cond
+(paren
+id|boot_cpu_data.x86
+OG
+l_int|3
+)paren
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+op_or_assign
+id|_PAGE_PCD
+suffix:semicolon
 macro_line|#else
 macro_line|#warning What do we have to do here??
 macro_line|#endif
@@ -2733,7 +2749,7 @@ c_func
 op_amp
 id|fb_con
 comma
-l_int|0
+l_int|12
 comma
 id|MAX_NR_CONSOLES
 op_minus

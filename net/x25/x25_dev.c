@@ -238,6 +238,9 @@ id|x25_neigh
 op_star
 id|neigh
 suffix:semicolon
+r_int
+id|queued
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -298,7 +301,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+id|queued
+op_assign
 id|x25_receive_data
 c_func
 (paren
@@ -306,6 +310,24 @@ id|skb
 comma
 id|neigh
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|queued
+)paren
+(brace
+multiline_comment|/* We need to free the skb ourselves because&n;&t;&t;&t;&t; * net_bh() won&squot;t care about our return code.&n;&t;&t;&t;&t; */
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 r_case
 l_int|0x01
@@ -676,6 +698,10 @@ r_int
 r_char
 op_star
 id|dptr
+suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
 suffix:semicolon
 r_switch
 c_cond

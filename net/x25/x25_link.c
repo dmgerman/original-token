@@ -946,7 +946,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Called when the link layer has terminated, or an establishment&n; *&t;request has failed. XXX should tell sockets.&n; */
+multiline_comment|/*&n; *&t;Called when the link layer has terminated, or an establishment&n; *&t;request has failed.&n; */
 DECL|function|x25_link_terminated
 r_void
 id|x25_link_terminated
@@ -961,6 +961,13 @@ id|neigh
 id|neigh-&gt;state
 op_assign
 id|X25_LINK_STATE_0
+suffix:semicolon
+multiline_comment|/* Out of order: clear existing virtual calls (X.25 03/93 4.6.3) */
+id|x25_kill_by_neigh
+c_func
+(paren
+id|neigh
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Add a new device.&n; */

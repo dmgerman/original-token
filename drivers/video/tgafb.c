@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This driver is partly based on the original TGA console driver&n; *&n; *&t;Copyright (C) 1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

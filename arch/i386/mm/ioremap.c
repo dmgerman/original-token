@@ -419,6 +419,30 @@ id|vm_struct
 op_star
 id|area
 suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t remap the low PCI/ISA area, it&squot;s always mapped..&n;&t; */
+r_if
+c_cond
+(paren
+id|phys_addr
+op_ge
+l_int|0xA0000
+op_logical_and
+(paren
+id|phys_addr
+op_plus
+id|size
+)paren
+op_le
+l_int|0x100000
+)paren
+r_return
+id|phys_to_virt
+c_func
+(paren
+id|phys_addr
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t allow anybody to remap normal RAM that we&squot;re using..&n;&t; */
 r_if
 c_cond
 (paren
@@ -431,12 +455,9 @@ id|high_memory
 )paren
 )paren
 r_return
-id|phys_to_virt
-c_func
-(paren
-id|phys_addr
-)paren
+l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; * Mappings have to be page-aligned&n;&t; */
 r_if
 c_cond
 (paren
@@ -456,6 +477,7 @@ c_func
 id|size
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t allow mappings that wrap..&n;&t; */
 r_if
 c_cond
 (paren
@@ -471,6 +493,7 @@ id|size
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; * Ok, go for it..&n;&t; */
 id|area
 op_assign
 id|get_vm_area

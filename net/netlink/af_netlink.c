@@ -4410,9 +4410,9 @@ id|netlink_bind
 comma
 id|netlink_connect
 comma
-l_int|NULL
+id|sock_no_socketpair
 comma
-l_int|NULL
+id|sock_no_accept
 comma
 id|netlink_getname
 comma
@@ -4424,9 +4424,9 @@ id|sock_no_listen
 comma
 id|sock_no_shutdown
 comma
-l_int|NULL
+id|sock_no_setsockopt
 comma
-l_int|NULL
+id|sock_no_getsockopt
 comma
 id|sock_no_fcntl
 comma

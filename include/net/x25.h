@@ -450,6 +450,16 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|x25_kill_by_neigh
+c_func
+(paren
+r_struct
+id|x25_neigh
+op_star
+)paren
+suffix:semicolon
 macro_line|#include &lt;net/x25call.h&gt;
 multiline_comment|/* x25_dev.c */
 r_extern
@@ -566,6 +576,20 @@ op_star
 comma
 r_struct
 id|x25_facilities
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_limit_facilities
+c_func
+(paren
+r_struct
+id|x25_facilities
+op_star
+comma
+r_struct
+id|x25_neigh
 op_star
 )paren
 suffix:semicolon

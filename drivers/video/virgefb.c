@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/drivers/video/virgefb.c -- CyberVision64/3D frame buffer device&n; *&n; *    Copyright (C) 1997 Andr&#xfffd; Heynatz&n; *&n; *&n; * This file is based on the CyberVision frame buffer device (cyberfb.c):&n; *&n; *    Copyright (C) 1996 Martin Apel&n; *                       Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 DECL|macro|VIRGEFBDEBUG
 macro_line|#undef VIRGEFBDEBUG
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

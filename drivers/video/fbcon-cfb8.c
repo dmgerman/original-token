@@ -583,7 +583,7 @@ op_plus
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -597,7 +597,7 @@ op_plus
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -663,6 +663,7 @@ id|fgx
 op_xor
 id|bgx
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_switch
 c_cond
 (paren
@@ -717,6 +718,7 @@ suffix:semicolon
 r_case
 l_int|8
 suffix:colon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -784,6 +786,7 @@ op_xor
 id|bgx
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_break
 suffix:semicolon
 r_case
@@ -942,6 +945,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|fbcon_cfb8_putcs
 r_void
@@ -978,13 +982,14 @@ id|u8
 op_star
 id|cdat
 comma
-id|c
-comma
 op_star
 id|dest
 comma
 op_star
 id|dest0
+suffix:semicolon
+id|u16
+id|c
 suffix:semicolon
 r_int
 id|rows
@@ -1074,6 +1079,7 @@ id|fgx
 op_xor
 id|bgx
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_switch
 c_cond
 (paren
@@ -1095,6 +1101,8 @@ op_assign
 op_star
 id|s
 op_increment
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|cdat
 op_assign
@@ -1158,6 +1166,7 @@ suffix:semicolon
 r_case
 l_int|8
 suffix:colon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -1170,6 +1179,8 @@ op_assign
 op_star
 id|s
 op_increment
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|cdat
 op_assign
@@ -1255,6 +1266,7 @@ op_add_assign
 l_int|8
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_break
 suffix:semicolon
 r_case
@@ -1275,6 +1287,8 @@ op_assign
 op_star
 id|s
 op_increment
+op_amp
+id|p-&gt;charmask
 suffix:semicolon
 id|cdat
 op_assign
@@ -1447,6 +1461,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|function|fbcon_cfb8_revc
 r_void
@@ -1505,6 +1520,34 @@ op_add_assign
 id|bytes
 )paren
 (brace
+macro_line|#ifdef CONFIG_FBCON_FONTWIDTH8_ONLY
+(paren
+(paren
+id|u32
+op_star
+)paren
+id|dest
+)paren
+(braket
+l_int|1
+)braket
+op_xor_assign
+l_int|0x0f0f0f0f
+suffix:semicolon
+(paren
+(paren
+id|u32
+op_star
+)paren
+id|dest
+)paren
+(braket
+l_int|0
+)braket
+op_xor_assign
+l_int|0x0f0f0f0f
+suffix:semicolon
+macro_line|#else
 r_switch
 c_cond
 (paren
@@ -1584,6 +1627,7 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 )brace
 DECL|function|fbcon_cfb8_clear_margins

@@ -770,6 +770,13 @@ r_char
 op_star
 id|str
 suffix:semicolon
+id|page
+(braket
+l_int|0
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -901,10 +908,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-id|strlen
-(paren
-id|page
-)paren
+id|len
 suffix:semicolon
 )brace
 DECL|function|destroy_proc_entry

@@ -190,5 +190,7 @@ DECL|macro|IPV6_ADD_MEMBERSHIP
 mdefine_line|#define IPV6_ADD_MEMBERSHIP&t;20
 DECL|macro|IPV6_DROP_MEMBERSHIP
 mdefine_line|#define IPV6_DROP_MEMBERSHIP&t;21
+DECL|macro|IPV6_ROUTER_ALERT
+mdefine_line|#define IPV6_ROUTER_ALERT&t;22
 macro_line|#endif
 eof

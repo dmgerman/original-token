@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsixfb.c,v 1.4 1998/07/21 10:36:53 jj Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsixfb.c,v 1.7 1998/07/22 12:44:59 jj Exp $&n; * cgsixfb.c: CGsix (GX,GXplus) frame buffer driver&n; *&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -953,17 +953,21 @@ l_int|0x10000000
 suffix:semicolon
 id|fbc-&gt;fg
 op_assign
-id|attr_bg_col_ec
+id|attr_bgcol_ec
 c_func
 (paren
+id|p
+comma
 id|conp
 )paren
 suffix:semicolon
 id|fbc-&gt;bg
 op_assign
-id|attr_bg_col_ec
+id|attr_bgcol_ec
 c_func
 (paren
+id|p
+comma
 id|conp
 )paren
 suffix:semicolon
@@ -1122,6 +1126,11 @@ id|fb_info_sbusfb
 op_star
 id|fb
 comma
+r_struct
+id|display
+op_star
+id|p
+comma
 r_int
 id|s
 comma
@@ -1162,17 +1171,21 @@ l_int|0x10000000
 suffix:semicolon
 id|fbc-&gt;fg
 op_assign
-id|attr_bg_col
+id|attr_bgcol
 c_func
 (paren
+id|p
+comma
 id|s
 )paren
 suffix:semicolon
 id|fbc-&gt;bg
 op_assign
-id|attr_bg_col
+id|attr_bgcol
 c_func
 (paren
+id|p
+comma
 id|s
 )paren
 suffix:semicolon
@@ -1345,7 +1358,7 @@ op_assign
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -1369,12 +1382,28 @@ op_assign
 (paren
 id|c
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_FBCON_FONTWIDTH8_ONLY
+id|fd
+op_assign
+id|p-&gt;fontdata
+op_plus
+id|i
+suffix:semicolon
+id|x
+op_assign
+id|fb-&gt;x_margin
+op_plus
+id|xx
+op_star
+l_int|8
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1425,6 +1454,7 @@ op_star
 id|p-&gt;fontwidth
 )paren
 suffix:semicolon
+macro_line|#endif
 r_do
 (brace
 id|i
@@ -1442,17 +1472,21 @@ l_int|0x10000000
 suffix:semicolon
 id|fbc-&gt;fg
 op_assign
-id|attr_fg_col
+id|attr_fgcol
 c_func
 (paren
+id|p
+comma
 id|c
 )paren
 suffix:semicolon
 id|fbc-&gt;bg
 op_assign
-id|attr_bg_col
+id|attr_bgcol
 c_func
 (paren
+id|p
+comma
 id|c
 )paren
 suffix:semicolon
@@ -1507,6 +1541,7 @@ id|fbc-&gt;y0
 op_assign
 id|y
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_if
 c_cond
 (paren
@@ -1515,6 +1550,7 @@ op_le
 l_int|8
 )paren
 (brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1537,6 +1573,7 @@ op_increment
 op_lshift
 l_int|24
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 )brace
 r_else
 (brace
@@ -1572,6 +1609,7 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
 DECL|function|cg6_putcs
 r_static
@@ -1662,18 +1700,22 @@ l_int|0x10000000
 suffix:semicolon
 id|fbc-&gt;fg
 op_assign
-id|attr_fg_col
+id|attr_fgcol
 c_func
 (paren
+id|p
+comma
 op_star
 id|s
 )paren
 suffix:semicolon
 id|fbc-&gt;bg
 op_assign
-id|attr_bg_col
+id|attr_bgcol
 c_func
 (paren
+id|p
+comma
 op_star
 id|s
 )paren
@@ -1713,6 +1755,14 @@ id|y
 op_assign
 id|fb-&gt;y_margin
 suffix:semicolon
+macro_line|#ifdef CONFIG_FBCON_FONTWIDTH8_ONLY
+id|x
+op_add_assign
+id|xx
+op_star
+l_int|8
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1733,6 +1783,7 @@ id|xx
 op_star
 id|p-&gt;fontwidth
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1755,6 +1806,7 @@ op_star
 id|p-&gt;fontheight
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_if
 c_cond
 (paren
@@ -1763,6 +1815,7 @@ op_le
 l_int|8
 )paren
 (brace
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -1819,7 +1872,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -1835,7 +1888,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -1851,7 +1904,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -1867,7 +1920,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -1886,7 +1939,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -1902,7 +1955,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -1918,7 +1971,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -1934,13 +1987,14 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_if
 c_cond
 (paren
@@ -1949,6 +2003,7 @@ op_eq
 l_int|8
 )paren
 (brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2017,6 +2072,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 )brace
 r_else
 (brace
@@ -2159,7 +2215,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 (paren
@@ -2179,7 +2235,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 (paren
@@ -2203,7 +2259,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -2223,7 +2279,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
@@ -2296,6 +2352,7 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
 r_while
 c_loop
@@ -2345,7 +2402,7 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_lshift
 id|p-&gt;fontheightlog
@@ -2360,12 +2417,13 @@ op_star
 id|s
 op_increment
 op_amp
-l_int|0xff
+id|p-&gt;charmask
 )paren
 op_star
 id|p-&gt;fontheight
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 r_if
 c_cond
 (paren
@@ -2374,6 +2432,7 @@ op_le
 l_int|8
 )paren
 (brace
+macro_line|#endif
 id|fd1
 op_assign
 id|p-&gt;fontdata
@@ -2402,6 +2461,7 @@ op_increment
 op_lshift
 l_int|24
 suffix:semicolon
+macro_line|#ifndef CONFIG_FBCON_FONTWIDTH8_ONLY
 )brace
 r_else
 (brace
@@ -2447,6 +2507,7 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
 )brace
 DECL|function|cg6_revc
@@ -2574,9 +2635,6 @@ op_star
 id|bt
 op_assign
 id|fb-&gt;s.cg6.bt
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 id|bt-&gt;addr
 op_assign
@@ -3218,33 +3276,9 @@ comma
 l_string|&quot;CGsix&quot;
 )paren
 suffix:semicolon
-id|fix-&gt;smem_start
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|phys
-op_plus
-id|CG6_RAM_OFFSET
-suffix:semicolon
 id|fix-&gt;line_length
 op_assign
 id|fb-&gt;var.xres_virtual
-suffix:semicolon
-id|fix-&gt;mmio_start
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|phys
-op_plus
-id|CG6_FBC_OFFSET
-suffix:semicolon
-id|fix-&gt;mmio_len
-op_assign
-id|PAGE_SIZE
 suffix:semicolon
 id|fix-&gt;accel
 op_assign
@@ -3583,12 +3617,19 @@ c_func
 (paren
 id|idstring
 comma
-l_string|&quot;cgsix at %02x.%08lx TEC Rev %x CPU %s Rev %x&quot;
+macro_line|#ifdef __sparc_v9__
+l_string|&quot;cgsix at %016lx TEC Rev %x CPU %s Rev %x&quot;
+comma
+id|phys
+comma
+macro_line|#else&t;
+l_string|&quot;cgsix at %x.%08lx TEC Rev %x CPU %s Rev %x&quot;
 comma
 id|fb-&gt;iospace
 comma
 id|phys
 comma
+macro_line|#endif
 (paren
 id|fb-&gt;s.cg6.thc-&gt;thc_misc
 op_rshift

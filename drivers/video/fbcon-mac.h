@@ -1,5 +1,4 @@
 multiline_comment|/*&n;     *  Mac variable bpp packed pixels (mac)&n;     */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#if defined(CONFIG_FBCON_MAC) || defined(CONFIG_FBCON_MAC_MODULE)
 DECL|macro|FBCON_HAS_MAC

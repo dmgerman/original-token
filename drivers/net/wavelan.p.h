@@ -1,23 +1,23 @@
-multiline_comment|/*&n; *&t;Wavelan ISA driver&n; *&n; *&t;&t;Jean II - HPLB &squot;96&n; *&n; * Reorganisation and extension of the driver.&n; *&n; * This file contain all definition and declarations necessary for the&n; * wavelan isa driver. This file is a private header, so it should&n; * be included only on wavelan.c !!!&n; */
+multiline_comment|/*&n; *&t;WaveLAN ISA driver&n; *&n; *&t;&t;Jean II - HPLB &squot;96&n; *&n; * Reorganisation and extension of the driver.&n; *&n; * This file contains all definitions and declarations necessary for the&n; * WaveLAN ISA driver.  This file is a private header, so it should&n; * be included only in wavelan.c!&n; */
 macro_line|#ifndef WAVELAN_P_H
 DECL|macro|WAVELAN_P_H
 mdefine_line|#define WAVELAN_P_H
-multiline_comment|/************************** DOCUMENTATION **************************/
-multiline_comment|/*&n; * This driver provide a Linux interface to the Wavelan ISA hardware&n; * The Wavelan is a product of Lucent (&quot;http://wavelan.netland.nl/&quot;).&n; * This division was formerly part of NCR and then AT&amp;T.&n; * Wavelan are also distributed by DEC (RoamAbout), Digital Ocean and&n; * Aironet (Arlan). If you have one of those product, you will need to&n; * make some changes below...&n; *&n; * This driver is still a beta software. A lot of bugs have been corrected,&n; * a lot of functionalities are implemented, the whole appear pretty stable,&n; * but there is still some area of improvement (encryption, performance...).&n; *&n; * To know how to use this driver, read the NET3 HOWTO.&n; * If you want to exploit the many other fonctionalities, look comments&n; * in the code...&n; *&n; * This driver is the result of the effort of many peoples (see below).&n; */
+multiline_comment|/************************** DOCUMENTATION ***************************/
+multiline_comment|/*&n; * This driver provides a Linux interface to the WaveLAN ISA hardware.&n; * The WaveLAN is a product of Lucent (http://www.wavelan.com/).&n; * This division was formerly part of NCR and then AT&amp;T.&n; * WaveLANs are also distributed by DEC (RoamAbout), Digital Ocean and&n; * Aironet (Arlan).  If you have one of those products, you will need to&n; * make some changes below.&n; *&n; * This driver is still beta software.  A lot of bugs have been corrected,&n; * a lot of functionality is implemented, and the whole appears stable,&n; * but there is still room for improvement (encryption, performance).&n; *&n; * To learn how to use this driver, read the NET3 HOWTO.&n; * If you want to exploit the many other functionalities, read the comments&n; * in the code.&n; *&n; * This driver is the result of the effort of many people (see below).&n; */
 multiline_comment|/* ------------------------ SPECIFIC NOTES ------------------------ */
-multiline_comment|/*&n; * wavelan.o is darn too big&n; * -------------------------&n; *&t;That&squot;s true ! There is a very simple way to reduce the driver&n; *&t;object by 33% (yes !). Comment out the following line :&n; *&t;&t;#include &lt;linux/wireless.h&gt;&n; *&n; * MAC address and hardware detection :&n; * ----------------------------------&n; *&t;The detection code of the wavelan chech that the first 3&n; *&t;octets of the MAC address fit the company code. This type of&n; *&t;detection work well for AT&amp;T cards (because the AT&amp;T code is&n; *&t;hardcoded in wavelan.h), but of course will fail for other&n; *&t;manufacturer.&n; *&n; *&t;If you are sure that your card is derived from the wavelan,&n; *&t;here is the way to configure it :&n; *&t;1) Get your MAC address&n; *&t;&t;a) With your card utilities (wfreqsel, instconf, ...)&n; *&t;&t;b) With the driver :&n; *&t;&t;&t;o compile the kernel with DEBUG_CONFIG_INFO enabled&n; *&t;&t;&t;o Boot and look the card messages&n; *&t;2) Set your MAC code (3 octets) in MAC_ADDRESSES[][3] (wavelan.h)&n; *&t;3) Compile &amp; verify&n; *&t;4) Send me the MAC code - I will include it in the next version...&n; *&n; * &quot;CU Inactive&quot; message at boot up :&n; * -----------------------------------&n; *&t;It seem that there is some weird timings problems with the&n; *&t;Intel microcontroler. In fact, this message is triggered by a&n; *&t;bad reading of the on board ram the first time we read the&n; *&t;control block. If you ignore this message, all is ok (but in&n; *&t;fact, currently, it reset the wavelan hardware).&n; *&n; *&t;To get rid of that problem, there is two solution. The first&n; *&t;is to add a dummy read of the scb at the end of&n; *&t;wv_82586_config. The second is to add the timers&n; *&t;wv_synchronous_cmd and wv_ack (the udelay just after the&n; *&t;waiting loops - seem that the controler is not totally ready&n; *&t;when it say it is !).&n; *&n; *&t;In the current code, I use the second solution (to be&n; *&t;consistent with the original solution of Bruce Janson).&n; */
+multiline_comment|/*&n; * wavelan.o is too darned big&n; * ---------------------------&n; *&t;That&squot;s true!  There is a very simple way to reduce the driver&n; *&t;object by 33%!  Comment out the following line:&n; *&t;&t;#include &lt;linux/wireless.h&gt;&n; *&n; * MAC address and hardware detection:&n; * -----------------------------------&n; *&t;The detection code for the WaveLAN checks that the first three&n; *&t;octets of the MAC address fit the company code.  This type of&n; *&t;detection works well for AT&amp;T cards (because the AT&amp;T code is&n; *&t;hardcoded in wavelan.h), but of course will fail for other&n; *&t;manufacturers.&n; *&n; *&t;If you are sure that your card is derived from the WaveLAN,&n; *&t;here is the way to configure it:&n; *&t;1) Get your MAC address&n; *&t;&t;a) With your card utilities (wfreqsel, instconf, etc.)&n; *&t;&t;b) With the driver:&n; *&t;&t;&t;o compile the kernel with DEBUG_CONFIG_INFO enabled&n; *&t;&t;&t;o Boot and look the card messages&n; *&t;2) Set your MAC code (3 octets) in MAC_ADDRESSES[][3] (wavelan.h)&n; *&t;3) Compile and verify&n; *&t;4) Send me the MAC code.  I will include it in the next version.&n; *&n; * &quot;CU Inactive&quot; message at boot up:&n; * -----------------------------------&n; *&t;It seems that there is some weird timing problem with the&n; *&t;Intel microcontroller.  In fact, this message is triggered by a&n; *&t;bad reading of the onboard RAM the first time we read the&n; *&t;control block.  If you ignore this message, all is OK (but in&n; *&t;fact, currently, it resets the WaveLAN hardware).&n; *&n; *&t;There are two ways to get rid of that problem.  The first&n; *&t;is to add a dummy read of the scb at the end of&n; *&t;wv_82586_config.  The second is to add the timers&n; *&t;wv_synchronous_cmd and wv_ack (the udelay just after the&n; *&t;waiting loops--it seems that the controller is not totally ready&n; *&t;when it says it is).&n; *&n; *&t;In the current code, I use the second solution (to be&n; *&t;consistent with the original solution of Bruce Janson).&n; */
 multiline_comment|/* --------------------- WIRELESS EXTENSIONS --------------------- */
-multiline_comment|/*&n; * This driver is the first one to support &quot;wireless extensions&quot;.&n; * This set of extensions provide you some way to control the wireless&n; * caracteristics of the hardware in a standard way and support for&n; * applications for taking advantage of it (like Mobile IP).&n; *&n; * You will need to enable the CONFIG_NET_RADIO define in the kernel&n; * configuration to enable the wireless extensions (this is the one&n; * giving access to the radio network device choice).&n; *&n; * It might also be a good idea as well to fetch the wireless tools to&n; * configure the device and play a bit.&n; */
+multiline_comment|/*&n; * This driver is the first to support &quot;wireless extensions&quot;.&n; * This set of extensions provides a standard way to control the wireless&n; * characteristics of the hardware.  Applications such as mobile IP may&n; * take advantage of it.&n; *&n; * You will need to enable the CONFIG_NET_RADIO define in the kernel&n; * configuration to enable the wireless extensions (this is the one&n; * giving access to the radio network device choice).&n; *&n; * It might also be a good idea as well to fetch the wireless tools to&n; * configure the device and play a bit.&n; */
 multiline_comment|/* ---------------------------- FILES ---------------------------- */
-multiline_comment|/*&n; * wavelan.c :&t;&t;The actual code for the driver - C functions&n; *&n; * wavelan.p.h :&t;Private header : local types / vars for the driver&n; *&n; * wavelan.h :&t;&t;Description of the hardware interface &amp; structs&n; *&n; * i82586.h :&t;&t;Description if the Ethernet controler&n; */
+multiline_comment|/*&n; * wavelan.c:&t;&t;actual code for the driver:  C functions&n; *&n; * wavelan.p.h:&t;&t;private header:  local types and variables for driver&n; *&n; * wavelan.h:&t;&t;description of the hardware interface and structs&n; *&n; * i82586.h:&t;&t;description of the Ethernet controller&n; */
 multiline_comment|/* --------------------------- HISTORY --------------------------- */
-multiline_comment|/*&n; * (Made with information in drivers headers. It may not be accurate,&n; * and I garantee nothing except my best effort...)&n; *&n; * The history of the Wavelan drivers is as complicated as history of&n; * the Wavelan itself (NCR -&gt; AT&amp;T -&gt; Lucent).&n; *&n; * All started with Anders Klemets &lt;klemets@paul.rutgers.edu&gt;,&n; * writting a Wavelan ISA driver for the MACH microkernel. Girish&n; * Welling &lt;welling@paul.rutgers.edu&gt; had also worked on it.&n; * Keith Moore modify this for the Pcmcia hardware.&n; * &n; * Robert Morris &lt;rtm@das.harvard.edu&gt; port these two drivers to BSDI&n; * and add specific Pcmcia support (there is currently no equivalent&n; * of the PCMCIA package under BSD...).&n; *&n; * Jim Binkley &lt;jrb@cs.pdx.edu&gt; port both BSDI drivers to freeBSD.&n; *&n; * Bruce Janson &lt;bruce@cs.usyd.edu.au&gt; port the BSDI ISA driver to Linux.&n; *&n; * Anthony D. Joseph &lt;adj@lcs.mit.edu&gt; started modify Bruce driver&n; * (with help of the BSDI PCMCIA driver) for PCMCIA.&n; * Yunzhou Li &lt;yunzhou@strat.iol.unh.edu&gt; finished is work.&n; * Joe Finney &lt;joe@comp.lancs.ac.uk&gt; patched the driver to start&n; * correctly 2.00 cards (2.4 GHz with frequency selection).&n; * David Hinds &lt;dhinds@hyper.stanford.edu&gt; integrated the whole in his&n; * Pcmcia package (+ bug corrections).&n; *&n; * I (Jean Tourrilhes - jt@hplb.hpl.hp.com) then started to make some&n; * patchs to the Pcmcia driver. After, I added code in the ISA driver&n; * for Wireless Extensions and full support of frequency selection&n; * cards. Then, I&squot;ve done the same to the Pcmcia driver + some&n; * reorganisation. Finally, I came back to the ISA driver to&n; * upgrade it at the same level as the Pcmcia one and reorganise&n; * the code&n; * Loeke Brederveld &lt;lbrederv@wavelan.com&gt; from Lucent has given me&n; * much needed informations on the Wavelan hardware.&n; */
-multiline_comment|/* The original copyrights and litteratures mention others names and&n; * credits. I don&squot;t know what there part in this development was...&n; */
-multiline_comment|/* By the way : for the copyright &amp; legal stuff :&n; * Almost everybody wrote code under GNU or BSD license (or alike),&n; * and want that their original copyright remain somewhere in the&n; * code (for myself, I go with the GPL).&n; * Nobody want to take responsibility for anything, except the fame...&n; */
+multiline_comment|/*&n; * This is based on information in the drivers&squot; headers. It may not be&n; * accurate, and I guarantee only my best effort.&n; *&n; * The history of the WaveLAN drivers is as complicated as the history of&n; * the WaveLAN itself (NCR -&gt; AT&amp;T -&gt; Lucent).&n; *&n; * It all started with Anders Klemets &lt;klemets@paul.rutgers.edu&gt;&n; * writing a WaveLAN ISA driver for the Mach microkernel.  Girish&n; * Welling &lt;welling@paul.rutgers.edu&gt; had also worked on it.&n; * Keith Moore modified this for the PCMCIA hardware.&n; * &n; * Robert Morris &lt;rtm@das.harvard.edu&gt; ported these two drivers to BSDI&n; * and added specific PCMCIA support (there is currently no equivalent&n; * of the PCMCIA package under BSD).&n; *&n; * Jim Binkley &lt;jrb@cs.pdx.edu&gt; ported both BSDI drivers to FreeBSD.&n; *&n; * Bruce Janson &lt;bruce@cs.usyd.edu.au&gt; ported the BSDI ISA driver to Linux.&n; *&n; * Anthony D. Joseph &lt;adj@lcs.mit.edu&gt; started to modify Bruce&squot;s driver&n; * (with help of the BSDI PCMCIA driver) for PCMCIA.&n; * Yunzhou Li &lt;yunzhou@strat.iol.unh.edu&gt; finished this work.&n; * Joe Finney &lt;joe@comp.lancs.ac.uk&gt; patched the driver to start&n; * 2.00 cards correctly (2.4 GHz with frequency selection).&n; * David Hinds &lt;dhinds@hyper.stanford.edu&gt; integrated the whole in his&n; * PCMCIA package (and bug corrections).&n; *&n; * I (Jean Tourrilhes - jt@hplb.hpl.hp.com) then started to make some&n; * patches to the PCMCIA driver.  Later, I added code in the ISA driver&n; * for Wireless Extensions and full support of frequency selection&n; * cards.  Then, I did the same to the PCMCIA driver, and did some&n; * reorganisation.  Finally, I came back to the ISA driver to&n; * upgrade it at the same level as the PCMCIA one and reorganise&n; * the code.&n; * Loeke Brederveld &lt;lbrederv@wavelan.com&gt; from Lucent has given me&n; * much needed information on the WaveLAN hardware.&n; */
+multiline_comment|/* The original copyrights and literature mention others&squot; names and&n; * credits.  I don&squot;t know what their part in this development was.&n; */
+multiline_comment|/* By the way, for the copyright and legal stuff:&n; * almost everybody wrote code under the GNU or BSD license (or similar),&n; * and want their original copyright to remain somewhere in the&n; * code (for myself, I go with the GPL).&n; * Nobody wants to take responsibility for anything, except the fame.&n; */
 multiline_comment|/* --------------------------- CREDITS --------------------------- */
-multiline_comment|/*&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre (bakre@paul.rutgers.edu),&n; *&t;Donald Becker (becker@cesdis.gsfc.nasa.gov),&n; *&t;Loeke Brederveld (Loeke.Brederveld@Utrecht.NCR.com),&n; *&t;Brent Elphick &lt;belphick@uwaterloo.ca&gt;,&n; *&t;Anders Klemets (klemets@it.kth.se),&n; *&t;Vladimir V. Kolpakov (w@stier.koenig.ru),&n; *&t;Marc Meertens (Marc.Meertens@Utrecht.NCR.com),&n; *&t;Pauline Middelink (middelin@polyware.iaf.nl),&n; *&t;Robert Morris (rtm@das.harvard.edu),&n; *&t;Jean Tourrilhes (jt@hplb.hpl.hp.com),&n; *&t;Girish Welling (welling@paul.rutgers.edu),&n; *&t;Clark Woodworth &lt;clark@hiway1.exit109.com&gt;&n; *&t;Yongguang Zhang &lt;ygz@isl.hrl.hac.com&gt;...&n; *&n; * Thanks go also to:&n; *&t;James Ashton (jaa101@syseng.anu.edu.au),&n; *&t;Alan Cox (iialan@iiit.swan.ac.uk),&n; *&t;Allan Creighton (allanc@cs.usyd.edu.au),&n; *&t;Matthew Geier (matthew@cs.usyd.edu.au),&n; *&t;Remo di Giovanni (remo@cs.usyd.edu.au),&n; *&t;Eckhard Grah (grah@wrcs1.urz.uni-wuppertal.de),&n; *&t;Vipul Gupta (vgupta@cs.binghamton.edu),&n; *&t;Mark Hagan (mhagan@wtcpost.daytonoh.NCR.COM),&n; *&t;Tim Nicholson (tim@cs.usyd.edu.au),&n; *&t;Ian Parkin (ian@cs.usyd.edu.au),&n; *&t;John Rosenberg (johnr@cs.usyd.edu.au),&n; *&t;George Rossi (george@phm.gov.au),&n; *&t;Arthur Scott (arthur@cs.usyd.edu.au),&n; *&t;Stanislav Sinyagin &lt;stas@isf.ru&gt;&n; *&t;Peter Storey,&n; * for their assistance and advice.&n; *&n; * Additional Credits:&n; *&n; * My developpement has been done under Linux 2.0.x (Debian 1.1) with&n; *&t;an HP Vectra XP/60.&n; *&n; */
+multiline_comment|/*&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre &lt;bakre@paul.rutgers.edu&gt;,&n; *&t;Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;,&n; *&t;Loeke Brederveld &lt;Loeke.Brederveld@Utrecht.NCR.com&gt;,&n; *&t;Brent Elphick &lt;belphick@uwaterloo.ca&gt;,&n; *&t;Anders Klemets &lt;klemets@it.kth.se&gt;,&n; *&t;Vladimir V. Kolpakov &lt;w@stier.koenig.ru&gt;,&n; *&t;Marc Meertens &lt;Marc.Meertens@Utrecht.NCR.com&gt;,&n; *&t;Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;,&n; *&t;Robert Morris &lt;rtm@das.harvard.edu&gt;,&n; *&t;Jean Tourrilhes &lt;jt@hplb.hpl.hp.com&gt;,&n; *&t;Girish Welling &lt;welling@paul.rutgers.edu&gt;,&n; *&t;Clark Woodworth &lt;clark@hiway1.exit109.com&gt;&n; *&t;Yongguang Zhang &lt;ygz@isl.hrl.hac.com&gt;&n; *&n; * Thanks go also to:&n; *&t;James Ashton &lt;jaa101@syseng.anu.edu.au&gt;,&n; *&t;Alan Cox &lt;iialan@iiit.swan.ac.uk&gt;,&n; *&t;Allan Creighton &lt;allanc@cs.usyd.edu.au&gt;,&n; *&t;Matthew Geier &lt;matthew@cs.usyd.edu.au&gt;,&n; *&t;Remo di Giovanni &lt;remo@cs.usyd.edu.au&gt;,&n; *&t;Eckhard Grah &lt;grah@wrcs1.urz.uni-wuppertal.de&gt;,&n; *&t;Vipul Gupta &lt;vgupta@cs.binghamton.edu&gt;,&n; *&t;Mark Hagan &lt;mhagan@wtcpost.daytonoh.NCR.COM&gt;,&n; *&t;Tim Nicholson &lt;tim@cs.usyd.edu.au&gt;,&n; *&t;Ian Parkin &lt;ian@cs.usyd.edu.au&gt;,&n; *&t;John Rosenberg &lt;johnr@cs.usyd.edu.au&gt;,&n; *&t;George Rossi &lt;george@phm.gov.au&gt;,&n; *&t;Arthur Scott &lt;arthur@cs.usyd.edu.au&gt;,&n; *&t;Stanislav Sinyagin &lt;stas@isf.ru&gt;&n; *&t;and Peter Storey for their assistance and advice.&n; *&n; * Additional Credits:&n; *&n; *&t;My development has been done under Linux 2.0.x (Debian 1.1) with&n; *&t;an HP Vectra XP/60.&n; *&n; */
 multiline_comment|/* ------------------------- IMPROVEMENTS ------------------------- */
-multiline_comment|/*&n; * I proudly present :&n; *&n; * Changes mades in first pre-release :&n; * ----------------------------------&n; *&t;- Reorganisation of the code, function name change&n; *&t;- Creation of private header (wavelan.p.h)&n; *&t;- Reorganised debug messages&n; *&t;- More comments, history, ...&n; *&t;- mmc_init : configure the PSA if not done&n; *&t;- mmc_init : correct default value of level threshold for pcmcia&n; *&t;- mmc_init : 2.00 detection better code for 2.00 init&n; *&t;- better info at startup&n; *&t;- irq setting (note : this setting is permanent...)&n; *&t;- Watchdog : change strategy (+ solve module removal problems)&n; *&t;- add wireless extensions (ioctl &amp; get_wireless_stats)&n; *&t;  get/set nwid/frequency on fly, info for /proc/net/wireless&n; *&t;- More wireless extension : SETSPY and GETSPY&n; *&t;- Make wireless extensions optional&n; *&t;- Private ioctl to set/get quality &amp; level threshold, histogram&n; *&t;- Remove /proc/net/wavelan&n; *&t;- Supress useless stuff from lp (net_local)&n; *&t;- kernel 2.1 support (copy_to/from_user instead of memcpy_to/fromfs)&n; *&t;- Add message level (debug stuff in /var/adm/debug &amp; errors not&n; *&t;  displayed at console and still in /var/adm/messages)&n; *&t;- multi device support&n; *&t;- Start fixing the probe (init code)&n; *&t;- More inlines&n; *&t;- man page&n; *&t;- Lot of others minor details &amp; cleanups&n; *&n; * Changes made in second pre-release :&n; * ----------------------------------&n; *&t;- Cleanup init code (probe &amp; module init)&n; *&t;- Better multi device support (module)&n; *&t;- name assignement (module)&n; *&n; * Changes made in third pre-release :&n; * ---------------------------------&n; *&t;- Be more conservative on timers&n; *&t;- Preliminary support for multicast (I still lack some details...)&n; *&n; * Changes made in fourth pre-release :&n; * ----------------------------------&n; *&t;- multicast (revisited and finished)&n; *&t;- Avoid reset in set_multicast_list (a really big hack)&n; *&t;  if somebody could apply this code for other i82586 based driver...&n; *&t;- Share on board memory 75% RU / 25% CU (instead of 50/50)&n; *&n; * Changes made for release in 2.1.15 :&n; * ----------------------------------&n; *&t;- Change the detection code for multi manufacturer code support&n; *&n; * Changes made for release in 2.1.17 :&n; * ----------------------------------&n; *&t;- Update to wireless extensions changes&n; *&t;- Silly bug in card initial configuration (psa_conf_status)&n; *&n; * Changes made for release in 2.1.27 &amp; 2.0.30 :&n; * -------------------------------------------&n; *&t;- Small bug in debug code (probably not the last one...)&n; *&t;- Remove extern kerword for wavelan_probe()&n; *&t;- Level threshold is now a standard wireless extension (version 4 !)&n; *&t;- modules parameters types (new module interface)&n; *&n; * Changes made for release in 2.1.36 :&n; * ----------------------------------&n; *&t;- byte count stats (courtesy of David Hinds)&n; *&t;- Remove dev_tint stuff (courtesy of David Hinds)&n; *&t;- Encryption setting from Brent Elphick (thanks a lot !)&n; *&t;- &squot;ioaddr&squot; to &squot;u_long&squot; for the Alpha (thanks to Stanislav Sinyagin)&n; *&n; * Wishes &amp; dreams :&n; * ---------------&n; *&t;- Roaming&n; */
+multiline_comment|/*&n; * I proudly present:&n; *&n; * Changes made in first pre-release:&n; * ----------------------------------&n; *&t;- reorganisation of the code, function name change&n; *&t;- creation of private header (wavelan.p.h)&n; *&t;- reorganised debug messages&n; *&t;- more comments, history, etc.&n; *&t;- mmc_init:  configure the PSA if not done&n; *&t;- mmc_init:  correct default value of level threshold for PCMCIA&n; *&t;- mmc_init:  2.00 detection better code for 2.00 initialization&n; *&t;- better info at startup&n; *&t;- IRQ setting (note:  this setting is permanent)&n; *&t;- watchdog:  change strategy (and solve module removal problems)&n; *&t;- add wireless extensions (ioctl and get_wireless_stats)&n; *&t;  get/set nwid/frequency on fly, info for /proc/net/wireless&n; *&t;- more wireless extensions:  SETSPY and GETSPY&n; *&t;- make wireless extensions optional&n; *&t;- private ioctl to set/get quality and level threshold, histogram&n; *&t;- remove /proc/net/wavelan&n; *&t;- suppress useless stuff from lp (net_local)&n; *&t;- kernel 2.1 support (copy_to/from_user instead of memcpy_to/fromfs)&n; *&t;- add message level (debug stuff in /var/adm/debug and errors not&n; *&t;  displayed at console and still in /var/adm/messages)&n; *&t;- multi device support&n; *&t;- start fixing the probe (init code)&n; *&t;- more inlines&n; *&t;- man page&n; *&t;- many other minor details and cleanups&n; *&n; * Changes made in second pre-release:&n; * -----------------------------------&n; *&t;- clean up init code (probe and module init)&n; *&t;- better multiple device support (module)&n; *&t;- name assignment (module)&n; *&n; * Changes made in third pre-release:&n; * ----------------------------------&n; *&t;- be more conservative on timers&n; *&t;- preliminary support for multicast (I still lack some details)&n; *&n; * Changes made in fourth pre-release:&n; * -----------------------------------&n; *&t;- multicast (revisited and finished)&n; *&t;- avoid reset in set_multicast_list (a really big hack)&n; *&t;  if somebody could apply this code for other i82586 based drivers&n; *&t;- share onboard memory 75% RU and 25% CU (instead of 50/50)&n; *&n; * Changes made for release in 2.1.15:&n; * -----------------------------------&n; *&t;- change the detection code for multi manufacturer code support&n; *&n; * Changes made for release in 2.1.17:&n; * -----------------------------------&n; *&t;- update to wireless extensions changes&n; *&t;- silly bug in card initial configuration (psa_conf_status)&n; *&n; * Changes made for release in 2.1.27 &amp; 2.0.30:&n; * --------------------------------------------&n; *&t;- small bug in debug code (probably not the last one...)&n; *&t;- remove extern keyword for wavelan_probe()&n; *&t;- level threshold is now a standard wireless extension (version 4 !)&n; *&t;- modules parameters types (new module interface)&n; *&n; * Changes made for release in 2.1.36:&n; * -----------------------------------&n; *&t;- byte count stats (courtesy of David Hinds)&n; *&t;- remove dev_tint stuff (courtesy of David Hinds)&n; *&t;- encryption setting from Brent Elphick (thanks a lot!)&n; *&t;- &squot;ioaddr&squot; to &squot;u_long&squot; for the Alpha (thanks to Stanislav Sinyagin)&n; *&n; * Wishes &amp; dreams:&n; * ----------------&n; *&t;- roaming&n; */
 multiline_comment|/***************************** INCLUDES *****************************/
 macro_line|#include&t;&lt;linux/module.h&gt;
 macro_line|#include&t;&lt;linux/kernel.h&gt;
@@ -44,83 +44,83 @@ macro_line|#include&t;&lt;linux/malloc.h&gt;
 macro_line|#include&t;&lt;linux/timer.h&gt;
 macro_line|#include&t;&lt;linux/init.h&gt;
 macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Wireless extensions */
-multiline_comment|/* Wavelan declarations */
+multiline_comment|/* WaveLAN declarations */
 macro_line|#include&t;&quot;i82586.h&quot;
 macro_line|#include&t;&quot;wavelan.h&quot;
 multiline_comment|/****************************** DEBUG ******************************/
 DECL|macro|DEBUG_MODULE_TRACE
-macro_line|#undef DEBUG_MODULE_TRACE&t;/* Module insertion/removal */
+macro_line|#undef DEBUG_MODULE_TRACE&t;/* module insertion/removal */
 DECL|macro|DEBUG_CALLBACK_TRACE
-macro_line|#undef DEBUG_CALLBACK_TRACE&t;/* Calls made by Linux */
+macro_line|#undef DEBUG_CALLBACK_TRACE&t;/* calls made by Linux */
 DECL|macro|DEBUG_INTERRUPT_TRACE
-macro_line|#undef DEBUG_INTERRUPT_TRACE&t;/* Calls to handler */
+macro_line|#undef DEBUG_INTERRUPT_TRACE&t;/* calls to handler */
 DECL|macro|DEBUG_INTERRUPT_INFO
-macro_line|#undef DEBUG_INTERRUPT_INFO&t;/* type of interrupt &amp; so on */
+macro_line|#undef DEBUG_INTERRUPT_INFO&t;/* type of interrupt and so on */
 DECL|macro|DEBUG_INTERRUPT_ERROR
 mdefine_line|#define DEBUG_INTERRUPT_ERROR&t;/* problems */
 DECL|macro|DEBUG_CONFIG_TRACE
-macro_line|#undef DEBUG_CONFIG_TRACE&t;/* Trace the config functions */
+macro_line|#undef DEBUG_CONFIG_TRACE&t;/* Trace the config functions. */
 DECL|macro|DEBUG_CONFIG_INFO
-macro_line|#undef DEBUG_CONFIG_INFO&t;/* What&squot;s going on... */
+macro_line|#undef DEBUG_CONFIG_INFO&t;/* what&squot;s going on */
 DECL|macro|DEBUG_CONFIG_ERRORS
-mdefine_line|#define DEBUG_CONFIG_ERRORS&t;/* Errors on configuration */
+mdefine_line|#define DEBUG_CONFIG_ERRORS&t;/* errors on configuration */
 DECL|macro|DEBUG_TX_TRACE
-macro_line|#undef DEBUG_TX_TRACE&t;&t;/* Transmission calls */
+macro_line|#undef DEBUG_TX_TRACE&t;&t;/* transmission calls */
 DECL|macro|DEBUG_TX_INFO
-macro_line|#undef DEBUG_TX_INFO&t;&t;/* Header of the transmited packet */
+macro_line|#undef DEBUG_TX_INFO&t;&t;/* header of the transmitted packet */
 DECL|macro|DEBUG_TX_ERROR
 mdefine_line|#define DEBUG_TX_ERROR&t;&t;/* unexpected conditions */
 DECL|macro|DEBUG_RX_TRACE
-macro_line|#undef DEBUG_RX_TRACE&t;&t;/* Transmission calls */
+macro_line|#undef DEBUG_RX_TRACE&t;&t;/* transmission calls */
 DECL|macro|DEBUG_RX_INFO
-macro_line|#undef DEBUG_RX_INFO&t;&t;/* Header of the transmited packet */
+macro_line|#undef DEBUG_RX_INFO&t;&t;/* header of the transmitted packet */
 DECL|macro|DEBUG_RX_ERROR
 mdefine_line|#define DEBUG_RX_ERROR&t;&t;/* unexpected conditions */
 DECL|macro|DEBUG_PACKET_DUMP
-macro_line|#undef DEBUG_PACKET_DUMP&t;16&t;/* Dump packet on the screen */
+macro_line|#undef DEBUG_PACKET_DUMP&t;16&t;/* Dump packet on the screen. */
 DECL|macro|DEBUG_IOCTL_TRACE
-macro_line|#undef DEBUG_IOCTL_TRACE&t;/* Misc call by Linux */
+macro_line|#undef DEBUG_IOCTL_TRACE&t;/* misc. call by Linux */
 DECL|macro|DEBUG_IOCTL_INFO
-macro_line|#undef DEBUG_IOCTL_INFO&t;&t;/* Various debug info */
+macro_line|#undef DEBUG_IOCTL_INFO&t;&t;/* various debugging info */
 DECL|macro|DEBUG_IOCTL_ERROR
-mdefine_line|#define DEBUG_IOCTL_ERROR&t;/* What&squot;s going wrong */
+mdefine_line|#define DEBUG_IOCTL_ERROR&t;/* what&squot;s going wrong */
 DECL|macro|DEBUG_BASIC_SHOW
-mdefine_line|#define DEBUG_BASIC_SHOW&t;/* Show basic startup info */
+mdefine_line|#define DEBUG_BASIC_SHOW&t;/* Show basic startup info. */
 DECL|macro|DEBUG_VERSION_SHOW
-macro_line|#undef DEBUG_VERSION_SHOW&t;/* Print version info */
+macro_line|#undef DEBUG_VERSION_SHOW&t;/* Print version info. */
 DECL|macro|DEBUG_PSA_SHOW
-macro_line|#undef DEBUG_PSA_SHOW&t;&t;/* Dump psa to screen */
+macro_line|#undef DEBUG_PSA_SHOW&t;&t;/* Dump PSA to screen. */
 DECL|macro|DEBUG_MMC_SHOW
-macro_line|#undef DEBUG_MMC_SHOW&t;&t;/* Dump mmc to screen */
+macro_line|#undef DEBUG_MMC_SHOW&t;&t;/* Dump mmc to screen. */
 DECL|macro|DEBUG_SHOW_UNUSED
-macro_line|#undef DEBUG_SHOW_UNUSED&t;/* Show also unused fields */
+macro_line|#undef DEBUG_SHOW_UNUSED&t;/* Show unused fields too. */
 DECL|macro|DEBUG_I82586_SHOW
-macro_line|#undef DEBUG_I82586_SHOW&t;/* Show i82586 status */
+macro_line|#undef DEBUG_I82586_SHOW&t;/* Show i82586 status. */
 DECL|macro|DEBUG_DEVICE_SHOW
-macro_line|#undef DEBUG_DEVICE_SHOW&t;/* Show device parameters */
-multiline_comment|/* Options : */
+macro_line|#undef DEBUG_DEVICE_SHOW&t;/* Show device parameters. */
+multiline_comment|/* Options */
 DECL|macro|USE_PSA_CONFIG
-mdefine_line|#define USE_PSA_CONFIG&t;&t;/* Use info from the PSA */
+mdefine_line|#define USE_PSA_CONFIG&t;&t;/* Use info from the PSA. */
 DECL|macro|IGNORE_NORMAL_XMIT_ERRS
-mdefine_line|#define IGNORE_NORMAL_XMIT_ERRS&t;/* Don&squot;t bother with normal conditions */
+mdefine_line|#define IGNORE_NORMAL_XMIT_ERRS&t;/* Don&squot;t bother with normal conditions. */
 DECL|macro|STRUCT_CHECK
-macro_line|#undef STRUCT_CHECK&t;&t;/* Verify padding of structures */
+macro_line|#undef STRUCT_CHECK&t;&t;/* Verify padding of structures. */
 DECL|macro|PSA_CRC
-macro_line|#undef PSA_CRC&t;&t;&t;/* Check CRC in PSA */
+macro_line|#undef PSA_CRC&t;&t;&t;/* Check CRC in PSA. */
 DECL|macro|OLDIES
-macro_line|#undef OLDIES&t;&t;&t;/* Old code (to redo) */
+macro_line|#undef OLDIES&t;&t;&t;/* old code (to redo) */
 DECL|macro|RECORD_SNR
-macro_line|#undef RECORD_SNR&t;&t;/* To redo */
+macro_line|#undef RECORD_SNR&t;&t;/* to redo */
 DECL|macro|EEPROM_IS_PROTECTED
-macro_line|#undef EEPROM_IS_PROTECTED&t;/* Doesn&squot;t seem to be necessary */
+macro_line|#undef EEPROM_IS_PROTECTED&t;/* doesn&squot;t seem to be necessary */
 DECL|macro|MULTICAST_AVOID
-mdefine_line|#define MULTICAST_AVOID&t;&t;/* Avoid extra multicast (I&squot;m sceptical) */
-macro_line|#ifdef WIRELESS_EXT&t;/* If wireless extension exist in the kernel */
-multiline_comment|/* Warning : these stuff will slow down the driver... */
+mdefine_line|#define MULTICAST_AVOID&t;&t;/* Avoid extra multicast (I&squot;m sceptical). */
+macro_line|#ifdef WIRELESS_EXT&t;/* If wireless extensions exist in the kernel */
+multiline_comment|/* Warning:  this stuff will slow down the driver. */
 DECL|macro|WIRELESS_SPY
-mdefine_line|#define WIRELESS_SPY&t;&t;/* Enable spying addresses */
+mdefine_line|#define WIRELESS_SPY&t;&t;/* Enable spying addresses. */
 DECL|macro|HISTOGRAM
-macro_line|#undef HISTOGRAM&t;&t;/* Enable histogram of sig level... */
+macro_line|#undef HISTOGRAM&t;&t;/* Enable histogram of signal level. */
 macro_line|#endif
 multiline_comment|/************************ CONSTANTS &amp; MACROS ************************/
 macro_line|#ifdef DEBUG_VERSION_SHOW
@@ -136,7 +136,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Watchdog temporisation */
 DECL|macro|WATCHDOG_JIFFIES
-mdefine_line|#define&t;WATCHDOG_JIFFIES&t;32&t;/* TODO: express in HZ. */
+mdefine_line|#define&t;WATCHDOG_JIFFIES&t;32&t;/* TODO:  express in HZ. */
 multiline_comment|/* Macro to get the number of elements in an array */
 DECL|macro|NELS
 mdefine_line|#define&t;NELS(a)&t;&t;&t;&t;(sizeof(a) / sizeof(a[0]))
@@ -207,7 +207,7 @@ id|WAVELAN_ADDR_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/* Hardware address */
-multiline_comment|/*&n; * Static specific data for the interface.&n; *&n; * For each network interface, Linux keep data in two structure. &quot;device&quot;&n; * keep the generic data (same format for everybody) and &quot;net_local&quot; keep&n; * the additional specific data.&n; * Note that some of this specific data is in fact generic (en_stats, for&n; * example).&n; */
+multiline_comment|/*&n; * Static specific data for the interface.&n; *&n; * For each network interface, Linux keeps data in two structures:  &quot;device&quot;&n; * keeps the generic data (same format for everybody) and &quot;net_local&quot; keeps&n; * additional specific data.&n; * Note that some of this specific data is in fact generic (en_stats, for&n; * example).&n; */
 DECL|struct|net_local
 r_struct
 id|net_local
@@ -217,13 +217,13 @@ id|net_local
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* Linked list of the devices */
+multiline_comment|/* linked list of the devices */
 DECL|member|dev
 id|device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* Reverse link... */
+multiline_comment|/* reverse link */
 DECL|member|stats
 id|en_stats
 id|stats
@@ -233,32 +233,32 @@ DECL|member|nresets
 r_int
 id|nresets
 suffix:semicolon
-multiline_comment|/* Number of hw resets */
+multiline_comment|/* number of hardware resets */
 DECL|member|reconfig_82586
 id|u_char
 id|reconfig_82586
 suffix:semicolon
-multiline_comment|/* Need to reconfigure the controler */
+multiline_comment|/* We need to reconfigure the controller. */
 DECL|member|promiscuous
 id|u_char
 id|promiscuous
 suffix:semicolon
-multiline_comment|/* Promiscuous mode */
+multiline_comment|/* promiscuous mode */
 DECL|member|mc_count
 r_int
 id|mc_count
 suffix:semicolon
-multiline_comment|/* Number of multicast addresses */
+multiline_comment|/* number of multicast addresses */
 DECL|member|watchdog
 id|timer_list
 id|watchdog
 suffix:semicolon
-multiline_comment|/* To avoid blocking state */
+multiline_comment|/* to avoid blocking state */
 DECL|member|hacr
 id|u_short
 id|hacr
 suffix:semicolon
-multiline_comment|/* Current host interface state */
+multiline_comment|/* current host interface state */
 DECL|member|tx_n_in_use
 r_int
 id|tx_n_in_use
@@ -284,14 +284,14 @@ DECL|member|wstats
 id|iw_stats
 id|wstats
 suffix:semicolon
-multiline_comment|/* Wireless specific stats */
+multiline_comment|/* Wireless-specific statistics */
 macro_line|#endif
 macro_line|#ifdef WIRELESS_SPY
 DECL|member|spy_number
 r_int
 id|spy_number
 suffix:semicolon
-multiline_comment|/* Number of addresses to spy */
+multiline_comment|/* number of addresses to spy */
 DECL|member|spy_address
 id|mac_addr
 id|spy_address
@@ -299,7 +299,7 @@ id|spy_address
 id|IW_MAX_SPY
 )braket
 suffix:semicolon
-multiline_comment|/* The addresses to spy */
+multiline_comment|/* the addresses to spy */
 DECL|member|spy_stat
 id|iw_qual
 id|spy_stat
@@ -307,14 +307,14 @@ id|spy_stat
 id|IW_MAX_SPY
 )braket
 suffix:semicolon
-multiline_comment|/* Statistics gathered */
+multiline_comment|/* statistics gathered */
 macro_line|#endif&t;/* WIRELESS_SPY */
 macro_line|#ifdef HISTOGRAM
 DECL|member|his_number
 r_int
 id|his_number
 suffix:semicolon
-multiline_comment|/* Number of intervals */
+multiline_comment|/* number of intervals */
 DECL|member|his_range
 id|u_char
 id|his_range
@@ -322,7 +322,7 @@ id|his_range
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* Boundaries of interval ]n-1; n] */
+multiline_comment|/* boundaries of interval ]n-1; n] */
 DECL|member|his_sum
 id|u_long
 id|his_sum
@@ -330,12 +330,12 @@ id|his_sum
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* Sum in interval */
+multiline_comment|/* sum in interval */
 macro_line|#endif&t;/* HISTOGRAM */
 )brace
 suffix:semicolon
 multiline_comment|/**************************** PROTOTYPES ****************************/
-multiline_comment|/* ----------------------- MISC SUBROUTINES ------------------------ */
+multiline_comment|/* ----------------------- MISC. SUBROUTINES ------------------------ */
 r_static
 r_inline
 r_int
@@ -358,7 +358,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* ReEnable interrupts : flags */
+multiline_comment|/* Enable interrupts:  flags */
 r_static
 id|u_char
 id|wv_irq_to_psa
@@ -386,7 +386,7 @@ c_func
 id|u_long
 )paren
 suffix:semicolon
-multiline_comment|/* Read the host interface : base address */
+multiline_comment|/* Read the host interface:  base address */
 r_static
 r_inline
 r_void
@@ -395,7 +395,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Write to host interface : base address */
+multiline_comment|/* Write to host interface:  base address */
 id|u_short
 )paren
 comma
@@ -417,7 +417,7 @@ multiline_comment|/* ioaddr */
 id|u_short
 )paren
 comma
-multiline_comment|/* hacr */
+multiline_comment|/* hacr   */
 id|wv_hacr_reset
 c_func
 (paren
@@ -434,7 +434,7 @@ multiline_comment|/* ioaddr */
 id|u_short
 )paren
 comma
-multiline_comment|/* hacr */
+multiline_comment|/* hacr   */
 id|wv_16_on
 c_func
 (paren
@@ -444,7 +444,7 @@ multiline_comment|/* ioaddr */
 id|u_short
 )paren
 comma
-multiline_comment|/* hacr */
+multiline_comment|/* hacr   */
 id|wv_ints_off
 c_func
 (paren
@@ -467,7 +467,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Read the Parameter Storage Area */
+multiline_comment|/* Read the Parameter Storage Area. */
 id|u_short
 comma
 multiline_comment|/* hacr */
@@ -487,21 +487,21 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Write to the PSA */
+multiline_comment|/* Write to the PSA. */
 id|u_short
 comma
 multiline_comment|/* hacr */
 r_int
 comma
-multiline_comment|/* Offset in psa */
+multiline_comment|/* offset in PSA */
 id|u_char
 op_star
 comma
-multiline_comment|/* Buffer in memory */
+multiline_comment|/* buffer in memory */
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Length of buffer */
+multiline_comment|/* length of buffer */
 r_static
 r_inline
 r_void
@@ -510,7 +510,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Write 1 byte to the Modem Manag Control */
+multiline_comment|/* Write 1 byte to the Modem Manag Control. */
 id|u_short
 comma
 id|u_char
@@ -521,7 +521,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Write n bytes to the MMC */
+multiline_comment|/* Write n bytes to the MMC. */
 id|u_char
 comma
 id|u_char
@@ -533,7 +533,7 @@ suffix:semicolon
 r_static
 r_inline
 id|u_char
-multiline_comment|/* Read 1 byte from the MMC */
+multiline_comment|/* Read 1 byte from the MMC. */
 id|mmc_in
 c_func
 (paren
@@ -550,7 +550,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Read n bytes from the MMC */
+multiline_comment|/* Read n bytes from the MMC. */
 id|u_char
 comma
 id|u_char
@@ -564,14 +564,14 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Wait for frequency EEprom : base address */
+multiline_comment|/* Wait for frequency EEPROM:  base address */
 r_int
 comma
-multiline_comment|/* Base delay to wait for */
+multiline_comment|/* base delay to wait for */
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Number of time to wait */
+multiline_comment|/* time to wait */
 r_static
 r_void
 id|fee_read
@@ -579,7 +579,7 @@ c_func
 (paren
 id|u_long
 comma
-multiline_comment|/* Read the frequency EEprom : base address */
+multiline_comment|/* Read the frequency EEPROM:  base address */
 id|u_short
 comma
 multiline_comment|/* destination offset */
@@ -745,7 +745,7 @@ c_func
 id|device
 op_star
 comma
-multiline_comment|/* Read a packet from a frame */
+multiline_comment|/* Read a packet from a frame. */
 id|u_short
 comma
 r_int
@@ -758,7 +758,7 @@ id|device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Read all packets waiting */
+multiline_comment|/* Read all packets waiting. */
 multiline_comment|/* --------------------- PACKET TRANSMISSION --------------------- */
 r_static
 r_inline
@@ -769,7 +769,7 @@ c_func
 id|device
 op_star
 comma
-multiline_comment|/* Write a packet to the Tx buffer */
+multiline_comment|/* Write a packet to the Tx buffer. */
 r_void
 op_star
 comma
@@ -785,7 +785,7 @@ r_struct
 id|sk_buff
 op_star
 comma
-multiline_comment|/* Send a packet */
+multiline_comment|/* Send a packet. */
 id|device
 op_star
 )paren
@@ -801,7 +801,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Initialize the modem */
+multiline_comment|/* Initialize the modem. */
 id|wv_ru_start
 c_func
 (paren
@@ -809,7 +809,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Start the i82586 receiver unit */
+multiline_comment|/* Start the i82586 receiver unit. */
 id|wv_cu_start
 c_func
 (paren
@@ -817,7 +817,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Start the i82586 command unit */
+multiline_comment|/* Start the i82586 command unit. */
 id|wv_82586_start
 c_func
 (paren
@@ -825,7 +825,7 @@ id|device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Start the i82586 */
+multiline_comment|/* Start the i82586. */
 r_static
 r_void
 id|wv_82586_config
@@ -835,7 +835,7 @@ id|device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Configure the i82586 */
+multiline_comment|/* Configure the i82586. */
 r_static
 r_inline
 r_void
@@ -855,7 +855,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Reset the wavelan hardware */
+multiline_comment|/* Reset the WaveLAN hardware. */
 id|wv_check_ioaddr
 c_func
 (paren
@@ -875,7 +875,7 @@ c_func
 (paren
 r_int
 comma
-multiline_comment|/* Interrupt handler */
+multiline_comment|/* interrupt handler */
 r_void
 op_star
 comma
@@ -892,7 +892,7 @@ c_func
 id|u_long
 )paren
 suffix:semicolon
-multiline_comment|/* Transmission watchdog */
+multiline_comment|/* transmission watchdog */
 multiline_comment|/* ------------------- CONFIGURATION CALLBACKS ------------------- */
 r_static
 r_int
@@ -903,7 +903,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Open the device */
+multiline_comment|/* Open the device. */
 id|wavelan_close
 c_func
 (paren
@@ -911,7 +911,7 @@ id|device
 op_star
 )paren
 comma
-multiline_comment|/* Close the device */
+multiline_comment|/* Close the device. */
 id|wavelan_config
 c_func
 (paren
@@ -919,7 +919,7 @@ id|device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Configure one device */
+multiline_comment|/* Configure one device. */
 r_extern
 r_int
 id|wavelan_probe
@@ -929,9 +929,9 @@ id|device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* See Space.c */
+multiline_comment|/* See Space.c. */
 multiline_comment|/**************************** VARIABLES ****************************/
-multiline_comment|/*&n; * This is the root of the linked list of wavelan drivers&n; * It is use to verify that we don&squot;t reuse the same base address&n; * for two differents drivers and to make the cleanup when&n; * removing the module.&n; */
+multiline_comment|/*&n; * This is the root of the linked list of WaveLAN drivers&n; * It is use to verify that we don&squot;t reuse the same base address&n; * for two different drivers and to clean up when removing the module.&n; */
 DECL|variable|wavelan_list
 r_static
 id|net_local
@@ -944,7 +944,7 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * This table is used to translate the psa value to irq number&n; * and vice versa...&n; */
+multiline_comment|/*&n; * This table is used to translate the PSA value to IRQ number&n; * and vice versa.&n; */
 DECL|variable|irqvals
 r_static
 id|u_char
@@ -987,7 +987,7 @@ l_int|0x80
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Table of the available i/o address (base address) for wavelan&n; */
+multiline_comment|/*&n; * Table of the available I/O addresses (base addresses) for WaveLAN&n; */
 DECL|variable|iobase
 r_static
 r_int
@@ -998,7 +998,7 @@ id|iobase
 op_assign
 (brace
 macro_line|#if&t;0
-multiline_comment|/* Leave out 0x3C0 for now -- seems to clash with some video&n;   * controllers.&n;   * Leave out the others too -- we will always use 0x390 and leave&n;   * 0x300 for the Ethernet device.&n;   * Jean II : 0x3E0 is really fine as well...&n;   */
+multiline_comment|/* Leave out 0x3C0 for now -- seems to clash with some video&n;   * controllers.&n;   * Leave out the others too -- we will always use 0x390 and leave&n;   * 0x300 for the Ethernet device.&n;   * Jean II:  0x3E0 is fine as well.&n;   */
 l_int|0x300
 comma
 l_int|0x390
