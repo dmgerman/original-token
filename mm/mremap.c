@@ -650,6 +650,11 @@ op_minus
 id|vma-&gt;vm_start
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -689,6 +694,11 @@ comma
 id|new_vma-&gt;vm_start
 comma
 id|new_vma-&gt;vm_end
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|do_munmap
@@ -788,11 +798,6 @@ c_func
 (paren
 op_amp
 id|current-&gt;mm-&gt;mmap_sem
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -1140,11 +1145,6 @@ id|ENOMEM
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|up
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdlamain.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  Main module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 28, 1997&t;Jaspreet Singh&t;Changed DRV_RELEASE to 1&n;* Nov 10, 1997&t;Jaspreet Singh&t;Changed sti() to restore_flags();&n;* Nov 06, 1997 &t;Jaspreet Singh&t;Changed DRV_VERSION to 4 and DRV_RELEASE to 0&n;* Oct 20, 1997 &t;Jaspreet Singh&t;Modified sdla_isr routine so that card-&gt;in_isr&n;*&t;&t;&t;&t;assignments are taken out and placed in the&n;*&t;&t;&t;&t;sdla_ppp.c, sdla_fr.c and sdla_x25.c isr&n;*&t;&t;&t;&t;routines. Took out &squot;wandev-&gt;tx_int_enabled&squot; and&n;*&t;&t;&t;&t;replaced it with &squot;wandev-&gt;enable_tx_int&squot;. &n;* May 29, 1997&t;Jaspreet Singh&t;Flow Control Problem&n;*&t;&t;&t;&t;added &quot;wandev-&gt;tx_int_enabled=1&quot; line in the&n;*&t;&t;&t;&t;init module. This line intializes the flag for &n;*&t;&t;&t;&t;preventing Interrupt disabled with device set to&n;*&t;&t;&t;&t;busy&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdlamain.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  Main module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* May 19, 1999  Arnaldo Melo    __initfunc for wanpipe_init&n;* Nov 28, 1997&t;Jaspreet Singh&t;Changed DRV_RELEASE to 1&n;* Nov 10, 1997&t;Jaspreet Singh&t;Changed sti() to restore_flags();&n;* Nov 06, 1997 &t;Jaspreet Singh&t;Changed DRV_VERSION to 4 and DRV_RELEASE to 0&n;* Oct 20, 1997 &t;Jaspreet Singh&t;Modified sdla_isr routine so that card-&gt;in_isr&n;*&t;&t;&t;&t;assignments are taken out and placed in the&n;*&t;&t;&t;&t;sdla_ppp.c, sdla_fr.c and sdla_x25.c isr&n;*&t;&t;&t;&t;routines. Took out &squot;wandev-&gt;tx_int_enabled&squot; and&n;*&t;&t;&t;&t;replaced it with &squot;wandev-&gt;enable_tx_int&squot;. &n;* May 29, 1997&t;Jaspreet Singh&t;Flow Control Problem&n;*&t;&t;&t;&t;added &quot;wandev-&gt;tx_int_enabled=1&quot; line in the&n;*&t;&t;&t;&t;init module. This line intializes the flag for &n;*&t;&t;&t;&t;preventing Interrupt disabled with device set to&n;*&t;&t;&t;&t;busy&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* kernel &lt;-&gt; user copy */
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* phys_to_virt() */
+macro_line|#include &lt;linux/init.h&gt;         /* __initfunc (when not using as a module) */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 macro_line|#ifdef&t;_DEBUG_
 DECL|macro|STATIC
@@ -228,11 +229,15 @@ id|init_module
 r_void
 )paren
 macro_line|#else
+id|__initfunc
+c_func
+(paren
 r_int
 id|wanpipe_init
 c_func
 (paren
 r_void
+)paren
 )paren
 macro_line|#endif
 (brace

@@ -152,7 +152,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* y-axis is reversed */
 id|mouse-&gt;dz
-op_add_assign
+op_sub_assign
 id|data
 (braket
 l_int|3
@@ -818,6 +818,11 @@ id|interface
 op_assign
 op_amp
 id|dev-&gt;config
+(braket
+l_int|0
+)braket
+dot
+id|altsetting
 (braket
 l_int|0
 )braket

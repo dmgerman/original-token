@@ -386,6 +386,7 @@ suffix:semicolon
 DECL|variable|proc_net
 DECL|variable|proc_scsi
 DECL|variable|proc_bus
+DECL|variable|proc_sysvipc
 r_struct
 id|proc_dir_entry
 op_star
@@ -396,6 +397,9 @@ id|proc_scsi
 comma
 op_star
 id|proc_bus
+comma
+op_star
+id|proc_sysvipc
 suffix:semicolon
 macro_line|#ifdef CONFIG_MCA
 DECL|variable|proc_mca
@@ -2952,6 +2956,20 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSVIPC
+id|proc_sysvipc
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;sysvipc&quot;
+comma
+id|S_IFDIR
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 id|proc_register
 c_func

@@ -1112,7 +1112,7 @@ suffix:semicolon
 )brace
 id|interface
 op_assign
-id|dev-&gt;config-&gt;interface
+id|dev-&gt;config-&gt;altsetting-&gt;interface
 suffix:semicolon
 multiline_comment|/* Lets be paranoid (for the moment)*/
 r_if

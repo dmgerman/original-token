@@ -3326,6 +3326,12 @@ comma
 id|signr
 )paren
 suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|current-&gt;flags
 op_or_assign
 id|PF_SIGNALED

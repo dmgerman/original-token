@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
@@ -1894,9 +1895,12 @@ id|state-&gt;completed
 op_assign
 l_int|NULL
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|state-&gt;wait_queue
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|state-&gt;inuse
 op_assign
@@ -2069,7 +2073,10 @@ id|adb_request
 op_star
 id|req
 suffix:semicolon
-id|DECLARE_WAITQUEUE
+id|wait_queue_t
+id|wait
+op_assign
+id|__WAITQUEUE_INITIALIZER
 c_func
 (paren
 id|wait

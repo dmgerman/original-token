@@ -1552,6 +1552,11 @@ DECL|enumerator|DEV_HWMON
 id|DEV_HWMON
 op_assign
 l_int|2
+comma
+DECL|enumerator|DEV_PARPORT
+id|DEV_PARPORT
+op_assign
+l_int|3
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/cdrom */
@@ -1561,6 +1566,75 @@ DECL|enumerator|DEV_CDROM_INFO
 id|DEV_CDROM_INFO
 op_assign
 l_int|1
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/parport */
+r_enum
+(brace
+DECL|enumerator|DEV_PARPORT_DEFAULT
+id|DEV_PARPORT_DEFAULT
+op_assign
+op_minus
+l_int|3
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/parport/default */
+r_enum
+(brace
+DECL|enumerator|DEV_PARPORT_DEFAULT_TIMESLICE
+id|DEV_PARPORT_DEFAULT_TIMESLICE
+op_assign
+l_int|1
+comma
+DECL|enumerator|DEV_PARPORT_DEFAULT_SPINTIME
+id|DEV_PARPORT_DEFAULT_SPINTIME
+op_assign
+l_int|2
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/parport/parport n */
+r_enum
+(brace
+DECL|enumerator|DEV_PARPORT_SPINTIME
+id|DEV_PARPORT_SPINTIME
+op_assign
+l_int|1
+comma
+DECL|enumerator|DEV_PARPORT_HARDWARE
+id|DEV_PARPORT_HARDWARE
+op_assign
+l_int|2
+comma
+DECL|enumerator|DEV_PARPORT_DEVICES
+id|DEV_PARPORT_DEVICES
+op_assign
+l_int|3
+comma
+DECL|enumerator|DEV_PARPORT_AUTOPROBE
+id|DEV_PARPORT_AUTOPROBE
+op_assign
+l_int|16
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/parport/parport n/devices/ */
+r_enum
+(brace
+DECL|enumerator|DEV_PARPORT_DEVICES_ACTIVE
+id|DEV_PARPORT_DEVICES_ACTIVE
+op_assign
+op_minus
+l_int|3
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/dev/parport/parport n/devices/device n */
+r_enum
+(brace
+DECL|enumerator|DEV_PARPORT_DEVICE_TIMESLICE
+id|DEV_PARPORT_DEVICE_TIMESLICE
+op_assign
+l_int|1
+comma
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

@@ -4,6 +4,11 @@ mdefine_line|#define _ALPHA_SOFTIRQ_H
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+multiline_comment|/*&n; * This works but is wrong - on SMP it should disable only on the&n; * current CPU and shouldn&squot;t synchronize like the heavy global&n; * disable does. Oh, well.&n; *&n; * See the x86 version for an example.&n; */
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;start_bh_atomic()
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;end_bh_atomic()
 r_extern
 r_int
 r_int

@@ -363,30 +363,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|member|release_resources
-r_void
-(paren
-op_star
-id|release_resources
-)paren
-(paren
-r_struct
-id|parport
-op_star
-)paren
-suffix:semicolon
-DECL|member|claim_resources
-r_int
-(paren
-op_star
-id|claim_resources
-)paren
-(paren
-r_struct
-id|parport
-op_star
-)paren
-suffix:semicolon
 DECL|member|epp_write_data
 r_void
 (paren
@@ -843,6 +819,11 @@ id|pardevice
 op_star
 id|waitnext
 suffix:semicolon
+DECL|member|sysctl_table
+r_void
+op_star
+id|sysctl_table
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Directory information for the /proc interface */
@@ -1012,6 +993,11 @@ DECL|member|cad_lock
 id|rwlock_t
 id|cad_lock
 suffix:semicolon
+DECL|member|sysctl_table
+r_void
+op_star
+id|sysctl_table
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|parport_driver
@@ -1104,17 +1090,6 @@ suffix:semicolon
 multiline_comment|/* parport_in_use returns nonzero if there are devices attached to a port. */
 DECL|macro|parport_in_use
 mdefine_line|#define parport_in_use(x)  ((x)-&gt;devices != NULL)
-multiline_comment|/* Put a parallel port to sleep; release its hardware resources.  Only possible&n; * if no devices are registered.  */
-r_extern
-r_void
-id|parport_quiesce
-c_func
-(paren
-r_struct
-id|parport
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* parport_enumerate returns a pointer to the linked list of all the ports&n; * in this machine.&n; */
 r_struct
 id|parport
@@ -1457,8 +1432,8 @@ DECL|macro|PARPORT_DEV_LURK
 mdefine_line|#define PARPORT_DEV_LURK&t;&t;(1&lt;&lt;0)&t;/* WARNING !! DEPRECATED !! */
 DECL|macro|PARPORT_DEV_EXCL
 mdefine_line|#define PARPORT_DEV_EXCL&t;&t;(1&lt;&lt;1)&t;/* Need exclusive access. */
-DECL|macro|PARPORT_FLAG_COMA
-mdefine_line|#define PARPORT_FLAG_COMA&t;&t;(1&lt;&lt;0)
+DECL|macro|PARPORT_FLAG_COMA_
+mdefine_line|#define PARPORT_FLAG_COMA_&t;&t;(1&lt;&lt;0)  /* No longer used. */
 DECL|macro|PARPORT_FLAG_EXCL
 mdefine_line|#define PARPORT_FLAG_EXCL&t;&t;(1&lt;&lt;1)&t;/* EXCL driver registered. */
 r_extern
@@ -1531,22 +1506,6 @@ suffix:semicolon
 multiline_comment|/* Prototypes from parport_procfs */
 r_extern
 r_int
-id|parport_proc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|parport_proc_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|parport_proc_register
 c_func
 (paren
@@ -1565,6 +1524,44 @@ r_struct
 id|parport
 op_star
 id|pp
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_device_proc_register
+c_func
+(paren
+r_struct
+id|pardevice
+op_star
+id|device
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_device_proc_unregister
+c_func
+(paren
+r_struct
+id|pardevice
+op_star
+id|device
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_default_proc_register
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|parport_default_proc_unregister
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

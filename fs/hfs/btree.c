@@ -304,7 +304,7 @@ id|bt-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
-id|init_waitqueue_head
+id|hfs_init_waitqueue
 c_func
 (paren
 op_amp

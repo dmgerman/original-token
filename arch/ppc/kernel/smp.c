@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.49 1999/03/18 04:16:31 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.52 1999/05/23 22:43:51 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -1371,6 +1371,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren

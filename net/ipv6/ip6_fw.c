@@ -1363,9 +1363,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
-DECL|function|module_cleanup
+DECL|function|cleanup_module
 r_void
-id|module_cleanup
+id|cleanup_module
 c_func
 (paren
 r_void

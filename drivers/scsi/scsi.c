@@ -895,6 +895,17 @@ id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* extra reset */
+(brace
+l_string|&quot;RELISYS&quot;
+comma
+l_string|&quot;Scorpio&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* responds to all LUN */
 multiline_comment|/*&n; * Other types of devices that have special flags.&n; */
 (brace
 l_string|&quot;SONY&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;* May 17, 1998  K. Baranowski&t;Fixed SNAP encapsulation in wan_encapsulate&n;* Dec 15, 1998  Arnaldo Melo    support for firmwares of up to 128000 bytes&n;*                               check wandev-&gt;setup return value&n;* Dec 22, 1998  Arnaldo Melo    vmalloc/vfree used in device_setup to allocate&n;*                               kernel memory and copy configuration data to&n;*                               kernel space (for big firmwares)&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;* May 17, 1998  K. Baranowski&t;Fixed SNAP encapsulation in wan_encapsulate&n;* Dec 15, 1998  Arnaldo Melo    support for firmwares of up to 128000 bytes&n;*                               check wandev-&gt;setup return value&n;* Dec 22, 1998  Arnaldo Melo    vmalloc/vfree used in device_setup to allocate&n;*                               kernel memory and copy configuration data to&n;*                               kernel space (for big firmwares)&n;* May 19, 1999  Arnaldo Melo    __initfunc in wanrouter_init&n;*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -206,20 +206,30 @@ l_int|0xC2
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef MODULE
-DECL|function|wanrouter_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|wanrouter_init
 c_func
 (paren
 r_void
 )paren
+)paren
 (brace
 r_int
 id|err
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|wanpipe_init
+c_func
+(paren
+r_void
+)paren
+comma
+id|cyclomx_init
 c_func
 (paren
 r_void
@@ -269,6 +279,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_CYCLADES_SYNC
+id|cyclomx_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|err
 suffix:semicolon

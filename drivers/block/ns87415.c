@@ -748,6 +748,11 @@ id|timeout
 suffix:semicolon
 macro_line|#endif
 )brace
+r_if
+c_cond
+(paren
+id|hwif-&gt;dma_base
+)paren
 id|outb
 c_func
 (paren
@@ -790,6 +795,11 @@ op_assign
 id|hwif-&gt;mate-&gt;irq
 suffix:semicolon
 multiline_comment|/* share IRQ with mate */
+r_if
+c_cond
+(paren
+id|hwif-&gt;dma_base
+)paren
 id|hwif-&gt;dmaproc
 op_assign
 op_amp

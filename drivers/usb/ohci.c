@@ -6425,10 +6425,10 @@ multiline_comment|/* ohci_init */
 multiline_comment|/* vim:sw=8&n; */
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; *  Clean up when unloading the module&n; */
-DECL|function|module_cleanup
+DECL|function|cleanup_module
 r_void
 (def_block
-id|module_cleanup
+id|cleanup_module
 c_func
 (paren
 r_void

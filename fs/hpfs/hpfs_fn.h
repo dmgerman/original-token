@@ -32,7 +32,7 @@ mdefine_line|#define FNODE_ALLOC_FWD&t;0
 DECL|macro|ALLOC_FWD_MIN
 mdefine_line|#define ALLOC_FWD_MIN&t;16
 DECL|macro|ALLOC_FWD_MAX
-mdefine_line|#define ALLOC_FWD_MAX&t;512
+mdefine_line|#define ALLOC_FWD_MAX&t;128
 DECL|macro|ALLOC_M
 mdefine_line|#define ALLOC_M&t;&t;1
 DECL|macro|FNODE_RD_AHEAD

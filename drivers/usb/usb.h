@@ -235,6 +235,8 @@ suffix:semicolon
 multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; *&n; */
 DECL|macro|USB_MAXCONFIG
 mdefine_line|#define USB_MAXCONFIG&t;&t;8
+DECL|macro|USB_MAXALTSETTING
+mdefine_line|#define USB_MAXALTSETTING       5
 DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
@@ -393,6 +395,19 @@ id|audio
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* hack for alternate settings */
+DECL|struct|usb_alternate_setting
+r_struct
+id|usb_alternate_setting
+(brace
+DECL|member|interface
+r_struct
+id|usb_interface_descriptor
+op_star
+id|interface
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Configuration descriptor information.. */
 DECL|struct|usb_config_descriptor
 r_struct
@@ -430,11 +445,21 @@ DECL|member|MaxPower
 id|__u8
 id|MaxPower
 suffix:semicolon
-DECL|member|interface
+DECL|member|act_altsetting
+r_int
+id|act_altsetting
+suffix:semicolon
+multiline_comment|/* active alternate setting */
+DECL|member|num_altsetting
+r_int
+id|num_altsetting
+suffix:semicolon
+multiline_comment|/* number of alternate settings */
+DECL|member|altsetting
 r_struct
-id|usb_interface_descriptor
+id|usb_alternate_setting
 op_star
-id|interface
+id|altsetting
 suffix:semicolon
 )brace
 suffix:semicolon

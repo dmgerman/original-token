@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.54 1999/05/10 04:43:46 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.60 1999/05/25 01:42:41 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Properties whose value is longer than this get excluded from our&n; * copy of the device tree.  This way we don&squot;t waste space storing&n; * things like &quot;driver,AAPL,MacOS,PowerPC&quot; properties.&n; */
 DECL|macro|MAX_PROPERTY_LENGTH
 mdefine_line|#define MAX_PROPERTY_LENGTH&t;1024
@@ -1959,6 +1960,22 @@ l_string|&quot;done&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+id|RELOC
+c_func
+(paren
+id|klimit
+)paren
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+id|mem
+op_minus
+id|offset
+)paren
+suffix:semicolon
 id|prom_rtas
 op_assign
 id|call_prom
@@ -2069,6 +2086,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t; * We do _not_ want the rtas_data inside the klimit&n;&t;&t;&t; * boundry since it&squot;ll be squashed when we do the&n;&t;&t;&t; * relocate of the kernel on chrp right after prom_init()&n;&t;&t;&t; * in head.S.  So, we just pick a spot in memory.&n;&t;&t;&t; * -- Cort&n;&t;&t;&t; */
+macro_line|#if 0
 id|mem
 op_assign
 (paren
@@ -2080,7 +2099,6 @@ op_amp
 op_minus
 l_int|4096
 suffix:semicolon
-multiline_comment|/* round to page bdry */
 id|RELOC
 c_func
 (paren
@@ -2098,6 +2116,21 @@ c_func
 (paren
 id|rtas_size
 )paren
+suffix:semicolon
+macro_line|#endif
+id|RELOC
+c_func
+(paren
+id|rtas_data
+)paren
+op_assign
+(paren
+l_int|6
+op_lshift
+l_int|20
+)paren
+op_plus
+id|KERNELBASE
 suffix:semicolon
 )brace
 id|prom_rtas
@@ -2283,22 +2316,6 @@ l_string|&quot; done&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|RELOC
-c_func
-(paren
-id|klimit
-)paren
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|mem
-op_minus
-id|offset
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 multiline_comment|/*&n;&t; * With CHRP SMP we need to use the OF to start the other&n;&t; * processors so we can&squot;t wait until smp_boot_cpus (the OF is&n;&t; * trashed by then) so we have to put the processors into&n;&t; * a holding pattern controlled by the kernel (not OF) before&n;&t; * we destroy the OF.&n;&t; *&n;&t; * This uses a chunk of high memory, puts some holding pattern&n;&t; * code there and sends the other processors off to there until&n;&t; * smp_boot_cpus tells them to do something.  We do that by using&n;&t; * physical address 0x0.  The holding pattern checks that address&n;&t; * until its cpu # is there, when it is that cpu jumps to&n;&t; * __secondary_start().  smp_boot_cpus() takes care of setting those&n;&t; * values.&n;&t; *&n;&t; * We also use physical address 0x4 here to tell when a cpu&n;&t; * is in its holding pattern code.&n;&t; *&n;&t; * -- Cort&n;&t; */
 (brace
@@ -7297,6 +7314,8 @@ id|list
 suffix:semicolon
 r_int
 id|i
+comma
+id|s
 suffix:semicolon
 r_struct
 id|device_node
@@ -7384,12 +7403,8 @@ id|u.words
 l_int|0
 )braket
 op_assign
-id|__pa
-c_func
-(paren
 op_star
 id|tokp
-)paren
 suffix:semicolon
 id|u.words
 (braket
@@ -7449,6 +7464,13 @@ c_func
 id|list
 )paren
 suffix:semicolon
+id|s
+op_assign
+id|_disable_interrupts
+c_func
+(paren
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -7476,6 +7498,12 @@ c_func
 (paren
 op_amp
 id|rtas_lock
+)paren
+suffix:semicolon
+id|_enable_interrupts
+c_func
+(paren
+id|s
 )paren
 suffix:semicolon
 r_if
@@ -7536,19 +7564,10 @@ m_abort
 )paren
 (brace
 macro_line|#ifdef CONFIG_XMON
-r_extern
-r_void
 id|xmon
 c_func
 (paren
-r_void
-op_star
-)paren
-suffix:semicolon
-id|xmon
-c_func
-(paren
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif

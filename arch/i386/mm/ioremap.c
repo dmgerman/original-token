@@ -422,6 +422,30 @@ suffix:semicolon
 r_int
 r_int
 id|offset
+comma
+id|last_addr
+suffix:semicolon
+multiline_comment|/* Don&squot;t allow wraparound or zero size */
+id|last_addr
+op_assign
+id|phys_addr
+op_plus
+id|size
+op_minus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|size
+op_logical_or
+id|last_addr
+OL
+id|phys_addr
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t remap the low PCI/ISA area, it&squot;s always mapped..&n;&t; */
 r_if
@@ -431,12 +455,8 @@ id|phys_addr
 op_ge
 l_int|0xA0000
 op_logical_and
-(paren
-id|phys_addr
-op_plus
-id|size
-)paren
-op_le
+id|last_addr
+OL
 l_int|0x100000
 )paren
 r_return
@@ -478,26 +498,10 @@ op_assign
 id|PAGE_ALIGN
 c_func
 (paren
-id|size
-op_plus
-id|offset
+id|last_addr
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Don&squot;t allow mappings that wrap..&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|size
-op_logical_or
-id|size
-OG
+op_minus
 id|phys_addr
-op_plus
-id|size
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, go for it..&n;&t; */
 id|area

@@ -133,6 +133,9 @@ comma
 multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_FS
 id|PROC_FS
+comma
+DECL|enumerator|PROC_SYSVIPC
+id|PROC_SYSVIPC
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -702,6 +705,22 @@ DECL|enumerator|PROC_CODA_FS_LAST
 id|PROC_CODA_FS_LAST
 )brace
 suffix:semicolon
+DECL|enum|sysvipc_directory_inos
+r_enum
+id|sysvipc_directory_inos
+(brace
+DECL|enumerator|PROC_SYSVIPC_SHM
+id|PROC_SYSVIPC_SHM
+op_assign
+id|PROC_CODA_FS_LAST
+comma
+DECL|enumerator|PROC_SYSVIPC_SEM
+id|PROC_SYSVIPC_SEM
+comma
+DECL|enumerator|PROC_SYSVIPC_MSG
+id|PROC_SYSVIPC_MSG
+)brace
+suffix:semicolon
 multiline_comment|/* Finally, the dynamically allocatable proc entries are reserved: */
 DECL|macro|PROC_DYNAMIC_FIRST
 mdefine_line|#define PROC_DYNAMIC_FIRST 4096
@@ -1047,6 +1066,12 @@ r_struct
 id|proc_dir_entry
 op_star
 id|proc_bus
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_sysvipc
 suffix:semicolon
 r_extern
 r_struct
@@ -1686,6 +1711,11 @@ r_extern
 r_struct
 id|inode_operations
 id|proc_ppc_htab_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_sysvipc_inode_operations
 suffix:semicolon
 multiline_comment|/*&n; * generic.c&n; */
 r_struct

@@ -54,9 +54,9 @@ mdefine_line|#define get_32be(x)&t;(*(unsigned *)(x))
 DECL|macro|RAM_START
 mdefine_line|#define RAM_START&t;0x00000000
 DECL|macro|RAM_END
-mdefine_line|#define RAM_END&t;&t;0x00800000&t;/* only 8M mapped with BATs */
+mdefine_line|#define RAM_END&t;&t;(8&lt;&lt;20)
 DECL|macro|RAM_FREE
-mdefine_line|#define RAM_FREE&t;0x00540000&t;/* after image of chrpboot */
+mdefine_line|#define RAM_FREE&t;(6&lt;&lt;20)&t;&t;/* after image of chrpboot */
 DECL|macro|PROG_START
 mdefine_line|#define PROG_START&t;0x00010000
 DECL|variable|avail_ram
@@ -130,13 +130,19 @@ id|initrd_start
 comma
 id|initrd_size
 suffix:semicolon
+r_extern
+r_char
+id|_start
+suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;chrpboot starting&bslash;n&bslash;r&quot;
+l_string|&quot;chrpboot starting: loaded at 0x%x&bslash;n&bslash;r&quot;
+comma
+op_amp
+id|_start
 )paren
 suffix:semicolon
-multiline_comment|/* setup_bats(); */
 r_if
 c_cond
 (paren
@@ -169,7 +175,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;initial ramdisk at %x (%u bytes)&bslash;n&bslash;r&quot;
+l_string|&quot;initial ramdisk at 0x%x (%u bytes)&bslash;n&bslash;r&quot;
 comma
 id|initrd_start
 comma
@@ -242,51 +248,26 @@ op_eq
 l_int|0x8b
 )paren
 (brace
-r_void
-op_star
-id|cp
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|RAM_FREE
-suffix:semicolon
 id|avail_ram
 op_assign
 (paren
-r_void
+r_char
 op_star
 )paren
-(paren
 id|RAM_FREE
-op_plus
-(paren
-(paren
-id|len
-op_plus
-l_int|7
-)paren
-op_amp
-op_minus
-l_int|8
-)paren
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|cp
-comma
-id|im
-comma
-id|len
-)paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;gunzipping... &quot;
+l_string|&quot;gunzipping (0x%x &lt;- 0x%x:0x%0x)...&quot;
+comma
+id|dst
+comma
+id|im
+comma
+id|im
+op_plus
+id|len
 )paren
 suffix:semicolon
 id|gunzip
@@ -296,7 +277,7 @@ id|dst
 comma
 l_int|0x400000
 comma
-id|cp
+id|im
 comma
 op_amp
 id|len
@@ -305,7 +286,9 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;done&bslash;n&bslash;r&quot;
+l_string|&quot;done %u bytes&bslash;n&bslash;r&quot;
+comma
+id|len
 )paren
 suffix:semicolon
 )brace
@@ -332,9 +315,15 @@ id|len
 suffix:semicolon
 id|sa
 op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
 id|PROG_START
 op_plus
-l_int|12
+id|PROG_START
 suffix:semicolon
 id|printf
 c_func
@@ -344,13 +333,6 @@ comma
 id|sa
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|pause
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 (paren
 op_star
 (paren
@@ -755,9 +737,11 @@ id|Z_STREAM_END
 id|printf
 c_func
 (paren
-l_string|&quot;inflate returned %d&bslash;n&bslash;r&quot;
+l_string|&quot;inflate returned %d msg: %s&bslash;n&bslash;r&quot;
 comma
 id|r
+comma
+id|s.msg
 )paren
 suffix:semicolon
 m_exit

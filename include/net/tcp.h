@@ -626,7 +626,7 @@ mdefine_line|#define TCP_SYN_RETRIES&t; 10&t;/* number of times to retry opening
 DECL|macro|TCP_PROBEWAIT_LEN
 mdefine_line|#define TCP_PROBEWAIT_LEN (1*HZ)/* time to wait between probes when&n;&t;&t;&t;&t; * I&squot;ve got something to write and&n;&t;&t;&t;&t; * there is no window&t;&t;&t;*/
 DECL|macro|TCP_KEEPALIVE_TIME
-mdefine_line|#define TCP_KEEPALIVE_TIME (180*60*HZ)&t;&t;/* two hours */
+mdefine_line|#define TCP_KEEPALIVE_TIME (120*60*HZ)&t;&t;/* two hours */
 DECL|macro|TCP_KEEPALIVE_PROBES
 mdefine_line|#define TCP_KEEPALIVE_PROBES&t;9&t;&t;/* Max of 9 keepalive probes&t;*/
 DECL|macro|TCP_KEEPALIVE_PERIOD

@@ -30,6 +30,56 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SOUND_SONICVIBES
+r_extern
+r_int
+id|init_sonicvibes
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_ES1370
+r_extern
+r_int
+id|init_es1370
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_ES1371
+r_extern
+r_int
+id|init_es1371
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_MSNDCLAS
+r_extern
+r_int
+id|msnd_classic_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_MSNDPIN
+r_extern
+r_int
+id|msnd_pinnacle_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Low level list operator. Scan the ordered list, find a hole and&n; *&t;join into it. Called with the lock asserted&n; */
 DECL|function|__sound_insert_unit
 r_static
@@ -330,7 +380,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This lock guards the sound loader list.&n; */
 DECL|variable|sound_loader_lock
-r_static
 id|spinlock_t
 id|sound_loader_lock
 op_assign

@@ -2368,7 +2368,7 @@ comma
 id|INITRD_MINOR
 )paren
 comma
-l_int|0
+id|rd_image_start
 comma
 l_int|0
 )paren

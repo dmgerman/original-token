@@ -1016,6 +1016,13 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|page-&gt;wait
+)paren
+suffix:semicolon
 id|out_free
 suffix:colon
 id|free_page

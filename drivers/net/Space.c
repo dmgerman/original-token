@@ -321,6 +321,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|skmca_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|elplus_probe
 c_func
 (paren
@@ -1266,6 +1276,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ELMC&t;&t;/* 3c523 */
 (brace
 id|elmc_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SKMC              /* SKnet Microchannel */
+(brace
+id|skmca_probe
 comma
 l_int|0
 )brace

@@ -1180,6 +1180,11 @@ id|hwif-&gt;chipset
 op_assign
 id|ide_cy82c693
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwif-&gt;dma_base
+)paren
 id|hwif-&gt;dmaproc
 op_assign
 op_amp

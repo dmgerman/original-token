@@ -538,15 +538,12 @@ c_func
 r_void
 )paren
 (brace
-(paren
-r_void
-)paren
-id|parport_proc_init
-c_func
+macro_line|#ifdef CONFIG_SYSCTL
+id|parport_default_proc_register
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* We can go on without it. */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -559,11 +556,12 @@ c_func
 r_void
 )paren
 (brace
-id|parport_proc_cleanup
-c_func
+macro_line|#ifdef CONFIG_SYSCTL
+id|parport_default_proc_unregister
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#else
 DECL|function|__initfunc
@@ -598,9 +596,8 @@ op_amp
 id|parport_probe_one
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef&t;CONFIG_PROC_FS
-id|parport_proc_init
-c_func
+macro_line|#ifdef&t;CONFIG_SYSCTL
+id|parport_default_proc_register
 (paren
 )paren
 suffix:semicolon
@@ -642,6 +639,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PARPORT_ATARI
 id|parport_atari_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARPORT_ARC
+id|parport_arc_init
 c_func
 (paren
 )paren
@@ -693,13 +697,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|parport_unregister_port
-)paren
-suffix:semicolon
-DECL|variable|parport_quiesce
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|parport_quiesce
 )paren
 suffix:semicolon
 DECL|variable|parport_register_driver

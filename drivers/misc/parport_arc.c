@@ -12,15 +12,57 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/arch/oldlatches.h&gt;
 macro_line|#include &lt;asm/arch/irqs.h&gt;
-DECL|macro|DATA_LATCH
-mdefine_line|#define DATA_LATCH    0x3350010
-multiline_comment|/* ARC can&squot;t read from the data latch, so we must use a soft copy. */
+DECL|macro|DATA_ADDRESS
+mdefine_line|#define DATA_ADDRESS    0x3350010
+multiline_comment|/* This is equivalent to the above and only used for request_region. */
+DECL|macro|PORT_BASE
+mdefine_line|#define PORT_BASE       0x80000000 | ((DATA_ADDRESS - IO_BASE) &gt;&gt; 2)
+multiline_comment|/* The hardware can&squot;t read from the data latch, so we must use a soft&n;   copy. */
 DECL|variable|data_copy
 r_static
 r_int
 r_char
 id|data_copy
 suffix:semicolon
+multiline_comment|/* These are pretty simple. We know the irq is never shared and the&n;   kernel does all the magic that&squot;s required. */
+DECL|function|arc_enable_irq
+r_static
+r_void
+id|arc_enable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|enable_irq
+c_func
+(paren
+id|p-&gt;irq
+)paren
+suffix:semicolon
+)brace
+DECL|function|arc_disable_irq
+r_static
+r_void
+id|arc_disable_irq
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|p
+)paren
+(brace
+id|disable_irq
+c_func
+(paren
+id|p-&gt;irq
+)paren
+suffix:semicolon
+)brace
 DECL|function|arc_interrupt
 r_static
 r_void
@@ -76,7 +118,7 @@ id|data_copy
 op_assign
 id|data
 suffix:semicolon
-id|outb
+id|outb_t
 c_func
 (paren
 id|data
@@ -197,10 +239,6 @@ multiline_comment|/* read_fifo */
 l_int|NULL
 comma
 multiline_comment|/* change_mode */
-id|arc_release_resources
-comma
-id|arc_claim_resources
-comma
 l_int|NULL
 comma
 multiline_comment|/* epp_write_data */
@@ -268,7 +306,7 @@ c_cond
 id|check_region
 c_func
 (paren
-id|DATA_LATCH
+id|PORT_BASE
 comma
 l_int|4
 )paren
@@ -276,11 +314,6 @@ l_int|4
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|p
 op_assign
 id|parport_register_port
@@ -295,7 +328,12 @@ comma
 op_amp
 id|parport_arc_ops
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
 )paren
 r_return
 l_int|0
@@ -306,7 +344,7 @@ id|PARPORT_MODE_ARCSPP
 suffix:semicolon
 id|p-&gt;size
 op_assign
-l_int|4
+l_int|1
 suffix:semicolon
 id|printk
 c_func
@@ -323,10 +361,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|p-&gt;flags
-op_or_assign
-id|PARPORT_FLAG_COMA
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -336,6 +370,12 @@ id|parport_probe_hook
 op_star
 id|parport_probe_hook
 )paren
+(paren
+id|p
+)paren
+suffix:semicolon
+multiline_comment|/* Tell the high-level drivers about the port. */
+id|parport_announce_port
 (paren
 id|p
 )paren

@@ -927,9 +927,12 @@ id|mouse.ready
 op_assign
 l_int|0
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|mouse.wait
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#ifdef __powerpc__
 r_if

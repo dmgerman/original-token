@@ -976,6 +976,19 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|do_brk
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* filemap.c */
 r_extern
 r_void
@@ -1252,6 +1265,23 @@ r_return
 id|vma
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|vm_area_struct
+op_star
+id|find_extend_vma
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
 DECL|macro|buffer_under_min
 mdefine_line|#define buffer_under_min()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
 DECL|macro|pgcache_under_min

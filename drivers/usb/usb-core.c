@@ -159,9 +159,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|module_cleanup
+DECL|function|cleanup_module
 r_void
-id|module_cleanup
+id|cleanup_module
 c_func
 (paren
 r_void

@@ -514,6 +514,14 @@ DECL|macro|__save_and_cli
 mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(7))
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;&t;__sti()
 macro_line|#ifdef __SMP__
 r_extern
 r_int

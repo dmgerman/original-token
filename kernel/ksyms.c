@@ -205,6 +205,13 @@ c_func
 id|do_munmap
 )paren
 suffix:semicolon
+DECL|variable|do_brk
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_brk
+)paren
+suffix:semicolon
 DECL|variable|exit_mm
 id|EXPORT_SYMBOL
 c_func

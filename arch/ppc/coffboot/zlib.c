@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-0.95&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - changed functions not used outside this file to &quot;local&quot;&n; * - added minCompression parameter to deflateInit2&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp&n; *&n; * $Id: zlib.c,v 1.2 1998/09/03 17:40:53 cort Exp $&n; */
+multiline_comment|/*&n; * This file is derived from various .h and .c files from the zlib-0.95&n; * distribution by Jean-loup Gailly and Mark Adler, with some additions&n; * by Paul Mackerras to aid in implementing Deflate compression and&n; * decompression for PPP packets.  See zlib.h for conditions of&n; * distribution and use.&n; *&n; * Changes that have been made include:&n; * - changed functions not used outside this file to &quot;local&quot;&n; * - added minCompression parameter to deflateInit2&n; * - added Z_PACKET_FLUSH (see zlib.h for details)&n; * - added inflateIncomp&n; *&n; * $Id: zlib.c,v 1.3 1999/05/27 22:22:54 cort Exp $&n; */
 multiline_comment|/*+++++*/
 multiline_comment|/* zutil.h -- internal interface and configuration of the compression library&n; * Copyright (C) 1995 Jean-loup Gailly.&n; * For conditions of distribution and use, see copyright notice in zlib.h&n; */
 multiline_comment|/* WARNING: this file should *not* be used by applications. It is&n;   part of the implementation of the compression library and is&n;   subject to change. Applications should only use zlib.h.&n; */
@@ -1899,6 +1899,40 @@ mdefine_line|#define OUTBYTE(a) {*q++=(Byte)(a);m--;}
 multiline_comment|/*   load local pointers */
 DECL|macro|LOAD
 mdefine_line|#define LOAD {LOADIN LOADOUT}
+multiline_comment|/*&n; * The IBM 150 firmware munges the data right after _etext[].  This&n; * protects it. -- Cort&n; */
+DECL|variable|protect_mask
+id|local
+id|uInt
+id|protect_mask
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
 multiline_comment|/* And&squot;ing with mask[n] masks the lower n bits */
 DECL|variable|inflate_mask
 id|local

@@ -430,6 +430,8 @@ DECL|macro|PCI_CLASS_SERIAL_USB
 mdefine_line|#define PCI_CLASS_SERIAL_USB&t;&t;0x0c03
 DECL|macro|PCI_CLASS_SERIAL_FIBER
 mdefine_line|#define PCI_CLASS_SERIAL_FIBER&t;&t;0x0c04
+DECL|macro|PCI_CLASS_HOT_SWAP_CONTROLLER
+mdefine_line|#define PCI_CLASS_HOT_SWAP_CONTROLLER&t;0xff00
 DECL|macro|PCI_CLASS_OTHERS
 mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
 multiline_comment|/*&n; * Vendor and card ID&squot;s: sort these numerically according to vendor&n; * (and according to card ID within vendor). Send all updates to&n; * &lt;linux-pcisupport@cck.uni-kl.de&gt;.&n; */
@@ -587,6 +589,8 @@ DECL|macro|PCI_DEVICE_ID_DEC_21152
 mdefine_line|#define PCI_DEVICE_ID_DEC_21152&t;&t;0x0024
 DECL|macro|PCI_DEVICE_ID_DEC_21153
 mdefine_line|#define PCI_DEVICE_ID_DEC_21153&t;&t;0x0025
+DECL|macro|PCI_DEVICE_ID_DEC_21154
+mdefine_line|#define PCI_DEVICE_ID_DEC_21154&t;&t;0x0026
 DECL|macro|PCI_VENDOR_ID_CIRRUS
 mdefine_line|#define PCI_VENDOR_ID_CIRRUS&t;&t;0x1013
 DECL|macro|PCI_DEVICE_ID_CIRRUS_7548
@@ -832,12 +836,18 @@ DECL|macro|PCI_DEVICE_ID_WINBOND2_89C940
 mdefine_line|#define PCI_DEVICE_ID_WINBOND2_89C940&t;0x0940
 DECL|macro|PCI_VENDOR_ID_MOTOROLA
 mdefine_line|#define PCI_VENDOR_ID_MOTOROLA&t;&t;0x1057
+DECL|macro|PCI_VENDOR_ID_MOTOROLA_OOPS
+mdefine_line|#define PCI_VENDOR_ID_MOTOROLA_OOPS&t;0x1507
 DECL|macro|PCI_DEVICE_ID_MOTOROLA_MPC105
 mdefine_line|#define PCI_DEVICE_ID_MOTOROLA_MPC105&t;0x0001
 DECL|macro|PCI_DEVICE_ID_MOTOROLA_MPC106
 mdefine_line|#define PCI_DEVICE_ID_MOTOROLA_MPC106&t;0x0002
 DECL|macro|PCI_DEVICE_ID_MOTOROLA_RAVEN
 mdefine_line|#define PCI_DEVICE_ID_MOTOROLA_RAVEN&t;0x4801
+DECL|macro|PCI_DEVICE_ID_MOTOROLA_FALCON
+mdefine_line|#define PCI_DEVICE_ID_MOTOROLA_FALCON&t;0x4802
+DECL|macro|PCI_DEVICE_ID_MOTOROLA_CPX8216
+mdefine_line|#define PCI_DEVICE_ID_MOTOROLA_CPX8216&t;0x4806
 DECL|macro|PCI_VENDOR_ID_PROMISE
 mdefine_line|#define PCI_VENDOR_ID_PROMISE&t;&t;0x105a
 DECL|macro|PCI_DEVICE_ID_PROMISE_20246

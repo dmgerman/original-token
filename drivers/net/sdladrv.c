@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdladrv.c&t;SDLA Support Module.  Main module.&n;*&n;*&t;&t;This module is a library of common hardware-specific functions&n;*&t;&t;used by all Sangoma drivers.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 20, 1996&t;Gene Kozin&t;Version 3.0.0. Complete overhaul.&n;* Jul 12, 1996&t;Gene Kozin&t;Changes for Linux 2.0 compatibility.&n;* Jun 12, 1996&t;Gene Kozin &t;Added support for S503 card.&n;* Apr 30, 1996&t;Gene Kozin&t;SDLA hardware interrupt is acknowledged before&n;*&t;&t;&t;&t;calling protocolspecific ISR.&n;*&t;&t;&t;&t;Register I/O ports with Linux kernel.&n;*&t;&t;&t;&t;Miscellaneous bug fixes.&n;* Dec 20, 1995&t;Gene Kozin&t;Fixed a bug in interrupt routine.&n;* Oct 14, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdladrv.c&t;SDLA Support Module.  Main module.&n;*&n;*&t;&t;This module is a library of common hardware-specific functions&n;*&t;&t;used by all Sangoma drivers.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* May 19, 1999&t;Arnaldo Melo&t;wanpipe_init belongs to sdlamain.c&n;* Dec 20, 1996&t;Gene Kozin&t;Version 3.0.0. Complete overhaul.&n;* Jul 12, 1996&t;Gene Kozin&t;Changes for Linux 2.0 compatibility.&n;* Jun 12, 1996&t;Gene Kozin &t;Added support for S503 card.&n;* Apr 30, 1996&t;Gene Kozin&t;SDLA hardware interrupt is acknowledged before&n;*&t;&t;&t;&t;calling protocolspecific ISR.&n;*&t;&t;&t;&t;Register I/O ports with Linux kernel.&n;*&t;&t;&t;&t;Miscellaneous bug fixes.&n;* Dec 20, 1995&t;Gene Kozin&t;Fixed a bug in interrupt routine.&n;* Oct 14, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 multiline_comment|/*****************************************************************************&n; * Notes:&n; * ------&n; * 1. This code is ment to be system-independent (as much as possible).  To&n; *    achive this, various macros are used to hide system-specific interfaces.&n; *    To compile this code, one of the following constants must be defined:&n; *&n; *&t;Platform&t;Define&n; *&t;--------&t;------&n; *&t;Linux&t;&t;_LINUX_&n; *&t;SCO Unix&t;_SCO_UNIX_&n; *&n; * 2. Supported adapter types:&n; *&n; *&t;S502A&n; *&t;ES502A (S502E)&n; *&t;S503&n; *&t;S507&n; *&t;S508 (S509)&n; *&n; * 3. S502A Notes:&n; *&n; *&t;There is no separate DPM window enable/disable control in S502A.  It&n; *&t;opens immediately after a window number it written to the HMCR&n; *&t;register.  To close the window, HMCR has to be written a value&n; *&t;????1111b (e.g. 0x0F or 0xFF).&n; *&n; *&t;S502A DPM window cannot be located at offset E000 (e.g. 0xAE000).&n; *&n; *&t;There should be a delay of ??? before reading back S502A status&n; *&t;register.&n; *&n; * 4. S502E Notes:&n; *&n; *&t;S502E has a h/w bug: although default IRQ line state is HIGH, enabling&n; *&t;interrupts by setting bit 1 of the control register (BASE) to &squot;1&squot;&n; *&t;causes it to go LOW! Therefore, disabling interrupts by setting that&n; *&t;bit to &squot;0&squot; causes low-to-high transition on IRQ line (ghosty&n; *&t;interrupt). The same occurs when disabling CPU by resetting bit 0 of&n; *&t;CPU control register (BASE+3) - see the next note.&n; *&n; *&t;S502E CPU and DPM control is limited:&n; *&n; *&t;o CPU cannot be stopped independently. Resetting bit 0 of the CPUi&n; *&t;  control register (BASE+3) shuts the board down entirely, including&n; *&t;  DPM;&n; *&n; *&t;o DPM access cannot be controlled dynamically. Ones CPU is started,&n; *&t;  bit 1 of the control register (BASE) is used to enable/disable IRQ,&n; *&t;  so that access to shared memory cannot be disabled while CPU is&n; *&t;  running.&n; ****************************************************************************/
 DECL|macro|_LINUX_
 mdefine_line|#define&t;_LINUX_
@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/module.h&gt;&t;/* support for loadable modules */
 macro_line|#include &lt;linux/sched.h&gt;&t;/* for jiffies, HZ, etc. */
 macro_line|#include &lt;linux/sdladrv.h&gt;&t;/* API definitions */
 macro_line|#include &lt;linux/sdlasfm.h&gt;&t;/* SDLA firmware module definitions */
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb(), outb(), etc. */
 DECL|macro|_INB
 mdefine_line|#define _INB(port)&t;&t;(inb(port))
@@ -1161,18 +1160,6 @@ id|init_module
 (paren
 r_void
 )paren
-macro_line|#else
-id|__initfunc
-c_func
-(paren
-r_int
-id|wanpipe_init
-c_func
-(paren
-r_void
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -1214,7 +1201,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/*============================================================================&n; * Module &squot;remove&squot; entry point.&n; * o release all remaining system resources&n; */
 DECL|function|cleanup_module
 r_void

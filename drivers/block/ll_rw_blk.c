@@ -1792,6 +1792,12 @@ r_case
 id|IDE5_MAJOR
 suffix:colon
 r_case
+id|IDE6_MAJOR
+suffix:colon
+r_case
+id|IDE7_MAJOR
+suffix:colon
+r_case
 id|ACSI_MAJOR
 suffix:colon
 r_case
@@ -1849,6 +1855,9 @@ id|SCSI_DISK7_MAJOR
 suffix:colon
 r_case
 id|SCSI_CDROM_MAJOR
+suffix:colon
+r_case
+id|I2O_MAJOR
 suffix:colon
 r_do
 (brace

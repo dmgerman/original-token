@@ -2414,11 +2414,6 @@ id|kbd_table
 )braket
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue_head_t
-id|keypress_wait
-suffix:semicolon
-r_extern
 r_void
 id|handle_scancode
 c_func
