@@ -1144,6 +1144,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
 DECL|macro|ffs
 mdefine_line|#define ffs(x) generic_ffs(x)
@@ -1271,6 +1272,7 @@ mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
 mdefine_line|#define hweight8(x) generic_hweight8(x)
 macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* find_next_zero_bit() finds the first zero bit in a bit string of length&n; * &squot;size&squot; bits, starting the search at bit &squot;offset&squot;. This is largely based&n; * on Linus&squot;s ALPHA routines, which are pretty portable BTW.&n; */
 DECL|function|find_next_zero_bit
 r_extern

@@ -271,6 +271,7 @@ r_return
 id|k
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
 DECL|macro|ffs
 mdefine_line|#define ffs(x) generic_ffs(x)
@@ -281,6 +282,7 @@ DECL|macro|hweight16
 mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
 mdefine_line|#define hweight8(x) generic_hweight8(x)
+macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
 mdefine_line|#define ext2_set_bit&t;&t;&t;test_and_set_bit

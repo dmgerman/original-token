@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
@@ -4338,7 +4339,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* called from init/main.c */
-DECL|function|aha1542_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|aha1542_setup
 c_func
@@ -4350,6 +4354,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_const

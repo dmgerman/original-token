@@ -4753,6 +4753,10 @@ suffix:semicolon
 r_int
 id|origlen
 suffix:semicolon
+r_struct
+id|ddpebits
+id|ddphv
+suffix:semicolon
 multiline_comment|/* Size check */
 r_if
 c_cond
@@ -4785,7 +4789,8 @@ op_star
 id|__u16
 op_star
 )paren
-id|ddp
+op_amp
+id|ddphv
 )paren
 op_assign
 id|ntohs
@@ -4816,7 +4821,7 @@ c_func
 (paren
 id|skb-&gt;len
 comma
-id|ddp-&gt;deh_len
+id|ddphv.deh_len
 )paren
 )paren
 suffix:semicolon
@@ -4856,7 +4861,7 @@ c_func
 (paren
 id|ddp
 comma
-id|ddp-&gt;deh_len
+id|ddphv.deh_len
 )paren
 op_ne
 id|ddp-&gt;deh_sum
@@ -5042,7 +5047,7 @@ id|rt
 op_eq
 l_int|NULL
 op_logical_or
-id|ddp-&gt;deh_hops
+id|ddphv.deh_hops
 op_eq
 id|DDP_MAXHOPS
 )paren
@@ -5059,7 +5064,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|ddp-&gt;deh_hops
+id|ddphv.deh_hops
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Route goes through another gateway, so&n;&t;&t; * set the target to the gateway instead.&n;&t;&t; */
@@ -5095,7 +5100,7 @@ id|rt-&gt;dev-&gt;hard_header_len
 op_plus
 id|ddp_dl-&gt;header_length
 op_plus
-id|ddp-&gt;deh_len
+id|ddphv.deh_len
 )paren
 )paren
 suffix:semicolon
@@ -5118,7 +5123,8 @@ op_star
 id|__u16
 op_star
 )paren
-id|ddp
+op_amp
+id|ddphv
 )paren
 )paren
 suffix:semicolon
@@ -6520,6 +6526,10 @@ id|ddp
 op_assign
 l_int|NULL
 suffix:semicolon
+r_struct
+id|ddpebits
+id|ddphv
+suffix:semicolon
 r_int
 id|copied
 op_assign
@@ -6580,6 +6590,29 @@ op_star
 id|skb-&gt;h.raw
 )paren
 suffix:semicolon
+op_star
+(paren
+(paren
+id|__u16
+op_star
+)paren
+op_amp
+id|ddphv
+)paren
+op_assign
+id|ntohs
+c_func
+(paren
+op_star
+(paren
+(paren
+id|__u16
+op_star
+)paren
+id|ddp
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6590,7 +6623,7 @@ id|SOCK_RAW
 (brace
 id|copied
 op_assign
-id|ddp-&gt;deh_len
+id|ddphv.deh_len
 suffix:semicolon
 r_if
 c_cond
@@ -6628,7 +6661,7 @@ r_else
 (brace
 id|copied
 op_assign
-id|ddp-&gt;deh_len
+id|ddphv.deh_len
 op_minus
 r_sizeof
 (paren

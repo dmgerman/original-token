@@ -1505,13 +1505,6 @@ c_func
 id|loops_per_sec
 )paren
 suffix:semicolon
-DECL|variable|need_resched
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|need_resched
-)paren
-suffix:semicolon
 DECL|variable|kstat
 id|EXPORT_SYMBOL
 c_func

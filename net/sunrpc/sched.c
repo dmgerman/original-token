@@ -1524,10 +1524,21 @@ r_int
 r_int
 id|oldflags
 suffix:semicolon
+r_int
+id|need_resched
+op_assign
+id|current-&gt;need_resched
+suffix:semicolon
 id|dprintk
 c_func
 (paren
 l_string|&quot;RPC:      rpc_schedule enter&bslash;n&quot;
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|oldflags
 )paren
 suffix:semicolon
 r_while
@@ -1536,12 +1547,6 @@ c_loop
 l_int|1
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|oldflags
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren

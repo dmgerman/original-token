@@ -5,6 +5,7 @@ macro_line|#ifdef __SMP__
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/*&n; *&t;Support definitions for SMP machines following the intel multiprocessing&n; *&t;specification&n; */
@@ -642,7 +643,7 @@ id|smp_process_available
 suffix:semicolon
 multiline_comment|/*&n; *&t;APIC handlers: Note according to the Intel specification update&n; *&t;you should put reads between APIC writes.&n; *&t;Intel Pentium processor specification update [11AP, pg 64]&n; *&t;&quot;Back to Back Assertions of HOLD May Cause Lost APIC Write Cycle&quot;&n; */
 DECL|macro|APIC_BASE
-mdefine_line|#define APIC_BASE ((char *)0xFEE00000)
+mdefine_line|#define APIC_BASE (fix_to_virt(FIX_APIC_BASE))
 DECL|function|apic_write
 r_extern
 id|__inline

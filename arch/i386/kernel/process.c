@@ -136,7 +136,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 (brace
 r_if
@@ -165,7 +165,7 @@ c_func
 )paren
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|__asm__
 c_func
@@ -190,7 +190,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 r_break
 suffix:semicolon
@@ -306,7 +306,7 @@ op_logical_neg
 id|hlt_counter
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|__asm__
 c_func
@@ -325,7 +325,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|start_idle
 op_assign
@@ -384,7 +384,7 @@ op_logical_neg
 id|hlt_counter
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 (brace
 id|__asm
@@ -1148,6 +1148,19 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|cr0
+op_assign
+l_int|0L
+comma
+id|cr2
+op_assign
+l_int|0L
+comma
+id|cr3
+op_assign
+l_int|0L
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1231,6 +1244,51 @@ comma
 l_int|0xffff
 op_amp
 id|regs-&gt;xes
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr0, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cr0
+)paren
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cr2
+)paren
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr3, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cr3
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CR0: %08lx CR2: %08lx CR3: %08lx&bslash;n&quot;
+comma
+id|cr0
+comma
+id|cr2
+comma
+id|cr3
 )paren
 suffix:semicolon
 )brace
@@ -1519,7 +1577,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|current-&gt;debugreg
+id|current-&gt;tss.debugreg
 (braket
 id|i
 )braket
@@ -2089,7 +2147,7 @@ id|dump-&gt;u_debugreg
 id|i
 )braket
 op_assign
-id|current-&gt;debugreg
+id|current-&gt;tss.debugreg
 (braket
 id|i
 )braket
@@ -2206,7 +2264,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This special macro can be used to load a debugging register&n; */
 DECL|macro|loaddebug
-mdefine_line|#define loaddebug(tsk,register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%db&quot; #register  &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;r&quot; (tsk-&gt;debugreg[register]))
+mdefine_line|#define loaddebug(tsk,register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%db&quot; #register  &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;r&quot; (tsk-&gt;tss.debugreg[register]))
 multiline_comment|/*&n; *&t;switch_to(x,yn) should switch tasks from x to y.&n; *&n; * We fsave/fwait so that an exception goes off at the right time&n; * (as a call from the fsave or fwait in effect) rather than to&n; * the wrong process. Lazy FP saving no longer makes any sense&n; * with modern CPU&squot;s, and this simplifies a lot of things (SMP&n; * and UP become the same).&n; *&n; * NOTE! We used to use the x86 hardware context switching. The&n; * reason for not using it any more becomes apparent when you&n; * try to recover gracefully from saved state that is no longer&n; * valid (stale segment register values in particular). With the&n; * hardware task-switch, there is no way to fix up bad state in&n; * a reasonable manner.&n; *&n; * The fact that Intel documents the hardware task-switching to&n; * be slow is a fairly red herring - this code is not noticeably&n; * faster. However, there _is_ some room for improvement here,&n; * so the performance issues may eventually be a valid point.&n; * More important, however, is the fact that this allows us much&n; * more flexibility.&n; */
 DECL|function|__switch_to
 r_void
@@ -2364,7 +2422,7 @@ multiline_comment|/*&n;&t; * Now maybe reload the debug registers&n;&t; */
 r_if
 c_cond
 (paren
-id|next-&gt;debugreg
+id|next-&gt;tss.debugreg
 (braket
 l_int|7
 )braket

@@ -93,15 +93,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
-(brace
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 r_while
 c_loop

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Holds initial configuration information for devices.&n; *&n; * NOTE:&t;This file is a nice idea, but its current format does not work&n; *&t;&t;well for drivers that support multiple units, like the SLIP&n; *&t;&t;driver.  We should actually have only one pointer to a driver&n; *&t;&t;here, with the driver knowing how many units it supports.&n; *&t;&t;Currently, the SLIP driver abuses the &quot;base_addr&quot; integer&n; *&t;&t;field of the &squot;device&squot; structure to store the unit number...&n; *&t;&t;-FvK&n; *&n; * Version:&t;@(#)Space.c&t;1.0.7&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; *&t;FIXME:&n; *&t;&t;Sort the device chain fastest first.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Holds initial configuration information for devices.&n; *&n; * Version:&t;@(#)Space.c&t;1.0.7&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@super.org&gt;&n; *&n; * Changelog:&n; *&t;&t;Paul Gortmaker (06/98): &n; *&t;&t; - sort probes in a sane way, make sure all (safe) probes&n; *&t;&t;   get run once &amp; failed autoprobes don&squot;t autoprobe again.&n; *&n; *&t;FIXME:&n; *&t;&t;Phase out placeholder dev entries put in the linked list&n; *&t;&t;here in favour of drivers using init_etherdev(NULL, ...)&n; *&t;&t;combined with a single find_all_devs() function (for 2.3)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -240,7 +240,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|apricot_probe
+id|i82596_probe
 c_func
 (paren
 r_struct
@@ -602,8 +602,27 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
-id|acorn_ethif_probe
-c_func
+id|ether1_probe
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ether3_probe
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|etherh_probe
 (paren
 r_struct
 id|device
@@ -732,6 +751,869 @@ id|device
 op_star
 )paren
 suffix:semicolon
+DECL|struct|devprobe
+r_struct
+id|devprobe
+(brace
+DECL|member|probe
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|member|status
+r_int
+id|status
+suffix:semicolon
+multiline_comment|/* non-zero if autoprobe has failed */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * probe_list walks a list of probe functions and calls each so long&n; * as a non-zero ioaddr is given, or as long as it hasn&squot;t already failed &n; * to find a card in the past (as recorded by &quot;status&quot;) when asked to&n; * autoprobe (i.e. a probe that fails to find a card when autoprobing&n; * will not be asked to autoprobe again).  It exits when a card is found.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_int
+id|probe_list
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|devprobe
+op_star
+id|plist
+)paren
+)paren
+(brace
+r_struct
+id|devprobe
+op_star
+id|p
+op_assign
+id|plist
+suffix:semicolon
+r_int
+r_int
+id|base_addr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|p-&gt;probe
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|base_addr
+op_logical_and
+id|p
+op_member_access_from_pointer
+id|probe
+c_func
+(paren
+id|dev
+)paren
+op_eq
+l_int|0
+)paren
+multiline_comment|/* probe given addr */
+r_return
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|p-&gt;status
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* has autoprobe failed yet? */
+id|p-&gt;status
+op_assign
+id|p
+op_member_access_from_pointer
+id|probe
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* no, try autoprobe */
+r_if
+c_cond
+(paren
+id|p-&gt;status
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|p
+op_increment
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * If your probe touches ISA ports (&lt;0x400) in addition to&n; * looking for PCI cards, then put it in the isa_probes&n; * list instead.&n; */
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|pci_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_DGRS
+(brace
+id|dgrs_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_VORTEX
+(brace
+id|tc59x_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DEC_ELCP 
+(brace
+id|tulip_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NE2K_PCI
+(brace
+id|ne2k_pci_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCNET32
+(brace
+id|pcnet32_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_EEXPRESS_PRO100&t;/* Intel EtherExpress Pro/100 */
+(brace
+id|eepro100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
+(brace
+id|de4x5_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_TLAN
+(brace
+id|tlan_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EPIC100
+(brace
+id|epic100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_RTL8139
+(brace
+id|rtl8139_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_YELLOWFIN
+(brace
+id|yellowfin_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * This is a bit of an artificial separation as there are PCI drivers&n; * that also probe for EISA cards (in the PCI group) and there are ISA&n; * drivers that probe for EISA cards (in the ISA group).  These are the&n; * EISA only driver probes.&n; */
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|eisa_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ULTRA32 
+(brace
+id|ultra32_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_AC3200&t;
+(brace
+id|ac3200_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ES3210
+(brace
+id|es_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_LNE390
+(brace
+id|lne390_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|sparc_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_HAPPYMEAL
+(brace
+id|happy_meal_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUNLANCE
+(brace
+id|sparc_lance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUNQE
+(brace
+id|qec_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MYRI_SBUS
+(brace
+id|myri_sbus_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|mca_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ULTRAMCA 
+(brace
+id|ultramca_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ELMC&t;&t;/* 3c523 */
+(brace
+id|elmc_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * ISA probes that touch addresses &lt; 0x400 (including those that also&n; * look for EISA/PCI cards in addition to ISA cards).&n; */
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|isa_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_EL3&t;&t;/* ISA, EISA (MCA someday) 3c5x9 */
+(brace
+id|el3_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HP100 &t;&t;/* ISA, EISA &amp; PCI */
+(brace
+id|hp100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_ULTRA 
+(brace
+id|ultra_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_WD80x3 
+(brace
+id|wd_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL2 &t;&t;/* 3c503 */
+(brace
+id|el2_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HPLAN
+(brace
+id|hp_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HPLAN_PLUS
+(brace
+id|hp_plus_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_E2100&t;&t;/* Cabletron E21xx series. */
+(brace
+id|e2100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NE2000&t;&t;/* ISA (use ne2k-pci for PCI cards) */
+(brace
+id|ne_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMC9194
+(brace
+id|smc_init
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SEEQ8005 
+(brace
+id|seeq8005_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_AT1500
+(brace
+id|at1500_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CS89x0
+(brace
+id|cs89x0_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_AT1700
+(brace
+id|at1700_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FMV18X&t;&t;/* Fujitsu FMV-181/182 */
+(brace
+id|fmv18x_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ETH16I
+(brace
+id|eth16i_probe
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* ICL EtherTeam 16i/32 */
+macro_line|#endif
+macro_line|#ifdef CONFIG_ZNET&t;&t;/* Zenith Z-Note and some IBM Thinkpads. */
+(brace
+id|znet_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EEXPRESS&t;&t;/* Intel EtherExpress */
+(brace
+id|express_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EEXPRESS_PRO&t;/* Intel EtherExpress Pro/10 */
+(brace
+id|eepro_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DEPCA&t;&t;/* DEC DEPCA */
+(brace
+id|depca_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EWRK3             /* DEC EtherWORKS 3 */
+(brace
+id|ewrk3_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_APRICOT) || defined(CONFIG_MVME16x_NET) || defined(CONFIG_BVME6000_NET)&t;/* Intel I82596 */
+(brace
+id|i82596_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL1&t;&t;/* 3c501 */
+(brace
+id|el1_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_WAVELAN&t;&t;/* WaveLAN */
+(brace
+id|wavelan_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
+(brace
+id|el16_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ELPLUS&t;&t;/* 3c505 */
+(brace
+id|elplus_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SK_G16
+(brace
+id|SK_init
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NI5010
+(brace
+id|ni5010_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NI52
+(brace
+id|ni52_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NI65
+(brace
+id|ni65_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|parport_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_DE600&t;&t;/* D-Link DE-600 adapter */
+(brace
+id|de600_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DE620&t;&t;/* D-Link DE-620 adapter */
+(brace
+id|de620_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
+(brace
+id|atp_init
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|m68k_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ATARILANCE&t;/* Lance-based Atari ethernet boards */
+(brace
+id|atarilance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_A2065&t;&t;/* Commodore/Ameristar A2065 Ethernet Board */
+(brace
+id|a2065_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
+(brace
+id|ariadne_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HYDRA&t;&t;/* Hydra Systems Amiganet Ethernet board */
+(brace
+id|hydra_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI_BIONET&t;/* Atari Bionet Ethernet board */
+(brace
+id|bionet_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI_PAMSNET&t;/* Atari PAMsNet Ethernet board */
+(brace
+id|pamsnet_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_HPLANCE&t;&t;/* HP300 internal Ethernet */
+(brace
+id|hplance_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|ppc_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_MACE
+(brace
+id|mace_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|sgi_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_SGISEEQ
+(brace
+id|sgiseeq_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|mips_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_MIPS_JAZZ_SONIC
+(brace
+id|sonic_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+DECL|variable|__initdata
+r_struct
+id|devprobe
+id|arm_probes
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ARM_ETHERH
+(brace
+id|etherh_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARM_ETHER3
+(brace
+id|ether3_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARM_ETHER1
+(brace
+id|ether1_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARM_AM79C961A
+(brace
+id|am79c961_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+(brace
+l_int|NULL
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Unified ethernet device probe, segmented per architecture and&n; * per bus interface.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -748,567 +1630,209 @@ id|dev
 )paren
 )paren
 (brace
-id|u_long
+r_int
+r_int
 id|base_addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+multiline_comment|/* &n;&t; * Backwards compatibility - historically an I/O base of 1 was &n;&t; * used to indicate not to probe for this ethN interface &n;&t; */
 r_if
 c_cond
-(paren
-(paren
-id|base_addr
-op_eq
-l_int|0xffe0
-)paren
-op_logical_or
 (paren
 id|base_addr
 op_eq
 l_int|1
-)paren
 )paren
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* ENXIO */
+multiline_comment|/* &n;&t; * The arch specific probes are 1st so that any on-board ethernet&n;&t; * will be probed before other ISA/EISA/MCA/PCI bus cards.&n;&t; */
 r_if
 c_cond
 (paren
-l_int|1
-macro_line|#ifdef CONFIG_HAPPYMEAL
-multiline_comment|/* Please keep this one first, we&squot;d like the on-board ethernet&n;&t; * to be probed first before other PCI cards on Ultra/PCI.  -DaveM&n;&t; */
-op_logical_and
-id|happy_meal_probe
+id|probe_list
 c_func
 (paren
 id|dev
+comma
+id|arm_probes
 )paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DGRS
-op_logical_and
-id|dgrs_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_VORTEX)
-op_logical_and
-id|tc59x_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_SEEQ8005)
-op_logical_and
-id|seeq8005_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_DEC_ELCP)
-op_logical_and
-id|tulip_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_HP100)
-op_logical_and
-id|hp100_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif&t;
-macro_line|#if defined(CONFIG_ULTRA)
-op_logical_and
-id|ultra_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_ULTRAMCA)
-op_logical_and
-id|ultramca_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_ULTRA32)
-op_logical_and
-id|ultra32_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_SMC9194)
-op_logical_and
-id|smc_init
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_WD80x3) || defined(WD80x3)
-op_logical_and
-id|wd_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_EL2) || defined(EL2)&t;/* 3c503 */
-op_logical_and
-id|el2_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_HPLAN) || defined(HPLAN)
-op_logical_and
-id|hp_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_HPLAN_PLUS)
-op_logical_and
-id|hp_plus_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_AC3200&t;&t;/* Ansel Communications EISA 3200. */
-op_logical_and
-id|ac3200_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ES3210
-op_logical_and
-id|es_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_LNE390
-op_logical_and
-id|lne390_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_E2100&t;&t;/* Cabletron E21xx series. */
-op_logical_and
-id|e2100_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_NE2K_PCI)
-op_logical_and
-id|ne2k_pci_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_NE2000)
-op_logical_and
-id|ne_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_AT1500
-op_logical_and
-id|at1500_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_CS89x0
-op_logical_and
-id|cs89x0_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_PCNET32
-op_logical_and
-id|pcnet32_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif&t;
-macro_line|#ifdef CONFIG_AT1700
-op_logical_and
-id|at1700_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_FMV18X&t;&t;/* Fujitsu FMV-181/182 */
-op_logical_and
-id|fmv18x_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ETH16I
-op_logical_and
-id|eth16i_probe
-c_func
-(paren
-id|dev
-)paren
-multiline_comment|/* ICL EtherTeam 16i/32 */
-macro_line|#endif
-macro_line|#ifdef CONFIG_EL3&t;&t;/* 3c509 */
-op_logical_and
-id|el3_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ZNET&t;&t;/* Zenith Z-Note and some IBM Thinkpads. */
-op_logical_and
-id|znet_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EEXPRESS&t;&t;/* Intel EtherExpress */
-op_logical_and
-id|express_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EEXPRESS_PRO&t;/* Intel EtherExpress Pro/10 */
-op_logical_and
-id|eepro_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EEXPRESS_PRO100&t;/* Intel EtherExpress Pro/100 */
-op_logical_and
-id|eepro100_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DEPCA&t;&t;/* DEC DEPCA */
-op_logical_and
-id|depca_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EWRK3             /* DEC EtherWORKS 3 */
-op_logical_and
-id|ewrk3_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
-op_logical_and
-id|de4x5_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_APRICOT&t;&t;/* Apricot I82596 */
-op_logical_and
-id|apricot_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EL1&t;&t;/* 3c501 */
-op_logical_and
-id|el1_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if&t;defined(CONFIG_WAVELAN)&t;/* WaveLAN */
-op_logical_and
-id|wavelan_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
-macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
-op_logical_and
-id|el16_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ELMC&t;&t;/* 3c523 */
-op_logical_and
-id|elmc_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ELPLUS&t;&t;/* 3c505 */
-op_logical_and
-id|elplus_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DE600&t;&t;/* D-Link DE-600 adapter */
-op_logical_and
-id|de600_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_DE620&t;&t;/* D-Link DE-620 adapter */
-op_logical_and
-id|de620_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#if defined(CONFIG_SK_G16)
-op_logical_and
-id|SK_init
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_NI5010
-op_logical_and
-id|ni5010_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_NI52
-op_logical_and
-id|ni52_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_NI65
-op_logical_and
-id|ni65_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARILANCE&t;/* Lance-based Atari ethernet boards */
-op_logical_and
-id|atarilance_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_A2065&t;&t;/* Commodore/Ameristar A2065 Ethernet Board */
-op_logical_and
-id|a2065_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
-op_logical_and
-id|ariadne_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_HYDRA&t;&t;/* Hydra Systems Amiganet Ethernet board */
-op_logical_and
-id|hydra_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARI_BIONET&t;/* Atari Bionet Ethernet board */
-op_logical_and
-id|bionet_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATARI_PAMSNET&t;/* Atari PAMsNet Ethernet board */
-op_logical_and
-id|pamsnet_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_HPLANCE&t;&t;/* HP300 internal Ethernet */
-op_logical_and
-id|hplance_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUNLANCE
-op_logical_and
-id|sparc_lance_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_TLAN
-op_logical_and
-id|tlan_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_SUNQE
-op_logical_and
-id|qec_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_MYRI_SBUS
-op_logical_and
-id|myri_sbus_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_MACE
-op_logical_and
-id|mace_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_SGISEEQ
-op_logical_and
-id|sgiseeq_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_MIPS_JAZZ_SONIC
-op_logical_and
-id|sonic_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARCH_ACORN
-op_logical_and
-id|acorn_ethif_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARM_AM79C961A
-op_logical_and
-id|am79c961_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_EPIC100
-op_logical_and
-id|epic100_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_RTL8139
-op_logical_and
-id|rtl8139_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef CONFIG_YELLOWFIN
-op_logical_and
-id|yellowfin_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
-op_logical_and
-l_int|1
+op_eq
+l_int|0
 )paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* -ENODEV or -EAGAIN would be more accurate. */
-)brace
 r_return
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|m68k_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|mips_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|ppc_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|sgi_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|sparc_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|pci_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|eisa_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|mca_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;         * Backwards compatibility - an I/O of 0xffe0 was used to indicate&n;         * that we shouldn&squot;t do a bunch of potentially risky ISA probes&n;         * for ethN (N&gt;1).  Since the widespread use of modules, *nobody*&n;         * compiles a kernel with all the ISA drivers built in anymore,&n;         * and so we should delete this check in linux 2.3 - Paul G.&n;         */
+r_if
+c_cond
+(paren
+id|base_addr
+op_ne
+l_int|0xffe0
+op_logical_and
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|isa_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_list
+c_func
+(paren
+id|dev
+comma
+id|parport_probes
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_FDDI
@@ -1337,17 +1861,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|base_addr
-op_eq
-l_int|0xffe0
-)paren
-op_logical_or
-(paren
 id|base_addr
 op_eq
 l_int|1
-)paren
 )paren
 r_return
 l_int|1
@@ -1526,47 +2042,6 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;sdla0_dev)
-macro_line|#endif
-multiline_comment|/* Run-time ATtachable (Pocket) devices have a different (not &quot;eth#&quot;) name. */
-macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
-DECL|variable|atp_dev
-r_static
-r_struct
-id|device
-id|atp_dev
-op_assign
-(brace
-l_string|&quot;atp0&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|atp_init
-comma
-multiline_comment|/* ... */
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
 macro_line|#endif
 macro_line|#if defined(CONFIG_LTPC)
 r_extern
@@ -1788,14 +2263,9 @@ macro_line|#ifndef ETH0_IRQ
 DECL|macro|ETH0_IRQ
 macro_line|# define ETH0_IRQ 0
 macro_line|#endif
-macro_line|#if !defined(__sparc__) &amp;&amp; !defined(CONFIG_ARCH_ACORN)
+multiline_comment|/* &quot;eth0&quot; defaults to autoprobe (== 0), other use a base of 0xffe0 (== -0x20),&n;   which means &quot;don&squot;t do ISA probes&quot;.  Distributions don&squot;t ship kernels with&n;   all ISA drivers compiled in anymore, so its probably no longer an issue. */
 DECL|macro|ETH_NOPROBE_ADDR
 mdefine_line|#define ETH_NOPROBE_ADDR 0xffe0
-macro_line|#else
-DECL|macro|ETH_NOPROBE_ADDR
-mdefine_line|#define ETH_NOPROBE_ADDR 0
-macro_line|#endif
-multiline_comment|/* &quot;eth0&quot; defaults to autoprobe (== 0), other use a base of 0xffe0 (== -0x20),&n;   which means &quot;don&squot;t probe&quot;.  These entries exist to only to provide empty&n;   slots which may be enabled at boot-time. */
 DECL|variable|eth7_dev
 r_static
 r_struct

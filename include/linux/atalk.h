@@ -132,7 +132,7 @@ DECL|member|status
 r_int
 id|status
 suffix:semicolon
-multiline_comment|/* What are we doing ?? */
+multiline_comment|/* What are we doing? */
 DECL|macro|ATIF_PROBE
 mdefine_line|#define ATIF_PROBE&t;1&t;&t;/* Probing for an address */
 DECL|macro|ATIF_PROBE_FAIL
@@ -254,6 +254,45 @@ id|__u8
 id|deh_sport
 suffix:semicolon
 multiline_comment|/* And netatalk apps expect to stick the type in themselves */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Don&squot;t drop the struct into the struct above.  You&squot;ll get some&n; *&t;surprise padding.&n; */
+DECL|struct|ddpebits
+r_struct
+id|ddpebits
+(brace
+macro_line|#ifdef __LITTLE_ENDIAN_BITFIELD
+DECL|member|deh_len
+DECL|member|deh_hops
+DECL|member|deh_pad
+id|__u16
+id|deh_len
+suffix:colon
+l_int|10
+comma
+id|deh_hops
+suffix:colon
+l_int|4
+comma
+id|deh_pad
+suffix:colon
+l_int|2
+suffix:semicolon
+macro_line|#else
+id|__u16
+id|deh_pad
+suffix:colon
+l_int|2
+comma
+id|deh_hops
+suffix:colon
+l_int|4
+comma
+id|deh_len
+suffix:colon
+l_int|10
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Short form header&n; */

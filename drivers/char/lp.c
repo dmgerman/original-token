@@ -176,7 +176,7 @@ id|dev
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 (paren
@@ -1819,7 +1819,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 (paren
@@ -1953,7 +1953,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 (paren

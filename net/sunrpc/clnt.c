@@ -718,6 +718,16 @@ id|async
 comma
 id|status
 suffix:semicolon
+multiline_comment|/* If this client is slain all further I/O fails */
+r_if
+c_cond
+(paren
+id|clnt-&gt;cl_dead
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
 multiline_comment|/* Turn off various signals */
 r_if
 c_cond
@@ -2480,6 +2490,16 @@ id|task-&gt;tk_client-&gt;cl_prog
 op_eq
 l_int|100003
 op_logical_and
+(paren
+id|ntohl
+c_func
+(paren
+op_star
+id|p
+)paren
+op_eq
+id|NFSERR_ACCES
+op_logical_or
 id|ntohl
 c_func
 (paren
@@ -2488,6 +2508,7 @@ id|p
 )paren
 op_eq
 id|NFSERR_PERM
+)paren
 )paren
 (brace
 r_if

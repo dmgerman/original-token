@@ -16,6 +16,8 @@ macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;irq.h&quot;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
 mdefine_line|#define DBG(x...) printk(x)

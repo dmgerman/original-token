@@ -92,6 +92,16 @@ op_star
 )paren
 suffix:semicolon
 r_static
+r_void
+id|nfs_umount_begin
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+)paren
+suffix:semicolon
+r_static
 r_int
 id|nfs_statfs
 c_func
@@ -139,6 +149,13 @@ id|nfs_statfs
 comma
 multiline_comment|/* stat filesystem */
 l_int|NULL
+comma
+multiline_comment|/* no remount */
+l_int|NULL
+comma
+multiline_comment|/* no clear inode */
+id|nfs_umount_begin
+multiline_comment|/* umount attempt begin */
 )brace
 suffix:semicolon
 DECL|variable|nfs_rpcstat
@@ -461,6 +478,49 @@ id|server-&gt;hostname
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+r_void
+DECL|function|nfs_umount_begin
+id|nfs_umount_begin
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+(brace
+r_struct
+id|nfs_server
+op_star
+id|server
+op_assign
+op_amp
+id|sb-&gt;u.nfs_sb.s_server
+suffix:semicolon
+r_struct
+id|rpc_clnt
+op_star
+id|rpc
+suffix:semicolon
+multiline_comment|/* -EIO all pending I/O */
+r_if
+c_cond
+(paren
+(paren
+id|rpc
+op_assign
+id|server-&gt;client
+)paren
+op_ne
+l_int|NULL
+)paren
+id|rpc_killall_tasks
+c_func
+(paren
+id|rpc
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Compute and set NFS server blocksize&n; */

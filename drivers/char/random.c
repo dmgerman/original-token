@@ -7111,7 +7111,7 @@ c_cond
 (paren
 id|to_user
 op_logical_and
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 c_func

@@ -741,6 +741,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;NFS: attempt to write to active swap file!&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/fixmap.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
 DECL|macro|flush_cache_all
@@ -396,6 +397,8 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;(((unsigned long) high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END&t;(FIXADDR_START)
 multiline_comment|/*&n; * The 4MB page is guessing..  Detailed in the infamous &quot;Chapter H&quot;&n; * of the Pentium details, but assuming intel did the straightforward&n; * thing, this bit set in the page directory entry just means that&n; * the page directory entry points directly to a 4MB-aligned block of&n; * memory. &n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x001

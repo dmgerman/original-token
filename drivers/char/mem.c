@@ -1156,6 +1156,11 @@ id|size
 )paren
 (brace
 r_struct
+id|mm_struct
+op_star
+id|mm
+suffix:semicolon
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -1170,12 +1175,16 @@ r_int
 )paren
 id|buf
 suffix:semicolon
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
 multiline_comment|/* Oops, this was forgotten before. -ben */
 id|down
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* For private mappings, just map in zero pages. */
@@ -1187,7 +1196,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|addr
 )paren
@@ -1250,7 +1259,7 @@ suffix:semicolon
 id|flush_cache_range
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|addr
 comma
@@ -1262,7 +1271,7 @@ suffix:semicolon
 id|zap_page_range
 c_func
 (paren
-id|vma
+id|mm
 comma
 id|addr
 comma
@@ -1272,8 +1281,6 @@ suffix:semicolon
 id|zeromap_page_range
 c_func
 (paren
-id|vma
-comma
 id|addr
 comma
 id|count
@@ -1284,7 +1291,7 @@ suffix:semicolon
 id|flush_tlb_range
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|addr
 comma
@@ -1320,7 +1327,7 @@ id|up
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* The shared case is hard. Let&squot;s do the conventional zeroing. */
@@ -1353,7 +1360,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 c_func
@@ -1384,7 +1391,7 @@ id|up
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

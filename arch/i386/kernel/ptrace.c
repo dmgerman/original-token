@@ -2192,7 +2192,7 @@ l_int|2
 suffix:semicolon
 id|tmp
 op_assign
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|addr
 )braket
@@ -2481,7 +2481,7 @@ id|addr
 op_rshift
 l_int|2
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debugreg
 (braket
 id|addr
 )braket

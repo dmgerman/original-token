@@ -1177,8 +1177,7 @@ l_char|&squot;0&squot;
 op_plus
 id|boot_cpu_data.x86
 suffix:semicolon
-macro_line|#if !defined(__SMP__) &amp;&amp; defined(CONFIG_MTRR)
-multiline_comment|/*  Must be done after other processors booted: at this point we are&n;&t;    called before SMP initialisation, so this is for the non-SMP case&n;&t;    only. The SMP case is handled in arch/i386/kernel/smp.c  */
+macro_line|#if defined(CONFIG_MTRR)
 id|mtrr_init
 (paren
 )paren

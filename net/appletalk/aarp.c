@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the AppleTalk AARP protocol for&n; *&t;&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. Potentially we can use&n; *&t;the generic neighbour discovery code to clean this up.&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&t;&t;Use neighbour discovery code.&n; *&t;&t;Token Ring Support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside AppleTalk (2nd Ed).&n; */
+multiline_comment|/*&n; *&t;AARP:&t;&t;An implementation of the AppleTalk AARP protocol for&n; *&t;&t;&t;Ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This doesn&squot;t fit cleanly with the IP arp. Potentially we can use&n; *&t;the generic neighbour discovery code to clean this up.&n; *&n; *&t;FIXME:&n; *&t;&t;We ought to handle the retransmits with a single list and a &n; *&t;separate fast timer for when it is needed.&n; *&t;&t;Use neighbour discovery code.&n; *&t;&t;Token Ring Support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;References:&n; *&t;&t;Inside AppleTalk (2nd Ed).&n; *&t;Fixes:&n; *&t;&t;Jaume Grau&t;-&t;flush caches on AARP_PROBE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2508,6 +2508,57 @@ id|sa.s_net
 op_assign
 id|ea-&gt;pa_dst_net
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ea-&gt;function
+op_eq
+id|AARP_PROBE
+)paren
+(brace
+multiline_comment|/* A probe implies someone trying to get an&n;&t;&t;&t;&t;   address. So as a precaution flush any&n;&t;&t;&t;&t;   entries we have for this address */
+r_struct
+id|aarp_entry
+op_star
+id|a
+op_assign
+id|aarp_find_entry
+c_func
+(paren
+id|resolved
+(braket
+id|sa.s_node
+op_mod
+(paren
+id|AARP_HASH_SIZE
+op_minus
+l_int|1
+)paren
+)braket
+comma
+id|skb-&gt;dev
+comma
+op_amp
+id|sa
+)paren
+suffix:semicolon
+multiline_comment|/* Make it expire next tick - that avoids us&n;&t;&t;&t;&t;   getting into a probe/flush/learn/probe/flush/learn&n;&t;&t;&t;&t;   cycle during probing of a slow to respond host addr */
+r_if
+c_cond
+(paren
+id|a
+op_ne
+l_int|NULL
+)paren
+(brace
+id|a-&gt;expires_at
+op_assign
+id|jiffies
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren

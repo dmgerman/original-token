@@ -2495,7 +2495,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|schedule
 c_func

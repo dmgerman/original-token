@@ -1682,6 +1682,7 @@ DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * There is one pci_dev structure for each slot-number/function-number&n; * combination:&n; */
 DECL|struct|pci_dev
 r_struct

@@ -20,7 +20,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;irq.h&quot;
 multiline_comment|/*&n; * volatile is justified in this case, it might change&n; * spontaneously, GCC should not cache it&n; */
 DECL|macro|IO_APIC_BASE
-mdefine_line|#define IO_APIC_BASE ((volatile int *)0xfec00000)
+mdefine_line|#define IO_APIC_BASE ((volatile int *)fix_to_virt(FIX_IO_APIC_BASE))
 DECL|enum|mp_irq_source_types
 r_enum
 id|mp_irq_source_types

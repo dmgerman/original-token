@@ -120,6 +120,13 @@ c_func
 id|rpc_shutdown_client
 )paren
 suffix:semicolon
+DECL|variable|rpc_killall_tasks
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rpc_killall_tasks
+)paren
+suffix:semicolon
 DECL|variable|rpc_do_call
 id|EXPORT_SYMBOL
 c_func

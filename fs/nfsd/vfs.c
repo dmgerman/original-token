@@ -2029,7 +2029,7 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon

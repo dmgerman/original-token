@@ -2908,6 +2908,22 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * If we may have to abort operations to get out of this&n;&t; * mount, and they will themselves hold resources we must&n;&t; * allow the fs to do things. In the Unix tradition of&n;&t; * &squot;Gee thats tricky lets do it in userspace&squot; the umount_begin&n;&t; * might fail to complete on the first run through as other tasks&n;&t; * must return, and the like. Thats for the mount program to worry&n;&t; * about for the moment.&n;&t; */
+r_if
+c_cond
+(paren
+id|sb-&gt;s_op-&gt;umount_begin
+)paren
+(brace
+id|sb-&gt;s_op
+op_member_access_from_pointer
+id|umount_begin
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Shrink dcache, then fsync. This guarantees that if the&n;&t; * filesystem is quiescent at this point, then (a) only the&n;&t; * root entry should be in use and (b) that root entry is&n;&t; * clean.&n;&t; */
 id|shrink_dcache_sb
 c_func
@@ -3208,7 +3224,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; */
+multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; *&n; * For 2.3.x we want a new sys_umount syscall with flags (ie &squot;force&squot;)&n; */
 DECL|function|sys_umount
 id|asmlinkage
 r_int

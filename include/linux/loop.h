@@ -109,6 +109,12 @@ id|idea_key
 id|lo_idea_de_key
 suffix:semicolon
 macro_line|#endif
+DECL|member|lo_backing_file
+r_struct
+id|file
+op_star
+id|lo_backing_file
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|typedef|transfer_proc_t

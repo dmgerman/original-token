@@ -2370,7 +2370,7 @@ c_cond
 id|FPU_lookahead
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 (brace
 id|FPU_ORIG_EIP
