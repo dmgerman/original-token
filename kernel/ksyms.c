@@ -574,6 +574,13 @@ c_func
 id|__mark_inode_dirty
 )paren
 suffix:semicolon
+DECL|variable|init_private_file
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_private_file
+)paren
+suffix:semicolon
 DECL|variable|insert_file_free
 id|EXPORT_SYMBOL
 c_func

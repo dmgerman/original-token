@@ -66,6 +66,13 @@ c_func
 id|fat_date_unix2dos
 )paren
 suffix:semicolon
+DECL|variable|fat_delete_inode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fat_delete_inode
+)paren
+suffix:semicolon
 DECL|variable|fat_dir_operations
 id|EXPORT_SYMBOL
 c_func

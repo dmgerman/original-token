@@ -684,15 +684,7 @@ l_int|768
 )braket
 )paren
 op_assign
-id|_PAGE_TABLE
-op_plus
-id|_PAGE_4M
-op_plus
-id|__pa
-c_func
-(paren
-id|address
-)paren
+id|__pe
 suffix:semicolon
 id|pg_dir
 op_increment

@@ -856,8 +856,6 @@ op_amp
 id|file
 )paren
 suffix:semicolon
-id|done_coredump
-suffix:colon
 id|put_write_access
 c_func
 (paren

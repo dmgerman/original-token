@@ -570,9 +570,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Revalidate is called on every cache lookup.  Some of those&n; * cache lookups may actually happen while the dentry is not&n; * yet completely filled in, and revalidate has to delay such&n; * lookups..&n; */
 DECL|function|autofs_revalidate
 r_static
-r_struct
-id|dentry
-op_star
+r_int
 id|autofs_revalidate
 c_func
 (paren
@@ -620,7 +618,7 @@ id|sbi
 )paren
 )paren
 r_return
-id|dentry
+l_int|1
 suffix:semicolon
 id|try_to_fill_dentry
 c_func
@@ -633,7 +631,7 @@ id|sbi
 )paren
 suffix:semicolon
 r_return
-id|dentry
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Negative dentry.. Should we time these out? */
@@ -644,11 +642,11 @@ op_logical_neg
 id|dentry-&gt;d_inode
 )paren
 r_return
-id|dentry
+l_int|1
 suffix:semicolon
 multiline_comment|/* We should update the usage stuff here.. */
 r_return
-id|dentry
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|autofs_root_lookup

@@ -4812,6 +4812,11 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/*&n;&t; * This is not really right. We&squot;d like to reschedule&n;&t; * just _once_ with this process having a zero count.&n;&t; */
+id|current-&gt;counter
+op_assign
+l_int|0
+suffix:semicolon
 id|spin_lock
 c_func
 (paren

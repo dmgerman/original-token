@@ -1269,7 +1269,7 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PNP_PARPORT
+macro_line|#ifdef CONFIG_PARPORT
 r_extern
 r_void
 id|parport_setup
@@ -2264,7 +2264,7 @@ id|wdt_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PNP_PARPORT
+macro_line|#ifdef CONFIG_PARPORT
 (brace
 l_string|&quot;parport=&quot;
 comma

@@ -189,10 +189,14 @@ r_struct
 id|qstr
 id|d_name
 suffix:semicolon
+DECL|member|d_time
+r_int
+r_int
+id|d_time
+suffix:semicolon
+multiline_comment|/* used by d_revalidate */
 DECL|member|d_revalidate
-r_struct
-id|dentry
-op_star
+r_int
 (paren
 op_star
 id|d_revalidate
@@ -399,9 +403,10 @@ r_int
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/* write full pathname into buffer and return length */
+multiline_comment|/* write full pathname into buffer and return start of pathname */
 r_extern
-r_int
+r_char
+op_star
 id|d_path
 c_func
 (paren
@@ -410,14 +415,12 @@ id|dentry
 op_star
 id|entry
 comma
-r_struct
-id|dentry
-op_star
-id|chroot
-comma
 r_char
 op_star
 id|buf
+comma
+r_int
+id|buflen
 )paren
 suffix:semicolon
 multiline_comment|/* Allocation counts.. */

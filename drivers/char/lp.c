@@ -2737,6 +2737,8 @@ c_func
 id|minor
 )paren
 )paren
+op_ne
+id|PARPORT_IRQ_NONE
 )paren
 (brace
 id|kfree_s
@@ -3478,7 +3480,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* disable driver on &quot;parport=&quot; or &quot;parport=0&quot; */
+multiline_comment|/* disable driver on &quot;lp=&quot; or &quot;lp=0&quot; */
 id|parport
 (braket
 l_int|0

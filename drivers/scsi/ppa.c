@@ -51,7 +51,7 @@ r_struct
 (brace
 DECL|member|dev
 r_struct
-id|ppd
+id|pardevice
 op_star
 id|dev
 suffix:semicolon
@@ -4684,7 +4684,7 @@ c_cond
 (paren
 id|modes
 op_amp
-id|PARPORT_MODE_SPP
+id|PARPORT_MODE_PCSPP
 )paren
 (brace
 multiline_comment|/* transfer global values here */
@@ -4783,9 +4783,9 @@ c_cond
 id|modes
 op_amp
 (paren
-id|PARPORT_MODE_EPP
+id|PARPORT_MODE_PCEPP
 op_or
-id|PARPORT_MODE_ECPEPP
+id|PARPORT_MODE_PCECPEPP
 )paren
 )paren
 (brace
@@ -4801,7 +4801,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PPA: Parport [ EPP ]&bslash;n&quot;
+l_string|&quot;PPA: Parport [ PCEPP ]&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4811,7 +4811,7 @@ c_cond
 (paren
 id|modes
 op_amp
-id|PARPORT_MODE_ECP
+id|PARPORT_MODE_PCECP
 )paren
 (brace
 id|w_ecr
@@ -4834,7 +4834,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PPA: Parport [ ECP in PS2 submode ]&bslash;n&quot;
+l_string|&quot;PPA: Parport [ PCECP in PS2 submode ]&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4844,7 +4844,7 @@ c_cond
 (paren
 id|modes
 op_amp
-id|PARPORT_MODE_PS2
+id|PARPORT_MODE_PCPS2
 )paren
 (brace
 id|ppa_hosts
@@ -4859,7 +4859,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PPA: Parport [ PS2 ]&bslash;n&quot;
+l_string|&quot;PPA: Parport [ PCPS2 ]&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

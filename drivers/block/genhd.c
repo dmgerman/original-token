@@ -4198,10 +4198,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PNP_PARPORT
+macro_line|#ifdef CONFIG_PARPORT
 r_extern
 r_int
-id|pnp_parport_init
+id|parport_init
 c_func
 (paren
 r_void
@@ -4218,8 +4218,8 @@ id|nr
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_PNP_PARPORT
-id|pnp_parport_init
+macro_line|#ifdef CONFIG_PARPORT
+id|parport_init
 c_func
 (paren
 )paren
