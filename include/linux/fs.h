@@ -3452,8 +3452,9 @@ c_func
 (paren
 r_int
 comma
-r_int
-r_int
+r_struct
+id|page
+op_star
 comma
 id|kdev_t
 comma

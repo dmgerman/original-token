@@ -713,6 +713,15 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Protocol type is host ordered byte.&n;&t;&t; */
+id|sin.sin_port
+op_assign
+id|ntohs
+c_func
+(paren
+id|sin.sin_port
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace

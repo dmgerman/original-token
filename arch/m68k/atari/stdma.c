@@ -203,9 +203,12 @@ r_void
 )paren
 (brace
 r_return
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|stdma_wait
-op_ne
-l_int|NULL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function: int stdma_islocked( void )&n; *&n; * Purpose: Check if the ST-DMA is currently locked.&n; * Note: Returned status is only valid if ints are disabled while calling and&n; *       as long as they remain disabled.&n; *       If called with ints enabled, status can change only from locked to&n; *       unlocked, because ints may not lock the ST-DMA.&n; *&n; * Inputs: none&n; *&n; * Returns: != 0 if locked, 0 otherwise&n; *&n; */

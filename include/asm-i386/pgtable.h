@@ -32,6 +32,8 @@ DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() __flush_tlb()
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all() __flush_tlb()
+DECL|macro|local_flush_tlb
+mdefine_line|#define local_flush_tlb() __flush_tlb()
 DECL|function|flush_tlb_mm
 r_static
 r_inline

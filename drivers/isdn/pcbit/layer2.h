@@ -3,7 +3,7 @@ multiline_comment|/*        &n; *        PCBIT-D low-layer interface definitions
 macro_line|#ifndef LAYER2_H
 DECL|macro|LAYER2_H
 mdefine_line|#define LAYER2_H
-macro_line|#include &lt;bytesex.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|macro|BANK1
 mdefine_line|#define BANK1 0x0000U /* PC -&gt; Board */
 DECL|macro|BANK2
@@ -93,7 +93,7 @@ DECL|struct|msg_fmt
 r_struct
 id|msg_fmt
 (brace
-macro_line|#if __BYTE_ORDER == 1234              /* Little Endian */
+macro_line|#ifdef __LITTLE_ENDIAN              /* Little Endian */
 DECL|member|scmd
 id|u_char
 id|scmd

@@ -4217,9 +4217,11 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t; *&t;This keeps serial console MUCH cleaner, but does assume&n;&t; *&t;the console driver checks there really is a video device&n;&t; *&t;attached (Sparc effectively does).&n;&t; */
+r_if
+c_cond
 (paren
-r_void
-)paren
+(paren
 id|open
 c_func
 (paren
@@ -4228,6 +4230,29 @@ comma
 id|O_RDWR
 comma
 l_int|0
+)paren
+OL
+l_int|0
+)paren
+op_logical_and
+(paren
+id|open
+c_func
+(paren
+l_string|&quot;/dev/ttyS0&quot;
+comma
+id|O_RDWR
+comma
+l_int|0
+)paren
+OL
+l_int|0
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to open a initial console.&bslash;n&quot;
 )paren
 suffix:semicolon
 (paren

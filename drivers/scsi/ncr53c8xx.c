@@ -10259,6 +10259,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|u_char
+id|scntl3
+suffix:semicolon
 id|printf
 c_func
 (paren
@@ -10410,7 +10413,7 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;**&t;Reset NCR chip&n;&t;*/
+multiline_comment|/*&n;&t;**&t;Reset NCR chip&n;&t;**&t;Preserve scntl3 for automatic clock detection.&n;&t;*/
 id|printf
 c_func
 (paren
@@ -10421,6 +10424,13 @@ c_func
 (paren
 id|np
 )paren
+)paren
+suffix:semicolon
+id|scntl3
+op_assign
+id|INB
+(paren
+id|nc_scntl3
 )paren
 suffix:semicolon
 id|OUTB
@@ -10440,6 +10450,13 @@ id|OUTB
 id|nc_istat
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+id|nc_scntl3
+comma
+id|scntl3
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Release Memory mapped IO region and IO mapped region&n;&t;*/
@@ -20492,7 +20509,7 @@ l_int|3
 (brace
 id|printf
 (paren
-l_string|&quot;%s: assuming 40MHz clock&quot;
+l_string|&quot;%s: assuming 40MHz clock&bslash;n&quot;
 comma
 id|ncr_name
 c_func

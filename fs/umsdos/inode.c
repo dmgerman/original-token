@@ -699,9 +699,12 @@ id|inode-&gt;u.umsdos_i.u.dir_info.looking
 op_ne
 l_int|0
 op_logical_or
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|inode-&gt;u.umsdos_i.u.dir_info.p
-op_ne
-l_int|NULL
+)paren
 )paren
 )paren
 (brace

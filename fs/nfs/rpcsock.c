@@ -2294,7 +2294,12 @@ c_loop
 (paren
 id|rsock-&gt;pending
 op_logical_or
+id|waitqueue_active
+c_func
+(paren
+op_amp
 id|rsock-&gt;backlog
+)paren
 )paren
 (brace
 id|interruptible_sleep_on

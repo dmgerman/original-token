@@ -513,7 +513,7 @@ c_func
 (paren
 id|ioaddr
 op_plus
-id|AC_EISA_ID
+id|AC_ID_PORT
 )paren
 comma
 id|AC_EISA_ID

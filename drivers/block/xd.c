@@ -4800,6 +4800,20 @@ comma
 l_string|&quot;xd&quot;
 )paren
 suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|xd_irq
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|xd_dma
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 eof

@@ -1978,6 +1978,16 @@ id|copied
 r_return
 id|copied
 suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGPIPE
+comma
+id|current
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EPIPE

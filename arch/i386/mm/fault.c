@@ -259,7 +259,7 @@ id|KERNEL_CS
 id|printk
 c_func
 (paren
-l_string|&quot;WP fault at %08x&bslash;n&quot;
+l_string|&quot;WP fault at %08lx&bslash;n&quot;
 comma
 id|regs-&gt;eip
 )paren
