@@ -164,7 +164,6 @@ multiline_comment|/* Allow administration of the random device */
 multiline_comment|/* Allow device administration (mknod)*/
 multiline_comment|/* Allow examination and configuration of disk quotas */
 multiline_comment|/* Allow configuring the kernel&squot;s syslog (printk behaviour) */
-multiline_comment|/* Allow sending a signal to any process */
 multiline_comment|/* Allow setting the domainname */
 multiline_comment|/* Allow setting the hostname */
 multiline_comment|/* Allow calling bdflush() */

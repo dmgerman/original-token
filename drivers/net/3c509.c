@@ -2561,7 +2561,7 @@ r_else
 (brace
 multiline_comment|/*&n;&t;&t; *&t;We lock the driver against other processors. Note&n;&t;&t; *&t;we don&squot;t need to lock versus the IRQ as we suspended&n;&t;&t; *&t;that. This means that we lose the ability to take&n;&t;&t; *&t;an RX during a TX upload. That sucks a bit with SMP&n;&t;&t; *&t;on an original 3c509 (2K buffer)&n;&t;&t; *&n;&t;&t; *&t;Using disable_irq stops us crapping on other&n;&t;&t; *&t;time sensitive devices.&n;&t;&t; */
 macro_line|#ifdef __SMP__
-id|disable_irq
+id|disable_irq_nosync
 c_func
 (paren
 id|dev-&gt;irq

@@ -3084,6 +3084,17 @@ c_cond
 id|stat
 op_amp
 id|BUSY_STAT
+op_logical_or
+(paren
+(paren
+id|stat
+op_amp
+id|WRERR_STAT
+)paren
+op_logical_and
+op_logical_neg
+id|drive-&gt;nowerr
+)paren
 )paren
 (brace
 multiline_comment|/* other bits are useless when BUSY */

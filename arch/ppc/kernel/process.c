@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: process.c,v 1.75 1999/02/12 07:06:29 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.78 1999/04/07 07:27:00 paulus Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -222,7 +222,6 @@ op_star
 id|fpregs
 )paren
 (brace
-macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -230,26 +229,12 @@ id|regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
 id|giveup_fpu
 c_func
 (paren
+id|current
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|memcpy
 c_func
 (paren
@@ -271,6 +256,49 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
+r_void
+DECL|function|enable_kernel_fp
+id|enable_kernel_fp
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|current-&gt;tss.regs
+op_logical_and
+(paren
+id|current-&gt;tss.regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+)paren
+id|giveup_fpu
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+r_else
+id|giveup_fpu
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* just enables FP for kernel */
+macro_line|#else
+id|giveup_fpu
+c_func
+(paren
+id|last_task_used_math
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 )brace
 multiline_comment|/* check to make sure the kernel stack is healthy */
 DECL|function|check_stack
@@ -639,11 +667,15 @@ multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by jus
 r_if
 c_cond
 (paren
+id|prev-&gt;tss.regs
+op_logical_and
+(paren
 id|prev-&gt;tss.regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
-id|smp_giveup_fpu
+)paren
+id|giveup_fpu
 c_func
 (paren
 id|prev
@@ -979,6 +1011,27 @@ id|i
 op_increment
 )paren
 (brace
+r_int
+r_int
+id|p
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|__get_user
+c_func
+(paren
+id|p
+comma
+op_amp
+id|pc
+(braket
+id|i
+)braket
+)paren
+)paren
+r_break
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -991,10 +1044,7 @@ l_char|&squot; &squot;
 suffix:colon
 l_char|&squot;&lt;&squot;
 comma
-id|pc
-(braket
-id|i
-)braket
+id|p
 comma
 id|i
 ques
@@ -1222,7 +1272,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * copy fpu info - assume lazy fpu switch now always&n;&t; *  -- Cort&n;&t; */
-macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -1230,26 +1279,12 @@ id|regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
 id|giveup_fpu
 c_func
 (paren
+id|current
 )paren
 suffix:semicolon
-macro_line|#endif&t;  
 id|memcpy
 c_func
 (paren
@@ -1891,7 +1926,6 @@ id|filename
 r_goto
 id|out
 suffix:semicolon
-macro_line|#ifdef __SMP__&t;  
 r_if
 c_cond
 (paren
@@ -1899,26 +1933,12 @@ id|regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;  
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
 id|giveup_fpu
 c_func
 (paren
+id|current
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|error
 op_assign
 id|do_execve

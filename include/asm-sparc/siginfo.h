@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: siginfo.h,v 1.3 1998/08/26 10:33:29 davem Exp $&n; * siginfo.c:&n; */
+multiline_comment|/* $Id: siginfo.h,v 1.4 1999/04/28 19:45:20 davem Exp $&n; * siginfo.c:&n; */
 macro_line|#ifndef _SPARC_SIGINFO_H
 DECL|macro|_SPARC_SIGINFO_H
 mdefine_line|#define _SPARC_SIGINFO_H

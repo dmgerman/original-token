@@ -181,7 +181,7 @@ r_if
 c_cond
 (paren
 id|nb
-op_eq
+op_ge
 l_int|4
 )paren
 id|buttons

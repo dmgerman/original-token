@@ -761,6 +761,10 @@ id|nr
 suffix:semicolon
 id|msg.msg_control
 op_assign
+l_int|NULL
+suffix:semicolon
+id|msg.msg_controllen
+op_assign
 l_int|0
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
@@ -1026,6 +1030,10 @@ op_assign
 id|nr
 suffix:semicolon
 id|msg.msg_control
+op_assign
+l_int|NULL
+suffix:semicolon
+id|msg.msg_controllen
 op_assign
 l_int|0
 suffix:semicolon

@@ -11,6 +11,8 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;0xc0000000
+DECL|macro|KERNELBASE
+mdefine_line|#define KERNELBASE&t;PAGE_OFFSET
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS

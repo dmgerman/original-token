@@ -528,6 +528,31 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* flush input queue */
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|KBSTATP
+)paren
+op_amp
+id|KBINRDY
+)paren
+)paren
+(brace
+(paren
+r_void
+)paren
+id|inb
+c_func
+(paren
+id|KBDATAP
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Send self-test */
 r_while
 c_loop

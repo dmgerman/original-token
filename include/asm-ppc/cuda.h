@@ -1,19 +1,4 @@
 multiline_comment|/*&n; * Definitions for talking to the CUDA.  The CUDA is a microcontroller&n; * which controls the ADB, system power, RTC, and various other things.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
-multiline_comment|/* First byte sent to or received from CUDA */
-DECL|macro|ADB_PACKET
-mdefine_line|#define ADB_PACKET&t;0
-DECL|macro|CUDA_PACKET
-mdefine_line|#define CUDA_PACKET&t;1
-DECL|macro|ERROR_PACKET
-mdefine_line|#define ERROR_PACKET&t;2
-DECL|macro|TIMER_PACKET
-mdefine_line|#define TIMER_PACKET&t;3
-DECL|macro|POWER_PACKET
-mdefine_line|#define POWER_PACKET&t;4
-DECL|macro|MACIIC_PACKET
-mdefine_line|#define MACIIC_PACKET&t;5
-DECL|macro|PMU_PACKET
-mdefine_line|#define PMU_PACKET&t;6
 multiline_comment|/* CUDA commands (2nd byte) */
 DECL|macro|CUDA_WARM_START
 mdefine_line|#define CUDA_WARM_START&t;&t;0
@@ -96,18 +81,15 @@ dot
 dot
 )paren
 suffix:semicolon
-r_int
-id|cuda_send_request
-c_func
-(paren
-r_struct
-id|adb_request
-op_star
-id|req
-)paren
-suffix:semicolon
 r_void
 id|cuda_poll
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|cuda_present
 c_func
 (paren
 r_void

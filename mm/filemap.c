@@ -30,9 +30,6 @@ id|page_hash_table
 id|PAGE_HASH_SIZE
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Simple routines for both non-shared and shared mappings.&n; */
-DECL|macro|release_page
-mdefine_line|#define release_page(page) __free_page((page))
 multiline_comment|/* &n; * Define a request structure for outstanding page write requests&n; * to the background page io daemon&n; */
 DECL|struct|pio_request
 r_struct
@@ -212,7 +209,7 @@ id|page-&gt;inode
 op_assign
 l_int|NULL
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -346,7 +343,7 @@ id|page-&gt;inode
 op_assign
 l_int|NULL
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -372,7 +369,7 @@ c_cond
 (paren
 id|offset
 OL
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 )paren
 (brace
 r_int
@@ -400,7 +397,7 @@ id|address
 comma
 l_int|0
 comma
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_minus
 id|offset
 )paren
@@ -438,7 +435,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -751,18 +748,18 @@ op_assign
 id|pos
 op_amp
 op_complement
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 suffix:semicolon
 id|pos
 op_assign
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 id|len
 op_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_minus
 id|offset
 suffix:semicolon
@@ -828,7 +825,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -845,7 +842,7 @@ id|len
 suffix:semicolon
 id|len
 op_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 id|offset
 op_assign
@@ -853,7 +850,7 @@ l_int|0
 suffix:semicolon
 id|pos
 op_add_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 )brace
 r_while
@@ -988,7 +985,7 @@ id|hash
 suffix:semicolon
 id|offset
 op_and_assign
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 r_switch
 c_cond
@@ -1001,10 +998,9 @@ l_int|0
 suffix:colon
 id|page_cache
 op_assign
-id|__get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -1061,9 +1057,7 @@ id|page
 multiline_comment|/*&n;&t;&t;&t; * Ok, add the new page to the hash-queues...&n;&t;&t;&t; */
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page_cache
@@ -1096,7 +1090,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -1381,7 +1375,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* defined PROFILE_READAHEAD */
-multiline_comment|/*&n; * Read-ahead context:&n; * -------------------&n; * The read ahead context fields of the &quot;struct file&quot; are the following:&n; * - f_raend : position of the first byte after the last page we tried to&n; *             read ahead.&n; * - f_ramax : current read-ahead maximum size.&n; * - f_ralen : length of the current IO read block we tried to read-ahead.&n; * - f_rawin : length of the current read-ahead window.&n; *             if last read-ahead was synchronous then&n; *                  f_rawin = f_ralen&n; *             otherwise (was asynchronous)&n; *                  f_rawin = previous value of f_ralen + f_ralen&n; *&n; * Read-ahead limits:&n; * ------------------&n; * MIN_READAHEAD   : minimum read-ahead size when read-ahead.&n; * MAX_READAHEAD   : maximum read-ahead size when read-ahead.&n; *&n; * Synchronous read-ahead benefits:&n; * --------------------------------&n; * Using reasonable IO xfer length from peripheral devices increase system &n; * performances.&n; * Reasonable means, in this context, not too large but not too small.&n; * The actual maximum value is:&n; *&t;MAX_READAHEAD + PAGE_SIZE = 76k is CONFIG_READA_SMALL is undefined&n; *      and 32K if defined (4K page size assumed).&n; *&n; * Asynchronous read-ahead benefits:&n; * ---------------------------------&n; * Overlapping next read request and user process execution increase system &n; * performance.&n; *&n; * Read-ahead risks:&n; * -----------------&n; * We have to guess which further data are needed by the user process.&n; * If these data are often not really needed, it&squot;s bad for system &n; * performances.&n; * However, we know that files are often accessed sequentially by &n; * application programs and it seems that it is possible to have some good &n; * strategy in that guessing.&n; * We only try to read-ahead files that seems to be read sequentially.&n; *&n; * Asynchronous read-ahead risks:&n; * ------------------------------&n; * In order to maximize overlapping, we must start some asynchronous read &n; * request from the device, as soon as possible.&n; * We must be very careful about:&n; * - The number of effective pending IO read requests.&n; *   ONE seems to be the only reasonable value.&n; * - The total memory pool usage for the file access stream.&n; *   This maximum memory usage is implicitly 2 IO read chunks:&n; *   2*(MAX_READAHEAD + PAGE_SIZE) = 156K if CONFIG_READA_SMALL is undefined,&n; *   64k if defined (4K page size assumed).&n; */
+multiline_comment|/*&n; * Read-ahead context:&n; * -------------------&n; * The read ahead context fields of the &quot;struct file&quot; are the following:&n; * - f_raend : position of the first byte after the last page we tried to&n; *             read ahead.&n; * - f_ramax : current read-ahead maximum size.&n; * - f_ralen : length of the current IO read block we tried to read-ahead.&n; * - f_rawin : length of the current read-ahead window.&n; *             if last read-ahead was synchronous then&n; *                  f_rawin = f_ralen&n; *             otherwise (was asynchronous)&n; *                  f_rawin = previous value of f_ralen + f_ralen&n; *&n; * Read-ahead limits:&n; * ------------------&n; * MIN_READAHEAD   : minimum read-ahead size when read-ahead.&n; * MAX_READAHEAD   : maximum read-ahead size when read-ahead.&n; *&n; * Synchronous read-ahead benefits:&n; * --------------------------------&n; * Using reasonable IO xfer length from peripheral devices increase system &n; * performances.&n; * Reasonable means, in this context, not too large but not too small.&n; * The actual maximum value is:&n; *&t;MAX_READAHEAD + PAGE_CACHE_SIZE = 76k is CONFIG_READA_SMALL is undefined&n; *      and 32K if defined (4K page size assumed).&n; *&n; * Asynchronous read-ahead benefits:&n; * ---------------------------------&n; * Overlapping next read request and user process execution increase system &n; * performance.&n; *&n; * Read-ahead risks:&n; * -----------------&n; * We have to guess which further data are needed by the user process.&n; * If these data are often not really needed, it&squot;s bad for system &n; * performances.&n; * However, we know that files are often accessed sequentially by &n; * application programs and it seems that it is possible to have some good &n; * strategy in that guessing.&n; * We only try to read-ahead files that seems to be read sequentially.&n; *&n; * Asynchronous read-ahead risks:&n; * ------------------------------&n; * In order to maximize overlapping, we must start some asynchronous read &n; * request from the device, as soon as possible.&n; * We must be very careful about:&n; * - The number of effective pending IO read requests.&n; *   ONE seems to be the only reasonable value.&n; * - The total memory pool usage for the file access stream.&n; *   This maximum memory usage is implicitly 2 IO read chunks:&n; *   2*(MAX_READAHEAD + PAGE_CACHE_SIZE) = 156K if CONFIG_READA_SMALL is undefined,&n; *   64k if defined (4K page size assumed).&n; */
 DECL|function|get_max_readahead
 r_static
 r_inline
@@ -1490,7 +1484,7 @@ id|raend
 op_assign
 id|filp-&gt;f_raend
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 id|max_ahead
 op_assign
@@ -1545,7 +1539,7 @@ l_int|0
 suffix:semicolon
 id|filp-&gt;f_ralen
 op_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -1578,7 +1572,7 @@ id|filp-&gt;f_ramax
 op_logical_and
 id|raend
 op_ge
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_logical_and
 id|ppos
 op_le
@@ -1591,10 +1585,10 @@ op_ge
 id|raend
 )paren
 (brace
-multiline_comment|/*&n; * Add ONE page to max_ahead in order to try to have about the same IO max size&n; * as synchronous read-ahead (MAX_READAHEAD + 1)*PAGE_SIZE.&n; * Compute the position of the last page we have tried to read in order to &n; * begin to read ahead just at the next page.&n; */
+multiline_comment|/*&n; * Add ONE page to max_ahead in order to try to have about the same IO max size&n; * as synchronous read-ahead (MAX_READAHEAD + 1)*PAGE_CACHE_SIZE.&n; * Compute the position of the last page we have tried to read in order to &n; * begin to read ahead just at the next page.&n; */
 id|raend
 op_sub_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -1607,7 +1601,7 @@ id|max_ahead
 op_assign
 id|filp-&gt;f_ramax
 op_plus
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -1644,7 +1638,7 @@ id|max_ahead
 (brace
 id|ahead
 op_add_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 id|page_cache
 op_assign
@@ -1698,7 +1692,7 @@ id|raend
 op_plus
 id|ahead
 op_plus
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 suffix:semicolon
 id|filp-&gt;f_ramax
 op_add_assign
@@ -1848,7 +1842,7 @@ id|pgpos
 op_assign
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 multiline_comment|/*&n; * If the current position is outside the previous read-ahead window, &n; * we reset the current read-ahead context and set read ahead max to zero&n; * (will be set to just needed value later),&n; * otherwise, we assume that the file accesses are sequential enough to&n; * continue read-ahead.&n; */
 r_if
@@ -1902,7 +1896,7 @@ op_plus
 id|desc-&gt;count
 op_le
 (paren
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_rshift
 l_int|1
 )paren
@@ -1928,7 +1922,7 @@ op_plus
 id|desc-&gt;count
 )paren
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 op_minus
 id|pgpos
@@ -2004,7 +1998,7 @@ id|inode
 comma
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 suffix:semicolon
 id|page
@@ -2016,7 +2010,7 @@ id|inode
 comma
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 comma
 op_star
 id|hash
@@ -2062,7 +2056,7 @@ id|inode
 comma
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 comma
 id|page
 comma
@@ -2117,11 +2111,11 @@ op_assign
 id|pos
 op_amp
 op_complement
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 id|nr
 op_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_minus
 id|offset
 suffix:semicolon
@@ -2170,7 +2164,7 @@ id|pos
 op_add_assign
 id|nr
 suffix:semicolon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -2200,10 +2194,9 @@ id|page_cache
 (brace
 id|page_cache
 op_assign
-id|__get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * That could have slept, so go around to the&n;&t;&t;&t; * very beginning..&n;&t;&t;&t; */
@@ -2225,9 +2218,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Ok, add the new page to the hash-queues...&n;&t;&t; */
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page_cache
@@ -2246,7 +2237,7 @@ id|inode
 comma
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 comma
 id|hash
 )paren
@@ -2293,7 +2284,7 @@ id|desc-&gt;error
 op_assign
 id|error
 suffix:semicolon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -2362,7 +2353,7 @@ id|desc-&gt;error
 op_assign
 id|error
 suffix:semicolon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -2386,7 +2377,7 @@ c_cond
 (paren
 id|page_cache
 )paren
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|page_cache
@@ -3178,13 +3169,13 @@ id|offset
 op_assign
 (paren
 id|address
-op_amp
-id|PAGE_MASK
-)paren
 op_minus
 id|area-&gt;vm_start
 op_plus
 id|area-&gt;vm_offset
+)paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -3253,10 +3244,9 @@ id|new_page
 (brace
 id|new_page
 op_assign
-id|__get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -3318,7 +3308,7 @@ c_cond
 (paren
 id|new_page
 )paren
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|new_page
@@ -3349,7 +3339,7 @@ c_func
 id|new_page
 )paren
 suffix:semicolon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -3367,13 +3357,13 @@ id|offset
 suffix:semicolon
 id|reada
 op_rshift_assign
-id|PAGE_SHIFT
+id|PAGE_CACHE_SHIFT
 op_plus
 id|page_cluster
 suffix:semicolon
 id|reada
 op_lshift_assign
-id|PAGE_SHIFT
+id|PAGE_CACHE_SHIFT
 op_plus
 id|page_cluster
 suffix:semicolon
@@ -3395,7 +3385,7 @@ id|i
 comma
 id|reada
 op_add_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 )paren
 id|new_page
 op_assign
@@ -3417,10 +3407,9 @@ id|new_page
 )paren
 id|new_page
 op_assign
-id|__get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -3454,9 +3443,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Now, create a new page-cache page from the page we got&n;&t; */
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|new_page
@@ -3573,7 +3560,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Things didn&squot;t work out. Return zero to tell the&n;&t; * mm layer so, possibly freeing the page cache page first.&n;&t; */
 id|failure
 suffix:colon
-id|release_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -3584,7 +3571,7 @@ c_cond
 (paren
 id|new_page
 )paren
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|new_page
@@ -4033,15 +4020,12 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
+op_member_access_from_pointer
 id|count
 )paren
 suffix:semicolon
@@ -4130,7 +4114,7 @@ op_eq
 id|MS_INVALIDATE
 )paren
 (brace
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|page
@@ -4159,7 +4143,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|page
@@ -5502,18 +5486,18 @@ op_assign
 id|pos
 op_amp
 op_complement
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 )paren
 suffix:semicolon
 id|pgpos
 op_assign
 id|pos
 op_amp
-id|PAGE_MASK
+id|PAGE_CACHE_MASK
 suffix:semicolon
 id|bytes
 op_assign
-id|PAGE_SIZE
+id|PAGE_CACHE_SIZE
 op_minus
 id|offset
 suffix:semicolon
@@ -5567,10 +5551,9 @@ id|page_cache
 (brace
 id|page_cache
 op_assign
-id|__get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -5590,9 +5573,7 @@ suffix:semicolon
 )brace
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page_cache
@@ -5699,7 +5680,7 @@ op_amp
 id|page-&gt;wait
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -5752,7 +5733,7 @@ c_cond
 (paren
 id|page_cache
 )paren
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|page_cache
@@ -5848,10 +5829,9 @@ id|out
 suffix:semicolon
 id|page_cache
 op_assign
-id|get_free_page
+id|page_cache_alloc
 c_func
 (paren
-id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -5863,11 +5843,15 @@ id|page_cache
 r_goto
 id|out
 suffix:semicolon
+id|clear_page
+c_func
+(paren
+id|page_cache
+)paren
+suffix:semicolon
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page_cache
@@ -5970,9 +5954,7 @@ id|page
 op_star
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|addr
@@ -6038,7 +6020,7 @@ op_amp
 id|page-&gt;wait
 )paren
 suffix:semicolon
-id|__free_page
+id|page_cache_release
 c_func
 (paren
 id|page
@@ -6144,15 +6126,12 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|page_cache_entry
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
+op_member_access_from_pointer
 id|count
 )paren
 suffix:semicolon
@@ -6443,7 +6422,7 @@ c_func
 id|p-&gt;file
 )paren
 suffix:semicolon
-id|free_page
+id|page_cache_free
 c_func
 (paren
 id|p-&gt;page

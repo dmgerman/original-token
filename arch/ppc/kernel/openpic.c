@@ -494,6 +494,15 @@ l_string|&quot;1.2&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|3
+suffix:colon
+id|version
+op_assign
+l_string|&quot;1.3&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|version

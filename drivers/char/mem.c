@@ -2373,6 +2373,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_USB
 macro_line|#ifdef CONFIG_USB_UHCI
 id|uhci_init
 c_func
@@ -2386,6 +2387,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined (CONFIG_FB)
 id|fbmem_init

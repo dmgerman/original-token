@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.150 1999/03/10 08:16:33 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.163 1999/04/09 06:37:13 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -451,6 +451,26 @@ id|bat_addrs
 (braket
 l_int|4
 )braket
+suffix:semicolon
+r_int
+r_int
+r_inline
+id|v_mapped_by_bats
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_int
+r_int
+r_inline
+id|p_mapped_by_bats
+c_func
+(paren
+r_int
+r_int
+)paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
 multiline_comment|/*&n; * this tells the system to map all of ram with the segregs&n; * (i.e. page tables) instead of the bats.&n; * -- Cort&n; */
@@ -1386,7 +1406,7 @@ id|v
 comma
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * Choose an address to map it to.&n;&t; * Once the vmalloc system is running, we use it.&n;&t; * Before then, we map addresses &gt;= ioremap_base&n;&t; * virt == phys; for addresses below this we use&n;&t; * space going down from ioremap_base (ioremap_bot&n;&t; * records where we&squot;re up to).&n;&t; *&n;&t; * We should also look out for a frame buffer and&n;&t; * map it with a free BAT register, if there is one.&n;&t; */
+multiline_comment|/*&n;&t; * Choose an address to map it to.&n;&t; * Once the vmalloc system is running, we use it.&n;&t; * Before then, we map addresses &gt;= ioremap_base&n;&t; * virt == phys; for addresses below this we use&n;&t; * space going down from ioremap_base (ioremap_bot&n;&t; * records where we&squot;re up to).&n;&t; */
 id|p
 op_assign
 id|addr
@@ -1405,6 +1425,41 @@ id|size
 op_minus
 id|p
 suffix:semicolon
+multiline_comment|/*&n;&t; * Don&squot;t allow anybody to remap normal RAM that we&squot;re using.&n;&t; * mem_init() sets high_memory so only do the check after that.&n;&t; */
+r_if
+c_cond
+(paren
+id|mem_init_done
+op_logical_and
+(paren
+id|p
+OL
+id|virt_to_phys
+c_func
+(paren
+id|high_memory
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;__ioremap(): phys addr %0lx is RAM lr %p&bslash;n&quot;
+comma
+id|p
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1415,6 +1470,28 @@ l_int|0
 r_return
 l_int|NULL
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
+macro_line|#if 0&t;
+multiline_comment|/*&n;&t; * Is it already mapped?  Perhaps overlapped by a previous&n;&t; * BAT mapping.  If the whole area is mapped then we&squot;re done,&n;&t; * otherwise remap it since we want to keep the virt addrs for&n;&t; * each request contiguous.&n;&t; *&n;&t; * We make the assumption here that if the bottom and top&n;&t; * of the range we want are mapped then it&squot;s mapped to the&n;&t; * same virt address (and this is contiguous).&n;&t; *  -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|v
+op_assign
+id|p_mapped_by_bats
+c_func
+(paren
+id|addr
+)paren
+)paren
+multiline_comment|/*&amp;&amp; p_mapped_by_bats(addr+(size-1))*/
+)paren
+r_goto
+id|out
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#endif /* CONFIG_8xx */
 r_if
 c_cond
 (paren
@@ -1510,6 +1587,9 @@ id|flags
 op_or_assign
 id|_PAGE_GUARDED
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx&t;
+multiline_comment|/*&n;&t; * Is it a candidate for a BAT mapping?&n;&t; */
+macro_line|#endif /* CONFIG_8xx */
 r_for
 c_loop
 (paren
@@ -1783,11 +1863,6 @@ id|pte_t
 op_star
 id|pg
 suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
-r_int
-id|b
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1837,51 +1912,17 @@ id|pd
 )paren
 )paren
 (brace
-macro_line|#ifndef CONFIG_8xx
-multiline_comment|/*&n;&t;&t; * Need to allocate second-level table, but first&n;&t;&t; * check whether this address is already mapped by&n;&t;&t; * the BATs; if so, don&squot;t bother allocating the page.&n;&t;&t; */
-r_for
-c_loop
-(paren
-id|b
-op_assign
-l_int|0
-suffix:semicolon
-id|b
-OL
-l_int|4
-suffix:semicolon
-op_increment
-id|b
-)paren
-(brace
 r_if
 c_cond
 (paren
+id|v_mapped_by_bats
+c_func
+(paren
 id|va
-op_ge
-id|bat_addrs
-(braket
-id|b
-)braket
-dot
-id|start
-op_logical_and
-id|va
-op_le
-id|bat_addrs
-(braket
-id|b
-)braket
-dot
-id|limit
 )paren
-(brace
-multiline_comment|/* XXX should check the phys address matches */
+)paren
 r_return
 suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_8xx */
 id|pg
 op_assign
 (paren
@@ -2882,6 +2923,154 @@ id|mem_pieces
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Return 1 if this VA is mapped by BATs&n; */
+DECL|function|v_mapped_by_bats
+r_int
+r_int
+r_inline
+id|v_mapped_by_bats
+c_func
+(paren
+r_int
+r_int
+id|va
+)paren
+(brace
+r_int
+id|b
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|b
+op_assign
+l_int|0
+suffix:semicolon
+id|b
+OL
+l_int|4
+suffix:semicolon
+op_increment
+id|b
+)paren
+r_if
+c_cond
+(paren
+id|va
+op_ge
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|start
+op_logical_and
+id|va
+OL
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|limit
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Return VA for a given PA or 0 if not mapped&n; */
+DECL|function|p_mapped_by_bats
+r_int
+r_int
+r_inline
+id|p_mapped_by_bats
+c_func
+(paren
+r_int
+r_int
+id|pa
+)paren
+(brace
+r_int
+id|b
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|b
+op_assign
+l_int|0
+suffix:semicolon
+id|b
+OL
+l_int|4
+suffix:semicolon
+op_increment
+id|b
+)paren
+r_if
+c_cond
+(paren
+id|pa
+op_ge
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|phys
+op_logical_and
+id|pa
+OL
+(paren
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|limit
+op_minus
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|start
+)paren
+op_plus
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|phys
+)paren
+r_return
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|start
+op_plus
+(paren
+id|pa
+op_minus
+id|bat_addrs
+(braket
+id|b
+)braket
+dot
+id|phys
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -3765,9 +3954,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|done
 OL
 id|tot
+)paren
+op_logical_and
+op_logical_neg
+id|bat_addrs
+(braket
+l_int|3
+)braket
+dot
+id|limit
 )paren
 (brace
 multiline_comment|/* use BAT3 to cover a bit more */
@@ -4453,14 +4652,18 @@ c_func
 (paren
 l_int|1
 comma
-l_int|0xd0000000
+l_int|0xf0000000
 comma
 l_int|0xc0000000
 comma
-l_int|0x10000000
+l_int|0x08000000
 comma
 id|IO_PAGE
 )paren
+suffix:semicolon
+id|ioremap_base
+op_assign
+l_int|0xf0000000
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4489,6 +4692,20 @@ comma
 l_int|0x80000000
 comma
 l_int|0x80000000
+comma
+l_int|0x10000000
+comma
+id|IO_PAGE
+)paren
+suffix:semicolon
+id|setbat
+c_func
+(paren
+l_int|3
+comma
+l_int|0x90000000
+comma
+l_int|0x90000000
 comma
 l_int|0x10000000
 comma
@@ -5700,7 +5917,7 @@ id|i
 suffix:semicolon
 multiline_comment|/* max amount of RAM we allow -- Cort */
 DECL|macro|RAM_LIMIT
-mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)&t;
+mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)
 id|memory_node
 op_assign
 id|find_devices

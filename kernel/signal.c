@@ -958,7 +958,7 @@ op_logical_neg
 id|capable
 c_func
 (paren
-id|CAP_SYS_ADMIN
+id|CAP_KILL
 )paren
 )paren
 r_goto

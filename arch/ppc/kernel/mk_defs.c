@@ -23,14 +23,7 @@ c_func
 r_void
 )paren
 (brace
-id|DEFINE
-c_func
-(paren
-id|KERNELBASE
-comma
-id|KERNELBASE
-)paren
-suffix:semicolon
+multiline_comment|/*DEFINE(KERNELBASE, KERNELBASE);*/
 id|DEFINE
 c_func
 (paren

@@ -3,6 +3,7 @@ macro_line|#ifndef _ASMi386_TIMEX_H
 DECL|macro|_ASMi386_TIMEX_H
 mdefine_line|#define _ASMi386_TIMEX_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/msr.h&gt;
 DECL|macro|CLOCK_TICK_RATE
 mdefine_line|#define CLOCK_TICK_RATE&t;1193180 /* Underlying HZ */
 DECL|macro|CLOCK_TICK_FACTOR
@@ -40,21 +41,12 @@ id|eax
 comma
 id|edx
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|rdtsc
 c_func
 (paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
 id|eax
-)paren
 comma
-l_string|&quot;=d&quot;
-(paren
 id|edx
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/hardirq.h&gt;
 r_extern
 r_int
 r_int
-id|local_bh_count
+id|ppc_local_bh_count
 (braket
 id|NR_CPUS
 )braket
@@ -214,7 +214,7 @@ l_int|0
 )paren
 (brace
 op_increment
-id|local_bh_count
+id|ppc_local_bh_count
 (braket
 id|cpu
 )braket
@@ -248,7 +248,7 @@ r_int
 id|cpu
 )paren
 (brace
-id|local_bh_count
+id|ppc_local_bh_count
 (braket
 id|cpu
 )braket
@@ -264,7 +264,7 @@ id|global_bh_count
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* __SMP__ */
+macro_line|#else
 DECL|function|start_bh_atomic
 r_extern
 r_inline
@@ -275,7 +275,7 @@ c_func
 r_void
 )paren
 (brace
-id|local_bh_count
+id|ppc_local_bh_count
 (braket
 id|smp_processor_id
 c_func
@@ -305,7 +305,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|local_bh_count
+id|ppc_local_bh_count
 (braket
 id|smp_processor_id
 c_func
@@ -317,12 +317,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(ppc_local_bh_count[cpu] ? 0 : (ppc_local_bh_count[cpu]=1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(ppc_local_bh_count[cpu] = 0)
 DECL|macro|synchronize_bh
-mdefine_line|#define synchronize_bh()&t;do { } while (0)
-macro_line|#endif /* __SMP__ */
+mdefine_line|#define synchronize_bh()&t;barrier()
+macro_line|#endif&t;/* SMP */
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh
 r_extern
@@ -391,5 +391,5 @@ op_lshift
 id|nr
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif&t;/* __ASM_SOFTIRQ_H */
 eof

@@ -2840,7 +2840,7 @@ op_logical_neg
 id|capable
 c_func
 (paren
-id|CAP_NET_ADMIN
+id|CAP_KILL
 )paren
 )paren
 r_return

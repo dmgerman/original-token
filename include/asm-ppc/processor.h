@@ -297,86 +297,27 @@ mdefine_line|#define SR14&t;14
 DECL|macro|SR15
 mdefine_line|#define SR15&t;15
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n; * If we&squot;ve configured for a specific machine set things&n; * up so the compiler can optimize away the other parts.&n; * -- Cort&n; */
-macro_line|#ifdef CONFIG_MACH_SPECIFIC
-macro_line|#ifdef CONFIG_PREP
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_prep)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (1)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (0)
-DECL|macro|have_of
-mdefine_line|#define have_of (0)
-macro_line|#endif /* CONFIG_PREP */
-macro_line|#ifdef CONFIG_CHRP
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_chrp)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (0)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (1)
-DECL|macro|have_of
-mdefine_line|#define have_of (1)
-macro_line|#endif /* CONFIG_CHRP */
-macro_line|#ifdef CONFIG_PMAC
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_Pmac)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (0)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (0)
-DECL|macro|have_of
-mdefine_line|#define have_of (1)
-macro_line|#endif /* CONFIG_PMAC */
-macro_line|#ifdef CONFIG_MBX
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_mbx)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (0)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (0)
-DECL|macro|have_of
-mdefine_line|#define have_of (0)
-macro_line|#endif /* CONFIG_MBX */
-macro_line|#ifdef CONFIG_FADS
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_fads)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (0)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (0)
-DECL|macro|have_of
-mdefine_line|#define have_of (0)
-macro_line|#endif /* CONFIG_FADS */
-macro_line|#ifdef CONFIG_APUS
-DECL|macro|_machine
-mdefine_line|#define _machine (_MACH_apus)
-DECL|macro|is_prep
-mdefine_line|#define is_prep (0)
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (0)
-DECL|macro|have_of
-mdefine_line|#define have_of (0)
-macro_line|#endif /* CONFIG_APUS */
-macro_line|#else /* CONFIG_MACH_SPECIFIC */
 r_extern
 r_int
 id|_machine
 suffix:semicolon
-multiline_comment|/* if we&squot;re a prep machine */
-DECL|macro|is_prep
-mdefine_line|#define is_prep (_machine == _MACH_prep)
-multiline_comment|/* if we&squot;re a chrp machine */
-DECL|macro|is_chrp
-mdefine_line|#define is_chrp (_machine == _MACH_chrp)
-multiline_comment|/* if we have openfirmware */
+multiline_comment|/* Temporary hacks until we can clean things up better - Corey */
 r_extern
-r_int
 r_int
 id|have_of
 suffix:semicolon
-macro_line|#endif /* CONFIG_MACH_SPECIFIC */
+r_extern
+r_int
+id|is_prep
+suffix:semicolon
+r_extern
+r_int
+id|is_chrp
+suffix:semicolon
+r_extern
+r_int
+id|is_powerplus
+suffix:semicolon
 multiline_comment|/* what kind of prep workstation we are */
 r_extern
 r_int
@@ -602,6 +543,20 @@ DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
+multiline_comment|/* In misc.c */
+r_void
+id|_nmask_and_or_msr
+c_func
+(paren
+r_int
+r_int
+id|nmask
+comma
+r_int
+r_int
+id|or_val
+)paren
+suffix:semicolon
 macro_line|#endif /* ndef ASSEMBLY*/
 macro_line|#endif /* __ASM_PPC_PROCESSOR_H */
 eof

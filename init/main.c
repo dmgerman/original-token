@@ -152,7 +152,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|powermac_init
+id|ppc_init
 c_func
 (paren
 r_void
@@ -2975,6 +2975,12 @@ comma
 id|reboot_setup
 )brace
 comma
+(brace
+l_string|&quot;mca-pentium&quot;
+comma
+id|mca_pentium
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 (brace
@@ -3944,7 +3950,7 @@ id|ints
 l_int|1
 )braket
 op_amp
-l_int|1
+l_int|3
 suffix:semicolon
 )brace
 DECL|function|prompt_ramdisk
@@ -5315,7 +5321,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_PPC)
-id|powermac_init
+id|ppc_init
 c_func
 (paren
 )paren

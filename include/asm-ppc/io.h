@@ -4,8 +4,6 @@ mdefine_line|#define _PPC_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-DECL|macro|KERNELBASE
-mdefine_line|#define KERNELBASE&t;0xc0000000
 DECL|macro|SIO_CONFIG_RA
 mdefine_line|#define SIO_CONFIG_RA&t;0x398
 DECL|macro|SIO_CONFIG_RD
@@ -25,7 +23,7 @@ mdefine_line|#define CHRP_PCI_DRAM_OFFSET &t;0
 DECL|macro|PREP_ISA_IO_BASE
 mdefine_line|#define PREP_ISA_IO_BASE &t;0x80000000
 DECL|macro|PREP_ISA_MEM_BASE
-mdefine_line|#define PREP_ISA_MEM_BASE &t;0xd0000000
+mdefine_line|#define PREP_ISA_MEM_BASE &t;0xc0000000
 DECL|macro|PREP_PCI_DRAM_OFFSET
 mdefine_line|#define PREP_PCI_DRAM_OFFSET &t;0x80000000
 macro_line|#ifdef CONFIG_MBX
@@ -84,7 +82,7 @@ macro_line|#else
 DECL|macro|readw
 mdefine_line|#define readw(addr) in_le16((volatile unsigned short *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) in_le32((volatile unsigned *)addr)
+mdefine_line|#define readl(addr) in_le32((volatile unsigned *)(addr))
 DECL|macro|writew
 mdefine_line|#define writew(b,addr) out_le16((volatile unsigned short *)(addr),(b))
 DECL|macro|writel

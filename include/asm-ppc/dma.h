@@ -15,37 +15,6 @@ multiline_comment|/* The maximum address that we can perform a DMA transfer to o
 multiline_comment|/* Doesn&squot;t really apply... */
 DECL|macro|MAX_DMA_ADDRESS
 mdefine_line|#define MAX_DMA_ADDRESS      0xFFFFFFFF
-macro_line|#if defined(CONFIG_MACH_SPECIFIC)
-macro_line|#if defined(CONFIG_PREP)
-DECL|macro|DMA_MODE_READ
-mdefine_line|#define DMA_MODE_READ 0x44
-DECL|macro|DMA_MODE_WRITE
-mdefine_line|#define DMA_MODE_WRITE 0x48
-DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD 0x00ffffff
-macro_line|#endif /* CONFIG_PREP */
-macro_line|#if defined(CONFIG_CHRP)
-DECL|macro|DMA_MODE_READ
-mdefine_line|#define DMA_MODE_READ 0x44
-DECL|macro|DMA_MODE_WRITE
-mdefine_line|#define DMA_MODE_WRITE 0x48
-DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD ~0L
-macro_line|#endif /* CONFIG_CHRP */
-macro_line|#ifdef CONFIG_PMAC
-DECL|macro|DMA_MODE_READ
-mdefine_line|#define DMA_MODE_READ 1
-DECL|macro|DMA_MODE_WRITE
-mdefine_line|#define DMA_MODE_WRITE 2
-DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD ~0L
-macro_line|#endif /* CONFIG_PMAC */
-macro_line|#ifdef CONFIG_APUS
-multiline_comment|/* This is bogus and should go away. */
-DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
-macro_line|#endif
-macro_line|#else
 multiline_comment|/* in arch/ppc/kernel/setup.c -- Cort */
 r_extern
 r_int
@@ -59,7 +28,6 @@ r_int
 r_int
 id|ISA_DMA_THRESHOLD
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb_p
@@ -208,7 +176,7 @@ mdefine_line|#define DMA2_EXT_REG               0x4D6
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
 DECL|macro|DMA_AUTOINIT
-mdefine_line|#define DMA_AUTOINIT&t;0x10
+mdefine_line|#define DMA_AUTOINIT   &t; 0x10
 r_extern
 id|spinlock_t
 id|dma_spin_lock
@@ -1312,9 +1280,9 @@ r_extern
 r_int
 id|isa_dma_bridge_buggy
 suffix:semicolon
-macro_line|#else
+macro_line|#else                                                         
 DECL|macro|isa_dma_bridge_buggy
-mdefine_line|#define isa_dma_bridge_buggy    (0)
+mdefine_line|#define isa_dma_bridge_buggy   (0)
 macro_line|#endif
 macro_line|#endif /* _ASM_DMA_H */
 eof

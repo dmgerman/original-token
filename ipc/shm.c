@@ -3052,7 +3052,7 @@ op_assign
 id|get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if

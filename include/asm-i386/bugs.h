@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/msr.h&gt;
 DECL|macro|CONFIG_BUGi386
 mdefine_line|#define CONFIG_BUGi386
 DECL|function|__initfunc
@@ -26,6 +27,30 @@ id|ints
 id|boot_cpu_data.hlt_works_ok
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|mca_pentium
+c_func
+(paren
+r_char
+op_star
+id|s
+comma
+r_int
+op_star
+id|ints
+)paren
+)paren
+(brace
+id|mca_pentium_flag
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|__initfunc
@@ -202,6 +227,76 @@ suffix:semicolon
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|mca_pentium_flag
+)paren
+(brace
+multiline_comment|/* The IBM Model 95 machines with pentiums lock up on&n;&t;&t; * fpu test, so we avoid it. All pentiums have inbuilt&n;&t;&t; * FPU and thus should use exception 16. We still do&n;&t;&t; * the FDIV test, although I doubt there where ever any&n;&t;&t; * MCA boxes built with non-FDIV-bug cpus.&n;&t;&t; */
+id|__asm__
+c_func
+(paren
+l_string|&quot;fninit&bslash;n&bslash;t&quot;
+l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
+l_string|&quot;fdivl %2&bslash;n&bslash;t&quot;
+l_string|&quot;fmull %2&bslash;n&bslash;t&quot;
+l_string|&quot;fldl %1&bslash;n&bslash;t&quot;
+l_string|&quot;fsubp %%st,%%st(1)&bslash;n&bslash;t&quot;
+l_string|&quot;fistpl %0&bslash;n&bslash;t&quot;
+l_string|&quot;fwait&bslash;n&bslash;t&quot;
+l_string|&quot;fninit&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+op_amp
+id|boot_cpu_data.fdiv_bug
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|x
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|y
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mca-pentium specified, avoiding FPU coupling test... &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|boot_cpu_data.fdiv_bug
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;??? No FDIV bug? Lucky you...&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;detected FDIV bug though.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -588,14 +683,10 @@ id|f_vide
 op_assign
 id|vide
 suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
+id|rdtscl
+c_func
 (paren
 id|d
-)paren
 )paren
 suffix:semicolon
 r_while
@@ -609,14 +700,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
+id|rdtscl
+c_func
 (paren
 id|d2
-)paren
 )paren
 suffix:semicolon
 id|d

@@ -1,4 +1,7 @@
 multiline_comment|/*&n; * /dev/nvram driver for Power Macintosh.&n; */
+DECL|macro|NVRAM_VERSION
+mdefine_line|#define NVRAM_VERSION &quot;1.0&quot;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -7,10 +10,12 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/init.h&gt;
 DECL|macro|NVRAM_SIZE
 mdefine_line|#define NVRAM_SIZE&t;8192
+multiline_comment|/* when building as a module, __openfirmware is both unavailable&n; * and unnecessary. */
+macro_line|#ifndef MODULE
 id|__openfirmware
+macro_line|#endif
 DECL|function|nvram_llseek
 r_static
 r_int
@@ -334,6 +339,31 @@ op_star
 id|file
 )paren
 (brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|nvram_release
+r_static
+r_int
+id|nvram_release
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -367,9 +397,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* flush */
-l_int|NULL
+id|nvram_release
 comma
-multiline_comment|/* no special release code */
 l_int|NULL
 multiline_comment|/* fsync */
 )brace
@@ -401,6 +430,15 @@ r_void
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Macintosh non-volatile memory driver v%s&bslash;n&quot;
+comma
+id|NVRAM_VERSION
+)paren
+suffix:semicolon
 id|misc_register
 c_func
 (paren
@@ -412,4 +450,35 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+(paren
+r_void
+)paren
+(brace
+r_return
+id|nvram_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+(paren
+r_void
+)paren
+(brace
+id|misc_deregister
+c_func
+(paren
+op_amp
+id|nvram_dev
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

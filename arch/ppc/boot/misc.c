@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.61 1999/03/08 23:51:02 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.63 1999/04/05 21:48:20 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
@@ -33,25 +33,21 @@ id|_end
 (braket
 )braket
 suffix:semicolon
-macro_line|#if defined(CONFIG_SERIAL_CONSOLE)
-DECL|variable|cmd_preset
-r_char
-id|cmd_preset
-(braket
-)braket
-op_assign
-l_string|&quot;console=ttyS0,9600n8&quot;
-suffix:semicolon
+macro_line|#ifdef CONFIG_CMDLINE
+DECL|macro|CMDLINE
+mdefine_line|#define CMDLINE CONFIG_CMDLINE
 macro_line|#else
+DECL|macro|CMDLINE
+mdefine_line|#define CMDLINE &quot;&quot;;
+macro_line|#endif
 DECL|variable|cmd_preset
 r_char
 id|cmd_preset
 (braket
 )braket
 op_assign
-l_string|&quot;&quot;
+id|CMDLINE
 suffix:semicolon
-macro_line|#endif
 DECL|variable|cmd_buf
 r_char
 id|cmd_buf
@@ -66,6 +62,13 @@ id|cmd_line
 op_assign
 id|cmd_buf
 suffix:semicolon
+DECL|variable|keyb_present
+r_int
+id|keyb_present
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* keyboard controller is present by default */
 DECL|variable|hold_resid_buf
 id|RESIDUAL
 id|hold_resid_buf
@@ -202,6 +205,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_static
 r_int
 id|_cvt
 c_func
@@ -220,6 +224,14 @@ comma
 r_char
 op_star
 id|digits
+)paren
+suffix:semicolon
+r_int
+r_char
+id|inb
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 DECL|function|pause
@@ -413,22 +425,43 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE)
+r_if
+c_cond
+(paren
+id|keyb_present
+)paren
 r_return
 (paren
-macro_line|#if defined(CONFIG_SERIAL_CONSOLE)
+id|CRT_tstc
+c_func
+(paren
+)paren
+op_logical_or
 id|NS16550_tstc
 c_func
 (paren
 id|com_port
 )paren
-op_logical_or
-macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
+)paren
+suffix:semicolon
+r_else
+id|NS16550_tstc
+c_func
+(paren
+id|com_port
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+(paren
 id|CRT_tstc
 c_func
 (paren
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 )brace
 DECL|function|getc
 id|getc
@@ -463,6 +496,11 @@ id|com_port
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
+r_if
+c_cond
+(paren
+id|keyb_present
+)paren
 r_if
 c_cond
 (paren
@@ -833,6 +871,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|cursor
+c_func
+(paren
+id|x
+comma
+id|y
+)paren
+suffix:semicolon
 id|orig_x
 op_assign
 id|x
@@ -1511,6 +1557,14 @@ id|res
 comma
 id|size
 suffix:semicolon
+r_int
+r_char
+id|board_type
+suffix:semicolon
+r_int
+r_char
+id|base_mod
+suffix:semicolon
 id|lines
 op_assign
 l_int|25
@@ -1561,12 +1615,6 @@ op_complement
 l_int|0x0030
 )paren
 suffix:semicolon
-id|vga_init
-c_func
-(paren
-l_int|0xC0000000
-)paren
-suffix:semicolon
 macro_line|#if defined(CONFIG_SERIAL_CONSOLE)
 id|com_port
 op_assign
@@ -1578,16 +1626,91 @@ op_star
 id|NS16550_init
 c_func
 (paren
-l_int|1
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
+id|vga_init
+c_func
+(paren
+l_int|0xC0000000
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|residual
 )paren
 (brace
+multiline_comment|/* Is this Motorola PPCBug? */
+r_if
+c_cond
+(paren
+(paren
+l_int|1
+op_amp
+id|residual-&gt;VitalProductData.FirmwareSupports
+)paren
+op_logical_and
+(paren
+l_int|1
+op_eq
+id|residual-&gt;VitalProductData.FirmwareSupplier
+)paren
+)paren
+(brace
+id|board_type
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x800
+)paren
+op_amp
+l_int|0xF0
+suffix:semicolon
+multiline_comment|/* If this is genesis 2 board then check for no&n;&t;&t;&t; * keyboard controller and more than one processor.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|board_type
+op_eq
+l_int|0xe0
+)paren
+(brace
+id|base_mod
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x803
+)paren
+suffix:semicolon
+multiline_comment|/* if a MVME2300 or a MCME2400 then no keyboard */
+r_if
+c_cond
+(paren
+(paren
+id|base_mod
+op_eq
+l_int|0x9
+)paren
+op_logical_or
+(paren
+id|base_mod
+op_eq
+l_int|0xF9
+)paren
+)paren
+(brace
+id|keyb_present
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* no keyboard */
+)brace
+)brace
+)brace
 id|memcpy
 c_func
 (paren
@@ -2057,7 +2180,7 @@ r_int
 )paren
 id|zimage_start
 op_le
-l_int|0x008000000
+l_int|0x00800000
 )paren
 (brace
 id|memcpy
@@ -2306,14 +2429,17 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_SERIAL_CONSOLE)
+r_if
+c_cond
+(paren
+id|keyb_present
+)paren
 id|CRT_tstc
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Forces keyboard to be initialized */
-macro_line|#endif
 id|puts
 c_func
 (paren

@@ -783,7 +783,6 @@ id|regs
 r_int
 id|fixed
 suffix:semicolon
-macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -791,26 +790,12 @@ id|regs-&gt;msr
 op_amp
 id|MSR_FP
 )paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
 id|giveup_fpu
 c_func
 (paren
+id|current
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|fixed
 op_assign
 id|fix_alignment

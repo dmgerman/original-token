@@ -127,7 +127,7 @@ mdefine_line|#define&t;__FD_ISSET(d, set)&t;((set)-&gt;fds_bits[__FDELT(d)] &amp
 DECL|macro|__FD_ZERO
 mdefine_line|#define&t;__FD_ZERO(set)&t;&bslash;&n;  ((void) memset ((__ptr_t) (set), 0, sizeof (__kernel_fd_set)))
 macro_line|#else /* __GNUC__ */
-macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt;= 2)
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2) &bslash;&n;    || (__GLIBC__ == 2 &amp;&amp; __GLIBC_MINOR__ == 0)
 multiline_comment|/* With GNU C, use inline functions instead so args are evaluated only once: */
 DECL|macro|__FD_SET
 macro_line|#undef __FD_SET

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ramdisk.c - Multiple RAM disk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This RAM disk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * RAM disk data.  This makes it possible to dynamically allocate the RAM disk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the RAM disk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new RAM disk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed RAM disk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The RAM disk&n; * loader now also loads into a dynamic (buffer cache based) RAM disk,&n; * not the old static RAM disk.  Support for the old static RAM disk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc.&n; * &t;When the RAM disk module is removed, free the protected buffers&n; * &t;Default RAM disk size changed to 2.88 MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *&n;* 4/25/96 : Made RAM disk size a parameter (default is now 4 MB) &n; *&t;&t;- Chad Page&n; *&n; * Add support for fs images split across &gt;1 disk, Paul Gortmaker, Mar &squot;98&n; *&n; */
+multiline_comment|/*&n; * ramdisk.c - Multiple RAM disk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This RAM disk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * RAM disk data.  This makes it possible to dynamically allocate the RAM disk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the RAM disk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new RAM disk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed RAM disk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The RAM disk&n; * loader now also loads into a dynamic (buffer cache based) RAM disk,&n; * not the old static RAM disk.  Support for the old static RAM disk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc.&n; * &t;When the RAM disk module is removed, free the protected buffers&n; * &t;Default RAM disk size changed to 2.88 MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *&n; * 4/25/96 : Made RAM disk size a parameter (default is now 4 MB) &n; *&t;&t;- Chad Page&n; *&n; * Add support for fs images split across &gt;1 disk, Paul Gortmaker, Mar &squot;98&n; *&n; * Make block size and block size shift for RAM disks a global macro&n; * and set blk_size for -ENOSPC,     Werner Fink &lt;werner@suse.de&gt;, Apr &squot;99&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/romfs_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
@@ -29,6 +30,11 @@ multiline_comment|/*&n; * 35 has been officially registered as the RAMDISK major
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+multiline_comment|/*&n; * We use a block size of 512 bytes in comparision to BLOCK_SIZE&n; * defined in include/linux/blk.h. This because of the finer&n; * granularity for filling up a RAM disk.&n; */
+DECL|macro|RDBLK_SIZE_BITS
+mdefine_line|#define RDBLK_SIZE_BITS&t;&t;9
+DECL|macro|RDBLK_SIZE
+mdefine_line|#define RDBLK_SIZE&t;&t;(1&lt;&lt;RDBLK_SIZE_BITS)
 multiline_comment|/* The RAM disk size is now a parameter */
 DECL|macro|NUM_RAMDISKS
 mdefine_line|#define NUM_RAMDISKS 16&t;&t;/* This cannot be overridden (yet) */ 
@@ -75,11 +81,22 @@ multiline_comment|/* Various static variables go here.  Most are used only in th
 DECL|variable|rd_length
 r_static
 r_int
+r_int
 id|rd_length
 (braket
 id|NUM_RAMDISKS
 )braket
 suffix:semicolon
+multiline_comment|/* Size of RAM disks in bytes   */
+DECL|variable|rd_hardsec
+r_static
+r_int
+id|rd_hardsec
+(braket
+id|NUM_RAMDISKS
+)braket
+suffix:semicolon
+multiline_comment|/* Size of real blocks in bytes */
 DECL|variable|rd_blocksizes
 r_static
 r_int
@@ -88,6 +105,16 @@ id|rd_blocksizes
 id|NUM_RAMDISKS
 )braket
 suffix:semicolon
+multiline_comment|/* Size of 1024 byte blocks :)  */
+DECL|variable|rd_kbsize
+r_static
+r_int
+id|rd_kbsize
+(braket
+id|NUM_RAMDISKS
+)braket
+suffix:semicolon
+multiline_comment|/* Size in blocks of 1024 bytes */
 multiline_comment|/*&n; * Parameters for the boot-loading of the RAM disk.  These are set by&n; * init/main.c (from arguments to the kernel command line) or from the&n; * architecture-specific setup routine (from the stored boot sector&n; * information). &n; */
 DECL|variable|rd_size
 r_int
@@ -157,12 +184,21 @@ r_int
 id|minor
 suffix:semicolon
 r_int
+r_int
 id|offset
 comma
 id|len
 suffix:semicolon
 id|repeat
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|CURRENT
+)paren
+r_return
+suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
 id|minor
@@ -195,13 +231,13 @@ id|offset
 op_assign
 id|CURRENT-&gt;sector
 op_lshift
-l_int|9
+id|RDBLK_SIZE_BITS
 suffix:semicolon
 id|len
 op_assign
 id|CURRENT-&gt;current_nr_sectors
 op_lshift
-l_int|9
+id|RDBLK_SIZE_BITS
 suffix:semicolon
 r_if
 c_cond
@@ -218,6 +254,41 @@ id|minor
 )braket
 )paren
 (brace
+id|end_request
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_goto
+id|repeat
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|CURRENT-&gt;cmd
+op_ne
+id|READ
+)paren
+op_logical_and
+(paren
+id|CURRENT-&gt;cmd
+op_ne
+id|WRITE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;RAMDISK: bad command: %d&bslash;n&quot;
+comma
+id|CURRENT-&gt;cmd
+)paren
+suffix:semicolon
 id|end_request
 c_func
 (paren
@@ -291,6 +362,10 @@ r_int
 id|arg
 )paren
 (brace
+r_int
+r_int
+id|minor
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -303,6 +378,14 @@ id|inode-&gt;i_rdev
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+id|minor
+op_assign
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -355,14 +438,10 @@ c_func
 (paren
 id|rd_length
 (braket
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
+id|minor
 )braket
-op_div
-l_int|512
+op_rshift
+id|RDBLK_SIZE_BITS
 comma
 (paren
 r_int
@@ -375,17 +454,23 @@ r_case
 id|BLKSSZGET
 suffix:colon
 multiline_comment|/* Block size of media */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|arg
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_return
 id|put_user
 c_func
 (paren
 id|rd_blocksizes
 (braket
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
+id|minor
 )braket
 comma
 (paren
@@ -395,9 +480,19 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+id|RO_IOCTLS
+c_func
+(paren
+id|inode-&gt;i_rdev
+comma
+id|arg
+)paren
+suffix:semicolon
 r_default
 suffix:colon
-r_break
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -796,6 +891,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* rd_size is given in kB */
 id|rd_length
 (braket
 id|i
@@ -803,18 +899,47 @@ id|i
 op_assign
 (paren
 id|rd_size
-op_star
-l_int|1024
+op_lshift
+id|BLOCK_SIZE_BITS
 )paren
+suffix:semicolon
+id|rd_hardsec
+(braket
+id|i
+)braket
+op_assign
+id|RDBLK_SIZE
 suffix:semicolon
 id|rd_blocksizes
 (braket
 id|i
 )braket
 op_assign
-l_int|1024
+id|BLOCK_SIZE
+suffix:semicolon
+id|rd_kbsize
+(braket
+id|i
+)braket
+op_assign
+(paren
+id|rd_length
+(braket
+id|i
+)braket
+op_rshift
+id|BLOCK_SIZE_BITS
+)paren
 suffix:semicolon
 )brace
+id|hardsect_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+id|rd_hardsec
+suffix:semicolon
+multiline_comment|/* Size of the RAM disk blocks */
 id|blksize_size
 (braket
 id|MAJOR_NR
@@ -822,6 +947,15 @@ id|MAJOR_NR
 op_assign
 id|rd_blocksizes
 suffix:semicolon
+multiline_comment|/* Avoid set_blocksize() check */
+id|blk_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+id|rd_kbsize
+suffix:semicolon
+multiline_comment|/* Size of the RAM disk in kB  */
 id|printk
 c_func
 (paren
@@ -843,6 +977,14 @@ id|MODULE_PARM
 id|rd_size
 comma
 l_string|&quot;1i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|rd_size
+comma
+l_string|&quot;Size of each RAM disk.&quot;
 )paren
 suffix:semicolon
 DECL|function|init_module
@@ -1357,6 +1499,9 @@ id|device
 comma
 r_int
 id|offset
+comma
+r_int
+id|unit
 )paren
 )paren
 (brace
@@ -1428,7 +1573,7 @@ c_func
 (paren
 id|MAJOR_NR
 comma
-l_int|0
+id|unit
 )paren
 suffix:semicolon
 id|memset
@@ -1672,10 +1817,10 @@ OG
 (paren
 id|rd_length
 (braket
-l_int|0
+id|unit
 )braket
 op_rshift
-id|BLOCK_SIZE_BITS
+id|RDBLK_SIZE_BITS
 )paren
 )paren
 (brace
@@ -1688,10 +1833,10 @@ id|nblocks
 comma
 id|rd_length
 (braket
-l_int|0
+id|unit
 )braket
 op_rshift
-id|BLOCK_SIZE_BITS
+id|RDBLK_SIZE_BITS
 )paren
 suffix:semicolon
 r_goto
@@ -2046,7 +2191,7 @@ c_func
 (paren
 id|MAJOR_NR
 comma
-l_int|0
+id|unit
 )paren
 suffix:semicolon
 id|done
@@ -2079,14 +2224,22 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
+r_static
 r_void
-id|rd_load
+id|rd_load_disk
 c_func
 (paren
-r_void
+r_int
+id|n
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_extern
+id|kdev_t
+id|real_root_dev
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2106,6 +2259,16 @@ id|ROOT_DEV
 )paren
 op_ne
 id|FLOPPY_MAJOR
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+op_logical_and
+id|MAJOR
+c_func
+(paren
+id|real_root_dev
+)paren
+op_ne
+id|FLOPPY_MAJOR
+macro_line|#endif
 )paren
 r_return
 suffix:semicolon
@@ -2141,6 +2304,46 @@ c_func
 id|ROOT_DEV
 comma
 id|rd_image_start
+comma
+id|n
+)paren
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|rd_load
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|rd_load_disk
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|rd_load_secondary
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|rd_load_disk
+c_func
+(paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2167,6 +2370,8 @@ id|MAJOR_NR
 comma
 id|INITRD_MINOR
 )paren
+comma
+l_int|0
 comma
 l_int|0
 )paren
@@ -2652,6 +2857,37 @@ id|outfp
 r_int
 id|result
 suffix:semicolon
+id|insize
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* valid bytes in inbuf */
+id|inptr
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* index of next byte to be processed in inbuf */
+id|outcnt
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* bytes in output buffer */
+id|exit_code
+op_assign
+l_int|0
+suffix:semicolon
+id|bytes_out
+op_assign
+l_int|0
+suffix:semicolon
+id|crc
+op_assign
+(paren
+id|ulg
+)paren
+l_int|0xffffffffL
+suffix:semicolon
+multiline_comment|/* shift register contents */
 id|crd_infp
 op_assign
 id|fp

@@ -150,8 +150,10 @@ mdefine_line|#define MCDX_ST_EOM 0x0100&t;&t;/* end of media */
 DECL|macro|MCDX_ST_DRV
 mdefine_line|#define MCDX_ST_DRV 0x00ff&t;&t;/* mask to query the drive status */
 macro_line|#ifndef I_WAS_HERE
+macro_line|#ifndef MODULE
 macro_line|#warning You have not edited mcdx.h
 macro_line|#warning Perhaps irq and i/o settings are wrong.
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* ex:set ts=4 sw=4: */
 eof

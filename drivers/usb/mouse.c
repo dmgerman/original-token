@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
+multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver. Fixed up a lot by Linus.&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.20: Linus rewrote read_mouse() to do PS/2 and do it&n; * correctly. Events are added together, not queued, to keep the rodent sober.&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -1019,23 +1019,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|usb_mouse_cleanup
 r_void
-)paren
-(brace
-r_return
-id|usb_mouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-id|cleanup_module
+id|usb_mouse_cleanup
 c_func
 (paren
 r_void
@@ -1057,5 +1043,4 @@ id|usb_mouse
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

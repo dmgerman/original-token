@@ -2,7 +2,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
-macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* for is_prep() */
+macro_line|#include &lt;asm/machdep.h&gt;&t;&t;/* ppc_md */
 r_extern
 r_void
 id|disable_irq
@@ -62,26 +62,28 @@ r_int
 id|irq
 )paren
 (brace
-r_return
-(paren
-(paren
-(paren
-id|is_prep
-op_logical_or
-id|is_chrp
-)paren
-op_logical_and
-id|irq
-op_eq
-l_int|2
-)paren
-ques
+r_if
 c_cond
-l_int|9
-suffix:colon
+(paren
+id|ppc_md.irq_cannonicalize
+)paren
+(brace
+r_return
+id|ppc_md
+dot
+id|irq_cannonicalize
+c_func
+(paren
 id|irq
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+r_return
+id|irq
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 macro_line|#else /* CONFIG_8xx */

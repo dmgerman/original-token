@@ -5062,6 +5062,12 @@ op_eq
 id|FLOPPY_MAJOR
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+r_extern
+r_int
+id|rd_doload
+suffix:semicolon
+macro_line|#endif
 id|floppy_eject
 c_func
 (paren
@@ -5075,7 +5081,25 @@ id|KERN_NOTICE
 l_string|&quot;(Warning, this kernel has no ramdisk support)&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* rd_doload is 2 for a dual initrd/ramload setup */
+r_if
+c_cond
+(paren
+id|rd_doload
+op_eq
+l_int|2
+)paren
+(brace
+id|rd_load_secondary
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
 macro_line|#endif
+(brace
 id|printk
 c_func
 (paren
@@ -5088,6 +5112,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 id|memset

@@ -87,6 +87,14 @@ r_int
 id|id
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|smp_message_recv
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;&t;0xFF            /* No processor magic marker */
 DECL|macro|PROC_CHANGE_PENALTY

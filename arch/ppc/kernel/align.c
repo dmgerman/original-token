@@ -898,7 +898,6 @@ id|EFAULT
 suffix:semicolon
 multiline_comment|/* bad address */
 )brace
-macro_line|#ifdef __SMP__
 r_if
 c_cond
 (paren
@@ -914,32 +913,12 @@ op_amp
 id|MSR_FP
 )paren
 )paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;
-r_if
-c_cond
-(paren
-(paren
-id|flags
-op_amp
-id|F
-)paren
-op_logical_and
-id|last_task_used_math
-op_eq
-id|current
-)paren
 id|giveup_fpu
 c_func
 (paren
+id|current
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1277,7 +1256,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/* these require some floating point conversions... */
-multiline_comment|/* note that giveup_fpu enables the FPU for the kernel */
 multiline_comment|/* we&squot;d like to use the assignment, but we have to compile&n;&t; * the kernel with -msoft-float so it doesn&squot;t use the&n;&t; * fp regs for copying 8-byte objects. */
 r_case
 id|LD
@@ -1286,27 +1264,11 @@ id|F
 op_plus
 id|S
 suffix:colon
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|regs-&gt;msr
-op_amp
-id|MSR_FP
-)paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;
-id|giveup_fpu
+id|enable_kernel_fp
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 id|cvt_fd
 c_func
 (paren
@@ -1333,27 +1295,11 @@ id|F
 op_plus
 id|S
 suffix:colon
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|regs-&gt;msr
-op_amp
-id|MSR_FP
-)paren
-id|smp_giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-macro_line|#else&t;
-id|giveup_fpu
+id|enable_kernel_fp
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 id|cvt_df
 c_func
 (paren

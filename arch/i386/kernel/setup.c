@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
+macro_line|#include &lt;asm/msr.h&gt;
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
 r_char
@@ -95,6 +96,13 @@ DECL|variable|BIOS_revision
 r_int
 r_int
 id|BIOS_revision
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|mca_pentium_flag
+r_int
+r_int
+id|mca_pentium_flag
 op_assign
 l_int|0
 suffix:semicolon
@@ -656,24 +664,6 @@ r_int
 id|len
 op_assign
 l_int|0
-suffix:semicolon
-r_static
-r_int
-r_char
-id|smptrap
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|smptrap
-)paren
-r_return
-suffix:semicolon
-id|smptrap
-op_assign
-l_int|1
 suffix:semicolon
 macro_line|#ifdef CONFIG_VISWS
 id|visws_get_board_type_and_rev
@@ -1254,10 +1244,6 @@ macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Check the bugs that will bite us before we get booting&n;&t; */
 )brace
-DECL|macro|rdmsr
-mdefine_line|#define rdmsr(msr,val1,val2) &bslash;&n;       __asm__ __volatile__(&quot;rdmsr&quot; &bslash;&n;&t;&t;&t;    : &quot;=a&quot; (val1), &quot;=d&quot; (val2) &bslash;&n;&t;&t;&t;    : &quot;c&quot; (msr))
-DECL|macro|wrmsr
-mdefine_line|#define wrmsr(msr,val1,val2) &bslash;&n;     __asm__ __volatile__(&quot;wrmsr&quot; &bslash;&n;&t;&t;&t;  : /* no outputs */ &bslash;&n;&t;&t;&t;  : &quot;c&quot; (msr), &quot;a&quot; (val1), &quot;d&quot; (val2))
 DECL|function|__initfunc
 id|__initfunc
 c_func

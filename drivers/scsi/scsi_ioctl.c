@@ -444,6 +444,15 @@ r_if
 c_cond
 (paren
 id|dev-&gt;removable
+op_logical_and
+(paren
+id|cmd
+(braket
+l_int|0
+)braket
+op_ne
+id|TEST_UNIT_READY
+)paren
 )paren
 (brace
 id|printk
@@ -456,7 +465,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_case
 id|UNIT_ATTENTION
 suffix:colon
@@ -475,13 +483,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* This is no longer considered an error */
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Disc change detected.&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* gag this error, VFS will log it anyway /axboe */
+multiline_comment|/* printk(KERN_INFO &quot;Disc change detected.&bslash;n&quot;); */
 r_break
 suffix:semicolon
 )brace

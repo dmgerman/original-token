@@ -1,12 +1,5 @@
 multiline_comment|/*&n; * Makes a prep bootable image which can be dd&squot;d onto&n; * a disk device to make a bootdisk.  Will take&n; * as input a elf executable, strip off the header&n; * and write out a boot image as:&n; * 1) default - strips elf header&n; *      suitable as a network boot image&n; * 2) -pbp - strips elf header and writes out prep boot partition image&n; *      cat or dd onto disk for booting&n; * 3) -asm - strips elf header and writes out as asm data&n; *      useful for generating data for a compressed image&n; *                  -- Cort&n; *&n; * Modified for x86 hosted builds by Matt Porter &lt;porter@neta.com&gt;&n; */
-macro_line|#ifdef linux
-macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/*#include &lt;asm/stat.h&gt;*/
-multiline_comment|/*#include &lt;asm/byteorder.h&gt;*/
-multiline_comment|/* the byte swap funcs don&squot;t work here -- Cort */
-macro_line|#else
 macro_line|#include &lt;unistd.h&gt;
-macro_line|#endif
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;errno.h&gt;
@@ -637,6 +630,8 @@ op_star
 id|length
 op_assign
 id|info.st_size
+op_minus
+id|elfhdr_size
 op_plus
 l_int|0x400
 suffix:semicolon
@@ -658,6 +653,8 @@ id|cpu_to_le32
 c_func
 (paren
 id|info.st_size
+op_minus
+id|elfhdr_size
 op_plus
 l_int|0x400
 )paren

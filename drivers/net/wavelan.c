@@ -865,6 +865,7 @@ id|crc_bytes
 suffix:semicolon
 )brace
 multiline_comment|/* psa_crc */
+macro_line|#endif&t;/* SET_PSA_CRC */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * update the checksum field in the Wavelan&squot;s PSA&n; */
 r_static
@@ -884,6 +885,7 @@ id|u_short
 id|hacr
 )paren
 (brace
+macro_line|#ifdef SET_PSA_CRC
 id|psa_t
 id|psa
 suffix:semicolon
@@ -1072,9 +1074,9 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_IOCTL_INFO */
+macro_line|#endif&t;/* SET_PSA_CRC */
 )brace
 multiline_comment|/* update_psa_checksum */
-macro_line|#endif&t;/* SET_PSA_CRC */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Write 1 byte to the MMC.&n; */
 r_static
@@ -2705,18 +2707,16 @@ op_amp
 id|AC_SFLD_OK
 )paren
 op_ne
-l_int|0
+id|AC_SFLD_OK
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;wv_config_complete(): set_multicast_address failed; status = 0x%x&bslash;n&quot;
+l_string|&quot;%s: wv_config_complete(): set_multicast_address failed; status = 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|str
 comma
 id|status
 )paren
@@ -2768,18 +2768,16 @@ op_amp
 id|AC_SFLD_OK
 )paren
 op_ne
-l_int|0
+id|AC_SFLD_OK
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;wv_config_complete(): set_MAC_address; status = 0x%x&bslash;n&quot;
+l_string|&quot;%s: wv_config_complete(): set_MAC_address failed; status = 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|str
 comma
 id|status
 )paren
@@ -2831,18 +2829,16 @@ op_amp
 id|AC_SFLD_OK
 )paren
 op_ne
-l_int|0
+id|AC_SFLD_OK
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;wv_config_complete(): configure; status = 0x%x&bslash;n&quot;
+l_string|&quot;%s: wv_config_complete(): configure failed; status = 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|str
 comma
 id|status
 )paren
@@ -2949,6 +2945,22 @@ id|tx_status
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* If not completed -&gt; exit */
+r_if
+c_cond
+(paren
+(paren
+id|tx_status
+op_amp
+id|AC_SFLD_C
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
 multiline_comment|/* Hack for reconfiguration */
 r_if
 c_cond
@@ -2976,22 +2988,6 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Not completed */
-multiline_comment|/* If not completed -&gt; exit */
-r_if
-c_cond
-(paren
-(paren
-id|tx_status
-op_amp
-id|AC_SFLD_C
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* We now remove this buffer */
 id|nreaped
 op_increment
@@ -3078,7 +3074,7 @@ id|lp-&gt;stats.collisions
 op_add_assign
 id|ncollisions
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_INFO
+macro_line|#ifdef DEBUG_TX_INFO
 r_if
 c_cond
 (paren
@@ -3106,7 +3102,6 @@ r_else
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-macro_line|#ifndef IGNORE_NORMAL_XMIT_ERRS
 r_if
 c_cond
 (paren
@@ -3118,11 +3113,11 @@ id|AC_SFLD_S10
 id|lp-&gt;stats.tx_carrier_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
+macro_line|#ifdef DEBUG_TX_FAIL
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wv_complete(): tx error: no CS.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3130,7 +3125,6 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif&t;/* IGNORE_NORMAL_XMIT_ERRS */
 r_if
 c_cond
 (paren
@@ -3142,11 +3136,11 @@ id|AC_SFLD_S9
 id|lp-&gt;stats.tx_carrier_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
+macro_line|#ifdef DEBUG_TX_FAIL
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wv_complete(): tx error: lost CTS.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3165,11 +3159,11 @@ id|AC_SFLD_S8
 id|lp-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
+macro_line|#ifdef DEBUG_TX_FAIL
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wv_complete(): tx error: slow DMA.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3177,7 +3171,6 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifndef IGNORE_NORMAL_XMIT_ERRS
 r_if
 c_cond
 (paren
@@ -3189,11 +3182,11 @@ id|AC_SFLD_S6
 id|lp-&gt;stats.tx_heartbeat_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
+macro_line|#ifdef DEBUG_TX_FAIL
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wv_complete(): tx error: heart beat.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3212,11 +3205,11 @@ id|AC_SFLD_S5
 id|lp-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
+macro_line|#ifdef DEBUG_TX_FAIL
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wv_complete(): tx error: too many collisions.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3224,9 +3217,8 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif&t;/* IGNORE_NORMAL_XMIT_ERRS */
 )brace
-macro_line|#ifdef DEBUG_INTERRUPT_INFO
+macro_line|#ifdef DEBUG_TX_INFO
 id|printk
 c_func
 (paren
@@ -5234,7 +5226,12 @@ id|msg2
 )paren
 multiline_comment|/* Name of the function */
 (brace
-macro_line|#ifndef DEBUG_PACKET_DUMP
+r_int
+id|i
+suffix:semicolon
+r_int
+id|maxi
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -5329,24 +5326,12 @@ l_int|13
 )braket
 )paren
 suffix:semicolon
-macro_line|#else&t;/* DEBUG_PACKET_DUMP */
-r_int
-id|i
-suffix:semicolon
-r_int
-id|maxi
-suffix:semicolon
+macro_line|#ifdef DEBUG_PACKET_DUMP
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: %s(): len=%d, data=&bslash;&quot;&quot;
-comma
-id|msg1
-comma
-id|msg2
-comma
-id|length
+l_string|&quot;data=&bslash;&quot;&quot;
 )paren
 suffix:semicolon
 r_if
@@ -5371,7 +5356,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|14
 suffix:semicolon
 id|i
 OL
@@ -6094,7 +6079,8 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This function doesn&squot;t exist.&n; */
+multiline_comment|/*&n; * This function doesn&squot;t exist.&n; * (Note : it was a nice way to test the reconfigure stuff...)&n; */
+macro_line|#ifdef SET_MAC_ADDRESS
 r_static
 r_int
 DECL|function|wavelan_set_mac_address
@@ -6139,6 +6125,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* SET_MAC_ADDRESS */
 macro_line|#ifdef WIRELESS_EXT&t;/* if wireless extensions exist in the kernel */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Frequency setting (for hardware capable of it)&n; * It&squot;s a bit complicated and you don&squot;t really want to look into it.&n; * (called in wavelan_ioctl)&n; */
@@ -7697,7 +7684,6 @@ id|MMW_LOOPT_SEL_DIS_NWID
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -7709,7 +7695,6 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -8032,7 +8017,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -8044,7 +8028,6 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mmc_out
 c_func
 (paren
@@ -8312,7 +8295,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -8324,7 +8306,6 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -9232,7 +9213,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -9244,7 +9224,6 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-macro_line|#endif
 id|mmc_out
 c_func
 (paren
@@ -9854,7 +9833,7 @@ l_string|&quot;%s: -&gt;wv_packet_read(0x%X, %d)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|fd_p
+id|buf_off
 comma
 id|sksize
 )paren
@@ -10146,6 +10125,12 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|fd_t
+id|fd
+suffix:semicolon
+id|rbd_t
+id|rbd
+suffix:semicolon
 r_int
 id|nreaped
 op_assign
@@ -10170,15 +10155,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-id|fd_t
-id|fd
-suffix:semicolon
-id|rbd_t
-id|rbd
-suffix:semicolon
-id|ushort
-id|pkt_len
-suffix:semicolon
 id|obram_read
 c_func
 (paren
@@ -10200,6 +10176,7 @@ id|fd
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Note about the status :&n;       * It start up to be 0 (the value we set). Then, when the RU&n;       * grab the buffer to prepare for reception, it sets the&n;       * FD_STATUS_B flag. When the RU has finished receiving the&n;       * frame, it clears FD_STATUS_B, set FD_STATUS_C to indicate&n;       * completion and set the other flags to indicate the eventual&n;       * errors. FD_STATUS_OK indicates that the reception was OK.&n;       */
 multiline_comment|/* If the current frame is not complete, we have reached the end. */
 r_if
 c_cond
@@ -10227,283 +10204,22 @@ c_cond
 (paren
 id|fd.fd_status
 op_amp
-(paren
-id|FD_STATUS_B
-op_or
 id|FD_STATUS_OK
 )paren
-)paren
-op_ne
-(paren
-id|FD_STATUS_B
-op_or
-id|FD_STATUS_OK
-)paren
-)paren
-(brace
-multiline_comment|/*&n;&t;   * Not sure about this one -- it does not seem&n;&t;   * to be an error so we will keep quiet about it.&n;&t;   */
-macro_line|#ifndef IGNORE_NORMAL_XMIT_ERRS
-macro_line|#ifdef DEBUG_RX_ERROR
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_B
-)paren
-op_ne
-id|FD_STATUS_B
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): frame not consumed by RU.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif&t;/* IGNORE_NORMAL_XMIT_ERRS */
-macro_line|#ifdef DEBUG_RX_ERROR
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_OK
-)paren
-op_ne
+op_eq
 id|FD_STATUS_OK
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): frame not received successfully.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-)brace
-multiline_comment|/* Were there problems in processing the frame?  Let&squot;s check. */
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-(paren
-id|FD_STATUS_S6
-op_or
-id|FD_STATUS_S7
-op_or
-id|FD_STATUS_S8
-op_or
-id|FD_STATUS_S9
-op_or
-id|FD_STATUS_S10
-op_or
-id|FD_STATUS_S11
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S6
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): no EOF flag.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S7
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_length_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): frame too short.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S8
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_over_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): rx DMA overrun.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S9
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_fifo_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): ran out of resources.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S10
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_frame_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): alignment error.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|fd.fd_status
-op_amp
-id|FD_STATUS_S11
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|lp-&gt;stats.rx_crc_errors
-op_increment
-suffix:semicolon
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): CRC error.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-)brace
 multiline_comment|/* Does the frame contain a pointer to the data?  Let&squot;s check. */
 r_if
 c_cond
 (paren
 id|fd.fd_rbd_offset
-op_eq
+op_ne
 id|I82586NULL
 )paren
 (brace
-macro_line|#ifdef DEBUG_RX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wv_receive(): frame has no data.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-r_else
-(brace
+multiline_comment|/* Read the receive buffer descriptor */
 id|obram_read
 c_func
 (paren
@@ -10570,13 +10286,7 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-id|pkt_len
-op_assign
-id|rbd.rbd_status
-op_amp
-id|RBD_STATUS_ACNT
-suffix:semicolon
+macro_line|#endif&t;/* DEBUG_RX_ERROR */
 multiline_comment|/* Read the packet and transmit to Linux */
 id|wv_packet_read
 c_func
@@ -10585,11 +10295,205 @@ id|dev
 comma
 id|rbd.rbd_bufl
 comma
-id|pkt_len
+id|rbd.rbd_status
+op_amp
+id|RBD_STATUS_ACNT
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if frame has data */
+macro_line|#ifdef DEBUG_RX_ERROR
+r_else
+multiline_comment|/* if frame has no data */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: wv_receive(): frame has no data.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+multiline_comment|/* If reception was no successful */
+(brace
+id|lp-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_INFO
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): frame not received successfully (%X).&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|fd.fd_status
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG_RX_ERROR
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S6
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: wv_receive(): no EOF flag.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S7
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|lp-&gt;stats.rx_length_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_FAIL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): frame too short.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S8
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|lp-&gt;stats.rx_over_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_FAIL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): rx DMA overrun.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S9
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|lp-&gt;stats.rx_fifo_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_FAIL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): ran out of resources.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S10
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|lp-&gt;stats.rx_frame_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_FAIL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): alignment error.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|fd.fd_status
+op_amp
+id|FD_STATUS_S11
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|lp-&gt;stats.rx_crc_errors
+op_increment
+suffix:semicolon
+macro_line|#ifdef DEBUG_RX_FAIL
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: wv_receive(): CRC error.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 id|fd.fd_status
 op_assign
 l_int|0
@@ -11081,7 +10985,7 @@ id|buf_addr
 comma
 id|buf
 comma
-id|clen
+id|length
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Overwrite the predecessor NOP link&n;   * so that it points to this txblock.&n;   */
@@ -11693,7 +11597,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -11705,7 +11608,6 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 multiline_comment|/* Zero the mmc structure. */
@@ -12460,7 +12362,7 @@ op_le
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -12889,7 +12791,7 @@ op_le
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -13260,7 +13162,7 @@ op_le
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -13341,7 +13243,7 @@ op_le
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -13468,7 +13370,7 @@ op_amp
 id|AC_SFLD_FAIL
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -14687,6 +14589,30 @@ multiline_comment|/* Start card functions */
 r_if
 c_cond
 (paren
+id|wv_cu_start
+c_func
+(paren
+id|dev
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Setup the controller and parameters */
+id|wv_82586_config
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Finish configuration with the receive unit */
+r_if
+c_cond
 (paren
 id|wv_ru_start
 c_func
@@ -14696,30 +14622,12 @@ id|dev
 OL
 l_int|0
 )paren
-op_logical_or
-(paren
-id|wv_cu_start
-c_func
-(paren
-id|dev
-)paren
-OL
-l_int|0
-)paren
-)paren
 (brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Finish configuration. */
-id|wv_82586_config
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_TRACE
 id|printk
 c_func
@@ -15703,7 +15611,7 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -15740,7 +15648,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -15795,7 +15703,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -16078,7 +15986,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef SET_PSA_CRC
 multiline_comment|/* update the Wavelan checksum */
 id|update_psa_checksum
 c_func
@@ -16090,7 +15997,6 @@ comma
 id|HACR_DEFAULT
 )paren
 suffix:semicolon
-macro_line|#endif
 id|wv_hacr_reset
 c_func
 (paren
@@ -16297,11 +16203,13 @@ op_assign
 op_amp
 id|wavelan_set_multicast_list
 suffix:semicolon
+macro_line|#ifdef SET_MAC_ADDRESS
 id|dev-&gt;set_mac_address
 op_assign
 op_amp
 id|wavelan_set_mac_address
 suffix:semicolon
+macro_line|#endif&t;/* SET_MAC_ADDRESS */
 macro_line|#ifdef WIRELESS_EXT&t;/* if wireless extension exists in the kernel */
 id|dev-&gt;do_ioctl
 op_assign
@@ -16439,7 +16347,7 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -16693,7 +16601,7 @@ op_eq
 l_int|0
 )paren
 (brace
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 id|printk
 c_func
 (paren
@@ -16899,7 +16807,7 @@ suffix:semicolon
 multiline_comment|/* if there is something at the address */
 )brace
 multiline_comment|/* Loop on all addresses. */
-macro_line|#ifdef DEBUG_CONFIG_ERRORS
+macro_line|#ifdef DEBUG_CONFIG_ERROR
 r_if
 c_cond
 (paren

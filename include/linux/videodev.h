@@ -858,6 +858,8 @@ DECL|macro|VID_HARDWARE_TYPHOON
 mdefine_line|#define VID_HARDWARE_TYPHOON&t;19
 DECL|macro|VID_HARDWARE_VINO
 mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* Reserved for SGI Indy Vino */
+DECL|macro|VID_HARDWARE_CADET
+mdefine_line|#define VID_HARDWARE_CADET&t;21&t;/* Cadet radio */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

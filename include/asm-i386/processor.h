@@ -348,6 +348,11 @@ r_int
 r_int
 id|BIOS_revision
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|mca_pentium_flag
+suffix:semicolon
 multiline_comment|/*&n; * User space process size: 3GB (default).&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(PAGE_OFFSET)

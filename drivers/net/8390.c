@@ -523,15 +523,10 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Ugly but a reset can be slow, yet must be protected */
-id|disable_irq
+id|disable_irq_nosync
 c_func
 (paren
 id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|synchronize_irq
-c_func
-(paren
 )paren
 suffix:semicolon
 id|spin_lock
@@ -608,15 +603,10 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Slow phase with lock held.&n;&t; */
-id|disable_irq
+id|disable_irq_nosync
 c_func
 (paren
 id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|synchronize_irq
-c_func
-(paren
 )paren
 suffix:semicolon
 id|spin_lock

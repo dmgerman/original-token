@@ -28,6 +28,21 @@ DECL|macro|ADB_RET_OK
 mdefine_line|#define ADB_RET_OK&t;0
 DECL|macro|ADB_RET_TIMEOUT
 mdefine_line|#define ADB_RET_TIMEOUT&t;3
+multiline_comment|/* The kind of ADB request. The controller may emulate some&n;   of all of those CUDA/PMU packet kinds */
+DECL|macro|ADB_PACKET
+mdefine_line|#define ADB_PACKET&t;0
+DECL|macro|CUDA_PACKET
+mdefine_line|#define CUDA_PACKET&t;1
+DECL|macro|ERROR_PACKET
+mdefine_line|#define ERROR_PACKET&t;2
+DECL|macro|TIMER_PACKET
+mdefine_line|#define TIMER_PACKET&t;3
+DECL|macro|POWER_PACKET
+mdefine_line|#define POWER_PACKET&t;4
+DECL|macro|MACIIC_PACKET
+mdefine_line|#define MACIIC_PACKET&t;5
+DECL|macro|PMU_PACKET
+mdefine_line|#define PMU_PACKET&t;6
 macro_line|#ifdef __KERNEL__
 DECL|struct|adb_request
 r_struct
@@ -115,8 +130,32 @@ l_int|16
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|enum|adb_hw
+multiline_comment|/* Messages sent thru the client_list notifier. You should NOT stop&n;   the operation, at least not with this version */
+DECL|enum|adb_message
+r_enum
+id|adb_message
+(brace
+DECL|enumerator|ADB_MSG_POWERDOWN
+id|ADB_MSG_POWERDOWN
+comma
+multiline_comment|/* Currently called before sleep only */
+DECL|enumerator|ADB_MSG_PRE_RESET
+id|ADB_MSG_PRE_RESET
+comma
+multiline_comment|/* Called before resetting the bus */
+DECL|enumerator|ADB_MSG_POST_RESET
+id|ADB_MSG_POST_RESET
+multiline_comment|/* Called after resetting the bus (re-do init &amp; register) */
+)brace
+suffix:semicolon
 r_extern
+r_struct
+id|notifier_block
+op_star
+id|adb_client_list
+suffix:semicolon
+multiline_comment|/* Kind of ADB controller */
+DECL|enum|adb_hw
 r_enum
 id|adb_hw
 (brace
@@ -124,6 +163,7 @@ DECL|enumerator|ADB_NONE
 DECL|enumerator|ADB_VIACUDA
 DECL|enumerator|ADB_VIAPMU
 DECL|enumerator|ADB_MACIO
+DECL|enumerator|ADB_UNKNOWN
 id|ADB_NONE
 comma
 id|ADB_VIACUDA
@@ -131,14 +171,26 @@ comma
 id|ADB_VIAPMU
 comma
 id|ADB_MACIO
+comma
+id|ADB_UNKNOWN
 )brace
-id|adb_hardware
 suffix:semicolon
+multiline_comment|/* Definition of a controller */
+DECL|struct|adb_controller
 r_extern
+r_struct
+id|adb_controller
+(brace
+DECL|member|kind
+r_enum
+id|adb_hw
+id|kind
+suffix:semicolon
+DECL|member|send_request
 r_int
 (paren
 op_star
-id|adb_send_request
+id|send_request
 )paren
 (paren
 r_struct
@@ -150,26 +202,45 @@ r_int
 id|sync
 )paren
 suffix:semicolon
-r_extern
+DECL|member|autopoll
 r_int
 (paren
 op_star
-id|adb_autopoll
+id|autopoll
 )paren
 (paren
 r_int
 id|devs
 )paren
 suffix:semicolon
-r_extern
+DECL|member|reset_bus
 r_int
 (paren
 op_star
-id|adb_reset_bus
+id|reset_bus
 )paren
 (paren
 r_void
 )paren
+suffix:semicolon
+DECL|member|poll
+r_void
+(paren
+op_star
+id|poll
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+)brace
+op_star
+id|adb_controller
+suffix:semicolon
+r_extern
+r_enum
+id|adb_hw
+id|adb_hardware
 suffix:semicolon
 multiline_comment|/* Values for adb_request flags */
 DECL|macro|ADBREQ_REPLY
@@ -291,6 +362,20 @@ comma
 r_int
 op_star
 id|handler_id
+)paren
+suffix:semicolon
+r_int
+id|adb_reset_bus
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|adb_poll
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

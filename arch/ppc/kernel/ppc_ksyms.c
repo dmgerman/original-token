@@ -26,6 +26,8 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -124,7 +126,7 @@ id|regs
 suffix:semicolon
 r_extern
 id|atomic_t
-id|n_lost_interrupts
+id|ppc_n_lost_interrupts
 suffix:semicolon
 r_extern
 r_void
@@ -252,11 +254,11 @@ c_func
 id|sys_sigreturn
 )paren
 suffix:semicolon
-DECL|variable|n_lost_interrupts
+DECL|variable|ppc_n_lost_interrupts
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|n_lost_interrupts
+id|ppc_n_lost_interrupts
 )paren
 suffix:semicolon
 DECL|variable|do_lost_interrupts
@@ -280,18 +282,18 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|ppc_local_irq_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_irq_count
+id|ppc_local_irq_count
 )paren
 suffix:semicolon
-DECL|variable|local_bh_count
+DECL|variable|ppc_local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|local_bh_count
+id|ppc_local_bh_count
 )paren
 suffix:semicolon
 DECL|variable|isa_io_base
@@ -313,6 +315,41 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_dram_offset
+)paren
+suffix:semicolon
+DECL|variable|ISA_DMA_THRESHOLD
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ISA_DMA_THRESHOLD
+)paren
+suffix:semicolon
+DECL|variable|DMA_MODE_READ
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|DMA_MODE_READ
+)paren
+suffix:semicolon
+DECL|variable|DMA_MODE_WRITE
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|DMA_MODE_WRITE
+)paren
+suffix:semicolon
+DECL|variable|_prep_type
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_prep_type
+)paren
+suffix:semicolon
+DECL|variable|ucSystemType
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ucSystemType
 )paren
 suffix:semicolon
 DECL|variable|atomic_add
@@ -779,6 +816,13 @@ c_func
 id|giveup_fpu
 )paren
 suffix:semicolon
+DECL|variable|enable_kernel_fp
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_kernel_fp
+)paren
+suffix:semicolon
 DECL|variable|flush_icache_range
 id|EXPORT_SYMBOL
 c_func
@@ -872,7 +916,6 @@ id|_write_unlock
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef CONFIG_MACH_SPECIFIC
 DECL|variable|_machine
 id|EXPORT_SYMBOL
 c_func
@@ -880,19 +923,18 @@ c_func
 id|_machine
 )paren
 suffix:semicolon
-macro_line|#endif
+DECL|variable|ppc_md
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppc_md
+)paren
+suffix:semicolon
 DECL|variable|adb_request
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|adb_request
-)paren
-suffix:semicolon
-DECL|variable|adb_autopoll
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|adb_autopoll
 )paren
 suffix:semicolon
 DECL|variable|adb_register
@@ -909,13 +951,6 @@ c_func
 id|cuda_request
 )paren
 suffix:semicolon
-DECL|variable|cuda_send_request
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cuda_send_request
-)paren
-suffix:semicolon
 DECL|variable|cuda_poll
 id|EXPORT_SYMBOL
 c_func
@@ -928,13 +963,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pmu_request
-)paren
-suffix:semicolon
-DECL|variable|pmu_send_request
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pmu_send_request
 )paren
 suffix:semicolon
 DECL|variable|pmu_poll
@@ -1000,13 +1028,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_property
-)paren
-suffix:semicolon
-DECL|variable|device_is_compatible
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|device_is_compatible
 )paren
 suffix:semicolon
 DECL|variable|pci_io_base
@@ -1076,7 +1097,6 @@ id|nvram_write_byte
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC */
-macro_line|#ifdef CONFIG_SOUND_MODULE
 DECL|variable|abs
 id|EXPORT_SYMBOL
 c_func
@@ -1084,7 +1104,13 @@ c_func
 id|abs
 )paren
 suffix:semicolon
-macro_line|#endif
+DECL|variable|device_is_compatible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|device_is_compatible
+)paren
+suffix:semicolon
 multiline_comment|/* The following are special because they&squot;re not called&n;   explicitly (the C compiler generates them).  Fortunately,&n;   their interface isn&squot;t gonna change any time soon now, so&n;   it&squot;s OK to leave it out of version control.  */
 DECL|variable|__ashrdi3
 id|EXPORT_SYMBOL_NOVERS

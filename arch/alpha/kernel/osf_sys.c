@@ -6523,10 +6523,6 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|ret
 op_assign
 id|do_adjtimex
@@ -6535,7 +6531,13 @@ c_func
 op_amp
 id|txc
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+OL
+l_int|0
 )paren
 r_return
 id|ret
@@ -6604,7 +6606,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 eof

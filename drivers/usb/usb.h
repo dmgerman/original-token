@@ -1,6 +1,7 @@
 macro_line|#ifndef __LINUX_USB_H
 DECL|macro|__LINUX_USB_H
 mdefine_line|#define __LINUX_USB_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -173,13 +174,13 @@ r_int
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; *&n; * Make this MUCH dynamic, right now&n; * it contains enough information for&n; * a USB floppy controller, and nothing&n; * else.&n; *&n; * I&squot;m not proud. I just want this dang&n; * thing to start working.&n; */
+multiline_comment|/*&n; * This is a USB device descriptor.&n; *&n; * USB device information&n; *&n; */
 DECL|macro|USB_MAXCONFIG
-mdefine_line|#define USB_MAXCONFIG&t;&t;2
+mdefine_line|#define USB_MAXCONFIG&t;&t;8
 DECL|macro|USB_MAXINTERFACES
-mdefine_line|#define USB_MAXINTERFACES&t;8
+mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
-mdefine_line|#define USB_MAXENDPOINTS&t;4
+mdefine_line|#define USB_MAXENDPOINTS&t;32
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -271,6 +272,11 @@ DECL|member|bInterval
 id|__u8
 id|bInterval
 suffix:semicolon
+DECL|member|audio
+r_void
+op_star
+id|audio
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Interface descriptor */
@@ -317,10 +323,13 @@ suffix:semicolon
 DECL|member|endpoint
 r_struct
 id|usb_endpoint_descriptor
+op_star
 id|endpoint
-(braket
-id|USB_MAXENDPOINTS
-)braket
+suffix:semicolon
+DECL|member|audio
+r_void
+op_star
+id|audio
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -364,10 +373,8 @@ suffix:semicolon
 DECL|member|interface
 r_struct
 id|usb_interface_descriptor
+op_star
 id|interface
-(braket
-id|USB_MAXINTERFACES
-)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -638,10 +645,8 @@ multiline_comment|/* Descriptor */
 DECL|member|config
 r_struct
 id|usb_config_descriptor
+op_star
 id|config
-(braket
-id|USB_MAXCONFIG
-)braket
 suffix:semicolon
 multiline_comment|/* All of the configs */
 DECL|member|parent
@@ -1170,9 +1175,11 @@ c_func
 r_struct
 id|usb_interface_descriptor
 op_star
+id|interface
 comma
 id|u8
 op_star
+id|data
 )paren
 (brace
 )brace
@@ -1186,9 +1193,11 @@ c_func
 r_struct
 id|usb_endpoint_descriptor
 op_star
+id|interface
 comma
 id|u8
 op_star
+id|data
 )paren
 (brace
 )brace

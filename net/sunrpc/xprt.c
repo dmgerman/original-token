@@ -535,6 +535,10 @@ id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
+id|msg.msg_controllen
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Dont repeat bytes */
 r_if
 c_cond
@@ -746,6 +750,10 @@ id|msg.msg_control
 op_assign
 l_int|NULL
 suffix:semicolon
+id|msg.msg_controllen
+op_assign
+l_int|0
+suffix:semicolon
 id|oldfs
 op_assign
 id|get_fs
@@ -819,6 +827,10 @@ suffix:semicolon
 id|msg.msg_control
 op_assign
 l_int|NULL
+suffix:semicolon
+id|msg.msg_controllen
+op_assign
+l_int|0
 suffix:semicolon
 id|oldfs
 op_assign

@@ -1,8 +1,8 @@
-multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;   Copyright (c) 1998, 1999 Jens Axboe&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n; -- Change the CDROMREADMODE1, CDROMREADMODE2, CDROMREADAUDIO, and &n; CDROMREADRAW ioctls so they go through the Uniform CD-ROM driver.&n; &n; -- Sync options and capability flags.&n; &n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead returns the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;2.13  July 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in CDROM_SELECT_SPEED where you couldn&squot;t lower the speed&n;  of the drive.  Thanks to Tobias Ringstr|m &lt;tori@prosolvia.se&gt; for pointing&n;  this out and providing a simple fix.&n;  -- Fixed the procfs-unload-module bug with the fill_inode procfs callback.&n;  thanks to Andrea Arcangeli&n;  -- Fixed it so that the /proc entry now also shows up when cdrom is&n;  compiled into the kernel.  Before it only worked when loaded as a module.&n;&n;  2.14 August 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in cdrom_media_changed and handling of reporting that&n;  the media had changed for devices that _don&squot;t_ implement media_changed.  &n;  Thanks to Grant R. Guenther &lt;grant@torque.net&gt; for spotting this bug.&n;  -- Made a few things more pedanticly correct.&n;&n;2.50 Oct 19, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- New maintainers! Erik was too busy to continue the work on the driver,&n;  so now Chris Zwilling &lt;chris@cloudnet.com&gt; and Jens Axboe &lt;axboe@image.dk&gt;&n;  will do their best to follow in his footsteps&n;  &n;  2.51 Dec 20, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check if drive is capable of doing what we ask before blindly changing&n;  cdi-&gt;options in various ioctl.&n;  -- Added version to proc entry.&n;  &n;  2.52 Jan 16, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed an error in open_for_data where we would sometimes not return&n;  the correct error value. Thanks Huba Gaspar &lt;huba@softcell.hu&gt;.&n;  -- Fixed module usage count - usage was based on /proc/sys/dev&n;  instead of /proc/sys/dev/cdrom. This could lead to an oops when other&n;  modules had entries in dev. Feb 02 - real bug was in sysctl.c where&n;  dev would be removed even though it was used. cdrom.c just illuminated&n;  that bug.&n;  &n;  2.53 Feb 22, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixup of several ioctl calls, in particular CDROM_SET_OPTIONS has&n;  been &quot;rewritten&quot; because capabilities and options aren&squot;t in sync. They&n;  should be...&n;  -- Added CDROM_LOCKDOOR ioctl. Locks the door and keeps it that way.&n;  -- Added CDROM_RESET ioctl.&n;  -- Added CDROM_DEBUG ioctl. Enable debug messages on-the-fly.&n;  -- Added CDROM_GET_CAPABILITY ioctl. This relieves userspace programs&n;  from parsing /proc/sys/dev/cdrom/info.&n;  &n;  2.54 Mar 15, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check capability mask from low level driver when counting tracks as&n;  per suggestion from Corey J. Scotts &lt;cstotts@blue.weeg.uiowa.edu&gt;.&n;&n;-------------------------------------------------------------------------*/
+multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen &lt;andersee@debian.org&gt;&n;   Copyright (c) 1998, 1999 Jens Axboe&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to the hardware. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n; To Do List:&n; ----------------------------------&n;&n; -- Modify sysctl/proc interface. I plan on having one directory per&n; drive, with entries for outputing general drive information, and sysctl&n; based tunable parameters such as whether the tray should auto-close for&n; that drive. Suggestions (or patches) for this welcome!&n;&n; -- Change the CDROMREADMODE1, CDROMREADMODE2, CDROMREADAUDIO, and &n; CDROMREADRAW ioctls so they go through the Uniform CD-ROM driver.&n; &n; -- Sync options and capability flags.&n; &n;&n;&n; Revision History&n; ----------------------------------&n; 1.00  Date Unknown -- David van Leeuwen &lt;david@tm.tno.nl&gt;&n; -- Initial version by David A. van Leeuwen. I don&squot;t have a detailed&n;  changelog for the 1.x series, David?&n;&n;2.00  Dec  2, 1997 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  -- Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved...&n;&n;  -- Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  -- Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  -- Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  -- Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  -- Simplified some complex logic so that the source code is easier to read.&n;&n;  -- Other stuff I probably forgot to mention (lots of changes).&n;&n;2.01 to 2.11 Dec 1997-Jan 1998&n;  -- TO-DO!  Write changelogs for 2.01 to 2.12.&n;&n;2.12  Jan  24, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in the IOCTL_IN and IOCTL_OUT macros.  It turns out that&n;  copy_*_user does not return EFAULT on error, but instead returns the number &n;  of bytes not copied.  I was returning whatever non-zero stuff came back from &n;  the copy_*_user functions directly, which would result in strange errors.&n;&n;2.13  July 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in CDROM_SELECT_SPEED where you couldn&squot;t lower the speed&n;  of the drive.  Thanks to Tobias Ringstr|m &lt;tori@prosolvia.se&gt; for pointing&n;  this out and providing a simple fix.&n;  -- Fixed the procfs-unload-module bug with the fill_inode procfs callback.&n;  thanks to Andrea Arcangeli&n;  -- Fixed it so that the /proc entry now also shows up when cdrom is&n;  compiled into the kernel.  Before it only worked when loaded as a module.&n;&n;  2.14 August 17, 1998 -- Erik Andersen &lt;andersee@debian.org&gt;&n;  -- Fixed a bug in cdrom_media_changed and handling of reporting that&n;  the media had changed for devices that _don&squot;t_ implement media_changed.  &n;  Thanks to Grant R. Guenther &lt;grant@torque.net&gt; for spotting this bug.&n;  -- Made a few things more pedanticly correct.&n;&n;2.50 Oct 19, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- New maintainers! Erik was too busy to continue the work on the driver,&n;  so now Chris Zwilling &lt;chris@cloudnet.com&gt; and Jens Axboe &lt;axboe@image.dk&gt;&n;  will do their best to follow in his footsteps&n;  &n;  2.51 Dec 20, 1998 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check if drive is capable of doing what we ask before blindly changing&n;  cdi-&gt;options in various ioctl.&n;  -- Added version to proc entry.&n;  &n;  2.52 Jan 16, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixed an error in open_for_data where we would sometimes not return&n;  the correct error value. Thanks Huba Gaspar &lt;huba@softcell.hu&gt;.&n;  -- Fixed module usage count - usage was based on /proc/sys/dev&n;  instead of /proc/sys/dev/cdrom. This could lead to an oops when other&n;  modules had entries in dev. Feb 02 - real bug was in sysctl.c where&n;  dev would be removed even though it was used. cdrom.c just illuminated&n;  that bug.&n;  &n;  2.53 Feb 22, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Fixup of several ioctl calls, in particular CDROM_SET_OPTIONS has&n;  been &quot;rewritten&quot; because capabilities and options aren&squot;t in sync. They&n;  should be...&n;  -- Added CDROM_LOCKDOOR ioctl. Locks the door and keeps it that way.&n;  -- Added CDROM_RESET ioctl.&n;  -- Added CDROM_DEBUG ioctl. Enable debug messages on-the-fly.&n;  -- Added CDROM_GET_CAPABILITY ioctl. This relieves userspace programs&n;  from parsing /proc/sys/dev/cdrom/info.&n;  &n;  2.54 Mar 15, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- Check capability mask from low level driver when counting tracks as&n;  per suggestion from Corey J. Scotts &lt;cstotts@blue.weeg.uiowa.edu&gt;.&n;  &n;  2.55 Apr 25, 1999 - Jens Axboe &lt;axboe@image.dk&gt;&n;  -- autoclose was mistakenly checked against CDC_OPEN_TRAY instead of&n;  CDC_CLOSE_TRAY.&n;  -- proc info didn&squot;t mask against capabilities mask.&n;&n;-------------------------------------------------------------------------*/
 DECL|macro|REVISION
-mdefine_line|#define REVISION &quot;Revision: 2.54&quot;
+mdefine_line|#define REVISION &quot;Revision: 2.55&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;Id: cdrom.c 2.54 1999/03/15&quot;
+mdefine_line|#define VERSION &quot;Id: cdrom.c 2.55 1999/04/25&quot;
 multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   messages dumped to the system logs.  The available masks include: */
 DECL|macro|CD_NOTHING
 mdefine_line|#define CD_NOTHING      0x0
@@ -544,7 +544,7 @@ op_amp
 op_complement
 id|cdi-&gt;mask
 op_amp
-id|CDC_OPEN_TRAY
+id|CDC_CLOSE_TRAY
 )paren
 id|cdi-&gt;options
 op_or_assign
@@ -4486,6 +4486,9 @@ comma
 (paren
 id|cdi-&gt;ops-&gt;capability
 op_amp
+op_complement
+id|cdi-&gt;mask
+op_amp
 id|CDC_CLOSE_TRAY
 )paren
 op_ne
@@ -4534,6 +4537,9 @@ comma
 (paren
 (paren
 id|cdi-&gt;ops-&gt;capability
+op_amp
+op_complement
+id|cdi-&gt;mask
 op_amp
 id|CDC_OPEN_TRAY
 )paren
@@ -4584,6 +4590,9 @@ comma
 (paren
 id|cdi-&gt;ops-&gt;capability
 op_amp
+op_complement
+id|cdi-&gt;mask
+op_amp
 id|CDC_LOCK
 )paren
 op_ne
@@ -4633,6 +4642,9 @@ comma
 (paren
 id|cdi-&gt;ops-&gt;capability
 op_amp
+op_complement
+id|cdi-&gt;mask
+op_amp
 id|CDC_SELECT_SPEED
 )paren
 op_ne
@@ -4681,6 +4693,9 @@ comma
 (paren
 (paren
 id|cdi-&gt;ops-&gt;capability
+op_amp
+op_complement
+id|cdi-&gt;mask
 op_amp
 id|CDC_SELECT_DISC
 )paren
@@ -4877,6 +4892,9 @@ comma
 (paren
 (paren
 id|cdi-&gt;ops-&gt;capability
+op_amp
+op_complement
+id|cdi-&gt;mask
 op_amp
 id|CDC_PLAY_AUDIO
 )paren

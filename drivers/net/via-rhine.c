@@ -4916,6 +4916,10 @@ id|dev-&gt;last_rx
 op_assign
 id|jiffies
 suffix:semicolon
+id|np-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
+suffix:semicolon
 id|np-&gt;stats.rx_packets
 op_increment
 suffix:semicolon

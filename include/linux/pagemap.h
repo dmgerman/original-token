@@ -31,6 +31,22 @@ id|mem_map
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The page cache can done in larger chunks than&n; * one page, because it allows for more efficient&n; * throughput (it can then be mapped into user&n; * space in smaller chunks for same flexibility).&n; *&n; * Or rather, it _will_ be done in larger chunks.&n; */
+DECL|macro|PAGE_CACHE_SHIFT
+mdefine_line|#define PAGE_CACHE_SHIFT&t;PAGE_SHIFT
+DECL|macro|PAGE_CACHE_SIZE
+mdefine_line|#define PAGE_CACHE_SIZE&t;&t;PAGE_SIZE
+DECL|macro|PAGE_CACHE_MASK
+mdefine_line|#define PAGE_CACHE_MASK&t;&t;PAGE_MASK
+DECL|macro|page_cache_alloc
+mdefine_line|#define page_cache_alloc()&t;__get_free_page(GFP_USER)
+DECL|macro|page_cache_free
+mdefine_line|#define page_cache_free(x)&t;free_page(x)
+DECL|macro|page_cache_release
+mdefine_line|#define page_cache_release(x)&t;__free_page(x)
+multiline_comment|/*&n; * From a kernel address, get the &quot;struct page *&quot;&n; */
+DECL|macro|page_cache_entry
+mdefine_line|#define page_cache_entry(x)&t;(mem_map + MAP_NR(x))
 DECL|macro|PAGE_HASH_BITS
 mdefine_line|#define PAGE_HASH_BITS 12
 DECL|macro|PAGE_HASH_SIZE

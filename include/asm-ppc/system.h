@@ -11,6 +11,32 @@ DECL|macro|rmb
 mdefine_line|#define rmb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb()  __asm__ __volatile__ (&quot;eieio&quot; : : : &quot;memory&quot;)
+r_extern
+r_void
+id|xmon_irq
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|xmon
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|excp
+)paren
+suffix:semicolon
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
 DECL|macro|__save_and_cli
@@ -60,7 +86,7 @@ id|flags
 (brace
 r_extern
 id|atomic_t
-id|n_lost_interrupts
+id|ppc_n_lost_interrupts
 suffix:semicolon
 r_extern
 r_void
@@ -84,7 +110,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|n_lost_interrupts
+id|ppc_n_lost_interrupts
 )paren
 op_ne
 l_int|0
@@ -264,17 +290,17 @@ r_void
 id|giveup_fpu
 c_func
 (paren
-r_void
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|smp_giveup_fpu
+id|enable_kernel_fp
 c_func
 (paren
-r_struct
-id|task_struct
-op_star
+r_void
 )paren
 suffix:semicolon
 r_extern

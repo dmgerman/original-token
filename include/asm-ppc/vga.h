@@ -106,8 +106,13 @@ DECL|macro|scr_memcpyw_from
 mdefine_line|#define scr_memcpyw_from memcpy
 DECL|macro|scr_memcpyw_to
 mdefine_line|#define scr_memcpyw_to memcpy
+r_extern
+r_int
+r_int
+id|vgacon_remap_base
+suffix:semicolon
 DECL|macro|VGA_MAP_MEM
-mdefine_line|#define VGA_MAP_MEM(x) (x + _ISA_MEM_BASE)
+mdefine_line|#define VGA_MAP_MEM(x) (x + vgacon_remap_base)
 DECL|macro|vga_readb
 mdefine_line|#define vga_readb(x) (*(x))
 DECL|macro|vga_writeb

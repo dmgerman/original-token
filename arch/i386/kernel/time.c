@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -86,20 +87,12 @@ l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Read the Time Stamp Counter */
-id|__asm__
+id|rdtsc
 c_func
 (paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
 id|eax
-)paren
 comma
-l_string|&quot;=d&quot;
-(paren
 id|edx
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* .. relative to previous jiffy (32 bits is enough) */
@@ -987,18 +980,10 @@ id|use_tsc
 multiline_comment|/*&n;&t;&t; * It is important that these two operations happen almost at&n;&t;&t; * the same time. We do the RDTSC stuff first, since it&squot;s&n;&t;&t; * faster. To avoid any inconsistencies, we need interrupts&n;&t;&t; * disabled locally.&n;&t;&t; */
 multiline_comment|/*&n;&t;&t; * Interrupts are just disabled locally since the timer irq&n;&t;&t; * has the SA_INTERRUPT flag set. -arca&n;&t;&t; */
 multiline_comment|/* read Pentium cycle counter */
-id|__asm__
+id|rdtscl
 c_func
 (paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
 id|last_tsc_low
-)paren
-suffix:colon
-suffix:colon
-l_string|&quot;edx&quot;
 )paren
 suffix:semicolon
 id|outb_p
@@ -1536,21 +1521,12 @@ r_int
 r_int
 id|count
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|rdtsc
 c_func
 (paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
 id|startlow
-)paren
 comma
-l_string|&quot;=d&quot;
-(paren
 id|starthigh
-)paren
 )paren
 suffix:semicolon
 id|count
@@ -1579,21 +1555,12 @@ op_eq
 l_int|0
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|rdtsc
 c_func
 (paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
 id|endlow
-)paren
 comma
-l_string|&quot;=d&quot;
-(paren
 id|endhigh
-)paren
 )paren
 suffix:semicolon
 id|last_tsc_low

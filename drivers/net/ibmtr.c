@@ -1811,6 +1811,10 @@ id|ti
 )paren
 )paren
 suffix:semicolon
+id|ibmtr_mem_base
+op_assign
+id|ti-&gt;sram_base
+suffix:semicolon
 macro_line|#else
 id|ti-&gt;avail_shared_ram
 op_assign

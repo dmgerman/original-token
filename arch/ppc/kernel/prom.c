@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.50 1999/03/16 10:40:34 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.53 1999/04/22 22:45:42 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -1053,6 +1054,7 @@ id|prom_entry
 id|pp
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP&t;
 r_int
 id|cpu
 op_assign
@@ -1072,6 +1074,7 @@ comma
 op_star
 id|path
 suffix:semicolon
+macro_line|#endif&t;
 r_int
 r_int
 id|mem
@@ -6588,12 +6591,18 @@ l_int|0
 r_if
 c_cond
 (paren
-id|strcasecmp
+id|strncasecmp
 c_func
 (paren
 id|cp
 comma
 id|compat
+comma
+id|strlen
+c_func
+(paren
+id|compat
+)paren
 )paren
 op_eq
 l_int|0
@@ -7249,6 +7258,12 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+DECL|variable|rtas_lock
+id|spinlock_t
+id|rtas_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* this can be called after setup -- Cort */
 id|__openfirmware
 r_int
@@ -7434,6 +7449,13 @@ c_func
 id|list
 )paren
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|rtas_lock
+)paren
+suffix:semicolon
 id|enter_rtas
 c_func
 (paren
@@ -7447,6 +7469,13 @@ c_func
 op_amp
 id|u
 )paren
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|rtas_lock
 )paren
 suffix:semicolon
 r_if

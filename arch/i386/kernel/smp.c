@@ -7,12 +7,8 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/mtrr.h&gt;
+macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &quot;irq.h&quot;
-r_extern
-r_int
-r_int
-id|start_kernel
-suffix:semicolon
 r_extern
 r_void
 id|update_one_process
@@ -343,11 +339,8 @@ macro_line|#endif
 multiline_comment|/*&n; * IA s/w dev Vol 3, Section 7.4&n; */
 DECL|macro|APIC_DEFAULT_PHYS_BASE
 mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
-multiline_comment|/*&n; * Reads and clears the Pentium Timestamp-Counter&n; */
-DECL|macro|READ_TSC
-mdefine_line|#define READ_TSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;(x))[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;(x))[1]))
 DECL|macro|CLEAR_TSC
-mdefine_line|#define CLEAR_TSC &bslash;&n;&t;__asm__ __volatile__ (&quot;&bslash;t.byte 0x0f, 0x30;&bslash;n&quot;::&bslash;&n;&t;&t;&quot;a&quot;(0x00001000), &quot;d&quot;(0x00001000), &quot;c&quot;(0x10):&quot;memory&quot;)
+mdefine_line|#define CLEAR_TSC wrmsr(0x10, 0x00001000, 0x00001000)
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
 DECL|function|smp_setup
 r_void
@@ -2735,7 +2728,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPUs - they just need to reload everything&n; * from the task structure&n; */
+multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPUs - they just need to reload everything&n; * from the task structure&n; * This function must not return.&n; */
 DECL|function|initialize_secondary
 r_void
 id|__init
@@ -2911,6 +2904,19 @@ id|i
 )braket
 op_assign
 id|cpucount
+suffix:semicolon
+id|idle-&gt;has_cpu
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* we schedule the first task manually */
+id|idle-&gt;tss.eip
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|start_secondary
 suffix:semicolon
 multiline_comment|/* start_eip had better be page-aligned! */
 id|start_eip
@@ -3877,6 +3883,11 @@ id|mtrr_init_boot_cpu
 )paren
 suffix:semicolon
 macro_line|#endif
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize the logical to physical CPU number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
 r_for
 c_loop
@@ -5744,7 +5755,7 @@ id|wait_8254_wraparound
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We wrapped around just now. Let&squot;s start:&n;&t; */
-id|READ_TSC
+id|rdtscll
 c_func
 (paren
 id|t1
@@ -5787,7 +5798,7 @@ c_func
 id|APIC_TMCCT
 )paren
 suffix:semicolon
-id|READ_TSC
+id|rdtscll
 c_func
 (paren
 id|t2

@@ -1789,6 +1789,10 @@ id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon
+id|inode-&gt;i_generation
+op_assign
+l_int|0
+suffix:semicolon
 id|memset
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.48 1999/03/16 10:40:32 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.49 1999/03/18 04:16:31 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -866,6 +866,13 @@ l_int|0
 )braket
 op_assign
 l_int|1
+suffix:semicolon
+id|cpu_callin_map
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 id|smp_store_cpu_info
 c_func

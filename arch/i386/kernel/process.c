@@ -226,6 +226,11 @@ op_assign
 op_minus
 l_int|100
 suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -313,6 +318,11 @@ id|current-&gt;counter
 op_assign
 op_minus
 l_int|100
+suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
 suffix:semicolon
 r_while
 c_loop

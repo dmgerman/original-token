@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -163,6 +164,10 @@ suffix:semicolon
 DECL|member|tx_reap
 id|ushort
 id|tx_reap
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1300,6 +1305,10 @@ id|shmem
 op_assign
 id|dev-&gt;mem_start
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1502,6 +1511,16 @@ op_plus
 id|MISC_CTRL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|hardware_send_packet
 c_func
 (paren
@@ -1512,6 +1531,27 @@ comma
 id|length
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else
+id|hardware_send_packet
+c_func
+(paren
+id|dev
+comma
+id|buf
+comma
+id|length
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -1626,6 +1666,13 @@ suffix:semicolon
 id|shmem
 op_assign
 id|dev-&gt;mem_start
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 id|status
 op_assign
@@ -2012,6 +2059,13 @@ comma
 id|ioaddr
 op_plus
 id|MISC_CTRL
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
 )paren
 suffix:semicolon
 r_return

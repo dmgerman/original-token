@@ -7187,6 +7187,16 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|NULL
+op_eq
+id|SCpnt
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* If not, the next line will oops ... */
 id|memset
 c_func
 (paren
@@ -7281,6 +7291,31 @@ id|SCpnt-&gt;owner
 op_assign
 id|SCSI_OWNER_NOBODY
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|j
+OL
+id|SDpnt-&gt;queue_depth
+)paren
+(brace
+multiline_comment|/* low on space (D.Gilbert 990424) */
+id|printk
+c_func
+(paren
+l_string|&quot;scsi_build_commandblocks: want=%d, space for=%d blocks&bslash;n&quot;
+comma
+id|SDpnt-&gt;queue_depth
+comma
+id|j
+)paren
+suffix:semicolon
+id|SDpnt-&gt;queue_depth
+op_assign
+id|j
+suffix:semicolon
+multiline_comment|/* Still problem if 0==j , continue anyway ... */
 )brace
 id|SDpnt-&gt;has_cmdblocks
 op_assign

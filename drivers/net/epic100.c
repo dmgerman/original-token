@@ -5696,6 +5696,15 @@ id|pkt_len
 )paren
 suffix:semicolon
 macro_line|#endif
+id|ep-&gt;rx_ring
+(braket
+id|entry
+)braket
+dot
+id|status
+op_assign
+l_int|0x8000
+suffix:semicolon
 )brace
 r_else
 (brace

@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
 mdefine_line|#define NET_DEBUG 4
@@ -142,6 +143,10 @@ DECL|member|old_mc_count
 r_int
 r_char
 id|old_mc_count
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1777,6 +1782,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
@@ -1794,6 +1803,18 @@ c_func
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Best would be to use synchronize_irq(); spin_lock() here&n;&t; *&t;lets make it work first..&n;&t; */
+macro_line|#ifdef CONFIG_SMP
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If dev-&gt;tbusy is set, all our tx buffers are full but the kernel&n;&t; * is calling us anyway.  Check that nothing bad is happening.&n;&t; */
 r_if
 c_cond
@@ -1827,9 +1848,22 @@ id|lp-&gt;last_tx
 OL
 id|HZ
 )paren
+(brace
+macro_line|#ifdef CONFIG_SMP
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1965,6 +1999,17 @@ c_func
 id|buf
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 id|enable_irq
 c_func
 (paren
@@ -2495,6 +2540,13 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 id|old_read_ptr
 op_assign
 id|inw
@@ -2969,6 +3021,13 @@ comma
 id|ioaddr
 op_plus
 id|WRITE_PTR
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
 )paren
 suffix:semicolon
 r_return
