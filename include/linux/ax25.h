@@ -26,8 +26,6 @@ DECL|macro|AX25_IDLE
 mdefine_line|#define AX25_IDLE&t;9
 DECL|macro|AX25_PACLEN
 mdefine_line|#define AX25_PACLEN&t;10
-DECL|macro|AX25_MAXQUEUE
-mdefine_line|#define AX25_MAXQUEUE&t;11
 DECL|macro|AX25_IAMDIGI
 mdefine_line|#define AX25_IAMDIGI&t;12
 DECL|macro|AX25_KILL

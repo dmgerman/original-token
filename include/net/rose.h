@@ -54,16 +54,29 @@ mdefine_line|#define&t;ROSE_DIAGNOSTIC&t;&t;&t;0xF1
 DECL|macro|ROSE_ILLEGAL
 mdefine_line|#define&t;ROSE_ILLEGAL&t;&t;&t;0xFD
 multiline_comment|/* Define Link State constants. */
-DECL|macro|ROSE_STATE_0
-mdefine_line|#define ROSE_STATE_0&t;&t;&t;0&t;&t;/* Ready */
-DECL|macro|ROSE_STATE_1
-mdefine_line|#define ROSE_STATE_1&t;&t;&t;1&t;&t;/* Awaiting Call Accepted */
-DECL|macro|ROSE_STATE_2
-mdefine_line|#define ROSE_STATE_2&t;&t;&t;2&t;&t;/* Awaiting Clear Confirmation */
-DECL|macro|ROSE_STATE_3
-mdefine_line|#define ROSE_STATE_3&t;&t;&t;3&t;&t;/* Data Transfer */
-DECL|macro|ROSE_STATE_4
-mdefine_line|#define&t;ROSE_STATE_4&t;&t;&t;4&t;&t;/* Awaiting Reset Confirmation */
+r_enum
+(brace
+DECL|enumerator|ROSE_STATE_0
+id|ROSE_STATE_0
+comma
+multiline_comment|/* Ready */
+DECL|enumerator|ROSE_STATE_1
+id|ROSE_STATE_1
+comma
+multiline_comment|/* Awaiting Call Accepted */
+DECL|enumerator|ROSE_STATE_2
+id|ROSE_STATE_2
+comma
+multiline_comment|/* Awaiting Clear Confirmation */
+DECL|enumerator|ROSE_STATE_3
+id|ROSE_STATE_3
+comma
+multiline_comment|/* Data Transfer */
+DECL|enumerator|ROSE_STATE_4
+id|ROSE_STATE_4
+multiline_comment|/* Awaiting Reset Confirmation */
+)brace
+suffix:semicolon
 DECL|macro|ROSE_DEFAULT_T0
 mdefine_line|#define ROSE_DEFAULT_T0&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T10 T20 value */
 DECL|macro|ROSE_DEFAULT_T1

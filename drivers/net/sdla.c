@@ -1780,7 +1780,7 @@ c_cond
 (paren
 id|inbuf
 )paren
-id|amemcpy
+id|memcpy
 c_func
 (paren
 id|cmd_buf-&gt;data
@@ -5060,8 +5060,6 @@ id|data
 suffix:semicolon
 r_int
 id|i
-comma
-id|err
 suffix:semicolon
 r_int
 id|size

@@ -1,6 +1,9 @@
 multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new&n; *&t;releases, misbehave and/or generally screw up. It might even work.&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; *&t;NET/ROM 002&t;Steve Whitehouse(GW7RRM) fixed the set_mac_address&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Put nr_rebuild_header into line with&n; *&t;&t;&t;&t;&t;ax25_rebuild_header&n; *&t;NET/ROM 004&t;Jonathan(G4KLX)&t;Callsign registration with AX.25.&n; *&t;NET/ROM 006&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
+DECL|macro|__NO_VERSION__
+mdefine_line|#define __NO_VERSION__
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -591,6 +594,8 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|ax25_listen_register
 c_func
 (paren
@@ -638,6 +643,8 @@ id|dev-&gt;dev_addr
 comma
 l_int|NULL
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -3250,8 +3250,23 @@ op_eq
 id|NETDEV_UP
 )paren
 (brace
-multiline_comment|/*&n; *&t;Join the initial group if multicast.&n; */
+multiline_comment|/*&n;&t;&t; *&t;Join the initial group if multicast.&n;&t;&t; */
 id|ip_mc_allhost
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|event
+op_eq
+id|NETDEV_DOWN
+)paren
+(brace
+id|ip_mc_drop_device
 c_func
 (paren
 id|dev

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ipv6.h&gt;
@@ -6665,6 +6666,12 @@ id|ndisc_proc_entry
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_IPV6_MODULE
+id|ndisc_eth_hook
+op_assign
+id|ndisc_eth_resolv
+suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#ifdef CONFIG_IPV6_MODULE

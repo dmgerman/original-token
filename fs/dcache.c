@@ -2,11 +2,14 @@ multiline_comment|/*&n; *  linux/fs/dcache.c&n; *&n; *  (C) Copyright 1994 Linus
 multiline_comment|/*&n; * The directory cache is a &quot;two-level&quot; cache, each level doing LRU on&n; * its entries.  Adding new entries puts them at the end of the LRU&n; * queue on the first-level cache, while the second-level cache is&n; * fed by any cache hits.&n; *&n; * The idea is that new additions (from readdir(), for example) will not&n; * flush the cache of entries that have really been used.&n; *&n; * There is a global hash-table over both caches that hashes the entries&n; * based on the directory inode number and device as well as on a&n; * string-hash computed over the name. &n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 multiline_comment|/*&n; * Don&squot;t bother caching long names.. They just take up space in the cache, and&n; * for a name cache you just want to cache the &quot;normal&quot; names anyway which tend&n; * to be short.&n; */
 DECL|macro|DCACHE_NAME_LEN
 mdefine_line|#define DCACHE_NAME_LEN&t;15
 DECL|macro|DCACHE_SIZE
 mdefine_line|#define DCACHE_SIZE 1024
+DECL|macro|DCACHE_HASH_QUEUES
+mdefine_line|#define DCACHE_HASH_QUEUES 256
 DECL|struct|hash_list
 r_struct
 id|hash_list
@@ -125,8 +128,6 @@ op_star
 id|level2_head
 suffix:semicolon
 multiline_comment|/*&n; * The hash-queues are also doubly-linked circular lists, but the head is&n; * itself on the doubly-linked list, not just a pointer to the first entry.&n; */
-DECL|macro|DCACHE_HASH_QUEUES
-mdefine_line|#define DCACHE_HASH_QUEUES 32
 DECL|macro|hash_fn
 mdefine_line|#define hash_fn(dev,dir,namehash) ((HASHDEV(dev) ^ (dir) ^ (namehash)) % DCACHE_HASH_QUEUES)
 DECL|variable|hash_table
@@ -279,6 +280,52 @@ r_int
 id|len
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|len
+op_ge
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+r_return
+id|len
+op_plus
+id|get_unaligned
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|name
+)paren
+op_plus
+id|get_unaligned
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|name
+op_plus
+id|len
+op_minus
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+)paren
+suffix:semicolon
 r_return
 id|len
 op_plus
@@ -438,31 +485,57 @@ id|hash
 r_struct
 id|dir_cache_entry
 op_star
-id|de
+id|nextde
 op_assign
 id|hash-&gt;next
 suffix:semicolon
 r_for
 c_loop
 (paren
-id|de
-op_assign
-id|hash-&gt;next
 suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+r_struct
+id|dir_cache_entry
+op_star
 id|de
-op_ne
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nextde
+op_eq
 (paren
 r_struct
 id|dir_cache_entry
 op_star
 )paren
 id|hash
+)paren
+r_break
 suffix:semicolon
 id|de
 op_assign
-id|de-&gt;h.next
+id|nextde
+suffix:semicolon
+id|nextde
+op_assign
+id|nextde-&gt;h.next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;name_len
+op_ne
+(paren
+r_int
+r_char
 )paren
-(brace
+id|len
+)paren
+r_continue
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -487,15 +560,6 @@ c_cond
 id|de-&gt;version
 op_ne
 id|dir-&gt;i_version
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|de-&gt;name_len
-op_ne
-id|len
 )paren
 r_continue
 suffix:semicolon

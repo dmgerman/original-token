@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_common.h,v 1.3 1996/05/19 00:13:05 fritz Exp $&n; *&n; * header for Linux ISDN subsystem, common used functions and debugging-switches (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_common.h,v $&n; * Revision 1.3  1996/05/19 00:13:05  fritz&n; * Removed debug flag.&n; *&n; * Revision 1.2  1996/04/20 16:20:40  fritz&n; * Misc. typos.&n; *&n; * Revision 1.1  1996/01/10 21:37:19  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_common.h,v 1.5 1997/02/10 10:05:45 fritz Exp $&n;&n; * header for Linux ISDN subsystem, common used functions and debugging-switches (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_common.h,v $&n; * Revision 1.5  1997/02/10 10:05:45  fritz&n; * More changes for Kernel 2.1.X&n; * Symbol information moved to isdn_syms.c&n; *&n; * Revision 1.4  1997/02/03 22:56:50  fritz&n; * Removed isdn_writebuf_stub prototype.&n; *&n; * Revision 1.3  1996/05/19 00:13:05  fritz&n; * Removed debug flag.&n; *&n; * Revision 1.2  1996/04/20 16:20:40  fritz&n; * Misc. typos.&n; *&n; * Revision 1.1  1996/01/10 21:37:19  fritz&n; * Initial revision&n; *&n; */
 DECL|macro|ISDN_DEBUG_MODEM_OPEN
 macro_line|#undef  ISDN_DEBUG_MODEM_OPEN
 DECL|macro|ISDN_DEBUG_MODEM_IOCTL
@@ -134,6 +134,7 @@ suffix:semicolon
 r_extern
 r_int
 id|isdn_readbchan
+c_func
 (paren
 r_int
 comma
@@ -168,24 +169,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|isdn_writebuf_stub
-c_func
-(paren
-r_int
-comma
-r_int
-comma
-r_const
-id|u_char
-op_star
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|isdn_writebuf_skb_stub
 c_func
 (paren
@@ -198,6 +181,29 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|register_isdn
+c_func
+(paren
+id|isdn_if
+op_star
+id|i
+)paren
+suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020111)
+r_extern
+r_void
+id|isdn_export_syms
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|isdn_export_syms
+mdefine_line|#define isdn_export_syms()
+macro_line|#endif
 macro_line|#if defined(ISDN_DEBUG_NET_DUMP) || defined(ISDN_DEBUG_MODEM_DUMP)
 r_extern
 r_void

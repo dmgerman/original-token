@@ -1711,6 +1711,13 @@ macro_line|#ifdef CONFIG_IP_FIREWALL_NETLINK
 r_if
 c_cond
 (paren
+(paren
+id|policy
+op_amp
+id|IP_FW_F_PRN
+)paren
+op_logical_and
+(paren
 id|answer
 op_eq
 id|FW_REJECT
@@ -1718,6 +1725,7 @@ op_logical_or
 id|answer
 op_eq
 id|FW_BLOCK
+)paren
 )paren
 (brace
 r_struct
@@ -4784,5 +4792,16 @@ id|ipfw_dev_notifier
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_IP_FIREWALL_NETLINK
+id|netlink_attach
+c_func
+(paren
+id|NETLINK_FIREWALL
+comma
+id|netlink_donothing
+)paren
+suffix:semicolon
+multiline_comment|/* XXX */
+macro_line|#endif /* CONFIG_IP_FIREWALL_NETLINK */
 )brace
 eof

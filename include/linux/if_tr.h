@@ -18,6 +18,7 @@ mdefine_line|#define ETH_DATA_LEN&t;1500&t;&t;/* Max. octets in payload&t; */
 mdefine_line|#define ETH_FRAME_LEN&t;1514&t;&t;/* Max. octets in frame sans FCS */
 macro_line|#endif
 multiline_comment|/* These are some defined Ethernet Protocol ID&squot;s. */
+multiline_comment|/* FIXME: should use the definitions in if_ether.h!!! */
 DECL|macro|ETH_P_IP
 mdefine_line|#define ETH_P_IP&t;0x0800&t;&t;/* Internet Protocol packet&t;*/
 DECL|macro|ETH_P_ARP

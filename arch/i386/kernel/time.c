@@ -27,6 +27,15 @@ id|irqaction
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
+multiline_comment|/* change this if you have some constant time drift */
+DECL|macro|USECS_PER_JIFFY
+mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
 macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
 multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
 r_static
@@ -49,15 +58,6 @@ id|init_timer_cc
 comma
 id|last_timer_cc
 suffix:semicolon
-r_extern
-r_volatile
-r_int
-r_int
-id|lost_ticks
-suffix:semicolon
-multiline_comment|/* change this if you have some constant time drift */
-DECL|macro|USECS_PER_JIFFY
-mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
 DECL|function|do_fast_gettimeoffset
 r_static
 r_int

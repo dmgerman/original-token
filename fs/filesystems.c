@@ -106,6 +106,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ROMFS_FS
+id|init_romfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_UMSDOS_FS
 id|init_umsdos_fs
 c_func
@@ -192,13 +199,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_UFS_FS
 id|init_ufs_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ROMFS_FS
-id|init_romfs_fs
 c_func
 (paren
 )paren

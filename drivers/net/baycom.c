@@ -13,12 +13,140 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
+multiline_comment|/* --------------------------------------------------------------------- */
+multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#else
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+DECL|macro|put_user
+macro_line|#undef put_user
+DECL|macro|get_user
+macro_line|#undef get_user
+DECL|macro|put_user
+mdefine_line|#define put_user(x,ptr) ({ __put_user((unsigned long)(x),(ptr),sizeof(*(ptr))); 0; })
+DECL|macro|get_user
+mdefine_line|#define get_user(x,ptr) ({ x = ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr)))); 0; })
+DECL|function|copy_from_user
+r_extern
+r_inline
+r_int
+id|copy_from_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|copy_to_user
+r_extern
+r_inline
+r_int
+id|copy_to_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|to
+comma
+id|n
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|BAYCOM_DEBUG
 mdefine_line|#define BAYCOM_DEBUG
@@ -3726,9 +3854,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
-r_static
-macro_line|#endif /* MODULE */
 DECL|function|baycom_init
 r_int
 id|baycom_init
@@ -3948,6 +4073,7 @@ multiline_comment|/* -----------------------------------------------------------
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * command line settable parameters&n; */
 DECL|variable|mode
+r_static
 r_char
 op_star
 id|mode
@@ -3955,17 +4081,20 @@ op_assign
 l_int|NULL
 suffix:semicolon
 DECL|variable|iobase
+r_static
 r_int
 id|iobase
 op_assign
 l_int|0x3f8
 suffix:semicolon
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
 l_int|4
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 id|MODULE_PARM
 c_func
 (paren
@@ -3974,12 +4103,28 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mode
+comma
+l_string|&quot;baycom operating mode; eg. ser12* or par96&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|iobase
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|iobase
+comma
+l_string|&quot;baycom io base address&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -3990,6 +4135,27 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;baycom irq number&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Baycom ser12, par96 and picpar amateur radio modem driver&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -4181,7 +4347,7 @@ id|ints
 l_int|0
 )braket
 OL
-l_int|3
+l_int|2
 )paren
 )paren
 (brace

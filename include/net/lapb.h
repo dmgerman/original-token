@@ -43,6 +43,14 @@ DECL|macro|LAPB_SPF
 mdefine_line|#define&t;LAPB_SPF&t;0x10&t;/* Poll/final bit for standard LAPB */
 DECL|macro|LAPB_EPF
 mdefine_line|#define&t;LAPB_EPF&t;0x01&t;/* Poll/final bit for extended LAPB */
+DECL|macro|LAPB_FRMR_W
+mdefine_line|#define&t;LAPB_FRMR_W&t;0x01&t;/* Control field invalid&t;*/
+DECL|macro|LAPB_FRMR_X
+mdefine_line|#define&t;LAPB_FRMR_X&t;0x02&t;/* I field invalid&t;&t;*/
+DECL|macro|LAPB_FRMR_Y
+mdefine_line|#define&t;LAPB_FRMR_Y&t;0x04&t;/* I field too long&t;&t;*/
+DECL|macro|LAPB_FRMR_Z
+mdefine_line|#define&t;LAPB_FRMR_Z&t;0x08&t;/* Invalid N(R)&t;&t;&t;*/
 DECL|macro|LAPB_POLLOFF
 mdefine_line|#define&t;LAPB_POLLOFF&t;0
 DECL|macro|LAPB_POLLON
@@ -61,16 +69,29 @@ mdefine_line|#define&t;LAPB_ADDR_C&t;0x0F
 DECL|macro|LAPB_ADDR_D
 mdefine_line|#define&t;LAPB_ADDR_D&t;0x07
 multiline_comment|/* Define Link State constants. */
-DECL|macro|LAPB_STATE_0
-mdefine_line|#define&t;LAPB_STATE_0&t;0&t;&t;/* Disconnected State&t;&t;*/
-DECL|macro|LAPB_STATE_1
-mdefine_line|#define&t;LAPB_STATE_1&t;1&t;&t;/* Awaiting Connection State&t;*/
-DECL|macro|LAPB_STATE_2
-mdefine_line|#define&t;LAPB_STATE_2&t;2&t;&t;/* Awaiting Disconnection State&t;*/
-DECL|macro|LAPB_STATE_3
-mdefine_line|#define&t;LAPB_STATE_3&t;3&t;&t;/* Data Transfer State&t;&t;*/
-DECL|macro|LAPB_STATE_4
-mdefine_line|#define&t;LAPB_STATE_4&t;4&t;&t;/* Frame Reject State&t;&t;*/
+r_enum
+(brace
+DECL|enumerator|LAPB_STATE_0
+id|LAPB_STATE_0
+comma
+multiline_comment|/* Disconnected State&t;&t;*/
+DECL|enumerator|LAPB_STATE_1
+id|LAPB_STATE_1
+comma
+multiline_comment|/* Awaiting Connection State&t;*/
+DECL|enumerator|LAPB_STATE_2
+id|LAPB_STATE_2
+comma
+multiline_comment|/* Awaiting Disconnection State&t;*/
+DECL|enumerator|LAPB_STATE_3
+id|LAPB_STATE_3
+comma
+multiline_comment|/* Data Transfer State&t;&t;*/
+DECL|enumerator|LAPB_STATE_4
+id|LAPB_STATE_4
+multiline_comment|/* Frame Reject State&t;&t;*/
+)brace
+suffix:semicolon
 DECL|macro|LAPB_DEFAULT_MODE
 mdefine_line|#define&t;LAPB_DEFAULT_MODE&t;&t;(LAPB_STANDARD | LAPB_SLP | LAPB_DTE)
 DECL|macro|LAPB_DEFAULT_WINDOW
@@ -85,6 +106,50 @@ DECL|macro|LAPB_SMODULUS
 mdefine_line|#define&t;LAPB_SMODULUS&t;8
 DECL|macro|LAPB_EMODULUS
 mdefine_line|#define&t;LAPB_EMODULUS&t;128
+multiline_comment|/*&n; *&t;Information about the current frame.&n; */
+DECL|struct|lapb_frame
+r_struct
+id|lapb_frame
+(brace
+DECL|member|type
+r_int
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* Parsed type&t;&t;*/
+DECL|member|nr
+DECL|member|ns
+r_int
+r_int
+id|nr
+comma
+id|ns
+suffix:semicolon
+multiline_comment|/* N(R), N(S)&t;&t;*/
+DECL|member|cr
+r_int
+r_char
+id|cr
+suffix:semicolon
+multiline_comment|/* Command/Response&t;*/
+DECL|member|pf
+r_int
+r_char
+id|pf
+suffix:semicolon
+multiline_comment|/* Poll/Final&t;&t;*/
+DECL|member|control
+r_int
+r_char
+id|control
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* Original control data*/
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;The per LAPB connection control structure.&n; */
 DECL|struct|lapb_cb
 r_typedef
 r_struct
@@ -101,6 +166,7 @@ r_void
 op_star
 id|token
 suffix:semicolon
+multiline_comment|/* Link status fields */
 DECL|member|mode
 r_int
 r_int
@@ -151,6 +217,7 @@ id|t1timer
 comma
 id|t2timer
 suffix:semicolon
+multiline_comment|/* Internal control information */
 DECL|member|input_queue
 r_struct
 id|sk_buff_head
@@ -180,6 +247,17 @@ DECL|member|callbacks
 r_struct
 id|lapb_register_struct
 id|callbacks
+suffix:semicolon
+multiline_comment|/* FRMR control information */
+DECL|member|frmr_data
+r_struct
+id|lapb_frame
+id|frmr_data
+suffix:semicolon
+DECL|member|frmr_type
+r_int
+r_char
+id|frmr_type
 suffix:semicolon
 DECL|typedef|lapb_cb
 )brace
@@ -391,7 +469,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|lapb_decode
 c_func
 (paren
@@ -402,16 +480,8 @@ r_struct
 id|sk_buff
 op_star
 comma
-r_int
-op_star
-comma
-r_int
-op_star
-comma
-r_int
-op_star
-comma
-r_int
+r_struct
+id|lapb_frame
 op_star
 )paren
 suffix:semicolon
@@ -428,6 +498,15 @@ comma
 r_int
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|lapb_transmit_frmr
+c_func
+(paren
+id|lapb_cb
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* lapb_timer.c */

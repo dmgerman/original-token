@@ -14,8 +14,6 @@ DECL|macro|NETROM_N2
 mdefine_line|#define NETROM_N2&t;3
 DECL|macro|NETROM_HDRINCL
 mdefine_line|#define&t;NETROM_HDRINCL&t;4
-DECL|macro|NETROM_PACLEN
-mdefine_line|#define&t;NETROM_PACLEN&t;5
 DECL|macro|NETROM_T4
 mdefine_line|#define&t;NETROM_T4&t;6
 DECL|macro|NETROM_IDLE

@@ -71,24 +71,44 @@ mdefine_line|#define&t;X25_COND_OWN_RX_BUSY&t;0x02
 DECL|macro|X25_COND_PEER_RX_BUSY
 mdefine_line|#define&t;X25_COND_PEER_RX_BUSY&t;0x04
 multiline_comment|/* Define Link State constants. */
-DECL|macro|X25_STATE_0
-mdefine_line|#define X25_STATE_0&t;&t;0&t;&t;/* Ready */
-DECL|macro|X25_STATE_1
-mdefine_line|#define X25_STATE_1&t;&t;1&t;&t;/* Awaiting Call Accepted */
-DECL|macro|X25_STATE_2
-mdefine_line|#define X25_STATE_2&t;&t;2&t;&t;/* Awaiting Clear Confirmation */
-DECL|macro|X25_STATE_3
-mdefine_line|#define X25_STATE_3&t;&t;3&t;&t;/* Data Transfer */
-DECL|macro|X25_STATE_4
-mdefine_line|#define&t;X25_STATE_4&t;&t;4&t;&t;/* Awaiting Reset Confirmation */
-DECL|macro|X25_LINK_STATE_0
-mdefine_line|#define&t;X25_LINK_STATE_0&t;0
-DECL|macro|X25_LINK_STATE_1
-mdefine_line|#define&t;X25_LINK_STATE_1&t;1
-DECL|macro|X25_LINK_STATE_2
-mdefine_line|#define&t;X25_LINK_STATE_2&t;2
-DECL|macro|X25_LINK_STATE_3
-mdefine_line|#define&t;X25_LINK_STATE_3&t;3
+r_enum
+(brace
+DECL|enumerator|X25_STATE_0
+id|X25_STATE_0
+comma
+multiline_comment|/* Ready */
+DECL|enumerator|X25_STATE_1
+id|X25_STATE_1
+comma
+multiline_comment|/* Awaiting Call Accepted */
+DECL|enumerator|X25_STATE_2
+id|X25_STATE_2
+comma
+multiline_comment|/* Awaiting Clear Confirmation */
+DECL|enumerator|X25_STATE_3
+id|X25_STATE_3
+comma
+multiline_comment|/* Data Transfer */
+DECL|enumerator|X25_STATE_4
+id|X25_STATE_4
+multiline_comment|/* Awaiting Reset Confirmation */
+)brace
+suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|X25_LINK_STATE_0
+id|X25_LINK_STATE_0
+comma
+DECL|enumerator|X25_LINK_STATE_1
+id|X25_LINK_STATE_1
+comma
+DECL|enumerator|X25_LINK_STATE_2
+id|X25_LINK_STATE_2
+comma
+DECL|enumerator|X25_LINK_STATE_3
+id|X25_LINK_STATE_3
+)brace
+suffix:semicolon
 DECL|macro|X25_DEFAULT_T20
 mdefine_line|#define X25_DEFAULT_T20&t;&t;(180 * X25_SLOWHZ)&t;/* Default T20 value */
 DECL|macro|X25_DEFAULT_T21

@@ -2325,7 +2325,7 @@ multiline_comment|/* ok&t;&t;*/
 id|inet6_ioctl
 comma
 multiline_comment|/* must change  */
-id|inet_listen
+id|sock_no_listen
 comma
 multiline_comment|/* ok&t;&t;*/
 id|inet_shutdown

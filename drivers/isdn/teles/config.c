@@ -15,6 +15,10 @@ id|cards
 op_assign
 (brace
 (brace
+(paren
+id|byte
+op_star
+)paren
 l_int|0xd0000
 comma
 l_int|15
@@ -28,7 +32,7 @@ l_int|NULL
 comma
 multiline_comment|/* example */
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -40,7 +44,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -52,7 +56,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -64,7 +68,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -76,7 +80,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -88,7 +92,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -100,7 +104,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -112,7 +116,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -124,7 +128,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -136,7 +140,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -148,7 +152,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -160,7 +164,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -172,7 +176,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -184,7 +188,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma
@@ -196,7 +200,7 @@ l_int|NULL
 )brace
 comma
 (brace
-l_int|0
+l_int|NULL
 comma
 l_int|0
 comma

@@ -3085,7 +3085,7 @@ id|ax25-&gt;dest_addr
 comma
 id|ax25-&gt;digipeat
 comma
-id|ax25-&gt;device
+id|ax25-&gt;ax25_dev-&gt;dev
 comma
 l_int|0
 comma
@@ -3263,7 +3263,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|0
+l_int|256
 comma
 (paren
 id|ax25_address

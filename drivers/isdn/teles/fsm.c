@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fsm.c,v 1.2 1996/04/29 22:49:57 fritz Exp $&n; *&n; * $Log: fsm.c,v $&n; * Revision 1.2  1996/04/29 22:49:57  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.1  1996/04/13 10:23:41  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: fsm.c,v 1.3 1997/02/16 01:04:12 fritz Exp $&n; *&n; * $Log: fsm.c,v $&n; * Revision 1.3  1997/02/16 01:04:12  fritz&n; * Bugfix: Changed timer handling caused hang with 2.1.X&n; *&n; * Revision 1.2  1996/04/29 22:49:57  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.1  1996/04/13 10:23:41  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -418,9 +418,6 @@ r_int
 id|where
 )paren
 (brace
-r_int
-id|flags
-suffix:semicolon
 macro_line|#if 0
 r_if
 c_cond
@@ -452,33 +449,11 @@ id|str
 suffix:semicolon
 )brace
 macro_line|#endif
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ft-&gt;tl.next
-)paren
 id|del_timer
 c_func
 (paren
 op_amp
 id|ft-&gt;tl
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -543,6 +518,8 @@ r_if
 c_cond
 (paren
 id|ft-&gt;tl.next
+op_logical_or
+id|ft-&gt;tl.prev
 )paren
 (brace
 id|printk

@@ -1,4 +1,15 @@
-multiline_comment|/* $Id: isdn_net.h,v 1.2 1996/04/20 16:29:43 fritz Exp $&n; *&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_net.h,v 1.5 1997/02/10 20:12:47 fritz Exp $&n;&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.5  1997/02/10 20:12:47  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.4  1997/02/03 23:16:48  fritz&n; * Removed isdn_net_receive_callback prototype.&n; *&n; * Revision 1.3  1997/01/17 01:19:30  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* Definitions for hupflags:                */
+DECL|macro|ISDN_WAITCHARGE
+mdefine_line|#define ISDN_WAITCHARGE  1      /* did not get a charge info yet            */
+DECL|macro|ISDN_HAVECHARGE
+mdefine_line|#define ISDN_HAVECHARGE  2      /* We know a charge info                    */
+DECL|macro|ISDN_CHARGEHUP
+mdefine_line|#define ISDN_CHARGEHUP   4      /* We want to use the charge mechanism      */
+DECL|macro|ISDN_INHUP
+mdefine_line|#define ISDN_INHUP       8      /* Even if incoming, close after huptimeout */
+DECL|macro|ISDN_MANCHARGE
+mdefine_line|#define ISDN_MANCHARGE  16      /* Charge Interval manually set             */
 r_extern
 r_char
 op_star
@@ -46,19 +57,6 @@ id|isdn_net_stat_callback
 c_func
 (paren
 r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|isdn_net_receive_callback
-c_func
-(paren
-r_int
-comma
-id|u_char
-op_star
 comma
 r_int
 )paren
@@ -122,8 +120,7 @@ r_int
 comma
 r_int
 comma
-r_char
-op_star
+id|setup_parm
 )paren
 suffix:semicolon
 r_extern

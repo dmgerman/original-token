@@ -729,13 +729,20 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* we don&squot;t want to mark this access volatile - bad code generation */
 r_return
 id|GET_APIC_ID
 c_func
 (paren
-id|apic_read
-c_func
+op_star
 (paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|apic_reg
+op_plus
 id|APIC_ID
 )paren
 )paren

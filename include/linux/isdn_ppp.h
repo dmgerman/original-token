@@ -19,41 +19,44 @@ r_char
 op_star
 )paren
 suffix:semicolon
-DECL|struct|pppinfo
+DECL|macro|CALLTYPE_INCOMING
+mdefine_line|#define CALLTYPE_INCOMING 0x1
+DECL|macro|CALLTYPE_OUTGOING
+mdefine_line|#define CALLTYPE_OUTGOING 0x2
+DECL|macro|CALLTYPE_CALLBACK
+mdefine_line|#define CALLTYPE_CALLBACK 0x4
+DECL|struct|pppcallinfo
 r_struct
-id|pppinfo
+id|pppcallinfo
 (brace
-DECL|member|type
+DECL|member|calltype
 r_int
-id|type
+id|calltype
 suffix:semicolon
-multiline_comment|/* set by user */
-r_union
-(brace
-DECL|member|clid
+DECL|member|local_num
+r_int
 r_char
-id|clid
+id|local_num
 (braket
-l_int|32
+l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* calling ID */
-DECL|member|bundles
+DECL|member|remote_num
 r_int
-id|bundles
+r_char
+id|remote_num
+(braket
+l_int|64
+)braket
 suffix:semicolon
-DECL|member|linknumber
+DECL|member|charge_units
 r_int
-id|linknumber
-suffix:semicolon
-DECL|member|info
-)brace
-id|info
+id|charge_units
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|PPPIOCLINKINFO
-mdefine_line|#define PPPIOCLINKINFO _IOWR(&squot;t&squot;,128,struct pppinfo)
+DECL|macro|PPPIOCGCALLINFO
+mdefine_line|#define PPPIOCGCALLINFO _IOWR(&squot;t&squot;,128,struct pppcallinfo)
 DECL|macro|PPPIOCBUNDLE
 mdefine_line|#define PPPIOCBUNDLE   _IOW(&squot;t&squot;,129,int)
 DECL|macro|PPPIOCGMPFLAGS

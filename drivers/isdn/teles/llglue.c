@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: llglue.c,v 1.6 1996/06/03 20:03:39 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.6  1996/06/03 20:03:39  fritz&n; * Fixed typos.&n; *&n; * Revision 1.5  1996/05/31 00:58:47  fritz&n; * Errata: Reverted change from rev 1.4.&n; *&n; * Revision 1.4  1996/05/26 14:59:57  fritz&n; * Bugfix: maxbufsize had been set without respect to possible X.75 header.&n; *&n; * Revision 1.3  1996/05/01 14:19:57  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.2  1996/04/29 23:01:46  fritz&n; * Added driverId and channel to readstatus().&n; *&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: llglue.c,v 1.7 1996/10/22 23:14:17 fritz Exp $&n; *&n; * $Log: llglue.c,v $&n; * Revision 1.7  1996/10/22 23:14:17  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.6  1996/06/03 20:03:39  fritz&n; * Fixed typos.&n; *&n; * Revision 1.5  1996/05/31 00:58:47  fritz&n; * Errata: Reverted change from rev 1.4.&n; *&n; * Revision 1.4  1996/05/26 14:59:57  fritz&n; * Bugfix: maxbufsize had been set without respect to possible X.75 header.&n; *&n; * Revision 1.3  1996/05/01 14:19:57  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.2  1996/04/29 23:01:46  fritz&n; * Added driverId and channel to readstatus().&n; *&n; * Revision 1.1  1996/04/13 10:26:29  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -115,20 +115,16 @@ c_cond
 (paren
 id|user
 )paren
-(brace
 id|put_user
 c_func
 (paren
 op_star
 id|teles_status_read
+op_increment
 comma
 id|p
 )paren
 suffix:semicolon
-id|teles_status_read
-op_increment
-suffix:semicolon
-)brace
 r_else
 op_star
 id|p

@@ -126,6 +126,8 @@ DECL|macro|VM_BDFLUSH
 mdefine_line|#define VM_BDFLUSH&t;4&t;/* struct: Control buffer cache flushing */
 DECL|macro|VM_MAXID
 mdefine_line|#define VM_MAXID&t;5
+DECL|macro|VM_OVERCOMMIT_MEMORY
+mdefine_line|#define VM_OVERCOMMIT_MEMORY 7&t;/* Turn off the virtual memory safety limit */
 multiline_comment|/* CTL_NET names: */
 DECL|macro|NET_CORE
 mdefine_line|#define NET_CORE        1
@@ -276,7 +278,50 @@ id|NET_NETROM_LINK_FAILS_COUNT
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ax25 */
-multiline_comment|/* Values are generated dynamically */
+r_enum
+(brace
+DECL|enumerator|NET_AX25_IP_DEFAULT_MODE
+id|NET_AX25_IP_DEFAULT_MODE
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_AX25_DEFAULT_MODE
+id|NET_AX25_DEFAULT_MODE
+comma
+DECL|enumerator|NET_AX25_BACKOFF_TYPE
+id|NET_AX25_BACKOFF_TYPE
+comma
+DECL|enumerator|NET_AX25_CONNECT_MODE
+id|NET_AX25_CONNECT_MODE
+comma
+DECL|enumerator|NET_AX25_STANDARD_WINDOW
+id|NET_AX25_STANDARD_WINDOW
+comma
+DECL|enumerator|NET_AX25_EXTENDED_WINDOW
+id|NET_AX25_EXTENDED_WINDOW
+comma
+DECL|enumerator|NET_AX25_T1_TIMEOUT
+id|NET_AX25_T1_TIMEOUT
+comma
+DECL|enumerator|NET_AX25_T2_TIMEOUT
+id|NET_AX25_T2_TIMEOUT
+comma
+DECL|enumerator|NET_AX25_T3_TIMEOUT
+id|NET_AX25_T3_TIMEOUT
+comma
+DECL|enumerator|NET_AX25_IDLE_TIMEOUT
+id|NET_AX25_IDLE_TIMEOUT
+comma
+DECL|enumerator|NET_AX25_N2
+id|NET_AX25_N2
+comma
+DECL|enumerator|NET_AX25_PACLEN
+id|NET_AX25_PACLEN
+comma
+DECL|enumerator|NET_AX25_PROTOCOL
+id|NET_AX25_PROTOCOL
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/rose */
 r_enum
 (brace

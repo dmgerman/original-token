@@ -1021,7 +1021,7 @@ id|dlci_conf
 (brace
 r_return
 op_minus
-id|FAULT
+id|EFAULT
 suffix:semicolon
 )brace
 r_if

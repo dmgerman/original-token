@@ -63,6 +63,10 @@ id|kmem_cache_t
 op_star
 id|vm_area_cachep
 suffix:semicolon
+DECL|variable|sysctl_overcommit_memory
+r_int
+id|sysctl_overcommit_memory
+suffix:semicolon
 multiline_comment|/*&n; * Check that a process has enough memory to allocate a&n; * new virtual mapping.&n; */
 DECL|function|vm_enough_memory
 r_static
@@ -78,6 +82,15 @@ id|pages
 multiline_comment|/*&n;&t; * stupid algorithm to decide if we have enough memory: while&n;&t; * simple, it hopefully works in most obvious cases.. Easy to&n;&t; * fool it, but this should catch most mistakes.&n;&t; */
 r_int
 id|freepages
+suffix:semicolon
+multiline_comment|/* sometimes we want to use more memory than we have. */
+r_if
+c_cond
+(paren
+id|sysctl_overcommit_memory
+)paren
+r_return
+l_int|1
 suffix:semicolon
 id|freepages
 op_assign

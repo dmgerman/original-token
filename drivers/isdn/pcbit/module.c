@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; *&n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of&n; * the GNU Public License, incorporated herein by reference.&n; */
-multiline_comment|/*&n; *        PCBIT-D module support&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*        &n; *        PCBIT-D module support&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -94,8 +94,36 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
-id|EXPORT_NO_SYMBOLS
+macro_line|#if (LINUX_VERSION_CODE &gt; 0x020111)
+id|MODULE_PARM
+c_func
+(paren
+id|mem
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_PCBIT_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_PCBIT_CARDS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|pcbit_init
 mdefine_line|#define pcbit_init init_module
 macro_line|#endif
@@ -276,6 +304,18 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+multiline_comment|/* No symbols to export, hide all symbols */
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020111)
+id|register_symtab
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#else
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

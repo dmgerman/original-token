@@ -96,6 +96,12 @@ id|PCI_DEVICE_ID_COMPEX_RL2000
 )brace
 comma
 (brace
+id|PCI_VENDOR_ID_KTI
+comma
+id|PCI_DEVICE_ID_KTI_ET32P2
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

@@ -5814,7 +5814,7 @@ c_func
 (paren
 id|haddr.c
 comma
-id|dev-&gt;broadcast
+id|strip_info-&gt;dev.broadcast
 comma
 r_sizeof
 (paren

@@ -10,18 +10,195 @@ macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
-macro_line|#include &lt;net/ax25.h&gt;
+macro_line|#ifdef CONFIG_AX25
+multiline_comment|/* prototypes for ax25_encapsulate and ax25_rebuild_header */
+macro_line|#include &lt;net/ax25.h&gt; 
+macro_line|#endif /* CONFIG_AX25 */
 multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+multiline_comment|/* --------------------------------------------------------------------- */
+multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#else
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+DECL|macro|put_user
+macro_line|#undef put_user
+DECL|macro|get_user
+macro_line|#undef get_user
+DECL|macro|put_user
+mdefine_line|#define put_user(x,ptr) ({ __put_user((unsigned long)(x),(ptr),sizeof(*(ptr))); 0; })
+DECL|macro|get_user
+mdefine_line|#define get_user(x,ptr) ({ x = ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr)))); 0; })
+DECL|function|copy_from_user
+r_extern
+r_inline
+r_int
+id|copy_from_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|copy_to_user
+r_extern
+r_inline
+r_int
+id|copy_to_user
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_const
+r_void
+op_star
+id|from
+comma
+r_int
+r_int
+id|n
+)paren
+(brace
+r_int
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|to
+comma
+id|n
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+id|memcpy_tofs
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+id|n
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
+DECL|function|dev_init_buffers
+r_extern
+id|__inline__
+r_void
+id|dev_init_buffers
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|DEV_NUMBUFFS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|dev-&gt;buffs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * The name of the card. Is used for messages and in the requests for&n; * io regions, irqs and dma channels&n; */
 DECL|variable|ax25_bcast
@@ -2485,6 +2662,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20119
 DECL|function|hdlcdrv_get_stats
 r_static
 r_struct
@@ -2498,6 +2676,20 @@ id|device
 op_star
 id|dev
 )paren
+macro_line|#else
+r_static
+r_struct
+id|enet_statistics
+op_star
+id|hdlcdrv_get_stats
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+macro_line|#endif
 (brace
 r_struct
 id|hdlcdrv_state
@@ -3308,6 +3500,7 @@ op_star
 id|dev
 )paren
 (brace
+r_const
 r_struct
 id|hdlcdrv_channel_params
 id|dflt_ch_params
@@ -3867,6 +4060,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 DECL|variable|hdlcdrv_receiver
 id|EXPORT_SYMBOL
 c_func
@@ -3902,8 +4096,66 @@ c_func
 id|hdlcdrv_unregister_hdlcdrv
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|variable|hdlcdrv_syms
+r_static
+r_struct
+id|symbol_table
+id|hdlcdrv_syms
+op_assign
+(brace
+macro_line|#include &lt;linux/symtab_begin.h&gt;
+id|X
+c_func
+(paren
+id|hdlcdrv_receiver
+)paren
+comma
+id|X
+c_func
+(paren
+id|hdlcdrv_transmitter
+)paren
+comma
+id|X
+c_func
+(paren
+id|hdlcdrv_arbitrate
+)paren
+comma
+id|X
+c_func
+(paren
+id|hdlcdrv_register_hdlcdrv
+)paren
+comma
+id|X
+c_func
+(paren
+id|hdlcdrv_unregister_hdlcdrv
+)paren
+comma
+macro_line|#include &lt;linux/symtab_end.h&gt;
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Thomas M. Sailer, sailer@ife.ee.ethz.ch, hb9jnx@hb9w.che.eu&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Packet Radio network interface HDLC encoder/decoder&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|init_module
 r_int
 id|init_module
@@ -3930,6 +4182,15 @@ comma
 id|__DATE__
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
+id|register_symtab
+c_func
+(paren
+op_amp
+id|hdlcdrv_syms
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

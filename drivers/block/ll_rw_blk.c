@@ -2496,16 +2496,16 @@ id|dev
 suffix:semicolon
 id|rsector
 op_assign
-(paren
 id|b
 (braket
 id|i
 )braket
 op_star
+(paren
 id|buffersize
-)paren
 op_rshift
 l_int|9
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 r_if

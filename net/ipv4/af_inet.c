@@ -5384,7 +5384,7 @@ id|datagram_poll
 comma
 id|inet_ioctl
 comma
-l_int|NULL
+id|sock_no_listen
 comma
 id|inet_shutdown
 comma

@@ -55,6 +55,10 @@ id|free
 op_assign
 l_int|1
 suffix:semicolon
+id|lp-&gt;inc_skb
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Truncate buffer to true 802.3 length&n;&t; *&t;[FIXME: move to 802.2 demux]&n;&t; */
 id|ll
 op_assign
@@ -177,6 +181,10 @@ id|lp-&gt;inc_skb
 op_assign
 id|skb
 suffix:semicolon
+id|free
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -262,6 +270,10 @@ id|lp-&gt;inc_skb
 op_assign
 id|skb
 suffix:semicolon
+id|free
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -282,6 +294,10 @@ suffix:semicolon
 id|lp-&gt;inc_skb
 op_assign
 id|skb
+suffix:semicolon
+id|free
+op_assign
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon

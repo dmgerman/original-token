@@ -1,11 +1,7 @@
-multiline_comment|/* $Id: l3_1TR6.h,v 1.3 1996/04/30 21:53:48 isdn4dev Exp $&n; *&n; * $Log: l3_1TR6.h,v $&n; * Revision 1.3  1996/04/30 21:53:48  isdn4dev&n; * Bugs, SPV, Logging in q931.c  Karsten Keil&n; *&n; * Revision 1.1  1996/04/13 10:25:42  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: l3_1TR6.h,v 1.4 1996/09/23 01:53:52 fritz Exp $&n; *&n; * $Log: l3_1TR6.h,v $&n; * Revision 1.4  1996/09/23 01:53:52  fritz&n; * Bugfix: discard unknown frames (non-EDSS1 and non-1TR6).&n; *&n; * Revision 1.3  1996/04/30 21:53:48  isdn4dev&n; * Bugs, SPV, Logging in q931.c  Karsten Keil&n; *&n; * Revision 1.1  1996/04/13 10:25:42  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#ifndef l3_1TR6
 DECL|macro|l3_1TR6
 mdefine_line|#define l3_1TR6
-DECL|macro|PROTO_DIS_N0
-mdefine_line|#define PROTO_DIS_N0 0x40
-DECL|macro|PROTO_DIS_N1
-mdefine_line|#define PROTO_DIS_N1 0x41
 multiline_comment|/*&n; * MsgType N0&n; */
 DECL|macro|MT_N0_REG_IND
 mdefine_line|#define MT_N0_REG_IND 0x61

@@ -3501,6 +3501,8 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
 macro_line|#endif&t;
 r_default
 suffix:colon

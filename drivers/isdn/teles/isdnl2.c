@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl2.c,v 1.2 1996/05/17 03:46:15 fritz Exp $&n; *&n; * $Log: isdnl2.c,v $&n; * Revision 1.2  1996/05/17 03:46:15  fritz&n; * General cleanup.&n; *&n; * Revision 1.1  1996/04/13 10:24:16  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl2.c,v 1.3 1996/11/23 11:32:57 keil Exp $&n; *&n; * $Log: isdnl2.c,v $&n; * Revision 1.3  1996/11/23 11:32:57  keil&n; * X.75 bugfixies; Thanks to Martin Maurer&n; *&n; * Revision 1.2  1996/05/17 03:46:15  fritz&n; * General cleanup.&n; *&n; * Revision 1.1  1996/04/13 10:24:16  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
@@ -1442,6 +1442,7 @@ id|st-&gt;l2
 comma
 id|ibh
 comma
+op_logical_neg
 l_int|0
 )paren
 suffix:semicolon
@@ -2953,7 +2954,8 @@ id|st-&gt;l2
 comma
 id|ibh2
 comma
-id|p
+op_logical_neg
+l_int|0
 )paren
 suffix:semicolon
 id|ptr
@@ -4546,8 +4548,6 @@ id|l2-&gt;vs
 op_lshift
 l_int|1
 )paren
-op_or
-l_int|0x10
 suffix:semicolon
 id|l2-&gt;vs
 op_assign

@@ -1550,7 +1550,7 @@ id|regs
 )paren
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -1561,7 +1561,7 @@ op_ne
 l_int|1
 )paren
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 multiline_comment|/* we let this handle by the calling routine */
 r_if

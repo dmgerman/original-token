@@ -338,6 +338,7 @@ id|jiffies
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; *&t;Init task must be ok at boot for the ix86 as we will check its signals&n; *&t;via the SMP irq return path.&n; */
 DECL|variable|current_set
 r_struct
 id|task_struct
@@ -346,6 +347,12 @@ id|current_set
 (braket
 id|NR_CPUS
 )braket
+op_assign
+(brace
+op_amp
+id|init_task
+comma
+)brace
 suffix:semicolon
 DECL|variable|last_task_used_math
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mod.c,v 1.1 1996/04/13 10:27:02 fritz Exp $&n; *&n; * $Log: mod.c,v $&n; * Revision 1.1  1996/04/13 10:27:02  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: mod.c,v 1.3 1997/02/14 12:23:31 fritz Exp $&n; *&n; * $Log: mod.c,v $&n; * Revision 1.3  1997/02/14 12:23:31  fritz&n; * Added support for new insmod parameter handling.&n; *&n; * Revision 1.2  1997/02/10 11:45:14  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.1  1996/04/13 10:27:02  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &quot;teles.h&quot;
 r_extern
 r_struct
@@ -20,8 +20,8 @@ r_typedef
 r_struct
 (brace
 DECL|member|membase
-r_int
-r_int
+id|byte
+op_star
 id|membase
 suffix:semicolon
 DECL|member|interrupt
@@ -211,6 +211,26 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+macro_line|#if (LINUX_VERSION_CODE &gt; 0x020111)
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-64i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|teles_id
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 r_void
 DECL|function|teles_mod_dec_use_count
 id|teles_mod_dec_use_count
@@ -234,8 +254,6 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 DECL|macro|teles_init
 mdefine_line|#define teles_init init_module
 macro_line|#else
@@ -357,6 +375,10 @@ id|i
 dot
 id|membase
 op_assign
+(paren
+id|byte
+op_star
+)paren
 id|ints
 (braket
 id|j
@@ -599,7 +621,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* No symbols to export, hide all symbols */
 macro_line|#ifdef MODULE
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020111)
+id|register_symtab
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#else
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren

@@ -5338,6 +5338,10 @@ id|ifr
 )paren
 suffix:semicolon
 )brace
+id|netmask.sin_addr.s_addr
+op_assign
+id|root_dev-&gt;pa_mask
+suffix:semicolon
 id|set_fs
 c_func
 (paren

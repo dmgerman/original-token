@@ -32,14 +32,21 @@ mdefine_line|#define&t;NR_NAK_FLAG&t;&t;&t;0x40
 DECL|macro|NR_MORE_FLAG
 mdefine_line|#define&t;NR_MORE_FLAG&t;&t;&t;0x20
 multiline_comment|/* Define Link State constants. */
-DECL|macro|NR_STATE_0
-mdefine_line|#define NR_STATE_0&t;&t;&t;0
-DECL|macro|NR_STATE_1
-mdefine_line|#define NR_STATE_1&t;&t;&t;1
-DECL|macro|NR_STATE_2
-mdefine_line|#define NR_STATE_2&t;&t;&t;2
-DECL|macro|NR_STATE_3
-mdefine_line|#define NR_STATE_3&t;&t;&t;3
+r_enum
+(brace
+DECL|enumerator|NR_STATE_0
+id|NR_STATE_0
+comma
+DECL|enumerator|NR_STATE_1
+id|NR_STATE_1
+comma
+DECL|enumerator|NR_STATE_2
+id|NR_STATE_2
+comma
+DECL|enumerator|NR_STATE_3
+id|NR_STATE_3
+)brace
+suffix:semicolon
 DECL|macro|NR_COND_ACK_PENDING
 mdefine_line|#define&t;NR_COND_ACK_PENDING&t;&t;0x01
 DECL|macro|NR_COND_REJECT

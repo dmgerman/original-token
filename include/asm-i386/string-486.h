@@ -1134,6 +1134,8 @@ l_string|&quot;d&quot;
 (paren
 id|count
 )paren
+suffix:colon
+l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
 r_return

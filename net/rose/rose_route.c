@@ -2407,7 +2407,7 @@ id|rose_neigh-&gt;callsign
 op_eq
 l_int|0
 op_logical_and
-id|ax25-&gt;device
+id|ax25-&gt;ax25_dev-&gt;dev
 op_eq
 id|rose_neigh-&gt;dev
 )paren

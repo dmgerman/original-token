@@ -15,7 +15,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;pcbit.h&quot;
 macro_line|#include &quot;edss1.h&quot;
 macro_line|#include &quot;layer2.h&quot;
@@ -808,10 +807,6 @@ r_struct
 id|callb_data
 id|info
 suffix:semicolon
-r_char
-op_star
-id|cp
-suffix:semicolon
 id|dev
 op_assign
 id|finddev
@@ -883,42 +878,8 @@ r_char
 op_star
 )paren
 op_amp
-id|ctl-&gt;num
+id|ctl-&gt;parm.setup.phone
 suffix:semicolon
-id|cp
-op_assign
-id|strchr
-c_func
-(paren
-id|info.data.setup.CalledPN
-comma
-l_char|&squot;,&squot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cp
-)paren
-op_star
-id|cp
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;DIAL: error in CalledPN&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 id|pcbit_fsm_event
 c_func
 (paren
@@ -1033,7 +994,7 @@ c_func
 (paren
 id|dev
 comma
-id|ctl-&gt;num
+id|ctl-&gt;parm.num
 )paren
 suffix:semicolon
 r_break
@@ -1529,9 +1490,6 @@ id|cbuf
 l_int|1024
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|copy_from_user
 c_func
 (paren
@@ -1541,10 +1499,6 @@ id|buf
 comma
 id|len
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 r_for
 c_loop
@@ -1634,9 +1588,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|copy_from_user
 c_func
 (paren
@@ -1646,19 +1597,7 @@ id|buf
 comma
 id|len
 )paren
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|ptr
-)paren
 suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
 id|loadbuf
 op_assign
 id|ptr
@@ -2888,9 +2827,11 @@ r_break
 suffix:semicolon
 macro_line|#endif
 )brace
-id|skb-&gt;free
-op_assign
-l_int|1
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2924,21 +2865,22 @@ id|stat_end
 op_assign
 l_int|0
 suffix:semicolon
+r_static
+id|__inline
+r_void
 DECL|function|memcpy_to_COND
-r_extern
-r_inline
-r_int
 id|memcpy_to_COND
 c_func
 (paren
 r_int
 id|flag
 comma
-r_void
+r_char
 op_star
 id|d
 comma
-r_void
+r_const
+r_char
 op_star
 id|s
 comma
@@ -2951,7 +2893,6 @@ c_cond
 (paren
 id|flag
 )paren
-r_return
 id|copy_to_user
 c_func
 (paren
@@ -2962,6 +2903,7 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_else
 id|memcpy
 c_func
 (paren
@@ -2971,9 +2913,6 @@ id|s
 comma
 id|len
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|pcbit_stat
@@ -3042,9 +2981,6 @@ OL
 id|stat_end
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3058,10 +2994,6 @@ id|stat_st
 comma
 id|len
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|stat_st
 op_add_assign
@@ -3080,9 +3012,6 @@ op_minus
 id|stat_st
 )paren
 (brace
-r_if
-c_cond
-(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3098,14 +3027,7 @@ id|STATBUF_LEN
 op_minus
 id|stat_st
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
-r_if
-c_cond
-(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3123,10 +3045,6 @@ op_minus
 id|stat_st
 )paren
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|stat_st
 op_assign
@@ -3141,9 +3059,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_if
-c_cond
-(paren
 id|memcpy_to_COND
 c_func
 (paren
@@ -3157,10 +3072,6 @@ id|stat_st
 comma
 id|len
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
 suffix:semicolon
 id|stat_st
 op_add_assign
@@ -3712,7 +3623,7 @@ r_struct
 id|pcbit_ioctl
 op_star
 )paren
-id|ctl-&gt;num
+id|ctl-&gt;parm.num
 suffix:semicolon
 r_switch
 c_cond

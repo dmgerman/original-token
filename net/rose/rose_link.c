@@ -247,7 +247,7 @@ c_func
 (paren
 id|skb
 comma
-l_int|0
+l_int|256
 comma
 id|rose_call
 comma
@@ -314,6 +314,8 @@ id|rose_call
 comma
 op_amp
 id|neigh-&gt;callsign
+comma
+id|neigh-&gt;digipeat
 comma
 id|neigh-&gt;dev
 )paren

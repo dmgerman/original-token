@@ -3,7 +3,10 @@ macro_line|#ifndef _HDLCDRV_H
 DECL|macro|_HDLCDRV_H
 mdefine_line|#define _HDLCDRV_H
 macro_line|#include &lt;linux/sockios.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
 macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/netdevice.h&gt;
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*&n; * structs for the IOCTL commands&n; */
@@ -89,11 +92,19 @@ DECL|member|ptt_keyed
 r_int
 id|ptt_keyed
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
 DECL|member|stats
 r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
+macro_line|#else
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|hdlcdrv_ioctl
@@ -684,11 +695,19 @@ id|hdlcdrv_bitbuffer
 id|bitbuf_hdlc
 suffix:semicolon
 macro_line|#endif /* HDLCDRV_DEBUG */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
 DECL|member|stats
 r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
+macro_line|#else
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
+macro_line|#endif
 DECL|member|ptt_keyed
 r_int
 id|ptt_keyed

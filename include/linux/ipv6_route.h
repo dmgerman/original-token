@@ -2,7 +2,6 @@ multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; 
 macro_line|#ifndef _LINUX_IPV6_ROUTE_H
 DECL|macro|_LINUX_IPV6_ROUTE_H
 mdefine_line|#define _LINUX_IPV6_ROUTE_H
-macro_line|#include &lt;linux/route.h&gt;
 DECL|macro|RTI_DEVRT
 mdefine_line|#define RTI_DEVRT&t;0x00010000&t;/* route lookup, dev must match&t;*/
 DECL|macro|RTI_ALLONLINK

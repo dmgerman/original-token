@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&t;DDP:&t;An implementation of the Appletalk DDP protocol for&n; *&t;&t;ethernet &squot;ELAP&squot;.&n; *&n; *&t;&t;Alan Cox  &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;&t;With more than a little assistance from&n; *&n; *&t;&t;Wesley Craig &lt;netatalk@umich.edu&gt;&n; *&n; *&t;Fixes:&n; *&t;&t;Michael Callahan&t;:&t;Made routing work&n; *&t;&t;Wesley Craig&t;&t;:&t;Fix probing to listen to a&n; *&t;&t;&t;&t;&t;&t;passed node id.&n; *&t;&t;Alan Cox&t;&t;:&t;Added send/recvmsg support&n; *&t;&t;Alan Cox&t;&t;:&t;Moved at. to protinfo in&n; *&t;&t;&t;&t;&t;&t;socket.&n; *&t;&t;Alan Cox&t;&t;:&t;Added firewall hooks.&n; *&t;&t;Alan Cox&t;&t;:&t;Supports new ARPHRD_LOOPBACK&n; *&t;&t;Christer Weinigel&t;: &t;Routing and /proc fixes.&n; *&t;&t;Bradford Johnson&t;:&t;Localtalk.&n; *&t;&t;Tom Dyas&t;&t;:&t;Module support.&n; *&t;&t;Alan Cox&t;&t;:&t;Hooks for PPP (based on the&n; *&t;&t;&t;&t;&t;&t;localtalk hook).&n; *&t;&t;Alan Cox&t;&t;:&t;Posix bits&n; *&t;&t;Alan Cox/Mike Freeman&t;:&t;Possible fix to NBP problems&n; *&t;&t;Bradford Johnson&t;:&t;IP-over-DDP (experimental)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -202,6 +202,10 @@ op_logical_or
 id|to-&gt;sat_addr.s_node
 op_eq
 id|ATADDR_BCAST
+op_logical_or
+id|to-&gt;sat_addr.s_node
+op_eq
+id|ATADDR_ANYNODE
 )paren
 )paren
 (brace
@@ -1370,6 +1374,10 @@ c_cond
 id|node
 op_eq
 id|ATADDR_BCAST
+op_logical_or
+id|node
+op_eq
+id|ATADDR_ANYNODE
 op_logical_or
 id|iface-&gt;address.s_node
 op_eq
@@ -3402,90 +3410,6 @@ r_return
 l_int|0xFFFF
 suffix:semicolon
 multiline_comment|/* Use 0xFFFF for 0. 0 itself means none */
-)brace
-multiline_comment|/*&n; *&t;Set &squot;magic&squot; options for appletalk. If we don&squot;t have any this is fine&n; *&t;as it is.&n; */
-DECL|function|atalk_setsockopt
-r_static
-r_int
-id|atalk_setsockopt
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|sock
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-id|optlen
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Get any magic options. Comment above applies.&n; */
-DECL|function|atalk_getsockopt
-r_static
-r_int
-id|atalk_getsockopt
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|sock
-comma
-r_int
-id|level
-comma
-r_int
-id|optname
-comma
-r_char
-op_star
-id|optval
-comma
-r_int
-op_star
-id|optlen
-)paren
-(brace
-r_return
-op_minus
-id|ENOPROTOOPT
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Only for connection oriented sockets - ignore&n; */
-DECL|function|atalk_listen
-r_static
-r_int
-id|atalk_listen
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|sock
-comma
-r_int
-id|backlog
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Create a socket. Initialise the socket, blank the addresses&n; *&t;set the state.&n; */
 DECL|function|atalk_create
@@ -7581,13 +7505,13 @@ id|datagram_poll
 comma
 id|atalk_ioctl
 comma
-id|atalk_listen
+id|sock_no_listen
 comma
 id|atalk_shutdown
 comma
-id|atalk_setsockopt
+id|sock_no_setsockopt
 comma
-id|atalk_getsockopt
+id|sock_no_getsockopt
 comma
 id|sock_no_fcntl
 comma

@@ -1,39 +1,16 @@
-multiline_comment|/* $Id: isdn_net.c,v 1.20 1996/08/29 20:06:03 fritz Exp $&n; *&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.20  1996/08/29 20:06:03  fritz&n; * Bugfix: Transmission timeout had been much to low.&n; *&n; * Revision 1.19  1996/08/12 16:24:32  hipp&n; * removed some (now) obsolete functions for syncPPP in rebuild_header etc.&n; *&n; * Revision 1.18  1996/07/03 13:48:51  hipp&n; * bugfix: Call dev_purge_queues() only for master device&n; *&n; * Revision 1.17  1996/06/25 18:37:37  fritz&n; * Fixed return count for empty return string in isdn_net_getphones().&n; *&n; * Revision 1.16  1996/06/24 17:48:08  fritz&n; * Bugfixes:&n; *   - Did not free channel on unbinding.&n; *   - ioctl returned wrong callback settings.&n; *&n; * Revision 1.15  1996/06/16 17:42:54  tsbogend&n; * fixed problem with IP addresses on Linux/Alpha (long is 8 byte there)&n; *&n; * Revision 1.14  1996/06/11 14:54:08  hipp&n; * minor bugfix in isdn_net_send_skb&n; * changes in BSENT callback handler for syncPPP&n; * added lp-&gt;sav_skb stuff&n; *&n; * Revision 1.13  1996/06/06 14:25:44  fritz&n; * Changed loglevel of &quot;incoming ... without OAD&quot; message, since&n; * with audio support this is quite normal.&n; *&n; * Revision 1.12  1996/06/05 02:36:45  fritz&n; * Minor bugfixes by M. Hipp.&n; *&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
-macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/* $Id: isdn_net.c,v 1.37 1997/02/11 18:32:51 fritz Exp $&n;&n; * Linux ISDN subsystem, network interfaces and related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.c,v $&n; * Revision 1.37  1997/02/11 18:32:51  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.36  1997/02/10 21:31:11  fritz&n; * Changed setup-interface (incoming and outgoing).&n; *&n; * Revision 1.35  1997/02/10 20:12:45  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.34  1997/02/03 23:15:07  fritz&n; * Reformatted according CodingStyle.&n; * replaced arp_find prototype by proper include.&n; * made dev_purge_queues static.&n; * Bugfix in bogocps calculation.&n; * removed isdn_net_receive_callback - was never used ;-)&n; * Misc. fixes for Kernel 2.1.X comaptibility.&n; *&n; * Revision 1.33  1997/01/17 01:19:25  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.32  1997/01/14 01:29:31  fritz&n; * Bugfix: isdn_net_hangup() did not reset ISDN_NET_CONNECTED.&n; *&n; * Revision 1.31  1997/01/11 23:30:42  fritz&n; * Speed up dial statemachine.&n; *&n; * Revision 1.30  1996/11/25 17:20:50  hipp&n; * fixed pppbind bug in isdn_net_find_icall()&n; *&n; * Revision 1.29  1996/11/13 02:31:38  fritz&n; * Minor cleanup.&n; *&n; * Revision 1.28  1996/10/27 20:49:06  keil&n; * bugfix to compile without MPP&n; *&n; * Revision 1.27  1996/10/25 18:46:01  fritz&n; * Another bugfix in isdn_net_autohup()&n; *&n; * Revision 1.26  1996/10/23 23:05:36  fritz&n; * Bugfix: Divide by zero in isdn_net_autohup()&n; *&n; * Revision 1.25  1996/10/22 23:13:58  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.24  1996/10/11 13:57:40  fritz&n; * Bugfix: Error in BogoCPS calculation.&n; *&n; * Revision 1.23  1996/09/23 01:58:08  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.22  1996/09/23 00:03:37  fritz&n; * Fix: did not compile without CONFIG_ISDN_PPP&n; *&n; * Revision 1.21  1996/09/07 12:44:50  hipp&n; * (hopefully) fixed callback problem with syncPPP&n; * syncPPP network devices now show PPP link encap&n; *&n; * Revision 1.20  1996/08/29 20:06:03  fritz&n; * Bugfix: Transmission timeout had been much to low.&n; *&n; * Revision 1.19  1996/08/12 16:24:32  hipp&n; * removed some (now) obsolete functions for syncPPP in rebuild_header etc.&n; *&n; * Revision 1.18  1996/07/03 13:48:51  hipp&n; * bugfix: Call dev_purge_queues() only for master device&n; *&n; * Revision 1.17  1996/06/25 18:37:37  fritz&n; * Fixed return count for empty return string in isdn_net_getphones().&n; *&n; * Revision 1.16  1996/06/24 17:48:08  fritz&n; * Bugfixes:&n; *   - Did not free channel on unbinding.&n; *   - ioctl returned wrong callback settings.&n; *&n; * Revision 1.15  1996/06/16 17:42:54  tsbogend&n; * fixed problem with IP addresses on Linux/Alpha (long is 8 byte there)&n; *&n; * Revision 1.14  1996/06/11 14:54:08  hipp&n; * minor bugfix in isdn_net_send_skb&n; * changes in BSENT callback handler for syncPPP&n; * added lp-&gt;sav_skb stuff&n; *&n; * Revision 1.13  1996/06/06 14:25:44  fritz&n; * Changed loglevel of &quot;incoming ... without OAD&quot; message, since&n; * with audio support this is quite normal.&n; *&n; * Revision 1.12  1996/06/05 02:36:45  fritz&n; * Minor bugfixes by M. Hipp.&n; *&n; * Revision 1.11  1996/05/18 01:36:59  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.10  1996/05/17 03:49:01  fritz&n; * Some cleanup.&n; *&n; * Revision 1.9  1996/05/06 11:34:57  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.8  1996/04/30 21:04:40  fritz&n; * Test commit&n; *&n; * Revision 1.7  1996/04/30 11:10:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:34:35  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:28:38  fritz&n; * Made more parameters of the dial statemachine user-configurable and&n; * added hangup after dial for more reliability using callback.&n; * Changed all io going through generic routines in isdn_common.c&n; * Added missing call to dev_free_skb on failed dialing.&n; * Added uihdlc encapsulation.&n; * Fixed isdn_net_setcfg not to destroy interface-flags anymore.&n; * Misc. typos.&n; *&n; * Revision 1.4  1996/02/19 15:23:38  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; *         send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:22:28  fritz&n; * Changed status- receive-callbacks to use pointer-arrays for finding&n; * a corresponding interface instead of looping over all interfaces.&n; * Activate Auto-hangup-timer only when interface is online.&n; * Some bugfixes in the dialing-statemachine.&n; * Lot of bugfixes in sk_buff&squot;ized encapsulation handling.&n; * For speedup connection-setup after dialing, remember sk_buf that triggered&n; * dialing.&n; * Fixed isdn_net_log_packet according to different encapsulations.&n; * Correct ARP-handling for ETHERNET-encapsulation.&n; *&n; * Revision 1.2  1996/01/22 05:05:12  fritz&n; * Changed returncode-logic for isdn_net_start_xmit() and its&n; * helper-functions.&n; * Changed handling of buildheader for RAWIP and ETHERNET-encapsulation.&n; *&n; * Revision 1.1  1996/01/09 04:12:34  fritz&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &quot;isdn_common.h&quot;
 macro_line|#include &quot;isdn_net.h&quot;
 macro_line|#ifdef CONFIG_ISDN_PPP
 macro_line|#include &quot;isdn_ppp.h&quot;
 macro_line|#endif
-multiline_comment|/* In ksyms.c, but why not in some .h ??? */
-r_extern
-r_int
-id|arp_find
-c_func
-(paren
-r_int
-r_char
-op_star
-comma
-id|u32
-comma
-r_struct
-id|device
-op_star
-comma
-id|u32
-comma
-r_struct
-id|sk_buff
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* Prototypes */
 r_int
 id|isdn_net_force_dial_lp
@@ -88,7 +65,7 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|dev_purge_queues
 c_func
@@ -105,7 +82,7 @@ r_char
 op_star
 id|isdn_net_revision
 op_assign
-l_string|&quot;$Revision: 1.20 $&quot;
+l_string|&quot;$Revision: 1.37 $&quot;
 suffix:semicolon
 multiline_comment|/*&n;  * Code for raw-networking over ISDN&n;  */
 r_static
@@ -290,7 +267,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; Assign an ISDN-channel to a net-interface &n; */
+multiline_comment|/*&n; * Assign an ISDN-channel to a net-interface&n; */
 r_static
 r_void
 DECL|function|isdn_net_bind_channel
@@ -424,7 +401,6 @@ c_cond
 op_logical_neg
 id|lp-&gt;master
 )paren
-(brace
 multiline_comment|/* purge only for master device */
 id|dev_purge_queues
 c_func
@@ -433,7 +409,6 @@ op_amp
 id|lp-&gt;netdev-&gt;dev
 )paren
 suffix:semicolon
-)brace
 id|lp-&gt;dialstate
 op_assign
 l_int|0
@@ -497,6 +472,14 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Perform auto-hangup and cps-calculation for net-interfaces.&n; *&n; * auto-hangup:&n; * Increment idle-counter (this counter is reset on any incoming or&n; * outgoing packet), if counter exceeds configured limit either do a&n; * hangup immediately or - if configured - wait until just before the next&n; * charge-info.&n; *&n; * cps-calculation (needed for dynamic channel-bundling):&n; * Since this function is called every second, simply reset the&n; * byte-counter of the interface after copying it to the cps-variable.&n; */
+DECL|variable|last_jiffies
+r_int
+r_int
+id|last_jiffies
+op_assign
+op_minus
+id|HZ
+suffix:semicolon
 r_void
 DECL|function|isdn_net_autohup
 id|isdn_net_autohup
@@ -512,20 +495,6 @@ id|dev-&gt;netdev
 suffix:semicolon
 r_int
 id|anymore
-suffix:semicolon
-id|ulong
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 id|anymore
 op_assign
@@ -550,9 +519,35 @@ op_amp
 id|p-&gt;local
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|jiffies
+op_minus
+id|last_jiffies
+)paren
+op_eq
+l_int|0
+)paren
 id|l-&gt;cps
 op_assign
 id|l-&gt;transcount
+suffix:semicolon
+r_else
+id|l-&gt;cps
+op_assign
+(paren
+id|l-&gt;transcount
+op_star
+id|HZ
+)paren
+op_div
+(paren
+id|jiffies
+op_minus
+id|last_jiffies
+)paren
 suffix:semicolon
 id|l-&gt;transcount
 op_assign
@@ -614,23 +609,49 @@ id|l-&gt;onhtime
 r_if
 c_cond
 (paren
+id|l-&gt;hupflags
+op_amp
+id|ISDN_MANCHARGE
+op_logical_and
+id|l-&gt;hupflags
+op_amp
+id|ISDN_CHARGEHUP
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|jiffies
+op_minus
+id|l-&gt;chargetime
+OG
+id|l-&gt;chargeint
+)paren
+id|l-&gt;chargetime
+op_add_assign
+id|l-&gt;chargeint
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|l-&gt;chargetime
+op_ge
+id|l-&gt;chargeint
+op_minus
+l_int|2
+op_star
+id|HZ
+)paren
+r_if
+c_cond
+(paren
 id|l-&gt;outgoing
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|l-&gt;hupflags
 op_amp
-l_int|4
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|l-&gt;hupflags
-op_amp
-l_int|1
+id|ISDN_INHUP
 )paren
 id|isdn_net_hangup
 c_func
@@ -639,6 +660,49 @@ op_amp
 id|p-&gt;dev
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|l-&gt;outgoing
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|l-&gt;hupflags
+op_amp
+id|ISDN_CHARGEHUP
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|l-&gt;hupflags
+op_amp
+id|ISDN_WAITCHARGE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_net: Hupflags of %s are %X&bslash;n&quot;
+comma
+id|l-&gt;name
+comma
+id|l-&gt;hupflags
+)paren
+suffix:semicolon
+id|isdn_net_hangup
+c_func
+(paren
+op_amp
+id|p-&gt;dev
+)paren
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -649,6 +713,20 @@ id|l-&gt;chargetime
 OG
 id|l-&gt;chargeint
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_net: %s: chtime = %d, chint = %d&bslash;n&quot;
+comma
+id|l-&gt;name
+comma
+id|l-&gt;chargetime
+comma
+id|l-&gt;chargeint
+)paren
+suffix:semicolon
 id|isdn_net_hangup
 c_func
 (paren
@@ -656,6 +734,7 @@ op_amp
 id|p-&gt;dev
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 id|isdn_net_hangup
@@ -672,7 +751,7 @@ c_cond
 (paren
 id|l-&gt;hupflags
 op_amp
-l_int|8
+id|ISDN_INHUP
 )paren
 id|isdn_net_hangup
 c_func
@@ -691,18 +770,16 @@ op_star
 id|p-&gt;next
 suffix:semicolon
 )brace
+id|last_jiffies
+op_assign
+id|jiffies
+suffix:semicolon
 id|isdn_timer_ctrl
 c_func
 (paren
 id|ISDN_TIMER_NETHANGUP
 comma
 id|anymore
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -791,12 +868,10 @@ c_cond
 (paren
 id|lp-&gt;master
 )paren
-(brace
 id|mdev
 op_assign
 id|lp-&gt;master
 suffix:semicolon
-)brace
 r_else
 id|mdev
 op_assign
@@ -1121,10 +1196,21 @@ comma
 id|lp-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/* If first Chargeinfo comes before B-Channel connect,&n;                                                 * we correct the timestamp here.&n;                                                 */
+multiline_comment|/* If first Chargeinfo comes before B-Channel connect,&n;&t;&t;&t;&t;&t;&t; * we correct the timestamp here.&n;&t;&t;&t;&t;&t;&t; */
 id|lp-&gt;chargetime
 op_assign
 id|jiffies
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_net: chargetime of %s now %d&bslash;n&quot;
+comma
+id|lp-&gt;name
+comma
+id|lp-&gt;chargetime
+)paren
 suffix:semicolon
 multiline_comment|/* Immediately send first skb to speed up arp */
 macro_line|#ifdef CONFIG_ISDN_PPP
@@ -1135,14 +1221,12 @@ id|lp-&gt;p_encap
 op_eq
 id|ISDN_NET_ENCAP_SYNCPPP
 )paren
-(brace
 id|isdn_ppp_wakeup_daemon
 c_func
 (paren
 id|lp
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -1211,13 +1295,13 @@ c_cond
 (paren
 id|lp-&gt;hupflags
 op_amp
-l_int|2
+id|ISDN_HAVECHARGE
 )paren
 (brace
 id|lp-&gt;hupflags
 op_and_assign
 op_complement
-l_int|1
+id|ISDN_WAITCHARGE
 suffix:semicolon
 id|lp-&gt;chargeint
 op_assign
@@ -1237,15 +1321,26 @@ c_cond
 (paren
 id|lp-&gt;hupflags
 op_amp
-l_int|1
+id|ISDN_WAITCHARGE
 )paren
 id|lp-&gt;hupflags
 op_or_assign
-l_int|2
+id|ISDN_HAVECHARGE
 suffix:semicolon
 id|lp-&gt;chargetime
 op_assign
 id|jiffies
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;isdn_net: Got CINF chargetime of %s now %d&bslash;n&quot;
+comma
+id|lp-&gt;name
+comma
+id|lp-&gt;chargetime
+)paren
 suffix:semicolon
 r_return
 l_int|1
@@ -1387,7 +1482,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/* Initiate dialout. Set phone-number-pointer to first number&n;&t;&t;&t; * of interface.&n;&t;&t;&t; */
+multiline_comment|/* Initiate dialout. Set phone-number-pointer to first number&n;&t;&t;&t;&t; * of interface.&n;&t;&t;&t;&t; */
 id|p-&gt;local.dial
 op_assign
 id|p-&gt;local.phone
@@ -1402,12 +1497,11 @@ suffix:semicolon
 id|p-&gt;local.dialstate
 op_increment
 suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* Prepare dialing. Clear EAZ, then set EAZ. */
+multiline_comment|/* Fall through */
 r_case
 l_int|2
 suffix:colon
+multiline_comment|/* Prepare dialing. Clear EAZ, then set EAZ. */
 id|cmd.driver
 op_assign
 id|p-&gt;local.isdn_device
@@ -1437,7 +1531,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|cmd.num
+id|cmd.parm.num
 comma
 l_string|&quot;%s&quot;
 comma
@@ -1479,12 +1573,11 @@ suffix:semicolon
 id|p-&gt;local.dialstate
 op_increment
 suffix:semicolon
-r_break
-suffix:semicolon
+multiline_comment|/* Falls through */
 r_case
 l_int|3
 suffix:colon
-multiline_comment|/* Setup interface, dial current phone-number, switch to next number.&n;&t;&t;&t; * If list of phone-numbers is exhausted, increment&n;&t;&t;&t; * retry-counter.&n;&t;&t;&t; */
+multiline_comment|/* Setup interface, dial current phone-number, switch to next number.&n;&t;&t;&t;&t; * If list of phone-numbers is exhausted, increment&n;&t;&t;&t;&t; * retry-counter.&n;&t;&t;&t;&t; */
 id|cmd.driver
 op_assign
 id|p-&gt;local.isdn_device
@@ -1565,15 +1658,34 @@ id|p-&gt;local.outgoing
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;local.chargeint
+)paren
+(brace
 id|p-&gt;local.hupflags
 op_or_assign
-l_int|1
+id|ISDN_HAVECHARGE
 suffix:semicolon
 id|p-&gt;local.hupflags
 op_and_assign
 op_complement
-l_int|2
+id|ISDN_WAITCHARGE
 suffix:semicolon
+)brace
+r_else
+(brace
+id|p-&gt;local.hupflags
+op_or_assign
+id|ISDN_WAITCHARGE
+suffix:semicolon
+id|p-&gt;local.hupflags
+op_and_assign
+op_complement
+id|ISDN_HAVECHARGE
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1607,14 +1719,30 @@ id|cmd.command
 op_assign
 id|ISDN_CMD_DIAL
 suffix:semicolon
+id|cmd.parm.setup.si1
+op_assign
+l_int|7
+suffix:semicolon
+id|cmd.parm.setup.si2
+op_assign
+l_int|0
+suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|cmd.num
+id|cmd.parm.setup.phone
 comma
-l_string|&quot;%s,%s,7,0&quot;
+l_string|&quot;%s&quot;
 comma
 id|p-&gt;local.dial-&gt;num
+)paren
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|cmd.parm.setup.eazmsn
+comma
+l_string|&quot;%s&quot;
 comma
 id|isdn_map_eaz2msn
 c_func
@@ -1673,7 +1801,7 @@ comma
 id|p-&gt;local.dial-&gt;num
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Switch to next number or back to start if at end of list.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Switch to next number or back to start if at end of list.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1758,7 +1886,7 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
-multiline_comment|/* Wait for D-Channel-connect.&n;                         * If timeout and max retries not&n;&t;&t;&t; * reached, switch back to state 3.&n;&t;&t;&t; */
+multiline_comment|/* Wait for D-Channel-connect.&n;&t;&t;&t;&t; * If timeout and max retries not&n;&t;&t;&t;&t; * reached, switch back to state 3.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1840,7 +1968,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-multiline_comment|/* Wait for B- or D-Channel-connect. If timeout,&n;                         * switch back to state 3.&n;&t;&t;&t; */
+multiline_comment|/* Wait for B- or D-Channel-connect. If timeout,&n;&t;&t;&t;&t; * switch back to state 3.&n;&t;&t;&t;&t; */
 macro_line|#ifdef ISDN_DEBUG_NET_DIAL
 id|printk
 c_func
@@ -1873,7 +2001,7 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-multiline_comment|/* Got incoming Call, setup L2 and L3 protocols,&n;                         * then wait for D-Channel-connect&n;                         */
+multiline_comment|/* Got incoming Call, setup L2 and L3 protocols,&n;&t;&t;&t;&t; * then wait for D-Channel-connect&n;&t;&t;&t;&t; */
 macro_line|#ifdef ISDN_DEBUG_NET_DIAL
 id|printk
 c_func
@@ -2084,7 +2212,7 @@ suffix:semicolon
 r_case
 l_int|12
 suffix:colon
-multiline_comment|/* Remote does callback. Hangup after cbdelay, then wait for incoming&n;                         * call (in state 4).&n;&t;&t;&t; */
+multiline_comment|/* Remote does callback. Hangup after cbdelay, then wait for incoming&n;&t;&t;&t;&t; * call (in state 4).&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2220,6 +2348,11 @@ op_amp
 id|ISDN_NET_CONNECTED
 )paren
 (brace
+id|lp-&gt;flags
+op_and_assign
+op_complement
+id|ISDN_NET_CONNECTED
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2833,9 +2966,11 @@ OL
 l_int|0
 )paren
 (brace
-id|skb-&gt;free
-op_assign
-l_int|1
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
 id|dev_kfree_skb
 c_func
@@ -2916,7 +3051,7 @@ id|ndev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;
+macro_line|#endif
 multiline_comment|/* Reset hangup-timeout */
 id|lp-&gt;huptimer
 op_assign
@@ -2931,7 +3066,7 @@ l_int|7000
 )paren
 (brace
 multiline_comment|/* Device overloaded */
-multiline_comment|/* &n;&t;&t; * Packet-delivery via round-robin over master &n;&t;&t; * and all connected slaves.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Packet-delivery via round-robin over master&n;&t;&t; * and all connected slaves.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3351,7 +3486,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* we probably should drop the skb here and return 0 to omit&n;&t;&t;   &squot;socket destroy delayed&squot; messages */
+multiline_comment|/* we probably should drop the skb here and return 0 to omit&n;&t;&t;&t;&t;&t;   &squot;socket destroy delayed&squot; messages */
 r_return
 l_int|1
 suffix:semicolon
@@ -3434,25 +3569,25 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* STN (skb to nirvana) ;) */
 )brace
-id|isdn_net_dial
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Initiate dialing */
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+id|isdn_net_dial
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Initiate dialing */
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* let upper layer requeue skb packet */
 )brace
 macro_line|#endif
-multiline_comment|/* remember first skb to speed up arp&n;                                 * when using encap ETHER&n;                                 */
+multiline_comment|/* remember first skb to speed up arp&n;&t;&t;&t;&t; * when using encap ETHER&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3484,11 +3619,6 @@ op_assign
 id|skb
 suffix:semicolon
 multiline_comment|/* Initiate dialing */
-id|isdn_net_dial
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ndev-&gt;tbusy
 op_assign
 l_int|0
@@ -3499,13 +3629,18 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|isdn_net_dial
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;                                 * Having no phone-number is a permanent&n;                                 * failure or misconfiguration.&n;                                 * Instead of just dropping, we should also&n;                                 * have the upper layers to respond&n;                                 * with an ICMP No route to host in the&n;                                 * future, however at the moment, i don&squot;t&n;                                 * know a simple way to do that.&n;                                 * The same applies, when the telecom replies&n;                                 * &quot;no destination&quot; to our dialing-attempt.&n;                                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Having no phone-number is a permanent&n;&t;&t;&t;&t; * failure or misconfiguration.&n;&t;&t;&t;&t; * Instead of just dropping, we should also&n;&t;&t;&t;&t; * have the upper layers to respond&n;&t;&t;&t;&t; * with an ICMP No route to host in the&n;&t;&t;&t;&t; * future, however at the moment, i don&squot;t&n;&t;&t;&t;&t; * know a simple way to do that.&n;&t;&t;&t;&t; * The same applies, when the telecom replies&n;&t;&t;&t;&t; * &quot;no destination&quot; to our dialing-attempt.&n;&t;&t;&t;&t; */
 id|printk
 c_func
 (paren
@@ -3574,6 +3709,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_return
+(paren
 id|isdn_net_xmit
 c_func
 (paren
@@ -3582,6 +3718,7 @@ comma
 id|lp
 comma
 id|skb
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -3725,9 +3862,10 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*      This is simply a copy from std. eth.c EXCEPT we pull ETH_HLEN&n; *      instead of dev-&gt;hard_header_len off. This is done because the&n; *      lowlevel-driver has already pulled off its stuff when we get&n; *      here and this routine only gets called with p_encap == ETHER.&n; *      Determine the packet&squot;s protocol ID. The rule here is that we&n; *      assume 802.3 if the type field is short enough to be a length.&n; *      This is normal practice and works for any &squot;now in use&squot; protocol.&n; */
+r_static
+r_int
+r_int
 DECL|function|isdn_net_type_trans
-r_int
-r_int
 id|isdn_net_type_trans
 c_func
 (paren
@@ -3788,19 +3926,17 @@ id|ETH_ALEN
 op_eq
 l_int|0
 )paren
-(brace
 id|skb-&gt;pkt_type
 op_assign
 id|PACKET_BROADCAST
 suffix:semicolon
-)brace
 r_else
 id|skb-&gt;pkt_type
 op_assign
 id|PACKET_MULTICAST
 suffix:semicolon
 )brace
-multiline_comment|/*&n;         *      This ALLMULTI check should be redundant by 1.4&n;         *      so don&squot;t forget to remove it.&n;         */
+multiline_comment|/*&n;&t; *      This ALLMULTI check should be redundant by 1.4&n;&t; *      so don&squot;t forget to remove it.&n;&t; */
 r_else
 r_if
 c_cond
@@ -3850,7 +3986,7 @@ id|rawp
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;         *      This is a magic hack to spot IPX packets. Older Novell breaks&n;         *      the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;         *      layer. We look for FFFF which isn&squot;t a used 802.2 SSAP/DSAP. This&n;         *      won&squot;t work for fault tolerant netware but does for the rest.&n;         */
+multiline_comment|/*&n;&t; *      This is a magic hack to spot IPX packets. Older Novell breaks&n;&t; *      the protocol design and runs IPX over 802.3 without an 802.2 LLC&n;&t; *      layer. We look for FFFF which isn&squot;t a used 802.2 SSAP/DSAP. This&n;&t; *      won&squot;t work for fault tolerant netware but does for the rest.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3871,7 +4007,7 @@ c_func
 id|ETH_P_802_3
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         *      Real 802.2 LLC&n;         */
+multiline_comment|/*&n;&t; *      Real 802.2 LLC&n;&t; */
 r_return
 id|htons
 c_func
@@ -3880,7 +4016,7 @@ id|ETH_P_802_2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Got a packet from ISDN-Channel.&n; */
+multiline_comment|/*&n; * Got a packet from ISDN-Channel.&n; */
 r_static
 r_void
 DECL|function|isdn_net_receive
@@ -3916,6 +4052,15 @@ op_assign
 id|lp
 suffix:semicolon
 multiline_comment|/* original &squot;lp&squot; */
+r_int
+id|proto
+op_assign
+id|PPP_PROTOCOL
+c_func
+(paren
+id|skb-&gt;data
+)paren
+suffix:semicolon
 macro_line|#endif
 id|lp-&gt;transcount
 op_add_assign
@@ -3924,6 +4069,26 @@ suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_PPP
+multiline_comment|/*&n;&t; * If encapsulation is syncppp, don&squot;t reset&n;&t; * huptimer on LCP packets.&n;&t; */
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_ne
+id|ISDN_NET_ENCAP_SYNCPPP
+op_logical_or
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+op_logical_and
+id|proto
+op_ne
+id|PPP_LCP
+)paren
+)paren
+macro_line|#endif
 id|lp-&gt;huptimer
 op_assign
 l_int|0
@@ -3950,6 +4115,26 @@ suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISDN_PPP
+multiline_comment|/*&n;&t;&t; * If encapsulation is syncppp, don&squot;t reset&n;&t;&t; * huptimer on LCP packets.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_ne
+id|ISDN_NET_ENCAP_SYNCPPP
+op_logical_or
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+op_logical_and
+id|proto
+op_ne
+id|PPP_LCP
+)paren
+)paren
+macro_line|#endif
 id|lp-&gt;huptimer
 op_assign
 l_int|0
@@ -4144,126 +4329,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * A packet arrived via ISDN. Search interface-chain for a corresponding&n; * interface. If found, deliver packet to receiver-function and return 1,&n; * else return 0.&n; */
 r_int
-DECL|function|isdn_net_receive_callback
-id|isdn_net_receive_callback
-c_func
-(paren
-r_int
-id|idx
-comma
-id|u_char
-op_star
-id|buf
-comma
-r_int
-id|len
-)paren
-(brace
-id|isdn_net_dev
-op_star
-id|p
-op_assign
-id|dev-&gt;rx_netdev
-(braket
-id|idx
-)braket
-suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
-)paren
-(brace
-id|isdn_net_local
-op_star
-id|lp
-op_assign
-op_amp
-id|p-&gt;local
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|lp-&gt;flags
-op_amp
-id|ISDN_NET_CONNECTED
-)paren
-op_logical_and
-(paren
-op_logical_neg
-id|lp-&gt;dialstate
-)paren
-)paren
-(brace
-id|skb
-op_assign
-id|dev_alloc_skb
-c_func
-(paren
-id|len
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;out of memory&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|memcpy
-c_func
-(paren
-id|skb_put
-c_func
-(paren
-id|skb
-comma
-id|len
-)paren
-comma
-id|buf
-comma
-id|len
-)paren
-suffix:semicolon
-id|isdn_net_receive
-c_func
-(paren
-op_amp
-id|p-&gt;dev
-comma
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-)brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *  receive callback for lowlevel drivers, which support skb&squot;s&n; */
-r_int
 DECL|function|isdn_net_rcv_skb
 id|isdn_net_rcv_skb
 c_func
@@ -4382,7 +4447,7 @@ comma
 id|ETH_HLEN
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; * Set the protocol type. For a packet of type ETH_P_802_3 we&n;         * put the length here instead. It is up to the 802.2 layer to&n;         * carry protocol information.&n;&t; */
+multiline_comment|/*&n;&t; * Set the protocol type. For a packet of type ETH_P_802_3 we&n;&t; * put the length here instead. It is up to the 802.2 layer to&n;&t; * carry protocol information.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4390,7 +4455,6 @@ id|type
 op_ne
 id|ETH_P_802_3
 )paren
-(brace
 id|eth-&gt;h_proto
 op_assign
 id|htons
@@ -4399,7 +4463,6 @@ c_func
 id|type
 )paren
 suffix:semicolon
-)brace
 r_else
 id|eth-&gt;h_proto
 op_assign
@@ -4409,13 +4472,12 @@ c_func
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Set the source hardware address. &n;&t; */
+multiline_comment|/*&n;&t; * Set the source hardware address.&n;&t; */
 r_if
 c_cond
 (paren
 id|saddr
 )paren
-(brace
 id|memcpy
 c_func
 (paren
@@ -4426,7 +4488,6 @@ comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
-)brace
 r_else
 id|memcpy
 c_func
@@ -4438,7 +4499,7 @@ comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Anyway, the loopback-device should never use this function... &n;&t; */
+multiline_comment|/*&n;&t; * Anyway, the loopback-device should never use this function...&n;&t; */
 r_if
 c_cond
 (paren
@@ -4458,7 +4519,9 @@ id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 r_return
+(paren
 id|dev-&gt;hard_header_len
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -4693,6 +4756,7 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/* We don&squot;t need to send arp, because we have point-to-point connections. */
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 r_static
 r_int
 DECL|function|isdn_net_rebuild_header
@@ -4749,7 +4813,7 @@ op_star
 )paren
 id|buff
 suffix:semicolon
-multiline_comment|/*&n;                 *      Only ARP/IP is currently supported&n;                 */
+multiline_comment|/*&n;&t;&t; *      Only ARP/IP is currently supported&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4790,8 +4854,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                 *      Try to get ARP to resolve the header.&n;                 */
-macro_line|#ifdef CONFIG_INET       
+multiline_comment|/*&n;&t;&t; *      Try to get ARP to resolve the header.&n;&t;&t; */
+macro_line|#ifdef CONFIG_INET
 id|ret
 op_assign
 id|arp_find
@@ -4813,12 +4877,128 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-macro_line|#endif  
+macro_line|#endif
 )brace
 r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#else
+r_static
+r_int
+DECL|function|isdn_net_rebuild_header
+id|isdn_net_rebuild_header
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
+id|isdn_net_local
+op_star
+id|lp
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_ETHER
+)paren
+(brace
+r_struct
+id|ethhdr
+op_star
+id|eth
+op_assign
+(paren
+r_struct
+id|ethhdr
+op_star
+)paren
+id|skb-&gt;data
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *      Only ARP/IP is currently supported&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|eth-&gt;h_proto
+op_ne
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;isdn_net: %s don&squot;t know how to resolve type %d addresses?&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+(paren
+r_int
+)paren
+id|eth-&gt;h_proto
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|eth-&gt;h_source
+comma
+id|dev-&gt;dev_addr
+comma
+id|dev-&gt;addr_len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *      Try to get ARP to resolve the header.&n;&t;&t; */
+macro_line|#ifdef CONFIG_INET
+id|ret
+op_assign
+id|arp_find
+c_func
+(paren
+id|eth-&gt;h_dest
+comma
+id|skb
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+macro_line|#endif
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Interface-setup. (called just after registering a new interface)&n; */
 r_static
 r_int
@@ -4898,10 +5078,17 @@ c_func
 id|ndev
 )paren
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 id|lp-&gt;org_hcb
 op_assign
 id|ndev-&gt;header_cache_bind
 suffix:semicolon
+macro_line|#else
+id|lp-&gt;org_hhc
+op_assign
+id|ndev-&gt;hard_header_cache
+suffix:semicolon
+macro_line|#endif
 id|lp-&gt;org_hcu
 op_assign
 id|ndev-&gt;header_cache_update
@@ -4911,10 +5098,17 @@ id|ndev-&gt;hard_header
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 id|ndev-&gt;header_cache_bind
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+id|ndev-&gt;hard_header_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|ndev-&gt;header_cache_update
 op_assign
 l_int|NULL
@@ -5011,7 +5205,7 @@ op_assign
 op_amp
 id|isdn_net_start_xmit
 suffix:semicolon
-multiline_comment|/* &n;&t; *  up till binding we ask the protocol layer to reserve as much&n;&t; *  as we might need for HL layer&n;         */
+multiline_comment|/*&n;&t; *  up till binding we ask the protocol layer to reserve as much&n;&t; *  as we might need for HL layer&n;&t; */
 r_for
 c_loop
 (paren
@@ -5186,7 +5380,7 @@ id|p
 r_case
 l_char|&squot;&bslash;&bslash;&squot;
 suffix:colon
-multiline_comment|/*&n;                                 * Literal match with following character,&n;                                 * fall through.&n;                                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Literal match with following character,&n;&t;&t;&t;&t; * fall through.&n;&t;&t;&t;&t; */
 id|p
 op_increment
 suffix:semicolon
@@ -5531,9 +5725,8 @@ comma
 r_int
 id|idx
 comma
-r_char
-op_star
-id|num
+id|setup_parm
+id|setup
 )paren
 (brace
 r_char
@@ -5571,12 +5764,8 @@ suffix:semicolon
 r_char
 id|nr
 (braket
-l_int|31
+l_int|32
 )braket
-suffix:semicolon
-r_char
-op_star
-id|s
 suffix:semicolon
 multiline_comment|/* Search name in netdev-chain */
 id|save_flags
@@ -5593,12 +5782,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num
+op_logical_neg
+id|setup.phone
 (braket
 l_int|0
 )braket
-op_eq
-l_char|&squot;,&squot;
 )paren
 (brace
 id|nr
@@ -5608,19 +5796,12 @@ l_int|0
 op_assign
 l_char|&squot;0&squot;
 suffix:semicolon
-id|strncpy
-c_func
-(paren
-op_amp
 id|nr
 (braket
 l_int|1
 )braket
-comma
-id|num
-comma
-l_int|30
-)paren
+op_assign
+l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 id|printk
 c_func
@@ -5631,143 +5812,36 @@ l_string|&quot;isdn_net: Incoming call without OAD, assuming &squot;0&squot;&bsl
 suffix:semicolon
 )brace
 r_else
-id|strncpy
+id|strcpy
 c_func
 (paren
 id|nr
 comma
-id|num
-comma
-l_int|30
+id|setup.phone
 )paren
 suffix:semicolon
-id|s
-op_assign
-id|strtok
-c_func
-(paren
-id|nr
-comma
-l_string|&quot;,&quot;
-)paren
-suffix:semicolon
-id|s
-op_assign
-id|strtok
-c_func
-(paren
-l_int|NULL
-comma
-l_string|&quot;,&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|s
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;isdn_net: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|si1
 op_assign
 (paren
 r_int
 )paren
-id|simple_strtoul
-c_func
-(paren
-id|s
-comma
-l_int|NULL
-comma
-l_int|10
-)paren
+id|setup.si1
 suffix:semicolon
-id|s
-op_assign
-id|strtok
-c_func
-(paren
-l_int|NULL
-comma
-l_string|&quot;,&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|s
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;isdn_net: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
-comma
-id|num
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|si2
 op_assign
 (paren
 r_int
 )paren
-id|simple_strtoul
-c_func
-(paren
-id|s
-comma
-l_int|NULL
-comma
-l_int|10
-)paren
-suffix:semicolon
-id|eaz
-op_assign
-id|strtok
-c_func
-(paren
-l_int|NULL
-comma
-l_string|&quot;,&quot;
-)paren
+id|setup.si2
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|eaz
+id|setup.eazmsn
+(braket
+l_int|0
+)braket
 )paren
 (brace
 id|printk
@@ -5782,6 +5856,11 @@ op_assign
 l_string|&quot;0&quot;
 suffix:semicolon
 )brace
+r_else
+id|eaz
+op_assign
+id|setup.eazmsn
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6068,7 +6147,7 @@ id|di
 )paren
 )paren
 (brace
-multiline_comment|/* Here we got a problem:&n;&t;&t;&t;&t;&t;   If using an ICN-Card, an incoming call is always signaled on&n;&t;&t;&t;&t;&t;   on the first channel of the card, if both channels are&n;&t;&t;&t;&t;&t;   down. However this channel may be bound exclusive. If the&n;&t;&t;&t;&t;&t;   second channel is free, this call should be accepted.&n;&t;&t;&t;&t;&t;   The solution is horribly but it runs, so what:&n;&t;&t;&t;&t;&t;   We exchange the exclusive bindings of the two channels, the&n;&t;&t;&t;&t;&t;   corresponding variables in the interface-structs.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* Here we got a problem:&n;&t;&t;&t;&t;&t; * If using an ICN-Card, an incoming call is always signaled on&n;&t;&t;&t;&t;&t; * on the first channel of the card, if both channels are&n;&t;&t;&t;&t;&t; * down. However this channel may be bound exclusive. If the&n;&t;&t;&t;&t;&t; * second channel is free, this call should be accepted.&n;&t;&t;&t;&t;&t; * The solution is horribly but it runs, so what:&n;&t;&t;&t;&t;&t; * We exchange the exclusive bindings of the two channels, the&n;&t;&t;&t;&t;&t; * corresponding variables in the interface-structs.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6109,7 +6188,7 @@ id|sidx
 )paren
 )paren
 (brace
-multiline_comment|/* Second Channel is free, now see if it is bound&n;&t;&t;&t;&t;&t;&t;&t;   exclusive too. */
+multiline_comment|/* Second Channel is free, now see if it is bound&n;&t;&t;&t;&t;&t;&t;&t; * exclusive too. */
 r_if
 c_cond
 (paren
@@ -6130,7 +6209,7 @@ l_string|&quot;n_fi: 2nd channel is down and bound&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Yes, swap bindings only, if the original&n;&t;&t;&t;&t;&t;&t;&t;&t;   binding is bound to channel 1 of this driver */
+multiline_comment|/* Yes, swap bindings only, if the original&n;&t;&t;&t;&t;&t;&t;&t;&t; * binding is bound to channel 1 of this driver */
 r_if
 c_cond
 (paren
@@ -6288,7 +6367,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* if (dev-&gt;usage[idx] &amp; ISDN_USAGE_EXCLUSIVE) */
 macro_line|#ifdef ISDN_DEBUG_NET_ICALL
 id|printk
 c_func
@@ -6732,6 +6810,22 @@ op_eq
 l_int|12
 )paren
 )paren
+(brace
+macro_line|#ifdef CONFIG_ISDN_PPP
+r_if
+c_cond
+(paren
+id|lp-&gt;p_encap
+op_eq
+id|ISDN_NET_ENCAP_SYNCPPP
+)paren
+id|isdn_ppp_free
+c_func
+(paren
+id|lp
+)paren
+suffix:semicolon
+macro_line|#endif
 id|isdn_free_channel
 c_func
 (paren
@@ -6742,6 +6836,7 @@ comma
 id|ISDN_USAGE_NET
 )paren
 suffix:semicolon
+)brace
 id|dev-&gt;usage
 (braket
 id|idx
@@ -6792,11 +6887,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|p-&gt;local.pppbind
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|p-&gt;local.flags
 op_or_assign
 id|ISDN_NET_CONNECTED
@@ -6819,12 +6909,12 @@ l_int|0
 suffix:semicolon
 id|p-&gt;local.hupflags
 op_or_assign
-l_int|1
+id|ISDN_WAITCHARGE
 suffix:semicolon
 id|p-&gt;local.hupflags
 op_and_assign
 op_complement
-l_int|2
+id|ISDN_HAVECHARGE
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_PPP
 r_if
@@ -6972,8 +7062,8 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Force a net-interface to dial out.&n; * This is called from the userlevel-routine below or&n; * from isdn_net_start_xmit().&n; */
-DECL|function|isdn_net_force_dial_lp
 r_int
+DECL|function|isdn_net_force_dial_lp
 id|isdn_net_force_dial_lp
 c_func
 (paren
@@ -7125,15 +7215,15 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Initiate dialing */
-id|isdn_net_dial
-c_func
-(paren
-)paren
-suffix:semicolon
 id|restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|isdn_net_dial
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -7524,6 +7614,14 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|netdev-&gt;local.sav_skb
+op_assign
+l_int|NULL
+suffix:semicolon
+id|netdev-&gt;local.first_skb
+op_assign
+l_int|NULL
+suffix:semicolon
 id|netdev-&gt;local.l2_proto
 op_assign
 id|ISDN_PROTO_L2_X75I
@@ -7545,14 +7643,14 @@ id|netdev-&gt;dev
 suffix:semicolon
 id|netdev-&gt;local.hupflags
 op_assign
-l_int|8
+id|ISDN_INHUP
 suffix:semicolon
 multiline_comment|/* Do hangup even on incoming calls */
 id|netdev-&gt;local.onhtime
 op_assign
 l_int|10
 suffix:semicolon
-multiline_comment|/* Default hangup-time for saving costs&n;&t;&t;&t;&t;&t;   of those who forget configuring this */
+multiline_comment|/* Default hangup-time for saving costs&n;&t;   of those who forget configuring this */
 id|netdev-&gt;local.dialmax
 op_assign
 l_int|1
@@ -7681,6 +7779,15 @@ id|n-&gt;local.master
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Master must not be started yet */
+r_if
+c_cond
+(paren
+id|n-&gt;dev.start
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 r_return
 (paren
 id|isdn_net_new
@@ -7701,8 +7808,8 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set interface-parameters.&n; * Always set all parameters, so the user-level application is responsible&n; * for not overwriting existing setups. It has to get the current&n; * setup first, if only selected parameters are to be changed.&n; */
-DECL|function|isdn_net_setcfg
 r_int
+DECL|function|isdn_net_setcfg
 id|isdn_net_setcfg
 c_func
 (paren
@@ -7847,7 +7954,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_ISDN_PPP
 r_if
 c_cond
 (paren
@@ -7856,11 +7962,12 @@ op_eq
 id|ISDN_NET_ENCAP_SYNCPPP
 )paren
 (brace
+macro_line|#ifndef CONFIG_ISDN_PPP
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: SyncPPP not configured&bslash;n&quot;
+l_string|&quot;%s: SyncPPP support not configured&bslash;n&quot;
 comma
 id|p-&gt;local.name
 )paren
@@ -7869,8 +7976,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
+macro_line|#else
+id|p-&gt;dev.type
+op_assign
+id|ARPHRD_PPP
+suffix:semicolon
+multiline_comment|/* change ARP type */
+id|p-&gt;dev.addr_len
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -8310,13 +8427,13 @@ id|cfg-&gt;chargehup
 )paren
 id|p-&gt;local.hupflags
 op_or_assign
-l_int|4
+id|ISDN_CHARGEHUP
 suffix:semicolon
 r_else
 id|p-&gt;local.hupflags
 op_and_assign
 op_complement
-l_int|4
+id|ISDN_CHARGEHUP
 suffix:semicolon
 r_if
 c_cond
@@ -8325,14 +8442,37 @@ id|cfg-&gt;ihup
 )paren
 id|p-&gt;local.hupflags
 op_or_assign
-l_int|8
+id|ISDN_INHUP
 suffix:semicolon
 r_else
 id|p-&gt;local.hupflags
 op_and_assign
 op_complement
-l_int|8
+id|ISDN_INHUP
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cfg-&gt;chargeint
+OG
+l_int|10
+)paren
+(brace
+id|p-&gt;local.hupflags
+op_or_assign
+id|ISDN_CHARGEHUP
+op_or
+id|ISDN_HAVECHARGE
+op_or
+id|ISDN_MANCHARGE
+suffix:semicolon
+id|p-&gt;local.chargeint
+op_assign
+id|cfg-&gt;chargeint
+op_star
+id|HZ
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8353,10 +8493,17 @@ id|p-&gt;dev.hard_header
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 id|p-&gt;dev.header_cache_bind
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+id|p-&gt;dev.hard_header_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|p-&gt;dev.header_cache_update
 op_assign
 l_int|NULL
@@ -8380,10 +8527,17 @@ op_eq
 id|ISDN_NET_ENCAP_ETHER
 )paren
 (brace
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 id|p-&gt;dev.header_cache_bind
 op_assign
 id|p-&gt;local.org_hcb
 suffix:semicolon
+macro_line|#else
+id|p-&gt;dev.hard_header_cache
+op_assign
+id|p-&gt;local.org_hhc
+suffix:semicolon
+macro_line|#endif
 id|p-&gt;dev.header_cache_update
 op_assign
 id|p-&gt;local.org_hcu
@@ -8397,10 +8551,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 id|p-&gt;dev.header_cache_bind
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+id|p-&gt;dev.hard_header_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|p-&gt;dev.header_cache_update
 op_assign
 l_int|NULL
@@ -8426,8 +8587,8 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Perform get-interface-parameters.ioctl&n; */
-DECL|function|isdn_net_getcfg
 r_int
+DECL|function|isdn_net_getcfg
 id|isdn_net_getcfg
 c_func
 (paren
@@ -8608,6 +8769,23 @@ id|p-&gt;local.slavedelay
 op_div
 id|HZ
 suffix:semicolon
+id|cfg-&gt;chargeint
+op_assign
+(paren
+id|p-&gt;local.hupflags
+op_amp
+id|ISDN_CHARGEHUP
+)paren
+ques
+c_cond
+(paren
+id|p-&gt;local.chargeint
+op_div
+id|HZ
+)paren
+suffix:colon
+l_int|0
+suffix:semicolon
 id|cfg-&gt;pppbind
 op_assign
 id|p-&gt;local.pppbind
@@ -8680,8 +8858,8 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Add a phone-number to an interface.&n; */
-DECL|function|isdn_net_addphone
 r_int
+DECL|function|isdn_net_addphone
 id|isdn_net_addphone
 c_func
 (paren
@@ -8792,8 +8970,8 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return a string of all phone-numbers of an interface.&n; */
-DECL|function|isdn_net_getphones
 r_int
+DECL|function|isdn_net_getphones
 id|isdn_net_getphones
 c_func
 (paren
@@ -8842,8 +9020,6 @@ id|flags
 suffix:semicolon
 r_int
 id|ret
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -8893,23 +9069,14 @@ c_cond
 id|more
 )paren
 (brace
-id|ret
-op_assign
 id|put_user
 c_func
 (paren
-(paren
-(paren
-r_char
-)paren
 l_char|&squot; &squot;
-)paren
 comma
 id|phones
-)paren
-suffix:semicolon
-id|phones
 op_increment
+)paren
 suffix:semicolon
 id|count
 op_increment
@@ -8918,8 +9085,41 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|ret
-op_logical_or
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|phones
+comma
+id|strlen
+c_func
+(paren
+id|n-&gt;num
+)paren
+op_plus
+l_int|1
+)paren
+)paren
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
 id|copy_to_user
 c_func
 (paren
@@ -8935,19 +9135,7 @@ id|n-&gt;num
 op_plus
 l_int|1
 )paren
-)paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-)brace
 id|phones
 op_add_assign
 id|strlen
@@ -8969,17 +9157,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|ret
-op_assign
 id|put_user
 c_func
 (paren
-(paren
-(paren
-r_char
-)paren
 l_int|0
-)paren
 comma
 id|phones
 )paren
@@ -8994,18 +9175,12 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|ret
-ques
-c_cond
-op_minus
-id|EFAULT
-suffix:colon
 id|count
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Delete a phone-number from an interface.&n; */
-DECL|function|isdn_net_delphone
 r_int
+DECL|function|isdn_net_delphone
 id|isdn_net_delphone
 c_func
 (paren
@@ -9126,9 +9301,9 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Delete all phone-numbers of an interface.&n; */
-DECL|function|isdn_net_rmallphone
 r_static
 r_int
+DECL|function|isdn_net_rmallphone
 id|isdn_net_rmallphone
 c_func
 (paren
@@ -9224,8 +9399,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Force a hangup of a network-interface.&n; */
-DECL|function|isdn_net_force_hangup
 r_int
+DECL|function|isdn_net_force_hangup
 id|isdn_net_force_hangup
 c_func
 (paren
@@ -9244,9 +9419,6 @@ c_func
 id|name
 )paren
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|device
 op_star
@@ -9258,17 +9430,6 @@ c_cond
 id|p
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9276,17 +9437,9 @@ id|p-&gt;local.isdn_device
 OL
 l_int|0
 )paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-)brace
 id|isdn_net_hangup
 c_func
 (paren
@@ -9326,12 +9479,6 @@ id|slave
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9342,9 +9489,9 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Helper-function for isdn_net_rm: Do the real work.&n; */
-DECL|function|isdn_net_realrm
 r_static
 r_int
+DECL|function|isdn_net_realrm
 id|isdn_net_realrm
 c_func
 (paren
@@ -9594,15 +9741,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISDN_PPP
-id|isdn_ppp_free_mpqueue
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-multiline_comment|/* still necessary? */
-macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -9614,8 +9752,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove a single network-interface.&n; */
-DECL|function|isdn_net_rm
 r_int
+DECL|function|isdn_net_rm
 id|isdn_net_rm
 c_func
 (paren
@@ -9705,8 +9843,8 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Remove all network-interfaces&n; */
-DECL|function|isdn_net_rmall
 r_int
+DECL|function|isdn_net_rmall
 id|isdn_net_rmall
 c_func
 (paren
@@ -9787,9 +9925,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * helper function to flush device queues&n; * the better place would be net/core/dev.c&n; */
-DECL|function|dev_purge_queues
+multiline_comment|/*&n; * helper function to flush device queues&n; * the better place would be net/core/dev.c&n; */
+r_static
 r_void
+DECL|function|dev_purge_queues
 id|dev_purge_queues
 c_func
 (paren
@@ -9839,7 +9978,6 @@ id|i
 )paren
 )paren
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
@@ -9848,7 +9986,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 eof

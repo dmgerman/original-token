@@ -1,9 +1,11 @@
-multiline_comment|/* $Id: teles.h,v 1.2 1996/04/30 21:52:04 isdn4dev Exp $&n; *&n; * $Log: teles.h,v $&n; * Revision 1.2  1996/04/30 21:52:04  isdn4dev&n; * SPV for 1TR6 - Karsten&n; *&n; * Revision 1.1  1996/04/13 10:29:00  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: teles.h,v 1.3 1997/02/11 01:40:36 keil Exp $&n; *&n; * $Log: teles.h,v $&n; * Revision 1.3  1997/02/11 01:40:36  keil&n; * New Param structure&n; *&n; * Revision 1.2  1996/04/30 21:52:04  isdn4dev&n; * SPV for 1TR6 - Karsten&n; *&n; * Revision 1.1  1996/04/13 10:29:00  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -15,8 +17,6 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|PH_ACTIVATE
 mdefine_line|#define PH_ACTIVATE   1
 DECL|macro|PH_DATA
@@ -953,36 +953,11 @@ r_int
 id|callref
 suffix:semicolon
 multiline_comment|/* TEI-Number                      */
-DECL|member|itc
-r_int
-id|itc
+DECL|member|setup
+id|setup_parm
+id|setup
 suffix:semicolon
-DECL|member|info
-r_int
-id|info
-suffix:semicolon
-multiline_comment|/* Service-Indicator               */
-DECL|member|info2
-r_int
-id|info2
-suffix:semicolon
-multiline_comment|/* Service-Indicator, second octet */
-DECL|member|calling
-r_char
-id|calling
-(braket
-l_int|40
-)braket
-suffix:semicolon
-multiline_comment|/* Called Id                       */
-DECL|member|called
-r_char
-id|called
-(braket
-l_int|40
-)braket
-suffix:semicolon
-multiline_comment|/* Caller Id                       */
+multiline_comment|/* from isdnif.h numbers and Serviceindicator */
 DECL|member|chargeinfo
 r_int
 id|chargeinfo
@@ -1048,8 +1023,8 @@ r_struct
 id|HscxState
 (brace
 DECL|member|membase
-r_int
-r_int
+id|byte
+op_star
 id|membase
 suffix:semicolon
 DECL|member|iobase
@@ -1161,8 +1136,8 @@ id|magic
 suffix:semicolon
 macro_line|#endif
 DECL|member|membase
-r_int
-r_int
+id|byte
+op_star
 id|membase
 suffix:semicolon
 DECL|member|iobase
@@ -1269,8 +1244,8 @@ r_struct
 id|IsdnCard
 (brace
 DECL|member|membase
-r_int
-r_int
+id|byte
+op_star
 id|membase
 suffix:semicolon
 DECL|member|interrupt

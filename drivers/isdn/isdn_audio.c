@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_audio.c,v 1.6 1996/06/06 14:43:31 fritz Exp $&n; *&n; * Linux ISDN subsystem, audio conversion and compression (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * DTMF code (c) 1996 by Christian Mock (cm@kukuruz.ping.at)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_audio.c,v $&n; * Revision 1.6  1996/06/06 14:43:31  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.5  1996/06/05 02:24:08  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.4  1996/05/17 03:48:01  fritz&n; * Removed some test statements.&n; * Added revision string.&n; *&n; * Revision 1.3  1996/05/10 08:48:11  fritz&n; * Corrected adpcm bugs.&n; *&n; * Revision 1.2  1996/04/30 09:31:17  fritz&n; * General rewrite.&n; *&n; * Revision 1.1.1.1  1996/04/28 12:25:40  fritz&n; * Taken under CVS control&n; *&n; */
+multiline_comment|/* $Id: isdn_audio.c,v 1.7 1997/02/03 22:44:11 fritz Exp $&n;&n; * Linux ISDN subsystem, audio conversion and compression (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * DTMF code (c) 1996 by Christian Mock (cm@kukuruz.ping.at)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_audio.c,v $&n; * Revision 1.7  1997/02/03 22:44:11  fritz&n; * Reformatted according CodingStyle&n; *&n; * Revision 1.6  1996/06/06 14:43:31  fritz&n; * Changed to support DTMF decoding on audio playback also.&n; *&n; * Revision 1.5  1996/06/05 02:24:08  fritz&n; * Added DTMF decoder for audio mode.&n; *&n; * Revision 1.4  1996/05/17 03:48:01  fritz&n; * Removed some test statements.&n; * Added revision string.&n; *&n; * Revision 1.3  1996/05/10 08:48:11  fritz&n; * Corrected adpcm bugs.&n; *&n; * Revision 1.2  1996/04/30 09:31:17  fritz&n; * General rewrite.&n; *&n; * Revision 1.1.1.1  1996/04/28 12:25:40  fritz&n; * Taken under CVS control&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -10,7 +10,7 @@ r_char
 op_star
 id|isdn_audio_revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 multiline_comment|/*&n; * Misc. lookup-tables.&n; */
 multiline_comment|/* ulaw -&gt; signed 16-bit */
@@ -2349,7 +2349,8 @@ l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
 l_string|&quot;xlatb&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&bslash;t&quot;
 l_string|&quot;loop 1b&bslash;n&bslash;t&quot;
-op_scope_resolution
+suffix:colon
+suffix:colon
 l_string|&quot;b&quot;
 (paren
 (paren
@@ -2485,11 +2486,11 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * linear &lt;-&gt; adpcm conversion stuff&n; * Most parts from the mgetty-package.&n; * (C) by Gert Doering and Klaus Weidner&n; * Used by permission of Gert Doering&n; */
 DECL|macro|ZEROTRAP
-mdefine_line|#define ZEROTRAP    /* turn on the trap as per the MIL-STD */
+mdefine_line|#define ZEROTRAP                /* turn on the trap as per the MIL-STD */
 DECL|macro|ZEROTRAP
 macro_line|#undef ZEROTRAP
 DECL|macro|BIAS
-mdefine_line|#define BIAS 0x84   /* define the add-in bias for 16 bit samples */
+mdefine_line|#define BIAS 0x84               /* define the add-in bias for 16 bit samples */
 DECL|macro|CLIP
 mdefine_line|#define CLIP 32635
 r_static
@@ -3054,13 +3055,11 @@ id|sign
 op_ne
 l_int|0
 )paren
-(brace
 id|sample
 op_assign
 op_minus
 id|sample
 suffix:semicolon
-)brace
 multiline_comment|/* get magnitude       */
 r_if
 c_cond
@@ -3069,12 +3068,10 @@ id|sample
 OG
 id|CLIP
 )paren
-(brace
 id|sample
 op_assign
 id|CLIP
 suffix:semicolon
-)brace
 multiline_comment|/* clip the magnitude  */
 multiline_comment|/* Convert from 16 bit linear to ulaw. */
 id|sample
@@ -3140,7 +3137,9 @@ l_int|0x02
 suffix:semicolon
 macro_line|#endif
 r_return
+(paren
 id|ulawbyte
+)paren
 suffix:semicolon
 )brace
 DECL|variable|Mx
@@ -3243,6 +3242,7 @@ r_static
 r_int
 DECL|function|isdn_audio_get_bits
 id|isdn_audio_get_bits
+c_func
 (paren
 id|adpcm_state
 op_star
@@ -3321,6 +3321,7 @@ r_static
 r_void
 DECL|function|isdn_audio_put_bits
 id|isdn_audio_put_bits
+c_func
 (paren
 r_int
 id|data
@@ -3535,6 +3536,7 @@ multiline_comment|/*&n; * Decompression of adpcm data to a/u-law&n; *&n; */
 r_int
 DECL|function|isdn_audio_adpcm2xlaw
 id|isdn_audio_adpcm2xlaw
+c_func
 (paren
 id|adpcm_state
 op_star
@@ -3628,6 +3630,7 @@ l_int|1
 )paren
 )paren
 ques
+c_cond
 op_minus
 l_int|1
 suffix:colon
@@ -3753,6 +3756,7 @@ suffix:semicolon
 r_int
 DECL|function|isdn_audio_2adpcm_flush
 id|isdn_audio_2adpcm_flush
+c_func
 (paren
 id|adpcm_state
 op_star
@@ -3799,6 +3803,7 @@ suffix:semicolon
 r_int
 DECL|function|isdn_audio_xlaw2adpcm
 id|isdn_audio_xlaw2adpcm
+c_func
 (paren
 id|adpcm_state
 op_star
@@ -3990,6 +3995,7 @@ l_int|1
 )paren
 )paren
 ques
+c_cond
 op_minus
 l_int|1
 suffix:colon
@@ -4077,6 +4083,7 @@ id|olen
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Goertzel algorithm.&n; * See http://ptolemy.eecs.berkeley.edu/~pino/Ptolemy/papers/96/dtmf_ict/&n; * for more info.&n; * Result is stored into an sk_buff and queued up for later&n; * evaluation.&n; */
+r_static
 r_void
 DECL|function|isdn_audio_goertzel
 id|isdn_audio_goertzel
@@ -4144,6 +4151,45 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|SET_SKB_FREE
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+OL
+r_sizeof
+(paren
+id|isdn_audio_skb
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;isdn_audio: insufficient DTMF skb_headroom, dropping&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|result
 op_assign
 (paren
@@ -4163,11 +4209,11 @@ op_star
 id|NCOEFF
 )paren
 suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-id|skb-&gt;users
+id|ISDN_AUDIO_SKB_DLECOUNT
+c_func
+(paren
+id|skb
+)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -4521,12 +4567,10 @@ id|silence
 op_eq
 l_int|8
 )paren
-(brace
 id|what
 op_assign
 l_char|&squot; &squot;
 suffix:semicolon
-)brace
 r_else
 (brace
 r_if
@@ -4580,12 +4624,10 @@ id|s-&gt;last
 op_ne
 l_char|&squot;.&squot;
 )paren
-(brace
 id|s-&gt;last
 op_assign
 id|what
 suffix:semicolon
-)brace
 multiline_comment|/* min. 1 non-DTMF between DTMF */
 )brace
 r_else

@@ -1021,6 +1021,38 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_HISAX
+r_extern
+r_void
+id|HiSax_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_PCBIT
+r_extern
+r_void
+id|pcbit_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARIMOUSE
 r_extern
 r_void
@@ -1096,22 +1128,6 @@ macro_line|#ifdef CONFIG_DIGI
 r_extern
 r_void
 id|pcxx_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ISDN_DRV_PCBIT
-r_extern
-r_void
-id|pcbit_setup
 c_func
 (paren
 r_char
@@ -2015,6 +2031,20 @@ macro_line|#ifdef CONFIG_ISDN_DRV_TELES
 l_string|&quot;teles=&quot;
 comma
 id|teles_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_HISAX
+(brace
+l_string|&quot;hisax=&quot;
+comma
+id|HiSax_setup
+)brace
+comma
+(brace
+l_string|&quot;HiSax=&quot;
+comma
+id|HiSax_setup
 )brace
 comma
 macro_line|#endif

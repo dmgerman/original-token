@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: q931.c,v 1.5 1996/06/03 20:03:40 fritz Exp $&n; *&n; * q931.c               code to decode ITU Q.931 call control messages&n; * &n; * Author               Jan den Ouden&n; * &n; * Changelog&n; * &n; * Pauline Middelink    general improvements&n; * &n; * Beat Doebeli         cause texts, display information element&n; * &n; * Karsten Keil         cause texts, display information element for 1TR6 &n; *&n; * &n; * $Log: q931.c,v $&n; * Revision 1.5  1996/06/03 20:03:40  fritz&n; * Fixed typos.&n; *&n; * Revision 1.4  1996/05/17 03:46:17  fritz&n; * General cleanup.&n; *&n; * Revision 1.3  1996/04/30 22:06:50  isdn4dev&n; *   logging 1TR6 messages correctly   Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:48:19  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:27:49  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: q931.c,v 1.6 1996/09/23 01:53:53 fritz Exp $&n; *&n; * q931.c               code to decode ITU Q.931 call control messages&n; * &n; * Author               Jan den Ouden&n; * &n; * Changelog&n; * &n; * Pauline Middelink    general improvements&n; * &n; * Beat Doebeli         cause texts, display information element&n; * &n; * Karsten Keil         cause texts, display information element for 1TR6 &n; *&n; * &n; * $Log: q931.c,v $&n; * Revision 1.6  1996/09/23 01:53:53  fritz&n; * Bugfix: discard unknown frames (non-EDSS1 and non-1TR6).&n; *&n; * Revision 1.5  1996/06/03 20:03:40  fritz&n; * Fixed typos.&n; *&n; * Revision 1.4  1996/05/17 03:46:17  fritz&n; * General cleanup.&n; *&n; * Revision 1.3  1996/04/30 22:06:50  isdn4dev&n; *   logging 1TR6 messages correctly   Karsten Keil&n; *&n; * Revision 1.2  1996/04/20 16:48:19  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:27:49  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
+macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;l3_1TR6.h&quot;
 id|byte
 op_star
@@ -4749,6 +4750,16 @@ suffix:semicolon
 )brace
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|buf
+(braket
+l_int|0
+)braket
+op_eq
+id|PROTO_EURO
+)paren
 (brace
 multiline_comment|/* EURO */
 multiline_comment|/* locate message type */
@@ -5102,6 +5113,22 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+r_else
+id|dp
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|dp
+comma
+l_string|&quot;Unnown frame type %.2x, ignored&bslash;n&quot;
+comma
+id|buf
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 id|dp
 op_add_assign
 id|sprintf

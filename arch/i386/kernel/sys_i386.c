@@ -321,9 +321,6 @@ r_struct
 id|sel_arg_struct
 id|a
 suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -345,13 +342,8 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
+multiline_comment|/* sys_select() does the appropriate kernel locking */
+r_return
 id|sys_select
 c_func
 (paren
@@ -365,14 +357,6 @@ id|a.exp
 comma
 id|a.tvp
 )paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_ipc() is the de-multiplexer for the SysV IPC calls..&n; *&n; * This is really horribly ugly.&n; */

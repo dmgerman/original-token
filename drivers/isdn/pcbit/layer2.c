@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
-multiline_comment|/*        &n; *        PCBIT-D low-layer interface&n; */
+multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; *&n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of&n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; *        PCBIT-D low-layer interface&n; */
 multiline_comment|/*&n; *        Based on documentation provided by Inesc:&n; *        - &quot;Interface com bus do PC para o PCBIT e PCBIT-D&quot;, Inesc, Jan 93&n; */
 multiline_comment|/*&n; *        TODO: better handling of errors&n; *              re-write/remove debug printks&n; */
 DECL|macro|__NO_VERSION__
@@ -135,10 +135,10 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|function|pcbit_sched_delivery
 r_static
 id|__inline__
 r_void
+DECL|function|pcbit_sched_delivery
 id|pcbit_sched_delivery
 c_func
 (paren
@@ -166,8 +166,8 @@ id|IMMEDIATE_BH
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Called from layer3&n; */
-DECL|function|pcbit_l2_write
 r_int
+DECL|function|pcbit_l2_write
 id|pcbit_l2_write
 c_func
 (paren
@@ -297,24 +297,12 @@ c_cond
 (paren
 id|skb
 )paren
-(brace
 id|frame-&gt;dt_len
 op_assign
 id|skb-&gt;len
 op_minus
 id|hdr_len
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|frame-&gt;dt_len
-op_eq
-l_int|0
-)paren
-id|skb-&gt;lock
-op_increment
-suffix:semicolon
-)brace
 r_else
 id|frame-&gt;dt_len
 op_assign
@@ -379,9 +367,7 @@ id|ptr
 op_assign
 id|ptr-&gt;next
 )paren
-(brace
 suffix:semicolon
-)brace
 id|ptr-&gt;next
 op_assign
 id|frame
@@ -397,10 +383,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pcbit_tx_update
 r_static
 id|__inline__
 r_void
+DECL|function|pcbit_tx_update
 id|pcbit_tx_update
 c_func
 (paren
@@ -459,9 +445,9 @@ id|BANK4
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * called by interrupt service routine or by write_2&n; */
-DECL|function|pcbit_transmit
 r_static
 r_void
+DECL|function|pcbit_transmit
 id|pcbit_transmit
 c_func
 (paren
@@ -649,7 +635,7 @@ op_amp
 id|frame-&gt;msg
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                         *  Board level 2 header &n;                         */
+multiline_comment|/*&n;&t;&t;&t; *  Board level 2 header&n;&t;&t;&t; */
 id|pcbit_writew
 c_func
 (paren
@@ -696,7 +682,7 @@ comma
 id|frame-&gt;dt_len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                         *  Board level 3 fixed-header &n;                         */
+multiline_comment|/*&n;&t;&t;&t; *  Board level 3 fixed-header&n;&t;&t;&t; */
 multiline_comment|/* LEN = TH */
 id|pcbit_writew
 c_func
@@ -924,7 +910,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG&t;&t;
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -947,8 +933,8 @@ macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; *  deliver a queued frame to the upper layer&n; */
-DECL|function|pcbit_deliver
 r_void
+DECL|function|pcbit_deliver
 id|pcbit_deliver
 c_func
 (paren
@@ -1107,10 +1093,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Reads BANK 2 &amp; Reassembles &n; */
-DECL|function|pcbit_receive
+multiline_comment|/*&n; * Reads BANK 2 &amp; Reassembles&n; */
 r_static
 r_void
+DECL|function|pcbit_receive
 id|pcbit_receive
 c_func
 (paren
@@ -1240,9 +1226,11 @@ c_cond
 id|dev-&gt;read_frame-&gt;skb
 )paren
 (brace
-id|dev-&gt;read_frame-&gt;skb-&gt;free
-op_assign
-l_int|1
+id|SET_SKB_FREE
+c_func
+(paren
+id|dev-&gt;read_frame-&gt;skb
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -1340,6 +1328,7 @@ l_int|0x02
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;pcbit: invalid cpu value&bslash;n&quot;
@@ -1360,7 +1349,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                 * we discard cpu &amp; proc on receiving&n;                 * but we read it to update the pointer&n;                 */
+multiline_comment|/*&n;&t;&t; * we discard cpu &amp; proc on receiving&n;&t;&t; * but we read it to update the pointer&n;&t;&t; */
 id|frame-&gt;hdr_len
 op_assign
 id|pcbit_readw
@@ -1377,7 +1366,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* &n;                 * 0 sized packet &n;                 * I don&squot;t know if they are an error or not...&n;                 * But they are very frequent&n;                 * Not documented&n;                 */
+multiline_comment|/*&n;&t;&t;   * 0 sized packet&n;&t;&t;   * I don&squot;t know if they are an error or not...&n;&t;&t;   * But they are very frequent&n;&t;&t;   * Not documented&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1662,9 +1651,7 @@ id|ptr
 op_assign
 id|ptr-&gt;next
 )paren
-(brace
 suffix:semicolon
-)brace
 id|ptr-&gt;next
 op_assign
 id|frame
@@ -1708,10 +1695,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  The board sends 0 sized frames&n; *  They are TDATA_CONFs that get messed up somehow&n; *  gotta send a fake acknowledgment to the upper layer somehow&n; */
-DECL|function|pcbit_fake_conf
 r_static
 id|__inline__
 r_void
+DECL|function|pcbit_fake_conf
 id|pcbit_fake_conf
 c_func
 (paren
@@ -1761,9 +1748,9 @@ id|ictl
 suffix:semicolon
 )brace
 )brace
-DECL|function|pcbit_firmware_bug
 r_static
 r_void
+DECL|function|pcbit_firmware_bug
 id|pcbit_firmware_bug
 c_func
 (paren
@@ -1821,8 +1808,8 @@ id|chan
 suffix:semicolon
 )brace
 )brace
-DECL|function|pcbit_irq_handler
 r_void
+DECL|function|pcbit_irq_handler
 id|pcbit_irq_handler
 c_func
 (paren
@@ -1941,8 +1928,8 @@ id|info
 op_amp
 l_int|0x40U
 )paren
-multiline_comment|/* E bit set */
 (brace
+multiline_comment|/* E bit set */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -2084,9 +2071,9 @@ id|BANK4
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcbit_l2_active_conf
 r_static
 r_void
+DECL|function|pcbit_l2_active_conf
 id|pcbit_l2_active_conf
 c_func
 (paren
@@ -2173,9 +2160,9 @@ id|dev
 suffix:semicolon
 )brace
 )brace
-DECL|function|pcbit_l2_err_recover
 r_static
 r_void
+DECL|function|pcbit_l2_err_recover
 id|pcbit_l2_err_recover
 c_func
 (paren
@@ -2259,9 +2246,11 @@ c_cond
 id|dev-&gt;read_frame-&gt;skb
 )paren
 (brace
-id|dev-&gt;read_frame-&gt;skb-&gt;free
-op_assign
-l_int|1
+id|SET_SKB_FREE
+c_func
+(paren
+id|dev-&gt;read_frame-&gt;skb
+)paren
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -2319,7 +2308,7 @@ c_func
 id|frame
 )paren
 suffix:semicolon
-macro_line|#else&t;&t;
+macro_line|#else
 id|frame-&gt;copied
 op_assign
 l_int|0
@@ -2394,9 +2383,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pcbit_l2_error
 r_static
 r_void
+DECL|function|pcbit_l2_error
 id|pcbit_l2_error
 c_func
 (paren
@@ -2468,9 +2457,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Description:&n; * if board acks frames&n; *   update dev-&gt;free&n; *   call pcbit_transmit to write possible queued frames&n; */
-DECL|function|pcbit_recv_ack
 r_static
 r_void
+DECL|function|pcbit_recv_ack
 id|pcbit_recv_ack
 c_func
 (paren

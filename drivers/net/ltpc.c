@@ -3020,6 +3020,58 @@ id|dev
 multiline_comment|/* This needs to be present to keep netatalk happy. */
 multiline_comment|/* Actually netatalk needs fixing! */
 )brace
+DECL|function|ltpc_hard_header
+r_static
+r_int
+id|ltpc_hard_header
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+r_int
+id|type
+comma
+r_void
+op_star
+id|daddr
+comma
+r_void
+op_star
+id|saddr
+comma
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|debug
+op_amp
+id|DEBUG_VERBOSE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ltpc_hard_header called for device %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|ltpc_init
 r_static
 r_int
@@ -3043,6 +3095,10 @@ suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
 id|ltpc_xmit
+suffix:semicolon
+id|dev-&gt;hard_header
+op_assign
+id|ltpc_hard_header
 suffix:semicolon
 id|dev-&gt;priv
 op_assign
@@ -3115,6 +3171,10 @@ id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
+suffix:semicolon
+id|dev-&gt;mc_list
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 l_int|0
@@ -3232,6 +3292,8 @@ suffix:semicolon
 )brace
 id|ltpc_timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|100
 suffix:semicolon
 )brace
@@ -3246,14 +3308,11 @@ id|dev
 suffix:semicolon
 id|ltpc_timer.expires
 op_assign
+id|jiffies
+op_plus
 l_int|5
 suffix:semicolon
 )brace
-id|ltpc_timer.expires
-op_add_assign
-id|jiffies
-suffix:semicolon
-multiline_comment|/* 1.2 to 1.3 change... */
 id|add_timer
 c_func
 (paren
@@ -4869,6 +4928,11 @@ l_int|5
 suffix:semicolon
 multiline_comment|/* polled mode -- 20 times per second */
 )brace
+id|ltpc_timer.expires
+op_add_assign
+id|jiffies
+suffix:semicolon
+multiline_comment|/* 1.2 to 1.3 change... */
 id|add_timer
 c_func
 (paren

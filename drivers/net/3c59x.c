@@ -25,8 +25,10 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -88,6 +90,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
 DECL|variable|product_ids
 r_static
 r_int
@@ -109,6 +112,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|product_names
 r_static
 r_const
@@ -1364,6 +1368,7 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
@@ -1617,6 +1622,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/* Now check all slots of the EISA bus. */
 r_if
 c_cond

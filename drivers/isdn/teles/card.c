@@ -1,12 +1,12 @@
-multiline_comment|/* $Id: card.c,v 1.13 1996/07/18 11:21:24 jdenoud Exp $&n; *&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; * $Log: card.c,v $&n; * Revision 1.13  1996/07/18 11:21:24  jdenoud&n; * Use small buffers for incoming audio data&n; *&n; * Revision 1.12  1996/06/24 17:16:52  fritz&n; * Added check for misconfigured membase.&n; *&n; * Revision 1.11  1996/06/14 03:30:37  fritz&n; * Added recovery from EXIR 40 interrupt.&n; * Some cleanup.&n; *&n; * Revision 1.10  1996/06/11 14:57:20  hipp&n; * minor changes to ensure, that SKBs are sent in the right order&n; *&n; * Revision 1.9  1996/06/06 14:42:09  fritz&n; * Bugfix: forgot hsp-&gt; in last change.&n; *&n; * Revision 1.7  1996/05/31 01:02:21  fritz&n; * Cosmetic changes.&n; *&n; * Revision 1.6  1996/05/26 14:58:10  fritz&n; * Bugfix: Did not show port correctly, when no card found.&n; *&n; * Revision 1.5  1996/05/17 03:45:02  fritz&n; * Made error messages more clearly.&n; * Bugfix: Only 31 bytes of 32-byte audio frames&n; *         have been transfered to upper layers.&n; *&n; * Revision 1.4  1996/05/06 10:17:57  fritz&n; * Added voice-send stuff&n; *  (Not reporting EXIR when in voice-mode, since it&squot;s normal).&n; *&n; * Revision 1.3  1996/04/30 22:02:40  isdn4dev&n; * Bugfixes for 16.3&n; *     -improved IO allocation&n; *     -fix second B channel problem&n; *     -correct ph_command patch&n; *&n; * Revision 1.2  1996/04/30 10:00:59  fritz&n; * Bugfix: Added ph_command(8) for 16.3.&n; * Bugfix: Ports did not get registered correctly&n; *         when using a 16.3.&n; *         Started voice support.&n; *         Some experimental changes of waitforXFW().&n; *&n; * Revision 1.1  1996/04/13 10:22:42  fritz&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: card.c,v 1.16 1996/10/22 23:14:16 fritz Exp $&n; *&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; * $Log: card.c,v $&n; * Revision 1.16  1996/10/22 23:14:16  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.15  1996/09/29 19:41:56  fritz&n; * Bugfix: ignore unknown frames.&n; *&n; * Revision 1.14  1996/09/23 01:53:49  fritz&n; * Bugfix: discard unknown frames (non-EDSS1 and non-1TR6).&n; *&n; * Revision 1.13  1996/07/18 11:21:24  jdenoud&n; * Use small buffers for incoming audio data&n; *&n; * Revision 1.12  1996/06/24 17:16:52  fritz&n; * Added check for misconfigured membase.&n; *&n; * Revision 1.11  1996/06/14 03:30:37  fritz&n; * Added recovery from EXIR 40 interrupt.&n; * Some cleanup.&n; *&n; * Revision 1.10  1996/06/11 14:57:20  hipp&n; * minor changes to ensure, that SKBs are sent in the right order&n; *&n; * Revision 1.9  1996/06/06 14:42:09  fritz&n; * Bugfix: forgot hsp-&gt; in last change.&n; *&n; * Revision 1.7  1996/05/31 01:02:21  fritz&n; * Cosmetic changes.&n; *&n; * Revision 1.6  1996/05/26 14:58:10  fritz&n; * Bugfix: Did not show port correctly, when no card found.&n; *&n; * Revision 1.5  1996/05/17 03:45:02  fritz&n; * Made error messages more clearly.&n; * Bugfix: Only 31 bytes of 32-byte audio frames&n; *         have been transfered to upper layers.&n; *&n; * Revision 1.4  1996/05/06 10:17:57  fritz&n; * Added voice-send stuff&n; *  (Not reporting EXIR when in voice-mode, since it&squot;s normal).&n; *&n; * Revision 1.3  1996/04/30 22:02:40  isdn4dev&n; * Bugfixes for 16.3&n; *     -improved IO allocation&n; *     -fix second B channel problem&n; *     -correct ph_command patch&n; *&n; * Revision 1.2  1996/04/30 10:00:59  fritz&n; * Bugfix: Added ph_command(8) for 16.3.&n; * Bugfix: Ports did not get registered correctly&n; *         when using a 16.3.&n; *         Started voice support.&n; *         Some experimental changes of waitforXFW().&n; *&n; * Revision 1.1  1996/04/13 10:22:42  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
+macro_line|#include &quot;proto.h&quot;
 DECL|macro|INCLUDE_INLINE_FUNCS
 mdefine_line|#define INCLUDE_INLINE_FUNCS
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|DCHAN_VERBOSE
 macro_line|#undef DCHAN_VERBOSE
 r_extern
@@ -50,8 +50,8 @@ DECL|function|readisac_0
 id|readisac_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|cardm
 comma
 id|byte
@@ -120,8 +120,8 @@ DECL|function|writeisac_0
 id|writeisac_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|cardm
 comma
 id|byte
@@ -268,8 +268,8 @@ DECL|function|readhscx_0
 id|readhscx_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|base
 comma
 id|byte
@@ -364,8 +364,8 @@ DECL|function|writehscx_0
 id|writehscx_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|base
 comma
 id|byte
@@ -630,8 +630,8 @@ DECL|function|waitforCEC_0
 id|waitforCEC_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|base
 comma
 id|byte
@@ -757,8 +757,8 @@ DECL|function|waitforXFW_0
 id|waitforXFW_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|base
 comma
 id|byte
@@ -894,8 +894,8 @@ DECL|function|writehscxCMDR_0
 id|writehscxCMDR_0
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|base
 comma
 id|byte
@@ -4977,8 +4977,8 @@ DECL|function|initisac
 id|initisac
 c_func
 (paren
-r_int
-r_int
+id|byte
+op_star
 id|cardmem
 comma
 r_int
@@ -5233,11 +5233,19 @@ id|card-&gt;membase
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|card-&gt;membase
 OL
 l_int|0x10000
 )paren
 (brace
+(paren
+r_int
+r_int
+)paren
 id|card-&gt;membase
 op_lshift_assign
 l_int|4
@@ -5246,8 +5254,12 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Teles membase configured DOSish, assuming 0x%x&bslash;n&quot;
+l_string|&quot;Teles membase configured DOSish, assuming 0x%lx&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|card-&gt;membase
 )paren
 suffix:semicolon
@@ -5269,8 +5281,11 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;Teles 8 assumed, mem: %x irq: %d proto: %s&bslash;n&quot;
+l_string|&quot;Teles 8 assumed, mem: %lx irq: %d proto: %s&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|card-&gt;membase
 comma
 id|card-&gt;interrupt
@@ -5626,12 +5641,18 @@ id|card-&gt;membase
 id|cfval
 op_or_assign
 (paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|card-&gt;membase
 op_rshift
 l_int|9
 )paren
 op_amp
 l_int|0xF0
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -5919,10 +5940,13 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;Teles 16.0 found, io: %x mem: %x irq: %d proto: %s&bslash;n&quot;
+l_string|&quot;Teles 16.0 found, io: %x mem: %lx irq: %d proto: %s&bslash;n&quot;
 comma
 id|card-&gt;iobase
 comma
+(paren
+r_int
+)paren
 id|card-&gt;membase
 comma
 id|card-&gt;interrupt

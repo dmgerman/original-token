@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn.h,v 1.16 1996/08/12 16:20:56 hipp Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.16  1996/08/12 16:20:56  hipp&n; * renamed ppp_minor to ppp_slot&n; *&n; * Revision 1.15  1996/06/15 14:56:57  fritz&n; * Added version signatures for data structures used&n; * by userlevel programs.&n; *&n; * Revision 1.14  1996/06/06 21:24:23  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.13  1996/06/05 02:18:20  fritz&n; * Added DTMF decoding stuff.&n; *&n; * Revision 1.12  1996/06/03 19:55:08  fritz&n; * Fixed typos.&n; *&n; * Revision 1.11  1996/05/31 01:37:47  fritz&n; * Minor changes, due to changes in isdn_tty.c&n; *&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn.h,v 1.23 1997/02/10 22:07:13 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.23  1997/02/10 22:07:13  fritz&n; * Added 2 modem registers for numbering plan and screening info.&n; *&n; * Revision 1.22  1997/02/03 23:42:08  fritz&n; * Added ISDN_TIMER_RINGING&n; * Misc. changes for Kernel 2.1.X compatibility&n; *&n; * Revision 1.21  1997/01/17 01:19:10  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.20  1997/01/17 00:41:19  fritz&n; * Increased TTY_DV.&n; *&n; * Revision 1.19  1997/01/14 01:41:07  fritz&n; * Added ATI2 related variables.&n; * Added variables for audio support in skbuffs.&n; *&n; * Revision 1.18  1996/11/06 17:37:50  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.17  1996/09/07 12:53:57  hipp&n; * moved a few isdn_ppp.c specific defines to drives/isdn/isdn_ppp.h&n; *&n; * Revision 1.16  1996/08/12 16:20:56  hipp&n; * renamed ppp_minor to ppp_slot&n; *&n; * Revision 1.15  1996/06/15 14:56:57  fritz&n; * Added version signatures for data structures used&n; * by userlevel programs.&n; *&n; * Revision 1.14  1996/06/06 21:24:23  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.13  1996/06/05 02:18:20  fritz&n; * Added DTMF decoding stuff.&n; *&n; * Revision 1.12  1996/06/03 19:55:08  fritz&n; * Fixed typos.&n; *&n; * Revision 1.11  1996/05/31 01:37:47  fritz&n; * Minor changes, due to changes in isdn_tty.c&n; *&n; * Revision 1.10  1996/05/18 01:37:18  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.9  1996/05/17 03:58:20  fritz&n; * Added flags for DLE handling.&n; *&n; * Revision 1.8  1996/05/11 21:49:55  fritz&n; * Removed queue management variables.&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.7  1996/05/07 09:10:06  fritz&n; * Reorganized tty-related structs.&n; *&n; * Revision 1.6  1996/05/06 11:38:27  hipp&n; * minor change in ippp struct&n; *&n; * Revision 1.5  1996/04/30 11:03:16  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.4  1996/04/29 23:00:02  fritz&n; * Added variables for voice-support.&n; *&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -114,7 +114,7 @@ mdefine_line|#define ISDN_USAGE_EXCLUSIVE 64 /* This bit is set, if channel is e
 DECL|macro|ISDN_USAGE_OUTGOING
 mdefine_line|#define ISDN_USAGE_OUTGOING 128 /* This bit is set, if channel is outgoing  */
 DECL|macro|ISDN_MODEM_ANZREG
-mdefine_line|#define ISDN_MODEM_ANZREG    21        /* Number of Modem-Registers        */
+mdefine_line|#define ISDN_MODEM_ANZREG    22        /* Number of Modem-Registers        */
 DECL|macro|ISDN_MSNLEN
 mdefine_line|#define ISDN_MSNLEN          20
 r_typedef
@@ -190,9 +190,9 @@ DECL|typedef|isdn_net_ioctl_phone
 id|isdn_net_ioctl_phone
 suffix:semicolon
 DECL|macro|NET_DV
-mdefine_line|#define NET_DV 0x01 /* Data version for net_cfg     */
+mdefine_line|#define NET_DV 0x02 /* Data version for net_cfg     */
 DECL|macro|TTY_DV
-mdefine_line|#define TTY_DV 0x01 /* Data version for iprofd etc. */
+mdefine_line|#define TTY_DV 0x03 /* Data version for iprofd etc. */
 r_typedef
 r_struct
 (brace
@@ -311,6 +311,11 @@ r_int
 id|pppbind
 suffix:semicolon
 multiline_comment|/* ippp device for bindings              */
+DECL|member|chargeint
+r_int
+id|chargeint
+suffix:semicolon
+multiline_comment|/* Use fixed charge interval length      */
 DECL|typedef|isdn_net_ioctl_cfg
 )brace
 id|isdn_net_ioctl_cfg
@@ -327,7 +332,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -403,6 +407,8 @@ DECL|macro|ISDN_TIMER_02SEC
 mdefine_line|#define ISDN_TIMER_02SEC     (HZ/(ISDN_TIMER_RES+1)/5) /* Slow-Timer1 .2 sec */
 DECL|macro|ISDN_TIMER_1SEC
 mdefine_line|#define ISDN_TIMER_1SEC      (HZ/(ISDN_TIMER_RES+1)) /* Slow-Timer2 1 sec   */
+DECL|macro|ISDN_TIMER_RINGING
+mdefine_line|#define ISDN_TIMER_RINGING   5 /* tty RINGs = ISDN_TIMER_1SEC * this factor */
 DECL|macro|ISDN_TIMER_MODEMREAD
 mdefine_line|#define ISDN_TIMER_MODEMREAD 1
 DECL|macro|ISDN_TIMER_MODEMPLUS
@@ -616,6 +622,7 @@ multiline_comment|/* Flags for charge-unit-hangup:    */
 multiline_comment|/* bit0: chargeint is invalid       */
 multiline_comment|/* bit1: Getting charge-interval    */
 multiline_comment|/* bit2: Do charge-unit-hangup      */
+multiline_comment|/* bit3: Do hangup even on incoming */
 DECL|member|outgoing
 r_int
 id|outgoing
@@ -734,6 +741,7 @@ op_star
 id|sav_skb
 suffix:semicolon
 multiline_comment|/* Ptr to skb, rejected by LL-driver*/
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
 multiline_comment|/* Ptr to orig. header_cache_bind   */
 DECL|member|org_hcb
 r_void
@@ -757,6 +765,32 @@ comma
 id|__u32
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Ptr to orig. hard_header_cache   */
+DECL|member|org_hhc
+r_int
+(paren
+op_star
+id|org_hhc
+)paren
+(paren
+r_struct
+id|dst_entry
+op_star
+id|dst
+comma
+r_struct
+id|dst_entry
+op_star
+id|neigh
+comma
+r_struct
+id|hh_cache
+op_star
+id|hh
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Ptr to orig. header_cache_update */
 DECL|member|org_hcu
 r_void
@@ -913,6 +947,30 @@ DECL|macro|ISDN_SERIAL_TYPE_NORMAL
 mdefine_line|#define ISDN_SERIAL_TYPE_NORMAL            1
 DECL|macro|ISDN_SERIAL_TYPE_CALLOUT
 mdefine_line|#define ISDN_SERIAL_TYPE_CALLOUT           2
+multiline_comment|/* For using sk_buffs with audio we need some private variables&n; * within each sk_buff. For this purpose, we declare a struct here,&n; * and put it always at skb-&gt;head. A few macros help accessing the&n; * variables. Of course, we need to check skb_headroom prior to&n; * any access.&n; */
+DECL|struct|isdn_audio_skb
+r_typedef
+r_struct
+id|isdn_audio_skb
+(brace
+DECL|member|dle_count
+r_int
+r_int
+id|dle_count
+suffix:semicolon
+DECL|member|lock
+r_int
+r_char
+id|lock
+suffix:semicolon
+DECL|typedef|isdn_audio_skb
+)brace
+id|isdn_audio_skb
+suffix:semicolon
+DECL|macro|ISDN_AUDIO_SKB_DLECOUNT
+mdefine_line|#define ISDN_AUDIO_SKB_DLECOUNT(skb) (((isdn_audio_skb*)skb-&gt;head)-&gt;dle_count)
+DECL|macro|ISDN_AUDIO_SKB_LOCK
+mdefine_line|#define ISDN_AUDIO_SKB_LOCK(skb) (((isdn_audio_skb*)skb-&gt;head)-&gt;lock)
 multiline_comment|/* Private data of AT-command-interpreter */
 DECL|struct|atemu
 r_typedef
@@ -1090,6 +1148,48 @@ r_int
 id|ncarrier
 suffix:semicolon
 multiline_comment|/* Flag: schedule NO CARRIER      */
+DECL|member|last_cause
+r_int
+r_char
+id|last_cause
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Last cause message             */
+DECL|member|last_num
+r_int
+r_char
+id|last_num
+(braket
+l_int|20
+)braket
+suffix:semicolon
+multiline_comment|/* Last phone-number              */
+DECL|member|last_l2
+r_int
+r_char
+id|last_l2
+suffix:semicolon
+multiline_comment|/* Last layer-2 protocol          */
+DECL|member|last_si
+r_int
+r_char
+id|last_si
+suffix:semicolon
+multiline_comment|/* Last service                   */
+DECL|member|last_lhup
+r_int
+r_char
+id|last_lhup
+suffix:semicolon
+multiline_comment|/* Last hangup local?             */
+DECL|member|last_dir
+r_int
+r_char
+id|last_dir
+suffix:semicolon
+multiline_comment|/* Last direction (in or out)     */
 DECL|member|nc_timer
 r_struct
 id|timer_list
@@ -1256,14 +1356,6 @@ DECL|macro|NUM_RCV_BUFFS
 mdefine_line|#define NUM_RCV_BUFFS     64
 DECL|macro|PPP_HARD_HDR_LEN
 mdefine_line|#define PPP_HARD_HDR_LEN 4
-DECL|macro|IPPP_OPEN
-mdefine_line|#define IPPP_OPEN        0x1
-DECL|macro|IPPP_CONNECT
-mdefine_line|#define IPPP_CONNECT     0x2
-DECL|macro|IPPP_CLOSEWAIT
-mdefine_line|#define IPPP_CLOSEWAIT   0x4
-DECL|macro|IPPP_NOBLOCK
-mdefine_line|#define IPPP_NOBLOCK     0x8
 macro_line|#ifdef CONFIG_ISDN_PPP
 DECL|struct|sqqueue
 r_struct

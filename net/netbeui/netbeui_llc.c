@@ -90,6 +90,7 @@ op_star
 id|llc
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;See what has occured&n;&t; */
+multiline_comment|/*&n;&t; *&t;Connect completion confirmation&n;&t; */
 r_if
 c_cond
 (paren
@@ -144,6 +145,9 @@ comma
 id|llc-&gt;inc_skb
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Frame free is controlled by our stream processor&n;&t;&t; */
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;We got disconnected&n;&t; */
 r_if
@@ -191,6 +195,7 @@ id|NETBEUI_CONNWAIT
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;Miscellaneous burps&n;&t; */
 r_if
 c_cond
 (paren
@@ -207,6 +212,7 @@ id|LLC_RST_CONFIRM
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Reset. &n;&t;&t; *&t;Q: Is tearing the link down the right answer ?&n;&t;&t; *&n;&t;&t; *&t;For now we just carry on&n;&t;&t; */
 )brace
+multiline_comment|/*&n;&t; *&t;Track link busy status&n;&t; */
 r_if
 c_cond
 (paren
@@ -258,9 +264,26 @@ comma
 id|llc-&gt;inc_skb
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/* We ignore TST, XID, FRMR stuff */
 multiline_comment|/* FIXME: We need to free frames here once I fix the callback! */
+r_if
+c_cond
+(paren
+id|llc-&gt;inc_skb
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; *&t;Netbeui has created a new logical link. As a result we will&n; *&t;need to find or create a suitable 802.2 LLC session and join&n; *&t;it.&n; */
 DECL|function|netbeui_create_channel

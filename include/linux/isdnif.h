@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnif.h,v 1.9 1996/06/06 21:24:24 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.17 1997/02/10 21:12:53 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -9,6 +9,8 @@ DECL|macro|ISDN_PTYPE_1TR6
 mdefine_line|#define ISDN_PTYPE_1TR6      1   /* german 1TR6-protocol */
 DECL|macro|ISDN_PTYPE_EURO
 mdefine_line|#define ISDN_PTYPE_EURO      2   /* EDSS1-protocol       */
+DECL|macro|ISDN_PTYPE_LEASED
+mdefine_line|#define ISDN_PTYPE_LEASED    3   /* for leased lines     */
 multiline_comment|/*&n; * Values for Layer-2-protocol-selection&n; */
 DECL|macro|ISDN_PROTO_L2_X75I
 mdefine_line|#define ISDN_PROTO_L2_X75I   0   /* X75/LAPB with I-Frames      */
@@ -115,6 +117,55 @@ DECL|macro|ISDN_FEATURE_P_1TR6
 mdefine_line|#define ISDN_FEATURE_P_1TR6     (0x1000 &lt;&lt; ISDN_PTYPE_1TR6)
 DECL|macro|ISDN_FEATURE_P_EURO
 mdefine_line|#define ISDN_FEATURE_P_EURO     (0x1000 &lt;&lt; ISDN_PTYPE_EURO)
+DECL|struct|setup_parm
+r_typedef
+r_struct
+id|setup_parm
+(brace
+DECL|member|phone
+r_char
+id|phone
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* Remote Phone-Number */
+DECL|member|eazmsn
+r_char
+id|eazmsn
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* Local EAZ or MSN    */
+DECL|member|si1
+r_int
+r_char
+id|si1
+suffix:semicolon
+multiline_comment|/* Service Indicator 1 */
+DECL|member|si2
+r_int
+r_char
+id|si2
+suffix:semicolon
+multiline_comment|/* Service Indicator 2 */
+DECL|member|plan
+r_int
+r_char
+id|plan
+suffix:semicolon
+multiline_comment|/* Numbering plan      */
+DECL|member|screen
+r_int
+r_char
+id|screen
+suffix:semicolon
+multiline_comment|/* Screening info      */
+DECL|typedef|setup_parm
+)brace
+id|setup_parm
+suffix:semicolon
 multiline_comment|/*&n; * Structure for exchanging above infos&n; *&n; */
 r_typedef
 r_struct
@@ -134,6 +185,8 @@ id|ulong
 id|arg
 suffix:semicolon
 multiline_comment|/* Additional Data                       */
+r_union
+(brace
 DECL|member|num
 r_char
 id|num
@@ -142,6 +195,14 @@ l_int|50
 )braket
 suffix:semicolon
 multiline_comment|/* Additional Data                       */
+DECL|member|setup
+id|setup_parm
+id|setup
+suffix:semicolon
+DECL|member|parm
+)brace
+id|parm
+suffix:semicolon
 DECL|typedef|isdn_ctrl
 )brace
 id|isdn_ctrl
@@ -331,6 +392,50 @@ id|isdn_if
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Compatibility Linux-2.0.X &lt;-&gt; Linux-2.1.X */
+macro_line|#ifndef LINUX_VERSION_CODE
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020100)
+macro_line|#include &lt;linux/mm.h&gt;
+DECL|macro|copy_from_user
+mdefine_line|#define copy_from_user memcpy_fromfs
+DECL|macro|copy_to_user
+mdefine_line|#define copy_to_user memcpy_tofs
+DECL|macro|GET_USER
+mdefine_line|#define GET_USER(x, addr) ( x = get_user(addr) )
+DECL|macro|RWTYPE
+mdefine_line|#define RWTYPE int
+DECL|macro|LSTYPE
+mdefine_line|#define LSTYPE int
+DECL|macro|RWARG
+mdefine_line|#define RWARG int
+DECL|macro|LSARG
+mdefine_line|#define LSARG off_t
+DECL|macro|SET_SKB_FREE
+mdefine_line|#define SET_SKB_FREE(x) ( x-&gt;free = 1 )
+macro_line|#else
+macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|GET_USER
+mdefine_line|#define GET_USER get_user
+DECL|macro|PUT_USER
+mdefine_line|#define PUT_USER put_user
+DECL|macro|RWTYPE
+mdefine_line|#define RWTYPE long
+DECL|macro|LSTYPE
+mdefine_line|#define LSTYPE long long
+DECL|macro|RWARG
+mdefine_line|#define RWARG unsigned long
+DECL|macro|LSARG
+mdefine_line|#define LSARG long long
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02010F)
+DECL|macro|SET_SKB_FREE
+mdefine_line|#define SET_SKB_FREE(x) ( x-&gt;free = 1 )
+macro_line|#else
+DECL|macro|SET_SKB_FREE
+mdefine_line|#define SET_SKB_FREE(x)
+macro_line|#endif
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* isdnif_h */
 eof
