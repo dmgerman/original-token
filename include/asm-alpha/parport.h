@@ -2,6 +2,7 @@ multiline_comment|/*&n; * parport.h: platform-specific PC-style parport initiali
 macro_line|#ifndef _ASM_AXP_PARPORT_H
 DECL|macro|_ASM_AXP_PARPORT_H
 mdefine_line|#define _ASM_AXP_PARPORT_H 1
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS  8

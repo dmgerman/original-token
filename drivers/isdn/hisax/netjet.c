@@ -5871,10 +5871,12 @@ suffix:semicolon
 )brace
 id|cs-&gt;hw.njet.base
 op_assign
-id|dev_netjet-&gt;base_address
+id|dev_netjet-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon

@@ -12,6 +12,7 @@ macro_line|#ifdef __KERNEL__   /* ioctl stuff only thing exported to users */
 DECL|macro|I2O_MAX_MANAGERS
 mdefine_line|#define I2O_MAX_MANAGERS&t;4
 multiline_comment|/*&n; *&t;I2O Interface Objects&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * message structures&n; */

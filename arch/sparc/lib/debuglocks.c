@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: debuglocks.c,v 1.7 1999/04/21 02:26:58 anton Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: debuglocks.c,v 1.8 1999/08/05 09:49:59 anton Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998-99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;&t;/* For NR_CPUS */
@@ -198,7 +198,9 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot; reader[i]=%08lx&quot;
+l_string|&quot; reader[%d]=%08lx&quot;
+comma
+id|i
 comma
 id|lock-&gt;reader_pc
 (braket

@@ -485,57 +485,68 @@ id|bpp_regs
 (brace
 multiline_comment|/* DMA registers */
 DECL|member|p_csr
+id|__volatile__
 id|__u32
 id|p_csr
 suffix:semicolon
 multiline_comment|/* DMA Control/Status Register */
 DECL|member|p_addr
+id|__volatile__
 id|__u32
 id|p_addr
 suffix:semicolon
 multiline_comment|/* Address Register */
 DECL|member|p_bcnt
+id|__volatile__
 id|__u32
 id|p_bcnt
 suffix:semicolon
 multiline_comment|/* Byte Count Register */
 DECL|member|p_tst_csr
+id|__volatile__
 id|__u32
 id|p_tst_csr
 suffix:semicolon
 multiline_comment|/* Test Control/Status (DMA2 only) */
 multiline_comment|/* Parallel Port registers */
 DECL|member|p_hcr
+id|__volatile__
 id|__u16
 id|p_hcr
 suffix:semicolon
 multiline_comment|/* Hardware Configuration Register */
 DECL|member|p_ocr
+id|__volatile__
 id|__u16
 id|p_ocr
 suffix:semicolon
 multiline_comment|/* Operation Configuration Register */
 DECL|member|p_dr
+id|__volatile__
 id|__u8
 id|p_dr
 suffix:semicolon
 multiline_comment|/* Parallel Data Register */
 DECL|member|p_tcr
+id|__volatile__
 id|__u8
 id|p_tcr
 suffix:semicolon
 multiline_comment|/* Transfer Control Register */
 DECL|member|p_or
+id|__volatile__
 id|__u8
 id|p_or
 suffix:semicolon
 multiline_comment|/* Output Register */
 DECL|member|p_ir
+id|__volatile__
 id|__u8
 id|p_ir
 suffix:semicolon
 multiline_comment|/* Input Register */
 DECL|member|p_icr
+id|__volatile__
 id|__u16
 id|p_icr
 suffix:semicolon

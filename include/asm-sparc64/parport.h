@@ -2,6 +2,7 @@ multiline_comment|/* $Id: parport.h,v 1.3 1999/08/04 03:20:03 davem Exp $&n; * p
 macro_line|#ifndef _ASM_SPARC64_PARPORT_H
 DECL|macro|_ASM_SPARC64_PARPORT_H
 mdefine_line|#define _ASM_SPARC64_PARPORT_H 1
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/ns87303.h&gt;
 macro_line|#ifdef CONFIG_PARPORT_PC_PCMCIA

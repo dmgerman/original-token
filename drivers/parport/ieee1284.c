@@ -832,32 +832,12 @@ id|parport_wait_peripheral
 id|port
 comma
 id|PARPORT_STATUS_ACK
-op_or
-id|PARPORT_STATUS_PAPEROUT
 comma
 id|PARPORT_STATUS_ACK
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|parport_read_status
-(paren
-id|port
-)paren
-op_amp
-id|PARPORT_STATUS_ACK
-)paren
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: working around buggy peripheral: tell &quot;
-l_string|&quot;Tim what make it is&bslash;n&quot;
-comma
-id|port-&gt;name
-)paren
-suffix:semicolon
+multiline_comment|/* This shouldn&squot;t really happen with a compliant device. */
 id|DPRINTK
 (paren
 id|KERN_DEBUG

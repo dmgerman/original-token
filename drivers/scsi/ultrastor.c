@@ -62,8 +62,6 @@ mdefine_line|#define ULTRASTOR_DEBUG (UD_ABORT|UD_CSIR|UD_RESET)
 macro_line|#endif
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;1.12&quot;
-DECL|macro|ARRAY_SIZE
-mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
 DECL|macro|PACKED
 mdefine_line|#define PACKED&t;&t;__attribute__((packed))
 DECL|macro|ALIGNED

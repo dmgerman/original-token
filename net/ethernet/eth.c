@@ -22,8 +22,6 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
-DECL|macro|ARRAY_SIZE
-mdefine_line|#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 DECL|function|eth_setup
 r_static
 r_int

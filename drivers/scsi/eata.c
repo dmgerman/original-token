@@ -346,8 +346,6 @@ DECL|macro|ASOK
 mdefine_line|#define ASOK              0x00
 DECL|macro|ASST
 mdefine_line|#define ASST              0x01
-DECL|macro|ARRAY_SIZE
-mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
 DECL|macro|YESNO
 mdefine_line|#define YESNO(a) ((a) ? &squot;y&squot; : &squot;n&squot;)
 DECL|macro|TLDEV

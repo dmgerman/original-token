@@ -4,6 +4,7 @@ macro_line|#ifndef __ASM_MIPS_IDE_H
 DECL|macro|__ASM_MIPS_IDE_H
 mdefine_line|#define __ASM_MIPS_IDE_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;6

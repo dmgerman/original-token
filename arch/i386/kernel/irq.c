@@ -1500,7 +1500,7 @@ r_int
 r_int
 )paren
 op_amp
-id|get_options
+id|get_option
 op_logical_and
 id|x
 OL

@@ -378,5 +378,27 @@ DECL|macro|CI_PREDICTOR_2
 mdefine_line|#define CI_PREDICTOR_2&t;&t;2&t;/* config option for Predictor-2 */
 DECL|macro|CILEN_PREDICTOR_2
 mdefine_line|#define CILEN_PREDICTOR_2&t;2&t;/* length of its config option */
+macro_line|#ifdef __KERNEL__
+r_extern
+r_int
+id|ppp_register_compressor
+c_func
+(paren
+r_struct
+id|compressor
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ppp_unregister_compressor
+c_func
+(paren
+r_struct
+id|compressor
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _NET_PPP_COMP_H */
 eof

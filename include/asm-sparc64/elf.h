@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.20 1999/07/30 09:31:14 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.21 1999/08/04 07:04:23 jj Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -74,7 +74,7 @@ mdefine_line|#define ELF_EXEC_PAGESIZE&t;8192
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 macro_line|#ifndef ELF_ET_DYN_BASE
 DECL|macro|ELF_ET_DYN_BASE
-mdefine_line|#define ELF_ET_DYN_BASE         0x50000000000
+mdefine_line|#define ELF_ET_DYN_BASE         0xfffff80000000000UL
 macro_line|#endif
 multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  */
 multiline_comment|/* On Ultra, we support all of the v8 capabilities. */

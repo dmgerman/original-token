@@ -504,8 +504,6 @@ DECL|macro|R_SIZECODE
 mdefine_line|#define R_SIZECODE (reply_buffer[6])
 DECL|macro|SEL_DLY
 mdefine_line|#define SEL_DLY (2*HZ/100)
-DECL|macro|ARRAY_SIZE
-mdefine_line|#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 multiline_comment|/*&n; * this struct defines the different floppy drive types.&n; */
 r_static
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.28 1999/07/30 09:35:27 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.29 1999/08/04 07:04:10 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -61,9 +61,29 @@ id|brk
 r_if
 c_cond
 (paren
+(paren
 id|brk
 op_ge
 l_int|0x80000000000UL
+op_logical_and
+id|brk
+OL
+id|PAGE_OFFSET
+)paren
+op_logical_or
+(paren
+id|brk
+op_minus
+id|current-&gt;mm-&gt;brk
+OG
+l_int|0x80000000000UL
+op_logical_and
+id|brk
+op_minus
+id|current-&gt;mm-&gt;brk
+OL
+id|PAGE_OFFSET
+)paren
 )paren
 (brace
 multiline_comment|/* VM hole */
@@ -759,11 +779,11 @@ c_cond
 (paren
 id|addr
 op_ge
-l_int|0x80000000000ULL
+l_int|0x80000000000UL
 op_logical_and
 id|addr
 OL
-l_int|0xfffff80000000000UL
+id|PAGE_OFFSET
 )paren
 (brace
 multiline_comment|/* VM hole */

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.11&t;August 04, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick&n; *&n; * drive_number&n; *&t;= ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *&t;= ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

@@ -1588,6 +1588,7 @@ r_int
 id|n
 )paren
 (brace
+r_const
 r_int
 r_char
 op_star

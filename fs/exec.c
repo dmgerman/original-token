@@ -112,7 +112,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MODULES
 DECL|function|unregister_binfmt
 r_int
 id|unregister_binfmt
@@ -174,7 +173,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_MODULES */
 multiline_comment|/* N.B. Error returns must be &lt; 0 */
 DECL|function|open_dentry
 r_int

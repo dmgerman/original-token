@@ -11,6 +11,7 @@ mdefine_line|#define MAX_HWIFS&t;4
 macro_line|#endif
 macro_line|#include &lt;asm/hdreg.h&gt;
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

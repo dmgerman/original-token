@@ -835,9 +835,11 @@ c_func
 (paren
 id|str
 comma
-id|MAX_PIRQS
-op_plus
-l_int|1
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
 comma
 id|ints
 )paren

@@ -80,6 +80,8 @@ DECL|macro|__HAVE_ARCH_STRRCHR
 mdefine_line|#define __HAVE_ARCH_STRRCHR
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
+DECL|macro|__HAVE_ARCH_MEMCHR
+mdefine_line|#define __HAVE_ARCH_MEMCHR
 multiline_comment|/* The following routine is like memset except that it writes 16-bit&n;   aligned values.  The DEST and COUNT parameters must be even for &n;   correct operation.  */
 DECL|macro|__HAVE_ARCH_MEMSETW
 mdefine_line|#define __HAVE_ARCH_MEMSETW

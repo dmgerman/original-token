@@ -1132,7 +1132,14 @@ id|S_MSG
 )paren
 suffix:semicolon
 multiline_comment|/* Stop the lowlevel driver from outputing. */
-multiline_comment|/* drv-&gt;ops-&gt;stop_output(drv); Should not be necessary  -- DJB 5/25/98 */
+id|drv-&gt;ops
+op_member_access_from_pointer
+id|stop_output
+c_func
+(paren
+id|drv
+)paren
+suffix:semicolon
 id|drv-&gt;output_active
 op_assign
 l_int|0
@@ -2704,12 +2711,12 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|get_user
+id|COPY_IN
 c_func
 (paren
-id|k
-comma
 id|arg
+comma
+id|k
 )paren
 )paren
 (brace
@@ -2930,12 +2937,12 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|get_user
+id|COPY_IN
 c_func
 (paren
-id|k
-comma
 id|arg
+comma
+id|k
 )paren
 )paren
 (brace
@@ -3233,12 +3240,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|get_user
+id|COPY_IN
 c_func
 (paren
-id|k
-comma
 id|arg
+comma
+id|k
 )paren
 )paren
 (brace

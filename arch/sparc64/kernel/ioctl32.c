@@ -3052,7 +3052,11 @@ op_assign
 id|strlen
 c_func
 (paren
-id|PPP_VERSION
+(paren
+r_char
+op_star
+)paren
+id|ifr.ifr_data
 )paren
 op_plus
 l_int|1

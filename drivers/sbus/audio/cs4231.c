@@ -8038,6 +8038,10 @@ c_func
 id|drv
 )paren
 suffix:semicolon
+id|cs4231_chip-&gt;perchip_info.play.active
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|cs4231_stop_output
@@ -8149,6 +8153,16 @@ op_or
 id|APC_PDMA_READY
 op_or
 id|APC_XINT_PENA
+op_or
+id|APC_PPAUSE
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;in cs4231_stop_output: 0x%x&bslash;n&quot;
+comma
+id|cs4231_chip-&gt;regs-&gt;dmacsr
 )paren
 suffix:semicolon
 id|cs4231_disable_play
@@ -8156,6 +8170,10 @@ c_func
 (paren
 id|drv
 )paren
+suffix:semicolon
+id|cs4231_chip-&gt;perchip_info.play.active
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -9600,10 +9618,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|cs4231_chip-&gt;perchip_info.play.active
-op_assign
-l_int|0
-suffix:semicolon
 id|eb4231_playintr
 c_func
 (paren
@@ -9694,15 +9708,17 @@ c_cond
 (paren
 id|dummy
 op_amp
-id|APC_PLAY_INT
-)paren
-(brace
-r_if
-c_cond
 (paren
-id|dummy
-op_amp
+id|APC_PLAY_INT
+op_or
+id|APC_XINT_PNVA
+op_or
+id|APC_XINT_PLAY
+op_or
+id|APC_XINT_EMPT
+op_or
 id|APC_XINT_PEMP
+)paren
 )paren
 (brace
 id|cs4231_chip-&gt;perchip_info.play.samples
@@ -9724,7 +9740,6 @@ c_func
 id|drv
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Any other conditions we need worry about? */
 )brace
 r_if
@@ -9806,6 +9821,7 @@ op_amp
 id|APC_XINT_EMPT
 )paren
 (brace
+macro_line|#if 0 /* Call to stop_output from midlevel will get this */
 r_if
 c_cond
 (paren
@@ -9840,6 +9856,7 @@ c_func
 id|drv
 )paren
 suffix:semicolon
+macro_line|#endif
 id|cs4231_getsamplecount
 c_func
 (paren

@@ -3,6 +3,7 @@ macro_line|#ifndef _SPARC64_IDE_H
 DECL|macro|_SPARC64_IDE_H
 mdefine_line|#define _SPARC64_IDE_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hdreg.h&gt;

@@ -2230,10 +2230,12 @@ suffix:semicolon
 multiline_comment|/* get IO address */
 id|cs-&gt;hw.diva.cfg_reg
 op_assign
-id|dev_diva-&gt;base_address
+id|dev_diva-&gt;resource
 (braket
 l_int|2
 )braket
+dot
+id|start
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
@@ -2269,10 +2271,12 @@ suffix:semicolon
 multiline_comment|/* get IO address */
 id|cs-&gt;hw.diva.cfg_reg
 op_assign
-id|dev_diva_u-&gt;base_address
+id|dev_diva_u-&gt;resource
 (braket
 l_int|2
 )braket
+dot
+id|start
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon

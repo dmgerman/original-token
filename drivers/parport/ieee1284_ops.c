@@ -57,6 +57,9 @@ r_int
 id|flags
 )paren
 (brace
+r_int
+id|no_irq
+suffix:semicolon
 id|ssize_t
 id|count
 op_assign
@@ -106,6 +109,13 @@ suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
+suffix:semicolon
+id|no_irq
+op_assign
+id|polling
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -245,10 +255,7 @@ c_cond
 (paren
 id|count
 op_logical_and
-id|polling
-(paren
-id|dev
-)paren
+id|no_irq
 )paren
 (brace
 id|parport_release
@@ -362,20 +369,27 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* hold */
-multiline_comment|/* Wait until it&squot;s received (up to 20us). */
+r_if
+c_cond
+(paren
+id|no_irq
+)paren
+multiline_comment|/* Assume the peripheral received it. */
+r_goto
+id|done
+suffix:semicolon
+multiline_comment|/* Wait until it&squot;s received, up to 500us (this ought to be&n;&t;&t; * tuneable). */
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+l_int|500
 suffix:semicolon
 id|i
-OL
-l_int|20
 suffix:semicolon
 id|i
-op_increment
+op_decrement
 )paren
 (brace
 r_if
@@ -398,7 +412,8 @@ op_amp
 id|PARPORT_STATUS_ACK
 )paren
 )paren
-r_break
+r_goto
+id|done
 suffix:semicolon
 id|udelay
 (paren
@@ -406,6 +421,19 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Two choices:&n;&t;&t; * 1. Assume that the peripheral got the data and just&n;&t;&t; *    hasn&squot;t acknowledged it yet.&n;&t;&t; * 2. Assume that the peripheral never saw the strobe pulse.&n;&t;&t; *&n;&t;&t; * We can&squot;t know for sure, so let&squot;s be conservative.&n;&t;&t; */
+id|DPRINTK
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: no ack&quot;
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+id|done
+suffix:colon
 id|count
 op_increment
 suffix:semicolon

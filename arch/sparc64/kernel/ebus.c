@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.36 1999/05/04 03:21:42 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.38 1999/08/06 10:37:32 davem Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/bpp.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|PROM_DEBUG
 macro_line|#undef PROM_DEBUG
 DECL|macro|DEBUG_FILL_EBUS_DEV
@@ -151,11 +152,9 @@ r_return
 id|mem
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ebus_intmap_match
 r_void
+id|__init
 id|ebus_intmap_match
 c_func
 (paren
@@ -172,7 +171,6 @@ comma
 r_int
 op_star
 id|interrupt
-)paren
 )paren
 (brace
 r_int
@@ -298,11 +296,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fill_ebus_child
 r_void
+id|__init
 id|fill_ebus_child
 c_func
 (paren
@@ -318,7 +314,6 @@ r_struct
 id|linux_ebus_child
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -634,7 +629,7 @@ macro_line|#ifdef DEBUG_FILL_EBUS_DEV
 id|dprintf
 c_func
 (paren
-l_string|&quot;child &squot;%s&squot;: address%s&bslash;n&quot;
+l_string|&quot;child &squot;%s&squot;: address%s &quot;
 comma
 id|dev-&gt;prom_name
 comma
@@ -665,12 +660,18 @@ op_increment
 id|dprintf
 c_func
 (paren
-l_string|&quot;        %016lx&bslash;n&quot;
+l_string|&quot;%016lx &quot;
 comma
 id|dev-&gt;base_address
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+id|dprintf
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -732,11 +733,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|fill_ebus_device
 r_void
+id|__init
 id|fill_ebus_device
 c_func
 (paren
@@ -747,7 +746,6 @@ r_struct
 id|linux_ebus_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -912,10 +910,12 @@ id|dev-&gt;base_address
 id|i
 )braket
 op_assign
-id|dev-&gt;bus-&gt;self-&gt;base_address
+id|dev-&gt;bus-&gt;self-&gt;resource
 (braket
 id|n
 )braket
+dot
+id|start
 suffix:semicolon
 id|dev-&gt;base_address
 (braket
@@ -1049,7 +1049,7 @@ macro_line|#ifdef DEBUG_FILL_EBUS_DEV
 id|dprintf
 c_func
 (paren
-l_string|&quot;&squot;%s&squot;: address%s&bslash;n&quot;
+l_string|&quot;&squot;%s&squot;: address%s &quot;
 comma
 id|dev-&gt;prom_name
 comma
@@ -1080,12 +1080,18 @@ op_increment
 id|dprintf
 c_func
 (paren
-l_string|&quot;  %016lx&bslash;n&quot;
+l_string|&quot;%016lx &quot;
 comma
 id|dev-&gt;base_address
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+id|dprintf
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1279,16 +1285,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ebus_init
 r_void
+id|__init
 id|ebus_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -1329,12 +1332,14 @@ id|lbuf
 l_int|128
 )braket
 suffix:semicolon
+r_struct
+id|resource
+op_star
+id|base
+suffix:semicolon
 r_int
 r_int
 id|addr
-comma
-op_star
-id|base
 suffix:semicolon
 r_int
 r_int
@@ -1680,7 +1685,7 @@ suffix:semicolon
 id|base
 op_assign
 op_amp
-id|ebus-&gt;self-&gt;base_address
+id|ebus-&gt;self-&gt;resource
 (braket
 l_int|0
 )braket
@@ -1803,9 +1808,11 @@ id|rp-&gt;parent_phys_hi
 op_lshift
 l_int|32UL
 suffix:semicolon
-op_star
-id|base
-op_increment
+id|base-&gt;name
+op_assign
+l_string|&quot;EBUS&quot;
+suffix:semicolon
+id|base-&gt;start
 op_assign
 (paren
 r_int
@@ -1816,6 +1823,36 @@ c_func
 (paren
 id|addr
 )paren
+suffix:semicolon
+id|base-&gt;end
+op_assign
+id|base-&gt;start
+op_plus
+id|regs
+(braket
+id|reg
+)braket
+dot
+id|size_lo
+op_minus
+l_int|1
+suffix:semicolon
+id|base-&gt;flags
+op_assign
+l_int|0
+suffix:semicolon
+id|request_resource
+c_func
+(paren
+op_amp
+id|ioport_resource
+comma
+id|base
+)paren
+suffix:semicolon
+id|base
+op_add_assign
+l_int|1
 suffix:semicolon
 id|printk
 c_func
