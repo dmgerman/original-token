@@ -342,7 +342,6 @@ r_int
 id|req_len
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,0)
 r_static
 r_int
 id|zft_write
@@ -367,31 +366,6 @@ r_int
 id|req_len
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 DECL|variable|zft_cdev
 r_static
@@ -1272,30 +1246,6 @@ r_int
 r_int
 id|req_len
 )paren
-macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,0)
-r_static
-r_int
-id|zft_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|fp
-comma
-r_const
-r_char
-op_star
-id|buff
-comma
-r_int
-id|req_len
-)paren
 macro_line|#else
 r_static
 r_int
@@ -1312,6 +1262,7 @@ id|file
 op_star
 id|fp
 comma
+r_const
 r_char
 op_star
 id|buff
@@ -1686,8 +1637,7 @@ id|zft_cdev
 comma
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,2,0) 
-macro_line|# if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
 id|register_symtab
 c_func
 (paren
@@ -1696,7 +1646,6 @@ id|zft_symbol_table
 )paren
 suffix:semicolon
 multiline_comment|/* add global zftape symbols */
-macro_line|# endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_ZFT_COMPRESSOR
 (paren
@@ -1721,16 +1670,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13) &amp;&amp; defined(MODULE)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 multiline_comment|/* Called by modules package before trying to unload the module&n; */
 DECL|function|can_unload

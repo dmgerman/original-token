@@ -1909,6 +1909,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|nsems
+op_assign
+id|sma-&gt;sem_nsems
+suffix:semicolon
 id|err
 op_assign
 op_minus
@@ -1959,10 +1963,6 @@ id|S_IRUGO
 )paren
 r_goto
 id|out_unlock
-suffix:semicolon
-id|nsems
-op_assign
-id|sma-&gt;sem_nsems
 suffix:semicolon
 r_switch
 c_cond

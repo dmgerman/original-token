@@ -1158,15 +1158,7 @@ DECL|function|t2_init_arch
 id|t2_init_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|mem_start
-comma
-r_int
-r_int
-op_star
-id|mem_end
+r_void
 )paren
 (brace
 r_struct
@@ -1415,7 +1407,6 @@ op_assign
 id|alloc_pci_controler
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hose-&gt;io_space

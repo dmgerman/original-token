@@ -782,11 +782,39 @@ op_star
 id|file
 )paren
 (brace
+r_extern
+r_void
+id|free_initrd_mem
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|initrd_users
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|free_initrd_mem
+c_func
+(paren
+id|initrd_start
+comma
+id|initrd_end
+)paren
+suffix:semicolon
 id|initrd_start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* No need to actually release the pages, because that is&n;&t;   done later by free_all_bootmem. */
 r_return
 l_int|0
 suffix:semicolon
@@ -971,14 +999,12 @@ id|block_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|macro|rd_init
-mdefine_line|#define rd_init init_module
 multiline_comment|/* Before freeing the module, invalidate all of the protected buffers! */
-DECL|function|cleanup_module
+DECL|function|rd_cleanup
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|rd_cleanup
 (paren
 r_void
 )paren
@@ -1030,13 +1056,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif  /* MODULE */
 multiline_comment|/* This is the registration and initialization section of the RAM disk driver */
 DECL|function|rd_init
 r_int
 id|__init
 id|rd_init
-c_func
 (paren
 r_void
 )paren
@@ -1205,6 +1229,22 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|rd_init
+id|module_init
+c_func
+(paren
+id|rd_init
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|rd_cleanup
+id|module_exit
+c_func
+(paren
+id|rd_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/* loadable module support */
 id|MODULE_PARM
 (paren

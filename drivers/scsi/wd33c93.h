@@ -766,7 +766,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_int
 id|wd33c93_reset
 (paren
@@ -777,14 +776,5 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#else
-r_int
-id|wd33c93_reset
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* WD33C93_H */
 eof

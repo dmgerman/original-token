@@ -20,39 +20,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Sponsored by &n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@PoohSticks.ORG&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * For more information, please consult &n; *&n; * NCR53C810 &n; * SCSI I/O Processor&n; * Programmer&squot;s Guide&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810/53C820&n; * PCI-SCSI I/O Processor Design In Guide&n; *&n; * For literature on Symbios Logic Inc. formerly NCR, SCSI, &n; * and Communication products please call (800) 334-5454 or&n; * (719) 536-3300. &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; */
 multiline_comment|/*&n; * Design issues : &n; * The cumulative latency needed to propagate a read/write request &n; * through the file system, buffer cache, driver stacks, SCSI host, and &n; * SCSI device is ultimately the limiting factor in throughput once we &n; * have a sufficiently fast host adapter.&n; *  &n; * So, to maximize performance we want to keep the ratio of latency to data &n; * transfer time to a minimum by&n; * 1.  Minimizing the total number of commands sent (typical command latency&n; *&t;including drive and bus mastering host overhead is as high as 4.5ms)&n; *&t;to transfer a given amount of data.  &n; *&n; *      This is accomplished by placing no arbitrary limit on the number&n; *&t;of scatter/gather buffers supported, since we can transfer 1K&n; *&t;per scatter/gather buffer without Eric&squot;s cluster patches, &n; *&t;4K with.  &n; *&n; * 2.  Minimizing the number of fatal interrupts serviced, since&n; * &t;fatal interrupts halt the SCSI I/O processor.  Basically,&n; *&t;this means offloading the practical maximum amount of processing &n; *&t;to the SCSI chip.&n; * &n; *&t;On the NCR53c810/820/720,  this is accomplished by using &n; *&t;&t;interrupt-on-the-fly signals when commands complete, &n; *&t;&t;and only handling fatal errors and SDTR / WDTR &t;messages &n; *&t;&t;in the host code.&n; *&n; *&t;On the NCR53c710, interrupts are generated as on the NCR53c8x0,&n; *&t;&t;only the lack of an interrupt-on-the-fly facility complicates&n; *&t;&t;things.   Also, SCSI ID registers and commands are &n; *&t;&t;bit fielded rather than binary encoded.&n; *&t;&t;&n; * &t;On the NCR53c700 and NCR53c700-66, operations that are done via &n; *&t;&t;indirect, table mode on the more advanced chips must be&n; *&t;        replaced by calls through a jump table which &n; *&t;&t;acts as a surrogate for the DSA.  Unfortunately, this &n; * &t;&t;will mean that we must service an interrupt for each &n; *&t;&t;disconnect/reconnect.&n; * &n; * 3.  Eliminating latency by pipelining operations at the different levels.&n; * &t;&n; *&t;This driver allows a configurable number of commands to be enqueued&n; *&t;for each target/lun combination (experimentally, I have discovered&n; *&t;that two seems to work best) and will ultimately allow for &n; *&t;SCSI-II tagged queuing.&n; * &t;&n; *&n; * Architecture : &n; * This driver is built around a Linux queue of commands waiting to &n; * be executed, and a shared Linux/NCR array of commands to start.  Commands&n; * are transfered to the array  by the run_process_issue_queue() function &n; * which is called whenever a command completes.&n; *&n; * As commands are completed, the interrupt routine is triggered,&n; * looks for commands in the linked list of completed commands with&n; * valid status, removes these commands from a list of running commands, &n; * calls the done routine, and flags their target/luns as not busy.&n; *&n; * Due to limitations in the intelligence of the NCR chips, certain&n; * concessions are made.  In many cases, it is easier to dynamically &n; * generate/fix-up code rather than calculate on the NCR at run time.  &n; * So, code is generated or fixed up for&n; *&n; * - Handling data transfers, using a variable number of MOVE instructions&n; *&t;interspersed with CALL MSG_IN, WHEN MSGIN instructions.&n; *&n; * &t;The DATAIN and DATAOUT routines&t;are separate, so that an incorrect&n; *&t;direction can be trapped, and space isn&squot;t wasted. &n; *&n; *&t;It may turn out that we&squot;re better off using some sort &n; *&t;of table indirect instruction in a loop with a variable&n; *&t;sized table on the NCR53c710 and newer chips.&n; *&n; * - Checking for reselection (NCR53c710 and better)&n; *&n; * - Handling the details of SCSI context switches (NCR53c710 and better),&n; *&t;such as reprogramming appropriate synchronous parameters, &n; *&t;removing the dsa structure from the NCR&squot;s queue of outstanding&n; *&t;commands, etc.&n; *&n; */
 multiline_comment|/* &n; * Accommodate differences between stock 1.2.x and 1.3.x asm-i386/types.h&n; * so lusers can drop in 53c7,8xx.* and get something which compiles &n; * without warnings.&n; */
-macro_line|#if !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3)
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; 65536 + 3 * 256
-DECL|macro|LINUX_1_3
-mdefine_line|#define LINUX_1_3
-macro_line|#else
-DECL|macro|LINUX_1_2
-mdefine_line|#define LINUX_1_2
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef LINUX_1_2
-DECL|macro|u32
-mdefine_line|#define u32 bogus_u32
-DECL|macro|s32
-mdefine_line|#define s32 bogus_s32
-macro_line|#include &lt;asm/types.h&gt;
-DECL|macro|u32
-macro_line|#undef u32
-DECL|macro|s32
-macro_line|#undef s32
-DECL|typedef|s32
-r_typedef
-id|__signed__
-r_int
-id|s32
-suffix:semicolon
-DECL|typedef|u32
-r_typedef
-r_int
-r_int
-id|u32
-suffix:semicolon
-macro_line|#endif /* def LINUX_1_2 */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -1311,7 +1279,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifndef LINUX_1_2
 r_else
 r_if
 c_cond
@@ -1336,7 +1303,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 id|hostdata
 op_assign
 (paren
@@ -3566,13 +3532,8 @@ r_int
 r_int
 id|command
 suffix:semicolon
-macro_line|#ifdef LINUX_1_2
 r_int
 r_int
-macro_line|#else
-r_int
-r_int
-macro_line|#endif
 id|base
 comma
 id|io_port
@@ -12708,14 +12669,9 @@ id|cmd-&gt;lun
 )paren
 )paren
 op_logical_and
-macro_line|#ifdef LINUX_1_2
-op_logical_neg
-id|in_scan_scsis
-macro_line|#else
 id|cmd-&gt;device
 op_logical_and
 id|cmd-&gt;device-&gt;has_cmdblocks
-macro_line|#endif
 )paren
 (brace
 r_if
@@ -12826,26 +12782,6 @@ id|tmp-&gt;size
 op_assign
 id|size
 suffix:semicolon
-macro_line|#ifdef LINUX_1_2
-id|tmp-&gt;free
-op_assign
-(paren
-(paren
-r_void
-(paren
-op_star
-)paren
-(paren
-r_void
-op_star
-comma
-r_int
-)paren
-)paren
-id|kfree_s
-)paren
-suffix:semicolon
-macro_line|#else
 id|tmp-&gt;free
 op_assign
 (paren
@@ -12864,7 +12800,6 @@ r_int
 id|kfree
 )paren
 suffix:semicolon
-macro_line|#endif
 id|save_flags
 (paren
 id|flags
@@ -14599,17 +14534,10 @@ id|cmd-&gt;lun
 )paren
 )paren
 )paren
-macro_line|#ifdef LINUX_1_2
-op_logical_or
-id|cmd-&gt;target
-OG
-l_int|7
-macro_line|#else
 op_logical_or
 id|cmd-&gt;target
 OG
 id|host-&gt;max_id
-macro_line|#endif
 op_logical_or
 id|cmd-&gt;target
 op_eq

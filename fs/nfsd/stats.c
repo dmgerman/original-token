@@ -74,15 +74,15 @@ id|nfsdstats.rcmisses
 comma
 id|nfsdstats.rcnocache
 comma
-id|nfsdstats.fh_cached
-comma
-id|nfsdstats.fh_valid
-comma
-id|nfsdstats.fh_fixup
+id|nfsdstats.fh_stale
 comma
 id|nfsdstats.fh_lookup
 comma
-id|nfsdstats.fh_stale
+id|nfsdstats.fh_anon
+comma
+id|nfsdstats.fh_nocache_dir
+comma
+id|nfsdstats.fh_nocache_nondir
 )paren
 suffix:semicolon
 multiline_comment|/* Assume we haven&squot;t hit EOF yet. Will be set by svc_proc_read. */

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Sat Oct 30 14:18:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Fri Nov 12 21:08:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1748,7 +1748,7 @@ comma
 id|self-&gt;io.iobase2
 )paren
 suffix:semicolon
-id|irport_change_speed
+id|__irport_change_speed
 c_func
 (paren
 op_amp

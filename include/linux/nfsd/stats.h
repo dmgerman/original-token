@@ -24,36 +24,36 @@ r_int
 id|rcnocache
 suffix:semicolon
 multiline_comment|/* uncached reqs */
-DECL|member|fh_cached
-r_int
-r_int
-id|fh_cached
-suffix:semicolon
-multiline_comment|/* dentry cached */
-DECL|member|fh_valid
-r_int
-r_int
-id|fh_valid
-suffix:semicolon
-multiline_comment|/* dentry validated */
-DECL|member|fh_fixup
-r_int
-r_int
-id|fh_fixup
-suffix:semicolon
-multiline_comment|/* dentry fixup validated */
-DECL|member|fh_lookup
-r_int
-r_int
-id|fh_lookup
-suffix:semicolon
-multiline_comment|/* new lookup required */
 DECL|member|fh_stale
 r_int
 r_int
 id|fh_stale
 suffix:semicolon
 multiline_comment|/* FH stale error */
+DECL|member|fh_lookup
+r_int
+r_int
+id|fh_lookup
+suffix:semicolon
+multiline_comment|/* dentry cached */
+DECL|member|fh_anon
+r_int
+r_int
+id|fh_anon
+suffix:semicolon
+multiline_comment|/* anon file dentry returned */
+DECL|member|fh_nocache_dir
+r_int
+r_int
+id|fh_nocache_dir
+suffix:semicolon
+multiline_comment|/* filehandle not foudn in dcache */
+DECL|member|fh_nocache_nondir
+r_int
+r_int
+id|fh_nocache_nondir
+suffix:semicolon
+multiline_comment|/* filehandle not foudn in dcache */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

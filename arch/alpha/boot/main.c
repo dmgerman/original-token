@@ -691,11 +691,7 @@ c_func
 r_char
 op_star
 )paren
-id|ZERO_PAGE
-c_func
-(paren
-l_int|0
-)paren
+id|ZERO_PGE
 comma
 id|envval
 )paren

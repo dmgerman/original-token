@@ -4887,6 +4887,8 @@ r_int
 id|i
 comma
 id|status
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop

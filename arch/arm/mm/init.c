@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
@@ -572,6 +572,13 @@ comma
 op_star
 id|bad_table
 suffix:semicolon
+r_int
+r_int
+id|zone_size
+(braket
+l_int|3
+)braket
+suffix:semicolon
 macro_line|#ifdef CONFIG_CPU_32
 DECL|macro|TABLE_OFFSET
 mdefine_line|#define TABLE_OFFSET&t;(PTRS_PER_PTE)
@@ -616,10 +623,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Initialise the zones and mem_map&n;&t; */
+id|zonesize_init
+c_func
+(paren
+id|zone_size
+)paren
+suffix:semicolon
 id|free_area_init
 c_func
 (paren
-id|max_low_pfn
+id|zone_size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * finish off the bad pages once&n;&t; * the mem_map is initialised&n;&t; */
@@ -814,29 +828,28 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_char
+id|__init_begin
+comma
+id|__init_end
+comma
+id|_text
+comma
+id|_etext
+comma
+id|_end
+suffix:semicolon
+r_int
 r_int
 id|codepages
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|reservedpages
-op_assign
-l_int|0
-suffix:semicolon
-r_int
+comma
 id|datapages
-op_assign
-l_int|0
+comma
+id|initpages
 suffix:semicolon
 r_int
-id|initpages
-op_assign
-l_int|0
-comma
 id|i
-comma
-id|min_nr
 suffix:semicolon
 id|max_mapnr
 op_assign
@@ -856,7 +869,6 @@ op_star
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_CPU_32
 multiline_comment|/*&n;&t; * We may have non-contiguous memory.  Setup the PageSkip stuff,&n;&t; * and mark the areas of mem_map which can be freed&n;&t; */
 r_if
 c_cond
@@ -870,7 +882,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* this will put all unused low memory onto the freelists */
 id|totalram_pages
 op_add_assign
@@ -909,15 +920,52 @@ id|size
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
-id|printk
+id|codepages
+op_assign
 (paren
-l_string|&quot;Memory: %luk/%luM available (%dk code, %dk reserved, %dk data, %dk init)&bslash;n&quot;
+r_int
+)paren
+op_amp
+id|_etext
+op_minus
+op_amp
+id|_text
+suffix:semicolon
+id|datapages
+op_assign
+(paren
+r_int
+)paren
+op_amp
+id|_end
+op_minus
+op_amp
+id|_etext
+suffix:semicolon
+id|initpages
+op_assign
+(paren
+r_int
+)paren
+op_amp
+id|__init_end
+op_minus
+op_amp
+id|__init_start
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Memory: %luk/%luM available (%dK code, %dK data, %dK init)&bslash;n&quot;
 comma
 (paren
 r_int
 r_int
 )paren
 id|nr_free_pages
+c_func
+(paren
+)paren
 op_lshift
 (paren
 id|PAGE_SHIFT
@@ -941,14 +989,6 @@ op_minus
 l_int|10
 )paren
 comma
-id|reservedpages
-op_lshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|10
-)paren
-comma
 id|datapages
 op_lshift
 (paren
@@ -965,67 +1005,6 @@ op_minus
 l_int|10
 )paren
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Correct freepages watermarks&n;&t; */
-id|i
-op_assign
-id|nr_free_pages
-op_rshift
-l_int|7
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|PAGE_SIZE
-OL
-l_int|32768
-)paren
-id|min_nr
-op_assign
-l_int|10
-suffix:semicolon
-r_else
-id|min_nr
-op_assign
-l_int|2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-id|min_nr
-)paren
-id|i
-op_assign
-id|min_nr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OG
-l_int|256
-)paren
-id|i
-op_assign
-l_int|256
-suffix:semicolon
-id|freepages.min
-op_assign
-id|i
-suffix:semicolon
-id|freepages.low
-op_assign
-id|i
-op_star
-l_int|2
-suffix:semicolon
-id|freepages.high
-op_assign
-id|i
-op_star
-l_int|3
 suffix:semicolon
 macro_line|#ifdef CONFIG_CPU_26
 r_if
@@ -1314,6 +1293,9 @@ suffix:semicolon
 id|val-&gt;freeram
 op_assign
 id|nr_free_pages
+c_func
+(paren
+)paren
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign

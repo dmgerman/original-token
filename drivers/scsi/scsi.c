@@ -101,21 +101,27 @@ DECL|macro|MIN_RESET_PERIOD
 mdefine_line|#define MIN_RESET_PERIOD (15*HZ)
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up.&n; */
 DECL|macro|BLIST_NOLUN
-mdefine_line|#define BLIST_NOLUN     0x01
+mdefine_line|#define BLIST_NOLUN     &t;0x001
 DECL|macro|BLIST_FORCELUN
-mdefine_line|#define BLIST_FORCELUN  0x02
+mdefine_line|#define BLIST_FORCELUN  &t;0x002
 DECL|macro|BLIST_BORKEN
-mdefine_line|#define BLIST_BORKEN    0x04
+mdefine_line|#define BLIST_BORKEN    &t;0x004
 DECL|macro|BLIST_KEY
-mdefine_line|#define BLIST_KEY       0x08
+mdefine_line|#define BLIST_KEY       &t;0x008
 DECL|macro|BLIST_SINGLELUN
-mdefine_line|#define BLIST_SINGLELUN 0x10
+mdefine_line|#define BLIST_SINGLELUN &t;0x010
 DECL|macro|BLIST_NOTQ
-mdefine_line|#define BLIST_NOTQ&t;0x20
+mdefine_line|#define BLIST_NOTQ&t;&t;0x020
 DECL|macro|BLIST_SPARSELUN
-mdefine_line|#define BLIST_SPARSELUN 0x40
+mdefine_line|#define BLIST_SPARSELUN &t;0x040
 DECL|macro|BLIST_MAX5LUN
-mdefine_line|#define BLIST_MAX5LUN&t;0x80
+mdefine_line|#define BLIST_MAX5LUN&t;&t;0x080
+DECL|macro|BLIST_ISDISK
+mdefine_line|#define BLIST_ISDISK    &t;0x100
+DECL|macro|BLIST_ISROM
+mdefine_line|#define BLIST_ISROM     &t;0x200
+DECL|macro|BLIST_GHOST
+mdefine_line|#define BLIST_GHOST     &t;0x400   
 multiline_comment|/*&n; * Data declarations.&n; */
 DECL|variable|scsi_pid
 r_int
@@ -399,7 +405,7 @@ id|SCpnt
 )paren
 suffix:semicolon
 DECL|macro|SCSI_BLOCK
-mdefine_line|#define SCSI_BLOCK(DEVICE, HOST)                                                &bslash;&n;                ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active)            &bslash;&n;&t;&t;  || ((HOST)-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue)    &bslash;&n;                  || ((HOST)-&gt;host_blocked)                                       &bslash;&n;                  || ((DEVICE) != NULL &amp;&amp; (DEVICE)-&gt;device_blocked) )
+mdefine_line|#define SCSI_BLOCK(DEVICE, HOST)                                         &bslash;&n;&t;        ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active)          &bslash;&n;  &t;&t;|| ((HOST)-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue)  &bslash;&n;&t;        || ((HOST)-&gt;host_blocked)                                     &bslash;&n;&t;        || ((DEVICE) != NULL &amp;&amp; (DEVICE)-&gt;device_blocked) )
 DECL|struct|dev_info
 r_struct
 id|dev_info
@@ -1078,7 +1084,7 @@ comma
 (brace
 l_string|&quot;MATSHITA&quot;
 comma
-l_string|&quot;PD&quot;
+l_string|&quot;PD-1&quot;
 comma
 l_string|&quot;*&quot;
 comma
@@ -1097,6 +1103,47 @@ comma
 id|BLIST_NOTQ
 op_or
 id|BLIST_NOLUN
+)brace
+comma
+(brace
+l_string|&quot;CREATIVE&quot;
+comma
+l_string|&quot;DVD-RAM RAM&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
+(brace
+l_string|&quot;MATSHITA&quot;
+comma
+l_string|&quot;PD-2 LF-D100&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
+(brace
+l_string|&quot;HITACHI&quot;
+comma
+l_string|&quot;GF-1050&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_GHOST
+)brace
+comma
+multiline_comment|/* Hitachi SCSI DVD-RAM */
+(brace
+l_string|&quot;TOSHIBA&quot;
+comma
+l_string|&quot;CDROM&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_ISROM
 )brace
 comma
 multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */
@@ -2704,6 +2751,23 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_static
+r_int
+id|ghost_channel
+op_assign
+op_minus
+l_int|1
+comma
+id|ghost_dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_int
+id|org_lun
+op_assign
+id|lun
+suffix:semicolon
 id|SDpnt-&gt;host
 op_assign
 id|shpnt
@@ -2724,6 +2788,43 @@ id|SDpnt-&gt;online
 op_assign
 id|TRUE
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|channel
+op_eq
+id|ghost_channel
+)paren
+op_logical_and
+(paren
+id|dev
+op_eq
+id|ghost_dev
+)paren
+op_logical_and
+(paren
+id|lun
+op_eq
+l_int|1
+)paren
+)paren
+(brace
+id|SDpnt-&gt;lun
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ghost_channel
+op_assign
+id|ghost_dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* Some low level driver could use device-&gt;type (DB) */
 id|SDpnt-&gt;type
 op_assign
@@ -3127,42 +3228,45 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* assume no peripheral if any sort of error */
 )brace
-multiline_comment|/*&n;&t; * It would seem some TOSHIBA CDROM gets things wrong&n;&t; */
+multiline_comment|/*&n;&t; * Get any flags for this device.  &n;&t; */
+id|bflags
+op_assign
+id|get_device_flags
+(paren
+id|scsi_result
+)paren
+suffix:semicolon
+multiline_comment|/*   The Toshiba ROM was &quot;gender-changed&quot; here as an inline hack.&n;&t;      This is now much more generic.&n;&t;      This is a mess: What we really want is to leave the scsi_result&n;&t;      alone, and just change the SDpnt structure. And the SDpnt is what&n;&t;      we want print_inquiry to print.  -- REW&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|scsi_result
-op_plus
-l_int|8
-comma
-l_string|&quot;TOSHIBA&quot;
-comma
-l_int|7
+id|bflags
+op_amp
+id|BLIST_ISDISK
 )paren
-op_logical_and
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|scsi_result
-op_plus
-l_int|16
-comma
-l_string|&quot;CD-ROM&quot;
-comma
-l_int|6
-)paren
-op_logical_and
+(brace
 id|scsi_result
 (braket
 l_int|0
 )braket
-op_eq
+op_assign
 id|TYPE_DISK
+suffix:semicolon
+id|scsi_result
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* removable */
+)brace
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_ISROM
 )paren
 (brace
 id|scsi_result
@@ -3180,6 +3284,68 @@ op_or_assign
 l_int|0x80
 suffix:semicolon
 multiline_comment|/* removable */
+)brace
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_GHOST
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|ghost_channel
+op_eq
+id|channel
+)paren
+op_logical_and
+(paren
+id|ghost_dev
+op_eq
+id|dev
+)paren
+op_logical_and
+(paren
+id|org_lun
+op_eq
+l_int|1
+)paren
+)paren
+(brace
+id|lun
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ghost_channel
+op_assign
+id|channel
+suffix:semicolon
+id|ghost_dev
+op_assign
+id|dev
+suffix:semicolon
+id|scsi_result
+(braket
+l_int|0
+)braket
+op_assign
+id|TYPE_MOD
+suffix:semicolon
+id|scsi_result
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* removable */
+)brace
 )brace
 id|memcpy
 c_func
@@ -3451,15 +3617,6 @@ multiline_comment|/*&n;&t; * Accommodate drivers that want to sleep when they sh
 id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * Get any flags for this device.&n;&t; */
-id|bflags
-op_assign
-id|get_device_flags
-c_func
-(paren
-id|scsi_result
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set the tagged_queue flag for SCSI-II devices that purport to support&n;&t; * tagged queuing in the INQUIRY data.&n;&t; */
 id|SDpnt-&gt;tagged_queue
@@ -3799,6 +3956,24 @@ op_star
 id|max_dev_lun
 op_assign
 l_int|5
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If this device is Ghosted, scan upto two luns. (It physically only&n;&t; * has one). -- REW&n;&t; */
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_GHOST
+)paren
+(brace
+op_star
+id|max_dev_lun
+op_assign
+l_int|2
 suffix:semicolon
 r_return
 l_int|1

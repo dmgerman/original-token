@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Oct  8 23:17:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Nov 16 10:01:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -2783,12 +2783,15 @@ id|self
 comma
 id|__u32
 id|speed
+comma
+r_int
+id|now
 )paren
 (brace
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), setting speed to %d&bslash;n&quot;
@@ -2818,14 +2821,23 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Must use the same speed in both directions */
-id|self-&gt;qos_rx.baud_rate.value
+id|self-&gt;speed
 op_assign
 id|speed
 suffix:semicolon
-id|self-&gt;qos_tx.baud_rate.value
-op_assign
+multiline_comment|/* Change speed now, or just piggyback speed on frames */
+r_if
+c_cond
+(paren
+id|now
+)paren
+id|irda_device_change_speed
+c_func
+(paren
+id|self-&gt;netdev
+comma
 id|speed
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IRDA_COMPRESSION
@@ -3221,6 +3233,8 @@ c_func
 id|self
 comma
 l_int|9600
+comma
+id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Default value in NDM */
@@ -3318,6 +3332,8 @@ c_func
 id|self
 comma
 id|qos-&gt;baud_rate.value
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|self-&gt;window_size

@@ -1143,6 +1143,8 @@ id|reply
 comma
 l_int|4
 )paren
+OL
+l_int|0
 )paren
 (brace
 r_return
@@ -1176,6 +1178,8 @@ id|reply
 comma
 l_int|8
 )paren
+OL
+l_int|0
 )paren
 (brace
 r_return
@@ -1326,7 +1330,7 @@ l_string|&quot;Class %03X, parent %d, want %d.&bslash;n&quot;
 comma
 id|unit-&gt;lct_data-&gt;class_id
 comma
-id|unit-&gt;lct_data-&gt;parent
+id|unit-&gt;lct_data-&gt;parent_tid
 comma
 id|d-&gt;lct_data-&gt;tid
 )paren
@@ -1355,7 +1359,9 @@ id|dprintk
 c_func
 (paren
 (paren
-l_string|&quot;Found a disk.&bslash;n&quot;
+l_string|&quot;Found a disk (%d).&bslash;n&quot;
+comma
+id|unit-&gt;lct_data-&gt;tid
 )paren
 )paren
 suffix:semicolon
@@ -1413,7 +1419,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;i2o_scsi: Unable to get lun for tid %d.&bslash;n&quot;
 comma
-id|d-&gt;lct_data-&gt;tid
+id|unit-&gt;lct_data-&gt;tid
 )paren
 suffix:semicolon
 r_continue
@@ -1727,13 +1733,7 @@ op_ne
 id|I2O_CLASS_BUS_ADAPTER_PORT
 )paren
 singleline_comment|// bus_adapter
-op_logical_and
-(paren
-id|d-&gt;lct_data-&gt;class_id
-op_ne
-id|I2O_CLASS_FIBRE_CHANNEL_PORT
-)paren
-singleline_comment|// FC_PORT
+singleline_comment|//&t;&t;&t;    &amp;&amp; (d-&gt;lct_data-&gt;class_id!=I2O_CLASS_FIBRE_CHANNEL_PORT)&t;// FC_PORT
 )paren
 (brace
 r_continue

@@ -1179,7 +1179,7 @@ id|m
 l_int|2
 )braket
 op_amp
-l_int|0x80000000
+l_int|0x40000000
 )paren
 (brace
 r_int
@@ -2473,7 +2473,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket
@@ -2538,7 +2538,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket
@@ -2751,7 +2751,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket
@@ -2822,7 +2822,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket
@@ -3893,7 +3893,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket
@@ -3958,7 +3958,7 @@ l_int|2
 op_assign
 id|i2ob_context
 op_or
-l_int|0x80000000
+l_int|0x40000000
 suffix:semicolon
 id|msg
 (braket

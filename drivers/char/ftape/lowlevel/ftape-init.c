@@ -271,7 +271,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VER(1,2,0) &amp;&amp; &bslash;&n;     LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18))
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
 id|register_symtab
 c_func
 (paren
@@ -412,16 +412,6 @@ c_func
 (paren
 l_string|&quot;QIC-117 driver for QIC-40/80/3010/3020 floppy tape drives.&quot;
 )paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*  Called by modules package when installing the driver&n; */

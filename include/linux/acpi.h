@@ -145,6 +145,40 @@ r_typedef
 r_int
 id|acpi_dstate_t
 suffix:semicolon
+multiline_comment|/*&n; * System sleep states&n; */
+r_enum
+(brace
+DECL|enumerator|ACPI_S0
+id|ACPI_S0
+comma
+multiline_comment|/* working */
+DECL|enumerator|ACPI_S1
+id|ACPI_S1
+comma
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S2
+id|ACPI_S2
+comma
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S3
+id|ACPI_S3
+comma
+multiline_comment|/* sleep */
+DECL|enumerator|ACPI_S4
+id|ACPI_S4
+comma
+multiline_comment|/* non-volatile sleep */
+DECL|enumerator|ACPI_S5
+id|ACPI_S5
+comma
+multiline_comment|/* soft-off */
+)brace
+suffix:semicolon
+DECL|typedef|acpi_sstate_t
+r_typedef
+r_int
+id|acpi_sstate_t
+suffix:semicolon
 r_struct
 id|acpi_dev
 suffix:semicolon
@@ -504,6 +538,8 @@ mdefine_line|#define ACPI_TMR_HZ&t;3580000 /* 3.58 MHz */
 multiline_comment|/* strangess to avoid integer overflow */
 DECL|macro|ACPI_uS_TO_TMR_TICKS
 mdefine_line|#define ACPI_uS_TO_TMR_TICKS(val) &bslash;&n;  (((val) * (ACPI_TMR_HZ / 10000)) / 100)
+DECL|macro|ACPI_TMR_TICKS_TO_uS
+mdefine_line|#define ACPI_TMR_TICKS_TO_uS(ticks) &bslash;&n;  (((ticks) * 100) / (ACPI_TMR_HZ / 10000))
 multiline_comment|/* CPU cycles -&gt; PM timer cycles, looks somewhat heuristic but&n;   (ticks = 3/11 * CPU_MHz + 2) comes pretty close for my systems&n; */
 DECL|macro|ACPI_CPU_TO_TMR_TICKS
 mdefine_line|#define ACPI_CPU_TO_TMR_TICKS(cycles) &bslash;&n;  ((cycles) / (3 * (loops_per_sec + 2500) / 500000 / 11 + 2))
@@ -534,6 +570,20 @@ mdefine_line|#define ACPI_DCK_CAP&t;  0x00000200
 multiline_comment|/* FACS flags */
 DECL|macro|ACPI_S4BIOS
 mdefine_line|#define ACPI_S4BIOS&t;  0x00000001
+multiline_comment|/* processor block offsets */
+DECL|macro|ACPI_P_CNT
+mdefine_line|#define ACPI_P_CNT&t;  0x00000000
+DECL|macro|ACPI_P_LVL2
+mdefine_line|#define ACPI_P_LVL2&t;  0x00000004
+DECL|macro|ACPI_P_LVL3
+mdefine_line|#define ACPI_P_LVL3&t;  0x00000005
+multiline_comment|/* C-state latencies (microseconds) */
+DECL|macro|ACPI_MAX_P_LVL2_LAT
+mdefine_line|#define ACPI_MAX_P_LVL2_LAT 100
+DECL|macro|ACPI_MAX_P_LVL3_LAT
+mdefine_line|#define ACPI_MAX_P_LVL3_LAT 1000
+DECL|macro|ACPI_INFINITE_LAT
+mdefine_line|#define ACPI_INFINITE_LAT   (~0UL)
 DECL|struct|acpi_rsdp
 r_struct
 id|acpi_rsdp
@@ -866,11 +916,8 @@ comma
 DECL|enumerator|ACPI_EVENT
 id|ACPI_EVENT
 comma
-DECL|enumerator|ACPI_P_LVL2
-id|ACPI_P_LVL2
-comma
-DECL|enumerator|ACPI_P_LVL3
-id|ACPI_P_LVL3
+DECL|enumerator|ACPI_P_BLK
+id|ACPI_P_BLK
 comma
 DECL|enumerator|ACPI_P_LVL2_LAT
 id|ACPI_P_LVL2_LAT
@@ -883,8 +930,6 @@ id|ACPI_S5_SLP_TYP
 comma
 )brace
 suffix:semicolon
-DECL|macro|ACPI_P_LVL_DISABLED
-mdefine_line|#define ACPI_P_LVL_DISABLED&t;0x80
 DECL|macro|ACPI_SLP_TYP_DISABLED
 mdefine_line|#define ACPI_SLP_TYP_DISABLED&t;(~0UL)
 multiline_comment|/*&n; * PIIX4-specific ACPI info (for systems with PIIX4 but no ACPI tables)&n; */
@@ -920,12 +965,8 @@ DECL|macro|ACPI_PIIX4_PM_TMR
 mdefine_line|#define ACPI_PIIX4_PM_TMR&t;0x0008
 DECL|macro|ACPI_PIIX4_GPE0
 mdefine_line|#define ACPI_PIIX4_GPE0&t;&t;0x000c
-DECL|macro|ACPI_PIIX4_P_CNT
-mdefine_line|#define ACPI_PIIX4_P_CNT&t;0x0010
-DECL|macro|ACPI_PIIX4_P_LVL2
-mdefine_line|#define ACPI_PIIX4_P_LVL2&t;0x0014
-DECL|macro|ACPI_PIIX4_P_LVL3
-mdefine_line|#define ACPI_PIIX4_P_LVL3&t;0x0015
+DECL|macro|ACPI_PIIX4_P_BLK
+mdefine_line|#define ACPI_PIIX4_P_BLK&t;0x0010
 DECL|macro|ACPI_PIIX4_PM1_EVT_LEN
 mdefine_line|#define ACPI_PIIX4_PM1_EVT_LEN&t;0x04
 DECL|macro|ACPI_PIIX4_PM1_CNT_LEN

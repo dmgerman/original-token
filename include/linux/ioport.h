@@ -177,6 +177,9 @@ op_star
 r_new
 )paren
 suffix:semicolon
+r_struct
+id|pci_dev
+suffix:semicolon
 r_extern
 r_int
 id|allocate_resource
@@ -207,6 +210,10 @@ comma
 r_int
 r_int
 id|align
+comma
+r_struct
+id|pci_dev
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Convenience shorthand with allocation */
@@ -302,6 +309,27 @@ c_func
 (paren
 r_int
 id|waittime
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|resource_fixup
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|resource
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IOPORT_H */

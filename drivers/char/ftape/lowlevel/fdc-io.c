@@ -5802,7 +5802,6 @@ id|TRACE_EXIT
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,70)
 DECL|function|ftape_interrupt
 r_static
 r_void
@@ -5821,21 +5820,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|ftape_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 r_void
 (paren
@@ -5954,7 +5938,6 @@ id|ftape_id
 )paren
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,3,70)
 id|free_irq
 c_func
 (paren
@@ -5963,14 +5946,6 @@ comma
 id|ftape_id
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|fdc.irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|TRACE_ABORT
 c_func
 (paren

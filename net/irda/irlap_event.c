@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Sun Oct 10 11:14:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Nov 16 12:33:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2239,7 +2239,8 @@ c_func
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We are allowed to send two frames!&n;&t;&t; */
+macro_line|#if 0
+multiline_comment|/* &n;&t;&t; * We are allowed to send two frames, but this may increase&n;&t;&t; * the connect latency, so lets not do it for now.&n;&t;&t; */
 id|irlap_send_ua_response_frame
 c_func
 (paren
@@ -2249,15 +2250,8 @@ op_amp
 id|self-&gt;qos_rx
 )paren
 suffix:semicolon
-id|irlap_send_ua_response_frame
-c_func
-(paren
-id|self
-comma
-op_amp
-id|self-&gt;qos_rx
-)paren
-suffix:semicolon
+macro_line|#endif
+multiline_comment|/* &n;&t;&t; * Applying the parameters now will make sure we change speed&n;&t;&t; * after we have sent the next frame&n;&t;&t; */
 id|irlap_apply_connection_parameters
 c_func
 (paren
@@ -2265,6 +2259,16 @@ id|self
 comma
 op_amp
 id|self-&gt;qos_tx
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Sending this frame will force a speed change after it has&n;&t;&t; * been sent&n;&t;&t; */
+id|irlap_send_ua_response_frame
+c_func
+(paren
+id|self
+comma
+op_amp
+id|self-&gt;qos_rx
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  The WD-timer could be set to the duration of the P-timer &n;&t;&t; *  for this case, but it is recommended to use twice the &n;&t;&t; *  value (note 3 IrLAP p. 60). &n;&t;&t; */
@@ -2755,8 +2759,15 @@ id|self-&gt;retry_count
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* This frame will just be sent at the old speed */
-multiline_comment|/* irlap_send_rr_frame( self, CMD_FRAME); */
+multiline_comment|/* This frame will actually force the speed change */
+id|irlap_send_rr_frame
+c_func
+(paren
+id|self
+comma
+id|CMD_FRAME
+)paren
+suffix:semicolon
 id|irlap_start_final_timer
 c_func
 (paren

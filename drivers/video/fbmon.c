@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *   linux/drivers/video/fbmon.c&n; *&n; *  Copyright (C) 1999 James Simmons&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * Notes:&n; *      This code handles the different types of monitors that are out their. &n; *   Most video cards for example can support a mode like 800x600 but fix&n; *   frequency monitors can&squot;t. So the code here checks if the monitor can&n; *   support the mode as well as the card can. Fbmonospecs takes on &n; *   different meaning with different types of monitors. For multifrequency &n; *   monitors fbmonospecs represents the range of frequencies the monitor &n; *   can support. Only one fbmonospec needs to be allocated. The fbmonospecs &n; *   pointer in fb_info points to this one. If you specific a mode that has &n; *   timing greater than the allowed range then setting the video mode will &n; *   fail. With multifrequency monitors you can set any mode you like as long&n; *   as you have a programmable clock on the video card. &n; *       With fixed frequency monitors you have only a SET of very narrow &n; *   allowed frequency ranges. So for a fixed fequency monitor you have a &n; *   array of fbmonospecs. The fbmonospecs in fb_info represents the &n; *   monitor frequency for the CURRENT mode. If you change the mode and ask&n; *   for fbmonospecs you will NOT get the same values as before. Note this&n; *   is not true for multifrequency monitors where you do get the same &n; *   fbmonospecs each time. Also the values in each fbmonospecs represent the &n; *   very narrow frequency band for range. Well you can&squot;t have exactly the &n; *   same frequencies from fixed monitor. So some tolerance is excepted.&n; *       By DEFAULT all monitors are assumed fixed frequency since they are so&n; *   easy to fry or screw up a mode with. Just try setting a 800x600 mode on&n; *   one. After you boot you can run a simple program the tells what kind of &n; *   monitor you have. If you have a multifrequency monitor then you can set &n; *   any mode size you like as long as your video card has a programmable clock.&n; *   By default also besides assuming you have a fixed frequency monitor it &n; *   assumes the monitor only supports lower modes. This way for example you&n; *   can&squot;t set a 1280x1024 mode on a fixed frequency monitor that can only &n; *   support up to 1024x768.&n; *&n; */
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 DECL|function|fbmon_valid_timings
 r_int
@@ -140,7 +141,7 @@ id|fb_info
 )paren
 (brace
 r_return
-id|fb_info-&gt;monspecs-&gt;dpms
+id|fb_info-&gt;monspecs.dpms
 suffix:semicolon
 )brace
 eof

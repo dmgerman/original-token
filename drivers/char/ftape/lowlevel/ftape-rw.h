@@ -5,7 +5,6 @@ multiline_comment|/*&n; * Copyright (C) 1993-1996 Bas Laarhoven,&n; *           
 macro_line|#include &quot;../lowlevel/fdc-io.h&quot;
 macro_line|#include &quot;../lowlevel/ftape-init.h&quot;
 macro_line|#include &quot;../lowlevel/ftape-bsm.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,0,0)
 macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|macro|GET2
 mdefine_line|#define GET2(address, offset) get_unaligned((__u16*)((__u8 *)address + offset))
@@ -19,20 +18,6 @@ DECL|macro|PUT4
 mdefine_line|#define PUT4(address, offset , value) put_unaligned((value), (__u32*)((__u8 *)address + offset))
 DECL|macro|PUT8
 mdefine_line|#define PUT8(address, offset , value) put_unaligned((value), (__u64*)((__u8 *)address + offset))
-macro_line|#else
-DECL|macro|GET2
-mdefine_line|#define GET2(address, offset) *(__u16*)((__u8 *)address + offset)
-DECL|macro|GET4
-mdefine_line|#define GET4(address, offset) *(__u32*)((__u8 *)address + offset)
-DECL|macro|GET8
-mdefine_line|#define GET8(address, offset) *(__u64*)((__u8 *)address + offset)
-DECL|macro|PUT2
-mdefine_line|#define PUT2(address, offset , value) *(__u16*)((__u8 *)address + offset) = (__u16)(value)
-DECL|macro|PUT4
-mdefine_line|#define PUT4(address, offset , value) *(__u32*)((__u8 *)address + offset) = (__u32)(value)
-DECL|macro|PUT8
-mdefine_line|#define PUT8(address, offset , value) *(__u64*)((__u8 *)address + offset) = (__u32)(value)
-macro_line|#endif
 DECL|enum|runner_status_enum
 r_enum
 id|runner_status_enum

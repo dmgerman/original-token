@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat Oct 30 20:03:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat Nov 13 23:25:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -274,6 +274,24 @@ r_struct
 id|net_device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|irport_change_speed_complete
+c_func
+(paren
+r_struct
+id|irda_task
+op_star
+id|task
+)paren
+suffix:semicolon
+DECL|variable|irport_change_speed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irport_change_speed
 )paren
 suffix:semicolon
 DECL|function|irport_init
@@ -1370,7 +1388,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irport_change_speed (instance, state, param)&n; *&n; *    State machine for changing speed of the device. We do it this way since&n; *    we cannot use schedule_timeout() when we are in interrupt context&n; */
 DECL|function|irport_change_speed
-r_static
 r_int
 id|irport_change_speed
 c_func
@@ -1673,6 +1690,10 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+id|iobase
+op_assign
+id|self-&gt;io.iobase2
+suffix:semicolon
 multiline_comment|/* Finished with frame?  */
 r_if
 c_cond
@@ -1688,7 +1709,7 @@ op_assign
 id|irport_write
 c_func
 (paren
-id|self-&gt;io.iobase2
+id|iobase
 comma
 id|self-&gt;io.fifo_size
 comma
@@ -1708,16 +1729,60 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|iobase
-op_assign
-id|self-&gt;io.iobase2
+multiline_comment|/* &n;&t;&t; *  Now serial buffer is almost free &amp; we can start &n;&t;&t; *  transmission of another packet. But first we must check&n;&t;&t; *  if we need to change the speed of the hardware&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|self-&gt;new_speed
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|5
+comma
+id|__FUNCTION__
+l_string|&quot;(), Changing speed!&bslash;n&quot;
+)paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; *  Now serial buffer is almost free &amp; we can start &n;&t;&t; *  transmission of another packet &n;&t;&t; */
+id|irda_task_execute
+c_func
+(paren
+id|self
+comma
+id|irport_change_speed
+comma
+id|irport_change_speed_complete
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+id|self-&gt;new_speed
+)paren
+suffix:semicolon
+id|self-&gt;new_speed
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock */
+multiline_comment|/* Tell network layer that we want more frames */
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
@@ -1728,6 +1793,7 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Reset Rx FIFO to make sure that all reflected transmit data&n;&t;&t; * is discarded. This is needed for half duplex operation&n;&t;&t; */
 id|fcr
 op_assign
 id|UART_FCR_ENABLE_FIFO
@@ -1750,7 +1816,6 @@ id|fcr
 op_or_assign
 id|UART_FCR_TRIGGER_14
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * Reset Rx FIFO to make sure that all reflected transmit data&n;&t;&t; * will be discarded&n;&t;&t; */
 id|outb
 c_func
 (paren
@@ -1765,7 +1830,6 @@ multiline_comment|/* Turn on receive interrupts */
 id|outb
 c_func
 (paren
-multiline_comment|/* UART_IER_RLSI| */
 id|UART_IER_RDI
 comma
 id|iobase
@@ -2111,34 +2175,10 @@ id|skb
 op_ne
 id|self-&gt;io.speed
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|irda_task_execute
-c_func
-(paren
-id|self
-comma
-id|irport_change_speed
-comma
-id|irport_change_speed_complete
-comma
-l_int|NULL
-comma
-(paren
-r_void
-op_star
-)paren
+id|self-&gt;new_speed
+op_assign
 id|speed
-)paren
-)paren
-multiline_comment|/* &n;&t;&t;&t; * Task not finished yet, so make the netdevice &n;&t;&t;&t; * layer requeue the frame &n;&t;&t;&t; */
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
-)brace
 id|spin_lock_irqsave
 c_func
 (paren

@@ -1912,6 +1912,8 @@ comma
 id|ppos
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#ifdef CONFIG_AUDIO
 r_case
 id|SND_DEV_DSP

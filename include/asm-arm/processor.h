@@ -64,6 +64,7 @@ multiline_comment|/* domain register&t;*/
 macro_line|#ifdef __KERNEL__
 DECL|macro|NR_DEBUGS
 mdefine_line|#define NR_DEBUGS&t;5
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &lt;asm/arch/processor.h&gt;
@@ -101,6 +102,10 @@ DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
+DECL|member|refcount
+id|atomic_t
+id|refcount
+suffix:semicolon
 multiline_comment|/* fault info&t;  */
 DECL|member|address
 r_int
@@ -142,7 +147,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&bslash;&n;&t;(struct context_save_struct *)0&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&bslash;&n;&t;ATOMIC_INIT(1),&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&bslash;&n;&t;(struct context_save_struct *)0&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;}
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -270,17 +275,8 @@ op_star
 id|p
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_CPU_26
-DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1022])
-DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1020])
-macro_line|#else
-DECL|macro|KSTK_EIP
-macro_line|# define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1021])
-DECL|macro|KSTK_ESP
-macro_line|# define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1019])
-macro_line|#endif
+DECL|macro|THREAD_SIZE
+mdefine_line|#define THREAD_SIZE&t;(8192)
 r_extern
 r_struct
 id|task_struct
@@ -293,7 +289,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|free_task_struct
+id|__free_task_struct
 c_func
 (paren
 r_struct
@@ -301,6 +297,12 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+DECL|macro|get_task_struct
+mdefine_line|#define get_task_struct(p)&t;atomic_inc(&amp;(p)-&gt;thread.refcount)
+DECL|macro|put_task_struct
+mdefine_line|#define put_task_struct(p)&t;free_task_struct(p)
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p)&t;&t;&t;&t;&t;&bslash;&n; do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (atomic_dec_and_test(&amp;(p)-&gt;thread.refcount))&t;&t;&bslash;&n;&t;&t;__free_task_struct((p));&t;&t;&t;&bslash;&n; } while (0)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

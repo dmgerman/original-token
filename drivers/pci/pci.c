@@ -2301,6 +2301,10 @@ id|dev-&gt;bus
 op_assign
 id|bus
 suffix:semicolon
+id|dev-&gt;sysdata
+op_assign
+id|bus-&gt;sysdata
+suffix:semicolon
 id|dev-&gt;devfn
 op_assign
 id|devfn
@@ -2828,6 +2832,10 @@ suffix:semicolon
 id|child-&gt;ops
 op_assign
 id|bus-&gt;ops
+suffix:semicolon
+id|child-&gt;sysdata
+op_assign
+id|bus-&gt;sysdata
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Set up the primary, secondary and subordinate&n;&t;&t;&t; * bus numbers.  Read resource ranges behind the bridge.&n;&t;&t;&t; */
 id|child-&gt;number

@@ -393,6 +393,29 @@ c_func
 id|init_mm
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_HIGHMEM
+DECL|variable|kmap_high
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kmap_high
+)paren
+suffix:semicolon
+DECL|variable|kunmap_high
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kunmap_high
+)paren
+suffix:semicolon
+DECL|variable|highmem_start_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|highmem_start_page
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* filesystem internal functions */
 DECL|variable|in_group_p
 id|EXPORT_SYMBOL
@@ -792,6 +815,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__wait_on_buffer
+)paren
+suffix:semicolon
+DECL|variable|___wait_on_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|___wait_on_page
 )paren
 suffix:semicolon
 DECL|variable|add_blkdev_randomness

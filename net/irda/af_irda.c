@@ -274,7 +274,7 @@ id|TCP_CLOSE
 suffix:semicolon
 id|sk-&gt;err
 op_assign
-id|reason
+id|ECONNRESET
 suffix:semicolon
 id|sk-&gt;shutdown
 op_or_assign
@@ -1060,6 +1060,24 @@ id|name
 id|notify_t
 id|notify
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;tsap
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
 multiline_comment|/* Initialize callbacks to be used by the IrDA stack */
 id|irda_notify_init
 c_func
@@ -1134,7 +1152,7 @@ l_string|&quot;(), Unable to allocate TSAP!&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/* Remember which TSAP selector we actually got */
@@ -1417,6 +1435,15 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1499,6 +1526,15 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|self
 op_assign
 id|sk-&gt;protinfo.irda
@@ -1563,8 +1599,7 @@ OL
 l_int|0
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|err
 suffix:semicolon
 multiline_comment|/*  Register with LM-IAS */
 id|self-&gt;ias_obj
@@ -2070,6 +2105,15 @@ id|self
 suffix:semicolon
 r_int
 id|err
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
 suffix:semicolon
 id|self
 op_assign
@@ -2867,6 +2911,17 @@ op_minus
 id|EPIPE
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_ne
+id|TCP_ESTABLISHED
+)paren
+r_return
+op_minus
+id|ENOTCONN
+suffix:semicolon
 id|self
 op_assign
 id|sk-&gt;protinfo.irda
@@ -3422,8 +3477,6 @@ id|msg-&gt;msg_namelen
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Lock the socket to prevent queue disordering&n;&t; * while sleeps in memcpy_tomsg&n;&t; */
-multiline_comment|/* &t;down(&amp;self-&gt;readsem); */
 r_do
 (brace
 r_int
@@ -3467,7 +3520,6 @@ c_cond
 id|sk-&gt;err
 )paren
 (brace
-multiline_comment|/* up(&amp;self-&gt;readsem); */
 r_return
 id|sock_error
 c_func
@@ -3485,7 +3537,6 @@ id|RCV_SHUTDOWN
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* &t;up(&amp;self-&gt;readsem); */
 r_if
 c_cond
 (paren
@@ -3514,17 +3565,9 @@ r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
-multiline_comment|/* &t;down(&amp;self-&gt;readsem); */
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Never glue messages from different writers */
-multiline_comment|/* &t;&t;if (check_creds &amp;&amp; */
-multiline_comment|/* &t;&t;    memcmp(UNIXCREDS(skb), &amp;scm-&gt;creds, sizeof(scm-&gt;creds)) != 0) */
-multiline_comment|/* &t;&t;{ */
-multiline_comment|/* &t;&t;&t;skb_queue_head(&amp;sk-&gt;receive_queue, skb); */
-multiline_comment|/* &t;&t;&t;break; */
-multiline_comment|/* &t;&t;} */
 id|chunk
 op_assign
 id|min
@@ -3581,9 +3624,6 @@ id|size
 op_sub_assign
 id|chunk
 suffix:semicolon
-multiline_comment|/* Copy credentials */
-multiline_comment|/* &t;&t;scm-&gt;creds = *UNIXCREDS(skb); */
-multiline_comment|/* &t;&t;check_creds = 1; */
 multiline_comment|/* Mark read part of skb as used */
 r_if
 c_cond
@@ -3604,8 +3644,6 @@ comma
 id|chunk
 )paren
 suffix:semicolon
-multiline_comment|/* &t;&t;&t;if (UNIXCB(skb).fp) */
-multiline_comment|/* &t;&t;&t;&t;unix_detach_fds(scm, skb); */
 multiline_comment|/* put the skb back if we didn&squot;t use it up.. */
 r_if
 c_cond
@@ -3640,8 +3678,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* &t;&t;&t;if (scm-&gt;fp) */
-multiline_comment|/* &t;&t;&t;&t;break; */
 )brace
 r_else
 (brace
@@ -3654,9 +3690,6 @@ id|__FUNCTION__
 l_string|&quot;() questionable!?&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* It is questionable, see note in unix_dgram_recvmsg. */
-multiline_comment|/* &t;&t;&t;if (UNIXCB(skb).fp) */
-multiline_comment|/* &t;&t;&t;&t;scm-&gt;fp = scm_fp_dup(UNIXCB(skb).fp); */
 multiline_comment|/* put message back and return */
 id|skb_queue_head
 c_func
@@ -3726,7 +3759,6 @@ id|FLOW_START
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* up(&amp;self-&gt;readsem); */
 r_return
 id|copied
 suffix:semicolon
@@ -3741,12 +3773,24 @@ c_func
 r_struct
 id|socket
 op_star
-id|sk
+id|sock
 comma
 r_int
 id|how
 )paren
 (brace
+r_struct
+id|irda_sock
+op_star
+id|self
+suffix:semicolon
+r_struct
+id|sock
+op_star
+id|sk
+op_assign
+id|sock-&gt;sk
+suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
@@ -3756,10 +3800,79 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME - generate DM and RNR states */
+id|self
+op_assign
+id|sk-&gt;protinfo.irda
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
 r_return
 op_minus
-id|EOPNOTSUPP
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|sk-&gt;state
+op_assign
+id|TCP_CLOSE
+suffix:semicolon
+id|sk-&gt;shutdown
+op_or_assign
+id|SEND_SHUTDOWN
+suffix:semicolon
+id|sk
+op_member_access_from_pointer
+id|state_change
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;iriap
+)paren
+id|iriap_close
+c_func
+(paren
+id|self-&gt;iriap
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;tsap
+)paren
+(brace
+id|irttp_disconnect_request
+c_func
+(paren
+id|self-&gt;tsap
+comma
+l_int|NULL
+comma
+id|P_NORMAL
+)paren
+suffix:semicolon
+id|irttp_close_tsap
+c_func
+(paren
+id|self-&gt;tsap
+)paren
+suffix:semicolon
+id|self-&gt;tsap
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irda_poll (file, sock, wait)&n; *&n; *    &n; *&n; */
@@ -4302,7 +4415,8 @@ l_string|&quot;(), sorry not impl. yet!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|ENOPROTOOPT
 suffix:semicolon
 r_case
 id|IRTTP_MAX_SDU_SIZE
@@ -4699,17 +4813,6 @@ suffix:colon
 id|val
 op_assign
 id|self-&gt;max_data_size
-suffix:semicolon
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), getting max_sdu_size = %d&bslash;n&quot;
-comma
-id|val
-)paren
 suffix:semicolon
 id|len
 op_assign

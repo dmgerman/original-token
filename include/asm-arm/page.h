@@ -165,11 +165,11 @@ mdefine_line|#define PAGE_BUG(page)&t;__bug(__FILE__, __LINE__, page)
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#include &lt;asm/arch/memory.h&gt;
 DECL|macro|__pa
-mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x) - PAGE_OFFSET)
+mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x) - PAGE_OFFSET + PHYS_OFFSET)
 DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x) + PAGE_OFFSET))
+mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x) + PAGE_OFFSET - PHYS_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)(addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif
 macro_line|#endif
 eof

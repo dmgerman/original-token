@@ -635,10 +635,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -730,10 +726,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -825,10 +817,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -908,10 +896,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -1263,11 +1247,6 @@ id|mcpcia_new_hose
 c_func
 (paren
 r_int
-r_int
-op_star
-id|mem_start
-comma
-r_int
 id|h
 )paren
 (brace
@@ -1301,7 +1280,6 @@ op_assign
 id|alloc_pci_controler
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|io
@@ -1309,7 +1287,6 @@ op_assign
 id|alloc_resource
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|mem
@@ -1317,7 +1294,6 @@ op_assign
 id|alloc_resource
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hae_mem
@@ -1325,7 +1301,6 @@ op_assign
 id|alloc_resource
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hose-&gt;io_space
@@ -1772,15 +1747,7 @@ DECL|function|mcpcia_init_arch
 id|mcpcia_init_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|mem_start
-comma
-r_int
-r_int
-op_star
-id|mem_end
+r_void
 )paren
 (brace
 r_extern
@@ -1853,8 +1820,6 @@ id|h
 id|mcpcia_new_hose
 c_func
 (paren
-id|mem_start
-comma
 id|h
 )paren
 suffix:semicolon

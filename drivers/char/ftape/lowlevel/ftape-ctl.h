@@ -300,17 +300,6 @@ mdefine_line|#define ft_failure             ftape_status.fti_failure
 multiline_comment|/*  history record */
 DECL|macro|ft_history
 mdefine_line|#define ft_history             ftape_status.fti_history
-multiline_comment|/*  compatibility with old kernel versions&n; */
-macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13)
-DECL|macro|_IOC_SIZE
-mdefine_line|#define _IOC_SIZE(cmd) (((cmd) &amp; IOCSIZE_MASK) &gt;&gt; IOCSIZE_SHIFT)
-DECL|macro|_IOC_DIR
-mdefine_line|#define _IOC_DIR(cmd)  (cmd)
-DECL|macro|_IOC_WRITE
-mdefine_line|#define _IOC_WRITE IOC_IN
-DECL|macro|_IOC_READ
-mdefine_line|#define _IOC_READ  IOC_OUT
-macro_line|#endif
 multiline_comment|/*&n; *      ftape-ctl.c defined global vars.&n; */
 r_extern
 id|ftape_info

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/arch/memory.h&gt;
 macro_line|#include &quot;map.h&quot;
@@ -535,6 +536,44 @@ op_plus
 id|offset
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Calculate the size of the DMA, normal and highmem zones.&n; * On 26-bit ARMs, we don&squot;t have any real DMA or highmem,&n; * so we allocate the whole memory as being DMA-capable.&n; */
+DECL|function|zonesize_init
+r_void
+id|__init
+id|zonesize_init
+c_func
+(paren
+r_int
+r_int
+op_star
+id|zone_size
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|zone_size
+(braket
+l_int|0
+)braket
+op_assign
+id|max_low_pfn
+suffix:semicolon
+id|zone_size
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|zone_size
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This contains the code to setup the memory map on an ARM2/ARM250/ARM3&n; * machine. This is both processor &amp; architecture specific, and requires&n; * some more work to get it to fit into our separate processor and&n; * architecture structure.&n; */
 DECL|function|pagetable_init
 r_void
@@ -561,19 +600,6 @@ op_assign
 id|alloc_bootmem_low_pages
 c_func
 (paren
-id|PTRS_PER_PTE
-op_star
-r_sizeof
-(paren
-id|pte_t
-)paren
-)paren
-suffix:semicolon
-id|memzero
-c_func
-(paren
-id|pte
-comma
 id|PTRS_PER_PTE
 op_star
 r_sizeof

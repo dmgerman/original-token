@@ -1311,6 +1311,24 @@ r_void
 id|FASTCALL
 c_func
 (paren
+id|__wake_up_sync
+c_func
+(paren
+id|wait_queue_head_t
+op_star
+id|q
+comma
+r_int
+r_int
+id|mode
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|FASTCALL
+c_func
+(paren
 id|sleep_on
 c_func
 (paren
@@ -1387,8 +1405,12 @@ id|tsk
 suffix:semicolon
 DECL|macro|wake_up
 mdefine_line|#define wake_up(x)&t;&t;&t;__wake_up((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
+DECL|macro|wake_up_sync
+mdefine_line|#define wake_up_sync(x)&t;&t;&t;__wake_up_sync((x),TASK_UNINTERRUPTIBLE | TASK_INTERRUPTIBLE)
 DECL|macro|wake_up_interruptible
 mdefine_line|#define wake_up_interruptible(x)&t;__wake_up((x),TASK_INTERRUPTIBLE)
+DECL|macro|wake_up_interruptible_sync
+mdefine_line|#define wake_up_interruptible_sync(x)&t;__wake_up_sync((x),TASK_INTERRUPTIBLE)
 r_extern
 r_int
 id|in_group_p

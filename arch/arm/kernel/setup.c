@@ -985,6 +985,8 @@ op_rshift
 id|PAGE_SHIFT
 comma
 id|end_pfn
+comma
+id|PHYS_OFFSET
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Register all available RAM with the bootmem allocator.&n;&t; * The address is relative to the start of physical memory.&n;&t; */

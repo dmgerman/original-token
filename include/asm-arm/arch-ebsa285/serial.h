@@ -10,10 +10,14 @@ DECL|macro|_SER_IRQ0
 mdefine_line|#define _SER_IRQ0&t;IRQ_ISA_UART
 DECL|macro|_SER_IRQ1
 mdefine_line|#define _SER_IRQ1&t;IRQ_ISA_UART2
+DECL|macro|RS_TABLE_SIZE
+mdefine_line|#define RS_TABLE_SIZE&t;16
 DECL|macro|STD_COM_FLAGS
 mdefine_line|#define STD_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST)
 multiline_comment|/* UART CLK        PORT  IRQ     FLAGS        */
-DECL|macro|SERIAL_PORT_DFNS
-mdefine_line|#define SERIAL_PORT_DFNS &bslash;&n;&t;{ 0, BASE_BAUD, 0x3F8, _SER_IRQ0, STD_COM_FLAGS },&t;/* ttyS0 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0x2F8, _SER_IRQ1, STD_COM_FLAGS },&t;/* ttyS1 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS2 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS3 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS }, &t;/* ttyS4 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS5 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS6 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS7 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS8 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS9 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS10 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS11 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS12 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0    , 0        , STD_COM_FLAGS },&t;/* ttyS13 */
+DECL|macro|STD_SERIAL_PORT_DEFNS
+mdefine_line|#define STD_SERIAL_PORT_DEFNS &bslash;&n;&t;{ 0, BASE_BAUD, 0x3F8, _SER_IRQ0, STD_COM_FLAGS },&t;/* ttyS0 */&t;&bslash;&n;&t;{ 0, BASE_BAUD, 0x2F8, _SER_IRQ1, STD_COM_FLAGS },&t;/* ttyS1 */
+DECL|macro|EXTRA_SERIAL_PORT_DEFNS
+mdefine_line|#define EXTRA_SERIAL_PORT_DEFNS
 macro_line|#endif
 eof

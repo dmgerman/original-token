@@ -243,6 +243,10 @@ DECL|macro|EXTRA_THREAD_STRUCT_INIT
 mdefine_line|#define EXTRA_THREAD_STRUCT_INIT&t;&t;&bslash;&n;&t;,&amp;uaccess_kernel
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,pc,sp)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long *stack = (unsigned long *)sp;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;memzero(regs-&gt;uregs, sizeof (regs-&gt;uregs));&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_pc = pc;&t;&t;/* pc */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_sp = sp;&t;&t;/* sp */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r2 = stack[2];&t;/* r2 (envp) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r1 = stack[1];&t;/* r1 (argv) */&t;&t;&t;&bslash;&n;&t;regs-&gt;ARM_r0 = stack[0];&t;/* r0 (argc) */&t;&t;&t;&bslash;&n;})
+DECL|macro|KSTK_EIP
+mdefine_line|#define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1022])
+DECL|macro|KSTK_ESP
+mdefine_line|#define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1020])
 multiline_comment|/* Allocation and freeing of basic task resources. */
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 r_extern
@@ -265,8 +269,6 @@ r_int
 id|page
 )paren
 suffix:semicolon
-DECL|macro|THREAD_SIZE
-mdefine_line|#define THREAD_SIZE&t;(8192)
 DECL|macro|ll_alloc_task_struct
 mdefine_line|#define ll_alloc_task_struct()&t;((struct task_struct *)get_page_8k(GFP_KERNEL))
 DECL|macro|ll_free_task_struct

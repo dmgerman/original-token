@@ -3,17 +3,15 @@ multiline_comment|/*&n; * Minor number schema:&n; *&n; * +----------------------
 multiline_comment|/* Kernel includes */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if (defined(CONFIG_PCI) &amp;&amp; (LINUX_VERSION_CODE &gt;= 131072))
+macro_line|#ifdef CONFIG_PCI
 DECL|macro|ENABLE_PCI
 mdefine_line|#define ENABLE_PCI
 macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt; 66304)
 DECL|macro|NEW_MODULES
 mdefine_line|#define NEW_MODULES
 macro_line|#ifdef LOCAL_ROCKET_H&t;&t;/* We&squot;re building standalone */
 DECL|macro|MODULE
 mdefine_line|#define MODULE
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef NEW_MODULES
 macro_line|#ifdef MODVERSIONS
@@ -420,14 +418,6 @@ id|support_low_speed
 comma
 l_string|&quot;0 means support 50 baud, 1 means support 460400 baud&quot;
 )paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n; * Provide backwards compatibility for kernels prior to 2.1.8.&n; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x20000)
-DECL|typedef|kdev_t
-r_typedef
-id|dev_t
-id|kdev_t
 suffix:semicolon
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 131336)
@@ -7547,7 +7537,6 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
-macro_line|#if (LINUX_VERSION_CODE &gt; 66304)
 DECL|function|rp_write
 r_static
 r_int
@@ -7571,29 +7560,6 @@ comma
 r_int
 id|count
 )paren
-macro_line|#else
-r_static
-r_int
-id|rp_write
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_int
-id|from_user
-comma
-r_int
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-macro_line|#endif&t;
 (brace
 r_struct
 id|r_port

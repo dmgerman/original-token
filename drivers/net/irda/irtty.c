@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Sun Oct 31 22:24:03 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Nov 16 02:50:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -1488,10 +1488,7 @@ id|task-&gt;state
 r_case
 id|IRDA_TASK_INIT
 suffix:colon
-r_case
-id|IRDA_TASK_WAIT
-suffix:colon
-multiline_comment|/* Are we ready to change speed yet? */
+multiline_comment|/* &n;&t;&t; * Make sure all data is sent before changing the speed of the&n;&t;&t; * serial port.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1504,22 +1501,41 @@ id|self-&gt;tty
 )paren
 )paren
 (brace
-id|task-&gt;state
-op_assign
-id|IRDA_TASK_WAIT
-suffix:semicolon
-multiline_comment|/* Try again later */
+multiline_comment|/* Keep state, and try again later */
 id|ret
 op_assign
 id|MSECS_TO_JIFFIES
 c_func
 (paren
-l_int|20
+l_int|10
 )paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/* Transmit buffer is now empty, but it may still&n;&t;&t;&t; * take over 13 ms for the FIFO to become empty, so&n;&t;&t;&t; * wait some more to be sure all data is sent&n;&t;&t;&t; */
+id|irda_task_next_state
+c_func
+(paren
+id|task
+comma
+id|IRDA_TASK_WAIT
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|13
+)paren
+suffix:semicolon
+)brace
+r_case
+id|IRDA_TASK_WAIT
+suffix:colon
 r_if
 c_cond
 (paren
@@ -2325,34 +2341,10 @@ id|skb
 op_ne
 id|self-&gt;io.speed
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|irda_task_execute
-c_func
-(paren
-id|self
-comma
-id|irtty_change_speed
-comma
-id|irtty_change_speed_complete
-comma
-l_int|NULL
-comma
-(paren
-r_void
-op_star
-)paren
+id|self-&gt;new_speed
+op_assign
 id|speed
-)paren
-)paren
-multiline_comment|/* &n;&t;&t;&t; * Task not finished yet, so make the netdevice &n;&t;&t;&t; * layer requeue the frame &n;&t;&t;&t; */
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
-)brace
 multiline_comment|/* Init tx buffer*/
 id|self-&gt;tx_buff.data
 op_assign
@@ -2420,44 +2412,6 @@ id|self-&gt;stats.tx_bytes
 op_add_assign
 id|self-&gt;tx_buff.len
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* &n;&t; *  Did we transmit the whole frame? Commented out for now since&n;&t; *  I must check if this optimalization really works. DB.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|self-&gt;tx_buff.len
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irtty_xmit_buf: finished with frame!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|self-&gt;tty-&gt;flags
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|TTY_DO_WRITE_WAKEUP
-)paren
-suffix:semicolon
-id|irda_unlock
-c_func
-(paren
-op_amp
-id|self-&gt;tbusy
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren
@@ -2604,6 +2558,46 @@ op_lshift
 id|TTY_DO_WRITE_WAKEUP
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;new_speed
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|5
+comma
+id|__FUNCTION__
+l_string|&quot;(), Changing speed!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irda_task_execute
+c_func
+(paren
+id|self
+comma
+id|irtty_change_speed
+comma
+id|irtty_change_speed_complete
+comma
+l_int|NULL
+comma
+(paren
+r_void
+op_star
+)paren
+id|self-&gt;new_speed
+)paren
+suffix:semicolon
+id|self-&gt;new_speed
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
@@ -2616,6 +2610,7 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; * Function irtty_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */

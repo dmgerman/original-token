@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/machvec.h&n; *&n; *&t;Copyright (C) 1997, 1998  Richard Henderson&n; *&n; * This file has goodies to help simplify instantiation of machine vectors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 multiline_comment|/* Whee.  Both TSUNAMI and POLARIS don&squot;t have an HAE.  Fix things up for&n;   the GENERIC kernel by defining the HAE address to be that of the cache.&n;   Now we can read and write it as we like.  ;-)  */
 DECL|macro|TSUNAMI_HAE_ADDRESS
 mdefine_line|#define TSUNAMI_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)

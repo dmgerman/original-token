@@ -5714,6 +5714,8 @@ id|ioremap
 c_func
 (paren
 id|fb_info.tga_fb_base
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_switch

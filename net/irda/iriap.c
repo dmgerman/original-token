@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Sun Oct 31 22:10:45 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Nov  5 20:25:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -252,14 +252,7 @@ c_func
 id|S_COMPUTER
 )paren
 suffix:semicolon
-id|hints
-op_or_assign
-id|irlmp_service_to_hint
-c_func
-(paren
-id|S_PNP
-)paren
-suffix:semicolon
+multiline_comment|/*hints |= irlmp_service_to_hint(S_PNP);*/
 id|service_handle
 op_assign
 id|irlmp_register_service
@@ -872,7 +865,17 @@ id|__FUNCTION__
 l_string|&quot;(), disconnect as client&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * Inform service user that the request failed by sending &n;&t;&t; * it a NULL value.&n;&t;&t; */
+id|iriap_do_client_event
+c_func
+(paren
+id|self
+comma
+id|IAP_LM_DISCONNECT_INDICATION
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Inform service user that the request failed by sending &n;&t;&t; * it a NULL value. Warning, the client might close us, so&n;&t;&t; * remember no to use self anymore after calling confirm&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -892,18 +895,6 @@ comma
 id|self-&gt;priv
 )paren
 suffix:semicolon
-id|iriap_do_client_event
-c_func
-(paren
-id|self
-comma
-id|IAP_LM_DISCONNECT_INDICATION
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-multiline_comment|/* Close instance only if client */
-multiline_comment|/* iriap_close(self); */
 )brace
 r_else
 (brace
@@ -1764,6 +1755,7 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* Warning, the client might close us, so remember no to use self&n;&t; * anymore after calling confirm &n;&t; */
 r_if
 c_cond
 (paren
@@ -3065,6 +3057,7 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t; * Warning, the client might close us, so remember&n;&t;&t;&t; * no to use self anymore after calling confirm &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3103,6 +3096,7 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t; * Warning, the client might close us, so remember&n;&t;&t;&t; * no to use self anymore after calling confirm &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3125,7 +3119,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* &t;iriap_close(self); */
 r_break
 suffix:semicolon
 r_default

@@ -236,7 +236,7 @@ id|parport_release
 id|dev
 )paren
 suffix:semicolon
-id|set_current_state
+id|__set_current_state
 (paren
 id|TASK_INTERRUPTIBLE
 )paren
@@ -1628,7 +1628,7 @@ id|parport_release
 id|dev
 )paren
 suffix:semicolon
-id|set_current_state
+id|__set_current_state
 (paren
 id|TASK_INTERRUPTIBLE
 )paren

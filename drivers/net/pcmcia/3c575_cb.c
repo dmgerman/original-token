@@ -7558,7 +7558,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#if ! defined(final_version) &amp;&amp; LINUX_VERSION_CODE &gt;= 0x10300
+macro_line|#if ! defined(final_version)
 r_if
 c_cond
 (paren

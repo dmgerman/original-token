@@ -5767,8 +5767,6 @@ c_func
 (paren
 id|name
 )paren
-op_ne
-l_int|NULL
 )paren
 (brace
 id|printk

@@ -853,7 +853,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  Display old ftape&squot;s end-of-file marks&n;&t;&t; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,0,0)
 r_while
 c_loop
 (paren
@@ -901,49 +900,6 @@ op_increment
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-r_while
-c_loop
-(paren
-(paren
-id|sector
-op_assign
-op_star
-(paren
-(paren
-id|__u16
-op_star
-)paren
-id|ptr
-)paren
-op_increment
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|TRACE
-c_func
-(paren
-id|ft_t_noise
-comma
-l_string|&quot;Old ftape eof mark: %4d/%2d&quot;
-comma
-id|sector
-comma
-op_star
-(paren
-(paren
-id|__u16
-op_star
-)paren
-id|ptr
-)paren
-op_increment
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;
 )brace
 r_else
 (brace

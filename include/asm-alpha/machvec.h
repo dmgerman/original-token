@@ -465,13 +465,7 @@ op_star
 id|init_arch
 )paren
 (paren
-r_int
-r_int
-op_star
-comma
-r_int
-r_int
-op_star
+r_void
 )paren
 suffix:semicolon
 DECL|member|init_irq

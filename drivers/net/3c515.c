@@ -6456,7 +6456,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x10300
 id|skb_reserve
 c_func
 (paren
@@ -6512,42 +6511,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;len
-op_assign
-id|pkt_len
-suffix:semicolon
-multiline_comment|/* &squot;skb-&gt;data&squot; points to the start of sk_buff data area. */
-id|insl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|RX_FIFO
-comma
-id|skb-&gt;data
-comma
-(paren
-id|pkt_len
-op_plus
-l_int|3
-)paren
-op_rshift
-l_int|2
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|RxDiscard
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Pop top Rx packet. */
-macro_line|#endif  /* KERNEL_1_3_0 */
 id|netif_rx
 c_func
 (paren
@@ -7018,7 +6981,6 @@ id|rx_nocopy
 op_increment
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x10300
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -7029,12 +6991,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;len
-op_assign
-id|pkt_len
-suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -7117,7 +7073,6 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Mark as being used by this device. */
-macro_line|#if LINUX_VERSION_CODE &gt; 0x10300
 id|skb_reserve
 c_func
 (paren
@@ -7140,21 +7095,6 @@ c_func
 id|skb-&gt;tail
 )paren
 suffix:semicolon
-macro_line|#else
-id|vp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|addr
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-macro_line|#endif
 id|vp-&gt;rx_skbuff
 (braket
 id|entry

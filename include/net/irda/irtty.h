@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.h&n; * Version:       1.0&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Mon Oct 18 23:24:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *  &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.h&n; * Version:       1.0&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:13:12 1997&n; * Modified at:   Fri Nov  5 10:46:51 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *  &n; *     Copyright (c) 1997, 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRTTY_H
 DECL|macro|IRTTY_H
 mdefine_line|#define IRTTY_H
@@ -99,6 +99,10 @@ op_star
 id|dongle
 suffix:semicolon
 multiline_comment|/* Dongle driver */
+DECL|member|new_speed
+id|__u32
+id|new_speed
+suffix:semicolon
 DECL|member|flags
 id|__u32
 id|flags

@@ -868,6 +868,11 @@ DECL|macro|TSUNAMI_IO_BIAS
 mdefine_line|#define TSUNAMI_IO_BIAS          TSUNAMI_IO(0)
 DECL|macro|TSUNAMI_MEM_BIAS
 mdefine_line|#define TSUNAMI_MEM_BIAS         TSUNAMI_MEM(0)
+multiline_comment|/* The IO address space is larger than 0xffff */
+DECL|macro|TSUNAMI_IO_SPACE
+mdefine_line|#define TSUNAMI_IO_SPACE&t;(TSUNAMI_CONF(0) - TSUNAMI_IO(0))
+DECL|macro|TSUNAMI_MEM_SPACE
+mdefine_line|#define TSUNAMI_MEM_SPACE&t;(_TSUNAMI_IACK_SC(0) - TSUNAMI_MEM(0))
 multiline_comment|/*&n; * Data structure for handling TSUNAMI machine checks:&n; */
 DECL|struct|el_TSUNAMI_sysdata_mcheck
 r_struct

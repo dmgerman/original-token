@@ -1,20 +1,21 @@
-multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&n; */
+multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the /proc/rtc&n; *&t;pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&t;1.09b&t;Jeff Garzik: Modularize, init cleanup&n; *&n; */
 DECL|macro|RTC_VERSION
-mdefine_line|#define RTC_VERSION&t;&t;&quot;1.09a&quot;
+mdefine_line|#define RTC_VERSION&t;&t;&quot;1.09b&quot;
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_EXTENT
 mdefine_line|#define RTC_IO_EXTENT&t;0x10&t;/* Only really two ports, but...&t;*/
 multiline_comment|/*&n; *&t;Note that *all* calls to CMOS_READ and CMOS_WRITE are done with&n; *&t;interrupts disabled. Due to the index-port/data-port (0x70/0x71)&n; *&t;design of the RTC, we don&squot;t want two different things trying to&n; *&t;get to it at once. (e.g. the periodic 11 min sync from time.c vs.&n; *&t;this driver.)&n; */
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -25,6 +26,11 @@ r_static
 r_int
 r_int
 id|rtc_port
+suffix:semicolon
+DECL|variable|rtc_irq
+r_static
+r_int
+id|rtc_irq
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
@@ -181,12 +187,42 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_static
+r_int
+id|rtc_read_proc
+c_func
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Bits in rtc_status. (6 bits of room for future expansion)&n; */
 DECL|macro|RTC_IS_OPEN
 mdefine_line|#define RTC_IS_OPEN&t;&t;0x01&t;/* means /dev/rtc is in use&t;*/
 DECL|macro|RTC_TIMER_ON
 mdefine_line|#define RTC_TIMER_ON&t;&t;0x02&t;/* missed irq timer active&t;*/
 DECL|variable|rtc_status
+r_static
 r_int
 r_char
 id|rtc_status
@@ -195,6 +231,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* bitmapped status byte.&t;*/
 DECL|variable|rtc_freq
+r_static
 r_int
 r_int
 id|rtc_freq
@@ -203,6 +240,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Current periodic IRQ rate&t;*/
 DECL|variable|rtc_irq_data
+r_static
 r_int
 r_int
 id|rtc_irq_data
@@ -221,6 +259,8 @@ l_int|1900
 suffix:semicolon
 multiline_comment|/* year corresponding to 0x00&t;*/
 DECL|variable|days_in_mo
+r_static
+r_const
 r_int
 r_char
 id|days_in_mo
@@ -1664,6 +1704,8 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|rtc_status
 op_or_assign
 id|RTC_IS_OPEN
@@ -1777,6 +1819,8 @@ id|rtc_irq_timer
 )paren
 suffix:semicolon
 )brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|rtc_irq_data
 op_assign
 l_int|0
@@ -1883,6 +1927,7 @@ id|rtc_fops
 )brace
 suffix:semicolon
 DECL|function|rtc_init
+r_static
 r_int
 id|__init
 id|rtc_init
@@ -1923,9 +1968,6 @@ r_struct
 id|linux_ebus_device
 op_star
 id|edev
-suffix:semicolon
-r_int
-id|rtc_irq
 suffix:semicolon
 macro_line|#endif
 id|printk
@@ -2084,6 +2126,19 @@ c_func
 (paren
 op_amp
 id|rtc_dev
+)paren
+suffix:semicolon
+id|create_proc_read_entry
+(paren
+l_string|&quot;rtc&quot;
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|rtc_read_proc
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Check region? Naaah! Just snarf it up. */
@@ -2304,6 +2359,75 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rtc_exit
+r_static
+r_void
+id|__exit
+id|rtc_exit
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* interrupts and timer disabled at this point by rtc_release */
+id|remove_proc_entry
+(paren
+l_string|&quot;rtc&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|misc_deregister
+c_func
+(paren
+op_amp
+id|rtc_dev
+)paren
+suffix:semicolon
+macro_line|#ifdef __sparc__
+id|free_irq
+(paren
+id|rtc_irq
+comma
+op_amp
+id|rtc_port
+)paren
+suffix:semicolon
+macro_line|#else
+id|release_region
+(paren
+id|RTC_PORT
+(paren
+l_int|0
+)paren
+comma
+id|RTC_IO_EXTENT
+)paren
+suffix:semicolon
+id|free_irq
+(paren
+id|RTC_IRQ
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif /* __sparc__ */
+)brace
+DECL|variable|rtc_init
+id|module_init
+c_func
+(paren
+id|rtc_init
+)paren
+suffix:semicolon
+DECL|variable|rtc_exit
+id|module_exit
+c_func
+(paren
+id|rtc_exit
+)paren
+suffix:semicolon
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 multiline_comment|/*&n; * &t;At IRQ rates &gt;= 4096Hz, an interrupt may get lost altogether.&n; *&t;(usually during an IDE disk interrupt, with IRQ unmasking off)&n; *&t;Since the interrupt handler doesn&squot;t get called, the IRQ status&n; *&t;byte doesn&squot;t get read, and the RTC stops generating interrupts.&n; *&t;A timer is set, and will call this function if/when that happens.&n; *&t;To get it out of this stalled state, we just read the status.&n; *&t;At least a jiffy of interrupts (rtc_freq/HZ) will have been lost.&n; *&t;(You *really* shouldn&squot;t be trying to use a non-realtime system &n; *&t;for something that requires a steady &gt; 1KHz signal anyways.)&n; */
 DECL|function|rtc_dropped_irq
 r_static
@@ -2397,9 +2521,10 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Info exported via &quot;/proc/rtc&quot;.&n; */
-DECL|function|get_rtc_status
+DECL|function|rtc_get_status
+r_static
 r_int
-id|get_rtc_status
+id|rtc_get_status
 c_func
 (paren
 r_char
@@ -2718,6 +2843,96 @@ r_return
 id|p
 op_minus
 id|buf
+suffix:semicolon
+)brace
+DECL|function|rtc_read_proc
+r_static
+r_int
+id|rtc_read_proc
+c_func
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+r_int
+id|len
+op_assign
+id|rtc_get_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_le
+id|off
+op_plus
+id|count
+)paren
+op_star
+id|eof
+op_assign
+l_int|1
+suffix:semicolon
+op_star
+id|start
+op_assign
+id|page
+op_plus
+id|off
+suffix:semicolon
+id|len
+op_sub_assign
+id|off
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|count
+)paren
+id|len
+op_assign
+id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|len
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Returns true if a clock update is in progress&n; */

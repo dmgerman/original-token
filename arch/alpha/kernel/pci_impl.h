@@ -74,12 +74,6 @@ op_star
 id|hose_tail
 suffix:semicolon
 r_extern
-r_struct
-id|pci_controler
-op_star
-id|probing_hose
-suffix:semicolon
-r_extern
 r_void
 id|common_init_pci
 c_func
@@ -107,9 +101,7 @@ op_star
 id|alloc_pci_controler
 c_func
 (paren
-r_int
-r_int
-op_star
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -119,9 +111,7 @@ op_star
 id|alloc_resource
 c_func
 (paren
-r_int
-r_int
-op_star
+r_void
 )paren
 suffix:semicolon
 r_extern

@@ -14,14 +14,6 @@ macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13) 
-DECL|typedef|__kernel_daddr_t
-r_typedef
-id|daddr_t
-id|__kernel_daddr_t
-suffix:semicolon
-multiline_comment|/* needed for mtio.h */
-macro_line|#endif
 macro_line|#include &lt;linux/mtio.h&gt;
 DECL|macro|FT_SECTOR
 mdefine_line|#define FT_SECTOR(x)&t;&t;(x+1)&t;/* sector offset into real sector */

@@ -102,11 +102,11 @@ macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|USED_MAP
-mdefine_line|#define USED_MAP(pg)&t;&t;&t;((pg)-&gt;offset)
+mdefine_line|#define USED_MAP(pg)&t;&t;&t;((pg)-&gt;index)
 DECL|macro|TEST_AND_CLEAR_USED
-mdefine_line|#define TEST_AND_CLEAR_USED(pg,off)&t;(test_and_clear_bit(off, &amp;(pg)-&gt;offset))
+mdefine_line|#define TEST_AND_CLEAR_USED(pg,off)&t;(test_and_clear_bit(off, &amp;USED_MAP(pg)))
 DECL|macro|SET_USED
-mdefine_line|#define SET_USED(pg,off)&t;&t;(set_bit(off, &amp;(pg)-&gt;offset))
+mdefine_line|#define SET_USED(pg,off)&t;&t;(set_bit(off, &amp;USED_MAP(pg)))
 DECL|function|add_page_to_queue
 r_static
 r_void
@@ -325,7 +325,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|page_address
+id|__page_address
 c_func
 (paren
 id|page

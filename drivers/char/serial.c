@@ -34,7 +34,7 @@ mdefine_line|#define CONFIG_SERIAL_DETECT_IRQ
 mdefine_line|#define CONFIG_SERIAL_MULTIPORT
 mdefine_line|#define CONFIG_HUB6
 macro_line|#endif
-macro_line|#if (defined(CONFIG_PCI) &amp;&amp; (LINUX_VERSION_CODE &gt;= 131072))
+macro_line|#ifdef CONFIG_PCI
 DECL|macro|ENABLE_SERIAL_PCI
 mdefine_line|#define ENABLE_SERIAL_PCI
 macro_line|#ifndef CONFIG_SERIAL_SHARE_IRQ
@@ -92,13 +92,11 @@ DECL|macro|DBG_CNT
 mdefine_line|#define DBG_CNT(s)
 macro_line|#endif
 multiline_comment|/*&n; * End of serial driver configuration section.&n; */
-macro_line|#if (LINUX_VERSION_CODE &gt; 66304)
 DECL|macro|NEW_MODULES
 mdefine_line|#define NEW_MODULES
 macro_line|#ifdef LOCAL_HEADERS&t;&t;/* We&squot;re building standalone */
 DECL|macro|MODULE
 mdefine_line|#define MODULE
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef NEW_MODULES
 macro_line|#ifdef MODVERSIONS

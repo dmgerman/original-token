@@ -64,10 +64,6 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
-ques
-c_cond
-suffix:colon
-id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -407,6 +403,11 @@ id|vucp
 id|addr
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -469,6 +470,11 @@ id|vusp
 id|addr
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -526,6 +532,11 @@ id|vuip
 id|addr
 op_assign
 id|value
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
@@ -802,11 +813,6 @@ id|pchip
 comma
 r_int
 id|index
-comma
-r_int
-r_int
-op_star
-id|mem_start
 )paren
 (brace
 r_struct
@@ -833,7 +839,6 @@ op_assign
 id|alloc_pci_controler
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hose-&gt;io_space
@@ -841,7 +846,6 @@ op_assign
 id|alloc_resource
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hose-&gt;mem_space
@@ -849,7 +853,6 @@ op_assign
 id|alloc_resource
 c_func
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 id|hose-&gt;config_space
@@ -878,7 +881,7 @@ id|hose-&gt;io_space-&gt;end
 op_assign
 id|hose-&gt;io_space-&gt;start
 op_plus
-l_int|0xffff
+id|TSUNAMI_IO_SPACE
 suffix:semicolon
 id|hose-&gt;io_space-&gt;name
 op_assign
@@ -886,6 +889,10 @@ id|pci_io_names
 (braket
 id|index
 )braket
+suffix:semicolon
+id|hose-&gt;io_space-&gt;flags
+op_assign
+id|IORESOURCE_IO
 suffix:semicolon
 id|hose-&gt;mem_space-&gt;start
 op_assign
@@ -897,6 +904,7 @@ id|index
 op_minus
 id|TSUNAMI_MEM_BIAS
 suffix:semicolon
+multiline_comment|/* the IOMEM address space is larger than 32bit but most pci&n;&t;   cars doesn&squot;t support 64bit address space so we stick with&n;&t;   32bit here (see the TSUNAMI_MEM_SPACE define). */
 id|hose-&gt;mem_space-&gt;end
 op_assign
 id|hose-&gt;mem_space-&gt;start
@@ -910,6 +918,13 @@ id|pci_mem_names
 id|index
 )braket
 suffix:semicolon
+id|hose-&gt;mem_space-&gt;flags
+op_assign
+id|IORESOURCE_MEM
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -918,7 +933,21 @@ id|ioport_resource
 comma
 id|hose-&gt;io_space
 )paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;failed to request IO on hose %d&quot;
+comma
+id|index
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -926,6 +955,17 @@ op_amp
 id|iomem_resource
 comma
 id|hose-&gt;mem_space
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;failed to request IOMEM on hose %d&quot;
+comma
+id|index
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, windows 1,2 and 3 are disabled.  In the future,&n;&t; * we may want to use them to do scatter/gather DMA. &n;&t; *&n;&t; * Window 0 goes at 1 GB and is 1 GB large, mapping to 0.&n;&t; * Window 1 goes at 2 GB and is 1 GB large, mapping to 1GB.&n;&t; */
@@ -1029,15 +1069,7 @@ DECL|function|tsunami_init_arch
 id|tsunami_init_arch
 c_func
 (paren
-r_int
-r_int
-op_star
-id|mem_start
-comma
-r_int
-r_int
-op_star
-id|mem_end
+r_void
 )paren
 (brace
 macro_line|#ifdef NXM_MACHINE_CHECKS_ON_TSUNAMI
@@ -1260,8 +1292,6 @@ c_func
 id|TSUNAMI_pchip0
 comma
 l_int|0
-comma
-id|mem_start
 )paren
 suffix:semicolon
 r_if
@@ -1279,8 +1309,6 @@ c_func
 id|TSUNAMI_pchip1
 comma
 l_int|1
-comma
-id|mem_start
 )paren
 suffix:semicolon
 )brace

@@ -6034,7 +6034,6 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Mark as being used by this device. */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x10300
 id|skb_reserve
 c_func
 (paren
@@ -6061,21 +6060,6 @@ id|skb-&gt;tail
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-id|vp-&gt;rx_ring
-(braket
-id|i
-)braket
-dot
-id|addr
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Wrap the ring. */
 id|vp-&gt;rx_ring
@@ -7183,7 +7167,7 @@ id|CmdInProgress
 )paren
 r_break
 suffix:semicolon
-macro_line|#if ! defined(final_version) &amp;&amp; LINUX_VERSION_CODE &gt;= 0x10300
+macro_line|#if ! defined(final_version)
 r_if
 c_cond
 (paren

@@ -4755,16 +4755,6 @@ l_string|&quot;Compression routines for zftape. Uses the lzrw3 algorithm by Ross
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,1,18)
 DECL|function|can_unload
 r_static
@@ -4798,8 +4788,7 @@ r_void
 r_int
 id|result
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(1,1,85)
-macro_line|# if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VER(2,1,18)
 id|register_symtab
 c_func
 (paren
@@ -4807,7 +4796,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* remove global ftape symbols */
-macro_line|# else
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -4831,7 +4820,6 @@ id|can_unload
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|# endif
 macro_line|#endif
 id|result
 op_assign

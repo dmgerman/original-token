@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;drivers/pci/setup.c&n; *&n; * Extruded from code written by&n; *      Dave Rusling (david.rusling@reo.mts.dec.com)&n; *      David Mosberger (davidm@cs.arizona.edu)&n; *&t;David Miller (davem@redhat.com)&n; *&n; * Support routines for initializing a PCI subsystem.&n; */
+multiline_comment|/* fixed for multiple pci buses, 1999 Andrea Arcangeli &lt;andrea@suse.de&gt; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -68,16 +69,6 @@ id|root
 op_ne
 l_int|NULL
 )paren
-(brace
-multiline_comment|/* If `dev&squot; is on a secondary pci bus, `root&squot; may not be&n;&t;&t;   at the origin.  In that case, adjust the resource into&n;&t;&t;   range.  */
-id|res-&gt;start
-op_add_assign
-id|root-&gt;start
-suffix:semicolon
-id|res-&gt;end
-op_add_assign
-id|root-&gt;start
-suffix:semicolon
 id|err
 op_assign
 id|request_resource
@@ -88,7 +79,6 @@ comma
 id|res
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -313,6 +303,8 @@ op_minus
 l_int|1
 comma
 id|size
+comma
+id|dev
 )paren
 OL
 l_int|0
@@ -556,32 +548,6 @@ id|min_mem
 )paren
 suffix:semicolon
 )brace
-DECL|struct|pbus_set_ranges_data
-r_struct
-id|pbus_set_ranges_data
-(brace
-DECL|member|found_vga
-r_int
-id|found_vga
-suffix:semicolon
-DECL|member|io_start
-DECL|member|io_end
-r_int
-r_int
-id|io_start
-comma
-id|io_end
-suffix:semicolon
-DECL|member|mem_start
-DECL|member|mem_end
-r_int
-r_int
-id|mem_start
-comma
-id|mem_end
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x, a)&t;&t;(((x) + (a) - 1) &amp; ~((a) - 1))
 DECL|macro|ROUND_DOWN
@@ -627,7 +593,7 @@ op_assign
 id|inner.io_start
 op_assign
 op_complement
-l_int|0
+l_int|0UL
 suffix:semicolon
 id|inner.mem_end
 op_assign
@@ -835,6 +801,15 @@ op_star
 l_int|1024
 op_star
 l_int|1024
+)paren
+suffix:semicolon
+id|pcibios_fixup_pbus_ranges
+c_func
+(paren
+id|bus
+comma
+op_amp
+id|inner
 )paren
 suffix:semicolon
 multiline_comment|/* Configure the bridge, if possible.  */

@@ -1219,11 +1219,9 @@ suffix:semicolon
 )brace
 id|interface
 op_assign
-op_amp
 id|dev-&gt;actconfig-&gt;interface
-(braket
+op_plus
 id|ifnum
-)braket
 suffix:semicolon
 r_if
 c_cond
@@ -1355,6 +1353,8 @@ id|usb_interface_claimed
 c_func
 (paren
 id|dev-&gt;actconfig-&gt;interface
+op_plus
+id|ifnum
 )paren
 )paren
 (brace

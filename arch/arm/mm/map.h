@@ -60,6 +60,16 @@ id|io_desc_size
 suffix:semicolon
 r_extern
 r_void
+id|zonesize_init
+c_func
+(paren
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|create_memmap_holes
 c_func
 (paren

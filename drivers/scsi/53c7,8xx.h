@@ -2,16 +2,7 @@ multiline_comment|/*&n; * NCR 53c{7,8}0x0 driver, header file&n; *&n; * Sponsore
 macro_line|#ifndef NCR53c7x0_H
 DECL|macro|NCR53c7x0_H
 mdefine_line|#define NCR53c7x0_H
-macro_line|#if !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3)
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; 65536 + 3 * 256
-DECL|macro|LINUX_1_3
-mdefine_line|#define LINUX_1_3
-macro_line|#else
-DECL|macro|LINUX_1_2
-mdefine_line|#define LINUX_1_2
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;

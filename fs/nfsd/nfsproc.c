@@ -886,6 +886,22 @@ id|inode
 op_assign
 id|newfhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode
+op_logical_and
+id|newfhp-&gt;fh_handle.fh_ino
+op_eq
+l_int|0
+)paren
+multiline_comment|/* inode might have been instantiated while we slept */
+id|fh_update
+c_func
+(paren
+id|newfhp
+)paren
+suffix:semicolon
 multiline_comment|/* Unfudge the mode bits */
 r_if
 c_cond

@@ -14,8 +14,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;i2o_lan.h&quot;
-DECL|macro|DRIVERDEBUG
-mdefine_line|#define DRIVERDEBUG
+singleline_comment|// #define DRIVERDEBUG
 singleline_comment|// #define DEBUG_IRQ
 multiline_comment|/*&n; *&t;Size of the I2O module table&n; */
 DECL|variable|i2o_handlers
@@ -565,6 +564,22 @@ op_rshift
 l_int|24
 )paren
 (brace
+multiline_comment|/* 0x40000000 is used as an error report supress bit */
+r_if
+c_cond
+(paren
+(paren
+id|msg
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x40000000
+)paren
+op_eq
+l_int|0
+)paren
+(brace
 id|i2o_report_status
 c_func
 (paren
@@ -575,6 +590,7 @@ comma
 id|msg
 )paren
 suffix:semicolon
+)brace
 id|status
 op_assign
 op_minus
@@ -1014,19 +1030,8 @@ id|c-&gt;status_block
 op_assign
 l_int|NULL
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;lct @ %p hrt @ %p status @ %p&quot;
-comma
-id|c-&gt;lct
-comma
-id|c-&gt;hrt
-comma
-id|c-&gt;status_block
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;&t;printk(KERN_INFO &quot;lct @ %p hrt @ %p status @ %p&quot;,
+singleline_comment|//&t;&t;&t;&t;&t;c-&gt;lct, c-&gt;hrt, c-&gt;status_block);
 id|sprintf
 c_func
 (paren
@@ -1241,21 +1246,8 @@ op_amp
 id|i2o_configuration_lock
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;hrt %p lct %p page_frame %p status_block %p&bslash;n&quot;
-comma
-id|c-&gt;hrt
-comma
-id|c-&gt;lct
-comma
-id|c-&gt;page_frame
-comma
-id|c-&gt;status_block
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;&t;printk(KERN_INFO &quot;hrt %p lct %p page_frame %p status_block %p&bslash;n&quot;,
+singleline_comment|//&t;&t;&t;&t;c-&gt;hrt, c-&gt;lct, c-&gt;page_frame, c-&gt;status_block);
 r_if
 c_cond
 (paren
@@ -2998,8 +2990,6 @@ id|buf
 l_int|64
 )braket
 suffix:semicolon
-r_return
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3018,6 +3008,8 @@ id|buf
 comma
 l_int|16
 )paren
+op_ge
+l_int|0
 )paren
 (brace
 id|buf
@@ -3031,7 +3023,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;     Vendor: %s&bslash;n&quot;
+l_string|&quot;     Vendor: %s&quot;
 comma
 id|buf
 )paren
@@ -3055,6 +3047,8 @@ id|buf
 comma
 l_int|16
 )paren
+op_ge
+l_int|0
 )paren
 (brace
 id|buf
@@ -3067,8 +3061,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;     Device: %s&bslash;n&quot;
+l_string|&quot;     Device: %s&quot;
 comma
 id|buf
 )paren
@@ -3093,6 +3086,8 @@ id|buf
 comma
 l_int|16
 )paren
+op_ge
+l_int|0
 )paren
 (brace
 id|buf
@@ -3131,6 +3126,8 @@ id|buf
 comma
 l_int|8
 )paren
+op_ge
+l_int|0
 )paren
 (brace
 id|buf
@@ -3143,7 +3140,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;        Rev: %s&bslash;n&quot;
 comma
 id|buf
@@ -3883,7 +3879,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;TID %d.&bslash;n&quot;
+l_string|&quot;Task ID %d.&bslash;n&quot;
 comma
 id|tid
 )paren
@@ -3908,7 +3904,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;  Class: &quot;
+l_string|&quot;     Class: &quot;
 )paren
 suffix:semicolon
 id|sprintf
@@ -3936,7 +3932,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  Subclass: 0x%03X   Flags: &quot;
+l_string|&quot; Subclass: 0x%04X                Flags: &quot;
 comma
 id|d-&gt;lct_data-&gt;sub_class
 )paren
@@ -5043,21 +5039,6 @@ op_star
 )paren
 id|c-&gt;status_block
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|5
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 id|m
 op_assign
 id|i2o_wait_message
@@ -5232,17 +5213,6 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SB is %d bytes.&bslash;n&quot;
-comma
-r_sizeof
-(paren
-id|i2o_status_block
-)paren
-)paren
-suffix:semicolon
 id|i2o_post_message
 c_func
 (paren
@@ -5331,11 +5301,10 @@ l_string|&quot;IOP get status timeout.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 r_return
-l_int|0
+op_minus
+id|ETIMEDOUT
 suffix:semicolon
-singleline_comment|//-ETIMEDOUT;
 )brace
 DECL|function|i2o_hrt_get
 r_int
@@ -6774,15 +6743,7 @@ comma
 l_int|88
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;i2o/iop%d: Initializing Outbound Queue&bslash;n&quot;
-comma
-id|c-&gt;unit
-)paren
-suffix:semicolon
+singleline_comment|//&t;printk(KERN_INFO &quot;i2o/iop%d: Initializing Outbound Queue&bslash;n&quot;, c-&gt;unit);
 id|m
 op_assign
 id|i2o_wait_message

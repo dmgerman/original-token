@@ -278,6 +278,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|skge_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|sparc_lance_probe
 c_func
 (paren
@@ -626,6 +634,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ACENIC
 (brace
 id|acenic_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SK98LIN
+(brace
+id|skge_probe
 comma
 l_int|0
 )brace

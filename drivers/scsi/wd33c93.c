@@ -7,11 +7,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#else
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|WD33C93_VERSION
@@ -4651,7 +4647,6 @@ id|CTRL_POLLED
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 DECL|function|wd33c93_reset
 r_int
 id|wd33c93_reset
@@ -4665,16 +4660,6 @@ r_int
 r_int
 id|reset_flags
 )paren
-macro_line|#else
-r_int
-id|wd33c93_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|Scsi_Host

@@ -15,14 +15,6 @@ DECL|macro|QIC117_TAPE_MAJOR
 mdefine_line|#define QIC117_TAPE_MAJOR 27
 macro_line|#endif
 multiline_comment|/*      ftape-init.c defined global variables.&n; */
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &lt;= KERNEL_VER(1,2,13)
-r_extern
-r_char
-id|kernel_version
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*      ftape-init.c defined global functions not defined in ftape.h&n; */
 macro_line|#ifdef MODULE
 id|asmlinkage

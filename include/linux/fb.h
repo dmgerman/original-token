@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_FB_H
 DECL|macro|_LINUX_FB_H
 mdefine_line|#define _LINUX_FB_H
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/* Definitions of frame buffers&t;&t;&t;&t;&t;&t;*/
 DECL|macro|FB_MAJOR

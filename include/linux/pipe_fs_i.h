@@ -29,6 +29,16 @@ r_int
 r_int
 id|writers
 suffix:semicolon
+DECL|member|waiting_readers
+r_int
+r_int
+id|waiting_readers
+suffix:semicolon
+DECL|member|waiting_writers
+r_int
+r_int
+id|waiting_writers
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual&n;   memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
@@ -48,6 +58,10 @@ DECL|macro|PIPE_READERS
 mdefine_line|#define PIPE_READERS(inode)&t;((inode).i_pipe-&gt;readers)
 DECL|macro|PIPE_WRITERS
 mdefine_line|#define PIPE_WRITERS(inode)&t;((inode).i_pipe-&gt;writers)
+DECL|macro|PIPE_WAITING_READERS
+mdefine_line|#define PIPE_WAITING_READERS(inode)&t;((inode).i_pipe-&gt;waiting_readers)
+DECL|macro|PIPE_WAITING_WRITERS
+mdefine_line|#define PIPE_WAITING_WRITERS(inode)&t;((inode).i_pipe-&gt;waiting_writers)
 DECL|macro|PIPE_EMPTY
 mdefine_line|#define PIPE_EMPTY(inode)&t;(PIPE_LEN(inode) == 0)
 DECL|macro|PIPE_FULL

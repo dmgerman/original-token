@@ -2598,9 +2598,9 @@ l_int|NULL
 multiline_comment|/* d_iput */
 )brace
 suffix:semicolon
+macro_line|#if 0 /* dead code */
 macro_line|#ifdef NFS_PARANOIA
 multiline_comment|/*&n; * Display all dentries holding the specified inode.&n; */
-DECL|function|show_dentry
 r_static
 r_void
 id|show_dentry
@@ -2684,7 +2684,8 @@ id|unhashed
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+macro_line|#endif /* NFS_PARANOIA */
+macro_line|#endif /* 0 */
 DECL|function|nfs_lookup
 r_static
 r_struct

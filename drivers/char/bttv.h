@@ -601,6 +601,8 @@ DECL|macro|BTTV_PHOEBE_TVMAS
 mdefine_line|#define BTTV_PHOEBE_TVMAS  0x16
 DECL|macro|BTTV_MODTEC_205
 mdefine_line|#define BTTV_MODTEC_205    0x17
+DECL|macro|BTTV_MAGICTVIEW061
+mdefine_line|#define BTTV_MAGICTVIEW061 0x18
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

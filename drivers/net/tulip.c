@@ -175,26 +175,13 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* Kernel compatibility defines, common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
 macro_line|#include &lt;linux/version.h&gt;&t;&t;/* Evil, but neccessary */
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x10300
-DECL|macro|RUN_AT
-mdefine_line|#define RUN_AT(x) (x)&t;&t;&t;/* What to put in timer-&gt;expires.  */
-DECL|macro|DEV_ALLOC_SKB
-mdefine_line|#define DEV_ALLOC_SKB(len) alloc_skb(len, GFP_ATOMIC)
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(addr)  ((unsigned long)addr)
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(addr) ((void*)addr)
-macro_line|#else  /* 1.3.0 and later */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 DECL|macro|DEV_ALLOC_SKB
 mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len + 2)
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x10344)
 DECL|macro|NEW_MULTICAST
 mdefine_line|#define NEW_MULTICAST
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#endif
 macro_line|#ifdef SA_SHIRQ
 DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, dev_id, pt_regs)
@@ -11687,7 +11674,6 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Mark as being used by this device. */
-macro_line|#if LINUX_VERSION_CODE &gt; 0x10300
 id|tp-&gt;rx_ring
 (braket
 id|i
@@ -11701,21 +11687,6 @@ c_func
 id|skb-&gt;tail
 )paren
 suffix:semicolon
-macro_line|#else
-id|tp-&gt;rx_ring
-(braket
-id|i
-)braket
-dot
-id|buffer1
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 id|tp-&gt;rx_ring
 (braket
@@ -13279,23 +13250,7 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte align the IP header */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x10300
-id|memcpy
-c_func
-(paren
-id|skb-&gt;data
-comma
-id|tp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer1
-comma
-id|pkt_len
-)paren
-suffix:semicolon
-macro_line|#elif LINUX_VERSION_CODE &lt; 0x20200  || defined(__alpha__)
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20200  || defined(__alpha__)
 id|memcpy
 c_func
 (paren
@@ -13441,7 +13396,6 @@ id|pkt_len
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; 0x10300
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -13452,12 +13406,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;len
-op_assign
-id|pkt_len
-suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -13552,7 +13500,6 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Mark as being used by this device. */
-macro_line|#if LINUX_VERSION_CODE &gt; 0x10300
 id|tp-&gt;rx_ring
 (braket
 id|entry
@@ -13566,21 +13513,6 @@ c_func
 id|skb-&gt;tail
 )paren
 suffix:semicolon
-macro_line|#else
-id|tp-&gt;rx_ring
-(braket
-id|entry
-)braket
-dot
-id|buffer1
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|skb-&gt;data
-)paren
-suffix:semicolon
-macro_line|#endif
 id|work_done
 op_increment
 suffix:semicolon

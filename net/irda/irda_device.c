@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.9&n; * Description:   Utility functions used by the device drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Oct  9 09:22:27 1999&n; * Modified at:   Mon Oct 18 22:40:10 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.9&n; * Description:   Utility functions used by the device drivers&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Oct  9 09:22:27 1999&n; * Modified at:   Tue Nov 16 12:54:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -544,6 +544,84 @@ op_amp
 id|req
 comma
 id|SIOCSDTRRTS
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+DECL|function|irda_device_change_speed
+r_int
+id|irda_device_change_speed
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+id|__u32
+id|speed
+)paren
+(brace
+r_struct
+id|if_irda_req
+id|req
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;do_ioctl
+)paren
+(brace
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), do_ioctl not impl. by &quot;
+l_string|&quot;device driver&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|req.ifr_baudrate
+op_assign
+id|speed
+suffix:semicolon
+id|ret
+op_assign
+id|dev
+op_member_access_from_pointer
+id|do_ioctl
+c_func
+(paren
+id|dev
+comma
+(paren
+r_struct
+id|ifreq
+op_star
+)paren
+op_amp
+id|req
+comma
+id|SIOCSBANDWIDTH
 )paren
 suffix:semicolon
 r_return

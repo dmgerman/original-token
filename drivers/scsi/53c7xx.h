@@ -3,16 +3,7 @@ multiline_comment|/*&n; * NCR 53c{7,8}0x0 driver, header file&n; *&n; * Sponsore
 macro_line|#ifndef NCR53c710_H
 DECL|macro|NCR53c710_H
 mdefine_line|#define NCR53c710_H
-macro_line|#if !defined(LINUX_1_2) &amp;&amp; !defined(LINUX_1_3)
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; 65536 + 3 * 256
-DECL|macro|LINUX_1_3
-mdefine_line|#define LINUX_1_3
-macro_line|#else
-DECL|macro|LINUX_1_2
-mdefine_line|#define LINUX_1_2
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
@@ -81,81 +72,10 @@ macro_line|#else
 DECL|macro|NCR53c7xx_release
 mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
-macro_line|#ifdef LINUX_1_2
-DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 17)&quot;, NCR53c7xx_detect,&bslash;&n;&t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
-macro_line|#else
 DECL|macro|NCR53c7xx
 mdefine_line|#define NCR53c7xx {NULL, NULL, NULL, NULL, &bslash;&n;        &quot;NCR53c{7,8}xx (rel 17)&quot;, NCR53c7xx_detect,&bslash;&n;        NULL, /* info */ NULL, /* command, deprecated */ NULL,&t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 24, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 3, &t;&t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
-macro_line|#endif
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
-macro_line|#ifdef LINUX_1_2
-multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
-DECL|function|virt_to_phys
-r_extern
-r_inline
-r_int
-r_int
-id|virt_to_phys
-c_func
-(paren
-r_volatile
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-(paren
-r_int
-r_int
-)paren
-id|address
-suffix:semicolon
-)brace
-DECL|function|phys_to_virt
-r_extern
-r_inline
-r_void
-op_star
-id|phys_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|address
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus virt_to_phys
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt phys_to_virt
-multiline_comment|/*&n; * readX/writeX() are used to access memory mapped devices. On some&n; * architectures the memory mapped IO stuff needs to be accessed&n; * differently. On the x86 architecture, we just read/write the&n; * memory location directly.&n; */
-DECL|macro|readb
-mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
-DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
-DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
-DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
-DECL|macro|writew
-mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
-DECL|macro|writel
-mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
-DECL|macro|mb
-mdefine_line|#define mb()
-macro_line|#endif /* def LINUX_1_2 */
 multiline_comment|/* SCSI control 0 rw, default = 0xc0 */
 DECL|macro|SCNTL0_REG
 mdefine_line|#define SCNTL0_REG &t;&t;0x00&t;

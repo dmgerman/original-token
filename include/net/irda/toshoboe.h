@@ -231,6 +231,10 @@ id|__u32
 id|flags
 suffix:semicolon
 multiline_comment|/* Interface flags */
+DECL|member|new_speed
+id|__u32
+id|new_speed
+suffix:semicolon
 DECL|member|pdev
 r_struct
 id|pci_dev

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Sat Oct 30 16:24:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Sat Nov 13 23:54:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations is quite&n; *    similar.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3180,6 +3180,9 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
+id|__u32
+id|speed
+suffix:semicolon
 id|__u8
 id|bank
 suffix:semicolon
@@ -3247,6 +3250,26 @@ id|FALSE
 r_return
 op_minus
 id|EBUSY
+suffix:semicolon
+multiline_comment|/* Check if we need to change the speed */
+r_if
+c_cond
+(paren
+(paren
+id|speed
+op_assign
+id|irda_get_speed
+c_func
+(paren
+id|skb
+)paren
+)paren
+op_ne
+id|self-&gt;io.speed
+)paren
+id|self-&gt;new_speed
+op_assign
+id|speed
 suffix:semicolon
 multiline_comment|/* Save current bank */
 id|bank
@@ -3924,6 +3947,25 @@ suffix:semicolon
 id|self-&gt;stats.tx_bytes
 op_add_assign
 id|self-&gt;tx_buff.len
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|self-&gt;new_speed
+)paren
+(brace
+id|pc87108_change_speed
+c_func
+(paren
+id|self
+comma
+id|self-&gt;new_speed
+)paren
+suffix:semicolon
+id|self-&gt;new_speed
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock tx_buff and request another frame */

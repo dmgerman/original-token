@@ -920,12 +920,9 @@ id|skb
 op_ne
 id|self-&gt;io.speed
 )paren
-id|toshoboe_setbaud
-(paren
-id|self
-comma
+id|self-&gt;new_speed
+op_assign
 id|speed
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1255,12 +1252,33 @@ suffix:semicolon
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* idev-&gt;media_busy = FALSE; */
+r_if
+c_cond
+(paren
+id|self-&gt;new_speed
+)paren
+(brace
+id|toshoboe_setbaud
+c_func
+(paren
+id|self
+comma
+id|self-&gt;new_speed
+)paren
+suffix:semicolon
+id|self-&gt;new_speed
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|self-&gt;netdev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Unlock */
+multiline_comment|/* Tell network layer that we want more frames */
 id|mark_bh
+c_func
 (paren
 id|NET_BH
 )paren
