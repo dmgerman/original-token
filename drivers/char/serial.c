@@ -4165,7 +4165,7 @@ id|info-&gt;irq
 comma
 id|rs_interrupt_single
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_string|&quot;serial&quot;
 )paren

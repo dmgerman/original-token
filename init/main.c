@@ -2551,6 +2551,30 @@ l_string|&quot;irq13&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MATH_EMULATION
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;No coprocessor found and no math emulation present.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Giving up.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2577,30 +2601,6 @@ l_string|&quot; Ok.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_MATH_EMULATION
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;No coprocessor found and no math emulation present.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Giving up.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|system_utsname.machine
 (braket
 l_int|1

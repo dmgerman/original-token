@@ -802,7 +802,7 @@ l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %%ah, %%ah&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
-l_string|&quot;=cb&quot;
+l_string|&quot;=c&quot;
 (paren
 op_star
 id|value
@@ -913,7 +913,7 @@ l_string|&quot;1&quot;
 id|PCIBIOS_READ_CONFIG_WORD
 )paren
 comma
-l_string|&quot;bx&quot;
+l_string|&quot;b&quot;
 (paren
 id|bx
 )paren
@@ -992,13 +992,13 @@ l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %%ah, %%ah&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
-l_string|&quot;=ecx&quot;
+l_string|&quot;=c&quot;
 (paren
 op_star
 id|value
 )paren
 comma
-l_string|&quot;=ax&quot;
+l_string|&quot;=a&quot;
 (paren
 id|ret
 )paren
@@ -1008,7 +1008,7 @@ l_string|&quot;1&quot;
 id|PCIBIOS_READ_CONFIG_DWORD
 )paren
 comma
-l_string|&quot;bx&quot;
+l_string|&quot;b&quot;
 (paren
 id|bx
 )paren
@@ -1086,7 +1086,7 @@ l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %%ah, %%ah&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
-l_string|&quot;=ax&quot;
+l_string|&quot;=a&quot;
 (paren
 id|ret
 )paren
@@ -1179,7 +1179,7 @@ l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %%ah, %%ah&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
-l_string|&quot;=ax&quot;
+l_string|&quot;=a&quot;
 (paren
 id|ret
 )paren
@@ -1189,12 +1189,12 @@ l_string|&quot;0&quot;
 id|PCIBIOS_WRITE_CONFIG_WORD
 )paren
 comma
-l_string|&quot;cx&quot;
+l_string|&quot;c&quot;
 (paren
 id|value
 )paren
 comma
-l_string|&quot;bx&quot;
+l_string|&quot;b&quot;
 (paren
 id|bx
 )paren
@@ -1272,7 +1272,7 @@ l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
 l_string|&quot;xor %%ah, %%ah&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
-l_string|&quot;=ax&quot;
+l_string|&quot;=a&quot;
 (paren
 id|ret
 )paren

@@ -3,7 +3,7 @@ multiline_comment|/* Configuration */
 multiline_comment|/* The following does some extra sanity checks */
 DECL|macro|SANITY
 mdefine_line|#define SANITY
-multiline_comment|/* Undefine the following if you have to floppy disk controllers:&n; * This is untested. If you get two controllers working, with drives attached&n; * too both, please mail me: Alain.Knaff@imag.fr */
+multiline_comment|/* Undefine the following if you have to floppy disk controllers:&n; * This works at least for me; if you get two controllers working, with&n; * drives attached to both, please mail me: Alain.Knaff@imag.fr */
 multiline_comment|/* #define HAVE_2_CONTROLLERS */
 multiline_comment|/* Undefine the following if you have problems accessing ED disks, but don&squot;t&n; * have problems accessing them with the stock driver. If that is the case,&n; * please mail me: Alain.Knaff@imag.fr */
 multiline_comment|/* #define FDC_FIFO_BUG */
@@ -394,15 +394,15 @@ l_int|2
 comma
 l_int|5
 comma
-l_int|18
+l_int|6
 comma
-l_int|31
+l_int|23
+comma
+l_int|10
+comma
+l_int|20
 comma
 l_int|11
-comma
-l_int|11
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -465,13 +465,13 @@ comma
 (brace
 l_int|4
 comma
-l_int|14
+l_int|22
 comma
-l_int|13
+l_int|21
 comma
-l_int|10
+l_int|30
 comma
-l_int|0
+l_int|3
 comma
 l_int|0
 comma
@@ -540,17 +540,17 @@ l_int|7
 comma
 l_int|4
 comma
-l_int|24
+l_int|25
 comma
-l_int|14
+l_int|22
 comma
-l_int|20
-comma
-l_int|13
-comma
-l_int|23
+l_int|31
 comma
 l_int|21
+comma
+l_int|29
+comma
+l_int|11
 )brace
 comma
 l_int|150
@@ -615,15 +615,15 @@ l_int|8
 comma
 l_int|4
 comma
-l_int|24
+l_int|25
 comma
-l_int|27
+l_int|28
 comma
-l_int|14
+l_int|22
 comma
-l_int|20
+l_int|31
 comma
-l_int|13
+l_int|21
 )brace
 comma
 l_int|150
@@ -688,15 +688,15 @@ l_int|8
 comma
 l_int|4
 comma
-l_int|24
+l_int|25
 comma
-l_int|27
+l_int|28
 comma
-l_int|14
+l_int|22
 comma
-l_int|20
+l_int|31
 comma
-l_int|13
+l_int|21
 )brace
 comma
 l_int|150
@@ -791,7 +791,7 @@ comma
 l_string|&quot;d360&quot;
 )brace
 comma
-multiline_comment|/*  1 360kB PC/QD   */
+multiline_comment|/*  1 360KB PC      */
 (brace
 l_int|2400
 comma
@@ -814,7 +814,7 @@ comma
 l_string|&quot;h1200&quot;
 )brace
 comma
-multiline_comment|/*  2 *1.2 MB AT    */
+multiline_comment|/*  2 1.2MB AT      */
 (brace
 l_int|720
 comma
@@ -837,7 +837,7 @@ comma
 l_string|&quot;D360&quot;
 )brace
 comma
-multiline_comment|/*  3 360kB SS 3.5&quot; */
+multiline_comment|/*  3 360KB SS 3.5&quot; */
 (brace
 l_int|1440
 comma
@@ -883,7 +883,7 @@ comma
 l_string|&quot;h360&quot;
 )brace
 comma
-multiline_comment|/*  5 *360kB AT     */
+multiline_comment|/*  5 360KB AT      */
 (brace
 l_int|1440
 comma
@@ -906,7 +906,7 @@ comma
 l_string|&quot;h720&quot;
 )brace
 comma
-multiline_comment|/*  6 720kB AT      */
+multiline_comment|/*  6 720KB AT      */
 (brace
 l_int|2880
 comma
@@ -929,7 +929,7 @@ comma
 l_string|&quot;H1440&quot;
 )brace
 comma
-multiline_comment|/*  7 *1.44MB 3.5&quot;  */
+multiline_comment|/*  7 1.44MB 3.5&quot;   */
 (brace
 l_int|5760
 comma
@@ -952,7 +952,7 @@ comma
 l_string|&quot;E2880&quot;
 )brace
 comma
-multiline_comment|/*  8 *2.88MB 3.5&quot;  */
+multiline_comment|/*  8 2.88MB 3.5&quot;   */
 (brace
 l_int|5760
 comma
@@ -998,7 +998,7 @@ comma
 l_string|&quot;h1440&quot;
 )brace
 comma
-multiline_comment|/* 10 *1.44MB 5.25&quot; */
+multiline_comment|/* 10 1.44MB 5.25&quot;  */
 (brace
 l_int|3360
 comma
@@ -1010,18 +1010,18 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x00
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;H1680&quot;
 )brace
 comma
-multiline_comment|/* 11 *1.68MB 3.5&quot;  */
+multiline_comment|/* 11 1.68MB 3.5&quot;   */
 (brace
 l_int|820
 comma
@@ -1217,18 +1217,18 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x09
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;d880&quot;
 )brace
 comma
-multiline_comment|/* 20 880k 5.25&quot;    */
+multiline_comment|/* 20 880KB 5.25&quot;   */
 (brace
 l_int|2080
 comma
@@ -1240,13 +1240,13 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
-l_int|0x0a
+l_int|0x0A
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;D1040&quot;
 )brace
@@ -1263,18 +1263,18 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
-l_int|0x1a
+l_int|0x1A
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;D1120&quot;
 )brace
 comma
-multiline_comment|/* 22 *1.12MB 3.5&quot;  */
+multiline_comment|/* 22 1.12MB 3.5&quot;   */
 (brace
 l_int|3200
 comma
@@ -1286,13 +1286,13 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x20
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;h1600&quot;
 )brace
@@ -1309,13 +1309,13 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x08
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;H1760&quot;
 )brace
@@ -1332,18 +1332,18 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x18
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;H1920&quot;
 )brace
 comma
-multiline_comment|/* 25 *1.92MB 3.5&quot;  */
+multiline_comment|/* 25 1.92MB 3.5&quot;   */
 (brace
 l_int|6400
 comma
@@ -1357,11 +1357,11 @@ l_int|0
 comma
 l_int|0x25
 comma
-l_int|0x5b
+l_int|0x5B
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;E3200&quot;
 )brace
@@ -1380,11 +1380,11 @@ l_int|0
 comma
 l_int|0x25
 comma
-l_int|0x5b
+l_int|0x5B
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;E3520&quot;
 )brace
@@ -1405,14 +1405,14 @@ l_int|0x25
 comma
 l_int|0x63
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;E3840&quot;
 )brace
 comma
-multiline_comment|/* 28 *3.84MB 3.5&quot;  */
+multiline_comment|/* 28 3.84MB 3.5&quot;   */
 (brace
 l_int|3680
 comma
@@ -1424,13 +1424,13 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x10
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;H1840&quot;
 )brace
@@ -1458,7 +1458,7 @@ comma
 l_string|&quot;H800&quot;
 )brace
 comma
-multiline_comment|/* 30 *800k 3.5&quot;    */
+multiline_comment|/* 30 800KB 3.5&quot;    */
 (brace
 l_int|3200
 comma
@@ -1470,18 +1470,18 @@ l_int|80
 comma
 l_int|0
 comma
-l_int|0x1c
+l_int|0x1C
 comma
 l_int|0x00
 comma
-l_int|0xcf
+l_int|0xCF
 comma
-l_int|0x6c
+l_int|0x6C
 comma
 l_string|&quot;H1600&quot;
 )brace
 comma
-multiline_comment|/* 31 *1.6MB 3.5&quot;   */
+multiline_comment|/* 31 1.6MB 3.5&quot;    */
 )brace
 suffix:semicolon
 DECL|macro|NUMBER
@@ -13111,6 +13111,7 @@ id|address
 op_assign
 l_int|0x3f0
 suffix:semicolon
+macro_line|#if N_FDC &gt; 1
 id|fdc_state
 (braket
 l_int|1
@@ -13120,6 +13121,7 @@ id|address
 op_assign
 l_int|0x370
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

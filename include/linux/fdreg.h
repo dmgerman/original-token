@@ -3,20 +3,22 @@ DECL|macro|_LINUX_FDREG_H
 mdefine_line|#define _LINUX_FDREG_H
 multiline_comment|/*&n; * This file contains some defines for the floppy disk controller.&n; * Various sources. Mostly &quot;IBM Microcomputers: A Programmers&n; * Handbook&quot;, Sanches and Canton.&n; */
 macro_line|#ifdef FDPATCHES
+DECL|macro|FD_IOPORT
+mdefine_line|#define FD_IOPORT fdc_state[fdc].address
 multiline_comment|/* Fd controller regs. S&amp;C, about page 340 */
 DECL|macro|FD_STATUS
-mdefine_line|#define FD_STATUS&t;(4 + fdc_state[fdc].address )
+mdefine_line|#define FD_STATUS&t;(4 + FD_IOPORT )
 DECL|macro|FD_DATA
-mdefine_line|#define FD_DATA&t;&t;(5 + fdc_state[fdc].address )
+mdefine_line|#define FD_DATA&t;&t;(5 + FD_IOPORT )
 multiline_comment|/* Digital Output Register */
 DECL|macro|FD_DOR
-mdefine_line|#define FD_DOR&t;&t;(2 + fdc_state[fdc].address )
+mdefine_line|#define FD_DOR&t;&t;(2 + FD_IOPORT )
 multiline_comment|/* Digital Input Register (read) */
 DECL|macro|FD_DIR
-mdefine_line|#define FD_DIR&t;&t;(7 + fdc_state[fdc].address )
+mdefine_line|#define FD_DIR&t;&t;(7 + FD_IOPORT )
 multiline_comment|/* Diskette Control Register (write)*/
 DECL|macro|FD_DCR
-mdefine_line|#define FD_DCR&t;&t;(7 + fdc_state[fdc].address )
+mdefine_line|#define FD_DCR&t;&t;(7 + FD_IOPORT )
 macro_line|#else
 DECL|macro|FD_STATUS
 mdefine_line|#define FD_STATUS&t;0x3f4
