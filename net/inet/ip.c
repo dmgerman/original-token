@@ -3326,6 +3326,10 @@ op_plus
 id|count
 )paren
 suffix:semicolon
+id|skb-&gt;ip_hdr
+op_assign
+id|iph
+suffix:semicolon
 r_return
 id|skb
 suffix:semicolon

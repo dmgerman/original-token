@@ -17,5 +17,7 @@ DECL|macro|MAP_TYPE
 mdefine_line|#define MAP_TYPE         0xf       /* Mask for type of mapping */
 DECL|macro|MAP_FIXED
 mdefine_line|#define MAP_FIXED        0x10      /* Interpret addr exactly */
+DECL|macro|MAP_ANONYMOUS
+mdefine_line|#define MAP_ANONYMOUS    0x20      /* don&squot;t use a file */
 macro_line|#endif /* _LINUX_MMAN_H */
 eof
