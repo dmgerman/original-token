@@ -1378,6 +1378,11 @@ id|dir-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+id|dir-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
@@ -4512,6 +4517,7 @@ id|new_bh
 op_logical_and
 id|new_de
 )paren
+(brace
 id|ext2_delete_entry
 c_func
 (paren
@@ -4520,6 +4526,12 @@ comma
 id|new_bh
 )paren
 suffix:semicolon
+id|new_dir-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
+)brace
 id|brelse
 (paren
 id|old_bh
@@ -4987,6 +4999,11 @@ id|new_bh
 r_goto
 id|end_rename
 suffix:semicolon
+id|new_dir-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
 multiline_comment|/*&n;&t; * sanity checking before doing the rename - avoid races&n;&t; */
 r_if
 c_cond
@@ -5027,11 +5044,6 @@ multiline_comment|/*&n;&t; * ok, that&squot;s it&n;&t; */
 id|new_de-&gt;inode
 op_assign
 id|old_inode-&gt;i_ino
-suffix:semicolon
-id|new_dir-&gt;i_version
-op_assign
-op_increment
-id|event
 suffix:semicolon
 id|dcache_add
 c_func

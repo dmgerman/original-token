@@ -123,8 +123,6 @@ DECL|macro|HDIO_GETMULTCOUNT
 mdefine_line|#define HDIO_GETMULTCOUNT&t;0x304
 DECL|macro|HDIO_SETMULTCOUNT
 mdefine_line|#define HDIO_SETMULTCOUNT&t;0x305
-DECL|macro|HDIO_SETFEATURE
-mdefine_line|#define HDIO_SETFEATURE  &t;0x306
 DECL|macro|HDIO_GETIDENTITY
 mdefine_line|#define HDIO_GETIDENTITY &t;0x307
 macro_line|#endif

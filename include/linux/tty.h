@@ -766,6 +766,17 @@ id|driver
 suffix:semicolon
 r_extern
 r_int
+id|tty_unregister_driver
+c_func
+(paren
+r_struct
+id|tty_driver
+op_star
+id|driver
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tty_read_raw_data
 c_func
 (paren

@@ -10,6 +10,10 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+DECL|macro|NAME_OFFSET
+mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
 r_static
 r_int
 id|isofs_readdir
@@ -1145,7 +1149,19 @@ id|bh
 )paren
 suffix:semicolon
 r_return
+id|ROUND_UP
+c_func
+(paren
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
+)paren
+op_plus
 id|i
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace

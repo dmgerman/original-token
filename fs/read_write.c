@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * Count is not yet used: but we&squot;ll probably support reading several entries&n; * at once in the future. Use count=1 in the library for future expansions.&n; */
+multiline_comment|/*&n; * Count is now a supported feature, but currently only the ext2fs&n; * uses it.  A count value of 1 is supported for compatibility with&n; * earlier libraries, but larger values are supported: count should&n; * indicate the total buffer space available for filling with dirents.&n; * The d_off entry in the dirents will then indicate the offset from&n; * each dirent to the next, and the return value will indicate the&n; * number of bytes written.  All dirents will be written at&n; * word-aligned addresses.  [sct Oct 1994]&n; */
 DECL|function|sys_readdir
 id|asmlinkage
 r_int
@@ -271,6 +271,14 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_ne
+id|file-&gt;f_pos
+)paren
+(brace
 id|file-&gt;f_pos
 op_assign
 id|tmp
@@ -279,6 +287,7 @@ id|file-&gt;f_reada
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 id|file-&gt;f_pos
 suffix:semicolon

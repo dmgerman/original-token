@@ -4,6 +4,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+DECL|macro|NAME_OFFSET
+mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
 DECL|function|minix_dir_read
 r_static
 r_int
@@ -175,6 +179,11 @@ r_int
 id|offset
 comma
 id|i
+comma
+id|ret
+suffix:semicolon
+r_int
+id|version
 suffix:semicolon
 r_char
 id|c
@@ -234,9 +243,16 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
+id|ret
+op_logical_and
 id|filp-&gt;f_pos
 OL
 id|inode-&gt;i_size
@@ -283,6 +299,9 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
+id|ret
+op_logical_and
 id|offset
 OL
 l_int|1024
@@ -313,6 +332,8 @@ id|filp-&gt;f_pos
 op_add_assign
 id|info-&gt;s_dirsize
 suffix:semicolon
+id|retry
+suffix:colon
 r_if
 c_cond
 (paren
@@ -366,6 +387,10 @@ c_cond
 id|i
 )paren
 (brace
+id|version
+op_assign
+id|inode-&gt;i_version
+suffix:semicolon
 id|put_fs_long
 c_func
 (paren
@@ -394,14 +419,31 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
-id|brelse
+r_if
+c_cond
+(paren
+id|version
+op_ne
+id|inode-&gt;i_version
+)paren
+r_goto
+id|retry
+suffix:semicolon
+id|ret
+op_assign
+id|ROUND_UP
 c_func
 (paren
-id|bh
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
 )paren
-suffix:semicolon
-r_return
+op_plus
 id|i
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -414,7 +456,7 @@ id|bh
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 eof

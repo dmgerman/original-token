@@ -5,6 +5,10 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+DECL|macro|NAME_OFFSET
+mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
 DECL|function|msdos_dir_read
 r_static
 r_int
@@ -285,7 +289,19 @@ id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
 r_return
+id|ROUND_UP
+c_func
+(paren
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
+)paren
+op_plus
 id|i
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -614,7 +630,19 @@ id|bh
 )paren
 suffix:semicolon
 r_return
+id|ROUND_UP
+c_func
+(paren
+id|NAME_OFFSET
+c_func
+(paren
+id|dirent
+)paren
+op_plus
 id|i
+op_plus
+l_int|1
+)paren
 suffix:semicolon
 )brace
 )brace

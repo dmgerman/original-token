@@ -8,9 +8,8 @@ DECL|macro|ALLOWED_DRIVE_MASK
 mdefine_line|#define ALLOWED_DRIVE_MASK 0x33
 multiline_comment|/* Undefine the following if you have to floppy disk controllers:&n; * This works at least for me; if you get two controllers working, with&n; * drives attached to both, please mail me: Alain.Knaff@imag.fr */
 multiline_comment|/* #define HAVE_2_CONTROLLERS */
-multiline_comment|/* Define the following if you don&squot;t like that your drives seek audibly&n; * after a disk change&n; */
-DECL|macro|SILENT_DC_CLEAR
-mdefine_line|#define SILENT_DC_CLEAR
+multiline_comment|/* Define the following if you don&squot;t like that your drives seek audibly&n; * after a disk change (but it may not work correctly for everybody)&n; */
+multiline_comment|/* #define SILENT_DC_CLEAR */
 multiline_comment|/* End of configuration */
 multiline_comment|/*&n; * 02.12.91 - Changed to static variables to indicate need for reset&n; * and recalibrate. This makes some things easier (output_byte reset&n; * checking etc), and means less interrupt jumping in case of errors,&n; * so the code is hopefully easier to understand.&n; */
 multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my best to get it working,&n; * but I don&squot;t like programming floppies, and I have only one anyway.&n; * Urgel. I should check for more errors, and do more graceful error&n; * recovery. Seems there are problems with several drives. I&squot;ve tried to&n; * correct them. No promises.&n; */
@@ -1046,7 +1045,7 @@ l_int|0x00
 comma
 l_int|0xCF
 comma
-l_int|0x6C
+l_int|0x0C
 comma
 l_string|&quot;H1680&quot;
 )brace
@@ -1322,7 +1321,7 @@ l_int|0x20
 comma
 l_int|0xCF
 comma
-l_int|0x6C
+l_int|0x2C
 comma
 l_string|&quot;h1600&quot;
 )brace
@@ -1345,7 +1344,7 @@ l_int|0x08
 comma
 l_int|0xCF
 comma
-l_int|0x6C
+l_int|0x2e
 comma
 l_string|&quot;H1760&quot;
 )brace
@@ -1506,7 +1505,7 @@ l_int|0x00
 comma
 l_int|0xCF
 comma
-l_int|0x6C
+l_int|0x2C
 comma
 l_string|&quot;H1600&quot;
 )brace
@@ -5380,17 +5379,12 @@ l_string|&quot;recal interrupt need 1 recal:&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* after a second recalibrate, we still haven&squot;t&n;&t;&t;&t; * reached track 0. Probably no drive */
-id|DRS-&gt;track
-op_assign
-id|PROVEN_ABSENT
-suffix:semicolon
+multiline_comment|/* after a second recalibrate, we still haven&squot;t&n;&t;&t;&t; * reached track 0. Probably no drive. Raise an&n;&t;&t;&t; * error, as failing immediately might upset &n;&t;&t;&t; * computers possessed by the Devil :-) */
 id|cont
 op_member_access_from_pointer
-id|done
+id|error
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 id|cont
@@ -7126,8 +7120,7 @@ id|FD_RAW_INTR
 op_or
 id|FD_RAW_SPIN
 op_or
-id|FD_RAW_NEED_DISK
-op_or
+multiline_comment|/*FD_RAW_NEED_DISK |*/
 id|FD_RAW_NEED_SEEK
 suffix:semicolon
 id|raw_cmd.rate

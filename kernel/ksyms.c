@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -304,6 +305,24 @@ id|X
 c_func
 (paren
 id|unregister_blkdev
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_register_driver
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_unregister_driver
+)paren
+comma
+id|X
+c_func
+(paren
+id|tty_std_termios
 )paren
 comma
 multiline_comment|/* block device driver support */
