@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_ax.c,v 1.13 1998/10/26 20:01:59 davem Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
+multiline_comment|/* $Id: parport_ax.c,v 1.14 1998/11/16 04:48:02 davem Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

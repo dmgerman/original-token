@@ -970,7 +970,7 @@ id|CAP_SYS_ADMIN
 r_goto
 id|out_nolock
 suffix:semicolon
-multiline_comment|/* The null signal is a permissions and process existance probe.&n;&t;   No signal is actually delivered.  */
+multiline_comment|/* The null signal is a permissions and process existance probe.&n;&t;   No signal is actually delivered.  Same goes for zombies. */
 id|ret
 op_assign
 l_int|0
@@ -980,6 +980,9 @@ c_cond
 (paren
 op_logical_neg
 id|sig
+op_logical_or
+op_logical_neg
+id|t-&gt;sig
 )paren
 r_goto
 id|out_nolock

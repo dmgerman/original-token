@@ -193,6 +193,8 @@ DECL|macro|AUDIO_ENCODING_ALAW
 mdefine_line|#define&t;AUDIO_ENCODING_ALAW&t;(2)&t;/* A-law encoding&t;  */
 DECL|macro|AUDIO_ENCODING_LINEAR
 mdefine_line|#define&t;AUDIO_ENCODING_LINEAR&t;(3)&t;/* Linear PCM encoding&t;  */
+DECL|macro|AUDIO_ENCODING_FLOAT
+mdefine_line|#define AUDIO_ENCODING_FLOAT    (4)     /* IEEE float (-1. &lt;-&gt; +1.) */
 DECL|macro|AUDIO_ENCODING_DVI
 mdefine_line|#define&t;AUDIO_ENCODING_DVI&t;(104)&t;/* DVI ADPCM&t;&t;  */
 DECL|macro|AUDIO_ENCODING_LINEAR8
@@ -248,9 +250,8 @@ DECL|macro|AUDIO_CD
 mdefine_line|#define&t;AUDIO_CD&t;&t;0x04&t;/* input from on-board CD inputs */
 DECL|macro|AUDIO_INTERNAL_CD_IN
 mdefine_line|#define&t;AUDIO_INTERNAL_CD_IN&t;AUDIO_CD&t;/* input from internal CDROM */
-multiline_comment|/* Supposedly an undocumented feature of the 4231 */
 DECL|macro|AUDIO_ANALOG_LOOPBACK
-mdefine_line|#define AUDIO_ANALOG_LOOPBACK   0x40
+mdefine_line|#define AUDIO_ANALOG_LOOPBACK   0x40    /* input from output */
 multiline_comment|/*&n; * This macro initializes an audio_info structure to &squot;harmless&squot; values.&n; * Note that (~0) might not be a harmless value for a flag that was&n; * a signed int.&n; */
 DECL|macro|AUDIO_INITINFO
 mdefine_line|#define&t;AUDIO_INITINFO(i)&t;{&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int&t;*__x__;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__x__ = (unsigned int *)(i);&t;&t;&t;&t;&bslash;&n;&t;    (char *) __x__ &lt; (((char *)(i)) + sizeof (audio_info_t));&t;&bslash;&n;&t;    *__x__++ = ~0);&t;&t;&t;&t;&t;&t;&bslash;&n;}
@@ -321,48 +322,9 @@ DECL|macro|AUDIO_DEV_CODEC
 mdefine_line|#define AUDIO_DEV_CODEC         (3)     /* dbri device (internal speaker) */
 DECL|macro|AUDIO_DEV_CS4231
 mdefine_line|#define AUDIO_DEV_CS4231        (5)     /* cs4231 device */
-multiline_comment|/*&n; * The following ioctl sets the audio device into an internal loopback mode,&n; * if the hardware supports this.  The argument is TRUE to set loopback,&n; * FALSE to reset to normal operation.  If the hardware does not support&n; * internal loopback, the ioctl should fail with EINVAL.&n; */
+multiline_comment|/*&n; * The following ioctl sets the audio device into an internal loopback mode,&n; * if the hardware supports this.  The argument is TRUE to set loopback,&n; * FALSE to reset to normal operation.  If the hardware does not support&n; * internal loopback, the ioctl should fail with EINVAL.&n; * Causes ADC data to be digitally mixed in and sent to the DAC.&n; */
 DECL|macro|AUDIO_DIAG_LOOPBACK
 mdefine_line|#define&t;AUDIO_DIAG_LOOPBACK&t;_IOW(&squot;A&squot;, 101, int)
-macro_line|#ifdef notneeded
-multiline_comment|/*&n; * Structure sent up as a M_PROTO message on trace streams&n; */
-DECL|typedef|audtrace_hdr_t
-r_typedef
-r_struct
-id|audtrace_hdr
-id|audtrace_hdr_t
-suffix:semicolon
-DECL|struct|audtrace_hdr
-r_struct
-id|audtrace_hdr
-(brace
-DECL|member|seq
-r_int
-r_int
-id|seq
-suffix:semicolon
-multiline_comment|/* Sequence number (per-aud_stream) */
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* device-dependent */
-DECL|member|timestamp
-r_struct
-id|timeval
-id|timestamp
-suffix:semicolon
-DECL|member|_f
-r_char
-id|_f
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* filler */
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;Linux kernel internal implementation.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
@@ -373,6 +335,58 @@ DECL|macro|SDF_OPEN_WRITE
 mdefine_line|#define&t;SDF_OPEN_WRITE&t;0x00000001
 DECL|macro|SDF_OPEN_READ
 mdefine_line|#define&t;SDF_OPEN_READ&t;0x00000002
+DECL|struct|sparcaudio_ringbuffer
+r_struct
+id|sparcaudio_ringbuffer
+(brace
+DECL|member|rb_start
+DECL|member|rb_end
+id|__u8
+op_star
+id|rb_start
+comma
+op_star
+id|rb_end
+suffix:semicolon
+multiline_comment|/* start, end of this memory buffer */
+DECL|member|rb_in
+DECL|member|rb_out
+id|__u8
+op_star
+id|rb_in
+comma
+op_star
+id|rb_out
+suffix:semicolon
+multiline_comment|/* input, output pointers */
+DECL|member|rb_fragsize
+r_int
+id|rb_fragsize
+suffix:semicolon
+multiline_comment|/* size of an audio frag */
+DECL|member|rb_numfrags
+r_int
+id|rb_numfrags
+suffix:semicolon
+multiline_comment|/* number of frags */
+DECL|member|rb_count
+DECL|member|rb_hiwat
+DECL|member|rb_lowat
+r_int
+id|rb_count
+comma
+id|rb_hiwat
+comma
+id|rb_lowat
+suffix:semicolon
+multiline_comment|/* bytes in use, hi/lo wat points */
+DECL|member|rb_bufsize
+r_int
+id|rb_bufsize
+suffix:semicolon
+multiline_comment|/* total size of buffer */
+)brace
+suffix:semicolon
 DECL|struct|sparcaudio_driver
 r_struct
 id|sparcaudio_driver
@@ -399,6 +413,25 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+DECL|member|sd_siglist
+r_struct
+id|strevent
+op_star
+id|sd_siglist
+suffix:semicolon
+multiline_comment|/* duplex: 0=simplex, 1=duplex, 2=loop */
+DECL|member|sd_sigflags
+DECL|member|duplex
+r_int
+id|sd_sigflags
+comma
+id|duplex
+suffix:semicolon
+multiline_comment|/* Which audio device are we? */
+DECL|member|index
+r_int
+id|index
+suffix:semicolon
 multiline_comment|/* This device */
 DECL|member|dev
 r_struct
@@ -419,6 +452,16 @@ r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
+multiline_comment|/* Start of ring buffer support */
+DECL|member|input_buffer
+DECL|member|output_buffer
+id|__u8
+op_star
+id|input_buffer
+comma
+op_star
+id|output_buffer
+suffix:semicolon
 multiline_comment|/* Support for a circular queue of output buffers. */
 DECL|member|output_buffers
 id|__u8
@@ -428,31 +471,40 @@ id|output_buffers
 suffix:semicolon
 DECL|member|output_sizes
 DECL|member|output_size
+DECL|member|output_buffer_size
 r_int
 op_star
 id|output_sizes
 comma
 id|output_size
+comma
+id|output_buffer_size
 suffix:semicolon
 DECL|member|num_output_buffers
 DECL|member|output_front
 DECL|member|output_rear
+DECL|member|output_offset
 r_int
 id|num_output_buffers
 comma
 id|output_front
 comma
 id|output_rear
+comma
+id|output_offset
 suffix:semicolon
 DECL|member|output_count
 DECL|member|output_active
 DECL|member|playing_count
+DECL|member|output_eof
 r_int
 id|output_count
 comma
 id|output_active
 comma
 id|playing_count
+comma
+id|output_eof
 suffix:semicolon
 DECL|member|output_write_wait
 DECL|member|output_drain_wait
@@ -464,6 +516,11 @@ comma
 op_star
 id|output_drain_wait
 suffix:semicolon
+DECL|member|output_notify
+r_char
+op_star
+id|output_notify
+suffix:semicolon
 multiline_comment|/* Support for a circular queue of input buffers. */
 DECL|member|input_buffers
 id|__u8
@@ -471,19 +528,29 @@ op_star
 op_star
 id|input_buffers
 suffix:semicolon
-DECL|member|input_offset
+DECL|member|input_sizes
+DECL|member|input_size
+DECL|member|input_buffer_size
 r_int
-id|input_offset
+op_star
+id|input_sizes
+comma
+id|input_size
+comma
+id|input_buffer_size
 suffix:semicolon
 DECL|member|num_input_buffers
 DECL|member|input_front
 DECL|member|input_rear
+DECL|member|input_offset
 r_int
 id|num_input_buffers
 comma
 id|input_front
 comma
 id|input_rear
+comma
+id|input_offset
 suffix:semicolon
 DECL|member|input_count
 DECL|member|input_active
@@ -500,6 +567,11 @@ r_struct
 id|wait_queue
 op_star
 id|input_read_wait
+suffix:semicolon
+multiline_comment|/* Hack to make it look like we support variable size buffers. */
+DECL|member|buffer_size
+r_int
+id|buffer_size
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1123,6 +1195,181 @@ id|sparcaudio_driver
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Get and set output pause */
+DECL|member|set_output_pause
+r_int
+(paren
+op_star
+id|set_output_pause
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_pause
+r_int
+(paren
+op_star
+id|get_output_pause
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set input pause */
+DECL|member|set_input_pause
+r_int
+(paren
+op_star
+id|set_input_pause
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_pause
+r_int
+(paren
+op_star
+id|get_input_pause
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set output samples */
+DECL|member|set_output_samples
+r_int
+(paren
+op_star
+id|set_output_samples
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_samples
+r_int
+(paren
+op_star
+id|get_output_samples
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set input samples */
+DECL|member|set_input_samples
+r_int
+(paren
+op_star
+id|set_input_samples
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_samples
+r_int
+(paren
+op_star
+id|get_input_samples
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set output error */
+DECL|member|set_output_error
+r_int
+(paren
+op_star
+id|set_output_error
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_error
+r_int
+(paren
+op_star
+id|get_output_error
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set input error */
+DECL|member|set_input_error
+r_int
+(paren
+op_star
+id|set_input_error
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_error
+r_int
+(paren
+op_star
+id|get_input_error
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get supported encodings */
+DECL|member|get_formats
+r_int
+(paren
+op_star
+id|get_formats
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -1133,6 +1380,8 @@ c_func
 r_struct
 id|sparcaudio_driver
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1143,6 +1392,8 @@ c_func
 r_struct
 id|sparcaudio_driver
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1165,6 +1416,8 @@ c_func
 r_struct
 id|sparcaudio_driver
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1192,31 +1445,161 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Mixer helper ioctls */
+DECL|macro|right
+mdefine_line|#define right(a) (((a &gt;&gt; 8) &amp; 0xff) % 101)
+DECL|macro|left
+mdefine_line|#define left(a) ((a &amp; 0xff) % 101)
 multiline_comment|/* Macros to convert between mixer stereo volumes and gain (mono) */
 DECL|macro|s_to_m
-mdefine_line|#define s_to_m(a) (((((a) &gt;&gt; 8) &amp; 0x7f) + ((a) &amp; 0x7f)) / 2)
+mdefine_line|#define s_to_m(a) ((((left(a) + right(a)) * 255) / 200) % 256)
 DECL|macro|m_to_s
-mdefine_line|#define m_to_s(a) (((a) &lt;&lt; 8) + (a))
+mdefine_line|#define m_to_s(a) ((a * 100 / 255) + ((a * 100 / 255) &lt;&lt; 8))
 multiline_comment|/* convert mixer stereo volume to balance */
 DECL|macro|s_to_b
-mdefine_line|#define s_to_b(a) (AUDIO_RIGHT_BALANCE * ((((a) &gt;&gt; 8) &amp; 0xff) /  (((((a) &gt;&gt; 8) &amp; 0xff) + ((a) &amp; 0xff)) / 2)))
+mdefine_line|#define s_to_b(a) (s_to_g(a) == 0) ? 32 : ((left(a) * AUDIO_RIGHT_BALANCE / (left(a) + right(a))))
 multiline_comment|/* convert mixer stereo volume to audio gain */
 DECL|macro|s_to_g
-mdefine_line|#define s_to_g(a) (((((a) &gt;&gt; 8) &amp; 0xff) + ((a) &amp; 0xff)) / 2)
+mdefine_line|#define s_to_g(a) ((((right(a) + left(a)) * 255) / 200) % 256)
 multiline_comment|/* convert gain a and balance b to mixer volume */
 DECL|macro|b_to_s
-mdefine_line|#define b_to_s(a,b) ((a * (b / AUDIO_RIGHT_BALANCE) &lt;&lt; 8) + (a * (1 - (b / AUDIO_RIGHT_BALANCE))))
+mdefine_line|#define b_to_s(a,b) (((((b * a * 200) / (AUDIO_RIGHT_BALANCE * 255)) % 100) &lt;&lt; 8) + ((((AUDIO_RIGHT_BALANCE - b) * a * 200) / (AUDIO_RIGHT_BALANCE * 255)) % 100))
+multiline_comment|/* Device minor numbers */
 DECL|macro|SPARCAUDIO_MIXER_MINOR
 mdefine_line|#define SPARCAUDIO_MIXER_MINOR 0
-DECL|macro|SPARCAUDIO_DSP16_MINOR
-mdefine_line|#define SPARCAUDIO_DSP16_MINOR 1
+multiline_comment|/* No sequencer (1) */
+multiline_comment|/* No midi (2) */
 DECL|macro|SPARCAUDIO_DSP_MINOR
 mdefine_line|#define SPARCAUDIO_DSP_MINOR   3
 DECL|macro|SPARCAUDIO_AUDIO_MINOR
 mdefine_line|#define SPARCAUDIO_AUDIO_MINOR 4
-DECL|macro|SPARCAUDIO_AUDIOCTL_MINOR
-mdefine_line|#define SPARCAUDIO_AUDIOCTL_MINOR 5
+DECL|macro|SPARCAUDIO_DSP16_MINOR
+mdefine_line|#define SPARCAUDIO_DSP16_MINOR 5
 DECL|macro|SPARCAUDIO_STATUS_MINOR
 mdefine_line|#define SPARCAUDIO_STATUS_MINOR 6
+DECL|macro|SPARCAUDIO_AUDIOCTL_MINOR
+mdefine_line|#define SPARCAUDIO_AUDIOCTL_MINOR 7
+multiline_comment|/* No sequencer l2 (8) */
+multiline_comment|/* No sound processor (9) */
+multiline_comment|/* allocate 2^SPARCAUDIO_DEVICE_SHIFT minors per audio device */
+DECL|macro|SPARCAUDIO_DEVICE_SHIFT
+mdefine_line|#define SPARCAUDIO_DEVICE_SHIFT 4
+multiline_comment|/* With the coming of dummy devices this should perhaps be as high as 5? */
+DECL|macro|SPARCAUDIO_MAX_DEVICES
+mdefine_line|#define SPARCAUDIO_MAX_DEVICES 3
+multiline_comment|/* Streams crap for realaudio */
+r_typedef
+DECL|struct|strevent
+r_struct
+id|strevent
+(brace
+DECL|member|se_next
+r_struct
+id|strevent
+op_star
+id|se_next
+suffix:semicolon
+multiline_comment|/* next event for this stream or NULL*/
+DECL|member|se_prev
+r_struct
+id|strevent
+op_star
+id|se_prev
+suffix:semicolon
+multiline_comment|/* previous event for this stream or last&n;                                 * event if this is the first one*/
+DECL|member|se_pid
+id|pid_t
+id|se_pid
+suffix:semicolon
+multiline_comment|/* process to be signaled */
+DECL|member|se_evs
+r_int
+id|se_evs
+suffix:semicolon
+multiline_comment|/* events wanted */
+DECL|typedef|strevent_t
+)brace
+id|strevent_t
+suffix:semicolon
+r_typedef
+DECL|struct|stdata
+r_struct
+id|stdata
+(brace
+DECL|member|sd_next
+r_struct
+id|stdata
+op_star
+id|sd_next
+suffix:semicolon
+multiline_comment|/* all stdatas are linked together */
+DECL|member|sd_prev
+r_struct
+id|stdata
+op_star
+id|sd_prev
+suffix:semicolon
+DECL|member|sd_siglist
+r_struct
+id|strevent
+op_star
+id|sd_siglist
+suffix:semicolon
+multiline_comment|/* processes to be sent SIGPOLL */
+DECL|member|sd_sigflags
+r_int
+id|sd_sigflags
+suffix:semicolon
+multiline_comment|/* logical OR of all siglist events */
+DECL|typedef|stdata_t
+)brace
+id|stdata_t
+suffix:semicolon
+DECL|macro|I_NREAD
+mdefine_line|#define I_NREAD _IOR(&squot;S&squot;,01, int)
+DECL|macro|I_NREAD_SOLARIS
+mdefine_line|#define I_NREAD_SOLARIS ((&squot;S&squot;&lt;&lt;8)|1)
+DECL|macro|I_FLUSH
+mdefine_line|#define I_FLUSH _IO(&squot;S&squot;,05)
+DECL|macro|I_FLUSH_SOLARIS
+mdefine_line|#define I_FLUSH_SOLARIS ((&squot;S&squot;&lt;&lt;8)|5)
+DECL|macro|FLUSHR
+mdefine_line|#define FLUSHR  1                       /* flush read queue */
+DECL|macro|FLUSHW
+mdefine_line|#define FLUSHW  2                       /* flush write queue */
+DECL|macro|FLUSHRW
+mdefine_line|#define FLUSHRW 3                       /* flush both queues */
+DECL|macro|I_SETSIG
+mdefine_line|#define I_SETSIG _IO(&squot;S&squot;,011)
+DECL|macro|I_SETSIG_SOLARIS
+mdefine_line|#define I_SETSIG_SOLARIS ((&squot;S&squot;&lt;&lt;8)|11)
+DECL|macro|S_INPUT
+mdefine_line|#define S_INPUT         0x01
+DECL|macro|S_HIPRI
+mdefine_line|#define S_HIPRI         0x02           
+DECL|macro|S_OUTPUT
+mdefine_line|#define S_OUTPUT        0x04           
+DECL|macro|S_MSG
+mdefine_line|#define S_MSG           0x08           
+DECL|macro|S_ERROR
+mdefine_line|#define S_ERROR         0x0010         
+DECL|macro|S_HANGUP
+mdefine_line|#define S_HANGUP        0x0020         
+DECL|macro|S_RDNORM
+mdefine_line|#define S_RDNORM        0x0040         
+DECL|macro|S_WRNORM
+mdefine_line|#define S_WRNORM        S_OUTPUT
+DECL|macro|S_RDBAND
+mdefine_line|#define S_RDBAND        0x0080         
+DECL|macro|S_WRBAND
+mdefine_line|#define S_WRBAND        0x0100         
+DECL|macro|S_BANDURG
+mdefine_line|#define S_BANDURG       0x0200         
+DECL|macro|S_ALL
+mdefine_line|#define S_ALL           0x03FF
+DECL|macro|I_GETSIG
+mdefine_line|#define I_GETSIG _IOR(&squot;S&squot;,012,int)
+DECL|macro|I_GETSIG_SOLARIS
+mdefine_line|#define I_GETSIG_SOLARIS ((&squot;S&squot;&lt;&lt;8)|12)
 macro_line|#endif
 eof

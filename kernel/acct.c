@@ -783,6 +783,11 @@ r_int
 r_int
 id|vsize
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
 multiline_comment|/*&n;&t; * First check to see if there is enough free_space to continue&n;&t; * the process accounting system.&n;&t; */
 r_if
 c_cond
@@ -1081,6 +1086,17 @@ c_func
 id|KERNEL_DS
 )paren
 suffix:semicolon
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|file-&gt;f_op
 op_member_access_from_pointer
 id|write
@@ -1103,6 +1119,13 @@ id|acct
 comma
 op_amp
 id|file-&gt;f_pos
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|inode-&gt;i_sem
 )paren
 suffix:semicolon
 id|set_fs

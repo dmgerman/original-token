@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -14,9 +15,11 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
 macro_line|#include &quot;dbri.h&quot;
+macro_line|#if defined(DBRI_ISDN) || defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x200ff
 macro_line|#include &quot;../../isdn/hisax/hisax.h&quot;
 macro_line|#include &quot;../../isdn/hisax/isdnl1.h&quot;
 macro_line|#include &quot;../../isdn/hisax/foreign.h&quot;
+macro_line|#endif
 multiline_comment|/* #define DBRI_DEBUG */
 macro_line|#ifdef DBRI_DEBUG
 DECL|macro|dprintk
@@ -129,8 +132,6 @@ DECL|variable|num_drivers
 r_static
 r_int
 id|num_drivers
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|output_callback_arg
 r_static
@@ -345,6 +346,8 @@ id|unregister_sparcaudio_driver
 c_func
 (paren
 id|drv
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|free_irq
@@ -4076,21 +4079,6 @@ id|drv
 op_member_access_from_pointer
 r_private
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Set the default audio parameters. */
-id|info-&gt;rgain
-op_assign
-l_int|128
-suffix:semicolon
-id|info-&gt;pgain
-op_assign
-l_int|200
-suffix:semicolon
-id|info-&gt;mgain
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -4469,7 +4457,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -4518,7 +4506,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -4576,7 +4564,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -4639,7 +4627,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -4725,7 +4713,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -4800,7 +4788,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -5006,7 +4994,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 )paren
 (brace
@@ -5197,7 +5185,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 op_logical_or
 id|chan
@@ -5467,7 +5455,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 op_logical_or
 id|chan
@@ -5562,7 +5550,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 op_logical_or
 id|chan
@@ -5800,7 +5788,7 @@ r_if
 c_cond
 (paren
 id|dev
-op_ge
+OG
 id|num_drivers
 op_logical_or
 id|chan
@@ -5988,6 +5976,7 @@ op_assign
 id|callback_arg
 suffix:semicolon
 )brace
+macro_line|#if defined(DBRI_ISDN) || defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x200ff
 DECL|variable|dbri_foreign_interface
 r_struct
 id|foreign_interface
@@ -6024,6 +6013,7 @@ c_func
 id|dbri_foreign_interface
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;****************************************************************************&n;**************************** Initialization ********************************&n;****************************************************************************&n;*/
 DECL|function|dbri_attach
 r_static
@@ -6315,6 +6305,8 @@ id|register_sparcaudio_driver
 c_func
 (paren
 id|drv
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -6599,5 +6591,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local Variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

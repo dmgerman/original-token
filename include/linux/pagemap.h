@@ -292,10 +292,6 @@ id|p
 id|page_cache_size
 op_increment
 suffix:semicolon
-id|page-&gt;age
-op_assign
-id|PAGE_AGE_VALUE
-suffix:semicolon
 r_if
 c_cond
 (paren

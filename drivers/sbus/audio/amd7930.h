@@ -3,6 +3,7 @@ macro_line|#ifndef _AMD7930_H_
 DECL|macro|_AMD7930_H_
 mdefine_line|#define _AMD7930_H_
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* Register interface presented to the CPU by the amd7930. */
 DECL|struct|amd7930
 r_struct

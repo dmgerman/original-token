@@ -191,6 +191,15 @@ comma
 op_star
 id|output_next_dma_handle
 suffix:semicolon
+DECL|member|output_dma_size
+DECL|member|output_next_dma_size
+r_volatile
+r_int
+r_int
+id|output_dma_size
+comma
+id|output_next_dma_size
+suffix:semicolon
 multiline_comment|/* Current record buffer. */
 DECL|member|input_ptr
 r_volatile
@@ -203,6 +212,25 @@ r_volatile
 r_int
 r_int
 id|input_size
+suffix:semicolon
+DECL|member|input_dma_handle
+DECL|member|input_next_dma_handle
+r_volatile
+id|__u32
+op_star
+id|input_dma_handle
+comma
+op_star
+id|input_next_dma_handle
+suffix:semicolon
+DECL|member|input_dma_size
+DECL|member|input_next_dma_size
+r_volatile
+r_int
+r_int
+id|input_dma_size
+comma
+id|input_next_dma_size
 suffix:semicolon
 multiline_comment|/* Number of buffers in the pipe. */
 DECL|member|playing_count

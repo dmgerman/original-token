@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.31 1998/08/26 10:32:19 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1998 Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.32 1998/11/18 06:15:20 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996-1998 Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998      Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -4696,6 +4696,14 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|inode-&gt;i_gid
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;i_uid
+op_assign
+l_int|0
+suffix:semicolon
 id|d_add
 c_func
 (paren

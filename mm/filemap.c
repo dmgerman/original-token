@@ -558,16 +558,8 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
-(brace
-id|touch_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -689,7 +681,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_rshift
 (paren
@@ -703,7 +695,7 @@ op_assign
 (paren
 id|limit
 op_lshift
-l_int|2
+l_int|1
 )paren
 op_rshift
 (paren
