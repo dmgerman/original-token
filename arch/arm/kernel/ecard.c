@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#include &lt;asm/arch/irq.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -52,7 +51,7 @@ id|blacklisted_str
 (braket
 )braket
 op_assign
-l_string|&quot;*loader blacklisted - not 32-bit compliant*&quot;
+l_string|&quot;*loader s/w is not 32-bit compliant*&quot;
 suffix:semicolon
 DECL|struct|expcard_blacklist
 r_static
@@ -128,7 +127,7 @@ id|PROD_ALSYS_SCSIATAPI
 comma
 id|noloader
 comma
-l_string|&quot;AlSystems PowerTec SCSI (loader blacklisted)&quot;
+l_string|&quot;AlSystems PowerTec SCSI&quot;
 )brace
 comma
 multiline_comment|/* Unsupported cards with no loader */
@@ -339,6 +338,10 @@ r_int
 id|irqnr
 )paren
 (brace
+id|irqnr
+op_and_assign
+l_int|7
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -412,6 +415,10 @@ r_int
 id|irqnr
 )paren
 (brace
+id|irqnr
+op_and_assign
+l_int|7
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -475,6 +482,10 @@ r_int
 id|fiqnr
 )paren
 (brace
+id|fiqnr
+op_and_assign
+l_int|7
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -548,6 +559,10 @@ r_int
 id|fiqnr
 )paren
 (brace
+id|fiqnr
+op_and_assign
+l_int|7
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -632,11 +647,6 @@ id|called
 op_assign
 l_int|0
 suffix:semicolon
-id|mask_irq
-(paren
-id|IRQ_EXPANSIONCARD
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -716,12 +726,8 @@ suffix:semicolon
 )brace
 )brace
 id|cli
+c_func
 (paren
-)paren
-suffix:semicolon
-id|unmask_irq
-(paren
-id|IRQ_EXPANSIONCARD
 )paren
 suffix:semicolon
 r_if
@@ -1958,14 +1964,9 @@ id|ec-&gt;slot_no
 (brace
 r_case
 l_int|0
-suffix:colon
-r_case
-l_int|1
-suffix:colon
-r_case
-l_int|2
-suffix:colon
-r_case
+dot
+dot
+dot
 l_int|3
 suffix:colon
 r_switch
@@ -2013,31 +2014,21 @@ suffix:semicolon
 macro_line|#ifdef IOCEC4IO_BASE
 r_case
 l_int|4
-suffix:colon
-r_case
-l_int|5
-suffix:colon
-r_case
-l_int|6
-suffix:colon
-r_case
+dot
+dot
+dot
 l_int|7
 suffix:colon
-r_switch
+r_if
 c_cond
 (paren
 id|type
+op_ne
+id|ECARD_IOC
 )paren
-(brace
-r_case
-id|ECARD_MEMC
-suffix:colon
 r_return
 l_int|0
 suffix:semicolon
-r_case
-id|ECARD_IOC
-suffix:colon
 r_return
 id|IOCEC4IO_BASE
 op_plus
@@ -2057,12 +2048,6 @@ op_lshift
 l_int|12
 )paren
 suffix:semicolon
-r_default
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 macro_line|#endif
 macro_line|#ifdef MEMCEC8IO_BASE
 r_case
@@ -2616,6 +2601,10 @@ suffix:semicolon
 id|irqexpansioncard.handler
 op_assign
 id|ecard_irq_expmask
+suffix:semicolon
+id|irqexpansioncard.flags
+op_or_assign
+id|SA_IRQNOMASK
 suffix:semicolon
 id|have_expmask
 op_assign

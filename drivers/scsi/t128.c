@@ -559,7 +559,15 @@ id|NCR5380_hostdata
 suffix:semicolon
 id|instance-&gt;base
 op_assign
+id|phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|base
+)paren
 suffix:semicolon
 id|NCR5380_init
 c_func

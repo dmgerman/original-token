@@ -4644,8 +4644,6 @@ r_int
 r_char
 op_star
 id|data
-comma
-id|value
 suffix:semicolon
 r_int
 id|len
@@ -4658,6 +4656,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#ifdef USLEEP
+r_int
+r_char
+id|value
+suffix:semicolon
+macro_line|#endif
 id|NCR5380_setup
 c_func
 (paren
@@ -6608,11 +6612,11 @@ r_char
 id|tmp
 suffix:semicolon
 r_int
-id|foo
-suffix:semicolon
-r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+id|foo
 suffix:semicolon
 macro_line|#if defined(REAL_DMA_POLL)
 r_int

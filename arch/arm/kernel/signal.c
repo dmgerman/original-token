@@ -14,6 +14,75 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|function|checksignals
+r_void
+id|checksignals
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sigset_t
+op_star
+id|blocked
+op_assign
+op_amp
+id|current-&gt;blocked
+suffix:semicolon
+r_int
+r_int
+id|mask
+op_assign
+id|blocked-&gt;sig
+(braket
+l_int|0
+)braket
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGKILL
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGINT
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGQUIT
+)paren
+suffix:semicolon
+id|mask
+op_and_assign
+id|blocked-&gt;sig
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_complement
+id|mask
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Bad signal mask&bslash;n&quot;
+)paren
+suffix:semicolon
+id|__backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
 DECL|macro|SWI_SYS_SIGRETURN
@@ -590,6 +659,13 @@ op_star
 id|sc
 )paren
 (brace
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -599,6 +675,8 @@ op_amp
 id|sc-&gt;arm_r0
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -608,6 +686,8 @@ op_amp
 id|sc-&gt;arm_r1
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -617,6 +697,8 @@ op_amp
 id|sc-&gt;arm_r2
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -626,6 +708,8 @@ op_amp
 id|sc-&gt;arm_r3
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -635,6 +719,8 @@ op_amp
 id|sc-&gt;arm_r4
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -644,6 +730,8 @@ op_amp
 id|sc-&gt;arm_r5
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -653,6 +741,8 @@ op_amp
 id|sc-&gt;arm_r6
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -662,6 +752,8 @@ op_amp
 id|sc-&gt;arm_r7
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -671,6 +763,8 @@ op_amp
 id|sc-&gt;arm_r8
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -680,6 +774,8 @@ op_amp
 id|sc-&gt;arm_r9
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -689,6 +785,8 @@ op_amp
 id|sc-&gt;arm_r10
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -698,6 +796,8 @@ op_amp
 id|sc-&gt;arm_fp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -707,6 +807,8 @@ op_amp
 id|sc-&gt;arm_ip
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -716,6 +818,8 @@ op_amp
 id|sc-&gt;arm_sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -725,6 +829,8 @@ op_amp
 id|sc-&gt;arm_lr
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -734,8 +840,9 @@ op_amp
 id|sc-&gt;arm_pc
 )paren
 suffix:semicolon
-multiline_comment|/* security! */
 macro_line|#ifdef CONFIG_CPU_32
+id|err
+op_or_assign
 id|__get_user
 c_func
 (paren
@@ -745,8 +852,20 @@ op_amp
 id|sc-&gt;arm_cpsr
 )paren
 suffix:semicolon
-multiline_comment|/* security! */
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|valid_user_regs
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
 multiline_comment|/* send SIGTRAP if we&squot;re single-stepping */
 r_if
 c_cond
@@ -766,7 +885,7 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-id|regs-&gt;ARM_r0
+id|err
 suffix:semicolon
 )brace
 DECL|function|sys_sigreturn
@@ -894,7 +1013,9 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|restore_sigcontext
 c_func
 (paren
@@ -903,19 +1024,25 @@ comma
 op_amp
 id|frame-&gt;sc
 )paren
+)paren
+r_goto
+id|badframe
+suffix:semicolon
+r_return
+id|regs-&gt;ARM_r0
 suffix:semicolon
 id|badframe
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|do_exit
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
+comma
+id|current
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_rt_sigreturn
@@ -1022,7 +1149,9 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|restore_sigcontext
 c_func
 (paren
@@ -1031,23 +1160,29 @@ comma
 op_amp
 id|frame-&gt;uc.uc_mcontext
 )paren
+)paren
+r_goto
+id|badframe
+suffix:semicolon
+r_return
+id|regs-&gt;ARM_r0
 suffix:semicolon
 id|badframe
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|do_exit
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
+comma
+id|current
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|setup_sigcontext
 id|setup_sigcontext
 c_func
@@ -1068,6 +1203,13 @@ r_int
 id|mask
 )paren
 (brace
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r0
@@ -1076,6 +1218,8 @@ op_amp
 id|sc-&gt;arm_r0
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r1
@@ -1084,6 +1228,8 @@ op_amp
 id|sc-&gt;arm_r1
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r2
@@ -1092,6 +1238,8 @@ op_amp
 id|sc-&gt;arm_r2
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r3
@@ -1100,6 +1248,8 @@ op_amp
 id|sc-&gt;arm_r3
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r4
@@ -1108,6 +1258,8 @@ op_amp
 id|sc-&gt;arm_r4
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r5
@@ -1116,6 +1268,8 @@ op_amp
 id|sc-&gt;arm_r5
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r6
@@ -1124,6 +1278,8 @@ op_amp
 id|sc-&gt;arm_r6
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r7
@@ -1132,6 +1288,8 @@ op_amp
 id|sc-&gt;arm_r7
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r8
@@ -1140,6 +1298,8 @@ op_amp
 id|sc-&gt;arm_r8
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r9
@@ -1148,6 +1308,8 @@ op_amp
 id|sc-&gt;arm_r9
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_r10
@@ -1156,6 +1318,8 @@ op_amp
 id|sc-&gt;arm_r10
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_fp
@@ -1164,6 +1328,8 @@ op_amp
 id|sc-&gt;arm_fp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_ip
@@ -1172,6 +1338,8 @@ op_amp
 id|sc-&gt;arm_ip
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_sp
@@ -1180,6 +1348,8 @@ op_amp
 id|sc-&gt;arm_sp
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_lr
@@ -1188,6 +1358,8 @@ op_amp
 id|sc-&gt;arm_lr
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_pc
@@ -1196,8 +1368,9 @@ op_amp
 id|sc-&gt;arm_pc
 )paren
 suffix:semicolon
-multiline_comment|/* security! */
 macro_line|#ifdef CONFIG_CPU_32
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|regs-&gt;ARM_cpsr
@@ -1206,8 +1379,9 @@ op_amp
 id|sc-&gt;arm_cpsr
 )paren
 suffix:semicolon
-multiline_comment|/* security! */
 macro_line|#endif
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|current-&gt;tss.trap_no
@@ -1216,6 +1390,8 @@ op_amp
 id|sc-&gt;trap_no
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|current-&gt;tss.error_code
@@ -1224,6 +1400,8 @@ op_amp
 id|sc-&gt;error_code
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 (paren
 id|mask
@@ -1231,6 +1409,9 @@ comma
 op_amp
 id|sc-&gt;oldmask
 )paren
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 DECL|function|setup_frame
@@ -1266,6 +1447,11 @@ r_int
 r_int
 id|retcode
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 id|frame
 op_assign
 (paren
@@ -1298,6 +1484,8 @@ id|frame
 r_goto
 id|segv_and_exit
 suffix:semicolon
+id|err
+op_or_assign
 id|setup_sigcontext
 c_func
 (paren
@@ -1321,6 +1509,8 @@ OG
 l_int|1
 )paren
 (brace
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1356,7 +1546,6 @@ r_int
 )paren
 id|ka-&gt;sa.sa_restorer
 suffix:semicolon
-multiline_comment|/* security! */
 )brace
 r_else
 (brace
@@ -1369,6 +1558,8 @@ r_int
 op_amp
 id|frame-&gt;retcode
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1385,6 +1576,14 @@ id|frame-&gt;retcode
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|segv_and_exit
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1428,19 +1627,36 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
-multiline_comment|/* security! */
+r_if
+c_cond
+(paren
+id|valid_user_regs
+c_func
+(paren
+id|regs
+)paren
+)paren
 r_return
 suffix:semicolon
 id|segv_and_exit
 suffix:colon
-id|lock_kernel
+r_if
+c_cond
+(paren
+id|sig
+op_eq
+id|SIGSEGV
+)paren
+id|ka-&gt;sa.sa_handler
+op_assign
+id|SIG_DFL
+suffix:semicolon
+id|force_sig
 c_func
 (paren
-)paren
-suffix:semicolon
-id|do_exit
-(paren
 id|SIGSEGV
+comma
+id|current
 )paren
 suffix:semicolon
 )brace
@@ -1481,6 +1697,11 @@ r_int
 r_int
 id|retcode
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 id|frame
 op_assign
 (paren
@@ -1513,6 +1734,8 @@ id|frame
 r_goto
 id|segv_and_exit
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1523,6 +1746,8 @@ op_amp
 id|frame-&gt;pinfo
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1533,6 +1758,8 @@ op_amp
 id|frame-&gt;puc
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1549,6 +1776,8 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/* Clear all the bits of the ucontext we don&squot;t use.  */
+id|err
+op_or_assign
 id|__clear_user
 c_func
 (paren
@@ -1564,6 +1793,8 @@ id|uc_mcontext
 )paren
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|setup_sigcontext
 c_func
 (paren
@@ -1579,6 +1810,8 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1611,7 +1844,6 @@ r_int
 )paren
 id|ka-&gt;sa.sa_restorer
 suffix:semicolon
-multiline_comment|/* security! */
 )brace
 r_else
 (brace
@@ -1624,6 +1856,8 @@ r_int
 op_amp
 id|frame-&gt;retcode
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1640,6 +1874,14 @@ id|frame-&gt;retcode
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|segv_and_exit
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1683,19 +1925,36 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
-multiline_comment|/* security! */
+r_if
+c_cond
+(paren
+id|valid_user_regs
+c_func
+(paren
+id|regs
+)paren
+)paren
 r_return
 suffix:semicolon
 id|segv_and_exit
 suffix:colon
-id|lock_kernel
+r_if
+c_cond
+(paren
+id|sig
+op_eq
+id|SIGSEGV
+)paren
+id|ka-&gt;sa.sa_handler
+op_assign
+id|SIG_DFL
+suffix:semicolon
+id|force_sig
 c_func
 (paren
-)paren
-suffix:semicolon
-id|do_exit
-(paren
 id|SIGSEGV
+comma
+id|current
 )paren
 suffix:semicolon
 )brace

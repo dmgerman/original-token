@@ -393,24 +393,50 @@ mdefine_line|#define save_flags(x) __save_flags(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
 macro_line|#endif
-DECL|macro|_set_gate
-mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %2,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;d&quot; ((char *) (addr)),&quot;a&quot; (__KERNEL_CS &lt;&lt; 16) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
-DECL|macro|set_intr_gate
-mdefine_line|#define set_intr_gate(n,addr) &bslash;&n;&t;_set_gate(idt+(n),14,0,addr)
-DECL|macro|set_trap_gate
-mdefine_line|#define set_trap_gate(n,addr) &bslash;&n;&t;_set_gate(idt+(n),15,0,addr)
-DECL|macro|set_system_gate
-mdefine_line|#define set_system_gate(n,addr) &bslash;&n;&t;_set_gate(idt+(n),15,3,addr)
-DECL|macro|set_call_gate
-mdefine_line|#define set_call_gate(a,addr) &bslash;&n;&t;_set_gate(a,12,3,addr)
-DECL|macro|_set_seg_desc
-mdefine_line|#define _set_seg_desc(gate_addr,type,dpl,base,limit) {&bslash;&n;&t;*((gate_addr)+1) = ((base) &amp; 0xff000000) | &bslash;&n;&t;&t;(((base) &amp; 0x00ff0000)&gt;&gt;16) | &bslash;&n;&t;&t;((limit) &amp; 0xf0000) | &bslash;&n;&t;&t;((dpl)&lt;&lt;13) | &bslash;&n;&t;&t;(0x00408000) | &bslash;&n;&t;&t;((type)&lt;&lt;8); &bslash;&n;&t;*(gate_addr) = (((base) &amp; 0x0000ffff)&lt;&lt;16) | &bslash;&n;&t;&t;((limit) &amp; 0x0ffff); }
-DECL|macro|_set_tssldt_desc
-mdefine_line|#define _set_tssldt_desc(n,addr,limit,type) &bslash;&n;__asm__ __volatile__ (&quot;movw %3,0(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%ax,2(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%al,4(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %4,5(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb $0,6(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%ah,7(%2)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%eax&quot; &bslash;&n;&t;: &quot;=m&quot;(*(n)) : &quot;a&quot; (addr), &quot;r&quot;(n), &quot;ir&quot;(limit), &quot;i&quot;(type))
-DECL|macro|set_tss_desc
-mdefine_line|#define set_tss_desc(n,addr) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),235,0x89)
-DECL|macro|set_ldt_desc
-mdefine_line|#define set_ldt_desc(n,addr,size) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),((size &lt;&lt; 3) - 1),0x82)
+r_extern
+r_void
+id|set_intr_gate
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+op_star
+id|addr
+)paren
+suffix:semicolon
+r_void
+id|set_ldt_desc
+c_func
+(paren
+r_void
+op_star
+id|n
+comma
+r_void
+op_star
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_void
+id|set_tss_desc
+c_func
+(paren
+r_void
+op_star
+id|n
+comma
+r_void
+op_star
+id|addr
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
 r_extern
 r_struct

@@ -616,7 +616,7 @@ mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE&t;0xfffffc000030A000
+mdefine_line|#define ZERO_PAGE&t;(PAGE_OFFSET+0x30A000)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -629,6 +629,17 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
+multiline_comment|/*&n; * On certain platforms whose physical address space can overlap KSEG,&n; * namely EV6 and above, we must re-twiddle the physaddr to restore the&n; * correct high-order bits.&n; */
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) &amp;&amp; defined(USE_48_BIT_KSEG)
+macro_line|#error &quot;EV6-only feature in a generic kernel&quot;
+macro_line|#endif
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || &bslash;&n;    (defined(CONFIG_ALPHA_EV6) &amp;&amp; !defined(USE_48_BIT_KSEG))
+DECL|macro|PHYS_TWIDDLE
+mdefine_line|#define PHYS_TWIDDLE(phys) &bslash;&n;  ((((phys) &amp; 0xc0000000000UL) == 0x40000000000UL) &bslash;&n;  ? ((phys) ^= 0xc0000000000UL) : (phys))
+macro_line|#else
+DECL|macro|PHYS_TWIDDLE
+mdefine_line|#define PHYS_TWIDDLE(phys) (phys)
+macro_line|#endif
 multiline_comment|/*&n; * Conversion functions:  convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|function|mk_pte
 r_extern
@@ -703,7 +714,11 @@ id|pte
 )paren
 op_assign
 (paren
+id|PHYS_TWIDDLE
+c_func
+(paren
 id|physpage
+)paren
 op_lshift
 (paren
 l_int|32

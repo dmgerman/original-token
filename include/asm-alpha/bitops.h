@@ -723,6 +723,9 @@ id|word
 )paren
 )paren
 suffix:semicolon
+r_return
+id|result
+suffix:semicolon
 macro_line|#else
 r_int
 r_int

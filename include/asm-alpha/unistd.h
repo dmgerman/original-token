@@ -45,8 +45,8 @@ DECL|macro|__NR_getxpid
 mdefine_line|#define __NR_getxpid&t;&t; 20
 DECL|macro|__NR_osf_mount
 mdefine_line|#define __NR_osf_mount&t;&t; 21
-DECL|macro|__NR_osf_umount
-mdefine_line|#define __NR_osf_umount&t;&t; 22
+DECL|macro|__NR_umount
+mdefine_line|#define __NR_umount&t;&t; 22
 DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid&t;&t; 23
 DECL|macro|__NR_getxuid
@@ -480,8 +480,8 @@ DECL|macro|__NR__sysctl
 mdefine_line|#define __NR__sysctl&t;&t;319
 DECL|macro|__NR_idle
 mdefine_line|#define __NR_idle&t;&t;320
-DECL|macro|__NR_umount
-mdefine_line|#define __NR_umount&t;&t;321
+DECL|macro|__NR_oldumount
+mdefine_line|#define __NR_oldumount&t;&t;321
 DECL|macro|__NR_swapon
 mdefine_line|#define __NR_swapon&t;&t;322
 DECL|macro|__NR_times
@@ -683,33 +683,6 @@ r_void
 id|sys_idle
 c_func
 (paren
-)paren
-suffix:semicolon
-)brace
-r_extern
-r_int
-id|sys_setup
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-DECL|function|setup
-r_static
-r_inline
-r_int
-id|setup
-c_func
-(paren
-r_int
-id|magic
-)paren
-(brace
-r_return
-id|sys_setup
-c_func
-(paren
-id|magic
 )paren
 suffix:semicolon
 )brace

@@ -9501,10 +9501,6 @@ id|dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;metric
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;mtu
 op_assign
 id|DEFAULT_STRIP_MTU

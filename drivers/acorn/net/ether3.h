@@ -104,6 +104,15 @@ DECL|macro|CFG1_LOCBUFMEM
 mdefine_line|#define CFG1_LOCBUFMEM&t;&t;0x0008
 DECL|macro|CFG1_INTVECTOR
 mdefine_line|#define CFG1_INTVECTOR&t;&t;0x0009
+DECL|macro|CFG1_RECVSPECONLY
+mdefine_line|#define CFG1_RECVSPECONLY&t;0x0000
+DECL|macro|CFG1_RECVSPECBROAD
+mdefine_line|#define CFG1_RECVSPECBROAD&t;0x4000
+DECL|macro|CFG1_RECVSPECBRMULTI
+mdefine_line|#define CFG1_RECVSPECBRMULTI&t;0x8000
+DECL|macro|CFG1_RECVPROMISC
+mdefine_line|#define CFG1_RECVPROMISC&t;0xC000
+multiline_comment|/* The following aren&squot;t in 8004 */
 DECL|macro|CFG1_DMABURSTCONT
 mdefine_line|#define CFG1_DMABURSTCONT&t;0x0000
 DECL|macro|CFG1_DMABURST800NS
@@ -132,14 +141,6 @@ DECL|macro|CFG1_RECVCOMPSTAT4
 mdefine_line|#define CFG1_RECVCOMPSTAT4&t;0x1000
 DECL|macro|CFG1_RECVCOMPSTAT5
 mdefine_line|#define CFG1_RECVCOMPSTAT5&t;0x2000
-DECL|macro|CFG1_RECVSPECONLY
-mdefine_line|#define CFG1_RECVSPECONLY&t;0x0000
-DECL|macro|CFG1_RECVSPECBROAD
-mdefine_line|#define CFG1_RECVSPECBROAD&t;0x4000
-DECL|macro|CFG1_RECVSPECBRMULTI
-mdefine_line|#define CFG1_RECVSPECBRMULTI&t;0x8000
-DECL|macro|CFG1_RECVPROMISC
-mdefine_line|#define CFG1_RECVPROMISC&t;0xC000
 multiline_comment|/* configuration register 2 */
 DECL|macro|REG_CONFIG2
 mdefine_line|#define REG_CONFIG2&t;&t;(dev-&gt;base_addr + 0x20)
@@ -218,6 +219,8 @@ DECL|macro|RXSTAT_SHORTPACKET
 mdefine_line|#define RXSTAT_SHORTPACKET&t;(1 &lt;&lt; 11)
 DECL|macro|RXSTAT_DONE
 mdefine_line|#define RXSTAT_DONE&t;&t;(1 &lt;&lt; 15)
+DECL|macro|TX_START
+mdefine_line|#define TX_START&t;0x0000
 DECL|macro|TX_END
 mdefine_line|#define TX_END&t;&t;0x6000
 DECL|macro|RX_START

@@ -10,6 +10,8 @@ DECL|macro|EV4_MAX_ASN
 mdefine_line|#define EV4_MAX_ASN 63
 DECL|macro|EV5_MAX_ASN
 mdefine_line|#define EV5_MAX_ASN 127
+DECL|macro|EV6_MAX_ASN
+mdefine_line|#define EV6_MAX_ASN 255
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|MAX_ASN
 macro_line|# define MAX_ASN&t;(alpha_mv.max_asn)
@@ -17,9 +19,12 @@ macro_line|#else
 macro_line|# ifdef CONFIG_ALPHA_EV4
 DECL|macro|MAX_ASN
 macro_line|#  define MAX_ASN&t;EV4_MAX_ASN
-macro_line|# else
+macro_line|# elif defined(CONFIG_ALPHA_EV5)
 DECL|macro|MAX_ASN
 macro_line|#  define MAX_ASN&t;EV5_MAX_ASN
+macro_line|# else
+DECL|macro|MAX_ASN
+macro_line|#  define MAX_ASN&t;EV6_MAX_ASN
 macro_line|# endif
 macro_line|#endif
 macro_line|#ifdef __SMP__
@@ -246,7 +251,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;call_pal %2&quot;
+l_string|&quot;call_pal %2 #__reload_tss&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/smp.c&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -35,20 +36,15 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-multiline_comment|/* Processor holding kernel spinlock */
-DECL|variable|klock_info
-id|klock_info_t
-id|klock_info
-op_assign
-(brace
-id|KLOCK_CLEAR
-comma
-l_int|0
-)brace
-suffix:semicolon
 DECL|variable|ticker_lock
 id|spinlock_t
 id|ticker_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
+DECL|variable|kernel_flag
+id|spinlock_t
+id|kernel_flag
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
@@ -195,16 +191,6 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 r_extern
-r_int
-id|cpu_idle
-c_func
-(paren
-r_void
-op_star
-id|unused
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|calibrate_delay
 c_func
@@ -214,24 +200,9 @@ r_void
 suffix:semicolon
 r_extern
 r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
-r_extern
-r_struct
 id|thread_struct
 op_star
 id|original_pcb_ptr
-suffix:semicolon
-r_extern
-r_void
-id|__start_cpu
-c_func
-(paren
-r_int
-r_int
-)paren
 suffix:semicolon
 r_static
 r_void
@@ -625,7 +596,6 @@ id|current
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
 id|cpu_idle
 c_func
 (paren
@@ -739,10 +709,6 @@ op_assign
 id|boot_cpu_id
 suffix:semicolon
 multiline_comment|/* ??? */
-id|klock_info.akp
-op_assign
-id|boot_cpu_id
-suffix:semicolon
 id|smp_store_cpu_info
 c_func
 (paren
@@ -3185,15 +3151,13 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;CPUs probed %d active %d map 0x%x AKP %d&bslash;n&quot;
+l_string|&quot;CPUs probed %d active %d map 0x%x&bslash;n&quot;
 comma
 id|smp_num_probed
 comma
 id|smp_num_cpus
 comma
 id|cpu_present_map
-comma
-id|klock_info.akp
 )paren
 suffix:semicolon
 )brace
@@ -3298,34 +3262,6 @@ id|timeout
 op_assign
 l_int|10000
 suffix:semicolon
-macro_line|#if 1
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kernel_lock_held
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;flush_tlb_all: kernel_flag %d (cpu %d akp %d)!&bslash;n&quot;
-comma
-id|klock_info.kernel_flag
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|klock_info.akp
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ipi_msg_flush_tb.flush_tb_mask
 op_assign
 id|to_whom
@@ -3419,34 +3355,6 @@ id|timeout
 op_assign
 l_int|10000
 suffix:semicolon
-macro_line|#if 1
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kernel_lock_held
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;flush_tlb_mm: kernel_flag %d (cpu %d akp %d)!&bslash;n&quot;
-comma
-id|klock_info.kernel_flag
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|klock_info.akp
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ipi_msg_flush_tb.p.flush_mm
 op_assign
 id|mm
@@ -3575,31 +3483,6 @@ id|timeout
 op_assign
 l_int|10000
 suffix:semicolon
-macro_line|#if 1
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kernel_lock_held
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;flush_tlb_page: kernel_flag %d (cpu %d akp %d)!&bslash;n&quot;
-comma
-id|klock_info.kernel_flag
-comma
-id|cpu
-comma
-id|klock_info.akp
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ipi_msg_flush_tb.p.flush_vma
 op_assign
 id|vma
@@ -3662,15 +3545,13 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;flush_tlb_page: STUCK on CPU %d [0x%x,0x%lx,%d,%d]&bslash;n&quot;
+l_string|&quot;flush_tlb_page: STUCK on CPU %d [0x%x,0x%lx,%d]&bslash;n&quot;
 comma
 id|cpu
 comma
 id|ipi_msg_flush_tb.flush_tb_mask
 comma
 id|addr
-comma
-id|klock_info.akp
 comma
 id|global_irq_holder
 )paren
@@ -3726,21 +3607,6 @@ suffix:semicolon
 r_int
 id|timeout
 suffix:semicolon
-r_int
-r_int
-id|where
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov $26, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|where
-)paren
-)paren
-suffix:semicolon
 id|timeout
 op_assign
 l_int|10000
@@ -3758,36 +3624,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 1
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kernel_lock_held
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;flush_tlb_range: kernel_flag %d (cpu %d akp %d) @ 0x%lx&bslash;n&quot;
-comma
-id|klock_info.kernel_flag
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|klock_info.akp
-comma
-id|where
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|ipi_msg_flush_tb.p.flush_mm
 op_assign
 id|mm
@@ -3865,179 +3701,11 @@ c_func
 l_int|100
 )paren
 suffix:semicolon
-suffix:semicolon
 multiline_comment|/* Wait for all clear from other CPUs. */
 )brace
 macro_line|#endif
 )brace
-macro_line|#ifdef DEBUG_KERNEL_LOCK
-DECL|function|___lock_kernel
-r_void
-id|___lock_kernel
-c_func
-(paren
-id|klock_info_t
-op_star
-id|klip
-comma
-r_int
-id|cpu
-comma
-r_int
-id|ipl
-)paren
-(brace
-r_int
-id|regx
-suffix:semicolon
-r_int
-id|stuck_lock
-suffix:semicolon
-r_int
-r_int
-id|inline_pc
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov $26, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|inline_pc
-)paren
-)paren
-suffix:semicolon
-id|try_again
-suffix:colon
-id|stuck_lock
-op_assign
-l_int|1
-op_lshift
-l_int|26
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;1:&t;ldl_l&t;%1,%0;&quot;
-l_string|&quot;&t;blbs&t;%1,6f;&quot;
-l_string|&quot;&t;or&t;%1,1,%1;&quot;
-l_string|&quot;&t;stl_c&t;%1,%0;&quot;
-l_string|&quot;&t;beq&t;%1,6f;&quot;
-l_string|&quot;4:&t;mb&bslash;n&quot;
-l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;6:&t;mov&t;%5,$16;&quot;
-l_string|&quot;&t;call_pal %4;&quot;
-l_string|&quot;7:&t;ldl&t;%1,%0;&quot;
-l_string|&quot;&t;blt&t;%2,4b&t;# debug&bslash;n&quot;
-l_string|&quot;&t;subl&t;%2,1,%2&t;# debug&bslash;n&quot;
-l_string|&quot;&t;blbs&t;%1,7b;&quot;
-l_string|&quot;&t;bis&t;$31,7,$16;&quot;
-l_string|&quot;&t;call_pal %4;&quot;
-l_string|&quot;&t;br&t;1b&bslash;n&quot;
-l_string|&quot;.previous&quot;
-suffix:colon
-l_string|&quot;=m,=m&quot;
-(paren
-id|__dummy_lock
-c_func
-(paren
-id|klip
-)paren
-)paren
-comma
-l_string|&quot;=&amp;r,=&amp;r&quot;
-(paren
-id|regx
-)paren
-comma
-l_string|&quot;=&amp;r,=&amp;r&quot;
-(paren
-id|stuck_lock
-)paren
-suffix:colon
-l_string|&quot;0,0&quot;
-(paren
-id|__dummy_lock
-c_func
-(paren
-id|klip
-)paren
-)paren
-comma
-l_string|&quot;i,i&quot;
-(paren
-id|PAL_swpipl
-)paren
-comma
-l_string|&quot;i,r&quot;
-(paren
-id|ipl
-)paren
-comma
-l_string|&quot;2,2&quot;
-(paren
-id|stuck_lock
-)paren
-suffix:colon
-l_string|&quot;$0&quot;
-comma
-l_string|&quot;$1&quot;
-comma
-l_string|&quot;$16&quot;
-comma
-l_string|&quot;$22&quot;
-comma
-l_string|&quot;$23&quot;
-comma
-l_string|&quot;$24&quot;
-comma
-l_string|&quot;$25&quot;
-comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stuck_lock
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;___kernel_lock stuck at %lx(%d) held %lx(%d)&bslash;n&quot;
-comma
-id|inline_pc
-comma
-id|cpu
-comma
-id|klip-&gt;pc
-comma
-id|klip-&gt;cpu
-)paren
-suffix:semicolon
-r_goto
-id|try_again
-suffix:semicolon
-)brace
-r_else
-(brace
-id|klip-&gt;pc
-op_assign
-id|inline_pc
-suffix:semicolon
-id|klip-&gt;cpu
-op_assign
-id|cpu
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-macro_line|#ifdef DEBUG_SPINLOCK
+macro_line|#if DEBUG_SPINLOCK
 DECL|function|spin_lock
 r_void
 id|spin_lock
@@ -4054,19 +3722,14 @@ suffix:semicolon
 r_int
 id|stuck
 suffix:semicolon
-r_int
-r_int
+r_void
+op_star
 id|inline_pc
-suffix:semicolon
-id|__asm__
+op_assign
+id|__builtin_return_address
 c_func
 (paren
-l_string|&quot;mov $26, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|inline_pc
-)paren
+l_int|0
 )paren
 suffix:semicolon
 id|try_again
@@ -4132,23 +3795,15 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;spinlock stuck at %lx (cur=%lx, own=%lx)&bslash;n&quot;
+l_string|&quot;spinlock stuck at %p (cur=%p, own=%p, prev=%p)&bslash;n&quot;
 comma
 id|inline_pc
 comma
-macro_line|#if 0
-id|lock-&gt;previous
-comma
-id|lock-&gt;task
-macro_line|#else
-(paren
-r_int
-r_int
-)paren
 id|current
 comma
 id|lock-&gt;task
-macro_line|#endif
+comma
+id|lock-&gt;previous
 )paren
 suffix:semicolon
 r_goto
@@ -4159,24 +3814,16 @@ r_else
 (brace
 id|lock-&gt;previous
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|inline_pc
 suffix:semicolon
 id|lock-&gt;task
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|current
 suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* DEBUG_SPINLOCK */
-macro_line|#ifdef DEBUG_RWLOCK
+macro_line|#if DEBUG_RWLOCK
 DECL|function|write_lock
 r_void
 id|write_lock
@@ -4197,19 +3844,14 @@ id|stuck_lock
 comma
 id|stuck_reader
 suffix:semicolon
-r_int
-r_int
+r_void
+op_star
 id|inline_pc
-suffix:semicolon
-id|__asm__
+op_assign
+id|__builtin_return_address
 c_func
 (paren
-l_string|&quot;mov $26, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|inline_pc
-)paren
+l_int|0
 )paren
 suffix:semicolon
 id|try_again
@@ -4230,24 +3872,24 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l&t;%1,%0;&quot;
-l_string|&quot;&t;blbs&t;%1,6f;&quot;
-l_string|&quot;&t;or&t;%1,1,%2;&quot;
-l_string|&quot;&t;stl_c&t;%2,%0;&quot;
-l_string|&quot;&t;beq&t;%2,6f;&quot;
-l_string|&quot;&t;blt&t;%1,8f;&quot;
+l_string|&quot;1:&t;ldl_l&t;%1,%0&bslash;n&quot;
+l_string|&quot;&t;blbs&t;%1,6f&bslash;n&quot;
+l_string|&quot;&t;or&t;%1,1,%2&bslash;n&quot;
+l_string|&quot;&t;stl_c&t;%2,%0&bslash;n&quot;
+l_string|&quot;&t;beq&t;%2,6f&bslash;n&quot;
+l_string|&quot;&t;blt&t;%1,8f&bslash;n&quot;
 l_string|&quot;4:&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;6:&t;ldl&t;%1,%0;&quot;
+l_string|&quot;6:&t;ldl&t;%1,%0&bslash;n&quot;
 l_string|&quot;&t;blt&t;%3,4b&t;# debug&bslash;n&quot;
 l_string|&quot;&t;subl&t;%3,1,%3&t;# debug&bslash;n&quot;
-l_string|&quot;&t;blbs&t;%1,6b;&quot;
-l_string|&quot;&t;br&t;1b;&quot;
-l_string|&quot;8:&t;ldl&t;%1,%0;&quot;
+l_string|&quot;&t;blbs&t;%1,6b&bslash;n&quot;
+l_string|&quot;&t;br&t;1b&bslash;n&quot;
+l_string|&quot;8:&t;ldl&t;%1,%0&bslash;n&quot;
 l_string|&quot;&t;blt&t;%4,4b&t;# debug&bslash;n&quot;
 l_string|&quot;&t;subl&t;%4,1,%4&t;# debug&bslash;n&quot;
-l_string|&quot;&t;blt&t;%1,8b;&quot;
-l_string|&quot;9:&t;br&t;4b&bslash;n&quot;
+l_string|&quot;&t;blt&t;%1,8b&bslash;n&quot;
+l_string|&quot;&t;br&t;4b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=m&quot;
@@ -4310,7 +3952,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;write_lock stuck at %lx&bslash;n&quot;
+l_string|&quot;write_lock stuck at %p&bslash;n&quot;
 comma
 id|inline_pc
 )paren
@@ -4330,7 +3972,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;write_lock stuck on readers at %lx&bslash;n&quot;
+l_string|&quot;write_lock stuck on readers at %p&bslash;n&quot;
 comma
 id|inline_pc
 )paren
@@ -4340,9 +3982,9 @@ id|try_again
 suffix:semicolon
 )brace
 )brace
-DECL|function|_read_lock
+DECL|function|read_lock
 r_void
-id|_read_lock
+id|read_lock
 c_func
 (paren
 id|rwlock_t
@@ -4356,19 +3998,14 @@ suffix:semicolon
 r_int
 id|stuck_lock
 suffix:semicolon
-r_int
-r_int
+r_void
+op_star
 id|inline_pc
-suffix:semicolon
-id|__asm__
+op_assign
+id|__builtin_return_address
 c_func
 (paren
-l_string|&quot;mov $26, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|inline_pc
-)paren
+l_int|0
 )paren
 suffix:semicolon
 id|try_again
@@ -4442,7 +4079,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;_read_lock stuck at %lx&bslash;n&quot;
+l_string|&quot;read_lock stuck at %p&bslash;n&quot;
 comma
 id|inline_pc
 )paren

@@ -20,6 +20,11 @@ r_char
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA-able buffer */
+DECL|member|this_size
+r_int
+id|this_size
+suffix:semicolon
+multiline_comment|/* allocated size of the structure */
 DECL|member|buffer_size
 r_int
 id|buffer_size
@@ -59,16 +64,33 @@ r_char
 op_star
 id|b_data
 suffix:semicolon
-DECL|member|orig_size
+DECL|member|use_sg
 r_int
-id|orig_size
-suffix:semicolon
-DECL|member|orig_b_data
 r_int
-r_char
-op_star
-id|orig_b_data
+id|use_sg
 suffix:semicolon
+multiline_comment|/* zero or number of segments for this adapter */
+DECL|member|sg_segs
+r_int
+r_int
+id|sg_segs
+suffix:semicolon
+multiline_comment|/* total number of allocated segments */
+DECL|member|orig_sg_segs
+r_int
+r_int
+id|orig_sg_segs
+suffix:semicolon
+multiline_comment|/* number of segments allocated at first try */
+DECL|member|sg
+r_struct
+id|scatterlist
+id|sg
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* MUST BE last item */
 DECL|typedef|ST_buffer
 )brace
 id|ST_buffer

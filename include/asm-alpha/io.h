@@ -10,13 +10,12 @@ mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
 multiline_comment|/*&n; * Virtual -&gt; physical identity mapping starts at this offset&n; */
-multiline_comment|/* XXX: Do we need to conditionalize on this?  */
 macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|IDENT_ADDR
-mdefine_line|#define IDENT_ADDR&t;(0xffff800000000000UL)
+mdefine_line|#define IDENT_ADDR     0xffff800000000000
 macro_line|#else
 DECL|macro|IDENT_ADDR
-mdefine_line|#define IDENT_ADDR&t;(0xfffffc0000000000UL)
+mdefine_line|#define IDENT_ADDR     0xfffffc0000000000
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * We try to avoid hae updates (thus the cache), but when we&n; * do need to update the hae, we need to do it atomically, so&n; * that any interrupts wouldn&squot;t get confused with the hae&n; * register not being up-to-date with respect to the hardware&n; * value.&n; */
@@ -110,8 +109,9 @@ op_star
 id|address
 )paren
 (brace
+multiline_comment|/* Conditionalize this on the CPU?  This here is 40 bits,&n;&t;   whereas EV4 only supports 34.  But KSEG is farther out&n;&t;   so it shouldn&squot;t _really_ matter.  */
 r_return
-l_int|0xffffffffUL
+l_int|0xffffffffffUL
 op_amp
 (paren
 r_int
@@ -787,6 +787,8 @@ DECL|macro|RTC_PORT
 macro_line|# define RTC_PORT(x)&t;((x) + alpha_mv.rtc_port)
 DECL|macro|RTC_ADDR
 macro_line|# define RTC_ADDR(x)&t;((x) | alpha_mv.rtc_addr)
+DECL|macro|RTC_ALWAYS_BCD
+macro_line|# define RTC_ALWAYS_BCD&t;(alpha_mv.rtc_bcd)
 macro_line|#else
 macro_line|# ifdef CONFIG_ALPHA_JENSEN
 DECL|macro|RTC_PORT
@@ -799,9 +801,14 @@ macro_line|#  define RTC_PORT(x)&t;(0x70 + (x))
 DECL|macro|RTC_ADDR
 macro_line|#  define RTC_ADDR(x)&t;(0x80 | (x))
 macro_line|# endif
-macro_line|#endif
+macro_line|# ifdef CONFIG_ALPHA_RUFFIAN
 DECL|macro|RTC_ALWAYS_BCD
-mdefine_line|#define RTC_ALWAYS_BCD&t;0
+macro_line|#  define RTC_ALWAYS_BCD&t;1
+macro_line|# else
+DECL|macro|RTC_ALWAYS_BCD
+macro_line|#  define RTC_ALWAYS_BCD&t;0
+macro_line|# endif
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ALPHA_IO_H */
 eof

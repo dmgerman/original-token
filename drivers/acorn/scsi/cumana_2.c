@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/cumana_2.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;0.0.2&t;Updated &amp; added DMA support&n; *  27-06-1998&t;RMK&t;&t;Changed asm/delay.h to linux/delay.h&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/cumana_2.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;0.0.2&t;Updated &amp; added DMA support&n; *  27-06-1998&t;RMK&t;&t;Changed asm/delay.h to linux/delay.h&n; *  18-08-1998&t;RMK&t;0.0.3&t;Fixed synchronous transfer depth&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -23,7 +23,7 @@ mdefine_line|#define CUMANASCSI2_XTALFREQ&t;&t;40
 DECL|macro|CUMANASCSI2_ASYNC_PERIOD
 mdefine_line|#define CUMANASCSI2_ASYNC_PERIOD&t;200
 DECL|macro|CUMANASCSI2_SYNC_DEPTH
-mdefine_line|#define CUMANASCSI2_SYNC_DEPTH&t;&t;8
+mdefine_line|#define CUMANASCSI2_SYNC_DEPTH&t;&t;7
 multiline_comment|/*&n; * List of devices that the driver will recognise&n; */
 DECL|macro|CUMANASCSI2_LIST
 mdefine_line|#define CUMANASCSI2_LIST&t;&t;{ MANU_CUMANA, PROD_CUMANA_SCSI_2 }
@@ -69,7 +69,7 @@ mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;2
+mdefine_line|#define VER_PATCH&t;3
 DECL|variable|ecs
 r_static
 r_struct
@@ -368,43 +368,26 @@ id|direction
 op_eq
 id|DMA_OUT
 )paren
-(brace
-r_for
-c_loop
+id|dma_cache_wback
+c_func
 (paren
-id|page
-op_assign
 (paren
 r_int
 r_int
 )paren
 id|addr
-suffix:semicolon
-id|len
-OG
-l_int|0
-suffix:semicolon
-id|page
-op_add_assign
-id|PAGE_SIZE
 comma
-id|len
-op_sub_assign
-id|PAGE_SIZE
-)paren
-id|flush_page_to_ram
-c_func
 (paren
-id|page
+r_int
+r_int
+)paren
+id|len
 )paren
 suffix:semicolon
-)brace
 r_else
-id|flush_cache_range
+id|dma_cache_inv
 c_func
 (paren
-id|current-&gt;mm
-comma
 (paren
 r_int
 r_int
@@ -415,8 +398,6 @@ comma
 r_int
 r_int
 )paren
-id|addr
-op_plus
 id|len
 )paren
 suffix:semicolon

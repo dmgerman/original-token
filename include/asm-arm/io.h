@@ -5,6 +5,7 @@ mdefine_line|#define __ASM_ARM_IO_H
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/arch/mmu.h&gt;
 macro_line|#include &lt;asm/arch/io.h&gt;
+macro_line|#include &lt;asm/proc/io.h&gt;
 multiline_comment|/* unsigned long virt_to_phys(void *x) */
 DECL|macro|virt_to_phys
 mdefine_line|#define virt_to_phys(x)&t;&t;(__virt_to_phys((unsigned long)(x)))

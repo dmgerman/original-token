@@ -186,6 +186,38 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|device_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|binfmt_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_initmem
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|filesystem_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_ARCH_ACORN
 r_extern
 r_void
@@ -4700,15 +4732,15 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|check_bugs
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
+)paren
+suffix:semicolon
+id|check_bugs
+c_func
+(paren
 )paren
 suffix:semicolon
 id|smp_init
@@ -4716,6 +4748,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Ok, the machine is now initialized. None of the devices&n;&t; * have been touched yet, but the CPU subsystem is up and&n;&t; * running, and memory management works.&n;&t; *&n;&t; * Now we can finally start doing some real work..&n;&t; */
 macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
 multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
 id|mtrr_init
@@ -4911,15 +4944,14 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|init
+DECL|function|do_basic_setup
 r_static
-r_int
-id|init
+r_void
+id|__init
+id|do_basic_setup
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
@@ -5023,10 +5055,28 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-id|setup
+multiline_comment|/* Set up devices .. */
+id|device_setup
 c_func
 (paren
-l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* .. executable formats .. */
+id|binfmt_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* .. filesystems .. */
+id|filesystem_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Mount the root filesystem.. */
+id|mount_root
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_UMSDOS_FS
@@ -5176,10 +5226,27 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-id|setup
+)brace
+DECL|function|init
+r_static
+r_int
+id|init
 c_func
 (paren
-l_int|1
+r_void
+op_star
+id|unused
+)paren
+(brace
+id|do_basic_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Ok, we have completed the initial bootup, and&n;&t; * we&squot;re essentially up and running. Get rid of the&n;&t; * initmem segments and start the user-mode stuff..&n;&t; */
+id|free_initmem
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

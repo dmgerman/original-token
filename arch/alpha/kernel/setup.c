@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_ALPHA_LCA etc */
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -20,6 +19,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -129,6 +131,10 @@ DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE&t;&t;((char*)(PARAM + 0x0000))
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE&t;256
+DECL|macro|INITRD_START
+mdefine_line|#define INITRD_START&t;&t;(*(unsigned long *) (PARAM+0x100))
+DECL|macro|INITRD_SIZE
+mdefine_line|#define INITRD_SIZE&t;&t;(*(unsigned long *) (PARAM+0x108))
 DECL|variable|command_line
 r_static
 r_char
@@ -176,215 +182,6 @@ suffix:colon
 l_int|16
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
-multiline_comment|/* It is (normally) only counter 1 that presents config problems, so&n;   provide this support function to do the rest of the job.  */
-r_void
-r_inline
-DECL|function|init_pit_rest
-id|init_pit_rest
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#if 0
-multiline_comment|/* Leave refresh timer alone---nobody should depend on a&n;&t;   particular value anyway. */
-id|outb
-c_func
-(paren
-l_int|0x54
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 1: refresh timer */
-id|outb
-c_func
-(paren
-l_int|0x18
-comma
-l_int|0x41
-)paren
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-l_int|0xb6
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 2: speaker */
-id|outb
-c_func
-(paren
-l_int|0x31
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x13
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|CMOS_READ
-c_func
-(paren
-id|RTC_FREQ_SELECT
-)paren
-op_amp
-l_int|0x3f
-)paren
-op_ne
-l_int|0x26
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Setting RTC_FREQ to 1024 Hz&bslash;n&quot;
-)paren
-suffix:semicolon
-id|CMOS_WRITE
-c_func
-(paren
-l_int|0x26
-comma
-id|RTC_FREQ_SELECT
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#ifdef CONFIG_RTC
-r_static
-r_inline
-r_void
-DECL|function|rtc_init_pit
-id|rtc_init_pit
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* Setup interval timer if /dev/rtc is being used */
-id|outb
-c_func
-(paren
-l_int|0x34
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* binary, mode 2, LSB/MSB, ch 0 */
-id|outb
-c_func
-(paren
-id|LATCH
-op_amp
-l_int|0xff
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-multiline_comment|/* LSB */
-id|outb
-c_func
-(paren
-id|LATCH
-op_rshift
-l_int|8
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-multiline_comment|/* MSB */
-id|request_region
-c_func
-(paren
-l_int|0x40
-comma
-l_int|0x20
-comma
-l_string|&quot;timer&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* reserve pit */
-id|init_pit_rest
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-r_void
-DECL|function|generic_init_pit
-id|generic_init_pit
-(paren
-r_void
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0x36
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 0: system timer */
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-id|request_region
-c_func
-(paren
-id|RTC_PORT
-c_func
-(paren
-l_int|0
-)paren
-comma
-l_int|0x10
-comma
-l_string|&quot;timer&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* reserve rtc */
-id|init_pit_rest
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* This probably isn&squot;t Right, but it is what the old code did.  */
-macro_line|#if defined(CONFIG_RTC)
-DECL|macro|init_pit
-macro_line|# define init_pit&t;rtc_init_pit
-macro_line|#else
-DECL|macro|init_pit
-macro_line|# define init_pit&t;alpha_mv.init_pit
-macro_line|#endif
 multiline_comment|/*&n; * Declare all of the machine vectors.&n; */
 r_extern
 r_struct
@@ -907,6 +704,36 @@ id|hwrpb-&gt;sys_variation
 suffix:semicolon
 )brace
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;Booting on %s%s%s using machine vector %s&bslash;n&quot;
+comma
+id|type_name
+comma
+(paren
+op_star
+id|var_name
+ques
+c_cond
+l_string|&quot; variation &quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+comma
+id|var_name
+comma
+id|alpha_mv.vector_name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Command line: %s&bslash;n&quot;
+comma
+id|command_line
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; * Sync with the HAE&n;&t; */
 multiline_comment|/* Save the SRM&squot;s current value for restoration.  */
 id|srm_hae
@@ -945,6 +772,66 @@ r_int
 )paren
 id|_end
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+id|initrd_start
+op_assign
+id|INITRD_START
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+id|initrd_end
+op_assign
+id|initrd_start
+op_plus
+id|INITRD_SIZE
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Initial ramdisk at: 0x%p (%lu bytes)&bslash;n&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+id|initrd_start
+comma
+id|INITRD_SIZE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_end
+OG
+op_star
+id|memory_end_p
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;initrd extends beyond end of memory &quot;
+l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
+comma
+id|initrd_end
+comma
+id|memory_end_p
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+id|initrd_end
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/* Initialize the machine.  Usually has to do with setting up&n;&t;   DMA windows and the like.  */
 r_if
 c_cond
@@ -959,21 +846,6 @@ c_func
 id|memory_start_p
 comma
 id|memory_end_p
-)paren
-suffix:semicolon
-multiline_comment|/* Initialize the timers.  */
-id|init_pit
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Default root filesystem to sda2.  */
-id|ROOT_DEV
-op_assign
-id|to_kdev_t
-c_func
-(paren
-l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Give us a default console.  TGA users will see nothing until&n;&t; * chr_dev_init is called, rather late in the boot sequence.&n;&t; */
@@ -992,35 +864,13 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/* Delayed so that we&squot;ve initialized the machine first.  */
-id|printk
+multiline_comment|/* Default root filesystem to sda2.  */
+id|ROOT_DEV
+op_assign
+id|to_kdev_t
 c_func
 (paren
-l_string|&quot;Booting on %s%s%s using machine vector %s&bslash;n&quot;
-comma
-id|type_name
-comma
-(paren
-op_star
-id|var_name
-ques
-c_cond
-l_string|&quot; variation &quot;
-suffix:colon
-l_string|&quot;&quot;
-)paren
-comma
-id|var_name
-comma
-id|alpha_mv.vector_name
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Command line: %s&bslash;n&quot;
-comma
-id|command_line
+l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check ASN in HWRPB for validity, report if bad.&n;&t; * FIXME: how was this failing?  Should we trust it instead,&n;&t; * and copy the value into alpha_mv.max_asn?&n; &t; */

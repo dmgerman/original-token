@@ -102,5 +102,8 @@ DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs)&t;((regs)-&gt;ARM_pc)
 DECL|macro|pc_pointer
 mdefine_line|#define pc_pointer(v)&t;&t;&t;(v)
+multiline_comment|/* Are the current registers suitable for user mode?&n; * (used to maintain security in signal handlers)&n; */
+DECL|macro|valid_user_regs
+mdefine_line|#define valid_user_regs(regs) &bslash;&n;&t;(user_mode(regs) &amp;&amp; ((regs)-&gt;ARM_sp &amp; 3) == 0)
 macro_line|#endif
 eof

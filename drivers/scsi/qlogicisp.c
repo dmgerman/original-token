@@ -4270,6 +4270,30 @@ l_string|&quot;qlogicisp : loading risc ram&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if RELOAD_FIRMWARE
+multiline_comment|/* Do not reload firmware if 1040B, i.e. revision 5 chip.  */
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_struct
+id|isp1020_hostdata
+op_star
+)paren
+id|host-&gt;hostdata
+)paren
+op_member_access_from_pointer
+id|revision
+op_eq
+l_int|5
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicisp : 1040B chip, firmware not (re)loaded&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
 (brace
 r_int
 id|i
@@ -4742,7 +4766,9 @@ id|PCI_DEVICE_ID_QLOGIC_ISP1020
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicisp : can&squot;t decode i/o address space&bslash;n&quot;
+l_string|&quot;qlogicisp : can&squot;t decode i/o address space 0x%lx&bslash;n&quot;
+comma
+id|io_base
 )paren
 suffix:semicolon
 r_return

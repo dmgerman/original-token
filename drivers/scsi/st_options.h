@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Tue May 27 22:29:15 1997 by makisara@home&n;*/
+multiline_comment|/*&n;   The compile-time configurable defaults for the Linux SCSI tape driver.&n;&n;   Copyright 1995 Kai Makisara.&n;&n;   Last modified: Wed Sep  2 21:24:07 1998 by root@home&n;*/
 macro_line|#ifndef _ST_OPTIONS_H
 DECL|macro|_ST_OPTIONS_H
 mdefine_line|#define _ST_OPTIONS_H
@@ -29,6 +29,15 @@ mdefine_line|#define ST_WRITE_THRESHOLD_BLOCKS 30
 multiline_comment|/* The maximum number of tape buffers the driver allocates. The number&n;   is also constrained by the number of drives detected. Determines the&n;   maximum number of concurrently active tape drives. */
 DECL|macro|ST_MAX_BUFFERS
 mdefine_line|#define ST_MAX_BUFFERS (2 + ST_EXTRA_DEVS)
+multiline_comment|/* Maximum number of scatter/gather segments */
+DECL|macro|ST_MAX_SG
+mdefine_line|#define ST_MAX_SG      16
+multiline_comment|/* The number of scatter/gather segments to allocate at first try (must be&n;   smaller or equal to the maximum). */
+DECL|macro|ST_FIRST_SG
+mdefine_line|#define ST_FIRST_SG    8
+multiline_comment|/* The size of the first scatter/gather segments (determines the maximum block&n;   size for SCSI adapters not supporting scatter/gather). The default is set&n;   to try to allocate the buffer as one chunk. */
+DECL|macro|ST_FIRST_ORDER
+mdefine_line|#define ST_FIRST_ORDER  5
 multiline_comment|/* The following lines define defaults for properties that can be set&n;   separately for each drive using the MTSTOPTIONS ioctl. */
 multiline_comment|/* If ST_TWO_FM is non-zero, the driver writes two filemarks after a&n;   file being written. Some drives can&squot;t handle two filemarks at the&n;   end of data. */
 DECL|macro|ST_TWO_FM

@@ -111,16 +111,6 @@ r_int
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Read the interrupt summary registers */
 id|pld
 op_assign
@@ -227,12 +217,6 @@ id|regs
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 r_static
 r_void

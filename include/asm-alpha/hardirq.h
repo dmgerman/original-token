@@ -1,6 +1,7 @@
 macro_line|#ifndef _ALPHA_HARDIRQ_H
 DECL|macro|_ALPHA_HARDIRQ_H
 mdefine_line|#define _ALPHA_HARDIRQ_H
+multiline_comment|/* Initially just a straight copy of the i386 code.  */
 macro_line|#include &lt;linux/tasks.h&gt;
 r_extern
 r_int
@@ -10,28 +11,25 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() (local_irq_count[smp_processor_id()] + local_bh_count[smp_processor_id()] != 0)
+mdefine_line|#define in_interrupt()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu]) != 0;&t;&bslash;&n;})
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
+mdefine_line|#define hardirq_endlock(cpu)&t;((void) 0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
+mdefine_line|#define hardirq_enter(cpu, irq)&t;(local_irq_count[cpu]++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
+mdefine_line|#define hardirq_exit(cpu, irq)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
-mdefine_line|#define synchronize_irq()&t;do { } while (0)
+mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
-multiline_comment|/* initially just a straight copy if the i386 code */
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
-r_char
 id|global_irq_holder
 suffix:semicolon
 r_extern
@@ -59,10 +57,6 @@ c_cond
 (paren
 id|global_irq_holder
 op_eq
-(paren
-r_int
-r_char
-)paren
 id|cpu
 )paren
 (brace
@@ -79,7 +73,6 @@ id|global_irq_lock
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Ordering of the counter bumps is _deadly_ important. */
 DECL|function|hardirq_enter
 r_static
 r_inline
@@ -89,6 +82,9 @@ c_func
 (paren
 r_int
 id|cpu
+comma
+r_int
+id|irq
 )paren
 (brace
 op_increment
@@ -114,6 +110,9 @@ c_func
 (paren
 r_int
 id|cpu
+comma
+r_int
+id|irq
 )paren
 (brace
 id|atomic_dec
@@ -141,82 +140,21 @@ r_int
 id|cpu
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|ret
-op_assign
-l_int|1
-suffix:semicolon
-id|__save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|atomic_add_return
-c_func
-(paren
-l_int|1
-comma
-op_amp
-id|global_irq_count
-)paren
-op_ne
-l_int|1
-)paren
-op_logical_or
-(paren
-id|global_irq_lock.lock
-op_ne
-l_int|0
-)paren
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
-op_increment
-id|local_irq_count
-(braket
-id|cpu
-)braket
-suffix:semicolon
-id|__sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 r_return
-id|ret
+op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+op_logical_and
+op_logical_neg
+id|global_irq_lock.lock
 suffix:semicolon
 )brace
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu) &bslash;&n;&t;do { &bslash;&n;&t;       __cli(); &bslash;&n;&t;&t;hardirq_exit(cpu); &bslash;&n;&t;&t;__sti(); &bslash;&n;&t;} while (0)
+mdefine_line|#define hardirq_endlock(cpu)  ((void)0)
 r_extern
 r_void
 id|synchronize_irq

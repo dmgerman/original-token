@@ -21,7 +21,7 @@ suffix:semicolon
 DECL|variable|init_fd_array
 r_static
 r_struct
-id|files
+id|file
 op_star
 id|init_fd_array
 (braket
@@ -68,7 +68,7 @@ c_func
 id|__section__
 c_func
 (paren
-l_string|&quot;.text&quot;
+l_string|&quot;.init.task&quot;
 )paren
 )paren
 )paren

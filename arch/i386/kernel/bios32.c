@@ -4329,16 +4329,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; *&n;&t;&t; * NOTE! If the &quot;original&quot; interrupt is marked as an old-fashioned&n;&t;&t; * irq, we have to keep it old-fashioned even if it&squot;s a PCI device&n;&t;&t; * and we could have found it in the MP-table transform.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|IO_APIC_IRQ
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-)paren
+multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
 (brace
 r_int
 id|irq
@@ -4371,6 +4362,7 @@ multiline_comment|/* interrupt pins are numbered starting from 1 */
 id|irq
 op_assign
 id|IO_APIC_get_PCI_irq_vector
+c_func
 (paren
 id|dev-&gt;bus-&gt;number
 comma

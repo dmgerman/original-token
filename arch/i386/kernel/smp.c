@@ -88,11 +88,9 @@ id|a
 OG
 id|b
 )paren
-(brace
 r_return
 id|a
 suffix:semicolon
-)brace
 r_return
 id|b
 suffix:semicolon
@@ -386,11 +384,9 @@ DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)
 macro_line|#endif
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_setup
 r_void
+id|__init
 id|smp_setup
 c_func
 (paren
@@ -401,7 +397,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -432,6 +427,7 @@ suffix:semicolon
 DECL|function|ack_APIC_irq
 r_void
 id|ack_APIC_irq
+c_func
 (paren
 r_void
 )paren
@@ -551,11 +547,9 @@ id|family
 op_eq
 l_int|0x6
 )paren
-(brace
 r_return
 l_string|&quot;Pentium(tm) Pro&quot;
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -563,11 +557,9 @@ id|family
 op_eq
 l_int|0x5
 )paren
-(brace
 r_return
 l_string|&quot;Pentium(tm)&quot;
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -579,11 +571,9 @@ id|model
 op_eq
 l_int|0x0F
 )paren
-(brace
 r_return
 l_string|&quot;Special controller&quot;
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -595,14 +585,12 @@ id|model
 OL
 l_int|9
 )paren
-(brace
 r_return
 id|model_defs
 (braket
 id|model
 )braket
 suffix:semicolon
-)brace
 id|sprintf
 c_func
 (paren
@@ -620,12 +608,10 @@ id|n
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Read the MPC&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_read_mpc
 r_static
 r_int
+id|__init
 id|smp_read_mpc
 c_func
 (paren
@@ -633,7 +619,6 @@ r_struct
 id|mp_config_table
 op_star
 id|mpc
-)paren
 )paren
 (brace
 r_char
@@ -932,14 +917,12 @@ op_lshift
 l_int|0
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;    Floating point unit present.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -951,14 +934,12 @@ op_lshift
 l_int|7
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;    Machine Exception supported.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -970,14 +951,12 @@ op_lshift
 l_int|8
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;    64 bit compare &amp; exchange supported.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -989,14 +968,12 @@ op_lshift
 l_int|9
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;    Internal APIC present.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -1031,7 +1008,6 @@ id|m-&gt;mpc_apicid
 OG
 id|NR_CPUS
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1042,7 +1018,6 @@ comma
 id|NR_CPUS
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
 id|cpu_present_map
@@ -1412,11 +1387,9 @@ id|num_processors
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan the memory blocks for an SMP configuration block.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_scan_config
 r_int
+id|__init
 id|smp_scan_config
 c_func
 (paren
@@ -1427,7 +1400,6 @@ comma
 r_int
 r_int
 id|length
-)paren
 )paren
 (brace
 r_int
@@ -1469,14 +1441,12 @@ id|mpf
 op_ne
 l_int|16
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Error: MPF size&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -1554,14 +1524,12 @@ op_lshift
 l_int|7
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;    IMCR and PIC compatibility mode.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -1789,7 +1757,6 @@ c_cond
 (paren
 id|mpf-&gt;mpf_physptr
 )paren
-(brace
 id|smp_read_mpc
 c_func
 (paren
@@ -1800,7 +1767,6 @@ op_star
 id|mpf-&gt;mpf_physptr
 )paren
 suffix:semicolon
-)brace
 id|__cpu_logical_map
 (braket
 l_int|0
@@ -1866,18 +1832,15 @@ op_star
 id|trampoline_base
 suffix:semicolon
 multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure it&squot;s suitably aligned.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|setup_trampoline
 r_static
 r_int
 r_int
+id|__init
 id|setup_trampoline
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|memcpy
@@ -1901,19 +1864,16 @@ id|trampoline_base
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;We are called very early to get the low memory for the&n; *&t;SMP bootup trampoline page.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_alloc_memory
 r_int
 r_int
+id|__init
 id|smp_alloc_memory
 c_func
 (paren
 r_int
 r_int
 id|mem_base
-)paren
 )paren
 (brace
 r_if
@@ -1954,17 +1914,14 @@ id|PAGE_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;The bootstrap kernel entry code has set these up. Save them for&n; *&t;a given CPU&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_store_cpu_info
 r_void
+id|__init
 id|smp_store_cpu_info
 c_func
 (paren
 r_int
 id|id
-)paren
 )paren
 (brace
 r_struct
@@ -2032,16 +1989,13 @@ suffix:semicolon
 multiline_comment|/* Remember we have B step Pentia with bugs */
 )brace
 multiline_comment|/*&n; *&t;Architecture specific routine called by the kernel just before init is&n; *&t;fired off. This allows the BP to have everything in order [we hope].&n; *&t;At the end of this all the APs will hit the system scheduling and off&n; *&t;we go. Each AP will load the system gdt&squot;s and jump through the kernel&n; *&t;init into idle(). At this point the scheduler will one day take over&n; * &t;and give them jobs to do. smp_callin is a standard routine&n; *&t;we use to track CPUs as they power up.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_commence
 r_void
+id|__init
 id|smp_commence
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Lets the callins below out of their loop.&n;&t; */
@@ -2058,16 +2012,13 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|enable_local_APIC
 r_void
+id|__init
 id|enable_local_APIC
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -2155,19 +2106,16 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_smp_mappings
 r_int
 r_int
+id|__init
 id|init_smp_mappings
 c_func
 (paren
 r_int
 r_int
 id|memory_start
-)paren
 )paren
 (brace
 r_int
@@ -2287,16 +2235,13 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_callin
 r_void
+id|__init
 id|smp_callin
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_extern
@@ -2415,18 +2360,15 @@ id|unused
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Activate a secondary processor.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|start_secondary
 r_int
+id|__init
 id|start_secondary
 c_func
 (paren
 r_void
 op_star
 id|unused
-)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_MTRR
@@ -2461,16 +2403,13 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Everything has been set up for the secondary&n; * CPUs - they just need to reload everything&n; * from the task structure&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|initialize_secondary
 r_void
+id|__init
 id|initialize_secondary
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -2548,18 +2487,15 @@ suffix:semicolon
 )brace
 id|stack_start
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|do_boot_cpu
 r_static
 r_void
+id|__init
 id|do_boot_cpu
 c_func
 (paren
 r_int
 id|i
-)paren
 )paren
 (brace
 r_int
@@ -3272,10 +3208,8 @@ op_lshift
 id|i
 )paren
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 multiline_comment|/* It has booted */
 id|udelay
 c_func
@@ -3364,14 +3298,12 @@ l_int|8192
 op_eq
 l_int|0xA5
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Stuck ??&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
@@ -3459,16 +3391,13 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPIs to boot each.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smp_boot_cpus
 r_void
+id|__init
 id|smp_boot_cpus
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -3947,7 +3876,6 @@ op_lshift
 id|i
 )paren
 )paren
-(brace
 id|bogosum
 op_add_assign
 id|cpu_data
@@ -3957,7 +3885,6 @@ id|i
 dot
 id|loops_per_sec
 suffix:semicolon
-)brace
 )brace
 id|printk
 c_func
@@ -4014,7 +3941,6 @@ c_cond
 (paren
 id|smp_b_stepping
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -4022,7 +3948,6 @@ id|KERN_WARNING
 l_string|&quot;WARNING: SMP operation may be unreliable with B stepping processors.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|SMP_PRINTK
 c_func
 (paren
@@ -4043,6 +3968,7 @@ suffix:colon
 DECL|function|send_IPI
 r_void
 id|send_IPI
+c_func
 (paren
 r_int
 id|dest
@@ -4196,10 +4122,8 @@ op_logical_or
 op_logical_neg
 id|smp_commenced
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Skip the reschedule if we are waiting to clear a&n;&t; *&t;message at this time. The reschedule cannot wait&n;&t; *&t;but is not critical.&n;&t; */
 r_switch
 c_cond
@@ -4307,10 +4231,8 @@ l_int|12
 )paren
 )paren
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|ct
 op_increment
 suffix:semicolon
@@ -4329,7 +4251,6 @@ id|ct
 op_eq
 l_int|1000
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -4338,7 +4259,6 @@ comma
 id|p
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Set the target requirement&n;&t; */
 r_if
 c_cond
@@ -4676,6 +4596,7 @@ id|regs
 )paren
 )paren
 id|x86_do_profile
+c_func
 (paren
 id|regs-&gt;eip
 )paren
@@ -4914,6 +4835,7 @@ c_func
 )paren
 suffix:semicolon
 id|ack_APIC_irq
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4985,6 +4907,7 @@ r_void
 )paren
 (brace
 id|ack_APIC_irq
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5011,7 +4934,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* ack_APIC_irq ();   see sw-dev-man vol 3, chapter 7.4.13.5 */
+multiline_comment|/* ack_APIC_irq();   see sw-dev-man vol 3, chapter 7.4.13.5 */
 id|printk
 c_func
 (paren
@@ -5023,17 +4946,15 @@ multiline_comment|/*&n; * This part sets up the APIC 32 bit clock in LVTT1, with
 DECL|macro|RDTSC
 mdefine_line|#define RDTSC(x)&t;__asm__ __volatile__ (  &quot;rdtsc&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
 multiline_comment|/*&n; * The timer chip is already set up at HZ interrupts per second here,&n; * but we do not accept timer interrupts yet. We only allow the BP&n; * to calibrate.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|get_8254_timer_count
 r_static
 r_int
 r_int
+id|__init
 id|get_8254_timer_count
+c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -5076,6 +4997,7 @@ mdefine_line|#define APIC_DIVISOR 16
 DECL|function|setup_APIC_timer
 r_void
 id|setup_APIC_timer
+c_func
 (paren
 r_int
 r_int
@@ -5156,15 +5078,13 @@ id|APIC_DIVISOR
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|wait_8254_wraparound
+r_void
+id|__init
+id|wait_8254_wraparound
 c_func
 (paren
 r_void
-id|wait_8254_wraparound
-(paren
-r_void
-)paren
 )paren
 (brace
 r_int
@@ -5217,15 +5137,13 @@ l_int|300
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * In this function we calibrate APIC bus clocks to the external&n; * timer. Unfortunately we cannot use jiffies and the timer irq&n; * to calibrate, since some later bootup code depends on getting&n; * the first irq? Ugh.&n; *&n; * We want to do the calibration only once since we&n; * want to have local timer irqs syncron. CPUs connected&n; * by the same APIC bus have the very same bus frequency.&n; * And we want to have irqs off anyways, no accidental&n; * APIC irq that way.&n; */
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|calibrate_APIC_clock
+r_int
+id|__init
+id|calibrate_APIC_clock
 c_func
 (paren
-r_int
-id|calibrate_APIC_clock
-(paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -5435,15 +5353,13 @@ r_int
 r_int
 id|calibration_result
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
+DECL|function|setup_APIC_clock
+r_void
+id|__init
+id|setup_APIC_clock
 c_func
 (paren
 r_void
-id|setup_APIC_clock
-(paren
-r_void
-)paren
 )paren
 (brace
 r_int
@@ -5552,6 +5468,7 @@ multiline_comment|/*&n; * the frequency of the profiling timer can be changed&n;
 DECL|function|setup_profiling_timer
 r_int
 id|setup_profiling_timer
+c_func
 (paren
 r_int
 r_int
@@ -5603,6 +5520,7 @@ c_func
 )paren
 suffix:semicolon
 id|setup_APIC_timer
+c_func
 (paren
 id|calibration_result
 op_div

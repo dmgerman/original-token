@@ -1,4 +1,4 @@
-multiline_comment|/* Parallel port /proc interface code.&n; * &n; * Authors: David Campbell &lt;campbell@torque.net&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *          Philip Blundell &lt;philb@gnu.org&gt;&n; *          Andrea Arcangeli &lt;arcangeli@mbox.queen.it&gt;&n; *          Riccardo Facchetti &lt;fizban@tin.it&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell&n; */
+multiline_comment|/* Parallel port /proc interface code.&n; * &n; * Authors: David Campbell &lt;campbell@torque.net&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *          Philip Blundell &lt;philb@gnu.org&gt;&n; *          Andrea Arcangeli&n; *          Riccardo Facchetti &lt;fizban@tin.it&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell&n; */
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;

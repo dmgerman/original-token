@@ -142,4 +142,23 @@ suffix:semicolon
 multiline_comment|/* The following macro is used to implement the table-based irq mapping&n;   function for all single-bus Alphas.  */
 DECL|macro|COMMON_TABLE_LOOKUP
 mdefine_line|#define COMMON_TABLE_LOOKUP&t;&t;&t;&t;&t;&t;&bslash;&n;({ long _ctl_ = -1; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   if (slot &gt;= min_idsel &amp;&amp; slot &lt;= max_idsel &amp;&amp; pin &lt; irqs_per_slot)&t;&bslash;&n;     _ctl_ = irq_tab[slot - min_idsel][pin];&t;&t;&t;&t;&bslash;&n;   _ctl_; })
+multiline_comment|/* The hose list.  */
+r_extern
+r_struct
+id|linux_hose_info
+op_star
+id|hose_head
+comma
+op_star
+op_star
+id|hose_tail
+suffix:semicolon
+r_extern
+r_int
+id|hose_count
+suffix:semicolon
+r_extern
+r_int
+id|pci_probe_enabled
+suffix:semicolon
 eof

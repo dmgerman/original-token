@@ -15,32 +15,23 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 multiline_comment|/* NOTE: Herein are back-to-back mb instructions.  They are magic.&n;   One plausible explanation is that the I/O controller does not properly&n;   handle the system transaction.  Another involves timing.  Ho hum.  */
-r_extern
-id|asmlinkage
-r_void
-id|wrmces
-c_func
-(paren
-r_int
-r_int
-id|mces
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef DEBUG 
-DECL|macro|DBG
-macro_line|# define DBG(args)&t;printk args
-macro_line|#else
-DECL|macro|DBG
-macro_line|# define DBG(args)
-macro_line|#endif
+DECL|macro|DEBUG_CONFIG
+mdefine_line|#define DEBUG_CONFIG 0
 DECL|macro|DEBUG_MCHECK
-mdefine_line|#define DEBUG_MCHECK
-macro_line|#ifdef DEBUG_MCHECK
+mdefine_line|#define DEBUG_MCHECK 0
+macro_line|#if DEBUG_CONFIG
+DECL|macro|DBG_CNF
+macro_line|# define DBG_CNF(args)&t;printk args
+macro_line|#else
+DECL|macro|DBG_CNF
+macro_line|# define DBG_CNF(args)
+macro_line|#endif
+macro_line|#if DEBUG_MCHECK
 DECL|macro|DBG_MCK
 macro_line|# define DBG_MCK(args)&t;printk args
 DECL|macro|DEBUG_MCHECK_DUMP
-mdefine_line|#define DEBUG_MCHECK_DUMP
+macro_line|# define DEBUG_MCHECK_DUMP
 macro_line|#else
 DECL|macro|DBG_MCK
 macro_line|# define DBG_MCK(args)
@@ -100,7 +91,7 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-id|DBG
+id|DBG_CNF
 c_func
 (paren
 (paren
@@ -146,11 +137,11 @@ OG
 l_int|20
 )paren
 (brace
-id|DBG
+id|DBG_CNF
 c_func
 (paren
 (paren
-l_string|&quot;mk_conf_addr: device (%d) &gt; 20, returning -1&bslash;n&quot;
+l_string|&quot;mk_conf_addr: device (%d) &gt; 20, return -1&bslash;n&quot;
 comma
 id|device
 )paren
@@ -212,7 +203,7 @@ id|pci_addr
 op_assign
 id|addr
 suffix:semicolon
-id|DBG
+id|DBG_CNF
 c_func
 (paren
 (paren
@@ -260,25 +251,13 @@ id|pyxis_cfg
 op_assign
 l_int|0
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-id|DBG
-c_func
-(paren
-(paren
-l_string|&quot;conf_read(addr=0x%lx, type1=%d)&bslash;n&quot;
-comma
-id|addr
-comma
-id|type1
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
@@ -310,7 +289,7 @@ id|vuip
 id|PYXIS_ERR
 suffix:semicolon
 multiline_comment|/* re-read to force write */
-id|DBG
+id|DBG_CNF
 c_func
 (paren
 (paren
@@ -359,14 +338,6 @@ id|vuip
 id|PYXIS_CFG
 suffix:semicolon
 multiline_comment|/* re-read to force write */
-id|DBG
-c_func
-(paren
-(paren
-l_string|&quot;conf_read: TYPE1 access&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 )brace
 id|mb
 c_func
@@ -473,15 +444,21 @@ id|PYXIS_CFG
 suffix:semicolon
 multiline_comment|/* re-read to force write */
 )brace
-id|DBG
+id|DBG_CNF
 c_func
 (paren
 (paren
-l_string|&quot;conf_read(): finished&bslash;n&quot;
+l_string|&quot;conf_read(addr=0x%lx, type1=%d) = %#x&bslash;n&quot;
+comma
+id|addr
+comma
+id|type1
+comma
+id|value
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -526,7 +503,21 @@ id|pyxis_cfg
 op_assign
 l_int|0
 suffix:semicolon
-id|save_and_cli
+id|DBG_CNF
+c_func
+(paren
+(paren
+l_string|&quot;conf_write(addr=%#lx, value=%#x, type1=%d)&bslash;n&quot;
+comma
+id|addr
+comma
+id|value
+comma
+id|type1
+)paren
+)paren
+suffix:semicolon
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -564,16 +555,6 @@ id|vuip
 id|PYXIS_ERR
 suffix:semicolon
 multiline_comment|/* re-read to force write */
-id|DBG
-c_func
-(paren
-(paren
-l_string|&quot;conf_write: PYXIS ERR was 0x%x&bslash;n&quot;
-comma
-id|stat0
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* If Type1 access, must set PYXIS CFG.  */
 r_if
 c_cond
@@ -613,15 +594,12 @@ id|vuip
 id|PYXIS_CFG
 suffix:semicolon
 multiline_comment|/* re-read to force write */
-id|DBG
+)brace
+id|mb
 c_func
 (paren
-(paren
-l_string|&quot;conf_read: TYPE1 access&bslash;n&quot;
-)paren
 )paren
 suffix:semicolon
-)brace
 id|draina
 c_func
 (paren
@@ -630,6 +608,10 @@ suffix:semicolon
 id|PYXIS_mcheck_expected
 op_assign
 l_int|1
+suffix:semicolon
+id|PYXIS_mcheck_taken
+op_assign
+l_int|0
 suffix:semicolon
 id|mb
 c_func
@@ -707,15 +689,7 @@ id|PYXIS_CFG
 suffix:semicolon
 multiline_comment|/* re-read to force write */
 )brace
-id|DBG
-c_func
-(paren
-(paren
-l_string|&quot;conf_write(): finished&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -723,8 +697,8 @@ id|flags
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_read_config_byte
-id|pyxis_pcibios_read_config_byte
+DECL|function|pyxis_hose_read_config_byte
+id|pyxis_hose_read_config_byte
 (paren
 id|u8
 id|bus
@@ -738,6 +712,11 @@ comma
 id|u8
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -753,11 +732,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xff
 suffix:semicolon
 r_if
 c_cond
@@ -817,8 +791,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_read_config_word
-id|pyxis_pcibios_read_config_word
+DECL|function|pyxis_hose_read_config_word
+id|pyxis_hose_read_config_word
 (paren
 id|u8
 id|bus
@@ -832,6 +806,11 @@ comma
 id|u16
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -847,21 +826,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xffff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x1
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -921,8 +885,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_read_config_dword
-id|pyxis_pcibios_read_config_dword
+DECL|function|pyxis_hose_read_config_dword
+id|pyxis_hose_read_config_dword
 (paren
 id|u8
 id|bus
@@ -936,6 +900,11 @@ comma
 id|u32
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -951,21 +920,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x3
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -1015,8 +969,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_write_config_byte
-id|pyxis_pcibios_write_config_byte
+DECL|function|pyxis_hose_write_config_byte
+id|pyxis_hose_write_config_byte
 (paren
 id|u8
 id|bus
@@ -1029,6 +983,11 @@ id|where
 comma
 id|u8
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1102,8 +1061,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_write_config_word
-id|pyxis_pcibios_write_config_word
+DECL|function|pyxis_hose_write_config_word
+id|pyxis_hose_write_config_word
 (paren
 id|u8
 id|bus
@@ -1116,6 +1075,11 @@ id|where
 comma
 id|u16
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1131,16 +1095,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x1
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -1199,8 +1153,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|pyxis_pcibios_write_config_dword
-id|pyxis_pcibios_write_config_dword
+DECL|function|pyxis_hose_write_config_dword
+id|pyxis_hose_write_config_dword
 (paren
 id|u8
 id|bus
@@ -1213,6 +1167,11 @@ id|where
 comma
 id|u32
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1228,16 +1187,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x3
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -2305,7 +2254,7 @@ id|vuip
 )paren
 id|PYXIS_ERR
 suffix:semicolon
-id|DBG
+id|DBG_MCK
 c_func
 (paren
 (paren
@@ -2436,74 +2385,6 @@ id|mchk_sysdata-&gt;epic_pear
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DEBUG_MCHECK_DUMP
-(brace
-r_int
-r_int
-op_star
-id|ptr
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-id|ptr
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|la_ptr
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|mchk_header-&gt;size
-op_div
-r_sizeof
-(paren
-r_int
-)paren
-suffix:semicolon
-id|i
-op_add_assign
-l_int|2
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; +%lx %lx %lx&bslash;n&quot;
-comma
-id|i
-op_star
-r_sizeof
-(paren
-r_int
-)paren
-comma
-id|ptr
-(braket
-id|i
-)braket
-comma
-id|ptr
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* DEBUG_MCHECK_DUMP */
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
 id|mb
 c_func
@@ -2522,7 +2403,7 @@ c_cond
 id|PYXIS_mcheck_expected
 )paren
 (brace
-id|DBG
+id|DBG_MCK
 c_func
 (paren
 (paren
@@ -2571,7 +2452,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 1
 r_else
 (brace
 id|printk
@@ -2649,7 +2529,70 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_MCHECK_DUMP
+(brace
+r_int
+r_int
+op_star
+id|ptr
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|la_ptr
+suffix:semicolon
+suffix:semicolon
+r_int
+id|n
+op_assign
+id|mchk_header-&gt;size
+op_div
+(paren
+l_int|2
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_do
+id|printk
+c_func
+(paren
+l_string|&quot; +%lx %lx %lx&bslash;n&quot;
+comma
+id|i
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+id|ptr
+(braket
+id|i
+)braket
+comma
+id|ptr
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_decrement
+id|i
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
+)brace
 )brace
 eof

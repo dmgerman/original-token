@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/kernel/leds-285.c&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * EBSA-285 LED control routines.  We use the leds as follows:&n; *&n; *  - Green - toggles state every 50 timer interrupts&n; *  - Amber - On if system is not idle&n; *  - Red   - currently unused&n; */
+multiline_comment|/*&n; * arch/arm/kernel/leds-ebsa285.c&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * EBSA-285 LED control routines.  We use the leds as follows:&n; *&n; *  - Green - toggles state every 50 timer interrupts&n; *  - Amber - On if system is not idle&n; *  - Red   - currently unused&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;

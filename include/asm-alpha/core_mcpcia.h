@@ -79,6 +79,10 @@ mdefine_line|#define MCPCIA_CAP_DIAG(h)&t;(IDENT_ADDR + 0xf9e0000700UL + HOSE(h)
 DECL|macro|MCPCIA_TOP_OF_MEM
 mdefine_line|#define MCPCIA_TOP_OF_MEM(h)&t;(IDENT_ADDR + 0xf9e00007c0UL + HOSE(h))
 multiline_comment|/*&n; * Error registers&n; */
+DECL|macro|MCPCIA_MC_ERR0
+mdefine_line|#define MCPCIA_MC_ERR0(h)&t;(IDENT_ADDR + 0xf9e0000800UL + HOSE(h))
+DECL|macro|MCPCIA_MC_ERR1
+mdefine_line|#define MCPCIA_MC_ERR1(h)&t;(IDENT_ADDR + 0xf9e0000840UL + HOSE(h))
 DECL|macro|MCPCIA_CAP_ERR
 mdefine_line|#define MCPCIA_CAP_ERR(h)&t;(IDENT_ADDR + 0xf9e0000880UL + HOSE(h))
 DECL|macro|MCPCIA_PCI_ERR1

@@ -1,14 +1,6 @@
 macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
-r_extern
-r_void
-id|checksignals
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#include &lt;asm/param.h&gt;&t;/* for HZ */
 r_extern
 r_int

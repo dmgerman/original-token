@@ -24,9 +24,6 @@ r_int
 r_int
 id|irq
 comma
-r_int
-id|cpu
-comma
 r_struct
 id|pt_regs
 op_star
@@ -122,6 +119,8 @@ id|irq_vector
 id|NR_IRQS
 )braket
 suffix:semicolon
+DECL|macro|IO_APIC_VECTOR
+mdefine_line|#define IO_APIC_VECTOR(irq)&t;irq_vector[irq]
 r_extern
 r_void
 id|init_IRQ_SMP
@@ -140,6 +139,10 @@ r_int
 comma
 r_struct
 id|pt_regs
+op_star
+comma
+r_struct
+id|irqaction
 op_star
 )paren
 suffix:semicolon
@@ -173,6 +176,7 @@ id|irq
 suffix:semicolon
 r_int
 id|i8259A_irq_pending
+c_func
 (paren
 r_int
 r_int
@@ -181,18 +185,21 @@ id|irq
 suffix:semicolon
 r_void
 id|ack_APIC_irq
+c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_void
 id|setup_IO_APIC
+c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_int
 id|IO_APIC_get_PCI_irq_vector
+c_func
 (paren
 r_int
 id|bus
@@ -206,6 +213,7 @@ id|fn
 suffix:semicolon
 r_void
 id|make_8259A_irq
+c_func
 (paren
 r_int
 r_int
@@ -214,6 +222,7 @@ id|irq
 suffix:semicolon
 r_void
 id|send_IPI
+c_func
 (paren
 r_int
 id|dest
@@ -224,12 +233,14 @@ id|vector
 suffix:semicolon
 r_void
 id|init_pic_mode
+c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_void
 id|print_IO_APIC
+c_func
 (paren
 r_void
 )paren
@@ -240,8 +251,6 @@ r_int
 r_int
 id|io_apic_irqs
 suffix:semicolon
-DECL|macro|IO_APIC_VECTOR
-mdefine_line|#define IO_APIC_VECTOR(irq)&t;irq_vector[irq]
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
 DECL|macro|MAX_MP_BUSSES
@@ -346,12 +355,6 @@ id|irq
 )paren
 (brace
 id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-id|release_irqlock
 c_func
 (paren
 id|cpu

@@ -4955,7 +4955,7 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_WARNINGING
+id|KERN_WARNING
 l_string|&quot;warning: &squot;plip=0x%x&squot; ignored&bslash;n&quot;
 comma
 id|ints

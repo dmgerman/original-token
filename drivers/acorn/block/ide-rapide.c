@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &quot;../../block/ide.h&quot;
 DECL|variable|rapide_cids
 r_static
@@ -71,19 +72,35 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|ide_ioregspec_t
+id|spec
+suffix:semicolon
+id|spec.base
+op_assign
+id|port
+suffix:semicolon
+id|spec.ctrl
+op_assign
+id|port
+op_plus
+l_int|0x206
+suffix:semicolon
+id|spec.offset
+op_assign
+l_int|1
+op_lshift
+l_int|4
+suffix:semicolon
+id|spec.irq
+op_assign
+id|ec-&gt;irq
+suffix:semicolon
 r_return
 id|ide_register_port
 c_func
 (paren
-id|port
-comma
-id|port
-op_plus
-l_int|0x206
-comma
-l_int|4
-comma
-id|ec-&gt;irq
+op_amp
+id|spec
 )paren
 suffix:semicolon
 )brace

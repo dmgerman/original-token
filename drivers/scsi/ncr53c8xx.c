@@ -578,9 +578,14 @@ DECL|macro|unmap_pci_mem
 mdefine_line|#define unmap_pci_mem(vaddr, size)
 DECL|macro|pcivtophys
 mdefine_line|#define pcivtophys(p)&t;&t;&t;((p) &amp; pci_dvma_mask)
-macro_line|#else&t;/* __sparc__ */
+macro_line|#else
+macro_line|#if defined(__alpha__)
+DECL|macro|pcivtophys
+mdefine_line|#define pcivtophys(p)&t;&t;&t;((p) &amp; 0xfffffffful)
+macro_line|#else
 DECL|macro|pcivtophys
 mdefine_line|#define pcivtophys(p)&t;&t;&t;(p)
+macro_line|#endif
 macro_line|#ifndef NCR_IOMAPPED
 DECL|function|__initfunc
 id|__initfunc

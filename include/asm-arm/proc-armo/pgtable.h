@@ -292,6 +292,8 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;0x01a00000
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END&t;0x01c00000
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;&t;0x01
 DECL|macro|_PAGE_READONLY

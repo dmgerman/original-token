@@ -7,11 +7,13 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#include &quot;proto.h&quot;
 macro_line|#ifdef CONFIG_RTC 
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0  /* using pit for timer */
@@ -19,12 +21,6 @@ macro_line|#else
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 8  /* using rtc for timer */
 macro_line|#endif
-r_extern
-r_struct
-id|hwrpb_struct
-op_star
-id|hwrpb
-suffix:semicolon
 r_static
 r_int
 id|set_rtc_mmss
@@ -421,8 +417,227 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|function|time_init
+multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
+multiline_comment|/* It is (normally) only counter 1 that presents config problems, so&n;   provide this support function to do the rest of the job.  */
 r_void
+r_inline
+DECL|function|init_pit_rest
+id|init_pit_rest
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if 0
+multiline_comment|/* Leave refresh timer alone---nobody should depend on a&n;&t;   particular value anyway. */
+id|outb
+c_func
+(paren
+l_int|0x54
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 1: refresh timer */
+id|outb
+c_func
+(paren
+l_int|0x18
+comma
+l_int|0x41
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb
+c_func
+(paren
+l_int|0xb6
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 2: speaker */
+id|outb
+c_func
+(paren
+l_int|0x31
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x13
+comma
+l_int|0x42
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_RTC
+r_static
+r_inline
+r_void
+DECL|function|rtc_init_pit
+id|rtc_init_pit
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Setup interval timer if /dev/rtc is being used */
+id|outb
+c_func
+(paren
+l_int|0x34
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* binary, mode 2, LSB/MSB, ch 0 */
+id|outb
+c_func
+(paren
+id|LATCH
+op_amp
+l_int|0xff
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* LSB */
+id|outb
+c_func
+(paren
+id|LATCH
+op_rshift
+l_int|8
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* MSB */
+id|request_region
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0x20
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* reserve pit */
+id|init_pit_rest
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_void
+DECL|function|generic_init_pit
+id|generic_init_pit
+(paren
+r_void
+)paren
+(brace
+r_int
+id|x
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|x
+op_assign
+(paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_FREQ_SELECT
+)paren
+op_amp
+l_int|0x3f
+)paren
+)paren
+op_ne
+l_int|0x26
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Setting RTC_FREQ to 1024 Hz (%x)&bslash;n&quot;
+comma
+id|x
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+l_int|0x26
+comma
+id|RTC_FREQ_SELECT
+)paren
+suffix:semicolon
+)brace
+id|request_region
+c_func
+(paren
+id|RTC_PORT
+c_func
+(paren
+l_int|0
+)paren
+comma
+l_int|0x10
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* reserve rtc */
+multiline_comment|/* Turn off the PIT.  */
+id|outb
+c_func
+(paren
+l_int|0x36
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* counter 0: system timer */
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|init_pit_rest
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* This probably isn&squot;t Right, but it is what the old code did.  */
+macro_line|#if defined(CONFIG_RTC)
+DECL|macro|init_pit
+macro_line|# define init_pit&t;rtc_init_pit
+macro_line|#else
+DECL|macro|init_pit
+macro_line|# define init_pit&t;alpha_mv.init_pit
+macro_line|#endif
+r_void
+DECL|function|time_init
 id|time_init
 c_func
 (paren
@@ -468,6 +683,12 @@ comma
 id|cc1
 comma
 id|cc2
+suffix:semicolon
+multiline_comment|/* Initialize the timers.  */
+id|init_pit
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 r_do
@@ -523,7 +744,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;HWPRB cycle frequency bogus.  Estimating... &quot;
+l_string|&quot;HWRPB cycle frequency bogus.  Estimating... &quot;
 )paren
 suffix:semicolon
 r_do
@@ -855,8 +1076,8 @@ l_string|&quot;Could not allocate timer IRQ!&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Use the cycle counter to estimate an displacement from the last time&n; * tick.  Unfortunately the Alpha designers made only the low 32-bits of&n; * the cycle counter active, so we overflow on 8.2 seconds on a 500MHz&n; * part.  So we can&squot;t do the &quot;find absolute time in terms of cycles&quot; thing&n; * that the other ports do.&n; */
-DECL|function|do_gettimeofday
 r_void
+DECL|function|do_gettimeofday
 id|do_gettimeofday
 c_func
 (paren
@@ -980,8 +1201,8 @@ op_assign
 id|usec
 suffix:semicolon
 )brace
-DECL|function|do_settimeofday
 r_void
+DECL|function|do_settimeofday
 id|do_settimeofday
 c_func
 (paren
@@ -1020,9 +1241,9 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; */
-DECL|function|set_rtc_mmss
 r_static
 r_int
+DECL|function|set_rtc_mmss
 id|set_rtc_mmss
 c_func
 (paren

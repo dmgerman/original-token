@@ -78,6 +78,8 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;  (((unsigned long)high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END       (PAGE_OFFSET + 0x10000000)
 multiline_comment|/* PMD types (actually level 1 descriptor) */
 DECL|macro|PMD_TYPE_MASK
 mdefine_line|#define PMD_TYPE_MASK&t;&t;0x0003
@@ -145,7 +147,7 @@ mdefine_line|#define PAGE_COPY       __pgprot(PTE_TYPE_SMALL | _PTE_YOUNG | _PTE
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY   __pgprot(PTE_TYPE_SMALL | _PTE_YOUNG | _PTE_READ)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL     __pgprot(PTE_TYPE_SMALL | _PTE_YOUNG | _PTE_DIRTY | _PTE_WRITE)
+mdefine_line|#define PAGE_KERNEL     __pgprot(PTE_TYPE_SMALL | _PTE_READ  | _PTE_DIRTY | _PTE_WRITE)
 DECL|macro|_PAGE_USER_TABLE
 mdefine_line|#define _PAGE_USER_TABLE&t;(PMD_TYPE_TABLE | PMD_DOMAIN(DOMAIN_USER))
 DECL|macro|_PAGE_KERNEL_TABLE

@@ -35,17 +35,7 @@ id|regs
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|intstatus
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The PALcode will have passed us vectors 0x800 or 0x810,&n;&t; * which are fairly arbitrary values and serve only to tell&n;&t; * us whether an interrupt has come in on IRQ0 or IRQ1. If&n;&t; * it&squot;s IRQ1 it&squot;s a PCI interrupt; if it&squot;s IRQ0, it&squot;s&n;&t; * probably ISA, but PCI interrupts can come through IRQ0&n;&t; * as well if the interrupt controller isn&squot;t in accelerated&n;&t; * mode.&n;&t; *&n;&t; * OTOH, the accelerator thing doesn&squot;t seem to be working&n;&t; * overly well, so what we&squot;ll do instead is try directly&n;&t; * examining the Master Interrupt Register to see if it&squot;s a&n;&t; * PCI interrupt, and if _not_ then we&squot;ll pass it on to the&n;&t; * ISA handler.&n;&t; */
 id|intstatus
@@ -156,12 +146,6 @@ id|isa_device_interrupt
 id|vector
 comma
 id|regs
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace

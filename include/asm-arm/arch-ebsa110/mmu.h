@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/mmu.h&n; *&n; * Cop
 macro_line|#ifndef __ASM_ARCH_MMU_H
 DECL|macro|__ASM_ARCH_MMU_H
 mdefine_line|#define __ASM_ARCH_MMU_H
-multiline_comment|/*&n; * On ebsa, the dram is contiguous&n; */
 DECL|macro|__virt_to_phys__is_a_macro
 mdefine_line|#define __virt_to_phys__is_a_macro
 DECL|macro|__virt_to_phys

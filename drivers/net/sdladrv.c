@@ -1631,6 +1631,10 @@ comma
 id|virt_to_phys
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|hw-&gt;dpmbase
 )paren
 )paren

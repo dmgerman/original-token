@@ -7,7 +7,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#if 0
+DECL|macro|SMC_DEBUG
+mdefine_line|#define SMC_DEBUG 0
+macro_line|#if SMC_DEBUG
+DECL|macro|DBG_DEVS
 macro_line|# define DBG_DEVS(args)         printk args
 macro_line|#else
 DECL|macro|DBG_DEVS
@@ -101,8 +104,6 @@ DECL|macro|PARP_BASE
 mdefine_line|#define PARP_BASE&t;&t;0x3bc
 DECL|macro|PARP_INTERRUPT
 mdefine_line|#define PARP_INTERRUPT&t;&t;7
-DECL|macro|SMC_DEBUG
-mdefine_line|#define SMC_DEBUG 0
 DECL|function|SMCConfigState
 r_static
 r_int
@@ -885,6 +886,14 @@ comma
 id|COM1_INTERRUPT
 )paren
 suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;SMC FDC37C93X: SER1 done&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|SMCEnableDevice
 c_func
 (paren
@@ -895,6 +904,14 @@ comma
 id|COM2_BASE
 comma
 id|COM2_INTERRUPT
+)paren
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;SMC FDC37C93X: SER2 done&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|SMCEnableDevice
@@ -909,6 +926,14 @@ comma
 id|PARP_INTERRUPT
 )paren
 suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;SMC FDC37C93X: PARP done&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* On PC164, IDE on the SMC is not enabled;&n;&t;&t;   CMD646 (PCI) on MB */
 id|SMCEnableKYBD
 c_func
@@ -916,10 +941,26 @@ c_func
 id|SMCUltraBase
 )paren
 suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;SMC FDC37C93X: KYB done&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|SMCEnableFDC
 c_func
 (paren
 id|SMCUltraBase
+)paren
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;SMC FDC37C93X: FDC done&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 macro_line|#if SMC_DEBUG
@@ -942,14 +983,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if SMC_DEBUG
-id|printk
+id|DBG_DEVS
 c_func
+(paren
 (paren
 l_string|&quot;No SMC FDC37C93X Ultra I/O Controller found&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

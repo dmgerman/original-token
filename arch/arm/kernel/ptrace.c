@@ -1932,7 +1932,7 @@ l_int|0
 r_return
 id|res
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|nsaved
 op_increment
@@ -2789,7 +2789,7 @@ id|pc
 op_plus
 l_int|4
 )paren
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|nsaved
 op_increment
@@ -2818,7 +2818,7 @@ id|read_long
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|i
 )braket
@@ -2835,7 +2835,7 @@ op_ge
 l_int|0
 )paren
 (brace
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|i
 op_plus
@@ -2850,7 +2850,7 @@ id|write_long
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|i
 )braket
@@ -2867,7 +2867,7 @@ OL
 l_int|0
 )paren
 (brace
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 l_int|4
 )braket
@@ -2879,7 +2879,7 @@ id|res
 suffix:semicolon
 )brace
 )brace
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 l_int|4
 )braket
@@ -2906,12 +2906,12 @@ id|i
 comma
 id|nsaved
 op_assign
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 l_int|4
 )braket
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 l_int|4
 )braket
@@ -2956,12 +2956,12 @@ id|write_long
 (paren
 id|child
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|i
 )braket
 comma
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 id|i
 op_plus
@@ -3621,7 +3621,7 @@ id|_NSIG
 r_goto
 id|out
 suffix:semicolon
-id|child-&gt;debugreg
+id|child-&gt;tss.debug
 (braket
 l_int|4
 )braket

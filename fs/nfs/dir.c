@@ -1769,6 +1769,20 @@ op_star
 id|dentry
 )paren
 (brace
+id|dfprintk
+c_func
+(paren
+id|VFS
+comma
+l_string|&quot;NFS: dentry_delete(%s/%s, %x)&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1785,18 +1799,6 @@ op_and_assign
 op_complement
 id|DCACHE_NFSFS_RENAMED
 suffix:semicolon
-macro_line|#ifdef NFS_DEBUG_VERBOSE
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_dentry_delete: unlinking %s/%s&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Unhash it first */
 id|d_drop
 c_func
@@ -1914,6 +1916,22 @@ op_star
 id|inode
 )paren
 (brace
+id|dfprintk
+c_func
+(paren
+id|VFS
+comma
+l_string|&quot;NFS: dentry_iput(%s/%s, cnt=%d, ino=%ld)&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3426,6 +3444,20 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
+id|dfprintk
+c_func
+(paren
+id|VFS
+comma
+l_string|&quot;NFS: silly-rename(%s/%s, ct=%d)&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_count
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Note that a silly-renamed file can be deleted once it&squot;s&n;&t; * no longer in use -- it&squot;s just an ordinary file now.&n;&t; */
 r_if
 c_cond
@@ -3687,6 +3719,20 @@ comma
 id|rehash
 op_assign
 l_int|0
+suffix:semicolon
+id|dfprintk
+c_func
+(paren
+id|VFS
+comma
+l_string|&quot;NFS: safe_remove(%s/%s, %ld)&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|inode-&gt;i_ino
+)paren
 suffix:semicolon
 multiline_comment|/* N.B. not needed now that d_delete is done in advance? */
 id|error
@@ -4374,6 +4420,13 @@ id|new_inode
 op_assign
 id|new_dentry-&gt;d_inode
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
 id|error
 comma
@@ -4385,17 +4438,16 @@ id|update
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef NFS_DEBUG_VERBOSE
-id|printk
+id|dfprintk
 c_func
 (paren
-l_string|&quot;nfs_rename: old %s/%s, count=%d, new %s/%s, count=%d&bslash;n&quot;
+id|VFS
+comma
+l_string|&quot;NFS: rename(%s/%s -&gt; %s/%s, ct=%d)&bslash;n&quot;
 comma
 id|old_dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|old_dentry-&gt;d_name.name
-comma
-id|old_dentry-&gt;d_count
 comma
 id|new_dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -4404,57 +4456,6 @@ comma
 id|new_dentry-&gt;d_count
 )paren
 suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|old_dir
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|old_dir-&gt;i_mode
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: old inode is NULL or not a directory&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|new_dir
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|new_dir-&gt;i_mode
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: new inode is NULL or not a directory&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
 id|error
 op_assign
 op_minus
@@ -4474,7 +4475,12 @@ id|NFS_MAXNAMLEN
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/*&n;&t; * First check whether the target is busy ... we can&squot;t&n;&t; * safely do _any_ rename if the target is in use.&n;&t; */
+multiline_comment|/*&n;&t; * First check whether the target is busy ... we can&squot;t&n;&t; * safely do _any_ rename if the target is in use.&n;&t; *&n;&t; * For files, make a copy of the dentry and then do a &n;&t; * silly-rename. If the silly-rename succeeds, the&n;&t; * copied dentry is hashed and becomes the new target.&n;&t; *&n;&t; * For directories, prune any unused children.&n;&t; */
+id|error
+op_assign
+op_minus
+id|EBUSY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4482,6 +4488,84 @@ id|new_dentry-&gt;d_count
 OG
 l_int|1
 op_logical_and
+id|new_inode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|S_ISREG
+c_func
+(paren
+id|new_inode-&gt;i_mode
+)paren
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+multiline_comment|/* copy the target dentry&squot;s name */
+id|dentry
+op_assign
+id|d_alloc
+c_func
+(paren
+id|new_dentry-&gt;d_parent
+comma
+op_amp
+id|new_dentry-&gt;d_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dentry
+)paren
+r_goto
+id|out
+suffix:semicolon
+multiline_comment|/* silly-rename the existing target ... */
+id|err
+op_assign
+id|nfs_sillyrename
+c_func
+(paren
+id|new_dir
+comma
+id|new_dentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|err
+)paren
+(brace
+id|new_dentry
+op_assign
+id|dentry
+suffix:semicolon
+id|new_inode
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* hash the replacement target */
+id|d_add
+c_func
+(paren
+id|new_dentry
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
 op_logical_neg
 id|list_empty
 c_func
@@ -4490,17 +4574,15 @@ op_amp
 id|new_dentry-&gt;d_subdirs
 )paren
 )paren
+(brace
 id|shrink_dcache_parent
 c_func
 (paren
 id|new_dentry
 )paren
 suffix:semicolon
-id|error
-op_assign
-op_minus
-id|EBUSY
-suffix:semicolon
+)brace
+multiline_comment|/* dentry still busy? */
 r_if
 c_cond
 (paren
@@ -4526,6 +4608,7 @@ macro_line|#endif
 r_goto
 id|out
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * Check for within-directory rename ... no complications.&n;&t; */
 r_if
@@ -4659,6 +4742,8 @@ c_cond
 id|new_dentry-&gt;d_count
 OG
 l_int|1
+op_logical_and
+id|new_inode
 )paren
 (brace
 macro_line|#ifdef NFS_PARANOIA
@@ -4841,6 +4926,18 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
+multiline_comment|/* new dentry created? */
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+id|dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon

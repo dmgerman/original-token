@@ -228,16 +228,6 @@ r_int
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Read the interrupt summary register of PYXIS */
 id|pld
 op_assign
@@ -331,6 +321,10 @@ l_int|0
 id|timer_interrupt
 c_func
 (paren
+l_int|0
+comma
+l_int|NULL
+comma
 id|regs
 )paren
 suffix:semicolon
@@ -396,12 +390,6 @@ id|PYXIS_INT_REQ
 suffix:semicolon
 multiline_comment|/* read to force the write */
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 r_static
 r_void
@@ -598,7 +586,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* enable 2nd PIC cascade */
 )brace
-multiline_comment|/*&n; * For RUFFIAN, we do not want to make any modifications to the PCI&n; * setup.  So just scan the busses.&n; */
+multiline_comment|/*&n; * For RUFFIAN, we do not want to make any modifications to the PCI&n; * setup.  But we may need to do some kind of init.&n; */
 r_static
 r_void
 id|__init
@@ -609,14 +597,7 @@ c_func
 r_void
 )paren
 (brace
-id|layout_all_busses
-c_func
-(paren
-id|DEFAULT_IO_BASE
-comma
-id|DEFAULT_MEM_BASE
-)paren
-suffix:semicolon
+multiline_comment|/* layout_all_busses(DEFAULT_IO_BASE, DEFAULT_MEM_BASE); */
 )brace
 multiline_comment|/*&n; * The DeskStation Ruffian motherboard firmware does not place&n; * the memory size in the PALimpure area.  Therefore, we use&n; * the Bank Configuration Registers in PYXIS to obtain the size.&n; */
 r_static
@@ -676,7 +657,7 @@ r_int
 id|size
 (braket
 )braket
-id|__initdata
+id|__initlocaldata
 op_assign
 (brace
 l_int|0x40000000UL
@@ -819,8 +800,43 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_static
+r_void
+DECL|function|ruffian_kill_arch
+id|ruffian_kill_arch
+(paren
+r_int
+id|mode
+comma
+r_char
+op_star
+id|reboot_cmd
+)paren
+(brace
+multiline_comment|/* Perhaps this works for other PYXIS as well?  */
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_RESET
+op_assign
+l_int|0x0000dead
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|generic_kill_arch
+c_func
+(paren
+id|mode
+comma
+id|reboot_cmd
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The System Vector&n; */
-macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_RUFFIAN)
 DECL|variable|__initmv
 r_struct
 id|alpha_machine_vector
@@ -834,9 +850,29 @@ l_string|&quot;Ruffian&quot;
 comma
 id|DO_EV5_MMU
 comma
-id|DO_DEFAULT_RTC
+multiline_comment|/* RUFFIAN always uses BCD, like a PeeCee.  */
+id|rtc_port
+suffix:colon
+l_int|0x70
 comma
-id|DO_PYXIS_IO
+id|rtc_addr
+suffix:colon
+l_int|0x80
+comma
+id|rtc_bcd
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* For the moment, do not use BWIO on RUFFIAN.  */
+id|IO
+c_func
+(paren
+id|PYXIS
+comma
+id|pyxis
+comma
+id|pyxis
+)paren
 comma
 id|DO_PYXIS_BUS
 comma
@@ -846,7 +882,7 @@ id|pyxis_machine_check
 comma
 id|max_dma_address
 suffix:colon
-id|ALPHA_MAX_DMA_ADDRESS
+id|ALPHA_RUFFIAN_MAX_DMA_ADDRESS
 comma
 id|nr_irqs
 suffix:colon
@@ -886,7 +922,7 @@ id|ruffian_pci_fixup
 comma
 id|kill_arch
 suffix:colon
-id|generic_kill_arch
+id|ruffian_kill_arch
 comma
 )brace
 suffix:semicolon
@@ -895,5 +931,4 @@ c_func
 (paren
 id|ruffian
 )paren
-macro_line|#endif
 eof

@@ -154,9 +154,11 @@ mdefine_line|#define SIGSTKSZ&t;8192
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; * SA_SHIRQ is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_PROBE
-mdefine_line|#define SA_PROBE&t;&t;SA_ONESHOT
+mdefine_line|#define SA_PROBE&t;&t;0x80000000
 DECL|macro|SA_SAMPLE_RANDOM
-mdefine_line|#define SA_SAMPLE_RANDOM&t;SA_RESTART
+mdefine_line|#define SA_SAMPLE_RANDOM&t;0x10000000
+DECL|macro|SA_IRQNOMASK
+mdefine_line|#define SA_IRQNOMASK&t;&t;0x08000000
 DECL|macro|SA_SHIRQ
 mdefine_line|#define SA_SHIRQ&t;&t;0x04000000
 macro_line|#endif

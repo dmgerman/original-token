@@ -809,6 +809,11 @@ op_star
 id|ptr
 )paren
 (brace
+id|arch_decomp_wdog
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|ptr
 op_assign
@@ -831,6 +836,11 @@ op_star
 id|ptr
 )paren
 (brace
+id|arch_decomp_wdog
+c_func
+(paren
+)paren
+suffix:semicolon
 id|free_mem_ptr
 op_assign
 (paren

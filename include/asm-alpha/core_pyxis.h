@@ -149,6 +149,8 @@ DECL|macro|PYXIS_INT_TIME
 mdefine_line|#define PYXIS_INT_TIME&t;&t;&t;(IDENT_ADDR + 0x87A0000240UL)
 DECL|macro|PYXIS_IIC_CTRL
 mdefine_line|#define PYXIS_IIC_CTRL&t;&t;&t;(IDENT_ADDR + 0x87A00002C0UL)
+DECL|macro|PYXIS_RESET
+mdefine_line|#define PYXIS_RESET&t;&t;&t;(IDENT_ADDR + 0x8780000900UL)
 multiline_comment|/*&n; * Bit definitions for I/O Controller status register 0:&n; */
 DECL|macro|PYXIS_STAT0_CMD
 mdefine_line|#define PYXIS_STAT0_CMD&t;&t;&t;0xf
@@ -349,49 +351,6 @@ DECL|macro|__IO_EXTERN_INLINE
 mdefine_line|#define __IO_EXTERN_INLINE
 macro_line|#endif
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
-multiline_comment|/* Ruffian doesn&squot;t do 1G PCI window */
-DECL|function|pyxis_ruffian_virt_to_bus
-r_static
-r_inline
-r_int
-r_int
-id|pyxis_ruffian_virt_to_bus
-c_func
-(paren
-r_void
-op_star
-id|address
-)paren
-(brace
-r_return
-id|virt_to_phys
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-)brace
-DECL|function|pyxis_ruffian_bus_to_virt
-r_static
-r_inline
-r_void
-op_star
-id|pyxis_ruffian_bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-id|phys_to_virt
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-)brace
 DECL|function|pyxis_virt_to_bus
 id|__EXTERN_INLINE
 r_int
@@ -1863,18 +1822,11 @@ macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
-macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus&t;pyxis_ruffian_virt_to_bus
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt&t;pyxis_ruffian_bus_to_virt
-macro_line|#else
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus&t;pyxis_virt_to_bus
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt&t;pyxis_bus_to_virt
-macro_line|#endif
-macro_line|#ifdef BWIO_ENABLED
+macro_line|#if defined(BWIO_ENABLED) &amp;&amp; !defined(CONFIG_ALPHA_RUFFIAN)
 DECL|macro|__inb
 macro_line|# define __inb&t;&t;pyxis_bw_inb
 DECL|macro|__inw
@@ -1946,7 +1898,7 @@ macro_line|# define __writeq&t;pyxis_writeq
 macro_line|#endif /* BWIO */
 DECL|macro|dense_mem
 mdefine_line|#define dense_mem&t;pyxis_dense_mem
-macro_line|#ifdef BWIO_ENABLED
+macro_line|#if defined(BWIO_ENABLED) &amp;&amp; !defined(CONFIG_ALPHA_RUFFIAN)
 DECL|macro|inb
 macro_line|# define inb(port) __inb((port))
 DECL|macro|inw

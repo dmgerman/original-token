@@ -15,17 +15,6 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic. &n; * One plausible explanation is that the i/o controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
-r_extern
-id|asmlinkage
-r_void
-id|wrmces
-c_func
-(paren
-r_int
-r_int
-id|mces
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
 DECL|macro|MCHK_K_TPERR
 mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
@@ -281,18 +270,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|save_flags
+id|__save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|DBGC
 c_func
 (paren
@@ -563,7 +547,7 @@ l_string|&quot;conf_read(): finished&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -606,18 +590,13 @@ id|cia_cfg
 op_assign
 l_int|0
 suffix:semicolon
-id|save_flags
+id|__save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* avoid getting hit by machine check */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Reset status register to avoid losing errors.  */
 id|stat0
 op_assign
@@ -847,7 +826,7 @@ l_string|&quot;conf_write(): finished&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -855,8 +834,8 @@ id|flags
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_read_config_byte
-id|cia_pcibios_read_config_byte
+DECL|function|cia_hose_read_config_byte
+id|cia_hose_read_config_byte
 (paren
 id|u8
 id|bus
@@ -870,6 +849,11 @@ comma
 id|u8
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -885,11 +869,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xff
 suffix:semicolon
 r_if
 c_cond
@@ -949,8 +928,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_read_config_word
-id|cia_pcibios_read_config_word
+DECL|function|cia_hose_read_config_word
+id|cia_hose_read_config_word
 (paren
 id|u8
 id|bus
@@ -964,6 +943,11 @@ comma
 id|u16
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -979,21 +963,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xffff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x1
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -1053,8 +1022,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_read_config_dword
-id|cia_pcibios_read_config_dword
+DECL|function|cia_hose_read_config_dword
+id|cia_hose_read_config_dword
 (paren
 id|u8
 id|bus
@@ -1068,6 +1037,11 @@ comma
 id|u32
 op_star
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1083,21 +1057,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-op_star
-id|value
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x3
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -1147,8 +1106,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_write_config_byte
-id|cia_pcibios_write_config_byte
+DECL|function|cia_hose_write_config_byte
+id|cia_hose_write_config_byte
 (paren
 id|u8
 id|bus
@@ -1161,6 +1120,11 @@ id|where
 comma
 id|u8
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1234,8 +1198,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_write_config_word
-id|cia_pcibios_write_config_word
+DECL|function|cia_hose_write_config_word
+id|cia_hose_write_config_word
 (paren
 id|u8
 id|bus
@@ -1248,6 +1212,11 @@ id|where
 comma
 id|u16
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1263,16 +1232,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x1
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond
@@ -1331,8 +1290,8 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 r_int
-DECL|function|cia_pcibios_write_config_dword
-id|cia_pcibios_write_config_dword
+DECL|function|cia_hose_write_config_dword
+id|cia_hose_write_config_dword
 (paren
 id|u8
 id|bus
@@ -1345,6 +1304,11 @@ id|where
 comma
 id|u32
 id|value
+comma
+r_struct
+id|linux_hose_info
+op_star
+id|hose
 )paren
 (brace
 r_int
@@ -1360,16 +1324,6 @@ suffix:semicolon
 r_int
 r_char
 id|type1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|where
-op_amp
-l_int|0x3
-)paren
-r_return
-id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
 r_if
 c_cond

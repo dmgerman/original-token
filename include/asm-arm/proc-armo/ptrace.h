@@ -72,19 +72,22 @@ DECL|macro|CC_Z_BIT
 mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
 DECL|macro|CC_N_BIT
 mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
-DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) &bslash;&n;&t;(((regs)-&gt;ARM_pc &amp; MODE_MASK) == USR26_MODE)
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_pc &amp; MODE_MASK)
+DECL|macro|user_mode
+mdefine_line|#define user_mode(regs) &bslash;&n;&t;(processor_mode(regs) == USR26_MODE)
 DECL|macro|interrupts_enabled
 mdefine_line|#define interrupts_enabled(regs) &bslash;&n;&t;(!((regs)-&gt;ARM_pc &amp; I_BIT))
 DECL|macro|fast_interrupts_enabled
 mdefine_line|#define fast_interrupts_enabled(regs) &bslash;&n;&t;(!((regs)-&gt;ARM_pc &amp; F_BIT))
 DECL|macro|condition_codes
 mdefine_line|#define condition_codes(regs) &bslash;&n;&t;((regs)-&gt;ARM_pc &amp; (CC_V_BIT|CC_C_BIT|CC_Z_BIT|CC_N_BIT))
-DECL|macro|instruction_pointer
-mdefine_line|#define instruction_pointer(regs)&t;((regs)-&gt;ARM_pc &amp; 0x03fffffc)
 DECL|macro|pc_pointer
-mdefine_line|#define pc_pointer(v)&t;&t;&t;((v) &amp; 0x03fffffc)
+mdefine_line|#define pc_pointer(v) &bslash;&n;&t;((v) &amp; 0x03fffffc)
+DECL|macro|instruction_pointer
+mdefine_line|#define instruction_pointer(regs) &bslash;&n;&t;(pc_pointer((regs)-&gt;ARM_pc))
+multiline_comment|/* Are the current registers suitable for user mode?&n; * (used to maintain security in signal handlers)&n; */
+DECL|macro|valid_user_regs
+mdefine_line|#define valid_user_regs(regs) &bslash;&n;&t;(user_mode(regs) &amp;&amp; ((regs)-&gt;ARM_sp &amp; 3) == 0)
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.88 1998/08/15 10:37:12 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.90 1998/09/05 12:39:39 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -583,10 +583,18 @@ c_cond
 (paren
 id|l
 op_amp
-id|PCI_MEMORY_RANGE_TYPE_MASK
+(paren
+id|PCI_BASE_ADDRESS_SPACE
+op_or
+id|PCI_BASE_ADDRESS_MEM_TYPE_MASK
+)paren
 )paren
 op_eq
+(paren
+id|PCI_BASE_ADDRESS_SPACE_MEMORY
+op_or
 id|PCI_BASE_ADDRESS_MEM_TYPE_64
+)paren
 )paren
 (brace
 id|reg

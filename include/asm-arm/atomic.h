@@ -1,11 +1,7 @@
-multiline_comment|/*&n; * linux/include/asm-arm/atomic.h&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  27-06-1996&t;RMK&t;Created&n; *  13-04-1997&t;RMK&t;Made functions atomic!&n; *  07-12-1997&t;RMK&t;Upgraded for v2.1.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/atomic.h&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  27-06-1996&t;RMK&t;Created&n; *  13-04-1997&t;RMK&t;Made functions atomic!&n; *  07-12-1997&t;RMK&t;Upgraded for v2.1.&n; *  26-08-1998&t;PJB&t;Added #ifdef __KERNEL__&n; */
 macro_line|#ifndef __ASM_ARM_ATOMIC_H
 DECL|macro|__ASM_ARM_ATOMIC_H
 mdefine_line|#define __ASM_ARM_ATOMIC_H
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef __SMP__
-macro_line|#error SMP not supported
-macro_line|#endif
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -19,6 +15,11 @@ id|atomic_t
 suffix:semicolon
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#ifdef __SMP__
+macro_line|#error SMP not supported
+macro_line|#endif
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;((v)-&gt;counter)
 DECL|macro|atomic_set
@@ -241,5 +242,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 eof

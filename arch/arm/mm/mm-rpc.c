@@ -149,7 +149,10 @@ dot
 id|phys_offset
 suffix:semicolon
 )brace
-DECL|function|init_dram_banks
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|init_dram_banks
 c_func
@@ -158,6 +161,7 @@ r_struct
 id|param_struct
 op_star
 id|params
+)paren
 )paren
 (brace
 r_int

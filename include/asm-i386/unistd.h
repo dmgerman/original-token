@@ -2,8 +2,6 @@ macro_line|#ifndef _ASM_I386_UNISTD_H_
 DECL|macro|_ASM_I386_UNISTD_H_
 mdefine_line|#define _ASM_I386_UNISTD_H_
 multiline_comment|/*&n; * This file contains the system call numbers.&n; */
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup&t;&t;  0&t;/* used only by init, to get system going */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;  1
 DECL|macro|__NR_fork
@@ -419,19 +417,6 @@ c_func
 r_int
 comma
 id|pause
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|setup
-comma
-r_int
-comma
-id|magic
 )paren
 r_static
 r_inline

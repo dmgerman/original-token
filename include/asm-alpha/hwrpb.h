@@ -257,10 +257,11 @@ r_int
 id|res
 suffix:semicolon
 DECL|member|ipc_buffer
-r_char
+r_int
+r_int
 id|ipc_buffer
 (braket
-l_int|168
+l_int|21
 )braket
 suffix:semicolon
 DECL|member|palcode_avail

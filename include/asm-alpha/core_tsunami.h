@@ -28,149 +28,256 @@ macro_line|#else
 DECL|macro|TS_BIAS
 mdefine_line|#define TS_BIAS 0x10000000000UL
 macro_line|#endif
-multiline_comment|/*&n; * CChip and DChip registers&n; */
-DECL|macro|TSUNAMI_CSR_CSC
-mdefine_line|#define&t;TSUNAMI_CSR_CSC&t;&t;(IDENT_ADDR + TS_BIAS + 0x1A0000000UL)
-DECL|macro|TSUNAMI_CSR_MTR
-mdefine_line|#define&t;TSUNAMI_CSR_MTR&t;&t;(IDENT_ADDR + TS_BIAS + 0x1A0000040UL)
-DECL|macro|TSUNAMI_CSR_MISC
-mdefine_line|#define&t;TSUNAMI_CSR_MISC&t;(IDENT_ADDR + TS_BIAS + 0x1A0000080UL)
-DECL|macro|TSUNAMI_CSR_MPD
-mdefine_line|#define&t;TSUNAMI_CSR_MPD&t;&t;(IDENT_ADDR + TS_BIAS + 0x1A00000C0UL)
-DECL|macro|TSUNAMI_CSR_AAR0
-mdefine_line|#define&t;TSUNAMI_CSR_AAR0&t;(IDENT_ADDR + TS_BIAS + 0x1A0000100UL)
-DECL|macro|TSUNAMI_CSR_AAR1
-mdefine_line|#define&t;TSUNAMI_CSR_AAR1&t;(IDENT_ADDR + TS_BIAS + 0x1A0000140UL)
-DECL|macro|TSUNAMI_CSR_AAR2
-mdefine_line|#define&t;TSUNAMI_CSR_AAR2&t;(IDENT_ADDR + TS_BIAS + 0x1A0000180UL)
-DECL|macro|TSUNAMI_CSR_AAR3
-mdefine_line|#define&t;TSUNAMI_CSR_AAR3&t;(IDENT_ADDR + TS_BIAS + 0x1A00001C0UL)
-DECL|macro|TSUNAMI_CSR_DIM0
-mdefine_line|#define&t;TSUNAMI_CSR_DIM0&t;(IDENT_ADDR + TS_BIAS + 0x1A0000200UL)
-DECL|macro|TSUNAMI_CSR_DIM1
-mdefine_line|#define&t;TSUNAMI_CSR_DIM1&t;(IDENT_ADDR + TS_BIAS + 0x1A0000240UL)
-DECL|macro|TSUNAMI_CSR_DIR0
-mdefine_line|#define&t;TSUNAMI_CSR_DIR0&t;(IDENT_ADDR + TS_BIAS + 0x1A0000280UL)
-DECL|macro|TSUNAMI_CSR_DIR1
-mdefine_line|#define&t;TSUNAMI_CSR_DIR1&t;(IDENT_ADDR + TS_BIAS + 0x1A00002C0UL)
-DECL|macro|TSUNAMI_CSR_DRIR
-mdefine_line|#define&t;TSUNAMI_CSR_DRIR&t;(IDENT_ADDR + TS_BIAS + 0x1A0000300UL)
-DECL|macro|TSUNAMI_CSR_PRBEN
-mdefine_line|#define&t;TSUNAMI_CSR_PRBEN&t;(IDENT_ADDR + TS_BIAS + 0x1A0000340UL)
-DECL|macro|TSUNAMI_CSR_IIC
-mdefine_line|#define&t;TSUNAMI_CSR_IIC&t;       &t;(IDENT_ADDR + TS_BIAS + 0x1A0000380UL)
-DECL|macro|TSUNAMI_CSR_WDR
-mdefine_line|#define&t;TSUNAMI_CSR_WDR&t;       &t;(IDENT_ADDR + TS_BIAS + 0x1A00003C0UL)
-DECL|macro|TSUNAMI_CSR_MPR0
-mdefine_line|#define&t;TSUNAMI_CSR_MPR0&t;(IDENT_ADDR + TS_BIAS + 0x1A0000400UL)
-DECL|macro|TSUNAMI_CSR_MPR1
-mdefine_line|#define&t;TSUNAMI_CSR_MPR1&t;(IDENT_ADDR + TS_BIAS + 0x1A0000440UL)
-DECL|macro|TSUNAMI_CSR_MPR2
-mdefine_line|#define&t;TSUNAMI_CSR_MPR2&t;(IDENT_ADDR + TS_BIAS + 0x1A0000480UL)
-DECL|macro|TSUNAMI_CSR_MPR3
-mdefine_line|#define&t;TSUNAMI_CSR_MPR3&t;(IDENT_ADDR + TS_BIAS + 0x1A00004C0UL)
-DECL|macro|TSUNAMI_CSR_TTR
-mdefine_line|#define&t;TSUNAMI_CSR_TTR&t;&t;(IDENT_ADDR + TS_BIAS + 0x1A0000580UL)
-DECL|macro|TSUNAMI_CSR_TDR
-mdefine_line|#define&t;TSUNAMI_CSR_TDR&t;&t;(IDENT_ADDR + TS_BIAS + 0x1A00005C0UL)
-DECL|macro|TSUNAMI_CSR_DSC
-mdefine_line|#define&t;TSUNAMI_CSR_DSC&t;       &t;(IDENT_ADDR + TS_BIAS + 0x1B0000800UL)
-DECL|macro|TSUNAMI_CSR_STR
-mdefine_line|#define&t;TSUNAMI_CSR_STR&t;&t;(IDENT_ADDR + TS_BIAS + 0x1B0000840UL)
-DECL|macro|TSUNAMI_CSR_DREV
-mdefine_line|#define&t;TSUNAMI_CSR_DREV&t;(IDENT_ADDR + TS_BIAS + 0x1B0000880UL)
-multiline_comment|/*&n; * PChip registers&n; */
-DECL|macro|TSUNAMI_PCHIP0_WSBA0
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSBA0  &t;(IDENT_ADDR + TS_BIAS + 0x180000000UL)
-DECL|macro|TSUNAMI_PCHIP0_WSBA1
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSBA1  &t;(IDENT_ADDR + TS_BIAS + 0x180000040UL)
-DECL|macro|TSUNAMI_PCHIP0_WSBA2
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSBA2  &t;(IDENT_ADDR + TS_BIAS + 0x180000080UL)
-DECL|macro|TSUNAMI_PCHIP0_WSBA3
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSBA3  &t;(IDENT_ADDR + TS_BIAS + 0x1800000C0UL)
-DECL|macro|TSUNAMI_PCHIP0_WSM0
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSM0  &t;(IDENT_ADDR + TS_BIAS + 0x180000100UL)
-DECL|macro|TSUNAMI_PCHIP0_WSM1
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSM1  &t;(IDENT_ADDR + TS_BIAS + 0x180000140UL)
-DECL|macro|TSUNAMI_PCHIP0_WSM2
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSM2  &t;(IDENT_ADDR + TS_BIAS + 0x180000180UL)
-DECL|macro|TSUNAMI_PCHIP0_WSM3
-mdefine_line|#define&t;TSUNAMI_PCHIP0_WSM3  &t;(IDENT_ADDR + TS_BIAS + 0x1800001C0UL)
-DECL|macro|TSUNAMI_PCHIP0_TBA0
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TBA0  &t;(IDENT_ADDR + TS_BIAS + 0x180000200UL)
-DECL|macro|TSUNAMI_PCHIP0_TBA1
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TBA1  &t;(IDENT_ADDR + TS_BIAS + 0x180000240UL)
-DECL|macro|TSUNAMI_PCHIP0_TBA2
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TBA2  &t;(IDENT_ADDR + TS_BIAS + 0x180000280UL)
-DECL|macro|TSUNAMI_PCHIP0_TBA3
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TBA3  &t;(IDENT_ADDR + TS_BIAS + 0x1800002C0UL)
-DECL|macro|TSUNAMI_PCHIP0_PCTL
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PCTL  &t;(IDENT_ADDR + TS_BIAS + 0x180000300UL)
-DECL|macro|TSUNAMI_PCHIP0_PLAT
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PLAT  &t;(IDENT_ADDR + TS_BIAS + 0x180000340UL)
-DECL|macro|TSUNAMI_PCHIP0_RESERVED
-mdefine_line|#define&t;TSUNAMI_PCHIP0_RESERVED&t;(IDENT_ADDR + TS_BIAS + 0x180000380UL)
-DECL|macro|TSUNAMI_PCHIP0_PERROR
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PERROR&t;(IDENT_ADDR + TS_BIAS + 0x1800003c0UL)
-DECL|macro|TSUNAMI_PCHIP0_PERRMASK
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PERRMASK&t;(IDENT_ADDR + TS_BIAS + 0x180000400UL)
-DECL|macro|TSUNAMI_PCHIP0_PERRSET
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PERRSET &t;(IDENT_ADDR + TS_BIAS + 0x180000440UL)
-DECL|macro|TSUNAMI_PCHIP0_TLBIV
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TLBIV  &t;(IDENT_ADDR + TS_BIAS + 0x180000480UL)
-DECL|macro|TSUNAMI_PCHIP0_TLBIA
-mdefine_line|#define&t;TSUNAMI_PCHIP0_TLBIA &t;(IDENT_ADDR + TS_BIAS + 0x1800004C0UL)
-DECL|macro|TSUNAMI_PCHIP0_PMONCTL
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PMONCTL&t;(IDENT_ADDR + TS_BIAS + 0x180000500UL)
-DECL|macro|TSUNAMI_PCHIP0_PMONCNT
-mdefine_line|#define&t;TSUNAMI_PCHIP0_PMONCNT&t;(IDENT_ADDR + TS_BIAS + 0x180000540UL)
-DECL|macro|TSUNAMI_PCHIP1_WSBA0
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSBA0  &t;(IDENT_ADDR + TS_BIAS + 0x380000000UL)
-DECL|macro|TSUNAMI_PCHIP1_WSBA1
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSBA1  &t;(IDENT_ADDR + TS_BIAS + 0x380000040UL)
-DECL|macro|TSUNAMI_PCHIP1_WSBA2
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSBA2  &t;(IDENT_ADDR + TS_BIAS + 0x380000080UL)
-DECL|macro|TSUNAMI_PCHIP1_WSBA3
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSBA3  &t;(IDENT_ADDR + TS_BIAS + 0x3800000C0UL)
-DECL|macro|TSUNAMI_PCHIP1_WSM0
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSM0  &t;(IDENT_ADDR + TS_BIAS + 0x380000100UL)
-DECL|macro|TSUNAMI_PCHIP1_WSM1
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSM1  &t;(IDENT_ADDR + TS_BIAS + 0x380000140UL)
-DECL|macro|TSUNAMI_PCHIP1_WSM2
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSM2  &t;(IDENT_ADDR + TS_BIAS + 0x380000180UL)
-DECL|macro|TSUNAMI_PCHIP1_WSM3
-mdefine_line|#define&t;TSUNAMI_PCHIP1_WSM3  &t;(IDENT_ADDR + TS_BIAS + 0x3800001C0UL)
-DECL|macro|TSUNAMI_PCHIP1_TBA0
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TBA0  &t;(IDENT_ADDR + TS_BIAS + 0x380000200UL)
-DECL|macro|TSUNAMI_PCHIP1_TBA1
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TBA1  &t;(IDENT_ADDR + TS_BIAS + 0x380000240UL)
-DECL|macro|TSUNAMI_PCHIP1_TBA2
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TBA2  &t;(IDENT_ADDR + TS_BIAS + 0x380000280UL)
-DECL|macro|TSUNAMI_PCHIP1_TBA3
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TBA3  &t;(IDENT_ADDR + TS_BIAS + 0x3800002C0UL)
-DECL|macro|TSUNAMI_PCHIP1_PCTL
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PCTL  &t;(IDENT_ADDR + TS_BIAS + 0x380000300UL)
-DECL|macro|TSUNAMI_PCHIP1_PLAT
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PLAT  &t;(IDENT_ADDR + TS_BIAS + 0x380000340UL)
-DECL|macro|TSUNAMI_PCHIP1_RESERVED
-mdefine_line|#define&t;TSUNAMI_PCHIP1_RESERVED&t;(IDENT_ADDR + TS_BIAS + 0x380000380UL)
-DECL|macro|TSUNAMI_PCHIP1_PERROR
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PERROR&t;(IDENT_ADDR + TS_BIAS + 0x3800003c0UL)
-DECL|macro|TSUNAMI_PCHIP1_PERRMASK
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PERRMASK&t;(IDENT_ADDR + TS_BIAS + 0x380000400UL)
-DECL|macro|TSUNAMI_PCHIP1_PERRSET
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PERRSET&t;(IDENT_ADDR + TS_BIAS + 0x380000440UL)
-DECL|macro|TSUNAMI_PCHIP1_TLBIV
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TLBIV  &t;(IDENT_ADDR + TS_BIAS + 0x380000480UL)
-DECL|macro|TSUNAMI_PCHIP1_TLBIA
-mdefine_line|#define&t;TSUNAMI_PCHIP1_TLBIA&t;(IDENT_ADDR + TS_BIAS + 0x3800004C0UL)
-DECL|macro|TSUNAMI_PCHIP1_PMONCTL
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PMONCTL&t;(IDENT_ADDR + TS_BIAS + 0x380000500UL)
-DECL|macro|TSUNAMI_PCHIP1_PMONCNT
-mdefine_line|#define&t;TSUNAMI_PCHIP1_PMONCNT&t;(IDENT_ADDR + TS_BIAS + 0x380000540UL)
-multiline_comment|/*                                                                          */
-multiline_comment|/* TSUNAMI Pchip Error register.                                            */
-multiline_comment|/*                                                                          */
+multiline_comment|/*&n; * CChip, DChip, and PChip registers&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|csr
+r_volatile
+r_int
+r_int
+id|csr
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|64
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|typedef|tsunami_64
+)brace
+id|tsunami_64
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|csc
+id|tsunami_64
+id|csc
+suffix:semicolon
+DECL|member|mtr
+id|tsunami_64
+id|mtr
+suffix:semicolon
+DECL|member|misc
+id|tsunami_64
+id|misc
+suffix:semicolon
+DECL|member|mpd
+id|tsunami_64
+id|mpd
+suffix:semicolon
+DECL|member|aar0
+id|tsunami_64
+id|aar0
+suffix:semicolon
+DECL|member|aar1
+id|tsunami_64
+id|aar1
+suffix:semicolon
+DECL|member|aar2
+id|tsunami_64
+id|aar2
+suffix:semicolon
+DECL|member|aar3
+id|tsunami_64
+id|aar3
+suffix:semicolon
+DECL|member|dim0
+id|tsunami_64
+id|dim0
+suffix:semicolon
+DECL|member|dim1
+id|tsunami_64
+id|dim1
+suffix:semicolon
+DECL|member|dir0
+id|tsunami_64
+id|dir0
+suffix:semicolon
+DECL|member|dir1
+id|tsunami_64
+id|dir1
+suffix:semicolon
+DECL|member|drir
+id|tsunami_64
+id|drir
+suffix:semicolon
+DECL|member|prben
+id|tsunami_64
+id|prben
+suffix:semicolon
+DECL|member|iic
+id|tsunami_64
+id|iic
+suffix:semicolon
+multiline_comment|/* a.k.a. iic0 */
+DECL|member|wdr
+id|tsunami_64
+id|wdr
+suffix:semicolon
+multiline_comment|/* a.k.a. iic1 */
+DECL|member|mpr0
+id|tsunami_64
+id|mpr0
+suffix:semicolon
+DECL|member|mpr1
+id|tsunami_64
+id|mpr1
+suffix:semicolon
+DECL|member|mpr2
+id|tsunami_64
+id|mpr2
+suffix:semicolon
+DECL|member|mpr3
+id|tsunami_64
+id|mpr3
+suffix:semicolon
+DECL|member|mctl
+id|tsunami_64
+id|mctl
+suffix:semicolon
+DECL|member|ttr
+id|tsunami_64
+id|ttr
+suffix:semicolon
+DECL|member|tdr
+id|tsunami_64
+id|tdr
+suffix:semicolon
+DECL|member|dim2
+id|tsunami_64
+id|dim2
+suffix:semicolon
+DECL|member|dim3
+id|tsunami_64
+id|dim3
+suffix:semicolon
+DECL|member|dir2
+id|tsunami_64
+id|dir2
+suffix:semicolon
+DECL|member|dir3
+id|tsunami_64
+id|dir3
+suffix:semicolon
+DECL|member|iic2
+id|tsunami_64
+id|iic2
+suffix:semicolon
+DECL|member|iic3
+id|tsunami_64
+id|iic3
+suffix:semicolon
+DECL|typedef|tsunami_cchip
+)brace
+id|tsunami_cchip
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|dsc
+id|tsunami_64
+id|dsc
+suffix:semicolon
+DECL|member|str
+id|tsunami_64
+id|str
+suffix:semicolon
+DECL|member|drev
+id|tsunami_64
+id|drev
+suffix:semicolon
+DECL|typedef|tsunami_dchip
+)brace
+id|tsunami_dchip
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|wsba
+id|tsunami_64
+id|wsba
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|wsm
+id|tsunami_64
+id|wsm
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|tba
+id|tsunami_64
+id|tba
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|pctl
+id|tsunami_64
+id|pctl
+suffix:semicolon
+DECL|member|plat
+id|tsunami_64
+id|plat
+suffix:semicolon
+DECL|member|reserved
+id|tsunami_64
+id|reserved
+suffix:semicolon
+DECL|member|perror
+id|tsunami_64
+id|perror
+suffix:semicolon
+DECL|member|perrmask
+id|tsunami_64
+id|perrmask
+suffix:semicolon
+DECL|member|perrset
+id|tsunami_64
+id|perrset
+suffix:semicolon
+DECL|member|tlbiv
+id|tsunami_64
+id|tlbiv
+suffix:semicolon
+DECL|member|tlbia
+id|tsunami_64
+id|tlbia
+suffix:semicolon
+DECL|member|pmonctl
+id|tsunami_64
+id|pmonctl
+suffix:semicolon
+DECL|member|pmoncnt
+id|tsunami_64
+id|pmoncnt
+suffix:semicolon
+DECL|typedef|tsunami_pchip
+)brace
+id|tsunami_pchip
+suffix:semicolon
+DECL|macro|TSUNAMI_cchip
+mdefine_line|#define TSUNAMI_cchip  ((tsunami_cchip *)(IDENT_ADDR+TS_BIAS+0x1A0000000UL))
+DECL|macro|TSUNAMI_dchip
+mdefine_line|#define TSUNAMI_dchip  ((tsunami_dchip *)(IDENT_ADDR+TS_BIAS+0x1B0000800UL))
+DECL|macro|TSUNAMI_pchip0
+mdefine_line|#define TSUNAMI_pchip0 ((tsunami_pchip *)(IDENT_ADDR+TS_BIAS+0x180000000UL))
+DECL|macro|TSUNAMI_pchip1
+mdefine_line|#define TSUNAMI_pchip1 ((tsunami_pchip *)(IDENT_ADDR+TS_BIAS+0x380000000UL))
+r_extern
+r_int
+id|TSUNAMI_bootcpu
+suffix:semicolon
+multiline_comment|/*&n; * TSUNAMI Pchip Error register.&n; */
 DECL|macro|perror_m_lost
 mdefine_line|#define perror_m_lost 0x1
 DECL|macro|perror_m_serr
@@ -331,9 +438,7 @@ l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*                                                                          */
-multiline_comment|/* TSUNAMI Pchip Window Space Base Address register.                        */
-multiline_comment|/*                                                                          */
+multiline_comment|/*&n; * TSUNAMI Pchip Window Space Base Address register.&n; */
 DECL|macro|wsba_m_ena
 mdefine_line|#define wsba_m_ena 0x1                
 DECL|macro|wsba_m_sg
@@ -399,9 +504,7 @@ l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;    */
-multiline_comment|/* TSUNAMI Pchip Control Register&t;&t;&t;&t;&t;    */
-multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;    */
+multiline_comment|/*&n; * TSUNAMI Pchip Control Register&n; */
 DECL|macro|pctl_m_fdsc
 mdefine_line|#define pctl_m_fdsc 0x1
 DECL|macro|pctl_m_fbtb
@@ -613,9 +716,7 @@ l_int|2
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*                                                                          */
-multiline_comment|/* TSUNAMI Pchip Error Mask Register.                                       */
-multiline_comment|/*                                                                          */
+multiline_comment|/*&n; * TSUNAMI Pchip Error Mask Register.&n; */
 DECL|macro|perrmask_m_lost
 mdefine_line|#define perrmask_m_lost 0x1
 DECL|macro|perrmask_m_serr
@@ -747,22 +848,18 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Memory spaces:&n; */
-DECL|macro|TSUNAMI_PCI0_MEM
-mdefine_line|#define TSUNAMI_PCI0_MEM&t;&t;(IDENT_ADDR + TS_BIAS + 0x000000000UL)
-DECL|macro|TSUNAMI_PCI0_IACK_SC
-mdefine_line|#define TSUNAMI_PCI0_IACK_SC&t;&t;(IDENT_ADDR + TS_BIAS + 0x1F8000000UL)
-DECL|macro|TSUNAMI_PCI0_IO
-mdefine_line|#define TSUNAMI_PCI0_IO&t;&t;&t;(IDENT_ADDR + TS_BIAS + 0x1FC000000UL)
-DECL|macro|TSUNAMI_PCI0_CONF
-mdefine_line|#define TSUNAMI_PCI0_CONF&t;&t;(IDENT_ADDR + TS_BIAS + 0x1FE000000UL)
-DECL|macro|TSUNAMI_PCI1_MEM
-mdefine_line|#define TSUNAMI_PCI1_MEM&t;&t;(IDENT_ADDR + TS_BIAS + 0x200000000UL)
-DECL|macro|TSUNAMI_PCI1_IACK_SC
-mdefine_line|#define TSUNAMI_PCI1_IACK_SC&t;&t;(IDENT_ADDR + TS_BIAS + 0x3F8000000UL)
-DECL|macro|TSUNAMI_PCI1_IO
-mdefine_line|#define TSUNAMI_PCI1_IO&t;&t;&t;(IDENT_ADDR + TS_BIAS + 0x3FC000000UL)
-DECL|macro|TSUNAMI_PCI1_CONF
-mdefine_line|#define TSUNAMI_PCI1_CONF&t;&t;(IDENT_ADDR + TS_BIAS + 0x3FE000000UL)
+DECL|macro|HOSE
+mdefine_line|#define HOSE(h) (((unsigned long)(h)) &lt;&lt; 33)
+DECL|macro|TSUNAMI_MEM
+mdefine_line|#define TSUNAMI_MEM(h)&t;     (IDENT_ADDR + TS_BIAS + 0x000000000UL + HOSE(h))
+DECL|macro|_TSUNAMI_IACK_SC
+mdefine_line|#define _TSUNAMI_IACK_SC(h)  (IDENT_ADDR + TS_BIAS + 0x1F8000000UL + HOSE(h))
+DECL|macro|TSUNAMI_IO
+mdefine_line|#define TSUNAMI_IO(h)&t;     (IDENT_ADDR + TS_BIAS + 0x1FC000000UL + HOSE(h))
+DECL|macro|TSUNAMI_CONF
+mdefine_line|#define TSUNAMI_CONF(h)&t;     (IDENT_ADDR + TS_BIAS + 0x1FE000000UL + HOSE(h))
+DECL|macro|TSUNAMI_IACK_SC
+mdefine_line|#define TSUNAMI_IACK_SC&t;     _TSUNAMI_IACK_SC(0) /* hack! */
 multiline_comment|/*&n; * Data structure for handling TSUNAMI machine checks:&n; */
 DECL|struct|el_TSUNAMI_sysdata_mcheck
 r_struct
@@ -823,13 +920,6 @@ id|TSUNAMI_DMA_WIN_BASE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * I/O functions:&n; *&n; * TSUNAMI, the 21??? PCI/memory support chipset for the EV6 (21264)&n; * can only use linear accesses to get at PCI memory and I/O spaces.&n; */
-multiline_comment|/* HACK ALERT! HACK ALERT! */
-multiline_comment|/* HACK ALERT! HACK ALERT! */
-multiline_comment|/* Only using PCI bus 0 for now in all routines.  */
-DECL|macro|TSUNAMI_IACK_SC
-mdefine_line|#define TSUNAMI_IACK_SC  TSUNAMI_PCI0_IACK_SC
-multiline_comment|/* HACK ALERT! HACK ALERT! */
-multiline_comment|/* HACK ALERT! HACK ALERT! */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char *
 DECL|macro|vusp
@@ -838,6 +928,10 @@ DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
+DECL|macro|XADDR
+mdefine_line|#define XADDR&t;((addr) &amp; 0xffffffffUL)
+DECL|macro|XHOSE
+mdefine_line|#define XHOSE&t;(((addr) &gt;&gt; 32) &amp; 3UL)
 DECL|function|tsunami_inb
 id|__EXTERN_INLINE
 r_int
@@ -859,9 +953,13 @@ op_star
 id|vucp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -891,9 +989,13 @@ op_star
 id|vucp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -924,9 +1026,13 @@ op_star
 id|vusp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -956,9 +1062,13 @@ op_star
 id|vusp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -986,9 +1096,13 @@ op_star
 id|vuip
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1012,9 +1126,13 @@ op_star
 id|vuip
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_IO
+id|TSUNAMI_IO
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 op_assign
 id|b
@@ -1047,9 +1165,13 @@ op_star
 id|vucp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1075,9 +1197,13 @@ op_star
 id|vusp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1100,9 +1226,13 @@ op_star
 id|vuip
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1124,9 +1254,13 @@ op_star
 id|vulp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1155,9 +1289,13 @@ op_star
 id|vucp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1192,9 +1330,13 @@ op_star
 id|vusp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1224,9 +1366,13 @@ op_star
 id|vuip
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 op_assign
 id|b
@@ -1257,9 +1403,13 @@ op_star
 id|vulp
 )paren
 (paren
-id|addr
+id|XADDR
 op_plus
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 )paren
 op_assign
 id|b
@@ -1284,7 +1434,11 @@ id|addr
 )paren
 (brace
 r_return
-id|TSUNAMI_PCI0_MEM
+id|TSUNAMI_MEM
+c_func
+(paren
+id|XHOSE
+)paren
 suffix:semicolon
 )brace
 DECL|macro|vucp
@@ -1295,6 +1449,10 @@ DECL|macro|vuip
 macro_line|#undef vuip
 DECL|macro|vulp
 macro_line|#undef vulp
+DECL|macro|XADDR
+macro_line|#undef XADDR
+DECL|macro|XHOSE
+macro_line|#undef XHOSE
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus&t;tsunami_virt_to_bus

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
 multiline_comment|/*&n; * New inode.c implementation.&n; *&n; * This implementation has the basic premise of trying&n; * to be extremely low-overhead and SMP-safe, yet be&n; * simple enough to be &quot;obviously correct&quot;.&n; *&n; * Famous last words.&n; */
 DECL|macro|INODE_PARANOIA
@@ -2850,11 +2851,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize the hash tables and default&n; * value for max inodes..&n; */
+multiline_comment|/*&n; * Initialize the hash tables and default&n; * value for max inodes&n; */
 DECL|macro|MAX_INODE
 mdefine_line|#define MAX_INODE (8192)
 DECL|function|inode_init
 r_void
+id|__init
 id|inode_init
 c_func
 (paren

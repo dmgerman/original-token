@@ -2325,7 +2325,7 @@ op_sub_assign
 l_int|4
 suffix:semicolon
 )brace
-multiline_comment|/* Handle all full-sized quadwords: we&squot;re aligned (or have a small count) */
+multiline_comment|/* Handle all full-sized quadwords: we&squot;re aligned&n;&t;   (or have a small count) */
 id|count
 op_sub_assign
 l_int|8

@@ -125,16 +125,6 @@ r_int
 r_int
 id|i
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Read the interrupt summary registers */
 id|pld
 op_assign
@@ -212,12 +202,6 @@ id|regs
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 r_static
 r_void
@@ -229,6 +213,48 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_ALPHA_GENERIC
+multiline_comment|/*&n;&t; * CABRIO SRM may not set variation correctly, so here we test&n;&t; * the high word of the interrupt summary register for the RAZ&n;&t; * bits, and hope that a true EB64+ would read all ones...&n;&t; */
+r_if
+c_cond
+(paren
+id|inw
+c_func
+(paren
+l_int|0x806
+)paren
+op_ne
+l_int|0xffff
+)paren
+(brace
+r_extern
+r_struct
+id|alpha_machine_vector
+id|cabriolet_mv
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;eb64p_init_irq: resetting for CABRIO&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|alpha_mv
+op_assign
+id|cabriolet_mv
+suffix:semicolon
+id|alpha_mv
+dot
+id|init_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* GENERIC */
 id|STANDARD_INIT_IRQ_PROLOG
 suffix:semicolon
 id|outb

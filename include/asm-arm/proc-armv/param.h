@@ -2,10 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armv/param.h&n; *&n; * Copy
 macro_line|#ifndef __ASM_PROC_PARAM_H
 DECL|macro|__ASM_PROC_PARAM_H
 mdefine_line|#define __ASM_PROC_PARAM_H
-macro_line|#ifndef HZ
-DECL|macro|HZ
-mdefine_line|#define HZ 100
-macro_line|#endif
+macro_line|#include &lt;asm/arch/param.h&gt;&t;&t;/* for HZ */
 DECL|macro|EXEC_PAGESIZE
 mdefine_line|#define EXEC_PAGESIZE   4096
 macro_line|#ifndef NGROUPS

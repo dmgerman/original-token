@@ -59,12 +59,14 @@ r_int
 id|mm_segment_t
 suffix:semicolon
 multiline_comment|/* domain register&t;*/
+DECL|macro|NR_DEBUGS
+mdefine_line|#define NR_DEBUGS&t;5
 DECL|macro|DECLARE_THREAD_STRUCT
-mdefine_line|#define DECLARE_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;struct thread_struct {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long&t;address;&t;&t;/* Address of fault&t;*/&t;&bslash;&n;&t;unsigned long&t;trap_no;&t;&t;/* Trap number&t;&t;*/&t;&bslash;&n;&t;unsigned long&t;error_code;&t;&t;/* Error code of trap&t;*/&t;&bslash;&n;&t;union fp_state&t;fpstate;&t;&t;/* FPE save state&t;*/&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define DECLARE_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;struct thread_struct {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long&t;address;&t;&t;/* Address of fault&t;*/&t;&bslash;&n;&t;unsigned long&t;trap_no;&t;&t;/* Trap number&t;&t;*/&t;&bslash;&n;&t;unsigned long&t;error_code;&t;&t;/* Error code of trap&t;*/&t;&bslash;&n;&t;union fp_state&t;fpstate;&t;&t;/* FPE save state&t;*/&t;&bslash;&n;&t;unsigned long&t;debug[NR_DEBUGS];&t;/* Debug/ptrace&t;&t;*/&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#include &lt;asm/arch/processor.h&gt;
 macro_line|#include &lt;asm/proc/processor.h&gt;
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&bslash;&n;}
 multiline_comment|/* Forward declaration, a strange C thing */
 r_struct
 id|mm_struct

@@ -1,6 +1,26 @@
 macro_line|#ifndef __ASM_ARM_SYSTEM_H
 DECL|macro|__ASM_ARM_SYSTEM_H
 mdefine_line|#define __ASM_ARM_SYSTEM_H
+multiline_comment|/* The type of machine we&squot;re running on */
+r_extern
+r_int
+r_int
+id|machine_type
+suffix:semicolon
+DECL|macro|MACH_TYPE_EBSA110
+mdefine_line|#define MACH_TYPE_EBSA110&t;0
+DECL|macro|MACH_TYPE_RISCPC
+mdefine_line|#define MACH_TYPE_RISCPC&t;1
+DECL|macro|MACH_TYPE_NEXUSPCI
+mdefine_line|#define MACH_TYPE_NEXUSPCI&t;3
+DECL|macro|MACH_TYPE_EBSA285
+mdefine_line|#define MACH_TYPE_EBSA285&t;4
+DECL|macro|MACH_TYPE_NETWINDER
+mdefine_line|#define MACH_TYPE_NETWINDER&t;5
+DECL|macro|MACH_TYPE_CATS
+mdefine_line|#define MACH_TYPE_CATS&t;&t;6
+DECL|macro|MACH_TYPE_TBOX
+mdefine_line|#define MACH_TYPE_TBOX&t;&t;7
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
 r_extern

@@ -1,4 +1,7 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/time.c&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/kernel/time.c&n; *  07-Aug-1998&t;RMK&t;Updated for arch/arm/kernel/leds.c&n; */
+macro_line|#include &lt;asm/leds.h&gt;
+DECL|macro|IRQ_TIMER
+mdefine_line|#define IRQ_TIMER IRQ_EBSA110_TIMER0
 DECL|macro|MCLK_47_8
 mdefine_line|#define MCLK_47_8
 macro_line|#if defined(MCLK_42_3)
@@ -109,16 +112,11 @@ id|count
 op_assign
 l_int|50
 suffix:semicolon
-op_star
+id|leds_event
+c_func
 (paren
-r_volatile
-r_int
-r_char
-op_star
+id|led_timer
 )paren
-l_int|0xf2400000
-op_xor_assign
-l_int|128
 suffix:semicolon
 )brace
 r_if

@@ -1,6 +1,7 @@
 macro_line|#ifndef _ALPHA_SOFTIRQ_H
 DECL|macro|_ALPHA_SOFTIRQ_H
 mdefine_line|#define _ALPHA_SOFTIRQ_H
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 r_extern

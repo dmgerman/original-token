@@ -1,9 +1,10 @@
 macro_line|#ifndef __ALPHA_SYSTEM_H
 DECL|macro|__ALPHA_SYSTEM_H
 mdefine_line|#define __ALPHA_SYSTEM_H
-macro_line|#include &lt;asm/pal.h&gt;&t;/* for backwards compatibility... */
+macro_line|#include &lt;asm/pal.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
-multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * With a few other pages for various reasons, we&squot;ll use an initial&n; * load address of 0xfffffc0000310000UL&n; */
+multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * With a few other pages for various reasons, we&squot;ll use an initial&n; * load address of PAGE_OFFSET+0x310000UL&n; */
 DECL|macro|BOOT_PCB
 mdefine_line|#define BOOT_PCB&t;0x20000000
 DECL|macro|BOOT_ADDR
@@ -12,22 +13,19 @@ multiline_comment|/* Remove when official MILO sources have ELF support: */
 DECL|macro|BOOT_SIZE
 mdefine_line|#define BOOT_SIZE&t;(16*1024)
 DECL|macro|KERNEL_START
-mdefine_line|#define KERNEL_START&t;0xfffffc0000300000
+mdefine_line|#define KERNEL_START&t;(PAGE_OFFSET+0x300000)
 DECL|macro|SWAPPER_PGD
-mdefine_line|#define SWAPPER_PGD&t;0xfffffc0000300000
+mdefine_line|#define SWAPPER_PGD&t;(PAGE_OFFSET+0x300000)
 DECL|macro|INIT_STACK
-mdefine_line|#define INIT_STACK&t;0xfffffc0000302000
+mdefine_line|#define INIT_STACK&t;(PAGE_OFFSET+0x302000)
 DECL|macro|EMPTY_PGT
-mdefine_line|#define EMPTY_PGT&t;0xfffffc0000304000
+mdefine_line|#define EMPTY_PGT&t;(PAGE_OFFSET+0x304000)
 DECL|macro|EMPTY_PGE
-mdefine_line|#define EMPTY_PGE&t;0xfffffc0000308000
+mdefine_line|#define EMPTY_PGE&t;(PAGE_OFFSET+0x308000)
 DECL|macro|ZERO_PGE
-mdefine_line|#define ZERO_PGE&t;0xfffffc000030A000
+mdefine_line|#define ZERO_PGE&t;(PAGE_OFFSET+0x30A000)
 DECL|macro|START_ADDR
-mdefine_line|#define START_ADDR&t;0xfffffc0000310000
-multiline_comment|/* Remove when official MILO sources have ELF support: */
-DECL|macro|START_SIZE
-mdefine_line|#define START_SIZE&t;(2*1024*1024)
+mdefine_line|#define START_ADDR&t;(PAGE_OFFSET+0x310000)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This is the logout header that should be common to all platforms&n; * (assuming they are running OSF/1 PALcode, I guess).&n; */
 DECL|struct|el_common
@@ -282,9 +280,9 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|halt
-mdefine_line|#define halt() __asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
+mdefine_line|#define halt() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #halt&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) do { &bslash;&n;&t;current = next; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - IDENT_ADDR); &bslash;&n;} while (0)
+mdefine_line|#define switch_to(prev,next) do {&t;&t;&t;&t;&t;&bslash;&n;&t;current = next;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - IDENT_ADDR);&t;&bslash;&n;} while (0)
 r_extern
 r_void
 id|alpha_switch_to
@@ -300,44 +298,34 @@ mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&qu
 DECL|macro|wmb
 mdefine_line|#define wmb() &bslash;&n;__asm__ __volatile__(&quot;wmb&quot;: : :&quot;memory&quot;)
 DECL|macro|imb
-mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
+mdefine_line|#define imb() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #imb&quot; : : &quot;i&quot; (PAL_imb) : &quot;memory&quot;)
 DECL|macro|draina
-mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
+mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #draina&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
 DECL|macro|call_pal1
-mdefine_line|#define call_pal1(palno,arg) &bslash;&n;({ &bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = arg; &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (palno) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
+mdefine_line|#define call_pal1(palno,arg)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = arg;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #call_pal1&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (palno)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&t;&bslash;&n;&t;__r0;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|getipl
-mdefine_line|#define getipl() &bslash;&n;({ &bslash;&n;&t;register unsigned long r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %1&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (r0) &bslash;&n;&t;&t;:&quot;i&quot; (PAL_rdps) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;r0; &bslash;&n;})
-macro_line|#ifdef THE_OLD_VERSION
+mdefine_line|#define getipl()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long r0 __asm__(&quot;$0&quot;);&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %1 #getipl&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (r0)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;i&quot; (PAL_rdps)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;&t;r0;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|setipl
-mdefine_line|#define setipl(ipl) &bslash;&n;do { &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %2&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_swpipl) &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;} while (0)
+mdefine_line|#define setipl(ipl)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;); __r16 = (ipl);&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %2 #setipl&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r16)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_swpipl)&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;})
 DECL|macro|swpipl
-mdefine_line|#define swpipl(ipl) &bslash;&n;({ &bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16) &bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (PAL_swpipl) &bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
-macro_line|#else
-DECL|macro|setipl
-mdefine_line|#define setipl(ipl) &bslash;&n;do { &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;mov %0,$16; call_pal %1&quot; &bslash;&n;&t;&t;: /* no output */ &bslash;&n;&t;&t;:&quot;i,r&quot; (ipl), &quot;i,i&quot; (PAL_swpipl) &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;} while (0)
-DECL|macro|swpipl
-mdefine_line|#define swpipl(ipl) &bslash;&n;({ &bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;mov %0,$16; call_pal %1&quot; &bslash;&n;&t;&t;: /* no output (bound to the template) */ &bslash;&n;&t;&t;: &quot;i,r&quot; (ipl), &quot;i,i&quot; (PAL_swpipl) &bslash;&n;&t;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
-macro_line|#endif
+mdefine_line|#define swpipl(ipl)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r0 __asm__(&quot;$0&quot;);&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (ipl);&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #swpipl&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r0),&quot;=r&quot; (__r16)&t;&t;&t;&bslash;&n;&t;&t;:&quot;1&quot; (__r16),&quot;i&quot; (PAL_swpipl)&t;&t;&t;&bslash;&n;&t;&t;:&quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;);&t;&bslash;&n;&t;__r0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__cli
 mdefine_line|#define __cli()&t;&t;&t;setipl(7)
 DECL|macro|__sti
 mdefine_line|#define __sti()&t;&t;&t;setipl(0)
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags)&t;do { (flags) = getipl(); } while (0)
+mdefine_line|#define __save_flags(flags)&t;((flags) = getipl())
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(flags)&t;do { (flags) = swpipl(7); } while (0)
+mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(7))
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
 macro_line|#ifdef __SMP__
 r_extern
 r_int
-r_char
 id|global_irq_holder
 suffix:semicolon
-DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;do { &bslash;&n;&t;(x) = ((global_irq_holder == (unsigned char) smp_processor_id()) &bslash;&n;&t;&t;? 1 &bslash;&n;&t;&t;: ((getipl() &amp; 7) ? 2 : 0)); &bslash;&n;} while (0)
 DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
+mdefine_line|#define save_and_cli(flags)     (save_flags(flags), cli())
 r_extern
 r_void
 id|__global_cli
@@ -349,6 +337,15 @@ suffix:semicolon
 r_extern
 r_void
 id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
 c_func
 (paren
 r_void
@@ -368,23 +365,25 @@ DECL|macro|cli
 mdefine_line|#define cli()                   __global_cli()
 DECL|macro|sti
 mdefine_line|#define sti()                   __global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(flags)&t;((flags) = __global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)    __global_restore_flags(flags)
 macro_line|#else /* __SMP__ */
 DECL|macro|cli
-mdefine_line|#define cli()&t;&t;&t;setipl(7)
+mdefine_line|#define cli()&t;&t;&t;__cli()
 DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;setipl(0)
+mdefine_line|#define sti()&t;&t;&t;__sti()
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;do { (flags) = getipl(); } while (0)
+mdefine_line|#define save_flags(flags)&t;__save_flags(flags)
 DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)&t;do { (flags) = swpipl(7); } while (0)
+mdefine_line|#define save_and_cli(flags)&t;__save_and_cli(flags)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;setipl(flags)
+mdefine_line|#define restore_flags(flags)&t;__restore_flags(flags)
 macro_line|#endif /* __SMP__ */
 multiline_comment|/*&n; * TB routines..&n; */
 DECL|macro|__tbi
-mdefine_line|#define __tbi(nr,arg,arg1...) do { &bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (nr); &bslash;&n;&t;register unsigned long __r17 __asm__(&quot;$17&quot;); arg; &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %3&quot; &bslash;&n;&t;&t;:&quot;=r&quot; (__r16),&quot;=r&quot; (__r17) &bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_tbi) ,##arg1 &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;} while (0)
+mdefine_line|#define __tbi(nr,arg,arg1...)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long __r16 __asm__(&quot;$16&quot;) = (nr);&t;&bslash;&n;&t;register unsigned long __r17 __asm__(&quot;$17&quot;); arg;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;call_pal %3 #__tbi&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;=r&quot; (__r16),&quot;=r&quot; (__r17)&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (__r16),&quot;i&quot; (PAL_tbi) ,##arg1&t;&t;&bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;);&t;&bslash;&n;})
 DECL|macro|tbi
 mdefine_line|#define tbi(x,y)&t;__tbi(x,__r17=(y),&quot;1&quot; (__r17))
 DECL|macro|tbisi
@@ -403,6 +402,7 @@ id|__inline__
 r_int
 r_int
 id|xchg_u32
+c_func
 (paren
 r_volatile
 r_int
@@ -419,6 +419,7 @@ id|__inline__
 r_int
 r_int
 id|xchg_u64
+c_func
 (paren
 r_volatile
 r_int
@@ -562,10 +563,6 @@ r_return
 id|val
 suffix:semicolon
 )brace
-DECL|macro|xchg
-mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
-DECL|macro|tas
-mdefine_line|#define tas(ptr) (xchg((ptr),1))
 multiline_comment|/*&n; * This function doesn&squot;t exist, so you&squot;ll get a linker error&n; * if something tries to do an invalid xchg().&n; *&n; * This only works if the compiler isn&squot;t horribly bad at optimizing.&n; * gcc-2.5.8 reportedly can&squot;t handle this, but as that doesn&squot;t work&n; * too well on the alpha anyway..&n; */
 r_extern
 r_void
@@ -575,11 +572,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|__xchg
 r_static
 id|__inline__
 r_int
 r_int
+DECL|function|__xchg
 id|__xchg
 c_func
 (paren
@@ -636,6 +633,10 @@ r_return
 id|x
 suffix:semicolon
 )brace
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) &bslash;&n;  ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+DECL|macro|tas
+mdefine_line|#define tas(ptr) (xchg((ptr),1))
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif
 eof

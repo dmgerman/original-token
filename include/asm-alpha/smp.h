@@ -3,6 +3,7 @@ DECL|macro|__ASM_SMP_H
 mdefine_line|#define __ASM_SMP_H
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;asm/pal.h&gt;
 DECL|struct|cpuinfo_alpha
 r_struct
 id|cpuinfo_alpha
@@ -44,48 +45,6 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-r_typedef
-r_volatile
-r_struct
-(brace
-DECL|member|kernel_flag
-r_int
-r_int
-id|kernel_flag
-suffix:semicolon
-multiline_comment|/* 4 bytes, please */
-DECL|member|akp
-r_int
-r_int
-id|akp
-suffix:semicolon
-multiline_comment|/* 4 bytes, please */
-DECL|member|pc
-r_int
-r_int
-id|pc
-suffix:semicolon
-DECL|member|cpu
-r_int
-r_int
-id|cpu
-suffix:semicolon
-DECL|typedef|klock_info_t
-)brace
-id|klock_info_t
-suffix:semicolon
-r_extern
-id|klock_info_t
-id|klock_info
-suffix:semicolon
-DECL|macro|KLOCK_HELD
-mdefine_line|#define KLOCK_HELD&t;0xff
-DECL|macro|KLOCK_CLEAR
-mdefine_line|#define KLOCK_CLEAR&t;0x00
-r_extern
-r_int
-id|task_lock_depth
-suffix:semicolon
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY     20
 r_extern
@@ -97,12 +56,81 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* HACK: Cabrio WHAMI return value is bogus if more than 8 bits used.. :-( */
-DECL|macro|hard_smp_processor_id
-mdefine_line|#define hard_smp_processor_id() &bslash;&n;({ &bslash;&n;&t;register unsigned char __r0 __asm__(&quot;$0&quot;); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;call_pal %0&quot; &bslash;&n;&t;&t;: /* no output (bound to the template) */ &bslash;&n;&t;&t;:&quot;i&quot; (PAL_whami) &bslash;&n;&t;&t;:&quot;$0&quot;, &quot;$1&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;&t;__r0; &bslash;&n;})
+DECL|function|hard_smp_processor_id
+r_static
+id|__inline__
+r_int
+r_char
+id|hard_smp_processor_id
+c_func
+(paren
+r_void
+)paren
+(brace
+r_register
+r_int
+r_char
+id|__r0
+id|__asm__
+c_func
+(paren
+l_string|&quot;$0&quot;
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;call_pal %1 #whami&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|__r0
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PAL_whami
+)paren
+suffix:colon
+l_string|&quot;$1&quot;
+comma
+l_string|&quot;$22&quot;
+comma
+l_string|&quot;$23&quot;
+comma
+l_string|&quot;$24&quot;
+comma
+l_string|&quot;$25&quot;
+)paren
+suffix:semicolon
+r_return
+id|__r0
+suffix:semicolon
+)brace
 DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id()&t;hard_smp_processor_id()
+mdefine_line|#define smp_processor_id()&t;(current-&gt;processor)
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu)&t;(cpu)
+multiline_comment|/* For the benefit of panic.  */
+r_void
+id|smp_message_pass
+c_func
+(paren
+r_int
+id|target
+comma
+r_int
+id|msg
+comma
+r_int
+r_int
+id|data
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
 macro_line|#endif /* __SMP__ */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID&t;(-1)

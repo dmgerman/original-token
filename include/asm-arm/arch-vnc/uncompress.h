@@ -120,4 +120,6 @@ suffix:semicolon
 multiline_comment|/*&n; * nothing to do&n; */
 DECL|macro|arch_decomp_setup
 mdefine_line|#define arch_decomp_setup()
+DECL|macro|arch_decomp_wdog
+mdefine_line|#define arch_decomp_wdog()
 eof

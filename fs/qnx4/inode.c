@@ -519,15 +519,18 @@ macro_line|#else
 l_int|NULL
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_QNX4FS_RW
 id|qnx4_put_inode
 comma
-macro_line|#ifdef CONFIG_QNX4FS_RW
 id|qnx4_delete_inode
 comma
 l_int|NULL
 comma
 multiline_comment|/* notify_change */
 macro_line|#else
+l_int|NULL
+comma
+multiline_comment|/* put_inode */
 l_int|NULL
 comma
 multiline_comment|/* delete_inode */

@@ -2704,11 +2704,6 @@ id|rqstp-&gt;rq_resbuf
 op_assign
 id|rqstp-&gt;rq_defbuf
 suffix:semicolon
-id|checksignals
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2776,11 +2771,6 @@ id|rqstp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We have to be able to interrupt this wait&n;&t;&t; * to bring down the daemons ...&n;&t;&t; */
-id|checksignals
-c_func
-(paren
-)paren
-suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE

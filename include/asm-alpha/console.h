@@ -63,22 +63,5 @@ DECL|macro|ENV_LANGUAGE
 mdefine_line|#define ENV_LANGUAGE&t;&t;0x0E
 DECL|macro|ENV_TTY_DEV
 mdefine_line|#define ENV_TTY_DEV&t;&t;0x0F
-r_extern
-r_int
-r_int
-id|dispatch
-c_func
-(paren
-r_int
-r_int
-id|code
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-DECL|macro|puts
-mdefine_line|#define puts(x,l) dispatch(CCB_PUTS,0,x,l)
 macro_line|#endif
 eof

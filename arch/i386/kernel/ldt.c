@@ -313,6 +313,14 @@ comma
 id|LDT_ENTRIES
 )paren
 suffix:semicolon
+id|current-&gt;tss.ldt
+op_assign
+id|_LDT
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
 id|load_ldt
 c_func
 (paren

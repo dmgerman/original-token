@@ -27,9 +27,9 @@ mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_SVC
 DECL|macro|NFSD_BUFSIZE
 mdefine_line|#define NFSD_BUFSIZE&t;&t;(1024 + NFSSVC_MAXBLKSIZE)
 DECL|macro|ALLOWED_SIGS
-mdefine_line|#define ALLOWED_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGSTOP))
+mdefine_line|#define ALLOWED_SIGS&t;(sigmask(SIGKILL))
 DECL|macro|SHUTDOWN_SIGS
-mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGTERM))
+mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGQUIT))
 r_extern
 r_struct
 id|svc_program

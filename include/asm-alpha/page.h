@@ -9,6 +9,7 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * A _lot_ of the kernel time is spent clearing pages, so&n; * do this as fast as we possibly can. Also, doing this&n; * as a separate inline function (rather than memset())&n; * results in clearer kernel profiles as we see _who_ is&n; * doing page clearing or copying.&n; */
@@ -420,12 +421,18 @@ DECL|macro|__pgd
 mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
-macro_line|#endif
+macro_line|#endif /* STRICT_MM_TYPECHECKS */
+macro_line|#endif /* !ASSEMBLY */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
-mdefine_line|#define PAGE_ALIGN(addr)&t;&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+macro_line|#ifdef USE_48_BIT_KSEG
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFFC0000000000UL
+mdefine_line|#define PAGE_OFFSET&t;&t;0xffff800000000000
+macro_line|#else
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;&t;0xfffffc0000000000
+macro_line|#endif
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long) (x) - PAGE_OFFSET)
 DECL|macro|__va

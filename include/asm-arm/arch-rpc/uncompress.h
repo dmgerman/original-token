@@ -696,4 +696,7 @@ l_string|&quot;&lt;4M of mem&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * nothing to do&n; */
+DECL|macro|arch_decomp_wdog
+mdefine_line|#define arch_decomp_wdog()
 eof

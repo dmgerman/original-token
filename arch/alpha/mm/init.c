@@ -11,11 +11,16 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+DECL|macro|DEBUG_POISON
+mdefine_line|#define DEBUG_POISON 0
 r_extern
 r_void
 id|die_if_kernel
@@ -1107,6 +1112,120 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* __SMP__ */
+macro_line|#if DEBUG_POISON
+r_static
+r_void
+DECL|function|kill_page
+id|kill_page
+c_func
+(paren
+r_int
+r_int
+id|pg
+)paren
+(brace
+r_int
+r_int
+op_star
+id|p
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pg
+suffix:semicolon
+r_int
+r_int
+id|i
+op_assign
+id|PAGE_SIZE
+comma
+id|v
+op_assign
+l_int|0xdeadbeefdeadbeef
+suffix:semicolon
+r_do
+(brace
+id|p
+(braket
+l_int|0
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|1
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|2
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|3
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|4
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|5
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|6
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|p
+(braket
+l_int|7
+)braket
+op_assign
+id|v
+suffix:semicolon
+id|i
+op_sub_assign
+l_int|64
+suffix:semicolon
+id|p
+op_add_assign
+l_int|8
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|i
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|macro|kill_page
+mdefine_line|#define kill_page(pg)
+macro_line|#endif
 r_void
 DECL|function|mem_init
 id|mem_init
@@ -1267,6 +1386,29 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|initrd_start
+op_logical_and
+id|tmp
+op_ge
+id|initrd_start
+op_logical_and
+id|tmp
+OL
+id|initrd_end
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
+id|kill_page
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -1375,6 +1517,12 @@ dot
 id|count
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|kill_page
+c_func
+(paren
+id|addr
 )paren
 suffix:semicolon
 id|free_page
