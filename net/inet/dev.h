@@ -17,6 +17,8 @@ DECL|macro|IS_LOOPBACK
 mdefine_line|#define IS_LOOPBACK&t;2&t;&t;/* address is for LOOPBACK&t;*/
 DECL|macro|IS_BROADCAST
 mdefine_line|#define IS_BROADCAST&t;3&t;&t;/* address is a valid broadcast&t;*/
+DECL|macro|IS_INVBCAST
+mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us */
 multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  We will&n; * gradually phase out this structure, and replace it with the&n; * more general (but stolen :-) BSD &quot;ifnet&quot; structure. -FvK&n; */
 DECL|struct|device
 r_struct
@@ -409,6 +411,28 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+DECL|macro|HAVE_MULTICAST
+mdefine_line|#define HAVE_MULTICAST&t;&t;&t; 
+DECL|member|set_multicast_list
+r_void
+(paren
+op_star
+id|set_multicast_list
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|num_addrs
+comma
+r_void
+op_star
+id|addrs
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|packet_type
@@ -637,6 +661,14 @@ suffix:semicolon
 r_extern
 r_void
 id|dev_transmit
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|in_inet_bh
 c_func
 (paren
 r_void

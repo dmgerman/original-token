@@ -1,32 +1,14 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the UDP module.&n; *&n; * Version:&t;@(#)udp.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the UDP module.&n; *&n; * Version:&t;@(#)udp.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: Turned on udp checksums. I don&squot;t want to&n; *&t;&t;&t;&t;  chase &squot;memory corruption&squot; bugs that aren&squot;t!&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _UDP_H
 DECL|macro|_UDP_H
 mdefine_line|#define _UDP_H
 macro_line|#include &lt;linux/udp.h&gt;
 DECL|macro|UDP_NO_CHECK
-mdefine_line|#define UDP_NO_CHECK&t;1
+mdefine_line|#define UDP_NO_CHECK&t;0
 r_extern
 r_struct
 id|proto
 id|udp_prot
-suffix:semicolon
-r_extern
-r_int
-id|udp_select
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|sel_type
-comma
-id|select_table
-op_star
-id|wait
-)paren
 suffix:semicolon
 r_extern
 r_void

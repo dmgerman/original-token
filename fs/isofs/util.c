@@ -368,6 +368,7 @@ id|p
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* We have to convert from a MM/DD/YY format to the unix ctime format.  We have to&n;   take into account leap years and all of that good stuff.  Unfortunately, the kernel&n;   does not have the information on hand to take into account daylight savings time,&n;   so there will be cases (roughly half the time) where the dates are off by one hour. */
 DECL|function|iso_date
 r_int
 id|iso_date
@@ -532,7 +533,7 @@ op_add_assign
 (paren
 id|year
 op_plus
-l_int|2
+l_int|1
 )paren
 op_div
 l_int|4

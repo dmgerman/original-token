@@ -92,8 +92,6 @@ DECL|macro|XD_RETRIES
 mdefine_line|#define XD_RETRIES&t;4&t;/* maximum 4 retries */
 DECL|macro|DEBUG
 macro_line|#undef DEBUG&t;&t;&t;/* define for debugging output */
-DECL|macro|XD_OVERRIDE
-macro_line|#undef XD_OVERRIDE&t;&t;/* define to override auto-detection */
 macro_line|#ifdef DEBUG
 DECL|macro|DEBUG_STARTUP
 mdefine_line|#define DEBUG_STARTUP&t;/* debug driver initialisation */
@@ -105,7 +103,7 @@ DECL|macro|DEBUG_OTHER
 mdefine_line|#define DEBUG_OTHER&t;/* debug misc. interrupt/DMA stuff */
 DECL|macro|DEBUG_COMMAND
 mdefine_line|#define DEBUG_COMMAND&t;/* debug each controller command */
-macro_line|#endif DEBUG
+macro_line|#endif /* DEBUG */
 multiline_comment|/* this structure defines the XT drives and their types */
 r_typedef
 r_struct
@@ -203,13 +201,24 @@ id|XD_SIGNATURE
 suffix:semicolon
 id|u_long
 id|xd_init
-c_func
 (paren
 id|u_long
 id|mem_start
 comma
 id|u_long
 id|mem_end
+)paren
+suffix:semicolon
+r_void
+id|xd_setup
+(paren
+r_char
+op_star
+id|command
+comma
+r_int
+op_star
+id|integers
 )paren
 suffix:semicolon
 r_static
@@ -445,10 +454,9 @@ id|timeout
 )paren
 suffix:semicolon
 multiline_comment|/* card specific setup and geometry gathering code */
-macro_line|#ifndef XD_OVERRIDE
 r_static
 r_void
-id|xd_dtc5150x_init_controller
+id|xd_dtc_init_controller
 (paren
 id|u_char
 op_star
@@ -457,7 +465,7 @@ id|address
 suffix:semicolon
 r_static
 r_void
-id|xd_dtc5150x_init_drive
+id|xd_dtc_init_drive
 (paren
 id|u_char
 id|drive
@@ -465,7 +473,7 @@ id|drive
 suffix:semicolon
 r_static
 r_void
-id|xd_wd1004a27x_init_controller
+id|xd_wd_init_controller
 (paren
 id|u_char
 op_star
@@ -474,7 +482,7 @@ id|address
 suffix:semicolon
 r_static
 r_void
-id|xd_wd1004a27x_init_drive
+id|xd_wd_init_drive
 (paren
 id|u_char
 id|drive
@@ -482,7 +490,7 @@ id|drive
 suffix:semicolon
 r_static
 r_void
-id|xd_seagate11_init_controller
+id|xd_seagate_init_controller
 (paren
 id|u_char
 op_star
@@ -491,7 +499,7 @@ id|address
 suffix:semicolon
 r_static
 r_void
-id|xd_seagate11_init_drive
+id|xd_seagate_init_drive
 (paren
 id|u_char
 id|drive
@@ -523,16 +531,6 @@ id|u_char
 id|ecc
 )paren
 suffix:semicolon
-macro_line|#endif XD_OVERRIDE
-r_static
-r_void
-id|xd_override_init_controller
-(paren
-id|u_char
-op_star
-id|address
-)paren
-suffix:semicolon
 r_static
 r_void
 id|xd_override_init_drive
@@ -541,5 +539,5 @@ id|u_char
 id|drive
 )paren
 suffix:semicolon
-macro_line|#endif _LINUX_XD_H
+macro_line|#endif /* _LINUX_XD_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -35,77 +35,90 @@ comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_NET_UNREACH&t;*/
 (brace
 id|EHOSTUNREACH
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_HOST_UNREACH&t;*/
 (brace
 id|ENOPROTOOPT
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_PROT_UNREACH&t;*/
 (brace
 id|ECONNREFUSED
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_PORT_UNREACH&t;*/
 (brace
 id|EOPNOTSUPP
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/*&t;ICMP_FRAG_NEEDED&t;*/
 (brace
 id|EOPNOTSUPP
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/*&t;ICMP_SR_FAILED&t;&t;*/
 (brace
 id|ENETUNREACH
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/* &t;ICMP_NET_UNKNOWN&t;*/
 (brace
 id|EHOSTDOWN
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_HOST_UNKNOWN&t;*/
 (brace
 id|ENONET
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_HOST_ISOLATED&t;*/
 (brace
 id|ENETUNREACH
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_NET_ANO&t;&t;*/
 (brace
 id|EHOSTUNREACH
 comma
 l_int|1
 )brace
 comma
+multiline_comment|/*&t;ICMP_HOST_ANO&t;&t;*/
 (brace
 id|EOPNOTSUPP
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/*&t;ICMP_NET_UNR_TOS&t;*/
 (brace
 id|EOPNOTSUPP
 comma
 l_int|0
 )brace
+multiline_comment|/*&t;ICMP_HOST_UNR_TOS&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/* Display the contents of an ICMP header. */
@@ -256,7 +269,7 @@ r_struct
 id|sk_buff
 op_star
 )paren
-id|kmalloc
+id|alloc_skb
 c_func
 (paren
 id|len
@@ -272,10 +285,6 @@ op_eq
 l_int|NULL
 )paren
 r_return
-suffix:semicolon
-id|skb-&gt;lock
-op_assign
-l_int|0
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -1043,12 +1052,7 @@ id|len
 suffix:semicolon
 id|skb2
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|kmalloc
+id|alloc_skb
 c_func
 (paren
 id|size
@@ -1083,10 +1087,6 @@ id|skb2-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|skb2-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
 id|skb2-&gt;mem_addr
 op_assign
 id|skb2
@@ -1094,6 +1094,10 @@ suffix:semicolon
 id|skb2-&gt;mem_len
 op_assign
 id|size
+suffix:semicolon
+id|skb2-&gt;free
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Build Layer 2-3 headers for message back to source */
 id|offset
@@ -1131,12 +1135,12 @@ c_func
 l_string|&quot;ICMP: Could not build IP Header for ICMP ECHO Response&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree_skb
 c_func
 (paren
-id|skb2-&gt;mem_addr
+id|skb2
 comma
-id|skb2-&gt;mem_len
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -1213,13 +1217,6 @@ id|icmphr-&gt;checksum
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|icmph-&gt;checksum
-)paren
-(brace
-multiline_comment|/* Calculate Checksum */
 id|icmphr-&gt;checksum
 op_assign
 id|ip_compute_csum
@@ -1235,7 +1232,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Ship it out - free it when done */
 id|ip_queue_xmit
 c_func
@@ -1390,12 +1386,7 @@ id|len
 suffix:semicolon
 id|skb2
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|kmalloc
+id|alloc_skb
 c_func
 (paren
 id|size
@@ -1430,10 +1421,6 @@ id|skb2-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|skb2-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
 id|skb2-&gt;mem_addr
 op_assign
 id|skb2
@@ -1441,6 +1428,10 @@ suffix:semicolon
 id|skb2-&gt;mem_len
 op_assign
 id|size
+suffix:semicolon
+id|skb2-&gt;free
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/* Build Layer 2-3 headers for message back to source */
 id|offset
@@ -1478,12 +1469,12 @@ c_func
 l_string|&quot;ICMP: Could not build IP Header for ICMP ADDRESS Response&bslash;n&quot;
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree_skb
 c_func
 (paren
-id|skb2-&gt;mem_addr
+id|skb2
 comma
-id|skb2-&gt;mem_len
+id|FREE_WRITE
 )paren
 suffix:semicolon
 id|skb-&gt;sk
@@ -1576,13 +1567,6 @@ id|dev-&gt;pa_mask
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|icmph-&gt;checksum
-)paren
-(brace
-multiline_comment|/* Calculate Checksum */
 id|icmphr-&gt;checksum
 op_assign
 id|ip_compute_csum
@@ -1598,7 +1582,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Ship it out - free it when done */
 id|ip_queue_xmit
 c_func
@@ -1744,13 +1727,6 @@ multiline_comment|/* Validate the packet first */
 r_if
 c_cond
 (paren
-id|icmph-&gt;checksum
-)paren
-(brace
-multiline_comment|/* Checksums Enabled? */
-r_if
-c_cond
-(paren
 id|ip_compute_csum
 c_func
 (paren
@@ -1793,7 +1769,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
 )brace
 id|print_icmp
 c_func

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 r_static
 r_int
 id|nfs_file_read
@@ -44,6 +45,20 @@ r_char
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_static
+r_int
+id|nfs_fsync
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -110,7 +125,8 @@ multiline_comment|/* no special open is needed */
 l_int|NULL
 comma
 multiline_comment|/* release */
-l_int|NULL
+id|nfs_fsync
+comma
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
@@ -164,6 +180,27 @@ l_int|NULL
 multiline_comment|/* truncate */
 )brace
 suffix:semicolon
+DECL|function|nfs_fsync
+r_static
+r_int
+id|nfs_fsync
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|nfs_file_read
 r_static
 r_int

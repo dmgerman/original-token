@@ -1,0 +1,355 @@
+multiline_comment|/*&n; *&t;SUCS&t;NET2 Debugged.&n; *&n; *&t;Generic datagram handling routines. These are generic for all protocols. Possibly a generic IP version on top&n; *&t;of these would make sense. Not tonight however 8-). &n; *&t;This is used because UDP, RAW, PACKET and the to be released IPX layer all have identical select code and mostly&n; *&t;identical recvfrom() code. So we share it here. The select was shared before but buried in udp.c so I moved it.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;. (datagram_select() from old udp.c code)&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;NULL return from skb_peek_copy() understood&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &quot;inet.h&quot;
+macro_line|#include &quot;dev.h&quot;
+macro_line|#include &quot;ip.h&quot;
+macro_line|#include &quot;protocol.h&quot;
+macro_line|#include &quot;arp.h&quot;
+macro_line|#include &quot;route.h&quot;
+macro_line|#include &quot;tcp.h&quot;
+macro_line|#include &quot;udp.h&quot;
+macro_line|#include &quot;skbuff.h&quot;
+macro_line|#include &quot;sock.h&quot;
+multiline_comment|/*&n; *&t;Get a datagram skbuff, understands the peeking, nonblocking wakeups and possible&n; *&t;races. This replaces identical code in packet,raw and udp, as well as the yet to&n; *&t;be released IPX support. It also finally fixes the long standing peek and read&n; *&t;race for datagram sockets. If you alter this routine remember it must be&n; *&t;re-entrant.&n; */
+DECL|function|skb_recv_datagram
+r_struct
+id|sk_buff
+op_star
+id|skb_recv_datagram
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|flags
+comma
+r_int
+id|noblock
+comma
+r_int
+op_star
+id|err
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+multiline_comment|/* Socket is inuse - so the timer doesn&squot;t attack it */
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|sk-&gt;rqueue
+op_eq
+l_int|NULL
+)paren
+multiline_comment|/* No data */
+(brace
+multiline_comment|/* If we are shutdown then no more data is going to appear. We are done */
+r_if
+c_cond
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|RCV_SHUTDOWN
+)paren
+(brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* User doesn&squot;t want to wait */
+r_if
+c_cond
+(paren
+id|noblock
+)paren
+(brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+multiline_comment|/* Interrupts off so that no packet arrives before we begin sleeping. &n;&t;&t;   Otherwise we might miss our wake up */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;rqueue
+op_eq
+l_int|NULL
+)paren
+(brace
+id|interruptible_sleep_on
+c_func
+(paren
+id|sk-&gt;sleep
+)paren
+suffix:semicolon
+multiline_comment|/* Signals may need a restart of the syscall */
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|ERESTARTSYS
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+op_ne
+l_int|0
+)paren
+multiline_comment|/* Error while waiting for packet&n;&t;&t;&t;&t;&t;&t;   eg an icmp sent earlier by the&n;&t;&t;&t;&t;&t;&t;   peer has finaly turned up now */
+(brace
+op_star
+id|err
+op_assign
+op_minus
+id|sk-&gt;err
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sk-&gt;err
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+id|sk-&gt;inuse
+op_assign
+l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Again only user level code calls this function, so nothing interrupt level&n;&t;     will suddenely eat the rqueue */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|MSG_PEEK
+)paren
+)paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|sk-&gt;rqueue
+)paren
+suffix:semicolon
+r_else
+(brace
+id|skb
+op_assign
+id|skb_peek_copy
+c_func
+(paren
+op_amp
+id|sk-&gt;rqueue
+)paren
+suffix:semicolon
+multiline_comment|/* We make a copy with interrupts off. Its the only&n;&t;  &t;&t;&t;&t;&t;   way to be safe as this code is re-entrant */
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* shouldn&squot;t happen but .. */
+op_star
+id|err
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+)brace
+r_return
+id|skb
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Datagram select: Again totally generic. Moved from udp.c&n; */
+DECL|function|datagram_select
+r_int
+id|datagram_select
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
+)paren
+(brace
+id|select_wait
+c_func
+(paren
+id|sk-&gt;sleep
+comma
+id|wait
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|sel_type
+)paren
+(brace
+r_case
+id|SEL_IN
+suffix:colon
+r_if
+c_cond
+(paren
+id|sk-&gt;rqueue
+op_ne
+l_int|NULL
+op_logical_or
+id|sk-&gt;err
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* This appears to be consistent&n;&t;&t;&t;&t;   with other stacks */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|SEL_OUT
+suffix:colon
+r_if
+c_cond
+(paren
+id|sk-&gt;prot
+op_member_access_from_pointer
+id|wspace
+c_func
+(paren
+id|sk
+)paren
+op_ge
+id|MIN_WRITE_SPACE
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|SEL_EX
+suffix:colon
+r_if
+c_cond
+(paren
+id|sk-&gt;err
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Socket has gone into error state (eg icmp error) */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+eof

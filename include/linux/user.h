@@ -110,12 +110,11 @@ r_int
 id|signal
 suffix:semicolon
 multiline_comment|/* Signal that caused the core dump. */
-DECL|member|u_comm
-r_char
-op_star
-id|u_comm
+DECL|member|reserved
+r_int
+id|reserved
 suffix:semicolon
-multiline_comment|/* User command that was responsible */
+multiline_comment|/* No longer used */
 DECL|member|u_ar0
 r_struct
 id|pt_regs
@@ -137,6 +136,21 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* To uniquely identify a core file */
+DECL|member|u_comm
+r_char
+id|u_comm
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* User command that was responsible */
+DECL|member|u_debugreg
+r_int
+id|u_debugreg
+(braket
+l_int|8
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NBPG

@@ -4,22 +4,6 @@ mdefine_line|#define __LINUX_KEYBOARD_H
 macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|macro|set_leds
 mdefine_line|#define set_leds() mark_bh(KEYBOARD_BH)
-multiline_comment|/*&n; * &quot;dead&quot; keys - prefix key values that are valid only for the next&n; * character code (sticky shift, E0/E1 special scancodes, diacriticals)&n; */
-r_extern
-r_int
-r_int
-id|kbd_dead_keys
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|kbd_prev_dead_keys
-suffix:semicolon
-multiline_comment|/*&n; * these are the hardcoded dead key flags&n; */
-DECL|macro|KGD_E0
-mdefine_line|#define KGD_E0&t;&t;0
-DECL|macro|KGD_E1
-mdefine_line|#define KGD_E1&t;&t;1
 multiline_comment|/*&n; * kbd-&gt;xxx contains the VC-local things (flag settings etc..)&n; * The low 3 local flags are hardcoded to be the led setting..&n; */
 DECL|struct|kbd_struct
 r_struct
@@ -65,6 +49,16 @@ DECL|macro|VC_META
 mdefine_line|#define VC_META&t;&t;9&t;/* 0 - meta, 1 - meta=prefix with ESC */
 DECL|macro|VC_PAUSE
 mdefine_line|#define VC_PAUSE&t;10&t;/* pause key pressed */
+DECL|macro|VC_MEDIUMRAW
+mdefine_line|#define VC_MEDIUMRAW&t;11&t;/* medium raw (keycode) mode */
+DECL|macro|VC_SHIFTLOCK
+mdefine_line|#define VC_SHIFTLOCK&t;12&t;/* shift lock mode */
+DECL|macro|VC_ALTGRLOCK
+mdefine_line|#define VC_ALTGRLOCK&t;13&t;/* altgr lock mode */
+DECL|macro|VC_CTRLLOCK
+mdefine_line|#define VC_CTRLLOCK&t;14&t;/* control lock mode */
+DECL|macro|VC_ALTLOCK
+mdefine_line|#define VC_ALTLOCK&t;15&t;/* alt lock mode */
 DECL|macro|LED_MASK
 mdefine_line|#define LED_MASK&t;7
 r_extern
@@ -77,84 +71,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|function|kbd_dead
-r_extern
-r_inline
-r_int
-id|kbd_dead
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-r_return
-id|kbd_prev_dead_keys
-op_amp
-(paren
-l_int|1
-op_lshift
-id|flag
-)paren
-suffix:semicolon
-)brace
-DECL|function|set_kbd_dead
-r_extern
-r_inline
-r_void
-id|set_kbd_dead
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_dead_keys
-op_or_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
-DECL|function|clr_kbd_dead
-r_extern
-r_inline
-r_void
-id|clr_kbd_dead
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_dead_keys
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|flag
-)paren
-suffix:semicolon
-)brace
-DECL|function|chg_kbd_dead
-r_extern
-r_inline
-r_void
-id|chg_kbd_dead
-c_func
-(paren
-r_int
-id|flag
-)paren
-(brace
-id|kbd_dead_keys
-op_xor_assign
-l_int|1
-op_lshift
-id|flag
-suffix:semicolon
-)brace
 DECL|function|vc_kbd_flag
 r_extern
 r_inline
@@ -283,7 +199,7 @@ id|NR_KEYS
 )braket
 suffix:semicolon
 DECL|macro|NR_FUNC
-mdefine_line|#define NR_FUNC 32
+mdefine_line|#define NR_FUNC 35
 DECL|macro|FUNC_BUFSIZE
 mdefine_line|#define FUNC_BUFSIZE 512
 r_extern
@@ -321,6 +237,8 @@ DECL|macro|KT_META
 mdefine_line|#define KT_META&t;&t;8
 DECL|macro|KT_ASCII
 mdefine_line|#define KT_ASCII&t;9
+DECL|macro|KT_LOCK
+mdefine_line|#define KT_LOCK&t;&t;10
 DECL|macro|K
 mdefine_line|#define K(t,v)&t;&t;(((t)&lt;&lt;8)|(v))
 DECL|macro|KTYP
@@ -379,6 +297,12 @@ DECL|macro|K_PGUP
 mdefine_line|#define K_PGUP&t;&t;K(KT_FN,24)
 DECL|macro|K_PGDN
 mdefine_line|#define K_PGDN&t;&t;K(KT_FN,25)
+DECL|macro|K_MACRO
+mdefine_line|#define K_MACRO         K(KT_FN,26)
+DECL|macro|K_HELP
+mdefine_line|#define K_HELP          K(KT_FN,27)
+DECL|macro|K_DO
+mdefine_line|#define K_DO            K(KT_FN,28)
 DECL|macro|K_HOLE
 mdefine_line|#define K_HOLE&t;&t;K(KT_SPEC,0)
 DECL|macro|K_ENTER
@@ -407,6 +331,8 @@ DECL|macro|K_BOOT
 mdefine_line|#define K_BOOT&t;&t;K(KT_SPEC,12)
 DECL|macro|K_CAPSON
 mdefine_line|#define K_CAPSON&t;K(KT_SPEC,13)
+DECL|macro|K_DEADNEXT
+mdefine_line|#define K_DEADNEXT      K(KT_SPEC,14)
 DECL|macro|K_P0
 mdefine_line|#define K_P0&t;&t;K(KT_PAD,0)
 DECL|macro|K_P1
@@ -441,6 +367,8 @@ DECL|macro|K_PCOMMA
 mdefine_line|#define K_PCOMMA&t;K(KT_PAD,15)&t;/* key-pad comma: kludge...&t;   */
 DECL|macro|K_PDOT
 mdefine_line|#define K_PDOT&t;&t;K(KT_PAD,16)&t;/* key-pad dot (period): kludge... */
+DECL|macro|K_PPLUSMINUS
+mdefine_line|#define K_PPLUSMINUS    K(KT_PAD,17)    /* key-pad plus/minus              */
 DECL|macro|K_DGRAVE
 mdefine_line|#define K_DGRAVE&t;K(KT_DEAD,0)
 DECL|macro|K_DACUTE
@@ -476,7 +404,7 @@ mdefine_line|#define K_ALT&t;&t;K(KT_SHIFT,KG_ALT)
 DECL|macro|K_ALTGR
 mdefine_line|#define K_ALTGR&t;&t;K(KT_SHIFT,KG_ALTGR)
 DECL|macro|NR_SHIFT
-mdefine_line|#define NR_SHIFT&t;16
+mdefine_line|#define NR_SHIFT&t;4
 DECL|macro|K_CAPSSHIFT
 mdefine_line|#define K_CAPSSHIFT&t;K(KT_SHIFT,NR_SHIFT)
 DECL|macro|K_ASC0
@@ -499,5 +427,13 @@ DECL|macro|K_ASC8
 mdefine_line|#define K_ASC8&t;&t;K(KT_ASCII,8)
 DECL|macro|K_ASC9
 mdefine_line|#define K_ASC9&t;&t;K(KT_ASCII,9)
+DECL|macro|K_SHIFTLOCK
+mdefine_line|#define K_SHIFTLOCK&t;K(KT_LOCK,0)
+DECL|macro|K_CTRLLOCK
+mdefine_line|#define K_CTRLLOCK&t;K(KT_LOCK,2)
+DECL|macro|K_ALTLOCK
+mdefine_line|#define K_ALTLOCK&t;K(KT_LOCK,3)
+DECL|macro|K_ALTGRLOCK
+mdefine_line|#define K_ALTGRLOCK&t;K(KT_LOCK,1)
 macro_line|#endif
 eof

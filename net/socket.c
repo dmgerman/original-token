@@ -1920,6 +1920,10 @@ op_logical_and
 id|type
 op_ne
 id|SOCK_RAW
+op_logical_and
+id|type
+op_ne
+id|SOCK_PACKET
 )paren
 op_logical_or
 id|protocol

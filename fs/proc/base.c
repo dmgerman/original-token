@@ -241,6 +241,14 @@ l_int|5
 comma
 l_string|&quot;statm&quot;
 )brace
+comma
+(brace
+l_int|15
+comma
+l_int|4
+comma
+l_string|&quot;maps&quot;
+)brace
 )brace
 suffix:semicolon
 DECL|macro|NR_BASE_DIRENTRY

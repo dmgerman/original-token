@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ddi.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &quot;unix.h&quot;
 DECL|variable|unix_datas
@@ -2879,7 +2880,7 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|EPIPE
 suffix:semicolon
 )brace
 r_if
@@ -3093,7 +3094,7 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|EPIPE
 suffix:semicolon
 )brace
 r_return
@@ -3200,7 +3201,7 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|EPIPE
 suffix:semicolon
 )brace
 )brace
@@ -3238,7 +3239,7 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|EPIPE
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We may become disconnected inside this loop, so watch&n;&t; * for it (peerupd is safe until we close).&n;&t; */
@@ -3262,7 +3263,7 @@ l_int|1
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|EPIPE
 suffix:semicolon
 )brace
 r_if

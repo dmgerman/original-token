@@ -222,6 +222,12 @@ id|NFSERR_ISDIR
 op_assign
 l_int|21
 comma
+DECL|enumerator|NFSERR_INVAL
+id|NFSERR_INVAL
+op_assign
+l_int|22
+comma
+multiline_comment|/* that Sun forgot */
 DECL|enumerator|NFSERR_FBIG
 id|NFSERR_FBIG
 op_assign

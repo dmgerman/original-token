@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 r_static
 r_int
 id|nfs_readlink

@@ -4605,6 +4605,12 @@ id|EISDIR
 )brace
 comma
 (brace
+id|NFSERR_INVAL
+comma
+id|EINVAL
+)brace
+comma
+(brace
 id|NFSERR_FBIG
 comma
 id|EFBIG

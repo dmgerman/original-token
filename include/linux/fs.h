@@ -33,7 +33,7 @@ DECL|macro|MAX_CHRDEV
 mdefine_line|#define MAX_CHRDEV 32
 DECL|macro|MAX_BLKDEV
 mdefine_line|#define MAX_BLKDEV 32
-multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unnamed (minor 0 = true nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; * 12 -&n; * 13 -&n; * 14 - sound card (?)&n; * 15 -&n; */
+multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; *  0 - unnamed (minor 0 = true nodev)&n; *  1 - /dev/mem&n; *  2 - /dev/fd&n; *  3 - /dev/hd&n; *  4 - /dev/ttyx&n; *  5 - /dev/tty&n; *  6 - /dev/lp&n; *  7 -&n; *  8 - /dev/sd&n; *  9 - /dev/st&n; * 10 - mice&n; * 11 - scsi cdrom&n; * 12 -&n; * 13 -&n; * 14 - sound card (?)&n; * 15 -&n; * 16 - &n; * 17 - &n; * 18 - &n; * 19 - &n; * 20 - &n; * 21 - /dev/sg&n; */
 DECL|macro|UNNAMED_MAJOR
 mdefine_line|#define UNNAMED_MAJOR 0
 DECL|macro|MAY_EXEC
@@ -150,6 +150,11 @@ mdefine_line|#define BLKFLSBUF 4705 /* flush buffer cache */
 multiline_comment|/* These are a few other constants  only used by scsi  devices */
 DECL|macro|SCSI_IOCTL_GET_IDLUN
 mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
+multiline_comment|/* Used to turn on and off tagged queueing for scsi devices */
+DECL|macro|SCSI_IOCTL_TAGGED_ENABLE
+mdefine_line|#define SCSI_IOCTL_TAGGED_ENABLE 0x5383
+DECL|macro|SCSI_IOCTL_TAGGED_DISABLE
+mdefine_line|#define SCSI_IOCTL_TAGGED_DISABLE 0x5384
 DECL|macro|BMAP_IOCTL
 mdefine_line|#define BMAP_IOCTL 1&t;/* obsolete - kept for compatibility */
 DECL|macro|FIBMAP
@@ -1514,7 +1519,22 @@ suffix:semicolon
 r_extern
 r_struct
 id|file_operations
-id|connecting_pipe_fops
+id|connecting_fifo_fops
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|read_fifo_fops
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|write_fifo_fops
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+id|rdwr_fifo_fops
 suffix:semicolon
 r_extern
 r_struct
@@ -1592,15 +1612,6 @@ id|super_blocks
 (braket
 id|NR_SUPER
 )braket
-suffix:semicolon
-r_extern
-r_void
-id|grow_buffers
-c_func
-(paren
-r_int
-id|size
-)paren
 suffix:semicolon
 r_extern
 r_int

@@ -4550,6 +4550,10 @@ id|new_inode
 id|new_inode-&gt;i_nlink
 op_decrement
 suffix:semicolon
+id|new_inode-&gt;i_ctime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
 id|new_inode-&gt;i_dirt
 op_assign
 l_int|1

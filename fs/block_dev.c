@@ -369,7 +369,7 @@ id|written
 suffix:semicolon
 )brace
 DECL|macro|NBUF
-mdefine_line|#define NBUF 16
+mdefine_line|#define NBUF 32
 DECL|function|block_read
 r_int
 id|block_read

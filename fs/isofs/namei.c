@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use isofs_match. No big problem. Match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, isofs_match returns 1 for success, 0 for failure.&n; */
 DECL|function|isofs_match
@@ -244,6 +245,26 @@ id|ino_back
 (brace
 r_int
 r_int
+id|bufsize
+op_assign
+id|ISOFS_BUFFER_SIZE
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
+r_int
+r_char
+id|bufbits
+op_assign
+id|ISOFS_BUFFER_BITS
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
+r_int
+r_int
 id|block
 comma
 id|i
@@ -328,11 +349,7 @@ op_assign
 id|f_pos
 op_amp
 (paren
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 op_minus
 l_int|1
 )paren
@@ -346,11 +363,7 @@ id|dir
 comma
 id|f_pos
 op_rshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 )paren
 suffix:semicolon
 r_if
@@ -370,11 +383,7 @@ id|dir-&gt;i_dev
 comma
 id|block
 comma
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 )paren
 )paren
@@ -397,9 +406,9 @@ id|iso_directory_record
 op_star
 )paren
 (paren
-id|offset
-op_plus
 id|bh-&gt;b_data
+op_plus
+id|offset
 )paren
 suffix:semicolon
 id|backlink
@@ -411,22 +420,14 @@ op_assign
 (paren
 id|block
 op_lshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 )paren
 op_plus
 (paren
 id|offset
 op_amp
 (paren
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 op_minus
 l_int|1
 )paren
@@ -462,6 +463,7 @@ suffix:semicolon
 id|f_pos
 op_assign
 (paren
+(paren
 id|f_pos
 op_amp
 op_complement
@@ -473,6 +475,7 @@ l_int|1
 )paren
 op_plus
 id|ISOFS_BLOCK_SIZE
+)paren
 suffix:semicolon
 id|block
 op_assign
@@ -481,15 +484,9 @@ c_func
 (paren
 id|dir
 comma
-(paren
 id|f_pos
-)paren
 op_rshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 )paren
 suffix:semicolon
 r_if
@@ -509,11 +506,7 @@ id|dir-&gt;i_dev
 comma
 id|block
 comma
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 )paren
 )paren
@@ -524,7 +517,6 @@ r_continue
 suffix:semicolon
 multiline_comment|/* Will kick out if past end of directory */
 )brace
-suffix:semicolon
 id|old_offset
 op_assign
 id|offset
@@ -553,17 +545,13 @@ op_star
 id|de
 )paren
 suffix:semicolon
-multiline_comment|/* Handle case where the directory entry spans two blocks. Usually&n;&t;&t;   1024 byte boundaries */
+multiline_comment|/* Handle case where the directory entry spans two blocks.&n;&t;&t;   Usually 1024 byte boundaries */
 r_if
 c_cond
 (paren
 id|offset
 op_ge
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 (brace
 id|cpnt
@@ -585,11 +573,7 @@ id|cpnt
 comma
 id|bh-&gt;b_data
 comma
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 suffix:semicolon
 id|de
@@ -600,9 +584,13 @@ id|iso_directory_record
 op_star
 )paren
 (paren
-id|old_offset
-op_plus
+(paren
+r_char
+op_star
+)paren
 id|cpnt
+op_plus
+id|old_offset
 )paren
 suffix:semicolon
 id|brelse
@@ -616,11 +604,7 @@ op_assign
 id|f_pos
 op_amp
 (paren
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 op_minus
 l_int|1
 )paren
@@ -634,11 +618,7 @@ id|dir
 comma
 id|f_pos
 op_rshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 )paren
 suffix:semicolon
 r_if
@@ -658,11 +638,7 @@ id|dir-&gt;i_dev
 comma
 id|block
 comma
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 )paren
 )paren
@@ -672,21 +648,17 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|cpnt
 op_plus
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 comma
 id|bh-&gt;b_data
 comma
-id|ISOFS_BUFFER_SIZE
-c_func
-(paren
-id|dir
-)paren
+id|bufsize
 )paren
 suffix:semicolon
 )brace
@@ -745,11 +717,7 @@ l_string|&quot;Doing .. (%d %d)&quot;
 comma
 id|dir-&gt;i_sb-&gt;s_firstdatazone
 op_lshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 comma
 id|dir-&gt;i_ino
 )paren
@@ -761,11 +729,7 @@ c_cond
 (paren
 id|dir-&gt;i_sb-&gt;u.isofs_sb.s_firstdatazone
 op_lshift
-id|ISOFS_BUFFER_BITS
-c_func
-(paren
-id|dir
-)paren
+id|bufbits
 )paren
 op_ne
 id|dir-&gt;i_ino
@@ -911,7 +875,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -931,8 +894,7 @@ op_assign
 id|c
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/* This allows us to match with and without a trailing period  */
+multiline_comment|/* This allows us to match with and without a trailing&n;&t;&t;       period.  */
 r_if
 c_cond
 (paren
@@ -957,9 +919,7 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 id|match
 op_assign
 id|isofs_match
@@ -1060,9 +1020,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
-suffix:semicolon
 op_star
 id|ino
 op_assign
@@ -1371,7 +1329,7 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-multiline_comment|/* We need this backlink for the .. entry */
+multiline_comment|/* We need this backlink for the &quot;..&quot; entry unless the name that we&n;&t;   are looking up traversed a mount point (in which case the inode&n;&t;   may not even be on an iso9660 filesystem, and writing to&n;&t;   u.isofs_i would only cause memory corruption).&n;&t;*/
 r_if
 c_cond
 (paren
@@ -1384,7 +1342,17 @@ id|result
 )paren
 op_member_access_from_pointer
 id|i_pipe
+op_logical_and
+(paren
+op_star
+id|result
 )paren
+op_member_access_from_pointer
+id|i_sb
+op_eq
+id|dir-&gt;i_sb
+)paren
+(brace
 (paren
 op_star
 id|result
@@ -1394,6 +1362,7 @@ id|u.isofs_i.i_backlink
 op_assign
 id|ino_back
 suffix:semicolon
+)brace
 id|iput
 c_func
 (paren

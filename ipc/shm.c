@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt; 
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 r_extern
 r_int
 id|ipcperms
@@ -3107,7 +3108,7 @@ op_logical_neg
 (paren
 id|page
 op_assign
-id|__get_free_page
+id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL

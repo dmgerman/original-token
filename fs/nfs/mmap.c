@@ -7,9 +7,10 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;linux/nfs_fs.h&gt;
 r_extern
 r_int
 id|share_page
@@ -136,6 +137,9 @@ multiline_comment|/* wppage */
 id|file_mmap_share
 comma
 multiline_comment|/* share */
+l_int|NULL
+comma
+multiline_comment|/* unmap */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a nfs file */
@@ -313,13 +317,23 @@ op_assign
 op_amp
 id|nfs_file_mmap
 suffix:semicolon
-id|mpnt-&gt;vm_next
-op_assign
-id|current-&gt;mmap
-suffix:semicolon
-id|current-&gt;mmap
-op_assign
+id|insert_vm_struct
+c_func
+(paren
+id|current
+comma
 id|mpnt
+)paren
+suffix:semicolon
+id|merge_segments
+c_func
+(paren
+id|current-&gt;mmap
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 r_return
 l_int|0

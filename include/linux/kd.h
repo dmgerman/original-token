@@ -341,6 +341,8 @@ DECL|macro|K_RAW
 mdefine_line|#define&t;&t;K_RAW&t;&t;0x00
 DECL|macro|K_XLATE
 mdefine_line|#define&t;&t;K_XLATE&t;&t;0x01
+DECL|macro|K_MEDIUMRAW
+mdefine_line|#define&t;&t;K_MEDIUMRAW&t;0x02
 DECL|macro|KDGKBMODE
 mdefine_line|#define KDGKBMODE&t;0x4B44&t;/* gets current keyboard mode */
 DECL|macro|KDSKBMODE

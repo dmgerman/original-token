@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;@(#)utils.c&t;1.0.7&t;05/18/93&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;@(#)utils.c&t;1.0.7&t;05/18/93&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area check.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -340,6 +340,9 @@ id|level
 r_int
 id|val
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -353,10 +356,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 (paren
 r_void
@@ -370,6 +375,16 @@ r_int
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|val
 op_assign
 id|get_fs_long

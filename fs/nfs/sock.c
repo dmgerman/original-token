@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -21,6 +21,8 @@ op_star
 id|inode
 )paren
 suffix:semicolon
+DECL|macro|_S
+mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 multiline_comment|/*&n; * We violate some modularity principles here by poking around&n; * in some socket internals.  Besides having to call socket&n; * functions from kernel-space instead of user space, the socket&n; * interface does not lend itself well to being cleanly called&n; * without a file descriptor.  Since the nfs calls can run on&n; * behalf of any process, the superblock maintains a file pointer&n; * to the server socket.&n; */
 DECL|function|do_nfs_rpc_call
 r_static
@@ -121,6 +123,10 @@ suffix:semicolon
 r_int
 id|addrlen
 suffix:semicolon
+r_int
+r_int
+id|old_mask
+suffix:semicolon
 id|xid
 op_assign
 id|start
@@ -166,6 +172,24 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sock
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_rpc_call: socki_lookup failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+)brace
 id|init_timeout
 op_assign
 id|server-&gt;timeo
@@ -190,24 +214,86 @@ id|server_name
 op_assign
 id|server-&gt;hostname
 suffix:semicolon
-r_if
-c_cond
+id|old_mask
+op_assign
+id|current-&gt;blocked
+suffix:semicolon
+id|current-&gt;blocked
+op_or_assign
+op_complement
 (paren
-op_logical_neg
-id|sock
-)paren
-(brace
-id|printk
+id|_S
 c_func
 (paren
-l_string|&quot;nfs_rpc_call: socki_lookup failed&bslash;n&quot;
+id|SIGKILL
+)paren
+macro_line|#if 0
+op_or
+id|_S
+c_func
+(paren
+id|SIGSTOP
+)paren
+macro_line|#endif
+op_or
+(paren
+(paren
+id|server-&gt;flags
+op_amp
+id|NFS_MOUNT_INTR
+)paren
+ques
+c_cond
+(paren
+(paren
+id|current-&gt;sigaction
+(braket
+id|SIGINT
+op_minus
+l_int|1
+)braket
+dot
+id|sa_handler
+op_eq
+id|SIG_DFL
+ques
+c_cond
+id|_S
+c_func
+(paren
+id|SIGINT
+)paren
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+id|current-&gt;sigaction
+(braket
+id|SIGQUIT
+op_minus
+l_int|1
+)braket
+dot
+id|sa_handler
+op_eq
+id|SIG_DFL
+ques
+c_cond
+id|_S
+c_func
+(paren
+id|SIGQUIT
+)paren
+suffix:colon
+l_int|0
+)paren
+)paren
+suffix:colon
+l_int|0
+)paren
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-)brace
 id|fs
 op_assign
 id|get_fs
@@ -375,22 +461,6 @@ op_complement
 id|current-&gt;blocked
 )paren
 (brace
-macro_line|#if 0
-multiline_comment|/* doesn&squot;t work yet */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|server-&gt;flags
-op_amp
-id|NFS_MOUNT_INTR
-)paren
-)paren
-r_goto
-id|re_select
-suffix:semicolon
-macro_line|#endif
 id|current-&gt;timeout
 op_assign
 l_int|0
@@ -553,9 +623,6 @@ op_minus
 id|EAGAIN
 )paren
 (brace
-r_goto
-id|re_select
-suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
@@ -564,6 +631,9 @@ l_string|&quot;nfs_rpc_call: bad select ready&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_goto
+id|re_select
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -621,6 +691,10 @@ l_string|&quot;nfs_rpc_call: XID mismatch&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+id|current-&gt;blocked
+op_assign
+id|old_mask
+suffix:semicolon
 id|set_fs
 c_func
 (paren

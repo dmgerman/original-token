@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -141,6 +141,10 @@ comma
 op_star
 id|p
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DPRINTF
 c_func
 (paren
@@ -169,6 +173,17 @@ op_eq
 l_int|NULL
 )paren
 r_return
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 id|p
 op_assign
@@ -239,6 +254,12 @@ id|r-&gt;rt_next
 suffix:semicolon
 )brace
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Remove all routing table entries for a device. */
 r_void
@@ -262,6 +283,10 @@ id|x
 comma
 op_star
 id|p
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 id|DPRINTF
 c_func
@@ -292,6 +317,17 @@ op_eq
 l_int|NULL
 )paren
 r_return
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|p
 op_assign
@@ -362,6 +398,12 @@ id|r-&gt;rt_next
 suffix:semicolon
 )brace
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|rt_add
@@ -400,6 +442,10 @@ id|rt
 suffix:semicolon
 r_int
 id|mask
+suffix:semicolon
+r_int
+r_int
+id|cpuflags
 suffix:semicolon
 multiline_comment|/* Allocate an entry. */
 id|rt
@@ -550,11 +596,11 @@ c_loop
 (paren
 id|mask
 op_assign
-l_int|0xff000000
+l_int|0xff000000L
 suffix:semicolon
 id|mask
 op_ne
-l_int|0xffffffff
+l_int|0xffffffffL
 suffix:semicolon
 id|mask
 op_assign
@@ -595,6 +641,17 @@ l_string|&quot;RT: mask = %X&bslash;n&quot;
 comma
 id|mask
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|cpuflags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 id|r1
@@ -666,6 +723,12 @@ id|rtable
 )paren
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|cpuflags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -714,6 +777,12 @@ id|rt_base
 op_assign
 id|rt
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|cpuflags
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -724,6 +793,12 @@ suffix:semicolon
 id|r1-&gt;rt_next
 op_assign
 id|rt
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|cpuflags
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1361,6 +1436,9 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1401,10 +1479,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 id|arg
 comma
@@ -1415,6 +1495,16 @@ id|rtentry
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -1436,10 +1526,12 @@ c_cond
 id|rt.rt_dev
 )paren
 (brace
+id|err
+op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_WRITE
+id|VERIFY_READ
 comma
 id|rt.rt_dev
 comma
@@ -1447,6 +1539,16 @@ r_sizeof
 id|namebuf
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 id|memcpy_fromfs
 c_func
 (paren

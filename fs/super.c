@@ -2313,7 +2313,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;VFS: Insert root floppy and press ENTER&quot;
+l_string|&quot;VFS: Insert root floppy and press ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
 id|wait_for_keypress

@@ -242,16 +242,31 @@ DECL|struct|ifreq
 r_struct
 id|ifreq
 (brace
+DECL|macro|IFHWADDRLEN
+mdefine_line|#define IFHWADDRLEN&t;6
 DECL|macro|IFNAMSIZ
 mdefine_line|#define&t;IFNAMSIZ&t;16
-DECL|member|ifr_name
+r_union
+(brace
+DECL|member|ifrn_name
 r_char
-id|ifr_name
+id|ifrn_name
 (braket
 id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* if name, e.g. &quot;en0&quot; */
+DECL|member|ifrn_hwaddr
+r_char
+id|ifrn_hwaddr
+(braket
+id|IFHWADDRLEN
+)braket
+suffix:semicolon
+DECL|member|ifr_ifrn
+)brace
+id|ifr_ifrn
+suffix:semicolon
 r_union
 (brace
 DECL|member|ifru_addr
@@ -296,6 +311,10 @@ id|ifr_ifru
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|ifr_name
+mdefine_line|#define ifr_name&t;ifr_ifrn.ifrn_name&t;/* interface name &t;*/
+DECL|macro|ifr_hwaddr
+mdefine_line|#define ifr_hwaddr&t;ifr_ifrn.ifrn_hwaddr&t;/* interface hardware   */
 DECL|macro|ifr_addr
 mdefine_line|#define&t;ifr_addr&t;ifr_ifru.ifru_addr&t;/* address&t;&t;*/
 DECL|macro|ifr_dstaddr

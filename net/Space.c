@@ -44,7 +44,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Section B:&t;Device Driver Modules.&n; *&t;&t;This section defines which network device drivers&n; *&t;&t;get linked into the Linux kernel.  It is currently&n; *&t;&t;only used by the INET protocol.  Any takers for the&n; *&t;&t;other protocols like XNS or Novell?&n; *&n; * WARNING:&t;THIS SECTION IS NOT YET USED BY THE DRIVERS !!!!!&n; */
-macro_line|#include &quot;drv/we8003/we8003.h&quot;&t;&t;/* Western Digital WD-80[01]3&t;*/
+multiline_comment|/*#include &quot;drv/we8003/we8003.h&quot;&t;Western Digital WD-80[01]3&t;*/
 multiline_comment|/*#include &quot;drv/dp8390/dp8390.h&quot;&t;Donald Becker&squot;s DP8390 kit&t;*/
 multiline_comment|/*#inclde &quot;drv/slip/slip.h&quot;&t;&t;Laurence Culhane&squot;s SLIP kit&t;*/
 DECL|variable|devices

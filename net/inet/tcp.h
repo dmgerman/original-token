@@ -26,7 +26,7 @@ mdefine_line|#define TCP_RETR1&t;7&t;/*&n;&t;&t;&t;&t; * This is howmany retries
 DECL|macro|TCP_RETR2
 mdefine_line|#define TCP_RETR2&t;15&t;/*&n;&t;&t;&t;&t; * This should take at least&n;&t;&t;&t;&t; * 90 minutes to time out.&n;&t;&t;&t;&t; */
 DECL|macro|TCP_TIMEOUT_LEN
-mdefine_line|#define TCP_TIMEOUT_LEN&t;720000&t;/* should be about 2 hrs&t;&t;*/
+mdefine_line|#define TCP_TIMEOUT_LEN&t;5000&t;/* should be about 5 mins&t;&t;*/
 DECL|macro|TCP_TIMEWAIT_LEN
 mdefine_line|#define TCP_TIMEWAIT_LEN 1000&t;/* how long to wait to sucessfully &n;&t;&t;&t;&t; * close the socket, about 60 seconds&t;*/
 DECL|macro|TCP_ACK_TIME
@@ -45,6 +45,13 @@ DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
 DECL|macro|TCP_WRITE_QUEUE_MAGIC
 mdefine_line|#define TCP_WRITE_QUEUE_MAGIC 0xa5f23477
+multiline_comment|/*&n; *&t;TCP option&n; */
+DECL|macro|TCPOPT_NOP
+mdefine_line|#define TCPOPT_NOP&t;&t;1
+DECL|macro|TCPOPT_EOL
+mdefine_line|#define TCPOPT_EOL&t;&t;0
+DECL|macro|TCPOPT_MSS
+mdefine_line|#define TCPOPT_MSS&t;&t;2
 multiline_comment|/*&n; * The next routines deal with comparing 32 bit unsigned ints&n; * and worry about wraparound. The general strategy is to do a&n; * normal compare so long as neither of the numbers is within&n; * 4K of wrapping.  Otherwise we must check for the wrap.&n; */
 r_static
 r_inline

@@ -42,7 +42,7 @@ multiline_comment|/*&n;&t; *  O_RDONLY&n;&t; *  POSIX.1 says that O_NONBLOCK mea
 id|filp-&gt;f_op
 op_assign
 op_amp
-id|connecting_pipe_fops
+id|connecting_fifo_fops
 suffix:semicolon
 r_if
 c_cond
@@ -197,7 +197,7 @@ id|inode
 id|filp-&gt;f_op
 op_assign
 op_amp
-id|read_pipe_fops
+id|read_fifo_fops
 suffix:semicolon
 r_if
 c_cond
@@ -260,7 +260,7 @@ suffix:semicolon
 id|filp-&gt;f_op
 op_assign
 op_amp
-id|write_pipe_fops
+id|write_fifo_fops
 suffix:semicolon
 r_if
 c_cond
@@ -430,7 +430,7 @@ multiline_comment|/*&n;&t; *  O_RDWR&n;&t; *  POSIX.1 leaves this case &quot;und
 id|filp-&gt;f_op
 op_assign
 op_amp
-id|rdwr_pipe_fops
+id|rdwr_fifo_fops
 suffix:semicolon
 r_if
 c_cond

@@ -96,6 +96,7 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_volatile
 r_void
 id|panic
 c_func
@@ -432,6 +433,11 @@ r_int
 r_int
 id|tr
 suffix:semicolon
+DECL|member|cr2
+r_int
+r_int
+id|cr2
+suffix:semicolon
 DECL|member|i387
 r_union
 id|i387_union
@@ -478,6 +484,14 @@ DECL|member|errno
 r_int
 id|errno
 suffix:semicolon
+DECL|member|debugreg
+r_int
+id|debugreg
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Hardware debugging registers */
 multiline_comment|/* various fields */
 DECL|member|next_task
 DECL|member|prev_task
@@ -845,6 +859,12 @@ id|swap_page
 suffix:semicolon
 multiline_comment|/* current page */
 macro_line|#endif NEW_SWAP
+DECL|member|stk_vma
+r_struct
+id|vm_area_struct
+op_star
+id|stk_vma
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Per process flags&n; */
@@ -864,7 +884,7 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/*tss*/&t;{0,0, &bslash;&n;&t; sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, KERNEL_DS, 0, &bslash;&n;&t; 0,0,0,0,0,0, &bslash;&n;&t; (long) &amp;swapper_pg_dir, &bslash;&n;&t; 0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t; USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t; _LDT(0),0, &bslash;&n;&t; 0, 0x8000, &bslash;&n;/* ioperm */ &t;{~0, }, &bslash;&n;&t; _TSS(0), &bslash;&n;/* 387 state */&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/*tss*/&t;{0,0, &bslash;&n;&t; sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, KERNEL_DS, 0, &bslash;&n;&t; 0,0,0,0,0,0, &bslash;&n;&t; (long) &amp;swapper_pg_dir, &bslash;&n;&t; 0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t; USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t; _LDT(0),0, &bslash;&n;&t; 0, 0x8000, &bslash;&n;/* ioperm */ &t;{~0, }, &bslash;&n;&t; _TSS(0), 0, &bslash;&n;/* 387 state */&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -898,13 +918,9 @@ r_volatile
 id|jiffies
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|startup_time
-suffix:semicolon
-r_extern
-r_int
-id|jiffies_offset
+r_struct
+id|timeval
+id|xtime
 suffix:semicolon
 r_extern
 r_int
@@ -927,7 +943,7 @@ r_int
 id|wp_works_ok
 suffix:semicolon
 DECL|macro|CURRENT_TIME
-mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
+mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern
 r_void
 id|sleep_on
@@ -1139,6 +1155,10 @@ l_string|&quot;add_wait_queue (%08x): wait-&gt;next = %08x&bslash;n&quot;
 comma
 id|pc
 comma
+(paren
+r_int
+r_int
+)paren
 id|wait-&gt;next
 )paren
 suffix:semicolon
@@ -1351,8 +1371,16 @@ c_func
 (paren
 l_string|&quot;list = %08x, queue = %08x&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|p
 comma
+(paren
+r_int
+r_int
+)paren
 id|wait
 )paren
 suffix:semicolon
@@ -1576,5 +1604,8 @@ r_struct
 id|desc_struct
 id|default_ldt
 suffix:semicolon
+multiline_comment|/* This special macro can be used to load a debugging register */
+DECL|macro|loaddebug
+mdefine_line|#define loaddebug(register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;movl %%edx,%%db&quot; #register &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;m&quot; (current-&gt;debugreg[register]) &bslash;&n;&t;&t;&t;:&quot;dx&quot;);
 macro_line|#endif
 eof

@@ -8,6 +8,7 @@ multiline_comment|/* Debugging support: add file/line info, add beginning+end ma
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|struct|bucket_desc
 r_struct

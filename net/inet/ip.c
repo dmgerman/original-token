@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Commented a couple of minor bits of surplus code&n; *&t;&t;Alan Cox&t;:&t;Undefining IP_FORWARD doesn&squot;t include the code&n; *&t;&t;&t;&t;&t;(just stops a compiler warning).&n; *&t;&t;Alan Cox&t;:&t;Frames with &gt;=MAX_ROUTE record routes, strict routes or loose routes&n; *&t;&t;&t;&t;&t;are junked rather than corrupting things.&n; *&t;&t;Alan Cox&t;:&t;Frames to bad broadcast subnets are dumped&n; *&t;&t;&t;&t;&t;We used to process them non broadcast and&n; *&t;&t;&t;&t;&t;boy could that cause havoc.&n; *&t;&t;Alan Cox&t;:&t;ip_forward sets the free flag on the &n; *&t;&t;&t;&t;&t;new frame it queues. Still crap because&n; *&t;&t;&t;&t;&t;it copies the frame but at least it &n; *&t;&t;&t;&t;&t;doesn&squot;t eat memory too.&n; *&t;&t;Alan Cox&t;:&t;Generic queue code and memory fixes.&n; *&n; * To Fix:&n; *&t;&t;IP option processing is mostly not needed. ip_forward needs to know about routing rules&n; *&t;&t;and time stamp but that&squot;s about all.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -21,7 +21,7 @@ macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;arp.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 DECL|macro|CONFIG_IP_FORWARD
-mdefine_line|#define CONFIG_IP_FORWARD
+macro_line|#undef CONFIG_IP_FORWARD
 r_extern
 r_int
 id|last_retran
@@ -756,7 +756,7 @@ c_cond
 (paren
 id|daddr
 op_ne
-l_int|0x0100007F
+l_int|0x0100007FL
 )paren
 id|saddr
 op_assign
@@ -1283,6 +1283,18 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|MAX_ROUTE
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|opt-&gt;loose_route.route
 (braket
 id|i
@@ -1388,6 +1400,18 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|MAX_ROUTE
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|opt-&gt;strict_route.route
 (braket
 id|i
@@ -1493,6 +1517,18 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|i
+op_ge
+id|MAX_ROUTE
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|opt-&gt;record_route.route
 (braket
 id|i
@@ -2047,13 +2083,8 @@ op_star
 id|iph
 )paren
 (brace
-r_if
-c_cond
+r_return
 (paren
-id|iph-&gt;check
-op_eq
-l_int|0
-op_logical_or
 id|ip_fast_csum
 c_func
 (paren
@@ -2066,14 +2097,9 @@ id|iph
 comma
 id|iph-&gt;ihl
 )paren
-op_eq
+op_ne
 l_int|0
 )paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Generate a checksym for an outgoing IP datagram. */
@@ -2109,6 +2135,7 @@ id|iph-&gt;ihl
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IP_FORWARD
 multiline_comment|/* Forward an IP datagram to its next destination. */
 r_static
 r_void
@@ -2412,7 +2439,7 @@ r_struct
 id|sk_buff
 op_star
 )paren
-id|kmalloc
+id|alloc_skb
 c_func
 (paren
 r_sizeof
@@ -2458,13 +2485,13 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|skb2-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
 id|skb2-&gt;sk
 op_assign
 l_int|NULL
+suffix:semicolon
+id|skb2-&gt;free
+op_assign
+l_int|1
 suffix:semicolon
 id|skb2-&gt;len
 op_assign
@@ -2543,6 +2570,7 @@ id|SOPRI_NORMAL
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/* This function receives all incoming IP datagrams. */
 r_int
 DECL|function|ip_rcv
@@ -2621,11 +2649,6 @@ id|iph-&gt;version
 op_ne
 l_int|4
 op_logical_or
-(paren
-id|iph-&gt;check
-op_ne
-l_int|0
-op_logical_and
 id|ip_fast_csum
 c_func
 (paren
@@ -2640,7 +2663,6 @@ id|iph-&gt;ihl
 )paren
 op_ne
 l_int|0
-)paren
 )paren
 (brace
 id|DPRINTF
@@ -2784,6 +2806,16 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;Machine %x tried to use us as a forwarder to %x but we have forwarding disabled!&bslash;n&quot;
+comma
+id|iph-&gt;saddr
+comma
+id|iph-&gt;daddr
+)paren
+suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -2800,7 +2832,32 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Reassemble IP fragments. */
+r_if
+c_cond
+(paren
+id|brd
+op_eq
+id|IS_INVBCAST
+)paren
+(brace
+multiline_comment|/*&t;printk(&quot;Invalid broadcast address from %x [target %x] (Probably they have a wrong netmask)&bslash;n&quot;,&n;&t;&t;iph-&gt;saddr,iph-&gt;daddr);*/
+id|skb-&gt;sk
+op_assign
+l_int|NULL
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;   * Reassemble IP fragments. &n;   */
 r_if
 c_cond
 (paren
@@ -2966,7 +3023,7 @@ c_func
 id|ipprot
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;* See if we need to make a copy of it.  This will&n;&t;* only be set if more than one protpocol wants it. &n;&t;* and then not for the last one.&n;&t;*/
+multiline_comment|/*&n;&t;* See if we need to make a copy of it.  This will&n;&t;* only be set if more than one protocol wants it. &n;&t;* and then not for the last one.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -2975,12 +3032,8 @@ id|ipprot-&gt;copy
 (brace
 id|skb2
 op_assign
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-id|kmalloc
+id|alloc_skb
+c_func
 (paren
 id|skb-&gt;mem_len
 comma
@@ -3010,10 +3063,6 @@ id|skb2-&gt;mem_addr
 op_assign
 id|skb2
 suffix:semicolon
-id|skb2-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
 id|skb2-&gt;h.raw
 op_assign
 (paren
@@ -3040,6 +3089,10 @@ r_int
 )paren
 id|skb
 )paren
+suffix:semicolon
+id|skb2-&gt;free
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -3202,6 +3255,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|IS_SKB
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|skb-&gt;free
 op_assign
 id|free
@@ -3512,14 +3571,26 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;ip_forward: NULL device bug!&bslash;n&quot;
+l_string|&quot;ip_retransmit: NULL device bug!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|oops
 suffix:semicolon
 )brace
+id|IS_SKB
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * The rebuild_header function sees if the ARP is done.&n;&t; * If not it sends a new ARP request, and if so it builds&n;&t; * the header.&n;&t; */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* We might get interrupted by an arp reply here and fill&n;&t;&t;   the frame in twice. Because of the technique used this&n;&t;&t;   would be a little sad */
 r_if
 c_cond
 (paren
@@ -3550,6 +3621,12 @@ id|dev
 )paren
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Failed to rebuild - next */
 r_if
 c_cond
 (paren
@@ -3574,6 +3651,11 @@ suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|skb-&gt;when
 op_assign
@@ -3605,19 +3687,7 @@ comma
 id|sk-&gt;priority
 )paren
 suffix:semicolon
-r_else
-id|dev
-op_member_access_from_pointer
-id|queue_xmit
-c_func
-(paren
-id|skb
-comma
-id|dev
-comma
-id|SOPRI_NORMAL
-)paren
-suffix:semicolon
+multiline_comment|/*&t;  else dev-&gt;queue_xmit(skb, dev, SOPRI_NORMAL ); CANNOT HAVE SK=NULL HERE */
 )brace
 id|oops
 suffix:colon
@@ -3655,7 +3725,7 @@ op_star
 id|skb-&gt;link3
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Double the RTT time every time we retransmit. &n;   * This will cause exponential back off on how hard we try to&n;   * get through again.  Once we get through, the rtt will settle&n;   * back down reasonably quickly.&n;   */
+multiline_comment|/*&n;   * Increase the RTT time every time we retransmit. &n;   * This will cause exponential back off on how hard we try to&n;   * get through again.  Once we get through, the rtt will settle&n;   * back down reasonably quickly.&n;   */
 id|sk-&gt;backoff
 op_increment
 suffix:semicolon
@@ -3697,6 +3767,25 @@ r_if
 c_cond
 (paren
 id|n
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Backoff &lt; 0!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|16
+suffix:semicolon
+multiline_comment|/* Make up a value */
+)brace
+r_if
+c_cond
+(paren
+id|n
 op_le
 l_int|4
 )paren
@@ -3709,11 +3798,36 @@ suffix:semicolon
 )brace
 multiline_comment|/* Binary exponential back off */
 r_else
+(brace
+r_if
+c_cond
+(paren
+id|n
+OL
+l_int|255
+)paren
+(brace
 r_return
 id|n
 op_star
 id|n
 suffix:semicolon
+)brace
 multiline_comment|/* Quadratic back off */
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Overloaded backoff!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|255
+op_star
+l_int|255
+suffix:semicolon
+)brace
+)brace
 )brace
 eof

@@ -566,6 +566,12 @@ c_func
 l_string|&quot;Uhhuh. NMI received. Dazed and confused, but trying to continue&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;You probably have a hardware problem with your RAM chips&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|function|do_debug
 id|asmlinkage
@@ -611,6 +617,39 @@ id|current
 comma
 l_int|1
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|regs-&gt;cs
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* If this is a kernel mode trap, then reset db7 and allow us to continue */
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl $0,%%edx&bslash;n&bslash;t&quot;
+"&bslash;"
+l_string|&quot;movl %%edx,%%db7&bslash;n&bslash;t&quot;
+"&bslash;"
+suffix:colon
+multiline_comment|/* no output */
+"&bslash;"
+suffix:colon
+multiline_comment|/* no input */
+suffix:colon
+l_string|&quot;dx&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 suffix:semicolon
 id|die_if_kernel
 c_func

@@ -99,6 +99,10 @@ DECL|macro|SIOCGIFMTU
 mdefine_line|#define SIOCGIFMTU&t;0x8921&t;&t;/* get MTU size&t;&t;&t;*/
 DECL|macro|SIOCSIFMTU
 mdefine_line|#define SIOCSIFMTU&t;0x8922&t;&t;/* set MTU size&t;&t;&t;*/
+DECL|macro|SIOCGIFHWADDR
+mdefine_line|#define&t;SIOCGIFHWADDR&t;0x8923&t;&t;/* get hardware address&t;&t;*/
+DECL|macro|SIOCSIFHWADDR
+mdefine_line|#define&t;SIOCSIFHWADDR&t;0x8924&t;&t;/* set hardware address (NI)&t;*/
 multiline_comment|/* Routing table calls. */
 DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x8940&t;&t;/* add routing table entry&t;*/

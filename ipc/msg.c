@@ -1,9 +1,10 @@
 multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; */
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_int
 id|ipcperms

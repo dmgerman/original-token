@@ -76,11 +76,7 @@ id|sysinfo
 suffix:semicolon
 id|val.uptime
 op_assign
-(paren
 id|jiffies
-op_plus
-id|jiffies_offset
-)paren
 op_div
 id|HZ
 suffix:semicolon

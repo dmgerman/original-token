@@ -230,6 +230,14 @@ l_string|&quot;malloc&quot;
 )brace
 comma
 macro_line|#endif
+(brace
+l_int|14
+comma
+l_int|5
+comma
+l_string|&quot;kcore&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

@@ -46,10 +46,6 @@ dot
 dot
 )paren
 (brace
-r_extern
-r_int
-id|log_to_console
-suffix:semicolon
 r_static
 r_char
 id|buf
@@ -84,13 +80,10 @@ c_func
 id|args
 )paren
 suffix:semicolon
-id|log_to_console
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;Kernel panic: %s&bslash;n&quot;
 comma
 id|buf
@@ -109,6 +102,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;In swapper task - not syncing&bslash;n&quot;
 )paren
 suffix:semicolon

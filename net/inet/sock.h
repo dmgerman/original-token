@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the AF_INET socket handler.&n; *&n; * Version:&t;@(#)sock.h&t;1.0.4&t;05/13/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche &lt;flla@stud.uni-sb.de&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the AF_INET socket handler.&n; *&n; * Version:&t;@(#)sock.h&t;1.0.4&t;05/13/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche &lt;flla@stud.uni-sb.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Volatiles in skbuff pointers. See&n; *&t;&t;&t;&t;&t;skbuff comments. May be overdone,&n; *&t;&t;&t;&t;&t;better to prove they can be removed&n; *&t;&t;&t;&t;&t;than the reverse.&n; *&t;&t;Alan Cox&t;:&t;Added a zapped field for tcp to note&n; *&t;&t;&t;&t;&t;a socket is reset and must stay shut up&n; *&t;&t;Alan Cox&t;:&t;New fields for options&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _SOCK_H
 DECL|macro|_SOCK_H
 mdefine_line|#define _SOCK_H
@@ -106,6 +106,13 @@ id|no_check
 comma
 DECL|member|exp_growth
 id|exp_growth
+comma
+DECL|member|zapped
+id|zapped
+comma
+multiline_comment|/* In ipx means not linked */
+DECL|member|broadcast
+id|broadcast
 suffix:semicolon
 DECL|member|proc
 r_int
@@ -298,6 +305,27 @@ r_int
 r_char
 id|priority
 suffix:semicolon
+DECL|member|debug
+r_int
+r_char
+id|debug
+suffix:semicolon
+DECL|member|rcvbuf
+r_int
+r_int
+id|rcvbuf
+suffix:semicolon
+DECL|member|sndbuf
+r_int
+r_int
+id|sndbuf
+suffix:semicolon
+DECL|member|type
+r_int
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* IPX type field */
 DECL|member|dummy_th
 r_struct
 id|tcphdr
@@ -313,6 +341,13 @@ DECL|member|timer
 r_struct
 id|timer_list
 id|timer
+suffix:semicolon
+multiline_comment|/* identd */
+DECL|member|socket
+r_struct
+id|socket
+op_star
+id|socket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -877,7 +912,7 @@ mdefine_line|#define TIME_DONE&t;5&t;/* used to absorb those last few packets */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME 1000&t;/* about 10 seconds&t;&t;&t;*/
 DECL|macro|PROT_SOCK
-mdefine_line|#define PROT_SOCK&t;1024
+mdefine_line|#define PROT_SOCK&t;1024&t;/* Sockets 0-1023 can&squot;t be bound too unless you are superuser */
 DECL|macro|SHUTDOWN_MASK
 mdefine_line|#define SHUTDOWN_MASK&t;3
 DECL|macro|RCV_SHUTDOWN

@@ -8,7 +8,7 @@ mdefine_line|#define AF_INET_MAJOR&t;18&t;&t;/* UNIX VFS major number&t;*/
 DECL|macro|NET16
 mdefine_line|#define NET16(x)&t;((((x) &gt;&gt; 8) &amp; 0x00FF) | (((x) &lt;&lt; 8) &amp; 0xFF00))
 DECL|macro|INET_DEBUG
-macro_line|#undef&t;INET_DEBUG
+mdefine_line|#define&t;INET_DEBUG
 macro_line|#ifdef&t;INET_DEBUG
 DECL|macro|DPRINTF
 macro_line|#  define&t;DPRINTF(x)&t;dprintf x 

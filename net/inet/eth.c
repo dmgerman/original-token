@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -385,20 +385,10 @@ id|buff
 suffix:semicolon
 id|eth-&gt;h_proto
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|type
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|eth-&gt;h_source
-comma
-id|dev-&gt;dev_addr
-comma
-id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 multiline_comment|/* We don&squot;t ARP for the LOOPBACK device... */
@@ -418,6 +408,16 @@ id|DBG_DEV
 comma
 l_string|&quot;ETH: No header for loopback&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|eth-&gt;h_source
+comma
+id|dev-&gt;dev_addr
+comma
+id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 id|memset
@@ -460,6 +460,16 @@ suffix:semicolon
 id|memcpy
 c_func
 (paren
+id|eth-&gt;h_source
+comma
+id|dev-&gt;dev_addr
+comma
+id|dev-&gt;addr_len
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
 id|eth-&gt;h_dest
 comma
 id|dev-&gt;broadcast
@@ -471,6 +481,22 @@ r_return
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|eth-&gt;h_source
+comma
+op_amp
+id|saddr
+comma
+l_int|4
+)paren
+suffix:semicolon
 multiline_comment|/* No. Ask ARP to resolve the Ethernet address. */
 r_if
 c_cond
@@ -488,15 +514,55 @@ id|saddr
 )paren
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_ne
+id|ETH_P_IP
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Erk: protocol %X got into an arp request state!&bslash;n&quot;
+comma
+id|type
+)paren
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|dev-&gt;hard_header_len
 suffix:semicolon
 )brace
 r_else
+(brace
+id|memcpy
+c_func
+(paren
+id|eth-&gt;h_source
+comma
+id|dev-&gt;dev_addr
+comma
+id|dev-&gt;addr_len
+)paren
+suffix:semicolon
+multiline_comment|/* This was missing causing chaos if the&n;  &t;&t;&t;&t;&t;&t;&t;&t;   header built correctly! */
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|dev-&gt;hard_header_len
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Rebuild the Ethernet MAC header. */
 r_int
@@ -596,21 +662,18 @@ id|dst
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*  Kludge to check IP address before sending an ARP request &n;     to fix invalid IP addresses on ARP calls.  jacob@mayhem 9/5/93  */
 r_if
 c_cond
 (paren
-id|src
+id|eth-&gt;h_proto
 op_ne
-id|dev-&gt;pa_addr
+id|htons
+c_func
+(paren
+id|ETH_P_ARP
 )paren
-(brace
-multiline_comment|/*&t;&n;     printk(&quot;Got bad arp_find request in eth_rebuild_header: %s&bslash;n&quot;, in_ntoa(src));&n;     printk(&quot;Replacing with correct source IP address: %s&bslash;n&quot;, in_ntoa(dev-&gt;pa_addr));&n;   */
-id|src
-op_assign
-id|dev-&gt;pa_addr
-suffix:semicolon
-)brace
+)paren
+multiline_comment|/* This ntohs kind of helps a bit! */
 r_if
 c_cond
 (paren
@@ -729,6 +792,26 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ntohs
+c_func
+(paren
+id|eth-&gt;h_proto
+)paren
+OL
+l_int|1536
+)paren
+(brace
+r_return
+id|htons
+c_func
+(paren
+id|ETH_P_802_3
+)paren
+suffix:semicolon
+)brace
 r_return
 id|eth-&gt;h_proto
 suffix:semicolon
