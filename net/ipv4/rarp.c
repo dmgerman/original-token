@@ -170,6 +170,8 @@ id|rarp_table
 )paren
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1055,6 +1057,9 @@ suffix:semicolon
 id|entry-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+multiline_comment|/* Don&squot;t unlink if we have entries to serve. */
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|sti
 c_func

@@ -2757,6 +2757,16 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
+macro_line|#elif NR_IRQS == 16
+id|isa_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
 macro_line|#endif
 r_return
 suffix:semicolon

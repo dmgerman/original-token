@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;cdk.h  -- CDK interface definitions.&n; *&n; *&t;Copyright (C) 1994,1995  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; *&t;cdk.h  -- CDK interface definitions.&n; *&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#ifndef&t;_CDK_H
 DECL|macro|_CDK_H
@@ -1096,6 +1096,11 @@ DECL|macro|STL_BSTOP
 mdefine_line|#define&t;STL_BSTOP&t;_IO(&squot;s&squot;,22)
 DECL|macro|STL_BRESET
 mdefine_line|#define&t;STL_BRESET&t;_IO(&squot;s&squot;,23)
+multiline_comment|/*&n; *&t;Define a set of ioctl extensions, used to get at special stuff.&n; */
+DECL|macro|STL_GETPFLAG
+mdefine_line|#define&t;STL_GETPFLAG&t;_IO(&squot;s&squot;,80)
+DECL|macro|STL_SETPFLAG
+mdefine_line|#define&t;STL_SETPFLAG&t;_IO(&squot;s&squot;,81)
 multiline_comment|/*****************************************************************************/
 macro_line|#endif
 eof

@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;stallion.c  -- stallion multiport serial driver.&n; *&n; *&t;Copyright (C) 1994,1995  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This code is loosely based on the Linux serial driver, written by&n; *&t;Linus Torvalds, Theodore T&squot;so and others.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; *&t;stallion.c  -- stallion multiport serial driver.&n; *&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This code is loosely based on the Linux serial driver, written by&n; *&t;Linus Torvalds, Theodore T&squot;so and others.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -151,7 +151,7 @@ r_char
 op_star
 id|stl_drvversion
 op_assign
-l_string|&quot;1.0.0&quot;
+l_string|&quot;1.0.2&quot;
 suffix:semicolon
 DECL|variable|stl_serialname
 r_static
@@ -936,16 +936,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-r_static
-r_void
-op_star
-id|stl_memalloc
-c_func
-(paren
-r_int
-id|len
-)paren
-suffix:semicolon
 r_int
 id|stl_init
 c_func
@@ -1452,6 +1442,16 @@ op_star
 r_private
 )paren
 suffix:semicolon
+r_static
+r_void
+op_star
+id|stl_memalloc
+c_func
+(paren
+r_int
+id|len
+)paren
+suffix:semicolon
 macro_line|#ifdef&t;CONFIG_PCI
 r_static
 r_int
@@ -1464,7 +1464,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*****************************************************************************/
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Use the kernel version number for modules.&n; */
+multiline_comment|/*&n; *&t;Loadable module initialization stuff.&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -1940,7 +1940,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;Local memory allocation routines. These are used so we can deal with&n; *&t;memory allocation at init time and during run-time in a consistent&n; *&t;way. Everbody just calls the stl_memalloc routine to allocate&n; *&t;memory and it will do the right thing.&n; */
+multiline_comment|/*&n; *&t;Local driver kernel memory allocation routine.&n; */
 DECL|function|stl_memalloc
 r_static
 r_void
@@ -12792,74 +12792,6 @@ id|brdp-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-macro_line|#if 0
-id|ioaddr
-op_assign
-l_int|0x0c000001
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|rc
-op_assign
-id|pcibios_write_config_dword
-c_func
-(paren
-id|busnr
-comma
-id|devnr
-comma
-l_int|0x40
-comma
-id|ioaddr
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;STALLION: failed to write register on PCI board, errno=%x&bslash;n&quot;
-comma
-id|rc
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|rc
-op_assign
-id|pcibios_write_config_dword
-c_func
-(paren
-id|busnr
-comma
-id|devnr
-comma
-l_int|0x48
-comma
-id|ioaddr
-)paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;STALLION: failed to write register on PCI board, errno=%x&bslash;n&quot;
-comma
-id|rc
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-macro_line|#endif
 id|stl_brdinit
 c_func
 (paren

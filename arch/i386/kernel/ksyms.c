@@ -1,5 +1,30 @@
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/user.h&gt;
+macro_line|#include &lt;linux/elfcore.h&gt;
+r_extern
+r_void
+id|dump_thread
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|user
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dump_fpu
+c_func
+(paren
+id|elf_fpregset_t
+op_star
+)paren
+suffix:semicolon
 DECL|variable|arch_symbol_table
 r_static
 r_struct
@@ -9,6 +34,18 @@ op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
 multiline_comment|/* platform dependent support */
+id|X
+c_func
+(paren
+id|dump_thread
+)paren
+comma
+id|X
+c_func
+(paren
+id|dump_fpu
+)paren
+comma
 macro_line|#ifdef __SMP__
 id|X
 c_func

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/fs/fat/fatfs_syms.c&n; *&n; * Exported kernel symbols for the low-level FAT-based fs support.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &quot;tables.h&quot;

@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; *&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
 DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;16
+mdefine_line|#define NR_REQUEST&t;64
 DECL|variable|all_requests
 r_static
 r_struct

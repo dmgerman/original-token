@@ -92,6 +92,9 @@ id|PROC_CMDLINE
 comma
 DECL|enumerator|PROC_SYS
 id|PROC_SYS
+comma
+DECL|enumerator|PROC_MTAB
+id|PROC_MTAB
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

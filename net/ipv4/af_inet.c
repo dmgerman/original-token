@@ -35,6 +35,9 @@ macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#ifdef CONFIG_IP_ALIAS
 macro_line|#include &lt;net/ip_alias.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_extern
@@ -4598,6 +4601,21 @@ suffix:colon
 r_case
 id|SIOCSRARP
 suffix:colon
+macro_line|#ifdef CONFIG_KERNELD
+r_if
+c_cond
+(paren
+id|rarp_ioctl_hook
+op_eq
+l_int|NULL
+)paren
+id|request_module
+c_func
+(paren
+l_string|&quot;rarp&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

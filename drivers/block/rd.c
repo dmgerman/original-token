@@ -1514,6 +1514,7 @@ l_int|16
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;%c&bslash;b&quot;
 comma
 id|rotator

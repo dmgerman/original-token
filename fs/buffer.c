@@ -416,7 +416,7 @@ id|bdf_prm
 op_assign
 (brace
 (brace
-l_int|60
+l_int|25
 comma
 l_int|500
 comma
@@ -5383,13 +5383,12 @@ comma
 id|size
 )paren
 suffix:semicolon
-id|set_bit
+id|mark_buffer_dirty
 c_func
 (paren
-id|BH_Dirty
+id|tmp
 comma
-op_amp
-id|tmp-&gt;b_state
+l_int|0
 )paren
 suffix:semicolon
 )brace

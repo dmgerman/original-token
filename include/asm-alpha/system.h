@@ -187,7 +187,7 @@ DECL|macro|tbia
 mdefine_line|#define tbia()&t;&t;tbi(-2)
 multiline_comment|/*&n; * Give prototypes to shut up gcc.&n; */
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|xchg_u32
@@ -203,7 +203,7 @@ id|val
 )paren
 suffix:semicolon
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|xchg_u64
@@ -220,7 +220,7 @@ id|val
 suffix:semicolon
 DECL|function|xchg_u32
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|xchg_u32
@@ -291,7 +291,7 @@ suffix:semicolon
 )brace
 DECL|function|xchg_u64
 r_extern
-r_inline
+id|__inline__
 r_int
 r_int
 id|xchg_u64
@@ -375,7 +375,7 @@ r_void
 suffix:semicolon
 DECL|function|__xchg
 r_static
-r_inline
+id|__inline__
 r_int
 r_int
 id|__xchg

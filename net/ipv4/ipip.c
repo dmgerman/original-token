@@ -252,9 +252,11 @@ op_assign
 id|ipip_rcv
 comma
 multiline_comment|/* IPIP handler          */
+macro_line|#if 0
 l_int|NULL
 comma
 multiline_comment|/* Will be UDP fraglist handler */
+macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* TUNNEL error control    */

@@ -1940,16 +1940,13 @@ macro_line|#ifdef CONFIG_ALPHA_AVANTI
 (brace
 l_int|1
 comma
+l_int|2
+comma
 l_int|1
 comma
-op_minus
-l_int|1
+l_int|0
 comma
-op_minus
-l_int|1
-comma
-op_minus
-l_int|1
+l_int|2
 )brace
 comma
 multiline_comment|/* idsel 13 KN25_PCI_SLOT2 */

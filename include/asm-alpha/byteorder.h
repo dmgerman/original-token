@@ -141,93 +141,17 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-"&quot;"
-macro_line|# bswap input: %0 (aabbccdd)
-macro_line|# output: %0, used %1 %2
-id|extlh
-op_mod
-l_int|0
-comma
-l_int|5
-comma
-op_mod
-l_int|1
-macro_line|# %1 = dd000000
-id|zap
-op_mod
-l_int|0
-comma
-l_int|0xfd
-comma
-op_mod
-l_int|2
-macro_line|# %2 = 0000cc00
-id|sll
-op_mod
-l_int|2
-comma
-l_int|5
-comma
-op_mod
-l_int|2
-macro_line|# %2 = 00198000
-id|s8addq
-op_mod
-l_int|2
-comma
-op_mod
-l_int|1
-comma
-op_mod
-l_int|1
-macro_line|# %1 = ddcc0000
-id|zap
-op_mod
-l_int|0
-comma
-l_int|0xfb
-comma
-op_mod
-l_int|2
-macro_line|# %2 = 00bb0000
-id|srl
-op_mod
-l_int|2
-comma
-l_int|8
-comma
-op_mod
-l_int|2
-macro_line|# %2 = 0000bb00
-id|extbl
-op_mod
-l_int|0
-comma
-l_int|3
-comma
-op_mod
-l_int|0
-macro_line|# %0 = 000000aa
-op_logical_or
-op_mod
-l_int|1
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-macro_line|# %0 = ddcc00aa
-op_logical_or
-op_mod
-l_int|2
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-macro_line|# %0 = ddccbbaa&quot;
+l_string|&quot;# bswap input: %0 (aabbccdd)&bslash;n&bslash;t&quot;
+l_string|&quot;# output: %0, used %1 %2&bslash;n&bslash;t&quot;
+l_string|&quot;extlh&t;%0,5,%1&t;&t;# %1 = dd000000&bslash;n&bslash;t&quot;
+l_string|&quot;zap&t;%0,0xfd,%2&t;# %2 = 0000cc00&bslash;n&bslash;t&quot;
+l_string|&quot;sll&t;%2,5,%2&t;&t;# %2 = 00198000&bslash;n&bslash;t&quot;
+l_string|&quot;s8addq&t;%2,%1,%1&t;# %1 = ddcc0000&bslash;n&bslash;t&quot;
+l_string|&quot;zap&t;%0,0xfb,%2&t;# %2 = 00bb0000&bslash;n&bslash;t&quot;
+l_string|&quot;srl&t;%2,8,%2&t;&t;# %2 = 0000bb00&bslash;n&bslash;t&quot;
+l_string|&quot;extbl&t;%0,3,%0&t;&t;# %0 = 000000aa&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%1,%0,%0&t;# %0 = ddcc00aa&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%2,%0,%0&t;# %0 = ddccbbaa&bslash;n&quot;
 suffix:colon
 l_string|&quot;r=&quot;
 (paren
@@ -281,46 +205,13 @@ comma
 id|t1
 suffix:semicolon
 id|__asm__
+c_func
 (paren
-"&quot;"
-id|bis
-op_mod
-l_int|2
-comma
-op_mod
-l_int|2
-comma
-op_mod
-l_int|0
-macro_line|# v0 is result; swap in-place.  v0=aabb
-id|extwh
-op_mod
-l_int|0
-comma
-l_int|7
-comma
-op_mod
-l_int|1
-macro_line|# t1 = bb00
-id|extbl
-op_mod
-l_int|0
-comma
-l_int|1
-comma
-op_mod
-l_int|0
-macro_line|# v0 = 00aa
-id|bis
-op_mod
-l_int|0
-comma
-op_mod
-l_int|1
-comma
-op_mod
-l_int|0
-macro_line|# v0 = bbaa&quot;
+l_string|&quot;# v0 is result; swap in-place.&bslash;n&bslash;t&quot;
+l_string|&quot;bis&t;%2,%2,%0&t;# v0 = aabb&bslash;n&bslash;t&quot;
+l_string|&quot;extwh&t;%0,7,%1&t;&t;# t1 = bb00&bslash;n&bslash;t&quot;
+l_string|&quot;extbl&t;%0,1,%0&t;&t;# v0 = 00aa&bslash;n&bslash;t&quot;
+l_string|&quot;bis&t;%0,%1,%0&t;# v0 = bbaa&bslash;n&quot;
 suffix:colon
 l_string|&quot;r=&quot;
 (paren

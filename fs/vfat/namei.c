@@ -2480,6 +2480,13 @@ id|extlen
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|base
+(braket
+id|baselen
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 id|count
 op_assign
 l_int|0

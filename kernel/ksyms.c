@@ -167,45 +167,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|iABI_hook
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_BINFMT_ELF
-macro_line|#include &lt;linux/elfcore.h&gt;
-r_extern
-r_int
-id|dump_fpu
-c_func
-(paren
-id|elf_fpregset_t
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-r_extern
-r_void
-id|dump_thread
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|user
-op_star
-)paren
-suffix:semicolon
 DECL|variable|symbol_table
 r_struct
 id|symbol_table
@@ -1765,21 +1726,7 @@ id|tr_type_trans
 )paren
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_ELF
-id|X
-c_func
-(paren
-id|dump_fpu
-)paren
-comma
-macro_line|#endif
 multiline_comment|/* bimfm_aout */
-id|X
-c_func
-(paren
-id|dump_thread
-)paren
-comma
 id|X
 c_func
 (paren
