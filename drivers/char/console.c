@@ -1157,6 +1157,7 @@ id|__real_origin
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Put the cursor just beyond the end of the display adaptor memory.&n; */
 DECL|function|hide_cursor
 r_static
 r_inline
@@ -1164,10 +1165,10 @@ r_void
 id|hide_cursor
 c_func
 (paren
-r_int
-id|currcons
+r_void
 )paren
 (brace
+multiline_comment|/* This is inefficient, we could just put the cursor at 0xffff,&n;     but perhaps the delays due to the inefficiency are useful for&n;     some hardware... */
 id|outb_p
 c_func
 (paren
@@ -1183,7 +1184,7 @@ l_int|0xff
 op_amp
 (paren
 (paren
-id|scr_end
+id|video_mem_term
 op_minus
 id|video_mem_base
 )paren
@@ -1209,7 +1210,7 @@ l_int|0xff
 op_amp
 (paren
 (paren
-id|scr_end
+id|video_mem_term
 op_minus
 id|video_mem_base
 )paren
@@ -1338,7 +1339,6 @@ r_else
 id|hide_cursor
 c_func
 (paren
-id|currcons
 )paren
 suffix:semicolon
 id|restore_flags
@@ -6963,7 +6963,6 @@ suffix:semicolon
 id|hide_cursor
 c_func
 (paren
-id|fg_console
 )paren
 suffix:semicolon
 id|console_blanked

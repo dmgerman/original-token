@@ -3728,9 +3728,6 @@ id|ddi_device
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|ret
-suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -919,6 +919,16 @@ r_volatile
 id|jiffies
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|itimer_ticks
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|itimer_next
+suffix:semicolon
+r_extern
 r_struct
 id|timeval
 id|xtime

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; * Real random numbers for secure rm added 94/02/18&n; * Idea from Pierre del Perugia &lt;delperug@gla.ecoledoc.ibp.fr&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -8,6 +9,16 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 DECL|macro|clear_block
 mdefine_line|#define clear_block(addr,size,value) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (value), &quot;c&quot; (size / 4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
+DECL|variable|ext2_secrm_seed
+r_static
+r_int
+id|ext2_secrm_seed
+op_assign
+l_int|152
+suffix:semicolon
+multiline_comment|/* Random generator base */
+DECL|macro|RANDOM_INT
+mdefine_line|#define RANDOM_INT (ext2_secrm_seed = ext2_secrm_seed * 69069l +1)
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**. Especially as I don&squot;t do any locking...&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
 DECL|function|trunc_direct
 r_static
@@ -205,7 +216,7 @@ id|bh-&gt;b_data
 comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
-id|CURRENT_TIME
+id|RANDOM_INT
 )paren
 suffix:semicolon
 id|bh-&gt;b_dirt
@@ -592,7 +603,7 @@ id|bh-&gt;b_data
 comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 comma
-id|CURRENT_TIME
+id|RANDOM_INT
 )paren
 suffix:semicolon
 id|bh-&gt;b_dirt

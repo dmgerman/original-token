@@ -842,7 +842,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MATH_EMULATION */
 DECL|variable|itimer_ticks
-r_static
 r_int
 r_int
 id|itimer_ticks
@@ -850,7 +849,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|itimer_next
-r_static
 r_int
 r_int
 id|itimer_next
