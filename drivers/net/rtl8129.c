@@ -841,6 +841,8 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|param
+r_static
+r_const
 r_int
 r_int
 id|param

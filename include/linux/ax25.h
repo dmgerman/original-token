@@ -42,12 +42,16 @@ DECL|macro|SIOCAX25OPTRT
 mdefine_line|#define SIOCAX25OPTRT&t;&t;(SIOCPROTOPRIVATE+7)
 DECL|macro|SIOCAX25CTLCON
 mdefine_line|#define SIOCAX25CTLCON&t;&t;(SIOCPROTOPRIVATE+8)
-DECL|macro|SIOCAX25GETINFO
-mdefine_line|#define SIOCAX25GETINFO&t;&t;(SIOCPROTOPRIVATE+9)
+DECL|macro|SIOCAX25GETINFOOLD
+mdefine_line|#define SIOCAX25GETINFOOLD&t;(SIOCPROTOPRIVATE+9)
 DECL|macro|SIOCAX25ADDFWD
 mdefine_line|#define SIOCAX25ADDFWD&t;&t;(SIOCPROTOPRIVATE+10)
 DECL|macro|SIOCAX25DELFWD
 mdefine_line|#define SIOCAX25DELFWD&t;&t;(SIOCPROTOPRIVATE+11)
+DECL|macro|SIOCAX25DEVCTL
+mdefine_line|#define SIOCAX25DEVCTL          (SIOCPROTOPRIVATE+12)
+DECL|macro|SIOCAX25GETINFO
+mdefine_line|#define SIOCAX25GETINFO         (SIOCPROTOPRIVATE+13)
 DECL|macro|AX25_SET_RT_IPMODE
 mdefine_line|#define AX25_SET_RT_IPMODE&t;2
 DECL|macro|AX25_NOUID_DEFAULT
@@ -196,6 +200,66 @@ id|AX25_MAX_DIGIS
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* this will go away. Please do not export to user land */
+DECL|struct|ax25_info_struct_depreciated
+r_struct
+id|ax25_info_struct_depreciated
+(brace
+DECL|member|n2
+DECL|member|n2count
+r_int
+r_int
+id|n2
+comma
+id|n2count
+suffix:semicolon
+DECL|member|t1
+DECL|member|t1timer
+r_int
+r_int
+id|t1
+comma
+id|t1timer
+suffix:semicolon
+DECL|member|t2
+DECL|member|t2timer
+r_int
+r_int
+id|t2
+comma
+id|t2timer
+suffix:semicolon
+DECL|member|t3
+DECL|member|t3timer
+r_int
+r_int
+id|t3
+comma
+id|t3timer
+suffix:semicolon
+DECL|member|idle
+DECL|member|idletimer
+r_int
+r_int
+id|idle
+comma
+id|idletimer
+suffix:semicolon
+DECL|member|state
+r_int
+r_int
+id|state
+suffix:semicolon
+DECL|member|rcv_q
+DECL|member|snd_q
+r_int
+r_int
+id|rcv_q
+comma
+id|snd_q
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ax25_info_struct
 r_struct
 id|ax25_info_struct
@@ -252,6 +316,30 @@ r_int
 id|rcv_q
 comma
 id|snd_q
+suffix:semicolon
+DECL|member|vs
+DECL|member|vr
+DECL|member|va
+DECL|member|vs_max
+r_int
+r_int
+id|vs
+comma
+id|vr
+comma
+id|va
+comma
+id|vs_max
+suffix:semicolon
+DECL|member|paclen
+r_int
+r_int
+id|paclen
+suffix:semicolon
+DECL|member|window
+r_int
+r_int
+id|window
 suffix:semicolon
 )brace
 suffix:semicolon

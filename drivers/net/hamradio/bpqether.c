@@ -587,6 +587,7 @@ id|dev
 op_eq
 l_int|NULL
 op_logical_or
+op_logical_neg
 id|test_bit
 c_func
 (paren
@@ -595,8 +596,6 @@ comma
 op_amp
 id|dev-&gt;state
 )paren
-op_eq
-l_int|0
 )paren
 (brace
 id|kfree_skb
@@ -1044,6 +1043,12 @@ id|dev_queue_xmit
 c_func
 (paren
 id|skb
+)paren
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -2181,10 +2186,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/*&n; * Initialize driver. To be called from af_ax25 if not compiled as a&n; * module&n; */
-DECL|function|bpq_init
+DECL|function|bpq_init_driver
+r_static
 r_int
 id|__init
-id|bpq_init
+id|bpq_init_driver
 c_func
 (paren
 r_void
@@ -2221,7 +2227,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;AX.25 ethernet driver version 0.01&bslash;n&quot;
+l_string|&quot;AX.25: bpqether driver version 0.01&bslash;n&quot;
 )paren
 suffix:semicolon
 id|proc_net_create
@@ -2295,45 +2301,15 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Joerg Reuter DL1BKE &lt;jreuter@lykos.oche.de&gt;&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Transmit and receive AX.25 packets over Ethernet&quot;
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|bpq_cleanup_driver
+r_static
 r_void
-)paren
-(brace
-r_return
-id|bpq_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|bpq_cleanup_driver
 c_func
 (paren
 r_void
@@ -2386,5 +2362,30 @@ id|bpq-&gt;axdev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Joerg Reuter DL1BKE &lt;jreuter@poboxes.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Transmit and receive AX.25 packets over Ethernet&quot;
+)paren
+suffix:semicolon
+DECL|variable|bpq_init_driver
+id|module_init
+c_func
+(paren
+id|bpq_init_driver
+)paren
+suffix:semicolon
+DECL|variable|bpq_cleanup_driver
+id|module_exit
+c_func
+(paren
+id|bpq_cleanup_driver
+)paren
+suffix:semicolon
 eof

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Miscellaneous Mac68K-specific stuff &n; */
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -22,7 +23,6 @@ macro_line|#include &lt;asm/mac_via.h&gt;
 macro_line|#include &lt;asm/mac_oss.h&gt;
 DECL|macro|BOOTINFO_COMPAT_1_0
 mdefine_line|#define BOOTINFO_COMPAT_1_0
-macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 multiline_comment|/* Offset between Unix time (1970-based) and Mac time (1904-based) */

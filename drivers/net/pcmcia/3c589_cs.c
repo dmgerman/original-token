@@ -3834,14 +3834,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_else
-(brace
-id|netif_stop_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

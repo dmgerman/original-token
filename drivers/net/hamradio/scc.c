@@ -3,9 +3,9 @@ mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.75 1998/11/04 15:15:01 jreuter 
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;3.0&quot;
 DECL|macro|BANNER
-mdefine_line|#define BANNER  &quot;Z8530 SCC driver version &quot;VERSION&quot;.dl1bke (experimental) by DL1BKE&bslash;n&quot;
+mdefine_line|#define BANNER  &quot;AX.25: Z8530 SCC driver version &quot;VERSION&quot;.dl1bke&bslash;n&quot;
 multiline_comment|/*&n; * Please use z8530drv-utils-3.0 with this version.&n; *            ------------------&n; *&n; * You can find a subset of the documentation in &n; * linux/Documentation/networking/z8530drv.txt.&n; */
-multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 1998 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   1994-09-13&t;started to write the driver, rescued most of my own&n;&t;&t;code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;though. The first version I put my hands on was sccdrv1.3&n;&t;&t;from August 1993. The memory buffer pool concept&n;&t;&t;appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;August 1994.&n;&n;   1995-01-31&t;changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   1996-10-05&t;New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use &squot;kissbridge&squot; if you need a KISS TNC emulator.&n;&n;   1996-12-13&t;Fixed for Linux networking changes. (G4KLX)&n;   1997-01-08&t;Fixed the remaining problems.&n;   1997-04-02&t;Hopefully fixed the problems with the new *_timer()&n;   &t;&t;routines, added calibration code.&n;   1997-10-12&t;Made SCC_DELAY a CONFIG option, added CONFIG_SCC_TRXECHO&n;   1998-01-29&t;Small fix to avoid lock-up on initialization&n;   1998-09-29&t;Fixed the &quot;grouping&quot; bugs, tx_inhibit works again,&n;   &t;&t;using dev-&gt;tx_queue_len now instead of MAXQUEUE now.&n;   1998-10-21&t;Postponed the spinlock changes, would need a lot of&n;   &t;&t;testing I currently don&squot;t have the time to. Softdcd doesn&squot;t&n;   &t;&t;work.&n;   1998-11-04&t;Softdcd does not work correctly in DPLL mode, in fact it &n;   &t;&t;never did. The DPLL locks on noise, the SYNC unit sees&n;   &t;&t;flags that aren&squot;t... Restarting the DPLL does not help&n;   &t;&t;either, it resynchronizes too slow and the first received&n;   &t;&t;frame gets lost.&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@poboxes.com&n;&t;&t;www     : http://poboxes.com/jreuter/&n;*/
+multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 2000 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   1994-09-13&t;started to write the driver, rescued most of my own&n;&t;&t;code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;though. The first version I put my hands on was sccdrv1.3&n;&t;&t;from August 1993. The memory buffer pool concept&n;&t;&t;appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;August 1994.&n;&n;   1995-01-31&t;changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   1996-10-05&t;New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use &squot;kissbridge&squot; if you need a KISS TNC emulator.&n;&n;   1996-12-13&t;Fixed for Linux networking changes. (G4KLX)&n;   1997-01-08&t;Fixed the remaining problems.&n;   1997-04-02&t;Hopefully fixed the problems with the new *_timer()&n;   &t;&t;routines, added calibration code.&n;   1997-10-12&t;Made SCC_DELAY a CONFIG option, added CONFIG_SCC_TRXECHO&n;   1998-01-29&t;Small fix to avoid lock-up on initialization&n;   1998-09-29&t;Fixed the &quot;grouping&quot; bugs, tx_inhibit works again,&n;   &t;&t;using dev-&gt;tx_queue_len now instead of MAXQUEUE now.&n;   1998-10-21&t;Postponed the spinlock changes, would need a lot of&n;   &t;&t;testing I currently don&squot;t have the time to. Softdcd doesn&squot;t&n;   &t;&t;work.&n;   1998-11-04&t;Softdcd does not work correctly in DPLL mode, in fact it &n;   &t;&t;never did. The DPLL locks on noise, the SYNC unit sees&n;   &t;&t;flags that aren&squot;t... Restarting the DPLL does not help&n;   &t;&t;either, it resynchronizes too slow and the first received&n;   &t;&t;frame gets lost.&n;   2000-02-13&t;Fixed for new network driver interface changes, still&n;   &t;&t;does TX timeouts itself since it uses its own queue&n;   &t;&t;scheme.&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@poboxes.com&n;&t;&t;www     : http://poboxes.com/jreuter/&n;*/
 multiline_comment|/* ----------------------------------------------------------------------- */
 DECL|macro|SCC_LDELAY
 macro_line|#undef  SCC_LDELAY&t;1&t;/* slow it even a bit more down */
@@ -495,24 +495,6 @@ id|Vector_Latch
 op_assign
 l_int|0
 suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Joerg Reuter &lt;jreuter@poboxes.com&gt;&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Network Device Driver for Z8530 based HDLC cards for Amateur Packet Radio&quot;
-)paren
-suffix:semicolon
-id|MODULE_SUPPORTED_DEVICE
-c_func
-(paren
-l_string|&quot;scc&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* *&t;&t;&t;Port Access Functions&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
@@ -890,46 +872,6 @@ macro_line|#endif
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* *&t;&t;&t;Some useful macros&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-DECL|function|scc_lock_dev
-r_static
-r_inline
-r_void
-id|scc_lock_dev
-c_func
-(paren
-r_struct
-id|scc_channel
-op_star
-id|scc
-)paren
-(brace
-id|netif_stop_queue
-c_func
-(paren
-id|scc-&gt;dev
-)paren
-suffix:semicolon
-)brace
-DECL|function|scc_unlock_dev
-r_static
-r_inline
-r_void
-id|scc_unlock_dev
-c_func
-(paren
-r_struct
-id|scc_channel
-op_star
-id|scc
-)paren
-(brace
-id|netif_wake_queue
-c_func
-(paren
-id|scc-&gt;dev
-)paren
-suffix:semicolon
-)brace
 DECL|function|scc_discard_buffers
 r_static
 r_inline
@@ -1144,7 +1086,7 @@ id|scc-&gt;stat.rxerrs
 op_increment
 suffix:semicolon
 multiline_comment|/* then count it as an error */
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|scc-&gt;rx_buff
@@ -1256,10 +1198,10 @@ id|scc-&gt;tx_buff
 op_assign
 id|skb
 suffix:semicolon
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 r_if
@@ -1296,7 +1238,7 @@ l_int|0
 )paren
 multiline_comment|/* Paranoia... */
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -1413,7 +1355,7 @@ id|ABUNDER
 )paren
 suffix:semicolon
 multiline_comment|/* send CRC */
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -1733,7 +1675,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|scc-&gt;tx_buff
@@ -1925,7 +1867,7 @@ l_string|&quot;z8530drv: oops, scc_rxint() received huge frame...&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -2049,7 +1991,7 @@ id|skb
 op_ne
 l_int|NULL
 )paren
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -2127,7 +2069,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* a bad frame */
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -3914,10 +3856,10 @@ id|scc-&gt;kiss.tailtime
 )paren
 suffix:semicolon
 )brace
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -4115,10 +4057,10 @@ id|scc-&gt;stat.tx_state
 op_assign
 id|TXS_IDLE
 suffix:semicolon
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 multiline_comment|/* t_maxkeyup locked it. */
@@ -4404,10 +4346,10 @@ id|scc-&gt;stat.tx_state
 op_assign
 id|TXS_IDLE
 suffix:semicolon
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -4442,12 +4384,13 @@ op_amp
 id|scc-&gt;tx_t
 )paren
 suffix:semicolon
-id|scc_lock_dev
+id|netif_stop_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
+multiline_comment|/* don&squot;t pile on the wabbit! */
 id|scc_discard_buffers
 c_func
 (paren
@@ -4461,10 +4404,10 @@ id|scc-&gt;stat.tx_state
 op_assign
 id|TXS_IDLE
 suffix:semicolon
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 )brace
@@ -4508,10 +4451,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * let things settle down before we start to&n;&t; * accept new data.&n;&t; */
-id|scc_lock_dev
+id|netif_stop_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 id|scc_discard_buffers
@@ -5342,10 +5285,10 @@ comma
 id|RES_EXT_INT
 )paren
 suffix:semicolon
-id|scc_unlock_dev
+id|netif_wake_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 id|restore_flags
@@ -5389,10 +5332,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|scc_lock_dev
+id|netif_stop_queue
 c_func
 (paren
-id|scc
+id|scc-&gt;dev
 )paren
 suffix:semicolon
 id|scc_discard_buffers
@@ -5835,6 +5778,10 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
 id|buf
 op_assign
 (paren
@@ -5849,6 +5796,13 @@ l_int|10
 comma
 id|GFP_KERNEL
 )paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|strcpy
 c_func
@@ -6049,6 +6003,10 @@ id|dev-&gt;do_ioctl
 op_assign
 id|scc_net_ioctl
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+l_int|NULL
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -6123,21 +6081,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|scc
-op_eq
-l_int|NULL
-op_logical_or
-id|scc-&gt;magic
-op_ne
-id|SCC_MAGIC
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 id|scc-&gt;init
 )paren
@@ -6203,22 +6146,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_if
-c_cond
+id|netif_stop_queue
+c_func
 (paren
-id|scc
-op_eq
-l_int|NULL
-op_logical_or
-id|scc-&gt;magic
-op_ne
-id|SCC_MAGIC
+id|dev
 )paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|save_flags
 c_func
@@ -6287,11 +6219,7 @@ c_func
 id|scc
 )paren
 suffix:semicolon
-id|netif_stop_queue
-c_func
-(paren
-id|dev
-)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -6323,7 +6251,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -6401,28 +6329,6 @@ suffix:semicolon
 r_char
 id|kisscmd
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|scc
-op_eq
-l_int|NULL
-op_logical_or
-id|scc-&gt;magic
-op_ne
-id|SCC_MAGIC
-)paren
-(brace
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6528,7 +6434,7 @@ id|skb_del
 suffix:semicolon
 id|skb_del
 op_assign
-id|__skb_dequeue
+id|skb_dequeue
 c_func
 (paren
 op_amp
@@ -6542,7 +6448,7 @@ id|skb_del
 )paren
 suffix:semicolon
 )brace
-id|__skb_queue_tail
+id|skb_queue_tail
 c_func
 (paren
 op_amp
@@ -6676,21 +6582,6 @@ id|scc_channel
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scc
-op_eq
-l_int|NULL
-op_logical_or
-id|scc-&gt;magic
-op_ne
-id|SCC_MAGIC
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 id|arg
 op_assign
@@ -7940,20 +7831,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|scc
-op_eq
-l_int|NULL
-op_logical_or
-id|scc-&gt;magic
-op_ne
-id|SCC_MAGIC
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
 id|scc-&gt;dev_stat.rx_errors
 op_assign
 id|scc-&gt;stat.rxerrs
@@ -8608,10 +8485,11 @@ macro_line|#endif
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* * &t;&t;&t;Init SCC driver &t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
-DECL|function|scc_init
+DECL|function|scc_init_driver
+r_static
 r_int
 id|__init
-id|scc_init
+id|scc_init_driver
 (paren
 r_void
 )paren
@@ -8817,51 +8695,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* ******************************************************************** */
-multiline_comment|/* *&t;&t;&t;    Module support &t;&t;&t;      * */
-multiline_comment|/* ******************************************************************** */
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|scc_cleanup_driver
+r_static
 r_void
-)paren
-(brace
-r_int
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-id|result
-op_assign
-id|scc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-op_eq
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Copyright 1993,1998 Joerg Reuter DL1BKE (jreuter@poboxes.com)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|scc_cleanup_driver
 c_func
 (paren
 r_void
@@ -9077,5 +8915,36 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Joerg Reuter &lt;jreuter@poboxes.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;AX.25 Device Driver for Z8530 based HDLC cards&quot;
+)paren
+suffix:semicolon
+id|MODULE_SUPPORTED_DEVICE
+c_func
+(paren
+l_string|&quot;scc&quot;
+)paren
+suffix:semicolon
+DECL|variable|scc_init_driver
+id|module_init
+c_func
+(paren
+id|scc_init_driver
+)paren
+suffix:semicolon
+DECL|variable|scc_cleanup_driver
+id|module_exit
+c_func
+(paren
+id|scc_cleanup_driver
+)paren
+suffix:semicolon
 eof

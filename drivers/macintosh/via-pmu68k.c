@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * Device driver for the PMU on 68K-based Apple PowerBooks&n; *&n; * The VIA (versatile interface adapter) interfaces to the PMU,&n; * a 6805 microprocessor core whose primary function is to control&n; * battery charging and system power on the PowerBooks.&n; * The PMU also controls the ADB (Apple Desktop Bus) which connects&n; * to the keyboard and mouse, as well as the non-volatile RAM&n; * and the RTC (real time clock) chip.&n; *&n; * Adapted for 68K PMU by Joshua M. Thompson&n; *&n; * Based largely on the PowerMac PMU code by Paul Mackerras and&n; * Fabio Riccardi.&n; *&n; * Also based on the PMU driver from MkLinux by Apple Computer, Inc.&n; * and the Open Software Foundation, Inc.&n; */
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

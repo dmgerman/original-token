@@ -105,30 +105,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|lps-&gt;flags
-op_amp
-id|LP_PORT_BUSY
-)paren
-)paren
-(brace
-multiline_comment|/* Let the port go. */
-id|clear_bit
-(paren
-id|LP_HAVE_PORT_BIT
-comma
-op_amp
-id|lps-&gt;flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Don&squot;t actually release the port now */
 r_return
 l_int|1

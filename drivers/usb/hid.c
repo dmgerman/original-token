@@ -6851,7 +6851,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;input%d: USB HID v%d.%d %s&bslash;n&quot;
+l_string|&quot;input%d: USB HID v%x.%02x %s&bslash;n&quot;
 comma
 id|hid-&gt;input.number
 comma

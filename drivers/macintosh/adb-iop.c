@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * I/O Processor (IOP) ADB Driver&n; * Written and (C) 1999 by Joshua M. Thompson (funaho@jurai.org)&n; * Based on via-cuda.c by Paul Mackerras.&n; *&n; * 1999-07-01 (jmt) - First implementation for new driver architecture.&n; *&n; * 1999-07-31 (jmt) - First working version.&n; *&n; * TODO:&n; *&n; * o Implement SRQ handling.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -8,6 +8,7 @@ id|version
 op_assign
 l_string|&quot;ewrk3.c:v0.43 96/8/16 davies@maniac.ultranet.com&bslash;n&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

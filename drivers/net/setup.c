@@ -54,23 +54,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|bpq_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|dmascc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|scc_init
 c_func
 (paren
 r_void
@@ -231,14 +215,6 @@ id|__initdata
 op_assign
 (brace
 multiline_comment|/*&n;&t; *&t;Early setup devices&n;&t; */
-macro_line|#if defined(CONFIG_SCC)
-(brace
-id|scc_init
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
 macro_line|#if defined(CONFIG_DMASCC)
 (brace
 id|dmascc_init
@@ -247,14 +223,6 @@ l_int|0
 )brace
 comma
 macro_line|#endif&t;
-macro_line|#if defined(CONFIG_BPQETHER)
-(brace
-id|bpq_init
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
 macro_line|#if defined(CONFIG_DLCI)
 (brace
 id|dlci_setup
