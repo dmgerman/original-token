@@ -590,7 +590,7 @@ comma
 id|old_acct
 )paren
 suffix:semicolon
-id|fput
+id|filp_close
 c_func
 (paren
 id|old_acct
@@ -609,7 +609,7 @@ id|error
 suffix:semicolon
 id|out_err
 suffix:colon
-id|fput
+id|filp_close
 c_func
 (paren
 id|file

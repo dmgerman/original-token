@@ -721,6 +721,11 @@ c_func
 id|task
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cred
+)paren
 id|rpcauth_insert_credcache
 c_func
 (paren

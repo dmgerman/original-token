@@ -9,6 +9,10 @@ DECL|macro|GSI_IEEE_FP_CONTROL
 mdefine_line|#define GSI_IEEE_FP_CONTROL&t;&t;45
 DECL|macro|GSI_IEEE_STATE_AT_SIGNAL
 mdefine_line|#define GSI_IEEE_STATE_AT_SIGNAL&t;46
+DECL|macro|GSI_PROC_TYPE
+mdefine_line|#define GSI_PROC_TYPE&t;&t;&t;60
+DECL|macro|GSI_GET_HWRPB
+mdefine_line|#define GSI_GET_HWRPB&t;&t;&t;101
 DECL|macro|SSI_NVPAIRS
 mdefine_line|#define SSI_NVPAIRS&t;&t;&t;1
 DECL|macro|SSI_IEEE_FP_CONTROL

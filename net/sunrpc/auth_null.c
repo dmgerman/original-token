@@ -170,9 +170,16 @@ id|cred
 )paren
 )paren
 )paren
+(brace
+id|task-&gt;tk_status
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|cred-&gt;cr_count
 op_assign
 l_int|0

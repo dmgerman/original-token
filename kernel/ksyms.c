@@ -564,6 +564,13 @@ c_func
 id|filp_open
 )paren
 suffix:semicolon
+DECL|variable|filp_close
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|filp_close
+)paren
+suffix:semicolon
 DECL|variable|fput
 id|EXPORT_SYMBOL
 c_func

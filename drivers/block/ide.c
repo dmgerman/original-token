@@ -476,6 +476,84 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * CompactFlash cards and their brethern pretend to be removable hard disks, except:&n; *&t;(1) they never have a slave unit, and&n; *&t;(2) they don&squot;t have doorlock mechanisms.&n; * This test catches them, and is invoked elsewhere when setting appropriate config bits.&n; *&n; * FIXME: This treatment is probably applicable for *all* PCMCIA (PC CARD) devices,&n; * so in linux 2.3.x we should change this to just treat all PCMCIA drives this way,&n; * and get rid of the model-name tests below (too big of an interface change for 2.2.x).&n; * At that time, we might also consider parameterizing the timeouts and retries,&n; * since these are MUCH faster than mechanical drives.&t;-M.Lord&n; */
+DECL|function|drive_is_flashcard
+r_int
+id|drive_is_flashcard
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+r_struct
+id|hd_driveid
+op_star
+id|id
+op_assign
+id|drive-&gt;id
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;removable
+op_logical_and
+id|id
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;KODAK ATA_FLASH&quot;
+comma
+l_int|15
+)paren
+multiline_comment|/* Kodak */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;Hitachi CV&quot;
+comma
+l_int|10
+)paren
+multiline_comment|/* Hitachi */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;SunDisk SDCFB&quot;
+comma
+l_int|13
+)paren
+)paren
+multiline_comment|/* SunDisk */
+(brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* yes, it is a flash memory card */
+)brace
+)brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* no, it is not a flash memory card */
+)brace
 multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in MHz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; * The actual value to be used is computed/displayed the first time through.&n; */
 DECL|function|ide_system_bus_speed
 r_int

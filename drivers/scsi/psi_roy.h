@@ -20,8 +20,8 @@ mdefine_line|#define&t;MAX_BUS&t;&t;&t;&t;2
 DECL|macro|MAX_UNITS
 mdefine_line|#define&t;MAX_UNITS&t;&t;&t;16
 DECL|macro|TIMEOUT_COMMAND
-mdefine_line|#define&t;TIMEOUT_COMMAND&t;&t;30 &t;&t;&t;
-singleline_comment|// number of jiffies for command busy timeout
+mdefine_line|#define&t;TIMEOUT_COMMAND&t;&t;400&t;&t;&t;
+singleline_comment|// number of milliSecondos for command busy timeout
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;I/O address offsets&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/************************************************/
@@ -56,6 +56,10 @@ DECL|macro|CMD_VERIFY_CHS
 mdefine_line|#define&t;CMD_VERIFY_CHS&t;&t;0x09&t;&t;/* verify data on sectors as specified (CHS mode) */
 DECL|macro|CMD_VERIFY
 mdefine_line|#define&t;CMD_VERIFY&t;&t;&t;0x0A&t;&t;/* verify data on sectors as specified (RBA mode) */
+DECL|macro|CMD_DASD_CDB
+mdefine_line|#define&t;CMD_DASD_CDB&t;&t;0x0B&t;&t;/* process CDB for a DASD device */
+DECL|macro|CMD_DASD_CDB_SG
+mdefine_line|#define&t;CMD_DASD_CDB_SG&t;&t;0x0C&t;&t;/* process CDB for a DASD device with scatter/gather */
 DECL|macro|CMD_READ_ABS
 mdefine_line|#define&t;CMD_READ_ABS&t;&t;0x10&t;&t;/* read absolute disk */
 DECL|macro|CMD_WRITE_ABS
@@ -80,12 +84,20 @@ DECL|macro|CMD_SCSI_THRU_SG
 mdefine_line|#define&t;CMD_SCSI_THRU_SG&t;0x31&t;&t;/* SCSI pass through CDB with scatter/gather */
 DECL|macro|CMD_SCSI_REQ_SENSE
 mdefine_line|#define&t;CMD_SCSI_REQ_SENSE&t;0x32&t;&t;/* SCSI pass through request sense after check condition */
+DECL|macro|CMD_DASD_RAID_RQ
+mdefine_line|#define&t;CMD_DASD_RAID_RQ&t;0x35&t;&t;/* request DASD RAID drive data */
+DECL|macro|CMD_DASD_RAID_RQ0
+mdefine_line|#define&t;CMD_DASD_RAID_RQ0&t;0x31&t;&t;&t;/* byte 1 subcommand to query for RAID 0 informatation */
+DECL|macro|CMD_DASD_RAID_RQ1
+mdefine_line|#define&t;CMD_DASD_RAID_RQ1&t;0x32&t;&t;&t;/* byte 1 subcommand to query for RAID 1 informatation */
+DECL|macro|CMD_DASD_RAID_RQ5
+mdefine_line|#define&t;CMD_DASD_RAID_RQ5&t;0x33&t;&t;&t;/* byte 1 subcommand to query for RAID 5 informatation */
 DECL|macro|CMD_DASD_SCSI_INQ
-mdefine_line|#define&t;CMD_DASD_SCSI_INQ&t;0x36&t;&t;/* to DASD inquire for DASD info in SCSI inquiry format */
+mdefine_line|#define&t;CMD_DASD_SCSI_INQ&t;0x36&t;&t;/* do DASD inquire and return in SCSI format */
 DECL|macro|CMD_DASD_CAP
 mdefine_line|#define&t;CMD_DASD_CAP&t;&t;0x37&t;&t;/* read DASD capacity */
 DECL|macro|CMD_DASD_INQ
-mdefine_line|#define&t;CMD_DASD_INQ&t;&t;0x38&t;&t;/* do DASD inquire for type data */
+mdefine_line|#define&t;CMD_DASD_INQ&t;&t;0x38&t;&t;/* do DASD inquire for type data and return SCSI/EIDE inquiry */
 DECL|macro|CMD_SCSI_INQ
 mdefine_line|#define&t;CMD_SCSI_INQ&t;&t;0x39&t;&t;/* do SCSI inquire */
 DECL|macro|CMD_READ_SETUP
@@ -154,6 +166,16 @@ DECL|macro|CMD_RAID_STOP
 mdefine_line|#define&t;CMD_RAID_STOP&t;&t;0x58&t;&t;/* stop any reconstruct in progress */
 DECL|macro|CMD_RAID_START
 mdefine_line|#define CMD_RAID_START&t;&t;0x59&t;&t;/* start reconstruct */
+DECL|macro|CMD_RAID0_READ
+mdefine_line|#define&t;CMD_RAID0_READ&t;&t;0x5A&t;&t;/* read RAID 0 parameter block */
+DECL|macro|CMD_RAID0_WRITE
+mdefine_line|#define&t;CMD_RAID0_WRITE&t;&t;0x5B&t;&t;/* write RAID 0 parameter block */
+DECL|macro|CMD_RAID5_READ
+mdefine_line|#define&t;CMD_RAID5_READ&t;&t;0x5C&t;&t;/* read RAID 5 parameter block */
+DECL|macro|CMD_RAID5_WRITE
+mdefine_line|#define&t;CMD_RAID5_WRITE&t;&t;0x5D&t;&t;/* write RAID 5 parameter block */
+DECL|macro|CMD_ERASE_TABLES
+mdefine_line|#define&t;CMD_ERASE_TABLES&t;0x5F&t;&t;/* erase partition table and RAID signatutures */
 DECL|macro|CMD_SCSI_GET
 mdefine_line|#define&t;CMD_SCSI_GET&t;&t;0x60&t;&t;/* get SCSI pass through devices */
 DECL|macro|CMD_SCSI_TIMEOUT
@@ -344,6 +366,10 @@ DECL|macro|SPEC_OS2_V3
 mdefine_line|#define&t;SPEC_OS2_V3&t;&t;&t;0x02&t;&t;/* OS/2 Warp */
 DECL|macro|SPCE_SCO_3242
 mdefine_line|#define&t;SPCE_SCO_3242&t;&t;0x04&t;&t;/* SCO 3.4.2.2 */
+DECL|macro|SPEC_QNX_4X
+mdefine_line|#define&t;SPEC_QNX_4X&t;&t;&t;0x05&t;&t;/* QNX 4.XX */
+DECL|macro|SPEC_NOVELL_NWPA
+mdefine_line|#define&t;SPEC_NOVELL_NWPA&t;0x08&t;&t;/* Novell NWPA scatter/gather support */
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&t;Inquire structures&t;&t;&t;&t;&t;&t;&t;*/
@@ -640,5 +666,27 @@ DECL|macro|DEVC_DASD_REMOVABLE
 mdefine_line|#define&t;DEVC_DASD_REMOVABLE&t;0x80&t;&t;/* Direct-access storage device, Removable */
 DECL|macro|DEVC_NONE
 mdefine_line|#define&t;DEVC_NONE&t;&t;&t;0xFF&t;&t;/* no device */
+singleline_comment|// SCSI controls for RAID
+DECL|macro|SC_MY_RAID
+mdefine_line|#define&t;SC_MY_RAID&t;&t;&t;0xBF&t;&t;&t;
+singleline_comment|// our special CDB command byte for Win95... interface
+DECL|macro|MY_SCSI_QUERY0
+mdefine_line|#define&t;MY_SCSI_QUERY0&t;&t;0x31&t;&t;&t;
+singleline_comment|// byte 1 subcommand to query driver for RAID 0 informatation
+DECL|macro|MY_SCSI_QUERY1
+mdefine_line|#define&t;MY_SCSI_QUERY1&t;&t;0x32&t;&t;&t;
+singleline_comment|// byte 1 subcommand to query driver for RAID 1 informatation
+DECL|macro|MY_SCSI_QUERY5
+mdefine_line|#define&t;MY_SCSI_QUERY5&t;&t;0x33&t;&t;&t;
+singleline_comment|// byte 1 subcommand to query driver for RAID 5 informatation
+DECL|macro|MY_SCSI_REBUILD
+mdefine_line|#define&t;MY_SCSI_REBUILD&t;&t;0x40&t;&t;&t;
+singleline_comment|// byte 1 subcommand to reconstruct a mirrored pair
+DECL|macro|MY_SCSI_DEMOFAIL
+mdefine_line|#define MY_SCSI_DEMOFAIL&t;0x54&t;&t;&t;
+singleline_comment|// byte 1 subcommand for RAID failure demonstration
+DECL|macro|MY_SCSI_ALARMMUTE
+mdefine_line|#define&t;MY_SCSI_ALARMMUTE&t;0x60&t;&t;&t;
+singleline_comment|// byte 1 subcommand to mute any alarm currently on
 macro_line|#endif
 eof

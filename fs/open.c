@@ -3377,9 +3377,9 @@ id|dentry
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * &quot;id&quot; is the POSIX thread ID. We use the&n; * files pointer for this..&n; */
-DECL|function|close_fp
+DECL|function|filp_close
 r_int
-id|close_fp
+id|filp_close
 c_func
 (paren
 r_struct
@@ -3538,7 +3538,7 @@ id|files-&gt;close_on_exec
 suffix:semicolon
 id|error
 op_assign
-id|close_fp
+id|filp_close
 c_func
 (paren
 id|filp

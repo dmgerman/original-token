@@ -635,7 +635,7 @@ id|i
 op_assign
 l_int|NULL
 suffix:semicolon
-id|close_fp
+id|filp_close
 c_func
 (paren
 id|file

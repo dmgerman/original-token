@@ -4564,7 +4564,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We&squot;ve decremented tty-&gt;count, so we should zero out&n;&t; * filp-&gt;private_data, to break the link between the tty and&n;&t; * the file descriptor.  Otherwise if close_fp() blocks before&n;&t; * the the file descriptor is removed from the inuse_filp&n;&t; * list, check_tty_count() could observe a discrepancy and&n;&t; * printk a warning message to the user.&n;&t; */
+multiline_comment|/*&n;&t; * We&squot;ve decremented tty-&gt;count, so we should zero out&n;&t; * filp-&gt;private_data, to break the link between the tty and&n;&t; * the file descriptor.  Otherwise if filp_close() blocks before&n;&t; * the the file descriptor is removed from the inuse_filp&n;&t; * list, check_tty_count() could observe a discrepancy and&n;&t; * printk a warning message to the user.&n;&t; */
 id|filp-&gt;private_data
 op_assign
 l_int|0

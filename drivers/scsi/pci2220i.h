@@ -1,9 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Perceptive Solutions, Inc. PCI-2000 device driver proc support for Linux.&n; *&n; * Copyright (c) 1997 Perceptive Solutions, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;File Name:&t;&t;pci2220i.h&n; *&n; *&t;Description:&t;Header file for the SCSI driver for the PCI2220I&n; *&t;&t;&t;&t;&t;EIDE interface card.&n; *&n; *-M*************************************************************************/
-macro_line|#ifndef _PCI2220I_H
-DECL|macro|_PCI2220I_H
-mdefine_line|#define _PCI2220I_H
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/kdev_t.h&gt;
+multiline_comment|/*+M*************************************************************************&n; * Perceptive Solutions, Inc. PCI-2000 device driver proc support for Linux.&n; *&n; * Copyright (c) 1999 Perceptive Solutions, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;File Name:&t;&t;pci2220i.h&n; *&n; *&t;Description:&t;Header file for the SCSI driver for the PCI2220I&n; *&t;&t;&t;&t;&t;EIDE interface card.&n; *&n; *-M*************************************************************************/
 macro_line|#ifndef&t;PSI_EIDE_SCSIOP
 DECL|macro|PSI_EIDE_SCSIOP
 mdefine_line|#define&t;PSI_EIDE_SCSIOP&t;1
@@ -26,15 +21,19 @@ DECL|macro|ULONG
 mdefine_line|#define&t;ULONG&t;&t;unsigned long
 DECL|macro|VOID
 mdefine_line|#define&t;VOID&t;&t;void
+macro_line|#include &quot;psi_dale.h&quot;
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;Timeout konstants&t;&t; &t;&t;&t;&t;*/
 multiline_comment|/************************************************/
 DECL|macro|TIMEOUT_READY
-mdefine_line|#define&t;TIMEOUT_READY&t;&t;&t;&t;10&t;&t;
+mdefine_line|#define&t;TIMEOUT_READY&t;&t;&t;&t;100&t;&t;&t;
 singleline_comment|// 100 mSec
 DECL|macro|TIMEOUT_DRQ
-mdefine_line|#define&t;TIMEOUT_DRQ&t;&t;&t;&t;&t;40&t;&t;
-singleline_comment|// 400 mSec
+mdefine_line|#define&t;TIMEOUT_DRQ&t;&t;&t;&t;&t;300&t;&t;&t;
+singleline_comment|// 300 mSec
+DECL|macro|TIMEOUT_DATA
+mdefine_line|#define&t;TIMEOUT_DATA&t;&t;&t;&t;(3 * HZ)&t;
+singleline_comment|// 3 seconds
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;Misc. macros&t;&t;&t; &t;&t;&t;&t;*/
 multiline_comment|/************************************************/
@@ -46,6 +45,10 @@ DECL|macro|XANY2SCSI
 mdefine_line|#define XANY2SCSI(up, p)&t;&t;&t;&t;&bslash;&n;((UCHAR *)up)[0] = ((long)(p)) &gt;&gt; 24;&t;&bslash;&n;((UCHAR *)up)[1] = ((long)(p)) &gt;&gt; 16;&t;&bslash;&n;((UCHAR *)up)[2] = ((long)(p)) &gt;&gt; 8;&t;&bslash;&n;((UCHAR *)up)[3] = ((long)(p));
 DECL|macro|XSCSI2LONG
 mdefine_line|#define XSCSI2LONG(up)&t;&t;&t;&t;&t;&bslash;&n;( (((long)(((UCHAR *)up)[0])) &lt;&lt; 24)&t;&bslash;&n;+ (((long)(((UCHAR *)up)[1])) &lt;&lt; 16)&t;&bslash;&n;+ (((long)(((UCHAR *)up)[2])) &lt;&lt;  8)&t;&bslash;&n;+ ((long)(((UCHAR *)up)[3])) )
+DECL|macro|SelectSpigot
+mdefine_line|#define&t;SelectSpigot(padapter,spigot)&t;outb_p (spigot, padapter-&gt;regStatSel)
+DECL|macro|WriteCommand
+mdefine_line|#define WriteCommand(padapter,cmd)&t;&t;outb_p (cmd, padapter-&gt;regStatCmd)
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;SCSI CDB operation codes &t;&t;&t;&t;*/
 multiline_comment|/************************************************/
@@ -214,10 +217,6 @@ DECL|macro|IDE_CMD_WRITE_MULTIPLE
 mdefine_line|#define&t;IDE_CMD_WRITE_MULTIPLE&t;&t;0xC5
 DECL|macro|IDE_CMD_SET_MULTIPLE
 mdefine_line|#define&t;IDE_CMD_SET_MULTIPLE&t;&t;0xC6
-DECL|macro|IDE_COMMAND_WRITE_DMA
-mdefine_line|#define IDE_COMMAND_WRITE_DMA&t;&t;0xCA
-DECL|macro|IDE_COMMAND_READ_DMA
-mdefine_line|#define IDE_COMMAND_READ_DMA&t;&t;0xC8
 DECL|macro|IDE_COMMAND_IDENTIFY
 mdefine_line|#define IDE_COMMAND_IDENTIFY&t;&t;0xEC
 singleline_comment|// IDE status definitions
@@ -254,58 +253,6 @@ DECL|macro|IDE_ERROR_UNC
 mdefine_line|#define&t;IDE_ERROR_UNC&t;&t;&t;&t;0x40
 DECL|macro|IDE_ERROR_BBK
 mdefine_line|#define&t;IDE_ERROR_BBK&t;&t;&t;&t;0x80
-singleline_comment|//&t;IDE interface structure
-DECL|struct|_IDE_STRUCT
-r_typedef
-r_struct
-id|_IDE_STRUCT
-(brace
-r_union
-(brace
-DECL|member|ide
-id|UCHAR
-id|ide
-(braket
-l_int|9
-)braket
-suffix:semicolon
-r_struct
-(brace
-DECL|member|data
-id|USHORT
-id|data
-suffix:semicolon
-DECL|member|sectors
-id|UCHAR
-id|sectors
-suffix:semicolon
-DECL|member|lba
-id|UCHAR
-id|lba
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|cmd
-id|UCHAR
-id|cmd
-suffix:semicolon
-DECL|member|spigot
-id|UCHAR
-id|spigot
-suffix:semicolon
-DECL|member|ides
-)brace
-id|ides
-suffix:semicolon
-DECL|member|ide
-)brace
-id|ide
-suffix:semicolon
-DECL|typedef|IDE_STRUCT
-)brace
-id|IDE_STRUCT
-suffix:semicolon
 singleline_comment|// SCSI read capacity structure
 DECL|struct|_READ_CAPACITY_DATA
 r_typedef
@@ -471,6 +418,8 @@ op_star
 id|PINQUIRYDATA
 suffix:semicolon
 singleline_comment|// IDE IDENTIFY data
+macro_line|#pragma pack (1)
+macro_line|#pragma align 1
 DECL|struct|_IDENTIFY_DATA
 r_typedef
 r_struct
@@ -480,45 +429,52 @@ DECL|member|GeneralConfiguration
 id|USHORT
 id|GeneralConfiguration
 suffix:semicolon
-singleline_comment|// 00
+singleline_comment|//  0
 DECL|member|NumberOfCylinders
 id|USHORT
 id|NumberOfCylinders
 suffix:semicolon
-singleline_comment|// 02
+singleline_comment|//  1
 DECL|member|Reserved1
 id|USHORT
 id|Reserved1
 suffix:semicolon
-singleline_comment|// 04
+singleline_comment|//  2
 DECL|member|NumberOfHeads
 id|USHORT
 id|NumberOfHeads
 suffix:semicolon
-singleline_comment|// 06
+singleline_comment|//  3
 DECL|member|UnformattedBytesPerTrack
 id|USHORT
 id|UnformattedBytesPerTrack
 suffix:semicolon
-singleline_comment|// 08
+singleline_comment|//  4
 DECL|member|UnformattedBytesPerSector
 id|USHORT
 id|UnformattedBytesPerSector
 suffix:semicolon
-singleline_comment|// 0A
+singleline_comment|//  5
 DECL|member|SectorsPerTrack
 id|USHORT
 id|SectorsPerTrack
 suffix:semicolon
-singleline_comment|// 0C
-DECL|member|VendorUnique1
+singleline_comment|//  6
+DECL|member|NumBytesISG
 id|USHORT
-id|VendorUnique1
-(braket
-l_int|3
-)braket
+id|NumBytesISG
 suffix:semicolon
-singleline_comment|// 0E
+singleline_comment|//  7 Byte Len - inter-sector gap
+DECL|member|NumBytesSync
+id|USHORT
+id|NumBytesSync
+suffix:semicolon
+singleline_comment|//  8          - sync field
+DECL|member|NumWordsVUS
+id|USHORT
+id|NumWordsVUS
+suffix:semicolon
+singleline_comment|//  9 Len - Vendor Unique Info
 DECL|member|SerialNumber
 id|USHORT
 id|SerialNumber
@@ -526,22 +482,22 @@ id|SerialNumber
 l_int|10
 )braket
 suffix:semicolon
-singleline_comment|// 14
+singleline_comment|// 10
 DECL|member|BufferType
 id|USHORT
 id|BufferType
 suffix:semicolon
-singleline_comment|// 28
+singleline_comment|// 20
 DECL|member|BufferSectorSize
 id|USHORT
 id|BufferSectorSize
 suffix:semicolon
-singleline_comment|// 2A
+singleline_comment|// 21
 DECL|member|NumberOfEccBytes
 id|USHORT
 id|NumberOfEccBytes
 suffix:semicolon
-singleline_comment|// 2C
+singleline_comment|// 22
 DECL|member|FirmwareRevision
 id|USHORT
 id|FirmwareRevision
@@ -549,7 +505,7 @@ id|FirmwareRevision
 l_int|4
 )braket
 suffix:semicolon
-singleline_comment|// 2E
+singleline_comment|// 23
 DECL|member|ModelNumber
 id|USHORT
 id|ModelNumber
@@ -557,93 +513,229 @@ id|ModelNumber
 l_int|20
 )braket
 suffix:semicolon
-singleline_comment|// 36
-DECL|member|MaximumBlockTransfer
-id|UCHAR
-id|MaximumBlockTransfer
-suffix:semicolon
-singleline_comment|// 5E
-DECL|member|VendorUnique2
-id|UCHAR
-id|VendorUnique2
-suffix:semicolon
-singleline_comment|// 5F
-DECL|member|DoubleWordIo
+singleline_comment|// 27
+DECL|member|NumSectorsPerInt
 id|USHORT
-id|DoubleWordIo
+id|NumSectorsPerInt
+suffix:colon
+l_int|8
 suffix:semicolon
-singleline_comment|// 60
-DECL|member|Capabilities
-id|USHORT
-id|Capabilities
-suffix:semicolon
-singleline_comment|// 62
+singleline_comment|// 47 Multiple Mode - Sec/Blk
 DECL|member|Reserved2
 id|USHORT
 id|Reserved2
+suffix:colon
+l_int|8
 suffix:semicolon
-singleline_comment|// 64
-DECL|member|VendorUnique3
-id|UCHAR
-id|VendorUnique3
-suffix:semicolon
-singleline_comment|// 66
-DECL|member|PioCycleTimingMode
-id|UCHAR
-id|PioCycleTimingMode
-suffix:semicolon
-singleline_comment|// 67
-DECL|member|VendorUnique4
-id|UCHAR
-id|VendorUnique4
-suffix:semicolon
-singleline_comment|// 68
-DECL|member|DmaCycleTimingMode
-id|UCHAR
-id|DmaCycleTimingMode
-suffix:semicolon
-singleline_comment|// 69
-DECL|member|TranslationFieldsValid
+singleline_comment|// 47
+DECL|member|DoubleWordMode
 id|USHORT
-id|TranslationFieldsValid
+id|DoubleWordMode
+suffix:semicolon
+singleline_comment|// 48 flag for double word mode capable
+DECL|member|VendorUnique1
+id|USHORT
+id|VendorUnique1
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 49
+DECL|member|SupportDMA
+id|USHORT
+id|SupportDMA
 suffix:colon
 l_int|1
 suffix:semicolon
-singleline_comment|// 6A
+singleline_comment|// 49 DMA supported
+DECL|member|SupportLBA
+id|USHORT
+id|SupportLBA
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 49 LBA supported
+DECL|member|SupportIORDYDisable
+id|USHORT
+id|SupportIORDYDisable
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 49 IORDY can be disabled
+DECL|member|SupportIORDY
+id|USHORT
+id|SupportIORDY
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 49 IORDY supported
+DECL|member|ReservedPsuedoDMA
+id|USHORT
+id|ReservedPsuedoDMA
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 49 reserved for pseudo DMA mode support
 DECL|member|Reserved3
 id|USHORT
 id|Reserved3
 suffix:colon
-l_int|15
+l_int|3
 suffix:semicolon
-DECL|member|NumberOfCurrentCylinders
-id|USHORT
-id|NumberOfCurrentCylinders
-suffix:semicolon
-singleline_comment|// 6C
-DECL|member|NumberOfCurrentHeads
-id|USHORT
-id|NumberOfCurrentHeads
-suffix:semicolon
-singleline_comment|// 6E
-DECL|member|CurrentSectorsPerTrack
-id|USHORT
-id|CurrentSectorsPerTrack
-suffix:semicolon
-singleline_comment|// 70
-DECL|member|CurrentSectorCapacity
-id|ULONG
-id|CurrentSectorCapacity
-suffix:semicolon
-singleline_comment|// 72
+singleline_comment|// 49
 DECL|member|Reserved4
 id|USHORT
 id|Reserved4
+suffix:semicolon
+singleline_comment|// 50
+DECL|member|Reserved5
+id|USHORT
+id|Reserved5
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 51 Transfer Cycle Timing - PIO
+DECL|member|PIOCycleTime
+id|USHORT
+id|PIOCycleTime
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 51 Transfer Cycle Timing - PIO
+DECL|member|Reserved6
+id|USHORT
+id|Reserved6
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 52                       - DMA
+DECL|member|DMACycleTime
+id|USHORT
+id|DMACycleTime
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 52                       - DMA
+DECL|member|Valid_54_58
+id|USHORT
+id|Valid_54_58
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 53 words 54 - 58 are vaild
+DECL|member|Valid_64_70
+id|USHORT
+id|Valid_64_70
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 53 words 64 - 70 are valid
+DECL|member|Reserved7
+id|USHORT
+id|Reserved7
+suffix:colon
+l_int|14
+suffix:semicolon
+singleline_comment|// 53
+DECL|member|LogNumCyl
+id|USHORT
+id|LogNumCyl
+suffix:semicolon
+singleline_comment|// 54 Current Translation - Num Cyl
+DECL|member|LogNumHeads
+id|USHORT
+id|LogNumHeads
+suffix:semicolon
+singleline_comment|// 55                       Num Heads
+DECL|member|LogSectorsPerTrack
+id|USHORT
+id|LogSectorsPerTrack
+suffix:semicolon
+singleline_comment|// 56                       Sec/Trk
+DECL|member|LogTotalSectors
+id|ULONG
+id|LogTotalSectors
+suffix:semicolon
+singleline_comment|// 57                       Total Sec
+DECL|member|CurrentNumSecPerInt
+id|USHORT
+id|CurrentNumSecPerInt
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 59 current setting for number of sectors per interrupt
+DECL|member|ValidNumSecPerInt
+id|USHORT
+id|ValidNumSecPerInt
+suffix:colon
+l_int|1
+suffix:semicolon
+singleline_comment|// 59 Current setting is valid for number of sectors per interrupt
+DECL|member|Reserved8
+id|USHORT
+id|Reserved8
+suffix:colon
+l_int|7
+suffix:semicolon
+singleline_comment|// 59
+DECL|member|LBATotalSectors
+id|ULONG
+id|LBATotalSectors
+suffix:semicolon
+singleline_comment|// 60 LBA Mode - Sectors
+DECL|member|DMASWordFlags
+id|USHORT
+id|DMASWordFlags
+suffix:semicolon
+singleline_comment|// 62
+DECL|member|DMAMWordFlags
+id|USHORT
+id|DMAMWordFlags
+suffix:semicolon
+singleline_comment|// 63
+DECL|member|AdvancedPIOSupport
+id|USHORT
+id|AdvancedPIOSupport
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 64 Flow control PIO transfer modes supported
+DECL|member|Reserved9
+id|USHORT
+id|Reserved9
+suffix:colon
+l_int|8
+suffix:semicolon
+singleline_comment|// 64
+DECL|member|MinMultiDMACycle
+id|USHORT
+id|MinMultiDMACycle
+suffix:semicolon
+singleline_comment|// 65 minimum multiword DMA transfer cycle time per word
+DECL|member|RecomendDMACycle
+id|USHORT
+id|RecomendDMACycle
+suffix:semicolon
+singleline_comment|// 66 Manufacturer&squot;s recommende multiword DMA transfer cycle time
+DECL|member|MinPIOCycleWithoutFlow
+id|USHORT
+id|MinPIOCycleWithoutFlow
+suffix:semicolon
+singleline_comment|// 67 Minimum PIO transfer cycle time without flow control
+DECL|member|MinPIOCylceWithFlow
+id|USHORT
+id|MinPIOCylceWithFlow
+suffix:semicolon
+singleline_comment|// 68 Minimum PIO transfer cycle time with IORDY flow control
+DECL|member|ReservedSpace
+id|USHORT
+id|ReservedSpace
 (braket
-l_int|197
+l_int|256
+op_minus
+l_int|69
 )braket
 suffix:semicolon
-singleline_comment|// 76
+singleline_comment|// 69
 DECL|typedef|IDENTIFY_DATA
 DECL|typedef|PIDENTIFY_DATA
 )brace
@@ -652,180 +744,8 @@ comma
 op_star
 id|PIDENTIFY_DATA
 suffix:semicolon
-singleline_comment|// Identify data without the Reserved4.
-DECL|struct|_IDENTIFY_DATA2
-r_typedef
-r_struct
-id|_IDENTIFY_DATA2
-(brace
-DECL|member|GeneralConfiguration
-id|USHORT
-id|GeneralConfiguration
-suffix:semicolon
-singleline_comment|// 00
-DECL|member|NumberOfCylinders
-id|USHORT
-id|NumberOfCylinders
-suffix:semicolon
-singleline_comment|// 02
-DECL|member|Reserved1
-id|USHORT
-id|Reserved1
-suffix:semicolon
-singleline_comment|// 04
-DECL|member|NumberOfHeads
-id|USHORT
-id|NumberOfHeads
-suffix:semicolon
-singleline_comment|// 06
-DECL|member|UnformattedBytesPerTrack
-id|USHORT
-id|UnformattedBytesPerTrack
-suffix:semicolon
-singleline_comment|// 08
-DECL|member|UnformattedBytesPerSector
-id|USHORT
-id|UnformattedBytesPerSector
-suffix:semicolon
-singleline_comment|// 0A
-DECL|member|SectorsPerTrack
-id|USHORT
-id|SectorsPerTrack
-suffix:semicolon
-singleline_comment|// 0C
-DECL|member|VendorUnique1
-id|USHORT
-id|VendorUnique1
-(braket
-l_int|3
-)braket
-suffix:semicolon
-singleline_comment|// 0E
-DECL|member|SerialNumber
-id|USHORT
-id|SerialNumber
-(braket
-l_int|10
-)braket
-suffix:semicolon
-singleline_comment|// 14
-DECL|member|BufferType
-id|USHORT
-id|BufferType
-suffix:semicolon
-singleline_comment|// 28
-DECL|member|BufferSectorSize
-id|USHORT
-id|BufferSectorSize
-suffix:semicolon
-singleline_comment|// 2A
-DECL|member|NumberOfEccBytes
-id|USHORT
-id|NumberOfEccBytes
-suffix:semicolon
-singleline_comment|// 2C
-DECL|member|FirmwareRevision
-id|USHORT
-id|FirmwareRevision
-(braket
-l_int|4
-)braket
-suffix:semicolon
-singleline_comment|// 2E
-DECL|member|ModelNumber
-id|USHORT
-id|ModelNumber
-(braket
-l_int|20
-)braket
-suffix:semicolon
-singleline_comment|// 36
-DECL|member|MaximumBlockTransfer
-id|UCHAR
-id|MaximumBlockTransfer
-suffix:semicolon
-singleline_comment|// 5E
-DECL|member|VendorUnique2
-id|UCHAR
-id|VendorUnique2
-suffix:semicolon
-singleline_comment|// 5F
-DECL|member|DoubleWordIo
-id|USHORT
-id|DoubleWordIo
-suffix:semicolon
-singleline_comment|// 60
-DECL|member|Capabilities
-id|USHORT
-id|Capabilities
-suffix:semicolon
-singleline_comment|// 62
-DECL|member|Reserved2
-id|USHORT
-id|Reserved2
-suffix:semicolon
-singleline_comment|// 64
-DECL|member|VendorUnique3
-id|UCHAR
-id|VendorUnique3
-suffix:semicolon
-singleline_comment|// 66
-DECL|member|PioCycleTimingMode
-id|UCHAR
-id|PioCycleTimingMode
-suffix:semicolon
-singleline_comment|// 67
-DECL|member|VendorUnique4
-id|UCHAR
-id|VendorUnique4
-suffix:semicolon
-singleline_comment|// 68
-DECL|member|DmaCycleTimingMode
-id|UCHAR
-id|DmaCycleTimingMode
-suffix:semicolon
-singleline_comment|// 69
-DECL|member|TranslationFieldsValid
-id|USHORT
-id|TranslationFieldsValid
-suffix:colon
-l_int|1
-suffix:semicolon
-singleline_comment|// 6A
-DECL|member|Reserved3
-id|USHORT
-id|Reserved3
-suffix:colon
-l_int|15
-suffix:semicolon
-DECL|member|NumberOfCurrentCylinders
-id|USHORT
-id|NumberOfCurrentCylinders
-suffix:semicolon
-singleline_comment|// 6C
-DECL|member|NumberOfCurrentHeads
-id|USHORT
-id|NumberOfCurrentHeads
-suffix:semicolon
-singleline_comment|// 6E
-DECL|member|CurrentSectorsPerTrack
-id|USHORT
-id|CurrentSectorsPerTrack
-suffix:semicolon
-singleline_comment|// 70
-DECL|member|CurrentSectorCapacity
-id|ULONG
-id|CurrentSectorCapacity
-suffix:semicolon
-singleline_comment|// 72
-DECL|typedef|IDENTIFY_DATA2
-DECL|typedef|PIDENTIFY_DATA2
-)brace
-id|IDENTIFY_DATA2
-comma
-op_star
-id|PIDENTIFY_DATA2
-suffix:semicolon
+macro_line|#pragma pack ()
+macro_line|#pragma align 0
 macro_line|#endif&t;
 singleline_comment|// PSI_EIDE_SCSIOP
 singleline_comment|// function prototypes
@@ -909,6 +829,5 @@ id|proc_dir_entry
 id|Proc_Scsi_Pci2220i
 suffix:semicolon
 DECL|macro|PCI2220I
-mdefine_line|#define PCI2220I { proc_dir:       &amp;Proc_Scsi_Pci2220i,/* proc_dir_entry */ &bslash;&n;&t;&t;  name:           &quot;PCI-2220I EIDE Disk Controller&quot;,&bslash;&n;&t;&t;  detect:         Pci2220i_Detect,&t;&t;&t;&bslash;&n;&t;&t;  command:&t;  Pci2220i_Command,&t;&t;&t;&bslash;&n;&t;&t;  queuecommand:&t;  Pci2220i_QueueCommand,&t;&t;&bslash;&n;&t;&t;  abort:&t;  Pci2220i_Abort,&t;&t;&t;&bslash;&n;&t;&t;  reset:&t;  Pci2220i_Reset,&t;&t;&t;&bslash;&n;&t;&t;  bios_param:&t;  Pci2220i_BiosParam,                 &t;&bslash;&n;&t;&t;  can_queue:&t;  1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;  this_id:&t;  -1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;  sg_tablesize:&t;  SG_NONE,&t;&t; &t;&t;&bslash;&n;&t;&t;  cmd_per_lun:&t;  1, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;  use_clustering: DISABLE_CLUSTERING }
-macro_line|#endif
+mdefine_line|#define PCI2220I { NULL, NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&amp;Proc_Scsi_Pci2220i,/* proc_dir_entry */&bslash;&n;&t;&t;&t;NULL,&t;&t;                &t;&t;&t;&bslash;&n;&t;&t;&t;&quot;PCI-2220I EIDE Disk Controller&quot;,&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t; &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Command,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_QueueCommand,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Abort,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Reset,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_BiosParam,                 &t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;-1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SG_NONE,&t;&t; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;DISABLE_CLUSTERING }
 eof

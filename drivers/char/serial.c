@@ -2666,7 +2666,7 @@ id|multi-&gt;port4
 op_amp
 id|multi-&gt;mask4
 )paren
-op_eq
+op_ne
 id|multi-&gt;match4
 )paren
 r_continue
@@ -4695,6 +4695,17 @@ c_func
 id|info-&gt;tty
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|baud
+)paren
+id|baud
+op_assign
+l_int|9600
+suffix:semicolon
+multiline_comment|/* B0 transition handled in rs_set_termios */
 id|baud_base
 op_assign
 id|info-&gt;state-&gt;baud_base
@@ -7058,7 +7069,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|state-&gt;flags
+id|info-&gt;flags
 op_amp
 id|ASYNC_INITIALIZED
 )paren
@@ -9214,11 +9225,17 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+r_int
+id|cflag
+op_assign
+id|tty-&gt;termios-&gt;c_cflag
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|tty-&gt;termios-&gt;c_cflag
+id|cflag
 op_eq
 id|old_termios-&gt;c_cflag
 )paren
@@ -9259,7 +9276,7 @@ id|CBAUD
 op_logical_and
 op_logical_neg
 (paren
-id|tty-&gt;termios-&gt;c_cflag
+id|cflag
 op_amp
 id|CBAUD
 )paren
@@ -9314,7 +9331,7 @@ id|CBAUD
 )paren
 op_logical_and
 (paren
-id|tty-&gt;termios-&gt;c_cflag
+id|cflag
 op_amp
 id|CBAUD
 )paren

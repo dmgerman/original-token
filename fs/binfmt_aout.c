@@ -817,7 +817,7 @@ id|current
 suffix:semicolon
 id|close_coredump
 suffix:colon
-id|close_fp
+id|filp_close
 c_func
 (paren
 id|file
@@ -1445,6 +1445,10 @@ op_eq
 id|ZMAGIC
 op_logical_and
 id|ex.a_text
+op_logical_and
+id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op
+op_logical_and
+id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op-&gt;bmap
 op_logical_and
 (paren
 id|fd_offset

@@ -280,7 +280,7 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 comma
-id|current-&gt;euid
+id|current-&gt;fsuid
 comma
 l_int|0
 )paren
@@ -341,7 +341,7 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 comma
-id|current-&gt;euid
+id|current-&gt;fsuid
 comma
 l_int|1
 )paren
@@ -397,7 +397,7 @@ id|inode
 comma
 l_int|1
 comma
-id|current-&gt;euid
+id|current-&gt;fsuid
 )paren
 )paren
 r_return
@@ -556,7 +556,7 @@ id|iattr
 comma
 l_int|0
 comma
-id|current-&gt;euid
+id|current-&gt;fsuid
 )paren
 )paren
 r_goto
@@ -588,7 +588,7 @@ id|iattr
 comma
 l_int|1
 comma
-id|current-&gt;euid
+id|current-&gt;fsuid
 )paren
 suffix:semicolon
 )brace

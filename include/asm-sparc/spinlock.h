@@ -246,7 +246,7 @@ mdefine_line|#define read_lock_irqsave(lock, flags) do { __save_and_cli(flags); 
 DECL|macro|read_unlock
 mdefine_line|#define read_unlock(lock) &bslash;&n;do {&t;unsigned long flags; &bslash;&n;&t;__save_and_cli(flags); &bslash;&n;&t;_do_read_unlock(lock, &quot;read_unlock&quot;); &bslash;&n;&t;__restore_flags(flags); &bslash;&n;} while(0)
 DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;do { _do_read_unlock(lock, &quot;read_unlock_irq&quot;); __sti() } while(0)
+mdefine_line|#define read_unlock_irq(lock)&t;do { _do_read_unlock(lock, &quot;read_unlock_irq&quot;); __sti(); } while(0)
 DECL|macro|read_unlock_irqrestore
 mdefine_line|#define read_unlock_irqrestore(lock, flags) do { _do_read_unlock(lock, &quot;read_unlock_irqrestore&quot;); __restore_flags(flags); } while(0)
 DECL|macro|write_lock

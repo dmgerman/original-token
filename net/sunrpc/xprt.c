@@ -4531,7 +4531,9 @@ id|xid
 )paren
 id|xid
 op_assign
-id|jiffies
+id|CURRENT_TIME
+op_lshift
+l_int|12
 suffix:semicolon
 id|dprintk
 c_func
@@ -4567,6 +4569,15 @@ id|xprt
 suffix:semicolon
 id|req-&gt;rq_xid
 op_assign
+id|xid
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|xid
+)paren
 id|xid
 op_increment
 suffix:semicolon

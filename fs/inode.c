@@ -2896,7 +2896,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the hash tables and default&n; * value for max inodes&n; */
 DECL|macro|MAX_INODE
-mdefine_line|#define MAX_INODE (8192)
+mdefine_line|#define MAX_INODE (12288)
 DECL|function|inode_init
 r_void
 id|__init

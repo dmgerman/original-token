@@ -5956,7 +5956,7 @@ suffix:semicolon
 )brace
 id|close_coredump
 suffix:colon
-id|close_fp
+id|filp_close
 c_func
 (paren
 id|file

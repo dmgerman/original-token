@@ -1,9 +1,228 @@
 macro_line|#ifndef _ACENIC_H_
 DECL|macro|_ACENIC_H_
 mdefine_line|#define _ACENIC_H_
-macro_line|#if ((BITS_PER_LONG != 32) &amp;&amp; (BITS_PER_LONG != 64))
-macro_line|#error &quot;BITS_PER_LONG not defined or not valid&quot;
+multiline_comment|/*&n; * Addressing:&n; *&n; * The Tigon uses 64-bit host addresses, regardless of their actual&n; * length, and it expects a big-endian format. For 32 bit systems the&n; * upper 32 bits of the address are simply ignored (zero), however for&n; * little endian 64 bit systems (Alpha) this looks strange with the&n; * two parts of the address word being swapped.&n; *&n; * The addresses are split in two 32 bit words for all architectures&n; * as some of them are in PCI shared memory and it is necessary to use&n; * readl/writel to access them.&n; *&n; * The addressing code is derived from Pete Beckman&squot;s work, but&n; * modified to deal properly with readl/writel usage.&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|addrhi
+id|u32
+id|addrhi
+suffix:semicolon
+DECL|member|addrlo
+id|u32
+id|addrlo
+suffix:semicolon
+DECL|typedef|aceaddr
+)brace
+id|aceaddr
+suffix:semicolon
+DECL|function|set_aceaddr
+r_static
+r_inline
+r_void
+id|set_aceaddr
+c_func
+(paren
+id|aceaddr
+op_star
+id|aa
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|baddr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|addr
+)paren
+suffix:semicolon
+macro_line|#if (BITS_PER_LONG == 64)
+id|aa-&gt;addrlo
+op_assign
+id|baddr
+op_amp
+l_int|0xffffffff
+suffix:semicolon
+id|aa-&gt;addrhi
+op_assign
+id|baddr
+op_rshift
+l_int|32
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Don&squot;t bother setting zero every time */
+id|aa-&gt;addrlo
+op_assign
+id|baddr
+suffix:semicolon
 macro_line|#endif
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_aceaddr_bus
+r_static
+r_inline
+r_void
+id|set_aceaddr_bus
+c_func
+(paren
+id|aceaddr
+op_star
+id|aa
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|baddr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|addr
+suffix:semicolon
+macro_line|#if (BITS_PER_LONG == 64)
+id|aa-&gt;addrlo
+op_assign
+id|baddr
+op_amp
+l_int|0xffffffff
+suffix:semicolon
+id|aa-&gt;addrhi
+op_assign
+id|baddr
+op_rshift
+l_int|32
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Don&squot;t bother setting zero every time */
+id|aa-&gt;addrlo
+op_assign
+id|baddr
+suffix:semicolon
+macro_line|#endif
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_aceaddr
+r_static
+r_inline
+r_void
+op_star
+id|get_aceaddr
+c_func
+(paren
+id|aceaddr
+op_star
+id|aa
+)paren
+(brace
+r_int
+r_int
+id|addr
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if (BITS_PER_LONG == 64)
+id|addr
+op_assign
+(paren
+id|u64
+)paren
+id|aa-&gt;addrhi
+op_lshift
+l_int|32
+op_or
+id|aa-&gt;addrlo
+suffix:semicolon
+macro_line|#else
+id|addr
+op_assign
+id|aa-&gt;addrlo
+suffix:semicolon
+macro_line|#endif
+r_return
+id|bus_to_virt
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_aceaddr_bus
+r_static
+r_inline
+r_void
+op_star
+id|get_aceaddr_bus
+c_func
+(paren
+id|aceaddr
+op_star
+id|aa
+)paren
+(brace
+r_int
+r_int
+id|addr
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if (BITS_PER_LONG == 64)
+id|addr
+op_assign
+(paren
+id|u64
+)paren
+id|aa-&gt;addrhi
+op_lshift
+l_int|32
+op_or
+id|aa-&gt;addrlo
+suffix:semicolon
+macro_line|#else
+id|addr
+op_assign
+id|aa-&gt;addrlo
+suffix:semicolon
+macro_line|#endif
+r_return
+(paren
+r_void
+op_star
+)paren
+id|addr
+suffix:semicolon
+)brace
 DECL|struct|ace_regs
 r_struct
 id|ace_regs
@@ -374,9 +593,9 @@ id|u32
 id|DmaWriteCfg
 suffix:semicolon
 multiline_comment|/* 0x620 */
-DECL|member|pad15
+DECL|member|TxBufRat
 id|u32
-id|pad15
+id|TxBufRat
 suffix:semicolon
 DECL|member|EvtCsm
 id|u32
@@ -585,11 +804,13 @@ DECL|macro|ACE_WARN
 mdefine_line|#define ACE_WARN&t;&t;0x08
 DECL|macro|ACE_WORD_SWAP
 mdefine_line|#define ACE_WORD_SWAP&t;&t;0x04
+DECL|macro|ACE_NO_JUMBO_FRAG
+mdefine_line|#define ACE_NO_JUMBO_FRAG&t;0x200
 DECL|macro|ACE_FATAL
 mdefine_line|#define ACE_FATAL&t;&t;0x40000000
 multiline_comment|/*&n; * DMA config&n; */
 DECL|macro|DMA_THRESH_8W
-mdefine_line|#define DMA_THRESH_8W&t;&t;0x80;
+mdefine_line|#define DMA_THRESH_8W&t;&t;0x80
 multiline_comment|/*&n; * Tuning parameters&n; */
 DECL|macro|TICKS_PER_SEC
 mdefine_line|#define TICKS_PER_SEC&t;&t;1000000
@@ -808,18 +1029,20 @@ DECL|macro|DESC_END
 mdefine_line|#define DESC_END&t;&t;0x04
 DECL|macro|DESC_MORE
 mdefine_line|#define DESC_MORE&t;&t;0x08
-multiline_comment|/*&n; * RX control block flags&n; */
-DECL|macro|RX_TCP_UDP_SUM
-mdefine_line|#define RX_TCP_UDP_SUM&t;&t;0x01
-DECL|macro|RX_IP_SUM
-mdefine_line|#define RX_IP_SUM&t;&t;0x02
-DECL|macro|RX_SPLIT_HDRS
-mdefine_line|#define RX_SPLIT_HDRS&t;&t;0x04
-DECL|macro|RX_NO_PSEUDO_HDR_SUM
-mdefine_line|#define RX_NO_PSEUDO_HDR_SUM&t;0x08
+multiline_comment|/*&n; * Control block flags&n; */
+DECL|macro|FLG_RX_TCP_UDP_SUM
+mdefine_line|#define FLG_RX_TCP_UDP_SUM&t;0x01
+DECL|macro|FLG_RX_IP_SUM
+mdefine_line|#define FLG_RX_IP_SUM&t;&t;0x02
+DECL|macro|FLG_RX_SPLIT_HDRS
+mdefine_line|#define FLG_RX_SPLIT_HDRS&t;0x04
+DECL|macro|FLG_RX_NO_PSDO_HDR_SUM
+mdefine_line|#define FLG_RX_NO_PSDO_HDR_SUM&t;0x08
+DECL|macro|FLG_RNG_DISABLED
+mdefine_line|#define FLG_RNG_DISABLED&t;0x200
 multiline_comment|/*&n; * Descriptor flags&n; */
-DECL|macro|JUMBO_FLAG
-mdefine_line|#define JUMBO_FLAG&t;&t;0x10
+DECL|macro|DFLG_RX_JUMBO
+mdefine_line|#define DFLG_RX_JUMBO&t;&t;0x10
 multiline_comment|/*&n; * TX ring&n; */
 DECL|macro|TX_RING_ENTRIES
 mdefine_line|#define TX_RING_ENTRIES&t;128
@@ -831,37 +1054,31 @@ DECL|struct|tx_desc
 r_struct
 id|tx_desc
 (brace
-macro_line|#if (BITS_PER_LONG == 64)
 DECL|member|addr
-id|u64
+id|aceaddr
 id|addr
+suffix:semicolon
+DECL|member|flagsize
+id|u32
+id|flagsize
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/*&n; * This is in PCI shared mem and must be accessed with readl/writel&n; * real layout is:&n; */
+macro_line|#if __LITTLE_ENDIAN
+id|u16
+id|flags
+suffix:semicolon
+id|u16
+id|size
 suffix:semicolon
 macro_line|#else
-id|u32
-id|zero
+id|u16
+id|size
 suffix:semicolon
-id|u32
-id|addr
+id|u16
+id|flags
 suffix:semicolon
 macro_line|#endif
-macro_line|#if __LITTLE_ENDIAN
-DECL|member|flags
-id|u16
-id|flags
-suffix:semicolon
-DECL|member|size
-id|u16
-id|size
-suffix:semicolon
-macro_line|#else
-DECL|member|size
-id|u16
-id|size
-suffix:semicolon
-DECL|member|flags
-id|u16
-id|flags
-suffix:semicolon
 macro_line|#endif
 DECL|member|nic_addr
 id|u32
@@ -877,29 +1094,26 @@ DECL|macro|RX_JUMBO_RING_ENTRIES
 mdefine_line|#define RX_JUMBO_RING_ENTRIES&t;256
 DECL|macro|RX_JUMBO_RING_SIZE
 mdefine_line|#define RX_JUMBO_RING_SIZE&t;(RX_JUMBO_RING_ENTRIES *sizeof(struct rx_desc))
+DECL|macro|RX_MINI_RING_ENTRIES
+mdefine_line|#define RX_MINI_RING_ENTRIES&t;1024
+DECL|macro|RX_MINI_RING_SIZE
+mdefine_line|#define RX_MINI_RING_SIZE&t;(RX_MINI_RING_ENTRIES *sizeof(struct rx_desc))
 DECL|macro|RX_RETURN_RING_ENTRIES
-mdefine_line|#define RX_RETURN_RING_ENTRIES&t;(2 * RX_STD_RING_ENTRIES)
+mdefine_line|#define RX_RETURN_RING_ENTRIES&t;2048
 DECL|macro|RX_RETURN_RING_SIZE
-mdefine_line|#define RX_RETURN_RING_SIZE&t;(RX_RETURN_RING_ENTRIES * &bslash;&n;&t;&t;&t;&t; sizeof(struct rx_desc))
+mdefine_line|#define RX_RETURN_RING_SIZE&t;(RX_MAX_RETURN_RING_ENTRIES * &bslash;&n;&t;&t;&t;&t; sizeof(struct rx_desc))
 DECL|macro|RX_RING_THRESH
-mdefine_line|#define RX_RING_THRESH&t;&t;32
+mdefine_line|#define RX_RING_THRESH&t;&t;64
+DECL|macro|RX_RING_JUMBO_THRESH
+mdefine_line|#define RX_RING_JUMBO_THRESH&t;48
 DECL|struct|rx_desc
 r_struct
 id|rx_desc
 (brace
-macro_line|#if (BITS_PER_LONG == 64)
 DECL|member|addr
-id|u64
+id|aceaddr
 id|addr
 suffix:semicolon
-macro_line|#else
-id|u32
-id|zero
-suffix:semicolon
-id|u32
-id|addr
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef __LITTLE_ENDIAN
 DECL|member|size
 id|u16
@@ -994,19 +1208,10 @@ DECL|struct|ring_ctrl
 r_struct
 id|ring_ctrl
 (brace
-macro_line|#if (BITS_PER_LONG == 64)
 DECL|member|rngptr
-id|u64
+id|aceaddr
 id|rngptr
 suffix:semicolon
-macro_line|#else
-id|u32
-id|zero
-suffix:semicolon
-id|u32
-id|rngptr
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef __LITTLE_ENDIAN
 DECL|member|flags
 id|u16
@@ -1203,62 +1408,32 @@ r_struct
 id|ring_ctrl
 id|rx_jumbo_ctrl
 suffix:semicolon
+DECL|member|rx_mini_ctrl
+r_struct
+id|ring_ctrl
+id|rx_mini_ctrl
+suffix:semicolon
 DECL|member|rx_return_ctrl
 r_struct
 id|ring_ctrl
 id|rx_return_ctrl
 suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
 DECL|member|evt_prd_ptr
-id|u64
+id|aceaddr
 id|evt_prd_ptr
 suffix:semicolon
 DECL|member|rx_ret_prd_ptr
-id|u64
+id|aceaddr
 id|rx_ret_prd_ptr
 suffix:semicolon
 DECL|member|tx_csm_ptr
-id|u64
+id|aceaddr
 id|tx_csm_ptr
 suffix:semicolon
 DECL|member|stats2_ptr
-id|u64
+id|aceaddr
 id|stats2_ptr
 suffix:semicolon
-macro_line|#else
-DECL|member|evt_prd_ptr_hi
-id|u32
-id|evt_prd_ptr_hi
-suffix:semicolon
-DECL|member|evt_prd_ptr
-id|u32
-id|evt_prd_ptr
-suffix:semicolon
-DECL|member|rx_ret_prd_ptr_hi
-id|u32
-id|rx_ret_prd_ptr_hi
-suffix:semicolon
-DECL|member|rx_ret_prd_ptr
-id|u32
-id|rx_ret_prd_ptr
-suffix:semicolon
-DECL|member|tx_csm_ptr_hi
-id|u32
-id|tx_csm_ptr_hi
-suffix:semicolon
-DECL|member|tx_csm_ptr
-id|u32
-id|tx_csm_ptr
-suffix:semicolon
-DECL|member|stats2_ptr_hi
-id|u32
-id|stats2_ptr_hi
-suffix:semicolon
-DECL|member|stats2_ptr
-id|u32
-id|stats2_ptr
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Struct private for the AceNIC.&n; */
@@ -1309,6 +1484,15 @@ id|rx_jumbo_ring
 id|RX_JUMBO_RING_ENTRIES
 )braket
 suffix:semicolon
+macro_line|#if 0
+r_struct
+id|rx_desc
+id|rx_mini_ring
+(braket
+id|RX_MINI_RING_ENTRIES
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|member|rx_return_ring
 r_struct
 id|rx_desc
@@ -1462,6 +1646,7 @@ DECL|member|fw_running
 DECL|member|fw_up
 DECL|member|jumbo
 DECL|member|promisc
+DECL|member|mcast_all
 r_int
 id|fw_running
 comma
@@ -1470,6 +1655,8 @@ comma
 id|jumbo
 comma
 id|promisc
+comma
+id|mcast_all
 suffix:semicolon
 DECL|member|version
 r_int
@@ -1579,6 +1766,17 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+)paren
+suffix:semicolon
+r_static
+r_int
+id|ace_load_firmware
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_static

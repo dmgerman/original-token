@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -918,6 +919,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__release_sock
+)paren
+suffix:semicolon
+multiline_comment|/* Route manipulation */
+DECL|variable|ip_rt_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ip_rt_ioctl
+)paren
+suffix:semicolon
+DECL|variable|devinet_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|devinet_ioctl
 )paren
 suffix:semicolon
 multiline_comment|/* needed for ip_gre -cw */
@@ -1928,6 +1944,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fddi_type_trans
+)paren
+suffix:semicolon
+DECL|variable|fddi_setup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fddi_setup
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_FDDI */

@@ -4169,12 +4169,6 @@ c_func
 l_string|&quot;Warning: Trashed word at 0xd0 in block %d &quot;
 l_string|&quot;ignored in checksum calculation&bslash;n&quot;
 comma
-id|kdevname
-c_func
-(paren
-id|dev
-)paren
-comma
 id|blk
 )paren
 suffix:semicolon
