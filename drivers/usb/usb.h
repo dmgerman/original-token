@@ -836,13 +836,15 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* -------------------------------------------------------------------------------------* &n; * New USB Structures                                                                   *&n; * -------------------------------------------------------------------------------------*/
+multiline_comment|/* --------------------------------------------------------------------------* &n; * New USB Structures                                                        *&n; * --------------------------------------------------------------------------*/
 DECL|macro|USB_DISABLE_SPD
-mdefine_line|#define USB_DISABLE_SPD           1
+mdefine_line|#define USB_DISABLE_SPD&t;&t;1
 DECL|macro|USB_ISO_ASAP
-mdefine_line|#define USB_ISO_ASAP              2
+mdefine_line|#define USB_ISO_ASAP&t;&t;2
 DECL|macro|USB_URB_EARLY_COMPLETE
-mdefine_line|#define USB_URB_EARLY_COMPLETE    4
+mdefine_line|#define USB_URB_EARLY_COMPLETE&t;4
+DECL|macro|USB_ASYNC_UNLINK
+mdefine_line|#define USB_ASYNC_UNLINK&t;8
 r_typedef
 r_struct
 (brace
@@ -896,6 +898,11 @@ r_typedef
 r_struct
 id|urb
 (brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+singleline_comment|// lock for the URB
 DECL|member|hcpriv
 r_void
 op_star
@@ -1012,11 +1019,11 @@ op_star
 id|purb_t
 suffix:semicolon
 DECL|macro|FILL_CONTROL_URB
-mdefine_line|#define FILL_CONTROL_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;setup_packet=c;&bslash;&n;&t;(a)-&gt;transfer_buffer=d;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=e;&bslash;&n;&t;(a)-&gt;complete=f;&bslash;&n;&t;(a)-&gt;context=g;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_CONTROL_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;spin_lock_init(&amp;(a)-&gt;lock);&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;setup_packet=c;&bslash;&n;&t;(a)-&gt;transfer_buffer=d;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=e;&bslash;&n;&t;(a)-&gt;complete=f;&bslash;&n;&t;(a)-&gt;context=g;&bslash;&n;    } while (0)
 DECL|macro|FILL_BULK_URB
-mdefine_line|#define FILL_BULK_URB(a,aa,b,c,d,e,f) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_BULK_URB(a,aa,b,c,d,e,f) &bslash;&n;    do {&bslash;&n;&t;spin_lock_init(&amp;(a)-&gt;lock);&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;    } while (0)
 DECL|macro|FILL_INT_URB
-mdefine_line|#define FILL_INT_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;&t;(a)-&gt;interval=g;&bslash;&n;&t;(a)-&gt;start_frame=-1;&bslash;&n;    } while (0)
+mdefine_line|#define FILL_INT_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;spin_lock_init(&amp;(a)-&gt;lock);&bslash;&n;&t;(a)-&gt;dev=aa;&bslash;&n;&t;(a)-&gt;pipe=b;&bslash;&n;&t;(a)-&gt;transfer_buffer=c;&bslash;&n;&t;(a)-&gt;transfer_buffer_length=d;&bslash;&n;&t;(a)-&gt;complete=e;&bslash;&n;&t;(a)-&gt;context=f;&bslash;&n;&t;(a)-&gt;interval=g;&bslash;&n;&t;(a)-&gt;start_frame=-1;&bslash;&n;    } while (0)
 id|purb_t
 id|usb_alloc_urb
 c_func

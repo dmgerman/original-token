@@ -1638,7 +1638,7 @@ l_string|&quot;alloc_urb: kmalloc failed&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 id|memset
@@ -1650,8 +1650,16 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|urb_t
+op_star
+id|urb
 )paren
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|urb-&gt;lock
 )paren
 suffix:semicolon
 r_return
@@ -1674,14 +1682,12 @@ c_cond
 (paren
 id|urb
 )paren
-(brace
 id|kfree
 c_func
 (paren
 id|urb
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|usb_submit_urb
@@ -1701,7 +1707,6 @@ id|urb
 op_logical_and
 id|urb-&gt;dev
 )paren
-(brace
 r_return
 id|urb-&gt;dev-&gt;bus-&gt;op
 op_member_access_from_pointer
@@ -1711,7 +1716,6 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-)brace
 r_else
 r_return
 op_minus
@@ -1736,7 +1740,6 @@ id|urb
 op_logical_and
 id|urb-&gt;dev
 )paren
-(brace
 r_return
 id|urb-&gt;dev-&gt;bus-&gt;op
 op_member_access_from_pointer
@@ -1746,7 +1749,6 @@ c_func
 id|urb
 )paren
 suffix:semicolon
-)brace
 r_else
 r_return
 op_minus
@@ -2229,12 +2231,10 @@ c_cond
 op_logical_neg
 id|dr
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|dr-&gt;requesttype
 op_assign
 id|requesttype

@@ -916,6 +916,12 @@ id|fb_monspecs
 id|monspecs
 suffix:semicolon
 multiline_comment|/* Current Monitor specs */
+DECL|member|cmap
+r_struct
+id|fb_cmap
+id|cmap
+suffix:semicolon
+multiline_comment|/* Current cmap */
 DECL|member|fbops
 r_struct
 id|fb_ops

@@ -10603,7 +10603,7 @@ id|i
 dot
 id|flags
 op_amp
-l_int|1
+id|IORESOURCE_IO
 )paren
 )paren
 r_continue
@@ -10846,10 +10846,17 @@ l_int|0
 r_continue
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,8)
+r_if
+c_cond
+(paren
 id|pci_enable_device
 (paren
 id|dev
 )paren
+OL
+l_int|0
+)paren
+r_continue
 suffix:semicolon
 macro_line|#endif
 r_if

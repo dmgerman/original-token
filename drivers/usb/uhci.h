@@ -145,6 +145,7 @@ id|element
 suffix:semicolon
 multiline_comment|/* Queue element pointer */
 multiline_comment|/* Software fields */
+multiline_comment|/* Can&squot;t use list_head since we want a specific order */
 DECL|member|prevqh
 DECL|member|nextqh
 r_struct
@@ -155,7 +156,6 @@ comma
 op_star
 id|nextqh
 suffix:semicolon
-multiline_comment|/* Previous and next TD in queue */
 DECL|member|dev
 r_struct
 id|usb_device
@@ -163,10 +163,10 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* The owning device */
-DECL|member|list
+DECL|member|remove_list
 r_struct
 id|list_head
-id|list
+id|remove_list
 suffix:semicolon
 )brace
 id|__attribute__
@@ -317,22 +317,23 @@ op_star
 id|urb
 suffix:semicolon
 multiline_comment|/* URB this TD belongs to */
+multiline_comment|/* We can&squot;t use list_head since we need a specific order */
+DECL|struct|ut_list
+r_struct
+id|ut_list
+(brace
+DECL|member|prev
 DECL|member|next
 r_struct
 id|uhci_td
 op_star
+id|prev
+comma
+op_star
 id|next
 suffix:semicolon
-multiline_comment|/* List of chained TD&squot;s for an URB */
-DECL|member|irq_list
-r_struct
-id|list_head
-id|irq_list
-suffix:semicolon
-multiline_comment|/* Active interrupt list.. */
 DECL|member|list
-r_struct
-id|list_head
+)brace
 id|list
 suffix:semicolon
 )brace
@@ -350,7 +351,7 @@ l_int|16
 suffix:semicolon
 multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-  -&gt;  dev1-  -&gt;  generic-  -&gt;  dev1-  -&gt;  control-  -&gt;  bulk- -&gt; ...&n; *   iso-QH      iso-QH       irq-QH      irq-QH        QH           QH&n; *      |           |            |           |           |            |&n; *     End     dev1-iso-TD1     End     dev1-irq-TD1    ...          ... &n; *                  |&n; *             dev1-iso-TD2&n; *                  |&n; *                ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * And now we don&squot;t put Iso transfers in QH&squot;s, so we don&squot;t waste one on it&n; * --jerdfelt&n; *&n; * To keep with Linus&squot; nomenclature, this is called the QH skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s QH&squot;s&n; */
 DECL|macro|UHCI_NUM_SKELTD
-mdefine_line|#define UHCI_NUM_SKELTD&t;&t;9
+mdefine_line|#define UHCI_NUM_SKELTD&t;&t;10
 DECL|macro|skel_int1_td
 mdefine_line|#define skel_int1_td&t;&t;skeltd[0]
 DECL|macro|skel_int2_td
@@ -369,6 +370,8 @@ DECL|macro|skel_int128_td
 mdefine_line|#define skel_int128_td&t;&t;skeltd[7]
 DECL|macro|skel_int256_td
 mdefine_line|#define skel_int256_td&t;&t;skeltd[8]
+DECL|macro|skel_term_td
+mdefine_line|#define skel_term_td&t;&t;skeltd[9]&t;/* To work around PIIX UHCI bug */
 DECL|macro|UHCI_NUM_SKELQH
 mdefine_line|#define UHCI_NUM_SKELQH&t;&t;4
 DECL|macro|skel_ls_control_qh
@@ -529,6 +532,7 @@ DECL|struct|uhci
 r_struct
 id|uhci
 (brace
+multiline_comment|/* Grabbed from PCI */
 DECL|member|irq
 r_int
 id|irq
@@ -572,6 +576,10 @@ id|UHCI_NUM_SKELQH
 )braket
 suffix:semicolon
 multiline_comment|/* Skeleton QH&squot;s */
+DECL|member|framelist_lock
+id|spinlock_t
+id|framelist_lock
+suffix:semicolon
 DECL|member|fl
 r_struct
 id|uhci_framelist
@@ -579,17 +587,29 @@ op_star
 id|fl
 suffix:semicolon
 multiline_comment|/* Frame list */
-DECL|member|irqlist_lock
-r_struct
-id|s_nested_lock
-id|irqlist_lock
+DECL|member|fsbr
+r_int
+id|fsbr
 suffix:semicolon
-DECL|member|interrupt_list
+multiline_comment|/* Full speed bandwidth reclamation */
+DECL|member|qh_remove_lock
+id|spinlock_t
+id|qh_remove_lock
+suffix:semicolon
+DECL|member|qh_remove_list
 r_struct
 id|list_head
-id|interrupt_list
+id|qh_remove_list
 suffix:semicolon
-multiline_comment|/* List of interrupt-active TD&squot;s for this uhci */
+DECL|member|urb_remove_lock
+id|spinlock_t
+id|urb_remove_lock
+suffix:semicolon
+DECL|member|urb_remove_list
+r_struct
+id|list_head
+id|urb_remove_list
+suffix:semicolon
 DECL|member|urblist_lock
 r_struct
 id|s_nested_lock
@@ -600,15 +620,6 @@ r_struct
 id|list_head
 id|urb_list
 suffix:semicolon
-DECL|member|framelist_lock
-id|spinlock_t
-id|framelist_lock
-suffix:semicolon
-DECL|member|fsbr
-r_int
-id|fsbr
-suffix:semicolon
-multiline_comment|/* Full speed bandwidth reclamation */
 DECL|member|rh
 r_struct
 id|virt_root_hub
@@ -628,17 +639,33 @@ op_star
 id|qh
 suffix:semicolon
 multiline_comment|/* QH for this URB */
-DECL|member|begin
-r_struct
-id|uhci_td
-op_star
-id|begin
+DECL|member|fsbr
+r_int
+id|fsbr
 suffix:semicolon
+DECL|member|inserttime
+r_int
+r_int
+id|inserttime
+suffix:semicolon
+multiline_comment|/* In jiffies */
+DECL|struct|up_list
+r_struct
+id|up_list
+(brace
+DECL|member|begin
 DECL|member|end
 r_struct
 id|uhci_td
 op_star
+id|begin
+comma
+op_star
 id|end
+suffix:semicolon
+DECL|member|list
+)brace
+id|list
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -804,7 +804,8 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_ISAPNP */
+macro_line|#if defined(CONFIG_ISAPNP) || defined(MODULE)
 DECL|variable|nopnp
 r_static
 r_int
@@ -812,6 +813,7 @@ id|nopnp
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|function|el3_probe
 r_int
 id|el3_probe
@@ -849,18 +851,20 @@ id|current_tag
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_int
-id|pnp_cards
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|mca_slot
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
+r_static
+r_int
+id|pnp_cards
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* First check all slots of the EISA bus.  The next slot address to&n;&t;   probe is kept in &squot;eisa_addr&squot; to support multiple probe() calls. */
 r_if
 c_cond

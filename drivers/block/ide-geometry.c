@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/block/ide-geometry.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
@@ -113,76 +114,6 @@ id|hwif-&gt;drives
 id|unit
 )braket
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|cmos_disks
-op_amp
-(paren
-l_int|0xf0
-op_rshift
-(paren
-id|unit
-op_star
-l_int|4
-)paren
-)paren
-)paren
-op_logical_and
-op_logical_neg
-id|drive-&gt;present
-op_logical_and
-op_logical_neg
-id|drive-&gt;nobios
-)paren
-(brace
-id|drive-&gt;cyl
-op_assign
-id|drive-&gt;bios_cyl
-op_assign
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|BIOS
-suffix:semicolon
-id|drive-&gt;head
-op_assign
-id|drive-&gt;bios_head
-op_assign
-op_star
-(paren
-id|BIOS
-op_plus
-l_int|2
-)paren
-suffix:semicolon
-id|drive-&gt;sect
-op_assign
-id|drive-&gt;bios_sect
-op_assign
-op_star
-(paren
-id|BIOS
-op_plus
-l_int|14
-)paren
-suffix:semicolon
-id|drive-&gt;ctl
-op_assign
-op_star
-(paren
-id|BIOS
-op_plus
-l_int|8
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -307,7 +238,6 @@ id|sect
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|BIOS
 op_add_assign
 l_int|16
@@ -378,10 +308,8 @@ suffix:semicolon
 r_int
 r_int
 id|total
-comma
-id|tracks
 suffix:semicolon
-multiline_comment|/*&n;&t; * The specs say: take geometry as obtained from Identify,&n;&t; * compute total capacity C*H*S from that, and truncate to&n;&t; * 1024*255*63. Now take S=63, H the first in the sequence&n;&t; * 4, 8, 16, 32, 64, 128, 255 such that 63*H*1024 &gt;= total.&n;&t; */
+multiline_comment|/*&n;&t; * The specs say: take geometry as obtained from Identify,&n;&t; * compute total capacity C*H*S from that, and truncate to&n;&t; * 1024*255*63. Now take S=63, H the first in the sequence&n;&t; * 4, 8, 16, 32, 64, 128, 255 such that 63*H*1024 &gt;= total.&n;&t; * [Please tell aeb@cwi.nl in case this computes a&n;&t; * geometry different from what OnTrack uses.]&n;&t; */
 id|total
 op_assign
 id|DRIVER
@@ -426,7 +354,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if 0
 r_while
 c_loop
 (paren
@@ -473,50 +400,6 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* The code below differs in two aspects:&n;&t;   (i) It will not produce geometries like C/H/S = 1024/64/63&n;&t;&t;because of the `&gt;=&squot;. This follows OnTracks text (which&n;&t;&t;claims that 512 &lt;= C &lt;= 1023), but not OnTracks code.&n;&t;   (ii) It starts dividing by 63, so that a rounding down occurs.&n;&t;&t;For example, with C=11159, H=10, S=37 we find total=4128830&n;&t;&t;and DM would make C=512, H=128, S=63, but we make 1024/64/63&n;&t;&t;if `&gt;=&squot; is replaced by `&gt;&squot;.&n;&t;   The reason we use this code is mainly that we have done so for&n;&t;   a long time without getting complaints.&n;&t;*/
-id|tracks
-op_assign
-id|total
-op_div
-l_int|63
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_star
-id|c
-op_ge
-l_int|1024
-)paren
-(brace
-op_star
-id|h
-op_assign
-op_star
-id|headp
-suffix:semicolon
-op_star
-id|c
-op_assign
-id|tracks
-op_div
-op_star
-id|h
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-op_increment
-id|headp
-op_eq
-l_int|0
-)paren
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * This routine is called from the partition-table code in pt/msdos.c.&n; * It has two tasks:&n; * (i) to handle Ontrack DiskManager by offsetting everything by 63 sectors,&n; *  or to handle EZdrive by remapping sector 0 to sector 1.&n; * (ii) to invent a translated geometry.&n; * Part (i) is suppressed if the user specifies the &quot;noremap&quot; option&n; * on the command line.&n; * Part (ii) is suppressed if the user specifies an explicit geometry.&n; *&n; * The ptheads parameter is either 0 or tells about the number of&n; * heads shown by the end of the first nonempty partition.&n; * If this is either 16, 32, 64, 128, 240 or 255 we&squot;ll believe it.&n; *&n; * The xparm parameter has the following meaning:&n; *&t; 0 = convert to CHS with fewer than 1024 cyls&n; *&t;     using the same method as Ontrack DiskManager.&n; *&t; 1 = same as &quot;0&quot;, plus offset everything by 63 sectors.&n; *&t;-1 = similar to &quot;0&quot;, plus redirect sector 0 to sector 1.&n; *&t; 2 = convert to a CHS geometry with &quot;ptheads&quot; heads.&n; *&n; * Returns 0 if the translation was not possible, if the device was not &n; * an IDE disk drive, or if a geometry was &quot;forced&quot; on the commandline.&n; * Returns 1 if the geometry translation was successful.&n; */
 DECL|function|ide_xlate_1024
@@ -822,4 +705,5 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDE */
 eof

@@ -2301,6 +2301,7 @@ r_int
 id|err
 suffix:semicolon
 macro_line|#ifndef MODULE
+macro_line|#ifdef CONFIG_PPP_DEFLATE
 r_extern
 r_struct
 id|compressor
@@ -2308,6 +2309,7 @@ id|ppp_deflate
 comma
 id|ppp_deflate_draft
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|ppp_async_init

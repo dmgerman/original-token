@@ -216,13 +216,25 @@ id|head
 comma
 id|tail
 suffix:semicolon
-multiline_comment|/*&n;&t; * The ATA spec tells large drives to return&n;&t; * C/H/S = 16383/16/63 independent of their size.&n;&t; * Some drives can be jumpered to use 15 heads instead of 16.&n;&t; */
+multiline_comment|/*&n;&t; * The ATA spec tells large drives to return&n;&t; * C/H/S = 16383/16/63 independent of their size.&n;&t; * Some drives can be jumpered to use 15 heads instead of 16.&n;&t; * Some drives can be jumpered to use 4092 cyls instead of 16383.&n;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|id-&gt;cyls
 op_eq
 l_int|16383
+op_logical_or
+(paren
+id|id-&gt;cyls
+op_eq
+l_int|4092
+op_logical_and
+id|id-&gt;cur_cyls
+op_eq
+l_int|16383
+)paren
+)paren
 op_logical_and
 id|id-&gt;sectors
 op_eq
