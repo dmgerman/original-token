@@ -3,7 +3,6 @@ multiline_comment|/*&n; *  This file contains the ppc architecture specific IDE 
 macro_line|#ifndef __ASMPPC_IDE_H
 DECL|macro|__ASMPPC_IDE_H
 mdefine_line|#define __ASMPPC_IDE_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#ifndef MAX_HWIFS

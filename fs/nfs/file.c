@@ -117,9 +117,9 @@ multiline_comment|/* ioctl - default */
 id|nfs_file_mmap
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|nfs_open
 comma
-multiline_comment|/* no special open is needed */
+multiline_comment|/* open - revalidate the inode */
 id|nfs_file_flush
 comma
 multiline_comment|/* flush */

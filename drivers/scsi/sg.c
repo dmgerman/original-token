@@ -5,7 +5,7 @@ r_char
 op_star
 id|sg_version_str
 op_assign
-l_string|&quot;Version: 2.1.31 (990327)&quot;
+l_string|&quot;Version: 2.1.32 (990501)&quot;
 suffix:semicolon
 multiline_comment|/*&n; *  D. P. Gilbert (dgilbert@interlog.com, dougg@triode.net.au)&n; *      - scatter list logic replaces previous large atomic SG_BIG_BUFF&n; *        sized allocation. See notes in &lt;scsi/sg.h&gt; include file. &n; * &n; *      - scsi logging is available via SCSI_LOG_TIMEOUT macros. First&n; *        the kernel/module needs to be built with CONFIG_SCSI_LOGGING&n; *        (otherwise the macros compile to empty statements), then do&n; *        something like: &squot;echo &quot;scsi log all&quot; &gt; /proc/scsi/scsi&squot; to log&n; *        everything or &squot;echo &quot;scsi log {token} #N&quot; &gt; /proc/scsi/scsi&squot;&n; *        where {token} is one of [error,timeout,scan,mlqueue,mlcomplete,&n; *        llqueue,llcomplete,hlqueue,hlcomplete,ioctl] and #N is 0...7&n; *        (with 0 meaning off). For example: &squot;scsi log timeout 7 &gt; &n; *        /proc/scsi/scsi&squot; to get all logging messages from this driver.&n; *        Should use hlcomplete but it is too &quot;noisy&quot; (sd uses it).&n; *&n; *      - This driver obtains memory (heap) for the low-level driver to&n; *        transfer/dma to and from. It is obtained from up to 4 sources:&n; *              - 1 SG_SCATTER_SZ sized buffer on open() (per fd)&n; *                [could be less if SG_SCATTER_SZ bytes not available]&n; *              - obtain heap as required on write()s (get_free_pages)&n; *              - obtain heap from the shared scsi dma pool&n; *              - obtain heap from kernel directly (kmalloc) [last choice]&n; *        the &squot;alt_address&squot; field in the scatter_list structure and the&n; *        related &squot;mem_src&squot; indicate the source of the heap allocation.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
@@ -34,8 +34,7 @@ op_assign
 id|SG_SCATTER_SZ
 suffix:semicolon
 multiline_comment|/* sg_big_buff is ro through sysctl */
-multiline_comment|/* N.B. This global is here to keep existing software happy. It now holds&n;   the size of the &quot;first buffer&quot; of the most recent sucessful sg_open(). */
-multiline_comment|/* Only available when &squot;sg&squot; compiled into kernel (rather than a module). */
+multiline_comment|/* N.B. This global is here to keep existing software happy. It now holds&n;   the size of the &quot;first buffer&quot; of the most recent sucessful sg_open(). &n;   Only available when &squot;sg&squot; compiled into kernel (rather than a module). &n;   This should probably be deprecated (use SG_GET_RESERVED_SIZE instead). */
 DECL|macro|SG_SECTOR_SZ
 mdefine_line|#define SG_SECTOR_SZ 512
 DECL|macro|SG_SECTOR_MSK
@@ -351,6 +350,11 @@ r_char
 id|cmd_q
 suffix:semicolon
 multiline_comment|/* 1 -&gt; allow command queuing, 0 -&gt; don&squot;t */
+DECL|member|underrun_flag
+r_char
+id|underrun_flag
+suffix:semicolon
+multiline_comment|/* 1 -&gt; flag underruns, 0 -&gt; don&squot;t, 2 -&gt; test */
 DECL|typedef|Sg_fd
 )brace
 id|Sg_fd
@@ -566,6 +570,9 @@ id|sdp
 comma
 r_int
 id|dev
+comma
+r_int
+id|get_reserved
 )paren
 suffix:semicolon
 r_static
@@ -993,8 +1000,9 @@ id|sdp-&gt;device-&gt;host-&gt;sg_tablesize
 suffix:semicolon
 id|sdp-&gt;merge_fd
 op_assign
-id|SG_DEF_MERGE_FD
+l_int|0
 suffix:semicolon
+multiline_comment|/* A little tricky if SG_DEF_MERGE_FD set */
 )brace
 r_if
 c_cond
@@ -1008,10 +1016,23 @@ c_func
 id|sdp
 comma
 id|dev
+comma
+id|O_RDWR
+op_eq
+(paren
+id|flags
+op_amp
+id|O_ACCMODE
+)paren
 )paren
 )paren
 )paren
 (brace
+id|filp-&gt;private_data
+op_assign
+id|sfp
+suffix:semicolon
+macro_line|#if SG_DEF_MERGE_FD
 r_if
 c_cond
 (paren
@@ -1019,10 +1040,11 @@ l_int|0
 op_eq
 id|sdp-&gt;merge_fd
 )paren
-id|filp-&gt;private_data
+id|sdp-&gt;merge_fd
 op_assign
-id|sfp
+l_int|1
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -1447,6 +1469,13 @@ id|req_pack_id
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+l_int|2
+op_ne
+id|sfp-&gt;underrun_flag
+)paren
 id|srp-&gt;header.pack_len
 op_assign
 id|srp-&gt;header.reply_len
@@ -1461,7 +1490,7 @@ op_ge
 id|size_sg_header
 )paren
 (brace
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|buf
@@ -1714,6 +1743,7 @@ id|count
 r_return
 id|k
 suffix:semicolon
+multiline_comment|/* protects following copy_from_user()s + get_user()s */
 multiline_comment|/* The minimum scsi command length is 6 bytes.  If we get anything&n; * less than this, it is clearly bogus.  */
 r_if
 c_cond
@@ -1762,7 +1792,7 @@ op_minus
 id|EDOM
 suffix:semicolon
 )brace
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -1781,7 +1811,7 @@ id|srp-&gt;header.pack_len
 op_assign
 id|count
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|opcode
@@ -2001,7 +2031,7 @@ op_assign
 id|cmd_size
 suffix:semicolon
 multiline_comment|/* Now copy the SCSI command from the user&squot;s address space.  */
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 id|cmnd
@@ -2055,11 +2085,22 @@ id|SCpnt-&gt;bufflen
 op_assign
 id|srp-&gt;data.bufflen
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|1
+op_eq
+id|sfp-&gt;underrun_flag
+)paren
 id|SCpnt-&gt;underflow
 op_assign
 id|srp-&gt;data.bufflen
 suffix:semicolon
-multiline_comment|/* Not many drivers look at this:&n;        aic7xxx driver gives DID_RETRY_COMMAND on underrun&n;        seagate comments out its underrun checking code, and the rest ...&n;*/
+r_else
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
 id|SCpnt-&gt;buffer
 op_assign
 id|srp-&gt;data.buffer
@@ -2241,34 +2282,6 @@ id|cmd_in
 r_case
 id|SG_SET_TIMEOUT
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 r_return
 id|get_user
 c_func
@@ -2292,34 +2305,6 @@ multiline_comment|/* strange ..., for backward compatibility */
 r_case
 id|SG_SET_FORCE_LOW_DMA
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 id|result
 op_assign
 id|get_user
@@ -2420,33 +2405,7 @@ suffix:semicolon
 r_case
 id|SG_GET_LOW_DMA
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
 r_return
-id|result
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -2461,9 +2420,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|SG_GET_SCSI_ID
@@ -2507,7 +2463,7 @@ op_star
 )paren
 id|arg
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2519,7 +2475,7 @@ op_amp
 id|sg_idp-&gt;host_no
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2531,7 +2487,7 @@ op_amp
 id|sg_idp-&gt;channel
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2543,7 +2499,7 @@ op_amp
 id|sg_idp-&gt;scsi_id
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2555,7 +2511,7 @@ op_amp
 id|sg_idp-&gt;lun
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 (paren
@@ -2567,7 +2523,7 @@ op_amp
 id|sg_idp-&gt;scsi_type
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0
@@ -2576,7 +2532,7 @@ op_amp
 id|sg_idp-&gt;unused1
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0
@@ -2585,7 +2541,7 @@ op_amp
 id|sg_idp-&gt;unused2
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 l_int|0
@@ -2601,34 +2557,6 @@ suffix:semicolon
 r_case
 id|SG_SET_FORCE_PACK_ID
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 id|result
 op_assign
 id|get_user
@@ -2710,7 +2638,7 @@ op_logical_neg
 id|srp-&gt;my_cmdp
 )paren
 (brace
-id|put_user
+id|__put_user
 c_func
 (paren
 id|srp-&gt;header.pack_id
@@ -2731,7 +2659,7 @@ op_assign
 id|srp-&gt;nextrp
 suffix:semicolon
 )brace
-id|put_user
+id|__put_user
 c_func
 (paren
 op_minus
@@ -2750,33 +2678,6 @@ suffix:semicolon
 r_case
 id|SG_GET_NUM_WAITING
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 id|srp
 op_assign
 id|sfp-&gt;headrp
@@ -2805,6 +2706,7 @@ op_assign
 id|srp-&gt;nextrp
 suffix:semicolon
 )brace
+r_return
 id|put_user
 c_func
 (paren
@@ -2817,39 +2719,10 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 id|SG_GET_SG_TABLESIZE
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
 r_return
-id|result
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -2861,9 +2734,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|SG_SET_RESERVED_SIZE
@@ -2886,22 +2756,16 @@ id|EACCES
 suffix:semicolon
 id|result
 op_assign
-id|verify_area
+id|get_user
 c_func
 (paren
-id|VERIFY_READ
+id|val
 comma
 (paren
-r_const
-r_void
+r_int
 op_star
 )paren
 id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -2912,39 +2776,14 @@ id|result
 r_return
 id|result
 suffix:semicolon
+multiline_comment|/* logic should go here */
 r_return
 l_int|0
 suffix:semicolon
 r_case
 id|SG_GET_RESERVED_SIZE
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
 r_return
-id|result
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -2957,39 +2796,10 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 r_case
 id|SG_GET_MERGE_FD
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
 r_return
-id|result
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -3004,9 +2814,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|SG_SET_MERGE_FD
@@ -3027,34 +2834,6 @@ op_minus
 id|EACCES
 suffix:semicolon
 multiline_comment|/* require write access since effect wider&n;                               then just this fd */
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 id|result
 op_assign
 id|get_user
@@ -3120,34 +2899,6 @@ id|SG_SET_COMMAND_Q
 suffix:colon
 id|result
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
-id|result
-op_assign
 id|get_user
 c_func
 (paren
@@ -3183,33 +2934,7 @@ suffix:semicolon
 r_case
 id|SG_GET_COMMAND_Q
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
 r_return
-id|result
-suffix:semicolon
 id|put_user
 c_func
 (paren
@@ -3225,8 +2950,56 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_case
+id|SG_SET_UNDERRUN_FLAG
+suffix:colon
+id|result
+op_assign
+id|get_user
+c_func
+(paren
+id|val
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+r_return
+id|result
+suffix:semicolon
+id|sfp-&gt;underrun_flag
+op_assign
+id|val
+suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+r_case
+id|SG_GET_UNDERRUN_FLAG
+suffix:colon
+r_return
+id|put_user
+c_func
+(paren
+(paren
+r_int
+)paren
+id|sfp-&gt;underrun_flag
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
 suffix:semicolon
 r_case
 id|SG_EMULATED_HOST
@@ -3280,34 +3053,6 @@ suffix:semicolon
 r_case
 id|SG_SET_DEBUG
 suffix:colon
-id|result
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_const
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-r_return
-id|result
-suffix:semicolon
 id|result
 op_assign
 id|get_user
@@ -3376,6 +3121,12 @@ id|SCSI_IOCTL_GET_IDLUN
 suffix:colon
 r_case
 id|SCSI_IOCTL_GET_BUS_NUMBER
+suffix:colon
+r_case
+id|SCSI_IOCTL_PROBE_HOST
+suffix:colon
+r_case
+id|SG_GET_TRANSFORM
 suffix:colon
 r_return
 id|scsi_ioctl
@@ -3916,6 +3667,17 @@ id|srp-&gt;data.buffer
 op_assign
 id|SCpnt-&gt;buffer
 suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|2
+op_eq
+id|sfp-&gt;underrun_flag
+)paren
+id|srp-&gt;header.pack_len
+op_assign
+id|SCpnt-&gt;underflow
+suffix:semicolon
 id|sg_clr_scpnt
 c_func
 (paren
@@ -4034,7 +3796,7 @@ suffix:semicolon
 r_case
 id|DID_ERROR
 suffix:colon
-multiline_comment|/* There really should be DID_UNDERRUN and DID_OVERRUN error values,&n;       * and a means for callers of scsi_do_cmd to indicate whether an&n;       * underrun or overrun should signal an error.  Until that can be&n;       * implemented, this kludge allows for returning useful error values&n;       * except in cases that return DID_ERROR that might be due to an&n;       * underrun. [Underrun on advansys adapter yields DID_ABORT -dpg]  */
+multiline_comment|/* There really should be DID_UNDERRUN and DID_OVERRUN error values,&n;       * and a means for callers of scsi_do_cmd to indicate whether an&n;       * underrun or overrun should signal an error.  Until that can be&n;       * implemented, this kludge allows for returning useful error values&n;       * except in cases that return DID_ERROR that might be due to an&n;       * underrun. */
 r_if
 c_cond
 (paren
@@ -4698,7 +4460,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;   low_dma=%d, force_packid=%d, closed=%d&bslash;n&quot;
+l_string|&quot;   low_dma=%d, force_packid=%d, urun_flag=%d, closed=%d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -4709,6 +4471,11 @@ comma
 r_int
 )paren
 id|fp-&gt;force_packid
+comma
+(paren
+r_int
+)paren
+id|fp-&gt;underrun_flag
 comma
 (paren
 r_int
@@ -5177,6 +4944,7 @@ id|sdp-&gt;merge_fd
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Cope with SG_DEF_MERGE_FD on open */
 id|sdp-&gt;sgdebug
 op_assign
 l_int|0
@@ -5675,7 +5443,7 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg build: m_b_s=%d, num_write_xfer=%d&bslash;n&quot;
+l_string|&quot;sg_sc_build: m_b_s=%d, num_write_xfer=%d&bslash;n&quot;
 comma
 id|max_buff_size
 comma
@@ -5796,7 +5564,7 @@ OG
 l_int|0
 )paren
 )paren
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 id|srp-&gt;data.buffer
@@ -6092,6 +5860,9 @@ op_assign
 r_char
 op_star
 )paren
+(paren
+r_int
+)paren
 id|mem_src
 suffix:semicolon
 r_if
@@ -6119,7 +5890,7 @@ id|num_write_xfer
 suffix:colon
 id|ret_sz
 suffix:semicolon
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 id|sclp-&gt;address
@@ -6146,21 +5917,15 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_sc_build: k=%d, a=0x%x, len=%d, ms=%d&bslash;n&quot;
+l_string|&quot;sg_sc_build: k=%d, a=0x%p, len=%d, ms=%d&bslash;n&quot;
 comma
 id|k
 comma
-(paren
-r_int
-)paren
 id|sclp-&gt;address
 comma
 id|ret_sz
 comma
-(paren
-r_int
-)paren
-id|sclp-&gt;alt_address
+id|mem_src
 )paren
 )paren
 suffix:semicolon
@@ -6329,7 +6094,7 @@ OG
 id|num_read_xfer
 )paren
 (brace
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|outp
@@ -6350,7 +6115,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|outp
@@ -6375,6 +6140,9 @@ op_assign
 (paren
 r_int
 )paren
+(paren
+r_int
+)paren
 id|sclp-&gt;alt_address
 suffix:semicolon
 id|SCSI_LOG_TIMEOUT
@@ -6385,13 +6153,10 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_sc_undo_rem: k=%d, a=0x%x, len=%d, ms=%d&bslash;n&quot;
+l_string|&quot;sg_sc_undo_rem: k=%d, a=0x%p, len=%d, ms=%d&bslash;n&quot;
 comma
 id|k
 comma
-(paren
-r_int
-)paren
 id|sclp-&gt;address
 comma
 id|sclp-&gt;length
@@ -6435,7 +6200,7 @@ id|num_read_xfer
 OG
 l_int|0
 )paren
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|outp
@@ -6480,11 +6245,8 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_sc_undo_rem: srp=%d not found&bslash;n&quot;
+l_string|&quot;sg_sc_undo_rem: srp=0x%p not found&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|srp
 )paren
 )paren
@@ -6867,6 +6629,9 @@ id|sdp
 comma
 r_int
 id|dev
+comma
+r_int
+id|get_reserved
 )paren
 (brace
 id|Sg_fd
@@ -6960,6 +6725,15 @@ id|sfp-&gt;cmd_q
 op_assign
 id|SG_DEF_COMMAND_Q
 suffix:semicolon
+id|sfp-&gt;underrun_flag
+op_assign
+id|SG_DEF_UNDERRUN_FLAG
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_reserved
+)paren
 id|sfp-&gt;fst_buf
 op_assign
 id|sg_low_malloc
@@ -6974,6 +6748,11 @@ comma
 op_amp
 id|sfp-&gt;fb_size
 )paren
+suffix:semicolon
+r_else
+id|sfp-&gt;fst_buf
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -7035,11 +6814,8 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_add_sfp: sfp=0x%x, m_s=%d&bslash;n&quot;
+l_string|&quot;sg_add_sfp: sfp=0x%p, m_s=%d&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|sfp
 comma
 (paren
@@ -7057,13 +6833,10 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_add_sfp:   fb_sz=%d, fst_buf=0x%x&bslash;n&quot;
+l_string|&quot;sg_add_sfp:   fb_sz=%d, fst_buf=0x%p&bslash;n&quot;
 comma
 id|sfp-&gt;fb_size
 comma
-(paren
-r_int
-)paren
 id|sfp-&gt;fst_buf
 )paren
 )paren
@@ -7239,13 +7012,10 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_remove_sfp:    fb_sz=%d, fst_buf=0x%x&bslash;n&quot;
+l_string|&quot;sg_remove_sfp:    fb_sz=%d, fst_buf=0x%p&bslash;n&quot;
 comma
 id|sfp-&gt;fb_size
 comma
-(paren
-r_int
-)paren
 id|sfp-&gt;fst_buf
 )paren
 )paren
@@ -7280,11 +7050,8 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_remove_sfp:    sfp=0x%x&bslash;n&quot;
+l_string|&quot;sg_remove_sfp:    sfp=0x%p&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|sfp
 )paren
 )paren
@@ -8110,16 +7877,13 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_malloc: size=%d, ms=%d, ret=0x%x&bslash;n&quot;
+l_string|&quot;sg_malloc: size=%d, ms=%d, ret=0x%p&bslash;n&quot;
 comma
 id|size
 comma
 op_star
 id|mem_srcp
 comma
-(paren
-r_int
-)paren
 id|resp
 )paren
 )paren
@@ -8250,13 +8014,10 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sg_low_free: bad mem_src=%d, buff=0x%x, rqSz=%df&bslash;n&quot;
+l_string|&quot;sg_low_free: bad mem_src=%d, buff=0x%p, rqSz=%df&bslash;n&quot;
 comma
 id|mem_src
 comma
-(paren
-r_int
-)paren
 id|buff
 comma
 id|size
@@ -8298,11 +8059,8 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;sg_free: buff=0x%x, size=%d&bslash;n&quot;
+l_string|&quot;sg_free: buff=0x%p, size=%d&bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|buff
 comma
 id|size
@@ -8394,5 +8152,20 @@ id|SCpnt-&gt;buffer
 op_assign
 l_int|NULL
 suffix:semicolon
+id|SCpnt-&gt;underflow
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;request.rq_dev
+op_assign
+id|MKDEV
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* &quot;sg&quot; _disowns_ command blk */
 )brace
 eof

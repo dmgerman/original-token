@@ -1151,6 +1151,13 @@ comma
 l_int|0x0f78
 )brace
 suffix:semicolon
+DECL|variable|ppp_crc16_table
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppp_crc16_table
+)paren
+suffix:semicolon
 macro_line|#ifdef CHECK_CHARACTERS
 DECL|variable|paritytab
 r_static

@@ -2009,7 +2009,7 @@ r_extern
 r_int
 id|rd_doload
 suffix:semicolon
-multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load */
+multiline_comment|/* 1 = load ramdisk, 0 = don&squot;t load 2 = dual disk */
 r_extern
 r_int
 id|rd_prompt

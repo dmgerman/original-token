@@ -506,6 +506,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|task-&gt;tk_flags
+op_or_assign
+id|RPC_TASK_RUNNING
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -568,10 +572,6 @@ id|task-&gt;tk_wait
 )paren
 suffix:semicolon
 )brace
-id|task-&gt;tk_flags
-op_or_assign
-id|RPC_TASK_RUNNING
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;For other people who may need to wake the I/O daemon&n; *&t;but should (for now) know nothing about its innards&n; */
 DECL|function|rpciod_wake_up
@@ -1426,11 +1426,26 @@ id|KERN_ERR
 l_string|&quot;RPC: rpciod waiting on sync task!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sleep_on
+id|sti
 c_func
 (paren
-op_amp
+)paren
+suffix:semicolon
+id|__wait_event
+c_func
+(paren
 id|task-&gt;tk_wait
+comma
+id|RPC_IS_RUNNING
+c_func
+(paren
+id|task
+)paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again.&n;&t;&t;&t; */

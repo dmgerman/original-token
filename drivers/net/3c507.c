@@ -11,6 +11,7 @@ l_string|&quot;3c507.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;This driver wouldn&squot;t have been written with the availability of the&n;&t;Crynwr driver source code.&t;It provided a known-working implementation&n;&t;that filled in the gaping holes of the Intel documentation.  Three cheers&n;&t;for Russ Nelson.&n;&n;&t;Intel Microcommunications Databook, Vol. 1, 1990.  It provides just enough&n;&t;info that the casual reader might think that it documents the i82586 :-&lt;.&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

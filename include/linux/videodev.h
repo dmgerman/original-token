@@ -374,6 +374,10 @@ DECL|macro|VIDEO_TUNER_NORM
 mdefine_line|#define VIDEO_TUNER_NORM&t;16&t;/* Tuner can set norm */
 DECL|macro|VIDEO_TUNER_STEREO_ON
 mdefine_line|#define VIDEO_TUNER_STEREO_ON&t;128&t;/* Tuner is seeing stereo */
+DECL|macro|VIDEO_TUNER_RDS_ON
+mdefine_line|#define VIDEO_TUNER_RDS_ON      256     /* Tuner is seeing an RDS datastream */
+DECL|macro|VIDEO_TUNER_MBS_ON
+mdefine_line|#define VIDEO_TUNER_MBS_ON      512     /* Tuner is seeing an MBS datastream */
 DECL|member|mode
 id|__u16
 id|mode

@@ -392,7 +392,7 @@ l_string|&quot;&t;mov&t;$24,$28&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;$28,%1&bslash;n&quot;
 l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
-l_string|&quot;&t;ble&t;$27,3f&bslash;n&quot;
+l_string|&quot;&t;ble&t;$24,3f&bslash;n&quot;
 l_string|&quot;4:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
