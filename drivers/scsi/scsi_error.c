@@ -58,7 +58,7 @@ id|RCSid
 (braket
 )braket
 op_assign
-l_string|&quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_error.c,v 1.9 1997/12/07 23:38:23 eric Exp $&quot;
+l_string|&quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_error.c,v 1.10 1997/12/08 04:50:35 eric Exp $&quot;
 suffix:semicolon
 id|STATIC
 r_int
@@ -2328,6 +2328,12 @@ r_return
 id|FAILED
 suffix:semicolon
 r_case
+id|ILLEGAL_REQUEST
+suffix:colon
+r_return
+id|SUCCESS
+suffix:semicolon
+r_case
 id|BLANK_CHECK
 suffix:colon
 r_case
@@ -2335,9 +2341,6 @@ id|DATA_PROTECT
 suffix:colon
 r_case
 id|HARDWARE_ERROR
-suffix:colon
-r_case
-id|ILLEGAL_REQUEST
 suffix:colon
 r_default
 suffix:colon

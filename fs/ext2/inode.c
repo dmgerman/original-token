@@ -931,6 +931,16 @@ op_assign
 op_minus
 id|EFBIG
 suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGXFSZ
+comma
+id|current
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon

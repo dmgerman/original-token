@@ -24,7 +24,7 @@ macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /mnt/ide/home/eric/linux/drivers/scsi/RCS/scsi_obsolete.c,v 1.3 1997/04/29 04:25:08 eric Exp $&quot;;&n;*/
+multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /mnt/ide/home/eric/CVSROOT/linux/drivers/scsi/scsi_obsolete.c,v 1.1 1997/05/18 23:27:21 eric Exp $&quot;;&n;*/
 DECL|macro|INTERNAL_ERROR
 mdefine_line|#define INTERNAL_ERROR (panic (&quot;Internal error in file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__))
 r_static

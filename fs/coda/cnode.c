@@ -3,8 +3,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
-macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_psdev.h&gt;
 r_extern
 r_int
 id|coda_debug
@@ -99,6 +99,15 @@ c_func
 op_amp
 (paren
 id|result-&gt;c_cnhead
+)paren
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+(paren
+id|result-&gt;c_volrootlist
 )paren
 )paren
 suffix:semicolon
@@ -263,6 +272,17 @@ r_struct
 id|cnode
 op_star
 id|cnp
+suffix:semicolon
+r_struct
+id|coda_sb_info
+op_star
+id|sbi
+op_assign
+id|coda_sbp
+c_func
+(paren
+id|sb
+)paren
 suffix:semicolon
 r_struct
 id|coda_vattr
@@ -552,6 +572,25 @@ id|cnp
 )paren
 suffix:semicolon
 multiline_comment|/* fill in the inode attributes */
+r_if
+c_cond
+(paren
+id|coda_fid_is_volroot
+c_func
+(paren
+id|fid
+)paren
+)paren
+id|list_add
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_volrootlist
+comma
+op_amp
+id|sbi-&gt;sbi_volroothead
+)paren
+suffix:semicolon
 id|coda_fill_inode
 c_func
 (paren

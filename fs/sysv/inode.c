@@ -4965,7 +4965,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* To avoid inconsistencies between inodes in memory and inodes on disk. */
 DECL|function|sysv_notify_change
-r_extern
 r_int
 id|sysv_notify_change
 c_func

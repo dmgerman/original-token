@@ -60,6 +60,12 @@ id|list_head
 id|c_cnhead
 suffix:semicolon
 multiline_comment|/* head of cache entries */
+DECL|member|c_volrootlist
+r_struct
+id|list_head
+id|c_volrootlist
+suffix:semicolon
+multiline_comment|/* list of volroot cnoddes */
 )brace
 suffix:semicolon
 multiline_comment|/* flags */
@@ -80,15 +86,6 @@ c_func
 r_struct
 id|cnode
 op_star
-)paren
-suffix:semicolon
-r_struct
-id|cnode
-op_star
-id|coda_cnode_alloc
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_int

@@ -1202,9 +1202,9 @@ id|sysv_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|oldinode
+id|old_dentry
 comma
 r_struct
 id|inode
@@ -1474,7 +1474,7 @@ id|sysv_notify_change
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct

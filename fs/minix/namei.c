@@ -2770,9 +2770,9 @@ id|minix_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|old_dentry
 comma
 r_struct
 id|inode
@@ -2787,6 +2787,13 @@ id|dentry
 (brace
 r_int
 id|error
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|old_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|minix_dir_entry

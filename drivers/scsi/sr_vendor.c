@@ -18,10 +18,8 @@ DECL|macro|VENDOR_NEC
 mdefine_line|#define VENDOR_NEC             2
 DECL|macro|VENDOR_TOSHIBA
 mdefine_line|#define VENDOR_TOSHIBA         3
-DECL|macro|VENDOR_HP_4020
-mdefine_line|#define VENDOR_HP_4020         4   /* HP 4xxx writers, others too ?? */
-DECL|macro|VENDOR_HP_6020
-mdefine_line|#define VENDOR_HP_6020         5   /* HP 6020 writers */
+DECL|macro|VENDOR_WRITER
+mdefine_line|#define VENDOR_WRITER          4   /* pre-scsi3 writers */
 DECL|macro|VENDOR_ID
 mdefine_line|#define VENDOR_ID (scsi_CDs[minor].vendor)
 r_void
@@ -69,30 +67,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|vendor
-comma
-l_string|&quot;HP&quot;
-comma
-l_int|2
+id|scsi_CDs
+(braket
+id|minor
+)braket
+dot
+id|readcd_known
 )paren
-op_logical_or
-op_logical_neg
-id|strncmp
-c_func
+multiline_comment|/* this is true for scsi3/mmc drives - no more checks */
+r_return
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|vendor
-comma
-l_string|&quot;PHILIPS&quot;
-comma
-l_int|7
-)paren
-)paren
-op_logical_and
 id|scsi_CDs
 (braket
 id|minor
@@ -103,28 +90,9 @@ op_eq
 id|TYPE_WORM
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|model
-comma
-l_string|&quot;CD-Writer 6020&quot;
-comma
-l_int|14
-)paren
-)paren
 id|VENDOR_ID
 op_assign
-id|VENDOR_HP_6020
-suffix:semicolon
-r_else
-id|VENDOR_ID
-op_assign
-id|VENDOR_HP_4020
+id|VENDOR_WRITER
 suffix:semicolon
 )brace
 r_else
@@ -1063,12 +1031,18 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|VENDOR_HP_4020
+id|VENDOR_WRITER
 suffix:colon
-multiline_comment|/* Fallthrough */
-r_case
-id|VENDOR_HP_6020
-suffix:colon
+id|memset
+c_func
+(paren
+id|cmd
+comma
+l_int|0
+comma
+l_int|12
+)paren
+suffix:semicolon
 id|cmd
 (braket
 l_int|0
@@ -1097,16 +1071,7 @@ id|cmd
 l_int|8
 )braket
 op_assign
-(paren
-id|VENDOR_ID
-op_eq
-id|VENDOR_HP_4020
-)paren
-ques
-c_cond
 l_int|0x04
-suffix:colon
-l_int|0x0c
 suffix:semicolon
 id|cmd
 (braket
@@ -1126,16 +1091,7 @@ id|cmd
 comma
 id|buffer
 comma
-(paren
-id|VENDOR_ID
-op_eq
-id|VENDOR_HP_4020
-)paren
-ques
-c_cond
 l_int|0x04
-suffix:colon
-l_int|0x0c
 comma
 l_int|0
 )paren
@@ -1177,14 +1133,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|VENDOR_ID
-op_eq
-id|VENDOR_HP_4020
-)paren
-(brace
 id|cmd
 (braket
 l_int|0
@@ -1259,7 +1207,6 @@ l_int|0
 (brace
 r_break
 suffix:semicolon
-)brace
 )brace
 id|sector
 op_assign

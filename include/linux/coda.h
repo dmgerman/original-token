@@ -7,6 +7,8 @@ macro_line|#ifdef __NetBSD__
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif 
 macro_line|#ifdef __linux__
+DECL|macro|cdev_t
+mdefine_line|#define cdev_t u_quad_t
 macro_line|#if !defined(_UQUAD_T_) &amp;&amp; (!defined(__GLIBC__) || __GLIBC__ &lt; 2)
 DECL|macro|_UQUAD_T_
 mdefine_line|#define _UQUAD_T_ 1
@@ -18,6 +20,9 @@ r_int
 id|u_quad_t
 suffix:semicolon
 macro_line|#endif 
+macro_line|#else
+DECL|macro|cdev_t
+mdefine_line|#define cdev_t dev_t
 macro_line|#endif
 multiline_comment|/*&n; * Cfs constants&n; */
 DECL|macro|CFS_MAXNAMLEN
@@ -374,10 +379,10 @@ id|va_flags
 suffix:semicolon
 multiline_comment|/* flags defined for file */
 DECL|member|va_rdev
-id|dev_t
+id|cdev_t
 id|va_rdev
 suffix:semicolon
-multiline_comment|/* device the special file represents */
+multiline_comment|/* device special file represents */
 DECL|member|va_bytes
 id|u_quad_t
 id|va_bytes
@@ -578,7 +583,7 @@ id|cfs_out_hdr
 id|oh
 suffix:semicolon
 DECL|member|dev
-id|dev_t
+id|cdev_t
 id|dev
 suffix:semicolon
 DECL|member|inode

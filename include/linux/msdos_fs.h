@@ -405,15 +405,20 @@ suffix:semicolon
 multiline_comment|/* last 2 characters in name */
 )brace
 suffix:semicolon
-DECL|struct|slot_info
+DECL|struct|vfat_slot_info
 r_struct
-id|slot_info
+id|vfat_slot_info
 (brace
 DECL|member|is_long
 r_int
 id|is_long
 suffix:semicolon
 multiline_comment|/* was the found entry long */
+DECL|member|is_alias
+r_int
+id|is_alias
+suffix:semicolon
+multiline_comment|/* was the found entry an alias */
 DECL|member|long_slots
 r_int
 id|long_slots
@@ -1074,6 +1079,11 @@ id|inode_operations
 id|fat_file_inode_operations_1024
 suffix:semicolon
 r_extern
+r_struct
+id|inode_operations
+id|fat_file_inode_operations_readpage
+suffix:semicolon
+r_extern
 id|ssize_t
 id|fat_file_read
 c_func
@@ -1133,6 +1143,20 @@ op_star
 comma
 r_struct
 id|vm_area_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fat_readpage
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|page
 op_star
 )paren
 suffix:semicolon

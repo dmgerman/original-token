@@ -2795,9 +2795,9 @@ id|sysv_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|oldinode
+id|old_dentry
 comma
 r_struct
 id|inode
@@ -2810,6 +2810,13 @@ op_star
 id|dentry
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|oldinode
+op_assign
+id|old_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon

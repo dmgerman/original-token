@@ -1,4 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/affs/file.c&n; *&n; *  (c) 1996  Hans-Joachim Widmaier - Rewritten&n; *&n; *  (C) 1993  Ray Burr - Modified for Amiga FFS filesystem.&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  affs regular file handling primitives&n; */
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 0
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1878,6 +1880,9 @@ id|nkey
 )paren
 r_break
 suffix:semicolon
+id|inode-&gt;u.affs_i.i_lastblock
+op_increment
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -2014,9 +2019,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|inode-&gt;u.affs_i.i_lastblock
-op_increment
-suffix:semicolon
 id|DATA_FRONT
 c_func
 (paren
@@ -3901,7 +3903,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: file_truncate(inode=%ld,size=%lu)&bslash;n&quot;
+l_string|&quot;AFFS: truncate(inode=%ld,size=%lu)&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -4059,7 +4061,7 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|affs_error
+id|affs_warning
 c_func
 (paren
 id|inode-&gt;i_sb
@@ -4231,49 +4233,6 @@ op_member_access_from_pointer
 id|secondary_type
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ekey
-op_eq
-id|inode-&gt;i_ino
-op_logical_and
-id|ptype
-op_eq
-id|T_SHORT
-op_logical_and
-id|stype
-op_eq
-id|ST_LINKFILE
-op_logical_and
-id|LINK_END
-c_func
-(paren
-id|bh-&gt;b_data
-comma
-id|inode
-)paren
-op_member_access_from_pointer
-id|original
-op_eq
-l_int|0
-)paren
-(brace
-id|pr_debug
-c_func
-(paren
-l_string|&quot;AFFS: truncate(): dumping link&bslash;n&quot;
-)paren
-suffix:semicolon
-id|affs_brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -2201,6 +2201,7 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Unlink and free a ctl_table.&n; */
 DECL|function|unregister_sysctl_table
 r_void
 id|unregister_sysctl_table
@@ -2209,13 +2210,13 @@ c_func
 r_struct
 id|ctl_table_header
 op_star
-id|table
+id|header
 )paren
 (brace
 id|DLIST_DELETE
 c_func
 (paren
-id|table
+id|header
 comma
 id|ctl_entry
 )paren
@@ -2224,13 +2225,19 @@ macro_line|#ifdef CONFIG_PROC_FS
 id|unregister_proc_table
 c_func
 (paren
-id|table-&gt;ctl_table
+id|header-&gt;ctl_table
 comma
 op_amp
 id|proc_sys_root
 )paren
 suffix:semicolon
 macro_line|#endif
+id|kfree
+c_func
+(paren
+id|header
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * /proc/sys support&n; */
 macro_line|#ifdef CONFIG_PROC_FS
@@ -2272,10 +2279,6 @@ id|table
 op_increment
 )paren
 (brace
-id|de
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Can&squot;t do anything without a proc name. */
 r_if
 c_cond
@@ -2295,8 +2298,19 @@ op_logical_and
 op_logical_neg
 id|table-&gt;child
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;SYSCTL: Can&squot;t register %s&bslash;n&quot;
+comma
+id|table-&gt;procname
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 id|len
 op_assign
 id|strlen
@@ -2308,6 +2322,10 @@ suffix:semicolon
 id|mode
 op_assign
 id|table-&gt;mode
+suffix:semicolon
+id|de
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -2423,6 +2441,7 @@ id|de
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Unregister a /proc sysctl table and any subdirectories.&n; */
 DECL|function|unregister_proc_table
 r_static
 r_void
@@ -2523,6 +2542,10 @@ comma
 id|de-&gt;low_ino
 )paren
 suffix:semicolon
+id|table-&gt;de
+op_assign
+l_int|NULL
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -2530,6 +2553,15 @@ id|de
 )paren
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;unregister_proc_table: %s not empty!&bslash;n&quot;
+comma
+id|table-&gt;procname
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|do_rw_proc

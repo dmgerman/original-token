@@ -61,10 +61,12 @@ c_func
 r_struct
 id|dentry
 op_star
+id|dentry
 comma
 r_struct
 id|iattr
 op_star
+id|attr
 )paren
 suffix:semicolon
 r_static
@@ -344,6 +346,15 @@ id|sbi-&gt;sbi_cchead
 )paren
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+(paren
+id|sbi-&gt;sbi_volroothead
+)paren
+)paren
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -491,7 +502,6 @@ id|sbi-&gt;sbi_root
 op_assign
 id|root
 suffix:semicolon
-multiline_comment|/* N.B. check this for failure */
 id|sb-&gt;s_root
 op_assign
 id|d_alloc_root
@@ -516,6 +526,8 @@ suffix:semicolon
 id|error
 suffix:colon
 id|EXIT
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -573,8 +585,6 @@ suffix:semicolon
 id|sb-&gt;s_dev
 op_assign
 l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -772,6 +782,23 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|coda_fid_is_volroot
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_fid
+)paren
+)paren
+id|list_del
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_volrootlist
+)paren
+suffix:semicolon
 id|open_inode
 op_assign
 id|cnp-&gt;c_ovp
@@ -839,7 +866,7 @@ c_func
 r_struct
 id|dentry
 op_star
-id|dentry
+id|de
 comma
 r_struct
 id|iattr
@@ -852,7 +879,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|de-&gt;d_inode
 suffix:semicolon
 r_struct
 id|cnode

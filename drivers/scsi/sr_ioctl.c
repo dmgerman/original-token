@@ -38,7 +38,7 @@ mdefine_line|#define IOCTL_RETRIES 3
 multiline_comment|/* The CDROM is fairly slow, so we need a little extra time */
 multiline_comment|/* In fact, it is very slow if it has to spin up first */
 DECL|macro|IOCTL_TIMEOUT
-mdefine_line|#define IOCTL_TIMEOUT 3000
+mdefine_line|#define IOCTL_TIMEOUT 30*HZ
 DECL|function|sr_ioctl_done
 r_static
 r_void
@@ -110,6 +110,10 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDev
+suffix:semicolon
 r_int
 id|result
 comma
@@ -120,6 +124,15 @@ comma
 id|retries
 op_assign
 l_int|0
+suffix:semicolon
+id|SDev
+op_assign
+id|scsi_CDs
+(braket
+id|target
+)braket
+dot
+id|device
 suffix:semicolon
 id|SCpnt
 op_assign
@@ -140,6 +153,22 @@ l_int|1
 suffix:semicolon
 id|retry
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|scsi_block_when_processing_errors
+c_func
+(paren
+id|SDev
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 (brace
 r_struct
 id|semaphore
@@ -202,6 +231,7 @@ id|result
 op_ne
 l_int|0
 )paren
+(brace
 r_switch
 c_cond
 (paren
@@ -300,18 +330,12 @@ l_int|10
 )paren
 (brace
 multiline_comment|/* sleep 2 sec and try again */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-l_int|200
-suffix:semicolon
-id|schedule
+id|scsi_sleep
+c_func
 (paren
+l_int|2
+op_star
+id|HZ
 )paren
 suffix:semicolon
 r_goto
@@ -454,7 +478,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-suffix:semicolon
+)brace
 id|result
 op_assign
 id|SCpnt-&gt;result
@@ -1336,10 +1360,6 @@ id|sr_cmd
 l_int|10
 )braket
 suffix:semicolon
-id|Scsi_Device
-op_star
-id|SDev
-suffix:semicolon
 r_int
 id|result
 comma
@@ -1353,32 +1373,6 @@ c_func
 id|cdi-&gt;dev
 )paren
 suffix:semicolon
-id|SDev
-op_assign
-id|scsi_CDs
-(braket
-id|target
-)braket
-dot
-id|device
-suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_block_when_processing_errors
-c_func
-(paren
-id|SDev
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -3980,10 +3974,6 @@ id|target
 comma
 id|err
 suffix:semicolon
-id|Scsi_Device
-op_star
-id|SDev
-suffix:semicolon
 id|target
 op_assign
 id|MINOR
@@ -3992,32 +3982,6 @@ c_func
 id|cdi-&gt;dev
 )paren
 suffix:semicolon
-id|SDev
-op_assign
-id|scsi_CDs
-(braket
-id|target
-)braket
-dot
-id|device
-suffix:semicolon
-multiline_comment|/*&n;     * If we are in the middle of error recovery, don&squot;t let anyone&n;     * else try and use this device.  Also, if error recovery fails, it&n;     * may try and take the device offline, in which case all further&n;     * access to the device is prohibited.&n;     */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scsi_block_when_processing_errors
-c_func
-(paren
-id|SDev
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren

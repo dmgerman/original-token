@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * If NFS_DEBUG is defined, you can toggle NFS debugging by causing&n; * a lookup of &quot;xyzzy&quot;. Just cd to an NFS-mounted filesystem and type&n; * &squot;ls xyzzy&squot; to turn on debugging.&n; */
+multiline_comment|/*&n; * If NFS_DEBUG is defined, you can toggle NFS debugging by causing&n; * a lookup of &quot;__xyzzy__&quot;. Just cd to an NFS-mounted filesystem and type&n; * &squot;ls __xyzzy__&squot; to turn on debugging.&n; */
 macro_line|#ifdef NFS_DEBUG
 DECL|macro|NFSDBG_FACILITY
 macro_line|# define NFSDBG_FACILITY&t;NFSDBG_PROC
@@ -219,7 +219,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot;xyzzy&quot;
+l_string|&quot;__xyzzy__&quot;
 )paren
 )paren
 id|nfs_debug

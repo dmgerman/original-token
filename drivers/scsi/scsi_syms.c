@@ -255,6 +255,13 @@ id|scsi_logging_level
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|scsi_sleep
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scsi_sleep
+)paren
+suffix:semicolon
 macro_line|#if defined(CONFIG_PROC_FS)
 DECL|variable|proc_print_scsidevice
 id|EXPORT_SYMBOL

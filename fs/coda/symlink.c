@@ -22,7 +22,7 @@ c_func
 r_struct
 id|dentry
 op_star
-id|dentry
+id|de
 comma
 r_char
 op_star
@@ -122,9 +122,9 @@ id|coda_readlink
 c_func
 (paren
 r_struct
-id|inode
-op_star
 id|dentry
+op_star
+id|de
 comma
 r_char
 op_star
@@ -139,7 +139,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|de-&gt;d_inode
 suffix:semicolon
 r_int
 id|len
@@ -298,7 +298,7 @@ c_func
 r_struct
 id|dentry
 op_star
-id|dentry
+id|de
 comma
 r_struct
 id|dentry
@@ -311,7 +311,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|de-&gt;d_inode
 suffix:semicolon
 r_int
 id|error
@@ -326,16 +326,15 @@ r_int
 id|len
 suffix:semicolon
 r_char
-op_star
-id|path
-suffix:semicolon
-r_char
 id|mem
 (braket
 id|CFS_MAXPATHLEN
 )braket
 suffix:semicolon
-multiline_comment|/* N.B. too big for the stack? */
+r_char
+op_star
+id|path
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
 id|CDEBUG

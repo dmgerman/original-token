@@ -110,7 +110,7 @@ id|affs_readlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 id|dentry
 comma

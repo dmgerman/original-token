@@ -96,6 +96,11 @@ r_struct
 id|list_head
 id|sbi_cchead
 suffix:semicolon
+DECL|member|sbi_volroothead
+r_struct
+id|list_head
+id|sbi_volroothead
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* communication pending/processing queues queues */

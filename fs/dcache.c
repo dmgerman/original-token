@@ -376,10 +376,6 @@ multiline_comment|/* Check whether to do a partial shrink_dcache */
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_count
-OG
-l_int|1
-op_logical_and
 op_logical_neg
 id|list_empty
 c_func

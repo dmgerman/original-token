@@ -56,9 +56,9 @@ id|coda_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|old_inode
+id|old_dentry
 comma
 r_struct
 id|inode
@@ -1129,6 +1129,12 @@ comma
 id|error
 )paren
 suffix:semicolon
+id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1153,6 +1159,12 @@ c_cond
 id|error
 )paren
 (brace
+id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
 id|result
 op_assign
 l_int|NULL
@@ -1167,7 +1179,6 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|d_instantiate
 c_func
 (paren
@@ -1387,6 +1398,12 @@ comma
 id|error
 )paren
 suffix:semicolon
+id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -1427,16 +1444,23 @@ c_cond
 (paren
 id|error
 )paren
+(brace
+id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
+)brace
 multiline_comment|/* invalidate the directory cnode&squot;s attributes */
 id|dircnp-&gt;c_flags
 op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|dir-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -1452,6 +1476,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* try to make de an entry in dir_inodde linked to source_de */
 DECL|function|coda_link
 r_static
 r_int
@@ -1459,9 +1484,9 @@ id|coda_link
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|source_de
 comma
 r_struct
 id|inode
@@ -1474,6 +1499,13 @@ op_star
 id|de
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|source_de-&gt;d_inode
+suffix:semicolon
 r_const
 r_char
 op_star
@@ -1611,7 +1643,6 @@ op_minus
 id|ENAMETOOLONG
 suffix:semicolon
 )brace
-multiline_comment|/* Check for link to/from control object. */
 id|error
 op_assign
 id|venus_link
@@ -1651,8 +1682,6 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-multiline_comment|/* &t;      cfsnc_zapfid(&amp;(dir_cnp-&gt;c_fid)); */
-multiline_comment|/* &t;      cfsnc_zapfid(&amp;(cnp-&gt;c_fid)); */
 id|inode-&gt;i_nlink
 op_increment
 suffix:semicolon
@@ -1662,6 +1691,15 @@ c_func
 id|de
 comma
 id|inode
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|d_drop
+c_func
+(paren
+id|de
 )paren
 suffix:semicolon
 )brace
@@ -1799,6 +1837,13 @@ comma
 id|symlen
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This entry is now negative. Since we do not create&n;&t; * an inode for the entry we have to drop it. &n;&t; */
+id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|venus_symlink
@@ -1826,12 +1871,12 @@ c_cond
 op_logical_neg
 id|error
 )paren
-id|d_drop
-c_func
-(paren
-id|de
-)paren
+(brace
+id|dir_cnp-&gt;c_flags
+op_or_assign
+id|C_VATTR
 suffix:semicolon
+)brace
 id|CDEBUG
 c_func
 (paren
@@ -1931,7 +1976,6 @@ id|dir-&gt;i_ino
 )paren
 suffix:semicolon
 multiline_comment|/* this file should no longer be in the namecache! */
-multiline_comment|/*         cfsnc_zapfile(dircnp, (const char *)name, len); */
 id|error
 op_assign
 id|venus_remove
@@ -1975,7 +2019,6 @@ op_and_assign
 op_complement
 id|C_VATTR
 suffix:semicolon
-multiline_comment|/* &t;cfsnc_zapfid(&amp;(dircnp-&gt;c_fid)); */
 id|de-&gt;d_inode-&gt;i_nlink
 op_decrement
 suffix:semicolon
@@ -2024,6 +2067,10 @@ id|de-&gt;d_name.len
 suffix:semicolon
 r_int
 id|error
+comma
+id|rehash
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2107,7 +2154,39 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/* Drop the dentry to force a new lookup */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|de-&gt;d_hash
+)paren
+)paren
+(brace
 id|d_drop
+c_func
+(paren
+id|de
+)paren
+suffix:semicolon
+id|rehash
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* update i_nlink and free the inode before unlinking;&n;&t;   if rmdir fails a new lookup set i_nlink right.*/
+r_if
+c_cond
+(paren
+id|de-&gt;d_inode-&gt;i_nlink
+)paren
+id|de-&gt;d_inode-&gt;i_nlink
+op_decrement
+suffix:semicolon
+id|d_delete
 c_func
 (paren
 id|de
@@ -2150,15 +2229,20 @@ r_return
 id|error
 suffix:semicolon
 )brace
-id|dir-&gt;i_nlink
-op_decrement
-suffix:semicolon
-id|d_delete
+r_if
+c_cond
+(paren
+id|rehash
+)paren
+id|d_add
 c_func
 (paren
 id|de
+comma
+l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* XXX how can mtime be set? */
 r_return
 l_int|0
 suffix:semicolon

@@ -21,8 +21,8 @@ macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
-macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_sysctl.h&gt;
 multiline_comment|/*&n; * Where is the prototype?&n; */

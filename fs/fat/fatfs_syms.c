@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/fat_cvf.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &quot;tables.h&quot;
 r_extern
@@ -221,6 +222,41 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fat_write_inode
+)paren
+suffix:semicolon
+DECL|variable|register_cvf_format
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_cvf_format
+)paren
+suffix:semicolon
+DECL|variable|unregister_cvf_format
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_cvf_format
+)paren
+suffix:semicolon
+DECL|variable|fat_get_cluster
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fat_get_cluster
+)paren
+suffix:semicolon
+DECL|variable|lock_fat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|lock_fat
+)paren
+suffix:semicolon
+DECL|variable|unlock_fat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unlock_fat
 )paren
 suffix:semicolon
 DECL|function|init_fat_fs

@@ -4054,6 +4054,19 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|ic_gateway
+op_eq
+id|INADDR_NONE
+op_logical_and
+id|b-&gt;relay_ip
+)paren
+id|ic_gateway
+op_assign
+id|b-&gt;relay_ip
+suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Dynamic IP configuration -- BOOTP and RARP.&n; */

@@ -206,10 +206,9 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
+DECL|function|charpas_read
 r_int
-r_char
-DECL|function|pas_read
-id|pas_read
+id|charpas_read
 c_func
 (paren
 r_int
@@ -226,8 +225,8 @@ id|translate_code
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|pas_write
+r_void
 id|pas_write
 c_func
 (paren
@@ -253,9 +252,9 @@ id|translate_code
 suffix:semicolon
 )brace
 multiline_comment|/******************* Begin of the Interrupt Handler ********************/
+DECL|function|pasintr
 r_static
 r_void
-DECL|function|pasintr
 id|pasintr
 c_func
 (paren
@@ -338,8 +337,8 @@ l_int|0x10
 suffix:semicolon
 )brace
 )brace
-r_int
 DECL|function|pas_set_intr
+r_int
 id|pas_set_intr
 c_func
 (paren
@@ -372,8 +371,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|pas_remove_intr
+r_int
 id|pas_remove_intr
 c_func
 (paren
@@ -414,9 +413,9 @@ r_struct
 id|address_info
 id|sbhw_config
 suffix:semicolon
+DECL|function|config_pas_hw
 r_static
 r_int
-DECL|function|config_pas_hw
 id|config_pas_hw
 c_func
 (paren
@@ -535,7 +534,7 @@ op_or
 l_int|0x04
 op_or
 l_int|0x10
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * |&n;&t;&t;&t;&t;&t;&t;   * 0x80&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * |&n;&t;&t;&t;&t;&t;&t; * 0x80&n;&t;&t;&t;&t;&t;&t; */
 comma
 l_int|0xB88
 )paren
@@ -563,6 +562,7 @@ l_int|15
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
 id|pas_irq
@@ -613,6 +613,7 @@ id|pas_irq
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
 id|pas_irq
@@ -659,6 +660,7 @@ l_int|7
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
 id|hw_config-&gt;dma
@@ -695,6 +697,7 @@ id|hw_config-&gt;dma
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
 id|hw_config-&gt;dma
@@ -722,6 +725,7 @@ l_string|&quot;PAS16&quot;
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;pas2_card.c: Can&squot;t allocate DMA channel&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -732,7 +736,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;   * This fixes the timing problems of the PAS due to the Symphony chipset&n;&t;   * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;&t; */
+multiline_comment|/*&n;&t; * This fixes the timing problems of the PAS due to the Symphony chipset&n;&t; * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;&t; */
 macro_line|#ifdef SYMPHONY_PAS
 id|outb
 c_func
@@ -869,7 +873,7 @@ r_int
 r_char
 id|irq_dma
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   * Turn on Sound Blaster compatibility&n;&t;&t;&t;   * bit 1 = SB emulation&n;&t;&t;&t;   * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t;&t;&t;   */
+multiline_comment|/*&n;&t;&t;&t; * Turn on Sound Blaster compatibility&n;&t;&t;&t; * bit 1 = SB emulation&n;&t;&t;&t; * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t;&t;&t; */
 id|pas_write
 c_func
 (paren
@@ -878,7 +882,7 @@ comma
 l_int|0xF788
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;   * &quot;Emulation address&quot;&n;&t;&t;&t;   */
+multiline_comment|/*&n;&t;&t;&t; * &quot;Emulation address&quot;&n;&t;&t;&t; */
 id|pas_write
 c_func
 (paren
@@ -909,7 +913,8 @@ id|sb_config-&gt;dma
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB DMA %d&bslash;n&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PAS16 Warning: Invalid SB DMA %d&bslash;n&bslash;n&quot;
 comma
 id|sb_config-&gt;dma
 )paren
@@ -926,7 +931,8 @@ id|sb_config-&gt;irq
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB IRQ %d&bslash;n&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;PAS16 Warning: Invalid SB IRQ %d&bslash;n&bslash;n&quot;
 comma
 id|sb_config-&gt;irq
 )paren
@@ -981,6 +987,7 @@ id|ok
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;PAS16: Driver not enabled&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -988,9 +995,9 @@ r_return
 id|ok
 suffix:semicolon
 )brace
+DECL|function|detect_pas_hw
 r_static
 r_int
-DECL|function|detect_pas_hw
 id|detect_pas_hw
 c_func
 (paren
@@ -1117,8 +1124,8 @@ r_return
 id|pas_model
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_pas_card
+r_void
 id|attach_pas_card
 c_func
 (paren
@@ -1335,6 +1342,70 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma16
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sb_dma16
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|config
 r_struct
 id|address_info
@@ -1356,6 +1427,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;MediaTrix audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1381,6 +1453,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;I/O, IRQ, DMA and type are mandatory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1449,8 +1522,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

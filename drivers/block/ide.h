@@ -324,10 +324,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* from:  hdx=noprobe */
 DECL|member|keep_settings
-r_int
+id|byte
 id|keep_settings
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* restore settings after drive reset */
 DECL|member|busy
@@ -345,10 +343,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* 1 if need to do check_media_change */
 DECL|member|using_dma
-r_int
+id|byte
 id|using_dma
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* disk is using dma for read/write */
 DECL|member|forced_geom
@@ -359,10 +355,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* 1 if hdx=c,h,s was given at boot */
 DECL|member|unmask
-r_int
+id|byte
 id|unmask
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* flag: okay to unmask other irqs */
 DECL|member|no_unmask
@@ -387,10 +381,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* flag: do not probe bios for drive */
 DECL|member|slow
-r_int
+id|byte
 id|slow
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* flag: slow data port */
 DECL|member|autotune
@@ -408,17 +400,13 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* request revalidation */
 DECL|member|bswap
-r_int
+id|byte
 id|bswap
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* flag: byte swap data */
 DECL|member|dsc_overlap
-r_int
+id|byte
 id|dsc_overlap
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* flag: DSC overlap */
 DECL|member|atapi_overlap
@@ -436,10 +424,8 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* flag: give obvious excess bandwidth */
 DECL|member|nice1
-r_int
+id|byte
 id|nice1
-suffix:colon
-l_int|1
 suffix:semicolon
 multiline_comment|/* flag: give potential excess bandwidth */
 DECL|member|nice2
@@ -501,6 +487,11 @@ multiline_comment|/* 0=16-bit, 1=32-bit, 2/3=32bit+sync */
 DECL|member|bad_wstat
 id|byte
 id|bad_wstat
+suffix:semicolon
+multiline_comment|/* used for ignoring WRERR_STAT */
+DECL|member|nowerr
+id|byte
+id|nowerr
 suffix:semicolon
 multiline_comment|/* used for ignoring WRERR_STAT */
 DECL|member|sect0
@@ -605,6 +596,20 @@ op_star
 id|proc
 suffix:semicolon
 multiline_comment|/* /proc/ide/ directory entry */
+DECL|member|settings
+r_void
+op_star
+id|settings
+suffix:semicolon
+multiline_comment|/* /proc/ide/ drive settings */
+DECL|member|driver_req
+r_char
+id|driver_req
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* requests specific driver */
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
@@ -1017,6 +1022,210 @@ DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
 suffix:semicolon
+multiline_comment|/*&n; * configurable drive settings&n; */
+DECL|macro|TYPE_INT
+mdefine_line|#define TYPE_INT&t;0
+DECL|macro|TYPE_INTA
+mdefine_line|#define TYPE_INTA&t;1
+DECL|macro|TYPE_BYTE
+mdefine_line|#define TYPE_BYTE&t;2
+DECL|macro|TYPE_SHORT
+mdefine_line|#define TYPE_SHORT&t;3
+DECL|macro|SETTING_READ
+mdefine_line|#define SETTING_READ&t;(1 &lt;&lt; 0)
+DECL|macro|SETTING_WRITE
+mdefine_line|#define SETTING_WRITE&t;(1 &lt;&lt; 1)
+DECL|macro|SETTING_RW
+mdefine_line|#define SETTING_RW&t;(SETTING_READ | SETTING_WRITE)
+DECL|typedef|ide_procset_t
+r_typedef
+r_int
+(paren
+id|ide_procset_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|struct|ide_settings_s
+r_typedef
+r_struct
+id|ide_settings_s
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|rw
+r_int
+id|rw
+suffix:semicolon
+DECL|member|read_ioctl
+r_int
+id|read_ioctl
+suffix:semicolon
+DECL|member|write_ioctl
+r_int
+id|write_ioctl
+suffix:semicolon
+DECL|member|data_type
+r_int
+id|data_type
+suffix:semicolon
+DECL|member|min
+r_int
+id|min
+suffix:semicolon
+DECL|member|max
+r_int
+id|max
+suffix:semicolon
+DECL|member|mul_factor
+r_int
+id|mul_factor
+suffix:semicolon
+DECL|member|div_factor
+r_int
+id|div_factor
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+DECL|member|set
+id|ide_procset_t
+op_star
+id|set
+suffix:semicolon
+DECL|member|auto_remove
+r_int
+id|auto_remove
+suffix:semicolon
+DECL|member|next
+r_struct
+id|ide_settings_s
+op_star
+id|next
+suffix:semicolon
+DECL|typedef|ide_settings_t
+)brace
+id|ide_settings_t
+suffix:semicolon
+r_void
+id|ide_add_setting
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_char
+op_star
+id|name
+comma
+r_int
+id|rw
+comma
+r_int
+id|read_ioctl
+comma
+r_int
+id|write_ioctl
+comma
+r_int
+id|data_type
+comma
+r_int
+id|min
+comma
+r_int
+id|max
+comma
+r_int
+id|mul_factor
+comma
+r_int
+id|div_factor
+comma
+r_void
+op_star
+id|data
+comma
+id|ide_procset_t
+op_star
+id|set
+)paren
+suffix:semicolon
+r_void
+id|ide_remove_setting
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+id|ide_settings_t
+op_star
+id|ide_find_setting_by_name
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_int
+id|ide_read_setting
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|t
+comma
+id|ide_settings_t
+op_star
+id|setting
+)paren
+suffix:semicolon
+r_int
+id|ide_write_setting
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|ide_settings_t
+op_star
+id|setting
+comma
+r_int
+id|val
+)paren
+suffix:semicolon
+r_void
+id|ide_add_generic_settings
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * /proc/ide interface&n; */
 r_typedef
 r_struct
@@ -1238,6 +1447,17 @@ id|ide_drive_t
 op_star
 )paren
 suffix:semicolon
+DECL|typedef|ide_setting_proc
+r_typedef
+r_void
+(paren
+id|ide_setting_proc
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
 DECL|struct|ide_driver_s
 r_typedef
 r_struct
@@ -1369,6 +1589,11 @@ id|ide_module_init_proc
 op_star
 id|init
 suffix:semicolon
+DECL|member|info
+r_void
+op_star
+id|info
+suffix:semicolon
 DECL|member|next
 r_struct
 id|ide_module_s
@@ -1388,6 +1613,11 @@ id|ide_hwifs
 )braket
 suffix:semicolon
 multiline_comment|/* master data repository */
+r_extern
+id|ide_module_t
+op_star
+id|ide_modules
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * One final include file, which references some of the data/defns from above&n; */
 DECL|macro|IDE_DRIVER
@@ -1652,6 +1882,31 @@ id|byte
 id|err
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Issue ATA command and wait for completion.&n; */
+r_int
+id|ide_wait_cmd
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|cmd
+comma
+r_int
+id|nsect
+comma
+r_int
+id|feature
+comma
+r_int
+id|sectors
+comma
+id|byte
+op_star
+id|buf
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in MHz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; */
 r_int
 id|ide_system_bus_speed
@@ -1839,6 +2094,11 @@ id|ide_scan_devices
 id|byte
 id|media
 comma
+r_const
+r_char
+op_star
+id|name
+comma
 id|ide_driver_t
 op_star
 id|driver
@@ -1868,6 +2128,20 @@ id|ide_unregister_subdriver
 id|ide_drive_t
 op_star
 id|drive
+)paren
+suffix:semicolon
+r_int
+id|ide_replace_subdriver
+c_func
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_const
+r_char
+op_star
+id|driver
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI

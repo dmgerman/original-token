@@ -2558,7 +2558,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;AFFS: Bitmap (%d,key=%lu) invalid - &quot;
+l_string|&quot;AFFS: Bitmap (%d,key=%u) invalid - &quot;
 l_string|&quot;mounting %s read only.&bslash;n&quot;
 comma
 id|mapidx
@@ -3030,6 +3030,21 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|s-&gt;s_root-&gt;d_op
+op_assign
+(paren
+id|s-&gt;u.affs_sb.s_flags
+op_amp
+id|SF_INTL
+)paren
+ques
+c_cond
+op_amp
+id|affs_dentry_operations_intl
+suffix:colon
+op_amp
+id|affs_dentry_operations
+suffix:semicolon
 multiline_comment|/* Record date of last change if the bitmap was truncated and&n;&t; * create data zones if the volume is writable.&n;&t; */
 r_if
 c_cond

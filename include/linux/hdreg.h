@@ -91,6 +91,8 @@ DECL|macro|WIN_READDMA
 mdefine_line|#define WIN_READDMA&t;&t;0xc8&t;/* read sectors using DMA transfers */
 DECL|macro|WIN_WRITEDMA
 mdefine_line|#define WIN_WRITEDMA&t;&t;0xca&t;/* write sectors using DMA transfers */
+DECL|macro|WIN_SMART
+mdefine_line|#define WIN_SMART&t;&t;0xb0&t;/* self-monitoring and reporting */
 multiline_comment|/* Additional drive command codes used by ATAPI devices. */
 DECL|macro|WIN_PIDENTIFY
 mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATAPI device&t;*/
@@ -98,6 +100,25 @@ DECL|macro|WIN_SRST
 mdefine_line|#define WIN_SRST&t;&t;0x08&t;/* ATAPI soft reset command */
 DECL|macro|WIN_PACKETCMD
 mdefine_line|#define WIN_PACKETCMD&t;&t;0xa0&t;/* Send a packet command. */
+multiline_comment|/* WIN_SMART sub-commands */
+DECL|macro|SMART_READ_VALUES
+mdefine_line|#define SMART_READ_VALUES&t;0xd0
+DECL|macro|SMART_READ_THRESHOLDS
+mdefine_line|#define SMART_READ_THRESHOLDS&t;0xd1
+DECL|macro|SMART_AUTOSAVE
+mdefine_line|#define SMART_AUTOSAVE&t;&t;0xd2
+DECL|macro|SMART_SAVE
+mdefine_line|#define SMART_SAVE&t;&t;0xd3
+DECL|macro|SMART_IMMEDIATE_OFFLINE
+mdefine_line|#define SMART_IMMEDIATE_OFFLINE&t;0xd4
+DECL|macro|SMART_ENABLE
+mdefine_line|#define SMART_ENABLE&t;&t;0xd8
+DECL|macro|SMART_DISABLE
+mdefine_line|#define SMART_DISABLE&t;&t;0xd9
+DECL|macro|SMART_STATUS
+mdefine_line|#define SMART_STATUS&t;&t;0xda
+DECL|macro|SMART_AUTO_OFFLINE
+mdefine_line|#define SMART_AUTO_OFFLINE&t;0xdb
 multiline_comment|/* Bits for HD_ERROR */
 DECL|macro|MARK_ERR
 mdefine_line|#define MARK_ERR&t;0x01&t;/* Bad address mark */

@@ -511,7 +511,11 @@ id|dentry
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sock
+id|S_ISSOCK
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
 )paren
 id|pattern
 op_assign
@@ -520,7 +524,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_pipe
+id|S_ISFIFO
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
 )paren
 id|pattern
 op_assign

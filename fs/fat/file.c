@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
+macro_line|#include &lt;linux/fat_cvf.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
@@ -206,6 +207,106 @@ l_int|NULL
 comma
 multiline_comment|/* follow_link */
 l_int|NULL
+comma
+multiline_comment|/* readpage */
+l_int|NULL
+comma
+multiline_comment|/* writepage */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|fat_truncate
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
+DECL|variable|fat_file_operations_readpage
+r_static
+r_struct
+id|file_operations
+id|fat_file_operations_readpage
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|fat_file_read
+comma
+multiline_comment|/* read */
+id|fat_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* select v2.0.x/poll v2.1.x - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+id|generic_file_mmap
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* release */
+id|file_fsync
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+DECL|variable|fat_file_inode_operations_readpage
+r_struct
+id|inode_operations
+id|fat_file_inode_operations_readpage
+op_assign
+(brace
+op_amp
+id|fat_file_operations_readpage
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+id|fat_readpage
 comma
 multiline_comment|/* readpage */
 l_int|NULL
@@ -1171,6 +1272,51 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cvf_format
+)paren
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cvf_format-&gt;cvf_file_read
+)paren
+(brace
+r_return
+id|MSDOS_SB
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
+op_member_access_from_pointer
+id|cvf_format
+op_member_access_from_pointer
+id|cvf_file_read
+c_func
+(paren
+id|filp
+comma
+id|buf
+comma
+id|count
+comma
+id|ppos
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|MSDOS_I
 c_func
@@ -1304,6 +1450,51 @@ suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|cvf_format
+)paren
+r_if
+c_cond
+(paren
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|cvf_format-&gt;cvf_file_write
+)paren
+(brace
+r_return
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|cvf_format
+op_member_access_from_pointer
+id|cvf_file_write
+c_func
+(paren
+id|filp
+comma
+id|buf
+comma
+id|count
+comma
+id|ppos
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* S_ISLNK allows for UMSDOS. Should never happen for normal MSDOS */

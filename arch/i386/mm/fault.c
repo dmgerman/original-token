@@ -672,21 +672,6 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: Exception at [&lt;%lx&gt;] cr2=%lx (fixup: %lx)&bslash;n&quot;
-comma
-id|tsk-&gt;comm
-comma
-id|regs-&gt;eip
-comma
-id|address
-comma
-id|fixup
-)paren
-suffix:semicolon
 id|regs-&gt;eip
 op_assign
 id|fixup
