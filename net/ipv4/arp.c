@@ -3151,7 +3151,7 @@ c_func
 (paren
 id|entry-&gt;ip
 comma
-id|entry-&gt;dev
+id|dev
 )paren
 suffix:semicolon
 r_else

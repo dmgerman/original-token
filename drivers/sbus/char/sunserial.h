@@ -1,4 +1,4 @@
-multiline_comment|/* serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunserial.h,v 1.5 1996/10/16 13:13:41 zaitcev Exp $&n; * serial.h: Definitions for the Sparc Zilog serial driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SERIAL_H
 DECL|macro|_SPARC_SERIAL_H
 mdefine_line|#define _SPARC_SERIAL_H
@@ -249,6 +249,16 @@ r_char
 id|is_cons
 suffix:semicolon
 multiline_comment|/* Is this our console. */
+DECL|member|channelA
+r_char
+id|channelA
+suffix:semicolon
+multiline_comment|/* This is channel A. */
+DECL|member|parity_mask
+r_char
+id|parity_mask
+suffix:semicolon
+multiline_comment|/* Mask out parity bits in data register. */
 multiline_comment|/* We need to know the current clock divisor&n;&t; * to read the bps rate the chip has currently&n;&t; * loaded.&n;&t; */
 DECL|member|clk_divisor
 r_int
@@ -265,15 +275,6 @@ DECL|member|curregs
 r_int
 r_char
 id|curregs
-(braket
-id|NUM_ZSREGS
-)braket
-suffix:semicolon
-multiline_comment|/* Values we need to set next opportunity */
-DECL|member|pendregs
-r_int
-r_char
-id|pendregs
 (braket
 id|NUM_ZSREGS
 )braket
@@ -526,6 +527,8 @@ DECL|macro|INT_ALL_Rx
 mdefine_line|#define&t;INT_ALL_Rx&t;0x10&t;/* Int on all Rx Characters or error */
 DECL|macro|INT_ERR_Rx
 mdefine_line|#define&t;INT_ERR_Rx&t;0x18&t;/* Int on error only */
+DECL|macro|RxINT_MASK
+mdefine_line|#define RxINT_MASK&t;0x18
 DECL|macro|WT_RDY_RT
 mdefine_line|#define&t;WT_RDY_RT&t;0x20&t;/* Wait/Ready on R/T */
 DECL|macro|WT_FN_RDYFN
@@ -534,8 +537,8 @@ DECL|macro|WT_RDY_ENAB
 mdefine_line|#define&t;WT_RDY_ENAB&t;0x80&t;/* Wait/Ready Enable */
 multiline_comment|/* Write Register #2 (Interrupt Vector) */
 multiline_comment|/* Write Register 3 */
-DECL|macro|RxENABLE
-mdefine_line|#define&t;RxENABLE&t;0x1&t;/* Rx Enable */
+DECL|macro|RxENAB
+mdefine_line|#define&t;RxENAB  &t;0x1&t;/* Rx Enable */
 DECL|macro|SYNC_L_INH
 mdefine_line|#define&t;SYNC_L_INH&t;0x2&t;/* Sync Character Load Inhibit */
 DECL|macro|ADD_SM
@@ -554,9 +557,11 @@ DECL|macro|Rx6
 mdefine_line|#define&t;Rx6&t;&t;0x80&t;/* Rx 6 Bits/Character */
 DECL|macro|Rx8
 mdefine_line|#define&t;Rx8&t;&t;0xc0&t;/* Rx 8 Bits/Character */
+DECL|macro|RxN_MASK
+mdefine_line|#define RxN_MASK&t;0xc0
 multiline_comment|/* Write Register 4 */
-DECL|macro|PAR_ENA
-mdefine_line|#define&t;PAR_ENA&t;&t;0x1&t;/* Parity Enable */
+DECL|macro|PAR_ENAB
+mdefine_line|#define&t;PAR_ENAB&t;0x1&t;/* Parity Enable */
 DECL|macro|PAR_EVEN
 mdefine_line|#define&t;PAR_EVEN&t;0x2&t;/* Parity Even/Odd* */
 DECL|macro|SYNC_ENAB
@@ -602,6 +607,8 @@ DECL|macro|Tx6
 mdefine_line|#define&t;Tx6&t;&t;0x40&t;/* Tx 6 bits/character */
 DECL|macro|Tx8
 mdefine_line|#define&t;Tx8&t;&t;0x60&t;/* Tx 8 bits/character */
+DECL|macro|TxN_MASK
+mdefine_line|#define TxN_MASK&t;0x60
 DECL|macro|DTR
 mdefine_line|#define&t;DTR&t;&t;0x80&t;/* DTR */
 multiline_comment|/* Write Register 6 (Sync bits 0-7/SDLC Address Field) */
@@ -679,8 +686,8 @@ mdefine_line|#define&t;RTxCX&t;0x80&t;/* RTxC Xtal/No Xtal */
 multiline_comment|/* Write Register 12 (lower byte of baud rate generator time constant) */
 multiline_comment|/* Write Register 13 (upper byte of baud rate generator time constant) */
 multiline_comment|/* Write Register 14 (Misc control bits) */
-DECL|macro|BRENABL
-mdefine_line|#define&t;BRENABL&t;1&t;/* Baud rate generator enable */
+DECL|macro|BRENAB
+mdefine_line|#define&t;BRENAB &t;1&t;/* Baud rate generator enable */
 DECL|macro|BRSRC
 mdefine_line|#define&t;BRSRC&t;2&t;/* Baud rate generator source */
 DECL|macro|DTRREQ
@@ -791,7 +798,7 @@ multiline_comment|/* Read Register 13 (upper byte of baud rate generator constan
 multiline_comment|/* Read Register 15 (value of WR 15) */
 multiline_comment|/* Misc macros */
 DECL|macro|ZS_CLEARERR
-mdefine_line|#define ZS_CLEARERR(channel)    (channel-&gt;control = ERR_RES)
+mdefine_line|#define ZS_CLEARERR(channel)    do { channel-&gt;control = ERR_RES; &bslash;&n;&t;&t;&t;&t;     udelay(5); } while(0)
 DECL|macro|ZS_CLEARFIFO
 mdefine_line|#define ZS_CLEARFIFO(channel)   do { volatile unsigned char garbage; &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); &bslash;&n;&t;&t;&t;&t;     garbage = channel-&gt;data; &bslash;&n;&t;&t;&t;&t;     udelay(2); } while(0)
 macro_line|#endif /* !(_SPARC_SERIAL_H) */

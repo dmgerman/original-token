@@ -389,7 +389,7 @@ op_assign
 (paren
 id|sk-&gt;protinfo.rose-&gt;va
 op_plus
-id|sk-&gt;window
+id|ROSE_DEFAULT_WINDOW
 )paren
 op_mod
 id|ROSE_MODULUS

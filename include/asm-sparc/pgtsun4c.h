@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.27 1996/10/30 06:01:32 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.32 1996/12/08 08:39:04 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -42,35 +42,46 @@ DECL|macro|SUN4C_VMALLOC_START
 mdefine_line|#define SUN4C_VMALLOC_START   (0xfe300000)
 multiline_comment|/*&n; * Sparc SUN4C pte fields.&n; */
 DECL|macro|_SUN4C_PAGE_VALID
-mdefine_line|#define _SUN4C_PAGE_VALID     0x80000000   /* valid page */
-DECL|macro|_SUN4C_PAGE_WRITE
-mdefine_line|#define _SUN4C_PAGE_WRITE     0x40000000   /* can be written to */
-DECL|macro|_SUN4C_PAGE_PRIV
-mdefine_line|#define _SUN4C_PAGE_PRIV      0x20000000   /* bit to signify privileged page */
-DECL|macro|_SUN4C_PAGE_USER
-mdefine_line|#define _SUN4C_PAGE_USER      0x00000000   /* User page */
-DECL|macro|_SUN4C_PAGE_NOCACHE
-mdefine_line|#define _SUN4C_PAGE_NOCACHE   0x10000000   /* non-cacheable page */
-DECL|macro|_SUN4C_PAGE_IO
-mdefine_line|#define _SUN4C_PAGE_IO        0x04000000   /* I/O page */
-DECL|macro|_SUN4C_PAGE_REF
-mdefine_line|#define _SUN4C_PAGE_REF       0x02000000   /* Page has been accessed/referenced */
+mdefine_line|#define _SUN4C_PAGE_VALID        0x80000000
+DECL|macro|_SUN4C_PAGE_SILENT_READ
+mdefine_line|#define _SUN4C_PAGE_SILENT_READ  0x80000000   /* synonym */
 DECL|macro|_SUN4C_PAGE_DIRTY
-mdefine_line|#define _SUN4C_PAGE_DIRTY     0x01000000   /* Page has been modified, is dirty */
+mdefine_line|#define _SUN4C_PAGE_DIRTY        0x40000000
+DECL|macro|_SUN4C_PAGE_SILENT_WRITE
+mdefine_line|#define _SUN4C_PAGE_SILENT_WRITE 0x40000000   /* synonym */
+DECL|macro|_SUN4C_PAGE_PRIV
+mdefine_line|#define _SUN4C_PAGE_PRIV         0x20000000   /* privileged page */
+DECL|macro|_SUN4C_PAGE_NOCACHE
+mdefine_line|#define _SUN4C_PAGE_NOCACHE      0x10000000   /* non-cacheable page */
 DECL|macro|_SUN4C_PAGE_PRESENT
-mdefine_line|#define _SUN4C_PAGE_PRESENT   0x00400000   /* present (known) page */
+mdefine_line|#define _SUN4C_PAGE_PRESENT      0x08000000   /* implemented in software */
+DECL|macro|_SUN4C_PAGE_IO
+mdefine_line|#define _SUN4C_PAGE_IO           0x04000000   /* I/O page */
+DECL|macro|_SUN4C_PAGE_READ
+mdefine_line|#define _SUN4C_PAGE_READ         0x00800000   /* implemented in software */
+DECL|macro|_SUN4C_PAGE_WRITE
+mdefine_line|#define _SUN4C_PAGE_WRITE        0x00400000   /* implemented in software */
+DECL|macro|_SUN4C_PAGE_ACCESSED
+mdefine_line|#define _SUN4C_PAGE_ACCESSED     0x00200000   /* implemented in software */
+DECL|macro|_SUN4C_PAGE_MODIFIED
+mdefine_line|#define _SUN4C_PAGE_MODIFIED     0x00100000   /* implemented in software */
+DECL|macro|_SUN4C_READABLE
+mdefine_line|#define _SUN4C_READABLE&t;&t;(_SUN4C_PAGE_READ|_SUN4C_PAGE_SILENT_READ|&bslash;&n;&t;&t;&t;&t; _SUN4C_PAGE_ACCESSED)
+DECL|macro|_SUN4C_WRITEABLE
+mdefine_line|#define _SUN4C_WRITEABLE&t;(_SUN4C_PAGE_WRITE|_SUN4C_PAGE_SILENT_WRITE|&bslash;&n;&t;&t;&t;&t; _SUN4C_PAGE_MODIFIED)
 DECL|macro|_SUN4C_PAGE_CHG_MASK
-mdefine_line|#define _SUN4C_PAGE_CHG_MASK  (0xffff | _SUN4C_PAGE_REF | _SUN4C_PAGE_DIRTY)
+mdefine_line|#define _SUN4C_PAGE_CHG_MASK&t;(0xffff|_SUN4C_PAGE_ACCESSED|_SUN4C_PAGE_MODIFIED)
 DECL|macro|SUN4C_PAGE_NONE
-mdefine_line|#define SUN4C_PAGE_NONE     __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_PRIV | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
+mdefine_line|#define SUN4C_PAGE_NONE&t;&t;__pgprot(_SUN4C_PAGE_PRESENT)
 DECL|macro|SUN4C_PAGE_SHARED
-mdefine_line|#define SUN4C_PAGE_SHARED   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_USER | _SUN4C_PAGE_REF)
+mdefine_line|#define SUN4C_PAGE_SHARED&t;__pgprot(_SUN4C_PAGE_PRESENT|_SUN4C_READABLE|&bslash;&n;&t;&t;&t;&t;&t; _SUN4C_PAGE_WRITE)
 DECL|macro|SUN4C_PAGE_COPY
-mdefine_line|#define SUN4C_PAGE_COPY     __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
+mdefine_line|#define SUN4C_PAGE_COPY&t;&t;__pgprot(_SUN4C_PAGE_PRESENT|_SUN4C_READABLE)
 DECL|macro|SUN4C_PAGE_READONLY
-mdefine_line|#define SUN4C_PAGE_READONLY __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
+mdefine_line|#define SUN4C_PAGE_READONLY&t;__pgprot(_SUN4C_PAGE_PRESENT|_SUN4C_READABLE)
 DECL|macro|SUN4C_PAGE_KERNEL
-mdefine_line|#define SUN4C_PAGE_KERNEL   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_PRIV | _SUN4C_PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF | _SUN4C_PAGE_NOCACHE)
+mdefine_line|#define SUN4C_PAGE_KERNEL&t;__pgprot(_SUN4C_READABLE|_SUN4C_WRITEABLE|&bslash;&n;&t;&t;&t;&t;&t; _SUN4C_PAGE_DIRTY|_SUN4C_PAGE_PRIV)
+macro_line|#ifndef __ASSEMBLY__
 DECL|function|sun4c_get_synchronous_error
 r_extern
 id|__inline__
@@ -314,7 +325,14 @@ id|addr
 comma
 l_string|&quot;r&quot;
 (paren
+(paren
 id|entry
+op_amp
+op_complement
+(paren
+id|_SUN4C_PAGE_PRESENT
+)paren
+)paren
 )paren
 comma
 l_string|&quot;i&quot;
@@ -404,5 +422,6 @@ r_return
 id|ctx
 suffix:semicolon
 )brace
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC_PGTSUN4C_H) */
 eof

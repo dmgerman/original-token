@@ -49,6 +49,12 @@ comma
 id|X
 c_func
 (paren
+id|MCA_bus
+)paren
+comma
+id|X
+c_func
+(paren
 id|wp_works_ok
 )paren
 comma

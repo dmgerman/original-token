@@ -3028,7 +3028,7 @@ id|uh-&gt;source
 comma
 id|daddr
 comma
-id|dev-&gt;pa_addr
+id|skb-&gt;dev-&gt;pa_addr
 comma
 id|IPCB
 c_func

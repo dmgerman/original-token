@@ -318,7 +318,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Taking exception at %lx (%lx)&bslash;n&quot;
+l_string|&quot;Taking exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
 comma
 id|regs-&gt;pc
 comma

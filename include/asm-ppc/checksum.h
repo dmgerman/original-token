@@ -109,5 +109,16 @@ r_int
 id|len
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|csum_fold
+c_func
+(paren
+r_int
+r_int
+id|sum
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

@@ -2,9 +2,10 @@ macro_line|#ifndef __ASM_PPC_PROCESSOR_H
 DECL|macro|__ASM_PPC_PROCESSOR_H
 mdefine_line|#define __ASM_PPC_PROCESSOR_H
 multiline_comment|/*&n; * PowerPC machine specifics&n; */
-macro_line|#ifndef _PPC_MACHINE_H_
-DECL|macro|_PPC_MACHINE_H_
-mdefine_line|#define _PPC_MACHINE_H_ 
+DECL|macro|KERNEL_STACK_SIZE
+mdefine_line|#define KERNEL_STACK_SIZE (4096) /* usable stack -- not buffers at either end */
+DECL|macro|KERNEL_STACK_MASK
+mdefine_line|#define KERNEL_STACK_MASK (~(KERNEL_STACK_SIZE-1))
 multiline_comment|/* Bit encodings for Machine State Register (MSR) */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
@@ -39,9 +40,9 @@ mdefine_line|#define MSR_RI&t;&t;(1&lt;&lt;1)&t;&t;/* Recoverable Exception */
 DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
 DECL|macro|MSR_
-mdefine_line|#define MSR_&t;&t;MSR_FP|MSR_FE0|MSR_FE1|MSR_ME
+mdefine_line|#define MSR_&t;&t;MSR_FE0|MSR_FE1|MSR_ME|MSR_FP
 DECL|macro|MSR_USER
-mdefine_line|#define MSR_USER&t;MSR_|MSR_PR|MSR_EE|MSR_IR|MSR_DR
+mdefine_line|#define MSR_USER&t;MSR_FE0|MSR_FE1|MSR_ME|MSR_PR|MSR_EE|MSR_IR|MSR_DR
 multiline_comment|/* Bit encodings for Hardware Implementation Register (HID0) */
 DECL|macro|HID0_EMCP
 mdefine_line|#define HID0_EMCP&t;(1&lt;&lt;31)&t;&t;/* Enable Machine Check pin */
@@ -77,9 +78,18 @@ DECL|macro|HID0_ICFI
 mdefine_line|#define HID0_ICFI&t;(1&lt;&lt;11)&t;&t;/* Instruction Cache Flash Invalidate */
 DECL|macro|HID0_DCI
 mdefine_line|#define HID0_DCI&t;(1&lt;&lt;10)&t;&t;/* Data Cache Invalidate */
-macro_line|#endif
-DECL|function|start_thread
-r_static
+DECL|macro|HID0_SIED
+mdefine_line|#define HID0_SIED&t;(1&lt;&lt;7)&t;&t;/* Serial Instruction Execution [Disable] */
+DECL|macro|HID0_BHTE
+mdefine_line|#define HID0_BHTE&t;(1&lt;&lt;2)&t;&t;/* Branch History Table Enable */
+multiline_comment|/* fpscr settings */
+DECL|macro|FPSCR_FX
+mdefine_line|#define FPSCR_FX        (1&lt;&lt;31)
+DECL|macro|FPSCR_FEX
+mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * PowerPC machine specifics&n; */
+r_extern
 r_inline
 r_void
 id|start_thread
@@ -88,33 +98,14 @@ c_func
 r_struct
 id|pt_regs
 op_star
-id|regs
 comma
 r_int
 r_int
-id|eip
 comma
 r_int
 r_int
-id|esp
 )paren
-(brace
-id|regs-&gt;nip
-op_assign
-id|eip
 suffix:semicolon
-id|regs-&gt;gpr
-(braket
-l_int|1
-)braket
-op_assign
-id|esp
-suffix:semicolon
-id|regs-&gt;msr
-op_assign
-id|MSR_USER
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -191,16 +182,48 @@ op_star
 id|regs
 suffix:semicolon
 multiline_comment|/* Pointer to saved register state */
+DECL|member|fp_used
+r_int
+r_int
+id|fp_used
+suffix:semicolon
+multiline_comment|/* number of quantums fp was used */
+DECL|member|fs
+r_int
+r_int
+id|fs
+suffix:semicolon
+multiline_comment|/* for get_fs() validation */
+DECL|member|expc
+r_int
+r_int
+id|expc
+suffix:semicolon
+multiline_comment|/* exception handler addr (see fault.c) */
+DECL|member|excount
+r_int
+r_int
+id|excount
+suffix:semicolon
+multiline_comment|/* exception handler count */
 )brace
 suffix:semicolon
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, {0}, &bslash;&n;&t;0, 0, {0}, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack,&bslash;&n;&t;(long *)swapper_pg_dir, {0}, &bslash;&n;&t;0, 0, {0}, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;KERNEL_DS, 0, 0 &bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+macro_line|#ifdef KERNEL_STACK_BUFFER
+multiline_comment|/* give a 1 page buffer below the stack - if change then change ppc_machine.h */
+DECL|macro|alloc_kernel_stack
+mdefine_line|#define alloc_kernel_stack()  &bslash;&n;          (memset((void *)__get_free_pages(GFP_KERNEL,1,0),0,KERNEL_STACK_SIZE+PAGE_SIZE)+PAGE_SIZE)
+DECL|macro|free_kernel_stack
+mdefine_line|#define free_kernel_stack(page) free_pages((page)-PAGE_SIZE,1)
+macro_line|#else
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack
 mdefine_line|#define free_kernel_stack(page) free_page((page))
+macro_line|#endif
 multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
 DECL|function|thread_saved_pc
 r_static
@@ -222,5 +245,16 @@ id|t-&gt;last_pc
 )paren
 suffix:semicolon
 )brace
+DECL|macro|_PROC_Motorola
+mdefine_line|#define _PROC_Motorola 0
+DECL|macro|_PROC_IBM
+mdefine_line|#define _PROC_IBM      1
+DECL|macro|_PROC_Be
+mdefine_line|#define _PROC_Be       2
+DECL|variable|_Processor
+r_int
+id|_Processor
+suffix:semicolon
+macro_line|#endif /* ASSEMBLY*/
 macro_line|#endif
 eof

@@ -916,6 +916,26 @@ op_assign
 op_star
 id|data
 suffix:semicolon
+multiline_comment|/* Althought anything producing this is buggy, it happens&n;&t;   now because of PATH_MAX changes.. */
+r_if
+c_cond
+(paren
+id|server-&gt;m.time_out
+OL
+l_int|10
+)paren
+(brace
+id|server-&gt;m.time_out
+op_assign
+l_int|10
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;You need to recompile your ncpfs utils..&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|server-&gt;m.file_mode
 op_assign
 (paren

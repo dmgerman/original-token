@@ -1,5 +1,5 @@
-multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio support - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; */
-multiline_comment|/* The mouse is run off of one of the Zilog serial ports.  On&n; * that port is the mouse and the keyboard, each gets a zs channel.&n; * The mouse itself is mouse-systems in nature.  So the protocol is:&n; *&n; * Byte 1) Button state which is bit-encoded as&n; *            0x4 == left-button down, else up&n; *            0x2 == middle-button down, else up&n; *            0x1 == right-button down, else up&n; *&n; * Byte 2) Delta-x&n; * Byte 3) Delta-y&n; * Byte 4) Delta-x again&n; * Byte 5) Delta-y again&n; *&n; * One day this driver will have to support more than one mouse in the system.&n; *&n; * This driver has two modes of operation: the default VUID_NATIVE is&n; * set when the device is opened and allows the application to see the&n; * mouse character stream as we get it from the serial (for gpm for&n; * example).  The second method, VUID_FIRM_EVENT will provide cooked&n; * events in Firm_event records.&n; * */
+multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio support - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; * Sep/96    Allow more than one reader -miguel.&n; */
+multiline_comment|/* The mouse is run off of one of the Zilog serial ports.  On&n; * that port is the mouse and the keyboard, each gets a zs channel.&n; * The mouse itself is mouse-systems in nature.  So the protocol is:&n; *&n; * Byte 1) Button state which is bit-encoded as&n; *            0x4 == left-button down, else up&n; *            0x2 == middle-button down, else up&n; *            0x1 == right-button down, else up&n; *&n; * Byte 2) Delta-x&n; * Byte 3) Delta-y&n; * Byte 4) Delta-x again&n; * Byte 5) Delta-y again&n; *&n; * One day this driver will have to support more than one mouse in the system.&n; *&n; * This driver has two modes of operation: the default VUID_NATIVE is&n; * set when the device is opened and allows the application to see the&n; * mouse character stream as we get it from the serial (for gpm for&n; * example).  The second method, VUID_FIRM_EVENT will provide cooked&n; * events in Firm_event records as expected by SunOS/Solaris applications.&n; *&n; * FIXME: We need to support more than one mouse.&n; * */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -8,7 +8,8 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
@@ -770,6 +771,17 @@ id|file
 r_if
 c_cond
 (paren
+id|sunmouse.active
+op_increment
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|sunmouse.present
 )paren
@@ -779,21 +791,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sunmouse.active
-)paren
-(brace
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-id|sunmouse.active
-op_assign
-l_int|1
-suffix:semicolon
 id|sunmouse.ready
 op_assign
 id|sunmouse.delta_x
@@ -881,12 +878,6 @@ op_star
 id|file
 )paren
 (brace
-id|sunmouse.active
-op_assign
-id|sunmouse.ready
-op_assign
-l_int|0
-suffix:semicolon
 id|sun_mouse_fasync
 (paren
 id|inode
@@ -895,6 +886,18 @@ id|file
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|sunmouse.active
+)paren
+r_return
+suffix:semicolon
+id|sunmouse.ready
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -918,6 +921,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren
@@ -948,6 +952,7 @@ r_char
 op_star
 id|buffer
 comma
+r_int
 r_int
 id|count
 )paren
@@ -1061,16 +1066,27 @@ id|queue_empty
 )paren
 )paren
 (brace
-op_star
+id|copy_to_user_ret
+c_func
+(paren
 (paren
 id|Firm_event
 op_star
 )paren
 id|p
-op_assign
-op_star
+comma
 id|get_from_queue
+c_func
 (paren
+)paren
+comma
+r_sizeof
+(paren
+id|Firm_event
+)paren
+comma
+op_minus
+id|EFAULT
 )paren
 suffix:semicolon
 id|p
@@ -1112,6 +1128,7 @@ id|count
 suffix:semicolon
 op_logical_neg
 id|queue_empty
+c_func
 (paren
 )paren
 op_logical_and
@@ -1121,14 +1138,22 @@ id|c
 op_decrement
 )paren
 (brace
-op_star
-id|buffer
-op_increment
-op_assign
+id|put_user_ret
+c_func
+(paren
 id|sunmouse.queue.stream
 (braket
 id|sunmouse.tail
 )braket
+comma
+id|buffer
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|buffer
+op_increment
 suffix:semicolon
 id|sunmouse.tail
 op_assign
@@ -1145,6 +1170,7 @@ id|sunmouse.ready
 op_assign
 op_logical_neg
 id|queue_empty
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1278,40 +1304,20 @@ comma
 r_int
 )paren
 suffix:colon
-id|i
-op_assign
-id|verify_area
+id|put_user_ret
+c_func
 (paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-op_star
-(paren
-r_int
-op_star
-)paren
-id|arg
-op_assign
 id|sunmouse.vuid_mode
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_minus
+id|EFAULT
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1327,40 +1333,20 @@ comma
 r_int
 )paren
 suffix:colon
-id|i
-op_assign
-id|verify_area
+id|get_user_ret
+c_func
 (paren
-id|VERIFY_READ
+id|i
 comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|i
-op_assign
-op_star
 (paren
 r_int
 op_star
 )paren
 id|arg
+comma
+op_minus
+id|EFAULT
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1374,14 +1360,27 @@ op_eq
 id|VUID_FIRM_EVENT
 )paren
 (brace
-id|sunmouse.vuid_mode
-op_assign
-op_star
+r_int
+id|value
+suffix:semicolon
+id|get_user_ret
+c_func
+(paren
+id|value
+comma
 (paren
 r_int
 op_star
 )paren
 id|arg
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|sunmouse.vuid_mode
+op_assign
+id|value
 suffix:semicolon
 id|sunmouse.head
 op_assign
@@ -1395,6 +1394,17 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x8024540b
+suffix:colon
+r_case
+l_int|0x40245408
+suffix:colon
+multiline_comment|/* This is a buggy application doing termios on the mouse driver */
+multiline_comment|/* we ignore it.  I keep this check here so that we will notice   */
+multiline_comment|/* future mouse vuid ioctls */
 r_break
 suffix:semicolon
 r_default
@@ -1460,12 +1470,16 @@ op_amp
 id|sun_mouse_fops
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|sun_mouse_init
 id|sun_mouse_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|printk

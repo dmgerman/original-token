@@ -128,9 +128,9 @@ macro_line|#include &lt;asm/smp.h&gt;
 DECL|macro|local_flush_tlb
 mdefine_line|#define local_flush_tlb() &bslash;&n;&t;__flush_tlb()
 DECL|macro|CLEVER_SMP_INVALIDATE
-macro_line|#undef CLEVER_SMP_INVALIDATE
+mdefine_line|#define CLEVER_SMP_INVALIDATE
 macro_line|#ifdef CLEVER_SMP_INVALIDATE
-multiline_comment|/*&n; *&t;Smarter SMP flushing macros. &n; *&t;&t;c/o Linus Torvalds.&n; *&n; *&t;These mean you can really definitely utterly forget about&n; *&t;writing to user space from interrupts. (Its not allowed anyway).&n; *&n; *&t;Doesn&squot;t currently work as Linus makes flush tlb calls before&n; *&t;stuff like current/current-&gt;mm are setup properly&n; */
+multiline_comment|/*&n; *&t;Smarter SMP flushing macros. &n; *&t;&t;c/o Linus Torvalds.&n; *&n; *&t;These mean you can really definitely utterly forget about&n; *&t;writing to user space from interrupts. (Its not allowed anyway).&n; */
 DECL|function|flush_tlb_current_task
 r_static
 r_inline

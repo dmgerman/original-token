@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.36 1996/09/29 22:57:21 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.39 1996/12/10 06:06:35 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -445,6 +445,9 @@ comma
 op_mod
 op_mod
 id|g3
+id|nop
+id|nop
+id|nop
 id|andcc
 op_mod
 op_mod
@@ -456,10 +459,9 @@ comma
 op_mod
 op_mod
 id|g0
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -471,6 +473,9 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
 id|ld
@@ -513,10 +518,9 @@ comma
 op_mod
 l_int|0
 )braket
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -527,9 +531,11 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
-id|nop
 op_logical_and
 op_mod
 op_mod
@@ -540,9 +546,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
 "&quot;"
-suffix:colon
-l_string|&quot;=&amp;r&quot;
 (paren
 id|ADDR
 )paren
@@ -639,6 +647,9 @@ comma
 op_mod
 op_mod
 id|g3
+id|nop
+id|nop
+id|nop
 id|andcc
 op_mod
 op_mod
@@ -650,10 +661,9 @@ comma
 op_mod
 op_mod
 id|g0
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -665,6 +675,9 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
 id|ld
@@ -707,10 +720,9 @@ comma
 op_mod
 l_int|0
 )braket
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -721,9 +733,11 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
-id|nop
 op_logical_and
 op_mod
 op_mod
@@ -734,9 +748,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
 "&quot;"
-suffix:colon
-l_string|&quot;=&amp;r&quot;
 (paren
 id|ADDR
 )paren
@@ -833,6 +849,9 @@ comma
 op_mod
 op_mod
 id|g3
+id|nop
+id|nop
+id|nop
 id|andcc
 op_mod
 op_mod
@@ -844,10 +863,9 @@ comma
 op_mod
 op_mod
 id|g0
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -859,6 +877,9 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
 id|ld
@@ -901,10 +922,9 @@ comma
 op_mod
 l_int|0
 )braket
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -915,9 +935,11 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
-id|nop
 op_logical_and
 op_mod
 op_mod
@@ -928,9 +950,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
 "&quot;"
-suffix:colon
-l_string|&quot;=&amp;r&quot;
 (paren
 id|ADDR
 )paren
@@ -1252,11 +1276,11 @@ multiline_comment|/* Linus sez that gcc can optimize the following correctly, we
 DECL|macro|find_first_zero_bit
 mdefine_line|#define find_first_zero_bit(addr, size) &bslash;&n;        find_next_zero_bit((addr), (size), 0)
 macro_line|#ifndef __KERNEL__
-DECL|function|__ext2_set_bit
+DECL|function|set_le_bit
 r_extern
 id|__inline__
 r_int
-id|__ext2_set_bit
+id|set_le_bit
 c_func
 (paren
 r_int
@@ -1371,11 +1395,11 @@ r_int
 id|ADDR
 suffix:semicolon
 )brace
-DECL|function|__ext2_clear_bit
+DECL|function|clear_le_bit
 r_extern
 id|__inline__
 r_int
-id|__ext2_clear_bit
+id|clear_le_bit
 c_func
 (paren
 r_int
@@ -1492,11 +1516,11 @@ suffix:semicolon
 )brace
 macro_line|#else /* __KERNEL__ */
 multiline_comment|/* Now for the ext2 filesystem bit operations and helper routines. */
-DECL|function|__ext2_set_bit
+DECL|function|set_le_bit
 r_extern
 id|__inline__
 r_int
-id|__ext2_set_bit
+id|set_le_bit
 c_func
 (paren
 r_int
@@ -1551,6 +1575,9 @@ comma
 op_mod
 op_mod
 id|g3
+id|nop
+id|nop
+id|nop
 id|andcc
 op_mod
 op_mod
@@ -1562,10 +1589,9 @@ comma
 op_mod
 op_mod
 id|g0
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -1577,6 +1603,9 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
 id|ldub
@@ -1619,10 +1648,9 @@ comma
 op_mod
 l_int|0
 )braket
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -1633,9 +1661,11 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
-id|nop
 op_logical_and
 op_mod
 op_mod
@@ -1646,9 +1676,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
 "&quot;"
-suffix:colon
-l_string|&quot;=&amp;r&quot;
 (paren
 id|ADDR
 )paren
@@ -1682,11 +1714,11 @@ r_int
 id|ADDR
 suffix:semicolon
 )brace
-DECL|function|__ext2_clear_bit
+DECL|function|clear_le_bit
 r_extern
 id|__inline__
 r_int
-id|__ext2_clear_bit
+id|clear_le_bit
 c_func
 (paren
 r_int
@@ -1741,6 +1773,9 @@ comma
 op_mod
 op_mod
 id|g3
+id|nop
+id|nop
+id|nop
 id|andcc
 op_mod
 op_mod
@@ -1752,10 +1787,9 @@ comma
 op_mod
 op_mod
 id|g0
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -1767,6 +1801,9 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
 id|ldub
@@ -1809,10 +1846,9 @@ comma
 op_mod
 l_int|0
 )braket
-id|be
-comma
-id|a
+id|bne
 l_float|1f
+id|nop
 id|wr
 op_mod
 op_mod
@@ -1823,9 +1859,11 @@ comma
 op_mod
 op_mod
 id|psr
+id|nop
+id|nop
+id|nop
 l_int|1
 suffix:colon
-id|nop
 op_logical_and
 op_mod
 op_mod
@@ -1836,9 +1874,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
 "&quot;"
-suffix:colon
-l_string|&quot;=&amp;r&quot;
 (paren
 id|ADDR
 )paren
@@ -1873,11 +1913,11 @@ id|ADDR
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */
-DECL|function|__ext2_test_bit
+DECL|function|test_le_bit
 r_extern
 id|__inline__
 r_int
-id|__ext2_test_bit
+id|test_le_bit
 c_func
 (paren
 r_int
@@ -1935,35 +1975,16 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__swab16
-r_extern
-id|__inline__
-r_int
-r_int
-id|__swab16
-c_func
-(paren
-r_int
-r_int
-id|value
-)paren
-(brace
-r_return
-(paren
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-)paren
-suffix:semicolon
-)brace
+macro_line|#ifdef __KERNEL__
+DECL|macro|ext2_set_bit
+mdefine_line|#define ext2_set_bit   set_le_bit
+DECL|macro|ext2_clear_bit
+mdefine_line|#define ext2_clear_bit clear_le_bit
+DECL|macro|ext2_test_bit
+mdefine_line|#define ext2_test_bit  test_le_bit
+macro_line|#endif /* __KERNEL__ */
+DECL|macro|find_first_zero_le_bit
+mdefine_line|#define find_first_zero_le_bit(addr, size) &bslash;&n;        find_next_zero_le_bit((addr), (size), 0)
 DECL|function|__swab32
 r_extern
 id|__inline__
@@ -1978,7 +1999,6 @@ id|value
 )paren
 (brace
 r_return
-(paren
 (paren
 id|value
 op_rshift
@@ -2010,17 +2030,14 @@ id|value
 op_lshift
 l_int|24
 )paren
-)paren
 suffix:semicolon
 )brace
-DECL|macro|__ext2_find_first_zero_bit
-mdefine_line|#define __ext2_find_first_zero_bit(addr, size) &bslash;&n;        __ext2_find_next_zero_bit((addr), (size), 0)
-DECL|function|__ext2_find_next_zero_bit
+DECL|function|find_next_zero_le_bit
 r_extern
 id|__inline__
 r_int
 r_int
-id|__ext2_find_next_zero_bit
+id|find_next_zero_le_bit
 c_func
 (paren
 r_void
@@ -2239,5 +2256,11 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
+DECL|macro|ext2_find_first_zero_bit
+mdefine_line|#define ext2_find_first_zero_bit     find_first_zero_le_bit
+DECL|macro|ext2_find_next_zero_bit
+mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_le_bit
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* defined(_SPARC_BITOPS_H) */
 eof

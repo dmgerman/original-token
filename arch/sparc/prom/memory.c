@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: memory.c,v 1.8 1996/07/12 05:14:56 tridge Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.9 1996/11/13 05:10:09 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* This routine, for consistency, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format because I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomach as I have not yet written&n; * the pepto-bismol kernel module yet.&n; */
@@ -74,8 +75,12 @@ id|linux_mem_v0
 id|prom_memlist
 suffix:semicolon
 multiline_comment|/* Internal Prom library routine to sort a linux_mlist_v0 memory&n; * list.  Used below in initialization.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_void
-DECL|function|prom_sortmemlist
 id|prom_sortmemlist
 c_func
 (paren
@@ -83,6 +88,7 @@ r_struct
 id|linux_mlist_v0
 op_star
 id|thislist
+)paren
 )paren
 (brace
 r_int
@@ -289,12 +295,16 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the memory lists based upon the prom version. */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|prom_meminit
 id|prom_meminit
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

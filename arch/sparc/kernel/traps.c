@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.47 1996/10/27 08:36:17 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.48 1996/11/13 05:09:42 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -507,6 +507,44 @@ id|regs-&gt;pc
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4c
+op_logical_or
+id|sparc_cpu_model
+op_eq
+id|sun4
+)paren
+(brace
+r_extern
+r_int
+id|do_user_muldiv
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|do_user_muldiv
+(paren
+id|regs
+comma
+id|pc
+)paren
+)paren
+r_return
+suffix:semicolon
+)brace
 id|current-&gt;tss.sig_address
 op_assign
 id|pc

@@ -18,6 +18,8 @@ DECL|macro|ROSE_IDLE
 mdefine_line|#define&t;ROSE_IDLE&t;5
 DECL|macro|ROSE_HDRINCL
 mdefine_line|#define&t;ROSE_HDRINCL&t;6
+DECL|macro|ROSE_HOLDBACK
+mdefine_line|#define&t;ROSE_HOLDBACK&t;7
 DECL|macro|ROSE_KILL
 mdefine_line|#define&t;ROSE_KILL&t;99
 DECL|macro|SIOCRSCTLCON

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.24 1996/10/27 08:36:08 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.30 1996/12/03 08:44:44 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,9 +17,11 @@ macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/a.out.h&gt;
 DECL|struct|poll
 r_struct
 id|poll
@@ -241,24 +243,7 @@ id|__kernel_size_t
 suffix:semicolon
 r_extern
 r_int
-id|__copy_to_user
-c_func
-(paren
-r_int
-r_int
-id|to
-comma
-r_int
-r_int
-id|from
-comma
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|__copy_from_user
+id|__copy_user
 c_func
 (paren
 r_int
@@ -438,6 +423,12 @@ comma
 id|X
 c_func
 (paren
+id|stack_top
+)paren
+comma
+id|X
+c_func
+(paren
 id|udelay
 )paren
 comma
@@ -476,6 +467,12 @@ comma
 id|X
 c_func
 (paren
+id|mmu_v2p
+)paren
+comma
+id|X
+c_func
+(paren
 id|mmu_unlockarea
 )paren
 comma
@@ -483,6 +480,48 @@ id|X
 c_func
 (paren
 id|mmu_lockarea
+)paren
+comma
+id|X
+c_func
+(paren
+id|mmu_get_scsi_sgl
+)paren
+comma
+id|X
+c_func
+(paren
+id|mmu_get_scsi_one
+)paren
+comma
+id|X
+c_func
+(paren
+id|mmu_release_scsi_sgl
+)paren
+comma
+id|X
+c_func
+(paren
+id|mmu_release_scsi_one
+)paren
+comma
+id|X
+c_func
+(paren
+id|sparc_dvma_malloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|sun4c_unmapioaddr
+)paren
+comma
+id|X
+c_func
+(paren
+id|srmmu_unmapioaddr
 )paren
 comma
 id|X
@@ -618,6 +657,24 @@ id|X
 c_func
 (paren
 id|prom_feval
+)paren
+comma
+id|X
+c_func
+(paren
+id|prom_getstring
+)paren
+comma
+id|X
+c_func
+(paren
+id|prom_apply_sbus_ranges
+)paren
+comma
+id|X
+c_func
+(paren
+id|prom_getintdefault
 )paren
 comma
 id|X
@@ -788,13 +845,7 @@ multiline_comment|/* Moving data to/from userspace. */
 id|X
 c_func
 (paren
-id|__copy_to_user
-)paren
-comma
-id|X
-c_func
-(paren
-id|__copy_from_user
+id|__copy_user
 )paren
 comma
 id|X
@@ -807,6 +858,13 @@ id|X
 c_func
 (paren
 id|__strncpy_from_user
+)paren
+comma
+multiline_comment|/* No version information on this, heavily used in inline asm,&n;&t; * and will always be &squot;void __ret_efault(void)&squot;.&n;&t; */
+id|XNOVERS
+c_func
+(paren
+id|__ret_efault
 )paren
 comma
 multiline_comment|/* No version information on these, as gcc produces such symbols. */

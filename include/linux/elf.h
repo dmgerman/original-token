@@ -292,6 +292,104 @@ DECL|macro|R_386_GOTPC
 mdefine_line|#define R_386_GOTPC&t;10
 DECL|macro|R_386_NUM
 mdefine_line|#define R_386_NUM&t;11
+multiline_comment|/*&n; * Sparc ELF relocation types&n; */
+DECL|macro|R_SPARC_NONE
+mdefine_line|#define&t;R_SPARC_NONE&t;&t;0
+DECL|macro|R_SPARC_8
+mdefine_line|#define&t;R_SPARC_8&t;&t;1
+DECL|macro|R_SPARC_16
+mdefine_line|#define&t;R_SPARC_16&t;&t;2
+DECL|macro|R_SPARC_32
+mdefine_line|#define&t;R_SPARC_32&t;&t;3
+DECL|macro|R_SPARC_DISP8
+mdefine_line|#define&t;R_SPARC_DISP8&t;&t;4
+DECL|macro|R_SPARC_DISP16
+mdefine_line|#define&t;R_SPARC_DISP16&t;&t;5
+DECL|macro|R_SPARC_DISP32
+mdefine_line|#define&t;R_SPARC_DISP32&t;&t;6
+DECL|macro|R_SPARC_WDISP30
+mdefine_line|#define&t;R_SPARC_WDISP30&t;&t;7
+DECL|macro|R_SPARC_WDISP22
+mdefine_line|#define&t;R_SPARC_WDISP22&t;&t;8
+DECL|macro|R_SPARC_HI22
+mdefine_line|#define&t;R_SPARC_HI22&t;&t;9
+DECL|macro|R_SPARC_22
+mdefine_line|#define&t;R_SPARC_22&t;&t;10
+DECL|macro|R_SPARC_13
+mdefine_line|#define&t;R_SPARC_13&t;&t;11
+DECL|macro|R_SPARC_LO10
+mdefine_line|#define&t;R_SPARC_LO10&t;&t;12
+DECL|macro|R_SPARC_GOT10
+mdefine_line|#define&t;R_SPARC_GOT10&t;&t;13
+DECL|macro|R_SPARC_GOT13
+mdefine_line|#define&t;R_SPARC_GOT13&t;&t;14
+DECL|macro|R_SPARC_GOT22
+mdefine_line|#define&t;R_SPARC_GOT22&t;&t;15
+DECL|macro|R_SPARC_PC10
+mdefine_line|#define&t;R_SPARC_PC10&t;&t;16
+DECL|macro|R_SPARC_PC22
+mdefine_line|#define&t;R_SPARC_PC22&t;&t;17
+DECL|macro|R_SPARC_WPLT30
+mdefine_line|#define&t;R_SPARC_WPLT30&t;&t;18
+DECL|macro|R_SPARC_COPY
+mdefine_line|#define&t;R_SPARC_COPY&t;&t;19
+DECL|macro|R_SPARC_GLOB_DAT
+mdefine_line|#define&t;R_SPARC_GLOB_DAT&t;20
+DECL|macro|R_SPARC_JMP_SLOT
+mdefine_line|#define&t;R_SPARC_JMP_SLOT&t;21
+DECL|macro|R_SPARC_RELATIVE
+mdefine_line|#define&t;R_SPARC_RELATIVE&t;22
+DECL|macro|R_SPARC_UA32
+mdefine_line|#define&t;R_SPARC_UA32&t;&t;23
+DECL|macro|R_SPARC_NUM
+mdefine_line|#define&t;R_SPARC_NUM&t;&t;24
+multiline_comment|/*&n; * 68k ELF relocation types&n; */
+DECL|macro|R_68K_NONE
+mdefine_line|#define R_68K_NONE&t;0
+DECL|macro|R_68K_32
+mdefine_line|#define R_68K_32&t;1
+DECL|macro|R_68K_16
+mdefine_line|#define R_68K_16&t;2
+DECL|macro|R_68K_8
+mdefine_line|#define R_68K_8&t;&t;3
+DECL|macro|R_68K_PC32
+mdefine_line|#define R_68K_PC32&t;4
+DECL|macro|R_68K_PC16
+mdefine_line|#define R_68K_PC16&t;5
+DECL|macro|R_68K_PC8
+mdefine_line|#define R_68K_PC8&t;6
+DECL|macro|R_68K_GOT32
+mdefine_line|#define R_68K_GOT32&t;7
+DECL|macro|R_68K_GOT16
+mdefine_line|#define R_68K_GOT16&t;8
+DECL|macro|R_68K_GOT8
+mdefine_line|#define R_68K_GOT8&t;9
+DECL|macro|R_68K_GOT32O
+mdefine_line|#define R_68K_GOT32O&t;10
+DECL|macro|R_68K_GOT16O
+mdefine_line|#define R_68K_GOT16O&t;11
+DECL|macro|R_68K_GOT8O
+mdefine_line|#define R_68K_GOT8O&t;12
+DECL|macro|R_68K_PLT32
+mdefine_line|#define R_68K_PLT32&t;13
+DECL|macro|R_68K_PLT16
+mdefine_line|#define R_68K_PLT16&t;14
+DECL|macro|R_68K_PLT8
+mdefine_line|#define R_68K_PLT8&t;15
+DECL|macro|R_68K_PLT32O
+mdefine_line|#define R_68K_PLT32O&t;16
+DECL|macro|R_68K_PLT16O
+mdefine_line|#define R_68K_PLT16O&t;17
+DECL|macro|R_68K_PLT8O
+mdefine_line|#define R_68K_PLT8O&t;18
+DECL|macro|R_68K_COPY
+mdefine_line|#define R_68K_COPY&t;19
+DECL|macro|R_68K_GLOB_DAT
+mdefine_line|#define R_68K_GLOB_DAT&t;20
+DECL|macro|R_68K_JMP_SLOT
+mdefine_line|#define R_68K_JMP_SLOT&t;21
+DECL|macro|R_68K_RELATIVE
+mdefine_line|#define R_68K_RELATIVE&t;22
 DECL|struct|elf32_rel
 r_typedef
 r_struct

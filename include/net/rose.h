@@ -70,6 +70,8 @@ DECL|macro|ROSE_DEFAULT_T2
 mdefine_line|#define ROSE_DEFAULT_T2&t;&t;(180 * PR_SLOWHZ)&t;/* Default T12 T22 value */
 DECL|macro|ROSE_DEFAULT_T3
 mdefine_line|#define&t;ROSE_DEFAULT_T3&t;&t;(180 * PR_SLOWHZ)&t;/* Default T13 T23 value */
+DECL|macro|ROSE_DEFAULT_HB
+mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;(5 * PR_SLOWHZ)&t;&t;/* Default Holdback value */
 DECL|macro|ROSE_DEFAULT_IDLE
 mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;(20 * 60 * PR_SLOWHZ)&t;/* Default No Activity value */
 DECL|macro|ROSE_DEFAULT_WINDOW
@@ -310,6 +312,7 @@ suffix:semicolon
 DECL|member|t1
 DECL|member|t2
 DECL|member|t3
+DECL|member|hb
 DECL|member|idle
 r_int
 r_int
@@ -318,6 +321,8 @@ comma
 id|t2
 comma
 id|t3
+comma
+id|hb
 comma
 id|idle
 suffix:semicolon
@@ -367,6 +372,10 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_rose_no_activity_timeout
+suffix:semicolon
+r_extern
+r_int
+id|sysctl_rose_ack_hold_back_timeout
 suffix:semicolon
 r_extern
 r_int

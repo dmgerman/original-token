@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: idprom.c,v 1.21 1996/10/12 13:12:48 davem Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: idprom.c,v 1.22 1996/11/13 05:09:25 davem Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;  /* Fun with Sun released architectures. */
@@ -150,7 +151,7 @@ id|SM_4M_SS60
 )brace
 comma
 (brace
-l_string|&quot;Sun4m SparcStation10&quot;
+l_string|&quot;Sun4m SparcStation10/20&quot;
 comma
 (paren
 id|SM_SUN4M
@@ -181,7 +182,10 @@ l_int|0x0
 )brace
 )brace
 suffix:semicolon
-DECL|function|display_system_type
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|display_system_type
@@ -190,6 +194,7 @@ c_func
 r_int
 r_char
 id|machtype
+)paren
 )paren
 (brace
 r_char
@@ -299,7 +304,10 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Calculate the IDPROM checksum (xor of the data bytes). */
-DECL|function|calc_idprom_cksum
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_char
@@ -310,6 +318,7 @@ r_struct
 id|idprom
 op_star
 id|idprom
+)paren
 )paren
 (brace
 r_int
@@ -355,12 +364,16 @@ id|cksum
 suffix:semicolon
 )brace
 multiline_comment|/* Create a local IDPROM copy, verify integrity, and display information. */
-DECL|function|idprom_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|idprom_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|prom_get_idprom

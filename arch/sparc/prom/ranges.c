@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: ranges.c,v 1.6 1996/11/03 08:12:01 davem Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ranges.c,v 1.7 1996/11/13 05:10:12 davem Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
@@ -338,12 +339,16 @@ id|sbus-&gt;num_sbus_ranges
 suffix:semicolon
 )brace
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|prom_ranges_init
 id|prom_ranges_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -445,8 +450,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|prom_sbus_ranges_init
 id|prom_sbus_ranges_init
 c_func
 (paren
@@ -457,6 +465,7 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
+)paren
 )paren
 (brace
 r_int

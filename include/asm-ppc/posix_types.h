@@ -85,6 +85,11 @@ r_char
 op_star
 id|__kernel_caddr_t
 suffix:semicolon
+DECL|typedef|__kernel_ipc_pid_t
+r_typedef
+r_int
+id|__kernel_ipc_pid_t
+suffix:semicolon
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef
@@ -282,6 +287,11 @@ r_int
 op_star
 id|tmp
 op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
 id|p-&gt;fds_bits
 suffix:semicolon
 r_int

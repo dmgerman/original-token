@@ -83,10 +83,14 @@ DECL|macro|ESI_SET_PRESCALAR
 mdefine_line|#define ESI_SET_PRESCALAR&t;0x23
 DECL|macro|ESI_NO_COMMAND
 mdefine_line|#define ESI_NO_COMMAND&t;&t;0xff
-DECL|macro|STAT_RX_TIMEOUT
-mdefine_line|#define STAT_RX_TIMEOUT&t;&t;0x01
-DECL|macro|STAT_NEED_DMA
-mdefine_line|#define STAT_NEED_DMA&t;&t;0x02
+DECL|macro|ESP_STAT_RX_TIMEOUT
+mdefine_line|#define ESP_STAT_RX_TIMEOUT&t;0x01
+DECL|macro|ESP_STAT_NEED_DMA
+mdefine_line|#define ESP_STAT_NEED_DMA&t;0x02
+DECL|macro|ESP_STAT_DMA_RX
+mdefine_line|#define ESP_STAT_DMA_RX&t;&t;0x04
+DECL|macro|ESP_STAT_DMA_TX
+mdefine_line|#define ESP_STAT_DMA_TX&t;&t;0x08
 DECL|macro|ESP_EVENT_WRITE_WAKEUP
 mdefine_line|#define ESP_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|ESP_MAGIC
@@ -101,10 +105,6 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
-DECL|member|baud_base
-r_int
-id|baud_base
-suffix:semicolon
 DECL|member|port
 r_int
 id|port
@@ -118,11 +118,6 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* defined in tty.h */
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* UART type */
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -173,11 +168,6 @@ r_int
 id|MCR
 suffix:semicolon
 multiline_comment|/* Modem control register */
-DECL|member|MCR_noint
-r_int
-id|MCR_noint
-suffix:semicolon
-multiline_comment|/* MCR with interrupts off */
 DECL|member|event
 r_int
 r_int

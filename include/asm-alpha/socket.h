@@ -46,5 +46,9 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
 DECL|macro|SO_BSDCOMPAT
 mdefine_line|#define SO_BSDCOMPAT&t;14
+DECL|macro|SO_PASSCRED
+mdefine_line|#define SO_PASSCRED&t;17
+DECL|macro|SO_PEERCRED
+mdefine_line|#define SO_PEERCRED&t;18
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

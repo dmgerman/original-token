@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: resource.h,v 1.5 1995/11/25 02:32:35 davem Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: resource.h,v 1.6 1996/11/25 03:30:25 ecd Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_RESOURCE_H
 DECL|macro|_SPARC_RESOURCE_H
 mdefine_line|#define _SPARC_RESOURCE_H
@@ -21,11 +21,13 @@ DECL|macro|RLIMIT_NPROC
 mdefine_line|#define RLIMIT_NPROC&t;7&t;&t;/* max number of processes */
 DECL|macro|RLIMIT_MEMLOCK
 mdefine_line|#define RLIMIT_MEMLOCK  8               /* max locked-in-memory address space */
+DECL|macro|RLIMIT_AS
+mdefine_line|#define RLIMIT_AS       9               /* address space limit */
 DECL|macro|RLIM_NLIMITS
-mdefine_line|#define RLIM_NLIMITS&t;9
+mdefine_line|#define RLIM_NLIMITS&t;10
 macro_line|#ifdef __KERNEL__
 DECL|macro|INIT_RLIMITS
-mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},&t;&t;&t;&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN},&t;&bslash;&n;    {LONG_MAX, LONG_MAX},                                               &bslash;&n;}
+mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},&t;&t;&t;&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {NR_OPEN, NR_OPEN}, {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER},&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX}                          &bslash;&n;}
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(_SPARC_RESOURCE_H) */
 eof

@@ -4,7 +4,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/solerrno.h&gt;
-DECL|variable|solaris_xlatb_rorl
+macro_line|#if 0
+multiline_comment|/* Not used - actually translated in iBCS */
 r_int
 r_int
 id|solaris_xlatb_rorl
@@ -195,6 +196,7 @@ comma
 id|SOL_ENOSYS
 )brace
 suffix:semicolon
+macro_line|#endif
 r_extern
 id|asmlinkage
 r_int

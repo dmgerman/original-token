@@ -503,7 +503,7 @@ op_assign
 (paren
 id|sk-&gt;protinfo.nr-&gt;va
 op_plus
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 )paren
 op_mod
 id|NR_MODULUS

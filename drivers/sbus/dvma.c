@@ -1,11 +1,11 @@
 multiline_comment|/* dvma.c:  Routines that are used to access DMA on the Sparc SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/contregs.h&gt;
 macro_line|#include &lt;asm/sysen.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -60,9 +60,12 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Probe this SBus DMA module(s) */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-DECL|function|dvma_init
 id|dvma_init
 c_func
 (paren
@@ -74,6 +77,7 @@ comma
 r_int
 r_int
 id|memory_start
+)paren
 )paren
 (brace
 r_struct
@@ -105,6 +109,30 @@ comma
 id|sbus
 )paren
 (brace
+r_int
+id|hme
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_dev-&gt;prom_name
+comma
+l_string|&quot;SUNW,fas&quot;
+)paren
+)paren
+(brace
+id|hme
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
 r_if
 c_cond
 (paren
@@ -209,9 +237,31 @@ id|num_dma
 op_increment
 suffix:semicolon
 multiline_comment|/* The constant PAGE_SIZE that is passed to sparc_alloc_io makes the&n;&t;&t; * routine only alloc 1 page, that was what the original code did&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|hme
+)paren
+(brace
+multiline_comment|/* On HME cards, dvma lives with esp, 2 reg sets. */
 id|prom_apply_sbus_ranges
 c_func
 (paren
+id|sbus
+comma
+id|dma-&gt;SBus_dev-&gt;reg_addrs
+comma
+l_int|0x2
+)paren
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* All others have only 1 reg set. */
+id|prom_apply_sbus_ranges
+c_func
+(paren
+id|sbus
+comma
 id|dma-&gt;SBus_dev-&gt;reg_addrs
 comma
 l_int|0x1
@@ -329,6 +379,21 @@ id|printk
 c_func
 (paren
 l_string|&quot;Revision 2 &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DMA_VERHME
+suffix:colon
+id|dma-&gt;revision
+op_assign
+id|dvmahme
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;HME DVMA gate array &quot;
 )paren
 suffix:semicolon
 r_break

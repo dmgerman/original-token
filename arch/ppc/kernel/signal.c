@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Adapted for PowerPC by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu) &n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
@@ -130,7 +131,6 @@ id|EINTR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This sets regs-&gt;esp even though we don&squot;t actually use sigstacks yet..&n; */
 DECL|function|sys_sigreturn
 id|asmlinkage
 r_int
@@ -156,6 +156,43 @@ suffix:semicolon
 r_int
 id|signo
 suffix:semicolon
+macro_line|#if 1 &t;
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+comma
+r_sizeof
+(paren
+id|sc
+)paren
+)paren
+op_logical_or
+(paren
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+op_ge
+id|KERNELBASE
+)paren
+)paren
+r_goto
+id|badframe
+suffix:semicolon
+macro_line|#endif&t;
 id|sc
 op_assign
 (paren
@@ -354,6 +391,15 @@ id|sc-&gt;signal
 )paren
 suffix:semicolon
 )brace
+id|badframe
+suffix:colon
+multiline_comment|/*printk(&quot;sys_sigreturn(): badstack regs %x cur %s/%d&bslash;n&quot;,&n;&t; regs,current-&gt;comm,current-&gt;pid);*/
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note that &squot;init&squot; is a special process: it doesn&squot;t get signals it doesn&squot;t&n; * want to handle. Thus you cannot kill init even with a SIGKILL even by&n; * mistake.&n; *&n; * Note that we go through the signals twice: once to check the signals that&n; * the kernel can handle, and then we build all the user-level signal handling&n; * stack-frames in one go after that.&n; */
 DECL|function|do_signal
@@ -427,11 +473,6 @@ id|sa
 suffix:semicolon
 r_int
 id|s
-op_assign
-id|_disable_interrupts
-c_func
-(paren
-)paren
 suffix:semicolon
 r_while
 c_loop
@@ -445,18 +486,6 @@ id|mask
 )paren
 )paren
 (brace
-macro_line|#if 0
-id|signr
-op_assign
-id|ffz
-c_func
-(paren
-op_complement
-id|signr
-)paren
-suffix:semicolon
-multiline_comment|/* Compute bit # */
-macro_line|#else
 r_for
 c_loop
 (paren
@@ -490,7 +519,6 @@ id|signr
 op_assign
 id|bitno
 suffix:semicolon
-macro_line|#endif
 id|current-&gt;signal
 op_and_assign
 op_complement
@@ -797,7 +825,7 @@ id|signr
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * OK, we&squot;re invoking a handler&n;&t;&t; */
+multiline_comment|/* handle signal */
 r_if
 c_cond
 (paren
@@ -870,12 +898,6 @@ id|handler_signal
 )paren
 multiline_comment|/* no handler will be called - return 0 */
 (brace
-id|_enable_interrupts
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -905,6 +927,46 @@ id|trampoline
 op_assign
 id|frame
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* verify stack is valid for writing regs struct */
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|frame
+comma
+r_sizeof
+(paren
+r_int
+)paren
+op_star
+l_int|2
+op_plus
+r_sizeof
+(paren
+op_star
+id|regs
+)paren
+)paren
+op_logical_or
+(paren
+id|frame
+op_ge
+id|KERNELBASE
+)paren
+)paren
+r_goto
+id|badframe
+suffix:semicolon
+macro_line|#endif
 id|trampoline
 (braket
 l_int|0
@@ -1014,6 +1076,37 @@ r_sizeof
 r_int
 )paren
 suffix:semicolon
+macro_line|#if 1
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|frame
+comma
+r_sizeof
+(paren
+r_struct
+id|sigcontext_struct
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+)paren
+r_goto
+id|badframe
+suffix:semicolon
+macro_line|#endif    
 id|sc
 op_assign
 (paren
@@ -1132,14 +1225,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|_enable_interrupts
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+id|badframe
+suffix:colon
+multiline_comment|/*  printk(&quot;do_signal(): badstack signr %d frame %x regs %x cur %s/%d&bslash;n&quot;,&n;&t; signr,frame,regs,current-&gt;comm,current-&gt;pid);*/
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
 suffix:semicolon
 )brace
 eof

@@ -35,10 +35,9 @@ DECL|macro|ipx_broadcast_node
 mdefine_line|#define ipx_broadcast_node&t;&quot;&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&bslash;377&quot;
 DECL|macro|ipx_this_node
 mdefine_line|#define ipx_this_node           &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-DECL|struct|ipx_packet
-r_typedef
+DECL|struct|ipxhdr
 r_struct
-id|ipx_packet
+id|ipxhdr
 (brace
 DECL|member|ipx_checksum
 r_int
@@ -106,9 +105,7 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-DECL|typedef|ipx_packet
 )brace
-id|ipx_packet
 suffix:semicolon
 macro_line|#include &lt;net/ipxcall.h&gt;
 r_extern

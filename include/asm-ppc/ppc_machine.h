@@ -2,6 +2,10 @@ multiline_comment|/*&n; * PowerPC machine specifics&n; */
 macro_line|#ifndef _PPC_MACHINE_H_
 DECL|macro|_PPC_MACHINE_H_
 mdefine_line|#define _PPC_MACHINE_H_ 
+DECL|macro|KERNEL_STACK_SIZE
+mdefine_line|#define KERNEL_STACK_SIZE (4096) /* usable stack -- not buffers at either end */
+DECL|macro|KERNEL_STACK_MASK
+mdefine_line|#define KERNEL_STACK_MASK (~(KERNEL_STACK_SIZE-1))
 multiline_comment|/* Bit encodings for Machine State Register (MSR) */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
@@ -36,9 +40,9 @@ mdefine_line|#define MSR_RI&t;&t;(1&lt;&lt;1)&t;&t;/* Recoverable Exception */
 DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
 DECL|macro|MSR_
-mdefine_line|#define MSR_&t;&t;MSR_FP|MSR_FE0|MSR_FE1|MSR_ME
+mdefine_line|#define MSR_&t;&t;MSR_FE0|MSR_FE1|MSR_ME|MSR_FP
 DECL|macro|MSR_USER
-mdefine_line|#define MSR_USER&t;MSR_|MSR_PR|MSR_EE|MSR_IR|MSR_DR
+mdefine_line|#define MSR_USER&t;MSR_FE0|MSR_FE1|MSR_ME|MSR_PR|MSR_EE|MSR_IR|MSR_DR
 multiline_comment|/* Bit encodings for Hardware Implementation Register (HID0) */
 DECL|macro|HID0_EMCP
 mdefine_line|#define HID0_EMCP&t;(1&lt;&lt;31)&t;&t;/* Enable Machine Check pin */
@@ -78,5 +82,10 @@ DECL|macro|HID0_SIED
 mdefine_line|#define HID0_SIED&t;(1&lt;&lt;7)&t;&t;/* Serial Instruction Execution [Disable] */
 DECL|macro|HID0_BHTE
 mdefine_line|#define HID0_BHTE&t;(1&lt;&lt;2)&t;&t;/* Branch History Table Enable */
+multiline_comment|/* fpscr settings */
+DECL|macro|FPSCR_FX
+mdefine_line|#define FPSCR_FX        (1&lt;&lt;31)
+DECL|macro|FPSCR_FEX
+mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
 macro_line|#endif
 eof

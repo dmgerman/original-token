@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psr.h,v 1.12 1996/09/30 02:23:19 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: psr.h,v 1.13 1996/12/10 06:06:36 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_PSR_H
 mdefine_line|#define __LINUX_SPARC_PSR_H
@@ -55,12 +55,28 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd&bslash;t%%psr, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
+"&quot;"
+id|rd
+op_mod
+op_mod
+id|psr
+comma
+op_mod
+l_int|0
+id|nop
+id|nop
+id|nop
+l_string|&quot;&t;: &quot;
+op_assign
+id|r
+"&quot;"
 (paren
 id|psr
 )paren
+suffix:colon
+multiline_comment|/* no inputs */
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -83,14 +99,29 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;wr&bslash;t%0, 0x0, %%psr&bslash;n&bslash;t&quot;
-l_string|&quot;nop; nop; nop;&quot;
+"&quot;"
+id|wr
+op_mod
+l_int|0
+comma
+l_int|0x0
+comma
+op_mod
+op_mod
+id|psr
+id|nop
+id|nop
+id|nop
+"&quot;"
 suffix:colon
+multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|new_psr
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -121,10 +152,24 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;st&bslash;t%%fsr, %1&bslash;n&bslash;t&quot;
-l_string|&quot;ld&bslash;t%1, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
+"&quot;"
+id|st
+op_mod
+op_mod
+id|fsr
+comma
+op_mod
+l_int|1
+id|ld
+op_mod
+l_int|1
+comma
+op_mod
+l_int|0
+l_string|&quot;&t;: &quot;
+op_assign
+id|r
+"&quot;"
 (paren
 id|fsr
 )paren

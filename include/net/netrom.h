@@ -105,6 +105,7 @@ DECL|member|state
 DECL|member|condition
 DECL|member|bpqext
 DECL|member|hdrincl
+DECL|member|window
 r_int
 r_char
 id|state
@@ -114,6 +115,8 @@ comma
 id|bpqext
 comma
 id|hdrincl
+comma
+id|window
 suffix:semicolon
 DECL|member|vs
 DECL|member|vr

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -351,7 +352,10 @@ id|limit
 (brace
 multiline_comment|/* Errm.. not sure how to do this.. */
 )brace
-DECL|function|sun4c_init_timers
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|sun4c_init_timers
@@ -371,6 +375,7 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -493,12 +498,16 @@ r_void
 (brace
 )brace
 macro_line|#endif
-DECL|function|sun4c_init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sun4c_init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

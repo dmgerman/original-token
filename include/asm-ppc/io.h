@@ -1,16 +1,30 @@
 macro_line|#ifndef _PPC_IO_H
 DECL|macro|_PPC_IO_H
 mdefine_line|#define _PPC_IO_H
+macro_line|#include &lt;asm/page.h&gt;
+multiline_comment|/* from the Carolina Technical Spec -- Cort */
+DECL|macro|IBM_ACORN
+mdefine_line|#define IBM_ACORN 0x82A
+DECL|macro|SIO_CONFIG_RA
+mdefine_line|#define SIO_CONFIG_RA&t;0x398
+DECL|macro|SIO_CONFIG_RD
+mdefine_line|#define SIO_CONFIG_RD&t;0x399
+DECL|macro|IBM_HDD_LED
+mdefine_line|#define IBM_HDD_LED       0x808
+DECL|macro|IBM_EQUIP_PRESENT
+mdefine_line|#define IBM_EQUIP_PRESENT 0x80c&t;
+DECL|macro|IBM_L2_STATUS
+mdefine_line|#define IBM_L2_STATUS     0x80d
+DECL|macro|IBM_L2_INVALIDATE
+mdefine_line|#define IBM_L2_INVALIDATE 0x814
+DECL|macro|IBM_SYS_CTL
+mdefine_line|#define IBM_SYS_CTL       0x81c
 multiline_comment|/* Define the particulars of outb/outw/outl &quot;instructions&quot; */
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO
 macro_line|#ifndef PCI_DRAM_OFFSET
 DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET  0x80000000
-macro_line|#endif
-macro_line|#ifndef KERNELBASE
-DECL|macro|KERNELBASE
-mdefine_line|#define KERNELBASE 0x90000000
 macro_line|#endif
 multiline_comment|/*&n; * The PCI bus is inherently Little-Endian.  The PowerPC is being&n; * run Big-Endian.  Thus all values which cross the [PCI] barrier&n; * must be endian-adjusted.  Also, the local DRAM has a different&n; * address from the PCI point of view, thus buffer addresses also&n; * have to be modified [mapped] appropriately.&n; */
 DECL|function|virt_to_bus

@@ -228,6 +228,13 @@ id|dst_entry
 op_star
 id|dst
 suffix:semicolon
+DECL|member|cb
+r_char
+id|cb
+(braket
+l_int|32
+)braket
+suffix:semicolon
 DECL|member|seq
 id|__u32
 id|seq
@@ -243,13 +250,6 @@ id|__u32
 id|ack_seq
 suffix:semicolon
 multiline_comment|/* TCP ack sequence number&t;&t;&t;*/
-DECL|member|cb
-r_char
-id|cb
-(braket
-l_int|32
-)braket
-suffix:semicolon
 DECL|member|len
 r_int
 r_int

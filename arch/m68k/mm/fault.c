@@ -378,7 +378,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
+l_string|&quot;Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
 comma
 id|fault_pc
 comma

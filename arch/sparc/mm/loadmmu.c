@@ -1,15 +1,26 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.36 1996/10/27 08:36:46 davem Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.42 1996/12/03 08:44:47 jj Exp $&n; * loadmmu.c:  This code loads up all the mm function pointers once the&n; *             machine type has been determined.  It also sets the static&n; *             mmu values such as PAGE_NONE, etc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/a.out.h&gt;
 DECL|variable|page_offset
 r_int
 r_int
 id|page_offset
 op_assign
 l_int|0xf0000000
+suffix:semicolon
+DECL|variable|stack_top
+r_int
+r_int
+id|stack_top
+op_assign
+l_int|0xf0000000
+op_minus
+id|PAGE_SIZE
 suffix:semicolon
 DECL|variable|ctx_list_pool
 r_struct
@@ -404,6 +415,23 @@ r_int
 id|address
 )paren
 suffix:semicolon
+DECL|variable|local_flush_sig_insns
+r_void
+(paren
+op_star
+id|local_flush_sig_insns
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|insn_addr
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|flush_cache_all
 r_void
@@ -531,6 +559,23 @@ id|flush_page_to_ram
 r_int
 r_int
 id|page
+)paren
+suffix:semicolon
+DECL|variable|flush_sig_insns
+r_void
+(paren
+op_star
+id|flush_sig_insns
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|insn_addr
 )paren
 suffix:semicolon
 DECL|variable|set_pte
@@ -1053,6 +1098,17 @@ id|pgd_alloc
 r_void
 )paren
 suffix:semicolon
+DECL|variable|pgd_flush
+r_void
+(paren
+op_star
+id|pgd_flush
+)paren
+(paren
+id|pgd_t
+op_star
+)paren
+suffix:semicolon
 DECL|variable|pte_write
 r_int
 (paren
@@ -1170,12 +1226,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|load_mmu
 id|load_mmu
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_switch

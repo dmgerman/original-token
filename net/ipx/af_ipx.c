@@ -1139,17 +1139,12 @@ r_int
 id|copy
 )paren
 (brace
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 r_struct
 id|sock
@@ -1338,17 +1333,12 @@ r_int
 id|copy
 )paren
 (brace
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 r_struct
 id|sock
@@ -1683,6 +1673,8 @@ comma
 id|out_offset
 )paren
 suffix:semicolon
+id|skb2-&gt;nh.raw
+op_assign
 id|skb2-&gt;h.raw
 op_assign
 id|skb_put
@@ -1740,17 +1732,12 @@ op_star
 id|node
 )paren
 (brace
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 r_struct
 id|device
@@ -1816,10 +1803,16 @@ op_eq
 id|intrfc-&gt;if_netnum
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;To our own node, loop and free the original.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;To our own node, loop and free the original.&n;&t;&t; *&t;The internal net will receive on all node address.&n;&t;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|intrfc
+op_eq
+id|ipx_internal_net
+)paren
+op_logical_or
 id|memcmp
 c_func
 (paren
@@ -2049,11 +2042,7 @@ c_func
 (paren
 l_string|&quot;IPX snd:&quot;
 comma
-(paren
-id|ipx_packet
-op_star
-)paren
-id|skb-&gt;h.raw
+id|skb-&gt;nh.ipxh
 )paren
 suffix:semicolon
 id|dump_data
@@ -2061,11 +2050,11 @@ c_func
 (paren
 l_string|&quot;ETH hdr:&quot;
 comma
-id|skb-&gt;sk
+id|skb-&gt;mac.raw
 comma
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 op_minus
-id|skb-&gt;sk
+id|skb-&gt;mac.raw
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2171,17 +2160,12 @@ op_star
 id|skb
 )paren
 (brace
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 id|ipx_interface
 op_star
@@ -2419,7 +2403,7 @@ op_add_assign
 r_sizeof
 (paren
 r_struct
-id|ipx_packet
+id|ipxhdr
 )paren
 suffix:semicolon
 id|l
@@ -4757,7 +4741,8 @@ id|__u16
 id|ipx_set_checksum
 c_func
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|packet
 comma
@@ -4903,7 +4888,8 @@ id|ipx_interface
 op_star
 id|intrfc
 suffix:semicolon
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 suffix:semicolon
@@ -4984,7 +4970,8 @@ id|size
 op_assign
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 op_plus
 id|len
@@ -5042,7 +5029,8 @@ multiline_comment|/* Fill in IPX header */
 id|ipx
 op_assign
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 )paren
 id|skb_put
@@ -5052,7 +5040,8 @@ id|skb
 comma
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 )paren
 suffix:semicolon
@@ -5065,7 +5054,8 @@ id|len
 op_plus
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 )paren
 suffix:semicolon
@@ -5080,10 +5070,11 @@ suffix:semicolon
 id|skb-&gt;h.raw
 op_assign
 (paren
-r_int
-r_char
+r_void
 op_star
 )paren
+id|skb-&gt;nh.ipxh
+op_assign
 id|ipx
 suffix:semicolon
 id|ipx-&gt;ipx_source.net
@@ -5243,7 +5234,8 @@ id|len
 op_plus
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 )paren
 suffix:semicolon
@@ -5313,17 +5305,12 @@ op_star
 id|skb
 )paren
 (brace
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 id|ipx_route
 op_star
@@ -8327,6 +8314,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s-%04X: %s&bslash;n&quot;
 comma
 id|str
@@ -8356,6 +8344,7 @@ id|p
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: %08X:%02X%02X%02X%02X%02X%02X:%04X&bslash;n&quot;
 comma
 id|str
@@ -8412,7 +8401,8 @@ r_char
 op_star
 id|str
 comma
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|p
 )paren
@@ -8420,6 +8410,7 @@ id|p
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: CHKSUM=%04X SIZE=%d (%04X) HOPS=%d (%02X) TYPE=%02X&bslash;n&quot;
 comma
 id|str
@@ -8472,7 +8463,8 @@ r_char
 op_star
 id|str
 comma
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|p
 )paren
@@ -8548,19 +8540,22 @@ id|ipx_interface
 op_star
 id|intrfc
 suffix:semicolon
-id|ipx_packet
+r_struct
+id|ipxhdr
 op_star
 id|ipx
 suffix:semicolon
-id|ipx
+id|skb-&gt;h.raw
 op_assign
 (paren
-id|ipx_packet
+r_void
 op_star
 )paren
-id|skb-&gt;h.raw
+id|ipx
+op_assign
+id|skb-&gt;nh.ipxh
 suffix:semicolon
-multiline_comment|/* Too small */
+multiline_comment|/* Too small? */
 r_if
 c_cond
 (paren
@@ -8572,7 +8567,8 @@ id|ipx-&gt;ipx_pktsize
 OL
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 )paren
 (brace
@@ -9014,7 +9010,7 @@ op_star
 id|msg-&gt;msg_name
 suffix:semicolon
 r_struct
-id|ipx_packet
+id|ipxhdr
 op_star
 id|ipx
 op_assign
@@ -9079,13 +9075,7 @@ suffix:semicolon
 )brace
 id|ipx
 op_assign
-(paren
-id|ipx_packet
-op_star
-)paren
-(paren
-id|skb-&gt;h.raw
-)paren
+id|skb-&gt;nh.ipxh
 suffix:semicolon
 id|truesize
 op_assign
@@ -9097,7 +9087,8 @@ id|ipx-&gt;ipx_pktsize
 op_minus
 r_sizeof
 (paren
-id|ipx_packet
+r_struct
+id|ipxhdr
 )paren
 suffix:semicolon
 id|copied
@@ -9131,7 +9122,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|ipx_packet
+id|ipxhdr
 )paren
 comma
 id|msg-&gt;msg_iov
@@ -9327,7 +9318,7 @@ op_minus
 r_sizeof
 (paren
 r_struct
-id|ipx_packet
+id|ipxhdr
 )paren
 suffix:semicolon
 )brace

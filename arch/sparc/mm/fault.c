@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.77 1996/10/28 00:56:02 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: fault.c,v 1.84 1996/12/10 06:06:23 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|ELEMENTS
 mdefine_line|#define ELEMENTS(arr) (sizeof (arr)/sizeof (arr[0]))
 r_extern
@@ -197,8 +198,10 @@ l_int|1
 (brace
 id|printk
 (paren
-l_string|&quot;The machine has more banks that this kernel can support&bslash;n&quot;
-l_string|&quot;Increase the SPARC_PHYS_BANKS setting (currently %d)&bslash;n&quot;
+l_string|&quot;The machine has more banks than &quot;
+l_string|&quot;this kernel can support&bslash;n&quot;
+l_string|&quot;Increase the SPARC_PHYS_BANKS &quot;
+l_string|&quot;setting (currently %d)&bslash;n&quot;
 comma
 id|SPARC_PHYS_BANKS
 )paren
@@ -470,6 +473,14 @@ op_assign
 id|tsk-&gt;mm
 suffix:semicolon
 r_int
+r_int
+id|fixup
+suffix:semicolon
+r_int
+r_int
+id|g2
+suffix:semicolon
+r_int
 id|from_user
 op_assign
 op_logical_neg
@@ -590,7 +601,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 macro_line|#endif
-multiline_comment|/* Now actually handle the fault.  Do kernel faults special,&n;&t; * because on the sun4c we could have faulted trying to read&n;&t; * the vma area of the task and without the following code&n;&t; * we&squot;d fault recursively until all our stack is gone. ;-(&n;&t; */
+multiline_comment|/* The kernel referencing a bad kernel pointer can lock up&n;&t; * a sun4c machine completely, so we must attempt recovery.&n;&t; */
 r_if
 c_cond
 (paren
@@ -602,13 +613,8 @@ op_ge
 id|PAGE_OFFSET
 )paren
 (brace
-id|quick_kernel_fault
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-r_return
+r_goto
+id|bad_area
 suffix:semicolon
 )brace
 id|vma
@@ -752,6 +758,75 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/* Is this in ex_table? */
+id|g2
+op_assign
+id|regs-&gt;u_regs
+(braket
+id|UREG_G2
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|from_user
+op_logical_and
+(paren
+id|fixup
+op_assign
+id|search_exception_table
+(paren
+id|regs-&gt;pc
+comma
+op_amp
+id|g2
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Exception: PC&lt;%08lx&gt; faddr&lt;%08lx&gt;&bslash;n&quot;
+comma
+id|regs-&gt;pc
+comma
+id|address
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;EX_TABLE: insn&lt;%08lx&gt; fixup&lt;%08x&gt; g2&lt;%08lx&gt;&bslash;n&quot;
+comma
+id|regs-&gt;pc
+comma
+id|fixup
+comma
+id|g2
+)paren
+suffix:semicolon
+id|regs-&gt;pc
+op_assign
+id|fixup
+suffix:semicolon
+id|regs-&gt;npc
+op_assign
+id|regs-&gt;pc
+op_plus
+l_int|4
+suffix:semicolon
+id|regs-&gt;u_regs
+(braket
+id|UREG_G2
+)braket
+op_assign
+id|g2
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Did we have an exception handler installed? */
 r_if
 c_cond
@@ -905,27 +980,24 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel NULL pointer dereference&quot;
+l_string|&quot;Unable to handle kernel NULL &quot;
+l_string|&quot;pointer dereference&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
+(brace
 id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel paging request&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_ALERT
-l_string|&quot; at virtual address %08lx&bslash;n&quot;
+l_string|&quot;Unable to handle kernel paging request &quot;
+l_string|&quot;at virtual address %08lx&bslash;n&quot;
 comma
 id|address
 )paren
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1041,24 +1113,22 @@ id|tsk-&gt;mm
 suffix:semicolon
 id|pgd_t
 op_star
-id|pgd
+id|pgdp
 suffix:semicolon
 id|pte_t
 op_star
-id|pte
+id|ptep
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|text_fault
 )paren
-(brace
 id|address
 op_assign
 id|regs-&gt;pc
 suffix:semicolon
-)brace
-id|pgd
+id|pgdp
 op_assign
 id|sun4c_pgd_offset
 c_func
@@ -1068,7 +1138,7 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|pte
+id|ptep
 op_assign
 id|sun4c_pte_offset
 c_func
@@ -1077,11 +1147,171 @@ c_func
 id|pmd_t
 op_star
 )paren
-id|pgd
+id|pgdp
 comma
 id|address
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pgd_val
+c_func
+(paren
+op_star
+id|pgdp
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|write
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_amp
+(paren
+id|_SUN4C_PAGE_WRITE
+op_or
+id|_SUN4C_PAGE_PRESENT
+)paren
+)paren
+op_eq
+(paren
+id|_SUN4C_PAGE_WRITE
+op_or
+id|_SUN4C_PAGE_PRESENT
+)paren
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_or_assign
+(paren
+id|_SUN4C_PAGE_ACCESSED
+op_or
+id|_SUN4C_PAGE_MODIFIED
+op_or
+id|_SUN4C_PAGE_VALID
+op_or
+id|_SUN4C_PAGE_DIRTY
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sun4c_get_segmap
+c_func
+(paren
+id|address
+)paren
+op_ne
+id|invalid_segment
+)paren
+(brace
+id|sun4c_put_pte
+c_func
+(paren
+id|address
+comma
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_amp
+(paren
+id|_SUN4C_PAGE_READ
+op_or
+id|_SUN4C_PAGE_PRESENT
+)paren
+)paren
+op_eq
+(paren
+id|_SUN4C_PAGE_READ
+op_or
+id|_SUN4C_PAGE_PRESENT
+)paren
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_or_assign
+(paren
+id|_SUN4C_PAGE_ACCESSED
+op_or
+id|_SUN4C_PAGE_VALID
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sun4c_get_segmap
+c_func
+(paren
+id|address
+)paren
+op_ne
+id|invalid_segment
+)paren
+(brace
+id|sun4c_put_pte
+c_func
+(paren
+id|address
+comma
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
 multiline_comment|/* This conditional is &squot;interesting&squot;. */
 r_if
 c_cond
@@ -1090,7 +1320,7 @@ id|pgd_val
 c_func
 (paren
 op_star
-id|pgd
+id|pgdp
 )paren
 op_logical_and
 op_logical_neg
@@ -1103,7 +1333,7 @@ id|pte_val
 c_func
 (paren
 op_star
-id|pte
+id|ptep
 )paren
 op_amp
 id|_SUN4C_PAGE_WRITE
@@ -1115,31 +1345,29 @@ id|pte_val
 c_func
 (paren
 op_star
-id|pte
+id|ptep
 )paren
 op_amp
 id|_SUN4C_PAGE_VALID
 )paren
 )paren
-(brace
-multiline_comment|/* XXX Very bad, can&squot;t do this optimization when VMA arg is actually&n;&t;&t; * XXX used by update_mmu_cache()!&n;&t;&t; */
+multiline_comment|/* Note: It is safe to not grab the MMAP semaphore here because&n;&t;&t; *       we know that update_mmu_cache() will not sleep for&n;&t;&t; *       any reason (at least not in the current implementation)&n;&t;&t; *       and therefore there is no danger of another thread getting&n;&t;&t; *       on the CPU and doing a shrink_mmap() on this vma.&n;&t;&t; */
 id|sun4c_update_mmu_cache
+(paren
+id|find_vma
 c_func
 (paren
-(paren
-r_struct
-id|vm_area_struct
-op_star
+id|current-&gt;mm
+comma
+id|address
 )paren
-l_int|0
 comma
 id|address
 comma
 op_star
-id|pte
+id|ptep
 )paren
 suffix:semicolon
-)brace
 r_else
 id|do_sparc_fault
 c_func

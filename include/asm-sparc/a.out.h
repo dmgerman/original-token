@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: a.out.h,v 1.9 1996/05/29 13:44:54 ecd Exp $ */
+multiline_comment|/* $Id: a.out.h,v 1.11 1996/12/03 08:44:56 jj Exp $ */
 macro_line|#ifndef __SPARC_A_OUT_H__
 DECL|macro|__SPARC_A_OUT_H__
 mdefine_line|#define __SPARC_A_OUT_H__
@@ -237,8 +237,13 @@ suffix:semicolon
 DECL|macro|N_RELOCATION_INFO_DECLARED
 mdefine_line|#define N_RELOCATION_INFO_DECLARED 1
 macro_line|#ifdef __KERNEL__
+r_extern
+r_int
+r_int
+id|stack_top
+suffix:semicolon
 DECL|macro|STACK_TOP
-mdefine_line|#define STACK_TOP&t;TASK_SIZE
+mdefine_line|#define STACK_TOP&t;(stack_top)
 macro_line|#endif
 macro_line|#endif /* __SPARC_A_OUT_H__ */
 eof

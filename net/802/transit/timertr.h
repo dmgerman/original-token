@@ -1,4 +1,4 @@
-multiline_comment|/* this file was generated on Thu Dec  5 13:58:11 GMT 1996  */
+multiline_comment|/* this file was generated on Mon Dec 16 22:26:17 GMT 1996  */
 multiline_comment|/* size of transition table is 898 bytes */
 DECL|variable|timertr_entry
 r_static

@@ -397,7 +397,7 @@ op_assign
 (paren
 id|sk-&gt;protinfo.nr-&gt;vl
 op_plus
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 )paren
 op_mod
 id|NR_MODULUS
@@ -634,7 +634,7 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 suffix:semicolon
 id|memcpy
 c_func
@@ -767,7 +767,7 @@ op_star
 id|dptr
 op_increment
 op_assign
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 suffix:semicolon
 r_if
 c_cond

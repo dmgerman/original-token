@@ -1018,7 +1018,7 @@ id|dev_lockct
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This almost never occurs, isn&squot;t in performance critical paths&n; *&t;and we can thus be relaxed about it&n; */
+multiline_comment|/*&n; *&t;This almost never occurs, isn&squot;t in performance critical paths&n; *&t;and we can thus be relaxed about it. &n; *&n; *&t;FIXME: What if this is being run as a real time process ??&n; *&t;&t;Linus: We need a way to force a yield here ?&n; */
 DECL|function|dev_lock_wait
 r_extern
 id|__inline__
@@ -1327,6 +1327,18 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Load a device via the kerneld */
+r_extern
+r_void
+id|dev_load
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

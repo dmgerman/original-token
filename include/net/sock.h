@@ -17,7 +17,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
 macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
-macro_line|#/* notyet */include &lt;net/x25.h&gt;
+macro_line|#include &lt;net/x25.h&gt;
 macro_line|#endif
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;net/ax25.h&gt;
@@ -782,12 +782,6 @@ r_int
 r_int
 id|shutdown
 suffix:semicolon
-DECL|member|window
-r_int
-r_int
-id|window
-suffix:semicolon
-multiline_comment|/* used by netrom/ax.25 */
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 r_union
 (brace

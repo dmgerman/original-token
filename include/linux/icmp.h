@@ -28,6 +28,8 @@ DECL|macro|ICMP_ADDRESS
 mdefine_line|#define ICMP_ADDRESS&t;&t;17&t;/* Address Mask Request&t;&t;*/
 DECL|macro|ICMP_ADDRESSREPLY
 mdefine_line|#define ICMP_ADDRESSREPLY&t;18&t;/* Address Mask Reply&t;&t;*/
+DECL|macro|NR_ICMP_TYPES
+mdefine_line|#define NR_ICMP_TYPES&t;&t;18
 multiline_comment|/* Codes for UNREACH. */
 DECL|macro|ICMP_NET_UNREACH
 mdefine_line|#define ICMP_NET_UNREACH&t;0&t;/* Network Unreachable&t;&t;*/
@@ -62,7 +64,7 @@ mdefine_line|#define ICMP_PREC_VIOLATION&t;14&t;/* Precedence violation */
 DECL|macro|ICMP_PREC_CUTOFF
 mdefine_line|#define ICMP_PREC_CUTOFF&t;15&t;/* Precedence cut off */
 DECL|macro|NR_ICMP_UNREACH
-mdefine_line|#define NR_ICMP_UNREACH&t;15&t;  /* instead of hardcoding immediate value */
+mdefine_line|#define NR_ICMP_UNREACH&t;&t;15&t;/* instead of hardcoding immediate value */
 multiline_comment|/* Codes for REDIRECT. */
 DECL|macro|ICMP_REDIR_NET
 mdefine_line|#define ICMP_REDIR_NET&t;&t;0&t;/* Redirect Net&t;&t;&t;*/

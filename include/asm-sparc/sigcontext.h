@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.9 1996/10/27 08:55:42 davem Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.10 1996/11/27 01:46:51 miguel Exp $ */
 macro_line|#ifndef _ASMsparc_SIGCONTEXT_H
 DECL|macro|_ASMsparc_SIGCONTEXT_H
 mdefine_line|#define _ASMsparc_SIGCONTEXT_H
@@ -92,6 +92,60 @@ id|SUNOS_MAXWIN
 )braket
 suffix:semicolon
 )brace
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|si_regs
+r_struct
+id|pt_regs
+id|si_regs
+suffix:semicolon
+DECL|member|si_float_regs
+r_int
+r_int
+id|si_float_regs
+(braket
+l_int|64
+)braket
+suffix:semicolon
+DECL|member|si_fsr
+r_int
+r_int
+id|si_fsr
+suffix:semicolon
+DECL|member|si_fpqdepth
+r_int
+r_int
+id|si_fpqdepth
+suffix:semicolon
+r_struct
+(brace
+DECL|member|insn_addr
+r_int
+r_int
+op_star
+id|insn_addr
+suffix:semicolon
+DECL|member|insn
+r_int
+r_int
+id|insn
+suffix:semicolon
+DECL|member|si_fpqueue
+)brace
+id|si_fpqueue
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|si_mask
+r_int
+id|si_mask
+suffix:semicolon
+DECL|typedef|__siginfo_t
+)brace
+id|__siginfo_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMsparc_SIGCONTEXT_H) */

@@ -4,7 +4,83 @@ DECL|macro|_PPC_PGTABLE_H
 mdefine_line|#define _PPC_PGTABLE_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
-multiline_comment|/*&n; * Memory management on the PowerPC is a software emulation of the i386&n; * MMU folded onto the PowerPC hardware MMU.  The emulated version looks&n; * and behaves like the two-level i386 MMU.  Entries from these tables&n; * are merged into the PowerPC hashed MMU tables, on demand, treating the&n; * hashed tables like a special cache.&n; *&n; * Since the PowerPC does not have separate kernel and user address spaces,&n; * the user virtual address space must be a [proper] subset of the kernel&n; * space.  Thus, all tasks will have a specific virtual mapping for the&n; * user virtual space and a common mapping for the kernel space.  The&n; * simplest way to split this was literally in half.  Also, life is so&n; * much simpler for the kernel if the machine hardware resources are&n; * always mapped in.  Thus, some additional space is given up to the&n; * kernel space to accommodate this.&n; *&n; * CAUTION! Some of the trade-offs make sense for the PreP platform on&n; * which this code was originally developed.  When it migrates to other&n; * PowerPC environments, some of the assumptions may fail and the whole&n; * setup may need to be reevaluated.&n; *&n; * On the PowerPC, page translations are kept in a hashed table.  There&n; * is exactly one of these tables [although the architecture supports&n; * an arbitrary number].  Page table entries move in/out of this hashed&n; * structure on demand, with the kernel filling in entries as they are&n; * needed.  Just where a page table entry hits in the hashed table is a&n; * function of the hashing which is in turn based on the upper 4 bits&n; * of the logical address.  These 4 bits address a &quot;virtual segment id&quot;&n; * which is unique per task/page combination for user addresses and&n; * fixed for the kernel addresses.  Thus, the kernel space can be simply&n; * shared [indeed at low overhead] among all tasks.&n; *&n; * The basic virtual address space is thus:&n; *&n; * 0x0XXXXXX  --+&n; * 0x1XXXXXX    |&n; * 0x2XXXXXX    |  User address space. &n; * 0x3XXXXXX    |&n; * 0x4XXXXXX    |&n; * 0x5XXXXXX    |&n; * 0x6XXXXXX    |&n; * 0x7XXXXXX  --+&n; * 0x8XXXXXX       PCI/ISA I/O space&n; * 0x9XXXXXX  --+&n; * 0xAXXXXXX    |  Kernel virtual memory&n; * 0xBXXXXXX  --+&n; * 0xCXXXXXX       PCI/ISA Memory space&n; * 0xDXXXXXX&n; * 0xEXXXXXX&n; * 0xFXXXXXX       Board I/O space&n; *&n; * CAUTION!  One of the real problems here is keeping the software&n; * managed tables coherent with the hardware hashed tables.  When&n; * the software decides to update the table, it&squot;s normally easy to&n; * update the hardware table.  But when the hardware tables need&n; * changed, e.g. as the result of a page fault, it&squot;s more difficult&n; * to reflect those changes back into the software entries.  Currently,&n; * this process is quite crude, with updates causing the entire set&n; * of tables to become invalidated.  Some performance could certainly&n; * be regained by improving this.&n; *&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
+r_inline
+r_void
+id|flush_tlb
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|flush_tlb_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|flush_tlb_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+id|vmaddr
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|flush_tlb_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+id|start
+comma
+r_int
+id|end
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_inline
+r_void
+id|really_flush_cache_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* only called from asm in head.S, so why bother? */
+multiline_comment|/*void MMU_init(void);*/
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -27,10 +103,11 @@ mdefine_line|#define PTRS_PER_PMD&t;1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
+multiline_comment|/* this must be a decent size since the ppc bat&squot;s can map only certain sizes&n;   but these can be different from the physical ram size configured.&n;   bat mapping must map at least physical ram size and vmalloc start addr&n;   must beging AFTER the area mapped by the bat.&n;   32 works for now, but may need to be changed with larger differences.&n;   offset = next greatest bat mapping to ramsize - ramsize&n;   (ie would be 0 if batmapping = ramsize)&n;        -- Cort 10/6/96&n;   */
 DECL|macro|VMALLOC_OFFSET
-mdefine_line|#define VMALLOC_OFFSET&t;(8*1024*1024)
+mdefine_line|#define VMALLOC_OFFSET&t;(32*1024*1024)
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START ((high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1))
+mdefine_line|#define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1)))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|_PAGE_PRESENT
@@ -98,17 +175,10 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
-multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * FIXME: This could be done much better!&n; */
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() printk(&quot;invalidate_all()&bslash;n&quot;);invalidate()
-macro_line|#if 0
-mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_mm(%x)&bslash;n&quot;, mm_struct);} while (0)
-mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_page(%x,%x)&bslash;n&quot;, mm_struct, addr);} while (0)
-mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); else printk(&quot;Can&squot;t invalidate_range(%x,%x,%x)&bslash;n&quot;, mm_struct, start, end);} while (0)
-macro_line|#endif
-multiline_comment|/*&n; * Define this if things work differently on an i386 and an i486:&n; * it will (on an i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
+multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
 DECL|macro|CONFIG_TEST_VERIFY_AREA
 macro_line|#undef CONFIG_TEST_VERIFY_AREA
+macro_line|#if 0
 multiline_comment|/* page table for 0-4MB for everybody */
 r_extern
 r_int
@@ -118,6 +188,7 @@ id|pg0
 l_int|1024
 )braket
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -139,18 +210,17 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|__zero_page
-c_func
-(paren
-r_void
-)paren
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
 suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
+mdefine_line|#define ZERO_PAGE ((unsigned long) empty_zero_page)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -168,11 +238,8 @@ multiline_comment|/* to set the page-dir */
 multiline_comment|/* tsk is a task_struct and pgdir is a pte_t */
 DECL|macro|SET_PAGE_DIR
 mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.pg_tables = (unsigned long *)(pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;{ &bslash;&n;/*_printk(&quot;Change page tables = %x&bslash;n&quot;, pgdir);*/ &bslash;&n;&t;} &bslash;&n;} while (0)
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
+multiline_comment|/* comes from include/linux/mm.h now -- Cort */
+multiline_comment|/*extern void *high_memory;*/
 DECL|function|pte_none
 r_extern
 r_inline
@@ -214,33 +281,6 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_extern
-r_inline
-r_int
-id|pte_inuse
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
-)paren
-(brace
-r_return
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
-)paren
-)braket
-dot
-id|reserved
-suffix:semicolon
-)brace
-multiline_comment|/*extern inline int pte_inuse(pte_t *ptep)&t;{ return mem_map[MAP_NR(ptep)] != 1; }*/
-macro_line|#endif
 DECL|function|pte_clear
 r_extern
 r_inline
@@ -263,48 +303,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_extern
-r_inline
-r_void
-id|pte_reuse
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
-)paren
-)braket
-dot
-id|reserved
-)paren
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
-)paren
-)braket
-dot
-id|count
-op_increment
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/*&n;   extern inline void pte_reuse(pte_t * ptep)&n;{&n;&t;if (!(mem_map[MAP_NR(ptep)] &amp; MAP_PAGE_RESERVED))&n;&t;&t;mem_map[MAP_NR(ptep)]++;&n;}&n;*/
 DECL|function|pmd_none
 r_extern
 r_inline
@@ -469,33 +467,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*extern inline int pgd_inuse(pgd_t * pgdp)&t;{ return mem_map[MAP_NR(pgdp)] != 1; }*/
-r_extern
-r_inline
-r_int
-id|pgd_inuse
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgdp
-)paren
-(brace
-r_return
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|pgdp
-)paren
-)braket
-dot
-id|reserved
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|pgd_clear
 r_extern
 r_inline
@@ -509,7 +480,6 @@ id|pgdp
 )paren
 (brace
 )brace
-multiline_comment|/*&n;extern inline void pgd_reuse(pgd_t * pgdp)&n;{&n;&t;if (!mem_map[MAP_NR(pgdp)].reserved)&n;&t;&t;mem_map[MAP_NR(pgdp)].count++;&n;}&n;*/
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern
@@ -920,6 +890,47 @@ id|pte
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
+DECL|function|mk_pte_phys
+r_static
+id|pte_t
+id|mk_pte_phys
+c_func
+(paren
+r_int
+r_int
+id|page
+comma
+id|pgprot_t
+id|pgprot
+)paren
+(brace
+id|pte_t
+id|pte
+suffix:semicolon
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_assign
+(paren
+id|page
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|pgprot
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+multiline_comment|/*#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = physpage + pgprot_val(pgprot); __pte; })*/
 DECL|function|mk_pte
 r_extern
 r_inline
@@ -996,7 +1007,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-multiline_comment|/*extern inline void pmd_set(pmd_t * pmdp, pte_t * ptep)&n;{ pmd_val(*pmdp) = _PAGE_TABLE | ((((unsigned long) ptep) - PAGE_OFFSET) &lt;&lt; (32-PAGE_SHIFT)); }&n;*/
 DECL|function|pte_page
 r_extern
 r_inline
@@ -1165,9 +1175,6 @@ id|pte
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*extern inline void pte_free_kernel(pte_t * pte)&n;{&n;&t;mem_map[MAP_NR(pte)] = 1;&n;&t;free_page((unsigned long) pte);&n;}&n;*/
-multiline_comment|/*&n;extern inline pte_t * pte_alloc_kernel(pmd_t * pmd, unsigned long address)&n;{&n;&t;address = (address &gt;&gt; PAGE_SHIFT) &amp; (PTRS_PER_PTE - 1);&n;&t;if (pmd_none(*pmd)) {&n;&t;&t;pte_t * page = (pte_t *) get_free_page(GFP_KERNEL);&n;&t;&t;if (pmd_none(*pmd)) {&n;&t;&t;&t;if (page) {&n;&t;&t;&t;&t;pmd_val(*pmd) = _PAGE_TABLE | (unsigned long) page;&n;&t;&t;&t;&t;mem_map[MAP_NR(page)] = MAP_PAGE_RESERVED;&n;&t;&t;&t;&t;return page + address;&n;&t;&t;&t;}&n;&t;&t;&t;pmd_val(*pmd) = _PAGE_TABLE | (unsigned long) BAD_PAGETABLE;&n;&t;&t;&t;return NULL;&n;&t;&t;}&n;&t;&t;free_page((unsigned long) page);&n;&t;}&n;&t;if (pmd_bad(*pmd)) {&n;&t;&t;printk(&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;, pmd_val(*pmd));&n;&t;&t;pmd_val(*pmd) = _PAGE_TABLE | (unsigned long) BAD_PAGETABLE;&n;&t;&t;return NULL;&n;&t;}&n;&t;return (pte_t *) pmd_page(*pmd) + address;&n;}*/
-multiline_comment|/*&n;extern inline pte_t * pte_alloc_kernel(pmd_t *pmd, unsigned long address)&n;{&n;printk(&quot;pte_alloc_kernel pmd = %08X, address = %08X&bslash;n&quot;, pmd, address);&n;&t;address = (address &gt;&gt; PAGE_SHIFT) &amp; (PTRS_PER_PTE - 1);&n;printk(&quot;address now = %08X&bslash;n&quot;, address);&n;&t;if (pmd_none(*pmd)) {&n;&t;&t;pte_t *page;&n;printk(&quot;pmd_none(*pmd) true&bslash;n&quot;);&n;&t;&t;page = (pte_t *) get_free_page(GFP_KERNEL);&n;printk(&quot;page = %08X after get_free_page(%08X)&bslash;n&quot;,page,GFP_KERNEL);&n;&t;&t;if (pmd_none(*pmd)) {&n;printk(&quot;pmd_none(*pmd=%08X) still&bslash;n&quot;,*pmd);&t;&t;  &n;&t;&t;&t;if (page) {&n;printk(&quot;page true = %08X&bslash;n&quot;,page);&t;&t;&t;  &n;&t;&t;&t;&t;pmd_set(pmd, page);&n;printk(&quot;pmd_set(%08X,%08X)&bslash;n&quot;,pmd,page);&t;&t;&t;  &n;&t;&t;&t;&t;mem_map[MAP_NR(page)].reserved = 1;&n;printk(&quot;did mem_map&bslash;n&quot;,pmd,page);&t;&t;&t;  &n;&t;&t;&t;&t;return page + address;&n;&t;&t;&t;}&n;printk(&quot;did pmd_set(%08X, %08X&bslash;n&quot;,pmd,BAD_PAGETABLE);&t;&t;&t;  &n;&t;&t;&t;pmd_set(pmd, (pte_t *) BAD_PAGETABLE);&n;&t;&t;&t;return NULL;&n;&t;&t;}&n;printk(&quot;did free_page(%08X)&bslash;n&quot;,page);&t;&t;&t;  &t;&t;&n;&t;&t;free_page((unsigned long) page);&n;&t;}&n;&t;if (pmd_bad(*pmd)) {&n;&t;&t;printk(&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;, pmd_val(*pmd));&n;&t;&t;pmd_set(pmd, (pte_t *) BAD_PAGETABLE);&n;&t;&t;return NULL;&n;&t;}&n;printk(&quot;returning pmd_page(%08X) + %08X&bslash;n&quot;,pmd_page(*pmd) , address);&t;  &n;&n;&t;return (pte_t *) pmd_page(*pmd) + address;&n;}&n;*/
 DECL|function|pte_alloc_kernel
 r_extern
 r_inline
@@ -1687,13 +1694,9 @@ id|pgd_t
 id|swapper_pg_dir
 (braket
 l_int|1024
-op_star
-l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/*extern pgd_t *swapper_pg_dir;*/
 multiline_comment|/*&n; * Software maintained MMU tables may have changed -- update the&n; * hardware [aka cache]&n; */
-DECL|function|update_mmu_cache
 r_extern
 r_inline
 r_void
@@ -1712,73 +1715,7 @@ comma
 id|pte_t
 id|_pte
 )paren
-(brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Update MMU cache - VMA: %x, Addr: %x, PTE: %x&bslash;n&quot;
-comma
-id|vma
-comma
-id|address
-comma
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|_pte
-)paren
 suffix:semicolon
-id|_printk
-c_func
-(paren
-l_string|&quot;Update MMU cache - VMA: %x, Addr: %x, PTE: %x&bslash;n&quot;
-comma
-id|vma
-comma
-id|address
-comma
-op_star
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|_pte
-)paren
-suffix:semicolon
-multiline_comment|/*&t;MMU_hash_page(&amp;(vma-&gt;vm_task)-&gt;tss, address &amp; PAGE_MASK, (pte *)&amp;_pte);*/
-macro_line|#endif&t;
-id|MMU_hash_page
-c_func
-(paren
-op_amp
-(paren
-id|current
-)paren
-op_member_access_from_pointer
-id|tss
-comma
-id|address
-op_amp
-id|PAGE_MASK
-comma
-(paren
-id|pte
-op_star
-)paren
-op_amp
-id|_pte
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef _SCHED_INIT_
-DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_task, 0, 0x40000000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
-macro_line|#endif&t;
 DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
 DECL|macro|SWP_OFFSET

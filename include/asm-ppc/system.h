@@ -58,17 +58,6 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*extern void memcpy(void *, void *, int);*/
-r_extern
-r_void
-id|bzero
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 r_struct
 id|task_struct
 suffix:semicolon

@@ -4282,13 +4282,12 @@ l_int|5
 suffix:semicolon
 id|skb-&gt;h.eth-&gt;h_proto
 op_assign
-id|htonl
+id|htons
 c_func
 (paren
 l_int|0x8038
 )paren
 suffix:semicolon
-multiline_comment|/* XXX verify */
 id|skb-&gt;h.raw
 op_add_assign
 id|skb-&gt;dev-&gt;hard_header_len
@@ -4587,9 +4586,12 @@ l_int|5
 suffix:semicolon
 id|skb-&gt;h.eth-&gt;h_proto
 op_assign
+id|htons
+c_func
+(paren
 l_int|0x8038
+)paren
 suffix:semicolon
-multiline_comment|/* XXX verify */
 id|skb-&gt;h.raw
 op_add_assign
 id|skb-&gt;dev-&gt;hard_header_len
@@ -4607,7 +4609,7 @@ id|Tcn_bpdu
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* mark that&squot;s we&squot;ve been here... */
+multiline_comment|/* mark that we&squot;ve been here... */
 id|skb-&gt;pkt_bridged
 op_assign
 id|IS_BRIDGED

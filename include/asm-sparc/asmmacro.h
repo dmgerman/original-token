@@ -15,11 +15,15 @@ DECL|macro|PROCESSOR_ID_TO_OFFSET
 mdefine_line|#define PROCESSOR_ID_TO_OFFSET(reg) &bslash;&n;&t;sll&t;%reg, 2, %reg;
 multiline_comment|/* All trap entry points _must_ begin with this macro or else you&n; * lose.  It makes sure the kernel has a proper window so that&n; * c-code can be called.&n; */
 macro_line|#ifndef SMP_DEBUG
+DECL|macro|SAVE_ALL_HEAD
+mdefine_line|#define SAVE_ALL_HEAD &bslash;&n;&t;sethi&t;%hi(trap_setup), %l4; &bslash;&n;&t;jmpl&t;%l4 + %lo(trap_setup), %l6;
 DECL|macro|SAVE_ALL
-mdefine_line|#define SAVE_ALL &bslash;&n;&t;sethi&t;%hi(trap_setup), %l4; &bslash;&n;&t;jmpl&t;%l4 + %lo(trap_setup), %l6; &bslash;&n;&t; nop;
+mdefine_line|#define SAVE_ALL &bslash;&n;&t;SAVE_ALL_HEAD &bslash;&n;&t; nop;
 macro_line|#else
+DECL|macro|SAVE_ALL_HEAD
+mdefine_line|#define SAVE_ALL_HEAD &bslash;&n;&t;GET_PROCESSOR_ID(l4); &bslash;&n;&t;set&t;C_LABEL(trap_log), %l5; &bslash;&n;&t;sll&t;%l4, 11, %l6; &bslash;&n;&t;add&t;%l5, %l6, %l5; &bslash;&n;&t;set&t;C_LABEL(trap_log_ent), %l6; &bslash;&n;&t;sll&t;%l4, 2, %l4; &bslash;&n;&t;add&t;%l6, %l4, %l6; &bslash;&n;&t;ld&t;[%l6], %l6; &bslash;&n;&t;sll&t;%l6, 3, %l6; &bslash;&n;&t;st&t;%l1, [%l5 + %l6]; &bslash;&n;&t;add&t;%l5, 4, %l5; &bslash;&n;&t;st&t;%l0, [%l5 + %l6]; &bslash;&n;&t;set&t;C_LABEL(trap_log_ent), %l5; &bslash;&n;&t;add&t;%l5, %l4, %l5; &bslash;&n;&t;srl&t;%l6, 3, %l6; &bslash;&n;&t;add&t;%l6, 1, %l6; &bslash;&n;&t;and&t;%l6, 255, %l6; &bslash;&n;&t;st&t;%l6, [%l5]; &bslash;&n;&t;sethi&t;%hi(trap_setup), %l4; &bslash;&n;&t;jmpl&t;%l4 + %lo(trap_setup), %l6;
 DECL|macro|SAVE_ALL
-mdefine_line|#define SAVE_ALL &bslash;&n;&t;GET_PROCESSOR_ID(l4); &bslash;&n;&t;set&t;C_LABEL(trap_log), %l5; &bslash;&n;&t;sll&t;%l4, 11, %l6; &bslash;&n;&t;add&t;%l5, %l6, %l5; &bslash;&n;&t;set&t;C_LABEL(trap_log_ent), %l6; &bslash;&n;&t;sll&t;%l4, 2, %l4; &bslash;&n;&t;add&t;%l6, %l4, %l6; &bslash;&n;&t;ld&t;[%l6], %l6; &bslash;&n;&t;sll&t;%l6, 3, %l6; &bslash;&n;&t;st&t;%l1, [%l5 + %l6]; &bslash;&n;&t;add&t;%l5, 4, %l5; &bslash;&n;&t;st&t;%l0, [%l5 + %l6]; &bslash;&n;&t;set&t;C_LABEL(trap_log_ent), %l5; &bslash;&n;&t;add&t;%l5, %l4, %l5; &bslash;&n;&t;srl&t;%l6, 3, %l6; &bslash;&n;&t;add&t;%l6, 1, %l6; &bslash;&n;&t;and&t;%l6, 255, %l6; &bslash;&n;&t;st&t;%l6, [%l5]; &bslash;&n;&t;sethi&t;%hi(trap_setup), %l4; &bslash;&n;&t;jmpl&t;%l4 + %lo(trap_setup), %l6; &bslash;&n;&t; nop;
+mdefine_line|#define SAVE_ALL &bslash;&n;&t;SAVE_ALL_HEAD &bslash;&n;&t; nop;
 macro_line|#endif
 multiline_comment|/* All traps low-level code here must end with this macro.&n; * For SMP configurations the ret_trap_entry routine will&n; * have to appropriate code to actually release the kernel&n; * entry lock.&n; */
 DECL|macro|RESTORE_ALL

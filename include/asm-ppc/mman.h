@@ -21,12 +21,14 @@ DECL|macro|MAP_ANONYMOUS
 mdefine_line|#define MAP_ANONYMOUS&t;0x20&t;&t;/* don&squot;t use a file */
 DECL|macro|MAP_RENAME
 mdefine_line|#define MAP_RENAME      MAP_ANONYMOUS   /* In SunOS terminology */
+DECL|macro|MAP_NORESERVE
+mdefine_line|#define MAP_NORESERVE   0x40            /* don&squot;t reserve swap pages */
 DECL|macro|MAP_GROWSDOWN
 mdefine_line|#define MAP_GROWSDOWN&t;0x0100&t;&t;/* stack-like segment */
 DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 DECL|macro|MAP_EXECUTABLE
-mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as an executable */
+mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
 DECL|macro|MS_ASYNC
 mdefine_line|#define MS_ASYNC&t;1&t;&t;/* sync memory asynchronously */
 DECL|macro|MS_INVALIDATE

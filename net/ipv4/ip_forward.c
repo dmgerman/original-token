@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/icmp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
+macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;

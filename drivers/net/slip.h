@@ -182,7 +182,7 @@ multiline_comment|/* 6 bit slip controls &t;&t;*/
 macro_line|#endif
 DECL|member|flags
 r_int
-r_char
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Flag values/ mode etc&t;*/

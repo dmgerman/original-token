@@ -4621,10 +4621,6 @@ id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
 suffix:semicolon
-id|sk-&gt;window
-op_assign
-id|osk-&gt;window
-suffix:semicolon
 id|sk-&gt;mtu
 op_assign
 id|osk-&gt;mtu
@@ -5139,7 +5135,7 @@ id|sk-&gt;socket
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Not used, but we should do this. **/
+multiline_comment|/* Not used, but we should do this */
 r_return
 l_int|0
 suffix:semicolon
@@ -7906,14 +7902,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|msg-&gt;msg_flags
 op_amp
 op_complement
 id|MSG_DONTWAIT
-)paren
-op_logical_or
-id|msg-&gt;msg_control
 )paren
 r_return
 op_minus
@@ -8569,7 +8561,7 @@ id|sk
 comma
 id|flags
 comma
-id|flags
+id|msg-&gt;msg_flags
 op_amp
 id|MSG_DONTWAIT
 comma
@@ -8664,6 +8656,8 @@ r_if
 c_cond
 (paren
 id|sax
+op_ne
+l_int|NULL
 )paren
 (brace
 id|ax25_digi

@@ -323,7 +323,7 @@ id|sk-&gt;protinfo.nr-&gt;n2count
 op_assign
 l_int|0
 suffix:semicolon
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 op_assign
 id|skb-&gt;data
 (braket
@@ -1126,7 +1126,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.nr-&gt;vl
 op_plus
-id|sk-&gt;window
+id|sk-&gt;protinfo.nr-&gt;window
 )paren
 op_mod
 id|NR_MODULUS

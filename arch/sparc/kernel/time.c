@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.19 1996/10/31 06:28:26 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.20 1996/11/13 05:09:40 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/timer.h&gt;
@@ -569,13 +570,17 @@ suffix:semicolon
 multiline_comment|/* Was the write blocked? */
 )brace
 multiline_comment|/* Probe for the real time clock chip. */
-DECL|function|clock_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|clock_probe
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -1059,12 +1064,16 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|time_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|time_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -439,39 +439,62 @@ DECL|macro|MODE_ADM
 mdefine_line|#define MODE_ADM 1
 DECL|macro|MODE_ABM
 mdefine_line|#define MODE_ABM 2
-DECL|member|rtq_front
+DECL|member|llc_callbacks
+r_int
+id|llc_callbacks
+suffix:semicolon
+multiline_comment|/* Pending callbacks */
+DECL|macro|LLC_CONNECT_INDICATION
+mdefine_line|#define LLC_CONNECT_INDICATION&t;1&t;
+DECL|macro|LLC_CONNECT_CONFIRM
+mdefine_line|#define LLC_CONNECT_CONFIRM&t;2
+DECL|macro|LLC_DATA_INDICATION
+mdefine_line|#define LLC_DATA_INDICATION&t;4
+DECL|macro|LLC_DISC_INDICATION
+mdefine_line|#define LLC_DISC_INDICATION&t;8
+DECL|macro|LLC_RESET_INDIC_LOC
+mdefine_line|#define LLC_RESET_INDIC_LOC&t;16
+DECL|macro|LLC_RESET_INDIC_REM
+mdefine_line|#define LLC_RESET_INDIC_REM&t;32
+DECL|macro|LLC_RESET_CONFIRM
+mdefine_line|#define LLC_RESET_CONFIRM&t;64
+DECL|macro|LLC_FRMR_RECV
+mdefine_line|#define LLC_FRMR_RECV&t;&t;128
+DECL|macro|LLC_FRMR_SENT
+mdefine_line|#define LLC_FRMR_SENT&t;&t;256
+DECL|macro|LLC_REMOTE_BUSY
+mdefine_line|#define LLC_REMOTE_BUSY&t;&t;512
+DECL|macro|LLC_REMOTE_NOTBUSY
+mdefine_line|#define LLC_REMOTE_NOTBUSY&t;1024
+DECL|macro|LLC_SET_REMOTE_BUSY
+mdefine_line|#define LLC_SET_REMOTE_BUSY&t;2048
+DECL|member|inc_skb
 r_struct
 id|sk_buff
 op_star
-id|rtq_front
+id|inc_skb
 suffix:semicolon
-multiline_comment|/* oldest skb in the re-transmit queue */
-DECL|member|rtq_back
+multiline_comment|/* Saved data buffer for indications */
+DECL|member|rtq
 r_struct
-id|sk_buff
-op_star
-id|rtq_back
+id|sk_buff_head
+id|rtq
 suffix:semicolon
-DECL|member|atq_front
+multiline_comment|/* Retransmit queue */
+DECL|member|atq
 r_struct
-id|sk_buff
-op_star
-id|atq_front
+id|sk_buff_head
+id|atq
 suffix:semicolon
-multiline_comment|/* oldest skb in the await-transmit queue */
-DECL|member|atq_back
-r_struct
-id|sk_buff
-op_star
-id|atq_back
-suffix:semicolon
+multiline_comment|/* Await transit queue */
 DECL|member|xid_count
 r_int
 r_char
 id|xid_count
 suffix:semicolon
 DECL|member|nextllc
-r_char
+r_struct
+id|llc_struct
 op_star
 id|nextllc
 suffix:semicolon
@@ -479,9 +502,9 @@ multiline_comment|/* ptr to next llc struct in proto chain */
 )brace
 suffix:semicolon
 DECL|macro|ADD_TO_RTQ
-mdefine_line|#define ADD_TO_RTQ(skb) llc_add_to_queue(skb, &amp;lp-&gt;rtq_front, &amp;lp-&gt;rtq_back) 
+mdefine_line|#define ADD_TO_RTQ(skb) skb_queue_tail(&amp;lp-&gt;rtq,skb)
 DECL|macro|ADD_TO_ATQ
-mdefine_line|#define ADD_TO_ATQ(skb) llc_add_to_queue(skb, &amp;lp-&gt;atq_front, &amp;lp-&gt;atq_back) 
+mdefine_line|#define ADD_TO_ATQ(skb) skb_queue_tail(&amp;lp-&gt;atq,skb)
 r_void
 id|llc_cancel_timers
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: termios.h,v 1.20 1996/10/31 00:59:54 davem Exp $ */
+multiline_comment|/* $Id: termios.h,v 1.21 1996/11/13 02:30:40 davem Exp $ */
 macro_line|#ifndef _SPARC_TERMIOS_H
 DECL|macro|_SPARC_TERMIOS_H
 mdefine_line|#define _SPARC_TERMIOS_H
@@ -158,6 +158,10 @@ DECL|macro|N_MOUSE
 mdefine_line|#define N_MOUSE&t;&t;2
 DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
+DECL|macro|N_STRIP
+mdefine_line|#define N_STRIP&t;&t;4
+DECL|macro|N_AX25
+mdefine_line|#define N_AX25&t;&t;5
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * c_cc characters in the termio structure.  Oh, how I love being&n; * backwardly compatible.  Notice that character 4 and 5 are&n; * interpreted differently depending on whether ICANON is set in&n; * c_lflag.  If it&squot;s set, they are used as _VEOF and _VEOL, otherwise&n; * as _VMIN and V_TIME.  This is for compatibility with OSF/1 (which&n; * is compatible with sysV)...&n; */
 DECL|macro|_VMIN

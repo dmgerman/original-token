@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.51 1996/10/27 08:55:32 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.54 1996/12/03 02:38:31 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1012,6 +1012,17 @@ id|pgd_alloc
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|pgd_flush
+)paren
+(paren
+id|pgd_t
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Fine grained cache/tlb flushing. */
 macro_line|#ifdef __SMP__
 r_extern
@@ -1144,6 +1155,23 @@ id|address
 suffix:semicolon
 r_extern
 r_void
+(paren
+op_star
+id|local_flush_sig_insns
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|insn_addr
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|smp_flush_cache_all
 c_func
 (paren
@@ -1256,6 +1284,21 @@ c_func
 r_int
 r_int
 id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|smp_flush_sig_insns
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|insn_addr
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1387,6 +1430,23 @@ r_int
 id|page
 )paren
 suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_sig_insns
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|insn_addr
+)paren
+suffix:semicolon
 multiline_comment|/* The permissions for pgprot_val to make a page mapped on the obio space */
 r_extern
 r_int
@@ -1493,11 +1553,11 @@ r_int
 id|invalid_segment
 suffix:semicolon
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry)&gt;&gt;2) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 2) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) (((entry) &gt;&gt; 9) &amp; 0x7ffff)
+mdefine_line|#define SWP_OFFSET(entry) (((entry) &gt;&gt; 9) &amp; 0x3ffff)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 9))
+mdefine_line|#define SWP_ENTRY(type,offset) ((((type) &amp; 0x7f) &lt;&lt; 2) | (((offset) &amp; 0x3ffff) &lt;&lt; 9))
 DECL|struct|ctx_list
 r_struct
 id|ctx_list

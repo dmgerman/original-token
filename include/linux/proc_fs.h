@@ -315,6 +315,15 @@ comma
 DECL|enumerator|PROC_NET_CL2LLC
 id|PROC_NET_CL2LLC
 comma
+DECL|enumerator|PROC_NET_X25_LINKS
+id|PROC_NET_X25_LINKS
+comma
+DECL|enumerator|PROC_NET_X25_ROUTES
+id|PROC_NET_X25_ROUTES
+comma
+DECL|enumerator|PROC_NET_X25
+id|PROC_NET_X25
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace
@@ -411,6 +420,9 @@ id|PROC_SCSI_PPA
 comma
 DECL|enumerator|PROC_SCSI_ESP
 id|PROC_SCSI_ESP
+comma
+DECL|enumerator|PROC_SCSI_QLOGICPTI
+id|PROC_SCSI_QLOGICPTI
 comma
 DECL|enumerator|PROC_SCSI_A3000
 id|PROC_SCSI_A3000

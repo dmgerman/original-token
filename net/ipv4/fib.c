@@ -92,7 +92,6 @@ r_static
 r_int
 id|fib_stamp
 suffix:semicolon
-r_static
 r_int
 id|rtmsg_process
 c_func
@@ -282,7 +281,6 @@ id|atomic_t
 id|fib_users
 suffix:semicolon
 DECL|function|fib_lock
-r_static
 r_void
 id|fib_lock
 c_func
@@ -316,7 +314,6 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|fib_unlock
-r_static
 r_void
 id|fib_unlock
 c_func
@@ -2516,8 +2513,7 @@ l_int|NULL
 suffix:semicolon
 id|fz
 op_assign
-op_amp
-id|local_class.fib_zone_list
+id|local_class.fib_zones
 (braket
 id|logmask
 )braket
@@ -3933,10 +3929,11 @@ suffix:semicolon
 r_int
 id|logmask
 op_assign
-l_int|32
+l_int|32L
 op_minus
 id|r-&gt;rtmsg_prefixlen
 suffix:semicolon
+multiline_comment|/* gcc bug work-around: must be &quot;L&quot; and &quot;long&quot; */
 id|u32
 id|dst
 op_assign
@@ -6429,7 +6426,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|rtmsg_process
-r_static
 r_int
 id|rtmsg_process
 c_func

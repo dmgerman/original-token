@@ -281,7 +281,7 @@ id|buffer
 comma
 l_string|&quot;%-127s&bslash;n&quot;
 comma
-l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tTOS&bslash;tHH&bslash;tARP&quot;
+l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;t&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tSource&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;tTOS&bslash;tHHRef&bslash;tHHUptod&bslash;tSpecDst&bslash;tHash&quot;
 )paren
 suffix:semicolon
 id|len
@@ -351,7 +351,7 @@ c_func
 (paren
 id|temp
 comma
-l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%X&bslash;t%d&bslash;t%u&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%u&bslash;t%u&bslash;t%02x&bslash;t%d&bslash;t%1d&bslash;t%08x&bslash;t%02x&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%8X&bslash;t%d&bslash;t%u&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%u&bslash;t%u&bslash;t%02X&bslash;t%d&bslash;t%1d&bslash;t%08X&bslash;t%02X&quot;
 comma
 id|r-&gt;u.dst.dev
 ques

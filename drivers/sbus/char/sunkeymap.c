@@ -305,13 +305,13 @@ l_int|0xf10e
 comma
 l_int|0xf701
 comma
-l_int|0xf105
+l_int|0xf10f
 comma
 l_int|0xf200
 comma
 l_int|0xf110
 comma
-l_int|0xf107
+l_int|0xf111
 comma
 l_int|0xf112
 comma
@@ -571,7 +571,7 @@ l_int|0xf510
 comma
 l_int|0xf701
 comma
-l_int|0xf200
+l_int|0xf511
 comma
 l_int|0xf200
 comma
@@ -837,7 +837,7 @@ l_int|0xf104
 comma
 l_int|0xf701
 comma
-l_int|0xf200
+l_int|0xf105
 comma
 l_int|0xf200
 comma
@@ -1635,7 +1635,7 @@ l_int|0xf504
 comma
 l_int|0xf701
 comma
-l_int|0xf200
+l_int|0xf505
 comma
 l_int|0xf200
 comma
@@ -1739,7 +1739,7 @@ l_int|0xf200
 comma
 l_int|0xf200
 comma
-l_int|0xf200
+l_int|0xf20c
 comma
 l_int|0xf20e
 comma

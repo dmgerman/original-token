@@ -1,7 +1,11 @@
 multiline_comment|/*&n; * This program will make a type 0x41 load image from an&n; * executable file.  Note:  assumes that the executable has&n; * already been &quot;flattened&quot; by &squot;mkboot&squot;.&n; *&n; * usage: mk_type41 flat-file image&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;errno.h&gt;
+macro_line|#ifdef linux
+macro_line|#include &lt;asm/stat.h&gt;
+macro_line|#else
 macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#endif
 DECL|function|_LE
 id|_LE
 c_func
@@ -663,7 +667,7 @@ l_int|79
 suffix:semicolon
 multiline_comment|/* assumes 80 cylinders/diskette     */
 multiline_comment|/*&n;     * The &quot;PReP&quot; software ignores the above fields and just looks at&n;     * the next two.&n;     *   - size of the diskette is (assumed to be)&n;     *     (2 tracks/cylinder)(18 sectors/tracks)(80 cylinders/diskette)&n;     *   - unlike the above sector numbers, the beginning sector is zero-based!&n;     */
-macro_line|#if 0     
+macro_line|#if 0
 id|pe-&gt;beginning_sector
 op_assign
 id|LeDword

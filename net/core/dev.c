@@ -2671,7 +2671,7 @@ l_char|&squot; &squot;
 comma
 id|stats-&gt;discard.nwid
 comma
-id|stats-&gt;discard.crypt
+id|stats-&gt;discard.codec
 comma
 id|stats-&gt;discard.misc
 )paren

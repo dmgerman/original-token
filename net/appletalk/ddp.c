@@ -7831,7 +7831,8 @@ suffix:semicolon
 id|sock_unregister
 c_func
 (paren
-id|atalk_proto_ops.family
+op_amp
+id|atalk_family_ops
 )paren
 suffix:semicolon
 id|free_route_list

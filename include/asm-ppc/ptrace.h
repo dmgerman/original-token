@@ -64,6 +64,16 @@ r_int
 r_int
 id|dsisr
 suffix:semicolon
+DECL|member|srr1
+r_int
+r_int
+id|srr1
+suffix:semicolon
+DECL|member|srr0
+r_int
+r_int
+id|srr0
+suffix:semicolon
 DECL|member|hash1
 DECL|member|hash2
 r_int
@@ -100,14 +110,6 @@ r_int
 id|result
 suffix:semicolon
 multiline_comment|/* Result of a system call */
-DECL|member|fpr
-r_float
-id|fpr
-(braket
-l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* Caution! Only FP0-FP3 save on interrupts */
 DECL|member|fpcsr
 r_float
 id|fpcsr
@@ -124,14 +126,7 @@ r_int
 id|marker
 suffix:semicolon
 multiline_comment|/* Should have DEADDEAD */
-DECL|member|_underhead
-r_int
-r_int
-id|_underhead
-(braket
-l_int|20
-)braket
-suffix:semicolon
+multiline_comment|/*unsigned long _underhead[20]; */
 multiline_comment|/* Callee&squot;s register save area */
 DECL|member|edx
 r_int

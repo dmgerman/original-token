@@ -53,7 +53,6 @@ id|ax25-&gt;write_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -62,7 +61,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -79,7 +77,6 @@ id|ax25-&gt;ack_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -88,7 +85,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -105,7 +101,6 @@ id|ax25-&gt;reseq_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -114,7 +109,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
@@ -131,7 +125,6 @@ id|ax25-&gt;frag_queue
 op_ne
 l_int|NULL
 )paren
-(brace
 id|kfree_skb
 c_func
 (paren
@@ -140,7 +133,6 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * This routine purges the input queue of those frames that have been&n; * acknowledged. This replaces the boxes labelled &quot;V(a) &lt;- N(r)&quot; on the&n; * SDL diagram.&n; */
 DECL|function|ax25_frames_acked
@@ -2245,6 +2237,7 @@ id|cmd
 suffix:semicolon
 op_star
 id|p
+op_increment
 op_assign
 id|param
 suffix:semicolon

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -682,7 +683,10 @@ id|lvl14_resolution
 suffix:semicolon
 )brace
 macro_line|#endif /* HANDLE_LVL14_IRQ */
-DECL|function|sun4m_init_timers
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|sun4m_init_timers
@@ -702,6 +706,7 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
 )paren
 )paren
 (brace
@@ -1152,12 +1157,16 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|function|sun4m_init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sun4m_init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

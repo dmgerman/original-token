@@ -1847,7 +1847,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lp-&gt;rtq_front
+id|skb_peek
+c_func
+(paren
+op_amp
+id|lp-&gt;rtq
+)paren
 op_ne
 l_int|NULL
 )paren

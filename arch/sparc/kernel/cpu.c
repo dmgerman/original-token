@@ -1,5 +1,6 @@
 multiline_comment|/* cpu.c: Dinky routines to look for the kind of Sparc cpu&n; *        we are on.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
@@ -334,7 +335,7 @@ l_int|9
 comma
 l_int|3
 comma
-l_string|&quot;Weitek on-chip FPU&quot;
+l_string|&quot;Fujitsu or Weitek on-chip FPU&quot;
 )brace
 comma
 )brace
@@ -408,7 +409,7 @@ l_int|1
 comma
 l_int|0xe
 comma
-l_string|&quot;ROSS HyperSparc RT625&quot;
+l_string|&quot;ROSS HyperSparc RT625 or RT626&quot;
 )brace
 comma
 multiline_comment|/* ECL Implementation, CRAY S-MP Supercomputer... AIEEE! */
@@ -516,7 +517,7 @@ l_int|9
 comma
 l_int|0
 comma
-l_string|&quot;Weitek Power-UP&quot;
+l_string|&quot;Fujitsu or Weitek Power-UP&quot;
 )brace
 comma
 (brace
@@ -524,7 +525,7 @@ l_int|9
 comma
 l_int|1
 comma
-l_string|&quot;Weitek Power-UP&quot;
+l_string|&quot;Fujitsu or Weitek Power-UP&quot;
 )brace
 comma
 (brace
@@ -532,7 +533,7 @@ l_int|9
 comma
 l_int|2
 comma
-l_string|&quot;Weitek Power-UP&quot;
+l_string|&quot;Fujitsu or Weitek Power-UP&quot;
 )brace
 comma
 (brace
@@ -540,7 +541,7 @@ l_int|9
 comma
 l_int|3
 comma
-l_string|&quot;Weitek Power-UP&quot;
+l_string|&quot;Fujitsu or Weitek Power-UP&quot;
 )brace
 comma
 (brace
@@ -636,12 +637,16 @@ r_int
 r_int
 id|fsr_storage
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|cpu_probe
 id|cpu_probe
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

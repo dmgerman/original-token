@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.10 1996/08/29 09:48:14 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.11 1996/11/19 11:26:14 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -527,5 +527,9 @@ r_char
 op_star
 )paren
 suffix:semicolon
+DECL|macro|virt_to_phys
+mdefine_line|#define virt_to_phys(x) __pa((unsigned long)(x))
+DECL|macro|phys_to_virt
+mdefine_line|#define phys_to_virt(x) __va((unsigned long)(x))
 macro_line|#endif /* !(__SPARC_IO_H) */
 eof

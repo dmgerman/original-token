@@ -91,6 +91,8 @@ DECL|macro|S_APPEND
 mdefine_line|#define S_APPEND&t;256&t;/* Append-only file */
 DECL|macro|S_IMMUTABLE
 mdefine_line|#define S_IMMUTABLE&t;512&t;/* Immutable file */
+DECL|macro|MS_NOATIME
+mdefine_line|#define MS_NOATIME&t;1024&t;/* Do not update access times. */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_MANDLOCK)
@@ -102,6 +104,8 @@ mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
 multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
+DECL|macro|DO_UPDATE_ATIME
+mdefine_line|#define DO_UPDATE_ATIME(inode) (!((inode)-&gt;i_flags &amp; MS_NOATIME) &amp;&amp; !IS_RDONLY(inode))
 DECL|macro|IS_NOSUID
 mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
 DECL|macro|IS_NODEV

@@ -356,7 +356,94 @@ l_int|15
 multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
-multiline_comment|/* #define PCI_DEBUG */
+multiline_comment|/* IBM Nobis */
+DECL|variable|Nobis_pci_IRQ_map
+r_static
+r_char
+id|Nobis_pci_IRQ_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 14 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+)brace
+suffix:semicolon
+DECL|variable|Nobis_pci_IRQ_routes
+r_static
+r_char
+id|Nobis_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|13
+comma
+multiline_comment|/* Line 1 */
+l_int|13
+comma
+multiline_comment|/* Line 2 */
+l_int|13
+comma
+multiline_comment|/* Line 3 */
+l_int|13
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+DECL|macro|PCI_DEBUG
+mdefine_line|#define PCI_DEBUG
+DECL|macro|PCI_DEBUG
+macro_line|#undef  PCI_DEBUG
 macro_line|#ifdef PCI_STATS
 DECL|variable|PCI_conversions
 r_int
@@ -1801,6 +1888,32 @@ suffix:semicolon
 id|Motherboard_routes
 op_assign
 id|BeBox_pci_IRQ_routes
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|_get_PVR
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+op_eq
+l_int|1
+)paren
+(brace
+multiline_comment|/* Nobis */
+id|Motherboard_map
+op_assign
+id|Nobis_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Nobis_pci_IRQ_routes
 suffix:semicolon
 )brace
 r_else

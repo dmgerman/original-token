@@ -23,6 +23,10 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
+DECL|member|dma2
+r_int
+id|dma2
+suffix:semicolon
 DECL|member|seriobase
 r_int
 id|seriobase
@@ -127,6 +131,20 @@ r_int
 r_char
 id|bits
 suffix:semicolon
+DECL|member|modename
+r_char
+id|modename
+(braket
+l_int|128
+)braket
+suffix:semicolon
+DECL|member|drivername
+r_char
+id|drivername
+(braket
+l_int|32
+)braket
+suffix:semicolon
 DECL|member|data
 )brace
 id|data
@@ -136,22 +154,48 @@ suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*&n; * ioctl values&n; */
 DECL|macro|HDLCDRVCTL_GETMODEMPAR
-mdefine_line|#define HDLCDRVCTL_GETMODEMPAR      0
+mdefine_line|#define HDLCDRVCTL_GETMODEMPAR       0
 DECL|macro|HDLCDRVCTL_SETMODEMPAR
-mdefine_line|#define HDLCDRVCTL_SETMODEMPAR      1
+mdefine_line|#define HDLCDRVCTL_SETMODEMPAR       1
+DECL|macro|HDLCDRVCTL_MODEMPARMASK
+mdefine_line|#define HDLCDRVCTL_MODEMPARMASK      2  /* not handled by hdlcdrv */
 DECL|macro|HDLCDRVCTL_GETCHANNELPAR
-mdefine_line|#define HDLCDRVCTL_GETCHANNELPAR    2
+mdefine_line|#define HDLCDRVCTL_GETCHANNELPAR    10
 DECL|macro|HDLCDRVCTL_SETCHANNELPAR
-mdefine_line|#define HDLCDRVCTL_SETCHANNELPAR    3
+mdefine_line|#define HDLCDRVCTL_SETCHANNELPAR    11
 DECL|macro|HDLCDRVCTL_GETSTAT
-mdefine_line|#define HDLCDRVCTL_GETSTAT          4
+mdefine_line|#define HDLCDRVCTL_GETSTAT          20
 DECL|macro|HDLCDRVCTL_CALIBRATE
-mdefine_line|#define HDLCDRVCTL_CALIBRATE        5
+mdefine_line|#define HDLCDRVCTL_CALIBRATE        21
 multiline_comment|/*&n; * these are mainly for debugging purposes&n; */
 DECL|macro|HDLCDRVCTL_GETSAMPLES
-mdefine_line|#define HDLCDRVCTL_GETSAMPLES       10
+mdefine_line|#define HDLCDRVCTL_GETSAMPLES       30
 DECL|macro|HDLCDRVCTL_GETBITS
-mdefine_line|#define HDLCDRVCTL_GETBITS          11
+mdefine_line|#define HDLCDRVCTL_GETBITS          31
+multiline_comment|/*&n; * not handled by hdlcdrv, but by its depending drivers&n; */
+DECL|macro|HDLCDRVCTL_GETMODE
+mdefine_line|#define HDLCDRVCTL_GETMODE          40
+DECL|macro|HDLCDRVCTL_SETMODE
+mdefine_line|#define HDLCDRVCTL_SETMODE          41
+DECL|macro|HDLCDRVCTL_MODELIST
+mdefine_line|#define HDLCDRVCTL_MODELIST         42
+DECL|macro|HDLCDRVCTL_DRIVERNAME
+mdefine_line|#define HDLCDRVCTL_DRIVERNAME       43
+multiline_comment|/*&n; * mask of needed modem parameters, returned by HDLCDRVCTL_MODEMPARMASK&n; */
+DECL|macro|HDLCDRV_PARMASK_IOBASE
+mdefine_line|#define HDLCDRV_PARMASK_IOBASE      (1&lt;&lt;0)
+DECL|macro|HDLCDRV_PARMASK_IRQ
+mdefine_line|#define HDLCDRV_PARMASK_IRQ         (1&lt;&lt;1)
+DECL|macro|HDLCDRV_PARMASK_DMA
+mdefine_line|#define HDLCDRV_PARMASK_DMA         (1&lt;&lt;2)
+DECL|macro|HDLCDRV_PARMASK_DMA2
+mdefine_line|#define HDLCDRV_PARMASK_DMA2        (1&lt;&lt;3)
+DECL|macro|HDLCDRV_PARMASK_SERIOBASE
+mdefine_line|#define HDLCDRV_PARMASK_SERIOBASE   (1&lt;&lt;4)
+DECL|macro|HDLCDRV_PARMASK_PARIOBASE
+mdefine_line|#define HDLCDRV_PARMASK_PARIOBASE   (1&lt;&lt;5)
+DECL|macro|HDLCDRV_PARMASK_MIDIIOBASE
+mdefine_line|#define HDLCDRV_PARMASK_MIDIIOBASE  (1&lt;&lt;6)
 multiline_comment|/* -------------------------------------------------------------------- */
 macro_line|#ifdef __KERNEL__
 DECL|macro|HDLCDRV_MAGIC
@@ -165,7 +209,7 @@ mdefine_line|#define HDLCDRV_BITBUFFER  256 /* should be a power of 2 for speed 
 DECL|macro|HDLCDRV_LOOPBACK
 macro_line|#undef HDLCDRV_LOOPBACK  /* define for HDLC debugging purposes */
 DECL|macro|HDLCDRV_DEBUG
-macro_line|#undef HDLCDRV_DEBUG
+mdefine_line|#define HDLCDRV_DEBUG
 multiline_comment|/* maximum packet length, excluding CRC */
 DECL|macro|HDLCDRV_MAXFLEN
 mdefine_line|#define HDLCDRV_MAXFLEN             400&t;
@@ -367,9 +411,17 @@ r_struct
 id|hdlcdrv_ops
 (brace
 multiline_comment|/*&n;&t; * first some informations needed by the hdlcdrv routines&n;&t; */
-DECL|member|bitrate
-r_int
-id|bitrate
+DECL|member|drvname
+r_const
+r_char
+op_star
+id|drvname
+suffix:semicolon
+DECL|member|drvinfo
+r_const
+r_char
+op_star
+id|drvinfo
 suffix:semicolon
 multiline_comment|/*&n;&t; * the routines called by the hdlcdrv routines&n;&t; */
 DECL|member|open
@@ -411,6 +463,10 @@ r_struct
 id|ifreq
 op_star
 comma
+r_struct
+id|hdlcdrv_ioctl
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
@@ -438,10 +494,24 @@ id|hdlcdrv_ops
 op_star
 id|ops
 suffix:semicolon
+r_struct
+(brace
+DECL|member|bitrate
+r_int
+id|bitrate
+suffix:semicolon
+DECL|member|par
+)brace
+id|par
+suffix:semicolon
 DECL|struct|hdlcdrv_pttoutput
 r_struct
 id|hdlcdrv_pttoutput
 (brace
+DECL|member|dma2
+r_int
+id|dma2
+suffix:semicolon
 DECL|member|seriobase
 r_int
 id|seriobase
@@ -838,6 +908,7 @@ suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_putbits
 r_extern
+r_inline
 r_void
 id|hdlcdrv_putbits
 c_func
@@ -864,6 +935,7 @@ suffix:semicolon
 )brace
 DECL|function|hdlcdrv_getbits
 r_extern
+r_inline
 r_int
 r_int
 id|hdlcdrv_getbits
@@ -937,6 +1009,7 @@ suffix:semicolon
 )brace
 DECL|function|hdlcdrv_channelbit
 r_extern
+r_inline
 r_void
 id|hdlcdrv_channelbit
 c_func
@@ -965,6 +1038,7 @@ macro_line|#endif /* HDLCDRV_DEBUG */
 )brace
 DECL|function|hdlcdrv_setdcd
 r_extern
+r_inline
 r_void
 id|hdlcdrv_setdcd
 c_func
@@ -987,6 +1061,7 @@ suffix:semicolon
 )brace
 DECL|function|hdlcdrv_ptt
 r_extern
+r_inline
 r_int
 id|hdlcdrv_ptt
 c_func

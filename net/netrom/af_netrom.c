@@ -2118,10 +2118,6 @@ id|sk-&gt;zapped
 op_assign
 l_int|1
 suffix:semicolon
-id|sk-&gt;window
-op_assign
-id|sysctl_netrom_transport_requested_window_size
-suffix:semicolon
 id|sk-&gt;state_change
 op_assign
 id|def_callback1
@@ -2214,6 +2210,10 @@ suffix:semicolon
 id|nr-&gt;paclen
 op_assign
 id|sysctl_netrom_transport_packet_length
+suffix:semicolon
+id|nr-&gt;window
+op_assign
+id|sysctl_netrom_transport_requested_window_size
 suffix:semicolon
 id|nr-&gt;t1timer
 op_assign
@@ -2479,10 +2479,6 @@ id|sk-&gt;state
 op_assign
 id|TCP_ESTABLISHED
 suffix:semicolon
-id|sk-&gt;window
-op_assign
-id|osk-&gt;window
-suffix:semicolon
 id|sk-&gt;mtu
 op_assign
 id|osk-&gt;mtu
@@ -2559,6 +2555,10 @@ suffix:semicolon
 id|nr-&gt;paclen
 op_assign
 id|osk-&gt;protinfo.nr-&gt;paclen
+suffix:semicolon
+id|nr-&gt;window
+op_assign
+id|osk-&gt;protinfo.nr-&gt;window
 suffix:semicolon
 id|nr-&gt;device
 op_assign
@@ -2889,7 +2889,7 @@ id|sk-&gt;socket
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Not used, but we should do this. **/
+multiline_comment|/* Not used, but we should do this */
 r_return
 l_int|0
 suffix:semicolon
@@ -4237,9 +4237,9 @@ c_cond
 (paren
 id|window
 OL
-id|make-&gt;window
+id|make-&gt;protinfo.nr-&gt;window
 )paren
-id|make-&gt;window
+id|make-&gt;protinfo.nr-&gt;window
 op_assign
 id|window
 suffix:semicolon
@@ -5618,7 +5618,7 @@ id|s-&gt;protinfo.nr-&gt;rtt
 op_div
 id|PR_SLOWHZ
 comma
-id|s-&gt;window
+id|s-&gt;protinfo.nr-&gt;window
 comma
 id|s-&gt;protinfo.nr-&gt;paclen
 comma

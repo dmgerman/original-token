@@ -301,7 +301,9 @@ r_struct
 id|icmp_control
 id|icmp_pointers
 (braket
-l_int|19
+id|NR_ICMP_TYPES
+op_plus
+l_int|1
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Build xmit assembly blocks&n; */
@@ -389,7 +391,7 @@ l_int|0
 suffix:semicolon
 id|type
 op_le
-l_int|18
+id|NR_ICMP_TYPES
 suffix:semicolon
 id|type
 op_increment
@@ -469,7 +471,7 @@ c_cond
 (paren
 id|type
 OG
-l_int|18
+id|NR_ICMP_TYPES
 )paren
 multiline_comment|/* No time limit present */
 r_return
@@ -748,7 +750,7 @@ c_cond
 (paren
 id|type
 OG
-l_int|18
+id|NR_ICMP_TYPES
 )paren
 r_return
 suffix:semicolon
@@ -1228,7 +1230,7 @@ c_cond
 (paren
 id|icmph-&gt;type
 OG
-l_int|18
+id|NR_ICMP_TYPES
 op_logical_or
 id|icmp_pointers
 (braket
@@ -2573,17 +2575,6 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-id|__u32
-id|saddr
-comma
-id|__u32
-id|daddr
-comma
 r_int
 id|len
 )paren
@@ -2921,7 +2912,7 @@ c_cond
 (paren
 id|icmph-&gt;type
 OG
-l_int|18
+id|NR_ICMP_TYPES
 )paren
 (brace
 id|icmp_statistics.IcmpInErrors
@@ -3072,7 +3063,9 @@ r_struct
 id|icmp_control
 id|icmp_pointers
 (braket
-l_int|19
+id|NR_ICMP_TYPES
+op_plus
+l_int|1
 )braket
 op_assign
 (brace

@@ -265,6 +265,10 @@ id|frametype
 r_case
 id|ROSE_CALL_ACCEPTED
 suffix:colon
+id|sk-&gt;protinfo.rose-&gt;condition
+op_assign
+l_int|0x00
+suffix:semicolon
 id|sk-&gt;protinfo.rose-&gt;timer
 op_assign
 l_int|0
@@ -528,6 +532,10 @@ suffix:semicolon
 id|sk-&gt;protinfo.rose-&gt;condition
 op_assign
 l_int|0x00
+suffix:semicolon
+id|sk-&gt;protinfo.rose-&gt;timer
+op_assign
+l_int|0
 suffix:semicolon
 id|sk-&gt;protinfo.rose-&gt;vs
 op_assign
@@ -867,7 +875,7 @@ id|OWN_RX_BUSY_CONDITION
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t;&t; * If the window is full, ack the frame.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * If the window is full, ack the frame, else start the&n;&t;&t;&t; * acknowledge hold back timer.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -875,7 +883,7 @@ c_cond
 (paren
 id|sk-&gt;protinfo.rose-&gt;vl
 op_plus
-id|sk-&gt;window
+id|ROSE_DEFAULT_WINDOW
 )paren
 op_mod
 id|ROSE_MODULUS
@@ -883,12 +891,34 @@ id|ROSE_MODULUS
 op_eq
 id|sk-&gt;protinfo.rose-&gt;vr
 )paren
+(brace
+id|sk-&gt;protinfo.rose-&gt;condition
+op_and_assign
+op_complement
+id|ACK_PENDING_CONDITION
+suffix:semicolon
+id|sk-&gt;protinfo.rose-&gt;timer
+op_assign
+l_int|0
+suffix:semicolon
 id|rose_enquiry_response
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|sk-&gt;protinfo.rose-&gt;condition
+op_or_assign
+id|ACK_PENDING_CONDITION
+suffix:semicolon
+id|sk-&gt;protinfo.rose-&gt;timer
+op_assign
+id|sk-&gt;protinfo.rose-&gt;hb
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default

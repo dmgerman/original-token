@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.30 1996/10/27 08:55:30 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.33 1996/12/03 08:44:55 jj Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -302,6 +302,9 @@ mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/* Now, to allow for very large physical memory configurations we&n; * place the page pool both above the kernel and below the kernel.&n; */
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr) ((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
+macro_line|#else /* !(__ASSEMBLY__) */
+DECL|macro|__pgprot
+mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */

@@ -2,6 +2,7 @@ multiline_comment|/* devices.c: Initial scan of the prom device tree for importa
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
@@ -43,15 +44,19 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-DECL|function|device_scan
 id|device_scan
 c_func
 (paren
 r_int
 r_int
 id|mem_start
+)paren
 )paren
 (brace
 r_char

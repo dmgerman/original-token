@@ -1,6 +1,6 @@
 DECL|macro|PT_DEBUG
 macro_line|#undef PT_DEBUG 1
-multiline_comment|/*&n; * pt.c: Linux device driver for the Gracilis PackeTwin.&n; * Copyright (c) 1995 Craig Small VK2XLZ (vk2xlz@vk2xlz.ampr.org.)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2, as&n; * published by the Free Software Foundation.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n; *&n; * This driver is largely based upon the PI driver by David Perry.&n; *&n; * Revision History&n; * 23/02/95 cs  Started again on driver, last one scrapped&n; * 27/02/95 cs  Program works, we have chan A only.  Tx stays on&n; * 28/02/95 cs  Fix Tx problem (&amp; TxUIE instead of | )&n; *&t;&t;Fix Chan B Tx timer problem, used TMR2 instead of TMR1&n; * 03/03/95 cs  Painfully found out (after 3 days) SERIAL_CFG is write only&n; *              created image of it and DMA_CFG&n; * 21/06/95 cs  Upgraded to suit PI driver 0.8 ALPHA&n; * 22/08/95&t;cs&t;Changed it all around to make it like pi driver&n; * 23/08/95 cs  It now works, got caught again by TMR2 and we must have&n; *&t;&t;&t;&t;auto-enables for daughter boards.&n; * 07/10/95 cs  Fixed for 1.3.30 (hopefully)&n; * 26/11/95 cs  Fixed for 1.3.43, ala 29/10 for pi2.c by ac&n; * 21/12/95 cs  Got rid of those nasty warnings when compiling, for 1.3.48&n; * 08/08/96 jsn Convert to use as a module. Removed send_kiss, empty_scc and&n; *&t;&t;pt_loopback functions - they were unused.&n; */
+multiline_comment|/*&n; * pt.c: Linux device driver for the Gracilis PackeTwin.&n; * Copyright (c) 1995 Craig Small VK2XLZ (vk2xlz@vk2xlz.ampr.org.)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License version 2, as&n; * published by the Free Software Foundation.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge MA 02139, USA.&n; *&n; * This driver is largely based upon the PI driver by David Perry.&n; *&n; * Revision History&n; * 23/02/95 cs  Started again on driver, last one scrapped&n; * 27/02/95 cs  Program works, we have chan A only.  Tx stays on&n; * 28/02/95 cs  Fix Tx problem (&amp; TxUIE instead of | )&n; *&t;&t;Fix Chan B Tx timer problem, used TMR2 instead of TMR1&n; * 03/03/95 cs  Painfully found out (after 3 days) SERIAL_CFG is write only&n; *              created image of it and DMA_CFG&n; * 21/06/95 cs  Upgraded to suit PI driver 0.8 ALPHA&n; * 22/08/95&t;cs&t;Changed it all around to make it like pi driver&n; * 23/08/95 cs  It now works, got caught again by TMR2 and we must have&n; *&t;&t;&t;&t;auto-enables for daughter boards.&n; * 07/10/95 cs  Fixed for 1.3.30 (hopefully)&n; * 26/11/95 cs  Fixed for 1.3.43, ala 29/10 for pi2.c by ac&n; * 21/12/95 cs  Got rid of those nasty warnings when compiling, for 1.3.48&n; * 08/08/96 jsn Convert to use as a module. Removed send_kiss, empty_scc and&n; *&t;&t;pt_loopback functions - they were unused.&n; * 13/12/96 jsn Fixed to match Linux networking changes.&n; */
 multiline_comment|/* &n; * default configuration of the PackeTwin,&n; * ie What Craig uses his PT for.&n; */
 DECL|macro|PT_DMA
 mdefine_line|#define PT_DMA 3
@@ -44,6 +44,7 @@ DECL|macro|PARAM_HARDWARE
 mdefine_line|#define&t;PARAM_HARDWARE&t;6
 DECL|macro|PARAM_RETURN
 mdefine_line|#define&t;PARAM_RETURN&t;255
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1254,96 +1255,6 @@ c_func
 id|skb
 comma
 id|FREE_WRITE
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Fill in the MAC-level header */
-DECL|function|pt_header
-r_static
-r_int
-id|pt_header
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
-)paren
-(brace
-r_return
-id|ax25_encapsulate
-c_func
-(paren
-id|skb
-comma
-id|dev
-comma
-id|type
-comma
-id|daddr
-comma
-id|saddr
-comma
-id|len
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Rebuild the MAC-level header */
-DECL|function|pt_rebuild_header
-r_static
-r_int
-id|pt_rebuild_header
-c_func
-(paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-r_return
-id|ax25_rebuild_header
-c_func
-(paren
-id|buff
-comma
-id|dev
-comma
-id|raddr
-comma
-id|skb
 )paren
 suffix:semicolon
 )brace
@@ -3986,14 +3897,16 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 id|dev-&gt;hard_header
 op_assign
-id|pt_header
+id|ax25_encapsulate
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
-id|pt_rebuild_header
+id|ax25_rebuild_header
 suffix:semicolon
+macro_line|#endif
 id|dev-&gt;set_mac_address
 op_assign
 id|pt_set_mac_address

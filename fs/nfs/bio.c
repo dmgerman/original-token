@@ -884,6 +884,12 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* In case we&squot;re called from a page fault we want to */
+multiline_comment|/* make sure we&squot;re runnable before we schedule.. */
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|dprintk
 c_func
 (paren

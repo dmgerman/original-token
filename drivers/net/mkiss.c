@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;MKISS Driver&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * &t;&t;This module implements the AX.25 protocol for kernel-based&n; *&t;&t;devices like TTYs. It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s AX.25 protocol layers, just like slip.c.&n; *&t;&t;AX.25 needs to be seperated from slip.c while slip.c is no&n; *&t;&t;longer a static kernel device since it is a module.&n; *&t;&t;This method clears the way to implement other kiss protocols&n; *&t;&t;like mkiss smack g8bpq ..... so far only mkiss is implemented.&n; *&n; * Hans Alblas Hansa@cuci.nl&n; *&n; *&t;History&n; */
+multiline_comment|/*&n; *&t;MKISS Driver&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * &t;&t;This module implements the AX.25 protocol for kernel-based&n; *&t;&t;devices like TTYs. It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s AX.25 protocol layers, just like slip.c.&n; *&t;&t;AX.25 needs to be seperated from slip.c while slip.c is no&n; *&t;&t;longer a static kernel device since it is a module.&n; *&t;&t;This method clears the way to implement other kiss protocols&n; *&t;&t;like mkiss smack g8bpq ..... so far only mkiss is implemented.&n; *&n; * Hans Alblas Hansa@cuci.nl&n; *&n; *&t;History&n; *&t;Jonathan (G4KLX)&t;Fixed to match Linux networking changes - 2.1.15.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1720,6 +1720,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 multiline_comment|/* Return the frame type ID */
 DECL|function|ax_header
 r_static
@@ -1793,19 +1794,6 @@ r_int
 id|ax_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -1817,20 +1805,16 @@ r_return
 id|ax25_rebuild_header
 c_func
 (paren
-id|buff
-comma
-id|dev
-comma
-id|raddr
-comma
 id|skb
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#endif&t;/* CONFIG_{AX25,AX25_MODULE} */
 multiline_comment|/* Open the low-level part of the AX25 channel. Easy! */
 DECL|function|ax_open
 r_static
@@ -3656,10 +3640,6 @@ id|dev-&gt;stop
 op_assign
 id|ax_close
 suffix:semicolon
-id|dev-&gt;hard_header
-op_assign
-id|ax_header
-suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|ax_get_stats
@@ -3706,10 +3686,16 @@ comma
 id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+id|dev-&gt;hard_header
+op_assign
+id|ax_header
+suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign
 id|ax_rebuild_header
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

@@ -334,6 +334,14 @@ id|binfmt_java_appletviewer
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef __sparc__
+r_extern
+r_char
+id|reboot_command
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* The default sysctl tables: */
 DECL|variable|root_table
 r_static
@@ -727,6 +735,28 @@ comma
 id|binfmt_java_appletviewer
 comma
 l_int|64
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dostring
+comma
+op_amp
+id|sysctl_string
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef __sparc__
+(brace
+id|KERN_SPARC_REBOOT
+comma
+l_string|&quot;reboot-cmd&quot;
+comma
+id|reboot_command
+comma
+l_int|256
 comma
 l_int|0644
 comma

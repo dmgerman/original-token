@@ -2011,16 +2011,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|pointless_func
-r_void
-id|pointless_func
-c_func
-(paren
-r_void
-)paren
-(brace
-suffix:semicolon
-)brace
 DECL|function|smp_callin
 r_void
 id|smp_callin

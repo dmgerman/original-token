@@ -17,6 +17,9 @@ DECL|macro|NCP_MOUNT_SOFT
 mdefine_line|#define NCP_MOUNT_SOFT 0x0001
 DECL|macro|NCP_MOUNT_INTR
 mdefine_line|#define NCP_MOUNT_INTR 0x0002
+multiline_comment|/* Gosh... */
+DECL|macro|NCP_PATH_MAX
+mdefine_line|#define NCP_PATH_MAX 1024
 DECL|struct|ncp_mount_data
 r_struct
 id|ncp_mount_data
@@ -66,7 +69,7 @@ r_int
 r_char
 id|mount_point
 (braket
-id|PATH_MAX
+id|NCP_PATH_MAX
 op_plus
 l_int|1
 )braket

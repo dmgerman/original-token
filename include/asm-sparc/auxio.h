@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.14 1996/10/31 06:29:10 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.15 1996/12/06 00:37:11 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H
@@ -121,6 +121,17 @@ suffix:semicolon
 r_case
 id|sun4m
 suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|AUXREG
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* VME chassic sun4m, no auxio. */
 id|regval
 op_assign
 op_star

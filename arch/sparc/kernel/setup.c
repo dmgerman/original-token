@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.75 1996/10/12 12:37:27 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.76 1996/11/13 05:09:32 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -379,7 +380,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Process kernel command line switches that are specific to the&n; * SPARC or that require special low-level processing.&n; */
-DECL|function|process_switch
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|process_switch
@@ -387,6 +391,7 @@ c_func
 (paren
 r_char
 id|c
+)paren
 )paren
 (brace
 r_switch
@@ -443,7 +448,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
-DECL|function|boot_flags_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|boot_flags_init
@@ -452,6 +460,7 @@ c_func
 r_char
 op_star
 id|commands
+)paren
 )paren
 (brace
 r_while
@@ -728,14 +737,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* This routine will in the future do all the nasty prom stuff&n; * to probe for the mmu type and its parameters, etc. This will&n; * also be where SMP things happen plus the Sparc specific memory&n; * physical memory probe as on the alpha.&n; */
 r_extern
-r_void
-id|load_mmu
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|prom_probe_memory
 c_func
@@ -778,6 +779,16 @@ r_extern
 r_int
 r_int
 id|srmmu_endmem_fixup
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sun_serial_setup
 c_func
 (paren
 r_int
@@ -863,7 +874,10 @@ comma
 )brace
 )brace
 suffix:semicolon
-DECL|function|setup_arch
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|setup_arch
 c_func
@@ -882,6 +896,7 @@ r_int
 r_int
 op_star
 id|memory_end_p
+)paren
 )paren
 (brace
 r_int
@@ -1619,6 +1634,17 @@ op_assign
 op_amp
 id|fake_swapper_regs
 suffix:semicolon
+op_star
+id|memory_start_p
+op_assign
+id|sun_serial_setup
+c_func
+(paren
+op_star
+id|memory_start_p
+)paren
+suffix:semicolon
+multiline_comment|/* set this up ASAP */
 (brace
 r_extern
 r_int
@@ -1840,6 +1866,7 @@ comma
 l_string|&quot;cpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;promlib&bslash;t&bslash;t: Version %d Revision %d&bslash;n&quot;
+l_string|&quot;prom&bslash;t&bslash;t: %d.%d&bslash;n&quot;
 l_string|&quot;type&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;ncpus probed&bslash;t: %d&bslash;n&quot;
 l_string|&quot;ncpus active&bslash;t: %d&bslash;n&quot;
@@ -1871,10 +1898,22 @@ l_int|0
 comma
 l_int|0
 comma
+l_int|0
+comma
+l_int|0
 macro_line|#else
 id|romvec-&gt;pv_romvers
 comma
 id|prom_rev
+comma
+id|romvec-&gt;pv_printrev
+op_rshift
+l_int|16
+comma
+(paren
+r_int
+)paren
+id|romvec-&gt;pv_printrev
 comma
 macro_line|#endif
 op_amp

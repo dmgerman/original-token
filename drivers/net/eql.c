@@ -1174,7 +1174,7 @@ l_int|100
 )paren
 id|printk
 (paren
-l_string|&quot;%s: %d slaves xmitng %ld B %s&bslash;n&quot;
+l_string|&quot;%s: %d slaves xmitng %d B %s&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

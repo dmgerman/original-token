@@ -856,4 +856,21 @@ id|port
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* makes writing to the ibm acorn power management stuff easier -- Cort */
+multiline_comment|/* args in forn of PA.B as in tech spec for ibm carolina */
+DECL|function|ibm_write
+r_void
+id|ibm_write
+c_func
+(paren
+r_int
+r_char
+id|val
+comma
+r_int
+r_int
+id|port
+)paren
+(brace
+)brace
 eof

@@ -1,4 +1,5 @@
 multiline_comment|/* auxio.c: Probing for the Sparc AUXIO register at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
@@ -9,12 +10,16 @@ r_char
 op_star
 id|auxio_register
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|auxio_probe
 id|auxio_probe
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -104,6 +109,26 @@ op_logical_neg
 id|auxio_nd
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|prom_searchsiblings
+c_func
+(paren
+id|node
+comma
+l_string|&quot;leds&quot;
+)paren
+)paren
+(brace
+multiline_comment|/* VME chassis sun4m machine, no auxio exists. */
+id|auxio_register
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|prom_printf
 c_func
 (paren

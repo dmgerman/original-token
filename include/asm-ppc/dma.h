@@ -1,5 +1,5 @@
 multiline_comment|/* $Id: dma.h,v 1.7 1992/12/14 00:29:34 root Exp root $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; */
-multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PowerPC (PreP) platform.  Take what you read&n; * with a grain of salt.&n; */
+multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified by Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * There may be some comments or restrictions made here which are&n; * not valid for the PowerPC (PreP) platform.  Take what you read&n; * with a grain of salt.&n; */
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
@@ -835,8 +835,6 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* These are in kernel/dma.c: */
-multiline_comment|/*extern int request_dma(unsigned int dmanr, char * device_id);*/
-multiline_comment|/* reserve a DMA channel */
 r_extern
 r_void
 id|free_dma

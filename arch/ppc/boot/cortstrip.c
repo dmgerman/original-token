@@ -7,7 +7,7 @@ DECL|macro|PLACE
 mdefine_line|#define PLACE 65536
 multiline_comment|/* size of read buffer */
 DECL|macro|SIZE
-mdefine_line|#define SIZE 0x200000
+mdefine_line|#define SIZE 0x100000
 multiline_comment|/* crude program to strip the elf header to make a bootable&n;   image via tftp&n; */
 DECL|function|main
 r_int
@@ -42,6 +42,7 @@ id|n
 comma
 id|skip
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -70,6 +71,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|fd
 op_assign
 id|open
@@ -202,14 +204,7 @@ comma
 id|SEEK_SET
 )paren
 suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;lseek&squot;d %d bytes&bslash;n&quot;
-comma
-id|i
-)paren
-suffix:semicolon
+multiline_comment|/*printf(&quot;lseek&squot;d %d bytes&bslash;n&quot;, i);*/
 r_if
 c_cond
 (paren
@@ -246,14 +241,7 @@ OG
 l_int|0
 )paren
 (brace
-id|printf
-c_func
-(paren
-l_string|&quot;Read %d bytes&bslash;n&quot;
-comma
-id|n
-)paren
-suffix:semicolon
+multiline_comment|/*printf(&quot;Read %d bytes&bslash;n&quot;, n);*/
 id|i
 op_assign
 id|write
@@ -266,14 +254,7 @@ comma
 id|n
 )paren
 suffix:semicolon
-id|printf
-c_func
-(paren
-l_string|&quot;Wrote %d bytes&bslash;n&quot;
-comma
-id|i
-)paren
-suffix:semicolon
+multiline_comment|/*printf(&quot;Wrote %d bytes&bslash;n&quot;, i);    */
 )brace
 id|close
 c_func

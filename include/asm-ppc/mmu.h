@@ -476,9 +476,8 @@ DECL|macro|HASH_TABLE_MASK_2M
 mdefine_line|#define HASH_TABLE_MASK_2M&t;0x01F   
 DECL|macro|HASH_TABLE_MASK_4M
 mdefine_line|#define HASH_TABLE_MASK_4M&t;0x03F   
-DECL|macro|MMU_PAGE_SIZE
-mdefine_line|#define MMU_PAGE_SIZE&t;4096
 r_extern
+r_inline
 r_int
 id|MMU_hash_page
 c_func
