@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/umsdos/check.c&n; *&n; *&n; */
+multiline_comment|/*&n; * linux/fs/umsdos/check.c&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -168,7 +168,7 @@ id|err
 )paren
 id|printk
 (paren
-l_string|&quot;&bslash;nErreur MM %d&bslash;n&quot;
+l_string|&quot;&bslash;nError MM %d&bslash;n&quot;
 comma
 id|err
 )paren

@@ -1025,7 +1025,6 @@ DECL|macro|hweight16
 mdefine_line|#define hweight16(x) generic_hweight16(x)
 DECL|macro|hweight8
 mdefine_line|#define hweight8(x) generic_hweight8(x)
-macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* Bitmap functions for the minix filesystem */
 r_extern
 id|__inline__
@@ -1719,5 +1718,6 @@ op_plus
 id|res
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _M68K_BITOPS_H */
 eof

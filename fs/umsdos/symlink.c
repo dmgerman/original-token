@@ -9,10 +9,6 @@ macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x)
-DECL|macro|Printk
-mdefine_line|#define Printk(x)&t;printk x
 DECL|variable|umsdos_symlink_operations
 r_static
 r_struct
@@ -21,7 +17,6 @@ id|umsdos_symlink_operations
 suffix:semicolon
 multiline_comment|/*&n; * Read the data associate with the symlink.&n; * Return length read in buffer or  a negative error code.&n; * &n; */
 DECL|function|umsdos_readlink_x
-r_static
 r_int
 id|umsdos_readlink_x
 (paren
@@ -54,11 +49,20 @@ id|ret
 op_assign
 id|dentry-&gt;d_inode-&gt;i_size
 suffix:semicolon
-id|check_dentry
+r_if
+c_cond
 (paren
-id|dentry
+op_logical_neg
+(paren
+id|dentry-&gt;d_inode
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EBADF
 suffix:semicolon
+)brace
 id|fill_new_filp
 (paren
 op_amp
@@ -266,7 +270,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#if 0&t;&t;&t;&t;/* DEBUG */
+macro_line|#if 0
 (brace
 r_struct
 id|umsdos_dirent
@@ -382,7 +386,7 @@ id|buflen
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* dput(dentry); / * FIXME /mn/ */
+multiline_comment|/* dput(dentry); / * FIXME /mn/? It seems it is unneeded. d_count is not changed by umsdos_readlink_x */
 id|Printk
 (paren
 (paren

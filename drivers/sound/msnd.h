@@ -1,13 +1,13 @@
-multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.9 1998/08/06 21:06:14 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * msnd.h&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; *&n; * Some parts of this header file were derived from the Turtle Beach&n; * MultiSound Driver Development Kit.&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; * Copyright (C) 1993 Turtle Beach Systems, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd.h,v 1.18 1998/09/04 18:43:40 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#ifndef __MSND_H
 DECL|macro|__MSND_H
 mdefine_line|#define __MSND_H
 DECL|macro|VERSION
-mdefine_line|#define VERSION&t;&t;&t;&quot;0.7.2&quot;
+mdefine_line|#define VERSION&t;&t;&t;&quot;0.7.13&quot;
 DECL|macro|DEFSAMPLERATE
 mdefine_line|#define DEFSAMPLERATE&t;&t;DSP_DEFAULT_SPEED
 DECL|macro|DEFSAMPLESIZE
-mdefine_line|#define DEFSAMPLESIZE&t;&t;8
+mdefine_line|#define DEFSAMPLESIZE&t;&t;AFMT_U8
 DECL|macro|DEFCHANNELS
 mdefine_line|#define DEFCHANNELS&t;&t;1
 DECL|macro|DEFFIFOSIZE
@@ -189,11 +189,11 @@ mdefine_line|#define&t;HDEX_MIDI_OUT_STOP&t;(9 + HDEX_BASE)
 DECL|macro|HDEX_AUX_REQ
 mdefine_line|#define&t;HDEX_AUX_REQ&t;&t;(10 + HDEX_BASE)
 DECL|macro|HIWORD
-mdefine_line|#define HIWORD(l)&t;&t;((WORD)((((DWORD)(l)) &gt;&gt; 16) &amp; 0xFFFF ))
+mdefine_line|#define HIWORD(l)&t;&t;((WORD)((((DWORD)(l)) &gt;&gt; 16) &amp; 0xFFFF))
 DECL|macro|LOWORD
 mdefine_line|#define LOWORD(l)&t;&t;((WORD)(DWORD)(l))
 DECL|macro|HIBYTE
-mdefine_line|#define HIBYTE(w)&t;&t;((BYTE)(((WORD)(w) &gt;&gt; 8 ) &amp; 0xFF ))
+mdefine_line|#define HIBYTE(w)&t;&t;((BYTE)(((WORD)(w) &gt;&gt; 8) &amp; 0xFF))
 DECL|macro|LOBYTE
 mdefine_line|#define LOBYTE(w)&t;&t;((BYTE)(w))
 DECL|macro|MAKELONG
@@ -224,103 +224,64 @@ macro_line|#  define spin_lock_irqsave(junk,flags)&t;&t;do { save_flags(flags); 
 DECL|macro|spin_unlock_irqrestore
 macro_line|#  define spin_unlock_irqrestore(junk,flags)&t;do { restore_flags(flags); } while (0)
 macro_line|#endif
+multiline_comment|/* JobQueueStruct */
+DECL|macro|JQS_wStart
+mdefine_line|#define JQS_wStart&t;&t;0x00
+DECL|macro|JQS_wSize
+mdefine_line|#define JQS_wSize&t;&t;0x02
+DECL|macro|JQS_wHead
+mdefine_line|#define JQS_wHead&t;&t;0x04
+DECL|macro|JQS_wTail
+mdefine_line|#define JQS_wTail&t;&t;0x06
+DECL|macro|JQS__size
+mdefine_line|#define JQS__size&t;&t;0x08
+multiline_comment|/* DAQueueDataStruct */
+DECL|macro|DAQDS_wStart
+mdefine_line|#define DAQDS_wStart&t;&t;0x00
+DECL|macro|DAQDS_wSize
+mdefine_line|#define DAQDS_wSize&t;&t;0x02
+DECL|macro|DAQDS_wFormat
+mdefine_line|#define DAQDS_wFormat&t;&t;0x04
+DECL|macro|DAQDS_wSampleSize
+mdefine_line|#define DAQDS_wSampleSize&t;0x06
+DECL|macro|DAQDS_wChannels
+mdefine_line|#define DAQDS_wChannels&t;&t;0x08
+DECL|macro|DAQDS_wSampleRate
+mdefine_line|#define DAQDS_wSampleRate&t;0x0A
+DECL|macro|DAQDS_wIntMsg
+mdefine_line|#define DAQDS_wIntMsg&t;&t;0x0C
+DECL|macro|DAQDS_wFlags
+mdefine_line|#define DAQDS_wFlags&t;&t;0x0E
+DECL|macro|DAQDS__size
+mdefine_line|#define DAQDS__size&t;&t;0x10
 DECL|typedef|BYTE
 r_typedef
-r_int
-r_char
+id|u8
 id|BYTE
 suffix:semicolon
 DECL|typedef|USHORT
 r_typedef
-r_int
-r_int
+id|u16
 id|USHORT
 suffix:semicolon
 DECL|typedef|WORD
 r_typedef
-r_int
-r_int
+id|u16
 id|WORD
 suffix:semicolon
 DECL|typedef|DWORD
 r_typedef
-r_int
-r_int
+id|u32
 id|DWORD
 suffix:semicolon
-r_typedef
 DECL|typedef|LPDAQD
-r_struct
-id|DAQueueDataStruct
+r_typedef
+r_volatile
+id|BYTE
 op_star
 id|LPDAQD
 suffix:semicolon
-DECL|macro|GCC_PACKED
-mdefine_line|#define GCC_PACKED&t;&t;__attribute__ ((packed))
-DECL|struct|JobQueueStruct
-r_struct
-id|JobQueueStruct
-(brace
-DECL|member|wStart
-id|WORD
-id|wStart
-suffix:semicolon
-DECL|member|wSize
-id|WORD
-id|wSize
-suffix:semicolon
-DECL|member|wHead
-id|WORD
-id|wHead
-suffix:semicolon
-DECL|member|wTail
-id|WORD
-id|wTail
-suffix:semicolon
-DECL|variable|GCC_PACKED
-)brace
-id|GCC_PACKED
-suffix:semicolon
-DECL|struct|DAQueueDataStruct
-r_struct
-id|DAQueueDataStruct
-(brace
-DECL|member|wStart
-id|WORD
-id|wStart
-suffix:semicolon
-DECL|member|wSize
-id|WORD
-id|wSize
-suffix:semicolon
-DECL|member|wFormat
-id|WORD
-id|wFormat
-suffix:semicolon
-DECL|member|wSampleSize
-id|WORD
-id|wSampleSize
-suffix:semicolon
-DECL|member|wChannels
-id|WORD
-id|wChannels
-suffix:semicolon
-DECL|member|wSampleRate
-id|WORD
-id|wSampleRate
-suffix:semicolon
-DECL|member|wIntMsg
-id|WORD
-id|wIntMsg
-suffix:semicolon
-DECL|member|wFlags
-id|WORD
-id|wFlags
-suffix:semicolon
-DECL|variable|GCC_PACKED
-)brace
-id|GCC_PACKED
-suffix:semicolon
+multiline_comment|/* Generic FIFO */
 r_typedef
 r_struct
 (brace
@@ -352,6 +313,7 @@ r_typedef
 r_struct
 id|multisound_dev
 (brace
+multiline_comment|/* Linux device info */
 DECL|member|name
 r_char
 op_star
@@ -367,7 +329,6 @@ suffix:semicolon
 multiline_comment|/* Hardware resources */
 DECL|member|io
 DECL|member|numio
-r_int
 r_int
 id|io
 comma
@@ -403,50 +364,22 @@ id|spinlock_t
 id|lock
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* MultiSound DDK variables */
-DECL|enumerator|msndClassic
-DECL|enumerator|msndPinnacle
-DECL|member|type
-r_enum
-(brace
-id|msndClassic
-comma
-id|msndPinnacle
-)brace
-id|type
-suffix:semicolon
+multiline_comment|/* Motorola 56k DSP SMA */
 DECL|member|SMA
-r_struct
-id|SMA0_CommonData
+r_volatile
+id|BYTE
 op_star
 id|SMA
 suffix:semicolon
-multiline_comment|/* diff. structure for classic vs. pinnacle */
 DECL|member|CurDAQD
-r_struct
-id|DAQueueDataStruct
+DECL|member|CurDARQD
+r_volatile
+id|BYTE
 op_star
 id|CurDAQD
-suffix:semicolon
-DECL|member|CurDARQD
-r_struct
-id|DAQueueDataStruct
+comma
 op_star
 id|CurDARQD
-suffix:semicolon
-DECL|member|pwDSPQData
-DECL|member|pwMIDQData
-DECL|member|pwMODQData
-r_volatile
-id|WORD
-op_star
-id|pwDSPQData
-comma
-op_star
-id|pwMIDQData
-comma
-op_star
-id|pwMODQData
 suffix:semicolon
 DECL|member|DAPQ
 DECL|member|DARQ
@@ -454,8 +387,7 @@ DECL|member|MODQ
 DECL|member|MIDQ
 DECL|member|DSPQ
 r_volatile
-r_struct
-id|JobQueueStruct
+id|BYTE
 op_star
 id|DAPQ
 comma
@@ -471,11 +403,32 @@ comma
 op_star
 id|DSPQ
 suffix:semicolon
-DECL|member|bCurrentMidiPatch
-id|BYTE
-id|bCurrentMidiPatch
+DECL|member|pwDSPQData
+DECL|member|pwMIDQData
+DECL|member|pwMODQData
+r_volatile
+id|WORD
+op_star
+id|pwDSPQData
+comma
+op_star
+id|pwMIDQData
+comma
+op_star
+id|pwMODQData
 suffix:semicolon
 multiline_comment|/* State variables */
+DECL|enumerator|msndClassic
+DECL|enumerator|msndPinnacle
+DECL|member|type
+r_enum
+(brace
+id|msndClassic
+comma
+id|msndPinnacle
+)brace
+id|type
+suffix:semicolon
 DECL|member|mode
 id|mode_t
 id|mode
@@ -562,6 +515,10 @@ DECL|member|channels
 r_int
 id|channels
 suffix:semicolon
+DECL|member|bCurrentMidiPatch
+id|BYTE
+id|bCurrentMidiPatch
+suffix:semicolon
 DECL|member|inc_ref
 r_void
 (paren
@@ -583,16 +540,16 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Digital audio FIFOs */
-DECL|member|fifosize
-r_int
-id|fifosize
-suffix:semicolon
 DECL|member|DAPF
 DECL|member|DARF
 id|msnd_fifo
 id|DAPF
 comma
 id|DARF
+suffix:semicolon
+DECL|member|fifosize
+r_int
+id|fifosize
 suffix:semicolon
 DECL|member|lastbank
 r_int

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -16,7 +17,7 @@ macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|variable|amiga_model
 r_int
 r_int
@@ -1732,13 +1733,6 @@ l_int|0xde0002
 op_or_assign
 l_int|0x80
 suffix:semicolon
-macro_line|#ifdef CONFIG_ZORRO
-id|zorro_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|jiffy_ticks
 r_static
@@ -3028,7 +3022,7 @@ r_int
 r_int
 id|jmp_addr040
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 op_logical_and
@@ -3039,7 +3033,7 @@ r_int
 r_int
 id|jmp_addr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 op_logical_and
@@ -3284,7 +3278,7 @@ id|SAVEKMSG_MAGIC2
 suffix:semicolon
 id|savekmsg-&gt;magicptr
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|savekmsg

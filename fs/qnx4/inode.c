@@ -1,4 +1,5 @@
 multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 01-06-1998 by Richard Frowijn : first release.&n; * 20-06-1998 by Frank Denis : Linux 2.1.99+ support, boot signature, misc.&n; * 30-06-1998 by Frank Denis : first step to write inodes.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

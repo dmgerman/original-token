@@ -3,7 +3,7 @@ DECL|macro|NDEBUG
 mdefine_line|#define NDEBUG (NDEBUG_RESTART_SELECT | NDEBUG_ABORT)
 macro_line|#endif
 multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; *      to implement 5380 SCSI drivers under Linux with a non-trantor&n; *      architecture.&n; *&n; *      Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * $Log: NCR5380.c,v $&n;&n; * Revision 1.9  1997/7/27&t;Ronald van Cuijlenborg&n; *&t;&t;&t;&t;(ronald.van.cuijlenborg@tip.nl or nutty@dds.nl)&n; * (hopefully) fixed and enhanced USLEEP&n; * added support for DTC3181E card (for Mustek scanner)&n; *&n;&n; * Revision 1.8&t;&t;&t;Ingmar Baumgart&n; *&t;&t;&t;&t;(ingmar@gonzo.schwaben.de)&n; * added support for NCR53C400a card&n; *&n;&n; * Revision 1.7  1996/3/2       Ray Van Tassle (rayvt@comm.mot.com)&n; * added proc_info&n; * added support needed for DTC 3180/3280&n; * fixed a couple of bugs&n; *&n;&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Log: NCR5380.c,v $&n;&n; * Revision 1.10 1998/9/2&t;Alan Cox&n; *&t;&t;&t;&t;(alan@redhat.com)&n; * Fixed up the timer lockups reported so far. Things still suck. Looking &n; * forward to 2.3 and per device request queues. Then it&squot;ll be possible to&n; * SMP thread this beast and improve life no end.&n; &n; * Revision 1.9  1997/7/27&t;Ronald van Cuijlenborg&n; *&t;&t;&t;&t;(ronald.van.cuijlenborg@tip.nl or nutty@dds.nl)&n; * (hopefully) fixed and enhanced USLEEP&n; * added support for DTC3181E card (for Mustek scanner)&n; *&n;&n; * Revision 1.8&t;&t;&t;Ingmar Baumgart&n; *&t;&t;&t;&t;(ingmar@gonzo.schwaben.de)&n; * added support for NCR53C400a card&n; *&n;&n; * Revision 1.7  1996/3/2       Ray Van Tassle (rayvt@comm.mot.com)&n; * added proc_info&n; * added support needed for DTC 3180/3280&n; * fixed a couple of bugs&n; *&n;&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
 multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *      tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
 macro_line|#if (NDEBUG &amp; NDEBUG_LISTS)
 DECL|macro|LIST
@@ -4314,6 +4314,13 @@ id|jiffies
 op_plus
 id|NCR_TIMEOUT
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4328,6 +4335,13 @@ op_logical_and
 id|jiffies
 OL
 id|timeout
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if
@@ -4741,6 +4755,13 @@ l_int|2
 op_star
 id|NCR_TIMEOUT
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4758,6 +4779,13 @@ op_logical_and
 id|jiffies
 OL
 id|timeout
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if
@@ -5156,6 +5184,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* clear this pointer, because we passed the&n;&t;&t;&t;&t;waiting period */
 macro_line|#else
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5179,6 +5214,13 @@ op_or
 id|SR_IO
 )paren
 )paren
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5407,6 +5449,13 @@ id|jiffies
 op_plus
 id|NCR_TIMEOUT
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5424,6 +5473,13 @@ op_logical_and
 id|jiffies
 OL
 id|timeout
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 r_if

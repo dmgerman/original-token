@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/hwtest.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|variable|atari_mch_cookie
 id|u_long
 id|atari_mch_cookie
@@ -2349,7 +2350,7 @@ r_int
 r_int
 id|jmp_addr040
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 op_logical_and

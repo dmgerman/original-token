@@ -1100,7 +1100,7 @@ op_star
 )paren
 id|de
 op_ge
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 op_plus
 id|bh-&gt;b_data
 )paren
@@ -1121,7 +1121,7 @@ l_int|0
 op_logical_and
 id|fragoff
 op_ne
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 )paren
 id|ufs_error
 (paren
@@ -1228,7 +1228,7 @@ op_assign
 id|SWAB16
 c_func
 (paren
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 )paren
 suffix:semicolon
 id|de-&gt;d_u.d_namlen
@@ -1243,7 +1243,7 @@ id|dir-&gt;i_size
 op_assign
 id|offset
 op_plus
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 suffix:semicolon
 id|mark_inode_dirty
 c_func
@@ -1784,7 +1784,7 @@ c_cond
 (paren
 id|i
 op_eq
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 )paren
 id|pde
 op_assign
@@ -1821,7 +1821,7 @@ c_cond
 (paren
 id|i
 op_eq
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 op_logical_and
 id|SWAB16
 c_func
@@ -2533,7 +2533,7 @@ id|ufs_dir_inode_operations
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 suffix:semicolon
 id|dir_block
 op_assign
@@ -2579,7 +2579,7 @@ id|inode-&gt;i_blocks
 op_assign
 id|sb-&gt;s_blocksize
 op_div
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 suffix:semicolon
 id|de
 op_assign
@@ -2659,7 +2659,7 @@ op_assign
 id|SWAB16
 c_func
 (paren
-id|SECTOR_SIZE
+id|UFS_SECTOR_SIZE
 op_minus
 id|UFS_DIR_REC_LEN
 c_func

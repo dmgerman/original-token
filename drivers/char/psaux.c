@@ -671,6 +671,12 @@ id|aux_count
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+id|pckbd_read_mask
+op_assign
+id|KBD_STAT_OBF
+suffix:semicolon
+macro_line|#endif
 id|aux_start_atomic
 c_func
 (paren
@@ -909,6 +915,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
+id|pckbd_read_mask
+op_assign
+id|AUX_STAT_OBF
+suffix:semicolon
+macro_line|#endif
 id|aux_ready
 op_assign
 l_int|0
@@ -2218,12 +2230,6 @@ id|aux_present
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef CONFIG_VT
-id|pckbd_read_mask
-op_assign
-id|AUX_STAT_OBF
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace

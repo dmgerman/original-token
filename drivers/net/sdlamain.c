@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/tqueue.h&gt;&t;/* for kernel task queues */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* kernel &lt;-&gt; user copy */
+macro_line|#include &lt;asm/io.h&gt;&t;&t;/* phys_to_virt() */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 macro_line|#ifdef&t;_DEBUG_
 DECL|macro|STATIC
@@ -435,12 +436,19 @@ id|cnt
 suffix:semicolon
 multiline_comment|/* adjust actual number of cards */
 r_else
+(brace
 id|kfree
 c_func
 (paren
 id|card_array
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 r_return
 id|err
 suffix:semicolon
@@ -567,8 +575,8 @@ id|WAN_UNCONFIGURED
 r_return
 op_minus
 id|EBUSY
-multiline_comment|/* already configured */
 suffix:semicolon
+multiline_comment|/* already configured */
 r_if
 c_cond
 (paren
@@ -754,6 +762,28 @@ l_int|2
 suffix:colon
 id|conf-&gt;irq
 suffix:semicolon
+multiline_comment|/* Compute the virtual address of the card in kernel space */
+r_if
+c_cond
+(paren
+id|conf-&gt;maddr
+)paren
+(brace
+id|card-&gt;hw.dpmbase
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
+c_func
+(paren
+id|conf-&gt;maddr
+)paren
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* But 0 means NULL */
 id|card-&gt;hw.dpmbase
 op_assign
 id|conf-&gt;maddr
@@ -966,6 +996,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/* Reserve I/O region and schedule background task */
+multiline_comment|/*&t;printk(KERN_INFO &quot;about to request&bslash;n&quot;);*/
 id|request_region
 c_func
 (paren
@@ -976,6 +1007,7 @@ comma
 id|wandev-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/*&t;printk(KERN_INFO &quot;request done&bslash;n&quot;);*/
 r_if
 c_cond
 (paren
@@ -1049,6 +1081,7 @@ id|WAN_UNCONFIGURED
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* If wee are in a critical section we lose */
 r_if
 c_cond
 (paren
@@ -1093,6 +1126,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* stop background thread */
+multiline_comment|/*&t;printk(KERN_INFO &quot;active now %d&bslash;n&quot;, active);&n;&n;&t;printk(KERN_INFO &quot;About to call sdla_down&bslash;n&quot;);*/
 id|sdla_down
 c_func
 (paren
@@ -1100,6 +1134,7 @@ op_amp
 id|card-&gt;hw
 )paren
 suffix:semicolon
+multiline_comment|/*&t;printk(KERN_INFO &quot;sdla_down done&bslash;n&quot;);&n;&t;printk(KERN_INFO &quot;About to call free_irq&bslash;n&quot;);*/
 id|free_irq
 c_func
 (paren
@@ -1108,6 +1143,7 @@ comma
 id|card
 )paren
 suffix:semicolon
+multiline_comment|/*&t;printk(KERN_INFO &quot;free_irq done&bslash;n&quot;);&n;&t;printk(KERN_INFO &quot;About to call release_region&bslash;n&quot;);*/
 id|release_region
 c_func
 (paren
@@ -1116,6 +1152,7 @@ comma
 id|card-&gt;hw.io_range
 )paren
 suffix:semicolon
+multiline_comment|/*&t;printk(KERN_INFO &quot;release_region done&bslash;n&quot;);*/
 id|wandev-&gt;critical
 op_assign
 l_int|0

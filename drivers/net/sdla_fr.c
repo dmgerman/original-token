@@ -162,7 +162,7 @@ suffix:semicolon
 multiline_comment|/* -&gt; owner */
 DECL|member|ifstats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|ifstats
 suffix:semicolon
 multiline_comment|/* interface statistics */
@@ -661,7 +661,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 c_func
@@ -5361,7 +5361,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* switch_net_numbers */
-multiline_comment|/*============================================================================&n; * Get Ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
+multiline_comment|/*============================================================================&n; * Get Ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats.&n; */
 DECL|function|if_stats
 r_static
 r_struct
@@ -5382,6 +5382,18 @@ id|chan
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chan
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 r_return
 op_amp
 id|chan-&gt;ifstats

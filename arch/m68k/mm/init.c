@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#endif
@@ -888,7 +889,7 @@ suffix:semicolon
 )brace
 id|ktable
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|ktablep
@@ -997,7 +998,7 @@ id|pindex
 op_increment
 )braket
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|tbl
@@ -1065,7 +1066,7 @@ id|printk
 (paren
 l_string|&quot;%lx=%lx &quot;
 comma
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 op_amp
@@ -1486,7 +1487,7 @@ id|tss.crp
 l_int|1
 )braket
 op_assign
-id|VTOP
+id|virt_to_phys
 (paren
 id|swapper_pg_dir
 )paren
@@ -1727,8 +1728,12 @@ id|PAGE_SIZE
 r_if
 c_cond
 (paren
-id|VTOP
+id|virt_to_phys
 (paren
+(paren
+r_void
+op_star
+)paren
 id|tmp
 )paren
 op_ge

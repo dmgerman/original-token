@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 macro_line|#include &lt;asm/segment.h&gt;&t;/* kernel &lt;-&gt; user copy */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to_user */
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router API definitions */
 multiline_comment|/****** Defines and Macros **************************************************/
 macro_line|#ifndef&t;min
@@ -593,7 +594,7 @@ id|conf_hdr
 (braket
 )braket
 op_assign
-l_string|&quot;Device name    | port |IRQ|DMA|mem.addr|mem.size|&quot;
+l_string|&quot;Device name    | port |IRQ|DMA| mem.addr |mem.size|&quot;
 l_string|&quot;option1|option2|option3|option4&bslash;n&quot;
 suffix:semicolon
 DECL|variable|stat_hdr
@@ -1084,7 +1085,7 @@ OL
 (paren
 id|PROC_BUFSZ
 op_minus
-l_int|80
+l_int|120
 )paren
 )paren
 suffix:semicolon
@@ -1109,7 +1110,7 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%-15s|0x%-4X|%3u|%3u|0x%-6lX|0x%-6X|%7u|%7u|%7u|%7u&bslash;n&quot;
+l_string|&quot;%-15s|0x%-4X|%3u|%3u| 0x%-8lX |0x%-6X|%7u|%7u|%7u|%7u&bslash;n&quot;
 comma
 id|wandev-&gt;name
 comma
@@ -1119,7 +1120,11 @@ id|wandev-&gt;irq
 comma
 id|wandev-&gt;dma
 comma
+id|virt_to_phys
+c_func
+(paren
 id|wandev-&gt;maddr
+)paren
 comma
 id|wandev-&gt;msize
 comma

@@ -981,6 +981,12 @@ c_func
 id|dmap-&gt;dma
 )paren
 suffix:semicolon
+id|sound_free_dmap
+c_func
+(paren
+id|dmap
+)paren
+suffix:semicolon
 )brace
 DECL|function|default_set_bits
 r_static

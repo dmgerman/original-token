@@ -9,10 +9,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x)
-DECL|macro|Printk
-mdefine_line|#define Printk(x)&t;printk x
 macro_line|#if 1
 multiline_comment|/*&n; * Wait for creation exclusivity.&n; * Return 0 if the dir was already available.&n; * Return 1 if a wait was necessary.&n; * When 1 is return, it means a wait was done. It does not&n; * mean the directory is available.&n; */
 DECL|function|umsdos_waitcreate
@@ -510,9 +506,11 @@ id|dir-&gt;i_ino
 )paren
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|dentry
+comma
+l_string|&quot;umsdos_create_any&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -721,6 +719,20 @@ id|info.f_pos
 )paren
 )paren
 suffix:semicolon
+id|check_dentry_path
+(paren
+id|dentry
+comma
+l_string|&quot;umsdos_create_any: BEG dentry&quot;
+)paren
+suffix:semicolon
+id|check_dentry_path
+(paren
+id|fake
+comma
+l_string|&quot;umsdos_create_any: BEG fake&quot;
+)paren
+suffix:semicolon
 id|d_instantiate
 (paren
 id|dentry
@@ -729,12 +741,27 @@ id|inode
 )paren
 suffix:semicolon
 multiline_comment|/* long name also gets inode info */
-id|dput
+id|inc_count
 (paren
-id|fake
+id|fake-&gt;d_inode
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: is this ok ? we try to kill short name dentry that we don&squot;t need */
+multiline_comment|/* we must do it, since dput(fake) will iput(our_inode) which we still need for long name (dentry) */
+multiline_comment|/* dput (fake);&t;/ * FIXME: is this OK ? we try to kill short name dentry that we don&squot;t need */
+id|check_dentry_path
+(paren
+id|dentry
+comma
+l_string|&quot;umsdos_create_any: END dentry&quot;
+)paren
+suffix:semicolon
+id|check_dentry_path
+(paren
+id|fake
+comma
+l_string|&quot;umsdos_create_any: END fake&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -949,14 +976,18 @@ op_amp
 id|new_info
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|old_dentry
+comma
+l_string|&quot;umsdos_rename_f OLD&quot;
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|new_dentry
+comma
+l_string|&quot;umsdos_rename_f OLD&quot;
 )paren
 suffix:semicolon
 id|chkstk
@@ -1169,6 +1200,12 @@ id|old
 comma
 op_star
 r_new
+comma
+op_star
+id|d_old_dir
+comma
+op_star
+id|dret
 suffix:semicolon
 r_struct
 id|inode
@@ -1177,19 +1214,38 @@ id|oldid
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ret
+id|d_old_dir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;@d_old_dir@&quot;
+comma
+l_int|11
+comma
+id|old_dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|dret
 op_assign
 id|compat_umsdos_real_lookup
 (paren
-id|old_dir
+id|d_old_dir
 comma
 id|old_info.fake.fname
 comma
 id|old_info.fake.len
-comma
-op_amp
-id|oldid
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dret
+)paren
+id|oldid
+op_assign
+id|dret-&gt;d_inode
 suffix:semicolon
 id|old
 op_assign
@@ -1235,17 +1291,20 @@ id|new_dir
 )paren
 suffix:semicolon
 multiline_comment|/* Both inode are needed later */
-id|check_dentry
+id|check_dentry_path
 (paren
 id|old
+comma
+l_string|&quot;umsdos_rename_f OLD2&quot;
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 r_new
+comma
+l_string|&quot;umsdos_rename_f NEW2&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: debug only */
 id|ret
 op_assign
 id|msdos_rename
@@ -1423,6 +1482,11 @@ suffix:semicolon
 multiline_comment|/* iput (inode); FIXME */
 )brace
 )brace
+id|fin_dentry
+(paren
+id|dret
+)paren
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -1479,14 +1543,18 @@ id|new_dir
 )paren
 suffix:semicolon
 )brace
-id|check_dentry
+id|check_dentry_path
 (paren
 id|old_dentry
+comma
+l_string|&quot;umsdos_rename_f OLD3&quot;
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|new_dentry
+comma
+l_string|&quot;umsdos_rename_f NEW3&quot;
 )paren
 suffix:semicolon
 id|Printk
@@ -1502,7 +1570,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Setup un Symbolic link or a (pseudo) hard link&n; * Return a negative error code or 0 if ok.&n; */
+multiline_comment|/*&n; * Setup un Symbolic link or a (pseudo) hard link&n; * Return a negative error code or 0 if OK.&n; */
 DECL|function|umsdos_symlink_x
 r_static
 r_int
@@ -1586,11 +1654,6 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
-id|loff_t
-id|myofs
-op_assign
-l_int|0
-suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
@@ -1599,12 +1662,16 @@ comma
 id|dentry
 )paren
 suffix:semicolon
+id|filp.f_pos
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Make the inode acceptable to MSDOS FIXME */
 id|Printk
 (paren
 (paren
 id|KERN_WARNING
-l_string|&quot;umsdos_symlink_x: /mn/ Is this ok?&bslash;n&quot;
+l_string|&quot;umsdos_symlink_x:  /mn/ is this OK?&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -1637,9 +1704,6 @@ comma
 id|symname
 comma
 id|len
-comma
-op_amp
-id|myofs
 )paren
 suffix:semicolon
 multiline_comment|/* dput(dentry); ?? where did this come from FIXME */
@@ -1712,7 +1776,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Setup un Symbolic link.&n; * Return a negative error code or 0 if ok.&n; */
+multiline_comment|/*&n; * Setup un Symbolic link.&n; * Return a negative error code or 0 if OK.&n; */
 DECL|function|UMSDOS_symlink
 r_int
 id|UMSDOS_symlink
@@ -1778,7 +1842,7 @@ id|oldinode
 op_assign
 id|olddentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/* #Specification: hard link / strategy&n;&t; * Well ... hard link are difficult to implement on top of an&n;&t; * MsDOS fat file system. Unlike UNIX file systems, there are no&n;&t; * inode. A directory entry hold the functionality of the inode&n;&t; * and the entry.&n;&t; * &n;&t; * We will used the same strategy as a normal Unix file system&n;&t; * (with inode) except we will do it symbolically (using paths).&n;&t; * &n;&t; * Because anything can happen during a DOS session (defragment,&n;&t; * directory sorting, etc...), we can&squot;t rely on MsDOS pseudo&n;&t; * inode number to record the link. For this reason, the link&n;&t; * will be done using hidden symbolic links. The following&n;&t; * scenario illustrate how it work.&n;&t; * &n;&t; * Given a file /foo/file&n;&t; * &n;&t; * #&n;&t; * ln /foo/file /tmp/file2&n;&t; * &n;&t; * become internally&n;&t; * &n;&t; * mv /foo/file /foo/-LINK1&n;&t; * ln -s /foo/-LINK1 /foo/file&n;&t; * ln -s /foo/-LINK1 /tmp/file2&n;&t; * #&n;&t; * &n;&t; * Using this strategy, we can operate on /foo/file or /foo/file2.&n;&t; * We can remove one and keep the other, like a normal Unix hard link.&n;&t; * We can rename /foo/file or /tmp/file2 independently.&n;&t; * &n;&t; * The entry -LINK1 will be hidden. It will hold a link count.&n;&t; * When all link are erased, the hidden file is erased too.&n;&t; */
+multiline_comment|/* #Specification: hard link / strategy&n;&t; * Hard links are difficult to implement on top of an MS-DOS FAT file&n;&t; * system. Unlike Unix file systems, there are no inodes. A directory&n;&t; * entry holds the functionality of the inode and the entry.&n;&t; * &n;&t; * We will used the same strategy as a normal Unix file system&n;&t; * (with inodes) except we will do it symbolically (using paths).&n;&t; * &n;&t; * Because anything can happen during a DOS session (defragment,&n;&t; * directory sorting, etc.), we can&squot;t rely on an MS-DOS pseudo&n;&t; * inode number to record the link. For this reason, the link&n;&t; * will be done using hidden symbolic links. The following&n;&t; * scenario illustrates how it works.&n;&t; * &n;&t; * Given a file /foo/file&n;&t; * &n;&t; * #&n;&t; * ln /foo/file /tmp/file2&n;&t; * &n;&t; * become internally&n;&t; * &n;&t; * mv /foo/file /foo/-LINK1&n;&t; * ln -s /foo/-LINK1 /foo/file&n;&t; * ln -s /foo/-LINK1 /tmp/file2&n;&t; * #&n;&t; * &n;&t; * Using this strategy, we can operate on /foo/file or /foo/file2.&n;&t; * We can remove one and keep the other, like a normal Unix hard link.&n;&t; * We can rename /foo/file or /tmp/file2 independently.&n;&t; * &n;&t; * The entry -LINK1 will be hidden. It will hold a link count.&n;&t; * When all link are erased, the hidden file is erased too.&n;&t; */
 multiline_comment|/* #Specification: weakness / hard link&n;&t; * The strategy for hard link introduces a side effect that&n;&t; * may or may not be acceptable. Here is the sequence&n;&t; * &n;&t; * #&n;&t; * mkdir subdir1&n;&t; * touch subdir1/file&n;&t; * mkdir subdir2&n;&t; * ln    subdir1/file subdir2/file&n;&t; * rm    subdir1/file&n;&t; * rmdir subdir1&n;&t; * rmdir: subdir1: Directory not empty&n;&t; * #&n;&t; * &n;&t; * This happen because there is an invisible file (--link) in&n;&t; * subdir1 which is referenced by subdir2/file.&n;&t; * &n;&t; * Any idea ?&n;&t; */
 multiline_comment|/* #Specification: weakness / hard link / rename directory&n;&t; * Another weakness of hard link come from the fact that&n;&t; * it is based on hidden symbolic links. Here is an example.&n;&t; * &n;&t; * #&n;&t; * mkdir /subdir1&n;&t; * touch /subdir1/file&n;&t; * mkdir /subdir2&n;&t; * ln    /subdir1/file subdir2/file&n;&t; * mv    /subdir1 subdir3&n;&t; * ls -l /subdir2/file&n;&t; * #&n;&t; * &n;&t; * Since /subdir2/file is a hidden symbolic link&n;&t; * to /subdir1/..hlinkNNN, accessing it will fail since&n;&t; * /subdir1 does not exist anymore (has been renamed).&n;&t; */
 r_int
@@ -2277,6 +2341,9 @@ multiline_comment|/* Permission bit + file type ??? */
 )paren
 (brace
 multiline_comment|/* Will hold the inode of the newly created file */
+r_int
+id|ret
+suffix:semicolon
 id|Printk
 (paren
 (paren
@@ -2285,12 +2352,15 @@ l_string|&quot;UMSDOS_create: entering&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|dentry
+comma
+l_string|&quot;UMSDOS_create START&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|umsdos_create_any
 (paren
 id|dir
@@ -2303,6 +2373,16 @@ l_int|0
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|check_dentry_path
+(paren
+id|dentry
+comma
+l_string|&quot;UMSDOS_create END&quot;
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Add a sub-directory in a directory&n; */
@@ -2465,9 +2545,9 @@ id|tdir
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;mkd-dir&quot;
+l_string|&quot;@mkd-dir@&quot;
 comma
-l_int|7
+l_int|9
 comma
 id|dir
 comma
@@ -2530,27 +2610,45 @@ r_struct
 id|inode
 op_star
 id|subdir
+op_assign
+l_int|NULL
 suffix:semicolon
-id|ret
+r_struct
+id|dentry
+op_star
+id|d_dir
+comma
+op_star
+id|dret
+suffix:semicolon
+id|d_dir
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;@d_dir5@&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|dret
 op_assign
 id|compat_umsdos_real_lookup
 (paren
-id|dir
+id|d_dir
 comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-op_amp
-id|subdir
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ret
-op_eq
-l_int|0
+id|dret
 )paren
 (brace
 r_struct
@@ -2561,13 +2659,17 @@ comma
 op_star
 id|tdsub
 suffix:semicolon
+id|subdir
+op_assign
+id|dret-&gt;d_inode
+suffix:semicolon
 id|tdsub
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;mkd-emd&quot;
+l_string|&quot;@mkd-emd@&quot;
 comma
-l_int|7
+l_int|9
 comma
 id|subdir
 comma
@@ -2629,6 +2731,11 @@ id|temp-&gt;d_inode
 )paren
 suffix:semicolon
 multiline_comment|/* iput (result); FIXME */
+id|fin_dentry
+(paren
+id|dret
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2644,7 +2751,7 @@ l_string|&quot;UMSDOS: Can&squot;t create empty --linux-.---&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* iput (subdir); FIXME */
+multiline_comment|/*iput (subdir); FIXME*/
 )brace
 )brace
 id|umsdos_unlockcreate
@@ -2694,9 +2801,11 @@ multiline_comment|/* #Specification: Special files / strategy&n;&t; * Device spe
 r_int
 id|ret
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|dentry
+comma
+l_string|&quot;UMSDOS_mknod START&quot;
 )paren
 suffix:semicolon
 id|ret
@@ -2714,9 +2823,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|check_dentry
+id|check_dentry_path
 (paren
 id|dentry
+comma
+l_string|&quot;UMSDOS_mknod END&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* dput(dentry); / * /mn/ FIXME! */
@@ -2740,7 +2851,7 @@ op_star
 id|dentry
 )paren
 (brace
-multiline_comment|/* #Specification: style / iput strategy&n;&t; * In the UMSDOS project, I am trying to apply a single&n;&t; * programming style regarding inode management. Many&n;&t; * entry point are receiving an inode to act on, and must&n;&t; * do an iput() as soon as they are finished with&n;&t; * the inode.&n;&t; * &n;&t; * For simple case, there is no problem. When you introduce&n;&t; * error checking, you end up with many iput placed around the&n;&t; * code.&n;&t; * &n;&t; * The coding style I use all around is one where I am trying&n;&t; * to provide independent flow logic (I don&squot;t know how to&n;&t; * name this). With this style, code is easier to understand&n;&t; * but you rapidly get iput() all around. Here is an exemple&n;&t; * of what I am trying to avoid.&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * ...&n;&t; * if(b){&n;&t; * ...&n;&t; * }&n;&t; * ...&n;&t; * if (c){&n;&t; * // Complex state. Was b true ? &n;&t; * ...&n;&t; * }&n;&t; * ...&n;&t; * }&n;&t; * // Weird state&n;&t; * if (d){&n;&t; * // ...&n;&t; * }&n;&t; * // Was iput finally done ?&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Here is the style I am using. Still sometime I do the&n;&t; * first when things are very simple (or very complicated :-( )&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * if (b){&n;&t; * ...&n;&t; * }else if (c){&n;&t; * // A single state gets here&n;&t; * }&n;&t; * }else if (d){&n;&t; * ...&n;&t; * }&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Again, while this help clarifying the code, I often get a lot&n;&t; * of iput(), unlike the first style, where I can place few &n;&t; * &quot;strategic&quot; iput(). &quot;strategic&quot; also mean, more difficult&n;&t; * to place.&n;&t; * &n;&t; * So here is the style I will be using from now on in this project.&n;&t; * There is always an iput() at the end of a function (which has&n;&t; * to do an iput()). One iput by inode. There is also one iput()&n;&t; * at the places where a successful operation is achieved. This&n;&t; * iput() is often done by a sub-function (often from the msdos&n;&t; * file system). So I get one too many iput() ? At the place&n;&t; * where an iput() is done, the inode is simply nulled, disabling&n;&t; * the last one.&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * if (b){&n;&t; * ...&n;&t; * }else if (c){&n;&t; * msdos_rmdir(dir,...);&n;&t; * dir = NULL;&n;&t; * }&n;&t; * }else if (d){&n;&t; * ...&n;&t; * }&n;&t; * iput (dir);&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Note that the umsdos_lockcreate() and umsdos_unlockcreate() function&n;&t; * pair goes against this practice of &quot;forgetting&quot; the inode as soon&n;&t; * as possible.&n;&t; */
+multiline_comment|/* #Specification: style / iput strategy&n;&t; * In the UMSDOS project, I am trying to apply a single&n;&t; * programming style regarding inode management.  Many&n;&t; * entry points are receiving an inode to act on, and must&n;&t; * do an iput() as soon as they are finished with&n;&t; * the inode.&n;&t; * &n;&t; * For simple cases, there is no problem.  When you introduce&n;&t; * error checking, you end up with many iput() calls in the&n;&t; * code.&n;&t; * &n;&t; * The coding style I use all around is one where I am trying&n;&t; * to provide independent flow logic (I don&squot;t know how to&n;&t; * name this).  With this style, code is easier to understand&n;&t; * but you must do iput() everywhere.  Here is an example&n;&t; * of what I am trying to avoid.&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * ...&n;&t; * if(b){&n;&t; * ...&n;&t; * }&n;&t; * ...&n;&t; * if (c){&n;&t; * // Complex state. Was b true? &n;&t; * ...&n;&t; * }&n;&t; * ...&n;&t; * }&n;&t; * // Weird state&n;&t; * if (d){&n;&t; * // ...&n;&t; * }&n;&t; * // Was iput finally done?&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Here is the style I am using.  Still sometimes I do the&n;&t; * first when things are very simple (or very complicated :-( ).&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * if (b){&n;&t; * ...&n;&t; * }else if (c){&n;&t; * // A single state gets here.&n;&t; * }&n;&t; * }else if (d){&n;&t; * ...&n;&t; * }&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Again, while this help clarifying the code, I often get a lot&n;&t; * of iput(), unlike the first style, where I can place few &n;&t; * &quot;strategic&quot; iput(). &quot;strategic&quot; also mean, more difficult&n;&t; * to place.&n;&t; * &n;&t; * So here is the style I will be using from now on in this project.&n;&t; * There is always an iput() at the end of a function (which has&n;&t; * to do an iput()). One iput by inode. There is also one iput()&n;&t; * at the places where a successful operation is achieved. This&n;&t; * iput() is often done by a sub-function (often from the msdos&n;&t; * file system).  So I get one too many iput()?  At the place&n;&t; * where an iput() is done, the inode is simply nulled, disabling&n;&t; * the last one.&n;&t; * &n;&t; * #&n;&t; * if (a){&n;&t; * if (b){&n;&t; * ...&n;&t; * }else if (c){&n;&t; * msdos_rmdir(dir,...);&n;&t; * dir = NULL;&n;&t; * }&n;&t; * }else if (d){&n;&t; * ...&n;&t; * }&n;&t; * iput (dir);&n;&t; * return status;&n;&t; * #&n;&t; * &n;&t; * Note that the umsdos_lockcreate() and umsdos_unlockcreate() function&n;&t; * pair goes against this practice of &quot;forgetting&quot; the inode as soon&n;&t; * as possible.&n;&t; */
 r_int
 id|ret
 suffix:semicolon
@@ -2764,7 +2875,7 @@ op_eq
 l_int|0
 )paren
 (brace
-r_volatile
+multiline_comment|/* volatile - DELME: I see no reason vor volatile /mn/ */
 r_struct
 id|inode
 op_star
@@ -2880,9 +2991,9 @@ id|tedir
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;emd-rmd&quot;
+l_string|&quot;@emd-rmd@&quot;
 comma
-l_int|7
+l_int|9
 comma
 id|dir
 comma
@@ -3046,9 +3157,9 @@ id|tdir
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;dir-rmd&quot;
+l_string|&quot;@dir-rmd@&quot;
 comma
-l_int|7
+l_int|9
 comma
 id|dir
 comma
@@ -3440,7 +3551,7 @@ op_amp
 id|UMSDOS_HLINK
 )paren
 (brace
-multiline_comment|/* #Specification: hard link / deleting a link&n;&t;&t;&t;&t;&t;&t; * When we deletes a file, and this file is a link&n;&t;&t;&t;&t;&t;&t; * we must subtract 1 to the nlink field of the&n;&t;&t;&t;&t;&t;&t; * hidden link.&n;&t;&t;&t;&t;&t;&t; * &n;&t;&t;&t;&t;&t;&t; * If the count goes to 0, we delete this hidden&n;&t;&t;&t;&t;&t;&t; * link too.&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* #Specification: hard link / deleting a link&n;&t;&t;&t;&t;&t;&t; * When we delete a file, and this file is a link&n;&t;&t;&t;&t;&t;&t; * we must subtract 1 to the nlink field of the&n;&t;&t;&t;&t;&t;&t; * hidden link.&n;&t;&t;&t;&t;&t;&t; * &n;&t;&t;&t;&t;&t;&t; * If the count goes to 0, we delete this hidden&n;&t;&t;&t;&t;&t;&t; * link too.&n;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * First, get the inode of the hidden link&n;&t;&t;&t;&t;&t;&t; * using the standard lookup function.&n;&t;&t;&t;&t;&t;&t; */
 r_struct
 id|inode
@@ -3609,7 +3720,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;Avant msdos_unlink %.*s &quot;
+l_string|&quot;Before msdos_unlink %.*s &quot;
 comma
 id|info.fake.len
 comma
@@ -3617,19 +3728,14 @@ id|info.fake.fname
 )paren
 )paren
 suffix:semicolon
-id|inc_count
-(paren
-id|dir
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME /mn/ is this needed anymore now that msdos_unlink locks dir using d_parent ? */
+multiline_comment|/* inc_count (dir);&t;/ * FIXME /mn/ is this needed any more now that msdos_unlink locks directories using d_parent ? */
 id|tdir
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;dir-del&quot;
+l_string|&quot;@dir-del@&quot;
 comma
-l_int|7
+l_int|9
 comma
 id|dir
 comma
@@ -3706,7 +3812,7 @@ multiline_comment|/* sticky bit set and we&squot;ve not got permission */
 id|Printk
 (paren
 (paren
-l_string|&quot;sticky set &quot;
+l_string|&quot;Sticky bit set. &quot;
 )paren
 )paren
 suffix:semicolon
@@ -3738,7 +3844,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Rename a file (move) in the file system.&n; */
+multiline_comment|/*&n; * Rename (move) a file.&n; */
 DECL|function|UMSDOS_rename
 r_int
 id|UMSDOS_rename
@@ -3764,7 +3870,7 @@ op_star
 id|new_dentry
 )paren
 (brace
-multiline_comment|/* #Specification: weakness / rename&n;&t; * There is a case where UMSDOS rename has a different behavior&n;&t; * than normal UNIX file system. Renaming an open file across&n;&t; * directory boundary does not work. Renaming an open file within&n;&t; * a directory does work however.&n;&t; * &n;&t; * The problem (not sure) is in the linux VFS msdos driver.&n;&t; * I believe this is not a bug but a design feature, because&n;&t; * an inode number represent some sort of directory address&n;&t; * in the MSDOS directory structure. So moving the file into&n;&t; * another directory does not preserve the inode number.&n;&t; */
+multiline_comment|/* #Specification: weakness / rename&n;&t; * There is a case where UMSDOS rename has a different behavior&n;&t; * than a normal Unix file system.  Renaming an open file across&n;&t; * directory boundary does not work.  Renaming an open file within&n;&t; * a directory does work, however.&n;&t; * &n;&t; * The problem may is in Linux VFS driver for msdos.&n;&t; * I believe this is not a bug but a design feature, because&n;&t; * an inode number represents some sort of directory address&n;&t; * in the MSDOS directory structure, so moving the file into&n;&t; * another directory does not preserve the inode number.&n;&t; */
 r_int
 id|ret
 op_assign
@@ -3821,9 +3927,9 @@ op_minus
 id|EEXIST
 )paren
 (brace
-multiline_comment|/* #Specification: rename / new name exist&n;&t;&t;&t; * If the destination name already exist, it will&n;&t;&t;&t; * silently be removed. EXT2 does it this way&n;&t;&t;&t; * and this is the spec of SUNOS. So does UMSDOS.&n;&t;&t;&t; * &n;&t;&t;&t; * If the destination is an empty directory it will&n;&t;&t;&t; * also be removed.&n;&t;&t;&t; */
-multiline_comment|/* #Specification: rename / new name exist / possible flaw&n;&t;&t;&t; * The code to handle the deletion of the target (file&n;&t;&t;&t; * and directory) use to be in umsdos_rename_f, surrounded&n;&t;&t;&t; * by proper directory locking. This was insuring that only&n;&t;&t;&t; * one process could achieve a rename (modification) operation&n;&t;&t;&t; * in the source and destination directory. This was also&n;&t;&t;&t; * insuring the operation was &quot;atomic&quot;.&n;&t;&t;&t; * &n;&t;&t;&t; * This has been changed because this was creating a kernel&n;&t;&t;&t; * stack overflow (stack is only 4k in the kernel). To avoid&n;&t;&t;&t; * the code doing the deletion of the target (if exist) has&n;&t;&t;&t; * been moved to a upper layer. umsdos_rename_f is tried&n;&t;&t;&t; * once and if it fails with EEXIST, the target is removed&n;&t;&t;&t; * and umsdos_rename_f is done again.&n;&t;&t;&t; * &n;&t;&t;&t; * This makes the code cleaner and (not sure) solve a&n;&t;&t;&t; * deadlock problem one tester was experiencing.&n;&t;&t;&t; * &n;&t;&t;&t; * The point is to mention that possibly, the semantic of&n;&t;&t;&t; * &quot;rename&quot; may be wrong. Anyone dare to check that :-)&n;&t;&t;&t; * Be aware that IF it is wrong, to produce the problem you&n;&t;&t;&t; * will need two process trying to rename a file to the&n;&t;&t;&t; * same target at the same time. Again, I am not sure it&n;&t;&t;&t; * is a problem at all.&n;&t;&t;&t; */
-multiline_comment|/* This is not super efficient but should work */
+multiline_comment|/* #Specification: rename / new name exist&n;&t;&t;&t; * If the destination name already exists, it will&n;&t;&t;&t; * silently be removed.  EXT2 does it this way&n;&t;&t;&t; * and this is the spec of SunOS.  So does UMSDOS.&n;&t;&t;&t; * &n;&t;&t;&t; * If the destination is an empty directory it will&n;&t;&t;&t; * also be removed.&n;&t;&t;&t; */
+multiline_comment|/* #Specification: rename / new name exist / possible flaw&n;&t;&t;&t; * The code to handle the deletion of the target (file&n;&t;&t;&t; * and directory) use to be in umsdos_rename_f, surrounded&n;&t;&t;&t; * by proper directory locking.  This was ensuring that only&n;&t;&t;&t; * one process could achieve a rename (modification) operation&n;&t;&t;&t; * in the source and destination directory.  This was also&n;&t;&t;&t; * ensuring the operation was &quot;atomic&quot;.&n;&t;&t;&t; * &n;&t;&t;&t; * This has been changed because this was creating a&n;&t;&t;&t; * stack overflow (the stack is only 4 kB) in the kernel.  To avoid&n;&t;&t;&t; * the code doing the deletion of the target (if exist) has&n;&t;&t;&t; * been moved to a upper layer. umsdos_rename_f is tried&n;&t;&t;&t; * once and if it fails with EEXIST, the target is removed&n;&t;&t;&t; * and umsdos_rename_f is done again.&n;&t;&t;&t; * &n;&t;&t;&t; * This makes the code cleaner and may solve a&n;&t;&t;&t; * deadlock problem one tester was experiencing.&n;&t;&t;&t; * &n;&t;&t;&t; * The point is to mention that possibly, the semantic of&n;&t;&t;&t; * &quot;rename&quot; may be wrong. Anyone dare to check that :-)&n;&t;&t;&t; * Be aware that IF it is wrong, to produce the problem you&n;&t;&t;&t; * will need two process trying to rename a file to the&n;&t;&t;&t; * same target at the same time. Again, I am not sure it&n;&t;&t;&t; * is a problem at all.&n;&t;&t;&t; */
+multiline_comment|/* This is not terribly efficient but should work. */
 id|inc_count
 (paren
 id|new_dir

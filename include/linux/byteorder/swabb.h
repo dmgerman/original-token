@@ -1,7 +1,7 @@
 macro_line|#ifndef _LINUX_BYTEORDER_SWABB_H
 DECL|macro|_LINUX_BYTEORDER_SWABB_H
 mdefine_line|#define _LINUX_BYTEORDER_SWABB_H
-multiline_comment|/*&n; * linux/byteorder/swabb.h&n; * SWAp Bytes Bizarrely&n; *&t;swaHHXX[ps]?(foo)&n; *&n; * Support for obNUXIous pdp-endian and other bizarre architectures.&n; * Will Linux ever run on such ancient beasts? if not, this file&n; * will be but a programming pearl. Still, it&squot;s a reminder that&n; * cpu_to_beXX and beXX_to_cpu should be well distinguished.&n; *&n; */
+multiline_comment|/*&n; * linux/byteorder/swabb.h&n; * SWAp Bytes Bizarrely&n; *&t;swaHHXX[ps]?(foo)&n; *&n; * Support for obNUXIous pdp-endian and other bizarre architectures.&n; * Will Linux ever run on such ancient beasts? if not, this file&n; * will be but a programming pearl. Still, it&squot;s a reminder that we&n; * shouldn&squot;t be making too many assumptions when trying to be portable.&n; *&n; */
 multiline_comment|/*&n; * Meaning of the names I chose (vaxlinux people feel free to correct them):&n; * swahw32&t;swap 16-bit half-words in a 32-bit word&n; * swahb32&t;swap 8-bit halves of each 16-bit half-word in a 32-bit word&n; *&n; * No 64-bit support yet. I don&squot;t know NUXI conventions for long longs.&n; * I guarantee it will be a mess when it&squot;s there, though :-&gt;&n; * It will be even worse if there are conflicting 64-bit conventions.&n; * Hopefully, no one ever used 64-bit objects on NUXI machines.&n; *&n; */
 DECL|macro|___swahw32
 mdefine_line|#define ___swahw32(x) &bslash;&n;&t;((__u32)( &bslash;&n;&t;&t;(((__u32)(x) &amp; (__u32)0x0000ffffUL) &lt;&lt; 16) | &bslash;&n;&t;&t;(((__u32)(x) &amp; (__u32)0xffff0000UL) &gt;&gt; 16) ))

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;fare@tunes.org&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
@@ -14,10 +14,10 @@ DECL|macro|UFS_SBLOCK
 mdefine_line|#define UFS_SBLOCK 8192
 DECL|macro|UFS_SBSIZE
 mdefine_line|#define UFS_SBSIZE 8192
-DECL|macro|SECTOR_SIZE
-mdefine_line|#define SECTOR_SIZE 512
-DECL|macro|SECTOR_BITS
-mdefine_line|#define SECTOR_BITS 9
+DECL|macro|UFS_SECTOR_SIZE
+mdefine_line|#define UFS_SECTOR_SIZE 512
+DECL|macro|UFS_SECTOR_BITS
+mdefine_line|#define UFS_SECTOR_BITS 9
 DECL|macro|UFS_MAGIC
 mdefine_line|#define UFS_MAGIC 0x00011954
 DECL|macro|UFS_CIGAM
@@ -70,10 +70,19 @@ multiline_comment|/* From here to next blank line, s_flags for ufs_sb_info */
 multiline_comment|/* endianness */
 DECL|macro|UFS_BYTESEX
 mdefine_line|#define UFS_BYTESEX&t;&t;0x00000001&t;/* mask; leave room to 0xF */
+macro_line|#if defined(__LITTLE_ENDIAN) || defined(__BIG_ENDIAN)
+multiline_comment|/* these are for sane architectures */
+DECL|macro|UFS_NATIVE_ENDIAN
+mdefine_line|#define UFS_NATIVE_ENDIAN&t;0x00000000
+DECL|macro|UFS_SWABBED_ENDIAN
+mdefine_line|#define UFS_SWABBED_ENDIAN&t;0x00000001
+macro_line|#else
+multiline_comment|/* these are for pervert architectures */
 DECL|macro|UFS_LITTLE_ENDIAN
 mdefine_line|#define UFS_LITTLE_ENDIAN&t;0x00000000
 DECL|macro|UFS_BIG_ENDIAN
 mdefine_line|#define UFS_BIG_ENDIAN&t;&t;0x00000001
+macro_line|#endif
 multiline_comment|/* directory entry encoding */
 DECL|macro|UFS_DE_MASK
 mdefine_line|#define UFS_DE_MASK&t;&t;0x00000010&t;/* mask for the following */

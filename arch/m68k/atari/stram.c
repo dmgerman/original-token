@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atari_stram.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_STRAM_SWAP
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR    Z2RAM_MAJOR
@@ -49,9 +50,6 @@ macro_line|#else
 DECL|macro|ALIGN_IF_SWAP
 mdefine_line|#define ALIGN_IF_SWAP(x)&t;(x)
 macro_line|#endif
-multiline_comment|/* map entry for reserved swap page (used as buffer) */
-DECL|macro|SWP_RSVD
-mdefine_line|#define SWP_RSVD&t;&t;&t;0x80
 multiline_comment|/* get index of swap page at address &squot;addr&squot; */
 DECL|macro|SWAP_NR
 mdefine_line|#define SWAP_NR(addr)&t;&t;(((unsigned long)(addr)-swap_start) &gt;&gt; PAGE_SHIFT)
@@ -414,21 +412,17 @@ id|unswap_by_move
 c_func
 (paren
 r_int
-r_char
+r_int
 op_star
-id|map
 comma
 r_int
 r_int
-id|max
 comma
 r_int
 r_int
-id|start
 comma
 r_int
 r_int
-id|n_pages
 )paren
 suffix:semicolon
 r_static
@@ -437,21 +431,17 @@ id|unswap_by_read
 c_func
 (paren
 r_int
-r_char
+r_int
 op_star
-id|map
 comma
 r_int
 r_int
-id|max
 comma
 r_int
 r_int
-id|start
 comma
 r_int
 r_int
-id|n_pages
 )paren
 suffix:semicolon
 r_static
@@ -669,7 +659,7 @@ suffix:semicolon
 multiline_comment|/* determine whether kernel code resides in ST-RAM (then ST-RAM is the&n;&t; * first memory block at virtual 0x0) */
 id|stram_start
 op_assign
-id|PTOV
+id|phys_to_virt
 c_func
 (paren
 l_int|0
@@ -944,24 +934,40 @@ comma
 id|swap_end
 )paren
 suffix:semicolon
-multiline_comment|/* reserve some amount of memory for maintainance of swapping itself:&n;&t;&t; * 1 page for the lockmap, and one page for each 4096 (PAGE_SIZE) swap&n;&t;&t; * pages. (1 byte for each page) */
+multiline_comment|/* reserve some amount of memory for maintainance of&n;&t;&t; * swapping itself: 1 page for the lockmap, and one page&n;&t;&t; * for each 2048 (PAGE_SIZE/2) swap pages. (2 bytes for&n;&t;&t; * each page) */
 id|swap_data
 op_assign
 id|start_mem
 suffix:semicolon
 id|start_mem
 op_add_assign
-id|PAGE_ALIGN
-c_func
+(paren
+(paren
 (paren
 id|SWAP_NR
 c_func
 (paren
 id|swap_end
 )paren
-)paren
 op_plus
 id|PAGE_SIZE
+op_div
+l_int|2
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+)paren
+op_plus
+l_int|1
+)paren
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
 multiline_comment|/* correct swap_start if necessary */
 r_if
@@ -1942,7 +1948,7 @@ id|p-&gt;swap_map
 op_assign
 (paren
 r_int
-r_char
+r_int
 op_star
 )paren
 (paren
@@ -2008,7 +2014,7 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* initialize swap_map: set regions that are already allocated or belong&n;&t; * to kernel data space to SWP_RSVD, otherwise to free */
+multiline_comment|/* initialize swap_map: set regions that are already allocated or belong&n;&t; * to kernel data space to SWAP_MAP_BAD, otherwise to free */
 id|j
 op_assign
 l_int|0
@@ -2073,7 +2079,7 @@ id|p-&gt;swap_map
 id|i
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 op_increment
 id|k
@@ -2095,7 +2101,7 @@ id|p-&gt;swap_map
 id|i
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 )brace
 r_else
@@ -2132,7 +2138,7 @@ id|p-&gt;swap_map
 l_int|0
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 multiline_comment|/* now swapping to this device ok */
 id|p-&gt;pages
@@ -3132,7 +3138,7 @@ id|unswap_by_move
 c_func
 (paren
 r_int
-r_char
+r_int
 op_star
 id|map
 comma
@@ -3226,7 +3232,7 @@ id|map
 id|i
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -3248,7 +3254,7 @@ id|map
 id|i
 )braket
 op_eq
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 (brace
 id|printk
@@ -3577,7 +3583,7 @@ id|map
 id|i
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 r_if
 c_cond
@@ -3614,7 +3620,7 @@ id|unswap_by_read
 c_func
 (paren
 r_int
-r_char
+r_int
 op_star
 id|map
 comma
@@ -3687,7 +3693,7 @@ id|map
 id|i
 )braket
 op_eq
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 (brace
 id|printk
@@ -3848,9 +3854,7 @@ id|map
 id|i
 )braket
 op_ne
-id|SWP_RSVD
-op_minus
-l_int|1
+id|SWAP_MAP_MAX
 )paren
 id|printk
 c_func
@@ -3904,7 +3908,7 @@ id|map
 id|i
 )braket
 op_assign
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 suffix:semicolon
 r_if
 c_cond
@@ -3959,7 +3963,7 @@ id|n_pages
 )paren
 (brace
 r_int
-r_char
+r_int
 op_star
 id|map
 op_assign
@@ -4126,7 +4130,7 @@ id|n_pages
 )paren
 (brace
 r_int
-r_char
+r_int
 op_star
 id|map
 op_assign
@@ -4184,7 +4188,7 @@ id|map
 id|offset
 )braket
 op_ne
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 id|printk
 c_func
@@ -4334,7 +4338,7 @@ id|region_free
 )paren
 (brace
 r_int
-r_char
+r_int
 op_star
 id|map
 op_assign
@@ -4416,7 +4420,7 @@ id|map
 id|tail
 )braket
 op_eq
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 (brace
 id|head
@@ -4517,7 +4521,7 @@ id|map
 id|tail
 )braket
 op_eq
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 (brace
 id|head
@@ -5704,7 +5708,7 @@ r_int
 id|i
 suffix:semicolon
 r_int
-r_char
+r_int
 op_star
 id|map
 op_assign
@@ -5773,7 +5777,7 @@ id|map
 id|i
 )braket
 op_eq
-id|SWP_RSVD
+id|SWAP_MAP_BAD
 )paren
 op_increment
 id|rsvd
@@ -5921,13 +5925,13 @@ c_func
 (paren
 l_string|&quot;0x%08lx-0x%08lx: %s (&quot;
 comma
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|p-&gt;start
 )paren
 comma
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|p-&gt;start

@@ -1564,6 +1564,11 @@ comma
 id|task
 )paren
 suffix:semicolon
+id|checksignals
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -208,7 +208,6 @@ comma
 multiline_comment|/* open */
 l_int|NULL
 comma
-multiline_comment|/* flush */
 id|coda_release
 comma
 multiline_comment|/* release */

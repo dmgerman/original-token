@@ -911,12 +911,6 @@ DECL|member|audio_mode
 r_int
 id|audio_mode
 suffix:semicolon
-multiline_comment|/* why don&squot;t we use file-&gt;f_flags &amp; O_NONBLOCK for the following? - ts */
-DECL|member|dev_nblock
-r_int
-id|dev_nblock
-suffix:semicolon
-multiline_comment|/* 1 if in nonblocking mode */
 DECL|macro|AM_NONE
 mdefine_line|#define&t;&t;AM_NONE&t;&t;0
 DECL|macro|AM_WRITE

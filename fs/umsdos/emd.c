@@ -10,20 +10,11 @@ macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x)
-DECL|macro|Printk
-mdefine_line|#define Printk(x) printk x
 multiline_comment|/*&n; *    Read a file into kernel space memory&n; *      returns how many bytes read (from fat_file_read)&n; */
 DECL|function|umsdos_file_read_kmem
 id|ssize_t
 id|umsdos_file_read_kmem
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -35,19 +26,10 @@ id|buf
 comma
 r_int
 id|count
-comma
-id|loff_t
-op_star
-id|offs
 )paren
 (brace
 r_int
 id|ret
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|old_dentry
 suffix:semicolon
 id|mm_segment_t
 id|old_fs
@@ -61,52 +43,17 @@ id|set_fs
 id|KERNEL_DS
 )paren
 suffix:semicolon
-id|old_dentry
-op_assign
-id|filp-&gt;f_dentry
-suffix:semicolon
-multiline_comment|/* save it */
-id|filp-&gt;f_dentry
-op_assign
-id|creat_dentry
-(paren
-id|UMSDOS_EMD_FILE
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-id|emd_dir
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-op_star
-id|offs
-op_assign
-id|filp-&gt;f_pos
-suffix:semicolon
 id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_file_read_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d, offs=%p&bslash;n&quot;
+l_string|&quot;umsdos_file_read_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d&bslash;n&quot;
 comma
 id|filp
 comma
 id|buf
 comma
 id|count
-comma
-id|offs
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  using emd=%ld&bslash;n&quot;
-comma
-id|emd_dir-&gt;i_ino
 )paren
 )paren
 suffix:semicolon
@@ -119,21 +66,6 @@ comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  ofs=%ld&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-op_star
-id|offs
 )paren
 )paren
 suffix:semicolon
@@ -246,7 +178,8 @@ id|buf
 comma
 id|count
 comma
-id|offs
+op_amp
+id|filp-&gt;f_pos
 )paren
 suffix:semicolon
 id|PRINTK
@@ -259,36 +192,6 @@ id|ret
 )paren
 )paren
 suffix:semicolon
-id|filp-&gt;f_pos
-op_assign
-op_star
-id|offs
-suffix:semicolon
-multiline_comment|/* we needed *filp only for this? grrrr... /mn/ */
-multiline_comment|/* FIXME: I have no idea what f_pos is used for. It seems to be used this way before offs was introduced.&n;&t; * this probably needs fixing /mn/ */
-id|d_drop
-(paren
-id|filp-&gt;f_dentry
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME: hmmmm... we should not dispose of it in this way ? */
-id|filp-&gt;f_dentry
-op_assign
-id|old_dentry
-suffix:semicolon
-multiline_comment|/* restore orig. dentry (it is dentry of file we need info about. Dunno why it gets passed to us&n;&t;&t;&t;&t;&t; * since we have no use for it, expect to store totally unrelated data of offset of EMD_FILE&n;&t;&t;&t;&t;&t; * end not directory in it. But what the hell now... fat_file_read requires it also, but prolly expects&n;&t;&t;&t;&t;&t; * it to be file* of EMD not file we want to read EMD entry about... ugh. complicated to explain :) /mn/ */
-multiline_comment|/* FIXME: we probably need to destroy original filp-&gt;f_dentry first ? Do we ? And how ? this way we leave all sorts of dentries, inodes etc. lying around */
-multiline_comment|/* Also FIXME: all the same problems in umsdos_file_write_kmem */
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) using emd=%lu&bslash;n&quot;
-comma
-id|emd_dir-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
 id|PRINTK
 (paren
 (paren
@@ -298,17 +201,6 @@ comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  (ret) ofs=%Lu&bslash;n&quot;
-comma
-op_star
-id|offs
 )paren
 )paren
 suffix:semicolon
@@ -411,7 +303,7 @@ id|mydirent
 op_assign
 id|buf
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 id|KERN_DEBUG
@@ -421,7 +313,7 @@ id|mydirent-&gt;uid
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 id|KERN_DEBUG
@@ -431,7 +323,7 @@ id|mydirent-&gt;gid
 )paren
 )paren
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 id|KERN_DEBUG
@@ -452,7 +344,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Write to file from kernel space. &n; *      Does the real job, assumes all structures are initialized !&n; */
+multiline_comment|/*&n; *    Write to file from kernel space. &n; *      Does the real job, assumes all structures are initialized!&n; */
 DECL|function|umsdos_file_write_kmem_real
 id|ssize_t
 id|umsdos_file_write_kmem_real
@@ -469,10 +361,6 @@ id|buf
 comma
 r_int
 id|count
-comma
-id|loff_t
-op_star
-id|offs
 )paren
 (brace
 id|ssize_t
@@ -494,15 +382,13 @@ id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_file_write_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d, offs=%p&bslash;n&quot;
+l_string|&quot;umsdos_file_write_kmem /mn/: Checkin: filp=%p, buf=%p, size=%d&bslash;n&quot;
 comma
 id|filp
 comma
 id|buf
 comma
 id|count
-comma
-id|offs
 )paren
 )paren
 suffix:semicolon
@@ -535,21 +421,6 @@ comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
-)paren
-)paren
-suffix:semicolon
-id|PRINTK
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  ofs=%ld&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-op_star
-id|offs
 )paren
 )paren
 suffix:semicolon
@@ -643,7 +514,7 @@ id|filp-&gt;f_rawin
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress symlinks&n;&t; * (in unlikely event that they are &gt; 512 bytes and can be compressed &n;&t; * FIXME: should we set it when reading symlink too ? */
+multiline_comment|/* note: i_binary=2 is for CVF-FAT. We put it here, instead of&n;&t; * umsdos_file_write_kmem, since it is also wise not to compress symlinks&n;&t; * (in the unlikely event that they are &gt; 512 bytes and can be compressed &n;&t; * FIXME: should we set it when reading symlinks too? */
 id|MSDOS_I
 (paren
 id|filp-&gt;f_dentry-&gt;d_inode
@@ -663,15 +534,20 @@ id|buf
 comma
 id|count
 comma
-id|offs
+op_amp
+id|filp-&gt;f_pos
 )paren
 suffix:semicolon
-id|PRINTK
+id|Printk
 (paren
 (paren
 id|KERN_DEBUG
 l_string|&quot;fat_file_write returned with %ld!&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|ret
 )paren
 )paren
@@ -685,16 +561,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Write to a file from kernel space&n; */
+multiline_comment|/*&n; *    Write to a file from kernel space.&n; */
 DECL|function|umsdos_file_write_kmem
 id|ssize_t
 id|umsdos_file_write_kmem
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -707,19 +578,10 @@ id|buf
 comma
 r_int
 id|count
-comma
-id|loff_t
-op_star
-id|offs
 )paren
 (brace
 r_int
 id|ret
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|old_dentry
 suffix:semicolon
 id|Printk
 (paren
@@ -729,40 +591,6 @@ l_string|&quot; STARTED WRITE_KMEM /mn/&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;  using emd=%ld&bslash;n&quot;
-comma
-id|emd_dir-&gt;i_ino
-)paren
-)paren
-suffix:semicolon
-id|old_dentry
-op_assign
-id|filp-&gt;f_dentry
-suffix:semicolon
-multiline_comment|/* save it */
-id|filp-&gt;f_dentry
-op_assign
-id|creat_dentry
-(paren
-id|UMSDOS_EMD_FILE
-comma
-id|UMSDOS_EMD_NAMELEN
-comma
-id|emd_dir
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-op_star
-id|offs
-op_assign
-id|filp-&gt;f_pos
-suffix:semicolon
-multiline_comment|/* FIXME, in read_kmem also: offs is not used so why pass it ?!!! /mn/ */
 id|ret
 op_assign
 id|umsdos_file_write_kmem_real
@@ -772,38 +600,25 @@ comma
 id|buf
 comma
 id|count
-comma
-id|offs
 )paren
 suffix:semicolon
+macro_line|#warning Should d_drop be here ?
+macro_line|#if 0
 id|d_drop
 (paren
 id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
-id|filp-&gt;f_pos
-op_assign
-op_star
-id|offs
-suffix:semicolon
-id|filp-&gt;f_dentry
-op_assign
-id|old_dentry
-suffix:semicolon
+macro_line|#endif
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write a block of bytes into one EMD file.&n; * The block of data is NOT in user space.&n; * &n; * Return 0 if ok, a negative error code if not.&n; */
+multiline_comment|/*&n; * Write a block of bytes into one EMD file.&n; * The block of data is NOT in user space.&n; * &n; * Return 0 if OK, a negative error code if not.&n; */
 DECL|function|umsdos_emd_dir_write
 id|ssize_t
 id|umsdos_emd_dir_write
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -816,19 +631,10 @@ comma
 multiline_comment|/* buffer in kernel memory, not in user space */
 r_int
 id|count
-comma
-id|loff_t
-op_star
-id|offs
 )paren
 (brace
 r_int
 id|written
-suffix:semicolon
-id|loff_t
-id|myofs
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef __BIG_ENDIAN
 r_struct
@@ -843,86 +649,71 @@ op_star
 )paren
 id|buf
 suffix:semicolon
+id|d-&gt;nlink
+op_assign
+id|cpu_to_le16
+(paren
+id|d-&gt;nlink
+)paren
+suffix:semicolon
+id|d-&gt;uid
+op_assign
+id|cpu_to_le16
+(paren
+id|d-&gt;uid
+)paren
+suffix:semicolon
+id|d-&gt;gid
+op_assign
+id|cpu_to_le16
+(paren
+id|d-&gt;gid
+)paren
+suffix:semicolon
+id|d-&gt;atime
+op_assign
+id|cpu_to_le32
+(paren
+id|d-&gt;atime
+)paren
+suffix:semicolon
+id|d-&gt;mtime
+op_assign
+id|cpu_to_le32
+(paren
+id|d-&gt;mtime
+)paren
+suffix:semicolon
+id|d-&gt;ctime
+op_assign
+id|cpu_to_le32
+(paren
+id|d-&gt;ctime
+)paren
+suffix:semicolon
+id|d-&gt;rdev
+op_assign
+id|cpu_to_le16
+(paren
+id|d-&gt;rdev
+)paren
+suffix:semicolon
+id|d-&gt;mode
+op_assign
+id|cpu_to_le16
+(paren
+id|d-&gt;mode
+)paren
+suffix:semicolon
 macro_line|#endif
 id|filp-&gt;f_flags
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __BIG_ENDIAN
-id|d-&gt;nlink
-op_assign
-id|cpu_to_le16
-(paren
-id|d-&gt;nlink
-)paren
-suffix:semicolon
-id|d-&gt;uid
-op_assign
-id|cpu_to_le16
-(paren
-id|d-&gt;uid
-)paren
-suffix:semicolon
-id|d-&gt;gid
-op_assign
-id|cpu_to_le16
-(paren
-id|d-&gt;gid
-)paren
-suffix:semicolon
-id|d-&gt;atime
-op_assign
-id|cpu_to_le32
-(paren
-id|d-&gt;atime
-)paren
-suffix:semicolon
-id|d-&gt;mtime
-op_assign
-id|cpu_to_le32
-(paren
-id|d-&gt;mtime
-)paren
-suffix:semicolon
-id|d-&gt;ctime
-op_assign
-id|cpu_to_le32
-(paren
-id|d-&gt;ctime
-)paren
-suffix:semicolon
-id|d-&gt;rdev
-op_assign
-id|cpu_to_le16
-(paren
-id|d-&gt;rdev
-)paren
-suffix:semicolon
-id|d-&gt;mode
-op_assign
-id|cpu_to_le16
-(paren
-id|d-&gt;mode
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|offs
-)paren
-id|myofs
-op_assign
-op_star
-id|offs
-suffix:semicolon
-multiline_comment|/* if offs is not NULL, read it */
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_emd_dir_write /mn/: calling write_kmem with %p, %p, %p, %d, %Ld&bslash;n&quot;
-comma
-id|emd_dir
+l_string|&quot;umsdos_emd_dir_write /mn/: calling write_kmem with %p, %p, %d, %Ld&bslash;n&quot;
 comma
 id|filp
 comma
@@ -930,7 +721,7 @@ id|buf
 comma
 id|count
 comma
-id|myofs
+id|filp-&gt;f_pos
 )paren
 )paren
 suffix:semicolon
@@ -938,16 +729,11 @@ id|written
 op_assign
 id|umsdos_file_write_kmem
 (paren
-id|emd_dir
-comma
 id|filp
 comma
 id|buf
 comma
 id|count
-comma
-op_amp
-id|myofs
 )paren
 suffix:semicolon
 id|Printk
@@ -957,17 +743,6 @@ l_string|&quot;umsdos_emd_dir_write /mn/: write_kmem returned&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|offs
-)paren
-op_star
-id|offs
-op_assign
-id|myofs
-suffix:semicolon
-multiline_comment|/* if offs is not NULL, store myofs there */
 macro_line|#ifdef __BIG_ENDIAN
 id|d-&gt;nlink
 op_assign
@@ -1026,7 +801,7 @@ id|d-&gt;mode
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1
+macro_line|#if UMS_DEBUG
 r_if
 c_cond
 (paren
@@ -1059,16 +834,11 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Read a block of bytes from one EMD file.&n; *      The block of data is NOT in user space.&n; *      Return 0 if ok, -EIO if any error.&n; */
+multiline_comment|/*&n; *      Read a block of bytes from one EMD file.&n; *      The block of data is NOT in user space.&n; *      Return 0 if OK, -EIO if any error.&n; */
 DECL|function|umsdos_emd_dir_read
 id|ssize_t
 id|umsdos_emd_dir_read
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -1081,17 +851,8 @@ comma
 multiline_comment|/* buffer in kernel memory, not in user space */
 r_int
 id|count
-comma
-id|loff_t
-op_star
-id|offs
 )paren
 (brace
-id|loff_t
-id|myofs
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 r_int
 id|ret
@@ -1115,17 +876,6 @@ op_star
 id|buf
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|offs
-)paren
-id|myofs
-op_assign
-op_star
-id|offs
-suffix:semicolon
-multiline_comment|/* if offs is not NULL, read it */
 id|filp-&gt;f_flags
 op_assign
 l_int|0
@@ -1134,16 +884,11 @@ id|sizeread
 op_assign
 id|umsdos_file_read_kmem
 (paren
-id|emd_dir
-comma
 id|filp
 comma
 id|buf
 comma
 id|count
-comma
-op_amp
-id|myofs
 )paren
 suffix:semicolon
 r_if
@@ -1156,7 +901,7 @@ id|count
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t read pos = %Ld (%d != %d)&bslash;n&quot;
+l_string|&quot;UMSDOS:  problem with EMD file:  can&squot;t read pos = %Ld (%d != %d)&bslash;n&quot;
 comma
 id|filp-&gt;f_pos
 comma
@@ -1229,22 +974,109 @@ id|d-&gt;mode
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|offs
-)paren
-op_star
-id|offs
-op_assign
-id|myofs
-suffix:semicolon
-multiline_comment|/* if offs is not NULL, store myofs there */
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Locate the EMD file in a directory .&n; * &n; * Return NULL if error. If ok, dir-&gt;u.umsdos_i.emd_inode &n; */
+multiline_comment|/*&n; * this checks weather filp points to directory or file,&n; * and if directory, it assumes that it has not yet been&n; * converted to point to EMD_FILE, and fixes it&n; *&n; * calling code should save old filp-&gt;f_dentry, call fix_emd_filp&n; * and if it succeeds (return code 0), do fin_dentry (filp-&gt;f_dentry)&n; * when it is over. It should also restore old filp-&gt;f_dentry.&n; *&n; */
+DECL|function|fix_emd_filp
+r_int
+id|fix_emd_filp
+(paren
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|dir
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|emd_dir
+suffix:semicolon
+multiline_comment|/* is current file (which should be EMD or directory) EMD? */
+r_if
+c_cond
+(paren
+id|dir-&gt;u.umsdos_i.i_emd_owner
+op_eq
+l_int|0xffffffff
+)paren
+(brace
+id|dget
+(paren
+id|filp-&gt;f_dentry
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;&bslash;nfix_emd_filp: EMD already done (should not be !)&bslash;n&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* it is not, we need to make it so */
+id|emd_dir
+op_assign
+id|umsdos_emd_dir_lookup
+(paren
+id|dir
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|emd_dir
+op_eq
+l_int|NULL
+)paren
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;&bslash;nfix_emd_filp: EMD not found (should never happen)!!!&bslash;n&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|99
+suffix:semicolon
+)brace
+id|filp-&gt;f_dentry
+op_assign
+id|creat_dentry
+(paren
+id|UMSDOS_EMD_FILE
+comma
+id|UMSDOS_EMD_NAMELEN
+comma
+id|emd_dir
+comma
+id|filp-&gt;f_dentry
+)paren
+suffix:semicolon
+multiline_comment|/* filp-&gt;f_dentry is dir containing EMD file, so it IS the parent dentry... */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Locate the EMD file in a directory.&n; * &n; * Return NULL if error, dir-&gt;u.umsdos_i.emd_inode if OK. &n; * caller must iput() returned inode when finished with it!&n; */
 DECL|function|umsdos_emd_dir_lookup
 r_struct
 id|inode
@@ -1267,8 +1099,20 @@ id|ret
 op_assign
 l_int|NULL
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|d_dir
+op_assign
+l_int|NULL
+comma
+op_star
+id|dlook
+op_assign
+l_int|NULL
+suffix:semicolon
 r_int
-id|res
+id|rv
 suffix:semicolon
 id|Printk
 (paren
@@ -1276,6 +1120,23 @@ id|Printk
 id|KERN_DEBUG
 l_string|&quot;Entering umsdos_emd_dir_lookup&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dir
+)paren
+id|printk
+(paren
+id|KERN_CRIT
+l_string|&quot;umsdos FATAL: should never happen: dir=NULL!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|check_inode
+(paren
+id|dir
 )paren
 suffix:semicolon
 r_if
@@ -1321,18 +1182,33 @@ id|UMSDOS_EMD_FILE
 )paren
 )paren
 suffix:semicolon
-id|res
+id|d_dir
 op_assign
-id|compat_umsdos_real_lookup
+id|geti_dentry
 (paren
 id|dir
-comma
+)paren
+suffix:semicolon
+id|dlook
+op_assign
+id|creat_dentry
+(paren
 id|UMSDOS_EMD_FILE
 comma
 id|UMSDOS_EMD_NAMELEN
 comma
-op_amp
-id|ret
+l_int|NULL
+comma
+id|d_dir
+)paren
+suffix:semicolon
+id|rv
+op_assign
+id|umsdos_real_lookup
+(paren
+id|dir
+comma
+id|dlook
 )paren
 suffix:semicolon
 id|PRINTK
@@ -1341,7 +1217,7 @@ id|PRINTK
 id|KERN_DEBUG
 l_string|&quot;-returned %d&bslash;n&quot;
 comma
-id|res
+id|rv
 )paren
 )paren
 suffix:semicolon
@@ -1353,12 +1229,14 @@ l_string|&quot;emd_dir_lookup &quot;
 )paren
 )paren
 suffix:semicolon
+id|ret
+op_assign
+id|dlook-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ret
-op_ne
-l_int|NULL
 )paren
 (brace
 id|Printk
@@ -1371,6 +1249,23 @@ suffix:semicolon
 id|dir-&gt;u.umsdos_i.i_emd_dir
 op_assign
 id|ret-&gt;i_ino
+suffix:semicolon
+id|inc_count
+(paren
+id|ret
+)paren
+suffix:semicolon
+multiline_comment|/* we&squot;ll need the inode */
+id|fin_dentry
+(paren
+id|dlook
+)paren
+suffix:semicolon
+multiline_comment|/* but not dentry */
+id|check_inode
+(paren
+id|ret
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1482,13 +1377,14 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Disable UMSDOS_notify_change() for EMD file */
+multiline_comment|/* inc_count (ret); // we need to return with incremented inode. FIXME: didn&squot;t umsdos_real_lookup already did that? and compat_msdos_create ? */
 id|ret-&gt;u.umsdos_i.i_emd_owner
 op_assign
 l_int|0xffffffff
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 1
+macro_line|#if UMS_DEBUG
 id|Printk
 (paren
 (paren
@@ -1521,7 +1417,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * creates an EMD file&n; * &n; * Return NULL if error. If ok, dir-&gt;u.umsdos_i.emd_inode &n; */
+multiline_comment|/*&n; * creates an EMD file&n; * &n; * Return NULL if error, dir-&gt;u.umsdos_i.emd_inode if OK. &n; */
 DECL|function|umsdos_emd_dir_create
 r_struct
 id|inode
@@ -1664,16 +1560,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read an entry from the EMD file.&n; * Support variable length record.&n; * Return -EIO if error, 0 if ok.&n; */
+multiline_comment|/*&n; * Read an entry from the EMD file.&n; * Support variable length record.&n; * Return -EIO if error, 0 if OK.&n; *&n; * does not change {d,i}_count&n; */
 DECL|function|umsdos_emd_dir_readentry
 r_int
 id|umsdos_emd_dir_readentry
 (paren
-r_struct
-id|inode
-op_star
-id|emd_dir
-comma
 r_struct
 id|file
 op_star
@@ -1699,7 +1590,7 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_emd_dir_readentry /mn/: trying to lookup %.*s (ino=%lu) using EMD %lu&bslash;n&quot;
+l_string|&quot;umsdos_emd_dir_readentry /mn/: reading EMD %.*s (ino=%lu) at pos=%d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1710,7 +1601,10 @@ id|filp-&gt;f_dentry-&gt;d_name.name
 comma
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 comma
-id|emd_dir-&gt;i_ino
+(paren
+r_int
+)paren
+id|filp-&gt;f_pos
 )paren
 )paren
 suffix:semicolon
@@ -1718,8 +1612,6 @@ id|ret
 op_assign
 id|umsdos_emd_dir_read
 (paren
-id|emd_dir
-comma
 id|filp
 comma
 (paren
@@ -1729,8 +1621,6 @@ op_star
 id|entry
 comma
 id|UMSDOS_REC_SIZE
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1741,7 +1631,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* note /mn/: is this wrong? ret is always 0 or -EIO. but who knows. It used to work this way... */
+multiline_comment|/* if no error */
 multiline_comment|/* Variable size record. Maybe, we have to read some more */
 r_int
 id|recsize
@@ -1749,18 +1639,6 @@ op_assign
 id|umsdos_evalrecsize
 (paren
 id|entry-&gt;name_len
-)paren
-suffix:semicolon
-id|Printk
-(paren
-(paren
-id|KERN_DEBUG
-l_string|&quot;umsdos_emd_dir_readentry /mn/: FIXME if %d &gt; %d?&bslash;n&quot;
-comma
-id|recsize
-comma
-id|UMSDOS_REC_SIZE
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -1771,12 +1649,22 @@ OG
 id|UMSDOS_REC_SIZE
 )paren
 (brace
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_emd_dir_readentry /mn/: %d &gt; %d!&bslash;n&quot;
+comma
+id|recsize
+comma
+id|UMSDOS_REC_SIZE
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_emd_dir_read
 (paren
-id|emd_dir
-comma
 id|filp
 comma
 (paren
@@ -1792,8 +1680,6 @@ comma
 id|recsize
 op_minus
 id|UMSDOS_REC_SIZE
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -1801,17 +1687,47 @@ suffix:semicolon
 id|Printk
 (paren
 (paren
-l_string|&quot;umsdos_emd_dir_readentry /mn/: returning %d.&bslash;n&quot;
+l_string|&quot;umsdos_emd_dir_readentry /mn/: ret=%d.&bslash;n&quot;
 comma
 id|ret
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry
+op_logical_and
+id|ret
+op_eq
+l_int|0
+)paren
+(brace
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_emd_dir_readentry /mn/: returning len=%d,name=%.*s&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|entry-&gt;name_len
+comma
+(paren
+r_int
+)paren
+id|entry-&gt;name_len
+comma
+id|entry-&gt;name
+)paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write an entry in the EMD file.&n; * Return 0 if ok, -EIO if some error.&n; */
+multiline_comment|/*&n; * Write an entry in the EMD file.&n; * Return 0 if OK, -EIO if some error.&n; */
 DECL|function|umsdos_writeentry
 r_int
 id|umsdos_writeentry
@@ -1835,7 +1751,7 @@ r_int
 id|free_entry
 )paren
 (brace
-multiline_comment|/* This entry is deleted, so Write all 0&squot;s */
+multiline_comment|/* This entry is deleted, so write all 0&squot;s. */
 r_int
 id|ret
 op_assign
@@ -1879,15 +1795,9 @@ l_string|&quot;umsdos_writeentry /mn/: entering...&bslash;n&quot;
 suffix:semicolon
 id|emd_dentry
 op_assign
-id|creat_dentry
+id|geti_dentry
 (paren
-l_string|&quot;wremd_mn&quot;
-comma
-l_int|8
-comma
 id|emd_dir
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1896,7 +1806,7 @@ c_cond
 id|free_entry
 )paren
 (brace
-multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t; * Unused entry in the EMD file are identify&n;&t;&t; * by the name_len field equal to 0. However to&n;&t;&t; * help future extension (or bug correction :-( ),&n;&t;&t; * empty entries are filled with 0.&n;&t;&t; */
+multiline_comment|/* #Specification: EMD file / empty entries&n;&t;&t; * Unused entry in the EMD file are identified&n;&t;&t; * by the name_len field equal to 0. However to&n;&t;&t; * help future extension (or bug correction :-( ),&n;&t;&t; * empty entries are filled with 0.&n;&t;&t; */
 id|memset
 (paren
 op_amp
@@ -1941,7 +1851,7 @@ op_minus
 id|entry-&gt;name_len
 )paren
 suffix:semicolon
-multiline_comment|/* #Specification: EMD file / spare bytes&n;&t;&t; * 10 bytes are unused in each record of the EMD. They&n;&t;&t; * are set to 0 all the time. So it will be possible&n;&t;&t; * to do new stuff and rely on the state of those&n;&t;&t; * bytes in old EMD file around.&n;&t;&t; */
+multiline_comment|/* #Specification: EMD file / spare bytes&n;&t;&t; * 10 bytes are unused in each record of the EMD. They&n;&t;&t; * are set to 0 all the time, so it will be possible&n;&t;&t; * to do new stuff and rely on the state of those&n;&t;&t; * bytes in old EMD files.&n;&t;&t; */
 id|memset
 (paren
 id|entry-&gt;spare
@@ -1971,7 +1881,7 @@ id|info
 id|printk
 (paren
 id|KERN_ERR
-l_string|&quot;umsdosfs: /mn/ info is empty ! ooops...&bslash;n&quot;
+l_string|&quot;UMSDOS:  /mn/ info is empty!  Oops!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|filp.f_pos
@@ -1995,13 +1905,11 @@ op_assign
 op_amp
 id|umsdos_file_operations
 suffix:semicolon
-multiline_comment|/* /mn/ - we have to fill it with dummy values so we won&squot;t segfault */
+multiline_comment|/* /mn/ - We have to fill it with dummy values so we won&squot;t segfault. */
 id|ret
 op_assign
 id|umsdos_emd_dir_write
 (paren
-id|emd_dir
-comma
 op_amp
 id|filp
 comma
@@ -2012,8 +1920,6 @@ op_star
 id|entry
 comma
 id|info-&gt;recsize
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|Printk
@@ -2035,7 +1941,7 @@ l_int|0
 (brace
 id|printk
 (paren
-l_string|&quot;UMSDOS: problem with EMD file. Can&squot;t write&bslash;n&quot;
+l_string|&quot;UMSDOS:  problem with EMD file:  can&squot;t write&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2092,7 +1998,7 @@ id|filp
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Fill the read buffer and take care of the byte remaining inside.&n; * Unread bytes are simply move to the beginning.&n; * &n; * Return -ENOENT if EOF, 0 if ok, a negative error code if any problem.&n; */
+multiline_comment|/*&n; * Fill the read buffer and take care of the byte remaining inside.&n; * Unread bytes are simply move to the beginning.&n; * &n; * Return -ENOENT if EOF, 0 if OK, a negative error code if any problem.&n; */
 DECL|function|umsdos_fillbuf
 r_static
 r_int
@@ -2127,6 +2033,11 @@ id|mustread
 suffix:semicolon
 r_int
 id|remain
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|old_ino
 suffix:semicolon
 id|PRINTK
 (paren
@@ -2195,12 +2106,19 @@ OG
 l_int|0
 )paren
 (brace
+id|old_ino
+op_assign
+id|buf-&gt;filp.f_dentry-&gt;d_inode
+suffix:semicolon
+multiline_comment|/* FIXME: do we need to save/restore it ? */
+id|buf-&gt;filp.f_dentry-&gt;d_inode
+op_assign
+id|inode
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_emd_dir_read
 (paren
-id|inode
-comma
 op_amp
 id|buf-&gt;filp
 comma
@@ -2209,9 +2127,11 @@ op_plus
 id|mustmove
 comma
 id|mustread
-comma
-l_int|NULL
 )paren
+suffix:semicolon
+id|buf-&gt;filp.f_dentry-&gt;d_inode
+op_assign
+id|old_ino
 suffix:semicolon
 r_if
 c_cond
@@ -2247,7 +2167,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * General search, locate a name in the EMD file or an empty slot to&n; * store it. if info-&gt;entry.name_len == 0, search the first empty&n; * slot (of the proper size).&n; * &n; * Caller must do iput on *pt_emd_dir.&n; * &n; * Return 0 if found, -ENOENT if not found, another error code if&n; * other problem.&n; * &n; * So this routine is used to either find an existing entry or to&n; * create a new one, while making sure it is a new one. After you&n; * get -ENOENT, you make sure the entry is stuffed correctly and&n; * call umsdos_writeentry().&n; * &n; * To delete an entry, you find it, zero out the entry (memset)&n; * and call umsdos_writeentry().&n; * &n; * All this to say that umsdos_writeentry must be call after this&n; * function since it rely on the f_pos field of info.&n; */
+multiline_comment|/*&n; * General search, locate a name in the EMD file or an empty slot to&n; * store it. if info-&gt;entry.name_len == 0, search the first empty&n; * slot (of the proper size).&n; * &n; * Caller must do iput on *pt_emd_dir.&n; * &n; * Return 0 if found, -ENOENT if not found, another error code if&n; * other problem.&n; * &n; * So this routine is used to either find an existing entry or to&n; * create a new one, while making sure it is a new one. After you&n; * get -ENOENT, you make sure the entry is stuffed correctly and&n; * call umsdos_writeentry().&n; * &n; * To delete an entry, you find it, zero out the entry (memset)&n; * and call umsdos_writeentry().&n; * &n; * All this to say that umsdos_writeentry must be call after this&n; * function since it rely on the f_pos field of info.&n; *&n; * calling code is expected to iput() returned *pt_emd_dir&n; *&n; */
 DECL|function|umsdos_find
 r_static
 r_int
@@ -2273,7 +2193,7 @@ id|pt_emd_dir
 )paren
 multiline_comment|/* Will hold the emd_dir inode or NULL if not found */
 (brace
-multiline_comment|/* #Specification: EMD file structure&n;&t; * The EMD file uses a fairly simple layout. It is made of records&n;&t; * (UMSDOS_REC_SIZE == 64). When a name can&squot;t be written is a single&n;&t; * record, multiple contiguous record are allocated.&n;&t; */
+multiline_comment|/* #Specification: EMD file structure&n;&t; * The EMD file uses a fairly simple layout.  It is made of records&n;&t; * (UMSDOS_REC_SIZE == 64).  When a name can&squot;t be written in a single&n;&t; * record, multiple contiguous records are allocated.&n;&t; */
 r_int
 id|ret
 op_assign
@@ -2304,6 +2224,11 @@ id|entry-&gt;name
 comma
 id|dir-&gt;i_ino
 )paren
+)paren
+suffix:semicolon
+id|check_inode
+(paren
+id|dir
 )paren
 suffix:semicolon
 id|emd_dir
@@ -2337,7 +2262,7 @@ multiline_comment|/* Position available to store the entry */
 r_int
 id|found
 suffix:semicolon
-multiline_comment|/* A valid empty position has been found */
+multiline_comment|/* A valid empty position has been found. */
 id|off_t
 id|one
 suffix:semicolon
@@ -2349,7 +2274,7 @@ multiline_comment|/* size of empty region starting at one */
 )brace
 id|empty
 suffix:semicolon
-multiline_comment|/* Read several entries at a time to speed up the search */
+multiline_comment|/* Read several entries at a time to speed up the search. */
 r_struct
 id|find_buffer
 id|buf
@@ -2357,13 +2282,64 @@ suffix:semicolon
 r_struct
 id|dentry
 op_star
-id|dentry
+id|demd
 suffix:semicolon
-id|dentry
+id|Printk
+(paren
+(paren
+l_string|&quot;umsdos_find: check emd_dir...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|check_inode
+(paren
+id|emd_dir
+)paren
+suffix:semicolon
+macro_line|#if 0&t;&t;/* FIXME! not needed. but there are count wraps. somewhere before umsdos_find there should be inc_count/iput pair around umsdos_find call.... */
+id|inc_count
+(paren
+id|emd_dir
+)paren
+suffix:semicolon
+multiline_comment|/* since we are going to fin_dentry, and need emd_dir afterwards -- caling code will iput() it */
+macro_line|#endif&t;&t;
+id|demd
+op_assign
+id|geti_dentry
+(paren
+id|emd_dir
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|demd
+)paren
+(brace
+id|dget
+(paren
+id|demd
+)paren
+suffix:semicolon
+multiline_comment|/* because we&squot;ll have to dput it */
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t;&t; * We don&squot;t have dentry alias for this inode. Too bad.&n;&t;&t;&t; * So we&squot;ll fake something (as best as we can).&n;&t;&t;&t; * (maybe we should do it in any case just to keep it simple?)&n;&t;&t;&t; *&n;&t;&t;&t; * Note that this is legal for EMD file, since in some places&n;&t;&t;&t; * we keep inode, but discard dentry (since we would have no way&n;&t;&t;&t; * to discard it later). Yes, this probably should be fixed somehow,&n;&t;&t;&t; * it is just that I don&squot;t have idea how right now, and I&squot;ve spent&n;&t;&t;&t; * quite some time to track it down why it dies here. Maybe new emd_dir_lookup&n;&t;&t;&t; * which returns dentry ? hmmmm... FIXME...&n;&t;&t;&t; *&n;&t;&t;&t; */
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;umsdos_find: inode has no alias for EMD inode, fake it&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|demd
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;umsfind-mn&quot;
+l_string|&quot;@emd_find@&quot;
 comma
 l_int|10
 comma
@@ -2372,12 +2348,20 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
+id|check_dentry_path
+(paren
+id|demd
+comma
+l_string|&quot; EMD_DIR_DENTRY umsdos_find&quot;
+)paren
+suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
 id|buf.filp
 comma
-id|dentry
+id|demd
 )paren
 suffix:semicolon
 id|buf.pos
@@ -2476,7 +2460,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* We are looking for an empty section at least */
-multiline_comment|/* recsize large */
+multiline_comment|/* as large as recsize. */
 r_if
 c_cond
 (paren
@@ -2512,7 +2496,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* This is the first empty record of a section */
+multiline_comment|/* This is the first empty record of a section. */
 id|empty.one
 op_assign
 id|file_pos
@@ -2531,7 +2515,7 @@ op_eq
 id|recsize
 )paren
 (brace
-multiline_comment|/* here is a large enough section */
+multiline_comment|/* Here is a large enough section. */
 id|empty.posok
 op_assign
 id|empty.one
@@ -2600,7 +2584,7 @@ id|empty.onesize
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Reset the free slot search */
+multiline_comment|/* Reset the free slot search. */
 r_if
 c_cond
 (paren
@@ -2652,6 +2636,11 @@ id|umsdos_manglename
 id|info
 )paren
 suffix:semicolon
+id|fin_dentry
+(paren
+id|demd
+)paren
+suffix:semicolon
 )brace
 op_star
 id|pt_emd_dir
@@ -2671,7 +2660,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Add a new entry in the emd file&n; * Return 0 if ok or a negative error code.&n; * Return -EEXIST if the entry already exist.&n; * &n; * Complete the information missing in info.&n; */
+multiline_comment|/*&n; * Add a new entry in the EMD file.&n; * Return 0 if OK or a negative error code.&n; * Return -EEXIST if the entry already exists.&n; * &n; * Complete the information missing in info.&n; */
 DECL|function|umsdos_newentry
 r_int
 id|umsdos_newentry
@@ -2757,12 +2746,11 @@ id|iput
 id|emd_dir
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Create a new hidden link.&n; * Return 0 if ok, an error code if not.&n; */
+multiline_comment|/*&n; * Create a new hidden link.&n; * Return 0 if OK, an error code if not.&n; */
 DECL|function|umsdos_newhidden
 r_int
 id|umsdos_newhidden
@@ -2816,7 +2804,6 @@ id|iput
 id|emd_dir
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
 r_if
 c_cond
 (paren
@@ -2851,7 +2838,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove an entry from the emd file&n; * Return 0 if ok, a negative error code otherwise.&n; * &n; * Complete the information missing in info.&n; */
+multiline_comment|/*&n; * Remove an entry from the EMD file.&n; * Return 0 if OK, a negative error code otherwise.&n; * &n; * Complete the information missing in info.&n; */
 DECL|function|umsdos_delentry
 r_int
 id|umsdos_delentry
@@ -2966,17 +2953,15 @@ suffix:semicolon
 )brace
 )brace
 id|iput
-c_func
 (paren
 id|emd_dir
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Verify is a EMD directory is empty.&n; * Return 0 if not empty&n; * 1 if empty&n; * 2 if empty, no EMD file.&n; */
+multiline_comment|/*&n; * Verify that a EMD directory is empty. Return &n; * 0 if not empty,&n; * 1 if empty,&n; * 2 if empty or no EMD file.&n; */
 DECL|function|umsdos_isempty
 r_int
 id|umsdos_isempty
@@ -2991,6 +2976,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+comma
+op_star
+id|d_dir
 suffix:semicolon
 r_int
 id|ret
@@ -3009,7 +2997,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* If the EMD file does not exist, it is certainly empty :-) */
+multiline_comment|/* If the EMD file does not exist, it is certainly empty. :-) */
 r_if
 c_cond
 (paren
@@ -3022,17 +3010,31 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+id|d_dir
+op_assign
+id|geti_dentry
+(paren
+id|dir
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|creat_dentry
 (paren
-l_string|&quot;isempty-mn&quot;
+id|UMSDOS_EMD_FILE
 comma
-l_int|10
+id|UMSDOS_EMD_NAMELEN
 comma
-id|dir
+id|emd_dir
 comma
-l_int|NULL
+id|d_dir
+)paren
+suffix:semicolon
+id|check_dentry_path
+(paren
+id|dentry
+comma
+l_string|&quot;umsdos_isempty BEGIN&quot;
 )paren
 suffix:semicolon
 id|fill_new_filp
@@ -3042,6 +3044,10 @@ id|filp
 comma
 id|dentry
 )paren
+suffix:semicolon
+id|filp.f_pos
+op_assign
+l_int|0
 suffix:semicolon
 id|filp.f_flags
 op_assign
@@ -3068,8 +3074,6 @@ c_cond
 (paren
 id|umsdos_emd_dir_readentry
 (paren
-id|emd_dir
-comma
 op_amp
 id|filp
 comma
@@ -3104,18 +3108,29 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|fin_dentry
+(paren
+id|dentry
+)paren
+suffix:semicolon
+id|check_dentry_path
+(paren
+id|dentry
+comma
+l_string|&quot;umsdos_isempty END&quot;
+)paren
+suffix:semicolon
 id|iput
 (paren
 id|emd_dir
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
 )brace
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Locate an entry in a EMD directory.&n; * Return 0 if ok, errcod if not, generally -ENOENT.&n; */
+multiline_comment|/*&n; * Locate an entry in a EMD directory.&n; * Return 0 if OK, error code if not, generally -ENOENT.&n; *&n; * does not change i_count&n; */
 DECL|function|umsdos_findentry
 r_int
 id|umsdos_findentry
@@ -3133,14 +3148,16 @@ comma
 r_int
 id|expect
 )paren
-(brace
 multiline_comment|/* 0: anything */
 multiline_comment|/* 1: file */
 multiline_comment|/* 2: directory */
+(brace
 r_struct
 id|inode
 op_star
 id|emd_dir
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|ret
@@ -3215,7 +3232,6 @@ id|iput
 id|emd_dir
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
 id|Printk
 (paren
 (paren

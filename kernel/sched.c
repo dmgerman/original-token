@@ -2860,8 +2860,6 @@ id|p
 r_if
 c_cond
 (paren
-id|p-&gt;pid
-op_logical_and
 (paren
 id|p-&gt;state
 op_eq

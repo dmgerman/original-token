@@ -25,7 +25,8 @@ mdefine_line|#define MACH_HP300    9
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 r_extern
-id|u_long
+r_int
+r_int
 id|m68k_machtype
 suffix:semicolon
 macro_line|#endif /* !__ASSEMBLY__ */
@@ -202,15 +203,18 @@ mdefine_line|#define MMU_APOLLO     (1&lt;&lt;MMUB_APOLLO)
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 r_extern
-id|u_long
+r_int
+r_int
 id|m68k_cputype
 suffix:semicolon
 r_extern
-id|u_long
+r_int
+r_int
 id|m68k_fputype
 suffix:semicolon
 r_extern
-id|u_long
+r_int
+r_int
 id|m68k_mmutype
 suffix:semicolon
 multiline_comment|/* Not really used yet */
@@ -302,13 +306,26 @@ macro_line|#  endif
 macro_line|#endif
 DECL|macro|CPU_TYPE
 mdefine_line|#define CPU_TYPE (m68k_cputype)
-macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n;     *  Miscellaneous&n;     */
 DECL|macro|NUM_MEMINFO
-mdefine_line|#define NUM_MEMINFO&t;(4)
+mdefine_line|#define NUM_MEMINFO&t;4
 DECL|macro|CL_SIZE
-mdefine_line|#define CL_SIZE&t;&t;(256)
+mdefine_line|#define CL_SIZE&t;&t;256
 macro_line|#ifndef __ASSEMBLY__
+r_extern
+r_int
+id|m68k_num_memory
+suffix:semicolon
+multiline_comment|/* # of memory blocks found */
+r_extern
+r_struct
+id|mem_info
+id|m68k_memory
+(braket
+id|NUM_MEMINFO
+)braket
+suffix:semicolon
+multiline_comment|/* memory description */
 DECL|struct|mem_info
 r_struct
 id|mem_info
@@ -327,22 +344,7 @@ suffix:semicolon
 multiline_comment|/* length of memory chunk (in bytes) */
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
-r_extern
-r_int
-id|m68k_num_memory
-suffix:semicolon
-multiline_comment|/* # of memory blocks found */
-r_extern
-r_struct
-id|mem_info
-id|m68k_memory
-(braket
-id|NUM_MEMINFO
-)braket
-suffix:semicolon
-multiline_comment|/* memory description */
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _M68K_SETUP_H */
 eof

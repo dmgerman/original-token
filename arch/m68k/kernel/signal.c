@@ -3952,11 +3952,6 @@ op_amp
 id|frame-&gt;retcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * no matter what frame format we were using before, we&n;&t; * will do the &quot;RTE&quot; using a normal 4 word frame.&n;&t; */
-id|regs-&gt;format
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Set up registers for signal handler */
 id|wrusp
 (paren
@@ -3975,6 +3970,8 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
+id|adjust_stack
+suffix:colon
 multiline_comment|/* Prepare to skip over the extra stuff in the exception frame.  */
 r_if
 c_cond
@@ -4014,11 +4011,11 @@ macro_line|#endif
 multiline_comment|/* This must be copied with decreasing addresses to&n;                   handle overlaps.  */
 id|tregs-&gt;vector
 op_assign
-id|regs-&gt;vector
+l_int|0
 suffix:semicolon
 id|tregs-&gt;format
 op_assign
-id|regs-&gt;format
+l_int|0
 suffix:semicolon
 id|tregs-&gt;pc
 op_assign
@@ -4051,6 +4048,9 @@ id|SIGSEGV
 comma
 id|current
 )paren
+suffix:semicolon
+r_goto
+id|adjust_stack
 suffix:semicolon
 )brace
 DECL|function|setup_rt_frame
@@ -4407,11 +4407,6 @@ op_amp
 id|frame-&gt;retcode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * no matter what frame format we were using before, we&n;&t; * will do the &quot;RTE&quot; using a normal 4 word frame.&n;&t; */
-id|regs-&gt;format
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Set up registers for signal handler */
 id|wrusp
 (paren
@@ -4430,6 +4425,8 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
+id|adjust_stack
+suffix:colon
 multiline_comment|/* Prepare to skip over the extra stuff in the exception frame.  */
 r_if
 c_cond
@@ -4469,11 +4466,11 @@ macro_line|#endif
 multiline_comment|/* This must be copied with decreasing addresses to&n;                   handle overlaps.  */
 id|tregs-&gt;vector
 op_assign
-id|regs-&gt;vector
+l_int|0
 suffix:semicolon
 id|tregs-&gt;format
 op_assign
-id|regs-&gt;format
+l_int|0
 suffix:semicolon
 id|tregs-&gt;pc
 op_assign
@@ -4506,6 +4503,9 @@ id|SIGSEGV
 comma
 id|current
 )paren
+suffix:semicolon
+r_goto
+id|adjust_stack
 suffix:semicolon
 )brace
 r_static
@@ -4691,7 +4691,7 @@ id|SA_ONESHOT
 )paren
 id|ka-&gt;sa.sa_handler
 op_assign
-l_int|NULL
+id|SIG_DFL
 suffix:semicolon
 r_if
 c_cond
@@ -4921,7 +4921,6 @@ id|regs-&gt;format
 op_eq
 l_int|11
 )paren
-(brace
 id|regs-&gt;stkadj
 op_assign
 id|frame_extra_sizes
@@ -4929,11 +4928,6 @@ id|frame_extra_sizes
 id|regs-&gt;format
 )braket
 suffix:semicolon
-id|regs-&gt;format
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_continue
 suffix:semicolon
 )brace
@@ -5297,11 +5291,11 @@ suffix:semicolon
 multiline_comment|/* This must be copied with decreasing addresses to&n;&t;&t;   handle overlaps.  */
 id|tregs-&gt;vector
 op_assign
-id|regs-&gt;vector
+l_int|0
 suffix:semicolon
 id|tregs-&gt;format
 op_assign
-id|regs-&gt;format
+l_int|0
 suffix:semicolon
 id|tregs-&gt;pc
 op_assign

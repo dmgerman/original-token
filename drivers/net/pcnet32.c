@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;pcnet32.c:v1.01 29.8.98 tsbogend@alpha.franken.de&bslash;n&quot;
+l_string|&quot;pcnet32.c:v1.02 3.9.98 tsbogend@alpha.franken.de&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -87,7 +87,7 @@ op_assign
 l_int|200
 suffix:semicolon
 multiline_comment|/*&n; * &t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
-multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; *         &n; */
+multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *         only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *         tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *         looks like the 974 doesn&squot;t like stopping and restarting in a&n; *         short period of time; now we do a reinit of the lance; the&n; *         bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *         and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *         made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *         and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *         added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *         added module support&n; *         changed irq probe to new style&n; *         added PCnetFast chip id&n; *         added fix for receive stalls with Intel saturn chipsets&n; *         added in-place rx skbs like in the tulip driver&n; *         minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *         back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *         added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *         increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; */
 multiline_comment|/*&n; * Set the number of Tx and Rx buffers, using Log_2(# buffers).&n; * Reasonable default values are 4 Tx buffers, and 16 Rx buffers.&n; * That translates to 2 (4 == 2^^2) and 4 (16 == 2^^4).&n; */
 macro_line|#ifndef PCNET32_LOG_TX_BUFFERS
 DECL|macro|PCNET32_LOG_TX_BUFFERS
@@ -357,7 +357,7 @@ id|dev
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|pcnet32_init_ring
 c_func
 (paren
@@ -1733,11 +1733,18 @@ l_int|1
 op_assign
 l_int|0x00000000
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pcnet32_init_ring
 c_func
 (paren
 id|dev
 )paren
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 multiline_comment|/* Re-initialize the PCNET32, and start it when done. */
 id|outw
@@ -1999,7 +2006,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Initialize the PCNET32 Rx and Tx rings. */
 r_static
-r_void
+r_int
 DECL|function|pcnet32_init_ring
 id|pcnet32_init_ring
 c_func
@@ -2024,11 +2031,6 @@ id|dev-&gt;priv
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-r_struct
-id|sk_buff
-op_star
-id|skb
 suffix:semicolon
 id|lp-&gt;lock
 op_assign
@@ -2065,33 +2067,58 @@ id|i
 op_increment
 )paren
 (brace
-id|skb
-op_assign
-id|dev_alloc_skb
-(paren
-id|PKT_BUF_SZ
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb
+id|lp-&gt;rx_skbuff
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
 id|lp-&gt;rx_skbuff
 (braket
 id|i
 )braket
 op_assign
-id|skb
+id|dev_alloc_skb
+(paren
+id|PKT_BUF_SZ
+)paren
+)paren
+)paren
+(brace
+multiline_comment|/* there is not much, we can do at this point */
+id|printk
+(paren
+l_string|&quot;%s: pcnet32_init_ring dev_alloc_skb failed.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|skb_reserve
 (paren
-id|skb
+id|lp-&gt;rx_skbuff
+(braket
+id|i
+)braket
 comma
 l_int|2
 )paren
 suffix:semicolon
+)brace
 id|lp-&gt;rx_ring
 (braket
 id|i
@@ -2108,7 +2135,12 @@ c_func
 id|virt_to_bus
 c_func
 (paren
-id|skb-&gt;tail
+id|lp-&gt;rx_skbuff
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|tail
 )paren
 )paren
 suffix:semicolon
@@ -2138,10 +2170,6 @@ c_func
 (paren
 l_int|0x8000
 )paren
-suffix:semicolon
-)brace
-r_else
-r_break
 suffix:semicolon
 )brace
 multiline_comment|/* The Tx buffer address is filled in as needed, but we do need to clear&n;&t;   the upper ownership bit. */
@@ -2239,6 +2267,9 @@ id|lp-&gt;tx_ring
 )paren
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -2271,11 +2302,16 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|pcnet32_init_ring
 c_func
 (paren
 id|dev
 )paren
+)paren
+r_return
 suffix:semicolon
 id|outw
 c_func
@@ -2617,6 +2653,12 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
 r_return
 l_int|0

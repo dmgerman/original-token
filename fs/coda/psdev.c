@@ -27,21 +27,10 @@ macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_proc.h&gt;
-multiline_comment|/*&n; * Where is the prototype?&n; */
-r_int
-id|proc_register_dynamic
-c_func
-(paren
+r_extern
 r_struct
 id|proc_dir_entry
-op_star
-id|dir
-comma
-r_struct
-id|proc_dir_entry
-op_star
-id|dp
-)paren
+id|proc_sys_root
 suffix:semicolon
 multiline_comment|/* &n; * Coda stuff&n; */
 r_extern
@@ -1571,7 +1560,6 @@ comma
 multiline_comment|/* open */
 l_int|NULL
 comma
-multiline_comment|/* flush */
 id|coda_psdev_release
 comma
 multiline_comment|/* release */
@@ -1592,11 +1580,6 @@ multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_sys_root
-suffix:semicolon
 DECL|variable|proc_sys_coda
 r_struct
 id|proc_dir_entry
@@ -2201,8 +2184,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -2224,7 +2205,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Coda Kernel/Venus communications (module), v4.6.0, braam@cs.cmu.edu&bslash;n&quot;
+l_string|&quot;Coda Kernel/Venus communications (module), v4.7.1, braam@cs.cmu.edu.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|status

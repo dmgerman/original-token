@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ufs/util.h&n; *&n; * Copyright (C) 1998 &n; * Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; * Charles University, Faculty of Mathematics and Physics&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &quot;swab.h&quot;
-multiline_comment|/*&n; * some usefull marcos&n; */
+multiline_comment|/*&n; * some useful macros&n; */
 DECL|macro|in_range
 mdefine_line|#define in_range(b,first,len)&t;((b)&gt;=(first)&amp;&amp;(b)&lt;(first)+(len))
 DECL|macro|howmany
@@ -13,7 +13,7 @@ mdefine_line|#define max(x,y)&t;&t;((x)&gt;(y)?(x):(y))
 multiline_comment|/*&n; * current filesystem state; method depends on flags&n; */
 DECL|macro|ufs_state
 mdefine_line|#define ufs_state(usb3) &bslash;&n;&t;(((flags &amp; UFS_ST_MASK) == UFS_ST_OLD) &bslash;&n;&t;? (usb3)-&gt;fs_u.fs_sun.fs_state /* old normal way */ &bslash;&n;&t;: (usb3)-&gt;fs_u.fs_44.fs_state /* 4.4BSD way */)
-multiline_comment|/*&n; * namlen, it&squot;s format depends of flags&n; */
+multiline_comment|/*&n; * namlen, its format depends of flags&n; */
 DECL|macro|ufs_namlen
 mdefine_line|#define ufs_namlen(de) _ufs_namlen_(de,flags,swab)
 DECL|function|_ufs_namlen_
@@ -63,7 +63,7 @@ id|de-&gt;d_u.d_44.d_namlen
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Here is how the uid is computed:&n; * if the file system is 4.2BSD, get it from oldids.&n; * if it has sun extension and oldids is USEEFT, get it from ui_sun.&n; * if it is 4.4 or Hurd, get it from ui_44 (which is the same as ui_hurd).&n; */
+multiline_comment|/*&n; * Here is how the uid is computed:&n; * if the file system is 4.2BSD, get it from oldids.&n; * if it has sun extension and oldids is USEEFT, get it from ui_sun.&n; * if it is 4.4 or Hurd, get it from ui_44 (which is the same as from ui_hurd).&n; */
 DECL|macro|ufs_uid
 mdefine_line|#define ufs_uid(inode) _ufs_uid_(inode,flags,swab)
 DECL|function|_ufs_uid_
@@ -190,12 +190,12 @@ id|inode-&gt;ui_u1.oldids.ui_sgid
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * marcros used for retyping&n; */
+multiline_comment|/*&n; * macros used to avoid needless retyping&n; */
 DECL|macro|UCPI_UBH
 mdefine_line|#define UCPI_UBH ((struct ufs_buffer_head *)ucpi)
 DECL|macro|USPI_UBH
 mdefine_line|#define USPI_UBH ((struct ufs_buffer_head *)uspi)
-multiline_comment|/*&n; * This functions manipulate with ufs_buffers&n; */
+multiline_comment|/*&n; * These functions manipulate ufs buffers&n; */
 DECL|macro|ubh_bread
 mdefine_line|#define ubh_bread(dev,fragment,size) _ubh_bread_(uspi,dev,fragment,size)  
 r_extern
@@ -374,9 +374,9 @@ multiline_comment|/*&n; * macros to get important structures from ufs_buffer_hea
 DECL|macro|ubh_get_usb_first
 mdefine_line|#define ubh_get_usb_first(ubh) &bslash;&n;&t;((struct ufs_super_block_first *)((ubh)-&gt;bh[0]-&gt;b_data))
 DECL|macro|ubh_get_usb_second
-mdefine_line|#define ubh_get_usb_second(ubh) &bslash;&n;&t;((struct ufs_super_block_second *)(ubh)-&gt; &bslash;&n;&t;bh[SECTOR_SIZE &gt;&gt; uspi-&gt;s_fshift]-&gt;b_data + (SECTOR_SIZE &amp; ~uspi-&gt;s_fmask))
+mdefine_line|#define ubh_get_usb_second(ubh) &bslash;&n;&t;((struct ufs_super_block_second *)(ubh)-&gt; &bslash;&n;&t;bh[UFS_SECTOR_SIZE &gt;&gt; uspi-&gt;s_fshift]-&gt;b_data + (UFS_SECTOR_SIZE &amp; ~uspi-&gt;s_fmask))
 DECL|macro|ubh_get_usb_third
-mdefine_line|#define ubh_get_usb_third(ubh) &bslash;&n;&t;((struct ufs_super_block_third *)((ubh)-&gt; &bslash;&n;&t;bh[SECTOR_SIZE*2 &gt;&gt; uspi-&gt;s_fshift]-&gt;b_data + (SECTOR_SIZE*2 &amp; ~uspi-&gt;s_fmask)))
+mdefine_line|#define ubh_get_usb_third(ubh) &bslash;&n;&t;((struct ufs_super_block_third *)((ubh)-&gt; &bslash;&n;&t;bh[UFS_SECTOR_SIZE*2 &gt;&gt; uspi-&gt;s_fshift]-&gt;b_data + (UFS_SECTOR_SIZE*2 &amp; ~uspi-&gt;s_fmask)))
 DECL|macro|ubh_get_ucg
 mdefine_line|#define ubh_get_ucg(ubh) &bslash;&n;&t;((struct ufs_cylinder_group *)((ubh)-&gt;bh[0]-&gt;b_data))
 multiline_comment|/*&n; * Extract byte from ufs_buffer_head&n; * Extract the bits for a block from a map inside ufs_buffer_head&n; */
@@ -398,12 +398,12 @@ mdefine_line|#define ubh_rotbl(ubh,i) &bslash;&n;&t;((uspi-&gt;s_postblformat !=
 multiline_comment|/*&n; * Determine the number of available frags given a&n; * percentage to hold in reserve.&n; */
 DECL|macro|ufs_freespace
 mdefine_line|#define ufs_freespace(usb, percentreserved) &bslash;&n;&t;(ufs_blkstofrags(SWAB32((usb)-&gt;fs_cstotal.cs_nbfree)) + &bslash;&n;&t;SWAB32((usb)-&gt;fs_cstotal.cs_nffree) - (uspi-&gt;s_dsize * (percentreserved) / 100))
-multiline_comment|/*&n; * Macros for access to cylinder group array structures&n; */
+multiline_comment|/*&n; * Macros to access cylinder group array structures&n; */
 DECL|macro|ubh_cg_blktot
 mdefine_line|#define ubh_cg_blktot(ucpi,cylno) &bslash;&n;&t;(*((__u32*)ubh_get_addr(UCPI_UBH, (ucpi)-&gt;c_btotoff + ((cylno) &lt;&lt; 2))))
 DECL|macro|ubh_cg_blks
 mdefine_line|#define ubh_cg_blks(ucpi,cylno,rpos) &bslash;&n;&t;(*((__u16*)ubh_get_addr(UCPI_UBH, &bslash;&n;&t;(ucpi)-&gt;c_boff + (((cylno) * uspi-&gt;s_nrpos + (rpos)) &lt;&lt; 1 ))))
-multiline_comment|/*&n; * Bitmap operation&n; * This functions work like classical bitmap operations. The diference &n; * is that we havn&squot;t the whole bitmap in one continuous part of memory,&n; * but in a few buffers.&n; * The parameter of each function is super_block, ufs_buffer_head and&n; * position of the begining of the bitmap.&n; */
+multiline_comment|/*&n; * Bitmap operations&n; * These functions work like classical bitmap operations.&n; * The difference is that we don&squot;t have the whole bitmap&n; * in one contiguous chunk of memory, but in several buffers.&n; * The parameters of each function are super_block, ufs_buffer_head and&n; * position of the beginning of the bitmap.&n; */
 DECL|macro|ubh_setbit
 mdefine_line|#define ubh_setbit(ubh,begin,bit) &bslash;&n;&t;(*ubh_get_addr(ubh, (begin) + ((bit) &gt;&gt; 3)) |= (1 &lt;&lt; ((bit) &amp; 7)))
 DECL|macro|ubh_clrbit
@@ -413,9 +413,9 @@ mdefine_line|#define ubh_isset(ubh,begin,bit) &bslash;&n;&t;(*ubh_get_addr (ubh,
 DECL|macro|ubh_isclr
 mdefine_line|#define ubh_isclr(ubh,begin,bit) (!ubh_isset(ubh,begin,bit))
 DECL|macro|ubh_find_first_zero_bit
-mdefine_line|#define ubh_find_first_zero_bit(ubh,begin,size) _ubh_find_next_zero_bit_(uspi,ubh,begin,size,0)
+mdefine_line|#define ubh_find_first_zero_bit(ubh,begin,size) &bslash;&n;&t;_ubh_find_next_zero_bit_(uspi,ubh,begin,size,0)
 DECL|macro|ubh_find_next_zero_bit
-mdefine_line|#define ubh_find_next_zero_bit(ubh,begin,size,offset) _ubh_find_next_zero_bit_(uspi,ubh,begin,size,offset)
+mdefine_line|#define ubh_find_next_zero_bit(ubh,begin,size,offset) &bslash;&n;&t;_ubh_find_next_zero_bit_(uspi,ubh,begin,size,offset)
 DECL|function|_ubh_find_next_zero_bit_
 r_static
 r_inline
@@ -557,9 +557,9 @@ id|begin
 suffix:semicolon
 )brace
 DECL|macro|ubh_isblockclear
-mdefine_line|#define ubh_isblockclear(ubh,begin,block) (!_ubh_isblockset_(uspi,ubh,begin,block))
+mdefine_line|#define ubh_isblockclear(ubh,begin,block) &bslash;&n;&t;(!_ubh_isblockset_(uspi,ubh,begin,block))
 DECL|macro|ubh_isblockset
-mdefine_line|#define ubh_isblockset(ubh,begin,block) _ubh_isblockset_(uspi,ubh,begin,block)
+mdefine_line|#define ubh_isblockset(ubh,begin,block) &bslash;&n;&t;_ubh_isblockset_(uspi,ubh,begin,block)
 DECL|function|_ubh_isblockset_
 r_static
 r_inline
@@ -1142,7 +1142,7 @@ id|cnt
 suffix:semicolon
 )brace
 DECL|macro|ubh_scanc
-mdefine_line|#define ubh_scanc(ubh,begin,size,table,mask) _ubh_scanc_(uspi,ubh,begin,size,table,mask)
+mdefine_line|#define ubh_scanc(ubh,begin,size,table,mask) &bslash;&n;&t;_ubh_scanc_(uspi,ubh,begin,size,table,mask)
 DECL|function|_ubh_scanc_
 r_static
 r_inline

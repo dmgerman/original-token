@@ -70,6 +70,11 @@ id|x86_model_id
 l_int|64
 )braket
 suffix:semicolon
+DECL|member|x86_cache_size
+r_int
+id|x86_cache_size
+suffix:semicolon
+multiline_comment|/* in KB - valid for CPUS which support this&n;&t;&t;&t;&t;    call  */
 DECL|member|fdiv_bug
 r_int
 id|fdiv_bug

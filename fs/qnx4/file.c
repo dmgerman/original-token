@@ -1,4 +1,5 @@
 multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 25-05-1998 by Richard Frowijn : first release.&n; * 21-06-1998 by Frank Denis : wrote qnx4_readpage to use generic_file_read.&n; * 27-06-1998 by Frank Denis : file overwriting.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

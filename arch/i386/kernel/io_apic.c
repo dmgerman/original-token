@@ -4469,6 +4469,9 @@ l_string|&quot; works.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; *&n; * IRQ&squot;s that are handled by the old PIC in all cases:&n; * - IRQ2 is the cascade IRQ, and cannot be a io-apic IRQ.&n; *   Linux doesn&squot;t really care, as it&squot;s not actually used&n; *   for any interrupt handling anyway.&n; * - IRQ13 is the FPU error IRQ, and may be connected&n; *   directly from the FPU to the old PIC. Linux doesn&squot;t&n; *   really care, because Linux doesn&squot;t want to use IRQ13&n; *   anyway (exception 16 is the proper FPU error signal)&n; * - IRQ9 is broken on PIIX4 motherboards:&n; *&n; *&t;&t;&quot;IRQ9 cannot be re-assigned&quot;&n; *&n; *&t;&t;IRQ9 is not available to assign to&n; *&t;&t;ISA add-in cards because it is&n; *&t;&t;dedicated to the power&n; *&t;&t;management function of the PIIX4&n; *&t;&t;controller on the motherboard.&n; *&t;&t;This is true for other motherboards&n; *&t;&t;which use the 82371AB PIIX4&n; *&t;&t;component.&n; */
+DECL|macro|PIC_IRQS
+mdefine_line|#define PIC_IRQS&t;((1&lt;&lt;2)|(1&lt;&lt;9)|(1&lt;&lt;13))
 DECL|function|setup_IO_APIC
 r_void
 id|__init
@@ -4510,25 +4513,7 @@ suffix:semicolon
 id|io_apic_irqs
 op_assign
 op_complement
-(paren
-(paren
-l_int|1
-op_lshift
-l_int|2
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|9
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|13
-)paren
-)paren
+id|PIC_IRQS
 suffix:semicolon
 )brace
 r_else

@@ -2,19 +2,32 @@ macro_line|#ifndef __M68K_SPINLOCK_H
 DECL|macro|__M68K_SPINLOCK_H
 mdefine_line|#define __M68K_SPINLOCK_H
 multiline_comment|/*&n; * We don&squot;t do SMP on the m68k .... at least not yet.&n; */
-DECL|member|dummy
+multiline_comment|/*&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
+DECL|typedef|spinlock_t
+r_typedef
+r_struct
+(brace
+)brace
+id|spinlock_t
+suffix:semicolon
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED { }
+macro_line|#else
+DECL|member|gcc_is_buggy
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
 (brace
 r_int
-id|dummy
+id|gcc_is_buggy
 suffix:semicolon
 )brace
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
@@ -34,19 +47,15 @@ mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { save_flag
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
-DECL|member|dummy
 DECL|typedef|rwlock_t
 r_typedef
 r_struct
 (brace
-r_int
-id|dummy
-suffix:semicolon
 )brace
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { 0 }
+mdefine_line|#define RW_LOCK_UNLOCKED { }
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock

@@ -1464,21 +1464,12 @@ op_star
 id|mm
 )paren
 (brace
-r_void
-op_star
-id|ldt
-op_assign
-id|mm-&gt;segments
-suffix:semicolon
-r_int
-id|nr
-suffix:semicolon
 multiline_comment|/* forget local segments */
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs ; lldt %w0&quot;
+l_string|&quot;movl %w0,%%fs ; movl %w0,%%gs&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -1488,46 +1479,33 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|current-&gt;tss.ldt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * Set the GDT entry back to the default.&n;&t; */
-id|nr
-op_assign
-id|current-&gt;tarray_ptr
-op_minus
-op_amp
-id|task
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|set_ldt_desc
-c_func
-(paren
-id|gdt
-op_plus
-(paren
-id|nr
-op_lshift
-l_int|1
-)paren
-op_plus
-id|FIRST_LDT_ENTRY
-comma
-op_amp
-id|default_ldt
-comma
-l_int|1
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|ldt
+id|mm-&gt;segments
 )paren
 (brace
+r_void
+op_star
+id|ldt
+op_assign
+id|mm-&gt;segments
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Get the LDT entry from init_task.&n;&t;&t; */
+id|current-&gt;tss.ldt
+op_assign
+id|_LDT
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|load_ldt
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 id|mm-&gt;segments
 op_assign
 l_int|NULL
@@ -1713,12 +1691,13 @@ id|ldt_size
 op_assign
 id|LDT_ENTRIES
 suffix:semicolon
+multiline_comment|/* &quot;default_ldt&quot; - use the one from init_task */
 id|p-&gt;tss.ldt
 op_assign
 id|_LDT
 c_func
 (paren
-id|nr
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1761,8 +1740,7 @@ id|KERN_WARNING
 l_string|&quot;ldt allocation failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_goto
-id|no_ldt
+r_return
 suffix:semicolon
 )brace
 id|memcpy
@@ -1778,21 +1756,14 @@ id|LDT_ENTRY_SIZE
 )paren
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-id|no_ldt
-suffix:colon
-id|ldt
+id|p-&gt;tss.ldt
 op_assign
-op_amp
-id|default_ldt
+id|_LDT
+c_func
+(paren
+id|nr
+)paren
 suffix:semicolon
-id|ldt_size
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 id|set_ldt_desc
 c_func
 (paren
@@ -1811,6 +1782,9 @@ comma
 id|ldt_size
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Save a segment.&n; */
 DECL|macro|savesegment

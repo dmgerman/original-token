@@ -292,7 +292,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;EXIT, resutl %u&bslash;n&quot;
+l_string|&quot;EXIT, result %u&bslash;n&quot;
 comma
 id|tmp
 )paren
@@ -1710,7 +1710,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;EXIT, resutl %u&bslash;n&quot;
+l_string|&quot;EXIT, result %u&bslash;n&quot;
 comma
 id|tmp
 op_plus
@@ -2452,7 +2452,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Linux i_size can be 32 on some architektures. We will mark &n;&t; * big files as read only and let user access first 32 bits.&n;&t; */
+multiline_comment|/*&n;&t; * Linux i_size can be 32 on some architectures. We will mark &n;&t; * big files as read only and let user access first 32 bits.&n;&t; */
 id|inode-&gt;u.ufs_i.i_size
 op_assign
 id|SWAB64

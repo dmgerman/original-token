@@ -506,6 +506,8 @@ DECL|macro|BTTV_MATRIX_VISION
 mdefine_line|#define BTTV_MATRIX_VISION 0x07 
 DECL|macro|BTTV_FLYVIDEO
 mdefine_line|#define BTTV_FLYVIDEO      0x08
+DECL|macro|BTTV_HAUPPAUGE878
+mdefine_line|#define BTTV_HAUPPAUGE878  0x09
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

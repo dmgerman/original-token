@@ -68,6 +68,8 @@ DECL|macro|IRQ_PENDING
 mdefine_line|#define IRQ_PENDING&t;4&t;/* IRQ pending - replay on enable */
 DECL|macro|IRQ_REPLAY
 mdefine_line|#define IRQ_REPLAY&t;8&t;/* IRQ has been replayed but not acked yet */
+DECL|macro|IRQ_AUTODETECT
+mdefine_line|#define IRQ_AUTODETECT&t;16&t;/* IRQ is being autodetected */
 multiline_comment|/*&n; * This is the &quot;IRQ descriptor&quot;, which contains various information&n; * about the irq, including what kind of hardware handling it has,&n; * whether it is disabled etc etc.&n; *&n; * Pad this out to 32 bytes for cache and indexing reasons.&n; */
 r_typedef
 r_struct

@@ -23,7 +23,7 @@ mdefine_line|#define UFSD(x)
 macro_line|#endif
 macro_line|#ifdef UFS_BALLOC_DEBUG_MORE
 DECL|macro|UFSDM
-mdefine_line|#define UFSDM &bslash;&n;ufs_print_cylinder_stuff (ucg, swab); &bslash;&n;printk(&quot;inode: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nifree), &bslash;&n;swab32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nifree), SWAB32(ucg-&gt;cg_cs.cs_nifree)); &bslash;&n;printk(&quot;block: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nbfree), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nbfree), SWAB32(ucg-&gt;cg_cs.cs_nbfree)); &bslash;&n;printk(&quot;fragment: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nffree), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nffree), SWAB32(ucg-&gt;cg_cs.cs_nffree)); &bslash;&n;printk(&quot;ndir: total %u, fs %u, cg %u&bslash;n&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_ndir), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_ndir), SWAB32(ucg-&gt;cg_cs.cs_ndir));
+mdefine_line|#define UFSDM &bslash;&n;ufs_print_cylinder_stuff (ucg, swab); &bslash;&n;printk(&quot;inode: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nifree), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nifree), SWAB32(ucg-&gt;cg_cs.cs_nifree)); &bslash;&n;printk(&quot;block: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nbfree), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nbfree), SWAB32(ucg-&gt;cg_cs.cs_nbfree)); &bslash;&n;printk(&quot;fragment: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nffree), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nffree), SWAB32(ucg-&gt;cg_cs.cs_nffree)); &bslash;&n;printk(&quot;ndir: total %u, fs %u, cg %u&bslash;n&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_ndir), &bslash;&n;SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_ndir), SWAB32(ucg-&gt;cg_cs.cs_ndir));
 macro_line|#else
 DECL|macro|UFSDM
 mdefine_line|#define UFSDM
@@ -1144,7 +1144,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|macro|NULLIFY_FRAGMENTS
-mdefine_line|#define NULLIFY_FRAGMENTS &bslash;&n;&t;for (i = oldcount; i &lt; newcount; i++) { &bslash;&n;&t;&t;bh = getblk (sb-&gt;s_dev, result + i, sb-&gt;s_blocksize); &bslash;&n;&t;&t;memset (bh-&gt;b_data, 0, sb-&gt;s_blocksize); &bslash;&n;&t;&t;mark_buffer_uptodate(bh, 1); &bslash;&n;&t;&t;mark_buffer_dirty (bh, 1); &bslash;&n;&t;&t;if (IS_SYNC(inode)) { &bslash;&n;&t;&t;&t;ll_rw_block (WRITE, 1, &amp;bh); &bslash;&n;  &t;&t;&t;wait_on_buffer (bh); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;brelse (bh); &bslash;&n;&t;}
+mdefine_line|#define NULLIFY_FRAGMENTS &bslash;&n;&t;for (i = oldcount; i &lt; newcount; i++) { &bslash;&n;&t;&t;bh = getblk (sb-&gt;s_dev, result + i, sb-&gt;s_blocksize); &bslash;&n;&t;&t;memset (bh-&gt;b_data, 0, sb-&gt;s_blocksize); &bslash;&n;&t;&t;mark_buffer_uptodate(bh, 1); &bslash;&n;&t;&t;mark_buffer_dirty (bh, 1); &bslash;&n;&t;&t;if (IS_SYNC(inode)) { &bslash;&n;&t;&t;&t;ll_rw_block (WRITE, 1, &amp;bh); &bslash;&n;&t;&t;&t;wait_on_buffer (bh); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;brelse (bh); &bslash;&n;&t;}
 DECL|function|ufs_new_fragments
 r_int
 id|ufs_new_fragments
@@ -2562,7 +2562,7 @@ id|uspi-&gt;s_ncg
 suffix:semicolon
 id|UFS_TEST_FREE_SPACE_CG
 )brace
-multiline_comment|/*&n; &t; * 3. brute force search&n;&t; * We start at i = 2 ( 0 is checked at 1.step, 1 at 2.step )&n;&t; */
+multiline_comment|/*&n;&t; * 3. brute force search&n;&t; * We start at i = 2 ( 0 is checked at 1.step, 1 at 2.step )&n;&t; */
 id|cgno
 op_assign
 (paren
@@ -3227,7 +3227,7 @@ r_goto
 id|gotit
 suffix:semicolon
 )brace
-multiline_comment|/*** This function should be optimalized later ***/
+multiline_comment|/*** This function should be optimized later ***/
 id|norot
 suffix:colon
 id|result

@@ -1,6 +1,8 @@
 macro_line|#ifndef LINUX_UMSDOS_FS_H
 DECL|macro|LINUX_UMSDOS_FS_H
 mdefine_line|#define LINUX_UMSDOS_FS_H
+DECL|macro|UMS_DEBUG
+mdefine_line|#define UMS_DEBUG 1
 DECL|macro|UMSDOS_VERSION
 mdefine_line|#define UMSDOS_VERSION&t;0
 DECL|macro|UMSDOS_RELEASE
@@ -24,6 +26,18 @@ macro_line|#include &lt;linux/dirent.h&gt;
 macro_line|#endif
 macro_line|#ifndef _LINUX_IOCTL_H
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#endif
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* #Specification: convention / PRINTK Printk and printk&n; * Here is the convention for the use of printk inside fs/umsdos&n; * &n; * printk carry important message (error or status).&n; * Printk is for debugging (it is a macro defined at the beginning of&n; * most source.&n; * PRINTK is a nulled Printk macro.&n; * &n; * This convention makes the source easier to read, and Printk easier&n; * to shut off.&n; */
+DECL|macro|PRINTK
+macro_line|#&t;define PRINTK(x)
+macro_line|#&t;ifdef UMS_DEBUG
+DECL|macro|Printk
+macro_line|#&t;&t;define Printk(x) printk x
+macro_line|#&t;else
+DECL|macro|Printk
+macro_line|#&t;&t;define Printk(x)
+macro_line|#&t;endif
 macro_line|#endif
 DECL|struct|umsdos_fake_info
 r_struct
@@ -188,7 +202,7 @@ mdefine_line|#define UMSDOS_GETVERSION  _IO(0x04,217)&t;/* Get the release numbe
 DECL|macro|UMSDOS_INIT_EMD
 mdefine_line|#define UMSDOS_INIT_EMD    _IO(0x04,218)&t;/* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
-mdefine_line|#define UMSDOS_DOS_SETUP   _IO(0x04,219)&t;/* Set the defaults of the MsDOS driver */
+mdefine_line|#define UMSDOS_DOS_SETUP   _IO(0x04,219)&t;/* Set the defaults of the MS-DOS driver. */
 DECL|macro|UMSDOS_RENAME_DOS
 mdefine_line|#define UMSDOS_RENAME_DOS  _IO(0x04,220)&t;/* rename a file/directory in the DOS&n;&t;&t;&t;&t;&t;&t; * directory only */
 DECL|struct|umsdos_ioctl

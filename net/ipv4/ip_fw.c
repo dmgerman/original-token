@@ -1097,7 +1097,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* function for checking chain labels for user space.  Makes sure that&n; * there are no special characters in the string */
+multiline_comment|/* function for checking chain labels for user space. */
 DECL|function|check_label
 r_static
 r_int
@@ -1112,6 +1112,7 @@ r_int
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* strlen must be &lt; IP_FW_MAX_LABEL_LENGTH. */
 r_for
 c_loop
 (paren
@@ -1124,11 +1125,6 @@ OL
 id|IP_FW_MAX_LABEL_LENGTH
 op_plus
 l_int|1
-op_logical_and
-id|label
-(braket
-id|i
-)braket
 suffix:semicolon
 id|i
 op_increment
@@ -1140,26 +1136,14 @@ id|label
 (braket
 id|i
 )braket
-op_le
-l_char|&squot; &squot;
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
 op_eq
-id|IP_FW_MAX_LABEL_LENGTH
-op_plus
-l_int|1
+l_char|&squot;&bslash;0&squot;
 )paren
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&t;This function returns a pointer to the first chain with a label&n; *&t;that matches the one given. */
@@ -3907,6 +3891,19 @@ r_struct
 id|ip_chain
 op_star
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|check_label
+c_func
+(paren
+id|label
+)paren
+)paren
+r_return
+id|EINVAL
 suffix:semicolon
 id|FWC_HAVE_LOCK
 c_func

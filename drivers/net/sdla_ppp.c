@@ -3869,6 +3869,21 @@ suffix:semicolon
 id|sdla_t
 op_star
 id|card
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Device is down:No statistics&n;&t; */
+r_if
+c_cond
+(paren
+id|ppp_priv_area
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|card
 op_assign
 id|ppp_priv_area-&gt;card
 suffix:semicolon

@@ -79,4 +79,7 @@ op_star
 id|dev_id
 )paren
 suffix:semicolon
+multiline_comment|/* number of interrupts, includes 0 (what&squot;s that?) */
+DECL|macro|HP300_NUM_IRQS
+mdefine_line|#define HP300_NUM_IRQS 8
 eof

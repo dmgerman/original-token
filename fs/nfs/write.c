@@ -33,6 +33,17 @@ op_star
 id|task
 )paren
 suffix:semicolon
+r_static
+r_void
+id|nfs_cancel_request
+c_func
+(paren
+r_struct
+id|nfs_wreq
+op_star
+id|req
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Cache parameters&n; */
 DECL|macro|NFS_WRITEBACK_DELAY
 mdefine_line|#define NFS_WRITEBACK_DELAY&t;(10 * HZ)
@@ -749,6 +760,13 @@ c_cond
 id|req-&gt;wb_dentry
 op_eq
 id|dentry
+op_logical_and
+op_logical_neg
+id|WB_CANCELLED
+c_func
+(paren
+id|req
+)paren
 )paren
 (brace
 id|found
@@ -1606,6 +1624,11 @@ op_assign
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
+id|checksignals
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2042,13 +2065,34 @@ c_cond
 id|sync
 )paren
 (brace
-multiline_comment|/* N.B. if signalled, result not ready? */
+multiline_comment|/* if signalled, ensure request is cancelled */
+r_if
+c_cond
+(paren
+(paren
+id|count
+op_assign
 id|wait_on_write_request
 c_func
 (paren
 id|req
 )paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|nfs_cancel_request
+c_func
+(paren
+id|req
+)paren
 suffix:semicolon
+id|status
+op_assign
+id|count
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

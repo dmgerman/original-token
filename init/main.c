@@ -4348,6 +4348,8 @@ c_func
 suffix:semicolon
 )brace
 )brace
+DECL|macro|smp_init
+mdefine_line|#define smp_init()&t;do { } while (0)
 macro_line|#else
 multiline_comment|/*&n; *&t;Multiprocessor idle thread is in arch/...&n; */
 r_extern
@@ -4377,18 +4379,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;The autoprobe routines assume CPU#0 on the i386&n; *&t;so we don&squot;t actually set the game in motion until&n; *&t;they are finished.&n; */
-DECL|function|smp_begin
-r_static
-r_void
-id|__init
-id|smp_begin
-c_func
-(paren
-r_void
-)paren
-(brace
 id|smp_threads_ready
 op_assign
 l_int|1
@@ -4710,20 +4700,18 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|check_bugs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|smp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|check_bugs
 c_func
 (paren
 )paren
@@ -4731,6 +4719,7 @@ suffix:semicolon
 macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
 multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
 id|mtrr_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5040,14 +5029,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; *&t;With the devices probed and setup we can&n;&t; *&t;now enter SMP mode.&n;&t; */
-id|smp_begin
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#ifdef CONFIG_UMSDOS_FS
 (brace
 multiline_comment|/*&n;&t;&t;&t;When mounting a umsdos fs as root, we detect&n;&t;&t;&t;the pseudo_root (/linux) and initialise it here.&n;&t;&t;&t;pseudo_root is defined in fs/umsdos/inode.c&n;&t;&t;*/

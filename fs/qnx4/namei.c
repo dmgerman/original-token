@@ -1,4 +1,5 @@
 multiline_comment|/* &n; * QNX4 file system, Linux implementation.&n; * &n; * Version : 0.1&n; * &n; * Using parts of the xiafs filesystem.&n; * &n; * History :&n; * &n; * 01-06-1998 by Richard Frowijn : first release.&n; * 21-06-1998 by Frank Denis : dcache support, fixed error codes.&n; * 04-07-1998 by Frank Denis : first step for rmdir/unlink.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/qnx4_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

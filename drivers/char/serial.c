@@ -10788,10 +10788,14 @@ op_ge
 id|NR_PORTS
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
 id|retval
 op_assign
 id|get_async_struct
@@ -10808,9 +10812,13 @@ c_cond
 (paren
 id|retval
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
+)brace
 id|tty-&gt;driver_data
 op_assign
 id|info
@@ -10832,10 +10840,14 @@ comma
 l_string|&quot;rs_open&quot;
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+)brace
 macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func
@@ -10884,10 +10896,14 @@ c_cond
 op_logical_neg
 id|page
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -10941,6 +10957,8 @@ op_amp
 id|info-&gt;close_wait
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 macro_line|#ifdef SERIAL_DO_RESTART
 r_return
 (paren
@@ -10979,9 +10997,13 @@ c_cond
 (paren
 id|retval
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
+)brace
 id|retval
 op_assign
 id|block_til_ready
@@ -11000,6 +11022,8 @@ c_cond
 id|retval
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func

@@ -83,24 +83,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Convert from frequency value to PSG period value (base&n;&t;   frequency 125 kHz).  */
-id|period
-op_assign
-id|PSG_FREQ
-op_div
-id|hz
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|period
-OG
-l_int|0xfff
-)paren
-id|period
-op_assign
-l_int|0xfff
-suffix:semicolon
 multiline_comment|/* Disable generator A in mixer control.  */
 id|sound_ym.rd_data_reg_sel
 op_assign
@@ -117,6 +99,30 @@ suffix:semicolon
 id|sound_ym.wd_data
 op_assign
 id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hz
+)paren
+(brace
+multiline_comment|/* Convert from frequency value to PSG period value (base&n;&t;       frequency 125 kHz).  */
+id|period
+op_assign
+id|PSG_FREQ
+op_div
+id|hz
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|period
+OG
+l_int|0xfff
+)paren
+id|period
+op_assign
+l_int|0xfff
 suffix:semicolon
 multiline_comment|/* Set generator A frequency to hz.  */
 id|sound_ym.rd_data_reg_sel
@@ -239,6 +245,7 @@ id|sound_ym.wd_data
 op_assign
 id|tmp
 suffix:semicolon
+)brace
 id|restore_flags
 c_func
 (paren

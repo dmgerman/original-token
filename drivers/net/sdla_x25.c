@@ -152,7 +152,7 @@ id|ch_idx
 suffix:semicolon
 DECL|member|ifstats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|ifstats
 suffix:semicolon
 multiline_comment|/* interface statistics */
@@ -3226,6 +3226,18 @@ id|chan
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|chan
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+id|chan
+suffix:semicolon
+)brace
 r_return
 op_amp
 id|chan-&gt;ifstats

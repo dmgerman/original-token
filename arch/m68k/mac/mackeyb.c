@@ -141,24 +141,19 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Hook for mouse driver */
-DECL|variable|mac_mouse_interrupt_hook
+DECL|variable|adb_mouse_interrupt_hook
 r_void
 (paren
 op_star
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 )paren
 (paren
+r_int
 r_char
 op_star
+comma
+r_int
 )paren
-suffix:semicolon
-DECL|variable|mac_emulate_button2
-r_int
-id|mac_emulate_button2
-suffix:semicolon
-DECL|variable|mac_emulate_button3
-r_int
-id|mac_emulate_button3
 suffix:semicolon
 multiline_comment|/* The mouse driver - for debugging */
 r_extern
@@ -2585,7 +2580,7 @@ multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse 
 r_if
 c_cond
 (paren
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 op_logical_or
 id|console_loglevel
 op_ge
@@ -2614,20 +2609,17 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* up */
-multiline_comment|/* faked ADB packet: device type ff, handler 4 ! */
+multiline_comment|/* faked ADB packet */
 r_static
+r_int
 r_char
 id|data
 (braket
-l_int|6
+l_int|4
 )braket
 op_assign
 (brace
-l_int|0xff
-comma
-l_int|0x40
-comma
-l_int|0x3c
+l_int|0
 comma
 l_int|0x80
 comma
@@ -2756,8 +2748,6 @@ multiline_comment|/* fake a mouse packet : send all bytes, change one! */
 id|data
 (braket
 id|button
-op_plus
-l_int|2
 )braket
 op_assign
 (paren
@@ -2772,12 +2762,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 )paren
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 c_func
 (paren
 id|data
+comma
+l_int|4
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_ADBMOUSE
@@ -2789,17 +2781,17 @@ l_string|&quot;mouse_fake: data %2x %2x %2x buttons %2x &bslash;n&quot;
 comma
 id|data
 (braket
+l_int|1
+)braket
+comma
+id|data
+(braket
+l_int|2
+)braket
+comma
+id|data
+(braket
 l_int|3
-)braket
-comma
-id|data
-(braket
-l_int|4
-)braket
-comma
-id|data
-(braket
-l_int|5
 )braket
 comma
 op_complement
@@ -2807,7 +2799,7 @@ op_complement
 (paren
 id|data
 (braket
-l_int|3
+l_int|1
 )braket
 op_amp
 l_int|0x80
@@ -2821,7 +2813,7 @@ op_or
 (paren
 id|data
 (braket
-l_int|4
+l_int|2
 )braket
 op_amp
 l_int|0x80
@@ -2835,7 +2827,7 @@ op_or
 (paren
 id|data
 (braket
-l_int|5
+l_int|3
 )braket
 op_amp
 l_int|0x80
@@ -3157,13 +3149,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 )paren
 (brace
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 c_func
 (paren
 id|data
+op_plus
+l_int|2
+comma
+id|nb
+op_minus
+l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * passing the mouse data to i.e. the X server as done for&n;&t;&t; * Xpmac will confuse applications on a sane X server :-)&n;&t;&t; */
@@ -3786,18 +3784,9 @@ id|plain_map
 )paren
 suffix:semicolon
 multiline_comment|/* initialize mouse interrupt hook */
-id|mac_mouse_interrupt_hook
+id|adb_mouse_interrupt_hook
 op_assign
 l_int|NULL
-suffix:semicolon
-multiline_comment|/* assume broken mouse :-) */
-id|mac_emulate_button2
-op_assign
-l_int|1
-suffix:semicolon
-id|mac_emulate_button3
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Might put that someplace else, possibly ....&n;&t; */
 id|adb_bus_init

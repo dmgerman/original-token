@@ -21,7 +21,7 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial_copy, but copies from src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
+multiline_comment|/*&n; * the same as csum_partial, but copies from src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
 r_int
 r_int
 id|csum_partial_copy
@@ -44,31 +44,11 @@ id|sum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * the same as csum_partial_copy, but copies from user space.&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
-r_int
-r_int
-id|csum_partial_copy_fromuser
-c_func
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-id|sum
-)paren
-suffix:semicolon
 r_extern
 r_int
 r_int
 id|csum_partial_copy_from_user
+c_func
 (paren
 r_const
 r_char
@@ -90,7 +70,6 @@ op_star
 id|csum_err
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: this needs to be written to really do no check -- Cort */
 DECL|macro|csum_partial_copy_nocheck
 mdefine_line|#define csum_partial_copy_nocheck(src, dst, len, sum)&t;&bslash;&n;&t;csum_partial_copy((src), (dst), (len), (sum))
 multiline_comment|/*&n; *&t;This is a version of ip_compute_csum() optimized for IP headers,&n; *&t;which always checksum on 4 octet boundaries.&n; *&n; */

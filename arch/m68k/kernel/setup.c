@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -778,6 +779,33 @@ id|record-&gt;size
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SINGLE_MEMORY_CHUNK
+r_if
+c_cond
+(paren
+id|m68k_num_memory
+OG
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Ignoring last %i chunks of physical memory&bslash;n&quot;
+comma
+(paren
+id|m68k_num_memory
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|m68k_num_memory
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -1288,7 +1316,12 @@ id|m68k_ramdisk.size
 (brace
 id|initrd_start
 op_assign
-id|PTOV
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
+c_func
 (paren
 id|m68k_ramdisk.addr
 )paren

@@ -152,12 +152,24 @@ l_string|&quot;   moveb %3,(%0)+&bslash;n&quot;
 l_string|&quot;6:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
-l_string|&quot;7: lsll #2,%2&bslash;n&quot;
+l_string|&quot;7: movel %2,%%d0&bslash;n&quot;
+l_string|&quot;71:clrl (%0)+&bslash;n&quot;
+l_string|&quot;   subql #1,%%d0&bslash;n&quot;
+l_string|&quot;   jne 71b&bslash;n&quot;
+l_string|&quot;   lsll #2,%2&bslash;n&quot;
 l_string|&quot;   addl %4,%2&bslash;n&quot;
+l_string|&quot;   btst #1,%4&bslash;n&quot;
+l_string|&quot;   jne 81f&bslash;n&quot;
+l_string|&quot;   btst #0,%4&bslash;n&quot;
+l_string|&quot;   jne 91f&bslash;n&quot;
 l_string|&quot;   jra 6b&bslash;n&quot;
 l_string|&quot;8: addql #2,%2&bslash;n&quot;
+l_string|&quot;81:clrw (%0)+&bslash;n&quot;
+l_string|&quot;   btst #0,%4&bslash;n&quot;
+l_string|&quot;   jne 91f&bslash;n&quot;
 l_string|&quot;   jra 6b&bslash;n&quot;
 l_string|&quot;9: addql #1,%2&bslash;n&quot;
+l_string|&quot;91:clrb (%0)+&bslash;n&quot;
 l_string|&quot;   jra 6b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -338,7 +350,7 @@ id|n
 suffix:semicolon
 )brace
 DECL|macro|__copy_from_user_big
-mdefine_line|#define __copy_from_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movesl (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    movel %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;11: lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 12f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 10b,11b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;, &quot;memory&quot;)
+mdefine_line|#define __copy_from_user_big(to, from, n, fixup, copy)&t;&bslash;&n;    __asm__ __volatile__&t;&t;&t;&t;&bslash;&n;&t;(&quot;10: movesl (%1)+,%%d0&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    movel %%d0,(%0)+&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    subql #1,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 10b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .even&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;11: movel %2,%%d0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;13: clrl (%0)+&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    subql #1,%%d0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jne 13b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    lsll #2,%2&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; fixup &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;    jra 12f&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t; &quot;    .align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;    .long 10b,11b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t; &quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; copy &quot;&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t; &quot;12:&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; : &quot;=a&quot;(to), &quot;=a&quot;(from), &quot;=d&quot;(n)&t;&t;&bslash;&n;&t; : &quot;0&quot;(to), &quot;1&quot;(from), &quot;2&quot;(n/4)&t;&t;&t;&bslash;&n;&t; : &quot;d0&quot;, &quot;memory&quot;)
 r_static
 r_inline
 r_int
@@ -384,6 +396,7 @@ l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #1,%2&bslash;n&quot;
+l_string|&quot;   clrb (%0)+&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -440,6 +453,7 @@ l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #2,%2&bslash;n&quot;
+l_string|&quot;   clrw (%0)+&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -498,7 +512,9 @@ l_string|&quot;3:&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;4: addql #2,%2&bslash;n&quot;
+l_string|&quot;   clrw (%0)+&bslash;n&quot;
 l_string|&quot;5: addql #1,%2&bslash;n&quot;
+l_string|&quot;   clrb (%0)+&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -556,6 +572,7 @@ l_string|&quot;2:&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;3: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;   jra 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -614,7 +631,9 @@ l_string|&quot;3:&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;4: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;5: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;   jra 3b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -676,8 +695,11 @@ l_string|&quot;4:&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;5: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;6: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;7: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;   jra 4b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -742,9 +764,13 @@ l_string|&quot;5:&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;   .even&bslash;n&quot;
 l_string|&quot;6: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;7: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;8: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;9: addql #4,%2&bslash;n&quot;
+l_string|&quot;   clrl (%0)+&bslash;n&quot;
 l_string|&quot;   jra 5b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
@@ -836,7 +862,8 @@ comma
 id|n
 comma
 multiline_comment|/* fixup */
-l_string|&quot;1: addql #1,%2&quot;
+l_string|&quot;1: addql #1,%2&bslash;n&quot;
+l_string|&quot;   clrb (%0)+&quot;
 comma
 multiline_comment|/* copy */
 l_string|&quot;2: movesb (%1)+,%%d0&bslash;n&quot;
@@ -861,7 +888,8 @@ comma
 id|n
 comma
 multiline_comment|/* fixup */
-l_string|&quot;1: addql #2,%2&quot;
+l_string|&quot;1: addql #2,%2&bslash;n&quot;
+l_string|&quot;   clrw (%0)+&quot;
 comma
 multiline_comment|/* copy */
 l_string|&quot;2: movesw (%1)+,%%d0&bslash;n&quot;
@@ -887,7 +915,9 @@ id|n
 comma
 multiline_comment|/* fixup */
 l_string|&quot;1: addql #2,%2&bslash;n&quot;
-l_string|&quot;2: addql #1,%2&quot;
+l_string|&quot;   clrw (%0)+&bslash;n&quot;
+l_string|&quot;2: addql #1,%2&bslash;n&quot;
+l_string|&quot;   clrb (%0)+&quot;
 comma
 multiline_comment|/* copy */
 l_string|&quot;3: movesw (%1)+,%%d0&bslash;n&quot;
@@ -1505,7 +1535,7 @@ id|n
 suffix:semicolon
 )brace
 DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user(to, from, n)&t;&t;&bslash;&n;{ void *__to = (to);&t;&t;&t;&t;&bslash;&n;  void *__from = (from);&t;&t;&t;&bslash;&n;  unsigned long __n = (n);&t;&t;&t;&bslash;&n;  char *__end = (char *)__to + __n;&t;&t;&bslash;&n;  unsigned long __res =&t;&t;&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_from_user(to, from, n) :&t;&bslash;&n; __generic_copy_from_user(to, from, n));&t;&bslash;&n;  if (__res) memset(__end - __res, 0, __res);&t;&bslash;&n;  res; }
+mdefine_line|#define copy_from_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_from_user(to, from, n) :&t;&bslash;&n; __generic_copy_from_user(to, from, n))
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to, from, n)&t;&t;&bslash;&n;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n; __constant_copy_to_user(to, from, n) :&t;&t;&bslash;&n; __generic_copy_to_user(to, from, n))
 DECL|macro|__copy_from_user

@@ -7,10 +7,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
-DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x)
-DECL|macro|Printk
-mdefine_line|#define Printk(x) printk x
 DECL|struct|UMSDOS_DIR_ONCE
 r_struct
 id|UMSDOS_DIR_ONCE
@@ -165,6 +161,11 @@ id|EPERM
 suffix:semicolon
 r_int
 id|err
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|old_dent
 suffix:semicolon
 multiline_comment|/* forward non-umsdos ioctls - this hopefully doesn&squot;t cause conflicts */
 r_if
@@ -385,24 +386,19 @@ id|UMSDOS_READDIR_EMD
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_READDIR_EMD&n;&t;&t;&t; * One entry is read from the EMD at the current&n;&t;&t;&t; * file position. The entry is put as is in the umsdos_dirent&n;&t;&t;&t; * field of struct umsdos_ioctl. The corresponding mangled&n;&t;&t;&t; * DOS entry name is put in the dos_dirent field.&n;&t;&t;&t; * &n;&t;&t;&t; * All entries are read including hidden links. Blank&n;&t;&t;&t; * entries are skipped.&n;&t;&t;&t; * &n;&t;&t;&t; * Return &gt; 0 if success.&n;&t;&t;&t; */
-r_struct
-id|inode
-op_star
-id|emd_dir
+id|old_dent
 op_assign
-id|umsdos_emd_dir_lookup
-(paren
-id|dir
-comma
-l_int|0
-)paren
+id|filp-&gt;f_dentry
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|emd_dir
-op_ne
-l_int|NULL
+id|fix_emd_filp
+(paren
+id|filp
+)paren
+op_eq
+l_int|0
 )paren
 (brace
 r_while
@@ -416,7 +412,7 @@ c_cond
 (paren
 id|filp-&gt;f_pos
 op_ge
-id|emd_dir-&gt;i_size
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_size
 )paren
 (brace
 id|ret
@@ -441,8 +437,6 @@ id|ret
 op_assign
 id|umsdos_emd_dir_readentry
 (paren
-id|emd_dir
-comma
 id|filp
 comma
 op_amp
@@ -528,12 +522,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|iput
+id|fin_dentry
 (paren
-id|emd_dir
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME? */
+id|filp-&gt;f_dentry
+op_assign
+id|old_dent
+suffix:semicolon
+multiline_comment|/* iput (filp-&gt;f_dentry-&gt;d_inode); / * FIXME? */
 )brace
 r_else
 (brace
@@ -577,12 +575,7 @@ id|emd_dir
 op_ne
 l_int|NULL
 suffix:semicolon
-id|iput
-(paren
-id|emd_dir
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME?? */
+multiline_comment|/* iput (emd_dir); / * FIXME?? */
 id|dir-&gt;i_op
 op_assign
 id|ret
@@ -710,7 +703,7 @@ id|dir
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: prolly should fill inode part */
+multiline_comment|/* FIXME: probably should fill inode part */
 id|new_dentry
 op_assign
 id|creat_dentry
@@ -815,35 +808,22 @@ op_star
 id|dp
 suffix:semicolon
 multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_DOS&n;&t;&t;&t;&t; * The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t; * execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t; * fields are used.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * Return 0 if success.&n;&t;&t;&t;&t; */
-id|inc_count
-(paren
-id|dir
-)paren
-suffix:semicolon
 id|dp
 op_assign
-id|creat_dentry
+id|geti_dentry
 (paren
-id|data.dos_dirent.d_name
-comma
-id|data.dos_dirent.d_reclen
-comma
 id|dir
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|dentry
 op_assign
-id|creat_dentry
+id|compat_umsdos_real_lookup
 (paren
-l_string|&quot;ioctl_unlink&quot;
-comma
-l_int|12
-comma
-l_int|NULL
-comma
 id|dp
+comma
+id|data.dos_dirent.d_name
+comma
+id|data.dos_dirent.d_reclen
 )paren
 suffix:semicolon
 id|ret
@@ -855,6 +835,12 @@ comma
 id|dentry
 )paren
 suffix:semicolon
+id|dput
+(paren
+id|dentry
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: is this OK now? */
 )brace
 r_else
 r_if
@@ -874,35 +860,22 @@ op_star
 id|dp
 suffix:semicolon
 multiline_comment|/* #Specification: ioctl / UMSDOS_RMDIR_DOS&n;&t;&t;&t;&t; * The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t; * execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t; * fields are used.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * Return 0 if success.&n;&t;&t;&t;&t; */
-id|inc_count
-(paren
-id|dir
-)paren
-suffix:semicolon
 id|dp
 op_assign
-id|creat_dentry
+id|geti_dentry
 (paren
-id|data.dos_dirent.d_name
-comma
-id|data.dos_dirent.d_reclen
-comma
 id|dir
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|dentry
 op_assign
-id|creat_dentry
+id|compat_umsdos_real_lookup
 (paren
-l_string|&quot;ioctl_unlink&quot;
-comma
-l_int|12
-comma
-l_int|NULL
-comma
 id|dp
+comma
+id|data.dos_dirent.d_name
+comma
+id|data.dos_dirent.d_reclen
 )paren
 suffix:semicolon
 id|ret
@@ -914,6 +887,12 @@ comma
 id|dentry
 )paren
 suffix:semicolon
+id|dput
+(paren
+id|dentry
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: is this OK now? */
 )brace
 r_else
 r_if
@@ -930,28 +909,42 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-id|ret
+r_struct
+id|dentry
+op_star
+id|d_dir
+comma
+op_star
+id|dret
+suffix:semicolon
+id|d_dir
+op_assign
+id|geti_dentry
+(paren
+id|dir
+)paren
+suffix:semicolon
+id|dret
 op_assign
 id|compat_umsdos_real_lookup
 (paren
-id|dir
+id|d_dir
 comma
 id|data.dos_dirent.d_name
 comma
 id|data.dos_dirent.d_reclen
-comma
-op_amp
-id|inode
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ret
-op_eq
-l_int|0
+id|dret
 )paren
 (brace
+id|inode
+op_assign
+id|dret-&gt;d_inode
+suffix:semicolon
 id|data.stat.st_ino
 op_assign
 id|inode-&gt;i_ino
@@ -990,7 +983,11 @@ id|data.stat
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* iput (inode); FIXME */
+id|fin_dentry
+(paren
+id|dret
+)paren
+suffix:semicolon
 )brace
 )brace
 r_else
@@ -1002,7 +999,7 @@ op_eq
 id|UMSDOS_DOS_SETUP
 )paren
 (brace
-multiline_comment|/* #Specification: ioctl / UMSDOS_DOS_SETUP&n;&t;&t;&t;&t; * The UMSDOS_DOS_SETUP ioctl allow changing the&n;&t;&t;&t;&t; * default permission of the MsDOS file system driver&n;&t;&t;&t;&t; * on the fly. The MsDOS driver apply global permission&n;&t;&t;&t;&t; * to every file and directory. Normally these permissions&n;&t;&t;&t;&t; * are controlled by a mount option. This is not&n;&t;&t;&t;&t; * available for root partition, so a special utility&n;&t;&t;&t;&t; * (umssetup) is provided to do this, normally in&n;&t;&t;&t;&t; * /etc/rc.local.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * Be aware that this apply ONLY to MsDOS directory&n;&t;&t;&t;&t; * (those without EMD --linux-.---). Umsdos directory&n;&t;&t;&t;&t; * have independent (standard) permission for each&n;&t;&t;&t;&t; * and every file.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * The field umsdos_dirent provide the information needed.&n;&t;&t;&t;&t; * umsdos_dirent.uid and gid sets the owner and group.&n;&t;&t;&t;&t; * umsdos_dirent.mode set the permissions flags.&n;&t;&t;&t;&t; */
+multiline_comment|/* #Specification: ioctl / UMSDOS_DOS_SETUP&n;&t;&t;&t;&t; * The UMSDOS_DOS_SETUP ioctl allow changing the&n;&t;&t;&t;&t; * default permission of the MS-DOS filesystem driver&n;&t;&t;&t;&t; * on the fly.  The MS-DOS driver applies global permissions&n;&t;&t;&t;&t; * to every file and directory. Normally these permissions&n;&t;&t;&t;&t; * are controlled by a mount option. This is not&n;&t;&t;&t;&t; * available for root partition, so a special utility&n;&t;&t;&t;&t; * (umssetup) is provided to do this, normally in&n;&t;&t;&t;&t; * /etc/rc.local.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * Be aware that this applies ONLY to MS-DOS directories&n;&t;&t;&t;&t; * (those without EMD --linux-.---). Umsdos directory&n;&t;&t;&t;&t; * have independent (standard) permission for each&n;&t;&t;&t;&t; * and every file.&n;&t;&t;&t;&t; * &n;&t;&t;&t;&t; * The field umsdos_dirent provide the information needed.&n;&t;&t;&t;&t; * umsdos_dirent.uid and gid sets the owner and group.&n;&t;&t;&t;&t; * umsdos_dirent.mode set the permissions flags.&n;&t;&t;&t;&t; */
 id|dir-&gt;i_sb-&gt;u.msdos_sb.options.fs_uid
 op_assign
 id|data.umsdos_dirent.uid

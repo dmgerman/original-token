@@ -62,9 +62,9 @@ macro_line|#include &quot;version.h&quot;
 macro_line|#else
 macro_line|#include &lt;linux/rocket.h&gt;
 DECL|macro|ROCKET_VERSION
-mdefine_line|#define ROCKET_VERSION &quot;1.14b&quot;
+mdefine_line|#define ROCKET_VERSION &quot;1.14c&quot;
 DECL|macro|ROCKET_DATE
-mdefine_line|#define ROCKET_DATE &quot;29-Jun-98&quot;
+mdefine_line|#define ROCKET_DATE &quot;24-Aug-98&quot;
 macro_line|#endif /* LOCAL_ROCKET_H */
 DECL|macro|ROCKET_PARANOIA_CHECK
 mdefine_line|#define ROCKET_PARANOIA_CHECK
@@ -8421,9 +8421,11 @@ op_star
 id|pci_find_slot
 c_func
 (paren
+r_int
 r_char
 id|bus
 comma
+r_int
 r_char
 id|device_fn
 )paren
@@ -8543,10 +8545,12 @@ c_func
 r_int
 id|i
 comma
-r_char
+r_int
+r_int
 id|bus
 comma
-r_char
+r_int
+r_int
 id|device_fn
 )paren
 )paren

@@ -1353,7 +1353,12 @@ op_amp
 id|task-&gt;tk_wait
 )paren
 suffix:semicolon
-multiline_comment|/* When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again. */
+multiline_comment|/*&n;&t;&t;&t; * When the task received a signal, remove from&n;&t;&t;&t; * any queues etc, and make runnable again.&n;&t;&t;&t; */
+id|checksignals
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1384,6 +1389,11 @@ id|oldflags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * When a sync task receives a signal, it exits with&n;&t;&t; * -ERESTARTSYS. In order to catch any callbacks that&n;&t;&t; * clean up after sleeping on some queue, we don&squot;t&n;&t;&t; * break the loop here, but go around once more.&n;&t;&t; */
+id|checksignals
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1799,6 +1809,11 @@ op_plus
 id|HZ
 op_rshift
 l_int|4
+)paren
+suffix:semicolon
+id|checksignals
+c_func
+(paren
 )paren
 suffix:semicolon
 id|current-&gt;state
@@ -2726,6 +2741,11 @@ c_loop
 id|rpciod_users
 )paren
 (brace
+id|checksignals
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3211,6 +3231,11 @@ c_func
 l_string|&quot;rpciod_down: waiting for pid %d to exit&bslash;n&quot;
 comma
 id|rpciod_pid
+)paren
+suffix:semicolon
+id|checksignals
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

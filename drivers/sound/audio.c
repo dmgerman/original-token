@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/audio&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : use more logical O_NONBLOCK semantics&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -348,15 +348,6 @@ op_member_access_from_pointer
 id|audio_mode
 op_assign
 id|AM_NONE
-suffix:semicolon
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 id|ret
@@ -839,12 +830,13 @@ comma
 op_amp
 id|buf_size
 comma
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
+op_logical_neg
+op_logical_neg
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
 )paren
 )paren
 OL
@@ -855,12 +847,11 @@ multiline_comment|/* Handle nonblocking mode */
 r_if
 c_cond
 (paren
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
 op_logical_and
 id|err
 op_eq
@@ -1267,12 +1258,13 @@ comma
 op_amp
 id|l
 comma
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
+op_logical_neg
+op_logical_neg
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
 )paren
 )paren
 OL
@@ -1283,12 +1275,9 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Nonblocking mode handling. Return current #
 r_if
 c_cond
 (paren
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
 op_logical_and
 id|buf_no
 op_eq
@@ -1845,14 +1834,9 @@ suffix:semicolon
 r_case
 id|SNDCTL_DSP_NONBLOCK
 suffix:colon
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dev_nblock
-op_assign
-l_int|1
+id|file-&gt;f_flags
+op_or_assign
+id|O_NONBLOCK
 suffix:semicolon
 r_return
 l_int|0

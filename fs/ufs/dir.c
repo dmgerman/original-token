@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * swab support by Francois-Rene Rideau &lt;fare@tunes.org&gt; 19970406&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &quot;swab.h&quot;
 macro_line|#include &quot;util.h&quot;
@@ -78,7 +78,7 @@ id|flags
 comma
 id|swab
 suffix:semicolon
-multiline_comment|/* Isn&squot;t that already done in the upper layer???&n;         * the VFS layer really needs some explicit documentation!&n;         */
+multiline_comment|/* Isn&squot;t that already done in the upper layer???&n;&t; * the VFS layer really needs some explicit documentation!&n;&t; */
 r_if
 c_cond
 (paren
@@ -400,7 +400,7 @@ id|offset
 )paren
 )paren
 (brace
-multiline_comment|/* On error, skip the f_pos to the&n;&t;                           next block. */
+multiline_comment|/* On error, skip the f_pos to the&n;&t;&t;&t;&t;   next block. */
 id|filp-&gt;f_pos
 op_assign
 (paren

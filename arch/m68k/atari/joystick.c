@@ -622,6 +622,9 @@ comma
 multiline_comment|/* joystick_mmap */
 id|open_joystick
 comma
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|release_joystick
 )brace
 suffix:semicolon

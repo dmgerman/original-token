@@ -1,5 +1,6 @@
-multiline_comment|/*&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; &n; */
+multiline_comment|/*&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
@@ -767,7 +768,7 @@ id|cg-&gt;cg_nextfreeoff
 suffix:semicolon
 )brace
 macro_line|#endif /* UFS_SUPER_DEBUG_MORE */
-multiline_comment|/*&n; * Called while file system is mounted, read super block&n; * and create important imtermal structures.&n; */
+multiline_comment|/*&n; * Called while file system is mounted, read super block&n; * and create important internal structures.&n; */
 DECL|function|ufs_read_super
 r_struct
 id|super_block
@@ -884,11 +885,7 @@ id|flags
 op_assign
 l_int|0
 suffix:semicolon
-id|swab
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* sb-&gt;s_dev and sb-&gt;s_flags are set by our caller&n;&t; * data is the mystery argument to sys_mount()&n;&t; *&n;&t; * Our caller also sets s_dev, s_covered, s_rd_only, s_dirt,&n; &t; *   and s_type when we return.&n;&t; */
+multiline_comment|/* sb-&gt;s_dev and sb-&gt;s_flags are set by our caller&n;&t; * data is the mystery argument to sys_mount()&n;&t; *&n;&t; * Our caller also sets s_dev, s_covered, s_rd_only, s_dirt,&n;&t; *   and s_type when we return.&n;&t; */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|lock_super
@@ -1020,15 +1017,36 @@ c_func
 id|USPI_UBH
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Check ufs magic number&n;&t; */
-r_if
+multiline_comment|/*&n;&t; * Check ufs magic number&n;&t; * This code uses goto, because it&squot;s a lesser evil than unbalanced&n;&t; * structure in conditional code. Brought to you by Fare&squot; as a minimal&n;&t; * hack to live with Daniel&squot;s (unnecessary, IMNSHO) manual swab&n;&t; * optimization -- see swab.h.&n;&t; */
+macro_line|#if defined(__LITTLE_ENDIAN) || defined(__BIG_ENDIAN) /* sane bytesex */
+r_switch
 c_cond
 (paren
 id|usb3-&gt;fs_magic
-op_ne
-id|UFS_MAGIC
 )paren
 (brace
+r_case
+id|UFS_MAGIC
+suffix:colon
+id|swab
+op_assign
+id|UFS_NATIVE_ENDIAN
+suffix:semicolon
+r_goto
+id|magic_found
+suffix:semicolon
+r_case
+id|UFS_CIGAM
+suffix:colon
+id|swab
+op_assign
+id|UFS_SWABBED_ENDIAN
+suffix:semicolon
+r_goto
+id|magic_found
+suffix:semicolon
+)brace
+macro_line|#else /* bytesex perversion */
 r_switch
 c_cond
 (paren
@@ -1047,7 +1065,8 @@ id|swab
 op_assign
 id|UFS_LITTLE_ENDIAN
 suffix:semicolon
-r_break
+r_goto
+id|magic_found
 suffix:semicolon
 r_case
 id|UFS_CIGAM
@@ -1056,13 +1075,12 @@ id|swab
 op_assign
 id|UFS_BIG_ENDIAN
 suffix:semicolon
-r_break
+r_goto
+id|magic_found
 suffix:semicolon
-r_default
-suffix:colon
-(brace
 )brace
-multiline_comment|/*&n;&t;&t;&t; * Try another super block location&n;&t;&t;&t; */
+macro_line|#endif
+multiline_comment|/*&n;&t; * Magic number not found -- try another super block location&n;&t; */
 r_if
 c_cond
 (paren
@@ -1106,15 +1124,18 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: super block loacation not in { 0, 96, 160} or bad magic number&bslash;n&quot;
+l_string|&quot;ufs_read_super: &quot;
+l_string|&quot;super block location not in &quot;
+l_string|&quot;{ 0, 96, 160} &quot;
+l_string|&quot;or bad magic number&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
 id|failed
 suffix:semicolon
 )brace
-)brace
-)brace
+id|magic_found
+suffix:colon
 multiline_comment|/*&n;&t; * Check block and fragment sizes&n;&t; */
 id|uspi-&gt;s_bsize
 op_assign
@@ -1188,7 +1209,7 @@ r_goto
 id|failed
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Block size is not 1024, set block_size to 512, &n;&t; * free buffers and read it again&n;&t; */
+multiline_comment|/*&n;&t; * Block size is not 1024. Free buffers, set block_size and&n;&t; * super_block_size to superblock-declared values, and try again.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1227,6 +1248,14 @@ c_func
 id|usb1-&gt;fs_fshift
 )paren
 suffix:semicolon
+id|block_size
+op_assign
+id|uspi-&gt;s_fsize
+suffix:semicolon
+id|super_block_size
+op_assign
+id|uspi-&gt;s_sbsize
+suffix:semicolon
 r_goto
 id|again
 suffix:semicolon
@@ -1244,7 +1273,7 @@ id|swab
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t; * Check file system type&n;&t; */
+multiline_comment|/*&n;&t; * Check file system flavor&n;&t; */
 id|flags
 op_or_assign
 id|UFS_VANILLA
@@ -1279,7 +1308,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;44BSD&bslash;n&quot;
+l_string|&quot;Flavor: 44BSD&bslash;n&quot;
 )paren
 )paren
 id|flags
@@ -1297,7 +1326,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;OLD&bslash;n&quot;
+l_string|&quot;Flavor: OLD&bslash;n&quot;
 )paren
 )paren
 id|sb-&gt;s_flags
@@ -1320,7 +1349,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;NEXT&bslash;n&quot;
+l_string|&quot;Flavor: NEXT&bslash;n&quot;
 )paren
 )paren
 id|flags
@@ -1338,7 +1367,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;SUN&bslash;n&quot;
+l_string|&quot;Flavor: SUN&bslash;n&quot;
 )paren
 )paren
 id|flags
@@ -1346,7 +1375,7 @@ op_or_assign
 id|UFS_SUN
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Check, if file system was correctly unmounted.&n;&t; * If not, make it read only.&n;&t; */
+multiline_comment|/*&n;&t; * Check whether file system was correctly unmounted.&n;&t; * If not, make it read only.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1410,32 +1439,9 @@ id|usb1-&gt;fs_clean
 )paren
 (brace
 r_case
-id|UFS_FSCLEAN
-suffix:colon
-id|UFSD
-c_func
-(paren
-(paren
-l_string|&quot;fs is clean&bslash;n&quot;
-)paren
-)paren
-r_break
-suffix:semicolon
-r_case
-id|UFS_FSSTABLE
-suffix:colon
-id|UFSD
-c_func
-(paren
-(paren
-l_string|&quot;fs is stable&bslash;n&quot;
-)paren
-)paren
-r_break
-suffix:semicolon
-r_case
 id|UFS_FSACTIVE
 suffix:colon
+multiline_comment|/* 0x00 */
 id|printk
 c_func
 (paren
@@ -1449,8 +1455,48 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|UFS_FSCLEAN
+suffix:colon
+multiline_comment|/* 0x01 */
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;ufs_read_super: fs is clean&bslash;n&quot;
+)paren
+)paren
+r_break
+suffix:semicolon
+r_case
+id|UFS_FSSTABLE
+suffix:colon
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;ufs_read_super: fs is stable&bslash;n&quot;
+)paren
+)paren
+r_break
+suffix:semicolon
+r_case
+id|UFS_FSOSF1
+suffix:colon
+multiline_comment|/* 0x03 */
+multiline_comment|/* XXX - is this the correct interpretation under DEC OSF/1? */
+id|printk
+c_func
+(paren
+l_string|&quot;ufs_read_super: &quot;
+l_string|&quot;fs is clean and stable (OSF/1)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|UFS_FSBAD
 suffix:colon
+multiline_comment|/* 0xFF */
 id|printk
 c_func
 (paren
@@ -1925,7 +1971,7 @@ c_func
 id|usb3-&gt;fs_rotbloff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Compute another fraquently used values&n;&t; */
+multiline_comment|/*&n;&t; * Compute another frequently used values&n;&t; */
 id|uspi-&gt;s_fpbmask
 op_assign
 id|uspi-&gt;s_fpb
@@ -1978,7 +2024,7 @@ id|uspi-&gt;s_nspfshift
 op_assign
 id|uspi-&gt;s_fshift
 op_minus
-id|SECTOR_BITS
+id|UFS_SECTOR_BITS
 suffix:semicolon
 id|uspi-&gt;s_nspb
 op_assign
@@ -1992,6 +2038,7 @@ id|uspi-&gt;s_inopb
 op_rshift
 id|uspi-&gt;s_fpbshift
 suffix:semicolon
+multiline_comment|/* we could merge back s_swab and s_flags by having&n;&t;   foo.s_flags = flags | swab; here, and #defining&n;&t;   s_swab to s_flags &amp; UFS_BYTESEX in swab.h */
 id|sb-&gt;u.ufs_sb.s_flags
 op_assign
 id|flags
@@ -2161,7 +2208,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Read cylinder group (we read only first fragment from block&n;&t; * at this time) and prepare internal data structures for cg caching.&n;&t; */
+multiline_comment|/*&n;&t; * Read cylinder group (we read only first fragment from block&n;&t; * at this time) and prepare internal data structures for cg caching.&n;&t; * XXX - something here fails on CDROMs from DEC!&n;&t; */
 r_if
 c_cond
 (paren
@@ -3494,12 +3541,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|init_ufs_fs
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_ufs_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

@@ -131,6 +131,8 @@ DECL|macro|C_O_TRUNC
 mdefine_line|#define C_O_TRUNC       0x010
 DECL|macro|C_O_EXCL
 mdefine_line|#define C_O_EXCL&t;0x100
+DECL|macro|C_O_CREAT
+mdefine_line|#define C_O_CREAT&t;0x200
 multiline_comment|/* these are to find mode bits in Venus */
 DECL|macro|C_M_READ
 mdefine_line|#define C_M_READ  00400
@@ -141,6 +143,8 @@ DECL|macro|C_A_R_OK
 mdefine_line|#define C_A_R_OK    4               /* Test for read permission.  */
 DECL|macro|C_A_W_OK
 mdefine_line|#define C_A_W_OK    2               /* Test for write permission.  */
+DECL|macro|C_A_C_OK
+mdefine_line|#define C_A_C_OK    8               /* Test for writing upon create.  */
 DECL|macro|C_A_X_OK
 mdefine_line|#define C_A_X_OK    1               /* Test for execute permission.  */
 DECL|macro|C_A_F_OK
@@ -313,14 +317,12 @@ DECL|macro|_VUID_T_
 mdefine_line|#define _VUID_T_
 DECL|typedef|vuid_t
 r_typedef
-r_int
-r_int
+id|u_int32_t
 id|vuid_t
 suffix:semicolon
 DECL|typedef|vgid_t
 r_typedef
-r_int
-r_int
+id|u_int32_t
 id|vgid_t
 suffix:semicolon
 macro_line|#endif /*_VUID_T_ */

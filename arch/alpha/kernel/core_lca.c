@@ -1770,7 +1770,7 @@ id|MCHK_K_SIO_SERR
 suffix:colon
 id|reason
 op_assign
-l_string|&quot;SIO SERR occurred on on PCI bus&quot;
+l_string|&quot;SIO SERR occurred on PCI bus&quot;
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -42,6 +42,7 @@ r_const
 )paren
 )paren
 suffix:semicolon
+macro_line|#include&lt;asm/virtconvert.h&gt;
 DECL|macro|VTOP
 mdefine_line|#define VTOP(addr)  (mm_vtop((unsigned long)(addr)))
 DECL|macro|PTOV
@@ -220,9 +221,13 @@ suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|address
 )paren
 )paren
@@ -311,9 +316,13 @@ suffix:colon
 suffix:colon
 l_string|&quot;a&quot;
 (paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|address
 )paren
 )paren
@@ -893,9 +902,9 @@ DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|macro|mk_pte
-mdefine_line|#define mk_pte(page, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = VTOP(page) + pgprot_val(pgprot); __pte; })
+mdefine_line|#define mk_pte(page, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = virt_to_phys((void *)page) + pgprot_val(pgprot); __pte; })
 DECL|macro|mk_pte_phys
-mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = VTOP(physpage) + pgprot_val(pgprot); __pte; })
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = virt_to_phys((void *)physpage) + pgprot_val(pgprot); __pte; })
 DECL|function|pte_modify
 r_extern
 r_inline
@@ -961,7 +970,7 @@ op_assign
 id|pte_t
 op_star
 )paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|ptep
@@ -1029,7 +1038,7 @@ op_assign
 id|pte_t
 op_star
 )paren
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|ptep
@@ -1098,7 +1107,7 @@ id|_PAGE_TABLE
 op_or
 id|_PAGE_ACCESSED
 op_or
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|pmdp
@@ -1118,8 +1127,17 @@ id|pte
 )paren
 (brace
 r_return
-id|PTOV
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
 c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 (paren
 id|pte_val
 c_func
@@ -1128,6 +1146,7 @@ id|pte
 )paren
 op_amp
 id|PAGE_MASK
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1145,8 +1164,17 @@ id|pmd
 )paren
 (brace
 r_return
-id|PTOV
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
 c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 (paren
 id|pmd_val
 c_func
@@ -1156,6 +1184,7 @@ id|pmd
 )paren
 op_amp
 id|_TABLE_MASK
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1174,8 +1203,17 @@ id|pgd
 )paren
 (brace
 r_return
-id|PTOV
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
 c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 (paren
 id|pgd_val
 c_func
@@ -1184,6 +1222,7 @@ id|pgd
 )paren
 op_amp
 id|_TABLE_MASK
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1853,7 +1892,7 @@ id|tsk-&gt;tss.crp
 l_int|1
 )braket
 op_assign
-id|VTOP
+id|virt_to_phys
 c_func
 (paren
 id|pgdir
@@ -2360,10 +2399,7 @@ id|ret
 l_int|0
 )braket
 op_assign
-id|ret
-(braket
-l_int|1
-)braket
+l_int|0
 suffix:semicolon
 id|quicklists.pgtable_cache_sz
 op_sub_assign
@@ -2492,10 +2528,7 @@ id|ret
 l_int|0
 )braket
 op_assign
-id|ret
-(braket
-l_int|1
-)braket
+l_int|0
 suffix:semicolon
 id|quicklists.pgtable_cache_sz
 op_decrement
@@ -3205,6 +3238,27 @@ id|entry
 (brace
 )brace
 multiline_comment|/*&n; * Check if the addr/len goes up to the end of a physical&n; * memory chunk.  Used for DMA functions.&n; */
+macro_line|#ifdef CONFIG_SINGLE_MEMORY_CHUNK
+multiline_comment|/*&n; * It makes no sense to consider whether we cross a memory boundary if&n; * we support just one physical chunk of memory.&n; */
+DECL|function|mm_end_of_chunk
+r_extern
+r_inline
+r_int
+id|mm_end_of_chunk
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else
 r_int
 id|mm_end_of_chunk
 (paren
@@ -3216,6 +3270,7 @@ r_int
 id|len
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Map some physical address range into the kernel address space.&n; */
 r_extern
 r_int

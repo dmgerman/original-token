@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#endif
@@ -1447,15 +1448,7 @@ id|mask
 )paren
 suffix:semicolon
 )brace
-r_static
-r_int
-r_int
-id|mm_vtop_fallback
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 multiline_comment|/*&n; * The following two routines map from a physical address to a kernel&n; * virtual address and vice versa.&n; */
 DECL|function|mm_vtop
 r_int
@@ -1467,6 +1460,7 @@ r_int
 id|vaddr
 )paren
 (brace
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 r_int
 id|i
 op_assign
@@ -1556,6 +1550,30 @@ OL
 id|m68k_num_memory
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|vaddr
+OL
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+r_return
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+op_plus
+id|vaddr
+suffix:semicolon
+macro_line|#endif
 r_return
 id|mm_vtop_fallback
 c_func
@@ -1564,9 +1582,9 @@ id|vaddr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Separate function to make the common case faster (needs to save less&n;   registers) */
 DECL|function|mm_vtop_fallback
-r_static
 r_int
 r_int
 id|mm_vtop_fallback
@@ -1936,14 +1954,13 @@ id|mmusr
 suffix:semicolon
 id|descaddr
 op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|PTOV
+id|phys_to_virt
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|descaddr
 )paren
 suffix:semicolon
@@ -2033,6 +2050,7 @@ id|vaddr
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|function|mm_ptov
 r_int
 r_int
@@ -2043,6 +2061,7 @@ r_int
 id|paddr
 )paren
 (brace
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 r_int
 id|i
 op_assign
@@ -2146,6 +2165,46 @@ OL
 id|m68k_num_memory
 )paren
 suffix:semicolon
+macro_line|#else
+r_int
+r_int
+id|base
+op_assign
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|paddr
+op_ge
+id|base
+op_logical_and
+id|paddr
+OL
+(paren
+id|base
+op_plus
+id|m68k_memory
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+)paren
+r_return
+(paren
+id|paddr
+op_minus
+id|base
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * assume that the kernel virtual address is the same as the&n;&t; * physical address.&n;&t; *&n;&t; * This should be reasonable in most situations:&n;&t; *  1) They shouldn&squot;t be dereferencing the virtual address&n;&t; *     unless they are sure that it is valid from kernel space.&n;&t; *  2) The only usage I see so far is converting a page table&n;&t; *     reference to some non-FASTMEM address space when freeing&n;         *     mmaped &quot;/dev/mem&quot; pages.  These addresses are just passed&n;&t; *     to &quot;free_page&quot;, which ignores addresses that aren&squot;t in&n;&t; *     the memory list anyway.&n;&t; *&n;&t; */
 macro_line|#ifdef CONFIG_AMIGA
 multiline_comment|/*&n;&t; * if on an amiga and address is in first 16M, move it &n;&t; * to the ZTWO_VADDR range&n;&t; */
@@ -2174,6 +2233,7 @@ r_return
 id|paddr
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* invalidate page in both caches */
 DECL|macro|clear040
 mdefine_line|#define&t;clear040(paddr)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;nop&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68040&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;      &quot;cinvp %%bc,(%0)&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;      &quot;.chip 68k&quot;&t;&t;&bslash;&n;&t;&t;&t;      : : &quot;a&quot; (paddr))
@@ -2421,6 +2481,7 @@ DECL|macro|pushcl040
 macro_line|#undef pushcl040
 DECL|macro|pushcli040
 macro_line|#undef pushcli040
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|function|mm_end_of_chunk
 r_int
 id|mm_end_of_chunk
@@ -2478,4 +2539,5 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

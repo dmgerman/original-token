@@ -343,6 +343,25 @@ id|ind
 suffix:semicolon
 DECL|macro|NB_SFS_SIZ
 mdefine_line|#define NB_SFS_SIZ 0x895440
+multiline_comment|/* cache.c */
+r_void
+id|coda_purge_children
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_void
+id|coda_purge_dentries
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* debugging masks */
 DECL|macro|D_SUPER
 mdefine_line|#define D_SUPER     1   /* print results returned by Venus */ 
