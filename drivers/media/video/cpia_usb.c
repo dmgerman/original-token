@@ -754,7 +754,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 r_goto
-id|error_all
+id|error_1
 suffix:semicolon
 )brace
 id|ucpia-&gt;buffers
@@ -854,7 +854,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 r_goto
-id|error_all
+id|error_1
 suffix:semicolon
 )brace
 id|ucpia-&gt;sbuf
@@ -966,7 +966,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;cpia_init_isoc: usb_alloc_urb 0&bslash;n&quot;
+l_string|&quot;cpia_init_isoc: usb_alloc_urb 1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|retval
@@ -975,7 +975,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 r_goto
-id|error_all
+id|error_urb0
 suffix:semicolon
 )brace
 id|ucpia-&gt;sbuf
@@ -1114,6 +1114,7 @@ c_cond
 (paren
 id|err
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -1123,6 +1124,10 @@ comma
 id|err
 )paren
 suffix:semicolon
+r_goto
+id|error_urb1
+suffix:semicolon
+)brace
 id|err
 op_assign
 id|usb_submit_urb
@@ -1141,6 +1146,7 @@ c_cond
 (paren
 id|err
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -1150,6 +1156,10 @@ comma
 id|err
 )paren
 suffix:semicolon
+r_goto
+id|error_urb1
+suffix:semicolon
+)brace
 id|ucpia-&gt;streaming
 op_assign
 l_int|1
@@ -1161,7 +1171,35 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-id|error_all
+id|error_urb1
+suffix:colon
+multiline_comment|/* free urb 1 */
+id|usb_free_urb
+c_func
+(paren
+id|ucpia-&gt;sbuf
+(braket
+l_int|1
+)braket
+dot
+id|urb
+)paren
+suffix:semicolon
+id|error_urb0
+suffix:colon
+multiline_comment|/* free urb 0 */
+id|usb_free_urb
+c_func
+(paren
+id|ucpia-&gt;sbuf
+(braket
+l_int|0
+)braket
+dot
+id|urb
+)paren
+suffix:semicolon
+id|error_1
 suffix:colon
 id|kfree
 (paren

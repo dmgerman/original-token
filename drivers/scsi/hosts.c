@@ -358,8 +358,6 @@ op_logical_neg
 id|shn-&gt;host_registered
 )paren
 op_logical_and
-id|shn-&gt;loaded_as_module
-op_logical_and
 (paren
 id|hname_len
 OG
@@ -395,7 +393,7 @@ l_int|1
 suffix:semicolon
 id|shn-&gt;loaded_as_module
 op_assign
-id|scsi_loadable_module_flag
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -439,7 +437,7 @@ id|j
 suffix:semicolon
 id|retval-&gt;loaded_as_module
 op_assign
-id|scsi_loadable_module_flag
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -511,7 +509,7 @@ l_int|1
 suffix:semicolon
 id|shn-&gt;loaded_as_module
 op_assign
-id|scsi_loadable_module_flag
+l_int|1
 suffix:semicolon
 id|shn-&gt;next
 op_assign

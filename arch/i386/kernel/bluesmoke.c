@@ -198,7 +198,7 @@ l_int|27
 id|rdmsr
 c_func
 (paren
-l_int|0x402
+l_int|0x403
 op_plus
 id|i
 op_star
@@ -269,6 +269,12 @@ comma
 id|low
 comma
 id|high
+)paren
+suffix:semicolon
+multiline_comment|/* Serialize */
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

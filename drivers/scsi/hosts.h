@@ -781,10 +781,6 @@ r_extern
 r_int
 id|next_scsi_host
 suffix:semicolon
-r_extern
-r_int
-id|scsi_loadable_module_flag
-suffix:semicolon
 r_int
 r_int
 id|scsi_init

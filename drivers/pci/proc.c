@@ -139,11 +139,13 @@ op_assign
 id|dp-&gt;data
 suffix:semicolon
 r_int
+r_int
 id|pos
 op_assign
 op_star
 id|ppos
 suffix:semicolon
+r_int
 r_int
 id|cnt
 comma
