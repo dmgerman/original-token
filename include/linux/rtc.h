@@ -83,6 +83,10 @@ DECL|macro|RTC_PIE_ON
 mdefine_line|#define RTC_PIE_ON&t;_IO(&squot;p&squot;, 0x05)&t;/* Periodic int. enable on&t;*/
 DECL|macro|RTC_PIE_OFF
 mdefine_line|#define RTC_PIE_OFF&t;_IO(&squot;p&squot;, 0x06)&t;/* ... off&t;&t;&t;*/
+DECL|macro|RTC_WIE_ON
+mdefine_line|#define RTC_WIE_ON&t;_IO(&squot;p&squot;, 0x0f)  /* Watchdog int. enable on&t;*/
+DECL|macro|RTC_WIE_OFF
+mdefine_line|#define RTC_WIE_OFF&t;_IO(&squot;p&squot;, 0x10)  /* ... off&t;&t;&t;*/
 DECL|macro|RTC_ALM_SET
 mdefine_line|#define RTC_ALM_SET&t;_IOW(&squot;p&squot;, 0x07, struct rtc_time) /* Set alarm time  */
 DECL|macro|RTC_ALM_READ

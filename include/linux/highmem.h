@@ -89,8 +89,28 @@ DECL|macro|prepare_highmem_swapout
 mdefine_line|#define prepare_highmem_swapout(page) page
 DECL|macro|replace_with_highmem
 mdefine_line|#define replace_with_highmem(page) page
-DECL|macro|kmap
-mdefine_line|#define kmap(page) page_address(page)
+DECL|function|kmap
+r_static
+id|__inline__
+r_int
+r_int
+id|kmap
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_return
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
 DECL|macro|kunmap
 mdefine_line|#define kunmap(page) do { } while (0)
 macro_line|#endif /* CONFIG_HIGHMEM */

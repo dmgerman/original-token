@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sgiwd93.c: SGI WD93 scsi driver.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&t;&t; 1999 Andrew R. Baker (andrewb@uab.edu)&n; *&t;&t;      - Support for 2nd SCSI controller on Indigo2&n; * &n; * (In all truth, Jed Schimmel wrote all this code.)&n; *&n; * $Id: sgiwd93.c,v 1.20 2000/02/21 15:05:48 ralf Exp $&n; */
+multiline_comment|/*&n; * sgiwd93.c: SGI WD93 scsi driver.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&t;&t; 1999 Andrew R. Baker (andrewb@uab.edu)&n; *&t;&t;      - Support for 2nd SCSI controller on Indigo2&n; * &n; * (In all truth, Jed Schimmel wrote all this code.)&n; *&n; * $Id: sgiwd93.c,v 1.19 2000/02/04 07:40:47 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -900,8 +900,8 @@ r_void
 id|sgiwd93_reset
 c_func
 (paren
-id|uchar
-op_star
+r_int
+r_int
 id|base
 )paren
 (brace
@@ -1105,8 +1105,7 @@ id|sgiwd93_host-&gt;base
 op_assign
 (paren
 r_int
-r_char
-op_star
+r_int
 )paren
 id|hregs
 suffix:semicolon
@@ -1246,8 +1245,7 @@ id|sgiwd93_host1-&gt;base
 op_assign
 (paren
 r_int
-r_char
-op_star
+r_int
 )paren
 id|hregs1
 suffix:semicolon

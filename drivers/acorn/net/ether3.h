@@ -279,7 +279,7 @@ suffix:semicolon
 multiline_comment|/* address to fetch next packet from&t; */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|timer

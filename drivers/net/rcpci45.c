@@ -111,7 +111,7 @@ suffix:semicolon
 multiline_comment|/*  timer */
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* the statistics structure */
@@ -321,7 +321,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|RCget_stats
 c_func
@@ -3189,7 +3189,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|RCget_stats
 id|RCget_stats
@@ -3576,7 +3576,7 @@ r_return
 (paren
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 op_amp

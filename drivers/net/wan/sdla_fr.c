@@ -5620,11 +5620,11 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* switch_net_numbers */
-multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
+multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats.&n; */
 DECL|function|if_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 (paren

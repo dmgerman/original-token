@@ -190,7 +190,7 @@ id|regs
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|skfp_ctl_get_stats
 c_func
@@ -3318,7 +3318,7 @@ singleline_comment|// skfp_interrupt
 multiline_comment|/*&n; * ======================&n; * = skfp_ctl_get_stats =&n; * ======================&n; *   &n; * Overview:&n; *   Get statistics for FDDI adapter&n; *  &n; * Returns:&n; *   Pointer to FDDI statistics structure&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   Gets current MIB objects from adapter, then&n; *   returns FDDI statistics structure as defined&n; *   in if_fddi.h.&n; *&n; *   Note: Since the FDDI statistics structure is&n; *   still new and the device structure doesn&squot;t&n; *   have an FDDI-specific get statistics handler,&n; *   we&squot;ll return the FDDI statistics structure as&n; *   a pointer to an Ethernet statistics structure.&n; *   That way, at least the first part of the statistics&n; *   structure can be decoded properly.&n; *   We&squot;ll have to pay attention to this routine as the&n; *   device structure becomes more mature and LAN media&n; *   independent.&n; *&n; */
 DECL|function|skfp_ctl_get_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|skfp_ctl_get_stats
 c_func
@@ -4139,7 +4139,7 @@ r_return
 (paren
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 op_amp

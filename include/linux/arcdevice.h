@@ -65,7 +65,7 @@ DECL|macro|BUGMSG
 mdefine_line|#define BUGMSG(x,msg,args...) &bslash;&n;&t;BUGMSG2(x, &quot;%s%6s: &quot; msg, &bslash;&n;            x==D_NORMAL&t;? KERN_WARNING &bslash;&n;            &t;&t;: x &lt; D_DURING ? KERN_INFO : KERN_DEBUG, &bslash;&n;&t;    dev-&gt;name , ## args)
 multiline_comment|/* see how long a function call takes to run, expressed in CPU cycles */
 DECL|macro|TIME
-mdefine_line|#define TIME(name, bytes, call) BUGLVL(D_TIMING) { &bslash;&n;&t;    cycles_t _x, _y; &bslash;&n;&t;    _x = get_cycles(); &bslash;&n;&t;    call; &bslash;&n;&t;    _y = get_cycles(); &bslash;&n;&t;    BUGMSG(D_TIMING, &bslash;&n;&t;       &quot;%s: %d bytes in %lu cycles == &quot; &bslash;&n;&t;       &quot;%lu Kbytes/100Mcycle&bslash;n&quot;,&bslash;&n;&t;&t;   name, bytes, _y - _x, &bslash;&n;&t;&t;   100000000 / 1024 * bytes / (_y - _x + 1));&bslash;&n;&t;} &bslash;&n;&t;else { &bslash;&n;&t;&t;    call;&bslash;&n;&t;}
+mdefine_line|#define TIME(name, bytes, call) BUGLVL(D_TIMING) { &bslash;&n;&t;    unsigned long _x, _y; &bslash;&n;&t;    _x = get_cycles(); &bslash;&n;&t;    call; &bslash;&n;&t;    _y = get_cycles(); &bslash;&n;&t;    BUGMSG(D_TIMING, &bslash;&n;&t;       &quot;%s: %d bytes in %lu cycles == &quot; &bslash;&n;&t;       &quot;%lu Kbytes/100Mcycle&bslash;n&quot;,&bslash;&n;&t;&t;   name, bytes, _y - _x, &bslash;&n;&t;&t;   100000000 / 1024 * bytes / (_y - _x + 1));&bslash;&n;&t;} &bslash;&n;&t;else { &bslash;&n;&t;&t;    call;&bslash;&n;&t;}
 multiline_comment|/*&n; * Time needed to reset the card - in ms (milliseconds).  This works on my&n; * SMC PC100.  I can&squot;t find a reference that tells me just how long I&n; * should wait.&n; */
 DECL|macro|RESETtime
 mdefine_line|#define RESETtime (300)

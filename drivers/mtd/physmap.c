@@ -1,14 +1,15 @@
-multiline_comment|/*&n; * $Id: physmap.c,v 1.1 2000/07/04 08:58:10 dwmw2 Exp $&n; *&n; * Normal mappings of chips in physical memory&n; */
+multiline_comment|/*&n; * $Id: physmap.c,v 1.2 2000/07/11 09:42:32 dwmw2 Exp $&n; *&n; * Normal mappings of chips in physical memory&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
 macro_line|#include &lt;linux/mtd/map.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|WINDOW_ADDR
-mdefine_line|#define WINDOW_ADDR 0x8000000
+mdefine_line|#define WINDOW_ADDR CONFIG_MTD_PHYSMAP_START
 DECL|macro|WINDOW_SIZE
-mdefine_line|#define WINDOW_SIZE 0x4000000
+mdefine_line|#define WINDOW_SIZE CONFIG_MTD_PHYSMAP_LEN
 DECL|variable|mymtd
 r_static
 r_struct

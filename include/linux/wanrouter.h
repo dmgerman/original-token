@@ -1257,21 +1257,12 @@ r_char
 id|api_status
 suffix:semicolon
 multiline_comment|/* device api status */
-macro_line|#ifdef LINUX_2_1
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* interface statistics */
-macro_line|#else
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-multiline_comment|/* interface statistics */
-macro_line|#endif
 DECL|member|reserved
 r_int
 id|reserved

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Copytight (C) 1999, 2000 Ralf Baechle (ralf@gnu.org)&n; * Copytight (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -52,7 +53,7 @@ r_extern
 r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 DECL|function|set_rtc_mmss
 r_static
@@ -700,7 +701,9 @@ r_int
 r_int
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -787,7 +790,11 @@ c_func
 suffix:semicolon
 id|tv-&gt;tv_usec
 op_sub_assign
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
 op_star
 (paren
 l_int|1000000

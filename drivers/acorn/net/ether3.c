@@ -175,7 +175,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ether3_getstats
 (paren
@@ -1332,7 +1332,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -1850,7 +1850,7 @@ multiline_comment|/*&n; * Get the current statistics.&t;This may be called with 
 DECL|function|ether3_getstats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ether3_getstats
 c_func
@@ -3160,7 +3160,7 @@ suffix:semicolon
 r_else
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign

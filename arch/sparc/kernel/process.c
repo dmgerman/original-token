@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.147 2000/05/09 17:40:13 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.148 2000/07/10 23:22:32 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -301,9 +301,9 @@ r_void
 )paren
 (brace
 multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-l_int|0
+l_int|20
 suffix:semicolon
 id|current-&gt;counter
 op_assign
@@ -885,6 +885,11 @@ c_func
 id|smpfunc_t
 )paren
 id|show_backtrace
+)paren
+suffix:semicolon
+id|show_backtrace
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

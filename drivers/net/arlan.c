@@ -532,7 +532,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|arlan_statistics
 (paren
@@ -9377,7 +9377,7 @@ multiline_comment|/*&n; * Get the current statistics.&n; * This may be called wi
 DECL|function|arlan_statistics
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|arlan_statistics
 c_func

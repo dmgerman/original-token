@@ -108,7 +108,7 @@ id|eepro_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|rx_start
@@ -392,7 +392,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|eepro_get_stats
 c_func
@@ -4387,7 +4387,7 @@ suffix:semicolon
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|eepro_get_stats
 id|eepro_get_stats

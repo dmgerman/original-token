@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.28 2000/03/13 22:21:44 harald Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
@@ -535,6 +536,15 @@ id|CPU_R10000
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|PRID_IMP_RM7000
+suffix:colon
+id|mips_cputype
+op_assign
+id|CPU_R5000
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|mips_cputype
@@ -690,17 +700,6 @@ op_star
 id|cmdline_p
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-r_int
-r_int
-id|tmp
-suffix:semicolon
-r_int
-r_int
-op_star
-id|initrd_header
-suffix:semicolon
-macro_line|#endif
 r_void
 id|baget_setup
 c_func
@@ -752,6 +751,13 @@ r_void
 suffix:semicolon
 r_void
 id|ddb_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|orion_setup
 c_func
 (paren
 r_void
@@ -872,6 +878,18 @@ r_case
 id|MACH_GROUP_NEC_DDB
 suffix:colon
 id|ddb_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ORION
+r_case
+id|MACH_GROUP_ORION
+suffix:colon
+id|orion_setup
 c_func
 (paren
 )paren

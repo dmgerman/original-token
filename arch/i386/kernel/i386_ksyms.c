@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/i387.h&gt;
@@ -388,6 +389,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strpbrk
+)paren
+suffix:semicolon
+DECL|variable|simple_strtol
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|simple_strtol
 )paren
 suffix:semicolon
 DECL|variable|strncpy_from_user

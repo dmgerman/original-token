@@ -190,6 +190,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 macro_line|#include &quot;esp.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SGIWD93
+macro_line|#include &quot;sgiwd93.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGICPTI
 macro_line|#include &quot;qlogicpti.h&quot;
 macro_line|#endif
@@ -624,10 +627,18 @@ macro_line|#ifdef CONFIG_SCSI_IMM
 id|IMM
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SGIWD93
+id|SGIWD93_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_JAZZ_ESP&t;
+id|SCSI_JAZZ_ESP
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN3X_ESP  
 id|SCSI_SUN3X_ESP
 comma
-macro_line|#endif  
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 id|SCSI_DEBUG
 comma

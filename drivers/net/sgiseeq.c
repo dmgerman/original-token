@@ -202,7 +202,7 @@ id|mode
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 )brace
@@ -2410,7 +2410,7 @@ suffix:semicolon
 DECL|function|sgiseeq_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|sgiseeq_get_stats
 c_func

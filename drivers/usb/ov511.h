@@ -281,10 +281,8 @@ mdefine_line|#define OV7610_REG_COM_L         0x35&t;/* misc settings */
 multiline_comment|/* 36-37 reserved */
 DECL|macro|OV7610_REG_COM_K
 mdefine_line|#define OV7610_REG_COM_K         0x38&t;/* misc registers */
-DECL|macro|STREAM_BUF_SIZE
-mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
 DECL|macro|SCRATCH_BUF_SIZE
-mdefine_line|#define SCRATCH_BUF_SIZE 384
+mdefine_line|#define SCRATCH_BUF_SIZE 512
 DECL|macro|FRAMES_PER_DESC
 mdefine_line|#define FRAMES_PER_DESC&t;&t;10&t;/* FIXME - What should this be? */
 DECL|macro|FRAME_SIZE_PER_DESC
@@ -376,6 +374,21 @@ DECL|enumerator|STATE_LINES
 id|STATE_LINES
 comma
 multiline_comment|/* Parsing lines */
+)brace
+suffix:semicolon
+multiline_comment|/* Buffer states */
+r_enum
+(brace
+DECL|enumerator|BUF_NOT_ALLOCATED
+id|BUF_NOT_ALLOCATED
+comma
+DECL|enumerator|BUF_ALLOCATED
+id|BUF_ALLOCATED
+comma
+DECL|enumerator|BUF_PEND_DEALLOC
+id|BUF_PEND_DEALLOC
+comma
+multiline_comment|/* ov511-&gt;buf_timer is set */
 )brace
 suffix:semicolon
 r_struct
@@ -736,6 +749,21 @@ op_star
 id|proc_entry
 suffix:semicolon
 multiline_comment|/* /proc/ov511/videoX */
+multiline_comment|/* Framebuffer/sbuf management */
+DECL|member|buf_state
+r_int
+id|buf_state
+suffix:semicolon
+DECL|member|buf_lock
+r_struct
+id|semaphore
+id|buf_lock
+suffix:semicolon
+DECL|member|buf_timer
+r_struct
+id|timer_list
+id|buf_timer
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|cam_list

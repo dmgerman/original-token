@@ -2,6 +2,7 @@ multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and condit
 macro_line|#ifndef _ASM_SN_ADDRS_H
 DECL|macro|_ASM_SN_ADDRS_H
 mdefine_line|#define _ASM_SN_ADDRS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if _LANGUAGE_C
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif /* _LANGUAGE_C */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.215 2000/06/30 13:25:28 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.218 2000/07/10 23:22:32 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -65,6 +65,11 @@ r_extern
 r_int
 r_int
 id|last_valid_pfn
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|page_kernel
 suffix:semicolon
 DECL|variable|srmmu_swapper_pg_dir
 id|pgd_t
@@ -2396,13 +2401,6 @@ c_cond
 id|page
 )paren
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|pte_spinlock
-)paren
-suffix:semicolon
 id|srmmu_pmd_set
 c_func
 (paren
@@ -2558,13 +2556,6 @@ c_cond
 id|page
 )paren
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|pte_spinlock
-)paren
-suffix:semicolon
 id|srmmu_pgd_set
 c_func
 (paren
@@ -10675,6 +10666,12 @@ comma
 id|page
 )paren
 suffix:semicolon
+id|local_flush_page_for_dma
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Load up routines and constants for sun4m and sun4d mmu */
@@ -10842,6 +10839,14 @@ c_func
 (paren
 id|SRMMU_PAGE_KERNEL
 )paren
+)paren
+suffix:semicolon
+id|page_kernel
+op_assign
+id|pgprot_val
+c_func
+(paren
+id|SRMMU_PAGE_KERNEL
 )paren
 suffix:semicolon
 id|pg_iobits

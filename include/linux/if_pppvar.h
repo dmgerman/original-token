@@ -270,7 +270,7 @@ suffix:semicolon
 multiline_comment|/* net device structure */
 DECL|member|estats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|estats
 suffix:semicolon
 multiline_comment|/* more detailed stats */

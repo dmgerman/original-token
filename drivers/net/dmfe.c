@@ -369,7 +369,7 @@ id|timer
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* statistic counter */
@@ -1136,7 +1136,7 @@ op_star
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|dmfe_get_stats
 c_func
@@ -3452,7 +3452,7 @@ multiline_comment|/*&n;   Get statistics from driver.&n; */
 DECL|function|dmfe_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|dmfe_get_stats
 c_func

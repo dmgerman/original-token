@@ -3484,7 +3484,7 @@ multiline_comment|/* return pointer to Ethernet statistics */
 DECL|function|skmca_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|skmca_stats
 c_func
@@ -4100,7 +4100,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

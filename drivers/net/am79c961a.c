@@ -1850,7 +1850,7 @@ multiline_comment|/*&n; * Get the current statistics.&t;This may be called with 
 DECL|function|am79c961_getstats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|am79c961_getstats
 (paren

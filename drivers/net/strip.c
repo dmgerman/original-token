@@ -9658,7 +9658,7 @@ suffix:semicolon
 DECL|function|strip_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|strip_get_stats
 c_func
@@ -9671,7 +9671,7 @@ id|dev
 (brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 r_struct
@@ -9699,7 +9699,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon

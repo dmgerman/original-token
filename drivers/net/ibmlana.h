@@ -69,7 +69,7 @@ suffix:semicolon
 multiline_comment|/* MCA-Slot-#                       */
 DECL|member|stat
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stat
 suffix:semicolon
 multiline_comment|/* packet statistics            */

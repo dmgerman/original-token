@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.86 2000/06/04 06:23:52 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/*  $Id: init.c,v 1.88 2000/07/10 20:56:53 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -34,6 +34,11 @@ r_int
 r_int
 id|phys_base
 suffix:semicolon
+DECL|variable|page_kernel
+r_int
+r_int
+id|page_kernel
+suffix:semicolon
 DECL|variable|sp_banks
 r_struct
 id|sparc_phys_banks
@@ -60,10 +65,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-id|SPIN_LOCK_UNLOCKED
-comma
-id|SPIN_LOCK_UNLOCKED
 )brace
 suffix:semicolon
 multiline_comment|/* References to section boundaries */

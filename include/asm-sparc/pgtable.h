@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.96 2000/06/05 06:08:46 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.97 2000/07/07 07:33:11 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -428,8 +428,18 @@ DECL|macro|PAGE_COPY
 mdefine_line|#define PAGE_COPY      __pgprot(BTFIXUP_INT(page_copy))
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY  __pgprot(BTFIXUP_INT(page_readonly))
+r_extern
+r_int
+r_int
+id|page_kernel
+suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|macro|PAGE_KERNEL
+mdefine_line|#define PAGE_KERNEL&t;page_kernel
+macro_line|#else
 DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL    __pgprot(BTFIXUP_INT(page_kernel))
+macro_line|#endif
 multiline_comment|/* Top-level page directory */
 r_extern
 id|pgd_t

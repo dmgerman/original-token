@@ -23,8 +23,10 @@ DECL|macro|MACH_GROUP_NEC_DDB
 mdefine_line|#define MACH_GROUP_NEC_DDB&t;8 /* NEC DDB */
 DECL|macro|MACH_GROUP_BAGET
 mdefine_line|#define MACH_GROUP_BAGET&t;9 /* Baget */
+DECL|macro|MACH_GROUP_ORION
+mdefine_line|#define MACH_GROUP_ORION       10 /* CoSine Orion */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot;, &quot;NEC DDB&quot;, &quot;Baget&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot;, &quot;NEC DDB&quot;, &quot;Baget&quot;, &quot;Orion&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/

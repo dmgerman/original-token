@@ -1515,7 +1515,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check if there is any memory pressure (free_pages &lt; pages_low)&n; */
+multiline_comment|/*&n; * Check if there recently has been memory pressure (zone_wake_kswapd)&n; */
 DECL|function|keep_kswapd_awake
 r_static
 r_inline
@@ -1780,19 +1780,17 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|priority
-op_decrement
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
+op_decrement
 id|priority
 op_ge
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Always end on a shrink_mmap.. */
+multiline_comment|/* Always end on a shrink_mmap.., may sleep... */
 r_while
 c_loop
 (paren
@@ -1816,12 +1814,18 @@ r_goto
 id|done
 suffix:semicolon
 )brace
-multiline_comment|/* We return 1 if we are freed some page */
+multiline_comment|/* We return 1 if we are freed some page, or&n;&t; * there are no memory pressure remaining   */
 r_return
 (paren
 id|count
 op_ne
 id|FREE_COUNT
+op_logical_or
+op_logical_neg
+id|memory_pressure
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 id|done

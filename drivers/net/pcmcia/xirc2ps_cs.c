@@ -776,7 +776,7 @@ id|node
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|card_type
@@ -862,7 +862,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|do_get_stats
 c_func
@@ -6726,7 +6726,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|do_get_stats
 id|do_get_stats

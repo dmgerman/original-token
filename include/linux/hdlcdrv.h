@@ -719,19 +719,11 @@ id|hdlcdrv_bitbuffer
 id|bitbuf_hdlc
 suffix:semicolon
 macro_line|#endif /* HDLCDRV_DEBUG */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-macro_line|#else
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-macro_line|#endif
 DECL|member|ptt_keyed
 r_int
 id|ptt_keyed

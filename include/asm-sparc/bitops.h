@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.57 2000/06/30 10:18:39 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.58 2000/07/07 07:29:30 anton Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -7,8 +7,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifndef __KERNEL__
 multiline_comment|/* User mode bitops, defined here for convenience. Note: these are not&n; * atomic, so packages like nthreads should do some locking around these&n; * themself.&n; */
-DECL|macro|__SMPVOL
-mdefine_line|#define __SMPVOL
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -369,13 +367,6 @@ suffix:semicolon
 )brace
 macro_line|#else /* __KERNEL__ */
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|__SMPVOL
-mdefine_line|#define __SMPVOL volatile
-macro_line|#else
-DECL|macro|__SMPVOL
-mdefine_line|#define __SMPVOL
-macro_line|#endif
 multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the four bytes and bit &squot;31&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
 DECL|function|test_and_set_bit
 r_extern
@@ -388,7 +379,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -514,7 +505,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -543,7 +534,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -669,7 +660,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -698,7 +689,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -824,7 +815,7 @@ r_int
 r_int
 id|nr
 comma
-id|__SMPVOL
+r_volatile
 r_void
 op_star
 id|addr
@@ -855,7 +846,6 @@ r_int
 id|nr
 comma
 id|__const__
-id|__SMPVOL
 r_void
 op_star
 id|addr
@@ -1394,6 +1384,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -1515,6 +1506,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr

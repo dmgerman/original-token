@@ -22,12 +22,11 @@ id|rwlock_t
 id|xtime_lock
 suffix:semicolon
 r_extern
-r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
-multiline_comment|/* kernel/sched.c */
+multiline_comment|/* kernel/timer.c */
 r_static
 r_int
 id|set_rtc_mmss
@@ -1060,7 +1059,9 @@ id|state.partial_tick
 suffix:semicolon
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 id|read_unlock_irqrestore
 c_func
@@ -1193,7 +1194,11 @@ multiline_comment|/* The offset that is added into time in do_gettimeofday above
 macro_line|#ifdef CONFIG_SMP
 id|delta_usec
 op_assign
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
 op_star
 (paren
 l_int|1000000
@@ -1221,7 +1226,11 @@ op_plus
 id|state.partial_tick
 op_plus
 (paren
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
 op_lshift
 id|FIX_SHIFT
 )paren

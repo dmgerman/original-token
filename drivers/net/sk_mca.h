@@ -121,7 +121,7 @@ suffix:semicolon
 multiline_comment|/* # of busy TX descriptors         */
 DECL|member|stat
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stat
 suffix:semicolon
 multiline_comment|/* packet statistics            */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.5 2000/06/04 06:23:53 anton Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.6 2000/07/10 20:56:53 anton Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H
@@ -486,14 +486,6 @@ r_int
 r_int
 id|pgd_cache_sz
 suffix:semicolon
-DECL|member|pgd_spinlock
-id|spinlock_t
-id|pgd_spinlock
-suffix:semicolon
-DECL|member|pte_spinlock
-id|spinlock_t
-id|pte_spinlock
-suffix:semicolon
 )brace
 id|pgt_quicklists
 suffix:semicolon
@@ -503,10 +495,6 @@ DECL|macro|pmd_quicklist
 mdefine_line|#define pmd_quicklist           ((unsigned long *)0)
 DECL|macro|pte_quicklist
 mdefine_line|#define pte_quicklist           (pgt_quicklists.pte_cache)
-DECL|macro|pgd_spinlock
-mdefine_line|#define pgd_spinlock&t;&t;(pgt_quicklists.pgd_spinlock)
-DECL|macro|pte_spinlock
-mdefine_line|#define pte_spinlock&t;&t;(pgt_quicklists.pte_spinlock)
 DECL|macro|pgtable_cache_size
 mdefine_line|#define pgtable_cache_size      (pgt_quicklists.pgtable_cache_sz)
 DECL|macro|pgd_cache_size

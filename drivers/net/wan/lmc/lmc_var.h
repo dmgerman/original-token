@@ -595,7 +595,7 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|STATCHECK
 mdefine_line|#define STATCHECK     0xBEEFCAFE
-multiline_comment|/*  Included in this structure are first&n; *   - standard enet_statistics&n; *   - some other counters used for debug and driver performance&n; *  evaluation -baz&n; */
+multiline_comment|/*  Included in this structure are first&n; *   - standard net_device_stats&n; *   - some other counters used for debug and driver performance&n; *  evaluation -baz&n; */
 DECL|struct|lmc_statistics
 r_struct
 id|lmc_statistics

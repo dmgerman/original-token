@@ -20,7 +20,7 @@ r_extern
 r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 DECL|variable|r4k_interval
 r_int
@@ -436,11 +436,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. jiffies - wall_jiffies&n;&t; * is nonzero if the timer bottom half hasnt executed yet.&n;&t; */
 r_if
 c_cond
 (paren
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 )paren
 id|tv-&gt;tv_usec
 op_add_assign

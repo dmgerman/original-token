@@ -120,8 +120,5 @@ suffix:semicolon
 multiline_comment|/* packet type ID field&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;We Have changed the ethernet statistics collection data. This&n; *&t;is just for partial compatibility for now.&n; */
-DECL|macro|enet_statistics
-mdefine_line|#define enet_statistics net_device_stats
 macro_line|#endif&t;/* _LINUX_IF_ETHER_H */
 eof

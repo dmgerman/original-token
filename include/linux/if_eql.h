@@ -113,7 +113,7 @@ id|max_slaves
 suffix:semicolon
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 suffix:semicolon

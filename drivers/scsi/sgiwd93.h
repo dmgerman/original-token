@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiwd93.h,v 1.6 2000/01/29 01:42:18 ralf Exp $&n; * sgiwd93.h: SGI WD93 scsi definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiwd93.h,v 1.5 1998/08/25 09:18:50 ralf Exp $&n; * sgiwd93.h: SGI WD93 scsi definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _SGIWD93_H
 DECL|macro|_SGIWD93_H
 mdefine_line|#define _SGIWD93_H

@@ -173,7 +173,7 @@ id|map
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ray_get_stats
 c_func
@@ -8312,7 +8312,7 @@ multiline_comment|/*============================================================
 DECL|function|ray_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ray_get_stats
 c_func
@@ -8371,7 +8371,7 @@ c_func
 (paren
 l_int|2
 comma
-l_string|&quot;ray_cs enet_statistics - device not present&bslash;n&quot;
+l_string|&quot;ray_cs net_device_stats - device not present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -294,7 +294,7 @@ id|dlci_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|slave
@@ -338,7 +338,7 @@ id|frad_local
 (brace
 DECL|member|stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 id|stats
 suffix:semicolon
 multiline_comment|/* devices which this FRAD is slaved to */

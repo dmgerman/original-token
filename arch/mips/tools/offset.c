@@ -647,12 +647,12 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define TASK_PRIORITY      &quot;
+l_string|&quot;#define TASK_NICE          &quot;
 comma
 r_struct
 id|task_struct
 comma
-id|priority
+id|nice
 )paren
 suffix:semicolon
 id|offset

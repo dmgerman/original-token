@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: offset.c,v 1.4 1999/12/04 03:59:01 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997, 1998, 1999, 2000 Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -647,12 +647,12 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define TASK_PRIORITY      &quot;
+l_string|&quot;#define TASK_NICE          &quot;
 comma
 r_struct
 id|task_struct
 comma
-id|priority
+id|nice
 )paren
 suffix:semicolon
 id|offset

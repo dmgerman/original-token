@@ -5163,7 +5163,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Get statistics&n; */
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|isdn_net_get_stats
 id|isdn_net_get_stats

@@ -1114,7 +1114,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function irlan_get_stats (dev)&n; *&n; *    Get the current statistics for this device&n; *&n; */
 DECL|function|irlan_eth_get_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|irlan_eth_get_stats
 c_func

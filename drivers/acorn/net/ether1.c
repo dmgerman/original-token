@@ -101,7 +101,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|ether1_getstats
 c_func
@@ -3135,7 +3135,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -4744,7 +4744,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|ether1_getstats
 id|ether1_getstats

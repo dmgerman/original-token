@@ -383,7 +383,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 (paren
@@ -4064,7 +4064,7 @@ r_return
 id|temp
 suffix:semicolon
 )brace
-multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
+multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats.&n; */
 macro_line|#ifdef LINUX_2_1
 DECL|function|if_stats
 r_static
@@ -4102,7 +4102,7 @@ macro_line|#else
 DECL|function|if_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 (paren

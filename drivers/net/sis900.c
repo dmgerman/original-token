@@ -699,7 +699,7 @@ id|cmd
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|sis900_get_stats
 c_func
@@ -5585,7 +5585,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|sis900_get_stats
 id|sis900_get_stats

@@ -14072,7 +14072,7 @@ suffix:semicolon
 multiline_comment|/************************&t;STATS, MULTICAST &amp; STUFF  ****************/
 DECL|function|awc_get_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|awc_get_stats
 c_func

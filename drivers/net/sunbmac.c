@@ -494,7 +494,7 @@ id|bregs
 )paren
 (brace
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign
@@ -4772,7 +4772,7 @@ suffix:semicolon
 DECL|function|bigmac_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|bigmac_get_stats
 c_func

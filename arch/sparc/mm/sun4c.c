@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.195 2000/06/30 13:25:28 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.196 2000/07/07 07:33:11 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -27,6 +27,11 @@ r_int
 id|num_segmaps
 comma
 id|num_contexts
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|page_kernel
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN4
 DECL|macro|SUN4C_VAC_SIZE
@@ -12511,6 +12516,14 @@ c_func
 (paren
 id|SUN4C_PAGE_KERNEL
 )paren
+)paren
+suffix:semicolon
+id|page_kernel
+op_assign
+id|pgprot_val
+c_func
+(paren
+id|SUN4C_PAGE_KERNEL
 )paren
 suffix:semicolon
 id|pg_iobits

@@ -11540,9 +11540,10 @@ id|current-&gt;policy
 op_assign
 id|SCHED_OTHER
 suffix:semicolon
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-l_int|40
+op_minus
+l_int|20
 suffix:semicolon
 singleline_comment|//&t;md_unlock_kernel();
 id|up
@@ -13645,9 +13646,9 @@ id|sysctl_speed_limit_max
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Resync has low priority.&n;&t; */
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-l_int|1
+l_int|19
 suffix:semicolon
 id|is_mddev_idle
 c_func
@@ -13978,7 +13979,7 @@ id|sysctl_speed_limit_min
 (brace
 id|current-&gt;priority
 op_assign
-l_int|1
+l_int|19
 suffix:semicolon
 r_if
 c_cond
@@ -14027,7 +14028,8 @@ suffix:semicolon
 r_else
 id|current-&gt;priority
 op_assign
-l_int|40
+op_minus
+l_int|20
 suffix:semicolon
 )brace
 id|fsync_dev

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: dma.h,v 1.5 2000/03/07 15:45:42 ralf Exp $&n; *&n; * l
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;&t;/* need byte IO */
 macro_line|#include &lt;linux/spinlock.h&gt;&t;&t;/* And spinlocks */
 macro_line|#include &lt;linux/delay.h&gt;

@@ -1378,7 +1378,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Get the current statistics.&n; * This may be called with the device open or closed.&n; */
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|sonic_get_stats
 id|sonic_get_stats

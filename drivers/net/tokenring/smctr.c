@@ -418,7 +418,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|smctr_get_stats
 c_func
@@ -6788,7 +6788,7 @@ multiline_comment|/*&n; * Get the current statistics. This may be called with th
 DECL|function|smctr_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|smctr_get_stats
 c_func
@@ -6815,7 +6815,7 @@ r_return
 (paren
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 op_amp

@@ -2262,6 +2262,7 @@ id|uts_sem
 )paren
 suffix:semicolon
 multiline_comment|/* UTS semaphore */
+macro_line|#ifndef __mips__
 DECL|variable|sys_call_table
 id|EXPORT_SYMBOL
 c_func
@@ -2269,6 +2270,7 @@ c_func
 id|sys_call_table
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|machine_restart
 id|EXPORT_SYMBOL
 c_func

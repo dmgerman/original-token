@@ -917,19 +917,11 @@ id|pci_bus
 comma
 id|pci_devfn
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20139
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-macro_line|#else
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-macro_line|#endif
 DECL|member|timer
 r_struct
 id|timer_list
@@ -1299,7 +1291,7 @@ id|cmd
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|rtl8129_get_stats
 c_func
@@ -7604,7 +7596,7 @@ suffix:semicolon
 )brace
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 DECL|function|rtl8129_get_stats
 id|rtl8129_get_stats

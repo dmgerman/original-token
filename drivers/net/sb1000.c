@@ -213,7 +213,7 @@ id|regs
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|sb1000_stats
 c_func
@@ -4743,7 +4743,7 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|stats
 op_assign
