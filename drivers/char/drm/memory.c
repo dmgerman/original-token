@@ -1563,7 +1563,7 @@ id|alloc_count
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 DECL|function|drm_alloc_agp
 id|agp_memory
 op_star

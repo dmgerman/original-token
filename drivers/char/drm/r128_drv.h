@@ -128,22 +128,6 @@ suffix:semicolon
 multiline_comment|/* r128_drv.c */
 r_extern
 r_int
-id|r128_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|r128_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|r128_version
 c_func
 (paren

@@ -21,10 +21,6 @@ macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#endif
 macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
-DECL|macro|DRM_AGP
-mdefine_line|#define DRM_AGP
-macro_line|#endif
-macro_line|#ifdef DRM_AGP
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/agp_backend.h&gt;
 macro_line|#endif
@@ -1175,7 +1171,7 @@ DECL|typedef|drm_device_dma_t
 )brace
 id|drm_device_dma_t
 suffix:semicolon
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 DECL|struct|drm_agp_mem
 r_typedef
 r_struct
@@ -1672,7 +1668,7 @@ id|wait_queue_head_t
 id|buf_writers
 suffix:semicolon
 multiline_comment|/* Processes waiting to ctx switch */
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 DECL|member|agp
 id|drm_agp_head_t
 op_star
@@ -2206,7 +2202,7 @@ r_int
 id|size
 )paren
 suffix:semicolon
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 r_extern
 id|agp_memory
 op_star
@@ -2592,20 +2588,6 @@ id|dev
 comma
 r_int
 r_new
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|drm_wakeup
-c_func
-(paren
-id|drm_device_t
-op_star
-id|dev
-comma
-id|drm_buf_t
-op_star
-id|buf
 )paren
 suffix:semicolon
 r_extern
@@ -3267,7 +3249,7 @@ r_int
 id|ctx_handle
 )paren
 suffix:semicolon
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 multiline_comment|/* AGP/GART support (agpsupport.c) */
 r_extern
 id|drm_agp_head_t

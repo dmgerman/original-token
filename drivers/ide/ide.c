@@ -1326,6 +1326,11 @@ op_star
 id|drive
 )paren
 (brace
+id|byte
+id|stat
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1355,15 +1360,34 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* need to guarantee 400ns since last command was issued */
 macro_line|#endif
-singleline_comment|//&t;if (GET_STAT() &amp; BUSY_STAT)&t;/* Note: this may clear a pending IRQ!! */
+macro_line|#ifdef CONFIG_IDEPCI_SHARE_IRQ
+multiline_comment|/*&n;&t; * We do a passive status test under shared PCI interrupts on&n;&t; * cards that truly share the ATA side interrupt, but may also share&n;&t; * an interrupt with another pci card/device.  We make no assumptions&n;&t; * about possible isa-pnp and pci-pnp issues yet.&n;&t; */
 r_if
 c_cond
 (paren
-id|IN_BYTE
+id|IDE_CONTROL_REG
+)paren
+id|stat
+op_assign
+id|GET_ALTSTAT
 c_func
 (paren
-id|IDE_ALTSTATUS_REG
 )paren
+suffix:semicolon
+r_else
+macro_line|#endif /* CONFIG_IDEPCI_SHARE_IRQ */
+id|stat
+op_assign
+id|GET_STAT
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Note: this may clear a pending IRQ!! */
+r_if
+c_cond
+(paren
+id|stat
 op_amp
 id|BUSY_STAT
 )paren
@@ -12659,6 +12683,50 @@ r_return
 l_int|0
 suffix:semicolon
 r_case
+id|HDIO_DRIVE_RESET
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+(paren
+r_void
+)paren
+id|ide_do_reset
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;suspend_reset
+)paren
+(brace
+multiline_comment|/*&n; *&t;&t;&t;&t;APM WAKE UP todo !!&n; *&t;&t;&t;&t;int nogoodpower = 1;&n; *&t;&t;&t;&t;while(nogoodpower) {&n; *&t;&t;&t;&t;&t;check_power1() or check_power2()&n; *&t;&t;&t;&t;&t;nogoodpower = 0;&n; *&t;&t;&t;&t;} &n; *&t;&t;&t;&t;HWIF(drive)-&gt;multiproc(drive);&n; */
+r_return
+id|ide_revalidate_disk
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+r_case
 id|BLKROSET
 suffix:colon
 r_case
@@ -16139,6 +16207,10 @@ suffix:semicolon
 id|drive-&gt;revalidate
 op_assign
 l_int|1
+suffix:semicolon
+id|drive-&gt;suspend_reset
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|ide_add_proc_entries

@@ -155,14 +155,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|filescache_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|signals_init
 c_func
 (paren
@@ -2373,12 +2365,7 @@ c_func
 id|mempages
 )paren
 suffix:semicolon
-id|filescache_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|dcache_init
+id|vfs_caches_init
 c_func
 (paren
 id|mempages
@@ -2420,11 +2407,6 @@ id|inode_init
 c_func
 (paren
 id|mempages
-)paren
-suffix:semicolon
-id|file_table_init
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_SYSVIPC)

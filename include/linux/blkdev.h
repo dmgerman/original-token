@@ -463,16 +463,6 @@ id|size
 suffix:semicolon
 r_extern
 r_void
-id|generic_unplug_device
-c_func
-(paren
-r_void
-op_star
-id|data
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|generic_make_request
 c_func
 (paren

@@ -2112,6 +2112,7 @@ id|l
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* OSS mixer ioctl port handling */
 r_static
 id|__inline__
@@ -2447,5 +2448,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _AUDIOIO_H_ */
 eof

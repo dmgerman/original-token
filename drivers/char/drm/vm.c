@@ -497,8 +497,6 @@ op_amp
 id|dev-&gt;vma_count
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#if DRM_DEBUG_CODE
 id|vma_entry
 op_assign
@@ -596,8 +594,6 @@ id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|atomic_dec
 c_func

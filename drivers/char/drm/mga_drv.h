@@ -277,22 +277,6 @@ suffix:semicolon
 multiline_comment|/* mga_drv.c */
 r_extern
 r_int
-id|mga_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|mga_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|mga_version
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ffb_drv.c,v 1.4 2000/07/13 08:06:39 davem Exp $&n; * ffb_drv.c: Creator/Creator3D direct rendering driver.&n; *&n; * Copyright (C) 2000 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ffb_drv.c,v 1.5 2000/07/26 01:03:57 davem Exp $&n; * ffb_drv.c: Creator/Creator3D direct rendering driver.&n; *&n; * Copyright (C) 2000 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -1070,6 +1070,10 @@ comma
 id|DRM_MEM_SAREA
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_break
 suffix:semicolon
 )brace

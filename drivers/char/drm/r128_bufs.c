@@ -4,7 +4,7 @@ mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;r128_drv.h&quot;
 macro_line|#include &quot;linux/un.h&quot;
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 DECL|function|r128_addbufs_agp
 r_int
 id|r128_addbufs_agp
@@ -812,7 +812,7 @@ op_minus
 id|EFAULT
 )paren
 suffix:semicolon
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 r_if
 c_cond
 (paren

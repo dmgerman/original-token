@@ -245,23 +245,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|file_table_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dcache_init
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* bh state bits */
 DECL|macro|BH_Uptodate
 mdefine_line|#define BH_Uptodate&t;0&t;/* 1 if the buffer contains valid data */
@@ -3492,6 +3475,16 @@ c_func
 r_const
 r_char
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* fs/dcache.c */
+r_extern
+r_void
+id|vfs_caches_init
+c_func
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|macro|__getname

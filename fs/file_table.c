@@ -5,13 +5,6 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-multiline_comment|/* SLAB cache for filp&squot;s. */
-DECL|variable|filp_cache
-r_static
-id|kmem_cache_t
-op_star
-id|filp_cache
-suffix:semicolon
 multiline_comment|/* sysctl tunables... */
 DECL|variable|files_stat
 r_struct
@@ -49,53 +42,6 @@ id|files_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-DECL|function|file_table_init
-r_void
-id|__init
-id|file_table_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|filp_cache
-op_assign
-id|kmem_cache_create
-c_func
-(paren
-l_string|&quot;filp&quot;
-comma
-r_sizeof
-(paren
-r_struct
-id|file
-)paren
-comma
-l_int|0
-comma
-id|SLAB_HWCACHE_ALIGN
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|filp_cache
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;VFS: Cannot alloc filp SLAB cache.&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * We could allocate the reserved files here, but really&n;&t; * shouldn&squot;t need to: the normal boot process will create&n;&t; * plenty of free files.&n;&t; */
-)brace
 multiline_comment|/* Find an unused file structure and return a pointer to it.&n; * Returns NULL, if there are no more free file structures or&n; * we run out of memory.&n; *&n; * SMP-safe.&n; */
 DECL|function|get_empty_filp
 r_struct
@@ -254,7 +200,7 @@ op_assign
 id|kmem_cache_alloc
 c_func
 (paren
-id|filp_cache
+id|filp_cachep
 comma
 id|SLAB_KERNEL
 )paren

@@ -275,6 +275,26 @@ id|kmem_cache_t
 op_star
 id|names_cachep
 suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|files_cachep
+suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|filp_cachep
+suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|dquot_cachep
+suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|bh_cachep
+suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_SLAB_H */
 eof

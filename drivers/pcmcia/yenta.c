@@ -3477,7 +3477,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize the standard cardbus registers&n; */
 DECL|function|yenta_config_init
 r_static
-r_int
+r_void
 id|yenta_config_init
 c_func
 (paren

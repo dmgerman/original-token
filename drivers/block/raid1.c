@@ -2067,10 +2067,6 @@ r_static
 r_int
 id|raid1_make_request
 (paren
-id|request_queue_t
-op_star
-id|q
-comma
 id|mddev_t
 op_star
 id|mddev
@@ -2125,6 +2121,10 @@ r_struct
 id|mirror_info
 op_star
 id|mirror
+suffix:semicolon
+id|request_queue_t
+op_star
+id|q
 suffix:semicolon
 r_if
 c_cond

@@ -39,6 +39,8 @@ DECL|macro|DEVID_PDC20246
 mdefine_line|#define DEVID_PDC20246&t;((ide_pci_devid_t){PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20246})
 DECL|macro|DEVID_PDC20262
 mdefine_line|#define DEVID_PDC20262&t;((ide_pci_devid_t){PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20262})
+DECL|macro|DEVID_PDC20265
+mdefine_line|#define DEVID_PDC20265&t;((ide_pci_devid_t){PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20265})
 DECL|macro|DEVID_PDC20267
 mdefine_line|#define DEVID_PDC20267&t;((ide_pci_devid_t){PCI_VENDOR_ID_PROMISE, PCI_DEVICE_ID_PROMISE_20267})
 DECL|macro|DEVID_RZ1000
@@ -1500,6 +1502,42 @@ l_int|48
 )brace
 comma
 (brace
+id|DEVID_PDC20265
+comma
+l_string|&quot;PDC20265&quot;
+comma
+id|PCI_PDC202XX
+comma
+id|ATA66_PDC202XX
+comma
+id|INIT_PDC202XX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x50
+comma
+l_int|0x02
+comma
+l_int|0x02
+)brace
+comma
+(brace
+l_int|0x50
+comma
+l_int|0x04
+comma
+l_int|0x04
+)brace
+)brace
+comma
+id|OFF_BOARD
+comma
+l_int|48
+)brace
+comma
+(brace
 id|DEVID_PDC20267
 comma
 l_string|&quot;PDC20267&quot;
@@ -2685,6 +2723,9 @@ id|PCI_DEVICE_ID_PROMISE_20246
 suffix:colon
 r_case
 id|PCI_DEVICE_ID_PROMISE_20262
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_PROMISE_20265
 suffix:colon
 r_case
 id|PCI_DEVICE_ID_PROMISE_20267
@@ -4096,6 +4137,14 @@ c_func
 id|d-&gt;devid
 comma
 id|DEVID_PDC20262
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_PDC20265
 )paren
 op_logical_or
 id|IDE_PCI_DEVID_EQ

@@ -715,10 +715,6 @@ r_struct
 id|md_list_head
 id|all_mddevs
 suffix:semicolon
-DECL|member|queue
-id|request_queue_t
-id|queue
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|mdk_personality_s
@@ -737,10 +733,6 @@ op_star
 id|make_request
 )paren
 (paren
-id|request_queue_t
-op_star
-id|q
-comma
 id|mddev_t
 op_star
 id|mddev

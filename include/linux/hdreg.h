@@ -309,12 +309,16 @@ DECL|macro|HDIO_GET_NICE
 mdefine_line|#define HDIO_GET_NICE&t;&t;0x030c&t;/* get nice flags */
 DECL|macro|HDIO_GET_IDENTITY
 mdefine_line|#define HDIO_GET_IDENTITY&t;0x030d&t;/* get IDE identification info */
-DECL|macro|HDIO_DRIVE_CMD_AEB
-mdefine_line|#define HDIO_DRIVE_CMD_AEB&t;0x031e
+DECL|macro|HDIO_DRIVE_RESET
+mdefine_line|#define HDIO_DRIVE_RESET&t;0x031c&t;/* execute a device reset */
+DECL|macro|HDIO_TRISTATE_HWIF
+mdefine_line|#define HDIO_TRISTATE_HWIF&t;0x031d&t;/* execute a channel tristate */
 DECL|macro|HDIO_DRIVE_TASK
-mdefine_line|#define HDIO_DRIVE_TASK&t;&t;0x031e
+mdefine_line|#define HDIO_DRIVE_TASK&t;&t;0x031e&t;/* execute task and special drive command */
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
+DECL|macro|HDIO_DRIVE_CMD_AEB
+mdefine_line|#define HDIO_DRIVE_CMD_AEB&t;HDIO_DRIVE_TASK
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */
 DECL|macro|HDIO_SET_MULTCOUNT
 mdefine_line|#define HDIO_SET_MULTCOUNT&t;0x0321&t;/* change IDE blockmode */

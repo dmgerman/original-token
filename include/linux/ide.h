@@ -158,6 +158,8 @@ DECL|macro|GET_ERR
 mdefine_line|#define GET_ERR()&t;&t;IN_BYTE(IDE_ERROR_REG)
 DECL|macro|GET_STAT
 mdefine_line|#define GET_STAT()&t;&t;IN_BYTE(IDE_STATUS_REG)
+DECL|macro|GET_ALTSTAT
+mdefine_line|#define GET_ALTSTAT()&t;&t;IN_BYTE(IDE_CONTROL_REG)
 DECL|macro|OK_STAT
 mdefine_line|#define OK_STAT(stat,good,bad)&t;(((stat)&amp;((good)|(bad)))==(good))
 DECL|macro|BAD_R_STAT
@@ -794,6 +796,11 @@ id|byte
 id|quirk_list
 suffix:semicolon
 multiline_comment|/* drive is considered quirky if set for a specific host */
+DECL|member|suspend_reset
+id|byte
+id|suspend_reset
+suffix:semicolon
+multiline_comment|/* drive suspend mode flag, soft-reset recovers */
 DECL|member|init_speed
 id|byte
 id|init_speed

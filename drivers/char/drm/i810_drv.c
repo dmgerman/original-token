@@ -1,27 +1,9 @@
 multiline_comment|/* i810_drv.c -- I810 driver -*- linux-c -*-&n; * Created: Mon Dec 13 01:56:22 1999 by jhartmann@precisioninsight.com&n; * &n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors: Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&t;    Jeff Hartmann &lt;jhartmann@valinux.com&gt;&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifndef EXPORT_SYMTAB
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
-macro_line|#endif
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;i810_drv.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-DECL|variable|i810_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|i810_init
-)paren
-suffix:semicolon
-DECL|variable|i810_cleanup
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|i810_cleanup
-)paren
-suffix:semicolon
 DECL|macro|I810_NAME
 mdefine_line|#define I810_NAME&t; &quot;i810&quot;
 DECL|macro|I810_DESC
@@ -841,20 +823,6 @@ c_func
 id|i810
 comma
 l_string|&quot;s&quot;
-)paren
-suffix:semicolon
-DECL|variable|i810_init
-id|module_init
-c_func
-(paren
-id|i810_init
-)paren
-suffix:semicolon
-DECL|variable|i810_cleanup
-id|module_exit
-c_func
-(paren
-id|i810_cleanup
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE
@@ -2181,6 +2149,20 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+DECL|variable|i810_init
+id|module_init
+c_func
+(paren
+id|i810_init
+)paren
+suffix:semicolon
+DECL|variable|i810_cleanup
+id|module_exit
+c_func
+(paren
+id|i810_cleanup
+)paren
+suffix:semicolon
 DECL|function|i810_version
 r_int
 id|i810_version
@@ -2350,8 +2332,6 @@ id|dev
 )paren
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -2733,8 +2713,6 @@ id|priv
 comma
 id|DRM_MEM_FILES
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|atomic_inc
 c_func

@@ -770,11 +770,6 @@ id|kmap_lock
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Simple bounce buffer support for highmem pages.&n; * This will be moved to the block layer in 2.5.&n; */
-r_extern
-id|kmem_cache_t
-op_star
-id|bh_cachep
-suffix:semicolon
 DECL|function|copy_from_high_bh
 r_static
 r_inline

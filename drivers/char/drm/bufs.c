@@ -425,7 +425,7 @@ multiline_comment|/* Pointer to lock */
 )brace
 r_break
 suffix:semicolon
-macro_line|#ifdef DRM_AGP
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 r_case
 id|_DRM_AGP
 suffix:colon

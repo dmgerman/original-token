@@ -5,22 +5,6 @@ mdefine_line|#define _GAMMA_DRV_H_
 multiline_comment|/* gamma_drv.c */
 r_extern
 r_int
-id|gamma_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|gamma_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|gamma_version
 c_func
 (paren

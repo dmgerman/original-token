@@ -560,7 +560,9 @@ id|size
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* This looks at memory. Mark it volatile to tell gcc not to move it around */
 id|__asm__
+id|__volatile__
 c_func
 (paren
 l_string|&quot;movl $-1,%%eax&bslash;n&bslash;t&quot;

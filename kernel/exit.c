@@ -627,11 +627,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_extern
-id|kmem_cache_t
-op_star
-id|files_cachep
-suffix:semicolon
 DECL|function|put_files_struct
 r_void
 id|put_files_struct

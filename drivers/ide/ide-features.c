@@ -23,8 +23,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-DECL|macro|SETFEATURES_CONTROL_REG
-mdefine_line|#define SETFEATURES_CONTROL_REG&t;&t;(0)&t;/* some arch&squot;s may need */
 multiline_comment|/*&n; * A Verbose noise maker for debugging on the attempted transfer rates.&n; */
 DECL|function|ide_xfer_verbose
 r_char
@@ -1253,7 +1251,9 @@ id|IDE_CONTROL_REG
 )paren
 op_logical_and
 (paren
-id|SETFEATURES_CONTROL_REG
+id|drive-&gt;quirk_list
+op_eq
+l_int|2
 )paren
 )paren
 id|OUT_BYTE

@@ -2941,7 +2941,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;context_flag   0x%08x&bslash;n&quot;
+l_string|&quot;context_flag   0x%08lx&bslash;n&quot;
 comma
 id|dev-&gt;context_flag
 )paren
@@ -2949,7 +2949,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;interrupt_flag 0x%08x&bslash;n&quot;
+l_string|&quot;interrupt_flag 0x%08lx&bslash;n&quot;
 comma
 id|dev-&gt;interrupt_flag
 )paren
@@ -2957,7 +2957,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;dma_flag       0x%08x&bslash;n&quot;
+l_string|&quot;dma_flag       0x%08lx&bslash;n&quot;
 comma
 id|dev-&gt;dma_flag
 )paren
