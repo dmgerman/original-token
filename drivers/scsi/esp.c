@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: esp.c,v 1.88 1999/12/21 02:38:07 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.c,v 1.89 1999/12/23 01:46:14 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|DEBUG_ESP
 mdefine_line|#define DEBUG_ESP
 multiline_comment|/* #define DEBUG_ESP_HME */
@@ -17910,4 +17911,15 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SCSI_SPARC_ESP
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+macro_line|#endif /* MODULE */
 eof

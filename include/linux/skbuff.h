@@ -613,6 +613,7 @@ op_star
 id|skb_copy
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star
@@ -626,9 +627,10 @@ r_extern
 r_struct
 id|sk_buff
 op_star
-id|skb_realloc_headroom
+id|skb_copy_expand
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star
@@ -636,6 +638,12 @@ id|skb
 comma
 r_int
 id|newheadroom
+comma
+r_int
+id|newtailroom
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
 DECL|macro|dev_kfree_skb
@@ -696,6 +704,7 @@ r_int
 id|skb_headroom
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star
@@ -707,6 +716,7 @@ r_int
 id|skb_tailroom
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star
@@ -779,6 +789,9 @@ op_star
 id|here
 )paren
 suffix:semicolon
+multiline_comment|/* Backwards compatibility */
+DECL|macro|skb_realloc_headroom
+mdefine_line|#define skb_realloc_headroom(skb, nhr) skb_copy_expand(skb, nhr, skb_tailroom(skb), GFP_ATOMIC)
 multiline_comment|/* Internal */
 DECL|function|skb_datarefp
 r_extern
@@ -2263,6 +2276,7 @@ r_int
 id|skb_headroom
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star
@@ -2282,6 +2296,7 @@ r_int
 id|skb_tailroom
 c_func
 (paren
+r_const
 r_struct
 id|sk_buff
 op_star

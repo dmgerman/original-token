@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  Name                         : qnx4_fs_sb.h&n; *  Aut
 macro_line|#ifndef _QNX4_FS_SB
 DECL|macro|_QNX4_FS_SB
 mdefine_line|#define _QNX4_FS_SB
-macro_line|#include &lt;linux/qnxtypes.h&gt;
+macro_line|#include &lt;linux/qnx4_fs.h&gt;
 multiline_comment|/*&n; * qnx4 super-block data in memory&n; */
 DECL|struct|qnx4_sb_info
 r_struct

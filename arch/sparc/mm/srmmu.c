@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.198 1999/11/14 06:15:14 zaitcev Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.199 1999/12/23 02:00:51 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9863,6 +9863,16 @@ id|sp_entry
 dot
 id|num_bytes
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|srmmu_map
+(braket
+id|srmmu_bank
+)braket
+dot
+id|size
+)paren
 id|srmmu_bank
 op_increment
 suffix:semicolon

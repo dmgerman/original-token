@@ -17,12 +17,12 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* 16 */
 DECL|member|i_size
-id|off_t
+id|qnx4_off_t
 id|i_size
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_first_xtnt
-id|_xtnt_t
+id|qnx4_xtnt_t
 id|i_first_xtnt
 suffix:semicolon
 multiline_comment|/*  8 */
@@ -52,7 +52,7 @@ id|i_ctime
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_num_xtnts
-id|_nxtnt_t
+id|qnx4_nxtnt_t
 id|i_num_xtnts
 suffix:semicolon
 multiline_comment|/*  2 */
@@ -62,17 +62,17 @@ id|i_mode
 suffix:semicolon
 multiline_comment|/*  2 */
 DECL|member|i_uid
-id|muid_t
+id|qnx4_muid_t
 id|i_uid
 suffix:semicolon
 multiline_comment|/*  2 */
 DECL|member|i_gid
-id|mgid_t
+id|qnx4_mgid_t
 id|i_gid
 suffix:semicolon
 multiline_comment|/*  2 */
 DECL|member|i_nlink
-id|nlink_t
+id|qnx4_nlink_t
 id|i_nlink
 suffix:semicolon
 multiline_comment|/*  2 */
@@ -85,7 +85,7 @@ l_int|4
 suffix:semicolon
 multiline_comment|/*  4 */
 DECL|member|i_type
-id|_ftype_t
+id|qnx4_ftype_t
 id|i_type
 suffix:semicolon
 multiline_comment|/*  1 */

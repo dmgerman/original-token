@@ -463,11 +463,11 @@ c_func
 id|skb_copy_datagram_iovec
 )paren
 suffix:semicolon
-DECL|variable|skb_realloc_headroom
+DECL|variable|skb_copy_expand
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|skb_realloc_headroom
+id|skb_copy_expand
 )paren
 suffix:semicolon
 DECL|variable|datagram_poll
