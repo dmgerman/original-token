@@ -6515,7 +6515,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cpu_has_pse
+id|cpu_has_vme
+op_logical_or
+id|cpu_has_tsc
+op_logical_or
+id|cpu_has_de
 )paren
 id|clear_in_cr4
 c_func

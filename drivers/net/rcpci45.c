@@ -4626,11 +4626,11 @@ c_func
 id|rcpci_init_module
 )paren
 suffix:semicolon
-DECL|variable|rcpci_clenaup_module
+DECL|variable|rcpci_cleanup_module
 id|module_exit
 c_func
 (paren
-id|rcpci_clenaup_module
+id|rcpci_cleanup_module
 )paren
 suffix:semicolon
 r_static

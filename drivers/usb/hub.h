@@ -140,15 +140,6 @@ DECL|member|wHubCharacteristics
 id|__u16
 id|wHubCharacteristics
 suffix:semicolon
-macro_line|#if 0
-id|__u8
-id|wHubCharacteristics
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* __u16 but not aligned! */
-macro_line|#endif
 DECL|member|bPwrOn2PwrGood
 id|__u8
 id|bPwrOn2PwrGood
@@ -158,11 +149,6 @@ id|__u8
 id|bHubContrCurrent
 suffix:semicolon
 multiline_comment|/* DeviceRemovable and PortPwrCtrlMask want to be variable-length &n;&t;   bitmaps that hold max 256 entries, but for now they&squot;re ignored */
-macro_line|#if 0
-id|__u8
-id|filler
-suffix:semicolon
-macro_line|#endif
 )brace
 id|__attribute__
 (paren
@@ -239,16 +225,21 @@ id|usb_device
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* Reference to the hub&squot;s polling IRQ and its associated pipe */
-DECL|member|irq_handle
-r_void
+multiline_comment|/* Interrupt polling pipe */
+DECL|member|urb
+r_struct
+id|urb
 op_star
-id|irq_handle
+id|urb
 suffix:semicolon
-DECL|member|irqpipe
-r_int
-r_int
-id|irqpipe
+DECL|member|buffer
+r_char
+id|buffer
+(braket
+id|USB_MAXCHILDREN
+op_div
+l_int|8
+)braket
 suffix:semicolon
 multiline_comment|/* List of hubs */
 DECL|member|hub_list

@@ -2405,6 +2405,18 @@ id|skb-&gt;dst
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+id|nf_conntrack_put
+c_func
+(paren
+id|skb-&gt;nfct
+)paren
+suffix:semicolon
+id|skb-&gt;nfct
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -3526,6 +3538,18 @@ c_func
 id|iph
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+id|nf_conntrack_put
+c_func
+(paren
+id|skb-&gt;nfct
+)paren
+suffix:semicolon
+id|skb-&gt;nfct
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|stats-&gt;tx_bytes
 op_add_assign
 id|skb-&gt;len

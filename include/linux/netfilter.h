@@ -19,8 +19,10 @@ DECL|macro|NF_STOLEN
 mdefine_line|#define NF_STOLEN 2
 DECL|macro|NF_QUEUE
 mdefine_line|#define NF_QUEUE 3
+DECL|macro|NF_REPEAT
+mdefine_line|#define NF_REPEAT 4
 DECL|macro|NF_MAX_VERDICT
-mdefine_line|#define NF_MAX_VERDICT NF_QUEUE
+mdefine_line|#define NF_MAX_VERDICT NF_REPEAT
 multiline_comment|/* Generic cache responses from hook functions. */
 DECL|macro|NFC_ALTERED
 mdefine_line|#define NFC_ALTERED 0x8000
@@ -194,6 +196,18 @@ r_int
 op_star
 id|len
 )paren
+suffix:semicolon
+multiline_comment|/* Number of users inside set() or get(). */
+DECL|member|use
+r_int
+r_int
+id|use
+suffix:semicolon
+DECL|member|cleanup_task
+r_struct
+id|task_struct
+op_star
+id|cleanup_task
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -508,24 +522,5 @@ mdefine_line|#define SUMAX(a,b) ((size_t)(a)&gt;(size_t)(b) ? (ssize_t)(a) : (ss
 DECL|macro|SUMIN
 mdefine_line|#define SUMIN(a,b) ((size_t)(a)&lt;(size_t)(b) ? (ssize_t)(a) : (ssize_t)(b))
 macro_line|#endif /*__KERNEL__*/
-DECL|enum|nf_reason
-r_enum
-id|nf_reason
-(brace
-multiline_comment|/* Do not, NOT, reorder these.  Add at end. */
-DECL|enumerator|NF_REASON_NONE
-id|NF_REASON_NONE
-comma
-DECL|enumerator|NF_REASON_SET_BY_IPCHAINS
-id|NF_REASON_SET_BY_IPCHAINS
-comma
-DECL|enumerator|NF_REASON_FOR_ROUTING
-id|NF_REASON_FOR_ROUTING
-comma
-DECL|enumerator|NF_REASON_FOR_CLS_FW
-id|NF_REASON_FOR_CLS_FW
-comma
-)brace
-suffix:semicolon
 macro_line|#endif /*__LINUX_NETFILTER_H*/
 eof

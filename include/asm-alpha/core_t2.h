@@ -1913,41 +1913,37 @@ DECL|macro|vuip
 macro_line|#undef vuip
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|__inb
-mdefine_line|#define __inb&t;&t;t2_inb
+mdefine_line|#define __inb(p)&t;&t;t2_inb((unsigned long)(p))
 DECL|macro|__inw
-mdefine_line|#define __inw&t;&t;t2_inw
+mdefine_line|#define __inw(p)&t;&t;t2_inw((unsigned long)(p))
 DECL|macro|__inl
-mdefine_line|#define __inl&t;&t;t2_inl
+mdefine_line|#define __inl(p)&t;&t;t2_inl((unsigned long)(p))
 DECL|macro|__outb
-mdefine_line|#define __outb&t;&t;t2_outb
+mdefine_line|#define __outb(x,p)&t;&t;t2_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-mdefine_line|#define __outw&t;&t;t2_outw
+mdefine_line|#define __outw(x,p)&t;&t;t2_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-mdefine_line|#define __outl&t;&t;t2_outl
+mdefine_line|#define __outl(x,p)&t;&t;t2_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-mdefine_line|#define __readb&t;&t;t2_readb
+mdefine_line|#define __readb(a)&t;&t;t2_readb((unsigned long)(a))
 DECL|macro|__readw
-mdefine_line|#define __readw&t;&t;t2_readw
+mdefine_line|#define __readw(a)&t;&t;t2_readw((unsigned long)(a))
 DECL|macro|__readl
-mdefine_line|#define __readl&t;&t;t2_readl
+mdefine_line|#define __readl(a)&t;&t;t2_readl((unsigned long)(a))
 DECL|macro|__readq
-mdefine_line|#define __readq&t;&t;t2_readq
+mdefine_line|#define __readq(a)&t;&t;t2_readq((unsigned long)(a))
 DECL|macro|__writeb
-mdefine_line|#define __writeb&t;t2_writeb
+mdefine_line|#define __writeb(x,a)&t;&t;t2_writeb((x),(unsigned long)(a))
 DECL|macro|__writew
-mdefine_line|#define __writew&t;t2_writew
+mdefine_line|#define __writew(x,a)&t;&t;t2_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-mdefine_line|#define __writel&t;t2_writel
+mdefine_line|#define __writel(x,a)&t;&t;t2_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-mdefine_line|#define __writeq&t;t2_writeq
+mdefine_line|#define __writeq(x,a)&t;&t;t2_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-mdefine_line|#define __ioremap&t;t2_ioremap
+mdefine_line|#define __ioremap(a)&t;&t;t2_ioremap((unsigned long)(a))
 DECL|macro|__is_ioaddr
-mdefine_line|#define __is_ioaddr&t;t2_is_ioaddr
-DECL|macro|inb
-mdefine_line|#define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
-DECL|macro|outb
-mdefine_line|#define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
+mdefine_line|#define __is_ioaddr(a)&t;&t;t2_is_ioaddr((unsigned long)(a))
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

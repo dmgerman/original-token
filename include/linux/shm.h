@@ -9,9 +9,9 @@ mdefine_line|#define SHMMAX 0x2000000&t;&t; /* max shared seg size (bytes) */
 DECL|macro|SHMMIN
 mdefine_line|#define SHMMIN 0&t;&t;&t; /* min shared seg size (bytes) */
 DECL|macro|SHMMNI
-mdefine_line|#define SHMMNI 128&t;&t;&t; /* max num of segs system wide */
+mdefine_line|#define SHMMNI 4096&t;&t;&t; /* max num of segs system wide */
 DECL|macro|SHMALL
-mdefine_line|#define SHMALL (SHMMAX/PAGE_SIZE*SHMMNI) /* max shm system wide (pages) */
+mdefine_line|#define SHMALL (SHMMAX/PAGE_SIZE*(SHMMNI/16)) /* max shm system wide (pages) */
 DECL|macro|SHMSEG
 mdefine_line|#define SHMSEG SHMMNI&t;&t;&t; /* max shared segs per process */
 macro_line|#include &lt;asm/shmparam.h&gt;

@@ -477,7 +477,12 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|NULL
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ESTALE
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* now to find a dentry.&n;&t; * If possible, get a well-connected one&n;&t; */
@@ -1358,23 +1363,6 @@ op_assign
 op_minus
 id|ESTALE
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|result
-)paren
-(brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;find_fh_dentry: No inode found.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|err_out
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

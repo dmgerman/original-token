@@ -847,6 +847,13 @@ c_func
 id|icmp_send
 )paren
 suffix:semicolon
+DECL|variable|icmp_reply
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|icmp_reply
+)paren
+suffix:semicolon
 DECL|variable|ip_options_compile
 id|EXPORT_SYMBOL
 c_func
@@ -1501,6 +1508,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_v4_conn_request
+)paren
+suffix:semicolon
+DECL|variable|tcp_v4_send_reset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_v4_send_reset
 )paren
 suffix:semicolon
 DECL|variable|tcp_create_openreq_child

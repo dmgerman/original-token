@@ -60,6 +60,50 @@ DECL|macro|NF_IP_POST_ROUTING
 mdefine_line|#define NF_IP_POST_ROUTING&t;4
 DECL|macro|NF_IP_NUMHOOKS
 mdefine_line|#define NF_IP_NUMHOOKS&t;&t;5
+DECL|enum|nf_ip_hook_priorities
+r_enum
+id|nf_ip_hook_priorities
+(brace
+DECL|enumerator|NF_IP_PRI_FIRST
+id|NF_IP_PRI_FIRST
+op_assign
+id|INT_MIN
+comma
+DECL|enumerator|NF_IP_PRI_CONNTRACK
+id|NF_IP_PRI_CONNTRACK
+op_assign
+op_minus
+l_int|200
+comma
+DECL|enumerator|NF_IP_PRI_MANGLE
+id|NF_IP_PRI_MANGLE
+op_assign
+op_minus
+l_int|150
+comma
+DECL|enumerator|NF_IP_PRI_NAT_DST
+id|NF_IP_PRI_NAT_DST
+op_assign
+op_minus
+l_int|100
+comma
+DECL|enumerator|NF_IP_PRI_FILTER
+id|NF_IP_PRI_FILTER
+op_assign
+l_int|0
+comma
+DECL|enumerator|NF_IP_PRI_NAT_SRC
+id|NF_IP_PRI_NAT_SRC
+op_assign
+l_int|100
+comma
+DECL|enumerator|NF_IP_PRI_LAST
+id|NF_IP_PRI_LAST
+op_assign
+id|INT_MAX
+comma
+)brace
+suffix:semicolon
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 macro_line|#ifdef __KERNEL__
 r_void

@@ -102,11 +102,6 @@ id|irq_attempt
 id|NR_IRQS
 )braket
 suffix:semicolon
-DECL|member|smp_local_irq_count
-r_int
-r_int
-id|smp_local_irq_count
-suffix:semicolon
 DECL|member|prof_multiplier
 r_int
 r_int

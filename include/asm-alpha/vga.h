@@ -21,6 +21,7 @@ c_func
 id|u16
 id|val
 comma
+r_volatile
 id|u16
 op_star
 id|addr
@@ -65,6 +66,7 @@ id|u16
 id|scr_readw
 c_func
 (paren
+r_volatile
 r_const
 id|u16
 op_star

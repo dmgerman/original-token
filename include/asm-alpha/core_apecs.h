@@ -1586,49 +1586,45 @@ DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|__inb
-mdefine_line|#define __inb&t;&t;apecs_inb
+mdefine_line|#define __inb(p)&t;&t;apecs_inb((unsigned long)(p))
 DECL|macro|__inw
-mdefine_line|#define __inw&t;&t;apecs_inw
+mdefine_line|#define __inw(p)&t;&t;apecs_inw((unsigned long)(p))
 DECL|macro|__inl
-mdefine_line|#define __inl&t;&t;apecs_inl
+mdefine_line|#define __inl(p)&t;&t;apecs_inl((unsigned long)(p))
 DECL|macro|__outb
-mdefine_line|#define __outb&t;&t;apecs_outb
+mdefine_line|#define __outb(x,p)&t;&t;apecs_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-mdefine_line|#define __outw&t;&t;apecs_outw
+mdefine_line|#define __outw(x,p)&t;&t;apecs_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-mdefine_line|#define __outl&t;&t;apecs_outl
+mdefine_line|#define __outl(x,p)&t;&t;apecs_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-mdefine_line|#define __readb&t;&t;apecs_readb
+mdefine_line|#define __readb(a)&t;&t;apecs_readb((unsigned long)(a))
 DECL|macro|__readw
-mdefine_line|#define __readw&t;&t;apecs_readw
+mdefine_line|#define __readw(a)&t;&t;apecs_readw((unsigned long)(a))
 DECL|macro|__readl
-mdefine_line|#define __readl&t;&t;apecs_readl
+mdefine_line|#define __readl(a)&t;&t;apecs_readl((unsigned long)(a))
 DECL|macro|__readq
-mdefine_line|#define __readq&t;&t;apecs_readq
+mdefine_line|#define __readq(a)&t;&t;apecs_readq((unsigned long)(a))
 DECL|macro|__writeb
-mdefine_line|#define __writeb&t;apecs_writeb
+mdefine_line|#define __writeb(x,a)&t;&t;apecs_writeb((x),(unsigned long)(a))
 DECL|macro|__writew
-mdefine_line|#define __writew&t;apecs_writew
+mdefine_line|#define __writew(x,a)&t;&t;apecs_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-mdefine_line|#define __writel&t;apecs_writel
+mdefine_line|#define __writel(x,a)&t;&t;apecs_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-mdefine_line|#define __writeq&t;apecs_writeq
+mdefine_line|#define __writeq(x,a)&t;&t;apecs_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-mdefine_line|#define __ioremap&t;apecs_ioremap
+mdefine_line|#define __ioremap(a)&t;&t;apecs_ioremap((unsigned long)(a))
 DECL|macro|__is_ioaddr
-mdefine_line|#define __is_ioaddr&t;apecs_is_ioaddr
-DECL|macro|inb
-mdefine_line|#define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
-DECL|macro|outb
-mdefine_line|#define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
+mdefine_line|#define __is_ioaddr(a)&t;&t;apecs_is_ioaddr((unsigned long)(a))
 DECL|macro|__raw_readl
-mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+mdefine_line|#define __raw_readl(a)&t;&t;__readl(a)
 DECL|macro|__raw_readq
-mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+mdefine_line|#define __raw_readq(a)&t;&t;__readq(a)
 DECL|macro|__raw_writel
-mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(a))
 DECL|macro|__raw_writeq
-mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(a))
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

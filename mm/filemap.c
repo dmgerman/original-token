@@ -301,7 +301,7 @@ multiline_comment|/* We cannot invalidate a locked page */
 r_if
 c_cond
 (paren
-id|PageLocked
+id|TryLockPage
 c_func
 (paren
 id|page
@@ -330,6 +330,12 @@ suffix:semicolon
 id|page-&gt;mapping
 op_assign
 l_int|NULL
+suffix:semicolon
+id|UnlockPage
+c_func
+(paren
+id|page
+)paren
 suffix:semicolon
 id|page_cache_release
 c_func

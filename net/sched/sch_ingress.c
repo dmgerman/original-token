@@ -734,7 +734,7 @@ r_return
 id|fwres
 suffix:semicolon
 )brace
-multiline_comment|/* after iptables */
+multiline_comment|/* after ipt_filter */
 DECL|variable|ing_ops
 r_static
 r_struct
@@ -754,6 +754,8 @@ id|PF_INET
 comma
 id|NF_IP_PRE_ROUTING
 comma
+id|NF_IP_PRI_FILTER
+op_plus
 l_int|1
 )brace
 suffix:semicolon

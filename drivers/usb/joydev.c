@@ -959,6 +959,7 @@ suffix:semicolon
 id|data.buttons
 op_assign
 (paren
+(paren
 id|joydev-&gt;nkey
 OG
 l_int|0
@@ -979,7 +980,9 @@ c_cond
 l_int|1
 suffix:colon
 l_int|0
+)paren
 op_or
+(paren
 (paren
 id|joydev-&gt;nkey
 OG
@@ -1001,6 +1004,7 @@ c_cond
 l_int|2
 suffix:colon
 l_int|0
+)paren
 suffix:semicolon
 id|data.x
 op_assign

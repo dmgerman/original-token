@@ -240,6 +240,10 @@ DECL|macro|cpu_has_pae
 mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_PAE)
 DECL|macro|cpu_has_tsc
 mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_TSC)
+DECL|macro|cpu_has_de
+mdefine_line|#define cpu_has_de &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_DE)
+DECL|macro|cpu_has_vme
+mdefine_line|#define cpu_has_vme &bslash;&n;&t;&t;(boot_cpu_data.x86_capability &amp; X86_FEATURE_VME)
 r_extern
 r_char
 id|ignore_irq13

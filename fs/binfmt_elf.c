@@ -46,8 +46,9 @@ r_int
 id|load_elf_library
 c_func
 (paren
-r_int
-id|fd
+r_struct
+id|file
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -3404,15 +3405,12 @@ r_int
 id|load_elf_library
 c_func
 (paren
-r_int
-id|fd
-)paren
-(brace
 r_struct
 id|file
 op_star
 id|file
-suffix:semicolon
+)paren
+(brace
 r_struct
 id|dentry
 op_star
@@ -3462,26 +3460,6 @@ id|error
 op_assign
 op_minus
 id|EACCES
-suffix:semicolon
-id|file
-op_assign
-id|fget
-c_func
-(paren
-id|fd
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|file
-op_logical_or
-op_logical_neg
-id|file-&gt;f_op
-)paren
-r_goto
-id|out
 suffix:semicolon
 id|dentry
 op_assign
@@ -3546,7 +3524,7 @@ id|elf_ex
 )paren
 )paren
 r_goto
-id|out_putf
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -3564,7 +3542,7 @@ op_ne
 l_int|0
 )paren
 r_goto
-id|out_putf
+id|out
 suffix:semicolon
 multiline_comment|/* First of all, some simple consistency checks */
 r_if
@@ -3594,7 +3572,7 @@ id|inode-&gt;i_fop-&gt;mmap
 )paren
 )paren
 r_goto
-id|out_putf
+id|out
 suffix:semicolon
 multiline_comment|/* Now read in all of the header information */
 id|j
@@ -3615,7 +3593,7 @@ OG
 id|ELF_EXEC_PAGESIZE
 )paren
 r_goto
-id|out_putf
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -3644,7 +3622,7 @@ op_logical_neg
 id|elf_phdata
 )paren
 r_goto
-id|out_putf
+id|out
 suffix:semicolon
 multiline_comment|/* N.B. check for error return?? */
 id|retval
@@ -3733,6 +3711,13 @@ id|elf_phdata
 op_increment
 suffix:semicolon
 multiline_comment|/* Now use mmap to map the library into memory. */
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|do_mmap
@@ -3777,6 +3762,13 @@ c_func
 id|elf_phdata-&gt;p_vaddr
 )paren
 )paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -3863,14 +3855,6 @@ id|kfree
 c_func
 (paren
 id|elf_phdata
-)paren
-suffix:semicolon
-id|out_putf
-suffix:colon
-id|fput
-c_func
-(paren
-id|file
 )paren
 suffix:semicolon
 id|out

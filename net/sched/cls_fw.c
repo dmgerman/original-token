@@ -129,16 +129,7 @@ macro_line|#ifdef CONFIG_NETFILTER
 id|u32
 id|id
 op_assign
-(paren
-id|skb-&gt;nfreason
-op_eq
-id|NF_REASON_FOR_CLS_FW
-ques
-c_cond
 id|skb-&gt;nfmark
-suffix:colon
-l_int|0
-)paren
 suffix:semicolon
 macro_line|#else
 id|u32

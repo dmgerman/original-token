@@ -269,17 +269,17 @@ macro_line|#ifdef __KERNEL__
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 multiline_comment|/* In a generic kernel, we always go through the machine vector.  */
 DECL|macro|__inb
-macro_line|# define __inb&t;&t;alpha_mv.mv_inb
+macro_line|# define __inb(p)&t;alpha_mv.mv_inb((unsigned long)(p))
 DECL|macro|__inw
-macro_line|# define __inw&t;&t;alpha_mv.mv_inw
+macro_line|# define __inw(p)&t;alpha_mv.mv_inw((unsigned long)(p))
 DECL|macro|__inl
-macro_line|# define __inl&t;&t;alpha_mv.mv_inl
+macro_line|# define __inl(p)&t;alpha_mv.mv_inl((unsigned long)(p))
 DECL|macro|__outb
-macro_line|# define __outb&t;&t;alpha_mv.mv_outb
+macro_line|# define __outb(x,p)&t;alpha_mv.mv_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-macro_line|# define __outw&t;&t;alpha_mv.mv_outw
+macro_line|# define __outw(x,p)&t;alpha_mv.mv_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-macro_line|# define __outl&t;&t;alpha_mv.mv_outl
+macro_line|# define __outl(x,p)&t;alpha_mv.mv_outl((x),(unsigned long)(p))
 DECL|macro|__readb
 macro_line|# define __readb(a)&t;alpha_mv.mv_readb((unsigned long)(a))
 DECL|macro|__readw
@@ -297,9 +297,9 @@ macro_line|# define __writel(v,a)&t;alpha_mv.mv_writel((v),(unsigned long)(a))
 DECL|macro|__writeq
 macro_line|# define __writeq(v,a)&t;alpha_mv.mv_writeq((v),(unsigned long)(a))
 DECL|macro|__ioremap
-macro_line|# define __ioremap(a)&t;alpha_mv.mv_ioremap(a)
+macro_line|# define __ioremap(a)&t;alpha_mv.mv_ioremap((unsigned long)(a))
 DECL|macro|__is_ioaddr
-macro_line|# define __is_ioaddr(a)&t;alpha_mv.mv_is_ioaddr(a)
+macro_line|# define __is_ioaddr(a)&t;alpha_mv.mv_is_ioaddr((unsigned long)(a))
 DECL|macro|inb
 macro_line|# define inb&t;&t;__inb
 DECL|macro|inw
@@ -531,15 +531,15 @@ macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The platform header files may define some of these macros to use&n; * the inlined versions where appropriate.  These macros may also be&n; * redefined by userlevel programs.&n; */
 macro_line|#ifndef inb
 DECL|macro|inb
-macro_line|# define inb(p)&t;&t;_inb((p))
+macro_line|# define inb(p)&t;&t;_inb(p)
 macro_line|#endif
 macro_line|#ifndef inw
 DECL|macro|inw
-macro_line|# define inw(p)&t;&t;_inw((p))
+macro_line|# define inw(p)&t;&t;_inw(p)
 macro_line|#endif
 macro_line|#ifndef inl
 DECL|macro|inl
-macro_line|# define inl(p)&t;&t;_inl((p))
+macro_line|# define inl(p)&t;&t;_inl(p)
 macro_line|#endif
 macro_line|#ifndef outb
 DECL|macro|outb
@@ -585,6 +585,7 @@ r_extern
 r_int
 r_int
 id|inb
+c_func
 (paren
 r_int
 r_int
@@ -595,6 +596,7 @@ r_extern
 r_int
 r_int
 id|inw
+c_func
 (paren
 r_int
 r_int
@@ -605,6 +607,7 @@ r_extern
 r_int
 r_int
 id|inl
+c_func
 (paren
 r_int
 r_int
@@ -614,6 +617,7 @@ suffix:semicolon
 r_extern
 r_void
 id|outb
+c_func
 (paren
 r_int
 r_char
@@ -627,6 +631,7 @@ suffix:semicolon
 r_extern
 r_void
 id|outw
+c_func
 (paren
 r_int
 r_int
@@ -640,6 +645,7 @@ suffix:semicolon
 r_extern
 r_void
 id|outl
+c_func
 (paren
 r_int
 r_int

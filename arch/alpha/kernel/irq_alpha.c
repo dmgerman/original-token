@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;proto.h&quot;
@@ -152,16 +153,9 @@ r_case
 l_int|1
 suffix:colon
 macro_line|#ifdef CONFIG_SMP
-id|cpu_data
-(braket
-id|smp_processor_id
-c_func
-(paren
-)paren
-)braket
-dot
-id|smp_local_irq_count
-op_increment
+(brace
+r_int
+id|cpu
 suffix:semicolon
 id|smp_percpu_timer_interrupt
 c_func
@@ -170,17 +164,42 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|cpu
+op_assign
 id|smp_processor_id
 c_func
 (paren
 )paren
-op_eq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cpu
+op_ne
 id|boot_cpuid
 )paren
-macro_line|#endif
+(brace
+id|irq_attempt
+c_func
+(paren
+id|cpu
+comma
+id|RTC_IRQ
+)paren
+op_increment
+suffix:semicolon
+id|kstat.irqs
+(braket
+id|cpu
+)braket
+(braket
+id|RTC_IRQ
+)braket
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
 id|handle_irq
 c_func
 (paren
@@ -190,14 +209,24 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
+)brace
+)brace
+macro_line|#else
+id|handle_irq
+c_func
+(paren
+id|RTC_IRQ
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|irq_err_count
-op_increment
-suffix:semicolon
 id|alpha_mv
 dot
 id|machine_check

@@ -2161,7 +2161,7 @@ id|rsdp-&gt;rsdt
 suffix:semicolon
 r_return
 op_minus
-id|ENODEV
+id|EINVAL
 suffix:semicolon
 )brace
 r_else
@@ -2199,7 +2199,7 @@ id|rsdt
 suffix:semicolon
 r_return
 op_minus
-id|ENODEV
+id|EINVAL
 suffix:semicolon
 )brace
 singleline_comment|// search RSDT for FACP
@@ -2400,7 +2400,7 @@ l_string|&quot;ACPI: missing FACP&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|ENODEV
+id|EINVAL
 suffix:semicolon
 )brace
 r_return
@@ -6431,14 +6431,29 @@ id|acpi_enabled
 r_case
 id|ACPI_ENABLED
 suffix:colon
-r_if
+r_switch
 c_cond
 (paren
 id|acpi_find_tables
 c_func
 (paren
 )paren
-op_logical_and
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+singleline_comment|// found valid ACPI tables
+r_break
+suffix:semicolon
+r_case
+op_minus
+id|ENODEV
+suffix:colon
+singleline_comment|// found no ACPI tables, try chipset-specific
+r_if
+c_cond
+(paren
 id|acpi_find_chipset
 c_func
 (paren
@@ -6448,6 +6463,16 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+singleline_comment|// found broken ACPI tables
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -6500,6 +6525,30 @@ id|acpi_facp
 op_star
 )paren
 id|acpi_facp.table
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PM_IS_ACTIVE
+c_func
+(paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;acpi: APM is already active.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
+)brace
+id|pm_active
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * Internally we always keep latencies in timer&n;&t; * ticks, which is simpler and more consistent (what is&n;&t; * an uS to us?). Besides, that gives people more&n;&t; * control in the /proc interfaces.&n;&t; */
 r_if
@@ -6631,10 +6680,6 @@ id|pm_power_off
 op_assign
 id|acpi_power_off
 suffix:semicolon
-id|pm_active
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the ACPI idle function. Note that we can&squot;t really&n;&t; * do this with multiple CPU&squot;s, we&squot;d need a per-CPU ACPI&n;&t; * device..&n;&t; */
 macro_line|#ifdef CONFIG_SMP
 r_if
@@ -6711,10 +6756,6 @@ id|pm_idle
 op_assign
 l_int|NULL
 suffix:semicolon
-id|pm_active
-op_assign
-l_int|0
-suffix:semicolon
 id|pm_power_off
 op_assign
 l_int|NULL
@@ -6767,6 +6808,10 @@ c_func
 op_amp
 id|acpi_driver
 )paren
+suffix:semicolon
+id|pm_active
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Parse kernel command line options&n; */

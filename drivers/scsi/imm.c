@@ -1205,7 +1205,7 @@ op_star
 id|tmp
 )paren
 (brace
-multiline_comment|/*&n;     * The following is supposedly the IEEE 1248-1994 negotiate&n;     * sequence. I have yet to obtain a copy of the above standard&n;     * so this is a bit of a guess...&n;     *&n;     * A fair chunk of this is based on the Linux parport implementation&n;     * of IEEE 1284.&n;     *&n;     * Return 0 if data available&n;     *        1 if no data available&n;     */
+multiline_comment|/*&n;     * The following is supposedly the IEEE 1284-1994 negotiate&n;     * sequence. I have yet to obtain a copy of the above standard&n;     * so this is a bit of a guess...&n;     *&n;     * A fair chunk of this is based on the Linux parport implementation&n;     * of IEEE 1284.&n;     *&n;     * Return 0 if data available&n;     *        1 if no data available&n;     */
 r_int
 r_int
 id|base

@@ -1401,109 +1401,105 @@ macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
 macro_line|#ifdef CONFIG_ALPHA_PYXIS
 DECL|macro|__inb
-macro_line|# define __inb&t;&t;cia_bwx_inb
+macro_line|# define __inb(p)&t;&t;cia_bwx_inb((unsigned long)(p))
 DECL|macro|__inw
-macro_line|# define __inw&t;&t;cia_bwx_inw
+macro_line|# define __inw(p)&t;&t;cia_bwx_inw((unsigned long)(p))
 DECL|macro|__inl
-macro_line|# define __inl&t;&t;cia_bwx_inl
+macro_line|# define __inl(p)&t;&t;cia_bwx_inl((unsigned long)(p))
 DECL|macro|__outb
-macro_line|# define __outb&t;&t;cia_bwx_outb
+macro_line|# define __outb(x,p)&t;&t;cia_bwx_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-macro_line|# define __outw&t;&t;cia_bwx_outw
+macro_line|# define __outw(x,p)&t;&t;cia_bwx_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-macro_line|# define __outl&t;&t;cia_bwx_outl
+macro_line|# define __outl(x,p)&t;&t;cia_bwx_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-macro_line|# define __readb&t;cia_bwx_readb
+macro_line|# define __readb(a)&t;&t;cia_bwx_readb((unsigned long)(a))
 DECL|macro|__readw
-macro_line|# define __readw&t;cia_bwx_readw
-DECL|macro|__writeb
-macro_line|# define __writeb&t;cia_bwx_writeb
-DECL|macro|__writew
-macro_line|# define __writew&t;cia_bwx_writew
+macro_line|# define __readw(a)&t;&t;cia_bwx_readw((unsigned long)(a))
 DECL|macro|__readl
-macro_line|# define __readl&t;cia_bwx_readl
+macro_line|# define __readl(a)&t;&t;cia_bwx_readl((unsigned long)(a))
 DECL|macro|__readq
-macro_line|# define __readq&t;cia_bwx_readq
+macro_line|# define __readq(a)&t;&t;cia_bwx_readq((unsigned long)(a))
+DECL|macro|__writeb
+macro_line|# define __writeb(x,a)&t;&t;cia_bwx_writeb((x),(unsigned long)(a))
+DECL|macro|__writew
+macro_line|# define __writew(x,a)&t;&t;cia_bwx_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-macro_line|# define __writel&t;cia_bwx_writel
+macro_line|# define __writel(x,a)&t;&t;cia_bwx_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-macro_line|# define __writeq&t;cia_bwx_writeq
+macro_line|# define __writeq(x,a)&t;&t;cia_bwx_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-macro_line|# define __ioremap&t;cia_bwx_ioremap
+macro_line|# define __ioremap(a)&t;&t;cia_bwx_ioremap((unsigned long)(a))
 DECL|macro|inb
-macro_line|# define inb(port)&t;&t;__inb((port))
+macro_line|# define inb(p)&t;&t;&t;__inb(p)
 DECL|macro|inw
-macro_line|# define inw(port)&t;&t;__inw((port))
+macro_line|# define inw(p)&t;&t;&t;__inw(p)
 DECL|macro|inl
-macro_line|# define inl(port)&t;&t;__inl((port))
+macro_line|# define inl(p)&t;&t;&t;__inl(p)
 DECL|macro|outb
-macro_line|# define outb(x, port)&t;&t;__outb((x),(port))
+macro_line|# define outb(x,p)&t;&t;__outb((x),(port))
 DECL|macro|outw
-macro_line|# define outw(x, port)&t;&t;__outw((x),(port))
+macro_line|# define outw(x,p)&t;&t;__outw((x),(port))
 DECL|macro|outl
-macro_line|# define outl(x, port)&t;&t;__outl((x),(port))
+macro_line|# define outl(x,p)&t;&t;__outl((x),(port))
 DECL|macro|__raw_readb
-macro_line|# define __raw_readb(addr)&t;__readb((addr))
+macro_line|# define __raw_readb(a)&t;&t;__readb(a)
 DECL|macro|__raw_readw
-macro_line|# define __raw_readw(addr)&t;__readw((addr))
-DECL|macro|__raw_writeb
-macro_line|# define __raw_writeb(b, addr)&t;__writeb((b),(addr))
-DECL|macro|__raw_writew
-macro_line|# define __raw_writew(b, addr)&t;__writew((b),(addr))
+macro_line|# define __raw_readw(a)&t;&t;__readw(a)
 DECL|macro|__raw_readl
-macro_line|# define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+macro_line|# define __raw_readl(a)&t;&t;__readl(a)
 DECL|macro|__raw_readq
-macro_line|# define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+macro_line|# define __raw_readq(a)&t;&t;__readq(a)
+DECL|macro|__raw_writeb
+macro_line|# define __raw_writeb(x,a)&t;__writeb((x),(a))
+DECL|macro|__raw_writew
+macro_line|# define __raw_writew(x,a)&t;__writew((x),(a))
 DECL|macro|__raw_writel
-macro_line|# define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+macro_line|# define __raw_writel(x,a)&t;__writel((x),(a))
 DECL|macro|__raw_writeq
-macro_line|# define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|# define __raw_writeq(x,a)&t;__writeq((x),(a))
 macro_line|#else
 DECL|macro|__inb
-macro_line|# define __inb&t;&t;cia_inb
+macro_line|# define __inb(p)&t;&t;cia_inb((unsigned long)(p))
 DECL|macro|__inw
-macro_line|# define __inw&t;&t;cia_inw
+macro_line|# define __inw(p)&t;&t;cia_inw((unsigned long)(p))
 DECL|macro|__inl
-macro_line|# define __inl&t;&t;cia_inl
+macro_line|# define __inl(p)&t;&t;cia_inl((unsigned long)(p))
 DECL|macro|__outb
-macro_line|# define __outb&t;&t;cia_outb
+macro_line|# define __outb(x,p)&t;&t;cia_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-macro_line|# define __outw&t;&t;cia_outw
+macro_line|# define __outw(x,p)&t;&t;cia_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-macro_line|# define __outl&t;&t;cia_outl
+macro_line|# define __outl(x,p)&t;&t;cia_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-macro_line|# define __readb&t;cia_readb
+macro_line|# define __readb(a)&t;&t;cia_readb((unsigned long)(a))
 DECL|macro|__readw
-macro_line|# define __readw&t;cia_readw
-DECL|macro|__writeb
-macro_line|# define __writeb&t;cia_writeb
-DECL|macro|__writew
-macro_line|# define __writew&t;cia_writew
+macro_line|# define __readw(a)&t;&t;cia_readw((unsigned long)(a))
 DECL|macro|__readl
-macro_line|# define __readl&t;cia_readl
+macro_line|# define __readl(a)&t;&t;cia_readl((unsigned long)(a))
 DECL|macro|__readq
-macro_line|# define __readq&t;cia_readq
+macro_line|# define __readq(a)&t;&t;cia_readq((unsigned long)(a))
+DECL|macro|__writeb
+macro_line|# define __writeb(x,a)&t;&t;cia_writeb((x),(unsigned long)(a))
+DECL|macro|__writew
+macro_line|# define __writew(x,a)&t;&t;cia_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-macro_line|# define __writel&t;cia_writel
+macro_line|# define __writel(x,a)&t;&t;cia_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-macro_line|# define __writeq&t;cia_writeq
+macro_line|# define __writeq(x,a)&t;&t;cia_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-macro_line|# define __ioremap&t;cia_ioremap
-DECL|macro|inb
-macro_line|# define inb(port) &bslash;&n;    (__builtin_constant_p((port))?__inb(port):_inb(port))
-DECL|macro|outb
-macro_line|# define outb(x, port) &bslash;&n;    (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
+macro_line|# define __ioremap(a)&t;&t;cia_ioremap((unsigned long)(a))
 DECL|macro|__raw_readl
-macro_line|# define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+macro_line|# define __raw_readl(a)&t;&t;__readl(a)
 DECL|macro|__raw_readq
-macro_line|# define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+macro_line|# define __raw_readq(a)&t;&t;__readq(a)
 DECL|macro|__raw_writel
-macro_line|# define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+macro_line|# define __raw_writel(v,a)&t;__writel((v),(a))
 DECL|macro|__raw_writeq
-macro_line|# define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+macro_line|# define __raw_writeq(v,a)&t;__writeq((v),(a))
 macro_line|#endif /* PYXIS */
 DECL|macro|__is_ioaddr
-mdefine_line|#define __is_ioaddr&t;cia_is_ioaddr
+mdefine_line|#define __is_ioaddr(a)&t;&t;cia_is_ioaddr((unsigned long)(a))
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

@@ -1193,9 +1193,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|cpu
-suffix:semicolon
 id|outb
 c_func
 (paren

@@ -1639,6 +1639,10 @@ id|num_bulk_out
 suffix:colon
 id|NUM_DONT_CARE
 comma
+id|num_ports
+suffix:colon
+l_int|1
+comma
 id|startup
 suffix:colon
 id|keyspan_pda_fake_startup

@@ -125,8 +125,9 @@ op_star
 id|load_shlib
 )paren
 (paren
-r_int
-id|fd
+r_struct
+id|file
+op_star
 )paren
 suffix:semicolon
 DECL|member|core_dump

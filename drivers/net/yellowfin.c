@@ -7246,11 +7246,11 @@ c_func
 id|yellowfin_init
 )paren
 suffix:semicolon
-DECL|variable|yellowfin_exit
+DECL|variable|yellowfin_cleanup
 id|module_exit
 c_func
 (paren
-id|yellowfin_exit
+id|yellowfin_cleanup
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__  -Wall -Wstrict-prototypes -O6 -c yellowfin.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  compile-command-alphaLX: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -c yellowfin.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`  -fomit-frame-pointer -fno-strength-reduce -mno-fp-regs -Wa,-m21164a -DBWX_USABLE -DBWIO_ENABLED&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c yellowfin.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */

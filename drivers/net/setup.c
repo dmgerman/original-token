@@ -14,14 +14,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|ppp_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|slip_init_ctrl_dev
 c_func
 (paren
@@ -274,9 +266,6 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_COMX)
 (brace
 id|comx_init
-c_func
-(paren
-)paren
 comma
 l_int|0
 )brace
@@ -427,13 +416,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_STRIP)
 id|strip_init_ctrl_dev
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PPP)
-id|ppp_init
 c_func
 (paren
 )paren

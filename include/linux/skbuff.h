@@ -373,11 +373,6 @@ r_int
 r_int
 id|nfmark
 suffix:semicolon
-multiline_comment|/* Reason for doing this to the packet (see netfilter.h) */
-DECL|member|nfreason
-id|__u32
-id|nfreason
-suffix:semicolon
 multiline_comment|/* Cache info */
 DECL|member|nfcache
 id|__u32

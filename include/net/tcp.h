@@ -2003,6 +2003,17 @@ id|skb
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|tcp_v4_send_reset
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|tcp_v4_conn_request
 c_func

@@ -1303,65 +1303,65 @@ DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|__inb
-mdefine_line|#define __inb&t;&t;tsunami_inb
+mdefine_line|#define __inb(p)&t;&t;tsunami_inb((unsigned long)(p))
 DECL|macro|__inw
-mdefine_line|#define __inw&t;&t;tsunami_inw
+mdefine_line|#define __inw(p)&t;&t;tsunami_inw((unsigned long)(p))
 DECL|macro|__inl
-mdefine_line|#define __inl&t;&t;tsunami_inl
+mdefine_line|#define __inl(p)&t;&t;tsunami_inl((unsigned long)(p))
 DECL|macro|__outb
-mdefine_line|#define __outb&t;&t;tsunami_outb
+mdefine_line|#define __outb(x,p)&t;&t;tsunami_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-mdefine_line|#define __outw&t;&t;tsunami_outw
+mdefine_line|#define __outw(x,p)&t;&t;tsunami_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-mdefine_line|#define __outl&t;&t;tsunami_outl
+mdefine_line|#define __outl(x,p)&t;&t;tsunami_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-mdefine_line|#define __readb&t;&t;tsunami_readb
+mdefine_line|#define __readb(a)&t;&t;tsunami_readb((unsigned long)(a))
 DECL|macro|__readw
-mdefine_line|#define __readw&t;&t;tsunami_readw
-DECL|macro|__writeb
-mdefine_line|#define __writeb&t;tsunami_writeb
-DECL|macro|__writew
-mdefine_line|#define __writew&t;tsunami_writew
+mdefine_line|#define __readw(a)&t;&t;tsunami_readw((unsigned long)(a))
 DECL|macro|__readl
-mdefine_line|#define __readl&t;&t;tsunami_readl
+mdefine_line|#define __readl(a)&t;&t;tsunami_readl((unsigned long)(a))
 DECL|macro|__readq
-mdefine_line|#define __readq&t;&t;tsunami_readq
+mdefine_line|#define __readq(a)&t;&t;tsunami_readq((unsigned long)(a))
+DECL|macro|__writeb
+mdefine_line|#define __writeb(x,a)&t;&t;tsunami_writeb((x),(unsigned long)(a))
+DECL|macro|__writew
+mdefine_line|#define __writew(x,a)&t;&t;tsunami_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-mdefine_line|#define __writel&t;tsunami_writel
+mdefine_line|#define __writel(x,a)&t;&t;tsunami_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-mdefine_line|#define __writeq&t;tsunami_writeq
+mdefine_line|#define __writeq(x,a)&t;&t;tsunami_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-mdefine_line|#define __ioremap&t;tsunami_ioremap
+mdefine_line|#define __ioremap(a)&t;&t;tsunami_ioremap((unsigned long)(a))
 DECL|macro|__is_ioaddr
-mdefine_line|#define __is_ioaddr&t;tsunami_is_ioaddr
+mdefine_line|#define __is_ioaddr(a)&t;&t;tsunami_is_ioaddr((unsigned long)(a))
 DECL|macro|inb
-mdefine_line|#define inb(port)&t;__inb((port))
+mdefine_line|#define inb(p)&t;&t;&t;__inb(p)
 DECL|macro|inw
-mdefine_line|#define inw(port)&t;__inw((port))
+mdefine_line|#define inw(p)&t;&t;&t;__inw(p)
 DECL|macro|inl
-mdefine_line|#define inl(port)&t;__inl((port))
+mdefine_line|#define inl(p)&t;&t;&t;__inl(p)
 DECL|macro|outb
-mdefine_line|#define outb(v, port)&t;__outb((v),(port))
+mdefine_line|#define outb(x,p)&t;&t;__outb((x),(p))
 DECL|macro|outw
-mdefine_line|#define outw(v, port)&t;__outw((v),(port))
+mdefine_line|#define outw(x,p)&t;&t;__outw((x),(p))
 DECL|macro|outl
-mdefine_line|#define outl(v, port)&t;__outl((v),(port))
+mdefine_line|#define outl(x,p)&t;&t;__outl((x),(p))
 DECL|macro|__raw_readb
-mdefine_line|#define __raw_readb(a)&t;&t;__readb((unsigned long)(a))
+mdefine_line|#define __raw_readb(a)&t;&t;__readb(a)
 DECL|macro|__raw_readw
-mdefine_line|#define __raw_readw(a)&t;&t;__readw((unsigned long)(a))
+mdefine_line|#define __raw_readw(a)&t;&t;__readw(a)
 DECL|macro|__raw_readl
-mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+mdefine_line|#define __raw_readl(a)&t;&t;__readl(a)
 DECL|macro|__raw_readq
-mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+mdefine_line|#define __raw_readq(a)&t;&t;__readq(a)
 DECL|macro|__raw_writeb
-mdefine_line|#define __raw_writeb(v,a)&t;__writeb((v),(unsigned long)(a))
+mdefine_line|#define __raw_writeb(v,a)&t;__writeb((v),(a))
 DECL|macro|__raw_writew
-mdefine_line|#define __raw_writew(v,a)&t;__writew((v),(unsigned long)(a))
+mdefine_line|#define __raw_writew(v,a)&t;__writew((v),(a))
 DECL|macro|__raw_writel
-mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(a))
 DECL|macro|__raw_writeq
-mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(a))
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

@@ -3584,7 +3584,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : at PCI bus %d, device %d,  function %d&bslash;n&quot;
+l_string|&quot;scsi-ncr53c7,8xx : at PCI bus %d, device %d, function %d&bslash;n&quot;
 comma
 id|bus
 comma
@@ -3632,11 +3632,9 @@ c_cond
 (paren
 id|error
 op_assign
-id|pcibios_read_config_word
+id|pci_read_config_word
 (paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -3648,11 +3646,9 @@ op_logical_or
 (paren
 id|error
 op_assign
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 (paren
-id|bus
-comma
-id|device_fn
+id|pdev
 comma
 id|PCI_CLASS_REVISION
 comma
@@ -3826,24 +3822,23 @@ id|PCI_COMMAND_IO
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
-id|io_port
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|flags
 op_amp
-l_int|3
+id|IORESOURCE_IO
 )paren
-op_ne
-l_int|1
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : disabling I/O mapping since base address 0 (0x%x)&bslash;n&quot;
-l_string|&quot;        bits 0..1 indicate a non-IO mapping&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|io_port
+l_string|&quot;scsi-ncr53c7,8xx : disabling I/O mapping since base &quot;
+l_string|&quot;address 0&bslash;n        contains a non-IO mapping&bslash;n&quot;
 )paren
 suffix:semicolon
 id|io_port
@@ -3851,11 +3846,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-id|io_port
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -3875,20 +3865,24 @@ id|PCI_COMMAND_MEMORY
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
-id|base
+id|pdev-&gt;resource
+(braket
+l_int|1
+)braket
+dot
+id|flags
 op_amp
-id|PCI_BASE_ADDRESS_SPACE
+id|IORESOURCE_MEM
 )paren
-op_ne
-id|PCI_BASE_ADDRESS_SPACE_MEMORY
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : disabling memory mapping since base address 1&bslash;n&quot;
-l_string|&quot;        contains a non-memory mapping&bslash;n&quot;
+l_string|&quot;scsi-ncr53c7,8xx : disabling memory mapping since base &quot;
+l_string|&quot;address 1&bslash;n        contains a non-memory mapping&bslash;n&quot;
 )paren
 suffix:semicolon
 id|base
@@ -3896,11 +3890,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-id|base
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
 )brace
 r_else
 (brace

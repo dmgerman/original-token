@@ -736,12 +736,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|register_irq_proc
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -763,12 +757,21 @@ id|irq_dir
 id|NR_IRQS
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|smp_affinity_entry
 r_static
 r_struct
 id|proc_dir_entry
 op_star
 id|smp_affinity_entry
+(braket
+id|NR_IRQS
+)braket
+suffix:semicolon
+DECL|variable|irq_user_affinity
+r_static
+r_char
+id|irq_user_affinity
 (braket
 id|NR_IRQS
 )braket
@@ -797,6 +800,106 @@ op_complement
 l_int|0UL
 )brace
 suffix:semicolon
+r_static
+r_void
+DECL|function|select_smp_affinity
+id|select_smp_affinity
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_static
+r_int
+id|last_cpu
+suffix:semicolon
+r_int
+id|cpu
+op_assign
+id|last_cpu
+op_plus
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|handler-&gt;set_affinity
+op_logical_or
+id|irq_user_affinity
+(braket
+id|irq
+)braket
+)paren
+r_return
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+(paren
+id|cpu_present_mask
+op_rshift
+id|cpu
+)paren
+op_amp
+l_int|1
+)paren
+op_eq
+l_int|0
+)paren
+id|cpu
+op_assign
+(paren
+id|cpu
+OL
+id|NR_CPUS
+ques
+c_cond
+id|cpu
+op_plus
+l_int|1
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+id|last_cpu
+op_assign
+id|cpu
+suffix:semicolon
+id|irq_affinity
+(braket
+id|irq
+)braket
+op_assign
+l_int|1UL
+op_lshift
+id|cpu
+suffix:semicolon
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|handler
+op_member_access_from_pointer
+id|set_affinity
+c_func
+(paren
+id|irq
+comma
+l_int|1UL
+op_lshift
+id|cpu
+)paren
+suffix:semicolon
+)brace
 DECL|macro|HEX_DIGITS
 mdefine_line|#define HEX_DIGITS 16
 r_static
@@ -1108,8 +1211,31 @@ op_amp
 id|new_value
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SMP
-multiline_comment|/*&n;&t; * Do not allow disabling IRQs completely - it&squot;s a too easy&n;&t; * way to make the system unusable accidentally :-) At least&n;&t; * one online CPU still has to be targeted.&n;&t; */
+multiline_comment|/* The special value 0 means release control of the&n;&t;   affinity to kernel.  */
+r_if
+c_cond
+(paren
+id|new_value
+op_eq
+l_int|0
+)paren
+(brace
+id|irq_user_affinity
+(braket
+id|irq
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|select_smp_affinity
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Do not allow disabling IRQs completely - it&squot;s a too easy&n;&t;   way to make the system unusable accidentally :-) At least&n;&t;   one online CPU still has to be targeted.  */
+r_else
 r_if
 c_cond
 (paren
@@ -1124,13 +1250,21 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#endif
+r_else
+(brace
 id|irq_affinity
 (braket
 id|irq
 )braket
 op_assign
 id|new_value
+suffix:semicolon
+id|irq_user_affinity
+(braket
+id|irq
+)braket
+op_assign
+l_int|1
 suffix:semicolon
 id|irq_desc
 (braket
@@ -1147,6 +1281,7 @@ comma
 id|new_value
 )paren
 suffix:semicolon
+)brace
 r_return
 id|full_count
 suffix:semicolon
@@ -1211,7 +1346,7 @@ id|sprintf
 (paren
 id|page
 comma
-l_string|&quot;%08lx&bslash;n&quot;
+l_string|&quot;%016lx&bslash;n&quot;
 comma
 op_star
 id|mask
@@ -1295,6 +1430,7 @@ r_return
 id|full_count
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_SMP */
 DECL|macro|MAX_NAMELEN
 mdefine_line|#define MAX_NAMELEN 10
 r_static
@@ -1372,6 +1508,7 @@ comma
 id|root_irq_dir
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* create /proc/irq/1234/smp_affinity */
 id|entry
 op_assign
@@ -1418,6 +1555,7 @@ id|irq
 op_assign
 id|entry
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|prof_cpu_mask
 r_int
@@ -1453,6 +1591,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* create /proc/irq/prof_cpu_mask */
 id|entry
 op_assign
@@ -1487,6 +1626,7 @@ id|entry-&gt;write_proc
 op_assign
 id|prof_cpu_mask_write_proc
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Create entries for all existing IRQs.&n;&t; */
 r_for
 c_loop
@@ -1679,6 +1819,14 @@ id|action-&gt;dev_id
 op_assign
 id|dev_id
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|select_smp_affinity
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 id|retval
 op_assign
 id|setup_irq
@@ -2222,7 +2370,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;LOC: &quot;
+l_string|&quot;IPI: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -2257,7 +2405,7 @@ id|j
 )paren
 )braket
 dot
-id|smp_local_irq_count
+id|ipi_count
 )paren
 suffix:semicolon
 id|p

@@ -280,7 +280,7 @@ id|changed
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;&t; * The default range on the mtu port for these devices is 0x388-0x388.&n;&t; * Here we increase that range so that two such cards can be&n;&t; * auto-configured.&n;&t; */
+multiline_comment|/* &n;&t; * The default range on the mpu port for these devices is 0x388-0x388.&n;&t; * Here we increase that range so that two such cards can be&n;&t; * auto-configured.&n;&t; */
 r_for
 c_loop
 (paren

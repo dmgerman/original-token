@@ -1,4 +1,4 @@
-multiline_comment|/* netfilter.c: look after the filters for various protocols. &n; * Heavily influenced by the old firewall.c by David Bonn and Alan Cox.&n; *&n; * Thanks to Rob `CmdrTaco&squot; Malda for not influencing this code in any&n; * way.&n; *&n; * Rusty Russell (C)1998 -- This code is GPL.&n; *&n; * February 2000: Modified by James Morris to have 1 queue per protocol.&n; */
+multiline_comment|/* netfilter.c: look after the filters for various protocols. &n; * Heavily influenced by the old firewall.c by David Bonn and Alan Cox.&n; *&n; * Thanks to Rob `CmdrTaco&squot; Malda for not influencing this code in any&n; * way.&n; *&n; * Rusty Russell (C)2000 -- This code is GPL.&n; *&n; * February 2000: Modified by James Morris to have 1 queue per protocol.&n; * 15-Mar-2000:   Added NF_REPEAT --RR.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
@@ -84,16 +84,6 @@ r_struct
 id|list_head
 op_star
 id|i
-suffix:semicolon
-id|NFDEBUG
-c_func
-(paren
-l_string|&quot;nf_register_hook: pf=%i hook=%u.&bslash;n&quot;
-comma
-id|reg-&gt;pf
-comma
-id|reg-&gt;hooknum
-)paren
 suffix:semicolon
 id|br_write_lock_bh
 c_func
@@ -412,6 +402,8 @@ id|reg
 )paren
 (brace
 multiline_comment|/* No point being interruptible: we&squot;re probably in cleanup_module() */
+id|restart
+suffix:colon
 id|down
 c_func
 (paren
@@ -419,6 +411,41 @@ op_amp
 id|nf_sockopt_mutex
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|reg-&gt;use
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* To be woken by nf_sockopt call... */
+id|reg-&gt;cleanup_task
+op_assign
+id|current
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|nf_sockopt_mutex
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_UNINTERRUPTIBLE
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_goto
+id|restart
+suffix:semicolon
+)brace
 id|list_del
 c_func
 (paren
@@ -739,7 +766,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PROTO=%d %ld.%ld.%ld.%ld:%hu %ld.%ld.%ld.%ld:%hu&quot;
+l_string|&quot;PROTO=%d %d.%d.%d.%d:%hu %d.%d.%d.%d:%hu&quot;
 l_string|&quot; L=%hu S=0x%2.2hX I=%hu F=0x%4.4hX T=%hu&quot;
 comma
 id|ip-&gt;protocol
@@ -1196,10 +1223,45 @@ id|NF_IP_POST_ROUTING
 )paren
 )paren
 (brace
+multiline_comment|/* Fragments will have no owners, but still&n;                           may be local */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|skb-&gt;nh.iph-&gt;frag_off
+op_amp
+id|htons
+c_func
+(paren
+id|IP_MF
+op_or
+id|IP_OFFSET
+)paren
+)paren
+op_logical_or
+id|skb-&gt;nf_debug
+op_ne
+(paren
+(paren
+l_int|1
+op_lshift
+id|NF_IP_LOCAL_OUT
+)paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|NF_IP_POST_ROUTING
+)paren
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;ip_finish_output: bad unowned skb = %p: &quot;
+l_string|&quot;ip_finish_output:&quot;
+l_string|&quot; bad unowned skb = %p: &quot;
 comma
 id|skb
 )paren
@@ -1218,6 +1280,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -1257,6 +1320,11 @@ id|list_head
 op_star
 id|i
 suffix:semicolon
+r_struct
+id|nf_sockopt_ops
+op_star
+id|ops
+suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
@@ -1293,9 +1361,6 @@ op_assign
 id|i-&gt;next
 )paren
 (brace
-r_struct
-id|nf_sockopt_ops
-op_star
 id|ops
 op_assign
 (paren
@@ -1331,6 +1396,16 @@ OL
 id|ops-&gt;get_optmax
 )paren
 (brace
+id|ops-&gt;use
+op_increment
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|nf_sockopt_mutex
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|ops
@@ -1366,6 +1441,16 @@ OL
 id|ops-&gt;set_optmax
 )paren
 (brace
+id|ops-&gt;use
+op_increment
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|nf_sockopt_mutex
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|ops
@@ -1390,13 +1475,40 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|ret
-op_assign
+id|up
+c_func
+(paren
+op_amp
+id|nf_sockopt_mutex
+)paren
+suffix:semicolon
+r_return
 op_minus
 id|ENOPROTOOPT
 suffix:semicolon
 id|out
 suffix:colon
+id|down
+c_func
+(paren
+op_amp
+id|nf_sockopt_mutex
+)paren
+suffix:semicolon
+id|ops-&gt;use
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ops-&gt;cleanup_task
+)paren
+id|wake_up_process
+c_func
+(paren
+id|ops-&gt;cleanup_task
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -1625,6 +1737,21 @@ suffix:colon
 r_return
 id|NF_DROP
 suffix:semicolon
+r_case
+id|NF_REPEAT
+suffix:colon
+op_star
+id|i
+op_assign
+(paren
+op_star
+id|i
+)paren
+op_member_access_from_pointer
+id|prev
+suffix:semicolon
+r_break
+suffix:semicolon
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 r_case
 id|NF_ACCEPT
@@ -1735,14 +1862,6 @@ r_int
 id|pf
 )paren
 (brace
-id|NFDEBUG
-c_func
-(paren
-l_string|&quot;Unregistering Netfilter queue handler for pf=%d&bslash;n&quot;
-comma
-id|pf
-)paren
-suffix:semicolon
 id|br_write_lock_bh
 c_func
 (paren
@@ -1843,12 +1962,6 @@ dot
 id|outfn
 )paren
 (brace
-id|NFDEBUG
-c_func
-(paren
-l_string|&quot;nf_queue: noone wants the packet, dropping it.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -2083,6 +2196,45 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER_DEBUG
+r_if
+c_cond
+(paren
+id|skb-&gt;nf_debug
+op_amp
+(paren
+l_int|1
+op_lshift
+id|hook
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;nf_hook: hook %i already set.&bslash;n&quot;
+comma
+id|hook
+)paren
+suffix:semicolon
+id|nf_dump_skb
+c_func
+(paren
+id|pf
+comma
+id|skb
+)paren
+suffix:semicolon
+)brace
+id|skb-&gt;nf_debug
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|hook
+)paren
+suffix:semicolon
+macro_line|#endif
 id|elem
 op_assign
 op_amp
@@ -2293,6 +2445,23 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Continue traversal iff userspace said ok... */
+r_if
+c_cond
+(paren
+id|verdict
+op_eq
+id|NF_REPEAT
+)paren
+(brace
+id|elem
+op_assign
+id|elem-&gt;prev
+suffix:semicolon
+id|verdict
+op_assign
+id|NF_ACCEPT
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1155,49 +1155,45 @@ DECL|macro|vulp
 macro_line|#undef vulp
 macro_line|#ifdef __WANT_IO_DEF
 DECL|macro|__inb
-mdefine_line|#define __inb&t;&t;mcpcia_inb
+mdefine_line|#define __inb(p)&t;&t;mcpcia_inb((unsigned long)(p))
 DECL|macro|__inw
-mdefine_line|#define __inw&t;&t;mcpcia_inw
+mdefine_line|#define __inw(p)&t;&t;mcpcia_inw((unsigned long)(p))
 DECL|macro|__inl
-mdefine_line|#define __inl&t;&t;mcpcia_inl
+mdefine_line|#define __inl(p)&t;&t;mcpcia_inl((unsigned long)(p))
 DECL|macro|__outb
-mdefine_line|#define __outb&t;&t;mcpcia_outb
+mdefine_line|#define __outb(x,p)&t;&t;mcpcia_outb((x),(unsigned long)(p))
 DECL|macro|__outw
-mdefine_line|#define __outw&t;&t;mcpcia_outw
+mdefine_line|#define __outw(x,p)&t;&t;mcpcia_outw((x),(unsigned long)(p))
 DECL|macro|__outl
-mdefine_line|#define __outl&t;&t;mcpcia_outl
+mdefine_line|#define __outl(x,p)&t;&t;mcpcia_outl((x),(unsigned long)(p))
 DECL|macro|__readb
-mdefine_line|#define __readb&t;&t;mcpcia_readb
+mdefine_line|#define __readb(a)&t;&t;mcpcia_readb((unsigned long)(a))
 DECL|macro|__readw
-mdefine_line|#define __readw&t;&t;mcpcia_readw
-DECL|macro|__writeb
-mdefine_line|#define __writeb&t;mcpcia_writeb
-DECL|macro|__writew
-mdefine_line|#define __writew&t;mcpcia_writew
+mdefine_line|#define __readw(a)&t;&t;mcpcia_readw((unsigned long)(a))
 DECL|macro|__readl
-mdefine_line|#define __readl&t;&t;mcpcia_readl
+mdefine_line|#define __readl(a)&t;&t;mcpcia_readl((unsigned long)(a))
 DECL|macro|__readq
-mdefine_line|#define __readq&t;&t;mcpcia_readq
+mdefine_line|#define __readq(a)&t;&t;mcpcia_readq((unsigned long)(a))
+DECL|macro|__writeb
+mdefine_line|#define __writeb(x,a)&t;&t;mcpcia_writeb((x),(unsigned long)(a))
+DECL|macro|__writew
+mdefine_line|#define __writew(x,a)&t;&t;mcpcia_writew((x),(unsigned long)(a))
 DECL|macro|__writel
-mdefine_line|#define __writel&t;mcpcia_writel
+mdefine_line|#define __writel(x,a)&t;&t;mcpcia_writel((x),(unsigned long)(a))
 DECL|macro|__writeq
-mdefine_line|#define __writeq&t;mcpcia_writeq
+mdefine_line|#define __writeq(x,a)&t;&t;mcpcia_writeq((x),(unsigned long)(a))
 DECL|macro|__ioremap
-mdefine_line|#define __ioremap&t;mcpcia_ioremap
+mdefine_line|#define __ioremap(a)&t;&t;mcpcia_ioremap((unsigned long)(a))
 DECL|macro|__is_ioaddr
-mdefine_line|#define __is_ioaddr&t;mcpcia_is_ioaddr
-DECL|macro|inb
-macro_line|# define inb(port) &bslash;&n;  (__builtin_constant_p((port))?__inb(port):_inb(port))
-DECL|macro|outb
-macro_line|# define outb(x, port) &bslash;&n;  (__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
+mdefine_line|#define __is_ioaddr(a)&t;&t;mcpcia_is_ioaddr((unsigned long)(a))
 DECL|macro|__raw_readl
-mdefine_line|#define __raw_readl(a)&t;&t;__readl((unsigned long)(a))
+mdefine_line|#define __raw_readl(a)&t;&t;__readl(a)
 DECL|macro|__raw_readq
-mdefine_line|#define __raw_readq(a)&t;&t;__readq((unsigned long)(a))
+mdefine_line|#define __raw_readq(a)&t;&t;__readq(a)
 DECL|macro|__raw_writel
-mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(unsigned long)(a))
+mdefine_line|#define __raw_writel(v,a)&t;__writel((v),(a))
 DECL|macro|__raw_writeq
-mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(unsigned long)(a))
+mdefine_line|#define __raw_writeq(v,a)&t;__writeq((v),(a))
 macro_line|#endif /* __WANT_IO_DEF */
 macro_line|#ifdef __IO_EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

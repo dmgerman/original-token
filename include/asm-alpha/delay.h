@@ -48,46 +48,31 @@ suffix:semicolon
 r_extern
 id|__inline__
 r_void
-DECL|function|udelay
-id|udelay
+DECL|function|__udelay
+id|__udelay
 c_func
 (paren
 r_int
 r_int
 id|usecs
+comma
+r_int
+r_int
+id|lps
 )paren
 (brace
-r_int
-r_int
-id|lps
-suffix:semicolon
-macro_line|#ifdef __SMP__
-id|lps
-op_assign
-id|cpu_data
-(braket
-id|smp_processor_id
-c_func
+id|usecs
+op_mul_assign
 (paren
+(paren
+l_int|1UL
+op_lshift
+l_int|32
 )paren
-)braket
-dot
-id|loops_per_sec
-suffix:semicolon
-macro_line|#else
-id|lps
-op_assign
-id|loops_per_sec
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Compute (usecs * 2**32 / 10**6) * loops_per_sec / 2**32.  */
-id|usecs
-op_mul_assign
-l_int|0x10c6
-suffix:semicolon
-multiline_comment|/* 2^32 / 10^6 */
-id|usecs
-op_mul_assign
+op_div
+l_int|1000000
+)paren
+op_star
 id|lps
 suffix:semicolon
 id|__delay
@@ -102,5 +87,12 @@ l_int|32
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|macro|udelay
+mdefine_line|#define udelay(u)  __udelay((u), cpu_data[smp_processor_id()].loops_per_sec)
+macro_line|#else
+DECL|macro|udelay
+mdefine_line|#define udelay(u)  __udelay((u), loops_per_sec)
+macro_line|#endif
 macro_line|#endif /* defined(__ALPHA_DELAY_H) */
 eof

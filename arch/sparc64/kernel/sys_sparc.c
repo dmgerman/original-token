@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.36 2000/02/16 07:31:35 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.37 2000/03/17 05:48:46 anton Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1549,7 +1549,7 @@ c_cond
 op_increment
 id|count
 op_le
-l_int|20
+l_int|5
 )paren
 (brace
 id|printk
@@ -1557,12 +1557,12 @@ id|printk
 l_string|&quot;For Solaris binary emulation you need solaris module loaded&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|show_regs
 (paren
 id|regs
 )paren
 suffix:semicolon
+)brace
 id|send_sig
 c_func
 (paren

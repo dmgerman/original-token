@@ -2743,12 +2743,6 @@ id|s-&gt;s_type
 op_assign
 l_int|NULL
 suffix:semicolon
-id|put_filesystem
-c_func
-(paren
-id|type
-)paren
-suffix:semicolon
 id|unlock_super
 c_func
 (paren
@@ -5470,7 +5464,7 @@ id|ROOT_DEV
 id|panic
 c_func
 (paren
-l_string|&quot;I have no root and I want to sream&quot;
+l_string|&quot;I have no root and I want to scream&quot;
 )paren
 suffix:semicolon
 id|bdev

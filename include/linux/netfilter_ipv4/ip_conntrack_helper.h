@@ -1,0 +1,101 @@
+multiline_comment|/* IP connection tracking helpers. */
+macro_line|#ifndef _IP_CONNTRACK_HELPER_H
+DECL|macro|_IP_CONNTRACK_HELPER_H
+mdefine_line|#define _IP_CONNTRACK_HELPER_H
+macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack.h&gt;
+r_struct
+id|module
+suffix:semicolon
+DECL|struct|ip_conntrack_helper
+r_struct
+id|ip_conntrack_helper
+(brace
+multiline_comment|/* Internal use. */
+DECL|member|list
+r_struct
+id|list_head
+id|list
+suffix:semicolon
+multiline_comment|/* Returns TRUE if it wants to help this connection (tuple is&n;           the tuple of REPLY packets from server). */
+DECL|member|will_help
+r_int
+(paren
+op_star
+id|will_help
+)paren
+(paren
+r_const
+r_struct
+id|ip_conntrack_tuple
+op_star
+id|rtuple
+)paren
+suffix:semicolon
+multiline_comment|/* Function to call when data passes; return verdict, or -1 to&n;           invalidate. */
+DECL|member|help
+r_int
+(paren
+op_star
+id|help
+)paren
+(paren
+r_const
+r_struct
+id|iphdr
+op_star
+comma
+r_int
+id|len
+comma
+r_struct
+id|ip_conntrack
+op_star
+id|ct
+comma
+r_enum
+id|ip_conntrack_info
+id|conntrackinfo
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_int
+id|ip_conntrack_helper_register
+c_func
+(paren
+r_struct
+id|ip_conntrack_helper
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_conntrack_helper_unregister
+c_func
+(paren
+r_struct
+id|ip_conntrack_helper
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Add an expected connection. */
+r_extern
+r_int
+id|ip_conntrack_expect_related
+c_func
+(paren
+r_struct
+id|ip_conntrack
+op_star
+id|related_to
+comma
+r_const
+r_struct
+id|ip_conntrack_tuple
+op_star
+id|tuple
+)paren
+suffix:semicolon
+macro_line|#endif /*_IP_CONNTRACK_HELPER_H*/
+eof

@@ -1992,10 +1992,11 @@ l_string|&quot;BUSY&quot;
 suffix:colon
 l_string|&quot;NOT READY&quot;
 comma
+id|netif_running
+c_func
 (paren
-r_int
+id|dev
 )paren
-id|dev-&gt;tbusy
 )paren
 suffix:semicolon
 id|len
@@ -4582,7 +4583,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|new_dir-&gt;ops
+id|new_dir-&gt;proc_iops
 op_assign
 op_amp
 id|proc_dir_inode_operations
@@ -4725,7 +4726,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|debug_file-&gt;ops
+id|debug_file-&gt;proc_iops
 op_assign
 op_amp
 id|comx_debug_inode_ops
@@ -5485,7 +5486,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|new_file-&gt;ops
+id|new_file-&gt;proc_iops
 op_assign
 op_amp
 id|comx_normal_inode_ops
@@ -5923,16 +5924,13 @@ macro_line|#ifdef MODULE
 DECL|macro|comx_init
 mdefine_line|#define comx_init init_module
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|comx_init
 r_int
+id|__init
 id|comx_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -6166,7 +6164,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|new_file-&gt;ops
+id|new_file-&gt;proc_iops
 op_assign
 op_amp
 id|comx_normal_inode_ops
