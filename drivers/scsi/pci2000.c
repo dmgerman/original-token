@@ -1,12 +1,10 @@
-multiline_comment|/*+M*************************************************************************&n; * Perceptive Solutions, Inc. PCI-2000 device driver proc support for Linux.&n; *&n; * Copyright (c) 1999 Perceptive Solutions, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;File Name:&t;&t;pci2000i.c&n; *&n; *&t;Revisions&t;1.10&t;Jan-21-1999&n; *&t;&t;- Fixed sign on message to reflect proper controller name.&n; *&t;&t;- Added support for RAID status monitoring and control.&n; *&n; *  Revisions&t;1.11&t;Mar-22-1999&n; *&t;&t;- Fixed control timeout to not lock up the entire system if&n; *&t;&t;  controller goes offline completely.&n; *&n; *-M*************************************************************************/
+multiline_comment|/****************************************************************************&n; * Perceptive Solutions, Inc. PCI-2000 device driver for Linux.&n; *&n; * pci2000.c - Linux Host Driver for PCI-2000 IntelliCache SCSI Adapters&n; *&n; * Copyright (c) 1997-1999 Perceptive Solutions, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * Technical updates and product information at:&n; *  http://www.psidisk.com&n; *&n; * Please send questions, comments, bug reports to:&n; *  tech@psidisk.com Technical Support&n; *&n; *&n; *&t;Revisions&t;1.10&t;Jan-21-1999&n; *&t;&t;- Fixed sign on message to reflect proper controller name.&n; *&t;&t;- Added support for RAID status monitoring and control.&n; *&n; *  Revisions&t;1.11&t;Mar-22-1999&n; *&t;&t;- Fixed control timeout to not lock up the entire system if&n; *&t;&t;  controller goes offline completely.&n; *&n; *&t;Revisions 1.12&t;&t;Mar-26-1999&n; *&t;&t;- Fixed spinlock and PCI configuration.&n; *&n; ****************************************************************************/
 DECL|macro|PCI2000_VERSION
-mdefine_line|#define PCI2000_VERSION&t;&t;&quot;1.11&quot;
+mdefine_line|#define PCI2000_VERSION&t;&t;&quot;1.12&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -18,9 +16,15 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;pci2000.h&quot;
 macro_line|#include &quot;psi_roy.h&quot;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,95)
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 DECL|variable|Proc_Scsi_Pci2000
 r_struct
 id|proc_dir_entry
@@ -134,6 +138,10 @@ suffix:semicolon
 DECL|member|tag
 id|USHORT
 id|tag
+suffix:semicolon
+DECL|member|irqOwned
+id|ULONG
+id|irqOwned
 suffix:semicolon
 DECL|member|dev
 id|DEV2000
@@ -548,6 +556,38 @@ suffix:semicolon
 r_int
 id|z
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+r_int
+id|flags
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 id|DEB
 c_func
 (paren
@@ -642,7 +682,8 @@ l_string|&quot;&bslash;npci2000: not my interrupt&quot;
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|padapter
@@ -750,7 +791,9 @@ id|padapter-&gt;cmd
 )paren
 suffix:semicolon
 singleline_comment|// complete the op
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 singleline_comment|// done, but, with what?
 id|irqProceed
@@ -783,7 +826,9 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 )brace
 id|outb_p
@@ -820,7 +865,9 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 )brace
 id|error
@@ -886,7 +933,9 @@ op_or
 l_int|2
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 )brace
 r_if
@@ -927,7 +976,9 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 )brace
 id|OpDone
@@ -939,7 +990,9 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
+suffix:semicolon
 suffix:semicolon
 )brace
 id|outb_p
@@ -967,8 +1020,29 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
+id|irq_return
+suffix:colon
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_QueueCommand
 r_int
 id|Pci2000_QueueCommand
@@ -1978,7 +2052,7 @@ id|DEB
 (paren
 id|printk
 (paren
-l_string|&quot;pci2220i_queuecommand: Unsupported command %02X&bslash;n&quot;
+l_string|&quot;pci2000_queuecommand: Unsupported command %02X&bslash;n&quot;
 comma
 op_star
 id|cdb
@@ -2057,7 +2131,7 @@ id|SCpnt-&gt;SCp.Status
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Command&n; *&n; *&t;Description:&t;Process a command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_Command&n; *&n; *&t;Description:&t;Process a command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_Command
 r_int
 id|Pci2000_Command
@@ -2102,7 +2176,7 @@ r_return
 id|SCpnt-&gt;result
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Detect&n; *&n; *&t;Description:&t;Detect and initialize our boards.&n; *&n; *&t;Parameters:&t;&t;tpnt - Pointer to SCSI host template structure.&n; *&n; *&t;Returns:&t;&t;Number of adapters found.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_Detect&n; *&n; *&t;Description:&t;Detect and initialize our boards.&n; *&n; *&t;Parameters:&t;&t;tpnt - Pointer to SCSI host template structure.&n; *&n; *&t;Returns:&t;&t;Number of adapters installed.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_Detect
 r_int
 id|Pci2000_Detect
@@ -2113,7 +2187,12 @@ id|tpnt
 )paren
 (brace
 r_int
-id|pci_index
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|installed
 op_assign
 l_int|0
 suffix:semicolon
@@ -2133,44 +2212,81 @@ suffix:semicolon
 r_int
 id|setirq
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_present
-(paren
-)paren
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|pci_index
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+r_struct
+id|pci_dev
+op_star
+id|pdev
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-id|pci_index
-op_le
-id|MAXADAPTER
-suffix:semicolon
-op_increment
-id|pci_index
-)paren
-(brace
+macro_line|#else
 id|UCHAR
 id|pci_bus
 comma
 id|pci_device_fn
 suffix:semicolon
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
+op_logical_neg
+id|pci_present
+(paren
+)paren
+)paren
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+(paren
+)paren
+)paren
+macro_line|#endif
+(brace
+id|printk
+(paren
+l_string|&quot;pci2000: PCI BIOS not present&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+r_while
+c_loop
+(paren
+(paren
+id|pdev
+op_assign
+id|pci_find_device
+(paren
+id|VENDOR_PSI
+comma
+id|DEVICE_ROY_1
+comma
+id|pdev
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+macro_line|#else
+r_while
+c_loop
+(paren
+op_logical_neg
 id|pcibios_find_device
 (paren
 id|VENDOR_PSI
 comma
 id|DEVICE_ROY_1
 comma
-id|pci_index
+id|found
 comma
 op_amp
 id|pci_bus
@@ -2178,11 +2294,9 @@ comma
 op_amp
 id|pci_device_fn
 )paren
-op_ne
-l_int|0
 )paren
-r_break
-suffix:semicolon
+macro_line|#endif
+(brace
 id|pshost
 op_assign
 id|scsi_register
@@ -2203,6 +2317,17 @@ c_func
 id|pshost
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+id|padapter-&gt;basePort
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0xFFFE
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_word
 (paren
 id|pci_bus
@@ -2219,6 +2344,7 @@ id|padapter-&gt;basePort
 op_and_assign
 l_int|0xFFFE
 suffix:semicolon
+macro_line|#endif
 id|DEB
 (paren
 id|printk
@@ -2319,6 +2445,12 @@ id|padapter
 r_goto
 id|unregister
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+id|pshost-&gt;irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_byte
 (paren
 id|pci_bus
@@ -2331,9 +2463,14 @@ op_amp
 id|pshost-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 id|setirq
 op_assign
 l_int|1
+suffix:semicolon
+id|padapter-&gt;irqOwned
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -2344,7 +2481,7 @@ l_int|0
 suffix:semicolon
 id|z
 OL
-id|pci_index
+id|installed
 suffix:semicolon
 id|z
 op_increment
@@ -2385,17 +2522,40 @@ id|pshost-&gt;irq
 comma
 id|Irq_Handler
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;pci2000&quot;
 comma
-l_int|NULL
+id|padapter
 )paren
+OL
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_irq
+(paren
+id|pshost-&gt;irq
+comma
+id|Irq_Handler
+comma
+id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
+comma
+l_string|&quot;pci2000&quot;
+comma
+id|padapter
+)paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;Unable to allocate IRQ for PSI-2000 controller.&bslash;n&quot;
+l_string|&quot;Unable to allocate IRQ for PCI-2000 controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -2403,14 +2563,28 @@ id|unregister
 suffix:semicolon
 )brace
 )brace
+id|padapter-&gt;irqOwned
+op_assign
+id|pshost-&gt;irq
+suffix:semicolon
+singleline_comment|// set IRQ as owned
+)brace
 id|PsiHost
 (braket
-id|pci_index
+id|installed
 )braket
 op_assign
 id|pshost
 suffix:semicolon
 singleline_comment|// save SCSI_HOST pointer
+id|pshost-&gt;io_port
+op_assign
+id|padapter-&gt;basePort
+suffix:semicolon
+id|pshost-&gt;n_io_port
+op_assign
+l_int|0xFF
+suffix:semicolon
 id|pshost-&gt;unique_id
 op_assign
 id|padapter-&gt;basePort
@@ -2485,7 +2659,20 @@ comma
 id|__TIME__
 )paren
 suffix:semicolon
+id|found
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|installed
+OL
+id|MAXADAPTER
+)paren
 r_continue
+suffix:semicolon
+r_break
 suffix:semicolon
 id|unregister
 suffix:colon
@@ -2495,17 +2682,19 @@ id|scsi_unregister
 id|pshost
 )paren
 suffix:semicolon
-)brace
+id|found
+op_increment
+suffix:semicolon
 )brace
 id|NumAdapters
 op_assign
-id|pci_index
+id|installed
 suffix:semicolon
 r_return
-id|pci_index
+id|installed
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Abort&n; *&n; *&t;Description:&t;Process the Abort command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Allways snooze.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_Abort&n; *&n; *&t;Description:&t;Process the Abort command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Allways snooze.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_Abort
 r_int
 id|Pci2000_Abort
@@ -2527,7 +2716,7 @@ r_return
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Reset&n; *&n; *&t;Description:&t;Process the Reset command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;flags - Flags about the reset command&n; *&n; *&t;Returns:&t;&t;No active command at this time, so this means&n; *&t;&t;&t;&t;&t;that each time we got some kind of response the&n; *&t;&t;&t;&t;&t;last time through.  Tell the mid-level code to&n; *&t;&t;&t;&t;&t;request sense information in order to decide what&n; *&t;&t;&t;&t;&t;to do next.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_Reset&n; *&n; *&t;Description:&t;Process the Reset command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;flags - Flags about the reset command&n; *&n; *&t;Returns:&t;&t;No active command at this time, so this means&n; *&t;&t;&t;&t;&t;that each time we got some kind of response the&n; *&t;&t;&t;&t;&t;last time through.  Tell the mid-level code to&n; *&t;&t;&t;&t;&t;request sense information in order to decide what&n; *&t;&t;&t;&t;&t;to do next.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_Reset
 r_int
 id|Pci2000_Reset
@@ -2545,8 +2734,64 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_Release&n; *&n; *&t;Description:&t;Release resources allocated for a single each adapter.&n; *&n; *&t;Parameters:&t;&t;pshost - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;zero.&n; *&n; ****************************************************************/
+DECL|function|Pci2000_Release
+r_int
+id|Pci2000_Release
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|pshost
+)paren
+(brace
+id|PADAPTER2000
+id|padapter
+op_assign
+id|HOSTDATA
+(paren
+id|pshost
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|padapter-&gt;irqOwned
+)paren
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
+id|free_irq
+(paren
+id|pshost-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.70 */
+id|free_irq
+(paren
+id|pshost-&gt;irq
+comma
+id|padapter
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.70 */
+id|release_region
+(paren
+id|pshost-&gt;io_port
+comma
+id|pshost-&gt;n_io_port
+)paren
+suffix:semicolon
+id|scsi_unregister
+c_func
+(paren
+id|pshost
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#include &quot;sd.h&quot;
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_BiosParam&n; *&n; *&t;Description:&t;Process the biosparam request from the SCSI manager to&n; *&t;&t;&t;&t;&t;return C/H/S data.&n; *&n; *&t;Parameters:&t;&t;disk - Pointer to SCSI disk structure.&n; *&t;&t;&t;&t;&t;dev&t; - Major/minor number from kernel.&n; *&t;&t;&t;&t;&t;geom - Pointer to integer array to place geometry data.&n; *&n; *&t;Returns:&t;&t;zero.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_BiosParam&n; *&n; *&t;Description:&t;Process the biosparam request from the SCSI manager to&n; *&t;&t;&t;&t;&t;return C/H/S data.&n; *&n; *&t;Parameters:&t;&t;disk - Pointer to SCSI disk structure.&n; *&t;&t;&t;&t;&t;dev&t; - Major/minor number from kernel.&n; *&t;&t;&t;&t;&t;geom - Pointer to integer array to place geometry data.&n; *&n; *&t;Returns:&t;&t;zero.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_BiosParam
 r_int
 id|Pci2000_BiosParam
@@ -2655,7 +2900,7 @@ DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign
-id|PCI2220I
+id|PCI2000
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif

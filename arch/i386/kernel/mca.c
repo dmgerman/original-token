@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/mca.c&n; *  Written by Martin Kolinek, February 1996&n; *&n; * Changes:&n; *&n; *&t;Chris Beauregard July 28th, 1996&n; *&t;- Fixed up integrated SCSI detection&n; *&n; *&t;Chris Beauregard August 3rd, 1996&n; *&t;- Made mca_info local&n; *&t;- Made integrated registers accessible through standard function calls&n; *&t;- Added name field&n; *&t;- More sanity checking&n; *&n; *&t;Chris Beauregard August 9th, 1996&n; *&t;- Rewrote /proc/mca&n; *&t;&n; *&t;Chris Beauregard January 7th, 1997&n; *&t;- Added basic NMI-processing&n; *&t;- Added more information to mca_info structure&n; *&n; *&t;David Weinehall October 12th, 1998&n; *&t;- Made a lot of cleaning up in the source&n; *&t;- Added use of save_flags / restore_flags&n; *&t;- Added the &squot;driver_loaded&squot; flag in MCA_adapter&n; *&t;- Added an alternative implemention of ZP Gu&squot;s mca_find_unused_adapter&n; *&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/mca.c&n; *  Written by Martin Kolinek, February 1996&n; *&n; * Changes:&n; *&n; *&t;Chris Beauregard July 28th, 1996&n; *&t;- Fixed up integrated SCSI detection&n; *&n; *&t;Chris Beauregard August 3rd, 1996&n; *&t;- Made mca_info local&n; *&t;- Made integrated registers accessible through standard function calls&n; *&t;- Added name field&n; *&t;- More sanity checking&n; *&n; *&t;Chris Beauregard August 9th, 1996&n; *&t;- Rewrote /proc/mca&n; *&t;&n; *&t;Chris Beauregard January 7th, 1997&n; *&t;- Added basic NMI-processing&n; *&t;- Added more information to mca_info structure&n; *&n; *&t;David Weinehall October 12th, 1998&n; *&t;- Made a lot of cleaning up in the source&n; *&t;- Added use of save_flags / restore_flags&n; *&t;- Added the &squot;driver_loaded&squot; flag in MCA_adapter&n; *&t;- Added an alternative implemention of ZP Gu&squot;s mca_find_unused_adapter&n; *&n; *&t;David Weinehall March 24th, 1999&n; *&t;- Fixed the output of &squot;Driver Installed&squot; in /proc/mca/pos&n; *&t;- Made the Integrated Video &amp; SCSI show up even if they have id 0000&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -102,7 +102,7 @@ DECL|struct|MCA_info
 r_struct
 id|MCA_info
 (brace
-multiline_comment|/* one for each of the 8 possible slots, plus one for integrated SCSI&n;   and one for integrated video. */
+multiline_comment|/* one for each of the 8 possible slots, plus one for integrated SCSI&n;&t; * and one for integrated video.&n;&t; */
 DECL|member|slot
 r_struct
 id|MCA_adapter
@@ -111,7 +111,7 @@ id|slot
 id|MCA_NUMADAPTERS
 )braket
 suffix:semicolon
-multiline_comment|/* two potential addresses for integrated SCSI adapter - this will      &n; * track which one we think it is&n; */
+multiline_comment|/* two potential addresses for integrated SCSI adapter - this will&n;&t; * track which one we think it is.&n;&t; */
 DECL|member|which_scsi
 r_int
 r_char
@@ -343,6 +343,10 @@ id|slot
 )braket
 dot
 id|id
+op_logical_and
+id|slot
+OL
+id|MCA_MAX_SLOT_NR
 )paren
 (brace
 multiline_comment|/* id = 0x0000 usually indicates hardware failure,&n;&t;&t; * however, ZP Gu (zpg@castle.net&gt; reports that his 9556&n;&t;&t; * has 0x0000 as id and everything still works.&n;&t;&t; */
@@ -478,7 +482,7 @@ id|MCA_ENABLED
 )paren
 )paren
 (brace
-multiline_comment|/* enabled bit is in pos 2 */
+multiline_comment|/* enabled bit is in POS 2 */
 id|mca_info-&gt;slot
 (braket
 id|slot
@@ -514,7 +518,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* WARNING: Be careful when making changes here. Putting an adapter&n;&t; * and the motherboard simultaneously into setup mode may result in &n;&t; * damage to chips (according to The Indispensible PC Hardware Book &n;&t; * by Hans-Peter Messmer). Also, we disable system interrupts (so  &t;&n;&t; * that we are not disturbed in the middle of this).&n;&t; */
+multiline_comment|/* WARNING: Be careful when making changes here. Putting an adapter&n;&t; * and the motherboard simultaneously into setup mode may result in&n;&t; * damage to chips (according to The Indispensible PC Hardware Book&n;&t; * by Hans-Peter Messmer). Also, we disable system interrupts (so&n;&t; * that we are not disturbed in the middle of this).&n;&t; */
 multiline_comment|/* Make sure the MCA bus is present */
 r_if
 c_cond
@@ -522,8 +526,10 @@ c_cond
 op_logical_neg
 id|MCA_bus
 )paren
+(brace
 r_return
 suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -565,7 +571,7 @@ comma
 id|MCA_ADAPTER_SETUP_REG
 )paren
 suffix:semicolon
-multiline_comment|/* Put motherboard into video setup mode, read integrated video &n;&t; * pos registers, and turn motherboard setup off.&n;&t; */
+multiline_comment|/* Put motherboard into video setup mode, read integrated video &n;&t; * POS registers, and turn motherboard setup off.&n;&t; */
 id|outb_p
 c_func
 (paren
@@ -628,7 +634,7 @@ c_func
 id|MCA_INTEGVIDEO
 )paren
 suffix:semicolon
-multiline_comment|/* Put motherboard into scsi setup mode, read integrated scsi&n;&t; * pos registers, and turn motherboard setup off.&n;&t; *&n;&t; * It seems there are two possible SCSI registers.  Martin says that&n;&t; * for the 56,57, 0xf7 is the one, but fails on the 76.&n;&t; * Alfredo (apena@vnet.ibm.com) says&n;&t; * 0xfd works on his machine.  We&squot;ll try both of them.  I figure it&squot;s&n;&t; * a good bet that only one could be valid at a time.  This could&n;&t; * screw up though if one is used for something else on the other&n;&t; * machine.&n;&t; */
+multiline_comment|/* Put motherboard into scsi setup mode, read integrated scsi&n;&t; * POS registers, and turn motherboard setup off.&n;&t; *&n;&t; * It seems there are two possible SCSI registers. Martin says that&n;&t; * for the 56,57, 0xf7 is the one, but fails on the 76.&n;&t; * Alfredo (apena@vnet.ibm.com) says&n;&t; * 0xfd works on his machine. We&squot;ll try both of them. I figure it&squot;s&n;&t; * a good bet that only one could be valid at a time. This could&n;&t; * screw up though if one is used for something else on the other&n;&t; * machine.&n;&t; */
 id|outb_p
 c_func
 (paren
@@ -692,7 +698,7 @@ op_ne
 l_int|0xff
 )paren
 (brace
-multiline_comment|/* 0xff all across means no device.  0x00 means something&squot;s&n;&t;&t;&t; * broken, but a device is probably there.  However, if you get&n;&t;&t;&t; * 0x00 from a motherboard register it won&squot;t matter what we&n;&t;&t;&t; * find.  For the record, on the 57SLC, the integrated SCSI&n;&t;&t;&t; * adapter has 0xffff for the adapter ID, but nonzero for&n;&t;&t;&t; * other registers.&n;&t;&t;&t; */
+multiline_comment|/* 0xff all across means no device. 0x00 means&n;&t;&t;&t; * something&squot;s broken, but a device is probably there.&n;&t;&t;&t; * However, if you get 0x00 from a motherboard&n;&t;&t;&t; * register it won&squot;t matter what we find.  For the&n;&t;&t;&t; * record, on the 57SLC, the integrated SCSI&n;&t;&t;&t; * adapter has 0xffff for the adapter ID, but&n;&t;&t;&t; * nonzero for other registers.&n;&t;&t;&t; */
 id|mca_info-&gt;which_scsi
 op_assign
 l_int|0xf7
@@ -733,6 +739,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 id|mca_info-&gt;slot
 (braket
 id|MCA_INTEGSCSI
@@ -754,13 +761,14 @@ id|j
 )paren
 suffix:semicolon
 )brace
+)brace
 id|mca_configure_adapter_status
 c_func
 (paren
 id|MCA_INTEGSCSI
 )paren
 suffix:semicolon
-multiline_comment|/* turn off motherboard setup */
+multiline_comment|/* Turn off motherboard setup */
 id|outb_p
 c_func
 (paren
@@ -769,7 +777,7 @@ comma
 id|MCA_MOTHERBOARD_SETUP_REG
 )paren
 suffix:semicolon
-multiline_comment|/* Now loop over MCA slots: put each adapter into setup mode, and&n;&t; * read its pos registers. Then put adapter setup off.&n;&t; */
+multiline_comment|/* Now loop over MCA slots: put each adapter into setup mode, and&n;&t; * read its POS registers. Then put adapter setup off.&n;&t; */
 r_for
 c_loop
 (paren
@@ -1042,7 +1050,7 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* more info available in pos 6 and 7? */
+multiline_comment|/* More info available in POS 6 and 7? */
 r_if
 c_cond
 (paren
@@ -1104,7 +1112,7 @@ r_int
 r_char
 id|pos5
 suffix:semicolon
-multiline_comment|/* First try - scan the various adapters and see if a specific          &n;         * adapter was responsible for the error&n;&t; */
+multiline_comment|/* First try - scan the various adapters and see if a specific&n;&t; * adapter was responsible for the error.&n;&t; */
 r_for
 c_loop
 (paren
@@ -1117,11 +1125,10 @@ OL
 id|MCA_NUMADAPTERS
 suffix:semicolon
 id|i
-op_add_assign
-l_int|1
+op_increment
 )paren
 (brace
-multiline_comment|/* bit 7 of POS 5 is reset when this adapter has a hardware     &n;                 * error.  bit 7 it reset if there&squot;s error information&n;                 * available in pos 6 and 7. */
+multiline_comment|/* Bit 7 of POS 5 is reset when this adapter has a hardware&n;&t; * error. Bit 7 it reset if there&squot;s error information&n;&t; * available in POS 6 and 7.&n;&t; */
 id|pos5
 op_assign
 id|mca_read_pos
@@ -1160,7 +1167,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* if I recall correctly, there&squot;s a whole bunch of other things that    &n;         * we can do to check for NMI problems, but that&squot;s all I know about&n;&t; * at the moment.&n;&t; */
+multiline_comment|/* If I recall correctly, there&squot;s a whole bunch of other things that&n;&t; * we can do to check for NMI problems, but that&squot;s all I know about&n;&t; * at the moment.&n;&t; */
 id|printk
 c_func
 (paren
@@ -1215,11 +1222,10 @@ OL
 id|MCA_NUMADAPTERS
 suffix:semicolon
 id|start
-op_add_assign
-l_int|1
+op_increment
 )paren
 (brace
-multiline_comment|/* not sure about this.  There&squot;s no point in returning&n;&t;&t; * adapters that aren&squot;t enabled, since they can&squot;t actually&n;&t;&t; * be used.  However, they might be needed for statistical&n;&t;&t; * purposes or something... But if that is the case, the&n;&t;&t; * user is free to write a routine that manually iterates&n;&t;&t; * through the adapters.&n;&t;&t; */
+multiline_comment|/* Not sure about this. There&squot;s no point in returning&n;&t;&t; * adapters that aren&squot;t enabled, since they can&squot;t actually&n;&t;&t; * be used. However, they might be needed for statistical&n;&t;&t; * purposes or something... But if that is the case, the&n;&t;&t; * user is free to write a routine that manually iterates&n;&t;&t; * through the adapters.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1305,11 +1311,10 @@ OL
 id|MCA_NUMADAPTERS
 suffix:semicolon
 id|start
-op_add_assign
-l_int|1
+op_increment
 )paren
 (brace
-multiline_comment|/* not sure about this.  There&squot;s no point in returning&n;&t;&t; * adapters that aren&squot;t enabled, since they can&squot;t actually&n;&t;&t; * be used.  However, they might be needed for statistical&n;&t;&t; * purposes or something... But if that is the case, the&n;&t;&t; * user is free to write a routine that manually iterates&n;&t;&t; * through the adapters.&n;&t;&t; */
+multiline_comment|/* not sure about this. There&squot;s no point in returning&n;&t;&t; * adapters that aren&squot;t enabled, since they can&squot;t actually&n;&t;&t; * be used. However, they might be needed for statistical&n;&t;&t; * purposes or something... But if that is the case, the&n;&t;&t; * user is free to write a routine that manually iterates&n;&t;&t; * through the adapters.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1490,7 +1495,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* make sure motherboard setup is off */
+multiline_comment|/* Make sure motherboard setup is off */
 id|outb_p
 c_func
 (paren
@@ -1499,7 +1504,7 @@ comma
 id|MCA_MOTHERBOARD_SETUP_REG
 )paren
 suffix:semicolon
-multiline_comment|/* read in the appropriate register */
+multiline_comment|/* Read in the appropriate register */
 r_if
 c_cond
 (paren
@@ -1510,7 +1515,7 @@ op_logical_and
 id|mca_info-&gt;which_scsi
 )paren
 (brace
-multiline_comment|/* disable adapter setup, enable motherboard setup */
+multiline_comment|/* Disable adapter setup, enable motherboard setup */
 id|outb_p
 c_func
 (paren
@@ -1557,7 +1562,7 @@ op_eq
 id|MCA_INTEGVIDEO
 )paren
 (brace
-multiline_comment|/* disable adapter setup, enable motherboard setup */
+multiline_comment|/* Disable adapter setup, enable motherboard setup */
 id|outb_p
 c_func
 (paren
@@ -1604,7 +1609,7 @@ OL
 id|MCA_MAX_SLOT_NR
 )paren
 (brace
-multiline_comment|/* make sure motherboard setup is off */
+multiline_comment|/* Make sure motherboard setup is off */
 id|outb_p
 c_func
 (paren
@@ -1613,7 +1618,7 @@ comma
 id|MCA_MOTHERBOARD_SETUP_REG
 )paren
 suffix:semicolon
-multiline_comment|/* read the appropriate register */
+multiline_comment|/* Read the appropriate register */
 id|outb_p
 c_func
 (paren
@@ -1649,7 +1654,7 @@ id|MCA_ADAPTER_SETUP_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* make sure the stored values are consistent, while we&squot;re here */
+multiline_comment|/* Make sure the stored values are consistent, while we&squot;re here */
 id|mca_info-&gt;slot
 (braket
 id|slot
@@ -1732,8 +1737,10 @@ id|mca_info
 op_eq
 l_int|0
 )paren
+(brace
 r_return
 suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -1745,7 +1752,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* make sure motherboard setup is off */
+multiline_comment|/* Make sure motherboard setup is off */
 id|outb_p
 c_func
 (paren
@@ -1754,7 +1761,7 @@ comma
 id|MCA_MOTHERBOARD_SETUP_REG
 )paren
 suffix:semicolon
-multiline_comment|/* read in the appropriate register */
+multiline_comment|/* Read in the appropriate register */
 id|outb_p
 c_func
 (paren
@@ -1795,7 +1802,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* update the global register list, while we have the byte */
+multiline_comment|/* Update the global register list, while we have the byte */
 id|mca_info-&gt;slot
 (braket
 id|slot
@@ -2244,7 +2251,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* Format pos registers of eight MCA slots */
+multiline_comment|/* Format POS registers of eight MCA slots */
 r_for
 c_loop
 (paren
@@ -2290,6 +2297,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 id|len
 op_add_assign
 id|sprintf
@@ -2312,6 +2320,7 @@ id|j
 )braket
 )paren
 suffix:semicolon
+)brace
 id|len
 op_add_assign
 id|sprintf
@@ -2332,7 +2341,7 @@ id|name
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Format pos registers of integrated video subsystem */
+multiline_comment|/* Format POS registers of integrated video subsystem */
 id|len
 op_add_assign
 id|sprintf
@@ -2359,6 +2368,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 id|len
 op_add_assign
 id|sprintf
@@ -2381,6 +2391,7 @@ id|j
 )braket
 )paren
 suffix:semicolon
+)brace
 id|len
 op_add_assign
 id|sprintf
@@ -2400,7 +2411,7 @@ dot
 id|name
 )paren
 suffix:semicolon
-multiline_comment|/* Format pos registers of integrated SCSI subsystem */
+multiline_comment|/* Format POS registers of integrated SCSI subsystem */
 id|len
 op_add_assign
 id|sprintf
@@ -2427,6 +2438,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 id|len
 op_add_assign
 id|sprintf
@@ -2449,6 +2461,7 @@ id|j
 )braket
 )paren
 suffix:semicolon
+)brace
 id|len
 op_add_assign
 id|sprintf
@@ -2513,7 +2526,7 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* should never happen */
+multiline_comment|/* Should never happen */
 id|proc_register
 c_func
 (paren
@@ -2586,7 +2599,7 @@ comma
 )brace
 )paren
 suffix:semicolon
-multiline_comment|/* initialize /proc/mca entries for existing adapters */
+multiline_comment|/* Initialize /proc/mca entries for existing adapters */
 r_for
 c_loop
 (paren
@@ -2599,8 +2612,7 @@ OL
 id|MCA_NUMADAPTERS
 suffix:semicolon
 id|i
-op_add_assign
-l_int|1
+op_increment
 )paren
 (brace
 id|mca_info-&gt;slot
@@ -2794,7 +2806,7 @@ l_int|0
 comma
 id|i
 suffix:semicolon
-multiline_comment|/* this really shouldn&squot;t happen... */
+multiline_comment|/* This really shouldn&squot;t happen... */
 r_if
 c_cond
 (paren
@@ -2812,7 +2824,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* print out the basic information */
+multiline_comment|/* Print out the basic information */
 r_if
 c_cond
 (paren
@@ -2896,7 +2908,7 @@ l_int|0
 )braket
 )paren
 (brace
-multiline_comment|/* drivers might register a name without /proc handler... */
+multiline_comment|/* Drivers might register a name without /proc handler... */
 id|len
 op_add_assign
 id|sprintf
@@ -2987,29 +2999,6 @@ suffix:colon
 l_string|&quot;No&quot;
 )paren
 suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Driver Installed: %s&bslash;n&quot;
-comma
-id|mca_is_adapter_used
-c_func
-(paren
-id|slot
-)paren
-ques
-c_cond
-l_string|&quot;Yes&quot;
-suffix:colon
-l_string|&quot;No&quot;
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3048,6 +3037,29 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;nDriver Installed: %s&quot;
+comma
+id|mca_is_adapter_used
+c_func
+(paren
+id|slot
+)paren
+ques
+c_cond
+l_string|&quot;Yes&quot;
+suffix:colon
+l_string|&quot;No&quot;
+)paren
+suffix:semicolon
 id|buf
 (braket
 id|len
@@ -3243,8 +3255,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* if we made it here, we better have a valid slot */
-multiline_comment|/* get the standard info */
+multiline_comment|/* If we made it here, we better have a valid slot */
+multiline_comment|/* Get the standard info */
 id|len
 op_assign
 id|mca_default_procfn
@@ -3255,7 +3267,7 @@ comma
 id|slot
 )paren
 suffix:semicolon
-multiline_comment|/* do any device-specific processing, if there is any */
+multiline_comment|/* Do any device-specific processing, if there is any */
 r_if
 c_cond
 (paren
@@ -3362,10 +3374,12 @@ id|count
 OL
 l_int|0
 )paren
+(brace
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3373,10 +3387,12 @@ id|count
 OG
 id|PROC_BLOCK_SIZE
 )paren
+(brace
 id|count
 op_assign
 id|PROC_BLOCK_SIZE
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3391,10 +3407,12 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
+(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|type
 op_assign
 id|inode-&gt;i_ino
@@ -3524,6 +3542,7 @@ id|ppos
 OG
 id|length
 )paren
+(brace
 id|count
 op_assign
 id|length
@@ -3531,6 +3550,7 @@ op_minus
 op_star
 id|ppos
 suffix:semicolon
+)brace
 id|end
 op_assign
 id|count

@@ -1,9 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.3&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Mon Dec 14 14:22:23 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Fri Mar 26 14:10:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAP_FRAME_H
 DECL|macro|IRLAP_FRAME_H
 mdefine_line|#define IRLAP_FRAME_H
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 multiline_comment|/* Frame types and templates */
@@ -48,33 +48,11 @@ mdefine_line|#define I_FRAME   0x00 /* Information Format */
 DECL|macro|UI_FRAME
 mdefine_line|#define UI_FRAME  0x03 /* Unnumbered Information */
 DECL|macro|CMD_FRAME
-mdefine_line|#define CMD_FRAME  0x01
+mdefine_line|#define CMD_FRAME 0x01
 DECL|macro|RSP_FRAME
-mdefine_line|#define RSP_FRAME  0x00
+mdefine_line|#define RSP_FRAME 0x00
 DECL|macro|PF_BIT
-mdefine_line|#define PF_BIT 0x10 /* Poll/final bit */
-DECL|macro|IR_S
-mdefine_line|#define IR_S                  0x01    /* Supervisory frames */
-DECL|macro|IR_RR
-mdefine_line|#define IR_RR                 0x01    /* Receiver ready */
-DECL|macro|IR_RNR
-mdefine_line|#define IR_RNR                0x05    /* Receiver not ready */
-DECL|macro|IR_REJ
-mdefine_line|#define IR_REJ                0x09    /* Reject */
-DECL|macro|IR_U
-mdefine_line|#define IR_U                  0x03    /* Unnumbered frames */
-DECL|macro|IR_SNRM
-mdefine_line|#define IR_SNRM               0x2f    /* Set Asynchronous Balanced Mode */
-DECL|macro|IR_DISC
-mdefine_line|#define IR_DISC               0x43    /* Disconnect */
-DECL|macro|IR_DM
-mdefine_line|#define IR_DM                 0x0f    /* Disconnected mode */
-DECL|macro|IR_UA
-mdefine_line|#define IR_UA                 0x63    /* Unnumbered acknowledge */
-DECL|macro|IR_FRMR
-mdefine_line|#define IR_FRMR               0x87    /* Frame reject */
-DECL|macro|IR_UI
-mdefine_line|#define IR_UI                 0x03    /* Unnumbered information */
+mdefine_line|#define PF_BIT    0x10 /* Poll/final bit */
 DECL|struct|xid_frame
 r_struct
 id|xid_frame
@@ -82,95 +60,39 @@ id|xid_frame
 DECL|member|caddr
 id|__u8
 id|caddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Connection address */
 DECL|member|control
 id|__u8
 id|control
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|ident
 id|__u8
 id|ident
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Should always be XID_FORMAT */
 DECL|member|saddr
 id|__u32
 id|saddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Source device address */
 DECL|member|daddr
 id|__u32
 id|daddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Destination device address */
 DECL|member|flags
 id|__u8
 id|flags
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Discovery flags */
 DECL|member|slotnr
 id|__u8
 id|slotnr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|version
 id|__u8
 id|version
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|discovery_info
 id|__u8
@@ -178,15 +100,10 @@ id|discovery_info
 (braket
 l_int|0
 )braket
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
+DECL|variable|PACK
 )brace
+id|PACK
 suffix:semicolon
 DECL|struct|test_frame
 r_struct
@@ -202,22 +119,26 @@ id|__u8
 id|control
 suffix:semicolon
 DECL|member|saddr
-id|__u8
+id|__u32
 id|saddr
 suffix:semicolon
 multiline_comment|/* Source device address */
 DECL|member|daddr
-id|__u8
+id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination device address */
 DECL|member|info
 id|__u8
-op_star
 id|info
+(braket
+l_int|0
+)braket
 suffix:semicolon
 multiline_comment|/* Information */
+DECL|variable|PACK
 )brace
+id|PACK
 suffix:semicolon
 DECL|struct|ua_frame
 r_struct
@@ -226,47 +147,19 @@ id|ua_frame
 DECL|member|caddr
 id|__u8
 id|caddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|control
 id|__u8
 id|control
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|saddr
 id|__u32
 id|saddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Source device address */
 DECL|member|daddr
 id|__u32
 id|daddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Dest device address */
 DECL|member|params
@@ -276,7 +169,9 @@ id|params
 l_int|0
 )braket
 suffix:semicolon
+DECL|variable|PACK
 )brace
+id|PACK
 suffix:semicolon
 DECL|struct|i_frame
 r_struct
@@ -285,24 +180,10 @@ id|i_frame
 DECL|member|caddr
 id|__u8
 id|caddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|control
 id|__u8
 id|control
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|data
 id|__u8
@@ -310,15 +191,10 @@ id|data
 (braket
 l_int|0
 )braket
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
+DECL|variable|PACK
 )brace
+id|PACK
 suffix:semicolon
 DECL|struct|snrm_frame
 r_struct
@@ -327,57 +203,22 @@ id|snrm_frame
 DECL|member|caddr
 id|__u8
 id|caddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|control
 id|__u8
 id|control
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|saddr
 id|__u32
 id|saddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|daddr
 id|__u32
 id|daddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|ncaddr
 id|__u8
 id|ncaddr
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|params
 id|__u8
@@ -386,13 +227,20 @@ id|params
 l_int|0
 )braket
 suffix:semicolon
+DECL|variable|PACK
 )brace
+id|PACK
 suffix:semicolon
 multiline_comment|/* Per-packet information we need to hide inside sk_buff */
 DECL|struct|irlap_skb_cb
 r_struct
 id|irlap_skb_cb
 (brace
+DECL|member|magic
+r_int
+id|magic
+suffix:semicolon
+multiline_comment|/* Be sure that we can trust the information */
 DECL|member|mtt
 r_int
 id|mtt
@@ -448,7 +296,7 @@ comma
 id|__u8
 id|command
 comma
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery
 )paren
@@ -464,6 +312,24 @@ comma
 r_struct
 id|qos_info
 op_star
+)paren
+suffix:semicolon
+r_void
+id|irlap_send_test_frame
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
+comma
+id|__u32
+id|daddr
+comma
+r_struct
+id|sk_buff
+op_star
+id|cmd
 )paren
 suffix:semicolon
 r_void
@@ -623,6 +489,5 @@ r_int
 id|command
 )paren
 suffix:semicolon
-multiline_comment|/* void irlap_input( struct irlap_cb *self, struct sk_buff *skb); */
 macro_line|#endif
 eof

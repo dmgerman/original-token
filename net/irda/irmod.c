@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Thu Feb 18 08:51:50 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon Mar 29 09:06:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/init.h&gt;
@@ -98,14 +98,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|irobex_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|irlan_init
 c_func
 (paren
@@ -160,6 +152,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IRDA_COMPRESSION
+macro_line|#ifdef CONFIG_IRDA_DEFLATE
+r_extern
+id|irda_deflate_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_IRDA_DEFLATE */
+macro_line|#endif /* CONFIG_IRDA_COMPRESSION */
 r_static
 r_int
 id|irda_open
@@ -512,18 +514,46 @@ c_func
 id|irlmp_discovery_request
 )paren
 suffix:semicolon
-DECL|variable|irlmp_register_layer
+DECL|variable|irlmp_register_client
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|irlmp_register_layer
+id|irlmp_register_client
 )paren
 suffix:semicolon
-DECL|variable|irlmp_unregister_layer
+DECL|variable|irlmp_unregister_client
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|irlmp_unregister_layer
+id|irlmp_unregister_client
+)paren
+suffix:semicolon
+DECL|variable|irlmp_update_client
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irlmp_update_client
+)paren
+suffix:semicolon
+DECL|variable|irlmp_register_service
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irlmp_register_service
+)paren
+suffix:semicolon
+DECL|variable|irlmp_unregister_service
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irlmp_unregister_service
+)paren
+suffix:semicolon
+DECL|variable|irlmp_service_to_hint
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irlmp_service_to_hint
 )paren
 suffix:semicolon
 DECL|variable|irlmp_data_request
@@ -779,7 +809,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Linux-2.2 Support for the IrDA (tm) Protocols (Dag Brattli)&bslash;n&quot;
+l_string|&quot;IrDA (tm) Protocols for Linux-2.2 (Dag Brattli)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|irlmp_init
@@ -853,13 +883,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IROBEX
-id|irobex_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IRCOMM
 id|ircomm_init
 c_func
@@ -899,7 +922,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * FIXME:&n; * This function should have been wrapped with #ifdef MODULE, but then&n; * irda_proto_cleanup() must be moved from af_irda.c to this file since&n; * that function must also be wrapped if this one is.&n; */
+macro_line|#ifdef MODULE
 DECL|function|irda_cleanup
 r_void
 id|irda_cleanup
@@ -959,6 +982,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Function irda_lock (lock)&n; *&n; *    Lock variable. Returns false if the lock is already set.&n; *    &n; */
 DECL|function|irda_lock
 r_inline
@@ -1830,6 +1854,32 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|irda_mod_inc_use_count
+r_void
+id|irda_mod_inc_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|irda_mod_dec_use_count
+r_void
+id|irda_mod_dec_use_count
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
+)brace
 macro_line|#ifdef MODULE
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|irda_proc_modcount
@@ -1912,5 +1962,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

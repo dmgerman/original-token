@@ -986,6 +986,14 @@ id|v.mode
 op_assign
 id|VIDEO_MODE_AUTO
 suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|v.name
+comma
+l_string|&quot;FM&quot;
+)paren
+suffix:semicolon
 id|v.signal
 op_assign
 l_int|0xFFFF

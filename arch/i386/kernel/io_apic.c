@@ -3476,7 +3476,7 @@ id|pos
 dot
 id|mpc_srcbus
 op_assign
-id|bus_type
+l_int|0
 suffix:semicolon
 id|mp_irqs
 (braket
@@ -4214,16 +4214,38 @@ id|i
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/*&n;&t;&t;&t; * we have no business changing low ISA&n;&t;&t;&t; * IRQs.&n;&t;&t;&t; */
+(brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|IO_APIC_IRQ
 c_func
 (paren
 id|i
 )paren
 )paren
+r_continue
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Hmm.. We don&squot;t have an entry for this,&n;&t;&t;&t; * so default to an old-fashioned 8259&n;&t;&t;&t; * interrupt if we can..&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|16
+)paren
+(brace
+id|make_8259A_irq
+c_func
+(paren
+id|i
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* Strange. Oh, well.. */
 id|irq_desc
 (braket
 id|i
@@ -4234,6 +4256,7 @@ op_assign
 op_amp
 id|no_irq_type
 suffix:semicolon
+)brace
 )brace
 id|init_IRQ_SMP
 c_func

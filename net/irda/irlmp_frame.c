@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Thu Feb 18 08:48:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Tue Apr  6 18:31:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irlmp_frame.h&gt;
+macro_line|#include &lt;net/irda/discovery.h&gt;
 r_static
 r_struct
 id|lsap_cb
@@ -435,7 +436,7 @@ id|CONNECT_CMD
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 l_string|&quot;Incoming connection, source LSAP=%d, dest LSAP=%d&bslash;n&quot;
 comma
@@ -805,6 +806,10 @@ id|lap-&gt;reason
 op_assign
 id|reason
 suffix:semicolon
+id|lap-&gt;daddr
+op_assign
+id|DEV_ADDR_ANY
+suffix:semicolon
 multiline_comment|/* FIXME: must do something with the userdata if any */
 multiline_comment|/*&n;&t; *  Inform station state machine&n;&t; */
 id|irlmp_do_lap_event
@@ -966,6 +971,64 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irlmp_link_discovery_indication (self, log)&n; *&n; *    Device is discovering us&n; *&n; */
+DECL|function|irlmp_link_discovery_indication
+r_void
+id|irlmp_link_discovery_indication
+c_func
+(paren
+r_struct
+id|lap_cb
+op_star
+id|self
+comma
+id|discovery_t
+op_star
+id|discovery
+)paren
+(brace
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|LMP_LAP_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|irlmp_add_discovery
+c_func
+(paren
+id|irlmp-&gt;cachelog
+comma
+id|discovery
+)paren
+suffix:semicolon
+multiline_comment|/* Just handle it the same way as a discovery confirm */
+id|irlmp_do_lap_event
+c_func
+(paren
+id|self
+comma
+id|LM_LAP_DISCOVERY_CONFIRM
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function irlmp_link_discovery_confirm (self, log)&n; *&n; *    Called by IrLAP with a list of discoveries after the discovery&n; *    request has been carried out. A NULL log is received if IrLAP&n; *    was unable to carry out the discovery request&n; *&n; */
 DECL|function|irlmp_link_discovery_confirm
 r_void
@@ -982,11 +1045,6 @@ op_star
 id|log
 )paren
 (brace
-multiline_comment|/* &t;DISCOVERY *discovery; */
-id|hashbin_t
-op_star
-id|old_log
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1018,117 +1076,12 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
+id|irlmp_add_discovery_log
 c_func
 (paren
-id|self-&gt;cachelog
-op_ne
-l_int|NULL
+id|irlmp-&gt;cachelog
 comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *  If log is missing this means that IrLAP was unable to perform the&n;&t; *  discovery, so restart discovery again with just the half timeout&n;&t; *  of the normal one.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
 id|log
-)paren
-(brace
-id|irlmp_start_discovery_timer
-c_func
-(paren
-id|irlmp
-comma
-l_int|150
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#if 0
-id|discovery
-op_assign
-id|hashbin_remove_first
-c_func
-(paren
-id|log
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|discovery
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), found %s&bslash;n&quot;
-comma
-id|discovery-&gt;info
-)paren
-suffix:semicolon
-multiline_comment|/* Remove any old discovery of this device */
-id|hashbin_remove
-c_func
-(paren
-id|self-&gt;cachelog
-comma
-id|discovery-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-multiline_comment|/* Insert the new one */
-id|hashbin_insert
-c_func
-(paren
-id|self-&gt;cachelog
-comma
-(paren
-id|QUEUE
-op_star
-)paren
-id|discovery
-comma
-id|discovery-&gt;daddr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|discovery
-op_assign
-id|hashbin_remove_first
-c_func
-(paren
-id|log
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|old_log
-op_assign
-id|self-&gt;cachelog
-suffix:semicolon
-id|self-&gt;cachelog
-op_assign
-id|log
-suffix:semicolon
-id|hashbin_delete
-c_func
-(paren
-id|old_log
-comma
-(paren
-id|FREE_FUNC
-)paren
-id|kfree
 )paren
 suffix:semicolon
 id|irlmp_do_lap_event
@@ -1153,7 +1106,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
 DECL|function|irlmp_update_cache
-id|__inline__
+r_inline
 r_void
 id|irlmp_update_cache
 c_func
@@ -1242,18 +1195,6 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Optimize for the common case. We assume that the last frame&n;&t; *  received is in the same connection as the last one, so check in&n;&t; *  cache first to avoid the linear search&n;&t; */
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
-id|ASSERT
-c_func
-(paren
-id|irlmp
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|NULL
-suffix:semicolon
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1274,15 +1215,6 @@ id|dlsap_sel
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Using cached LSAP&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 (paren
 id|irlmp-&gt;cache.lsap

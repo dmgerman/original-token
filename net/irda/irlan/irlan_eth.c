@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Wed Feb  3 19:58:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Mon Mar 22 17:41:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
+macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlan_common.h&gt;
 macro_line|#include &lt;net/irda/irlan_eth.h&gt;
 multiline_comment|/*&n; * Function irlan_eth_tx (skb)&n; *&n; *    Transmits ethernet frames over IrDA link.&n; *&n; */
@@ -304,7 +305,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_eth_receive (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
 DECL|function|irlan_eth_receive
-r_void
+r_int
 id|irlan_eth_receive
 c_func
 (paren
@@ -344,6 +345,7 @@ op_ne
 l_int|NULL
 comma
 r_return
+l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -355,6 +357,7 @@ op_eq
 id|IRLAN_MAGIC
 comma
 r_return
+l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -370,6 +373,7 @@ op_increment
 id|self-&gt;stats.rx_dropped
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|ASSERT
@@ -380,6 +384,7 @@ OG
 l_int|1
 comma
 r_return
+l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -414,7 +419,9 @@ id|self-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-multiline_comment|/* &t;net_bh(); */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_eth_flow (status)&n; *&n; *    Do flow control between IP/Ethernet and IrLAN/IrTTP. This is done by &n; *    controlling the dev-&gt;tbusy variable.&n; */
 DECL|function|irlan_eth_flow_indication

@@ -485,6 +485,8 @@ DECL|macro|SOL_ATM
 mdefine_line|#define SOL_ATM&t;&t;264&t;/* ATM layer (cell level) */
 DECL|macro|SOL_AAL
 mdefine_line|#define SOL_AAL&t;&t;265&t;/* ATM Adaption Layer (packet level) */
+DECL|macro|SOL_IRDA
+mdefine_line|#define SOL_IRDA        266
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1

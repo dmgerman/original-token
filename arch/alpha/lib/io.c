@@ -1968,6 +1968,7 @@ r_int
 r_int
 id|to
 comma
+r_const
 r_void
 op_star
 id|from
@@ -1977,6 +1978,7 @@ id|count
 )paren
 (brace
 multiline_comment|/* Optimize co-aligned transfers.  Everything else gets handled&n;&t;   a byte at a time. */
+multiline_comment|/* FIXME -- align FROM.  */
 r_if
 c_cond
 (paren
@@ -2011,6 +2013,7 @@ c_func
 (paren
 op_star
 (paren
+r_const
 id|u64
 op_star
 )paren
@@ -2079,6 +2082,7 @@ c_func
 (paren
 op_star
 (paren
+r_const
 id|u32
 op_star
 )paren
@@ -2147,6 +2151,7 @@ c_func
 (paren
 op_star
 (paren
+r_const
 id|u16
 op_star
 )paren
@@ -2194,6 +2199,7 @@ c_func
 (paren
 op_star
 (paren
+r_const
 id|u8
 op_star
 )paren

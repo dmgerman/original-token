@@ -1,9 +1,10 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Sat Feb 20 01:30:39 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Thu Mar 25 10:27:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
+macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
 DECL|variable|irttp
@@ -26,7 +27,7 @@ id|self
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|irttp_data_indication
 c_func
 (paren
@@ -45,7 +46,7 @@ id|skb
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|irttp_udata_indication
 c_func
 (paren
@@ -102,7 +103,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -426,12 +427,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrTTP: Can&squot;t allocate memory for &quot;
-l_string|&quot;TSAP control block!&bslash;n&quot;
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unable to kmalloc!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -501,6 +503,35 @@ comma
 id|NOTIFY_MAX_NAME
 )paren
 suffix:semicolon
+id|self-&gt;magic
+op_assign
+id|TTP_TSAP_MAGIC
+suffix:semicolon
+id|self-&gt;connected
+op_assign
+id|FALSE
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|self-&gt;rx_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|self-&gt;tx_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|self-&gt;rx_fragments
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Create LSAP at IrLMP layer&n;&t; */
 id|lsap
 op_assign
@@ -557,36 +588,6 @@ id|self-&gt;lsap
 op_assign
 id|lsap
 suffix:semicolon
-id|self-&gt;magic
-op_assign
-id|TTP_TSAP_MAGIC
-suffix:semicolon
-id|self-&gt;connected
-op_assign
-id|FALSE
-suffix:semicolon
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|self-&gt;rx_queue
-)paren
-suffix:semicolon
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|self-&gt;tx_queue
-)paren
-suffix:semicolon
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|self-&gt;rx_fragments
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *  Insert ourself into the hashbin&n;&t; */
 id|hashbin_insert
 c_func
 (paren
@@ -598,7 +599,10 @@ op_star
 )paren
 id|self
 comma
-id|self-&gt;stsap_sel
+(paren
+r_int
+)paren
+id|self
 comma
 l_int|NULL
 )paren
@@ -636,15 +640,6 @@ op_star
 id|self
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* First make sure we&squot;re connected. */
 id|ASSERT
 c_func
@@ -808,7 +803,10 @@ c_func
 (paren
 id|irttp-&gt;tsaps
 comma
-id|self-&gt;stsap_sel
+(paren
+r_int
+)paren
+id|self
 comma
 l_int|NULL
 )paren
@@ -1007,15 +1005,6 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1082,7 +1071,7 @@ l_string|&quot;(), No data, or not connected&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOTCONN
 suffix:semicolon
 )brace
 multiline_comment|/*  &n;&t; *  Check if SAR is disabled, and the frame is larger than what fits&n;&t; *  inside an IrLAP frame&n;&t; */
@@ -1113,7 +1102,7 @@ l_string|&quot;(), SAR disabled, and data is to large for IrLAP!&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EMSGSIZE
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t; *  Check if SAR is enabled, and the frame is larger than the &n;&t; *  TxMaxSduSize &n;&t; */
@@ -1124,6 +1113,12 @@ c_cond
 id|self-&gt;tx_max_sdu_size
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|self-&gt;tx_max_sdu_size
+op_ne
+id|SAR_UNBOUND
 )paren
 op_logical_and
 (paren
@@ -1145,7 +1140,7 @@ l_string|&quot;but data is larger than TxMaxSduSize!&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EMSGSIZE
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t; *  Check if transmit queue is full&n;&t; */
@@ -1171,7 +1166,7 @@ id|self
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOBUFS
 suffix:semicolon
 )brace
 multiline_comment|/* Queue frame, or queue frame segments */
@@ -1298,7 +1293,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irttp_xmit (self)&n; *&n; *    If possible, transmit a frame queued for transmission.&n; *&n; */
+multiline_comment|/*&n; * Function irttp_run_tx_queue (self)&n; *&n; *    If possible, transmit a frame queued for transmission.&n; *&n; */
 DECL|function|irttp_run_tx_queue
 r_static
 r_void
@@ -1420,15 +1415,13 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Since we can transmit and receive frames concurrently, &n;&t;&t; *  the code below is a critical region and we must assure that&n;&t;&t; *  nobody messes with the credits while we update them.&n;&t;&t; */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|self-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|n
@@ -1439,7 +1432,7 @@ id|self-&gt;avail_credit
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Only space for 127 credits in frame */
+multiline_comment|/* Only room for 127 credits in frame */
 r_if
 c_cond
 (paren
@@ -1466,20 +1459,13 @@ suffix:semicolon
 id|self-&gt;send_credit
 op_decrement
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|self-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;irttp_xmit: Giving away %d credits&bslash;n&quot;
-comma
-id|n
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t; *  More bit must be set by the data_request() or fragment() &n;&t;&t; *  functions&n;&t;&t; */
@@ -1674,15 +1660,13 @@ id|LAP_HEADER
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Since we can transmit and receive frames concurrently, &n;&t; *  the code below is a critical region and we must assure that&n;&t; *  nobody messes with the credits while we update them.&n;&t; */
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|self-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|n
@@ -1717,9 +1701,12 @@ id|self-&gt;remote_credit
 op_add_assign
 id|n
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|self-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1757,9 +1744,10 @@ id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irttp_udata_indication (instance, sap, skb)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irttp_udata_indication (instance, sap, skb)&n; *&n; *    Received some unit-data (unreliable)&n; *&n; */
 DECL|function|irttp_udata_indication
-r_void
+r_static
+r_int
 id|irttp_udata_indication
 c_func
 (paren
@@ -1808,6 +1796,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1819,6 +1809,8 @@ op_eq
 id|TTP_TSAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1830,6 +1822,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1856,10 +1850,14 @@ suffix:semicolon
 id|self-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_data_indication (handle, skb)&n; *&n; *    Receive segment from IrLMP. &n; *&n; */
 DECL|function|irttp_data_indication
-r_void
+r_static
+r_int
 id|irttp_data_indication
 c_func
 (paren
@@ -1909,6 +1907,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1920,6 +1920,8 @@ op_eq
 id|TTP_TSAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1931,6 +1933,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1960,7 +1964,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
 l_string|&quot;(), got %d credits, TSAP sel=%02x&bslash;n&quot;
@@ -2066,6 +2070,9 @@ id|self
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_flow_request (self, command)&n; *&n; *    This funtion could be used by the upper layers to tell IrTTP to stop&n; *    delivering frames if the receive queues are starting to get full, or &n; *    to tell IrTTP to start delivering frames again.&n; */
@@ -2177,7 +2184,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_connect_request (self, dtsap_sel, daddr, qos)&n; *&n; *    Try to connect to remote destination TSAP selector&n; *&n; */
 DECL|function|irttp_connect_request
-r_void
+r_int
 id|irttp_connect_request
 c_func
 (paren
@@ -2200,7 +2207,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -2213,6 +2220,9 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+id|__u16
+id|tmp_be
 suffix:semicolon
 id|__u8
 op_star
@@ -2240,6 +2250,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -2251,6 +2263,8 @@ op_eq
 id|TTP_TSAP_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -2278,6 +2292,8 @@ op_logical_neg
 id|skb
 )paren
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 multiline_comment|/* Reserve space for MUX_CONTROL and LAP header */
 id|skb_reserve
@@ -2320,6 +2336,8 @@ id|LAP_HEADER
 )paren
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -2412,6 +2430,8 @@ id|LAP_HEADER
 )paren
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -2459,26 +2479,30 @@ op_assign
 l_int|0x02
 suffix:semicolon
 multiline_comment|/* Value length */
-op_star
+id|tmp_be
+op_assign
+id|cpu_to_be16
+c_func
 (paren
 (paren
 id|__u16
-op_star
 )paren
+id|max_sdu_size
+)paren
+suffix:semicolon
+id|memcpy
+c_func
 (paren
 id|frame
 op_plus
 l_int|4
-)paren
-)paren
-op_assign
-id|htons
-c_func
-(paren
-id|max_sdu_size
+comma
+op_amp
+id|tmp_be
+comma
+l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* Big endian! */
 )brace
 r_else
 (brace
@@ -2505,6 +2529,7 @@ l_int|0x7f
 suffix:semicolon
 )brace
 multiline_comment|/* Connect with IrLMP. No QoS parameters for now */
+r_return
 id|irlmp_connect_request
 c_func
 (paren
@@ -2541,7 +2566,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -2555,6 +2580,9 @@ id|tsap_cb
 op_star
 id|self
 suffix:semicolon
+id|__u16
+id|tmp_cpu
+suffix:semicolon
 id|__u8
 op_star
 id|frame
@@ -2564,6 +2592,13 @@ id|n
 suffix:semicolon
 r_int
 id|parameters
+suffix:semicolon
+id|__u8
+id|plen
+comma
+id|pi
+comma
+id|pl
 suffix:semicolon
 id|DEBUG
 c_func
@@ -2703,31 +2738,63 @@ c_cond
 id|parameters
 )paren
 (brace
-id|DEBUG
+id|plen
+op_assign
+id|frame
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|pi
+op_assign
+id|frame
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|pl
+op_assign
+id|frame
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|ASSERT
 c_func
 (paren
-l_int|4
+id|pl
+op_eq
+l_int|2
 comma
-id|__FUNCTION__
-l_string|&quot;(), Contains parameters!&bslash;n&quot;
+r_return
+suffix:semicolon
 )paren
 suffix:semicolon
-id|self-&gt;tx_max_sdu_size
-op_assign
-id|ntohs
+id|memcpy
 c_func
 (paren
-op_star
-(paren
-id|__u16
-op_star
-)paren
-(paren
+op_amp
+id|tmp_cpu
+comma
 id|frame
 op_plus
 l_int|4
+comma
+l_int|2
 )paren
+suffix:semicolon
+multiline_comment|/* Align value */
+id|be16_to_cpus
+c_func
+(paren
+op_amp
+id|tmp_cpu
 )paren
+suffix:semicolon
+multiline_comment|/* Convert to host order */
+id|self-&gt;tx_max_sdu_size
+op_assign
+id|tmp_cpu
 suffix:semicolon
 id|DEBUG
 c_func
@@ -2807,7 +2874,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -2826,6 +2893,9 @@ id|lsap_cb
 op_star
 id|lsap
 suffix:semicolon
+id|__u16
+id|tmp_cpu
+suffix:semicolon
 id|__u8
 op_star
 id|frame
@@ -2835,6 +2905,13 @@ id|parameters
 suffix:semicolon
 r_int
 id|n
+suffix:semicolon
+id|__u8
+id|plen
+comma
+id|pi
+comma
+id|pl
 suffix:semicolon
 id|self
 op_assign
@@ -2968,22 +3045,63 @@ id|__FUNCTION__
 l_string|&quot;(), Contains parameters!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|self-&gt;tx_max_sdu_size
+id|plen
 op_assign
-id|ntohs
+id|frame
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|pi
+op_assign
+id|frame
+(braket
+l_int|2
+)braket
+suffix:semicolon
+id|pl
+op_assign
+id|frame
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|ASSERT
 c_func
 (paren
-op_star
-(paren
-id|__u16
-op_star
+id|pl
+op_eq
+l_int|2
+comma
+r_return
+suffix:semicolon
 )paren
+suffix:semicolon
+id|memcpy
+c_func
 (paren
+op_amp
+id|tmp_cpu
+comma
 id|frame
 op_plus
 l_int|4
+comma
+l_int|2
 )paren
+suffix:semicolon
+multiline_comment|/* Align value */
+id|be16_to_cpus
+c_func
+(paren
+op_amp
+id|tmp_cpu
 )paren
+suffix:semicolon
+multiline_comment|/* Convert to host order */
+id|self-&gt;tx_max_sdu_size
+op_assign
+id|tmp_cpu
 suffix:semicolon
 id|DEBUG
 c_func
@@ -3016,6 +3134,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* Remove TTP header */
 r_if
 c_cond
 (paren
@@ -3051,7 +3170,7 @@ id|tsap_cb
 op_star
 id|self
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -3064,6 +3183,9 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+id|__u32
+id|tmp_be
 suffix:semicolon
 id|__u8
 op_star
@@ -3301,23 +3423,28 @@ op_assign
 l_int|0x02
 suffix:semicolon
 multiline_comment|/* Value length */
-op_star
+id|tmp_be
+op_assign
+id|cpu_to_be16
+c_func
 (paren
 (paren
 id|__u16
-op_star
 )paren
+id|max_sdu_size
+)paren
+suffix:semicolon
+id|memcpy
+c_func
 (paren
 id|frame
 op_plus
 l_int|4
-)paren
-)paren
-op_assign
-id|htons
-c_func
-(paren
-id|max_sdu_size
+comma
+op_amp
+id|tmp_be
+comma
+l_int|2
 )paren
 suffix:semicolon
 )brace
@@ -3351,6 +3478,196 @@ id|self-&gt;lsap
 comma
 id|skb
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irttp_dup (self, instance)&n; *&n; *    Duplicate TSAP, can be used by servers to confirm a connection on a&n; *    new TSAP so it can keep listening on the old one.&n; */
+DECL|function|irttp_dup
+r_struct
+id|tsap_cb
+op_star
+id|irttp_dup
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|orig
+comma
+r_void
+op_star
+id|instance
+)paren
+(brace
+r_struct
+id|tsap_cb
+op_star
+r_new
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hashbin_find
+c_func
+(paren
+id|irttp-&gt;tsaps
+comma
+(paren
+r_int
+)paren
+id|orig
+comma
+l_int|NULL
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unable to find TSAP&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_new
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|tsap_cb
+)paren
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+r_new
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unable to kmalloc&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* Dup */
+id|memcpy
+c_func
+(paren
+r_new
+comma
+id|orig
+comma
+r_sizeof
+(paren
+r_struct
+id|tsap_cb
+)paren
+)paren
+suffix:semicolon
+r_new
+op_member_access_from_pointer
+id|notify.instance
+op_assign
+id|instance
+suffix:semicolon
+r_new
+op_member_access_from_pointer
+id|lsap
+op_assign
+id|irlmp_dup
+c_func
+(paren
+id|orig-&gt;lsap
+comma
+r_new
+)paren
+suffix:semicolon
+multiline_comment|/* Not everything should be copied */
+id|init_timer
+c_func
+(paren
+op_amp
+r_new
+op_member_access_from_pointer
+id|todo_timer
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+r_new
+op_member_access_from_pointer
+id|rx_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+r_new
+op_member_access_from_pointer
+id|tx_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+r_new
+op_member_access_from_pointer
+id|rx_fragments
+)paren
+suffix:semicolon
+id|hashbin_insert
+c_func
+(paren
+id|irttp-&gt;tsaps
+comma
+(paren
+id|QUEUE
+op_star
+)paren
+r_new
+comma
+(paren
+r_int
+)paren
+r_new
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+r_new
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irttp_disconnect_request (self)&n; *&n; *    Close this connection please! If priority is high, the queued data &n; *    segments, if any, will be deallocated first&n; *&n; */
@@ -3686,12 +4003,14 @@ id|self-&gt;connected
 op_assign
 id|FALSE
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Use callback to notify layer above &n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self-&gt;notify.disconnect_indication
 )paren
+r_return
+suffix:semicolon
 id|self-&gt;notify
 dot
 id|disconnect_indication
@@ -3706,6 +4025,93 @@ comma
 id|userdata
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irttp_do_data_indication (self, skb)&n; *&n; *    Try to deliver reassebled skb to layer above, and requeue it if that&n; *    for some reason should fail. We mark rx sdu as busy to apply back&n; *    pressure is necessary.&n; */
+DECL|function|irttp_do_data_indication
+r_void
+id|irttp_do_data_indication
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
+id|self-&gt;notify
+dot
+id|data_indication
+c_func
+(paren
+id|self-&gt;notify.instance
+comma
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Usually the layer above will notify that it&squot;s input queue is&n;&t; * starting to get filled by using the flow request, but this may&n;&t; * be difficult, so it can instead just refuse to eat it and just&n;&t; * give an error back &n;&t; */
+r_if
+c_cond
+(paren
+id|err
+op_eq
+op_minus
+id|ENOMEM
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;() requeueing skb!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure we take a break */
+id|self-&gt;rx_sdu_busy
+op_assign
+id|TRUE
+suffix:semicolon
+multiline_comment|/* Need to push the header in again */
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|TTP_HEADER
+)paren
+suffix:semicolon
+id|skb-&gt;data
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x00
+suffix:semicolon
+multiline_comment|/* Make sure MORE bit is cleared */
+multiline_comment|/* Put skb back on queue */
+id|skb_queue_head
+c_func
+(paren
+op_amp
+id|self-&gt;rx_queue
+comma
+id|skb
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irttp_run_rx_queue (self)&n; *&n; *     Check if we have any frames to be transmitted, or if we have any&n; *     available credit to give away.&n; */
 DECL|function|irttp_run_rx_queue
@@ -3724,55 +4130,10 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-id|__u8
-op_star
-id|frame
-suffix:semicolon
 r_int
 id|more
 op_assign
 l_int|0
-suffix:semicolon
-r_void
-op_star
-id|instance
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|TTP_TSAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|instance
-op_assign
-id|self-&gt;notify.instance
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|instance
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
 suffix:semicolon
 id|DEBUG
 c_func
@@ -3803,24 +4164,14 @@ id|FALSE
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Process receive queue&n;&t; */
+multiline_comment|/*&n;&t; *  Reassemble all frames in receive queue and deliver them&n;&t; */
 r_while
 c_loop
 (paren
-(paren
-op_logical_neg
-id|skb_queue_empty
-c_func
-(paren
-op_amp
-id|self-&gt;rx_queue
-)paren
-)paren
-op_logical_and
 op_logical_neg
 id|self-&gt;rx_sdu_busy
-)paren
-(brace
+op_logical_and
+(paren
 id|skb
 op_assign
 id|skb_dequeue
@@ -3829,47 +4180,20 @@ c_func
 op_amp
 id|self-&gt;rx_queue
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|skb
 )paren
-r_break
-suffix:semicolon
-multiline_comment|/* Should not happend, but ...  */
+)paren
+(brace
 id|self-&gt;avail_credit
 op_increment
 suffix:semicolon
-id|frame
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|more
 op_assign
-id|frame
+id|skb-&gt;data
 (braket
 l_int|0
 )braket
 op_amp
 l_int|0x80
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), More=%s&bslash;n&quot;
-comma
-id|more
-ques
-c_cond
-l_string|&quot;TRUE&quot;
-suffix:colon
-l_string|&quot;FALSE&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Remove TTP header */
 id|skb_pull
@@ -3889,24 +4213,14 @@ multiline_comment|/*  &n;&t;&t; * If SAR is disabled, or user has requested no r
 r_if
 c_cond
 (paren
-(paren
-id|self-&gt;no_defrag
-)paren
-op_logical_or
-(paren
 id|self-&gt;rx_max_sdu_size
 op_eq
-l_int|0
-)paren
+id|SAR_DISABLE
 )paren
 (brace
-id|self-&gt;notify
-dot
-id|data_indication
+id|irttp_do_data_indication
 c_func
 (paren
-id|instance
-comma
 id|self
 comma
 id|skb
@@ -3941,7 +4255,7 @@ c_func
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;(), queueing fragment&bslash;n&quot;
+l_string|&quot;(), queueing frag&bslash;n&quot;
 )paren
 suffix:semicolon
 id|skb_queue_tail
@@ -3956,29 +4270,35 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
+multiline_comment|/* Free the part of the SDU that is too big */
+id|dev_kfree_skb
 c_func
 (paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), Error!&bslash;n&quot;
+id|skb
 )paren
 suffix:semicolon
 )brace
+r_continue
+suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t;&t; *  This is the last fragment, so time to reassemble!&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  This is the last fragment, so time to reassemble!&n;&t;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|self-&gt;rx_sdu_size
 op_le
 id|self-&gt;rx_max_sdu_size
 )paren
+op_logical_or
+(paren
+id|self-&gt;rx_max_sdu_size
+op_eq
+id|SAR_UNBOUND
+)paren
+)paren
 (brace
-multiline_comment|/* A little optimizing. Only queue the &n;&t;&t;&t;&t; * fragment if there is other fragments. Since&n;&t;&t;&t;&t; * if this is the last and only fragment, &n;&t;&t;&t;&t; * there is no need to reassemble &n;&t;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; * A little optimizing. Only queue the fragment if&n;&t;&t;&t; * there are other fragments. Since if this is the&n;&t;&t;&t; * last and only fragment, there is no need to&n;&t;&t;&t; * reassemble :-) &n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3991,15 +4311,6 @@ id|self-&gt;rx_fragments
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), queueing fragment&bslash;n&quot;
-)paren
-suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren
@@ -4018,13 +4329,10 @@ id|self
 )paren
 suffix:semicolon
 )brace
-id|self-&gt;notify
-dot
-id|data_indication
+multiline_comment|/* Now we can deliver the reassembled skb */
+id|irttp_do_data_indication
 c_func
 (paren
-id|instance
-comma
 id|self
 comma
 id|skb
@@ -4042,13 +4350,25 @@ id|__FUNCTION__
 l_string|&quot;(), Truncated frame&bslash;n&quot;
 )paren
 suffix:semicolon
-id|self-&gt;notify
-dot
-id|data_indication
+multiline_comment|/* Free the part of the SDU that is too big */
+id|dev_kfree_skb
 c_func
 (paren
-id|self-&gt;notify.instance
-comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Deliver only the valid but truncated part of SDU */
+id|skb
+op_assign
+id|irttp_reassemble_skb
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|irttp_do_data_indication
+c_func
+(paren
 id|self
 comma
 id|skb
@@ -4059,7 +4379,6 @@ id|self-&gt;rx_sdu_size
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Reset lock */
 id|self-&gt;rx_queue_lock
@@ -4265,6 +4584,15 @@ id|skb
 )paren
 r_return
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* &n;&t; * Need to reserve space for TTP header in case this skb needs to &n;&t; * be requeued in case delivery failes&n;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|TTP_HEADER
+)paren
 suffix:semicolon
 id|skb_put
 c_func
@@ -4698,6 +5026,11 @@ id|self-&gt;tx_queue
 )paren
 )paren
 (brace
+multiline_comment|/* Make sure disconnect is not pending anymore */
+id|self-&gt;disconnect_pend
+op_assign
+id|FALSE
+suffix:semicolon
 r_if
 c_cond
 (paren

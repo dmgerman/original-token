@@ -1,10 +1,11 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Tue Feb  2 10:55:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.h&n; * Version:       1.0&n; * Description:   Tiny Transport Protocol (TTP) definitions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon Mar 22 13:17:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRTTP_H
 DECL|macro|IRTTP_H
 mdefine_line|#define IRTTP_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
@@ -33,6 +34,8 @@ DECL|macro|P_HIGH
 mdefine_line|#define P_HIGH      1
 DECL|macro|SAR_DISABLE
 mdefine_line|#define SAR_DISABLE 0
+DECL|macro|SAR_UNBOUND
+mdefine_line|#define SAR_UNBOUND 0xffffffff
 multiline_comment|/*&n; *  This structure contains all data assosiated with one instance of a TTP &n; *  connection.&n; */
 DECL|struct|tsap_cb
 r_struct
@@ -120,6 +123,10 @@ DECL|member|rx_queue_lock
 r_int
 id|rx_queue_lock
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|notify
 r_struct
 id|notify_t
@@ -142,12 +149,12 @@ id|rx_sdu_busy
 suffix:semicolon
 multiline_comment|/* RxSdu.busy */
 DECL|member|rx_sdu_size
-r_int
+id|__u32
 id|rx_sdu_size
 suffix:semicolon
 multiline_comment|/* Current size of a partially received frame */
 DECL|member|rx_max_sdu_size
-r_int
+id|__u32
 id|rx_max_sdu_size
 suffix:semicolon
 multiline_comment|/* Max receive user data size */
@@ -161,11 +168,6 @@ r_int
 id|tx_max_sdu_size
 suffix:semicolon
 multiline_comment|/* Max transmit user data size */
-DECL|member|no_defrag
-r_int
-id|no_defrag
-suffix:semicolon
-multiline_comment|/* Don&squot;t reassemble received fragments */
 DECL|member|close_pend
 r_int
 id|close_pend
@@ -271,7 +273,7 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-r_void
+r_int
 id|irttp_connect_request
 c_func
 (paren
@@ -294,7 +296,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -320,7 +322,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -338,13 +340,29 @@ id|tsap_cb
 op_star
 id|self
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
 id|sk_buff
 op_star
 id|userdata
+)paren
+suffix:semicolon
+r_struct
+id|tsap_cb
+op_star
+id|irttp_dup
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
+comma
+r_void
+op_star
+id|instance
 )paren
 suffix:semicolon
 r_void
@@ -378,24 +396,6 @@ id|LOCAL_FLOW
 id|flow
 )paren
 suffix:semicolon
-DECL|function|irttp_no_reassemble
-r_static
-id|__inline__
-r_void
-id|irttp_no_reassemble
-c_func
-(paren
-r_struct
-id|tsap_cb
-op_star
-id|self
-)paren
-(brace
-id|self-&gt;no_defrag
-op_assign
-id|TRUE
-suffix:semicolon
-)brace
 DECL|function|irttp_get_saddr
 r_static
 id|__inline

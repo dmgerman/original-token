@@ -1960,15 +1960,6 @@ c_func
 id|b-&gt;root_cluster
 )paren
 suffix:semicolon
-id|CF_LE_W
-c_func
-(paren
-id|b-&gt;info_sector
-)paren
-comma
-id|logical_sector_size
-)paren
-suffix:semicolon
 multiline_comment|/* MC - if info_sector is 0, don&squot;t multiply by 0 */
 r_if
 c_cond

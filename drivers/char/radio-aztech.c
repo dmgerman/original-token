@@ -670,6 +670,14 @@ op_or_assign
 id|VIDEO_TUNER_STEREO_ON
 suffix:semicolon
 )brace
+id|strcpy
+c_func
+(paren
+id|v.name
+comma
+l_string|&quot;FM&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

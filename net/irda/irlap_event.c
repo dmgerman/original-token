@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Thu Feb 11 00:38:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Fri Mar 26 14:24:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -389,6 +389,8 @@ comma
 l_string|&quot;RECV_SNRM_CMD&quot;
 comma
 l_string|&quot;RECV_TEST_CMD&quot;
+comma
+l_string|&quot;RECV_TEST_RSP&quot;
 comma
 l_string|&quot;RECV_UA_RSP&quot;
 comma
@@ -922,7 +924,16 @@ multiline_comment|/* Check if we should try to connect */
 r_if
 c_cond
 (paren
+(paren
 id|self-&gt;connect_pending
+)paren
+op_logical_and
+op_logical_neg
+id|irda_device_is_media_busy
+c_func
+(paren
+id|self-&gt;irdev
+)paren
 )paren
 (brace
 id|self-&gt;connect_pending
@@ -1051,7 +1062,7 @@ op_star
 id|info
 )paren
 (brace
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery_rsp
 suffix:semicolon
@@ -1344,10 +1355,7 @@ op_le
 id|info-&gt;S
 )paren
 (brace
-id|self-&gt;daddr
-op_assign
-id|info-&gt;daddr
-suffix:semicolon
+multiline_comment|/* self-&gt;daddr = info-&gt;daddr;  */
 id|self-&gt;slot
 op_assign
 id|irlap_generate_rand_time_slot
@@ -1387,13 +1395,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Sending XID rsp 1&bslash;n&quot;
-)paren
+id|discovery_rsp-&gt;daddr
+op_assign
+id|info-&gt;daddr
 suffix:semicolon
 id|irlap_send_discovery_xid_frame
 c_func
@@ -1444,9 +1448,75 @@ id|skb
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|RECV_TEST_CMD
+suffix:colon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|test_frame
+)paren
+)paren
+suffix:semicolon
+id|irlap_send_test_frame
+c_func
+(paren
+id|self
+comma
+id|info-&gt;daddr
+comma
+id|skb
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RECV_TEST_RSP
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;() not implemented!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* &t;DEBUG( 0, &quot;irlap_state_ndm: Unknown event&quot;); */
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %s&quot;
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -1684,7 +1754,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
@@ -1750,7 +1820,7 @@ op_star
 id|info
 )paren
 (brace
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery_rsp
 suffix:semicolon
@@ -1891,22 +1961,16 @@ id|self-&gt;frame_sent
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Sending XID rsp 2, s=%d&bslash;n&quot;
-comma
-id|info-&gt;s
-)paren
-suffix:semicolon
 id|discovery_rsp
 op_assign
 id|irlmp_get_discovery_response
 c_func
 (paren
 )paren
+suffix:semicolon
+id|discovery_rsp-&gt;daddr
+op_assign
+id|info-&gt;daddr
 suffix:semicolon
 id|irlap_send_discovery_xid_frame
 c_func
@@ -6774,6 +6838,39 @@ id|LAP_NRM_S
 )paren
 suffix:semicolon
 macro_line|#endif
+r_break
+suffix:semicolon
+r_case
+id|RECV_TEST_CMD
+suffix:colon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+r_sizeof
+(paren
+r_struct
+id|test_frame
+)paren
+)paren
+suffix:semicolon
+id|irlap_send_test_frame
+c_func
+(paren
+id|self
+comma
+id|info-&gt;daddr
+comma
+id|skb
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default

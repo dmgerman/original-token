@@ -256,24 +256,27 @@ comma
 id|tmp
 comma
 id|tmp2
+comma
+id|sub
 suffix:semicolon
-multiline_comment|/* &quot;Equivalent&quot; C.  Note that we have to do this all without&n;&t;   (taken) branches in order to be a valid ll/sc sequence.&n;&n;&t;   do {&n;&t;       tmp = ldq_l;&n;&t;       ret = 0;&n;&t;       tmp -= 1;&n;&t;       if ((int)tmp &lt; 0)&t;&t;// count&n;&t;           break;&n;&t;       if ((long)tmp &lt; 0)&t;&t;// waking&n;&t;           break;&n;&t;       tmp += 0xffffffff00000000;&n;&t;       ret = 1;&n;&t;       tmp = stq_c = tmp;&n;&t;   } while (tmp == 0);&n;&t;*/
+multiline_comment|/* &quot;Equivalent&quot; C.  Note that we have to do this all without&n;&t;   (taken) branches in order to be a valid ll/sc sequence.&n;&n;&t;   do {&n;&t;       tmp = ldq_l;&n;&t;       sub = 0x0000000100000000;&n;&t;       ret = ((int)tmp &lt;= 0);&t;&t;// count &lt;= 0 ?&n;&t;       // If we&squot;re subtracting one from count, we don&squot;t need &n;&t;       // one from waking and vice versa.&n;&t;       if ((int)tmp &gt; 0) sub = 1;&t;// count &gt; 0 ?&n;&t;       if ((long)tmp &gt;= 0) ret = 0;&t;// waking &gt;= 0 ?&n;&t;       if (ret) break;&t;&n;&t;       tmp -= sub;&n;&t;       tmp = stq_c = tmp;&n;&t;   } while (tmp == 0);&n;&t;*/
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldq_l&t;%1,%3&bslash;n&quot;
-l_string|&quot;&t;lda&t;%0,0&bslash;n&quot;
-l_string|&quot;&t;subl&t;%1,1,%2&bslash;n&quot;
-l_string|&quot;&t;subq&t;%1,1,%1&bslash;n&quot;
-l_string|&quot;&t;blt&t;%2,2f&bslash;n&quot;
-l_string|&quot;&t;blt&t;%1,2f&bslash;n&quot;
-l_string|&quot;&t;ldah&t;%1,-32768(%1)&bslash;n&quot;
-l_string|&quot;&t;ldah&t;%1,-32768(%1)&bslash;n&quot;
-l_string|&quot;&t;lda&t;%0,1&bslash;n&quot;
-l_string|&quot;&t;stq_c&t;%1,%3&bslash;n&quot;
+l_string|&quot;1:&t;ldq_l&t;%1,%4&bslash;n&quot;
+l_string|&quot;&t;lda&t;%3,1&bslash;n&quot;
+l_string|&quot;&t;addl&t;%1,0,%2&bslash;n&quot;
+l_string|&quot;&t;sll&t;%3,32,%3&bslash;n&quot;
+l_string|&quot;&t;cmple&t;%2,0,%0&bslash;n&quot;
+l_string|&quot;&t;cmovgt&t;%2,1,%3&bslash;n&quot;
+l_string|&quot;&t;cmovge&t;%1,0,%0&bslash;n&quot;
+l_string|&quot;&t;bne&t;%0,2f&bslash;n&quot;
+l_string|&quot;&t;subq&t;%1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;stq_c&t;%1,%4&bslash;n&quot;
 l_string|&quot;&t;beq&t;%1,3f&bslash;n&quot;
-l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;&t;mb&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -291,6 +294,11 @@ comma
 l_string|&quot;=&amp;r&quot;
 (paren
 id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|sub
 )paren
 suffix:colon
 l_string|&quot;m&quot;

@@ -779,9 +779,17 @@ id|VIDEO_MODE_AUTO
 suffix:semicolon
 id|v.signal
 op_assign
-l_int|0
+l_int|0xFFFF
 suffix:semicolon
 multiline_comment|/* We can&squot;t get the signal strength */
+id|strcpy
+c_func
+(paren
+id|v.tuner
+comma
+l_string|&quot;FM&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

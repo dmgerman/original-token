@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Mon Feb  8 09:05:51 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irqueue.c&n; * Version:       0.3&n; * Description:   General queue implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Jun  9 13:29:31 1998&n; * Modified at:   Thu Mar 11 13:27:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (C) 1998, Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; *     Copyright (C) 1998, Dag Brattli, &n; *     All Rights Reserved.&n; *&n; *     This code is taken from the Vortex Operating System written by Aage&n; *     Kvalnes. Aage has agreed that this code can use the GPL licence,&n; *     although he does not use that licence in his own code.&n; *     &n; *     This copyright does however _not_ include the ELF hash() function&n; *     which I currently don&squot;t know which licence or copyright it&n; *     has. Please inform me if you know.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
@@ -42,6 +42,9 @@ id|type
 id|hashbin_t
 op_star
 id|hashbin
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|DEBUG
 c_func
@@ -96,6 +99,28 @@ suffix:semicolon
 id|hashbin-&gt;magic
 op_assign
 id|HB_MAGIC
+suffix:semicolon
+multiline_comment|/* Make sure all spinlock&squot;s are unlocked */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|HASHBIN_SIZE
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|hashbin-&gt;hb_mutex
+(braket
+id|i
+)braket
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 r_return
 id|hashbin
@@ -428,7 +453,6 @@ id|hashbin-&gt;hb_type
 op_amp
 id|HB_GLOBAL
 )paren
-(brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -441,7 +465,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
 id|save_flags
@@ -542,7 +565,6 @@ id|hashbin-&gt;hb_type
 op_amp
 id|HB_GLOBAL
 )paren
-(brace
 id|spin_unlock_irq
 c_func
 (paren
@@ -553,7 +575,6 @@ id|bin
 )braket
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond

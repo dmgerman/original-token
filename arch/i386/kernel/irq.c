@@ -237,11 +237,7 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 DECL|macro|__byte
-mdefine_line|#define __byte(x,y) (((unsigned char *)&amp;(y))[x])
-DECL|macro|__word
-mdefine_line|#define __word(x,y) (((unsigned short *)&amp;(y))[x])
-DECL|macro|__long
-mdefine_line|#define __long(x,y) (((unsigned int *)&amp;(y))[x])
+mdefine_line|#define __byte(x,y) &t;(((unsigned char *)&amp;(y))[x])
 DECL|macro|cached_21
 mdefine_line|#define cached_21&t;(__byte(0,cached_irq_mask))
 DECL|macro|cached_A1
@@ -429,13 +425,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-id|__long
-c_func
-(paren
-l_int|0
-comma
 id|io_apic_irqs
-)paren
 op_and_assign
 op_complement
 (paren

@@ -89,7 +89,7 @@ OG
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * waking_non_zero_interruptible:&n; *&t;1&t;got the lock&n; *&t;0&t;go to sleep&n; *&t;-EINTR&t;interrupted&n; *&n; * We must undo the sem-&gt;count down_interruptible increment&n; * simultaneously and atomicly with the sem-&gt;waking adjustment,&n; * otherwise we can race with wake_one_more.&n; *&n; * This is accomplished by doing a 64-bit ll/sc on the 2 32-bit words.&n; */
+multiline_comment|/*&n; * waking_non_zero_interruptible:&n; *&t;1&t;got the lock&n; *&t;0&t;go to sleep&n; *&t;-EINTR&t;interrupted&n; *&n; * We must undo the sem-&gt;count down_interruptible decrement&n; * simultaneously and atomicly with the sem-&gt;waking adjustment,&n; * otherwise we can race with wake_one_more.&n; *&n; * This is accomplished by doing a 64-bit ll/sc on the 2 32-bit words.&n; */
 r_static
 r_inline
 r_int

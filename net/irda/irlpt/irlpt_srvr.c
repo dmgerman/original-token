@@ -49,14 +49,6 @@ r_void
 suffix:semicolon
 r_static
 r_void
-id|irlpt_server_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_void
 id|irlpt_server_disconnect_indication
 c_func
 (paren
@@ -95,7 +87,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -122,7 +114,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -132,7 +124,7 @@ id|skb
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|irlpt_server_data_indication
 c_func
 (paren
@@ -166,6 +158,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|skey
+r_static
+id|__u32
+id|skey
+suffix:semicolon
+multiline_comment|/* IrLMP service handle */
 DECL|variable|irlpt_server_lsap
 r_int
 id|irlpt_server_lsap
@@ -577,6 +575,9 @@ r_void
 )paren
 )paren
 (brace
+id|__u16
+id|hints
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -700,16 +701,20 @@ op_amp
 id|irlpt_server-&gt;rx_queue
 )paren
 suffix:semicolon
-id|irlmp_register_layer
+id|hints
+op_assign
+id|irlmp_service_to_hint
 c_func
 (paren
 id|S_PRINTER
-comma
-id|SERVER
-comma
-id|FALSE
-comma
-l_int|NULL
+)paren
+suffix:semicolon
+id|skey
+op_assign
+id|irlmp_register_service
+c_func
+(paren
+id|hints
 )paren
 suffix:semicolon
 id|register_irlpt_server
@@ -767,6 +772,12 @@ id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+id|irlmp_unregister_service
+c_func
+(paren
+id|skey
+)paren
+suffix:semicolon
 id|deregister_irlpt_server
 c_func
 (paren
@@ -796,21 +807,6 @@ id|irlpt_server_debug
 comma
 id|__FUNCTION__
 l_string|&quot;: freeing SKB&bslash;n&quot;
-)paren
-suffix:semicolon
-id|IS_SKB
-c_func
-(paren
-id|skb
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|FREE_SKB_MAGIC
-c_func
-(paren
-id|skb
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -1051,7 +1047,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -1152,7 +1148,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -1267,7 +1263,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function irlpt_server_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
 DECL|function|irlpt_server_data_indication
 r_static
-r_void
+r_int
 id|irlpt_server_data_indication
 c_func
 (paren
@@ -1317,6 +1313,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1328,6 +1326,8 @@ op_eq
 id|IRLPT_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1339,6 +1339,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1388,6 +1390,9 @@ comma
 id|__FUNCTION__
 l_string|&quot; --&gt;&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function register_irlpt_server(void)&n; *&n; *    Register server support so we can accept incoming connections. We&n; *    must register both a TSAP for control and data&n; * &n; */
@@ -1639,6 +1644,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1647,6 +1655,8 @@ comma
 l_string|&quot;--&gt; IrLPT server: init_module&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ret
+op_assign
 id|irlpt_server_init
 c_func
 (paren
@@ -1661,7 +1671,7 @@ l_string|&quot;IrLPT server: init_module --&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Remove the IrLPT server module, this function is called by the rmmod(1)&n; *    program&n; */

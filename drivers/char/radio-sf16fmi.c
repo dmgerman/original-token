@@ -621,6 +621,14 @@ c_func
 id|fmi
 )paren
 suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|v.name
+comma
+l_string|&quot;FM&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

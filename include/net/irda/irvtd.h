@@ -1,10 +1,11 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irvtd.h&n; * Version:       0.1&n; * Sources:       irlpt.h&n; * &n; *     Copyright (c) 1998, Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
-macro_line|#ifndef IRCOMM_H
-DECL|macro|IRCOMM_H
-mdefine_line|#define IRCOMM_H
+macro_line|#ifndef IRVTD_H
+DECL|macro|IRVTD_H
+mdefine_line|#define IRVTD_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/ircomm_common.h&gt;
@@ -16,33 +17,10 @@ DECL|macro|IRVTD_RX_QUEUE_HIGH
 mdefine_line|#define IRVTD_RX_QUEUE_HIGH 10
 DECL|macro|IRVTD_RX_QUEUE_LOW
 mdefine_line|#define IRVTD_RX_QUEUE_LOW  2
-multiline_comment|/*&n; * Serial input interrupt line counters -- external structure&n; * Four lines can interrupt: CTS, DSR, RI, DCD&n; *&n; * this structure must be compatible with serial_icounter_struct defined in&n; * &lt;linux/serial.h&gt;.&n; */
-DECL|struct|icounter_struct
-r_struct
-id|icounter_struct
-(brace
-DECL|member|cts
-DECL|member|dsr
-DECL|member|rng
-DECL|member|dcd
-r_int
-id|cts
-comma
-id|dsr
-comma
-id|rng
-comma
-id|dcd
-suffix:semicolon
-DECL|member|reserved
-r_int
-id|reserved
-(braket
-l_int|16
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|IRCOMM_MAJOR
+mdefine_line|#define IRCOMM_MAJOR  60;  /* Zero means automatic allocation&n;                              60,61,62,and 63 is reserved for experiment */
+DECL|macro|IRVTD_MINOR
+mdefine_line|#define IRVTD_MINOR 64
 DECL|struct|irvtd_cb
 r_struct
 id|irvtd_cb
@@ -53,6 +31,10 @@ id|magic
 suffix:semicolon
 multiline_comment|/* magic used to detect corruption of the struct */
 multiline_comment|/* if daddr is NULL, remote device have not been discovered yet */
+DECL|member|tx_disable
+r_int
+id|tx_disable
+suffix:semicolon
 DECL|member|rx_disable
 r_int
 id|rx_disable
@@ -63,13 +45,11 @@ id|sk_buff
 op_star
 id|txbuff
 suffix:semicolon
-multiline_comment|/* buffer queue */
 DECL|member|rxbuff
 r_struct
 id|sk_buff_head
 id|rxbuff
 suffix:semicolon
-multiline_comment|/* buffer queue */
 DECL|member|comm
 r_struct
 id|ircomm_cb
@@ -78,10 +58,6 @@ id|comm
 suffix:semicolon
 multiline_comment|/* ircomm instance */
 multiline_comment|/* &n;&t; * These members are used for compatibility with usual serial device.&n;&t; * See linux/serial.h&n;&t; */
-DECL|member|baud_base
-r_int
-id|baud_base
-suffix:semicolon
 DECL|member|flags
 r_int
 id|flags
@@ -129,10 +105,10 @@ id|wait_queue
 op_star
 id|tx_wait
 suffix:semicolon
-DECL|member|rx_tqueue
+DECL|member|timer
 r_struct
-id|tq_struct
-id|rx_tqueue
+id|timer_list
+id|timer
 suffix:semicolon
 DECL|member|pgrp
 r_int
@@ -141,16 +117,6 @@ suffix:semicolon
 DECL|member|session
 r_int
 id|session
-suffix:semicolon
-DECL|member|normal_termios
-r_struct
-id|termios
-id|normal_termios
-suffix:semicolon
-DECL|member|callout_termios
-r_struct
-id|termios
-id|callout_termios
 suffix:semicolon
 DECL|member|closing_wait
 r_int
@@ -162,6 +128,10 @@ DECL|member|close_delay
 r_int
 r_int
 id|close_delay
+suffix:semicolon
+DECL|member|custom_divisor
+r_int
+id|custom_divisor
 suffix:semicolon
 DECL|member|mcr
 r_int
@@ -183,9 +153,13 @@ DECL|member|ttp_stoprx
 r_int
 id|ttp_stoprx
 suffix:semicolon
+DECL|member|disconnect_pend
+r_int
+id|disconnect_pend
+suffix:semicolon
 DECL|member|icount
 r_struct
-id|icounter_struct
+id|serial_icounter_struct
 id|icount
 suffix:semicolon
 DECL|member|read_status_mask
@@ -198,7 +172,5 @@ id|ignore_status_mask
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Debug function */
-multiline_comment|/* #define CHECK_SKB(skb) check_skb((skb),  __LINE__,__FILE__) */
 macro_line|#endif
 eof

@@ -1820,34 +1820,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This gets called with I_LOCK held: it needs&n; * to read the inode and then unlock it&n; */
-DECL|function|read_inode
-r_static
-r_inline
-r_void
-id|read_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-(brace
-id|sb-&gt;s_op
-op_member_access_from_pointer
-id|read_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; */
 DECL|function|get_empty_inode
 r_struct
@@ -2117,12 +2089,12 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|sb-&gt;s_op
+op_member_access_from_pointer
 id|read_inode
 c_func
 (paren
 id|inode
-comma
-id|sb
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * This is special!  We do not need the spinlock&n;&t;&t; * when clearing I_LOCK, because we&squot;re guaranteed&n;&t;&t; * that nobody else tries to do anything about the&n;&t;&t; * state of the inode when it is locked, as we&n;&t;&t; * just created it (so there can be no old holders&n;&t;&t; * that haven&squot;t tested I_LOCK).&n;&t;&t; */

@@ -725,6 +725,7 @@ c_func
 r_int
 r_int
 comma
+r_const
 r_void
 op_star
 comma

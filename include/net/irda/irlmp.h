@@ -1,14 +1,16 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.3&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Thu Feb  4 11:06:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.h&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Tue Apr  6 20:05:14 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLMP_H
 DECL|macro|IRLMP_H
 mdefine_line|#define IRLMP_H
+macro_line|#include &lt;asm/param.h&gt;  /* for HZ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;net/irda/irmod.h&gt;
+macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/irlmp_event.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
+macro_line|#include &lt;net/irda/discovery.h&gt;
 multiline_comment|/* LSAP-SEL&squot;s */
 DECL|macro|LSAP_MASK
 mdefine_line|#define LSAP_MASK     0x7f
@@ -35,38 +37,8 @@ DECL|macro|LMP_MAX_HEADER
 mdefine_line|#define LMP_MAX_HEADER      (LAP_HEADER+LMP_HEADER)
 DECL|macro|LM_MAX_CONNECTIONS
 mdefine_line|#define LM_MAX_CONNECTIONS  10
-multiline_comment|/* Hint bit positions for first hint byte */
-DECL|macro|HINT_PNP
-mdefine_line|#define HINT_PNP         0x01
-DECL|macro|HINT_PDA
-mdefine_line|#define HINT_PDA         0x02
-DECL|macro|HINT_COMPUTER
-mdefine_line|#define HINT_COMPUTER    0x04
-DECL|macro|HINT_PRINTER
-mdefine_line|#define HINT_PRINTER     0x08
-DECL|macro|HINT_MODEM
-mdefine_line|#define HINT_MODEM       0x10
-DECL|macro|HINT_FAX
-mdefine_line|#define HINT_FAX         0x20
-DECL|macro|HINT_LAN
-mdefine_line|#define HINT_LAN         0x40
-DECL|macro|HINT_EXTENSION
-mdefine_line|#define HINT_EXTENSION   0x80
-multiline_comment|/* Hint bit positions for second hint byte (first extension byte) */
-DECL|macro|HINT_TELEPHONY
-mdefine_line|#define HINT_TELEPHONY   0x01
-DECL|macro|HINT_FILE_SERVER
-mdefine_line|#define HINT_FILE_SERVER 0x02
-DECL|macro|HINT_COMM
-mdefine_line|#define HINT_COMM        0x04
-DECL|macro|HINT_MESSAGE
-mdefine_line|#define HINT_MESSAGE     0x08
-DECL|macro|HINT_HTTP
-mdefine_line|#define HINT_HTTP        0x10
-DECL|macro|HINT_OBEX
-mdefine_line|#define HINT_OBEX        0x20
 DECL|macro|LM_IDLE_TIMEOUT
-mdefine_line|#define LM_IDLE_TIMEOUT  200 /* 2 seconds for now */
+mdefine_line|#define LM_IDLE_TIMEOUT     2*HZ /* 2 seconds for now */
 r_typedef
 r_enum
 (brace
@@ -100,52 +72,80 @@ comma
 DECL|enumerator|S_OBEX
 id|S_OBEX
 comma
+DECL|enumerator|S_ANY
+id|S_ANY
+comma
+DECL|enumerator|S_END
+id|S_END
+comma
 DECL|typedef|SERVICE
 )brace
 id|SERVICE
 suffix:semicolon
-DECL|macro|S_END
-mdefine_line|#define S_END 0xff
-DECL|macro|CLIENT
-mdefine_line|#define CLIENT 1
-DECL|macro|SERVER
-mdefine_line|#define SERVER 2
-DECL|typedef|DISCOVERY_CALLBACK
+DECL|typedef|DISCOVERY_CALLBACK1
 r_typedef
 r_void
 (paren
 op_star
-id|DISCOVERY_CALLBACK
+id|DISCOVERY_CALLBACK1
 )paren
 (paren
-id|DISCOVERY
+id|discovery_t
 op_star
 )paren
 suffix:semicolon
-DECL|struct|irlmp_registration
+DECL|typedef|DISCOVERY_CALLBACK2
+r_typedef
+r_void
+(paren
+op_star
+id|DISCOVERY_CALLBACK2
+)paren
+(paren
+id|hashbin_t
+op_star
+)paren
+suffix:semicolon
+r_typedef
 r_struct
-id|irlmp_registration
 (brace
 DECL|member|queue
 id|QUEUE
 id|queue
 suffix:semicolon
 multiline_comment|/* Must be first */
-DECL|member|service
-r_int
-id|service
+DECL|member|hints
+id|__u16
+id|hints
 suffix:semicolon
-multiline_comment|/* LAN, OBEX, COMM etc. */
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* Client or server or both */
-DECL|member|discovery_callback
-id|DISCOVERY_CALLBACK
-id|discovery_callback
-suffix:semicolon
+multiline_comment|/* Hint bits */
+DECL|typedef|irlmp_service_t
 )brace
+id|irlmp_service_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|queue
+id|QUEUE
+id|queue
+suffix:semicolon
+multiline_comment|/* Must be first */
+DECL|member|hint_mask
+id|__u16
+id|hint_mask
+suffix:semicolon
+DECL|member|callback1
+id|DISCOVERY_CALLBACK1
+id|callback1
+suffix:semicolon
+DECL|member|callback2
+id|DISCOVERY_CALLBACK2
+id|callback2
+suffix:semicolon
+DECL|typedef|irlmp_client_t
+)brace
+id|irlmp_client_t
 suffix:semicolon
 r_struct
 id|lap_cb
@@ -277,12 +277,6 @@ id|__u32
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination device address */
-DECL|member|cachelog
-id|hashbin_t
-op_star
-id|cachelog
-suffix:semicolon
-multiline_comment|/* Discovered devices for this link */
 DECL|member|qos
 r_struct
 id|qos_info
@@ -337,12 +331,12 @@ id|__u8
 id|conflict_flag
 suffix:semicolon
 DECL|member|discovery_cmd
-id|DISCOVERY
+id|discovery_t
 id|discovery_cmd
 suffix:semicolon
 multiline_comment|/* Discovery command to use by IrLAP */
 DECL|member|discovery_rsp
-id|DISCOVERY
+id|discovery_t
 id|discovery_rsp
 suffix:semicolon
 multiline_comment|/* Discovery response to use by IrLAP */
@@ -373,17 +367,32 @@ id|hashbin_t
 op_star
 id|unconnected_lsaps
 suffix:semicolon
-DECL|member|registry
+DECL|member|clients
 id|hashbin_t
 op_star
-id|registry
+id|clients
 suffix:semicolon
-DECL|member|hint
-id|__u8
-id|hint
-(braket
-l_int|2
-)braket
+DECL|member|services
+id|hashbin_t
+op_star
+id|services
+suffix:semicolon
+DECL|member|cachelog
+id|hashbin_t
+op_star
+id|cachelog
+suffix:semicolon
+DECL|member|running
+r_int
+id|running
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|hints
+id|__u16_host_order
+id|hints
 suffix:semicolon
 multiline_comment|/* Hint bits */
 )brace
@@ -428,41 +437,74 @@ op_star
 id|self
 )paren
 suffix:semicolon
-r_void
-id|irlmp_register_layer
+id|__u16
+id|irlmp_service_to_hint
 c_func
 (paren
 r_int
 id|service
-comma
-r_int
-id|type
-comma
-r_int
-id|do_discovery
-comma
-id|DISCOVERY_CALLBACK
 )paren
 suffix:semicolon
-r_void
-id|irlmp_unregister_layer
+id|__u32
+id|irlmp_register_service
 c_func
 (paren
+id|__u16
+id|hints
+)paren
+suffix:semicolon
 r_int
-id|service
+id|irlmp_unregister_service
+c_func
+(paren
+id|__u32
+id|handle
+)paren
+suffix:semicolon
+id|__u32
+id|irlmp_register_client
+c_func
+(paren
+id|__u16
+id|hint_mask
 comma
+id|DISCOVERY_CALLBACK1
+id|callback1
+comma
+id|DISCOVERY_CALLBACK2
+id|callback2
+)paren
+suffix:semicolon
 r_int
-id|type
+id|irlmp_unregister_client
+c_func
+(paren
+id|__u32
+id|handle
+)paren
+suffix:semicolon
+r_int
+id|irlmp_update_client
+c_func
+(paren
+id|__u32
+id|handle
+comma
+id|__u16
+id|hint_mask
+comma
+id|DISCOVERY_CALLBACK1
+comma
+id|DISCOVERY_CALLBACK2
 )paren
 suffix:semicolon
 r_void
-id|irlmp_register_irlap
+id|irlmp_register_link
 c_func
 (paren
 r_struct
 id|irlap_cb
 op_star
-id|self
 comma
 id|__u32
 id|saddr
@@ -473,7 +515,7 @@ op_star
 )paren
 suffix:semicolon
 r_void
-id|irlmp_unregister_irlap
+id|irlmp_unregister_link
 c_func
 (paren
 id|__u32
@@ -547,6 +589,22 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+r_struct
+id|lsap_cb
+op_star
+id|irlmp_dup
+c_func
+(paren
+r_struct
+id|lsap_cb
+op_star
+id|self
+comma
+r_void
+op_star
+id|instance
+)paren
+suffix:semicolon
 r_void
 id|irlmp_disconnect_indication
 c_func
@@ -583,26 +641,9 @@ r_void
 id|irlmp_discovery_confirm
 c_func
 (paren
-r_struct
-id|lap_cb
-op_star
-comma
 id|hashbin_t
 op_star
 id|discovery_log
-)paren
-suffix:semicolon
-r_void
-id|irlmp_discovery_indication
-c_func
-(paren
-r_struct
-id|lap_cb
-op_star
-comma
-id|DISCOVERY
-op_star
-id|discovery
 )paren
 suffix:semicolon
 r_void
@@ -613,7 +654,15 @@ r_int
 id|nslots
 )paren
 suffix:semicolon
-id|DISCOVERY
+r_void
+id|irlmp_do_discovery
+c_func
+(paren
+r_int
+id|nslots
+)paren
+suffix:semicolon
+id|discovery_t
 op_star
 id|irlmp_get_discovery_response
 c_func
@@ -745,10 +794,29 @@ r_int
 id|sysctl_discovery_slots
 suffix:semicolon
 r_extern
+r_int
+id|sysctl_discovery
+suffix:semicolon
+r_extern
 r_struct
 id|irlmp_cb
 op_star
 id|irlmp
 suffix:semicolon
+DECL|function|irlmp_get_cachelog
+r_static
+r_inline
+id|hashbin_t
+op_star
+id|irlmp_get_cachelog
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|irlmp-&gt;cachelog
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

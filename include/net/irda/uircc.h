@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.h&n; * Version:       0.1&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 11:00:49 1998&n; * Modified at:   Tue Jan 19 23:52:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.h&n; * Version:       0.1&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 11:00:49 1998&n; * Modified at:   Thu Mar 11 01:37:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef UIRCC_H
 DECL|macro|UIRCC_H
 mdefine_line|#define UIRCC_H
@@ -85,6 +85,8 @@ DECL|macro|UIRCC_CR12
 mdefine_line|#define UIRCC_CR12          0x0c /* Timer counter initial value (low byte) */
 DECL|macro|UIRCC_CR13
 mdefine_line|#define UIRCC_CR13          0x0d /* Timer counter initial value (high byte) */
+DECL|macro|UIRCC_CR15
+mdefine_line|#define UIRCC_CR15          0x0f
 multiline_comment|/* Status registers (read only) */
 DECL|macro|UIRCC_SR0
 mdefine_line|#define UIRCC_SR0           0x00 /* Transmit/receive status register */
@@ -120,10 +122,14 @@ DECL|macro|UIRCC_SR9
 mdefine_line|#define UIRCC_SR9           0x09 /* System status 1 */
 DECL|macro|UIRCC_SR10
 mdefine_line|#define UIRCC_SR10          0x0a /* Modem select status */
+DECL|macro|UIRCC_SR11
+mdefine_line|#define UIRCC_SR11          0x0b
 DECL|macro|UIRCC_SR12
 mdefine_line|#define UIRCC_SR12          0x0c /* Timer counter status (low byte) */
 DECL|macro|UIRCC_SR13
 mdefine_line|#define UIRCC_SR13          0x0d /* Timer counter status (high byte) */
+DECL|macro|UIRCC_SR15
+mdefine_line|#define UIRCC_SR15          0x0f
 multiline_comment|/* Private data for each instance */
 DECL|struct|uircc_cb
 r_struct

@@ -1,7 +1,15 @@
-multiline_comment|/*+M*************************************************************************&n; * Perceptive Solutions, Inc. PCI-2000 device driver proc support for Linux.&n; *&n; * Copyright (c) 1999 Perceptive Solutions, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;File Name:&t;&t;pci2220i.h&n; *&n; *&t;Description:&t;Header file for the SCSI driver for the PCI2220I&n; *&t;&t;&t;&t;&t;EIDE interface card.&n; *&n; *-M*************************************************************************/
+multiline_comment|/****************************************************************************&n; * Perceptive Solutions, Inc. PCI-2220I device driver for Linux.&n; *&n; * pci2220i.h - Linux Host Driver for PCI-2220i EIDE Adapters&n; *&n; * Copyright (c) 1997-1999 Perceptive Solutions, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * Technical updates and product information at:&n; *  http://www.psidisk.com&n; *&n; * Please send questions, comments, bug reports to:&n; *  tech@psidisk.com Technical Support&n; *&n; ****************************************************************************/
+macro_line|#ifndef _PCI2220I_H
+DECL|macro|_PCI2220I_H
+mdefine_line|#define _PCI2220I_H
 macro_line|#ifndef&t;PSI_EIDE_SCSIOP
 DECL|macro|PSI_EIDE_SCSIOP
 mdefine_line|#define&t;PSI_EIDE_SCSIOP&t;1
+macro_line|#ifndef LINUX_VERSION_CODE
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif 
+DECL|macro|LINUXVERSION
+mdefine_line|#define&t;LINUXVERSION(v,p,s)    (((v)&lt;&lt;16) + ((p)&lt;&lt;8) + (s))
 multiline_comment|/************************************************/
 multiline_comment|/*&t;&t;Some defines that we like &t;&t;&t;&t;*/
 multiline_comment|/************************************************/
@@ -804,6 +812,15 @@ id|flags
 )paren
 suffix:semicolon
 r_int
+id|Pci2220i_Release
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|pshost
+)paren
+suffix:semicolon
+r_int
 id|Pci2220i_BiosParam
 (paren
 id|Disk
@@ -828,6 +845,12 @@ r_struct
 id|proc_dir_entry
 id|Proc_Scsi_Pci2220i
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,75)
 DECL|macro|PCI2220I
-mdefine_line|#define PCI2220I { NULL, NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&amp;Proc_Scsi_Pci2220i,/* proc_dir_entry */&bslash;&n;&t;&t;&t;NULL,&t;&t;                &t;&t;&t;&bslash;&n;&t;&t;&t;&quot;PCI-2220I EIDE Disk Controller&quot;,&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t; &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Command,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_QueueCommand,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Abort,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Reset,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_BiosParam,                 &t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;-1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SG_NONE,&t;&t; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;DISABLE_CLUSTERING }
+mdefine_line|#define PCI2220I {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;next:&t;&t;&t;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;module:&t;&t;&t;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;proc_dir:&t;&t;&t;&t;&t;&amp;Proc_Scsi_Pci2220i,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;proc_info:&t;&t;&t;&t;&t;NULL,&t;/* let&squot;s not bloat the kernel */&bslash;&n;&t;&t;name:&t;&t;&t;&t;&t;&t;&quot;PCI-2220I EIDE Disk Controller&quot;,&t;&t;&bslash;&n;&t;&t;detect:&t;&t;&t;&t;&t;&t;Pci2220i_Detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;release:&t;&t;&t;&t;&t;Pci2220i_Release,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;info:&t;&t;&t;&t;&t;&t;NULL,&t;/* let&squot;s not bloat the kernel */&bslash;&n;&t;&t;command:&t;&t;&t;&t;&t;Pci2220i_Command,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;queuecommand:&t;&t;&t;&t;Pci2220i_QueueCommand,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;eh_strategy_handler:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;eh_abort_handler:&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;eh_device_reset_handler:&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;eh_bus_reset_handler:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;eh_host_reset_handler:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;abort:&t;&t;&t;&t;&t;&t;Pci2220i_Abort,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;reset:&t;&t;&t;&t;&t;&t;Pci2220i_Reset,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;slave_attach:&t;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;bios_param:&t;&t;&t;&t;&t;Pci2220i_BiosParam,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;can_queue:&t;&t;&t;&t;&t;1,&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;this_id:&t;&t;&t;&t;&t;-1,&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:&t;&t;&t;&t;SG_NONE,&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:&t;&t;&t;&t;1,&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;present:&t;&t;&t;&t;&t;0,&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unchecked_isa_dma:&t;&t;&t;0,&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;use_clustering:&t;&t;&t;&t;DISABLE_CLUSTERING,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;use_new_eh_code:&t;&t;&t;0&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;}
+macro_line|#else
+DECL|macro|PCI2220I
+mdefine_line|#define PCI2220I { NULL, NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&amp;Proc_Scsi_Pci2220i,/* proc_dir_entry */&bslash;&n;&t;&t;&t;NULL,&t;&t;                &t;&t;&t;&bslash;&n;&t;&t;&t;&quot;PCI-2220I EIDE Disk Controller&quot;,&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Release,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t; &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Command,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_QueueCommand,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Abort,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_Reset,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;Pci2220i_BiosParam,                 &t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;-1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;SG_NONE,&t;&t; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;1, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;DISABLE_CLUSTERING }
+macro_line|#endif
+macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Feb 17 23:29:34 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Apr  7 16:56:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -46,7 +46,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|irlan_client_ctrl_data_indication
 c_func
 (paren
@@ -82,7 +82,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -242,6 +242,7 @@ id|irlan_client_kick_timer_expired
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irlan_client_wakeup (self, saddr, daddr)&n; *&n; *    Wake up client&n; *&n; */
 DECL|function|irlan_client_wakeup
 r_void
 id|irlan_client_wakeup
@@ -294,14 +295,16 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Check if we are already awake */
 r_if
 c_cond
 (paren
 id|self-&gt;client.state
-op_eq
+op_ne
 id|IRLAN_IDLE
 )paren
-(brace
+r_return
+suffix:semicolon
 multiline_comment|/* saddr may have changed! */
 id|self-&gt;saddr
 op_assign
@@ -351,7 +354,7 @@ c_cond
 id|self-&gt;notify_irmanager
 )paren
 (brace
-multiline_comment|/* &n;&t;&t;&t; * Tell irmanager that the device can now be &n;&t;&t;&t; * configured but only if the device was not taken&n;&t;&t;&t; * down by the user&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t; * Tell irmanager that the device can now be &n;&t;&t; * configured but only if the device was not taken&n;&t;&t; * down by the user&n;&t;&t; */
 id|mgr_event.event
 op_assign
 id|EVENT_IRLAN_START
@@ -373,7 +376,7 @@ op_amp
 id|mgr_event
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t; * We set this so that we only notify once, since if &n;&t;&t;&t; * configuration of the network device fails, the user&n;&t;&t;&t; * will have to sort it out first anyway. No need to &n;&t;&t;&t; * try again.&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t; * We set this so that we only notify once, since if &n;&t;&t; * configuration of the network device fails, the user&n;&t;&t; * will have to sort it out first anyway. No need to &n;&t;&t; * try again.&n;&t;&t; */
 id|self-&gt;notify_irmanager
 op_assign
 id|FALSE
@@ -394,38 +397,11 @@ c_func
 (paren
 id|self
 comma
-l_int|200
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|DEBUG
-c_func
-(paren
 l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), state=%s&bslash;n&quot;
-comma
-id|irlan_state
-(braket
-id|self-&gt;client.state
-)braket
+op_star
+id|HZ
 )paren
 suffix:semicolon
-multiline_comment|/*  &n;&t;&t; *  If we get here, it&squot;s obvious that the last &n;&t;&t; *  connection attempt has failed, so its best &n;&t;&t; *  to go back to idle!&n;&t;&t; */
-id|irlan_do_client_event
-c_func
-(paren
-id|self
-comma
-id|IRLAN_LMP_DISCONNECT
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irlan_discovery_indication (daddr)&n; *&n; *    Remote device with IrLAN server support discovered&n; *&n; */
 DECL|function|irlan_client_discovery_indication
@@ -433,7 +409,7 @@ r_void
 id|irlan_client_discovery_indication
 c_func
 (paren
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery
 )paren
@@ -721,7 +697,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function irlan_client_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the control channel&n; *&n; */
 DECL|function|irlan_client_ctrl_data_indication
 r_static
-r_void
+r_int
 id|irlan_client_ctrl_data_indication
 c_func
 (paren
@@ -770,6 +746,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -781,6 +759,8 @@ op_eq
 id|IRLAN_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -792,6 +772,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -804,6 +786,9 @@ id|IRLAN_DATA_INDICATION
 comma
 id|skb
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|irlan_client_ctrl_disconnect_indication
@@ -1085,7 +1070,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -1592,11 +1577,17 @@ r_int
 id|val_len
 )paren
 (brace
+macro_line|#ifdef CONFIG_IRLAN_GRATUITOUS_ARP
 r_struct
 id|in_device
 op_star
 id|in_dev
 suffix:semicolon
+macro_line|#endif
+id|__u16
+id|tmp_cpu
+suffix:semicolon
+multiline_comment|/* Temporary value in host order */
 id|__u8
 op_star
 id|bytes
@@ -2008,13 +1999,29 @@ op_eq
 l_int|0
 )paren
 (brace
-id|self-&gt;client.recv_arb_val
-op_assign
-id|le16_to_cpup
+id|memcpy
 c_func
 (paren
+op_amp
+id|tmp_cpu
+comma
 id|value
+comma
+l_int|2
 )paren
+suffix:semicolon
+multiline_comment|/* Align value */
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|tmp_cpu
+)paren
+suffix:semicolon
+multiline_comment|/* Convert to host order */
+id|self-&gt;client.recv_arb_val
+op_assign
+id|tmp_cpu
 suffix:semicolon
 id|DEBUG
 c_func
@@ -2042,13 +2049,29 @@ op_eq
 l_int|0
 )paren
 (brace
-id|self-&gt;client.max_frame
-op_assign
-id|le16_to_cpup
+id|memcpy
 c_func
 (paren
+op_amp
+id|tmp_cpu
+comma
 id|value
+comma
+l_int|2
 )paren
+suffix:semicolon
+multiline_comment|/* Align value */
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|tmp_cpu
+)paren
+suffix:semicolon
+multiline_comment|/* Convert to host order */
+id|self-&gt;client.max_frame
+op_assign
+id|tmp_cpu
 suffix:semicolon
 id|DEBUG
 c_func

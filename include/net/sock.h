@@ -43,6 +43,9 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
 macro_line|#include &lt;net/dn.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_IRDA) || defined(CONFIG_IRDA_MODULE)
+macro_line|#include &lt;net/irda/irda.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_FILTER
 macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#endif
@@ -1200,6 +1203,14 @@ r_struct
 id|econet_opt
 op_star
 id|af_econet
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_IRDA) || defined(CONFIG_IRDA_MODULE)
+DECL|member|irda
+r_struct
+id|irda_sock
+op_star
+id|irda
 suffix:semicolon
 macro_line|#endif
 DECL|member|protinfo

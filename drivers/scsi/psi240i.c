@@ -306,9 +306,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_after
+c_func
+(paren
 id|timer
-OG
+comma
 id|jiffies
+)paren
 )paren
 suffix:semicolon
 singleline_comment|// test for timeout
@@ -487,9 +491,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_after
+c_func
+(paren
 id|timer
-OG
+comma
 id|jiffies
+)paren
 )paren
 suffix:semicolon
 singleline_comment|// test for timeout
@@ -748,7 +756,7 @@ c_func
 (paren
 id|printk
 (paren
-l_string|&quot;&bslash;npsi240i recieved interrupt&bslash;n&quot;
+l_string|&quot;&bslash;npsi240i received interrupt&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon

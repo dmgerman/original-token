@@ -815,11 +815,11 @@ id|ms-&gt;s_state
 suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
-l_int|1024
+id|BLOCK_SIZE
 suffix:semicolon
 id|s-&gt;s_blocksize_bits
 op_assign
-l_int|10
+id|BLOCK_SIZE_BITS
 suffix:semicolon
 id|s-&gt;u.minix_sb.s_ninodes
 op_assign

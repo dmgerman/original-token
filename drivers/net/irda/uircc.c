@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.1&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Tue Feb  9 13:30:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; *     Notice that FIR mode is not working yet, since I don&squot;t know &n; *     how to make the UIRCC drive the interrupt line, and not the&n; *     UART (which is used for SIR speeds). Please mail me if you know!&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.3&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC v 1.3)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Sat Apr  3 15:54:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -150,6 +150,7 @@ r_int
 id|dma
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_static
 r_int
 id|uircc_close
@@ -161,6 +162,7 @@ op_star
 id|idev
 )paren
 suffix:semicolon
+macro_line|#endif /* MODULE */
 r_static
 r_int
 id|uircc_probe
@@ -290,6 +292,25 @@ id|idev
 suffix:semicolon
 r_static
 r_int
+id|uircc_toshiba_cmd
+c_func
+(paren
+r_int
+op_star
+id|retval
+comma
+r_int
+id|arg0
+comma
+r_int
+id|arg1
+comma
+r_int
+id|arg2
+)paren
+suffix:semicolon
+r_static
+r_int
 id|uircc_net_init
 c_func
 (paren
@@ -381,6 +402,8 @@ id|ioaddr
 comma
 id|CHIP_IO_EXTENT
 )paren
+OL
+l_int|0
 )paren
 r_continue
 suffix:semicolon
@@ -530,7 +553,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -766,10 +789,7 @@ id|IR_57600
 op_or
 id|IR_115200
 op_or
-id|IR_576000
-op_or
-id|IR_1152000
-op_or
+multiline_comment|/*IR_576000|IR_1152000| */
 (paren
 id|IR_4000000
 op_lshift
@@ -778,7 +798,7 @@ l_int|8
 suffix:semicolon
 id|idev-&gt;qos.min_turn_time.bits
 op_assign
-l_int|0x07
+l_int|0x0f
 suffix:semicolon
 id|irda_qos_bits_to_value
 c_func
@@ -820,10 +840,6 @@ op_assign
 l_int|4000
 suffix:semicolon
 multiline_comment|/* Initialize callbacks */
-id|idev-&gt;hard_xmit
-op_assign
-id|uircc_hard_xmit
-suffix:semicolon
 id|idev-&gt;change_speed
 op_assign
 id|uircc_change_speed
@@ -875,6 +891,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function uircc_close (idev)&n; *&n; *    Close driver instance&n; *&n; */
+macro_line|#ifdef MODULE
 DECL|function|uircc_close
 r_static
 r_int
@@ -889,6 +906,9 @@ id|idev
 (brace
 r_int
 id|iobase
+suffix:semicolon
+r_int
+id|status
 suffix:semicolon
 id|DEBUG
 c_func
@@ -928,6 +948,20 @@ suffix:semicolon
 id|iobase
 op_assign
 id|idev-&gt;io.iobase
+suffix:semicolon
+multiline_comment|/* Some magic to disable FIR and enable SIR */
+id|uircc_toshiba_cmd
+c_func
+(paren
+op_amp
+id|status
+comma
+l_int|0xffff
+comma
+l_int|0x001b
+comma
+l_int|0x0000
+)paren
 suffix:semicolon
 multiline_comment|/* Disable modem */
 id|outb
@@ -1002,6 +1036,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Function uircc_probe (iobase, board_addr, irq, dma)&n; *&n; *    Returns non-negative on success.&n; *&n; */
 DECL|function|uircc_probe
 r_static
@@ -1025,24 +1060,10 @@ id|dma
 r_int
 id|version
 suffix:semicolon
-macro_line|#if 0
-r_int
-id|probe_irq
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|mask
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1081,12 +1102,11 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;UIRCC driver loaded. Version: 0x%02x&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;Sharp UIRCC IrDA driver loaded. Version: 0x%02x&bslash;n&quot;
 comma
 id|version
 )paren
@@ -1106,6 +1126,16 @@ multiline_comment|/* Initialize some registers */
 id|outb
 c_func
 (paren
+l_int|0x03
+comma
+id|iobase
+op_plus
+id|UIRCC_CR15
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
 l_int|0
 comma
 id|iobase
@@ -1121,6 +1151,23 @@ comma
 id|iobase
 op_plus
 id|UIRCC_CR9
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), sr15=%#x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR15
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Enable DMA single mode */
@@ -1149,224 +1196,6 @@ op_plus
 id|UIRCC_CR2
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|irport_close
-c_func
-(paren
-id|iobase2
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|1
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-multiline_comment|/* Set appropriate speed mode */
-id|outb
-c_func
-(paren
-id|UIRCC_CR10_FIR
-comma
-id|iobase
-op_plus
-id|UIRCC_CR10
-)paren
-suffix:semicolon
-multiline_comment|/* Enable DMA single mode */
-id|outb
-c_func
-(paren
-id|UIRCC_CR1_RX_DMA
-op_or
-id|UIRCC_CR1_TX_DMA
-op_or
-id|UIRCC_CR1_MUST_SET
-comma
-id|iobase
-op_plus
-id|UIRCC_CR1
-)paren
-suffix:semicolon
-multiline_comment|/* Set up timer */
-id|outb
-c_func
-(paren
-l_int|0x01
-comma
-id|iobase
-op_plus
-id|UIRCC_CR12
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|iobase
-op_plus
-id|UIRCC_CR13
-)paren
-suffix:semicolon
-multiline_comment|/* Set interrupt mask */
-id|outb
-c_func
-(paren
-l_int|0x82
-comma
-id|iobase
-op_plus
-id|UIRCC_CR2
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(*), sr3=%#x, sr2=%#x, sr10=%#x, sr12=%#x&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR3
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR2
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR10
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR12
-)paren
-)paren
-suffix:semicolon
-id|mask
-op_assign
-id|probe_irq_on
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enable timer */
-id|outb
-c_func
-(paren
-l_int|0x08
-comma
-id|iobase
-op_plus
-id|UIRCC_CR11
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|10000
-)paren
-suffix:semicolon
-multiline_comment|/* Wait for interrupt! */
-id|probe_irq
-op_assign
-id|probe_irq_off
-c_func
-(paren
-id|mask
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;Found irq=%d&bslash;n&quot;
-comma
-id|probe_irq
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), sr3=%#x, sr2=%#x, sr10=%#x, sr12=%#x&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR3
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR2
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR10
-)paren
-comma
-id|inb
-c_func
-(paren
-id|iobase
-op_plus
-id|UIRCC_SR12
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Diable timer */
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-id|iobase
-op_plus
-id|UIRCC_CR11
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Set self poll address */
 r_return
 l_int|0
@@ -1401,6 +1230,9 @@ id|modem
 op_assign
 id|UIRCC_CR10_SIR
 suffix:semicolon
+r_int
+id|status
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1410,6 +1242,8 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Just test the high speed stuff */
+multiline_comment|/*speed = 4000000;*/
 id|ASSERT
 c_func
 (paren
@@ -1477,13 +1311,32 @@ suffix:colon
 r_case
 l_int|115200
 suffix:colon
-multiline_comment|/* &t;&t;irport_open( idev-&gt;io.iobase2); */
+id|irport_open
+c_func
+(paren
+id|idev-&gt;io.iobase2
+)paren
+suffix:semicolon
 id|irport_change_speed
 c_func
 (paren
 id|idev-&gt;io.iobase2
 comma
 id|speed
+)paren
+suffix:semicolon
+multiline_comment|/* Some magic to disable FIR and enable SIR */
+id|uircc_toshiba_cmd
+c_func
+(paren
+op_amp
+id|status
+comma
+l_int|0xffff
+comma
+l_int|0x001b
+comma
+l_int|0x0000
 )paren
 suffix:semicolon
 id|modem
@@ -1529,6 +1382,20 @@ c_func
 id|idev-&gt;io.iobase2
 )paren
 suffix:semicolon
+multiline_comment|/* Some magic to disable SIR and enable FIR */
+id|uircc_toshiba_cmd
+c_func
+(paren
+op_amp
+id|status
+comma
+l_int|0xffff
+comma
+l_int|0x001b
+comma
+l_int|0x0001
+)paren
+suffix:semicolon
 id|modem
 op_assign
 id|UIRCC_CR10_FIR
@@ -1542,6 +1409,18 @@ id|__FUNCTION__
 l_string|&quot;(), handling baud of 4000000&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Set self pole address */
+id|outb
+c_func
+(paren
+l_int|0x10
+comma
+id|iobase
+op_plus
+id|UIRCC_CR8
+)paren
+suffix:semicolon
+multiline_comment|/* outb(0x10, iobase+UIRCC_CR11); */
 r_break
 suffix:semicolon
 r_default
@@ -1599,7 +1478,7 @@ op_plus
 id|UIRCC_CR1
 )paren
 suffix:semicolon
-multiline_comment|/* outb( UIRCC_CR2_RECV_MASK, iobase+UIRCC_CR2);  */
+multiline_comment|/* Enable all interrupts  */
 id|outb
 c_func
 (paren
@@ -1687,7 +1566,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(%ld), skb-&gt;len=%d&bslash;n&quot;
@@ -1700,6 +1579,8 @@ r_int
 id|skb-&gt;len
 )paren
 suffix:semicolon
+multiline_comment|/* Reset carrier latch */
+multiline_comment|/*outb(0x02, iobase+UIRCC_CR0);*/
 multiline_comment|/* Use irport for SIR speeds */
 r_if
 c_cond
@@ -1719,6 +1600,63 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), sr0=%#x, sr1=%#x, sr2=%#x, sr3=%#x, sr10=%#x, sr11=%#x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR0
+)paren
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR3
+)paren
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR2
+)paren
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR3
+)paren
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR10
+)paren
+comma
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UIRCC_SR11
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Lock transmit buffer */
 r_if
 c_cond
@@ -1794,7 +1732,6 @@ id|mtt
 )paren
 suffix:semicolon
 multiline_comment|/* Enable transmit interrupts */
-multiline_comment|/* outb( UIRCC_CR2_XMIT_MASK, iobase+UIRCC_CR2); */
 id|outb
 c_func
 (paren
@@ -1823,7 +1760,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function uircc_dma_xmit (idev, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
+multiline_comment|/*&n; * Function uircc_dma_write (idev, iobase)&n; *&n; *    Transmit data using DMA&n; *&n; */
 DECL|function|uircc_dma_write
 r_static
 r_void
@@ -1844,13 +1781,10 @@ id|uircc_cb
 op_star
 id|self
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1898,6 +1832,52 @@ op_plus
 id|UIRCC_CR3
 )paren
 suffix:semicolon
+multiline_comment|/* Set modem */
+id|outb
+c_func
+(paren
+l_int|0x80
+comma
+id|iobase
+op_plus
+id|UIRCC_CR10
+)paren
+suffix:semicolon
+multiline_comment|/* Enable transmit DMA */
+id|outb
+c_func
+(paren
+id|UIRCC_CR1_TX_DMA
+op_or
+id|UIRCC_CR1_MUST_SET
+comma
+id|iobase
+op_plus
+id|UIRCC_CR1
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+(paren
+(paren
+(paren
+id|__u32
+)paren
+(paren
+id|idev-&gt;tx_buff.data
+)paren
+)paren
+op_amp
+l_int|0x01
+)paren
+op_ne
+l_int|0x01
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
 id|setup_dma
 c_func
 (paren
@@ -1910,26 +1890,11 @@ comma
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;residue=%d&bslash;n&quot;
-comma
-id|get_dma_residue
-c_func
-(paren
-id|idev-&gt;io.dma
-)paren
-)paren
-suffix:semicolon
 id|idev-&gt;io.direction
 op_assign
 id|IO_XMIT
 suffix:semicolon
-multiline_comment|/* Set frame length */
+multiline_comment|/* Set frame length (should be the real length without padding */
 id|outb
 c_func
 (paren
@@ -2078,6 +2043,17 @@ op_lshift
 l_int|8
 suffix:semicolon
 multiline_comment|/* High byte */
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), sent %d bytes&bslash;n&quot;
+comma
+id|len
+)paren
+suffix:semicolon
 multiline_comment|/* Disable transmit */
 id|self-&gt;cr3
 op_and_assign
@@ -2092,6 +2068,17 @@ comma
 id|iobase
 op_plus
 id|UIRCC_CR3
+)paren
+suffix:semicolon
+multiline_comment|/* Transmit reset (just to be sure) */
+id|outb
+c_func
+(paren
+id|UIRCC_CR0_XMIT_RST
+comma
+id|iobase
+op_plus
+id|UIRCC_CR0
 )paren
 suffix:semicolon
 multiline_comment|/* Check for underrrun! */
@@ -2186,7 +2173,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
@@ -2200,7 +2187,59 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
-multiline_comment|/* Disable DMA */
+multiline_comment|/* Transmit disable */
+multiline_comment|/* self-&gt;cr3 &amp;= ~UIRCC_CR3_XMIT_EN; */
+id|self-&gt;cr3
+op_assign
+l_int|0
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|self-&gt;cr3
+comma
+id|iobase
+op_plus
+id|UIRCC_CR3
+)paren
+suffix:semicolon
+multiline_comment|/* Transmit reset (just in case) */
+id|outb
+c_func
+(paren
+id|UIRCC_CR0_XMIT_RST
+comma
+id|iobase
+op_plus
+id|UIRCC_CR0
+)paren
+suffix:semicolon
+multiline_comment|/* Set modem */
+id|outb
+c_func
+(paren
+l_int|0x08
+comma
+id|iobase
+op_plus
+id|UIRCC_CR10
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure Rx DMA is set */
+id|outb
+c_func
+(paren
+id|UIRCC_CR1_RX_DMA
+op_or
+id|UIRCC_CR1_MUST_SET
+comma
+id|iobase
+op_plus
+id|UIRCC_CR1
+)paren
+suffix:semicolon
+multiline_comment|/* Rx reset */
+multiline_comment|/* outb(UIRCC_CR0_RECV_RST, iobase+UIRCC_CR0); */
 id|setup_dma
 c_func
 (paren
@@ -2228,7 +2267,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Enable receiving with CRC */
 id|self-&gt;cr3
-op_or_assign
+op_assign
 (paren
 id|UIRCC_CR3_RECV_EN
 op_or
@@ -2245,16 +2284,18 @@ op_plus
 id|UIRCC_CR3
 )paren
 suffix:semicolon
-multiline_comment|/* Address check? */
 id|DEBUG
 c_func
 (paren
 l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;(), done!&bslash;n&quot;
+l_string|&quot;(), cr3=%#x&bslash;n&quot;
+comma
+id|self-&gt;cr3
 )paren
 suffix:semicolon
+multiline_comment|/* Address check? */
 r_return
 l_int|0
 suffix:semicolon
@@ -2322,7 +2363,7 @@ c_func
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), crc or frm error&bslash;n&quot;
+l_string|&quot;(), CRC or FRAME error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2589,6 +2630,14 @@ op_logical_neg
 id|sr3
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+l_string|&quot;**&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2639,7 +2688,7 @@ id|sr3
 r_case
 id|UIRCC_SR3_RX_EOF
 suffix:colon
-multiline_comment|/* Check of end of frame */
+multiline_comment|/* Check for end of frame */
 id|uircc_dma_receive_complete
 c_func
 (paren
@@ -2662,6 +2711,22 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
+id|uircc_dma_receive
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|iobase
+op_plus
+id|UIRCC_CR2
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2675,6 +2740,13 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
+id|uircc_dma_receive
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
+multiline_comment|/* outb(0, iobase+UIRCC_CR2);  */
 r_break
 suffix:semicolon
 r_case
@@ -3116,6 +3188,75 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function uircc_toshiba_cmd (arg0, arg1, arg2)&n; *&n; *    disable FIR: uircc_toshiba_cmd(&amp;status, 0xffff, 0x001b, 0x0000);&n; *    enable  FIR: uircc_toshiba_cmd(&amp;status, 0xffff, 0x001b, 0x0001);&n; *    IRDA status: uircc_toshiba_cmd(&amp;status, 0xfefe, 0x001b, 0x0000);&n; */
+DECL|function|uircc_toshiba_cmd
+r_static
+r_int
+id|uircc_toshiba_cmd
+c_func
+(paren
+r_int
+op_star
+id|retval
+comma
+r_int
+id|arg0
+comma
+r_int
+id|arg1
+comma
+r_int
+id|arg2
+)paren
+(brace
+r_char
+id|return_code
+op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+r_volatile
+(paren
+l_string|&quot;inb   $0xb2,%%al; &quot;
+l_string|&quot;movb  %%ah,%%al;  &quot;
+suffix:colon
+multiline_comment|/* Output */
+l_string|&quot;=al&quot;
+(paren
+id|return_code
+)paren
+comma
+l_string|&quot;=ecx&quot;
+(paren
+op_star
+id|retval
+)paren
+suffix:colon
+multiline_comment|/* Input */
+l_string|&quot;ax&quot;
+(paren
+id|arg0
+)paren
+comma
+l_string|&quot;bx&quot;
+(paren
+id|arg1
+)paren
+comma
+l_string|&quot;cx&quot;
+(paren
+id|arg2
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Return&n;&t; * 0x00 = OK&n;&t; * 0x80 = Function not supported by system&n;&t; * 0x83 = Input data error&n;&t; */
+r_return
+(paren
+r_int
+)paren
+id|return_code
+suffix:semicolon
+)brace
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    &n; *&n; */
 DECL|function|init_module
@@ -3126,13 +3267,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|uircc_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    &n; *&n; */
@@ -3150,5 +3289,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

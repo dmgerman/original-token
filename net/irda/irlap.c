@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.9&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sat Feb 20 01:39:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.9&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Apr  6 21:07:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
@@ -334,18 +335,53 @@ op_amp
 id|self-&gt;wx_list
 )paren
 suffix:semicolon
-multiline_comment|/* My unique IrLAP device address! :-) */
-id|self-&gt;saddr
-op_assign
-id|jiffies
-suffix:semicolon
-multiline_comment|/*  Generate random connection address for this session */
-id|self-&gt;caddr
-op_assign
-id|jiffies
+multiline_comment|/* My unique IrLAP device address! */
+id|get_random_bytes
+c_func
+(paren
 op_amp
+id|self-&gt;saddr
+comma
+r_sizeof
+(paren
+id|self-&gt;saddr
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Generate random connection address for this session, which must&n;&t; * be 7 bits wide and different from 0x00 and 0xfe &n;&t; */
+r_while
+c_loop
+(paren
+(paren
+id|self-&gt;caddr
+op_eq
+l_int|0x00
+)paren
+op_logical_or
+(paren
+id|self-&gt;caddr
+op_eq
+l_int|0xfe
+)paren
+)paren
+(brace
+id|get_random_bytes
+c_func
+(paren
+op_amp
+id|self-&gt;caddr
+comma
+r_sizeof
+(paren
+id|self-&gt;caddr
+)paren
+)paren
+suffix:semicolon
+id|self-&gt;caddr
+op_and_assign
 l_int|0xfe
 suffix:semicolon
+)brace
 id|init_timer
 c_func
 (paren
@@ -425,7 +461,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|irlmp_register_irlap
+id|irlmp_register_link
 c_func
 (paren
 id|self
@@ -546,7 +582,7 @@ id|self
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_close ()&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlap_close (self)&n; *&n; *    Remove IrLAP instance&n; *&n; */
 DECL|function|irlap_close
 r_void
 id|irlap_close
@@ -602,7 +638,7 @@ comma
 id|LAP_DISC_INDICATION
 )paren
 suffix:semicolon
-id|irlmp_unregister_irlap
+id|irlmp_unregister_link
 c_func
 (paren
 id|self-&gt;saddr
@@ -651,7 +687,7 @@ id|lap
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_connect_indication ()&n; *&n; *    Another device is attempting to make a connection&n; *&n; */
+multiline_comment|/*&n; * Function irlap_connect_indication (self, skb)&n; *&n; *    Another device is attempting to make a connection&n; *&n; */
 DECL|function|irlap_connect_indication
 r_void
 id|irlap_connect_indication
@@ -724,7 +760,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_connect_response (void)&n; *&n; *    Service user has accepted incomming connection&n; *&n; */
+multiline_comment|/*&n; * Function irlap_connect_response (self, skb)&n; *&n; *    Service user has accepted incomming connection&n; *&n; */
 DECL|function|irlap_connect_response
 r_void
 id|irlap_connect_response
@@ -763,7 +799,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_connect_request (daddr, qos, sniff)&n; *&n; *    Request connection with another device, sniffing is not implemented &n; *    yet.&n; */
+multiline_comment|/*&n; * Function irlap_connect_request (self, daddr, qos_user, sniff)&n; *&n; *    Request connection with another device, sniffing is not implemented &n; *    yet.&n; *&n; */
 DECL|function|irlap_connect_request
 r_void
 id|irlap_connect_request
@@ -789,10 +825,12 @@ id|sniff
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|3
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), daddr=0x%08x&bslash;n&quot;
+comma
+id|daddr
 )paren
 suffix:semicolon
 id|ASSERT
@@ -833,9 +871,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|self-&gt;state
 op_eq
 id|LAP_NDM
+)paren
+op_logical_and
+op_logical_neg
+id|irda_device_is_media_busy
+c_func
+(paren
+id|self-&gt;irdev
+)paren
 )paren
 id|irlap_do_event
 c_func
@@ -855,7 +902,7 @@ op_assign
 id|TRUE
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_connect_confirm (void)&n; *&n; *    Connection request is accepted&n; *&n; */
+multiline_comment|/*&n; * Function irlap_connect_confirm (self, skb)&n; *&n; *    Connection request has been accepted&n; *&n; */
 DECL|function|irlap_connect_confirm
 r_void
 id|irlap_connect_confirm
@@ -915,7 +962,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_data_indication (skb)&n; *&n; *    Received data frames from IR-port, so we just pass them up to &n; *    IrLMP for further processing&n; *&n; */
+multiline_comment|/*&n; * Function irlap_data_indication (self, skb)&n; *&n; *    Received data frames from IR-port, so we just pass them up to &n; *    IrLMP for further processing&n; *&n; */
 DECL|function|irlap_data_indication
 r_inline
 r_void
@@ -1670,7 +1717,7 @@ id|irlap_cb
 op_star
 id|self
 comma
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery
 )paren
@@ -1982,7 +2029,7 @@ id|irlap_cb
 op_star
 id|self
 comma
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery
 )paren
@@ -2040,7 +2087,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|irlmp_discovery_indication
+id|irlmp_link_discovery_indication
 c_func
 (paren
 id|self-&gt;notify.instance
@@ -2099,7 +2146,7 @@ c_func
 (paren
 id|quality_of_link
 comma
-id|NO_CHANGE
+id|LOCK_NO_CHANGE
 )paren
 suffix:semicolon
 )brace

@@ -24,14 +24,6 @@ r_void
 suffix:semicolon
 r_static
 r_void
-id|irlpt_client_cleanup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_void
 id|irlpt_client_close
 c_func
 (paren
@@ -46,7 +38,7 @@ r_void
 id|irlpt_client_discovery_indication
 c_func
 (paren
-id|DISCOVERY
+id|discovery_t
 op_star
 )paren
 suffix:semicolon
@@ -68,7 +60,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_seg_size
 comma
 r_struct
@@ -126,6 +118,12 @@ id|version
 op_assign
 l_string|&quot;IrLPT client, v2 (Thomas Davis)&quot;
 suffix:semicolon
+DECL|variable|ckey
+r_static
+id|__u32
+id|ckey
+suffix:semicolon
+multiline_comment|/* IrLMP client handle */
 DECL|variable|client_fops
 r_struct
 id|file_operations
@@ -561,6 +559,9 @@ r_void
 )paren
 )paren
 (brace
+id|__u16
+id|hints
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -608,16 +609,24 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|irlmp_register_layer
+id|hints
+op_assign
+id|irlmp_service_to_hint
 c_func
 (paren
 id|S_PRINTER
-comma
-id|CLIENT
-comma
-id|TRUE
+)paren
+suffix:semicolon
+id|ckey
+op_assign
+id|irlmp_register_client
+c_func
+(paren
+id|hints
 comma
 id|irlpt_client_discovery_indication
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
@@ -666,12 +675,10 @@ id|__FUNCTION__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|irlmp_unregister_layer
+id|irlmp_unregister_client
 c_func
 (paren
-id|S_PRINTER
-comma
-id|CLIENT
+id|ckey
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Delete hashbin and close all irlpt client instances in it&n;&t; */
@@ -721,6 +728,10 @@ id|__u32
 id|daddr
 )paren
 (brace
+r_struct
+id|irmanager_event
+id|mgr_event
+suffix:semicolon
 r_struct
 id|irlpt_cb
 op_star
@@ -897,6 +908,28 @@ comma
 id|IRLPT_CLIENT_IDLE
 )paren
 suffix:semicolon
+multiline_comment|/* Tell irmanager to create /dev/irlpt&lt;X&gt; */
+id|mgr_event.event
+op_assign
+id|EVENT_IRLPT_START
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|mgr_event.devname
+comma
+l_string|&quot;%s&quot;
+comma
+id|self-&gt;ifname
+)paren
+suffix:semicolon
+id|irmanager_notify
+c_func
+(paren
+op_amp
+id|mgr_event
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|DEBUG
@@ -925,6 +958,10 @@ op_star
 id|self
 )paren
 (brace
+r_struct
+id|irmanager_event
+id|mgr_event
+suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -960,6 +997,28 @@ id|IRLPT_MAGIC
 comma
 r_return
 suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Tell irmanager to remove /dev/irlpt&lt;X&gt; */
+id|mgr_event.event
+op_assign
+id|EVENT_IRLPT_STOP
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|mgr_event.devname
+comma
+l_string|&quot;%s&quot;
+comma
+id|self-&gt;ifname
+)paren
+suffix:semicolon
+id|irmanager_notify
+c_func
+(paren
+op_amp
+id|mgr_event
 )paren
 suffix:semicolon
 r_while
@@ -1025,7 +1084,7 @@ r_void
 id|irlpt_client_discovery_indication
 c_func
 (paren
-id|DISCOVERY
+id|discovery_t
 op_star
 id|discovery
 )paren
@@ -1399,7 +1458,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -1533,7 +1592,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Function client_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the data channel&n; *&n; */
 DECL|function|irlpt_client_data_indication
 r_static
-r_void
+r_int
 id|irlpt_client_data_indication
 c_func
 (paren
@@ -1574,6 +1633,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1608,6 +1669,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1619,6 +1682,8 @@ op_eq
 id|IRLPT_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1736,6 +1801,9 @@ comma
 id|__FUNCTION__
 l_string|&quot; --&gt;&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlpt_get_value_confirm (obj_id, type, value_int, value_char, priv)&n; *&n; *    Fixed to match changes in iriap.h, DB.&n; *&n; */

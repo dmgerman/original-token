@@ -1,10 +1,9 @@
-multiline_comment|/*+M*************************************************************************&n; * Perceptive Solutions, Inc. PCI-22220I device driver proc support for Linux.&n; *&n; * Copyright (c) 1999 Perceptive Solutions, Inc.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;File Name:&t;&t;pci2220i.c&n; *&n; *&t;Description:&t;SCSI driver for the PCI2220I EIDE interface card.&n; *&n; *-M*************************************************************************/
+multiline_comment|/****************************************************************************&n; * Perceptive Solutions, Inc. PCI-2220I device driver for Linux.&n; *&n; * pci2220i.c - Linux Host Driver for PCI-2220I EIDE RAID Adapters&n; *&n; * Copyright (c) 1997-1999 Perceptive Solutions, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * Technical updates and product information at:&n; *  http://www.psidisk.com&n; *&n; * Please send questions, comments, bug reports to:&n; *  tech@psidisk.com Technical Support&n; *&n; *&n; *&t;Revisions 1.10&t;&t;Mar-26-1999&n; *&t;&t;- Updated driver for RAID and hot reconstruct support.&n; *&n; *&t;Revisions 1.11&t;&t;Mar-26-1999&n; *&t;&t;- Fixed spinlock and PCI configuration.&n; *&n; ****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -20,8 +19,14 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;pci2220i.h&quot;
+macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,95)
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#endif
 DECL|macro|PCI2220I_VERSION
-mdefine_line|#define&t;PCI2220I_VERSION&t;&t;&quot;1.10&quot;
+mdefine_line|#define&t;PCI2220I_VERSION&t;&t;&quot;1.11&quot;
 singleline_comment|//#define&t;READ_CMD&t;&t;&t;&t;IDE_COMMAND_READ
 singleline_comment|//#define&t;WRITE_CMD&t;&t;&t;&t;IDE_COMMAND_WRITE
 singleline_comment|//#define&t;MAX_BUS_MASTER_BLOCKS&t;1&t;&t;// This is the maximum we can bus master
@@ -295,6 +300,11 @@ id|ULONG
 id|timingAddress
 suffix:semicolon
 singleline_comment|// address to use on adapter for current timing mode
+DECL|member|irqOwned
+id|ULONG
+id|irqOwned
+suffix:semicolon
+singleline_comment|// owned IRQ or zero if shared
 DECL|member|device
 id|OUR_DEVICE
 id|device
@@ -373,10 +383,6 @@ DECL|member|failinprog
 id|USHORT
 id|failinprog
 suffix:semicolon
-DECL|member|timeoutReconRetry
-id|USHORT
-id|timeoutReconRetry
-suffix:semicolon
 DECL|member|reconTimer
 r_struct
 id|timer_list
@@ -386,6 +392,11 @@ DECL|member|timer
 r_struct
 id|timer_list
 id|timer
+suffix:semicolon
+DECL|member|kBuffer
+id|UCHAR
+op_star
+id|kBuffer
 suffix:semicolon
 DECL|typedef|ADAPTER2220I
 DECL|typedef|PADAPTER2220I
@@ -463,16 +474,6 @@ id|DALE_DATA_MODE4
 comma
 id|DALE_DATA_MODE4P
 )brace
-suffix:semicolon
-DECL|variable|Buffer
-r_static
-id|UCHAR
-id|Buffer
-(braket
-id|SECTORSXFER
-op_star
-id|BYTES_PER_SECTOR
-)braket
 suffix:semicolon
 r_static
 r_void
@@ -1714,7 +1715,7 @@ op_assign
 (paren
 id|PIDENTIFY_DATA
 )paren
-id|Buffer
+id|padapter-&gt;kBuffer
 suffix:semicolon
 id|SelectSpigot
 (paren
@@ -1769,7 +1770,7 @@ id|insw
 (paren
 id|padapter-&gt;regData
 comma
-id|Buffer
+id|padapter-&gt;kBuffer
 comma
 r_sizeof
 (paren
@@ -1785,6 +1786,256 @@ id|pid-&gt;LBATotalSectors
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/****************************************************************&n; *&t;Name:&t;InlineReadSignature&t;:LOCAL&n; *&n; *&t;Description:&t;Do an inline read RAID sigature.&n; *&n; *&t;Parameters:&t;&t;padapter - Pointer adapter data structure.&n; *&t;&t;&t;&t;&t;pdev&t; - Pointer to device.&n; *&t;&t;&t;&t;&t;index&t; - index of data to read.&n; *&n; *&t;Returns:&t;&t;Zero if no error or status register contents on error.&n; *&n; ****************************************************************/
+DECL|function|InlineReadSignature
+r_static
+id|UCHAR
+id|InlineReadSignature
+(paren
+id|PADAPTER2220I
+id|padapter
+comma
+id|POUR_DEVICE
+id|pdev
+comma
+r_int
+id|index
+)paren
+(brace
+id|UCHAR
+id|status
+suffix:semicolon
+id|UCHAR
+id|spigot
+op_assign
+l_int|1
+op_lshift
+id|index
+suffix:semicolon
+id|ULONG
+id|zl
+op_assign
+id|pdev-&gt;lastsectorlba
+(braket
+id|index
+)braket
+suffix:semicolon
+id|SelectSpigot
+(paren
+id|padapter
+comma
+id|spigot
+op_or
+l_int|0x80
+)paren
+suffix:semicolon
+singleline_comment|// select the spigot without interrupts
+id|outb_p
+(paren
+id|pdev-&gt;byte6
+op_or
+(paren
+(paren
+id|UCHAR
+op_star
+)paren
+op_amp
+id|zl
+)paren
+(braket
+l_int|3
+)braket
+comma
+id|padapter-&gt;regLba24
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|WaitReady
+(paren
+id|padapter
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|status
+)paren
+(brace
+id|outb_p
+(paren
+(paren
+(paren
+id|UCHAR
+op_star
+)paren
+op_amp
+id|zl
+)paren
+(braket
+l_int|2
+)braket
+comma
+id|padapter-&gt;regLba16
+)paren
+suffix:semicolon
+id|outb_p
+(paren
+(paren
+(paren
+id|UCHAR
+op_star
+)paren
+op_amp
+id|zl
+)paren
+(braket
+l_int|1
+)braket
+comma
+id|padapter-&gt;regLba8
+)paren
+suffix:semicolon
+id|outb_p
+(paren
+(paren
+(paren
+id|UCHAR
+op_star
+)paren
+op_amp
+id|zl
+)paren
+(braket
+l_int|0
+)braket
+comma
+id|padapter-&gt;regLba0
+)paren
+suffix:semicolon
+id|outb_p
+(paren
+l_int|1
+comma
+id|padapter-&gt;regSectCount
+)paren
+suffix:semicolon
+id|WriteCommand
+(paren
+id|padapter
+comma
+id|IDE_COMMAND_READ
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|WaitDrq
+(paren
+id|padapter
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|status
+)paren
+(brace
+id|insw
+(paren
+id|padapter-&gt;regData
+comma
+id|padapter-&gt;kBuffer
+comma
+id|BYTES_PER_SECTOR
+op_div
+l_int|2
+)paren
+suffix:semicolon
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
+op_amp
+id|pdev-&gt;DiskMirror
+(braket
+id|index
+)braket
+)paren
+)paren
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
+op_amp
+id|padapter-&gt;kBuffer
+(braket
+id|DISK_MIRROR_POSITION
+)braket
+)paren
+)paren
+(braket
+l_int|0
+)braket
+suffix:semicolon
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
+op_amp
+id|pdev-&gt;DiskMirror
+(braket
+id|index
+)braket
+)paren
+)paren
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
+op_amp
+id|padapter-&gt;kBuffer
+(braket
+id|DISK_MIRROR_POSITION
+)braket
+)paren
+)paren
+(braket
+l_int|1
+)braket
+suffix:semicolon
+singleline_comment|// some drives assert DRQ before IRQ so let&squot;s make sure we clear the IRQ
+id|WaitReady
+(paren
+id|padapter
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_return
+id|status
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;DecodeError&t;:LOCAL&n; *&n; *&t;Description:&t;Decode and process device errors.&n; *&n; *&t;Parameters:&t;&t;padapter - Pointer to adapter data.&n; *&t;&t;&t;&t;&t;status - Status register code.&n; *&n; *&t;Returns:&t;&t;The driver status code.&n; *&n; ****************************************************************/
@@ -2052,57 +2303,83 @@ id|padapter-&gt;expectingIRQ
 op_assign
 id|TRUE
 suffix:semicolon
-id|outsw
 (paren
-id|padapter-&gt;regData
-comma
-id|Buffer
-comma
-id|DISK_MIRROR_POSITION
-op_div
-l_int|2
+(paren
+id|ULONG
+op_star
 )paren
-suffix:semicolon
-id|outsw
 (paren
-id|padapter-&gt;regData
-comma
+op_amp
+id|padapter-&gt;kBuffer
+(braket
+id|DISK_MIRROR_POSITION
+)braket
+)paren
+)paren
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
 op_amp
 id|pdev-&gt;DiskMirror
 (braket
 id|index
 )braket
-comma
-r_sizeof
+)paren
+)paren
+(braket
+l_int|0
+)braket
+suffix:semicolon
 (paren
-id|DISK_MIRROR
+(paren
+id|ULONG
+op_star
 )paren
-op_div
-l_int|2
+(paren
+op_amp
+id|padapter-&gt;kBuffer
+(braket
+id|DISK_MIRROR_POSITION
+)braket
 )paren
+)paren
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+(paren
+id|ULONG
+op_star
+)paren
+(paren
+op_amp
+id|pdev-&gt;DiskMirror
+(braket
+id|index
+)braket
+)paren
+)paren
+(braket
+l_int|1
+)braket
 suffix:semicolon
 id|outsw
 (paren
 id|padapter-&gt;regData
 comma
-id|Buffer
+id|padapter-&gt;kBuffer
 comma
-(paren
-(paren
-l_int|512
-op_minus
-(paren
-id|DISK_MIRROR_POSITION
-op_plus
-r_sizeof
-(paren
-id|DISK_MIRROR
-)paren
-)paren
-)paren
+id|BYTES_PER_SECTOR
 op_div
 l_int|2
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -2129,7 +2406,7 @@ id|DEB
 (paren
 id|printk
 (paren
-l_string|&quot;&bslash;npci2000i:  Initialize failover process - survivor = %d&quot;
+l_string|&quot;&bslash;npci2220i:  Initialize failover process - survivor = %d&quot;
 comma
 id|padapter-&gt;survivor
 )paren
@@ -2262,9 +2539,6 @@ id|pdev
 op_assign
 id|padapter-&gt;pdev
 suffix:semicolon
-id|ULONG
-id|flags
-suffix:semicolon
 id|UCHAR
 id|status
 op_assign
@@ -2275,14 +2549,18 @@ id|temp
 comma
 id|temp1
 suffix:semicolon
-id|DEB
-(paren
-id|printk
-(paren
-l_string|&quot;&bslash;nPCI2220I: Timeout expired &quot;
-)paren
-)paren
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+r_int
+id|flags
 suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
 id|save_flags
 (paren
 id|flags
@@ -2290,6 +2568,25 @@ id|flags
 suffix:semicolon
 id|cli
 (paren
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
+id|DEB
+(paren
+id|printk
+(paren
+l_string|&quot;&bslash;nPCI2220I: Timeout expired &quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2304,11 +2601,6 @@ id|printk
 (paren
 l_string|&quot;in failover process&quot;
 )paren
-)paren
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|OpDone
@@ -2326,7 +2618,8 @@ id|padapter-&gt;regStatCmd
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 )brace
 r_while
@@ -2345,21 +2638,6 @@ id|padapter-&gt;reconPhase
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|padapter-&gt;timeoutReconRetry
-)paren
-(brace
-id|StartTimer
-(paren
-id|padapter
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -2381,11 +2659,6 @@ l_int|3
 )paren
 op_rshift
 l_int|1
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|DEB
 (paren
@@ -2414,7 +2687,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 r_case
 id|RECON_PHASE_READY
@@ -2428,7 +2702,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 r_case
 id|RECON_PHASE_COPY
@@ -2441,11 +2716,6 @@ id|pdev-&gt;spigot
 op_rshift
 l_int|1
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|DEB
 (paren
 id|printk
@@ -2454,8 +2724,19 @@ l_string|&quot;&bslash;npci2220i: FAILURE 2&quot;
 )paren
 )paren
 suffix:semicolon
+id|DEB
+(paren
+id|printk
+(paren
+l_string|&quot;&bslash;n       spig/stat = %X&quot;
+comma
+id|inb_p
+(paren
+id|padapter-&gt;regStatSel
+)paren
+)paren
+suffix:semicolon
 r_if
-c_cond
 (paren
 id|InitFailover
 (paren
@@ -2473,7 +2754,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 r_case
 id|RECON_PHASE_UPDATE
@@ -2486,16 +2768,12 @@ id|pdev-&gt;spigot
 op_rshift
 l_int|1
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|DEB
 (paren
 id|printk
 (paren
 l_string|&quot;&bslash;npci2220i: FAILURE 3&quot;
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -2518,7 +2796,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 r_case
 id|RECON_PHASE_END
@@ -2530,11 +2809,6 @@ id|pdev-&gt;spigot
 )paren
 op_rshift
 l_int|1
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|DEB
 (paren
@@ -2563,11 +2837,13 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 r_default
 suffix:colon
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 )brace
 )brace
@@ -2728,11 +3004,6 @@ id|padapter-&gt;survivor
 op_assign
 l_int|0
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|DEB
 (paren
 id|printk
@@ -2762,7 +3033,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 )brace
 )brace
@@ -2786,11 +3058,6 @@ l_int|3
 )paren
 op_rshift
 l_int|1
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|DEB
 (paren
@@ -2821,7 +3088,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_return
+r_goto
+id|timerExpiryDone
 suffix:semicolon
 )brace
 )brace
@@ -2846,11 +3114,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|OpDone
 (paren
 id|padapter
@@ -2863,6 +3126,27 @@ id|status
 )paren
 )paren
 suffix:semicolon
+id|timerExpiryDone
+suffix:colon
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;&t;&t;SetReconstruct&t;:LOCAL&n; *&n; *&t;Description:&t;Set the reconstruct up.&n; *&n; *&t;Parameters:&t;&t;pdev&t;- Pointer to device structure.&n; *&t;&t;&t;&t;&t;index&t;- Mirror index number.&n; *&n; *&t;Returns:&t;&t;Number of sectors on new disk required.&n; *&n; ****************************************************************/
 DECL|function|SetReconstruct
@@ -2966,6 +3250,38 @@ suffix:semicolon
 id|UCHAR
 id|zc
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+r_int
+id|flags
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 id|padapter
 op_assign
 (paren
@@ -2978,7 +3294,8 @@ c_cond
 (paren
 id|padapter-&gt;SCpnt
 )paren
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 id|pdev
 op_assign
@@ -2989,15 +3306,11 @@ op_assign
 (paren
 id|PIDENTIFY_DATA
 )paren
-id|Buffer
+id|padapter-&gt;kBuffer
 suffix:semicolon
 id|padapter-&gt;reconTimer.data
 op_assign
 l_int|0
-suffix:semicolon
-id|padapter-&gt;timeoutReconRetry
-op_assign
-l_int|2
 suffix:semicolon
 id|padapter-&gt;pdev
 op_assign
@@ -3093,7 +3406,8 @@ id|UCBF_MATCHED
 )paren
 )paren
 (brace
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 r_if
@@ -3208,7 +3522,8 @@ c_cond
 op_logical_neg
 id|pdev-&gt;hotRecon
 )paren
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 id|zc
 op_assign
@@ -3514,7 +3829,8 @@ comma
 id|pdev
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 id|pdev-&gt;raid
@@ -3537,13 +3853,15 @@ op_xor
 l_int|1
 )paren
 )paren
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 id|padapter-&gt;reconPhase
 op_assign
 id|RECON_PHASE_MARKING
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 singleline_comment|//**********************************
@@ -3602,14 +3920,16 @@ comma
 id|pdev
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 id|padapter-&gt;reconPhase
 op_assign
 id|RECON_PHASE_UPDATE
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 id|zl
@@ -3696,7 +4016,8 @@ id|WaitReady
 id|padapter
 )paren
 )paren
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 id|SelectSpigot
 (paren
@@ -3739,7 +4060,8 @@ comma
 id|pdev
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 id|SelectSpigot
@@ -3856,7 +4178,8 @@ comma
 id|READ_CMD
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 )brace
 id|pdev-&gt;DiskMirror
@@ -3899,14 +4222,34 @@ op_xor
 l_int|1
 )paren
 )paren
-r_return
+r_goto
+id|reconTimerExpiry
 suffix:semicolon
 id|padapter-&gt;reconPhase
 op_assign
 id|RECON_PHASE_LAST
 suffix:semicolon
-r_return
+id|reconTimerExpiry
+suffix:colon
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Irq_Handler&t;:LOCAL&n; *&n; *&t;Description:&t;Interrupt handler.&n; *&n; *&t;Parameters:&t;&t;irq&t;&t;- Hardware IRQ number.&n; *&t;&t;&t;&t;&t;dev_id&t;-&n; *&t;&t;&t;&t;&t;regs&t;-&n; *&n; *&t;Returns:&t;&t;TRUE if drive is not ready in time.&n; *&n; ****************************************************************/
 DECL|function|Irq_Handler
@@ -3958,6 +4301,38 @@ suffix:semicolon
 id|ULONG
 id|zl
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+r_int
+id|flags
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
+id|spin_lock_irqsave
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 singleline_comment|//&t;DEB (printk (&quot;&bslash;npci2220i recieved interrupt&bslash;n&quot;));
 r_for
 c_loop
@@ -4042,7 +4417,8 @@ l_string|&quot;&bslash;npci2220i: not my interrupt&quot;
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|padapter
@@ -4088,7 +4464,8 @@ id|STOP_HERE
 (paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|padapter-&gt;expectingIRQ
@@ -4205,7 +4582,8 @@ comma
 id|SCpnt-&gt;scsi_done
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 )brace
@@ -4301,7 +4679,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 r_if
@@ -4357,14 +4736,16 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|padapter-&gt;reconPhase
 op_assign
 id|RECON_PHASE_END
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|OpDone
@@ -4376,7 +4757,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 r_case
 id|RECON_PHASE_READY
@@ -4419,7 +4801,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|SelectSpigot
@@ -4482,7 +4865,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|SelectSpigot
@@ -4512,7 +4896,7 @@ id|insw
 (paren
 id|padapter-&gt;regData
 comma
-id|Buffer
+id|padapter-&gt;kBuffer
 comma
 id|padapter-&gt;reconSize
 op_star
@@ -4537,7 +4921,7 @@ id|outl
 (paren
 id|virt_to_bus
 (paren
-id|Buffer
+id|padapter-&gt;kBuffer
 )paren
 comma
 id|padapter-&gt;regDmaAddrPci
@@ -4577,7 +4961,8 @@ id|padapter-&gt;regDmaCmdStat
 suffix:semicolon
 singleline_comment|// kick the DMA engine in gear
 )brace
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 r_case
 id|RECON_PHASE_COPY
@@ -4645,21 +5030,6 @@ l_string|&quot;&bslash;npci2220i: FAILURE 13&quot;
 )paren
 )paren
 suffix:semicolon
-id|DEB
-(paren
-id|printk
-(paren
-l_string|&quot;  status = %X  error = %X&quot;
-comma
-id|status
-comma
-id|inb_p
-(paren
-id|padapter-&gt;regError
-)paren
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4682,7 +5052,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|OpDone
@@ -4694,7 +5065,8 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 r_case
 id|RECON_PHASE_END
@@ -4763,7 +5135,8 @@ id|status
 )paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|padapter-&gt;reconOn
@@ -4783,11 +5156,13 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 r_default
 suffix:colon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 )brace
@@ -4868,7 +5243,8 @@ comma
 id|pdev
 )paren
 )paren
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 r_break
@@ -4947,7 +5323,8 @@ id|padapter-&gt;expectingIRQ
 op_assign
 id|TRUE
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|status
@@ -5089,7 +5466,8 @@ comma
 id|pdev
 )paren
 )paren
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 r_break
@@ -5151,7 +5529,8 @@ comma
 id|pdev
 )paren
 )paren
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 id|status
 op_assign
@@ -5214,7 +5593,8 @@ comma
 id|pdev
 )paren
 )paren
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 id|SelectSpigot
 (paren
@@ -5240,7 +5620,8 @@ id|padapter-&gt;expectingIRQ
 op_assign
 id|TRUE
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|status
@@ -5281,7 +5662,8 @@ id|padapter-&gt;expectingIRQ
 op_assign
 id|TRUE
 suffix:semicolon
-r_return
+r_goto
+id|irq_return
 suffix:semicolon
 )brace
 id|status
@@ -5305,7 +5687,7 @@ op_assign
 (paren
 id|PIDENTIFY_DATA
 )paren
-id|Buffer
+id|padapter-&gt;kBuffer
 suffix:semicolon
 id|status
 op_assign
@@ -5575,6 +5957,27 @@ comma
 id|zl
 )paren
 suffix:semicolon
+id|irq_return
+suffix:colon
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
+multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v2.1.95 */
+multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Pci2220i_QueueCommand
@@ -6631,7 +7034,7 @@ id|padapter-&gt;regDesc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Detect&n; *&n; *&t;Description:&t;Detect and initialize our boards.&n; *&n; *&t;Parameters:&t;&t;tpnt - Pointer to SCSI host template structure.&n; *&n; *&t;Returns:&t;&t;Number of adapters found.&n; *&n; ****************************************************************/
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Detect&n; *&n; *&t;Description:&t;Detect and initialize our boards.&n; *&n; *&t;Parameters:&t;&t;tpnt - Pointer to SCSI host template structure.&n; *&n; *&t;Returns:&t;&t;Number of adapters installed.&n; *&n; ****************************************************************/
 DECL|function|Pci2220i_Detect
 r_int
 id|Pci2220i_Detect
@@ -6642,7 +7045,12 @@ id|tpnt
 )paren
 (brace
 r_int
-id|pci_index
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|installed
 op_assign
 l_int|0
 suffix:semicolon
@@ -6681,44 +7089,81 @@ id|spigot2
 op_assign
 id|FALSE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_present
-(paren
-)paren
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|pci_index
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+r_struct
+id|pci_dev
+op_star
+id|pdev
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-id|pci_index
-op_le
-id|MAXADAPTER
-suffix:semicolon
-op_increment
-id|pci_index
-)paren
-(brace
+macro_line|#else
 id|UCHAR
 id|pci_bus
 comma
 id|pci_device_fn
 suffix:semicolon
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
+op_logical_neg
+id|pci_present
+(paren
+)paren
+)paren
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+(paren
+)paren
+)paren
+macro_line|#endif
+(brace
+id|printk
+(paren
+l_string|&quot;pci2220i: PCI BIOS not present&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+r_while
+c_loop
+(paren
+(paren
+id|pdev
+op_assign
+id|pci_find_device
+(paren
+id|VENDOR_PSI
+comma
+id|DEVICE_DALE_1
+comma
+id|pdev
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+macro_line|#else
+r_while
+c_loop
+(paren
+op_logical_neg
 id|pcibios_find_device
 (paren
 id|VENDOR_PSI
 comma
 id|DEVICE_DALE_1
 comma
-id|pci_index
+id|found
 comma
 op_amp
 id|pci_bus
@@ -6726,11 +7171,9 @@ comma
 op_amp
 id|pci_device_fn
 )paren
-op_ne
-l_int|0
 )paren
-r_break
-suffix:semicolon
+macro_line|#endif
+(brace
 id|pshost
 op_assign
 id|scsi_register
@@ -6763,6 +7206,17 @@ id|ADAPTER2220I
 )paren
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+id|zs
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|1
+)braket
+op_amp
+l_int|0xFFFE
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_word
 (paren
 id|pci_bus
@@ -6779,6 +7233,7 @@ id|zs
 op_and_assign
 l_int|0xFFFE
 suffix:semicolon
+macro_line|#endif
 id|padapter-&gt;basePort
 op_assign
 id|zs
@@ -6818,6 +7273,17 @@ op_plus
 id|RTR_MAILBOX
 suffix:semicolon
 singleline_comment|// 16 byte scratchpad I/O base address
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+id|zs
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xFFFE
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_word
 (paren
 id|pci_bus
@@ -6834,6 +7300,7 @@ id|zs
 op_and_assign
 l_int|0xFFFE
 suffix:semicolon
+macro_line|#endif
 id|padapter-&gt;regBase
 op_assign
 id|zs
@@ -6974,6 +7441,12 @@ singleline_comment|// if no devices on this board
 r_goto
 id|unregister
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+id|pshost-&gt;irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+macro_line|#else
 id|pcibios_read_config_byte
 (paren
 id|pci_bus
@@ -6986,6 +7459,7 @@ op_amp
 id|pshost-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 id|setirq
 op_assign
 l_int|1
@@ -6999,7 +7473,7 @@ l_int|0
 suffix:semicolon
 id|z
 OL
-id|pci_index
+id|installed
 suffix:semicolon
 id|z
 op_increment
@@ -7040,17 +7514,40 @@ id|pshost-&gt;irq
 comma
 id|Irq_Handler
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_string|&quot;pci2220i&quot;
 comma
-l_int|NULL
+id|padapter
 )paren
+OL
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_irq
+(paren
+id|pshost-&gt;irq
+comma
+id|Irq_Handler
+comma
+id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
+comma
+l_string|&quot;pci2220i&quot;
+comma
+id|padapter
+)paren
+OL
+l_int|0
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;Unable to allocate IRQ for PSI-2220I controller.&bslash;n&quot;
+l_string|&quot;Unable to allocate IRQ for PCI-2220I controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -7058,14 +7555,72 @@ id|unregister
 suffix:semicolon
 )brace
 )brace
+id|padapter-&gt;irqOwned
+op_assign
+id|pshost-&gt;irq
+suffix:semicolon
+singleline_comment|// set IRQ as owned
+)brace
+id|padapter-&gt;kBuffer
+op_assign
+id|kmalloc
+(paren
+id|SECTORSXFER
+op_star
+id|BYTES_PER_SECTOR
+comma
+id|GFP_DMA
+op_or
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|padapter-&gt;kBuffer
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Unable to allocate DMA buffer for PCI-2220I controller.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
+id|free_irq
+(paren
+id|pshost-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.70 */
+id|free_irq
+(paren
+id|pshost-&gt;irq
+comma
+id|padapter
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.70 */
+r_goto
+id|unregister
+suffix:semicolon
+)brace
 id|PsiHost
 (braket
-id|pci_index
+id|installed
 )braket
 op_assign
 id|pshost
 suffix:semicolon
 singleline_comment|// save SCSI_HOST pointer
+id|pshost-&gt;io_port
+op_assign
+id|padapter-&gt;basePort
+suffix:semicolon
+id|pshost-&gt;n_io_port
+op_assign
+l_int|0xFF
+suffix:semicolon
 id|pshost-&gt;unique_id
 op_assign
 id|padapter-&gt;regBase
@@ -7558,6 +8113,64 @@ c_cond
 (paren
 id|spigot1
 op_logical_and
+(paren
+id|DiskMirror
+(braket
+l_int|0
+)braket
+dot
+id|status
+op_amp
+id|UCBF_REBUILD
+)paren
+)paren
+id|InlineReadSignature
+(paren
+id|padapter
+comma
+op_amp
+id|padapter-&gt;device
+(braket
+id|z
+)braket
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|spigot2
+op_logical_and
+(paren
+id|DiskMirror
+(braket
+l_int|1
+)braket
+dot
+id|status
+op_amp
+id|UCBF_REBUILD
+)paren
+)paren
+id|InlineReadSignature
+(paren
+id|padapter
+comma
+op_amp
+id|padapter-&gt;device
+(braket
+id|z
+)braket
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|spigot1
+op_logical_and
 id|spigot2
 )paren
 (brace
@@ -7794,10 +8407,21 @@ comma
 id|__TIME__
 )paren
 suffix:semicolon
-id|NumAdapters
+id|found
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|installed
+OL
+id|MAXADAPTER
+)paren
 r_continue
+suffix:semicolon
+r_break
+suffix:semicolon
 suffix:semicolon
 id|unregister
 suffix:colon
@@ -7807,10 +8431,16 @@ id|scsi_unregister
 id|pshost
 )paren
 suffix:semicolon
+id|found
+op_increment
+suffix:semicolon
 )brace
-)brace
-r_return
 id|NumAdapters
+op_assign
+id|installed
+suffix:semicolon
+r_return
+id|installed
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Abort&n; *&n; *&t;Description:&t;Process the Abort command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;Allways snooze.&n; *&n; ****************************************************************/
@@ -7843,6 +8473,136 @@ id|reset_flags
 (brace
 r_return
 id|SCSI_RESET_PUNT
+suffix:semicolon
+)brace
+multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_Release&n; *&n; *&t;Description:&t;Release resources allocated for a single each adapter.&n; *&n; *&t;Parameters:&t;&t;pshost - Pointer to SCSI command structure.&n; *&n; *&t;Returns:&t;&t;zero.&n; *&n; ****************************************************************/
+DECL|function|Pci2220i_Release
+r_int
+id|Pci2220i_Release
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|pshost
+)paren
+(brace
+id|PADAPTER2220I
+id|padapter
+op_assign
+id|HOSTDATA
+(paren
+id|pshost
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|padapter-&gt;reconOn
+)paren
+(brace
+id|padapter-&gt;reconOn
+op_assign
+id|FALSE
+suffix:semicolon
+singleline_comment|// shut down the hot reconstruct
+r_if
+c_cond
+(paren
+id|padapter-&gt;reconPhase
+)paren
+id|udelay
+(paren
+l_int|300000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|padapter-&gt;reconTimer.data
+)paren
+singleline_comment|// is the timer running?
+(brace
+id|del_timer
+(paren
+op_amp
+id|padapter-&gt;reconTimer
+)paren
+suffix:semicolon
+id|padapter-&gt;reconTimer.data
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+singleline_comment|// save RAID status on the board
+id|outb_p
+(paren
+id|DiskMirror
+(braket
+l_int|0
+)braket
+dot
+id|status
+comma
+id|padapter-&gt;regScratchPad
+op_plus
+id|DALE_RAID_0_STATUS
+)paren
+suffix:semicolon
+id|outb_p
+(paren
+id|DiskMirror
+(braket
+l_int|1
+)braket
+dot
+id|status
+comma
+id|padapter-&gt;regScratchPad
+op_plus
+id|DALE_RAID_1_STATUS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|padapter-&gt;irqOwned
+)paren
+macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
+id|free_irq
+(paren
+id|pshost-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#else /* version &gt;= v1.3.70 */
+id|free_irq
+(paren
+id|pshost-&gt;irq
+comma
+id|padapter
+)paren
+suffix:semicolon
+macro_line|#endif /* version &gt;= v1.3.70 */
+id|release_region
+(paren
+id|pshost-&gt;io_port
+comma
+id|pshost-&gt;n_io_port
+)paren
+suffix:semicolon
+id|kfree
+(paren
+id|padapter-&gt;kBuffer
+)paren
+suffix:semicolon
+id|scsi_unregister
+c_func
+(paren
+id|pshost
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#include &quot;sd.h&quot;

@@ -1,4 +1,7 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_common.h&n; * Version:       &n; * Description:   An implementation of IrCOMM service interface and state machine &n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; *&n; *     Copyright (c) 1998, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+macro_line|#ifndef IRCOMM_H
+DECL|macro|IRCOMM_H
+mdefine_line|#define IRCOMM_H
 multiline_comment|/* #define DEBUG(n, args...) printk( KERN_DEBUG args) */
 multiline_comment|/* enable all debug message */
 macro_line|#include &lt;linux/types.h&gt;
@@ -72,22 +75,37 @@ DECL|typedef|IRCOMM_EVENT
 )brace
 id|IRCOMM_EVENT
 suffix:semicolon
+r_typedef
+r_enum
+(brace
+DECL|enumerator|TX_READY
+id|TX_READY
+comma
+DECL|enumerator|TX_BUSY
+id|TX_BUSY
+comma
+DECL|enumerator|IAS_PARAM
+id|IAS_PARAM
+comma
+DECL|enumerator|CONTROL_CHANNEL
+id|CONTROL_CHANNEL
+comma
+DECL|typedef|IRCOMM_CMD
+)brace
+id|IRCOMM_CMD
+suffix:semicolon
 DECL|macro|IRCOMM_MAGIC
 mdefine_line|#define IRCOMM_MAGIC            0x434f4d4d
 DECL|macro|COMM_INIT_CTRL_PARAM
 mdefine_line|#define COMM_INIT_CTRL_PARAM    3          /* length of initial control parameters */
-DECL|macro|COMM_CTRL_MIN
-mdefine_line|#define COMM_CTRL_MIN           1          /* length of clen field */
+DECL|macro|COMM_HEADER
+mdefine_line|#define COMM_HEADER             1          /* length of clen field */
 DECL|macro|COMM_HEADER_SIZE
-mdefine_line|#define COMM_HEADER_SIZE        (LAP_HEADER+LMP_HEADER+TTP_HEADER+COMM_CTRL_MIN)
+mdefine_line|#define COMM_HEADER_SIZE        (LAP_HEADER+LMP_HEADER+TTP_HEADER+COMM_HEADER)
 DECL|macro|COMM_DEFAULT_DATA_SIZE
 mdefine_line|#define COMM_DEFAULT_DATA_SIZE  64
 DECL|macro|IRCOMM_MAX_CONNECTION
-mdefine_line|#define IRCOMM_MAX_CONNECTION   1          /* Don&squot;t change */
-DECL|macro|IAS_PARAM
-mdefine_line|#define IAS_PARAM               1
-DECL|macro|CONTROL_CHANNEL
-mdefine_line|#define CONTROL_CHANNEL         2
+mdefine_line|#define IRCOMM_MAX_CONNECTION   1          /* Don&squot;t change for now */
 DECL|macro|UNKNOWN
 mdefine_line|#define UNKNOWN         0x00            /* not defined yet. */
 multiline_comment|/* we use 9wire if servicetype=DEFAULT, but is it good? */
@@ -108,7 +126,7 @@ mdefine_line|#define PARALLEL&t;0x02&t;&t;/* bit 1 */
 DECL|macro|SERVICETYPE
 mdefine_line|#define SERVICETYPE 0x00
 DECL|macro|PORT_TYPE
-mdefine_line|#define PORT_TYPE 0x02
+mdefine_line|#define PORT_TYPE 0x01
 DECL|macro|PORT_NAME
 mdefine_line|#define PORT_NAME 0x02
 DECL|macro|FIXED_PORT_NAME
@@ -145,10 +163,6 @@ DECL|macro|IEEE1284_MODE
 mdefine_line|#define IEEE1284_MODE 0x34
 DECL|macro|IEEE1284_ECP_EPP_DATA_TRANSFER
 mdefine_line|#define IEEE1284_ECP_EPP_DATA_TRANSFER 0x35
-DECL|macro|TX_READY
-mdefine_line|#define TX_READY 0xFE  /* FIXME: this is not defined in IrCOMM spec */
-DECL|macro|TX_BUSY
-mdefine_line|#define TX_BUSY  0XFF  /*         so we should find another way */
 multiline_comment|/*  parameters of FLOW_CONTROL  */
 DECL|macro|USE_RTS
 mdefine_line|#define USE_RTS 0x08  /* use RTS on output */
@@ -183,6 +197,27 @@ mdefine_line|#define MSR_RI    0x40
 DECL|macro|MSR_DCD
 mdefine_line|#define MSR_DCD   0x80
 multiline_comment|/*  parameters of DATA_FORMAT */
+DECL|macro|IRCOMM_WLEN5
+mdefine_line|#define IRCOMM_WLEN5   0x00       /* word length is 5bit */
+DECL|macro|IRCOMM_WLEN6
+mdefine_line|#define IRCOMM_WLEN6   0x01       /* word length is 6bit */
+DECL|macro|IRCOMM_WLEN7
+mdefine_line|#define IRCOMM_WLEN7   0x02       /* word length is 7bit */
+DECL|macro|IRCOMM_WLEN8
+mdefine_line|#define IRCOMM_WLEN8   0x03       /* word length is 8bit */
+DECL|macro|IRCOMM_STOP2
+mdefine_line|#define IRCOMM_STOP2   0x04       /* 2 stop bits mode */
+DECL|macro|IRCOMM_PARENB
+mdefine_line|#define IRCOMM_PARENB  0x08       /* parity enable */
+DECL|macro|IRCOMM_PARODD
+mdefine_line|#define IRCOMM_PARODD  0x00       /*  odd parity */
+DECL|macro|IRCOMM_PAREVEN
+mdefine_line|#define IRCOMM_PAREVEN 0x10       /*  even parity */
+DECL|macro|IRCOMM_PARMARK
+mdefine_line|#define IRCOMM_PARMARK 0x20
+DECL|macro|IRCOMM_PARSPC
+mdefine_line|#define IRCOMM_PARSPC  0x30
+multiline_comment|/*  parameters of LINE_STATUS */
 DECL|macro|LSR_OE
 mdefine_line|#define LSR_OE     0x02    /* Overrun error indicator */
 DECL|macro|LSR_PE
@@ -222,7 +257,7 @@ r_int
 id|max_txbuff_size
 suffix:semicolon
 DECL|member|maxsdusize
-r_int
+id|__u32
 id|maxsdusize
 suffix:semicolon
 DECL|member|daddr
@@ -234,6 +269,21 @@ DECL|member|saddr
 id|__u32
 id|saddr
 suffix:semicolon
+DECL|member|ias_type
+r_int
+id|ias_type
+suffix:semicolon
+DECL|member|disconnect_priority
+r_int
+id|disconnect_priority
+suffix:semicolon
+multiline_comment|/* P_NORMAL or P_HIGH. see irttp.h */
+DECL|member|notify
+r_struct
+id|notify_t
+id|notify
+suffix:semicolon
+multiline_comment|/* container of callbacks */
 DECL|member|d_handler
 r_void
 (paren
@@ -247,12 +297,10 @@ op_star
 id|self
 )paren
 suffix:semicolon
-DECL|member|notify
-r_struct
-id|notify_t
-id|notify
+DECL|member|control_ch_pending
+r_int
+id|control_ch_pending
 suffix:semicolon
-multiline_comment|/* container of callbacks */
 DECL|member|ctrl_skb
 r_struct
 id|sk_buff
@@ -260,6 +308,16 @@ op_star
 id|ctrl_skb
 suffix:semicolon
 multiline_comment|/* queue of control channel */
+DECL|member|dlsap
+id|__u8
+id|dlsap
+suffix:semicolon
+multiline_comment|/* IrLMP dlsap */
+DECL|member|lsap
+id|__u8
+id|lsap
+suffix:semicolon
+multiline_comment|/* sap of local device */
 DECL|member|tsap
 r_struct
 id|tsap_cb
@@ -279,16 +337,44 @@ r_int
 id|reason
 suffix:semicolon
 multiline_comment|/* I don&squot;t know about reason: &n;&t;&t;&t;&t;see Irlmp.c or somewhere :p)*/
-DECL|member|dlsap
-id|__u8
-id|dlsap
+DECL|member|peer_cap
+r_int
+id|peer_cap
 suffix:semicolon
-multiline_comment|/* IrLMP dlsap */
-DECL|member|lsap
-id|__u8
-id|lsap
+multiline_comment|/* capability of peer device */
+DECL|member|discovery_wait
+r_struct
+id|wait_queue
+op_star
+id|discovery_wait
 suffix:semicolon
-multiline_comment|/* sap of local device */
+DECL|member|ias_wait
+r_struct
+id|wait_queue
+op_star
+id|ias_wait
+suffix:semicolon
+multiline_comment|/* statistics */
+DECL|member|tx_packets
+r_int
+id|tx_packets
+suffix:semicolon
+DECL|member|rx_packets
+r_int
+id|rx_packets
+suffix:semicolon
+DECL|member|tx_controls
+r_int
+id|tx_controls
+suffix:semicolon
+DECL|member|pending_control_tuples
+r_int
+id|pending_control_tuples
+suffix:semicolon
+DECL|member|ignored_control_tuples
+r_int
+id|ignored_control_tuples
+suffix:semicolon
 DECL|member|pi
 id|__u8
 id|pi
@@ -305,10 +391,6 @@ suffix:semicolon
 DECL|member|servicetype
 id|__u8
 id|servicetype
-suffix:semicolon
-DECL|member|peer_servicetype
-id|__u8
-id|peer_servicetype
 suffix:semicolon
 DECL|member|data_format
 id|__u8
@@ -426,10 +508,27 @@ DECL|member|port_name
 r_char
 id|port_name
 (braket
-l_int|60
+l_int|33
 )braket
 suffix:semicolon
+DECL|member|port_name_critical
+r_int
+id|port_name_critical
+suffix:semicolon
 )brace
+suffix:semicolon
+r_int
+id|ircomm_query_ias_and_connect
+c_func
+(paren
+r_struct
+id|ircomm_cb
+op_star
+id|self
+comma
+id|__u8
+id|servicetype
+)paren
 suffix:semicolon
 r_void
 id|ircomm_connect_request
@@ -439,9 +538,6 @@ r_struct
 id|ircomm_cb
 op_star
 id|self
-comma
-r_int
-id|maxsdusize
 )paren
 suffix:semicolon
 r_void
@@ -458,7 +554,7 @@ id|sk_buff
 op_star
 id|userdata
 comma
-r_int
+id|__u32
 id|maxsdusize
 )paren
 suffix:semicolon
@@ -475,9 +571,12 @@ r_struct
 id|sk_buff
 op_star
 id|userdata
+comma
+r_int
+id|priority
 )paren
 suffix:semicolon
-r_void
+r_int
 id|ircomm_data_request
 c_func
 (paren
@@ -500,41 +599,42 @@ r_struct
 id|ircomm_cb
 op_star
 id|self
-)paren
-suffix:semicolon
-r_void
-id|ircomm_append_ctrl
-c_func
-(paren
-r_struct
-id|ircomm_cb
-op_star
-id|self
 comma
 id|__u8
 id|instruction
 )paren
 suffix:semicolon
+r_void
+id|ircomm_parse_tuples
+c_func
+(paren
 r_struct
 id|ircomm_cb
 op_star
-id|ircomm_attach_cable
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|type
+)paren
+suffix:semicolon
+r_struct
+id|ircomm_cb
+op_star
+id|ircomm_open_instance
 c_func
 (paren
-id|__u8
-id|servicetype
-comma
 r_struct
 id|notify_t
 id|notify
-comma
-r_void
-op_star
-id|handler
 )paren
 suffix:semicolon
 r_int
-id|ircomm_detach_cable
+id|ircomm_close_instance
 c_func
 (paren
 r_struct
@@ -543,124 +643,5 @@ op_star
 id|self
 )paren
 suffix:semicolon
-r_void
-id|ircomm_accept_data_indication
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|ircomm_accept_connect_confirm
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-r_struct
-id|qos_info
-op_star
-id|qos
-comma
-r_int
-id|maxsdusize
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|ircomm_accept_connect_indication
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-r_struct
-id|qos_info
-op_star
-id|qos
-comma
-r_int
-id|maxsdusize
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|ircomm_accept_disconnect_indication
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-id|LM_REASON
-id|reason
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-suffix:semicolon
-r_void
-id|ircomm_accept_flow_indication
-c_func
-(paren
-r_void
-op_star
-id|instance
-comma
-r_void
-op_star
-id|sap
-comma
-id|LOCAL_FLOW
-id|flow
-)paren
-suffix:semicolon
-r_void
-id|ircomm_next_state
-c_func
-(paren
-r_struct
-id|ircomm_cb
-op_star
-id|self
-comma
-id|IRCOMM_STATE
-id|state
-)paren
-suffix:semicolon
+macro_line|#endif
 eof

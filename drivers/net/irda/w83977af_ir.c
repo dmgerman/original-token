@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Tue Feb  9 13:30:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in w83977af_ir.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Wed Apr  7 17:35:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -38,7 +38,7 @@ id|io
 )braket
 op_assign
 (brace
-l_int|0x400
+l_int|0x180
 comma
 op_complement
 l_int|0
@@ -59,7 +59,7 @@ id|irq
 )braket
 op_assign
 (brace
-l_int|22
+l_int|6
 comma
 l_int|0
 comma
@@ -405,6 +405,8 @@ id|ioaddr
 comma
 id|CHIP_IO_EXTENT
 )paren
+OL
+l_int|0
 )paren
 r_continue
 suffix:semicolon
@@ -764,10 +766,6 @@ op_assign
 l_int|4000
 suffix:semicolon
 multiline_comment|/* Initialize callbacks */
-id|idev-&gt;hard_xmit
-op_assign
-id|w83977af_hard_xmit
-suffix:semicolon
 id|idev-&gt;change_speed
 op_assign
 id|w83977af_change_speed
@@ -990,12 +988,13 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
+multiline_comment|/* w977_write_reg(0x70, 0x06); */
 id|w977_write_reg
 c_func
 (paren
 l_int|0x70
 comma
-l_int|0x06
+id|irq
 )paren
 suffix:semicolon
 macro_line|#ifdef NETWINDER
@@ -1009,7 +1008,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Netwinder uses 1 higher than Linux */
+multiline_comment|/* Netwinder uses one higher than Linux */
 macro_line|#else
 id|w977_write_reg
 c_func
@@ -1866,7 +1865,9 @@ l_int|50
 (brace
 multiline_comment|/* Adjust for timer resolution */
 id|mtt
-op_div_assign
+op_assign
+id|mtt
+op_div
 l_int|1000
 op_plus
 l_int|1
@@ -4643,13 +4644,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|w83977af_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    &n; *&n; */
@@ -4667,5 +4666,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* MODULE */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Feb  9 13:08:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Apr  6 21:35:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
-macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irtty.h&gt;
 macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
@@ -654,7 +653,6 @@ op_assign
 id|IRTTY_MAGIC
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Initialize driver&n;&t; */
-multiline_comment|/* self-&gt;idev.flags |= SIR_MODE | IO_PIO; */
 id|self-&gt;idev.rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
@@ -857,7 +855,6 @@ id|self-&gt;magic
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* hashbin_remove( irtty, 0, self-&gt;name); */
 id|self
 op_assign
 id|hashbin_remove
@@ -2022,7 +2019,7 @@ multiline_comment|/* &n;&t;&t; *  Now serial buffer is almost free &amp; we can 
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|5
 comma
 id|__FUNCTION__
 l_string|&quot;(), finished with frame!&bslash;n&quot;
@@ -2272,7 +2269,7 @@ id|dongle
 op_assign
 id|dongle
 suffix:semicolon
-multiline_comment|/* Insert IrDA compressor into hashbin */
+multiline_comment|/* Insert IrDA dongle into hashbin */
 id|hashbin_insert
 c_func
 (paren
@@ -2347,6 +2344,7 @@ id|node
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irtty_set_dtr_rts (tty, dtr, rts)&n; *&n; *    This function can be used by dongles etc. to set or reset the status&n; *    of the dtr and rts lines&n; */
 DECL|function|irtty_set_dtr_rts
 r_void
 id|irtty_set_dtr_rts
@@ -2370,8 +2368,14 @@ suffix:semicolon
 r_int
 id|arg
 op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef TIOCM_OUT2 /* Not defined for ARM */
+id|arg
+op_assign
 id|TIOCM_OUT2
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2577,13 +2581,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|irtty_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Cleanup IrTTY module&n; *&n; */

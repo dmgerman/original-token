@@ -1,13 +1,14 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Haris Zukanovic &lt;haris@stud.cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Feb  9 14:01:50 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *     Copyright (c) 1998 Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Haris Zukanovic nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Haris Zukanovic &lt;haris@stud.cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Wed Apr  7 17:17:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *     Copyright (c) 1998 Dag Brattli, &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Haris Zukanovic nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
-multiline_comment|/* Some non-standard interface flags (should not conflict with any in if.h */
+multiline_comment|/* Some non-standard interface flags (should not conflict with any in if.h) */
 DECL|macro|IFF_SIR
 mdefine_line|#define IFF_SIR &t;0x01 /* Supports SIR speeds */
 DECL|macro|IFF_MIR
@@ -18,8 +19,10 @@ DECL|macro|IFF_PIO
 mdefine_line|#define IFF_PIO   &t;0x08 /* Supports PIO transfer of data */
 DECL|macro|IFF_DMA
 mdefine_line|#define IFF_DMA&t;&t;0x10 /* Supports DMA transfer of data */
+DECL|macro|IFF_SHM
+mdefine_line|#define IFF_SHM         0x20 /* Supports shared memory data transfers */
 DECL|macro|IFF_DONGLE
-mdefine_line|#define IFF_DONGLE      0x20 /* Interface has a dongle attached */
+mdefine_line|#define IFF_DONGLE      0x40 /* Interface has a dongle attached */
 DECL|macro|IO_XMIT
 mdefine_line|#define IO_XMIT 0x01
 DECL|macro|IO_RECV
@@ -45,6 +48,11 @@ comma
 id|io_ext2
 suffix:semicolon
 multiline_comment|/* Length of iobase */
+DECL|member|membase
+r_int
+id|membase
+suffix:semicolon
+multiline_comment|/* Shared memory base */
 DECL|member|irq
 DECL|member|irq2
 r_int
@@ -75,7 +83,7 @@ DECL|member|direction
 r_int
 id|direction
 suffix:semicolon
-multiline_comment|/* Used by some FIR drivers */
+multiline_comment|/* Link direction, used by some FIR drivers */
 DECL|member|baudrate
 r_int
 id|baudrate
@@ -236,35 +244,15 @@ DECL|member|media_busy
 r_int
 id|media_busy
 suffix:semicolon
+multiline_comment|/* spinlock_t lock; */
+multiline_comment|/* For serializing operations */
 multiline_comment|/* Media busy stuff */
 DECL|member|media_busy_timer
 r_struct
 id|timer_list
 id|media_busy_timer
 suffix:semicolon
-DECL|member|todo_timer
-r_struct
-id|timer_list
-id|todo_timer
-suffix:semicolon
-DECL|member|hard_xmit
-r_int
-(paren
-op_star
-id|hard_xmit
-)paren
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/* Driver specific implementation */
 DECL|member|change_speed
 r_void
 (paren
@@ -308,11 +296,6 @@ id|irda_device
 op_star
 )paren
 suffix:semicolon
-DECL|member|new_speed
-r_int
-id|new_speed
-suffix:semicolon
-multiline_comment|/* Will be removed in future */
 )brace
 suffix:semicolon
 r_extern
@@ -440,7 +423,8 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-id|__inline__
+r_inline
+r_int
 r_int
 id|irda_get_mtt
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Feb 17 23:49:10 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Apr  7 17:03:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -29,6 +29,14 @@ op_star
 id|irlan
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|ckey
+DECL|variable|skey
+r_static
+id|__u32
+id|ckey
+comma
+id|skey
 suffix:semicolon
 multiline_comment|/* Module parameters */
 DECL|variable|eth
@@ -375,6 +383,7 @@ id|irlan_watchdog_timer_expired
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irlan_eth_open (dev)&n; *&n; *    Network device has been opened by user&n; *&n; */
 DECL|function|irlan_eth_open
 r_static
 r_int
@@ -450,6 +459,17 @@ suffix:semicolon
 id|self-&gt;notify_irmanager
 op_assign
 id|TRUE
+suffix:semicolon
+multiline_comment|/* We are now open, so time to do some work */
+id|irlan_client_wakeup
+c_func
+(paren
+id|self
+comma
+id|self-&gt;saddr
+comma
+id|self-&gt;daddr
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -542,7 +562,7 @@ comma
 id|IRLAN_TIMEOUT
 )paren
 suffix:semicolon
-multiline_comment|/* Device closed by user */
+multiline_comment|/* Device closed by user! */
 r_if
 c_cond
 (paren
@@ -647,7 +667,7 @@ id|dev-&gt;tx_queue_len
 op_assign
 id|TTP_MAX_QUEUE
 suffix:semicolon
-macro_line|#ifdef 0
+macro_line|#if 0
 multiline_comment|/*  &n;&t; *  OK, since we are emulating an IrLAN sever we will have to give&n;&t; *  ourself an ethernet address!&n;&t; *  FIXME: this must be more dynamically&n;&t; */
 id|dev-&gt;dev_addr
 (braket
@@ -741,6 +761,9 @@ id|irlan_cb
 op_star
 r_new
 suffix:semicolon
+id|__u16
+id|hints
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -800,30 +823,34 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Register with IrLMP as a service user */
-id|irlmp_register_layer
+id|hints
+op_assign
+id|irlmp_service_to_hint
 c_func
 (paren
 id|S_LAN
-comma
-id|CLIENT
-comma
-id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* Register with IrLMP as a client */
+id|ckey
+op_assign
+id|irlmp_register_client
+c_func
+(paren
+id|hints
 comma
 id|irlan_client_discovery_indication
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Register with IrLMP as a service */
-id|irlmp_register_layer
+id|skey
+op_assign
+id|irlmp_register_service
 c_func
 (paren
-id|S_LAN
-comma
-id|SERVER
-comma
-id|FALSE
-comma
-l_int|NULL
+id|hints
 )paren
 suffix:semicolon
 multiline_comment|/* Start the first IrLAN instance */
@@ -867,20 +894,16 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|irlmp_unregister_layer
+id|irlmp_unregister_client
 c_func
 (paren
-id|S_LAN
-comma
-id|SERVER
+id|ckey
 )paren
 suffix:semicolon
-id|irlmp_unregister_layer
+id|irlmp_unregister_service
 c_func
 (paren
-id|S_LAN
-comma
-id|CLIENT
+id|skey
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
@@ -1439,7 +1462,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -1599,7 +1622,7 @@ id|qos_info
 op_star
 id|qos
 comma
-r_int
+id|__u32
 id|max_sdu_size
 comma
 r_struct
@@ -3744,6 +3767,10 @@ suffix:semicolon
 id|__u8
 id|param_len
 suffix:semicolon
+id|__u16
+id|tmp_le
+suffix:semicolon
+multiline_comment|/* Temporary value in little endian format */
 r_int
 id|n
 op_assign
@@ -3924,18 +3951,7 @@ op_add_assign
 id|param_len
 suffix:semicolon
 multiline_comment|/* Insert value length (2 byte little endian format, LSB first) */
-op_star
-(paren
-(paren
-id|__u16
-op_star
-)paren
-(paren
-id|frame
-op_plus
-id|n
-)paren
-)paren
+id|tmp_le
 op_assign
 id|cpu_to_le16
 c_func
@@ -3943,10 +3959,24 @@ c_func
 id|value_len
 )paren
 suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|frame
+op_plus
+id|n
+comma
+op_amp
+id|tmp_le
+comma
+l_int|2
+)paren
+suffix:semicolon
 id|n
 op_add_assign
 l_int|2
 suffix:semicolon
+multiline_comment|/* To avoid alignment problems */
 multiline_comment|/* Insert value */
 r_switch
 c_cond
@@ -3970,23 +4000,25 @@ suffix:semicolon
 r_case
 id|IRLAN_SHORT
 suffix:colon
-op_star
-(paren
-(paren
-id|__u16
-op_star
-)paren
-(paren
-id|frame
-op_plus
-id|n
-)paren
-)paren
+id|tmp_le
 op_assign
 id|cpu_to_le16
 c_func
 (paren
 id|value_short
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|frame
+op_plus
+id|n
+comma
+op_amp
+id|tmp_le
+comma
+l_int|2
 )paren
 suffix:semicolon
 id|n
@@ -4146,14 +4178,25 @@ op_add_assign
 id|name_len
 suffix:semicolon
 multiline_comment|/*  &n;&t; *  Get length of parameter value (2 bytes in little endian &n;&t; *  format) &n;&t; */
-id|val_len
-op_assign
-id|le16_to_cpup
+id|memcpy
 c_func
 (paren
+op_amp
+id|val_len
+comma
 id|buf
 op_plus
 id|n
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* To avoid alignment problems */
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|val_len
 )paren
 suffix:semicolon
 id|n
@@ -4763,13 +4806,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|irlan_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Remove the IrLAN module, this function is called by the rmmod(1)&n; *    program&n; */
