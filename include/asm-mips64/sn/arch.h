@@ -66,7 +66,7 @@ id|cnodeid_t
 id|get_cpu_cnode
 c_func
 (paren
-r_int
+id|cpuid_t
 )paren
 suffix:semicolon
 r_extern

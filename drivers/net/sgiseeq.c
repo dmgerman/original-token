@@ -1357,6 +1357,10 @@ suffix:semicolon
 id|sp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|sp-&gt;stats.rx_bytes
+op_add_assign
+id|len
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2212,6 +2216,10 @@ c_cond
 id|ETH_ZLEN
 suffix:colon
 id|skblen
+suffix:semicolon
+id|sp-&gt;stats.tx_bytes
+op_add_assign
+id|len
 suffix:semicolon
 id|entry
 op_assign
@@ -3176,6 +3184,8 @@ id|dev
 r_static
 r_int
 id|initialized
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star

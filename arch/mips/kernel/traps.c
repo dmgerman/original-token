@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.28 2000/03/13 10:33:02 raiko Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; * Complete output from die() by Ulf Carlsson, 1998&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; * Complete output from die() by Ulf Carlsson, 1998&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -818,7 +818,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Process %s (pid: %ld, stackpage=%08lx)&bslash;n&quot;
+l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -963,7 +963,6 @@ id|__stop___dbe_table
 )braket
 suffix:semicolon
 DECL|function|__declare_dbe_table
-r_static
 r_void
 id|__declare_dbe_table
 c_func
@@ -1368,11 +1367,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1432,8 +1426,7 @@ id|fcr31
 )paren
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|pc
@@ -1509,8 +1502,7 @@ c_func
 id|regs
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 singleline_comment|//force_sig(SIGFPE, current);
 id|printk
@@ -1520,13 +1512,6 @@ id|KERN_DEBUG
 l_string|&quot;Should send SIGFPE to %s&bslash;n&quot;
 comma
 id|current-&gt;comm
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1753,11 +1738,6 @@ r_int
 r_int
 id|opcode
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1816,7 +1796,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+l_string|&quot;[%s:%d] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -1831,11 +1811,6 @@ l_int|31
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2179,15 +2154,10 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+l_string|&quot;[%s:%d] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -2199,11 +2169,6 @@ id|regs-&gt;regs
 (braket
 l_int|31
 )braket
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if

@@ -86,6 +86,14 @@ id|pckbd_sysrq_xlate
 l_int|128
 )braket
 suffix:semicolon
+r_extern
+r_void
+id|kbd_forward_char
+(paren
+r_int
+id|ch
+)paren
+suffix:semicolon
 DECL|macro|kbd_setkeycode
 mdefine_line|#define kbd_setkeycode&t;&t;pckbd_setkeycode
 DECL|macro|kbd_getkeycode

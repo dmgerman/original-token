@@ -217,6 +217,10 @@ DECL|macro|ST0_SX
 mdefine_line|#define ST0_SX&t;&t;&t;0x00000040
 DECL|macro|ST0_KX
 mdefine_line|#define ST0_KX &t;&t;&t;0x00000080
+DECL|macro|ST0_DE
+mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
+DECL|macro|ST0_CE
+mdefine_line|#define ST0_CE&t;&t;&t;0x00020000
 multiline_comment|/*&n; * Bitfields in the R[23]000 cp0 status register.&n; */
 DECL|macro|ST0_IEC
 mdefine_line|#define ST0_IEC                 0x00000001
@@ -231,6 +235,10 @@ mdefine_line|#define ST0_IEO&t;&t;&t;0x00000010
 DECL|macro|ST0_KUO
 mdefine_line|#define ST0_KUO&t;&t;&t;0x00000020
 multiline_comment|/* bits 6 &amp; 7 are reserved on R[23]000 */
+DECL|macro|ST0_ISC
+mdefine_line|#define ST0_ISC&t;&t;&t;0x00010000
+DECL|macro|ST0_SWC
+mdefine_line|#define ST0_SWC&t;&t;&t;0x00020000
 multiline_comment|/*&n; * Bits specific to the R4640/R4650&n; */
 DECL|macro|ST0_UM
 mdefine_line|#define ST0_UM                 &lt;1   &lt;&lt;  4)
@@ -273,10 +281,6 @@ DECL|macro|STATUSB_IP7
 mdefine_line|#define  STATUSB_IP7&t;&t;15
 DECL|macro|STATUSF_IP7
 mdefine_line|#define  STATUSF_IP7&t;&t;(1   &lt;&lt; 15)
-DECL|macro|ST0_DE
-mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
-DECL|macro|ST0_CE
-mdefine_line|#define ST0_CE&t;&t;&t;0x00020000
 DECL|macro|ST0_CH
 mdefine_line|#define ST0_CH&t;&t;&t;0x00040000
 DECL|macro|ST0_SR

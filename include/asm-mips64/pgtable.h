@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.14 2000/03/02 02:37:13 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle at alii&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PGTABLE_H
 DECL|macro|_ASM_PGTABLE_H
 mdefine_line|#define _ASM_PGTABLE_H
@@ -111,8 +111,8 @@ mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;flush_cache_all()
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(start, page)&t;do { } while(0)
-multiline_comment|/* Basically we have the same two-level (which is the logical three level&n; * Linux page table layout folded) page tables as the i386.  Some day&n; * when we have proper page coloring support we can have a 1% quicker&n; * tlb refill handling mechanism, but for now it is a bit slower but&n; * works even with the cache aliasing problem the R4k and above have.&n; */
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = page_address(page);&t;&t;&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)                                                              
+multiline_comment|/*&n; * Each address space has 2 4K pages as its page directory, giving 1024&n; * (== PTRS_PER_PGD) 8 byte pointers to pmd tables. Each pmd table is a&n; * pair of 4K pages, giving 1024 (== PTRS_PER_PMD) 8 byte pointers to&n; * page tables. Each page table is a single 4K page, giving 512 (==&n; * PTRS_PER_PTE) 8 byte ptes. Each pgde is initialized to point to&n; * invalid_pmd_table, each pmde is initialized to point to &n; * invalid_pte_table, each pte is initialized to 0. When memory is low,&n; * and a pmd table or a page table allocation fails, empty_bad_pmd_table&n; * and empty_bad_page_table is returned back to higher layer code, so&n; * that the failure is recognized later on. Linux does not seem to &n; * handle these failures very well though. The empty_bad_page_table has&n; * invalid pte entries in it, to force page faults.&n; * Vmalloc handling: vmalloc uses swapper_pg_dir[0] (returned by &n; * pgd_offset_k), which is initalized to point to kpmdtbl. kpmdtbl is &n; * the only single page pmd in the system. kpmdtbl entries point into &n; * kptbl[] array. We reserve 1&lt;&lt;KPTBL_PAGE_ORDER pages to hold the&n; * vmalloc range translations, which the fault handler looks at.&n; */
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
@@ -139,12 +139,14 @@ DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
 DECL|macro|FIRST_USER_PGD_NR
 mdefine_line|#define FIRST_USER_PGD_NR&t;0
+DECL|macro|KPTBL_PAGE_ORDER
+mdefine_line|#define KPTBL_PAGE_ORDER  1
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START     XKSEG
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|VMALLOC_END
-mdefine_line|#define VMALLOC_END       (KSEG3 + (1UL &lt;&lt; 40))&t;/* 1 TB */
+mdefine_line|#define VMALLOC_END       &bslash;&n;  (VMALLOC_START + ((1 &lt;&lt; KPTBL_PAGE_ORDER) * PTRS_PER_PTE * PAGE_SIZE))
 multiline_comment|/* Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; *&n; * Similar to the Alpha port, we need to keep track of the ref&n; * and mod bits in software.  We have a software &quot;yeah you can read&n; * from this page&quot; bit, and a hardware one which actually lets the&n; * process read from the page.  On the same token we have a software&n; * writable bit and the real hardware one which actually lets the&n; * process write to the page, this keeps a mod bit via the hardware&n; * dirty bit.&n; *&n; * Certain revisions of the R4000 and R5000 have a bug where if a&n; * certain sequence occurs in the last 3 instructions of an executable&n; * page, and the following page is not mapped, the cpu can do&n; * unpredictable things.  The code (when it is written) to deal with&n; * this problem will be in the update_mmu_cache() code for the r4k.&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT               (1&lt;&lt;0)  /* implemented in software */
@@ -307,8 +309,18 @@ r_extern
 id|pte_t
 id|invalid_pte_table
 (braket
-l_int|2
-op_star
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+id|pte_t
+)paren
+)braket
+suffix:semicolon
+r_extern
+id|pte_t
+id|empty_bad_page_table
+(braket
 id|PAGE_SIZE
 op_div
 r_sizeof
@@ -320,6 +332,20 @@ suffix:semicolon
 r_extern
 id|pmd_t
 id|invalid_pmd_table
+(braket
+l_int|2
+op_star
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+id|pmd_t
+)paren
+)braket
+suffix:semicolon
+r_extern
+id|pmd_t
+id|empty_bad_pmd_table
 (braket
 l_int|2
 op_star
@@ -596,56 +622,17 @@ id|pmd
 )paren
 (brace
 r_return
-(paren
-(paren
-id|pmd_page
-c_func
-(paren
-id|pmd
-)paren
-OG
-(paren
-r_int
-r_int
-)paren
-id|high_memory
-)paren
-op_logical_or
-(paren
-id|pmd_page
-c_func
-(paren
-id|pmd
-)paren
-OL
-id|PAGE_OFFSET
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|pmd_present
-r_extern
-r_inline
-r_int
-id|pmd_present
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
 id|pmd_val
 c_func
 (paren
 id|pmd
 )paren
-op_ne
+op_eq
 (paren
 r_int
 r_int
 )paren
-id|invalid_pte_table
+id|empty_bad_page_table
 suffix:semicolon
 )brace
 DECL|function|pmd_clear
@@ -714,56 +701,17 @@ id|pgd
 )paren
 (brace
 r_return
-(paren
-(paren
-id|pgd_page
-c_func
-(paren
-id|pgd
-)paren
-OG
-(paren
-r_int
-r_int
-)paren
-id|high_memory
-)paren
-op_logical_or
-(paren
-id|pgd_page
-c_func
-(paren
-id|pgd
-)paren
-OL
-id|PAGE_OFFSET
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|pgd_present
-r_extern
-r_inline
-r_int
-id|pgd_present
-c_func
-(paren
-id|pgd_t
-id|pgd
-)paren
-(brace
-r_return
 id|pgd_val
 c_func
 (paren
 id|pgd
 )paren
-op_ne
+op_eq
 (paren
 r_int
 r_int
 )paren
-id|invalid_pmd_table
+id|empty_bad_pmd_table
 suffix:semicolon
 )brace
 DECL|function|pgd_clear
@@ -1250,7 +1198,7 @@ DECL|macro|page_pte
 mdefine_line|#define page_pte(page) page_pte_prot(page, __pgprot(0))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
-mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, 0)
 DECL|macro|pgd_index
 mdefine_line|#define pgd_index(address)&t;((address &gt;&gt; PGDIR_SHIFT) &amp; (PTRS_PER_PGD - 1))
 multiline_comment|/* to find an entry in a page-table-directory */
@@ -1377,16 +1325,6 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize a new pgd / pmd table with invalid pointers.&n; */
 r_extern
 r_void
-id|pte_init
-c_func
-(paren
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|pgd_init
 c_func
 (paren
@@ -1403,6 +1341,10 @@ c_func
 r_int
 r_int
 id|page
+comma
+r_int
+r_int
+id|pagetable
 )paren
 suffix:semicolon
 r_extern

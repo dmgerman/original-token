@@ -202,10 +202,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|maxcpus
-suffix:semicolon
 id|init_new_context
 c_func
 (paren
@@ -232,10 +228,6 @@ id|smp_tune_scheduling
 c_func
 (paren
 )paren
-suffix:semicolon
-id|smp_num_cpus
-op_assign
-id|maxcpus
 suffix:semicolon
 id|allowboot
 c_func

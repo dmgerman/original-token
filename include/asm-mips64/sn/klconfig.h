@@ -5,14 +5,8 @@ mdefine_line|#define&t;_ASM_SN_KLCONFIG_H
 multiline_comment|/*&n; * klconfig.h&n; */
 multiline_comment|/*&n; * The KLCONFIG structures store info about the various BOARDs found&n; * during Hardware Discovery. In addition, it stores info about the&n; * components found on the BOARDs.&n; */
 multiline_comment|/*&n; * WARNING:&n; *&t;Certain assembly language routines (notably xxxxx.s) in the IP27PROM &n; *&t;will depend on the format of the data structures in this file.  In &n; *      most cases, rearranging the fields can seriously break things.   &n; *      Adding fields in the beginning or middle can also break things.&n; *      Add fields if necessary, to the end of a struct in such a way&n; *      that offsets of existing fields do not change.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
-macro_line|#if defined(CONFIG_SGI_IP27) || defined(CONFIG_SGI_IP35)
-macro_line|#include &lt;asm/sn/agent.h&gt;
-macro_line|#include &lt;asm/arc/types.h&gt;
-macro_line|#include &lt;asm/arc/hinv.h&gt;
-macro_line|#endif /* !CONFIG_SGI_IP27 || !CONFIG_SGI_IP35 */
 macro_line|#if defined(CONFIG_SGI_IP27)
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 singleline_comment|//#include &lt;sys/SN/router.h&gt;
@@ -20,20 +14,29 @@ singleline_comment|// XXX Stolen from &lt;sys/SN/router.h&gt;:
 DECL|macro|MAX_ROUTER_PORTS
 mdefine_line|#define MAX_ROUTER_PORTS (6)    /* Max. number of ports on a router */
 macro_line|#include &lt;asm/sn/sn0/sn0_fru.h&gt;
+macro_line|#include &lt;asm/sn/agent.h&gt;
 singleline_comment|//#include &lt;sys/graph.h&gt;
+macro_line|#include &lt;asm/arc/types.h&gt;
+macro_line|#include &lt;asm/arc/hinv.h&gt;
 singleline_comment|//#include &lt;sys/xtalk/xbow.h&gt;
-macro_line|#elif defined(CONFIG_SGI_IP35)
-macro_line|#include &lt;asm/sn/sn1/addrs.h&gt;
-macro_line|#include &lt;sys/sn/router.h&gt;
-macro_line|#include &lt;sys/graph.h&gt;
-macro_line|#include &lt;asm/xtalk/xbow.h&gt;
-macro_line|#endif  /* !CONFIG_SGI_IP27 &amp;&amp; !CONFIG_SGI_IP35 */
-macro_line|#if (defined(CONFIG_SGI_IP27) &amp;&amp; defined(CONFIG_SGI_IO)) || &bslash;&n;     defined(CONFIG_SGI_IP35)
+macro_line|#if defined(CONFIG_SGI_IO)
 singleline_comment|// The hack file has to be before vector and after sn0_fru....
 macro_line|#include &lt;asm/hack.h&gt;
 macro_line|#include &lt;asm/sn/vector.h&gt;
 macro_line|#include &lt;asm/xtalk/xtalk.h&gt;
-macro_line|#endif  /* !(CONFIG_SGI_IP27 &amp;&amp; CONFIG_SGI_IO) || !CONFIG_SGI_IP35 */
+macro_line|#endif  /* CONFIG_SGI_IO */
+macro_line|#elif defined(CONFIG_SGI_IP35)
+macro_line|#include &lt;asm/hack.h&gt;
+macro_line|#include &lt;asm/sn/sn1/addrs.h&gt;
+macro_line|#include &lt;asm/sn/vector.h&gt;
+macro_line|#include &lt;sys/sn/router.h&gt;
+macro_line|#include &lt;asm/sn/agent.h&gt;
+macro_line|#include &lt;sys/graph.h&gt;
+macro_line|#include &lt;asm/arc/types.h&gt;
+macro_line|#include &lt;asm/arc/hinv.h&gt;
+macro_line|#include &lt;asm/xtalk/xbow.h&gt;
+macro_line|#include &lt;asm/xtalk/xtalk.h&gt;
+macro_line|#endif  /* !CONFIG_SGI_IP27 &amp;&amp; !CONFIG_SGI_IP35 */
 DECL|macro|KLCFGINFO_MAGIC
 mdefine_line|#define KLCFGINFO_MAGIC&t;0xbeedbabe
 macro_line|#ifdef FRUTEST

@@ -20,7 +20,7 @@ DECL|macro|FPC_CSR
 mdefine_line|#define FPC_CSR&t;&t;69
 DECL|macro|FPC_EIR
 mdefine_line|#define FPC_EIR&t;&t;70
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 DECL|macro|abi64_no_regargs
 mdefine_line|#define abi64_no_regargs&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy0,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy1,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy2,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy3,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy4,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy5,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy6,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy7
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the stack during a&n; * system call/exception. As usual the registers k0/k1 aren&squot;t being saved.&n; */
@@ -71,10 +71,12 @@ id|cp0_cause
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(_LANGUAGE_ASSEMBLY__) */
+macro_line|#ifdef _LANGUAGE_ASSEMBLY
 macro_line|#include &lt;asm/offset.h&gt;
+macro_line|#endif /* (_LANGUAGE_ASSEMBLY__) */
 macro_line|#ifdef __KERNEL__
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;cp0_epc)
 r_extern
@@ -91,7 +93,7 @@ op_star
 suffix:semicolon
 DECL|macro|show_regs
 mdefine_line|#define show_regs(regs)&t;_show_regs(regs)
-macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(_LANGUAGE_ASSEMBLY__) */
 macro_line|#endif
 macro_line|#endif /* _ASM_PTRACE_H */
 eof

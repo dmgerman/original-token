@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.c,v 1.24 2000/02/04 07:40:23 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; * Copyright (C) 1994 - 1999  Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1991, 1992  Linus Torvalds&n; * Copyright (C) 1994 - 1999  Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -81,6 +81,15 @@ r_struct
 id|sigcontext
 op_star
 id|sc
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|syscall_trace
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|function|copy_siginfo_to_user
@@ -1417,6 +1426,18 @@ r_goto
 id|badframe
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t let your children do this ...&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;ptrace
+op_amp
+id|PT_TRACESYS
+)paren
+id|syscall_trace
+c_func
+(paren
+)paren
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -3036,9 +3057,9 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_and
 id|signr
@@ -3357,11 +3378,6 @@ suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sigaddset
 c_func
 (paren

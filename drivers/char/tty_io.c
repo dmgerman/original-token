@@ -343,6 +343,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|sgi_serial_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -9182,13 +9190,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_SERIAL) &t;
+macro_line|#elif defined(CONFIG_SERIAL)
 id|serial_console_init
 c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
+macro_line|#ifdef CONFIG_SGI_SERIAL
+id|sgi_serial_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_MVME162_SCC) || defined(CONFIG_BVME6000_SCC) || defined(CONFIG_MVME147_SCC)
 id|vme_scc_console_init
 c_func

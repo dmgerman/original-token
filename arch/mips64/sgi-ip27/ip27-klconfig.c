@@ -259,7 +259,7 @@ id|cnodeid_t
 id|get_cpu_cnode
 c_func
 (paren
-r_int
+id|cpuid_t
 id|cpu
 )paren
 (brace

@@ -225,7 +225,7 @@ mdefine_line|#define IPV6_TLV_PAD0&t;&t;0
 DECL|macro|IPV6_TLV_PADN
 mdefine_line|#define IPV6_TLV_PADN&t;&t;1
 DECL|macro|IPV6_TLV_ROUTERALERT
-mdefine_line|#define IPV6_TLV_ROUTERALERT&t;20
+mdefine_line|#define IPV6_TLV_ROUTERALERT&t;5
 DECL|macro|IPV6_TLV_JUMBO
 mdefine_line|#define IPV6_TLV_JUMBO&t;&t;194
 multiline_comment|/*&n; *&t;IPV6 socket options&n; */

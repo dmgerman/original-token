@@ -130,7 +130,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] wants ioctl 0x%xd (arg 0x%lx)&quot;
+l_string|&quot;[%s:%d] wants ioctl 0x%xd (arg 0x%lx)&quot;
 comma
 id|current-&gt;comm
 comma
@@ -186,7 +186,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOCATTACHSEMA): &quot;
+l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOCATTACHSEMA): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -212,7 +212,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;UIOCATTACHSEMA: attaching usema %p to process %ld&bslash;n&quot;
+l_string|&quot;UIOCATTACHSEMA: attaching usema %p to process %d&bslash;n&quot;
 comma
 id|usema
 comma
@@ -279,7 +279,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOC*BLOCK): &quot;
+l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOC*BLOCK): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -294,7 +294,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;UIOC*BLOCK: putting process %ld to sleep on usema %p&quot;
+l_string|&quot;UIOC*BLOCK: putting process %d to sleep on usema %p&quot;
 comma
 id|current-&gt;pid
 comma
@@ -370,7 +370,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOC*BLOCK): &quot;
+l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOC*BLOCK): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -385,7 +385,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] releasing usema %p&quot;
+l_string|&quot;[%s:%d] releasing usema %p&quot;
 comma
 id|current-&gt;comm
 comma
@@ -438,7 +438,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] wants to poll usema %p&quot;
+l_string|&quot;[%s:%d] wants to poll usema %p&quot;
 comma
 id|current-&gt;comm
 comma

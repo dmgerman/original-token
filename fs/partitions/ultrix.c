@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;check.h&quot;
 DECL|function|ultrix_partition
-r_static
 r_int
 id|ultrix_partition
 c_func
@@ -22,14 +21,13 @@ comma
 r_int
 r_int
 id|first_sector
+comma
+r_int
+id|first_part_minor
 )paren
 (brace
 r_int
 id|i
-comma
-id|minor
-op_assign
-id|current_minor
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -162,7 +160,7 @@ suffix:semicolon
 id|i
 op_increment
 comma
-id|minor
+id|first_part_minor
 op_increment
 )paren
 r_if
@@ -180,7 +178,7 @@ c_func
 (paren
 id|hd
 comma
-id|minor
+id|first_part_minor
 comma
 id|label-&gt;pt_part
 (braket

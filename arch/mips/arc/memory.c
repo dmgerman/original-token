@@ -435,10 +435,6 @@ suffix:semicolon
 r_int
 r_int
 id|bootmap_size
-comma
-id|kbegin
-comma
-id|kend
 suffix:semicolon
 r_struct
 id|linux_mdesc

@@ -1,8 +1,8 @@
-multiline_comment|/* $Id: ide.h,v 1.6 1999/10/09 00:01:42 ralf Exp $&n; *&n; *  linux/include/asm-mips/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * This file contains the MIPS architecture specific IDE code.&n; *&n; * Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
 multiline_comment|/*&n; *  This file contains the MIPS architecture specific IDE code.&n; */
-macro_line|#ifndef __ASM_MIPS_IDE_H
-DECL|macro|__ASM_MIPS_IDE_H
-mdefine_line|#define __ASM_MIPS_IDE_H
+macro_line|#ifndef __ASM_IDE_H
+DECL|macro|__ASM_IDE_H
+mdefine_line|#define __ASM_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef MAX_HWIFS
@@ -223,7 +223,7 @@ suffix:semicolon
 )brace
 DECL|function|ide_init_hwif_ports
 r_static
-id|__inline__
+r_inline
 r_void
 id|ide_init_hwif_ports
 c_func
@@ -243,33 +243,90 @@ op_star
 id|irq
 )paren
 (brace
-id|ide_ops
-op_member_access_from_pointer
-id|ide_init_hwif_ports
-c_func
-(paren
-id|hw
-comma
-id|data_port
-comma
-id|ctrl_port
-comma
-op_amp
-id|hw-&gt;irq
-)paren
-suffix:semicolon
-id|hw-&gt;irq
+id|ide_ioreg_t
+id|reg
 op_assign
-id|ide_ops
-op_member_access_from_pointer
-id|ide_default_irq
-c_func
-(paren
 id|data_port
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|IDE_DATA_OFFSET
+suffix:semicolon
+id|i
+op_le
+id|IDE_STATUS_OFFSET
+suffix:semicolon
+id|i
+op_increment
 )paren
+(brace
+id|hw-&gt;io_ports
+(braket
+id|i
+)braket
+op_assign
+id|reg
+suffix:semicolon
+id|reg
+op_add_assign
+l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
+r_if
+c_cond
+(paren
+id|ctrl_port
+)paren
+(brace
+id|hw-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+op_assign
+id|ctrl_port
+suffix:semicolon
+)brace
+r_else
+(brace
+id|hw-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+op_assign
+id|hw-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+op_plus
+l_int|0x206
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+l_int|NULL
+)paren
+op_star
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+id|hw-&gt;io_ports
+(braket
+id|IDE_IRQ_OFFSET
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|ide_init_default_hwifs
 r_static
 id|__inline__
@@ -316,7 +373,7 @@ id|index
 comma
 l_int|0
 comma
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 id|hw.irq
@@ -578,5 +635,5 @@ mdefine_line|#define ide_release_lock(lock)&t;&t;do {} while (0)
 DECL|macro|ide_get_lock
 mdefine_line|#define ide_get_lock(lock, hdlr, data)&t;do {} while (0)
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASM_MIPS_IDE_H */
+macro_line|#endif /* __ASM_IDE_H */
 eof

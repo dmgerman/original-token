@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.20 2000/02/27 19:51:38 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.21 2000/07/07 22:29:42 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -530,6 +530,14 @@ id|ipv6_txoptions
 op_star
 id|opt
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|ip6_frag_nqueues
+suffix:semicolon
+r_extern
+id|atomic_t
+id|ip6_frag_mem
 suffix:semicolon
 DECL|macro|IPV6_FRAG_TIMEOUT
 mdefine_line|#define IPV6_FRAG_TIMEOUT&t;(60*HZ)&t;&t;/* 60 seconds */

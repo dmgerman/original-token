@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.7 2000/03/13 22:43:25 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 by Silicon Graphics&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -57,7 +57,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;Got syscall %d, cpu %d proc %s:%d epc 0x%lx&bslash;n&quot;
+l_string|&quot;Got syscall %ld, cpu %d proc %s:%d epc 0x%lx&bslash;n&quot;
 comma
 id|regs.regs
 (braket
@@ -160,13 +160,15 @@ op_assign
 id|tsk-&gt;mm
 suffix:semicolon
 r_int
-id|si_code
-op_assign
-id|SEGV_MAPERR
-suffix:semicolon
-r_int
 r_int
 id|fixup
+suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
 r_if
@@ -274,7 +276,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
-id|si_code
+id|info.si_code
 op_assign
 id|SEGV_ACCERR
 suffix:semicolon
@@ -382,6 +384,43 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Quickly check for vmalloc range faults.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|vma
+)paren
+op_logical_and
+(paren
+id|address
+op_ge
+id|VMALLOC_START
+)paren
+op_logical_and
+(paren
+id|address
+OL
+id|VMALLOC_END
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Fix vmalloc invalidate fault&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -392,10 +431,6 @@ id|regs
 )paren
 )paren
 (brace
-r_struct
-id|siginfo
-id|si
-suffix:semicolon
 id|tsk-&gt;thread.cp0_badvaddr
 op_assign
 id|address
@@ -439,15 +474,16 @@ l_int|31
 )paren
 suffix:semicolon
 macro_line|#endif
-id|si.si_signo
+id|info.si_signo
 op_assign
 id|SIGSEGV
 suffix:semicolon
-id|si.si_code
+id|info.si_errno
 op_assign
-id|si_code
+l_int|0
 suffix:semicolon
-id|si.si_addr
+multiline_comment|/* info.si_code has been set above */
+id|info.si_addr
 op_assign
 (paren
 r_void
@@ -461,7 +497,7 @@ c_func
 id|SIGSEGV
 comma
 op_amp
-id|si
+id|info
 comma
 id|tsk
 )paren
@@ -536,7 +572,7 @@ c_func
 (paren
 id|KERN_ALERT
 l_string|&quot;Cpu %d Unable to handle kernel paging request at &quot;
-l_string|&quot;address %08lx, epc == %08lx, ra == %08lx&bslash;n&quot;
+l_string|&quot;address %08lx, epc == %08x, ra == %08x&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -545,8 +581,16 @@ c_func
 comma
 id|address
 comma
+(paren
+r_int
+r_int
+)paren
 id|regs-&gt;cp0_epc
 comma
+(paren
+r_int
+r_int
+)paren
 id|regs-&gt;regs
 (braket
 l_int|31
@@ -619,10 +663,33 @@ id|tsk-&gt;thread.cp0_badvaddr
 op_assign
 id|address
 suffix:semicolon
-id|force_sig
+id|info.si_code
+op_assign
+id|SIGBUS
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|BUS_ADRERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGBUS
+comma
+op_amp
+id|info
 comma
 id|tsk
 )paren

@@ -399,16 +399,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|ioc3_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|SK_init
 c_func
 (paren
@@ -553,16 +543,6 @@ suffix:semicolon
 r_extern
 r_int
 id|bagetlance_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dec_lance_probe
 c_func
 (paren
 r_struct
@@ -1461,23 +1441,6 @@ comma
 l_int|0
 )brace
 comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_SGI_IOC3_ETH
-(brace
-id|ioc3_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_DECLANCE&t;&t;/* DECstation on-board controller */
-(brace
-id|dec_lance_probe
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* and maybe TURBOchannel option boards */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BAGETLANCE        /* Lance-based Baget ethernet boards */
 (brace

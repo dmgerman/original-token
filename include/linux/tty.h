@@ -263,7 +263,15 @@ mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA in Color Mode&t;&t;*/
 DECL|macro|VIDEO_TYPE_VGAC
 mdefine_line|#define VIDEO_TYPE_VGAC&t;&t;0x22&t;/* VGA+ in Color Mode&t;&t;*/
 DECL|macro|VIDEO_TYPE_VLFB
-mdefine_line|#define VIDEO_TYPE_VLFB&t;&t;0x23&t;/* VESA VGA in graphic mode    &t;*/
+mdefine_line|#define VIDEO_TYPE_VLFB&t;&t;0x23&t;/* VESA VGA in graphic mode&t;*/
+DECL|macro|VIDEO_TYPE_PICA_S3
+mdefine_line|#define VIDEO_TYPE_PICA_S3&t;0x30&t;/* ACER PICA-61 local S3 video&t;*/
+DECL|macro|VIDEO_TYPE_MIPS_G364
+mdefine_line|#define VIDEO_TYPE_MIPS_G364&t;0x31    /* MIPS Magnum 4000 G364 video  */
+DECL|macro|VIDEO_TYPE_SNI_RM
+mdefine_line|#define VIDEO_TYPE_SNI_RM&t;0x32    /* SNI RM200 PCI video          */
+DECL|macro|VIDEO_TYPE_SGI
+mdefine_line|#define VIDEO_TYPE_SGI          0x33    /* Various SGI graphics hardware */
 DECL|macro|VIDEO_TYPE_TGAC
 mdefine_line|#define VIDEO_TYPE_TGAC&t;&t;0x40&t;/* DEC TGA */
 DECL|macro|VIDEO_TYPE_SUN
@@ -272,10 +280,6 @@ DECL|macro|VIDEO_TYPE_SUNPCI
 mdefine_line|#define VIDEO_TYPE_SUNPCI       0x51    /* Sun PCI based frame buffer. */
 DECL|macro|VIDEO_TYPE_PMAC
 mdefine_line|#define VIDEO_TYPE_PMAC&t;&t;0x60&t;/* PowerMacintosh frame buffer. */
-DECL|macro|VIDEO_TYPE_SGI
-mdefine_line|#define VIDEO_TYPE_SGI          0x70    /* Various SGI graphics hardware */
-DECL|macro|VIDEO_TYPE_MIPS_G364
-mdefine_line|#define VIDEO_TYPE_MIPS_G364&t;0x71    /* MIPS Magnum 4000 G364 video  */
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;

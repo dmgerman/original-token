@@ -13,7 +13,7 @@ multiline_comment|/*&n;    * Ye olde division-by-multiplication trick.&n;    *&n
 DECL|macro|QUOTIENT
 macro_line|#  define QUOTIENT ((1UL &lt;&lt; (32 - LOG_2_HZ)) * 100)
 DECL|macro|HZ_TO_STD
-macro_line|#  define HZ_TO_STD(a)                            &bslash;&n;   ({ int __res;                                  &bslash;&n;        __asm__(                                  &bslash;&n;           &quot;multu&bslash;t%0,%2&bslash;n&bslash;t&quot;&t;&t;&t;  &bslash;&n;           &quot;mfhi&bslash;t%0&quot;&t;&t;&t;&t;  &bslash;&n;        : &quot;=r&quot; (__res): &quot;0&quot; (a), &quot;r&quot; (QUOTIENT)); &bslash;&n;        __res;})
+macro_line|#  define HZ_TO_STD(a)                            &bslash;&n;   ({ unsigned int __res;&t;&t;&t;  &bslash;&n;      unsigned long lo;&t;&t;&t;&t;  &bslash;&n;        __asm__(&quot;multu&bslash;t%2,%3&bslash;n&bslash;t&quot;&t;&t;  &bslash;&n;&t;&t;:&quot;=h&quot; (__res), &quot;=l&quot; (lo)&t;  &bslash;&n;&t;&t;:&quot;r&quot; (a),&quot;r&quot; (QUOTIENT));         &bslash;&n;        (__typeof__(a)) __res;})
 macro_line|#else
 DECL|macro|HZ
 macro_line|#  define HZ 100

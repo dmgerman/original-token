@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/pc_keyb.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
@@ -47,6 +48,11 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+r_extern
+r_struct
+id|ide_ops
+id|std_ide_ops
+suffix:semicolon
 r_extern
 r_struct
 id|rtc_ops
@@ -381,6 +387,13 @@ id|_machine_power_off
 op_assign
 id|ddb_machine_power_off
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|ide_ops
+op_assign
+op_amp
+id|std_ide_ops
+suffix:semicolon
+macro_line|#endif
 id|rtc_ops
 op_assign
 op_amp

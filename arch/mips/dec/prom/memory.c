@@ -553,7 +553,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Freeing unused PROM memory: %dk freed&bslash;n&quot;
+l_string|&quot;Freeing unused PROM memory: %ldk freed&bslash;n&quot;
 comma
 (paren
 id|end

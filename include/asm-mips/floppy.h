@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.6 1999/01/04 16:09:21 ralf Exp $&n; *&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 2000 Ralf Baechle&n; */
 macro_line|#ifndef _ASM_FLOPPY_H
 DECL|macro|_ASM_FLOPPY_H
 mdefine_line|#define _ASM_FLOPPY_H
@@ -232,41 +232,43 @@ op_star
 id|fd_ops
 suffix:semicolon
 DECL|macro|fd_inb
-mdefine_line|#define fd_inb(port)&t;&t;&t;fd_ops-&gt;fd_inb(port)
+mdefine_line|#define fd_inb(port)&t;&t;fd_ops-&gt;fd_inb(port)
 DECL|macro|fd_outb
-mdefine_line|#define fd_outb(value,port)&t;&t;fd_ops-&gt;fd_outb(value,port)
+mdefine_line|#define fd_outb(value,port)&t;fd_ops-&gt;fd_outb(value,port)
 DECL|macro|fd_enable_dma
-mdefine_line|#define fd_enable_dma(channel)&t;&t;fd_ops-&gt;fd_enable_dma(channel)
+mdefine_line|#define fd_enable_dma()&t;&t;fd_ops-&gt;fd_enable_dma(FLOPPY_DMA)
 DECL|macro|fd_disable_dma
-mdefine_line|#define fd_disable_dma(channel)&t;&t;fd_ops-&gt;fd_disable_dma(channel)
+mdefine_line|#define fd_disable_dma()&t;fd_ops-&gt;fd_disable_dma(FLOPPY_DMA)
 DECL|macro|fd_request_dma
-mdefine_line|#define fd_request_dma(channel)&t;&t;fd_ops-&gt;fd_request_dma(channel)
+mdefine_line|#define fd_request_dma()&t;fd_ops-&gt;fd_request_dma(FLOPPY_DMA)
 DECL|macro|fd_free_dma
-mdefine_line|#define fd_free_dma(channel)&t;&t;fd_ops-&gt;fd_free_dma(channel)
+mdefine_line|#define fd_free_dma()&t;&t;fd_ops-&gt;fd_free_dma(FLOPPY_DMA)
 DECL|macro|fd_clear_dma_ff
-mdefine_line|#define fd_clear_dma_ff(channel)&t;fd_ops-&gt;fd_clear_dma_ff(channel)
+mdefine_line|#define fd_clear_dma_ff()&t;fd_ops-&gt;fd_clear_dma_ff(FLOPPY_DMA)
 DECL|macro|fd_set_dma_mode
-mdefine_line|#define fd_set_dma_mode(channel, mode)&t;fd_ops-&gt;fd_set_dma_mode(channel, mode)
+mdefine_line|#define fd_set_dma_mode(mode)&t;fd_ops-&gt;fd_set_dma_mode(FLOPPY_DMA, mode)
 DECL|macro|fd_set_dma_addr
-mdefine_line|#define fd_set_dma_addr(channel, addr)&t;fd_ops-&gt;fd_set_dma_addr(channel, &bslash;&n;&t;&t;&t;&t;&t;         virt_to_bus(addr))
+mdefine_line|#define fd_set_dma_addr(addr)&t;fd_ops-&gt;fd_set_dma_addr(FLOPPY_DMA, &bslash;&n;&t;&t;&t;&t;                       virt_to_bus(addr))
 DECL|macro|fd_set_dma_count
-mdefine_line|#define fd_set_dma_count(channel,count)&t;fd_ops-&gt;fd_set_dma_count(channel,count)
+mdefine_line|#define fd_set_dma_count(count)&t;fd_ops-&gt;fd_set_dma_count(FLOPPY_DMA,count)
 DECL|macro|fd_get_dma_residue
-mdefine_line|#define fd_get_dma_residue(channel)&t;fd_ops-&gt;fd_get_dma_residue(channel)
+mdefine_line|#define fd_get_dma_residue()&t;fd_ops-&gt;fd_get_dma_residue(FLOPPY_DMA)
 DECL|macro|fd_enable_irq
-mdefine_line|#define fd_enable_irq(irq)&t;&t;fd_ops-&gt;fd_enable_irq(irq)
+mdefine_line|#define fd_enable_irq()&t;&t;fd_ops-&gt;fd_enable_irq(FLOPPY_IRQ)
 DECL|macro|fd_disable_irq
-mdefine_line|#define fd_disable_irq(irq)&t;&t;fd_ops-&gt;fd_disable_irq(irq)
+mdefine_line|#define fd_disable_irq()&t;fd_ops-&gt;fd_disable_irq(FLOPPY_IRQ)
 DECL|macro|fd_request_irq
-mdefine_line|#define fd_request_irq(irq)&t;&t;request_irq(irq, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;&t;    SA_INTERRUPT &bslash;&n;&t;&t;&t;&t;&t;            | SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;                    &quot;floppy&quot;, NULL)
+mdefine_line|#define fd_request_irq()&t;request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;            SA_INTERRUPT | SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;, NULL)
 DECL|macro|fd_free_irq
-mdefine_line|#define fd_free_irq(irq)&t;&t;free_irq(irq, NULL);
+mdefine_line|#define fd_free_irq()&t;&t;free_irq(FLOPPY_IRQ, NULL);
 DECL|macro|fd_dma_mem_alloc
-mdefine_line|#define fd_dma_mem_alloc(size) fd_ops-&gt;fd_dma_mem_alloc(size)
+mdefine_line|#define fd_dma_mem_alloc(size)&t;fd_ops-&gt;fd_dma_mem_alloc(size)
 DECL|macro|fd_dma_mem_free
 mdefine_line|#define fd_dma_mem_free(mem,size) fd_ops-&gt;fd_dma_mem_free(mem,size)
 DECL|macro|fd_drive_type
-mdefine_line|#define fd_drive_type(n)&t;&t;fd_ops-&gt;fd_drive_type(n)
+mdefine_line|#define fd_drive_type(n)&t;fd_ops-&gt;fd_drive_type(n)
+DECL|macro|fd_cacheflush
+mdefine_line|#define fd_cacheflush(addr,size) dma_cache_wback_inv(addr,size)
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 24
 multiline_comment|/*&n; * And on Mips&squot;s the CMOS info fails also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or whereever a particular machine has stored this ...&n; */
@@ -276,6 +278,8 @@ DECL|macro|FLOPPY1_TYPE
 mdefine_line|#define FLOPPY1_TYPE&t;&t;&t;fd_drive_type(1)
 DECL|macro|FDC1
 mdefine_line|#define FDC1&t;&t;&t;fd_ops-&gt;fd_getfdaddr1();
+multiline_comment|/*&n; * Hack: The floppy drivrer defines this, before including fdreg.h.  We use&n; * to define FDC2 only one and keep it a static variable in floppy.c.&n; */
+macro_line|#ifdef FDPATCHES
 DECL|variable|FDC2
 r_static
 r_int
@@ -284,6 +288,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#endif
 DECL|macro|N_FDC
 mdefine_line|#define N_FDC 1&t;&t;&t;/* do you *really* want a second controller? */
 DECL|macro|N_DRIVE

@@ -44,10 +44,10 @@ DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
-mdefine_line|#define DBG(x)&t;&t;printk(KERN_DEBUG &quot;aty128fb: %s&bslash;n&quot;,(x));
+mdefine_line|#define DBG(fmt, args...)&t;&t;printk(KERN_DEBUG &quot;aty128fb: %s &quot; fmt, __FUNCTION__, ##args);
 macro_line|#else
 DECL|macro|DBG
-mdefine_line|#define DBG(x)
+mdefine_line|#define DBG(fmt, args...)
 macro_line|#endif
 macro_line|#ifndef CONFIG_PPC
 multiline_comment|/* default mode */
@@ -233,6 +233,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_PPC */
 macro_line|#ifndef MODULE
 multiline_comment|/* default modedb mode */
+multiline_comment|/* 640x480, 60 Hz, Non-Interlaced (25.172 MHz dotclock) */
 DECL|variable|__initdata
 r_static
 r_struct
@@ -241,31 +242,52 @@ id|defaultmode
 id|__initdata
 op_assign
 (brace
-multiline_comment|/* 640x480, 60 Hz, Non-Interlaced (25.172 MHz dotclock) */
-l_int|NULL
-comma
+id|refresh
+suffix:colon
 l_int|60
 comma
+id|xres
+suffix:colon
 l_int|640
 comma
+id|yres
+suffix:colon
 l_int|480
 comma
+id|pixclock
+suffix:colon
 l_int|39722
 comma
+id|left_margin
+suffix:colon
 l_int|48
 comma
+id|right_margin
+suffix:colon
 l_int|16
 comma
+id|upper_margin
+suffix:colon
 l_int|33
 comma
+id|lower_margin
+suffix:colon
 l_int|10
 comma
+id|hsync_len
+suffix:colon
 l_int|96
 comma
+id|vsync_len
+suffix:colon
 l_int|2
 comma
+id|sync
+suffix:colon
 l_int|0
 comma
+id|vmode
+suffix:colon
 id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
@@ -392,7 +414,6 @@ id|rage_128
 suffix:semicolon
 multiline_comment|/* packed BIOS settings */
 macro_line|#ifndef CONFIG_PPC
-macro_line|#pragma pack(1)
 r_typedef
 r_struct
 (brace
@@ -486,9 +507,14 @@ id|XCLK_max_freq
 suffix:semicolon
 DECL|typedef|PLL_BLOCK
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 id|PLL_BLOCK
 suffix:semicolon
-macro_line|#pragma pack()
 macro_line|#endif /* !CONFIG_PPC */
 multiline_comment|/* onboard memory information */
 DECL|struct|aty128_meminfo
@@ -668,15 +694,9 @@ comma
 l_string|&quot;64-bit DDR SGRAM&quot;
 )brace
 suffix:semicolon
-DECL|variable|currcon
-r_static
-r_int
-id|currcon
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|aty128fb_name
 r_static
+r_const
 r_char
 op_star
 id|aty128fb_name
@@ -698,20 +718,11 @@ l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
-r_char
+r_int
 id|noaccel
 id|__initdata
 op_assign
 l_int|0
-suffix:semicolon
-DECL|variable|__initdata
-r_static
-r_int
-r_int
-id|initdepth
-id|__initdata
-op_assign
-l_int|8
 suffix:semicolon
 macro_line|#ifndef MODULE
 DECL|variable|__initdata
@@ -1069,10 +1080,6 @@ DECL|member|fbcon_cmap
 )brace
 id|fbcon_cmap
 suffix:semicolon
-DECL|member|blitter_may_be_busy
-r_int
-id|blitter_may_be_busy
-suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
 DECL|member|pdev
 r_struct
@@ -1097,6 +1104,14 @@ suffix:semicolon
 id|mtrr
 suffix:semicolon
 macro_line|#endif
+DECL|member|currcon
+r_int
+id|currcon
+suffix:semicolon
+DECL|member|blitter_may_be_busy
+r_int
+id|blitter_may_be_busy
+suffix:semicolon
 DECL|member|fifo_slots
 r_int
 id|fifo_slots
@@ -2297,20 +2312,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
 r_if
 c_cond
 (paren
 id|reset
 )paren
 multiline_comment|/* reset engine?? */
-id|DBG
+id|printk
 c_func
 (paren
-l_string|&quot;PLL write timeout!&quot;
+id|KERN_DEBUG
+l_string|&quot;aty128fb: PLL write timeout!&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* tell PLL to update */
 r_static
@@ -2830,14 +2844,12 @@ comma
 id|PM4_BUFFER_CNTL_NONPM4
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
 id|DBG
 c_func
 (paren
 l_string|&quot;engine reset&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_void
@@ -4819,12 +4831,11 @@ id|pll-&gt;vclk
 op_assign
 id|vclk
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;var_to_pll: post %d feedback %d vlck %d output %d ref_divider %d&bslash;n&quot;
+l_string|&quot;post %d feedback %d vlck %d output %d ref_divider %d &quot;
+l_string|&quot;vclk_per: %d&bslash;n&quot;
 comma
 id|pll-&gt;post_divider
 comma
@@ -4835,18 +4846,10 @@ comma
 id|output_freq
 comma
 id|c.ref_divider
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;var_to_pll: vclk_per: %d&bslash;n&quot;
 comma
 id|period_in_ps
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5058,17 +5061,14 @@ id|m-&gt;Tr2w
 op_plus
 id|x
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;aty128fb: x %x&bslash;n&quot;
+l_string|&quot;x %x&bslash;n&quot;
 comma
 id|x
 )paren
 suffix:semicolon
-macro_line|#endif
 id|b
 op_assign
 l_int|0
@@ -5153,12 +5153,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;aty128fb: p: %x rloop: %x x: %x ron: %x roff: %x&bslash;n&quot;
+l_string|&quot;p: %x rloop: %x x: %x ron: %x roff: %x&bslash;n&quot;
 comma
 id|p
 comma
@@ -5171,7 +5169,6 @@ comma
 id|roff
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dsp-&gt;dda_config
 op_assign
 id|p
@@ -6832,12 +6829,41 @@ op_star
 id|info
 )paren
 (brace
+macro_line|#if 1
+id|fb_copy_cmap
+c_func
+(paren
+op_amp
+id|info-&gt;cmap
+comma
+id|cmap
+comma
+id|kspc
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|2
+)paren
+suffix:semicolon
+macro_line|#else
+r_struct
+id|fb_info_aty128
+id|fb
+op_assign
+(paren
+r_struct
+id|fb_info_aty128
+op_star
+)paren
+id|info
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|con
 op_eq
-id|currcon
+id|fb-&gt;currcon
 )paren
 multiline_comment|/* current console? */
 r_return
@@ -6927,6 +6953,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -6957,6 +6984,18 @@ id|info
 (brace
 r_int
 id|err
+suffix:semicolon
+r_struct
+id|fb_info_aty128
+op_star
+id|fb
+op_assign
+(paren
+r_struct
+id|fb_info_aty128
+op_star
+)paren
+id|info
 suffix:semicolon
 r_struct
 id|display
@@ -7032,7 +7071,7 @@ c_cond
 (paren
 id|con
 op_eq
-id|currcon
+id|fb-&gt;currcon
 )paren
 multiline_comment|/* current console? */
 r_return
@@ -7309,104 +7348,6 @@ id|noaccel
 op_assign
 l_int|1
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|this_opt
-comma
-l_string|&quot;depth:&quot;
-comma
-l_int|6
-)paren
-)paren
-(brace
-r_int
-r_int
-id|depth
-op_assign
-id|simple_strtoul
-c_func
-(paren
-id|this_opt
-op_plus
-l_int|6
-comma
-l_int|NULL
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|depth
-)paren
-(brace
-r_case
-l_int|0
-dot
-dot
-dot
-l_int|8
-suffix:colon
-id|initdepth
-op_assign
-l_int|8
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|9
-dot
-dot
-dot
-l_int|16
-suffix:colon
-id|initdepth
-op_assign
-l_int|16
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|17
-dot
-dot
-dot
-l_int|24
-suffix:colon
-id|initdepth
-op_assign
-l_int|24
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|25
-dot
-dot
-dot
-l_int|32
-suffix:colon
-id|initdepth
-op_assign
-l_int|32
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|initdepth
-op_assign
-l_int|8
-suffix:semicolon
-)brace
 )brace
 macro_line|#ifdef CONFIG_MTRR
 r_else
@@ -7949,7 +7890,7 @@ comma
 op_amp
 id|defaultmode
 comma
-id|initdepth
+l_int|8
 )paren
 op_eq
 l_int|0
@@ -8374,51 +8315,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* Request resources we&squot;re going to use */
-id|io_addr
-op_assign
-id|pci_resource_start
-c_func
-(paren
-id|pdev
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_region
-c_func
-(paren
-id|io_addr
-comma
-id|pci_resource_len
-c_func
-(paren
-id|pdev
-comma
-l_int|1
-)paren
-comma
-l_string|&quot;aty128fb IO&quot;
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: cannot reserve I/O ports&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|err_out_none
-suffix:semicolon
-)brace
-macro_line|#endif
 id|fb_addr
 op_assign
 id|pci_resource_start
@@ -8554,6 +8450,11 @@ multiline_comment|/* Copy PCI device info into info-&gt;pdev */
 id|info-&gt;pdev
 op_assign
 id|pdev
+suffix:semicolon
+id|info-&gt;currcon
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* Virtualize mmio region */
 id|info-&gt;regbase_phys
@@ -8866,8 +8767,6 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|err_out_none
-suffix:colon
 r_return
 op_minus
 id|ENODEV
@@ -9345,12 +9244,10 @@ c_func
 id|bios_seg
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;get_pllinfo: ppll_max %d ppll_min %d xclk %d &quot;
+l_string|&quot;ppll_max %d ppll_min %d xclk %d &quot;
 l_string|&quot;ref_divider %d dotclock %d&bslash;n&quot;
 comma
 id|info-&gt;constants.ppll_max
@@ -9364,7 +9261,6 @@ comma
 id|info-&gt;constants.dotclock
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -9668,7 +9564,7 @@ c_cond
 (paren
 id|fb_display
 (braket
-id|currcon
+id|info-&gt;currcon
 )braket
 dot
 id|cmap.len
@@ -9679,7 +9575,7 @@ c_func
 op_amp
 id|fb_display
 (braket
-id|currcon
+id|info-&gt;currcon
 )braket
 dot
 id|cmap
@@ -9692,7 +9588,7 @@ id|fb
 )paren
 suffix:semicolon
 multiline_comment|/* set the current console */
-id|currcon
+id|info-&gt;currcon
 op_assign
 id|con
 suffix:semicolon
@@ -10476,12 +10372,24 @@ op_star
 id|info
 )paren
 (brace
+r_struct
+id|fb_info_aty128
+op_star
+id|fb
+op_assign
+(paren
+r_struct
+id|fb_info_aty128
+op_star
+)paren
+id|info
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|con
 op_ne
-id|currcon
+id|fb-&gt;currcon
 )paren
 r_return
 suffix:semicolon

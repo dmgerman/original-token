@@ -404,9 +404,13 @@ id|size
 )paren
 (brace
 r_return
-id|vmalloc_prot
+id|__vmalloc
 (paren
 id|size
+comma
+id|GFP_KERNEL
+op_or
+id|__GFP_HIGHMEM
 comma
 id|PAGE_KERNEL_UNCACHED
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.53 2000/05/03 06:37:07 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.55 2000/07/08 00:20:43 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1758,9 +1758,15 @@ id|err
 r_goto
 id|out_free
 suffix:semicolon
-id|sk-&gt;stamp
-op_assign
-id|skb-&gt;stamp
+id|sock_recv_timestamp
+c_func
+(paren
+id|msg
+comma
+id|sk
+comma
+id|skb
+)paren
 suffix:semicolon
 multiline_comment|/* Copy the address. */
 r_if
@@ -4006,6 +4012,26 @@ suffix:semicolon
 id|fl.fl6_dst
 op_assign
 id|daddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fl.fl6_src
+op_eq
+l_int|NULL
+op_logical_and
+op_logical_neg
+id|ipv6_addr_any
+c_func
+(paren
+op_amp
+id|np-&gt;saddr
+)paren
+)paren
+id|fl.fl6_src
+op_assign
+op_amp
+id|np-&gt;saddr
 suffix:semicolon
 id|fl.uli_u.ports.dport
 op_assign

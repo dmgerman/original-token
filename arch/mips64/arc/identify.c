@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: identify.c,v 1.5 1999/11/19 20:35:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * identify.c: identify machine by looking up system identifier&n; *&n; * Copyright (C) 1998 Thomas Bogendoerfer&n; * &n; * This code is based on arch/mips/sgi/kernel/system.c, which is&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * identify.c: identify machine by looking up system identifier&n; *&n; * Copyright (C) 1998 Thomas Bogendoerfer&n; * &n; * This code is based on arch/mips/sgi/kernel/system.c, which is&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -102,6 +102,7 @@ DECL|function|string_to_mach
 id|string_to_mach
 c_func
 (paren
+r_const
 r_char
 op_star
 id|s

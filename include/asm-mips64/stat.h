@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1999 Ralf Baechle&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1999, 2000 Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_STAT_H
 DECL|macro|_ASM_STAT_H
 mdefine_line|#define _ASM_STAT_H
@@ -204,6 +204,7 @@ id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* The memory layout is the same as of struct stat64 of the 32-bit kernel.  */
 DECL|struct|stat
 r_struct
 id|stat
@@ -212,14 +213,15 @@ DECL|member|st_dev
 id|dev_t
 id|st_dev
 suffix:semicolon
-DECL|member|st_pad1
+DECL|member|st_pad0
 r_int
-id|st_pad1
+r_int
+id|st_pad0
 (braket
 l_int|3
 )braket
 suffix:semicolon
-multiline_comment|/* Reserved for network id */
+multiline_comment|/* Reserved for st_dev expansion  */
 DECL|member|st_ino
 id|ino_t
 id|st_ino
@@ -244,20 +246,18 @@ DECL|member|st_rdev
 id|dev_t
 id|st_rdev
 suffix:semicolon
-DECL|member|st_pad2
+DECL|member|st_pad1
 r_int
-id|st_pad2
+r_int
+id|st_pad1
 (braket
-l_int|2
+l_int|3
 )braket
 suffix:semicolon
+multiline_comment|/* Reserved for st_rdev expansion  */
 DECL|member|st_size
 id|off_t
 id|st_size
-suffix:semicolon
-DECL|member|st_pad3
-r_int
-id|st_pad3
 suffix:semicolon
 multiline_comment|/*&n;&t; * Actually this should be timestruc_t st_atime, st_mtime and st_ctime&n;&t; * but we don&squot;t have it under Linux.&n;&t; */
 DECL|member|st_atime
@@ -266,57 +266,39 @@ id|st_atime
 suffix:semicolon
 DECL|member|reserved0
 r_int
+r_int
 id|reserved0
 suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
 DECL|member|st_mtime
 id|time_t
 id|st_mtime
 suffix:semicolon
 DECL|member|reserved1
 r_int
+r_int
 id|reserved1
 suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
 DECL|member|st_ctime
 id|time_t
 id|st_ctime
 suffix:semicolon
 DECL|member|reserved2
 r_int
+r_int
 id|reserved2
 suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
 DECL|member|st_blksize
+r_int
 r_int
 id|st_blksize
 suffix:semicolon
 DECL|member|st_blocks
 r_int
+r_int
 id|st_blocks
-suffix:semicolon
-DECL|member|st_fstype
-r_char
-id|st_fstype
-(braket
-l_int|16
-)braket
-suffix:semicolon
-multiline_comment|/* Filesystem type name */
-DECL|member|st_pad4
-r_int
-id|st_pad4
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* Linux specific fields */
-DECL|member|st_flags
-r_int
-r_int
-id|st_flags
-suffix:semicolon
-DECL|member|st_gen
-r_int
-r_int
-id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon

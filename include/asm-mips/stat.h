@@ -1,6 +1,6 @@
-macro_line|#ifndef __ASM_MIPS_STAT_H
-DECL|macro|__ASM_MIPS_STAT_H
-mdefine_line|#define __ASM_MIPS_STAT_H
+macro_line|#ifndef _ASM_STAT_H
+DECL|macro|_ASM_STAT_H
+mdefine_line|#define _ASM_STAT_H
 macro_line|#include &lt;linux/types.h&gt;
 DECL|struct|__old_kernel_stat
 r_struct
@@ -206,7 +206,7 @@ id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* This matches struct stat64 in glibc2.1, hence the absolutely&n; * insane amounts of padding around dev_t&squot;s.&n; * XXX We don&squot;t ship glibc 2.1 for MIPS yet, so this structure may be&n; * changed without breaking compatibility.  You&squot;ve been warned.&n; */
+multiline_comment|/*&n; * This matches struct stat64 in glibc2.1, hence the absolutely insane&n; * amounts of padding around dev_t&squot;s.  The memory layout is the same as of&n; * struct stat of the 64-bit kernel.&n; */
 DECL|struct|stat64
 r_struct
 id|stat64
@@ -216,37 +216,33 @@ r_int
 r_int
 id|st_dev
 suffix:semicolon
-DECL|member|__pad0
+DECL|member|st_pad0
 r_int
-r_char
-id|__pad0
+r_int
+id|st_pad0
 (braket
-l_int|8
+l_int|3
 )braket
 suffix:semicolon
+multiline_comment|/* Reserved for st_dev expansion  */
 DECL|member|st_ino
-r_int
-r_int
+id|ino_t
 id|st_ino
 suffix:semicolon
 DECL|member|st_mode
-r_int
-r_int
+id|mode_t
 id|st_mode
 suffix:semicolon
 DECL|member|st_nlink
-r_int
-r_int
+id|nlink_t
 id|st_nlink
 suffix:semicolon
 DECL|member|st_uid
-r_int
-r_int
+id|uid_t
 id|st_uid
 suffix:semicolon
 DECL|member|st_gid
-r_int
-r_int
+id|gid_t
 id|st_gid
 suffix:semicolon
 DECL|member|st_rdev
@@ -254,19 +250,51 @@ r_int
 r_int
 id|st_rdev
 suffix:semicolon
-DECL|member|__pad3
+DECL|member|st_pad1
 r_int
-r_char
-id|__pad3
+r_int
+id|st_pad1
 (braket
-l_int|10
+l_int|3
 )braket
 suffix:semicolon
+multiline_comment|/* Reserved for st_rdev expansion  */
 DECL|member|st_size
 r_int
 r_int
 id|st_size
 suffix:semicolon
+multiline_comment|/*&n;&t; * Actually this should be timestruc_t st_atime, st_mtime and st_ctime&n;&t; * but we don&squot;t have it under Linux.&n;&t; */
+DECL|member|st_atime
+id|time_t
+id|st_atime
+suffix:semicolon
+DECL|member|reserved0
+r_int
+r_int
+id|reserved0
+suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
+DECL|member|st_mtime
+id|time_t
+id|st_mtime
+suffix:semicolon
+DECL|member|reserved1
+r_int
+r_int
+id|reserved1
+suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
+DECL|member|st_ctime
+id|time_t
+id|st_ctime
+suffix:semicolon
+DECL|member|reserved2
+r_int
+r_int
+id|reserved2
+suffix:semicolon
+multiline_comment|/* Reserved for st_atime expansion  */
 DECL|member|st_blksize
 r_int
 r_int
@@ -277,55 +305,7 @@ r_int
 r_int
 id|st_blocks
 suffix:semicolon
-multiline_comment|/* Number 512-byte blocks allocated. */
-DECL|member|__pad4
-r_int
-r_int
-id|__pad4
-suffix:semicolon
-multiline_comment|/* future possible st_blocks high bits */
-DECL|member|st_atime
-r_int
-r_int
-id|st_atime
-suffix:semicolon
-DECL|member|__pad5
-r_int
-r_int
-id|__pad5
-suffix:semicolon
-DECL|member|st_mtime
-r_int
-r_int
-id|st_mtime
-suffix:semicolon
-DECL|member|__pad6
-r_int
-r_int
-id|__pad6
-suffix:semicolon
-DECL|member|st_ctime
-r_int
-r_int
-id|st_ctime
-suffix:semicolon
-DECL|member|__pad7
-r_int
-r_int
-id|__pad7
-suffix:semicolon
-multiline_comment|/* will be high 32 bits of ctime someday */
-DECL|member|__unused1
-r_int
-r_int
-id|__unused1
-suffix:semicolon
-DECL|member|__unused2
-r_int
-r_int
-id|__unused2
-suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* __ASM_MIPS_STAT_H */
+macro_line|#endif /* _ASM_STAT_H */
 eof

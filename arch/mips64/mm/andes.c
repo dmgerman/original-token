@@ -2074,14 +2074,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|write_32bit_cp0_register
-c_func
-(paren
-id|CP0_WIRED
-comma
-l_int|0
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * You should never change this register:&n;&t; *   - On R4600 1.7 the tlbp never hits for pages smaller than&n;&t; *     the value in the c0_pagemask register.&n;&t; *   - The entire mm handling assumes the c0_pagemask register to&n;&t; *     be set for 4kb pages.&n;&t; */
 id|write_32bit_cp0_register
 c_func

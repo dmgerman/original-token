@@ -1034,7 +1034,7 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/* ---------- LFS-64 ----------- */
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__ia64__)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined (__ia64__) &amp;&amp; !defined(__mips64)
 DECL|function|cp_new_stat64
 r_static
 r_int

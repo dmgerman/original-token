@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Reset an IP27.&n; *&n; * Copyright (C) 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Reset an IP27.&n; *&n; * Copyright (C) 1997, 1998, 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,8 +9,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
-macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
 macro_line|#include &lt;asm/sn/gda.h&gt;
@@ -59,6 +57,8 @@ id|noreturn
 )paren
 )paren
 suffix:semicolon
+DECL|macro|noreturn
+mdefine_line|#define noreturn while(1);&t;&t;&t;&t;/* Silence gcc.  */
 multiline_comment|/* XXX How to pass the reboot command to the firmware??? */
 DECL|function|machine_restart
 r_void
@@ -70,9 +70,11 @@ op_star
 id|command
 )paren
 (brace
+macro_line|#if 0
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -117,7 +119,7 @@ id|i
 comma
 id|PROMOP_REG
 comma
-id|PROMOP_RESTART
+id|PROMOP_REBOOT
 )paren
 suffix:semicolon
 macro_line|#else
@@ -132,6 +134,8 @@ id|NPR_LOCALRESET
 )paren
 suffix:semicolon
 macro_line|#endif
+id|noreturn
+suffix:semicolon
 )brace
 DECL|function|machine_halt
 r_void
@@ -141,10 +145,55 @@ c_func
 r_void
 )paren
 (brace
-id|ArcEnterInteractiveMode
+r_int
+id|i
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+id|smp_send_stop
 c_func
 (paren
 )paren
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|numnodes
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|REMOTE_HUB_S
+c_func
+(paren
+id|COMPACT_TO_NASID_NODEID
+c_func
+(paren
+id|i
+)paren
+comma
+id|PROMOP_REG
+comma
+id|PROMOP_RESTART
+)paren
+suffix:semicolon
+id|LOCAL_HUB_S
+c_func
+(paren
+id|NI_PORT_RESET
+comma
+id|NPR_PORTRESET
+op_or
+id|NPR_LOCALRESET
+)paren
+suffix:semicolon
+id|noreturn
 suffix:semicolon
 )brace
 DECL|function|machine_power_off
@@ -156,6 +205,8 @@ r_void
 )paren
 (brace
 multiline_comment|/* To do ...  */
+id|noreturn
+suffix:semicolon
 )brace
 DECL|function|ip27_reboot_setup
 r_void

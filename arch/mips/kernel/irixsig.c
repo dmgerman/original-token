@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: irixsig.c,v 1.13 1999/10/09 00:00:58 ralf Exp $&n; */
+multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 - 2000 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -28,6 +28,15 @@ r_int
 r_int
 op_star
 id|ru
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|syscall_trace
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|macro|DEBUG_SIG
@@ -793,11 +802,6 @@ op_star
 id|info
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -808,11 +812,6 @@ id|do_exit
 c_func
 (paren
 id|SIGSEGV
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1112,9 +1111,9 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 op_logical_and
 id|signr
@@ -1421,11 +1420,6 @@ suffix:semicolon
 multiline_comment|/* FALLTHRU */
 r_default
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sigaddset
 c_func
 (paren
@@ -1433,6 +1427,12 @@ op_amp
 id|current-&gt;signal
 comma
 id|signr
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 id|current-&gt;flags
@@ -1880,6 +1880,18 @@ id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t let your children do this ...&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;ptrace
+op_amp
+id|PT_TRACESYS
+)paren
+id|syscall_trace
+c_func
+(paren
+)paren
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -2239,10 +2251,8 @@ op_star
 id|set
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2275,6 +2285,8 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
+id|err
+op_assign
 id|__put_user
 c_func
 (paren
@@ -2295,6 +2307,8 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -2315,6 +2329,8 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -2335,6 +2351,8 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -2363,7 +2381,7 @@ id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 DECL|function|irix_sigprocmask
@@ -2419,11 +2437,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
 r_return
 id|error
 suffix:semicolon
-)brace
 id|__copy_from_user
 c_func
 (paren
@@ -2934,11 +2950,6 @@ id|timeo
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef DEBUG_SIG
 id|printk
 c_func
@@ -3271,11 +3282,6 @@ id|EINTR
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -3358,11 +3364,6 @@ r_struct
 id|task_struct
 op_star
 id|p
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3500,6 +3501,17 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3527,10 +3539,8 @@ id|p-&gt;pid
 op_ne
 id|pid
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3544,10 +3554,8 @@ id|p-&gt;pgrp
 op_ne
 id|pid
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3557,10 +3565,8 @@ op_ne
 id|SIGCHLD
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 id|flag
 op_assign
 l_int|1
@@ -3598,9 +3604,9 @@ id|W_STOPPED
 op_logical_and
 op_logical_neg
 (paren
-id|p-&gt;flags
+id|p-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 )paren
 r_continue
@@ -3839,6 +3845,13 @@ r_continue
 suffix:semicolon
 )brace
 )brace
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3856,11 +3869,9 @@ id|options
 op_amp
 id|W_NOHANG
 )paren
-(brace
 r_goto
 id|end_waitsys
 suffix:semicolon
-)brace
 id|retval
 op_assign
 op_minus
@@ -3875,11 +3886,9 @@ c_func
 id|current
 )paren
 )paren
-(brace
 r_goto
 id|end_waitsys
 suffix:semicolon
-)brace
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
@@ -3900,6 +3909,10 @@ id|ECHILD
 suffix:semicolon
 id|end_waitsys
 suffix:colon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -3912,11 +3925,6 @@ id|wait
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -4021,11 +4029,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4036,12 +4039,10 @@ l_int|2
 op_eq
 l_int|1000
 )paren
-(brace
 id|base
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|ctx
 op_assign
 (paren
@@ -4183,7 +4184,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|__put_user
 c_func
 (paren
@@ -4199,7 +4199,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|__put_user
 c_func
 (paren
@@ -4292,11 +4291,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -4325,11 +4319,6 @@ r_struct
 id|irix5_context
 op_star
 id|ctx
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4396,11 +4385,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4506,11 +4493,6 @@ l_int|2
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -4549,11 +4531,6 @@ id|old
 (brace
 r_int
 id|error
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_SIG
 id|printk
@@ -4643,11 +4620,6 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -4690,11 +4662,6 @@ id|old
 (brace
 r_int
 id|error
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_SIG
 id|printk
@@ -4788,11 +4755,6 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -4836,11 +4798,6 @@ id|sig
 (brace
 r_int
 id|error
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|error
 op_assign
@@ -4899,11 +4856,6 @@ id|EINVAL
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

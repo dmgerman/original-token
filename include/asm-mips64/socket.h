@@ -71,6 +71,10 @@ DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME             28
+DECL|macro|SO_TIMESTAMP
+mdefine_line|#define SO_TIMESTAMP&t;&t;29
+DECL|macro|SCM_TIMESTAMP
+mdefine_line|#define SCM_TIMESTAMP&t;&t;SO_TIMESTAMP
 multiline_comment|/* Nast libc5 fixup - bletch */
 macro_line|#if defined(__KERNEL__)
 multiline_comment|/* Socket types. */

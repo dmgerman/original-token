@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: ip27-irq.c,v 1.9 2000/03/14 01:39:27 ralf Exp $&n; *&n; * ip27-irq.c: Highlevel interrupt handling for IP27 architecture.&n; *&n; * Copyright (C) 1999 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * ip27-irq.c: Highlevel interrupt handling for IP27 architecture.&n; *&n; * Copyright (C) 1999, 2000 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -13,10 +12,10 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -53,6 +52,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|irq_to_bus
+(braket
+)braket
+comma
+id|irq_to_slot
+(braket
+)braket
+comma
+id|bus_to_cpu
+(braket
+)braket
+suffix:semicolon
 DECL|variable|irq_cannonicalize
 r_int
 (paren
@@ -68,7 +81,7 @@ r_int
 id|intr_connect_level
 c_func
 (paren
-id|cpuid_t
+r_int
 id|cpu
 comma
 r_int
@@ -79,7 +92,7 @@ r_int
 id|intr_disconnect_level
 c_func
 (paren
-id|cpuid_t
+r_int
 id|cpu
 comma
 r_int
@@ -111,16 +124,20 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * we need to map irq&squot;s up to at least bit 7 of the INT_MASK0_A register&n; * since bits 0-6 are pre-allocated for other purposes.&n; */
 DECL|macro|IRQ_TO_SWLEVEL
-mdefine_line|#define IRQ_TO_SWLEVEL(i)&t;i + 7
+mdefine_line|#define IRQ_TO_SWLEVEL(cpu, i)&t;i + 7
 DECL|macro|SWLEVEL_TO_IRQ
-mdefine_line|#define SWLEVEL_TO_IRQ(s)&t;s - 7
-multiline_comment|/*&n; * use these macros to get the encoded nasid, widget id, and real irq&n; * from the irq value&n; */
-DECL|macro|NASID_FROM_IRQ
-mdefine_line|#define NASID_FROM_IRQ(i)       ((i &gt;&gt; 16)&amp;(0xff))
-DECL|macro|WID_FROM_IRQ
-mdefine_line|#define WID_FROM_IRQ(i)          ((i &gt;&gt; 8)&amp;(0xff))
-DECL|macro|IRQ_FROM_IRQ
-mdefine_line|#define IRQ_FROM_IRQ(i)               ((i)&amp;(0xff))
+mdefine_line|#define SWLEVEL_TO_IRQ(cpu, s)&t;s - 7
+multiline_comment|/*&n; * use these macros to get the encoded nasid and widget id&n; * from the irq value&n; */
+DECL|macro|IRQ_TO_BUS
+mdefine_line|#define IRQ_TO_BUS(i)&t;&t;&t;irq_to_bus[(i)]
+DECL|macro|IRQ_TO_CPU
+mdefine_line|#define IRQ_TO_CPU(i)&t;&t;&t;bus_to_cpu[IRQ_TO_BUS(i)]
+DECL|macro|NASID_FROM_PCI_IRQ
+mdefine_line|#define NASID_FROM_PCI_IRQ(i)&t;&t;bus_to_nid[IRQ_TO_BUS(i)]
+DECL|macro|WID_FROM_PCI_IRQ
+mdefine_line|#define WID_FROM_PCI_IRQ(i)&t;&t;bus_to_wid[IRQ_TO_BUS(i)]
+DECL|macro|SLOT_FROM_PCI_IRQ
+mdefine_line|#define&t;SLOT_FROM_PCI_IRQ(i)&t;&t;irq_to_slot[i]
 DECL|function|disable_irq
 r_void
 id|disable_irq
@@ -197,7 +214,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|32
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -312,11 +329,14 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s (the special SMP cross-CPU interrupts&n; * have their own specific handlers).&n; */
 DECL|function|do_IRQ
-id|asmlinkage
+r_static
 r_void
 id|do_IRQ
 c_func
 (paren
+id|cpuid_t
+id|thiscpu
+comma
 r_int
 id|irq
 comma
@@ -333,27 +353,18 @@ id|action
 suffix:semicolon
 r_int
 id|do_random
-comma
-id|cpu
-suffix:semicolon
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
 suffix:semicolon
 id|irq_enter
 c_func
 (paren
-id|cpu
+id|thiscpu
 comma
 id|irq
 )paren
 suffix:semicolon
 id|kstat.irqs
 (braket
-id|cpu
+id|thiscpu
 )braket
 (braket
 id|irq
@@ -388,15 +399,6 @@ id|SA_INTERRUPT
 id|__sti
 c_func
 (paren
-)paren
-suffix:semicolon
-id|action
-op_assign
-op_star
-(paren
-id|irq
-op_plus
-id|irq_action
 )paren
 suffix:semicolon
 id|do_random
@@ -454,7 +456,7 @@ suffix:semicolon
 id|irq_exit
 c_func
 (paren
-id|cpu
+id|thiscpu
 comma
 id|irq
 )paren
@@ -569,7 +571,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* For now ...  */
+multiline_comment|/*&n; * This code is unnecessarily complex, because we do SA_INTERRUPT&n; * intr enabling. Basically, once we grab the set of intrs we need&n; * to service, we must mask _all_ these interrupts; firstly, to make&n; * sure the same intr does not intr again, causing recursion that &n; * can lead to stack overflow. Secondly, we can not just mask the&n; * one intr we are do_IRQing, because the non-masked intrs in the&n; * first set might intr again, causing multiple servicings of the&n; * same intr. This effect is mostly seen for intercpu intrs.&n; * Kanoj 05.13.00&n; */
 DECL|function|ip27_do_irq
 r_void
 id|ip27_do_irq
@@ -591,6 +593,14 @@ id|pend0
 comma
 id|mask0
 suffix:semicolon
+id|cpuid_t
+id|thiscpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
 r_int
 id|pi_int_mask0
 op_assign
@@ -599,10 +609,7 @@ op_assign
 id|cputoslice
 c_func
 (paren
-id|smp_processor_id
-c_func
-(paren
-)paren
+id|thiscpu
 )paren
 op_eq
 l_int|0
@@ -647,16 +654,14 @@ id|pend0
 op_and_assign
 id|mask0
 suffix:semicolon
-r_do
-(brace
-id|swlevel
-op_assign
-id|ms1bit
-c_func
+multiline_comment|/* Pick intrs we should look at */
+r_if
+c_cond
 (paren
 id|pend0
 )paren
-suffix:semicolon
+(brace
+multiline_comment|/* Prevent any of the picked intrs from recursing */
 id|LOCAL_HUB_S
 c_func
 (paren
@@ -666,10 +671,18 @@ id|mask0
 op_amp
 op_complement
 (paren
-l_int|1
-op_lshift
-id|swlevel
+id|pend0
 )paren
+)paren
+suffix:semicolon
+r_do
+(brace
+id|swlevel
+op_assign
+id|ms1bit
+c_func
+(paren
+id|pend0
 )paren
 suffix:semicolon
 id|LOCAL_HUB_CLR_INTR
@@ -684,24 +697,19 @@ op_assign
 id|SWLEVEL_TO_IRQ
 c_func
 (paren
+id|thiscpu
+comma
 id|swlevel
 )paren
 suffix:semicolon
 id|do_IRQ
 c_func
 (paren
+id|thiscpu
+comma
 id|irq
 comma
 id|regs
-)paren
-suffix:semicolon
-multiline_comment|/* reset INT_MASK0 register */
-id|LOCAL_HUB_S
-c_func
-(paren
-id|pi_int_mask0
-comma
-id|mask0
 )paren
 suffix:semicolon
 multiline_comment|/* clear bit in pend0 */
@@ -717,7 +725,25 @@ c_loop
 (paren
 id|pend0
 )paren
+(brace
 suffix:semicolon
+)brace
+multiline_comment|/* Now allow the set of serviced intrs again */
+id|LOCAL_HUB_S
+c_func
+(paren
+id|pi_int_mask0
+comma
+id|mask0
+)paren
+suffix:semicolon
+id|LOCAL_HUB_L
+c_func
+(paren
+id|PI_INT_PEND0
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* Startup one of the (PCI ...) IRQs routes over a bridge.  */
@@ -733,6 +759,9 @@ r_int
 id|irq
 )paren
 (brace
+id|bridgereg_t
+id|device
+suffix:semicolon
 id|bridge_t
 op_star
 id|bridge
@@ -742,23 +771,16 @@ id|pin
 comma
 id|swlevel
 suffix:semicolon
-r_int
-id|real_irq
-op_assign
-id|IRQ_FROM_IRQ
-c_func
-(paren
-id|irq
-)paren
+id|cpuid_t
+id|cpu
 suffix:semicolon
-id|DBG
+id|nasid_t
+id|master
+op_assign
+id|NASID_FROM_PCI_IRQ
 c_func
 (paren
-l_string|&quot;bridge_startup(): irq= 0x%x  real_irq= %d&bslash;n&quot;
-comma
 id|irq
-comma
-id|real_irq
 )paren
 suffix:semicolon
 id|bridge
@@ -770,105 +792,56 @@ op_star
 id|NODE_SWIN_BASE
 c_func
 (paren
-id|NASID_FROM_IRQ
-c_func
-(paren
-id|irq
-)paren
+id|master
 comma
-id|WID_FROM_IRQ
+id|WID_FROM_PCI_IRQ
 c_func
 (paren
 id|irq
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIIIIIXME ...  Temporary kludge.  This knows how interrupts are&n;           setup in _my_ Origin.  */
-r_if
-c_cond
-(paren
-id|irq
-op_ne
-id|real_irq
-)paren
-multiline_comment|/* pci device interrupt */
-r_switch
-c_cond
-(paren
-id|real_irq
-)paren
-(brace
-r_case
-id|IRQ_FROM_IRQ
-c_func
-(paren
-id|IOC3_ETH_INT
-)paren
-suffix:colon
 id|pin
 op_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|pin
-op_assign
-id|real_irq
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_else
-r_switch
-c_cond
-(paren
-id|real_irq
-)paren
-(brace
-r_case
-id|CPU_RESCHED_A_IRQ
-suffix:colon
-r_case
-id|CPU_RESCHED_B_IRQ
-suffix:colon
-r_case
-id|CPU_CALL_A_IRQ
-suffix:colon
-r_case
-id|CPU_CALL_B_IRQ
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
+id|SLOT_FROM_PCI_IRQ
 c_func
 (paren
-l_string|&quot;bridge_startup: whoops? %d&bslash;n&quot;
-comma
 id|irq
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;         * &quot;map&quot; irq to a swlevel greater than 6 since the first 6 bits&n;         * of INT_PEND0 are taken&n;         */
+id|cpu
+op_assign
+id|IRQ_TO_CPU
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+id|DBG
+c_func
+(paren
+l_string|&quot;bridge_startup(): irq= 0x%x  pin=%d&bslash;n&quot;
+comma
+id|irq
+comma
+id|pin
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * &quot;map&quot; irq to a swlevel greater than 6 since the first 6 bits&n;&t; * of INT_PEND0 are taken&n;&t; */
 id|swlevel
 op_assign
 id|IRQ_TO_SWLEVEL
 c_func
 (paren
-id|real_irq
+id|cpu
+comma
+id|irq
 )paren
 suffix:semicolon
 id|intr_connect_level
 c_func
 (paren
-id|smp_processor_id
-c_func
-(paren
-)paren
+id|cpu
 comma
 id|swlevel
 )paren
@@ -880,9 +853,17 @@ id|pin
 dot
 id|addr
 op_assign
+(paren
 l_int|0x20000
 op_or
 id|swlevel
+op_or
+(paren
+id|master
+op_lshift
+l_int|8
+)paren
+)paren
 suffix:semicolon
 id|bridge-&gt;b_int_enable
 op_or_assign
@@ -892,76 +873,12 @@ op_lshift
 id|pin
 )paren
 suffix:semicolon
-multiline_comment|/* set more stuff in int_enable reg */
+multiline_comment|/* more stuff in int_enable reg */
 id|bridge-&gt;b_int_enable
 op_or_assign
 l_int|0x7ffffe00
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|real_irq
-OL
-l_int|2
-op_logical_or
-id|real_irq
-op_eq
-l_int|4
-op_logical_or
-id|real_irq
-op_eq
-l_int|5
-)paren
-(brace
-id|bridgereg_t
-id|device
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;                 * Allocate enough RRBs on the bridge for the DMAs.&n;                 * Right now allocating 2 RRBs on the normal channel&n;                 * and 2 on the virtual channel for slot 0 on the bus.&n;                 * And same for slot 1, to get ioc3 eth working.&n;                 */
-id|Not
-id|touching
-id|b_even_resp
-multiline_comment|/* boot doesn&squot;t go far */
-id|bridge-&gt;b_even_resp
-op_assign
-l_int|0xdd99cc88
-suffix:semicolon
-multiline_comment|/* boot doesn&squot;t go far */
-id|bridge-&gt;b_even_resp
-op_assign
-l_int|0xcccc8888
-suffix:semicolon
-multiline_comment|/* breaks eth0 */
-id|bridge-&gt;b_even_resp
-op_assign
-l_int|0xcc88
-suffix:semicolon
-multiline_comment|/* breaks eth0 */
-macro_line|#endif
-multiline_comment|/* Turn on bridge swapping */
-id|device
-op_assign
-id|bridge-&gt;b_device
-(braket
-id|real_irq
-)braket
-dot
-id|reg
-suffix:semicolon
-id|device
-op_or_assign
-id|BRIDGE_DEV_SWAP_DIR
-suffix:semicolon
-id|bridge-&gt;b_device
-(braket
-id|real_irq
-)braket
-dot
-id|reg
-op_assign
-id|device
-suffix:semicolon
-multiline_comment|/*&n;                 * Associate interrupt pin with device&n;                 * XXX This only works if b_int_device is initialized to 0!&n;                 */
+multiline_comment|/*&n;&t; * XXX This only works if b_int_device is initialized to 0!&n;&t; * We program the bridge to have a 1:1 mapping between devices&n;&t; * (slots) and intr pins.&n;&t; */
 id|device
 op_assign
 id|bridge-&gt;b_int_device
@@ -972,7 +889,7 @@ op_or_assign
 id|pin
 op_lshift
 (paren
-id|real_irq
+id|pin
 op_star
 l_int|3
 )paren
@@ -982,7 +899,6 @@ id|bridge-&gt;b_int_device
 op_assign
 id|device
 suffix:semicolon
-)brace
 id|bridge-&gt;b_widget.w_tflush
 suffix:semicolon
 multiline_comment|/* Flush */
@@ -1013,21 +929,6 @@ id|pin
 comma
 id|swlevel
 suffix:semicolon
-r_int
-id|real_irq
-op_assign
-id|IRQ_FROM_IRQ
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-r_struct
-id|irqaction
-op_star
-op_star
-id|p
-suffix:semicolon
 id|bridge
 op_assign
 (paren
@@ -1037,13 +938,13 @@ op_star
 id|NODE_SWIN_BASE
 c_func
 (paren
-id|NASID_FROM_IRQ
+id|NASID_FROM_PCI_IRQ
 c_func
 (paren
 id|irq
 )paren
 comma
-id|WID_FROM_IRQ
+id|WID_FROM_PCI_IRQ
 c_func
 (paren
 id|irq
@@ -1058,81 +959,23 @@ comma
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/* FIIIIIXME ...  Temporary kludge.  This knows how interrupts are&n;           setup in _my_ Origin.  */
-r_if
-c_cond
+id|pin
+op_assign
+id|SLOT_FROM_PCI_IRQ
+c_func
 (paren
 id|irq
-op_ne
-id|real_irq
-)paren
-multiline_comment|/* pci device interrupt */
-r_switch
-c_cond
-(paren
-id|real_irq
-)paren
-(brace
-r_case
-id|IRQ_FROM_IRQ
-c_func
-(paren
-id|IOC3_ETH_INT
-)paren
-suffix:colon
-id|pin
-op_assign
-l_int|2
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|pin
-op_assign
-id|real_irq
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_else
-r_switch
-c_cond
-(paren
-id|real_irq
-)paren
-(brace
-r_case
-id|CPU_RESCHED_A_IRQ
-suffix:colon
-r_case
-id|CPU_RESCHED_B_IRQ
-suffix:colon
-r_case
-id|CPU_CALL_A_IRQ
-suffix:colon
-r_case
-id|CPU_CALL_B_IRQ
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
-c_func
-(paren
-l_string|&quot;bridge_startup: whoops?&quot;
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;         * map irq to a swlevel greater than 6 since the first 6 bits&n;         * of INT_PEND0 are taken&n;         */
+multiline_comment|/*&n;&t; * map irq to a swlevel greater than 6 since the first 6 bits&n;&t; * of INT_PEND0 are taken&n;&t; */
 id|swlevel
 op_assign
 id|IRQ_TO_SWLEVEL
 c_func
 (paren
-id|real_irq
+id|cpu
+comma
+id|irq
 )paren
 suffix:semicolon
 id|intr_disconnect_level
@@ -1162,115 +1005,6 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Never anything pending.  */
-)brace
-DECL|function|bridge_init
-r_static
-r_void
-id|bridge_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|bridge_t
-op_star
-id|bridge
-suffix:semicolon
-id|nasid_t
-id|nasid
-suffix:semicolon
-r_char
-id|wid
-suffix:semicolon
-r_int
-id|bus
-suffix:semicolon
-id|nasid
-op_assign
-id|get_nasid
-c_func
-(paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|bus
-op_assign
-l_int|0
-suffix:semicolon
-id|bus
-OL
-id|num_bridges
-suffix:semicolon
-id|bus
-op_increment
-)paren
-(brace
-id|bridge
-op_assign
-(paren
-id|bridge_t
-op_star
-)paren
-id|NODE_SWIN_BASE
-c_func
-(paren
-id|bus_to_nid
-(braket
-id|bus
-)braket
-comma
-id|bus_to_wid
-(braket
-id|bus
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/* Hmm...  IRIX sets additional bits in the address which are&n;             documented as reserved in the bridge docs ...  */
-id|bridge-&gt;b_int_mode
-op_assign
-l_int|0x0
-suffix:semicolon
-multiline_comment|/* Don&squot;t clear ints */
-macro_line|#if 0
-id|bridge-&gt;b_wid_int_upper
-op_assign
-l_int|0x000a8000
-suffix:semicolon
-multiline_comment|/* Ints to node 0 */
-id|bridge-&gt;b_wid_int_lower
-op_assign
-l_int|0x01000090
-suffix:semicolon
-id|bridge-&gt;b_dir_map
-op_assign
-l_int|0xa00000
-suffix:semicolon
-multiline_comment|/* DMA */
-macro_line|#endif /* shouldn&squot;t lower= 0x01800090 ??? */
-id|bridge-&gt;b_wid_int_upper
-op_assign
-l_int|0x000a8000
-suffix:semicolon
-multiline_comment|/* Ints to widget A */
-id|bridge-&gt;b_wid_int_lower
-op_assign
-l_int|0x01800090
-suffix:semicolon
-id|bridge-&gt;b_dir_map
-op_assign
-l_int|0xa00000
-suffix:semicolon
-multiline_comment|/* DMA */
-id|bridge-&gt;b_int_enable
-op_assign
-l_int|0
-suffix:semicolon
-id|bridge-&gt;b_widget.w_tflush
-suffix:semicolon
-multiline_comment|/* Flush */
-)brace
 )brace
 DECL|function|irq_debug
 r_void
@@ -1309,7 +1043,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PI_INT_PEND0   = 0x%x&bslash;n&quot;
+l_string|&quot;PI_INT_PEND0   = 0x%lx&bslash;n&quot;
 comma
 id|LOCAL_HUB_L
 c_func
@@ -1321,7 +1055,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PI_INT_MASK0_A = 0x%x&bslash;n&quot;
+l_string|&quot;PI_INT_MASK0_A = 0x%lx&bslash;n&quot;
 comma
 id|LOCAL_HUB_L
 c_func
@@ -1375,6 +1109,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|irq
+op_ge
+id|NR_IRQS
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;IRQ array overflow %d&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
 r_new
 op_member_access_from_pointer
 id|flags
@@ -1397,11 +1156,7 @@ id|p
 op_assign
 id|irq_action
 op_plus
-id|IRQ_FROM_IRQ
-c_func
-(paren
 id|irq
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1476,8 +1231,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 op_logical_neg
 id|shared
+)paren
+op_logical_and
+(paren
+id|irq
+op_ge
+id|BASE_PCI_IRQ
+)paren
 )paren
 (brace
 id|bridge_startup
@@ -1551,21 +1314,6 @@ l_string|&quot;request_irq(): irq= 0x%x&bslash;n&quot;
 comma
 id|irq
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IRQ_FROM_IRQ
-c_func
-(paren
-id|irq
-)paren
-OG
-l_int|9
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -1703,13 +1451,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IRQ_FROM_IRQ
-c_func
-(paren
 id|irq
-)paren
-OG
-l_int|9
+op_ge
+id|NR_IRQS
 )paren
 (brace
 id|printk
@@ -1728,11 +1472,7 @@ c_loop
 (paren
 id|p
 op_assign
-id|IRQ_FROM_IRQ
-c_func
-(paren
 id|irq
-)paren
 op_plus
 id|irq_action
 suffix:semicolon
@@ -1775,11 +1515,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|irq
-(braket
-id|irq_action
-)braket
+op_ge
+id|BASE_PCI_IRQ
 )paren
 id|bridge_shutdown
 c_func
@@ -1870,11 +1608,6 @@ r_void
 id|irq_cannonicalize
 op_assign
 id|indy_irq_cannonicalize
-suffix:semicolon
-id|bridge_init
-c_func
-(paren
-)paren
 suffix:semicolon
 id|set_except_vector
 c_func
@@ -2696,7 +2429,7 @@ r_int
 id|intr_connect_level
 c_func
 (paren
-id|cpuid_t
+r_int
 id|cpu
 comma
 r_int
@@ -2844,7 +2577,7 @@ r_int
 id|intr_disconnect_level
 c_func
 (paren
-id|cpuid_t
+r_int
 id|cpu
 comma
 r_int
@@ -2995,18 +2728,6 @@ id|regs
 (brace
 multiline_comment|/* Nothing, the return from intr will work for us */
 )brace
-DECL|function|install_cpuintr
-r_void
-id|install_cpuintr
-c_func
-(paren
-id|cpuid_t
-id|cpu
-)paren
-(brace
-r_int
-id|irq
-suffix:semicolon
 r_extern
 r_void
 id|smp_call_function_interrupt
@@ -3015,15 +2736,27 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|function|install_cpuintr
+r_void
+id|install_cpuintr
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+macro_line|#ifdef CONFIG_SMP
+macro_line|#if (CPUS_PER_NODE == 2)
 r_static
 r_int
 id|done
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|irq
+suffix:semicolon
 multiline_comment|/*&n;&t; * This is a hack till we have a pernode irqlist. Currently,&n;&t; * just have the master cpu set up the handlers for the per&n;&t; * cpu irqs.&n;&t; */
-macro_line|#ifdef CONFIG_SMP
-macro_line|#if (CPUS_PER_NODE == 2)
 id|irq
 op_assign
 id|CPU_RESCHED_A_IRQ
@@ -3042,6 +2775,8 @@ comma
 id|IRQ_TO_SWLEVEL
 c_func
 (paren
+id|cpu
+comma
 id|irq
 )paren
 )paren
@@ -3094,6 +2829,8 @@ comma
 id|IRQ_TO_SWLEVEL
 c_func
 (paren
+id|cpu
+comma
 id|irq
 )paren
 )paren
@@ -3212,20 +2949,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* HACK ENDS */
 macro_line|#else /* CPUS_PER_NODE */
-op_lshift
-id|Bomb
-op_logical_neg
-id|Must
-id|redefine
-id|this
-r_for
-c_loop
-id|more
-id|than
-l_int|2
-id|CPUS
-dot
-op_rshift
+macro_line|#error Must redefine this for more than 2 CPUS.
 macro_line|#endif /* CPUS_PER_NODE */
 macro_line|#endif /* CONFIG_SMP */
 )brace
@@ -3234,7 +2958,7 @@ r_void
 id|install_tlbintr
 c_func
 (paren
-id|cpuid_t
+r_int
 id|cpu
 )paren
 (brace

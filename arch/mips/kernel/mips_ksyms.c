@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mips_ksyms.c,v 1.25 2000/02/24 00:12:40 ralf Exp $&n; *&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 2000 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,9 +7,9 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/floppy.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
@@ -17,6 +17,9 @@ macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+macro_line|#include &lt;asm/floppy.h&gt;
+macro_line|#endif
 r_extern
 r_void
 op_star
@@ -168,6 +171,13 @@ c_func
 id|strlen
 )paren
 suffix:semicolon
+DECL|variable|strpbrk
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|strpbrk
+)paren
+suffix:semicolon
 DECL|variable|strncat
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -189,18 +199,18 @@ c_func
 id|strrchr
 )paren
 suffix:semicolon
+DECL|variable|strstr
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|strstr
+)paren
+suffix:semicolon
 DECL|variable|strtok
 id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|strtok
-)paren
-suffix:semicolon
-DECL|variable|strpbrk
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|strpbrk
 )paren
 suffix:semicolon
 DECL|variable|_clear_page
@@ -472,11 +482,27 @@ id|screen_info
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
+DECL|variable|ide_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_ops
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|get_wchan
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_wchan
+)paren
+suffix:semicolon
+DECL|variable|irq_stat
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irq_stat
 )paren
 suffix:semicolon
 eof

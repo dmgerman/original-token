@@ -21,7 +21,7 @@ DECL|macro|FPC_CSR
 mdefine_line|#define FPC_CSR&t;&t;69
 DECL|macro|FPC_EIR
 mdefine_line|#define FPC_EIR&t;&t;70
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the stack during a&n; * system call/exception. As usual the registers k0/k1 aren&squot;t being saved.&n; */
 DECL|struct|pt_regs
 r_struct
@@ -79,10 +79,12 @@ id|cp0_cause
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(_LANGUAGE_ASSEMBLY) */
+macro_line|#ifdef _LANGUAGE_ASSEMBLY
 macro_line|#include &lt;asm/offset.h&gt;
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
-macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) (((regs)-&gt;cp0_status &amp; KU_MASK) == KU_USER)
@@ -98,7 +100,7 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#endif /* !(_LANGUAGE_ASSEMBLY) */
 macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_PTRACE_H */
 eof

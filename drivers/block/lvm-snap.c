@@ -11,6 +11,12 @@ r_static
 r_char
 op_star
 id|lvm_snap_version
+id|__attribute__
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 l_string|&quot;LVM 0.8final (15/02/2000)&bslash;n&quot;
 suffix:semicolon

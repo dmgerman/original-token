@@ -1115,14 +1115,9 @@ id|ENOMEM
 suffix:semicolon
 id|tmp
 op_assign
-(paren
-r_char
-op_star
-)paren
-id|__get_free_page
+id|__getname
 c_func
 (paren
-id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if

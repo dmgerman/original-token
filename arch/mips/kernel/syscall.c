@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: syscall.c,v 1.13 2000/02/04 07:40:23 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1999 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 2000 by Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; */
 DECL|macro|CONF_PRINT_SYSCALLS
 macro_line|#undef CONF_PRINT_SYSCALLS
 DECL|macro|CONF_DEBUG_IRIX
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/branch.h&gt;

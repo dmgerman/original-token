@@ -1670,12 +1670,8 @@ id|priority
 id|count
 op_assign
 id|dentry_stat.nr_unused
-op_rshift
-(paren
+op_div
 id|priority
-op_rshift
-l_int|2
-)paren
 suffix:semicolon
 id|prune_dcache
 c_func

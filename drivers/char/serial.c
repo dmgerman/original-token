@@ -243,6 +243,8 @@ r_struct
 id|console
 id|sercons
 suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; defined(CONFIG_MAGIC_SYSRQ) &amp;&amp; !defined(MODULE)
 DECL|variable|break_pressed
 r_static
 r_int
@@ -8012,6 +8014,10 @@ id|HIGH_BITS_OFFSET
 )paren
 id|new_port
 op_add_assign
+(paren
+r_int
+r_int
+)paren
 id|new_serial.port_high
 op_lshift
 id|HIGH_BITS_OFFSET
@@ -18863,8 +18869,8 @@ comma
 l_int|115200
 )brace
 comma
-macro_line|#if 0&t;&t;&t;/* No definition for PCI_DEVICE_ID_NEC_NILE4 */
-multiline_comment|/*&n;&t; * NEC Vrc-5074 (Nile 4) builtin UART.&n;&t; */
+macro_line|#ifdef CONFIG_DDB5074
+multiline_comment|/*&n;&t; * NEC Vrc-5074 (Nile 4) builtin UART.&n;&t; * Conditionally compiled in since this is a motherboard device.&n;&t; */
 (brace
 id|PCI_VENDOR_ID_NEC
 comma
@@ -22960,6 +22966,10 @@ id|HIGH_BITS_OFFSET
 )paren
 id|port
 op_add_assign
+(paren
+r_int
+r_int
+)paren
 id|req-&gt;port_high
 op_lshift
 id|HIGH_BITS_OFFSET

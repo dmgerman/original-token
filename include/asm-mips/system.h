@@ -510,6 +510,14 @@ r_int
 id|line
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|abs
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|macro|die
 mdefine_line|#define die(msg, regs)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__die(msg, regs, __FILE__ &quot;:&quot;__FUNCTION__, __LINE__)
 DECL|macro|die_if_kernel

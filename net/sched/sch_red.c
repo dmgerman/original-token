@@ -24,6 +24,7 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
+macro_line|#include &lt;net/inet_ecn.h&gt;
 DECL|macro|RED_ECN_ECT
 mdefine_line|#define RED_ECN_ECT  0x02
 DECL|macro|RED_ECN_CE
@@ -178,37 +179,12 @@ op_amp
 id|RED_ECN_CE
 )paren
 )paren
-(brace
-id|u32
-id|check
-op_assign
-id|skb-&gt;nh.iph-&gt;check
-suffix:semicolon
-id|check
-op_add_assign
-id|__constant_htons
+id|IP_ECN_set_ce
 c_func
 (paren
-l_int|0xFFFE
+id|skb-&gt;nh.iph
 )paren
 suffix:semicolon
-id|skb-&gt;nh.iph-&gt;check
-op_assign
-id|check
-op_plus
-(paren
-id|check
-op_rshift
-l_int|16
-)paren
-suffix:semicolon
-id|skb-&gt;nh.iph-&gt;tos
-op_assign
-id|tos
-op_or
-id|RED_ECN_CE
-suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon

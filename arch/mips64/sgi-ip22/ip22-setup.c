@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/pc_keyb.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -321,6 +322,11 @@ op_star
 id|ctype
 suffix:semicolon
 macro_line|#endif
+id|TLBMISS_HANDLER_SETUP
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Init the INDY HPC I/O controller.  Need to call this before&n;&t; * fucking with the memory controller because it needs to know the&n;&t; * boardID and whether this is a Guiness or a FullHouse machine.&n;&t; */
 id|sgihpc_init
 c_func

@@ -319,26 +319,26 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Talk about misusing macros..&n; */
 DECL|macro|__OUT1
-mdefine_line|#define __OUT1(s) &bslash;&n;extern inline void __out##s(unsigned int value, unsigned int port) {
+mdefine_line|#define __OUT1(s) &bslash;&n;extern inline void __out##s(unsigned int value, unsigned long port) {
 DECL|macro|__OUT2
 mdefine_line|#define __OUT2(m) &bslash;&n;__asm__ __volatile__ (&quot;s&quot; #m &quot;&bslash;t%0,%1(%2)&quot;
 DECL|macro|__OUT
 mdefine_line|#define __OUT(m,s) &bslash;&n;__OUT1(s) __OUT2(m) : : &quot;r&quot; (value), &quot;i&quot; (0), &quot;r&quot; (mips_io_port_base+port)); } &bslash;&n;__OUT1(s##c) __OUT2(m) : : &quot;r&quot; (value), &quot;ir&quot; (port), &quot;r&quot; (mips_io_port_base)); } &bslash;&n;__OUT1(s##_p) __OUT2(m) : : &quot;r&quot; (value), &quot;i&quot; (0), &quot;r&quot; (mips_io_port_base+port)); &bslash;&n;&t;SLOW_DOWN_IO; } &bslash;&n;__OUT1(s##c_p) __OUT2(m) : : &quot;r&quot; (value), &quot;ir&quot; (port), &quot;r&quot; (mips_io_port_base)); &bslash;&n;&t;SLOW_DOWN_IO; }
 DECL|macro|__IN1
-mdefine_line|#define __IN1(t,s) &bslash;&n;extern __inline__ t __in##s(unsigned int port) { t _v;
+mdefine_line|#define __IN1(t,s) &bslash;&n;extern __inline__ t __in##s(unsigned long port) { t _v;
 multiline_comment|/*&n; * Required nops will be inserted by the assembler&n; */
 DECL|macro|__IN2
 mdefine_line|#define __IN2(m) &bslash;&n;__asm__ __volatile__ (&quot;l&quot; #m &quot;&bslash;t%0,%1(%2)&quot;
 DECL|macro|__IN
 mdefine_line|#define __IN(t,m,s) &bslash;&n;__IN1(t,s) __IN2(m) : &quot;=r&quot; (_v) : &quot;i&quot; (0), &quot;r&quot; (mips_io_port_base+port)); return _v; } &bslash;&n;__IN1(t,s##c) __IN2(m) : &quot;=r&quot; (_v) : &quot;ir&quot; (port), &quot;r&quot; (mips_io_port_base)); return _v; } &bslash;&n;__IN1(t,s##_p) __IN2(m) : &quot;=r&quot; (_v) : &quot;i&quot; (0), &quot;r&quot; (mips_io_port_base+port)); SLOW_DOWN_IO; return _v; } &bslash;&n;__IN1(t,s##c_p) __IN2(m) : &quot;=r&quot; (_v) : &quot;ir&quot; (port), &quot;r&quot; (mips_io_port_base)); SLOW_DOWN_IO; return _v; }
 DECL|macro|__INS1
-mdefine_line|#define __INS1(s) &bslash;&n;extern inline void __ins##s(unsigned int port, void * addr, unsigned long count) {
+mdefine_line|#define __INS1(s) &bslash;&n;extern inline void __ins##s(unsigned long port, void * addr, unsigned long count) {
 DECL|macro|__INS2
 mdefine_line|#define __INS2(m) &bslash;&n;if (count) &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tl&quot; #m &quot;&bslash;t$1, %4(%5)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;dsubiu&bslash;t%1, 1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;s&quot; #m &quot;&bslash;t$1,(%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bnez&bslash;t%1, 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;daddiu&bslash;t%0, %6&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;treorder&quot;
 DECL|macro|__INS
 mdefine_line|#define __INS(m,s,i) &bslash;&n;__INS1(s) __INS2(m) &bslash;&n;&t;: &quot;=r&quot; (addr), &quot;=r&quot; (count) &bslash;&n;&t;: &quot;0&quot; (addr), &quot;1&quot; (count), &quot;i&quot; (0), &quot;r&quot; (mips_io_port_base+port), &quot;I&quot; (i) &bslash;&n;&t;: &quot;$1&quot;);} &bslash;&n;__INS1(s##c) __INS2(m) &bslash;&n;&t;: &quot;=r&quot; (addr), &quot;=r&quot; (count) &bslash;&n;&t;: &quot;0&quot; (addr), &quot;1&quot; (count), &quot;ir&quot; (port), &quot;r&quot; (mips_io_port_base), &quot;I&quot; (i) &bslash;&n;&t;: &quot;$1&quot;);}
 DECL|macro|__OUTS1
-mdefine_line|#define __OUTS1(s) &bslash;&n;extern inline void __outs##s(unsigned int port, const void * addr, unsigned long count) {
+mdefine_line|#define __OUTS1(s) &bslash;&n;extern inline void __outs##s(unsigned long port, const void * addr, unsigned long count) {
 DECL|macro|__OUTS2
 mdefine_line|#define __OUTS2(m) &bslash;&n;if (count) &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tl&quot; #m &quot;&bslash;t$1, (%0)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;dsubu&bslash;t%1, 1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;s&quot; #m &quot;&bslash;t$1, %4(%5)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bnez&bslash;t%1, 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;daddiu&bslash;t%0, %6&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;treorder&quot;
 DECL|macro|__OUTS

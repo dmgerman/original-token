@@ -539,7 +539,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Addr                 == %08x&bslash;n&quot;
+l_string|&quot;Addr                 == %08lx&bslash;n&quot;
 comma
 id|addr
 )paren
@@ -547,7 +547,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;tasks-&gt;mm.pgd        == %08x&bslash;n&quot;
+l_string|&quot;tasks-&gt;mm.pgd        == %08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -569,7 +569,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;page_dir == %08x&bslash;n&quot;
+l_string|&quot;page_dir == %08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -591,7 +591,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pgd == %08x, &quot;
+l_string|&quot;pgd == %08lx, &quot;
 comma
 (paren
 r_int
@@ -613,7 +613,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pmd == %08x, &quot;
+l_string|&quot;pmd == %08lx, &quot;
 comma
 (paren
 r_int
@@ -635,7 +635,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pte == %08x, &quot;
+l_string|&quot;pte == %08lx, &quot;
 comma
 (paren
 r_int
@@ -652,7 +652,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;page == %08x&bslash;n&quot;
+l_string|&quot;page == %08lx&bslash;n&quot;
 comma
 (paren
 r_int

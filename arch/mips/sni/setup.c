@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.13 1999/12/04 03:59:00 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 2000 by Ralf Baechle&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -12,10 +12,10 @@ macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/pc_keyb.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -247,11 +247,6 @@ r_char
 id|aux_device_present
 suffix:semicolon
 r_extern
-r_struct
-id|pci_ops
-id|sni_pci_ops
-suffix:semicolon
-r_extern
 r_int
 r_char
 id|sni_map_isa_cache
@@ -421,6 +416,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0 /* XXX Tag me deeper  */
 id|tag
 op_star
 id|atag
@@ -522,6 +518,7 @@ id|lines
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|sni_pcimt_detect
 c_func
 (paren
@@ -631,11 +628,6 @@ l_int|0x04
 comma
 l_string|&quot;PCI config data&quot;
 )paren
-suffix:semicolon
-id|pci_ops
-op_assign
-op_amp
-id|sni_pci_ops
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_ops

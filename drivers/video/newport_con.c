@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: newport_con.c,v 1.14 1999/06/24 01:10:24 ulfc Exp $&n; *&n; * newport_con.c: Abscon for newport hardware&n; * &n; * (C) 1998 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; * (C) 1999 Ulf Carlsson (ulfc@thepuffingruop.com)&n; * &n; * This driver is based on sgicons.c and cons_newport.&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/*&n; * newport_con.c: Abscon for newport hardware&n; * &n; * (C) 1998 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; * (C) 1999 Ulf Carlsson (ulfc@thepuffingruop.com)&n; * &n; * This driver is based on sgicons.c and cons_newport.&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2579,7 +2579,7 @@ id|newport_putc
 (paren
 id|vc
 comma
-id|chattr
+id|vc-&gt;vc_video_erase_char
 comma
 id|y
 comma

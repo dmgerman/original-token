@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.4 2000/01/20 23:50:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1995, 1996 Paul M. Antoine&n; * Copyright (C) 1998 Ulf Carlsson&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1995, 1996 Paul M. Antoine&n; * Copyright (C) 1998 Ulf Carlsson&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -58,7 +58,7 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
-id|__xtlb_mod_debug
+id|__xtlb_mod
 c_func
 (paren
 r_void
@@ -67,7 +67,7 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
-id|__xtlb_tlbl_debug
+id|__xtlb_tlbl
 c_func
 (paren
 r_void
@@ -76,7 +76,7 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
-id|__xtlb_tlbs_debug
+id|__xtlb_tlbs
 c_func
 (paren
 r_void
@@ -321,7 +321,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; %08lx&quot;
+l_string|&quot; %016lx&quot;
 comma
 id|stackdata
 )paren
@@ -349,7 +349,7 @@ c_cond
 (paren
 id|i
 op_mod
-l_int|8
+l_int|4
 op_eq
 l_int|0
 )paren
@@ -507,11 +507,16 @@ id|module_end
 )paren
 )paren
 (brace
+multiline_comment|/* Since our kernel is still at KSEG0,&n;&t;&t;&t; * truncate the address so that ksymoops&n;&t;&t;&t; * understands it.&n;&t;&t;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot; [&lt;%08lx&gt;]&quot;
+l_string|&quot; [&lt;%08x&gt;]&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
 suffix:semicolon
@@ -602,7 +607,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%c%08lx%c&quot;
+l_string|&quot;%c%08x%c&quot;
 comma
 (paren
 id|i
@@ -696,7 +701,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Process %s (pid: %ld, stackpage=%08lx)&bslash;n&quot;
+l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -945,6 +950,15 @@ r_int
 r_int
 id|insn
 suffix:semicolon
+r_extern
+r_void
+id|simfp
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_MIPS_FPE_MODULE
 r_if
 c_cond
@@ -966,11 +980,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1030,8 +1039,7 @@ id|fcr31
 )paren
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 id|pc
@@ -1107,8 +1115,7 @@ c_func
 id|regs
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 singleline_comment|//force_sig(SIGFPE, current);
 id|printk
@@ -1118,13 +1125,6 @@ id|KERN_DEBUG
 l_string|&quot;Should send SIGFPE to %s&bslash;n&quot;
 comma
 id|current-&gt;comm
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1345,15 +1345,10 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Cpu%d[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+l_string|&quot;Cpu%d[%s:%d] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -1370,11 +1365,6 @@ id|regs-&gt;regs
 (braket
 l_int|31
 )braket
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -1572,7 +1562,7 @@ multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occurs
 id|panic
 c_func
 (paren
-l_string|&quot;Caught reserved exception %d - should not happen.&quot;
+l_string|&quot;Caught reserved exception %ld - should not happen.&quot;
 comma
 (paren
 id|regs-&gt;cp0_cause
@@ -1885,11 +1875,11 @@ r_void
 (brace
 r_extern
 r_char
-id|__tlb_refill_debug_tramp
+id|except_vec0
 suffix:semicolon
 r_extern
 r_char
-id|__xtlb_refill_debug_tramp
+id|except_vec1_r10k
 suffix:semicolon
 r_extern
 r_char
@@ -2090,7 +2080,7 @@ op_star
 id|KSEG0
 comma
 op_amp
-id|__tlb_refill_debug_tramp
+id|except_vec0
 comma
 l_int|0x80
 )paren
@@ -2107,7 +2097,7 @@ op_plus
 l_int|0x080
 comma
 op_amp
-id|__xtlb_refill_debug_tramp
+id|except_vec1_r10k
 comma
 l_int|0x80
 )paren
@@ -2188,7 +2178,7 @@ c_func
 (paren
 l_int|1
 comma
-id|__xtlb_mod_debug
+id|__xtlb_mod
 )paren
 suffix:semicolon
 id|set_except_vector
@@ -2196,7 +2186,7 @@ c_func
 (paren
 l_int|2
 comma
-id|__xtlb_tlbl_debug
+id|__xtlb_tlbl
 )paren
 suffix:semicolon
 id|set_except_vector
@@ -2204,7 +2194,7 @@ c_func
 (paren
 l_int|3
 comma
-id|__xtlb_tlbs_debug
+id|__xtlb_tlbs
 )paren
 suffix:semicolon
 id|set_except_vector

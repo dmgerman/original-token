@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The real floating point exception handler.  While it doesn&squot;t really&n; * make sense to have this in a module, it makes debugging of this code&n; * in the kernel space a lot easier.  So far this handler in the released&n; * kernel source is just a dummy.&n; *&n; * Copyright (C) 1997 Ralf Baechle&n; *&n; * $Id: fpe.c,v 1.3 1998/04/05 11:23:50 ralf Exp $&n; */
+multiline_comment|/*&n; * The real floating point exception handler.  While it doesn&squot;t really&n; * make sense to have this in a module, it makes debugging of this code&n; * in the kernel space a lot easier.  So far this handler in the released&n; * kernel source is just a dummy.&n; *&n; * Copyright (C) 1997, 2000 Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -41,11 +41,6 @@ r_int
 id|fcr31
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
 id|show_regs
 c_func
@@ -86,11 +81,6 @@ id|current
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * For easier experimentation we never increment/decrement&n; * the module usable counter.&n; */
 r_int

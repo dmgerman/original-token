@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
+macro_line|#include &lt;asm/sn/klkernvars.h&gt;
 DECL|struct|plat_pglist_data
 r_typedef
 r_struct
@@ -14,6 +15,10 @@ id|plat_pglist_data
 DECL|member|gendata
 id|pg_data_t
 id|gendata
+suffix:semicolon
+DECL|member|kern_vars
+id|kern_vars_t
+id|kern_vars
 suffix:semicolon
 DECL|typedef|plat_pg_data_t
 )brace
@@ -45,6 +50,8 @@ DECL|macro|PLAT_NODE_DATA_SIZE
 mdefine_line|#define PLAT_NODE_DATA_SIZE(n)&t;     (PLAT_NODE_DATA(n)-&gt;gendata.node_size)
 DECL|macro|PLAT_NODE_DATA_LOCALNR
 mdefine_line|#define PLAT_NODE_DATA_LOCALNR(p, n) &bslash;&n;&t;&t;(((p) - PLAT_NODE_DATA(n)-&gt;gendata.node_start_paddr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|numa_node_id
+mdefine_line|#define numa_node_id()&t;cputocnode(current-&gt;processor)
 macro_line|#ifdef CONFIG_DISCONTIGMEM
 multiline_comment|/*&n; * Following are macros that each numa implmentation must define.&n; */
 multiline_comment|/*&n; * Given a kernel address, find the home node of the underlying memory.&n; */

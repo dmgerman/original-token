@@ -1098,6 +1098,7 @@ id|low
 op_assign
 id|max_low_pfn
 suffix:semicolon
+macro_line|#if defined(CONFIG_PCI) || defined(CONFIG_ISA)
 r_if
 c_cond
 (paren
@@ -1131,6 +1132,15 @@ op_minus
 id|max_dma
 suffix:semicolon
 )brace
+macro_line|#else
+id|zones_size
+(braket
+id|ZONE_DMA
+)braket
+op_assign
+id|low
+suffix:semicolon
+macro_line|#endif
 id|free_area_init
 c_func
 (paren

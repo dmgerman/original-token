@@ -6,6 +6,18 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+multiline_comment|/*&n; * For the fast tlb miss handlers, we currently keep a per cpu array&n; * of pointers to the current pgd for each processor. Also, the proc.&n; * id is stuffed into the context register. This should be changed to &n; * use the processor id via current-&gt;processor, where current is stored&n; * in watchhi/lo. The context register should be used to contiguously&n; * map the page tables.&n; */
+DECL|macro|TLBMISS_HANDLER_SETUP_PGD
+mdefine_line|#define TLBMISS_HANDLER_SETUP_PGD(pgd) &bslash;&n;&t;pgd_current[smp_processor_id()] = (unsigned long)(pgd)
+DECL|macro|TLBMISS_HANDLER_SETUP
+mdefine_line|#define TLBMISS_HANDLER_SETUP() &bslash;&n;&t;set_context((unsigned long) smp_processor_id() &lt;&lt; (23 + 3)); &bslash;&n;&t;TLBMISS_HANDLER_SETUP_PGD(swapper_pg_dir)
+r_extern
+r_int
+r_int
+id|pgd_current
+(braket
+)braket
+suffix:semicolon
 macro_line|#ifndef CONFIG_SMP
 DECL|macro|CPU_CONTEXT
 mdefine_line|#define CPU_CONTEXT(cpu, mm)&t;(mm)-&gt;context
@@ -287,6 +299,14 @@ id|cpu
 comma
 id|next
 )paren
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|TLBMISS_HANDLER_SETUP_PGD
+c_func
+(paren
+id|next-&gt;pgd
 )paren
 suffix:semicolon
 )brace
@@ -366,6 +386,14 @@ c_func
 comma
 id|next
 )paren
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|TLBMISS_HANDLER_SETUP_PGD
+c_func
+(paren
+id|next-&gt;pgd
 )paren
 suffix:semicolon
 )brace

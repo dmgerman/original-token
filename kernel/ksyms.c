@@ -457,6 +457,13 @@ c_func
 id|getname
 )paren
 suffix:semicolon
+DECL|variable|names_cachep
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|names_cachep
+)paren
+suffix:semicolon
 DECL|variable|_fput
 id|EXPORT_SYMBOL
 c_func

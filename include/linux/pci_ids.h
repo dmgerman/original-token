@@ -545,6 +545,8 @@ DECL|macro|PCI_VENDOR_ID_NEC
 mdefine_line|#define PCI_VENDOR_ID_NEC&t;&t;0x1033
 DECL|macro|PCI_DEVICE_ID_NEC_PCX2
 mdefine_line|#define PCI_DEVICE_ID_NEC_PCX2&t;&t;0x0046
+DECL|macro|PCI_DEVICE_ID_NEC_NILE4
+mdefine_line|#define PCI_DEVICE_ID_NEC_NILE4&t;&t;0x005a
 DECL|macro|PCI_VENDOR_ID_FD
 mdefine_line|#define PCI_VENDOR_ID_FD&t;&t;0x1036
 DECL|macro|PCI_DEVICE_ID_FD_36C70

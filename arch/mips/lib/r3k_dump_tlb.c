@@ -129,7 +129,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;va=%08lx asid=%08lx&quot;
-l_string|&quot;  [pa=%06lx n=%d d=%d v=%d g=%ld]&quot;
+l_string|&quot;  [pa=%06lx n=%d d=%d v=%d g=%d]&quot;
 comma
 (paren
 id|entryhi

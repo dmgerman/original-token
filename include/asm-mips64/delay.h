@@ -1,7 +1,8 @@
-multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Copyright (C) 1995 - 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Copyright (C) 1995 - 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_DELAY_H
 DECL|macro|_ASM_DELAY_H
 mdefine_line|#define _ASM_DELAY_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 r_extern
 id|__inline__
@@ -52,6 +53,10 @@ r_int
 id|lps
 )paren
 (brace
+r_int
+r_int
+id|lo
+suffix:semicolon
 id|usecs
 op_mul_assign
 l_int|0x000010c6f7a0b5edUL
@@ -60,15 +65,19 @@ multiline_comment|/* 2**64 / 1000000 */
 id|__asm__
 c_func
 (paren
-l_string|&quot;dmultu&bslash;t%0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;mfhi&bslash;t%0&quot;
+l_string|&quot;dmultu&bslash;t%2,%3&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=h&quot;
 (paren
 id|usecs
 )paren
+comma
+l_string|&quot;=l&quot;
+(paren
+id|lo
+)paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;r&quot;
 (paren
 id|usecs
 )paren

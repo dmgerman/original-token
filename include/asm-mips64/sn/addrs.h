@@ -2,7 +2,6 @@ multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and condit
 macro_line|#ifndef _ASM_SN_ADDRS_H
 DECL|macro|_ASM_SN_ADDRS_H
 mdefine_line|#define _ASM_SN_ADDRS_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if _LANGUAGE_C
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif /* _LANGUAGE_C */
@@ -110,7 +109,7 @@ mdefine_line|#define UALIAS_FLIP_SIZE&t;0x20000
 DECL|macro|UALIAS_FLIP_BIT
 mdefine_line|#define UALIAS_FLIP_BIT&t;&t;0x10000
 DECL|macro|UALIAS_FLIP_ADDR
-mdefine_line|#define UALIAS_FLIP_ADDR(_x)&t;(cputoslice(getcpuid()) ? &bslash;&n;&t;&t;&t;&t; (_x) ^ UALIAS_FLIP_BIT : (_x))
+mdefine_line|#define UALIAS_FLIP_ADDR(_x)&t;(cputoslice(smp_processor_id()) ? &bslash;&n;&t;&t;&t;&t; (_x) ^ UALIAS_FLIP_BIT : (_x))
 DECL|macro|LBOOT_BASE
 mdefine_line|#define LBOOT_BASE&t;&t;(HSPEC_BASE + 0x10000000)
 DECL|macro|LBOOT_SIZE

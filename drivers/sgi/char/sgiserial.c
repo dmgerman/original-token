@@ -2514,30 +2514,6 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work at all for 16450&squot;s, as a sun has a Z8530.&n; */
-DECL|function|rs_timer
-r_static
-r_void
-id|rs_timer
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;rs_timer called&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 DECL|function|startup
 r_static
 r_int
@@ -9571,10 +9547,10 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
-DECL|function|serial_console_init
+DECL|function|sgi_serial_console_init
 r_void
 id|__init
-id|serial_console_init
+id|sgi_serial_console_init
 c_func
 (paren
 r_void
@@ -9588,4 +9564,11 @@ id|sgi_console_driver
 )paren
 suffix:semicolon
 )brace
+DECL|variable|rs_init
+id|__initcall
+c_func
+(paren
+id|rs_init
+)paren
+suffix:semicolon
 eof

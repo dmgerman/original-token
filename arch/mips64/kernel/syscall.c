@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: syscall.c,v 1.3 2000/02/04 07:40:24 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/offset.h&gt;
@@ -751,6 +752,15 @@ id|cmd
 r_case
 id|SETNAME
 suffix:colon
+(brace
+r_char
+id|nodename
+(braket
+id|__NEW_UTS_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -775,44 +785,38 @@ id|arg1
 suffix:semicolon
 id|len
 op_assign
-id|strlen_user
+id|strncpy_from_user
 c_func
 (paren
+id|nodename
+comma
 id|name
+comma
+r_sizeof
+(paren
+id|nodename
+)paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|len
-op_eq
+OL
 l_int|0
-op_logical_or
-id|len
-OG
-id|__NEW_UTS_LEN
 )paren
 r_return
 op_minus
-id|EINVAL
+id|EFAULT
 suffix:semicolon
-id|down
+id|down_write
 c_func
 (paren
 op_amp
 id|uts_sem
 )paren
 suffix:semicolon
-id|errno
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|copy_from_user
+id|strncpy
 c_func
 (paren
 id|system_utsname.nodename
@@ -821,8 +825,14 @@ id|name
 comma
 id|len
 )paren
+suffix:semicolon
+id|up_write
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
-(brace
+suffix:semicolon
 id|system_utsname.nodename
 (braket
 id|len
@@ -830,25 +840,19 @@ id|len
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|errno
-op_assign
+r_return
 l_int|0
 suffix:semicolon
 )brace
-id|up
-c_func
-(paren
-op_amp
-id|uts_sem
-)paren
-suffix:semicolon
-r_return
-id|errno
-suffix:semicolon
 r_case
 id|MIPS_ATOMIC_SET
 suffix:colon
-multiline_comment|/* This is broken in case of page faults and SMP ...&n;&t;&t;   Risc/OS fauls after maximum 20 tries with EAGAIN.  */
+(brace
+multiline_comment|/* This is broken in case of page faults and SMP ...&n;&t;&t;    Risc/OS faults after maximum 20 tries with EAGAIN.  */
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|p
 op_assign
 (paren
@@ -881,6 +885,10 @@ id|errno
 r_return
 id|errno
 suffix:semicolon
+id|errno
+op_assign
+l_int|0
+suffix:semicolon
 id|save_and_cli
 c_func
 (paren
@@ -888,14 +896,24 @@ id|flags
 )paren
 suffix:semicolon
 id|errno
-op_assign
-op_star
+op_or_assign
+id|__get_user
+c_func
+(paren
+id|tmp
+comma
 id|p
+)paren
 suffix:semicolon
-op_star
-id|p
-op_assign
+id|errno
+op_or_assign
+id|__put_user
+c_func
+(paren
 id|arg2
+comma
+id|p
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -903,10 +921,19 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-r_return
+r_if
+c_cond
+(paren
 id|errno
+)paren
+r_return
+id|tmp
+suffix:semicolon
+r_return
+id|tmp
 suffix:semicolon
 multiline_comment|/* This is broken ...  */
+)brace
 r_case
 id|MIPS_FIXADE
 suffix:colon
@@ -969,6 +996,7 @@ comma
 r_int
 id|second
 comma
+r_int
 r_int
 id|third
 comma

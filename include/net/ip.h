@@ -583,6 +583,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* The function in 2.2 was invalid, producing wrong result for&n; * check=0xFEFF. It was noticed by Arthur Skawina _year_ ago. --ANK(000625) */
 r_extern
 id|__inline__
 DECL|function|ip_decrease_ttl
@@ -615,8 +616,8 @@ id|check
 op_plus
 (paren
 id|check
-op_rshift
-l_int|16
+op_ge
+l_int|0xFFFF
 )paren
 suffix:semicolon
 r_return
@@ -831,6 +832,14 @@ id|sk_buff
 op_star
 id|skb
 )paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_frag_nqueues
+suffix:semicolon
+r_extern
+id|atomic_t
+id|ip_frag_mem
 suffix:semicolon
 multiline_comment|/*&n; *&t;Functions provided by ip_forward.c&n; */
 r_extern

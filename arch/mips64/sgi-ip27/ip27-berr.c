@@ -1,10 +1,28 @@
-multiline_comment|/* $Id: ip27-berr.c,v 1.1 2000/01/20 22:50:29 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hub.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+r_extern
+r_void
+id|dump_tlb_addr
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dump_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 id|asmlinkage
 r_void

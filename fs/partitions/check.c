@@ -17,6 +17,7 @@ macro_line|#include &quot;osf.h&quot;
 macro_line|#include &quot;sgi.h&quot;
 macro_line|#include &quot;sun.h&quot;
 macro_line|#include &quot;ibm.h&quot;
+macro_line|#include &quot;ultrix.h&quot;
 r_extern
 r_void
 id|device_init

@@ -78,25 +78,18 @@ mdefine_line|#define LED_CYCLE_SHFT  4
 DECL|macro|SEND_NMI
 mdefine_line|#define SEND_NMI(_nasid, _slice)&t;&bslash;&n;          REMOTE_HUB_S((_nasid),  (PI_NMI_A + ((_slice) * PI_NMI_OFFSET)), 1)
 multiline_comment|/* Sanity hazzard ...  Below all the Origin hacks are following.  */
-DECL|macro|SCSI0_INT
-mdefine_line|#define SCSI0_INT&t;&t;0
-DECL|macro|SCSI1_INT
-mdefine_line|#define SCSI1_INT&t;&t;1
 DECL|macro|CPU_RESCHED_A_IRQ
-mdefine_line|#define CPU_RESCHED_A_IRQ&t;3
+mdefine_line|#define CPU_RESCHED_A_IRQ&t;0
 DECL|macro|CPU_RESCHED_B_IRQ
-mdefine_line|#define CPU_RESCHED_B_IRQ&t;4
-DECL|macro|QLOGICFC_SLOT5
-mdefine_line|#define QLOGICFC_SLOT5          5
+mdefine_line|#define CPU_RESCHED_B_IRQ&t;1
 DECL|macro|CPU_CALL_A_IRQ
-mdefine_line|#define CPU_CALL_A_IRQ&t;&t;6
+mdefine_line|#define CPU_CALL_A_IRQ&t;&t;2
 DECL|macro|CPU_CALL_B_IRQ
-mdefine_line|#define CPU_CALL_B_IRQ&t;&t;7
-DECL|macro|IOC3_SERIAL_INT
-mdefine_line|#define IOC3_SERIAL_INT&t;&t;8
-multiline_comment|/*#define IOC3_ETH_INT&t;&t;9*/
+mdefine_line|#define CPU_CALL_B_IRQ&t;&t;3
 DECL|macro|IOC3_ETH_INT
-mdefine_line|#define IOC3_ETH_INT&t;&t;0x0809&t;/* nasid 0, wid 0x8 */
+mdefine_line|#define IOC3_ETH_INT&t;&t;4
+DECL|macro|BASE_PCI_IRQ
+mdefine_line|#define BASE_PCI_IRQ&t;&t;4
 DECL|macro|SN00_BRIDGE
 mdefine_line|#define SN00_BRIDGE&t;&t;0x9200000008000000
 DECL|macro|SN00I_BRIDGE0

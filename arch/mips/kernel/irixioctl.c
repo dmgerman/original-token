@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixioctl.c,v 1.6 1999/02/06 05:12:56 adevries Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -195,11 +195,9 @@ id|tp-&gt;driver.subtype
 op_eq
 id|PTY_TYPE_MASTER
 )paren
-(brace
 r_return
 id|tp-&gt;link
 suffix:semicolon
-)brace
 r_else
 r_return
 id|tp
@@ -238,11 +236,6 @@ r_int
 id|error
 op_assign
 l_int|0
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTLS
 id|printk
@@ -392,10 +385,8 @@ c_cond
 (paren
 id|error
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|__put_user
 c_func
 (paren
@@ -1257,11 +1248,6 @@ id|error
 )paren
 suffix:semicolon
 macro_line|#endif
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

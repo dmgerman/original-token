@@ -4742,6 +4742,11 @@ id|i_pos
 r_return
 suffix:semicolon
 )brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

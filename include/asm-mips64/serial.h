@@ -14,7 +14,7 @@ multiline_comment|/*&n; * The IOC3 serials use a 22MHz clock rate with an additi
 DECL|macro|IOC3_BAUD
 mdefine_line|#define IOC3_BAUD (22000000 / (3*16))
 DECL|macro|IOC3_COM_FLAGS
-mdefine_line|#define IOC3_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST | ASYNC_IOC3)
+mdefine_line|#define IOC3_COM_FLAGS (ASYNC_BOOT_AUTOCONF | ASYNC_SKIP_TEST)
 multiline_comment|/* Let the compiler figure out the size.  */
 DECL|macro|RS_TABLE_SIZE
 mdefine_line|#define RS_TABLE_SIZE

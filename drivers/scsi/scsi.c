@@ -211,17 +211,6 @@ op_star
 id|SDpnt
 )paren
 suffix:semicolon
-r_static
-r_int
-id|scsi_unregister_device
-c_func
-(paren
-r_struct
-id|Scsi_Device_Template
-op_star
-id|tpnt
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * These are the interface to the old error handling code.  It should go away&n; * someday soon.&n; */
 r_extern
 r_void
@@ -7173,6 +7162,17 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
+r_static
+r_int
+id|scsi_unregister_device
+c_func
+(paren
+r_struct
+id|Scsi_Device_Template
+op_star
+id|tpnt
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This entry point should be called by a loadable module if it is trying&n; * add a high level scsi driver to the system.&n; */
 DECL|function|scsi_register_device_module
 r_static

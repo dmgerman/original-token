@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.c,v 1.1 1999/12/04 03:59:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 Ross Biro&n; * Copyright (C) Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 2000 Ulf Carlsson&n; *&n; * At this time Linux/MIPS64 only supports syscall tracing, even for 32-bit&n; * binaries.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 Ross Biro&n; * Copyright (C) Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 2000 Ulf Carlsson&n; *&n; * At this time Linux/MIPS64 only supports syscall tracing, even for 32-bit&n; * binaries.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/* Tracing a 32-bit process with a 64-bit strace and vice verca will not&n;   work.  I don&squot;t know how to fix this.  */
+multiline_comment|/*&n; * Tracing a 32-bit process with a 64-bit strace and vice versa will not&n; * work.  I don&squot;t know how to fix this.&n; */
 DECL|function|sys32_ptrace
 id|asmlinkage
 r_int
@@ -46,36 +46,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;ptrace(r=%d,pid=%d,addr=%08lx,data=%08lx)&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|request
-comma
-(paren
-r_int
-)paren
-id|pid
-comma
-(paren
-r_int
-r_int
-)paren
-id|addr
-comma
-(paren
-r_int
-r_int
-)paren
-id|data
-)paren
-suffix:semicolon
-macro_line|#endif
 id|ret
 op_assign
 op_minus
@@ -93,17 +63,17 @@ multiline_comment|/* are we already being traced? */
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* set the ptrace bit in the process flags. */
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|ret
 op_assign
@@ -263,16 +233,16 @@ multiline_comment|/* the same process cannot be attached many times */
 r_if
 c_cond
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out_tsk
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|write_lock_irq
 c_func
@@ -341,9 +311,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 )paren
 r_goto
@@ -448,6 +418,10 @@ comma
 r_int
 r_int
 op_star
+)paren
+(paren
+r_int
+r_int
 )paren
 id|data
 )paren
@@ -715,6 +689,10 @@ comma
 (paren
 r_int
 op_star
+)paren
+(paren
+r_int
+r_int
 )paren
 id|data
 )paren
@@ -1017,15 +995,15 @@ id|request
 op_eq
 id|PTRACE_SYSCALL
 )paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 r_else
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 id|child-&gt;exit_code
 op_assign
@@ -1095,13 +1073,13 @@ id|_NSIG
 )paren
 r_break
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 suffix:semicolon
 id|child-&gt;exit_code
@@ -1259,17 +1237,17 @@ multiline_comment|/* are we already being traced? */
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* set the ptrace bit in the process flags. */
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|ret
 op_assign
@@ -1429,16 +1407,16 @@ multiline_comment|/* the same process cannot be attached many times */
 r_if
 c_cond
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 r_goto
 id|out_tsk
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_PTRACED
+id|PT_PTRACED
 suffix:semicolon
 id|write_lock_irq
 c_func
@@ -1507,9 +1485,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 )paren
 r_goto
@@ -2184,15 +2162,15 @@ id|request
 op_eq
 id|PTRACE_SYSCALL
 )paren
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_or_assign
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 r_else
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
-id|PF_TRACESYS
+id|PT_TRACESYS
 suffix:semicolon
 id|child-&gt;exit_code
 op_assign
@@ -2262,13 +2240,13 @@ id|_NSIG
 )paren
 r_break
 suffix:semicolon
-id|child-&gt;flags
+id|child-&gt;ptrace
 op_and_assign
 op_complement
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 suffix:semicolon
 id|child-&gt;exit_code
@@ -2360,19 +2338,19 @@ r_if
 c_cond
 (paren
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 )paren
 op_ne
 (paren
-id|PF_PTRACED
+id|PT_PTRACED
 op_or
-id|PF_TRACESYS
+id|PT_TRACESYS
 )paren
 )paren
 r_return

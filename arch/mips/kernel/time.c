@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.14 2000/01/26 00:07:44 ralf Exp $&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Copyright (C) 1996, 1997, 1998  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
+multiline_comment|/*&n; * Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; * Copyright (C) 1996 - 2000  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -20,6 +21,17 @@ r_volatile
 r_int
 r_int
 id|lost_ticks
+suffix:semicolon
+DECL|variable|r4k_interval
+r_int
+r_int
+id|r4k_interval
+op_assign
+l_int|0
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|xtime_lock
 suffix:semicolon
 multiline_comment|/*&n; * Change this if you have some constant time drift&n; */
 multiline_comment|/* This is the value for the PC-style PICs. */
@@ -404,9 +416,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_and_cli
-c_func
+id|read_lock_irqsave
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -432,9 +446,11 @@ id|tv-&gt;tv_usec
 op_add_assign
 id|USECS_PER_JIFFY
 suffix:semicolon
-id|restore_flags
-c_func
+id|read_unlock_irqrestore
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -466,9 +482,10 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
-c_func
+id|write_lock_irq
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;&t; * correctly. However, the value in this location is&n;&t; * is value at the last tick.&n;&t; * Discover what correction gettimeofday&n;&t; * would have done, and then undo it!&n;&t; */
@@ -517,9 +534,10 @@ id|time_esterror
 op_assign
 id|NTP_PHASE_LIMIT
 suffix:semicolon
-id|sti
-c_func
+id|write_unlock_irq
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -891,7 +909,6 @@ l_int|4
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -966,7 +983,6 @@ id|pc
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|do_timer
 c_func
 (paren
@@ -974,6 +990,12 @@ id|regs
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, then update&n;&t; * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to 500 ms before the new second starts.&n;&t; */
+id|read_lock
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1017,6 +1039,7 @@ id|tick
 op_div
 l_int|2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1040,12 +1063,20 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
+)brace
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
+id|read_unlock
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 )brace
-DECL|function|r4k_timer_interrupt
 r_static
+r_inline
 r_void
+DECL|function|r4k_timer_interrupt
 id|r4k_timer_interrupt
 c_func
 (paren
@@ -1088,6 +1119,33 @@ id|timerlo
 op_assign
 id|count
 suffix:semicolon
+macro_line|#ifdef CONFIG_SGI_IP22
+multiline_comment|/* Since we don&squot;t get anything but r4k timer interrupts, we need to&n;&t; * set this up so that we&squot;ll get one next time. Fortunately since we&n;&t; * have timerhi/timerlo, we don&squot;t care so much if we miss one. So&n;&t; * we need only ask for the next in r4k_interval counts. On other&n;&t; * archs we have a real timer, so we don&squot;t want this.&n;&t; */
+id|write_32bit_cp0_register
+(paren
+id|CP0_COMPARE
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|count
+op_plus
+id|r4k_interval
+)paren
+)paren
+suffix:semicolon
+id|kstat.irqs
+(braket
+l_int|0
+)braket
+(braket
+id|irq
+)braket
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|timer_interrupt
 c_func
 (paren
@@ -1113,6 +1171,33 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+DECL|function|indy_r4k_timer_interrupt
+r_void
+id|indy_r4k_timer_interrupt
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_static
+r_const
+r_int
+id|INDY_R4K_TIMER_IRQ
+op_assign
+l_int|7
+suffix:semicolon
+id|r4k_timer_interrupt
+(paren
+id|INDY_R4K_TIMER_IRQ
+comma
+l_int|NULL
+comma
+id|regs
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -1392,6 +1477,8 @@ r_void
 r_int
 r_int
 id|epoch
+op_assign
+l_int|0
 comma
 id|year
 comma
@@ -1623,6 +1710,12 @@ id|year
 op_add_assign
 id|epoch
 suffix:semicolon
+id|write_lock_irq
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|mktime
@@ -1644,6 +1737,12 @@ suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
+suffix:semicolon
+id|write_unlock_irq
+(paren
+op_amp
+id|xtime_lock
+)paren
 suffix:semicolon
 id|init_cycle_counter
 c_func

@@ -1580,9 +1580,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 id|send_sig
 c_func

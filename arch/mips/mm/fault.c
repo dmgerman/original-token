@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.15 2000/02/04 07:40:23 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 2000 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -71,13 +71,15 @@ op_assign
 id|tsk-&gt;mm
 suffix:semicolon
 r_int
-id|si_code
-op_assign
-id|SEGV_MAPERR
-suffix:semicolon
-r_int
 r_int
 id|fixup
+suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
 r_if
@@ -178,7 +180,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
-id|si_code
+id|info.si_code
 op_assign
 id|SEGV_ACCERR
 suffix:semicolon
@@ -296,10 +298,6 @@ id|regs
 )paren
 )paren
 (brace
-r_struct
-id|siginfo
-id|si
-suffix:semicolon
 id|tsk-&gt;thread.cp0_badvaddr
 op_assign
 id|address
@@ -343,15 +341,16 @@ l_int|31
 )paren
 suffix:semicolon
 macro_line|#endif
-id|si.si_signo
+id|info.si_signo
 op_assign
 id|SIGSEGV
 suffix:semicolon
-id|si.si_code
+id|info.si_errno
 op_assign
-id|si_code
+l_int|0
 suffix:semicolon
-id|si.si_addr
+multiline_comment|/* info.si_code has been set above */
+id|info.si_addr
 op_assign
 (paren
 r_void
@@ -365,7 +364,7 @@ c_func
 id|SIGSEGV
 comma
 op_amp
-id|si
+id|info
 comma
 id|tsk
 )paren
@@ -516,10 +515,33 @@ id|tsk-&gt;thread.cp0_badvaddr
 op_assign
 id|address
 suffix:semicolon
-id|force_sig
+id|info.si_code
+op_assign
+id|SIGBUS
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|BUS_ADRERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|address
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGBUS
+comma
+op_amp
+id|info
 comma
 id|tsk
 )paren

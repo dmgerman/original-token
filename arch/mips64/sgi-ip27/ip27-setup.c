@@ -1,7 +1,10 @@
-multiline_comment|/* $Id: ip27-setup.c,v 1.7 2000/03/07 15:45:29 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SGI IP27 specific setup.&n; *&n; * Copyright (C) 1999 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Silcon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SGI IP27 specific setup.&n; *&n; * Copyright (C) 1999, 2000 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999, 2000 Silcon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
@@ -14,6 +17,7 @@ macro_line|#include &lt;asm/sn/sn_private.h&gt;
 macro_line|#include &lt;asm/pci/bridge.h&gt;
 macro_line|#include &lt;asm/paccess.h&gt;
 macro_line|#include &lt;asm/sn/sn0/ip27.h&gt;
+macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 multiline_comment|/* Check against user dumbness.  */
 macro_line|#ifdef CONFIG_VT
 macro_line|#error CONFIG_VT not allowed for IP27.
@@ -272,18 +276,32 @@ DECL|macro|XXBOW_WIDGET_PART_NUM
 mdefine_line|#define XXBOW_WIDGET_PART_NUM   0xd000          /* Xbridge */
 DECL|macro|BASE_XBOW_PORT
 mdefine_line|#define BASE_XBOW_PORT  &t;8     /* Lowest external port */
+DECL|variable|bus_to_cpu
+r_int
+r_int
+id|bus_to_cpu
+(braket
+l_int|256
+)braket
+suffix:semicolon
 DECL|function|pcibr_setup
-r_static
 r_void
 id|__init
 id|pcibr_setup
 c_func
 (paren
-r_void
+id|cnodeid_t
+id|nid
 )paren
 (brace
 r_int
 id|i
+comma
+id|start
+comma
+id|num
+comma
+id|masterwid
 suffix:semicolon
 id|bridge_t
 op_star
@@ -295,6 +313,8 @@ id|hubreg
 suffix:semicolon
 id|nasid_t
 id|nasid
+comma
+id|masternasid
 suffix:semicolon
 id|xwidget_part_num_t
 id|partnum
@@ -302,20 +322,40 @@ suffix:semicolon
 id|widgetreg_t
 id|widget_id
 suffix:semicolon
-id|num_bridges
+r_static
+id|spinlock_t
+id|pcibr_setup_lock
 op_assign
-l_int|0
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/*&n;&t; * find what&squot;s on our local node&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|pcibr_setup_lock
+)paren
+suffix:semicolon
+id|start
+op_assign
+id|num_bridges
+suffix:semicolon
+multiline_comment|/* Remember where we start from */
 id|nasid
 op_assign
-l_int|0
+id|COMPACT_TO_NASID_NODEID
+c_func
+(paren
+id|nid
+)paren
 suffix:semicolon
 id|hubreg
 op_assign
-id|LOCAL_HUB_L
+id|REMOTE_HUB_L
 c_func
 (paren
+id|nasid
+comma
 id|IIO_LLP_CSR
 )paren
 suffix:semicolon
@@ -359,7 +399,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;pcibr_setup(): found partnum= 0x%x &quot;
+l_string|&quot;Cpu %d, Nasid 0x%x, pcibr_setup(): found partnum= 0x%x&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|nasid
 comma
 id|partnum
 )paren
@@ -398,6 +445,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -456,8 +504,12 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;brd= 0x%x&bslash;n&quot;
+l_string|&quot;brd = 0x%lx&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|brd
 )paren
 suffix:semicolon
@@ -492,6 +544,81 @@ l_string|&quot;argh&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t;    * Okay, here&squot;s a xbow. Lets arbitrate and find&n;&t;&t;&t;    * out if we should initialize it. Set hub connected&n;&t;&t;&t;    * at highest or lowest widget as master.&n;&t;&t;&t;    * This algo needs to change a little for headless&n;&t;&t;&t;    * nodes.&n;&t;&t;&t;    */
+macro_line|#ifdef WIDGET_A
+id|i
+op_assign
+id|HUB_WIDGET_ID_MAX
+op_plus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|i
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|XBOW_PORT_TYPE_HUB
+c_func
+(paren
+id|xbow_p
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|i
+op_assign
+id|HUB_WIDGET_ID_MIN
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|i
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+id|XBOW_PORT_TYPE_HUB
+c_func
+(paren
+id|xbow_p
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|masterwid
+op_assign
+id|i
+suffix:semicolon
+id|masternasid
+op_assign
+id|XBOW_PORT_NASID
+c_func
+(paren
+id|xbow_p
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nasid
+op_eq
+id|masternasid
+)paren
 r_for
 c_loop
 (paren
@@ -599,6 +726,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -662,17 +790,34 @@ l_int|3
 suffix:semicolon
 )brace
 )brace
+id|num
+op_assign
+id|num_bridges
+op_minus
+id|start
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|pcibr_setup_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;         * set bridge registers&n;         */
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|0
+id|start
 suffix:semicolon
 id|i
 OL
-id|num_bridges
+(paren
+id|start
+op_plus
+id|num
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -698,6 +843,16 @@ id|bus_to_nid
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+id|bus_to_cpu
+(braket
+id|i
+)braket
+op_assign
+id|smp_processor_id
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * point to this bridge&n;&t;&t; */
@@ -745,6 +900,30 @@ id|bridge-&gt;b_wid_control
 op_or_assign
 id|BRIDGE_CTRL_MEM_SWAP
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Hmm...  IRIX sets additional bits in the address which &n;&t;&t; * are documented as reserved in the bridge docs.&n;&t;&t; * We waste time programming b_wid_int_upper/b_wid_int_lower,&n;&t;&t; * since bridge_startup will set up the widget-&gt;nasid intr&n;&t;&t; * path anyway.&n;&t;&t; */
+id|bridge-&gt;b_int_mode
+op_assign
+l_int|0x0
+suffix:semicolon
+multiline_comment|/* Don&squot;t clear ints */
+id|bridge-&gt;b_wid_int_upper
+op_assign
+l_int|0x000a8000
+suffix:semicolon
+multiline_comment|/* Ints to widget A */
+id|bridge-&gt;b_wid_int_lower
+op_assign
+l_int|0x01800090
+suffix:semicolon
+id|bridge-&gt;b_dir_map
+op_assign
+l_int|0xa00000
+suffix:semicolon
+multiline_comment|/* DMA */
+id|bridge-&gt;b_int_enable
+op_assign
+l_int|0
+suffix:semicolon
 id|bridge-&gt;b_wid_tflush
 suffix:semicolon
 multiline_comment|/* wait until Bridge PIO complete */
@@ -767,16 +946,15 @@ id|p
 comma
 id|e
 suffix:semicolon
+id|num_bridges
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * hub_rtc init and cpu clock intr enabled for later calibrate_delay.&n;&t; */
 id|DBG
 c_func
 (paren
 l_string|&quot;ip27_setup(): Entered.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|per_cpu_init
-c_func
-(paren
 )paren
 suffix:semicolon
 id|nid
@@ -893,22 +1071,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DBG
+id|per_cpu_init
 c_func
 (paren
-l_string|&quot;ip27_setup(): calling pcibr_setup&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* set some bridge registers */
-id|pcibr_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-id|DBG
-c_func
-(paren
-l_string|&quot;ip27_setup(): Exit.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

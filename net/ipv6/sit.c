@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.39 2000/07/07 01:55:20 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.41 2000/07/07 23:47:45 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -29,6 +29,7 @@ macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
+macro_line|#include &lt;net/inet_ecn.h&gt;
 multiline_comment|/*&n;   This version of net/ipv6/sit.c is cloned of net/ipv4/ip_gre.c&n;&n;   For comments look at net/ipv4/ip_gre.c --ANK&n; */
 DECL|macro|HASH_SIZE
 mdefine_line|#define HASH_SIZE  16
@@ -63,7 +64,7 @@ id|net_device
 id|ipip6_fb_tunnel_dev
 op_assign
 (brace
-l_string|&quot;&quot;
+l_string|&quot;sit0&quot;
 comma
 l_int|0x0
 comma
@@ -801,14 +802,6 @@ id|nt-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|dev-&gt;name
-comma
-id|nt-&gt;parms.name
-)paren
-suffix:semicolon
 id|dev-&gt;init
 op_assign
 id|ipip6_tunnel_init
@@ -830,6 +823,14 @@ r_sizeof
 op_star
 id|parms
 )paren
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|dev-&gt;name
+comma
+id|nt-&gt;parms.name
 )paren
 suffix:semicolon
 r_if
@@ -1590,6 +1591,50 @@ r_return
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|ipip6_ecn_decapsulate
+r_static
+r_inline
+r_void
+id|ipip6_ecn_decapsulate
+c_func
+(paren
+r_struct
+id|iphdr
+op_star
+id|iph
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|INET_ECN_is_ce
+c_func
+(paren
+id|iph-&gt;tos
+)paren
+op_logical_and
+id|INET_ECN_is_not_ce
+c_func
+(paren
+id|ip6_get_dsfield
+c_func
+(paren
+id|skb-&gt;nh.ipv6h
+)paren
+)paren
+)paren
+id|IP6_ECN_set_ce
+c_func
+(paren
+id|skb-&gt;nh.ipv6h
+)paren
+suffix:semicolon
+)brace
 DECL|function|ipip6_rcv
 r_int
 id|ipip6_rcv
@@ -1732,6 +1777,14 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+id|ipip6_ecn_decapsulate
+c_func
+(paren
+id|iph
+comma
+id|skb
+)paren
+suffix:semicolon
 id|netif_rx
 c_func
 (paren
@@ -1895,6 +1948,9 @@ id|addr6
 suffix:semicolon
 r_int
 id|addr_type
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -2456,7 +2512,17 @@ id|IPPROTO_IPV6
 suffix:semicolon
 id|iph-&gt;tos
 op_assign
+id|INET_ECN_encapsulate
+c_func
+(paren
 id|tos
+comma
+id|ip6_get_dsfield
+c_func
+(paren
+id|iph6
+)paren
+)paren
 suffix:semicolon
 id|iph-&gt;daddr
 op_assign
@@ -2516,13 +2582,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-id|stats-&gt;tx_bytes
-op_add_assign
-id|skb-&gt;len
-suffix:semicolon
-id|stats-&gt;tx_packets
-op_increment
-suffix:semicolon
+id|err
+op_assign
 id|NF_HOOK
 c_func
 (paren
@@ -2538,6 +2599,49 @@ id|rt-&gt;u.dst.dev
 comma
 id|do_ip_send
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ipip6_tunnel_xmit: ip_send() failed, err=%d&bslash;n&quot;
+comma
+op_minus
+id|err
+)paren
+suffix:semicolon
+)brace
+id|skb
+op_assign
+l_int|NULL
+suffix:semicolon
+r_goto
+id|tx_error
+suffix:semicolon
+)brace
+id|stats-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+id|stats-&gt;tx_packets
+op_increment
 suffix:semicolon
 id|tunnel-&gt;recursion
 op_decrement
@@ -2558,12 +2662,19 @@ suffix:colon
 id|stats-&gt;tx_errors
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+)brace
 id|tunnel-&gt;recursion
 op_decrement
 suffix:semicolon

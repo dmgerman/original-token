@@ -1,11 +1,16 @@
-multiline_comment|/* $Id: processor.h,v 1.11 2000/03/14 01:39:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Waldorf GMBH&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Waldorf GMBH&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999, 2000 Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PROCESSOR_H
 DECL|macro|_ASM_PROCESSOR_H
 mdefine_line|#define _ASM_PROCESSOR_H
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+multiline_comment|/*&n; * Return current * instruction pointer (&quot;program counter&quot;).&n; *&n; * Two implementations.  The ``la&squot;&squot; version results in shorter code for&n; * the kernel which we assume to reside in the 32-bit compat address space.&n; * The  ``jal&squot;&squot; version is for use by modules which live in outer space.&n; * This is just a single instruction unlike the long dla macro expansion.&n; */
+macro_line|#ifdef MODULE
 DECL|macro|current_text_addr
-mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
+mdefine_line|#define current_text_addr()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;void *_a;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;jal&bslash;t1f, 1f&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (_a));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_a;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+macro_line|#else
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;void *_a;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ (&quot;dla&bslash;t%0, 1f&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (_a));&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;_a;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+macro_line|#endif
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
@@ -66,6 +71,11 @@ r_int
 id|asid_cache
 suffix:semicolon
 macro_line|#if defined(CONFIG_SGI_IP27)
+DECL|member|p_cpuid
+id|cpuid_t
+id|p_cpuid
+suffix:semicolon
+multiline_comment|/* PROM assigned cpuid */
 DECL|member|p_nodeid
 id|cnodeid_t
 id|p_nodeid

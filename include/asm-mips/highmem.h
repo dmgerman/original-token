@@ -23,12 +23,54 @@ id|kmap_prot
 suffix:semicolon
 DECL|macro|kmap_init
 mdefine_line|#define kmap_init()&t;&t;&t;do { } while(0)
-DECL|macro|kmap
-mdefine_line|#define kmap(page)&t;&t;&t;page_address(page)
+DECL|function|kmap
+r_static
+id|__inline__
+r_int
+r_int
+id|kmap
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_return
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+)brace
 DECL|macro|kunmap
 mdefine_line|#define kunmap(page)&t;&t;&t;do { } while(0)
-DECL|macro|kmap_atomic
-mdefine_line|#define kmap_atomic(page, type)&t;&t;page_address(page)
+DECL|function|kmap_atomic
+r_static
+id|__inline__
+r_int
+r_int
+id|kmap_atomic
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+id|type
+)paren
+(brace
+r_return
+id|page_address
+c_func
+(paren
+id|page
+)paren
+)brace
 DECL|macro|kunmap_atomic
 mdefine_line|#define kunmap_atomic(page, type)&t;do { } while(0)
 macro_line|#endif /* _ASM_HIGHMEM_H */

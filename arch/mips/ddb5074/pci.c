@@ -1398,6 +1398,21 @@ id|resource
 op_star
 id|r
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Don&squot;t touch the Nile 4&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_NEC
+op_logical_and
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NEC_NILE4
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|pci_read_config_word
 c_func
 (paren

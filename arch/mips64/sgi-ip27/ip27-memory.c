@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ip27-memory.c,v 1.2 2000/01/27 01:05:24 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 by Ralf Baechle&n; * Copyright (C) 2000 by Silicon Graphics, Inc.&n; *&n; * On SGI IP27 the ARC memory configuration data is completly bogus but&n; * alternate easier to use mechanisms are available.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 by Ralf Baechle&n; * Copyright (C) 2000 by Silicon Graphics, Inc.&n; *&n; * On SGI IP27 the ARC memory configuration data is completly bogus but&n; * alternate easier to use mechanisms are available.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,18 +14,15 @@ macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;
 macro_line|#include &lt;asm/mmzone.h&gt;
-DECL|typedef|pfn_t
-r_typedef
-r_int
-r_int
-id|pfn_t
-suffix:semicolon
-multiline_comment|/* into &lt;asm/sn/types.h&gt; */
-DECL|macro|KDM_TO_PHYS
-mdefine_line|#define KDM_TO_PHYS(x)&t;((x) &amp; TO_PHYS_MASK)&t;/* into asm/addrspace.h */
+multiline_comment|/* ip27-klnuma.c   */
 r_extern
-r_char
-id|_end
+id|pfn_t
+id|node_getfirstfree
+c_func
+(paren
+id|cnodeid_t
+id|cnode
+)paren
 suffix:semicolon
 DECL|macro|PFN_UP
 mdefine_line|#define PFN_UP(x)&t;(((x) + PAGE_SIZE-1) &gt;&gt; PAGE_SHIFT)
@@ -53,13 +50,6 @@ DECL|variable|numpages
 r_static
 id|pfn_t
 id|numpages
-suffix:semicolon
-DECL|variable|pagenr
-r_static
-id|pfn_t
-id|pagenr
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|plat_node_data
 id|plat_pg_data_t
@@ -90,89 +80,17 @@ c_func
 l_string|&quot;NUMA debug&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUG
-c_func
+op_star
 (paren
+r_int
+op_star
 )paren
-suffix:semicolon
-r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Return pfn of first free page of memory on a node. PROM may allocate&n; * data structures on the first couple of pages of the first slot of each &n; * node. If this is the case, getfirstfree(node) &gt; getslotstart(node, 0).&n; */
-DECL|function|node_getfirstfree
-id|pfn_t
-id|node_getfirstfree
-c_func
-(paren
-id|cnodeid_t
-id|cnode
-)paren
-(brace
-id|nasid_t
-id|nasid
 op_assign
-id|COMPACT_TO_NASID_NODEID
-c_func
-(paren
-id|cnode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cnode
-op_eq
 l_int|0
-)paren
-r_return
-(paren
-id|KDM_TO_PHYS
-c_func
-(paren
-id|PAGE_ALIGN
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-op_amp
-id|_end
-)paren
-)paren
-op_minus
-(paren
-id|CKSEG0
-op_minus
-id|K0BASE
-)paren
-)paren
-op_rshift
-id|PAGE_SHIFT
-)paren
 suffix:semicolon
 r_return
-(paren
-id|KDM_TO_PHYS
-c_func
-(paren
-id|PAGE_ALIGN
-c_func
-(paren
-id|SYMMON_STK_ADDR
-c_func
-(paren
-id|nasid
-comma
 l_int|0
-)paren
-)paren
-)paren
-op_rshift
-id|PAGE_SHIFT
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Return the number of pages of memory provided by the given slot&n; * on the specified node.&n; */
@@ -1022,6 +940,13 @@ r_void
 multiline_comment|/* We got nothing to free here ...  */
 )brace
 macro_line|#ifdef CONFIG_DISCONTIGMEM
+DECL|variable|pagenr
+r_static
+id|pfn_t
+id|pagenr
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|paging_init
 r_void
 id|__init
@@ -1068,6 +993,12 @@ r_int
 r_int
 )paren
 id|invalid_pmd_table
+comma
+(paren
+r_int
+r_int
+)paren
+id|invalid_pte_table
 )paren
 suffix:semicolon
 id|memset
@@ -1086,7 +1017,40 @@ r_sizeof
 id|pte_t
 )paren
 op_star
-l_int|2
+id|PTRS_PER_PTE
+)paren
+suffix:semicolon
+id|pmd_init
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|empty_bad_pmd_table
+comma
+(paren
+r_int
+r_int
+)paren
+id|empty_bad_page_table
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|empty_bad_page_table
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|pte_t
+)paren
 op_star
 id|PTRS_PER_PTE
 )paren
@@ -1203,7 +1167,7 @@ r_void
 (brace
 r_extern
 r_char
-id|_ftext
+id|_stext
 comma
 id|_etext
 comma
@@ -1634,7 +1598,7 @@ r_int
 r_int
 )paren
 op_amp
-id|_ftext
+id|_stext
 suffix:semicolon
 id|datasize
 op_assign

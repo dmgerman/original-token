@@ -5060,7 +5060,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_ALGOBIT
 r_extern
 r_int
-id|algo_bit_init
+id|i2c_algo_bit_init
 c_func
 (paren
 r_void
@@ -5070,7 +5070,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_BITLP
 r_extern
 r_int
-id|bitlp_init
+id|i2c_bitlp_init
 c_func
 (paren
 r_void
@@ -5080,7 +5080,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_BITELV
 r_extern
 r_int
-id|bitelv_init
+id|i2c_bitelv_init
 c_func
 (paren
 r_void
@@ -5090,7 +5090,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_BITVELLE
 r_extern
 r_int
-id|bitvelle_init
+id|i2c_bitvelle_init
 c_func
 (paren
 r_void
@@ -5100,7 +5100,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_BITVIA
 r_extern
 r_int
-id|bitvia_init
+id|i2c_bitvia_init
 c_func
 (paren
 r_void
@@ -5110,7 +5110,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_ALGOPCF
 r_extern
 r_int
-id|algo_pcf_init
+id|i2c_algo_pcf_init
 c_func
 (paren
 r_void
@@ -5120,7 +5120,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_I2C_PCFISA
 r_extern
 r_int
-id|pcfisa_init
+id|i2c_pcfisa_init
 c_func
 (paren
 r_void

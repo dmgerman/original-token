@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.h,v 1.14 2000/06/09 07:35:28 davem Exp $ */
+multiline_comment|/* $Id: socket.h,v 1.15 2000/07/08 00:20:43 davem Exp $ */
 macro_line|#ifndef _ASM_SOCKET_H
 DECL|macro|_ASM_SOCKET_H
 mdefine_line|#define _ASM_SOCKET_H
@@ -59,6 +59,10 @@ DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        0x001b
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME&t;&t;0x001c
+DECL|macro|SO_TIMESTAMP
+mdefine_line|#define SO_TIMESTAMP&t;&t;0x001d
+DECL|macro|SCM_TIMESTAMP
+mdefine_line|#define SCM_TIMESTAMP&t;&t;SO_TIMESTAMP
 multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
 DECL|macro|SO_SECURITY_AUTHENTICATION
 mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;0x5001

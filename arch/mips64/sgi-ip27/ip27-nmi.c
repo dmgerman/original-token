@@ -498,6 +498,7 @@ comma
 id|cpu
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t;&t;&t; * cputonasid, cputoslice&n;&t;&t;&t;&t;&t;&t; * needs kernel cpuid&n;&t;&t;&t;&t;&t;&t; */
 id|SEND_NMI
 c_func
 (paren

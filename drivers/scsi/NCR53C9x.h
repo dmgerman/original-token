@@ -122,8 +122,14 @@ macro_line|#endif
 multiline_comment|/* The ESP SCSI controllers have their register sets in three&n; * &quot;classes&quot;:&n; *&n; * 1) Registers which are both read and write.&n; * 2) Registers which are read only.&n; * 3) Registers which are write only.&n; *&n; * Yet, they all live within the same IO space.&n; */
 macro_line|#ifndef __i386__
 macro_line|#ifndef MULTIPLE_PAD_SIZES
+macro_line|#ifdef CONFIG_CPU_HAS_WB
+macro_line|#include &lt;asm/wbflush.h&gt;
+DECL|macro|esp_write
+mdefine_line|#define esp_write(__reg, __val) do{(__reg) = (__val); wbflush();} while(0)
+macro_line|#else
 DECL|macro|esp_write
 mdefine_line|#define esp_write(__reg, __val) ((__reg) = (__val))
+macro_line|#endif
 DECL|macro|esp_read
 mdefine_line|#define esp_read(__reg) (__reg)
 DECL|struct|ESP_regs

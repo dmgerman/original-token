@@ -89,7 +89,7 @@ op_star
 id|fd_ops
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 r_extern
 r_struct
 id|ide_ops
@@ -113,6 +113,7 @@ id|rtc_ops
 op_star
 id|rtc_ops
 suffix:semicolon
+macro_line|#ifdef CONFIG_PC_KEYB
 r_extern
 r_struct
 id|kbd_ops
@@ -124,6 +125,7 @@ id|kbd_ops
 op_star
 id|kbd_ops
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Setup information&n; *&n; * These are initialized so they are in the .data section&n; */
 DECL|variable|mips_memory_upper
 r_int
@@ -774,15 +776,17 @@ op_amp
 id|no_ide_ops
 suffix:semicolon
 macro_line|#endif
-id|rtc_ops
-op_assign
-op_amp
-id|no_rtc_ops
-suffix:semicolon
+macro_line|#ifdef CONFIG_PC_KEYB
 id|kbd_ops
 op_assign
 op_amp
 id|no_kbd_ops
+suffix:semicolon
+macro_line|#endif
+id|rtc_ops
+op_assign
+op_amp
+id|no_rtc_ops
 suffix:semicolon
 r_switch
 c_cond

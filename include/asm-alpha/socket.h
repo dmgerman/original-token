@@ -57,6 +57,10 @@ DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME&t;&t;28
+DECL|macro|SO_TIMESTAMP
+mdefine_line|#define SO_TIMESTAMP&t;&t;29
+DECL|macro|SCM_TIMESTAMP
+mdefine_line|#define SCM_TIMESTAMP&t;&t;SO_TIMESTAMP
 multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
 DECL|macro|SO_SECURITY_AUTHENTICATION
 mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;19

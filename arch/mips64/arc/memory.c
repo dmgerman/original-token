@@ -12,10 +12,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
-r_extern
-r_char
-id|_end
-suffix:semicolon
 r_struct
 id|linux_mdesc
 op_star

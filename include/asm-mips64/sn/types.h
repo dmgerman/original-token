@@ -63,6 +63,12 @@ r_char
 id|clusterid_t
 suffix:semicolon
 multiline_comment|/* Clusterid of the cell */
+DECL|typedef|pfn_t
+r_typedef
+r_int
+r_int
+id|pfn_t
+suffix:semicolon
 DECL|typedef|vertex_hdl_t
 r_typedef
 id|dev_t

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.20 2000/02/23 00:41:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994 - 2000 Ralf Baechle&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -1100,6 +1100,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_DDB5074 /* This has no business here  */
 r_else
 id|nile4_enable_irq
 c_func
@@ -1111,6 +1112,7 @@ id|irq
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|restore_flags
 c_func
@@ -1445,7 +1447,7 @@ id|i
 )braket
 )paren
 (brace
-id|enable_irq
+id|i8259_enable_irq
 c_func
 (paren
 id|i

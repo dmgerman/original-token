@@ -417,18 +417,10 @@ multiline_comment|/* traffic control index */
 macro_line|#endif
 )brace
 suffix:semicolon
-multiline_comment|/* These are just the default values. This is run time configurable.&n; * FIXME: Probably the config option should go away. -- erics&n; */
-macro_line|#ifdef CONFIG_SKB_LARGE
 DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;65535
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;65535
-macro_line|#else
-DECL|macro|SK_WMEM_MAX
-mdefine_line|#define SK_WMEM_MAX&t;32767
-DECL|macro|SK_RMEM_MAX
-mdefine_line|#define SK_RMEM_MAX&t;32767
-macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Handling routines are only of interest to the kernel&n; */
 macro_line|#include &lt;linux/malloc.h&gt;

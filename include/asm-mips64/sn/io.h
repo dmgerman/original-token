@@ -2,7 +2,6 @@ multiline_comment|/* $Id: io.h,v 1.2 2000/02/02 16:35:57 ralf Exp $&n; *&n; * Th
 macro_line|#ifndef _ASM_SN_IO_H
 DECL|macro|_ASM_SN_IO_H
 mdefine_line|#define _ASM_SN_IO_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if !defined(CONFIG_SGI_IO)
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 DECL|macro|IO_SPACE_BASE

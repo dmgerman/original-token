@@ -199,6 +199,10 @@ DECL|macro|ST0_SX
 mdefine_line|#define ST0_SX&t;&t;&t;0x00000040
 DECL|macro|ST0_KX
 mdefine_line|#define ST0_KX &t;&t;&t;0x00000080
+DECL|macro|ST0_DE
+mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
+DECL|macro|ST0_CE
+mdefine_line|#define ST0_CE&t;&t;&t;0x00020000
 multiline_comment|/*&n; * Status register bits available in all MIPS CPUs.&n; */
 DECL|macro|ST0_IM
 mdefine_line|#define ST0_IM&t;&t;&t;0x0000ff00
@@ -234,10 +238,6 @@ DECL|macro|STATUSB_IP7
 mdefine_line|#define  STATUSB_IP7&t;&t;15
 DECL|macro|STATUSF_IP7
 mdefine_line|#define  STATUSF_IP7&t;&t;(1   &lt;&lt; 15)
-DECL|macro|ST0_DE
-mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
-DECL|macro|ST0_CE
-mdefine_line|#define ST0_CE&t;&t;&t;0x00020000
 DECL|macro|ST0_CH
 mdefine_line|#define ST0_CH&t;&t;&t;0x00040000
 DECL|macro|ST0_SR

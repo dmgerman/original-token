@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixelf.c,v 1.28 2000/03/23 02:25:42 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
+multiline_comment|/*&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -2131,12 +2131,6 @@ l_int|0
 suffix:semicolon
 id|dput_and_out
 suffix:colon
-id|allow_write_access
-c_func
-(paren
-id|file
-)paren
-suffix:semicolon
 id|fput
 c_func
 (paren
@@ -3538,9 +3532,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|current-&gt;ptrace
 op_amp
-id|PF_PTRACED
+id|PT_PTRACED
 )paren
 id|send_sig
 c_func
@@ -6007,11 +6001,11 @@ id|irix_format
 )paren
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|exit_irix_binfmt
 r_static
 r_void
 id|__exit
-id|cleanup_module
+id|exit_irix_binfmt
 c_func
 (paren
 r_void

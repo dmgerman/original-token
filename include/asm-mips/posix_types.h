@@ -24,7 +24,6 @@ suffix:semicolon
 DECL|typedef|__kernel_nlink_t
 r_typedef
 r_int
-r_int
 id|__kernel_nlink_t
 suffix:semicolon
 DECL|typedef|__kernel_off_t

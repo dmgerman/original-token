@@ -125,5 +125,9 @@ mdefine_line|#define COMPAT_K1BASE32&t;&t;0xffffffffa0000000
 DECL|macro|PHYS_TO_COMPATK1
 mdefine_line|#define PHYS_TO_COMPATK1(x)&t;((x) | COMPAT_K1BASE32) /* 32-bit compat k1 */
 macro_line|#endif
+DECL|macro|KDM_TO_PHYS
+mdefine_line|#define KDM_TO_PHYS(x)&t;((unsigned long)(x) &amp; TO_PHYS_MASK)
+DECL|macro|PHYS_TO_K0
+mdefine_line|#define PHYS_TO_K0(x)&t;((unsigned long)(x) | K0BASE)
 macro_line|#endif /* _ASM_ADDRSPACE_H */
 eof

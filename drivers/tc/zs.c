@@ -6682,10 +6682,6 @@ id|chip
 comma
 id|channel
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/*&n;&t; * did we get here by accident?&n;&t; */
 r_if
 c_cond
@@ -7625,10 +7621,6 @@ id|info
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-r_int
-r_char
-id|nine
 suffix:semicolon
 id|info
 op_assign

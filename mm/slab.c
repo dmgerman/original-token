@@ -611,13 +611,6 @@ id|name
 suffix:colon
 l_string|&quot;kmem_cache&quot;
 comma
-id|next
-suffix:colon
-id|LIST_HEAD_INIT
-c_func
-(paren
-id|cache_cache.next
-)paren
 )brace
 suffix:semicolon
 multiline_comment|/* Guard access to the cache-chain. */
@@ -840,12 +833,9 @@ op_amp
 id|cache_chain_sem
 )paren
 suffix:semicolon
-id|list_add
+id|INIT_LIST_HEAD
 c_func
 (paren
-op_amp
-id|cache_cache.next
-comma
 op_amp
 id|cache_chain
 )paren
@@ -936,7 +926,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot;size-%d&quot;
+l_string|&quot;size-%Zd&quot;
 comma
 id|sizes-&gt;cs_size
 )paren
@@ -1005,7 +995,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot;size-%d(DMA)&quot;
+l_string|&quot;size-%Zd(DMA)&quot;
 comma
 id|sizes-&gt;cs_size
 )paren

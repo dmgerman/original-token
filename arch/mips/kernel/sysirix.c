@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.26 2000/03/12 23:15:33 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/*&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -22,7 +22,7 @@ macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/inventory.h&gt;
-multiline_comment|/* 2,526 lines of complete and utter shit coming up... */
+multiline_comment|/* 2,191 lines of complete and utter shit coming up... */
 r_extern
 r_int
 id|max_threads
@@ -117,7 +117,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;SYSMP[%s:%ld]: Unsupported opcode %d&bslash;n&quot;
+l_string|&quot;SYSMP[%s:%d]: Unsupported opcode %d&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -199,11 +199,6 @@ id|base
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -214,12 +209,10 @@ l_int|2
 op_eq
 l_int|1000
 )paren
-(brace
 id|base
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|cmd
 op_assign
 id|regs-&gt;regs
@@ -241,7 +234,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_MAXPROCS&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_MAXPROCS&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -266,11 +259,18 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_ISBLOCKED&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_ISBLOCKED&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
 id|current-&gt;pid
+)paren
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 id|task
@@ -286,27 +286,29 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|task
-)paren
-(brace
 id|error
 op_assign
 op_minus
 id|ESRCH
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|error
+)paren
 id|error
 op_assign
 (paren
 id|task-&gt;run_list.next
 op_ne
 l_int|NULL
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Can _your_ OS find this out that fast? */
@@ -330,7 +332,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_SETSTACKSIZE&lt;%08lx&gt;&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_SETSTACKSIZE&lt;%08lx&gt;&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -350,12 +352,10 @@ id|value
 OG
 id|RLIM_INFINITY
 )paren
-(brace
 id|value
 op_assign
 id|RLIM_INFINITY
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -432,7 +432,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_GETSTACKSIZE&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_GETSTACKSIZE&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -456,7 +456,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_MAXPROCS&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_MAXPROCS&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -475,7 +475,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_UNBLKONEXEC&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_UNBLKONEXEC&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -495,7 +495,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_SETEXITSIG&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_SETEXITSIG&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -516,7 +516,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_RESIDENT&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_RESIDENT&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -536,7 +536,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_ATTACHADDR&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_ATTACHADDR&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -556,7 +556,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_DETACHADDR&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_DETACHADDR&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -576,7 +576,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_TERMCHILD&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_TERMCHILD&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -596,7 +596,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_GETSHMASK&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_GETSHMASK&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -627,7 +627,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_COREPID&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_COREPID&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -647,7 +647,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_ATTACHADDRPERM&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_ATTACHADDRPERM&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -667,7 +667,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Wants PR_PTHREADEXIT&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Wants PR_PTHREADEXIT&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -690,7 +690,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;irix_prctl[%s:%ld]: Non-existant opcode %d&bslash;n&quot;
+l_string|&quot;irix_prctl[%s:%d]: Non-existant opcode %d&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -710,11 +710,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -940,11 +935,6 @@ id|base
 op_assign
 l_int|0
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -955,12 +945,10 @@ l_int|2
 op_eq
 l_int|1000
 )paren
-(brace
 id|base
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|cmd
 op_assign
 id|regs-&gt;regs
@@ -1047,6 +1035,12 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+r_char
+id|comm
+(braket
+l_int|16
+)braket
+suffix:semicolon
 id|retval
 op_assign
 id|verify_area
@@ -1064,36 +1058,62 @@ c_cond
 (paren
 id|retval
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
-id|for_each_task
+id|read_lock
 c_func
 (paren
-id|p
+op_amp
+id|tasklist_lock
 )paren
-(brace
+suffix:semicolon
+id|p
+op_assign
+id|find_task_by_pid
+c_func
+(paren
+id|pid
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;pid
-op_eq
-id|pid
+op_logical_neg
+id|p
 )paren
 (brace
-r_goto
-id|found0
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
 suffix:semicolon
-)brace
-)brace
 id|retval
 op_assign
 op_minus
 id|ESRCH
 suffix:semicolon
-id|found0
-suffix:colon
+r_break
+suffix:semicolon
+)brace
+id|memcpy
+c_func
+(paren
+id|comm
+comma
+id|p-&gt;comm
+comma
+l_int|16
+)paren
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
 multiline_comment|/* XXX Need to check sizes. */
 id|copy_to_user
 c_func
@@ -1182,6 +1202,7 @@ c_func
 id|name
 )paren
 suffix:semicolon
+multiline_comment|/* PROM lock?  */
 r_if
 c_cond
 (paren
@@ -1294,7 +1315,7 @@ macro_line|#ifdef DEBUG_PROCGRPS
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] setpgid(%d, %d) &quot;
+l_string|&quot;[%s:%d] setpgid(%d, %d) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -1693,7 +1714,7 @@ macro_line|#ifdef DEBUG_PROCGRPS
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] getsid(%d) &quot;
+l_string|&quot;[%s:%d] getsid(%d) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -1802,18 +1823,6 @@ r_case
 id|SGI_PHYSP
 suffix:colon
 (brace
-id|pgd_t
-op_star
-id|pgdp
-suffix:semicolon
-id|pmd_t
-op_star
-id|pmdp
-suffix:semicolon
-id|pte_t
-op_star
-id|ptep
-suffix:semicolon
 r_int
 r_int
 id|addr
@@ -1842,6 +1851,25 @@ l_int|6
 )braket
 )paren
 suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
+id|pgd_t
+op_star
+id|pgdp
+suffix:semicolon
+id|pmd_t
+op_star
+id|pmdp
+suffix:semicolon
+id|pte_t
+op_star
+id|ptep
+suffix:semicolon
 id|retval
 op_assign
 id|verify_area
@@ -1862,17 +1890,22 @@ c_cond
 (paren
 id|retval
 )paren
-(brace
 r_return
 id|retval
 suffix:semicolon
-)brace
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|pgdp
 op_assign
 id|pgd_offset
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|addr
 )paren
@@ -1897,20 +1930,30 @@ comma
 id|addr
 )paren
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ptep
 )paren
 (brace
+id|pte_t
+id|pte
+op_assign
+op_star
+id|ptep
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|pte_val
 c_func
 (paren
-op_star
-id|ptep
+id|pte
 )paren
 op_amp
 (paren
@@ -1920,7 +1963,8 @@ id|_PAGE_PRESENT
 )paren
 )paren
 (brace
-r_return
+id|retval
+op_assign
 id|put_user
 c_func
 (paren
@@ -1928,8 +1972,7 @@ c_func
 id|pte_val
 c_func
 (paren
-op_star
-id|ptep
+id|pte
 )paren
 op_amp
 id|PAGE_MASK
@@ -1940,15 +1983,14 @@ comma
 id|pageno
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 )brace
-id|retval
-op_assign
-op_minus
-id|EINVAL
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2065,11 +2107,6 @@ suffix:semicolon
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -2130,9 +2167,11 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|lock_kernel
+id|down
 c_func
 (paren
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if
@@ -2336,9 +2375,11 @@ l_int|0
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
+id|up
 c_func
 (paren
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -2414,6 +2455,10 @@ r_return
 id|current-&gt;gid
 suffix:semicolon
 )brace
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 DECL|function|irix_stime
 id|asmlinkage
 r_int
@@ -2424,14 +2469,6 @@ r_int
 id|value
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2442,19 +2479,15 @@ c_func
 id|CAP_SYS_TIME
 )paren
 )paren
-(brace
-id|ret
-op_assign
+r_return
 op_minus
 id|EPERM
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|xtime.tv_sec
@@ -2473,24 +2506,15 @@ id|time_esterror
 op_assign
 id|MAXPHASE
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
-)paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 r_return
-id|ret
+l_int|0
 suffix:semicolon
 )brace
 r_extern
@@ -2548,8 +2572,6 @@ op_assign
 id|jiffies
 op_div
 id|HZ
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|getitimer_real
@@ -2668,11 +2690,6 @@ r_int
 r_int
 id|oldalarm
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2728,8 +2745,7 @@ id|oldalarm
 op_assign
 id|it_old.it_value.tv_sec
 suffix:semicolon
-multiline_comment|/* ehhh.. We can&squot;t return 0 if we have an alarm pending.. */
-multiline_comment|/* And we&squot;d better return too much than too little anyway */
+multiline_comment|/*&n;&t; * ehhh.. We can&squot;t return 0 if we have an alarm pending ...&n;&t; * And we&squot;d better return too much than too little anyway&n;&t; */
 r_if
 c_cond
 (paren
@@ -2737,11 +2753,6 @@ id|it_old.it_value.tv_usec
 )paren
 id|oldalarm
 op_increment
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 id|oldalarm
@@ -2828,13 +2839,10 @@ r_int
 id|datalen
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_mount(%p,%p,%08lx,%p,%p,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_mount(%p,%p,%08lx,%p,%p,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -2853,8 +2861,7 @@ comma
 id|datalen
 )paren
 suffix:semicolon
-id|ret
-op_assign
+r_return
 id|sys_mount
 c_func
 (paren
@@ -2868,9 +2875,6 @@ id|flags
 comma
 id|data
 )paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 DECL|struct|irix_statfs
@@ -3404,7 +3408,7 @@ macro_line|#ifdef DEBUG_PROCGRPS
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] setpgrp(%d) &quot;
+l_string|&quot;[%s:%d] setpgrp(%d) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -3461,12 +3465,9 @@ id|tbuf
 )paren
 (brace
 r_int
-id|error
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
+id|err
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3474,7 +3475,7 @@ c_cond
 id|tbuf
 )paren
 (brace
-id|error
+id|err
 op_assign
 id|verify_area
 c_func
@@ -3491,11 +3492,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+id|err
 )paren
-r_goto
-id|out
+r_return
+id|err
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3505,6 +3508,8 @@ op_amp
 id|tbuf-&gt;tms_utime
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3514,6 +3519,8 @@ op_amp
 id|tbuf-&gt;tms_stime
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3523,6 +3530,8 @@ op_amp
 id|tbuf-&gt;tms_cutime
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -3533,19 +3542,8 @@ id|tbuf-&gt;tms_cstime
 )paren
 suffix:semicolon
 )brace
-id|error
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
-id|error
+id|err
 suffix:semicolon
 )brace
 DECL|function|irix_exec
@@ -3624,8 +3622,8 @@ c_func
 id|filename
 )paren
 )paren
-r_goto
-id|out
+r_return
+id|error
 suffix:semicolon
 id|error
 op_assign
@@ -3665,8 +3663,6 @@ c_func
 id|filename
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 r_return
 id|error
 suffix:semicolon
@@ -3704,12 +3700,10 @@ l_int|2
 op_eq
 l_int|1000
 )paren
-(brace
 id|base
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 id|filename
 op_assign
 id|getname
@@ -3747,8 +3741,8 @@ c_func
 id|filename
 )paren
 )paren
-r_goto
-id|out
+r_return
+id|error
 suffix:semicolon
 id|error
 op_assign
@@ -3796,8 +3790,6 @@ c_func
 id|filename
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 r_return
 id|error
 suffix:semicolon
@@ -3815,7 +3807,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld]: irix_gethostid() called...&bslash;n&quot;
+l_string|&quot;[%s:%d]: irix_gethostid() called...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -3842,7 +3834,7 @@ id|val
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld]: irix_sethostid(%08lx) called...&bslash;n&quot;
+l_string|&quot;[%s:%d]: irix_sethostid(%08lx) called...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -3983,9 +3975,31 @@ id|len
 r_int
 id|error
 suffix:semicolon
-id|lock_kernel
+id|error
+op_assign
+id|verify_area
 c_func
 (paren
+id|VERIFY_WRITE
+comma
+id|name
+comma
+id|len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+id|down_read
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_if
@@ -4009,26 +4023,8 @@ suffix:semicolon
 )brace
 id|error
 op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|name
-comma
-id|len
-)paren
+l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-r_goto
-id|out
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4042,25 +4038,16 @@ comma
 id|len
 )paren
 )paren
-(brace
 id|error
 op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|error
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
+id|up_read
 c_func
 (paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_return
@@ -4483,33 +4470,84 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-r_extern
-id|asmlinkage
-r_int
-id|sys_llseek
+DECL|function|llseek
+r_static
+r_inline
+id|loff_t
+id|llseek
 c_func
 (paren
-r_int
-r_int
-id|fd
-comma
-r_int
-r_int
-id|offset_high
-comma
-r_int
-r_int
-id|offset_low
+r_struct
+id|file
+op_star
+id|file
 comma
 id|loff_t
-op_star
-id|result
+id|offset
 comma
-r_int
 r_int
 id|origin
 )paren
+(brace
+id|loff_t
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_struct
+id|file
+op_star
+comma
+id|loff_t
+comma
+r_int
+)paren
 suffix:semicolon
+id|loff_t
+id|retval
+suffix:semicolon
+id|fn
+op_assign
+id|default_llseek
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file-&gt;f_op
+op_logical_and
+id|file-&gt;f_op-&gt;llseek
+)paren
+id|fn
+op_assign
+id|file-&gt;f_op-&gt;llseek
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|fn
+c_func
+(paren
+id|file
+comma
+id|offset
+comma
+id|origin
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
 DECL|function|irix_lseek64
 id|asmlinkage
 r_int
@@ -4529,78 +4567,97 @@ r_int
 id|offlow
 comma
 r_int
-id|base
+id|origin
 )paren
 (brace
-id|mm_segment_t
-id|old_fs
+r_int
+id|retval
+suffix:semicolon
+r_struct
+id|file
+op_star
+id|file
 suffix:semicolon
 id|loff_t
-id|junk
+id|offset
 suffix:semicolon
-r_int
-id|error
-suffix:semicolon
-id|old_fs
+id|retval
 op_assign
-id|get_fs
-c_func
-(paren
-)paren
+op_minus
+id|EBADF
 suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-id|error
+id|file
 op_assign
-id|sys_llseek
+id|fget
 c_func
 (paren
 id|fd
-comma
-id|offhi
-comma
-id|offlow
-comma
-op_amp
-id|junk
-comma
-id|base
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|old_fs
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+op_logical_neg
+id|file
 )paren
-(brace
 r_goto
-id|out
+id|bad
 suffix:semicolon
-)brace
-id|error
+id|retval
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|origin
+OG
+l_int|2
+)paren
+r_goto
+id|out_putf
+suffix:semicolon
+id|offset
+op_assign
+id|llseek
+c_func
+(paren
+id|file
+comma
+(paren
+(paren
+id|loff_t
+)paren
+id|offhi
+op_lshift
+l_int|32
+)paren
+op_or
+id|offlow
+comma
+id|origin
+)paren
+suffix:semicolon
+id|retval
 op_assign
 (paren
 r_int
 )paren
-id|junk
+id|offset
 suffix:semicolon
-id|out
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
+id|bad
 suffix:colon
 r_return
-id|error
+id|retval
 suffix:semicolon
 )brace
 DECL|function|irix_sginap
@@ -4757,16 +4814,10 @@ id|fd
 )paren
 )paren
 )paren
-(brace
-id|retval
-op_assign
+r_return
 op_minus
 id|EBADF
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
 multiline_comment|/* Ok, bad taste hack follows, try to think in something else&n;&t;&t; * when reading this.  */
 r_if
 c_cond
@@ -4881,8 +4932,6 @@ c_func
 id|file
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 r_return
 id|retval
 suffix:semicolon
@@ -4907,7 +4956,7 @@ id|behavior
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_madvise(%08lx,%d,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_madvise(%08lx,%d,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -4945,7 +4994,7 @@ id|op
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_pagelock(%p,%d,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_pagelock(%p,%d,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -4978,7 +5027,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_quotactl()&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_quotactl()&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -5010,7 +5059,7 @@ macro_line|#ifdef DEBUG_PROCGRPS
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] BSDsetpgrp(%d, %d) &quot;
+l_string|&quot;[%s:%d] BSDsetpgrp(%d, %d) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -5050,7 +5099,6 @@ op_eq
 id|current-&gt;pid
 )paren
 )paren
-(brace
 id|error
 op_assign
 id|sys_setsid
@@ -5058,7 +5106,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_else
 id|error
 op_assign
@@ -5104,7 +5151,7 @@ id|cnt
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_systeminfo(%d,%p,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_systeminfo(%d,%p,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -5223,12 +5270,11 @@ op_star
 id|buf
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
-id|lock_kernel
+id|down_read
 c_func
 (paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_if
@@ -5285,28 +5331,20 @@ l_int|65
 )paren
 )paren
 (brace
-id|retval
-op_assign
+r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
 )brace
-id|retval
-op_assign
-l_int|1
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
+id|up_read
 c_func
 (paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_return
-id|retval
+l_int|1
 suffix:semicolon
 )brace
 DECL|macro|DEBUG_XSTAT
@@ -5873,7 +5911,7 @@ macro_line|#ifdef DEBUG_XSTAT
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_xstat(%d,%s,%p) &quot;
+l_string|&quot;[%s:%d] Wheee.. irix_xstat(%d,%s,%p) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -6077,7 +6115,7 @@ macro_line|#ifdef DEBUG_XSTAT
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_lxstat(%d,%s,%p) &quot;
+l_string|&quot;[%s:%d] Wheee.. irix_lxstat(%d,%s,%p) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -6282,7 +6320,7 @@ macro_line|#ifdef DEBUG_XSTAT
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_fxstat(%d,%d,%p) &quot;
+l_string|&quot;[%s:%d] Wheee.. irix_fxstat(%d,%d,%p) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -6490,7 +6528,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_xmknod(%d,%s,%x,%x)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_xmknod(%d,%s,%x,%x)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -6529,8 +6567,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -6539,13 +6576,10 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_goto
-id|out
+r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|out
-suffix:colon
 r_return
 id|retval
 suffix:semicolon
@@ -6567,7 +6601,7 @@ id|arg
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_swapctl(%d,%p)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_swapctl(%d,%p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -6686,7 +6720,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_statvfs(%s,%p)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_statvfs(%s,%p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -6874,7 +6908,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|__put_user
 c_func
 (paren
@@ -6887,7 +6920,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|__put_user
 c_func
 (paren
@@ -6920,7 +6952,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|__put_user
 c_func
 (paren
@@ -6933,7 +6964,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|error
 op_assign
 l_int|0
@@ -6985,7 +7015,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_fstatvfs(%d,%p)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_fstatvfs(%d,%p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -7251,7 +7281,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_priocntl()&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_priocntl()&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -7285,7 +7315,7 @@ id|val
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_sigqueue(%d,%d,%d,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_sigqueue(%d,%d,%d,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -7938,7 +7968,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_dmi()&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_dmi()&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -7979,7 +8009,7 @@ id|off2
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_pread(%d,%p,%d,%d,%d,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_pread(%d,%p,%d,%d,%d,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -8032,7 +8062,7 @@ id|off2
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_pwrite(%d,%p,%d,%d,%d,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_pwrite(%d,%p,%d,%d,%d,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -8093,7 +8123,7 @@ id|arg5
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_fastpath(%d,%08lx,%08lx,%08lx,%08lx,&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_fastpath(%d,%08lx,%08lx,%08lx,%08lx,&quot;
 l_string|&quot;%08lx,%08lx)&bslash;n&quot;
 comma
 id|current-&gt;comm
@@ -8223,7 +8253,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_statvfs(%s,%p)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_statvfs(%s,%p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -8524,7 +8554,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_fstatvfs(%d,%p)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_fstatvfs(%d,%p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -8794,12 +8824,12 @@ id|midbuf
 )paren
 (brace
 r_int
-id|error
+id|err
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_getmountid(%s, %p)&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_getmountid(%s, %p)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -8810,7 +8840,7 @@ comma
 id|midbuf
 )paren
 suffix:semicolon
-id|error
+id|err
 op_assign
 id|verify_area
 c_func
@@ -8833,14 +8863,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+id|err
 )paren
-(brace
-r_goto
-id|out
+r_return
+id|err
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * The idea with this system call is that when trying to determine&n;&t; * &squot;pwd&squot; and it&squot;s a toss-up for some reason, userland can use the&n;&t; * fsid of the filesystem to try and make the right decision, but&n;&t; * we don&squot;t have this so for now. XXX&n;&t; */
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -8853,6 +8883,8 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -8865,6 +8897,8 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -8877,6 +8911,8 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
+id|err
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -8889,14 +8925,8 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
-id|error
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
 r_return
-id|error
+id|err
 suffix:semicolon
 )brace
 DECL|function|irix_nsproc
@@ -8928,7 +8958,7 @@ id|slen
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Wheee.. irix_nsproc(%08lx,%08lx,%08lx,%08lx,%d)&bslash;n&quot;
+l_string|&quot;[%s:%d] Wheee.. irix_nsproc(%08lx,%08lx,%08lx,%08lx,%d)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -9231,7 +9261,7 @@ macro_line|#ifdef DEBUG_GETDENTS
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] ngetdents(%d, %p, %d, %p) &quot;
+l_string|&quot;[%s:%d] ngetdents(%d, %p, %d, %p) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -9714,11 +9744,9 @@ comma
 id|cnt
 )paren
 )paren
-(brace
 r_goto
 id|out_f
 suffix:semicolon
-)brace
 id|error
 op_assign
 op_minus
@@ -9739,11 +9767,9 @@ op_plus
 l_int|255
 )paren
 )paren
-(brace
 r_goto
 id|out_f
 suffix:semicolon
-)brace
 id|buf.curr
 op_assign
 (paren
@@ -9958,11 +9984,9 @@ id|eob
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|out_f
 suffix:semicolon
-)brace
 id|error
 op_assign
 op_minus
@@ -9983,11 +10007,9 @@ op_plus
 l_int|255
 )paren
 )paren
-(brace
 r_goto
 id|out_f
 suffix:semicolon
-)brace
 op_star
 id|eob
 op_assign
@@ -10133,7 +10155,7 @@ multiline_comment|/* Reboot */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Wants to reboot...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Wants to reboot...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10155,7 +10177,7 @@ multiline_comment|/* Shutdown */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Wants to shutdown...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Wants to shutdown...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10177,7 +10199,7 @@ multiline_comment|/* Remount-root */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Wants to remount root...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Wants to remount root...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10199,7 +10221,7 @@ multiline_comment|/* Kill all tasks. */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Wants to kill all tasks...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Wants to kill all tasks...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10221,7 +10243,7 @@ multiline_comment|/* Set magic mushrooms... */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Wants to set magic mushroom[%d]...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Wants to set magic mushroom[%d]...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10246,7 +10268,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_uadmin: Unknown operation [%d]...&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_uadmin: Unknown operation [%d]...&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10331,7 +10353,7 @@ multiline_comment|/* ustat() */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_utssys: Wants to do ustat()&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_utssys: Wants to do ustat()&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10353,7 +10375,7 @@ multiline_comment|/* fusers() */
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_utssys: Wants to do fusers()&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_utssys: Wants to do fusers()&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10373,7 +10395,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_utssys: Wants to do unknown type[%d]&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_utssys: Wants to do unknown type[%d]&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10446,7 +10468,7 @@ macro_line|#ifdef DEBUG_FCNTL
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_fcntl(%d, %d, %d) &quot;
+l_string|&quot;[%s:%d] irix_fcntl(%d, %d, %d) &quot;
 comma
 id|current-&gt;comm
 comma
@@ -10526,7 +10548,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Wants to get file size limit.&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Wants to get file size limit.&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10547,7 +10569,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Wants to set file size limit.&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Wants to set file size limit.&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10568,7 +10590,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Wants to get brk limit.&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Wants to get brk limit.&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10590,7 +10612,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Wants to get fd limit.&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Wants to get fd limit.&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10624,7 +10646,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Wants to get txt offset.&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Wants to get txt offset.&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10644,7 +10666,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] irix_ulimit: Unknown command [%d].&bslash;n&quot;
+l_string|&quot;[%s:%d] irix_ulimit: Unknown command [%d].&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -10683,7 +10705,7 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;irix_unimp [%s:%ld] v0=%d v1=%d a0=%08lx a1=%08lx a2=%08lx &quot;
+l_string|&quot;irix_unimp [%s:%d] v0=%d v1=%d a0=%08lx a1=%08lx a2=%08lx &quot;
 l_string|&quot;a3=%08lx&bslash;n&quot;
 comma
 id|current-&gt;comm

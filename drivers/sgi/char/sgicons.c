@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgicons.c,v 1.11 1999/01/04 16:07:19 ralf Exp $&n; *&n; * sgicons.c: Setting up and registering console I/O on the SGI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * This implement a virtual console interface.&n; */
+multiline_comment|/* $Id: sgicons.c,v 1.10 1998/08/25 09:18:58 ralf Exp $&n; *&n; * sgicons.c: Setting up and registering console I/O on the SGI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * This implement a virtual console interface.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

@@ -13,7 +13,8 @@ r_typedef
 r_struct
 (brace
 DECL|member|sig
-id|__u32
+r_int
+r_int
 id|sig
 (braket
 id|_NSIG_WORDS

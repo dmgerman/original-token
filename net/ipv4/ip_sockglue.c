@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.47 2000/01/16 05:11:23 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.49 2000/07/08 00:20:43 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1392,6 +1392,16 @@ id|err
 r_goto
 id|out_free_skb
 suffix:semicolon
+id|sock_recv_timestamp
+c_func
+(paren
+id|msg
+comma
+id|sk
+comma
+id|skb
+)paren
+suffix:semicolon
 id|serr
 op_assign
 id|SKB_EXT_ERR
@@ -1998,6 +2008,7 @@ id|IP_TOS
 suffix:colon
 multiline_comment|/* This sets both TOS and Precedence */
 multiline_comment|/* Reject setting of unused bits */
+macro_line|#ifndef CONFIG_INET_ECN
 r_if
 c_cond
 (paren
@@ -2013,6 +2024,28 @@ id|IPTOS_PREC_MASK
 r_goto
 id|e_inval
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|sk-&gt;type
+op_eq
+id|SOCK_STREAM
+)paren
+(brace
+id|val
+op_and_assign
+op_complement
+l_int|3
+suffix:semicolon
+id|val
+op_or_assign
+id|sk-&gt;protinfo.af_inet.tos
+op_amp
+l_int|3
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

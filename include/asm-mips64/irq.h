@@ -3,7 +3,7 @@ macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS 64
+mdefine_line|#define NR_IRQS 256
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
 r_extern

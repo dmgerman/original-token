@@ -1766,14 +1766,44 @@ id|elf_ex.e_machine
 r_goto
 id|out
 suffix:semicolon
-macro_line|#ifdef __mips__
-multiline_comment|/* IRIX binaries handled elsewhere. */
+macro_line|#if defined(__mips__) &amp;&amp; !defined(__mips64)
+multiline_comment|/* IRIX5 binaries handled elsewhere.  */
 r_if
 c_cond
 (paren
 id|elf_ex.e_flags
 op_amp
 id|EF_MIPS_ARCH
+)paren
+(brace
+id|retval
+op_assign
+op_minus
+id|ENOEXEC
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#if defined(__mips__) &amp;&amp; defined(__mips64)
+multiline_comment|/* Linux/MIPS 32-bit binaries handled elsewhere.  */
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+id|elf_caddr_t
+)paren
+op_eq
+l_int|8
+op_logical_and
+id|elf_ex.e_ident
+(braket
+id|EI_CLASS
+)braket
+op_eq
+id|ELFCLASS32
 )paren
 (brace
 id|retval

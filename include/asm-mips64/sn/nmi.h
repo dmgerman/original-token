@@ -2,7 +2,7 @@ multiline_comment|/* &n; * This file is subject to the terms and conditions of t
 macro_line|#ifndef __ASM_SN_NMI_H
 DECL|macro|__ASM_SN_NMI_H
 mdefine_line|#define __ASM_SN_NMI_H
-macro_line|#ident &quot;$Revision: 1.1 $&quot;
+macro_line|#ident &quot;$Revision: 1.2 $&quot;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 multiline_comment|/*&n; * The launch data structure resides at a fixed place in each node&squot;s memory&n; * and is used to communicate between the master processor and the slave&n; * processors.&n; *&n; * The master stores launch parameters in the launch structure&n; * corresponding to a target processor that is in a slave loop, then sends&n; * an interrupt to the slave processor.  The slave calls the desired&n; * function, followed by an optional rendezvous function, then returns to&n; * the slave loop.  The master does not wait for the slaves before&n; * returning.&n; *&n; * There is an array of launch structures, one per CPU on the node.  One&n; * interrupt level is used per CPU.&n; */
 DECL|macro|NMI_MAGIC
