@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sbpcd.h   Specify interface address and interface type here.&n; */
-multiline_comment|/*&n; * these definitions can get overridden by the kernel command line&n; * (&quot;lilo boot option&quot;). Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; *                             or&n; *                                 sbpcd=0x330,SPEA&n; *&n; *  and, if you have a second CDROM controller board,&n; *                                 sbpcd2=0x310,LaserMate&n; *  and so on.&n; *&n; * These strings are case sensitive !!!&n; */
+multiline_comment|/*&n; * the definitions for the first controller can get overridden by&n; * the kernel command line (&quot;lilo boot option&quot;).&n; * Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; *                             or&n; *                                 sbpcd=0x330,SPEA&n; *&n; * These strings are case sensitive !!!&n; */
 multiline_comment|/*&n; * put your CDROM port base address into CDROM_PORT&n; * and specify the type of your interface in SBPRO.&n; *&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P, WDH-7001C) adresses typically are 0x0300, 0x0310, ...&n; * SPEA addresses are 0x320, 0x330, 0x340, 0x350&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; * set SBPRO to 2 for the SPEA Media FX card&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
 macro_line|#if !(SBPCD_ISSUE-1) /* first (or if you have only one) interface board: */
 DECL|macro|CDROM_PORT
@@ -32,35 +32,6 @@ multiline_comment|/*&n; * nothing to change below here if you are not experiment
 macro_line|#ifndef _LINUX_SBPCD_H
 DECL|macro|_LINUX_SBPCD_H
 mdefine_line|#define _LINUX_SBPCD_H
-multiline_comment|/*==========================================================================*/
-multiline_comment|/*==========================================================================*/
-multiline_comment|/*&n; * to fork and execute a function after some elapsed time:&n; * one &quot;jifs&quot; unit is 10 msec.&n; */
-DECL|macro|MY_TIMER
-macro_line|#undef MY_TIMER
-DECL|macro|SET_TIMER
-macro_line|#undef SET_TIMER
-DECL|macro|CLEAR_TIMER
-macro_line|#undef CLEAR_TIMER
-macro_line|#if !(SBPCD_ISSUE-1)
-DECL|macro|MY_TIMER
-mdefine_line|#define MY_TIMER SBPCD_TIMER
-macro_line|#endif
-macro_line|#if !(SBPCD_ISSUE-2)
-DECL|macro|MY_TIMER
-mdefine_line|#define MY_TIMER SBPCD2_TIMER
-macro_line|#endif
-macro_line|#if !(SBPCD_ISSUE-3)
-DECL|macro|MY_TIMER
-mdefine_line|#define MY_TIMER SBPCD3_TIMER
-macro_line|#endif
-macro_line|#if !(SBPCD_ISSUE-4)
-DECL|macro|MY_TIMER
-mdefine_line|#define MY_TIMER SBPCD4_TIMER
-macro_line|#endif
-DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;        ((timer_table[MY_TIMER].expires = jiffies + jifs), &bslash;&n;        (timer_table[MY_TIMER].fn = func), &bslash;&n;        (timer_active |= 1&lt;&lt;MY_TIMER))
-DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER&t;timer_active &amp;= ~(1&lt;&lt;MY_TIMER)
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Debug output levels&n; */

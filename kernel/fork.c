@@ -615,7 +615,13 @@ suffix:semicolon
 multiline_comment|/* wrong.. */
 )brace
 r_return
-l_int|0
+id|shm_fork
+c_func
+(paren
+id|current
+comma
+id|p
+)paren
 suffix:semicolon
 )brace
 DECL|function|copy_fs
@@ -1120,14 +1126,6 @@ id|p-&gt;tss.i387
 )paren
 )paren
 suffix:semicolon
-id|p-&gt;semun
-op_assign
-l_int|NULL
-suffix:semicolon
-id|p-&gt;shm
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1135,14 +1133,6 @@ id|copy_mm
 c_func
 (paren
 id|clone_flags
-comma
-id|p
-)paren
-op_logical_or
-id|shm_fork
-c_func
-(paren
-id|current
 comma
 id|p
 )paren

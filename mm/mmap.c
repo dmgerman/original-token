@@ -1650,6 +1650,10 @@ op_logical_or
 op_logical_neg
 id|mp
 op_logical_or
+id|prev-&gt;vm_flags
+op_ne
+id|mpnt-&gt;vm_flags
+op_logical_or
 id|prev-&gt;vm_share
 op_ne
 id|mpnt-&gt;vm_share

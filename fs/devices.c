@@ -7,32 +7,6 @@ macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * Ugly. We&squot;ll fix this once all the drivers use the f_ops-&gt;check_media_change()&n; * stuff instead..&n; */
-macro_line|#ifdef CONFIG_MCD
-r_extern
-r_int
-id|check_mcd_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SBPCD
-r_extern
-r_int
-id|check_sbpcd_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|struct|device_struct
 r_struct
 id|device_struct
@@ -662,69 +636,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 1 /* this will go soon.. */
-r_else
-r_switch
-c_cond
-(paren
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-)paren
-(brace
-macro_line|#if defined(CONFIG_MCD)
-r_case
-id|MITSUMI_CDROM_MAJOR
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|check_mcd_media_change
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_SBPCD)
-r_case
-id|MATSUSHITA_CDROM_MAJOR
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|check_sbpcd_media_change
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-r_default
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif&t;/* will go away */
 id|printk
 c_func
 (paren

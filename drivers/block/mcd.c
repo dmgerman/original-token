@@ -468,16 +468,14 @@ l_int|3
 suffix:semicolon
 macro_line|#endif /* WORK_AROUND_MITSUMI_BUG_93 */
 )brace
+r_static
 r_int
-DECL|function|check_mcd_media_change
-id|check_mcd_media_change
+DECL|function|check_mcd_change
+id|check_mcd_change
 c_func
 (paren
-r_int
+id|dev_t
 id|full_dev
-comma
-r_int
-id|flag
 )paren
 (brace
 r_int
@@ -520,18 +518,10 @@ id|retval
 op_assign
 id|mcdDiskChanged
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|flag
-)paren
-(brace
 id|mcdDiskChanged
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_return
 id|retval
 suffix:semicolon
@@ -4151,7 +4141,16 @@ id|mcd_release
 comma
 multiline_comment|/* release */
 l_int|NULL
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+id|check_mcd_change
+comma
+multiline_comment|/* media change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * MCD interrupt descriptor&n; */

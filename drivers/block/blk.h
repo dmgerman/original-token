@@ -432,9 +432,42 @@ DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == MATSUSHITA_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM&quot;
+mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM controller #1&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_sbpcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == MATSUSHITA_CDROM2_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM controller #2&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sbpcd2_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == MATSUSHITA_CDROM3_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM controller #3&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sbpcd3_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == MATSUSHITA_CDROM4_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Matsushita CD-ROM controller #4&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_sbpcd4_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON

@@ -48,18 +48,6 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_SBPCD)
-r_extern
-r_int
-id|check_sbpcd_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static

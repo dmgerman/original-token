@@ -95,6 +95,8 @@ DECL|macro|VM_GROWSDOWN
 mdefine_line|#define VM_GROWSDOWN&t;0x01
 DECL|macro|VM_GROWSUP
 mdefine_line|#define VM_GROWSUP&t;0x02
+DECL|macro|VM_SHM
+mdefine_line|#define VM_SHM&t;&t;0x04
 multiline_comment|/*&n; * These are the virtual MM functions - opening of an area, closing it (needed to&n; * keep files on disk up-to-date etc), pointer to the functions called when a&n; * no-page or a wp-page exception occurs, and the function which decides on sharing&n; * of pages between different processes.&n; */
 DECL|struct|vm_operations_struct
 r_struct
