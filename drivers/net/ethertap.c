@@ -6,10 +6,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;net/netlink.h&gt;
+macro_line|#include &lt;linux/netlink.h&gt;
 multiline_comment|/*&n; *&t;Index to functions.&n; */
 r_int
 id|ethertap_probe
@@ -248,6 +249,11 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|in_device
+op_star
+id|in_dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -280,6 +286,34 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Fill in the MAC based on the IP address. We do the same thing&n;&t;   here as PLIP does */
+r_if
+c_cond
+(paren
+(paren
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Any address wil do - we take the first&n;&t;&t; */
+r_struct
+id|in_ifaddr
+op_star
+id|ifa
+op_assign
+id|in_dev-&gt;ifa_list
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ifa
+op_ne
+l_int|NULL
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -288,11 +322,13 @@ op_plus
 l_int|2
 comma
 op_amp
-id|dev-&gt;pa_addr
+id|ifa-&gt;ifa_local
 comma
 l_int|4
 )paren
 suffix:semicolon
+)brace
+)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -447,9 +483,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: bad unit!&bslash;n&quot;
-comma
-id|dev-&gt;name
+l_string|&quot;ethertap: bad unit!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree_skb

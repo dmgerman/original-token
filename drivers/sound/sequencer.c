@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
 macro_line|#include &quot;softoss.h&quot;
 DECL|variable|softsynthp
 r_int
@@ -271,6 +271,7 @@ suffix:semicolon
 r_static
 r_int
 id|seq_queue
+c_func
 (paren
 r_int
 r_char
@@ -284,6 +285,7 @@ suffix:semicolon
 r_static
 r_void
 id|seq_startplay
+c_func
 (paren
 r_void
 )paren
@@ -291,6 +293,7 @@ suffix:semicolon
 r_static
 r_int
 id|seq_sync
+c_func
 (paren
 r_void
 )paren
@@ -298,6 +301,7 @@ suffix:semicolon
 r_static
 r_void
 id|seq_reset
+c_func
 (paren
 r_void
 )paren
@@ -308,6 +312,7 @@ macro_line|#endif
 r_int
 DECL|function|sequencer_read
 id|sequencer_read
+c_func
 (paren
 r_int
 id|dev
@@ -359,11 +364,13 @@ suffix:colon
 l_int|8
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -392,6 +399,7 @@ l_int|0
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -436,6 +444,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|midi_sleeper
@@ -479,6 +488,7 @@ id|iqlen
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -516,6 +526,7 @@ id|IEV_SZ
 )braket
 suffix:semicolon
 id|copy_to_user
+c_func
 (paren
 op_amp
 (paren
@@ -555,6 +566,7 @@ op_decrement
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -569,16 +581,18 @@ r_static
 r_void
 DECL|function|sequencer_midi_output
 id|sequencer_midi_output
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;   * Currently NOP&n;   */
+multiline_comment|/*&n;&t; * Currently NOP&n;&t; */
 )brace
 r_void
 DECL|function|seq_copy_to_input
 id|seq_copy_to_input
+c_func
 (paren
 r_int
 r_char
@@ -593,7 +607,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;     * Verify that the len is valid for the current mode.&n;   */
+multiline_comment|/*&n;&t;   * Verify that the len is valid for the current mode.&n;&t; */
 r_if
 c_cond
 (paren
@@ -639,15 +653,18 @@ r_return
 suffix:semicolon
 multiline_comment|/* Overflow */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 op_amp
 id|iqueue
@@ -691,6 +708,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|midi_sleeper
@@ -700,6 +718,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -709,6 +728,7 @@ r_static
 r_void
 DECL|function|sequencer_midi_input
 id|sequencer_midi_input
+c_func
 (paren
 r_int
 id|dev
@@ -749,6 +769,7 @@ l_int|NULL
 id|tstamp
 op_assign
 id|softsynthp
+c_func
 (paren
 id|SSYN_GETTIME
 comma
@@ -785,6 +806,7 @@ op_or
 id|SEQ_WAIT
 suffix:semicolon
 id|seq_copy_to_input
+c_func
 (paren
 (paren
 r_int
@@ -831,6 +853,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|seq_copy_to_input
+c_func
 (paren
 id|event_rec
 comma
@@ -841,6 +864,7 @@ suffix:semicolon
 r_void
 DECL|function|seq_input_event
 id|seq_input_event
+c_func
 (paren
 r_int
 r_char
@@ -864,7 +888,10 @@ id|SEQ_2
 )paren
 id|this_time
 op_assign
-id|tmr-&gt;get_time
+id|tmr
+op_member_access_from_pointer
+id|get_time
+c_func
 (paren
 id|tmr_no
 )paren
@@ -880,6 +907,7 @@ l_int|NULL
 id|this_time
 op_assign
 id|softsynthp
+c_func
 (paren
 id|SSYN_GETTIME
 comma
@@ -955,6 +983,7 @@ op_assign
 id|this_time
 suffix:semicolon
 id|seq_copy_to_input
+c_func
 (paren
 id|tmp_event
 comma
@@ -967,6 +996,7 @@ id|this_time
 suffix:semicolon
 )brace
 id|seq_copy_to_input
+c_func
 (paren
 id|event_rec
 comma
@@ -977,6 +1007,7 @@ suffix:semicolon
 r_int
 DECL|function|sequencer_write
 id|sequencer_write
+c_func
 (paren
 r_int
 id|dev
@@ -1030,8 +1061,10 @@ op_rshift
 l_int|4
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sequencer_write(dev=%d, count=%d)&bslash;n&quot;
 comma
@@ -1065,6 +1098,7 @@ l_int|4
 )paren
 (brace
 id|copy_from_user
+c_func
 (paren
 (paren
 r_char
@@ -1127,6 +1161,13 @@ op_logical_or
 id|dev
 op_ge
 id|max_synthdev
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
@@ -1175,6 +1216,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|load_patch
+c_func
 (paren
 id|dev
 comma
@@ -1226,6 +1268,7 @@ id|SEQ_EXTENDED
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer: Invalid level 2 event %x&bslash;n&quot;
 comma
@@ -1256,6 +1299,7 @@ op_logical_neg
 id|seq_playing
 )paren
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1266,6 +1310,7 @@ id|c
 suffix:semicolon
 )brace
 id|copy_from_user
+c_func
 (paren
 (paren
 r_char
@@ -1302,6 +1347,7 @@ id|SEQ_2
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer: 4 byte event in level 2 mode&bslash;n&quot;
 )paren
@@ -1374,6 +1420,7 @@ id|max_mididev
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer Error: Nonexistent MIDI device %d&bslash;n&quot;
 comma
@@ -1403,6 +1450,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|dev
 comma
@@ -1418,10 +1466,12 @@ l_int|0
 )paren
 (brace
 id|seq_reset
+c_func
 (paren
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer Error: Unable to open Midi #%d&bslash;n&quot;
 comma
@@ -1446,6 +1496,7 @@ c_cond
 (paren
 op_logical_neg
 id|seq_queue
+c_func
 (paren
 id|event_rec
 comma
@@ -1478,6 +1529,7 @@ op_logical_neg
 id|seq_playing
 )paren
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1525,6 +1577,7 @@ op_logical_neg
 id|seq_playing
 )paren
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1536,6 +1589,7 @@ r_static
 r_int
 DECL|function|seq_queue
 id|seq_queue
+c_func
 (paren
 r_int
 r_char
@@ -1546,7 +1600,7 @@ r_char
 id|nonblock
 )paren
 (brace
-multiline_comment|/*&n;   * Test if there is space in the queue&n;   */
+multiline_comment|/*&n;&t; * Test if there is space in the queue&n;&t; */
 r_if
 c_cond
 (paren
@@ -1561,10 +1615,11 @@ op_logical_neg
 id|seq_playing
 )paren
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Give chance to drain the queue&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Give chance to drain the queue&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1583,12 +1638,13 @@ id|WK_SLEEP
 )paren
 )paren
 (brace
-multiline_comment|/*&n;       * Sleep until there is enough space on the queue&n;       */
+multiline_comment|/*&n;&t;&t;   * Sleep until there is enough space on the queue&n;&t;&t;   */
 id|seq_sleep_flag.opts
 op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -1615,6 +1671,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * To be sure&n;&t;&t;&t;&t; */
 )brace
 id|memcpy
+c_func
 (paren
 op_amp
 id|queue
@@ -1650,6 +1707,7 @@ r_static
 r_int
 DECL|function|extended_event
 id|extended_event
+c_func
 (paren
 r_int
 r_char
@@ -1716,6 +1774,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|kill_note
+c_func
 (paren
 id|dev
 comma
@@ -1777,6 +1836,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|kill_note
+c_func
 (paren
 id|dev
 comma
@@ -1805,6 +1865,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|start_note
+c_func
 (paren
 id|dev
 comma
@@ -1835,6 +1896,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|set_instr
+c_func
 (paren
 id|dev
 comma
@@ -1860,6 +1922,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|aftertouch
+c_func
 (paren
 id|dev
 comma
@@ -1885,6 +1948,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|panning
+c_func
 (paren
 id|dev
 comma
@@ -1913,6 +1977,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|dev
 comma
@@ -1969,6 +2034,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|volume_method
+c_func
 (paren
 id|dev
 comma
@@ -1995,6 +2061,7 @@ r_static
 r_int
 DECL|function|find_voice
 id|find_voice
+c_func
 (paren
 r_int
 id|dev
@@ -2073,6 +2140,7 @@ r_static
 r_int
 DECL|function|alloc_voice
 id|alloc_voice
+c_func
 (paren
 r_int
 id|dev
@@ -2113,6 +2181,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|alloc_voice
+c_func
 (paren
 id|dev
 comma
@@ -2167,6 +2236,7 @@ r_static
 r_void
 DECL|function|seq_chn_voice_event
 id|seq_chn_voice_event
+c_func
 (paren
 r_int
 r_char
@@ -2199,6 +2269,13 @@ r_int
 id|dev
 OG
 id|max_synthdev
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 suffix:semicolon
@@ -2250,6 +2327,7 @@ id|alloc_voice
 id|voice
 op_assign
 id|find_voice
+c_func
 (paren
 id|dev
 comma
@@ -2327,6 +2405,7 @@ multiline_comment|/* Internal synthesizer (FM, GUS, etc) */
 id|voice
 op_assign
 id|alloc_voice
+c_func
 (paren
 id|dev
 comma
@@ -2363,7 +2442,7 @@ OL
 id|num_synths
 )paren
 (brace
-multiline_comment|/*&n;&t;     * The MIDI channel 10 is a percussive channel. Use the note&n;&t;     * number to select the proper patch (128 to 255) to play.&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;       * The MIDI channel 10 is a percussive channel. Use the note&n;&t;&t;&t;       * number to select the proper patch (128 to 255) to play.&n;&t;&t;&t;     */
 r_if
 c_cond
 (paren
@@ -2378,6 +2457,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|set_instr
+c_func
 (paren
 id|dev
 comma
@@ -2411,6 +2491,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|setup_voice
+c_func
 (paren
 id|dev
 comma
@@ -2426,6 +2507,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|start_note
+c_func
 (paren
 id|dev
 comma
@@ -2459,6 +2541,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|kill_note
+c_func
 (paren
 id|dev
 comma
@@ -2492,6 +2575,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|aftertouch
+c_func
 (paren
 id|dev
 comma
@@ -2521,6 +2605,7 @@ r_static
 r_void
 DECL|function|seq_chn_common_event
 id|seq_chn_common_event
+c_func
 (paren
 r_int
 r_char
@@ -2589,6 +2674,13 @@ r_int
 id|dev
 OG
 id|max_synthdev
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 suffix:semicolon
@@ -2666,6 +2758,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|set_instr
+c_func
 (paren
 id|dev
 comma
@@ -2682,6 +2775,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|set_instr
+c_func
 (paren
 id|dev
 comma
@@ -2905,6 +2999,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|dev
 comma
@@ -2923,6 +3018,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|dev
 comma
@@ -2942,6 +3038,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|dev
 comma
@@ -3048,6 +3145,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|bender
+c_func
 (paren
 id|dev
 comma
@@ -3064,6 +3162,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|bender
+c_func
 (paren
 id|dev
 comma
@@ -3081,6 +3180,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|bender
+c_func
 (paren
 id|dev
 comma
@@ -3100,6 +3200,7 @@ r_static
 r_int
 DECL|function|seq_timing_event
 id|seq_timing_event
+c_func
 (paren
 r_int
 r_char
@@ -3148,7 +3249,10 @@ c_cond
 (paren
 id|ret
 op_assign
-id|tmr-&gt;event
+id|tmr
+op_member_access_from_pointer
+id|event
+c_func
 (paren
 id|tmr_no
 comma
@@ -3176,11 +3280,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3200,6 +3306,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -3209,6 +3316,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3232,7 +3340,7 @@ id|parm
 op_add_assign
 id|prev_event_time
 suffix:semicolon
-multiline_comment|/*&n;         * NOTE!  No break here. Execution of TMR_WAIT_REL continues in the&n;         * next case (TMR_WAIT_ABS)&n;       */
+multiline_comment|/*&n;&t;&t;     * NOTE!  No break here. Execution of TMR_WAIT_REL continues in the&n;&t;&t;     * next case (TMR_WAIT_ABS)&n;&t;&t;   */
 r_case
 id|TMR_WAIT_ABS
 suffix:colon
@@ -3267,6 +3375,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_REQUEST
 comma
@@ -3279,6 +3388,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|request_sound_timer
+c_func
 (paren
 id|time
 )paren
@@ -3300,11 +3410,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3324,6 +3436,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -3333,6 +3446,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3356,6 +3470,7 @@ l_int|NULL
 )paren
 (brace
 id|softsynthp
+c_func
 (paren
 id|SSYN_START
 comma
@@ -3412,6 +3527,7 @@ op_eq
 id|SEQ_2
 )paren
 id|seq_copy_to_input
+c_func
 (paren
 id|event_rec
 comma
@@ -3431,6 +3547,7 @@ id|SEQ_ECHO
 )paren
 suffix:semicolon
 id|seq_copy_to_input
+c_func
 (paren
 (paren
 r_int
@@ -3458,6 +3575,7 @@ r_static
 r_void
 DECL|function|seq_local_event
 id|seq_local_event
+c_func
 (paren
 r_int
 r_char
@@ -3503,6 +3621,7 @@ id|LOCL_STARTAUDIO
 suffix:colon
 macro_line|#ifdef CONFIG_AUDIO
 id|DMAbuf_start_devices
+c_func
 (paren
 id|parm
 )paren
@@ -3519,6 +3638,7 @@ r_static
 r_void
 DECL|function|seq_sysex_message
 id|seq_sysex_message
+c_func
 (paren
 r_int
 r_char
@@ -3648,6 +3768,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|send_sysex
+c_func
 (paren
 id|dev
 comma
@@ -3661,6 +3782,7 @@ r_static
 r_int
 DECL|function|play_event
 id|play_event
+c_func
 (paren
 r_int
 r_char
@@ -3668,7 +3790,7 @@ op_star
 id|q
 )paren
 (brace
-multiline_comment|/*&n;     * NOTE! This routine returns&n;     *   0 = normal event played.&n;     *   1 = Timer armed. Suspend playback until timer callback.&n;     *   2 = MIDI output buffer full. Restore queue and suspend until timer&n;   */
+multiline_comment|/*&n;&t;   * NOTE! This routine returns&n;&t;   *   0 = normal event played.&n;&t;   *   1 = Timer armed. Suspend playback until timer callback.&n;&t;   *   2 = MIDI output buffer full. Restore queue and suspend until timer&n;&t; */
 r_int
 r_int
 op_star
@@ -3711,6 +3833,7 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|kill_note
+c_func
 (paren
 l_int|0
 comma
@@ -3774,6 +3897,7 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|start_note
+c_func
 (paren
 l_int|0
 comma
@@ -3807,7 +3931,7 @@ op_star
 )paren
 id|q
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Bytes 1 to 3 are containing the *&n;&t;&t;&t;&t;&t; * delay in &squot;ticks&squot;&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Bytes 1 to 3 are containing the *&n;&t;&t;&t;&t;&t;&t; * delay in &squot;ticks&squot;&n;&t;&t;&t;&t;&t;&t; */
 op_star
 id|delay
 op_assign
@@ -3853,6 +3977,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_REQUEST
 comma
@@ -3865,6 +3990,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|request_sound_timer
+c_func
 (paren
 id|time
 )paren
@@ -3886,11 +4012,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3910,6 +4038,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -3919,12 +4048,13 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;     * The timer is now active and will reinvoke this function&n;&t;     * after the timer expires. Return to the caller now.&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;       * The timer is now active and will reinvoke this function&n;&t;&t;&t;       * after the timer expires. Return to the caller now.&n;&t;&t;&t;     */
 r_return
 l_int|1
 suffix:semicolon
@@ -3959,6 +4089,7 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|set_instr
+c_func
 (paren
 l_int|0
 comma
@@ -3978,7 +4109,7 @@ suffix:semicolon
 r_case
 id|SEQ_SYNCTIMER
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Reset timer&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Reset timer&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4011,6 +4142,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_START
 comma
@@ -4059,6 +4191,13 @@ op_logical_or
 id|dev
 op_ge
 id|num_midis
+op_logical_or
+id|midi_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_break
 suffix:semicolon
@@ -4072,6 +4211,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|dev
 comma
@@ -4082,7 +4222,7 @@ l_int|1
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;         * Output FIFO is full. Wait one timer cycle and try again.&n;&t;       */
+multiline_comment|/*&n;&t;&t;&t;&t;         * Output FIFO is full. Wait one timer cycle and try again.&n;&t;&t;&t;&t;       */
 id|seq_playing
 op_assign
 l_int|1
@@ -4095,6 +4235,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_REQUEST
 comma
@@ -4108,6 +4249,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|request_sound_timer
+c_func
 (paren
 op_minus
 l_int|1
@@ -4132,13 +4274,14 @@ r_case
 id|SEQ_ECHO
 suffix:colon
 id|seq_copy_to_input
+c_func
 (paren
 id|q
 comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Echo back to the process&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Echo back to the process&n;&t;&t;&t;&t;&t;&t; */
 r_break
 suffix:semicolon
 r_case
@@ -4166,6 +4309,7 @@ l_int|1
 )braket
 op_member_access_from_pointer
 id|hw_control
+c_func
 (paren
 id|q
 (braket
@@ -4181,6 +4325,7 @@ r_case
 id|SEQ_EXTENDED
 suffix:colon
 id|extended_event
+c_func
 (paren
 id|q
 )paren
@@ -4191,6 +4336,7 @@ r_case
 id|EV_CHN_VOICE
 suffix:colon
 id|seq_chn_voice_event
+c_func
 (paren
 id|q
 )paren
@@ -4201,6 +4347,7 @@ r_case
 id|EV_CHN_COMMON
 suffix:colon
 id|seq_chn_common_event
+c_func
 (paren
 id|q
 )paren
@@ -4214,6 +4361,7 @@ r_if
 c_cond
 (paren
 id|seq_timing_event
+c_func
 (paren
 id|q
 )paren
@@ -4231,6 +4379,7 @@ r_case
 id|EV_SEQ_LOCAL
 suffix:colon
 id|seq_local_event
+c_func
 (paren
 id|q
 )paren
@@ -4241,6 +4390,7 @@ r_case
 id|EV_SYSEX
 suffix:colon
 id|seq_sysex_message
+c_func
 (paren
 id|q
 )paren
@@ -4259,6 +4409,7 @@ r_static
 r_void
 DECL|function|seq_startplay
 id|seq_startplay
+c_func
 (paren
 r_void
 )paren
@@ -4281,11 +4432,13 @@ l_int|0
 )paren
 (brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4307,6 +4460,7 @@ id|qlen
 op_decrement
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4322,6 +4476,7 @@ c_cond
 id|action
 op_assign
 id|play_event
+c_func
 (paren
 op_amp
 id|queue
@@ -4376,11 +4531,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4400,6 +4557,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -4409,6 +4567,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4419,6 +4578,7 @@ r_static
 r_void
 DECL|function|reset_controllers
 id|reset_controllers
+c_func
 (paren
 r_int
 id|dev
@@ -4464,6 +4624,7 @@ r_static
 r_void
 DECL|function|setup_mode2
 id|setup_mode2
+c_func
 (paren
 r_void
 )paren
@@ -4492,6 +4653,11 @@ op_increment
 r_if
 c_cond
 (paren
+id|midi_devs
+(braket
+id|dev
+)braket
+op_logical_and
 id|midi_devs
 (braket
 id|dev
@@ -4582,6 +4748,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|reset_controllers
+c_func
 (paren
 id|dev
 comma
@@ -4647,6 +4814,7 @@ suffix:semicolon
 r_int
 DECL|function|sequencer_open
 id|sequencer_open
+c_func
 (paren
 r_int
 id|dev
@@ -4680,6 +4848,7 @@ op_logical_neg
 id|sequencer_ok
 )paren
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4713,8 +4882,10 @@ op_amp
 id|O_ACCMODE
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sequencer_open(dev=%d)&bslash;n&quot;
 comma
@@ -4730,6 +4901,7 @@ id|sequencer_ok
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Soundcard: Sequencer not initialized&bslash;n&quot;
 )paren
@@ -4766,6 +4938,7 @@ id|num_midis
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer: No MIDI devices. Input not possible&bslash;n&quot;
 )paren
@@ -4780,11 +4953,13 @@ id|ENXIO
 suffix:semicolon
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4795,6 +4970,7 @@ id|sequencer_busy
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4813,6 +4989,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4893,6 +5070,11 @@ id|sound_timer_devs
 (braket
 id|i
 )braket
+op_logical_and
+id|sound_timer_devs
+(braket
+id|i
+)braket
 op_member_access_from_pointer
 id|priority
 OG
@@ -4951,6 +5133,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;sequencer: No timer for level 2&bslash;n&quot;
 )paren
@@ -4965,6 +5148,7 @@ id|ENXIO
 suffix:semicolon
 )brace
 id|setup_mode2
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5043,6 +5227,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|i
 comma
@@ -5054,6 +5239,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sequencer: Warning! Cannot open synth device #%d (%d)&bslash;n&quot;
 comma
@@ -5073,6 +5259,7 @@ op_member_access_from_pointer
 id|midi_dev
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;(Maps to MIDI dev #%d)&bslash;n&quot;
 comma
@@ -5151,6 +5338,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_START
 comma
@@ -5216,6 +5404,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|i
 comma
@@ -5246,7 +5435,10 @@ op_eq
 id|SEQ_2
 )paren
 (brace
-id|tmr-&gt;open
+id|tmr
+op_member_access_from_pointer
+id|open
+c_func
 (paren
 id|tmr_no
 comma
@@ -5275,6 +5467,7 @@ suffix:semicolon
 r_void
 DECL|function|seq_drain_midi_queues
 id|seq_drain_midi_queues
+c_func
 (paren
 r_void
 )paren
@@ -5284,7 +5477,7 @@ id|i
 comma
 id|n
 suffix:semicolon
-multiline_comment|/*&n;   * Give the Midi drivers time to drain their output queues&n;   */
+multiline_comment|/*&n;&t; * Give the Midi drivers time to drain their output queues&n;&t; */
 id|n
 op_assign
 l_int|1
@@ -5355,6 +5548,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|buffer_status
+c_func
 (paren
 id|i
 )paren
@@ -5362,7 +5556,7 @@ id|i
 id|n
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;       * Let&squot;s have a delay&n;       */
+multiline_comment|/*&n;&t;&t;   * Let&squot;s have a delay&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -5408,6 +5602,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -5449,6 +5644,7 @@ suffix:semicolon
 r_void
 DECL|function|sequencer_release
 id|sequencer_release
+c_func
 (paren
 r_int
 id|dev
@@ -5476,8 +5672,10 @@ op_rshift
 l_int|4
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sequencer_release(dev=%d)&bslash;n&quot;
 comma
@@ -5485,7 +5683,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Wait until the queue is empty (if we don&squot;t have nonblock)&n;   */
+multiline_comment|/*&n;&t; * Wait until the queue is empty (if we don&squot;t have nonblock)&n;&t; */
 r_if
 c_cond
 (paren
@@ -5524,6 +5722,7 @@ l_int|0
 )paren
 (brace
 id|seq_sync
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5566,6 +5765,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -5611,11 +5811,13 @@ op_ne
 id|OPEN_READ
 )paren
 id|seq_drain_midi_queues
+c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ensure the output queues are empty&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Ensure the output queues are empty&n;&t;&t;&t;&t;&t;&t; */
 id|seq_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5627,10 +5829,11 @@ op_ne
 id|OPEN_READ
 )paren
 id|seq_drain_midi_queues
+c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Flush the all notes off messages&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Flush the all notes off messages&n;&t;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -5657,7 +5860,7 @@ op_lshift
 id|i
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Actually opened&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Actually opened&n;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5673,6 +5876,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|close
+c_func
 (paren
 id|i
 )paren
@@ -5730,6 +5934,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|close
+c_func
 (paren
 id|i
 )paren
@@ -5742,7 +5947,10 @@ id|seq_mode
 op_eq
 id|SEQ_2
 )paren
-id|tmr-&gt;close
+id|tmr
+op_member_access_from_pointer
+id|close
+c_func
 (paren
 id|tmr_no
 )paren
@@ -5753,6 +5961,7 @@ c_cond
 id|obsolete_api_used
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;/dev/music: Obsolete (4 byte) API was used by this program&bslash;n&quot;
 )paren
@@ -5766,6 +5975,7 @@ r_static
 r_int
 DECL|function|seq_sync
 id|seq_sync
+c_func
 (paren
 r_void
 )paren
@@ -5791,15 +6001,18 @@ id|current-&gt;blocked
 )paren
 )paren
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5846,6 +6059,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -5883,6 +6097,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -5895,6 +6110,7 @@ r_static
 r_void
 DECL|function|midi_outc
 id|midi_outc
+c_func
 (paren
 r_int
 id|dev
@@ -5904,7 +6120,7 @@ r_char
 id|data
 )paren
 (brace
-multiline_comment|/*&n;   * NOTE! Calls sleep(). Don&squot;t call this from interrupt.&n;   */
+multiline_comment|/*&n;&t; * NOTE! Calls sleep(). Don&squot;t call this from interrupt.&n;&t; */
 r_int
 id|n
 suffix:semicolon
@@ -5912,7 +6128,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * This routine sends one byte to the Midi channel.&n;   * If the output FIFO is full, it waits until there&n;   * is space in the queue&n;   */
+multiline_comment|/*&n;&t; * This routine sends one byte to the Midi channel.&n;&t; * If the output FIFO is full, it waits until there&n;&t; * is space in the queue&n;&t; */
 id|n
 op_assign
 l_int|3
@@ -5921,11 +6137,13 @@ id|HZ
 suffix:semicolon
 multiline_comment|/* Timeout */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5941,6 +6159,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|dev
 comma
@@ -5983,6 +6202,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -6023,6 +6243,7 @@ op_decrement
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -6032,11 +6253,12 @@ r_static
 r_void
 DECL|function|seq_reset
 id|seq_reset
+c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;   * NOTE! Calls sleep(). Don&squot;t call this from interrupt.&n;   */
+multiline_comment|/*&n;&t; * NOTE! Calls sleep(). Don&squot;t call this from interrupt.&n;&t; */
 r_int
 id|i
 suffix:semicolon
@@ -6055,6 +6277,7 @@ op_ne
 l_int|NULL
 )paren
 id|softsynthp
+c_func
 (paren
 id|SSYN_STOP
 comma
@@ -6067,6 +6290,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|sound_stop_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -6137,6 +6361,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|reset
+c_func
 (paren
 id|i
 )paren
@@ -6203,6 +6428,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|i
 comma
@@ -6220,6 +6446,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|controller
+c_func
 (paren
 id|i
 comma
@@ -6237,6 +6464,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|bender
+c_func
 (paren
 id|i
 comma
@@ -6275,10 +6503,11 @@ id|midi_written
 id|i
 )braket
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Midi used. Some notes may still be playing&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Midi used. Some notes may still be playing&n;&t;&t;&t;&t;&t;&t; */
 (brace
-multiline_comment|/*&n;&t;       *      Sending just a ACTIVE SENSING message should be enough to stop all&n;&t;       *      playing notes. Since there are devices not recognizing the&n;&t;       *      active sensing, we have to send some all notes off messages also.&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t;&t;       *      Sending just a ACTIVE SENSING message should be enough to stop all&n;&t;&t;&t;&t;       *      playing notes. Since there are devices not recognizing the&n;&t;&t;&t;&t;       *      active sensing, we have to send some all notes off messages also.&n;&t;&t;&t;&t;     */
 id|midi_outc
+c_func
 (paren
 id|i
 comma
@@ -6301,6 +6530,7 @@ op_increment
 )paren
 (brace
 id|midi_outc
+c_func
 (paren
 id|i
 comma
@@ -6321,6 +6551,7 @@ l_int|0x0f
 suffix:semicolon
 multiline_comment|/* control change */
 id|midi_outc
+c_func
 (paren
 id|i
 comma
@@ -6329,6 +6560,7 @@ l_int|0x7b
 suffix:semicolon
 multiline_comment|/* All notes off */
 id|midi_outc
+c_func
 (paren
 id|i
 comma
@@ -6343,6 +6575,7 @@ id|i
 )braket
 op_member_access_from_pointer
 id|close
+c_func
 (paren
 id|i
 )paren
@@ -6368,11 +6601,13 @@ op_assign
 l_int|0
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -6393,6 +6628,7 @@ op_assign
 id|WK_WAKEUP
 suffix:semicolon
 id|wake_up
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -6402,6 +6638,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -6411,21 +6648,24 @@ r_static
 r_void
 DECL|function|seq_panic
 id|seq_panic
+c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;     * This routine is called by the application in case the user&n;     * wants to reset the system to the default state.&n;   */
+multiline_comment|/*&n;&t;   * This routine is called by the application in case the user&n;&t;   * wants to reset the system to the default state.&n;&t; */
 id|seq_reset
+c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Since some of the devices don&squot;t recognize the active sensing and&n;     * all notes off messages, we have to shut all notes manually.&n;     *&n;     *      TO BE IMPLEMENTED LATER&n;   */
-multiline_comment|/*&n;     * Also return the controllers to their default states&n;   */
+multiline_comment|/*&n;&t;   * Since some of the devices don&squot;t recognize the active sensing and&n;&t;   * all notes off messages, we have to shut all notes manually.&n;&t;   *&n;&t;   *      TO BE IMPLEMENTED LATER&n;&t; */
+multiline_comment|/*&n;&t;   * Also return the controllers to their default states&n;&t; */
 )brace
 r_int
 DECL|function|sequencer_ioctl
 id|sequencer_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -6504,7 +6744,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 r_return
-id|tmr-&gt;ioctl
+id|tmr
+op_member_access_from_pointer
+id|ioctl
+c_func
 (paren
 id|tmr_no
 comma
@@ -6548,6 +6791,13 @@ op_logical_or
 id|pending_timer
 op_ge
 id|num_sound_timers
+op_logical_or
+id|sound_timer_devs
+(braket
+id|pending_timer
+)braket
+op_eq
+l_int|NULL
 )paren
 (brace
 id|pending_timer
@@ -6578,6 +6828,7 @@ r_case
 id|SNDCTL_SEQ_PANIC
 suffix:colon
 id|seq_panic
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -6612,6 +6863,7 @@ id|current-&gt;blocked
 )paren
 )paren
 id|seq_sync
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -6634,6 +6886,7 @@ r_case
 id|SNDCTL_SEQ_RESET
 suffix:colon
 id|seq_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -6702,6 +6955,7 @@ id|midi_dev
 )braket
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|midi_dev
 comma
@@ -6798,7 +7052,10 @@ op_eq
 id|SEQ_2
 )paren
 r_return
-id|tmr-&gt;ioctl
+id|tmr
+op_member_access_from_pointer
+id|ioctl
+c_func
 (paren
 id|tmr_no
 comma
@@ -6824,6 +7081,7 @@ op_star
 id|arg
 op_assign
 id|softsynthp
+c_func
 (paren
 id|SSYN_GETTIME
 comma
@@ -6855,7 +7113,7 @@ suffix:semicolon
 r_case
 id|SNDCTL_SEQ_CTRLRATE
 suffix:colon
-multiline_comment|/*&n;       * If *arg == 0, just return the current rate&n;       */
+multiline_comment|/*&n;&t;&t;   * If *arg == 0, just return the current rate&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -6864,7 +7122,10 @@ op_eq
 id|SEQ_2
 )paren
 r_return
-id|tmr-&gt;ioctl
+id|tmr
+op_member_access_from_pointer
+id|ioctl
+c_func
 (paren
 id|tmr_no
 comma
@@ -6939,6 +7200,13 @@ op_logical_or
 id|dev
 op_ge
 id|num_synths
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 (brace
 r_return
@@ -6977,6 +7245,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 id|dev
 comma
@@ -7051,6 +7320,13 @@ op_logical_or
 id|dev
 op_ge
 id|num_synths
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
@@ -7092,6 +7368,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 id|dev
 comma
@@ -7130,6 +7407,13 @@ op_logical_or
 id|dev
 op_ge
 id|num_synths
+op_logical_or
+id|synth_devs
+(braket
+id|dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
@@ -7159,6 +7443,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 id|dev
 comma
@@ -7185,6 +7470,7 @@ r_int
 id|dev
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -7260,6 +7546,7 @@ id|dev
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 id|dev
 comma
@@ -7284,6 +7571,7 @@ r_int
 id|dev
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -7353,6 +7641,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -7379,6 +7668,7 @@ id|inf
 )paren
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|inf.name
 comma
@@ -7395,6 +7685,7 @@ op_assign
 id|dev
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -7442,6 +7733,7 @@ r_int
 id|flags
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -7471,20 +7763,24 @@ id|event_rec
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|play_event
+c_func
 (paren
 id|event_rec.arr
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -7511,6 +7807,7 @@ op_star
 id|pp
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -7582,6 +7879,7 @@ op_member_access_from_pointer
 id|info
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -7770,6 +8068,7 @@ l_int|0
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 l_int|0
 comma
@@ -7789,6 +8088,7 @@ suffix:semicolon
 r_int
 DECL|function|sequencer_select
 id|sequencer_select
+c_func
 (paren
 r_int
 id|dev
@@ -7826,11 +8126,13 @@ r_case
 id|SEL_IN
 suffix:colon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -7846,6 +8148,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|poll_wait
+c_func
 (paren
 op_amp
 id|midi_sleeper
@@ -7854,6 +8157,7 @@ id|wait
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -7863,6 +8167,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -7876,11 +8181,13 @@ r_case
 id|SEL_OUT
 suffix:colon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -7901,6 +8208,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|poll_wait
+c_func
 (paren
 op_amp
 id|seq_sleeper
@@ -7909,6 +8217,7 @@ id|wait
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -7918,6 +8227,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -7941,6 +8251,7 @@ suffix:semicolon
 r_void
 DECL|function|sequencer_timer
 id|sequencer_timer
+c_func
 (paren
 r_int
 r_int
@@ -7948,6 +8259,7 @@ id|dummy
 )paren
 (brace
 id|seq_startplay
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -7955,12 +8267,13 @@ suffix:semicolon
 r_int
 DECL|function|note_to_freq
 id|note_to_freq
+c_func
 (paren
 r_int
 id|note_num
 )paren
 (brace
-multiline_comment|/*&n;   * This routine converts a midi note to a frequency (multiplied by 1000)&n;   */
+multiline_comment|/*&n;&t; * This routine converts a midi note to a frequency (multiplied by 1000)&n;&t; */
 r_int
 id|note
 comma
@@ -8052,7 +8365,7 @@ op_minus
 id|BASE_OCTAVE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * note_freq &gt;&gt;= 1;&n;   */
+multiline_comment|/*&n;&t; * note_freq &gt;&gt;= 1;&n;&t; */
 r_return
 id|note_freq
 suffix:semicolon
@@ -8061,6 +8374,7 @@ r_int
 r_int
 DECL|function|compute_finetune
 id|compute_finetune
+c_func
 (paren
 r_int
 r_int
@@ -8185,7 +8499,7 @@ id|bend
 op_assign
 id|range
 suffix:semicolon
-multiline_comment|/*&n;     if (bend &gt; 2399)&n;     bend = 2399;&n;   */
+multiline_comment|/*&n;&t;   if (bend &gt; 2399)&n;&t;   bend = 2399;&n;&t; */
 r_while
 c_loop
 (paren
@@ -8277,6 +8591,7 @@ multiline_comment|/* Bend up */
 r_void
 DECL|function|sequencer_init
 id|sequencer_init
+c_func
 (paren
 r_void
 )paren
@@ -8290,6 +8605,7 @@ r_return
 suffix:semicolon
 macro_line|#ifdef CONFIG_MIDI
 id|MIDIbuf_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -8308,6 +8624,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 id|SEQ_MAX_QUEUE
 op_star
@@ -8344,6 +8661,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sound: Can&squot;t allocate memory for sequencer output queue&bslash;n&quot;
 )paren
@@ -8365,6 +8683,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 id|SEQ_MAX_QUEUE
 op_star
@@ -8401,6 +8720,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sound: Can&squot;t allocate memory for sequencer input queue&bslash;n&quot;
 )paren

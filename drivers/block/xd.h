@@ -40,7 +40,7 @@ DECL|macro|CMD_SEEK
 mdefine_line|#define CMD_SEEK&t;0x0B&t;/* seek */
 multiline_comment|/* Controller specific commands */
 DECL|macro|CMD_DTCSETPARAM
-mdefine_line|#define CMD_DTCSETPARAM&t;0x0C&t;/* set drive parameters (DTC 5150X only?) */
+mdefine_line|#define CMD_DTCSETPARAM&t;0x0C&t;/* set drive parameters (DTC 5150X &amp; CX only?) */
 DECL|macro|CMD_DTCGETECC
 mdefine_line|#define CMD_DTCGETECC&t;0x0D&t;/* get ecc error length (DTC 5150X only?) */
 DECL|macro|CMD_DTCREADBUF
@@ -128,8 +128,6 @@ DECL|typedef|XD_INFO
 )brace
 id|XD_INFO
 suffix:semicolon
-DECL|macro|HDIO_GETGEO
-mdefine_line|#define&t;HDIO_GETGEO&t;0x0301&t;&t;/* get drive geometry */
 multiline_comment|/* this structure is returned to the HDIO_GETGEO ioctl */
 r_typedef
 r_struct
@@ -214,6 +212,20 @@ op_star
 id|integers
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
+r_void
+id|xd_manual_geo_init
+(paren
+r_char
+op_star
+id|command
+comma
+r_int
+op_star
+id|integers
+)paren
+suffix:semicolon
+macro_line|#endif /* MODULE */
 r_static
 id|u_char
 id|xd_detect
@@ -413,6 +425,20 @@ id|control
 )paren
 suffix:semicolon
 r_static
+r_void
+id|xd_wakeup
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|xd_watchdog
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
 r_inline
 id|u_char
 id|xd_waitport
@@ -465,6 +491,14 @@ id|xd_dtc_init_controller
 r_int
 r_int
 id|address
+)paren
+suffix:semicolon
+r_static
+r_void
+id|xd_dtc5150cx_init_drive
+(paren
+id|u_char
+id|drive
 )paren
 suffix:semicolon
 r_static

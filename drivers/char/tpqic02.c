@@ -6043,15 +6043,10 @@ multiline_comment|/* read/write routines:&n; * This code copies between a kernel
 multiline_comment|/*&n; * Problem: tar(1) doesn&squot;t always read the entire file. Sometimes the entire file&n; * has been read, but the EOF token is never returned to tar(1), simply because&n; * tar(1) knows it has already read all of the data it needs. So we must use&n; * open/release to reset the `reported_read_eof&squot; flag. If we don&squot;t, the next read&n; * request would return the EOF flag for the previous file.&n; */
 DECL|function|qic02_tape_read
 r_static
-r_int
+id|ssize_t
 id|qic02_tape_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -6062,8 +6057,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -6072,7 +6070,7 @@ suffix:semicolon
 id|kdev_t
 id|dev
 op_assign
-id|inode-&gt;i_rdev
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 suffix:semicolon
 r_int
 r_int
@@ -6582,7 +6580,8 @@ id|buf
 op_add_assign
 id|bytes_done
 suffix:semicolon
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_add_assign
 id|bytes_done
 suffix:semicolon
@@ -6613,15 +6612,10 @@ multiline_comment|/* qic02_tape_read */
 multiline_comment|/* The drive detects near-EOT by means of the holes in the tape.&n; * When the holes are detected, there is some space left. The drive&n; * reports this as a TP_EOM exception. After clearing the exception,&n; * the drive should accept two extra blocks.&n; *&n; * It seems there are some archiver programs that would like to use the&n; * extra space for writing a continuation marker. The driver should return&n; * end-of-file to the user program on writes, when the holes are detected.&n; * If the user-program wants to use the extra space, it should use the&n; * MTNOP ioctl() to get the generic status register and may then continue&n; * writing (max 1kB).&t;----------- doesn&squot;t work yet...............&n; *&n; * EOF behaviour on writes:&n; * If there is enough room, write all of the data.&n; * If there is insufficient room, write as much as will fit and&n; * return the amount written. If the requested amount differs from the&n; * written amount, the application program should recognize that as the&n; * end of file. Subsequent writes will return -ENOSPC.&n; * Unless the minor bits specify a rewind-on-close, the tape will not&n; * be rewound when it is full. The user-program should do that, if desired.&n; * If the driver were to do that automatically, a user-program could be &n; * confused about the EOT/BOT condition after re-opening the tape device.&n; *&n; * Multiple volume support: Tar closes the tape device before prompting for&n; * the next tape. The user may then insert a new tape and tar will open the&n; * tape device again. The driver will detect an exception status in (No Cartridge)&n; * and force a rewind. After that tar may continue writing.&n; */
 DECL|function|qic02_tape_write
 r_static
-r_int
+id|ssize_t
 id|qic02_tape_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -6633,8 +6627,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -6643,7 +6640,7 @@ suffix:semicolon
 id|kdev_t
 id|dev
 op_assign
-id|inode-&gt;i_rdev
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 suffix:semicolon
 r_int
 r_int
@@ -7112,7 +7109,8 @@ id|buf
 op_add_assign
 id|bytes_done
 suffix:semicolon
-id|filp-&gt;f_pos
+op_star
+id|ppos
 op_add_assign
 id|bytes_done
 suffix:semicolon

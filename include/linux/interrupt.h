@@ -139,6 +139,9 @@ id|CYCLADES_BH
 comma
 DECL|enumerator|CM206_BH
 id|CM206_BH
+comma
+DECL|enumerator|JS_BH
+id|JS_BH
 )brace
 suffix:semicolon
 macro_line|#include &lt;asm/hardirq.h&gt;

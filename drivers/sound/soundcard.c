@@ -13,9 +13,19 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#endif /* __KERNEL__ */
+macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#include &lt;linux/delay.h&gt;
+DECL|macro|SOUND_CORE
+mdefine_line|#define SOUND_CORE
+macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#ifdef MODULE
+DECL|macro|modular
+mdefine_line|#define modular 1
+macro_line|#else
+DECL|macro|modular
+mdefine_line|#define modular 0
+macro_line|#endif
 DECL|variable|chrdev_registered
 r_static
 r_int
@@ -92,10 +102,11 @@ DECL|macro|DMA_MAP_FREE
 mdefine_line|#define DMA_MAP_FREE&t;&t;1
 DECL|macro|DMA_MAP_BUSY
 mdefine_line|#define DMA_MAP_BUSY&t;&t;2
+DECL|function|sound_read
 r_static
 id|ssize_t
-DECL|function|sound_read
 id|sound_read
+c_func
 (paren
 r_struct
 id|file
@@ -117,18 +128,12 @@ id|ppos
 r_int
 id|dev
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 id|files
@@ -141,10 +146,8 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 r_return
-(paren
-id|ssize_t
-)paren
 id|sound_read_sw
+c_func
 (paren
 id|dev
 comma
@@ -160,10 +163,11 @@ id|count
 )paren
 suffix:semicolon
 )brace
+DECL|function|sound_write
 r_static
 id|ssize_t
-DECL|function|sound_write
 id|sound_write
+c_func
 (paren
 r_struct
 id|file
@@ -186,18 +190,12 @@ id|ppos
 r_int
 id|dev
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 id|files
@@ -210,10 +208,8 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 r_return
-(paren
-id|ssize_t
-)paren
 id|sound_write_sw
+c_func
 (paren
 id|dev
 comma
@@ -229,11 +225,12 @@ id|count
 )paren
 suffix:semicolon
 )brace
+DECL|function|sound_lseek
 r_static
 r_int
 r_int
-DECL|function|sound_lseek
 id|sound_lseek
+c_func
 (paren
 r_struct
 id|file
@@ -250,13 +247,14 @@ id|orig
 (brace
 r_return
 op_minus
-id|EPERM
+id|ESPIPE
 suffix:semicolon
 )brace
+DECL|function|sound_open
 r_static
 r_int
-DECL|function|sound_open
 id|sound_open
+c_func
 (paren
 r_struct
 id|inode
@@ -284,11 +282,7 @@ c_cond
 id|is_unloading
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: Driver partially removed. Can&squot;t open device&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(KERN_ERR &quot;Sound: Driver partially removed. Can&squot;t open device&bslash;n&quot;);*/
 r_return
 op_minus
 id|EBUSY
@@ -297,6 +291,7 @@ suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
@@ -316,11 +311,7 @@ op_ne
 id|SND_DEV_STATUS
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;SoundCard Error: The soundcard system has not been configured&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;SoundCard Error: The soundcard system has not been configured&bslash;n&quot;);*/
 r_return
 op_minus
 id|ENXIO
@@ -386,6 +377,7 @@ c_cond
 id|retval
 op_assign
 id|sound_open_sw
+c_func
 (paren
 id|dev
 comma
@@ -400,10 +392,11 @@ r_return
 id|retval
 suffix:semicolon
 macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
+id|SOUND_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -432,10 +425,11 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|function|sound_release
 r_static
 r_int
-DECL|function|sound_release
 id|sound_release
+c_func
 (paren
 r_struct
 id|inode
@@ -454,6 +448,7 @@ suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
@@ -468,6 +463,7 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 id|sound_release_sw
+c_func
 (paren
 id|dev
 comma
@@ -479,17 +475,18 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
+id|SOUND_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sound_ioctl
 r_static
 r_int
-DECL|function|sound_ioctl
 id|sound_ioctl
+c_func
 (paren
 r_struct
 id|inode
@@ -538,6 +535,7 @@ suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
@@ -555,6 +553,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -562,6 +561,7 @@ op_ne
 id|_SIOC_NONE
 op_logical_and
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -569,10 +569,11 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;         * Have to validate the address given by the process.&n;       */
+multiline_comment|/*&n;&t;&t; * Have to validate the address given by the process.&n;&t;&t; */
 id|len
 op_assign
 id|_SIOC_SIZE
+c_func
 (paren
 id|cmd
 )paren
@@ -595,6 +596,7 @@ suffix:semicolon
 id|ptr
 op_assign
 id|vmalloc
+c_func
 (paren
 id|len
 )paren
@@ -618,6 +620,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -632,6 +635,7 @@ c_cond
 id|err
 op_assign
 id|verify_area
+c_func
 (paren
 id|VERIFY_READ
 comma
@@ -651,6 +655,7 @@ r_return
 id|err
 suffix:semicolon
 id|copy_from_user
+c_func
 (paren
 id|ptr
 comma
@@ -668,6 +673,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -682,6 +688,7 @@ c_cond
 id|err
 op_assign
 id|verify_area
+c_func
 (paren
 id|VERIFY_WRITE
 comma
@@ -705,6 +712,7 @@ suffix:semicolon
 id|err
 op_assign
 id|sound_ioctl_sw
+c_func
 (paren
 id|dev
 comma
@@ -726,14 +734,15 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
 op_amp
 id|_SIOC_READ
 )paren
-(brace
 id|copy_to_user
+c_func
 (paren
 (paren
 r_char
@@ -746,7 +755,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -757,6 +765,7 @@ op_logical_and
 id|alloced
 )paren
 id|vfree
+c_func
 (paren
 id|ptr
 )paren
@@ -776,10 +785,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|sound_select
 r_static
 r_int
-DECL|function|sound_select
 id|sound_select
+c_func
 (paren
 r_struct
 id|inode
@@ -805,6 +815,7 @@ suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
 id|inode-&gt;i_rdev
 )paren
@@ -819,8 +830,10 @@ op_assign
 id|file-&gt;f_flags
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_select(dev=%d, type=0x%x)&bslash;n&quot;
 comma
@@ -838,7 +851,7 @@ op_amp
 l_int|0x0f
 )paren
 (brace
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
 r_case
 id|SND_DEV_SEQ
 suffix:colon
@@ -847,6 +860,7 @@ id|SND_DEV_SEQ2
 suffix:colon
 r_return
 id|sequencer_select
+c_func
 (paren
 id|dev
 comma
@@ -864,12 +878,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 r_case
 id|SND_DEV_MIDIN
 suffix:colon
 r_return
 id|MIDIbuf_select
+c_func
 (paren
 id|dev
 comma
@@ -887,7 +902,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_AUDIO
+macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
 r_case
 id|SND_DEV_DSP
 suffix:colon
@@ -899,6 +914,7 @@ id|SND_DEV_AUDIO
 suffix:colon
 r_return
 id|DMAbuf_select
+c_func
 (paren
 id|dev
 op_rshift
@@ -928,11 +944,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sound_poll
 r_static
 r_int
 r_int
-DECL|function|sound_poll
 id|sound_poll
+c_func
 (paren
 r_struct
 id|file
@@ -962,6 +979,7 @@ r_if
 c_cond
 (paren
 id|sound_select
+c_func
 (paren
 id|inode
 comma
@@ -980,6 +998,7 @@ r_if
 c_cond
 (paren
 id|sound_select
+c_func
 (paren
 id|inode
 comma
@@ -998,10 +1017,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|sound_mmap
 r_static
 r_int
-DECL|function|sound_mmap
 id|sound_mmap
+c_func
 (paren
 r_struct
 id|file
@@ -1033,6 +1053,7 @@ suffix:semicolon
 id|dev
 op_assign
 id|MINOR
+c_func
 (paren
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
@@ -1072,11 +1093,7 @@ op_ne
 id|SND_DEV_AUDIO
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: mmap() not supported for other than audio devices&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: mmap() not supported for other than audio devices&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -1090,7 +1107,6 @@ op_amp
 id|VM_WRITE
 )paren
 multiline_comment|/* Map write and read/write to the output buf */
-(brace
 id|dmap
 op_assign
 id|audio_devs
@@ -1100,7 +1116,6 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1109,7 +1124,6 @@ id|vma-&gt;vm_flags
 op_amp
 id|VM_READ
 )paren
-(brace
 id|dmap
 op_assign
 id|audio_devs
@@ -1119,14 +1133,9 @@ id|dev
 op_member_access_from_pointer
 id|dmap_in
 suffix:semicolon
-)brace
 r_else
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: Undefined mmap() access&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: Undefined mmap() access&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -1140,11 +1149,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: mmap() error. dmap == NULL&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: mmap() error. dmap == NULL&bslash;n&quot;);*/
 r_return
 op_minus
 id|EIO
@@ -1158,11 +1163,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: mmap() called when raw_buf == NULL&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: mmap() called when raw_buf == NULL&bslash;n&quot;);*/
 r_return
 op_minus
 id|EIO
@@ -1174,11 +1175,7 @@ c_cond
 id|dmap-&gt;mapping_flags
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: mmap() called twice for the same DMA buffer&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: mmap() called twice for the same DMA buffer&bslash;n&quot;);*/
 r_return
 op_minus
 id|EIO
@@ -1192,11 +1189,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;Sound: mmap() offset must be 0.&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;Sound: mmap() offset must be 0.&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -1217,7 +1210,9 @@ id|dmap-&gt;bytes_in_use
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: mmap() size = %ld. Should be %d&bslash;n&quot;
 comma
 id|size
@@ -1230,10 +1225,12 @@ r_if
 c_cond
 (paren
 id|remap_page_range
+c_func
 (paren
 id|vma-&gt;vm_start
 comma
 id|virt_to_phys
+c_func
 (paren
 id|dmap-&gt;raw_buf
 )paren
@@ -1262,6 +1259,7 @@ op_or_assign
 id|DMA_MAP_MAPPED
 suffix:semicolon
 id|memset
+c_func
 (paren
 id|dmap-&gt;raw_buf
 comma
@@ -1309,12 +1307,14 @@ r_void
 macro_line|#endif
 DECL|function|soundcard_init
 id|soundcard_init
+c_func
 (paren
 r_void
 )paren
 (brace
 macro_line|#ifndef MODULE
 id|register_chrdev
+c_func
 (paren
 id|sound_major
 comma
@@ -1334,14 +1334,17 @@ op_assign
 l_int|1
 suffix:semicolon
 id|sndtable_init
+c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize call tables and detect cards */
+macro_line|#ifdef FIXME
 r_if
 c_cond
 (paren
 id|sndtable_get_cardcount
+c_func
 (paren
 )paren
 op_eq
@@ -1350,15 +1353,19 @@ l_int|0
 r_return
 suffix:semicolon
 multiline_comment|/* No cards detected */
-macro_line|#ifdef CONFIG_AUDIO
+macro_line|#endif
+macro_line|#if defined(CONFIG_AUDIO)
 r_if
 c_cond
 (paren
 id|num_audiodevs
+op_logical_or
+id|modular
 )paren
 multiline_comment|/* Audio devices present */
 (brace
 id|audio_init_devices
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1378,6 +1385,7 @@ r_static
 r_void
 DECL|function|free_all_irqs
 id|free_all_irqs
+c_func
 (paren
 r_void
 )paren
@@ -1399,6 +1407,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1412,17 +1421,21 @@ id|i
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound warning: IRQ%d was left allocated - fixed.&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
 id|snd_release_irq
+c_func
 (paren
 id|i
 )paren
 suffix:semicolon
+)brace
 )brace
 id|irqs
 op_assign
@@ -1458,9 +1471,10 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
+c_func
 (paren
 r_void
 )paren
@@ -1477,25 +1491,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-OL
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Sound: Incompatible kernel (wrapper) version&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-multiline_comment|/*&n;     * &quot;sound=&quot; command line handling by Harald Milz.&n;   */
+multiline_comment|/*&n;&t; * &quot;sound=&quot; command line handling by Harald Milz.&n;&t; */
 id|i
 op_assign
 l_int|0
@@ -1538,6 +1534,7 @@ c_cond
 id|i
 )paren
 id|sound_setup
+c_func
 (paren
 l_string|&quot;sound=&quot;
 comma
@@ -1547,6 +1544,7 @@ suffix:semicolon
 id|err
 op_assign
 id|register_chrdev
+c_func
 (paren
 id|sound_major
 comma
@@ -1563,7 +1561,9 @@ id|err
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound: driver already loaded/included in kernel&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1576,6 +1576,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|soundcard_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1587,7 +1588,9 @@ op_ge
 l_int|1024
 )paren
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound warning: Deallocation table was too small.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1596,9 +1599,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
+c_func
 (paren
 r_void
 )paren
@@ -1621,14 +1625,16 @@ c_cond
 id|chrdev_registered
 )paren
 id|unregister_chrdev
+c_func
 (paren
 id|sound_major
 comma
 l_string|&quot;sound&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
 id|sound_stop_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1638,21 +1644,25 @@ macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
 r_extern
 r_void
 id|sound_unload_lowlevel_drivers
+c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 id|sound_unload_lowlevel_drivers
+c_func
 (paren
 )paren
 suffix:semicolon
 )brace
 macro_line|#endif
 id|sound_unload_drivers
+c_func
 (paren
 )paren
 suffix:semicolon
 id|free_all_irqs
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1671,6 +1681,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1683,17 +1694,21 @@ id|DMA_MAP_UNAVAIL
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: Hmm, DMA%d was left allocated - fixed&bslash;n&quot;
 comma
 id|i
 )paren
 suffix:semicolon
 id|sound_free_dma
+c_func
 (paren
 id|i
 )paren
 suffix:semicolon
+)brace
 )brace
 r_for
 c_loop
@@ -1711,6 +1726,7 @@ op_increment
 )paren
 (brace
 id|vfree
+c_func
 (paren
 id|sound_mem_blocks
 (braket
@@ -1721,9 +1737,10 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-r_void
 DECL|function|tenmicrosec
+r_void
 id|tenmicrosec
+c_func
 (paren
 r_int
 op_star
@@ -1731,14 +1748,16 @@ id|osp
 )paren
 (brace
 id|udelay
+c_func
 (paren
 l_int|10
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|snd_set_irq_handler
+r_int
 id|snd_set_irq_handler
+c_func
 (paren
 r_int
 id|interrupt_level
@@ -1776,17 +1795,20 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|retcode
 op_assign
 id|request_irq
+c_func
 (paren
 id|interrupt_level
 comma
@@ -1808,7 +1830,9 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: IRQ%d already in use&bslash;n&quot;
 comma
 id|interrupt_level
@@ -1825,6 +1849,7 @@ id|interrupt_level
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1833,9 +1858,10 @@ r_return
 id|retcode
 suffix:semicolon
 )brace
-r_void
 DECL|function|snd_release_irq
+r_void
 id|snd_release_irq
+c_func
 (paren
 r_int
 id|vect
@@ -1867,6 +1893,7 @@ id|vect
 )paren
 suffix:semicolon
 id|free_irq
+c_func
 (paren
 id|vect
 comma
@@ -1874,9 +1901,10 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_dma
+r_int
 id|sound_alloc_dma
+c_func
 (paren
 r_int
 id|chn
@@ -1896,6 +1924,7 @@ c_cond
 id|err
 op_assign
 id|request_dma
+c_func
 (paren
 id|chn
 comma
@@ -1919,9 +1948,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_open_dma
+r_int
 id|sound_open_dma
+c_func
 (paren
 r_int
 id|chn
@@ -1948,7 +1978,9 @@ l_int|4
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound_open_dma: Invalid DMA channel %d&bslash;n&quot;
 comma
 id|chn
@@ -1959,11 +1991,13 @@ l_int|1
 suffix:semicolon
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1979,6 +2013,7 @@ id|DMA_MAP_FREE
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;sound_open_dma: DMA channel %d busy or not allocated (%d)&bslash;n&quot;
 comma
@@ -1991,6 +2026,7 @@ id|chn
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2007,6 +2043,7 @@ op_assign
 id|DMA_MAP_BUSY
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2015,9 +2052,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_free_dma
+r_void
 id|sound_free_dma
+c_func
 (paren
 r_int
 id|chn
@@ -2039,6 +2077,7 @@ r_return
 suffix:semicolon
 )brace
 id|free_dma
+c_func
 (paren
 id|chn
 )paren
@@ -2051,9 +2090,10 @@ op_assign
 id|DMA_MAP_UNAVAIL
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_close_dma
+r_void
 id|sound_close_dma
+c_func
 (paren
 r_int
 id|chn
@@ -2064,11 +2104,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -2084,13 +2126,16 @@ id|DMA_MAP_BUSY
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound_close_dma: Bad access to DMA channel %d&bslash;n&quot;
 comma
 id|chn
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2106,16 +2151,18 @@ op_assign
 id|DMA_MAP_FREE
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
+DECL|function|do_sequencer_timer
 r_static
 r_void
-DECL|function|do_sequencer_timer
 id|do_sequencer_timer
+c_func
 (paren
 r_int
 r_int
@@ -2123,6 +2170,7 @@ id|dummy
 )paren
 (brace
 id|sequencer_timer
+c_func
 (paren
 l_int|0
 )paren
@@ -2146,9 +2194,10 @@ comma
 id|do_sequencer_timer
 )brace
 suffix:semicolon
-r_void
 DECL|function|request_sound_timer
+r_void
 id|request_sound_timer
+c_func
 (paren
 r_int
 id|count
@@ -2167,7 +2216,6 @@ OL
 l_int|0
 )paren
 (brace
-(brace
 id|seq_timer.expires
 op_assign
 (paren
@@ -2178,12 +2226,11 @@ op_plus
 id|jiffies
 suffix:semicolon
 id|add_timer
+c_func
 (paren
 op_amp
 id|seq_timer
 )paren
-suffix:semicolon
-)brace
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2207,7 +2254,6 @@ id|count
 op_assign
 l_int|1
 suffix:semicolon
-(brace
 id|seq_timer.expires
 op_assign
 (paren
@@ -2217,22 +2263,23 @@ op_plus
 id|jiffies
 suffix:semicolon
 id|add_timer
+c_func
 (paren
 op_amp
 id|seq_timer
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-)brace
-r_void
 DECL|function|sound_stop_timer
+r_void
 id|sound_stop_timer
+c_func
 (paren
 r_void
 )paren
 (brace
 id|del_timer
+c_func
 (paren
 op_amp
 id|seq_timer
@@ -2252,6 +2299,7 @@ suffix:semicolon
 r_int
 DECL|function|sound_alloc_dmap
 id|sound_alloc_dmap
+c_func
 (paren
 r_int
 id|dev
@@ -2409,6 +2457,7 @@ r_char
 op_star
 )paren
 id|__get_free_pages
+c_func
 (paren
 id|GFP_ATOMIC
 comma
@@ -2434,7 +2483,9 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound error: Couldn&squot;t allocate DMA buffer&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2460,7 +2511,9 @@ c_cond
 id|debugmem
 )paren
 id|printk
+c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sound: start 0x%lx, end 0x%lx&bslash;n&quot;
 comma
 (paren
@@ -2518,7 +2571,9 @@ id|MAX_DMA_ADDRESS
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound: Got invalid address 0x%lx for %db DMA-buffer&bslash;n&quot;
 comma
 (paren
@@ -2542,6 +2597,7 @@ suffix:semicolon
 id|dmap-&gt;raw_buf_phys
 op_assign
 id|virt_to_bus
+c_func
 (paren
 id|start_addr
 )paren
@@ -2552,6 +2608,7 @@ c_loop
 id|i
 op_assign
 id|MAP_NR
+c_func
 (paren
 id|start_addr
 )paren
@@ -2559,6 +2616,7 @@ suffix:semicolon
 id|i
 op_le
 id|MAP_NR
+c_func
 (paren
 id|end_addr
 )paren
@@ -2568,6 +2626,7 @@ op_increment
 )paren
 (brace
 id|set_bit
+c_func
 (paren
 id|PG_reserved
 comma
@@ -2586,9 +2645,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_free_dmap
+r_void
 id|sound_free_dmap
+c_func
 (paren
 r_int
 id|dev
@@ -2677,6 +2737,7 @@ c_loop
 id|i
 op_assign
 id|MAP_NR
+c_func
 (paren
 id|start_addr
 )paren
@@ -2684,6 +2745,7 @@ suffix:semicolon
 id|i
 op_le
 id|MAP_NR
+c_func
 (paren
 id|end_addr
 )paren
@@ -2693,6 +2755,7 @@ op_increment
 )paren
 (brace
 id|clear_bit
+c_func
 (paren
 id|PG_reserved
 comma
@@ -2708,6 +2771,7 @@ suffix:semicolon
 suffix:semicolon
 )brace
 id|free_pages
+c_func
 (paren
 (paren
 r_int
@@ -2724,9 +2788,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Intel version !!!!!!!!! */
-r_int
 DECL|function|sound_start_dma
+r_int
 id|sound_start_dma
+c_func
 (paren
 r_int
 id|dev
@@ -2768,25 +2833,30 @@ op_or_assign
 id|DMA_AUTOINIT
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|disable_dma
+c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|clear_dma_ff
+c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|set_dma_mode
+c_func
 (paren
 id|chan
 comma
@@ -2794,6 +2864,7 @@ id|dma_mode
 )paren
 suffix:semicolon
 id|set_dma_addr
+c_func
 (paren
 id|chan
 comma
@@ -2801,6 +2872,7 @@ id|physaddr
 )paren
 suffix:semicolon
 id|set_dma_count
+c_func
 (paren
 id|chan
 comma
@@ -2808,11 +2880,13 @@ id|count
 )paren
 suffix:semicolon
 id|enable_dma
+c_func
 (paren
 id|chan
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2822,9 +2896,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-r_void
 DECL|function|conf_printf
+r_void
 id|conf_printf
+c_func
 (paren
 r_char
 op_star
@@ -2845,6 +2920,7 @@ id|trace_init
 r_return
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;&lt;%s&gt; at 0x%03x&quot;
 comma
@@ -2859,6 +2935,7 @@ c_cond
 id|hw_config-&gt;irq
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; irq %d&quot;
 comma
@@ -2890,6 +2967,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot; dma %d&quot;
 comma
@@ -2905,6 +2983,7 @@ op_minus
 l_int|1
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;,%d&quot;
 comma
@@ -2913,14 +2992,16 @@ id|hw_config-&gt;dma2
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|conf_printf2
+r_void
 id|conf_printf2
+c_func
 (paren
 r_char
 op_star
@@ -2948,6 +3029,7 @@ id|trace_init
 r_return
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;&lt;%s&gt; at 0x%03x&quot;
 comma
@@ -2962,6 +3044,7 @@ c_cond
 id|irq
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot; irq %d&quot;
 comma
@@ -2993,6 +3076,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot; dma %d&quot;
 comma
@@ -3008,6 +3092,7 @@ op_minus
 l_int|1
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;,%d&quot;
 comma
@@ -3016,6 +3101,7 @@ id|dma2
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren

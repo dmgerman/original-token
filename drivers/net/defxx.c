@@ -6928,13 +6928,12 @@ id|bp-&gt;xmt_length_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* bump error counter */
-id|dev_tint
+id|mark_bh
 c_func
 (paren
-id|dev
+id|NET_BH
 )paren
 suffix:semicolon
-multiline_comment|/* dequeue packets from xmt queue and send them */
 id|dev_kfree_skb
 c_func
 (paren

@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -164,6 +165,28 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|csum_partial_copy
+)paren
+suffix:semicolon
+multiline_comment|/* Delay loops */
+DECL|variable|__udelay
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__udelay
+)paren
+suffix:semicolon
+DECL|variable|__delay
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__delay
+)paren
+suffix:semicolon
+DECL|variable|__const_udelay
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__const_udelay
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__

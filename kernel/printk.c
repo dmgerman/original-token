@@ -330,7 +330,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|c
@@ -496,7 +496,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|c

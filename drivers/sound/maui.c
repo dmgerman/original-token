@@ -1,12 +1,15 @@
 multiline_comment|/*&n; * sound/maui.c&n; *&n; * The low level driver for Turtle Beach Maui and Tropez.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_MAUI
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#include &quot;sound_firmware.h&quot;
+macro_line|#if defined(CONFIG_MAUI) || defined(MODULE)
 DECL|variable|maui_base
 r_static
 r_int
@@ -121,6 +124,7 @@ r_static
 r_int
 DECL|function|maui_wait
 id|maui_wait
+c_func
 (paren
 r_int
 id|mask
@@ -149,6 +153,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|HOST_STAT_PORT
 )paren
@@ -181,6 +186,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|HOST_STAT_PORT
 )paren
@@ -231,6 +237,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|maui_sleeper
@@ -290,6 +297,7 @@ r_static
 r_int
 DECL|function|maui_read
 id|maui_read
+c_func
 (paren
 r_void
 )paren
@@ -298,12 +306,14 @@ r_if
 c_cond
 (paren
 id|maui_wait
+c_func
 (paren
 id|STAT_RX_AVAIL
 )paren
 )paren
 r_return
 id|inb
+c_func
 (paren
 id|HOST_DATA_PORT
 )paren
@@ -317,6 +327,7 @@ r_static
 r_int
 DECL|function|maui_write
 id|maui_write
+c_func
 (paren
 r_int
 r_char
@@ -327,12 +338,14 @@ r_if
 c_cond
 (paren
 id|maui_wait
+c_func
 (paren
 id|STAT_TX_AVAIL
 )paren
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|data
@@ -346,6 +359,7 @@ l_int|1
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;Maui: Write timeout&bslash;n&quot;
 )paren
@@ -358,6 +372,7 @@ r_static
 r_void
 DECL|function|mauiintr
 id|mauiintr
+c_func
 (paren
 r_int
 id|irq
@@ -381,6 +396,7 @@ r_static
 r_int
 DECL|function|download_code
 id|download_code
+c_func
 (paren
 r_void
 )paren
@@ -407,6 +423,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;Code download (%d bytes): &quot;
 comma
@@ -522,6 +539,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_int|0xF1
 )paren
@@ -534,6 +552,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_char|&squot;S&squot;
 )paren
@@ -549,6 +568,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 id|maui_os
 (braket
@@ -596,6 +616,7 @@ r_if
 c_cond
 (paren
 id|maui_wait
+c_func
 (paren
 id|STAT_RX_AVAIL
 )paren
@@ -604,6 +625,7 @@ id|STAT_RX_AVAIL
 id|c
 op_assign
 id|inb
+c_func
 (paren
 id|HOST_DATA_PORT
 )paren
@@ -620,6 +642,7 @@ l_int|0x80
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Download not acknowledged&bslash;n&quot;
 )paren
@@ -641,6 +664,7 @@ l_int|10
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;.&quot;
 )paren
@@ -652,6 +676,7 @@ id|done
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nDownload complete&bslash;n&quot;
 )paren
@@ -666,6 +691,7 @@ suffix:semicolon
 id|failure
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nDownload failed!!!&bslash;n&quot;
 )paren
@@ -678,6 +704,7 @@ r_static
 r_int
 DECL|function|maui_init
 id|maui_init
+c_func
 (paren
 r_int
 id|irq
@@ -735,6 +762,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Maui: Invalid IRQ %d&bslash;n&quot;
 comma
@@ -746,6 +774,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
@@ -756,6 +785,7 @@ id|HOST_CTRL_PORT
 suffix:semicolon
 multiline_comment|/* Reset */
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -766,6 +796,7 @@ id|HOST_DATA_PORT
 suffix:semicolon
 multiline_comment|/* Set the IRQ bits */
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -778,6 +809,7 @@ id|HOST_DATA_PORT
 suffix:semicolon
 multiline_comment|/* Set the IRQ bits again? */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -788,6 +820,7 @@ id|HOST_CTRL_PORT
 suffix:semicolon
 multiline_comment|/* Leave reset */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -798,6 +831,7 @@ id|HOST_CTRL_PORT
 suffix:semicolon
 multiline_comment|/* Leave reset */
 id|outb
+c_func
 (paren
 (paren
 l_int|0xD0
@@ -835,6 +869,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -845,6 +880,7 @@ id|HOST_CTRL_PORT
 suffix:semicolon
 multiline_comment|/* Leave reset */
 id|printk
+c_func
 (paren
 l_string|&quot;Turtle Beach Maui initialization&bslash;n&quot;
 )paren
@@ -854,6 +890,7 @@ c_cond
 (paren
 op_logical_neg
 id|download_code
+c_func
 (paren
 )paren
 )paren
@@ -861,6 +898,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE0
@@ -872,11 +910,13 @@ suffix:semicolon
 multiline_comment|/* Normal operation */
 multiline_comment|/* Select mpu401 mode */
 id|maui_write
+c_func
 (paren
 l_int|0xf0
 )paren
 suffix:semicolon
 id|maui_write
+c_func
 (paren
 l_int|1
 )paren
@@ -885,6 +925,7 @@ r_if
 c_cond
 (paren
 id|maui_read
+c_func
 (paren
 )paren
 op_ne
@@ -892,11 +933,13 @@ l_int|0x80
 )paren
 (brace
 id|maui_write
+c_func
 (paren
 l_int|0xf0
 )paren
 suffix:semicolon
 id|maui_write
+c_func
 (paren
 l_int|1
 )paren
@@ -905,18 +948,21 @@ r_if
 c_cond
 (paren
 id|maui_read
+c_func
 (paren
 )paren
 op_ne
 l_int|0x80
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;Maui didn&squot;t acknowledge set HW mode command&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;Maui initialized OK&bslash;n&quot;
 )paren
@@ -929,6 +975,7 @@ r_static
 r_int
 DECL|function|maui_short_wait
 id|maui_short_wait
+c_func
 (paren
 r_int
 id|mask
@@ -956,6 +1003,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|HOST_STAT_PORT
 )paren
@@ -976,6 +1024,7 @@ r_static
 r_int
 DECL|function|maui_load_patch
 id|maui_load_patch
+c_func
 (paren
 r_int
 id|dev
@@ -1041,6 +1090,7 @@ id|SYSEX_PATCH
 multiline_comment|/* Handled by midi_synth.c */
 r_return
 id|orig_load_patch
+c_func
 (paren
 id|dev
 comma
@@ -1064,6 +1114,7 @@ id|MAUI_PATCH
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Maui: Unknown patch format&bslash;n&quot;
 )paren
@@ -1078,6 +1129,7 @@ id|hdr_size
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Maui error: Patch header too short&bslash;n&quot;
 )paren
@@ -1091,8 +1143,9 @@ id|count
 op_sub_assign
 id|hdr_size
 suffix:semicolon
-multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
+multiline_comment|/*&n;&t; * Copy the header from user space but ignore the first bytes which have&n;&t; * been transferred already.&n;&t; */
 id|copy_from_user
+c_func
 (paren
 op_amp
 (paren
@@ -1129,6 +1182,7 @@ id|header.len
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Maui warning: Host command record too short (%d&lt;%d)&bslash;n&quot;
 comma
@@ -1173,6 +1227,7 @@ r_char
 id|data
 suffix:semicolon
 id|get_user
+c_func
 (paren
 op_star
 (paren
@@ -1223,6 +1278,7 @@ r_if
 c_cond
 (paren
 id|maui_write
+c_func
 (paren
 id|data
 )paren
@@ -1242,6 +1298,7 @@ c_cond
 id|i
 op_assign
 id|maui_read
+c_func
 (paren
 )paren
 )paren
@@ -1258,6 +1315,7 @@ op_minus
 l_int|1
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;Maui: Error status %02x&bslash;n&quot;
 comma
@@ -1276,6 +1334,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_maui
 id|probe_maui
+c_func
 (paren
 r_struct
 id|address_info
@@ -1297,6 +1356,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -1318,6 +1378,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|hw_config-&gt;irq
 comma
@@ -1352,6 +1413,7 @@ c_cond
 op_logical_neg
 (paren
 id|inb
+c_func
 (paren
 id|HOST_STAT_PORT
 )paren
@@ -1361,6 +1423,7 @@ id|STAT_TX_AVAIL
 op_logical_or
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_int|0x9F
 )paren
@@ -1368,11 +1431,13 @@ op_logical_or
 multiline_comment|/* Report firmware version */
 op_logical_neg
 id|maui_short_wait
+c_func
 (paren
 id|STAT_RX_AVAIL
 )paren
 op_logical_or
 id|maui_read
+c_func
 (paren
 )paren
 op_eq
@@ -1380,6 +1445,7 @@ op_minus
 l_int|1
 op_logical_or
 id|maui_read
+c_func
 (paren
 )paren
 op_eq
@@ -1391,12 +1457,14 @@ c_cond
 (paren
 op_logical_neg
 id|maui_init
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
 )paren
 (brace
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
@@ -1411,6 +1479,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_int|0xCF
 )paren
@@ -1418,11 +1487,13 @@ l_int|0xCF
 multiline_comment|/* Report hardware version */
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
@@ -1438,6 +1509,7 @@ c_cond
 id|tmp1
 op_assign
 id|maui_read
+c_func
 (paren
 )paren
 )paren
@@ -1449,6 +1521,7 @@ op_logical_or
 id|tmp2
 op_assign
 id|maui_read
+c_func
 (paren
 )paren
 )paren
@@ -1458,11 +1531,13 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;No WaveFront firmware detected (card uninitialized?)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
@@ -1484,6 +1559,7 @@ l_int|0xff
 )paren
 (brace
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
@@ -1498,6 +1574,7 @@ c_cond
 id|trace_init
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;WaveFront hardware version %d.%d&bslash;n&quot;
 comma
@@ -1511,6 +1588,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_int|0x9F
 )paren
@@ -1526,6 +1604,7 @@ c_cond
 id|tmp1
 op_assign
 id|maui_read
+c_func
 (paren
 )paren
 )paren
@@ -1537,6 +1616,7 @@ op_logical_or
 id|tmp2
 op_assign
 id|maui_read
+c_func
 (paren
 )paren
 )paren
@@ -1553,6 +1633,7 @@ c_cond
 id|trace_init
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;WaveFront firmware version %d.%d&bslash;n&quot;
 comma
@@ -1566,6 +1647,7 @@ c_cond
 (paren
 op_logical_neg
 id|maui_write
+c_func
 (paren
 l_int|0x85
 )paren
@@ -1596,6 +1678,7 @@ op_increment
 id|tmp1
 op_or_assign
 id|maui_read
+c_func
 (paren
 )paren
 op_lshift
@@ -1612,6 +1695,7 @@ c_cond
 id|trace_init
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;Available DRAM %dk&bslash;n&quot;
 comma
@@ -1638,6 +1722,7 @@ r_if
 c_cond
 (paren
 id|probe_mpu401
+c_func
 (paren
 id|hw_config
 )paren
@@ -1647,6 +1732,7 @@ suffix:semicolon
 id|ret
 op_assign
 id|probe_mpu401
+c_func
 (paren
 id|hw_config
 )paren
@@ -1657,6 +1743,7 @@ c_cond
 id|ret
 )paren
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -1674,6 +1761,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_maui
 id|attach_maui
+c_func
 (paren
 r_struct
 id|address_info
@@ -1683,10 +1771,9 @@ id|hw_config
 (brace
 r_int
 id|this_dev
-op_assign
-id|num_midis
 suffix:semicolon
 id|conf_printf
+c_func
 (paren
 l_string|&quot;Maui&quot;
 comma
@@ -1703,6 +1790,7 @@ op_assign
 l_string|&quot;Maui&quot;
 suffix:semicolon
 id|attach_mpu401
+c_func
 (paren
 id|hw_config
 )paren
@@ -1710,9 +1798,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_midis
-OG
-id|this_dev
+id|hw_config-&gt;slots
+(braket
+l_int|1
+)braket
+op_ne
+op_minus
+l_int|1
 )paren
 multiline_comment|/* The MPU401 driver installed itself */
 (brace
@@ -1721,7 +1813,14 @@ id|synth_operations
 op_star
 id|synth
 suffix:semicolon
-multiline_comment|/*&n;       * Intercept patch loading calls so that they can be handled&n;       * by the Maui driver.&n;       */
+id|this_dev
+op_assign
+id|hw_config-&gt;slots
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;   * Intercept patch loading calls so that they can be handled&n;&t;&t;   * by the Maui driver.&n;&t;&t;   */
 id|synth
 op_assign
 id|midi_devs
@@ -1755,7 +1854,9 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Maui: Can&squot;t install patch loader&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1764,6 +1865,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_maui
 id|unload_maui
+c_func
 (paren
 r_struct
 id|address_info
@@ -1777,6 +1879,7 @@ op_assign
 id|hw_config-&gt;irq
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -1786,6 +1889,7 @@ l_int|6
 )paren
 suffix:semicolon
 id|unload_mpu401
+c_func
 (paren
 id|hw_config
 )paren
@@ -1810,10 +1914,176 @@ OG
 l_int|0
 )paren
 id|snd_release_irq
+c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|fw_load
+r_static
+r_int
+id|fw_load
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|cfg
+r_struct
+id|address_info
+id|cfg
+suffix:semicolon
+multiline_comment|/*&n; *    Install a CS4232 based card. Need to have ad1848 and mpu401&n; *      loaded ready.&n; */
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Turtle beach Maui and Tropez driver, Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;maui: irq and io must be set.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|maui_os
+op_eq
+l_int|NULL
+)paren
+(brace
+id|fw_load
+op_assign
+l_int|1
+suffix:semicolon
+id|maui_osLen
+op_assign
+id|mod_firmware_load
+c_func
+(paren
+l_string|&quot;/etc/sound/oswf.mot&quot;
+comma
+(paren
+r_char
+op_star
+op_star
+)paren
+op_amp
+id|maui_os
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|probe_maui
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|attach_maui
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fw_load
+op_logical_and
+id|maui_os
+)paren
+id|kfree
+c_func
+(paren
+id|maui_os
+)paren
+suffix:semicolon
+id|unload_maui
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

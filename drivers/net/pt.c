@@ -2182,7 +2182,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;PT: 0.41 ALPHA 07 October 1995 Craig Small (vk2xlz@vk2xlz.ampr.org)&bslash;n&quot;
+l_string|&quot;PT: 0.41 ALPHA 07 October 1995 Craig Small (csmall@small.dropbear.id.au)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -3915,30 +3915,6 @@ multiline_comment|/* New style flags */
 id|dev-&gt;flags
 op_assign
 l_int|0
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
 suffix:semicolon
 r_return
 l_int|0

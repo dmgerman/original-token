@@ -119,6 +119,8 @@ DECL|macro|APBLOCK_MAJOR
 mdefine_line|#define APBLOCK_MAJOR   38   /* AP1000 Block device */
 DECL|macro|DDV_MAJOR
 mdefine_line|#define DDV_MAJOR       39   /* AP1000 DDV block device */
+DECL|macro|NBD_MAJOR
+mdefine_line|#define NBD_MAJOR&t;43   /* Network block device&t;*/
 DECL|macro|RISCOM8_NORMAL_MAJOR
 mdefine_line|#define RISCOM8_NORMAL_MAJOR 48
 DECL|macro|RISCOM8_CALLOUT_MAJOR

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux driver for the PC110 pad&n; *&n; *&t;The pad provides triples of data. The first byte has&n; *&t;0x80=bit 8 X, 0x01=bit 7 X, 0x08=bit 8 Y, 0x01=still down&n; *&t;The second byte is bits 0-6 X&n; *&t;The third is bits 0-6 Y&n; *&n; *&t;This is read internally and used to synthesize a stream of&n; *&t;triples in the form expected from a PS/2 device.&n; *&n; *&t;0.0 1997-05-16 Alan Cox &lt;alan@cymru.net&gt; - Pad reader&n; *&t;0.1 1997-05-19 Robin O&squot;Leary &lt;robin@acm.org&gt; - PS/2 emulation&n; *&t;0.2 1997-06-03 Robin O&squot;Leary &lt;robin@acm.org&gt; - tap gesture&n; *&t;0.3 1997-06-27 Alan Cox &lt;alan@cymru.net&gt; - 2.1 commit&n; */
+multiline_comment|/*&n; *&t;Linux driver for the PC110 pad&n; *&n; *&t;The pad provides triples of data. The first byte has&n; *&t;0x80=bit 8 X, 0x01=bit 7 X, 0x08=bit 8 Y, 0x01=still down&n; *&t;The second byte is bits 0-6 X&n; *&t;The third is bits 0-6 Y&n; *&n; *&t;This is read internally and used to synthesize a stream of&n; *&t;triples in the form expected from a PS/2 device.&n; *&n; *&t;0.0 1997-05-16 Alan Cox &lt;alan@cymru.net&gt; - Pad reader&n; *&t;0.1 1997-05-19 Robin O&squot;Leary &lt;robin@acm.org&gt; - PS/2 emulation&n; *&t;0.2 1997-06-03 Robin O&squot;Leary &lt;robin@acm.org&gt; - tap gesture&n; *&t;0.3 1997-06-27 Alan Cox &lt;alan@cymru.net&gt; - 2.1 commit&n; *&t;0.4 1997-11-09 Alan Cox &lt;alan@cymru.net&gt; - Single Unix VFS API changes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1617,15 +1617,10 @@ suffix:semicolon
 multiline_comment|/*&n; * writes are disallowed&n; */
 DECL|function|write_pad
 r_static
-r_int
+id|ssize_t
 id|write_pad
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1637,8 +1632,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_return
@@ -1713,15 +1711,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Read pad data.  Currently never blocks.&n; */
 DECL|function|read_pad
 r_static
-r_int
+id|ssize_t
 id|read_pad
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1732,8 +1725,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int

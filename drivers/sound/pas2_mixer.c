@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/pas2_mixer.c&n; *&n; * Mixer routines for the Pr
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_PAS
+macro_line|#if defined(CONFIG_PAS) || defined(MODULE)
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(what)&t;&t;/* (what) */
@@ -100,6 +100,7 @@ suffix:semicolon
 r_void
 DECL|function|mix_write
 id|mix_write
+c_func
 (paren
 r_int
 r_char
@@ -109,7 +110,7 @@ r_int
 id|ioaddr
 )paren
 (brace
-multiline_comment|/*&n;   * The Revision D cards have a problem with their MVA508 interface. The&n;   * kludge-o-rama fix is to make a 16-bit quantity with identical LSB and&n;   * MSBs out of the output byte and to do a 16-bit out to the mixer port -&n;   * 1. We need to do this because it isn&squot;t timing problem but chip access&n;   * sequence problem.&n;   */
+multiline_comment|/*&n;&t; * The Revision D cards have a problem with their MVA508 interface. The&n;&t; * kludge-o-rama fix is to make a 16-bit quantity with identical LSB and&n;&t; * MSBs out of the output byte and to do a 16-bit out to the mixer port -&n;&t; * 1. We need to do this because it isn&squot;t timing problem but chip access&n;&t; * sequence problem.&n;&t; */
 r_if
 c_cond
 (paren
@@ -119,6 +120,7 @@ l_int|4
 )paren
 (brace
 id|outw
+c_func
 (paren
 id|data
 op_or
@@ -138,6 +140,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -149,6 +152,7 @@ suffix:semicolon
 )brace
 r_else
 id|pas_write
+c_func
 (paren
 id|data
 comma
@@ -160,6 +164,7 @@ r_static
 r_int
 DECL|function|mixer_output
 id|mixer_output
+c_func
 (paren
 r_int
 id|right_vol
@@ -226,6 +231,7 @@ l_int|0x04
 )paren
 (brace
 id|mix_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -235,6 +241,7 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 id|left
 comma
@@ -249,6 +256,7 @@ suffix:semicolon
 r_else
 (brace
 id|mix_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -260,6 +268,7 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 id|left
 comma
@@ -267,6 +276,7 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -278,6 +288,7 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 id|right
 comma
@@ -301,12 +312,14 @@ r_static
 r_void
 DECL|function|set_mode
 id|set_mode
+c_func
 (paren
 r_int
 id|new_mode
 )paren
 (brace
 id|mix_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -316,6 +329,7 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 id|new_mode
 comma
@@ -331,6 +345,7 @@ r_static
 r_int
 DECL|function|pas_mixer_set
 id|pas_mixer_set
+c_func
 (paren
 r_int
 id|whichDev
@@ -356,8 +371,10 @@ op_assign
 l_int|0
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;static int pas_mixer_set(int whichDev = %d, unsigned int level = %X)&bslash;n&quot;
 comma
@@ -426,6 +443,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -440,7 +458,7 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/*&n;       * Note! Bass and Treble are mono devices. Will use just the left&n;       * channel.&n;       */
+multiline_comment|/*&n;&t;&t;   * Note! Bass and Treble are mono devices. Will use just the left&n;&t;&t;   * channel.&n;&t;&t;   */
 r_case
 id|SOUND_MIXER_BASS
 suffix:colon
@@ -451,6 +469,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -475,6 +494,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -499,6 +519,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -525,6 +546,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -551,6 +573,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -577,6 +600,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -603,6 +627,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -629,6 +654,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -655,6 +681,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -681,6 +708,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -707,6 +735,7 @@ id|whichDev
 )braket
 op_assign
 id|mixer_output
+c_func
 (paren
 id|right
 comma
@@ -767,6 +796,7 @@ id|i
 )paren
 (brace
 id|pas_mixer_set
+c_func
 (paren
 id|i
 comma
@@ -803,6 +833,7 @@ r_static
 r_void
 DECL|function|pas_mixer_reset
 id|pas_mixer_reset
+c_func
 (paren
 r_void
 )paren
@@ -811,8 +842,10 @@ r_int
 id|foo
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_mixer.c: void pas_mixer_reset(void)&bslash;n&quot;
 )paren
@@ -833,6 +866,7 @@ id|foo
 op_increment
 )paren
 id|pas_mixer_set
+c_func
 (paren
 id|foo
 comma
@@ -843,6 +877,7 @@ id|foo
 )paren
 suffix:semicolon
 id|set_mode
+c_func
 (paren
 l_int|0x04
 op_or
@@ -854,6 +889,7 @@ r_static
 r_int
 DECL|function|pas_mixer_ioctl
 id|pas_mixer_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -867,8 +903,10 @@ id|arg
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_mixer.c: int pas_mixer_ioctl(unsigned int cmd = %X, unsigned int arg = %X)&bslash;n&quot;
 comma
@@ -959,6 +997,7 @@ op_or_assign
 l_int|0x04
 suffix:semicolon
 id|set_mode
+c_func
 (paren
 id|mode_control
 )paren
@@ -1094,6 +1133,7 @@ op_amp
 l_int|0x03
 suffix:semicolon
 id|set_mode
+c_func
 (paren
 id|mode_control
 )paren
@@ -1161,6 +1201,7 @@ op_assign
 op_logical_neg
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1178,8 +1219,10 @@ c_cond
 id|level
 )paren
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1194,8 +1237,10 @@ l_int|0x0B8A
 suffix:semicolon
 r_else
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1209,6 +1254,7 @@ r_return
 op_logical_neg
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1250,6 +1296,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -1266,6 +1313,7 @@ op_star
 id|arg
 op_assign
 id|pas_mixer_set
+c_func
 (paren
 id|cmd
 op_amp
@@ -1424,13 +1472,18 @@ suffix:semicolon
 r_int
 DECL|function|pas_init_mixer
 id|pas_init_mixer
+c_func
 (paren
 r_void
 )paren
 (brace
+r_int
+id|d
+suffix:semicolon
 id|levels
 op_assign
 id|load_mixer_volumes
+c_func
 (paren
 l_string|&quot;PAS16_1&quot;
 comma
@@ -1440,15 +1493,24 @@ l_int|1
 )paren
 suffix:semicolon
 id|pas_mixer_reset
+c_func
 (paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_mixers
-OL
-id|MAX_MIXER_DEV
+(paren
+id|d
+op_assign
+id|sound_alloc_mixerdev
+c_func
+(paren
+)paren
+)paren
+op_ne
+op_minus
+l_int|1
 )paren
 (brace
 id|audio_devs
@@ -1458,12 +1520,11 @@ id|pas_audiodev
 op_member_access_from_pointer
 id|mixer_dev
 op_assign
-id|num_mixers
+id|d
 suffix:semicolon
 id|mixer_devs
 (braket
-id|num_mixers
-op_increment
+id|d
 )braket
 op_assign
 op_amp

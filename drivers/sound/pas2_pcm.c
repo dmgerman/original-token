@@ -2,8 +2,7 @@ multiline_comment|/*&n; * pas2_pcm.c Audio routines for PAS16&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_PAS
-macro_line|#ifdef CONFIG_AUDIO
+macro_line|#if defined(MODULE) || ( defined(CONFIG_PAS) &amp;&amp; defined(CONFIG_AUDIO) )
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(WHAT)
@@ -102,6 +101,7 @@ r_static
 r_int
 DECL|function|pcm_set_speed
 id|pcm_set_speed
+c_func
 (paren
 r_int
 id|arg
@@ -223,11 +223,12 @@ suffix:semicolon
 id|tmp
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Set anti-aliasing filters according to sample rate. You really *NEED*&n;     * to enable this feature for all normal recording unless you want to&n;     * experiment with aliasing effects.&n;     * These filters apply to the selected &quot;recording&quot; source.&n;     * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;     * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;     *&n;     * I cleared bit 5 of these values, since that bit controls the master&n;     * mute flag. (Olav W&#xfffd;lfelschneider)&n;     *&n;   */
+multiline_comment|/*&n;&t;   * Set anti-aliasing filters according to sample rate. You really *NEED*&n;&t;   * to enable this feature for all normal recording unless you want to&n;&t;   * experiment with aliasing effects.&n;&t;   * These filters apply to the selected &quot;recording&quot; source.&n;&t;   * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;&t;   * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;&t;   *&n;&t;   * I cleared bit 5 of these values, since that bit controls the master&n;&t;   * mute flag. (Olav W&#xfffd;lfelschneider)&n;&t;   *&n;&t; */
 macro_line|#if !defined NO_AUTO_FILTER_SET
 id|tmp
 op_and_assign
@@ -322,15 +323,18 @@ id|tmp
 suffix:semicolon
 macro_line|#endif
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|tmp
 op_amp
@@ -345,6 +349,7 @@ l_int|0x0B8A
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x00
 op_or
@@ -356,6 +361,7 @@ l_int|0x138B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|foo
 op_amp
@@ -365,6 +371,7 @@ l_int|0x1388
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 (paren
 id|foo
@@ -378,6 +385,7 @@ l_int|0x1388
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|tmp
 comma
@@ -385,6 +393,7 @@ l_int|0x0B8A
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -397,6 +406,7 @@ r_static
 r_int
 DECL|function|pcm_set_channels
 id|pcm_set_channels
+c_func
 (paren
 r_int
 id|arg
@@ -429,8 +439,10 @@ id|pcm_channels
 )paren
 (brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -445,6 +457,7 @@ op_assign
 id|arg
 suffix:semicolon
 id|pcm_set_speed
+c_func
 (paren
 id|pcm_speed
 )paren
@@ -459,6 +472,7 @@ r_static
 r_int
 DECL|function|pcm_set_bits
 id|pcm_set_bits
+c_func
 (paren
 r_int
 id|arg
@@ -497,8 +511,10 @@ id|pcm_bits
 )paren
 (brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x8389
 )paren
@@ -521,6 +537,7 @@ r_static
 r_int
 DECL|function|pas_audio_ioctl
 id|pas_audio_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -537,8 +554,10 @@ r_int
 id|val
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static int pas_audio_ioctl(unsigned int cmd = %X, unsigned int arg = %X)&bslash;n&quot;
 comma
@@ -576,6 +595,7 @@ op_star
 id|arg
 op_assign
 id|pcm_set_speed
+c_func
 (paren
 id|val
 )paren
@@ -622,6 +642,7 @@ op_star
 id|arg
 op_assign
 id|pcm_set_channels
+c_func
 (paren
 id|val
 op_plus
@@ -655,6 +676,7 @@ op_star
 id|arg
 op_assign
 id|pcm_set_channels
+c_func
 (paren
 id|val
 )paren
@@ -701,6 +723,7 @@ op_star
 id|arg
 op_assign
 id|pcm_set_bits
+c_func
 (paren
 id|val
 )paren
@@ -739,22 +762,27 @@ r_static
 r_void
 DECL|function|pas_audio_reset
 id|pas_audio_reset
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static void pas_audio_reset(void)&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -771,6 +799,7 @@ r_static
 r_int
 DECL|function|pas_audio_open
 id|pas_audio_open
+c_func
 (paren
 r_int
 id|dev
@@ -787,8 +816,10 @@ r_int
 id|flags
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static int pas_audio_open(int mode = %X)&bslash;n&quot;
 comma
@@ -797,11 +828,13 @@ id|mode
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -812,6 +845,7 @@ id|pcm_busy
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -826,6 +860,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -837,6 +872,7 @@ c_cond
 id|err
 op_assign
 id|pas_set_intr
+c_func
 (paren
 id|PAS_PCM_INTRBITS
 )paren
@@ -863,6 +899,7 @@ r_static
 r_void
 DECL|function|pas_audio_close
 id|pas_audio_close
+c_func
 (paren
 r_int
 id|dev
@@ -873,28 +910,34 @@ r_int
 id|flags
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static void pas_audio_close(void)&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|pas_audio_reset
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|pas_remove_intr
+c_func
 (paren
 id|PAS_PCM_INTRBITS
 )paren
@@ -908,6 +951,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -917,6 +961,7 @@ r_static
 r_void
 DECL|function|pas_audio_output_block
 id|pas_audio_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -939,8 +984,10 @@ comma
 id|cnt
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static void pas_audio_output_block(char *buf = %P, int count = %X)&bslash;n&quot;
 comma
@@ -991,17 +1038,21 @@ id|pcm_count
 r_return
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1038,8 +1089,10 @@ id|pcm_count
 )paren
 (brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1051,6 +1104,7 @@ l_int|0x0B8A
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x40
 op_or
@@ -1062,6 +1116,7 @@ l_int|0x138B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|count
 op_amp
@@ -1071,6 +1126,7 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 (paren
 id|count
@@ -1084,8 +1140,10 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1101,8 +1159,10 @@ id|count
 suffix:semicolon
 )brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1116,8 +1176,10 @@ l_int|0x0B8A
 suffix:semicolon
 macro_line|#ifdef NO_TRIGGER
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1135,6 +1197,7 @@ op_assign
 id|PCM_DAC
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1144,6 +1207,7 @@ r_static
 r_void
 DECL|function|pas_audio_start_input
 id|pas_audio_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -1167,8 +1231,10 @@ r_int
 id|cnt
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: static void pas_audio_start_input(char *buf = %P, int count = %X)&bslash;n&quot;
 comma
@@ -1219,11 +1285,13 @@ id|pcm_count
 r_return
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1253,8 +1321,10 @@ id|pcm_count
 )paren
 (brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1266,6 +1336,7 @@ l_int|0x0B8A
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x40
 op_or
@@ -1277,6 +1348,7 @@ l_int|0x138B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|count
 op_amp
@@ -1286,6 +1358,7 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 (paren
 id|count
@@ -1299,8 +1372,10 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1316,8 +1391,10 @@ id|count
 suffix:semicolon
 )brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0x0B8A
 )paren
@@ -1331,9 +1408,11 @@ l_int|0x0B8A
 suffix:semicolon
 macro_line|#ifdef NO_TRIGGER
 id|pas_write
+c_func
 (paren
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1353,6 +1432,7 @@ op_assign
 id|PCM_ADC
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1363,6 +1443,7 @@ r_static
 r_void
 DECL|function|pas_audio_trigger
 id|pas_audio_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -1376,11 +1457,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1396,8 +1479,10 @@ op_amp
 id|PCM_ENABLE_OUTPUT
 )paren
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1418,9 +1503,11 @@ op_amp
 id|PCM_ENABLE_INPUT
 )paren
 id|pas_write
+c_func
 (paren
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1436,8 +1523,10 @@ l_int|0xF8A
 suffix:semicolon
 r_else
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1449,6 +1538,7 @@ l_int|0xF8A
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1459,6 +1549,7 @@ r_static
 r_int
 DECL|function|pas_audio_prepare_for_input
 id|pas_audio_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -1471,6 +1562,7 @@ id|bcount
 )paren
 (brace
 id|pas_audio_reset
+c_func
 (paren
 id|dev
 )paren
@@ -1483,6 +1575,7 @@ r_static
 r_int
 DECL|function|pas_audio_prepare_for_output
 id|pas_audio_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -1495,6 +1588,7 @@ id|bcount
 )paren
 (brace
 id|pas_audio_reset
+c_func
 (paren
 id|dev
 )paren
@@ -1540,6 +1634,7 @@ suffix:semicolon
 r_void
 DECL|function|pas_pcm_init
 id|pas_pcm_init
+c_func
 (paren
 r_struct
 id|address_info
@@ -1548,8 +1643,10 @@ id|hw_config
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_pcm.c: long pas_pcm_init()&bslash;n&quot;
 )paren
@@ -1563,6 +1660,7 @@ r_if
 c_cond
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xEF8B
 )paren
@@ -1574,6 +1672,7 @@ op_or_assign
 l_int|16
 suffix:semicolon
 id|pcm_set_speed
+c_func
 (paren
 id|DSP_DEFAULT_SPEED
 )paren
@@ -1581,9 +1680,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_audiodevs
-OL
-id|MAX_AUDIO_DEV
+(paren
+id|pas_audiodev
+op_assign
+id|sound_alloc_audiodev
+c_func
+(paren
+)paren
+)paren
+op_ne
+op_minus
+l_int|1
 )paren
 (brace
 r_if
@@ -1593,6 +1700,7 @@ c_cond
 id|pas_audiodev
 op_assign
 id|sound_install_audiodrv
+c_func
 (paren
 id|AUDIO_DRIVER_VERSION
 comma
@@ -1630,7 +1738,9 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;PAS16: Too many PCM devices available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1638,6 +1748,7 @@ suffix:semicolon
 r_void
 DECL|function|pas_pcm_interrupt
 id|pas_pcm_interrupt
+c_func
 (paren
 r_int
 r_char
@@ -1655,7 +1766,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;       * Halt the PCM first. Otherwise we don&squot;t have time to start a new&n;       * block before the PCM chip proceeds to the next sample&n;       */
+multiline_comment|/*&n;&t;&t;   * Halt the PCM first. Otherwise we don&squot;t have time to start a new&n;&t;&t;   * block before the PCM chip proceeds to the next sample&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -1673,8 +1784,10 @@ id|DMA_AUTOMODE
 )paren
 (brace
 id|pas_write
+c_func
 (paren
 id|pas_read
+c_func
 (paren
 l_int|0xF8A
 )paren
@@ -1696,6 +1809,7 @@ r_case
 id|PCM_DAC
 suffix:colon
 id|DMAbuf_outputintr
+c_func
 (paren
 id|pas_audiodev
 comma
@@ -1708,6 +1822,7 @@ r_case
 id|PCM_ADC
 suffix:colon
 id|DMAbuf_inputintr
+c_func
 (paren
 id|pas_audiodev
 )paren
@@ -1717,6 +1832,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;PAS: Unexpected PCM interrupt&bslash;n&quot;
 )paren
@@ -1724,6 +1840,5 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

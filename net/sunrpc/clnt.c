@@ -1205,6 +1205,37 @@ comma
 id|task-&gt;tk_status
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * After a call to xprt_reserve(), we must have either&n;&t; * a request slot or else an error status.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|task-&gt;tk_status
+op_ge
+l_int|0
+op_logical_and
+op_logical_neg
+id|task-&gt;tk_rqstp
+)paren
+op_logical_or
+(paren
+id|task-&gt;tk_status
+OL
+l_int|0
+op_logical_and
+id|task-&gt;tk_rqstp
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;call_reserveresult: status=%d, request=%p??&bslash;n&quot;
+comma
+id|task-&gt;tk_status
+comma
+id|task-&gt;tk_rqstp
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1216,6 +1247,9 @@ l_int|0
 id|task-&gt;tk_action
 op_assign
 id|call_allocate
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -1242,7 +1276,8 @@ c_func
 id|task
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -1255,9 +1290,18 @@ op_minus
 id|ETIMEDOUT
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: task timed out&bslash;n&quot;
+)paren
+suffix:semicolon
 id|task-&gt;tk_action
 op_assign
 id|call_timeout
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -1290,6 +1334,10 @@ id|EIO
 )paren
 suffix:semicolon
 )brace
+id|out
+suffix:colon
+r_return
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * 2.&t;Allocate the buffer. For details, see sched.c:rpc_malloc.&n; *&t;(Note: buffer memory is freed in rpc_task_release).&n; */
 r_static

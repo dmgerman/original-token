@@ -70,9 +70,6 @@ op_lshift
 id|processor
 )paren
 )paren
-(brace
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren

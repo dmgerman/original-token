@@ -43,6 +43,7 @@ r_int
 r_char
 DECL|function|opl3sa_read
 id|opl3sa_read
+c_func
 (paren
 r_int
 id|addr
@@ -57,15 +58,18 @@ r_char
 id|tmp
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x1d
@@ -76,6 +80,7 @@ l_int|0xf86
 suffix:semicolon
 multiline_comment|/* password */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -92,12 +97,14 @@ multiline_comment|/* address */
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 l_int|0xf87
 )paren
 suffix:semicolon
 multiline_comment|/* data */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -110,6 +117,7 @@ r_static
 r_void
 DECL|function|opl3sa_write
 id|opl3sa_write
+c_func
 (paren
 r_int
 id|addr
@@ -123,15 +131,18 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x1d
@@ -142,6 +153,7 @@ l_int|0xf86
 suffix:semicolon
 multiline_comment|/* password */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -156,6 +168,7 @@ l_int|0xf86
 suffix:semicolon
 multiline_comment|/* address */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -170,6 +183,7 @@ l_int|0xf87
 suffix:semicolon
 multiline_comment|/* data */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -179,6 +193,7 @@ r_static
 r_int
 DECL|function|opl3sa_detect
 id|opl3sa_detect
+c_func
 (paren
 r_void
 )paren
@@ -194,6 +209,7 @@ c_cond
 id|tmp
 op_assign
 id|opl3sa_read
+c_func
 (paren
 l_int|0x01
 )paren
@@ -206,12 +222,15 @@ l_int|0x04
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA detect error 1 (%x)&bslash;n&quot;
 comma
 id|opl3sa_read
+c_func
 (paren
 l_int|0x01
 )paren
@@ -225,6 +244,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 l_int|0xf87
 )paren
@@ -233,14 +253,17 @@ id|tmp
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA detect failed 2 (%x/%x)&bslash;n&quot;
 comma
 id|tmp
 comma
 id|inb
+c_func
 (paren
 l_int|0xf87
 )paren
@@ -255,6 +278,7 @@ id|tmp
 op_assign
 (paren
 id|opl3sa_read
+c_func
 (paren
 l_int|0x04
 )paren
@@ -277,8 +301,10 @@ l_int|1
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA detect failed 3 (%d)&bslash;n&quot;
 comma
@@ -291,8 +317,10 @@ l_int|0
 suffix:semicolon
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA mode %x detected&bslash;n&quot;
 comma
@@ -301,6 +329,7 @@ id|tmp
 )paren
 suffix:semicolon
 id|opl3sa_write
+c_func
 (paren
 l_int|0x01
 comma
@@ -309,6 +338,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* Disable MSS */
 id|opl3sa_write
+c_func
 (paren
 l_int|0x02
 comma
@@ -317,6 +347,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* Disable SB */
 id|opl3sa_write
+c_func
 (paren
 l_int|0x03
 comma
@@ -332,6 +363,7 @@ multiline_comment|/*&n; *    Probe and attach routines for the Windows Sound Sys
 r_int
 DECL|function|probe_opl3sa_wss
 id|probe_opl3sa_wss
+c_func
 (paren
 r_struct
 id|address_info
@@ -353,6 +385,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 l_int|0xf86
 comma
@@ -363,11 +396,12 @@ multiline_comment|/* Control port is busy */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (OPL3-SA for example)&n;     * return 0x00.&n;   */
+multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (OPL3-SA for example)&n;&t;   * return 0x00.&n;&t; */
 r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -376,6 +410,7 @@ l_int|8
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA: MSS I/O port conflict (%x)&bslash;n&quot;
 comma
@@ -395,11 +430,13 @@ c_cond
 (paren
 op_logical_neg
 id|opl3sa_detect
+c_func
 (paren
 )paren
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;OSS: OPL3-SA chip not found&bslash;n&quot;
 )paren
@@ -453,6 +490,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;OSS: Unsupported OPL3-SA/WSS base %x&bslash;n&quot;
 comma
@@ -464,6 +502,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|opl3sa_write
+c_func
 (paren
 l_int|0x01
 comma
@@ -478,6 +517,7 @@ suffix:semicolon
 id|ret
 op_assign
 id|probe_ms_sound
+c_func
 (paren
 id|hw_config
 )paren
@@ -488,6 +528,7 @@ c_cond
 id|ret
 )paren
 id|request_region
+c_func
 (paren
 l_int|0xf86
 comma
@@ -503,6 +544,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_opl3sa_wss
 id|attach_opl3sa_wss
+c_func
 (paren
 r_struct
 id|address_info
@@ -516,6 +558,7 @@ op_assign
 id|num_mixers
 suffix:semicolon
 id|attach_ms_sound
+c_func
 (paren
 id|hw_config
 )paren
@@ -530,6 +573,7 @@ id|nm
 multiline_comment|/* A mixer was installed */
 (brace
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE1
 comma
@@ -537,6 +581,7 @@ id|SOUND_MIXER_CD
 )paren
 suffix:semicolon
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE2
 comma
@@ -544,6 +589,7 @@ id|SOUND_MIXER_SYNTH
 )paren
 suffix:semicolon
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE3
 comma
@@ -555,6 +601,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_opl3sa_mpu
 id|attach_opl3sa_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -568,6 +615,7 @@ op_assign
 l_string|&quot;OPL3-SA (MPU401)&quot;
 suffix:semicolon
 id|attach_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -577,6 +625,7 @@ macro_line|#endif
 r_int
 DECL|function|probe_opl3sa_mpu
 id|probe_opl3sa_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -645,8 +694,10 @@ id|mpu_initialized
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA: MPU mode already initialized&bslash;n&quot;
 )paren
@@ -660,6 +711,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -668,6 +720,7 @@ l_int|4
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA: MPU I/O port conflict (%x)&bslash;n&quot;
 comma
@@ -687,6 +740,7 @@ l_int|10
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA: Bad MPU IRQ %d&bslash;n&quot;
 comma
@@ -710,6 +764,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;OPL3-SA: Bad MPU IRQ %d&bslash;n&quot;
 comma
@@ -784,6 +839,7 @@ op_lshift
 l_int|2
 suffix:semicolon
 id|opl3sa_write
+c_func
 (paren
 l_int|0x03
 comma
@@ -796,6 +852,7 @@ l_int|1
 suffix:semicolon
 r_return
 id|probe_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -809,6 +866,7 @@ macro_line|#endif
 r_void
 DECL|function|unload_opl3sa_wss
 id|unload_opl3sa_wss
+c_func
 (paren
 r_struct
 id|address_info
@@ -834,6 +892,7 @@ op_assign
 id|hw_config-&gt;dma
 suffix:semicolon
 id|release_region
+c_func
 (paren
 l_int|0xf86
 comma
@@ -841,6 +900,7 @@ l_int|2
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -848,6 +908,7 @@ l_int|4
 )paren
 suffix:semicolon
 id|ad1848_unload
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -866,6 +927,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_opl3sa_mpu
 id|unload_opl3sa_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -875,6 +937,7 @@ id|hw_config
 (brace
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -885,6 +948,7 @@ macro_line|#ifdef SB_OK
 r_void
 DECL|function|unload_opl3sa_sb
 id|unload_opl3sa_sb
+c_func
 (paren
 r_struct
 id|address_info
@@ -894,6 +958,7 @@ id|hw_config
 (brace
 macro_line|#ifdef CONFIG_SBDSP
 id|sb_dsp_unload
+c_func
 (paren
 id|hw_config
 )paren

@@ -4201,6 +4201,7 @@ id|RX_OFFSET
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
@@ -4250,6 +4251,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#endif
 id|hb-&gt;happy_meal_rxd
 (braket
 id|i
@@ -4289,7 +4291,9 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 )brace
+macro_line|#endif
 id|skb_reserve
 c_func
 (paren
@@ -11051,36 +11055,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb
-op_eq
-l_int|NULL
-op_logical_or
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: skb is NULL&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|test_and_set_bit
 c_func
 (paren
@@ -12373,10 +12347,6 @@ id|happy_meal_set_multicast
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
-(paren
-r_int
-r_char
-)paren
 id|sdev-&gt;irqs
 (braket
 l_int|0

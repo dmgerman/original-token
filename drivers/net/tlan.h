@@ -27,7 +27,7 @@ mdefine_line|#define TLAN_IGNORE&t;0
 DECL|macro|TLAN_RECORD
 mdefine_line|#define TLAN_RECORD&t;1
 DECL|macro|TLAN_DBG
-mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if ( debug &amp; lvl ) printk( format, ##args );
+mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if (debug&amp;lvl) printk( format, ##args );
 DECL|macro|TLAN_DEBUG_GNRL
 mdefine_line|#define TLAN_DEBUG_GNRL&t;0x0001
 DECL|macro|TLAN_DEBUG_TX
@@ -37,7 +37,7 @@ mdefine_line|#define TLAN_DEBUG_RX&t;0x0004
 DECL|macro|TLAN_DEBUG_LIST
 mdefine_line|#define TLAN_DEBUG_LIST&t;0x0008
 multiline_comment|/*****************************************************************&n;&t; * Device Identification Definitions&n;&t; *&n;&t; ****************************************************************/
-multiline_comment|/* NOTE: These should be moved to pci.h someday */
+multiline_comment|/* NOTE: These have been moved to pci.h, will use them&n;&t;   eventually */
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10
 mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10 0xAE34
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10_100
@@ -150,13 +150,19 @@ id|TLAN_MAX_FRAME_SIZE
 suffix:semicolon
 multiline_comment|/*****************************************************************&n;&t; * PHY definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_PHY_MAX_ADDR
-mdefine_line|#define TLAN_PHY_MAX_ADDR   0x1F
-DECL|macro|TLAN_PHY_INTERNAL
-mdefine_line|#define TLAN_PHY_INTERNAL&t;0x1F
+mdefine_line|#define TLAN_PHY_MAX_ADDR&t;0x1F
 DECL|macro|TLAN_PHY_ACTIVITY
 mdefine_line|#define TLAN_PHY_ACTIVITY&t;0x00000001
 DECL|macro|TLAN_PHY_AUTONEG
 mdefine_line|#define TLAN_PHY_AUTONEG&t;0x00000002
+DECL|macro|TLAN_PHY_INTS
+mdefine_line|#define TLAN_PHY_INTS&t;&t;0x00000004
+DECL|macro|TLAN_PHY_BIT_RATE
+mdefine_line|#define TLAN_PHY_BIT_RATE&t;0x00000008
+DECL|macro|TLAN_PHY_UNMANAGED
+mdefine_line|#define TLAN_PHY_UNMANAGED&t;0x00000010
+DECL|macro|TLAN_PHY_INTERNAL
+mdefine_line|#define TLAN_PHY_INTERNAL&t;0x00000020
 DECL|typedef|TLanPhyFunc
 r_typedef
 r_int
@@ -1051,7 +1057,23 @@ id|b
 suffix:semicolon
 )brace
 DECL|macro|XOR8
-mdefine_line|#define XOR8( a, b, c, d, e, f, g, h )&t;xor( a, xor( b, xor( c, xor( d, xor( e, xor( f, xor( g, h ) ) ) ) ) ) )
+mdefine_line|#define XOR8( a, b, c, d, e, f, g, h )&t;xor( a, xor( b, xor( c, xor( d, xor( e, x
+op_logical_or
+(paren
+id|f
+comma
+op_xor
+(paren
+id|g
+comma
+id|h
+)paren
+)paren
+)paren
+)paren
+)paren
+)paren
+)paren
 DECL|macro|DA
 mdefine_line|#define DA( a, bit )&t;&t;&t;&t;&t;( ( (u8) a[bit/8] ) &amp; ( (u8) ( 1 &lt;&lt; bit%8 ) ) )
 DECL|function|TLan_HashFunc
@@ -1126,7 +1148,8 @@ c_func
 (paren
 id|a
 comma
-l_int|36
+l_int|3
+l_int|6
 )paren
 comma
 id|DA
@@ -1196,7 +1219,8 @@ c_func
 (paren
 id|a
 comma
-l_int|37
+l_int|3
+l_int|7
 )paren
 comma
 id|DA
@@ -1268,7 +1292,8 @@ c_func
 (paren
 id|a
 comma
-l_int|38
+l_int|3
+l_int|8
 )paren
 comma
 id|DA
@@ -1340,7 +1365,8 @@ c_func
 (paren
 id|a
 comma
-l_int|39
+l_int|3
+l_int|9
 )paren
 comma
 id|DA
@@ -1412,7 +1438,8 @@ c_func
 (paren
 id|a
 comma
-l_int|40
+l_int|4
+l_int|0
 )paren
 comma
 id|DA
@@ -1484,7 +1511,8 @@ c_func
 (paren
 id|a
 comma
-l_int|41
+l_int|4
+l_int|1
 )paren
 comma
 id|DA

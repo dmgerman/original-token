@@ -256,6 +256,10 @@ DECL|member|synthdev
 r_int
 id|synthdev
 suffix:semicolon
+DECL|member|timerdev
+r_int
+id|timerdev
+suffix:semicolon
 DECL|member|sequencer_mode
 r_int
 id|sequencer_mode

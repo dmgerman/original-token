@@ -227,15 +227,10 @@ suffix:semicolon
 )brace
 DECL|function|softdog_write
 r_static
-r_int
+id|ssize_t
 id|softdog_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -247,8 +242,11 @@ op_star
 id|data
 comma
 r_int
-r_int
 id|len
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Refresh the timer.&n;&t; */

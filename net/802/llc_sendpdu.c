@@ -463,10 +463,6 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|lp-&gt;dev
@@ -729,10 +725,6 @@ id|tmp-&gt;dev
 op_assign
 id|lp-&gt;dev
 suffix:semicolon
-id|tmp-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -936,10 +928,6 @@ suffix:semicolon
 id|tmp-&gt;dev
 op_assign
 id|lp-&gt;dev
-suffix:semicolon
-id|tmp-&gt;priority
-op_assign
-id|SOPRI_NORMAL
 suffix:semicolon
 id|dev_queue_xmit
 c_func

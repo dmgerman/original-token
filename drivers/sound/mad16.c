@@ -1,8 +1,26 @@
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * sound/mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924     (in non PnP mode)&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928 (can anybody&n; * confirm this?).&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_MAD16
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#ifdef MODULE
+DECL|macro|MAD16_CDSEL
+mdefine_line|#define MAD16_CDSEL   mad16_cdsel
+DECL|macro|MAD16_CONF
+mdefine_line|#define MAD16_CONF    mad16_conf
+DECL|variable|mad16_conf
+r_static
+r_int
+id|mad16_conf
+suffix:semicolon
+DECL|variable|mad16_cdsel
+r_static
+r_int
+id|mad16_cdsel
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_MAD16) || defined(MODULE)
 macro_line|#include &quot;sb.h&quot;
 DECL|variable|already_initialized
 r_static
@@ -72,6 +90,7 @@ r_int
 r_char
 DECL|function|mad_read
 id|mad_read
+c_func
 (paren
 r_int
 id|port
@@ -86,11 +105,13 @@ r_char
 id|tmp
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -108,6 +129,7 @@ r_case
 id|MOZART
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE2
@@ -122,6 +144,7 @@ r_case
 id|C929
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE3
@@ -142,6 +165,7 @@ r_case
 id|C924
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE5
@@ -162,6 +186,7 @@ id|C930
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|port
@@ -176,6 +201,7 @@ multiline_comment|/* Write to index reg */
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 l_int|0xe0f
 )paren
@@ -186,11 +212,13 @@ r_else
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 id|port
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -203,6 +231,7 @@ r_static
 r_void
 DECL|function|mad_write
 id|mad_write
+c_func
 (paren
 r_int
 id|port
@@ -216,11 +245,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -238,6 +269,7 @@ r_case
 id|MOZART
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE2
@@ -252,6 +284,7 @@ r_case
 id|C929
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE3
@@ -272,6 +305,7 @@ r_case
 id|C924
 suffix:colon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE5
@@ -292,6 +326,7 @@ id|C930
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|port
@@ -304,6 +339,7 @@ l_int|0xe0e
 suffix:semicolon
 multiline_comment|/* Write to index reg */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -323,6 +359,7 @@ suffix:semicolon
 )brace
 r_else
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -340,6 +377,7 @@ id|port
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -349,6 +387,7 @@ r_static
 r_int
 DECL|function|detect_c930
 id|detect_c930
+c_func
 (paren
 r_void
 )paren
@@ -358,6 +397,7 @@ r_char
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -375,8 +415,10 @@ l_int|0x06
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Wrong C930 signature (%x)&bslash;n&quot;
 comma
@@ -387,6 +429,7 @@ suffix:semicolon
 multiline_comment|/* return 0; */
 )brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -397,6 +440,7 @@ r_if
 c_cond
 (paren
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -405,8 +449,10 @@ l_int|0x06
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Wrong C930 signature2 (%x)&bslash;n&quot;
 comma
@@ -417,6 +463,7 @@ suffix:semicolon
 multiline_comment|/* return 0; */
 )brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -425,6 +472,7 @@ id|tmp
 suffix:semicolon
 multiline_comment|/* Restore bits */
 id|mad_write
+c_func
 (paren
 id|MC7_PORT
 comma
@@ -438,6 +486,7 @@ c_cond
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC7_PORT
 )paren
@@ -447,8 +496,10 @@ l_int|0
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;MC7 not writable (%x)&bslash;n&quot;
 comma
@@ -461,6 +512,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|mad_write
+c_func
 (paren
 id|MC7_PORT
 comma
@@ -474,6 +526,7 @@ c_cond
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC7_PORT
 )paren
@@ -483,8 +536,10 @@ l_int|0xcb
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;MC7 not writable2 (%x)&bslash;n&quot;
 comma
@@ -504,6 +559,7 @@ r_static
 r_int
 DECL|function|detect_mad16
 id|detect_mad16
+c_func
 (paren
 r_void
 )paren
@@ -525,6 +581,7 @@ c_cond
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -534,8 +591,10 @@ l_int|0xff
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;MC1_PORT returned 0xff&bslash;n&quot;
 )paren
@@ -560,14 +619,17 @@ id|i
 op_increment
 )paren
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Port %0x (init value) = %0x&bslash;n&quot;
 comma
 id|i
 comma
 id|mad_read
+c_func
 (paren
 id|i
 )paren
@@ -583,6 +645,7 @@ id|C930
 )paren
 r_return
 id|detect_c930
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -594,6 +657,7 @@ c_cond
 id|tmp2
 op_assign
 id|inb
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -604,8 +668,10 @@ id|tmp
 multiline_comment|/* It didn&squot;t close */
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;MC1_PORT didn&squot;t close after read (0x%02x)&bslash;n&quot;
 comma
@@ -618,6 +684,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -634,6 +701,7 @@ c_cond
 id|tmp2
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -648,6 +716,7 @@ l_int|0x80
 multiline_comment|/* Compare the bit */
 (brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -656,8 +725,10 @@ id|tmp
 suffix:semicolon
 multiline_comment|/* Restore */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Bit revert test failed (0x%02x, 0x%02x)&bslash;n&quot;
 comma
@@ -672,6 +743,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -688,6 +760,7 @@ r_static
 r_int
 DECL|function|wss_init
 id|wss_init
+c_func
 (paren
 r_struct
 id|address_info
@@ -705,6 +778,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -713,6 +787,7 @@ l_int|8
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: I/O port conflict&bslash;n&quot;
 )paren
@@ -726,6 +801,7 @@ c_cond
 (paren
 op_logical_neg
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -740,12 +816,13 @@ id|mad16_osp
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTrix Pro for example)&n;     * return 0x00.&n;   */
+multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t;   * return 0x00.&n;&t; */
 r_if
 c_cond
 (paren
 (paren
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -759,6 +836,7 @@ l_int|0x04
 op_logical_and
 (paren
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -772,14 +850,17 @@ l_int|0x00
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;No MSS signature detected on port 0x%x (0x%x)&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 comma
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -801,6 +882,7 @@ l_int|11
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
 comma
@@ -828,6 +910,7 @@ l_int|3
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Bad DMA %d&bslash;n&quot;
 comma
@@ -838,7 +921,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Check that DMA0 is not in use with a 8 bit board.&n;   */
+multiline_comment|/*&n;&t;   * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
 r_if
 c_cond
 (paren
@@ -847,6 +930,7 @@ op_eq
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -857,6 +941,7 @@ l_int|0x80
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Can&squot;t use DMA0 with a 8 bit card/slot&bslash;n&quot;
 )paren
@@ -877,6 +962,7 @@ op_ne
 l_int|9
 op_logical_and
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -887,6 +973,7 @@ l_int|0x80
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Can&squot;t use IRQ%d with a 8 bit card/slot&bslash;n&quot;
 comma
@@ -902,6 +989,7 @@ r_static
 r_int
 DECL|function|init_c930
 id|init_c930
+c_func
 (paren
 r_struct
 id|address_info
@@ -917,6 +1005,7 @@ id|cfg
 op_assign
 (paren
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -971,6 +1060,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;MAD16: Invalid codec port %x&bslash;n&quot;
 comma
@@ -982,6 +1072,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -990,6 +1081,7 @@ id|cfg
 suffix:semicolon
 multiline_comment|/* MC2 is CD configuration. Don&squot;t touch it. */
 id|mad_write
+c_func
 (paren
 id|MC3_PORT
 comma
@@ -998,6 +1090,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Disable SB mode IRQ and DMA */
 id|mad_write
+c_func
 (paren
 id|MC4_PORT
 comma
@@ -1006,6 +1099,7 @@ l_int|0x52
 suffix:semicolon
 multiline_comment|/* ??? */
 id|mad_write
+c_func
 (paren
 id|MC5_PORT
 comma
@@ -1014,6 +1108,7 @@ l_int|0x3C
 suffix:semicolon
 multiline_comment|/* Init it into mode2 */
 id|mad_write
+c_func
 (paren
 id|MC6_PORT
 comma
@@ -1022,6 +1117,7 @@ l_int|0x02
 suffix:semicolon
 multiline_comment|/* Enable WSS, Disable MPU and SB */
 id|mad_write
+c_func
 (paren
 id|MC7_PORT
 comma
@@ -1029,6 +1125,7 @@ l_int|0xCB
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC10_PORT
 comma
@@ -1037,6 +1134,7 @@ l_int|0x11
 suffix:semicolon
 r_return
 id|wss_init
+c_func
 (paren
 id|hw_config
 )paren
@@ -1046,6 +1144,7 @@ r_static
 r_int
 DECL|function|chip_detect
 id|chip_detect
+c_func
 (paren
 r_void
 )paren
@@ -1059,8 +1158,10 @@ op_assign
 id|C924
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Detect using password = 0xE5&bslash;n&quot;
 )paren
@@ -1071,6 +1172,7 @@ c_cond
 (paren
 op_logical_neg
 id|detect_mad16
+c_func
 (paren
 )paren
 )paren
@@ -1081,8 +1183,10 @@ op_assign
 id|C928
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Detect using password = 0xE2&bslash;n&quot;
 )paren
@@ -1093,6 +1197,7 @@ c_cond
 (paren
 op_logical_neg
 id|detect_mad16
+c_func
 (paren
 )paren
 )paren
@@ -1102,8 +1207,10 @@ op_assign
 id|C929
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Detect using password = 0xE3&bslash;n&quot;
 )paren
@@ -1114,6 +1221,7 @@ c_cond
 (paren
 op_logical_neg
 id|detect_mad16
+c_func
 (paren
 )paren
 )paren
@@ -1122,6 +1230,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|PASSWD_REG
 )paren
@@ -1133,6 +1242,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * First relocate MC# registers to 0xe0e/0xe0f, disable password &n; */
 id|outb
+c_func
 (paren
 (paren
 l_int|0xE4
@@ -1142,6 +1252,7 @@ id|PASSWD_REG
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -1155,8 +1266,10 @@ op_assign
 id|C930
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Detect using password = 0xE4&bslash;n&quot;
 )paren
@@ -1177,14 +1290,17 @@ id|i
 op_increment
 )paren
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;port %03x = %02x&bslash;n&quot;
 comma
 id|i
 comma
 id|mad_read
+c_func
 (paren
 id|i
 )paren
@@ -1196,6 +1312,7 @@ c_cond
 (paren
 op_logical_neg
 id|detect_mad16
+c_func
 (paren
 )paren
 )paren
@@ -1203,8 +1320,10 @@ r_return
 l_int|0
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;mad16.c: 82C930 detected&bslash;n&quot;
 )paren
@@ -1214,8 +1333,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;mad16.c: 82C929 detected&bslash;n&quot;
 )paren
@@ -1237,6 +1358,7 @@ c_cond
 id|model
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC3_PORT
 )paren
@@ -1249,8 +1371,10 @@ l_int|0x03
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;mad16.c: Mozart detected&bslash;n&quot;
 )paren
@@ -1264,8 +1388,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;mad16.c: 82C928 detected???&bslash;n&quot;
 )paren
@@ -1285,6 +1411,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_mad16
 id|probe_mad16
+c_func
 (paren
 r_struct
 id|address_info
@@ -1340,8 +1467,10 @@ id|hw_config-&gt;osp
 suffix:semicolon
 multiline_comment|/*&n; *    Check that all ports return 0xff (bus float) when no password&n; *      is written to the password register.&n; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;--- Detecting MAD16 / Mozart ---&bslash;n&quot;
 )paren
@@ -1352,6 +1481,7 @@ c_cond
 (paren
 op_logical_neg
 id|chip_detect
+c_func
 (paren
 )paren
 )paren
@@ -1367,6 +1497,7 @@ id|C930
 )paren
 r_return
 id|init_c930
+c_func
 (paren
 id|hw_config
 )paren
@@ -1386,14 +1517,17 @@ id|i
 op_increment
 )paren
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;port %03x = %02x&bslash;n&quot;
 comma
 id|i
 comma
 id|mad_read
+c_func
 (paren
 id|i
 )paren
@@ -1405,6 +1539,7 @@ id|tmp
 op_assign
 (paren
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -1440,6 +1575,7 @@ l_int|3
 multiline_comment|/* Not a valid port */
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MAD16/Mozart: Bad WSS base address 0x%x&bslash;n&quot;
 comma
@@ -1492,6 +1628,7 @@ suffix:semicolon
 multiline_comment|/* CD-ROM and joystick bits */
 macro_line|#endif
 id|mad_write
+c_func
 (paren
 id|MC1_PORT
 comma
@@ -1507,6 +1644,7 @@ macro_line|#else
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC2_PORT
 )paren
@@ -1520,6 +1658,7 @@ suffix:semicolon
 multiline_comment|/* Enable OPL4 access */
 macro_line|#endif
 id|mad_write
+c_func
 (paren
 id|MC2_PORT
 comma
@@ -1527,6 +1666,7 @@ id|tmp
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC3_PORT
 comma
@@ -1544,6 +1684,7 @@ id|C924
 multiline_comment|/* Specific C924 init values */
 (brace
 id|mad_write
+c_func
 (paren
 id|MC4_PORT
 comma
@@ -1551,6 +1692,7 @@ l_int|0xA0
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC5_PORT
 comma
@@ -1558,6 +1700,7 @@ l_int|0x05
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC6_PORT
 comma
@@ -1570,6 +1713,7 @@ c_cond
 (paren
 op_logical_neg
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -1609,6 +1753,7 @@ id|C929
 )paren
 (brace
 id|mad_write
+c_func
 (paren
 id|MC4_PORT
 comma
@@ -1616,6 +1761,7 @@ l_int|0xa2
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC5_PORT
 comma
@@ -1625,6 +1771,7 @@ id|cs4231_mode
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC6_PORT
 comma
@@ -1636,6 +1783,7 @@ multiline_comment|/* Disable MPU401 */
 r_else
 (brace
 id|mad_write
+c_func
 (paren
 id|MC4_PORT
 comma
@@ -1643,6 +1791,7 @@ l_int|0x02
 )paren
 suffix:semicolon
 id|mad_write
+c_func
 (paren
 id|MC5_PORT
 comma
@@ -1667,14 +1816,17 @@ id|i
 op_increment
 )paren
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;port %03x after init = %02x&bslash;n&quot;
 comma
 id|i
 comma
 id|mad_read
+c_func
 (paren
 id|i
 )paren
@@ -1682,6 +1834,7 @@ id|i
 )paren
 suffix:semicolon
 id|wss_init
+c_func
 (paren
 id|hw_config
 )paren
@@ -1693,6 +1846,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_mad16
 id|attach_mad16
+c_func
 (paren
 r_struct
 id|address_info
@@ -1802,6 +1956,7 @@ c_cond
 (paren
 op_logical_neg
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -1815,7 +1970,7 @@ id|mad16_osp
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;     * Set the IRQ and DMA addresses.&n;   */
+multiline_comment|/*&n;&t;   * Set the IRQ and DMA addresses.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1849,6 +2004,7 @@ l_int|1
 r_return
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -1864,6 +2020,7 @@ c_cond
 (paren
 (paren
 id|inb
+c_func
 (paren
 id|version_port
 )paren
@@ -1874,6 +2031,7 @@ op_eq
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;[IRQ Conflict?]&quot;
 )paren
@@ -1991,6 +2149,7 @@ multiline_comment|/* Enable capture DMA */
 r_else
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MAD16: Invalid capture DMA&bslash;n&quot;
 )paren
@@ -2007,6 +2166,7 @@ op_assign
 id|dma
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -2023,7 +2183,13 @@ id|config_port
 )paren
 suffix:semicolon
 multiline_comment|/* Write IRQ+DMA setup */
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
 id|ad1848_init
+c_func
 (paren
 l_string|&quot;MAD16 WSS&quot;
 comma
@@ -2043,6 +2209,7 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -2055,6 +2222,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_mad16_mpu
 id|attach_mad16_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -2071,11 +2239,12 @@ id|C929
 )paren
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -2096,6 +2265,7 @@ op_assign
 l_string|&quot;Mad16/Mozart&quot;
 suffix:semicolon
 id|sb_dsp_init
+c_func
 (paren
 id|hw_config
 )paren
@@ -2122,6 +2292,7 @@ op_assign
 l_string|&quot;Mad16/Mozart&quot;
 suffix:semicolon
 id|attach_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -2131,6 +2302,7 @@ macro_line|#endif
 r_int
 DECL|function|probe_mad16_mpu
 id|probe_mad16_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -2217,7 +2389,7 @@ id|C929
 )paren
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 r_int
 r_char
 id|tmp
@@ -2225,15 +2397,17 @@ suffix:semicolon
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC3_PORT
 )paren
 suffix:semicolon
-multiline_comment|/* &n;       * MAD16 SB base is defined by the WSS base. It cannot be changed &n;       * alone.&n;       * Ignore configured I/O base. Use the active setting. &n;       */
+multiline_comment|/* &n;&t;&t;   * MAD16 SB base is defined by the WSS base. It cannot be changed &n;&t;&t;   * alone.&n;&t;&t;   * Ignore configured I/O base. Use the active setting. &n;&t;&t;   */
 r_if
 c_cond
 (paren
 id|mad_read
+c_func
 (paren
 id|MC1_PORT
 )paren
@@ -2301,6 +2475,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;mad16/Mozart: Invalid MIDI IRQ&bslash;n&quot;
 )paren
@@ -2310,6 +2485,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|mad_write
+c_func
 (paren
 id|MC3_PORT
 comma
@@ -2324,6 +2500,7 @@ id|SB_MIDI_ONLY
 suffix:semicolon
 r_return
 id|sb_dsp_detect
+c_func
 (paren
 id|hw_config
 )paren
@@ -2337,6 +2514,7 @@ macro_line|#endif
 id|tmp
 op_assign
 id|mad_read
+c_func
 (paren
 id|MC6_PORT
 )paren
@@ -2374,6 +2552,7 @@ l_int|3
 multiline_comment|/* Out of array bounds */
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MAD16 / Mozart: Invalid MIDI port 0x%x&bslash;n&quot;
 comma
@@ -2431,6 +2610,7 @@ l_int|3
 multiline_comment|/* Out of array bounds */
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MAD16 / Mozart: Invalid MIDI IRQ %d&bslash;n&quot;
 comma
@@ -2463,6 +2643,7 @@ suffix:semicolon
 )brace
 )brace
 id|mad_write
+c_func
 (paren
 id|MC6_PORT
 comma
@@ -2472,6 +2653,7 @@ suffix:semicolon
 multiline_comment|/* Write MPU401 config */
 r_return
 id|probe_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -2485,6 +2667,7 @@ macro_line|#endif
 r_void
 DECL|function|unload_mad16
 id|unload_mad16
+c_func
 (paren
 r_struct
 id|address_info
@@ -2493,6 +2676,7 @@ id|hw_config
 )paren
 (brace
 id|ad1848_unload
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -2508,16 +2692,27 @@ l_int|0
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
 l_int|4
 )paren
 suffix:semicolon
+id|sound_unload_audiodev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|unload_mad16_mpu
 id|unload_mad16_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -2525,7 +2720,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -2536,6 +2731,7 @@ id|C929
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
 id|sb_dsp_unload
+c_func
 (paren
 id|hw_config
 )paren
@@ -2546,12 +2742,709 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 id|unload_uart401
+c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_int
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma16
+r_int
+id|dma16
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Set this for modules that need it */
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|cdtype
+r_int
+id|cdtype
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|cdirq
+r_int
+id|cdirq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|cdport
+r_int
+id|cdport
+op_assign
+l_int|0x340
+suffix:semicolon
+DECL|variable|cddma
+r_int
+id|cddma
+op_assign
+l_int|3
+suffix:semicolon
+DECL|variable|opl4
+r_int
+id|opl4
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|joystick
+r_int
+id|joystick
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|found_mpu
+r_static
+r_int
+id|found_mpu
+suffix:semicolon
+DECL|variable|dma_map
+r_static
+r_int
+id|dma_map
+(braket
+l_int|2
+)braket
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+(brace
+l_int|0x03
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x02
+)brace
+comma
+(brace
+l_int|0x03
+comma
+op_minus
+l_int|1
+comma
+l_int|0x01
+comma
+l_int|0x00
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+)brace
+suffix:semicolon
+DECL|variable|irq_map
+r_static
+r_int
+id|irq_map
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0x00
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+l_int|0x0A
+comma
+op_minus
+l_int|1
+comma
+l_int|0x04
+comma
+op_minus
+l_int|1
+comma
+l_int|0x08
+comma
+op_minus
+l_int|1
+comma
+l_int|0x10
+comma
+l_int|0x14
+comma
+l_int|0x18
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+suffix:semicolon
+DECL|variable|config
+r_struct
+id|address_info
+id|config
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|dmatype
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;MAD16 audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;I/O, DMA and irq are mandatory&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;CDROM &quot;
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cdtype
+)paren
+(brace
+r_case
+l_int|0x00
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Disabled&quot;
+)paren
+suffix:semicolon
+id|cdirq
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x02
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Sony CDU31A&quot;
+)paren
+suffix:semicolon
+id|dmatype
+op_assign
+l_int|2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x04
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Mitsumi&quot;
+)paren
+suffix:semicolon
+id|dmatype
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x06
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Panasonic Lasermate&quot;
+)paren
+suffix:semicolon
+id|dmatype
+op_assign
+l_int|2
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x08
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Secondary IDE&quot;
+)paren
+suffix:semicolon
+id|dmatype
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x0A
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Primary IDE&quot;
+)paren
+suffix:semicolon
+id|dmatype
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nInvalid CDROM type&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dmatype
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cddma
+OG
+l_int|7
+op_logical_or
+id|cddma
+OL
+l_int|0
+op_logical_or
+id|dma_map
+(braket
+id|dmatype
+)braket
+(braket
+id|cddma
+)braket
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;nInvalid CDROM DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cddma
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, DMA %d&quot;
+comma
+id|cddma
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;, no DMA&quot;
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cdtype
+op_logical_and
+op_logical_neg
+id|cdirq
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, no IRQ&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|cdirq
+template_param
+l_int|15
+op_logical_or
+id|irq_map
+(braket
+id|cdirq
+)braket
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, invalid IRQ (disabling)&quot;
+)paren
+suffix:semicolon
+id|cdirq
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;, IRQ %d&quot;
+comma
+id|cdirq
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;.&bslash;nJoystick port &quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|joystick
+op_eq
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;enabled.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|joystick
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;disabled.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *    Build the config words&n;&t; */
+id|mad16_conf
+op_assign
+(paren
+id|joystick
+op_xor
+l_int|1
+)paren
+op_or
+id|cdtype
+suffix:semicolon
+id|mad16_cdsel
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|opl4
+)paren
+id|mad16_cdsel
+op_or_assign
+l_int|0x20
+suffix:semicolon
+id|mad16_cdsel
+op_or_assign
+id|dma_map
+(braket
+id|dmatype
+)braket
+(braket
+id|cddma
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cdtype
+OL
+l_int|0x08
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|cdport
+)paren
+(brace
+r_case
+l_int|0x340
+suffix:colon
+id|mad16_cdsel
+op_or_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x330
+suffix:colon
+id|mad16_cdsel
+op_or_assign
+l_int|0x40
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x360
+suffix:colon
+id|mad16_cdsel
+op_or_assign
+l_int|0x80
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x320
+suffix:colon
+id|mad16_cdsel
+op_or_assign
+l_int|0xC0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown CDROM I/O base %d&bslash;n&quot;
+comma
+id|cdport
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+)brace
+id|mad16_cdsel
+op_or_assign
+id|irq_map
+(braket
+id|cdirq
+)braket
+suffix:semicolon
+id|config.io_base
+op_assign
+id|io
+suffix:semicolon
+id|config.irq
+op_assign
+id|irq
+suffix:semicolon
+id|config.dma
+op_assign
+id|dma
+suffix:semicolon
+id|config.dma2
+op_assign
+id|dma16
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|probe_mad16
+c_func
+(paren
+op_amp
+id|config
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|found_mpu
+op_assign
+id|probe_mad16_mpu
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|attach_mad16
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|found_mpu
+)paren
+id|attach_mad16_mpu
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|found_mpu
+)paren
+id|unload_mad16_mpu
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|unload_mad16
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* That&squot;s all folks */
 macro_line|#endif
 eof

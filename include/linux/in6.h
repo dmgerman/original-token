@@ -160,9 +160,13 @@ mdefine_line|#define IPV6_ADDRFORM&t;&t;1
 DECL|macro|IPV6_PKTINFO
 mdefine_line|#define IPV6_PKTINFO&t;&t;2
 DECL|macro|IPV6_RXHOPOPTS
-mdefine_line|#define IPV6_RXHOPOPTS&t;&t;3
+mdefine_line|#define IPV6_RXHOPOPTS&t;&t;3 /* obsolete name */
 DECL|macro|IPV6_RXDSTOPTS
-mdefine_line|#define IPV6_RXDSTOPTS&t;&t;4
+mdefine_line|#define IPV6_RXDSTOPTS&t;&t;4 /* obsolete name */
+DECL|macro|IPV6_HOPOPTS
+mdefine_line|#define IPV6_HOPOPTS&t;&t;IPV6_RXHOPOPTS  /* new name */
+DECL|macro|IPV6_DSTOPTS
+mdefine_line|#define IPV6_DSTOPTS&t;&t;IPV6_RXDSTOPTS  /* new name */
 DECL|macro|IPV6_RXSRCRT
 mdefine_line|#define IPV6_RXSRCRT&t;&t;5
 DECL|macro|IPV6_PKTOPTIONS

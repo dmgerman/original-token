@@ -2388,36 +2388,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* If some higher level thinks we&squot;ve misses a tx-done interrupt&n;       we are passed NULL. n.b. dev_tint handles the cli()/sti()&n;       itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* shouldn&squot;t happen */
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -167,11 +167,13 @@ comma
 l_int|0
 comma
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -243,6 +245,7 @@ l_int|0
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
@@ -260,11 +263,13 @@ l_int|0
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
 comma
 id|B
+c_func
 (paren
 id|OPT_GUS16
 )paren
@@ -406,11 +411,13 @@ l_int|0
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
 comma
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
@@ -426,16 +433,19 @@ l_int|1
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_UNUSED1
 )paren
 comma
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
@@ -451,16 +461,19 @@ l_int|1
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_UNUSED1
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_MPU401
 )paren
@@ -492,11 +505,13 @@ l_int|1
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_MPU401
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_MAUI
 )paren
@@ -528,6 +543,7 @@ l_int|1
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_ADLIB
 )paren
@@ -545,36 +561,43 @@ l_int|0
 comma
 (brace
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_ADLIB
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
 comma
 id|B
+c_func
 (paren
 id|OPT_YM3812_AUTO
 )paren
@@ -800,11 +823,13 @@ comma
 l_string|&quot;GUSHW&quot;
 comma
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_SPNP
 )paren
@@ -814,11 +839,13 @@ comma
 l_string|&quot;SSCAPEHW&quot;
 comma
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
 op_or
 id|B
+c_func
 (paren
 id|OPT_SPNP
 )paren
@@ -892,6 +919,7 @@ l_int|0
 suffix:semicolon
 r_void
 id|build_defines
+c_func
 (paren
 r_void
 )paren
@@ -899,6 +927,7 @@ suffix:semicolon
 macro_line|#include &quot;hex2hex.h&quot;
 r_int
 id|bin2hex
+c_func
 (paren
 r_char
 op_star
@@ -916,6 +945,7 @@ suffix:semicolon
 r_int
 DECL|function|can_select_option
 id|can_select_option
+c_func
 (paren
 r_int
 id|nr
@@ -980,6 +1010,7 @@ c_cond
 id|DISABLED_OPTIONS
 op_amp
 id|B
+c_func
 (paren
 id|nr
 )paren
@@ -994,6 +1025,7 @@ suffix:semicolon
 r_int
 DECL|function|think_positively
 id|think_positively
+c_func
 (paren
 r_char
 op_star
@@ -1019,6 +1051,7 @@ suffix:semicolon
 id|response
 suffix:colon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1031,6 +1064,7 @@ c_cond
 id|def_answ
 )paren
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1039,6 +1073,7 @@ l_string|&quot; [Y/n/?] &quot;
 suffix:semicolon
 r_else
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1052,6 +1087,7 @@ c_cond
 id|len
 op_assign
 id|read
+c_func
 (paren
 l_int|0
 comma
@@ -1068,6 +1104,7 @@ l_int|1
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1075,11 +1112,13 @@ l_string|&quot;&bslash;n&bslash;nERROR! Cannot read stdin&bslash;n&quot;
 )paren
 suffix:semicolon
 id|perror
+c_func
 (paren
 l_string|&quot;stdin&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
@@ -1115,6 +1154,7 @@ l_char|&squot;?&squot;
 (brace
 multiline_comment|/* display help message */
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1122,6 +1162,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1129,6 +1170,7 @@ id|help
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1153,6 +1195,7 @@ c_cond
 (paren
 op_logical_neg
 id|strcmp
+c_func
 (paren
 id|answ
 comma
@@ -1161,6 +1204,7 @@ l_string|&quot;y&quot;
 op_logical_or
 op_logical_neg
 id|strcmp
+c_func
 (paren
 id|answ
 comma
@@ -1177,6 +1221,7 @@ suffix:semicolon
 r_int
 DECL|function|ask_value
 id|ask_value
+c_func
 (paren
 r_char
 op_star
@@ -1206,6 +1251,7 @@ c_cond
 id|len
 op_assign
 id|read
+c_func
 (paren
 l_int|0
 comma
@@ -1222,6 +1268,7 @@ l_int|1
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1229,11 +1276,13 @@ l_string|&quot;&bslash;n&bslash;nERROR! Cannot read stdin&bslash;n&quot;
 )paren
 suffix:semicolon
 id|perror
+c_func
 (paren
 l_string|&quot;stdin&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
@@ -1269,6 +1318,7 @@ r_if
 c_cond
 (paren
 id|sscanf
+c_func
 (paren
 id|answ
 comma
@@ -1282,6 +1332,7 @@ l_int|1
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1303,6 +1354,7 @@ mdefine_line|#define FMT_INT 2
 r_void
 DECL|function|show_comment
 id|show_comment
+c_func
 (paren
 r_int
 id|mask
@@ -1341,12 +1393,14 @@ c_cond
 id|mask
 op_eq
 id|B
+c_func
 (paren
 id|i
 )paren
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nif [ &bslash;&quot;$CONFIG_%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; ]; then&bslash;n&quot;
 comma
@@ -1359,6 +1413,7 @@ id|macro
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;comment &squot;%s&squot;&bslash;n&quot;
 comma
@@ -1366,6 +1421,7 @@ id|txt
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;fi&bslash;n&quot;
 )paren
@@ -1387,6 +1443,7 @@ id|selected_options
 r_return
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1400,6 +1457,7 @@ suffix:semicolon
 r_void
 DECL|function|ask_int_choice
 id|ask_int_choice
+c_func
 (paren
 r_int
 id|mask
@@ -1454,6 +1512,7 @@ c_cond
 id|mask
 op_eq
 id|B
+c_func
 (paren
 id|i
 )paren
@@ -1473,6 +1532,7 @@ suffix:semicolon
 id|j
 OL
 id|strlen
+c_func
 (paren
 id|choices
 )paren
@@ -1498,6 +1558,7 @@ op_assign
 l_char|&squot;_&squot;
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;nif [ &bslash;&quot;$CONFIG_%s&bslash;&quot; = &bslash;&quot;y&bslash;&quot; ]; then&bslash;n&quot;
 comma
@@ -1517,6 +1578,7 @@ op_eq
 id|FMT_INT
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;int &squot;%s %s&squot; %s %d&bslash;n&quot;
 comma
@@ -1531,6 +1593,7 @@ id|defa
 suffix:semicolon
 r_else
 id|printf
+c_func
 (paren
 l_string|&quot;hex &squot;%s %s&squot; %s %x&bslash;n&quot;
 comma
@@ -1544,6 +1607,7 @@ id|defa
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;fi&bslash;n&quot;
 )paren
@@ -1565,6 +1629,7 @@ id|selected_options
 r_return
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1577,6 +1642,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|choices
 comma
@@ -1584,6 +1650,7 @@ l_string|&quot;&quot;
 )paren
 )paren
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1609,6 +1676,7 @@ op_minus
 l_int|1
 )paren
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1616,6 +1684,7 @@ l_string|&quot;&bslash;t(-1 disables this feature)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1625,6 +1694,7 @@ id|defa
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1634,6 +1704,7 @@ suffix:semicolon
 id|num
 op_assign
 id|ask_value
+c_func
 (paren
 l_string|&quot;%d&quot;
 comma
@@ -1651,6 +1722,7 @@ l_int|1
 r_return
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1662,6 +1734,7 @@ id|num
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define %s %d&bslash;n&quot;
 comma
@@ -1681,6 +1754,7 @@ op_eq
 l_int|0
 )paren
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1688,6 +1762,7 @@ l_string|&quot;&bslash;t(0 disables this feature)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1697,6 +1772,7 @@ id|defa
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1706,6 +1782,7 @@ suffix:semicolon
 id|num
 op_assign
 id|ask_value
+c_func
 (paren
 l_string|&quot;%x&quot;
 comma
@@ -1722,6 +1799,7 @@ l_int|0
 r_return
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1733,6 +1811,7 @@ id|num
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define %s 0x%x&bslash;n&quot;
 comma
@@ -1747,6 +1826,7 @@ suffix:semicolon
 r_void
 DECL|function|rebuild_file
 id|rebuild_file
+c_func
 (paren
 r_char
 op_star
@@ -1868,6 +1948,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1884,6 +1965,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|method
 comma
@@ -1898,6 +1980,7 @@ c_cond
 (paren
 op_logical_neg
 id|bin2hex
+c_func
 (paren
 id|old
 comma
@@ -1908,6 +1991,7 @@ id|var
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1927,6 +2011,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|method
 comma
@@ -1941,6 +2026,7 @@ c_cond
 (paren
 op_logical_neg
 id|hex2hex
+c_func
 (paren
 id|old
 comma
@@ -1951,6 +2037,7 @@ id|var
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1968,6 +2055,7 @@ suffix:semicolon
 r_else
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1989,6 +2077,7 @@ suffix:semicolon
 r_int
 DECL|function|use_old_config
 id|use_old_config
+c_func
 (paren
 r_char
 op_star
@@ -2011,6 +2100,7 @@ op_star
 id|oldf
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -2026,6 +2116,7 @@ c_cond
 id|oldf
 op_assign
 id|fopen
+c_func
 (paren
 id|filename
 comma
@@ -2037,6 +2128,7 @@ l_int|NULL
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -2044,6 +2136,7 @@ l_string|&quot;Couldn&squot;t open previous configuration file&bslash;n&quot;
 )paren
 suffix:semicolon
 id|perror
+c_func
 (paren
 id|filename
 )paren
@@ -2056,6 +2149,7 @@ r_while
 c_loop
 (paren
 id|fgets
+c_func
 (paren
 id|buf
 comma
@@ -2085,6 +2179,7 @@ l_char|&squot;#&squot;
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -2092,6 +2187,7 @@ id|buf
 )paren
 suffix:semicolon
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2111,6 +2207,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2120,6 +2217,7 @@ op_eq
 l_int|0
 )paren
 id|rebuild_file
+c_func
 (paren
 op_amp
 id|buf
@@ -2132,6 +2230,7 @@ r_continue
 suffix:semicolon
 )brace
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2151,6 +2250,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2207,6 +2307,7 @@ id|i
 op_increment
 suffix:semicolon
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2226,6 +2327,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2240,6 +2342,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2254,6 +2357,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2265,6 +2369,7 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2282,6 +2387,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2293,6 +2399,7 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2318,6 +2425,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2330,6 +2438,7 @@ r_continue
 suffix:semicolon
 multiline_comment|/* Skip excludes */
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2350,6 +2459,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2360,6 +2470,7 @@ l_int|0
 )paren
 (brace
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2401,6 +2512,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|hw_table
 (braket
@@ -2430,6 +2542,7 @@ r_continue
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -2443,6 +2556,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2499,6 +2613,7 @@ id|i
 op_increment
 suffix:semicolon
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2519,6 +2634,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2530,6 +2646,7 @@ l_int|0
 r_continue
 suffix:semicolon
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2550,6 +2667,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|tmp
 comma
@@ -2562,6 +2680,7 @@ r_continue
 suffix:semicolon
 multiline_comment|/* Not a #undef  EXCLUDE_ line */
 id|strncpy
+c_func
 (paren
 id|tmp
 comma
@@ -2603,6 +2722,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|hw_table
 (braket
@@ -2632,6 +2752,7 @@ r_continue
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -2640,6 +2761,7 @@ id|buf
 suffix:semicolon
 )brace
 id|fclose
+c_func
 (paren
 id|oldf
 )paren
@@ -2675,11 +2797,13 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
@@ -2693,6 +2817,7 @@ id|macro
 suffix:semicolon
 r_else
 id|printf
+c_func
 (paren
 l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
@@ -2705,6 +2830,7 @@ id|macro
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -2739,6 +2865,7 @@ dot
 id|mask
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
@@ -2752,6 +2879,7 @@ id|name
 suffix:semicolon
 r_else
 id|printf
+c_func
 (paren
 l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
@@ -2768,11 +2896,13 @@ op_increment
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08x&bslash;n&quot;
 comma
@@ -2780,6 +2910,7 @@ id|selected_options
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -2787,6 +2918,7 @@ l_string|&quot;Old configuration copied.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|build_defines
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -2801,6 +2933,7 @@ suffix:semicolon
 r_void
 DECL|function|build_defines
 id|build_defines
+c_func
 (paren
 r_void
 )paren
@@ -2819,6 +2952,7 @@ c_cond
 id|optf
 op_assign
 id|fopen
+c_func
 (paren
 l_string|&quot;.defines&quot;
 comma
@@ -2830,6 +2964,7 @@ l_int|NULL
 )paren
 (brace
 id|perror
+c_func
 (paren
 l_string|&quot;.defines&quot;
 )paren
@@ -2872,11 +3007,13 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
 )paren
 id|fprintf
+c_func
 (paren
 id|optf
 comma
@@ -2891,6 +3028,7 @@ id|macro
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|optf
 comma
@@ -2927,6 +3065,7 @@ dot
 id|mask
 )paren
 id|fprintf
+c_func
 (paren
 id|optf
 comma
@@ -2945,6 +3084,7 @@ op_increment
 suffix:semicolon
 )brace
 id|fprintf
+c_func
 (paren
 id|optf
 comma
@@ -2952,6 +3092,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fclose
+c_func
 (paren
 id|optf
 )paren
@@ -2960,6 +3101,7 @@ suffix:semicolon
 r_void
 DECL|function|ask_parameters
 id|ask_parameters
+c_func
 (paren
 r_void
 )paren
@@ -2968,13 +3110,16 @@ r_int
 id|num
 suffix:semicolon
 id|build_defines
+c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * IRQ and DMA settings&n;   */
+multiline_comment|/*&n;&t; * IRQ and DMA settings&n;&t; */
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_AEDSP16
 )paren
@@ -2991,8 +3136,10 @@ l_string|&quot;220 or 240&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3009,8 +3156,10 @@ l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3027,8 +3176,10 @@ l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3045,8 +3196,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3063,8 +3216,10 @@ l_string|&quot;5, 6 or 7 (use 1 for 8 bit cards)&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3081,8 +3236,10 @@ l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|show_comment
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3091,8 +3248,10 @@ l_string|&quot;MPU401 IRQ is only required with Jazz16, SM Wave and ESS1688.&quo
 )paren
 suffix:semicolon
 id|show_comment
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3101,8 +3260,10 @@ l_string|&quot;Enter -1 to the following question if you have something else suc
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -3120,8 +3281,10 @@ l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
@@ -3138,8 +3301,10 @@ l_string|&quot;3, 4, 5, 7, 9, 10, 11, 12, 14 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
@@ -3161,6 +3326,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_PAS
 )paren
@@ -3170,6 +3336,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Enable Joystick port on ProAudioSpectrum&quot;
 comma
@@ -3180,6 +3347,7 @@ l_string|&quot;on the PAS sound card.&bslash;n&quot;
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define PAS_JOYSTICK_ENABLE&bslash;n&quot;
 )paren
@@ -3188,6 +3356,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Enable PAS16 bus clock option&quot;
 comma
@@ -3200,6 +3369,7 @@ l_string|&quot;this switch with DOS&bslash;n&quot;
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
 )paren
@@ -3208,6 +3378,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Disable SB mode of PAS16&quot;
 comma
@@ -3218,14 +3389,17 @@ l_string|&quot;Another SB compatible card in the same system&bslash;n&quot;
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define DISABLE_SB_EMULATION&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
@@ -3242,8 +3416,10 @@ l_string|&quot;210, 220, 230, 240, 250 or 260&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
@@ -3260,8 +3436,10 @@ l_string|&quot;3, 5, 7, 9, 11, 12 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
@@ -3278,8 +3456,10 @@ l_string|&quot;1, 3, 5, 6 or 7&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS
 )paren
@@ -3297,8 +3477,10 @@ l_string|&quot;1, 3, 5, 6 or 7&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS16
 )paren
@@ -3315,8 +3497,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS16
 )paren
@@ -3333,8 +3517,10 @@ l_string|&quot;3, 4, 5, 7, or 9&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_GUS16
 )paren
@@ -3351,8 +3537,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MPU401
 )paren
@@ -3369,8 +3557,10 @@ l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MPU401
 )paren
@@ -3392,8 +3582,10 @@ c_cond
 id|dump_only
 )paren
 id|show_comment
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAUI
 )paren
@@ -3402,8 +3594,10 @@ l_string|&quot;ERROR! You have to use old sound configuration method with Maui.&
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAUI
 )paren
@@ -3420,8 +3614,10 @@ l_string|&quot;210, 230, 260, 290, 300, 320, 338 or 330&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAUI
 )paren
@@ -3438,8 +3634,10 @@ l_string|&quot;5, 9, 12 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_UART6850
 )paren
@@ -3456,8 +3654,10 @@ l_string|&quot;(Unknown)&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_UART6850
 )paren
@@ -3480,8 +3680,10 @@ c_cond
 id|dump_only
 )paren
 id|show_comment
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3490,8 +3692,10 @@ l_string|&quot;ERROR! You have to use old sound configuration method with PSS ca
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3508,8 +3712,10 @@ l_string|&quot;220 or 240&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3526,8 +3732,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3544,8 +3752,10 @@ l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3562,8 +3772,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3580,8 +3792,10 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -3598,8 +3812,10 @@ l_string|&quot;3, 4, 5, 7 or 9&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -3616,8 +3832,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -3634,8 +3852,10 @@ l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -3652,8 +3872,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -3671,8 +3893,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3689,8 +3913,10 @@ l_string|&quot;320, 330, 340 or 350&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3707,8 +3933,10 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3725,8 +3953,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3743,8 +3973,10 @@ l_string|&quot;534, 608, E84 or F44&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3766,6 +3998,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_SSCAPE
 )paren
@@ -3777,6 +4010,7 @@ suffix:semicolon
 id|reveal_spea
 op_assign
 id|think_positively
+c_func
 (paren
 l_string|&quot;Is your SoundScape card made/marketed by Reveal or Spea&quot;
 comma
@@ -3792,6 +4026,7 @@ c_cond
 id|reveal_spea
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define REVEAL_SPEA&bslash;n&quot;
 )paren
@@ -3803,8 +4038,10 @@ c_cond
 id|dump_only
 )paren
 id|show_comment
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3813,8 +4050,10 @@ l_string|&quot;ERROR! You have to use old sound configuration method with OPL3-S
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3831,8 +4070,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3849,8 +4090,10 @@ l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3867,8 +4110,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3885,8 +4130,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3903,8 +4150,10 @@ l_string|&quot;330, 370, 3B0 or 3F0&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3921,8 +4170,10 @@ l_string|&quot;3, 4, 5, 7 or 9&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3939,8 +4190,10 @@ l_string|&quot;220, 210, 230, 240, 250, 260 or 270&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3957,8 +4210,10 @@ l_string|&quot;3, 4, 5 or 7&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -3975,8 +4230,10 @@ l_string|&quot;1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -3993,8 +4250,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -4011,8 +4270,10 @@ l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -4029,8 +4290,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -4047,8 +4310,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -4065,8 +4330,10 @@ l_string|&quot;330, 370, 3B0 or 3F0&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_OPL3SA1
 )paren
@@ -4083,8 +4350,10 @@ l_string|&quot;3, 4, 5, 7 or 9&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4101,8 +4370,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4119,8 +4390,10 @@ l_string|&quot;5, 7, 9, 11, 12 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4137,8 +4410,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4155,8 +4430,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4173,8 +4450,10 @@ l_string|&quot;330, 370, 3B0 or 3F0&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_CS4232
 )paren
@@ -4191,8 +4470,10 @@ l_string|&quot;5, 7, 9, 11, 12 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4209,8 +4490,10 @@ l_string|&quot;530, 604, E80 or F40&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4227,8 +4510,10 @@ l_string|&quot;7, 9, 10 or 11&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4245,8 +4530,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4263,8 +4550,10 @@ l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4281,8 +4570,10 @@ l_string|&quot;300, 310, 320 or 330 (0 disables)&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_MAD16
 )paren
@@ -4299,8 +4590,10 @@ l_string|&quot;5, 7, 9 or 10&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SOFTOSS
 )paren
@@ -4317,8 +4610,10 @@ l_string|&quot;8000 to 48000&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
+c_func
 (paren
 id|B
+c_func
 (paren
 id|OPT_SOFTOSS
 )paren
@@ -4338,6 +4633,7 @@ suffix:semicolon
 r_void
 DECL|function|dump_script
 id|dump_script
+c_func
 (paren
 r_void
 )paren
@@ -4367,6 +4663,7 @@ op_logical_neg
 id|DUMMY_OPTS
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
@@ -4380,6 +4677,7 @@ op_logical_neg
 id|DISABLED_OPTIONS
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
@@ -4387,6 +4685,7 @@ id|i
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;bool &squot;%s&squot; CONFIG_%s&bslash;n&quot;
 comma
@@ -4414,10 +4713,12 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ask_parameters
+c_func
 (paren
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#&bslash;n$MAKE -C drivers/sound kernelconfig || exit 1&bslash;n&quot;
 )paren
@@ -4426,6 +4727,7 @@ suffix:semicolon
 r_void
 DECL|function|dump_fixed_local
 id|dump_fixed_local
+c_func
 (paren
 r_void
 )paren
@@ -4436,16 +4738,19 @@ op_assign
 l_int|0
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/* Computer generated file. Please don&squot;t edit! */&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define KERNEL_COMPATIBLE_CONFIG&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08x&bslash;n&bslash;n&quot;
 comma
@@ -4473,6 +4778,7 @@ comma
 id|j
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#if &quot;
 )paren
@@ -4499,6 +4805,7 @@ op_logical_neg
 id|DISABLED_OPTIONS
 op_amp
 id|B
+c_func
 (paren
 id|j
 )paren
@@ -4515,6 +4822,7 @@ dot
 id|mask
 op_amp
 id|B
+c_func
 (paren
 id|j
 )paren
@@ -4526,6 +4834,7 @@ c_cond
 id|n
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot; || &quot;
 )paren
@@ -4542,11 +4851,13 @@ l_int|2
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;&bslash;&bslash;n  &quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;defined(CONFIG_%s)&quot;
 comma
@@ -4560,11 +4871,13 @@ id|macro
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#&bslash;tdefine CONFIG_%s&bslash;n&quot;
 comma
@@ -4577,6 +4890,7 @@ id|name
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#endif&bslash;n&bslash;n&quot;
 )paren
@@ -4589,6 +4903,7 @@ suffix:semicolon
 r_void
 DECL|function|dump_fixed_defines
 id|dump_fixed_defines
+c_func
 (paren
 r_void
 )paren
@@ -4599,6 +4914,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;# Computer generated file. Please don&squot;t edit&bslash;n&bslash;n&quot;
 )paren
@@ -4633,6 +4949,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4641,11 +4958,13 @@ op_logical_neg
 id|DISABLED_OPTIONS
 op_amp
 id|B
+c_func
 (paren
 id|j
 )paren
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4657,12 +4976,14 @@ dot
 id|mask
 op_amp
 id|B
+c_func
 (paren
 id|j
 )paren
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;ifdef CONFIG_%s&bslash;n&quot;
 comma
@@ -4676,6 +4997,19 @@ id|macro
 suffix:semicolon
 id|printf
 (paren
+l_string|&quot;ifneq ($(CONFIG_%s),Y)&bslash;n&quot;
+comma
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
 l_string|&quot;CONFIG_%s=y&bslash;n&quot;
 comma
 id|extra_options
@@ -4687,10 +5021,19 @@ id|name
 )paren
 suffix:semicolon
 id|printf
+c_func
+(paren
+l_string|&quot;endif&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+c_func
 (paren
 l_string|&quot;endif&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+)brace
 )brace
 id|i
 op_increment
@@ -4700,6 +5043,7 @@ suffix:semicolon
 r_int
 DECL|function|main
 id|main
+c_func
 (paren
 r_int
 id|argc
@@ -4728,6 +5072,7 @@ r_if
 c_cond
 (paren
 id|getuid
+c_func
 (paren
 )paren
 op_ne
@@ -4746,6 +5091,7 @@ c_cond
 id|home
 op_assign
 id|getenv
+c_func
 (paren
 l_string|&quot;HOME&quot;
 )paren
@@ -4755,6 +5101,7 @@ l_int|NULL
 )paren
 (brace
 id|sprintf
+c_func
 (paren
 id|old_config_file
 comma
@@ -4781,6 +5128,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|argv
 (braket
@@ -4793,6 +5141,7 @@ op_eq
 l_int|0
 op_logical_and
 id|use_old_config
+c_func
 (paren
 id|oldconf
 )paren
@@ -4807,6 +5156,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|argv
 (braket
@@ -4820,6 +5170,7 @@ l_int|0
 )paren
 (brace
 id|dump_script
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4834,6 +5185,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|argv
 (braket
@@ -4847,6 +5199,7 @@ l_int|0
 )paren
 (brace
 id|dump_fixed_local
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4861,6 +5214,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|argv
 (braket
@@ -4874,6 +5228,7 @@ l_int|0
 )paren
 (brace
 id|dump_fixed_defines
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4885,6 +5240,7 @@ suffix:semicolon
 )brace
 )brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -4895,6 +5251,7 @@ r_if
 c_cond
 (paren
 id|access
+c_func
 (paren
 id|oldconf
 comma
@@ -4911,6 +5268,7 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|str
 comma
@@ -4923,6 +5281,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 id|str
 comma
@@ -4936,6 +5295,7 @@ r_if
 c_cond
 (paren
 id|use_old_config
+c_func
 (paren
 id|oldconf
 )paren
@@ -4947,27 +5307,31 @@ l_int|0
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;/*&bslash;tGenerated by configure. Don&squot;t edit!!!!&bslash;t*/&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*&bslash;tMaking changes to this file is not as simple as it may look.&bslash;t*/&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*&bslash;tIf you change the CONFIG_ settings in local.h you&bslash;t*/&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*&bslash;t_have_ to edit .defines too.&bslash;t*/&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 (brace
-multiline_comment|/*&n;     * Partial driver&n;     */
+multiline_comment|/*&n;&t;&t; * Partial driver&n;&t;&t; */
 id|full_driver
 op_assign
 l_int|0
@@ -4990,6 +5354,7 @@ r_if
 c_cond
 (paren
 id|can_select_option
+c_func
 (paren
 id|i
 )paren
@@ -5003,12 +5368,13 @@ op_logical_neg
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Not selected yet&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Not selected yet&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5034,6 +5400,7 @@ id|alias
 id|selected_options
 op_or_assign
 id|B
+c_func
 (paren
 id|hw_table
 (braket
@@ -5047,6 +5414,7 @@ r_else
 id|selected_options
 op_or_assign
 id|B
+c_func
 (paren
 id|i
 )paren
@@ -5068,6 +5436,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 id|questions
 (braket
@@ -5095,6 +5464,7 @@ id|alias
 id|selected_options
 op_or_assign
 id|B
+c_func
 (paren
 id|hw_table
 (braket
@@ -5108,6 +5478,7 @@ r_else
 id|selected_options
 op_or_assign
 id|B
+c_func
 (paren
 id|i
 )paren
@@ -5121,6 +5492,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -5130,6 +5502,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Support for the SG NX Pro mixer&quot;
 comma
@@ -5140,6 +5513,7 @@ l_string|&quot;provided on Sound Galaxy NX Pro sound cards.&bslash;n&quot;
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define __SGNXPRO__&bslash;n&quot;
 )paren
@@ -5151,6 +5525,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -5160,6 +5535,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Support for the MV Jazz16 (ProSonic etc.)&quot;
 comma
@@ -5173,6 +5549,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you have SoundMan Wave&quot;
 comma
@@ -5183,6 +5560,7 @@ l_string|&quot;Enable this option of you have the Logitech SoundMan Wave sound c
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SM_WAVE&bslash;n&quot;
 )paren
@@ -5193,6 +5571,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you have access to the MIDI0001.BIN file&quot;
 comma
@@ -5211,6 +5590,7 @@ l_int|512
 )braket
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5218,6 +5598,7 @@ l_string|&quot;Enter full name of the MIDI0001.BIN file (pwd is sound): &quot;
 )paren
 suffix:semicolon
 id|scanf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -5225,6 +5606,7 @@ id|path
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5238,6 +5620,7 @@ c_cond
 (paren
 op_logical_neg
 id|bin2hex
+c_func
 (paren
 id|path
 comma
@@ -5248,6 +5631,7 @@ l_string|&quot;smw_ucode&quot;
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5260,6 +5644,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Try again with correct path&quot;
 comma
@@ -5276,11 +5661,13 @@ suffix:semicolon
 r_else
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SMW_MIDI0001_INCLUDED&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*build bin2hex %s smw-midi0001.h smw_ucode */&bslash;n&quot;
 comma
@@ -5298,6 +5685,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -5307,6 +5695,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you have a Logitech SoundMan Games&quot;
 comma
@@ -5322,6 +5711,7 @@ l_string|&quot;Answer &squot;n&squot; if you are unsure what to do!&bslash;n&quo
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define SM_GAMES&bslash;n&quot;
 )paren
@@ -5333,6 +5723,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_AEDSP16
 )paren
@@ -5349,6 +5740,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_SB
 )paren
@@ -5358,6 +5750,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you want support for the Audio Excel Sound Blaster Pro mode&quot;
 comma
@@ -5369,6 +5762,7 @@ l_string|&quot;in Sound Blaster Pro mode.&bslash;n&quot;
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define AEDSP16_SBPRO&bslash;n&quot;
 )paren
@@ -5386,6 +5780,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -5402,6 +5797,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you want support for the Audio Excel Microsoft Sound System mode&quot;
 comma
@@ -5413,6 +5809,7 @@ l_string|&quot;in Microsoft Sound System mode.&bslash;n&quot;
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define AEDSP16_MSS&bslash;n&quot;
 )paren
@@ -5432,11 +5829,13 @@ l_int|0
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5456,11 +5855,13 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_MPU401
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define AEDSP16_MPU401&bslash;n&quot;
 )paren
@@ -5472,6 +5873,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_PSS
 )paren
@@ -5483,6 +5885,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you wish to include an LD file&quot;
 comma
@@ -5500,6 +5903,7 @@ l_int|512
 )braket
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5507,6 +5911,7 @@ l_string|&quot;Enter the path to your LD file (pwd is sound): &quot;
 )paren
 suffix:semicolon
 id|scanf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -5514,6 +5919,7 @@ id|path
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5527,6 +5933,7 @@ c_cond
 (paren
 op_logical_neg
 id|bin2hex
+c_func
 (paren
 id|path
 comma
@@ -5537,6 +5944,7 @@ l_string|&quot;pss_synth&quot;
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5549,6 +5957,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;try again with correct path&quot;
 comma
@@ -5564,11 +5973,13 @@ suffix:semicolon
 r_else
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define PSS_HAVE_LD&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*build bin2hex %s synth-ld.h pss_synth */&bslash;n&quot;
 comma
@@ -5584,6 +5995,7 @@ op_star
 id|sf
 op_assign
 id|fopen
+c_func
 (paren
 l_string|&quot;synth-ld.h&quot;
 comma
@@ -5591,6 +6003,7 @@ l_string|&quot;w&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -5598,6 +6011,7 @@ l_string|&quot;/* automatically generated by configure */&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -5606,6 +6020,7 @@ l_string|&quot;#define pss_synthLen 0&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fclose
+c_func
 (paren
 id|sf
 )paren
@@ -5618,6 +6033,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_TRIX
 )paren
@@ -5629,6 +6045,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you want to include TRXPRO.HEX in your kernel&quot;
 comma
@@ -5649,6 +6066,7 @@ l_int|512
 )braket
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5656,6 +6074,7 @@ l_string|&quot;Enter the path to your TRXPRO.HEX file (pwd is sound): &quot;
 )paren
 suffix:semicolon
 id|scanf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -5663,6 +6082,7 @@ id|path
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5676,6 +6096,7 @@ c_cond
 (paren
 op_logical_neg
 id|hex2hex
+c_func
 (paren
 id|path
 comma
@@ -5688,6 +6109,7 @@ r_goto
 id|hex2hex_again
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*build hex2hex %s trix_boot.h trix_boot */&bslash;n&quot;
 comma
@@ -5695,6 +6117,7 @@ id|path
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define INCLUDE_TRIX_BOOT&bslash;n&quot;
 )paren
@@ -5707,6 +6130,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_MSS
 )paren
@@ -5716,6 +6140,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Support for builtin sound of Compaq Deskpro XL&quot;
 comma
@@ -5726,6 +6151,7 @@ l_string|&quot;Enable this if you have Compaq Deskpro XL.&bslash;n&quot;
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define DESKPROXL&bslash;n&quot;
 )paren
@@ -5738,6 +6164,7 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|OPT_MAUI
 )paren
@@ -5749,6 +6176,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Do you have access to the OSWF.MOT file&quot;
 comma
@@ -5767,6 +6195,7 @@ l_int|512
 )braket
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5774,6 +6203,7 @@ l_string|&quot;Enter full name of the OSWF.MOT file (pwd is sound): &quot;
 )paren
 suffix:semicolon
 id|scanf
+c_func
 (paren
 l_string|&quot;%s&quot;
 comma
@@ -5781,6 +6211,7 @@ id|path
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5794,6 +6225,7 @@ c_cond
 (paren
 op_logical_neg
 id|bin2hex
+c_func
 (paren
 id|path
 comma
@@ -5804,6 +6236,7 @@ l_string|&quot;maui_os&quot;
 )paren
 (brace
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5816,6 +6249,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 l_string|&quot;Try again with correct path&quot;
 comma
@@ -5832,11 +6266,13 @@ suffix:semicolon
 r_else
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define HAVE_MAUI_BOOT&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;/*build bin2hex %s maui_boot.h maui_os */&bslash;n&quot;
 comma
@@ -5858,11 +6294,13 @@ id|ANY_DEVS
 )paren
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;invalid_configuration__run_make_config_again&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -5906,11 +6344,13 @@ c_cond
 id|selected_options
 op_amp
 id|B
+c_func
 (paren
 id|i
 )paren
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
@@ -5924,6 +6364,7 @@ id|macro
 suffix:semicolon
 r_else
 id|printf
+c_func
 (paren
 l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
@@ -5936,6 +6377,7 @@ id|macro
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -5970,6 +6412,7 @@ dot
 id|mask
 )paren
 id|printf
+c_func
 (paren
 l_string|&quot;#define CONFIG_%s&bslash;n&quot;
 comma
@@ -5983,6 +6426,7 @@ id|name
 suffix:semicolon
 r_else
 id|printf
+c_func
 (paren
 l_string|&quot;#undef  CONFIG_%s&bslash;n&quot;
 comma
@@ -5999,15 +6443,18 @@ op_increment
 suffix:semicolon
 )brace
 id|printf
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ask_parameters
+c_func
 (paren
 )paren
 suffix:semicolon
 id|printf
+c_func
 (paren
 l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08lx&bslash;n&quot;
 comma
@@ -6015,6 +6462,7 @@ id|selected_options
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -6035,6 +6483,7 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|str
 comma
@@ -6047,6 +6496,7 @@ r_if
 c_cond
 (paren
 id|think_positively
+c_func
 (paren
 id|str
 comma
@@ -6065,6 +6515,7 @@ l_int|200
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|cmd
 comma
@@ -6074,6 +6525,7 @@ id|oldconf
 )paren
 suffix:semicolon
 id|fclose
+c_func
 (paren
 id|stdout
 )paren
@@ -6082,6 +6534,7 @@ r_if
 c_cond
 (paren
 id|system
+c_func
 (paren
 id|cmd
 )paren
@@ -6089,6 +6542,7 @@ op_ne
 l_int|0
 )paren
 id|perror
+c_func
 (paren
 id|cmd
 )paren
@@ -6104,6 +6558,7 @@ suffix:semicolon
 r_int
 DECL|function|bin2hex
 id|bin2hex
+c_func
 (paren
 r_char
 op_star
@@ -6139,6 +6594,7 @@ c_cond
 id|fd
 op_assign
 id|open
+c_func
 (paren
 id|path
 comma
@@ -6154,6 +6610,7 @@ op_star
 id|sf
 op_assign
 id|fopen
+c_func
 (paren
 id|target
 comma
@@ -6161,6 +6618,7 @@ l_string|&quot;w&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -6168,6 +6626,7 @@ l_string|&quot;/* automatically generated by configure */&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -6185,6 +6644,7 @@ l_int|1
 id|count
 op_assign
 id|read
+c_func
 (paren
 id|fd
 comma
@@ -6219,6 +6679,7 @@ op_eq
 l_int|0
 )paren
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -6226,6 +6687,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -6241,6 +6703,7 @@ op_increment
 suffix:semicolon
 )brace
 id|fprintf
+c_func
 (paren
 id|sf
 comma
@@ -6253,11 +6716,13 @@ id|i
 )paren
 suffix:semicolon
 id|fclose
+c_func
 (paren
 id|sf
 )paren
 suffix:semicolon
 id|close
+c_func
 (paren
 id|fd
 )paren

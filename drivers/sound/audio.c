@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/a
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_AUDIO
+macro_line|#if defined(CONFIG_AUDIO) || defined(MODULE)
 macro_line|#include &quot;ulaw.h&quot;
 macro_line|#include &quot;coproc.h&quot;
 DECL|macro|NEUTRAL8
@@ -34,6 +34,7 @@ DECL|macro|AM_READ
 mdefine_line|#define &t;AM_READ&t;&t;OPEN_READ
 r_int
 id|dma_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -74,6 +75,7 @@ r_static
 r_int
 DECL|function|set_format
 id|set_format
+c_func
 (paren
 r_int
 id|dev
@@ -149,7 +151,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_bits
+id|d
+op_member_access_from_pointer
+id|set_bits
+c_func
 (paren
 id|dev
 comma
@@ -181,6 +186,7 @@ suffix:semicolon
 r_int
 DECL|function|audio_open
 id|audio_open
+c_func
 (paren
 r_int
 id|dev
@@ -255,6 +261,7 @@ c_cond
 id|ret
 op_assign
 id|DMAbuf_open
+c_func
 (paren
 id|dev
 comma
@@ -291,6 +298,7 @@ op_member_access_from_pointer
 id|coproc
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|audio_devs
 (braket
@@ -307,6 +315,7 @@ l_int|0
 )paren
 (brace
 id|audio_release
+c_func
 (paren
 id|dev
 comma
@@ -314,6 +323,7 @@ id|file
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;Sound: Can&squot;t access coprocessor device&bslash;n&quot;
 )paren
@@ -338,6 +348,7 @@ id|SND_DEV_AUDIO
 )paren
 (brace
 id|set_format
+c_func
 (paren
 id|dev
 comma
@@ -347,6 +358,7 @@ suffix:semicolon
 )brace
 r_else
 id|set_format
+c_func
 (paren
 id|dev
 comma
@@ -375,6 +387,7 @@ r_static
 r_void
 DECL|function|sync_output
 id|sync_output
+c_func
 (paren
 r_int
 id|dev
@@ -446,6 +459,7 @@ op_minus
 id|l
 suffix:semicolon
 id|memset
+c_func
 (paren
 id|dmap-&gt;raw_buf
 op_plus
@@ -457,6 +471,7 @@ id|len
 )paren
 suffix:semicolon
 id|DMAbuf_move_wrpointer
+c_func
 (paren
 id|dev
 comma
@@ -522,11 +537,13 @@ id|dmap-&gt;buffsize
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;audio: Buffer error 2&bslash;n&quot;
 )paren
 suffix:semicolon
 id|memset
+c_func
 (paren
 id|dmap-&gt;raw_buf
 op_plus
@@ -548,6 +565,7 @@ suffix:semicolon
 r_void
 DECL|function|audio_release
 id|audio_release
+c_func
 (paren
 r_int
 id|dev
@@ -592,6 +610,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|sync_output
+c_func
 (paren
 id|dev
 )paren
@@ -611,7 +630,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|coproc-&gt;close
+id|coproc
+op_member_access_from_pointer
+id|close
+c_func
 (paren
 id|audio_devs
 (braket
@@ -624,6 +646,7 @@ id|COPR_PCM
 )paren
 suffix:semicolon
 id|DMAbuf_release
+c_func
 (paren
 id|dev
 comma
@@ -636,6 +659,7 @@ r_static
 r_void
 DECL|function|translate_bytes
 id|translate_bytes
+c_func
 (paren
 r_const
 r_int
@@ -699,6 +723,7 @@ r_inline
 r_void
 DECL|function|translate_bytes
 id|translate_bytes
+c_func
 (paren
 r_const
 r_void
@@ -722,6 +747,7 @@ l_int|0
 )paren
 (brace
 id|__asm__
+c_func
 (paren
 l_string|&quot;cld&bslash;n&quot;
 l_string|&quot;1:&bslash;tlodsb&bslash;n&bslash;t&quot;
@@ -776,6 +802,7 @@ macro_line|#endif
 r_int
 DECL|function|audio_write
 id|audio_write
+c_func
 (paren
 r_int
 id|dev
@@ -879,6 +906,7 @@ id|count
 multiline_comment|/* Flush output */
 (brace
 id|sync_output
+c_func
 (paren
 id|dev
 )paren
@@ -900,6 +928,7 @@ c_cond
 id|err
 op_assign
 id|DMAbuf_getwrbuffer
+c_func
 (paren
 id|dev
 comma
@@ -995,6 +1024,7 @@ id|dmap_out-&gt;buffsize
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;audio: Buffer error 3 (%lx,%d), (%lx, %d)&bslash;n&quot;
 comma
@@ -1045,6 +1075,7 @@ id|dmap_out-&gt;raw_buf
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;audio: Buffer error 13 (%lx&lt;%lx)&bslash;n&quot;
 comma
@@ -1070,6 +1101,7 @@ id|EDOM
 suffix:semicolon
 )brace
 id|copy_from_user
+c_func
 (paren
 id|dma_buf
 comma
@@ -1091,7 +1123,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;copy_user
+id|d
+op_member_access_from_pointer
+id|copy_user
+c_func
 (paren
 id|dev
 comma
@@ -1117,12 +1152,14 @@ op_amp
 id|CNV_MU_LAW
 )paren
 (brace
-multiline_comment|/*&n;&t;   * This just allows interrupts while the conversion is running&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;     * This just allows interrupts while the conversion is running&n;&t;&t;&t;     */
 id|sti
+c_func
 (paren
 )paren
 suffix:semicolon
 id|translate_bytes
+c_func
 (paren
 id|ulaw_dsp
 comma
@@ -1146,6 +1183,7 @@ op_add_assign
 id|l
 suffix:semicolon
 id|DMAbuf_move_wrpointer
+c_func
 (paren
 id|dev
 comma
@@ -1160,6 +1198,7 @@ suffix:semicolon
 r_int
 DECL|function|audio_read
 id|audio_read
+c_func
 (paren
 r_int
 id|dev
@@ -1250,6 +1289,7 @@ id|DMA_DUPLEX
 )paren
 (brace
 id|sync_output
+c_func
 (paren
 id|dev
 )paren
@@ -1295,6 +1335,7 @@ c_cond
 id|buf_no
 op_assign
 id|DMAbuf_getrdbuffer
+c_func
 (paren
 id|dev
 comma
@@ -1346,7 +1387,7 @@ id|l
 op_assign
 id|c
 suffix:semicolon
-multiline_comment|/*&n;       * Insert any local processing here.&n;       */
+multiline_comment|/*&n;&t;&t;   * Insert any local processing here.&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -1358,12 +1399,14 @@ op_amp
 id|CNV_MU_LAW
 )paren
 (brace
-multiline_comment|/*&n;&t;   * This just allows interrupts while the conversion is running&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;     * This just allows interrupts while the conversion is running&n;&t;&t;&t;     */
 id|sti
+c_func
 (paren
 )paren
 suffix:semicolon
 id|translate_bytes
+c_func
 (paren
 id|dsp_ulaw
 comma
@@ -1386,6 +1429,7 @@ op_assign
 id|dmabuf
 suffix:semicolon
 id|copy_to_user
+c_func
 (paren
 op_amp
 (paren
@@ -1403,6 +1447,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 id|DMAbuf_rmchars
+c_func
 (paren
 id|dev
 comma
@@ -1429,6 +1474,7 @@ suffix:semicolon
 r_int
 DECL|function|audio_ioctl
 id|audio_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -1489,7 +1535,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|coproc-&gt;ioctl
+id|coproc
+op_member_access_from_pointer
+id|ioctl
+c_func
 (paren
 id|audio_devs
 (braket
@@ -1507,6 +1556,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;/dev/dsp%d: No coprocessor for this device&bslash;n&quot;
 comma
@@ -1562,16 +1612,19 @@ r_return
 l_int|0
 suffix:semicolon
 id|sync_output
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|DMAbuf_sync
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|DMAbuf_reset
+c_func
 (paren
 id|dev
 )paren
@@ -1629,11 +1682,13 @@ op_or
 id|DMA_DIRTY
 suffix:semicolon
 id|sync_output
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 id|dma_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -1661,6 +1716,7 @@ op_assign
 id|AM_NONE
 suffix:semicolon
 id|DMAbuf_reset
+c_func
 (paren
 id|dev
 )paren
@@ -1714,6 +1770,7 @@ op_star
 id|arg
 op_assign
 id|set_format
+c_func
 (paren
 id|dev
 comma
@@ -1778,6 +1835,7 @@ r_int
 id|err
 op_assign
 id|dma_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -1801,6 +1859,7 @@ r_return
 id|err
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -1891,6 +1950,7 @@ r_int
 id|err
 op_assign
 id|dma_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -1914,6 +1974,7 @@ r_return
 id|err
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -2045,6 +2106,7 @@ op_or_assign
 id|DSP_CAP_MMAP
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -2105,7 +2167,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_speed
+id|d
+op_member_access_from_pointer
+id|set_speed
+c_func
 (paren
 id|dev
 comma
@@ -2130,7 +2195,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_speed
+id|d
+op_member_access_from_pointer
+id|set_speed
+c_func
 (paren
 id|dev
 comma
@@ -2163,6 +2231,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;sound: SNDCTL_DSP_STEREO called with invalid argument %d&bslash;n&quot;
 comma
@@ -2199,7 +2268,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_channels
+id|d
+op_member_access_from_pointer
+id|set_channels
+c_func
 (paren
 id|dev
 comma
@@ -2238,7 +2310,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_channels
+id|d
+op_member_access_from_pointer
+id|set_channels
+c_func
 (paren
 id|dev
 comma
@@ -2263,7 +2338,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_channels
+id|d
+op_member_access_from_pointer
+id|set_channels
+c_func
 (paren
 id|dev
 comma
@@ -2288,7 +2366,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;set_bits
+id|d
+op_member_access_from_pointer
+id|set_bits
+c_func
 (paren
 id|dev
 comma
@@ -2401,6 +2482,7 @@ r_default
 suffix:colon
 r_return
 id|dma_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -2414,16 +2496,18 @@ suffix:semicolon
 r_void
 DECL|function|audio_init_devices
 id|audio_init_devices
+c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;   * NOTE! This routine could be called several times during boot.&n;   */
+multiline_comment|/*&n;&t; * NOTE! This routine could be called several times during boot.&n;&t; */
 )brace
 macro_line|#endif
 r_void
 DECL|function|reorganize_buffers
 id|reorganize_buffers
+c_func
 (paren
 r_int
 id|dev
@@ -2437,7 +2521,7 @@ r_int
 id|recording
 )paren
 (brace
-multiline_comment|/*&n;   * This routine breaks the physical device buffers to logical ones.&n;   */
+multiline_comment|/*&n;&t; * This routine breaks the physical device buffers to logical ones.&n;&t; */
 r_struct
 id|audio_operations
 op_star
@@ -2464,7 +2548,10 @@ id|bsz
 suffix:semicolon
 id|sr
 op_assign
-id|dsp_dev-&gt;d-&gt;set_speed
+id|dsp_dev-&gt;d
+op_member_access_from_pointer
+id|set_speed
+c_func
 (paren
 id|dev
 comma
@@ -2473,7 +2560,10 @@ l_int|0
 suffix:semicolon
 id|nc
 op_assign
-id|dsp_dev-&gt;d-&gt;set_channels
+id|dsp_dev-&gt;d
+op_member_access_from_pointer
+id|set_channels
+c_func
 (paren
 id|dev
 comma
@@ -2482,7 +2572,10 @@ l_int|0
 suffix:semicolon
 id|sz
 op_assign
-id|dsp_dev-&gt;d-&gt;set_bits
+id|dsp_dev-&gt;d
+op_member_access_from_pointer
+id|set_bits
+c_func
 (paren
 id|dev
 comma
@@ -2522,6 +2615,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Warning: Invalid PCM parameters[%d] sr=%d, nc=%d, sz=%d&bslash;n&quot;
 comma
@@ -2585,7 +2679,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Compute the fragment size using the default algorithm */
-multiline_comment|/*&n;         * Compute a buffer size for time not exceeding 1 second.&n;         * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;         * of sound (using the current speed, sample size and #channels).&n;       */
+multiline_comment|/*&n;&t;&t;     * Compute a buffer size for time not exceeding 1 second.&n;&t;&t;     * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;&t;&t;     * of sound (using the current speed, sample size and #channels).&n;&t;&t;   */
 id|bsz
 op_assign
 id|dmap-&gt;buffsize
@@ -2682,7 +2776,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;         * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n;         * the buffer size computation has already been done.&n;       */
+multiline_comment|/*&n;&t;&t;     * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n;&t;&t;     * the buffer size computation has already been done.&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -2789,6 +2883,7 @@ suffix:semicolon
 multiline_comment|/* Force size which is multiple of 8 bytes */
 macro_line|#ifdef OS_DMA_ALIGN_CHECK
 id|OS_DMA_ALIGN_CHECK
+c_func
 (paren
 id|bsz
 )paren
@@ -2873,6 +2968,7 @@ id|dmap-&gt;raw_buf
 )paren
 (brace
 id|memset
+c_func
 (paren
 id|dmap-&gt;raw_buf
 comma
@@ -2916,6 +3012,7 @@ r_static
 r_int
 DECL|function|dma_subdivide
 id|dma_subdivide
+c_func
 (paren
 r_int
 id|dev
@@ -3041,6 +3138,7 @@ r_static
 r_int
 DECL|function|dma_set_fragment
 id|dma_set_fragment
+c_func
 (paren
 r_int
 id|dev
@@ -3311,6 +3409,7 @@ suffix:semicolon
 r_int
 DECL|function|dma_ioctl
 id|dma_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -3389,6 +3488,7 @@ id|OPEN_WRITE
 id|ret
 op_assign
 id|dma_subdivide
+c_func
 (paren
 id|dev
 comma
@@ -3444,6 +3544,7 @@ id|OPEN_READ
 id|ret
 op_assign
 id|dma_subdivide
+c_func
 (paren
 id|dev
 comma
@@ -3572,6 +3673,7 @@ id|DMA_ALLOC_DONE
 )paren
 )paren
 id|reorganize_buffers
+c_func
 (paren
 id|dev
 comma
@@ -3606,6 +3708,7 @@ c_cond
 (paren
 op_logical_neg
 id|DMAbuf_space_in_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3619,6 +3722,7 @@ r_else
 id|info-&gt;fragments
 op_assign
 id|DMAbuf_space_in_queue
+c_func
 (paren
 id|dev
 )paren
@@ -3642,7 +3746,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;local_qlen
+id|d
+op_member_access_from_pointer
+id|local_qlen
+c_func
 (paren
 id|dev
 )paren
@@ -3657,7 +3764,7 @@ id|info-&gt;fragments
 id|tmp
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|info-&gt;fragments
 op_sub_assign
 id|tmp
@@ -3813,6 +3920,7 @@ id|PCM_ENABLE_OUTPUT
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sound: Device doesn&squot;t have full duplex capability&bslash;n&quot;
 )paren
@@ -3823,11 +3931,13 @@ id|EINVAL
 suffix:semicolon
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3865,6 +3975,7 @@ r_int
 id|err
 suffix:semicolon
 id|reorganize_buffers
+c_func
 (paren
 id|dev
 comma
@@ -3884,7 +3995,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;prepare_for_input
+id|d
+op_member_access_from_pointer
+id|prepare_for_input
+c_func
 (paren
 id|dev
 comma
@@ -3914,6 +4028,7 @@ op_assign
 id|bits
 suffix:semicolon
 id|DMAbuf_activate_recording
+c_func
 (paren
 id|dev
 comma
@@ -3962,6 +4077,7 @@ id|DMA_ALLOC_DONE
 )paren
 (brace
 id|reorganize_buffers
+c_func
 (paren
 id|dev
 comma
@@ -3993,6 +4109,7 @@ op_assign
 id|dmap_out-&gt;fragment_size
 suffix:semicolon
 id|DMAbuf_launch_output
+c_func
 (paren
 id|dev
 comma
@@ -4028,7 +4145,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;trigger
+id|d
+op_member_access_from_pointer
+id|trigger
+c_func
 (paren
 id|dev
 comma
@@ -4044,6 +4164,7 @@ id|go
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4094,7 +4215,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;trigger
+id|d
+op_member_access_from_pointer
+id|trigger
+c_func
 (paren
 id|dev
 comma
@@ -4153,11 +4277,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4168,6 +4294,7 @@ suffix:semicolon
 id|info.ptr
 op_assign
 id|DMAbuf_get_buffer_pointer
+c_func
 (paren
 id|dev
 comma
@@ -4204,6 +4331,7 @@ op_add_assign
 id|info.ptr
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -4245,6 +4373,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Reset interrupt counter */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4293,11 +4422,13 @@ op_minus
 id|EINVAL
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4308,6 +4439,7 @@ suffix:semicolon
 id|info.ptr
 op_assign
 id|DMAbuf_get_buffer_pointer
+c_func
 (paren
 id|dev
 comma
@@ -4344,6 +4476,7 @@ op_add_assign
 id|info.ptr
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -4385,6 +4518,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Reset interrupt counter */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4427,6 +4561,7 @@ id|DMA_ACTIVE
 )paren
 )paren
 id|DMAbuf_launch_output
+c_func
 (paren
 id|dev
 comma
@@ -4471,6 +4606,7 @@ op_amp
 id|OPEN_WRITE
 )paren
 id|reorganize_buffers
+c_func
 (paren
 id|dev
 comma
@@ -4521,6 +4657,7 @@ id|OPEN_READ
 )paren
 )paren
 id|reorganize_buffers
+c_func
 (paren
 id|dev
 comma
@@ -4595,6 +4732,7 @@ suffix:semicolon
 id|ret
 op_assign
 id|dma_set_fragment
+c_func
 (paren
 id|dev
 comma
@@ -4639,6 +4777,7 @@ id|OPEN_READ
 id|ret
 op_assign
 id|dma_set_fragment
+c_func
 (paren
 id|dev
 comma
@@ -4663,7 +4802,10 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d-&gt;ioctl
+id|d
+op_member_access_from_pointer
+id|ioctl
+c_func
 (paren
 id|dev
 comma

@@ -18,6 +18,8 @@ DECL|macro|RTF_FLOW
 mdefine_line|#define RTF_FLOW&t;0x02000000&t;/* flow significant route&t;*/
 DECL|macro|RTF_POLICY
 mdefine_line|#define RTF_POLICY&t;0x04000000&t;/* policy route&t;&t;&t;*/
+DECL|macro|RTF_LOCAL
+mdefine_line|#define RTF_LOCAL&t;0x80000000
 DECL|struct|in6_rtmsg
 r_struct
 id|in6_rtmsg
@@ -68,5 +70,15 @@ id|rtmsg_ifindex
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|RTMSG_NEWDEVICE
+mdefine_line|#define RTMSG_NEWDEVICE&t;&t;0x11
+DECL|macro|RTMSG_DELDEVICE
+mdefine_line|#define RTMSG_DELDEVICE&t;&t;0x12
+DECL|macro|RTMSG_NEWROUTE
+mdefine_line|#define RTMSG_NEWROUTE&t;&t;0x21
+DECL|macro|RTMSG_DELROUTE
+mdefine_line|#define RTMSG_DELROUTE&t;&t;0x22
+DECL|macro|RTMSG_AR_FAILED
+mdefine_line|#define RTMSG_AR_FAILED&t;&t;0x51&t;/* Address Resolution failed&t;*/
 macro_line|#endif
 eof

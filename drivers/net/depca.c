@@ -1,4 +1,4 @@
-multiline_comment|/*  depca.c: A DIGITAL DEPCA  &amp; EtherWORKS ethernet driver for linux.&n;&n;    Written 1994, 1995 by David C. Davies.&n;&n;&n;                      Copyright 1994 David C. Davies&n;&t;&t;                   and&n;&t;&t;&t; United States Government&n;&t; (as represented by the Director, National Security Agency).&n;&n;               Copyright 1995  Digital Equipment Corporation.&n;&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of DEPCA and EtherWORKS ethernet cards:&n;&n;        DEPCA       (the original)&n;    &t;DE100&n;    &t;DE101&n;&t;DE200 Turbo&n;&t;DE201 Turbo&n;&t;DE202 Turbo (TP BNC)&n;&t;DE210&n;&t;DE422       (EISA)&n;&n;    The  driver has been tested on DE100, DE200 and DE202 cards  in  a&n;    relatively busy network. The DE422 has been tested a little.&n;&n;    This  driver will NOT work   for the DE203,  DE204  and DE205 series  of&n;    cards,  since they have  a  new custom ASIC in   place of the AMD  LANCE&n;    chip.  See the &squot;ewrk3.c&squot;   driver in the  Linux  source tree for running&n;    those cards.&n;&n;    I have benchmarked the driver with a  DE100 at 595kB/s to (542kB/s from)&n;    a DECstation 5000/200.&n;&n;    The author may be reached at davies@maniac.ultranet.com&n;&n;    =========================================================================&n;&n;    The  driver was originally based  on   the &squot;lance.c&squot; driver from  Donald&n;    Becker   which  is included with  the  standard  driver distribution for&n;    linux.  V0.4  is  a complete  re-write  with only  the kernel  interface&n;    remaining from the original code.&n;&n;    1) Lance.c code in /linux/drivers/net/&n;    2) &quot;Ethernet/IEEE 802.3 Family. 1992 World Network Data Book/Handbook&quot;,&n;       AMD, 1992 [(800) 222-9323].&n;    3) &quot;Am79C90 CMOS Local Area Network Controller for Ethernet (C-LANCE)&quot;,&n;       AMD, Pub. #17881, May 1993.&n;    4) &quot;Am79C960 PCnet-ISA(tm), Single-Chip Ethernet Controller for ISA&quot;,&n;       AMD, Pub. #16907, May 1992&n;    5) &quot;DEC EtherWORKS LC Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE100-OM.003&n;    6) &quot;DEC EtherWORKS Turbo Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1990, Pub. #EK-DE200-OM.003&n;    7) &quot;DEPCA Hardware Reference Manual&quot;, Pub. #EK-DEPCA-PR&n;       Digital Equipment Corporation, 1989&n;    8) &quot;DEC EtherWORKS Turbo_(TP BNC) Ethernet Controller Owners Manual&quot;,&n;       Digital Equipment corporation, 1991, Pub. #EK-DE202-OM.001&n;&n;&n;    Peter Bauer&squot;s depca.c (V0.5) was referred to when debugging V0.1 of this&n;    driver.&n;&n;    The original DEPCA  card requires that the  ethernet ROM address counter&n;    be enabled to count and has an 8 bit NICSR.  The ROM counter enabling is&n;    only  done when a  0x08 is read as the  first address octet (to minimise&n;    the chances  of writing over some  other hardware&squot;s  I/O register).  The&n;    NICSR accesses   have been changed  to  byte accesses  for all the cards&n;    supported by this driver, since there is only one  useful bit in the MSB&n;    (remote boot timeout) and it  is not used.  Also, there  is a maximum of&n;    only 48kB network  RAM for this  card.  My thanks  to Torbjorn Lindh for&n;    help debugging all this (and holding my feet to  the fire until I got it&n;    right).&n;&n;    The DE200  series  boards have  on-board 64kB  RAM for  use  as a shared&n;    memory network  buffer. Only the DE100  cards make use  of a  2kB buffer&n;    mode which has not  been implemented in  this driver (only the 32kB  and&n;    64kB modes are supported [16kB/48kB for the original DEPCA]).&n;&n;    At the most only 2 DEPCA cards can  be supported on  the ISA bus because&n;    there is only provision  for two I/O base addresses  on each card (0x300&n;    and 0x200). The I/O address is detected by searching for a byte sequence&n;    in the Ethernet station address PROM at the expected I/O address for the&n;    Ethernet  PROM.   The shared memory  base   address  is &squot;autoprobed&squot;  by&n;    looking  for the self  test PROM  and detecting the  card name.   When a&n;    second  DEPCA is  detected,  information  is   placed in the   base_addr&n;    variable of the  next device structure (which  is created if necessary),&n;    thus  enabling ethif_probe  initialization  for the device.  More than 2&n;    EISA cards can  be  supported, but  care will  be  needed assigning  the&n;    shared memory to ensure that each slot has the  correct IRQ, I/O address&n;    and shared memory address assigned.&n;&n;    ************************************************************************&n;&n;    NOTE: If you are using two  ISA DEPCAs, it is  important that you assign&n;    the base memory addresses correctly.   The  driver autoprobes I/O  0x300&n;    then 0x200.  The  base memory address for  the first device must be less&n;    than that of the second so that the auto probe will correctly assign the&n;    I/O and memory addresses on the same card.  I can&squot;t think of a way to do&n;    this unambiguously at the moment, since there is nothing on the cards to&n;    tie I/O and memory information together.&n;&n;    I am unable  to  test  2 cards   together for now,    so this  code   is&n;    unchecked. All reports, good or bad, are welcome.&n;&n;    ************************************************************************&n;&n;    The board IRQ   setting must be  at an  unused IRQ which  is auto-probed&n;    using Donald Becker&squot;s autoprobe routines. DEPCA and DE100 board IRQs are&n;    {2,3,4,5,7}, whereas the  DE200 is at {5,9,10,11,15}.  Note that IRQ2 is&n;    really IRQ9 in machines with 16 IRQ lines.&n;&n;    No 16MB memory  limitation should exist with this  driver as DMA is  not&n;    used and the common memory area is in low memory on the network card (my&n;    current system has 20MB and I&squot;ve not had problems yet).&n;&n;    The ability to load this driver as a loadable module has been added. To&n;    utilise this ability, you have to do &lt;8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy depca.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) if you wish, edit the  source code near  line 1530 to reflect the I/O&n;    address and IRQ you&squot;re using (see also 5).&n;    3) compile  depca.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the depca configuration turned off and reboot.&n;    5) insmod depca.o [irq=7] [io=0x200] [mem=0xd0000] [adapter_name=DE100]&n;       [Alan Cox: Changed the code to allow command line irq/io assignments]&n;       [Dave Davies: Changed the code to allow command line mem/name&n;                                                                assignments]&n;    6) run the net startup bits for your eth?? interface manually&n;    (usually /etc/rc.inet[12] at boot time).&n;    7) enjoy!&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts.&n;&n;    To unload a module, turn off the associated interface&n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod depca&squot;.&n;&n;    To assign a base memory address for the shared memory  when running as a&n;    loadable module, see 5 above.  To include the adapter  name (if you have&n;    no PROM  but know the card name)  also see 5  above. Note that this last&n;    option  will not work  with kernel  built-in  depca&squot;s.&n;&n;    The shared memory assignment for a loadable module  makes sense to avoid&n;    the &squot;memory autoprobe&squot; picking the wrong shared memory  (for the case of&n;    2 depca&squot;s in a PC).&n;&n;&n;    TO DO:&n;    ------&n;&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;&n;      0.1     25-jan-94   Initial writing.&n;      0.2     27-jan-94   Added LANCE TX hardware buffer chaining.&n;      0.3      1-feb-94   Added multiple DEPCA support.&n;      0.31     4-feb-94   Added DE202 recognition.&n;      0.32    19-feb-94   Tidy up. Improve multi-DEPCA support.&n;      0.33    25-feb-94   Fix DEPCA ethernet ROM counter enable.&n;                          Add jabber packet fix from murf@perftech.com&n;&t;&t;&t;  and becker@super.org&n;      0.34     7-mar-94   Fix DEPCA max network memory RAM &amp; NICSR access.&n;      0.35     8-mar-94   Added DE201 recognition. Tidied up.&n;      0.351   30-apr-94   Added EISA support. Added DE422 recognition.&n;      0.36    16-may-94   DE422 fix released.&n;      0.37    22-jul-94   Added MODULE support&n;      0.38    15-aug-94   Added DBR ROM switch in depca_close().&n;                          Multi DEPCA bug fix.&n;      0.38axp 15-sep-94   Special version for Alpha AXP Linux V1.0.&n;      0.381   12-dec-94   Added DE101 recognition, fix multicast bug.&n;      0.382    9-feb-95   Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;      0.383   22-feb-95   Fix for conflict with VESA SCSI reported by&n;                          &lt;stromain@alf.dec.com&gt;&n;      0.384   17-mar-95   Fix a ring full bug reported by &lt;bkm@star.rl.ac.uk&gt;&n;      0.385    3-apr-95   Fix a recognition bug reported by&n;                                                &lt;ryan.niemi@lastfrontier.com&gt;&n;      0.386   21-apr-95   Fix the last fix...sorry, must be galloping senility&n;      0.40    25-May-95   Rewrite for portability &amp; updated.&n;                          ALPHA support from &lt;jestabro@amt.tay1.dec.com&gt;&n;      0.41    26-Jun-95   Added verify_area() calls in depca_ioctl() from&n;                          suggestion by &lt;heiko@colossus.escape.de&gt;&n;      0.42    27-Dec-95   Add &squot;mem&squot; shared memory assignment for loadable&n;                          modules.&n;                          Add &squot;adapter_name&squot; for loadable modules when no PROM.&n;&t;&t;&t;  Both above from a suggestion by&n;&t;&t;&t;  &lt;pchen@woodruffs121.residence.gatech.edu&gt;.&n;&t;&t;&t;  Add new multicasting code.&n;      0.421   22-Apr-96&t;  Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;      0.422   29-Apr-96&t;  Fix depca_hw_init() bug &lt;jari@markkus2.fimr.fi&gt;&n;      0.423    7-Jun-96   Fix module load bug &lt;kmg@barco.be&gt;&n;      0.43    16-Aug-96   Update alloc_device() to conform to de4x5.c&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  depca.c: A DIGITAL DEPCA  &amp; EtherWORKS ethernet driver for linux.&n;&n;   Written 1994, 1995 by David C. Davies.&n;&n;&n;   Copyright 1994 David C. Davies&n;   and&n;   United States Government&n;   (as represented by the Director, National Security Agency).&n;&n;   Copyright 1995  Digital Equipment Corporation.&n;&n;&n;   This software may be used and distributed according to the terms of&n;   the GNU Public License, incorporated herein by reference.&n;&n;   This driver is written for the Digital Equipment Corporation series&n;   of DEPCA and EtherWORKS ethernet cards:&n;&n;   DEPCA       (the original)&n;   DE100&n;   DE101&n;   DE200 Turbo&n;   DE201 Turbo&n;   DE202 Turbo (TP BNC)&n;   DE210&n;   DE422       (EISA)&n;&n;   The  driver has been tested on DE100, DE200 and DE202 cards  in  a&n;   relatively busy network. The DE422 has been tested a little.&n;&n;   This  driver will NOT work   for the DE203,  DE204  and DE205 series  of&n;   cards,  since they have  a  new custom ASIC in   place of the AMD  LANCE&n;   chip.  See the &squot;ewrk3.c&squot;   driver in the  Linux  source tree for running&n;   those cards.&n;&n;   I have benchmarked the driver with a  DE100 at 595kB/s to (542kB/s from)&n;   a DECstation 5000/200.&n;&n;   The author may be reached at davies@maniac.ultranet.com&n;&n;   =========================================================================&n;&n;   The  driver was originally based  on   the &squot;lance.c&squot; driver from  Donald&n;   Becker   which  is included with  the  standard  driver distribution for&n;   linux.  V0.4  is  a complete  re-write  with only  the kernel  interface&n;   remaining from the original code.&n;&n;   1) Lance.c code in /linux/drivers/net/&n;   2) &quot;Ethernet/IEEE 802.3 Family. 1992 World Network Data Book/Handbook&quot;,&n;   AMD, 1992 [(800) 222-9323].&n;   3) &quot;Am79C90 CMOS Local Area Network Controller for Ethernet (C-LANCE)&quot;,&n;   AMD, Pub. #17881, May 1993.&n;   4) &quot;Am79C960 PCnet-ISA(tm), Single-Chip Ethernet Controller for ISA&quot;,&n;   AMD, Pub. #16907, May 1992&n;   5) &quot;DEC EtherWORKS LC Ethernet Controller Owners Manual&quot;,&n;   Digital Equipment corporation, 1990, Pub. #EK-DE100-OM.003&n;   6) &quot;DEC EtherWORKS Turbo Ethernet Controller Owners Manual&quot;,&n;   Digital Equipment corporation, 1990, Pub. #EK-DE200-OM.003&n;   7) &quot;DEPCA Hardware Reference Manual&quot;, Pub. #EK-DEPCA-PR&n;   Digital Equipment Corporation, 1989&n;   8) &quot;DEC EtherWORKS Turbo_(TP BNC) Ethernet Controller Owners Manual&quot;,&n;   Digital Equipment corporation, 1991, Pub. #EK-DE202-OM.001&n;&n;&n;   Peter Bauer&squot;s depca.c (V0.5) was referred to when debugging V0.1 of this&n;   driver.&n;&n;   The original DEPCA  card requires that the  ethernet ROM address counter&n;   be enabled to count and has an 8 bit NICSR.  The ROM counter enabling is&n;   only  done when a  0x08 is read as the  first address octet (to minimise&n;   the chances  of writing over some  other hardware&squot;s  I/O register).  The&n;   NICSR accesses   have been changed  to  byte accesses  for all the cards&n;   supported by this driver, since there is only one  useful bit in the MSB&n;   (remote boot timeout) and it  is not used.  Also, there  is a maximum of&n;   only 48kB network  RAM for this  card.  My thanks  to Torbjorn Lindh for&n;   help debugging all this (and holding my feet to  the fire until I got it&n;   right).&n;&n;   The DE200  series  boards have  on-board 64kB  RAM for  use  as a shared&n;   memory network  buffer. Only the DE100  cards make use  of a  2kB buffer&n;   mode which has not  been implemented in  this driver (only the 32kB  and&n;   64kB modes are supported [16kB/48kB for the original DEPCA]).&n;&n;   At the most only 2 DEPCA cards can  be supported on  the ISA bus because&n;   there is only provision  for two I/O base addresses  on each card (0x300&n;   and 0x200). The I/O address is detected by searching for a byte sequence&n;   in the Ethernet station address PROM at the expected I/O address for the&n;   Ethernet  PROM.   The shared memory  base   address  is &squot;autoprobed&squot;  by&n;   looking  for the self  test PROM  and detecting the  card name.   When a&n;   second  DEPCA is  detected,  information  is   placed in the   base_addr&n;   variable of the  next device structure (which  is created if necessary),&n;   thus  enabling ethif_probe  initialization  for the device.  More than 2&n;   EISA cards can  be  supported, but  care will  be  needed assigning  the&n;   shared memory to ensure that each slot has the  correct IRQ, I/O address&n;   and shared memory address assigned.&n;&n;   ************************************************************************&n;&n;   NOTE: If you are using two  ISA DEPCAs, it is  important that you assign&n;   the base memory addresses correctly.   The  driver autoprobes I/O  0x300&n;   then 0x200.  The  base memory address for  the first device must be less&n;   than that of the second so that the auto probe will correctly assign the&n;   I/O and memory addresses on the same card.  I can&squot;t think of a way to do&n;   this unambiguously at the moment, since there is nothing on the cards to&n;   tie I/O and memory information together.&n;&n;   I am unable  to  test  2 cards   together for now,    so this  code   is&n;   unchecked. All reports, good or bad, are welcome.&n;&n;   ************************************************************************&n;&n;   The board IRQ   setting must be  at an  unused IRQ which  is auto-probed&n;   using Donald Becker&squot;s autoprobe routines. DEPCA and DE100 board IRQs are&n;   {2,3,4,5,7}, whereas the  DE200 is at {5,9,10,11,15}.  Note that IRQ2 is&n;   really IRQ9 in machines with 16 IRQ lines.&n;&n;   No 16MB memory  limitation should exist with this  driver as DMA is  not&n;   used and the common memory area is in low memory on the network card (my&n;   current system has 20MB and I&squot;ve not had problems yet).&n;&n;   The ability to load this driver as a loadable module has been added. To&n;   utilise this ability, you have to do &lt;8 things:&n;&n;   0) have a copy of the loadable modules code installed on your system.&n;   1) copy depca.c from the  /linux/drivers/net directory to your favourite&n;   temporary directory.&n;   2) if you wish, edit the  source code near  line 1530 to reflect the I/O&n;   address and IRQ you&squot;re using (see also 5).&n;   3) compile  depca.c, but include -DMODULE in  the command line to ensure&n;   that the correct bits are compiled (see end of source code).&n;   4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;   kernel with the depca configuration turned off and reboot.&n;   5) insmod depca.o [irq=7] [io=0x200] [mem=0xd0000] [adapter_name=DE100]&n;   [Alan Cox: Changed the code to allow command line irq/io assignments]&n;   [Dave Davies: Changed the code to allow command line mem/name&n;   assignments]&n;   6) run the net startup bits for your eth?? interface manually&n;   (usually /etc/rc.inet[12] at boot time).&n;   7) enjoy!&n;&n;   Note that autoprobing is not allowed in loadable modules - the system is&n;   already up and running and you&squot;re messing with interrupts.&n;&n;   To unload a module, turn off the associated interface&n;   &squot;ifconfig eth?? down&squot; then &squot;rmmod depca&squot;.&n;&n;   To assign a base memory address for the shared memory  when running as a&n;   loadable module, see 5 above.  To include the adapter  name (if you have&n;   no PROM  but know the card name)  also see 5  above. Note that this last&n;   option  will not work  with kernel  built-in  depca&squot;s.&n;&n;   The shared memory assignment for a loadable module  makes sense to avoid&n;   the &squot;memory autoprobe&squot; picking the wrong shared memory  (for the case of&n;   2 depca&squot;s in a PC).&n;&n;&n;   TO DO:&n;   ------&n;&n;&n;   Revision History&n;   ----------------&n;&n;   Version   Date        Description&n;&n;   0.1     25-jan-94   Initial writing.&n;   0.2     27-jan-94   Added LANCE TX hardware buffer chaining.&n;   0.3      1-feb-94   Added multiple DEPCA support.&n;   0.31     4-feb-94   Added DE202 recognition.&n;   0.32    19-feb-94   Tidy up. Improve multi-DEPCA support.&n;   0.33    25-feb-94   Fix DEPCA ethernet ROM counter enable.&n;   Add jabber packet fix from murf@perftech.com&n;   and becker@super.org&n;   0.34     7-mar-94   Fix DEPCA max network memory RAM &amp; NICSR access.&n;   0.35     8-mar-94   Added DE201 recognition. Tidied up.&n;   0.351   30-apr-94   Added EISA support. Added DE422 recognition.&n;   0.36    16-may-94   DE422 fix released.&n;   0.37    22-jul-94   Added MODULE support&n;   0.38    15-aug-94   Added DBR ROM switch in depca_close().&n;   Multi DEPCA bug fix.&n;   0.38axp 15-sep-94   Special version for Alpha AXP Linux V1.0.&n;   0.381   12-dec-94   Added DE101 recognition, fix multicast bug.&n;   0.382    9-feb-95   Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;   0.383   22-feb-95   Fix for conflict with VESA SCSI reported by&n;   &lt;stromain@alf.dec.com&gt;&n;   0.384   17-mar-95   Fix a ring full bug reported by &lt;bkm@star.rl.ac.uk&gt;&n;   0.385    3-apr-95   Fix a recognition bug reported by&n;   &lt;ryan.niemi@lastfrontier.com&gt;&n;   0.386   21-apr-95   Fix the last fix...sorry, must be galloping senility&n;   0.40    25-May-95   Rewrite for portability &amp; updated.&n;   ALPHA support from &lt;jestabro@amt.tay1.dec.com&gt;&n;   0.41    26-Jun-95   Added verify_area() calls in depca_ioctl() from&n;   suggestion by &lt;heiko@colossus.escape.de&gt;&n;   0.42    27-Dec-95   Add &squot;mem&squot; shared memory assignment for loadable&n;   modules.&n;   Add &squot;adapter_name&squot; for loadable modules when no PROM.&n;   Both above from a suggestion by&n;   &lt;pchen@woodruffs121.residence.gatech.edu&gt;.&n;   Add new multicasting code.&n;   0.421   22-Apr-96      Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;   0.422   29-Apr-96      Fix depca_hw_init() bug &lt;jari@markkus2.fimr.fi&gt;&n;   0.423    7-Jun-96   Fix module load bug &lt;kmg@barco.be&gt;&n;   0.43    16-Aug-96   Update alloc_device() to conform to de4x5.c&n;&n;   =========================================================================&n; */
 DECL|variable|version
 r_static
 r_const
@@ -49,33 +49,33 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 DECL|macro|DEPCA_NDA
-mdefine_line|#define DEPCA_NDA 0xffe0            /* No Device Address */
-multiline_comment|/*&n;** Ethernet PROM defines&n;*/
+mdefine_line|#define DEPCA_NDA 0xffe0&t;/* No Device Address */
+multiline_comment|/*&n;   ** Ethernet PROM defines&n; */
 DECL|macro|PROBE_LENGTH
 mdefine_line|#define PROBE_LENGTH    32
 DECL|macro|ETH_PROM_SIG
 mdefine_line|#define ETH_PROM_SIG    0xAA5500FFUL
-multiline_comment|/*&n;** Set the number of Tx and Rx buffers. Ensure that the memory requested&n;** here is &lt;= to the amount of shared memory set up by the board switches.&n;** The number of descriptors MUST BE A POWER OF 2.&n;**&n;** total_memory = NUM_RX_DESC*(8+RX_BUFF_SZ) + NUM_TX_DESC*(8+TX_BUFF_SZ)&n;*/
+multiline_comment|/*&n;   ** Set the number of Tx and Rx buffers. Ensure that the memory requested&n;   ** here is &lt;= to the amount of shared memory set up by the board switches.&n;   ** The number of descriptors MUST BE A POWER OF 2.&n;   **&n;   ** total_memory = NUM_RX_DESC*(8+RX_BUFF_SZ) + NUM_TX_DESC*(8+TX_BUFF_SZ)&n; */
 DECL|macro|NUM_RX_DESC
-mdefine_line|#define NUM_RX_DESC     8               /* Number of RX descriptors */
+mdefine_line|#define NUM_RX_DESC     8&t;/* Number of RX descriptors */
 DECL|macro|NUM_TX_DESC
-mdefine_line|#define NUM_TX_DESC     8               /* Number of TX descriptors */
+mdefine_line|#define NUM_TX_DESC     8&t;/* Number of TX descriptors */
 DECL|macro|RX_BUFF_SZ
-mdefine_line|#define RX_BUFF_SZ&t;1536            /* Buffer size for each Rx buffer */
+mdefine_line|#define RX_BUFF_SZ&t;1536&t;/* Buffer size for each Rx buffer */
 DECL|macro|TX_BUFF_SZ
-mdefine_line|#define TX_BUFF_SZ&t;1536            /* Buffer size for each Tx buffer */
+mdefine_line|#define TX_BUFF_SZ&t;1536&t;/* Buffer size for each Tx buffer */
 DECL|macro|CRC_POLYNOMIAL_BE
-mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL  /* Ethernet CRC, big endian */
+mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL&t;/* Ethernet CRC, big endian */
 DECL|macro|CRC_POLYNOMIAL_LE
-mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL  /* Ethernet CRC, little endian */
-multiline_comment|/*&n;** EISA bus defines&n;*/
+mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL&t;/* Ethernet CRC, little endian */
+multiline_comment|/*&n;   ** EISA bus defines&n; */
 DECL|macro|DEPCA_EISA_IO_PORTS
-mdefine_line|#define DEPCA_EISA_IO_PORTS 0x0c00       /* I/O port base address, slot 0 */
+mdefine_line|#define DEPCA_EISA_IO_PORTS 0x0c00&t;/* I/O port base address, slot 0 */
 DECL|macro|MAX_EISA_SLOTS
 mdefine_line|#define MAX_EISA_SLOTS 16
 DECL|macro|EISA_SLOT_INC
 mdefine_line|#define EISA_SLOT_INC 0x1000
-multiline_comment|/*&n;** ISA Bus defines&n;*/
+multiline_comment|/*&n;   ** ISA Bus defines&n; */
 DECL|macro|DEPCA_RAM_BASE_ADDRESSES
 mdefine_line|#define DEPCA_RAM_BASE_ADDRESSES {0xc0000,0xd0000,0xe0000,0x00000}
 DECL|macro|DEPCA_IO_PORTS
@@ -89,9 +89,12 @@ id|mem_chkd
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;** Name &lt;-&gt; Adapter mapping&n;*/
+multiline_comment|/*&n;   ** Name &lt;-&gt; Adapter mapping&n; */
 DECL|macro|DEPCA_SIGNATURE
 mdefine_line|#define DEPCA_SIGNATURE {&quot;DEPCA&quot;,&bslash;&n;&t;&t;&t; &quot;DE100&quot;,&quot;DE101&quot;,&bslash;&n;                         &quot;DE200&quot;,&quot;DE201&quot;,&quot;DE202&quot;,&bslash;&n;&t;&t;&t; &quot;DE210&quot;,&bslash;&n;                         &quot;DE422&quot;,&bslash;&n;                         &quot;&quot;}
+r_static
+r_enum
+(brace
 DECL|enumerator|DEPCA
 DECL|enumerator|de100
 DECL|enumerator|de101
@@ -101,10 +104,6 @@ DECL|enumerator|de202
 DECL|enumerator|de210
 DECL|enumerator|de422
 DECL|enumerator|unknown
-DECL|variable|adapter
-r_static
-r_enum
-(brace
 id|DEPCA
 comma
 id|de100
@@ -122,22 +121,23 @@ comma
 id|de422
 comma
 id|unknown
+DECL|variable|adapter
 )brace
 id|adapter
 suffix:semicolon
-multiline_comment|/*&n;** Miscellaneous info...&n;*/
+multiline_comment|/*&n;   ** Miscellaneous info...&n; */
 DECL|macro|DEPCA_STRLEN
 mdefine_line|#define DEPCA_STRLEN 16
 DECL|macro|MAX_NUM_DEPCAS
 mdefine_line|#define MAX_NUM_DEPCAS 2
-multiline_comment|/*&n;** Memory Alignment. Each descriptor is 4 longwords long. To force a&n;** particular alignment on the TX descriptor, adjust DESC_SKIP_LEN and&n;** DESC_ALIGN. ALIGN aligns the start address of the private memory area&n;** and hence the RX descriptor ring&squot;s first entry.&n;*/
+multiline_comment|/*&n;   ** Memory Alignment. Each descriptor is 4 longwords long. To force a&n;   ** particular alignment on the TX descriptor, adjust DESC_SKIP_LEN and&n;   ** DESC_ALIGN. ALIGN aligns the start address of the private memory area&n;   ** and hence the RX descriptor ring&squot;s first entry.&n; */
 DECL|macro|ALIGN4
-mdefine_line|#define ALIGN4      ((u_long)4 - 1)       /* 1 longword align */
+mdefine_line|#define ALIGN4      ((u_long)4 - 1)&t;/* 1 longword align */
 DECL|macro|ALIGN8
-mdefine_line|#define ALIGN8      ((u_long)8 - 1)       /* 2 longword (quadword) align */
+mdefine_line|#define ALIGN8      ((u_long)8 - 1)&t;/* 2 longword (quadword) align */
 DECL|macro|ALIGN
-mdefine_line|#define ALIGN         ALIGN8              /* Keep the LANCE happy... */
-multiline_comment|/*&n;** The DEPCA Rx and Tx ring descriptors.&n;*/
+mdefine_line|#define ALIGN         ALIGN8&t;/* Keep the LANCE happy... */
+multiline_comment|/*&n;   ** The DEPCA Rx and Tx ring descriptors.&n; */
 DECL|struct|depca_rx_desc
 r_struct
 id|depca_rx_desc
@@ -181,8 +181,8 @@ multiline_comment|/* Errors and TDR info */
 )brace
 suffix:semicolon
 DECL|macro|LA_MASK
-mdefine_line|#define LA_MASK 0x0000ffff      /* LANCE address mask for mapping network RAM&n;&t;&t;&t;&t;   to LANCE memory address space */
-multiline_comment|/*&n;** The Lance initialization block, described in databook, in common memory.&n;*/
+mdefine_line|#define LA_MASK 0x0000ffff&t;/* LANCE address mask for mapping network RAM&n;&t;&t;&t;&t;   to LANCE memory address space */
+multiline_comment|/*&n;   ** The Lance initialization block, described in databook, in common memory.&n; */
 DECL|struct|depca_init
 r_struct
 id|depca_init
@@ -223,7 +223,7 @@ suffix:semicolon
 DECL|macro|DEPCA_PKT_STAT_SZ
 mdefine_line|#define DEPCA_PKT_STAT_SZ 16
 DECL|macro|DEPCA_PKT_BIN_SZ
-mdefine_line|#define DEPCA_PKT_BIN_SZ  128                /* Should be &gt;=100 unless you&n;                                                increase DEPCA_PKT_STAT_SZ */
+mdefine_line|#define DEPCA_PKT_BIN_SZ  128&t;/* Should be &gt;=100 unless you&n;&t;&t;&t;&t;   increase DEPCA_PKT_STAT_SZ */
 DECL|struct|depca_private
 r_struct
 id|depca_private
@@ -383,10 +383,10 @@ suffix:semicolon
 multiline_comment|/* log2(txRingMask+1) for the descriptors */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;** The transmit ring full condition is described by the tx_old and tx_new&n;** pointers by:&n;**    tx_old            = tx_new    Empty ring&n;**    tx_old            = tx_new+1  Full ring&n;**    tx_old+txRingMask = tx_new    Full ring  (wrapped condition)&n;*/
+multiline_comment|/*&n;   ** The transmit ring full condition is described by the tx_old and tx_new&n;   ** pointers by:&n;   **    tx_old            = tx_new    Empty ring&n;   **    tx_old            = tx_new+1  Full ring&n;   **    tx_old+txRingMask = tx_new    Full ring  (wrapped condition)&n; */
 DECL|macro|TX_BUFFS_AVAIL
 mdefine_line|#define TX_BUFFS_AVAIL ((lp-&gt;tx_old&lt;=lp-&gt;tx_new)?&bslash;&n;&t;&t;&t; lp-&gt;tx_old+lp-&gt;txRingMask-lp-&gt;tx_new:&bslash;&n;                         lp-&gt;tx_old               -lp-&gt;tx_new-1)
-multiline_comment|/*&n;** Public Functions&n;*/
+multiline_comment|/*&n;   ** Public Functions&n; */
 r_static
 r_int
 id|depca_open
@@ -486,7 +486,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;** Private functions&n;*/
+multiline_comment|/*&n;   ** Private functions&n; */
 r_static
 r_int
 id|depca_hw_init
@@ -748,7 +748,7 @@ id|loading_module
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|# else
+macro_line|#else
 DECL|variable|__initdata
 r_static
 id|u_char
@@ -833,7 +833,7 @@ id|loading_module
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|variable|name
 r_static
 r_char
@@ -861,7 +861,7 @@ id|mem
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* For loadable module assignment&n;                                              use insmod mem=0x????? .... */
+multiline_comment|/* For loadable module assignment&n;&t;&t;&t;&t;   use insmod mem=0x????? .... */
 DECL|variable|adapter_name
 r_static
 r_char
@@ -870,8 +870,8 @@ id|adapter_name
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-multiline_comment|/* If no PROM when loadable module&n;&t;&t;&t;&t;&t;      use insmod adapter_name=DE??? ...&n;&t;&t;&t;&t;&t;   */
-multiline_comment|/*&n;** Miscellaneous defines...&n;*/
+multiline_comment|/* If no PROM when loadable module&n;&t;&t;&t;&t;&t;   use insmod adapter_name=DE??? ...&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;   ** Miscellaneous defines...&n; */
 DECL|macro|STOP_DEPCA
 mdefine_line|#define STOP_DEPCA &bslash;&n;    outw(CSR0, DEPCA_ADDR);&bslash;&n;    outw(STOP, DEPCA_DATA)
 "&f;"
@@ -976,7 +976,7 @@ id|iobase
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    ** Walk the device list to check that at least one device&n;    ** initialised OK&n;    */
+multiline_comment|/*&n;&t;&t;   ** Walk the device list to check that at least one device&n;&t;&t;   ** initialised OK&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -1373,7 +1373,7 @@ id|offset
 op_assign
 l_int|0x8000
 suffix:semicolon
-multiline_comment|/* 32kbyte RAM offset*/
+multiline_comment|/* 32kbyte RAM offset */
 id|nicsr
 op_and_assign
 op_complement
@@ -1753,7 +1753,7 @@ comma
 id|DEPCA_NICSR
 )paren
 suffix:semicolon
-multiline_comment|/* To auto-IRQ we enable the initialization-done and DMA err,&n;&t;     interrupts. For now we will always get a DMA error. */
+multiline_comment|/* To auto-IRQ we enable the initialization-done and DMA err,&n;&t;&t;&t;&t;&t;   interrupts. For now we will always get a DMA error. */
 r_if
 c_cond
 (paren
@@ -1935,7 +1935,7 @@ id|ENXIO
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 )brace
 r_else
 (brace
@@ -2114,9 +2114,9 @@ id|status
 suffix:semicolon
 )brace
 "&f;"
+DECL|function|depca_open
 r_static
 r_int
-DECL|function|depca_open
 id|depca_open
 c_func
 (paren
@@ -2331,9 +2331,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize the lance Rx and Tx descriptor rings. */
+DECL|function|depca_init_ring
 r_static
 r_void
-DECL|function|depca_init_ring
 id|depca_init_ring
 c_func
 (paren
@@ -2596,10 +2596,10 @@ multiline_comment|/* Enable the Tx and Rx */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Writes a socket buffer to TX descriptor ring and starts transmission&n;*/
+multiline_comment|/*&n;   ** Writes a socket buffer to TX descriptor ring and starts transmission&n; */
+DECL|function|depca_start_xmit
 r_static
 r_int
-DECL|function|depca_start_xmit
 id|depca_start_xmit
 c_func
 (paren
@@ -2721,22 +2721,6 @@ suffix:semicolon
 )brace
 r_return
 id|status
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -2866,10 +2850,10 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** The DEPCA interrupt handler.&n;*/
+multiline_comment|/*&n;   ** The DEPCA interrupt handler.&n; */
+DECL|function|depca_interrupt
 r_static
 r_void
-DECL|function|depca_interrupt
 id|depca_interrupt
 c_func
 (paren
@@ -2915,6 +2899,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;depca_interrupt(): irq %d for unknown device.&bslash;n&quot;
 comma
@@ -3088,9 +3073,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|depca_rx
 r_static
 r_int
-DECL|function|depca_rx
 id|depca_rx
 c_func
 (paren
@@ -3381,7 +3366,7 @@ id|pkt_len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;  ** Notify the upper protocol layers that there is another&n;&t;  ** packet to handle&n;&t;  */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   ** Notify the upper protocol layers that there is another&n;&t;&t;&t;&t;&t;   ** packet to handle&n;&t;&t;&t;&t;&t; */
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -3398,7 +3383,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;  ** Update stats&n;&t;  */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   ** Update stats&n;&t;&t;&t;&t;&t; */
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -3729,7 +3714,7 @@ id|base
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    ** Update entry information&n;    */
+multiline_comment|/*&n;&t;&t;   ** Update entry information&n;&t;&t; */
 id|lp-&gt;rx_new
 op_assign
 (paren
@@ -3744,10 +3729,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Buffer sent - check for buffer errors.&n;*/
+multiline_comment|/*&n;   ** Buffer sent - check for buffer errors.&n; */
+DECL|function|depca_tx
 r_static
 r_int
-DECL|function|depca_tx
 id|depca_tx
 c_func
 (paren
@@ -3962,9 +3947,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|depca_close
 r_static
 r_int
-DECL|function|depca_close
 id|depca_close
 c_func
 (paren
@@ -4033,7 +4018,7 @@ id|DEPCA_DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  ** We stop the DEPCA here -- it occasionally polls&n;  ** memory if we don&squot;t.&n;  */
+multiline_comment|/*&n;&t;   ** We stop the DEPCA here -- it occasionally polls&n;&t;   ** memory if we don&squot;t.&n;&t; */
 id|outw
 c_func
 (paren
@@ -4042,7 +4027,7 @@ comma
 id|DEPCA_DATA
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  ** Give back the ROM in case the user wants to go to DOS&n;  */
+multiline_comment|/*&n;&t;   ** Give back the ROM in case the user wants to go to DOS&n;&t; */
 r_if
 c_cond
 (paren
@@ -4073,7 +4058,7 @@ id|DEPCA_NICSR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  ** Free the associated irq&n;  */
+multiline_comment|/*&n;&t;   ** Free the associated irq&n;&t; */
 id|free_irq
 c_func
 (paren
@@ -4412,10 +4397,10 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;*/
+multiline_comment|/*&n;   ** Set or clear the multicast filter for this adaptor.&n; */
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren
@@ -4447,9 +4432,7 @@ c_loop
 (paren
 id|dev-&gt;tbusy
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Stop ring access */
 id|set_bit
 c_func
@@ -4471,9 +4454,7 @@ id|lp-&gt;tx_old
 op_ne
 id|lp-&gt;tx_new
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Wait for the ring to empty */
 id|STOP_DEPCA
 suffix:semicolon
@@ -4534,7 +4515,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Unlock the TX ring */
 )brace
-multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Big endian crc one liner is mine, all mine, ha ha ha ha!&n;** LANCE calculates its hash codes big endian.&n;*/
+multiline_comment|/*&n;   ** Calculate the hash code and update the logical address filter&n;   ** from a list of ethernet multicast addresses.&n;   ** Big endian crc one liner is mine, all mine, ha ha ha ha!&n;   ** LANCE calculates its hash codes big endian.&n; */
 DECL|function|SetMulticastFilter
 r_static
 r_void
@@ -4856,7 +4837,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** ISA bus I/O device probe&n;*/
+multiline_comment|/*&n;   ** ISA bus I/O device probe&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -5082,7 +5063,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
+multiline_comment|/*&n;   ** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;   ** the motherboard. Upto 15 EISA devices are supported.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -5332,7 +5313,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;** found then check for an autoprobe or unused device location. If they&n;** are not available then insert a new device structure at the end of&n;** the current list.&n;*/
+multiline_comment|/*&n;   ** Search the entire &squot;eth&squot; device list for a fixed probe. If a match isn&squot;t&n;   ** found then check for an autoprobe or unused device location. If they&n;   ** are not available then insert a new device structure at the end of&n;   ** the current list.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -5579,7 +5560,7 @@ r_return
 id|dev
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** If at end of eth device list and can&squot;t use current entry, malloc&n;** one up. If memory could not be allocated, print an error message.&n;*/
+multiline_comment|/*&n;   ** If at end of eth device list and can&squot;t use current entry, malloc&n;   ** one up. If memory could not be allocated, print an error message.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -5813,7 +5794,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Look for a particular board name in the on-board Remote Diagnostics&n;** and Boot (readb) ROM. This will also give us a clue to the network RAM&n;** base address.&n;*/
+multiline_comment|/*&n;   ** Look for a particular board name in the on-board Remote Diagnostics&n;   ** and Boot (readb) ROM. This will also give us a clue to the network RAM&n;   ** base address.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -6056,7 +6037,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Look for a special sequence in the Ethernet station address PROM that&n;** is common across all DEPCA products. Note that the original DEPCA needs&n;** its ROM address counter to be initialized and enabled. Only enable&n;** if the first address octet is a 0x08 - this minimises the chances of&n;** messing around with some other hardware, but it assumes that this DEPCA&n;** card initialized itself correctly.&n;**&n;** Search the Ethernet address ROM for the signature. Since the ROM address&n;** counter can start at an arbitrary point, the search must include the entire&n;** probe sequence length plus the (length_of_the_signature - 1).&n;** Stop the search IMMEDIATELY after the signature is found so that the&n;** PROM address counter is correctly positioned at the start of the&n;** ethernet address for later read out.&n;*/
+multiline_comment|/*&n;   ** Look for a special sequence in the Ethernet station address PROM that&n;   ** is common across all DEPCA products. Note that the original DEPCA needs&n;   ** its ROM address counter to be initialized and enabled. Only enable&n;   ** if the first address octet is a 0x08 - this minimises the chances of&n;   ** messing around with some other hardware, but it assumes that this DEPCA&n;   ** card initialized itself correctly.&n;   **&n;   ** Search the Ethernet address ROM for the signature. Since the ROM address&n;   ** counter can start at an arbitrary point, the search must include the entire&n;   ** probe sequence length plus the (length_of_the_signature - 1).&n;   ** Stop the search IMMEDIATELY after the signature is found so that the&n;   ** PROM address counter is correctly positioned at the start of the&n;   ** ethernet address for later read out.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -6282,7 +6263,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** The DE100 and DE101 PROM accesses were made non-standard for some bizarre&n;** reason: access the upper half of the PROM with x=0; access the lower half&n;** with x=1.&n;*/
+multiline_comment|/*&n;   ** The DE100 and DE101 PROM accesses were made non-standard for some bizarre&n;   ** reason: access the upper half of the PROM with x=0; access the lower half&n;   ** with x=1.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -6512,7 +6493,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Load a packet into the shared memory&n;*/
+multiline_comment|/*&n;   ** Load a packet into the shared memory&n; */
 DECL|function|load_packet
 r_static
 r_int
@@ -6598,7 +6579,7 @@ id|T_OWN
 )paren
 (brace
 multiline_comment|/* Enough room? */
-multiline_comment|/*&n;    ** Caution: the write order is important here... don&squot;t set up the&n;    ** ownership rights until all the other information is in place.&n;    */
+multiline_comment|/*&n;&t;&t;   ** Caution: the write order is important here... don&squot;t set up the&n;&t;&t;   ** ownership rights until all the other information is in place.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6985,7 +6966,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
+multiline_comment|/*&n;   ** Look for a particular board name in the EISA configuration space&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -7888,7 +7869,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Perform IOCTL call functions here. Some are privileged operations and the&n;** effective uid is checked in those cases.&n;** All MCA IOCTLs will not work here and are for testing purposes only.&n;*/
+multiline_comment|/*&n;   ** Perform IOCTL call functions here. Some are privileged operations and the&n;   ** effective uid is checked in those cases.&n;   ** All MCA IOCTLs will not work here and are for testing purposes only.&n; */
 DECL|function|depca_ioctl
 r_static
 r_int
@@ -8138,9 +8119,7 @@ c_loop
 (paren
 id|dev-&gt;tbusy
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Stop ring access */
 id|set_bit
 c_func
@@ -8162,9 +8141,7 @@ id|lp-&gt;tx_old
 op_ne
 id|lp-&gt;tx_new
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Wait for the ring to empty */
 id|STOP_DEPCA
 suffix:semicolon
@@ -8225,9 +8202,7 @@ c_loop
 (paren
 id|dev-&gt;tbusy
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Stop ring access */
 id|set_bit
 c_func
@@ -8249,9 +8224,7 @@ id|lp-&gt;tx_old
 op_ne
 id|lp-&gt;tx_new
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Wait for the ring to empty */
 id|STOP_DEPCA
 suffix:semicolon
@@ -8316,9 +8289,7 @@ c_loop
 (paren
 id|dev-&gt;tbusy
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Stop ring access */
 id|set_bit
 c_func
@@ -8340,9 +8311,7 @@ id|lp-&gt;tx_old
 op_ne
 id|lp-&gt;tx_new
 )paren
-(brace
 suffix:semicolon
-)brace
 multiline_comment|/* Wait for the ring to empty */
 id|STOP_DEPCA
 suffix:semicolon
@@ -8869,8 +8838,8 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* See depca_probe() for autoprobe messages when a module */
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -8905,8 +8874,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -8950,7 +8919,7 @@ id|DEPCA_TOTAL_SIZE
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -c depca.c&quot;&n; *&n; *  compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -c depca.c&quot;&n; * End:&n; */
 eof

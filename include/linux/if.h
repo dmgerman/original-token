@@ -31,6 +31,8 @@ DECL|macro|IFF_SLAVE
 mdefine_line|#define IFF_SLAVE&t;0x800&t;&t;/* slave of a load balancer&t;*/
 DECL|macro|IFF_MULTICAST
 mdefine_line|#define IFF_MULTICAST&t;0x1000&t;&t;/* Supports multicast&t;&t;*/
+DECL|macro|IFF_VOLATILE
+mdefine_line|#define IFF_VOLATILE&t;(IFF_LOOPBACK|IFF_POINTOPOINT|IFF_BROADCAST|IFF_ALLMULTI)
 DECL|macro|IFF_PORTSEL
 mdefine_line|#define IFF_PORTSEL&t;0x2000          /* can set media type&t;&t;*/
 DECL|macro|IFF_AUTOMEDIA
@@ -231,6 +233,8 @@ DECL|macro|ifr_data
 mdefine_line|#define&t;ifr_data&t;ifr_ifru.ifru_data&t;/* for use by interface&t;*/
 DECL|macro|ifr_ifindex
 mdefine_line|#define ifr_ifindex&t;ifr_ifru.ifru_ivalue&t;/* interface index&t;*/
+DECL|macro|ifr_bandwidth
+mdefine_line|#define ifr_bandwidth&t;ifr_ifru.ifru_ivalue    /* link bandwidth&t;*/
 multiline_comment|/*&n; * Structure used in SIOCGIFCONF request.&n; * Used to retrieve interface configuration&n; * for machine (useful for programs which&n; * must know all networks accessible).&n; */
 DECL|struct|ifconf
 r_struct

@@ -3,8 +3,7 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
-macro_line|#ifdef CONFIG_GUSHW
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if ( defined(CONFIG_GUSHW) &amp;&amp; defined(CONFIG_MIDI) ) || defined (MODULE)
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -98,12 +97,14 @@ r_static
 r_int
 DECL|function|GUS_MIDI_STATUS
 id|GUS_MIDI_STATUS
+c_func
 (paren
 r_void
 )paren
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|u_MidiStatus
 )paren
@@ -113,6 +114,7 @@ r_static
 r_int
 DECL|function|gus_midi_open
 id|gus_midi_open
+c_func
 (paren
 r_int
 id|dev
@@ -152,6 +154,7 @@ id|midi_busy
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;GUS: Midi busy&bslash;n&quot;
 )paren
@@ -162,6 +165,7 @@ id|EBUSY
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|MIDI_RESET
@@ -171,6 +175,7 @@ id|u_MidiControl
 )paren
 suffix:semicolon
 id|gus_delay
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -210,6 +215,7 @@ l_int|1
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|gus_midi_control
@@ -245,6 +251,7 @@ r_static
 r_int
 DECL|function|dump_to_midi
 id|dump_to_midi
+c_func
 (paren
 r_int
 r_char
@@ -265,11 +272,13 @@ op_assign
 l_int|1
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -277,6 +286,7 @@ r_if
 c_cond
 (paren
 id|GUS_MIDI_STATUS
+c_func
 (paren
 )paren
 op_amp
@@ -288,6 +298,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|midi_byte
@@ -299,12 +310,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;       * Enable Midi xmit interrupts (again)&n;       */
+multiline_comment|/*&n;&t;&t;   * Enable Midi xmit interrupts (again)&n;&t;&t;   */
 id|gus_midi_control
 op_or_assign
 id|MIDI_ENABLE_XMIT
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|gus_midi_control
@@ -315,6 +327,7 @@ id|u_MidiControl
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -327,13 +340,15 @@ r_static
 r_void
 DECL|function|gus_midi_close
 id|gus_midi_close
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
+multiline_comment|/*&n;&t; * Reset FIFO pointers, disable intrs&n;&t; */
 id|outb
+c_func
 (paren
 (paren
 id|MIDI_RESET
@@ -351,6 +366,7 @@ r_static
 r_int
 DECL|function|gus_midi_out
 id|gus_midi_out
+c_func
 (paren
 r_int
 id|dev
@@ -364,13 +380,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * Drain the local queue first&n;   */
+multiline_comment|/*&n;&t; * Drain the local queue first&n;&t; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -380,6 +398,7 @@ c_loop
 id|qlen
 op_logical_and
 id|dump_to_midi
+c_func
 (paren
 id|tmp_queue
 (braket
@@ -396,11 +415,12 @@ op_increment
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Output the byte if the local queue is empty.&n;   */
+multiline_comment|/*&n;&t; * Output the byte if the local queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -411,6 +431,7 @@ r_if
 c_cond
 (paren
 id|dump_to_midi
+c_func
 (paren
 id|midi_byte
 )paren
@@ -418,8 +439,8 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
-multiline_comment|/*&n;   * Put to the local queue&n;   */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t; * Put to the local queue&n;&t; */
 r_if
 c_cond
 (paren
@@ -432,11 +453,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -454,6 +477,7 @@ id|qtail
 op_increment
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -466,6 +490,7 @@ r_static
 r_int
 DECL|function|gus_midi_start_read
 id|gus_midi_start_read
+c_func
 (paren
 r_int
 id|dev
@@ -479,6 +504,7 @@ r_static
 r_int
 DECL|function|gus_midi_end_read
 id|gus_midi_end_read
+c_func
 (paren
 r_int
 id|dev
@@ -492,6 +518,7 @@ r_static
 r_int
 DECL|function|gus_midi_ioctl
 id|gus_midi_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -512,6 +539,7 @@ r_static
 r_void
 DECL|function|gus_midi_kick
 id|gus_midi_kick
+c_func
 (paren
 r_int
 id|dev
@@ -522,6 +550,7 @@ r_static
 r_int
 DECL|function|gus_midi_buffer_status
 id|gus_midi_buffer_status
+c_func
 (paren
 r_int
 id|dev
@@ -541,11 +570,13 @@ r_return
 l_int|0
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -555,6 +586,7 @@ c_cond
 id|qlen
 op_logical_and
 id|dump_to_midi
+c_func
 (paren
 id|tmp_queue
 (braket
@@ -571,6 +603,7 @@ op_increment
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -585,6 +618,7 @@ op_or
 op_logical_neg
 (paren
 id|GUS_MIDI_STATUS
+c_func
 (paren
 )paren
 op_amp
@@ -646,27 +680,43 @@ suffix:semicolon
 r_void
 DECL|function|gus_midi_init
 id|gus_midi_init
+c_func
 (paren
-r_void
+r_struct
+id|address_info
+op_star
+id|hw_config
 )paren
 (brace
+r_int
+id|dev
+op_assign
+id|sound_alloc_mididev
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_midis
-op_ge
-id|MAX_MIDI_DEV
+id|dev
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;gus_midi: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|MIDI_RESET
@@ -679,18 +729,25 @@ id|std_midi_synth.midi_dev
 op_assign
 id|my_dev
 op_assign
-id|num_midis
+id|dev
+suffix:semicolon
+id|hw_config-&gt;slots
+(braket
+l_int|2
+)braket
+op_assign
+id|dev
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
-op_increment
+id|dev
 )braket
 op_assign
 op_amp
 id|gus_midi_operations
 suffix:semicolon
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -700,6 +757,7 @@ suffix:semicolon
 r_void
 DECL|function|gus_midi_interrupt
 id|gus_midi_interrupt
+c_func
 (paren
 r_int
 id|dummy
@@ -722,11 +780,13 @@ op_assign
 l_int|10
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -742,6 +802,7 @@ op_logical_and
 id|stat
 op_assign
 id|GUS_MIDI_STATUS
+c_func
 (paren
 )paren
 )paren
@@ -764,6 +825,7 @@ id|MIDI_RCV_FULL
 id|data
 op_assign
 id|inb
+c_func
 (paren
 id|u_MidiData
 )paren
@@ -774,6 +836,7 @@ c_cond
 id|input_opened
 )paren
 id|midi_input_intr
+c_func
 (paren
 id|my_dev
 comma
@@ -795,6 +858,7 @@ c_loop
 id|qlen
 op_logical_and
 id|dump_to_midi
+c_func
 (paren
 id|tmp_queue
 (braket
@@ -817,13 +881,14 @@ op_logical_neg
 id|qlen
 )paren
 (brace
-multiline_comment|/*&n;&t;       * Disable Midi output interrupts, since no data in the buffer&n;&t;       */
+multiline_comment|/*&n;&t;&t;&t;&t;       * Disable Midi output interrupts, since no data in the buffer&n;&t;&t;&t;&t;       */
 id|gus_midi_control
 op_and_assign
 op_complement
 id|MIDI_ENABLE_XMIT
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|gus_midi_control
@@ -833,6 +898,7 @@ id|u_MidiControl
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|gus_midi_control
@@ -845,11 +911,11 @@ suffix:semicolon
 )brace
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

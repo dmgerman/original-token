@@ -1138,11 +1138,11 @@ l_int|2
 )paren
 )brace
 suffix:semicolon
-macro_line|#ifdef SM_GAMES       /* Master volume is lower and PCM &amp; FM volumes&n;&t;&t;&t;     higher than with SB Pro. This improves the&n;&t;&t;&t;     sound quality */
-DECL|variable|default_levels
+multiline_comment|/* SM_GAMES          Master volume is lower and PCM &amp; FM volumes&n;&t;&t;&t;     higher than with SB Pro. This improves the&n;&t;&t;&t;     sound quality */
+DECL|variable|smg_default_levels
 r_static
 r_int
-id|default_levels
+id|smg_default_levels
 (braket
 l_int|32
 )braket
@@ -1200,11 +1200,10 @@ l_int|0x1515
 multiline_comment|/* Line3 */
 )brace
 suffix:semicolon
-macro_line|#else  /* If the user selected just plain SB Pro */
-DECL|variable|default_levels
+DECL|variable|sb_default_levels
 r_static
 r_int
-id|default_levels
+id|sb_default_levels
 (braket
 l_int|32
 )braket
@@ -1262,7 +1261,6 @@ l_int|0x1515
 multiline_comment|/* Line3 */
 )brace
 suffix:semicolon
-macro_line|#endif /* SM_GAMES */
 DECL|variable|sb16_recmasks_L
 r_static
 r_int

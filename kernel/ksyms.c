@@ -344,6 +344,13 @@ c_func
 id|free_pages
 )paren
 suffix:semicolon
+DECL|variable|__free_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__free_page
+)paren
+suffix:semicolon
 DECL|variable|kmem_find_general_cachep
 id|EXPORT_SYMBOL
 c_func
@@ -464,6 +471,13 @@ id|vmtruncate
 )paren
 suffix:semicolon
 multiline_comment|/* filesystem internal functions */
+DECL|variable|get_super
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_super
+)paren
+suffix:semicolon
 DECL|variable|getname
 id|EXPORT_SYMBOL
 c_func
@@ -847,6 +861,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|put_cached_page
+)paren
+suffix:semicolon
+DECL|variable|prune_dcache
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|prune_dcache
 )paren
 suffix:semicolon
 DECL|variable|shrink_dcache_sb
@@ -1741,13 +1762,6 @@ id|si_meminfo
 )paren
 suffix:semicolon
 multiline_comment|/* Added to make file system as module */
-DECL|variable|get_super
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_super
-)paren
-suffix:semicolon
 DECL|variable|set_writetime
 id|EXPORT_SYMBOL
 c_func
@@ -1809,13 +1823,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|init_fifo
-)paren
-suffix:semicolon
-DECL|variable|super_blocks
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|super_blocks
 )paren
 suffix:semicolon
 DECL|variable|fifo_inode_operations

@@ -1,4 +1,4 @@
-multiline_comment|/*&t;$Id: com90io.c,v 1.2 1997/09/05 08:57:52 mj Exp $&n;&n;        Written 1997 by David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
+multiline_comment|/*&t;$Id: com90io.c,v 1.6 1997/11/09 11:04:59 mj Exp $&n;&n;        Written 1997 by David Woodhouse &lt;dwmw2@cam.ac.uk&gt;&n;&n;&t;Derived from the original arcnet.c,&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -637,7 +637,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;com90io.c: v2.91 97/08/19 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;com90io.c: v3.00 97/11/09 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for an IO mapped card either, although we can check that&n; * it&squot;s where we were told it was, and even autoirq&n; */
@@ -2853,7 +2853,7 @@ l_int|4
 )paren
 suffix:semicolon
 multiline_comment|/* exception-specific stuff - these four bytes&n;       * make the packet long enough to fit in a 512-byte&n;       * frame.&n;       */
-id|put_whole_buffer
+id|put_buffer_byte
 c_func
 (paren
 id|dev
@@ -2864,9 +2864,28 @@ l_int|512
 op_plus
 id|offset
 comma
-l_int|4
+id|hdr
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|put_whole_buffer
+c_func
+(paren
+id|dev
 comma
-l_string|&quot;&bslash;0&bslash;0xff&bslash;0xff&bslash;0xff&quot;
+id|lp-&gt;txbuf
+op_star
+l_int|512
+op_plus
+id|offset
+op_plus
+l_int|1
+comma
+l_int|3
+comma
+l_string|&quot;&bslash;377&bslash;377&bslash;377&quot;
 )paren
 suffix:semicolon
 id|offset

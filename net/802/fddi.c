@@ -63,11 +63,11 @@ c_cond
 (paren
 id|type
 op_ne
-id|htons
-c_func
-(paren
 id|ETH_P_IP
-)paren
+op_logical_and
+id|type
+op_ne
+id|ETH_P_ARP
 )paren
 (brace
 id|hl
@@ -101,11 +101,11 @@ c_cond
 (paren
 id|type
 op_eq
-id|htons
-c_func
-(paren
 id|ETH_P_IP
-)paren
+op_logical_or
+id|type
+op_eq
+id|ETH_P_ARP
 )paren
 (brace
 id|fddi-&gt;hdr.llc_snap.dsap
@@ -230,13 +230,47 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/* Only ARP/IP is currently supported */
+macro_line|#if 0
+r_struct
+id|neighbour
+op_star
+id|neigh
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;dst
+)paren
+id|neigh
+op_assign
+id|skb-&gt;dst-&gt;neighbour
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|neigh
+)paren
+r_return
+id|neigh-&gt;ops
+op_member_access_from_pointer
+id|resolve
+c_func
+(paren
+id|fddi-&gt;daddr
+comma
+id|skb
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Only ARP/IP is currently supported&n;&t; */
 r_if
 c_cond
 (paren
 id|fddi-&gt;hdr.llc_snap.ethertype
 op_ne
-id|htons
+id|__constant_htons
 c_func
 (paren
 id|ETH_P_IP
@@ -246,12 +280,10 @@ id|ETH_P_IP
 id|printk
 c_func
 (paren
-l_string|&quot;fddi_rebuild_header: Don&squot;t know how to resolve type %04X addresses?&bslash;n&quot;
+l_string|&quot;%s: Don&squot;t know how to resolve type %02X addresses.&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
+id|skb-&gt;dev-&gt;name
+comma
 id|htons
 c_func
 (paren
@@ -272,11 +304,6 @@ id|fddi-&gt;daddr
 comma
 id|skb
 )paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Determine the packet&squot;s protocol ID and fill in skb fields.&n; * This routine is called before an incoming packet is passed&n; * up.  It&squot;s used to fill in specific skb fields and to set&n; * the proper pointer to the start of packet data (skb-&gt;data).&n; */
@@ -339,7 +366,7 @@ l_int|3
 suffix:semicolon
 id|type
 op_assign
-id|htons
+id|__constant_htons
 c_func
 (paren
 id|ETH_P_802_2

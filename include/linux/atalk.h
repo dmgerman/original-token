@@ -535,7 +535,6 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_extern
 r_void
 id|aarp_device_down
@@ -547,6 +546,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_extern
 r_void
 id|aarp_cleanup_module

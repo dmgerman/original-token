@@ -102,6 +102,7 @@ id|stats
 suffix:semicolon
 DECL|member|key
 r_int
+r_int
 id|key
 suffix:semicolon
 )brace
@@ -370,8 +371,10 @@ id|u32
 id|board
 suffix:semicolon
 r_int
+r_int
 id|key
 suffix:semicolon
+r_const
 r_struct
 id|ConfigDev
 op_star
@@ -399,9 +402,7 @@ op_assign
 id|zorro_find
 c_func
 (paren
-id|MANUF_HYDRA_SYSTEMS
-comma
-id|PROD_AMIGANET
+id|ZORRO_PROD_HYDRA_SYSTEMS_AMIGANET
 comma
 l_int|0
 comma
@@ -638,6 +639,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

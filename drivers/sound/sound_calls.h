@@ -931,7 +931,7 @@ op_star
 id|osp
 )paren
 suffix:semicolon
-r_void
+r_int
 id|opl3_init
 c_func
 (paren
@@ -1265,7 +1265,10 @@ suffix:semicolon
 r_void
 id|gus_wave_unload
 (paren
-r_void
+r_struct
+id|address_info
+op_star
+id|hw_config
 )paren
 suffix:semicolon
 r_void
@@ -1332,7 +1335,10 @@ r_void
 id|gus_midi_init
 c_func
 (paren
-r_void
+r_struct
+id|address_info
+op_star
+id|hw_config
 )paren
 suffix:semicolon
 r_void
@@ -1418,7 +1424,7 @@ id|both
 )paren
 suffix:semicolon
 multiline_comment|/* &t;From ics2101.c */
-r_void
+r_int
 id|ics2101_mixer_init
 c_func
 (paren
@@ -1443,7 +1449,7 @@ id|new_usecs
 )paren
 suffix:semicolon
 multiline_comment|/*&t;From ad1848.c */
-r_void
+r_int
 id|ad1848_init
 (paren
 r_char

@@ -2,13 +2,14 @@ multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Bl
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
+macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 r_static
 r_int
 DECL|function|sb_audio_open
 id|sb_audio_open
+c_func
 (paren
 r_int
 id|dev
@@ -41,6 +42,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Incomplete initialization&bslash;n&quot;
 )paren
@@ -63,6 +65,7 @@ id|OPEN_READ
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Notice: Recording is not possible with /dev/dsp%d&bslash;n&quot;
 comma
@@ -82,11 +85,13 @@ id|EPERM
 suffix:semicolon
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -97,6 +102,7 @@ id|devc-&gt;opened
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -123,6 +129,7 @@ r_if
 c_cond
 (paren
 id|sound_open_dma
+c_func
 (paren
 id|devc-&gt;dma16
 comma
@@ -131,6 +138,7 @@ l_string|&quot;Sound Blaster 16 bit&quot;
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -146,6 +154,7 @@ op_assign
 id|mode
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -155,6 +164,7 @@ op_assign
 id|IMODE_NONE
 suffix:semicolon
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
@@ -167,6 +177,7 @@ r_static
 r_void
 DECL|function|sb_audio_close
 id|sb_audio_close
+c_func
 (paren
 r_int
 id|dev
@@ -212,6 +223,7 @@ op_ne
 id|devc-&gt;dma8
 )paren
 id|sound_close_dma
+c_func
 (paren
 id|devc-&gt;dma16
 )paren
@@ -225,6 +237,7 @@ r_static
 r_void
 DECL|function|sb_set_output_parms
 id|sb_set_output_parms
+c_func
 (paren
 r_int
 id|dev
@@ -272,6 +285,7 @@ r_static
 r_void
 DECL|function|sb_set_input_parms
 id|sb_set_input_parms
+c_func
 (paren
 r_int
 id|dev
@@ -320,6 +334,7 @@ r_static
 r_void
 DECL|function|sb1_audio_output_block
 id|sb1_audio_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -380,11 +395,13 @@ op_assign
 id|IMODE_OUTPUT
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -392,6 +409,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -401,6 +419,7 @@ l_int|0x14
 multiline_comment|/* 8 bit DAC using DMA */
 (brace
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -416,6 +435,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -437,11 +457,13 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -455,6 +477,7 @@ r_static
 r_void
 DECL|function|sb1_audio_start_input
 id|sb1_audio_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -490,7 +513,7 @@ id|dev
 op_member_access_from_pointer
 id|devc
 suffix:semicolon
-multiline_comment|/*&n;   * Start a DMA input to the buffer pointed by dmaqtail&n;   */
+multiline_comment|/*&n;&t; * Start a DMA input to the buffer pointed by dmaqtail&n;&t; */
 multiline_comment|/* DMAbuf_start_dma (dev, buf, count, DMA_MODE_READ); */
 r_if
 c_cond
@@ -516,11 +539,13 @@ op_assign
 id|IMODE_INPUT
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -528,6 +553,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -537,6 +563,7 @@ l_int|0x24
 multiline_comment|/* 8 bit ADC using DMA */
 (brace
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -552,6 +579,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -573,11 +601,13 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;SB Error: Unable to start ADC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -591,6 +621,7 @@ r_static
 r_void
 DECL|function|sb1_audio_trigger
 id|sb1_audio_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -621,6 +652,7 @@ op_logical_neg
 id|bits
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -640,6 +672,7 @@ r_case
 id|IMODE_INPUT
 suffix:colon
 id|sb1_audio_start_input
+c_func
 (paren
 id|dev
 comma
@@ -656,6 +689,7 @@ r_case
 id|IMODE_OUTPUT
 suffix:colon
 id|sb1_audio_output_block
+c_func
 (paren
 id|dev
 comma
@@ -679,6 +713,7 @@ r_static
 r_int
 DECL|function|sb1_audio_prepare_for_input
 id|sb1_audio_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -706,11 +741,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -718,6 +755,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -725,6 +763,7 @@ l_int|0x40
 )paren
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -732,6 +771,7 @@ id|devc-&gt;tconst
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -739,6 +779,7 @@ id|DSP_CMD_SPKOFF
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -755,6 +796,7 @@ r_static
 r_int
 DECL|function|sb1_audio_prepare_for_output
 id|sb1_audio_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -782,11 +824,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -794,6 +838,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -801,6 +846,7 @@ l_int|0x40
 )paren
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -808,6 +854,7 @@ id|devc-&gt;tconst
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -815,6 +862,7 @@ id|DSP_CMD_SPKON
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -831,6 +879,7 @@ r_static
 r_int
 DECL|function|sb1_audio_set_speed
 id|sb1_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -950,6 +999,7 @@ r_static
 r_int
 DECL|function|sb1_audio_set_channels
 id|sb1_audio_set_channels
+c_func
 (paren
 r_int
 id|dev
@@ -980,6 +1030,7 @@ r_int
 r_int
 DECL|function|sb1_audio_set_bits
 id|sb1_audio_set_bits
+c_func
 (paren
 r_int
 id|dev
@@ -1010,6 +1061,7 @@ r_static
 r_void
 DECL|function|sb1_audio_halt_xfer
 id|sb1_audio_halt_xfer
+c_func
 (paren
 r_int
 id|dev
@@ -1031,20 +1083,24 @@ op_member_access_from_pointer
 id|devc
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1055,6 +1111,7 @@ r_static
 r_void
 DECL|function|sb20_audio_output_block
 id|sb20_audio_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -1119,11 +1176,13 @@ op_assign
 id|IMODE_OUTPUT
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1131,6 +1190,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1140,6 +1200,7 @@ l_int|0x48
 multiline_comment|/* DSP Block size */
 (brace
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1155,6 +1216,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1198,6 +1260,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1205,6 +1268,7 @@ id|cmd
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
 )paren
@@ -1212,11 +1276,13 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Unable to start DAC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1230,6 +1296,7 @@ r_static
 r_void
 DECL|function|sb20_audio_start_input
 id|sb20_audio_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -1269,7 +1336,7 @@ r_int
 r_char
 id|cmd
 suffix:semicolon
-multiline_comment|/*&n;   * Start a DMA input to the buffer pointed by dmaqtail&n;   */
+multiline_comment|/*&n;&t; * Start a DMA input to the buffer pointed by dmaqtail&n;&t; */
 multiline_comment|/* DMAbuf_start_dma (dev, buf, count, DMA_MODE_READ); */
 r_if
 c_cond
@@ -1295,11 +1362,13 @@ op_assign
 id|IMODE_INPUT
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1307,6 +1376,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1316,6 +1386,7 @@ l_int|0x48
 multiline_comment|/* DSP Block size */
 (brace
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1331,6 +1402,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1383,6 +1455,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1390,6 +1463,7 @@ id|cmd
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Unable to start ADC&bslash;n&quot;
 )paren
@@ -1397,11 +1471,13 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;SB Error: Unable to start ADC&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1415,6 +1491,7 @@ r_static
 r_void
 DECL|function|sb20_audio_trigger
 id|sb20_audio_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -1445,6 +1522,7 @@ op_logical_neg
 id|bits
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1464,6 +1542,7 @@ r_case
 id|IMODE_INPUT
 suffix:colon
 id|sb20_audio_start_input
+c_func
 (paren
 id|dev
 comma
@@ -1480,6 +1559,7 @@ r_case
 id|IMODE_OUTPUT
 suffix:colon
 id|sb20_audio_output_block
+c_func
 (paren
 id|dev
 comma
@@ -1504,6 +1584,7 @@ r_static
 r_int
 DECL|function|sb201_audio_set_speed
 id|sb201_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -1638,6 +1719,7 @@ r_static
 r_int
 DECL|function|sbpro_audio_prepare_for_input
 id|sbpro_audio_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -1729,11 +1811,13 @@ l_int|0x04
 suffix:semicolon
 multiline_comment|/* 16 bit mode */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1741,6 +1825,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1748,6 +1833,7 @@ l_int|0x40
 )paren
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1755,6 +1841,7 @@ id|devc-&gt;tconst
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1769,6 +1856,7 @@ op_eq
 l_int|1
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1780,6 +1868,7 @@ suffix:semicolon
 multiline_comment|/* Mono input */
 r_else
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1790,6 +1879,7 @@ id|bits
 suffix:semicolon
 multiline_comment|/* Stereo input */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1806,6 +1896,7 @@ r_static
 r_int
 DECL|function|sbpro_audio_prepare_for_output
 id|sbpro_audio_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -1885,6 +1976,7 @@ op_eq
 id|MDL_SBPRO
 )paren
 id|sb_mixer_set_stereo
+c_func
 (paren
 id|devc
 comma
@@ -1894,11 +1986,13 @@ l_int|2
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1906,6 +2000,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1913,6 +2008,7 @@ l_int|0x40
 )paren
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1920,6 +2016,7 @@ id|devc-&gt;tconst
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1958,6 +2055,7 @@ op_eq
 l_int|1
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1969,6 +2067,7 @@ suffix:semicolon
 multiline_comment|/* Mono output */
 r_else
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1984,6 +2083,7 @@ r_else
 id|tmp
 op_assign
 id|sb_getmixer
+c_func
 (paren
 id|devc
 comma
@@ -2008,6 +2108,7 @@ op_or_assign
 l_int|0x02
 suffix:semicolon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -2018,6 +2119,7 @@ id|tmp
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -2034,6 +2136,7 @@ r_static
 r_int
 DECL|function|sbpro_audio_set_speed
 id|sbpro_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -2099,6 +2202,7 @@ op_assign
 l_int|22050
 suffix:semicolon
 id|sb201_audio_set_speed
+c_func
 (paren
 id|dev
 comma
@@ -2114,6 +2218,7 @@ r_static
 r_int
 DECL|function|sbpro_audio_set_channels
 id|sbpro_audio_set_channels
+c_func
 (paren
 r_int
 id|dev
@@ -2176,11 +2281,13 @@ OG
 l_int|22050
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;OSS: Application error. Wrong ioctl call order.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sbpro_audio_set_speed
+c_func
 (paren
 id|dev
 comma
@@ -2197,6 +2304,7 @@ r_static
 r_int
 DECL|function|jazz16_audio_set_speed
 id|jazz16_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -2316,6 +2424,7 @@ r_static
 r_int
 DECL|function|ess_audio_set_speed
 id|ess_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -2441,6 +2550,7 @@ r_static
 r_void
 DECL|function|ess_speed
 id|ess_speed
+c_func
 (paren
 id|sb_devc
 op_star
@@ -2537,6 +2647,7 @@ r_char
 id|divider
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2570,6 +2681,7 @@ l_int|82
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2585,6 +2697,7 @@ r_static
 r_int
 DECL|function|ess_audio_prepare_for_input
 id|ess_audio_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -2608,11 +2721,13 @@ op_member_access_from_pointer
 id|devc
 suffix:semicolon
 id|ess_speed
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -2620,6 +2735,7 @@ id|DSP_CMD_SPKOFF
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2630,6 +2746,7 @@ l_int|0x0e
 suffix:semicolon
 multiline_comment|/* Auto init DMA mode */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2637,6 +2754,7 @@ l_int|0xa8
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -2656,6 +2774,7 @@ id|devc-&gt;channels
 suffix:semicolon
 multiline_comment|/* Mono/stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2683,6 +2802,7 @@ id|AFMT_U8
 (brace
 multiline_comment|/* 8 bit mono */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2692,6 +2812,7 @@ l_int|0x51
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2705,6 +2826,7 @@ r_else
 (brace
 multiline_comment|/* 16 bit mono */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2714,6 +2836,7 @@ l_int|0x71
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2737,6 +2860,7 @@ id|AFMT_U8
 (brace
 multiline_comment|/* 8 bit stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2746,6 +2870,7 @@ l_int|0x51
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2759,6 +2884,7 @@ r_else
 (brace
 multiline_comment|/* 16 bit stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2768,6 +2894,7 @@ l_int|0x71
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2779,6 +2906,7 @@ suffix:semicolon
 )brace
 )brace
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2786,6 +2914,7 @@ l_int|0xb1
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -2799,6 +2928,7 @@ l_int|0x50
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2806,6 +2936,7 @@ l_int|0xb2
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -2826,10 +2957,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ess_audio_prepare_for_output
 r_static
 r_int
-DECL|function|ess_audio_prepare_for_output
 id|ess_audio_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -2853,16 +2985,19 @@ op_member_access_from_pointer
 id|devc
 suffix:semicolon
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|ess_speed
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2873,6 +3008,7 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* Auto init DMA mode */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2880,6 +3016,7 @@ l_int|0xa8
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -2899,6 +3036,7 @@ id|devc-&gt;channels
 suffix:semicolon
 multiline_comment|/* Mono/stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2926,6 +3064,7 @@ id|AFMT_U8
 (brace
 multiline_comment|/* 8 bit mono */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2935,6 +3074,7 @@ l_int|0x80
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2944,6 +3084,7 @@ l_int|0x51
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2957,6 +3098,7 @@ r_else
 (brace
 multiline_comment|/* 16 bit mono */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2966,6 +3108,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2975,6 +3118,7 @@ l_int|0x71
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2998,6 +3142,7 @@ id|AFMT_U8
 (brace
 multiline_comment|/* 8 bit stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3007,6 +3152,7 @@ l_int|0x80
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3016,6 +3162,7 @@ l_int|0x51
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3029,6 +3176,7 @@ r_else
 (brace
 multiline_comment|/* 16 bit stereo */
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3038,6 +3186,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3047,6 +3196,7 @@ l_int|0x71
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3058,6 +3208,7 @@ suffix:semicolon
 )brace
 )brace
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3065,6 +3216,7 @@ l_int|0xb1
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -3078,6 +3230,7 @@ l_int|0x50
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3085,6 +3238,7 @@ l_int|0xb2
 comma
 (paren
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -3098,6 +3252,7 @@ l_int|0x50
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3112,10 +3267,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ess_audio_output_block
 r_static
 r_void
-DECL|function|ess_audio_output_block
 id|ess_audio_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -3178,6 +3334,7 @@ op_assign
 id|IMODE_OUTPUT
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3199,6 +3356,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3224,12 +3382,14 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
 l_int|0xb8
 comma
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -3245,10 +3405,11 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|ess_audio_start_input
 r_static
 r_void
-DECL|function|ess_audio_start_input
 id|ess_audio_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -3286,7 +3447,7 @@ op_assign
 op_minus
 id|nr_bytes
 suffix:semicolon
-multiline_comment|/*&n;   * Start a DMA input to the buffer pointed by dmaqtail&n;   */
+multiline_comment|/*&n;&t; * Start a DMA input to the buffer pointed by dmaqtail&n;&t; */
 multiline_comment|/* DMAbuf_start_dma (dev, buf, count, DMA_MODE_READ); */
 r_if
 c_cond
@@ -3312,6 +3473,7 @@ op_assign
 id|IMODE_INPUT
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3333,6 +3495,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -3358,12 +3521,14 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ess_write
+c_func
 (paren
 id|devc
 comma
 l_int|0xb8
 comma
 id|ess_read
+c_func
 (paren
 id|devc
 comma
@@ -3379,10 +3544,11 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|ess_audio_trigger
 r_static
 r_void
-DECL|function|ess_audio_trigger
 id|ess_audio_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -3413,6 +3579,7 @@ op_logical_neg
 id|bits
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3432,6 +3599,7 @@ r_case
 id|IMODE_INPUT
 suffix:colon
 id|ess_audio_start_input
+c_func
 (paren
 id|dev
 comma
@@ -3448,6 +3616,7 @@ r_case
 id|IMODE_OUTPUT
 suffix:colon
 id|ess_audio_output_block
+c_func
 (paren
 id|dev
 comma
@@ -3468,10 +3637,11 @@ id|bits
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * SB16 specific routines&n; */
+DECL|function|sb16_audio_set_speed
 r_static
 r_int
-DECL|function|sb16_audio_set_speed
 id|sb16_audio_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -3530,11 +3700,12 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
+DECL|function|sb16_audio_set_bits
 r_static
 r_int
 r_int
-DECL|function|sb16_audio_set_bits
 id|sb16_audio_set_bits
+c_func
 (paren
 r_int
 id|dev
@@ -3562,6 +3733,7 @@ id|bits
 op_ne
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3582,71 +3754,16 @@ id|devc-&gt;bits
 op_assign
 id|AFMT_U8
 suffix:semicolon
+)brace
 r_return
 id|devc-&gt;bits
 suffix:semicolon
 )brace
-r_static
-r_int
 DECL|function|sb16_audio_prepare_for_input
-id|sb16_audio_prepare_for_input
-(paren
-r_int
-id|dev
-comma
-r_int
-id|bsize
-comma
-r_int
-id|bcount
-)paren
-(brace
-id|sb_devc
-op_star
-id|devc
-op_assign
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|devc
-suffix:semicolon
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dmap_out-&gt;dma
-op_assign
-id|audio_devs
-(braket
-id|dev
-)braket
-op_member_access_from_pointer
-id|dmap_in-&gt;dma
-op_assign
-id|devc-&gt;bits
-op_eq
-id|AFMT_S16_LE
-ques
-c_cond
-id|devc-&gt;dma16
-suffix:colon
-id|devc-&gt;dma8
-suffix:semicolon
-id|devc-&gt;trigger_bits
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_static
 r_int
-DECL|function|sb16_audio_prepare_for_output
-id|sb16_audio_prepare_for_output
+id|sb16_audio_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -3700,10 +3817,69 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|sb16_audio_prepare_for_output
+r_static
+r_int
+id|sb16_audio_prepare_for_output
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|bsize
+comma
+r_int
+id|bcount
+)paren
+(brace
+id|sb_devc
+op_star
+id|devc
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|devc
+suffix:semicolon
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;dma
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_in-&gt;dma
+op_assign
+id|devc-&gt;bits
+op_eq
+id|AFMT_S16_LE
+ques
+c_cond
+id|devc-&gt;dma16
+suffix:colon
+id|devc-&gt;dma8
+suffix:semicolon
+id|devc-&gt;trigger_bits
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|sb16_audio_output_block
 r_static
 r_void
-DECL|function|sb16_audio_output_block
 id|sb16_audio_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -3763,16 +3939,19 @@ id|cnt
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* DMAbuf_start_dma (dev, buf, count, DMA_MODE_WRITE); */
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3780,6 +3959,7 @@ l_int|0x41
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3799,6 +3979,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3814,6 +3995,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3830,6 +4012,7 @@ l_int|0xc6
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3859,6 +4042,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3874,6 +4058,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3889,15 +4074,17 @@ l_int|8
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|sb16_audio_start_input
 r_static
 r_void
-DECL|function|sb16_audio_start_input
 id|sb16_audio_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -3957,16 +4144,19 @@ id|cnt
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* DMAbuf_start_dma (dev, buf, count, DMA_MODE_READ); */
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3974,6 +4164,7 @@ l_int|0x42
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -3993,6 +4184,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4008,6 +4200,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4024,6 +4217,7 @@ l_int|0xce
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4053,6 +4247,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4068,6 +4263,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4083,15 +4279,17 @@ l_int|8
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|sb16_audio_trigger
 r_static
 r_void
-DECL|function|sb16_audio_trigger
 id|sb16_audio_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -4122,6 +4320,7 @@ op_logical_neg
 id|bits
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4141,6 +4340,7 @@ r_case
 id|IMODE_INPUT
 suffix:colon
 id|sb16_audio_start_input
+c_func
 (paren
 id|dev
 comma
@@ -4157,6 +4357,7 @@ r_case
 id|IMODE_OUTPUT
 suffix:colon
 id|sb16_audio_output_block
+c_func
 (paren
 id|dev
 comma
@@ -4176,10 +4377,11 @@ op_assign
 id|bits
 suffix:semicolon
 )brace
+DECL|function|sb_audio_ioctl
 r_static
 r_int
-DECL|function|sb_audio_ioctl
 id|sb_audio_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -4498,9 +4700,10 @@ comma
 id|sbpro_audio_set_channels
 )brace
 suffix:semicolon
-r_void
 DECL|function|sb_audio_init
+r_void
 id|sb_audio_init
+c_func
 (paren
 id|sb_devc
 op_star
@@ -4540,8 +4743,10 @@ id|MDL_SB1
 suffix:colon
 multiline_comment|/* SB1.0 or SB 1.5 */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use standard SB1.x driver&bslash;n&quot;
 )paren
@@ -4557,8 +4762,10 @@ r_case
 id|MDL_SB2
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use SB2.0 driver&bslash;n&quot;
 )paren
@@ -4579,8 +4786,10 @@ r_case
 id|MDL_SB201
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use SB2.01 (high speed) driver&bslash;n&quot;
 )paren
@@ -4604,8 +4813,10 @@ r_case
 id|MDL_SMW
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use Jazz16 driver&bslash;n&quot;
 )paren
@@ -4630,8 +4841,10 @@ r_case
 id|MDL_ESS
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use ESS ES688/1688 driver&bslash;n&quot;
 )paren
@@ -4656,8 +4869,10 @@ r_case
 id|MDL_SB16
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use SB16 driver&bslash;n&quot;
 )paren
@@ -4681,8 +4896,10 @@ suffix:semicolon
 r_default
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Will use SB Pro driver&bslash;n&quot;
 )paren
@@ -4705,6 +4922,7 @@ c_cond
 id|devc-&gt;my_dev
 op_assign
 id|sound_install_audiodrv
+c_func
 (paren
 id|AUDIO_DRIVER_VERSION
 comma
@@ -4733,6 +4951,13 @@ OL
 l_int|0
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;sb: unable to install audio.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace

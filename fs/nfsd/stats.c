@@ -63,13 +63,23 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;rc %d %d %d&bslash;n&quot;
+l_string|&quot;rc %d %d %d  %d %d %d %d %d&bslash;n&quot;
 comma
 id|nfsdstats.rchits
 comma
 id|nfsdstats.rcmisses
 comma
 id|nfsdstats.rcnocache
+comma
+id|nfsdstats.fh_cached
+comma
+id|nfsdstats.fh_valid
+comma
+id|nfsdstats.fh_fixup
+comma
+id|nfsdstats.fh_lookup
+comma
+id|nfsdstats.fh_stale
 )paren
 suffix:semicolon
 multiline_comment|/* Assume we haven&squot;t hit EOF yet. Will be set by svc_proc_read. */

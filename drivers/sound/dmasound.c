@@ -1,5 +1,5 @@
 multiline_comment|/* linux/drivers/sound/dmasound.c */
-multiline_comment|/*&n;&n;OSS/Free compatible Atari TT/Falcon and Amiga DMA sound driver for Linux/m68k&n;&n;(c) 1995 by Michael Schlueter &amp; Michael Marte&n;&n;Michael Schlueter (michael@duck.syd.de) did the basic structure of the VFS&n;interface and the u-law to signed byte conversion.&n;&n;Michael Marte (marte@informatik.uni-muenchen.de) did the sound queue,&n;/dev/mixer, /dev/sndstat and complemented the VFS interface. He would like&n;to thank:&n;Michael Schlueter for initial ideas and documentation on the MFP and&n;the DMA sound hardware.&n;Therapy? for their CD &squot;Troublegum&squot; which really made me rock.&n;&n;/dev/sndstat is based on code by Hannu Savolainen, the author of the&n;VoxWare family of drivers.&n;&n;This file is subject to the terms and conditions of the GNU General Public&n;License.  See the file COPYING in the main directory of this archive&n;for more details.&n;&n;History:&n;1995/8/25&t;first release&n;&n;1995/9/02&t;++roman: fixed atari_stram_alloc() call, the timer programming&n;&t;&t;&t;and several race conditions&n;&n;1995/9/14&t;++roman: After some discussion with Michael Schlueter, revised&n;&t;&t;&t;the interrupt disabling&n;&t;&t;&t;Slightly speeded up U8-&gt;S8 translation by using long&n;&t;&t;&t;operations where possible&n;&t;&t;&t;Added 4:3 interpolation for /dev/audio&n;&n;1995/9/20&t;++TeSche: Fixed a bug in sq_write and changed /dev/audio&n;&t;&t;&t;converting to play at 12517Hz instead of 6258Hz.&n;&n;1995/9/23&t;++TeSche: Changed sq_interrupt() and sq_play() to pre-program&n;&t;&t;&t;the DMA for another frame while there&squot;s still one&n;&t;&t;&t;running. This allows the IRQ response to be&n;&t;&t;&t;arbitrarily delayed and playing will still continue.&n;&n;1995/10/14&t;++Guenther_Kelleter@ac3.maus.de, ++TeSche: better support for&n;&t;&t;&t;Falcon audio (the Falcon doesn&squot;t raise an IRQ at the&n;&t;&t;&t;end of a frame, but at the beginning instead!). uses&n;&t;&t;&t;&squot;if (codec_dma)&squot; in lots of places to simply switch&n;&t;&t;&t;between Falcon and TT code.&n;&n;1995/11/06&t;++TeSche: started introducing a hardware abstraction scheme&n;&t;&t;&t;(may perhaps also serve for Amigas?), can now play&n;&t;&t;&t;samples at almost all frequencies by means of a more&n;&t;&t;&t;generalized expand routine, takes a good deal of care&n;&t;&t;&t;to cut data only at sample sizes, buffer size is now&n;&t;&t;&t;a kernel runtime option, implemented fsync() &amp; several&n;&t;&t;&t;minor improvements&n;&t;&t;++Guenther: useful hints and bug fixes, cross-checked it for&n;&t;&t;&t;Falcons&n;&n;1996/3/9&t;++geert: support added for Amiga, A-law, 16-bit little endian.&n;&t;&t;&t;Unification to drivers/sound/dmasound.c.&n;&n;1996/4/6&t;++Martin Mitchell: updated to 1.3 kernel.&n;&n;1996/6/13       ++topi: fixed things that were broken (mainly the amiga&n;                        14-bit routines), /dev/sndstat shows now the real&n;                        hardware frequency, the lowpass filter is disabled&n;&t;&t;&t;by default now.&n;&n;1996/9/25&t;++geert: modularization&n;&n;*/
+multiline_comment|/*&n;&n;   OSS/Free compatible Atari TT/Falcon and Amiga DMA sound driver for Linux/m68k&n;&n;   (c) 1995 by Michael Schlueter &amp; Michael Marte&n;&n;   Michael Schlueter (michael@duck.syd.de) did the basic structure of the VFS&n;   interface and the u-law to signed byte conversion.&n;&n;   Michael Marte (marte@informatik.uni-muenchen.de) did the sound queue,&n;   /dev/mixer, /dev/sndstat and complemented the VFS interface. He would like&n;   to thank:&n;   Michael Schlueter for initial ideas and documentation on the MFP and&n;   the DMA sound hardware.&n;   Therapy? for their CD &squot;Troublegum&squot; which really made me rock.&n;&n;   /dev/sndstat is based on code by Hannu Savolainen, the author of the&n;   VoxWare family of drivers.&n;&n;   This file is subject to the terms and conditions of the GNU General Public&n;   License.  See the file COPYING in the main directory of this archive&n;   for more details.&n;&n;   History:&n;   1995/8/25    first release&n;&n;   1995/9/02    ++roman: fixed atari_stram_alloc() call, the timer programming&n;   and several race conditions&n;&n;   1995/9/14    ++roman: After some discussion with Michael Schlueter, revised&n;   the interrupt disabling&n;   Slightly speeded up U8-&gt;S8 translation by using long&n;   operations where possible&n;   Added 4:3 interpolation for /dev/audio&n;&n;   1995/9/20    ++TeSche: Fixed a bug in sq_write and changed /dev/audio&n;   converting to play at 12517Hz instead of 6258Hz.&n;&n;   1995/9/23    ++TeSche: Changed sq_interrupt() and sq_play() to pre-program&n;   the DMA for another frame while there&squot;s still one&n;   running. This allows the IRQ response to be&n;   arbitrarily delayed and playing will still continue.&n;&n;   1995/10/14   ++Guenther_Kelleter@ac3.maus.de, ++TeSche: better support for&n;   Falcon audio (the Falcon doesn&squot;t raise an IRQ at the&n;   end of a frame, but at the beginning instead!). uses&n;   &squot;if (codec_dma)&squot; in lots of places to simply switch&n;   between Falcon and TT code.&n;&n;   1995/11/06   ++TeSche: started introducing a hardware abstraction scheme&n;   (may perhaps also serve for Amigas?), can now play&n;   samples at almost all frequencies by means of a more&n;   generalized expand routine, takes a good deal of care&n;   to cut data only at sample sizes, buffer size is now&n;   a kernel runtime option, implemented fsync() &amp; several&n;   minor improvements&n;   ++Guenther: useful hints and bug fixes, cross-checked it for&n;   Falcons&n;&n;   1996/3/9     ++geert: support added for Amiga, A-law, 16-bit little endian.&n;   Unification to drivers/sound/dmasound.c.&n;&n;   1996/4/6     ++Martin Mitchell: updated to 1.3 kernel.&n;&n;   1996/6/13       ++topi: fixed things that were broken (mainly the amiga&n;   14-bit routines), /dev/sndstat shows now the real&n;   hardware frequency, the lowpass filter is disabled&n;   by default now.&n;&n;   1996/9/25    ++geert: modularization&n;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -17,11 +17,11 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 macro_line|#include &quot;dmasound.h&quot;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#ifdef MODULE
@@ -39,7 +39,7 @@ id|irq_installed
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|variable|sound_buffers
 r_static
 r_char
@@ -59,27 +59,27 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
-multiline_comment|/*&n;    *&t;The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    */
+multiline_comment|/*&n;    * The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *   (Imported from arch/m68k/amiga/amisound.c)&n;    */
 r_extern
 r_volatile
 id|u_short
 id|amiga_audio_min_period
 suffix:semicolon
-multiline_comment|/*&n;    *&t;amiga_mksound() should be able to restore the period after beeping&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    */
+multiline_comment|/*&n;    * amiga_mksound() should be able to restore the period after beeping&n;    *   (Imported from arch/m68k/amiga/amisound.c)&n;    */
 r_extern
 id|u_short
 id|amiga_audio_period
 suffix:semicolon
-multiline_comment|/*&n;    *&t;Audio DMA masks&n;    */
+multiline_comment|/*&n;    * Audio DMA masks&n;    */
 DECL|macro|AMI_AUDIO_OFF
 mdefine_line|#define AMI_AUDIO_OFF&t;(DMAF_AUD0 | DMAF_AUD1 | DMAF_AUD2 | DMAF_AUD3)
 DECL|macro|AMI_AUDIO_8
 mdefine_line|#define AMI_AUDIO_8&t;(DMAF_SETCLR | DMAF_MASTER | DMAF_AUD0 | DMAF_AUD1)
 DECL|macro|AMI_AUDIO_14
 mdefine_line|#define AMI_AUDIO_14&t;(AMI_AUDIO_8 | DMAF_AUD2 | DMAF_AUD3)
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Some declarations *******************************************************/
 DECL|macro|DMASND_TT
 mdefine_line|#define DMASND_TT&t;&t;1
@@ -2726,7 +2726,7 @@ l_int|848
 comma
 )brace
 suffix:semicolon
-macro_line|#endif /* HAS_16BIT_TABLES */
+macro_line|#endif&t;&t;&t;&t;/* HAS_16BIT_TABLES */
 macro_line|#ifdef HAS_14BIT_TABLES
 multiline_comment|/* 14 bit mu-law (LSB) */
 DECL|variable|alaw2dma14l
@@ -3772,7 +3772,7 @@ comma
 l_int|20
 )brace
 suffix:semicolon
-macro_line|#endif /* HAS_14BIT_TABLES */
+macro_line|#endif&t;&t;&t;&t;/* HAS_14BIT_TABLES */
 multiline_comment|/*** Translations ************************************************************/
 macro_line|#ifdef CONFIG_ATARI
 r_static
@@ -4153,7 +4153,7 @@ r_int
 id|frameLeft
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_static
 r_int
@@ -4344,7 +4344,7 @@ r_int
 id|frameLeft
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Machine definitions *****************************************************/
 r_typedef
 r_struct
@@ -4402,7 +4402,7 @@ id|irqcleanup
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|member|init
 r_void
 (paren
@@ -4473,8 +4473,8 @@ id|play
 r_void
 )paren
 suffix:semicolon
-DECL|typedef|MACHINE
 )brace
+DECL|typedef|MACHINE
 id|MACHINE
 suffix:semicolon
 multiline_comment|/*** Low level stuff *********************************************************/
@@ -4495,14 +4495,14 @@ DECL|member|size
 r_int
 id|size
 suffix:semicolon
-multiline_comment|/* 8/16 bit*/
+multiline_comment|/* 8/16 bit */
 DECL|member|speed
 r_int
 id|speed
 suffix:semicolon
 multiline_comment|/* speed */
-DECL|typedef|SETTINGS
 )brace
+DECL|typedef|SETTINGS
 id|SETTINGS
 suffix:semicolon
 r_typedef
@@ -4692,8 +4692,8 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|typedef|TRANS
 )brace
+DECL|typedef|TRANS
 id|TRANS
 suffix:semicolon
 DECL|struct|sound_settings
@@ -4760,7 +4760,7 @@ id|u_long
 id|data
 suffix:semicolon
 multiline_comment|/* data for expanding */
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 )brace
 suffix:semicolon
 DECL|variable|sound
@@ -4814,7 +4814,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 r_static
 r_int
 id|AtaSetBass
@@ -4936,7 +4936,7 @@ op_star
 id|fp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_static
 r_void
@@ -4981,7 +4981,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 r_static
 r_void
 id|AmiSilence
@@ -5060,7 +5060,7 @@ op_star
 id|fp
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Mid level stuff *********************************************************/
 r_static
 r_void
@@ -5124,7 +5124,7 @@ r_int
 id|bass
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 r_static
 r_int
 id|sound_set_treble
@@ -5258,7 +5258,7 @@ DECL|member|rear_size
 r_int
 id|rear_size
 suffix:semicolon
-multiline_comment|/*&n;     *&t;The use of the playing field depends on the hardware&n;     *&n;     *&t;Atari: The number of frames that are loaded/playing&n;     *&n;     *&t;Amiga: Bit 0 is set: a frame is loaded&n;     *&t;       Bit 1 is set: a frame is playing&n;     */
+multiline_comment|/*&n;&t;   *        The use of the playing field depends on the hardware&n;&t;   *&n;&t;   *  Atari: The number of frames that are loaded/playing&n;&t;   *&n;&t;   *  Amiga: Bit 0 is set: a frame is loaded&n;&t;   *         Bit 1 is set: a frame is playing&n;&t;   */
 DECL|member|playing
 r_int
 id|playing
@@ -5294,7 +5294,7 @@ r_int
 id|ignore_int
 suffix:semicolon
 multiline_comment|/* ++TeSche: used for Falcon */
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 DECL|member|block_size_half
 DECL|member|block_size_quarter
@@ -5303,7 +5303,7 @@ id|block_size_half
 comma
 id|block_size_quarter
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 suffix:semicolon
 DECL|variable|sq
@@ -5591,10 +5591,10 @@ r_int
 id|count
 )paren
 suffix:semicolon
-DECL|function|ioctl_return
 r_static
 r_inline
 r_int
+DECL|function|ioctl_return
 id|ioctl_return
 c_func
 (paren
@@ -5614,7 +5614,9 @@ OL
 l_int|0
 )paren
 r_return
+(paren
 id|value
+)paren
 suffix:semicolon
 r_return
 id|put_user
@@ -5697,11 +5699,11 @@ id|ints
 suffix:semicolon
 multiline_comment|/* ++Martin: stub for now */
 multiline_comment|/*** Translations ************************************************************/
-multiline_comment|/* ++TeSche: radically changed for new expanding purposes...&n; *&n; * These two routines now deal with copying/expanding/translating the samples&n; * from user space into our buffer at the right frequency. They take care about&n; * how much data there&squot;s actually to read, how much buffer space there is and&n; * to convert samples into the right frequency/encoding. They will only work on&n; * complete samples so it may happen they leave some bytes in the input stream&n; * if the user didn&squot;t write a multiple of the current sample size. They both&n; * return the number of bytes they&squot;ve used from both streams so you may detect&n; * such a situation. Luckily all programs should be able to cope with that.&n; *&n; * I think I&squot;ve optimized anything as far as one can do in plain C, all&n; * variables should fit in registers and the loops are really short. There&squot;s&n; * one loop for every possible situation. Writing a more generalized and thus&n; * parameterized loop would only produce slower code. Feel free to optimize&n; * this in assembler if you like. :)&n; *&n; * I think these routines belong here because they&squot;re not yet really hardware&n; * independent, especially the fact that the Falcon can play 16bit samples&n; * only in stereo is hardcoded in both of them!&n; *&n; * ++geert: split in even more functions (one per format)&n; */
+multiline_comment|/* ++TeSche: radically changed for new expanding purposes...&n;&n; * These two routines now deal with copying/expanding/translating the samples&n; * from user space into our buffer at the right frequency. They take care about&n; * how much data there&squot;s actually to read, how much buffer space there is and&n; * to convert samples into the right frequency/encoding. They will only work on&n; * complete samples so it may happen they leave some bytes in the input stream&n; * if the user didn&squot;t write a multiple of the current sample size. They both&n; * return the number of bytes they&squot;ve used from both streams so you may detect&n; * such a situation. Luckily all programs should be able to cope with that.&n; *&n; * I think I&squot;ve optimized anything as far as one can do in plain C, all&n; * variables should fit in registers and the loops are really short. There&squot;s&n; * one loop for every possible situation. Writing a more generalized and thus&n; * parameterized loop would only produce slower code. Feel free to optimize&n; * this in assembler if you like. :)&n; *&n; * I think these routines belong here because they&squot;re not yet really hardware&n; * independent, especially the fact that the Falcon can play 16bit samples&n; * only in stereo is hardcoded in both of them!&n; *&n; * ++geert: split in even more functions (one per format)&n; */
 macro_line|#ifdef CONFIG_ATARI
-DECL|function|ata_ct_law
 r_static
 r_int
+DECL|function|ata_ct_law
 id|ata_ct_law
 c_func
 (paren
@@ -5819,12 +5821,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_s8
 r_static
 r_int
+DECL|function|ata_ct_s8
 id|ata_ct_s8
 c_func
 (paren
@@ -5906,12 +5910,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_u8
 r_static
 r_int
+DECL|function|ata_ct_u8
 id|ata_ct_u8
 c_func
 (paren
@@ -6087,12 +6093,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_s16be
 r_static
 r_int
+DECL|function|ata_ct_s16be
 id|ata_ct_s16be
 c_func
 (paren
@@ -6264,12 +6272,14 @@ id|used
 suffix:semicolon
 )brace
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_u16be
 r_static
 r_int
+DECL|function|ata_ct_u16be
 id|ata_ct_u16be
 c_func
 (paren
@@ -6471,12 +6481,14 @@ id|used
 suffix:semicolon
 )brace
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_s16le
 r_static
 r_int
+DECL|function|ata_ct_s16le
 id|ata_ct_s16le
 c_func
 (paren
@@ -6692,12 +6704,14 @@ id|used
 suffix:semicolon
 )brace
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ct_u16le
 r_static
 r_int
+DECL|function|ata_ct_u16le
 id|ata_ct_u16le
 c_func
 (paren
@@ -6912,12 +6926,14 @@ id|used
 suffix:semicolon
 )brace
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_law
 r_static
 r_int
+DECL|function|ata_ctx_law
 id|ata_ctx_law
 c_func
 (paren
@@ -7195,12 +7211,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_s8
 r_static
 r_int
+DECL|function|ata_ctx_s8
 id|ata_ctx_s8
 c_func
 (paren
@@ -7433,12 +7451,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_u8
 r_static
 r_int
+DECL|function|ata_ctx_u8
 id|ata_ctx_u8
 c_func
 (paren
@@ -7679,12 +7699,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_s16be
 r_static
 r_int
+DECL|function|ata_ctx_s16be
 id|ata_ctx_s16be
 c_func
 (paren
@@ -7938,12 +7960,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_u16be
 r_static
 r_int
+DECL|function|ata_ctx_u16be
 id|ata_ctx_u16be
 c_func
 (paren
@@ -8205,12 +8229,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_s16le
 r_static
 r_int
+DECL|function|ata_ctx_s16le
 id|ata_ctx_s16le
 c_func
 (paren
@@ -8480,12 +8506,14 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_ctx_u16le
 r_static
 r_int
+DECL|function|ata_ctx_u16le
 id|ata_ctx_u16le
 c_func
 (paren
@@ -8759,14 +8787,16 @@ op_minus
 id|frameLeft
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
-DECL|function|ami_ct_law
 r_static
 r_int
+DECL|function|ami_ct_law
 id|ami_ct_law
 c_func
 (paren
@@ -8981,12 +9011,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_s8
 r_static
 r_int
+DECL|function|ami_ct_s8
 id|ami_ct_s8
 c_func
 (paren
@@ -9148,12 +9180,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_u8
 r_static
 r_int
+DECL|function|ami_ct_u8
 id|ami_ct_u8
 c_func
 (paren
@@ -9352,12 +9386,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_s16be
 r_static
 r_int
+DECL|function|ami_ct_s16be
 id|ami_ct_s16be
 c_func
 (paren
@@ -9637,12 +9673,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_u16be
 r_static
 r_int
+DECL|function|ami_ct_u16be
 id|ami_ct_u16be
 c_func
 (paren
@@ -9934,12 +9972,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_s16le
 r_static
 r_int
+DECL|function|ami_ct_s16le
 id|ami_ct_s16le
 c_func
 (paren
@@ -10243,12 +10283,14 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-DECL|function|ami_ct_u16le
 r_static
 r_int
+DECL|function|ami_ct_u16le
 id|ami_ct_u16le
 c_func
 (paren
@@ -10558,10 +10600,12 @@ op_add_assign
 id|used
 suffix:semicolon
 r_return
+(paren
 id|used
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 macro_line|#ifdef CONFIG_ATARI
 DECL|variable|transTTNormal
 r_static
@@ -10655,7 +10699,7 @@ comma
 id|ata_ctx_u16le
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 DECL|variable|transAmiga
 r_static
@@ -10680,14 +10724,14 @@ comma
 id|ami_ct_u16le
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Low level stuff *********************************************************/
 macro_line|#ifdef CONFIG_ATARI
 multiline_comment|/*&n; * Atari (TT/Falcon)&n; */
-DECL|function|AtaAlloc
 r_static
 r_void
 op_star
+DECL|function|AtaAlloc
 id|AtaAlloc
 c_func
 (paren
@@ -10744,9 +10788,9 @@ id|order
 )paren
 suffix:semicolon
 )brace
-DECL|function|AtaFree
 r_static
 r_void
+DECL|function|AtaFree
 id|AtaFree
 c_func
 (paren
@@ -10791,6 +10835,7 @@ l_int|1
 suffix:semicolon
 )brace
 id|free_pages
+c_func
 (paren
 (paren
 r_int
@@ -10802,16 +10847,16 @@ id|order
 )paren
 suffix:semicolon
 )brace
-DECL|function|AtaIrqInit
 r_static
 r_int
+DECL|function|AtaIrqInit
 id|AtaIrqInit
 c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/* Set up timer A. Timer A&n;    will receive a signal upon end of playing from the sound&n;    hardware. Furthermore Timer A is able to count events&n;    and will cause an interrupt after a programmed number&n;    of events. So all we need to keep the music playing is&n;    to provide the sound hardware with new data upon&n;    an interrupt from timer A. */
+multiline_comment|/* Set up timer A. Timer A&n;&t;   will receive a signal upon end of playing from the sound&n;&t;   hardware. Furthermore Timer A is able to count events&n;&t;   and will cause an interrupt after a programmed number&n;&t;   of events. So all we need to keep the music playing is&n;&t;   to provide the sound hardware with new data upon&n;&t;   an interrupt from timer A. */
 id|mfp.tim_ct_a
 op_assign
 l_int|0
@@ -10852,13 +10897,15 @@ op_or_assign
 l_int|0x20
 suffix:semicolon
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|function|AtaIrqCleanUp
 r_static
 r_void
+DECL|function|AtaIrqCleanUp
 id|AtaIrqCleanUp
 c_func
 (paren
@@ -10885,14 +10932,14 @@ id|ata_sq_interrupt
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|macro|TONE_VOXWARE_TO_DB
 mdefine_line|#define TONE_VOXWARE_TO_DB(v) &bslash;&n;&t;(((v) &lt; 0) ? -12 : ((v) &gt; 100) ? 12 : ((v) - 50) * 6 / 25)
 DECL|macro|TONE_DB_TO_VOXWARE
 mdefine_line|#define TONE_DB_TO_VOXWARE(v) (((v) * 25 + ((v) &gt; 0 ? 5 : -5)) / 6 + 50)
-DECL|function|AtaSetBass
 r_static
 r_int
+DECL|function|AtaSetBass
 id|AtaSetBass
 c_func
 (paren
@@ -10919,16 +10966,18 @@ id|sound.bass
 )paren
 suffix:semicolon
 r_return
+(paren
 id|TONE_DB_TO_VOXWARE
 c_func
 (paren
 id|sound.bass
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|AtaSetTreble
 r_static
 r_int
+DECL|function|AtaSetTreble
 id|AtaSetTreble
 c_func
 (paren
@@ -10955,17 +11004,19 @@ id|sound.treble
 )paren
 suffix:semicolon
 r_return
+(paren
 id|TONE_DB_TO_VOXWARE
 c_func
 (paren
 id|sound.treble
 )paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * TT&n; */
-DECL|function|TTSilence
 r_static
 r_void
+DECL|function|TTSilence
 id|TTSilence
 c_func
 (paren
@@ -10984,9 +11035,9 @@ id|MW_LM1992_PSG_HIGH
 suffix:semicolon
 multiline_comment|/* mix in PSG signal 1:1 */
 )brace
-DECL|function|TTInit
 r_static
 r_void
+DECL|function|TTInit
 id|TTInit
 c_func
 (paren
@@ -11041,7 +11092,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* this isn&squot;t as much useful for a TT than for a Falcon, but&n;&t; * then it doesn&squot;t hurt very much to implement it for a TT too.&n;&t; */
+multiline_comment|/* this isn&squot;t as much useful for a TT than for a Falcon, but&n;&t;&t; * then it doesn&squot;t hurt very much to implement it for a TT too.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11217,9 +11268,9 @@ op_minus
 id|sound.soft.speed
 suffix:semicolon
 )brace
-DECL|function|TTSetFormat
 r_static
 r_int
+DECL|function|TTSetFormat
 id|TTSetFormat
 c_func
 (paren
@@ -11238,7 +11289,9 @@ r_case
 id|AFMT_QUERY
 suffix:colon
 r_return
+(paren
 id|sound.soft.format
+)paren
 suffix:semicolon
 r_case
 id|AFMT_MU_LAW
@@ -11292,16 +11345,18 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|format
+)paren
 suffix:semicolon
 )brace
 DECL|macro|VOLUME_VOXWARE_TO_DB
 mdefine_line|#define VOLUME_VOXWARE_TO_DB(v) &bslash;&n;&t;(((v) &lt; 0) ? -40 : ((v) &gt; 100) ? 0 : ((v) * 2) / 5 - 40)
 DECL|macro|VOLUME_DB_TO_VOXWARE
 mdefine_line|#define VOLUME_DB_TO_VOXWARE(v) ((((v) + 40) * 5 + 1) / 2)
-DECL|function|TTSetVolume
 r_static
 r_int
+DECL|function|TTSetVolume
 id|TTSetVolume
 c_func
 (paren
@@ -11354,6 +11409,7 @@ id|sound.volume_right
 )paren
 suffix:semicolon
 r_return
+(paren
 id|VOLUME_DB_TO_VOXWARE
 c_func
 (paren
@@ -11369,12 +11425,13 @@ id|sound.volume_right
 op_lshift
 l_int|8
 )paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Falcon&n; */
-DECL|function|FalconSilence
 r_static
 r_void
+DECL|function|FalconSilence
 id|FalconSilence
 c_func
 (paren
@@ -11424,9 +11481,9 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* ADC Input = PSG */
 )brace
-DECL|function|FalconInit
 r_static
 r_void
+DECL|function|FalconInit
 id|FalconInit
 c_func
 (paren
@@ -11489,7 +11546,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* if we will tolerate 3% error 8000Hz-&gt;8195Hz (2.38%) would&n;&t; * be playable without expanding, but that now a kernel runtime&n;&t; * option&n;&t; */
+multiline_comment|/* if we will tolerate 3% error 8000Hz-&gt;8195Hz (2.38%) would&n;&t;&t; * be playable without expanding, but that now a kernel runtime&n;&t;&t; * option&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11800,9 +11857,9 @@ op_minus
 id|sound.soft.speed
 suffix:semicolon
 )brace
-DECL|function|FalconSetFormat
 r_static
 r_int
+DECL|function|FalconSetFormat
 id|FalconSetFormat
 c_func
 (paren
@@ -11824,7 +11881,9 @@ r_case
 id|AFMT_QUERY
 suffix:colon
 r_return
+(paren
 id|sound.soft.format
+)paren
 suffix:semicolon
 r_case
 id|AFMT_MU_LAW
@@ -11905,7 +11964,9 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|format
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* This is for the Falcon output *attenuation* in 1.5dB steps,&n; * i.e. output level from 0 to -22.5dB in -1.5dB steps.&n; */
@@ -11913,9 +11974,9 @@ DECL|macro|VOLUME_VOXWARE_TO_ATT
 mdefine_line|#define VOLUME_VOXWARE_TO_ATT(v) &bslash;&n;&t;((v) &lt; 0 ? 15 : (v) &gt; 100 ? 0 : 15 - (v) * 3 / 20)
 DECL|macro|VOLUME_ATT_TO_VOXWARE
 mdefine_line|#define VOLUME_ATT_TO_VOXWARE(v) (100 - (v) * 20 / 3)
-DECL|function|FalconSetVolume
 r_static
 r_int
+DECL|function|FalconSetVolume
 id|FalconSetVolume
 c_func
 (paren
@@ -11958,6 +12019,7 @@ op_lshift
 l_int|4
 suffix:semicolon
 r_return
+(paren
 id|VOLUME_ATT_TO_VOXWARE
 c_func
 (paren
@@ -11971,11 +12033,12 @@ id|sound.volume_right
 )paren
 op_lshift
 l_int|8
+)paren
 suffix:semicolon
 )brace
-DECL|function|ata_sq_play_next_frame
 r_static
 r_void
+DECL|function|ata_sq_play_next_frame
 id|ata_sq_play_next_frame
 c_func
 (paren
@@ -11990,7 +12053,7 @@ comma
 op_star
 id|end
 suffix:semicolon
-multiline_comment|/* used by AtaPlay() if all doubts whether there really is something&n;     * to be played are already wiped out.&n;     */
+multiline_comment|/* used by AtaPlay() if all doubts whether there really is something&n;&t; * to be played are already wiped out.&n;&t; */
 id|start
 op_assign
 id|sq_block_address
@@ -12041,7 +12104,7 @@ id|start
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Since only an even number of samples per frame can&n;&t;be played, we might lose one byte here. (TO DO) */
+multiline_comment|/* Since only an even number of samples per frame can&n;&t;   be played, we might lose one byte here. (TO DO) */
 id|sq.front
 op_assign
 (paren
@@ -12062,16 +12125,16 @@ op_or
 id|DMASND_CTRL_REPEAT
 suffix:semicolon
 )brace
-DECL|function|AtaPlay
 r_static
 r_void
+DECL|function|AtaPlay
 id|AtaPlay
 c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/* ++TeSche: Note that sq.playing is no longer just a flag but holds&n;     * the number of frames the DMA is currently programmed for instead,&n;     * may be 0, 1 (currently being played) or 2 (pre-programmed).&n;     *&n;     * Changes done to sq.count and sq.playing are a bit more subtle again&n;     * so now I must admit I also prefer disabling the irq here rather&n;     * than considering all possible situations. But the point is that&n;     * disabling the irq doesn&squot;t have any bad influence on this version of&n;     * the driver as we benefit from having pre-programmed the DMA&n;     * wherever possible: There&squot;s no need to reload the DMA at the exact&n;     * time of an interrupt but only at some time while the pre-programmed&n;     * frame is playing!&n;     */
+multiline_comment|/* ++TeSche: Note that sq.playing is no longer just a flag but holds&n;&t; * the number of frames the DMA is currently programmed for instead,&n;&t; * may be 0, 1 (currently being played) or 2 (pre-programmed).&n;&t; *&n;&t; * Changes done to sq.count and sq.playing are a bit more subtle again&n;&t; * so now I must admit I also prefer disabling the irq here rather&n;&t; * than considering all possible situations. But the point is that&n;&t; * disabling the irq doesn&squot;t have any bad influence on this version of&n;&t; * the driver as we benefit from having pre-programmed the DMA&n;&t; * wherever possible: There&squot;s no need to reload the DMA at the exact&n;&t; * time of an interrupt but only at some time while the pre-programmed&n;&t; * frame is playing!&n;&t; */
 id|atari_disable_irq
 c_func
 (paren
@@ -12109,7 +12172,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* looks like there&squot;s nothing &squot;in&squot; the DMA yet, so try&n;&t; * to put two frames into it (at least one is available).&n;&t; */
+multiline_comment|/* looks like there&squot;s nothing &squot;in&squot; the DMA yet, so try&n;&t;&t;   * to put two frames into it (at least one is available).&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -12125,7 +12188,7 @@ op_logical_neg
 id|sq.syncing
 )paren
 (brace
-multiline_comment|/* hmmm, the only existing frame is not&n;&t;     * yet filled and we&squot;re not syncing?&n;&t;     */
+multiline_comment|/* hmmm, the only existing frame is not&n;&t;&t;&t;     * yet filled and we&squot;re not syncing?&n;&t;&t;&t;     */
 id|atari_enable_irq
 c_func
 (paren
@@ -12174,7 +12237,7 @@ op_logical_neg
 id|sq.syncing
 )paren
 (brace
-multiline_comment|/* hmmm, there were two frames, but the second&n;&t;     * one is not yet filled and we&squot;re not syncing?&n;&t;     */
+multiline_comment|/* hmmm, there were two frames, but the second&n;&t;&t;&t;     * one is not yet filled and we&squot;re not syncing?&n;&t;&t;&t;     */
 id|atari_enable_irq
 c_func
 (paren
@@ -12193,7 +12256,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* there&squot;s already a frame being played so we may only stuff&n;&t; * one new into the DMA, but even if this may be the last&n;&t; * frame existing the previous one is still on sq.count.&n;&t; */
+multiline_comment|/* there&squot;s already a frame being played so we may only stuff&n;&t;&t;   * one new into the DMA, but even if this may be the last&n;&t;&t;   * frame existing the previous one is still on sq.count.&n;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -12209,7 +12272,7 @@ op_logical_neg
 id|sq.syncing
 )paren
 (brace
-multiline_comment|/* hmmm, the only existing frame is not&n;&t;     * yet filled and we&squot;re not syncing?&n;&t;     */
+multiline_comment|/* hmmm, the only existing frame is not&n;&t;&t;&t;     * yet filled and we&squot;re not syncing?&n;&t;&t;&t;     */
 id|atari_enable_irq
 c_func
 (paren
@@ -12233,9 +12296,9 @@ id|IRQ_MFP_TIMA
 )paren
 suffix:semicolon
 )brace
-DECL|function|ata_sq_interrupt
 r_static
 r_void
+DECL|function|ata_sq_interrupt
 id|ata_sq_interrupt
 c_func
 (paren
@@ -12297,7 +12360,7 @@ id|DMASND_FALCON
 )paren
 )paren
 (brace
-multiline_comment|/* ++TeSche: Falcon only: ignore first irq because it comes&n;&t; * immediately after starting a frame. after that, irqs come&n;&t; * (almost) like on the TT.&n;&t; */
+multiline_comment|/* ++TeSche: Falcon only: ignore first irq because it comes&n;&t;&t;   * immediately after starting a frame. after that, irqs come&n;&t;&t;   * (almost) like on the TT.&n;&t;&t;   */
 id|sq.ignore_int
 op_assign
 l_int|0
@@ -12312,7 +12375,7 @@ op_logical_neg
 id|sq.playing
 )paren
 (brace
-multiline_comment|/* playing was interrupted and sq_reset() has already cleared&n;&t; * the sq variables, so better don&squot;t do anything here.&n;&t; */
+multiline_comment|/* playing was interrupted and sq_reset() has already cleared&n;&t;&t;   * the sq variables, so better don&squot;t do anything here.&n;&t;&t;   */
 id|WAKE_UP
 c_func
 (paren
@@ -12322,7 +12385,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Probably ;) one frame is finished. Well, in fact it may be that a&n;     * pre-programmed one is also finished because there has been a long&n;     * delay in interrupt delivery and we&squot;ve completely lost one, but&n;     * there&squot;s no way to detect such a situation. In such a case the last&n;     * frame will be played more than once and the situation will recover&n;     * as soon as the irq gets through.&n;     */
+multiline_comment|/* Probably ;) one frame is finished. Well, in fact it may be that a&n;&t; * pre-programmed one is also finished because there has been a long&n;&t; * delay in interrupt delivery and we&squot;ve completely lost one, but&n;&t; * there&squot;s no way to detect such a situation. In such a case the last&n;&t; * frame will be played more than once and the situation will recover&n;&t; * as soon as the irq gets through.&n;&t; */
 id|sq.count
 op_decrement
 suffix:semicolon
@@ -12351,7 +12414,7 @@ c_func
 id|sq.write_queue
 )paren
 suffix:semicolon
-multiline_comment|/* At least one block of the queue is free now&n;&t;so wake up a writing process blocked because&n;&t;of a full queue. */
+multiline_comment|/* At least one block of the queue is free now&n;&t;   so wake up a writing process blocked because&n;&t;   of a full queue. */
 r_if
 c_cond
 (paren
@@ -12367,7 +12430,7 @@ op_ne
 l_int|1
 )paren
 )paren
-multiline_comment|/* We must be a bit carefully here: sq.count indicates the&n;&t; * number of buffers used and not the number of frames to&n;&t; * be played. If sq.count==1 and sq.playing==1 that means&n;&t; * the only remaining frame was already programmed earlier&n;&t; * (and is currently running) so we mustn&squot;t call AtaPlay()&n;&t; * here, otherwise we&squot;ll play one frame too much.&n;&t; */
+multiline_comment|/* We must be a bit carefully here: sq.count indicates the&n;&t;&t; * number of buffers used and not the number of frames to&n;&t;&t; * be played. If sq.count==1 and sq.playing==1 that means&n;&t;&t; * the only remaining frame was already programmed earlier&n;&t;&t; * (and is currently running) so we mustn&squot;t call AtaPlay()&n;&t;&t; * here, otherwise we&squot;ll play one frame too much.&n;&t;&t; */
 id|AtaPlay
 c_func
 (paren
@@ -12385,15 +12448,15 @@ c_func
 id|sq.sync_queue
 )paren
 suffix:semicolon
-multiline_comment|/* We are not playing after AtaPlay(), so there&n;&t;is nothing to play any more. Wake up a process&n;&t;waiting for audio output to drain. */
+multiline_comment|/* We are not playing after AtaPlay(), so there&n;&t;   is nothing to play any more. Wake up a process&n;&t;   waiting for audio output to drain. */
 )brace
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 multiline_comment|/*&n; * Amiga&n; */
-DECL|function|AmiAlloc
 r_static
 r_void
 op_star
+DECL|function|AmiAlloc
 id|AmiAlloc
 c_func
 (paren
@@ -12406,6 +12469,7 @@ id|flags
 )paren
 (brace
 r_return
+(paren
 id|amiga_chip_alloc
 c_func
 (paren
@@ -12414,11 +12478,12 @@ r_int
 )paren
 id|size
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|AmiFree
 r_static
 r_void
+DECL|function|AmiFree
 id|AmiFree
 c_func
 (paren
@@ -12432,14 +12497,15 @@ id|size
 )paren
 (brace
 id|amiga_chip_free
+c_func
 (paren
 id|obj
 )paren
 suffix:semicolon
 )brace
-DECL|function|AmiIrqInit
 r_static
 r_int
+DECL|function|AmiIrqInit
 id|AmiIrqInit
 c_func
 (paren
@@ -12470,16 +12536,20 @@ id|ami_sq_interrupt
 )paren
 )paren
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|function|AmiIrqCleanUp
 r_static
 r_void
+DECL|function|AmiIrqCleanUp
 id|AmiIrqCleanUp
 c_func
 (paren
@@ -12501,10 +12571,10 @@ id|ami_sq_interrupt
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
-DECL|function|AmiSilence
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 r_static
 r_void
+DECL|function|AmiSilence
 id|AmiSilence
 c_func
 (paren
@@ -12517,9 +12587,9 @@ op_assign
 id|AMI_AUDIO_OFF
 suffix:semicolon
 )brace
-DECL|function|AmiInit
 r_static
 r_void
+DECL|function|AmiInit
 id|AmiInit
 c_func
 (paren
@@ -12636,9 +12706,9 @@ l_int|50
 suffix:semicolon
 multiline_comment|/* recommended for newer amiga models */
 )brace
-DECL|function|AmiSetFormat
 r_static
 r_int
+DECL|function|AmiSetFormat
 id|AmiSetFormat
 c_func
 (paren
@@ -12660,7 +12730,9 @@ r_case
 id|AFMT_QUERY
 suffix:colon
 r_return
+(paren
 id|sound.soft.format
+)paren
 suffix:semicolon
 r_case
 id|AFMT_MU_LAW
@@ -12741,16 +12813,18 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|format
+)paren
 suffix:semicolon
 )brace
 DECL|macro|VOLUME_VOXWARE_TO_AMI
 mdefine_line|#define VOLUME_VOXWARE_TO_AMI(v) &bslash;&n;&t;(((v) &lt; 0) ? 0 : ((v) &gt; 100) ? 64 : ((v) * 64)/100)
 DECL|macro|VOLUME_AMI_TO_VOXWARE
 mdefine_line|#define VOLUME_AMI_TO_VOXWARE(v) ((v)*100/64)
-DECL|function|AmiSetVolume
 r_static
 r_int
+DECL|function|AmiSetVolume
 id|AmiSetVolume
 c_func
 (paren
@@ -12801,6 +12875,7 @@ op_assign
 id|sound.volume_right
 suffix:semicolon
 r_return
+(paren
 id|VOLUME_AMI_TO_VOXWARE
 c_func
 (paren
@@ -12816,11 +12891,12 @@ id|sound.volume_right
 op_lshift
 l_int|8
 )paren
+)paren
 suffix:semicolon
 )brace
-DECL|function|AmiSetTreble
 r_static
 r_int
+DECL|function|AmiSetTreble
 id|AmiSetTreble
 c_func
 (paren
@@ -12850,7 +12926,9 @@ op_or_assign
 l_int|0x02
 suffix:semicolon
 r_return
+(paren
 id|treble
+)paren
 suffix:semicolon
 )brace
 DECL|macro|AMI_PLAY_LOADED
@@ -12859,9 +12937,9 @@ DECL|macro|AMI_PLAY_PLAYING
 mdefine_line|#define AMI_PLAY_PLAYING&t;2
 DECL|macro|AMI_PLAY_MASK
 mdefine_line|#define AMI_PLAY_MASK&t;&t;3
-DECL|function|ami_sq_play_next_frame
 r_static
 r_void
+DECL|function|ami_sq_play_next_frame
 id|ami_sq_play_next_frame
 c_func
 (paren
@@ -12888,7 +12966,7 @@ suffix:semicolon
 id|u_long
 id|size
 suffix:semicolon
-multiline_comment|/* used by AmiPlay() if all doubts whether there really is something&n;     * to be played are already wiped out.&n;     */
+multiline_comment|/* used by AmiPlay() if all doubts whether there really is something&n;&t; * to be played are already wiped out.&n;&t; */
 id|start
 op_assign
 id|sq_block_address
@@ -13190,9 +13268,9 @@ op_or_assign
 id|AMI_PLAY_LOADED
 suffix:semicolon
 )brace
-DECL|function|AmiPlay
 r_static
 r_void
+DECL|function|AmiPlay
 id|AmiPlay
 c_func
 (paren
@@ -13271,7 +13349,7 @@ op_logical_neg
 id|sq.syncing
 )paren
 (brace
-multiline_comment|/* hmmm, the only existing frame is not&n;&t; * yet filled and we&squot;re not syncing?&n;&t; */
+multiline_comment|/* hmmm, the only existing frame is not&n;&t;&t;   * yet filled and we&squot;re not syncing?&n;&t;&t;   */
 id|custom.intena
 op_assign
 id|IF_SETCLR
@@ -13294,9 +13372,9 @@ op_or
 id|IF_AUD0
 suffix:semicolon
 )brace
-DECL|function|ami_sq_interrupt
 r_static
 r_void
+DECL|function|ami_sq_interrupt
 id|ami_sq_interrupt
 c_func
 (paren
@@ -13325,7 +13403,7 @@ op_logical_neg
 id|sq.playing
 )paren
 (brace
-multiline_comment|/* Playing was interrupted and sq_reset() has already cleared&n;&t; * the sq variables, so better don&squot;t do anything here.&n;&t; */
+multiline_comment|/* Playing was interrupted and sq_reset() has already cleared&n;&t;&t;   * the sq variables, so better don&squot;t do anything here.&n;&t;&t;   */
 id|WAKE_UP
 c_func
 (paren
@@ -13407,7 +13485,7 @@ c_cond
 op_logical_neg
 id|sq.playing
 )paren
-multiline_comment|/* Nothing to play anymore.&n;&t;   Wake up a process waiting for audio output to drain. */
+multiline_comment|/* Nothing to play anymore.&n;&t;&t;   Wake up a process waiting for audio output to drain. */
 id|WAKE_UP
 c_func
 (paren
@@ -13415,7 +13493,7 @@ id|sq.sync_queue
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Machine definitions *****************************************************/
 macro_line|#ifdef CONFIG_ATARI
 DECL|variable|machTT
@@ -13435,7 +13513,7 @@ comma
 macro_line|#ifdef MODULE
 id|AtaIrqCleanUp
 comma
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 id|TTInit
 comma
 id|TTSilence
@@ -13468,7 +13546,7 @@ comma
 macro_line|#ifdef MODULE
 id|AtaIrqCleanUp
 comma
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 id|FalconInit
 comma
 id|FalconSilence
@@ -13484,7 +13562,7 @@ comma
 id|AtaPlay
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 DECL|variable|machAmiga
 r_static
@@ -13503,7 +13581,7 @@ comma
 macro_line|#ifdef MODULE
 id|AmiIrqCleanUp
 comma
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 id|AmiInit
 comma
 id|AmiSilence
@@ -13519,11 +13597,11 @@ comma
 id|AmiPlay
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 multiline_comment|/*** Mid level stuff *********************************************************/
-DECL|function|sound_silence
 r_static
 r_void
+DECL|function|sound_silence
 id|sound_silence
 c_func
 (paren
@@ -13546,9 +13624,9 @@ id|sound.mach.silence
 )paren
 suffix:semicolon
 )brace
-DECL|function|sound_init
 r_static
 r_void
+DECL|function|sound_init
 id|sound_init
 c_func
 (paren
@@ -13563,9 +13641,9 @@ id|sound.mach.init
 )paren
 suffix:semicolon
 )brace
-DECL|function|sound_set_format
 r_static
 r_int
+DECL|function|sound_set_format
 id|sound_set_format
 c_func
 (paren
@@ -13583,9 +13661,9 @@ id|format
 )paren
 suffix:semicolon
 )brace
-DECL|function|sound_set_speed
 r_static
 r_int
+DECL|function|sound_set_speed
 id|sound_set_speed
 c_func
 (paren
@@ -13601,7 +13679,9 @@ OL
 l_int|0
 )paren
 r_return
+(paren
 id|sound.soft.speed
+)paren
 suffix:semicolon
 id|sound.soft.speed
 op_assign
@@ -13626,12 +13706,14 @@ op_assign
 id|sound.soft.speed
 suffix:semicolon
 r_return
+(paren
 id|sound.soft.speed
+)paren
 suffix:semicolon
 )brace
-DECL|function|sound_set_stereo
 r_static
 r_int
+DECL|function|sound_set_stereo
 id|sound_set_stereo
 c_func
 (paren
@@ -13647,7 +13729,9 @@ OL
 l_int|0
 )paren
 r_return
+(paren
 id|sound.soft.stereo
+)paren
 suffix:semicolon
 id|stereo
 op_assign
@@ -13679,12 +13763,14 @@ id|sound.mach.init
 )paren
 suffix:semicolon
 r_return
+(paren
 id|stereo
+)paren
 suffix:semicolon
 )brace
-DECL|function|sound_set_volume
 r_static
 r_int
+DECL|function|sound_set_volume
 id|sound_set_volume
 c_func
 (paren
@@ -13703,9 +13789,9 @@ id|volume
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ATARI
-DECL|function|sound_set_bass
 r_static
 r_int
+DECL|function|sound_set_bass
 id|sound_set_bass
 c_func
 (paren
@@ -13714,6 +13800,7 @@ id|bass
 )paren
 (brace
 r_return
+(paren
 id|sound.mach.setBass
 ques
 c_cond
@@ -13726,12 +13813,13 @@ id|bass
 )paren
 suffix:colon
 l_int|50
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ATARI */
-DECL|function|sound_set_treble
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 r_static
 r_int
+DECL|function|sound_set_treble
 id|sound_set_treble
 c_func
 (paren
@@ -13740,6 +13828,7 @@ id|treble
 )paren
 (brace
 r_return
+(paren
 id|sound.mach.setTreble
 ques
 c_cond
@@ -13752,11 +13841,12 @@ id|treble
 )paren
 suffix:colon
 l_int|50
+)paren
 suffix:semicolon
 )brace
-DECL|function|sound_copy_translate
 r_static
 r_int
+DECL|function|sound_copy_translate
 id|sound_copy_translate
 c_func
 (paren
@@ -13891,6 +13981,7 @@ c_cond
 id|ct_func
 )paren
 r_return
+(paren
 id|ct_func
 c_func
 (paren
@@ -13904,10 +13995,13 @@ id|frameUsed
 comma
 id|frameLeft
 )paren
+)paren
 suffix:semicolon
 r_else
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * /dev/mixer abstraction&n; */
@@ -13915,9 +14009,9 @@ DECL|macro|RECLEVEL_VOXWARE_TO_GAIN
 mdefine_line|#define RECLEVEL_VOXWARE_TO_GAIN(v) &bslash;&n;&t;((v) &lt; 0 ? 0 : (v) &gt; 100 ? 15 : (v) * 3 / 20)
 DECL|macro|RECLEVEL_GAIN_TO_VOXWARE
 mdefine_line|#define RECLEVEL_GAIN_TO_VOXWARE(v) (((v) * 20 + 2) / 3)
-DECL|function|mixer_init
 r_static
 r_void
+DECL|function|mixer_init
 id|mixer_init
 c_func
 (paren
@@ -14031,7 +14125,7 @@ l_int|4
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|DMASND_AMIGA
@@ -14088,12 +14182,12 @@ l_int|50
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 )brace
-DECL|function|mixer_open
 r_static
 r_int
+DECL|function|mixer_open
 id|mixer_open
 c_func
 (paren
@@ -14107,20 +14201,24 @@ c_cond
 id|mixer.busy
 )paren
 r_return
+(paren
 op_minus
 id|EBUSY
+)paren
 suffix:semicolon
 id|mixer.busy
 op_assign
 l_int|1
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
-DECL|function|mixer_release
 r_static
 r_int
+DECL|function|mixer_release
 id|mixer_release
 c_func
 (paren
@@ -14132,12 +14230,14 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
-DECL|function|mixer_ioctl
 r_static
 r_int
+DECL|function|mixer_ioctl
 id|mixer_ioctl
 c_func
 (paren
@@ -14181,6 +14281,7 @@ r_case
 id|SOUND_MIXER_READ_DEVMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14192,11 +14293,13 @@ id|SOUND_MASK_MIC
 op_or
 id|SOUND_MASK_SPEAKER
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_RECMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14204,11 +14307,13 @@ id|arg
 comma
 id|SOUND_MASK_MIC
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_STEREODEVS
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14218,11 +14323,13 @@ id|SOUND_MASK_VOLUME
 op_or
 id|SOUND_MASK_MIC
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_CAPS
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14230,11 +14337,13 @@ id|arg
 comma
 id|SOUND_CAP_EXCL_INPUT
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_VOLUME
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14253,6 +14362,7 @@ id|sound.volume_right
 )paren
 op_lshift
 l_int|8
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -14293,6 +14403,7 @@ r_case
 id|SOUND_MIXER_READ_MIC
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14317,6 +14428,7 @@ l_int|0xf
 )paren
 op_lshift
 l_int|8
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -14345,6 +14457,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14358,6 +14471,7 @@ c_cond
 l_int|0
 suffix:colon
 l_int|100
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -14373,6 +14487,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14382,6 +14497,7 @@ id|sound_set_volume
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -14439,6 +14555,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14452,6 +14569,7 @@ c_cond
 l_int|0
 suffix:colon
 l_int|100
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -14471,6 +14589,7 @@ r_case
 id|SOUND_MIXER_READ_DEVMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14497,11 +14616,13 @@ suffix:colon
 l_int|0
 )paren
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_RECMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14509,11 +14630,13 @@ id|arg
 comma
 l_int|0
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_STEREODEVS
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14521,11 +14644,13 @@ id|arg
 comma
 id|SOUND_MASK_VOLUME
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_VOLUME
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14547,11 +14672,13 @@ op_lshift
 l_int|8
 )paren
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_BASS
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14563,11 +14690,13 @@ c_func
 id|sound.bass
 )paren
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_TREBLE
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14577,6 +14706,7 @@ id|TONE_DB_TO_VOXWARE
 c_func
 (paren
 id|sound.treble
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -14618,6 +14748,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14632,12 +14763,15 @@ l_int|0
 suffix:colon
 l_int|100
 )paren
+)paren
 suffix:semicolon
 )brace
 r_else
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_case
@@ -14652,6 +14786,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14661,6 +14796,7 @@ id|sound_set_volume
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -14676,6 +14812,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14685,6 +14822,7 @@ id|sound_set_bass
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -14700,6 +14838,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14709,6 +14848,7 @@ id|sound_set_treble
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -14777,6 +14917,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14791,17 +14932,20 @@ l_int|0
 suffix:colon
 l_int|100
 )paren
+)paren
 suffix:semicolon
 )brace
 r_else
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|DMASND_AMIGA
@@ -14816,6 +14960,7 @@ r_case
 id|SOUND_MIXER_READ_DEVMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14825,11 +14970,13 @@ id|SOUND_MASK_VOLUME
 op_or
 id|SOUND_MASK_TREBLE
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_RECMASK
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14837,11 +14984,13 @@ id|arg
 comma
 l_int|0
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_STEREODEVS
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14849,11 +14998,13 @@ id|arg
 comma
 id|SOUND_MASK_VOLUME
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_VOLUME
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14873,6 +15024,7 @@ id|sound.volume_right
 op_lshift
 l_int|8
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_WRITE_VOLUME
@@ -14886,6 +15038,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14897,17 +15050,20 @@ c_func
 id|data
 )paren
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_TREBLE
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
 id|arg
 comma
 id|sound.treble
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -14922,6 +15078,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -14933,21 +15090,24 @@ c_func
 id|data
 )paren
 )paren
+)paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Sound queue stuff, the heart of the driver&n; */
-DECL|function|sq_init
 r_static
 r_void
+DECL|function|sq_init
 id|sq_init
 c_func
 (paren
@@ -15011,7 +15171,7 @@ id|sq.ignore_int
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 id|sq.block_size_half
 op_assign
@@ -15025,13 +15185,13 @@ id|sq.block_size_half
 op_rshift
 l_int|1
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 id|sound_silence
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* whatever you like as startup mode for /dev/dsp,&n;     * (/dev/audio hasn&squot;t got a startup mode). note that&n;     * once changed a new open() will *not* restore these!&n;     */
+multiline_comment|/* whatever you like as startup mode for /dev/dsp,&n;&t; * (/dev/audio hasn&squot;t got a startup mode). note that&n;&t; * once changed a new open() will *not* restore these!&n;&t; */
 id|sound.dsp.format
 op_assign
 id|AFMT_S8
@@ -15070,7 +15230,7 @@ l_int|8195
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|DMASND_AMIGA
@@ -15081,7 +15241,7 @@ l_int|8000
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 multiline_comment|/* before the first open to /dev/dsp this wouldn&squot;t be set */
 id|sound.soft
@@ -15093,9 +15253,9 @@ op_assign
 id|sound.dsp
 suffix:semicolon
 )brace
-DECL|function|sq_play
 r_static
 r_void
+DECL|function|sq_play
 id|sq_play
 c_func
 (paren
@@ -15111,9 +15271,9 @@ id|sound.mach.play
 suffix:semicolon
 )brace
 multiline_comment|/* ++TeSche: radically changed this one too */
-DECL|function|sq_write
 r_static
 r_int
+DECL|function|sq_write
 id|sq_write
 c_func
 (paren
@@ -15143,7 +15303,7 @@ id|bUsed
 comma
 id|bLeft
 suffix:semicolon
-multiline_comment|/* ++TeSche: Is something like this necessary?&n;     * Hey, that&squot;s an honest question! Or does any other part of the&n;     * filesystem already checks this situation? I really don&squot;t know.&n;     */
+multiline_comment|/* ++TeSche: Is something like this necessary?&n;&t; * Hey, that&squot;s an honest question! Or does any other part of the&n;&t; * filesystem already checks this situation? I really don&squot;t know.&n;&t; */
 r_if
 c_cond
 (paren
@@ -15152,9 +15312,11 @@ op_eq
 l_int|0
 )paren
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
-multiline_comment|/* The interrupt doesn&squot;t start to play the last, incomplete frame.&n;     * Thus we can append to it without disabling the interrupts! (Note&n;     * also that sq.rear isn&squot;t affected by the interrupt.)&n;     */
+multiline_comment|/* The interrupt doesn&squot;t start to play the last, incomplete frame.&n;&t; * Thus we can append to it without disabling the interrupts! (Note&n;&t; * also that sq.rear isn&squot;t affected by the interrupt.)&n;&t; */
 r_if
 c_cond
 (paren
@@ -15244,6 +15406,7 @@ id|sq.open_mode
 )paren
 )paren
 r_return
+(paren
 id|uWritten
 OG
 l_int|0
@@ -15253,6 +15416,7 @@ id|uWritten
 suffix:colon
 op_minus
 id|EAGAIN
+)paren
 suffix:semicolon
 id|SLEEP
 c_func
@@ -15268,6 +15432,7 @@ c_cond
 id|SIGNAL_RECEIVED
 )paren
 r_return
+(paren
 id|uWritten
 OG
 l_int|0
@@ -15277,9 +15442,10 @@ id|uWritten
 suffix:colon
 op_minus
 id|EINTR
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Here, we can avoid disabling the interrupt by first&n;&t; * copying and translating the data, and then updating&n;&t; * the sq variables. Until this is done, the interrupt&n;&t; * won&squot;t see the new frame and we can work on it&n;&t; * undisturbed.&n;&t; */
+multiline_comment|/* Here, we can avoid disabling the interrupt by first&n;&t;&t;   * copying and translating the data, and then updating&n;&t;&t;   * the sq variables. Until this is done, the interrupt&n;&t;&t;   * won&squot;t see the new frame and we can work on it&n;&t;&t;   * undisturbed.&n;&t;&t;   */
 id|dest
 op_assign
 id|sq_block_address
@@ -15369,12 +15535,14 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 id|uWritten
+)paren
 suffix:semicolon
 )brace
-DECL|function|sq_open
 r_static
 r_int
+DECL|function|sq_open
 id|sq_open
 c_func
 (paren
@@ -15398,8 +15566,10 @@ id|open_mode
 )paren
 )paren
 r_return
+(paren
 op_minus
 id|EBUSY
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -15421,8 +15591,10 @@ c_cond
 id|SIGNAL_RECEIVED
 )paren
 r_return
+(paren
 op_minus
 id|EINTR
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -15439,14 +15611,16 @@ id|sq.ignore_int
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
-DECL|function|sq_reset
 r_static
 r_void
+DECL|function|sq_reset
 id|sq_reset
 c_func
 (paren
@@ -15477,9 +15651,9 @@ op_mod
 id|sq.max_count
 suffix:semicolon
 )brace
-DECL|function|sq_sync
 r_static
 r_int
+DECL|function|sq_sync
 id|sq_sync
 c_func
 (paren
@@ -15521,7 +15695,7 @@ c_cond
 id|SIGNAL_RECEIVED
 )paren
 (brace
-multiline_comment|/* While waiting for audio output to drain, an interrupt occurred.&n;&t;       Stop audio output immediately and clear the queue. */
+multiline_comment|/* While waiting for audio output to drain, an interrupt occurred.&n;&t;&t;&t;       Stop audio output immediately and clear the queue. */
 id|sq_reset
 c_func
 (paren
@@ -15541,12 +15715,14 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 id|rc
+)paren
 suffix:semicolon
 )brace
-DECL|function|sq_release
 r_static
 r_int
+DECL|function|sq_release
 id|sq_release
 c_func
 (paren
@@ -15581,16 +15757,18 @@ c_func
 id|sq.open_queue
 )paren
 suffix:semicolon
-multiline_comment|/* Wake up a process waiting for the queue being released.&n;&t;   Note: There may be several processes waiting for a call to open()&n;&t;&t; returning. */
+multiline_comment|/* Wake up a process waiting for the queue being released.&n;&t;&t;     Note: There may be several processes waiting for a call to open()&n;&t;&t;     returning. */
 )brace
 r_return
+(paren
 id|rc
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * /dev/sndstat&n; */
-DECL|function|state_init
 r_static
 r_void
+DECL|function|state_init
 id|state_init
 c_func
 (paren
@@ -15603,9 +15781,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* state.buf should not overflow! */
-DECL|function|state_open
 r_static
 r_int
+DECL|function|state_open
 id|state_open
 c_func
 (paren
@@ -15635,8 +15813,10 @@ c_cond
 id|state.busy
 )paren
 r_return
+(paren
 op_minus
 id|EBUSY
+)paren
 suffix:semicolon
 id|state.ptr
 op_assign
@@ -15665,7 +15845,7 @@ l_string|&quot;Atari &quot;
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|DMASND_AMIGA
@@ -15676,7 +15856,7 @@ l_string|&quot;Amiga &quot;
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 id|len
 op_add_assign
@@ -15999,7 +16179,7 @@ id|sound.volume_right
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|DMASND_AMIGA
@@ -16034,7 +16214,7 @@ id|sound.volume_right
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 id|len
 op_add_assign
@@ -16089,12 +16269,14 @@ op_assign
 id|len
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
-DECL|function|state_release
 r_static
 r_int
+DECL|function|state_release
 id|state_release
 c_func
 (paren
@@ -16106,12 +16288,14 @@ op_assign
 l_int|0
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
-DECL|function|state_read
 r_static
 r_int
+DECL|function|state_read
 id|state_read
 c_func
 (paren
@@ -16150,7 +16334,9 @@ op_le
 l_int|0
 )paren
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 id|copy_to_user
 c_func
@@ -16171,13 +16357,15 @@ op_add_assign
 id|n
 suffix:semicolon
 r_return
+(paren
 id|n
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*** High level stuff ********************************************************/
-DECL|function|sound_open
 r_static
 r_int
+DECL|function|sound_open
 id|sound_open
 c_func
 (paren
@@ -16329,12 +16517,14 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_return
+(paren
 id|rc
+)paren
 suffix:semicolon
 )brace
-DECL|function|sound_fsync
 r_static
 r_int
+DECL|function|sound_fsync
 id|sound_fsync
 c_func
 (paren
@@ -16373,7 +16563,9 @@ r_case
 id|SND_DEV_CTL
 suffix:colon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 r_case
 id|SND_DEV_DSP
@@ -16382,14 +16574,17 @@ r_case
 id|SND_DEV_AUDIO
 suffix:colon
 r_return
+(paren
 id|sq_sync
 c_func
 (paren
+)paren
 )paren
 suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|unknown_minor_dev
 c_func
 (paren
@@ -16397,12 +16592,13 @@ l_string|&quot;sound_fsync&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
 )brace
 )brace
-DECL|function|sound_release
 r_static
 r_void
+DECL|function|sound_release
 id|sound_release
 c_func
 (paren
@@ -16498,10 +16694,10 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|sound_lseek
 r_static
 r_int
 r_int
+DECL|function|sound_lseek
 id|sound_lseek
 c_func
 (paren
@@ -16530,15 +16726,10 @@ suffix:semicolon
 )brace
 DECL|function|sound_read
 r_static
-r_int
+id|ssize_t
 id|sound_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -16548,9 +16739,12 @@ r_char
 op_star
 id|buf
 comma
-r_int
-r_int
+id|szie_t
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -16559,7 +16753,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_switch
@@ -16574,12 +16768,14 @@ r_case
 id|SND_DEV_STATUS
 suffix:colon
 r_return
+(paren
 id|state_read
 c_func
 (paren
 id|buf
 comma
 id|count
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -16592,12 +16788,15 @@ r_case
 id|SND_DEV_AUDIO
 suffix:colon
 r_return
+(paren
 op_minus
 id|EPERM
+)paren
 suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|unknown_minor_dev
 c_func
 (paren
@@ -16605,20 +16804,16 @@ l_string|&quot;sound_read&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
 )brace
 )brace
 DECL|function|sound_write
 r_static
-r_int
+id|ssize_t
 id|sound_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -16630,8 +16825,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -16640,7 +16838,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_switch
@@ -16658,8 +16856,10 @@ r_case
 id|SND_DEV_CTL
 suffix:colon
 r_return
+(paren
 op_minus
 id|EPERM
+)paren
 suffix:semicolon
 r_case
 id|SND_DEV_DSP
@@ -16668,6 +16868,7 @@ r_case
 id|SND_DEV_AUDIO
 suffix:colon
 r_return
+(paren
 id|sq_write
 c_func
 (paren
@@ -16675,16 +16876,19 @@ id|buf
 comma
 id|count
 )paren
+)paren
 suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|unknown_minor_dev
 c_func
 (paren
 l_string|&quot;sound_write&quot;
 comma
 id|dev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -16705,8 +16909,10 @@ id|dev
 (brace
 multiline_comment|/* printk(&quot;%s: Unknown minor device %d&bslash;n&quot;, fname, dev); */
 r_return
+(paren
 op_minus
 id|ENXIO
+)paren
 suffix:semicolon
 )brace
 DECL|function|sound_ioctl
@@ -16759,13 +16965,16 @@ r_case
 id|SND_DEV_STATUS
 suffix:colon
 r_return
+(paren
 op_minus
 id|EPERM
+)paren
 suffix:semicolon
 r_case
 id|SND_DEV_CTL
 suffix:colon
 r_return
+(paren
 id|mixer_ioctl
 c_func
 (paren
@@ -16776,6 +16985,7 @@ comma
 id|cmd
 comma
 id|arg
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -16799,7 +17009,9 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_POST
@@ -16808,6 +17020,7 @@ r_case
 id|SNDCTL_DSP_SYNC
 suffix:colon
 r_return
+(paren
 id|sound_fsync
 c_func
 (paren
@@ -16815,8 +17028,9 @@ id|inode
 comma
 id|file
 )paren
+)paren
 suffix:semicolon
-multiline_comment|/* ++TeSche: before changing any of these it&squot;s probably wise to&n;&t;&t; * wait until sound playing has settled down&n;&t;&t; */
+multiline_comment|/* ++TeSche: before changing any of these it&squot;s probably wise to&n;&t;&t;&t; &t;&t; * wait until sound playing has settled down&n;&t;&t;&t; &t;&t; */
 r_case
 id|SNDCTL_DSP_SPEED
 suffix:colon
@@ -16837,6 +17051,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -16846,6 +17061,7 @@ id|sound_set_speed
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -16869,6 +17085,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -16878,6 +17095,7 @@ id|sound_set_stereo
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -16901,6 +17119,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -16915,6 +17134,7 @@ l_int|1
 )paren
 op_plus
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -16937,6 +17157,7 @@ id|data
 )paren
 suffix:semicolon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -16946,6 +17167,7 @@ id|sound_set_format
 c_func
 (paren
 id|data
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -17036,6 +17258,7 @@ id|AFMT_U16_LE
 suffix:semicolon
 )brace
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
@@ -17043,17 +17266,20 @@ id|arg
 comma
 id|fmt
 )paren
+)paren
 suffix:semicolon
 r_case
 id|SNDCTL_DSP_GETBLKSIZE
 suffix:colon
 r_return
+(paren
 id|IOCTL_OUT
 c_func
 (paren
 id|arg
 comma
 l_int|10240
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -17067,6 +17293,7 @@ suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|mixer_ioctl
 c_func
 (paren
@@ -17078,6 +17305,7 @@ id|cmd
 comma
 id|arg
 )paren
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -17085,6 +17313,7 @@ suffix:semicolon
 r_default
 suffix:colon
 r_return
+(paren
 id|unknown_minor_dev
 c_func
 (paren
@@ -17092,11 +17321,14 @@ l_string|&quot;sound_ioctl&quot;
 comma
 id|dev
 )paren
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
 op_minus
 id|EINVAL
+)paren
 suffix:semicolon
 )brace
 DECL|variable|sound_fops
@@ -17129,8 +17361,8 @@ id|sound_fsync
 )brace
 suffix:semicolon
 multiline_comment|/*** Config &amp; Setup **********************************************************/
-DECL|function|soundcard_init
 r_void
+DECL|function|soundcard_init
 id|soundcard_init
 c_func
 (paren
@@ -17216,13 +17448,14 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;DMA sound driver: Timer A interrupt already in use&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_ATARI */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
 r_case
 id|MACH_AMIGA
@@ -17248,7 +17481,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
-macro_line|#endif /* CONFIG_AMIGA */
+macro_line|#endif&t;&t;&t;&t;/* CONFIG_AMIGA */
 )brace
 r_if
 c_cond
@@ -17262,6 +17495,7 @@ multiline_comment|/* Set up sound queue, /dev/audio and /dev/dsp. */
 id|sound_buffers
 op_assign
 id|kmalloc
+c_func
 (paren
 id|numBufs
 op_star
@@ -17286,6 +17520,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;DMA sound driver: Not enough buffer memory, driver disabled!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -17312,7 +17547,10 @@ id|sound_buffers
 id|i
 )braket
 op_assign
-id|sound.mach.dma_alloc
+id|sound.mach
+dot
+id|dma_alloc
+c_func
 (paren
 id|bufSize
 op_lshift
@@ -17337,7 +17575,10 @@ c_loop
 id|i
 op_decrement
 )paren
-id|sound.mach.dma_free
+id|sound.mach
+dot
+id|dma_free
+c_func
 (paren
 id|sound_buffers
 (braket
@@ -17350,6 +17591,7 @@ l_int|10
 )paren
 suffix:semicolon
 id|kfree
+c_func
 (paren
 id|sound_buffers
 )paren
@@ -17416,6 +17658,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;DMA sound driver: Interrupt initialization failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -17431,6 +17674,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;DMA sound driver installed, using %d buffers of %dk.&bslash;n&quot;
 comma
 id|numBufs
@@ -17459,8 +17703,8 @@ multiline_comment|/* ++Martin: stub, could possibly be merged with soundcard.c e
 )brace
 DECL|macro|MAXARGS
 mdefine_line|#define MAXARGS&t;&t;8&t;/* Should be sufficient for now */
-DECL|function|dmasound_setup
 r_void
+DECL|function|dmasound_setup
 id|dmasound_setup
 c_func
 (paren
@@ -17510,6 +17754,7 @@ id|MAX_CATCH_RADIUS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;dmasound_setup: illegal catch radius, using default = %d&bslash;n&quot;
 comma
 id|catchRadius
@@ -17540,6 +17785,7 @@ id|MIN_BUFFERS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;dmasound_setup: illegal number of buffers, using default = %d&bslash;n&quot;
 comma
 id|numBufs
@@ -17566,6 +17812,7 @@ id|MAX_BUFSIZE
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;dmasound_setup: illegal buffer size, using default = %d&bslash;n&quot;
 comma
 id|bufSize
@@ -17591,6 +17838,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;dmasound_setup: illegal number of arguments&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -17699,6 +17947,7 @@ id|err
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;dmasound: driver already loaded/included in kernel&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -17812,5 +18061,5 @@ id|sound_buffers
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 eof

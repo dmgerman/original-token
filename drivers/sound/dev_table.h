@@ -1844,7 +1844,7 @@ id|sound_drivers
 )braket
 op_assign
 (brace
-macro_line|#ifdef CONFIG_PSS
+macro_line|#if defined(CONFIG_PSS) &amp;&amp; !defined(CONFIG_PSS_MODULE)
 (brace
 l_string|&quot;PSS&quot;
 comma
@@ -1894,6 +1894,7 @@ id|unload_pss_mss
 )brace
 comma
 macro_line|#endif
+macro_line|#if defined(CONFIG_GUS) &amp;&amp; !defined(CONFIG_GUS_MODULE)
 macro_line|#ifdef CONFIG_GUS16
 (brace
 l_string|&quot;GUS16&quot;
@@ -1946,7 +1947,8 @@ id|unload_gus
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_MSS
+macro_line|#endif
+macro_line|#if defined(CONFIG_MSS) &amp;&amp; !defined(CONFIG_MSS_MODULE)
 (brace
 l_string|&quot;MSS&quot;
 comma
@@ -2049,7 +2051,7 @@ id|unload_cs4232_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_YM3812)
+macro_line|#if defined(CONFIG_YM3812) &amp;&amp; !defined(CONFIG_YM3812_MODULE)
 (brace
 l_string|&quot;OPL3&quot;
 comma
@@ -2067,7 +2069,7 @@ id|unload_adlib
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PAS
+macro_line|#if defined(CONFIG_PAS) &amp;&amp; !defined(CONFIG_PAS_MODULE)
 (brace
 l_string|&quot;PAS16&quot;
 comma
@@ -2085,7 +2087,7 @@ id|unload_pas
 )brace
 comma
 macro_line|#endif
-macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_MPU401_MODULE)
 (brace
 l_string|&quot;MPU401&quot;
 comma
@@ -2103,7 +2105,7 @@ id|unload_mpu401
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_UART401_MODULE)
 (brace
 l_string|&quot;UART401&quot;
 comma
@@ -2121,7 +2123,7 @@ id|unload_uart401
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_MAUI)
+macro_line|#if defined(CONFIG_MAUI) &amp;&amp; !defined(CONFIG_MAUI_MODULE)
 (brace
 l_string|&quot;MAUI&quot;
 comma
@@ -2139,7 +2141,7 @@ id|unload_maui
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI) &amp;&amp; !defined(CONFIG_UART6850_MODULE)
 (brace
 l_string|&quot;MIDI6850&quot;
 comma
@@ -2157,7 +2159,7 @@ id|unload_uart6850
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SBDSP
+macro_line|#if defined(CONFIG_SBDSP) &amp;&amp; !defined(CONFIG_SBDSP_MODULE)
 (brace
 l_string|&quot;SBLAST&quot;
 comma
@@ -2278,7 +2280,7 @@ id|unload_opl3sa_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_TRIX
+macro_line|#if defined (CONFIG_TRIX) &amp;&amp; !defined(CONFIG_TRIX_MODULE)
 (brace
 l_string|&quot;TRXPRO&quot;
 comma
@@ -2328,7 +2330,7 @@ id|unload_trix_mpu
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SOFTOSS
+macro_line|#if defined(CONFIG_SOFTOSS) &amp;&amp; !defined(CONFIG_SOFTOSS_MODULE)
 (brace
 l_string|&quot;SOFTSYN&quot;
 comma
@@ -2960,7 +2962,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_YM3812
+macro_line|#if defined(CONFIG_YM3812) 
 (brace
 id|SNDCARD_ADLIB
 comma
@@ -3446,6 +3448,81 @@ comma
 r_void
 op_star
 id|devc
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_audiodev
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_mixerdev
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_mididev
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_synthdev
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|sound_unload_timerdev
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_int
+id|sound_alloc_audiodev
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|sound_alloc_mixerdev
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|sound_alloc_timerdev
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|sound_alloc_synthdev
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|sound_alloc_mididev
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _DEV_TABLE_H_ */

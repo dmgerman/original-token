@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sys_timer.c&n; *&n; * The default timer for the 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SEQUENCER
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(MODULE)
 DECL|variable|opened
 DECL|variable|tmr_running
 r_static
@@ -64,6 +64,7 @@ suffix:semicolon
 r_static
 r_void
 id|poll_def_tmr
+c_func
 (paren
 r_int
 r_int
@@ -93,12 +94,13 @@ r_int
 r_int
 DECL|function|tmr2ticks
 id|tmr2ticks
+c_func
 (paren
 r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n;   *    Convert system timer ticks (HZ) to MIDI ticks&n;   *    (divide # of MIDI ticks/minute by # of system ticks/minute).&n;   */
+multiline_comment|/*&n;&t; *    Convert system timer ticks (HZ) to MIDI ticks&n;&t; *    (divide # of MIDI ticks/minute by # of system ticks/minute).&n;&t; */
 r_return
 (paren
 (paren
@@ -127,6 +129,7 @@ r_static
 r_void
 DECL|function|poll_def_tmr
 id|poll_def_tmr
+c_func
 (paren
 r_int
 r_int
@@ -149,6 +152,7 @@ op_plus
 id|jiffies
 suffix:semicolon
 id|add_timer
+c_func
 (paren
 op_amp
 id|def_tmr
@@ -170,6 +174,7 @@ op_assign
 id|ticks_offs
 op_plus
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -192,6 +197,7 @@ op_minus
 l_int|1
 suffix:semicolon
 id|sequencer_timer
+c_func
 (paren
 l_int|0
 )paren
@@ -204,6 +210,7 @@ r_static
 r_void
 DECL|function|tmr_reset
 id|tmr_reset
+c_func
 (paren
 r_void
 )paren
@@ -213,11 +220,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -251,6 +260,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -260,6 +270,7 @@ r_static
 r_int
 DECL|function|def_tmr_open
 id|def_tmr_open
+c_func
 (paren
 r_int
 id|dev
@@ -278,6 +289,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -304,6 +316,7 @@ op_plus
 id|jiffies
 suffix:semicolon
 id|add_timer
+c_func
 (paren
 op_amp
 id|def_tmr
@@ -319,6 +332,7 @@ r_static
 r_void
 DECL|function|def_tmr_close
 id|def_tmr_close
+c_func
 (paren
 r_int
 id|dev
@@ -331,6 +345,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|del_timer
+c_func
 (paren
 op_amp
 id|def_tmr
@@ -342,6 +357,7 @@ r_static
 r_int
 DECL|function|def_tmr_event
 id|def_tmr_event
+c_func
 (paren
 r_int
 id|dev
@@ -434,6 +450,7 @@ r_case
 id|TMR_START
 suffix:colon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -499,6 +516,7 @@ suffix:semicolon
 id|ticks_offs
 op_add_assign
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -518,6 +536,7 @@ r_case
 id|TMR_ECHO
 suffix:colon
 id|seq_copy_to_input
+c_func
 (paren
 id|event
 comma
@@ -539,6 +558,7 @@ r_int
 r_int
 DECL|function|def_tmr_get_time
 id|def_tmr_get_time
+c_func
 (paren
 r_int
 id|dev
@@ -561,6 +581,7 @@ r_static
 r_int
 DECL|function|def_tmr_ioctl
 id|def_tmr_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -600,6 +621,7 @@ r_case
 id|SNDCTL_TMR_START
 suffix:colon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -751,6 +773,7 @@ suffix:semicolon
 id|ticks_offs
 op_add_assign
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -868,6 +891,7 @@ r_static
 r_void
 DECL|function|def_tmr_arm
 id|def_tmr_arm
+c_func
 (paren
 r_int
 id|dev

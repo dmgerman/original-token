@@ -1,9 +1,10 @@
 multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerly uart401_midi.c)&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_UART401
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#if (defined(CONFIG_UART401)||defined(CONFIG_MIDI)) || defined(MODULE)
 DECL|struct|uart401_devc
 r_typedef
 r_struct
@@ -93,6 +94,7 @@ r_static
 r_int
 DECL|function|uart401_status
 id|uart401_status
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -101,6 +103,7 @@ id|devc
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|STATPORT
 )paren
@@ -114,6 +117,7 @@ r_static
 r_void
 DECL|function|uart401_cmd
 id|uart401_cmd
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -125,6 +129,7 @@ id|cmd
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|cmd
@@ -138,6 +143,7 @@ r_static
 r_int
 DECL|function|uart401_read
 id|uart401_read
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -146,6 +152,7 @@ id|devc
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|DATAPORT
 )paren
@@ -155,6 +162,7 @@ r_static
 r_void
 DECL|function|uart401_write
 id|uart401_write
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -166,6 +174,7 @@ id|byte
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|byte
@@ -188,6 +197,7 @@ mdefine_line|#define&t;UART_MODE_ON&t;0x3F
 r_static
 r_int
 id|reset_uart401
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -197,6 +207,7 @@ suffix:semicolon
 r_static
 r_void
 id|enter_uart_mode
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -207,6 +218,7 @@ r_static
 r_void
 DECL|function|uart401_input_loop
 id|uart401_input_loop
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -217,6 +229,7 @@ r_while
 c_loop
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
@@ -227,6 +240,7 @@ r_char
 id|c
 op_assign
 id|uart401_read
+c_func
 (paren
 id|devc
 )paren
@@ -252,7 +266,10 @@ id|OPEN_READ
 op_logical_and
 id|devc-&gt;midi_input_intr
 )paren
-id|devc-&gt;midi_input_intr
+id|devc
+op_member_access_from_pointer
+id|midi_input_intr
+c_func
 (paren
 id|devc-&gt;my_dev
 comma
@@ -264,6 +281,7 @@ suffix:semicolon
 r_void
 DECL|function|uart401intr
 id|uart401intr
+c_func
 (paren
 r_int
 id|irq
@@ -311,11 +329,13 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
 )paren
 id|uart401_input_loop
+c_func
 (paren
 id|devc
 )paren
@@ -325,6 +345,7 @@ r_static
 r_int
 DECL|function|uart401_open
 id|uart401_open
+c_func
 (paren
 r_int
 id|dev
@@ -387,11 +408,13 @@ r_while
 c_loop
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
 )paren
 id|uart401_read
+c_func
 (paren
 id|devc
 )paren
@@ -405,6 +428,7 @@ op_assign
 id|mode
 suffix:semicolon
 id|enter_uart_mode
+c_func
 (paren
 id|devc
 )paren
@@ -421,6 +445,7 @@ r_static
 r_void
 DECL|function|uart401_close
 id|uart401_close
+c_func
 (paren
 r_int
 id|dev
@@ -442,6 +467,7 @@ op_member_access_from_pointer
 id|devc
 suffix:semicolon
 id|reset_uart401
+c_func
 (paren
 id|devc
 )paren
@@ -455,6 +481,7 @@ r_static
 r_int
 DECL|function|uart401_out
 id|uart401_out
+c_func
 (paren
 r_int
 id|dev
@@ -494,13 +521,15 @@ id|devc-&gt;disabled
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
+multiline_comment|/*&n;&t; * Test for input since pending input seems to block the output.&n;&t; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -508,21 +537,24 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
 )paren
 id|uart401_input_loop
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Sometimes it takes about 13000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
+multiline_comment|/*&n;&t; * Sometimes it takes about 13000 loops before the output becomes ready&n;&t; * (After reset). Normally it takes just about 10 loops.&n;&t; */
 r_for
 c_loop
 (paren
@@ -536,6 +568,7 @@ l_int|0
 op_logical_and
 op_logical_neg
 id|output_ready
+c_func
 (paren
 id|devc
 )paren
@@ -549,12 +582,14 @@ c_cond
 (paren
 op_logical_neg
 id|output_ready
+c_func
 (paren
 id|devc
 )paren
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MPU-401: Timeout - Device not responding&bslash;n&quot;
 )paren
@@ -564,11 +599,13 @@ op_assign
 l_int|1
 suffix:semicolon
 id|reset_uart401
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|enter_uart_mode
+c_func
 (paren
 id|devc
 )paren
@@ -578,6 +615,7 @@ l_int|1
 suffix:semicolon
 )brace
 id|uart401_write
+c_func
 (paren
 id|devc
 comma
@@ -592,6 +630,7 @@ r_static
 r_int
 DECL|function|uart401_start_read
 id|uart401_start_read
+c_func
 (paren
 r_int
 id|dev
@@ -605,6 +644,7 @@ r_static
 r_int
 DECL|function|uart401_end_read
 id|uart401_end_read
+c_func
 (paren
 r_int
 id|dev
@@ -618,6 +658,7 @@ r_static
 r_int
 DECL|function|uart401_ioctl
 id|uart401_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -638,6 +679,7 @@ r_static
 r_void
 DECL|function|uart401_kick
 id|uart401_kick
+c_func
 (paren
 r_int
 id|dev
@@ -648,6 +690,7 @@ r_static
 r_int
 DECL|function|uart401_buffer_status
 id|uart401_buffer_status
+c_func
 (paren
 r_int
 id|dev
@@ -711,6 +754,7 @@ r_static
 r_void
 DECL|function|enter_uart_mode
 id|enter_uart_mode
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -727,11 +771,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -748,6 +794,7 @@ l_int|0
 op_logical_and
 op_logical_neg
 id|output_ready
+c_func
 (paren
 id|devc
 )paren
@@ -761,6 +808,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|uart401_cmd
+c_func
 (paren
 id|devc
 comma
@@ -804,6 +852,7 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
@@ -812,6 +861,7 @@ r_if
 c_cond
 (paren
 id|uart401_read
+c_func
 (paren
 id|devc
 )paren
@@ -823,6 +873,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -831,6 +882,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_uart401
 id|attach_uart401
+c_func
 (paren
 r_struct
 id|address_info
@@ -879,6 +931,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -917,7 +970,9 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;uart401: Can&squot;t allocate memory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -925,6 +980,7 @@ r_return
 suffix:semicolon
 )brace
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -994,6 +1050,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|devc-&gt;irq
 comma
@@ -1008,7 +1065,9 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;uart401: Failed to allocate IRQ%d&bslash;n&quot;
 comma
 id|devc-&gt;irq
@@ -1028,9 +1087,13 @@ id|devc
 suffix:semicolon
 id|devc-&gt;my_dev
 op_assign
-id|num_midis
+id|sound_alloc_mididev
+c_func
+(paren
+)paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -1040,6 +1103,7 @@ l_string|&quot;MPU-401 UART&quot;
 )paren
 suffix:semicolon
 id|enter_uart_mode
+c_func
 (paren
 id|devc
 )paren
@@ -1047,20 +1111,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_midis
-op_ge
-id|MAX_MIDI_DEV
+id|devc-&gt;my_dev
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;uart401: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|conf_printf
+c_func
 (paren
 id|name
 comma
@@ -1070,12 +1138,10 @@ suffix:semicolon
 id|std_midi_synth.midi_dev
 op_assign
 id|devc-&gt;my_dev
-op_assign
-id|num_midis
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_assign
 (paren
@@ -1090,6 +1156,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -1126,21 +1193,29 @@ c_cond
 (paren
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_eq
 l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;uart401: Failed to allocate memory&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|devc-&gt;my_dev
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -1148,7 +1223,7 @@ op_star
 )paren
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 comma
 (paren
@@ -1167,7 +1242,7 @@ id|midi_operations
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|devc
@@ -1176,7 +1251,7 @@ id|devc
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|converter
@@ -1193,6 +1268,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -1223,13 +1299,12 @@ l_int|1024
 id|sound_nblocks
 op_increment
 suffix:semicolon
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|converter
@@ -1238,14 +1313,23 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;uart401: Failed to allocate memory&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|devc-&gt;my_dev
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -1253,7 +1337,7 @@ op_star
 )paren
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|converter
@@ -1273,10 +1357,11 @@ id|synth_operations
 )paren
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|info.name
@@ -1286,17 +1371,22 @@ id|name
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
+id|devc-&gt;my_dev
 )braket
 op_member_access_from_pointer
 id|converter-&gt;id
 op_assign
 l_string|&quot;UART401&quot;
 suffix:semicolon
-id|num_midis
-op_increment
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+op_assign
+id|devc-&gt;my_dev
 suffix:semicolon
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1309,6 +1399,7 @@ r_static
 r_int
 DECL|function|reset_uart401
 id|reset_uart401
+c_func
 (paren
 id|uart401_devc
 op_star
@@ -1322,7 +1413,7 @@ id|timeout
 comma
 id|n
 suffix:semicolon
-multiline_comment|/*&n;   * Send the RESET command. Try again if no success at the first time.&n;   */
+multiline_comment|/*&n;&t; * Send the RESET command. Try again if no success at the first time.&n;&t; */
 id|ok
 op_assign
 l_int|0
@@ -1358,6 +1449,7 @@ l_int|0
 op_logical_and
 op_logical_neg
 id|output_ready
+c_func
 (paren
 id|devc
 )paren
@@ -1371,13 +1463,14 @@ op_assign
 l_int|0
 suffix:semicolon
 id|uart401_cmd
+c_func
 (paren
 id|devc
 comma
 id|MPU_RESET
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Wait at least 25 msec. This method is not accurate so let&squot;s make the&n;       * loop bit longer. Cannot sleep since this is called during boot.&n;       */
+multiline_comment|/*&n;&t;&t;   * Wait at least 25 msec. This method is not accurate so let&squot;s make the&n;&t;&t;   * loop bit longer. Cannot sleep since this is called during boot.&n;&t;&t;   */
 r_for
 c_loop
 (paren
@@ -1412,6 +1505,7 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 id|devc
 )paren
@@ -1420,6 +1514,7 @@ r_if
 c_cond
 (paren
 id|uart401_read
+c_func
 (paren
 id|devc
 )paren
@@ -1438,8 +1533,10 @@ id|ok
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Reset UART401 OK&bslash;n&quot;
 )paren
@@ -1448,8 +1545,10 @@ suffix:semicolon
 )brace
 r_else
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Reset UART401 failed - No hardware detected.&bslash;n&quot;
 )paren
@@ -1461,11 +1560,12 @@ c_cond
 id|ok
 )paren
 id|uart401_input_loop
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t;&t;&t; */
 r_return
 id|ok
 suffix:semicolon
@@ -1473,6 +1573,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_uart401
 id|probe_uart401
+c_func
 (paren
 r_struct
 id|address_info
@@ -1501,8 +1602,10 @@ op_amp
 id|hw_info
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Entered probe_uart401()&bslash;n&quot;
 )paren
@@ -1516,6 +1619,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -1558,22 +1662,26 @@ op_assign
 l_int|0
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ok
 op_assign
 id|reset_uart401
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1594,6 +1702,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_uart401
 id|unload_uart401
+c_func
 (paren
 r_struct
 id|address_info
@@ -1650,11 +1759,13 @@ l_int|NULL
 r_return
 suffix:semicolon
 id|reset_uart401
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -1668,11 +1779,199 @@ op_logical_neg
 id|devc-&gt;share_irq
 )paren
 id|snd_release_irq
+c_func
 (paren
 id|devc-&gt;irq
 )paren
 suffix:semicolon
+multiline_comment|/* Free device too !! - AC FIXME: CHECK THIS IS RIGHT */
+r_if
+c_cond
+(paren
+id|devc
+)paren
+id|vfree
+c_func
+(paren
+id|devc
+)paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|hw
+r_struct
+id|address_info
+id|hw
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Can be loaded either for module use or to provide functions&n;&t;   to others */
+r_if
+c_cond
+(paren
+id|io
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|irq
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;MPU-401 UART driver Copyright (C) Hannu Savolainen 1993-1997&quot;
+)paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|irq
+suffix:semicolon
+id|hw.io_base
+op_assign
+id|io
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_uart401
+c_func
+(paren
+op_amp
+id|hw
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|attach_uart401
+c_func
+(paren
+op_amp
+id|hw
+)paren
+suffix:semicolon
+)brace
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|io
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|irq
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|unload_uart401
+c_func
+(paren
+op_amp
+id|hw
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*  FREE SYMTAB */
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#else
 macro_line|#endif
 macro_line|#endif
+DECL|variable|attach_uart401
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|attach_uart401
+)paren
+suffix:semicolon
+DECL|variable|probe_uart401
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|probe_uart401
+)paren
+suffix:semicolon
+DECL|variable|unload_uart401
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unload_uart401
+)paren
+suffix:semicolon
+DECL|variable|uart401intr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|uart401intr
+)paren
+suffix:semicolon
 eof

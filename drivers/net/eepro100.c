@@ -4428,37 +4428,6 @@ suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-op_logical_or
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Obsolete driver layer request made: skbuff==NULL.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t;   If this ever occurs the queue layer is doing something evil! */
 r_if
 c_cond

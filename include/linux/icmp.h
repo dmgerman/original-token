@@ -153,5 +153,18 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; *&t;constants for (set|get)sockopt&n; */
+DECL|macro|ICMP_FILTER
+mdefine_line|#define ICMP_FILTER&t;&t;&t;1
+DECL|struct|icmp_filter
+r_struct
+id|icmp_filter
+(brace
+DECL|member|data
+id|__u32
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif&t;/* _LINUX_ICMP_H */
 eof

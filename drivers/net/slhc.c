@@ -792,6 +792,23 @@ comma
 op_star
 id|oth
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Don&squot;t play with runt packets.&n;&t; */
+r_if
+c_cond
+(paren
+id|isize
+OL
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+(brace
+r_return
+id|isize
+suffix:semicolon
+)brace
 id|ip
 op_assign
 (paren
@@ -880,10 +897,14 @@ id|th-&gt;doff
 op_star
 l_int|4
 suffix:semicolon
-multiline_comment|/*  Bail if the TCP packet isn&squot;t `compressible&squot; (i.e., ACK isn&squot;t set or&n;&t; *  some other control bit is set).&n;&t; */
+multiline_comment|/*  Bail if the TCP packet isn&squot;t `compressible&squot; (i.e., ACK isn&squot;t set or&n;&t; *  some other control bit is set). Also uncompressible if&n;&t; *  its a runt.&n;&t; */
 r_if
 c_cond
 (paren
+id|hlen
+OG
+id|isize
+op_logical_or
 id|th-&gt;syn
 op_logical_or
 id|th-&gt;fin
@@ -2786,7 +2807,7 @@ id|NULLSLCOMPR
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t%ld Cmp, %ld Uncmp, %ld Bad, %ld Tossed&bslash;n&quot;
+l_string|&quot;&bslash;t%d Cmp, %d Uncmp, %d Bad, %d Tossed&bslash;n&quot;
 comma
 id|comp-&gt;sls_i_compressed
 comma
@@ -2821,7 +2842,7 @@ id|NULLSLCOMPR
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t%ld Cmp, %ld Uncmp, %ld AsIs, %ld NotTCP&bslash;n&quot;
+l_string|&quot;&bslash;t%d Cmp, %d Uncmp, %d AsIs, %d NotTCP&bslash;n&quot;
 comma
 id|comp-&gt;sls_o_compressed
 comma
@@ -2835,7 +2856,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t%10ld Searches, %10ld Misses&bslash;n&quot;
+l_string|&quot;&bslash;t%10d Searches, %10d Misses&bslash;n&quot;
 comma
 id|comp-&gt;sls_o_searches
 comma

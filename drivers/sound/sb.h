@@ -472,5 +472,9 @@ r_char
 id|reg
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|acer
+suffix:semicolon
 macro_line|#endif
 eof

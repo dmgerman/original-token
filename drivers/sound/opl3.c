@@ -1,10 +1,12 @@
 multiline_comment|/*&n; * sound/opl3.c&n; *&n; * A low level driver for Yamaha YM3812 and OPL-3 -chips&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * Major improvements to the FM handling 30AUG92 by Rob Hooft,&n; */
 multiline_comment|/*&n; * hooft@chem.ruu.nl&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_YM3812
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#if defined(CONFIG_YM3812) || defined(MODULE)
 macro_line|#include &quot;opl3.h&quot;
 DECL|macro|MAX_VOICE
 mdefine_line|#define MAX_VOICE&t;18
@@ -143,8 +145,8 @@ r_int
 op_star
 id|osp
 suffix:semicolon
-)brace
 DECL|typedef|opl_devinfo
+)brace
 id|opl_devinfo
 suffix:semicolon
 DECL|variable|devc
@@ -164,6 +166,7 @@ suffix:semicolon
 r_static
 r_int
 id|store_instr
+c_func
 (paren
 r_int
 id|instr_no
@@ -177,6 +180,7 @@ suffix:semicolon
 r_static
 r_void
 id|freq_to_fnum
+c_func
 (paren
 r_int
 id|freq
@@ -193,6 +197,7 @@ suffix:semicolon
 r_static
 r_void
 id|opl3_command
+c_func
 (paren
 r_int
 id|io_addr
@@ -209,6 +214,7 @@ suffix:semicolon
 r_static
 r_int
 id|opl3_kill_note
+c_func
 (paren
 r_int
 id|dev
@@ -223,10 +229,11 @@ r_int
 id|velocity
 )paren
 suffix:semicolon
+DECL|function|enter_4op_mode
 r_static
 r_void
-DECL|function|enter_4op_mode
 id|enter_4op_mode
+c_func
 (paren
 r_void
 )paren
@@ -273,6 +280,7 @@ l_int|0x3f
 suffix:semicolon
 multiline_comment|/* Connect all possible 4 OP voice operators */
 id|opl3_command
+c_func
 (paren
 id|devc-&gt;right_io
 comma
@@ -404,10 +412,11 @@ op_assign
 l_int|12
 suffix:semicolon
 )brace
+DECL|function|opl3_ioctl
 r_static
 r_int
-DECL|function|opl3_ioctl
 id|opl3_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -435,11 +444,14 @@ id|sbi_instrument
 id|ins
 suffix:semicolon
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Warning: Obsolete ioctl(SNDCTL_FM_LOAD_INSTR) used. Fix the program.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -481,6 +493,7 @@ id|SBFM_MAXINSTR
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;FM Error: Invalid instrument number %d&bslash;n&quot;
 comma
@@ -494,6 +507,7 @@ suffix:semicolon
 )brace
 r_return
 id|store_instr
+c_func
 (paren
 id|ins.channel
 comma
@@ -502,8 +516,6 @@ id|ins
 )paren
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
@@ -521,6 +533,7 @@ suffix:colon
 id|devc-&gt;nr_voice
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -552,15 +565,11 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SNDCTL_SYNTH_MEMAVL
 suffix:colon
 r_return
 l_int|0x7fffffff
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SNDCTL_FM_4OP_ENABLE
@@ -573,13 +582,12 @@ op_eq
 l_int|2
 )paren
 id|enter_4op_mode
+c_func
 (paren
 )paren
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -589,9 +597,10 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-r_int
 DECL|function|opl3_detect
+r_int
 id|opl3_detect
+c_func
 (paren
 r_int
 id|ioaddr
@@ -601,7 +610,7 @@ op_star
 id|osp
 )paren
 (brace
-multiline_comment|/*&n;   * This function returns 1 if the FM chip is present at the given I/O port&n;   * The detection algorithm plays with the timer built in the FM chip and&n;   * looks for a change in the status register.&n;   *&n;   * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;   * boards.&n;   *&n;   * Note2! The chip is initialized if detected.&n;   */
+multiline_comment|/*&n;&t; * This function returns 1 if the FM chip is present at the given I/O port&n;&t; * The detection algorithm plays with the timer built in the FM chip and&n;&t; * looks for a change in the status register.&n;&t; *&n;&t; * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;&t; * boards.&n;&t; *&n;&t; * Note2! The chip is initialized if detected.&n;&t; */
 r_int
 r_char
 id|stat1
@@ -618,9 +627,18 @@ id|devc
 op_ne
 l_int|NULL
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;opl3: Only one OPL3 supported.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|devc
 op_assign
 (paren
@@ -635,6 +653,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -675,8 +694,11 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;OPL3: Can&squot;t allocate memory for the device control structure&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;OPL3: Can&squot;t allocate memory for the device control &quot;
+l_string|&quot;structure &bslash;n &quot;
 )paren
 suffix:semicolon
 r_return
@@ -693,6 +715,7 @@ id|ioaddr
 suffix:semicolon
 multiline_comment|/* Reset timers 1 and 2 */
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 comma
@@ -705,6 +728,7 @@ id|TIMER2_MASK
 suffix:semicolon
 multiline_comment|/* Reset the IRQ of the FM chip */
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 comma
@@ -718,6 +742,7 @@ op_assign
 id|stat1
 op_assign
 id|inb
+c_func
 (paren
 id|ioaddr
 )paren
@@ -743,10 +768,13 @@ op_ne
 l_int|0x0f
 )paren
 (brace
-id|DDB
+id|MDB
+c_func
 (paren
 id|printk
+c_func
 (paren
+id|KERN_INFO
 l_string|&quot;OPL3 not detected %x&bslash;n&quot;
 comma
 id|signature
@@ -793,8 +821,9 @@ id|detected_model
 op_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works probably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
+multiline_comment|/*&n;&t;&t; * Detect availability of OPL4 (_experimental_). Works probably&n;&t;&t; * only after a cold boot. In addition the OPL4 port&n;&t;&t; * of the chip may not be connected to the PC bus at all.&n;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -806,6 +835,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -825,6 +855,7 @@ c_cond
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 id|ioaddr
 )paren
@@ -844,6 +875,7 @@ c_cond
 (paren
 op_logical_neg
 id|check_region
+c_func
 (paren
 id|ioaddr
 op_minus
@@ -858,6 +890,7 @@ r_int
 id|tmp
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x02
@@ -870,6 +903,7 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* Select OPL4 ID register */
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -877,6 +911,7 @@ suffix:semicolon
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 id|ioaddr
 op_minus
@@ -885,6 +920,7 @@ l_int|7
 suffix:semicolon
 multiline_comment|/* Read it */
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -903,6 +939,7 @@ op_assign
 l_int|4
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xF8
@@ -915,11 +952,13 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* Select OPL4 FM mixer control */
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x1B
@@ -932,6 +971,7 @@ l_int|7
 suffix:semicolon
 multiline_comment|/* Write value */
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -944,6 +984,7 @@ l_int|3
 suffix:semicolon
 )brace
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 op_plus
@@ -970,6 +1011,7 @@ id|i
 op_increment
 )paren
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 comma
@@ -980,8 +1022,9 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Note off&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Note off&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 comma
@@ -991,6 +1034,7 @@ id|ENABLE_WAVE_SELECT
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|ioaddr
 comma
@@ -999,14 +1043,14 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Melodic mode.&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Melodic mode.&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|opl3_kill_note
 r_static
 r_int
-DECL|function|opl3_kill_note
 id|opl3_kill_note
 (paren
 r_int
@@ -1060,8 +1104,10 @@ id|voice
 )braket
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Kill note %d&bslash;n&quot;
 comma
@@ -1080,6 +1126,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -1189,10 +1236,11 @@ DECL|macro|UNDEFINED
 mdefine_line|#define UNDEFINED&t;&t;TOMTOM
 DECL|macro|DEFAULT
 mdefine_line|#define DEFAULT&t;&t;&t;TOMTOM
+DECL|function|store_instr
 r_static
 r_int
-DECL|function|store_instr
 id|store_instr
+c_func
 (paren
 r_int
 id|instr_no
@@ -1221,13 +1269,16 @@ l_int|2
 )paren
 )paren
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;FM warning: Invalid patch format field (key) 0x%x&bslash;n&quot;
 comma
 id|instr-&gt;key
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -1258,9 +1309,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|opl3_set_instr
 r_static
 r_int
-DECL|function|opl3_set_instr
 id|opl3_set_instr
 (paren
 r_int
@@ -1646,10 +1697,11 @@ comma
 l_int|8
 )brace
 suffix:semicolon
+DECL|function|calc_vol
 r_static
 r_void
-DECL|function|calc_vol
 id|calc_vol
+c_func
 (paren
 r_int
 r_char
@@ -1747,10 +1799,11 @@ l_int|0x3f
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_voice_volume
 r_static
 r_void
-DECL|function|set_voice_volume
 id|set_voice_volume
+c_func
 (paren
 r_int
 id|voice
@@ -1891,6 +1944,7 @@ l_int|0x01
 )paren
 (brace
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol1
@@ -1901,6 +1955,7 @@ id|main_vol
 )paren
 suffix:semicolon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol2
@@ -1914,6 +1969,7 @@ suffix:semicolon
 r_else
 (brace
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol2
@@ -1925,6 +1981,7 @@ id|main_vol
 suffix:semicolon
 )brace
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -1939,6 +1996,7 @@ id|vol1
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -1955,7 +2013,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * 4 OP voice&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * 4 OP voice&n;&t;&t; */
 r_int
 id|connection
 suffix:semicolon
@@ -1991,7 +2049,7 @@ op_plus
 l_int|3
 )braket
 suffix:semicolon
-multiline_comment|/*&n;       * The connection method for 4 OP devc-&gt;voc is defined by the rightmost&n;       * bits at the offsets 10 and 10+OFFS_4OP&n;       */
+multiline_comment|/*&n;&t;&t; * The connection method for 4 OP devc-&gt;voc is defined by the rightmost&n;&t;&t; * bits at the offsets 10 and 10+OFFS_4OP&n;&t;&t; */
 id|connection
 op_assign
 (paren
@@ -2028,6 +2086,7 @@ r_case
 l_int|0
 suffix:colon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol4
@@ -2043,6 +2102,7 @@ r_case
 l_int|1
 suffix:colon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol2
@@ -2053,6 +2113,7 @@ id|main_vol
 )paren
 suffix:semicolon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol4
@@ -2068,6 +2129,7 @@ r_case
 l_int|2
 suffix:colon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol1
@@ -2078,6 +2140,7 @@ id|main_vol
 )paren
 suffix:semicolon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol4
@@ -2093,6 +2156,7 @@ r_case
 l_int|3
 suffix:colon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol1
@@ -2103,6 +2167,7 @@ id|main_vol
 )paren
 suffix:semicolon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol3
@@ -2113,6 +2178,7 @@ id|main_vol
 )paren
 suffix:semicolon
 id|calc_vol
+c_func
 (paren
 op_amp
 id|vol4
@@ -2129,6 +2195,7 @@ suffix:colon
 suffix:semicolon
 )brace
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2143,6 +2210,7 @@ id|vol1
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2157,6 +2225,7 @@ id|vol2
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2171,6 +2240,7 @@ id|vol3
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2186,9 +2256,9 @@ id|vol4
 suffix:semicolon
 )brace
 )brace
+DECL|function|opl3_start_note
 r_static
 r_int
-DECL|function|opl3_start_note
 id|opl3_start_note
 (paren
 r_int
@@ -2285,6 +2355,7 @@ l_int|255
 multiline_comment|/*&n;&t;&t;&t;&t; * Just change the volume&n;&t;&t;&t;&t; */
 (brace
 id|set_voice_volume
+c_func
 (paren
 id|voice
 comma
@@ -2302,8 +2373,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Kill previous note before playing&n;   */
+multiline_comment|/*&n;&t; * Kill previous note before playing&n;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2317,8 +2389,9 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t; * min&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * min&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2332,7 +2405,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume to&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2342,6 +2415,7 @@ l_int|4
 )paren
 (brace
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2356,6 +2430,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2371,6 +2446,7 @@ l_int|0xff
 suffix:semicolon
 )brace
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2412,7 +2488,9 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;OPL3: Initializing voice %d with undefined instrument&bslash;n&quot;
 comma
 id|voice
@@ -2476,7 +2554,7 @@ id|instr-&gt;key
 op_ne
 id|OPL3_PATCH
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Just 2 OP patch&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Just 2 OP patch&n;&t;&t;&t;&t;&t;&t; */
 (brace
 id|voice_mode
 op_assign
@@ -2504,6 +2582,7 @@ id|voice_shift
 suffix:semicolon
 )brace
 id|opl3_command
+c_func
 (paren
 id|devc-&gt;right_io
 comma
@@ -2513,8 +2592,9 @@ id|devc-&gt;cmask
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Set Sound Characteristics&n;   */
+multiline_comment|/*&n;&t; * Set Sound Characteristics&n;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2532,6 +2612,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2548,8 +2629,9 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set Attack/Decay&n;   */
+multiline_comment|/*&n;&t; * Set Attack/Decay&n;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2567,6 +2649,7 @@ l_int|4
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2583,8 +2666,9 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set Sustain/Release&n;   */
+multiline_comment|/*&n;&t; * Set Sustain/Release&n;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2602,6 +2686,7 @@ l_int|6
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2618,8 +2703,9 @@ l_int|7
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set Wave Select&n;   */
+multiline_comment|/*&n;&t; * Set Wave Select&n;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2637,6 +2723,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2653,7 +2740,7 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set Feedback/Connection&n;   */
+multiline_comment|/*&n;&t; * Set Feedback/Connection&n;&t; */
 id|fpc
 op_assign
 id|instr-&gt;operators
@@ -2724,6 +2811,7 @@ l_int|0x30
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Ensure that at least one chn is enabled&n;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2734,7 +2822,7 @@ comma
 id|fpc
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * If the voice is a 4 OP one, initialize the operators 3 and 4 also&n;   */
+multiline_comment|/*&n;&t; * If the voice is a 4 OP one, initialize the operators 3 and 4 also&n;&t; */
 r_if
 c_cond
 (paren
@@ -2743,8 +2831,9 @@ op_eq
 l_int|4
 )paren
 (brace
-multiline_comment|/*&n;       * Set Sound Characteristics&n;       */
+multiline_comment|/*&n;&t;&t; * Set Sound Characteristics&n;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2764,6 +2853,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2782,8 +2872,9 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Set Attack/Decay&n;       */
+multiline_comment|/*&n;&t;&t; * Set Attack/Decay&n;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2803,6 +2894,7 @@ l_int|4
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2821,8 +2913,9 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Set Sustain/Release&n;       */
+multiline_comment|/*&n;&t;&t; * Set Sustain/Release&n;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2842,6 +2935,7 @@ l_int|6
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2860,8 +2954,9 @@ l_int|7
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Set Wave Select&n;       */
+multiline_comment|/*&n;&t;&t; * Set Wave Select&n;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2881,6 +2976,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2899,7 +2995,7 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Set Feedback/Connection&n;       */
+multiline_comment|/*&n;&t;&t; * Set Feedback/Connection&n;&t;&t; */
 id|fpc
 op_assign
 id|instr-&gt;operators
@@ -2923,8 +3019,9 @@ id|fpc
 op_or_assign
 l_int|0x30
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ensure that at least one chn is enabled&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Ensure that at least one chn is enabled&n;&t;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -2948,6 +3045,7 @@ op_assign
 id|voice_mode
 suffix:semicolon
 id|set_voice_volume
+c_func
 (paren
 id|voice
 comma
@@ -2971,16 +3069,18 @@ dot
 id|orig_freq
 op_assign
 id|note_to_freq
+c_func
 (paren
 id|note
 )paren
 op_div
 l_int|1000
 suffix:semicolon
-multiline_comment|/*&n;   * Since the pitch bender may have been set before playing the note, we&n;   * have to calculate the bending now.&n;   */
+multiline_comment|/*&n;&t; * Since the pitch bender may have been set before playing the note, we&n;&t; * have to calculate the bending now.&n;&t; */
 id|freq
 op_assign
 id|compute_finetune
+c_func
 (paren
 id|devc-&gt;voc
 (braket
@@ -3016,6 +3116,7 @@ op_assign
 id|freq
 suffix:semicolon
 id|freq_to_fnum
+c_func
 (paren
 id|freq
 comma
@@ -3026,7 +3127,7 @@ op_amp
 id|fnum
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Play note&n;   */
+multiline_comment|/*&n;&t; * Play note&n;&t; */
 id|data
 op_assign
 id|fnum
@@ -3035,6 +3136,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Least significant bits of fnumber&n;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -3079,6 +3181,7 @@ op_assign
 id|data
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -3097,6 +3200,7 @@ op_eq
 l_int|4
 )paren
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -3113,9 +3217,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|freq_to_fnum
 r_static
 r_void
-DECL|function|freq_to_fnum
 id|freq_to_fnum
 (paren
 r_int
@@ -3135,8 +3239,8 @@ id|f
 comma
 id|octave
 suffix:semicolon
-multiline_comment|/*&n;   * Converts the note frequency to block and fnum values for the FM chip&n;   */
-multiline_comment|/*&n;   * First try to compute the block -value (octave) where the note belongs&n;   */
+multiline_comment|/*&n;&t; * Converts the note frequency to block and fnum values for the FM chip&n;&t; */
+multiline_comment|/*&n;&t; * First try to compute the block -value (octave) where the note belongs&n;&t; */
 id|f
 op_assign
 id|freq
@@ -3242,9 +3346,9 @@ op_assign
 id|octave
 suffix:semicolon
 )brace
+DECL|function|opl3_command
 r_static
 r_void
-DECL|function|opl3_command
 id|opl3_command
 (paren
 r_int
@@ -3262,8 +3366,9 @@ id|val
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   * The original 2-OP synth requires a quite long delay after writing to a&n;   * register. The OPL-3 survives with just two INBs&n;   */
+multiline_comment|/*&n;&t; * The original 2-OP synth requires a quite long delay after writing to a&n;&t; * register. The OPL-3 survives with just two INBs&n;&t; */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3288,6 +3393,7 @@ op_ne
 l_int|2
 )paren
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -3308,11 +3414,13 @@ id|i
 op_increment
 )paren
 id|inb
+c_func
 (paren
 id|io_addr
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3340,16 +3448,19 @@ l_int|2
 )paren
 (brace
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -3371,15 +3482,17 @@ id|i
 op_increment
 )paren
 id|inb
+c_func
 (paren
 id|io_addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|opl3_reset
 r_static
 r_void
-DECL|function|opl3_reset
 id|opl3_reset
+c_func
 (paren
 r_int
 id|devno
@@ -3425,6 +3538,7 @@ op_increment
 )paren
 (brace
 id|opl3_command
+c_func
 (paren
 id|pv_map
 (braket
@@ -3455,6 +3569,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|pv_map
 (braket
@@ -3501,6 +3616,7 @@ l_int|4
 )paren
 (brace
 id|opl3_command
+c_func
 (paren
 id|pv_map
 (braket
@@ -3531,6 +3647,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|pv_map
 (braket
@@ -3562,6 +3679,7 @@ l_int|0xff
 suffix:semicolon
 )brace
 id|opl3_kill_note
+c_func
 (paren
 id|devno
 comma
@@ -3612,10 +3730,11 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+DECL|function|opl3_open
 r_static
 r_int
-DECL|function|opl3_open
 id|opl3_open
+c_func
 (paren
 r_int
 id|dev
@@ -3635,6 +3754,8 @@ id|devc-&gt;busy
 r_return
 op_minus
 id|EBUSY
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|devc-&gt;busy
 op_assign
@@ -3702,6 +3823,7 @@ op_eq
 l_int|2
 )paren
 id|opl3_command
+c_func
 (paren
 id|devc-&gt;right_io
 comma
@@ -3714,10 +3836,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|opl3_close
 r_static
 r_void
-DECL|function|opl3_close
 id|opl3_close
+c_func
 (paren
 r_int
 id|dev
@@ -3751,15 +3874,19 @@ op_assign
 l_int|0
 suffix:semicolon
 id|opl3_reset
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
+DECL|function|opl3_hw_control
 r_static
 r_void
-DECL|function|opl3_hw_control
 id|opl3_hw_control
+c_func
 (paren
 r_int
 id|dev
@@ -3771,10 +3898,11 @@ id|event
 )paren
 (brace
 )brace
+DECL|function|opl3_load_patch
 r_static
 r_int
-DECL|function|opl3_load_patch
 id|opl3_load_patch
+c_func
 (paren
 r_int
 id|dev
@@ -3813,7 +3941,9 @@ id|ins
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;FM Error: Patch record too short&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3823,6 +3953,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 id|copy_from_user
+c_func
 (paren
 op_amp
 (paren
@@ -3866,7 +3997,9 @@ id|SBFM_MAXINSTR
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;FM Error: Invalid instrument number %d&bslash;n&quot;
 comma
 id|ins.channel
@@ -3883,6 +4016,7 @@ id|format
 suffix:semicolon
 r_return
 id|store_instr
+c_func
 (paren
 id|ins.channel
 comma
@@ -3891,10 +4025,11 @@ id|ins
 )paren
 suffix:semicolon
 )brace
+DECL|function|opl3_panning
 r_static
 r_void
-DECL|function|opl3_panning
 id|opl3_panning
+c_func
 (paren
 r_int
 id|dev
@@ -3916,10 +4051,11 @@ op_assign
 id|value
 suffix:semicolon
 )brace
+DECL|function|opl3_volume_method
 r_static
 r_void
-DECL|function|opl3_volume_method
 id|opl3_volume_method
+c_func
 (paren
 r_int
 id|dev
@@ -3930,11 +4066,12 @@ id|mode
 (brace
 )brace
 DECL|macro|SET_VIBRATO
-mdefine_line|#define SET_VIBRATO(cell) { &bslash;&n;      tmp = instr-&gt;operators[(cell-1)+(((cell-1)/2)*OFFS_4OP)]; &bslash;&n;      if (pressure &gt; 110) &bslash;&n;&t;tmp |= 0x40;&t;&t;/* Vibrato on */ &bslash;&n;      opl3_command (map-&gt;ioaddr, AM_VIB + map-&gt;op[cell-1], tmp);}
+mdefine_line|#define SET_VIBRATO(cell) { &bslash;&n;&t;tmp = instr-&gt;operators[(cell-1)+(((cell-1)/2)*OFFS_4OP)]; &bslash;&n;&t;if (pressure &gt; 110) &bslash;&n;&t;&t;tmp |= 0x40;&t;&t;/* Vibrato on */ &bslash;&n;&t;opl3_command (map-&gt;ioaddr, AM_VIB + map-&gt;op[cell-1], tmp);}
+DECL|function|opl3_aftertouch
 r_static
 r_void
-DECL|function|opl3_aftertouch
 id|opl3_aftertouch
+c_func
 (paren
 r_int
 id|dev
@@ -3984,8 +4121,10 @@ id|voice
 )braket
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Aftertouch %d&bslash;n&quot;
 comma
@@ -4002,7 +4141,7 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;   * Adjust the amount of vibrato depending the pressure&n;   */
+multiline_comment|/*&n;&t; * Adjust the amount of vibrato depending the pressure&n;&t; */
 id|instr
 op_assign
 id|devc-&gt;act_i
@@ -4074,6 +4213,7 @@ r_case
 l_int|0
 suffix:colon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|4
 )paren
@@ -4084,11 +4224,13 @@ r_case
 l_int|1
 suffix:colon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|2
 )paren
 suffix:semicolon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|4
 )paren
@@ -4099,11 +4241,13 @@ r_case
 l_int|2
 suffix:colon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|4
 )paren
@@ -4114,16 +4258,19 @@ r_case
 l_int|3
 suffix:colon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|3
 )paren
 suffix:semicolon
 id|SET_VIBRATO
+c_func
 (paren
 l_int|4
 )paren
@@ -4131,11 +4278,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       * Not implemented yet&n;       */
+multiline_comment|/*&n;&t;&t; * Not implemented yet&n;&t;&t; */
 )brace
 r_else
 (brace
 id|SET_VIBRATO
+c_func
 (paren
 l_int|1
 )paren
@@ -4152,8 +4300,9 @@ op_amp
 l_int|0x01
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Additive synthesis&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Additive synthesis&n;&t;&t;&t;&t;&t;&t;&t; */
 id|SET_VIBRATO
+c_func
 (paren
 l_int|2
 )paren
@@ -4162,10 +4311,11 @@ suffix:semicolon
 )brace
 DECL|macro|SET_VIBRATO
 macro_line|#undef SET_VIBRATO
+DECL|function|bend_pitch
 r_static
 r_void
-DECL|function|bend_pitch
 id|bend_pitch
+c_func
 (paren
 r_int
 id|dev
@@ -4247,10 +4397,11 @@ l_int|0x20
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Not keyed on&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Not keyed on&n;&t;&t;&t; */
 id|freq
 op_assign
 id|compute_finetune
+c_func
 (paren
 id|devc-&gt;voc
 (braket
@@ -4286,6 +4437,7 @@ op_assign
 id|freq
 suffix:semicolon
 id|freq_to_fnum
+c_func
 (paren
 id|freq
 comma
@@ -4304,6 +4456,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Least significant bits of fnumber&n;&t;&t;&t;&t; */
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -4348,6 +4501,7 @@ op_assign
 id|data
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|map-&gt;ioaddr
 comma
@@ -4359,9 +4513,9 @@ id|data
 )paren
 suffix:semicolon
 )brace
+DECL|function|opl3_controller
 r_static
 r_void
-DECL|function|opl3_controller
 id|opl3_controller
 (paren
 r_int
@@ -4400,6 +4554,7 @@ r_case
 id|CTRL_PITCH_BENDER
 suffix:colon
 id|bend_pitch
+c_func
 (paren
 id|dev
 comma
@@ -4462,10 +4617,11 @@ r_break
 suffix:semicolon
 )brace
 )brace
+DECL|function|opl3_bender
 r_static
 r_void
-DECL|function|opl3_bender
 id|opl3_bender
+c_func
 (paren
 r_int
 id|dev
@@ -4491,6 +4647,7 @@ id|devc-&gt;nr_voice
 r_return
 suffix:semicolon
 id|bend_pitch
+c_func
 (paren
 id|dev
 comma
@@ -4502,10 +4659,11 @@ l_int|8192
 )paren
 suffix:semicolon
 )brace
+DECL|function|opl3_alloc_voice
 r_static
 r_int
-DECL|function|opl3_alloc_voice
 id|opl3_alloc_voice
+c_func
 (paren
 r_int
 id|dev
@@ -4661,7 +4819,7 @@ op_assign
 id|devc-&gt;nr_voice
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *    Now try to find a free voice&n;   */
+multiline_comment|/*&n;&t; *    Now try to find a free voice&n;&t; */
 id|best
 op_assign
 id|first
@@ -4731,7 +4889,7 @@ op_mod
 id|avail
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *    Insert some kind of priority mechanism here.&n;   */
+multiline_comment|/*&n;&t; *    Insert some kind of priority mechanism here.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4759,10 +4917,11 @@ id|best
 suffix:semicolon
 multiline_comment|/* All devc-&gt;voc in use. Select the first one. */
 )brace
+DECL|function|opl3_setup_voice
 r_static
 r_void
-DECL|function|opl3_setup_voice
 id|opl3_setup_voice
+c_func
 (paren
 r_int
 id|dev
@@ -4791,6 +4950,7 @@ id|chn
 )braket
 suffix:semicolon
 id|opl3_set_instr
+c_func
 (paren
 id|dev
 comma
@@ -4898,9 +5058,10 @@ comma
 id|opl3_setup_voice
 )brace
 suffix:semicolon
-r_void
 DECL|function|opl3_init
+r_int
 id|opl3_init
+c_func
 (paren
 r_int
 id|ioaddr
@@ -4913,22 +5074,9 @@ id|osp
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|num_synths
-op_ge
-id|MAX_SYNTH_DEV
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;OPL3 Error: Too many synthesizers&bslash;n&quot;
-)paren
+r_int
+id|me
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4938,14 +5086,47 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;OPL3: Device control structure not initialized.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;opl3_init: Device control structure not initialized.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|me
+op_assign
+id|sound_alloc_synthdev
+c_func
+(paren
+)paren
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;opl3: Too many synthesizers&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|memset
+c_func
 (paren
 (paren
 r_char
@@ -4975,6 +5156,7 @@ op_assign
 l_int|9
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|devc-&gt;fm_info.name
 comma
@@ -5059,14 +5241,14 @@ id|devc-&gt;fm_info
 suffix:semicolon
 id|synth_devs
 (braket
-id|num_synths
-op_increment
+id|me
 )braket
 op_assign
 op_amp
 id|opl3_operations
 suffix:semicolon
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5097,6 +5279,7 @@ c_cond
 id|devc-&gt;is_opl4
 )paren
 id|conf_printf2
+c_func
 (paren
 l_string|&quot;Yamaha OPL4/OPL3 FM&quot;
 comma
@@ -5113,6 +5296,7 @@ l_int|1
 suffix:semicolon
 r_else
 id|conf_printf2
+c_func
 (paren
 l_string|&quot;Yamaha OPL3 FM&quot;
 comma
@@ -5146,6 +5330,7 @@ op_or_assign
 id|SYNTH_CAP_OPL3
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|devc-&gt;fm_info.name
 comma
@@ -5166,6 +5351,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5197,7 +5383,9 @@ id|ioaddr
 op_assign
 id|devc-&gt;right_io
 suffix:semicolon
+)brace
 id|opl3_command
+c_func
 (paren
 id|devc-&gt;right_io
 comma
@@ -5207,6 +5395,7 @@ id|OPL3_ENABLE
 )paren
 suffix:semicolon
 id|opl3_command
+c_func
 (paren
 id|devc-&gt;right_io
 comma
@@ -5219,6 +5408,7 @@ suffix:semicolon
 r_else
 (brace
 id|conf_printf2
+c_func
 (paren
 l_string|&quot;Yamaha OPL2 FM&quot;
 comma
@@ -5292,6 +5482,138 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_return
+id|me
+suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; *    We provide OPL3 functions.&n; */
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|me
+r_int
+id|me
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;YM3812 and OPL-3 driver Copyright (C) by Hannu Savolainen, Rob Hooft 1993-1996&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_ne
+op_minus
+l_int|1
+)paren
+multiline_comment|/* User loading pure OPL3 module */
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opl3_detect
+c_func
+(paren
+id|io
+comma
+l_int|NULL
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+id|me
+op_assign
+id|opl3_init
+c_func
+(paren
+id|io
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|devc
+)paren
+(brace
+id|vfree
+c_func
+(paren
+id|devc
+)paren
+suffix:semicolon
+id|devc
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sound_unload_synthdev
+c_func
+(paren
+id|me
+)paren
+suffix:semicolon
+)brace
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#else
 macro_line|#endif
+macro_line|#endif
+DECL|variable|opl3_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|opl3_init
+)paren
+suffix:semicolon
+DECL|variable|opl3_detect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|opl3_detect
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 eof

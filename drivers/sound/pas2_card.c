@@ -1,7 +1,9 @@
 multiline_comment|/*&n; * sound/pas2_card.c&n; *&n; * Detection routine for the Pro Audio Spectrum cards.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_PAS
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#if defined(CONFIG_PAS) || defined(MODULE)
 DECL|variable|dma_bits
 r_static
 r_int
@@ -194,6 +196,7 @@ multiline_comment|/*&n; * pas_read() and pas_write() are equivalents of inb and 
 r_extern
 r_void
 id|mix_write
+c_func
 (paren
 r_int
 r_char
@@ -207,6 +210,7 @@ r_int
 r_char
 DECL|function|pas_read
 id|pas_read
+c_func
 (paren
 r_int
 id|ioaddr
@@ -214,6 +218,7 @@ id|ioaddr
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|ioaddr
 op_xor
@@ -224,6 +229,7 @@ suffix:semicolon
 r_void
 DECL|function|pas_write
 id|pas_write
+c_func
 (paren
 r_int
 r_char
@@ -234,6 +240,7 @@ id|ioaddr
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|data
@@ -250,6 +257,7 @@ r_static
 r_void
 DECL|function|pasintr
 id|pasintr
+c_func
 (paren
 r_int
 id|irq
@@ -270,11 +278,13 @@ suffix:semicolon
 id|status
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x0B89
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|status
 comma
@@ -292,6 +302,7 @@ l_int|0x08
 (brace
 macro_line|#ifdef CONFIG_AUDIO
 id|pas_pcm_interrupt
+c_func
 (paren
 id|status
 comma
@@ -313,8 +324,9 @@ op_amp
 l_int|0x10
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 id|pas_midi_interrupt
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -329,6 +341,7 @@ suffix:semicolon
 r_int
 DECL|function|pas_set_intr
 id|pas_set_intr
+c_func
 (paren
 r_int
 id|mask
@@ -348,6 +361,7 @@ op_or_assign
 id|mask
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_intr_mask
 comma
@@ -361,6 +375,7 @@ suffix:semicolon
 r_int
 DECL|function|pas_remove_intr
 id|pas_remove_intr
+c_func
 (paren
 r_int
 id|mask
@@ -381,6 +396,7 @@ op_complement
 id|mask
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|pas_intr_mask
 comma
@@ -393,10 +409,16 @@ suffix:semicolon
 )brace
 multiline_comment|/******************* End of the Interrupt handler **********************/
 multiline_comment|/******************* Begin of the Initialization Code ******************/
+r_extern
+r_struct
+id|address_info
+id|sbhw_config
+suffix:semicolon
 r_static
 r_int
 DECL|function|config_pas_hw
 id|config_pas_hw
+c_func
 (paren
 r_struct
 id|address_info
@@ -418,6 +440,7 @@ op_assign
 id|hw_config-&gt;irq
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x00
 comma
@@ -425,6 +448,7 @@ l_int|0x0B8B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x36
 comma
@@ -432,6 +456,7 @@ l_int|0x138B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x36
 comma
@@ -439,6 +464,7 @@ l_int|0x1388
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0
 comma
@@ -446,6 +472,7 @@ l_int|0x1388
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x74
 comma
@@ -453,6 +480,7 @@ l_int|0x138B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x74
 comma
@@ -460,6 +488,7 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0
 comma
@@ -467,6 +496,7 @@ l_int|0x1389
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -480,6 +510,7 @@ l_int|0x0B8A
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -495,6 +526,7 @@ l_int|0xF8A
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x01
 op_or
@@ -503,12 +535,13 @@ op_or
 l_int|0x04
 op_or
 l_int|0x10
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * |&n;&t;&t;&t;&t;&t;   * 0x80&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * |&n;&t;&t;&t;&t;&t;&t;   * 0x80&n;&t;&t;&t;&t;&t;&t; */
 comma
 l_int|0xB88
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|0x80
 macro_line|#ifdef PAS_JOYSTICK_ENABLE
@@ -528,6 +561,7 @@ l_int|15
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
@@ -544,6 +578,7 @@ r_else
 id|int_ptrs
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0xF38A
 )paren
@@ -558,6 +593,7 @@ op_amp
 l_int|0xf
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|int_ptrs
 comma
@@ -575,6 +611,7 @@ id|pas_irq
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Invalid IRQ %d&quot;
 comma
@@ -592,6 +629,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|pas_irq
 comma
@@ -619,6 +657,7 @@ l_int|7
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
@@ -633,6 +672,7 @@ suffix:semicolon
 r_else
 (brace
 id|pas_write
+c_func
 (paren
 id|dma_bits
 (braket
@@ -653,6 +693,7 @@ id|hw_config-&gt;dma
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Invalid DMA selection %d&quot;
 comma
@@ -670,6 +711,7 @@ r_if
 c_cond
 (paren
 id|sound_alloc_dma
+c_func
 (paren
 id|hw_config-&gt;dma
 comma
@@ -678,6 +720,7 @@ l_string|&quot;PAS16&quot;
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;pas2_card.c: Can&squot;t allocate DMA channel&bslash;n&quot;
 )paren
@@ -689,9 +732,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;     * This fixes the timing problems of the PAS due to the Symphony chipset&n;     * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;   */
+multiline_comment|/*&n;&t;   * This fixes the timing problems of the PAS due to the Symphony chipset&n;&t;   * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;&t; */
 macro_line|#ifdef SYMPHONY_PAS
 id|outb
+c_func
 (paren
 (paren
 l_int|0x05
@@ -701,6 +745,7 @@ l_int|0xa8
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x60
@@ -712,6 +757,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef BROKEN_BUS_CLOCK
 id|pas_write
+c_func
 (paren
 l_int|0x01
 op_or
@@ -725,8 +771,9 @@ l_int|0x8388
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/*&n;   * pas_write(0x01, 0x8388);&n;   */
+multiline_comment|/*&n;&t; * pas_write(0x01, 0x8388);&n;&t; */
 id|pas_write
+c_func
 (paren
 l_int|0x01
 op_or
@@ -739,6 +786,7 @@ l_int|0x8388
 suffix:semicolon
 macro_line|#endif
 id|pas_write
+c_func
 (paren
 l_int|0x18
 comma
@@ -747,6 +795,7 @@ l_int|0x838A
 suffix:semicolon
 multiline_comment|/* ??? */
 id|pas_write
+c_func
 (paren
 l_int|0x20
 op_or
@@ -757,6 +806,7 @@ l_int|0x0B8A
 suffix:semicolon
 multiline_comment|/* Mute off, filter = 17.897 kHz */
 id|pas_write
+c_func
 (paren
 l_int|8
 comma
@@ -764,6 +814,7 @@ l_int|0xBF8A
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 l_int|0x80
 op_or
@@ -773,19 +824,21 @@ l_int|0x078B
 )paren
 suffix:semicolon
 id|mix_write
+c_func
 (paren
 l_int|5
 comma
 l_int|0x078B
 )paren
 suffix:semicolon
-macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; (defined(CONFIG_SB) || defined(CONFIG_SB_MODULE))
 (brace
 r_struct
 id|address_info
 op_star
 id|sb_config
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_if
 c_cond
 (paren
@@ -793,26 +846,41 @@ c_cond
 id|sb_config
 op_assign
 id|sound_getconf
+c_func
 (paren
 id|SNDCARD_SB
 )paren
 )paren
 )paren
+macro_line|#else
+id|sb_config
+op_assign
+op_amp
+id|sbhw_config
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb_config-&gt;io_base
+)paren
+macro_line|#endif
 (brace
 r_int
 r_char
 id|irq_dma
 suffix:semicolon
-multiline_comment|/*&n;&t; * Turn on Sound Blaster compatibility&n;&t; * bit 1 = SB emulation&n;&t; * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t; */
+multiline_comment|/*&n;&t;&t;&t;   * Turn on Sound Blaster compatibility&n;&t;&t;&t;   * bit 1 = SB emulation&n;&t;&t;&t;   * bit 0 = MPU401 emulation (CDPC only :-( )&n;&t;&t;&t;   */
 id|pas_write
+c_func
 (paren
 l_int|0x02
 comma
 l_int|0xF788
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * &quot;Emulation address&quot;&n;&t; */
+multiline_comment|/*&n;&t;&t;&t;   * &quot;Emulation address&quot;&n;&t;&t;&t;   */
 id|pas_write
+c_func
 (paren
 (paren
 id|sb_config-&gt;io_base
@@ -839,6 +907,7 @@ id|sb_config-&gt;dma
 )braket
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB DMA %d&bslash;n&bslash;n&quot;
 comma
@@ -855,6 +924,7 @@ id|sb_config-&gt;irq
 )braket
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nPAS16 Warning: Invalid SB IRQ %d&bslash;n&bslash;n&quot;
 comma
@@ -874,6 +944,7 @@ id|sb_config-&gt;irq
 )braket
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|irq_dma
 comma
@@ -883,6 +954,7 @@ suffix:semicolon
 )brace
 r_else
 id|pas_write
+c_func
 (paren
 l_int|0x00
 comma
@@ -892,6 +964,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 id|pas_write
+c_func
 (paren
 l_int|0x00
 comma
@@ -906,6 +979,7 @@ op_logical_neg
 id|ok
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Driver not enabled&bslash;n&quot;
 )paren
@@ -918,6 +992,7 @@ r_static
 r_int
 DECL|function|detect_pas_hw
 id|detect_pas_hw
+c_func
 (paren
 r_struct
 id|address_info
@@ -931,8 +1006,9 @@ id|board_id
 comma
 id|foo
 suffix:semicolon
-multiline_comment|/*&n;   * WARNING: Setting an option like W:1 or so that disables warm boot reset&n;   * of the card will screw up this detect code something fierce. Adding code&n;   * to handle this means possibly interfering with other cards on the bus if&n;   * you have something on base port 0x388. SO be forewarned.&n;   */
+multiline_comment|/*&n;&t; * WARNING: Setting an option like W:1 or so that disables warm boot reset&n;&t; * of the card will screw up this detect code something fierce. Adding code&n;&t; * to handle this means possibly interfering with other cards on the bus if&n;&t; * you have something on base port 0x388. SO be forewarned.&n;&t; */
 id|outb
+c_func
 (paren
 (paren
 l_int|0xBC
@@ -943,6 +1019,7 @@ l_int|0x9A01
 suffix:semicolon
 multiline_comment|/* Activate first board */
 id|outb
+c_func
 (paren
 (paren
 id|hw_config-&gt;io_base
@@ -961,6 +1038,7 @@ op_xor
 id|hw_config-&gt;io_base
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 l_int|1
 comma
@@ -971,6 +1049,7 @@ multiline_comment|/* Select one wait states */
 id|board_id
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x0B8B
 )paren
@@ -985,7 +1064,7 @@ l_int|0xff
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;   * We probably have a PAS-series board, now check for a PAS16-series board&n;   * by trying to change the board revision bits. PAS16-series hardware won&squot;t&n;   * let you do this - the bits are read-only.&n;   */
+multiline_comment|/*&n;&t; * We probably have a PAS-series board, now check for a PAS16-series board&n;&t; * by trying to change the board revision bits. PAS16-series hardware won&squot;t&n;&t; * let you do this - the bits are read-only.&n;&t; */
 id|foo
 op_assign
 id|board_id
@@ -993,6 +1072,7 @@ op_xor
 l_int|0xe0
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|foo
 comma
@@ -1002,11 +1082,13 @@ suffix:semicolon
 id|foo
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x0B8B
 )paren
 suffix:semicolon
 id|pas_write
+c_func
 (paren
 id|board_id
 comma
@@ -1026,6 +1108,7 @@ suffix:semicolon
 id|pas_model
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0xFF88
 )paren
@@ -1037,6 +1120,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_pas_card
 id|attach_pas_card
+c_func
 (paren
 r_struct
 id|address_info
@@ -1052,6 +1136,7 @@ r_if
 c_cond
 (paren
 id|detect_pas_hw
+c_func
 (paren
 id|hw_config
 )paren
@@ -1064,6 +1149,7 @@ c_cond
 id|pas_model
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0xFF88
 )paren
@@ -1077,6 +1163,7 @@ l_int|100
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|temp
 comma
@@ -1091,12 +1178,14 @@ id|pas_model
 )braket
 comma
 id|pas_read
+c_func
 (paren
 l_int|0x2789
 )paren
 )paren
 suffix:semicolon
 id|conf_printf
+c_func
 (paren
 id|temp
 comma
@@ -1108,6 +1197,7 @@ r_if
 c_cond
 (paren
 id|config_pas_hw
+c_func
 (paren
 id|hw_config
 )paren
@@ -1115,26 +1205,30 @@ id|hw_config
 (brace
 macro_line|#ifdef CONFIG_AUDIO
 id|pas_pcm_init
+c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; defined(CONFIG_SB)
+macro_line|#if !defined(DISABLE_SB_EMULATION) &amp;&amp; (defined(CONFIG_SB) || defined(CONFIG_SB_MODULE))
 id|sb_dsp_disable_midi
+c_func
 (paren
 id|pas_sb_base
 )paren
 suffix:semicolon
 multiline_comment|/* No MIDI capability */
 macro_line|#endif
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 id|pas_midi_init
+c_func
 (paren
 )paren
 suffix:semicolon
 macro_line|#endif
 id|pas_init_mixer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1144,6 +1238,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_pas
 id|probe_pas
+c_func
 (paren
 r_struct
 id|address_info
@@ -1153,6 +1248,7 @@ id|hw_config
 (brace
 r_return
 id|detect_pas_hw
+c_func
 (paren
 id|hw_config
 )paren
@@ -1161,6 +1257,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_pas
 id|unload_pas
+c_func
 (paren
 r_struct
 id|address_info
@@ -1169,15 +1266,207 @@ id|hw_config
 )paren
 (brace
 id|sound_free_dma
+c_func
 (paren
 id|hw_config-&gt;dma
 )paren
 suffix:semicolon
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_int
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma16
+r_int
+id|dma16
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Set this for modules that need it */
+DECL|variable|sb_io
+r_int
+id|sb_io
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|sb_irq
+r_int
+id|sb_irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|sb_dma
+r_int
+id|sb_dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|sb_dma16
+r_int
+id|sb_dma16
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|config
+r_struct
+id|address_info
+id|config
+suffix:semicolon
+DECL|variable|sbhw_config
+r_struct
+id|address_info
+id|sbhw_config
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;MediaTrix audio driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;I/O, IRQ, DMA and type are mandatory&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|config.io_base
+op_assign
+id|io
+suffix:semicolon
+id|config.irq
+op_assign
+id|irq
+suffix:semicolon
+id|config.dma
+op_assign
+id|dma
+suffix:semicolon
+id|config.dma2
+op_assign
+id|dma16
+suffix:semicolon
+id|sbhw_config.io_base
+op_assign
+id|sb_io
+suffix:semicolon
+id|sbhw_config.irq
+op_assign
+id|sb_irq
+suffix:semicolon
+id|sbhw_config.dma
+op_assign
+id|sb_dma
+suffix:semicolon
+id|sbhw_config.dma2
+op_assign
+id|sb_dma16
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|probe_pas
+c_func
+(paren
+op_amp
+id|config
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|attach_pas_card
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unload_pas
+c_func
+(paren
+op_amp
+id|config
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

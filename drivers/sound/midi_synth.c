@@ -6,7 +6,7 @@ mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS
 mdefine_line|#define USE_SIMPLE_MACROS
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI) || defined (MODULE)
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
 DECL|variable|sysex_sleeper
@@ -59,7 +59,7 @@ id|prev_out_status
 id|MAX_MIDI_DEV
 )braket
 suffix:semicolon
-macro_line|#ifndef CONFIG_SEQUENCER
+macro_line|#if !defined(CONFIG_SEQUENCER) &amp;&amp; !defined(MODULE)
 DECL|macro|STORE
 mdefine_line|#define STORE(cmd)
 macro_line|#else
@@ -75,6 +75,7 @@ mdefine_line|#define _SEQ_ADVBUF(x) len=x
 r_void
 DECL|function|do_midi_msg
 id|do_midi_msg
+c_func
 (paren
 r_int
 id|synthno
@@ -114,8 +115,10 @@ l_int|0
 )paren
 (brace
 id|STORE
+c_func
 (paren
 id|SEQ_START_NOTE
+c_func
 (paren
 id|synthno
 comma
@@ -152,8 +155,10 @@ r_case
 l_int|0x80
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_STOP_NOTE
+c_func
 (paren
 id|synthno
 comma
@@ -182,8 +187,10 @@ r_case
 l_int|0xA0
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_KEY_PRESSURE
+c_func
 (paren
 id|synthno
 comma
@@ -212,8 +219,10 @@ r_case
 l_int|0xB0
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_CONTROL
+c_func
 (paren
 id|synthno
 comma
@@ -242,8 +251,10 @@ r_case
 l_int|0xC0
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_SET_PATCH
+c_func
 (paren
 id|synthno
 comma
@@ -267,8 +278,10 @@ r_case
 l_int|0xD0
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_CHN_PRESSURE
+c_func
 (paren
 id|synthno
 comma
@@ -292,8 +305,10 @@ r_case
 l_int|0xE0
 suffix:colon
 id|STORE
+c_func
 (paren
 id|SEQ_BENDER
+c_func
 (paren
 id|synthno
 comma
@@ -340,6 +355,7 @@ r_static
 r_void
 DECL|function|midi_outc
 id|midi_outc
+c_func
 (paren
 r_int
 id|midi_dev
@@ -374,6 +390,7 @@ id|midi_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|midi_dev
 comma
@@ -396,7 +413,7 @@ id|data
 op_amp
 l_int|0x80
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Status byte&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Status byte&n;&t;&t;&t;&t;&t;&t; */
 id|prev_out_status
 (braket
 id|midi_dev
@@ -412,13 +429,14 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Store for running status&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Store for running status&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Mission complete&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Mission complete&n;&t;&t;&t;&t;&t; */
 )brace
-multiline_comment|/*&n;   * Sorry! No space on buffers.&n;   */
+multiline_comment|/*&n;&t; * Sorry! No space on buffers.&n;&t; */
 id|printk
+c_func
 (paren
 l_string|&quot;Midi send timed out&bslash;n&quot;
 )paren
@@ -428,6 +446,7 @@ r_static
 r_int
 DECL|function|prefix_cmd
 id|prefix_cmd
+c_func
 (paren
 r_int
 id|midi_dev
@@ -463,6 +482,7 @@ id|midi_dev
 )braket
 op_member_access_from_pointer
 id|prefix_cmd
+c_func
 (paren
 id|midi_dev
 comma
@@ -474,6 +494,7 @@ r_static
 r_void
 DECL|function|midi_synth_input
 id|midi_synth_input
+c_func
 (paren
 r_int
 id|orig_dev
@@ -498,7 +519,7 @@ id|len_tab
 (braket
 )braket
 op_assign
-multiline_comment|/* # of data bytes following a status&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* # of data bytes following a status&n;&t;&t;&t;&t;&t;&t; */
 (brace
 l_int|2
 comma
@@ -531,6 +552,13 @@ c_cond
 id|orig_dev
 template_param
 id|num_midis
+op_logical_or
+id|midi_devs
+(braket
+id|orig_dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 suffix:semicolon
@@ -677,6 +705,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|do_midi_msg
+c_func
 (paren
 id|dev
 comma
@@ -806,6 +835,7 @@ op_assign
 id|MST_INIT
 suffix:semicolon
 id|do_midi_msg
+c_func
 (paren
 id|dev
 comma
@@ -853,6 +883,7 @@ multiline_comment|/* MST_SYSEX */
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;MIDI%d: Unexpected state %d (%02x)&bslash;n&quot;
 comma
@@ -876,6 +907,7 @@ r_static
 r_void
 DECL|function|leave_sysex
 id|leave_sysex
+c_func
 (paren
 r_int
 id|dev
@@ -924,6 +956,7 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|orig_dev
 comma
@@ -949,16 +982,18 @@ r_static
 r_void
 DECL|function|midi_synth_output
 id|midi_synth_output
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;   * Currently NOP&n;   */
+multiline_comment|/*&n;&t; * Currently NOP&n;&t; */
 )brace
 r_int
 DECL|function|midi_synth_ioctl
 id|midi_synth_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -971,7 +1006,7 @@ id|caddr_t
 id|arg
 )paren
 (brace
-multiline_comment|/*&n;   * int orig_dev = synth_devs[dev]-&gt;midi_dev;&n;   */
+multiline_comment|/*&n;&t; * int orig_dev = synth_devs[dev]-&gt;midi_dev;&n;&t; */
 r_switch
 c_cond
 (paren
@@ -982,6 +1017,7 @@ r_case
 id|SNDCTL_SYNTH_INFO
 suffix:colon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -1039,6 +1075,7 @@ suffix:semicolon
 r_int
 DECL|function|midi_synth_kill_note
 id|midi_synth_kill_note
+c_func
 (paren
 r_int
 id|dev
@@ -1111,6 +1148,7 @@ op_assign
 l_int|127
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -1163,6 +1201,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1173,6 +1212,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1186,17 +1226,19 @@ id|msg
 op_eq
 l_int|0x90
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Running status = Note on&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Running status = Note on&n;&t;&t;&t;&t;&t; */
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Note on with velocity 0 == note&n;&t;&t;&t;&t;&t;   * off&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;   * Note on with velocity 0 == note&n;&t;&t;&t;&t;&t;&t;&t;   * off&n;&t;&t;&t;&t;&t;&t;&t; */
 r_else
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1219,6 +1261,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1235,6 +1278,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1247,8 +1291,9 @@ l_int|0x0f
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Note on&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Note on&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1256,13 +1301,14 @@ id|note
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Zero G&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Zero G&n;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
@@ -1271,6 +1317,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1287,6 +1334,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1299,8 +1347,9 @@ l_int|0x0f
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Note off&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Note off&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1308,6 +1357,7 @@ id|note
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1323,6 +1373,7 @@ suffix:semicolon
 r_int
 DECL|function|midi_synth_set_instr
 id|midi_synth_set_instr
+c_func
 (paren
 r_int
 id|dev
@@ -1366,6 +1417,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -1375,6 +1427,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1391,6 +1444,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1405,6 +1459,7 @@ l_int|0x0f
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Program change&n;&t;&t;&t;&t;&t;&t;&t; */
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1418,6 +1473,7 @@ suffix:semicolon
 r_int
 DECL|function|midi_synth_start_note
 id|midi_synth_start_note
+c_func
 (paren
 r_int
 id|dev
@@ -1490,6 +1546,7 @@ op_assign
 l_int|127
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -1530,6 +1587,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1540,6 +1598,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1547,6 +1606,7 @@ id|note
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1561,6 +1621,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1577,6 +1638,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1589,8 +1651,9 @@ l_int|0x0f
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Note on&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Note on&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1598,6 +1661,7 @@ id|note
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1612,12 +1676,14 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_reset
 id|midi_synth_reset
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -1626,6 +1692,7 @@ suffix:semicolon
 r_int
 DECL|function|midi_synth_open
 id|midi_synth_open
+c_func
 (paren
 r_int
 id|dev
@@ -1662,6 +1729,13 @@ c_cond
 id|orig_dev
 template_param
 id|num_midis
+op_logical_or
+id|midi_devs
+(braket
+id|orig_dev
+)braket
+op_eq
+l_int|NULL
 )paren
 r_return
 op_minus
@@ -1700,6 +1774,7 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|open
+c_func
 (paren
 id|orig_dev
 comma
@@ -1716,6 +1791,10 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 id|inc
 op_assign
 op_amp
@@ -1727,11 +1806,13 @@ op_member_access_from_pointer
 id|in_info
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1756,6 +1837,7 @@ op_assign
 l_int|0x00
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1771,6 +1853,7 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_close
 id|midi_synth_close
+c_func
 (paren
 r_int
 id|dev
@@ -1787,17 +1870,19 @@ op_member_access_from_pointer
 id|midi_dev
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Shut up the synths by sending just single active sensing message.&n;   */
+multiline_comment|/*&n;&t; * Shut up the synths by sending just single active sensing message.&n;&t; */
 id|midi_devs
 (braket
 id|orig_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|orig_dev
 comma
@@ -1810,14 +1895,20 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|close
+c_func
 (paren
 id|orig_dev
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|midi_synth_hw_control
 id|midi_synth_hw_control
+c_func
 (paren
 r_int
 id|dev
@@ -1832,6 +1923,7 @@ id|event
 r_int
 DECL|function|midi_synth_load_patch
 id|midi_synth_load_patch
+c_func
 (paren
 r_int
 id|dev
@@ -1907,6 +1999,7 @@ op_amp
 id|sysex
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -1916,6 +2009,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -1934,6 +2028,7 @@ id|SYSEX_PATCH
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MIDI Error: Invalid patch format (key) 0x%x&bslash;n&quot;
 comma
@@ -1954,6 +2049,7 @@ id|hdr_size
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MIDI Error: Patch header too short&bslash;n&quot;
 )paren
@@ -1967,8 +2063,9 @@ id|count
 op_sub_assign
 id|hdr_size
 suffix:semicolon
-multiline_comment|/*&n;   * Copy the header from user space but ignore the first bytes which have&n;   * been transferred already.&n;   */
+multiline_comment|/*&n;&t; * Copy the header from user space but ignore the first bytes which have&n;&t; * been transferred already.&n;&t; */
 id|copy_from_user
+c_func
 (paren
 op_amp
 (paren
@@ -2005,6 +2102,7 @@ id|sysex.len
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MIDI Warning: Sysex record too short (%d&lt;%d)&bslash;n&quot;
 comma
@@ -2061,6 +2159,7 @@ r_char
 id|data
 suffix:semicolon
 id|get_user
+c_func
 (paren
 op_star
 (paren
@@ -2132,6 +2231,7 @@ l_int|0xf0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Error: Sysex start missing&bslash;n&quot;
 )paren
@@ -2152,6 +2252,7 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2209,6 +2310,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|sysex_sleeper
@@ -2270,6 +2372,7 @@ op_logical_neg
 id|eox_seen
 )paren
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2283,6 +2386,7 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_panning
 id|midi_synth_panning
+c_func
 (paren
 r_int
 id|dev
@@ -2298,6 +2402,7 @@ id|pressure
 r_void
 DECL|function|midi_synth_aftertouch
 id|midi_synth_aftertouch
+c_func
 (paren
 r_int
 id|dev
@@ -2343,6 +2448,7 @@ l_int|15
 r_return
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -2376,13 +2482,14 @@ id|chn
 op_ne
 id|channel
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Test for running status&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Test for running status&n;&t;&t;&t;&t;&t;&t; */
 (brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2398,6 +2505,7 @@ l_int|0x0f
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2410,7 +2518,7 @@ l_int|0x0f
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Channel pressure&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Channel pressure&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 r_if
@@ -2418,6 +2526,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2427,6 +2536,7 @@ id|pressure
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2437,6 +2547,7 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_controller
 id|midi_synth_controller
+c_func
 (paren
 r_int
 id|dev
@@ -2485,6 +2596,7 @@ l_int|15
 r_return
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -2524,6 +2636,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2539,6 +2652,7 @@ l_int|0x0f
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2558,6 +2672,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2567,6 +2682,7 @@ id|ctrl_num
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2574,6 +2690,7 @@ id|ctrl_num
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2586,6 +2703,7 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_bender
 id|midi_synth_bender
+c_func
 (paren
 r_int
 id|dev
@@ -2631,6 +2749,7 @@ l_int|16383
 r_return
 suffix:semicolon
 id|leave_sysex
+c_func
 (paren
 id|dev
 )paren
@@ -2664,13 +2783,14 @@ id|prev_chn
 op_ne
 id|channel
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Test for running status&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Test for running status&n;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2686,6 +2806,7 @@ l_int|0x0f
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2705,6 +2826,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2716,6 +2838,7 @@ l_int|0x7f
 r_return
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2725,6 +2848,7 @@ l_int|0x7f
 )paren
 suffix:semicolon
 id|midi_outc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2741,6 +2865,7 @@ suffix:semicolon
 r_void
 DECL|function|midi_synth_setup_voice
 id|midi_synth_setup_voice
+c_func
 (paren
 r_int
 id|dev
@@ -2756,6 +2881,7 @@ id|channel
 r_int
 DECL|function|midi_synth_send_sysex
 id|midi_synth_send_sysex
+c_func
 (paren
 r_int
 id|dev
@@ -2815,6 +2941,7 @@ c_cond
 (paren
 op_logical_neg
 id|prefix_cmd
+c_func
 (paren
 id|orig_dev
 comma
@@ -2914,6 +3041,7 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|orig_dev
 comma
@@ -2954,6 +3082,7 @@ id|orig_dev
 )braket
 op_member_access_from_pointer
 id|outputc
+c_func
 (paren
 id|orig_dev
 comma

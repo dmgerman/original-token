@@ -19,20 +19,20 @@ mdefine_line|#define&t;_GNUC_
 macro_line|#include &lt;linux/sdla_fr.h&gt;&t;/* frame relay firmware API definitions */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 DECL|macro|CMD_OK
-mdefine_line|#define&t;CMD_OK&t;&t;0&t;&t;/* normal firmware return code */
+mdefine_line|#define&t;CMD_OK&t;&t;0&t;/* normal firmware return code */
 DECL|macro|CMD_TIMEOUT
-mdefine_line|#define&t;CMD_TIMEOUT&t;0xFF&t;&t;/* firmware command timed out */
+mdefine_line|#define&t;CMD_TIMEOUT&t;0xFF&t;/* firmware command timed out */
 DECL|macro|MAX_CMD_RETRY
-mdefine_line|#define&t;MAX_CMD_RETRY&t;10&t;&t;/* max number of firmware retries */
+mdefine_line|#define&t;MAX_CMD_RETRY&t;10&t;/* max number of firmware retries */
 DECL|macro|FR_HEADER_LEN
-mdefine_line|#define&t;FR_HEADER_LEN&t;8&t;&t;/* max encapsulation header size */
+mdefine_line|#define&t;FR_HEADER_LEN&t;8&t;/* max encapsulation header size */
 DECL|macro|FR_CHANNEL_MTU
-mdefine_line|#define&t;FR_CHANNEL_MTU&t;1500&t;&t;/* unfragmented logical channel MTU */
+mdefine_line|#define&t;FR_CHANNEL_MTU&t;1500&t;/* unfragmented logical channel MTU */
 multiline_comment|/* Q.922 frame types */
 DECL|macro|Q922_UI
-mdefine_line|#define&t;Q922_UI&t;&t;0x03&t;&t;/* Unnumbered Info frame */
+mdefine_line|#define&t;Q922_UI&t;&t;0x03&t;/* Unnumbered Info frame */
 DECL|macro|Q922_XID
-mdefine_line|#define&t;Q922_XID&t;0xAF&t;&t;/* ??? */
+mdefine_line|#define&t;Q922_XID&t;0xAF&t;/* ??? */
 multiline_comment|/****** Data Structures *****************************************************/
 multiline_comment|/* This is an extention of the &squot;struct device&squot; we create for each network&n; * interface to keep the rest of channel-specific data.&n; */
 DECL|struct|fr_channel
@@ -126,6 +126,7 @@ multiline_comment|/* WAN link driver entry points. These are called by the WAN r
 r_static
 r_int
 id|update
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -135,6 +136,7 @@ suffix:semicolon
 r_static
 r_int
 id|new_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -153,6 +155,7 @@ suffix:semicolon
 r_static
 r_int
 id|del_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -168,6 +171,7 @@ multiline_comment|/* WANPIPE-specific entry points */
 r_static
 r_int
 id|wpf_exec
+c_func
 (paren
 r_struct
 id|sdla
@@ -187,6 +191,7 @@ multiline_comment|/* Network device interface */
 r_static
 r_int
 id|if_init
+c_func
 (paren
 r_struct
 id|device
@@ -197,6 +202,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_open
+c_func
 (paren
 r_struct
 id|device
@@ -207,6 +213,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_close
+c_func
 (paren
 r_struct
 id|device
@@ -217,6 +224,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_header
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -247,6 +255,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_rebuild_hdr
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -257,6 +266,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_send
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -274,6 +284,7 @@ r_struct
 id|enet_statistics
 op_star
 id|if_stats
+c_func
 (paren
 r_struct
 id|device
@@ -285,6 +296,7 @@ multiline_comment|/* Interrupt handlers */
 r_static
 r_void
 id|fr502_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -294,6 +306,7 @@ suffix:semicolon
 r_static
 r_void
 id|fr508_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -303,6 +316,7 @@ suffix:semicolon
 r_static
 r_void
 id|fr502_rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -312,6 +326,7 @@ suffix:semicolon
 r_static
 r_void
 id|fr508_rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -321,6 +336,7 @@ suffix:semicolon
 r_static
 r_void
 id|tx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -330,6 +346,7 @@ suffix:semicolon
 r_static
 r_void
 id|spur_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -340,6 +357,7 @@ multiline_comment|/* Background polling routines */
 r_static
 r_void
 id|wpf_poll
+c_func
 (paren
 id|sdla_t
 op_star
@@ -350,6 +368,7 @@ multiline_comment|/* Frame relay firmware interface functions */
 r_static
 r_int
 id|fr_read_version
+c_func
 (paren
 id|sdla_t
 op_star
@@ -363,6 +382,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_configure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -376,6 +396,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_set_intr_mode
+c_func
 (paren
 id|sdla_t
 op_star
@@ -391,6 +412,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_comm_enable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -400,6 +422,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_comm_disable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -409,6 +432,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_get_err_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -418,6 +442,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_get_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -427,6 +452,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_add_dlci
+c_func
 (paren
 id|sdla_t
 op_star
@@ -442,6 +468,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_activate_dlci
+c_func
 (paren
 id|sdla_t
 op_star
@@ -457,6 +484,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_issue_isf
+c_func
 (paren
 id|sdla_t
 op_star
@@ -469,6 +497,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr502_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -491,6 +520,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr508_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -514,6 +544,7 @@ multiline_comment|/* Firmware asynchronous event handlers */
 r_static
 r_int
 id|fr_event
+c_func
 (paren
 id|sdla_t
 op_star
@@ -530,6 +561,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_modem_failure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -543,6 +575,7 @@ suffix:semicolon
 r_static
 r_int
 id|fr_dlci_change
+c_func
 (paren
 id|sdla_t
 op_star
@@ -557,6 +590,7 @@ multiline_comment|/* Miscellaneous functions */
 r_static
 r_int
 id|update_chan_state
+c_func
 (paren
 r_struct
 id|device
@@ -567,6 +601,7 @@ suffix:semicolon
 r_static
 r_void
 id|set_chan_state
+c_func
 (paren
 r_struct
 id|device
@@ -582,6 +617,7 @@ r_struct
 id|device
 op_star
 id|find_channel
+c_func
 (paren
 id|sdla_t
 op_star
@@ -594,6 +630,7 @@ suffix:semicolon
 r_static
 r_int
 id|is_tx_ready
+c_func
 (paren
 id|sdla_t
 op_star
@@ -604,6 +641,7 @@ r_static
 r_int
 r_int
 id|dec_to_uint
+c_func
 (paren
 r_int
 r_char
@@ -622,6 +660,7 @@ c_func
 (paren
 r_int
 id|wpf_init
+c_func
 (paren
 id|sdla_t
 op_star
@@ -1228,6 +1267,7 @@ DECL|function|update
 r_static
 r_int
 id|update
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -1322,6 +1362,7 @@ DECL|function|new_if
 r_static
 r_int
 id|new_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -1563,6 +1604,7 @@ DECL|function|del_if
 r_static
 r_int
 id|del_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -1601,6 +1643,7 @@ DECL|function|wpf_exec
 r_static
 r_int
 id|wpf_exec
+c_func
 (paren
 r_struct
 id|sdla
@@ -1656,12 +1699,10 @@ id|cmd
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 multiline_comment|/* execute command */
 r_do
 (brace
@@ -1703,12 +1744,10 @@ comma
 id|cmd.length
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1769,12 +1808,10 @@ id|fr_cmd_t
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|len
 op_assign
 id|mbox-&gt;cmd.length
@@ -1815,6 +1852,7 @@ DECL|function|if_init
 r_static
 r_int
 id|if_init
+c_func
 (paren
 r_struct
 id|device
@@ -1986,6 +2024,7 @@ DECL|function|if_open
 r_static
 r_int
 id|if_open
+c_func
 (paren
 r_struct
 id|device
@@ -2108,8 +2147,8 @@ id|FR_ISF_FSE
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* FR switch: activate DLCI(s) */
 (brace
+multiline_comment|/* FR switch: activate DLCI(s) */
 id|fr_add_dlci
 c_func
 (paren
@@ -2183,6 +2222,7 @@ DECL|function|if_close
 r_static
 r_int
 id|if_close
+c_func
 (paren
 r_struct
 id|device
@@ -2278,6 +2318,7 @@ DECL|function|if_header
 r_static
 r_int
 id|if_header
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -2368,6 +2409,7 @@ DECL|function|if_rebuild_hdr
 r_static
 r_int
 id|if_rebuild_hdr
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -2407,6 +2449,7 @@ DECL|function|if_send
 r_static
 r_int
 id|if_send
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -2728,6 +2771,7 @@ r_struct
 id|enet_statistics
 op_star
 id|if_stats
+c_func
 (paren
 r_struct
 id|device
@@ -2752,6 +2796,7 @@ DECL|function|fr502_isr
 r_static
 r_void
 id|fr502_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2818,6 +2863,7 @@ DECL|function|fr508_isr
 r_static
 r_void
 id|fr508_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2930,6 +2976,7 @@ DECL|function|fr502_rx_intr
 r_static
 r_void
 id|fr502_rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3175,6 +3222,7 @@ DECL|function|fr508_rx_intr
 r_static
 r_void
 id|fr508_rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3507,6 +3555,7 @@ DECL|function|tx_intr
 r_static
 r_void
 id|tx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3519,6 +3568,11 @@ op_star
 id|dev
 op_assign
 id|card-&gt;wandev.dev
+suffix:semicolon
+r_int
+id|v
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -3540,32 +3594,40 @@ op_logical_or
 op_logical_neg
 id|dev-&gt;start
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
+id|v
+op_add_assign
+id|dev-&gt;tbusy
+suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
-suffix:semicolon
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
 suffix:semicolon
 )brace
 id|card-&gt;wandev.tx_int_enabled
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;printk(KERN_INFO &quot;%s: transmit interrupt!&bslash;n&quot;, card-&gt;devname);&n;*/
+r_if
+c_cond
+(paren
+id|v
+)paren
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   printk(KERN_INFO &quot;%s: transmit interrupt!&bslash;n&quot;, card-&gt;devname);&n; */
 )brace
 multiline_comment|/*============================================================================&n; * Spurious interrupt handler.&n; * o print a warning&n; * o &n; * If number of spurious interrupts exceeded some limit, then ???&n; */
 DECL|function|spur_intr
 r_static
 r_void
 id|spur_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3588,6 +3650,7 @@ DECL|function|wpf_poll
 r_static
 r_void
 id|wpf_poll
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3693,6 +3756,7 @@ DECL|function|fr_read_version
 r_static
 r_int
 id|fr_read_version
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3811,6 +3875,7 @@ DECL|function|fr_configure
 r_static
 r_int
 id|fr_configure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3972,6 +4037,7 @@ DECL|function|fr_set_intr_mode
 r_static
 r_int
 id|fr_set_intr_mode
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4152,6 +4218,7 @@ DECL|function|fr_comm_enable
 r_static
 r_int
 id|fr_comm_enable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4234,6 +4301,7 @@ DECL|function|fr_comm_disable
 r_static
 r_int
 id|fr_comm_disable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4316,6 +4384,7 @@ DECL|function|fr_get_err_stats
 r_static
 r_int
 id|fr_get_err_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4436,6 +4505,7 @@ DECL|function|fr_get_stats
 r_static
 r_int
 id|fr_get_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4546,6 +4616,7 @@ DECL|function|fr_add_dlci
 r_static
 r_int
 id|fr_add_dlci
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4679,6 +4750,7 @@ DECL|function|fr_activate_dlci
 r_static
 r_int
 id|fr_activate_dlci
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4812,6 +4884,7 @@ DECL|function|fr_issue_isf
 r_static
 r_int
 id|fr_issue_isf
+c_func
 (paren
 id|sdla_t
 op_star
@@ -4908,6 +4981,7 @@ DECL|function|fr502_send
 r_static
 r_int
 id|fr502_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5025,6 +5099,7 @@ DECL|function|fr508_send
 r_static
 r_int
 id|fr508_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5201,6 +5276,7 @@ DECL|function|fr_event
 r_static
 r_int
 id|fr_event
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5328,6 +5404,7 @@ DECL|function|fr_modem_failure
 r_static
 r_int
 id|fr_modem_failure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5377,6 +5454,7 @@ DECL|function|fr_dlci_change
 r_static
 r_int
 id|fr_dlci_change
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5521,6 +5599,7 @@ DECL|function|update_chan_state
 r_static
 r_int
 id|update_chan_state
+c_func
 (paren
 r_struct
 id|device
@@ -5679,6 +5758,7 @@ DECL|function|set_chan_state
 r_static
 r_void
 id|set_chan_state
+c_func
 (paren
 r_struct
 id|device
@@ -5734,6 +5814,7 @@ r_case
 id|WAN_CONNECTED
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s: interface %s connected!&bslash;n&quot;
@@ -5749,6 +5830,7 @@ r_case
 id|WAN_CONNECTING
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s: interface %s connecting...&bslash;n&quot;
@@ -5764,6 +5846,7 @@ r_case
 id|WAN_DISCONNECTED
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s: interface %s disconnected!&bslash;n&quot;
@@ -5799,6 +5882,7 @@ r_struct
 id|device
 op_star
 id|find_channel
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5852,6 +5936,7 @@ DECL|function|is_tx_ready
 r_static
 r_int
 id|is_tx_ready
+c_func
 (paren
 id|sdla_t
 op_star
@@ -5932,6 +6017,7 @@ r_static
 r_int
 r_int
 id|dec_to_uint
+c_func
 (paren
 r_int
 r_char

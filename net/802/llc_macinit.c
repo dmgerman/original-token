@@ -11,7 +11,7 @@ macro_line|#include &lt;net/p8022.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/llc_frame.h&gt;
 macro_line|#include &lt;net/llc.h&gt;
-multiline_comment|/*&n; *&t;All incoming frames pass thru mac_data_indicate().&n; *&t;Here an llc structure is associated with an skb depending on the source&n; *&t;MAC address in the pdu.&n; *&t;The received sk_buffs with pdus other than I_CMD and I_RSP&n; *&t;are freed by mac_data_indicate() after processing,&n; *&t;the I pdu buffers are freed by the cl2llc client when it no longer needs&n; *&t;the skb.&n;*/
+multiline_comment|/*&n; *&t;All incoming frames pass thru mac_data_indicate().&n; *&t;On entry the llc structure related to the frame is passed as parameter. &n; *&t;The received sk_buffs with pdus other than I_CMD and I_RSP&n; *&t;are freed by mac_data_indicate() after processing,&n; *&t;the I pdu buffers are freed by the cl2llc client when it no longer needs&n; *&t;the skb.&n;*/
 DECL|function|llc_mac_data_indicate
 r_int
 id|llc_mac_data_indicate
@@ -24,16 +24,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|packet_type
-op_star
-id|pt
 )paren
 (brace
 r_int
@@ -346,6 +336,13 @@ c_cond
 id|lp-&gt;llc_callbacks
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|lp-&gt;llc_event
+op_ne
+l_int|NULL
+)paren
 id|lp
 op_member_access_from_pointer
 id|llc_event
@@ -511,10 +508,6 @@ id|lp-&gt;llc_event
 op_assign
 id|event
 suffix:semicolon
-id|lp-&gt;remote_mac_len
-op_assign
-id|lp-&gt;dev-&gt;addr_len
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -522,7 +515,10 @@ id|lp-&gt;remote_mac
 comma
 id|rmac
 comma
-id|lp-&gt;remote_mac_len
+r_sizeof
+(paren
+id|lp-&gt;remote_mac
+)paren
 )paren
 suffix:semicolon
 id|lp-&gt;state
@@ -621,6 +617,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|llc_xid_request
+)paren
+suffix:semicolon
+DECL|variable|llc_mac_data_indicate
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|llc_mac_data_indicate
+)paren
+suffix:semicolon
+DECL|variable|llc_cancel_timers
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|llc_cancel_timers
 )paren
 suffix:semicolon
 DECL|macro|ALL_TYPES_8022

@@ -69,6 +69,14 @@ DECL|macro|ARPHRD_SIT
 mdefine_line|#define ARPHRD_SIT&t;776&t;&t;/* sit0 device - IPv6-in-IPv4&t;*/
 DECL|macro|ARPHRD_IPDDP
 mdefine_line|#define ARPHRD_IPDDP&t;777&t;&t;/* IP over DDP tunneller&t;*/
+DECL|macro|ARPHRD_IPGRE
+mdefine_line|#define ARPHRD_IPGRE&t;778&t;&t;/* GRE over IP&t;&t;&t;*/
+DECL|macro|ARPHRD_PIMREG
+mdefine_line|#define ARPHRD_PIMREG&t;779&t;&t;/* PIMSM register interface&t;*/
+DECL|macro|ARPHRD_HIPPI
+mdefine_line|#define ARPHRD_HIPPI&t;780&t;&t;/* High Performance Parallel Interface */
+DECL|macro|ARPHRD_ASH
+mdefine_line|#define ARPHRD_ASH&t;781&t;&t;/* Nexus 64Mbps Ash&t;&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

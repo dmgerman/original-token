@@ -1656,27 +1656,6 @@ id|dev-&gt;flags
 op_assign
 id|IFF_POINTOPOINT
 suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* sizeof (__u32) */
 r_return
 l_int|0
 suffix:semicolon
@@ -2578,6 +2557,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Break the tty-&gt;ppp link */
+multiline_comment|/* Strong layering violation. */
 r_if
 c_cond
 (paren
@@ -2594,11 +2574,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* close the device properly */
-id|dev-&gt;flags
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* prevent recursion */
 )brace
 id|ppp_free_buf
 (paren
@@ -8455,7 +8430,8 @@ r_struct
 id|ppp_idle
 id|cur_ddinfo
 suffix:semicolon
-id|__u32
+r_int
+r_int
 id|cur_jiffies
 op_assign
 id|jiffies
@@ -9356,11 +9332,6 @@ id|dev2ppp
 (paren
 id|dev
 )paren
-suffix:semicolon
-multiline_comment|/* reset POINTOPOINT every time, since dev_close zaps it! */
-id|dev-&gt;flags
-op_or_assign
-id|IFF_POINTOPOINT
 suffix:semicolon
 r_if
 c_cond
@@ -10735,11 +10706,19 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;I am dying to know, are you still alive?&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef main_got_it_is_something
 id|dev_close
 (paren
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

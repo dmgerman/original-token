@@ -1900,6 +1900,11 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+id|error
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1907,9 +1912,8 @@ id|len
 OG
 id|NFS_MAXNAMLEN
 )paren
-r_return
-op_minus
-id|ENAMETOOLONG
+r_goto
+id|out
 suffix:semicolon
 id|error
 op_assign
@@ -2011,6 +2015,8 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+id|out
+suffix:colon
 r_return
 id|error
 suffix:semicolon
@@ -2054,12 +2060,6 @@ op_assign
 op_minus
 id|EACCES
 suffix:semicolon
-id|nfs_invalidate_dircache
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 id|inode
 op_assign
 id|nfs_fhget
@@ -2101,6 +2101,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Following a failed create operation, we drop the dentry rather&n; * than retain a negative dentry. This avoids a problem in the event&n; * that the operation succeeded on the server, but an error in the&n; * reply path made it appear to have failed.&n; */
 DECL|function|nfs_create
 r_static
 r_int
@@ -2175,6 +2176,11 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+id|error
+op_assign
+op_minus
+id|ENAMETOOLONG
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2182,9 +2188,8 @@ id|dentry-&gt;d_name.len
 OG
 id|NFS_MAXNAMLEN
 )paren
-r_return
-op_minus
-id|ENAMETOOLONG
+r_goto
+id|out
 suffix:semicolon
 id|sattr.mode
 op_assign
@@ -2211,6 +2216,13 @@ r_int
 )paren
 op_minus
 l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * Invalidate the dir cache before the operation to avoid a race.&n;&t; */
+id|nfs_invalidate_dircache
+c_func
+(paren
+id|dir
+)paren
 suffix:semicolon
 id|error
 op_assign
@@ -2263,10 +2275,36 @@ op_amp
 id|fhandle
 )paren
 suffix:semicolon
+r_else
+(brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_create: %s/%s failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|error
+)paren
+suffix:semicolon
+macro_line|#endif
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
+id|out
+suffix:colon
 r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * See comments for nfs_proc_create regarding failed operations.&n; */
 DECL|function|nfs_mknod
 r_static
 r_int
@@ -2401,6 +2439,12 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
+id|nfs_invalidate_dircache
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|nfs_proc_create
@@ -2452,10 +2496,34 @@ op_amp
 id|fhandle
 )paren
 suffix:semicolon
+r_else
+(brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_mknod: %s/%s failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|error
+)paren
+suffix:semicolon
+macro_line|#endif
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
 r_return
 id|error
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * See comments for nfs_proc_create regarding failed operations.&n; */
 DECL|function|nfs_mkdir
 r_static
 r_int
@@ -2567,6 +2635,12 @@ r_int
 op_minus
 l_int|1
 suffix:semicolon
+id|nfs_invalidate_dircache
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|nfs_proc_mkdir
@@ -2618,6 +2692,29 @@ op_amp
 id|fhandle
 )paren
 suffix:semicolon
+r_else
+(brace
+macro_line|#ifdef NFS_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_mkdir: %s/%s failed, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|error
+)paren
+suffix:semicolon
+macro_line|#endif
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+)brace
 r_return
 id|error
 suffix:semicolon
@@ -3727,13 +3824,30 @@ id|NFS_MAXPATHLEN
 r_goto
 id|out
 suffix:semicolon
+macro_line|#ifdef NFS_PARANOIA
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;nfs_proc_symlink: %s/%s not negative!&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * Fill in the sattr for the call.&n; &t; * Note: SunOS 4.1.2 crashes if the mode isn&squot;t initialized!&n;&t; */
 id|sattr.mode
 op_assign
 id|S_IFLNK
 op_or
 id|S_IRWXUGO
 suffix:semicolon
-multiline_comment|/* SunOS 4.1.2 crashes without this! */
 id|sattr.uid
 op_assign
 id|sattr.gid
@@ -3755,6 +3869,13 @@ r_int
 )paren
 op_minus
 l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * Drop the dentry in advance to force a new lookup.&n;&t; * Since nfs_proc_symlink doesn&squot;t return a fattr, we&n;&t; * can&squot;t instantiate the new inode.&n;&t; */
+id|d_drop
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|error
 op_assign
@@ -3800,11 +3921,25 @@ c_func
 id|dentry-&gt;d_parent
 )paren
 suffix:semicolon
-multiline_comment|/*  this looks _funny_ doesn&squot;t it? But: nfs_proc_symlink()&n;&t;&t; *  only fills in sattr, not fattr. Thus nfs_fhget() cannot be&n;&t;&t; *  called, it would be pointless, without a valid fattr&n;&t;&t; *  argument. Other possibility: call nfs_proc_lookup()&n;&t;&t; *  HERE. But why? If somebody wants to reference this&n;&t;&t; *  symlink, the cached_lookup() will fail, and&n;&t;&t; *  nfs_proc_symlink() will be called anyway.&n;&t;&t; */
-id|d_drop
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|error
+op_eq
+op_minus
+id|EEXIST
+)paren
+(brace
+id|printk
 c_func
 (paren
-id|dentry
+l_string|&quot;nfs_proc_symlink: %s/%s already exists??&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 )brace

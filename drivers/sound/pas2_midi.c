@@ -2,8 +2,7 @@ multiline_comment|/*&n; * sound/pas2_midi.c&n; *&n; * The low level driver for t
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_PAS
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if ( defined(MODULE) || defined(CONFIG_PAS) ) &amp;&amp; defined(CONFIG_MIDI)
 DECL|variable|midi_busy
 DECL|variable|input_opened
 r_static
@@ -66,6 +65,7 @@ r_static
 r_int
 DECL|function|pas_midi_open
 id|pas_midi_open
+c_func
 (paren
 r_int
 id|dev
@@ -116,6 +116,7 @@ id|midi_busy
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;PAS16: Midi busy&bslash;n&quot;
 )paren
@@ -125,8 +126,9 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Reset input and output FIFO pointers&n;   */
+multiline_comment|/*&n;&t; * Reset input and output FIFO pointers&n;&t; */
 id|pas_write
+c_func
 (paren
 l_int|0x20
 op_or
@@ -136,11 +138,13 @@ l_int|0x178b
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -151,6 +155,7 @@ c_cond
 id|err
 op_assign
 id|pas_set_intr
+c_func
 (paren
 l_int|0x10
 )paren
@@ -160,6 +165,7 @@ l_int|0
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -168,7 +174,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Enable input available and output FIFO empty interrupts&n;   */
+multiline_comment|/*&n;&t; * Enable input available and output FIFO empty interrupts&n;&t; */
 id|ctrl
 op_assign
 l_int|0
@@ -224,14 +230,16 @@ suffix:semicolon
 multiline_comment|/* Enable output */
 )brace
 id|pas_write
+c_func
 (paren
 id|ctrl
 comma
 l_int|0x178b
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Acknowledge any pending interrupts&n;   */
+multiline_comment|/*&n;&t; * Acknowledge any pending interrupts&n;&t; */
 id|pas_write
+c_func
 (paren
 l_int|0xff
 comma
@@ -239,6 +247,7 @@ l_int|0x1B88
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -263,13 +272,15 @@ r_static
 r_void
 DECL|function|pas_midi_close
 id|pas_midi_close
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
+multiline_comment|/*&n;&t; * Reset FIFO pointers, disable intrs&n;&t; */
 id|pas_write
+c_func
 (paren
 l_int|0x20
 op_or
@@ -279,6 +290,7 @@ l_int|0x178b
 )paren
 suffix:semicolon
 id|pas_remove_intr
+c_func
 (paren
 l_int|0x10
 )paren
@@ -292,6 +304,7 @@ r_static
 r_int
 DECL|function|dump_to_midi
 id|dump_to_midi
+c_func
 (paren
 r_int
 r_char
@@ -310,6 +323,7 @@ op_assign
 id|x
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x1B89
 )paren
@@ -340,6 +354,7 @@ suffix:semicolon
 multiline_comment|/* Ask upper layers to retry after some time */
 )brace
 id|pas_write
+c_func
 (paren
 id|midi_byte
 comma
@@ -354,6 +369,7 @@ r_static
 r_int
 DECL|function|pas_midi_out
 id|pas_midi_out
+c_func
 (paren
 r_int
 id|dev
@@ -367,13 +383,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * Drain the local queue first&n;   */
+multiline_comment|/*&n;&t; * Drain the local queue first&n;&t; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -383,6 +401,7 @@ c_loop
 id|qlen
 op_logical_and
 id|dump_to_midi
+c_func
 (paren
 id|tmp_queue
 (braket
@@ -399,11 +418,12 @@ op_increment
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Output the byte if the local queue is empty.&n;   */
+multiline_comment|/*&n;&t; * Output the byte if the local queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -414,6 +434,7 @@ r_if
 c_cond
 (paren
 id|dump_to_midi
+c_func
 (paren
 id|midi_byte
 )paren
@@ -421,7 +442,7 @@ id|midi_byte
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;   * Put to the local queue&n;   */
+multiline_comment|/*&n;&t; * Put to the local queue&n;&t; */
 r_if
 c_cond
 (paren
@@ -434,11 +455,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Local queue full */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -456,6 +479,7 @@ id|qtail
 op_increment
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -468,6 +492,7 @@ r_static
 r_int
 DECL|function|pas_midi_start_read
 id|pas_midi_start_read
+c_func
 (paren
 r_int
 id|dev
@@ -481,6 +506,7 @@ r_static
 r_int
 DECL|function|pas_midi_end_read
 id|pas_midi_end_read
+c_func
 (paren
 r_int
 id|dev
@@ -494,6 +520,7 @@ r_static
 r_int
 DECL|function|pas_midi_ioctl
 id|pas_midi_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -514,6 +541,7 @@ r_static
 r_void
 DECL|function|pas_midi_kick
 id|pas_midi_kick
+c_func
 (paren
 r_int
 id|dev
@@ -524,6 +552,7 @@ r_static
 r_int
 DECL|function|pas_buffer_status
 id|pas_buffer_status
+c_func
 (paren
 r_int
 id|dev
@@ -586,21 +615,33 @@ suffix:semicolon
 r_void
 DECL|function|pas_midi_init
 id|pas_midi_init
+c_func
 (paren
 r_void
 )paren
 (brace
+r_int
+id|dev
+op_assign
+id|sound_alloc_mididev
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_midis
-op_ge
-id|MAX_MIDI_DEV
+id|dev
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;pas_midi_init: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -610,18 +651,18 @@ id|std_midi_synth.midi_dev
 op_assign
 id|my_dev
 op_assign
-id|num_midis
+id|dev
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
-op_increment
+id|dev
 )braket
 op_assign
 op_amp
 id|pas_midi_operations
 suffix:semicolon
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -629,6 +670,7 @@ suffix:semicolon
 r_void
 DECL|function|pas_midi_interrupt
 id|pas_midi_interrupt
+c_func
 (paren
 r_void
 )paren
@@ -649,6 +691,7 @@ suffix:semicolon
 id|stat
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x1B88
 )paren
@@ -665,6 +708,7 @@ multiline_comment|/* Input data available */
 id|incount
 op_assign
 id|pas_read
+c_func
 (paren
 l_int|0x1B89
 )paren
@@ -703,10 +747,12 @@ id|input_opened
 )paren
 (brace
 id|midi_input_intr
+c_func
 (paren
 id|my_dev
 comma
 id|pas_read
+c_func
 (paren
 l_int|0x178A
 )paren
@@ -715,6 +761,7 @@ suffix:semicolon
 )brace
 r_else
 id|pas_read
+c_func
 (paren
 l_int|0x178A
 )paren
@@ -734,11 +781,13 @@ l_int|0x10
 )paren
 (brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -748,6 +797,7 @@ c_loop
 id|qlen
 op_logical_and
 id|dump_to_midi
+c_func
 (paren
 id|tmp_queue
 (braket
@@ -764,6 +814,7 @@ op_increment
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -778,10 +829,12 @@ l_int|0x40
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MIDI output overrun %x,%x&bslash;n&quot;
 comma
 id|pas_read
+c_func
 (paren
 l_int|0x1B89
 )paren
@@ -791,6 +844,7 @@ id|stat
 suffix:semicolon
 )brace
 id|pas_write
+c_func
 (paren
 id|stat
 comma
@@ -799,6 +853,5 @@ l_int|0x1B88
 suffix:semicolon
 multiline_comment|/* Acknowledge interrupts */
 )brace
-macro_line|#endif
 macro_line|#endif
 eof

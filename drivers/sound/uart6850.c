@@ -1,10 +1,11 @@
 multiline_comment|/*&n; * sound/uart6850.c&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * Extended by Alan Cox for Red Hat Software. Now a loadable MIDI driver.&n; * 28/4/97 - (C) Copyright Alan Cox. Released under the GPL version 2.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_UART6850
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#if defined(CONFIG_UART6850) &amp;&amp; defined(CONFIG_MIDI) || defined(MODULE)
 DECL|variable|uart6850_base
 r_static
 r_int
@@ -28,12 +29,14 @@ r_static
 r_int
 DECL|function|uart6850_status
 id|uart6850_status
+c_func
 (paren
 r_void
 )paren
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|STATPORT
 )paren
@@ -47,6 +50,7 @@ r_static
 r_void
 DECL|function|uart6850_cmd
 id|uart6850_cmd
+c_func
 (paren
 r_int
 r_char
@@ -54,6 +58,7 @@ id|cmd
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|cmd
@@ -67,12 +72,14 @@ r_static
 r_int
 DECL|function|uart6850_read
 id|uart6850_read
+c_func
 (paren
 r_void
 )paren
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|DATAPORT
 )paren
@@ -82,6 +89,7 @@ r_static
 r_void
 DECL|function|uart6850_write
 id|uart6850_write
+c_func
 (paren
 r_int
 r_char
@@ -89,6 +97,7 @@ id|byte
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|byte
@@ -133,6 +142,7 @@ suffix:semicolon
 r_static
 r_int
 id|reset_uart6850
+c_func
 (paren
 r_void
 )paren
@@ -156,6 +166,7 @@ suffix:semicolon
 r_static
 r_void
 id|poll_uart6850
+c_func
 (paren
 r_int
 r_int
@@ -184,6 +195,7 @@ r_static
 r_void
 DECL|function|uart6850_input_loop
 id|uart6850_input_loop
+c_func
 (paren
 r_void
 )paren
@@ -205,6 +217,7 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 )paren
 )paren
@@ -214,6 +227,7 @@ r_char
 id|c
 op_assign
 id|uart6850_read
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -229,6 +243,7 @@ op_amp
 id|OPEN_READ
 )paren
 id|midi_input_intr
+c_func
 (paren
 id|my_dev
 comma
@@ -242,6 +257,7 @@ c_loop
 (paren
 op_logical_neg
 id|input_avail
+c_func
 (paren
 )paren
 op_logical_and
@@ -254,6 +270,7 @@ suffix:semicolon
 r_void
 DECL|function|m6850intr
 id|m6850intr
+c_func
 (paren
 r_int
 id|irq
@@ -272,10 +289,12 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 )paren
 )paren
 id|uart6850_input_loop
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -285,6 +304,7 @@ r_static
 r_void
 DECL|function|poll_uart6850
 id|poll_uart6850
+c_func
 (paren
 r_int
 r_int
@@ -309,11 +329,13 @@ r_return
 suffix:semicolon
 multiline_comment|/* Device has been closed */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -321,10 +343,12 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 )paren
 )paren
 id|uart6850_input_loop
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -338,6 +362,7 @@ op_plus
 id|jiffies
 suffix:semicolon
 id|add_timer
+c_func
 (paren
 op_amp
 id|uart6850_timer
@@ -347,6 +372,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;   * Come back later&n;&t;&t;&t;&t; */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -356,6 +382,7 @@ r_static
 r_int
 DECL|function|uart6850_open
 id|uart6850_open
+c_func
 (paren
 r_int
 id|dev
@@ -395,6 +422,7 @@ id|uart6850_opened
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Midi6850: Midi busy&bslash;n&quot;
 )paren
@@ -405,12 +433,16 @@ id|EBUSY
 suffix:semicolon
 )brace
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|uart6850_cmd
+c_func
 (paren
 id|UART_RESET
 )paren
 suffix:semicolon
 id|uart6850_input_loop
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -423,6 +455,7 @@ op_assign
 id|mode
 suffix:semicolon
 id|poll_uart6850
+c_func
 (paren
 l_int|0
 )paren
@@ -436,17 +469,20 @@ r_static
 r_void
 DECL|function|uart6850_close
 id|uart6850_close
+c_func
 (paren
 r_int
 id|dev
 )paren
 (brace
 id|uart6850_cmd
+c_func
 (paren
 id|UART_MODE_ON
 )paren
 suffix:semicolon
 id|del_timer
+c_func
 (paren
 op_amp
 id|uart6850_timer
@@ -457,11 +493,14 @@ id|uart6850_opened
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 r_static
 r_int
 DECL|function|uart6850_out
 id|uart6850_out
+c_func
 (paren
 r_int
 id|dev
@@ -478,13 +517,15 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
+multiline_comment|/*&n;&t; * Test for input since pending input seems to block the output.&n;&t; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -492,19 +533,22 @@ r_if
 c_cond
 (paren
 id|input_avail
+c_func
 (paren
 )paren
 )paren
 id|uart6850_input_loop
+c_func
 (paren
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Sometimes it takes about 13000 loops before the output becomes ready&n;   * (After reset). Normally it takes just about 10 loops.&n;   */
+multiline_comment|/*&n;&t; * Sometimes it takes about 13000 loops before the output becomes ready&n;&t; * (After reset). Normally it takes just about 10 loops.&n;&t; */
 r_for
 c_loop
 (paren
@@ -518,6 +562,7 @@ l_int|0
 op_logical_and
 op_logical_neg
 id|output_ready
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -525,17 +570,19 @@ id|timeout
 op_decrement
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|output_ready
+c_func
 (paren
 )paren
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Midi6850: Timeout&bslash;n&quot;
 )paren
@@ -545,6 +592,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|uart6850_write
+c_func
 (paren
 id|midi_byte
 )paren
@@ -557,6 +605,7 @@ r_static
 r_int
 DECL|function|uart6850_command
 id|uart6850_command
+c_func
 (paren
 r_int
 id|dev
@@ -575,6 +624,7 @@ r_static
 r_int
 DECL|function|uart6850_start_read
 id|uart6850_start_read
+c_func
 (paren
 r_int
 id|dev
@@ -588,6 +638,7 @@ r_static
 r_int
 DECL|function|uart6850_end_read
 id|uart6850_end_read
+c_func
 (paren
 r_int
 id|dev
@@ -601,6 +652,7 @@ r_static
 r_int
 DECL|function|uart6850_ioctl
 id|uart6850_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -621,6 +673,7 @@ r_static
 r_void
 DECL|function|uart6850_kick
 id|uart6850_kick
+c_func
 (paren
 r_int
 id|dev
@@ -631,6 +684,7 @@ r_static
 r_int
 DECL|function|uart6850_buffer_status
 id|uart6850_buffer_status
+c_func
 (paren
 r_int
 id|dev
@@ -692,6 +746,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_uart6850
 id|attach_uart6850
+c_func
 (paren
 r_struct
 id|address_info
@@ -711,14 +766,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_midis
-op_ge
-id|MAX_MIDI_DEV
+(paren
+id|my_dev
+op_assign
+id|sound_alloc_mididev
+c_func
+(paren
+)paren
+)paren
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;Sound: Too many midi devices detected&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;uart6850: Too many midi devices detected&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -742,14 +807,24 @@ c_cond
 op_logical_neg
 id|uart6850_detected
 )paren
+(brace
+id|sound_unload_mididev
+c_func
+(paren
+id|my_dev
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -761,11 +836,12 @@ op_assign
 l_int|30000
 suffix:semicolon
 id|timeout
-OL
+OG
 l_int|0
 op_logical_and
 op_logical_neg
 id|output_ready
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -773,8 +849,9 @@ id|timeout
 op_decrement
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Wait&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|uart6850_cmd
+c_func
 (paren
 id|UART_MODE_ON
 )paren
@@ -784,11 +861,13 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|conf_printf
+c_func
 (paren
 l_string|&quot;6850 Midi Interface&quot;
 comma
@@ -798,19 +877,24 @@ suffix:semicolon
 id|std_midi_synth.midi_dev
 op_assign
 id|my_dev
+suffix:semicolon
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
 op_assign
-id|num_midis
+id|my_dev
 suffix:semicolon
 id|midi_devs
 (braket
-id|num_midis
-op_increment
+id|my_dev
 )braket
 op_assign
 op_amp
 id|uart6850_operations
 suffix:semicolon
 id|sequencer_init
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -819,11 +903,13 @@ r_static
 r_int
 DECL|function|reset_uart6850
 id|reset_uart6850
+c_func
 (paren
 r_void
 )paren
 (brace
 id|uart6850_read
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -835,6 +921,7 @@ multiline_comment|/*&n;&t;&t;&t;&t; * OK&n;&t;&t;&t;&t; */
 r_int
 DECL|function|probe_uart6850
 id|probe_uart6850
+c_func
 (paren
 r_struct
 id|address_info
@@ -863,6 +950,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|uart6850_irq
 comma
@@ -881,6 +969,7 @@ suffix:semicolon
 id|ok
 op_assign
 id|reset_uart6850
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -895,6 +984,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_uart6850
 id|unload_uart6850
+c_func
 (paren
 r_struct
 id|address_info
@@ -903,9 +993,118 @@ id|hw_config
 )paren
 (brace
 id|snd_release_irq
+c_func
 (paren
 id|hw_config-&gt;irq
 )paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|4
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|cfg
+r_struct
+id|address_info
+id|cfg
+suffix:semicolon
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;uart6850: irq and io must be set.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_uart6850
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unload_uart6850
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 macro_line|#endif

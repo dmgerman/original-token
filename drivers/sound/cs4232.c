@@ -1,8 +1,10 @@
 multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; *&n; * Supported chips are:&n; *      CS4232&n; *      CS4236&n; *      CS4236B&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_CS4232
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#if defined(CONFIG_CS4232) || defined (MODULE)
 DECL|macro|KEY_PORT
 mdefine_line|#define KEY_PORT&t;0x279&t;/* Same as LPT1 status port */
 DECL|macro|CSN_NUM
@@ -11,6 +13,7 @@ r_static
 r_void
 DECL|function|CS_OUT
 id|CS_OUT
+c_func
 (paren
 r_int
 r_char
@@ -18,6 +21,7 @@ id|a
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|a
@@ -53,6 +57,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_cs4232_mpu
 id|probe_cs4232_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -76,6 +81,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_cs4232_mpu
 id|attach_cs4232_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -162,6 +168,7 @@ suffix:semicolon
 r_int
 DECL|function|probe_cs4232
 id|probe_cs4232
+c_func
 (paren
 r_struct
 id|address_info
@@ -215,6 +222,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|base
 comma
@@ -223,6 +231,7 @@ l_int|4
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;cs4232.c: I/O port 0x%03x not free&bslash;n&quot;
 comma
@@ -237,6 +246,7 @@ r_if
 c_cond
 (paren
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -286,6 +296,7 @@ id|i
 op_increment
 )paren
 id|CS_OUT
+c_func
 (paren
 id|crystal_key
 (braket
@@ -332,6 +343,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|cs_sleeper
@@ -370,6 +382,7 @@ suffix:semicolon
 multiline_comment|/* Delay */
 multiline_comment|/*&n; * Now set the CSN (Card Select Number).&n; */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x06
 comma
@@ -378,6 +391,7 @@ id|CSN_NUM
 suffix:semicolon
 multiline_comment|/*&n; * Then set some config bytes. First logical device 0 &n; */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x15
 comma
@@ -386,6 +400,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* Select logical device 0 (WSS/SB/FM) */
 id|CS_OUT3
+c_func
 (paren
 l_int|0x47
 comma
@@ -407,6 +422,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 l_int|0x388
 comma
@@ -415,6 +431,7 @@ l_int|4
 )paren
 multiline_comment|/* Not free */
 id|CS_OUT3
+c_func
 (paren
 l_int|0x48
 comma
@@ -425,6 +442,7 @@ l_int|0x00
 multiline_comment|/* FM base off */
 r_else
 id|CS_OUT3
+c_func
 (paren
 l_int|0x48
 comma
@@ -435,6 +453,7 @@ l_int|0x88
 suffix:semicolon
 multiline_comment|/* FM base 0x388 */
 id|CS_OUT3
+c_func
 (paren
 l_int|0x42
 comma
@@ -445,6 +464,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* SB base off */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x22
 comma
@@ -453,6 +473,7 @@ id|irq
 suffix:semicolon
 multiline_comment|/* SB+WSS IRQ */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x2a
 comma
@@ -469,6 +490,7 @@ op_minus
 l_int|1
 )paren
 id|CS_OUT2
+c_func
 (paren
 l_int|0x25
 comma
@@ -477,6 +499,7 @@ id|dma2
 multiline_comment|/* WSS DMA2 */
 r_else
 id|CS_OUT2
+c_func
 (paren
 l_int|0x25
 comma
@@ -485,6 +508,7 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* No WSS DMA2 */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x33
 comma
@@ -531,6 +555,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|cs_sleeper
@@ -582,6 +607,7 @@ l_int|0
 )paren
 (brace
 id|CS_OUT2
+c_func
 (paren
 l_int|0x15
 comma
@@ -590,6 +616,7 @@ l_int|0x03
 suffix:semicolon
 multiline_comment|/* Select logical device 3 (MPU) */
 id|CS_OUT3
+c_func
 (paren
 l_int|0x47
 comma
@@ -608,6 +635,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* MPU base */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x22
 comma
@@ -616,6 +644,7 @@ id|mpu_irq
 suffix:semicolon
 multiline_comment|/* MPU IRQ */
 id|CS_OUT2
+c_func
 (paren
 l_int|0x33
 comma
@@ -627,6 +656,7 @@ multiline_comment|/* Activate logical dev 3 */
 macro_line|#endif
 multiline_comment|/*&n; * Finally activate the chip&n; */
 id|CS_OUT
+c_func
 (paren
 l_int|0x79
 )paren
@@ -670,6 +700,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|cs_sleeper
@@ -711,6 +742,7 @@ r_if
 c_cond
 (paren
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -757,6 +789,7 @@ op_assign
 id|WK_SLEEP
 suffix:semicolon
 id|interruptible_sleep_on
+c_func
 (paren
 op_amp
 id|cs_sleeper
@@ -801,6 +834,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_cs4232
 id|attach_cs4232
+c_func
 (paren
 r_struct
 id|address_info
@@ -843,7 +877,13 @@ id|dma2
 op_assign
 id|dma1
 suffix:semicolon
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
 id|ad1848_init
+c_func
 (paren
 l_string|&quot;Crystal audio controller&quot;
 comma
@@ -872,6 +912,7 @@ id|old_num_mixers
 (brace
 multiline_comment|/* Assume the mixer map is as suggested in the CS4232 databook */
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE1
 comma
@@ -879,6 +920,7 @@ id|SOUND_MIXER_LINE
 )paren
 suffix:semicolon
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE2
 comma
@@ -886,6 +928,7 @@ id|SOUND_MIXER_CD
 )paren
 suffix:semicolon
 id|AD1848_REROUTE
+c_func
 (paren
 id|SOUND_MIXER_LINE3
 comma
@@ -959,6 +1002,7 @@ r_if
 c_cond
 (paren
 id|probe_uart401
+c_func
 (paren
 op_amp
 id|hw_config2
@@ -970,6 +1014,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|attach_uart401
+c_func
 (paren
 op_amp
 id|hw_config2
@@ -985,12 +1030,23 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|hw_config-&gt;slots
+(braket
+l_int|1
+)braket
+op_assign
+id|hw_config2.slots
+(braket
+l_int|1
+)braket
+suffix:semicolon
 )brace
 macro_line|#endif
 )brace
 r_void
 DECL|function|unload_cs4232
 id|unload_cs4232
+c_func
 (paren
 r_struct
 id|address_info
@@ -1029,6 +1085,7 @@ op_assign
 id|dma1
 suffix:semicolon
 id|ad1848_unload
+c_func
 (paren
 id|base
 comma
@@ -1041,6 +1098,15 @@ id|dma2
 comma
 multiline_comment|/* Capture DMA */
 l_int|0
+)paren
+suffix:semicolon
+id|sound_unload_audiodev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
@@ -1106,7 +1172,18 @@ id|hw_config2.card_subtype
 op_assign
 l_int|0
 suffix:semicolon
+id|hw_config2.slots
+(braket
+l_int|1
+)braket
+op_assign
+id|hw_config-&gt;slots
+(braket
+l_int|1
+)braket
+suffix:semicolon
 id|unload_uart401
+c_func
 (paren
 op_amp
 id|hw_config2
@@ -1118,6 +1195,7 @@ macro_line|#endif
 r_void
 DECL|function|unload_cs4232_mpu
 id|unload_cs4232_mpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -1127,5 +1205,170 @@ id|hw_config
 (brace
 multiline_comment|/* Not required. Handled by cs4232_unload */
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_int
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma2
+r_int
+id|dma2
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|cfg
+r_struct
+id|address_info
+id|cfg
+suffix:semicolon
+multiline_comment|/*&n; *    Install a CS4232 based card. Need to have ad1848 and mpu401&n; *      loaded ready.&n; */
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|irq
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma2
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cs4232: dma, dma2, irq and io must be set.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|cfg.io_base
+op_assign
+id|io
+suffix:semicolon
+id|cfg.irq
+op_assign
+id|irq
+suffix:semicolon
+id|cfg.dma
+op_assign
+id|dma
+suffix:semicolon
+id|cfg.dma2
+op_assign
+id|dma2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probe_cs4232
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|probe_cs4232_mpu
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+multiline_comment|/* Bug always returns 0 not OK -- AC */
+id|attach_cs4232
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|attach_cs4232_mpu
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unload_cs4232_mpu
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|unload_cs4232
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
+id|SOUND_LOCK_END
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

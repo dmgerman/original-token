@@ -2129,29 +2129,10 @@ op_assign
 id|sl_outfill
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Needed because address &squot;0&squot; is special */
-r_if
-c_cond
-(paren
-id|dev-&gt;pa_addr
-op_eq
-l_int|0
-)paren
-(brace
-id|dev-&gt;pa_addr
-op_assign
-id|ntohl
-c_func
-(paren
-l_int|0xC0A80001
-)paren
-suffix:semicolon
-)brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&t;dev-&gt;flags |= IFF_UP; */
 id|dev-&gt;start
 op_assign
 l_int|1
@@ -2250,7 +2231,6 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&t;dev-&gt;flags &amp;= ~IFF_UP; */
 r_return
 l_int|0
 suffix:semicolon
@@ -2595,6 +2575,15 @@ id|SLIP_MAGIC
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sl-&gt;dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+(brace
+multiline_comment|/* STRONG layering violation! --ANK */
 (paren
 r_void
 )paren
@@ -2604,6 +2593,7 @@ c_func
 id|sl-&gt;dev
 )paren
 suffix:semicolon
+)brace
 id|tty-&gt;disc_data
 op_assign
 l_int|0
@@ -2647,12 +2637,6 @@ id|sl_free
 c_func
 (paren
 id|sl
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|sl-&gt;dev
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -4788,27 +4772,9 @@ id|dev-&gt;flags
 op_assign
 id|IFF_NOARP
 op_or
+id|IFF_POINTOPOINT
+op_or
 id|IFF_MULTICAST
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-l_int|4
 suffix:semicolon
 r_return
 l_int|0

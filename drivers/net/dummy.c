@@ -189,6 +189,11 @@ id|dev-&gt;flags
 op_or_assign
 id|IFF_NOARP
 suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_BROADCAST
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -15,6 +15,8 @@ DECL|macro|KERNELD_REQUEST_ROUTE
 mdefine_line|#define KERNELD_REQUEST_ROUTE 6 /* from net/ipv4/route.c */
 DECL|macro|KERNELD_BLANKER
 mdefine_line|#define KERNELD_BLANKER 7 /* from drivers/char/console.c */
+DECL|macro|KERNELD_PNP
+mdefine_line|#define KERNELD_PNP 8 /* from drivers/pnp/kerneld.c */
 DECL|macro|KERNELD_ARP
 mdefine_line|#define KERNELD_ARP 256 /* from net/ipv4/arp.c */
 multiline_comment|/*&n; * Uncomment the following line for the new kerneld protocol&n; * This includes the pid of the kernel level requester into the kerneld header&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*  de4x5.c: A DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500&n;             ethernet driver for Linux.&n;&n;    Copyright 1994, 1995 Digital Equipment Corporation.&n;&n;    Testing resources for this driver have been made available&n;    in part by NASA Ames Research Center (mjacob@nas.nasa.gov).&n;&n;    The author may be reached at davies@maniac.ultranet.com.&n;&n;    This program is free software; you can redistribute  it and/or modify it&n;    under  the terms of  the GNU General  Public License as published by the&n;    Free Software Foundation;  either version 2 of the  License, or (at your&n;    option) any later version.&n;&n;    THIS  SOFTWARE  IS PROVIDED   ``AS  IS&squot;&squot; AND   ANY  EXPRESS OR   IMPLIED&n;    WARRANTIES,   INCLUDING, BUT NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF&n;    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN&n;    NO  EVENT  SHALL   THE AUTHOR  BE    LIABLE FOR ANY   DIRECT,  INDIRECT,&n;    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT&n;    NOT LIMITED   TO, PROCUREMENT OF  SUBSTITUTE GOODS  OR SERVICES; LOSS OF&n;    USE, DATA,  OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON&n;    ANY THEORY OF LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT&n;    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF&n;    THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&n;&n;    You should have received a copy of the  GNU General Public License along&n;    with this program; if not, write  to the Free Software Foundation, Inc.,&n;    675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Originally,   this  driver  was    written  for the  Digital   Equipment&n;    Corporation series of EtherWORKS ethernet cards:&n;&n;        DE425 TP/COAX EISA&n;&t;DE434 TP PCI&n;&t;DE435 TP/COAX/AUI PCI&n;&t;DE450 TP/COAX/AUI PCI&n;&t;DE500 10/100 PCI Fasternet&n;&n;    but it  will  now attempt  to  support all  cards which   conform to the&n;    Digital Semiconductor   SROM   Specification.    The  driver   currently&n;    recognises the following chips:&n;&n;        DC21040  (no SROM) &n;&t;DC21041[A]  &n;&t;DC21140[A] &n;&t;DC21142 &n;&t;DC21143 &n;&n;    So far the driver is known to work with the following cards:&n;&n;        KINGSTON&n;&t;Linksys&n;&t;ZNYX342&n;&t;SMC8432&n;&t;SMC9332 (w/new SROM)&n;&t;ZNYX31[45]&n;&t;ZNYX346 10/100 4 port (can act as a 10/100 bridge!) &n;&n;    The driver has been tested on a relatively busy network using the DE425,&n;    DE434, DE435 and DE500 cards and benchmarked with &squot;ttcp&squot;: it transferred&n;    16M of data to a DECstation 5000/200 as follows:&n;&n;                TCP           UDP&n;             TX     RX     TX     RX&n;    DE425   1030k  997k   1170k  1128k&n;    DE434   1063k  995k   1170k  1125k&n;    DE435   1063k  995k   1170k  1125k&n;    DE500   1063k  998k   1170k  1125k  in 10Mb/s mode&n;&n;    All  values are typical (in   kBytes/sec) from a  sample  of 4 for  each&n;    measurement. Their error is +/-20k on a quiet (private) network and also&n;    depend on what load the CPU has.&n;&n;    =========================================================================&n;    This driver  has been written substantially  from  scratch, although its&n;    inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious. With the module autoload of&n;    every  usable DECchip board,  I  pinched Donald&squot;s &squot;next_module&squot; field to&n;    link my modules together.&n;&n;    Upto 15 EISA cards can be supported under this driver, limited primarily&n;    by the available IRQ lines.  I have  checked different configurations of&n;    multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;    problem yet (provided you have at least depca.c v0.38) ...&n;&n;    PCI support has been added  to allow the driver  to work with the DE434,&n;    DE435, DE450 and DE500 cards. The I/O accesses are a bit of a kludge due&n;    to the differences in the EISA and PCI CSR address offsets from the base&n;    address.&n;&n;    The ability to load this  driver as a loadable  module has been included&n;    and used extensively  during the driver development  (to save those long&n;    reboot sequences).  Loadable module support  under PCI and EISA has been&n;    achieved by letting the driver autoprobe as if it were compiled into the&n;    kernel. Do make sure  you&squot;re not sharing  interrupts with anything  that&n;    cannot accommodate  interrupt  sharing!&n;&n;    To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) for fixed  autoprobes (not  recommended),  edit the source code  near&n;    line 5539 to reflect the I/O address  you&squot;re using, or assign these when&n;    loading by:&n;&n;                   insmod de4x5 io=0xghh           where g = bus number&n;&t;&t;                                        hh = device number   &n;&n;       NB: autoprobing for modules is now supported by default. You may just&n;           use:&n;&n;                   insmod de4x5&n;&n;           to load all available boards. For a specific board, still use&n;&t;   the &squot;io=?&squot; above.&n;    3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the de4x5 configuration turned off and reboot.&n;    5) insmod de4x5 [io=0xghh]&n;    6) run the net startup bits for your new eth?? interface(s) manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    To unload a module, turn off the associated interface(s) &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;    Automedia detection is included so that in  principal you can disconnect&n;    from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;    pause whilst the   driver figures out   where its media went).  My tests&n;    using ping showed that it appears to work....&n;&n;    By  default,  the driver will  now   autodetect any  DECchip based card.&n;    Should you have a need to restrict the driver to DIGITAL only cards, you&n;    can compile with a  DEC_ONLY define, or if  loading as a module, use the&n;    &squot;dec_only=1&squot;  parameter. &n;&n;    I&squot;ve changed the timing routines to  use the kernel timer and scheduling&n;    functions  so that the  hangs  and other assorted problems that occurred&n;    while autosensing the  media  should be gone.  A  bonus  for the DC21040&n;    auto  media sense algorithm is  that it can now  use one that is more in&n;    line with the  rest (the DC21040  chip doesn&squot;t  have a hardware  timer).&n;    The downside is the 1 &squot;jiffies&squot; (10ms) resolution.&n;&n;    IEEE 802.3u MII interface code has  been added in anticipation that some&n;    products may use it in the future.&n;&n;    The SMC9332 card  has a non-compliant SROM  which needs fixing -  I have&n;    patched this  driver to detect it  because the SROM format used complies&n;    to a previous DEC-STD format.&n;&n;    I have removed the buffer copies needed for receive on Intels.  I cannot&n;    remove them for   Alphas since  the  Tulip hardware   only does longword&n;    aligned  DMA transfers  and  the  Alphas get   alignment traps with  non&n;    longword aligned data copies (which makes them really slow). No comment.&n;&n;    I  have added SROM decoding  routines to make this  driver work with any&n;    card that  supports the Digital  Semiconductor SROM spec. This will help&n;    all  cards running the dc2114x  series chips in particular.  Cards using&n;    the dc2104x  chips should run correctly with  the basic  driver.  I&squot;m in&n;    debt to &lt;mjacob@feral.com&gt; for the  testing and feedback that helped get&n;    this feature working.  So far we have  tested KINGSTON, SMC8432, SMC9332&n;    (with the latest SROM complying  with the SROM spec  V3: their first was&n;    broken), ZNYX342  and  LinkSys. ZYNX314 (dual  21041  MAC) and  ZNYX 315&n;    (quad 21041 MAC)  cards also  appear  to work despite their  incorrectly&n;    wired IRQs.&n;&n;    I have added a temporary fix for interrupt problems when some SCSI cards&n;    share the same interrupt as the DECchip based  cards. The problem occurs&n;    because  the SCSI card wants to  grab the interrupt  as a fast interrupt&n;    (runs the   service routine with interrupts turned   off) vs.  this card&n;    which really needs to run the service routine with interrupts turned on.&n;    This driver will  now   add the interrupt service   routine  as  a  fast&n;    interrupt if it   is bounced from the   slow interrupt.  THIS IS NOT   A&n;    RECOMMENDED WAY TO RUN THE DRIVER  and has been done  for a limited time&n;    until  people   sort  out their  compatibility    issues and the  kernel&n;    interrupt  service code  is  fixed.   YOU  SHOULD SEPARATE OUT  THE FAST&n;    INTERRUPT CARDS FROM THE SLOW INTERRUPT CARDS to ensure that they do not&n;    run on the same interrupt. PCMCIA/CardBus is another can of worms...&n;&n;    Finally, I think  I have really  fixed  the module  loading problem with&n;    more than one DECchip based  card.  As a  side effect, I don&squot;t mess with&n;    the  device structure any  more which means that  if more than 1 card in&n;    2.0.x is    installed (4  in   2.1.x),  the  user   will have   to  edit&n;    linux/drivers/net/Space.c  to make room for  them. Hence, module loading&n;    is  the preferred way to use   this driver, since  it  doesn&squot;t have this&n;    limitation.&n;&n;    Where SROM  media detection is used and  full duplex is specified in the&n;    SROM, the feature is ignored unless de4x5_full_duplex  is set at compile&n;    time OR during a module  load (insmod de4x5 de4x5_full_duplex=1).   This&n;    is because there  is no way  to automatically  detect full duplex  links&n;    except through  autonegotiation.   When I  include  the  autonegotiation&n;    feature  in  the  SROM  autoconf   code,   this detection  will    occur&n;    automatically.&n;&n;    TO DO:&n;    ------&n;&n;    o check what revision numbers the 21142 and 21143 have&n;    o&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     17-Nov-94   Initial writing. ALPHA code release.&n;      0.2     13-Jan-95   Added PCI support for DE435&squot;s.&n;      0.21    19-Jan-95   Added auto media detection.&n;      0.22    10-Feb-95   Fix interrupt handler call &lt;chris@cosy.sbg.ac.at&gt;.&n;                          Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;&t;&t;&t;  Add request/release_region code.&n;&t;&t;&t;  Add loadable modules support for PCI.&n;&t;&t;&t;  Clean up loadable modules support.&n;      0.23    28-Feb-95   Added DC21041 and DC21140 support. &n;                          Fix missed frame counter value and initialisation.&n;&t;&t;&t;  Fixed EISA probe.&n;      0.24    11-Apr-95   Change delay routine to use &lt;linux/udelay&gt;.&n;                          Change TX_BUFFS_AVAIL macro.&n;&t;&t;&t;  Change media autodetection to allow manual setting.&n;&t;&t;&t;  Completed DE500 (DC21140) support.&n;      0.241   18-Apr-95   Interim release without DE500 Autosense Algorithm.&n;      0.242   10-May-95   Minor changes.&n;      0.30    12-Jun-95   Timer fix for DC21140.&n;                          Portability changes.&n;&t;&t;&t;  Add ALPHA changes from &lt;jestabro@ant.tay1.dec.com&gt;.&n;&t;&t;&t;  Add DE500 semi automatic autosense.&n;&t;&t;&t;  Add Link Fail interrupt TP failure detection.&n;&t;&t;&t;  Add timer based link change detection.&n;&t;&t;&t;  Plugged a memory leak in de4x5_queue_pkt().&n;      0.31    13-Jun-95   Fixed PCI stuff for 1.3.1.&n;      0.32    26-Jun-95   Added verify_area() calls in de4x5_ioctl() from a&n;                          suggestion by &lt;heiko@colossus.escape.de&gt;.&n;      0.33     8-Aug-95   Add shared interrupt support (not released yet).&n;      0.331   21-Aug-95   Fix de4x5_open() with fast CPUs.&n;                          Fix de4x5_interrupt().&n;                          Fix dc21140_autoconf() mess.&n;&t;&t;&t;  No shared interrupt support.&n;      0.332   11-Sep-95   Added MII management interface routines.&n;      0.40     5-Mar-96   Fix setup frame timeout &lt;maartenb@hpkuipc.cern.ch&gt;.&n;                          Add kernel timer code (h/w is too flaky).&n;&t;&t;&t;  Add MII based PHY autosense.&n;&t;&t;&t;  Add new multicasting code.&n;&t;&t;&t;  Add new autosense algorithms for media/mode &n;&t;&t;&t;  selection using kernel scheduling/timing.&n;&t;&t;&t;  Re-formatted.&n;&t;&t;&t;  Made changes suggested by &lt;jeff@router.patch.net&gt;:&n;&t;&t;&t;    Change driver to detect all DECchip based cards&n;&t;&t;&t;    with DEC_ONLY restriction a special case.&n;&t;&t;&t;    Changed driver to autoprobe as a module. No irq&n;&t;&t;&t;    checking is done now - assume BIOS is good!&n;&t;&t;&t;  Added SMC9332 detection &lt;manabe@Roy.dsl.tutics.ac.jp&gt;&n;      0.41    21-Mar-96   Don&squot;t check for get_hw_addr checksum unless DEC card&n;                          only &lt;niles@axp745gsfc.nasa.gov&gt;&n;&t;&t;&t;  Fix for multiple PCI cards reported by &lt;jos@xos.nl&gt;&n;&t;&t;&t;  Duh, put the SA_SHIRQ flag into request_interrupt().&n;&t;&t;&t;  Fix SMC ethernet address in enet_det[].&n;&t;&t;&t;  Print chip name instead of &quot;UNKNOWN&quot; during boot.&n;      0.42    26-Apr-96   Fix MII write TA bit error.&n;                          Fix bug in dc21040 and dc21041 autosense code.&n;&t;&t;&t;  Remove buffer copies on receive for Intels.&n;&t;&t;&t;  Change sk_buff handling during media disconnects to&n;&t;&t;&t;   eliminate DUP packets.&n;&t;&t;&t;  Add dynamic TX thresholding.&n;&t;&t;&t;  Change all chips to use perfect multicast filtering.&n;&t;&t;&t;  Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;      0.43   21-Jun-96    Fix unconnected media TX retry bug.&n;                          Add Accton to the list of broken cards.&n;&t;&t;&t;  Fix TX under-run bug for non DC21140 chips.&n;&t;&t;&t;  Fix boot command probe bug in alloc_device() as&n;&t;&t;&t;   reported by &lt;koen.gadeyne@barco.com&gt; and &n;&t;&t;&t;   &lt;orava@nether.tky.hut.fi&gt;.&n;&t;&t;&t;  Add cache locks to prevent a race condition as&n;&t;&t;&t;   reported by &lt;csd@microplex.com&gt; and &n;&t;&t;&t;   &lt;baba@beckman.uiuc.edu&gt;.&n;&t;&t;&t;  Upgraded alloc_device() code.&n;      0.431  28-Jun-96    Fix potential bug in queue_pkt() from discussion&n;                          with &lt;csd@microplex.com&gt;&n;      0.44   13-Aug-96    Fix RX overflow bug in 2114[023] chips.&n;                          Fix EISA probe bugs reported by &lt;os2@kpi.kharkov.ua&gt;&n;&t;&t;&t;  and &lt;michael@compurex.com&gt;.&n;      0.441   9-Sep-96    Change dc21041_autoconf() to probe quiet BNC media&n;                           with a loopback packet.&n;      0.442   9-Sep-96    Include AUI in dc21041 media printout. Bug reported&n;                           by &lt;bhat@mundook.cs.mu.OZ.AU&gt;&n;      0.45    8-Dec-96    Include endian functions for PPC use, from work &n;                           by &lt;cort@cs.nmt.edu&gt; and &lt;g.thomas@opengroup.org&gt;.&n;      0.451  28-Dec-96    Added fix to allow autoprobe for modules after&n;                           suggestion from &lt;mjacob@feral.com&gt;.&n;      0.5    30-Jan-97    Added SROM decoding functions.&n;                          Updated debug flags.&n;&t;&t;&t;  Fix sleep/wakeup calls for PCI cards, bug reported&n;&t;&t;&t;   by &lt;cross@gweep.lkg.dec.com&gt;.&n;&t;&t;&t;  Added multi-MAC, one SROM feature from discussion&n;&t;&t;&t;   with &lt;mjacob@feral.com&gt;.&n;&t;&t;&t;  Added full module autoprobe capability.&n;&t;&t;&t;  Added attempt to use an SMC9332 with broken SROM.&n;&t;&t;&t;  Added fix for ZYNX multi-mac cards that didn&squot;t&n;&t;&t;&t;   get their IRQs wired correctly.&n;      0.51   13-Feb-97    Added endian fixes for the SROM accesses from&n;&t;&t;&t;   &lt;paubert@iram.es&gt;&n;&t;&t;&t;  Fix init_connection() to remove extra device reset.&n;&t;&t;&t;  Fix MAC/PHY reset ordering in dc21140m_autoconf().&n;&t;&t;&t;  Fix initialisation problem with lp-&gt;timeout in&n;&t;&t;&t;   typeX_infoblock() from &lt;paubert@iram.es&gt;.&n;&t;&t;&t;  Fix MII PHY reset problem from work done by&n;&t;&t;&t;   &lt;paubert@iram.es&gt;.&n;      0.52   26-Apr-97    Some changes may not credit the right people -&n;                           a disk crash meant I lost some mail.&n;&t;&t;&t;  Change RX interrupt routine to drop rather than &n;&t;&t;&t;   defer packets to avoid hang reported by &n;&t;&t;&t;   &lt;g.thomas@opengroup.org&gt;.&n;&t;&t;&t;  Fix srom_exec() to return for COMPACT and type 1&n;&t;&t;&t;   infoblocks.&n;&t;&t;&t;  Added DC21142 and DC21143 functions.&n;&t;&t;&t;  Added byte counters from &lt;phil@tazenda.demon.co.uk&gt;&n;&t;&t;&t;  Added SA_INTERRUPT temporary fix from &n;&t;&t;&t;   &lt;mjacob@feral.com&gt;.&n;      0.53   12-Nov-97    Fix the *_probe() to include &squot;eth??&squot; name during&n;                           module load: bug reported by&n;&t;&t;&t;   &lt;Piete.Brooks@cl.cam.ac.uk&gt;&n;&t;&t;&t;  Fix multi-MAC, one SROM, to work with 2114x chips:&n;&t;&t;&t;   bug reported by &lt;cmetz@inner.net&gt;.&n;&t;&t;&t;  Make above search independent of BIOS device scan&n;&t;&t;&t;   direction.&n;&t;&t;&t;  Completed DC2114[23] autosense functions.&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  de4x5.c: A DIGITAL DC21x4x DECchip and DE425/DE434/DE435/DE450/DE500&n;   ethernet driver for Linux.&n;&n;   Copyright 1994, 1995 Digital Equipment Corporation.&n;&n;   Testing resources for this driver have been made available&n;   in part by NASA Ames Research Center (mjacob@nas.nasa.gov).&n;&n;   The author may be reached at davies@maniac.ultranet.com.&n;&n;   This program is free software; you can redistribute  it and/or modify it&n;   under  the terms of  the GNU General  Public License as published by the&n;   Free Software Foundation;  either version 2 of the  License, or (at your&n;   option) any later version.&n;&n;   THIS  SOFTWARE  IS PROVIDED   ``AS  IS&squot;&squot; AND   ANY  EXPRESS OR   IMPLIED&n;   WARRANTIES,   INCLUDING, BUT NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF&n;   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN&n;   NO  EVENT  SHALL   THE AUTHOR  BE    LIABLE FOR ANY   DIRECT,  INDIRECT,&n;   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT&n;   NOT LIMITED   TO, PROCUREMENT OF  SUBSTITUTE GOODS  OR SERVICES; LOSS OF&n;   USE, DATA,  OR PROFITS; OR  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON&n;   ANY THEORY OF LIABILITY, WHETHER IN  CONTRACT, STRICT LIABILITY, OR TORT&n;   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF&n;   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&n;&n;   You should have received a copy of the  GNU General Public License along&n;   with this program; if not, write  to the Free Software Foundation, Inc.,&n;   675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;   Originally,   this  driver  was    written  for the  Digital   Equipment&n;   Corporation series of EtherWORKS ethernet cards:&n;&n;   DE425 TP/COAX EISA&n;   DE434 TP PCI&n;   DE435 TP/COAX/AUI PCI&n;   DE450 TP/COAX/AUI PCI&n;   DE500 10/100 PCI Fasternet&n;&n;   but it  will  now attempt  to  support all  cards which   conform to the&n;   Digital Semiconductor   SROM   Specification.    The  driver   currently&n;   recognises the following chips:&n;&n;        DC21040  (no SROM) &n;&t;DC21041[A]  &n;&t;DC21140[A] &n;&t;DC21142 &n;&t;DC21143 &n;&n;    So far the driver is known to work with the following cards:&n;&n;   KINGSTON&n;   Linksys&n;   ZNYX342&n;   SMC8432&n;   SMC9332 (w/new SROM)&n;   ZNYX31[45]&n;   ZNYX346 10/100 4 port (can act as a 10/100 bridge!) &n;&n;   The driver has been tested on a relatively busy network using the DE425,&n;   DE434, DE435 and DE500 cards and benchmarked with &squot;ttcp&squot;: it transferred&n;   16M of data to a DECstation 5000/200 as follows:&n;&n;   TCP           UDP&n;   TX     RX     TX     RX&n;   DE425   1030k  997k   1170k  1128k&n;   DE434   1063k  995k   1170k  1125k&n;   DE435   1063k  995k   1170k  1125k&n;   DE500   1063k  998k   1170k  1125k  in 10Mb/s mode&n;&n;   All  values are typical (in   kBytes/sec) from a  sample  of 4 for  each&n;   measurement. Their error is +/-20k on a quiet (private) network and also&n;   depend on what load the CPU has.&n;&n;   =========================================================================&n;   This driver  has been written substantially  from  scratch, although its&n;   inheritance of style and stack interface from &squot;ewrk3.c&squot; and in turn from&n;   Donald Becker&squot;s &squot;lance.c&squot; should be obvious. With the module autoload of&n;   every  usable DECchip board,  I  pinched Donald&squot;s &squot;next_module&squot; field to&n;   link my modules together.&n;&n;   Upto 15 EISA cards can be supported under this driver, limited primarily&n;   by the available IRQ lines.  I have  checked different configurations of&n;   multiple depca, EtherWORKS 3 cards and de4x5 cards and  have not found a&n;   problem yet (provided you have at least depca.c v0.38) ...&n;&n;   PCI support has been added  to allow the driver  to work with the DE434,&n;   DE435, DE450 and DE500 cards. The I/O accesses are a bit of a kludge due&n;   to the differences in the EISA and PCI CSR address offsets from the base&n;   address.&n;&n;   The ability to load this  driver as a loadable  module has been included&n;   and used extensively  during the driver development  (to save those long&n;   reboot sequences).  Loadable module support  under PCI and EISA has been&n;   achieved by letting the driver autoprobe as if it were compiled into the&n;   kernel. Do make sure  you&squot;re not sharing  interrupts with anything  that&n;   cannot accommodate  interrupt  sharing!&n;&n;   To utilise this ability, you have to do 8 things:&n;&n;   0) have a copy of the loadable modules code installed on your system.&n;   1) copy de4x5.c from the  /linux/drivers/net directory to your favourite&n;   temporary directory.&n;   2) for fixed  autoprobes (not  recommended),  edit the source code  near&n;   line 5539 to reflect the I/O address  you&squot;re using, or assign these when&n;   loading by:&n;&n;   insmod de4x5 io=0xghh           where g = bus number&n;   hh = device number   &n;&n;   NB: autoprobing for modules is now supported by default. You may just&n;   use:&n;&n;   insmod de4x5&n;&n;   to load all available boards. For a specific board, still use&n;   the &squot;io=?&squot; above.&n;   3) compile  de4x5.c, but include -DMODULE in  the command line to ensure&n;   that the correct bits are compiled (see end of source code).&n;   4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;   kernel with the de4x5 configuration turned off and reboot.&n;   5) insmod de4x5 [io=0xghh]&n;   6) run the net startup bits for your new eth?? interface(s) manually &n;   (usually /etc/rc.inet[12] at boot time). &n;   7) enjoy!&n;&n;   To unload a module, turn off the associated interface(s) &n;   &squot;ifconfig eth?? down&squot; then &squot;rmmod de4x5&squot;.&n;&n;   Automedia detection is included so that in  principal you can disconnect&n;   from, e.g.  TP, reconnect  to BNC  and  things will still work  (after a&n;   pause whilst the   driver figures out   where its media went).  My tests&n;   using ping showed that it appears to work....&n;&n;   By  default,  the driver will  now   autodetect any  DECchip based card.&n;   Should you have a need to restrict the driver to DIGITAL only cards, you&n;   can compile with a  DEC_ONLY define, or if  loading as a module, use the&n;   &squot;dec_only=1&squot;  parameter. &n;&n;   I&squot;ve changed the timing routines to  use the kernel timer and scheduling&n;   functions  so that the  hangs  and other assorted problems that occurred&n;   while autosensing the  media  should be gone.  A  bonus  for the DC21040&n;   auto  media sense algorithm is  that it can now  use one that is more in&n;   line with the  rest (the DC21040  chip doesn&squot;t  have a hardware  timer).&n;   The downside is the 1 &squot;jiffies&squot; (10ms) resolution.&n;&n;   IEEE 802.3u MII interface code has  been added in anticipation that some&n;   products may use it in the future.&n;&n;   The SMC9332 card  has a non-compliant SROM  which needs fixing -  I have&n;   patched this  driver to detect it  because the SROM format used complies&n;   to a previous DEC-STD format.&n;&n;   I have removed the buffer copies needed for receive on Intels.  I cannot&n;   remove them for   Alphas since  the  Tulip hardware   only does longword&n;   aligned  DMA transfers  and  the  Alphas get   alignment traps with  non&n;   longword aligned data copies (which makes them really slow). No comment.&n;&n;   I  have added SROM decoding  routines to make this  driver work with any&n;   card that  supports the Digital  Semiconductor SROM spec. This will help&n;   all  cards running the dc2114x  series chips in particular.  Cards using&n;   the dc2104x  chips should run correctly with  the basic  driver.  I&squot;m in&n;   debt to &lt;mjacob@feral.com&gt; for the  testing and feedback that helped get&n;   this feature working.  So far we have  tested KINGSTON, SMC8432, SMC9332&n;   (with the latest SROM complying  with the SROM spec  V3: their first was&n;   broken), ZNYX342  and  LinkSys. ZYNX314 (dual  21041  MAC) and  ZNYX 315&n;   (quad 21041 MAC)  cards also  appear  to work despite their  incorrectly&n;   wired IRQs.&n;&n;   I have added a temporary fix for interrupt problems when some SCSI cards&n;   share the same interrupt as the DECchip based  cards. The problem occurs&n;   because  the SCSI card wants to  grab the interrupt  as a fast interrupt&n;   (runs the   service routine with interrupts turned   off) vs.  this card&n;   which really needs to run the service routine with interrupts turned on.&n;   This driver will  now   add the interrupt service   routine  as  a  fast&n;   interrupt if it   is bounced from the   slow interrupt.  THIS IS NOT   A&n;   RECOMMENDED WAY TO RUN THE DRIVER  and has been done  for a limited time&n;   until  people   sort  out their  compatibility    issues and the  kernel&n;   interrupt  service code  is  fixed.   YOU  SHOULD SEPARATE OUT  THE FAST&n;   INTERRUPT CARDS FROM THE SLOW INTERRUPT CARDS to ensure that they do not&n;   run on the same interrupt. PCMCIA/CardBus is another can of worms...&n;&n;    Finally, I think  I have really  fixed  the module  loading problem with&n;    more than one DECchip based  card.  As a  side effect, I don&squot;t mess with&n;    the  device structure any  more which means that  if more than 1 card in&n;    2.0.x is    installed (4  in   2.1.x),  the  user   will have   to  edit&n;    linux/drivers/net/Space.c  to make room for  them. Hence, module loading&n;    is  the preferred way to use   this driver, since  it  doesn&squot;t have this&n;    limitation.&n;&n;    Where SROM  media detection is used and  full duplex is specified in the&n;    SROM, the feature is ignored unless de4x5_full_duplex  is set at compile&n;    time OR during a module  load (insmod de4x5 de4x5_full_duplex=1).   This&n;    is because there  is no way  to automatically  detect full duplex  links&n;    except through  autonegotiation.   When I  include  the  autonegotiation&n;    feature  in  the  SROM  autoconf   code,   this detection  will    occur&n;    automatically.&n;&n;   TO DO:&n;   ------&n;&n;    o check what revision numbers the 21142 and 21143 have&n;    o&n;&n;   Revision History&n;   ----------------&n;&n;   Version   Date        Description&n;&n;   0.1     17-Nov-94   Initial writing. ALPHA code release.&n;   0.2     13-Jan-95   Added PCI support for DE435&squot;s.&n;   0.21    19-Jan-95   Added auto media detection.&n;   0.22    10-Feb-95   Fix interrupt handler call &lt;chris@cosy.sbg.ac.at&gt;.&n;   Fix recognition bug reported by &lt;bkm@star.rl.ac.uk&gt;.&n;   Add request/release_region code.&n;   Add loadable modules support for PCI.&n;   Clean up loadable modules support.&n;   0.23    28-Feb-95   Added DC21041 and DC21140 support. &n;   Fix missed frame counter value and initialisation.&n;   Fixed EISA probe.&n;   0.24    11-Apr-95   Change delay routine to use &lt;linux/udelay&gt;.&n;   Change TX_BUFFS_AVAIL macro.&n;   Change media autodetection to allow manual setting.&n;   Completed DE500 (DC21140) support.&n;   0.241   18-Apr-95   Interim release without DE500 Autosense Algorithm.&n;   0.242   10-May-95   Minor changes.&n;   0.30    12-Jun-95   Timer fix for DC21140.&n;   Portability changes.&n;   Add ALPHA changes from &lt;jestabro@ant.tay1.dec.com&gt;.&n;   Add DE500 semi automatic autosense.&n;   Add Link Fail interrupt TP failure detection.&n;   Add timer based link change detection.&n;   Plugged a memory leak in de4x5_queue_pkt().&n;   0.31    13-Jun-95   Fixed PCI stuff for 1.3.1.&n;   0.32    26-Jun-95   Added verify_area() calls in de4x5_ioctl() from a&n;   suggestion by &lt;heiko@colossus.escape.de&gt;.&n;   0.33     8-Aug-95   Add shared interrupt support (not released yet).&n;   0.331   21-Aug-95   Fix de4x5_open() with fast CPUs.&n;   Fix de4x5_interrupt().&n;   Fix dc21140_autoconf() mess.&n;   No shared interrupt support.&n;   0.332   11-Sep-95   Added MII management interface routines.&n;   0.40     5-Mar-96   Fix setup frame timeout &lt;maartenb@hpkuipc.cern.ch&gt;.&n;   Add kernel timer code (h/w is too flaky).&n;   Add MII based PHY autosense.&n;   Add new multicasting code.&n;   Add new autosense algorithms for media/mode &n;   selection using kernel scheduling/timing.&n;   Re-formatted.&n;   Made changes suggested by &lt;jeff@router.patch.net&gt;:&n;   Change driver to detect all DECchip based cards&n;   with DEC_ONLY restriction a special case.&n;   Changed driver to autoprobe as a module. No irq&n;   checking is done now - assume BIOS is good!&n;   Added SMC9332 detection &lt;manabe@Roy.dsl.tutics.ac.jp&gt;&n;   0.41    21-Mar-96   Don&squot;t check for get_hw_addr checksum unless DEC card&n;   only &lt;niles@axp745gsfc.nasa.gov&gt;&n;   Fix for multiple PCI cards reported by &lt;jos@xos.nl&gt;&n;   Duh, put the SA_SHIRQ flag into request_interrupt().&n;   Fix SMC ethernet address in enet_det[].&n;   Print chip name instead of &quot;UNKNOWN&quot; during boot.&n;   0.42    26-Apr-96   Fix MII write TA bit error.&n;   Fix bug in dc21040 and dc21041 autosense code.&n;   Remove buffer copies on receive for Intels.&n;   Change sk_buff handling during media disconnects to&n;   eliminate DUP packets.&n;   Add dynamic TX thresholding.&n;   Change all chips to use perfect multicast filtering.&n;   Fix alloc_device() bug &lt;jari@markkus2.fimr.fi&gt;&n;   0.43   21-Jun-96    Fix unconnected media TX retry bug.&n;   Add Accton to the list of broken cards.&n;   Fix TX under-run bug for non DC21140 chips.&n;   Fix boot command probe bug in alloc_device() as&n;   reported by &lt;koen.gadeyne@barco.com&gt; and &n;   &lt;orava@nether.tky.hut.fi&gt;.&n;   Add cache locks to prevent a race condition as&n;   reported by &lt;csd@microplex.com&gt; and &n;   &lt;baba@beckman.uiuc.edu&gt;.&n;   Upgraded alloc_device() code.&n;   0.431  28-Jun-96    Fix potential bug in queue_pkt() from discussion&n;   with &lt;csd@microplex.com&gt;&n;   0.44   13-Aug-96    Fix RX overflow bug in 2114[023] chips.&n;   Fix EISA probe bugs reported by &lt;os2@kpi.kharkov.ua&gt;&n;   and &lt;michael@compurex.com&gt;.&n;   0.441   9-Sep-96    Change dc21041_autoconf() to probe quiet BNC media&n;   with a loopback packet.&n;   0.442   9-Sep-96    Include AUI in dc21041 media printout. Bug reported&n;   by &lt;bhat@mundook.cs.mu.OZ.AU&gt;&n;   0.45    8-Dec-96    Include endian functions for PPC use, from work &n;   by &lt;cort@cs.nmt.edu&gt; and &lt;g.thomas@opengroup.org&gt;.&n;   0.451  28-Dec-96    Added fix to allow autoprobe for modules after&n;   suggestion from &lt;mjacob@feral.com&gt;.&n;   0.5    30-Jan-97    Added SROM decoding functions.&n;   Updated debug flags.&n;   Fix sleep/wakeup calls for PCI cards, bug reported&n;   by &lt;cross@gweep.lkg.dec.com&gt;.&n;   Added multi-MAC, one SROM feature from discussion&n;   with &lt;mjacob@feral.com&gt;.&n;   Added full module autoprobe capability.&n;   Added attempt to use an SMC9332 with broken SROM.&n;   Added fix for ZYNX multi-mac cards that didn&squot;t&n;   get their IRQs wired correctly.&n;   0.51   13-Feb-97    Added endian fixes for the SROM accesses from&n;   &lt;paubert@iram.es&gt;&n;   Fix init_connection() to remove extra device reset.&n;   Fix MAC/PHY reset ordering in dc21140m_autoconf().&n;   Fix initialisation problem with lp-&gt;timeout in&n;   typeX_infoblock() from &lt;paubert@iram.es&gt;.&n;   Fix MII PHY reset problem from work done by&n;   &lt;paubert@iram.es&gt;.&n;   0.52   26-Apr-97    Some changes may not credit the right people -&n;   a disk crash meant I lost some mail.&n;   Change RX interrupt routine to drop rather than &n;   defer packets to avoid hang reported by &n;   &lt;g.thomas@opengroup.org&gt;.&n;   Fix srom_exec() to return for COMPACT and type 1&n;   infoblocks.&n;   Added DC21142 and DC21143 functions.&n;   Added byte counters from &lt;phil@tazenda.demon.co.uk&gt;&n;   Added SA_INTERRUPT temporary fix from &n;   &lt;mjacob@feral.com&gt;.&n;      0.53   12-Nov-97    Fix the *_probe() to include &squot;eth??&squot; name during&n;                           module load: bug reported by&n;&t;&t;&t;   &lt;Piete.Brooks@cl.cam.ac.uk&gt;&n;&t;&t;&t;  Fix multi-MAC, one SROM, to work with 2114x chips:&n;&t;&t;&t;   bug reported by &lt;cmetz@inner.net&gt;.&n;&t;&t;&t;  Make above search independent of BIOS device scan&n;&t;&t;&t;   direction.&n;&t;&t;&t;  Completed DC2114[23] autosense functions.&n;&n;   =========================================================================&n; */
 DECL|variable|version
 r_static
 r_const
@@ -66,7 +66,7 @@ macro_line|#  include &lt;asm/segment.h&gt;
 macro_line|#else
 macro_line|#  include &lt;asm/uaccess.h&gt;
 macro_line|#  include &lt;linux/init.h&gt;
-macro_line|#endif  /* LINUX_VERSION_CODE */
+macro_line|#endif&t;&t;&t;&t;/* LINUX_VERSION_CODE */
 DECL|macro|TWIDDLE
 mdefine_line|#define TWIDDLE(a) (u_short)le16_to_cpu(get_unaligned((u_short *)(a)))
 multiline_comment|/*&n;** MII Information&n;*/
@@ -193,7 +193,7 @@ multiline_comment|/* 21142 MII Connector Interrupt info        */
 )brace
 suffix:semicolon
 DECL|macro|DE4X5_MAX_PHY
-mdefine_line|#define DE4X5_MAX_PHY 8     /* Allow upto 8 attached PHY devices per board */
+mdefine_line|#define DE4X5_MAX_PHY 8&t;&t;/* Allow upto 8 attached PHY devices per board */
 DECL|struct|sia_phy
 r_struct
 id|sia_phy
@@ -446,7 +446,7 @@ id|DEBUG_VERSION
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef DE4X5_AUTOSENSE              /* Should be done on a per adapter basis */
+macro_line|#ifdef DE4X5_AUTOSENSE&t;&t;/* Should be done on a per adapter basis */
 DECL|variable|de4x5_autosense
 r_static
 r_int
@@ -465,8 +465,8 @@ suffix:semicolon
 multiline_comment|/* Do auto media/mode sensing */
 macro_line|#endif
 DECL|macro|DE4X5_AUTOSENSE_MS
-mdefine_line|#define DE4X5_AUTOSENSE_MS 250      /* msec autosense tick (DE500) */
-macro_line|#ifdef DE4X5_FULL_DUPLEX            /* Should be done on a per adapter basis */
+mdefine_line|#define DE4X5_AUTOSENSE_MS 250&t;/* msec autosense tick (DE500) */
+macro_line|#ifdef DE4X5_FULL_DUPLEX&t;/* Should be done on a per adapter basis */
 DECL|variable|de4x5_full_duplex
 r_static
 id|s32
@@ -484,7 +484,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|macro|DE4X5_NDA
-mdefine_line|#define DE4X5_NDA 0xffe0            /* No Device (I/O) Address */
+mdefine_line|#define DE4X5_NDA 0xffe0&t;/* No Device (I/O) Address */
 multiline_comment|/*&n;** Ethernet PROM defines&n;*/
 DECL|macro|PROBE_LENGTH
 mdefine_line|#define PROBE_LENGTH    32
@@ -492,30 +492,30 @@ DECL|macro|ETH_PROM_SIG
 mdefine_line|#define ETH_PROM_SIG    0xAA5500FFUL
 multiline_comment|/*&n;** Ethernet Info&n;*/
 DECL|macro|PKT_BUF_SZ
-mdefine_line|#define PKT_BUF_SZ&t;1536            /* Buffer size for each Tx/Rx buffer */
+mdefine_line|#define PKT_BUF_SZ&t;1536&t;/* Buffer size for each Tx/Rx buffer */
 DECL|macro|IEEE802_3_SZ
-mdefine_line|#define IEEE802_3_SZ    1518            /* Packet + CRC */
+mdefine_line|#define IEEE802_3_SZ    1518&t;/* Packet + CRC */
 DECL|macro|MAX_PKT_SZ
-mdefine_line|#define MAX_PKT_SZ   &t;1514            /* Maximum ethernet packet length */
+mdefine_line|#define MAX_PKT_SZ   &t;1514&t;/* Maximum ethernet packet length */
 DECL|macro|MAX_DAT_SZ
-mdefine_line|#define MAX_DAT_SZ   &t;1500            /* Maximum ethernet data length */
+mdefine_line|#define MAX_DAT_SZ   &t;1500&t;/* Maximum ethernet data length */
 DECL|macro|MIN_DAT_SZ
-mdefine_line|#define MIN_DAT_SZ   &t;1               /* Minimum ethernet data length */
+mdefine_line|#define MIN_DAT_SZ   &t;1&t;/* Minimum ethernet data length */
 DECL|macro|PKT_HDR_LEN
-mdefine_line|#define PKT_HDR_LEN     14              /* Addresses and data length info */
+mdefine_line|#define PKT_HDR_LEN     14&t;/* Addresses and data length info */
 DECL|macro|FAKE_FRAME_LEN
 mdefine_line|#define FAKE_FRAME_LEN  (MAX_PKT_SZ + 1)
 DECL|macro|QUEUE_PKT_TIMEOUT
-mdefine_line|#define QUEUE_PKT_TIMEOUT (3*HZ)        /* 3 second timeout */
+mdefine_line|#define QUEUE_PKT_TIMEOUT (3*HZ)&t;/* 3 second timeout */
 DECL|macro|CRC_POLYNOMIAL_BE
-mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL  /* Ethernet CRC, big endian */
+mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL&t;/* Ethernet CRC, big endian */
 DECL|macro|CRC_POLYNOMIAL_LE
-mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL  /* Ethernet CRC, little endian */
+mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL&t;/* Ethernet CRC, little endian */
 multiline_comment|/*&n;** EISA bus defines&n;*/
 DECL|macro|DE4X5_EISA_IO_PORTS
-mdefine_line|#define DE4X5_EISA_IO_PORTS   0x0c00    /* I/O port base address, slot 0 */
+mdefine_line|#define DE4X5_EISA_IO_PORTS   0x0c00&t;/* I/O port base address, slot 0 */
 DECL|macro|DE4X5_EISA_TOTAL_SIZE
-mdefine_line|#define DE4X5_EISA_TOTAL_SIZE 0x100     /* I/O address extent */
+mdefine_line|#define DE4X5_EISA_TOTAL_SIZE 0x100&t;/* I/O address extent */
 DECL|macro|MAX_EISA_SLOTS
 mdefine_line|#define MAX_EISA_SLOTS 16
 DECL|macro|EISA_SLOT_INC
@@ -530,34 +530,34 @@ multiline_comment|/*&n;** PCI Bus defines&n;*/
 DECL|macro|PCI_MAX_BUS_NUM
 mdefine_line|#define PCI_MAX_BUS_NUM      8
 DECL|macro|DE4X5_PCI_TOTAL_SIZE
-mdefine_line|#define DE4X5_PCI_TOTAL_SIZE 0x80       /* I/O address extent */
+mdefine_line|#define DE4X5_PCI_TOTAL_SIZE 0x80&t;/* I/O address extent */
 DECL|macro|DE4X5_CLASS_CODE
-mdefine_line|#define DE4X5_CLASS_CODE     0x00020000 /* Network controller, Ethernet */
+mdefine_line|#define DE4X5_CLASS_CODE     0x00020000&t;&t;/* Network controller, Ethernet */
 DECL|macro|NO_MORE_PCI
 mdefine_line|#define NO_MORE_PCI          -2         /* PCI bus search all done */
 multiline_comment|/*&n;** Memory Alignment. Each descriptor is 4 longwords long. To force a&n;** particular alignment on the TX descriptor, adjust DESC_SKIP_LEN and&n;** DESC_ALIGN. ALIGN aligns the start address of the private memory area&n;** and hence the RX descriptor ring&squot;s first entry. &n;*/
 DECL|macro|ALIGN4
-mdefine_line|#define ALIGN4      ((u_long)4 - 1)     /* 1 longword align */
+mdefine_line|#define ALIGN4      ((u_long)4 - 1)&t;/* 1 longword align */
 DECL|macro|ALIGN8
-mdefine_line|#define ALIGN8      ((u_long)8 - 1)     /* 2 longword align */
+mdefine_line|#define ALIGN8      ((u_long)8 - 1)&t;/* 2 longword align */
 DECL|macro|ALIGN16
-mdefine_line|#define ALIGN16     ((u_long)16 - 1)    /* 4 longword align */
+mdefine_line|#define ALIGN16     ((u_long)16 - 1)&t;/* 4 longword align */
 DECL|macro|ALIGN32
-mdefine_line|#define ALIGN32     ((u_long)32 - 1)    /* 8 longword align */
+mdefine_line|#define ALIGN32     ((u_long)32 - 1)&t;/* 8 longword align */
 DECL|macro|ALIGN64
-mdefine_line|#define ALIGN64     ((u_long)64 - 1)    /* 16 longword align */
+mdefine_line|#define ALIGN64     ((u_long)64 - 1)&t;/* 16 longword align */
 DECL|macro|ALIGN128
-mdefine_line|#define ALIGN128    ((u_long)128 - 1)   /* 32 longword align */
+mdefine_line|#define ALIGN128    ((u_long)128 - 1)&t;/* 32 longword align */
 DECL|macro|ALIGN
-mdefine_line|#define ALIGN         ALIGN32           /* Keep the DC21040 happy... */
+mdefine_line|#define ALIGN         ALIGN32&t;/* Keep the DC21040 happy... */
 DECL|macro|CACHE_ALIGN
 mdefine_line|#define CACHE_ALIGN   CAL_16LONG
 DECL|macro|DESC_SKIP_LEN
-mdefine_line|#define DESC_SKIP_LEN DSL_0             /* Must agree with DESC_ALIGN */
+mdefine_line|#define DESC_SKIP_LEN DSL_0&t;/* Must agree with DESC_ALIGN */
 multiline_comment|/*#define DESC_ALIGN    u32 dummy[4];  / * Must agree with DESC_SKIP_LEN */
 DECL|macro|DESC_ALIGN
 mdefine_line|#define DESC_ALIGN
-macro_line|#ifndef DEC_ONLY                        /* See README.de4x5 for using this */
+macro_line|#ifndef DEC_ONLY&t;&t;/* See README.de4x5 for using this */
 DECL|variable|dec_only
 r_static
 r_int
@@ -590,7 +590,7 @@ DECL|macro|STOP_DE4X5
 mdefine_line|#define STOP_DE4X5 {&bslash;&n;    omr = inl(DE4X5_OMR);&bslash;&n;    omr &amp;= ~(OMR_ST|OMR_SR);&bslash;&n;    outl(omr, DE4X5_OMR);               /* Disable the TX and/or RX */ &bslash;&n;}
 multiline_comment|/*&n;** DE4X5 SIA RESET&n;*/
 DECL|macro|RESET_SIA
-mdefine_line|#define RESET_SIA outl(0, DE4X5_SICR);  /* Reset SIA connectivity regs */
+mdefine_line|#define RESET_SIA outl(0, DE4X5_SICR);&t;/* Reset SIA connectivity regs */
 multiline_comment|/*&n;** DE500 AUTOSENSE TIMER INTERVAL (MILLISECS)&n;*/
 DECL|macro|DE4X5_AUTOSENSE_MS
 mdefine_line|#define DE4X5_AUTOSENSE_MS  250
@@ -660,11 +660,11 @@ DECL|macro|SUB_VENDOR_ID
 mdefine_line|#define SUB_VENDOR_ID 0x500a
 multiline_comment|/*&n;** DE4X5 Descriptors. Make sure that all the RX buffers are contiguous&n;** and have sizes of both a power of 2 and a multiple of 4.&n;** A size of 256 bytes for each buffer could be chosen because over 90% of&n;** all packets in our network are &lt;256 bytes long and 64 longword alignment&n;** is possible. 1536 showed better &squot;ttcp&squot; performance. Take your pick. 32 TX&n;** descriptors are needed for machines with an ALPHA CPU.&n;*/
 DECL|macro|NUM_RX_DESC
-mdefine_line|#define NUM_RX_DESC 8                   /* Number of RX descriptors   */
+mdefine_line|#define NUM_RX_DESC 8&t;&t;/* Number of RX descriptors   */
 DECL|macro|NUM_TX_DESC
-mdefine_line|#define NUM_TX_DESC 32                  /* Number of TX descriptors   */
+mdefine_line|#define NUM_TX_DESC 32&t;&t;/* Number of TX descriptors   */
 DECL|macro|RX_BUFF_SZ
-mdefine_line|#define RX_BUFF_SZ  1536                /* Power of 2 for kmalloc and */
+mdefine_line|#define RX_BUFF_SZ  1536&t;/* Power of 2 for kmalloc and */
 multiline_comment|/* Multiple of 4 for DC21040  */
 multiline_comment|/* Allows 512 byte alignment  */
 DECL|struct|de4x5_desc
@@ -695,7 +695,7 @@ multiline_comment|/*&n;** The DE4X5 private structure&n;*/
 DECL|macro|DE4X5_PKT_STAT_SZ
 mdefine_line|#define DE4X5_PKT_STAT_SZ 16
 DECL|macro|DE4X5_PKT_BIN_SZ
-mdefine_line|#define DE4X5_PKT_BIN_SZ  128            /* Should be &gt;=100 unless you&n;                                            increase DE4X5_PKT_STAT_SZ */
+mdefine_line|#define DE4X5_PKT_BIN_SZ  128&t;/* Should be &gt;=100 unless you&n;&t;&t;&t;&t;   increase DE4X5_PKT_STAT_SZ */
 DECL|struct|de4x5_private
 r_struct
 id|de4x5_private
@@ -777,7 +777,7 @@ id|frame
 l_int|64
 )braket
 suffix:semicolon
-multiline_comment|/* Min sized packet for loopback*/
+multiline_comment|/* Min sized packet for loopback */
 DECL|member|stats
 r_struct
 id|net_device_stats
@@ -885,7 +885,7 @@ DECL|member|media
 r_int
 id|media
 suffix:semicolon
-multiline_comment|/* Media (eg TP), mode (eg 100B)*/
+multiline_comment|/* Media (eg TP), mode (eg 100B) */
 DECL|member|c_media
 r_int
 id|c_media
@@ -977,6 +977,7 @@ id|buf
 suffix:semicolon
 multiline_comment|/* Original kmalloc&squot;d mem addr  */
 DECL|member|lock
+r_int
 r_int
 id|lock
 suffix:semicolon
@@ -2085,7 +2086,7 @@ id|u_long
 id|address
 )paren
 suffix:semicolon
-multiline_comment|/*static void    srom_busy(u_int command, u_long address);*/
+multiline_comment|/*static void    srom_busy(u_int command, u_long address); */
 r_static
 r_void
 id|sendto_srom
@@ -2348,6 +2349,7 @@ r_int
 id|status
 )paren
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 r_static
 r_void
 id|eisa_probe
@@ -2362,6 +2364,7 @@ id|u_long
 id|iobase
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|pci_probe
@@ -2862,7 +2865,7 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* LINUX_VERSION_CODE */
-macro_line|# else
+macro_line|#else
 DECL|variable|loading_module
 r_static
 r_int
@@ -2870,7 +2873,7 @@ id|loading_module
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 DECL|variable|name
 r_static
 r_char
@@ -2881,6 +2884,7 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 DECL|variable|de4x5_irq
 r_static
 id|u_char
@@ -2890,6 +2894,7 @@ id|de4x5_irq
 op_assign
 id|EISA_ALLOWED_IRQ_LIST
 suffix:semicolon
+macro_line|#endif
 DECL|variable|num_de4x5s
 r_static
 r_int
@@ -3057,6 +3062,7 @@ id|iobase
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 id|eisa_probe
 c_func
 (paren
@@ -3065,6 +3071,7 @@ comma
 id|iobase
 )paren
 suffix:semicolon
+macro_line|#endif
 id|pci_probe
 c_func
 (paren
@@ -3192,7 +3199,7 @@ id|ENXIO
 suffix:semicolon
 multiline_comment|/* Hardware could not reset */
 )brace
-multiline_comment|/* &n;    ** Now find out what kind of DC21040/DC21041/DC21140 board we have.&n;    */
+multiline_comment|/* &n;&t;** Now find out what kind of DC21040/DC21041/DC21140 board we have.&n;&t;*/
 id|useSROM
 op_assign
 id|FALSE
@@ -3376,7 +3383,7 @@ id|de4x5_private
 op_star
 id|lp
 suffix:semicolon
-multiline_comment|/* &n;&t;** Reserve a section of kernel memory for the adapter&n;&t;** private area and the TX/RX descriptor rings.&n;&t;*/
+multiline_comment|/* &n;&t;&t;** Reserve a section of kernel memory for the adapter&n;&t;&t;** private area and the TX/RX descriptor rings.&n;&t;&t;*/
 id|dev-&gt;priv
 op_assign
 (paren
@@ -3410,7 +3417,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;** Align to a longword boundary&n;&t;*/
+multiline_comment|/*&n;&t;&t;** Align to a longword boundary&n;&t;&t;*/
 id|tmp
 op_assign
 id|dev-&gt;priv
@@ -3527,7 +3534,7 @@ id|de4x5_srom
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;** Choose correct autosensing in case someone messed up&n;&t;*/
+multiline_comment|/*&n;&t;&t;** Choose correct autosensing in case someone messed up&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -3630,8 +3637,8 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;** Set up the RX descriptor ring (Intels)&n;&t;** Allocate contiguous receive buffers, long word aligned (Alphas) &n;&t;*/
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(DE4X5_DO_MEMCPY)
+multiline_comment|/*&n;&t;&t;** Set up the RX descriptor ring (Intels)&n;&t;&t;** Allocate contiguous receive buffers, long word aligned (Alphas) &n;&t;&t;*/
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__sparc_v9__) &amp;&amp; !defined(DE4X5_DO_MEMCPY)
 r_for
 c_loop
 (paren
@@ -4025,7 +4032,7 @@ id|lp-&gt;state
 op_assign
 id|CLOSED
 suffix:semicolon
-multiline_comment|/*&n;&t;** Check for an MII interface&n;&t;*/
+multiline_comment|/*&n;&t;&t;** Check for an MII interface&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -4052,7 +4059,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;      and requires IRQ%d (provided by %s).&bslash;n&quot;
+l_string|&quot;      and requires IRQ %x (provided by %s).&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
@@ -4142,9 +4149,9 @@ id|status
 suffix:semicolon
 )brace
 "&f;"
+DECL|function|de4x5_open
 r_static
 r_int
-DECL|function|de4x5_open
 id|de4x5_open
 c_func
 (paren
@@ -4225,7 +4232,7 @@ id|EAGAIN
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;    ** Wake up the adapter&n;    */
+multiline_comment|/*&n;&t;** Wake up the adapter&n;&t;*/
 id|yawn
 c_func
 (paren
@@ -4234,7 +4241,7 @@ comma
 id|WAKEUP
 )paren
 suffix:semicolon
-multiline_comment|/* &n;    ** Re-initialize the DE4X5... &n;    */
+multiline_comment|/* &n;&t;** Re-initialize the DE4X5... &n;&t;*/
 id|status
 op_assign
 id|de4x5_init
@@ -4496,9 +4503,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Initialize the DE4X5 operating conditions. NB: a chip problem with the&n;** DC21140 requires using perfect filtering mode for that chip. Since I can&squot;t&n;** see why I&squot;d want &gt; 14 multicast addresses, I have changed all chips to use&n;** the perfect filtering mode. Keep the DMA burst length at 8: there seems&n;** to be data corruption problems if it is larger (UDP errors seen from a&n;** ttcp source).&n;*/
+DECL|function|de4x5_init
 r_static
 r_int
-DECL|function|de4x5_init
 id|de4x5_init
 c_func
 (paren
@@ -4539,9 +4546,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_sw_reset
 r_static
 r_int
-DECL|function|de4x5_sw_reset
 id|de4x5_sw_reset
 c_func
 (paren
@@ -4624,7 +4631,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;    ** Set the programmable burst length to 8 longwords for all the DC21140&n;    ** Fasternet chips and 4 longwords for all others: DMA errors result&n;    ** without these values. Cache align 16 long.&n;    */
+multiline_comment|/* &n;&t;** Set the programmable burst length to 8 longwords for all the DC21140&n;&t;** Fasternet chips and 4 longwords for all others: DMA errors result&n;&t;** without these values. Cache align 16 long.&n;&t;*/
 id|bmr
 op_assign
 (paren
@@ -4953,9 +4960,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* &n;** Writes a socket buffer address to the next available transmit descriptor&n;*/
+DECL|function|de4x5_queue_pkt
 r_static
 r_int
-DECL|function|de4x5_queue_pkt
 id|de4x5_queue_pkt
 c_func
 (paren
@@ -4992,24 +4999,6 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|test_and_set_bit
 c_func
 (paren
@@ -5038,7 +5027,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;    ** Clean out the TX ring asynchronously to interrupts - sometimes the&n;    ** interrupts are lost by delayed descriptor status updates relative to&n;    ** the irq assertion, especially with a busy PCI bus.&n;    */
+multiline_comment|/*&n;&t;** Clean out the TX ring asynchronously to interrupts - sometimes the&n;&t;** interrupts are lost by delayed descriptor status updates relative to&n;&t;** the irq assertion, especially with a busy PCI bus.&n;&t;*/
 id|cli
 c_func
 (paren
@@ -5332,9 +5321,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** The DE4X5 interrupt handler. &n;** &n;** I/O Read/Writes through intermediate PCI bridges are never &squot;posted&squot;,&n;** so that the asserted interrupt always has some real data to work with -&n;** if these I/O accesses are ever changed to memory accesses, ensure the&n;** STS write is read immediately to complete the transaction if the adapter&n;** is not on bus 0. Lost interrupts can still occur when the PCI bus load&n;** is high and descriptor status bits cannot be set before the associated&n;** interrupt is asserted and this routine entered.&n;*/
+DECL|function|de4x5_interrupt
 r_static
 r_void
-DECL|function|de4x5_interrupt
 id|de4x5_interrupt
 c_func
 (paren
@@ -5389,6 +5378,7 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;de4x5_interrupt(): irq %d for unknown device.&bslash;n&quot;
 comma
@@ -5633,9 +5623,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_rx
 r_static
 r_int
-DECL|function|de4x5_rx
 id|de4x5_rx
 c_func
 (paren
@@ -6038,7 +6028,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;** Update entry information&n;&t;*/
+multiline_comment|/*&n;&t;&t;** Update entry information&n;&t;&t;*/
 id|lp-&gt;rx_new
 op_assign
 (paren
@@ -6054,9 +6044,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Buffer sent - check for TX buffer errors.&n;*/
+DECL|function|de4x5_tx
 r_static
 r_int
-DECL|function|de4x5_tx
 id|de4x5_tx
 c_func
 (paren
@@ -6334,9 +6324,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_ast
 r_static
 r_int
-DECL|function|de4x5_ast
 id|de4x5_ast
 c_func
 (paren
@@ -6454,9 +6444,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_txur
 r_static
 r_int
-DECL|function|de4x5_txur
 id|de4x5_txur
 c_func
 (paren
@@ -6478,7 +6468,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -6587,9 +6577,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_rx_ovfc
 r_static
 r_int
-DECL|function|de4x5_rx_ovfc
 id|de4x5_rx_ovfc
 c_func
 (paren
@@ -6611,7 +6601,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -6707,9 +6697,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_close
 r_static
 r_int
-DECL|function|de4x5_close
 id|de4x5_close
 c_func
 (paren
@@ -6778,7 +6768,7 @@ id|DE4X5_STS
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;    ** We stop the DE4X5 here... mask interrupts and stop TX &amp; RX&n;    */
+multiline_comment|/* &n;&t;** We stop the DE4X5 here... mask interrupts and stop TX &amp; RX&n;&t;*/
 id|DISABLE_IRQs
 suffix:semicolon
 id|STOP_DE4X5
@@ -6879,9 +6869,9 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
+DECL|function|de4x5_local_stats
 r_static
 r_void
-DECL|function|de4x5_local_stats
 id|de4x5_local_stats
 c_func
 (paren
@@ -7111,9 +7101,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|load_packet
 r_static
 r_void
-DECL|function|load_packet
 id|load_packet
 c_func
 (paren
@@ -7224,9 +7214,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;*/
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren
@@ -7349,9 +7339,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Little endian crc one liner from Matt Thomas, DEC.&n;*/
+DECL|function|SetMulticastFilter
 r_static
 r_void
-DECL|function|SetMulticastFilter
 id|SetMulticastFilter
 c_func
 (paren
@@ -7721,6 +7711,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifndef __sparc_v9__
 multiline_comment|/*&n;** EISA bus I/O device probe. Probe from slot 1 since slot 0 is usually&n;** the motherboard. Upto 15 EISA devices are supported.&n;*/
 DECL|function|__initfunc
 id|__initfunc
@@ -8082,6 +8073,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;&t;&t;/* !(__sparc_v9__) */
 multiline_comment|/*&n;** PCI bus I/O device probe&n;** NB: PCI I/O accesses and Bus Mastering are enabled by the PCI BIOS, not&n;** the driver. Some PCI BIOS&squot;s, pre V2.1, need the slot + features to be&n;** enabled by the user first in the set up utility. Hence we just check for&n;** enabled features and silently ignore the card if they&squot;re not.&n;**&n;** STOP PRESS: Some BIOS&squot;s __require__ the driver to enable the bus mastering&n;** bit. Here, check for I/O accesses and then set BM. If you put the card in&n;** a non BM slot, you&squot;re on your own (and complain to the PC vendor that your&n;** PC doesn&squot;t conform to the PCI standard)!&n;*/
 DECL|macro|PCI_DEVICE
 mdefine_line|#define PCI_DEVICE    (dev_num &lt;&lt; 3)
@@ -8107,11 +8099,6 @@ id|ioaddr
 )paren
 (brace
 id|u_char
-id|irq
-comma
-id|timer
-suffix:semicolon
-id|u_char
 id|pb
 comma
 id|pbus
@@ -8121,6 +8108,8 @@ comma
 id|dnum
 comma
 id|dev_fn
+comma
+id|timer
 suffix:semicolon
 id|u_short
 id|dev_id
@@ -8132,13 +8121,17 @@ comma
 id|status
 suffix:semicolon
 id|u_int
+id|irq
+suffix:semicolon
+id|u_int
 r_class
 op_assign
 id|DE4X5_CLASS_CODE
 suffix:semicolon
 id|u_int
 id|device
-comma
+suffix:semicolon
+id|u_long
 id|iobase
 suffix:semicolon
 r_struct
@@ -8179,10 +8172,6 @@ multiline_comment|/* No PCI bus in this machine! */
 id|lp-&gt;bus
 op_assign
 id|PCI
-suffix:semicolon
-id|lp-&gt;bus_num
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -8295,6 +8284,39 @@ id|dev_num
 )paren
 )paren
 (brace
+macro_line|#ifdef __sparc_v9__
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|pdev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|pdev
+suffix:semicolon
+id|pdev
+op_assign
+id|pdev-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|pdev-&gt;bus-&gt;number
+op_eq
+id|pb
+op_logical_and
+id|pdev-&gt;devfn
+op_eq
+id|dev_fn
+)paren
+r_break
+suffix:semicolon
+macro_line|#endif
 id|device
 op_assign
 l_int|0
@@ -8413,6 +8435,20 @@ op_assign
 id|device
 suffix:semicolon
 multiline_comment|/* Get the board I/O address */
+macro_line|#ifdef __sparc_v9__
+id|iobase
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+macro_line|#else
+(brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
 id|pcibios_read_config_dword
 c_func
 (paren
@@ -8423,14 +8459,31 @@ comma
 id|PCI_BASE_ADDRESS_0
 comma
 op_amp
-id|iobase
+id|tmp
 )paren
 suffix:semicolon
+id|iobase
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+macro_line|#endif
 id|iobase
 op_and_assign
 id|CBIO_MASK
 suffix:semicolon
 multiline_comment|/* Fetch the IRQ to be used */
+macro_line|#ifdef __sparc_v9__
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+macro_line|#else
+(brace
+r_int
+r_char
+id|tmp
+suffix:semicolon
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -8441,9 +8494,14 @@ comma
 id|PCI_INTERRUPT_LINE
 comma
 op_amp
-id|irq
+id|tmp
 )paren
 suffix:semicolon
+id|irq
+op_assign
+id|tmp
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -8464,6 +8522,7 @@ l_int|0xff
 )paren
 r_continue
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Check if I/O accesses and Bus Mastering are enabled */
 id|pcibios_read_config_word
 c_func
@@ -8478,6 +8537,49 @@ op_amp
 id|status
 )paren
 suffix:semicolon
+macro_line|#ifdef __powerpc__
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|PCI_COMMAND_IO
+)paren
+)paren
+(brace
+id|status
+op_or_assign
+id|PCI_COMMAND_IO
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|pb
+comma
+id|PCI_DEVICE
+comma
+id|PCI_COMMAND
+comma
+id|status
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|pb
+comma
+id|PCI_DEVICE
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|status
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* __powerpc__ */
 r_if
 c_cond
 (paren
@@ -9188,9 +9290,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Auto configure the media here rather than setting the port at compile&n;** time. This routine is called by de4x5_init() and when a loss of media is&n;** detected (excessive collisions, loss of carrier, no carrier or link fail&n;** [TP] or no recent receive activity) to check whether the user has been &n;** sneaky and changed the port on us.&n;*/
+DECL|function|autoconf_media
 r_static
 r_int
-DECL|function|autoconf_media
 id|autoconf_media
 c_func
 (paren
@@ -9336,9 +9438,9 @@ id|lp-&gt;media
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Autoconfigure the media when using the DC21040. AUI cannot be distinguished&n;** from BNC as the port has a jumper to set thick or thin wire. When set for&n;** BNC, the BNC port will indicate activity if it&squot;s not terminated correctly.&n;** The only way to test for that is to place a loopback packet onto the&n;** network and watch for errors. Since we&squot;re messing with the interrupt mask&n;** register, disable the board interrupts and do not allow any more packets to&n;** be queued to the hardware. Re-enable everything only when the media is&n;** found.&n;** I may have to &quot;age out&quot; locally queued packets so that the higher layer&n;** timeouts don&squot;t effectively duplicate packets on the network.&n;*/
+DECL|function|dc21040_autoconf
 r_static
 r_int
-DECL|function|dc21040_autoconf
 id|dc21040_autoconf
 c_func
 (paren
@@ -9683,9 +9785,9 @@ r_return
 id|next_tick
 suffix:semicolon
 )brace
+DECL|function|dc21040_state
 r_static
 r_int
-DECL|function|dc21040_state
 id|dc21040_state
 c_func
 (paren
@@ -9876,9 +9978,9 @@ r_return
 id|next_tick
 suffix:semicolon
 )brace
+DECL|function|de4x5_suspect_state
 r_static
 r_int
-DECL|function|de4x5_suspect_state
 id|de4x5_suspect_state
 c_func
 (paren
@@ -10035,9 +10137,9 @@ id|next_tick
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Autoconfigure the media when using the DC21041. AUI needs to be tested&n;** before BNC, because the BNC port will indicate activity if it&squot;s not&n;** terminated correctly. The only way to test for that is to place a loopback&n;** packet onto the network and watch for errors. Since we&squot;re messing with&n;** the interrupt mask register, disable the board interrupts and do not allow&n;** any more packets to be queued to the hardware. Re-enable everything only&n;** when the media is found.&n;*/
+DECL|function|dc21041_autoconf
 r_static
 r_int
-DECL|function|dc21041_autoconf
 id|dc21041_autoconf
 c_func
 (paren
@@ -11111,9 +11213,9 @@ id|next_tick
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Some autonegotiation chips are broken in that they do not return the&n;** acknowledge bit (anlpa &amp; MII_ANLPA_ACK) in the link partner advertisement&n;** register, except at the first power up negotiation.&n;*/
+DECL|function|dc21140m_autoconf
 r_static
 r_int
-DECL|function|dc21140m_autoconf
 id|dc21140m_autoconf
 c_func
 (paren
@@ -11147,7 +11249,8 @@ comma
 id|slnk
 comma
 id|sr
-comma
+suffix:semicolon
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -12121,7 +12224,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -13342,9 +13445,9 @@ r_return
 id|next_tick
 suffix:semicolon
 )brace
+DECL|function|srom_autoconf
 r_static
 r_int
-DECL|function|srom_autoconf
 id|srom_autoconf
 c_func
 (paren
@@ -13377,9 +13480,9 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This mapping keeps the original media codes and FDX flag unchanged.&n;** While it isn&squot;t strictly necessary, it helps me for the moment...&n;** The early return avoids a media state / SROM media space clash.&n;*/
+DECL|function|srom_map_media
 r_static
 r_int
-DECL|function|srom_map_media
 id|srom_map_media
 c_func
 (paren
@@ -13623,9 +13726,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|de4x5_init_connection
 r_static
 r_void
-DECL|function|de4x5_init_connection
 id|de4x5_init_connection
 c_func
 (paren
@@ -13720,9 +13823,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** General PHY reset function. Some MII devices don&squot;t reset correctly&n;** since their MII address pins can float at voltages that are dependent&n;** on the signal pin use. Do a double reset to ensure a reset.&n;*/
+DECL|function|de4x5_reset_phy
 r_static
 r_int
-DECL|function|de4x5_reset_phy
 id|de4x5_reset_phy
 c_func
 (paren
@@ -13919,9 +14022,9 @@ r_return
 id|next_tick
 suffix:semicolon
 )brace
+DECL|function|test_media
 r_static
 r_int
-DECL|function|test_media
 id|test_media
 c_func
 (paren
@@ -14107,9 +14210,9 @@ r_return
 id|sts
 suffix:semicolon
 )brace
+DECL|function|test_tp
 r_static
 r_int
-DECL|function|test_tp
 id|test_tp
 c_func
 (paren
@@ -14209,9 +14312,9 @@ DECL|macro|SAMPLE_INTERVAL
 mdefine_line|#define SAMPLE_INTERVAL 500  /* ms */
 DECL|macro|SAMPLE_DELAY
 mdefine_line|#define SAMPLE_DELAY    2000 /* ms */
+DECL|function|test_for_100Mb
 r_static
 r_int
-DECL|function|test_for_100Mb
 id|test_for_100Mb
 c_func
 (paren
@@ -14401,9 +14504,9 @@ r_return
 id|gep
 suffix:semicolon
 )brace
+DECL|function|wait_for_link
 r_static
 r_int
-DECL|function|wait_for_link
 id|wait_for_link
 c_func
 (paren
@@ -14462,9 +14565,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**&n;**&n;*/
+DECL|function|test_mii_reg
 r_static
 r_int
-DECL|function|test_mii_reg
 id|test_mii_reg
 c_func
 (paren
@@ -14500,7 +14603,8 @@ id|dev-&gt;priv
 suffix:semicolon
 r_int
 id|test
-comma
+suffix:semicolon
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -14590,9 +14694,9 @@ r_return
 id|reg
 suffix:semicolon
 )brace
+DECL|function|is_spd_100
 r_static
 r_int
-DECL|function|is_spd_100
 id|is_spd_100
 c_func
 (paren
@@ -14768,9 +14872,9 @@ r_return
 id|spd
 suffix:semicolon
 )brace
+DECL|function|is_100_up
 r_static
 r_int
-DECL|function|is_100_up
 id|is_100_up
 c_func
 (paren
@@ -14931,9 +15035,9 @@ id|lp-&gt;asBitValid
 suffix:semicolon
 )brace
 )brace
+DECL|function|is_10_up
 r_static
 r_int
-DECL|function|is_10_up
 id|is_10_up
 c_func
 (paren
@@ -15099,9 +15203,9 @@ id|lp-&gt;asBitValid
 suffix:semicolon
 )brace
 )brace
+DECL|function|is_anc_capable
 r_static
 r_int
-DECL|function|is_anc_capable
 id|is_anc_capable
 c_func
 (paren
@@ -15201,9 +15305,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;** Send a packet onto the media and watch for send errors that indicate the&n;** media is bad or unconnected.&n;*/
+DECL|function|ping_media
 r_static
 r_int
-DECL|function|ping_media
 id|ping_media
 c_func
 (paren
@@ -15403,11 +15507,11 @@ id|sisr
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This function does 2 things: on Intels it kmalloc&squot;s another buffer to&n;** replace the one about to be passed up. On Alpha&squot;s it kmallocs a buffer&n;** into which the packet is copied.&n;*/
+DECL|function|de4x5_alloc_rx_buff
 r_static
 r_struct
 id|sk_buff
 op_star
-DECL|function|de4x5_alloc_rx_buff
 id|de4x5_alloc_rx_buff
 c_func
 (paren
@@ -15440,7 +15544,7 @@ id|sk_buff
 op_star
 id|p
 suffix:semicolon
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(DE4X5_DO_MEMCPY)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__powerpc__) &amp;&amp; !defined(__sparc_v9__) &amp;&amp; !defined(DE4X5_DO_MEMCPY)
 r_struct
 id|sk_buff
 op_star
@@ -15727,9 +15831,9 @@ id|p
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|de4x5_free_rx_buffs
 r_static
 r_void
-DECL|function|de4x5_free_rx_buffs
 id|de4x5_free_rx_buffs
 c_func
 (paren
@@ -15821,9 +15925,9 @@ multiline_comment|/* Dummy entry */
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_free_tx_buffs
 r_static
 r_void
-DECL|function|de4x5_free_tx_buffs
 id|de4x5_free_tx_buffs
 c_func
 (paren
@@ -15925,9 +16029,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** When a user pulls a connection, the DECchip can end up in a&n;** &squot;running - waiting for end of transmission&squot; state. This means that we&n;** have to perform a chip soft reset to ensure that we can synchronize&n;** the hardware and software and make any media probes using a loopback&n;** packet meaningful.&n;*/
+DECL|function|de4x5_save_skbs
 r_static
 r_void
-DECL|function|de4x5_save_skbs
 id|de4x5_save_skbs
 c_func
 (paren
@@ -16010,9 +16114,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_restore_skbs
 r_static
 r_void
-DECL|function|de4x5_restore_skbs
 id|de4x5_restore_skbs
 c_func
 (paren
@@ -16161,9 +16265,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_cache_state
 r_static
 r_void
-DECL|function|de4x5_cache_state
 id|de4x5_cache_state
 c_func
 (paren
@@ -16310,9 +16414,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_put_cache
 r_static
 r_void
-DECL|function|de4x5_put_cache
 id|de4x5_put_cache
 c_func
 (paren
@@ -16383,9 +16487,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_putb_cache
 r_static
 r_void
-DECL|function|de4x5_putb_cache
 id|de4x5_putb_cache
 c_func
 (paren
@@ -16430,11 +16534,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_get_cache
 r_static
 r_struct
 id|sk_buff
 op_star
-DECL|function|de4x5_get_cache
 id|de4x5_get_cache
 c_func
 (paren
@@ -16483,9 +16587,9 @@ id|p
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Check the Auto Negotiation State. Return OK when a link pass interrupt&n;** is received and the auto-negotiation status is NWAY OK.&n;*/
+DECL|function|test_ans
 r_static
 r_int
-DECL|function|test_ans
 id|test_ans
 c_func
 (paren
@@ -16626,9 +16730,9 @@ r_return
 id|sts
 suffix:semicolon
 )brace
+DECL|function|de4x5_setup_intr
 r_static
 r_void
-DECL|function|de4x5_setup_intr
 id|de4x5_setup_intr
 c_func
 (paren
@@ -16703,9 +16807,8 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;**&n;*/
-r_static
-r_void
 DECL|function|reset_init_sia
+r_void
 id|reset_init_sia
 c_func
 (paren
@@ -16867,9 +16970,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Create a loopback ethernet packet&n;*/
+DECL|function|create_packet
 r_static
 r_void
-DECL|function|create_packet
 id|create_packet
 c_func
 (paren
@@ -16964,9 +17067,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Known delay in microseconds&n;*/
+DECL|function|de4x5_us_delay
 r_static
 r_void
-DECL|function|de4x5_us_delay
 id|de4x5_us_delay
 c_func
 (paren
@@ -16984,9 +17087,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Known delay in milliseconds, in millisecond steps.&n;*/
+DECL|function|de4x5_ms_delay
 r_static
 r_void
-DECL|function|de4x5_ms_delay
 id|de4x5_ms_delay
 c_func
 (paren
@@ -17023,9 +17126,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the EISA configuration space&n;*/
+DECL|function|EISA_signature
 r_static
 r_int
-DECL|function|EISA_signature
 id|EISA_signature
 c_func
 (paren
@@ -17278,9 +17381,9 @@ suffix:semicolon
 multiline_comment|/* return the device name string */
 )brace
 multiline_comment|/*&n;** Look for a particular board name in the PCI configuration space&n;*/
+DECL|function|PCI_signature
 r_static
 r_int
-DECL|function|PCI_signature
 id|PCI_signature
 c_func
 (paren
@@ -17551,9 +17654,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Set up the Ethernet PROM counter to the start of the Ethernet address on&n;** the DC21040, else  read the SROM for the other chips.&n;** The SROM may not be present in a multi-MAC card, so first read the&n;** MAC address and check for a bad address. If there is a bad one then exit&n;** immediately with the prior srom contents intact (the h/w address will&n;** be fixed up later).&n;*/
+DECL|function|DevicePresent
 r_static
 r_void
-DECL|function|DevicePresent
 id|DevicePresent
 c_func
 (paren
@@ -17758,9 +17861,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** For the bad status case and no SROM, then add one to the previous&n;** address. However, need to add one backwards in case we have 0xff&n;** as one or more of the bytes. Only the last 3 bytes should be checked&n;** as the first three are invariant - assigned to an organisation.&n;*/
+DECL|function|get_hw_addr
 r_static
 r_int
-DECL|function|get_hw_addr
 id|get_hw_addr
 c_func
 (paren
@@ -18276,9 +18379,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Test for enet addresses in the first 32 bytes. The built-in strncmp&n;** didn&squot;t seem to work here...?&n;*/
+DECL|function|de4x5_bad_srom
 r_static
 r_int
-DECL|function|de4x5_bad_srom
 id|de4x5_bad_srom
 c_func
 (paren
@@ -18404,9 +18507,9 @@ r_return
 id|status
 suffix:semicolon
 )brace
+DECL|function|de4x5_strncmp
 r_static
 r_int
-DECL|function|de4x5_strncmp
 id|de4x5_strncmp
 c_func
 (paren
@@ -18455,9 +18558,9 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+DECL|function|srom_repair
 r_static
 r_void
-DECL|function|srom_repair
 id|srom_repair
 c_func
 (paren
@@ -18551,9 +18654,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Assume that the irq&squot;s do not follow the PCI spec - this is seems&n;** to be true so far (2 for 2).&n;*/
+DECL|function|test_bad_enet
 r_static
 r_int
-DECL|function|test_bad_enet
 id|test_bad_enet
 c_func
 (paren
@@ -18790,9 +18893,9 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** SROM Read&n;*/
+DECL|function|srom_rd
 r_static
 r_int
-DECL|function|srom_rd
 id|srom_rd
 c_func
 (paren
@@ -18867,9 +18970,9 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|srom_latch
 r_static
 r_void
-DECL|function|srom_latch
 id|srom_latch
 c_func
 (paren
@@ -18909,9 +19012,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_command
 r_static
 r_void
-DECL|function|srom_command
 id|srom_command
 c_func
 (paren
@@ -18955,9 +19058,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_address
 r_static
 r_void
-DECL|function|srom_address
 id|srom_address
 c_func
 (paren
@@ -19052,9 +19155,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|srom_data
 r_static
 r_int
-DECL|function|srom_data
 id|srom_data
 c_func
 (paren
@@ -19150,10 +19253,10 @@ r_return
 id|word
 suffix:semicolon
 )brace
-multiline_comment|/*&n;static void&n;srom_busy(u_int command, u_long addr)&n;{&n;   sendto_srom((command &amp; 0x0000ff00) | DT_CS, addr);&n;   &n;   while (!((getfrom_srom(addr) &gt;&gt; 3) &amp; 0x01)) {&n;       de4x5_ms_delay(1);&n;   }&n;   &n;   sendto_srom(command &amp; 0x0000ff00, addr);&n;   &n;   return;&n;}&n;*/
+multiline_comment|/*&n;   static void&n;   srom_busy(u_int command, u_long addr)&n;   {&n;   sendto_srom((command &amp; 0x0000ff00) | DT_CS, addr);&n;&n;   while (!((getfrom_srom(addr) &gt;&gt; 3) &amp; 0x01)) {&n;   de4x5_ms_delay(1);&n;   }&n;&n;   sendto_srom(command &amp; 0x0000ff00, addr);&n;&n;   return;&n;   }&n; */
+DECL|function|sendto_srom
 r_static
 r_void
-DECL|function|sendto_srom
 id|sendto_srom
 c_func
 (paren
@@ -19181,9 +19284,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|getfrom_srom
 r_static
 r_int
-DECL|function|getfrom_srom
 id|getfrom_srom
 c_func
 (paren
@@ -19212,9 +19315,9 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|srom_infoleaf_info
 r_static
 r_int
-DECL|function|srom_infoleaf_info
 id|srom_infoleaf_info
 c_func
 (paren
@@ -19415,9 +19518,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This routine loads any type 1 or 3 MII info into the mii device&n;** struct and executes any type 5 code to reset PHY devices for this&n;** controller.&n;** The info for the MII devices will be valid since the index used&n;** will follow the discovery process from MII address 1-31 then 0.&n;*/
+DECL|function|srom_init
 r_static
 r_void
-DECL|function|srom_init
 id|srom_init
 c_func
 (paren
@@ -19709,9 +19812,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** A generic routine that writes GEP control, data and reset information&n;** to the GEP register (21140) or csr15 GEP portion (2114[23]).&n;*/
+DECL|function|srom_exec
 r_static
 r_void
-DECL|function|srom_exec
 id|srom_exec
 c_func
 (paren
@@ -19879,9 +19982,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Basically this function is a NOP since it will never be called,&n;** unless I implement the DC21041 SROM functions. There&squot;s no need&n;** since the existing code will be satisfactory for all boards.&n;*/
+DECL|function|dc21041_infoleaf
 r_static
 r_int
-DECL|function|dc21041_infoleaf
 id|dc21041_infoleaf
 c_func
 (paren
@@ -19895,9 +19998,9 @@ r_return
 id|DE4X5_AUTOSENSE_MS
 suffix:semicolon
 )brace
+DECL|function|dc21140_infoleaf
 r_static
 r_int
-DECL|function|dc21140_infoleaf
 id|dc21140_infoleaf
 c_func
 (paren
@@ -20063,9 +20166,9 @@ op_complement
 id|TIMER_CB
 suffix:semicolon
 )brace
+DECL|function|dc21142_infoleaf
 r_static
 r_int
-DECL|function|dc21142_infoleaf
 id|dc21142_infoleaf
 c_func
 (paren
@@ -20220,9 +20323,9 @@ op_complement
 id|TIMER_CB
 suffix:semicolon
 )brace
+DECL|function|dc21143_infoleaf
 r_static
 r_int
-DECL|function|dc21143_infoleaf
 id|dc21143_infoleaf
 c_func
 (paren
@@ -20378,9 +20481,9 @@ id|TIMER_CB
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** The compact infoblock is only designed for DC21140[A] chips, so&n;** we&squot;ll reuse the dc21140m_autoconf function. Non MII media only.&n;*/
+DECL|function|compact_infoblock
 r_static
 r_int
-DECL|function|compact_infoblock
 id|compact_infoblock
 c_func
 (paren
@@ -20633,9 +20736,9 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This block describes non MII media for the DC21140[A] only.&n;*/
+DECL|function|type0_infoblock
 r_static
 r_int
-DECL|function|type0_infoblock
 id|type0_infoblock
 c_func
 (paren
@@ -20903,9 +21006,9 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* These functions are under construction! */
+DECL|function|type1_infoblock
 r_static
 r_int
-DECL|function|type1_infoblock
 id|type1_infoblock
 c_func
 (paren
@@ -21206,9 +21309,9 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|type2_infoblock
 r_static
 r_int
-DECL|function|type2_infoblock
 id|type2_infoblock
 c_func
 (paren
@@ -21476,9 +21579,9 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|type3_infoblock
 r_static
 r_int
-DECL|function|type3_infoblock
 id|type3_infoblock
 c_func
 (paren
@@ -21797,9 +21900,9 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|type4_infoblock
 r_static
 r_int
-DECL|function|type4_infoblock
 id|type4_infoblock
 c_func
 (paren
@@ -22108,9 +22211,9 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** This block type provides information for resetting external devices&n;** (chips) through the General Purpose Register.&n;*/
+DECL|function|type5_infoblock
 r_static
 r_int
-DECL|function|type5_infoblock
 id|type5_infoblock
 c_func
 (paren
@@ -22255,9 +22358,9 @@ id|DE4X5_AUTOSENSE_MS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** MII Read/Write&n;*/
+DECL|function|mii_rd
 r_static
 r_int
-DECL|function|mii_rd
 id|mii_rd
 c_func
 (paren
@@ -22340,9 +22443,9 @@ id|ioaddr
 suffix:semicolon
 multiline_comment|/* Read data                      */
 )brace
+DECL|function|mii_wr
 r_static
 r_void
-DECL|function|mii_wr
 id|mii_wr
 c_func
 (paren
@@ -22444,9 +22547,9 @@ multiline_comment|/* Write data                     */
 r_return
 suffix:semicolon
 )brace
+DECL|function|mii_rdata
 r_static
 r_int
-DECL|function|mii_rdata
 id|mii_rdata
 c_func
 (paren
@@ -22498,9 +22601,9 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|mii_wdata
 r_static
 r_void
-DECL|function|mii_wdata
 id|mii_wdata
 c_func
 (paren
@@ -22552,9 +22655,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|mii_address
 r_static
 r_void
-DECL|function|mii_address
 id|mii_address
 c_func
 (paren
@@ -22613,9 +22716,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|mii_ta
 r_static
 r_void
-DECL|function|mii_ta
 id|mii_ta
 c_func
 (paren
@@ -22676,9 +22779,9 @@ multiline_comment|/* Tri-state MDIO */
 r_return
 suffix:semicolon
 )brace
+DECL|function|mii_swap
 r_static
 r_int
-DECL|function|mii_swap
 id|mii_swap
 c_func
 (paren
@@ -22732,9 +22835,9 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
+DECL|function|sendto_mii
 r_static
 r_void
-DECL|function|sendto_mii
 id|sendto_mii
 c_func
 (paren
@@ -22798,9 +22901,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|getfrom_mii
 r_static
 r_int
-DECL|function|getfrom_mii
 id|getfrom_mii
 c_func
 (paren
@@ -22858,9 +22961,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Here&squot;s 3 ways to calculate the OUI from the ID registers.&n;*/
+DECL|function|mii_get_oui
 r_static
 r_int
-DECL|function|mii_get_oui
 id|mii_get_oui
 c_func
 (paren
@@ -22871,7 +22974,7 @@ id|u_long
 id|ioaddr
 )paren
 (brace
-multiline_comment|/*&n;    union {&n;&t;u_short reg;&n;&t;u_char breg[2];&n;    } a;&n;    int i, r2, r3, ret=0;*/
+multiline_comment|/*&n;   union {&n;   u_short reg;&n;   u_char breg[2];&n;   } a;&n;   int i, r2, r3, ret=0; */
 r_int
 id|r2
 comma
@@ -22902,7 +23005,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* SEEQ and Cypress way * /&n;    / * Shuffle r2 and r3 * /&n;    a.reg=0;&n;    r3 = ((r3&gt;&gt;10)|(r2&lt;&lt;6))&amp;0x0ff;&n;    r2 = ((r2&gt;&gt;2)&amp;0x3fff);&n;&n;    / * Bit reverse r3 * /&n;    for (i=0;i&lt;8;i++) {&n;&t;ret&lt;&lt;=1;&n;&t;ret |= (r3&amp;1);&n;&t;r3&gt;&gt;=1;&n;    }&n;&n;    / * Bit reverse r2 * /&n;    for (i=0;i&lt;16;i++) {&n;&t;a.reg&lt;&lt;=1;&n;&t;a.reg |= (r2&amp;1);&n;&t;r2&gt;&gt;=1;&n;    }&n;&n;    / * Swap r2 bytes * /&n;    i=a.breg[0];&n;    a.breg[0]=a.breg[1];&n;    a.breg[1]=i;&n;&n;    return ((a.reg&lt;&lt;8)|ret); */
+multiline_comment|/* SEEQ and Cypress way * /&n;&t;   / * Shuffle r2 and r3 * /&n;&t;   a.reg=0;&n;&t;   r3 = ((r3&gt;&gt;10)|(r2&lt;&lt;6))&amp;0x0ff;&n;&t;   r2 = ((r2&gt;&gt;2)&amp;0x3fff);&n;&n;&t;   / * Bit reverse r3 * /&n;&t;   for (i=0;i&lt;8;i++) {&n;&t;   ret&lt;&lt;=1;&n;&t;   ret |= (r3&amp;1);&n;&t;   r3&gt;&gt;=1;&n;&t;   }&n;&n;&t;   / * Bit reverse r2 * /&n;&t;   for (i=0;i&lt;16;i++) {&n;&t;   a.reg&lt;&lt;=1;&n;&t;   a.reg |= (r2&amp;1);&n;&t;   r2&gt;&gt;=1;&n;&t;   }&n;&n;&t;   / * Swap r2 bytes * /&n;&t;   i=a.breg[0];&n;&t;   a.breg[0]=a.breg[1];&n;&t;   a.breg[1]=i;&n;&n;&t;   return ((a.reg&lt;&lt;8)|ret); */
 multiline_comment|/* SEEQ and Cypress way */
 multiline_comment|/*    return ((r2&lt;&lt;6)|(u_int)(r3&gt;&gt;10)); */
 multiline_comment|/* NATIONAL and BROADCOM way */
@@ -22912,9 +23015,9 @@ suffix:semicolon
 multiline_comment|/* (I did it) My way */
 )brace
 multiline_comment|/*&n;** The SROM spec forces us to search addresses [1-31 0]. Bummer.&n;*/
+DECL|function|mii_get_phy
 r_static
 r_int
-DECL|function|mii_get_phy
 id|mii_get_phy
 c_func
 (paren
@@ -22936,7 +23039,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -23286,7 +23389,7 @@ id|k
 op_increment
 )paren
 (brace
-multiline_comment|/*For each PHY*/
+multiline_comment|/*For each PHY */
 id|mii_wr
 c_func
 (paren
@@ -23349,10 +23452,10 @@ r_return
 id|lp-&gt;mii_cnt
 suffix:semicolon
 )brace
+DECL|function|build_setup_frame
 r_static
 r_char
 op_star
-DECL|function|build_setup_frame
 id|build_setup_frame
 c_func
 (paren
@@ -23572,9 +23675,9 @@ id|pa
 suffix:semicolon
 multiline_comment|/* Points to the next entry */
 )brace
+DECL|function|enable_ast
 r_static
 r_void
-DECL|function|enable_ast
 id|enable_ast
 c_func
 (paren
@@ -23610,9 +23713,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|disable_ast
 r_static
 r_void
-DECL|function|disable_ast
 id|disable_ast
 c_func
 (paren
@@ -23644,9 +23747,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_switch_mac_port
 r_static
 r_int
-DECL|function|de4x5_switch_mac_port
 id|de4x5_switch_mac_port
 c_func
 (paren
@@ -23668,7 +23771,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -23803,9 +23906,9 @@ r_return
 id|omr
 suffix:semicolon
 )brace
+DECL|function|gep_wr
 r_static
 r_void
-DECL|function|gep_wr
 id|gep_wr
 c_func
 (paren
@@ -23830,7 +23933,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -23884,9 +23987,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|gep_rd
 r_static
 r_int
-DECL|function|gep_rd
 id|gep_rd
 c_func
 (paren
@@ -23908,7 +24011,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -23959,9 +24062,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|timeout
 r_static
 r_void
-DECL|function|timeout
 id|timeout
 c_func
 (paren
@@ -24057,9 +24160,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|yawn
 r_static
 r_void
-DECL|function|yawn
 id|yawn
 c_func
 (paren
@@ -24084,7 +24187,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -24259,9 +24362,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_dbg_open
 r_static
 r_void
-DECL|function|de4x5_dbg_open
 id|de4x5_dbg_open
 c_func
 (paren
@@ -24656,9 +24759,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_dbg_mii
 r_static
 r_void
-DECL|function|de4x5_dbg_mii
 id|de4x5_dbg_mii
 c_func
 (paren
@@ -24683,7 +24786,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
+id|u_long
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -24941,9 +25044,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_dbg_media
 r_static
 r_void
-DECL|function|de4x5_dbg_media
 id|de4x5_dbg_media
 c_func
 (paren
@@ -24979,6 +25082,14 @@ c_cond
 id|de4x5_debug
 op_amp
 id|DEBUG_MEDIA
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|lp-&gt;chipset
+op_ne
+id|DC21140
 )paren
 (brace
 id|printk
@@ -25082,6 +25193,7 @@ l_string|&quot;.&quot;
 )paren
 suffix:semicolon
 )brace
+)brace
 id|lp-&gt;c_media
 op_assign
 id|lp-&gt;media
@@ -25090,9 +25202,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_dbg_srom
 r_static
 r_void
-DECL|function|de4x5_dbg_srom
 id|de4x5_dbg_srom
 c_func
 (paren
@@ -25295,9 +25407,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|de4x5_dbg_rx
 r_static
 r_void
-DECL|function|de4x5_dbg_rx
 id|de4x5_dbg_rx
 c_func
 (paren
@@ -25528,9 +25640,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;** Perform IOCTL call functions here. Some are privileged operations and the&n;** effective uid is checked in those cases. In the normal course of events&n;** this function is only used for my testing.&n;*/
+DECL|function|de4x5_ioctl
 r_static
 r_int
-DECL|function|de4x5_ioctl
 id|de4x5_ioctl
 c_func
 (paren
@@ -26393,7 +26505,7 @@ r_break
 suffix:semicolon
 DECL|macro|DE4X5_DUMP
 mdefine_line|#define DE4X5_DUMP              0x0f /* Dump the DE4X5 Status */
-multiline_comment|/*&t;&n;      case DE4X5_DUMP:&n;&t;j = 0;&n;&t;tmp.addr[j++] = dev-&gt;irq;&n;&t;for (i=0; i&lt;ETH_ALEN; i++) {&n;&t;    tmp.addr[j++] = dev-&gt;dev_addr[i];&n;&t;}&n;&t;tmp.addr[j++] = lp-&gt;rxRingSize;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;&t;for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;&t;    if (i &lt; 3) {&n;&t;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;    }&n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&t;&n;&t;for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;&t;}&n;&t;for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;&t;    tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;&t;}&n;&t;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;&t;if (lp-&gt;chipset == DC21140) {&n;&t;    tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;&t;} else {&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;&t;}&n;&t;tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;&t;if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;&t;    tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;    tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    } else {&n;&t;&t;tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;&t;    }&n;&t;}&n;&t;&n;&t;tmp.addr[j++] = lp-&gt;txRingSize;&n;&t;tmp.addr[j++] = dev-&gt;tbusy;&n;&t;&n;&t;ioc-&gt;len = j;&n;&t;if (!(status = verify_area(VERIFY_WRITE, (void *)ioc-&gt;data, ioc-&gt;len))) {&n;&t;    copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len);&n;&t;}&n;&t;&n;&t;break;&n;*/
+multiline_comment|/*&t;&n;   case DE4X5_DUMP:&n;   j = 0;&n;   tmp.addr[j++] = dev-&gt;irq;&n;   for (i=0; i&lt;ETH_ALEN; i++) {&n;   tmp.addr[j++] = dev-&gt;dev_addr[i];&n;   }&n;   tmp.addr[j++] = lp-&gt;rxRingSize;&n;   tmp.lval[j&gt;&gt;2] = (long)lp-&gt;rx_ring; j+=4;&n;   tmp.lval[j&gt;&gt;2] = (long)lp-&gt;tx_ring; j+=4;&n;&n;   for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;   if (i &lt; 3) {&n;   tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;   }&n;   }&n;   tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;rx_ring[i].status; j+=4;&n;   for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;   if (i &lt; 3) {&n;   tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;   }&n;   }&n;   tmp.lval[j&gt;&gt;2] = (long)&amp;lp-&gt;tx_ring[i].status; j+=4;&n;&n;   for (i=0;i&lt;lp-&gt;rxRingSize-1;i++){&n;   if (i &lt; 3) {&n;   tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;   }&n;   }&n;   tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;rx_ring[i].buf); j+=4;&n;   for (i=0;i&lt;lp-&gt;txRingSize-1;i++){&n;   if (i &lt; 3) {&n;   tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;   }&n;   }&n;   tmp.lval[j&gt;&gt;2] = (s32)le32_to_cpu(lp-&gt;tx_ring[i].buf); j+=4;&n;&n;   for (i=0;i&lt;lp-&gt;rxRingSize;i++){&n;   tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;rx_ring[i].status); j+=4;&n;   }&n;   for (i=0;i&lt;lp-&gt;txRingSize;i++){&n;   tmp.lval[j&gt;&gt;2] = le32_to_cpu(lp-&gt;tx_ring[i].status); j+=4;&n;   }&n;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_BMR);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_TPD);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_RPD);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_RRBA); j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_TRBA); j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_STS);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_OMR);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_IMR);  j+=4;&n;   tmp.lval[j&gt;&gt;2] = lp-&gt;chipset; j+=4; &n;   if (lp-&gt;chipset == DC21140) {&n;   tmp.lval[j&gt;&gt;2] = gep_rd(dev);  j+=4;&n;   } else {&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_SISR); j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_SICR); j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_STRR); j+=4;&n;   tmp.lval[j&gt;&gt;2] = inl(DE4X5_SIGR); j+=4; &n;   }&n;   tmp.lval[j&gt;&gt;2] = lp-&gt;phy[lp-&gt;active].id; j+=4; &n;   if (lp-&gt;phy[lp-&gt;active].id &amp;&amp; (!lp-&gt;useSROM || lp-&gt;useMII)) {&n;   tmp.lval[j&gt;&gt;2] = lp-&gt;active; j+=4; &n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_CR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_SR,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID0,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_ID1,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   tmp.lval[j&gt;&gt;2]=mii_rd(MII_ANLPA,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   }&n;   tmp.lval[j&gt;&gt;2]=mii_rd(0x10,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   if (lp-&gt;phy[lp-&gt;active].id != BROADCOM_T4) {&n;   tmp.lval[j&gt;&gt;2]=mii_rd(0x11,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   tmp.lval[j&gt;&gt;2]=mii_rd(0x12,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   } else {&n;   tmp.lval[j&gt;&gt;2]=mii_rd(0x14,lp-&gt;phy[lp-&gt;active].addr,DE4X5_MII); j+=4;&n;   }&n;   }&n;&n;   tmp.addr[j++] = lp-&gt;txRingSize;&n;   tmp.addr[j++] = dev-&gt;tbusy;&n;&n;   ioc-&gt;len = j;&n;   if (!(status = verify_area(VERIFY_WRITE, (void *)ioc-&gt;data, ioc-&gt;len))) {&n;   copy_to_user(ioc-&gt;data, tmp.addr, ioc-&gt;len);&n;   }&n;&n;   break;&n; */
 r_default
 suffix:colon
 id|status
@@ -26437,8 +26549,8 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* LINUX_VERSION_CODE */
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -26551,8 +26663,8 @@ r_return
 id|status
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -26579,11 +26691,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|unlink_modules
 r_static
 r_struct
 id|device
 op_star
-DECL|function|unlink_modules
 id|unlink_modules
 c_func
 (paren
@@ -26680,9 +26792,9 @@ r_return
 id|next
 suffix:semicolon
 )brace
+DECL|function|count_adapters
 r_static
 r_int
-DECL|function|count_adapters
 id|count_adapters
 c_func
 (paren
@@ -26693,6 +26805,8 @@ r_int
 id|i
 comma
 id|j
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 id|name
@@ -26719,7 +26833,9 @@ id|DE4X5_CLASS_CODE
 suffix:semicolon
 id|u_int
 id|device
-comma
+suffix:semicolon
+macro_line|#ifndef __sparc_v9__
+id|u_int
 id|iobase
 op_assign
 l_int|0x1000
@@ -26727,10 +26843,6 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|j
-op_assign
-l_int|0
-comma
 id|i
 op_assign
 l_int|1
@@ -26762,6 +26874,7 @@ id|j
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -27000,7 +27113,7 @@ r_return
 r_new
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -c de4x5.c&quot;&n; *&n; *  compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I/linux/include -Wall -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2 -O2 -m486 -c de4x5.c&quot;&n; * End:&n; */
 eof

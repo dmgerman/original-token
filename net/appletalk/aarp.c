@@ -414,10 +414,6 @@ id|aarp_eth_multicast
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send it.&n;&t; */
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -647,10 +643,6 @@ id|sha
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send it.&n;&t; */
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -855,10 +847,6 @@ id|aarp_eth_multicast
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send it.&n;&t; */
-id|skb-&gt;priority
-op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -1480,6 +1468,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Check for localtalk first&n;&t; */
 r_if
 c_cond
@@ -1611,20 +1603,13 @@ r_if
 c_cond
 (paren
 id|skb-&gt;sk
-op_eq
-l_int|NULL
 )paren
 (brace
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
-)brace
-r_else
-id|skb-&gt;priority
-op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1660,20 +1645,13 @@ r_if
 c_cond
 (paren
 id|skb-&gt;sk
-op_eq
-l_int|NULL
 )paren
 (brace
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
-)brace
-r_else
-id|skb-&gt;priority
-op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1760,20 +1738,13 @@ r_if
 c_cond
 (paren
 id|skb-&gt;sk
-op_eq
-l_int|NULL
 )paren
 (brace
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
-)brace
-r_else
-id|skb-&gt;priority
-op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
+)brace
 id|dev_queue_xmit
 c_func
 (paren
@@ -1838,20 +1809,13 @@ r_if
 c_cond
 (paren
 id|skb-&gt;sk
-op_eq
-l_int|NULL
 )paren
 (brace
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
-)brace
-r_else
-id|skb-&gt;priority
-op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
+)brace
 id|dev_queue_xmit
 c_func
 (paren
@@ -2144,20 +2108,13 @@ r_if
 c_cond
 (paren
 id|skb-&gt;sk
-op_eq
-l_int|NULL
 )paren
 (brace
 id|skb-&gt;priority
 op_assign
-id|SOPRI_NORMAL
-suffix:semicolon
-)brace
-r_else
-id|skb-&gt;priority
-op_assign
 id|skb-&gt;sk-&gt;priority
 suffix:semicolon
+)brace
 id|dev_queue_xmit
 c_func
 (paren
@@ -2735,8 +2692,7 @@ id|aarp_notifier
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; * Remove the AARP entries associated with a device.&n; * Called from cleanup_module() in ddp.c.&n; */
+multiline_comment|/*&n; * Remove the AARP entries associated with a device.&n; */
 DECL|function|aarp_device_down
 r_void
 id|aarp_device_down
@@ -2796,6 +2752,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 multiline_comment|/*&n; * General module cleanup. Called from cleanup_module() in ddp.c.&n; */
 DECL|function|aarp_cleanup_module
 r_void

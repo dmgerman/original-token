@@ -1,6 +1,9 @@
 multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A (and SB, MPU).&n; * CS4232A is an improved version of CS4232.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &quot;soundmodule.h&quot;
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 DECL|macro|DEB1
@@ -391,6 +394,7 @@ mdefine_line|#define io_Polled_IO(d)&t;&t;((d)-&gt;base+3)
 r_static
 r_int
 id|ad1848_open
+c_func
 (paren
 r_int
 id|dev
@@ -402,6 +406,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_close
+c_func
 (paren
 r_int
 id|dev
@@ -410,6 +415,7 @@ suffix:semicolon
 r_static
 r_int
 id|ad1848_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -425,6 +431,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -443,6 +450,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -461,6 +469,7 @@ suffix:semicolon
 r_static
 r_int
 id|ad1848_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -475,6 +484,7 @@ suffix:semicolon
 r_static
 r_int
 id|ad1848_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -489,6 +499,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_halt
+c_func
 (paren
 r_int
 id|dev
@@ -497,6 +508,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_halt_input
+c_func
 (paren
 r_int
 id|dev
@@ -505,6 +517,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_halt_output
+c_func
 (paren
 r_int
 id|dev
@@ -513,6 +526,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -521,10 +535,11 @@ r_int
 id|bits
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
 r_static
 r_int
 id|ad1848_tmr_install
+c_func
 (paren
 r_int
 id|dev
@@ -533,6 +548,7 @@ suffix:semicolon
 r_static
 r_void
 id|ad1848_tmr_reprogram
+c_func
 (paren
 r_int
 id|dev
@@ -543,6 +559,7 @@ r_static
 r_int
 DECL|function|ad_read
 id|ad_read
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -572,6 +589,7 @@ OG
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -583,15 +601,18 @@ id|timeout
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -608,6 +629,7 @@ id|devc-&gt;MCE_bit
 )paren
 comma
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
@@ -616,8 +638,10 @@ suffix:semicolon
 id|x
 op_assign
 id|inb
+c_func
 (paren
 id|io_Indexed_Data
+c_func
 (paren
 id|devc
 )paren
@@ -625,6 +649,7 @@ id|devc
 suffix:semicolon
 multiline_comment|/* printk(&quot;(%02x&lt;-%02x) &quot;, reg|devc-&gt;MCE_bit, x); */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -637,6 +662,7 @@ r_static
 r_void
 DECL|function|ad_write
 id|ad_write
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -666,6 +692,7 @@ OG
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -677,15 +704,18 @@ id|timeout
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -702,12 +732,14 @@ id|devc-&gt;MCE_bit
 )paren
 comma
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -722,6 +754,7 @@ l_int|0xff
 )paren
 comma
 id|io_Indexed_Data
+c_func
 (paren
 id|devc
 )paren
@@ -729,6 +762,7 @@ id|devc
 suffix:semicolon
 multiline_comment|/* printk(&quot;(%02x-&gt;%02x) &quot;, reg|devc-&gt;MCE_bit, data); */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -738,6 +772,7 @@ r_static
 r_void
 DECL|function|wait_for_calibration
 id|wait_for_calibration
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -749,7 +784,7 @@ id|timeout
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Wait until the auto calibration process has finished.&n;     *&n;     * 1)       Wait until the chip becomes ready (reads don&squot;t return 0x80).&n;     * 2)       Wait until the ACI bit of I11 gets on and then off.&n;   */
+multiline_comment|/*&n;&t;   * Wait until the auto calibration process has finished.&n;&t;   *&n;&t;   * 1)       Wait until the chip becomes ready (reads don&squot;t return 0x80).&n;&t;   * 2)       Wait until the ACI bit of I11 gets on and then off.&n;&t; */
 id|timeout
 op_assign
 l_int|100000
@@ -762,6 +797,7 @@ OG
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -775,6 +811,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -782,6 +819,7 @@ op_amp
 l_int|0x80
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848: Auto calibration timed out(1).&bslash;n&quot;
 )paren
@@ -800,6 +838,7 @@ op_logical_and
 op_logical_neg
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -818,6 +857,7 @@ c_cond
 op_logical_neg
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -841,6 +881,7 @@ OG
 l_int|0
 op_logical_and
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -856,6 +897,7 @@ r_if
 c_cond
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -872,6 +914,7 @@ op_ne
 id|MD_1845
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848: Auto calibration timed out(3).&bslash;n&quot;
 )paren
@@ -881,6 +924,7 @@ r_static
 r_void
 DECL|function|ad_mute
 id|ad_mute
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -894,7 +938,7 @@ r_int
 r_char
 id|prev
 suffix:semicolon
-multiline_comment|/*&n;     * Save old register settings and mute output channels&n;   */
+multiline_comment|/*&n;&t;   * Save old register settings and mute output channels&n;&t; */
 r_for
 c_loop
 (paren
@@ -918,6 +962,7 @@ id|i
 )braket
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -930,6 +975,7 @@ r_static
 r_void
 DECL|function|ad_unmute
 id|ad_unmute
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -941,6 +987,7 @@ r_static
 r_void
 DECL|function|ad_enter_MCE
 id|ad_enter_MCE
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -968,6 +1015,7 @@ OG
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -979,11 +1027,13 @@ id|timeout
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -994,8 +1044,10 @@ suffix:semicolon
 id|prev
 op_assign
 id|inb
+c_func
 (paren
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
@@ -1010,6 +1062,7 @@ l_int|0x40
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1018,18 +1071,21 @@ r_return
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|devc-&gt;MCE_bit
 )paren
 comma
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1039,6 +1095,7 @@ r_static
 r_void
 DECL|function|ad_leave_MCE
 id|ad_leave_MCE
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -1068,6 +1125,7 @@ OG
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -1079,17 +1137,20 @@ id|timeout
 op_decrement
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|acal
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -1103,20 +1164,24 @@ suffix:semicolon
 id|prev
 op_assign
 id|inb
+c_func
 (paren
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
 )paren
 comma
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
@@ -1137,6 +1202,7 @@ l_int|0
 multiline_comment|/* Not in MCE mode */
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1145,12 +1211,14 @@ r_return
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
 )paren
 comma
 id|io_Index_Addr
+c_func
 (paren
 id|devc
 )paren
@@ -1166,11 +1234,13 @@ l_int|0x08
 )paren
 multiline_comment|/* Auto calibration is enabled */
 id|wait_for_calibration
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1180,6 +1250,7 @@ r_static
 r_int
 DECL|function|ad1848_set_recmask
 id|ad1848_set_recmask
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -1429,6 +1500,7 @@ op_lshift_assign
 l_int|6
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -1436,6 +1508,7 @@ l_int|0
 comma
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -1449,6 +1522,7 @@ id|recdev
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -1456,6 +1530,7 @@ l_int|1
 comma
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -1541,6 +1616,7 @@ r_static
 r_void
 DECL|function|change_bits
 id|change_bits
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -1758,6 +1834,7 @@ r_static
 r_int
 DECL|function|ad1848_mixer_get
 id|ad1848_mixer_get
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -1803,6 +1880,7 @@ r_static
 r_int
 DECL|function|ad1848_mixer_set
 id|ad1848_mixer_set
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -1987,7 +2065,7 @@ id|dev
 op_assign
 id|retvol
 suffix:semicolon
-multiline_comment|/*&n;     * Set the left channel&n;   */
+multiline_comment|/*&n;&t;   * Set the left channel&n;&t; */
 id|regoffs
 op_assign
 id|devc-&gt;mix_devices
@@ -2003,6 +2081,7 @@ suffix:semicolon
 id|val
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2010,6 +2089,7 @@ id|regoffs
 )paren
 suffix:semicolon
 id|change_bits
+c_func
 (paren
 id|devc
 comma
@@ -2024,6 +2104,7 @@ id|left
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -2039,7 +2120,7 @@ id|regoffs
 op_assign
 id|val
 suffix:semicolon
-multiline_comment|/*&n;     * Set the right channel&n;   */
+multiline_comment|/*&n;&t;   * Set the right channel&n;&t; */
 r_if
 c_cond
 (paren
@@ -2074,6 +2155,7 @@ suffix:semicolon
 id|val
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2081,6 +2163,7 @@ id|regoffs
 )paren
 suffix:semicolon
 id|change_bits
+c_func
 (paren
 id|devc
 comma
@@ -2095,6 +2178,7 @@ id|right
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -2118,6 +2202,7 @@ r_static
 r_void
 DECL|function|ad1848_mixer_reset
 id|ad1848_mixer_reset
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -2144,6 +2229,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|name
 comma
@@ -2265,6 +2351,7 @@ suffix:semicolon
 id|devc-&gt;levels
 op_assign
 id|load_mixer_volumes
+c_func
 (paren
 id|name
 comma
@@ -2299,6 +2386,7 @@ id|i
 )paren
 )paren
 id|ad1848_mixer_set
+c_func
 (paren
 id|devc
 comma
@@ -2311,6 +2399,7 @@ id|i
 )paren
 suffix:semicolon
 id|ad1848_set_recmask
+c_func
 (paren
 id|devc
 comma
@@ -2336,12 +2425,14 @@ op_amp
 id|AUDIO_SPEAKER
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|26
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2355,12 +2446,14 @@ suffix:semicolon
 multiline_comment|/* Unmute mono out */
 r_else
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|26
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2376,6 +2469,7 @@ r_static
 r_int
 DECL|function|ad1848_mixer_ioctl
 id|ad1848_mixer_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -2471,12 +2565,14 @@ op_amp
 id|AUDIO_SPEAKER
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|26
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2490,12 +2586,14 @@ suffix:semicolon
 multiline_comment|/* Unmute mono out */
 r_else
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|26
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -2542,6 +2640,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -2578,6 +2677,7 @@ op_star
 id|arg
 op_assign
 id|ad1848_set_recmask
+c_func
 (paren
 id|devc
 comma
@@ -2608,6 +2708,7 @@ op_star
 id|arg
 op_assign
 id|ad1848_mixer_set
+c_func
 (paren
 id|devc
 comma
@@ -2628,7 +2729,7 @@ id|cmd
 op_amp
 l_int|0xff
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Return parameters&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Return parameters&n;&t;&t;&t;&t;&t;&t; */
 (brace
 r_case
 id|SOUND_MIXER_RECSRC
@@ -2754,6 +2855,7 @@ op_star
 id|arg
 op_assign
 id|ad1848_mixer_get
+c_func
 (paren
 id|devc
 comma
@@ -2775,6 +2877,7 @@ r_static
 r_int
 DECL|function|ad1848_set_speed
 id|ad1848_set_speed
+c_func
 (paren
 r_int
 id|dev
@@ -2813,7 +2916,7 @@ id|dev
 op_member_access_from_pointer
 id|portc
 suffix:semicolon
-multiline_comment|/*&n;     * The sampling speed is encoded in the least significant nibble of I8. The&n;     * LSB selects the clock source (0=24.576 MHz, 1=16.9344 MHz) and other&n;     * three bits select the divisor (indirectly):&n;     *&n;     * The available speeds are in the following table. Keep the speeds in&n;     * the increasing order.&n;   */
+multiline_comment|/*&n;&t;   * The sampling speed is encoded in the least significant nibble of I8. The&n;&t;   * LSB selects the clock source (0=24.576 MHz, 1=16.9344 MHz) and other&n;&t;   * three bits select the divisor (indirectly):&n;&t;   *&n;&t;   * The available speeds are in the following table. Keep the speeds in&n;&t;   * the increasing order.&n;&t; */
 r_typedef
 r_struct
 (brace
@@ -3239,6 +3342,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848: Can&squot;t find speed???&bslash;n&quot;
 )paren
@@ -3274,6 +3378,7 @@ r_static
 r_int
 DECL|function|ad1848_set_channels
 id|ad1848_set_channels
+c_func
 (paren
 r_int
 id|dev
@@ -3324,6 +3429,7 @@ r_int
 r_int
 DECL|function|ad1848_set_bits
 id|ad1848_set_bits
+c_func
 (paren
 r_int
 id|dev
@@ -3610,6 +3716,7 @@ r_static
 r_int
 DECL|function|ad1848_open
 id|ad1848_open
+c_func
 (paren
 r_int
 id|dev
@@ -3674,11 +3781,13 @@ op_member_access_from_pointer
 id|portc
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3695,6 +3804,7 @@ id|mode
 )paren
 (brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3743,6 +3853,7 @@ op_assign
 id|mode
 suffix:semicolon
 id|ad1848_trigger
+c_func
 (paren
 id|dev
 comma
@@ -3772,12 +3883,14 @@ op_assign
 id|dev
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Mute output until the playback really starts. This decreases clicking (hope so).&n; */
 id|ad_mute
+c_func
 (paren
 id|devc
 )paren
@@ -3790,6 +3903,7 @@ r_static
 r_void
 DECL|function|ad1848_close
 id|ad1848_close
+c_func
 (paren
 r_int
 id|dev
@@ -3830,19 +3944,23 @@ op_member_access_from_pointer
 id|portc
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_close(void)&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -3851,6 +3969,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ad1848_halt
+c_func
 (paren
 id|dev
 )paren
@@ -3869,11 +3988,13 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ad_unmute
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3883,6 +4004,7 @@ r_static
 r_int
 DECL|function|ad1848_ioctl
 id|ad1848_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -3904,6 +4026,7 @@ r_static
 r_void
 DECL|function|ad1848_output_block
 id|ad1848_output_block
+c_func
 (paren
 r_int
 id|dev
@@ -4041,15 +4164,18 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Auto DMA mode on. No need to react&n;&t;&t;&t;&t; */
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4067,6 +4193,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4100,6 +4227,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4109,6 +4237,7 @@ r_static
 r_void
 DECL|function|ad1848_start_input
 id|ad1848_start_input
+c_func
 (paren
 r_int
 id|dev
@@ -4246,11 +4375,13 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Auto DMA mode on. No need to react&n;&t;&t;&t;&t; */
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4263,6 +4394,7 @@ id|MD_1848
 )paren
 (brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4280,6 +4412,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4304,6 +4437,7 @@ suffix:semicolon
 r_else
 (brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4321,6 +4455,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4343,6 +4478,7 @@ l_int|0xff
 suffix:semicolon
 )brace
 id|ad_unmute
+c_func
 (paren
 id|devc
 )paren
@@ -4360,6 +4496,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4369,6 +4506,7 @@ r_static
 r_int
 DECL|function|ad1848_prepare_for_output
 id|ad1848_prepare_for_output
+c_func
 (paren
 r_int
 id|dev
@@ -4428,16 +4566,19 @@ op_member_access_from_pointer
 id|portc
 suffix:semicolon
 id|ad_mute
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4463,6 +4604,7 @@ op_or_assign
 l_int|0x10
 suffix:semicolon
 id|ad_enter_MCE
+c_func
 (paren
 id|devc
 )paren
@@ -4483,6 +4625,7 @@ l_int|0xf0
 suffix:semicolon
 multiline_comment|/* Mask off the rate select bits */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4499,6 +4642,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* Speed MSB */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4514,6 +4658,7 @@ multiline_comment|/* Speed LSB */
 id|old_fs
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -4531,6 +4676,7 @@ id|MD_4232
 id|tmp
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -4538,6 +4684,7 @@ l_int|16
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4557,6 +4704,7 @@ op_eq
 id|MD_IWAVE
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4567,6 +4715,7 @@ l_int|0xc2
 suffix:semicolon
 multiline_comment|/* Disable variable frequency select */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4575,7 +4724,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Write to I8 starts resynchronization. Wait until it completes.&n;   */
+multiline_comment|/*&n;&t; * Write to I8 starts resynchronization. Wait until it completes.&n;&t; */
 id|timeout
 op_assign
 l_int|0
@@ -4588,6 +4737,7 @@ OL
 l_int|100
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -4609,6 +4759,7 @@ OL
 l_int|10000
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -4626,6 +4777,7 @@ op_eq
 id|MD_4232
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4638,12 +4790,14 @@ l_int|0x30
 )paren
 suffix:semicolon
 id|ad_leave_MCE
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Starts the calibration process.&n;&t;&t;&t;&t; */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4652,7 +4806,7 @@ id|devc-&gt;xfer_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
 r_if
 c_cond
 (paren
@@ -4679,6 +4833,7 @@ l_int|0x01
 )paren
 (brace
 id|ad1848_tmr_reprogram
+c_func
 (paren
 id|dev
 )paren
@@ -4686,6 +4841,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|ad1848_halt_output
+c_func
 (paren
 id|dev
 )paren
@@ -4698,6 +4854,7 @@ r_static
 r_int
 DECL|function|ad1848_prepare_for_input
 id|ad1848_prepare_for_input
+c_func
 (paren
 r_int
 id|dev
@@ -4765,11 +4922,13 @@ r_return
 l_int|0
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4795,6 +4954,7 @@ op_or_assign
 l_int|0x10
 suffix:semicolon
 id|ad_enter_MCE
+c_func
 (paren
 id|devc
 )paren
@@ -4815,6 +4975,7 @@ l_int|0xf0
 suffix:semicolon
 multiline_comment|/* Mask off the rate select bits */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4831,6 +4992,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* Speed MSB */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4854,6 +5016,7 @@ id|MD_4232
 id|tmp
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -4861,6 +5024,7 @@ l_int|16
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4880,6 +5044,7 @@ op_eq
 id|MD_IWAVE
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4889,7 +5054,7 @@ l_int|0xc2
 )paren
 suffix:semicolon
 multiline_comment|/* Disable variable frequency select */
-multiline_comment|/*&n;   * If mode &gt;= 2 (CS4231), set I28. It&squot;s the capture format register.&n;   */
+multiline_comment|/*&n;&t; * If mode &gt;= 2 (CS4231), set I28. It&squot;s the capture format register.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4901,6 +5066,7 @@ id|MD_1848
 id|old_fs
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -4908,6 +5074,7 @@ l_int|28
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4916,7 +5083,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Write to I28 starts resynchronization. Wait until it completes.&n;       */
+multiline_comment|/*&n;&t;&t;   * Write to I28 starts resynchronization. Wait until it completes.&n;&t;&t;   */
 id|timeout
 op_assign
 l_int|0
@@ -4929,6 +5096,7 @@ OL
 l_int|100
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -4950,6 +5118,7 @@ OL
 l_int|10000
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -4971,7 +5140,7 @@ op_ne
 id|MD_1845
 )paren
 (brace
-multiline_comment|/*&n;&t;   * CS4231 compatible devices don&squot;t have separate sampling rate selection&n;&t;   * register for recording an playback. The I8 register is shared so we have to&n;&t;   * set the speed encoding bits of it too.&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;     * CS4231 compatible devices don&squot;t have separate sampling rate selection&n;&t;&t;&t;     * register for recording an playback. The I8 register is shared so we have to&n;&t;&t;&t;     * set the speed encoding bits of it too.&n;&t;&t;&t;     */
 r_int
 r_char
 id|tmp
@@ -4980,6 +5149,7 @@ id|portc-&gt;speed_bits
 op_or
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -4990,6 +5160,7 @@ l_int|0xf0
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -4998,7 +5169,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Write to I8 starts resynchronization. Wait until it completes.&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;     * Write to I8 starts resynchronization. Wait until it completes.&n;&t;&t;&t;     */
 id|timeout
 op_assign
 l_int|0
@@ -5011,6 +5182,7 @@ OL
 l_int|100
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -5032,6 +5204,7 @@ OL
 l_int|10000
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -5049,6 +5222,7 @@ multiline_comment|/* For AD1848 set I8. */
 id|old_fs
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5056,6 +5230,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5064,7 +5239,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Write to I8 starts resynchronization. Wait until it completes.&n;       */
+multiline_comment|/*&n;&t;&t;   * Write to I8 starts resynchronization. Wait until it completes.&n;&t;&t;   */
 id|timeout
 op_assign
 l_int|0
@@ -5077,6 +5252,7 @@ OL
 l_int|100
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -5098,6 +5274,7 @@ OL
 l_int|10000
 op_logical_and
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -5116,6 +5293,7 @@ op_eq
 id|MD_4232
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5128,12 +5306,14 @@ l_int|0x30
 )paren
 suffix:semicolon
 id|ad_leave_MCE
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Starts the calibration process.&n;&t;&t;&t;&t; */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -5169,6 +5349,7 @@ l_int|0x01
 )paren
 (brace
 id|ad1848_tmr_reprogram
+c_func
 (paren
 id|dev
 )paren
@@ -5176,6 +5357,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|ad1848_halt_input
+c_func
 (paren
 id|dev
 )paren
@@ -5188,6 +5370,7 @@ r_static
 r_void
 DECL|function|ad1848_halt
 id|ad1848_halt
+c_func
 (paren
 r_int
 id|dev
@@ -5228,6 +5411,7 @@ r_char
 id|bits
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5246,6 +5430,7 @@ op_amp
 id|OPEN_WRITE
 )paren
 id|ad1848_halt_output
+c_func
 (paren
 id|dev
 )paren
@@ -5262,6 +5447,7 @@ op_amp
 id|OPEN_READ
 )paren
 id|ad1848_halt_input
+c_func
 (paren
 id|dev
 )paren
@@ -5275,6 +5461,7 @@ r_static
 r_void
 DECL|function|ad1848_halt_input
 id|ad1848_halt_input
+c_func
 (paren
 r_int
 id|dev
@@ -5305,6 +5492,7 @@ c_cond
 op_logical_neg
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5318,15 +5506,18 @@ r_return
 suffix:semicolon
 multiline_comment|/* Capture not enabled */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ad_mute
+c_func
 (paren
 id|devc
 )paren
@@ -5336,6 +5527,7 @@ r_int
 id|tmout
 suffix:semicolon
 id|disable_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -5363,6 +5555,7 @@ r_if
 c_cond
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5374,12 +5567,14 @@ l_int|0x10
 r_break
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|9
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5392,6 +5587,7 @@ l_int|0x02
 suffix:semicolon
 multiline_comment|/* Stop capture */
 id|enable_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -5408,12 +5604,14 @@ id|PCM_ENABLE_INPUT
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -5421,12 +5619,14 @@ id|devc
 suffix:semicolon
 multiline_comment|/* Clear interrupt status */
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -5439,6 +5639,7 @@ op_complement
 id|PCM_ENABLE_INPUT
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -5448,6 +5649,7 @@ r_static
 r_void
 DECL|function|ad1848_halt_output
 id|ad1848_halt_output
+c_func
 (paren
 r_int
 id|dev
@@ -5478,6 +5680,7 @@ c_cond
 op_logical_neg
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5491,15 +5694,18 @@ r_return
 suffix:semicolon
 multiline_comment|/* Playback not enabled */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ad_mute
+c_func
 (paren
 id|devc
 )paren
@@ -5509,6 +5715,7 @@ r_int
 id|tmout
 suffix:semicolon
 id|disable_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -5536,6 +5743,7 @@ r_if
 c_cond
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5547,12 +5755,14 @@ l_int|0x10
 r_break
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|9
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5565,6 +5775,7 @@ l_int|0x01
 suffix:semicolon
 multiline_comment|/* Stop playback */
 id|enable_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -5581,12 +5792,14 @@ id|PCM_ENABLE_OUTPUT
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -5594,12 +5807,14 @@ id|devc
 suffix:semicolon
 multiline_comment|/* Clear interrupt status */
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -5612,6 +5827,7 @@ op_complement
 id|PCM_ENABLE_OUTPUT
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -5621,6 +5837,7 @@ r_static
 r_void
 DECL|function|ad1848_trigger
 id|ad1848_trigger
+c_func
 (paren
 r_int
 id|dev
@@ -5670,11 +5887,13 @@ comma
 id|old
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -5687,6 +5906,7 @@ op_assign
 id|old
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5755,6 +5975,7 @@ id|old
 )paren
 (brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5764,12 +5985,14 @@ id|tmp
 )paren
 suffix:semicolon
 id|ad_unmute
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 )brace
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -5779,6 +6002,7 @@ r_static
 r_void
 DECL|function|ad1848_init_hw
 id|ad1848_init_hw
+c_func
 (paren
 id|ad1848_info
 op_star
@@ -5788,7 +6012,7 @@ id|devc
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   * Initial values for the indirect registers of CS4248/AD1848.&n;   */
+multiline_comment|/*&n;&t; * Initial values for the indirect registers of CS4248/AD1848.&n;&t; */
 r_static
 r_int
 id|init_values
@@ -5877,6 +6101,7 @@ id|i
 op_increment
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5889,12 +6114,14 @@ id|i
 )paren
 suffix:semicolon
 id|ad_mute
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize some variables */
 id|ad_unmute
+c_func
 (paren
 id|devc
 )paren
@@ -5909,12 +6136,14 @@ id|MD_1848
 )paren
 (brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|12
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -5933,6 +6162,7 @@ op_eq
 id|MD_IWAVE
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5957,6 +6187,7 @@ id|i
 op_increment
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -5976,6 +6207,7 @@ op_eq
 id|MD_IWAVE
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6002,12 +6234,14 @@ op_amp
 id|DMA_DUPLEX
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|9
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6021,12 +6255,14 @@ suffix:semicolon
 multiline_comment|/* Dual DMA mode */
 r_else
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|9
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6045,12 +6281,14 @@ op_eq
 id|MD_1845
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|27
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6071,6 +6309,7 @@ id|MD_IWAVE
 (brace
 multiline_comment|/* Some magic Interwave specific initialization */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6081,6 +6320,7 @@ l_int|0x6c
 suffix:semicolon
 multiline_comment|/* Select codec mode 3 */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6091,6 +6331,7 @@ l_int|0x30
 suffix:semicolon
 multiline_comment|/* Playback and capture counters enabled */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6110,12 +6351,14 @@ op_complement
 id|DMA_DUPLEX
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|9
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6128,31 +6371,36 @@ suffix:semicolon
 multiline_comment|/* Single DMA mode */
 )brace
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
 )paren
 suffix:semicolon
 multiline_comment|/* Clear pending interrupts */
-multiline_comment|/*&n;   * Toggle the MCE bit. It completes the initialization phase.&n;   */
+multiline_comment|/*&n;&t; * Toggle the MCE bit. It completes the initialization phase.&n;&t; */
 id|ad_enter_MCE
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 multiline_comment|/* In case the bit was off */
 id|ad_leave_MCE
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|ad1848_mixer_reset
+c_func
 (paren
 id|devc
 )paren
@@ -6161,6 +6409,7 @@ suffix:semicolon
 r_int
 DECL|function|ad1848_detect
 id|ad1848_detect
+c_func
 (paren
 r_int
 id|io_base
@@ -6223,8 +6472,10 @@ r_int
 id|i
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect(%x)&bslash;n&quot;
 comma
@@ -6286,6 +6537,7 @@ id|MAX_AUDIO_DEV
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 - Too many audio devices&bslash;n&quot;
 )paren
@@ -6298,6 +6550,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|io_base
 comma
@@ -6306,6 +6559,7 @@ l_int|4
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848.c: Port %x not free.&bslash;n&quot;
 comma
@@ -6363,11 +6617,12 @@ id|devc-&gt;debug_flag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed its power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
+multiline_comment|/*&n;&t;   * Check that the I/O address is in use.&n;&t;   *&n;&t;   * The bit 0x80 of the base I/O port is known to be 0 after the&n;&t;   * chip has performed its power on initialization. Just assume&n;&t;   * this has happened before the OS is starting.&n;&t;   *&n;&t;   * If the I/O address is unused, it typically returns 0xff.&n;&t; */
 r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -6376,8 +6631,10 @@ l_int|0xff
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect: The base I/O address appears to be dead&bslash;n&quot;
 )paren
@@ -6386,8 +6643,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Wait for the device to stop initialization&n; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step 0&bslash;n&quot;
 )paren
@@ -6413,6 +6672,7 @@ r_char
 id|x
 op_assign
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -6435,8 +6695,10 @@ r_break
 suffix:semicolon
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step A&bslash;n&quot;
 )paren
@@ -6446,6 +6708,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -6454,6 +6717,7 @@ l_int|0x80
 )paren
 multiline_comment|/* Not ready. Let&squot;s wait */
 id|ad_leave_MCE
+c_func
 (paren
 id|devc
 )paren
@@ -6463,6 +6727,7 @@ c_cond
 (paren
 (paren
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -6475,8 +6740,10 @@ l_int|0x00
 multiline_comment|/* Not a AD1848 */
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect error - step A (%02x)&bslash;n&quot;
 comma
@@ -6484,6 +6751,7 @@ comma
 r_int
 )paren
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -6494,16 +6762,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Test if it&squot;s possible to change contents of the indirect registers.&n;     * Registers 0 and 1 are ADC volume registers. The bit 0x10 is read only&n;     * so try to avoid using it.&n;   */
+multiline_comment|/*&n;&t;   * Test if it&squot;s possible to change contents of the indirect registers.&n;&t;   * Registers 0 and 1 are ADC volume registers. The bit 0x10 is read only&n;&t;   * so try to avoid using it.&n;&t; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step B&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6513,6 +6784,7 @@ l_int|0xaa
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6529,6 +6801,7 @@ c_cond
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6542,6 +6815,7 @@ op_logical_or
 id|tmp2
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6566,8 +6840,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect error - step B (%x/%x)&bslash;n&quot;
 comma
@@ -6582,14 +6858,17 @@ l_int|0
 suffix:semicolon
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step C&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6599,6 +6878,7 @@ l_int|0x45
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6614,6 +6894,7 @@ c_cond
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6627,6 +6908,7 @@ op_logical_or
 id|tmp2
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6651,8 +6933,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect error - step C (%x/%x)&bslash;n&quot;
 comma
@@ -6666,10 +6950,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * The indirect register I12 has some read only bits. Lets&n;     * try to change them.&n;   */
+multiline_comment|/*&n;&t;   * The indirect register I12 has some read only bits. Lets&n;&t;   * try to change them.&n;&t; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step D&bslash;n&quot;
 )paren
@@ -6678,6 +6964,7 @@ suffix:semicolon
 id|tmp
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6685,6 +6972,7 @@ l_int|12
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6712,6 +7000,7 @@ op_ne
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6724,8 +7013,10 @@ l_int|0x0f
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect error - step D (%x)&bslash;n&quot;
 comma
@@ -6737,18 +7028,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * NOTE! Last 4 bits of the reg I12 tell the chip revision.&n;     *   0x01=RevB and 0x0A=RevC.&n;   */
-multiline_comment|/*&n;     * The original AD1848/CS4248 has just 15 indirect registers. This means&n;     * that I0 and I16 should return the same value (etc.).&n;     * However this doesn&squot;t work with CS4248. Actually it seems to be impossible&n;     * to detect if the chip is a CS4231 or CS4248.&n;     * Ensure that the Mode2 enable bit of I12 is 0. Otherwise this test fails&n;     * with CS4231.&n;   */
+multiline_comment|/*&n;&t;   * NOTE! Last 4 bits of the reg I12 tell the chip revision.&n;&t;   *   0x01=RevB and 0x0A=RevC.&n;&t; */
+multiline_comment|/*&n;&t;   * The original AD1848/CS4248 has just 15 indirect registers. This means&n;&t;   * that I0 and I16 should return the same value (etc.).&n;&t;   * However this doesn&squot;t work with CS4248. Actually it seems to be impossible&n;&t;   * to detect if the chip is a CS4231 or CS4248.&n;&t;   * Ensure that the Mode2 enable bit of I12 is 0. Otherwise this test fails&n;&t;   * with CS4231.&n;&t; */
 multiline_comment|/*&n; * OPTi 82C930 has mode2 control bit in another place. This test will fail&n; * with it. Accept this situation as a possible indication of this chip.&n; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step F&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6779,6 +7073,7 @@ c_cond
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6790,6 +7085,7 @@ op_ne
 id|tmp2
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6801,8 +7097,10 @@ l_int|16
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect step F(%d/%x/%x) - OPTi chip???&bslash;n&quot;
 comma
@@ -6827,10 +7125,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Try to switch the chip to mode2 (CS4231) by setting the MODE2 bit (0x40).&n;     * The bit 0x80 is always 1 in CS4248 and CS4231.&n;   */
+multiline_comment|/*&n;&t;   * Try to switch the chip to mode2 (CS4231) by setting the MODE2 bit (0x40).&n;&t;   * The bit 0x80 is always 1 in CS4248 and CS4231.&n;&t; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step G&bslash;n&quot;
 )paren
@@ -6853,6 +7153,7 @@ l_int|0
 suffix:semicolon
 r_else
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6875,6 +7176,7 @@ suffix:semicolon
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6923,16 +7225,19 @@ l_int|0x40
 )paren
 )paren
 (brace
-multiline_comment|/*&n;         *      CS4231 detected - is it?&n;         *&n;         *      Verify that setting I0 doesn&squot;t change I16.&n;       */
+multiline_comment|/*&n;&t;&t;     *      CS4231 detected - is it?&n;&t;&t;     *&n;&t;&t;     *      Verify that setting I0 doesn&squot;t change I16.&n;&t;&t;   */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step H&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6943,6 +7248,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Set I16 to known value */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6958,6 +7264,7 @@ c_cond
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6970,6 +7277,7 @@ l_int|0x45
 multiline_comment|/* No change -&gt; CS4231? */
 (brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -6985,6 +7293,7 @@ c_cond
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -6997,8 +7306,10 @@ l_int|0xaa
 multiline_comment|/* Rotten bits? */
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848 detect error - step H(%x)&bslash;n&quot;
 comma
@@ -7010,10 +7321,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;     * Verify that some bits of I25 are read only.&n;&t;   */
+multiline_comment|/*&n;&t;&t;&t;       * Verify that some bits of I25 are read only.&n;&t;&t;&t;     */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step I&bslash;n&quot;
 )paren
@@ -7022,6 +7335,7 @@ suffix:semicolon
 id|tmp1
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7030,6 +7344,7 @@ l_int|25
 suffix:semicolon
 multiline_comment|/* Original bits */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7045,6 +7360,7 @@ c_cond
 (paren
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7066,7 +7382,7 @@ id|id
 comma
 id|full_id
 suffix:semicolon
-multiline_comment|/*&n;&t;       *      It&squot;s at least CS4231&n;&t;       */
+multiline_comment|/*&n;&t;&t;&t;&t;       *      It&squot;s at least CS4231&n;&t;&t;&t;&t;       */
 id|devc-&gt;chip_name
 op_assign
 l_string|&quot;CS4231&quot;
@@ -7075,10 +7391,11 @@ id|devc-&gt;model
 op_assign
 id|MD_4231
 suffix:semicolon
-multiline_comment|/*&n;&t;       * It could be an AD1845 or CS4231A as well.&n;&t;       * CS4231 and AD1845 report the same revision info in I25&n;&t;       * while the CS4231A reports different.&n;&t;       */
+multiline_comment|/*&n;&t;&t;&t;&t;       * It could be an AD1845 or CS4231A as well.&n;&t;&t;&t;&t;       * CS4231 and AD1845 report the same revision info in I25&n;&t;&t;&t;&t;       * while the CS4231A reports different.&n;&t;&t;&t;&t;       */
 id|id
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7090,6 +7407,7 @@ suffix:semicolon
 id|full_id
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7107,6 +7425,7 @@ multiline_comment|/* Device busy??? */
 id|id
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7126,6 +7445,7 @@ multiline_comment|/* Device still busy??? */
 id|id
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7135,14 +7455,17 @@ op_amp
 l_int|0xe7
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step J (%02x/%02x)&bslash;n&quot;
 comma
 id|id
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7229,12 +7552,13 @@ r_case
 l_int|0x80
 suffix:colon
 (brace
-multiline_comment|/* &n;&t;&t;     * It must be a CS4231 or AD1845. The register I23 of&n;&t;&t;     * CS4231 is undefined and it appears to be read only.&n;&t;&t;     * AD1845 uses I23 for setting sample rate. Assume&n;&t;&t;     * the chip is AD1845 if I23 is changeable.&n;&t;&t;     */
+multiline_comment|/* &n;&t;&t;&t;&t;&t;&t;&t; * It must be a CS4231 or AD1845. The register I23 of&n;&t;&t;&t;&t;&t;&t;&t; * CS4231 is undefined and it appears to be read only.&n;&t;&t;&t;&t;&t;&t;&t; * AD1845 uses I23 for setting sample rate. Assume&n;&t;&t;&t;&t;&t;&t;&t; * the chip is AD1845 if I23 is changeable.&n;&t;&t;&t;&t;&t;&t;&t; */
 r_int
 r_char
 id|tmp
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7242,6 +7566,7 @@ l_int|23
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7271,6 +7596,7 @@ r_if
 c_cond
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7316,12 +7642,14 @@ op_assign
 id|MD_1848
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|12
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7335,6 +7663,7 @@ suffix:semicolon
 multiline_comment|/* Mode2 off */
 )brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7351,12 +7680,15 @@ r_default
 suffix:colon
 multiline_comment|/* Assume CS4231 or OPTi 82C930 */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848: I25 = %02x/%02x&bslash;n&quot;
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7364,6 +7696,7 @@ l_int|25
 )paren
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7399,6 +7732,7 @@ suffix:semicolon
 )brace
 )brace
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7409,8 +7743,10 @@ id|tmp1
 suffix:semicolon
 multiline_comment|/* Restore bits */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step K&bslash;n&quot;
 )paren
@@ -7419,8 +7755,10 @@ suffix:semicolon
 )brace
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - step L&bslash;n&quot;
 )paren
@@ -7446,8 +7784,10 @@ id|AD_F_CS4231
 suffix:semicolon
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848_detect() - Detected OK&bslash;n&quot;
 )paren
@@ -7470,9 +7810,10 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
+r_int
 DECL|function|ad1848_init
 id|ad1848_init
+c_func
 (paren
 r_char
 op_star
@@ -7498,7 +7839,7 @@ op_star
 id|osp
 )paren
 (brace
-multiline_comment|/*&n;     * NOTE! If irq &lt; 0, there is another driver which has allocated the IRQ&n;     *   so that this driver doesn&squot;t need to allocate/deallocate it.&n;     *   The actually used IRQ is ABS(irq).&n;   */
+multiline_comment|/*&n;&t;   * NOTE! If irq &lt; 0, there is another driver which has allocated the IRQ&n;&t;   *   so that this driver doesn&squot;t need to allocate/deallocate it.&n;&t;   *   The actually used IRQ is ABS(irq).&n;&t; */
 r_int
 id|my_dev
 suffix:semicolon
@@ -7507,6 +7848,9 @@ id|dev_name
 (braket
 l_int|100
 )braket
+suffix:semicolon
+r_int
+id|e
 suffix:semicolon
 id|ad1848_info
 op_star
@@ -7589,6 +7933,7 @@ op_ne
 l_int|0
 )paren
 id|sprintf
+c_func
 (paren
 id|dev_name
 comma
@@ -7601,6 +7946,7 @@ id|devc-&gt;chip_name
 suffix:semicolon
 r_else
 id|sprintf
+c_func
 (paren
 id|dev_name
 comma
@@ -7610,6 +7956,7 @@ id|devc-&gt;chip_name
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|devc-&gt;base
 comma
@@ -7619,6 +7966,7 @@ id|devc-&gt;name
 )paren
 suffix:semicolon
 id|conf_printf2
+c_func
 (paren
 id|dev_name
 comma
@@ -7689,6 +8037,7 @@ c_cond
 id|my_dev
 op_assign
 id|sound_install_audiodrv
+c_func
 (paren
 id|AUDIO_DRIVER_VERSION
 comma
@@ -7722,6 +8071,8 @@ l_int|0
 )paren
 (brace
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|portc
@@ -7737,6 +8088,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -7776,6 +8128,7 @@ op_assign
 id|portc
 suffix:semicolon
 id|memset
+c_func
 (paren
 (paren
 r_char
@@ -7796,6 +8149,7 @@ id|nr_ad1848_devs
 op_increment
 suffix:semicolon
 id|ad1848_init_hw
+c_func
 (paren
 id|devc
 )paren
@@ -7821,6 +8175,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|devc-&gt;irq
 comma
@@ -7835,7 +8190,9 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ad1848: IRQ in use&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7860,6 +8217,7 @@ r_char
 id|tmp
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -7871,6 +8229,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7881,6 +8240,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* Timer MSB */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7891,6 +8251,7 @@ l_int|0x10
 suffix:semicolon
 multiline_comment|/* Timer LSB */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7922,6 +8283,7 @@ op_increment
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -7942,7 +8304,9 @@ op_eq
 l_int|0
 )paren
 id|printk
+c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;ad1848: Interrupt test failed (IRQ%d)&bslash;n&quot;
 comma
 id|devc-&gt;irq
@@ -7951,8 +8315,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Interrupt test OK&bslash;n&quot;
 )paren
@@ -7989,7 +8355,7 @@ id|devc-&gt;dev_no
 op_assign
 id|my_dev
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
 r_if
 c_cond
 (paren
@@ -8004,6 +8370,7 @@ op_logical_and
 id|devc-&gt;irq_ok
 )paren
 id|ad1848_tmr_install
+c_func
 (paren
 id|my_dev
 )paren
@@ -8020,6 +8387,7 @@ r_if
 c_cond
 (paren
 id|sound_alloc_dma
+c_func
 (paren
 id|dma_playback
 comma
@@ -8027,6 +8395,7 @@ id|devc-&gt;name
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d&bslash;n&quot;
 comma
@@ -8044,6 +8413,7 @@ r_if
 c_cond
 (paren
 id|sound_alloc_dma
+c_func
 (paren
 id|dma_capture
 comma
@@ -8051,6 +8421,7 @@ id|devc-&gt;name
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d&bslash;n&quot;
 comma
@@ -8061,7 +8432,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|e
+op_assign
 id|sound_install_mixer
+c_func
 (paren
 id|MIXER_DRIVER_VERSION
 comma
@@ -8078,6 +8453,7 @@ id|mixer_operations
 comma
 id|devc
 )paren
+)paren
 op_ge
 l_int|0
 )paren
@@ -8089,15 +8465,19 @@ id|my_dev
 op_member_access_from_pointer
 id|mixer_dev
 op_assign
-id|num_mixers
-op_minus
-l_int|1
+id|e
 suffix:semicolon
 )brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_return
+id|my_dev
+suffix:semicolon
 )brace
-r_void
 DECL|function|ad1848_control
+r_void
 id|ad1848_control
+c_func
 (paren
 r_int
 id|cmd
@@ -8149,11 +8529,13 @@ id|MD_1845
 r_return
 suffix:semicolon
 id|ad_enter_MCE
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -8161,6 +8543,7 @@ l_int|29
 comma
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -8178,6 +8561,7 @@ l_int|5
 )paren
 suffix:semicolon
 id|ad_leave_MCE
+c_func
 (paren
 id|devc
 )paren
@@ -8216,6 +8600,7 @@ id|SOUND_MIXER_NONE
 (brace
 multiline_comment|/* Just hide this control */
 id|ad1848_mixer_set
+c_func
 (paren
 id|devc
 comma
@@ -8339,10 +8724,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 r_void
 DECL|function|ad1848_unload
 id|ad1848_unload
+c_func
 (paren
 r_int
 id|io_base
@@ -8426,6 +8814,7 @@ l_int|NULL
 )paren
 (brace
 id|release_region
+c_func
 (paren
 id|devc-&gt;base
 comma
@@ -8447,11 +8836,13 @@ OG
 l_int|0
 )paren
 id|snd_release_irq
+c_func
 (paren
 id|devc-&gt;irq
 )paren
 suffix:semicolon
 id|sound_free_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -8479,6 +8870,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;dma
 )paren
 id|sound_free_dma
+c_func
 (paren
 id|audio_devs
 (braket
@@ -8492,16 +8884,20 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;ad1848: Can&squot;t find device to be unloaded. Base=%x&bslash;n&quot;
 comma
 id|io_base
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
-r_void
 DECL|function|adintr
+r_void
 id|adintr
+c_func
 (paren
 r_int
 id|irq
@@ -8657,8 +9053,10 @@ multiline_comment|/* Jump back here if int status doesn&squot;t reset */
 id|status
 op_assign
 id|inb
+c_func
 (paren
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -8672,6 +9070,7 @@ op_eq
 l_int|0x80
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;adintr: Why?&bslash;n&quot;
 )paren
@@ -8684,12 +9083,14 @@ op_eq
 id|MD_1848
 )paren
 id|outb
+c_func
 (paren
 (paren
 l_int|0
 )paren
 comma
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -8718,11 +9119,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -8736,6 +9139,7 @@ c_cond
 id|devc-&gt;c930_password_port
 )paren
 id|outb
+c_func
 (paren
 (paren
 l_int|0xe4
@@ -8746,6 +9150,7 @@ id|devc-&gt;c930_password_port
 suffix:semicolon
 multiline_comment|/* Password */
 id|outb
+c_func
 (paren
 (paren
 l_int|11
@@ -8757,6 +9162,7 @@ suffix:semicolon
 id|c930_stat
 op_assign
 id|inb
+c_func
 (paren
 l_int|0xe0f
 )paren
@@ -8786,6 +9192,7 @@ l_int|0x20
 suffix:semicolon
 multiline_comment|/* Playback intr */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -8802,6 +9209,7 @@ id|MD_1848
 id|alt_stat
 op_assign
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -8823,11 +9231,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -8837,6 +9247,7 @@ c_cond
 id|devc-&gt;c930_password_port
 )paren
 id|outb
+c_func
 (paren
 (paren
 l_int|0xe4
@@ -8847,6 +9258,7 @@ id|devc-&gt;c930_password_port
 suffix:semicolon
 multiline_comment|/* Password */
 id|outb
+c_func
 (paren
 (paren
 l_int|11
@@ -8856,6 +9268,7 @@ l_int|0xe0e
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 op_complement
@@ -8866,6 +9279,7 @@ l_int|0xe0f
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -8880,12 +9294,14 @@ op_ne
 id|MD_1848
 )paren
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|24
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -8914,6 +9330,7 @@ l_int|0x20
 )paren
 (brace
 id|DMAbuf_inputintr
+c_func
 (paren
 id|devc-&gt;record_dev
 )paren
@@ -8936,6 +9353,7 @@ l_int|0x10
 )paren
 (brace
 id|DMAbuf_outputintr
+c_func
 (paren
 id|devc-&gt;playback_dev
 comma
@@ -8959,7 +9377,7 @@ multiline_comment|/* Timer interrupt */
 id|devc-&gt;timer_ticks
 op_increment
 suffix:semicolon
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
 r_if
 c_cond
 (paren
@@ -8970,6 +9388,7 @@ op_logical_and
 id|devc-&gt;timer_running
 )paren
 id|sound_timer_interrupt
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -8981,8 +9400,10 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|io_Status
+c_func
 (paren
 id|devc
 )paren
@@ -9007,6 +9428,7 @@ r_static
 r_int
 DECL|function|init_deskpro
 id|init_deskpro
+c_func
 (paren
 r_struct
 id|address_info
@@ -9025,6 +9447,7 @@ c_cond
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
@@ -9034,8 +9457,10 @@ l_int|0xff
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;init_deskpro: Dead port 0xc44&bslash;n&quot;
 )paren
@@ -9046,6 +9471,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9061,6 +9487,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
@@ -9069,8 +9496,10 @@ l_int|0x04
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;init_deskpro: Invalid bank1 signature in port 0xc44&bslash;n&quot;
 )paren
@@ -9085,11 +9514,13 @@ multiline_comment|/*&n; * I/O port 0xc44 Audio configuration register.&n; *&n; *
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc44 (before): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9102,16 +9533,19 @@ l_int|0xc44
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9123,10 +9557,12 @@ l_int|0xc44
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
@@ -9184,8 +9620,10 @@ suffix:semicolon
 r_default
 suffix:colon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;init_deskpro: Invalid MSS port %x&bslash;n&quot;
 comma
@@ -9198,6 +9636,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9213,11 +9652,13 @@ multiline_comment|/* Write to bank=0 */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc44 (after): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9231,16 +9672,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9253,10 +9697,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc44
 )paren
@@ -9267,11 +9713,13 @@ multiline_comment|/*&n; * I/O port 0xc45 FM Address Decode/MSS ID Register.&n; *
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc45 (before): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9285,16 +9733,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc45
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9307,10 +9758,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc45
 )paren
@@ -9318,6 +9771,7 @@ l_int|0xc45
 suffix:semicolon
 macro_line|#endif
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9331,6 +9785,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x88
@@ -9341,6 +9796,7 @@ l_int|0xc45
 suffix:semicolon
 multiline_comment|/* FM base 7:0 = 0x88 */
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9353,6 +9809,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x10
@@ -9365,11 +9822,13 @@ multiline_comment|/* MSS ID = 0x10 (MSS port returns 0x04) */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc45 (after): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9383,16 +9842,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc45
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9405,10 +9867,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc45
 )paren
@@ -9419,11 +9883,13 @@ multiline_comment|/*&n; * I/O port 0xc46 FM Address Decode/Address ASIC Revision
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc46 (before): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9437,16 +9903,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc46
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9459,10 +9928,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc46
 )paren
@@ -9470,6 +9941,7 @@ l_int|0xc46
 suffix:semicolon
 macro_line|#endif
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9483,6 +9955,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x03
@@ -9493,6 +9966,7 @@ l_int|0xc46
 suffix:semicolon
 multiline_comment|/* FM base 15:8 = 0x03 */
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9505,6 +9979,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x11
@@ -9517,11 +9992,13 @@ multiline_comment|/* ASIC ID = 0x11 */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc46 (after): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9535,16 +10012,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc46
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9557,10 +10037,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc46
 )paren
@@ -9571,11 +10053,13 @@ multiline_comment|/*&n; * I/O port 0xc47 FM Address Decode Register.&n; *&n; * b
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc47 (before): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9589,16 +10073,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc47
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9611,10 +10098,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc47
 )paren
@@ -9622,6 +10111,7 @@ l_int|0xc47
 suffix:semicolon
 macro_line|#endif
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9635,6 +10125,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x7c
@@ -9645,6 +10136,7 @@ l_int|0xc47
 suffix:semicolon
 multiline_comment|/* FM decode enable bits = 0x7c */
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9657,6 +10149,7 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
@@ -9669,11 +10162,13 @@ multiline_comment|/* Reserved bank1 = 0x00 */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc47 (after): &quot;
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9687,16 +10182,19 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=0 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x &quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc47
 )paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|tmp
@@ -9709,10 +10207,12 @@ l_int|0xc44
 suffix:semicolon
 multiline_comment|/* Select bank=1 */
 id|printk
+c_func
 (paren
 l_string|&quot;%02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc47
 )paren
@@ -9722,10 +10222,12 @@ macro_line|#endif
 multiline_comment|/*&n; * I/O port 0xc6f = Audio Disable Function Register&n; */
 macro_line|#ifdef DEBUGXL
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc6f (before) = %02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc6f
 )paren
@@ -9733,6 +10235,7 @@ l_int|0xc6f
 suffix:semicolon
 macro_line|#endif
 id|outb
+c_func
 (paren
 (paren
 l_int|0x80
@@ -9743,10 +10246,12 @@ l_int|0xc6f
 suffix:semicolon
 macro_line|#ifdef DEBUGXL
 id|printk
+c_func
 (paren
 l_string|&quot;Port 0xc6f (after) = %02x&bslash;n&quot;
 comma
 id|inb
+c_func
 (paren
 l_int|0xc6f
 )paren
@@ -9761,6 +10266,7 @@ macro_line|#endif
 r_int
 DECL|function|probe_ms_sound
 id|probe_ms_sound
+c_func
 (paren
 r_struct
 id|address_info
@@ -9773,8 +10279,10 @@ r_char
 id|tmp
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Entered probe_ms_sound(%x, %d)&bslash;n&quot;
 comma
@@ -9788,6 +10296,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -9796,6 +10305,7 @@ l_int|8
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: I/O port conflict&bslash;n&quot;
 )paren
@@ -9816,6 +10326,7 @@ multiline_comment|/* Has no IRQ/DMA registers */
 multiline_comment|/* check_opl3(0x388, hw_config); */
 r_return
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -9842,6 +10353,7 @@ c_cond
 (paren
 op_logical_neg
 id|init_deskpro
+c_func
 (paren
 id|hw_config
 )paren
@@ -9851,7 +10363,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;     * Check if the IO port returns valid signature. The original MS Sound&n;     * system returns 0x04 while some cards (AudioTrix Pro for example)&n;     * return 0x00 or 0x0f.&n;   */
+multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t;   * return 0x00 or 0x0f.&n;&t; */
 r_if
 c_cond
 (paren
@@ -9859,6 +10371,7 @@ c_cond
 id|tmp
 op_assign
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -9874,8 +10387,10 @@ r_int
 id|ret
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;I/O address is inactive (%x)&bslash;n&quot;
 comma
@@ -9891,6 +10406,7 @@ op_logical_neg
 id|ret
 op_assign
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -9910,8 +10426,10 @@ l_int|1
 suffix:semicolon
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;MSS signature = %x&bslash;n&quot;
 comma
@@ -9952,9 +10470,11 @@ l_int|0x00
 r_int
 id|ret
 suffix:semicolon
-id|DDB
+id|MDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;No MSS signature detected on port 0x%x (0x%x)&bslash;n&quot;
 comma
@@ -9964,6 +10484,7 @@ comma
 r_int
 )paren
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -9973,8 +10494,10 @@ l_int|3
 )paren
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Trying to detect codec anyway but IRQ/DMA may not work&bslash;n&quot;
 )paren
@@ -9988,6 +10511,7 @@ op_logical_neg
 id|ret
 op_assign
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -10019,6 +10543,7 @@ l_int|11
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
 comma
@@ -10046,6 +10571,7 @@ l_int|3
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Bad DMA %d&bslash;n&quot;
 comma
@@ -10056,7 +10582,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Check that DMA0 is not in use with a 8 bit board.&n;   */
+multiline_comment|/*&n;&t;   * Check that DMA0 is not in use with a 8 bit board.&n;&t; */
 r_if
 c_cond
 (paren
@@ -10065,6 +10591,7 @@ op_eq
 l_int|0
 op_logical_and
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -10075,6 +10602,7 @@ l_int|0x80
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Can&squot;t use DMA0 with a 8 bit card/slot&bslash;n&quot;
 )paren
@@ -10095,6 +10623,7 @@ op_ne
 l_int|9
 op_logical_and
 id|inb
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -10105,6 +10634,7 @@ l_int|0x80
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Can&squot;t use IRQ%d with a 8 bit card/slot&bslash;n&quot;
 comma
@@ -10117,6 +10647,7 @@ suffix:semicolon
 )brace
 r_return
 id|ad1848_detect
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -10131,6 +10662,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_ms_sound
 id|attach_ms_sound
+c_func
 (paren
 r_struct
 id|address_info
@@ -10236,7 +10768,13 @@ l_int|1
 )paren
 multiline_comment|/* Has no IRQ/DMA registers */
 (brace
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
 id|ad1848_init
+c_func
 (paren
 l_string|&quot;MS Sound System&quot;
 comma
@@ -10256,6 +10794,7 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -10267,7 +10806,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Set the IRQ and DMA addresses.&n;   */
+multiline_comment|/*&n;&t;   * Set the IRQ and DMA addresses.&n;&t; */
 id|bits
 op_assign
 id|interrupt_bits
@@ -10285,6 +10824,7 @@ l_int|1
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Bad IRQ %d&bslash;n&quot;
 comma
@@ -10295,6 +10835,7 @@ r_return
 suffix:semicolon
 )brace
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -10310,6 +10851,7 @@ c_cond
 (paren
 (paren
 id|inb
+c_func
 (paren
 id|version_port
 )paren
@@ -10320,6 +10862,7 @@ op_eq
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;[MSS: IRQ Conflict?]&quot;
 )paren
@@ -10433,6 +10976,7 @@ multiline_comment|/* Enable capture DMA */
 r_else
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;MSS: Invalid capture DMA&bslash;n&quot;
 )paren
@@ -10459,6 +11003,7 @@ op_assign
 id|dma2
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -10475,7 +11020,13 @@ id|config_port
 )paren
 suffix:semicolon
 multiline_comment|/* Write IRQ+DMA setup */
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
 id|ad1848_init
+c_func
 (paren
 l_string|&quot;MSS audio codec&quot;
 comma
@@ -10495,6 +11046,7 @@ id|hw_config-&gt;osp
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -10507,6 +11059,7 @@ suffix:semicolon
 r_void
 DECL|function|unload_ms_sound
 id|unload_ms_sound
+c_func
 (paren
 r_struct
 id|address_info
@@ -10514,7 +11067,21 @@ op_star
 id|hw_config
 )paren
 (brace
+r_int
+id|mixer
+op_assign
+id|audio_devs
+(braket
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+)braket
+op_member_access_from_pointer
+id|mixer_dev
+suffix:semicolon
 id|ad1848_unload
+c_func
 (paren
 id|hw_config-&gt;io_base
 op_plus
@@ -10529,7 +11096,32 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mixer
+op_ge
+l_int|0
+)paren
+(brace
+id|sound_unload_mixerdev
+c_func
+(paren
+id|mixer
+)paren
+suffix:semicolon
+)brace
+id|sound_unload_audiodev
+c_func
+(paren
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -10537,7 +11129,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
+macro_line|#if (defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)) || defined(MODULE)
 multiline_comment|/*&n; * Timer stuff (for /dev/music).&n; */
 DECL|variable|current_interval
 r_static
@@ -10552,6 +11144,7 @@ r_int
 r_int
 DECL|function|ad1848_tmr_start
 id|ad1848_tmr_start
+c_func
 (paren
 r_int
 id|dev
@@ -10590,11 +11183,13 @@ r_int
 id|divider
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -10615,6 +11210,7 @@ r_if
 c_cond
 (paren
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -10671,6 +11267,7 @@ op_assign
 l_int|65535
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -10687,6 +11284,7 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* Set upper bits */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
@@ -10699,12 +11297,14 @@ l_int|0xff
 suffix:semicolon
 multiline_comment|/* Set lower bits */
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|16
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -10720,6 +11320,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -10742,6 +11343,7 @@ r_static
 r_void
 DECL|function|ad1848_tmr_reprogram
 id|ad1848_tmr_reprogram
+c_func
 (paren
 r_int
 id|dev
@@ -10749,6 +11351,7 @@ id|dev
 (brace
 multiline_comment|/*&n; *    Audio driver has changed sampling rate so that a different xtal&n; *      oscillator was selected. We have to reprogram the timer rate.&n; */
 id|ad1848_tmr_start
+c_func
 (paren
 id|dev
 comma
@@ -10756,6 +11359,7 @@ id|current_interval
 )paren
 suffix:semicolon
 id|sound_timer_syncinterval
+c_func
 (paren
 id|current_interval
 )paren
@@ -10765,6 +11369,7 @@ r_static
 r_void
 DECL|function|ad1848_tmr_disable
 id|ad1848_tmr_disable
+c_func
 (paren
 r_int
 id|dev
@@ -10790,21 +11395,25 @@ op_member_access_from_pointer
 id|devc
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|16
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -10820,6 +11429,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -10829,6 +11439,7 @@ r_static
 r_void
 DECL|function|ad1848_tmr_restart
 id|ad1848_tmr_restart
+c_func
 (paren
 r_int
 id|dev
@@ -10863,21 +11474,25 @@ l_int|0
 r_return
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|ad_write
+c_func
 (paren
 id|devc
 comma
 l_int|16
 comma
 id|ad_read
+c_func
 (paren
 id|devc
 comma
@@ -10892,6 +11507,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -10919,6 +11535,7 @@ r_static
 r_int
 DECL|function|ad1848_tmr_install
 id|ad1848_tmr_install
+c_func
 (paren
 r_int
 id|dev
@@ -10943,6 +11560,7 @@ op_assign
 id|dev
 suffix:semicolon
 id|sound_timer_init
+c_func
 (paren
 op_amp
 id|ad1848_tmr
@@ -10957,6 +11575,290 @@ id|name
 suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|variable|ad1848_detect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ad1848_detect
+)paren
+suffix:semicolon
+DECL|variable|ad1848_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ad1848_init
+)paren
+suffix:semicolon
+DECL|variable|ad1848_unload
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ad1848_unload
+)paren
+suffix:semicolon
+DECL|variable|adintr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adintr
+)paren
+suffix:semicolon
+DECL|variable|probe_ms_sound
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|probe_ms_sound
+)paren
+suffix:semicolon
+DECL|variable|attach_ms_sound
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|attach_ms_sound
+)paren
+suffix:semicolon
+DECL|variable|unload_ms_sound
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unload_ms_sound
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma2
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|type
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma
+r_int
+id|dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dma2
+r_int
+id|dma2
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|type
+r_int
+id|type
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|loaded
+r_static
+r_int
+id|loaded
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|hw_config
+r_struct
+id|address_info
+id|hw_config
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ad1848/cs4248 codec driver Copyright (C) by Hannu Savolainen 1993-1996&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+op_minus
+l_int|1
+op_logical_or
+id|dma
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;ad1848: must give I/O , IRQ and DMA.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|hw_config.irq
+op_assign
+id|irq
+suffix:semicolon
+id|hw_config.io_base
+op_assign
+id|io
+suffix:semicolon
+id|hw_config.dma
+op_assign
+id|dma
+suffix:semicolon
+id|hw_config.dma2
+op_assign
+id|dma2
+suffix:semicolon
+id|hw_config.card_subtype
+op_assign
+id|type
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|probe_ms_sound
+c_func
+(paren
+op_amp
+id|hw_config
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+id|attach_ms_sound
+c_func
+(paren
+op_amp
+id|hw_config
+)paren
+suffix:semicolon
+id|loaded
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|SOUND_LOCK
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|SOUND_LOCK_END
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|loaded
+)paren
+(brace
+id|unload_ms_sound
+c_func
+(paren
+op_amp
+id|hw_config
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*      unregister_symtab(&amp;ad1848_syms); */
+)brace
+macro_line|#else
+r_void
+DECL|function|export_ad1848_syms
+id|export_ad1848_syms
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_symtab
+c_func
+(paren
+op_amp
+id|ad1848_syms
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif

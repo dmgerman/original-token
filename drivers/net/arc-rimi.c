@@ -1,4 +1,4 @@
-multiline_comment|/*&t;$Id: arc-rimi.c,v 1.2 1997/09/05 08:57:51 mj Exp $&n;&n;        Derived from the original arcnet.c,&n;        Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
+multiline_comment|/*&t;$Id: arc-rimi.c,v 1.5 1997/11/09 11:04:57 mj Exp $&n;&n;        Derived from the original arcnet.c,&n;        Written 1994-1996 by Avery Pennarun,&n;&t;which was in turn derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@bond.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&n;&t;**********************&n;&n;&t;The original copyright of skeleton.c was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;&n;&t;**********************&n;&n;&t;For more details, see drivers/net/arcnet.c&n;&n;&t;**********************&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -318,7 +318,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arc-rimi.c: v2.92 97/09/02 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
+l_string|&quot;arc-rimi.c: v3.00 97/11/09 Avery Pennarun &lt;apenwarr@bond.net&gt; et al.&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/****************************************************************************&n; *                                                                          *&n; * Probe and initialization                                                 *&n; *                                                                          *&n; ****************************************************************************/
 multiline_comment|/* We cannot probe for a RIM I card; one reason is I don&squot;t know how to reset&n; * them.  In fact, we can&squot;t even get their node ID automatically.  So, we&n; * need to be passed a specific shmem address, IRQ, and node ID.&n; */

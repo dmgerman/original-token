@@ -1,13 +1,18 @@
-multiline_comment|/*&n; * sound/awe_config.h&n; *&n; * Configuration of AWE32 sound driver&n; *   version 0.4.2; Sep. 1, 1997&n; *&n; * Copyright (C) 1996 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_config.h&n; *&n; * Configuration of AWE32 sound driver&n; *   version 0.4.2; Sep. 15, 1997&n; *&n; * Copyright (C) 1996 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_CONFIG_H_DEF
 DECL|macro|AWE_CONFIG_H_DEF
 mdefine_line|#define AWE_CONFIG_H_DEF
 multiline_comment|/*----------------------------------------------------------------&n; * system configuration&n; *----------------------------------------------------------------*/
-DECL|macro|AWE_NEW_KERNEL_INTERFACE
-mdefine_line|#define AWE_NEW_KERNEL_INTERFACE
 multiline_comment|/* if you&squot;re using obsolete VoxWare 3.0.x on Linux 1.2.x (or FreeBSD),&n; * define the following line.&n; */
 DECL|macro|AWE_OBSOLETE_VOXWARE
 macro_line|#undef AWE_OBSOLETE_VOXWARE
+macro_line|#ifdef __FreeBSD__
+DECL|macro|AWE_OBSOLETE_VOXWARE
+macro_line|#  define AWE_OBSOLETE_VOXWARE
+macro_line|#endif
+multiline_comment|/* if you&squot;re using OSS-Lite on Linux 2.1.6 or later, define the&n; * following line.&n; */
+DECL|macro|AWE_NEW_KERNEL_INTERFACE
+mdefine_line|#define AWE_NEW_KERNEL_INTERFACE
 multiline_comment|/* if you have lowlevel.h in the lowlevel directory (OSS-Lite), define&n; * the following line.&n; */
 DECL|macro|HAS_LOWLEVEL_H
 mdefine_line|#define HAS_LOWLEVEL_H
@@ -38,7 +43,7 @@ mdefine_line|#define DEF_FM_REVERB_DEPTH&t;0x10
 multiline_comment|/*----------------------------------------------------------------*&n; * other compile conditions&n; *----------------------------------------------------------------*/
 multiline_comment|/* initialize FM passthrough even without extended RAM */
 DECL|macro|AWE_ALWAYS_INIT_FM
-mdefine_line|#define AWE_ALWAYS_INIT_FM
+macro_line|#undef AWE_ALWAYS_INIT_FM
 multiline_comment|/* debug on */
 DECL|macro|AWE_DEBUG_ON
 mdefine_line|#define AWE_DEBUG_ON

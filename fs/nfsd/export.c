@@ -8,6 +8,10 @@ macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsfh.h&gt;
 macro_line|#include &lt;linux/nfsd/syscall.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
+DECL|macro|NFSDDBG_FACILITY
+mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_EXPORT
+DECL|macro|NFSD_PARANOIA
+mdefine_line|#define NFSD_PARANOIA 1
 DECL|typedef|svc_client
 r_typedef
 r_struct
@@ -112,23 +116,6 @@ r_int
 id|max
 )paren
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|exp_lnamei
-c_func
-(paren
-r_char
-op_star
-id|pathname
-comma
-r_int
-op_star
-id|errp
-)paren
-suffix:semicolon
-DECL|macro|NFSDDBG_FACILITY
-mdefine_line|#define NFSDDBG_FACILITY&t;NFSDDBG_EXPORT
 DECL|macro|CLIENT_HASHBITS
 mdefine_line|#define CLIENT_HASHBITS&t;&t;6
 DECL|macro|CLIENT_HASHMAX
@@ -221,7 +208,7 @@ DECL|macro|READLOCK
 mdefine_line|#define READLOCK&t;&t;0
 DECL|macro|WRITELOCK
 mdefine_line|#define WRITELOCK&t;&t;1
-multiline_comment|/*&n; * Find the export entry matching xdev/xino.&n; */
+multiline_comment|/*&n; * Find a client&squot;s export for a device.&n; */
 r_static
 r_inline
 id|svc_export
@@ -270,6 +257,7 @@ r_return
 id|exp
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Find the client&squot;s export entry matching xdev/xino.&n; */
 id|svc_export
 op_star
 DECL|function|exp_get
@@ -325,7 +313,56 @@ suffix:colon
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look up the root inode of the parent fs.&n; * We have to go through iget in order to allow for wait_on_inode.&n; */
+multiline_comment|/*&n; * Check whether there are any exports for a device.&n; */
+r_static
+r_int
+DECL|function|exp_device_in_use
+id|exp_device_in_use
+c_func
+(paren
+id|dev_t
+id|dev
+)paren
+(brace
+r_struct
+id|svc_client
+op_star
+id|clp
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|clp
+op_assign
+id|clients
+suffix:semicolon
+id|clp
+suffix:semicolon
+id|clp
+op_assign
+id|clp-&gt;cl_next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|exp_find
+c_func
+(paren
+id|clp
+comma
+id|dev
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Look up the device of the parent fs.&n; */
 r_static
 r_inline
 r_int
@@ -563,10 +600,15 @@ c_func
 OL
 l_int|0
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Look up client info */
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -581,16 +623,9 @@ id|nxp-&gt;ex_client
 )paren
 )paren
 )paren
-(brace
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
 r_goto
-id|finish
+id|out_unlock
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * If there&squot;s already an export for this file, assume this&n;&t; * is just a flag update.&n;&t; */
 r_if
 c_cond
@@ -611,21 +646,18 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Ensure there&squot;s only one export per FS. */
-r_if
-c_cond
-(paren
-id|exp-&gt;ex_ino
-op_ne
-id|ino
-)paren
-(brace
 id|err
 op_assign
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
-r_else
+r_if
+c_cond
+(paren
+id|exp-&gt;ex_ino
+op_eq
+id|ino
+)paren
 (brace
 id|exp-&gt;ex_flags
 op_assign
@@ -645,7 +677,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_goto
-id|finish
+id|out_unlock
 suffix:semicolon
 )brace
 multiline_comment|/* Look up the dentry */
@@ -676,7 +708,7 @@ id|dentry
 )paren
 )paren
 r_goto
-id|finish
+id|out_unlock
 suffix:semicolon
 id|err
 op_assign
@@ -740,6 +772,11 @@ r_goto
 id|finish
 suffix:semicolon
 multiline_comment|/* If this is a sub-export, must be root of FS */
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -768,20 +805,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sb
-op_logical_and
-(paren
 id|inode
 op_ne
 id|sb-&gt;s_root-&gt;d_inode
 )paren
-)paren
 (brace
-id|err
-op_assign
-op_minus
-id|EINVAL
+macro_line|#ifdef NFSD_PARANOIA
+id|printk
+c_func
+(paren
+l_string|&quot;exp_export: sub-export %s not root of device %s&bslash;n&quot;
+comma
+id|nxp-&gt;ex_path
+comma
+id|kdevname
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)paren
 suffix:semicolon
+macro_line|#endif
 r_goto
 id|finish
 suffix:semicolon
@@ -944,37 +988,30 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|finish
+multiline_comment|/* Unlock hashtable */
+id|out_unlock
 suffix:colon
-multiline_comment|/* Release dentry */
-r_if
-c_cond
-(paren
-id|err
-OL
-l_int|0
-op_logical_and
-op_logical_neg
-id|IS_ERR
+id|exp_unlock
 c_func
 (paren
-id|dentry
 )paren
-)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|err
+suffix:semicolon
+multiline_comment|/* Release the dentry */
+id|finish
+suffix:colon
 id|dput
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
-multiline_comment|/* Unlock hashtable */
-id|exp_unlock
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|err
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unexport a file system. The export entry has already&n; * been removed from the client&squot;s list of exported fs&squot;s.&n; */
@@ -1058,6 +1095,37 @@ op_assign
 id|unexp-&gt;ex_parent
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Check whether this is the last export for this device,&n;&t; * and if so flush any cached dentries.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|exp_device_in_use
+c_func
+(paren
+id|unexp-&gt;ex_dev
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;exp_do_unexport: %s last use, flushing cache&bslash;n&quot;
+comma
+id|kdevname
+c_func
+(paren
+id|unexp-&gt;ex_dev
+)paren
+)paren
+suffix:semicolon
+id|nfsd_fh_flush
+c_func
+(paren
+id|unexp-&gt;ex_dev
+)paren
+suffix:semicolon
+)brace
 id|dentry
 op_assign
 id|unexp-&gt;ex_dentry
@@ -1084,7 +1152,6 @@ id|KERN_WARNING
 l_string|&quot;nfsd: bad dentry in unexport!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_else
 id|dput
 c_func
 (paren
@@ -1239,18 +1306,14 @@ c_func
 OL
 l_int|0
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 id|err
 op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|clp
 op_assign
 id|exp_getclientbyname
@@ -1258,11 +1321,21 @@ c_func
 (paren
 id|nxp-&gt;ex_client
 )paren
-)paren
-op_ne
-l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|clp
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;exp_unexport: found client %s&bslash;n&quot;
+comma
+id|nxp-&gt;ex_client
+)paren
+suffix:semicolon
 id|expp
 op_assign
 id|clp-&gt;cl_export
@@ -1301,8 +1374,20 @@ id|exp-&gt;ex_ino
 op_ne
 id|nxp-&gt;ex_ino
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;exp_unexport: ino mismatch, %ld not %ld&bslash;n&quot;
+comma
+id|exp-&gt;ex_ino
+comma
+id|nxp-&gt;ex_ino
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 op_star
 id|expp
 op_assign
@@ -1335,6 +1420,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
 id|err
 suffix:semicolon
@@ -1831,6 +1918,11 @@ comma
 id|ilen
 suffix:semicolon
 multiline_comment|/* First, consistency check. */
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1847,9 +1939,8 @@ id|NFSCLNT_IDMAX
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1858,9 +1949,8 @@ id|ncp-&gt;cl_naddr
 OG
 id|NFSCLNT_ADDRMAX
 )paren
-r_return
-op_minus
-id|EINVAL
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Lock the hashtable */
 r_if
@@ -1877,8 +1967,8 @@ c_func
 OL
 l_int|0
 )paren
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* First check if this is a change request for a client. */
 r_for
@@ -1907,6 +1997,11 @@ id|ncp-&gt;cl_ident
 )paren
 )paren
 r_break
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENOMEM
 suffix:semicolon
 r_if
 c_cond
@@ -1941,17 +2036,9 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
-(brace
-id|exp_unlock
-c_func
-(paren
-)paren
+r_goto
+id|out_unlock
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -2005,11 +2092,6 @@ id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|ch
 (braket
 id|i
@@ -2018,17 +2100,23 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|GFP_KERNEL
-comma
 r_sizeof
 (paren
+r_struct
+id|svc_clnthash
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|ch
 (braket
-l_int|0
+id|i
 )braket
-)paren
-)paren
-)paren
 )paren
 (brace
 r_while
@@ -2058,14 +2146,8 @@ c_func
 id|clp
 )paren
 suffix:semicolon
-id|exp_unlock
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 )brace
@@ -2205,13 +2287,21 @@ op_assign
 id|clp
 suffix:semicolon
 )brace
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+id|out_unlock
+suffix:colon
 id|exp_unlock
 c_func
 (paren
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Delete a client given an identifier.&n; */

@@ -1,10 +1,11 @@
+macro_line|#warning This wont work until we merge the networking changes
+macro_line|#if 0
 multiline_comment|/* $Id: plip.c,v 1.3.6.2 1997/04/16 15:07:56 phil Exp $ */
 multiline_comment|/* PLIP: A parallel port &quot;network&quot; driver for Linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
 multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;Modularization and ifreq/ifmap support by Alan Cox.&n; *&t;&t;Rewritten by Niibe Yutaka.&n; *              parport-sharing awareness code by Philip Blundell.&n; *&n; * Fixes:&n; *&t;&t;Niibe Yutaka&n; *&t;&t;  - Module initialization.  You can specify I/O addr and IRQ:&n; *&t;&t;&t;# insmod plip.o io=0x3bc irq=7&n; *&t;&t;  - MTU fix.&n; *&t;&t;  - Make sure other end is OK, before sending a packet.&n; *&t;&t;  - Fix immediate timer problem.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Original version and the name &squot;PLIP&squot; from Donald Becker &lt;becker@super.org&gt;&n; * inspired by Russ Nelson&squot;s parallel port packet driver.&n; *&n; * NOTE:&n; *     Tanabe Hiroyasu had changed the protocol, and it was in Linux v1.0.&n; *     Because of the necessity to communicate to DOS machines with the&n; *     Crynwr packet driver, Peter Bauer changed the protocol again&n; *     back to original protocol.&n; *&n; *     This version follows original PLIP protocol.&n; *     So, this PLIP can&squot;t communicate the PLIP of Linux v1.0.&n; */
 multiline_comment|/*&n; *     To use with DOS box, please do (Turn on ARP switch):&n; *&t;# ifconfig plip[0-2] arp&n; */
-DECL|variable|version
 r_static
 r_const
 r_char
@@ -33,6 +34,7 @@ macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_plip.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
@@ -42,14 +44,11 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 multiline_comment|/* Maximum number of devices to support. */
-DECL|macro|PLIP_MAX
 mdefine_line|#define PLIP_MAX  8
 multiline_comment|/* Use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
-DECL|macro|NET_DEBUG
 mdefine_line|#define NET_DEBUG 1
 macro_line|#endif
-DECL|variable|net_debug
 r_static
 r_int
 r_int
@@ -58,23 +57,15 @@ op_assign
 id|NET_DEBUG
 suffix:semicolon
 multiline_comment|/* In micro second */
-DECL|macro|PLIP_DELAY_UNIT
 mdefine_line|#define PLIP_DELAY_UNIT&t;&t;   1
 multiline_comment|/* Connection time out = PLIP_TRIGGER_WAIT * PLIP_DELAY_UNIT usec */
-DECL|macro|PLIP_TRIGGER_WAIT
 mdefine_line|#define PLIP_TRIGGER_WAIT&t; 500
 multiline_comment|/* Nibble time out = PLIP_NIBBLE_WAIT * PLIP_DELAY_UNIT usec */
-DECL|macro|PLIP_NIBBLE_WAIT
 mdefine_line|#define PLIP_NIBBLE_WAIT        3000
-DECL|macro|PAR_INTR_ON
 mdefine_line|#define PAR_INTR_ON&t;&t;(LP_PINITP|LP_PSELECP|LP_PINTEN)
-DECL|macro|PAR_INTR_OFF
 mdefine_line|#define PAR_INTR_OFF&t;&t;(LP_PINITP|LP_PSELECP)
-DECL|macro|PAR_DATA
 mdefine_line|#define PAR_DATA(dev)&t;&t;((dev)-&gt;base_addr+0)
-DECL|macro|PAR_STATUS
 mdefine_line|#define PAR_STATUS(dev)&t;&t;((dev)-&gt;base_addr+1)
-DECL|macro|PAR_CONTROL
 mdefine_line|#define PAR_CONTROL(dev)&t;((dev)-&gt;base_addr+2)
 multiline_comment|/* Bottom halfs */
 r_static
@@ -237,78 +228,58 @@ id|handle
 )paren
 suffix:semicolon
 "&f;"
-DECL|enum|plip_connection_state
 r_enum
 id|plip_connection_state
 (brace
-DECL|enumerator|PLIP_CN_NONE
 id|PLIP_CN_NONE
 op_assign
 l_int|0
 comma
-DECL|enumerator|PLIP_CN_RECEIVE
 id|PLIP_CN_RECEIVE
 comma
-DECL|enumerator|PLIP_CN_SEND
 id|PLIP_CN_SEND
 comma
-DECL|enumerator|PLIP_CN_CLOSING
 id|PLIP_CN_CLOSING
 comma
-DECL|enumerator|PLIP_CN_ERROR
 id|PLIP_CN_ERROR
 )brace
 suffix:semicolon
-DECL|enum|plip_packet_state
 r_enum
 id|plip_packet_state
 (brace
-DECL|enumerator|PLIP_PK_DONE
 id|PLIP_PK_DONE
 op_assign
 l_int|0
 comma
-DECL|enumerator|PLIP_PK_TRIGGER
 id|PLIP_PK_TRIGGER
 comma
-DECL|enumerator|PLIP_PK_LENGTH_LSB
 id|PLIP_PK_LENGTH_LSB
 comma
-DECL|enumerator|PLIP_PK_LENGTH_MSB
 id|PLIP_PK_LENGTH_MSB
 comma
-DECL|enumerator|PLIP_PK_DATA
 id|PLIP_PK_DATA
 comma
-DECL|enumerator|PLIP_PK_CHECKSUM
 id|PLIP_PK_CHECKSUM
 )brace
 suffix:semicolon
-DECL|enum|plip_nibble_state
 r_enum
 id|plip_nibble_state
 (brace
-DECL|enumerator|PLIP_NB_BEGIN
 id|PLIP_NB_BEGIN
 comma
-DECL|enumerator|PLIP_NB_1
 id|PLIP_NB_1
 comma
-DECL|enumerator|PLIP_NB_2
 id|PLIP_NB_2
 comma
 )brace
 suffix:semicolon
-DECL|struct|plip_local
 r_struct
 id|plip_local
 (brace
-DECL|member|state
 r_enum
 id|plip_packet_state
 id|state
 suffix:semicolon
-DECL|member|nibble
 r_enum
 id|plip_nibble_state
 id|nibble
@@ -318,12 +289,10 @@ r_union
 r_struct
 (brace
 macro_line|#if defined(__LITTLE_ENDIAN)
-DECL|member|lsb
 r_int
 r_char
 id|lsb
 suffix:semicolon
-DECL|member|msb
 r_int
 r_char
 id|msb
@@ -340,35 +309,28 @@ suffix:semicolon
 macro_line|#else
 macro_line|#error&t;&quot;Please fix the endianness defines in &lt;asm/byteorder.h&gt;&quot;
 macro_line|#endif
-DECL|member|b
 )brace
 id|b
 suffix:semicolon
-DECL|member|h
 r_int
 r_int
 id|h
 suffix:semicolon
-DECL|member|length
 )brace
 id|length
 suffix:semicolon
-DECL|member|byte
 r_int
 r_int
 id|byte
 suffix:semicolon
-DECL|member|checksum
 r_int
 r_char
 id|checksum
 suffix:semicolon
-DECL|member|data
 r_int
 r_char
 id|data
 suffix:semicolon
-DECL|member|skb
 r_struct
 id|sk_buff
 op_star
@@ -376,74 +338,59 @@ id|skb
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|net_local
 r_struct
 id|net_local
 (brace
-DECL|member|enet_stats
 r_struct
 id|net_device_stats
 id|enet_stats
 suffix:semicolon
-DECL|member|immediate
 r_struct
 id|tq_struct
 id|immediate
 suffix:semicolon
-DECL|member|deferred
 r_struct
 id|tq_struct
 id|deferred
 suffix:semicolon
-DECL|member|snd_data
 r_struct
 id|plip_local
 id|snd_data
 suffix:semicolon
-DECL|member|rcv_data
 r_struct
 id|plip_local
 id|rcv_data
 suffix:semicolon
-DECL|member|pardev
 r_struct
 id|pardevice
 op_star
 id|pardev
 suffix:semicolon
-DECL|member|trigger
 r_int
 r_int
 id|trigger
 suffix:semicolon
-DECL|member|nibble
 r_int
 r_int
 id|nibble
 suffix:semicolon
-DECL|member|connection
 r_enum
 id|plip_connection_state
 id|connection
 suffix:semicolon
-DECL|member|timeout_count
 r_int
 r_int
 id|timeout_count
 suffix:semicolon
-DECL|member|is_deferred
 r_int
 id|is_deferred
 suffix:semicolon
-DECL|member|port_owner
 r_int
 id|port_owner
 suffix:semicolon
-DECL|member|should_relinquish
 r_int
 id|should_relinquish
 suffix:semicolon
-DECL|member|orig_rebuild_header
 r_int
 (paren
 op_star
@@ -460,7 +407,6 @@ suffix:semicolon
 suffix:semicolon
 "&f;"
 multiline_comment|/* Entry point of PLIP driver.&n;   Probe the hardware, and register/initialize the driver.&n;&n;   PLIP is rather weird, because of the way it interacts with the parport&n;   system.  It is _not_ initialised from Space.c.  Instead, plip_init()&n;   is called, and that function makes up a &quot;struct device&quot; for each port, and&n;   then calls us here.&n;&n;   */
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -600,6 +546,16 @@ op_assign
 id|IFF_POINTOPOINT
 op_or
 id|IFF_NOARP
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;dev_addr
+comma
+l_int|0xfc
+comma
+id|ETH_ALEN
+)paren
 suffix:semicolon
 multiline_comment|/* Set the private structure */
 id|dev-&gt;priv
@@ -749,7 +705,6 @@ suffix:semicolon
 multiline_comment|/* Bottom half handler for the delayed request.&n;   This routine is kicked by do_timer().&n;   Request `plip_bh&squot; to be invoked. */
 r_static
 r_void
-DECL|function|plip_kick_bh
 id|plip_kick_bh
 c_func
 (paren
@@ -935,13 +890,9 @@ r_int
 id|error
 )paren
 suffix:semicolon
-DECL|macro|OK
 mdefine_line|#define OK        0
-DECL|macro|TIMEOUT
 mdefine_line|#define TIMEOUT   1
-DECL|macro|ERROR
 mdefine_line|#define ERROR     2
-DECL|typedef|plip_func
 r_typedef
 r_int
 (paren
@@ -970,7 +921,6 @@ op_star
 id|rcv
 )paren
 suffix:semicolon
-DECL|variable|connection_state_table
 r_static
 id|plip_func
 id|connection_state_table
@@ -992,7 +942,6 @@ suffix:semicolon
 multiline_comment|/* Bottom half handler of PLIP. */
 r_static
 r_void
-DECL|function|plip_bh
 id|plip_bh
 c_func
 (paren
@@ -1109,7 +1058,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_bh_timeout_error
 id|plip_bh_timeout_error
 c_func
 (paren
@@ -1406,7 +1354,6 @@ suffix:semicolon
 "&f;"
 r_static
 r_int
-DECL|function|plip_none
 id|plip_none
 c_func
 (paren
@@ -1439,7 +1386,6 @@ multiline_comment|/* PLIP_RECEIVE --- receive a byte(two nibbles)&n;   Returns O
 r_inline
 r_static
 r_int
-DECL|function|plip_receive
 id|plip_receive
 c_func
 (paren
@@ -1684,7 +1630,6 @@ suffix:semicolon
 multiline_comment|/* PLIP_RECEIVE_PACKET --- receive a packet */
 r_static
 r_int
-DECL|function|plip_receive_packet
 id|plip_receive_packet
 c_func
 (paren
@@ -2273,7 +2218,6 @@ multiline_comment|/* PLIP_SEND --- send a byte (two nibbles)&n;   Returns OK on 
 r_inline
 r_static
 r_int
-DECL|function|plip_send
 id|plip_send
 c_func
 (paren
@@ -2501,7 +2445,6 @@ suffix:semicolon
 multiline_comment|/* PLIP_SEND_PACKET --- send a packet */
 r_static
 r_int
-DECL|function|plip_send_packet
 id|plip_send_packet
 c_func
 (paren
@@ -3015,7 +2958,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_connection_close
 id|plip_connection_close
 c_func
 (paren
@@ -3099,7 +3041,6 @@ suffix:semicolon
 multiline_comment|/* PLIP_ERROR --- wait till other end settled */
 r_static
 r_int
-DECL|function|plip_error
 id|plip_error
 c_func
 (paren
@@ -3233,7 +3174,6 @@ suffix:semicolon
 multiline_comment|/* Handle the parallel port interrupts. */
 r_static
 r_void
-DECL|function|plip_interrupt
 id|plip_interrupt
 c_func
 (paren
@@ -3476,7 +3416,6 @@ suffix:semicolon
 multiline_comment|/* We don&squot;t need to send arp, for plip is point-to-point. */
 r_static
 r_int
-DECL|function|plip_rebuild_header
 id|plip_rebuild_header
 c_func
 (paren
@@ -3517,9 +3456,6 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3540,39 +3476,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|eth-&gt;h_proto
-op_ne
-id|__constant_htons
-c_func
-(paren
-id|ETH_P_IP
-)paren
-macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
-op_logical_and
-id|eth-&gt;h_proto
-op_ne
-id|__constant_htons
-c_func
-(paren
-id|ETH_P_IPV6
-)paren
-macro_line|#endif
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;plip_rebuild_header: Don&squot;t know how to resolve type %d addresses?&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|eth-&gt;h_proto
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -3583,73 +3486,22 @@ comma
 id|dev-&gt;addr_len
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-op_minus
-r_sizeof
-(paren
-id|u32
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|eth-&gt;h_dest
-(braket
-id|i
-)braket
-op_assign
-l_int|0xfc
-suffix:semicolon
-macro_line|#if 0
-op_star
-(paren
-id|u32
-op_star
-)paren
+id|memcpy
+c_func
 (paren
 id|eth-&gt;h_dest
-op_plus
-id|i
+comma
+id|dev-&gt;broadcast
+comma
+id|dev-&gt;addr_len
 )paren
-op_assign
-id|dst
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* Do not want to include net/route.h here.&n;&t; * In any case, it is TOP of silliness to emulate&n;&t; * hardware addresses on PtP link. --ANK&n;&t; */
-op_star
-(paren
-id|u32
-op_star
-)paren
-(paren
-id|eth-&gt;h_dest
-op_plus
-id|i
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_tx_packet
 id|plip_tx_packet
 c_func
 (paren
@@ -3715,25 +3567,6 @@ suffix:semicolon
 id|nl-&gt;port_owner
 op_assign
 l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -3879,7 +3712,6 @@ suffix:semicolon
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine gets exclusive access to the parallel port by allocating&n;   its IRQ line.&n; */
 r_static
 r_int
-DECL|function|plip_open
 id|plip_open
 c_func
 (paren
@@ -3901,8 +3733,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
-id|i
+r_struct
+id|in_device
+op_star
+id|in_dev
 suffix:semicolon
 multiline_comment|/* Grab the port */
 r_if
@@ -3981,46 +3815,60 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Fill in the MAC-level header. */
-r_for
-c_loop
+id|memset
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ETH_ALEN
-op_minus
-r_sizeof
-(paren
-id|u32
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
 id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
-op_assign
+comma
 l_int|0xfc
-suffix:semicolon
-multiline_comment|/* Ugh, this is like death. */
-op_star
-(paren
-id|u32
-op_star
+comma
+id|ETH_ALEN
 )paren
+suffix:semicolon
+multiline_comment|/* Now PLIP doesnt have a real mac addr which is a pain..&n;&t;   we need to create one, and to be DOS compatible its a good&n;&t;   idea to use the same rules. Layering purists please look away */
+r_if
+c_cond
+(paren
+(paren
+id|in_dev
+op_assign
+id|dev-&gt;ip_ptr
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Any address wil do - we take the first&n;&t;&t; */
+r_struct
+id|in_ifaddr
+op_star
+id|ifa
+op_assign
+id|in_dev-&gt;ifa_list
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ifa
+op_ne
+l_int|NULL
+)paren
+(brace
+id|memcpy
+c_func
 (paren
 id|dev-&gt;dev_addr
 op_plus
-id|i
+l_int|2
+comma
+op_amp
+id|ifa-&gt;ifa_local
+comma
+l_int|4
 )paren
-op_assign
-id|dev-&gt;pa_addr
 suffix:semicolon
+)brace
+)brace
 id|dev-&gt;interrupt
 op_assign
 l_int|0
@@ -4042,7 +3890,6 @@ suffix:semicolon
 multiline_comment|/* The inverse routine to plip_open (). */
 r_static
 r_int
-DECL|function|plip_close
 id|plip_close
 c_func
 (paren
@@ -4206,7 +4053,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_preempt
 id|plip_preempt
 c_func
 (paren
@@ -4267,7 +4113,6 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|plip_wakeup
 id|plip_wakeup
 c_func
 (paren
@@ -4388,7 +4233,6 @@ r_static
 r_struct
 id|net_device_stats
 op_star
-DECL|function|plip_get_stats
 id|plip_get_stats
 c_func
 (paren
@@ -4424,7 +4268,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_config
 id|plip_config
 c_func
 (paren
@@ -4496,7 +4339,6 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|plip_ioctl
 id|plip_ioctl
 c_func
 (paren
@@ -4583,7 +4425,6 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
-DECL|variable|parport
 r_static
 r_int
 id|parport
@@ -4592,12 +4433,20 @@ id|PLIP_MAX
 )braket
 op_assign
 (brace
+(braket
+l_int|0
+dot
+dot
+dot
+id|PLIP_MAX
 op_minus
 l_int|1
-comma
+)braket
+op_assign
+op_minus
+l_int|1
 )brace
 suffix:semicolon
-DECL|variable|timid
 r_static
 r_int
 id|timid
@@ -4626,7 +4475,6 @@ comma
 l_string|&quot;1i&quot;
 )paren
 suffix:semicolon
-DECL|variable|dev_plip
 r_static
 r_struct
 id|device
@@ -4643,7 +4491,6 @@ comma
 suffix:semicolon
 macro_line|#ifdef MODULE
 r_void
-DECL|function|cleanup_module
 id|cleanup_module
 c_func
 (paren
@@ -4761,17 +4608,14 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|macro|plip_init
 mdefine_line|#define plip_init  init_module
 macro_line|#else /* !MODULE */
-DECL|variable|parport_ptr
 r_static
 r_int
 id|parport_ptr
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|plip_setup
 r_void
 id|plip_setup
 c_func
@@ -4912,7 +4756,6 @@ macro_line|#endif /* MODULE */
 r_static
 r_int
 r_inline
-DECL|function|plip_searchfor
 id|plip_searchfor
 c_func
 (paren
@@ -4969,7 +4812,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -5310,4 +5152,5 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -m486 -c plip.c&quot;&n; * End:&n; */
+macro_line|#endif
 eof

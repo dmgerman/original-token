@@ -7,6 +7,8 @@ DECL|macro|TR_RESET_INTERVAL
 mdefine_line|#define TR_RESET_INTERVAL (HZ/20) /* 5 on PC = 50 ms */
 DECL|macro|TR_BUSY_INTERVAL
 mdefine_line|#define TR_BUSY_INTERVAL (HZ/5) /* 5 on PC = 200 ms */
+DECL|macro|TR_SPIN_INTERVAL
+mdefine_line|#define TR_SPIN_INTERVAL (3*HZ) /* 3 seconds before init timeout */
 DECL|macro|TR_ISA
 mdefine_line|#define TR_ISA 1
 DECL|macro|TR_MCA
@@ -421,7 +423,7 @@ multiline_comment|/* DIR_OPEN_ADAPTER options */
 DECL|macro|OPEN_PASS_BCON_MAC
 mdefine_line|#define OPEN_PASS_BCON_MAC 0x0100
 DECL|macro|NUM_RCV_BUF
-mdefine_line|#define NUM_RCV_BUF 3
+mdefine_line|#define NUM_RCV_BUF 2
 DECL|macro|RCV_BUF_LEN
 mdefine_line|#define RCV_BUF_LEN 1024
 DECL|macro|DHB_LENGTH

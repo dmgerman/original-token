@@ -421,6 +421,8 @@ id|file-&gt;f_op
 op_assign
 id|c-&gt;fops
 )paren
+op_logical_and
+id|file-&gt;f_op-&gt;open
 )paren
 r_return
 id|file-&gt;f_op

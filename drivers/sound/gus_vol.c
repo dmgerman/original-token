@@ -2,7 +2,7 @@ multiline_comment|/*&n; * gus_vol.c - Compute volume for GUS.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_GUSHW
+macro_line|#if defined(CONFIG_GUSHW) || defined(MODULE)
 macro_line|#include &quot;gus_linearvol.h&quot;
 DECL|macro|GUS_VOLUME
 mdefine_line|#define GUS_VOLUME&t;gus_wave_volume
@@ -15,6 +15,7 @@ r_int
 r_int
 DECL|function|gus_adagio_vol
 id|gus_adagio_vol
+c_func
 (paren
 r_int
 id|vel
@@ -38,7 +39,7 @@ id|n
 comma
 id|x
 suffix:semicolon
-multiline_comment|/*&n;   * A voice volume of 64 is considered neutral, so adjust the main volume if&n;   * something other than this neutral value was assigned in the patch&n;   * library.&n;   */
+multiline_comment|/*&n;&t; * A voice volume of 64 is considered neutral, so adjust the main volume if&n;&t; * something other than this neutral value was assigned in the patch&n;&t; * library.&n;&t; */
 id|x
 op_assign
 l_int|256
@@ -51,7 +52,7 @@ op_minus
 l_int|64
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Boost expression by voice volume above neutral.&n;   */
+multiline_comment|/*&n;&t; * Boost expression by voice volume above neutral.&n;&t; */
 r_if
 c_cond
 (paren
@@ -75,7 +76,7 @@ l_int|64
 op_div
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;   * Combine multiplicative and level components.&n;   */
+multiline_comment|/*&n;&t; * Combine multiplicative and level components.&n;&t; */
 id|x
 op_assign
 id|vel
@@ -93,7 +94,7 @@ op_star
 id|x
 suffix:semicolon
 macro_line|#ifdef GUS_VOLUME
-multiline_comment|/*&n;   * Further adjustment by installation-specific master volume control&n;   * (default 60).&n;   */
+multiline_comment|/*&n;&t; * Further adjustment by installation-specific master volume control&n;&t; * (default 60).&n;&t; */
 id|x
 op_assign
 (paren
@@ -108,7 +109,7 @@ l_int|10000
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef GUS_USE_CHN_MAIN_VOLUME
-multiline_comment|/*&n;   * Experimental support for the channel main volume&n;   */
+multiline_comment|/*&n;&t; * Experimental support for the channel main volume&n;&t; */
 id|mainv
 op_assign
 (paren
@@ -164,7 +165,7 @@ op_or
 l_int|255
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Convert to GUS&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;   * mantissa m.&n;   */
+multiline_comment|/*&n;&t; * Convert to GUS&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;&t; * mantissa m.&n;&t; */
 id|n
 op_assign
 id|x
@@ -217,7 +218,7 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Mantissa is part of linear volume not expressed in exponent.  (This is&n;   * not quite like real logs -- I wonder if it&squot;s right.)&n;   */
+multiline_comment|/*&n;&t; * Mantissa is part of linear volume not expressed in exponent.  (This is&n;&t; * not quite like real logs -- I wonder if it&squot;s right.)&n;&t; */
 id|m
 op_assign
 id|x
@@ -228,7 +229,7 @@ op_lshift
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Adjust mantissa to 8 bits.&n;   */
+multiline_comment|/*&n;&t; * Adjust mantissa to 8 bits.&n;&t; */
 r_if
 c_cond
 (paren
@@ -282,6 +283,7 @@ r_int
 r_int
 DECL|function|gus_linear_vol
 id|gus_linear_vol
+c_func
 (paren
 r_int
 id|vol

@@ -1507,6 +1507,9 @@ r_int
 r_int
 id|page
 suffix:semicolon
+id|ino_t
+id|root_ino
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -1575,6 +1578,11 @@ c_func
 id|sb-&gt;s_root
 )paren
 suffix:semicolon
+id|root_ino
+op_assign
+id|root-&gt;d_inode-&gt;i_ino
+suffix:semicolon
+multiline_comment|/* usually 2 */
 id|name
 op_assign
 (paren
@@ -1593,7 +1601,7 @@ id|name
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Walk up the tree building the name string as we go.&n;&t; * When we reach the root (ino == 2), get the dentry&n;&t; * relative to the root dentry.&n;&t; */
+multiline_comment|/*&n;&t; * Walk up the tree to construct the name string.&n;&t; * When we reach the root inode, look up the name&n;&t; * relative to the root dentry.&n;&t; */
 r_while
 c_loop
 (paren
@@ -1605,7 +1613,7 @@ c_cond
 (paren
 id|ino
 op_eq
-l_int|2
+id|root_ino
 )paren
 (brace
 r_if
@@ -1632,8 +1640,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_goto
-id|out_page
+r_break
 suffix:semicolon
 )brace
 id|result
@@ -1722,14 +1729,43 @@ r_goto
 id|out_root
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Prepend the name to the buffer.&n;&t;&t; */
+id|result
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENAMETOOLONG
+)paren
+suffix:semicolon
 id|name
 op_sub_assign
+(paren
 id|dirent.len
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|name
+op_le
+id|page
+)paren
+r_goto
+id|out_root
 suffix:semicolon
 id|memcpy
 c_func
 (paren
 id|name
+op_plus
+l_int|1
 comma
 id|dirent.name
 comma
@@ -1737,23 +1773,11 @@ id|dirent.len
 )paren
 suffix:semicolon
 op_star
-(paren
-op_decrement
 id|name
-)paren
 op_assign
 l_char|&squot;/&squot;
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Make sure we can&squot;t get caught in a loop ...&n;&t;&t; */
-id|result
-op_assign
-id|ERR_PTR
-c_func
-(paren
-op_minus
-id|EINVAL
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1763,13 +1787,13 @@ id|dirent.ino
 op_logical_and
 id|dirino
 op_ne
-l_int|2
+id|root_ino
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;lookup_inode: loop detected, dirino=%ld, path=%s&bslash;n&quot;
+l_string|&quot;lookup_inode: looping?? (ino=%ld, path=%s)&bslash;n&quot;
 comma
 id|dirino
 comma
@@ -1789,8 +1813,31 @@ op_assign
 id|dirent.ino
 suffix:semicolon
 )brace
+id|out_page
+suffix:colon
+id|free_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|result
+suffix:semicolon
+multiline_comment|/*&n;&t; * Error exits ...&n;&t; */
 id|out_iput
 suffix:colon
+id|result
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOMEM
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
@@ -1805,18 +1852,8 @@ c_func
 id|root
 )paren
 suffix:semicolon
-id|out_page
-suffix:colon
-id|free_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
+r_goto
 id|out
-suffix:colon
-r_return
-id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find an entry in the cache matching the given dentry pointer.&n; */
@@ -3223,7 +3260,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The is the basic lookup mechanism for turning an NFS filehandle &n; * into a dentry. There are several levels to the search:&n; * (1) Look for the dentry pointer the short-term fhcache,&n; *     and verify that it has the correct inode number.&n; *&n; * (2) Try to validate the dentry pointer in the filehandle,&n; *     and verify that it has the correct inode number.&n; *&n; * (3) Search for the parent dentry in the dir cache, and then&n; *     look for the name matching the inode number.&n; *&n; * (4) The most general case ... search the whole volume for the inode.&n; *&n; * If successful, we return a dentry with the use count incremented.&n; */
+multiline_comment|/*&n; * The is the basic lookup mechanism for turning an NFS filehandle &n; * into a dentry. There are several levels to the search:&n; * (1) Look for the dentry pointer the short-term fhcache,&n; *     and verify that it has the correct inode number.&n; *&n; * (2) Try to validate the dentry pointer in the filehandle,&n; *     and verify that it has the correct inode number. If this&n; *     fails, check for a cached lookup in the fix-up list and&n; *     repeat step (2) using the new dentry pointer.&n; *&n; * (3) Look up the dentry by using the inode and parent inode numbers&n; *     to build the name string. This should succeed for any unix-like&n; *     filesystem.&n; *&n; * (4) Search for the parent dentry in the dir cache, and then&n; *     look for the name matching the inode number.&n; *&n; * (5) The most general case ... search the whole volume for the inode.&n; *&n; * If successful, we return a dentry with the use count incremented.&n; *&n; * Note: steps (4) and (5) above are probably unnecessary now that (3)&n; * is working. Remove the code once this is verified ...&n; */
 r_static
 r_struct
 id|dentry
@@ -3269,9 +3306,14 @@ c_cond
 (paren
 id|dentry
 )paren
+(brace
+id|nfsdstats.fh_cached
+op_increment
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Stage 2: Attempt to validate the dentry in the filehandle.&n;&t; */
 id|dentry
 op_assign
@@ -3345,11 +3387,22 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
+op_logical_neg
 id|retry
 )paren
+id|nfsdstats.fh_valid
+op_increment
+suffix:semicolon
+r_else
+(brace
+id|nfsdstats.fh_fixup
+op_increment
+suffix:semicolon
+macro_line|#ifdef NFSD_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
@@ -3357,6 +3410,7 @@ l_string|&quot;find_fh_dentry: retried validation successful&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 r_goto
 id|out
 suffix:semicolon
@@ -3447,9 +3501,14 @@ id|inode-&gt;i_ino
 op_eq
 id|fh-&gt;fh_ino
 )paren
+(brace
+id|nfsdstats.fh_lookup
+op_increment
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
 macro_line|#ifdef NFSD_PARANOIA
 id|printk
 c_func
@@ -3534,6 +3593,9 @@ macro_line|#endif
 id|dentry
 op_assign
 l_int|NULL
+suffix:semicolon
+id|nfsdstats.fh_stale
+op_increment
 suffix:semicolon
 id|out
 suffix:colon
@@ -3868,6 +3930,25 @@ comma
 id|dentry
 comma
 id|access
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;fh_verify: %s/%s permission failure, acc=%x, error=%d&bslash;n&quot;
+comma
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+id|access
+comma
+id|error
 )paren
 suffix:semicolon
 id|out
@@ -4243,7 +4324,7 @@ OG
 id|NFS_MAXNAMLEN
 )paren
 r_goto
-id|bad_length
+id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Note: d_validate doesn&squot;t dereference the parent pointer ...&n;&t; * just combines it with the name hash to find the hash chain.&n;&t; */
 id|valid
@@ -4291,38 +4372,21 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-id|bad_length
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;nfsd_d_validate: invalid length %d&bslash;n&quot;
-comma
-id|len
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
 )brace
-multiline_comment|/*&n; * Free the dentry and path caches.&n; */
-DECL|function|nfsd_fh_free
+multiline_comment|/*&n; * Flush any cached dentries for the specified device&n; * or for all devices.&n; *&n; * This is called when revoking the last export for a&n; * device, so that it can be unmounted cleanly.&n; */
+DECL|function|nfsd_fh_flush
 r_void
-id|nfsd_fh_free
+id|nfsd_fh_flush
 c_func
 (paren
-r_void
+id|dev_t
+id|dev
 )paren
 (brace
 r_struct
 id|fh_entry
 op_star
 id|fhe
-suffix:semicolon
-r_struct
-id|list_head
-op_star
-id|tmp
 suffix:semicolon
 r_int
 id|i
@@ -4379,6 +4443,17 @@ id|dentry
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_logical_and
+id|dentry-&gt;d_inode-&gt;i_dev
+op_ne
+id|dev
+)paren
+r_continue
+suffix:semicolon
 id|fhe-&gt;dentry
 op_assign
 l_int|NULL
@@ -4402,6 +4477,31 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Free the dentry and path caches.&n; */
+DECL|function|nfsd_fh_free
+r_void
+id|nfsd_fh_free
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|list_head
+op_star
+id|tmp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Flush dentries for all devices */
+id|nfsd_fh_flush
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * N.B. write a destructor for these lists ...&n;&t; */
 id|i
 op_assign
@@ -4520,8 +4620,8 @@ id|nfsd_nr_put
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|nfsd_fh_init
+r_void
 id|nfsd_fh_init
 c_func
 (paren

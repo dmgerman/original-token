@@ -1464,25 +1464,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;     * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;     * itself.&n;     */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* &n;     * Block a timer-based transmit from overlapping.  This could better be&n;     * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;     */
 r_if
 c_cond

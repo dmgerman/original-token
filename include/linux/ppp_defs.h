@@ -1,6 +1,6 @@
 multiline_comment|/*&t;$Id: ppp_defs.h,v 1.2 1994/09/21 01:31:06 paulus Exp $&t;*/
 multiline_comment|/*&n; * ppp_defs.h - PPP definitions.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAVE BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; */
-multiline_comment|/*&n; *  ==FILEVERSION 960302==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     ppp_defs.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp_defs.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 970607==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     ppp_defs.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp_defs.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 macro_line|#ifndef _PPP_DEFS_H_
 DECL|macro|_PPP_DEFS_H_
 mdefine_line|#define _PPP_DEFS_H_
@@ -31,6 +31,8 @@ mdefine_line|#define&t;PPP_TRANS&t;0x20&t;/* Asynchronous transparency modifier 
 multiline_comment|/*&n; * Protocol field values.&n; */
 DECL|macro|PPP_IP
 mdefine_line|#define PPP_IP&t;&t;0x21&t;/* Internet Protocol */
+DECL|macro|PPP_AT
+mdefine_line|#define PPP_AT&t;&t;0x29&t;/* AppleTalk Protocol */
 DECL|macro|PPP_IPX
 mdefine_line|#define PPP_IPX&t;&t;0x2b&t;/* IPX protocol */
 DECL|macro|PPP_VJC_COMP
@@ -43,6 +45,8 @@ DECL|macro|PPP_COMP
 mdefine_line|#define PPP_COMP&t;0xfd&t;/* compressed packet */
 DECL|macro|PPP_IPCP
 mdefine_line|#define PPP_IPCP&t;0x8021&t;/* IP Control Protocol */
+DECL|macro|PPP_ATCP
+mdefine_line|#define PPP_ATCP&t;0x8029&t;/* AppleTalk Control Protocol */
 DECL|macro|PPP_IPXCP
 mdefine_line|#define PPP_IPXCP&t;0x802b&t;/* IPX Control Protocol */
 DECL|macro|PPP_CCP
@@ -55,6 +59,8 @@ DECL|macro|PPP_LQR
 mdefine_line|#define PPP_LQR&t;&t;0xc025&t;/* Link Quality Report protocol */
 DECL|macro|PPP_CHAP
 mdefine_line|#define PPP_CHAP&t;0xc223&t;/* Cryptographic Handshake Auth. Protocol */
+DECL|macro|PPP_CBCP
+mdefine_line|#define PPP_CBCP&t;0xc029&t;/* Callback Control Protocol */
 multiline_comment|/*&n; * Values for FCS calculations.&n; */
 DECL|macro|PPP_INITFCS
 mdefine_line|#define PPP_INITFCS&t;0xffff&t;/* Initial FCS value */

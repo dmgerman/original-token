@@ -3095,22 +3095,12 @@ id|dentry-&gt;d_count
 OG
 l_int|1
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ext2_rmdir: d_count=%d, pruning&bslash;n&quot;
-comma
-id|dentry-&gt;d_count
-)paren
-suffix:semicolon
 id|shrink_dcache_parent
 c_func
 (paren
 id|dentry
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

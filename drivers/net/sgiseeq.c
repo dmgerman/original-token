@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiseeq.c,v 1.1 1997/06/09 08:34:30 ralf Exp $&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiseeq.c,v 1.3 1997/11/16 13:57:45 alan Exp $&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2244,57 +2244,6 @@ id|dev
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Is the skippy buf even reasonable? */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: skb is NULL&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: skb len is %ld&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Are we getting in someone else&squot;s way? */

@@ -2,7 +2,8 @@ multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#ifdef CONFIG_SBDSP
+macro_line|#include &quot;sound_firmware.h&quot;
+macro_line|#if defined(CONFIG_SBDSP) || defined(MODULE)
 macro_line|#ifndef CONFIG_AUDIO
 macro_line|#error You will need to configure the sound driver with CONFIG_AUDIO option.
 macro_line|#endif
@@ -149,6 +150,7 @@ macro_line|#endif
 r_int
 DECL|function|sb_dsp_command
 id|sb_dsp_command
+c_func
 (paren
 id|sb_devc
 op_star
@@ -175,7 +177,7 @@ op_div
 l_int|10
 suffix:semicolon
 multiline_comment|/* Timeout */
-multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
+multiline_comment|/*&n;&t; * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;&t; * called while interrupts are disabled. This means that the timer is&n;&t; * disabled also. However the timeout situation is a abnormal condition.&n;&t; * Normally the DSP should be ready to accept commands after just couple of&n;&t; * loops.&n;&t; */
 r_for
 c_loop
 (paren
@@ -200,6 +202,7 @@ c_cond
 (paren
 (paren
 id|inb
+c_func
 (paren
 id|DSP_STATUS
 )paren
@@ -211,6 +214,7 @@ l_int|0
 )paren
 (brace
 id|outb
+c_func
 (paren
 (paren
 id|val
@@ -225,6 +229,7 @@ suffix:semicolon
 )brace
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sound Blaster: DSP Command(%x) Timeout.&bslash;n&quot;
 comma
@@ -239,6 +244,7 @@ r_static
 r_int
 DECL|function|sb_dsp_get_byte
 id|sb_dsp_get_byte
+c_func
 (paren
 id|sb_devc
 op_star
@@ -264,6 +270,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -273,6 +280,7 @@ l_int|0x80
 (brace
 r_return
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -285,6 +293,7 @@ suffix:semicolon
 r_int
 DECL|function|ess_write
 id|ess_write
+c_func
 (paren
 id|sb_devc
 op_star
@@ -305,6 +314,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -316,6 +326,7 @@ l_int|0
 suffix:semicolon
 r_return
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -326,6 +337,7 @@ suffix:semicolon
 r_int
 DECL|function|ess_read
 id|ess_read
+c_func
 (paren
 id|sb_devc
 op_star
@@ -342,6 +354,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -358,6 +371,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -370,6 +384,7 @@ l_int|1
 suffix:semicolon
 r_return
 id|sb_dsp_get_byte
+c_func
 (paren
 id|devc
 )paren
@@ -379,6 +394,7 @@ r_static
 r_void
 DECL|function|sbintr
 id|sbintr
+c_func
 (paren
 r_int
 id|irq
@@ -424,8 +440,10 @@ id|irq
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sbintr: Bogus interrupt IRQ%d&bslash;n&quot;
 comma
@@ -451,6 +469,7 @@ id|MDL_SB16
 id|src
 op_assign
 id|sb_getmixer
+c_func
 (paren
 id|devc
 comma
@@ -458,7 +477,7 @@ id|IRQ_STAT
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt source register */
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
+macro_line|#if defined(CONFIG_MIDI)&amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
 r_if
 c_cond
 (paren
@@ -467,6 +486,7 @@ op_amp
 l_int|4
 )paren
 id|uart401intr
+c_func
 (paren
 id|devc-&gt;irq
 comma
@@ -506,6 +526,7 @@ r_case
 id|IMODE_OUTPUT
 suffix:colon
 id|DMAbuf_outputintr
+c_func
 (paren
 id|devc-&gt;dev
 comma
@@ -518,6 +539,7 @@ r_case
 id|IMODE_INPUT
 suffix:colon
 id|DMAbuf_inputintr
+c_func
 (paren
 id|devc-&gt;dev
 )paren
@@ -532,8 +554,9 @@ suffix:semicolon
 r_case
 id|IMODE_MIDI
 suffix:colon
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if  defined(CONFIG_MIDI)
 id|sb_midi_interrupt
+c_func
 (paren
 id|devc
 )paren
@@ -557,6 +580,7 @@ l_int|0x01
 id|status
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -575,6 +599,7 @@ l_int|0x02
 id|status
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVL16
 )paren
@@ -583,6 +608,7 @@ suffix:semicolon
 r_int
 DECL|function|sb_dsp_reset
 id|sb_dsp_reset
+c_func
 (paren
 id|sb_devc
 op_star
@@ -593,8 +619,10 @@ r_int
 id|loopc
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Entered sb_dsp_reset()&bslash;n&quot;
 )paren
@@ -608,6 +636,7 @@ op_eq
 id|MDL_ESS
 )paren
 id|outb
+c_func
 (paren
 (paren
 l_int|3
@@ -619,6 +648,7 @@ suffix:semicolon
 multiline_comment|/* Reset FIFO too */
 r_else
 id|outb
+c_func
 (paren
 (paren
 l_int|1
@@ -628,11 +658,13 @@ id|DSP_RESET
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0
@@ -642,16 +674,19 @@ id|DSP_RESET
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -670,6 +705,7 @@ op_logical_and
 op_logical_neg
 (paren
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -685,6 +721,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -693,8 +730,10 @@ l_int|0xAA
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sb: No response to RESET&bslash;n&quot;
 )paren
@@ -713,6 +752,7 @@ op_eq
 id|MDL_ESS
 )paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -721,8 +761,10 @@ l_int|0xc6
 suffix:semicolon
 multiline_comment|/* Enable extended mode */
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sb_dsp_reset() OK&bslash;n&quot;
 )paren
@@ -736,6 +778,7 @@ r_static
 r_void
 DECL|function|dsp_get_vers
 id|dsp_get_vers
+c_func
 (paren
 id|sb_devc
 op_star
@@ -750,19 +793,23 @@ r_int
 id|flags
 suffix:semicolon
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Entered dsp_get_vers()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -773,6 +820,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -797,6 +845,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -814,6 +863,7 @@ l_int|0
 id|devc-&gt;major
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -823,6 +873,7 @@ r_else
 id|devc-&gt;minor
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -833,8 +884,10 @@ suffix:semicolon
 )brace
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;DSP version %d.%d&bslash;n&quot;
 comma
@@ -845,6 +898,7 @@ id|devc-&gt;minor
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -854,6 +908,7 @@ r_static
 r_int
 DECL|function|sb16_set_dma_hw
 id|sb16_set_dma_hw
+c_func
 (paren
 id|sb_devc
 op_star
@@ -880,6 +935,7 @@ l_int|3
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB16: Invalid 8 bit DMA (%d)&bslash;n&quot;
 comma
@@ -918,6 +974,7 @@ id|devc-&gt;dma16
 )paren
 suffix:semicolon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -935,6 +992,7 @@ r_static
 r_void
 DECL|function|sb16_set_mpu_port
 id|sb16_set_mpu_port
+c_func
 (paren
 id|sb_devc
 op_star
@@ -952,6 +1010,7 @@ r_char
 id|bits
 op_assign
 id|sb_getmixer
+c_func
 (paren
 id|devc
 comma
@@ -971,6 +1030,7 @@ r_case
 l_int|0x300
 suffix:colon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -987,6 +1047,7 @@ r_case
 l_int|0x330
 suffix:colon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -1002,6 +1063,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -1014,6 +1076,7 @@ l_int|0x02
 suffix:semicolon
 multiline_comment|/* Disable MPU */
 id|printk
+c_func
 (paren
 l_string|&quot;SB16: Invalid MIDI I/O port %x&bslash;n&quot;
 comma
@@ -1027,6 +1090,7 @@ r_static
 r_int
 DECL|function|sb16_set_irq_hw
 id|sb16_set_irq_hw
+c_func
 (paren
 id|sb_devc
 op_star
@@ -1084,6 +1148,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;SB16 IRQ%d is not possible&bslash;n&quot;
 comma
@@ -1095,6 +1160,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -1111,6 +1177,7 @@ r_static
 r_void
 DECL|function|relocate_Jazz16
 id|relocate_Jazz16
+c_func
 (paren
 id|sb_devc
 op_star
@@ -1197,15 +1264,18 @@ id|hw_config-&gt;io_base
 suffix:semicolon
 multiline_comment|/*&n; * Magic wake up sequence by writing to 0x201 (aka Joystick port)&n; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xAF
@@ -1215,6 +1285,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x50
@@ -1224,6 +1295,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -1233,6 +1305,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -1242,6 +1315,7 @@ r_static
 r_int
 DECL|function|init_Jazz16
 id|init_Jazz16
+c_func
 (paren
 id|sb_devc
 op_star
@@ -1265,6 +1339,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1278,6 +1353,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_get_byte
+c_func
 (paren
 id|devc
 )paren
@@ -1304,6 +1380,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: Invalid interrupt (IRQ%d)&bslash;n&quot;
 comma
@@ -1330,6 +1407,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: Invalid 8 bit DMA (DMA%d)&bslash;n&quot;
 comma
@@ -1349,6 +1427,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: No 16 bit DMA channel defined&bslash;n&quot;
 )paren
@@ -1373,6 +1452,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: Invalid 16 bit DMA (DMA%d)&bslash;n&quot;
 comma
@@ -1392,6 +1472,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1406,6 +1487,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1432,6 +1514,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1450,6 +1533,7 @@ op_assign
 id|MDL_JAZZ
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|name
 comma
@@ -1469,8 +1553,10 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 id|strlen
+c_func
 (paren
 id|name
 op_plus
@@ -1485,6 +1571,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|strlen
+c_func
 (paren
 id|name
 op_plus
@@ -1510,6 +1597,7 @@ op_ne
 l_int|NULL
 )paren
 id|strcpy
+c_func
 (paren
 id|hw_config-&gt;name
 comma
@@ -1528,6 +1616,7 @@ r_static
 r_void
 DECL|function|relocate_ess1688
 id|relocate_ess1688
+c_func
 (paren
 id|sb_devc
 op_star
@@ -1587,8 +1676,10 @@ suffix:semicolon
 multiline_comment|/* Wrong port */
 )brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;Doing ESS1688 address selection&bslash;n&quot;
 )paren
@@ -1597,58 +1688,69 @@ suffix:semicolon
 multiline_comment|/*&n; * ES1688 supports two alternative ways for software address config.&n; * First try the so called Read-Sequence-Key method.&n; */
 multiline_comment|/* Reset the sequence logic */
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 multiline_comment|/* Perform the read sequence */
 id|inb
+c_func
 (paren
 l_int|0x22b
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x22b
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x22b
 )paren
 suffix:semicolon
 id|inb
+c_func
 (paren
 l_int|0x229
 )paren
 suffix:semicolon
 multiline_comment|/* Select the base address by reading from it. Then probe using the port. */
 id|inb
+c_func
 (paren
 id|devc-&gt;base
 )paren
@@ -1657,6 +1759,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
@@ -1667,6 +1770,7 @@ suffix:semicolon
 macro_line|#if 0&t;&t;&t;&t;/* This causes system lockups (Nokia 386/25 at least) */
 multiline_comment|/*&n; * The last resort is the system control register method.&n; */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
@@ -1677,6 +1781,7 @@ l_int|0xfb
 suffix:semicolon
 multiline_comment|/* 0xFB is the unlock register */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
@@ -1687,6 +1792,7 @@ l_int|0xe0
 suffix:semicolon
 multiline_comment|/* Select index 0 */
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -1697,6 +1803,7 @@ l_int|0xe1
 suffix:semicolon
 multiline_comment|/* Write the config bits */
 id|outb
+c_func
 (paren
 (paren
 l_int|0x00
@@ -1712,6 +1819,7 @@ r_static
 r_int
 DECL|function|ess_init
 id|ess_init
+c_func
 (paren
 id|sb_devc
 op_star
@@ -1755,6 +1863,7 @@ l_int|100
 suffix:semicolon
 multiline_comment|/*&n; * Try to detect ESS chips.&n; */
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -1779,6 +1888,7 @@ r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -1796,6 +1906,7 @@ l_int|0
 id|ess_major
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -1805,6 +1916,7 @@ r_else
 id|ess_minor
 op_assign
 id|inb
+c_func
 (paren
 id|DSP_READ
 )paren
@@ -1841,6 +1953,7 @@ l_int|0x80
 )paren
 (brace
 id|sprintf
+c_func
 (paren
 id|name
 comma
@@ -1902,6 +2015,7 @@ op_assign
 l_string|&quot;ES1688&quot;
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|name
 comma
@@ -1917,6 +2031,7 @@ suffix:semicolon
 )brace
 r_else
 id|strcpy
+c_func
 (paren
 id|name
 comma
@@ -1946,8 +2061,10 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 id|strlen
+c_func
 (paren
 id|name
 op_plus
@@ -1962,6 +2079,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|strlen
+c_func
 (paren
 id|name
 op_plus
@@ -1987,6 +2105,7 @@ op_ne
 l_int|NULL
 )paren
 id|strcpy
+c_func
 (paren
 id|hw_config-&gt;name
 comma
@@ -1994,6 +2113,7 @@ id|name
 )paren
 suffix:semicolon
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
@@ -2062,6 +2182,7 @@ l_int|0x10
 suffix:semicolon
 multiline_comment|/* Disable all interrupts */
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nESS1688: Invalid IRQ %d&bslash;n&quot;
 comma
@@ -2077,6 +2198,7 @@ c_cond
 (paren
 op_logical_neg
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2092,6 +2214,7 @@ l_int|2
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nESS1688: Failed to write to IRQ config register&bslash;n&quot;
 )paren
@@ -2128,6 +2251,7 @@ l_int|0x00
 suffix:semicolon
 multiline_comment|/* Disable all DMA */
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nESS1688: Invalid DMA %d&bslash;n&quot;
 comma
@@ -2161,6 +2285,7 @@ c_cond
 (paren
 op_logical_neg
 id|ess_write
+c_func
 (paren
 id|devc
 comma
@@ -2176,6 +2301,7 @@ l_int|2
 )paren
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nESS1688: Failed to write to DMA config register&bslash;n&quot;
 )paren
@@ -2184,6 +2310,7 @@ multiline_comment|/*&n; * Enable joystick and OPL3&n; */
 id|cfg
 op_assign
 id|sb_getmixer
+c_func
 (paren
 id|devc
 comma
@@ -2191,6 +2318,7 @@ l_int|0x40
 )paren
 suffix:semicolon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -2215,6 +2343,7 @@ id|SB_NO_MIDI
 suffix:semicolon
 multiline_comment|/* ES1688 uses MPU401 MIDI mode */
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
@@ -2226,6 +2355,7 @@ suffix:semicolon
 r_int
 DECL|function|sb_dsp_detect
 id|sb_dsp_detect
+c_func
 (paren
 r_struct
 id|address_info
@@ -2243,10 +2373,27 @@ op_assign
 op_amp
 id|sb_info
 suffix:semicolon
+id|sb_info.my_mididev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|sb_info.my_mixerdev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|sb_info.my_dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n; * Initialize variables &n; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sb_dsp_detect(%x) entered&bslash;n&quot;
 comma
@@ -2258,16 +2405,28 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
 l_int|16
 )paren
 )paren
+(brace
+macro_line|#ifdef MODULE
+id|printk
+c_func
+(paren
+l_string|&quot;sb: I/O region in use.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|memset
+c_func
 (paren
 (paren
 r_char
@@ -2306,16 +2465,123 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|acer
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x0b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x0b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x0b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x09
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+id|devc-&gt;base
+op_plus
+l_int|0x00
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Detect the device&n; */
 r_if
 c_cond
 (paren
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
 )paren
 id|dsp_get_vers
+c_func
 (paren
 id|devc
 )paren
@@ -2358,6 +2624,7 @@ l_int|1
 )paren
 )paren
 id|relocate_Jazz16
+c_func
 (paren
 id|devc
 comma
@@ -2382,6 +2649,7 @@ l_int|0
 )paren
 )paren
 id|relocate_ess1688
+c_func
 (paren
 id|devc
 )paren
@@ -2391,19 +2659,30 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_reset
+c_func
 (paren
 id|devc
 )paren
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;SB reset failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|printk
+c_func
+(paren
+l_string|&quot;sb: dsp reset failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2416,6 +2695,7 @@ op_eq
 l_int|0
 )paren
 id|dsp_get_vers
+c_func
 (paren
 id|devc
 )paren
@@ -2445,6 +2725,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -2455,6 +2736,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -2482,6 +2764,7 @@ id|i
 op_increment
 )paren
 id|inb
+c_func
 (paren
 id|DSP_DATA_AVAIL
 )paren
@@ -2514,6 +2797,7 @@ id|sound_nblocks
 )braket
 op_assign
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -2552,7 +2836,9 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sb: Can&squot;t allocate memory for device information&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2561,6 +2847,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -2580,9 +2867,11 @@ id|sb_devc
 )paren
 )paren
 suffix:semicolon
-id|DDB
+id|MDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;SB %d.%d detected OK (%x)&bslash;n&quot;
 comma
@@ -2601,6 +2890,7 @@ suffix:semicolon
 r_void
 DECL|function|sb_dsp_init
 id|sb_dsp_init
+c_func
 (paren
 r_struct
 id|address_info
@@ -2624,8 +2914,10 @@ id|sb_be_quiet
 suffix:semicolon
 multiline_comment|/*&n; * Check if we had detected a SB device earlier&n; */
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sb_dsp_init(%x) entered&bslash;n&quot;
 comma
@@ -2648,9 +2940,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DDB
+id|MDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;No detected device&bslash;n&quot;
 )paren
@@ -2676,8 +2970,10 @@ id|hw_config-&gt;io_base
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;I/O port mismatch&bslash;n&quot;
 )paren
@@ -2689,8 +2985,30 @@ suffix:semicolon
 multiline_comment|/*&n; * Now continue initialization of the device&n; */
 id|devc-&gt;dev
 op_assign
-id|num_audiodevs
+id|sound_alloc_audiodev
+c_func
+(paren
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|devc-&gt;dev
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;sb: too many audio devices.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|devc-&gt;caps
 op_assign
 id|hw_config-&gt;driver_use_1
@@ -2719,6 +3037,7 @@ r_if
 c_cond
 (paren
 id|snd_set_irq_handler
+c_func
 (paren
 id|hw_config-&gt;irq
 comma
@@ -2733,10 +3052,18 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
+id|KERN_ERR
 l_string|&quot;SB: Can&squot;t allocate IRQ%d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
+)paren
+suffix:semicolon
+id|sound_unload_audiodev
+c_func
+(paren
+id|devc-&gt;dev
 )paren
 suffix:semicolon
 r_return
@@ -2765,6 +3092,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb16_set_irq_hw
+c_func
 (paren
 id|devc
 comma
@@ -2774,8 +3102,15 @@ id|devc-&gt;irq
 multiline_comment|/* Unsupported IRQ */
 (brace
 id|snd_release_irq
+c_func
 (paren
 id|devc-&gt;irq
+)paren
+suffix:semicolon
+id|sound_unload_audiodev
+c_func
+(paren
+id|devc-&gt;dev
 )paren
 suffix:semicolon
 id|irq2devc
@@ -2826,6 +3161,7 @@ id|MDL_ESS
 op_logical_or
 op_logical_neg
 id|ess_init
+c_func
 (paren
 id|devc
 comma
@@ -2851,6 +3187,7 @@ id|MDL_SMW
 op_logical_or
 op_logical_neg
 id|init_Jazz16
+c_func
 (paren
 id|devc
 comma
@@ -2859,8 +3196,10 @@ id|hw_config
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;This is a genuine SB Pro&bslash;n&quot;
 )paren
@@ -2918,6 +3257,7 @@ r_if
 c_cond
 (paren
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -2956,6 +3296,7 @@ id|devc-&gt;irq_ok
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;sb: Interrupt test on IRQ%d failed - Probable IRQ conflict&bslash;n&quot;
 comma
@@ -2966,8 +3307,10 @@ suffix:semicolon
 r_else
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;IRQ test OK (IRQ%d)&bslash;n&quot;
 comma
@@ -2977,10 +3320,11 @@ id|devc-&gt;irq
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif&t;&t;&t;&t;/* __SMP__ */
 )brace
 multiline_comment|/* IRQ setup */
 id|request_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -3107,6 +3451,7 @@ l_int|7
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB16: Bad or missing 16 bit DMA channel&bslash;n&quot;
 )paren
@@ -3122,6 +3467,7 @@ op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
 id|sb16_set_dma_hw
+c_func
 (paren
 id|devc
 )paren
@@ -3153,11 +3499,12 @@ op_eq
 l_int|4
 )paren
 id|sb_mixer_init
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -3169,6 +3516,7 @@ id|SB_NO_MIDI
 )paren
 )paren
 id|sb_dsp_midi_init
+c_func
 (paren
 id|devc
 )paren
@@ -3186,6 +3534,7 @@ op_assign
 l_string|&quot;Sound Blaster (8 BIT/MONO ONLY)&quot;
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|name
 comma
@@ -3199,6 +3548,7 @@ id|devc-&gt;minor
 )paren
 suffix:semicolon
 id|conf_printf
+c_func
 (paren
 id|name
 comma
@@ -3227,21 +3577,25 @@ l_int|1
 multiline_comment|/* &quot;True&quot; SB Pro should have v3.1 (rare ones may have 3.2). */
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;This soundcard may not be fully Sound Blaster Pro compatible.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;In many cases there is another way to configure OSS so that&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;it works properly with OSS (for example in 16 bit mode).&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;Please ignore this message if you _really_ have a SB Pro.&bslash;n&quot;
 )paren
@@ -3260,6 +3614,7 @@ id|MDL_SBPRO
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB DSP version is just %d.%d which means that your card is&bslash;n&quot;
 comma
@@ -3269,11 +3624,13 @@ id|devc-&gt;minor
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;several years old (8 bit only device)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;or alternatively the sound driver is incorrectly configured.&bslash;n&quot;
 )paren
@@ -3307,6 +3664,7 @@ r_if
 c_cond
 (paren
 id|sound_alloc_dma
+c_func
 (paren
 id|devc-&gt;dma8
 comma
@@ -3315,6 +3673,7 @@ l_string|&quot;SoundBlaster8&quot;
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Can&squot;t allocate 8 bit DMA channel %d&bslash;n&quot;
 comma
@@ -3337,6 +3696,7 @@ r_if
 c_cond
 (paren
 id|sound_alloc_dma
+c_func
 (paren
 id|devc-&gt;dma16
 comma
@@ -3345,6 +3705,7 @@ l_string|&quot;SoundBlaster16&quot;
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB: Can&squot;t allocate 16 bit DMA channel %d&bslash;n&quot;
 comma
@@ -3353,6 +3714,7 @@ id|devc-&gt;dma16
 suffix:semicolon
 )brace
 id|sb_audio_init
+c_func
 (paren
 id|devc
 comma
@@ -3360,10 +3722,24 @@ id|name
 )paren
 suffix:semicolon
 )brace
+r_else
+(brace
+id|MDB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;sb: No audio devices found.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_void
 DECL|function|sb_dsp_disable_midi
 id|sb_dsp_disable_midi
+c_func
 (paren
 r_int
 id|io_base
@@ -3373,6 +3749,7 @@ id|io_base
 r_void
 DECL|function|sb_dsp_disable_recording
 id|sb_dsp_disable_recording
+c_func
 (paren
 r_int
 id|io_base
@@ -3382,6 +3759,7 @@ id|io_base
 r_void
 DECL|function|sb_dsp_unload
 id|sb_dsp_unload
+c_func
 (paren
 r_struct
 id|address_info
@@ -3444,6 +3822,7 @@ id|hw_config-&gt;io_base
 )paren
 (brace
 id|release_region
+c_func
 (paren
 id|devc-&gt;base
 comma
@@ -3462,6 +3841,7 @@ id|SB_NO_AUDIO
 )paren
 (brace
 id|sound_free_dma
+c_func
 (paren
 id|devc-&gt;dma8
 )paren
@@ -3474,6 +3854,7 @@ op_ge
 l_int|0
 )paren
 id|sound_free_dma
+c_func
 (paren
 id|devc-&gt;dma16
 )paren
@@ -3499,6 +3880,7 @@ l_int|0
 )paren
 (brace
 id|snd_release_irq
+c_func
 (paren
 id|devc-&gt;irq
 )paren
@@ -3510,10 +3892,29 @@ id|devc-&gt;irq
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sound_unload_mixerdev
+c_func
+(paren
+id|devc-&gt;my_mixerdev
+)paren
+suffix:semicolon
+id|sound_unload_mididev
+c_func
+(paren
+id|devc-&gt;my_mididev
+)paren
+suffix:semicolon
+id|sound_unload_audiodev
+c_func
+(paren
+id|devc-&gt;my_dev
+)paren
+suffix:semicolon
 )brace
 )brace
 r_else
 id|release_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -3525,6 +3926,7 @@ multiline_comment|/*&n; * Mixer access routines&n; */
 r_void
 DECL|function|sb_setmixer
 id|sb_setmixer
+c_func
 (paren
 id|sb_devc
 op_star
@@ -3544,15 +3946,18 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3570,16 +3975,19 @@ id|MIXER_ADDR
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3597,16 +4005,19 @@ id|MIXER_DATA
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3616,6 +4027,7 @@ r_int
 r_int
 DECL|function|sb_getmixer
 id|sb_getmixer
+c_func
 (paren
 id|sb_devc
 op_star
@@ -3635,15 +4047,18 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3661,11 +4076,13 @@ id|MIXER_ADDR
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -3673,21 +4090,25 @@ suffix:semicolon
 id|val
 op_assign
 id|inb
+c_func
 (paren
 id|MIXER_DATA
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3696,12 +4117,13 @@ r_return
 id|val
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MIDI
+macro_line|#if defined(CONFIG_MIDI)
 multiline_comment|/*&n; * MPU401 MIDI initialization.&n; */
 r_static
 r_void
 DECL|function|smw_putmem
 id|smw_putmem
+c_func
 (paren
 id|sb_devc
 op_star
@@ -3723,15 +4145,18 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|addr
@@ -3746,6 +4171,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Low address bits */
 id|outb
+c_func
 (paren
 (paren
 id|addr
@@ -3760,6 +4186,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* High address bits */
 id|outb
+c_func
 (paren
 (paren
 id|val
@@ -3770,6 +4197,7 @@ id|base
 suffix:semicolon
 multiline_comment|/* Data */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3780,6 +4208,7 @@ r_int
 r_char
 DECL|function|smw_getmem
 id|smw_getmem
+c_func
 (paren
 id|sb_devc
 op_star
@@ -3801,15 +4230,18 @@ r_char
 id|val
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|addr
@@ -3824,6 +4256,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* Low address bits */
 id|outb
+c_func
 (paren
 (paren
 id|addr
@@ -3840,12 +4273,14 @@ multiline_comment|/* High address bits */
 id|val
 op_assign
 id|inb
+c_func
 (paren
 id|base
 )paren
 suffix:semicolon
 multiline_comment|/* Data */
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -3858,6 +4293,7 @@ r_static
 r_int
 DECL|function|smw_midi_init
 id|smw_midi_init
+c_func
 (paren
 id|sb_devc
 op_star
@@ -3889,10 +4325,11 @@ r_int
 r_char
 id|control
 suffix:semicolon
-multiline_comment|/*&n;     *  Reset the microcontroller so that the RAM can be accessed&n;   */
+multiline_comment|/*&n;&t;   *  Reset the microcontroller so that the RAM can be accessed&n;&t; */
 id|control
 op_assign
 id|inb
+c_func
 (paren
 id|mpu_base
 op_plus
@@ -3900,6 +4337,7 @@ l_int|7
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|control
@@ -3914,6 +4352,7 @@ l_int|7
 suffix:semicolon
 multiline_comment|/* Set last two bits to 1 (?) */
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -3947,11 +4386,13 @@ op_increment
 )paren
 multiline_comment|/* Wait at least 1ms */
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|control
@@ -3965,8 +4406,9 @@ l_int|7
 )paren
 suffix:semicolon
 multiline_comment|/* xxxxxx00 enables RAM */
-multiline_comment|/*&n;     *  Detect microcontroller by probing the 8k RAM area&n;   */
+multiline_comment|/*&n;&t;   *  Detect microcontroller by probing the 8k RAM area&n;&t; */
 id|smw_putmem
+c_func
 (paren
 id|devc
 comma
@@ -3978,6 +4420,7 @@ l_int|0x00
 )paren
 suffix:semicolon
 id|smw_putmem
+c_func
 (paren
 id|devc
 comma
@@ -3989,6 +4432,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 id|tenmicrosec
+c_func
 (paren
 id|devc-&gt;osp
 )paren
@@ -3997,6 +4441,7 @@ r_if
 c_cond
 (paren
 id|smw_getmem
+c_func
 (paren
 id|devc
 comma
@@ -4008,6 +4453,7 @@ op_ne
 l_int|0x00
 op_logical_or
 id|smw_getmem
+c_func
 (paren
 id|devc
 comma
@@ -4020,12 +4466,15 @@ l_int|0xff
 )paren
 (brace
 id|DDB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nSM Wave: No microcontroller RAM detected (%02x, %02x)&bslash;n&quot;
 comma
 id|smw_getmem
+c_func
 (paren
 id|devc
 comma
@@ -4035,6 +4484,7 @@ l_int|0
 )paren
 comma
 id|smw_getmem
+c_func
 (paren
 id|devc
 comma
@@ -4050,16 +4500,51 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* No RAM */
 )brace
-multiline_comment|/*&n;     *  There is RAM so assume it&squot;s really a SM Wave&n;   */
+multiline_comment|/*&n;&t;   *  There is RAM so assume it&squot;s really a SM Wave&n;&t; */
 id|devc-&gt;model
 op_assign
 id|MDL_SMW
 suffix:semicolon
 id|smw_mixer_init
+c_func
 (paren
 id|devc
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smw_ucode
+)paren
+(brace
+r_extern
+r_void
+op_star
+id|smw_free
+suffix:semicolon
+id|smw_ucodeLen
+op_assign
+id|mod_firmware_load
+c_func
+(paren
+l_string|&quot;/etc/sound/midi0001.bin&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|smw_ucode
+)paren
+suffix:semicolon
+id|smw_free
+op_assign
+id|smw_ucode
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4077,6 +4562,7 @@ l_int|8192
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;nSM Wave: Invalid microcode (MIDI0001.BIN) length&bslash;n&quot;
 )paren
@@ -4085,7 +4571,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;       *  Download microcode&n;       */
+multiline_comment|/*&n;&t;&t;   *  Download microcode&n;&t;&t;   */
 r_for
 c_loop
 (paren
@@ -4101,6 +4587,7 @@ id|i
 op_increment
 )paren
 id|smw_putmem
+c_func
 (paren
 id|devc
 comma
@@ -4114,7 +4601,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       *  Verify microcode&n;       */
+multiline_comment|/*&n;&t;&t;   *  Verify microcode&n;&t;&t;   */
 r_for
 c_loop
 (paren
@@ -4133,6 +4620,7 @@ r_if
 c_cond
 (paren
 id|smw_getmem
+c_func
 (paren
 id|devc
 comma
@@ -4148,6 +4636,7 @@ id|i
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SM Wave: Microcode verification failed&bslash;n&quot;
 )paren
@@ -4162,7 +4651,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef SMW_SCSI_IRQ
-multiline_comment|/*&n;     * Set the SCSI interrupt (IRQ2/9, IRQ3 or IRQ10). The SCSI interrupt&n;     * is disabled by default.&n;     *&n;     * BTW the Zilog 5380 SCSI controller is located at MPU base + 0x10.&n;   */
+multiline_comment|/*&n;&t;   * Set the SCSI interrupt (IRQ2/9, IRQ3 or IRQ10). The SCSI interrupt&n;&t;   * is disabled by default.&n;&t;   *&n;&t;   * BTW the Zilog 5380 SCSI controller is located at MPU base + 0x10.&n;&t; */
 (brace
 r_static
 r_int
@@ -4217,7 +4706,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef SMW_OPL4_ENABLE
-multiline_comment|/*&n;     *  Make the OPL4 chip visible on the PC bus at 0x380.&n;     *&n;     *  There is no need to enable this feature since this driver&n;     *  doesn&squot;t support OPL4 yet. Also there is no RAM in SM Wave so&n;     *  enabling OPL4 is pretty useless.&n;   */
+multiline_comment|/*&n;&t;   *  Make the OPL4 chip visible on the PC bus at 0x380.&n;&t;   *&n;&t;   *  There is no need to enable this feature since this driver&n;&t;   *  doesn&squot;t support OPL4 yet. Also there is no RAM in SM Wave so&n;&t;   *  enabling OPL4 is pretty useless.&n;&t; */
 id|control
 op_or_assign
 l_int|0x10
@@ -4226,6 +4715,7 @@ multiline_comment|/* Uses IRQ12 if bit 0x20 == 0 */
 multiline_comment|/* control |= 0x20;      Uncomment this if you want to use IRQ7 */
 macro_line|#endif
 id|outb
+c_func
 (paren
 (paren
 id|control
@@ -4251,6 +4741,7 @@ r_static
 r_int
 DECL|function|ess_midi_init
 id|ess_midi_init
+c_func
 (paren
 id|sb_devc
 op_star
@@ -4271,6 +4762,7 @@ suffix:semicolon
 id|cfg
 op_assign
 id|sb_getmixer
+c_func
 (paren
 id|devc
 comma
@@ -4288,6 +4780,7 @@ l_int|8
 )paren
 (brace
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -4323,6 +4816,7 @@ l_int|3
 )paren
 (brace
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -4401,6 +4895,7 @@ op_lshift
 l_int|5
 suffix:semicolon
 id|sb_setmixer
+c_func
 (paren
 id|devc
 comma
@@ -4419,6 +4914,7 @@ r_static
 r_int
 DECL|function|init_Jazz16_midi
 id|init_Jazz16_midi
+c_func
 (paren
 id|sb_devc
 op_star
@@ -4483,6 +4979,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: Invalid MIDI interrupt (IRQ%d)&bslash;n&quot;
 comma
@@ -4576,6 +5073,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Jazz16: Invalid MIDI I/O port %x&bslash;n&quot;
 comma
@@ -4588,15 +5086,18 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Magic wake up sequence by writing to 0x201 (aka Joystick port)&n; */
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0xAF
@@ -4606,6 +5107,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 l_int|0x50
@@ -4615,6 +5117,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|bits
@@ -4624,6 +5127,7 @@ l_int|0x201
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -4633,6 +5137,7 @@ op_assign
 l_string|&quot;Jazz16&quot;
 suffix:semicolon
 id|smw_midi_init
+c_func
 (paren
 id|devc
 comma
@@ -4644,6 +5149,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4658,6 +5164,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4684,6 +5191,7 @@ c_cond
 (paren
 op_logical_neg
 id|sb_dsp_command
+c_func
 (paren
 id|devc
 comma
@@ -4712,6 +5220,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_sbmpu
 id|attach_sbmpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -4719,8 +5228,9 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
 id|attach_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -4730,6 +5240,7 @@ macro_line|#endif
 r_int
 DECL|function|probe_sbmpu
 id|probe_sbmpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -4737,7 +5248,7 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
 id|sb_devc
 op_star
 id|devc
@@ -4772,6 +5283,7 @@ r_if
 c_cond
 (paren
 id|check_region
+c_func
 (paren
 id|hw_config-&gt;io_base
 comma
@@ -4780,6 +5292,7 @@ l_int|4
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;sbmpu: I/O port conflict (%x)&bslash;n&quot;
 comma
@@ -4812,6 +5325,7 @@ l_int|0x330
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;SB16: Invalid MIDI port %x&bslash;n&quot;
 comma
@@ -4841,6 +5355,7 @@ l_int|12
 )paren
 multiline_comment|/* What is Vibra&squot;s version??? */
 id|sb16_set_mpu_port
+c_func
 (paren
 id|devc
 comma
@@ -4874,6 +5389,7 @@ c_cond
 (paren
 op_logical_neg
 id|ess_midi_init
+c_func
 (paren
 id|devc
 comma
@@ -4913,6 +5429,7 @@ c_cond
 (paren
 op_logical_neg
 id|init_Jazz16_midi
+c_func
 (paren
 id|devc
 comma
@@ -4932,6 +5449,7 @@ suffix:semicolon
 )brace
 r_return
 id|probe_uart401
+c_func
 (paren
 id|hw_config
 )paren
@@ -4945,6 +5463,7 @@ macro_line|#endif
 r_void
 DECL|function|unload_sbmpu
 id|unload_sbmpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -4952,18 +5471,20 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; (defined(CONFIG_UART401)||defined(CONFIG_UART401_MODULE))
 id|unload_uart401
+c_func
 (paren
 id|hw_config
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#else /* !CONFIG_MIDI */
+macro_line|#else&t;&t;&t;&t;/* !CONFIG_MIDI */
 r_void
 DECL|function|unload_sbmpu
 id|unload_sbmpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -4975,6 +5496,7 @@ id|hw_config
 r_int
 DECL|function|probe_sbmpu
 id|probe_sbmpu
+c_func
 (paren
 r_struct
 id|address_info
@@ -4989,6 +5511,7 @@ suffix:semicolon
 r_void
 DECL|function|attach_sbmpu
 id|attach_sbmpu
+c_func
 (paren
 r_struct
 id|address_info

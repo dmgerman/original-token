@@ -62,6 +62,7 @@ r_int
 op_star
 DECL|function|load_mixer_volumes
 id|load_mixer_volumes
+c_func
 (paren
 r_char
 op_star
@@ -98,6 +99,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|name
 comma
@@ -144,6 +146,7 @@ id|MAX_MIXER_DEV
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Sound: Too many mixers (%s)&bslash;n&quot;
 comma
@@ -160,6 +163,7 @@ id|num_mixer_volumes
 op_increment
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|mixer_vols
 (braket
@@ -238,6 +242,7 @@ r_static
 r_int
 DECL|function|set_mixer_levels
 id|set_mixer_levels
+c_func
 (paren
 id|caddr_t
 id|arg
@@ -265,6 +270,7 @@ id|mixer_vol_table
 op_star
 )paren
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -280,6 +286,7 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -309,6 +316,7 @@ id|buf
 )paren
 suffix:semicolon
 id|load_mixer_volumes
+c_func
 (paren
 id|buf-&gt;name
 comma
@@ -318,6 +326,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -347,6 +356,7 @@ id|buf
 )paren
 suffix:semicolon
 id|vfree
+c_func
 (paren
 id|buf
 )paren
@@ -359,6 +369,7 @@ r_static
 r_int
 DECL|function|get_mixer_levels
 id|get_mixer_levels
+c_func
 (paren
 id|caddr_t
 id|arg
@@ -388,6 +399,7 @@ id|mixer_vol_table
 op_star
 )paren
 id|vmalloc
+c_func
 (paren
 r_sizeof
 (paren
@@ -403,6 +415,7 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -454,6 +467,7 @@ suffix:semicolon
 r_else
 (brace
 id|memcpy
+c_func
 (paren
 (paren
 r_char
@@ -480,6 +494,7 @@ id|buf
 suffix:semicolon
 )brace
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -509,6 +524,7 @@ id|buf
 )paren
 suffix:semicolon
 id|vfree
+c_func
 (paren
 id|buf
 )paren
@@ -521,6 +537,7 @@ r_static
 r_int
 DECL|function|put_status
 id|put_status
+c_func
 (paren
 r_char
 op_star
@@ -531,6 +548,7 @@ r_int
 id|l
 op_assign
 id|strlen
+c_func
 (paren
 id|s
 )paren
@@ -548,6 +566,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 op_amp
 id|status_buf
@@ -572,6 +591,7 @@ r_static
 r_int
 DECL|function|put_status_int
 id|put_status_int
+c_func
 (paren
 r_int
 r_int
@@ -608,6 +628,7 @@ id|val
 )paren
 r_return
 id|put_status
+c_func
 (paren
 l_string|&quot;0&quot;
 )paren
@@ -670,6 +691,7 @@ r_return
 l_int|0
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 op_amp
 id|status_buf
@@ -700,11 +722,12 @@ r_static
 r_void
 DECL|function|init_status
 id|init_status
+c_func
 (paren
 r_void
 )paren
 (brace
-multiline_comment|/*&n;   * Write the status information to the status_buf and update status_len.&n;   * There is a limit of 4000 bytes for the data.&n;   */
+multiline_comment|/*&n;&t; * Write the status information to the status_buf and update status_len.&n;&t; * There is a limit of 4000 bytes for the data.&n;&t; */
 r_int
 id|i
 suffix:semicolon
@@ -714,6 +737,7 @@ l_int|0
 suffix:semicolon
 macro_line|#ifdef SOUND_UNAME_A
 id|put_status
+c_func
 (paren
 l_string|&quot;OSS/Free&quot;
 id|SOUND_VERSION_STRING
@@ -729,9 +753,11 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 macro_line|#else
 id|put_status
+c_func
 (paren
 l_string|&quot;OSS/Free:&quot;
 id|SOUND_VERSION_STRING
+macro_line|#if 0
 l_string|&quot; (&quot;
 id|SOUND_CONFIG_DATE
 l_string|&quot; &quot;
@@ -741,74 +767,88 @@ id|SOUND_CONFIG_HOST
 l_string|&quot;.&quot;
 id|SOUND_CONFIG_DOMAIN
 l_string|&quot;)&quot;
+macro_line|#endif
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
 id|put_status
+c_func
 (paren
 l_string|&quot;Load type: Driver loaded as a module.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
 id|put_status
+c_func
 (paren
 l_string|&quot;Load type: Driver compiled into kernel&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 id|put_status
+c_func
 (paren
 l_string|&quot;Kernel: &quot;
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 id|system_utsname.sysname
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 id|system_utsname.nodename
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 id|system_utsname.release
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 id|system_utsname.version
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 id|system_utsname.machine
 )paren
 suffix:semicolon
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -818,6 +858,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;Config options: &quot;
 )paren
@@ -829,6 +870,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|SELECTED_SOUND_OPTIONS
 comma
@@ -842,6 +884,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&bslash;nInstalled drivers: &bslash;n&quot;
 )paren
@@ -880,6 +923,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;Type &quot;
 )paren
@@ -891,6 +935,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|sound_drivers
 (braket
@@ -909,6 +954,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -920,6 +966,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|sound_drivers
 (braket
@@ -936,6 +983,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -948,6 +996,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nCard config: &bslash;n&quot;
 )paren
@@ -1002,13 +1051,14 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;(&quot;
 )paren
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; * if (!put_status_int(snd_installed_cards[i].card_type, 10)) return;&n;&t; * if (!put_status (&quot;: &quot;)) return;&n;&t; */
+multiline_comment|/*&n;&t;&t;&t;   * if (!put_status_int(snd_installed_cards[i].card_type, 10)) return;&n;&t;&t;&t;   * if (!put_status (&quot;: &quot;)) return;&n;&t;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -1016,6 +1066,7 @@ c_cond
 id|drv
 op_assign
 id|snd_find_driver
+c_func
 (paren
 id|snd_installed_cards
 (braket
@@ -1034,6 +1085,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|sound_drivers
 (braket
@@ -1061,6 +1113,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot; at 0x&quot;
 )paren
@@ -1072,6 +1125,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|snd_installed_cards
 (braket
@@ -1108,6 +1162,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot; irq &quot;
 )paren
@@ -1131,6 +1186,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|tmp
 comma
@@ -1159,6 +1215,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot; drq &quot;
 )paren
@@ -1170,6 +1227,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|snd_installed_cards
 (braket
@@ -1202,6 +1260,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;,&quot;
 )paren
@@ -1213,6 +1272,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|snd_installed_cards
 (braket
@@ -1244,6 +1304,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;)&quot;
 )paren
@@ -1255,6 +1316,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1270,6 +1332,7 @@ id|sound_started
 )paren
 (brace
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&bslash;n***** Sound driver not started *****&bslash;n&bslash;n&quot;
 )paren
@@ -1283,6 +1346,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nAudio devices: NOT ENABLED IN CONFIG&bslash;n&quot;
 )paren
@@ -1295,6 +1359,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nAudio devices:&bslash;n&quot;
 )paren
@@ -1319,8 +1384,21 @@ op_increment
 r_if
 c_cond
 (paren
+id|audio_devs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|i
 comma
@@ -1334,6 +1412,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -1345,6 +1424,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|audio_devs
 (braket
@@ -1373,6 +1453,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot; (DUPLEX)&quot;
 )paren
@@ -1384,6 +1465,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1398,6 +1480,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nSynth devices: NOT ENABLED IN CONFIG&bslash;n&quot;
 )paren
@@ -1410,6 +1493,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nSynth devices:&bslash;n&quot;
 )paren
@@ -1434,8 +1518,21 @@ op_increment
 r_if
 c_cond
 (paren
+id|synth_devs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|i
 comma
@@ -1449,6 +1546,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -1460,6 +1558,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|synth_devs
 (braket
@@ -1476,6 +1575,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1490,6 +1590,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nMidi devices: NOT ENABLED IN CONFIG&bslash;n&quot;
 )paren
@@ -1502,6 +1603,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nMidi devices:&bslash;n&quot;
 )paren
@@ -1526,8 +1628,21 @@ op_increment
 r_if
 c_cond
 (paren
+id|midi_devs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|i
 comma
@@ -1541,6 +1656,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -1552,6 +1668,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|midi_devs
 (braket
@@ -1568,6 +1685,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1582,6 +1700,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nTimers:&bslash;n&quot;
 )paren
@@ -1606,8 +1725,21 @@ op_increment
 r_if
 c_cond
 (paren
+id|sound_timer_devs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|i
 comma
@@ -1621,6 +1753,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -1632,6 +1765,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|sound_timer_devs
 (braket
@@ -1648,6 +1782,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1661,6 +1796,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;nMixers:&bslash;n&quot;
 )paren
@@ -1685,8 +1821,21 @@ op_increment
 r_if
 c_cond
 (paren
+id|mixer_devs
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|put_status_int
+c_func
 (paren
 id|i
 comma
@@ -1700,6 +1849,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;: &quot;
 )paren
@@ -1711,6 +1861,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 id|mixer_devs
 (braket
@@ -1727,6 +1878,7 @@ c_cond
 (paren
 op_logical_neg
 id|put_status
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -1739,6 +1891,7 @@ r_static
 r_int
 DECL|function|read_status
 id|read_status
+c_func
 (paren
 r_char
 op_star
@@ -1748,7 +1901,7 @@ r_int
 id|count
 )paren
 (brace
-multiline_comment|/*&n;   * Return at most &squot;count&squot; bytes from the status_buf.&n;   */
+multiline_comment|/*&n;&t; * Return at most &squot;count&squot; bytes from the status_buf.&n;&t; */
 r_int
 id|l
 comma
@@ -1797,6 +1950,7 @@ id|status_ptr
 )braket
 suffix:semicolon
 id|copy_to_user
+c_func
 (paren
 op_amp
 (paren
@@ -1824,6 +1978,7 @@ suffix:semicolon
 r_int
 DECL|function|sound_read_sw
 id|sound_read_sw
+c_func
 (paren
 r_int
 id|dev
@@ -1842,8 +1997,10 @@ id|count
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_read_sw(dev=%d, count=%d)&bslash;n&quot;
 comma
@@ -1866,6 +2023,7 @@ id|SND_DEV_STATUS
 suffix:colon
 r_return
 id|read_status
+c_func
 (paren
 id|buf
 comma
@@ -1886,6 +2044,7 @@ id|SND_DEV_AUDIO
 suffix:colon
 r_return
 id|audio_read
+c_func
 (paren
 id|dev
 comma
@@ -1908,6 +2067,7 @@ id|SND_DEV_SEQ2
 suffix:colon
 r_return
 id|sequencer_read
+c_func
 (paren
 id|dev
 comma
@@ -1927,6 +2087,7 @@ id|SND_DEV_MIDIN
 suffix:colon
 r_return
 id|MIDIbuf_read
+c_func
 (paren
 id|dev
 comma
@@ -1950,6 +2111,7 @@ suffix:semicolon
 r_int
 DECL|function|sound_write_sw
 id|sound_write_sw
+c_func
 (paren
 r_int
 id|dev
@@ -1969,8 +2131,10 @@ id|count
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_write_sw(dev=%d, count=%d)&bslash;n&quot;
 comma
@@ -1997,6 +2161,7 @@ id|SND_DEV_SEQ2
 suffix:colon
 r_return
 id|sequencer_write
+c_func
 (paren
 id|dev
 comma
@@ -2022,6 +2187,7 @@ id|SND_DEV_AUDIO
 suffix:colon
 r_return
 id|audio_write
+c_func
 (paren
 id|dev
 comma
@@ -2041,6 +2207,7 @@ id|SND_DEV_MIDIN
 suffix:colon
 r_return
 id|MIDIbuf_write
+c_func
 (paren
 id|dev
 comma
@@ -2061,6 +2228,7 @@ suffix:semicolon
 r_int
 DECL|function|sound_open_sw
 id|sound_open_sw
+c_func
 (paren
 r_int
 id|dev
@@ -2075,8 +2243,10 @@ r_int
 id|retval
 suffix:semicolon
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_open_sw(dev=%d)&bslash;n&quot;
 comma
@@ -2101,6 +2271,7 @@ l_int|0
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;Invalid minor device %d&bslash;n&quot;
 comma
@@ -2147,6 +2318,7 @@ r_char
 op_star
 )paren
 id|vmalloc
+c_func
 (paren
 l_int|4000
 )paren
@@ -2171,6 +2343,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|init_status
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -2223,6 +2396,7 @@ c_cond
 id|retval
 op_assign
 id|sequencer_open
+c_func
 (paren
 id|dev
 comma
@@ -2249,6 +2423,7 @@ c_cond
 id|retval
 op_assign
 id|MIDIbuf_open
+c_func
 (paren
 id|dev
 comma
@@ -2281,6 +2456,7 @@ c_cond
 id|retval
 op_assign
 id|audio_open
+c_func
 (paren
 id|dev
 comma
@@ -2299,6 +2475,7 @@ macro_line|#endif
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Invalid minor device %d&bslash;n&quot;
 comma
@@ -2320,6 +2497,7 @@ suffix:semicolon
 r_void
 DECL|function|sound_release_sw
 id|sound_release_sw
+c_func
 (paren
 r_int
 id|dev
@@ -2331,8 +2509,10 @@ id|file
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_release_sw(dev=%d)&bslash;n&quot;
 comma
@@ -2357,6 +2537,7 @@ c_cond
 id|status_buf
 )paren
 id|vfree
+c_func
 (paren
 id|status_buf
 )paren
@@ -2384,6 +2565,7 @@ r_case
 id|SND_DEV_SEQ2
 suffix:colon
 id|sequencer_release
+c_func
 (paren
 id|dev
 comma
@@ -2398,6 +2580,7 @@ r_case
 id|SND_DEV_MIDIN
 suffix:colon
 id|MIDIbuf_release
+c_func
 (paren
 id|dev
 comma
@@ -2418,6 +2601,7 @@ r_case
 id|SND_DEV_AUDIO
 suffix:colon
 id|audio_release
+c_func
 (paren
 id|dev
 comma
@@ -2430,6 +2614,7 @@ macro_line|#endif
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 l_string|&quot;Sound error: Releasing unknown device 0x%02x&bslash;n&quot;
 comma
@@ -2445,6 +2630,7 @@ r_static
 r_int
 DECL|function|get_mixer_info
 id|get_mixer_info
+c_func
 (paren
 r_int
 id|dev
@@ -2475,6 +2661,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|info.id
 comma
@@ -2539,6 +2726,7 @@ op_member_access_from_pointer
 id|modify_counter
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -2575,6 +2763,7 @@ r_static
 r_int
 DECL|function|get_old_mixer_info
 id|get_old_mixer_info
+c_func
 (paren
 r_int
 id|dev
@@ -2605,6 +2794,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|info.id
 comma
@@ -2660,6 +2850,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 (paren
 op_amp
@@ -2696,6 +2887,7 @@ r_static
 r_int
 DECL|function|sound_mixer_ioctl
 id|sound_mixer_ioctl
+c_func
 (paren
 r_int
 id|mixdev
@@ -2717,6 +2909,7 @@ id|SOUND_MIXER_INFO
 )paren
 r_return
 id|get_mixer_info
+c_func
 (paren
 id|mixdev
 comma
@@ -2732,6 +2925,7 @@ id|SOUND_OLD_MIXER_INFO
 )paren
 r_return
 id|get_old_mixer_info
+c_func
 (paren
 id|mixdev
 comma
@@ -2742,6 +2936,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -2763,6 +2958,7 @@ id|mixdev
 )braket
 op_member_access_from_pointer
 id|ioctl
+c_func
 (paren
 id|mixdev
 comma
@@ -2775,6 +2971,7 @@ suffix:semicolon
 r_int
 DECL|function|sound_ioctl_sw
 id|sound_ioctl_sw
+c_func
 (paren
 r_int
 id|dev
@@ -2793,8 +2990,10 @@ id|arg
 )paren
 (brace
 id|DEB
+c_func
 (paren
 id|printk
+c_func
 (paren
 l_string|&quot;sound_ioctl_sw(dev=%d, cmd=0x%x, arg=0x%x)&bslash;n&quot;
 comma
@@ -2911,6 +3110,7 @@ id|ENXIO
 suffix:semicolon
 r_return
 id|sound_mixer_ioctl
+c_func
 (paren
 id|mixdev
 comma
@@ -2926,6 +3126,7 @@ r_default
 suffix:colon
 r_return
 id|sound_mixer_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -2956,6 +3157,7 @@ id|SOUND_MIXER_GETLEVELS
 )paren
 r_return
 id|get_mixer_levels
+c_func
 (paren
 id|arg
 )paren
@@ -2969,6 +3171,7 @@ id|SOUND_MIXER_SETLEVELS
 )paren
 r_return
 id|set_mixer_levels
+c_func
 (paren
 id|arg
 )paren
@@ -3002,6 +3205,7 @@ id|ENXIO
 suffix:semicolon
 r_return
 id|sound_mixer_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -3021,6 +3225,7 @@ id|SND_DEV_SEQ2
 suffix:colon
 r_return
 id|sequencer_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -3046,6 +3251,7 @@ id|SND_DEV_AUDIO
 suffix:colon
 r_return
 id|audio_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -3065,6 +3271,7 @@ id|SND_DEV_MIDIN
 suffix:colon
 r_return
 id|MIDIbuf_ioctl
+c_func
 (paren
 id|dev
 comma

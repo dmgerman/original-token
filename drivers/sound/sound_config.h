@@ -1,6 +1,6 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-macro_line|#include &quot;local.h&quot;
+macro_line|#include &quot;local.h.master&quot;
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
 macro_line|#ifndef SND_DEFAULT_ENABLE
@@ -157,7 +157,21 @@ DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver spesific. Usually 0 */
+multiline_comment|/* Driver specific. Usually 0 */
+DECL|member|memptr
+r_void
+op_star
+id|memptr
+suffix:semicolon
+multiline_comment|/* Module memory chainer */
+DECL|member|slots
+r_int
+id|slots
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* To remember driver slot ids */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES
@@ -257,6 +271,15 @@ macro_line|#endif
 macro_line|#ifndef DDB
 DECL|macro|DDB
 mdefine_line|#define DDB(x) {}
+macro_line|#endif
+macro_line|#ifndef MDB
+macro_line|#ifdef MODULE
+DECL|macro|MDB
+mdefine_line|#define MDB(x) x
+macro_line|#else
+DECL|macro|MDB
+mdefine_line|#define MDB(x)
+macro_line|#endif
 macro_line|#endif
 DECL|macro|TIMER_ARMED
 mdefine_line|#define TIMER_ARMED&t;121234

@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/poll.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -181,14 +181,10 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_int
+id|ssize_t
 id|do_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -197,7 +193,9 @@ r_char
 op_star
 comma
 r_int
-r_int
+comma
+id|loff_t
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -2262,15 +2260,10 @@ suffix:semicolon
 )brace
 DECL|function|do_read
 r_static
-r_int
+id|ssize_t
 id|do_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -2281,8 +2274,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_struct

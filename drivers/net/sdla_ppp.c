@@ -15,7 +15,7 @@ macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_GNUC_
 mdefine_line|#define&t;_GNUC_
-macro_line|#include &lt;linux/sdla_ppp.h&gt;&t;&t;/* PPP firmware API definitions */
+macro_line|#include &lt;linux/sdla_ppp.h&gt;&t;/* PPP firmware API definitions */
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 macro_line|#ifdef&t;_DEBUG_
 DECL|macro|STATIC
@@ -25,24 +25,25 @@ DECL|macro|STATIC
 mdefine_line|#define&t;STATIC&t;&t;static
 macro_line|#endif
 DECL|macro|CMD_OK
-mdefine_line|#define&t;CMD_OK&t;&t;0&t;&t;/* normal firmware return code */
+mdefine_line|#define&t;CMD_OK&t;&t;0&t;/* normal firmware return code */
 DECL|macro|CMD_TIMEOUT
-mdefine_line|#define&t;CMD_TIMEOUT&t;0xFF&t;&t;/* firmware command timed out */
+mdefine_line|#define&t;CMD_TIMEOUT&t;0xFF&t;/* firmware command timed out */
 DECL|macro|PPP_DFLT_MTU
-mdefine_line|#define&t;PPP_DFLT_MTU&t;1500&t;&t;/* default MTU */
+mdefine_line|#define&t;PPP_DFLT_MTU&t;1500&t;/* default MTU */
 DECL|macro|PPP_MAX_MTU
-mdefine_line|#define&t;PPP_MAX_MTU&t;4000&t;&t;/* maximum MTU */
+mdefine_line|#define&t;PPP_MAX_MTU&t;4000&t;/* maximum MTU */
 DECL|macro|PPP_HDR_LEN
 mdefine_line|#define PPP_HDR_LEN&t;1
 DECL|macro|CONNECT_TIMEOUT
-mdefine_line|#define&t;CONNECT_TIMEOUT&t;(90*HZ)&t;&t;/* link connection timeout */
+mdefine_line|#define&t;CONNECT_TIMEOUT&t;(90*HZ)&t;/* link connection timeout */
 DECL|macro|HOLD_DOWN_TIME
-mdefine_line|#define&t;HOLD_DOWN_TIME&t;(30*HZ)&t;&t;/* link hold down time */
+mdefine_line|#define&t;HOLD_DOWN_TIME&t;(30*HZ)&t;/* link hold down time */
 multiline_comment|/****** Function Prototypes *************************************************/
 multiline_comment|/* WAN link driver entry points. These are called by the WAN router module. */
 r_static
 r_int
 id|update
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -52,6 +53,7 @@ suffix:semicolon
 r_static
 r_int
 id|new_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -70,6 +72,7 @@ suffix:semicolon
 r_static
 r_int
 id|del_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -85,6 +88,7 @@ multiline_comment|/* WANPIPE-specific entry points */
 r_static
 r_int
 id|wpp_exec
+c_func
 (paren
 r_struct
 id|sdla
@@ -104,6 +108,7 @@ multiline_comment|/* Network device interface */
 r_static
 r_int
 id|if_init
+c_func
 (paren
 r_struct
 id|device
@@ -114,6 +119,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_open
+c_func
 (paren
 r_struct
 id|device
@@ -124,6 +130,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_close
+c_func
 (paren
 r_struct
 id|device
@@ -134,6 +141,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_header
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -164,6 +172,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_rebuild_hdr
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -174,6 +183,7 @@ suffix:semicolon
 r_static
 r_int
 id|if_send
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -191,6 +201,7 @@ r_struct
 id|enet_statistics
 op_star
 id|if_stats
+c_func
 (paren
 r_struct
 id|device
@@ -202,6 +213,7 @@ multiline_comment|/* PPP firmware interface functions */
 r_static
 r_int
 id|ppp_read_version
+c_func
 (paren
 id|sdla_t
 op_star
@@ -215,6 +227,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_configure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -228,6 +241,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_set_intr_mode
+c_func
 (paren
 id|sdla_t
 op_star
@@ -240,6 +254,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_comm_enable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -249,6 +264,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_comm_disable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -258,6 +274,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_get_err_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -267,6 +284,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -286,6 +304,7 @@ suffix:semicolon
 r_static
 r_int
 id|ppp_error
+c_func
 (paren
 id|sdla_t
 op_star
@@ -303,6 +322,7 @@ multiline_comment|/* Interrupt handlers */
 id|STATIC
 r_void
 id|wpp_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -312,6 +332,7 @@ suffix:semicolon
 r_static
 r_void
 id|rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -321,6 +342,7 @@ suffix:semicolon
 r_static
 r_void
 id|tx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -331,6 +353,7 @@ multiline_comment|/* Background polling routines */
 r_static
 r_void
 id|wpp_poll
+c_func
 (paren
 id|sdla_t
 op_star
@@ -340,6 +363,7 @@ suffix:semicolon
 r_static
 r_void
 id|poll_active
+c_func
 (paren
 id|sdla_t
 op_star
@@ -349,6 +373,7 @@ suffix:semicolon
 r_static
 r_void
 id|poll_connecting
+c_func
 (paren
 id|sdla_t
 op_star
@@ -358,6 +383,7 @@ suffix:semicolon
 r_static
 r_void
 id|poll_disconnected
+c_func
 (paren
 id|sdla_t
 op_star
@@ -368,6 +394,7 @@ multiline_comment|/* Miscellaneous functions */
 r_static
 r_int
 id|config502
+c_func
 (paren
 id|sdla_t
 op_star
@@ -377,6 +404,7 @@ suffix:semicolon
 r_static
 r_int
 id|config508
+c_func
 (paren
 id|sdla_t
 op_star
@@ -386,6 +414,7 @@ suffix:semicolon
 r_static
 r_void
 id|show_disc_cause
+c_func
 (paren
 id|sdla_t
 op_star
@@ -399,6 +428,7 @@ r_static
 r_int
 r_char
 id|bps_to_speed_code
+c_func
 (paren
 r_int
 r_int
@@ -418,6 +448,7 @@ c_func
 (paren
 r_int
 id|wpp_init
+c_func
 (paren
 id|sdla_t
 op_star
@@ -658,6 +689,7 @@ DECL|function|update
 r_static
 r_int
 id|update
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -746,6 +778,7 @@ DECL|function|new_if
 r_static
 r_int
 id|new_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -847,6 +880,7 @@ DECL|function|del_if
 r_static
 r_int
 id|del_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -868,6 +902,7 @@ DECL|function|wpp_exec
 r_static
 r_int
 id|wpp_exec
+c_func
 (paren
 r_struct
 id|sdla
@@ -913,12 +948,10 @@ id|ppp_cmd_t
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|len
 op_assign
 id|mbox-&gt;cmd.length
@@ -947,12 +980,10 @@ comma
 id|len
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* execute command */
 r_if
@@ -991,12 +1022,10 @@ id|ppp_cmd_t
 )paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 id|len
 op_assign
 id|mbox-&gt;cmd.length
@@ -1037,6 +1066,7 @@ DECL|function|if_init
 r_static
 r_int
 id|if_init
+c_func
 (paren
 r_struct
 id|device
@@ -1175,6 +1205,7 @@ DECL|function|if_open
 r_static
 r_int
 id|if_open
+c_func
 (paren
 r_struct
 id|device
@@ -1503,6 +1534,7 @@ DECL|function|if_close
 r_static
 r_int
 id|if_close
+c_func
 (paren
 r_struct
 id|device
@@ -1582,6 +1614,7 @@ DECL|function|if_header
 r_static
 r_int
 id|if_header
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -1643,6 +1676,7 @@ DECL|function|if_rebuild_hdr
 r_static
 r_int
 id|if_rebuild_hdr
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -1676,6 +1710,7 @@ DECL|function|if_send
 r_static
 r_int
 id|if_send
+c_func
 (paren
 r_struct
 id|sk_buff
@@ -1862,6 +1897,7 @@ r_struct
 id|enet_statistics
 op_star
 id|if_stats
+c_func
 (paren
 r_struct
 id|device
@@ -1886,6 +1922,7 @@ DECL|function|ppp_read_version
 r_static
 r_int
 id|ppp_read_version
+c_func
 (paren
 id|sdla_t
 op_star
@@ -1992,6 +2029,7 @@ DECL|function|ppp_configure
 r_static
 r_int
 id|ppp_configure
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2102,6 +2140,7 @@ DECL|function|ppp_set_intr_mode
 r_static
 r_int
 id|ppp_set_intr_mode
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2216,6 +2255,7 @@ DECL|function|ppp_comm_enable
 r_static
 r_int
 id|ppp_comm_enable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2288,6 +2328,7 @@ DECL|function|ppp_comm_disable
 r_static
 r_int
 id|ppp_comm_disable
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2360,6 +2401,7 @@ DECL|function|ppp_get_err_stats
 r_static
 r_int
 id|ppp_get_err_stats
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2465,6 +2507,7 @@ DECL|function|ppp_send
 r_static
 r_int
 id|ppp_send
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2612,6 +2655,7 @@ DECL|function|ppp_error
 r_static
 r_int
 id|ppp_error
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2678,6 +2722,7 @@ DECL|function|wpp_isr
 id|STATIC
 r_void
 id|wpp_isr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -2750,6 +2795,7 @@ DECL|function|rx_intr
 r_static
 r_void
 id|rx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3081,6 +3127,7 @@ DECL|function|tx_intr
 r_static
 r_void
 id|tx_intr
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3109,10 +3156,10 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-id|dev_tint
+id|mark_bh
 c_func
 (paren
-id|dev
+id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -3122,6 +3169,7 @@ DECL|function|wpp_poll
 r_static
 r_void
 id|wpp_poll
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3174,6 +3222,7 @@ DECL|function|poll_active
 r_static
 r_void
 id|poll_active
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3217,6 +3266,7 @@ DECL|function|poll_connecting
 r_static
 r_void
 id|poll_connecting
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3278,6 +3328,7 @@ DECL|function|poll_disconnected
 r_static
 r_void
 id|poll_disconnected
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3331,6 +3382,7 @@ DECL|function|config502
 r_static
 r_int
 id|config502
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3433,7 +3485,7 @@ id|cfg.conf_flags
 op_or_assign
 l_int|0x0E
 suffix:semicolon
-multiline_comment|/*&n;&t;cfg.ip_local&t;&t;= dev-&gt;pa_addr;&n;&t;cfg.ip_remote&t;&t;= dev-&gt;pa_dstaddr;&n;*/
+multiline_comment|/*&n;   cfg.ip_local         = dev-&gt;pa_addr;&n;   cfg.ip_remote                = dev-&gt;pa_dstaddr;&n; */
 r_return
 id|ppp_configure
 c_func
@@ -3450,6 +3502,7 @@ DECL|function|config508
 r_static
 r_int
 id|config508
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3499,7 +3552,7 @@ id|cfg.conf_flags
 op_or_assign
 l_int|0x300
 suffix:semicolon
-multiline_comment|/*send Configure-Request packets forever*/
+multiline_comment|/*send Configure-Request packets forever */
 id|cfg.txbuf_percent
 op_assign
 l_int|60
@@ -3562,7 +3615,7 @@ id|cfg.ipx_options
 op_assign
 l_int|0xA0
 suffix:semicolon
-multiline_comment|/*&n;&t;cfg.ip_local&t;&t;= dev-&gt;pa_addr;&n;&t;cfg.ip_remote&t;&t;= dev-&gt;pa_dstaddr;&n;*/
+multiline_comment|/*&n;   cfg.ip_local         = dev-&gt;pa_addr;&n;   cfg.ip_remote                = dev-&gt;pa_dstaddr;&n; */
 r_return
 id|ppp_configure
 c_func
@@ -3579,6 +3632,7 @@ DECL|function|show_disc_cause
 r_static
 r_void
 id|show_disc_cause
+c_func
 (paren
 id|sdla_t
 op_star
@@ -3764,6 +3818,7 @@ r_static
 r_int
 r_char
 id|bps_to_speed_code
+c_func
 (paren
 r_int
 r_int

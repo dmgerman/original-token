@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/ics2101.c&n; *&n; * Driver for the ICS2101 mixer
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_GUSHW)
+macro_line|#if defined(CONFIG_GUSHW) || defined(MODULE)
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
 DECL|macro|MIX_DEVS
@@ -68,16 +68,17 @@ comma
 l_int|1
 )brace
 suffix:semicolon
+DECL|function|scale_vol
 r_static
 r_int
-DECL|function|scale_vol
 id|scale_vol
+c_func
 (paren
 r_int
 id|vol
 )paren
 (brace
-multiline_comment|/*&n;     *  Experimental volume scaling by Risto Kankkunen.&n;     *  This should give smoother volume response than just&n;     *  a plain multiplication.&n;   */
+multiline_comment|/*&n;&t; *  Experimental volume scaling by Risto Kankkunen.&n;&t; *  This should give smoother volume response than just&n;&t; *  a plain multiplication.&n;&t; */
 r_int
 id|e
 suffix:semicolon
@@ -162,10 +163,11 @@ id|vol
 )paren
 suffix:semicolon
 )brace
+DECL|function|write_mix
 r_static
 r_void
-DECL|function|write_mix
 id|write_mix
+c_func
 (paren
 r_int
 id|dev
@@ -202,6 +204,7 @@ suffix:semicolon
 id|vol
 op_assign
 id|scale_vol
+c_func
 (paren
 id|vol
 )paren
@@ -243,15 +246,18 @@ l_int|0x03
 suffix:semicolon
 )brace
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|ctrl_addr
@@ -261,6 +267,7 @@ id|u_MixSelect
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|selector
@@ -273,6 +280,7 @@ id|u_MixData
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|attn_addr
@@ -282,6 +290,7 @@ id|u_MixSelect
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 (paren
@@ -295,15 +304,17 @@ id|u_MixData
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_volumes
 r_static
 r_int
-DECL|function|set_volumes
 id|set_volumes
+c_func
 (paren
 r_int
 id|dev
@@ -375,6 +386,7 @@ op_assign
 l_int|100
 suffix:semicolon
 id|write_mix
+c_func
 (paren
 id|dev
 comma
@@ -384,6 +396,7 @@ id|left
 )paren
 suffix:semicolon
 id|write_mix
+c_func
 (paren
 id|dev
 comma
@@ -413,10 +426,11 @@ r_return
 id|vol
 suffix:semicolon
 )brace
+DECL|function|ics2101_mixer_ioctl
 r_static
 r_int
-DECL|function|ics2101_mixer_ioctl
 id|ics2101_mixer_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -449,6 +463,7 @@ r_if
 c_cond
 (paren
 id|_SIOC_DIR
+c_func
 (paren
 id|cmd
 )paren
@@ -481,6 +496,7 @@ id|SOUND_MIXER_RECSRC
 suffix:colon
 r_return
 id|gus_default_mixer_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -488,8 +504,6 @@ id|cmd
 comma
 id|arg
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_MIC
@@ -504,14 +518,13 @@ op_star
 id|arg
 op_assign
 id|set_volumes
+c_func
 (paren
 id|DEV_MIC
 comma
 id|val
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_CD
@@ -526,14 +539,13 @@ op_star
 id|arg
 op_assign
 id|set_volumes
+c_func
 (paren
 id|DEV_CD
 comma
 id|val
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_LINE
@@ -548,14 +560,13 @@ op_star
 id|arg
 op_assign
 id|set_volumes
+c_func
 (paren
 id|DEV_LINE
 comma
 id|val
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_SYNTH
@@ -570,14 +581,13 @@ op_star
 id|arg
 op_assign
 id|set_volumes
+c_func
 (paren
 id|DEV_GF1
 comma
 id|val
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_VOLUME
@@ -592,14 +602,13 @@ op_star
 id|arg
 op_assign
 id|set_volumes
+c_func
 (paren
 id|DEV_VOL
 comma
 id|val
 )paren
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -610,6 +619,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
 r_switch
 c_cond
 (paren
@@ -617,13 +627,14 @@ id|cmd
 op_amp
 l_int|0xff
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t; * Return parameters&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Return parameters&n;&t;&t;&t;&t;&t;&t; */
 (brace
 r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
 r_return
 id|gus_default_mixer_ioctl
+c_func
 (paren
 id|dev
 comma
@@ -631,8 +642,6 @@ id|cmd
 comma
 id|arg
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_DEVMASK
@@ -648,8 +657,6 @@ id|arg
 op_assign
 id|MIX_DEVS
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_STEREODEVS
@@ -674,8 +681,6 @@ op_or
 id|SOUND_MASK_MIC
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SOUND_MIXER_RECMASK
 suffix:colon
@@ -692,8 +697,6 @@ id|SOUND_MASK_MIC
 op_or
 id|SOUND_MASK_LINE
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_CAPS
@@ -730,8 +733,6 @@ id|DEV_MIC
 )braket
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SOUND_MIXER_LINE
 suffix:colon
@@ -749,8 +750,6 @@ id|volumes
 id|DEV_LINE
 )braket
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_CD
@@ -770,8 +769,6 @@ id|DEV_CD
 )braket
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SOUND_MIXER_VOLUME
 suffix:colon
@@ -789,8 +786,6 @@ id|volumes
 id|DEV_VOL
 )braket
 )paren
-suffix:semicolon
-r_break
 suffix:semicolon
 r_case
 id|SOUND_MIXER_SYNTH
@@ -810,14 +805,13 @@ id|DEV_GF1
 )braket
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
 r_default
 suffix:colon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+)brace
 )brace
 )brace
 r_return
@@ -839,9 +833,10 @@ comma
 id|ics2101_mixer_ioctl
 )brace
 suffix:semicolon
-r_void
+r_int
 DECL|function|ics2101_mixer_init
 id|ics2101_mixer_init
+c_func
 (paren
 r_void
 )paren
@@ -849,28 +844,43 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_int
+id|n
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_mixers
-OL
-id|MAX_MIXER_DEV
+(paren
+id|n
+op_assign
+id|sound_alloc_mixerdev
+c_func
+(paren
+)paren
+)paren
+op_ne
+op_minus
+l_int|1
 )paren
 (brace
+id|n
+op_assign
+id|num_mixers
+suffix:semicolon
 id|mixer_devs
 (braket
-id|num_mixers
-op_increment
+id|n
 )braket
 op_assign
 op_amp
 id|ics2101_mixer_operations
 suffix:semicolon
-multiline_comment|/*&n;         * Some GUS v3.7 cards had some channels flipped. Disable&n;         * the flipping feature if the model id is other than 5.&n;       */
+multiline_comment|/*&n;&t;&t; * Some GUS v3.7 cards had some channels flipped. Disable&n;&t;&t; * the flipping feature if the model id is other than 5.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|inb
+c_func
 (paren
 id|u_MixSelect
 )paren
@@ -922,6 +932,7 @@ l_int|2
 suffix:semicolon
 )brace
 id|set_volumes
+c_func
 (paren
 id|DEV_GF1
 comma
@@ -929,6 +940,7 @@ l_int|0x5a5a
 )paren
 suffix:semicolon
 id|set_volumes
+c_func
 (paren
 id|DEV_CD
 comma
@@ -936,6 +948,7 @@ l_int|0x5a5a
 )paren
 suffix:semicolon
 id|set_volumes
+c_func
 (paren
 id|DEV_MIC
 comma
@@ -943,6 +956,7 @@ l_int|0x0000
 )paren
 suffix:semicolon
 id|set_volumes
+c_func
 (paren
 id|DEV_LINE
 comma
@@ -950,6 +964,7 @@ l_int|0x5a5a
 )paren
 suffix:semicolon
 id|set_volumes
+c_func
 (paren
 id|DEV_VOL
 comma
@@ -957,6 +972,7 @@ l_int|0x5a5a
 )paren
 suffix:semicolon
 id|set_volumes
+c_func
 (paren
 id|DEV_UNUSED
 comma
@@ -964,6 +980,9 @@ l_int|0x0000
 )paren
 suffix:semicolon
 )brace
+r_return
+id|n
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

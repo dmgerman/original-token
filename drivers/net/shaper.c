@@ -1863,26 +1863,6 @@ id|dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-l_int|4
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Shaper is ok&n;&t; */
 r_return
 l_int|0

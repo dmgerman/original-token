@@ -1,4 +1,4 @@
-multiline_comment|/*      cops.c: LocalTalk driver for Linux.&n; *&n; *&t;Authors:&n; *      - Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&n; *&t;With more than a little help from;&n; *&t;- Alan Cox &lt;Alan.Cox@linux.org&gt; &n; *&n; *      Derived from:&n; *      - skeleton.c: A network driver outline for linux.&n; *        Written 1993-94 by Donald Becker.&n; *&t;- ltpc.c: A driver for the LocalTalk PC card.&n; *&t;  Written by Bradford W. Johnson.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *      This software may be used and distributed according to the terms&n; *      of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;Changes:&n; *&t;19970608&t;Alan Cox&t;Allowed dual card type support&n; *&t;&t;&t;&t;&t;Can set board type in insmod&n; *&t;&t;&t;&t;&t;Hooks for cops_setup routine&n; *&t;&t;&t;&t;&t;(not yet implemented).&n; */
+multiline_comment|/*      cops.c: LocalTalk driver for Linux.&n; *&n; *&t;Authors:&n; *      - Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&n; *&n; *&t;With more than a little help from;&n; *&t;- Alan Cox &lt;Alan.Cox@linux.org&gt; &n; *&n; *      Derived from:&n; *      - skeleton.c: A network driver outline for linux.&n; *        Written 1993-94 by Donald Becker.&n; *&t;- ltpc.c: A driver for the LocalTalk PC card.&n; *&t;  Written by Bradford W. Johnson.&n; *&n; *      Copyright 1993 United States Government as represented by the&n; *      Director, National Security Agency.&n; *&n; *      This software may be used and distributed according to the terms&n; *      of the GNU Public License, incorporated herein by reference.&n; *&n; *&t;Changes:&n; *&t;19970608&t;Alan Cox&t;Allowed dual card type support&n; *&t;&t;&t;&t;&t;Can set board type in insmod&n; *&t;&t;&t;&t;&t;Hooks for cops_setup routine&n; *&t;&t;&t;&t;&t;(not yet implemented).&n; *&t;19971101&t;Jay Schulist&t;Fixes for multiple lt* devices.&n; */
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cops.c:v0.01 3/17/97 Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&bslash;n&quot;
+l_string|&quot;cops.c:v0.02 3/17/97 Jay Schulist &lt;Jay.Schulist@spacs.k12.wi.us&gt;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; *  Sources:&n; *      COPS Localtalk SDK. This provides almost all of the information&n; *      needed.&n; */
 multiline_comment|/*&n; * insmod/modprobe configurable stuff.&n; *&t;- IO Port, choose one your card supports or 0 if you dare.&n; *&t;- IRQ, also choose one your card supports or nothing and let&n; *&t;  the driver figure it out.&n; */
@@ -31,6 +31,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -104,7 +105,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Default IRQ */
 macro_line|#endif
-multiline_comment|/*&n; *&t;COPS Autoprobe information.&n; *&t;Right now if port address is right but IRQ is not 5 this will&n; *      return a 5 no matter what since we will still get a status response.&n; *      Need one more additional check to narrow down after we have gotten&n; *      the ioaddr. But since only other possible IRQs is 3 and 4 so no real&n; *&t;hurry on this. I *STRONGLY* recommend using IRQ 5 for your card with&n; *&t;this driver.&n; * &n; *&t;This driver has 2 modes and they are: Dayna mode and Tangent mode.&n; *&t;Each mode corresponds with the type of card. It has been found&n; *&t;that there are 2 main types of cards and all other cards are&n; *&t;the same and just have different names or only have minor differences&n; *&t;such as more IO ports. As this driver is tested it will&n; *&t;become more clear on exactly what cards are supported. The driver&n; *&t;defaults to using Dayna mode. To change the drivers mode adjust&n; *&t;drivers/net/CONFIG, and the line COPS_OPTS = -DDAYNA to -DTANGENT.&n; *&n; *      This driver should support:&n; *      TANGENT driver mode:&n; *              Tangent ATB-II, Novell NL-1000, Daystar Digital LT-200&n; *      DAYNA driver mode:&n; *              Dayna DL2000/DaynaTalk PC (Half Length), COPS LT-95, Farallon PhoneNET PC III&n; *&t;Other cards possibly supported mode unkown though:&n; *&t;&t;Farallon PhoneNET PC II&n; *&t;&t;Dayna DL2000 (Full length)&n; *&n; *&t;Cards NOT supported by this driver but supported by the ltpc.c&n; *&t;driver written by Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&n; *&t;&t;Farallon PhoneNET PC&n; *&t;&t;Original Apple LocalTalk PC card&n; */
+multiline_comment|/*&n; *&t;COPS Autoprobe information.&n; *&t;Right now if port address is right but IRQ is not 5 this will&n; *      return a 5 no matter what since we will still get a status response.&n; *      Need one more additional check to narrow down after we have gotten&n; *      the ioaddr. But since only other possible IRQs is 3 and 4 so no real&n; *&t;hurry on this. I *STRONGLY* recommend using IRQ 5 for your card with&n; *&t;this driver.&n; * &n; *&t;This driver has 2 modes and they are: Dayna mode and Tangent mode.&n; *&t;Each mode corresponds with the type of card. It has been found&n; *&t;that there are 2 main types of cards and all other cards are&n; *&t;the same and just have different names or only have minor differences&n; *&t;such as more IO ports. As this driver is tested it will&n; *&t;become more clear on exactly what cards are supported. The driver&n; *&t;defaults to using Dayna mode. To change the drivers mode adjust&n; *&t;drivers/net/CONFIG, and the line COPS_OPTS = -DDAYNA to -DTANGENT.&n; *&n; *      This driver should support:&n; *      TANGENT driver mode:&n; *              Tangent ATB-II, Novell NL-1000, Daystar Digital LT-200&n; *      DAYNA driver mode:&n; *              Dayna DL2000/DaynaTalk PC (Half Length), COPS LT-95, &n; *&t;&t;Farallon PhoneNET PC III, Farallon PhoneNET PC II&n; *&t;Other cards possibly supported mode unkown though:&n; *&t;&t;Dayna DL2000 (Full length)&n; *&n; *&t;Cards NOT supported by this driver but supported by the ltpc.c&n; *&t;driver written by Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&n; *&t;&t;Farallon PhoneNET PC&n; *&t;&t;Original Apple LocalTalk PC card&n; */
 multiline_comment|/*&n; * Zero terminated list of IO ports to probe.&n; */
 DECL|variable|cops_portlist
 r_static
@@ -206,133 +207,14 @@ r_char
 id|node_acquire
 suffix:semicolon
 multiline_comment|/* Node ID when acquired. */
-)brace
-suffix:semicolon
-multiline_comment|/* Allocate a new device with the form of lt0, lt1, lt2, etc. */
-DECL|function|cops_dev_alloc
+DECL|member|node_addr
 r_struct
-id|device
-op_star
-id|cops_dev_alloc
-c_func
-(paren
-r_char
-op_star
-id|name
-)paren
-(brace
-r_int
-id|i
-op_assign
-l_int|0
+id|at_addr
+id|node_addr
 suffix:semicolon
-r_struct
-id|device
-op_star
-id|d
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|device
-)paren
-op_plus
-l_int|8
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|d
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|d
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Clear the structure */
-r_if
-c_cond
-(paren
-id|d
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* Full node addres */
 )brace
-id|d-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|d
-op_plus
-l_int|1
-)paren
 suffix:semicolon
-multiline_comment|/* Name string space */
-multiline_comment|/* Get next free device name */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|100
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|d-&gt;name
-comma
-id|name
-comma
-id|i
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev_get
-c_func
-(paren
-id|d-&gt;name
-)paren
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-id|d
-suffix:semicolon
-)brace
-)brace
-r_return
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Over 100 of the things .. bail out! */
-)brace
 multiline_comment|/* Index to functions, as function prototypes. */
 r_extern
 r_int
@@ -547,7 +429,10 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *      Check for a network adaptor of this type, and return &squot;0&squot; iff one exists. &n; *      If dev-&gt;base_addr == 0, probe all likely locations.&n; *      If dev-&gt;base_addr == 1, always return failure.&n; *      If dev-&gt;base_addr == 2, allocate space for the device and return success &n; *      (detachable devices only).&n; */
-DECL|function|cops_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|cops_probe
 c_func
@@ -556,6 +441,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_int
@@ -580,10 +466,12 @@ l_int|0
 op_logical_and
 id|io
 )paren
+(brace
 id|base_addr
 op_assign
 id|io
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -591,6 +479,7 @@ id|base_addr
 OG
 l_int|0x1ff
 )paren
+(brace
 multiline_comment|/* Check a single specified location. */
 r_return
 id|cops_probe1
@@ -601,6 +490,7 @@ comma
 id|base_addr
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -609,11 +499,13 @@ id|base_addr
 op_ne
 l_int|0
 )paren
+(brace
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -649,8 +541,10 @@ comma
 id|COPS_IO_EXTENT
 )paren
 )paren
+(brace
 r_continue
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -664,27 +558,22 @@ id|ioaddr
 op_eq
 l_int|0
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* No &quot;lt&quot; devices found. */
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: No COPS localtalk devices found!&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
+)brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *      This is the real probe routine. Linux has a history of friendly device&n; *      probes on the ISA bus. A good device probes avoids doing writes, and&n; *      verifies that the correct device exists and functions.&n; */
-DECL|function|cops_probe1
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|cops_probe1
@@ -697,6 +586,7 @@ id|dev
 comma
 r_int
 id|ioaddr
+)paren
 )paren
 (brace
 r_struct
@@ -723,39 +613,6 @@ id|board
 op_assign
 id|board_type
 suffix:semicolon
-multiline_comment|/* Defined here to save some trouble */
-multiline_comment|/* Allocate a new &squot;dev&squot; if needed. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev
-op_assign
-id|cops_dev_alloc
-c_func
-(paren
-id|dev-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/* New &quot;lt&quot; device; beyond lt0. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren
@@ -766,6 +623,7 @@ op_increment
 op_eq
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -774,12 +632,13 @@ comma
 id|version
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Fill in the &squot;dev&squot; fields. */
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-multiline_comment|/*&n;         * Since this board has jumpered interrupts, allocate the interrupt&n;         * vector now. There is no point in waiting since no other device&n;         * can use the interrupt, and this marks the irq as busy. Jumpered&n;         * interrupts are typically not reported by the boards, and we must&n;         * used AutoIRQ to find them.&n;         *&n;&t; */
+multiline_comment|/*&n;         * Since this board has jumpered interrupts, allocate the interrupt&n;         * vector now. There is no point in waiting since no other device&n;         * can use the interrupt, and this marks the irq as busy. Jumpered&n;         * interrupts are typically not reported by the boards, and we must&n;         * used AutoIRQ to find them.&n;&t; */
 r_if
 c_cond
 (paren
@@ -789,10 +648,12 @@ l_int|2
 op_logical_and
 id|irq
 )paren
+(brace
 id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -819,10 +680,12 @@ id|irqaddr
 op_eq
 l_int|0
 )paren
+(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+)brace
 multiline_comment|/* No IRQ found on this port */
 r_else
 id|dev-&gt;irq
@@ -838,11 +701,13 @@ id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
+(brace
 multiline_comment|/* &n;&t;&t; * Fixup for users that don&squot;t know that IRQ 2 is really&n;&t;&t; * IRQ 9, or don&squot;t know which one to set.&n;&t;&t; */
 id|dev-&gt;irq
 op_assign
 l_int|9
 suffix:semicolon
+)brace
 multiline_comment|/* Snarf the interrupt now. */
 id|irqval
 op_assign
@@ -861,28 +726,16 @@ comma
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* If its in use set it to 0 and disallow open() calls.. users can still&n;&t;   ifconfig the irq one day */
 r_if
 c_cond
 (paren
 id|irqval
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Unable to get IRQ %d (irqval=%d).&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
 id|dev-&gt;irq
-comma
-id|irqval
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|dev-&gt;hard_start_xmit
@@ -912,10 +765,12 @@ id|dev-&gt;priv
 op_eq
 l_int|NULL
 )paren
+(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|lp
 op_assign
 (paren
@@ -1043,7 +898,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cops_irq
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|cops_irq
@@ -1053,6 +911,7 @@ id|ioaddr
 comma
 r_int
 id|board
+)paren
 )paren
 (brace
 multiline_comment|/*&n;         * This does not use the IRQ to determine where the IRQ is. We just&n;         * assume that when we get a correct status response that is the IRQ then.&n;         * This really just verifies the IO port but since we only have access&n;         * to such a small number of IRQs (5, 4, 3) this is not bad.&n;         * This will probably not work for more than one card.&n;         */
@@ -1204,9 +1063,11 @@ id|status
 op_eq
 l_int|1
 )paren
+(brace
 r_return
 id|irqaddr
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1259,6 +1120,28 @@ op_star
 id|dev
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: No irq line set.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
 id|cops_jumpstart
 c_func
 (paren
@@ -2460,12 +2343,14 @@ id|status
 op_amp
 id|TANG_RX_READY
 )paren
+(brace
 id|cops_rx
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+)brace
 )brace
 id|dev-&gt;tbusy
 op_assign
@@ -2960,9 +2845,11 @@ id|tickssofar
 OL
 l_int|5
 )paren
+(brace
 r_return
 l_int|1
 suffix:semicolon
+)brace
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
@@ -3047,6 +2934,7 @@ id|dev-&gt;tbusy
 op_ne
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -3056,6 +2944,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 id|cli
@@ -3419,7 +3308,7 @@ id|at_addr
 op_star
 )paren
 op_amp
-id|dev-&gt;pa_addr
+id|lp-&gt;node_addr
 suffix:semicolon
 r_switch
 c_cond
@@ -3554,14 +3443,22 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|dev_cops
+DECL|variable|lt_name
+r_static
+r_char
+id|lt_name
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|variable|cops0_dev
 r_static
 r_struct
 id|device
-id|dev_cops
+id|cops0_dev
 op_assign
 (brace
-l_string|&quot;lt0&quot;
+id|lt_name
 comma
 multiline_comment|/* device name */
 l_int|0
@@ -3622,6 +3519,8 @@ r_void
 (brace
 r_int
 id|result
+comma
+id|err
 suffix:semicolon
 r_if
 c_cond
@@ -3630,6 +3529,7 @@ id|io
 op_eq
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -3639,15 +3539,39 @@ comma
 id|cardname
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Copy the parameters from insmod into the device structure. */
-id|dev_cops.base_addr
+id|cops0_dev.base_addr
 op_assign
 id|io
 suffix:semicolon
-id|dev_cops.irq
+id|cops0_dev.irq
 op_assign
 id|irq
 suffix:semicolon
+id|err
+op_assign
+id|dev_alloc_name
+c_func
+(paren
+op_amp
+id|cops0_dev
+comma
+l_string|&quot;lt%d&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3658,15 +3582,17 @@ id|register_netdev
 c_func
 (paren
 op_amp
-id|dev_cops
+id|cops0_dev
 )paren
 )paren
 op_ne
 l_int|0
 )paren
+(brace
 r_return
 id|result
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3680,45 +3606,47 @@ r_void
 )paren
 (brace
 multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
-id|free_irq
-c_func
-(paren
-id|dev_cops.irq
-comma
-op_amp
-id|dev_cops
-)paren
-suffix:semicolon
-id|release_region
-c_func
-(paren
-id|dev_cops.base_addr
-comma
-id|COPS_IO_EXTENT
-)paren
-suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
 op_amp
-id|dev_cops
+id|cops0_dev
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev_cops.priv
+id|cops0_dev.priv
 )paren
+(brace
 id|kfree_s
 c_func
 (paren
-id|dev_cops.priv
+id|cops0_dev.priv
 comma
 r_sizeof
 (paren
 r_struct
 id|cops_local
 )paren
+)paren
+suffix:semicolon
+)brace
+id|free_irq
+c_func
+(paren
+id|cops0_dev.irq
+comma
+op_amp
+id|cops0_dev
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|cops0_dev.base_addr
+comma
+id|COPS_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

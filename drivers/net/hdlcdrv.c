@@ -23,7 +23,6 @@ multiline_comment|/* make genksyms happy */
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
-macro_line|#include &lt;linux/net_alias.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
 macro_line|#include &lt;linux/version.h&gt;
@@ -2593,25 +2592,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;         * we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t; * itself. &n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|skb_queue_tail
 c_func
 (paren
@@ -3778,30 +3758,6 @@ multiline_comment|/* New style flags */
 id|dev-&gt;flags
 op_assign
 l_int|0
-suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-id|dev-&gt;pa_addr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
 suffix:semicolon
 r_return
 l_int|0

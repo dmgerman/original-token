@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sound_timer.c&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SEQUENCER)
+macro_line|#if defined(CONFIG_SEQUENCER) || defined(CONFIG_SEQUENCER_MODULE)
 DECL|variable|initialized
 DECL|variable|opened
 DECL|variable|tmr_running
@@ -88,12 +88,13 @@ r_int
 r_int
 DECL|function|tmr2ticks
 id|tmr2ticks
+c_func
 (paren
 r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n;   *    Convert timer ticks to MIDI ticks&n;   */
+multiline_comment|/*&n;&t; *    Convert timer ticks to MIDI ticks&n;&t; */
 r_int
 r_int
 id|tmp
@@ -142,6 +143,7 @@ r_static
 r_void
 DECL|function|reprogram_timer
 id|reprogram_timer
+c_func
 (paren
 r_void
 )paren
@@ -164,7 +166,7 @@ op_star
 id|curr_timebase
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Don&squot;t kill the system by setting too high timer rate&n;   */
+multiline_comment|/*&n;&t;   * Don&squot;t kill the system by setting too high timer rate&n;&t; */
 r_if
 c_cond
 (paren
@@ -178,7 +180,10 @@ l_int|2000
 suffix:semicolon
 id|usecs_per_tmr
 op_assign
-id|tmr-&gt;tmr_start
+id|tmr
+op_member_access_from_pointer
+id|tmr_start
+c_func
 (paren
 id|tmr-&gt;dev
 comma
@@ -189,6 +194,7 @@ suffix:semicolon
 r_void
 DECL|function|sound_timer_syncinterval
 id|sound_timer_syncinterval
+c_func
 (paren
 r_int
 r_int
@@ -203,6 +209,7 @@ suffix:semicolon
 id|ticks_offs
 op_add_assign
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -220,6 +227,7 @@ r_static
 r_void
 DECL|function|tmr_reset
 id|tmr_reset
+c_func
 (paren
 r_void
 )paren
@@ -229,11 +237,13 @@ r_int
 id|flags
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -267,6 +277,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -276,6 +287,7 @@ r_static
 r_int
 DECL|function|timer_open
 id|timer_open
+c_func
 (paren
 r_int
 id|dev
@@ -294,6 +306,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -310,6 +323,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|reprogram_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -321,6 +335,7 @@ r_static
 r_void
 DECL|function|timer_close
 id|timer_close
+c_func
 (paren
 r_int
 id|dev
@@ -332,7 +347,10 @@ id|tmr_running
 op_assign
 l_int|0
 suffix:semicolon
-id|tmr-&gt;tmr_disable
+id|tmr
+op_member_access_from_pointer
+id|tmr_disable
+c_func
 (paren
 id|tmr-&gt;dev
 )paren
@@ -342,6 +360,7 @@ r_static
 r_int
 DECL|function|timer_event
 id|timer_event
+c_func
 (paren
 r_int
 id|dev
@@ -434,6 +453,7 @@ r_case
 id|TMR_START
 suffix:colon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -442,6 +462,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|reprogram_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -464,6 +485,7 @@ op_assign
 l_int|1
 suffix:semicolon
 id|reprogram_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -507,6 +529,7 @@ suffix:semicolon
 id|ticks_offs
 op_add_assign
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -520,6 +543,7 @@ op_assign
 id|parm
 suffix:semicolon
 id|reprogram_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -530,6 +554,7 @@ r_case
 id|TMR_ECHO
 suffix:colon
 id|seq_copy_to_input
+c_func
 (paren
 id|event
 comma
@@ -551,6 +576,7 @@ r_int
 r_int
 DECL|function|timer_get_time
 id|timer_get_time
+c_func
 (paren
 r_int
 id|dev
@@ -573,6 +599,7 @@ r_static
 r_int
 DECL|function|timer_ioctl
 id|timer_ioctl
+c_func
 (paren
 r_int
 id|dev
@@ -615,6 +642,7 @@ r_case
 id|SNDCTL_TMR_START
 suffix:colon
 id|tmr_reset
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -757,6 +785,7 @@ suffix:semicolon
 id|ticks_offs
 op_add_assign
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -770,6 +799,7 @@ op_assign
 id|val
 suffix:semicolon
 id|reprogram_timer
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -872,6 +902,7 @@ r_static
 r_void
 DECL|function|timer_arm
 id|timer_arm
+c_func
 (paren
 r_int
 id|dev
@@ -948,6 +979,7 @@ suffix:semicolon
 r_void
 DECL|function|sound_timer_interrupt
 id|sound_timer_interrupt
+c_func
 (paren
 r_void
 )paren
@@ -960,7 +992,10 @@ id|opened
 )paren
 r_return
 suffix:semicolon
-id|tmr-&gt;tmr_restart
+id|tmr
+op_member_access_from_pointer
+id|tmr_restart
+c_func
 (paren
 id|tmr-&gt;dev
 )paren
@@ -981,6 +1016,7 @@ op_assign
 id|ticks_offs
 op_plus
 id|tmr2ticks
+c_func
 (paren
 id|tmr_ctr
 )paren
@@ -1003,6 +1039,7 @@ op_minus
 l_int|1
 suffix:semicolon
 id|sequencer_timer
+c_func
 (paren
 l_int|0
 )paren
@@ -1012,6 +1049,7 @@ suffix:semicolon
 r_void
 DECL|function|sound_timer_init
 id|sound_timer_init
+c_func
 (paren
 r_struct
 id|sound_lowlev_timer
@@ -1057,25 +1095,28 @@ id|tmr
 op_assign
 id|t
 suffix:semicolon
+id|n
+op_assign
+id|sound_alloc_timerdev
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_sound_timers
-op_ge
-id|MAX_TIMER_DEV
+id|n
+op_eq
+op_minus
+l_int|1
 )paren
 id|n
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Overwrite the system timer */
-r_else
-id|n
-op_assign
-id|num_sound_timers
-op_increment
-suffix:semicolon
 id|strcpy
+c_func
 (paren
 id|sound_timer.info.name
 comma

@@ -509,7 +509,7 @@ id|I_CMD
 op_logical_or
 (paren
 id|fr-&gt;i_hdr.i_pflag
-op_assign
+op_eq
 l_int|0
 )paren
 )paren

@@ -1,5 +1,5 @@
 multiline_comment|/* Because this code is derived from the 4.3BSD compress source:&n; *&n; * Copyright (c) 1985, 1986 The Regents of the University of California.&n; * All rights reserved.&n; *&n; * This code is derived from software contributed to Berkeley by&n; * James A. Woods, derived from original work by Spencer Thomas&n; * and Joseph Orost.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *&t;This product includes software developed by the University of&n; *&t;California, Berkeley and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
-multiline_comment|/*&n; * This version is for use with contiguous buffers on Linux-derived systems.&n; *&n; *  ==FILEVERSION 4==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     bsd_comp.c is shipped with a PPP distribution as well as with&n; *     the kernel; if everyone increases the FILEVERSION number above,&n; *     then scripts can do the right thing when deciding whether to&n; *     install a new bsd_comp.c file. Don&squot;t change the format of that&n; *     line otherwise, so the installation script can recognize it.&n; *&n; * $Id: bsd_comp.c,v 1.1 1994/12/08 01:59:58 paulus Exp $&n; */
+multiline_comment|/*&n; * This version is for use with contiguous buffers on Linux-derived systems.&n; *&n; *  ==FILEVERSION 970607==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     bsd_comp.c is shipped with a PPP distribution as well as with&n; *     the kernel; if everyone increases the FILEVERSION number above,&n; *     then scripts can do the right thing when deciding whether to&n; *     install a new bsd_comp.c file. Don&squot;t change the format of that&n; *     line otherwise, so the installation script can recognize it.&n; *&n; * From: bsd_comp.c,v 1.3 1994/12/08 01:59:58 paulus Exp&n; */
 macro_line|#ifndef MODULE
 macro_line|#error This file must be compiled as a module.
 macro_line|#endif
@@ -21,7 +21,6 @@ macro_line|#include &lt;linux/string.h&gt;&t;/* used in new tty drivers */
 macro_line|#include &lt;linux/signal.h&gt;&t;/* used in new tty drivers */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -30,12 +29,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/ppp_defs.h&gt;
-macro_line|#ifdef NEW_SKBUFF
-macro_line|# /*nodep*/ include &lt;linux/netprotocol.h&gt;
-macro_line|#endif
-macro_line|#include &lt;linux/ip.h&gt;
-macro_line|#include &lt;linux/tcp.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 DECL|macro|PACKETPTR
 macro_line|#undef   PACKETPTR
 DECL|macro|PACKETPTR
@@ -66,7 +59,7 @@ id|fcode
 suffix:semicolon
 r_struct
 (brace
-macro_line|#if defined(__LITTLE_ENDIAN) /* Little endian order */
+macro_line|#if defined(__LITTLE_ENDIAN)&t;&t;/* Little endian order */
 DECL|member|prefix
 r_int
 r_int
@@ -84,7 +77,7 @@ r_int
 r_char
 id|pad
 suffix:semicolon
-macro_line|#elif defined(__BIG_ENDIAN) /* Big endian order */
+macro_line|#elif defined(__BIG_ENDIAN)&t;&t;/* Big endian order */
 r_int
 r_char
 id|pad
@@ -99,6 +92,8 @@ r_int
 id|prefix
 suffix:semicolon
 multiline_comment|/* preceding code */
+macro_line|#else
+macro_line|#error Endianness not defined...
 macro_line|#endif
 DECL|member|hs
 )brace
@@ -582,10 +577,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|db-&gt;in_count
-op_assign
-l_int|0
-suffix:semicolon
-id|db-&gt;incomp_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -1952,7 +1943,7 @@ op_assign
 op_increment
 id|isize
 suffix:semicolon
-multiline_comment|/* This is off by one, but that is what is in draft! */
+multiline_comment|/* Low byte of protocol is counted as input */
 r_while
 c_loop
 (paren
@@ -2263,8 +2254,11 @@ multiline_comment|/* output the last code */
 id|db-&gt;bytes_out
 op_add_assign
 id|olen
+op_minus
+id|PPP_HDRLEN
+op_minus
+id|BSD_OVHD
 suffix:semicolon
-multiline_comment|/* Do not count bytes from here */
 id|db-&gt;uncomp_bytes
 op_add_assign
 id|isize

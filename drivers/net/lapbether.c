@@ -22,7 +22,6 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#include &lt;linux/lapb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|bcast_addr
@@ -272,15 +271,6 @@ l_string|&quot;dummy&quot;
 comma
 l_int|5
 )paren
-macro_line|#ifdef CONFIG_NET_ALIAS
-op_logical_and
-op_logical_neg
-id|net_alias_is
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 )paren
 suffix:semicolon
 )brace
@@ -1753,45 +1743,10 @@ id|dev-&gt;do_ioctl
 op_assign
 id|lapbeth_ioctl
 suffix:semicolon
-multiline_comment|/* preset with reasonable values */
 id|dev-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-macro_line|#ifdef CONFIG_INET
-id|dev-&gt;pa_addr
-op_assign
-id|in_aton
-c_func
-(paren
-l_string|&quot;192.168.0.1&quot;
-)paren
-suffix:semicolon
-id|dev-&gt;pa_brdaddr
-op_assign
-id|in_aton
-c_func
-(paren
-l_string|&quot;192.168.0.255&quot;
-)paren
-suffix:semicolon
-id|dev-&gt;pa_mask
-op_assign
-id|in_aton
-c_func
-(paren
-l_string|&quot;255.255.255.0&quot;
-)paren
-suffix:semicolon
-id|dev-&gt;pa_alen
-op_assign
-l_int|4
-suffix:semicolon
-macro_line|#endif
 id|dev-&gt;type
 op_assign
 id|ARPHRD_X25

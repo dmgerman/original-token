@@ -863,6 +863,10 @@ id|tchanid
 comma
 id|ctemp
 suffix:semicolon
+r_int
+r_int
+id|timeout
+suffix:semicolon
 macro_line|#ifndef MODULE
 id|dev
 op_assign
@@ -1450,7 +1454,12 @@ id|irq
 op_assign
 l_int|11
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: this wait should have a timeout&n;&t;&t;&t; */
+id|timeout
+op_assign
+id|jiffies
+op_plus
+id|TR_SPIN_INTERVAL
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1467,7 +1476,35 @@ op_plus
 id|RRR_EVEN
 )paren
 )paren
+r_if
+c_cond
+(paren
+id|jiffies
+OG
+id|timeout
+)paren
 (brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Hardware timeout during initialization.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|ti
+comma
+r_sizeof
+(paren
+r_struct
+id|tok_info
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 id|ti-&gt;sram
@@ -7529,25 +7566,6 @@ suffix:semicolon
 multiline_comment|/* we fake the transmission start time... */
 r_return
 l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Donald does this, so we do too. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_if

@@ -2,7 +2,9 @@ multiline_comment|/*&n; * DLCI/FRAD&t;Definitions for Frame Relay Access Devices
 macro_line|#ifndef _FRAD_H_
 DECL|macro|_FRAD_H_
 mdefine_line|#define _FRAD_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
+macro_line|#if defined(CONFIG_DLCI) || defined(CONFIG_DLCI_MODULE)
 multiline_comment|/* Structures and constants associated with the DLCI device driver */
 DECL|struct|dlci_add
 r_struct
@@ -498,6 +500,21 @@ op_star
 id|name
 )paren
 suffix:semicolon
+DECL|variable|dlci_ioctl_hook
+r_int
+(paren
+op_star
+id|dlci_ioctl_hook
+)paren
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif __KERNEL__
+macro_line|#endif /* CONFIG_DLCI || CONFIG_DLCI_MODULE */
 macro_line|#endif
 eof

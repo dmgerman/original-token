@@ -395,6 +395,16 @@ r_int
 r_int
 id|TcpRetransSegs
 suffix:semicolon
+DECL|member|TcpInErrs
+r_int
+r_int
+id|TcpInErrs
+suffix:semicolon
+DECL|member|TcpOutRsts
+r_int
+r_int
+id|TcpOutRsts
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|udp_mib
