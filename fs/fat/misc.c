@@ -1611,7 +1611,7 @@ op_logical_neg
 op_star
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|dir-&gt;i_dev
@@ -1619,6 +1619,10 @@ comma
 id|sector
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren
@@ -1772,7 +1776,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -1780,6 +1784,10 @@ comma
 id|sector
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren

@@ -165,9 +165,9 @@ mdefine_line|#define CSR62&t;&t;0x3e00&t;/*   Previous Transmit Status and Byte 
 DECL|macro|CSR63
 mdefine_line|#define CSR63&t;&t;0x3f00&t;/*   Previous Transmit Status and Byte Count */
 DECL|macro|CSR64
-mdefine_line|#define CSR64&t;&t;0x4000&t;/*   Next Transmit Buffer Addres */
+mdefine_line|#define CSR64&t;&t;0x4000&t;/*   Next Transmit Buffer Address */
 DECL|macro|CSR65
-mdefine_line|#define CSR65&t;&t;0x4100&t;/*   Next Transmit Buffer Addres */
+mdefine_line|#define CSR65&t;&t;0x4100&t;/*   Next Transmit Buffer Address */
 DECL|macro|CSR66
 mdefine_line|#define CSR66&t;&t;0x4200&t;/*   Next Transmit Status and Byte Count */
 DECL|macro|CSR67

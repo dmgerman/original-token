@@ -1,5 +1,5 @@
 macro_line|#ifndef A3000_H
-multiline_comment|/* $Id: a3000.h,v 1.2 1996/02/29 22:10:29 root Exp root $&n; *&n; * Header file for the Amiga 3000 built-in SCSI controller for Linux&n; *&n; * Written and (C) 1993, Hamish Macdonald, see a3000.c for more info&n; *&n; */
+multiline_comment|/* $Id: a3000.h,v 1.3 1996/04/25 20:58:09 root Exp root $&n; *&n; * Header file for the Amiga 3000 built-in SCSI controller for Linux&n; *&n; * Written and (C) 1993, Hamish Macdonald, see a3000.c for more info&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 r_int
 id|a3000_detect
@@ -50,6 +50,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#ifndef NULL

@@ -963,8 +963,6 @@ l_string|&quot;MD21/S2     ESDI&quot;
 comma
 l_string|&quot;*&quot;
 comma
-id|BLIST_FORCELUN
-op_or
 id|BLIST_SINGLELUN
 )brace
 comma

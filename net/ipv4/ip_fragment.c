@@ -731,10 +731,6 @@ suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|qp-&gt;dev
-suffix:semicolon
 )brace
 id|memset
 c_func

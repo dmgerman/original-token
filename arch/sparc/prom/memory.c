@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memory.c,v 1.6 1996/04/08 09:02:27 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.7 1996/04/25 06:09:46 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;

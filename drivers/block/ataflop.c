@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  drivers/block/ataflop.c&n; *&n; *  Copyright (C) 1993  Greg Harp&n; *  Atari Support by Bjoern Brauel, Roman Hodek&n; *&n; *  Big cleanup Sep 11..14 1994 Roman Hodek:&n; *   - Driver now works interrupt driven&n; *   - Support for two drives; should work, but I cannot test that :-(&n; *   - Reading is done in whole tracks and buffered to speed up things&n; *   - Disk change detection and drive deselecting after motor-off&n; *     similar to TOS&n; *   - Autodetection of disk format (DD/HD); untested yet, because I&n; *     don&squot;t have an HD drive :-(&n; *&n; *  Fixes Nov 13 1994 Martin Schaller:&n; *   - Autodetection works now&n; *   - Support for 5 1/4&squot;&squot; disks&n; *   - Removed drive type (unknown on atari)&n; *   - Do seeks with 8 Mhz&n; *&n; *  Changes by Andreas Schwab:&n; *   - After errors in multiple read mode try again reading single sectors&n; *  (Feb 1995):&n; *   - Clean up error handling&n; *   - Set blk_size for proper size checking&n; *   - Initialize track register when testing presence of floppy&n; *   - Implement some ioctl&squot;s&n; *&n; *  Changes by Torsten Lang:&n; *   - When probing the floppies we should add the FDCCMDADD_H flag since&n; *     the FDC will otherwise wait forever when no disk is inserted...&n; *&n; * ++ Freddi Aschwanden (fa) 20.9.95 fixes for medusa:&n; *  - MFPDELAY() after each FDC access -&gt; atari &n; *  - more/other disk formats&n; *  - DMA to the block buffer directly if we have a 32bit DMA&n; *  - for medusa, the step rate is always 3ms&n; *  - on medusa, use only cache_push()&n; * Roman:&n; *  - Make disk format numbering independant from minors&n; *  - Let user set max. supported drive type (speeds up format&n; *    detection, saves buffer space)&n; *&n; * Roman 10/15/95:&n; *  - implement some more ioctls&n; *  - disk formatting&n; *  &n; * Andreas 95/12/12:&n; *  - increase gap size at start of track for HD/ED disks&n; *&n; *  Things left to do:&n; *   - Formatting&n; *   - Maybe a better strategy for disk change detection (does anyone&n; *     know one?)&n; */
+multiline_comment|/*&n; *  drivers/block/ataflop.c&n; *&n; *  Copyright (C) 1993  Greg Harp&n; *  Atari Support by Bjoern Brauel, Roman Hodek&n; *&n; *  Big cleanup Sep 11..14 1994 Roman Hodek:&n; *   - Driver now works interrupt driven&n; *   - Support for two drives; should work, but I cannot test that :-(&n; *   - Reading is done in whole tracks and buffered to speed up things&n; *   - Disk change detection and drive deselecting after motor-off&n; *     similar to TOS&n; *   - Autodetection of disk format (DD/HD); untested yet, because I&n; *     don&squot;t have an HD drive :-(&n; *&n; *  Fixes Nov 13 1994 Martin Schaller:&n; *   - Autodetection works now&n; *   - Support for 5 1/4&squot;&squot; disks&n; *   - Removed drive type (unknown on atari)&n; *   - Do seeks with 8 Mhz&n; *&n; *  Changes by Andreas Schwab:&n; *   - After errors in multiple read mode try again reading single sectors&n; *  (Feb 1995):&n; *   - Clean up error handling&n; *   - Set blk_size for proper size checking&n; *   - Initialize track register when testing presence of floppy&n; *   - Implement some ioctl&squot;s&n; *&n; *  Changes by Torsten Lang:&n; *   - When probing the floppies we should add the FDCCMDADD_H flag since&n; *     the FDC will otherwise wait forever when no disk is inserted...&n; *&n; * ++ Freddi Aschwanden (fa) 20.9.95 fixes for medusa:&n; *  - MFPDELAY() after each FDC access -&gt; atari &n; *  - more/other disk formats&n; *  - DMA to the block buffer directly if we have a 32bit DMA&n; *  - for medusa, the step rate is always 3ms&n; *  - on medusa, use only cache_push()&n; * Roman:&n; *  - Make disk format numbering independent from minors&n; *  - Let user set max. supported drive type (speeds up format&n; *    detection, saves buffer space)&n; *&n; * Roman 10/15/95:&n; *  - implement some more ioctls&n; *  - disk formatting&n; *  &n; * Andreas 95/12/12:&n; *  - increase gap size at start of track for HD/ED disks&n; *&n; *  Things left to do:&n; *   - Formatting&n; *   - Maybe a better strategy for disk change detection (does anyone&n; *     know one?)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -801,7 +801,7 @@ DECL|macro|FDC_READ
 mdefine_line|#define FDC_READ(reg) ({&t;&t;&t;&bslash;&n;    /* unsigned long __flags; */&t;&t;&bslash;&n;    unsigned short __val;&t;&t;&t;&bslash;&n;    /* save_flags(__flags); cli(); */&t;&t;&bslash;&n;    dma_wd.dma_mode_status = 0x80 | (reg);&t;&bslash;&n;    udelay(25);&t;&t;&t;&t;&t;&bslash;&n;    __val = dma_wd.fdc_acces_seccount;&t;&t;&bslash;&n;    MFPDELAY();&t;&t;&t;&t;&t;&bslash;&n;    /* restore_flags(__flags); */&t;&t;&bslash;&n;    __val &amp; 0xff;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|FDC_WRITE
 mdefine_line|#define FDC_WRITE(reg,val)&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;/* unsigned long __flags; */&t;&t;&bslash;&n;&t;/* save_flags(__flags); cli(); */&t;&bslash;&n;&t;dma_wd.dma_mode_status = 0x80 | (reg);&t;&bslash;&n;&t;udelay(25);&t;&t;&t;&t;&bslash;&n;&t;dma_wd.fdc_acces_seccount = (val);&t;&bslash;&n;&t;MFPDELAY();&t;&t;&t;&t;&bslash;&n;        /* restore_flags(__flags); */&t;&t;&bslash;&n;    } while(0)
-multiline_comment|/* Buffering variables:&n; * First, there is a DMA buffer in ST-RAM that is used for floppy DMA&n; * operations. Second, a track buffer is used to cache a whole track&n; * of the disk to save read operations. These are two seperate buffers&n; * because that allows write operations without clearing the track buffer.&n; */
+multiline_comment|/* Buffering variables:&n; * First, there is a DMA buffer in ST-RAM that is used for floppy DMA&n; * operations. Second, a track buffer is used to cache a whole track&n; * of the disk to save read operations. These are two separate buffers&n; * because that allows write operations without clearing the track buffer.&n; */
 DECL|variable|MaxSectors
 r_static
 r_int
@@ -1033,7 +1033,7 @@ mdefine_line|#define&t;FD_MOTOR_OFF_MAXTRY&t;(10*20)
 DECL|macro|FLOPPY_TIMEOUT
 mdefine_line|#define FLOPPY_TIMEOUT&t;&t;(6*HZ)
 DECL|macro|RECALIBRATE_ERRORS
-mdefine_line|#define RECALIBRATE_ERRORS&t;4&t;/* Atfer this many errors the drive&n;&t;&t;&t;&t;&t; * will be recalibrated. */
+mdefine_line|#define RECALIBRATE_ERRORS&t;4&t;/* After this many errors the drive&n;&t;&t;&t;&t;&t; * will be recalibrated. */
 DECL|macro|MAX_ERRORS
 mdefine_line|#define MAX_ERRORS&t;&t;8&t;/* After this many errors the driver&n;&t;&t;&t;&t;&t; * will give up. */
 DECL|macro|START_MOTOR_OFF_TIMER
@@ -1052,7 +1052,7 @@ id|Probing
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* This flag is set when a dummy seek is necesary to make the WP&n; * status bit accessible.&n; */
+multiline_comment|/* This flag is set when a dummy seek is necessary to make the WP&n; * status bit accessible.&n; */
 DECL|variable|NeedSeek
 r_static
 r_int
@@ -1964,7 +1964,7 @@ id|CHECK_CHANGE_DELAY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handling of the Head Settling Flag: This flag should be set after each&n; * seek operation, because we dont&squot;t use seeks with verify.&n; */
+multiline_comment|/* Handling of the Head Settling Flag: This flag should be set after each&n; * seek operation, because we don&squot;t use seeks with verify.&n; */
 DECL|function|set_head_settle_flag
 r_static
 id|__inline__
@@ -3286,7 +3286,7 @@ op_assign
 id|PhysDMABuffer
 suffix:semicolon
 )brace
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 id|paddr
@@ -3601,7 +3601,7 @@ c_cond
 id|read_track
 )paren
 (brace
-multiline_comment|/* If reading a whole track, wait about one disk rotation and&n;&t;&t; * then check if all sectors are read. The FDC will even&n;&t;&t; * search for the first non-existant sector and need 1 sec to&n;&t;&t; * recognise that it isn&squot;t present :-(&n;&t;&t; */
+multiline_comment|/* If reading a whole track, wait about one disk rotation and&n;&t;&t; * then check if all sectors are read. The FDC will even&n;&t;&t; * search for the first non-existent sector and need 1 sec to&n;&t;&t; * recognise that it isn&squot;t present :-(&n;&t;&t; */
 id|readtrack_timer.expires
 op_assign
 id|jiffies
@@ -4031,7 +4031,7 @@ op_amp
 id|FDCSTAT_RECNF
 )paren
 op_logical_and
-multiline_comment|/* RECNF is no error after a multiple read when the FDC&n;&t;       searched for a non-existant sector! */
+multiline_comment|/* RECNF is no error after a multiple read when the FDC&n;&t;       searched for a non-existent sector! */
 op_logical_neg
 (paren
 id|read_track
@@ -4293,7 +4293,7 @@ id|ReqData
 suffix:colon
 id|DMABuffer
 suffix:semicolon
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 id|VTOP
@@ -4327,7 +4327,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 id|PhysTrackBuffer
@@ -4459,7 +4459,7 @@ id|paddr
 op_assign
 id|PhysTrackBuffer
 suffix:semicolon
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 id|paddr
@@ -4785,14 +4785,14 @@ id|FloppyIRQHandler
 r_goto
 id|end
 suffix:semicolon
-multiline_comment|/* int occured after timer was fired, but&n;&t;&t;&t;&t;&t;  * before we came here... */
+multiline_comment|/* int occurred after timer was fired, but&n;&t;&t;&t;&t;&t;  * before we came here... */
 id|SET_IRQ_HANDLER
 c_func
 (paren
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* If the timeout occured while the readtrack_check timer was&n;&t; * active, we need to cancel it, else bad things will happen */
+multiline_comment|/* If the timeout occurred while the readtrack_check timer was&n;&t; * active, we need to cancel it, else bad things will happen */
 r_if
 c_cond
 (paren
@@ -4902,7 +4902,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* we must wait for the IRQ here, because the ST-DMA&n;&t;&t;   is released immediatly afterwards and the interrupt&n;&t;&t;   may be delivered to the wrong driver. */
+multiline_comment|/* we must wait for the IRQ here, because the ST-DMA&n;&t;&t;   is released immediately afterwards and the interrupt&n;&t;&t;   may be delivered to the wrong driver. */
 )brace
 )brace
 DECL|function|finish_fdc_done
@@ -5088,7 +5088,7 @@ id|nr
 )paren
 (brace
 )brace
-multiline_comment|/* The detection of disk changes is a dark chapter in Atari history :-(&n; * Because the &quot;Drive ready&quot; signal isn&squot;t present in the Atari&n; * hardware, one has to rely on the &quot;Write Protect&quot;. This works fine,&n; * as long as no write protected disks are used. TOS solves this&n; * problem by introducing tri-state logic (&quot;maybe changed&quot;) and&n; * looking at the serial number in block 0. This isn&squot;t possible for&n; * Linux, since the floppy driver can&squot;t make assumptions about the&n; * filesystem used on the disk and thus the contents of block 0. I&squot;ve&n; * choosen the method to always say &quot;The disk was changed&quot; if it is&n; * unsure whether it was. This implies that every open or mount&n; * invalidates the disk buffers if you work with write protected&n; * disks. But at least this is better than working with incorrect data&n; * due to unrecognised disk changes.&n; */
+multiline_comment|/* The detection of disk changes is a dark chapter in Atari history :-(&n; * Because the &quot;Drive ready&quot; signal isn&squot;t present in the Atari&n; * hardware, one has to rely on the &quot;Write Protect&quot;. This works fine,&n; * as long as no write protected disks are used. TOS solves this&n; * problem by introducing tri-state logic (&quot;maybe changed&quot;) and&n; * looking at the serial number in block 0. This isn&squot;t possible for&n; * Linux, since the floppy driver can&squot;t make assumptions about the&n; * filesystem used on the disk and thus the contents of block 0. I&squot;ve&n; * chosen the method to always say &quot;The disk was changed&quot; if it is&n; * unsure whether it was. This implies that every open or mount&n; * invalidates the disk buffers if you work with write protected&n; * disks. But at least this is better than working with incorrect data&n; * due to unrecognised disk changes.&n; */
 DECL|function|check_floppy_change
 r_static
 r_int

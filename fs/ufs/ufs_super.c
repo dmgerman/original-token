@@ -1,4 +1,6 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_super.c,v 1.1 1996/04/21 14:41:19 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_super.c,v 1.3 1996/04/25 09:12:09 davem Exp $&n; *&n; */
+multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
@@ -80,7 +82,6 @@ id|super_operations
 id|ufs_super_ops
 op_assign
 (brace
-op_amp
 id|ufs_read_inode
 comma
 l_int|NULL
@@ -89,16 +90,13 @@ multiline_comment|/* notify_change() */
 l_int|NULL
 comma
 multiline_comment|/* XXX - ufs_write_inode() */
-op_amp
 id|ufs_put_inode
 comma
-op_amp
 id|ufs_put_super
 comma
 l_int|NULL
 comma
 multiline_comment|/* XXX - ufs_write_super() */
-op_amp
 id|ufs_statfs
 comma
 l_int|NULL
@@ -113,7 +111,6 @@ id|file_system_type
 id|ufs_fs_type
 op_assign
 (brace
-op_amp
 id|ufs_read_super
 comma
 l_string|&quot;ufs&quot;
@@ -140,9 +137,62 @@ id|ufs_fs_type
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_assign
+id|init_ufs_fs
+c_func
+(paren
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+id|register_symtab
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|status
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|ufs_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#if 0 /* unused */
 r_static
 r_void
-DECL|function|ufs_print_super_stuff
 id|ufs_print_super_stuff
 c_func
 (paren
@@ -256,6 +306,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 r_struct
 id|super_block
 op_star
@@ -800,7 +851,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: inopb %lu&bslash;n&quot;
+l_string|&quot;ufs_read_super: inopb %u&bslash;n&quot;
 comma
 id|sb-&gt;u.ufs_sb.s_inopb
 )paren

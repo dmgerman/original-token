@@ -876,6 +876,11 @@ id|PTY_TYPE_MASTER
 r_return
 l_int|0
 suffix:semicolon
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if PTY_SLAVE_WAITS_ON_OPEN
 id|add_wait_queue
 c_func
 (paren
@@ -885,10 +890,6 @@ comma
 op_amp
 id|wait
 )paren
-suffix:semicolon
-id|retval
-op_assign
-l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -914,6 +915,10 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Block until the master is open...&n;&t;&t; */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -951,6 +956,28 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tty-&gt;link-&gt;count
+op_logical_or
+id|test_bit
+c_func
+(paren
+id|TTY_OTHER_CLOSED
+comma
+op_amp
+id|tty-&gt;flags
+)paren
+)paren
+id|retval
+op_assign
+op_minus
+id|EPERM
+suffix:semicolon
+macro_line|#endif
 r_return
 id|retval
 suffix:semicolon

@@ -94,10 +94,6 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|m-&gt;msg_name
-op_assign
-id|address
-suffix:semicolon
 )brace
 r_else
 id|err
@@ -124,6 +120,10 @@ r_return
 id|err
 suffix:semicolon
 )brace
+id|m-&gt;msg_name
+op_assign
+id|address
+suffix:semicolon
 )brace
 r_if
 c_cond

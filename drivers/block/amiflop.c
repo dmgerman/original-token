@@ -3226,7 +3226,7 @@ id|gap1
 l_int|22
 )braket
 suffix:semicolon
-multiline_comment|/* for longword-aligndness (0x4e) */
+multiline_comment|/* for longword-alignedness (0x4e) */
 )brace
 suffix:semicolon
 multiline_comment|/* crc routines are borrowed from the messydos-handler  */
@@ -3288,7 +3288,7 @@ l_int|511
 suffix:semicolon
 multiline_comment|/* precomputed magic */
 )brace
-multiline_comment|/* excerpt from the messydos-device           &n;; The CRC is computed not only over the actual data, but including&n;; the SYNC mark (3 * $a1) and the &squot;ID/DATA - Address Mark&squot; ($fe/$fb).&n;; As we don&squot;t read or encode these fields into our buffers, we have to&n;; preload the registers containing the CRC with the values they would have&n;; after stepping over these fields.&n;;&n;; How CRCs &quot;really&quot; work:&n;;&n;; First, you should regard a bitstring as a series of coefficients of&n;; polymomials. We calculate with these polynomials in modulo-2&n;; arithmetic, in which both add and subtract are done the same as&n;; exclusive-or. Now, we modify our data (a very long polynomial) in&n;; such a way that it becomes divisible by the CCITT-standard 16-bit&n;;&t;&t; 16   12   5&n;; polynomial:&t;x  + x&t;+ x + 1, represented by $11021. The easiest&n;; way to do this would be to multiply (using proper arithmetic) our&n;; datablock with $11021. So we have:&n;;   data * $11021&t;&t; =&n;;   data * ($10000 + $1021)      =&n;;   data * $10000 + data * $1021&n;; The left part of this is simple: Just add two 0 bytes. But then&n;; the right part (data $1021) remains difficult and even could have&n;; a carry into the left part. The solution is to use a modified&n;; multiplication, which has a result that is not correct, but with&n;; a difference of any multiple of $11021. We then only need to keep&n;; the 16 least significant bits of the result.&n;;&n;; The following algorithm does this for us:&n;;&n;;   unsigned char *data, c, crclo, crchi;&n;;   while (not done) {&n;;&t;c = *data++ + crchi;&n;;&t;crchi = (@ c) &gt;&gt; 8 + crclo;&n;;&t;crclo = @ c;&n;;   }&n;;&n;; Remember, + is done with EOR, the @ operator is in two tables (high&n;; and low byte separately), which is calculated as&n;;&n;;      $1021 * (c &amp; $F0)&n;;  xor $1021 * (c &amp; $0F)&n;;  xor $1021 * (c &gt;&gt; 4)         (* is regular multiplication)&n;;&n;;&n;; Anyway, the end result is the same as the remainder of the division of&n;; the data by $11021. I am afraid I need to study theory a bit more...&n;&n;&n;my only works was to code this from manx to C....&n;&n;*/
+multiline_comment|/* excerpt from the messydos-device           &n;; The CRC is computed not only over the actual data, but including&n;; the SYNC mark (3 * $a1) and the &squot;ID/DATA - Address Mark&squot; ($fe/$fb).&n;; As we don&squot;t read or encode these fields into our buffers, we have to&n;; preload the registers containing the CRC with the values they would have&n;; after stepping over these fields.&n;;&n;; How CRCs &quot;really&quot; work:&n;;&n;; First, you should regard a bitstring as a series of coefficients of&n;; polynomials. We calculate with these polynomials in modulo-2&n;; arithmetic, in which both add and subtract are done the same as&n;; exclusive-or. Now, we modify our data (a very long polynomial) in&n;; such a way that it becomes divisible by the CCITT-standard 16-bit&n;;&t;&t; 16   12   5&n;; polynomial:&t;x  + x&t;+ x + 1, represented by $11021. The easiest&n;; way to do this would be to multiply (using proper arithmetic) our&n;; datablock with $11021. So we have:&n;;   data * $11021&t;&t; =&n;;   data * ($10000 + $1021)      =&n;;   data * $10000 + data * $1021&n;; The left part of this is simple: Just add two 0 bytes. But then&n;; the right part (data $1021) remains difficult and even could have&n;; a carry into the left part. The solution is to use a modified&n;; multiplication, which has a result that is not correct, but with&n;; a difference of any multiple of $11021. We then only need to keep&n;; the 16 least significant bits of the result.&n;;&n;; The following algorithm does this for us:&n;;&n;;   unsigned char *data, c, crclo, crchi;&n;;   while (not done) {&n;;&t;c = *data++ + crchi;&n;;&t;crchi = (@ c) &gt;&gt; 8 + crclo;&n;;&t;crclo = @ c;&n;;   }&n;;&n;; Remember, + is done with EOR, the @ operator is in two tables (high&n;; and low byte separately), which is calculated as&n;;&n;;      $1021 * (c &amp; $F0)&n;;  xor $1021 * (c &amp; $0F)&n;;  xor $1021 * (c &gt;&gt; 4)         (* is regular multiplication)&n;;&n;;&n;; Anyway, the end result is the same as the remainder of the division of&n;; the data by $11021. I am afraid I need to study theory a bit more...&n;&n;&n;my only works was to code this from manx to C....&n;&n;*/
 DECL|function|dos_crc
 r_static
 id|ushort
@@ -8789,7 +8789,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fd%d: accesing %s-disk with %s-layout&bslash;n&quot;
+l_string|&quot;fd%d: accessing %s-disk with %s-layout&bslash;n&quot;
 comma
 id|drive
 comma

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * split in two parts for better support of different hardware&n; * by Joerg Dorchain (dorchain@mpi-sb.mpg.de)&n; *&n; * Amiga printer device by Michael Rausch (linux@uni-koblenz.de);&n; * Atari support added by Andreas Schwab (schwab@ls5.informatik.uni-dortmund.de);&n; * based upon work from&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; */
-multiline_comment|/* 01/17/95: Matthias Welwarsky (dg8y@rs11.hrz.th-darmstadt.de)&n; * lp_write(): rewritten from scratch&n; * lp_interrupt(): fixed cli()/sti()-bug&n; * &n; * 95/05/28: Andreas Schwab (schwab@issan.informatik.uni-dortmund.de)&n; * lp_write() fixed to make it work again.&n; * 95/08/18: Andreas Schwab&n; * lp_write_interrupt: fix race condition&n; *&n; *  * CAUTION, please do check! *    &n; * &n; *  on 68000-based machines sti() must NEVER appear in interrupt driven&n; *  code. The 68k-CPU has a priority-based interrupt scheme. while an interrupt&n; *  with a certain priority is executed, all requests with lower or same&n; *  priority get locked out. executing the sti()-macro allows ANY interrupt&n; *  to be served. this really causes BIG trouble!&n; *  to protect an interrupt driven routine against beeing interrupted &n; *  (if absolutely needed!) one should use save_flags();cli()/restore_flags()!&n; *&n; */
+multiline_comment|/* 01/17/95: Matthias Welwarsky (dg8y@rs11.hrz.th-darmstadt.de)&n; * lp_write(): rewritten from scratch&n; * lp_interrupt(): fixed cli()/sti()-bug&n; * &n; * 95/05/28: Andreas Schwab (schwab@issan.informatik.uni-dortmund.de)&n; * lp_write() fixed to make it work again.&n; * 95/08/18: Andreas Schwab&n; * lp_write_interrupt: fix race condition&n; *&n; *  * CAUTION, please do check! *    &n; * &n; *  on 68000-based machines sti() must NEVER appear in interrupt driven&n; *  code. The 68k-CPU has a priority-based interrupt scheme. while an interrupt&n; *  with a certain priority is executed, all requests with lower or same&n; *  priority get locked out. executing the sti()-macro allows ANY interrupt&n; *  to be served. this really causes BIG trouble!&n; *  to protect an interrupt driven routine against being interrupted &n; *  (if absolutely needed!) one should use save_flags();cli()/restore_flags()!&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -793,7 +793,7 @@ c_cond
 id|lp_error
 )paren
 (brace
-multiline_comment|/* an error has occured, maybe in lp_interrupt().&n;&t;   figure out the type of error, exit on request or if nothing has &n;&t;   been printed at all. */
+multiline_comment|/* an error has occurred, maybe in lp_interrupt().&n;&t;   figure out the type of error, exit on request or if nothing has &n;&t;   been printed at all. */
 r_if
 c_cond
 (paren

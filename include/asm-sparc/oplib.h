@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.7 1996/04/04 16:31:25 tridge Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.8 1996/04/25 06:13:23 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H

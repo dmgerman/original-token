@@ -1,3 +1,6 @@
+multiline_comment|/* Number of bytes to readahead on disc access */
+DECL|macro|FAT_READAHEAD
+mdefine_line|#define FAT_READAHEAD (18*1024)
 r_struct
 id|buffer_head
 op_star

@@ -1240,7 +1240,7 @@ r_int
 r_int
 id|errorcode
 suffix:semicolon
-multiline_comment|/*&n;&t; * No special handling for the second writeback anymore.&n;&t; * It misinterpreted the misaligned status sometimes.&n;&t; * This way an extra pgae-fault may be caused (Martin Apel).&n;&t; */
+multiline_comment|/*&n;&t; * No special handling for the second writeback anymore.&n;&t; * It misinterpreted the misaligned status sometimes.&n;&t; * This way an extra page-fault may be caused (Martin Apel).&n;&t; */
 id|mmusr
 op_assign
 id|probe040

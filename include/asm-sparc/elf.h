@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.2 1995/11/25 02:31:40 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.3 1996/04/22 15:48:48 miguel Exp $ */
 macro_line|#ifndef __ASMSPARC_ELF_H
 DECL|macro|__ASMSPARC_ELF_H
 mdefine_line|#define __ASMSPARC_ELF_H
@@ -26,5 +26,9 @@ r_int
 r_int
 id|elf_fpregset_t
 suffix:semicolon
+DECL|macro|elf_check_arch
+mdefine_line|#define elf_check_arch(x) ((x) == EM_SPARC)
+DECL|macro|ELF_ARCH
+mdefine_line|#define ELF_ARCH EM_SPARC
 macro_line|#endif
 eof

@@ -407,7 +407,7 @@ id|smp_buf
 comma
 l_string|&quot;&bslash;n        CPU0&bslash;t&bslash;tCPU1&bslash;t&bslash;tCPU2&bslash;t&bslash;tCPU3&bslash;n&quot;
 l_string|&quot;State: %s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;t&bslash;t%s&bslash;n&quot;
-l_string|&quot;Lock:  %08lx&bslash;t&bslash;t%08lx&bslash;t%08lx&bslash;t&bslash;t%08lx&bslash;n&quot;
+l_string|&quot;Lock:  %08lx&bslash;t&bslash;t%08lx&bslash;t%08lx&bslash;t%08lx&bslash;n&quot;
 l_string|&quot;&bslash;n&quot;
 l_string|&quot;klock: %x&bslash;n&quot;
 comma
@@ -1101,14 +1101,6 @@ op_complement
 l_int|8
 )paren
 suffix:semicolon
-id|current_set
-(braket
-id|i
-)braket
-op_assign
-op_amp
-id|init_task
-suffix:semicolon
 id|local_flush_cache_all
 c_func
 (paren
@@ -1210,13 +1202,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|current_set
-(braket
-id|i
-)braket
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_if
 c_cond

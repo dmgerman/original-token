@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.26 1996/03/25 20:21:08 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.27 1996/04/25 06:13:06 davem Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H

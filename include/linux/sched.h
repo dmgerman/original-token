@@ -754,6 +754,8 @@ DECL|macro|PF_EXITING
 mdefine_line|#define PF_EXITING&t;0x00000200&t;/* getting shut down */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* Process used the FPU this quantum (SMP only) */
+DECL|macro|PF_DTRACE
+mdefine_line|#define PF_DTRACE&t;0x00200000&t;/* delayed trace (used on m68k) */
 multiline_comment|/*&n; * Limit the stack by to some sane default: root can always&n; * increase this limit if needed..  8MB seems reasonable.&n; */
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
@@ -928,6 +930,21 @@ id|tsk
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|force_sig
+c_func
+(paren
+r_int
+r_int
+id|sig
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|send_sig
 c_func
@@ -1074,6 +1091,16 @@ id|exit_thread
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|exit_mm
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 r_extern

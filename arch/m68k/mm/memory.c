@@ -1285,7 +1285,7 @@ c_cond
 id|m68k_is040or060
 )paren
 (brace
-multiline_comment|/* ++roman: There have been too many problems with the CINV, it seems&n;&t; * to break the cache maintainance of DMAing drivers. I don&squot;t expect&n;&t; * too much overhead by using CPUSH instead.&n;&t; */
+multiline_comment|/* ++roman: There have been too many problems with the CINV, it seems&n;&t; * to break the cache maintenance of DMAing drivers. I don&squot;t expect&n;&t; * too much overhead by using CPUSH instead.&n;&t; */
 r_while
 c_loop
 (paren
@@ -1775,6 +1775,108 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/* 68030/68020 have no writeback cache; still need to clear icache. */
+r_else
+multiline_comment|/* 68030 or 68020 */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movec %/cacr,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;oriw %0,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %/d0,%/cacr&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|FLUSH_I
+)paren
+suffix:colon
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|flush_cache_all
+r_void
+id|flush_cache_all
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+op_ge
+l_int|4
+)paren
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;.word 0xf478&bslash;n&quot;
+op_scope_resolution
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* 68030 or 68020 */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movec %/cacr,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;oriw %0,%/d0&bslash;n&bslash;t&quot;
+l_string|&quot;movec %/d0,%/cacr&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|FLUSH_I
+)paren
+suffix:colon
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|flush_page_to_ram
+r_void
+id|flush_page_to_ram
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+op_eq
+l_int|4
+)paren
+id|pushv040
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|m68k_is040or060
+op_eq
+l_int|6
+)paren
+id|push040
+c_func
+(paren
+id|VTOP
+c_func
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* someone mentioned that pushv060 doesn&squot;t work */
 multiline_comment|/* 68030/68020 have no writeback cache; still need to clear icache. */
 r_else
 multiline_comment|/* 68030 or 68020 */

@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************&n; *                                                                           *&n; * Copyright (c) David L. Mills 1993                                         *&n; *                                                                           *&n; * Permission to use, copy, modify, and distribute this software and its     *&n; * documentation for any purpose and without fee is hereby granted, provided *&n; * that the above copyright notice appears in all copies and that both the   *&n; * copyright notice and this permission notice appear in supporting          *&n; * documentation, and that the name University of Delaware not be used in    *&n; * advertising or publicity pertaining to distribution of the software       *&n; * without specific, written prior permission.  The University of Delaware   *&n; * makes no representations about the suitability this software for any      *&n; * purpose.  It is provided &quot;as is&quot; without express or implied warranty.     *&n; *                                                                           *&n; *****************************************************************************/
-multiline_comment|/*&n; * Modification history timex.h&n; *&n; * 17 Sep 93    David L. Mills&n; *      Created file $NTP/include/sys/timex.h&n; * 07 Oct 93    Torsten Duwe&n; *      Derived linux/timex.h&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1489)&n; */
+multiline_comment|/*&n; * Modification history timex.h&n; *&n; * 26 Sep 94&t;David L. Mills&n; *&t;Added defines for hybrid phase/frequency-lock loop.&n; *&n; * 19 Mar 94&t;David L. Mills&n; *&t;Moved defines from kernel routines to header file and added new&n; *&t;defines for PPS phase-lock loop.&n; *&n; * 20 Feb 94&t;David L. Mills&n; *&t;Revised status codes and structures for external clock and PPS&n; *&t;signal discipline.&n; *&n; * 28 Nov 93&t;David L. Mills&n; *&t;Adjusted parameters to improve stability and increase poll&n; *&t;interval.&n; *&n; * 17 Sep 93    David L. Mills&n; *      Created file $NTP/include/sys/timex.h&n; * 07 Oct 93    Torsten Duwe&n; *      Derived linux/timex.h&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1589)&n; */
 macro_line|#ifndef _LINUX_TIMEX_H
 DECL|macro|_LINUX_TIMEX_H
 mdefine_line|#define _LINUX_TIMEX_H
@@ -20,11 +20,11 @@ DECL|macro|SHIFT_KH
 mdefine_line|#define SHIFT_KH 2&t;&t;/* FLL frequency factor (shift) */
 DECL|macro|MAXTC
 mdefine_line|#define MAXTC 6&t;&t;&t;/* maximum time constant (shift) */
-multiline_comment|/*&n; * The SHIFT_SCALE define establishes the decimal point of the time_phase&n; * variable which serves as a an extension to the low-order bits of the&n; * system clock variable. The SHIFT_UPDATE define establishes the decimal&n; * point of the time_offset variable which represents the current offset&n; * with respect to standard time. The FINEUSEC define represents 1 usec in&n; * scaled units.&n; *&n; * SHIFT_USEC defines the scaling (shift) of the time_freq and&n; * time_tolerance variables, which represent the current frequency&n; * offset and maximum frequency tolerance.&n; */
+multiline_comment|/*&n; * The SHIFT_SCALE define establishes the decimal point of the time_phase&n; * variable which serves as a an extension to the low-order bits of the&n; * system clock variable. The SHIFT_UPDATE define establishes the decimal&n; * point of the time_offset variable which represents the current offset&n; * with respect to standard time. The FINEUSEC define represents 1 usec in&n; * scaled units.&n; *&n; * SHIFT_USEC defines the scaling (shift) of the time_freq and&n; * time_tolerance variables, which represent the current frequency&n; * offset and maximum frequency tolerance.&n; *&n; * FINEUSEC is 1 us in SHIFT_UPDATE units of the time_phase variable.&n; */
 DECL|macro|SHIFT_SCALE
-mdefine_line|#define SHIFT_SCALE 22&t;&t;/* shift for phase scale factor */
+mdefine_line|#define SHIFT_SCALE 22&t;&t;/* phase scale (shift) */
 DECL|macro|SHIFT_UPDATE
-mdefine_line|#define SHIFT_UPDATE (SHIFT_KG + MAXTC) /* shift for offset scale factor */
+mdefine_line|#define SHIFT_UPDATE (SHIFT_KG + MAXTC) /* time offset scale (shift) */
 DECL|macro|SHIFT_USEC
 mdefine_line|#define SHIFT_USEC 16&t;&t;/* frequency offset scale (shift) */
 DECL|macro|FINEUSEC
@@ -32,7 +32,7 @@ mdefine_line|#define FINEUSEC (1L &lt;&lt; SHIFT_SCALE) /* 1 us in phase units *
 DECL|macro|MAXPHASE
 mdefine_line|#define MAXPHASE 512000L        /* max phase error (us) */
 DECL|macro|MAXFREQ
-mdefine_line|#define MAXFREQ (100L &lt;&lt; SHIFT_USEC)  /* max frequency error (ppm) */
+mdefine_line|#define MAXFREQ (512L &lt;&lt; SHIFT_USEC)  /* max frequency error (ppm) */
 DECL|macro|MAXTIME
 mdefine_line|#define MAXTIME (200L &lt;&lt; PPS_AVG) /* max PPS error (jitter) (200 us) */
 DECL|macro|MINSEC
@@ -243,6 +243,10 @@ DECL|macro|MOD_STATUS
 mdefine_line|#define MOD_STATUS&t;ADJ_STATUS
 DECL|macro|MOD_TIMECONST
 mdefine_line|#define MOD_TIMECONST&t;ADJ_TIMECONST
+DECL|macro|MOD_CLKB
+mdefine_line|#define MOD_CLKB&t;ADJ_TICK
+DECL|macro|MOD_CLKA
+mdefine_line|#define MOD_CLKA&t;ADJ_OFFSET_SINGLESHOT /* 0x8000 in original */
 multiline_comment|/*&n; * Status codes (timex.status)&n; */
 DECL|macro|STA_PLL
 mdefine_line|#define STA_PLL&t;&t;0x0001&t;/* enable PLL updates (rw) */
@@ -274,7 +278,7 @@ DECL|macro|STA_RONLY
 mdefine_line|#define STA_RONLY (STA_PPSSIGNAL | STA_PPSJITTER | STA_PPSWANDER | &bslash;&n;    STA_PPSERROR | STA_CLOCKERR) /* read-only bits */
 multiline_comment|/*&n; * Clock states (time_state)&n; */
 DECL|macro|TIME_OK
-mdefine_line|#define TIME_OK&t;&t;0&t;/* clock synchronized */
+mdefine_line|#define TIME_OK&t;&t;0&t;/* clock synchronized, no leap second */
 DECL|macro|TIME_INS
 mdefine_line|#define TIME_INS&t;1&t;/* insert leap second */
 DECL|macro|TIME_DEL
@@ -282,13 +286,13 @@ mdefine_line|#define TIME_DEL&t;2&t;/* delete leap second */
 DECL|macro|TIME_OOP
 mdefine_line|#define TIME_OOP&t;3&t;/* leap second in progress */
 DECL|macro|TIME_WAIT
-mdefine_line|#define TIME_WAIT&t;4&t;/* leap second has occurred */
+mdefine_line|#define TIME_WAIT&t;4&t;/* leap second has occured */
 DECL|macro|TIME_ERROR
 mdefine_line|#define TIME_ERROR&t;5&t;/* clock not synchronized */
 DECL|macro|TIME_BAD
 mdefine_line|#define TIME_BAD&t;TIME_ERROR /* bw compat */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * kernel variables&n; */
+multiline_comment|/*&n; * kernel variables&n; * Note: maximum error = NTP synch distance = dispersion + delay / 2;&n; * estimated error = NTP dispersion.&n; */
 r_extern
 r_int
 id|tick

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vac-ops.h,v 1.10 1996/04/04 12:51:36 davem Exp $ */
+multiline_comment|/* $Id: vac-ops.h,v 1.11 1996/04/25 06:13:38 davem Exp $ */
 macro_line|#ifndef _SPARC_VAC_OPS_H
 DECL|macro|_SPARC_VAC_OPS_H
 mdefine_line|#define _SPARC_VAC_OPS_H

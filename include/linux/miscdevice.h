@@ -9,6 +9,10 @@ DECL|macro|MS_BUSMOUSE_MINOR
 mdefine_line|#define MS_BUSMOUSE_MINOR 2
 DECL|macro|ATIXL_BUSMOUSE_MINOR
 mdefine_line|#define ATIXL_BUSMOUSE_MINOR 3
+DECL|macro|AMIGAMOUSE_MINOR
+mdefine_line|#define AMIGAMOUSE_MINOR 4
+DECL|macro|ATARIMOUSE_MINOR
+mdefine_line|#define ATARIMOUSE_MINOR 5
 DECL|macro|SUN_MOUSE_MINOR
 mdefine_line|#define SUN_MOUSE_MINOR 6
 DECL|macro|MISC_DYNAMIC_MINOR

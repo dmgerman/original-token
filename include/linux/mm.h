@@ -4,6 +4,7 @@ mdefine_line|#define _LINUX_MM_H
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 r_extern
 r_int
@@ -12,7 +13,6 @@ id|high_memory
 suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-macro_line|#ifdef __KERNEL__
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE

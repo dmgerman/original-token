@@ -2,10 +2,8 @@ multiline_comment|/*&n; *&t;Definitions for the &squot;struct sk_buff&squot; mem
 macro_line|#ifndef _LINUX_SKBUFF_H
 DECL|macro|_LINUX_SKBUFF_H
 mdefine_line|#define _LINUX_SKBUFF_H
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|CONFIG_SKB_CHECK
 mdefine_line|#define CONFIG_SKB_CHECK 0
@@ -382,6 +380,7 @@ mdefine_line|#define SK_HEAD_SKB&t;0x12231298
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Handling routines are only of interest to the kernel&n; */
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#if 0
 r_extern

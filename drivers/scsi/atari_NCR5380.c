@@ -1,5 +1,5 @@
 multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_consecutive_buffers() that trys to&n; *    merge scatter-gather buffers that are located at consecutive&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; * &n; */
+multiline_comment|/*&n; * ++roman: To port the 5380 driver to the Atari, I had to do some changes in&n; * this file, too:&n; *&n; *  - Some of the debug statements were incorrect (undefined variables and the&n; *    like). I fixed that.&n; *&n; *  - In information_transfer(), I think a #ifdef was wrong. Looking at the&n; *    possible DMA transfer size should also happen for REAL_DMA. I added this&n; *    in the #if statement.&n; *&n; *  - When using real DMA, information_transfer() should return in a DATAOUT&n; *    phase after starting the DMA. It has nothing more to do.&n; *&n; *  - The interrupt service routine should run main after end of DMA, too (not&n; *    only after RESELECTION interrupts). Additionally, it should _not_ test&n; *    for more interrupts after running main, since a DMA process may have&n; *    been started and interrupts are turned on now. The new int could happen&n; *    inside the execution of NCR5380_intr(), leading to recursive&n; *    calls.&n; *&n; *  - I&squot;ve added a function merge_consecutive_buffers() that tries to&n; *    merge scatter-gather buffers that are located at consecutive&n; *    physical addresses and can be processed with the same DMA setup.&n; *    Since most scatter-gather operations work on a page (4K) of&n; *    4 buffers (1K), in more than 90% of all cases three interrupts and&n; *    DMA setup actions are saved.&n; * &n; */
 multiline_comment|/*&n; * +++roman: I&squot;ve deleted all the stuff for AUTOPROBE_IRQ, REAL_DMA_POLL,&n; * PSEUDO_DMA and USLEEP, because these were messing up&n; * readability and will never be needed for Atari SCSI.&n; */
 multiline_comment|/*&n; * $Log: atari_NCR5380.c,v $&n; * Revision 1.2  1996/04/04 13:30:22  root&n; * interrupts more like the pc&n; *&n; * Revision 1.1  1996/03/20 17:51:35  root&n; * Initial revision&n; *&n; * Revision 1.2  1994/11/26  03:38:32  hamish&n; * v0.9pl4&n; *&n; * Revision 1.1  1994/11/08  03:25:43  hamish&n; * Initial revision&n; *&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
 multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
@@ -5728,7 +5728,7 @@ op_or
 id|ICR_ASSERT_ATN
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Wait for the target to indicate a valid phase by asserting &n;     * REQ.  Once this happens, we&squot;ll have either a MSGOUT phase &n;     * and can immediately send the ABORT message, or we&squot;ll have some &n;     * other phase and will have to source/sink data.&n;     * &n;     * We really don&squot;t care what value was on the bus or what value&n;     * the target see&squot;s, so we just handshake.&n;     */
+multiline_comment|/* &n;     * Wait for the target to indicate a valid phase by asserting &n;     * REQ.  Once this happens, we&squot;ll have either a MSGOUT phase &n;     * and can immediately send the ABORT message, or we&squot;ll have some &n;     * other phase and will have to source/sink data.&n;     * &n;     * We really don&squot;t care what value was on the bus or what value&n;     * the target sees, so we just handshake.&n;     */
 r_while
 c_loop
 (paren
@@ -6705,7 +6705,7 @@ id|cmd-&gt;lun
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Enable reselect interupts */
+multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
 (paren
@@ -6921,7 +6921,7 @@ id|cmd-&gt;lun
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Enable reselect interupts */
+multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
 (paren
@@ -7212,7 +7212,7 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-multiline_comment|/* Enable reselect interupts */
+multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
 (paren
@@ -7236,7 +7236,7 @@ suffix:colon
 r_case
 id|SIMPLE_QUEUE_TAG
 suffix:colon
-multiline_comment|/* The target obviously doesn&squot;t support tagged&n;&t;&t;&t; * queuing, even though it announced this ability in&n;&t;&t;&t; * its INQUIRY data ?!? (maybe only this LUN?) Ok,&n;&t;&t;&t; * clear &squot;tagged_supported&squot; and lock the LUN, since&n;&t;&t;&t; * the command is treated as untagged furtheron.&n;&t;&t;&t; */
+multiline_comment|/* The target obviously doesn&squot;t support tagged&n;&t;&t;&t; * queuing, even though it announced this ability in&n;&t;&t;&t; * its INQUIRY data ?!? (maybe only this LUN?) Ok,&n;&t;&t;&t; * clear &squot;tagged_supported&squot; and lock the LUN, since&n;&t;&t;&t; * the command is treated as untagged further on.&n;&t;&t;&t; */
 id|cmd-&gt;device-&gt;tagged_supported
 op_assign
 l_int|0
@@ -7406,7 +7406,7 @@ comma
 id|ICR_BASE
 )paren
 suffix:semicolon
-multiline_comment|/* Enable reselect interupts */
+multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
 (paren
@@ -8163,7 +8163,7 @@ l_int|0x07
 )paren
 suffix:semicolon
 macro_line|#ifdef SUPPORT_TAGS
-multiline_comment|/* If the phase is still MSGIN, the target wants to send some more&n;     * messages. In case it supports tagged queuing, this is probably a&n;     * SIMPLE_QEUE_TAG for the I_T_L_Q nexus.&n;     */
+multiline_comment|/* If the phase is still MSGIN, the target wants to send some more&n;     * messages. In case it supports tagged queuing, this is probably a&n;     * SIMPLE_QUEUE_TAG for the I_T_L_Q nexus.&n;     */
 id|tag
 op_assign
 id|TAG_NONE
@@ -9016,7 +9016,7 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR5380_reset (Scsi_Cmnd *cmd)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : SCSI_RESET_WAKEUP&n; *&n; */
+multiline_comment|/* &n; * Function : int NCR5380_reset (Scsi_Cmnd *cmd, unsigned int reset_flags)&n; * &n; * Purpose : reset the SCSI bus.&n; *&n; * Returns : SCSI_RESET_WAKEUP&n; *&n; */
 DECL|function|NCR5380_reset
 r_static
 r_int
@@ -9026,6 +9026,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 macro_line|#if 0
@@ -9156,7 +9160,7 @@ id|RESET_PARITY_INTERRUPT_REG
 )paren
 suffix:semicolon
 macro_line|#if 0 /* XXX Now done by midlevel code XXX */
-multiline_comment|/* After the reset, there are no more connected or disconnected commands&n;     * and no busy units; to avoid problems with re-inserting the commands&n;     * into the issue_queue (via scsi_done()), the aborted commands are&n;     * remebered in local variables first.&n;     */
+multiline_comment|/* After the reset, there are no more connected or disconnected commands&n;     * and no busy units; to avoid problems with re-inserting the commands&n;     * into the issue_queue (via scsi_done()), the aborted commands are&n;     * remembered in local variables first.&n;     */
 id|save_flags
 c_func
 (paren

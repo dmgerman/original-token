@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.19 1996/03/26 06:51:58 miguel Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.20 1996/04/25 06:13:40 davem Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H

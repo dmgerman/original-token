@@ -20,6 +20,7 @@ DECL|macro|UTS_DOMAINNAME
 mdefine_line|#define UTS_DOMAINNAME &quot;(none)&quot;&t;/* set by setdomainname() */
 macro_line|#endif
 multiline_comment|/*&n; * The definitions for UTS_RELEASE and UTS_VERSION are now defined&n; * in linux/version.h, and should only be used by linux/version.c&n; */
+multiline_comment|/* Shouldn&squot;t these be defined somewhere in a i386 definition? */
 multiline_comment|/* Don&squot;t touch these, unless you really know what you&squot;re doing. */
 DECL|macro|DEF_INITSEG
 mdefine_line|#define DEF_INITSEG&t;0x9000

@@ -2276,7 +2276,7 @@ id|shmd-&gt;vm_end
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; */

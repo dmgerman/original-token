@@ -46,7 +46,7 @@ l_string|&quot;ir&quot;
 id|i
 )paren
 comma
-l_string|&quot;m&quot;
+l_string|&quot;0&quot;
 (paren
 id|__atomic_fool_gcc
 c_func
@@ -92,7 +92,7 @@ l_string|&quot;ir&quot;
 id|i
 )paren
 comma
-l_string|&quot;m&quot;
+l_string|&quot;0&quot;
 (paren
 id|__atomic_fool_gcc
 c_func
@@ -130,7 +130,7 @@ id|v
 )paren
 )paren
 suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;0&quot;
 (paren
 id|__atomic_fool_gcc
 c_func
@@ -168,7 +168,7 @@ id|v
 )paren
 )paren
 suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;0&quot;
 (paren
 id|__atomic_fool_gcc
 c_func
@@ -191,11 +191,14 @@ op_star
 id|v
 )paren
 (brace
+r_char
+id|c
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;subql #1,%0&quot;
+l_string|&quot;subql #1,%0; seq %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
@@ -205,8 +208,13 @@ c_func
 id|v
 )paren
 )paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|c
+)paren
 suffix:colon
-l_string|&quot;m&quot;
+l_string|&quot;0&quot;
 (paren
 id|__atomic_fool_gcc
 c_func
@@ -217,12 +225,9 @@ id|v
 )paren
 suffix:semicolon
 r_return
-(paren
-op_star
-id|v
-op_le
+id|c
+op_ne
 l_int|0
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif /* __ARCH_M68K_ATOMIC __ */

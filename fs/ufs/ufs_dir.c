@@ -1,49 +1,46 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.1 1996/04/21 14:41:04 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.3 1996/04/25 09:12:00 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/* XXX */
 r_extern
 r_int
 id|ufs_lookup
-c_func
 (paren
+r_struct
+id|inode
+op_star
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+comma
+r_struct
+id|inode
+op_star
+op_star
 )paren
 suffix:semicolon
 r_extern
 r_int
 id|ufs_bmap
-c_func
-(paren
-)paren
-suffix:semicolon
-DECL|function|ufs_dir_read
-r_static
-r_int
-id|ufs_dir_read
 (paren
 r_struct
 id|inode
 op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
 comma
 r_int
-id|count
 )paren
-(brace
-multiline_comment|/* XXX - probably allow this for root, EISDIR for normal users */
-r_return
-op_minus
-id|EISDIR
 suffix:semicolon
-)brace
+r_extern
+r_void
+id|ufs_print_inode
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
 r_static
 r_int
@@ -137,6 +134,10 @@ l_string|&quot;ufs_readdir: ino %lu  f_pos %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
+(paren
+r_int
+r_int
+)paren
 id|filp-&gt;f_pos
 )paren
 suffix:semicolon
@@ -378,12 +379,14 @@ l_int|0
 (brace
 id|filp-&gt;f_pos
 op_assign
+(paren
 id|filp-&gt;f_pos
 op_amp
 (paren
 id|sb-&gt;s_blocksize
 op_minus
 l_int|1
+)paren
 )paren
 op_plus
 id|sb-&gt;s_blocksize
@@ -484,7 +487,7 @@ id|UFS_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_readdir: filldir(%s,%lu)&bslash;n&quot;
+l_string|&quot;ufs_readdir: filldir(%s,%u)&bslash;n&quot;
 comma
 id|de-&gt;d_name
 comma
@@ -580,14 +583,12 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek */
-op_amp
-id|ufs_dir_read
+l_int|NULL
 comma
 multiline_comment|/* read */
 l_int|NULL
 comma
 multiline_comment|/* write */
-op_amp
 id|ufs_readdir
 comma
 multiline_comment|/* readdir */
@@ -606,7 +607,6 @@ multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* release */
-op_amp
 id|file_fsync
 comma
 multiline_comment|/* fsync */
@@ -634,7 +634,6 @@ multiline_comment|/* default directory file operations */
 l_int|NULL
 comma
 multiline_comment|/* create */
-op_amp
 id|ufs_lookup
 comma
 multiline_comment|/* lookup */

@@ -82,48 +82,15 @@ OG
 id|mtu
 )paren
 (brace
-r_switch
+r_if
 c_cond
 (paren
 op_star
 id|skb-&gt;data
+op_eq
+id|AX25_P_TEXT
 )paren
 (brace
-r_case
-id|AX25_P_SEGMENT
-suffix:colon
-multiline_comment|/* this is an error, but... */
-id|printk
-c_func
-(paren
-l_string|&quot;ax25_output(): woops, fragmentation of fragment?!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* okay, let&squot;s fragment it further (tss, tss...) */
-r_case
-id|AX25_P_NETROM
-suffix:colon
-multiline_comment|/* err, is this a good idea? */
-r_case
-id|AX25_P_IP
-suffix:colon
-id|mtu
-op_sub_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* Allow for fragment control info */
-id|ka9qfrag
-op_assign
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|ka9qfrag
-op_assign
-l_int|0
-suffix:semicolon
 id|skb_pull
 c_func
 (paren
@@ -133,7 +100,21 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* skip PID */
-r_break
+id|ka9qfrag
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|mtu
+op_sub_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Allow for fragment control info */
+id|ka9qfrag
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|fragno
@@ -182,7 +163,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t; * do _not_ use sock_alloc_send_skb, our socket may have&n;&t;&t;&t; * sk-&gt;shutdown set...&n;&t;&t;&t; *&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t;&t; * do _not_ use sock_alloc_send_skb, our socket may have&n;&t;&t;&t; * sk-&gt;shutdown set...&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -214,7 +195,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ax25_output(): alloc_skb returned NULL&bslash;n&quot;
+l_string|&quot;ax25_output: alloc_skb returned NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

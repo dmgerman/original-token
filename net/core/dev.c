@@ -1395,11 +1395,28 @@ op_amp
 id|BR_UP
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;We pass the bridge a complete frame. This means&n;&t;&t;&t; *&t;recovering the MAC header first.&n;&t;&t;&t; */
+r_int
+id|offset
+op_assign
+id|skb-&gt;data
+op_minus
+id|skb-&gt;mac.raw
+suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+id|skb_push
+c_func
+(paren
+id|skb
+comma
+id|offset
+)paren
+suffix:semicolon
+multiline_comment|/* Put header back on for bridge */
 r_if
 c_cond
 (paren
@@ -1413,6 +1430,15 @@ id|skb
 r_continue
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Pull the MAC header off for the copy going to&n;&t;&t;&t; *&t;the upper layers.&n;&t;&t;&t; */
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|offset
+)paren
+suffix:semicolon
 id|sti
 c_func
 (paren
@@ -1425,7 +1451,7 @@ id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;* &t;Fetch the packet protocol ID. &n;&t;&t;*/
+multiline_comment|/*&n;&t;&t; * &t;Fetch the packet protocol ID. &n;&t;&t; */
 id|type
 op_assign
 id|skb-&gt;protocol

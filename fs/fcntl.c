@@ -426,6 +426,25 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* requiered for SunOS emulation */
+r_if
+c_cond
+(paren
+id|O_NONBLOCK
+op_ne
+id|O_NDELAY
+)paren
+r_if
+c_cond
+(paren
+id|arg
+op_amp
+id|O_NDELAY
+)paren
+id|arg
+op_or_assign
+id|O_NONBLOCK
+suffix:semicolon
 id|filp-&gt;f_flags
 op_and_assign
 op_complement

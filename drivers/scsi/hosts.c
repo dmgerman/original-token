@@ -20,6 +20,18 @@ macro_line|#endif
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#ifdef CONFIG_A3000_SCSI
+macro_line|#include &quot;a3000.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_A2091_SCSI
+macro_line|#include &quot;a2091.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_GVP11_SCSI
+macro_line|#include &quot;gvp11.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI_SCSI
+macro_line|#include &quot;atari_scsi.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 macro_line|#include &quot;advansys.h&quot;
 macro_line|#endif
@@ -98,7 +110,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/hosts.c,v 1.10 1996/04/16 08:09:36 davem Exp $&quot;;&n;*/
+multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux-1.3.95/drivers/scsi/RCS/hosts.c,v 1.7 1996/04/25 22:21:56 root Exp root $&quot;;&n;*/
 multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n; * the system - we do this to ensure that the controller numbering is&n; * always consistent, no matter how the kernel is configured. */
 DECL|macro|NO_CONTROLLER
@@ -119,6 +131,26 @@ id|builtin_scsi_hosts
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_AMIGA
+macro_line|#ifdef CONFIG_A3000_SCSI
+id|A3000_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_A2091_SCSI
+id|A2091_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_GVP11_SCSI
+id|GVP11_SCSI
+comma
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARI
+macro_line|#ifdef CONFIG_ATARI_SCSI
+id|ATARI_SCSI
+comma
+macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 id|ADVANSYS
 comma

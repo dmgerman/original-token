@@ -51,6 +51,8 @@ DECL|macro|SOUND_MAJOR
 mdefine_line|#define SOUND_MAJOR&t;14
 DECL|macro|CDU31A_CDROM_MAJOR
 mdefine_line|#define CDU31A_CDROM_MAJOR 15
+DECL|macro|JOYSTICK_MAJOR
+mdefine_line|#define JOYSTICK_MAJOR&t;15
 DECL|macro|GOLDSTAR_CDROM_MAJOR
 mdefine_line|#define GOLDSTAR_CDROM_MAJOR 16
 DECL|macro|OPTICS_CDROM_MAJOR
@@ -93,10 +95,12 @@ DECL|macro|MATSUSHITA_CDROM4_MAJOR
 mdefine_line|#define MATSUSHITA_CDROM4_MAJOR 28
 DECL|macro|STL_SIOMEMMAJOR
 mdefine_line|#define STL_SIOMEMMAJOR 28
+DECL|macro|ACSI_MAJOR
+mdefine_line|#define ACSI_MAJOR&t;28
 DECL|macro|AZTECH_CDROM_MAJOR
 mdefine_line|#define AZTECH_CDROM_MAJOR 29
 DECL|macro|GRAPHDEV_MAJOR
-mdefine_line|#define GRAPHDEV_MAJOR 29&t;/* SparcLinux /dev/fb */
+mdefine_line|#define GRAPHDEV_MAJOR&t;29&t;/* SparcLinux &amp; Linux/68k /dev/fb */
 DECL|macro|CM206_CDROM_MAJOR
 mdefine_line|#define CM206_CDROM_MAJOR 32
 DECL|macro|IDE2_MAJOR
@@ -107,6 +111,8 @@ DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
 DECL|macro|IDETAPE_MAJOR
 mdefine_line|#define IDETAPE_MAJOR&t;37
+DECL|macro|Z2RAM_MAJOR
+mdefine_line|#define Z2RAM_MAJOR&t;37
 DECL|macro|RISCOM8_NORMAL_MAJOR
 mdefine_line|#define RISCOM8_NORMAL_MAJOR 48
 DECL|macro|RISCOM8_CALLOUT_MAJOR

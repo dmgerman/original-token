@@ -540,6 +540,9 @@ id|NCR5380_reset
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#ifndef NCR5380_queue_command

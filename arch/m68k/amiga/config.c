@@ -1419,7 +1419,7 @@ id|ciab.cra
 op_and_assign
 l_int|0xC0
 suffix:semicolon
-multiline_comment|/* turn off timer A, continous mode, from Eclk */
+multiline_comment|/* turn off timer A, continuous mode, from Eclk */
 id|ciab.talo
 op_assign
 id|jiffy_ticks
@@ -1438,7 +1438,7 @@ op_sub_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* install interrupt service routine for CIAB Timer A */
-multiline_comment|/*&n;     * Please don&squot;t change this to use ciaa, as it interfers with the&n;     * SCSI code. We&squot;ll have to take a look at this later&n;     */
+multiline_comment|/*&n;     * Please don&squot;t change this to use ciaa, as it interferes with the&n;     * SCSI code. We&squot;ll have to take a look at this later&n;     */
 macro_line|#if 0
 id|add_isr
 (paren

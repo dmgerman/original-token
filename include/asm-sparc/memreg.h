@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memreg.h,v 1.5 1995/12/02 20:05:25 davem Exp $ */
+multiline_comment|/* $Id: memreg.h,v 1.6 1996/04/25 06:13:13 davem Exp $ */
 macro_line|#ifndef _SPARC_MEMREG_H
 DECL|macro|_SPARC_MEMREG_H
 mdefine_line|#define _SPARC_MEMREG_H

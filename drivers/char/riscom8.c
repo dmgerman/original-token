@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      linux/drivers/char/riscom.c  -- RISCom/8 multiport serial driver.&n; *&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (begemot@bgm.rosprint.net)&n; *&n; *      This code is loosely based on the Linux serial driver, written by&n; *      Linus Torvalds, Theodore T&squot;so and others. The RISCom/8 card &n; *      programming info was obtained from various drivers for other OSes &n; *&t;(FreeBSD, ISC, etc), but no source code from those drivers were &n; *&t;directly included in this drvier.&n; *&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;Revision 1.0 &n; */
+multiline_comment|/*&n; *      linux/drivers/char/riscom.c  -- RISCom/8 multiport serial driver.&n; *&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (begemot@bgm.rosprint.net)&n; *&n; *      This code is loosely based on the Linux serial driver, written by&n; *      Linus Torvalds, Theodore T&squot;so and others. The RISCom/8 card &n; *      programming info was obtained from various drivers for other OSes &n; *&t;(FreeBSD, ISC, etc), but no source code from those drivers were &n; *&t;directly included in this driver.&n; *&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&t;Revision 1.0 &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -607,7 +607,7 @@ id|reg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Wait for Chanel Command Register ready */
+multiline_comment|/* Wait for Channel Command Register ready */
 DECL|function|rc_wait_CCR
 r_extern
 r_inline
@@ -722,7 +722,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;rc%d: Skipping probe at 0x%03x. I/O adress in use.&bslash;n&quot;
+l_string|&quot;rc%d: Skipping probe at 0x%03x. I/O address in use.&bslash;n&quot;
 comma
 id|board_No
 c_func
@@ -1420,7 +1420,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * &n; *  Inerrupt processing routines.&n; * &n; */
+multiline_comment|/* &n; * &n; *  Interrupt processing routines.&n; * &n; */
 DECL|function|rc_mark_event
 r_extern
 r_inline
@@ -1437,7 +1437,7 @@ r_int
 id|event
 )paren
 (brace
-multiline_comment|/* &n;         * I&squot;m not quite happy with current scheme all serial&n;&t; * drivers use their own BH routine.&n;         * It seem&squot;s this easily can be done with one BH routine&n;&t; * serving for all serial drivers.&n;&t; * For now I must introduce another one - RISCOM8_BH.&n;&t; * Still hope this will be changed in near future.&n;         */
+multiline_comment|/* &n;         * I&squot;m not quite happy with current scheme all serial&n;&t; * drivers use their own BH routine.&n;         * It seems this easily can be done with one BH routine&n;&t; * serving for all serial drivers.&n;&t; * For now I must introduce another one - RISCOM8_BH.&n;&t; * Still hope this will be changed in near future.&n;         */
 id|set_bit
 c_func
 (paren
@@ -3164,7 +3164,7 @@ multiline_comment|/* Drop DTR on all ports */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Setting up port characteristics. &n; * Must be called with disabled interupts&n; */
+multiline_comment|/*&n; * Setting up port characteristics. &n; * Must be called with disabled interrupts&n; */
 DECL|function|rc_change_speed
 r_static
 r_void
@@ -3777,7 +3777,7 @@ op_complement
 id|RCSR_OE
 suffix:semicolon
 )brace
-multiline_comment|/* Enable Hardware FLow Control */
+multiline_comment|/* Enable Hardware Flow Control */
 r_if
 c_cond
 (paren
@@ -4044,7 +4044,7 @@ comma
 id|mcor2
 )paren
 suffix:semicolon
-multiline_comment|/* Enable CD180 trasmitter &amp; receiver */
+multiline_comment|/* Enable CD180 transmitter &amp; receiver */
 id|rc_wait_CCR
 c_func
 (paren
@@ -4074,7 +4074,7 @@ comma
 id|port-&gt;IER
 )paren
 suffix:semicolon
-multiline_comment|/* And finaly set RTS on */
+multiline_comment|/* And finally set RTS on */
 id|rc_out
 c_func
 (paren
@@ -4495,7 +4495,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;rc%d: rc_shutdow_port: bad board count: %d&bslash;n&quot;
+l_string|&quot;rc%d: rc_shutdown_port: bad board count: %d&bslash;n&quot;
 comma
 id|board_No
 c_func
@@ -9195,7 +9195,7 @@ id|riscom_callout_driver
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
-multiline_comment|/*&n; * Called at boot time.&n; * &n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there wiil be no probing at default&n; * addresses in this case.&n; *&n; */
+multiline_comment|/*&n; * Called at boot time.&n; * &n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there will be no probing at default&n; * addresses in this case.&n; *&n; */
 DECL|function|riscom8_setup
 r_void
 id|riscom8_setup
@@ -9390,7 +9390,7 @@ id|iobase3
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * You can setup up to 4 boards (current value of RC_NBOARD)&n; * by specifying &quot;iobase=0xXXX iobase1=0xXXX ...&quot; as isnmod parametr.&n; *&n; */
+multiline_comment|/*&n; * You can setup up to 4 boards (current value of RC_NBOARD)&n; * by specifying &quot;iobase=0xXXX iobase1=0xXXX ...&quot; as insmod parameter.&n; *&n; */
 DECL|function|init_module
 r_int
 id|init_module

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/affs/amigaffs.c&n; *&n; *  (C) 1996  Stefan Reinauer - Modified to compile as Module&n; *&n; *  (C) 1993  Ray Burr - Amiga FFS filesystem.&n; *&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -324,7 +325,7 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/* Get the key number of the first extention block for the file&n;   header pointed to by FH_DATA. */
+multiline_comment|/* Get the key number of the first extension block for the file&n;   header pointed to by FH_DATA. */
 DECL|function|affs_get_extension
 r_int
 id|affs_get_extension
@@ -474,4 +475,57 @@ id|affs_fs_type
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_assign
+id|init_affs_fs
+c_func
+(paren
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+id|register_symtab
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|status
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|affs_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

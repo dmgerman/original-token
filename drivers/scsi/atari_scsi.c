@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * atari_scsi.c -- Device dependant functions for the Atari generic SCSI port&n; *&n; * Copyright 1994 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; *&n; *   Loosely based on the work of Robert De Vries&squot; team and added:&n; *    - working real DMA&n; *    - Falcon support (untested yet!)   ++bjoern fixed and now it works&n; *    - lots of extensions and bug fixes.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; */
+multiline_comment|/*&n; * atari_scsi.c -- Device dependent functions for the Atari generic SCSI port&n; *&n; * Copyright 1994 Roman Hodek &lt;Roman.Hodek@informatik.uni-erlangen.de&gt;&n; *&n; *   Loosely based on the work of Robert De Vries&squot; team and added:&n; *    - working real DMA&n; *    - Falcon support (untested yet!)   ++bjoern fixed and now it works&n; *    - lots of extensions and bug fixes.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; *&n; */
 multiline_comment|/**************************************************************************/
 multiline_comment|/*                                                                        */
 multiline_comment|/* Notes for Falcon SCSI:                                                 */
@@ -24,19 +24,19 @@ multiline_comment|/* other drivers using the ST-DMA, because the queues will sel
 multiline_comment|/* totally empty if there is a lot of disk traffic.                       */
 multiline_comment|/*                                                                        */
 multiline_comment|/* For this reasons I decided to employ a more elaborate scheme:          */
-multiline_comment|/*  - First, we give up the lock everytime we can (for fairness), this    */
+multiline_comment|/*  - First, we give up the lock every time we can (for fairness), this    */
 multiline_comment|/*    means every time a command finishes and there are no other commands */
 multiline_comment|/*    on the disconnected queue.                                          */
 multiline_comment|/*  - If there are others waiting to lock the DMA chip, we stop           */
-multiline_comment|/*    issueing commands, i.e. moving them onto the issue queue.           */
+multiline_comment|/*    issuing commands, i.e. moving them onto the issue queue.           */
 multiline_comment|/*    Because of that, the disconnected queue will run empty in a         */
 multiline_comment|/*    while. Instead we go to sleep on a &squot;fairness_queue&squot;.                */
 multiline_comment|/*  - If the lock is released, all processes waiting on the fairness      */
-multiline_comment|/*    queue will be woken. The first of them trys to re-lock the DMA,     */
+multiline_comment|/*    queue will be woken. The first of them tries to re-lock the DMA,     */
 multiline_comment|/*    the others wait for the first to finish this task. After that,      */
 multiline_comment|/*    they can all run on and do their commands...                        */
 multiline_comment|/* This sounds complicated (and it is it :-(), but it seems to be a       */
-multiline_comment|/* good compromise between fairness and performance: As long as noone     */
+multiline_comment|/* good compromise between fairness and performance: As long as no one     */
 multiline_comment|/* else wants to work with the ST-DMA chip, SCSI can go along as          */
 multiline_comment|/* usual. If now someone else comes, this behaviour is changed to a       */
 multiline_comment|/* &quot;fairness mode&quot;: just already initiated commands are finished and      */
@@ -718,7 +718,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Look if it was the DMA that has interrupted: First possibility&n;&t; * is that a bus error occured...&n;&t; */
+multiline_comment|/* Look if it was the DMA that has interrupted: First possibility&n;&t; * is that a bus error occurred...&n;&t; */
 r_if
 c_cond
 (paren
@@ -758,7 +758,7 @@ l_string|&quot;SCSI DMA bus error -- bad DMA programming!&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* If the DMA is active but not finished, we have the the case&n;&t; * that some other 5380 interrupt occured within the DMA transfer.&n;&t; * This means we have residual bytes, if the desired end address&n;&t; * is not yet reached. Maybe we have to fetch some bytes from the&n;&t; * rest data register, too. The residual must be calculated from&n;&t; * the address pointer, not the counter register, because only the&n;&t; * addr reg counts bytes not yet written and pending in the rest&n;&t; * data reg!&n;&t; */
+multiline_comment|/* If the DMA is active but not finished, we have the the case&n;&t; * that some other 5380 interrupt occurred within the DMA transfer.&n;&t; * This means we have residual bytes, if the desired end address&n;&t; * is not yet reached. Maybe we have to fetch some bytes from the&n;&t; * rest data register, too. The residual must be calculated from&n;&t; * the address pointer, not the counter register, because only the&n;&t; * addr reg counts bytes not yet written and pending in the rest&n;&t; * data reg!&n;&t; */
 r_if
 c_cond
 (paren
@@ -1380,7 +1380,7 @@ id|oldflags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This function manages the locking of the ST-DMA.&n; * If the DMA isn&squot;t locked already for SCSI, it trys to lock it by&n; * calling stdma_lock(). But if the DMA is locked by the SCSI code and&n; * there are other drivers waiting for the chip, we do not issue the&n; * command immediately but wait on &squot;falcon_fairness_queue&squot;. We will be&n; * waked up when the DMA is unlocked by some SCSI interrupt. After that&n; * we try to get the lock again.&n; * But we must be prepared that more than one instance of&n; * falcon_get_lock() is waiting on the fairness queue. They should not&n; * try all at once to call stdma_lock(), one is enough! For that, the&n; * first one sets &squot;falcon_trying_lock&squot;, others that see that variable&n; * set wait on the queue &squot;falcon_try_wait&squot;.&n; * Complicated, complicated.... Sigh...&n; */
+multiline_comment|/* This function manages the locking of the ST-DMA.&n; * If the DMA isn&squot;t locked already for SCSI, it tries to lock it by&n; * calling stdma_lock(). But if the DMA is locked by the SCSI code and&n; * there are other drivers waiting for the chip, we do not issue the&n; * command immediately but wait on &squot;falcon_fairness_queue&squot;. We will be&n; * waked up when the DMA is unlocked by some SCSI interrupt. After that&n; * we try to get the lock again.&n; * But we must be prepared that more than one instance of&n; * falcon_get_lock() is waiting on the fairness queue. They should not&n; * try all at once to call stdma_lock(), one is enough! For that, the&n; * first one sets &squot;falcon_trying_lock&squot;, others that see that variable&n; * set wait on the queue &squot;falcon_try_wait&squot;.&n; * Complicated, complicated.... Sigh...&n; */
 DECL|function|falcon_get_lock
 r_static
 r_void
@@ -1523,7 +1523,7 @@ l_string|&quot;Falcon SCSI: someone stole the lock :-(&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* This is the wrapper function for NCR5380_queue_command(). It just&n; * trys to get the lock on the ST-DMA (see above) and then calls the&n; * original function.&n; */
+multiline_comment|/* This is the wrapper function for NCR5380_queue_command(). It just&n; * tries to get the lock on the ST-DMA (see above) and then calls the&n; * original function.&n; */
 macro_line|#if 0
 r_int
 id|atari_queue_command
@@ -2103,7 +2103,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|atari_dma_bufffer
+id|atari_dma_buffer
 )paren
 id|scsi_init_free
 (paren
@@ -2461,6 +2461,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
+id|reset_flags
 )paren
 (brace
 r_int
@@ -2531,6 +2535,8 @@ id|NCR5380_reset
 c_func
 (paren
 id|cmd
+comma
+id|reset_flags
 )paren
 suffix:semicolon
 multiline_comment|/* Re-enable ints */
@@ -2793,7 +2799,7 @@ id|addr
 suffix:semicolon
 multiline_comment|/* Needed for calculating residual later. */
 multiline_comment|/* Cache cleanup stuff: On writes, push any dirty cache out before sending&n;&t; * it to the peripheral. (Must be done before DMA setup, since at least&n;&t; * the ST-DMA begins to fill internal buffers right after setup. For&n;&t; * reads, invalidate any cache, may be altered after DMA without CPU&n;&t; * knowledge.&n;&t; * &n;&t; * ++roman: For the Medusa, there&squot;s no need at all for that cache stuff,&n;&t; * because the hardware does bus snooping (fine!).&n;&t; */
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 id|addr

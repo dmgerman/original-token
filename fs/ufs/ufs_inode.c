@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_inode.c,v 1.1 1996/04/21 14:41:12 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_inode.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_inode.c,v 1.3 1996/04/25 09:12:05 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

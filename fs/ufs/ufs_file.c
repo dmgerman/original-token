@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_file.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_file.c,v 1.1 1996/04/21 14:41:08 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_file.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_file.c,v 1.3 1996/04/25 09:12:02 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/*&n; * Return values:&n; *   0:  bmap failed&n; *  nonzero: absolute &quot;block&quot; number&n; */
 DECL|function|ufs_bmap
@@ -167,7 +167,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_bmap: can&squot;t map block %lu, ino %lu&bslash;n&quot;
+l_string|&quot;ufs_bmap: can&squot;t map block %u, ino %lu&bslash;n&quot;
 comma
 id|block
 op_plus
@@ -202,7 +202,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_bmap: imap ino %lu block %lu phys %lu&bslash;n&quot;
+l_string|&quot;ufs_bmap: imap ino %lu block %u phys %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -246,7 +246,6 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* lseek */
-op_amp
 id|generic_file_read
 comma
 multiline_comment|/* read */
@@ -262,7 +261,6 @@ multiline_comment|/* select */
 l_int|NULL
 comma
 multiline_comment|/* ioctl */
-op_amp
 id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
@@ -272,11 +270,9 @@ multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* release */
-op_amp
 id|file_fsync
 comma
 multiline_comment|/* fsync */
-multiline_comment|/* XXX - is this ok? */
 l_int|NULL
 comma
 multiline_comment|/* fasync */
@@ -331,14 +327,12 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-op_amp
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-op_amp
 id|ufs_bmap
 comma
 multiline_comment|/* bmap */

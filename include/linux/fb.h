@@ -2,10 +2,6 @@ macro_line|#ifndef _LINUX_FB_H
 DECL|macro|_LINUX_FB_H
 mdefine_line|#define _LINUX_FB_H
 multiline_comment|/* Definitions of frame buffers&t;&t;&t;&t;&t;&t;*/
-macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#endif
 multiline_comment|/* ioctls&n;   0x46 is &squot;F&squot;&t;&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|FBIOGET_VSCREENINFO
 mdefine_line|#define FBIOGET_VSCREENINFO &t;0x4600
@@ -93,11 +89,16 @@ id|u_short
 id|ywrapstep
 suffix:semicolon
 multiline_comment|/* zero if no hardware ywrap    */
+DECL|member|line_length
+id|u_long
+id|line_length
+suffix:semicolon
+multiline_comment|/* length of a line in bytes    */
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|11
+l_int|9
 )braket
 suffix:semicolon
 multiline_comment|/* Reserved for future compatibility */
@@ -170,6 +171,10 @@ DECL|macro|FB_VMODE_MASK
 mdefine_line|#define FB_VMODE_MASK&t;&t;255
 DECL|macro|FB_VMODE_YWRAP
 mdefine_line|#define FB_VMODE_YWRAP&t;&t;256&t;/* ywrap instead of panning     */
+DECL|macro|FB_VMODE_SMOOTH_XPAN
+mdefine_line|#define FB_VMODE_SMOOTH_XPAN&t;512&t;/* smooth xpan possible (internally used) */
+DECL|macro|FB_VMODE_CONUPDATE
+mdefine_line|#define FB_VMODE_CONUPDATE&t;512&t;/* don&squot;t update x/yoffset&t;*/
 DECL|struct|fb_var_screeninfo
 r_struct
 id|fb_var_screeninfo
@@ -365,11 +370,12 @@ multiline_comment|/* transparency, can be NULL */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/fs.h&gt;
 DECL|struct|fb_ops
 r_struct
 id|fb_ops
 (brace
-multiline_comment|/* get non setable parameters&t;*/
+multiline_comment|/* get non settable parameters&t;*/
 DECL|member|fb_get_fix
 r_int
 (paren
@@ -384,7 +390,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* get setable parameters&t;*/
+multiline_comment|/* get settable parameters&t;*/
 DECL|member|fb_get_var
 r_int
 (paren
@@ -399,7 +405,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* set setable parameters&t;*/
+multiline_comment|/* set settable parameters&t;*/
 DECL|member|fb_set_var
 r_int
 (paren
@@ -523,132 +529,6 @@ DECL|struct|display
 r_struct
 id|display
 (brace
-multiline_comment|/*&n; * As long as the old Amiga screen driver is being used, we have to&n; * include these old parameters.&n; */
-macro_line|#if defined(CONFIG_AMIGA)
-DECL|member|scr_max_height
-id|ushort
-id|scr_max_height
-suffix:semicolon
-multiline_comment|/* screen dimensions */
-DECL|member|scr_max_width
-id|ushort
-id|scr_max_width
-suffix:semicolon
-DECL|member|scr_height
-id|ushort
-id|scr_height
-suffix:semicolon
-DECL|member|scr_width
-id|ushort
-id|scr_width
-suffix:semicolon
-DECL|member|scr_depth
-id|ushort
-id|scr_depth
-suffix:semicolon
-DECL|member|bytes_per_row
-r_int
-id|bytes_per_row
-suffix:semicolon
-multiline_comment|/* offset to one line below */
-DECL|member|crsrcol
-id|ulong
-id|crsrcol
-suffix:semicolon
-DECL|member|scroll_latch
-id|ushort
-id|scroll_latch
-suffix:semicolon
-multiline_comment|/* Vblank support for hardware scroll */
-DECL|member|y_wrap
-id|ushort
-id|y_wrap
-suffix:semicolon
-DECL|member|cursor_latch
-id|ushort
-id|cursor_latch
-suffix:semicolon
-multiline_comment|/* Hardware cursor */
-DECL|member|cursor
-DECL|member|dummy
-id|ushort
-op_star
-id|cursor
-comma
-op_star
-id|dummy
-suffix:semicolon
-DECL|member|cursor_flash
-id|ushort
-id|cursor_flash
-suffix:semicolon
-DECL|member|cursor_visible
-id|ushort
-id|cursor_visible
-suffix:semicolon
-multiline_comment|/* Some chipreg values we need to rebuild copper lists */
-DECL|member|diwstrt_v
-DECL|member|diwstrt_h
-id|ushort
-id|diwstrt_v
-comma
-id|diwstrt_h
-suffix:semicolon
-multiline_comment|/* display window control */
-DECL|member|diwstop_v
-DECL|member|diwstop_h
-id|ushort
-id|diwstop_v
-comma
-id|diwstop_h
-suffix:semicolon
-DECL|member|bplcon0
-id|ushort
-id|bplcon0
-suffix:semicolon
-multiline_comment|/* display mode */
-DECL|member|htotal
-id|ushort
-id|htotal
-suffix:semicolon
-DECL|member|bitplane
-id|u_char
-op_star
-id|bitplane
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* pointers to display bitplanes */
-DECL|member|plane_size
-id|ulong
-id|plane_size
-suffix:semicolon
-DECL|member|coplist1hdr
-id|ushort
-op_star
-id|coplist1hdr
-suffix:semicolon
-multiline_comment|/* List 1 static  component */
-DECL|member|coplist1dyn
-id|ushort
-op_star
-id|coplist1dyn
-suffix:semicolon
-multiline_comment|/* List 1 dynamic component */
-DECL|member|coplist2hdr
-id|ushort
-op_star
-id|coplist2hdr
-suffix:semicolon
-multiline_comment|/* List 2 static  component */
-DECL|member|coplist2dyn
-id|ushort
-op_star
-id|coplist2dyn
-suffix:semicolon
-multiline_comment|/* List 2 dynamic component */
-macro_line|#endif
 multiline_comment|/* Filled in by the frame buffer device */
 DECL|member|var
 r_struct
@@ -693,6 +573,11 @@ id|u_short
 id|ywrapstep
 suffix:semicolon
 multiline_comment|/* zero if no hardware ywrap */
+DECL|member|line_length
+id|u_long
+id|line_length
+suffix:semicolon
+multiline_comment|/* length of a line in bytes */
 DECL|member|can_soft_blank
 id|u_short
 id|can_soft_blank
@@ -726,6 +611,11 @@ op_star
 id|conp
 suffix:semicolon
 multiline_comment|/* pointer to console data */
+DECL|member|vrows
+r_int
+id|vrows
+suffix:semicolon
+multiline_comment|/* number of virtual rows */
 DECL|member|cursor_x
 r_int
 id|cursor_x
@@ -768,6 +658,11 @@ DECL|member|fontwidth
 r_int
 id|fontwidth
 suffix:semicolon
+DECL|member|userfont
+r_int
+id|userfont
+suffix:semicolon
+multiline_comment|/* != 0 if fontdata kmalloc()ed */
 DECL|member|dispsw
 r_struct
 id|display_switch
@@ -918,14 +813,30 @@ DECL|struct|fb_var_cursorinfo
 r_struct
 id|fb_var_cursorinfo
 (brace
+DECL|member|width
+id|u_short
+id|width
+suffix:semicolon
+DECL|member|height
+id|u_short
+id|height
+suffix:semicolon
+DECL|member|xspot
+id|u_short
+id|xspot
+suffix:semicolon
+DECL|member|yspot
+id|u_short
+id|yspot
+suffix:semicolon
 DECL|member|data
-id|u_long
+id|u_char
 id|data
 (braket
-l_int|256
+l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/* max. 64x64 (ilbm, 2 planes)&t;*/
+multiline_comment|/* field with [height][width]        */
 )brace
 suffix:semicolon
 DECL|struct|fb_cursorstate
@@ -952,6 +863,76 @@ DECL|macro|FB_CURSOR_ON
 mdefine_line|#define FB_CURSOR_ON&t;&t;1
 DECL|macro|FB_CURSOR_FLASH
 mdefine_line|#define FB_CURSOR_FLASH&t;&t;2
+DECL|macro|FBCMD_DRAWLINE
+mdefine_line|#define FBCMD_DRAWLINE&t;&t;0x4621
+DECL|macro|FBCMD_MOVE
+mdefine_line|#define FBCMD_MOVE&t;&t;0x4622
+DECL|macro|FB_LINE_XOR
+mdefine_line|#define FB_LINE_XOR&t;1
+DECL|macro|FB_LINE_BOX
+mdefine_line|#define FB_LINE_BOX&t;2
+DECL|macro|FB_LINE_FILLED
+mdefine_line|#define FB_LINE_FILLED&t;4
+DECL|struct|fb_line
+r_struct
+id|fb_line
+(brace
+DECL|member|start_x
+r_int
+id|start_x
+suffix:semicolon
+DECL|member|start_y
+r_int
+id|start_y
+suffix:semicolon
+DECL|member|end_x
+r_int
+id|end_x
+suffix:semicolon
+DECL|member|end_y
+r_int
+id|end_y
+suffix:semicolon
+DECL|member|color
+r_int
+id|color
+suffix:semicolon
+DECL|member|option
+r_int
+id|option
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|fb_move
+r_struct
+id|fb_move
+(brace
+DECL|member|src_x
+r_int
+id|src_x
+suffix:semicolon
+DECL|member|src_y
+r_int
+id|src_y
+suffix:semicolon
+DECL|member|dest_x
+r_int
+id|dest_x
+suffix:semicolon
+DECL|member|dest_y
+r_int
+id|dest_y
+suffix:semicolon
+DECL|member|height
+r_int
+id|height
+suffix:semicolon
+DECL|member|width
+r_int
+id|width
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif /* Preliminary */
 macro_line|#endif /* _LINUX_FB_H */
 eof

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
+macro_line|#include &lt;linux/affs_fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 r_extern
@@ -172,6 +173,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_HPFS_FS
 id|init_hpfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AFFS_FS
+id|init_affs_fs
 c_func
 (paren
 )paren

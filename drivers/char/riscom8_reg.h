@@ -129,7 +129,7 @@ multiline_comment|/* Channel Address Register (R/W) */
 DECL|macro|CAR_CHAN
 mdefine_line|#define CAR_CHAN        0x07    /* Channel Number Mask                     */
 DECL|macro|CAR_A7
-mdefine_line|#define CAR_A7          0x08    /* A7 Address Extention (unused)           */
+mdefine_line|#define CAR_A7          0x08    /* A7 Address Extension (unused)           */
 multiline_comment|/* Receive Character Status Register (R/O) */
 DECL|macro|RCSR_TOUT
 mdefine_line|#define RCSR_TOUT       0x80    /* Rx Timeout                              */

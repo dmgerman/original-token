@@ -321,14 +321,12 @@ id|current-&gt;tss.trap_no
 op_assign
 l_int|14
 suffix:semicolon
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return

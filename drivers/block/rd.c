@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; */
+multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; *&n; *  Added initrd: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *&n; * 4/25/96 : Made ramdisk size a parameter (default is now 4MB) &n; *&t;&t;- Chad Page&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -25,11 +25,9 @@ multiline_comment|/*&n; * 35 has been officially registered as the RAMDISK major
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
-multiline_comment|/* These *should* be defined as parameters */
+multiline_comment|/* The ramdisk size is now a parameter */
 DECL|macro|NUM_RAMDISKS
-mdefine_line|#define NUM_RAMDISKS 8
-DECL|macro|RD_DEFAULTSIZE
-mdefine_line|#define RD_DEFAULTSIZE&t;2880&t;/* 2.88 MB */
+mdefine_line|#define NUM_RAMDISKS 16&t;&t;/* This cannot be overridden (yet) */ 
 macro_line|#ifndef MODULE
 multiline_comment|/* We don&squot;t have to load ramdisks or gunzip them in a module... */
 DECL|macro|RD_LOADER
@@ -109,6 +107,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* starting block # of image */
+DECL|variable|rd_size
+r_int
+id|rd_size
+op_assign
+l_int|4096
+suffix:semicolon
+multiline_comment|/* Size of the ramdisks */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 DECL|variable|initrd_start
 DECL|variable|initrd_end
@@ -783,7 +788,7 @@ id|i
 )braket
 op_assign
 (paren
-id|RD_DEFAULTSIZE
+id|rd_size
 op_star
 l_int|1024
 )paren
@@ -802,6 +807,16 @@ id|MAJOR_NR
 )braket
 op_assign
 id|rd_blocksizes
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Ramdisk driver initialized : %d ramdisks of %dK size&bslash;n&quot;
+comma
+id|NUM_RAMDISKS
+comma
+id|rd_size
+)paren
 suffix:semicolon
 r_return
 l_int|0

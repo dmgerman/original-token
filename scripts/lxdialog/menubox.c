@@ -1101,6 +1101,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|key
+OL
+l_int|256
+op_logical_and
 id|isalpha
 c_func
 (paren

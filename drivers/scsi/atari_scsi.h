@@ -50,6 +50,9 @@ id|atari_scsi_reset
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_int
@@ -85,7 +88,7 @@ DECL|macro|atari_scsi_release
 mdefine_line|#define atari_scsi_release NULL
 macro_line|#endif
 multiline_comment|/* The values for CMD_PER_LUN and CAN_QUEUE are somehow arbitrary. Higher&n; * values should work, too; try it! (but cmd_per_lun costs memory!) */
-multiline_comment|/* But there seems to be a bug somewhere that requires CAN_QUEUE to be&n; * 2*CMD_OER_LUN. At least on a TT, no suprious timeouts seen since&n; * changed CMD_PER_LUN... */
+multiline_comment|/* But there seems to be a bug somewhere that requires CAN_QUEUE to be&n; * 2*CMD_OER_LUN. At least on a TT, no spurious timeouts seen since&n; * changed CMD_PER_LUN... */
 multiline_comment|/* Note: The Falcon currently uses 8/1 setting due to unsolved problems with&n; * cmd_per_lun != 1 */
 DECL|macro|ATARI_TT_CAN_QUEUE
 mdefine_line|#define ATARI_TT_CAN_QUEUE&t;&t;16

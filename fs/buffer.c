@@ -877,7 +877,6 @@ id|ncount
 op_increment
 suffix:semicolon
 )brace
-suffix:semicolon
 id|bh-&gt;b_count
 op_decrement
 suffix:semicolon
@@ -1716,7 +1715,6 @@ multiline_comment|/* Free list entries should not be&n;&t;&t;&t;&t;&t;      in t
 r_return
 suffix:semicolon
 )brace
-suffix:semicolon
 id|nr_buffers_type
 (braket
 id|bh-&gt;b_list
@@ -1968,7 +1966,6 @@ op_assign
 id|bh
 suffix:semicolon
 )brace
-suffix:semicolon
 id|nr_free
 (braket
 id|isize
@@ -4462,28 +4459,24 @@ id|bh
 r_return
 id|bh
 suffix:semicolon
+r_else
+id|ll_rw_block
+c_func
+(paren
+id|READ
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
 id|blocks
 op_assign
 (paren
-(paren
 id|filesize
-op_amp
-(paren
-id|bufsize
 op_minus
-l_int|1
-)paren
-)paren
-op_minus
-(paren
 id|pos
-op_amp
-(paren
-id|bufsize
-op_minus
-l_int|1
-)paren
-)paren
 )paren
 op_rshift
 (paren
@@ -4496,7 +4489,7 @@ r_if
 c_cond
 (paren
 id|blocks
-OG
+OL
 (paren
 id|read_ahead
 (braket
@@ -4534,6 +4527,7 @@ id|blocks
 op_assign
 id|NBUF
 suffix:semicolon
+multiline_comment|/*&t;if (blocks) printk(&quot;breada (new) %d blocks&bslash;n&quot;,blocks); */
 id|bhlist
 (braket
 l_int|0
@@ -4593,6 +4587,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_else
 id|bhlist
 (braket
 id|j
@@ -4603,14 +4598,27 @@ id|bh
 suffix:semicolon
 )brace
 multiline_comment|/* Request the read for these buffers, and then release them */
+r_if
+c_cond
+(paren
+id|j
+OG
+l_int|1
+)paren
 id|ll_rw_block
 c_func
 (paren
-id|READ
+id|READA
 comma
+(paren
 id|j
+op_minus
+l_int|1
+)paren
 comma
 id|bhlist
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_for
@@ -9052,7 +9060,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -9220,6 +9227,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+suffix:semicolon
 multiline_comment|/* Having func 0 used to launch the actual bdflush and then never&n;&t;return (unless explicitly killed). We return zero here to &n;&t;remain semi-compatible with present update(8) programs. */
 r_return
 l_int|0

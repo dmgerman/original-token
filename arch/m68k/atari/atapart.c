@@ -393,7 +393,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nID of extended partion is not XGM!&bslash;n&quot;
+l_string|&quot;&bslash;nID of extended partition is not XGM!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|brelse
@@ -505,7 +505,7 @@ id|rs-&gt;icdpart
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/* sanity check: no ICD format if first partion invalid */
+multiline_comment|/* sanity check: no ICD format if first partition invalid */
 r_if
 c_cond
 (paren

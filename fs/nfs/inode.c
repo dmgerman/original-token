@@ -1315,6 +1315,12 @@ suffix:semicolon
 macro_line|#endif
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|exit_mm
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|current-&gt;session
 op_assign
 l_int|1

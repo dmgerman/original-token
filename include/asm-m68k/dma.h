@@ -1,7 +1,7 @@
 macro_line|#ifndef _M68K_DMA_H
 DECL|macro|_M68K_DMA_H
 mdefine_line|#define _M68K_DMA_H 1
-multiline_comment|/* Don&squot;t define MAX_DMA_ADDRESS; it&squot;s useless on the m68k and any&n;   occurence should be flagged as an error.  */
+multiline_comment|/* Don&squot;t define MAX_DMA_ADDRESS; it&squot;s useless on the m68k and any&n;   occurrence should be flagged as an error.  */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
 r_extern

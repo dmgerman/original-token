@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** bootstrap.c -- Load and launch the Atari Linux kernel&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** History:&n;**  10 Dec 1995 BOOTP/TFTP support (Roman)&n;**&t;03 Oct 1995 Allow kernel to be loaded to TT ram again (Andreas)&n;**&t;11 Jul 1995 Add support for ELF format kernel (Andreas)&n;**&t;16 Jun 1995 Adapted to Linux 1.2: kernel always loaded into ST ram&n;**&t;&t;    (Andreas)&n;**      14 Nov 1994 YANML (Yet Another New Memory Layout :-) kernel&n;**&t;&t;    start address is KSTART_ADDR + PAGE_SIZE, this&n;**&t;&t;    does not need the ugly klugde with&n;**&t;&t;    -fwritable-strings (++andreas)&n;**      09 Sep 1994 Adapted to the new memory layout: All the boot_info entry&n;**                  mentions all ST-Ram and the mover is located somewhere&n;**                  in the middle of memory (roman)&n;**                  Added the default arguments file known from the other&n;**                  bootstrap version&n;**      19 Feb 1994 Changed everything so that it works? (rdv)&n;**      14 Mar 1994 New mini-copy routine used (rdv)&n;*/
+multiline_comment|/*&n;** bootstrap.c -- Load and launch the Atari Linux kernel&n;**&n;** Copyright 1993 by Arjan Knor&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** History:&n;**  10 Dec 1995 BOOTP/TFTP support (Roman)&n;**&t;03 Oct 1995 Allow kernel to be loaded to TT ram again (Andreas)&n;**&t;11 Jul 1995 Add support for ELF format kernel (Andreas)&n;**&t;16 Jun 1995 Adapted to Linux 1.2: kernel always loaded into ST ram&n;**&t;&t;    (Andreas)&n;**      14 Nov 1994 YANML (Yet Another New Memory Layout :-) kernel&n;**&t;&t;    start address is KSTART_ADDR + PAGE_SIZE, this&n;**&t;&t;    does not need the ugly kludge with&n;**&t;&t;    -fwritable-strings (++andreas)&n;**      09 Sep 1994 Adapted to the new memory layout: All the boot_info entry&n;**                  mentions all ST-Ram and the mover is located somewhere&n;**                  in the middle of memory (roman)&n;**                  Added the default arguments file known from the other&n;**                  bootstrap version&n;**      19 Feb 1994 Changed everything so that it works? (rdv)&n;**      14 Mar 1994 New mini-copy routine used (rdv)&n;*/
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;unistd.h&gt;
@@ -2881,7 +2881,7 @@ id|elf_kernel
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* A few plausability checks */
+multiline_comment|/* A few plausibility checks */
 r_if
 c_cond
 (paren
@@ -2993,7 +2993,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Unable to read programm headers from %s&bslash;n&quot;
+l_string|&quot;Unable to read program headers from %s&bslash;n&quot;
 comma
 id|kernel_name
 )paren

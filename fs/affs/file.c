@@ -297,7 +297,7 @@ r_return
 id|key
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * affs_file_read() is also needed by the directory read-routine,&n; * so it&squot;s not static. NOTE! reading directories directly is a bad idea,&n; * but has to be supported for now for compatability reasons with older&n; * versions.&n; */
+multiline_comment|/*&n; * affs_file_read() is also needed by the directory read-routine,&n; * so it&squot;s not static. NOTE! reading directories directly is a bad idea,&n; * but has to be supported for now for compatibility reasons with older&n; * versions.&n; */
 DECL|function|affs_file_read
 r_int
 id|affs_file_read

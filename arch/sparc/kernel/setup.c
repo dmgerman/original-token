@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.60 1996/04/04 16:30:28 tridge Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.62 1996/04/25 09:11:33 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -782,11 +782,6 @@ id|total
 comma
 id|i
 comma
-id|panic_stuff
-(braket
-l_int|2
-)braket
-comma
 id|packed
 suffix:semicolon
 macro_line|#if CONFIG_AP1000
@@ -813,31 +808,6 @@ op_assign
 l_char|&squot;m&squot;
 suffix:semicolon
 multiline_comment|/* ugly :-( */
-macro_line|#endif
-macro_line|#if 0
-multiline_comment|/* Always reboot on panic, but give 5 seconds to hit L1-A&n;&t; * and look at debugging info if desired.&n;&t; */
-id|panic_stuff
-(braket
-l_int|0
-)braket
-op_assign
-l_int|1
-suffix:semicolon
-id|panic_stuff
-(braket
-l_int|1
-)braket
-op_assign
-l_int|5
-suffix:semicolon
-id|panic_setup
-c_func
-(paren
-l_int|0
-comma
-id|panic_stuff
-)paren
-suffix:semicolon
 macro_line|#endif
 id|sparc_ttable
 op_assign

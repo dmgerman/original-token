@@ -251,7 +251,7 @@ mdefine_line|#define&t;MMU060_TT&t;(0x00180000)&t;/* transfer type (TT) bits */
 DECL|macro|MMU060_TM
 mdefine_line|#define&t;MMU060_TM&t;(0x00070000)&t;/* transfer modifier (TM) bits */
 DECL|macro|MMU060_IO
-mdefine_line|#define&t;MMU060_IO&t;(0x00008000)&t;/* intruction or operand */
+mdefine_line|#define&t;MMU060_IO&t;(0x00008000)&t;/* instruction or operand */
 DECL|macro|MMU060_PBE
 mdefine_line|#define&t;MMU060_PBE&t;(0x00004000)&t;/* push buffer bus error */
 DECL|macro|MMU060_SBE

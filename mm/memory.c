@@ -4686,14 +4686,12 @@ op_logical_neg
 id|page
 )paren
 (brace
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGBUS
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|flush_cache_page

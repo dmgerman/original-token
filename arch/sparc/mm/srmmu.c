@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.59 1996/04/21 10:32:21 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@pool.informatik.rwth-aachen.de)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.62 1996/04/25 09:11:47 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@pool.informatik.rwth-aachen.de)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3272,6 +3272,16 @@ r_int
 id|page
 )paren
 (brace
+id|tsunami_flush_icache
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tsunami_flush_dcache
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* However, Tsunami is not IO coherent. */
 DECL|function|tsunami_flush_page_for_dma
@@ -3285,6 +3295,11 @@ r_int
 id|page
 )paren
 (brace
+id|tsunami_flush_icache
+c_func
+(paren
+)paren
+suffix:semicolon
 id|tsunami_flush_dcache
 c_func
 (paren
@@ -3853,11 +3868,6 @@ c_func
 r_void
 )paren
 (brace
-id|viking_flush_icache
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|viking_flush_cache_mm
 r_static
@@ -3882,11 +3892,6 @@ id|NO_CONTEXT
 (brace
 macro_line|#endif
 id|flush_user_windows
-c_func
-(paren
-)paren
-suffix:semicolon
-id|viking_flush_icache
 c_func
 (paren
 )paren
@@ -3926,11 +3931,6 @@ id|NO_CONTEXT
 (brace
 macro_line|#endif
 id|flush_user_windows
-c_func
-(paren
-)paren
-suffix:semicolon
-id|viking_flush_icache
 c_func
 (paren
 )paren
@@ -3977,20 +3977,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_flags
-op_amp
-id|VM_EXEC
-)paren
-(brace
-id|viking_flush_icache
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifndef __SMP__
 )brace
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pconf.h,v 1.2 1995/11/25 02:32:20 davem Exp $&n; * pconf.h: pathconf() and fpathconf() defines for SunOS&n; *          system call compatibility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pconf.h,v 1.3 1996/04/25 06:13:25 davem Exp $&n; * pconf.h: pathconf() and fpathconf() defines for SunOS&n; *          system call compatibility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PCONF_H
 DECL|macro|_SPARC_PCONF_H
 mdefine_line|#define _SPARC_PCONF_H

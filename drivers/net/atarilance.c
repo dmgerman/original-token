@@ -416,7 +416,7 @@ DECL|member|dirty_tx
 r_int
 id|dirty_tx
 suffix:semicolon
-multiline_comment|/* Ring entries to be freeed. */
+multiline_comment|/* Ring entries to be freed. */
 multiline_comment|/* copy function */
 DECL|member|memcpy_f
 r_void
@@ -608,7 +608,7 @@ mdefine_line|#define CSR3&t;3&t;&t;/* misc */
 DECL|macro|CSR8
 mdefine_line|#define CSR8&t;8&t;  &t;/* address filter */
 DECL|macro|CSR15
-mdefine_line|#define CSR15&t;15&t;&t;/* promiscous mode */
+mdefine_line|#define CSR15&t;15&t;&t;/* promiscuous mode */
 multiline_comment|/* CSR0 */
 multiline_comment|/* (R=readable, W=writeable, S=set on write, C=clear on write) */
 DECL|macro|CSR0_INIT

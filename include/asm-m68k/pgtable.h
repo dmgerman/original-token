@@ -275,7 +275,7 @@ DECL|macro|__S110
 mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
-multiline_comment|/* zero page used for unitialized stuff */
+multiline_comment|/* zero page used for uninitialized stuff */
 r_extern
 r_int
 r_int
@@ -2623,24 +2623,31 @@ r_int
 id|len
 )paren
 suffix:semicolon
-macro_line|#if 0
-mdefine_line|#define flush_cache_all()&t;&t;    do { &bslash;&n;                   if (m68k_is040or060 &gt;= 4) &bslash;&n;                     __asm__ __volatile__ (&quot;.word 0xf478&bslash;n&quot; ::); &bslash;&n;                                            } while (0)
-mdefine_line|#define flush_cache_mm(mm)&t;&t;   flush_cache_all()
-mdefine_line|#define flush_cache_range(mm, start, end)  flush_cache_all()
-mdefine_line|#define flush_cache_page(vma, vmaddr)&t;   flush_cache_all()
-mdefine_line|#define flush_page_to_ram(page)&t;&t;   flush_cache_all()
-macro_line|#else
-DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * Could someone take a look at these?&n; */
+r_extern
+r_void
+id|flush_cache_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;do { } while (0)
+mdefine_line|#define flush_cache_mm(mm)&t;&t;   flush_cache_all()
 DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm, start, end)&t;do { } while (0)
+mdefine_line|#define flush_cache_range(mm, start, end)  flush_cache_all()
 DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
-macro_line|#endif
+mdefine_line|#define flush_cache_page(vma, addr)&t;   flush_cache_all()
+r_extern
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
 multiline_comment|/* cache code */
 DECL|macro|FLUSH_I_AND_D
 mdefine_line|#define FLUSH_I_AND_D&t;(0x00000808)
@@ -2731,11 +2738,18 @@ id|pte
 )paren
 (brace
 )brace
-DECL|macro|SWP_TYPE
+multiline_comment|/*&n; * I don&squot;t know what is going on here, but since these were changed,&n; * swapping haven&squot;t been working on the 68040.&n; */
+macro_line|#if 0
 mdefine_line|#define SWP_TYPE(entry)  (((entry) &gt;&gt; 2) &amp; 0x7f)
-DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 9)
-DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 9))
+macro_line|#else
+DECL|macro|SWP_TYPE
+mdefine_line|#define SWP_TYPE(entry)  (((entry) &amp; 0x1fc) &gt;&gt; 2)
+DECL|macro|SWP_OFFSET
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
+DECL|macro|SWP_ENTRY
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; PAGE_SHIFT))
+macro_line|#endif
 macro_line|#endif /* _M68K_PGTABLE_H */
 eof

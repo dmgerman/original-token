@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.h,v 1.3 1995/11/25 02:31:22 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cache.h,v 1.4 1996/04/25 06:12:49 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CACHE_H
 DECL|macro|_SPARC_CACHE_H
 mdefine_line|#define _SPARC_CACHE_H

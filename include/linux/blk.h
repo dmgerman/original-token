@@ -547,6 +547,7 @@ DECL|macro|CURRENT_DEV
 mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;rq_dev)
 macro_line|#ifdef DEVICE_INTR
 DECL|variable|DEVICE_INTR
+r_static
 r_void
 (paren
 op_star

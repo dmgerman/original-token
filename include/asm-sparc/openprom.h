@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.15 1995/11/25 02:32:13 davem Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.16 1996/04/23 01:54:46 davem Exp $ */
 macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H

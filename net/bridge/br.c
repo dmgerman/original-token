@@ -4738,6 +4738,11 @@ c_func
 id|skb-&gt;dev
 )paren
 suffix:semicolon
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Received frame so it is resolved */
 id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;mac.raw

@@ -428,7 +428,7 @@ DECL|member|fs_nrpos
 id|__s32
 id|fs_nrpos
 suffix:semicolon
-multiline_comment|/* number of rotaional positions */
+multiline_comment|/* number of rotational positions */
 DECL|member|fs_postbloff
 id|__s32
 id|fs_postbloff

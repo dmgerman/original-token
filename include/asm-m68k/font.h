@@ -19,7 +19,7 @@ id|width
 comma
 r_int
 op_star
-id|heigth
+id|height
 comma
 id|u_char
 op_star
@@ -61,5 +61,8 @@ id|data
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* Max. length for the name of a predefined font */
+DECL|macro|MAX_FONT_NAME
+mdefine_line|#define MAX_FONT_NAME&t;32
 macro_line|#endif /* _ASM_M68K_FONT_H_ */
 eof

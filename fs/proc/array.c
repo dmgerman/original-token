@@ -2071,6 +2071,13 @@ DECL|macro|KSTK_EIP
 macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
 DECL|macro|KSTK_ESP
 macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|#elif defined(__sparc__)
+DECL|macro|PT_REG
+macro_line|# define PT_REG(reg)            (PAGE_SIZE - sizeof(struct pt_regs)     &bslash;&n;                                 + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)  (*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)  (*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(u_regs[UREG_FP])))
 macro_line|#endif
 multiline_comment|/* Gcc optimizes away &quot;strlen(x)&quot; for constant x */
 DECL|macro|ADDBUF

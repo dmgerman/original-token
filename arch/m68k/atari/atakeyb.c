@@ -2381,7 +2381,7 @@ id|IRQ_MFP_ACIA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* ++roman: If a keyboard overrun happened, we can&squot;t tell in general how much&n; * bytes have been lost and in which state of the packet structure we are now.&n; * This usually causes keyboards bytes to be interpreted as mouse movements&n; * and vice versa, which is very annoying. It seems better to throw away some&n; * bytes (that are usually mouse bytes) than to misinterpret them. Therefor I&n; * introduced the RESYNC state for IKBD data. In this state, the bytes up to&n; * one that really looks like a key event (0x04..0xf2) or the start of a mouse&n; * packet (0xf8..0xfb) are thrown away, but at most 2 bytes. This at least&n; * speeds up the resynchronization of the event structure, even if maybe a&n; * mouse movement is lost. However, nothing is perfect. For bytes 0x01..0x03,&n; * it&squot;s really hard to decide whether they&squot;re mouse or keyboard bytes. Since&n; * overruns usually occur when moving the Atari mouse rapidly, they&squot;re seen as&n; * mouse bytes here. If this is wrong, only a make code of the keyboard gets&n; * lost, which isn&squot;t too bad. Loosing a break code would be desasterous,&n; * because then the keyboard repeat strikes...&n; */
+multiline_comment|/* ++roman: If a keyboard overrun happened, we can&squot;t tell in general how much&n; * bytes have been lost and in which state of the packet structure we are now.&n; * This usually causes keyboards bytes to be interpreted as mouse movements&n; * and vice versa, which is very annoying. It seems better to throw away some&n; * bytes (that are usually mouse bytes) than to misinterpret them. Therefor I&n; * introduced the RESYNC state for IKBD data. In this state, the bytes up to&n; * one that really looks like a key event (0x04..0xf2) or the start of a mouse&n; * packet (0xf8..0xfb) are thrown away, but at most 2 bytes. This at least&n; * speeds up the resynchronization of the event structure, even if maybe a&n; * mouse movement is lost. However, nothing is perfect. For bytes 0x01..0x03,&n; * it&squot;s really hard to decide whether they&squot;re mouse or keyboard bytes. Since&n; * overruns usually occur when moving the Atari mouse rapidly, they&squot;re seen as&n; * mouse bytes here. If this is wrong, only a make code of the keyboard gets&n; * lost, which isn&squot;t too bad. Loosing a break code would be disastrous,&n; * because then the keyboard repeat strikes...&n; */
 DECL|function|keyboard_interrupt
 r_static
 r_void
@@ -3129,7 +3129,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/* if allswell code 0xF1 is returned, else the break codes of&n;       all keys making contact */
+multiline_comment|/* if all&squot;s well code 0xF1 is returned, else the break codes of&n;       all keys making contact */
 )brace
 multiline_comment|/* Set mouse button action */
 DECL|function|ikbd_mouse_button_action

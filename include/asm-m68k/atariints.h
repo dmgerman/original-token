@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** atariints.h -- Atari Linux interrupt handling structs and prototypes&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/2/94 Roman Hodek:&n;**   TT interupt definitions added.&n;**&n;** 12/02/96: (Roman)&n;**   Adapted to new int handling scheme (see ataints.c); revised numbering&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;*/
+multiline_comment|/*&n;** atariints.h -- Atari Linux interrupt handling structs and prototypes&n;**&n;** Copyright 1994 by Bj&#xfffd;rn Brauel&n;**&n;** 5/2/94 Roman Hodek:&n;**   TT interrupt definitions added.&n;**&n;** 12/02/96: (Roman)&n;**   Adapted to new int handling scheme (see ataints.c); revised numbering&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;*/
 macro_line|#ifndef _LINUX_ATARIINTS_H_
 DECL|macro|_LINUX_ATARIINTS_H_
 mdefine_line|#define _LINUX_ATARIINTS_H_
@@ -30,8 +30,8 @@ DECL|macro|IRQ_TYPE_FAST
 mdefine_line|#define IRQ_TYPE_FAST     1
 DECL|macro|IRQ_TYPE_PRIO
 mdefine_line|#define IRQ_TYPE_PRIO     2
-DECL|macro|IRQ_SUPRIOUS
-mdefine_line|#define&t;IRQ_SUPRIOUS      (IRQ_MACHSPEC | 0)
+DECL|macro|IRQ_SPURIOUS
+mdefine_line|#define&t;IRQ_SPURIOUS      (IRQ_MACHSPEC | 0)
 multiline_comment|/* auto-vector interrupts */
 DECL|macro|IRQ_AUTO_1
 mdefine_line|#define IRQ_AUTO_1        (IRQ_MACHSPEC | 1)

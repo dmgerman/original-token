@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.19 1996/01/24 02:33:50 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.20 1996/04/24 09:10:02 davem Exp $ */
 macro_line|#ifndef _SPARC_PTRACE_H
 DECL|macro|_SPARC_PTRACE_H
 mdefine_line|#define _SPARC_PTRACE_H
@@ -367,12 +367,10 @@ mdefine_line|#define SF_XARG5  0x58
 DECL|macro|SF_XXARG
 mdefine_line|#define SF_XXARG  0x5c
 multiline_comment|/* Stuff for the ptrace system call */
-macro_line|#if 0 /* Need to fix the header files a bit... */
-macro_line|#undef PTRACE_ATTACH
-macro_line|#undef PTRACE_DETACH
-mdefine_line|#define PTRACE_ATTACH&t;&t;  10
-mdefine_line|#define PTRACE_DETACH&t;&t;  11
-macro_line|#endif
+DECL|macro|PTRACE_SUNATTACH
+mdefine_line|#define PTRACE_SUNATTACH&t;  10
+DECL|macro|PTRACE_SUNDETACH
+mdefine_line|#define PTRACE_SUNDETACH&t;  11
 DECL|macro|PTRACE_GETREGS
 mdefine_line|#define PTRACE_GETREGS            12
 DECL|macro|PTRACE_SETREGS

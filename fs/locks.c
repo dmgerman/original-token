@@ -986,6 +986,26 @@ suffix:colon
 r_case
 id|F_EXLCK
 suffix:colon
+macro_line|#if 1
+multiline_comment|/* warn a bit for now, but don&squot;t overdo it */
+(brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+l_int|5
+)paren
+(brace
+id|count
+op_increment
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -995,6 +1015,9 @@ comma
 id|current-&gt;pid
 )paren
 suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

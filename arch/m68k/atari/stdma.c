@@ -79,7 +79,7 @@ id|dummy
 )paren
 suffix:semicolon
 multiline_comment|/************************* End of Prototypes **************************/
-multiline_comment|/*&n; * Function: void stdma_lock( isrfunc isr, void *data )&n; *&n; * Purpose: Trys to get a lock on the ST-DMA chip that is used by more&n; *   then one device driver. Waits on stdma_wait until lock is free.&n; *   stdma_lock() may not be called from an interrupt! You have to&n; *   get the lock in your main routine and release it when your&n; *   request is finished.&n; *&n; * Inputs: A interupt function that is called until the lock is&n; *   released.&n; *&n; * Returns: nothing&n; *&n; */
+multiline_comment|/*&n; * Function: void stdma_lock( isrfunc isr, void *data )&n; *&n; * Purpose: Tries to get a lock on the ST-DMA chip that is used by more&n; *   then one device driver. Waits on stdma_wait until lock is free.&n; *   stdma_lock() may not be called from an interrupt! You have to&n; *   get the lock in your main routine and release it when your&n; *   request is finished.&n; *&n; * Inputs: A interrupt function that is called until the lock is&n; *   released.&n; *&n; * Returns: nothing&n; *&n; */
 DECL|function|stdma_lock
 r_void
 id|stdma_lock
@@ -193,7 +193,7 @@ id|oldflags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: int stdma_others_waiting( void )&n; *&n; * Purpose: Check if someone waits for the ST-DMA lock.&n; *&n; * Inputs: none&n; *&n; * Returns: 0 if noone is waiting, != 0 otherwise&n; *&n; */
+multiline_comment|/*&n; * Function: int stdma_others_waiting( void )&n; *&n; * Purpose: Check if someone waits for the ST-DMA lock.&n; *&n; * Inputs: none&n; *&n; * Returns: 0 if no one is waiting, != 0 otherwise&n; *&n; */
 DECL|function|stdma_others_waiting
 r_int
 id|stdma_others_waiting
@@ -249,7 +249,7 @@ l_string|&quot;ST-DMA: floppy/ACSI/IDE/Falcon-SCSI&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void stdma_int()&n; *&n; * Purpose: The interupt routine for the ST-DMA. It calls the isr&n; *   registered by stdma_lock().&n; *&n; */
+multiline_comment|/*&n; * Function: void stdma_int()&n; *&n; * Purpose: The interrupt routine for the ST-DMA. It calls the isr&n; *   registered by stdma_lock().&n; *&n; */
 DECL|function|stdma_int
 r_static
 r_void

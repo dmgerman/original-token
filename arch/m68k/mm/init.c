@@ -1524,11 +1524,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|reservedpages
-op_assign
-l_int|0
-suffix:semicolon
-r_int
 id|datapages
 op_assign
 l_int|0
@@ -1837,7 +1832,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Memory: %luk/%luk available (%dk kernel code, %dk reserved, %dk data)&bslash;n&quot;
+l_string|&quot;Memory: %luk/%luk available (%dk kernel code, %dk data)&bslash;n&quot;
 comma
 id|tmp
 op_rshift
@@ -1848,14 +1843,6 @@ op_rshift
 l_int|10
 comma
 id|codepages
-op_lshift
-(paren
-id|PAGE_SHIFT
-op_minus
-l_int|10
-)paren
-comma
-id|reservedpages
 op_lshift
 (paren
 id|PAGE_SHIFT

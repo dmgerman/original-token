@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.h,v 1.5 1995/11/25 02:33:05 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.h,v 1.6 1996/04/25 06:13:33 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TRAPS_H
 DECL|macro|_SPARC_TRAPS_H
 mdefine_line|#define _SPARC_TRAPS_H

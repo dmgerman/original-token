@@ -467,7 +467,7 @@ DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
 DECL|macro|MAX_REPLIES
-mdefine_line|#define MAX_REPLIES 17
+mdefine_line|#define MAX_REPLIES 16
 DECL|variable|reply_buffer
 r_static
 r_int

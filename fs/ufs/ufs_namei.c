@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.1 1996/04/21 14:41:15 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_namei.c,v 1.3 1996/04/25 09:12:07 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 r_extern
 r_int
@@ -485,7 +485,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_lookup: bread failed: ino %lu, lfragno %u&quot;
+l_string|&quot;ufs_lookup: bread failed: ino %lu, lfragno %lu&quot;
 comma
 id|dir-&gt;i_ino
 comma
@@ -574,7 +574,7 @@ id|UFS_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;lfragno 0x%x  direct d 0x%x  d_ino %u  d_reclen %u  d_namlen %u  d_name `%s&squot;&bslash;n&quot;
+l_string|&quot;lfragno 0x%lx  direct d 0x%x  d_ino %u  d_reclen %u  d_namlen %u  d_name `%s&squot;&bslash;n&quot;
 comma
 id|lfragno
 comma

@@ -162,7 +162,7 @@ op_div
 l_int|8
 )paren
 (brace
-multiline_comment|/* Special case: These values are used by console.c to&n;&t;&t; * generate the console bell. They are catched here and the&n;&t;&t; * sound actually generated is somehow special: it uses the&n;&t;&t; * generator B and an envelope. No timer is needed therefore&n;&t;&t; * and the bell doesn&squot;t disturb an other ongoing sound.&n;&t;&t; */
+multiline_comment|/* Special case: These values are used by console.c to&n;&t;&t; * generate the console bell. They are cached here and the&n;&t;&t; * sound actually generated is somehow special: it uses the&n;&t;&t; * generator B and an envelope. No timer is needed therefore&n;&t;&t; * and the bell doesn&squot;t disturb an other ongoing sound.&n;&t;&t; */
 multiline_comment|/* set envelope duration to 492 ms */
 id|sound_ym.rd_data_reg_sel
 op_assign

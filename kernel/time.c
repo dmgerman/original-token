@@ -161,15 +161,15 @@ l_int|0
 suffix:semicolon
 id|time_state
 op_assign
-id|TIME_BAD
+id|TIME_ERROR
 suffix:semicolon
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|sti
 c_func
@@ -1095,6 +1095,7 @@ op_minus
 id|time_tolerance
 suffix:semicolon
 )brace
+multiline_comment|/* STA_PLL || STA_PPSTIME */
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -76,11 +76,12 @@ id|tq_scheduler
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * phase-lock loop variables&n; */
+multiline_comment|/* TIME_ERROR prevents overwriting the CMOS clock */
 DECL|variable|time_state
 r_int
 id|time_state
 op_assign
-id|TIME_BAD
+id|TIME_ERROR
 suffix:semicolon
 multiline_comment|/* clock synchronization status */
 DECL|variable|time_status
@@ -88,8 +89,6 @@ r_int
 id|time_status
 op_assign
 id|STA_UNSYNC
-op_or
-id|STA_PLL
 suffix:semicolon
 multiline_comment|/* clock status bits */
 DECL|variable|time_offset
@@ -124,16 +123,16 @@ DECL|variable|time_maxerror
 r_int
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
-multiline_comment|/* maximum error */
+multiline_comment|/* maximum error (us) */
 DECL|variable|time_esterror
 r_int
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
-multiline_comment|/* estimated error */
+multiline_comment|/* estimated error (us) */
 DECL|variable|time_phase
 r_int
 id|time_phase
@@ -1325,7 +1324,13 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Aiee: scheduling in interrupt&bslash;n&quot;
+l_string|&quot;Aiee: scheduling in interrupt %p&bslash;n&quot;
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2472,29 +2477,21 @@ id|ltemp
 suffix:semicolon
 multiline_comment|/* Bump the maxerror field */
 id|time_maxerror
-op_assign
-(paren
-l_int|0x70000000
-op_minus
-id|time_maxerror
-OL
+op_add_assign
 id|time_tolerance
 op_rshift
 id|SHIFT_USEC
-)paren
-ques
+suffix:semicolon
+r_if
 c_cond
-l_int|0x70000000
-suffix:colon
 (paren
 id|time_maxerror
-op_plus
-(paren
-id|time_tolerance
-op_rshift
-id|SHIFT_USEC
+OG
+id|MAXPHASE
 )paren
-)paren
+id|time_maxerror
+op_assign
+id|MAXPHASE
 suffix:semicolon
 multiline_comment|/*&n;     * Leap second processing. If in leap-insert state at&n;     * the end of the day, the system clock is set back one&n;     * second; if in leap-delete state, the system clock is&n;     * set ahead one second. The microtime() routine or&n;     * external clock driver will insure that reported time&n;     * is always monotonic. The ugly divides should be&n;     * replaced.&n;     */
 r_switch
@@ -2855,6 +2852,7 @@ l_int|2
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* in the NTP reference this is called &quot;hardclock()&quot; */
 DECL|function|update_wall_time_one_tick
 r_static
 r_void

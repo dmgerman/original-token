@@ -8,7 +8,7 @@ op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
 multiline_comment|/*&n;   * Add things here when you find the need for it.&n;   */
-multiline_comment|/* examble&n;  X(something_you_need),&n;  */
+multiline_comment|/* example&n;  X(something_you_need),&n;  */
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon

@@ -590,9 +590,9 @@ id|unused
 l_int|3
 )braket
 suffix:semicolon
-DECL|member|checkksum
+DECL|member|checksum
 id|ULONG
-id|checkksum
+id|checksum
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cypress.h,v 1.4 1996/03/12 17:48:12 davem Exp $&n; * cypress.h: Cypress module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cypress.h,v 1.5 1996/04/25 06:12:51 davem Exp $&n; * cypress.h: Cypress module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CYPRESS_H
 DECL|macro|_SPARC_CYPRESS_H
 mdefine_line|#define _SPARC_CYPRESS_H

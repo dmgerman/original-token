@@ -1,5 +1,5 @@
 macro_line|#ifndef GVP11_H
-multiline_comment|/* $Id: gvp11.h,v 1.4 1996/03/12 20:42:40 root Exp root $&n; *&n; * Header file for the GVP Series II SCSI controller for Linux&n; *&n; * Written and (C) 1993, Ralf Baechle, see gvp11.c for more info&n; * based on a2091.h (C) 1993 by Hamish Macdonald&n; *&n; */
+multiline_comment|/* $Id: gvp11.h,v 1.5 1996/04/25 20:58:31 root Exp root $&n; *&n; * Header file for the GVP Series II SCSI controller for Linux&n; *&n; * Written and (C) 1993, Ralf Baechle, see gvp11.c for more info&n; * based on a2091.h (C) 1993 by Hamish Macdonald&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 r_int
 id|gvp11_detect
@@ -50,6 +50,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#ifndef NULL

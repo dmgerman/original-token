@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.20 1996/03/24 20:21:27 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.21 1996/04/25 06:13:28 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H

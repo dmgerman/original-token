@@ -1,5 +1,5 @@
 macro_line|#ifndef A2091_H
-multiline_comment|/* $Id: a2091.h,v 1.3 1996/03/12 20:41:46 root Exp root $&n; *&n; * Header file for the Commodore A2091 Zorro II SCSI controller for Linux&n; *&n; * Written and (C) 1993, Hamish Macdonald, see a2091.c for more info&n; *&n; */
+multiline_comment|/* $Id: a2091.h,v 1.4 1996/04/25 20:57:48 root Exp root $&n; *&n; * Header file for the Commodore A2091 Zorro II SCSI controller for Linux&n; *&n; * Written and (C) 1993, Hamish Macdonald, see a2091.c for more info&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 r_int
 id|a2091_detect
@@ -50,6 +50,9 @@ c_func
 (paren
 id|Scsi_Cmnd
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 macro_line|#ifndef NULL

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.42 1996/04/16 08:24:44 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.43 1996/04/24 09:09:42 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
 macro_line|#include &lt;asm/unistd.h&gt;
+macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 multiline_comment|/* #define TRAP_DEBUG */
 DECL|struct|trap_trace_entry
@@ -358,6 +359,27 @@ l_string|&quot;Whee... Hello Mr. Penguin&quot;
 comma
 id|current-&gt;tss.kregs
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|SP_TRAP_SBPT
+)paren
+(brace
+id|send_sig
+c_func
+(paren
+id|SIGTRAP
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 id|current-&gt;tss.sig_desc

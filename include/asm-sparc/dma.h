@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.15 1996/03/23 02:40:00 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.16 1996/04/25 06:12:54 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H

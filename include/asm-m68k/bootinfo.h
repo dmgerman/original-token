@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** asm/bootinfo.h -- Definition of the Linux/68K boot information structure&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** 5/2/94 Roman Hodek:&n;**   Added bi_atari part of the machine dependant union bi_un; for now it&n;**&t; contains just a model field to distinguish between TT and Falcon.&n;*/
+multiline_comment|/*&n;** asm/bootinfo.h -- Definition of the Linux/68K boot information structure&n;**&n;** Copyright 1992 by Greg Harp&n;**&n;** This file is subject to the terms and conditions of the GNU General Public&n;** License.  See the file README.legal in the main directory of this archive&n;** for more details.&n;**&n;** Created 09/29/92 by Greg Harp&n;**&n;** 5/2/94 Roman Hodek:&n;**   Added bi_atari part of the machine dependent union bi_un; for now it&n;**&t; contains just a model field to distinguish between TT and Falcon.&n;*/
 macro_line|#ifndef BOOTINFO_H
 DECL|macro|BOOTINFO_H
 mdefine_line|#define BOOTINFO_H
@@ -312,7 +312,7 @@ c_func
 id|EXTD_SHIFTER
 )paren
 suffix:semicolon
-multiline_comment|/* STe-Shifter - 24 bit adress */
+multiline_comment|/* STe-Shifter - 24 bit address */
 id|ATARIHW_DECLARE
 c_func
 (paren

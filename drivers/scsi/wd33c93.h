@@ -1,7 +1,7 @@
+multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; *    IMPORTANT: This file is for version 1.21 - 20/Mar/1996&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 macro_line|#ifndef WD33C93_H
 DECL|macro|WD33C93_H
 mdefine_line|#define WD33C93_H
-multiline_comment|/*&n; *    wd33c93.h -  Linux device driver definitions for the&n; *                 Commodore Amiga A2091/590 SCSI controller card&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; */
 DECL|macro|uchar
 mdefine_line|#define uchar unsigned char
 multiline_comment|/* wd register names */
@@ -215,7 +215,7 @@ DECL|macro|CTRL_DMA
 mdefine_line|#define CTRL_DMA     0x80
 multiline_comment|/* Timeout Period register */
 DECL|macro|TIMEOUT_PERIOD_VALUE
-mdefine_line|#define TIMEOUT_PERIOD_VALUE  20    /* results in 200 ms. */
+mdefine_line|#define TIMEOUT_PERIOD_VALUE  20    /* 20 = 200 ms */
 multiline_comment|/* Synchronous Transfer Register */
 DECL|macro|STR_FSS
 mdefine_line|#define STR_FSS      0x80
@@ -323,6 +323,11 @@ id|reg_value
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* FEF: defines for hostdata-&gt;dma_buffer_pool */
+DECL|macro|BUF_CHIP_ALLOCED
+mdefine_line|#define BUF_CHIP_ALLOCED 0
+DECL|macro|BUF_SCSI_ALLOCED
+mdefine_line|#define BUF_SCSI_ALLOCED 1
 DECL|struct|WD33C93_hostdata
 r_struct
 id|WD33C93_hostdata
@@ -351,7 +356,7 @@ DECL|member|microcode
 id|uchar
 id|microcode
 suffix:semicolon
-multiline_comment|/* microcode rev if &squot;B&squot; */
+multiline_comment|/* microcode rev */
 DECL|member|dma_dir
 r_int
 id|dma_dir
@@ -375,6 +380,11 @@ r_int
 r_int
 id|dma_bounce_len
 suffix:semicolon
+DECL|member|dma_buffer_pool
+id|uchar
+id|dma_buffer_pool
+suffix:semicolon
+multiline_comment|/* FEF: buffer from chip_ram? */
 DECL|member|busy
 r_volatile
 id|uchar
@@ -427,6 +437,11 @@ id|uchar
 id|level2
 suffix:semicolon
 multiline_comment|/* extent to which Level-2 commands are used */
+DECL|member|disconnect
+id|uchar
+id|disconnect
+suffix:semicolon
+multiline_comment|/* disconnect/reselect policy */
 DECL|member|args
 r_int
 r_int
@@ -459,6 +474,12 @@ r_int
 id|outgoing_len
 suffix:semicolon
 multiline_comment|/* length of outgoing message */
+DECL|member|default_sx_per
+r_int
+r_int
+id|default_sx_per
+suffix:semicolon
+multiline_comment|/* default transfer period for SCSI bus */
 DECL|member|sync_xfer
 id|uchar
 id|sync_xfer
@@ -475,6 +496,17 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* status of sync negotiation per target */
+DECL|member|no_sync
+id|uchar
+id|no_sync
+suffix:semicolon
+multiline_comment|/* bitmask: don&squot;t do sync on these targets */
+macro_line|#if 0
+id|uchar
+id|proc
+suffix:semicolon
+multiline_comment|/* bitmask: what&squot;s in proc output */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* defines for hostdata-&gt;chip */
@@ -505,11 +537,8 @@ mdefine_line|#define D_DMA_OFF          0
 DECL|macro|D_DMA_RUNNING
 mdefine_line|#define D_DMA_RUNNING      1
 multiline_comment|/* defines for hostdata-&gt;level2 */
-multiline_comment|/* NOTE: only the first 3 are implemented so far - having trouble&n; * when more than 1 device is reading/writing at the same time...&n; */
-DECL|macro|L2_NONE
-mdefine_line|#define L2_NONE      1  /* no combination commands - we get lots of ints */
-DECL|macro|L2_SELECT
-mdefine_line|#define L2_SELECT    2  /* start with SEL_ATN_XFER, but never resume it */
+multiline_comment|/* NOTE: only the first 3 are implemented so far */
+multiline_comment|/*  (The first 8 bits are reserved for compatibility. They function&n;#define L2_SELECT    2  /* start with SEL_ATN_XFER, but never resume it */
 DECL|macro|L2_BASIC
 mdefine_line|#define L2_BASIC     3  /* resume after STATUS ints &amp; RDP messages */
 DECL|macro|L2_DATA
@@ -520,26 +549,28 @@ DECL|macro|L2_RESELECT
 mdefine_line|#define L2_RESELECT  6  /* resume after everything, including RESELECT ints */
 DECL|macro|L2_ALL
 mdefine_line|#define L2_ALL       7  /* always resume */
-DECL|macro|L2_DEFAULT
-mdefine_line|#define L2_DEFAULT   L2_BASIC
+multiline_comment|/* defines for hostdata-&gt;disconnect */
+DECL|macro|DIS_NEVER
+mdefine_line|#define DIS_NEVER    0
+DECL|macro|DIS_ADAPTIVE
+mdefine_line|#define DIS_ADAPTIVE 1
+DECL|macro|DIS_ALWAYS
+mdefine_line|#define DIS_ALWAYS   2
 multiline_comment|/* defines for hostdata-&gt;args */
-multiline_comment|/*  (The first 8 bits are reserved for compatability. They function&n; *   as they did in the old driver - note that turning off sync_xfer&n; *   on a target affects all LUNs at that SCSI id.)&n; */
-DECL|macro|A_LEVEL2_0
-mdefine_line|#define A_LEVEL2_0            1&lt;&lt;8
-DECL|macro|A_LEVEL2_1
-mdefine_line|#define A_LEVEL2_1            1&lt;&lt;9
-DECL|macro|A_LEVEL2_2
-mdefine_line|#define A_LEVEL2_2            1&lt;&lt;10
-DECL|macro|A_NO_DISCONNECT
-mdefine_line|#define A_NO_DISCONNECT       1&lt;&lt;11
+DECL|macro|DB_TEST1
+mdefine_line|#define DB_TEST1              1&lt;&lt;0
+DECL|macro|DB_TEST2
+mdefine_line|#define DB_TEST2              1&lt;&lt;1
 DECL|macro|DB_QUEUE_COMMAND
-mdefine_line|#define DB_QUEUE_COMMAND      1&lt;&lt;12
+mdefine_line|#define DB_QUEUE_COMMAND      1&lt;&lt;2
 DECL|macro|DB_EXECUTE
-mdefine_line|#define DB_EXECUTE            1&lt;&lt;13
+mdefine_line|#define DB_EXECUTE            1&lt;&lt;3
 DECL|macro|DB_INTR
-mdefine_line|#define DB_INTR               1&lt;&lt;14
-DECL|macro|DB_TRANSFER_DATA
-mdefine_line|#define DB_TRANSFER_DATA      1&lt;&lt;15
+mdefine_line|#define DB_INTR               1&lt;&lt;4
+DECL|macro|DB_TRANSFER
+mdefine_line|#define DB_TRANSFER           1&lt;&lt;5
+DECL|macro|DB_MASK
+mdefine_line|#define DB_MASK               0x3f
 multiline_comment|/* defines for hostdata-&gt;sync_stat[] */
 DECL|macro|SS_UNSET
 mdefine_line|#define SS_UNSET     0
@@ -549,6 +580,23 @@ DECL|macro|SS_WAITING
 mdefine_line|#define SS_WAITING   2
 DECL|macro|SS_SET
 mdefine_line|#define SS_SET       3
+multiline_comment|/* defines for hostdata-&gt;proc */
+DECL|macro|PR_VERSION
+mdefine_line|#define PR_VERSION   1&lt;&lt;0
+DECL|macro|PR_INFO
+mdefine_line|#define PR_INFO      1&lt;&lt;1
+DECL|macro|PR_TOTALS
+mdefine_line|#define PR_TOTALS    1&lt;&lt;2
+DECL|macro|PR_CONNECTED
+mdefine_line|#define PR_CONNECTED 1&lt;&lt;3
+DECL|macro|PR_INPUTQ
+mdefine_line|#define PR_INPUTQ    1&lt;&lt;4
+DECL|macro|PR_DISCQ
+mdefine_line|#define PR_DISCQ     1&lt;&lt;5
+DECL|macro|PR_TEST
+mdefine_line|#define PR_TEST      1&lt;&lt;6
+DECL|macro|PR_STOP
+mdefine_line|#define PR_STOP      1&lt;&lt;7
 r_void
 id|wd33c93_init
 (paren
@@ -580,13 +628,6 @@ id|cmd
 )paren
 suffix:semicolon
 r_int
-id|wd33c93_reset
-(paren
-id|Scsi_Cmnd
-op_star
-)paren
-suffix:semicolon
-r_int
 id|wd33c93_queuecommand
 (paren
 id|Scsi_Cmnd
@@ -613,5 +654,51 @@ op_star
 id|instance
 )paren
 suffix:semicolon
+r_int
+id|wd33c93_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
+r_int
+id|wd33c93_reset
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#else
+r_int
+id|wd33c93_reset
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if 0
+r_struct
+id|proc_dir_entry
+id|proc_scsi_wd33c93
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* WD33C93_H */
 eof

@@ -1208,7 +1208,7 @@ id|file_end
 comma
 id|fh_data
 comma
-multiline_comment|/* coincidendly the same as  dir_end */
+multiline_comment|/* coincidently the same as  dir_end */
 id|AFFS_I2BSIZE
 (paren
 id|inode
@@ -1250,7 +1250,7 @@ id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* some differrent idea ? */
+multiline_comment|/* some different idea ? */
 id|inode-&gt;i_uid
 op_assign
 l_int|0
@@ -1396,7 +1396,7 @@ id|inode-&gt;i_nlink
 op_add_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* It&squot;s hard to say whats correct */
+multiline_comment|/* It&squot;s hard to say what&squot;s correct */
 id|brelse
 c_func
 (paren

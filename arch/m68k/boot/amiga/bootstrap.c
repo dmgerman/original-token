@@ -1171,7 +1171,7 @@ l_string|&quot;A3000 shadowed Kickstart detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if we suspect that Kickstart is zkicked,&n;&t;&t;   modify the entry to show 512K more at the botton of RAM */
+multiline_comment|/* if we suspect that Kickstart is zkicked,&n;&t;&t;   modify the entry to show 512K more at the bottom of RAM */
 r_if
 c_cond
 (paren

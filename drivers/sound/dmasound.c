@@ -4636,7 +4636,7 @@ DECL|member|mach
 id|MACHINE
 id|mach
 suffix:semicolon
-multiline_comment|/* machine dependend things */
+multiline_comment|/* machine dependent things */
 DECL|member|hard
 id|SETTINGS
 id|hard
@@ -5580,7 +5580,7 @@ id|ints
 suffix:semicolon
 multiline_comment|/* ++Martin: stub for now */
 multiline_comment|/*** Translations ************************************************************/
-multiline_comment|/* ++TeSche: radically changed for new expanding purposes...&n; *&n; * These two routines now deal with copying/expanding/translating the samples&n; * from user space into our buffer at the right frequency. They take care about&n; * how much data there&squot;s actually to read, how much buffer space there is and&n; * to convert samples into the right frequency/encoding. They will only work on&n; * complete samples so it may happen they leave some bytes in the input stream&n; * if the user didn&squot;t write a multiple of the current sample size. They both&n; * return the number of bytes they&squot;ve used from both streams so you may detect&n; * such a situation. Luckily all programs should be able to cope with that.&n; *&n; * I think I&squot;ve optimized anything as far as one can do in plain C, all&n; * variables should fit in registers and the loops are really short. There&squot;s&n; * one loop for every possible situation. Writing a more generalized and thus&n; * parametrized loop would only produce slower code. Feel free to optimize&n; * this in assembler if you like. :)&n; *&n; * I think these routines belong here because they&squot;re not yet really hardware&n; * independend, especially the fact that the Falcon can play 16bit samples&n; * only in stereo is hardcoded in both of them!&n; *&n; * ++geert: split in even more functions (one per format)&n; */
+multiline_comment|/* ++TeSche: radically changed for new expanding purposes...&n; *&n; * These two routines now deal with copying/expanding/translating the samples&n; * from user space into our buffer at the right frequency. They take care about&n; * how much data there&squot;s actually to read, how much buffer space there is and&n; * to convert samples into the right frequency/encoding. They will only work on&n; * complete samples so it may happen they leave some bytes in the input stream&n; * if the user didn&squot;t write a multiple of the current sample size. They both&n; * return the number of bytes they&squot;ve used from both streams so you may detect&n; * such a situation. Luckily all programs should be able to cope with that.&n; *&n; * I think I&squot;ve optimized anything as far as one can do in plain C, all&n; * variables should fit in registers and the loops are really short. There&squot;s&n; * one loop for every possible situation. Writing a more generalized and thus&n; * parameterized loop would only produce slower code. Feel free to optimize&n; * this in assembler if you like. :)&n; *&n; * I think these routines belong here because they&squot;re not yet really hardware&n; * independent, especially the fact that the Falcon can play 16bit samples&n; * only in stereo is hardcoded in both of them!&n; *&n; * ++geert: split in even more functions (one per format)&n; */
 macro_line|#ifdef CONFIG_ATARI
 DECL|function|ata_ct_law
 r_static
@@ -11779,7 +11779,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* ++TeSche: Note that sq.playing is no longer just a flag but holds&n;     * the number of frames the DMA is currently programmed for instead,&n;     * may be 0, 1 (currently being played) or 2 (pre-programmed).&n;     *&n;     * Changes done to sq.count and sq.playing are a bit more subtle again&n;     * so now I must admit I also prefer disabling the irq here rather&n;     * than considering all possible situations. But the point is that&n;     * disabling the irq doesn&squot;t have any bad influence on this version of&n;     * the driver as we benefit from having pre-programmed the DMA&n;     * whereever possible: There&squot;s no need to reload the DMA at the exact&n;     * time of an interrupt but only at some time while the pre-programmed&n;     * frame is playing!&n;     */
+multiline_comment|/* ++TeSche: Note that sq.playing is no longer just a flag but holds&n;     * the number of frames the DMA is currently programmed for instead,&n;     * may be 0, 1 (currently being played) or 2 (pre-programmed).&n;     *&n;     * Changes done to sq.count and sq.playing are a bit more subtle again&n;     * so now I must admit I also prefer disabling the irq here rather&n;     * than considering all possible situations. But the point is that&n;     * disabling the irq doesn&squot;t have any bad influence on this version of&n;     * the driver as we benefit from having pre-programmed the DMA&n;     * wherever possible: There&squot;s no need to reload the DMA at the exact&n;     * time of an interrupt but only at some time while the pre-programmed&n;     * frame is playing!&n;     */
 id|atari_disable_irq
 c_func
 (paren
@@ -15136,7 +15136,7 @@ c_cond
 id|SIGNAL_RECEIVED
 )paren
 (brace
-multiline_comment|/* While waiting for audio output to drain, an interrupt occured.&n;&t;       Stop audio output immediately and clear the queue. */
+multiline_comment|/* While waiting for audio output to drain, an interrupt occurred.&n;&t;       Stop audio output immediately and clear the queue. */
 id|sq_reset
 c_func
 (paren
@@ -15196,7 +15196,7 @@ c_func
 id|sq.open_queue
 )paren
 suffix:semicolon
-multiline_comment|/* Wake up a process waiting for the queue beeing released.&n;&t;   Note: There may be several processes waiting for a call to open()&n;&t;&t; returning. */
+multiline_comment|/* Wake up a process waiting for the queue being released.&n;&t;   Note: There may be several processes waiting for a call to open()&n;&t;&t; returning. */
 )brace
 r_return
 id|rc

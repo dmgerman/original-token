@@ -355,6 +355,36 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|atarilance_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|a2065_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ariadne_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -694,6 +724,30 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NI52
 op_logical_and
 id|ni52_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARILANCE&t;/* Lance-based Atari ethernet boards */
+op_logical_and
+id|atarilance_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_A2065&t;&t;/* Commodore/Ameristar A2065 Ethernet Board */
+op_logical_and
+id|a2065_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARIADNE&t;&t;/* Village Tronic Ariadne Ethernet Board */
+op_logical_and
+id|ariadne_probe
 c_func
 (paren
 id|dev

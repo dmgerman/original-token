@@ -262,7 +262,7 @@ DECL|variable|current_par
 )brace
 id|current_par
 suffix:semicolon
-multiline_comment|/* Don&squot;t calculate an own resoltion, and thus don&squot;t change the one found when&n; * booting (currently used for the Falcon to keep settings for internal video&n; * hardware extensions (e.g. ScreenBlaster)  */
+multiline_comment|/* Don&squot;t calculate an own resolution, and thus don&squot;t change the one found when&n; * booting (currently used for the Falcon to keep settings for internal video&n; * hardware extensions (e.g. ScreenBlaster)  */
 DECL|variable|DontCalcRes
 r_static
 r_int
@@ -4277,7 +4277,7 @@ DECL|member|control_mask
 r_int
 id|control_mask
 suffix:semicolon
-multiline_comment|/* dito, for hw.falcon.vid_control */
+multiline_comment|/* ditto, for hw.falcon.vid_control */
 )brace
 DECL|variable|f25
 id|f25
@@ -8343,7 +8343,7 @@ op_amp
 id|par
 )paren
 suffix:semicolon
-multiline_comment|/* Detectet mode is always the &quot;autodetect&quot; slot */
+multiline_comment|/* Detected mode is always the &quot;autodetect&quot; slot */
 r_return
 l_int|1
 suffix:semicolon
@@ -11017,7 +11017,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* =========================================================== */
-multiline_comment|/* ============== Hardware Independant Functions ============= */
+multiline_comment|/* ============== Hardware Independent Functions ============= */
 multiline_comment|/* =========================================================== */
 multiline_comment|/* used for hardware scrolling */
 r_static
@@ -15090,7 +15090,7 @@ op_star
 id|int_str
 )paren
 (brace
-multiline_comment|/* Format to config extendet internal video hardware like OverScan:&n;&t;&quot;&lt;switch-type&gt;,internal:&lt;xres&gt;;&lt;yres&gt;;&lt;xres_max&gt;;&lt;yres_max&gt;;&lt;offset&gt;&quot;&n;&t;Explanation:&n;&t;&lt;switch-type&gt; type to switch on higher resolution&n;&t;&t;&t;sw_acia : via keyboard ACIA&n;&t;&t;&t;sw_snd6 : via bit 6 of the soundchip port&n;&t;&t;&t;sw_snd7 : via bit 7 of the soundchip port&n;&t;&lt;xres&gt;: x-resolution &n;&t;&lt;yres&gt;: y-resolution&n;&t;The following are only needed if you have an overscan which&n;&t;needs a black border:&n;&t;&lt;xres_max&gt;: max. length of a line in pixels your OverScan hardware would allow&n;&t;&lt;yres_max&gt;: max. number of lines your OverScan hardware would allow&n;&t;&lt;offset&gt;: Offset from physical beginning to visible beginning&n;&t;&t;  of screen in bytes&n;&t;*/
+multiline_comment|/* Format to config extended internal video hardware like OverScan:&n;&t;&quot;&lt;switch-type&gt;,internal:&lt;xres&gt;;&lt;yres&gt;;&lt;xres_max&gt;;&lt;yres_max&gt;;&lt;offset&gt;&quot;&n;&t;Explanation:&n;&t;&lt;switch-type&gt; type to switch on higher resolution&n;&t;&t;&t;sw_acia : via keyboard ACIA&n;&t;&t;&t;sw_snd6 : via bit 6 of the soundchip port&n;&t;&t;&t;sw_snd7 : via bit 7 of the soundchip port&n;&t;&lt;xres&gt;: x-resolution &n;&t;&lt;yres&gt;: y-resolution&n;&t;The following are only needed if you have an overscan which&n;&t;needs a black border:&n;&t;&lt;xres_max&gt;: max. length of a line in pixels your OverScan hardware would allow&n;&t;&lt;yres_max&gt;: max. number of lines your OverScan hardware would allow&n;&t;&lt;offset&gt;: Offset from physical beginning to visible beginning&n;&t;&t;  of screen in bytes&n;&t;*/
 r_int
 id|xres
 suffix:semicolon

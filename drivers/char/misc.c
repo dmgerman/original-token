@@ -86,6 +86,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|sun_mouse_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|watchdog_init
 c_func
@@ -710,6 +718,27 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATIXL_BUSMOUSE
 id|atixl_busmouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_AMIGAMOUSE
+id|amiga_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATARIMOUSE
+id|atari_mouse_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_MOUSE
+id|sun_mouse_init
 c_func
 (paren
 )paren

@@ -3,7 +3,7 @@ macro_line|#ifndef _LINUX_ATARIHW_H_
 DECL|macro|_LINUX_ATARIHW_H_
 mdefine_line|#define _LINUX_ATARIHW_H_
 macro_line|#include &lt;linux/types.h&gt;
-multiline_comment|/* Reading the MFP port register gives a machine independant delay, since the&n; * MFP always has a 8 MHz clock. This avoids problems with the varying length&n; * of nops on various machines. Somebody claimed that the tstb takes 600 ns.&n; */
+multiline_comment|/* Reading the MFP port register gives a machine independent delay, since the&n; * MFP always has a 8 MHz clock. This avoids problems with the varying length&n; * of nops on various machines. Somebody claimed that the tstb takes 600 ns.&n; */
 DECL|macro|MFPDELAY
 mdefine_line|#define&t;MFPDELAY() &bslash;&n;&t;__asm__ __volatile__ ( &quot;tstb %0&quot; : : &quot;m&quot; (mfp.par_dt_reg) : &quot;cc&quot; );
 multiline_comment|/* Memory used for screen ram and stdma buffers */
@@ -40,11 +40,11 @@ suffix:semicolon
 multiline_comment|/* Do cache push/invalidate for DMA read/write. This function obeys the&n; * snooping on some machines (Medusa) and processors: The Medusa itself can&n; * snoop, but only the &squot;040 can source data from its cache to DMA writes i.e.,&n; * reads from memory). Both &squot;040 and &squot;060 invalidate cache entries on snooped&n; * DMA reads (i.e., writes to memory).&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-DECL|function|dma_cache_maintainance
+DECL|function|dma_cache_maintenance
 r_static
 r_inline
 r_void
-id|dma_cache_maintainance
+id|dma_cache_maintenance
 c_func
 (paren
 r_int
@@ -739,9 +739,9 @@ DECL|member|dst_y_inc
 id|u_short
 id|dst_y_inc
 suffix:semicolon
-DECL|member|dst_adress
+DECL|member|dst_address
 id|u_long
-id|dst_adress
+id|dst_address
 suffix:semicolon
 DECL|member|wd_per_line
 id|u_short
@@ -1139,7 +1139,7 @@ DECL|macro|tt_rtc
 mdefine_line|#define&t;tt_rtc&t;((*(volatile struct TT_RTC *)TT_RTC_BAS))
 multiline_comment|/*&n;** ACIA 6850&n; */
 multiline_comment|/* constants for the ACIA registers */
-multiline_comment|/* baudrate selection and reset (Baudrte = clock/factor) */
+multiline_comment|/* baudrate selection and reset (Baudrate = clock/factor) */
 DECL|macro|ACIA_DIV1
 mdefine_line|#define ACIA_DIV1  0
 DECL|macro|ACIA_DIV16

@@ -2,13 +2,14 @@ macro_line|#ifndef _LINUX_GENHD_H
 DECL|macro|_LINUX_GENHD_H
 mdefine_line|#define _LINUX_GENHD_H
 multiline_comment|/*&n; * &t;genhd.h Copyright (C) 1992 Drew Eckhardt&n; *&t;Generic hard disk header file by  &n; * &t;&t;Drew Eckhardt&n; *&n; *&t;&t;&lt;drew@colorado.edu&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CONFIG_MSDOS_PARTITION
 mdefine_line|#define CONFIG_MSDOS_PARTITION 1
 macro_line|#ifdef __alpha__
 DECL|macro|CONFIG_OSF_PARTITION
 mdefine_line|#define CONFIG_OSF_PARTITION 1
 macro_line|#endif
-macro_line|#ifdef __sparc__
+macro_line|#if defined(__sparc__) || defined(CONFIG_SMD_DISKLABEL)
 DECL|macro|CONFIG_SUN_PARTITION
 mdefine_line|#define CONFIG_SUN_PARTITION 1
 macro_line|#endif
@@ -181,6 +182,223 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_BSD_DISKLABEL
+multiline_comment|/*&n; * BSD disklabel support by Yossi Gottlieb &lt;yogo@math.tau.ac.il&gt;&n; */
+DECL|macro|BSD_PARTITION
+mdefine_line|#define BSD_PARTITION&t;&t;0xa5&t;/* Partition ID */
+DECL|macro|BSD_DISKMAGIC
+mdefine_line|#define BSD_DISKMAGIC&t;(0x82564557UL)&t;/* The disk magic number */
+DECL|macro|BSD_MAXPARTITIONS
+mdefine_line|#define BSD_MAXPARTITIONS&t;8
+DECL|macro|BSD_FS_UNUSED
+mdefine_line|#define BSD_FS_UNUSED&t;&t;0&t;/* disklabel unused partition entry ID */
+DECL|struct|bsd_disklabel
+r_struct
+id|bsd_disklabel
+(brace
+DECL|member|d_magic
+id|__u32
+id|d_magic
+suffix:semicolon
+multiline_comment|/* the magic number */
+DECL|member|d_type
+id|__s16
+id|d_type
+suffix:semicolon
+multiline_comment|/* drive type */
+DECL|member|d_subtype
+id|__s16
+id|d_subtype
+suffix:semicolon
+multiline_comment|/* controller/d_type specific */
+DECL|member|d_typename
+r_char
+id|d_typename
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* type name, e.g. &quot;eagle&quot; */
+DECL|member|d_packname
+r_char
+id|d_packname
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* pack identifier */
+DECL|member|d_secsize
+id|__u32
+id|d_secsize
+suffix:semicolon
+multiline_comment|/* # of bytes per sector */
+DECL|member|d_nsectors
+id|__u32
+id|d_nsectors
+suffix:semicolon
+multiline_comment|/* # of data sectors per track */
+DECL|member|d_ntracks
+id|__u32
+id|d_ntracks
+suffix:semicolon
+multiline_comment|/* # of tracks per cylinder */
+DECL|member|d_ncylinders
+id|__u32
+id|d_ncylinders
+suffix:semicolon
+multiline_comment|/* # of data cylinders per unit */
+DECL|member|d_secpercyl
+id|__u32
+id|d_secpercyl
+suffix:semicolon
+multiline_comment|/* # of data sectors per cylinder */
+DECL|member|d_secperunit
+id|__u32
+id|d_secperunit
+suffix:semicolon
+multiline_comment|/* # of data sectors per unit */
+DECL|member|d_sparespertrack
+id|__u16
+id|d_sparespertrack
+suffix:semicolon
+multiline_comment|/* # of spare sectors per track */
+DECL|member|d_sparespercyl
+id|__u16
+id|d_sparespercyl
+suffix:semicolon
+multiline_comment|/* # of spare sectors per cylinder */
+DECL|member|d_acylinders
+id|__u32
+id|d_acylinders
+suffix:semicolon
+multiline_comment|/* # of alt. cylinders per unit */
+DECL|member|d_rpm
+id|__u16
+id|d_rpm
+suffix:semicolon
+multiline_comment|/* rotational speed */
+DECL|member|d_interleave
+id|__u16
+id|d_interleave
+suffix:semicolon
+multiline_comment|/* hardware sector interleave */
+DECL|member|d_trackskew
+id|__u16
+id|d_trackskew
+suffix:semicolon
+multiline_comment|/* sector 0 skew, per track */
+DECL|member|d_cylskew
+id|__u16
+id|d_cylskew
+suffix:semicolon
+multiline_comment|/* sector 0 skew, per cylinder */
+DECL|member|d_headswitch
+id|__u32
+id|d_headswitch
+suffix:semicolon
+multiline_comment|/* head switch time, usec */
+DECL|member|d_trkseek
+id|__u32
+id|d_trkseek
+suffix:semicolon
+multiline_comment|/* track-to-track seek, usec */
+DECL|member|d_flags
+id|__u32
+id|d_flags
+suffix:semicolon
+multiline_comment|/* generic flags */
+DECL|macro|NDDATA
+mdefine_line|#define NDDATA 5
+DECL|member|d_drivedata
+id|__u32
+id|d_drivedata
+(braket
+id|NDDATA
+)braket
+suffix:semicolon
+multiline_comment|/* drive-type specific information */
+DECL|macro|NSPARE
+mdefine_line|#define NSPARE 5
+DECL|member|d_spare
+id|__u32
+id|d_spare
+(braket
+id|NSPARE
+)braket
+suffix:semicolon
+multiline_comment|/* reserved for future use */
+DECL|member|d_magic2
+id|__u32
+id|d_magic2
+suffix:semicolon
+multiline_comment|/* the magic number (again) */
+DECL|member|d_checksum
+id|__u16
+id|d_checksum
+suffix:semicolon
+multiline_comment|/* xor of data incl. partitions */
+multiline_comment|/* filesystem and partition information: */
+DECL|member|d_npartitions
+id|__u16
+id|d_npartitions
+suffix:semicolon
+multiline_comment|/* number of partitions in following */
+DECL|member|d_bbsize
+id|__u32
+id|d_bbsize
+suffix:semicolon
+multiline_comment|/* size of boot area at sn0, bytes */
+DECL|member|d_sbsize
+id|__u32
+id|d_sbsize
+suffix:semicolon
+multiline_comment|/* max size of fs superblock, bytes */
+DECL|struct|bsd_partition
+r_struct
+id|bsd_partition
+(brace
+multiline_comment|/* the partition table */
+DECL|member|p_size
+id|__u32
+id|p_size
+suffix:semicolon
+multiline_comment|/* number of sectors in partition */
+DECL|member|p_offset
+id|__u32
+id|p_offset
+suffix:semicolon
+multiline_comment|/* starting sector */
+DECL|member|p_fsize
+id|__u32
+id|p_fsize
+suffix:semicolon
+multiline_comment|/* filesystem basic fragment size */
+DECL|member|p_fstype
+id|__u8
+id|p_fstype
+suffix:semicolon
+multiline_comment|/* filesystem type, see below */
+DECL|member|p_frag
+id|__u8
+id|p_frag
+suffix:semicolon
+multiline_comment|/* filesystem fragments per block */
+DECL|member|p_cpg
+id|__u16
+id|p_cpg
+suffix:semicolon
+multiline_comment|/* filesystem cylinders per group */
+DECL|member|d_partitions
+)brace
+id|d_partitions
+(braket
+id|BSD_MAXPARTITIONS
+)braket
+suffix:semicolon
+multiline_comment|/* actually may be more */
+)brace
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_BSD_DISKLABEL */
 r_extern
 r_struct
 id|gendisk

@@ -2866,7 +2866,7 @@ c_func
 id|RTC_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* control registers are&n;                                   * independant from the UIP */
+multiline_comment|/* control registers are&n;                                   * independent from the UIP */
 r_if
 c_cond
 (paren
@@ -4708,6 +4708,8 @@ r_int
 id|len
 op_assign
 l_int|0
+comma
+id|i
 suffix:semicolon
 r_for
 c_loop

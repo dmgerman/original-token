@@ -973,7 +973,7 @@ id|argv
 op_assign
 id|sp
 suffix:semicolon
-macro_line|#ifdef __i386__
+macro_line|#if defined(__i386__) || defined(__mc68000__)
 id|put_user
 c_func
 (paren

@@ -238,12 +238,6 @@ id|tcp_mib
 id|tcp_statistics
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
-id|master_select_wakeup
-suffix:semicolon
-r_extern
 r_void
 id|tcp_err
 c_func
@@ -1013,21 +1007,6 @@ id|TCP_ESTABLISHED
 (brace
 id|tcp_statistics.TcpCurrEstab
 op_increment
-suffix:semicolon
-multiline_comment|/* This is a hack but it doesn&squot;t occur often and it&squot;s going to&n;&t;&t;&t;   be a real        to fix nicely */
-r_if
-c_cond
-(paren
-id|oldstate
-op_eq
-id|TCP_SYN_RECV
-)paren
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|master_select_wakeup
-)paren
 suffix:semicolon
 )brace
 r_break

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martins &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -257,7 +257,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Socket option code for IP. This is the end of the line after any TCP,UDP etc options on&n; *&t;an IP socket.&n; *&n; *&t;We implement IP_TOS (type of service), IP_TTL (time to live).&n; *&n; *&t;Next release we will sort out IP_OPTIONS since for some people are kind of important.&n; */
+multiline_comment|/*&n; *&t;Socket option code for IP. This is the end of the line after any TCP,UDP etc options on&n; *&t;an IP socket.&n; *&n; *&t;We implement IP_TOS (type of service), IP_TTL (time to live).&n; */
 DECL|function|ip_mc_find_devfor
 r_static
 r_struct
@@ -700,46 +700,77 @@ suffix:semicolon
 r_case
 id|IP_TOS
 suffix:colon
+multiline_comment|/* This sets both TOS and Precedence */
 r_if
 c_cond
 (paren
 id|val
-l_int|255
+l_int|63
 )paren
-(brace
+multiline_comment|/* Reject setting of unused bits */
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+(paren
+id|val
+op_amp
+l_int|3
+)paren
+OG
+l_int|4
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+multiline_comment|/* Only root can set Prec&gt;4 */
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|sk-&gt;ip_tos
 op_assign
 id|val
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|val
-op_eq
-id|IPTOS_LOWDELAY
+op_amp
+l_int|0x38
 )paren
 (brace
+r_case
+id|IPTOS_LOWDELAY
+suffix:colon
 id|sk-&gt;priority
 op_assign
 id|SOPRI_INTERACTIVE
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|val
-op_eq
+r_break
+suffix:semicolon
+r_case
 id|IPTOS_THROUGHPUT
-)paren
-(brace
+suffix:colon
 id|sk-&gt;priority
 op_assign
 id|SOPRI_BACKGROUND
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|sk-&gt;priority
+op_assign
+id|SOPRI_NORMAL
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_return

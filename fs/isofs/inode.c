@@ -13,6 +13,8 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+DECL|macro|MULTI_VOLUME
+mdefine_line|#define MULTI_VOLUME
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -1517,6 +1519,7 @@ op_ne
 l_int|1
 )paren
 (brace
+macro_line|#ifndef  MULTI_VOLUME 
 id|printk
 c_func
 (paren
@@ -1526,6 +1529,7 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 id|s-&gt;u.isofs_sb.s_nzones
@@ -1573,6 +1577,7 @@ op_ne
 l_int|1
 )paren
 (brace
+macro_line|#ifndef MULTI_VOLUME
 id|printk
 c_func
 (paren
@@ -1582,6 +1587,7 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 id|s-&gt;u.isofs_sb.s_nzones
@@ -2856,6 +2862,7 @@ op_assign
 l_char|&squot;y&squot;
 suffix:semicolon
 )brace
+macro_line|#ifndef MULTI_VOLUME
 r_if
 c_cond
 (paren
@@ -2884,6 +2891,7 @@ l_string|&quot;Multi volume CD somehow got mounted.&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif&t;
 (brace
 r_if
 c_cond

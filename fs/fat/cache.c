@@ -135,7 +135,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -155,6 +155,10 @@ id|SECTOR_BITS
 )paren
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren
@@ -162,7 +166,7 @@ id|SECTOR_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;bread in fat_access failed&bslash;n&quot;
+l_string|&quot;breada in fat_access failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -197,7 +201,7 @@ op_logical_neg
 (paren
 id|bh2
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -217,6 +221,10 @@ id|SECTOR_BITS
 )paren
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren
@@ -230,7 +238,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;bread in fat_access failed&bslash;n&quot;
+l_string|&quot;breada in fat_access failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -560,7 +568,7 @@ op_logical_neg
 (paren
 id|c_bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -590,6 +598,10 @@ op_star
 id|copy
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren
@@ -628,7 +640,7 @@ op_logical_neg
 (paren
 id|c_bh2
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -660,6 +672,10 @@ op_plus
 l_int|1
 comma
 id|SECTOR_SIZE
+comma
+l_int|0
+comma
+id|FAT_READAHEAD
 )paren
 )paren
 )paren

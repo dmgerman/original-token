@@ -1498,7 +1498,7 @@ comma
 l_int|7
 op_or
 id|bit
-id|determins
+id|determines
 r_if
 c_cond
 id|denorm

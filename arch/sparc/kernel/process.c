@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.49 1996/04/20 07:37:20 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: process.c,v 1.51 1996/04/25 06:08:49 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -156,11 +156,6 @@ r_volatile
 r_int
 id|cval
 suffix:semicolon
-id|current-&gt;priority
-op_assign
-op_minus
-l_int|50
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -180,18 +175,6 @@ id|spap
 )paren
 (brace
 r_continue
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_star
-id|spap
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
 suffix:semicolon
 )brace
 id|cli

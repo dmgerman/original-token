@@ -1,7 +1,18 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_symlink.c,v 1.1 1996/04/21 14:41:23 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_symlink.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_symlink.c,v 1.3 1996/04/25 09:12:11 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+r_extern
+r_int
+id|ufs_bmap
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 r_static
 r_int
 DECL|function|ufs_readlink
@@ -39,8 +50,6 @@ id|link
 suffix:semicolon
 r_int
 id|i
-comma
-id|err
 suffix:semicolon
 r_char
 id|c
@@ -274,9 +283,6 @@ id|bh
 suffix:semicolon
 r_return
 id|i
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * XXX - blatantly stolen from ext2fs&n; */
