@@ -2,12 +2,18 @@ macro_line|#ifndef __ALPHA_MMU_CONTEXT_H
 DECL|macro|__ALPHA_MMU_CONTEXT_H
 mdefine_line|#define __ALPHA_MMU_CONTEXT_H
 multiline_comment|/*&n; * get a new mmu context..&n; *&n; * Copyright (C) 1996, Linus Torvalds&n; */
-macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/*&n; * The maximum ASN&squot;s the processor supports. On the EV4 this doesn&squot;t&n; * matter as the pal-code doesn&squot;t use the ASNs anyway, on the EV5&n; * EV5 this is 127.&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * The maximum ASN&squot;s the processor supports.  On the EV4 this is 63&n; * but the PAL-code doesn&squot;t actually use this information.  On the&n; * EV5 this is 127.&n; *&n; * On the EV4, the ASNs are more-or-less useless anyway, as they are&n; * only used as a icache tag, not for TB entries.  On the EV5 ASN&squot;s&n; * also validate the TB entries, and thus make a lot more sense.&n; *&n; * The EV4 ASN&squot;s don&squot;t even match the architecture manual, ugh.  And&n; * I quote: &quot;If a processor implements address space numbers (ASNs),&n; * and the old PTE has the Address Space Match (ASM) bit clear (ASNs&n; * in use) and the Valid bit set, then entries can also effectively be&n; * made coherent by assigning a new, unused ASN to the currently&n; * running process and not reusing the previous ASN before calling the&n; * appropriate PALcode routine to invalidate the translation buffer&n; * (TB)&quot;. &n; *&n; * In short, the EV4 has a &quot;kind of&quot; ASN capability, but it doesn&squot;t actually&n; * work correctly and can thus not be used (explaining the lack of PAL-code&n; * support).&n; */
+macro_line|#ifdef CONFIG_EV5
 DECL|macro|MAX_ASN
 mdefine_line|#define MAX_ASN 127
+macro_line|#else
+DECL|macro|MAX_ASN
+mdefine_line|#define MAX_ASN 63
+macro_line|#endif
 DECL|macro|ASN_VERSION_SHIFT
-mdefine_line|#define ASN_VERSION_SHIFT 32
+mdefine_line|#define ASN_VERSION_SHIFT 16
 DECL|macro|ASN_VERSION_MASK
 mdefine_line|#define ASN_VERSION_MASK ((~0UL) &lt;&lt; ASN_VERSION_SHIFT)
 DECL|macro|ASN_FIRST_VERSION
@@ -26,6 +32,7 @@ op_star
 id|p
 )paren
 (brace
+macro_line|#ifdef CONFIG_EV5
 r_static
 r_int
 r_int
@@ -85,6 +92,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|imb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|asn_cache
 op_assign
 (paren
@@ -125,6 +137,7 @@ id|ASN_VERSION_MASK
 suffix:semicolon
 multiline_comment|/* just asn */
 )brace
+macro_line|#endif
 )brace
 macro_line|#endif
 eof

@@ -2,29 +2,7 @@ macro_line|#ifndef _ALPHA_PGTABLE_H
 DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
-r_extern
-r_void
-id|tbi
-c_func
-(paren
-r_int
-id|type
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-DECL|macro|tbisi
-mdefine_line|#define tbisi(x)&t;tbi(1,(x))
-DECL|macro|tbisd
-mdefine_line|#define tbisd(x)&t;tbi(2,(x))
-DECL|macro|tbis
-mdefine_line|#define tbis(x)&t;&t;tbi(3,(x))
-DECL|macro|tbiap
-mdefine_line|#define tbiap()&t;&t;tbi(-1)
-DECL|macro|tbia
-mdefine_line|#define tbia()&t;&t;tbi(-2)
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Invalidate current user mapping.&n; */
 DECL|function|invalidate
 r_static

@@ -61,14 +61,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-id|asmlinkage
-r_void
-id|imb
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_int
 id|ptrace_set_bpt

@@ -300,10 +300,6 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|page
-comma
-r_int
 id|write_access
 )paren
 suffix:semicolon

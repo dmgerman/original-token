@@ -504,6 +504,10 @@ id|p-&gt;tss.flags
 op_assign
 l_int|1
 suffix:semicolon
+id|p-&gt;mm-&gt;context
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */
 DECL|function|dump_thread

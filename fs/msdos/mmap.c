@@ -29,10 +29,6 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|page
-comma
-r_int
 id|error_code
 )paren
 (brace
@@ -45,6 +41,10 @@ id|area-&gt;vm_inode
 suffix:semicolon
 r_int
 r_int
+id|page
+suffix:semicolon
+r_int
+r_int
 id|clear
 suffix:semicolon
 r_int
@@ -54,6 +54,23 @@ r_int
 id|gap
 suffix:semicolon
 multiline_comment|/* distance from eof to pos */
+id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
+)paren
+r_return
+id|page
+suffix:semicolon
 id|address
 op_and_assign
 id|PAGE_MASK

@@ -5370,6 +5370,8 @@ id|page
 r_int
 r_int
 id|block
+comma
+id|address
 suffix:semicolon
 r_int
 op_star
@@ -5434,15 +5436,23 @@ OG
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* We should make this asynchronous, but this is good enough for now.. */
-id|bread_page
-c_func
-(paren
+multiline_comment|/*&n;&t; * We should make this asynchronous, but this is good enough for now..&n;&t; */
+multiline_comment|/* IO start */
+id|page-&gt;count
+op_increment
+suffix:semicolon
+id|address
+op_assign
 id|page_address
 c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+id|bread_page
+c_func
+(paren
+id|address
 comma
 id|inode-&gt;i_dev
 comma
@@ -5451,6 +5461,7 @@ comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
+multiline_comment|/* IO ready (this part should be in the &quot;page ready callback&quot; function) */
 id|page-&gt;uptodate
 op_assign
 l_int|1
@@ -5460,6 +5471,12 @@ c_func
 (paren
 op_amp
 id|page-&gt;wait
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+id|address
 )paren
 suffix:semicolon
 r_return

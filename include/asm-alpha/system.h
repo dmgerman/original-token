@@ -135,6 +135,14 @@ id|pctxp
 suffix:semicolon
 DECL|macro|switch_to
 mdefine_line|#define switch_to(p) do { &bslash;&n;&t;current_set[0] = p; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;(p)-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
+r_extern
+r_void
+id|imb
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|mb
 mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 DECL|macro|draina
@@ -153,6 +161,30 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;setipl(flags)
+multiline_comment|/*&n; * TB routines..&n; */
+r_extern
+r_void
+id|tbi
+c_func
+(paren
+r_int
+id|type
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+DECL|macro|tbisi
+mdefine_line|#define tbisi(x)&t;tbi(1,(x))
+DECL|macro|tbisd
+mdefine_line|#define tbisd(x)&t;tbi(2,(x))
+DECL|macro|tbis
+mdefine_line|#define tbis(x)&t;&t;tbi(3,(x))
+DECL|macro|tbiap
+mdefine_line|#define tbiap()&t;&t;tbi(-1)
+DECL|macro|tbia
+mdefine_line|#define tbia()&t;&t;tbi(-2)
 multiline_comment|/*&n; * Give prototypes to shut up gcc.&n; */
 r_extern
 r_inline

@@ -3833,7 +3833,7 @@ id|oldinode
 suffix:semicolon
 id|error
 op_assign
-id|namei
+id|lnamei
 c_func
 (paren
 id|oldname

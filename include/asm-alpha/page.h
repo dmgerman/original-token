@@ -120,7 +120,7 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFFC0000000000
+mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFFC0000000000UL
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */

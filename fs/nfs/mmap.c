@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
+multiline_comment|/*&n; * Return a page for mmap. We need to start using the page cache,&n; * because otherwise we can&squot;t share pages between processes..&n; */
 DECL|function|nfs_file_mmap_nopage
 r_static
 r_int
@@ -29,10 +29,6 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|page
-comma
-r_int
 id|no_share
 )paren
 (brace
@@ -42,6 +38,10 @@ op_star
 id|inode
 op_assign
 id|area-&gt;vm_inode
+suffix:semicolon
+r_int
+r_int
+id|page
 suffix:semicolon
 r_int
 r_int
@@ -63,6 +63,23 @@ suffix:semicolon
 r_struct
 id|nfs_fattr
 id|fattr
+suffix:semicolon
+id|page
+op_assign
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|page
+)paren
+r_return
+id|page
 suffix:semicolon
 id|address
 op_and_assign

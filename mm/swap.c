@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
 macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
@@ -1821,6 +1822,11 @@ r_int
 r_int
 id|page
 suffix:semicolon
+r_struct
+id|page
+op_star
+id|page_map
+suffix:semicolon
 id|pte
 op_assign
 op_star
@@ -1850,9 +1856,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 op_ge
+id|MAP_NR
+c_func
+(paren
 id|high_memory
+)paren
 )paren
 r_return
 l_int|0
@@ -1867,19 +1881,20 @@ id|limit
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|page_map
+op_assign
 id|mem_map
-(braket
+op_plus
 id|MAP_NR
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
-id|reserved
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page_map-&gt;reserved
 )paren
 r_return
 l_int|0
@@ -1921,29 +1936,31 @@ id|pte
 )paren
 )paren
 suffix:semicolon
-id|touch_page
+id|page_age_update
 c_func
 (paren
-id|page
+id|page_map
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|age_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|age_of
+id|page_age_update
 c_func
 (paren
-id|page
+id|page_map
+comma
+id|pte_young
+c_func
+(paren
+id|pte
+)paren
 )paren
 )paren
 r_return
@@ -2010,16 +2027,7 @@ r_else
 r_if
 c_cond
 (paren
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
-)braket
-dot
-id|count
+id|page_map-&gt;count
 op_ne
 l_int|1
 )paren
@@ -2109,16 +2117,7 @@ id|page
 r_if
 c_cond
 (paren
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
-)braket
-dot
-id|count
+id|page_map-&gt;count
 op_ne
 l_int|1
 )paren
