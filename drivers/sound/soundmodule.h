@@ -77,5 +77,5 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* _SOUNDMODULE_H */
 eof

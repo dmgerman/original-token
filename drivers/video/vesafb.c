@@ -2380,14 +2380,14 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;vesafb: abort, cannot reserve video memory at 0x%lu&bslash;n&quot;
+l_string|&quot;vesafb: abort, cannot reserve video memory at 0x%lx&bslash;n&quot;
 comma
 id|video_base
 )paren
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EBUSY
 suffix:semicolon
 )brace
 id|video_vbase
@@ -2400,6 +2400,37 @@ comma
 id|video_size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|video_vbase
+)paren
+(brace
+id|release_mem_region
+c_func
+(paren
+id|video_base
+comma
+id|video_size
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;vesafb: abort, cannot ioremap video memory 0x%lx @ 0x%lx&bslash;n&quot;
+comma
+id|video_size
+comma
+id|video_base
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren

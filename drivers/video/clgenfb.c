@@ -1,7 +1,8 @@
 multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.5&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.6&quot;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -11151,7 +11152,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+l_string|&quot;clgen: cannot reserve region 0x%lx, abort&bslash;n&quot;
 comma
 id|board_addr
 )paren
@@ -11190,7 +11191,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+l_string|&quot;clgen: cannot reserve region 0x%lx, abort&bslash;n&quot;
 comma
 l_int|0xA0000L
 )paren
@@ -11625,7 +11626,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;clgen: cannot reserve region 0x%lu, abort&bslash;n&quot;
+l_string|&quot;clgen: cannot reserve region 0x%lx, abort&bslash;n&quot;
 comma
 id|board_addr
 )paren

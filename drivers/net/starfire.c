@@ -177,7 +177,7 @@ id|version2
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot; Undates and info at http://www.scyld.com/network/starfire.html&bslash;n&quot;
+l_string|&quot; Updates and info at http://www.scyld.com/network/starfire.html&bslash;n&quot;
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func

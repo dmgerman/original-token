@@ -1,20 +1,23 @@
 macro_line|#ifndef __LINUX_OV511_H
 DECL|macro|__LINUX_OV511_H
 mdefine_line|#define __LINUX_OV511_H
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|OV511_DEBUG
 mdefine_line|#define OV511_DEBUG&t;/* Turn on debug messages */
 macro_line|#ifdef OV511_DEBUG
 DECL|macro|PDEBUG
-macro_line|#  define PDEBUG(level, fmt, args...) &bslash;&n;if (debug &gt;= level) printk(&quot;ov511: &quot; fmt &quot;&bslash;n&quot; , ## args)
+macro_line|#  define PDEBUG(level, fmt, args...) &bslash;&n;if (debug &gt;= level) printk(&quot;ov511: [&quot; __PRETTY_FUNCTION__ &quot;:%d] &quot; fmt &quot;&bslash;n&quot;, __LINE__ , ## args)
 macro_line|#else
 DECL|macro|PDEBUG
 macro_line|#  define PDEBUG(level, fmt, args...) do {} while(0)
 macro_line|#endif
 multiline_comment|/* Camera interface register numbers */
 DECL|macro|OV511_REG_CAMERA_DELAY_MODE
-mdefine_line|#define OV511_REG_CAMERA_DELAY_MODE&t;&t;&t;0x10
+mdefine_line|#define OV511_REG_CAMERA_DELAY_MODE&t;&t;0x10
 DECL|macro|OV511_REG_CAMERA_EDGE_MODE
-mdefine_line|#define OV511_REG_CAMERA_EDGE_MODE&t;&t;&t;0x11
+mdefine_line|#define OV511_REG_CAMERA_EDGE_MODE&t;&t;0x11
 DECL|macro|OV511_REG_CAMERA_CLAMPED_PIXEL_NUM
 mdefine_line|#define OV511_REG_CAMERA_CLAMPED_PIXEL_NUM&t;0x12
 DECL|macro|OV511_REG_CAMERA_CLAMPED_LINE_NUM
@@ -28,7 +31,7 @@ mdefine_line|#define OV511_REG_CAMERA_DATA_INPUT_SELECT&t;0x16
 DECL|macro|OV511_REG_CAMERA_RESERVED_LINE_MODE
 mdefine_line|#define OV511_REG_CAMERA_RESERVED_LINE_MODE&t;0x17
 DECL|macro|OV511_REG_CAMERA_BITMASK
-mdefine_line|#define OV511_REG_CAMERA_BITMASK&t;&t;&t;0x18
+mdefine_line|#define OV511_REG_CAMERA_BITMASK&t;&t;0x18
 multiline_comment|/* Snapshot mode camera interface register numbers */
 DECL|macro|OV511_REG_SNAP_CAPTURED_FRAME
 mdefine_line|#define OV511_REG_SNAP_CAPTURED_FRAME&t;&t;0x19
@@ -39,11 +42,11 @@ mdefine_line|#define OV511_REG_SNAP_CLAMPED_LINE_NUM&t;&t;0x1B
 DECL|macro|OV511_REG_SNAP_PIXEL_DIVISOR
 mdefine_line|#define OV511_REG_SNAP_PIXEL_DIVISOR&t;&t;0x1C
 DECL|macro|OV511_REG_SNAP_LINE_DIVISOR
-mdefine_line|#define OV511_REG_SNAP_LINE_DIVISOR&t;&t;&t;0x1D
+mdefine_line|#define OV511_REG_SNAP_LINE_DIVISOR&t;&t;0x1D
 DECL|macro|OV511_REG_SNAP_DATA_INPUT_SELECT
 mdefine_line|#define OV511_REG_SNAP_DATA_INPUT_SELECT&t;0x1E
 DECL|macro|OV511_REG_SNAP_BITMASK
-mdefine_line|#define OV511_REG_SNAP_BITMASK&t;&t;&t;&t;0x1F
+mdefine_line|#define OV511_REG_SNAP_BITMASK&t;&t;&t;0x1F
 multiline_comment|/* DRAM register numbers */
 DECL|macro|OV511_REG_DRAM_ENABLE_FLOW_CONTROL
 mdefine_line|#define OV511_REG_DRAM_ENABLE_FLOW_CONTROL&t;0x20
@@ -55,19 +58,19 @@ DECL|macro|OV511_REG_DRAM_REFRESH_COUNTER
 mdefine_line|#define OV511_REG_DRAM_REFRESH_COUNTER&t;&t;0x23
 multiline_comment|/* ISO FIFO register numbers */
 DECL|macro|OV511_REG_FIFO_PACKET_SIZE
-mdefine_line|#define OV511_REG_FIFO_PACKET_SIZE&t;&t;&t;0x30
+mdefine_line|#define OV511_REG_FIFO_PACKET_SIZE&t;&t;0x30
 DECL|macro|OV511_REG_FIFO_BITMASK
-mdefine_line|#define OV511_REG_FIFO_BITMASK&t;&t;&t;&t;0x31
+mdefine_line|#define OV511_REG_FIFO_BITMASK&t;&t;&t;0x31
 multiline_comment|/* PIO register numbers */
 DECL|macro|OV511_REG_PIO_BITMASK
-mdefine_line|#define OV511_REG_PIO_BITMASK&t;&t;&t;&t;0x38
+mdefine_line|#define OV511_REG_PIO_BITMASK&t;&t;&t;0x38
 DECL|macro|OV511_REG_PIO_DATA_PORT
-mdefine_line|#define OV511_REG_PIO_DATA_PORT&t;&t;&t;&t;0x39
+mdefine_line|#define OV511_REG_PIO_DATA_PORT&t;&t;&t;0x39
 DECL|macro|OV511_REG_PIO_BIST
-mdefine_line|#define OV511_REG_PIO_BIST&t;&t;&t;&t;&t;0x3E
+mdefine_line|#define OV511_REG_PIO_BIST&t;&t;&t;0x3E
 multiline_comment|/* I2C register numbers */
 DECL|macro|OV511_REG_I2C_CONTROL
-mdefine_line|#define OV511_REG_I2C_CONTROL&t;&t;&t;&t;0x40
+mdefine_line|#define OV511_REG_I2C_CONTROL&t;&t;&t;0x40
 DECL|macro|OV511_REG_I2C_SLAVE_ID_WRITE
 mdefine_line|#define OV511_REG_I2C_SLAVE_ID_WRITE&t;&t;0x41
 DECL|macro|OV511_REG_I2C_SUB_ADDRESS_3_BYTE
@@ -75,9 +78,9 @@ mdefine_line|#define OV511_REG_I2C_SUB_ADDRESS_3_BYTE&t;0x42
 DECL|macro|OV511_REG_I2C_SUB_ADDRESS_2_BYTE
 mdefine_line|#define OV511_REG_I2C_SUB_ADDRESS_2_BYTE&t;0x43
 DECL|macro|OV511_REG_I2C_SLAVE_ID_READ
-mdefine_line|#define OV511_REG_I2C_SLAVE_ID_READ&t;&t;&t;0x44
+mdefine_line|#define OV511_REG_I2C_SLAVE_ID_READ&t;&t;0x44
 DECL|macro|OV511_REG_I2C_DATA_PORT
-mdefine_line|#define OV511_REG_I2C_DATA_PORT&t;&t;&t;&t;0x45
+mdefine_line|#define OV511_REG_I2C_DATA_PORT&t;&t;&t;0x45
 DECL|macro|OV511_REG_I2C_CLOCK_PRESCALER
 mdefine_line|#define OV511_REG_I2C_CLOCK_PRESCALER&t;&t;0x46
 DECL|macro|OV511_REG_I2C_TIME_OUT_COUNTER
@@ -89,48 +92,48 @@ DECL|macro|OV511_REG_I2C_SNAP_DATA_PORT
 mdefine_line|#define OV511_REG_I2C_SNAP_DATA_PORT&t;&t;0x49
 multiline_comment|/* System control register numbers */
 DECL|macro|OV511_REG_SYSTEM_RESET
-mdefine_line|#define OV511_REG_SYSTEM_RESET&t;&t;&t;&t;0x50
+mdefine_line|#define OV511_REG_SYSTEM_RESET&t;&t;&t;0x50
 DECL|macro|OV511_RESET_UDC
-mdefine_line|#define &t;OV511_RESET_UDC&t;&t;&t;&t;0x01
+mdefine_line|#define &t;OV511_RESET_UDC&t;&t;&t;0x01
 DECL|macro|OV511_RESET_I2C
-mdefine_line|#define &t;OV511_RESET_I2C&t;&t;&t;&t;0x02
+mdefine_line|#define &t;OV511_RESET_I2C&t;&t;&t;0x02
 DECL|macro|OV511_RESET_FIFO
-mdefine_line|#define &t;OV511_RESET_FIFO&t;&t;&t;0x04
+mdefine_line|#define &t;OV511_RESET_FIFO&t;&t;0x04
 DECL|macro|OV511_RESET_OMNICE
-mdefine_line|#define &t;OV511_RESET_OMNICE&t;&t;&t;0x08
+mdefine_line|#define &t;OV511_RESET_OMNICE&t;&t;0x08
 DECL|macro|OV511_RESET_DRAM_INTF
 mdefine_line|#define &t;OV511_RESET_DRAM_INTF&t;&t;0x10
 DECL|macro|OV511_RESET_CAMERA_INTF
 mdefine_line|#define &t;OV511_RESET_CAMERA_INTF&t;&t;0x20
 DECL|macro|OV511_RESET_OV511
-mdefine_line|#define&t;&t;OV511_RESET_OV511&t;&t;&t;0x40
+mdefine_line|#define &t;OV511_RESET_OV511&t;&t;0x40
 DECL|macro|OV511_RESET_NOREGS
-mdefine_line|#define&t;&t;OV511_RESET_NOREGS&t;&t;&t;0x3F&t;/* All but OV511 &amp; regs */
+mdefine_line|#define &t;OV511_RESET_NOREGS&t;&t;0x3F /* All but OV511 &amp; regs */
 DECL|macro|OV511_RESET_ALL
-mdefine_line|#define &t;OV511_RESET_ALL&t;&t;&t;&t;0x7F
+mdefine_line|#define &t;OV511_RESET_ALL&t;&t;&t;0x7F
 DECL|macro|OV511_REG_SYSTEM_CLOCK_DIVISOR
 mdefine_line|#define OV511_REG_SYSTEM_CLOCK_DIVISOR&t;&t;0x51
 DECL|macro|OV511_REG_SYSTEM_SNAPSHOT
-mdefine_line|#define OV511_REG_SYSTEM_SNAPSHOT&t;&t;&t;0x52
+mdefine_line|#define OV511_REG_SYSTEM_SNAPSHOT&t;&t;0x52
 DECL|macro|OV511_REG_SYSTEM_INIT
 mdefine_line|#define OV511_REG_SYSTEM_INIT         &t;&t;0x53
 DECL|macro|OV511_REG_SYSTEM_PWR_CLK
-mdefine_line|#define OV511_REG_SYSTEM_PWR_CLK      &t;&t;0x54    /* OV511+ only */
+mdefine_line|#define OV511_REG_SYSTEM_PWR_CLK&t;&t;0x54&t;/* OV511+ only */
 DECL|macro|OV511_REG_SYSTEM_LED_CTL
-mdefine_line|#define OV511_REG_SYSTEM_LED_CTL      &t;&t;0x55    /* OV511+ only */
+mdefine_line|#define OV511_REG_SYSTEM_LED_CTL&t;&t;0x55&t;/* OV511+ only */
 DECL|macro|OV511_REG_SYSTEM_USER_DEFINED
 mdefine_line|#define OV511_REG_SYSTEM_USER_DEFINED&t;&t;0x5E
 DECL|macro|OV511_REG_SYSTEM_CUSTOM_ID
-mdefine_line|#define OV511_REG_SYSTEM_CUSTOM_ID&t;&t;&t;0x5F
+mdefine_line|#define OV511_REG_SYSTEM_CUSTOM_ID&t;&t;0x5F
 multiline_comment|/* OmniCE register numbers */
 DECL|macro|OV511_OMNICE_PREDICTION_HORIZ_Y
-mdefine_line|#define OV511_OMNICE_PREDICTION_HORIZ_Y&t;0x70
+mdefine_line|#define OV511_OMNICE_PREDICTION_HORIZ_Y&t;&t;0x70
 DECL|macro|OV511_OMNICE_PREDICTION_HORIZ_UV
 mdefine_line|#define OV511_OMNICE_PREDICTION_HORIZ_UV&t;0x71
 DECL|macro|OV511_OMNICE_PREDICTION_VERT_Y
 mdefine_line|#define OV511_OMNICE_PREDICTION_VERT_Y&t;&t;0x72
 DECL|macro|OV511_OMNICE_PREDICTION_VERT_UV
-mdefine_line|#define OV511_OMNICE_PREDICTION_VERT_UV&t;0x73
+mdefine_line|#define OV511_OMNICE_PREDICTION_VERT_UV&t;&t;0x73
 DECL|macro|OV511_OMNICE_QUANTIZATION_HORIZ_Y
 mdefine_line|#define OV511_OMNICE_QUANTIZATION_HORIZ_Y&t;0x74
 DECL|macro|OV511_OMNICE_QUANTIZATION_HORIZ_UV
@@ -140,17 +143,17 @@ mdefine_line|#define OV511_OMNICE_QUANTIZATION_VERT_Y&t;0x76
 DECL|macro|OV511_OMNICE_QUANTIZATION_VERT_UV
 mdefine_line|#define OV511_OMNICE_QUANTIZATION_VERT_UV&t;0x77
 DECL|macro|OV511_OMNICE_ENABLE
-mdefine_line|#define OV511_OMNICE_ENABLE&t;&t;&t;&t;&t;0x78
+mdefine_line|#define OV511_OMNICE_ENABLE&t;&t;&t;0x78
 DECL|macro|OV511_OMNICE_LUT_ENABLE
-mdefine_line|#define OV511_OMNICE_LUT_ENABLE&t;&t;&t;&t;0x79&t;&t;
+mdefine_line|#define OV511_OMNICE_LUT_ENABLE&t;&t;&t;0x79&t;&t;
 DECL|macro|OV511_OMNICE_Y_LUT_BEGIN
-mdefine_line|#define OV511_OMNICE_Y_LUT_BEGIN&t;&t;&t;0x80
+mdefine_line|#define OV511_OMNICE_Y_LUT_BEGIN&t;&t;0x80
 DECL|macro|OV511_OMNICE_Y_LUT_END
-mdefine_line|#define OV511_OMNICE_Y_LUT_END&t;&t;&t;&t;0x9F
+mdefine_line|#define OV511_OMNICE_Y_LUT_END&t;&t;&t;0x9F
 DECL|macro|OV511_OMNICE_UV_LUT_BEGIN
-mdefine_line|#define OV511_OMNICE_UV_LUT_BEGIN&t;&t;&t;0xA0
+mdefine_line|#define OV511_OMNICE_UV_LUT_BEGIN&t;&t;0xA0
 DECL|macro|OV511_OMNICE_UV_LUT_END
-mdefine_line|#define OV511_OMNICE_UV_LUT_END&t;&t;&t;&t;0xBF
+mdefine_line|#define OV511_OMNICE_UV_LUT_END&t;&t;&t;0xBF
 multiline_comment|/* Alternate numbers for various max packet sizes (OV511 only) */
 DECL|macro|OV511_ALT_SIZE_992
 mdefine_line|#define OV511_ALT_SIZE_992&t;0
@@ -185,7 +188,7 @@ DECL|macro|OV511PLUS_ALT_SIZE_769
 mdefine_line|#define OV511PLUS_ALT_SIZE_769&t;6
 DECL|macro|OV511PLUS_ALT_SIZE_961
 mdefine_line|#define OV511PLUS_ALT_SIZE_961&t;7
-multiline_comment|/* ov7610 registers */
+multiline_comment|/* OV7610 registers */
 DECL|macro|OV7610_REG_GAIN
 mdefine_line|#define OV7610_REG_GAIN          0x00
 DECL|macro|OV7610_REG_BLUE
@@ -275,14 +278,14 @@ mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
 DECL|macro|SCRATCH_BUF_SIZE
 mdefine_line|#define SCRATCH_BUF_SIZE 384
 DECL|macro|FRAMES_PER_DESC
-mdefine_line|#define FRAMES_PER_DESC&t;&t;10  /* FIXME - What should this be? */
+mdefine_line|#define FRAMES_PER_DESC&t;&t;10&t;/* FIXME - What should this be? */
 DECL|macro|FRAME_SIZE_PER_DESC
 mdefine_line|#define FRAME_SIZE_PER_DESC&t;993&t;/* FIXME - Deprecated */
 DECL|macro|MAX_FRAME_SIZE_PER_DESC
-mdefine_line|#define MAX_FRAME_SIZE_PER_DESC&t;993  /* For statically allocated stuff */
+mdefine_line|#define MAX_FRAME_SIZE_PER_DESC&t;993&t;/* For statically allocated stuff */
 singleline_comment|// FIXME - should this be 0x81 (endpoint address) or 0x01 (endpoint number)?
 DECL|macro|OV511_ENDPOINT_ADDRESS
-mdefine_line|#define OV511_ENDPOINT_ADDRESS 0x81 /* Address of isoc endpoint */
+mdefine_line|#define OV511_ENDPOINT_ADDRESS 0x81&t;/* Address of isoc endpoint */
 singleline_comment|// CAMERA SPECIFIC
 singleline_comment|// FIXME - these can vary between specific models
 DECL|macro|OV7610_I2C_WRITE_ID
@@ -559,12 +562,22 @@ id|usb_device
 op_star
 id|dev
 suffix:semicolon
-DECL|member|customid
+macro_line|#if 0
 r_int
 r_char
 id|customid
 suffix:semicolon
 multiline_comment|/* Type of camera */
+macro_line|#else
+DECL|member|customid
+r_int
+id|customid
+suffix:semicolon
+DECL|member|desc
+r_int
+id|desc
+suffix:semicolon
+macro_line|#endif
 DECL|member|iface
 r_int
 r_char
@@ -690,6 +703,35 @@ r_int
 id|packet_size
 suffix:semicolon
 multiline_comment|/* Frame size per isoc desc */
+multiline_comment|/* proc interface */
+DECL|member|param_lock
+r_struct
+id|semaphore
+id|param_lock
+suffix:semicolon
+multiline_comment|/* params lock for this camera */
+DECL|member|proc_entry
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_entry
+suffix:semicolon
+multiline_comment|/* /proc/ov511/videoX */
+)brace
+suffix:semicolon
+DECL|struct|cam_list
+r_struct
+id|cam_list
+(brace
+DECL|member|id
+r_int
+id|id
+suffix:semicolon
+DECL|member|description
+r_char
+op_star
+id|description
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -47,14 +47,13 @@ l_string|&quot;EMU10K1&quot;
 comma
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|emu10k1_pci_tbl
 r_static
 r_struct
 id|pci_device_id
 id|emu10k1_pci_tbl
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 (brace
@@ -3946,12 +3945,11 @@ id|DRIVER_VERSION
 l_string|&quot;&bslash;nCopyright (C) 1999 Creative Technology Ltd.&quot;
 )paren
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|emu10k1_pci_driver
 r_static
 r_struct
 id|pci_driver
 id|emu10k1_pci_driver
-id|__initdata
 op_assign
 (brace
 id|name
