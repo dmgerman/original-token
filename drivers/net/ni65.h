@@ -125,15 +125,13 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* bit 29-31: number of rmd&squot;s (power of 2) */
 DECL|member|rrp
-r_int
-r_int
+id|u32
 id|rrp
 suffix:semicolon
 multiline_comment|/* receive ring pointer (align 8) */
 multiline_comment|/* bit 29-31: number of tmd&squot;s (power of 2) */
 DECL|member|trp
-r_int
-r_int
+id|u32
 id|trp
 suffix:semicolon
 multiline_comment|/* transmit ring pointer (align 8) */
@@ -148,8 +146,7 @@ r_union
 (brace
 DECL|member|buffer
 r_volatile
-r_int
-r_int
+id|u32
 id|buffer
 suffix:semicolon
 r_struct
@@ -178,6 +175,7 @@ DECL|member|u
 id|u
 suffix:semicolon
 DECL|member|blen
+r_volatile
 r_int
 id|blen
 suffix:semicolon
@@ -197,8 +195,7 @@ r_union
 (brace
 DECL|member|buffer
 r_volatile
-r_int
-r_int
+id|u32
 id|buffer
 suffix:semicolon
 r_struct
@@ -227,6 +224,7 @@ DECL|member|u
 id|u
 suffix:semicolon
 DECL|member|blen
+r_volatile
 r_int
 r_int
 id|blen

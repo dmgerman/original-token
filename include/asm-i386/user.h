@@ -46,7 +46,7 @@ suffix:semicolon
 multiline_comment|/* 8*10 bytes for each FP-reg = 80 bytes */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is the old layout of &quot;struct pt_regs&quot;, and&n; * is still the layout used by user more (the new&n; * pt_regs doesn&squot;t have all registers as the kernel&n; * doesn&squot;t use the extra segment registers)&n; */
+multiline_comment|/*&n; * This is the old layout of &quot;struct pt_regs&quot;, and&n; * is still the layout used by user mode (the new&n; * pt_regs doesn&squot;t have all registers as the kernel&n; * doesn&squot;t use the extra segment registers)&n; */
 DECL|struct|user_regs_struct
 r_struct
 id|user_regs_struct

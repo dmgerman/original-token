@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 r_extern
 r_void
@@ -36,6 +37,18 @@ op_assign
 (brace
 macro_line|#include &lt;linux/symtab_begin.h&gt;
 multiline_comment|/* platform dependent support */
+id|X
+c_func
+(paren
+id|EISA_bus
+)paren
+comma
+id|X
+c_func
+(paren
+id|wp_works_ok
+)paren
+comma
 id|X
 c_func
 (paren

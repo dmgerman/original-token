@@ -52,5 +52,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Hardware write protection */
+DECL|macro|verify_write
+mdefine_line|#define verify_write(type, addr, size) 0
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

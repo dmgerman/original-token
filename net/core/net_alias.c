@@ -4137,34 +4137,14 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * net_alias initialisation&n; * called from net_dev_init().&n; */
-DECL|function|net_alias_init
-r_void
-id|net_alias_init
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/*&n;   * register dev events notifier&n;   */
-id|register_netdevice_notifier
-c_func
-(paren
-op_amp
-id|net_alias_dev_notifier
-)paren
-suffix:semicolon
-multiline_comment|/*&n;   * register /proc/net entries&n;   */
 macro_line|#ifndef ALIAS_USER_LAND_DEBUG
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
-c_func
-(paren
-op_amp
-(paren
+DECL|variable|proc_net_alias_types
+r_static
 r_struct
 id|proc_dir_entry
-)paren
+id|proc_net_alias_types
+op_assign
 (brace
 id|PROC_NET_ALIAS_TYPES
 comma
@@ -4189,16 +4169,13 @@ id|proc_net_inode_operations
 comma
 id|net_alias_types_getinfo
 )brace
-)paren
 suffix:semicolon
-id|proc_net_register
-c_func
-(paren
-op_amp
-(paren
+DECL|variable|proc_net_aliases
+r_static
 r_struct
 id|proc_dir_entry
-)paren
+id|proc_net_aliases
+op_assign
 (brace
 id|PROC_NET_ALIASES
 comma
@@ -4223,6 +4200,41 @@ id|proc_net_inode_operations
 comma
 id|net_alias_getinfo
 )brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+multiline_comment|/*&n; * net_alias initialisation&n; * called from net_dev_init().&n; */
+DECL|function|net_alias_init
+r_void
+id|net_alias_init
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;   * register dev events notifier&n;   */
+id|register_netdevice_notifier
+c_func
+(paren
+op_amp
+id|net_alias_dev_notifier
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * register /proc/net entries&n;   */
+macro_line|#ifndef ALIAS_USER_LAND_DEBUG
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_alias_types
+)paren
+suffix:semicolon
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_aliases
 )paren
 suffix:semicolon
 macro_line|#endif

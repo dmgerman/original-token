@@ -4533,7 +4533,7 @@ c_cond
 (paren
 id|dev-&gt;mc_count
 OG
-l_int|15
+l_int|14
 op_logical_or
 (paren
 id|dev-&gt;flags
@@ -4589,7 +4589,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* We have &lt;= 15 addresses that we can use the wonderful&n;&t;&t;   16 address perfect filtering of the Tulip.  Note that only&n;&t;&t;   the low shortword of setup_frame[] is valid. */
+multiline_comment|/* We have &lt; 15 addresses that we can use the wonderful&n;&t;&t;   16 address perfect filtering of the Tulip.  Note that only&n;&t;&t;   the low shortword of setup_frame[] is valid. */
 id|tio_write
 c_func
 (paren
@@ -4663,6 +4663,25 @@ op_star
 )paren
 id|dev-&gt;dev_addr
 suffix:semicolon
+multiline_comment|/* Always accept broadcast packets */
+op_star
+id|setup_frm
+op_increment
+op_assign
+l_int|0xffff
+suffix:semicolon
+op_star
+id|setup_frm
+op_increment
+op_assign
+l_int|0xffff
+suffix:semicolon
+op_star
+id|setup_frm
+op_increment
+op_assign
+l_int|0xffff
+suffix:semicolon
 r_do
 (brace
 op_star
@@ -4699,7 +4718,7 @@ c_loop
 op_increment
 id|i
 OL
-l_int|16
+l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/* Now add this frame to the Tx list. */

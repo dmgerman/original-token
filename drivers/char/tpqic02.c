@@ -887,10 +887,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* ifc_init */
-DECL|function|report_exception
+DECL|function|report_qic_exception
 r_static
 r_void
-id|report_exception
+id|report_qic_exception
 c_func
 (paren
 r_int
@@ -910,7 +910,7 @@ c_func
 (paren
 id|TPQD_ALWAYS
 comma
-l_string|&quot;Oops -- report_exception&quot;
+l_string|&quot;Oops -- report_qic_exception&quot;
 )paren
 suffix:semicolon
 id|n
@@ -946,12 +946,12 @@ id|msg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* report_exception */
+multiline_comment|/* report_qic_exception */
 multiline_comment|/* Try to map the drive-exception bits `s&squot; to a predefined &quot;exception number&quot;,&n; * by comparing the significant exception bits for each entry in the&n; * exception table (`exception_list[]&squot;).&n; * It is assumed that s!=0.&n; */
-DECL|function|decode_exception_nr
+DECL|function|decode_qic_exception_nr
 r_static
 r_int
-id|decode_exception_nr
+id|decode_qic_exception_nr
 c_func
 (paren
 r_int
@@ -1005,7 +1005,7 @@ id|printk
 c_func
 (paren
 id|TPQIC02_NAME
-l_string|&quot;: decode_exception_nr: exception(%x) not recognized&bslash;n&quot;
+l_string|&quot;: decode_qic_exception_nr: exception(%x) not recognized&bslash;n&quot;
 comma
 id|s
 )paren
@@ -1014,7 +1014,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* decode_exception_nr */
+multiline_comment|/* decode_qic_exception_nr */
 macro_line|#ifdef OBSOLETE
 multiline_comment|/* There are exactly 14 possible exceptions, as defined in QIC-02 rev F.&n; * Some are FATAL, some aren&squot;t. Currently all exceptions are treated as fatal.&n; * Especially 6 and 14 should not abort the transfer. RSN...&n; * Should probably let sense() figure out the exception number using the code&n; * below, and just report the error based on the number here, returning a code&n; * for FATAL/CONTINUABLE.&n; */
 DECL|function|report_error
@@ -1319,10 +1319,10 @@ suffix:semicolon
 multiline_comment|/* report_error */
 macro_line|#endif
 multiline_comment|/* Perform appropriate action for certain exceptions.&n; * should return a value to indicate stop/continue (in case of bad blocks)&n; */
-DECL|function|handle_exception
+DECL|function|handle_qic_exception
 r_static
 r_void
-id|handle_exception
+id|handle_qic_exception
 c_func
 (paren
 r_int
@@ -1422,7 +1422,7 @@ op_assign
 id|NO
 suffix:semicolon
 )brace
-multiline_comment|/* handle_exception */
+multiline_comment|/* handle_qic_exception */
 DECL|function|is_exception
 r_static
 r_inline
@@ -3229,13 +3229,13 @@ id|TP_ST1
 multiline_comment|/* My Wangtek occasionally reports `status&squot; 1212 which should be ignored. */
 id|exnr
 op_assign
-id|decode_exception_nr
+id|decode_qic_exception_nr
 c_func
 (paren
 id|err
 )paren
 suffix:semicolon
-id|handle_exception
+id|handle_qic_exception
 c_func
 (paren
 id|exnr
@@ -3244,7 +3244,7 @@ id|err
 )paren
 suffix:semicolon
 multiline_comment|/* update driver state wrt drive status */
-id|report_exception
+id|report_qic_exception
 c_func
 (paren
 id|exnr

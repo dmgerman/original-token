@@ -652,27 +652,12 @@ macro_line|#endif
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
-DECL|function|misc_init
-r_int
-id|misc_init
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifndef MODULE
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register_dynamic
-c_func
-(paren
-op_amp
-id|proc_root
-comma
-op_amp
-(paren
+DECL|variable|proc_misc
+r_static
 r_struct
 id|proc_dir_entry
-)paren
+id|proc_misc
+op_assign
 (brace
 l_int|0
 comma
@@ -700,6 +685,25 @@ id|proc_misc_read
 multiline_comment|/* get_info */
 comma
 )brace
+suffix:semicolon
+DECL|function|misc_init
+r_int
+id|misc_init
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifndef MODULE
+macro_line|#ifdef CONFIG_PROC_FS
+id|proc_register_dynamic
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_misc
 )paren
 suffix:semicolon
 macro_line|#endif /* PROC_FS */

@@ -192,32 +192,6 @@ c_func
 id|get_options
 )paren
 comma
-multiline_comment|/* system info variables */
-multiline_comment|/* These check that they aren&squot;t defines (0/1) */
-macro_line|#ifndef EISA_bus__is_a_macro
-id|X
-c_func
-(paren
-id|EISA_bus
-)paren
-comma
-macro_line|#endif
-macro_line|#ifndef MCA_bus__is_a_macro
-id|X
-c_func
-(paren
-id|MCA_bus
-)paren
-comma
-macro_line|#endif
-macro_line|#ifndef wp_works_ok__is_a_macro
-id|X
-c_func
-(paren
-id|wp_works_ok
-)paren
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* PCI BIOS support */
 id|X

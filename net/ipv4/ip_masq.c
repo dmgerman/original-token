@@ -3839,30 +3839,13 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Initialize ip masquerading&n; */
-DECL|function|ip_masq_init
-r_int
-id|ip_masq_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|register_symtab
-(paren
-op_amp
-id|ip_masq_syms
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS        
-id|proc_net_register
-c_func
-(paren
-op_amp
-(paren
+DECL|variable|proc_net_ipmsqhst
+r_static
 r_struct
 id|proc_dir_entry
-)paren
+id|proc_net_ipmsqhst
+op_assign
 (brace
 id|PROC_NET_IPMSQHST
 comma
@@ -3887,6 +3870,29 @@ id|proc_net_inode_operations
 comma
 id|ip_msqhst_procinfo
 )brace
+suffix:semicolon
+macro_line|#endif&t;
+multiline_comment|/*&n; *&t;Initialize ip masquerading&n; */
+DECL|function|ip_masq_init
+r_int
+id|ip_masq_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_symtab
+(paren
+op_amp
+id|ip_masq_syms
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS        
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_ipmsqhst
 )paren
 suffix:semicolon
 macro_line|#endif&t;

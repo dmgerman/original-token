@@ -609,11 +609,6 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|nlist
-comma
-id|ncount
-suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -623,41 +618,20 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* One pass for no-wait, three for wait:&n;&t;   0) write out all dirty, unlocked buffers;&n;&t;   1) write out all dirty buffers, waiting if locked;&n;&t;   2) wait for completion by waiting for all buffers to unlock. */
-id|repeat
-suffix:colon
+r_do
+(brace
 id|retry
 op_assign
 l_int|0
 suffix:semicolon
-id|repeat2
+id|repeat
 suffix:colon
-id|ncount
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* We search all lists as a failsafe mechanism, not because we expect&n;&t;   there to be dirty buffers on any of the other lists. */
-r_for
-c_loop
-(paren
-id|nlist
-op_assign
-l_int|0
-suffix:semicolon
-id|nlist
-OL
-id|NR_LIST
-suffix:semicolon
-id|nlist
-op_increment
-)paren
-(brace
-id|repeat1
-suffix:colon
 id|bh
 op_assign
 id|lru_list
 (braket
-id|nlist
+id|BUF_DIRTY
 )braket
 suffix:semicolon
 r_if
@@ -666,10 +640,8 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-(brace
-r_continue
+r_break
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -677,7 +649,7 @@ id|i
 op_assign
 id|nr_buffers_type
 (braket
-id|nlist
+id|BUF_DIRTY
 )braket
 op_star
 l_int|2
@@ -697,13 +669,11 @@ c_cond
 (paren
 id|bh-&gt;b_list
 op_ne
-id|nlist
+id|BUF_DIRTY
 )paren
-(brace
 r_goto
-id|repeat1
+id|repeat
 suffix:semicolon
-)brace
 id|next
 op_assign
 id|bh-&gt;b_next_free
@@ -714,13 +684,11 @@ c_cond
 op_logical_neg
 id|lru_list
 (braket
-id|nlist
+id|BUF_DIRTY
 )braket
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -742,7 +710,7 @@ id|bh
 )paren
 )paren
 (brace
-multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t;     requested AND pass &gt; 0. */
+multiline_comment|/* Buffer is locked; skip it unless wait is&n;&t;&t;&t;&t;   requested AND pass &gt; 0. */
 r_if
 c_cond
 (paren
@@ -766,10 +734,10 @@ id|bh
 )paren
 suffix:semicolon
 r_goto
-id|repeat2
+id|repeat
 suffix:semicolon
 )brace
-multiline_comment|/* If an unlocked buffer is not uptodate, there has&n;&t;&t;&t;     been an IO error. Skip it. */
+multiline_comment|/* If an unlocked buffer is not uptodate, there has&n;&t;&t;&t;    been an IO error. Skip it. */
 r_if
 c_cond
 (paren
@@ -810,7 +778,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Don&squot;t write clean buffers.  Don&squot;t write ANY buffers&n;&t;&t;&t;    on the third pass. */
+multiline_comment|/* Don&squot;t write clean buffers.  Don&squot;t write ANY buffers&n;&t;&t;&t;   on the third pass. */
 r_if
 c_cond
 (paren
@@ -842,6 +810,9 @@ suffix:semicolon
 id|bh-&gt;b_count
 op_increment
 suffix:semicolon
+id|next-&gt;b_count
+op_increment
+suffix:semicolon
 id|bh-&gt;b_flushtime
 op_assign
 l_int|0
@@ -857,35 +828,10 @@ op_amp
 id|bh
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|nlist
-op_ne
-id|BUF_DIRTY
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;[%d %s %ld] &quot;
-comma
-id|nlist
-comma
-id|kdevname
-c_func
-(paren
-id|bh-&gt;b_dev
-)paren
-comma
-id|bh-&gt;b_blocknr
-)paren
-suffix:semicolon
-id|ncount
-op_increment
-suffix:semicolon
-)brace
 id|bh-&gt;b_count
+op_decrement
+suffix:semicolon
+id|next-&gt;b_count
 op_decrement
 suffix:semicolon
 id|retry
@@ -893,23 +839,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|ncount
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;sys_sync: %d dirty buffers not on dirty list&bslash;n&quot;
-comma
-id|ncount
-)paren
-suffix:semicolon
 multiline_comment|/* If we are waiting for the sync to succeed, and if any dirty&n;&t;   blocks were written, then repeat; on the second pass, only&n;&t;   wait for buffers being written (do not pass to write any&n;&t;   more buffers on the second pass). */
-r_if
-c_cond
+)brace
+r_while
+c_loop
 (paren
 id|wait
 op_logical_and
@@ -920,8 +853,6 @@ id|pass
 op_le
 l_int|2
 )paren
-r_goto
-id|repeat
 suffix:semicolon
 r_return
 id|err

@@ -23,21 +23,6 @@ DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE 1
-r_extern
-r_int
-id|__verify_write
-c_func
-(paren
-r_const
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|verify_write
-mdefine_line|#define verify_write(type,addr,size) &bslash;&n;(((type) &amp;&amp; !wp_works_ok)?__verify_write((addr),(size)):0)
 DECL|function|verify_area
 r_extern
 r_inline

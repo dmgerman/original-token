@@ -1718,7 +1718,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;  Reason: %s (short frame%s, dc_stat=%lx):&bslash;pn&quot;
+l_string|&quot;  Reason: %s (short frame%s, dc_stat=%lx):&bslash;n&quot;
 comma
 id|reason
 comma

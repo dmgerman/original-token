@@ -1587,30 +1587,13 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Initialization routine&n; */
-DECL|function|ip_masq_app_init
-r_int
-id|ip_masq_app_init
-c_func
-(paren
-r_void
-)paren
-(brace
-id|register_symtab
-(paren
-op_amp
-id|ip_masq_app_syms
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS        
-id|proc_net_register
-c_func
-(paren
-op_amp
-(paren
+DECL|variable|proc_net_ip_masq_app
+r_static
 r_struct
 id|proc_dir_entry
-)paren
+id|proc_net_ip_masq_app
+op_assign
 (brace
 id|PROC_NET_IP_MASQ_APP
 comma
@@ -1635,6 +1618,29 @@ id|proc_net_inode_operations
 comma
 id|ip_masq_app_getinfo
 )brace
+suffix:semicolon
+macro_line|#endif        
+multiline_comment|/*&n; *&t;Initialization routine&n; */
+DECL|function|ip_masq_app_init
+r_int
+id|ip_masq_app_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_symtab
+(paren
+op_amp
+id|ip_masq_app_syms
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS        
+id|proc_net_register
+c_func
+(paren
+op_amp
+id|proc_net_ip_masq_app
 )paren
 suffix:semicolon
 macro_line|#endif        

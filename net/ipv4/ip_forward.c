@@ -607,11 +607,24 @@ id|dev2
 OL
 l_int|0
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|rt
+)paren
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
 multiline_comment|/* Problem - ie bad checksum */
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

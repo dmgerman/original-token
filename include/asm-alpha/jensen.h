@@ -70,6 +70,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * IO functions&n; *&n; * The &quot;local&quot; functions are those that don&squot;t go out to the EISA bus,&n; * but instead act on the VL82C106 chip directly.. This is mainly the&n; * keyboard, RTC,  printer and first two serial lines..&n; *&n; * The local stuff makes for some complications, but it seems to be&n; * gone in the PCI version. I hope I can get DEC suckered^H^H^H^H^H^H^H^H&n; * convinced that I need one of the newer machines.&n; */
 DECL|function|__local_inb
 r_extern
@@ -887,6 +888,7 @@ DECL|macro|inb
 mdefine_line|#define inb(port) &bslash;&n;(__builtin_constant_p((port))?__inb(port):_inb(port))
 DECL|macro|outb
 mdefine_line|#define outb(x, port) &bslash;&n;(__builtin_constant_p((port))?__outb((x),(port)):_outb((x),(port)))
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * The Alpha Jensen hardware for some rather strange reason puts&n; * the RTC clock at 0x170 instead of 0x70. Probably due to some&n; * misguided idea about using 0x70 for NMI stuff.&n; *&n; * These defines will override the defaults when doing RTC queries&n; */
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;(0x170+(x))

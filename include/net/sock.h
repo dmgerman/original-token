@@ -306,6 +306,10 @@ DECL|member|fin_seq
 id|__u32
 id|fin_seq
 suffix:semicolon
+DECL|member|syn_seq
+id|__u32
+id|syn_seq
+suffix:semicolon
 DECL|member|urg_seq
 id|__u32
 id|urg_seq

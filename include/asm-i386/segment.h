@@ -40,6 +40,29 @@ DECL|macro|set_fs
 mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment = (x))
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
+r_extern
+r_int
+id|__verify_write
+c_func
+(paren
+r_const
+r_void
+op_star
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+macro_line|#if CPU &gt; 386
+DECL|macro|verify_write
+mdefine_line|#define verify_write(type,addr,size) 0
+macro_line|#else
+multiline_comment|/*&n; * The intel i386 CPU needs to check writability by hand, as the&n; * CPU does not honour the write protect bit in supervisor mode&n; */
+DECL|macro|verify_write
+mdefine_line|#define verify_write(type,addr,size) &bslash;&n;(((type) &amp;&amp; !wp_works_ok)?__verify_write((addr),(size)):0)
+macro_line|#endif
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

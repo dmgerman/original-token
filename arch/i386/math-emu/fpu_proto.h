@@ -68,7 +68,7 @@ id|flags
 suffix:semicolon
 id|asmlinkage
 r_void
-id|exception
+id|FPU_exception
 c_func
 (paren
 r_int

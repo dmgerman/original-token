@@ -10896,6 +10896,32 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Bug trap for null data. Release the skb and bail out.&n; */
+r_if
+c_cond
+(paren
+id|data
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ppp_dev_xmit: data=NULL before ppp_dev_xmit_ip.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Look at the protocol in the skb to determine the difference between&n; * an IP frame and an IPX frame.&n; */
 r_switch
 c_cond

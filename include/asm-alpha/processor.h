@@ -14,11 +14,6 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * The alpha has no problems with write protection&n; */
-DECL|macro|wp_works_ok
-mdefine_line|#define wp_works_ok 1
-DECL|macro|wp_works_ok__is_a_macro
-mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/*&n; * The VM exception save area. We need to save&n; *&t;return address (r26)&n; *&t;PC (r30)&n; *&t;function-call-saved regs (r9-r15)&n; * Count is used to do some basic sanity checking, and&n; * to handle the case where a kernel service itself sets&n; * up exceptions while another exception is active.&n; *&n; * NOTE: Exceptions are not &quot;recursive&quot;: in the case above&n; * the oldest exception is the one that is left active, but&n; * the VM fault handler will notice a count != 1 and abort&n; * because exceptions within exceptions are an error.&n; */
 DECL|struct|exception_struct
 r_struct

@@ -1427,6 +1427,10 @@ id|newsk-&gt;fin_seq
 op_assign
 id|skb-&gt;seq
 suffix:semicolon
+id|newsk-&gt;syn_seq
+op_assign
+id|skb-&gt;seq
+suffix:semicolon
 id|newsk-&gt;state
 op_assign
 id|TCP_SYN_RECV
@@ -4118,7 +4122,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This routine is only called when we have urgent data&n; *&t;signalled. Its the &squot;slow&squot; part of tcp_urg. It could be&n; *&t;moved inline now as tcp_urg is only called from one&n; *&t;place. We handle URGent data wrong. We have to - as&n; *&t;BSD still doesn&squot;t use the correction from RFC961.&n; */
+multiline_comment|/*&n; *&t;This routine is only called when we have urgent data&n; *&t;signalled. Its the &squot;slow&squot; part of tcp_urg. It could be&n; *&t;moved inline now as tcp_urg is only called from one&n; *&t;place. We handle URGent data wrong. We have to - as&n; *&t;BSD still doesn&squot;t use the correction from RFC961.&n; *&n; *&t;For 1003.1g we should support a new option TCP_STDURG to permit&n; *&t;either form.&n; */
 DECL|function|tcp_check_urg
 r_static
 r_void
@@ -4235,6 +4239,18 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;We may be adding urgent data when the last byte read was&n;&t; *&t;urgent. To do this requires some care. We cannot just ignore&n;&t; *&t;sk-&gt;copied_seq since we would read the last urgent byte again&n;&t; *&t;as data, nor can we alter copied_seq until this data arrives&n;&t; *&t;or we break the sematics of SIOCATMARK (and thus sockatmark())&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;urg_seq
+op_eq
+id|sk-&gt;copied_seq
+)paren
+id|sk-&gt;copied_seq
+op_increment
+suffix:semicolon
+multiline_comment|/* Move the copied sequence on correctly */
 id|sk-&gt;urg_data
 op_assign
 id|URG_NOTYET
@@ -4682,11 +4698,6 @@ r_struct
 id|sock
 op_star
 id|sk
-suffix:semicolon
-r_int
-id|syn_ok
-op_assign
-l_int|0
 suffix:semicolon
 id|__u32
 id|seq
@@ -5266,11 +5277,6 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *&t;Ok.. it&squot;s good. Set up sequence numbers and&n;&t;&t;&t;&t; *&t;move to established.&n;&t;&t;&t;&t; */
-id|syn_ok
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Don&squot;t reset this connection for the syn */
 id|sk-&gt;acked_seq
 op_assign
 id|skb-&gt;seq
@@ -5672,14 +5678,15 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;!syn_ok is effectively the state test in RFC793.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Check for a SYN, and ensure it matches the SYN we were&n;&t; *&t;first sent. We have to handle the rather unusual (but valid)&n;&t; *&t;sequence that KA9Q derived products may generate of&n;&t; *&n;&t; *&t;SYN&n;&t; *&t;&t;&t;&t;SYN|ACK Data&n;&t; *&t;ACK&t;(lost)&n;&t; *&t;&t;&t;&t;SYN|ACK Data + More Data&n;&t; *&t;.. we must ACK not RST...&n;&t; *&n;&t; *&t;We keep syn_seq as the sequence space occupied by the &n;&t; *&t;original syn. &n;&t; */
 r_if
 c_cond
 (paren
 id|th-&gt;syn
 op_logical_and
-op_logical_neg
-id|syn_ok
+id|skb-&gt;seq
+op_ne
+id|sk-&gt;syn_seq
 )paren
 (brace
 id|tcp_send_reset
