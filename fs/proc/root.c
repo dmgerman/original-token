@@ -194,6 +194,14 @@ comma
 (brace
 l_int|6
 comma
+l_int|7
+comma
+l_string|&quot;version&quot;
+)brace
+comma
+(brace
+l_int|7
+comma
 l_int|4
 comma
 l_string|&quot;self&quot;
@@ -343,7 +351,7 @@ c_cond
 (paren
 id|ino
 op_eq
-l_int|6
+l_int|7
 )paren
 multiline_comment|/* self modifying inode ... */
 id|ino

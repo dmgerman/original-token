@@ -17,6 +17,14 @@ id|high_memory
 op_assign
 l_int|0
 suffix:semicolon
+r_extern
+r_void
+id|sound_mem_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|nr_free_pages
 r_int
 id|nr_free_pages
@@ -4547,6 +4555,11 @@ op_add_assign
 l_int|4096
 suffix:semicolon
 )brace
+id|sound_mem_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|free_page_list
 op_assign
 l_int|0

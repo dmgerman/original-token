@@ -97,9 +97,19 @@ DECL|macro|MS_NOEXEC
 mdefine_line|#define MS_NOEXEC    8 /* disallow program execution */
 DECL|macro|MS_SYNC
 mdefine_line|#define MS_SYNC     16 /* writes are synced at once */
-multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; */
+DECL|macro|MS_REMOUNT
+mdefine_line|#define&t;MS_REMOUNT  32 /* alter flags of a mounted FS */
+multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
+DECL|macro|MS_RMT_MASK
+mdefine_line|#define MS_RMT_MASK (MS_RDONLY)
+multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
+DECL|macro|MS_MGC_VAL
+mdefine_line|#define MS_MGC_VAL 0xC0ED0000 /* magic flag number to indicate &quot;new&quot; flags */
+DECL|macro|MS_MGC_MSK
+mdefine_line|#define MS_MGC_MSK 0xffff0000 /* magic flag number mask */
+multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to overrride it sevelctively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
 DECL|macro|IS_RDONLY
-mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_flags &amp; MS_RDONLY)
+mdefine_line|#define IS_RDONLY(inode) ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY)
 DECL|macro|IS_NOSUID
 mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
 DECL|macro|IS_NODEV

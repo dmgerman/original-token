@@ -55,6 +55,11 @@ DECL|macro|F_WRLCK
 mdefine_line|#define F_WRLCK&t;&t;1
 DECL|macro|F_UNLCK
 mdefine_line|#define F_UNLCK&t;&t;2
+multiline_comment|/* For bsd flock () */
+DECL|macro|F_EXLCK
+mdefine_line|#define F_EXLCK&t;&t;4&t;/* or 3 */
+DECL|macro|F_SHLCK
+mdefine_line|#define F_SHLCK&t;&t;8&t;/* or 4 */
 multiline_comment|/* Once again - not implemented, but ... */
 DECL|struct|flock
 r_struct

@@ -2,6 +2,23 @@ macro_line|#ifndef _ASM_BITOPS_H
 multiline_comment|/*&n; * Copyright 1992, Linus Torvalds.&n; */
 macro_line|#ifdef i386
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. Both set_bit and clear_bit return 0&n; * if the bit-setting went ok, != 0 if the bit already was set/cleared.&n; *&n; * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).&n; */
+multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
+DECL|struct|__dummy
+DECL|member|a
+r_struct
+id|__dummy
+(brace
+r_int
+r_int
+id|a
+(braket
+l_int|100
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|ADDR
+mdefine_line|#define ADDR (*(struct __dummy *) addr)
 DECL|function|set_bit
 r_extern
 r_inline
@@ -12,7 +29,7 @@ c_func
 r_int
 id|nr
 comma
-r_int
+r_void
 op_star
 id|addr
 )paren
@@ -24,24 +41,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;
+l_string|&quot;btsl %2,%1&bslash;n&bslash;tsetb %0&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren
 id|ok
 )paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|nr
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-id|addr
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -59,7 +73,7 @@ c_func
 r_int
 id|nr
 comma
-r_int
+r_void
 op_star
 id|addr
 )paren
@@ -71,24 +85,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;
+l_string|&quot;btrl %2,%1&bslash;n&bslash;tsetnb %0&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren
 id|ok
 )paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|nr
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-id|addr
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -107,7 +118,7 @@ c_func
 r_int
 id|nr
 comma
-r_int
+r_void
 op_star
 id|addr
 )paren
@@ -119,24 +130,21 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;btl %1,%2&bslash;n&bslash;tsetb %0&quot;
+l_string|&quot;btl %2,%1&bslash;n&bslash;tsetb %0&quot;
 suffix:colon
 l_string|&quot;=q&quot;
 (paren
 id|ok
 )paren
 suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|ADDR
+)paren
+comma
 l_string|&quot;r&quot;
 (paren
 id|nr
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-id|addr
-)paren
 )paren
 )paren
 suffix:semicolon

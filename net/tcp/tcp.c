@@ -12026,7 +12026,7 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
-id|sk-&gt;state
+id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
 suffix:semicolon
@@ -12503,7 +12503,7 @@ id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
 suffix:semicolon
-id|sk-&gt;state
+id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
 suffix:semicolon

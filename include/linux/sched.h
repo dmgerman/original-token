@@ -4,9 +4,7 @@ mdefine_line|#define _LINUX_SCHED_H
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
-multiline_comment|/*&n; * This is the maximum nr of tasks - change it if you need to&n; */
-DECL|macro|NR_TASKS
-mdefine_line|#define NR_TASKS&t;64
+macro_line|#include &lt;linux/tasks.h&gt;
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;0xc0000000

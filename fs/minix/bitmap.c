@@ -5,12 +5,9 @@ macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|clear_block
 mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;::&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
-DECL|macro|set_bit
-mdefine_line|#define set_bit(nr,addr) ({&bslash;&n;char res; &bslash;&n;__asm__ __volatile__(&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;: &bslash;&n;&quot;=q&quot; (res):&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
-DECL|macro|clear_bit
-mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;char res; &bslash;&n;__asm__ __volatile__(&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;: &bslash;&n;&quot;=q&quot; (res):&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|macro|find_first_zero
 mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xorl %%edx,%%edx&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl %%edx,%%ecx&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;0&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
 DECL|variable|nibblemap
