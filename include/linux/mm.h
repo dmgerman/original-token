@@ -374,6 +374,17 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
+DECL|member|dirty
+r_int
+id|dirty
+suffix:colon
+l_int|16
+comma
+DECL|member|age
+id|age
+suffix:colon
+l_int|8
+suffix:semicolon
 DECL|member|flags
 r_int
 id|flags
@@ -408,12 +419,6 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-DECL|member|write_list
-r_struct
-id|page
-op_star
-id|write_list
-suffix:semicolon
 DECL|member|prev
 r_struct
 id|page
@@ -432,36 +437,40 @@ id|buffer_head
 op_star
 id|buffers
 suffix:semicolon
-DECL|member|dirty
+DECL|member|swap_unlock_entry
 r_int
-id|dirty
-suffix:colon
-l_int|16
-comma
-DECL|member|age
-id|age
-suffix:colon
-l_int|8
+r_int
+id|swap_unlock_entry
 suffix:semicolon
+DECL|member|map_nr
+r_int
+r_int
+id|map_nr
+suffix:semicolon
+multiline_comment|/* page-&gt;map_nr == page - mem_map */
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
 suffix:semicolon
 multiline_comment|/* Page flag bit values */
 DECL|macro|PG_locked
-mdefine_line|#define PG_locked&t; 0
+mdefine_line|#define PG_locked&t;&t; 0
 DECL|macro|PG_error
-mdefine_line|#define PG_error&t; 1
+mdefine_line|#define PG_error&t;&t; 1
 DECL|macro|PG_referenced
-mdefine_line|#define PG_referenced&t; 2
+mdefine_line|#define PG_referenced&t;&t; 2
 DECL|macro|PG_uptodate
-mdefine_line|#define PG_uptodate&t; 3
-DECL|macro|PG_freeafter
-mdefine_line|#define PG_freeafter&t; 4
+mdefine_line|#define PG_uptodate&t;&t; 3
+DECL|macro|PG_free_after
+mdefine_line|#define PG_free_after&t;&t; 4
+DECL|macro|PG_decr_after
+mdefine_line|#define PG_decr_after&t;&t; 5
+DECL|macro|PG_swap_unlock_after
+mdefine_line|#define PG_swap_unlock_after&t; 6
 DECL|macro|PG_DMA
-mdefine_line|#define PG_DMA&t;&t; 5
+mdefine_line|#define PG_DMA&t;&t;&t; 7
 DECL|macro|PG_reserved
-mdefine_line|#define PG_reserved&t;31
+mdefine_line|#define PG_reserved&t;&t;31
 multiline_comment|/* Make it prettier to test the above... */
 DECL|macro|PageLocked
 mdefine_line|#define PageLocked(page)&t;(test_bit(PG_locked, &amp;(page)-&gt;flags))
@@ -473,12 +482,17 @@ DECL|macro|PageDirty
 mdefine_line|#define PageDirty(page)&t;&t;(test_bit(PG_dirty, &amp;(page)-&gt;flags))
 DECL|macro|PageUptodate
 mdefine_line|#define PageUptodate(page)&t;(test_bit(PG_uptodate, &amp;(page)-&gt;flags))
-DECL|macro|PageFreeafter
-mdefine_line|#define PageFreeafter(page)&t;(test_bit(PG_freeafter, &amp;(page)-&gt;flags))
+DECL|macro|PageFreeAfter
+mdefine_line|#define PageFreeAfter(page)&t;(test_bit(PG_free_after, &amp;(page)-&gt;flags))
+DECL|macro|PageDecrAfter
+mdefine_line|#define PageDecrAfter(page)&t;(test_bit(PG_decr_after, &amp;(page)-&gt;flags))
+DECL|macro|PageSwapUnlockAfter
+mdefine_line|#define PageSwapUnlockAfter(page) (test_bit(PG_swap_unlock_after, &amp;(page)-&gt;flags))
 DECL|macro|PageDMA
 mdefine_line|#define PageDMA(page)&t;&t;(test_bit(PG_DMA, &amp;(page)-&gt;flags))
 DECL|macro|PageReserved
 mdefine_line|#define PageReserved(page)&t;(test_bit(PG_reserved, &amp;(page)-&gt;flags))
+multiline_comment|/*&n; * page-&gt;reserved denotes a page which must never be accessed (which&n; * may not even be present).&n; *&n; * page-&gt;dma is set for those pages which lie in the range of&n; * physical addresses capable of carrying DMA transfers.&n; *&n; * Multiple processes may &quot;see&quot; the same page. E.g. for untouched&n; * mappings of /dev/null, all processes see the same page full of&n; * zeroes, and text pages of executables and shared libraries have&n; * only one copy in memory, at most, normally.&n; *&n; * For the non-reserved pages, page-&gt;count denotes a reference count.&n; *   page-&gt;count == 0 means the page is free.&n; *   page-&gt;count == 1 means the page is used for exactly one purpose&n; *   (e.g. a private data page of one process).&n; *&n; * A page may be used for kmalloc() or anyone else who does a&n; * get_free_page(). In this case the page-&gt;count is at least 1, and&n; * all other fields are unused but should be 0 or NULL. The&n; * managament of this page is the responsibility of the one who uses&n; * it.&n; *&n; * The other pages (we may call them &quot;process pages&quot;) are completely&n; * managed by the Linux memory manager: I/O, buffers, swapping etc.&n; * The following discussion applies only to them.&n; *&n; * A page may belong to an inode&squot;s memory mapping. In this case,&n; * page-&gt;inode is the inode, and page-&gt;offset is the file offset&n; * of the page (not necessarily a multiple of PAGE_SIZE).&n; *&n; * A page may have buffers allocated to it. In this case,&n; * page-&gt;buffers is a circular list of these buffer heads. Else,&n; * page-&gt;buffers == NULL.&n; *&n; * For pages belonging to inodes, the page-&gt;count is the number of&n; * attaches, plus 1 if buffers are allocated to the page.&n; *&n; * All pages belonging to an inode make up a doubly linked list&n; * inode-&gt;i_pages, using the fields page-&gt;next and page-&gt;prev. (These&n; * fields are also used for freelist management when page-&gt;count==0.)&n; * There is also a hash table mapping (inode,offset) to the page&n; * in memory if present. The lists for this hash table use the fields&n; * page-&gt;next_hash and page-&gt;prev_hash.&n; *&n; * All process pages can do I/O:&n; * - inode pages may need to be read from disk,&n; * - inode pages which have been modified and are MAP_SHARED may need&n; *   to be written to disk,&n; * - private pages which have been modified may need to be swapped out&n; *   to swap space and (later) to be read back into memory.&n; * During disk I/O, page-&gt;locked is true. This bit is set before I/O&n; * and reset when I/O completes. page-&gt;wait is a wait queue of all&n; * tasks waiting for the I/O on this page to complete.&n; * page-&gt;uptodate tells whether the page&squot;s contents is valid.&n; * When a read completes, the page becomes uptodate, unless a disk I/O&n; * error happened.&n; * When a write completes, and page-&gt;free_after is true, the page is&n; * freed without any further delay.&n; *&n; * For choosing which pages to swap out, inode pages carry a&n; * page-&gt;referenced bit, which is set any time the system accesses&n; * that page through the (inode,offset) hash table.&n; * There is also the page-&gt;age counter, which implements a linear&n; * decay (why not an exponential decay?), see swapctl.h.&n; */
 r_extern
 id|mem_map_t
 op_star

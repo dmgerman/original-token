@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * eexpress2.c: Intel EtherExpress device driver for Linux&n; *&n; * Original version written 1993 by Donald Becker&n; * Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n; * Changed to support io= irq= by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Reworked 1995 by John Sullivan &lt;js10039@cam.ac.uk&gt;&n; *&n; *  06mar96 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *     - move started, buffer sizes, and so on into private data area.&n; *     - fix module loading for multiple cards&n; * &n; *  31jan96 Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; *     - Tidy up&n; *     - Some debugging.  Now works with 1.3 kernels.&n; *&n; *     Still to do:&n; *     - rationalise debugging&n; *     - fix detect/autoprobe and module routines&n; *     - test under high load, try to chase CU lockups&n; *     - look at RAM size check&n; *&n; * ToDo:&n; *   Multicast/Promiscuous mode handling&n; *   Put back debug reporting?&n; *   More documentation&n; *   Some worry about whether statistics are reported accurately&n; *&n; */
-multiline_comment|/*&n; * The original EtherExpress driver was just about usable, but&n; * suffered from a long startup delay, a hard limit of 16k memory&n; * usage on the card (EtherExpress 16s have either 32k or 64k),&n; * and random locks under load. The last was particularly annoying&n; * and made running eXceed/W preferable to Linux/XFree. After hacking&n; * through the driver for a couple of days, I had fixed most of the&n; * card handling errors, at the expense of turning the code into&n; * a complete jungle, but still hadn&squot;t tracked down the lock-ups.&n; * I had hoped these would be an IP bug, but failed to reproduce them&n; * under other drivers, so decided to start from scratch and rewrite&n; * the driver cleanly. And here it is.&n; *&n; * It&squot;s still not quite there, but self-corrects a lot more problems.&n; * the &squot;CU wedged, resetting...&squot; message shouldn&squot;t happen at all, but&n; * at least we recover. It still locks occasionally, any ideas welcome.&n; *&n; * The original startup delay experienced by some people was due to the&n; * first ARP request for the address of the default router getting lost.&n; * (mostly the reply we were getting back was arriving before our&n; * hardware address was set up, or before the configuration sequence&n; * had told the card NOT to strip of the frame header). If you a long&n; * startup delay, you may have lost this ARP request/reply, although&n; * the original cause has been fixed. However, it is more likely that&n; * you&squot;ve just locked under this version.&n; *&n; * The main changes are in the 586 initialization procedure (which was&n; * just broken before - the EExp is a strange beasty and needs careful&n; * handling) the receive buffer handling (we now use a non-terminating&n; * circular list of buffers, which stops the card giving us out-of-&n; * resources errors), and the transmit code. The driver is also more&n; * structured, and I have tried to keep the kernel interface separate&n; * from the hardware interface (although some routines naturally want&n; * to do both).&n; *&n; * John Sullivan&n; *&n; * 18/5/95:&n; *&n; * The lock-ups seem to happen when you access card memory after a 586&n; * reset. This happens only 1 in 12 resets, on a random basis, and&n; * completely locks the machine. As far as I can see there is no&n; * workaround possible - the only thing to be done is make sure we&n; * never reset the card *after* booting the kernel - once at probe time&n; * must be sufficient, and we&squot;ll just have to put up with that failing&n; * occasionally (or buy a new NIC). By the way, this looks like a &n; * definite card bug, since Intel&squot;s own driver for DOS does exactly the&n; * same.&n; */
+multiline_comment|/* $Id: eexpress.c,v 1.12 1996/04/15 17:27:30 phil Exp $&n; *&n; * Intel EtherExpress device driver for Linux&n; *&n; * Original version written 1993 by Donald Becker&n; * Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n; * Changed to support io= irq= by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; * Reworked 1995 by John Sullivan &lt;js10039@cam.ac.uk&gt;&n; * More fixes by Philip Blundell &lt;pjb27@cam.ac.uk&gt;&n; */
+multiline_comment|/*&n; * The original EtherExpress driver was just about usable, but&n; * suffered from a long startup delay, a hard limit of 16k memory&n; * usage on the card (EtherExpress 16s have either 32k or 64k),&n; * and random locks under load. The last was particularly annoying&n; * and made running eXceed/W preferable to Linux/XFree. After hacking&n; * through the driver for a couple of days, I had fixed most of the&n; * card handling errors, at the expense of turning the code into&n; * a complete jungle, but still hadn&squot;t tracked down the lock-ups.&n; * I had hoped these would be an IP bug, but failed to reproduce them&n; * under other drivers, so decided to start from scratch and rewrite&n; * the driver cleanly. And here it is.&n; *&n; * It&squot;s still not quite there, but self-corrects a lot more problems.&n; * the &squot;CU wedged, resetting...&squot; message shouldn&squot;t happen at all, but&n; * at least we recover. It still locks occasionally, any ideas welcome.&n; *&n; * The original startup delay experienced by some people was due to the&n; * first ARP request for the address of the default router getting lost.&n; * (mostly the reply we were getting back was arriving before our&n; * hardware address was set up, or before the configuration sequence&n; * had told the card NOT to strip of the frame header). If you a long&n; * startup delay, you may have lost this ARP request/reply, although&n; * the original cause has been fixed. However, it is more likely that&n; * you&squot;ve just locked under this version.&n; *&n; * The main changes are in the 586 initialization procedure (which was&n; * just broken before - the EExp is a strange beasty and needs careful&n; * handling) the receive buffer handling (we now use a non-terminating&n; * circular list of buffers, which stops the card giving us out-of-&n; * resources errors), and the transmit code. The driver is also more&n; * structured, and I have tried to keep the kernel interface separate&n; * from the hardware interface (although some routines naturally want&n; * to do both).&n; *&n; * John Sullivan&n; *&n; * 18/5/95:&n; *&n; * The lock-ups seem to happen when you access card memory after a 586&n; * reset. This happens only 1 in 12 resets, on a random basis, and&n; * completely locks the machine. As far as I can see there is no&n; * workaround possible - the only thing to be done is make sure we&n; * never reset the card *after* booting the kernel - once at probe time&n; * must be sufficient, and we&squot;ll just have to put up with that failing&n; * occasionally (or buy a new NIC). By the way, this looks like a &n; * definite card bug, since Intel&squot;s own driver for DOS does exactly the&n; * same.&n; *&n; * This bug makes switching in and out of promiscuous mode a risky&n; * business, since we must do a 586 reset each time.&n; */
 multiline_comment|/*&n; * Sources:&n; *&n; * The original eexpress.c by Donald Becker&n; *   Sources: the Crynwr EtherExpress driver source.&n; *            the Intel Microcommunications Databook Vol.1 1990&n; *&n; * wavelan.c and i82586.h&n; *   This was invaluable for the complete &squot;586 configuration details&n; *   and command format.&n; *&n; * The Crynwr sources (again)&n; *   Not as useful as the Wavelan driver, but then I had eexpress.c to&n; *   go off.&n; *&n; * The Intel EtherExpress 16 ethernet card&n; *   Provided the only reason I want to see a working etherexpress driver.&n; *   A lot of fixes came from just observing how the card (mis)behaves when&n; *   you prod it.&n; *&n; */
 DECL|variable|version
 r_static
@@ -8,8 +8,8 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;eexpress.c: v0.07 1/19/94 Donald Becker &lt;becker@super.org&gt;&bslash;n&quot;
-l_string|&quot;            v0.10 4th May 1995 John Sullivan &lt;js10039@cam.ac.uk&gt;&bslash;n&quot;
+l_string|&quot;eexpress.c: v0.10 04-May-95 John Sullivan &lt;js10039@cam.ac.uk&gt;&bslash;n&quot;
+l_string|&quot;            v0.13 10-Apr-96 Philip Blundell &lt;phil@tazenda.demon.co.uk&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -31,8 +31,6 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/*&n; * Not actually used yet - may be implemented when the driver has&n; * been debugged!&n; *&n; * Debug Level&t;&t;Driver Status&n; *&t;0&t;&t;Final release&n; *&t;1&t;&t;Beta test&n; *&t;2&n; *&t;3&n; * &t;4&t;&t;Report timeouts &amp; 586 errors (normal debug level)&n; *&t;5&t;&t;Report all major events&n; *&t;6&t;&t;Dump sent/received packet contents&n; *&t;7&t;&t;Report function entry/exit&n; */
-DECL|macro|NET_DEBUG
-macro_line|#undef NET_DEBUG
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
 mdefine_line|#define NET_DEBUG 4
@@ -114,6 +112,11 @@ DECL|member|started
 r_int
 r_char
 id|started
+suffix:semicolon
+DECL|member|promisc
+r_int
+r_char
+id|promisc
 suffix:semicolon
 DECL|member|rx_buf_start
 r_int
@@ -375,6 +378,17 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_static
+r_void
+id|eexp_set_multicast
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Prototypes for hardware access functions&n; */
 r_static
 r_void
@@ -474,20 +488,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
-suffix:semicolon
-r_static
-r_void
-id|eexp_hw_rxmap
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|rx_buf
 )paren
 suffix:semicolon
 r_static
@@ -704,6 +704,7 @@ macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: eexp_open()&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -795,6 +796,19 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#if NET_DEBUG &gt; 6
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: leaving eexp_open()&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -911,6 +925,8 @@ comma
 l_int|16
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -988,6 +1004,7 @@ macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: eexp_xmit()&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1070,6 +1087,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Retransmit timed out, status %04x, resetting...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1167,6 +1185,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Reset timed out status %04x, retrying...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1264,6 +1283,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmit timed out, CU not active status %04x %04x, restarting...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1304,6 +1324,7 @@ id|txstatus
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: CU wedged, status %04x %04x, resetting...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1363,6 +1384,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: i82586 startup timed out, status %04x, resetting...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1432,6 +1454,7 @@ id|status
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: CU has died! status %04x %04x, attempting to restart...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1493,7 +1516,6 @@ id|dev-&gt;tbusy
 )paren
 )paren
 (brace
-multiline_comment|/*    printk(&quot;%s: Transmitter busy or access conflict&bslash;n&quot;,dev-&gt;name); */
 id|lp-&gt;stats.tx_dropped
 op_increment
 suffix:semicolon
@@ -1655,6 +1677,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;net_interrupt(): irq %d for unknown device caught by EExpress&bslash;n&quot;
 comma
 id|irq
@@ -1667,6 +1690,7 @@ macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: interrupt&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1764,8 +1788,19 @@ id|status
 )paren
 )paren
 (brace
-r_if
-c_cond
+macro_line|#if NET_DEBUG &gt; 4
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: SCBcomplete event received&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+r_while
+c_loop
 (paren
 id|SCB_CUstat
 c_func
@@ -1775,24 +1810,29 @@ id|status
 op_eq
 l_int|2
 )paren
-r_while
-c_loop
-(paren
-id|SCB_CUstat
-c_func
-(paren
-id|inw
+id|status
+op_assign
+id|inw_p
 c_func
 (paren
 id|ioaddr
 op_plus
 id|SCB_STATUS
 )paren
-)paren
-op_eq
-l_int|2
+suffix:semicolon
+macro_line|#if NET_DEBUG &gt; 4
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: CU went non-active (status = %08x)&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|status
 )paren
 suffix:semicolon
+macro_line|#endif
 id|PRIV
 c_func
 (paren
@@ -1803,7 +1843,7 @@ id|started
 op_assign
 l_int|1
 suffix:semicolon
-id|outw
+id|outw_p
 c_func
 (paren
 id|lp-&gt;tx_link
@@ -1813,7 +1853,7 @@ op_plus
 id|SCB_CBL
 )paren
 suffix:semicolon
-id|outw
+id|outw_p
 c_func
 (paren
 id|PRIV
@@ -1908,6 +1948,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: RU stopped status %04x, restarting...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2032,6 +2073,21 @@ op_plus
 id|SET_IRQ
 )paren
 suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if NET_DEBUG &gt; 6
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: leaving eexp_irq()&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2107,6 +2163,7 @@ macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: eexp_hw_rx()&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2227,6 +2284,7 @@ l_int|0xc000
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Rx frame at %04x corrupted, status %04x, cmd %04x, &quot;
 l_string|&quot;next %04x, pbuf %04x, len %04x&bslash;n&quot;
 comma
@@ -2243,14 +2301,6 @@ comma
 id|pbuf
 comma
 id|pkt_len
-)paren
-suffix:semicolon
-id|eexp_hw_rxmap
-c_func
-(paren
-id|dev
-comma
-id|rx_block
 )paren
 suffix:semicolon
 id|boguscount
@@ -2367,6 +2417,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Memory squeeze, dropping packet&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3491,6 +3542,11 @@ id|dev-&gt;get_stats
 op_assign
 id|eexp_stats
 suffix:semicolon
+id|dev-&gt;set_multicast_list
+op_assign
+op_amp
+id|eexp_set_multicast
+suffix:semicolon
 id|ether_setup
 c_func
 (paren
@@ -4169,6 +4225,7 @@ id|failcount
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: CU start timed out, status %04x, cmd %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4240,6 +4297,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Failed to restart CU, resetting board...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4731,185 +4789,6 @@ id|WRITE_PTR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This really ought not to be necessary now. Repairs a single&n; * damaged receive buffer. If buffer memory is getting bashed&n; * enough to call this, we probably have bigger problems that can&n; * be fixed here.&n; */
-DECL|function|eexp_hw_rxmap
-r_static
-r_void
-id|eexp_hw_rxmap
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|rx_buf
-)paren
-(brace
-r_struct
-id|net_local
-op_star
-id|lp
-op_assign
-(paren
-r_struct
-id|net_local
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
-r_int
-r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-r_int
-r_int
-id|old_wp
-op_assign
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|WRITE_PTR
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|rx_buf
-comma
-id|ioaddr
-op_plus
-id|WRITE_PTR
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x0000
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x0000
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-(paren
-id|rx_buf
-op_eq
-id|lp-&gt;rx_last
-)paren
-ques
-c_cond
-id|lp-&gt;rx_first
-suffix:colon
-(paren
-id|rx_buf
-op_plus
-id|RX_BUF_SIZE
-)paren
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|rx_buf
-op_plus
-l_int|0x16
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outsw
-c_func
-(paren
-id|ioaddr
-comma
-id|rx_words
-comma
-r_sizeof
-(paren
-id|rx_words
-)paren
-op_rshift
-l_int|1
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x8000
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-op_minus
-l_int|1
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|rx_buf
-op_plus
-l_int|0x20
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x0000
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x8000
-op_or
-(paren
-id|RX_BUF_SIZE
-op_minus
-l_int|0x20
-)paren
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|old_wp
-comma
-id|ioaddr
-op_plus
-id|WRITE_PTR
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Reset the 586, fill memory (including calls to&n; * eexp_hw_[(rx)(tx)]init()) unreset, and start&n; * the configuration sequence. We don&squot;t wait for this&n; * to finish, but allow the interrupt handler to start&n; * the CU and RU for us. We can&squot;t start the receive/&n; * transmission system up before we know that the&n; * hardware is configured correctly&n; */
 DECL|function|eexp_hw_init586
 r_static
@@ -4941,6 +4820,16 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+macro_line|#if NET_DEBUG &gt; 6
+id|printk
+c_func
+(paren
+l_string|&quot;%s: eexp_hw_init586()&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
 id|PRIV
 c_func
 (paren
@@ -4968,7 +4857,7 @@ op_plus
 id|SET_IRQ
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|i586_RST
@@ -4978,57 +4867,60 @@ op_plus
 id|EEPROM_Ctrl
 )paren
 suffix:semicolon
-(brace
-r_int
-r_int
-id|wcnt
+id|outw_p
+c_func
+(paren
+id|lp-&gt;rx_buf_end
+comma
+id|ioaddr
+op_plus
+id|WRITE_PTR
+)paren
 suffix:semicolon
-id|wcnt
+id|start_code
+(braket
+l_int|28
+)braket
 op_assign
-l_int|0
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
+)paren
+ques
+c_cond
+(paren
+id|start_code
+(braket
+l_int|28
+)braket
+op_or
+l_int|1
+)paren
+suffix:colon
+(paren
+id|start_code
+(braket
+l_int|28
+)braket
+op_amp
+op_complement
+l_int|1
+)paren
 suffix:semicolon
-id|outw
+id|PRIV
 c_func
 (paren
-l_int|0
-comma
-id|ioaddr
-op_plus
-id|WRITE_PTR
+id|dev
 )paren
+op_member_access_from_pointer
+id|promisc
+op_assign
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|wcnt
-op_add_assign
-l_int|2
-)paren
-op_ne
-id|lp-&gt;rx_buf_end
-op_plus
-l_int|12
-)paren
-id|outw
-c_func
-(paren
-l_int|0
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-)brace
-id|outw
-c_func
-(paren
-id|lp-&gt;rx_buf_end
-comma
-id|ioaddr
-op_plus
-id|WRITE_PTR
-)paren
-suffix:semicolon
+multiline_comment|/* We may die here */
 id|outsw
 c_func
 (paren
@@ -5166,6 +5058,7 @@ id|rboguscount
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: i82586 reset timed out, kicking...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5206,6 +5099,7 @@ id|rfailcount
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: i82586 not responding, giving up.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5301,6 +5195,7 @@ id|ifailcount
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: i82586 initialization timed out, status %04x, cmd %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5374,6 +5269,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Failed to initialize i82586, giving up.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5406,25 +5302,16 @@ id|lp-&gt;init_time
 op_assign
 id|jiffies
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|PRIV
-c_func
-(paren
-id|dev
-)paren
-op_member_access_from_pointer
-id|started
-)paren
+macro_line|#if NET_DEBUG &gt; 6
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Uh? We haven&squot;t started yet&bslash;n&quot;
+l_string|&quot;%s: leaving eexp_hw_init586()&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -5476,9 +5363,6 @@ op_plus
 id|SET_IRQ
 )paren
 suffix:semicolon
-id|set_loopback
-suffix:semicolon
-multiline_comment|/* yet more paranoia - since we&squot;re resetting the ASIC&n;&t;&t;&t;* that controls this function, how can it possibly work?&n;&t;&t;&t;*/
 id|PRIV
 c_func
 (paren
@@ -5616,6 +5500,43 @@ comma
 id|ioaddr
 op_plus
 id|EEPROM_Ctrl
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Set or clear the multicast filter for this adaptor.&n; * We have to do a complete 586 restart for this to take effect.&n; * At the moment only promiscuous mode is supported.&n; */
+r_static
+r_void
+DECL|function|eexp_set_multicast
+id|eexp_set_multicast
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
+)paren
+op_ne
+id|PRIV
+c_func
+(paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|promisc
+)paren
+id|eexp_hw_init586
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5912,4 +5833,5 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Local Variables:&n; *  c-file-style: &quot;linux&quot;&n; *  tab-width: 8&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/discs/bibble/src/linux-1.3.69/include  -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strength-reduce -pipe -m486 -DCPU=486 -DMODULE  -c 3c505.c&quot;&n; * End:&n; */
 eof

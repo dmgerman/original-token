@@ -1589,7 +1589,7 @@ id|filp-&gt;f_rawin
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Will try asynchronous read-ahead.&n; * Double the max read ahead size each time.&n; *   That heuristic avoid to do some large IO for files that are not really&n; *   accessed sequentialy.&n; */
+multiline_comment|/*&n; * Will try asynchronous read-ahead.&n; * Double the max read ahead size each time.&n; *   That heuristic avoid to do some large IO for files that are not really&n; *   accessed sequentially.&n; */
 )brace
 r_else
 (brace

@@ -419,7 +419,7 @@ mdefine_line|#define CAN_DMA(x) (PageDMA(x))
 DECL|macro|ADDRESS
 mdefine_line|#define ADDRESS(x) (PAGE_OFFSET + ((x) &lt;&lt; PAGE_SHIFT))
 DECL|macro|RMQUEUE
-mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = &amp;area-&gt;list, *ret; &bslash;&n;&t;&t;while (&amp;area-&gt;list != (ret = prev-&gt;next)) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr = ret - mem_map; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
+mdefine_line|#define RMQUEUE(order, dma) &bslash;&n;do { struct free_area_struct * area = free_area+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct page *prev = &amp;area-&gt;list, *ret; &bslash;&n;&t;&t;while (&amp;area-&gt;list != (ret = prev-&gt;next)) { &bslash;&n;&t;&t;&t;if (!dma || CAN_DMA(ret)) { &bslash;&n;&t;&t;&t;&t;unsigned long map_nr = ret-&gt;map_nr; &bslash;&n;&t;&t;&t;&t;(prev-&gt;next = ret-&gt;next)-&gt;prev = prev; &bslash;&n;&t;&t;&t;&t;MARK_USED(map_nr, new_order, area); &bslash;&n;&t;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;&t;EXPAND(ret, map_nr, order, new_order, area); &bslash;&n;&t;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;&t;return ADDRESS(map_nr); &bslash;&n;&t;&t;&t;} &bslash;&n;&t;&t;&t;prev = ret; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;new_order++; area++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|macro|EXPAND
 mdefine_line|#define EXPAND(map,index,low,high,area) &bslash;&n;do { unsigned long size = 1 &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;area--; high--; size &gt;&gt;= 1; &bslash;&n;&t;&t;add_mem_queue(&amp;area-&gt;list, map); &bslash;&n;&t;&t;MARK_USED(index, high, area); &bslash;&n;&t;&t;index += size; &bslash;&n;&t;&t;map += size; &bslash;&n;&t;} &bslash;&n;&t;map-&gt;count = 1; &bslash;&n;&t;map-&gt;age = PAGE_INITIAL_AGE; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
@@ -897,6 +897,12 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+id|p-&gt;map_nr
+op_assign
+id|p
+op_minus
+id|mem_map
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -1170,6 +1176,7 @@ id|entry
 )paren
 )paren
 (brace
+multiline_comment|/* keep swap page allocated for the moment (swap cache) */
 id|set_pte
 c_func
 (paren

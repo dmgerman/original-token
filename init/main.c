@@ -2455,6 +2455,13 @@ l_int|0
 op_eq
 l_char|&squot;/&squot;
 op_logical_or
+id|line
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;,&squot;
+op_logical_or
 (paren
 id|line
 (braket

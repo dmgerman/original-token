@@ -1243,7 +1243,9 @@ id|TCP_TIMEOUT_INIT
 suffix:semicolon
 id|newsk-&gt;mdev
 op_assign
-l_int|0
+id|TCP_TIMEOUT_INIT
+op_lshift
+l_int|1
 suffix:semicolon
 id|newsk-&gt;max_window
 op_assign
@@ -1876,7 +1878,7 @@ suffix:semicolon
 id|u32
 id|window_seq
 suffix:semicolon
-multiline_comment|/* &n;&t; * 1 - there was data in packet as well as ack or new data is sent or &n;&t; *     in shutdown state&n;&t; * 2 - data from retransmit queue was acked and removed&n;&t; * 4 - window shrunk or data from retransmit queue was acked and removed&n;&t; * 8 - we want to do a fast retransmit. One packet only.&n;&t; */
+multiline_comment|/* &n;&t; * 1 - there was data in packet as well as ack or new data is sent or &n;&t; *     in shutdown state&n;&t; * 2 - data from retransmit queue was acked and removed&n;&t; * 4 - window shrunk or data from retransmit queue was acked and removed&n;&t; */
 r_if
 c_cond
 (paren
@@ -2100,6 +2102,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Remember the highest ack received and update the&n;&t; *&t;right hand window edge of the host.&n;&t; *&t;We do a bit of work here to track number of times we&squot;ve&n;&t; *&t;seen this ack without a change in the right edge of the&n;&t; *&t;window and no data in the packet.&n;&t; *&t;This will allow us to do fast retransmits.&n;&t; */
+multiline_comment|/* We are looking for duplicate ACKs here.&n;&t; * An ACK is a duplicate if:&n;&t; * (1) it has the same sequence number as the largest number we&squot;ve seen,&n;&t; * (2) it has the same window as the last ACK,&n;&t; * (3) we have outstanding data that has not been ACKed&n;&t; * (4) The packet was not carrying any data.&n;&t; * I&squot;ve tried to order these in occurance of most likely to fail&n;&t; * to least likely to fail.&n;&t; * [These are the rules BSD stacks use to determine if an ACK is a&n;&t; *  duplicate.]&n;&t; */
 r_if
 c_cond
 (paren
@@ -2117,27 +2120,95 @@ id|flag
 op_amp
 l_int|1
 )paren
+op_logical_and
+id|before
+c_func
+(paren
+id|ack
+comma
+id|sk-&gt;sent_seq
+)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We only want to short cut this once, many&n;&t;&t; * ACKs may still come, we&squot;ll do a normal transmit&n;&t;&t; * for these ACKs.&n;&t;&t; */
+multiline_comment|/* See draft-stevens-tcpca-spec-01 for explanation&n;&t;&t; * of what we are doing here.&n;&t;&t; */
+id|sk-&gt;rcv_ack_cnt
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_increment
 id|sk-&gt;rcv_ack_cnt
 op_eq
 id|MAX_DUP_ACKS
 op_plus
 l_int|1
 )paren
-id|flag
-op_or_assign
-l_int|8
+(brace
+id|sk-&gt;ssthresh
+op_assign
+id|max
+c_func
+(paren
+id|sk-&gt;cong_window
+op_rshift
+l_int|1
+comma
+l_int|2
+)paren
 suffix:semicolon
-multiline_comment|/* flag for a fast retransmit */
+id|sk-&gt;cong_window
+op_assign
+id|sk-&gt;ssthresh
+op_plus
+id|MAX_DUP_ACKS
+op_plus
+l_int|1
+suffix:semicolon
+id|tcp_do_retransmit
+c_func
+(paren
+id|sk
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* reduce the count. We don&squot;t want to be&n;&t;&t;&t;* seen to be in &quot;retransmit&quot; mode if we&n;&t;&t;&t;* are doing a fast retransmit.&n;&t;&t;&t;*/
+id|sk-&gt;retransmits
+op_decrement
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sk-&gt;rcv_ack_cnt
+OG
+id|MAX_DUP_ACKS
+op_plus
+l_int|1
+)paren
+(brace
+id|sk-&gt;cong_window
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;* At this point we are suppose to transmit a NEW&n;&t;&t;&t;* packet (not retransmit the missing packet,&n;&t;&t;&t;* this would only get us into a retransmit war.)&n;&t;&t;&t;* I think that having just adjusted cong_window&n;&t;&t;&t;* we will transmit the new packet below.&n;&t;&t;&t;*/
+)brace
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;rcv_ack_cnt
+OG
+id|MAX_DUP_ACKS
+)paren
+(brace
+id|sk-&gt;cong_window
+op_assign
+id|sk-&gt;ssthresh
+suffix:semicolon
+)brace
 id|sk-&gt;window_seq
 op_assign
 id|window_seq
@@ -2929,12 +3000,6 @@ l_int|2
 )paren
 op_logical_and
 id|sk-&gt;retransmits
-)paren
-op_logical_or
-(paren
-id|flag
-op_amp
-l_int|8
 )paren
 op_logical_or
 (paren

@@ -3340,7 +3340,11 @@ c_func
 (paren
 id|SetTxThreshold
 op_plus
+(paren
 l_int|1536
+op_rshift
+l_int|2
+)paren
 comma
 id|ioaddr
 op_plus
@@ -3401,7 +3405,11 @@ c_func
 (paren
 id|SetTxThreshold
 op_plus
+(paren
 l_int|1536
+op_rshift
+l_int|2
+)paren
 comma
 id|ioaddr
 op_plus

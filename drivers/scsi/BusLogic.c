@@ -1825,7 +1825,7 @@ c_cond
 id|AutoSCSIByte45.ForceBusDeviceScanningOrder
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;Sort the I/O Addresses such that the corrseponding PCI devices&n;&t;&t;are in ascending order by Bus Number and Device Number.&n;&t;      */
+multiline_comment|/*&n;&t;&t;Sort the I/O Addresses such that the corresponding PCI devices&n;&t;&t;are in ascending order by Bus Number and Device Number.&n;&t;      */
 r_int
 id|LastInterchange
 op_assign

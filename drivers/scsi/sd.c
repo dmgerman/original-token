@@ -438,7 +438,7 @@ id|file
 r_int
 id|target
 suffix:semicolon
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|inode-&gt;i_rdev

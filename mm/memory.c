@@ -2885,7 +2885,7 @@ id|PAGE_COPY
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* no need for invalidate */
+multiline_comment|/* no need for flush_tlb */
 r_return
 id|page
 suffix:semicolon

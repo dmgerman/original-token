@@ -3444,7 +3444,7 @@ multiline_comment|/* bad packet received */
 id|p-&gt;stats.rx_length_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* packet to long */
+multiline_comment|/* packet too long */
 id|printk
 c_func
 (paren

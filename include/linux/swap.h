@@ -162,6 +162,15 @@ DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf),1)
 DECL|macro|write_swap_page
 mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf),1)
+r_extern
+r_void
+id|swap_after_unlock_page
+(paren
+r_int
+r_int
+id|entry
+)paren
+suffix:semicolon
 multiline_comment|/* linux/mm/page_alloc.c */
 r_extern
 r_void

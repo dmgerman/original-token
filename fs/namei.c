@@ -1754,31 +1754,6 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/* SunOS, Solaris 2.x and HPUX all deny open() on&n;&t; * an existing file with mandatory locks.&n;&t; */
-id|error
-op_assign
-id|locks_verify_locked
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_return
-id|error
-suffix:semicolon
-)brace
 id|error
 op_assign
 id|follow_link
@@ -2024,8 +1999,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t;&t; * In my opinion the mandatory lock check should really be&n;&t;&t; * here. Only O_TRUNC calls can modify the file contents -&n;&t;&t; * but none of the commercial OS&squot;es seem to do it this way.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Refuse to truncate files with mandatory locks held on them&n;&t;&t; */
 id|error
 op_assign
 id|locks_verify_locked
@@ -2050,7 +2024,6 @@ r_return
 id|error
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

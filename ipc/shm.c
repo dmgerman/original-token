@@ -2088,6 +2088,9 @@ id|tmp
 comma
 id|shm_sgn
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 multiline_comment|/* clear old mappings */
 id|do_munmap
 c_func
@@ -2129,6 +2132,10 @@ id|shmd-&gt;vm_end
 )paren
 suffix:semicolon
 multiline_comment|/* map page range */
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 id|shm_sgn
 op_assign
 id|shmd-&gt;vm_pte
@@ -2211,10 +2218,15 @@ c_cond
 op_logical_neg
 id|page_middle
 )paren
-r_return
+(brace
+id|error
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|page_table
 op_assign
 id|pte_alloc
@@ -2231,10 +2243,15 @@ c_cond
 op_logical_neg
 id|page_table
 )paren
-r_return
+(brace
+id|error
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|set_pte
 c_func
 (paren
@@ -3586,6 +3603,9 @@ op_logical_neg
 id|PageDMA
 c_func
 (paren
+op_amp
+id|mem_map
+(braket
 id|MAP_NR
 c_func
 (paren
@@ -3595,8 +3615,7 @@ c_func
 id|page
 )paren
 )paren
-op_plus
-id|mem_map
+)braket
 )paren
 )paren
 r_goto

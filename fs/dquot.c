@@ -1847,7 +1847,7 @@ c_func
 (paren
 id|quotamessage
 comma
-l_string|&quot;%s: warning, %s file quota exceeded to long.&bslash;r&bslash;n&quot;
+l_string|&quot;%s: warning, %s file quota exceeded too long.&bslash;r&bslash;n&quot;
 comma
 id|dquot-&gt;dq_mnt-&gt;mnt_dirname
 comma
@@ -2091,7 +2091,7 @@ c_func
 (paren
 id|quotamessage
 comma
-l_string|&quot;%s: write failed, %s disk quota exceeded to long.&bslash;r&bslash;n&quot;
+l_string|&quot;%s: write failed, %s disk quota exceeded too long.&bslash;r&bslash;n&quot;
 comma
 id|dquot-&gt;dq_mnt-&gt;mnt_dirname
 comma

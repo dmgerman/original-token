@@ -7941,7 +7941,7 @@ id|oldto
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * This routine can be a performance bottleneck under high loads, since&n;     * it is called twice per SCSI operation: once when internal_cmnd is&n;     * called, and again when scsi_done completes the command.  To limit&n;     * the load this routine can cause, we shortcut processing if no clock&n;     * ticks have occurred since the last time it was called.  This may&n;     * cause the computation of least below to be inaccurrate, but it will&n;     * be corrected after the next clock tick.&n;     */
+multiline_comment|/*&n;     * This routine can be a performance bottleneck under high loads, since&n;     * it is called twice per SCSI operation: once when internal_cmnd is&n;     * called, and again when scsi_done completes the command.  To limit&n;     * the load this routine can cause, we shortcut processing if no clock&n;     * ticks have occurred since the last time it was called.  This may&n;     * cause the computation of least below to be inaccurate, but it will&n;     * be corrected after the next clock tick.&n;     */
 r_if
 c_cond
 (paren

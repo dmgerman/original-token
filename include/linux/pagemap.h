@@ -24,11 +24,7 @@ id|PAGE_OFFSET
 op_plus
 id|PAGE_SIZE
 op_star
-(paren
-id|page
-op_minus
-id|mem_map
-)paren
+id|page-&gt;map_nr
 suffix:semicolon
 )brace
 DECL|macro|PAGE_HASH_BITS
@@ -42,6 +38,7 @@ r_int
 r_int
 id|page_cache_size
 suffix:semicolon
+multiline_comment|/* # of pages currently in the hash table */
 r_extern
 r_struct
 id|page
@@ -71,7 +68,7 @@ id|offset
 )paren
 (brace
 DECL|macro|i
-mdefine_line|#define i (((unsigned long) inode)/sizeof(unsigned long))
+mdefine_line|#define i (((unsigned long) inode)/(sizeof(struct inode) &amp; ~ (sizeof(struct inode) - 1)))
 DECL|macro|o
 mdefine_line|#define o (offset &gt;&gt; PAGE_SHIFT)
 DECL|macro|s

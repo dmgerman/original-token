@@ -2519,7 +2519,7 @@ id|device
 id|dlci
 op_assign
 (brace
-id|devname
+l_string|&quot;dlci&quot;
 comma
 l_int|0
 comma

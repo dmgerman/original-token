@@ -803,6 +803,8 @@ c_func
 (paren
 )paren
 )paren
+id|current-&gt;fsgid
+op_assign
 id|current-&gt;egid
 op_assign
 id|egid
@@ -1636,6 +1638,8 @@ c_func
 (paren
 )paren
 )paren
+id|current-&gt;fsuid
+op_assign
 id|current-&gt;euid
 op_assign
 id|euid
