@@ -1132,7 +1132,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; */
+multiline_comment|/* This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; *&n;&t; * Firstly stop charging the sender for the space. We will&n;&t; * charge the recipient or discard. If we are called from ipx_rcv&n;&t; * this is ok as no socket owns an input buffer.&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+)paren
+(brace
+id|skb-&gt;sk-&gt;wmem_alloc
+op_sub_assign
+id|skb-&gt;truesize
+suffix:semicolon
+multiline_comment|/* Adjust */
+id|skb-&gt;sk
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Disown */
+)brace
 r_if
 c_cond
 (paren
@@ -1756,6 +1773,7 @@ comma
 id|dest_node
 )paren
 suffix:semicolon
+macro_line|#ifdef ALREADY_DONE_GUV
 r_if
 c_cond
 (paren
@@ -1770,6 +1788,7 @@ op_add_assign
 id|skb-&gt;truesize
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#if 0
 multiline_comment|/* Now log the packet just before transmission */
 id|dump_pkt

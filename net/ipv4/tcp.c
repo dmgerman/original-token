@@ -972,7 +972,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;This is not the right way to handle this. We have to&n;&t;&t;&t; *&t;issue an up to date window and ack report with this &n;&t;&t;&t; *&t;retransmit to keep the odd buggy tcp that relies on &n;&t;&t;&t; *&t;the fact BSD does this happy. &n;&t;&t;&t; *&t;We don&squot;t however need to recalculate the entire &n;&t;&t;&t; *&t;checksum, so someone wanting a small problem to play&n;&t;&t;&t; *&t;with might like to implement RFC1141/RFC1624 and speed&n;&t;&t;&t; *&t;this up by avoiding a full checksum.&n;&t;&t;&t; */
 id|th-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -2200,7 +2200,7 @@ c_func
 (paren
 id|counted
 comma
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 )paren
 )paren
 multiline_comment|/* Found a hole so stops here */
@@ -2213,7 +2213,7 @@ op_minus
 (paren
 id|counted
 op_minus
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 )paren
 suffix:semicolon
 multiline_comment|/* Length - header but start from where we are up to (avoid overlaps) */
@@ -3063,13 +3063,17 @@ multiline_comment|/*&n;&t; *&t;Actual processing.&n;&t; */
 id|tcp_statistics.TcpOutSegs
 op_increment
 suffix:semicolon
-id|skb-&gt;h.seq
+id|skb-&gt;seq
 op_assign
 id|ntohl
 c_func
 (paren
 id|th-&gt;seq
 )paren
+suffix:semicolon
+id|skb-&gt;end_seq
+op_assign
+id|skb-&gt;seq
 op_plus
 id|size
 op_minus
@@ -3084,7 +3088,7 @@ c_cond
 id|after
 c_func
 (paren
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -3146,7 +3150,7 @@ c_func
 (paren
 id|sk-&gt;window_seq
 comma
-id|sk-&gt;write_queue.next-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;end_seq
 )paren
 op_logical_and
 id|sk-&gt;send_head
@@ -3173,7 +3177,7 @@ r_else
 multiline_comment|/*&n;&t;&t; *&t;This is going straight out&n;&t;&t; */
 id|th-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -3181,7 +3185,7 @@ id|sk-&gt;acked_seq
 suffix:semicolon
 id|th-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|tcp_select_window
@@ -3821,7 +3825,7 @@ suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Fill in the packet and send it&n;  &t; */
 id|t1-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|ack
@@ -5503,7 +5507,7 @@ id|sk
 suffix:semicolon
 id|t1-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|sk-&gt;window
@@ -5511,7 +5515,7 @@ id|sk-&gt;window
 suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -6206,7 +6210,7 @@ c_func
 op_star
 id|seq
 comma
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 )paren
 )paren
 r_break
@@ -6216,7 +6220,7 @@ op_assign
 op_star
 id|seq
 op_minus
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 suffix:semicolon
 r_if
 c_cond
@@ -7087,20 +7091,24 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-id|t1-&gt;seq
+id|buff-&gt;seq
 op_assign
-id|ntohl
-c_func
-(paren
 id|sk-&gt;write_seq
-)paren
 suffix:semicolon
 id|sk-&gt;write_seq
 op_increment
 suffix:semicolon
-id|buff-&gt;h.seq
+id|buff-&gt;end_seq
 op_assign
 id|sk-&gt;write_seq
+suffix:semicolon
+id|t1-&gt;seq
+op_assign
+id|htonl
+c_func
+(paren
+id|buff-&gt;seq
+)paren
 suffix:semicolon
 id|t1-&gt;ack
 op_assign
@@ -7108,7 +7116,7 @@ l_int|1
 suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -7116,7 +7124,7 @@ id|sk-&gt;acked_seq
 suffix:semicolon
 id|t1-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|sk-&gt;window
@@ -7606,11 +7614,7 @@ id|th-&gt;syn
 (brace
 id|t1-&gt;ack_seq
 op_assign
-id|htonl
-c_func
-(paren
 id|th-&gt;seq
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -7619,7 +7623,11 @@ op_assign
 id|htonl
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|th-&gt;seq
+)paren
 op_plus
 l_int|1
 )paren
@@ -8490,19 +8498,19 @@ l_int|0
 suffix:semicolon
 id|newsk-&gt;acked_seq
 op_assign
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
 id|newsk-&gt;copied_seq
 op_assign
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
 id|newsk-&gt;fin_seq
 op_assign
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 suffix:semicolon
 id|newsk-&gt;state
 op_assign
@@ -8651,13 +8659,13 @@ l_int|0
 suffix:semicolon
 id|newsk-&gt;acked_seq
 op_assign
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
 id|newsk-&gt;copied_seq
 op_assign
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
@@ -9013,7 +9021,12 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-id|buff-&gt;h.seq
+id|buff-&gt;seq
+op_assign
+id|newsk-&gt;write_seq
+op_increment
+suffix:semicolon
+id|buff-&gt;end_seq
 op_assign
 id|newsk-&gt;write_seq
 suffix:semicolon
@@ -9031,8 +9044,7 @@ op_assign
 id|ntohl
 c_func
 (paren
-id|newsk-&gt;write_seq
-op_increment
+id|buff-&gt;seq
 )paren
 suffix:semicolon
 id|t1-&gt;ack
@@ -9085,12 +9097,10 @@ l_int|1
 suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
-id|skb-&gt;h.th-&gt;seq
-op_plus
-l_int|1
+id|newsk-&gt;acked_seq
 )paren
 suffix:semicolon
 id|t1-&gt;doff
@@ -9471,7 +9481,7 @@ op_logical_and
 id|before
 c_func
 (paren
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;window_seq
 op_plus
@@ -9490,7 +9500,7 @@ op_logical_or
 id|before
 c_func
 (paren
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;rcv_ack_seq
 op_plus
@@ -9522,7 +9532,7 @@ c_cond
 id|before
 c_func
 (paren
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;rcv_ack_seq
 op_plus
@@ -9652,7 +9662,7 @@ suffix:semicolon
 macro_line|#endif
 id|th-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -9660,7 +9670,7 @@ id|sk-&gt;acked_seq
 suffix:semicolon
 id|th-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|tcp_select_window
@@ -9686,7 +9696,7 @@ id|sk
 suffix:semicolon
 id|sk-&gt;sent_seq
 op_assign
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;IP manages our queue for some crazy reason&n;&t;&t;&t; */
 id|sk-&gt;prot
@@ -10029,7 +10039,7 @@ c_cond
 id|after
 c_func
 (paren
-id|skb-&gt;h.seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -10267,7 +10277,7 @@ id|before
 (paren
 id|sk-&gt;window_seq
 comma
-id|sk-&gt;write_queue.next-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;end_seq
 )paren
 )paren
 (brace
@@ -10337,9 +10347,9 @@ op_logical_and
 id|after
 c_func
 (paren
-id|sk-&gt;send_head-&gt;h.seq
+id|sk-&gt;send_head-&gt;end_seq
 comma
-id|sk-&gt;send_head-&gt;link3-&gt;h.seq
+id|sk-&gt;send_head-&gt;link3-&gt;end_seq
 )paren
 )paren
 id|printk
@@ -10355,7 +10365,7 @@ c_cond
 id|before
 c_func
 (paren
-id|sk-&gt;send_head-&gt;h.seq
+id|sk-&gt;send_head-&gt;end_seq
 comma
 id|ack
 op_plus
@@ -10664,7 +10674,7 @@ id|sk-&gt;window_seq
 op_plus
 l_int|1
 comma
-id|sk-&gt;write_queue.next-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;end_seq
 )paren
 op_logical_and
 (paren
@@ -10679,7 +10689,7 @@ op_logical_or
 id|before
 c_func
 (paren
-id|sk-&gt;write_queue.next-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;end_seq
 comma
 id|sk-&gt;rcv_ack_seq
 op_plus
@@ -10713,7 +10723,7 @@ c_func
 (paren
 id|sk-&gt;window_seq
 comma
-id|sk-&gt;write_queue.next-&gt;h.seq
+id|sk-&gt;write_queue.next-&gt;end_seq
 )paren
 op_logical_and
 id|sk-&gt;send_head
@@ -11228,13 +11238,7 @@ id|th
 (brace
 id|sk-&gt;fin_seq
 op_assign
-id|th-&gt;seq
-op_plus
-id|skb-&gt;len
-op_plus
-id|th-&gt;syn
-op_plus
-id|th-&gt;fin
+id|skb-&gt;end_seq
 suffix:semicolon
 r_if
 c_cond
@@ -11564,7 +11568,7 @@ multiline_comment|/* We don&squot;t care if it&squot;s just an ack or&n;&t;&t;&t
 (brace
 id|new_seq
 op_assign
-id|th-&gt;seq
+id|skb-&gt;seq
 op_plus
 id|skb-&gt;len
 op_plus
@@ -11741,17 +11745,17 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;skb1-&gt;h.th-&gt;seq = %d: &quot;
+l_string|&quot;skb1-&gt;seq = %d: &quot;
 comma
-id|skb1-&gt;h.th-&gt;seq
+id|skb1-&gt;seq
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;skb-&gt;h.th-&gt;seq = %d&bslash;n&quot;
+l_string|&quot;skb-&gt;seq = %d&bslash;n&quot;
 comma
-id|skb-&gt;h.th-&gt;seq
+id|skb-&gt;seq
 )paren
 suffix:semicolon
 id|printk
@@ -11769,9 +11773,9 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Optimisation: Duplicate frame or extension 
 r_if
 c_cond
 (paren
-id|th-&gt;seq
+id|skb-&gt;seq
 op_eq
-id|skb1-&gt;h.th-&gt;seq
+id|skb1-&gt;seq
 op_logical_and
 id|skb-&gt;len
 op_ge
@@ -11818,11 +11822,11 @@ c_cond
 id|after
 c_func
 (paren
-id|th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 comma
-id|skb1-&gt;h.th-&gt;seq
+id|skb1-&gt;seq
 )paren
 )paren
 (brace
@@ -11866,28 +11870,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Figure out what the ack value for this frame is&n;&t; */
-id|th-&gt;ack_seq
-op_assign
-id|th-&gt;seq
-op_plus
-id|skb-&gt;len
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|th-&gt;syn
-)paren
-id|th-&gt;ack_seq
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|th-&gt;fin
-)paren
-id|th-&gt;ack_seq
-op_increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11931,7 +11913,7 @@ op_logical_or
 id|before
 c_func
 (paren
-id|th-&gt;seq
+id|skb-&gt;seq
 comma
 id|sk-&gt;acked_seq
 op_plus
@@ -11945,7 +11927,7 @@ c_cond
 id|before
 c_func
 (paren
-id|th-&gt;seq
+id|skb-&gt;seq
 comma
 id|sk-&gt;acked_seq
 op_plus
@@ -11962,7 +11944,7 @@ c_cond
 id|after
 c_func
 (paren
-id|th-&gt;ack_seq
+id|skb-&gt;end_seq
 comma
 id|sk-&gt;acked_seq
 )paren
@@ -11973,7 +11955,7 @@ op_assign
 id|sk-&gt;window
 op_minus
 (paren
-id|th-&gt;ack_seq
+id|skb-&gt;end_seq
 op_minus
 id|sk-&gt;acked_seq
 )paren
@@ -11995,7 +11977,7 @@ id|newwindow
 suffix:semicolon
 id|sk-&gt;acked_seq
 op_assign
-id|th-&gt;ack_seq
+id|skb-&gt;end_seq
 suffix:semicolon
 )brace
 id|skb-&gt;acked
@@ -12048,7 +12030,7 @@ c_cond
 id|before
 c_func
 (paren
-id|skb2-&gt;h.th-&gt;seq
+id|skb2-&gt;seq
 comma
 id|sk-&gt;acked_seq
 op_plus
@@ -12062,7 +12044,7 @@ c_cond
 id|after
 c_func
 (paren
-id|skb2-&gt;h.th-&gt;ack_seq
+id|skb2-&gt;end_seq
 comma
 id|sk-&gt;acked_seq
 )paren
@@ -12073,7 +12055,7 @@ op_assign
 id|sk-&gt;window
 op_minus
 (paren
-id|skb2-&gt;h.th-&gt;ack_seq
+id|skb2-&gt;end_seq
 op_minus
 id|sk-&gt;acked_seq
 )paren
@@ -12095,7 +12077,7 @@ id|newwindow
 suffix:semicolon
 id|sk-&gt;acked_seq
 op_assign
-id|skb2-&gt;h.th-&gt;ack_seq
+id|skb2-&gt;end_seq
 suffix:semicolon
 )brace
 id|skb2-&gt;acked
@@ -12373,7 +12355,11 @@ op_decrement
 suffix:semicolon
 id|ptr
 op_add_assign
+id|ntohl
+c_func
+(paren
 id|th-&gt;seq
+)paren
 suffix:semicolon
 multiline_comment|/* ignore urgent data that we&squot;ve already seen and read */
 r_if
@@ -12518,7 +12504,11 @@ id|ptr
 op_assign
 id|sk-&gt;urg_seq
 op_minus
+id|ntohl
+c_func
+(paren
 id|th-&gt;seq
+)paren
 op_plus
 id|th-&gt;doff
 op_star
@@ -13083,20 +13073,24 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-id|t1-&gt;seq
+id|buff-&gt;seq
 op_assign
-id|ntohl
-c_func
-(paren
 id|sk-&gt;write_seq
 op_increment
+suffix:semicolon
+id|t1-&gt;seq
+op_assign
+id|htonl
+c_func
+(paren
+id|buff-&gt;seq
 )paren
 suffix:semicolon
 id|sk-&gt;sent_seq
 op_assign
 id|sk-&gt;write_seq
 suffix:semicolon
-id|buff-&gt;h.seq
+id|buff-&gt;end_seq
 op_assign
 id|sk-&gt;write_seq
 suffix:semicolon
@@ -13512,7 +13506,11 @@ id|ignore_it
 suffix:semicolon
 id|next_seq
 op_add_assign
+id|ntohl
+c_func
+(paren
 id|th-&gt;seq
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This isn&squot;t quite right.  sk-&gt;acked_seq could be more recent&n;&t; * than sk-&gt;window.  This is however close enough.  We will accept&n;&t; * slightly more packets than we should, but it should not cause&n;&t; * problems unless someone is trying to forge packets.&n;&t; */
 multiline_comment|/* have we already seen all of this packet? */
@@ -13541,7 +13539,11 @@ op_logical_neg
 id|before
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|th-&gt;seq
+)paren
 comma
 id|sk-&gt;acked_seq
 op_plus
@@ -14031,12 +14033,34 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|th-&gt;seq
+id|skb-&gt;seq
 op_assign
 id|ntohl
 c_func
 (paren
 id|th-&gt;seq
+)paren
+suffix:semicolon
+id|skb-&gt;end_seq
+op_assign
+id|skb-&gt;seq
+op_plus
+id|th-&gt;syn
+op_plus
+id|th-&gt;fin
+op_plus
+id|len
+op_minus
+id|th-&gt;doff
+op_star
+l_int|4
+suffix:semicolon
+id|skb-&gt;ack_seq
+op_assign
+id|ntohl
+c_func
+(paren
+id|th-&gt;ack_seq
 )paren
 suffix:semicolon
 multiline_comment|/* See if we know about the socket. */
@@ -14349,7 +14373,7 @@ id|TCP_SYN_RECV
 op_logical_and
 id|th-&gt;syn
 op_logical_and
-id|th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 op_eq
@@ -14500,13 +14524,13 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t reset this connection for the syn */
 id|sk-&gt;acked_seq
 op_assign
-id|th-&gt;seq
+id|skb-&gt;seq
 op_plus
 l_int|1
 suffix:semicolon
 id|sk-&gt;fin_seq
 op_assign
-id|th-&gt;seq
+id|skb-&gt;seq
 suffix:semicolon
 id|tcp_send_ack
 c_func
@@ -14692,7 +14716,7 @@ op_logical_and
 id|after
 c_func
 (paren
-id|th-&gt;seq
+id|skb-&gt;seq
 comma
 id|sk-&gt;acked_seq
 )paren
@@ -15419,7 +15443,7 @@ l_int|1
 suffix:semicolon
 id|nth-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -15427,7 +15451,7 @@ id|sk-&gt;acked_seq
 suffix:semicolon
 id|nth-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|tcp_select_window
@@ -15476,7 +15500,7 @@ id|win_size
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Remember our right edge sequence number.&n;&t;&t; */
-id|buff-&gt;h.seq
+id|buff-&gt;end_seq
 op_assign
 id|sk-&gt;sent_seq
 op_plus
@@ -15484,7 +15508,7 @@ id|win_size
 suffix:semicolon
 id|sk-&gt;sent_seq
 op_assign
-id|buff-&gt;h.seq
+id|buff-&gt;end_seq
 suffix:semicolon
 multiline_comment|/* Hack */
 macro_line|#if 0
@@ -15814,7 +15838,7 @@ l_int|0
 suffix:semicolon
 id|t1-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|sk-&gt;acked_seq
@@ -15822,7 +15846,7 @@ id|sk-&gt;acked_seq
 suffix:semicolon
 id|t1-&gt;window
 op_assign
-id|ntohs
+id|htons
 c_func
 (paren
 id|tcp_select_window

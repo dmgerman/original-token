@@ -1,4 +1,4 @@
-multiline_comment|/* devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devops.c,v 1.3 1995/11/25 00:59:59 davem Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Open the device described by the string &squot;dstr&squot;.  Returns the handle&n; * to that device used for subsequent operations on that device.&n; * Returns -1 on failure.&n; */

@@ -171,11 +171,6 @@ c_func
 r_struct
 id|device
 op_star
-comma
-r_int
-comma
-r_void
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -1224,10 +1219,10 @@ id|dev-&gt;priv
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*********************************************&n; *&n; * Set or clear the multicast filter for this adaptor.&n; * (no real multicast implemented for the DE-620, but she can be promiscuous...)&n; *&n; * num_addrs == -1&t;Promiscuous mode, receive all packets&n; * num_addrs == 0&t;Normal mode, clear multicast list&n; * num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n; *&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/*********************************************&n; *&n; * Set or clear the multicast filter for this adaptor.&n; * (no real multicast implemented for the DE-620, but she can be promiscuous...)&n; *&n; */
+DECL|function|de620_set_multicast_list
 r_static
 r_void
-DECL|function|de620_set_multicast_list
 id|de620_set_multicast_list
 c_func
 (paren
@@ -1235,19 +1230,20 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
+op_logical_or
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
+)paren
 )paren
 (brace
 multiline_comment|/* Enable promiscuous mode */

@@ -1,4 +1,4 @@
-multiline_comment|/* pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.9 1995/11/25 02:32:24 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/page.h&gt;  /* just in case */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H

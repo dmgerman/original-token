@@ -36,9 +36,9 @@ mdefine_line|#define IGMP_DVMRP&t;&t;&t;0x13&t;/* DVMRP routing */
 DECL|macro|IGMP_PIM
 mdefine_line|#define IGMP_PIM&t;&t;&t;0x14&t;/* PIM routing */
 DECL|macro|IGMP_HOST_NEW_MEMBERSHIP_REPORT
-mdefine_line|#define IGMP_HOST_NEW_MEMBERSHIP_REPORT&t;0x16&t;/* New version of 0x11 */
+mdefine_line|#define IGMP_HOST_NEW_MEMBERSHIP_REPORT 0x16&t;/* New version of 0x11 */
 DECL|macro|IGMP_HOST_LEAVE_MESSAGE
-mdefine_line|#define IGMP_HOST_LEAVE_MESSAGE&t;&t;0x17&t;/* An extra BSD seems to send */
+mdefine_line|#define IGMP_HOST_LEAVE_MESSAGE &t;0x17&t;/* An extra BSD seems to send */
 DECL|macro|IGMP_MTRACE_RESP
 mdefine_line|#define IGMP_MTRACE_RESP&t;&t;0x1e
 DECL|macro|IGMP_MTRACE
@@ -55,11 +55,29 @@ mdefine_line|#define IGMP_SLEEPING_MEMBER&t;&t;0x04
 DECL|macro|IGMP_AWAKENING_MEMBER
 mdefine_line|#define IGMP_AWAKENING_MEMBER&t;&t;0x05
 DECL|macro|IGMP_OLD_ROUTER
-mdefine_line|#define IGMP_OLD_ROUTER&t;&t;&t;0x00
+mdefine_line|#define IGMP_OLD_ROUTER &t;&t;0x00
 DECL|macro|IGMP_NEW_ROUTER
-mdefine_line|#define IGMP_NEW_ROUTER&t;&t;&t;0x01
+mdefine_line|#define IGMP_NEW_ROUTER &t;&t;0x01
+DECL|macro|IGMP_MINLEN
+mdefine_line|#define IGMP_MINLEN&t;&t;&t;8
+DECL|macro|IGMP_MAX_HOST_REPORT_DELAY
+mdefine_line|#define IGMP_MAX_HOST_REPORT_DELAY&t;10&t;/* max delay for response to */
+multiline_comment|/* query (in seconds)&t;*/
+DECL|macro|IGMP_TIMER_SCALE
+mdefine_line|#define IGMP_TIMER_SCALE&t;&t;10&t;/* denotes that the igmphdr-&gt;timer field */
+multiline_comment|/* specifies time in 10th of seconds&t; */
+DECL|macro|IGMP_AGE_THRESHOLD
+mdefine_line|#define IGMP_AGE_THRESHOLD&t;&t;540&t;/* If this host don&squot;t hear any IGMP V1&t;*/
+multiline_comment|/* message in this period of time, revert */
+multiline_comment|/* to IGMP v2 router */
 DECL|macro|IGMP_ALL_HOSTS
 mdefine_line|#define IGMP_ALL_HOSTS&t;&t;htonl(0xE0000001L)
+DECL|macro|IGMP_ALL_ROUTER
+mdefine_line|#define IGMP_ALL_ROUTER &t;htonl(0xE0000002L)
+DECL|macro|IGMP_LOCAL_GROUP
+mdefine_line|#define IGMP_LOCAL_GROUP&t;htonl(0xE0000000L)
+DECL|macro|IGMP_LOCAL_GROUP_MASK
+mdefine_line|#define IGMP_LOCAL_GROUP_MASK&t;htonl(0xFFFFFF00L)
 multiline_comment|/*&n; * struct for keeping the multicast list in&n; */
 macro_line|#ifdef __KERNEL__
 DECL|struct|ip_mc_socklist
@@ -119,6 +137,34 @@ suffix:semicolon
 DECL|member|users
 r_int
 id|users
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|router_info
+r_struct
+id|router_info
+(brace
+DECL|member|dev
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* type of router which is querier on this interface */
+DECL|member|time
+r_int
+id|time
+suffix:semicolon
+multiline_comment|/* # of slow timeouts since last old query */
+DECL|member|next
+r_struct
+id|router_info
+op_star
+id|next
 suffix:semicolon
 )brace
 suffix:semicolon

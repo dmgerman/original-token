@@ -205,13 +205,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 multiline_comment|/* Example routines you must write ;-&gt;. */
@@ -2690,13 +2683,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 multiline_comment|/*&n; * I _could_ do upto 6 addresses here, but wont (yet?)&n; */
@@ -2732,6 +2718,10 @@ id|SEEQCFG1_MATCH_ALL
 comma
 id|SEEQ_CFG1
 )paren
+suffix:semicolon
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
 suffix:semicolon
 )brace
 r_else

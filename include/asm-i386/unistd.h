@@ -296,6 +296,8 @@ DECL|macro|__NR_readv
 mdefine_line|#define __NR_readv&t;&t;145
 DECL|macro|__NR_writev
 mdefine_line|#define __NR_writev&t;&t;146
+DECL|macro|__NR_getsid
+mdefine_line|#define __NR_getsid&t;&t;147
 DECL|macro|__NR_mlock
 mdefine_line|#define __NR_mlock&t;&t;150
 DECL|macro|__NR_munlock

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: vaddrs.h,v 1.15 1995/11/25 02:33:20 davem Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
@@ -13,13 +14,15 @@ mdefine_line|#define  INTREG_VADDR (TIMER_VADDR+0x5000)
 DECL|macro|IOBASE_VADDR
 mdefine_line|#define  IOBASE_VADDR   0xfe000000  /* Base for mapping pages */
 DECL|macro|IOBASE_LEN
-mdefine_line|#define  IOBASE_LEN     0x00400000  /* Length of the IO area */
-DECL|macro|IOBASE_SUN4C_SEGMAP
-mdefine_line|#define  IOBASE_SUN4C_SEGMAP 100
+mdefine_line|#define  IOBASE_LEN     0x00100000  /* Length of the IO area */
+DECL|macro|IOBASE_END
+mdefine_line|#define  IOBASE_END     0xfe100000
 DECL|macro|DVMA_VADDR
-mdefine_line|#define  DVMA_VADDR     0xfff00000  /* Base area of the DVMA on the 4c */
+mdefine_line|#define  DVMA_VADDR     0xfff00000  /* Base area of the DVMA on suns */
 DECL|macro|DVMA_LEN
-mdefine_line|#define  DVMA_LEN       0x000c0000  /* Size of the DVMA address space */
+mdefine_line|#define  DVMA_LEN       0x00040000  /* Size of the DVMA address space */
+DECL|macro|DVMA_END
+mdefine_line|#define  DVMA_END       0xfff40000
 multiline_comment|/* On sun4m machines we need per-cpu virtual areas */
 DECL|macro|PERCPU_VADDR
 mdefine_line|#define  PERCPU_VADDR   0xff000000  /* Base for per-cpu virtual mappings */

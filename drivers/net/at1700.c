@@ -281,13 +281,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 "&f;"
@@ -2668,13 +2661,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_int
@@ -2685,7 +2671,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
+op_logical_or
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_PROMISC
+op_or
+id|IFF_ALLMULTI
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. - AC&n;&t;&t; */

@@ -1,4 +1,4 @@
-multiline_comment|/* timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.10 1995/11/25 02:33:03 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
@@ -143,6 +143,13 @@ r_struct
 id|sun4m_timer_regs
 op_star
 id|sun4m_timers
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+op_star
+id|master_l10_counter
 suffix:semicolon
 r_extern
 r_volatile

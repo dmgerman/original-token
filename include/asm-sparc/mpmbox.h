@@ -1,4 +1,4 @@
-multiline_comment|/* mpmbox.h:  Interface and defines for the OpenProm mailbox&n; *               facilities for MP machines under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mpmbox.h,v 1.3 1995/11/25 02:32:09 davem Exp $&n; * mpmbox.h:  Interface and defines for the OpenProm mailbox&n; *               facilities for MP machines under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MPMBOX_H
 DECL|macro|_SPARC_MPMBOX_H
 mdefine_line|#define _SPARC_MPMBOX_H

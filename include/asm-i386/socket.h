@@ -43,6 +43,8 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
 DECL|macro|SO_LINGER
 mdefine_line|#define SO_LINGER&t;13
-multiline_comment|/* To add :#define SO_REUSEPORT 14 */
+DECL|macro|SO_BSDCOMPAT
+mdefine_line|#define SO_BSDCOMPAT&t;14
+multiline_comment|/* To add :#define SO_REUSEPORT 15 */
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

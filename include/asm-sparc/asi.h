@@ -1,43 +1,43 @@
+multiline_comment|/* $Id: asi.h,v 1.11 1995/11/25 02:31:11 davem Exp $ */
 macro_line|#ifndef _SPARC_ASI_H
 DECL|macro|_SPARC_ASI_H
 mdefine_line|#define _SPARC_ASI_H
 multiline_comment|/* asi.h:  Address Space Identifier values for the sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Pioneer work for sun4m: Paul Hatchman (paul@sfe.com.au)&n; * Joint edition for sun4c+sun4m: Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;&n; */
-multiline_comment|/* These are sun4c, beware on other architectures. Although things should&n; * be similar under regular sun4&squot;s.&n; */
+multiline_comment|/* The first batch are for the sun4c. */
 DECL|macro|ASI_NULL1
-mdefine_line|#define ASI_NULL1        0x0
+mdefine_line|#define ASI_NULL1           0x00
 DECL|macro|ASI_NULL2
-mdefine_line|#define ASI_NULL2        0x1
+mdefine_line|#define ASI_NULL2           0x01
 multiline_comment|/* sun4c and sun4 control registers and mmu/vac ops */
 DECL|macro|ASI_CONTROL
-mdefine_line|#define ASI_CONTROL          0x2
+mdefine_line|#define ASI_CONTROL         0x02
 DECL|macro|ASI_SEGMAP
-mdefine_line|#define ASI_SEGMAP           0x3
+mdefine_line|#define ASI_SEGMAP          0x03
 DECL|macro|ASI_PTE
-mdefine_line|#define ASI_PTE              0x4
+mdefine_line|#define ASI_PTE             0x04
 DECL|macro|ASI_HWFLUSHSEG
-mdefine_line|#define ASI_HWFLUSHSEG       0x5      /* These are to initiate hw flushes of the cache */
+mdefine_line|#define ASI_HWFLUSHSEG      0x05
 DECL|macro|ASI_HWFLUSHPAGE
-mdefine_line|#define ASI_HWFLUSHPAGE      0x6
+mdefine_line|#define ASI_HWFLUSHPAGE     0x06
 DECL|macro|ASI_REGMAP
-mdefine_line|#define ASI_REGMAP           0x6      /* Top level segmaps on Sun4&squot;s with MUTANT MMU */
+mdefine_line|#define ASI_REGMAP          0x06
 DECL|macro|ASI_HWFLUSHCONTEXT
-mdefine_line|#define ASI_HWFLUSHCONTEXT   0x7
+mdefine_line|#define ASI_HWFLUSHCONTEXT  0x07
 DECL|macro|ASI_USERTXT
-mdefine_line|#define ASI_USERTXT      0x8
+mdefine_line|#define ASI_USERTXT         0x08
 DECL|macro|ASI_KERNELTXT
-mdefine_line|#define ASI_KERNELTXT    0x9
+mdefine_line|#define ASI_KERNELTXT       0x09
 DECL|macro|ASI_USERDATA
-mdefine_line|#define ASI_USERDATA     0xa
+mdefine_line|#define ASI_USERDATA        0x0a
 DECL|macro|ASI_KERNELDATA
-mdefine_line|#define ASI_KERNELDATA   0xb
+mdefine_line|#define ASI_KERNELDATA      0x0b
 multiline_comment|/* VAC Cache flushing on sun4c and sun4 */
 DECL|macro|ASI_FLUSHSEG
-mdefine_line|#define ASI_FLUSHSEG     0xc      /* These are for &quot;software&quot; flushes of the cache */
+mdefine_line|#define ASI_FLUSHSEG        0x0c
 DECL|macro|ASI_FLUSHPG
-mdefine_line|#define ASI_FLUSHPG      0xd
+mdefine_line|#define ASI_FLUSHPG         0x0d
 DECL|macro|ASI_FLUSHCTX
-mdefine_line|#define ASI_FLUSHCTX     0xe
-multiline_comment|/* The following are now not so SS5 specific any more, it is pretty&n; * much a complete generic sun4m/V8 ASI assignment listing now.&n; *&n; * -- davem@caip.rutgers.edu&n; */
+mdefine_line|#define ASI_FLUSHCTX        0x0e
 multiline_comment|/* SPARCstation-5: only 6 bits are decoded. */
 multiline_comment|/* wo = Write Only, rw = Read Write;        */
 multiline_comment|/* ss = Single Size, as = All Sizes;        */
@@ -73,7 +73,7 @@ DECL|macro|ASI_M_DATAC_TAG
 mdefine_line|#define ASI_M_DATAC_TAG     0x0E   /* Data Cache Tag; rw, ss */
 DECL|macro|ASI_M_DATAC_DATA
 mdefine_line|#define ASI_M_DATAC_DATA    0x0F   /* Data Cache Data; rw, ss */
-multiline_comment|/* The following cache flushing ASIs work only with the &squot;sta&squot;&n; * instruction results are unpredictable for &squot;swap&squot; and &squot;ldstuba&squot; etc.&n; * So don&squot;t do it.&n; */
+multiline_comment|/* The following cache flushing ASIs work only with the &squot;sta&squot;&n; * instruction. Results are unpredictable for &squot;swap&squot; and &squot;ldstuba&squot;,&n; * so don&squot;t do it.&n; */
 multiline_comment|/* These ASI flushes affect external caches too. */
 DECL|macro|ASI_M_FLUSH_PAGE
 mdefine_line|#define ASI_M_FLUSH_PAGE    0x10   /* Flush I&amp;D Cache Line (page); wo, ss */
@@ -85,7 +85,7 @@ DECL|macro|ASI_M_FLUSH_CTX
 mdefine_line|#define ASI_M_FLUSH_CTX     0x13   /* Flush I&amp;D Cache Line (context); wo, ss */
 DECL|macro|ASI_M_FLUSH_USER
 mdefine_line|#define ASI_M_FLUSH_USER    0x14   /* Flush I&amp;D Cache Line (user); wo, ss */
-multiline_comment|/* Block-copy operations are available on certain V8 cpus */
+multiline_comment|/* Block-copy operations are available only on certain V8 cpus. */
 DECL|macro|ASI_M_BCOPY
 mdefine_line|#define ASI_M_BCOPY         0x17   /* Block copy */
 multiline_comment|/* These affect only the ICACHE and are Ross HyperSparc specific. */
@@ -124,7 +124,7 @@ DECL|macro|ASI_M_FLUSH_IWHOLE
 mdefine_line|#define ASI_M_FLUSH_IWHOLE 0x31   /* Flush entire ICACHE; wo, ss */
 DECL|macro|ASI_M_DCDR
 mdefine_line|#define ASI_M_DCDR         0x39   /* Data Cache Diagnostics Registerl rw, ss */
-multiline_comment|/* Sparc V9 TI UltraSparc ASI&squot;s */
+multiline_comment|/* Sparc V9 TI UltraSparc ASI&squot;s (V8 ploos ploos) */
 multiline_comment|/* ASIs 0x0-0x7f are Supervisor Only.  0x80-0xff are for anyone. */
 multiline_comment|/* You will notice that there are a lot of places where if a normal&n; * ASI is available on the V9, there is also a little-endian version.&n; */
 DECL|macro|ASI_V9_RESV0
@@ -146,11 +146,11 @@ mdefine_line|#define ASI_V9_USER_SEC    0x11   /* User secondary address space *
 DECL|macro|ASI_V9_MMUPASS
 mdefine_line|#define ASI_V9_MMUPASS     0x14   /* OBMEM (external cache, no data cache) */
 DECL|macro|ASI_V9_IOPASS
-mdefine_line|#define ASI_V9_IOPASS      0x15   /* Like MMUPASS but for I/O areas (uncached) */
+mdefine_line|#define ASI_V9_IOPASS      0x15   /* Like MMUPASS, for I/O areas (uncached) */
 DECL|macro|ASI_V9_USER_PRIML
-mdefine_line|#define ASI_V9_USER_PRIML  0x18   /* User primary address space, little-endian. */
+mdefine_line|#define ASI_V9_USER_PRIML  0x18   /* User primary addr space, lil-endian. */
 DECL|macro|ASI_V9_USER_SECL
-mdefine_line|#define ASI_V9_USER_SECL   0x19   /* User secondary address space, little-endian. */
+mdefine_line|#define ASI_V9_USER_SECL   0x19   /* User secondary addr space, lil-endian. */
 DECL|macro|ASI_V9_MMUPASSL
 mdefine_line|#define ASI_V9_MMUPASSL    0x1C   /* OBMEM little-endian */
 DECL|macro|ASI_V9_IOPASSL

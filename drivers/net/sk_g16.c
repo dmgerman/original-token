@@ -491,7 +491,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -501,16 +500,8 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * LANCE Functions&n; * ---------------&n; */
 r_static
 r_int
@@ -1472,13 +1463,11 @@ op_assign
 op_amp
 id|SK_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Set the generic fields of the device structure */
 id|ether_setup
 c_func
@@ -3794,10 +3783,9 @@ suffix:semicolon
 multiline_comment|/* Return Device status */
 )brace
 multiline_comment|/* End of SK_get_stats() */
-macro_line|#ifdef HAVE_MULTICAST
 "&f;"
-multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a program performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmulti&squot; which enables or disables the&n; *                  Promiscuous mode.&n; *                  Promiscuous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remember&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device Structure&n; *                  I : int num_addrs      - explanation further down&n; *                  I : void *addrs        - &n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
-multiline_comment|/* Set or clear the multicast filter for SK_G16.&n; *&n; * num_addrs == -1      Promiscuous mode, receive all packets&n; * num_addrs == 0       Normal mode, clear multicast list&n; * num_addrs &gt; 0        Multicast mode, receive normal and MC packets&n; */
+multiline_comment|/*-&n; * Function       : set_multicast_list&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function gets called when a program performs&n; *                  a SIOCSIFFLAGS call. Ifconfig does this if you call&n; *                  &squot;ifconfig [-]allmulti&squot; which enables or disables the&n; *                  Promiscuous mode.&n; *                  Promiscuous mode is when the Network card accepts all&n; *                  packets, not only the packets which match our MAC &n; *                  Address. It is useful for writing a network monitor,&n; *                  but it is also a security problem. You have to remember&n; *                  that all information on the net is not encrypted.&n; *&n; * Parameters     : I : struct device *dev - SK_G16 device Structure&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     95/10/18  ACox  Noew multicast calling scheme&n;-*/
+multiline_comment|/* Set or clear the multicast filter for SK_G16.&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -3820,10 +3808,9 @@ id|addrs
 r_if
 c_cond
 (paren
-id|num_addrs
-op_eq
-op_minus
-l_int|1
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
 multiline_comment|/* Reinitialize LANCE with MODE_PROM set */
@@ -3840,9 +3827,16 @@ r_else
 r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
 op_eq
 l_int|0
+op_logical_and
+op_logical_neg
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
 )paren
 (brace
 multiline_comment|/* Reinitialize LANCE without MODE_PROM */
@@ -3858,6 +3852,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Multicast with logical address filter on */
+multiline_comment|/* Reinitialize LANCE without MODE_PROM */
+id|SK_lance_init
+c_func
+(paren
+id|dev
+comma
+id|MODE_NORMAL
+)paren
+suffix:semicolon
 multiline_comment|/* Not implemented yet. */
 )brace
 )brace

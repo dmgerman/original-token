@@ -1,4 +1,4 @@
-multiline_comment|/* bare.h:  Defines for the low level entry code of the BOOT program.&n; *          We include in the head.h stuff that the real kernel uses&n; *          and this saves a lot of repetition here.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bare.h,v 1.2 1995/11/25 00:57:41 davem Exp $&n; * bare.h:  Defines for the low level entry code of the BOOT program.&n; *          We include in the head.h stuff that the real kernel uses&n; *          and this saves a lot of repetition here.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/cprefix.h&gt;

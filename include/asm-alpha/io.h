@@ -305,6 +305,22 @@ macro_line|#ifndef outb_p
 DECL|macro|outb_p
 macro_line|# define outb_p&t;&t;outb
 macro_line|#endif
+macro_line|#ifndef inw_p
+DECL|macro|inw_p
+macro_line|# define inw_p&t;&t;inw
+macro_line|#endif
+macro_line|#ifndef outw_p
+DECL|macro|outw_p
+macro_line|# define outw_p&t;&t;outw
+macro_line|#endif
+macro_line|#ifndef inl_p
+DECL|macro|inl_p
+macro_line|# define inl_p&t;&t;inl
+macro_line|#endif
+macro_line|#ifndef outl_p
+DECL|macro|outl_p
+macro_line|# define outl_p&t;&t;outl
+macro_line|#endif
 multiline_comment|/*&n; * The &quot;address&quot; in IO memory space is not clearly either a integer or a&n; * pointer. We will accept both, thus the casts.&n; */
 macro_line|#ifndef readb
 DECL|macro|readb

@@ -1,4 +1,4 @@
-multiline_comment|/* memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.4 1995/11/25 01:00:02 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* This routine, for consistancy, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format becuase I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomache as I have not yet written&n; * the pepto-bismal kernel module yet.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/* tsunami.h:  Module specific definitions for Tsunami V8 Sparcs&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tsunami.h,v 1.2 1995/11/25 02:33:06 davem Exp $&n; * tsunami.h:  Module specific definitions for Tsunami V8 Sparcs&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TSUNAMI_H
 DECL|macro|_SPARC_TSUNAMI_H
 mdefine_line|#define _SPARC_TSUNAMI_H

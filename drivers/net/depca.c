@@ -475,13 +475,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 multiline_comment|/*&n;** Private functions&n;*/
@@ -609,13 +602,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_char
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -3074,10 +3060,6 @@ id|SetMulticastFilter
 c_func
 (paren
 id|dev
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_for
@@ -4901,7 +4883,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;** num_addrs == -1&t;Promiscuous mode, receive all packets&n;** num_addrs == 0&t;Normal mode, clear multicast list&n;** num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;** &t;&t;&t;best-effort filtering.&n;*/
+multiline_comment|/*&n;** Set or clear the multicast filter for this adaptor.&n;*/
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -4912,13 +4894,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_struct
@@ -4995,23 +4970,27 @@ multiline_comment|/* Initialize the descriptor rings */
 r_if
 c_cond
 (paren
-id|num_addrs
-op_ge
-l_int|0
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
 )paren
+)paren
+(brace
+id|lp-&gt;init_block.mode
+op_or_assign
+id|PROM
+suffix:semicolon
+multiline_comment|/* Set promiscuous mode */
+)brace
+r_else
 (brace
 id|SetMulticastFilter
 c_func
 (paren
 id|dev
-comma
-id|num_addrs
-comma
-(paren
-r_char
-op_star
-)paren
-id|addrs
 )paren
 suffix:semicolon
 id|lp-&gt;init_block.mode
@@ -5020,14 +4999,6 @@ op_complement
 id|PROM
 suffix:semicolon
 multiline_comment|/* Unset promiscuous mode */
-)brace
-r_else
-(brace
-id|lp-&gt;init_block.mode
-op_or_assign
-id|PROM
-suffix:semicolon
-multiline_comment|/* Set promiscuous mode */
 )brace
 id|LoadCSRs
 c_func
@@ -5061,13 +5032,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_char
-op_star
-id|addrs
 )paren
 (brace
 r_struct
@@ -5101,11 +5065,18 @@ id|poly
 op_assign
 id|CRC_POLYNOMIAL_BE
 suffix:semicolon
+r_struct
+id|dev_mc_list
+op_star
+id|dmi
+op_assign
+id|dev-&gt;mc_list
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
-op_eq
+id|dev-&gt;mc_count
+op_ge
 id|HASH_TABLE_LEN
 )paren
 (brace
@@ -5181,13 +5152,24 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|num_addrs
+id|dev-&gt;mc_count
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
 multiline_comment|/* for each address in the list */
+r_int
+r_char
+op_star
+id|addrs
+op_assign
+id|dmi-&gt;dmi_addr
+suffix:semicolon
+id|dmi
+op_assign
+id|dmi-&gt;next
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8225,6 +8207,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#if 0    
 r_case
 id|DEPCA_SET_MCA
 suffix:colon
@@ -8384,6 +8367,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#endif    
 r_case
 id|DEPCA_GET_STATS
 suffix:colon

@@ -310,7 +310,6 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|hp100_set_multicast_list
@@ -320,16 +319,8 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|hp100_interrupt
@@ -1605,7 +1596,6 @@ id|get_stats
 op_assign
 id|hp100_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev
 op_member_access_from_pointer
 id|set_multicast_list
@@ -1613,7 +1603,6 @@ op_assign
 op_amp
 id|hp100_set_multicast_list
 suffix:semicolon
-macro_line|#endif
 id|request_region
 c_func
 (paren
@@ -3852,8 +3841,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  multicast setup&n; */
-macro_line|#ifdef HAVE_MULTICAST
-multiline_comment|/*&n; *  Set or clear the multicast filter for this adapter.&n; *&n; *  num_addrs == -1             Promiscuous mode, receive all packets&n; *  num_addrs == 0              Normal mode, clear multicast list&n; *  num_addrs &gt; 0               Multicast mode, receive normal and MC packets,&n; *                              best-effort filtering.&n; */
+multiline_comment|/*&n; *  Set or clear the multicast filter for this adapter.&n; */
 DECL|function|hp100_set_multicast_list
 r_static
 r_void
@@ -3864,13 +3852,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_int
@@ -3900,7 +3881,7 @@ c_func
 (paren
 l_string|&quot;hp100_set_multicast_list: num_addrs = %d&bslash;n&quot;
 comma
-id|num_addrs
+id|dev-&gt;mc_count
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3937,10 +3918,9 @@ multiline_comment|/* stop rx/tx */
 r_if
 c_cond
 (paren
-id|num_addrs
-op_eq
-op_minus
-l_int|1
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
 id|lp
@@ -3962,9 +3942,11 @@ r_else
 r_if
 c_cond
 (paren
-id|num_addrs
-op_ne
-l_int|0
+id|dev-&gt;mc_count
+op_logical_or
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
 )paren
 (brace
 id|lp
@@ -4054,7 +4036,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* HAVE_MULTICAST */
 multiline_comment|/*&n; *  hardware interrupt handling&n; */
 DECL|function|hp100_interrupt
 r_static

@@ -1422,7 +1422,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ok, these three routines NOW keep track of readers/writers,&n; * Linus previously did it with inode-&gt;i_count checking.&n; */
 DECL|function|pipe_read_release
 r_static
 r_void
@@ -1545,6 +1544,101 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+DECL|function|pipe_read_open
+r_static
+r_int
+id|pipe_read_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+id|PIPE_READERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_increment
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pipe_write_open
+r_static
+r_int
+id|pipe_write_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+id|PIPE_WRITERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_increment
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pipe_rdwr_open
+r_static
+r_int
+id|pipe_rdwr_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+id|PIPE_READERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_increment
+suffix:semicolon
+id|PIPE_WRITERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_increment
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The file_operations structs are not static because they&n; * are also used in linux/fs/fifo.c to do operations on fifo&squot;s.&n; */
 DECL|variable|connecting_fifo_fops
 r_struct
@@ -1568,9 +1662,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* no mmap on pipes.. surprise */
-l_int|NULL
+id|pipe_read_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1598,9 +1691,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* no mmap on pipes.. surprise */
-l_int|NULL
+id|pipe_read_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1628,9 +1720,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|pipe_write_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_write_release
 comma
 l_int|NULL
@@ -1658,9 +1749,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|pipe_rdwr_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_rdwr_release
 comma
 l_int|NULL
@@ -1688,9 +1778,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* no mmap on pipes.. surprise */
-l_int|NULL
+id|pipe_read_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_read_release
 comma
 l_int|NULL
@@ -1718,9 +1807,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|pipe_write_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_write_release
 comma
 l_int|NULL
@@ -1748,9 +1836,8 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|pipe_rdwr_open
 comma
-multiline_comment|/* no special open code */
 id|pipe_rdwr_release
 comma
 l_int|NULL

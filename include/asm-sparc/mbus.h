@@ -1,4 +1,4 @@
-multiline_comment|/* mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mbus.h,v 1.5 1995/11/25 02:32:00 davem Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MBUS_H
 DECL|macro|_SPARC_MBUS_H
 mdefine_line|#define _SPARC_MBUS_H

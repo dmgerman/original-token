@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: pgtable.h,v 1.25 1995/11/25 02:32:22 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -6,12 +7,133 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/pgtsun4c.h&gt;
 macro_line|#include &lt;asm/pgtsrmmu.h&gt;
+macro_line|#include &lt;asm/vac-ops.h&gt;
+macro_line|#include &lt;asm/oplib.h&gt;
 r_extern
 r_void
 id|load_mmu
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+multiline_comment|/* mmu-specific process creation/cloning/etc hooks. */
+r_extern
+r_void
+(paren
+op_star
+id|mmu_exit_hook
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_fork_hook
+)paren
+(paren
+r_void
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_release_hook
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_flush_hook
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_task_cacheflush
+)paren
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Routines for data transfer buffers. */
+r_extern
+r_char
+op_star
+(paren
+op_star
+id|mmu_lockarea
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_unlockarea
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Routines for getting a dvma scsi buffer. */
+r_extern
+r_char
+op_star
+(paren
+op_star
+id|mmu_get_scsi_buffer
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|mmu_release_scsi_buffer
+)paren
+(paren
+r_char
+op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -173,8 +295,7 @@ l_int|1024
 suffix:semicolon
 multiline_comment|/* Page table for 0-4MB for everybody, on the Sparc this&n; * holds the same as on the i386.&n; */
 r_extern
-r_int
-r_int
+id|pte_t
 id|pg0
 (braket
 l_int|1024
@@ -188,171 +309,43 @@ suffix:semicolon
 multiline_comment|/* the no. of pointers that fit on a page: this will go away */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE   (PAGE_SIZE/sizeof(void*))
-multiline_comment|/* I define these like the i386 does because the check for text or data fault&n; * is done at trap time by the low level handler. Maybe I can set these bits&n; * then once determined. I leave them like this for now though.&n; */
+multiline_comment|/* Here is a trick, since mmap.c need the initializer elements for&n; * protection_map[] to be constant at compile time, I set the following&n; * to all zeros.  I set it to the real values after I link in the&n; * appropriate MMU page table routines at boot time.&n; */
 DECL|macro|__P000
-mdefine_line|#define __P000  PAGE_NONE
+mdefine_line|#define __P000  __pgprot(0)
 DECL|macro|__P001
-mdefine_line|#define __P001  PAGE_READONLY
+mdefine_line|#define __P001  __pgprot(0)
 DECL|macro|__P010
-mdefine_line|#define __P010  PAGE_COPY
+mdefine_line|#define __P010  __pgprot(0)
 DECL|macro|__P011
-mdefine_line|#define __P011  PAGE_COPY
+mdefine_line|#define __P011  __pgprot(0)
 DECL|macro|__P100
-mdefine_line|#define __P100  PAGE_READONLY
+mdefine_line|#define __P100  __pgprot(0)
 DECL|macro|__P101
-mdefine_line|#define __P101  PAGE_READONLY
+mdefine_line|#define __P101  __pgprot(0)
 DECL|macro|__P110
-mdefine_line|#define __P110  PAGE_COPY
+mdefine_line|#define __P110  __pgprot(0)
 DECL|macro|__P111
-mdefine_line|#define __P111  PAGE_COPY
+mdefine_line|#define __P111  __pgprot(0)
 DECL|macro|__S000
-mdefine_line|#define __S000&t;PAGE_NONE
+mdefine_line|#define __S000&t;__pgprot(0)
 DECL|macro|__S001
-mdefine_line|#define __S001&t;PAGE_READONLY
+mdefine_line|#define __S001&t;__pgprot(0)
 DECL|macro|__S010
-mdefine_line|#define __S010&t;PAGE_SHARED
+mdefine_line|#define __S010&t;__pgprot(0)
 DECL|macro|__S011
-mdefine_line|#define __S011&t;PAGE_SHARED
+mdefine_line|#define __S011&t;__pgprot(0)
 DECL|macro|__S100
-mdefine_line|#define __S100&t;PAGE_READONLY
+mdefine_line|#define __S100&t;__pgprot(0)
 DECL|macro|__S101
-mdefine_line|#define __S101&t;PAGE_READONLY
+mdefine_line|#define __S101&t;__pgprot(0)
 DECL|macro|__S110
-mdefine_line|#define __S110&t;PAGE_SHARED
+mdefine_line|#define __S110&t;__pgprot(0)
 DECL|macro|__S111
-mdefine_line|#define __S111&t;PAGE_SHARED
-multiline_comment|/* Contexts on the Sparc. */
-DECL|macro|MAX_CTXS
-mdefine_line|#define MAX_CTXS 256
-DECL|macro|NO_CTX
-mdefine_line|#define NO_CTX   0xffff     /* In tss.context means task has no context currently */
-r_extern
-r_struct
-id|task_struct
-op_star
-id|ctx_tasks
-(braket
-id|MAX_CTXS
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|ctx_tasks_last_frd
-suffix:semicolon
+mdefine_line|#define __S111&t;__pgprot(0)
 r_extern
 r_int
 id|num_contexts
 suffix:semicolon
-multiline_comment|/* This routine allocates a new context.  And &squot;p&squot; must not be &squot;current&squot;! */
-DECL|function|alloc_mmu_ctx
-r_extern
-r_inline
-r_int
-id|alloc_mmu_ctx
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|num_contexts
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|ctx_tasks
-(braket
-id|i
-)braket
-op_eq
-l_int|NULL
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-OL
-id|num_contexts
-)paren
-(brace
-id|p-&gt;tss.context
-op_assign
-id|i
-suffix:semicolon
-id|ctx_tasks
-(braket
-id|i
-)braket
-op_assign
-id|p
-suffix:semicolon
-r_return
-id|i
-suffix:semicolon
-)brace
-multiline_comment|/* Have to free one up */
-id|ctx_tasks_last_frd
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ctx_tasks_last_frd
-op_ge
-id|num_contexts
-)paren
-(brace
-id|ctx_tasks_last_frd
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Right here is where we invalidate the user mappings that were&n;&t; * present.  TODO&n;&t; */
-id|ctx_tasks
-(braket
-id|ctx_tasks_last_frd
-)braket
-op_member_access_from_pointer
-id|tss.context
-op_assign
-id|NO_CTX
-suffix:semicolon
-id|ctx_tasks
-(braket
-id|ctx_tasks_last_frd
-)braket
-op_assign
-id|p
-suffix:semicolon
-id|p-&gt;tss.context
-op_assign
-id|ctx_tasks_last_frd
-suffix:semicolon
-r_return
-id|ctx_tasks_last_frd
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -427,7 +420,7 @@ id|pgd_page
 id|pgd_t
 )paren
 suffix:semicolon
-multiline_comment|/* to set the page-dir&n; *&n; * On the Sparc the page segments hold 64 pte&squot;s which means 256k/segment.&n; * Therefore there is no global idea of &squot;the&squot; page directory, although we&n; * make a virtual one in kernel memory so that we can keep the stats on&n; * all the pages since not all can be loaded at once in the mmu.&n; *&n; * Actually on the SRMMU things do work exactly like the i386, the&n; * page tables live in real physical ram, no funky TLB buisness.  But&n; * we have to do lots of flushing. And we have to update the root level&n; * page table pointer for this process if it has a context.&n; */
+multiline_comment|/* to set the page-dir&n; *&n; * On the Sparc the page segments hold 64 pte&squot;s which means 256k/segment.&n; * Therefore there is no global idea of &squot;the&squot; page directory, although we&n; * make a virtual one in kernel memory so that we can keep the stats on&n; * all the pages since not all can be loaded at once in the mmu.&n; *&n; * Actually on the SRMMU things do work exactly like the i386, the&n; * page tables live in real physical ram, no funky TLB buisness.&n; */
 r_extern
 r_void
 (paren
@@ -445,7 +438,7 @@ id|pgdir
 )paren
 suffix:semicolon
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { sparc_update_rootmmu_dir(tsk, pgdir); } while (0)
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) sparc_update_rootmmu_dir(tsk, pgdir)
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
@@ -838,7 +831,7 @@ id|pgd_set
 id|pgd_t
 op_star
 comma
-id|pte_t
+id|pmd_t
 op_star
 )paren
 suffix:semicolon
@@ -864,7 +857,7 @@ id|pgd_offset
 )paren
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
 comma
 r_int
@@ -1021,7 +1014,6 @@ id|pgd_t
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* A page directory on the sun4c needs 16k, thus we request an order of&n; * two.&n; *&n; * I need 16k for a sun4c page table, so I use kmalloc since kmalloc_init()&n; * is called before pgd_alloc ever is (I think).&n; */
 r_extern
 id|pgd_t
 op_star
@@ -1033,189 +1025,38 @@ id|pgd_alloc
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* Fault handler stuff... */
+DECL|macro|FAULT_CODE_PROT
+mdefine_line|#define FAULT_CODE_PROT     0x1
+DECL|macro|FAULT_CODE_WRITE
+mdefine_line|#define FAULT_CODE_WRITE    0x2
+DECL|macro|FAULT_CODE_USER
+mdefine_line|#define FAULT_CODE_USER     0x4
 r_extern
 r_int
-id|invalid_segment
-suffix:semicolon
-multiline_comment|/* Sun4c specific routines.  They can stay inlined. */
-DECL|function|alloc_sun4c_pseg
-r_extern
-r_inline
-r_int
-id|alloc_sun4c_pseg
-c_func
 (paren
-r_void
+op_star
+id|get_fault_info
 )paren
-(brace
+(paren
 r_int
-id|oldseg
+r_int
+op_star
 comma
-id|i
-suffix:semicolon
-multiline_comment|/* First see if any are free already */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|PSEG_ENTRIES
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|phys_seg_map
-(braket
-id|i
-)braket
-op_eq
-id|PSEG_AVL
-)paren
-(brace
-r_return
-id|i
-suffix:semicolon
-)brace
-multiline_comment|/* Uh-oh, gotta unallocate a TLB pseg */
-id|oldseg
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|PSEG_ENTRIES
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-multiline_comment|/* Can not touch PSEG_KERNEL and PSEG_RSV segmaps */
-r_if
-c_cond
-(paren
-id|phys_seg_map
-(braket
-id|i
-)braket
-op_ne
-id|PSEG_USED
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-multiline_comment|/* Ok, take a look at it&squot;s lifespan */
-id|oldseg
-op_assign
-(paren
-id|phys_seg_life
-(braket
-id|i
-)braket
-OG
-id|oldseg
-)paren
-ques
-c_cond
-id|phys_seg_life
-(braket
-id|i
-)braket
-suffix:colon
-id|oldseg
-suffix:semicolon
-)brace
-id|phys_seg_life
-(braket
-id|oldseg
-)braket
-op_assign
-id|PSEG_BORN
-suffix:semicolon
-r_return
-id|oldseg
-suffix:semicolon
-)brace
-multiline_comment|/* Age all psegs except pseg_skip */
-DECL|function|age_sun4c_psegs
-r_extern
-r_inline
-r_void
-id|age_sun4c_psegs
-c_func
-(paren
 r_int
-id|pseg_skip
-)paren
-(brace
 r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|pseg_skip
-suffix:semicolon
-id|i
-op_increment
+op_star
+comma
+r_int
+r_int
 )paren
-(brace
-id|phys_seg_life
-(braket
-id|i
-)braket
-op_increment
 suffix:semicolon
-)brace
-id|i
-op_increment
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|i
-OL
-id|PSEG_ENTRIES
-)paren
-(brace
-id|phys_seg_life
-(braket
-id|i
-op_increment
-)braket
-op_increment
-suffix:semicolon
-)brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * This is only ever called when the sun4c page fault routines run&n; * so we can keep this here as the srmmu code will never get to it.&n; */
-DECL|function|update_mmu_cache
 r_extern
-r_inline
 r_void
+(paren
+op_star
 id|update_mmu_cache
-c_func
+)paren
 (paren
 r_struct
 id|vm_area_struct
@@ -1229,125 +1070,128 @@ comma
 id|pte_t
 id|pte
 )paren
-(brace
-r_int
-r_int
-id|clr_addr
 suffix:semicolon
+r_extern
 r_int
-id|segmap
-suffix:semicolon
-id|segmap
-op_assign
-(paren
-r_int
-)paren
-id|get_segmap
-c_func
-(paren
-id|address
-op_amp
-id|SUN4C_REAL_PGDIR_MASK
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|segmap
-op_eq
 id|invalid_segment
+suffix:semicolon
+DECL|macro|SWP_TYPE
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
+DECL|macro|SWP_OFFSET
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
+DECL|macro|SWP_ENTRY
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+DECL|struct|ctx_list
+r_struct
+id|ctx_list
+(brace
+DECL|member|next
+r_struct
+id|ctx_list
+op_star
+id|next
+suffix:semicolon
+DECL|member|prev
+r_struct
+id|ctx_list
+op_star
+id|prev
+suffix:semicolon
+DECL|member|ctx_number
+r_int
+r_char
+id|ctx_number
+suffix:semicolon
+DECL|member|ctx_task
+r_struct
+id|task_struct
+op_star
+id|ctx_task
+suffix:semicolon
+multiline_comment|/* Who has it now, if not free */
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ctx_list
+op_star
+id|ctx_list_pool
+suffix:semicolon
+multiline_comment|/* Dynamically allocated */
+r_extern
+r_struct
+id|ctx_list
+id|ctx_free
+suffix:semicolon
+multiline_comment|/* Head of free list */
+r_extern
+r_struct
+id|ctx_list
+id|ctx_used
+suffix:semicolon
+multiline_comment|/* Head of used contexts list */
+DECL|function|remove_from_ctx_list
+r_extern
+r_inline
+r_void
+id|remove_from_ctx_list
+c_func
+(paren
+r_struct
+id|ctx_list
+op_star
+id|entry
 )paren
 (brace
-id|segmap
+id|entry-&gt;next-&gt;prev
 op_assign
-id|alloc_sun4c_pseg
-c_func
-(paren
-)paren
+id|entry-&gt;prev
 suffix:semicolon
-id|put_segmap
+id|entry-&gt;prev-&gt;next
+op_assign
+id|entry-&gt;next
+suffix:semicolon
+)brace
+DECL|function|add_to_ctx_list
+r_extern
+r_inline
+r_void
+id|add_to_ctx_list
 c_func
 (paren
-(paren
-id|address
-op_amp
-id|SUN4C_REAL_PGDIR_MASK
-)paren
+r_struct
+id|ctx_list
+op_star
+id|head
 comma
-id|segmap
-)paren
-suffix:semicolon
-id|phys_seg_map
-(braket
-id|segmap
-)braket
-op_assign
-id|PSEG_USED
-suffix:semicolon
-multiline_comment|/* We got a segmap, clear all the pte&squot;s in it. */
-r_for
-c_loop
-(paren
-id|clr_addr
-op_assign
-(paren
-id|address
-op_amp
-id|SUN4C_REAL_PGDIR_MASK
-)paren
-suffix:semicolon
-id|clr_addr
-OL
-(paren
-(paren
-id|address
-op_amp
-id|SUN4C_REAL_PGDIR_MASK
-)paren
-op_plus
-id|SUN4C_REAL_PGDIR_SIZE
-)paren
-suffix:semicolon
-id|clr_addr
-op_add_assign
-id|PAGE_SIZE
+r_struct
+id|ctx_list
+op_star
+id|entry
 )paren
 (brace
-id|put_pte
-c_func
+id|entry-&gt;next
+op_assign
+id|head
+suffix:semicolon
 (paren
-id|clr_addr
-comma
-l_int|0
+id|entry-&gt;prev
+op_assign
+id|head-&gt;prev
 )paren
+op_member_access_from_pointer
+id|next
+op_assign
+id|entry
+suffix:semicolon
+id|head-&gt;prev
+op_assign
+id|entry
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* Do aging */
-id|age_sun4c_psegs
-c_func
-(paren
-id|segmap
-)paren
-suffix:semicolon
-id|put_pte
-c_func
-(paren
-(paren
-id|address
-op_amp
-id|PAGE_MASK
-)paren
-comma
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
+DECL|macro|add_to_free_ctxlist
+mdefine_line|#define add_to_free_ctxlist(entry) add_to_ctx_list(&amp;ctx_free, entry)
+DECL|macro|add_to_used_ctxlist
+mdefine_line|#define add_to_used_ctxlist(entry) add_to_ctx_list(&amp;ctx_used, entry)
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */
 eof

@@ -240,13 +240,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -867,7 +860,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 2 now */
+multiline_comment|/* be CAREFUL, BANK 2 now */
 id|id
 op_assign
 id|inb
@@ -1341,7 +1334,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 1 now */
+multiline_comment|/* be CAREFUL, BANK 1 now */
 multiline_comment|/* Enable the interrupt line. */
 id|temp_reg
 op_assign
@@ -1373,7 +1366,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 0 now */
+multiline_comment|/* be CAREFUL, BANK 0 now */
 multiline_comment|/* clear all interrupts */
 id|outb
 c_func
@@ -1411,7 +1404,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 1 now */
+multiline_comment|/* be CAREFUL, BANK 1 now */
 id|temp_reg
 op_assign
 id|inb
@@ -1757,7 +1750,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 2 now */
+multiline_comment|/* be CAREFUL, BANK 2 now */
 id|temp_reg
 op_assign
 id|inb
@@ -1900,7 +1893,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 1 now */
+multiline_comment|/* be CAREFUL, BANK 1 now */
 id|temp_reg
 op_assign
 id|inb
@@ -2800,7 +2793,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list
@@ -2811,13 +2804,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_struct
@@ -2841,15 +2827,25 @@ r_int
 r_int
 id|mode
 suffix:semicolon
+r_struct
+id|dev_mc_list
+op_star
+id|dmi
+op_assign
+id|dev-&gt;mc_list
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
-op_le
-op_minus
-l_int|1
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
+)paren
 op_logical_or
-id|num_addrs
+id|dev-&gt;mc_count
 OG
 l_int|63
 )paren
@@ -2867,7 +2863,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 2 now */
+multiline_comment|/* be CAREFUL, BANK 2 now */
 id|mode
 op_assign
 id|inb
@@ -2933,7 +2929,7 @@ r_else
 r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
 op_eq
 l_int|0
 )paren
@@ -2946,7 +2942,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 2 now */
+multiline_comment|/* be CAREFUL, BANK 2 now */
 id|mode
 op_assign
 id|inb
@@ -3009,8 +3005,6 @@ id|status
 comma
 op_star
 id|eaddrs
-op_assign
-id|addrs
 suffix:semicolon
 r_int
 id|i
@@ -3038,7 +3032,7 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* be CAREFULL, BANK 2 now */
+multiline_comment|/* be CAREFUL, BANK 2 now */
 id|mode
 op_assign
 id|inb
@@ -3137,7 +3131,7 @@ c_func
 l_int|6
 op_star
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
 op_plus
 l_int|1
 )paren
@@ -3156,12 +3150,25 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|num_addrs
+id|dev-&gt;mc_count
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+id|eaddrs
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|dmi-&gt;dmi_addr
+suffix:semicolon
+id|dmi
+op_assign
+id|dmi-&gt;next
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -3275,7 +3282,7 @@ op_plus
 l_int|6
 op_star
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
 op_plus
 l_int|1
 )paren
@@ -3438,7 +3445,7 @@ l_string|&quot;%s: set Rx mode to %d addresses.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|num_addrs
+id|dev-&gt;mc_count
 )paren
 suffix:semicolon
 r_break

@@ -784,6 +784,14 @@ id|skb2
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Add the physical headers.&n;&t;&t;&t; */
+id|skb2-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MROUTE
 r_if
 c_cond

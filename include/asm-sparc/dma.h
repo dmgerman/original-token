@@ -1,27 +1,26 @@
-multiline_comment|/*&n; * include/asm-sparc/dma.h&n; *&n; * Don&squot;t even ask, I am figuring out how this crap works&n; * on the Sparc. It may end up being real hairy to plug&n; * into this code, maybe not, we&squot;ll see.&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.12 1995/11/25 02:31:34 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;  /* for invalidate&squot;s, etc. */
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* DMA probing routine */
-r_extern
-r_int
-r_int
-id|probe_dma
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* These are irrelevant for Sparc DMA, but we leave it in so that&n; * things can compile.&n; */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS  0x0
+mdefine_line|#define MAX_DMA_ADDRESS  (~0UL)
+DECL|macro|DMA_MODE_READ
+mdefine_line|#define DMA_MODE_READ    1
+DECL|macro|DMA_MODE_WRITE
+mdefine_line|#define DMA_MODE_WRITE   2
+multiline_comment|/* Useful constants */
+DECL|macro|SIZE_16MB
+mdefine_line|#define SIZE_16MB      (16*1024*1024)
+DECL|macro|SIZE_64K
+mdefine_line|#define SIZE_64K       (64*1024)
 multiline_comment|/* Structure to describe the current status of DMA registers on the Sparc */
 DECL|struct|sparc_dma_registers
 r_struct
@@ -57,48 +56,107 @@ suffix:semicolon
 multiline_comment|/* DMA test register */
 )brace
 suffix:semicolon
+multiline_comment|/* DVMA chip revisions */
+DECL|enum|dvma_rev
+r_enum
+id|dvma_rev
+(brace
+DECL|enumerator|dvmarev0
+id|dvmarev0
+comma
+DECL|enumerator|dvmaesc1
+id|dvmaesc1
+comma
+DECL|enumerator|dvmarev1
+id|dvmarev1
+comma
+DECL|enumerator|dvmarev2
+id|dvmarev2
+comma
+DECL|enumerator|dvmarev3
+id|dvmarev3
+comma
+DECL|enumerator|dvmarevplus
+id|dvmarevplus
+)brace
+suffix:semicolon
+DECL|macro|DMA_HASCOUNT
+mdefine_line|#define DMA_HASCOUNT(rev)  ((rev)==dvmaesc1)
 multiline_comment|/* Linux DMA information structure, filled during probe. */
 DECL|struct|Linux_SBus_DMA
 r_struct
 id|Linux_SBus_DMA
 (brace
+DECL|member|next
+r_struct
+id|Linux_SBus_DMA
+op_star
+id|next
+suffix:semicolon
 DECL|member|SBus_dev
 r_struct
 id|linux_sbus_device
 op_star
 id|SBus_dev
 suffix:semicolon
-multiline_comment|/* pointer to sbus device struct */
-DECL|member|DMA_regs
+DECL|member|regs
 r_struct
 id|sparc_dma_registers
 op_star
-id|DMA_regs
+id|regs
 suffix:semicolon
-multiline_comment|/* Pointer to DMA regs in IO space */
 multiline_comment|/* Status, misc info */
 DECL|member|node
 r_int
 id|node
 suffix:semicolon
 multiline_comment|/* Prom node for this DMA device */
-DECL|member|dma_running
+DECL|member|running
 r_int
-id|dma_running
+id|running
 suffix:semicolon
-multiline_comment|/* Are we using the DMA now? */
-multiline_comment|/* DMA revision: 0=REV0 1=REV1 2=REV2 3=DMA_PLUS */
-DECL|member|dma_rev
+multiline_comment|/* Are we doing DMA now? */
+DECL|member|allocated
 r_int
-id|dma_rev
+id|allocated
+suffix:semicolon
+multiline_comment|/* Are we &quot;owned&quot; by anyone yet? */
+multiline_comment|/* Transfer information. */
+DECL|member|addr
+r_int
+r_int
+id|addr
+suffix:semicolon
+multiline_comment|/* Start address of current transfer */
+DECL|member|nbytes
+r_int
+id|nbytes
+suffix:semicolon
+multiline_comment|/* Size of current transfer */
+DECL|member|realbytes
+r_int
+id|realbytes
+suffix:semicolon
+multiline_comment|/* For splitting up large transfers, etc. */
+multiline_comment|/* DMA revision */
+DECL|member|revision
+r_enum
+id|dvma_rev
+id|revision
 suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
 r_struct
 id|Linux_SBus_DMA
-id|Sparc_DMA
+op_star
+id|dma_chain
 suffix:semicolon
+multiline_comment|/* Broken hardware... */
+DECL|macro|DMA_ISBROKEN
+mdefine_line|#define DMA_ISBROKEN(dma)    ((dma)-&gt;revision == dvmarev1)
+DECL|macro|DMA_ISESC1
+mdefine_line|#define DMA_ISESC1(dma)      ((dma)-&gt;revision == dvmaesc1)
 multiline_comment|/* Main routines in dma.c */
 r_extern
 r_void
@@ -113,38 +171,15 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|probe_dma
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sparc_dma_init_transfer
+id|dvma_init
 c_func
 (paren
 r_struct
-id|sparc_dma_registers
+id|linux_sbus
 op_star
 comma
 r_int
 r_int
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|sparc_dma_interrupt
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Fields in the cond_reg register */
@@ -153,6 +188,8 @@ DECL|macro|DMA_DEVICE_ID
 mdefine_line|#define DMA_DEVICE_ID    0xf0000000        /* Device identification bits */
 DECL|macro|DMA_VERS0
 mdefine_line|#define DMA_VERS0        0x00000000        /* Sunray DMA version */
+DECL|macro|DMA_ESCV1
+mdefine_line|#define DMA_ESCV1        0x40000000        /* DMA ESC Version 1 */
 DECL|macro|DMA_VERS1
 mdefine_line|#define DMA_VERS1        0x80000000        /* DMA rev 1 */
 DECL|macro|DMA_VERS2
@@ -160,9 +197,9 @@ mdefine_line|#define DMA_VERS2        0xa0000000        /* DMA rev 2 */
 DECL|macro|DMA_VERSPLUS
 mdefine_line|#define DMA_VERSPLUS     0x90000000        /* DMA rev 1 PLUS */
 DECL|macro|DMA_HNDL_INTR
-mdefine_line|#define DMA_HNDL_INTR    0x00000001        /* An interrupt needs to be handled */
+mdefine_line|#define DMA_HNDL_INTR    0x00000001        /* An IRQ needs to be handled */
 DECL|macro|DMA_HNDL_ERROR
-mdefine_line|#define DMA_HNDL_ERROR   0x00000002        /* We need to take care of an error */
+mdefine_line|#define DMA_HNDL_ERROR   0x00000002        /* We need to take an error */
 DECL|macro|DMA_FIFO_ISDRAIN
 mdefine_line|#define DMA_FIFO_ISDRAIN 0x0000000c        /* The DMA FIFO is draining */
 DECL|macro|DMA_INT_ENAB
@@ -176,11 +213,11 @@ mdefine_line|#define DMA_FIFO_STDRAIN 0x00000040        /* DMA_VERS1 Drain the F
 DECL|macro|DMA_RST_SCSI
 mdefine_line|#define DMA_RST_SCSI     0x00000080        /* Reset the SCSI controller */
 DECL|macro|DMA_ST_WRITE
-mdefine_line|#define DMA_ST_WRITE     0x00000100        /* If set, write from device to memory */
+mdefine_line|#define DMA_ST_WRITE     0x00000100        /* write from device to memory */
 DECL|macro|DMA_ENABLE
 mdefine_line|#define DMA_ENABLE       0x00000200        /* Fire up DMA, handle requests */
 DECL|macro|DMA_PEND_READ
-mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Read is pending */
+mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pendind Read */
 DECL|macro|DMA_BCNT_ENAB
 mdefine_line|#define DMA_BCNT_ENAB    0x00002000        /* If on, use the byte counter */
 DECL|macro|DMA_TERM_CNTR
@@ -189,27 +226,72 @@ DECL|macro|DMA_CSR_DISAB
 mdefine_line|#define DMA_CSR_DISAB    0x00010000        /* No FIFO drains during csr */
 DECL|macro|DMA_SCSI_DISAB
 mdefine_line|#define DMA_SCSI_DISAB   0x00020000        /* No FIFO drains during reg */
+DECL|macro|DMA_ADD_ENABLE
+mdefine_line|#define DMA_ADD_ENABLE   0x00040000        /* Special ESC DVMA optimization */
 DECL|macro|DMA_BRST_SZ
 mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SBUS transfer r/w burst size */
 DECL|macro|DMA_ADDR_DISAB
 mdefine_line|#define DMA_ADDR_DISAB   0x00100000        /* No FIFO drains during addr */
 DECL|macro|DMA_2CLKS
-mdefine_line|#define DMA_2CLKS        0x00200000        /* Each transfer equals 2 clock ticks */
+mdefine_line|#define DMA_2CLKS        0x00200000        /* Each transfer = 2 clock ticks */
 DECL|macro|DMA_3CLKS
-mdefine_line|#define DMA_3CLKS        0x00400000        /* Each transfer equals 3 clock ticks */
+mdefine_line|#define DMA_3CLKS        0x00400000        /* Each transfer = 3 clock ticks */
 DECL|macro|DMA_CNTR_DISAB
-mdefine_line|#define DMA_CNTR_DISAB   0x00800000        /* No intr&squot;s when DMA_TERM_CNTR is set */
+mdefine_line|#define DMA_CNTR_DISAB   0x00800000        /* No IRQ when DMA_TERM_CNTR set */
 DECL|macro|DMA_AUTO_NADDR
-mdefine_line|#define DMA_AUTO_NADDR   0x01000000        /* Use &quot;auto next address&quot; feature */
+mdefine_line|#define DMA_AUTO_NADDR   0x01000000        /* Use &quot;auto nxt addr&quot; feature */
 DECL|macro|DMA_SCSI_ON
 mdefine_line|#define DMA_SCSI_ON      0x02000000        /* Enable SCSI dma */
 DECL|macro|DMA_LOADED_ADDR
 mdefine_line|#define DMA_LOADED_ADDR  0x04000000        /* Address has been loaded */
 DECL|macro|DMA_LOADED_NADDR
 mdefine_line|#define DMA_LOADED_NADDR 0x08000000        /* Next address has been loaded */
-multiline_comment|/* Only 24-bits of the byte count are significant */
-DECL|macro|DMA_BYTE_CNT_MASK
-mdefine_line|#define DMA_BYTE_CNT_MASK  0x00ffffff
+multiline_comment|/* Values describing the burst-size property from the PROM */
+DECL|macro|DMA_BURST1
+mdefine_line|#define DMA_BURST1       0x01
+DECL|macro|DMA_BURST2
+mdefine_line|#define DMA_BURST2       0x02
+DECL|macro|DMA_BURST4
+mdefine_line|#define DMA_BURST4       0x04
+DECL|macro|DMA_BURST8
+mdefine_line|#define DMA_BURST8       0x08
+DECL|macro|DMA_BURST16
+mdefine_line|#define DMA_BURST16      0x10
+DECL|macro|DMA_BURST32
+mdefine_line|#define DMA_BURST32      0x20
+DECL|macro|DMA_BURST64
+mdefine_line|#define DMA_BURST64      0x40
+DECL|macro|DMA_BURSTBITS
+mdefine_line|#define DMA_BURSTBITS    0x7f
+multiline_comment|/* Determine highest possible final transfer address given a base */
+DECL|macro|DMA_MAXEND
+mdefine_line|#define DMA_MAXEND(addr) (0x01000000UL-(((unsigned long)(addr))&amp;0x00ffffffUL))
+multiline_comment|/* Yes, I hack a lot of elisp in my spare time... */
+DECL|macro|DMA_ERROR_P
+mdefine_line|#define DMA_ERROR_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_HNDL_ERROR))
+DECL|macro|DMA_IRQ_P
+mdefine_line|#define DMA_IRQ_P(regs)    ((((regs)-&gt;cond_reg) &amp; DMA_HNDL_INTR))
+DECL|macro|DMA_WRITE_P
+mdefine_line|#define DMA_WRITE_P(regs)  ((((regs)-&gt;cond_reg) &amp; DMA_ST_WRITE))
+DECL|macro|DMA_OFF
+mdefine_line|#define DMA_OFF(regs)      ((((regs)-&gt;cond_reg) &amp;= (~DMA_ENABLE)))
+DECL|macro|DMA_INTSOFF
+mdefine_line|#define DMA_INTSOFF(regs)  ((((regs)-&gt;cond_reg) &amp;= (~DMA_INT_ENAB)))
+DECL|macro|DMA_INTSON
+mdefine_line|#define DMA_INTSON(regs)   ((((regs)-&gt;cond_reg) |= (DMA_INT_ENAB)))
+DECL|macro|DMA_PUNTFIFO
+mdefine_line|#define DMA_PUNTFIFO(regs) ((((regs)-&gt;cond_reg) |= DMA_FIFO_INV))
+DECL|macro|DMA_SETSTART
+mdefine_line|#define DMA_SETSTART(regs, addr)  ((((regs)-&gt;st_addr) = (char *) addr))
+DECL|macro|DMA_BEGINDMA_W
+mdefine_line|#define DMA_BEGINDMA_W(regs) &bslash;&n;        ((((regs)-&gt;cond_reg |= (DMA_ST_WRITE|DMA_ENABLE|DMA_INT_ENAB))))
+DECL|macro|DMA_BEGINDMA_R
+mdefine_line|#define DMA_BEGINDMA_R(regs) &bslash;&n;        ((((regs)-&gt;cond_reg |= ((DMA_ENABLE|DMA_INT_ENAB)&amp;(~DMA_ST_WRITE)))))
+multiline_comment|/* For certain DMA chips, we need to disable ints upon irq entry&n; * and turn them back on when we are done.  So in any ESP interrupt&n; * handler you *must* call DMA_IRQ_ENTRY upon entry and DMA_IRQ_EXIT&n; * when leaving the handler.  You have been warned...&n; */
+DECL|macro|DMA_IRQ_ENTRY
+mdefine_line|#define DMA_IRQ_ENTRY(dma, dregs) do { &bslash;&n;        if(DMA_ISBROKEN(dma)) DMA_INTSOFF(dregs); &bslash;&n;   } while (0)
+DECL|macro|DMA_IRQ_EXIT
+mdefine_line|#define DMA_IRQ_EXIT(dma, dregs) do { &bslash;&n;&t;if(DMA_ISBROKEN(dma)) DMA_INTSON(dregs); &bslash;&n;   } while(0)
 multiline_comment|/* Pause until counter runs out or BIT isn&squot;t set in the DMA condition&n; * register.&n; */
 DECL|function|sparc_dma_pause
 r_extern
@@ -221,7 +303,7 @@ c_func
 r_struct
 id|sparc_dma_registers
 op_star
-id|dma_regs
+id|regs
 comma
 r_int
 r_int
@@ -239,7 +321,7 @@ r_while
 c_loop
 (paren
 (paren
-id|dma_regs-&gt;cond_reg
+id|regs-&gt;cond_reg
 op_amp
 id|bit
 )paren
@@ -257,7 +339,7 @@ suffix:semicolon
 id|__delay
 c_func
 (paren
-l_int|1
+l_int|5
 )paren
 suffix:semicolon
 )brace
@@ -265,160 +347,53 @@ multiline_comment|/* Check for bogus outcome. */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ctr
-op_eq
-l_int|0
 )paren
 (brace
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;DMA Grrr:  I tried for wait for the assertion of bit %08xl to clear&quot;
+l_string|&quot;DMA timeout&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Reset the friggin&squot; thing... */
+DECL|macro|DMA_RESET
+mdefine_line|#define DMA_RESET(dma) do { &bslash;&n;&t;struct sparc_dma_registers *regs = dma-&gt;regs;                      &bslash;&n;&t;/* Let the current FIFO drain itself */                            &bslash;&n;&t;sparc_dma_pause(regs, (DMA_FIFO_ISDRAIN));                         &bslash;&n;&t;/* Reset the logic */                                              &bslash;&n;&t;regs-&gt;cond_reg |= (DMA_RST_SCSI);     /* assert */                 &bslash;&n;&t;__delay(400);                         /* let the bits set ;) */    &bslash;&n;&t;regs-&gt;cond_reg &amp;= ~(DMA_RST_SCSI);    /* de-assert */              &bslash;&n;&t;sparc_dma_enable_interrupts(regs);    /* Re-enable interrupts */   &bslash;&n;&t;/* Enable FAST transfers if available */                           &bslash;&n;&t;if(dma-&gt;revision&gt;dvmarev1) regs-&gt;cond_reg |= DMA_3CLKS;            &bslash;&n;&t;dma-&gt;running = 0;                                                  &bslash;&n;} while(0)
+DECL|macro|for_each_dvma
+mdefine_line|#define for_each_dvma(dma) &bslash;&n;        for((dma) = dma_chain; (dma); (dma) = (dma)-&gt;next)
+r_extern
+r_int
+id|get_dma_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|request_dma
+c_func
+(paren
+r_int
+r_int
 comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_dma
+c_func
 (paren
 r_int
 r_int
 )paren
-id|bit
-)paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;           in the DMA condition register and it did not!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Cannot continue, halting...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Enable DMA interrupts */
-DECL|function|sparc_dma_enable_interrupts
-r_extern
-r_inline
-r_void
-id|sparc_dma_enable_interrupts
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
-id|dma_regs
-)paren
-(brace
-id|dma_regs-&gt;cond_reg
-op_or_assign
-id|DMA_INT_ENAB
-suffix:semicolon
-)brace
-multiline_comment|/* Disable DMA interrupts from coming in */
-DECL|function|sparc_dma_disable_interrupts
-r_extern
-r_inline
-r_void
-id|sparc_dma_disable_interrupts
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
-id|dma_regs
-)paren
-(brace
-id|dma_regs-&gt;cond_reg
-op_and_assign
-op_complement
-(paren
-id|DMA_INT_ENAB
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Reset the DMA module. */
-DECL|function|sparc_dma_reset
-r_extern
-r_inline
-r_void
-id|sparc_dma_reset
-c_func
-(paren
-r_struct
-id|sparc_dma_registers
-op_star
-id|dma_regs
-)paren
-(brace
-multiline_comment|/* Let the current FIFO drain itself */
-id|sparc_dma_pause
-c_func
-(paren
-id|dma_regs
-comma
-(paren
-id|DMA_FIFO_ISDRAIN
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Reset the logic */
-id|dma_regs-&gt;cond_reg
-op_or_assign
-(paren
-id|DMA_RST_SCSI
-)paren
-suffix:semicolon
-multiline_comment|/* assert */
-id|__delay
-c_func
-(paren
-l_int|400
-)paren
-suffix:semicolon
-multiline_comment|/* let the bits set ;) */
-id|dma_regs-&gt;cond_reg
-op_and_assign
-op_complement
-(paren
-id|DMA_RST_SCSI
-)paren
-suffix:semicolon
-multiline_comment|/* de-assert */
-id|sparc_dma_enable_interrupts
-c_func
-(paren
-id|dma_regs
-)paren
-suffix:semicolon
-multiline_comment|/* Re-enable interrupts */
-multiline_comment|/* Enable FAST transfers if available */
-r_if
-c_cond
-(paren
-id|Sparc_DMA.dma_rev
-OG
-l_int|1
-)paren
-(brace
-id|dma_regs-&gt;cond_reg
-op_or_assign
-id|DMA_3CLKS
-suffix:semicolon
-)brace
-id|Sparc_DMA.dma_running
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 macro_line|#endif /* !(_ASM_SPARC_DMA_H) */
 eof

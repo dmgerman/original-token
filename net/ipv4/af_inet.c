@@ -3484,7 +3484,7 @@ op_star
 )paren
 id|sock-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; * We&squot;ve been passed an extra socket.&n;&t; * We need to free it up because the tcp module creates&n;&t; * its own when it accepts one.&n;&t; */
+multiline_comment|/*&n;&t; *&t;We&squot;ve been passed an extra socket.&n;&t; *&t;We need to free it up because the tcp module creates&n;&t; *&t;its own when it accepts one.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3529,7 +3529,7 @@ r_return
 op_minus
 id|EOPNOTSUPP
 suffix:semicolon
-multiline_comment|/* Restore the state if we have been interrupted, and then returned. */
+multiline_comment|/*&n;&t; *&t;Restore the state if we have been interrupted, and then returned. &n;&t; */
 r_if
 c_cond
 (paren

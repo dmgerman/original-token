@@ -1,4 +1,4 @@
-multiline_comment|/* oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.5 1995/11/25 02:32:14 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -61,7 +61,7 @@ suffix:semicolon
 multiline_comment|/* The functions... */
 multiline_comment|/* You must call prom_init() before using any of the library services,&n; * preferably as early as possible.  Pass it the romvec pointer.&n; */
 r_extern
-r_int
+r_void
 id|prom_init
 c_func
 (paren
@@ -326,6 +326,68 @@ comma
 dot
 dot
 dot
+)paren
+suffix:semicolon
+multiline_comment|/* Query for input device type */
+DECL|enum|prom_input_device
+r_enum
+id|prom_input_device
+(brace
+DECL|enumerator|PROMDEV_IKBD
+id|PROMDEV_IKBD
+comma
+multiline_comment|/* input from keyboard */
+DECL|enumerator|PROMDEV_ITTYA
+id|PROMDEV_ITTYA
+comma
+multiline_comment|/* input from ttya */
+DECL|enumerator|PROMDEV_ITTYB
+id|PROMDEV_ITTYB
+comma
+multiline_comment|/* input from ttyb */
+DECL|enumerator|PROMDEV_I_UNK
+id|PROMDEV_I_UNK
+comma
+)brace
+suffix:semicolon
+r_extern
+r_enum
+id|prom_input_device
+id|prom_query_input_device
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Query for output device type */
+DECL|enum|prom_output_device
+r_enum
+id|prom_output_device
+(brace
+DECL|enumerator|PROMDEV_OSCREEN
+id|PROMDEV_OSCREEN
+comma
+multiline_comment|/* to screen */
+DECL|enumerator|PROMDEV_OTTYA
+id|PROMDEV_OTTYA
+comma
+multiline_comment|/* to ttya */
+DECL|enumerator|PROMDEV_OTTYB
+id|PROMDEV_OTTYB
+comma
+multiline_comment|/* to ttyb */
+DECL|enumerator|PROMDEV_O_UNK
+id|PROMDEV_O_UNK
+comma
+)brace
+suffix:semicolon
+r_extern
+r_enum
+id|prom_output_device
+id|prom_query_output_device
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Multiprocessor operations... */

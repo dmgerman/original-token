@@ -1,4 +1,4 @@
-multiline_comment|/* sysen.h:  Bit fields within the &quot;System Enable&quot; register accessed via&n; *           the ASI_CONTROL address space at address AC_SYSENABLE.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sysen.h,v 1.3 1995/11/25 02:32:58 davem Exp $&n; * sysen.h:  Bit fields within the &quot;System Enable&quot; register accessed via&n; *           the ASI_CONTROL address space at address AC_SYSENABLE.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SYSEN_H
 DECL|macro|_SPARC_SYSEN_H
 mdefine_line|#define _SPARC_SYSEN_H

@@ -1,4 +1,4 @@
-multiline_comment|/* ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ross.h,v 1.3 1995/11/25 02:32:37 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ROSS_H
 DECL|macro|_SPARC_ROSS_H
 mdefine_line|#define _SPARC_ROSS_H

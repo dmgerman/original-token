@@ -1,4 +1,4 @@
-multiline_comment|/* mp.h:  Multiprocessing definitions for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mp.h,v 1.2 1995/11/25 02:32:06 davem Exp $&n; * mp.h:  Multiprocessing definitions for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MP_H
 DECL|macro|_SPARC_MP_H
 mdefine_line|#define _SPARC_MP_H

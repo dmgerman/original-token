@@ -1,4 +1,4 @@
-multiline_comment|/* promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devmap.c,v 1.2 1995/11/25 00:59:56 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Just like the routines in palloc.c, these should not be used&n; * by the kernel at all.  Bootloader facility mainly.  And again,&n; * this is only available on V2 proms and above.&n; */

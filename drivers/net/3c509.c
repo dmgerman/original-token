@@ -376,7 +376,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -386,16 +385,8 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 "&f;"
 DECL|function|el3_probe
 r_int
@@ -1149,13 +1140,11 @@ op_assign
 op_amp
 id|el3_get_stats
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Fill in the generic fields of the device structure. */
 id|ether_setup
 c_func
@@ -3104,11 +3093,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* &n; *&t;Set or clear the multicast filter for this adaptor.&n; */
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren
@@ -3116,13 +3104,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_int
@@ -3149,12 +3130,12 @@ c_cond
 (paren
 id|old
 op_ne
-id|num_addrs
+id|dev-&gt;mc_count
 )paren
 (brace
 id|old
 op_assign
-id|num_addrs
+id|dev-&gt;mc_count
 suffix:semicolon
 id|printk
 c_func
@@ -3163,7 +3144,7 @@ l_string|&quot;%s: Setting Rx mode to %d addresses.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|num_addrs
+id|dev-&gt;mc_count
 )paren
 suffix:semicolon
 )brace
@@ -3171,14 +3152,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
-OG
-l_int|0
+id|dev-&gt;mc_count
 op_logical_or
-id|num_addrs
-op_eq
-op_minus
-l_int|2
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
 )paren
 (brace
 id|outw
@@ -3202,9 +3182,9 @@ r_else
 r_if
 c_cond
 (paren
-id|num_addrs
-OL
-l_int|0
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
 id|outw
@@ -3242,7 +3222,6 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_static
 r_int
 DECL|function|el3_close

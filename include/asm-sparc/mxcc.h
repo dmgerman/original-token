@@ -1,4 +1,4 @@
-multiline_comment|/* mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mxcc.h,v 1.2 1995/11/25 02:32:11 davem Exp $&n; * mxcc.h:  Definitions of the Viking MXCC registers&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MXCC_H
 DECL|macro|_SPARC_MXCC_H
 mdefine_line|#define _SPARC_MXCC_H

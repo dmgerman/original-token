@@ -216,6 +216,9 @@ id|broadcast
 comma
 DECL|member|nonagle
 id|nonagle
+comma
+DECL|member|bsdism
+id|bsdism
 suffix:semicolon
 DECL|member|lingertime
 r_int

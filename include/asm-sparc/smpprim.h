@@ -1,4 +1,4 @@
-multiline_comment|/*  smpprim.h:  SMP locking primitives on the Sparc&n; *&n; *  God knows we won&squot;t be actually using this code for some time&n; *  but I thought I&squot;d write it since I knew how.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: smpprim.h,v 1.4 1995/11/25 02:32:47 davem Exp $&n; *  smpprim.h:  SMP locking primitives on the Sparc&n; *&n; *  God knows we won&squot;t be actually using this code for some time&n; *  but I thought I&squot;d write it since I knew how.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_SMPPRIM_H
 DECL|macro|__SPARC_SMPPRIM_H
 mdefine_line|#define __SPARC_SMPPRIM_H

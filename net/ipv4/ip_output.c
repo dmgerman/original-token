@@ -250,6 +250,14 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -425,6 +433,10 @@ suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
+suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|ETH_P_IP
 suffix:semicolon
 r_if
 c_cond

@@ -247,7 +247,7 @@ op_assign
 (brace
 l_int|0
 comma
-multiline_comment|/* MUTTER ntohs(ETH_P_IPX),*/
+multiline_comment|/* MUTTER ntohs(ETH_P_8022),*/
 l_int|NULL
 comma
 multiline_comment|/* All devices */

@@ -9326,6 +9326,13 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif&t;
+id|skb-&gt;protocol
+op_assign
+id|htons
+(paren
+id|ETH_P_AX25
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

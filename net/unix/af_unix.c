@@ -1054,6 +1054,10 @@ id|sk-&gt;inuse
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;bsdism
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;debug
 op_assign
 l_int|0

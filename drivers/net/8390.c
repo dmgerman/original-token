@@ -9,7 +9,7 @@ id|version
 op_assign
 l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
+multiline_comment|/*&n;  Braindamage remaining:&n;  Much of this code should have been cleaned up, but every attempt &n;  has broken some clone part.&n;  &n;  Doesn&squot;t currently work on all shared memory cards.&n;  &n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -131,7 +131,6 @@ r_int
 id|start_page
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -141,16 +140,8 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 "&f;"
 multiline_comment|/* Open/initialize the board.  This routine goes all-out, setting everything&n;   up anew at each open, even though many of these registers should only&n;   need to be set once at boot.&n;   */
 DECL|function|ei_open
@@ -2373,8 +2364,7 @@ op_amp
 id|ei_local-&gt;stat
 suffix:semicolon
 )brace
-macro_line|#ifdef HAVE_MULTICAST
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;   .   &t;&t;&t;&t;best-effort filtering.&n;   */
+multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adaptor.&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -2402,14 +2392,35 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
-OG
-l_int|0
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+id|E8390_RXCONFIG
+op_or
+l_int|0x18
+comma
+id|ioaddr
+op_plus
+id|EN0_RXCR
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
 op_logical_or
-id|num_addrs
-op_eq
-op_minus
-l_int|2
+id|dev-&gt;mc_list
 )paren
 (brace
 multiline_comment|/* The multicast-accept list is initialized to accept-all, and we&n;&t;&t;   rely on higher-level filtering for now. */
@@ -2427,26 +2438,6 @@ id|EN0_RXCR
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-OL
-l_int|0
-)paren
-id|outb_p
-c_func
-(paren
-id|E8390_RXCONFIG
-op_or
-l_int|0x18
-comma
-id|ioaddr
-op_plus
-id|EN0_RXCR
-)paren
-suffix:semicolon
-r_else
 id|outb_p
 c_func
 (paren
@@ -2458,7 +2449,6 @@ id|EN0_RXCR
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Initialize the rest of the 8390 device structure. */
 DECL|function|ethdev_init
 r_int
@@ -2968,6 +2958,15 @@ id|EN0_RXCR
 )paren
 suffix:semicolon
 multiline_comment|/* rx on,  */
+id|dev
+op_member_access_from_pointer
+id|set_multicast_list
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Get the multicast status right if this&n;&t;&t;&t;&t;&t;&t;&t;   was a reset. */
 )brace
 r_return
 suffix:semicolon

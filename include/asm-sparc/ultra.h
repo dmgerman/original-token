@@ -1,4 +1,4 @@
-multiline_comment|/* ultra.h: Definitions and defines for the TI V9 UltraSparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ultra.h,v 1.2 1995/11/25 02:33:10 davem Exp $&n; * ultra.h: Definitions and defines for the TI V9 UltraSparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ULTRA_H
 DECL|macro|_SPARC_ULTRA_H
 mdefine_line|#define _SPARC_ULTRA_H

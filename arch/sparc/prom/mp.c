@@ -1,4 +1,4 @@
-multiline_comment|/* mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mp.c,v 1.4 1995/11/25 01:00:06 davem Exp $&n; * mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Start cpu with prom-tree node &squot;cpunode&squot; using context described&n; * by &squot;ctable_reg&squot; in context &squot;ctx&squot; at program counter &squot;pc&squot;.&n; *&n; * XXX Have to look into what the return values mean. XXX&n; */

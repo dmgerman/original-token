@@ -1,16 +1,177 @@
+multiline_comment|/* $Id: segment.h,v 1.6 1995/11/25 02:32:40 davem Exp $ */
 macro_line|#ifndef _ASM_SEGMENT_H
 DECL|macro|_ASM_SEGMENT_H
 mdefine_line|#define _ASM_SEGMENT_H
-DECL|macro|KERNEL_CS
-mdefine_line|#define KERNEL_CS   0x0
+multiline_comment|/* Sparc is not segmented, these are just place holders. */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS   0x0
-DECL|macro|USER_CS
-mdefine_line|#define USER_CS     0x1
+mdefine_line|#define KERNEL_DS   0
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS     0x1
+mdefine_line|#define USER_DS     1
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * Uh, these should become the main single-value transfer routines..&n; * They automatically use the right size if we just have the right&n; * pointer type..&n; */
+DECL|macro|put_user
+mdefine_line|#define put_user(x,ptr) __put_user((unsigned long)(x),(ptr),sizeof(*(ptr)))
+DECL|macro|get_user
+mdefine_line|#define get_user(ptr) ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr))))
+multiline_comment|/*&n; * This is a silly but good way to make sure that&n; * the __put_user function is indeed always optimized,&n; * and that we use the correct sizes..&n; */
+r_extern
+r_int
+id|bad_user_access_length
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* I should make this use unaligned transfers etc.. */
+DECL|function|__put_user
+r_static
+r_inline
+r_void
+id|__put_user
+c_func
+(paren
+r_int
+r_int
+id|x
+comma
+r_void
+op_star
+id|y
+comma
+r_int
+id|size
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+op_star
+(paren
+r_char
+op_star
+)paren
+id|y
+op_assign
+id|x
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+op_star
+(paren
+r_int
+op_star
+)paren
+id|y
+op_assign
+id|x
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+op_star
+(paren
+r_int
+op_star
+)paren
+id|y
+op_assign
+id|x
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|bad_user_access_length
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* I should make this use unaligned transfers etc.. */
+DECL|function|__get_user
+r_static
+r_inline
+r_int
+r_int
+id|__get_user
+c_func
+(paren
+r_const
+r_void
+op_star
+id|y
+comma
+r_int
+id|size
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+r_return
+op_star
+(paren
+r_int
+r_char
+op_star
+)paren
+id|y
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+r_return
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|y
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+r_return
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|y
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+id|bad_user_access_length
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * Deprecated routines&n; */
 DECL|function|get_user_byte
 r_static
 r_inline
@@ -74,27 +235,6 @@ suffix:semicolon
 )brace
 DECL|macro|get_fs_long
 mdefine_line|#define get_fs_long(addr) get_user_long((int *)(addr))
-DECL|function|get_user_quad
-r_static
-r_inline
-r_int
-r_int
-id|get_user_quad
-c_func
-(paren
-r_const
-r_int
-op_star
-id|addr
-)paren
-(brace
-r_return
-op_star
-id|addr
-suffix:semicolon
-)brace
-DECL|macro|get_fs_quad
-mdefine_line|#define get_fs_quad(addr) get_user_quad((long *)(addr))
 DECL|function|put_user_byte
 r_static
 r_inline
@@ -165,34 +305,14 @@ suffix:semicolon
 )brace
 DECL|macro|put_fs_long
 mdefine_line|#define put_fs_long(x,addr) put_user_long((x),(int *)(addr))
-DECL|function|put_user_quad
-r_static
-r_inline
-r_void
-id|put_user_quad
-c_func
-(paren
-r_int
-r_int
-id|val
-comma
-r_int
-op_star
-id|addr
-)paren
-(brace
-op_star
-id|addr
-op_assign
-id|val
-suffix:semicolon
-)brace
-DECL|macro|put_fs_quad
-mdefine_line|#define put_fs_quad(x,addr) put_user_quad((x),(long *)(addr))
 DECL|macro|memcpy_fromfs
 mdefine_line|#define memcpy_fromfs(to, from, n) memcpy((to),(from),(n))
 DECL|macro|memcpy_tofs
 mdefine_line|#define memcpy_tofs(to, from, n) memcpy((to),(from),(n))
+r_extern
+r_int
+id|current_user_segment
+suffix:semicolon
 DECL|function|get_fs
 r_static
 r_inline
@@ -205,7 +325,7 @@ r_void
 )paren
 (brace
 r_return
-l_int|0
+id|current_user_segment
 suffix:semicolon
 )brace
 DECL|function|get_ds
@@ -220,7 +340,7 @@ r_void
 )paren
 (brace
 r_return
-l_int|0
+id|KERNEL_DS
 suffix:semicolon
 )brace
 DECL|function|set_fs
@@ -235,16 +355,11 @@ r_int
 id|val
 )paren
 (brace
-r_int
-r_int
-id|foo
-suffix:semicolon
-id|foo
+id|current_user_segment
 op_assign
 id|val
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+macro_line|#endif  /* __ASSEMBLY__ */
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

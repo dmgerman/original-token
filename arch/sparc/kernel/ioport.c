@@ -1,12 +1,15 @@
-multiline_comment|/* ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
+multiline_comment|/* $Id: ioport.c,v 1.12 1995/11/25 00:58:07 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* This points to the next to use virtual memory for io mappings */
 DECL|variable|next_free_region
 r_static
@@ -66,6 +69,19 @@ r_int
 )paren
 id|address
 suffix:semicolon
+r_int
+r_int
+id|offset
+op_assign
+(paren
+id|addr
+op_amp
+(paren
+op_complement
+id|PAGE_MASK
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -88,6 +104,10 @@ op_assign
 id|next_free_region
 suffix:semicolon
 )brace
+id|len
+op_add_assign
+id|offset
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -123,7 +143,11 @@ c_cond
 (paren
 id|check_region
 (paren
+(paren
 id|vaddr
+op_or
+id|offset
+)paren
 comma
 id|len
 )paren
@@ -144,7 +168,11 @@ suffix:semicolon
 multiline_comment|/* Tell Linux resource manager about the mapping */
 id|request_region
 (paren
+(paren
 id|vaddr
+op_or
+id|offset
+)paren
 comma
 id|len
 comma
@@ -204,10 +232,14 @@ r_return
 r_void
 op_star
 )paren
+(paren
 id|base_address
+op_or
+id|offset
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Does DVMA allocations with PAGE_SIZE granulatity */
+multiline_comment|/* Does DVMA allocations with PAGE_SIZE granulatity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundry restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA see&squot;s a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
 DECL|function|sparc_dvma_malloc
 r_void
 op_star
@@ -278,63 +310,32 @@ id|prom_halt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Tell Linux resource manager about the mapping */
-id|request_region
-(paren
+multiline_comment|/* Basically these can be mapped just like any old&n;&t; * IO pages, cacheable bit off, etc.  The physical&n;&t; * pages are pre-mapped in paging_init()&n;&t; */
+id|base_address
+op_assign
 id|vaddr
+suffix:semicolon
+multiline_comment|/* Assign the memory area. */
+id|dvma_next_free
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|dvma_next_free
+op_plus
+id|len
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+id|base_address
 comma
 id|len
 comma
 id|name
 )paren
 suffix:semicolon
-id|base_address
-op_assign
-id|vaddr
-suffix:semicolon
-multiline_comment|/* Assign the memory area and remove the cache bit */
-multiline_comment|/* XXX EWWWWEE!!  Sun4c specific, fix now! XXX */
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|len
-OG
-l_int|0
-suffix:semicolon
-id|len
-op_sub_assign
-id|PAGE_SIZE
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Len=%d&bslash;n&quot;
-comma
-id|len
-)paren
-suffix:semicolon
-id|put_pte
-(paren
-id|vaddr
-comma
-id|get_pte
-(paren
-id|vaddr
-)paren
-op_or
-id|PTE_NC
-)paren
-suffix:semicolon
-id|vaddr
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-id|dvma_next_free
-op_add_assign
-id|PAGE_SIZE
-suffix:semicolon
-)brace
 r_return
 (paren
 r_void

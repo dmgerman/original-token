@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.18 1995/11/25 00:58:47 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,6 +10,133 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mp.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
+r_void
+DECL|function|syscall_trace_entry
+id|syscall_trace_entry
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s[%d]: sys[%d](%d, %d, %d, %d) &quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_G1
+)braket
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I0
+)braket
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I1
+)braket
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I2
+)braket
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I3
+)braket
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_void
+DECL|function|syscall_trace_exit
+id|syscall_trace_exit
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;retvals[%d,%d] at pc&lt;%08lx&gt;&bslash;n&quot;
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I0
+)braket
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I1
+)braket
+comma
+id|regs-&gt;pc
+comma
+id|regs-&gt;npc
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_void
+DECL|function|do_cwp_assertion_failure
+id|do_cwp_assertion_failure
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|psr
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;CWP return from trap assertion fails:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Current psr %08lx, new psr %08lx&bslash;n&quot;
+comma
+id|psr
+comma
+id|regs-&gt;psr
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;bogus CWP&quot;
+)paren
+suffix:semicolon
+)brace
 r_void
 DECL|function|do_hw_interrupt
 id|do_hw_interrupt
@@ -83,9 +210,37 @@ comma
 id|psr
 )paren
 suffix:semicolon
-id|halt
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
+l_string|&quot;Kernel illegal instruction, how are ya!&quot;
+)paren
+suffix:semicolon
+)brace
+id|current-&gt;tss.sig_address
+op_assign
+id|pc
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_ILLINST
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGILL
+comma
+id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -126,14 +281,28 @@ comma
 id|psr
 )paren
 suffix:semicolon
-id|halt
+id|current-&gt;tss.sig_address
+op_assign
+id|pc
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_PRIVINST
+suffix:semicolon
+id|send_sig
 c_func
 (paren
+id|SIGILL
+comma
+id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* XXX User may want to be allowed to do this. XXX */
 r_void
 DECL|function|do_memaccess_unaligned
 id|do_memaccess_unaligned
@@ -169,9 +338,37 @@ comma
 id|psr
 )paren
 suffix:semicolon
-id|halt
+r_if
+c_cond
+(paren
+id|regs-&gt;psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
+l_string|&quot;Kernel does unaligned memory access, yuck!&quot;
+)paren
+suffix:semicolon
+)brace
+id|current-&gt;tss.sig_address
+op_assign
+id|pc
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_PRIVINST
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -200,25 +397,393 @@ r_int
 id|psr
 )paren
 (brace
-id|printk
+multiline_comment|/* Sanity check... */
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
-l_string|&quot;Floating Point Disabled trap at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
+l_string|&quot;FPE disabled trap from kernel, die die die...&quot;
 )paren
 suffix:semicolon
-id|halt
+)brace
+id|put_psr
+c_func
+(paren
+id|get_psr
 c_func
 (paren
 )paren
+op_or
+id|PSR_EF
+)paren
+suffix:semicolon
+multiline_comment|/* Allow FPU ops. */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+multiline_comment|/* No state save necessary */
+id|regs-&gt;psr
+op_or_assign
+id|PSR_EF
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|last_task_used_math
+)paren
+(brace
+multiline_comment|/* Other processes fpu state, save away */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;st %%fsr, [%0]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Save away the floating point queue if necessary. */
+r_if
+c_cond
+(paren
+id|current-&gt;tss.fsr
+op_amp
+l_int|0x2000
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mov 0x0, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;1: std %%fq, [%2 + %%g2]&bslash;n&bslash;t&quot;
+l_string|&quot;st %%fsr, [%0]&bslash;n&bslash;t&quot;
+l_string|&quot;ld [%0], %%g3&bslash;n&bslash;t&quot;
+l_string|&quot;andcc %%g3, %1, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;bne 1b&bslash;n&bslash;t&quot;
+l_string|&quot;add %%g2, 0x8, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;srl %%g2, 0x3, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;st %%g2, [%3]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.fsr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+l_int|0x2000
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.fpqueue
+(braket
+l_int|0
+)braket
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.fpqdepth
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|current-&gt;tss.fpqdepth
+op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;std %%f0, [%0 + 0x00]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f2, [%0 + 0x08]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f4, [%0 + 0x10]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f6, [%0 + 0x18]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f8, [%0 + 0x20]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f10, [%0 + 0x28]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f12, [%0 + 0x30]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f14, [%0 + 0x38]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f16, [%0 + 0x40]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f18, [%0 + 0x48]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f20, [%0 + 0x50]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f22, [%0 + 0x58]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f24, [%0 + 0x60]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f26, [%0 + 0x68]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f28, [%0 + 0x70]&bslash;n&bslash;t&quot;
+l_string|&quot;std %%f30, [%0 + 0x78]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+id|last_task_used_math
+op_assign
+id|current
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;used_math
+)paren
+(brace
+multiline_comment|/* Restore the old state. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldd [%0 + 0x00], %%f0&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x08], %%f2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x10], %%f4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x18], %%f6&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x20], %%f8&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x28], %%f10&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x30], %%f12&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x38], %%f14&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x40], %%f16&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x48], %%f18&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x50], %%f20&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x58], %%f22&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x60], %%f24&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x68], %%f26&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x70], %%f28&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x78], %%f30&bslash;n&bslash;t&quot;
+l_string|&quot;ld  [%1], %%fsr&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|current-&gt;tss.fsr
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Set initial sane state. */
+r_auto
+r_int
+r_int
+id|init_fsr
+op_assign
+l_int|0x0UL
+suffix:semicolon
+r_auto
+r_int
+r_int
+id|init_fregs
+(braket
+l_int|32
+)braket
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+op_assign
+(brace
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+comma
+op_complement
+l_int|0UL
+)brace
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldd [%0 + 0x00], %%f0&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x08], %%f2&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x10], %%f4&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x18], %%f6&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x20], %%f8&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x28], %%f10&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x30], %%f12&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x38], %%f14&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x40], %%f16&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x48], %%f18&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x50], %%f20&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x58], %%f22&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x60], %%f24&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x68], %%f26&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x70], %%f28&bslash;n&bslash;t&quot;
+l_string|&quot;ldd [%0 + 0x78], %%f30&bslash;n&bslash;t&quot;
+l_string|&quot;ld  [%1], %%fsr&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|init_fregs
+(braket
+l_int|0
+)braket
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_amp
+id|init_fsr
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 )brace
 r_void
 DECL|function|do_fpe_trap
@@ -243,21 +808,53 @@ r_int
 id|psr
 )paren
 (brace
-id|printk
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
-l_string|&quot;Floating Point Exception at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
+l_string|&quot;FPE exception trap from kernel, die die die...&quot;
 )paren
 suffix:semicolon
-id|halt
+)brace
+multiline_comment|/* XXX Do something real... XXX */
+id|regs-&gt;psr
+op_and_assign
+op_complement
+id|PSR_EF
+suffix:semicolon
+id|last_task_used_math
+op_assign
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+l_int|0
+suffix:semicolon
+id|current-&gt;tss.sig_address
+op_assign
+id|pc
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_FPERROR
+suffix:semicolon
+multiline_comment|/* as good as any */
+id|send_sig
 c_func
 (paren
+id|SIGFPE
+comma
+id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -298,9 +895,38 @@ comma
 id|psr
 )paren
 suffix:semicolon
-id|halt
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
+l_string|&quot;KERNEL tag overflow trap, wowza!&quot;
+)paren
+suffix:semicolon
+)brace
+id|current-&gt;tss.sig_address
+op_assign
+id|pc
+suffix:semicolon
+id|current-&gt;tss.sig_desc
+op_assign
+id|SUBSIG_TAG
+suffix:semicolon
+multiline_comment|/* as good as any */
+id|send_sig
+c_func
+(paren
+id|SIGEMT
+comma
+id|current
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -341,11 +967,22 @@ comma
 id|psr
 )paren
 suffix:semicolon
-id|halt
+r_if
+c_cond
+(paren
+id|psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|panic
 c_func
 (paren
+l_string|&quot;Tell me what a watchpoint trap is, and I&squot;ll then deal &quot;
+l_string|&quot;with such a beast...&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -376,49 +1013,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;Register Access Exception at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_void
-DECL|function|handle_iacc_error
-id|handle_iacc_error
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|npc
-comma
-r_int
-r_int
-id|psr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Instruction Access Error at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
 comma
 id|pc
 comma
@@ -565,49 +1159,6 @@ r_return
 suffix:semicolon
 )brace
 r_void
-DECL|function|handle_dacc_error
-id|handle_dacc_error
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|npc
-comma
-r_int
-r_int
-id|psr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Data Access Error at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_void
 DECL|function|handle_hw_divzero
 id|handle_hw_divzero
 c_func
@@ -650,130 +1201,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|do_ast
 r_void
-DECL|function|handle_dstore_error
-id|handle_dstore_error
+id|do_ast
 c_func
 (paren
 r_struct
 id|pt_regs
 op_star
 id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|npc
-comma
-r_int
-r_int
-id|psr
 )paren
 (brace
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;Data Store Error at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_void
-DECL|function|handle_dacc_mmu_miss
-id|handle_dacc_mmu_miss
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|npc
-comma
-r_int
-r_int
-id|psr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Data Access MMU-Miss Exception at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_void
-DECL|function|handle_iacc_mmu_miss
-id|handle_iacc_mmu_miss
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|pc
-comma
-r_int
-r_int
-id|npc
-comma
-r_int
-r_int
-id|psr
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Instruction Access MMU-Miss Exception at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
-id|halt
-c_func
-(paren
+l_string|&quot;Don&squot;t know how to handle AST traps yet ;-(&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -810,7 +1252,6 @@ DECL|variable|thiscpus_mid
 r_int
 id|thiscpus_mid
 suffix:semicolon
-multiline_comment|/* #define SMP_TESTING */
 r_void
 DECL|function|trap_init
 id|trap_init
@@ -851,13 +1292,13 @@ op_ne
 id|sun4m
 )paren
 (brace
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;trap_init: Multiprocessor on a non-sun4m! Aieee...&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;trap_init: Cannot continue, bailing out.&bslash;n&quot;
@@ -870,7 +1311,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Ok, we are on a sun4m with multiple cpu&squot;s */
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;trap_init: Multiprocessor detected, initiating CPU-startup. cpus=%d&bslash;n&quot;
@@ -998,33 +1439,6 @@ id|cpuid
 dot
 id|trap_table
 suffix:semicolon
-macro_line|#ifdef SMP_TESTING
-id|printk
-c_func
-(paren
-l_string|&quot;thiscpus_tbr = %08x&bslash;n&quot;
-comma
-id|thiscpus_tbr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;About to fire up cpu %d mid %d cpuid %d&bslash;n&quot;
-comma
-id|i
-comma
-id|linux_cpus
-(braket
-id|i
-)braket
-dot
-id|mid
-comma
-id|cpuid
-)paren
-suffix:semicolon
-macro_line|#endif
 id|prom_startcpu
 c_func
 (paren
@@ -1047,7 +1461,7 @@ op_star
 id|sparc_cpu_startup
 )paren
 suffix:semicolon
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;Waiting for cpu %d to start up...&bslash;n&quot;
@@ -1085,14 +1499,6 @@ OG
 l_int|200
 )paren
 (brace
-macro_line|#ifdef SMP_TESTING
-id|printk
-c_func
-(paren
-l_string|&quot;UGH, CPU would not start up ;-( &bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace

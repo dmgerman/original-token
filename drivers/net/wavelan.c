@@ -244,11 +244,6 @@ c_func
 (paren
 id|device
 op_star
-comma
-r_int
-comma
-r_void
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -4374,6 +4369,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
+multiline_comment|/* Not yet supported */
 id|dev-&gt;mtu
 op_assign
 id|WAVELAN_MTU
@@ -8512,13 +8513,6 @@ c_func
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 id|net_local
@@ -8539,23 +8533,11 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: -&gt;wavelan_set_multicast_list(dev=0x%x, num_addrs=%d, addrs=0x%x)&bslash;n&quot;
+l_string|&quot;%s: -&gt;wavelan_set_multicast_list(dev=0x%x)&quot;
 comma
 id|dev-&gt;name
 comma
-(paren
-r_int
-r_int
-)paren
 id|dev
-comma
-id|num_addrs
-comma
-(paren
-r_int
-r_int
-)paren
-id|addrs
 )paren
 suffix:semicolon
 id|lp
@@ -8566,16 +8548,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_switch
+r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
-r_case
-op_minus
-l_int|1
-suffix:colon
 multiline_comment|/*&n;&t;&t; * Promiscuous mode: receive all packets.&n;&t;&t; */
 id|lp-&gt;promiscuous
 op_assign
@@ -8603,11 +8583,25 @@ c_func
 id|x
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0
-suffix:colon
+)brace
+macro_line|#if MULTICAST_IS_ADDED&t;
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
+op_logical_or
+id|dev-&gt;mc_list
+)paren
+(brace
+)brace
+macro_line|#endif&t;
+r_else
+(brace
 multiline_comment|/*&n;&t;&t; * Normal mode: disable promiscuous mode,&n;&t;&t; * clear multicast list.&n;&t;&t; */
 id|lp-&gt;promiscuous
 op_assign
@@ -8634,13 +8628,6 @@ c_func
 (paren
 id|x
 )paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-multiline_comment|/*&n;&t;&t; * Multicast mode: receive normal and&n;&t;&t; * multicast packets and do best-effort filtering.&n;&t;&t; */
-r_break
 suffix:semicolon
 )brace
 r_if

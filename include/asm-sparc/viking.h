@@ -1,4 +1,4 @@
-multiline_comment|/* viking.h:  Defines specific to the TI Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: viking.h,v 1.5 1995/11/25 02:33:21 davem Exp $&n; * viking.h:  Defines specific to the TI Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_VIKING_H
 DECL|macro|_SPARC_VIKING_H
 mdefine_line|#define _SPARC_VIKING_H

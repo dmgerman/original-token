@@ -1,8 +1,9 @@
+multiline_comment|/* $Id: openprom.h,v 1.15 1995/11/25 02:32:13 davem Exp $ */
 macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H
 multiline_comment|/* openprom.h:  Prom structures and defines for access to the OPENBOOT&n; *              prom routines and data areas.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
-multiline_comment|/* In the v0 interface of the openboot prom we could traverse a nice&n; * little list structure to figure out where in vm-space the prom had&n; * mapped itself and how much space it was taking up. In the v2 prom&n; * interface we have to rely on &squot;magic&squot; values. :-( Most of the machines&n; * I have checked on have the prom mapped here all the time though.&n; */
+multiline_comment|/* Imperical constants... */
 DECL|macro|KADB_DEBUGGER_BEGVM
 mdefine_line|#define KADB_DEBUGGER_BEGVM     0xffc00000    /* Where kern debugger is in virt-mem */
 DECL|macro|LINUX_OPPROM_BEGVM
@@ -12,7 +13,7 @@ mdefine_line|#define&t;LINUX_OPPROM_ENDVM&t;0xfff00000
 DECL|macro|LINUX_OPPROM_MAGIC
 mdefine_line|#define&t;LINUX_OPPROM_MAGIC      0x10010407
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* The device functions structure for the v0 prom. Nice and neat, open,&n; * close, read &amp; write divvied up between net + block + char devices. We&n; * also have a seek routine only usable for block devices. The divide&n; * and conquer strategy of this struct becomes unnecessary for v2.&n; *&n; * V0 device names are limited to two characters, &squot;sd&squot; for scsi-disk,&n; * &squot;le&squot; for local-ethernet, etc. Note that it is technically possible&n; * to boot a kernel off of a tape drive and use the tape as the root&n; * partition! In order to do this you have to have &squot;magic&squot; formatted&n; * tapes from Sun supposedly :-)&n; */
+multiline_comment|/* V0 prom device operations. */
 DECL|struct|linux_dev_v0_funcs
 r_struct
 id|linux_dev_v0_funcs
@@ -179,7 +180,7 @@ id|from
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The OpenBoot Prom device operations for version-2 interfaces are both&n; * good and bad. They now allow you to address ANY device whatsoever&n; * that is in the machine via these funny &quot;device paths&quot;. They look like&n; * this:&n; *&n; *   &quot;/sbus/esp@0,0xf004002c/sd@3,1&quot;&n; *&n; * You can basically reference any device on the machine this way, and&n; * you pass this string to the v2 dev_ops. Producing these strings all&n; * the time can be a pain in the rear after a while. Why v2 has memory&n; * allocations in here are beyond me. Perhaps they figure that if you&n; * are going to use only the prom&squot;s device drivers then your memory&n; * management is either non-existent or pretty sad. :-)&n; */
+multiline_comment|/* V2 and later prom device operations. */
 DECL|struct|linux_dev_v2_funcs
 r_struct
 id|linux_dev_v2_funcs
@@ -196,7 +197,6 @@ id|d
 )paren
 suffix:semicolon
 multiline_comment|/* Convert ihandle to phandle */
-multiline_comment|/* &quot;dumb&quot; prom memory management routines, probably&n;&t; *  only safe to use for mapping device address spaces...&n;         */
 DECL|member|v2_dumb_mem_alloc
 r_char
 op_star
@@ -228,7 +228,7 @@ r_int
 id|sz
 )paren
 suffix:semicolon
-multiline_comment|/* &quot;dumb&quot; mmap() munmap(), copy on write? what&squot;s that? */
+multiline_comment|/* To map devices into virtual I/O space. */
 DECL|member|v2_dumb_mmap
 r_char
 op_star
@@ -266,7 +266,6 @@ r_int
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/* Basic Operations, self-explanatory */
 DECL|member|v2_dev_open
 r_int
 (paren
@@ -366,7 +365,6 @@ r_void
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Just like the device ops, they slightly screwed up the mem-list&n; * from v0 to v2. Probably easier on the prom-writer dude, sucks for&n; * us though. See above comment about prom-vm mapped address space&n; * magic numbers. :-(&n; */
 DECL|struct|linux_mlist_v0
 r_struct
 id|linux_mlist_v0
@@ -388,7 +386,6 @@ id|num_bytes
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The linux_mlist_v0&squot;s are pointed to by this structure. One list&n; * per description. This means one list for total physical memory,&n; * one for prom&squot;s address mapping, and one for physical mem left after&n; * the kernel is loaded.&n; */
 DECL|struct|linux_mem_v0
 r_struct
 id|linux_mem_v0
@@ -400,7 +397,6 @@ op_star
 op_star
 id|v0_totphys
 suffix:semicolon
-multiline_comment|/* all of physical */
 DECL|member|v0_prommap
 r_struct
 id|linux_mlist_v0
@@ -408,7 +404,6 @@ op_star
 op_star
 id|v0_prommap
 suffix:semicolon
-multiline_comment|/* addresses map&squot;d by prom */
 DECL|member|v0_available
 r_struct
 id|linux_mlist_v0
@@ -416,7 +411,7 @@ op_star
 op_star
 id|v0_available
 suffix:semicolon
-multiline_comment|/* what phys. is left over */
+multiline_comment|/* What we can use */
 )brace
 suffix:semicolon
 multiline_comment|/* Arguments sent to the kernel from the boot prompt. */
@@ -432,7 +427,6 @@ id|argv
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* argv format for boot string */
 DECL|member|args
 r_char
 id|args
@@ -440,7 +434,6 @@ id|args
 l_int|100
 )braket
 suffix:semicolon
-multiline_comment|/* string space */
 DECL|member|boot_dev
 r_char
 id|boot_dev
@@ -448,37 +441,32 @@ id|boot_dev
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* e.g., &quot;sd&quot; for `b sd(...&squot; */
 DECL|member|boot_dev_ctrl
 r_int
 id|boot_dev_ctrl
 suffix:semicolon
-multiline_comment|/* controller # */
 DECL|member|boot_dev_unit
 r_int
 id|boot_dev_unit
 suffix:semicolon
-multiline_comment|/* unit # */
 DECL|member|dev_partition
 r_int
 id|dev_partition
 suffix:semicolon
-multiline_comment|/* partition # */
 DECL|member|kernel_file_name
 r_char
 op_star
 id|kernel_file_name
 suffix:semicolon
-multiline_comment|/* kernel to boot, e.g., &quot;vmunix&quot; */
 DECL|member|aieee1
 r_void
 op_star
 id|aieee1
 suffix:semicolon
-multiline_comment|/* give me some time  :&gt; */
+multiline_comment|/* XXX */
 )brace
 suffix:semicolon
-multiline_comment|/* Prom version-2 gives us the raw strings for boot arguments and&n; * boot device path. We also get the stdin and stdout file pseudo&n; * descriptors for use with the mungy v2 device functions.&n; */
+multiline_comment|/* V2 and up boot things. */
 DECL|struct|linux_bootargs_v2
 r_struct
 id|linux_bootargs_v2
@@ -489,29 +477,25 @@ op_star
 op_star
 id|bootpath
 suffix:semicolon
-multiline_comment|/* V2: Path to boot device */
 DECL|member|bootargs
 r_char
 op_star
 op_star
 id|bootargs
 suffix:semicolon
-multiline_comment|/* V2: Boot args */
 DECL|member|fd_stdin
 r_int
 op_star
 id|fd_stdin
 suffix:semicolon
-multiline_comment|/* V2: Stdin descriptor */
 DECL|member|fd_stdout
 r_int
 op_star
 id|fd_stdout
 suffix:semicolon
-multiline_comment|/* V2: Stdout descriptor */
 )brace
 suffix:semicolon
-multiline_comment|/* This is the actual Prom Vector from which everything else is accessed&n; * via struct and function pointers, etc. The prom when it loads us into&n; * memory plops a pointer to this master structure in register %o0 before&n; * it jumps to the kernel start address. I will update this soon to cover&n; * the v3 semantics (cpu_start, cpu_stop and other SMP fun things). :-)&n; */
+multiline_comment|/* The top level PROM vector. */
 DECL|struct|linux_romvec
 r_struct
 id|linux_romvec
@@ -522,66 +506,55 @@ r_int
 r_int
 id|pv_magic_cookie
 suffix:semicolon
-multiline_comment|/* Magic Mushroom... */
 DECL|member|pv_romvers
 r_int
 r_int
 id|pv_romvers
 suffix:semicolon
-multiline_comment|/* iface vers (0, 2, or 3) */
 DECL|member|pv_plugin_revision
 r_int
 r_int
 id|pv_plugin_revision
 suffix:semicolon
-multiline_comment|/* revision relative to above vers */
 DECL|member|pv_printrev
 r_int
 r_int
 id|pv_printrev
 suffix:semicolon
-multiline_comment|/* print revision */
-multiline_comment|/* Version 0 memory descriptors (see below). */
+multiline_comment|/* Version 0 memory descriptors. */
 DECL|member|pv_v0mem
 r_struct
 id|linux_mem_v0
 id|pv_v0mem
 suffix:semicolon
-multiline_comment|/* V0: Memory description lists. */
-multiline_comment|/* Node operations (see below). */
+multiline_comment|/* Node operations. */
 DECL|member|pv_nodeops
 r_struct
 id|linux_nodeops
 op_star
 id|pv_nodeops
 suffix:semicolon
-multiline_comment|/* node functions, gets device data */
 DECL|member|pv_bootstr
 r_char
 op_star
 op_star
 id|pv_bootstr
 suffix:semicolon
-multiline_comment|/* Boot command, eg sd(0,0,0)vmunix */
 DECL|member|pv_v0devops
 r_struct
 id|linux_dev_v0_funcs
 id|pv_v0devops
 suffix:semicolon
-multiline_comment|/* V0: device ops */
-multiline_comment|/*&n;&t; * PROMDEV_* cookies.  I fear these may vanish in lieu of fd0/fd1&n;&t; * (see below) in future PROMs, but for now they work fine.&n;&t; */
 DECL|member|pv_stdin
 r_char
 op_star
 id|pv_stdin
 suffix:semicolon
-multiline_comment|/* stdin cookie */
 DECL|member|pv_stdout
 r_char
 op_star
 id|pv_stdout
 suffix:semicolon
-multiline_comment|/* stdout cookie */
 DECL|macro|PROMDEV_KBD
 mdefine_line|#define&t;PROMDEV_KBD&t;0&t;&t;/* input from keyboard */
 DECL|macro|PROMDEV_SCREEN
@@ -612,7 +585,7 @@ r_int
 id|ch
 )paren
 suffix:semicolon
-multiline_comment|/* Non-blocking variants that return -1 on error. */
+multiline_comment|/* Non-blocking variants. */
 DECL|member|pv_nbgetchar
 r_int
 (paren
@@ -634,7 +607,6 @@ r_int
 id|ch
 )paren
 suffix:semicolon
-multiline_comment|/* Put counted string (can be very slow). */
 DECL|member|pv_putstr
 r_void
 (paren
@@ -690,13 +662,11 @@ id|pv_abort
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* BREAK key abort */
 DECL|member|pv_ticks
 r_int
 op_star
 id|pv_ticks
 suffix:semicolon
-multiline_comment|/* milliseconds since last reset */
 DECL|member|pv_halt
 r_void
 (paren
@@ -707,7 +677,6 @@ id|pv_halt
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* End the show */
 DECL|member|pv_synchook
 r_void
 (paren
@@ -719,8 +688,7 @@ id|pv_synchook
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* &quot;sync&quot; ptr to function */
-multiline_comment|/*&n;&t; * This eval&squot;s a FORTH string.  Unfortunately, its interface&n;&t; * changed between V0 and V2, which gave us much pain.&n;&t; */
+multiline_comment|/* Evaluate a forth string, not different proto for V0 and V2-&gt;up. */
 r_union
 (brace
 DECL|member|v0_eval
@@ -761,8 +729,7 @@ op_star
 op_star
 id|pv_v0bootargs
 suffix:semicolon
-multiline_comment|/* V0: Boot args */
-multiline_comment|/* Extract Ethernet address from network device. */
+multiline_comment|/* Get ether address. */
 DECL|member|pv_enaddr
 r_int
 r_int
@@ -784,13 +751,11 @@ r_struct
 id|linux_bootargs_v2
 id|pv_v2bootargs
 suffix:semicolon
-multiline_comment|/* V2: Boot args+std-in/out */
 DECL|member|pv_v2devops
 r_struct
 id|linux_dev_v2_funcs
 id|pv_v2devops
 suffix:semicolon
-multiline_comment|/* V2: device operations */
 DECL|member|filler
 r_int
 id|filler
@@ -798,7 +763,7 @@ id|filler
 l_int|15
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t; * The following is machine-dependent.&n;&t; *&n;&t; * The sun4c needs a PROM function to set a PMEG for another&n;&t; * context, so that the kernel can map itself in all contexts.&n;&t; * It is not possible simply to set the context register, because&n;&t; * contexts 1 through N may have invalid translations for the&n;&t; * current program counter.  The hardware has a mode in which&n;&t; * all memory references go to the PROM, so the PROM can do it&n;&t; * easily.&n;&t; */
+multiline_comment|/* This one is sun4c/sun4 only. */
 DECL|member|pv_setctxt
 r_void
 (paren
@@ -817,8 +782,8 @@ r_int
 id|pmeg
 )paren
 suffix:semicolon
-multiline_comment|/* Prom version 3 Multiprocessor routines. This stuff is crazy.&n;&t; * No joke. Calling these when there is only one cpu probably&n;&t; * crashes the machine, have to test this. :-)&n;         */
-multiline_comment|/* v3_cpustart() will start the cpu &squot;whichcpu&squot; in mmu-context&n;&t; * &squot;thiscontext&squot; executing at address &squot;prog_counter&squot;&n;         */
+multiline_comment|/* Prom version 3 Multiprocessor routines. This stuff is crazy.&n;&t; * No joke. Calling these when there is only one cpu probably&n;&t; * crashes the machine, have to test this. :-)&n;&t; */
+multiline_comment|/* v3_cpustart() will start the cpu &squot;whichcpu&squot; in mmu-context&n;&t; * &squot;thiscontext&squot; executing at address &squot;prog_counter&squot;&n;&t; */
 DECL|member|v3_cpustart
 r_int
 (paren
@@ -882,12 +847,11 @@ id|whichcpu
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * In addition to the global stuff defined in the PROM vectors above,&n; * the PROM has quite a collection of `nodes&squot;.  A node is described by&n; * an integer---these seem to be internal pointers, actually---and the&n; * nodes are arranged into an N-ary tree.  Each node implements a fixed&n; * set of functions, as described below.  The first two deal with the tree&n; * structure, allowing traversals in either breadth- or depth-first fashion.&n; * The rest deal with `properties&squot;.&n; *&n; * A node property is simply a name/value pair.  The names are C strings&n; * (NUL-terminated); the values are arbitrary byte strings (counted strings).&n; * Many values are really just C strings.  Sometimes these are NUL-terminated,&n; * sometimes not, depending on the the interface version; v0 seems to&n; * terminate and v2 not.  Many others are simply integers stored as four&n; * bytes in machine order: you just get them and go.  The third popular&n; * format is an `address&squot;, which is made up of one or more sets of three&n; * integers as defined below.&n; *&n; * One uses these functions to traverse the device tree to see what devices&n; * this machine has attached to it.&n; *&n; * N.B.: for the `next&squot; functions, next(0) = first, and next(last) = 0.&n; * Whoever designed this part had good taste.  On the other hand, these&n; * operation vectors are global, rather than per-node, yet the pointers&n; * are not in the openprom vectors but rather found by indirection from&n; * there.  So the taste balances out.&n; */
+multiline_comment|/* Routines for traversing the prom device tree. */
 DECL|struct|linux_nodeops
 r_struct
 id|linux_nodeops
 (brace
-multiline_comment|/*&n;&t; * Tree traversal.&n;&t; */
 DECL|member|no_nextnode
 r_int
 (paren
@@ -899,7 +863,6 @@ r_int
 id|node
 )paren
 suffix:semicolon
-multiline_comment|/* next(node) */
 DECL|member|no_child
 r_int
 (paren
@@ -911,8 +874,6 @@ r_int
 id|node
 )paren
 suffix:semicolon
-multiline_comment|/* first child */
-multiline_comment|/*&n;&t; * Property functions.  Proper use of getprop requires calling&n;&t; * proplen first to make sure it fits.  Kind of a pain, but no&n;&t; * doubt more convenient for the PROM coder.&n;&t; */
 DECL|member|no_proplen
 r_int
 (paren

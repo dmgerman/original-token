@@ -1,9 +1,12 @@
-multiline_comment|/* include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.28 1995/11/25 02:32:30 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
-macro_line|#include &lt;linux/sched.h&gt;  /* For intr_count */
-macro_line|#include &lt;asm/ptrace.h&gt;   /* For pt_regs declaration */
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/psr.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/head.h&gt;
+macro_line|#include &lt;asm/signal.h&gt;
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -13,105 +16,137 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * Write Protection works right in supervisor mode on the Sparc&n; */
-macro_line|#if 0  /* Let&squot;s try this out ;) */
-mdefine_line|#define wp_works_ok 1
-mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
-macro_line|#else
+multiline_comment|/*&n; * Write Protection works right in supervisor mode on the Sparc...&n; * And then there came the Swift module, which isn&squot;t so swift...&n; */
 r_extern
 r_char
 id|wp_works_ok
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; *&n; * With the way identity mapping works on the sun4c, this is the best&n; * value to use.&n; *&n; * This has to be looked into for a unified sun4c/sun4m task size.&n; */
+multiline_comment|/* Whee, this is STACK_TOP and the lowest kernel address too... */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;(0xC000000UL)
-multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
-DECL|macro|IO_BITMAP_SIZE
-mdefine_line|#define IO_BITMAP_SIZE&t;32
-multiline_comment|/* The first four entries here MUST be the first four. This allows me to&n; * do %lo(offset) loads and stores in entry.S. See TRAP_WIN_CLEAN to see&n; * why.&n; */
+mdefine_line|#define TASK_SIZE&t;(KERNBASE)
+multiline_comment|/* The Sparc processor specific thread struct. */
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
-DECL|member|uwindows
+DECL|member|uwinmask
 r_int
 r_int
-id|uwindows
+id|uwinmask
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* how many user windows are in the set */
-DECL|member|wim
+multiline_comment|/* For signal handling */
+DECL|member|sig_address
 r_int
 r_int
-id|wim
+id|sig_address
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* user&squot;s window invalid mask */
+DECL|member|sig_desc
+r_int
+r_int
+id|sig_desc
+suffix:semicolon
+multiline_comment|/* Context switch saved kernel state. */
+DECL|member|ksp
+r_int
+r_int
+id|ksp
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|member|kpc
+r_int
+r_int
+id|kpc
+suffix:semicolon
+DECL|member|kpsr
+r_int
+r_int
+id|kpsr
+suffix:semicolon
+DECL|member|kwim
+r_int
+r_int
+id|kwim
+suffix:semicolon
+multiline_comment|/* A place to store user windows and stack pointers&n;&t; * when the stack needs inspection.&n;&t; */
+DECL|macro|NSWINS
+mdefine_line|#define NSWINS 8
+DECL|member|reg_window
+r_struct
+id|reg_window
+id|reg_window
+(braket
+id|NSWINS
+)braket
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|member|rwbuf_stkptrs
+r_int
+r_int
+id|rwbuf_stkptrs
+(braket
+id|NSWINS
+)braket
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
 DECL|member|w_saved
 r_int
 r_int
 id|w_saved
 suffix:semicolon
-multiline_comment|/* how many windows saved in reg_window[] */
-DECL|member|ksp
-r_int
-r_int
-id|ksp
-suffix:semicolon
-multiline_comment|/* kernel stack pointer */
-DECL|member|usp
-r_int
-r_int
-id|usp
-suffix:semicolon
-multiline_comment|/* user&squot;s sp, throw reg windows here */
-DECL|member|psr
-r_int
-r_int
-id|psr
-suffix:semicolon
-multiline_comment|/* save for condition codes */
-DECL|member|pc
-r_int
-r_int
-id|pc
-suffix:semicolon
-multiline_comment|/* program counter */
-DECL|member|npc
-r_int
-r_int
-id|npc
-suffix:semicolon
-multiline_comment|/* next program counter */
-DECL|member|yreg
-r_int
-r_int
-id|yreg
-suffix:semicolon
-DECL|member|align
-r_int
-r_int
-id|align
-suffix:semicolon
-multiline_comment|/* to get 8-byte alignment  XXX  */
-DECL|member|reg_window
-r_int
-r_int
-id|reg_window
-(braket
-l_int|16
-)braket
-suffix:semicolon
+multiline_comment|/* Where our page table lives. */
 DECL|member|pgd_ptr
 r_int
 r_int
 id|pgd_ptr
 suffix:semicolon
+multiline_comment|/* The context currently allocated to this process&n;&t; * or -1 if no context has been allocated to this&n;&t; * task yet.&n;&t; */
 DECL|member|context
 r_int
 id|context
 suffix:semicolon
-multiline_comment|/* The context allocated to this thread */
-multiline_comment|/* 8 local registers + 8 in registers * 24 register windows.&n; * Most sparcs I know of only have 7 or 8 windows implemented,&n; * we determine how many at boot time and store that value&n; * in nwindows.&n; */
+multiline_comment|/* Floating point regs */
 DECL|member|float_regs
 r_int
 r_int
@@ -119,123 +154,104 @@ id|float_regs
 (braket
 l_int|64
 )braket
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* V8 and below have 32, V9 has 64 */
+DECL|member|fsr
+r_int
+r_int
+id|fsr
+suffix:semicolon
+DECL|member|fpqdepth
+r_int
+r_int
+id|fpqdepth
+suffix:semicolon
+DECL|struct|fpq
+r_struct
+id|fpq
+(brace
+DECL|member|insn_addr
+r_int
+r_int
+op_star
+id|insn_addr
+suffix:semicolon
+DECL|member|insn
+r_int
+r_int
+id|insn
+suffix:semicolon
+DECL|member|fpqueue
+)brace
+id|fpqueue
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|sstk_info
+r_struct
+id|sigstack
+id|sstk_info
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_task, (PAGE_OFFSET), (0xff000000UL), &bslash;&n;&t;&t;    0x0 , VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, (0xf0000000UL), (0xffffffffUL), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;&t;(long) &amp;swapper_pg_dir, -1,  &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;}
-multiline_comment|/* The thread_frame is what needs to be set up in certain circumstances&n; * upon entry to a trap. It is also loaded sometimes during a window&n; * spill if things don&squot;t go right (bad user stack pointer). In reality&n; * it is not per-process per se, it just sits in the kernel stack while&n; * the current process is in a handler then it is basically forgotten&n; * about the next time flow control goes back to that process.&n; */
-multiline_comment|/* Sparc stack save area allocated for each save, not very exciting. */
-DECL|struct|sparc_save_stack
+mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,           0,        0,   0,   0,    0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved, pgd_ptr,                context */  &bslash;&n;   0,       (long) &amp;swapper_pg_dir, -1, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;}
+multiline_comment|/* Return saved PC of a blocked thread. */
+DECL|function|thread_saved_pc
+r_extern
+r_inline
+r_int
+r_int
+id|thread_saved_pc
+c_func
+(paren
 r_struct
-id|sparc_save_stack
-(brace
-DECL|member|locals
-r_int
-r_int
-id|locals
-(braket
-l_int|8
-)braket
-suffix:semicolon
-DECL|member|ins
-r_int
-r_int
-id|ins
-(braket
-l_int|8
-)braket
-suffix:semicolon
-DECL|member|padd
-r_int
-r_int
-id|padd
-(braket
-l_int|8
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * These are the &quot;cli()&quot; and &quot;sti()&quot; for software interrupts&n; * They work by increasing/decreasing the &quot;intr_count&quot; value, &n; * and as such can be nested arbitrarily.&n; */
-DECL|function|start_bh_atomic
-r_extern
-r_inline
-r_void
-id|start_bh_atomic
-c_func
-(paren
-r_void
+id|thread_struct
+op_star
+id|t
 )paren
 (brace
-id|__asm__
-id|__volatile__
-c_func
+r_return
 (paren
-l_string|&quot;rd %%psr, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g2, 0x20, %%psr&bslash;n&bslash;t&quot;
-multiline_comment|/* disable traps */
-l_string|&quot;ld %0,%%g3&bslash;n&bslash;t&quot;
-l_string|&quot;add %%g3,1,%%g3&bslash;n&bslash;t&quot;
-l_string|&quot;st %%g3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g2, 0x0, %%psr&bslash;n&bslash;t&quot;
-multiline_comment|/* enable traps */
-suffix:colon
-l_string|&quot;=m&quot;
 (paren
-id|intr_count
+r_struct
+id|pt_regs
+op_star
 )paren
-suffix:colon
-suffix:colon
-l_string|&quot;g2&quot;
-comma
-l_string|&quot;g3&quot;
-comma
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|function|end_bh_atomic
-r_extern
-r_inline
-r_void
-id|end_bh_atomic
-c_func
 (paren
-r_void
-)paren
-(brace
-id|__asm__
-id|__volatile__
-c_func
 (paren
-l_string|&quot;rd %%psr, %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g2, 0x20, %%psr&bslash;n&bslash;t&quot;
-l_string|&quot;ld %0,%%g3&bslash;n&bslash;t&quot;
-l_string|&quot;sub %%g3,1,%%g3&bslash;n&bslash;t&quot;
-l_string|&quot;st %%g3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;wr %%g2, 0x0, %%psr&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=m&quot;
+id|t-&gt;ksp
+op_amp
 (paren
-id|intr_count
+op_complement
+l_int|0xfff
 )paren
-suffix:colon
-suffix:colon
-l_string|&quot;g2&quot;
-comma
-l_string|&quot;g3&quot;
-comma
-l_string|&quot;memory&quot;
 )paren
+op_plus
+(paren
+l_int|0x1000
+op_minus
+id|TRACEREG_SZ
+)paren
+)paren
+)paren
+op_member_access_from_pointer
+id|pc
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
-DECL|function|start_thread
-r_static
-r_inline
+r_extern
 r_void
 id|start_thread
 c_func
@@ -247,24 +263,12 @@ id|regs
 comma
 r_int
 r_int
-id|sp
+id|pc
 comma
 r_int
 r_int
-id|fp
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;start_thread called, halting..n&quot;
+id|sp
 )paren
 suffix:semicolon
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif /* __ASM_SPARC_PROCESSOR_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: cache.h,v 1.3 1995/11/25 02:31:22 davem Exp $&n; * cache.h:  Cache specific code for the Sparc.  These include flushing&n; *           and direct tag/data line access.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_CACHE_H
 DECL|macro|_SPARC_CACHE_H
 mdefine_line|#define _SPARC_CACHE_H
@@ -143,8 +143,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* Second cache-data access.  The data is returned two-32bit quantities&n; * at a time.&n; */
 DECL|function|get_icache_data
@@ -255,8 +253,6 @@ l_int|1
 )braket
 op_assign
 id|value2
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|put_icache_data
@@ -372,8 +368,6 @@ l_string|&quot;memory&quot;
 multiline_comment|/* no joke */
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* Different types of flushes with the ICACHE.  Some of the flushes&n; * affect both the ICACHE and the external cache.  Others only clear&n; * the ICACHE entries on the cpu itself.  V8&squot;s (most) allow&n; * granularity of flushes on the packet (element in line), whole line,&n; * and entire cache (ie. all lines) level.  The ICACHE only flushes are&n; * ROSS HyperSparc specific and are in ross.h&n; */
 multiline_comment|/* Flushes which clear out both the on-chip and external caches */
@@ -409,8 +403,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 DECL|function|flush_ei_seg
 r_extern
@@ -443,8 +435,6 @@ id|ASI_M_FLUSH_SEG
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|function|flush_ei_region
@@ -479,8 +469,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 DECL|function|flush_ei_ctx
 r_extern
@@ -514,8 +502,6 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 DECL|function|flush_ei_user
 r_extern
@@ -548,8 +534,6 @@ id|ASI_M_FLUSH_USER
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* !(_SPARC_CACHE_H) */

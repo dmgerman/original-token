@@ -142,6 +142,9 @@ macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#endif
 r_extern
 r_char
 op_star

@@ -1,4 +1,5 @@
-multiline_comment|/* mp.c:  SMP cpu idling and dispatch on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller&n; */
+multiline_comment|/* $Id: c_mp.c,v 1.3 1995/11/25 00:57:50 davem Exp $&n; * mp.c:  SMP cpu idling and dispatch on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller&n; */
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/mp.h&gt;
 macro_line|#include &lt;asm/mbus.h&gt;
 DECL|variable|percpu_table

@@ -32,6 +32,13 @@ id|dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+(paren
+id|ETH_P_IPX
+)paren
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|hard_header

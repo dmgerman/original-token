@@ -1,4 +1,4 @@
-multiline_comment|/* ecc.h: Definitions and defines for the external cache/memory&n; *        controller on the sun4m.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ecc.h,v 1.2 1995/11/25 02:31:37 davem Exp $&n; * ecc.h: Definitions and defines for the external cache/memory&n; *        controller on the sun4m.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ECC_H
 DECL|macro|_SPARC_ECC_H
 mdefine_line|#define _SPARC_ECC_H

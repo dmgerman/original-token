@@ -1,4 +1,4 @@
-multiline_comment|/* srmmuinv.c:  Invalidate routines for the various different&n; *              SRMMU implementations.&n; *&n; * Copyright (C) 1995 David S. Miller&n; */
+multiline_comment|/* $Id: srmmuinv.c,v 1.2 1995/11/25 00:59:36 davem Exp $&n; * srmmuinv.c:  Invalidate routines for the various different&n; *              SRMMU implementations.&n; *&n; * Copyright (C) 1995 David S. Miller&n; */
 multiline_comment|/* HyperSparc */
 DECL|function|hyper_invalidate
 id|hyper_invalidate

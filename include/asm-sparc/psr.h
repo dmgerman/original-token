@@ -1,11 +1,11 @@
-multiline_comment|/* psr.h: This file holds the macros for masking off various parts of&n;          the processor status register on the Sparc. This is valid&n;&t;  for Version 8. On the V9 this is renamed to the PSTATE&n;&t;  register and its members are accessed as fields like&n;&t;  PSTATE.PRIV for the current CPU privilege level.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
+multiline_comment|/* $Id: psr.h,v 1.5 1995/11/25 02:32:31 davem Exp $&n; * psr.h: This file holds the macros for masking off various parts of&n; *        the processor status register on the Sparc. This is valid&n; *        for Version 8. On the V9 this is renamed to the PSTATE&n; *        register and its members are accessed as fields like&n; *        PSTATE.PRIV for the current CPU privilege level.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_PSR_H
 mdefine_line|#define __LINUX_SPARC_PSR_H
 DECL|macro|__LINUX_SPARC_V8
 mdefine_line|#define __LINUX_SPARC_V8  /* duh */
 macro_line|#ifdef __LINUX_SPARC_V8
-multiline_comment|/* The Sparc PSR fields are laid out as the following:&n;&n;    ------------------------------------------------------------------------&n;    | impl  | vers  | icc   | resv  | EC | EF | PIL  | S | PS | ET |  CWP  |&n;bits| 31-28 | 27-24 | 23-20 | 19-14 | 13 | 12 | 11-8 | 7 | 6  | 5  |  4-0  |&n;    ------------------------------------------------------------------------&n;&n;   The PSR can only be directly be written/read by the privileged instructions&n;   &squot;rd&squot; and &squot;wr&squot;. Certain fields are changed as a side effect due to the &squot;Ticc&squot;,&n;   &squot;save&squot;, &squot;restore&squot;, and &squot;rett&squot; instructions. Also the integer condition codes&n;   &squot;icc&squot; are modified by various arithmetic instructions.&n;&n;   For example:  wr  %o2, or&squot;d_bit_pattern, %psr&n;                 rd  %psr, %o3&n;&n;*/
+multiline_comment|/* The Sparc PSR fields are laid out as the following:&n; *&n; *  ------------------------------------------------------------------------&n; *  | impl  | vers  | icc   | resv  | EC | EF | PIL  | S | PS | ET |  CWP  |&n; *  | 31-28 | 27-24 | 23-20 | 19-14 | 13 | 12 | 11-8 | 7 | 6  | 5  |  4-0  |&n; *  ------------------------------------------------------------------------&n; */
 DECL|macro|PSR_CWP
 mdefine_line|#define PSR_CWP     0x0000001f         /* current window pointer     */
 DECL|macro|PSR_ET
@@ -140,7 +140,7 @@ suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__LINUX_SPARC_V8) */
 macro_line|#ifdef __LINUX_SPARC_V9
-multiline_comment|/* The information available in the %psr on the V8 is spread amongst&n;   a whole bunch of registers on the V9. The main one being PSTATE.&n;&n;     --------------------------------------------------------&n;     |  CLE  | TLE |  MM  | RED | PEF | AM | PRIV | IE | AG |&n;bits |   9   |  8  |  7-6 |  5  |  4  |  3 |   2  |  1 |  0 |&n;     --------------------------------------------------------&n;&n;   Writes and reads to PSTATE are done via &squot;wrpr&squot; and &squot;rdpr&squot; instructions.&n;&n;   For example:  wrpr %o2, or&squot;d_bit_pattern, %pstate&n;                 rdpr %pstate, %o3&n;*/
+multiline_comment|/* The information available in the %psr on the V8 is spread amongst&n; * a whole bunch of registers on the V9. The main one being PSTATE.&n; *&n; *   --------------------------------------------------------&n; *   |  CLE  | TLE |  MM  | RED | PEF | AM | PRIV | IE | AG |&n; *   |   9   |  8  |  7-6 |  5  |  4  |  3 |   2  |  1 |  0 |&n; *   --------------------------------------------------------&n; *&n; * Writes and reads to PSTATE are done via &squot;wrpr&squot; and &squot;rdpr&squot; instructions.&n; *&n; * For example:  wrpr %o2, or&squot;d_bit_pattern, %pstate&n; *               rdpr %pstate, %o3&n; */
 DECL|macro|PSTATE_AG
 mdefine_line|#define PSTATE_AG    0x001   /* Alternate Globals             */
 DECL|macro|PSTATE_IE
@@ -223,7 +223,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* The Version Register holds vendor information for the chip:&n;&n;    ---------------------------------------------------------------------------&n;    | manufacturer | implementation | mask | reserved | maxtl | resv | maxwin |&n;bits|  63-48       |   47-32        | 31-24|   23-16  | 15-8  | 7-5  |  4-0   |&n;    ---------------------------------------------------------------------------&n;&n;*/
+multiline_comment|/* The Version Register holds vendor information for the chip:&n; *&n; *  ---------------------------------------------------------------------------&n; *  | manufacturer | implementation | mask | reserved | maxtl | resv | maxwin |&n; *  |  63-48       |   47-32        | 31-24|   23-16  | 15-8  | 7-5  |  4-0   |&n; *  ---------------------------------------------------------------------------&n; *&n; */
 DECL|macro|VERS_MAXWIN
 mdefine_line|#define VERS_MAXWIN  0x000000000000001f     /* &squot;nwindows&squot; on this chip       */
 DECL|macro|VERS_MAXTL

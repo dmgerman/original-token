@@ -854,7 +854,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* filldir() migth have slept, so we must re-validate &quot;p&quot; */
+multiline_comment|/* filldir() might have slept, so we must re-validate &quot;p&quot; */
 r_if
 c_cond
 (paren

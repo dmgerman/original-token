@@ -1,4 +1,5 @@
-multiline_comment|/* init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init.c,v 1.6 1995/11/25 01:00:01 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|variable|romvec
@@ -49,7 +50,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_int
+r_void
 DECL|function|prom_init
 id|prom_init
 c_func
@@ -60,34 +61,10 @@ op_star
 id|rp
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|rp
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|romvec
 op_assign
 id|rp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|romvec-&gt;pv_magic_cookie
-op_ne
-id|LINUX_OPPROM_MAGIC
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Ok, we seem to have a sane romvec here. */
 r_switch
 c_cond
 (paren
@@ -134,8 +111,10 @@ c_func
 l_string|&quot;PROMLIB: Sun IEEE Prom not supported yet&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|1
+id|prom_halt
+c_func
+(paren
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -149,8 +128,10 @@ comma
 id|romvec-&gt;pv_romvers
 )paren
 suffix:semicolon
-r_return
-l_int|1
+id|prom_halt
+c_func
+(paren
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -193,8 +174,10 @@ l_int|1
 )paren
 )paren
 (brace
-r_return
-l_int|1
+id|prom_halt
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -226,8 +209,10 @@ l_int|1
 )paren
 )paren
 (brace
-r_return
-l_int|1
+id|prom_halt
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|prom_meminit
@@ -240,7 +225,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|prom_printf
+id|printk
 c_func
 (paren
 l_string|&quot;PROMLIB: Sun Boot Prom Version %d Revision %d&bslash;n&quot;
@@ -252,7 +237,6 @@ id|prom_rev
 suffix:semicolon
 multiline_comment|/* Initialization successful. */
 r_return
-l_int|0
 suffix:semicolon
 )brace
 eof

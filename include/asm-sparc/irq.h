@@ -1,9 +1,11 @@
-macro_line|#ifndef _ALPHA_IRQ_H
-DECL|macro|_ALPHA_IRQ_H
-mdefine_line|#define _ALPHA_IRQ_H
-multiline_comment|/*&n; *&t;linux/include/asm-sparc/irq.h&n; *&n; *&t;Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.8 1995/11/25 02:31:54 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#ifndef _SPARC_IRQ_H
+DECL|macro|_SPARC_IRQ_H
+mdefine_line|#define _SPARC_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS    15
 r_extern
 r_void
 id|disable_irq
@@ -20,6 +22,38 @@ c_func
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|request_fast_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+r_int
+r_int
+id|flags
+comma
+r_const
+r_char
+op_star
+id|devname
 )paren
 suffix:semicolon
 multiline_comment|/* On the sun4m, just like the timers, we have both per-cpu and master&n; * interrupt registers.&n; */
@@ -134,21 +168,5 @@ DECL|macro|SUN4M_INT_E14
 mdefine_line|#define SUN4M_INT_E14     0x00000080
 DECL|macro|SUN4M_INT_E10
 mdefine_line|#define SUN4M_INT_E10     0x00080000
-macro_line|#if 0 /* These aren&squot;t used on the Sparc (yet), but kept for&n;       * future reference, they could come in handy.&n;       */
-mdefine_line|#define __STR(x) #x
-mdefine_line|#define STR(x) __STR(x)
-mdefine_line|#define SAVE_ALL &quot;xx&quot;
-mdefine_line|#define SAVE_MOST &quot;yy&quot;
-mdefine_line|#define RESTORE_MOST &quot;zz&quot;
-mdefine_line|#define ACK_FIRST(mask) &quot;aa&quot;
-mdefine_line|#define ACK_SECOND(mask) &quot;dummy&quot;
-mdefine_line|#define UNBLK_FIRST(mask) &quot;dummy&quot;
-mdefine_line|#define UNBLK_SECOND(mask) &quot;dummy&quot;
-mdefine_line|#define IRQ_NAME2(nr) nr##_interrupt(void)
-mdefine_line|#define IRQ_NAME(nr) IRQ_NAME2(IRQ##nr)
-mdefine_line|#define FAST_IRQ_NAME(nr) IRQ_NAME2(fast_IRQ##nr)
-mdefine_line|#define BAD_IRQ_NAME(nr) IRQ_NAME2(bad_IRQ##nr)
-mdefine_line|#define BUILD_IRQ(chip,nr,mask) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;asmlinkage void FAST_IRQ_NAME(nr); &bslash;&n;asmlinkage void BAD_IRQ_NAME(nr); &bslash;&n;asm code comes here
-macro_line|#endif
 macro_line|#endif
 eof

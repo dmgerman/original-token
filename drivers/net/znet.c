@@ -434,13 +434,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -2796,7 +2789,7 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef HAVE_MULTICAST
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n;   As a side effect this routine must also initialize the device parameters.&n;   This is taken advantage of in open().&n;&n;   N.B. that we change i593_init[] in place.  This (properly) makes the&n;   mode change persistent, but must be changed if this code is moved to&n;   a multiple adaptor environment.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   As a side effect this routine must also initialize the device parameters.&n;   This is taken advantage of in open().&n;&n;   N.B. that we change i593_init[] in place.  This (properly) makes the&n;   mode change persistent, but must be changed if this code is moved to&n;   a multiple adaptor environment.&n; */
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -2807,13 +2800,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_int
@@ -2824,10 +2810,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
-op_eq
-op_minus
-l_int|1
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
 (brace
 multiline_comment|/* Enable promiscuous mode */
@@ -2866,9 +2851,13 @@ r_else
 r_if
 c_cond
 (paren
-id|num_addrs
-op_ne
-l_int|0
+id|dev-&gt;mc_list
+op_logical_or
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
 )paren
 (brace
 multiline_comment|/* Enable accept-all-multicast mode */

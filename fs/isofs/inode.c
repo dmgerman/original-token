@@ -1596,6 +1596,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Max size:%ld   Log zone size:%ld&bslash;n&quot;
 comma
 id|s-&gt;u.isofs_sb.s_max_size
@@ -1608,6 +1609,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;First datazone:%ld   Root inode number %d&bslash;n&quot;
 comma
 id|s-&gt;u.isofs_sb.s_firstdatazone
@@ -1635,6 +1637,7 @@ id|high_sierra
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Disc in High Sierra format.&bslash;n&quot;
 )paren
 suffix:semicolon

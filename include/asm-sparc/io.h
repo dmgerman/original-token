@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: io.h,v 1.8 1995/11/25 02:31:50 davem Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H

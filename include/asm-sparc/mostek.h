@@ -1,4 +1,4 @@
-multiline_comment|/* mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.4 1995/11/25 02:32:05 davem Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MOSTEK_H
 DECL|macro|_SPARC_MOSTEK_H
 mdefine_line|#define _SPARC_MOSTEK_H

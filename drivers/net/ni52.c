@@ -1,5 +1,5 @@
 multiline_comment|/* &n; * net-3-driver for the NI5210 card (i82586 Ethernet chip)&n; *&n; * This is an extension to the Linux operating system, and is covered by the&n; * same Gnu Public License that covers that work.&n; * &n; * Alphacode 0.62 (95/01/19) for Linux 1.1.82 (or later)&n; * Copyrights (c) 1994,1995 by M.Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *    [feel free to mail ....]&n; *&n; * CAN YOU PLEASE REPORT ME YOUR PERFORMANCE EXPERIENCES !!.&n; * &n; * If you find a bug, please report me:&n; *   The kernel panic output and any kmsg from the ni52 driver&n; *   the ni5210-driver-version and the linux-kernel version &n; *   how many shared memory (memsize) on the netcard, &n; *   bootprom: yes/no, base_addr, mem_start&n; *   maybe the ni5210-card revision and the i82586 version&n; *&n; * autoprobe for: base_addr: 0x300,0x280,0x360,0x320,0x340&n; *                mem_start: 0xc8000,0xd0000,0xd4000,0xd8000 (8K and 16K)&n; *&n; * sources:&n; *   skeleton.c from Donald Becker&n; *&n; * I have also done a look in the following sources: (mail me if you need them)&n; *   crynwr-packet-driver by Russ Nelson&n; *   Garret A. Wollman&squot;s (fourth) i82586-driver for BSD&n; *   (before getting an i82596 (yes 596 not 586) manual, the existing drivers helped&n; *    me a lot to understand this tricky chip.)&n; *&n; * Known Problems:&n; *   The internal sysbus seems to be slow. So we often lose packets because of&n; *   overruns while receiving from a fast remote host. &n; *   This can slow down TCP connections. Maybe the newer ni5210 cards are better.&n; * &n; * IMPORTANT NOTE:&n; *   On fast networks, it&squot;s a (very) good idea to have 16K shared memory. With&n; *   8K, we can store only 4 receive frames, so it can (easily) happen that a remote &n; *   machine &squot;overruns&squot; our system.&n; *&n; * Known i82586 bugs (I&squot;m sure, there are many more!):&n; *   Running the NOP-mode, the i82586 sometimes seems to forget to report&n; *   every xmit-interrupt until we restart the CU.&n; *   Another MAJOR bug is, that the RU sometimes seems to ignore the EL-Bit &n; *   in the RBD-Struct which indicates an end of the RBD queue. &n; *   Instead, the RU fetches another (randomly selected and &n; *   usually used) RBD and begins to fill it. (Maybe, this happens only if &n; *   the last buffer from the previous RFD fits exact into the queue and&n; *   the next RFD can&squot;t fetch an initial RBD. Anyone knows more? )&n; */
-multiline_comment|/*&n; * 19.Jan.95: verified (MH)&n; *&n; * 19.Sep.94: Added Multicast support (not tested yet) (MH)&n; * &n; * 18.Sep.94: Workaround for &squot;EL-Bug&squot;. Removed flexible RBD-handling. &n; *            Now, every RFD has exact one RBD. (MH)&n; *&n; * 14.Sep.94: added promiscuous mode, a few cleanups (MH)&n; *&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; *&n; * &lt; 30.Sep.93: first versions &n; */
+multiline_comment|/*&n; * 18.Nov.95: Mcast changes (AC).&n; *&n; * 19.Jan.95: verified (MH)&n; *&n; * 19.Sep.94: Added Multicast support (not tested yet) (MH)&n; * &n; * 18.Sep.94: Workaround for &squot;EL-Bug&squot;. Removed flexible RBD-handling. &n; *            Now, every RFD has exact one RBD. (MH)&n; *&n; * 14.Sep.94: added promiscuous mode, a few cleanups (MH)&n; *&n; * 19.Aug.94: changed request_irq() parameter (MH)&n; * &n; * 20.July.94: removed cleanup bugs, removed a 16K-mem-probe-bug (MH)&n; *&n; * 19.July.94: lotsa cleanups .. (MH)&n; *&n; * 17.July.94: some patches ... verified to run with 1.1.29 (MH)&n; *&n; * 4.July.94: patches for Linux 1.1.24  (MH)&n; *&n; * 26.March.94: patches for Linux 1.0 and iomem-auto-probe (MH)&n; *&n; * 30.Sep.93: Added nop-chain .. driver now runs with only one Xmit-Buff, too (MH)&n; *&n; * &lt; 30.Sep.93: first versions &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -150,13 +150,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 multiline_comment|/* helper-functions */
@@ -169,13 +162,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 r_static
@@ -462,10 +448,6 @@ id|init586
 c_func
 (paren
 id|dev
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|startrecv586
@@ -1668,13 +1650,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_void
@@ -1727,6 +1702,18 @@ r_struct
 id|mcsetup_cmd_struct
 op_star
 id|mc_cmd
+suffix:semicolon
+r_struct
+id|dev_mc_list
+op_star
+id|dmi
+op_assign
+id|dev-&gt;mc_list
+suffix:semicolon
+r_int
+id|num_addrs
+op_assign
+id|dev-&gt;mc_count
 suffix:semicolon
 id|ptr
 op_assign
@@ -1810,18 +1797,29 @@ l_int|0xf2
 suffix:semicolon
 id|cfg_cmd-&gt;promisc
 op_assign
-(paren
-id|num_addrs
-OL
-l_int|0
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/* promisc on/off */
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
+)paren
+)paren
+(brace
+id|cfg_cmd-&gt;promisc
+op_assign
+l_int|1
+suffix:semicolon
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
+)brace
 id|cfg_cmd-&gt;carr_coll
 op_assign
 l_int|0x00
@@ -2478,9 +2476,7 @@ multiline_comment|/* &n;   * Multicast setup&n;   */
 r_if
 c_cond
 (paren
-id|num_addrs
-OG
-l_int|0
+id|dev-&gt;mc_count
 )paren
 (brace
 multiline_comment|/* I don&squot;t understand this: do we really need memory after the init? */
@@ -2532,6 +2528,7 @@ OL
 id|num_addrs
 )paren
 (brace
+multiline_comment|/* BUG - should go ALLMULTI in this case */
 id|num_addrs
 op_assign
 id|len
@@ -2603,24 +2600,14 @@ id|mc_cmd-&gt;mc_list
 id|i
 )braket
 comma
-(paren
-(paren
-r_char
-(paren
-op_star
-)paren
-(braket
-l_int|6
-)braket
-)paren
-id|addrs
-)paren
-(braket
-id|i
-)braket
+id|dmi-&gt;dmi_addr
 comma
 l_int|6
 )paren
+suffix:semicolon
+id|dmi
+op_assign
+id|dmi-&gt;next
 suffix:semicolon
 )brace
 id|p-&gt;scb-&gt;cbl_offset
@@ -4917,13 +4904,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_if
@@ -4931,9 +4911,6 @@ c_cond
 (paren
 op_logical_neg
 id|dev-&gt;start
-op_logical_and
-op_logical_neg
-id|num_addrs
 )paren
 (brace
 id|printk
@@ -4961,10 +4938,6 @@ id|init586
 c_func
 (paren
 id|dev
-comma
-id|num_addrs
-comma
-id|addrs
 )paren
 suffix:semicolon
 id|startrecv586

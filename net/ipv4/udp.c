@@ -287,6 +287,20 @@ dot
 id|fatal
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;4.x BSD compatibility item. Break RFC1122 to&n;&t;&t; *&t;get BSD socket semantics.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;bsdism
+op_logical_and
+id|sk-&gt;state
+op_ne
+id|TCP_ESTABLISHED
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|sk-&gt;err
 op_assign
 id|icmp_err_convert

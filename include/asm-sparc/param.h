@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: param.h,v 1.3 1995/11/25 02:32:18 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_PARAM_H
 DECL|macro|_ASMSPARC_PARAM_H
 mdefine_line|#define _ASMSPARC_PARAM_H
@@ -6,7 +7,7 @@ DECL|macro|HZ
 mdefine_line|#define HZ 100
 macro_line|#endif
 DECL|macro|EXEC_PAGESIZE
-mdefine_line|#define EXEC_PAGESIZE&t;4096
+mdefine_line|#define EXEC_PAGESIZE&t;8192    /* Thanks for sun4&squot;s we carry baggage... */
 macro_line|#ifndef NGROUPS
 DECL|macro|NGROUPS
 mdefine_line|#define NGROUPS&t;&t;32

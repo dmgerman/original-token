@@ -551,7 +551,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -561,16 +560,8 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
-macro_line|#endif
 "&f;"
 multiline_comment|/* This lance probe is unlike the other board probes in 1.0.*.  The LANCE may&n;   have to allocate a contiguous low-memory region for bounce buffers.&n;   This requirement is satisfied by having the lance initialization occur&n;   before the memory management system is started, and thus well before the&n;   other probes. */
 DECL|function|lance_init
@@ -4855,10 +4846,10 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -2&t;&t;All multicasts&n;   num_addrs == -1&t;&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adaptor.&n; */
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren
@@ -4904,15 +4895,43 @@ multiline_comment|/* Temporarily stop the lance.&t; */
 r_if
 c_cond
 (paren
-id|num_addrs
-op_ge
-l_int|0
-op_logical_or
-id|num_addrs
-op_eq
-op_minus
-l_int|2
+id|dev-&gt;flags
+op_amp
+id|IFF_PROMISC
 )paren
+(brace
+multiline_comment|/* Log any net taps. */
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Promiscuous mode enabled.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|15
+comma
+id|ioaddr
+op_plus
+id|LANCE_ADDR
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x8000
+comma
+id|ioaddr
+op_plus
+id|LANCE_DATA
+)paren
+suffix:semicolon
+multiline_comment|/* Set promiscuous mode */
+)brace
+r_else
 (brace
 r_int
 id|multicast_table
@@ -4923,7 +4942,25 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* We don&squot;t use the multicast table, but rely on upper-layer filtering. */
+r_int
+id|num_addrs
+op_assign
+id|dev-&gt;mc_count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_ALLMULTI
+)paren
+(brace
+id|num_addrs
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* FIXIT: We don&squot;t use the multicast table, but rely on upper-layer filtering. */
 id|memset
 c_func
 (paren
@@ -5009,39 +5046,6 @@ id|LANCE_DATA
 )paren
 suffix:semicolon
 multiline_comment|/* Unset promiscuous mode */
-)brace
-r_else
-(brace
-multiline_comment|/* Log any net taps. */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Promiscuous mode enabled.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|15
-comma
-id|ioaddr
-op_plus
-id|LANCE_ADDR
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x8000
-comma
-id|ioaddr
-op_plus
-id|LANCE_DATA
-)paren
-suffix:semicolon
-multiline_comment|/* Set promiscuous mode */
 )brace
 id|lance_restart
 c_func

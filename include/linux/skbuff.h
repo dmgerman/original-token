@@ -135,11 +135,6 @@ r_char
 op_star
 id|raw
 suffix:semicolon
-DECL|member|seq
-r_int
-r_int
-id|seq
-suffix:semicolon
 DECL|member|h
 )brace
 id|h
@@ -176,30 +171,42 @@ r_int
 id|len
 suffix:semicolon
 multiline_comment|/* Length of actual data&t;&t;&t;*/
-DECL|member|saddr
-r_int
-r_int
-id|saddr
-suffix:semicolon
-multiline_comment|/* IP source address&t;&t;&t;&t;*/
-DECL|member|daddr
-r_int
-r_int
-id|daddr
-suffix:semicolon
-multiline_comment|/* IP target address&t;&t;&t;&t;*/
-DECL|member|raddr
-r_int
-r_int
-id|raddr
-suffix:semicolon
-multiline_comment|/* IP next hop address&t;&t;&t;&t;*/
 DECL|member|csum
 r_int
 r_int
 id|csum
 suffix:semicolon
 multiline_comment|/* Checksum &t;&t;&t;&t;&t;*/
+DECL|member|saddr
+id|__u32
+id|saddr
+suffix:semicolon
+multiline_comment|/* IP source address&t;&t;&t;&t;*/
+DECL|member|daddr
+id|__u32
+id|daddr
+suffix:semicolon
+multiline_comment|/* IP target address&t;&t;&t;&t;*/
+DECL|member|raddr
+id|__u32
+id|raddr
+suffix:semicolon
+multiline_comment|/* IP next hop address&t;&t;&t;&t;*/
+DECL|member|seq
+id|__u32
+id|seq
+suffix:semicolon
+multiline_comment|/* TCP sequence number&t;&t;&t;&t;*/
+DECL|member|end_seq
+id|__u32
+id|end_seq
+suffix:semicolon
+multiline_comment|/* seq [+ fin] [+ syn] + datalen&t;&t;*/
+DECL|member|ack_seq
+id|__u32
+id|ack_seq
+suffix:semicolon
+multiline_comment|/* TCP ack sequence number&t;&t;&t;*/
 DECL|member|proto_priv
 r_int
 r_char
@@ -275,6 +282,18 @@ r_int
 id|truesize
 suffix:semicolon
 multiline_comment|/* Buffer size &t;&t;&t;&t;&t;*/
+DECL|member|count
+r_int
+id|count
+suffix:semicolon
+multiline_comment|/* reference count&t;&t;&t;&t;*/
+DECL|member|data_skb
+r_struct
+id|sk_buff
+op_star
+id|data_skb
+suffix:semicolon
+multiline_comment|/* Link to the actual data skb&t;&t;&t;*/
 DECL|member|head
 r_int
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* idprom.h: Macros and defines for idprom routines&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: idprom.h,v 1.5 1995/11/25 02:31:49 davem Exp $&n; * idprom.h: Macros and defines for idprom routines&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IDPROM_H
 DECL|macro|_SPARC_IDPROM_H
 mdefine_line|#define _SPARC_IDPROM_H

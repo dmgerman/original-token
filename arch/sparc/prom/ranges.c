@@ -1,4 +1,4 @@
-multiline_comment|/* ranges.c: Handle ranges in newer proms for obio.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ranges.c,v 1.4 1995/11/25 01:00:12 davem Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|variable|promlib_obio_ranges

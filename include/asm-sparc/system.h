@@ -1,13 +1,11 @@
+multiline_comment|/* $Id: system.h,v 1.19 1995/11/25 02:32:59 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * I wish the boot time image was as beautiful as the Alpha&squot;s&n; * but no such luck. The icky PROM loads us at 0x0, and jumps&n; * to magic address 0x4000 to start things going.&n; *&n; * Sorry, I can&squot;t impress people with cool looking 64-bit values&n; * yet. Wait till V9 ;-)&n; */
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
-DECL|macro|START_ADDR
-mdefine_line|#define START_ADDR&t;(0x00004000)
 DECL|macro|EMPTY_PGT
 mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
 DECL|macro|EMPTY_PGE
@@ -50,6 +48,7 @@ id|sun4u
 op_assign
 l_int|0x05
 comma
+multiline_comment|/* V8 ploos ploos */
 DECL|enumerator|sun_unknown
 id|sun_unknown
 op_assign
@@ -78,43 +77,22 @@ r_int
 id|empty_zero_page
 suffix:semicolon
 r_extern
-r_void
-id|wrent
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|wrkgp
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|linux_romvec
 op_star
 id|romvec
 suffix:semicolon
 DECL|macro|halt
-mdefine_line|#define halt() do { &bslash;&n;&t;&t;&t; printk(&quot;Entering monitor in file %s at line %d&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;romvec-&gt;pv_halt(); } while(0)
-DECL|macro|move_to_user_mode
-mdefine_line|#define move_to_user_mode() halt()
-macro_line|#ifndef stbar  /* store barrier Sparc insn to synchronize stores in PSO */
-DECL|macro|stbar
-mdefine_line|#define stbar() __asm__ __volatile__(&quot;stbar&quot;: : :&quot;memory&quot;)
-macro_line|#endif
-multiline_comment|/* When a context switch happens we must flush all user windows so that&n; * the windows of the current process are flushed onto it&squot;s stack. This&n; * way the windows are all clean for the next process.&n; */
-DECL|macro|flush_user_windows
-mdefine_line|#define flush_user_windows() &bslash;&n;do { __asm__ __volatile__( &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;save %sp, -64, %sp&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;  &quot;restore&bslash;n&bslash;t&quot;); } while(0)
+mdefine_line|#define halt() romvec-&gt;pv_halt()
+multiline_comment|/* When a context switch happens we must flush all user windows so that&n; * the windows of the current process are flushed onto it&squot;s stack. This&n; * way the windows are all clean for the next process and the stack&n; * frames are up to date.&n; */
+r_extern
+r_void
+id|flush_user_windows
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|sparc_switch_to
@@ -126,120 +104,264 @@ id|new_task
 )paren
 suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(p) sparc_switch_to(p)
-multiline_comment|/* Changing the PIL on the sparc is a bit hairy. I&squot;ll figure out some&n; * more optimized way of doing this soon. This is bletcherous code.&n; */
-DECL|macro|swpipl
-mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long psr, retval; &bslash;&n;__asm__ __volatile__( &bslash;&n;        &quot;rd %%psr, %0&bslash;n&bslash;t&quot; : &quot;=&amp;r&quot; (psr)); &bslash;&n;retval = psr; &bslash;&n;psr = (psr &amp; ~(PSR_PIL)); &bslash;&n;psr |= ((__new_ipl &lt;&lt; 8) &amp; PSR_PIL); &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;wr  %0, 0x0, %%psr&bslash;n&bslash;t&quot; &bslash;&n;&t;: : &quot;r&quot; (psr)); &bslash;&n;retval = ((retval&gt;&gt;8)&amp;15); &bslash;&n;retval; })
-DECL|macro|cli
-mdefine_line|#define cli()&t;&t;&t;swpipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
-DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;swpipl(0)   /* I&squot;m scared */
-DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(15); } while (0)
-DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;swpipl(flags)
-DECL|macro|iret
-mdefine_line|#define iret() __asm__ __volatile__ (&quot;jmp %%l1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&t;     &quot;rett %%l2&bslash;n&bslash;t&quot;: : :&quot;memory&quot;)
-multiline_comment|/* Must this be atomic? */
-DECL|function|xchg_u32
+mdefine_line|#define switch_to(p) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(p); &bslash;&n;                          sparc_switch_to(p); &bslash;&n;                     } while(0)
+multiline_comment|/* Changing the IRQ level on the Sparc. */
+DECL|function|setipl
 r_extern
 r_inline
 r_void
-op_star
-id|xchg_u32
+id|setipl
 c_func
 (paren
 r_int
-op_star
-id|m
+id|__new_ipl
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd %%psr, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;andn %%g1, %1, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;sll %0, 8, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;and %%g2, %1, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;or %%g1, %%g2, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;wr %%g1, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;nop; nop; nop&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|__new_ipl
+)paren
 comma
+l_string|&quot;i&quot;
+(paren
+id|PSR_PIL
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|getipl
+r_extern
+r_inline
 r_int
-r_int
-id|val
+id|getipl
+c_func
+(paren
+r_void
 )paren
 (brace
 r_int
-r_int
-id|dummy
+id|retval
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ld %1,%2&bslash;n&bslash;t&quot;
-l_string|&quot;st %0, %1&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %2, %0&quot;
+l_string|&quot;rd %%psr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and %0, %1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;srl %0, 8, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|val
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
-id|m
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dummy
+id|retval
 )paren
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;i&quot;
 (paren
-id|val
+id|PSR_PIL
 )paren
 )paren
 suffix:semicolon
 r_return
-(paren
-r_void
-op_star
-)paren
-id|val
+id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* pointers are 32 bits on the sparc (at least the v8, and they&squot;ll work&n; * on the V9 none the less). I don&squot;t need the xchg_u64 routine for now.&n; */
-DECL|function|xchg_ptr
+DECL|function|swpipl
 r_extern
 r_inline
-r_void
-op_star
-id|xchg_ptr
+r_int
+id|swpipl
 c_func
 (paren
-r_void
-op_star
-id|m
-comma
-r_void
-op_star
-id|val
+r_int
+id|__new_ipl
 )paren
 (brace
-r_return
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
 (paren
-r_void
-op_star
+l_string|&quot;rd %%psr, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;srl %%g1, 8, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and %0, 15, %0&bslash;n&bslash;t&quot;
+l_string|&quot;andn %%g1, %2, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;and %1, 15, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;sll %%g2, 8, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;or %%g1, %%g2, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;wr %%g1, 0x0, %%psr&bslash;n&bslash;t&quot;
+l_string|&quot;nop; nop; nop&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
 )paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|__new_ipl
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|PSR_PIL
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|macro|cli
+mdefine_line|#define cli()&t;&t;&t;setipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
+DECL|macro|sti
+mdefine_line|#define sti()&t;&t;&t;setipl(0)   /* I&squot;m scared */
+DECL|macro|save_flags
+mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(flags)&t;setipl(flags)
+DECL|macro|nop
+mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;);
+DECL|function|xchg_u32
+r_extern
+r_inline
+r_int
+r_int
 id|xchg_u32
 c_func
 (paren
-(paren
+r_volatile
+r_int
 r_int
 op_star
-)paren
 id|m
 comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|retval
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+op_star
+id|m
+suffix:semicolon
+op_star
+id|m
+op_assign
+id|val
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+DECL|macro|tas
+mdefine_line|#define tas(ptr) (xchg((ptr),1))
+r_extern
+r_void
+id|__xchg_called_with_bad_pointer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|function|__xchg
+r_static
+r_inline
+r_int
+r_int
+id|__xchg
+c_func
 (paren
 r_int
 r_int
+id|x
+comma
+r_volatile
+r_void
+op_star
+id|ptr
+comma
+r_int
+id|size
 )paren
-id|val
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|4
+suffix:colon
+r_return
+id|xchg_u32
+c_func
+(paren
+id|ptr
+comma
+id|x
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
+id|__xchg_called_with_bad_pointer
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|x
+suffix:semicolon
+)brace
 macro_line|#endif /* __ASSEMBLY__ */
-macro_line|#endif
+macro_line|#endif /* !(__SPARC_SYSTEM_H) */
 eof

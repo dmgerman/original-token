@@ -265,6 +265,28 @@ id|skb-&gt;daddr
 op_assign
 id|saddr
 suffix:semicolon
+macro_line|#if 0&t;
+multiline_comment|/*&n;&t; *&t;For no adequately explained reasons BSD likes to mess up the header of&n;&t; *&t;the received frame. &n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;bsdism
+)paren
+(brace
+id|skb-&gt;ip_hdr-&gt;tot_len
+op_assign
+id|ntohs
+c_func
+(paren
+id|skb-&gt;ip_hdr-&gt;tot_len
+op_minus
+l_int|4
+op_star
+id|skb-&gt;ip_hdr-&gt;ihl
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* Charge it to the socket. */
 r_if
 c_cond

@@ -1,11 +1,11 @@
-multiline_comment|/* eth16i.c An ICL EtherTeam 16i/32 ethernet driver for Linux&n;&n;   Written 1994-95 by Mika Kuoppala&n;&n;   Copyright (C) 1994, 1995 by Mika Kuoppala&n;   Based on skeleton.c and at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@pupu.elt.icl.fi&n;&n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Valuable assistance from:&n;&t;Markku Viima (ICL) &n;&t;Ari Valve (ICL)&n;   &n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01&t;&t;15.12-94&t;Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;&t;&t;&t;&t;Made a few changes to signature checking&n;&t;&t;&t;&t;to make it a bit reliable.&n;&t;&t;&t;&t;- fixed bug in tx_buf mapping&n;&t;&t;&t;&t;- fixed bug in initialization (DLC_EN&n;&t;&t;&t;&t;  wasn&squot;t enabled when initialization&n;&t;&t;&t;&t;  was done.)&n;   0.05&t;&t;08.02-95&t;If there were more than one packet to send,&n;&t;&t;&t;&t;transmit was jammed due to invalid&n;&t;&t;&t;&t;register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;&t;&t;&t;&t;data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95&t;Added module support&n;   &n;   0.10         04.09-95&t;Fixed receive packet allocation to work&t;&t;&n;        &t;&t;&t;with kernels &gt; 1.3.x&n;   &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   Bugs:&n;&t;In some cases the interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;&n;   To do:&n;&t;- Real multicast support&n;*/
+multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;&n;   Written 1994-95 by Mika Kuoppala&n;&n;   Copyright (C) 1994, 1995 by Mika Kuoppala&n;   Based on skeleton.c and at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@elt.icl.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA&n;&n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Valuable assistance from:&n;&t;Markku Viima (ICL) &n;&t;Ari Valve (ICL)&n;   &n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01&t;&t;15.12-94&t;Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;&t;&t;&t;&t;Made a few changes to signature checking&n;&t;&t;&t;&t;to make it a bit reliable.&n;&t;&t;&t;&t;- fixed bug in tx_buf mapping&n;&t;&t;&t;&t;- fixed bug in initialization (DLC_EN&n;&t;&t;&t;&t;  wasn&squot;t enabled when initialization&n;&t;&t;&t;&t;  was done.)&n;   0.05&t;&t;08.02-95&t;If there were more than one packet to send,&n;&t;&t;&t;&t;transmit was jammed due to invalid&n;&t;&t;&t;&t;register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;&t;&t;&t;&t;data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95&t;Added module support&n;   &n;   0.10         04.09-95&t;Fixed receive packet allocation to work&t;&t;&n;        &t;&t;&t;with kernels &gt; 1.3.x&n;   &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   Bugs:&n;&t;In some cases the interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;&n;   To do:&n;&t;- Real multicast support&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eth16i.c: v0.21 17-10-95 Mika Kuoppala (miku@pupu.elt.icl.fi)&bslash;n&quot;
+l_string|&quot;eth16i.c: v0.21 17-10-95 Mika Kuoppala (miku@elt.icl.fi)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4788,9 +4788,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|num_addrs
+id|dev-&gt;mc_count
+op_logical_or
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
+)paren
 )paren
 (brace
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
+multiline_comment|/* Must do this */
 id|outb
 c_func
 (paren
@@ -5027,19 +5040,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|MOD_IN_USE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;eth16i: Device busy, remove delayed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
 id|unregister_netdev
 c_func
 (paren
@@ -5068,7 +5068,6 @@ comma
 id|ETH16I_IO_EXTENT
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* MODULE */
 eof

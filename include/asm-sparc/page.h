@@ -1,4 +1,4 @@
-multiline_comment|/* page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.22 1995/11/25 02:32:16 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -8,14 +8,15 @@ macro_line|#include &lt;asm/head.h&gt;       /* for KERNBASE */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   12             /* This is the virtual page... */
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET    KERNBASE
+mdefine_line|#define PAGE_OFFSET  KERNBASE
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
 multiline_comment|/* to mask away the intra-page address bits */
 DECL|macro|PAGE_MASK
-mdefine_line|#define PAGE_MASK         (~(PAGE_SIZE-1))
+mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled in&n; * probe_memory() and is later used by mem_init() to set up&n; * mem_map[].  We statically allocate SPARC_PHYS_BANKS of&n; * these structs, this is arbitrary.  The entry after the&n; * last valid one has num_bytes==0.&n; */
 DECL|struct|sparc_phys_banks
 r_struct
@@ -165,6 +166,7 @@ id|invalidate
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 r_extern
 r_void
 (paren
@@ -174,10 +176,10 @@ id|set_pte
 (paren
 id|pte_t
 op_star
-id|ptep
+id|pteptr
 comma
 id|pte_t
-id|entry
+id|pteval
 )paren
 suffix:semicolon
 multiline_comment|/* to align the pointer to the (next) page boundary */
@@ -185,9 +187,7 @@ DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 multiline_comment|/* We now put the free page pool mapped contiguously in high memory above&n; * the kernel.&n; */
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr) ((((unsigned long)addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
-DECL|macro|MAP_PAGE_RESERVED
-mdefine_line|#define MAP_PAGE_RESERVED (1&lt;&lt;15)
+mdefine_line|#define MAP_NR(addr) ((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* The rest is kind of funky because on the sparc, the offsets into the mmu &n; * entries are encoded in magic alternate address space tables. I will &n; * probably find some nifty inline assembly routines to do the equivalent. &n; * Much thought must go into this code.   (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* Bitfields within a Sparc sun4c PTE (page table entry). */
@@ -338,7 +338,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lduba [%1] %2, %0&quot;
+l_string|&quot;&bslash;n&bslash;tlduba [%1] %2, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -357,11 +357,7 @@ id|ASI_SEGMAP
 )paren
 suffix:semicolon
 r_return
-(paren
 id|entry
-op_amp
-l_int|0xff
-)paren
 suffix:semicolon
 )brace
 DECL|function|put_segmap
@@ -384,7 +380,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stba %1, [%0] %2&quot;
+l_string|&quot;&bslash;n&bslash;tstba %1, [%0] %2&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -395,8 +391,6 @@ comma
 l_string|&quot;r&quot;
 (paren
 id|entry
-op_amp
-l_int|0xff
 )paren
 comma
 l_string|&quot;i&quot;
@@ -430,7 +424,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lda [%1] %2, %0&quot;
+l_string|&quot;&bslash;n&bslash;tlda [%1] %2, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -472,7 +466,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;sta %1, [%0] %2&quot;
+l_string|&quot;&bslash;n&bslash;tsta %1, [%0] %2&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -501,7 +495,9 @@ op_star
 id|switch_to_context
 )paren
 (paren
-r_int
+r_void
+op_star
+id|tsk
 )paren
 suffix:semicolon
 DECL|function|get_context
@@ -522,7 +518,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lduba [%1] %2, %0&quot;
+l_string|&quot;&bslash;n&bslash;tlduba [%1] %2, %0&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -544,12 +540,44 @@ r_return
 id|ctx
 suffix:semicolon
 )brace
-DECL|typedef|mem_map_t
-r_typedef
+DECL|function|set_context
+r_extern
+id|__inline__
 r_int
+id|set_context
+c_func
+(paren
 r_int
-id|mem_map_t
+id|ctx
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tstba %0, [%1] %2&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ctx
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|AC_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_CONTROL
+)paren
+)paren
 suffix:semicolon
+r_return
+id|ctx
+suffix:semicolon
+)brace
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */

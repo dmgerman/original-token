@@ -1,8 +1,8 @@
-multiline_comment|/* sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.8 1995/11/25 02:32:38 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
-macro_line|#include &lt;asm/openprom.h&gt;  /* For linux_prom_registers and linux_prom_irqs */
+macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* We scan which devices are on the SBus using the PROM node device&n; * tree.  SBus devices are described in two different ways.  You can&n; * either get an absolute address at which to access the device, or&n; * you can get a SBus &squot;slot&squot; number and an offset within that slot.&n; */
 multiline_comment|/* The base address at which to calculate device OBIO addresses. */
 DECL|macro|SUN_SBUS_BVADDR
@@ -108,10 +108,10 @@ id|SBUS_OFF_MASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Handy macro */
-DECL|macro|STRUCT_ALIGN
-mdefine_line|#define STRUCT_ALIGN(addr) ((addr+7)&amp;(~7))
-multiline_comment|/* Linus SBUS device tables */
+r_struct
+id|linux_sbus
+suffix:semicolon
+multiline_comment|/* Linux SBUS device tables */
 DECL|struct|linux_sbus_device
 r_struct
 id|linux_sbus_device
@@ -123,6 +123,20 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* next device on this SBus or null */
+DECL|member|child
+r_struct
+id|linux_sbus_device
+op_star
+id|child
+suffix:semicolon
+multiline_comment|/* For ledma and espdma on sun4m */
+DECL|member|my_bus
+r_struct
+id|linux_sbus
+op_star
+id|my_bus
+suffix:semicolon
+multiline_comment|/* Back ptr to sbus */
 DECL|member|prom_node
 r_int
 id|prom_node
@@ -130,17 +144,20 @@ suffix:semicolon
 multiline_comment|/* PROM device tree node for this device */
 DECL|member|prom_name
 r_char
-op_star
 id|prom_name
+(braket
+l_int|64
+)braket
 suffix:semicolon
 multiline_comment|/* PROM device name */
 DECL|member|linux_name
 r_char
-op_star
 id|linux_name
+(braket
+l_int|64
+)braket
 suffix:semicolon
 multiline_comment|/* Name used internally by Linux */
-multiline_comment|/* device register addresses */
 DECL|member|reg_addrs
 r_struct
 id|linux_prom_registers
@@ -153,7 +170,6 @@ DECL|member|num_registers
 r_int
 id|num_registers
 suffix:semicolon
-multiline_comment|/* List of IRQ&squot;s this device uses. */
 DECL|member|irqs
 r_struct
 id|linux_prom_irqs
@@ -195,10 +211,9 @@ DECL|member|slot
 r_int
 id|slot
 suffix:semicolon
-multiline_comment|/* Device slot number */
 )brace
 suffix:semicolon
-multiline_comment|/* This struct describes the SBus-es found on this machine. */
+multiline_comment|/* This struct describes the SBus(s) found on this machine. */
 DECL|struct|linux_sbus
 r_struct
 id|linux_sbus
@@ -224,21 +239,46 @@ suffix:semicolon
 multiline_comment|/* PROM device tree node for this SBus */
 DECL|member|prom_name
 r_char
-op_star
 id|prom_name
+(braket
+l_int|64
+)braket
 suffix:semicolon
 multiline_comment|/* Usually &quot;sbus&quot; */
 DECL|member|clock_freq
 r_int
 id|clock_freq
 suffix:semicolon
-multiline_comment|/* Speed of this SBus */
 )brace
 suffix:semicolon
 r_extern
 r_struct
 id|linux_sbus
-id|Linux_SBus
+op_star
+id|SBus_chain
 suffix:semicolon
+r_extern
+r_inline
+r_int
+DECL|function|sbus_is_slave
+id|sbus_is_slave
+c_func
+(paren
+r_struct
+id|linux_sbus_device
+op_star
+id|dev
+)paren
+(brace
+multiline_comment|/* Have to write this for sun4c&squot;s */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Device probing routines could find these handy */
+DECL|macro|for_each_sbus
+mdefine_line|#define for_each_sbus(bus) &bslash;&n;        for((bus) = SBus_chain; (bus); (bus)=(bus)-&gt;next)
+DECL|macro|for_each_sbusdev
+mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
 macro_line|#endif /* !(_SPARC_SBUS_H) */
 eof

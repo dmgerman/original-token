@@ -285,13 +285,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 suffix:semicolon
 "&f;"
@@ -3428,10 +3421,10 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adapter.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/*&n; *&t;Set or clear the multicast filter for this adapter.&n; */
+DECL|function|set_multicast_list
 r_static
 r_void
-DECL|function|set_multicast_list
 id|set_multicast_list
 c_func
 (paren
@@ -3439,13 +3432,6 @@ r_struct
 id|device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
 (brace
 r_struct
@@ -3465,6 +3451,28 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|num_addrs
+op_assign
+id|dev-&gt;mc_list
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+(paren
+id|IFF_ALLMULTI
+op_or
+id|IFF_PROMISC
+)paren
+)paren
+(brace
+id|num_addrs
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;We must make the kernel realise we had to move&n;&t; *&t;into promisc mode or we start all out war on&n;&t; *&t;the cable. - AC&n;&t; */
 r_if
 c_cond

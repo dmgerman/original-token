@@ -1,4 +1,4 @@
-multiline_comment|/* traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.h,v 1.5 1995/11/25 02:33:05 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TRAPS_H
 DECL|macro|_SPARC_TRAPS_H
 mdefine_line|#define _SPARC_TRAPS_H
@@ -98,6 +98,37 @@ id|tt_v9_entry
 op_star
 id|sparc_v9_ttablel1
 suffix:semicolon
+DECL|function|get_tbr
+r_extern
+id|__inline__
+r_int
+r_int
+id|get_tbr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|tbr
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rd %%tbr, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|tbr
+)paren
+)paren
+suffix:semicolon
+r_return
+id|tbr
+suffix:semicolon
+)brace
 multiline_comment|/* For patching the trap table at boot time, we need to know how to&n; * form various common Sparc instructions.  Thus these macros...&n; */
 DECL|macro|SPARC_MOV_CONST_L3
 mdefine_line|#define SPARC_MOV_CONST_L3(const) (0xa6102000 | (const&amp;0xfff))
@@ -205,6 +236,23 @@ DECL|macro|SP_TRAP_NETBSD
 mdefine_line|#define SP_TRAP_NETBSD  0x89         /* NetBSD System Call */
 DECL|macro|SP_TRAP_LINUX
 mdefine_line|#define SP_TRAP_LINUX   0x90         /* Linux System Call */
+multiline_comment|/* Names used for compatibility with SunOS */
+DECL|macro|ST_SYSCALL
+mdefine_line|#define ST_SYSCALL              0x00
+DECL|macro|ST_BREAKPOINT
+mdefine_line|#define ST_BREAKPOINT           0x01
+DECL|macro|ST_DIV0
+mdefine_line|#define ST_DIV0                 0x02
+DECL|macro|ST_FLUSH_WINDOWS
+mdefine_line|#define ST_FLUSH_WINDOWS        0x03
+DECL|macro|ST_CLEAN_WINDOWS
+mdefine_line|#define ST_CLEAN_WINDOWS        0x04
+DECL|macro|ST_RANGE_CHECK
+mdefine_line|#define ST_RANGE_CHECK          0x05
+DECL|macro|ST_FIX_ALIGN
+mdefine_line|#define ST_FIX_ALIGN            0x06
+DECL|macro|ST_INT_OVERFLOW
+mdefine_line|#define ST_INT_OVERFLOW         0x07
 multiline_comment|/* Special traps... */
 DECL|macro|SP_TRAP_KBPT1
 mdefine_line|#define SP_TRAP_KBPT1   0xfe         /* KADB/PROM Breakpoint one */

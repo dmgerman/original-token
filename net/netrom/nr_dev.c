@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 003&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 1.3.0 or higher/ NET3.029&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from loopback.c&n; *&t;NET/ROM 002&t;Steve Whitehouse(GW7RRM) fixed the set_mac_address&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NETROM
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -477,12 +477,19 @@ op_star
 id|addr
 )paren
 (brace
+r_struct
+id|sockaddr
+op_star
+id|sa
+op_assign
+id|addr
+suffix:semicolon
 id|memcpy
 c_func
 (paren
 id|dev-&gt;dev_addr
 comma
-id|addr
+id|sa-&gt;sa_data
 comma
 id|dev-&gt;addr_len
 )paren
