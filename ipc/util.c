@@ -423,5 +423,20 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|shm_unuse
+r_void
+id|shm_unuse
+c_func
+(paren
+r_int
+r_int
+id|entry
+comma
+r_int
+r_int
+id|page
+)paren
+(brace
+)brace
 macro_line|#endif /* CONFIG_SYSVIPC */
 eof

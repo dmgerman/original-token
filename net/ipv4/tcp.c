@@ -519,6 +519,18 @@ id|mask
 op_assign
 id|POLLERR
 suffix:semicolon
+multiline_comment|/*&n;&t; * POLLHUP is certainly not done right. But poll() doesn&squot;t&n;&t; * have a notion of HUP in just one direction, and for a&n;&t; * socket the read side is more interesting.&n;&t; *&n;&t; * Some poll() documentation says that POLLHUP is incompatible&n;&t; * with the POLLOUT/POLLWR flags, so somebody should check this&n;&t; * all. But careful, it tends to be safer to return too many&n;&t; * bits than too few, and you can easily break real applications&n;&t; * if you don&squot;t tell them that something has hung up!&n;&t; *&n;&t; * Check-me.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;shutdown
+op_amp
+id|RCV_SHUTDOWN
+)paren
+id|mask
+op_or_assign
+id|POLLHUP
+suffix:semicolon
 multiline_comment|/* Connected? */
 r_if
 c_cond
@@ -534,22 +546,9 @@ op_complement
 id|TCPF_SYN_SENT
 op_or
 id|TCPF_SYN_RECV
-op_or
-id|TCPF_CLOSE
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;shutdown
-op_amp
-id|RCV_SHUTDOWN
-)paren
-id|mask
-op_or_assign
-id|POLLHUP
-suffix:semicolon
 r_if
 c_cond
 (paren

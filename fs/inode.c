@@ -2982,6 +2982,18 @@ id|sb
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* File with pending delete? */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Writable file? */
 r_if
 c_cond
 (paren
@@ -2991,9 +3003,11 @@ c_func
 id|inode-&gt;i_mode
 )paren
 op_logical_and
+(paren
 id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
+)paren
 )paren
 r_return
 l_int|0

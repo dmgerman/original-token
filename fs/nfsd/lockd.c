@@ -29,12 +29,20 @@ op_star
 id|filp
 )paren
 (brace
+id|u32
+id|nfserr
+suffix:semicolon
 r_struct
 id|svc_fh
 id|fh
 suffix:semicolon
-id|u32
-id|nfserr
+multiline_comment|/* must initialize before using! */
+id|fh_init
+c_func
+(paren
+op_amp
+id|fh
+)paren
 suffix:semicolon
 id|fh.fh_handle
 op_assign
@@ -44,10 +52,6 @@ suffix:semicolon
 id|fh.fh_export
 op_assign
 l_int|NULL
-suffix:semicolon
-id|fh.fh_dverified
-op_assign
-l_int|0
 suffix:semicolon
 id|nfserr
 op_assign

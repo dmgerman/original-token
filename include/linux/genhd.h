@@ -99,6 +99,13 @@ id|nr_sects
 suffix:semicolon
 multiline_comment|/* nr of sectors in partition */
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|hd_struct
 r_struct

@@ -259,6 +259,15 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|swap_after_unlock_page
+(paren
+r_int
+r_int
+id|entry
+)paren
+suffix:semicolon
 multiline_comment|/* linux/mm/page_alloc.c */
 r_extern
 r_void
@@ -305,7 +314,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|swap_duplicate
 c_func
 (paren
@@ -314,12 +323,12 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|swap_after_unlock_page
+r_int
+id|swap_check_entry
+c_func
 (paren
 r_int
 r_int
-id|entry
 )paren
 suffix:semicolon
 r_extern
@@ -337,6 +346,28 @@ r_int
 suffix:semicolon
 DECL|macro|read_swap_cache
 mdefine_line|#define read_swap_cache(entry) read_swap_cache_async(entry, 1);
+multiline_comment|/*&n; * Make these inline later once they are working properly.&n; */
+r_extern
+r_void
+id|delete_from_swap_cache
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|free_page_and_swap_cache
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
 multiline_comment|/* linux/mm/swapfile.c */
 r_extern
 r_int
@@ -400,6 +431,26 @@ r_extern
 r_struct
 id|swap_list_t
 id|swap_list
+suffix:semicolon
+r_int
+id|sys_swapoff
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_int
+id|sys_swapon
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
@@ -536,50 +587,6 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Make these inline later once they are working properly.&n; */
-r_extern
-r_int
-id|find_in_swap_cache
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|delete_from_swap_cache
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|remove_from_swap_cache
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|free_page_and_swap_cache
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
 macro_line|#endif /* __KERNEL__*/
 macro_line|#endif /* _LINUX_SWAP_H */
 eof

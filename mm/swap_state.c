@@ -14,6 +14,12 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
+DECL|variable|swapper_inode
+r_struct
+id|inode
+id|swapper_inode
+suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 DECL|variable|swap_cache_add_total
 r_int
@@ -56,12 +62,6 @@ r_int
 id|swap_cache_find_success
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* &n; * Keep a reserved false inode which we will use to mark pages in the&n; * page cache are acting as swap cache instead of file cache. &n; *&n; * We only need a unique pointer to satisfy the page cache, but we&squot;ll&n; * reserve an entire zeroed inode structure for the purpose just to&n; * ensure that any mistaken dereferences of this structure cause a&n; * kernel oops.&n; */
-DECL|variable|swapper_inode
-r_struct
-id|inode
-id|swapper_inode
 suffix:semicolon
 DECL|function|show_swap_cache_info
 r_void
@@ -147,6 +147,7 @@ id|page
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;swap_cache: replacing non-empty entry %08lx &quot;
 l_string|&quot;on page %08lx&bslash;n&quot;
 comma
@@ -172,6 +173,7 @@ id|page-&gt;inode
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;swap_cache: replacing page-cached entry &quot;
 l_string|&quot;on page %08lx&bslash;n&quot;
 comma
@@ -231,9 +233,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If swap_map[] reaches SWAP_MAP_MAX the entries are treated as &quot;permanent&quot;.&n; */
+multiline_comment|/*&n; * Verify that a swap entry is valid and increment its swap map count.&n; *&n; * Note: if swap_map[] reaches SWAP_MAP_MAX the entries are treated as&n; * &quot;permanent&quot;, but will be reclaimed by the next swapoff.&n; */
 DECL|function|swap_duplicate
-r_void
+r_int
 id|swap_duplicate
 c_func
 (paren
@@ -252,6 +254,11 @@ r_int
 id|offset
 comma
 id|type
+suffix:semicolon
+r_int
+id|result
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -326,6 +333,7 @@ id|offset
 r_goto
 id|bad_unused
 suffix:semicolon
+multiline_comment|/*&n;&t; * Entry is valid, so increment the map count.&n;&t; */
 r_if
 c_cond
 (paren
@@ -361,6 +369,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;swap_duplicate: entry %08lx map count=%d&bslash;n&quot;
 comma
 id|entry
@@ -379,6 +388,10 @@ op_assign
 id|SWAP_MAP_MAX
 suffix:semicolon
 )brace
+id|result
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifdef DEBUG_SWAP
 id|printk
 c_func
@@ -397,13 +410,17 @@ macro_line|#endif
 id|out
 suffix:colon
 r_return
+id|result
 suffix:semicolon
 id|bad_file
 suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;swap_duplicate: Trying to duplicate nonexistent swap-page&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;swap_duplicate: entry %08lx, nonexistent swap file&bslash;n&quot;
+comma
+id|entry
 )paren
 suffix:semicolon
 r_goto
@@ -414,7 +431,10 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;swap_duplicate: offset exceeds max&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;swap_duplicate: entry %08lx, offset exceeds max&bslash;n&quot;
+comma
+id|entry
 )paren
 suffix:semicolon
 r_goto
@@ -425,13 +445,16 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;swap_duplicate at %8p: unused page&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;swap_duplicate at %8p: entry %08lx, unused page&bslash;n&quot;
 comma
 id|__builtin_return_address
 c_func
 (paren
 l_int|0
 )paren
+comma
+id|entry
 )paren
 suffix:semicolon
 r_goto
@@ -439,6 +462,8 @@ id|out
 suffix:semicolon
 )brace
 DECL|function|remove_from_swap_cache
+r_static
+r_inline
 r_void
 id|remove_from_swap_cache
 c_func
@@ -554,7 +579,7 @@ id|page
 suffix:semicolon
 )brace
 DECL|function|delete_from_swap_cache
-r_int
+r_void
 id|delete_from_swap_cache
 c_func
 (paren
@@ -622,13 +647,7 @@ id|swap_free
 id|entry
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/* &n; * Perform a free_page(), also freeing any swap cache associated with&n; * this page if it is the last user of the page. &n; */
 DECL|function|free_page_and_swap_cache
@@ -746,22 +765,9 @@ c_func
 id|found
 )paren
 )paren
-(brace
-id|__free_page
-c_func
-(paren
-id|found
-)paren
+r_goto
+id|out_bad
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot;VM: Found a non-swapper swap page!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -788,8 +794,25 @@ id|found
 )paren
 suffix:semicolon
 )brace
+id|out_bad
+suffix:colon
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;VM: Found a non-swapper swap page!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|__free_page
+c_func
+(paren
+id|found
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
-multiline_comment|/* &n; * Locate a page of swap in physical memory, reserving swap cache space&n; * and reading the disk if it is not already cached.  If wait==0, we are&n; * only doing readahead, so don&squot;t worry if the page is already locked.&n; */
+multiline_comment|/* &n; * Locate a page of swap in physical memory, reserving swap cache space&n; * and reading the disk if it is not already cached.  If wait==0, we are&n; * only doing readahead, so don&squot;t worry if the page is already locked.&n; *&n; * A failure return means that either the page allocation failed or that&n; * the swap entry is no longer in use.&n; */
 DECL|function|read_swap_cache_async
 r_struct
 id|page
@@ -812,14 +835,10 @@ id|found_page
 comma
 op_star
 id|new_page
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_int
 id|new_page_addr
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef DEBUG_SWAP
 id|printk
@@ -838,8 +857,7 @@ l_string|&quot;&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|repeat
-suffix:colon
+multiline_comment|/*&n;&t; * Look for the page in the swap cache.&n;&t; */
 id|found_page
 op_assign
 id|lookup_swap_cache
@@ -853,30 +871,9 @@ c_cond
 (paren
 id|found_page
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|new_page
-)paren
-id|__free_page
-c_func
-(paren
-id|new_page
-)paren
+r_goto
+id|out
 suffix:semicolon
-r_return
-id|found_page
-suffix:semicolon
-)brace
-multiline_comment|/* The entry is not present.  Lock down a new page, add it to&n;&t; * the swap cache and read its contents. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|new_page
-)paren
-(brace
 id|new_page_addr
 op_assign
 id|__get_free_page
@@ -891,8 +888,8 @@ c_cond
 op_logical_neg
 id|new_page_addr
 )paren
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Out of memory */
 id|new_page
@@ -905,11 +902,39 @@ c_func
 id|new_page_addr
 )paren
 suffix:semicolon
-r_goto
-id|repeat
+multiline_comment|/*&n;&t; * Check the swap cache again, in case we stalled above.&n;&t; */
+id|found_page
+op_assign
+id|lookup_swap_cache
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
-multiline_comment|/* We might have stalled */
-)brace
+r_if
+c_cond
+(paren
+id|found_page
+)paren
+r_goto
+id|out_free_page
+suffix:semicolon
+multiline_comment|/*&n;&t; * Make sure the swap entry is still in use.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|swap_duplicate
+c_func
+(paren
+id|entry
+)paren
+)paren
+multiline_comment|/* Account for the swap cache */
+r_goto
+id|out_free_page
+suffix:semicolon
+multiline_comment|/* &n;&t; * Add it to the swap cache and read its contents.&n;&t; */
 r_if
 c_cond
 (paren
@@ -922,24 +947,9 @@ comma
 id|entry
 )paren
 )paren
-(brace
-id|free_page
-c_func
-(paren
-id|new_page_addr
-)paren
+r_goto
+id|out_free_page
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|swap_duplicate
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
-multiline_comment|/* Account for the swap cache */
 id|set_bit
 c_func
 (paren
@@ -988,6 +998,19 @@ suffix:semicolon
 macro_line|#endif
 r_return
 id|new_page
+suffix:semicolon
+id|out_free_page
+suffix:colon
+id|__free_page
+c_func
+(paren
+id|new_page
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|found_page
 suffix:semicolon
 )brace
 eof

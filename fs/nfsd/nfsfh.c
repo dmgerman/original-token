@@ -4115,7 +4115,7 @@ id|exp-&gt;ex_dev
 comma
 id|exp-&gt;ex_ino
 comma
-id|dentry-&gt;d_parent-&gt;d_name.name
+id|parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
@@ -4130,6 +4130,28 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * N.B. We shouldn&squot;t need to init the fh -- the call to fh_compose&n;&t; * may not be done on error paths, but the cleanup must call fh_put.&n;&t; * Fix this soon!&n;&t; */
+r_if
+c_cond
+(paren
+id|fhp-&gt;fh_dverified
+op_logical_or
+id|fhp-&gt;fh_locked
+op_logical_or
+id|fhp-&gt;fh_dentry
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;fh_compose: fh %s/%s not initialized!&bslash;n&quot;
+comma
+id|parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+)brace
 id|fh_init
 c_func
 (paren
