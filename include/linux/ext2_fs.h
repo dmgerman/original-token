@@ -1681,14 +1681,6 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|init_ext2_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|ext2_statfs
 (paren
 r_struct

@@ -5,9 +5,8 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* $Revision: 1.30 $ $Date: 1999/11/16 08:12:38 $*/
-multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c.h,v 1.32 1999/12/21 23:45:58 frodo Exp $ */
 macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
@@ -957,6 +956,20 @@ id|i2c_client
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* returns -EBUSY if address has been taken, 0 if not. Note that the only&n;   other place at which this is called is within i2c_attach_client; so&n;   you can cheat by simply not registering. Not recommended, of course! */
+r_extern
+r_int
+id|i2c_check_addr
+(paren
+r_struct
+id|i2c_adapter
+op_star
+id|adapter
+comma
+r_int
+id|addr
+)paren
+suffix:semicolon
 multiline_comment|/* Detect function. It itterates over all possible addresses itself.&n; * It will only call found_proc if some client is connected at the&n; * specific address (unless a &squot;force&squot; matched);&n; */
 DECL|typedef|i2c_client_found_addr_proc
 r_typedef
@@ -1147,6 +1160,11 @@ multiline_comment|/* this is for i2c-dev.c&t;*/
 DECL|macro|I2C_SLAVE
 mdefine_line|#define I2C_SLAVE&t;0x0703&t;/* Change slave address&t;&t;&t;*/
 multiline_comment|/* Attn.: Slave address is 7 or 10 bits */
+DECL|macro|I2C_SLAVE_FORCE
+mdefine_line|#define I2C_SLAVE_FORCE&t;0x0706&t;/* Change slave address&t;&t;&t;*/
+multiline_comment|/* Attn.: Slave address is 7 or 10 bits */
+multiline_comment|/* This changes the address, even if it */
+multiline_comment|/* is already taken!                    */
 DECL|macro|I2C_TENBIT
 mdefine_line|#define I2C_TENBIT&t;0x0704&t;/* 0 for 7 bit addrs, != 0 for 10 bit   */
 DECL|macro|I2C_FUNCS

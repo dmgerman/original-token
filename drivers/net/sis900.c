@@ -6009,7 +6009,6 @@ id|i
 op_increment
 )paren
 (brace
-op_plus
 multiline_comment|/* why plus 0x04 ??, That makes the correct value for hash table. */
 id|outl
 c_func

@@ -2316,6 +2316,8 @@ comma
 l_int|11
 comma
 l_int|12
+comma
+l_int|0
 )brace
 suffix:semicolon
 r_int

@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/br.h&gt;
 macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a, b) (((a) &lt;= (b)) ? (a) : (b))
@@ -10347,7 +10348,7 @@ multiline_comment|/* Set up MAC address based on BogoMIPs figure for first CPU a
 id|bogomips
 op_assign
 (paren
-id|boot_cpu_data.loops_per_sec
+id|loops_per_sec
 op_plus
 l_int|2500
 )paren

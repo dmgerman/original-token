@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &quot;linux/video_decoder.h&quot;
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(x...)&t;x&t;&t;/* remove when no long debugging */
+mdefine_line|#define DEBUG(x...)&t;&t;&t;/* remove when no long debugging */
 DECL|macro|SAA7110_MAX_INPUT
 mdefine_line|#define SAA7110_MAX_INPUT&t;9&t;/* 6 CVBS, 3 SVHS */
 DECL|macro|SAA7110_MAX_OUTPUT
@@ -1257,6 +1257,9 @@ comma
 l_int|0x04
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -1269,6 +1272,7 @@ id|saa7110_read
 c_func
 (paren
 id|decoder
+)paren
 )paren
 )paren
 suffix:semicolon

@@ -1231,8 +1231,7 @@ id|bh_orig
 suffix:semicolon
 id|bh-&gt;b_rsector
 op_assign
-op_minus
-l_int|1
+id|bh_orig-&gt;b_rsector
 suffix:semicolon
 id|memset
 c_func

@@ -3,8 +3,8 @@ multiline_comment|/* i2c-pcf8584.h: PCF 8584 global defines&t;&t;&t;&t;*/
 multiline_comment|/* -------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1996 Simon G. Vogl&n;                   1999 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;*/
 multiline_comment|/* --------------------------------------------------------------------&t;*/
-multiline_comment|/* $Id: i2c-pcf8584.h,v 1.1 1999/07/18 14:01:33 frodo Exp $ */
 multiline_comment|/* With some changes from Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c-pcf8584.h,v 1.2 1999/12/21 23:45:58 frodo Exp $ */
 macro_line|#ifndef I2C_PCF8584_H
 DECL|macro|I2C_PCF8584_H
 mdefine_line|#define I2C_PCF8584_H 1

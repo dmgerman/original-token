@@ -154,6 +154,18 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* insmod parameter */
+DECL|variable|addr
+r_static
+r_int
+id|addr
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|this_adap
+r_static
+r_int
+id|this_adap
+suffix:semicolon
 DECL|macro|dprintk
 mdefine_line|#define dprintk     if (debug) printk
 id|MODULE_PARM
@@ -168,6 +180,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|type
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|addr
 comma
 l_string|&quot;i&quot;
 )paren
@@ -882,7 +902,7 @@ id|config
 op_assign
 id|tun-&gt;UHF
 suffix:semicolon
-macro_line|#if 0   
+macro_line|#if 1   
 singleline_comment|// Fix colorstandard mode change
 r_if
 c_cond
@@ -890,10 +910,7 @@ c_cond
 id|t-&gt;type
 op_eq
 id|TUNER_PHILIPS_SECAM
-op_logical_and
-id|t-&gt;std
-op_eq
-id|V4L2_STANDARD_DDD
+multiline_comment|/*&amp;&amp; t-&gt;std == V4L2_STANDARD_DDD*/
 )paren
 id|config
 op_or_assign
@@ -1276,6 +1293,20 @@ id|i2c_client
 op_star
 id|client
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|this_adap
+OG
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|this_adap
+op_increment
+suffix:semicolon
 id|client_template.adapter
 op_assign
 id|adap
@@ -1448,6 +1479,33 @@ op_star
 id|adap
 )paren
 (brace
+r_if
+c_cond
+(paren
+l_int|0
+op_ne
+id|addr
+)paren
+(brace
+id|normal_i2c_range
+(braket
+l_int|0
+)braket
+op_assign
+id|addr
+suffix:semicolon
+id|normal_i2c_range
+(braket
+l_int|1
+)braket
+op_assign
+id|addr
+suffix:semicolon
+)brace
+id|this_adap
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

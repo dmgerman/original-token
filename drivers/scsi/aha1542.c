@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber&t;&lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        19-Jul-99&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *        Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus&n; *        controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; *  Modified by Mike McLagan &lt;mike.mclagan@linux.org&gt;&n; *        Recognise extended mode on AHA1542CP, different bit than 1542CF&n; *        1-Jan-97&n; *  Modified by Bjorn L. Thordarson and Einar Thor Einarsson&n; *        Recognize that DMA0 is valid DMA channel -- 13-Jul-98&n; *  Modified by Chris Faulhaber &lt;jedgar@fxp.org&gt;&n; *        Added module command-line options&n; *        19-Jul-99&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,6 +9,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -143,7 +145,7 @@ dot
 id|length
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Not safe to continue.&n;   */
+multiline_comment|/*&n;&t; * Not safe to continue.&n;&t; */
 id|panic
 c_func
 (paren
@@ -159,10 +161,11 @@ macro_line|#else
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 macro_line|#endif
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
-multiline_comment|/* The adaptec can be configured for quite a number of addresses, but&n;I generally do not want the card poking around at random.  We allow&n;two addresses - this allows people to use the Adaptec with a Midi&n;card, which also used 0x330 -- can be overridden with LILO! */
+multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n; */
+multiline_comment|/* The adaptec can be configured for quite a number of addresses, but&n;   I generally do not want the card poking around at random.  We allow&n;   two addresses - this allows people to use the Adaptec with a Midi&n;   card, which also used 0x330 -- can be overridden with LILO! */
 DECL|macro|MAXBOARDS
-mdefine_line|#define MAXBOARDS 2&t;/* Increase this and the sizes of the&n;&t;&t;&t;   arrays below, if you need more.. */
+mdefine_line|#define MAXBOARDS 4&t;&t;/* Increase this and the sizes of the&n;&t;&t;&t;&t;   arrays below, if you need more.. */
+multiline_comment|/* Boards 3,4 slots are reserved for ISAPnP scans */
 DECL|variable|bases
 r_static
 r_int
@@ -172,7 +175,15 @@ id|bases
 id|MAXBOARDS
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x330
+comma
+l_int|0x334
+comma
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 multiline_comment|/* set by aha1542_setup according to the command line */
 DECL|variable|setup_called
@@ -182,12 +193,6 @@ id|setup_called
 (braket
 id|MAXBOARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|setup_buson
 r_static
@@ -196,12 +201,6 @@ id|setup_buson
 (braket
 id|MAXBOARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|setup_busoff
 r_static
@@ -210,12 +209,6 @@ id|setup_busoff
 (braket
 id|MAXBOARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|setup_dmaspeed
 r_static
@@ -231,6 +224,12 @@ l_int|1
 comma
 op_minus
 l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
 )brace
 suffix:semicolon
 DECL|variable|setup_str
@@ -241,23 +240,15 @@ id|setup_str
 (braket
 id|MAXBOARDS
 )braket
-op_assign
-(brace
-(paren
-r_char
-op_star
-)paren
-l_int|NULL
-comma
-(paren
-r_char
-op_star
-)paren
-l_int|NULL
-)brace
 suffix:semicolon
-multiline_comment|/*&n; * LILO/Module params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]&n; *&n; * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:&n; *&t;&t;&t;0x130, 0x134, 0x230, 0x234, 0x330, 0x334&n; *&t;   &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus&n; *&t;&t;    when transferring data.  1542A power-on default is 11us,&n; *&t;&t;    valid values are in range: 2..15 (decimal)&n; *&t;   &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while&n; *&t;&t;    it is transferring data (not to monopolize the bus).&n; *&t;&t;    Power-on default is 4us, valid range: 1..64 microseconds.&n; *&t;   &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),&n; *&t;&t;    but experimenter can alter it with this.&n; *&t;&t;    Valid values: 5, 6, 7, 8, 10 (MB/s)&n; *&t;&t;    Factory default is 5 MB/s.&n; */
+multiline_comment|/*&n; * LILO/Module params:  aha1542=&lt;PORTBASE&gt;[,&lt;BUSON&gt;,&lt;BUSOFF&gt;[,&lt;DMASPEED&gt;]]&n; *&n; * Where:  &lt;PORTBASE&gt; is any of the valid AHA addresses:&n; *                      0x130, 0x134, 0x230, 0x234, 0x330, 0x334&n; *         &lt;BUSON&gt;  is the time (in microsecs) that AHA spends on the AT-bus&n; *                  when transferring data.  1542A power-on default is 11us,&n; *                  valid values are in range: 2..15 (decimal)&n; *         &lt;BUSOFF&gt; is the time that AHA spends OFF THE BUS after while&n; *                  it is transferring data (not to monopolize the bus).&n; *                  Power-on default is 4us, valid range: 1..64 microseconds.&n; *         &lt;DMASPEED&gt; Default is jumper selected (1542A: on the J1),&n; *                  but experimenter can alter it with this.&n; *                  Valid values: 5, 6, 7, 8, 10 (MB/s)&n; *                  Factory default is 5 MB/s.&n; */
 macro_line|#if defined(MODULE)
+DECL|variable|isapnp
+r_int
+id|isapnp
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|aha1542
 r_int
 id|aha1542
@@ -283,13 +274,28 @@ comma
 l_string|&quot;1-4i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|isapnp
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|variable|isapnp
+r_int
+id|isapnp
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#endif
 DECL|macro|BIOS_TRANSLATION_1632
-mdefine_line|#define BIOS_TRANSLATION_1632 0  /* Used by some old 1542A boards */
+mdefine_line|#define BIOS_TRANSLATION_1632 0&t;/* Used by some old 1542A boards */
 DECL|macro|BIOS_TRANSLATION_6432
-mdefine_line|#define BIOS_TRANSLATION_6432 1 /* Default case these days */
+mdefine_line|#define BIOS_TRANSLATION_6432 1&t;/* Default case these days */
 DECL|macro|BIOS_TRANSLATION_25563
-mdefine_line|#define BIOS_TRANSLATION_25563 2 /* Big disk case */
+mdefine_line|#define BIOS_TRANSLATION_25563 2&t;/* Big disk case */
 DECL|struct|aha1542_hostdata
 r_struct
 id|aha1542_hostdata
@@ -347,11 +353,6 @@ id|aha_host
 (braket
 l_int|7
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* One for each IRQ level (9-15) */
 DECL|macro|WAITnexttimeout
@@ -433,7 +434,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*    int s = inb(STATUS), i = inb(INTRFLAGS);&n;  printk(&quot;status=%x intrflags=%x&bslash;n&quot;, s, i, WAITnexttimeout-WAITtimeout); */
+multiline_comment|/*&t;int s = inb(STATUS), i = inb(INTRFLAGS);&n;&t;printk(&quot;status=%x intrflags=%x&bslash;n&quot;, s, i, WAITnexttimeout-WAITtimeout); */
 )brace
 multiline_comment|/* This is a bit complicated, but we need to make sure that an interrupt&n;   routine does not send something out while we are in the middle of this.&n;   Fortunately, it is only at boot time that multi-byte messages&n;   are ever sent. */
 DECL|function|aha1542_out
@@ -618,6 +619,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_out failed(%d): &quot;
 comma
 id|len
@@ -726,6 +728,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_in failed(%d): &quot;
 comma
 id|len
@@ -876,7 +879,7 @@ suffix:semicolon
 r_case
 l_int|0x11
 suffix:colon
-multiline_comment|/* Selection time out-The initiator selection or target&n;&t;&t;    reselection was not complete within the SCSI Time out period */
+multiline_comment|/* Selection time out-The initiator selection or target&n;&t;&t;&t;&t;   reselection was not complete within the SCSI Time out period */
 id|hosterr
 op_assign
 id|DID_TIME_OUT
@@ -886,7 +889,7 @@ suffix:semicolon
 r_case
 l_int|0x12
 suffix:colon
-multiline_comment|/* Data overrun/underrun-The target attempted to transfer more data&n;&t;&t;    than was allocated by the Data Length field or the sum of the&n;&t;&t;    Scatter / Gather Data Length fields. */
+multiline_comment|/* Data overrun/underrun-The target attempted to transfer more data&n;&t;&t;&t;&t;   than was allocated by the Data Length field or the sum of the&n;&t;&t;&t;&t;   Scatter / Gather Data Length fields. */
 r_case
 l_int|0x13
 suffix:colon
@@ -894,27 +897,27 @@ multiline_comment|/* Unexpected bus free-The target dropped the SCSI BSY at an u
 r_case
 l_int|0x15
 suffix:colon
-multiline_comment|/* MBO command was not 00, 01 or 02-The first byte of the CB was&n;&t;&t;    invalid. This usually indicates a software failure. */
+multiline_comment|/* MBO command was not 00, 01 or 02-The first byte of the CB was&n;&t;&t;&t;&t;   invalid. This usually indicates a software failure. */
 r_case
 l_int|0x16
 suffix:colon
-multiline_comment|/* Invalid CCB Operation Code-The first byte of the CCB was invalid.&n;&t;&t;    This usually indicates a software failure. */
+multiline_comment|/* Invalid CCB Operation Code-The first byte of the CCB was invalid.&n;&t;&t;&t;&t;   This usually indicates a software failure. */
 r_case
 l_int|0x17
 suffix:colon
-multiline_comment|/* Linked CCB does not have the same LUN-A subsequent CCB of a set&n;&t;&t;    of linked CCB&squot;s does not specify the same logical unit number as&n;&t;&t;    the first. */
+multiline_comment|/* Linked CCB does not have the same LUN-A subsequent CCB of a set&n;&t;&t;&t;&t;   of linked CCB&squot;s does not specify the same logical unit number as&n;&t;&t;&t;&t;   the first. */
 r_case
 l_int|0x18
 suffix:colon
-multiline_comment|/* Invalid Target Direction received from Host-The direction of a&n;&t;&t;    Target Mode CCB was invalid. */
+multiline_comment|/* Invalid Target Direction received from Host-The direction of a&n;&t;&t;&t;&t;   Target Mode CCB was invalid. */
 r_case
 l_int|0x19
 suffix:colon
-multiline_comment|/* Duplicate CCB Received in Target Mode-More than once CCB was&n;&t;&t;    received to service data transfer between the same target LUN&n;&t;&t;    and initiator SCSI ID in the same direction. */
+multiline_comment|/* Duplicate CCB Received in Target Mode-More than once CCB was&n;&t;&t;&t;&t;   received to service data transfer between the same target LUN&n;&t;&t;&t;&t;   and initiator SCSI ID in the same direction. */
 r_case
 l_int|0x1a
 suffix:colon
-multiline_comment|/* Invalid CCB or Segment List Parameter-A segment list with a zero&n;&t;&t;    length segment or invalid segment list boundaries was received.&n;&t;&t;    A CCB parameter was invalid. */
+multiline_comment|/* Invalid CCB or Segment List Parameter-A segment list with a zero&n;&t;&t;&t;&t;   length segment or invalid segment list boundaries was received.&n;&t;&t;&t;&t;   A CCB parameter was invalid. */
 id|DEB
 c_func
 (paren
@@ -939,7 +942,7 @@ suffix:semicolon
 r_case
 l_int|0x14
 suffix:colon
-multiline_comment|/* Target bus phase sequence failure-An invalid bus phase or bus&n;&t;&t;    phase sequence was requested by the target. The host adapter&n;&t;&t;    will generate a SCSI Reset Condition, notifying the host with&n;&t;&t;    a SCRD interrupt */
+multiline_comment|/* Target bus phase sequence failure-An invalid bus phase or bus&n;&t;&t;&t;&t;   phase sequence was requested by the target. The host adapter&n;&t;&t;&t;&t;   will generate a SCSI Reset Condition, notifying the host with&n;&t;&t;&t;&t;   a SCRD interrupt */
 id|hosterr
 op_assign
 id|DID_RESET
@@ -951,7 +954,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;makecode: unknown hoststatus %x&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;aha1542: makecode: unknown hoststatus %x&bslash;n&quot;
 comma
 id|hosterr
 )paren
@@ -1028,11 +1032,9 @@ id|bse
 op_eq
 l_int|0xff
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* Reset the adapter. I ought to make a hard reset, but it&squot;s not really necessary */
 multiline_comment|/*  DEB(printk(&quot;aha1542_test_port called &bslash;n&quot;)); */
 multiline_comment|/* In case some other card was probing here, reset interrupts */
@@ -1049,7 +1051,7 @@ c_func
 id|SRST
 op_or
 id|IRST
-multiline_comment|/*|SCRST*/
+multiline_comment|/*|SCRST */
 comma
 id|CONTROL
 c_func
@@ -1119,7 +1121,7 @@ id|INTRMASK
 r_goto
 id|fail
 suffix:semicolon
-multiline_comment|/* Perform a host adapter inquiry instead so we do not need to set&n;       up the mailboxes ahead of time */
+multiline_comment|/* Perform a host adapter inquiry instead so we do not need to set&n;&t;   up the mailboxes ahead of time */
 id|aha1542_out
 c_func
 (paren
@@ -1402,14 +1404,12 @@ c_cond
 op_logical_neg
 id|shost
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;Splunge!&quot;
 )paren
 suffix:semicolon
-)brace
 id|mb
 op_assign
 id|HOSTDATA
@@ -1447,6 +1447,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_intr_handle: &quot;
 )paren
 suffix:semicolon
@@ -1565,7 +1566,7 @@ id|shost-&gt;io_port
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Check for unusual interrupts.  If any of these happen, we should&n;&t; probably do something special, but for now just printing a message&n;&t; is sufficient.  A SCSI reset detected is something that we really&n;&t; need to deal with in some way. */
+multiline_comment|/* Check for unusual interrupts.  If any of these happen, we should&n;&t;&t;   probably do something special, but for now just printing a message&n;&t;&t;   is sufficient.  A SCSI reset detected is something that we really&n;&t;&t;   need to deal with in some way. */
 r_if
 c_cond
 (paren
@@ -1677,10 +1678,8 @@ id|status
 op_ne
 l_int|0
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|mbi
 op_increment
 suffix:semicolon
@@ -1744,23 +1743,22 @@ id|needs_restart
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;aha1542.c: interrupt received, but no mail.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* We detected a reset.  Restart all pending commands for&n;&t;   devices that use the hard reset option */
+multiline_comment|/* We detected a reset.  Restart all pending commands for&n;&t;&t;&t;   devices that use the hard reset option */
 r_if
 c_cond
 (paren
 id|needs_restart
 )paren
-(brace
 id|aha1542_restart
 c_func
 (paren
 id|shost
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -1854,6 +1852,7 @@ id|hastat
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_command: returning %x (status %d)&bslash;n&quot;
 comma
 id|ccb
@@ -1895,15 +1894,14 @@ id|mbistatus
 op_eq
 l_int|3
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 multiline_comment|/* Aborted command not found */
 macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;...done %d %d&bslash;n&quot;
 comma
 id|mbo
@@ -1938,12 +1936,14 @@ id|SCtmp-&gt;scsi_done
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;aha1542_intr_handle: Unexpected interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;tarstat=%x, hastat=%x idlun=%x ccb#=%d &bslash;n&quot;
 comma
 id|ccb
@@ -1996,7 +1996,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t; Adaptec automatically fetches it, and there is no guarantee that&n;&t; we will still have it in the cdb when we come back */
+multiline_comment|/* Fetch the sense data, and tuck it away, in the required slot.  The&n;&t;&t;   Adaptec automatically fetches it, and there is no guarantee that&n;&t;&t;   we will still have it in the cdb when we come back */
 r_if
 c_cond
 (paren
@@ -2077,10 +2077,10 @@ c_cond
 (paren
 id|errstatus
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;(aha1542 error:%x %x %x) &quot;
 comma
 id|errstatus
@@ -2100,7 +2100,6 @@ dot
 id|tarstat
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_if
 c_cond
@@ -2175,7 +2174,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;&t;  DEB(printk(&quot;aha1542_intr_handle: buf:&quot;));&n;&t;  for (i = 0; i &lt; bufflen; i++)&n;&t;  printk(&quot;%02x &quot;, ((unchar *)buff)[i]);&n;&t;  printk(&quot;&bslash;n&quot;);&n;&t;  */
+multiline_comment|/*&n;&t;&t;&t;   DEB(printk(&quot;aha1542_intr_handle: buf:&quot;));&n;&t;&t;&t;   for (i = 0; i &lt; bufflen; i++)&n;&t;&t;&t;   printk(&quot;%02x &quot;, ((unchar *)buff)[i]);&n;&t;&t;&t;   printk(&quot;&bslash;n&quot;);&n;&t;&t;&t; */
 )brace
 id|DEB
 c_func
@@ -2210,7 +2209,7 @@ id|mbo
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* This effectively frees up the mailbox slot, as&n;&t;&t;&t;     far as queuecommand is concerned */
+multiline_comment|/* This effectively frees up the mailbox slot, as&n;&t;&t;&t;&t;&t;&t;&t;   far as queuecommand is concerned */
 id|my_done
 c_func
 (paren
@@ -2365,7 +2364,7 @@ id|REQUEST_SENSE
 (brace
 multiline_comment|/* Don&squot;t do the command - we have the sense data already */
 macro_line|#if 0
-multiline_comment|/* scsi_request_sense() provides a buffer of size 256,&n;&t; so there is no reason to expect equality */
+multiline_comment|/* scsi_request_sense() provides a buffer of size 256,&n;&t;&t;   so there is no reason to expect equality */
 r_if
 c_cond
 (paren
@@ -2379,6 +2378,7 @@ id|SCpnt-&gt;sense_buffer
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;aha1542: Wrong buffer length supplied &quot;
 l_string|&quot;for request sense (%d)&bslash;n&quot;
 comma
@@ -2462,6 +2462,7 @@ id|done
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_queuecommand: dev %d cmd %02x pos %d len %d &quot;
 comma
 id|target
@@ -2478,6 +2479,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_command: dev %d cmd %02x pos %d len %d &quot;
 comma
 id|target
@@ -2498,6 +2500,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_queuecommand: dumping scsi cmd:&quot;
 )paren
 suffix:semicolon
@@ -2550,7 +2553,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* we are still testing, so *don&squot;t* write */
 macro_line|#endif
-multiline_comment|/* Use the outgoing mailboxes in a round-robin fashion, because this&n;   is how the host adapter will scan for them */
+multiline_comment|/* Use the outgoing mailboxes in a round-robin fashion, because this&n;&t;   is how the host adapter will scan for them */
 id|save_flags
 c_func
 (paren
@@ -2612,10 +2615,8 @@ id|mbo
 op_eq
 l_int|NULL
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|mbo
 op_increment
 suffix:semicolon
@@ -2666,14 +2667,12 @@ id|SCint
 id|mbo
 )braket
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;Unable to find empty mailbox for aha1542.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|HOSTDATA
 c_func
 (paren
@@ -2687,7 +2686,7 @@ id|mbo
 op_assign
 id|SCpnt
 suffix:semicolon
-multiline_comment|/* This will effectively prevent someone else from&n;&t;&t;&t;    screwing with this cdb. */
+multiline_comment|/* This will effectively prevent someone else from&n;&t;&t;&t;&t;&t;&t;&t;   screwing with this cdb. */
 id|HOSTDATA
 c_func
 (paren
@@ -2708,6 +2707,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Sending command (%d %x)...&quot;
 comma
 id|mbo
@@ -2737,7 +2737,7 @@ id|mbo
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* This gets trashed for some reason*/
+multiline_comment|/* This gets trashed for some reason */
 id|memset
 c_func
 (paren
@@ -2859,7 +2859,7 @@ id|op
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/* SCSI Initiator Command  w/scatter-gather*/
+multiline_comment|/* SCSI Initiator Command  w/scatter-gather */
 id|SCpnt-&gt;host_scribble
 op_assign
 (paren
@@ -2971,6 +2971,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Bad segment list supplied to aha1542.c (%d, %d)&bslash;n&quot;
 comma
 id|SCpnt-&gt;use_sg
@@ -2996,6 +2997,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;%d: %x %x %d&bslash;n&quot;
 comma
 id|i
@@ -3035,6 +3037,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;cptr %x: &quot;
 comma
 (paren
@@ -3071,7 +3074,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3083,7 +3085,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|panic
 c_func
 (paren
@@ -3139,7 +3140,6 @@ l_int|1
 OG
 id|ISA_DMA_THRESHOLD
 )paren
-(brace
 id|BAD_SG_DMA
 c_func
 (paren
@@ -3152,7 +3152,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-)brace
 id|any2scsi
 c_func
 (paren
@@ -3241,7 +3240,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -3253,7 +3251,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 r_else
@@ -3302,7 +3299,6 @@ l_int|1
 OG
 id|ISA_DMA_THRESHOLD
 )paren
-(brace
 id|BAD_DMA
 c_func
 (paren
@@ -3311,7 +3307,6 @@ comma
 id|bufflen
 )paren
 suffix:semicolon
-)brace
 id|any2scsi
 c_func
 (paren
@@ -3354,7 +3349,7 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*SCSI Target Id*/
+multiline_comment|/*SCSI Target Id */
 id|ccb
 (braket
 id|mbo
@@ -3413,6 +3408,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha1542_command: sending.. &quot;
 )paren
 suffix:semicolon
@@ -3774,6 +3770,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_detect: failed setting up mailboxes&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3909,6 +3906,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_detect: query board settings&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3971,7 +3969,7 @@ suffix:semicolon
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/* This means that the adapter, although Adaptec 1542 compatible, doesn&squot;t use a DMA channel.&n;       Currently only aware of the BusLogic BT-445S VL-Bus adapter which needs this. */
+multiline_comment|/* This means that the adapter, although Adaptec 1542 compatible, doesn&squot;t use a DMA channel.&n;&t;&t;   Currently only aware of the BusLogic BT-445S VL-Bus adapter which needs this. */
 op_star
 id|dma_chan
 op_assign
@@ -3984,6 +3982,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to determine Adaptec DMA priority.  Disabling board&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4067,6 +4066,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to determine Adaptec IRQ level.  Disabling board&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4152,11 +4152,9 @@ comma
 l_int|2
 )paren
 )paren
-(brace
 r_return
 id|retval
 suffix:semicolon
-)brace
 id|WAITd
 c_func
 (paren
@@ -4244,12 +4242,10 @@ op_amp
 l_int|0x03
 )paren
 )paren
-(brace
 id|retval
 op_assign
 id|BIOS_TRANSLATION_25563
 suffix:semicolon
-)brace
 id|aha1542_out
 c_func
 (paren
@@ -4289,6 +4285,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_mbenable: Mailbox init failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4417,6 +4414,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_detect: query card type&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4433,7 +4431,7 @@ op_assign
 id|BIOS_TRANSLATION_6432
 suffix:semicolon
 multiline_comment|/* Default case */
-multiline_comment|/* For an AHA1740 series board, we ignore the board since there is a&n;   hardware bug which can lead to wrong blocks being returned if the board&n;   is operating in the 1542 emulation mode.  Since there is an extended mode&n;   driver, we simply ignore the board and let the 1740 driver pick it up.&n;*/
+multiline_comment|/* For an AHA1740 series board, we ignore the board since there is a&n;&t;   hardware bug which can lead to wrong blocks being returned if the board&n;&t;   is operating in the 1542 emulation mode.  Since there is an extended mode&n;&t;   driver, we simply ignore the board and let the 1740 driver pick it up.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4448,6 +4446,7 @@ l_int|0x43
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;aha1542.c: Emulation mode not supported for AHA 174N hardware.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4456,7 +4455,7 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Always call this - boards that do not support extended bios translation&n;     will ignore the command, and we will set the proper default */
+multiline_comment|/* Always call this - boards that do not support extended bios translation&n;&t;   will ignore the command, and we will set the proper default */
 op_star
 id|transl
 op_assign
@@ -4513,12 +4512,14 @@ id|MAXBOARDS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542: aha1542_setup called too many times! Bad LILO params ?&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;   Entryline 1: %s&bslash;n&quot;
 comma
 id|setup_str
@@ -4530,6 +4531,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;   Entryline 2: %s&bslash;n&quot;
 comma
 id|setup_str
@@ -4541,6 +4543,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;   This line:   %s&bslash;n&quot;
 comma
 id|str
@@ -4563,6 +4566,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542: %s&bslash;n&quot;
 comma
 id|str
@@ -4577,6 +4581,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542: Wrong parameters may cause system malfunction.. We try anyway..&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4732,6 +4737,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542: %s&bslash;n&quot;
 comma
 id|str
@@ -4746,6 +4752,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542: Valid values for DMASPEED are 5-8, 10 MB/s.  Using jumper defaults.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4944,6 +4951,185 @@ id|atbt
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t; *&t;Hunt for ISA Plug&squot;n&squot;Pray Adaptecs (AHA1535)&n;&t; */
+r_if
+c_cond
+(paren
+id|isapnp
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|indx
+op_assign
+l_int|0
+suffix:semicolon
+id|indx
+OL
+r_sizeof
+(paren
+id|bases
+)paren
+op_div
+r_sizeof
+(paren
+id|bases
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|indx
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bases
+(braket
+id|indx
+)braket
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|pdev
+op_assign
+id|isapnp_find_dev
+c_func
+(paren
+l_int|NULL
+comma
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;A&squot;
+comma
+l_char|&squot;D&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_FUNCTION
+c_func
+(paren
+l_int|0x1542
+)paren
+comma
+id|pdev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pdev
+op_eq
+l_int|NULL
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Activate the PnP card&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|pdev
+op_member_access_from_pointer
+id|prepare
+c_func
+(paren
+id|pdev
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|flags
+op_amp
+id|IORESOURCE_IO
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|flags
+op_or_assign
+id|IORESOURCE_AUTO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pdev
+op_member_access_from_pointer
+id|activate
+c_func
+(paren
+id|pdev
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+id|bases
+(braket
+id|indx
+)braket
+op_assign
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
+suffix:semicolon
+multiline_comment|/* The card can be queried for its DMA, we have &n;&t;&t;&t;   the DMA set up that is enough */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ISAPnP found an AHA1535 at I/O 0x%03X&bslash;n&quot;
+comma
+id|bases
+(braket
+id|indx
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
 r_for
 c_loop
 (paren
@@ -5006,7 +5192,7 @@ id|aha1542_hostdata
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* For now we do this - until kmalloc is more intelligent&n;&t;&t;       we are resigned to stupid hacks like this */
+multiline_comment|/* For now we do this - until kmalloc is more intelligent&n;&t;&t;&t;   we are resigned to stupid hacks like this */
 r_if
 c_cond
 (paren
@@ -5022,6 +5208,7 @@ id|ISA_DMA_THRESHOLD
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Invalid address for shpnt with 1542.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5044,11 +5231,9 @@ comma
 id|shpnt
 )paren
 )paren
-(brace
 r_goto
 id|unregister
 suffix:semicolon
-)brace
 id|base_io
 op_assign
 id|bases
@@ -5250,6 +5435,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542_detect: setting bus on/off-time failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5273,11 +5459,9 @@ op_amp
 id|trans
 )paren
 )paren
-(brace
 r_goto
 id|unregister
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5305,6 +5489,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Configuring Adaptec (SCSI-ID %d) at IO:%x, IRQ %d&quot;
 comma
 id|scsi_id
@@ -5405,6 +5590,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to allocate IRQ for adaptec controller.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5441,6 +5627,7 @@ l_string|&quot;aha1542&quot;
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unable to allocate DMA channel for Adaptec.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5541,14 +5728,13 @@ id|trans
 op_eq
 id|BIOS_TRANSLATION_25563
 )paren
-(brace
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;aha1542.c: Using extended bios translation&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|HOSTDATA
 c_func
 (paren
@@ -5720,6 +5906,7 @@ id|buf
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;aha_detect: LU %d sector_size %d device_size %d&bslash;n&quot;
 comma
 id|i
@@ -5844,7 +6031,7 @@ l_int|512
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif    
+macro_line|#endif
 id|request_region
 c_func
 (paren
@@ -5977,6 +6164,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Potential to restart %d stalled commands...&bslash;n&quot;
 comma
 id|count
@@ -6015,10 +6203,11 @@ op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/*&n;     * The abort command does not leave the device in a clean state where&n;     *  it is available to be used again.  Until this gets worked out, we&n;     * will leave it commented out.  &n;     */
+multiline_comment|/*&n;&t; * The abort command does not leave the device in a clean state where&n;&t; *  it is available to be used again.  Until this gets worked out, we&n;&t; * will leave it commented out.  &n;&t; */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;aha1542.c: Unable to abort command for target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
@@ -6152,10 +6341,8 @@ id|mbo
 op_eq
 l_int|NULL
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|mbo
 op_increment
 suffix:semicolon
@@ -6206,14 +6393,12 @@ id|SCint
 id|mbo
 )braket
 )paren
-(brace
 id|panic
 c_func
 (paren
 l_string|&quot;Unable to find empty mailbox for aha1542.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|HOSTDATA
 c_func
 (paren
@@ -6227,7 +6412,7 @@ id|mbo
 op_assign
 id|SCpnt
 suffix:semicolon
-multiline_comment|/* This will effectively&n;&t;&t;&t;&t;&t;&t;   prevent someone else from&n;&t;&t;&t;&t;&t;&t;   screwing with this cdb. */
+multiline_comment|/* This will effectively&n;&t;&t;&t;&t;&t;&t;&t;   prevent someone else from&n;&t;&t;&t;&t;&t;&t;&t;   screwing with this cdb. */
 id|HOSTDATA
 c_func
 (paren
@@ -6265,7 +6450,7 @@ id|mbo
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* This gets trashed for some reason*/
+multiline_comment|/* This gets trashed for some reason */
 id|memset
 c_func
 (paren
@@ -6315,7 +6500,7 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/*SCSI Target Id*/
+multiline_comment|/*SCSI Target Id */
 id|ccb
 (braket
 id|mbo
@@ -6357,7 +6542,7 @@ id|commlinkid
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;     * Now tell the 1542 to flush all pending commands for this &n;     * target &n;     */
+multiline_comment|/* &n;&t; * Now tell the 1542 to flush all pending commands for this &n;&t; * target &n;&t; */
 id|aha1542_out
 c_func
 (paren
@@ -6372,6 +6557,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;aha1542.c: Trying device reset for target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
@@ -6381,16 +6567,17 @@ r_return
 id|SUCCESS
 suffix:semicolon
 macro_line|#ifdef ERIC_neverdef
-multiline_comment|/* &n;     * With the 1542 we apparently never get an interrupt to&n;     * acknowledge a device reset being sent.  Then again, Leonard&n;     * says we are doing this wrong in the first place...&n;     *&n;     * Take a wait and see attitude.  If we get spurious interrupts,&n;     * then the device reset is doing something sane and useful, and&n;     * we will wait for the interrupt to post completion.&n;     */
+multiline_comment|/* &n;&t; * With the 1542 we apparently never get an interrupt to&n;&t; * acknowledge a device reset being sent.  Then again, Leonard&n;&t; * says we are doing this wrong in the first place...&n;&t; *&n;&t; * Take a wait and see attitude.  If we get spurious interrupts,&n;&t; * then the device reset is doing something sane and useful, and&n;&t; * we will wait for the interrupt to post completion.&n;&t; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sent BUS DEVICE RESET to target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Free the command block for all commands running on this &n;     * target... &n;     */
+multiline_comment|/*&n;&t; * Free the command block for all commands running on this &n;&t; * target... &n;&t; */
 r_for
 c_loop
 (paren
@@ -6504,7 +6691,7 @@ suffix:semicolon
 r_return
 id|FAILED
 suffix:semicolon
-macro_line|#endif /* ERIC_neverdef */
+macro_line|#endif&t;&t;&t;&t;/* ERIC_neverdef */
 )brace
 DECL|function|aha1542_bus_reset
 r_int
@@ -6519,7 +6706,7 @@ id|SCpnt
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* &n;     * This does a scsi reset for all devices on the bus.&n;     * In principle, we could also reset the 1542 - should&n;     * we do this?  Try this first, and we can add that later&n;     * if it turns out to be useful.&n;     */
+multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.&n;&t; * In principle, we could also reset the 1542 - should&n;&t; * we do this?  Try this first, and we can add that later&n;&t; * if it turns out to be useful.&n;&t; */
 id|outb
 c_func
 (paren
@@ -6532,7 +6719,7 @@ id|SCpnt-&gt;host-&gt;io_port
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Wait for the thing to settle down a bit.  Unfortunately&n;     * this is going to basically lock up the machine while we&n;     * wait for this to complete.  To be 100% correct, we need to&n;     * check for timeout, and if we are doing something like this&n;     * we are pretty desperate anyways.&n;     */
+multiline_comment|/*&n;&t; * Wait for the thing to settle down a bit.  Unfortunately&n;&t; * this is going to basically lock up the machine while we&n;&t; * wait for this to complete.  To be 100% correct, we need to&n;&t; * check for timeout, and if we are doing something like this&n;&t; * we are pretty desperate anyways.&n;&t; */
 id|spin_unlock_irq
 c_func
 (paren
@@ -6581,10 +6768,11 @@ op_or
 id|CDF
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Now try to pick up the pieces.  For all pending commands,&n;     * free any internal data structures, and basically clear things&n;     * out.  We do not try and restart any commands or anything - &n;     * the strategy handler takes care of that crap.&n;     */
+multiline_comment|/*&n;&t; * Now try to pick up the pieces.  For all pending commands,&n;&t; * free any internal data structures, and basically clear things&n;&t; * out.  We do not try and restart any commands or anything - &n;&t; * the strategy handler takes care of that crap.&n;&t; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sent BUS RESET to scsi host %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
@@ -6645,7 +6833,7 @@ c_cond
 id|SCtmp-&gt;device-&gt;soft_reset
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If this device implements the soft reset option,&n;&t;&t; * then it is still holding onto the command, and&n;&t;&t; * may yet complete it.  In this case, we don&squot;t&n;&t;&t; * flush the data.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * If this device implements the soft reset option,&n;&t;&t;&t;&t; * then it is still holding onto the command, and&n;&t;&t;&t;&t; * may yet complete it.  In this case, we don&squot;t&n;&t;&t;&t;&t; * flush the data.&n;&t;&t;&t;&t; */
 r_continue
 suffix:semicolon
 )brace
@@ -6716,7 +6904,7 @@ id|SCpnt
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* &n;     * This does a scsi reset for all devices on the bus.&n;     * In principle, we could also reset the 1542 - should&n;     * we do this?  Try this first, and we can add that later&n;     * if it turns out to be useful.&n;     */
+multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.&n;&t; * In principle, we could also reset the 1542 - should&n;&t; * we do this?  Try this first, and we can add that later&n;&t; * if it turns out to be useful.&n;&t; */
 id|outb
 c_func
 (paren
@@ -6731,7 +6919,7 @@ id|SCpnt-&gt;host-&gt;io_port
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Wait for the thing to settle down a bit.  Unfortunately&n;     * this is going to basically lock up the machine while we&n;     * wait for this to complete.  To be 100% correct, we need to&n;     * check for timeout, and if we are doing something like this&n;     * we are pretty desperate anyways.&n;     */
+multiline_comment|/*&n;&t; * Wait for the thing to settle down a bit.  Unfortunately&n;&t; * this is going to basically lock up the machine while we&n;&t; * wait for this to complete.  To be 100% correct, we need to&n;&t; * check for timeout, and if we are doing something like this&n;&t; * we are pretty desperate anyways.&n;&t; */
 id|spin_unlock_irq
 c_func
 (paren
@@ -6780,7 +6968,7 @@ op_or
 id|CDF
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * We need to do this too before the 1542 can interact with&n;     * us again.&n;     */
+multiline_comment|/*&n;&t; * We need to do this too before the 1542 can interact with&n;&t; * us again.&n;&t; */
 id|setup_mailboxes
 c_func
 (paren
@@ -6789,10 +6977,11 @@ comma
 id|SCpnt-&gt;host
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Now try to pick up the pieces.  For all pending commands,&n;     * free any internal data structures, and basically clear things&n;     * out.  We do not try and restart any commands or anything - &n;     * the strategy handler takes care of that crap.&n;     */
+multiline_comment|/*&n;&t; * Now try to pick up the pieces.  For all pending commands,&n;&t; * free any internal data structures, and basically clear things&n;&t; * out.  We do not try and restart any commands or anything - &n;&t; * the strategy handler takes care of that crap.&n;&t; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sent BUS RESET to scsi host %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
@@ -6853,7 +7042,7 @@ c_cond
 id|SCtmp-&gt;device-&gt;soft_reset
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If this device implements the soft reset option,&n;&t;&t; * then it is still holding onto the command, and&n;&t;&t; * may yet complete it.  In this case, we don&squot;t&n;&t;&t; * flush the data.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * If this device implements the soft reset option,&n;&t;&t;&t;&t; * then it is still holding onto the command, and&n;&t;&t;&t;&t; * may yet complete it.  In this case, we don&squot;t&n;&t;&t;&t;&t; * flush the data.&n;&t;&t;&t;&t; */
 r_continue
 suffix:semicolon
 )brace
@@ -6947,6 +7136,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;In aha1542_abort: %x %x&bslash;n&quot;
 comma
 id|inb
@@ -7030,10 +7220,8 @@ id|status
 op_ne
 l_int|0
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|mbi
 op_increment
 suffix:semicolon
@@ -7085,6 +7273,7 @@ id|status
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Lost interrupt discovered on irq %d - attempting to recover&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;irq
@@ -7102,7 +7291,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* OK, no lost interrupt.  Try looking to see how many pending commands&n;     we think we have. */
+multiline_comment|/* OK, no lost interrupt.  Try looking to see how many pending commands&n;&t;   we think we have. */
 r_for
 c_loop
 (paren
@@ -7152,6 +7341,7 @@ id|SCpnt
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Timed out command pending for %s&bslash;n&quot;
 comma
 id|kdevname
@@ -7181,6 +7371,7 @@ id|status
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;OGMB still full - restarting&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7202,6 +7393,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Other pending command %s&bslash;n&quot;
 comma
 id|kdevname
@@ -7326,7 +7518,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;     * See if a bus reset was suggested.&n;     */
+multiline_comment|/*&n;&t; * See if a bus reset was suggested.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7335,7 +7527,7 @@ op_amp
 id|SCSI_RESET_SUGGEST_BUS_RESET
 )paren
 (brace
-multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.&n;&t; * In principle, we could also reset the 1542 - should&n;&t; * we do this?  Try this first, and we can add that later&n;&t; * if it turns out to be useful.&n;&t; */
+multiline_comment|/* &n;&t;&t; * This does a scsi reset for all devices on the bus.&n;&t;&t; * In principle, we could also reset the 1542 - should&n;&t;&t; * we do this?  Try this first, and we can add that later&n;&t;&t; * if it turns out to be useful.&n;&t;&t; */
 id|outb
 c_func
 (paren
@@ -7350,7 +7542,7 @@ id|SCpnt-&gt;host-&gt;io_port
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Wait for the thing to settle down a bit.  Unfortunately&n;&t; * this is going to basically lock up the machine while we&n;&t; * wait for this to complete.  To be 100% correct, we need to&n;&t; * check for timeout, and if we are doing something like this&n;&t; * we are pretty desperate anyways.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Wait for the thing to settle down a bit.  Unfortunately&n;&t;&t; * this is going to basically lock up the machine while we&n;&t;&t; * wait for this to complete.  To be 100% correct, we need to&n;&t;&t; * check for timeout, and if we are doing something like this&n;&t;&t; * we are pretty desperate anyways.&n;&t;&t; */
 id|WAIT
 c_func
 (paren
@@ -7377,7 +7569,7 @@ op_or
 id|CDF
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We need to do this too before the 1542 can interact with&n;&t; * us again.&n;&t; */
+multiline_comment|/*&n;&t;&t; * We need to do this too before the 1542 can interact with&n;&t;&t; * us again.&n;&t;&t; */
 id|setup_mailboxes
 c_func
 (paren
@@ -7386,10 +7578,11 @@ comma
 id|SCpnt-&gt;host
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now try to pick up the pieces.  Restart all commands&n;&t; * that are currently active on the bus, and reset all of&n;&t; * the datastructures.  We have some time to kill while&n;&t; * things settle down, so print a nice message.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Now try to pick up the pieces.  Restart all commands&n;&t;&t; * that are currently active on the bus, and reset all of&n;&t;&t; * the datastructures.  We have some time to kill while&n;&t;&t; * things settle down, so print a nice message.&n;&t;&t; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sent BUS RESET to scsi host %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
@@ -7465,6 +7658,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sending DID_RESET for target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
@@ -7507,7 +7701,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Now tell the mid-level code what we did here.  Since&n;&t; * we have restarted all of the outstanding commands,&n;&t; * then report SUCCESS.&n;&t; */
+multiline_comment|/*&n;&t;&t; * Now tell the mid-level code what we did here.  Since&n;&t;&t; * we have restarted all of the outstanding commands,&n;&t;&t; * then report SUCCESS.&n;&t;&t; */
 r_return
 (paren
 id|SCSI_RESET_SUCCESS
@@ -7520,12 +7714,14 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;aha1542.c: Unable to perform hard reset.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_CRIT
 l_string|&quot;Power cycle machine to reset&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7600,16 +7796,17 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Here is the tricky part.  What to do next.  Do we get an interrupt&n;&t;&t; for the commands that we aborted with the specified target, or&n;&t;&t; do we generate this on our own?  Try it without first and see&n;&t;&t; what happens */
+multiline_comment|/* Here is the tricky part.  What to do next.  Do we get an interrupt&n;&t;&t;&t;&t;   for the commands that we aborted with the specified target, or&n;&t;&t;&t;&t;   do we generate this on our own?  Try it without first and see&n;&t;&t;&t;&t;   what happens */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sent BUS DEVICE RESET to target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/* If the first does not work, then try the second.  I think the&n;&t;&t; first option is more likely to be correct. Free the command&n;&t;&t; block for all commands running on this target... */
+multiline_comment|/* If the first does not work, then try the second.  I think the&n;&t;&t;&t;&t;   first option is more likely to be correct. Free the command&n;&t;&t;&t;&t;   block for all commands running on this target... */
 r_for
 c_loop
 (paren
@@ -7693,6 +7890,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sending DID_RESET for target %d&bslash;n&quot;
 comma
 id|SCpnt-&gt;target
@@ -7740,7 +7938,7 @@ id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* No active command at this time, so this means that each time we got&n;       some kind of response the last time through.  Tell the mid-level code&n;       to request sense information in order to decide what to do next. */
+multiline_comment|/* No active command at this time, so this means that each time we got&n;&t;   some kind of response the last time through.  Tell the mid-level code&n;&t;   to request sense information in order to decide what to do next. */
 r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon

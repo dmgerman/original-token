@@ -24,27 +24,13 @@ suffix:semicolon
 DECL|macro|ZORAN_MAX_FBUFFERS
 mdefine_line|#define&t;ZORAN_MAX_FBUFFERS&t;2
 DECL|macro|ZORAN_MAX_FBUFFER
-mdefine_line|#define ZORAN_MAX_FBUFFER&t;0x0A2000
+mdefine_line|#define&t;ZORAN_MAX_FBUFFER&t;(768*576*2)
 DECL|macro|ZORAN_MAX_FBUFSIZE
-mdefine_line|#define ZORAN_MAX_FBUFSIZE&t;(ZORAN_MAX_FBUFFERS*ZORAN_MAX_FBUFFER)
-multiline_comment|/* external declarations */
-r_extern
-r_int
-r_int
-id|zoran_alloc_memory
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|zoran_free_memory
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+mdefine_line|#define&t;ZORAN_MAX_FBUFSIZE&t;(ZORAN_MAX_FBUFFERS*ZORAN_MAX_FBUFFER)
+DECL|macro|ZORAN_VBI_BUFFERS
+mdefine_line|#define&t;ZORAN_VBI_BUFFERS&t;2
+DECL|macro|ZORAN_VBI_BUFSIZE
+mdefine_line|#define&t;ZORAN_VBI_BUFSIZE&t;(22*1024*2)
 DECL|struct|tvcard
 r_struct
 id|tvcard
@@ -134,19 +120,41 @@ DECL|struct|vidinfo
 r_struct
 id|vidinfo
 (brace
+DECL|member|next
+r_struct
+id|vidinfo
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* next active buffer&t;&t;&t;*/
+DECL|member|kindof
+id|uint
+id|kindof
+suffix:semicolon
+DECL|macro|FBUFFER_OVERLAY
+mdefine_line|#define&t;FBUFFER_OVERLAY&t;&t;0
+DECL|macro|FBUFFER_GRAB
+mdefine_line|#define&t;FBUFFER_GRAB&t;&t;1
+DECL|macro|FBUFFER_VBI
+mdefine_line|#define&t;FBUFFER_VBI&t;&t;2
 DECL|member|status
-r_int
+id|uint
 id|status
 suffix:semicolon
-DECL|macro|FBUFFER_UNUSED
-mdefine_line|#define FBUFFER_UNUSED       0
-DECL|macro|FBUFFER_GRABBING
-mdefine_line|#define FBUFFER_GRABBING     1
+DECL|macro|FBUFFER_FREE
+mdefine_line|#define FBUFFER_FREE&t;&t;0
+DECL|macro|FBUFFER_BUSY
+mdefine_line|#define FBUFFER_BUSY&t;&t;1
 DECL|macro|FBUFFER_DONE
-mdefine_line|#define FBUFFER_DONE         2
+mdefine_line|#define FBUFFER_DONE&t;&t;2
+DECL|member|fieldnr
+id|ulong
+id|fieldnr
+suffix:semicolon
+multiline_comment|/* # of field, not framer!&t;&t;*/
 DECL|member|x
 DECL|member|y
-r_int
+id|uint
 id|x
 comma
 id|y
@@ -158,29 +166,39 @@ id|w
 comma
 id|h
 suffix:semicolon
-DECL|member|bpl
-r_int
-id|bpl
-suffix:semicolon
-DECL|member|bpp
-r_int
-id|bpp
-suffix:semicolon
-multiline_comment|/* should be calculated */
+multiline_comment|/* w,h can be negative!&t;&t;&t;*/
 DECL|member|format
-r_int
+id|uint
 id|format
 suffix:semicolon
-DECL|member|vidadr
-id|ulong
-id|vidadr
+multiline_comment|/* index in palette2fmt[]&t;&t;*/
+DECL|member|bpp
+id|uint
+id|bpp
 suffix:semicolon
-multiline_comment|/* physical video address */
+multiline_comment|/* lookup from palette2fmt[]&t;&t;*/
+DECL|member|bpl
+id|uint
+id|bpl
+suffix:semicolon
+multiline_comment|/* calc: width * bpp&t;&t;&t;*/
+DECL|member|busadr
+id|ulong
+id|busadr
+suffix:semicolon
+multiline_comment|/* bus addr for DMA engine&t;&t;*/
+DECL|member|memadr
+r_char
+op_star
+id|memadr
+suffix:semicolon
+multiline_comment|/* kernel addr for making copies&t;*/
 DECL|member|overlay
 id|ulong
 op_star
 id|overlay
 suffix:semicolon
+multiline_comment|/* kernel addr of overlay mask&t;&t;*/
 )brace
 suffix:semicolon
 DECL|struct|zoran
@@ -192,96 +210,91 @@ r_struct
 id|video_device
 id|video_dev
 suffix:semicolon
+DECL|macro|CARD_DEBUG
+mdefine_line|#define CARD_DEBUG&t;KERN_DEBUG &quot;%s(%lu): &quot;
+DECL|macro|CARD_INFO
+mdefine_line|#define CARD_INFO&t;KERN_INFO &quot;%s(%lu): &quot;
+DECL|macro|CARD_ERR
+mdefine_line|#define CARD_ERR&t;KERN_ERR &quot;%s(%lu): &quot;
 DECL|macro|CARD
-mdefine_line|#define CARD&t;ztv-&gt;video_dev.name
+mdefine_line|#define CARD&t;&t;ztv-&gt;video_dev.name,ztv-&gt;fieldnr
+multiline_comment|/* zoran chip specific details */
 DECL|member|i2c
 r_struct
 id|i2c_bus
 id|i2c
 suffix:semicolon
-DECL|member|picture
-r_struct
-id|video_picture
-id|picture
-suffix:semicolon
-multiline_comment|/* Current picture params */
-DECL|member|audio_dev
-r_struct
-id|video_audio
-id|audio_dev
-suffix:semicolon
-multiline_comment|/* Current audio params */
-multiline_comment|/* zoran chip specific details */
+multiline_comment|/* i2c registration data&t;*/
 DECL|member|dev
 r_struct
 id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* ptr to PCI device */
-DECL|member|id
-id|ushort
-id|id
-suffix:semicolon
-multiline_comment|/* chip id */
-DECL|member|revision
-r_int
-r_char
-id|revision
-suffix:semicolon
-multiline_comment|/* chip revision */
+multiline_comment|/* ptr to PCI device&t;&t;*/
 DECL|member|zoran_adr
-r_int
+id|ulong
 id|zoran_adr
 suffix:semicolon
-multiline_comment|/* bus address of IO memory */
+multiline_comment|/* bus address of IO memory&t;*/
 DECL|member|zoran_mem
 r_char
 op_star
 id|zoran_mem
 suffix:semicolon
-multiline_comment|/* pointer to mapped IO memory */
-multiline_comment|/* videocard details */
-DECL|member|swidth
-r_int
-id|swidth
-suffix:semicolon
-multiline_comment|/* screen width */
-DECL|member|sheight
-r_int
-id|sheight
-suffix:semicolon
-multiline_comment|/* screen height */
-DECL|member|depth
-r_int
-id|depth
-suffix:semicolon
-multiline_comment|/* depth in bits */
-multiline_comment|/* channel details */
-DECL|member|norm
-r_int
-id|norm
-suffix:semicolon
-multiline_comment|/* 0=PAL, 1=NTSC, 2=SECAM */
+multiline_comment|/* kernel address of IO memory&t;*/
 DECL|member|card
 r_struct
 id|tvcard
 op_star
 id|card
 suffix:semicolon
-multiline_comment|/* the cardtype */
+multiline_comment|/* the cardtype&t;&t;&t;*/
+DECL|member|norm
+id|uint
+id|norm
+suffix:semicolon
+multiline_comment|/* 0=PAL, 1=NTSC, 2=SECAM&t;*/
 DECL|member|tuner_freq
-r_int
+id|uint
 id|tuner_freq
 suffix:semicolon
-multiline_comment|/* in Hz */
+multiline_comment|/* Current freq in kHz&t;&t;*/
+DECL|member|picture
+r_struct
+id|video_picture
+id|picture
+suffix:semicolon
+multiline_comment|/* Current picture params&t;*/
+multiline_comment|/* videocard details */
+DECL|member|swidth
+id|uint
+id|swidth
+suffix:semicolon
+multiline_comment|/* screen width&t;&t;&t;*/
+DECL|member|sheight
+id|uint
+id|sheight
+suffix:semicolon
+multiline_comment|/* screen height&t;&t;*/
+DECL|member|depth
+id|uint
+id|depth
+suffix:semicolon
+multiline_comment|/* depth in bits&t;&t;*/
 multiline_comment|/* State details */
+DECL|member|fbuffer
+r_char
+op_star
+id|fbuffer
+suffix:semicolon
+multiline_comment|/* framebuffers for mmap&t;*/
 DECL|member|overinfo
 r_struct
 id|vidinfo
 id|overinfo
 suffix:semicolon
-multiline_comment|/* overlay data */
+multiline_comment|/* overlay data&t;&t;&t;*/
 DECL|member|grabinfo
 r_struct
 id|vidinfo
@@ -290,54 +303,58 @@ id|grabinfo
 id|ZORAN_MAX_FBUFFERS
 )braket
 suffix:semicolon
-multiline_comment|/* grabbing data */
-DECL|member|readinfo
-r_struct
-id|vidinfo
-id|readinfo
-suffix:semicolon
-multiline_comment|/* reading data */
-multiline_comment|/* maintenance data */
-DECL|member|fbuffer
-r_char
-op_star
-id|fbuffer
-suffix:semicolon
-multiline_comment|/* framebuffers for mmap */
-DECL|member|user
-r_int
-id|user
-suffix:semicolon
-multiline_comment|/* # users */
-DECL|member|have_decoder
-r_int
-id|have_decoder
-suffix:semicolon
-multiline_comment|/* did we detect a mux? */
-DECL|member|have_tuner
-r_int
-id|have_tuner
-suffix:semicolon
-multiline_comment|/* did we detect a tuner? */
-DECL|member|tuner_type
-r_int
-id|tuner_type
-suffix:semicolon
-multiline_comment|/* tuner type, when found */
-DECL|member|running
-r_int
-id|running
-suffix:semicolon
+multiline_comment|/* grabbing data*/
 DECL|member|grabq
 id|wait_queue_head_t
 id|grabq
 suffix:semicolon
-multiline_comment|/* waiting capturers */
-DECL|member|readq
-id|wait_queue_head_t
-id|readq
+multiline_comment|/* grabbers queue&t;&t;*/
+multiline_comment|/* VBI details */
+DECL|member|vbi_dev
+r_struct
+id|video_device
+id|vbi_dev
 suffix:semicolon
-multiline_comment|/* waiting readers */
+DECL|member|readinfo
+r_struct
+id|vidinfo
+id|readinfo
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* VBI data - flip buffers&t;*/
+DECL|member|vbiq
+id|wait_queue_head_t
+id|vbiq
+suffix:semicolon
+multiline_comment|/* vbi queue&t;&t;&t;*/
+multiline_comment|/* maintenance data */
+DECL|member|have_decoder
+r_int
+id|have_decoder
+suffix:semicolon
+multiline_comment|/* did we detect a mux?&t;&t;*/
+DECL|member|have_tuner
+r_int
+id|have_tuner
+suffix:semicolon
+multiline_comment|/* did we detect a tuner?&t;*/
+DECL|member|users
+r_int
+id|users
+suffix:semicolon
+multiline_comment|/* howmany video/vbi open?&t;*/
+DECL|member|tuner_type
+r_int
+id|tuner_type
+suffix:semicolon
+multiline_comment|/* tuner type, when found&t;*/
+DECL|member|running
+r_int
+id|running
+suffix:semicolon
+multiline_comment|/* are we rolling?&t;&t;*/
 DECL|member|lock
 id|rwlock_t
 id|lock
@@ -346,24 +363,31 @@ DECL|member|state
 r_int
 id|state
 suffix:semicolon
-multiline_comment|/* what is requested of us? */
-DECL|macro|STATE_READ
-mdefine_line|#define STATE_READ&t;0
-DECL|macro|STATE_GRAB
-mdefine_line|#define STATE_GRAB&t;1
+multiline_comment|/* what is requested of us?&t;*/
 DECL|macro|STATE_OVERLAY
-mdefine_line|#define STATE_OVERLAY&t;2
-DECL|member|prevstate
-r_int
-id|prevstate
+mdefine_line|#define STATE_OVERLAY&t;0
+DECL|macro|STATE_VBI
+mdefine_line|#define STATE_VBI&t;1
+DECL|member|workqueue
+r_struct
+id|vidinfo
+op_star
+id|workqueue
 suffix:semicolon
-DECL|member|lastframe
-r_int
-id|lastframe
+multiline_comment|/* buffers to grab, head is active */
+DECL|member|fieldnr
+id|ulong
+id|fieldnr
 suffix:semicolon
-DECL|member|interlace
+multiline_comment|/* #field, ticked every VSYNC&t;*/
+DECL|member|lastfieldnr
+id|ulong
+id|lastfieldnr
+suffix:semicolon
+multiline_comment|/* #field, ticked every GRAB&t;*/
+DECL|member|vidInterlace
 r_int
-id|interlace
+id|vidInterlace
 suffix:semicolon
 multiline_comment|/* calculated */
 DECL|member|vidXshift
@@ -372,12 +396,12 @@ id|vidXshift
 suffix:semicolon
 multiline_comment|/* calculated */
 DECL|member|vidWidth
-r_int
+id|uint
 id|vidWidth
 suffix:semicolon
 multiline_comment|/* calculated */
 DECL|member|vidHeight
-r_int
+id|uint
 id|vidHeight
 suffix:semicolon
 multiline_comment|/* calculated */
@@ -387,7 +411,7 @@ DECL|macro|zrwrite
 mdefine_line|#define zrwrite(dat,adr)    writel((dat),(char *) (ztv-&gt;zoran_mem+(adr)))
 DECL|macro|zrread
 mdefine_line|#define zrread(adr)         readl(ztv-&gt;zoran_mem+(adr))
-macro_line|#if !defined(PDEBUG) || (PDEBUG == 0)
+macro_line|#if PDEBUG == 0
 DECL|macro|zrand
 mdefine_line|#define zrand(dat,adr)      zrwrite((dat) &amp; zrread(adr), adr)
 DECL|macro|zror

@@ -1,11 +1,11 @@
-multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;   &n;   Written 1994-1998 by Mika Kuoppala&n;   &n;   Copyright (C) 1994-1998 by Mika Kuoppala&n;   Based on skeleton.c and heavily on at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@iki.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA &n;&t;  (Uses true 32 bit transfers rather than 16i compability mode)&n;&n;   Example Module usage:&n;        insmod eth16i.o ioaddr=0x2a0 mediatype=bnc&n;&n;&t;mediatype can be one of the following: bnc,tp,dix,auto,eprom&n;&n;&t;&squot;auto&squot; will try to autoprobe mediatype.&n;&t;&squot;eprom&squot; will use whatever type defined in eprom.&n;&n;   I have benchmarked driver with PII/300Mhz as a ftp client&n;   and 486/33Mhz as a ftp server. Top speed was 1128.37 kilobytes/sec.&n;   &n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Author thanks following persons due to their valueble assistance:    &n;        Markku Viima (ICL)&n;&t;Ari Valve (ICL)      &n;&t;Donald Becker&n;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01         15.12-94        Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;                                Made a few changes to signature checking&n;                                to make it a bit reliable.&n;                                - fixed bug in tx_buf mapping&n;                                - fixed bug in initialization (DLC_EN&n;                                  wasn&squot;t enabled when initialization&n;                                  was done.)&n;   0.05         08.02-95        If there were more than one packet to send,&n;                                transmit was jammed due to invalid&n;                                register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;                                data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95        Added module support&n;   &n;   0.10         04.09-95        Fixed receive packet allocation to work&n;                                with kernels &gt; 1.3.x&n;      &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   &t;&t;&t;&t;&n;   0.22&t;&t;22.02-96&t;Receive buffer was not flushed&n;&t;&t;&t;&t;correctly when faulty packet was&n;&t;&t;&t;&t;received. Now fixed.&n;&n;   0.23&t;&t;26.02-96&t;Made resetting the adapter&t;&n;&t;&t;&t; &t;more reliable.&n;   &n;   0.24&t;&t;27.02-96&t;Rewrote faulty packet handling in eth16i_rx&n;&n;   0.25&t;&t;22.05-96&t;kfree() was missing from cleanup_module.&n;&n;   0.26&t;&t;11.06-96&t;Sometimes card was not found by &n;&t;&t;&t;&t;check_signature(). Now made more reliable.&n;   &n;   0.27&t;&t;23.06-96&t;Oops. 16 consecutive collisions halted &n;&t;&t;&t;&t;adapter. Now will try to retransmit &n;&t;&t;&t;&t;MAX_COL_16 times before finally giving up.&n;   &n;   0.28&t;        28.10-97&t;Added dev_id parameter (NULL) for free_irq&n;&n;   0.29         29.10-97        Multiple card support for module users&n;&n;   0.30         30.10-97        Fixed irq allocation bug.&n;                                (request_irq moved from probe to open)&n;&n;   0.30a        21.08-98        Card detection made more relaxed. Driver&n;                                had problems with some TCP/IP-PROM boots&n;&t;&t;&t;&t;to find the card. Suggested by &n;&t;&t;&t;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   0.31         28.08-98        Media interface port can now be selected&n;                                with module parameters or kernel&n;&t;&t;&t;&t;boot parameters. &n;&n;   0.32         31.08-98        IRQ was never freed if open/close &n;                                pair wasn&squot;t called. Now fixed.&n;   &n;   0.33         10.09-98        When eth16i_open() was called after&n;                                eth16i_close() chip never recovered.&n;&t;&t;&t;&t;Now more shallow reset is made on&n;&t;&t;&t;&t;close.&n;&n;   Bugs:&n;&t;In some cases the media interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;This is also true for IRQ setting. You cannot use module&n;&t;parameter to configure IRQ of the card (yet). &n;&n;   To do:&n;&t;- Real multicast support&n;&t;- Rewrite the media interface autoprobing code. Its _horrible_ !&n;&t;- Possibly merge all the MB86965 specific code to external&n;&t;  module for use by eth16.c and Donald&squot;s at1700.c&n;&t;- IRQ configuration with module parameter. I will do&n;&t;  this when i will get enough info about setting&n;&t;  irq without configuration utility.&n;*/
+multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;   &n;   Written 1994-1999 by Mika Kuoppala&n;   &n;   Copyright (C) 1994-1999 by Mika Kuoppala&n;   Based on skeleton.c and heavily on at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@iki.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA &n;&t;  (Uses true 32 bit transfers rather than 16i compability mode)&n;&n;   Example Module usage:&n;        insmod eth16i.o io=0x2a0 mediatype=bnc&n;&n;&t;mediatype can be one of the following: bnc,tp,dix,auto,eprom&n;&n;&t;&squot;auto&squot; will try to autoprobe mediatype.&n;&t;&squot;eprom&squot; will use whatever type defined in eprom.&n;&n;   I have benchmarked driver with PII/300Mhz as a ftp client&n;   and 486/33Mhz as a ftp server. Top speed was 1128.37 kilobytes/sec.&n;   &n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Author thanks following persons due to their valueble assistance:    &n;        Markku Viima (ICL)&n;&t;Ari Valve (ICL)      &n;&t;Donald Becker&n;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01         15.12-94        Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;                                Made a few changes to signature checking&n;                                to make it a bit reliable.&n;                                - fixed bug in tx_buf mapping&n;                                - fixed bug in initialization (DLC_EN&n;                                  wasn&squot;t enabled when initialization&n;                                  was done.)&n;   0.05         08.02-95        If there were more than one packet to send,&n;                                transmit was jammed due to invalid&n;                                register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;                                data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95        Added module support&n;   &n;   0.10         04.09-95        Fixed receive packet allocation to work&n;                                with kernels &gt; 1.3.x&n;      &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   &t;&t;&t;&t;&n;   0.22&t;&t;22.02-96&t;Receive buffer was not flushed&n;&t;&t;&t;&t;correctly when faulty packet was&n;&t;&t;&t;&t;received. Now fixed.&n;&n;   0.23&t;&t;26.02-96&t;Made resetting the adapter&t;&n;&t;&t;&t; &t;more reliable.&n;   &n;   0.24&t;&t;27.02-96&t;Rewrote faulty packet handling in eth16i_rx&n;&n;   0.25&t;&t;22.05-96&t;kfree() was missing from cleanup_module.&n;&n;   0.26&t;&t;11.06-96&t;Sometimes card was not found by &n;&t;&t;&t;&t;check_signature(). Now made more reliable.&n;   &n;   0.27&t;&t;23.06-96&t;Oops. 16 consecutive collisions halted &n;&t;&t;&t;&t;adapter. Now will try to retransmit &n;&t;&t;&t;&t;MAX_COL_16 times before finally giving up.&n;   &n;   0.28&t;        28.10-97&t;Added dev_id parameter (NULL) for free_irq&n;&n;   0.29         29.10-97        Multiple card support for module users&n;&n;   0.30         30.10-97        Fixed irq allocation bug.&n;                                (request_irq moved from probe to open)&n;&n;   0.30a        21.08-98        Card detection made more relaxed. Driver&n;                                had problems with some TCP/IP-PROM boots&n;&t;&t;&t;&t;to find the card. Suggested by &n;&t;&t;&t;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   0.31         28.08-98        Media interface port can now be selected&n;                                with module parameters or kernel&n;&t;&t;&t;&t;boot parameters. &n;&n;   0.32         31.08-98        IRQ was never freed if open/close &n;                                pair wasn&squot;t called. Now fixed.&n;   &n;   0.33         10.09-98        When eth16i_open() was called after&n;                                eth16i_close() chip never recovered.&n;&t;&t;&t;&t;Now more shallow reset is made on&n;&t;&t;&t;&t;close.&n;&n;   0.34         29.06-99&t;Fixed one bad #ifdef.&n;&t;&t;&t;&t;Changed ioaddr -&gt; io for consistency&n;&n;   0.35         01.07-99        transmit,-receive bytes were never&n;                                updated in stats. &n;&n;   Bugs:&n;&t;In some cases the media interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;This is also true for IRQ setting. You cannot use module&n;&t;parameter to configure IRQ of the card (yet). &n;&n;   To do:&n;&t;- Real multicast support&n;&t;- Rewrite the media interface autoprobing code. Its _horrible_ !&n;&t;- Possibly merge all the MB86965 specific code to external&n;&t;  module for use by eth16.c and Donald&squot;s at1700.c&n;&t;- IRQ configuration with module parameter. I will do&n;&t;  this when i will get enough info about setting&n;&t;  irq without configuration utility.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eth16i.c: v0.33 10-09-98 Mika Kuoppala (miku@iki.fi)&bslash;n&quot;
+l_string|&quot;eth16i.c: v0.35 01-Jul-1999 Mika Kuoppala (miku@iki.fi)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -531,6 +531,11 @@ DECL|member|tx_buffered_packets
 r_int
 r_int
 id|tx_buffered_packets
+suffix:semicolon
+DECL|member|tx_buffered_bytes
+r_int
+r_int
+id|tx_buffered_bytes
 suffix:semicolon
 DECL|member|col_16
 r_int
@@ -4182,6 +4187,10 @@ suffix:semicolon
 id|lp-&gt;tx_buffered_packets
 op_increment
 suffix:semicolon
+id|lp-&gt;tx_buffered_bytes
+op_assign
+id|length
+suffix:semicolon
 id|lp-&gt;tx_queue
 op_increment
 suffix:semicolon
@@ -4679,6 +4688,10 @@ id|skb
 suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 r_if
 c_cond
@@ -5227,6 +5240,10 @@ multiline_comment|/* The transmit has been done */
 id|lp-&gt;stats.tx_packets
 op_assign
 id|lp-&gt;tx_buffered_packets
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|lp-&gt;tx_buffered_bytes
 suffix:semicolon
 id|lp-&gt;col_16
 op_assign
@@ -5848,10 +5865,10 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|variable|ioaddr
+DECL|variable|io
 r_static
 r_int
-id|ioaddr
+id|io
 (braket
 id|MAX_ETH16I_CARDS
 )braket
@@ -5913,7 +5930,7 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|ioaddr
+id|io
 comma
 l_string|&quot;1-&quot;
 id|__MODULE_STRING
@@ -5927,7 +5944,7 @@ suffix:semicolon
 id|MODULE_PARM_DESC
 c_func
 (paren
-id|ioaddr
+id|io
 comma
 l_string|&quot;eth16i io base address&quot;
 )paren
@@ -6053,7 +6070,7 @@ suffix:semicolon
 multiline_comment|/* irq[this_dev]; */
 id|dev-&gt;base_addr
 op_assign
-id|ioaddr
+id|io
 (braket
 id|this_dev
 )braket
@@ -6121,7 +6138,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ioaddr
+id|io
 (braket
 id|this_dev
 )braket
@@ -6167,7 +6184,7 @@ c_func
 id|KERN_WARNING
 l_string|&quot;eth16i.c No Eth16i card found (i/o = 0x%x).&bslash;n&quot;
 comma
-id|ioaddr
+id|io
 (braket
 id|this_dev
 )braket

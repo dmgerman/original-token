@@ -1772,7 +1772,6 @@ l_string|&quot;i2c tda9855 driver&quot;
 comma
 id|I2C_DRIVERID_TDA9855
 comma
-multiline_comment|/* FIXME */
 id|I2C_DF_NOTIFY
 comma
 id|tda9855_probe

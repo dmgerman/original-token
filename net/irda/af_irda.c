@@ -5912,7 +5912,7 @@ op_minus
 id|ENOPROTOOPT
 suffix:semicolon
 r_case
-id|IRTTP_MAX_SDU_SIZE
+id|IRLMP_MAX_SDU_SIZE
 suffix:colon
 r_if
 c_cond
@@ -6707,7 +6707,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|IRTTP_MAX_SDU_SIZE
+id|IRLMP_MAX_SDU_SIZE
 suffix:colon
 id|val
 op_assign

@@ -1179,7 +1179,6 @@ l_string|&quot;i2c tea6300 driver&quot;
 comma
 id|I2C_DRIVERID_TEA6300
 comma
-multiline_comment|/* FIXME */
 id|I2C_DF_NOTIFY
 comma
 id|tea6300_probe

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.9&n; * Description:   IrLAP frame declarations&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Thu Dec  9 15:50:09 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.h&n; * Version:       0.9&n; * Description:   IrLAP frame declarations&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Dec 21 11:10:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRLAP_FRAME_H
 DECL|macro|IRLAP_FRAME_H
 mdefine_line|#define IRLAP_FRAME_H
@@ -268,6 +268,17 @@ c_func
 r_struct
 id|irlap_cb
 op_star
+id|self
+)paren
+suffix:semicolon
+r_void
+id|irlap_send_rd_frame
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
 )paren
 suffix:semicolon
 r_void
@@ -277,6 +288,7 @@ c_func
 r_struct
 id|irlap_cb
 op_star
+id|self
 )paren
 suffix:semicolon
 r_void
@@ -286,6 +298,7 @@ c_func
 r_struct
 id|irlap_cb
 op_star
+id|self
 comma
 r_int
 id|command
@@ -350,6 +363,19 @@ c_func
 r_struct
 id|irlap_cb
 op_star
+comma
+r_int
+id|command
+)paren
+suffix:semicolon
+r_void
+id|irlap_resend_rejected_frame
+c_func
+(paren
+r_struct
+id|irlap_cb
+op_star
+id|self
 comma
 r_int
 id|command

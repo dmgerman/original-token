@@ -5,8 +5,7 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* $Revision: 1.4 $ $Date: 1999/12/02 02:05:34 $*/
-multiline_comment|/* ------------------------------------------------------------------------- */
+multiline_comment|/* $Id: i2c-id.h,v 1.6 1999/12/21 23:45:58 frodo Exp $ */
 macro_line|#ifndef I2C_ID_H
 DECL|macro|I2C_ID_H
 mdefine_line|#define I2C_ID_H
@@ -62,6 +61,8 @@ DECL|macro|I2C_DRIVERID_EXP2
 mdefine_line|#define I2C_DRIVERID_EXP2&t;0xF2
 DECL|macro|I2C_DRIVERID_EXP3
 mdefine_line|#define I2C_DRIVERID_EXP3&t;0xF3
+DECL|macro|I2C_DRIVERID_MGATVO
+mdefine_line|#define I2C_DRIVERID_MGATVO&t;0x0101&t;/* Matrox TVOut&t;&t;&t;*/
 DECL|macro|I2C_DRIVERID_I2CDEV
 mdefine_line|#define I2C_DRIVERID_I2CDEV&t;900
 DECL|macro|I2C_DRIVERID_I2CPROC
@@ -113,6 +114,8 @@ DECL|macro|I2C_HW_B_VIA
 mdefine_line|#define I2C_HW_B_VIA    0x07    /* Via vt82c586b&t;&t;&t;*/
 DECL|macro|I2C_HW_B_HYDRA
 mdefine_line|#define I2C_HW_B_HYDRA  0x08    /* Apple Hydra Mac I/O                  */
+DECL|macro|I2C_HW_B_G400
+mdefine_line|#define I2C_HW_B_G400&t;0x09&t;/* Matrox G400&t;&t;&t;&t;*/
 multiline_comment|/* --- PCF 8584 based algorithms&t;&t;&t;&t;&t;*/
 DECL|macro|I2C_HW_P_LP
 mdefine_line|#define I2C_HW_P_LP&t;0x00&t;/* Parallel port interface&t;&t;*/

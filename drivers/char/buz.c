@@ -14169,20 +14169,6 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-id|zr36060_sleep
-c_func
-(paren
-id|zr
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|mdelay
-c_func
-(paren
-l_int|10
-)paren
-suffix:semicolon
 multiline_comment|/* display codec revision */
 r_if
 c_cond
@@ -14365,20 +14351,6 @@ c_func
 l_int|3000
 )paren
 suffix:semicolon
-id|zr36060_sleep
-c_func
-(paren
-id|zr
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|3000
-)paren
-suffix:semicolon
 multiline_comment|/* display codec revision */
 r_if
 c_cond
@@ -14429,8 +14401,20 @@ comma
 id|rev
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;&t;&t;kfree((void *) zr-&gt;stat_com);
-singleline_comment|//&t;&t;&t;&t;return -1;
+id|kfree
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|zr-&gt;stat_com
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon

@@ -400,6 +400,7 @@ c_cond
 (paren
 id|self-&gt;tsap
 )paren
+(brace
 id|irttp_close_tsap
 c_func
 (paren
@@ -410,6 +411,7 @@ id|self-&gt;tsap
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 multiline_comment|/* Remove LSAP */
 r_if
 c_cond

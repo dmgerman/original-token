@@ -85,18 +85,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_VIDEO_ZR36120
-r_extern
-r_int
-id|init_zr36120_cards
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|variable|video_init_list
 r_static
 r_struct

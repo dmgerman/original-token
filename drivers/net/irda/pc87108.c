@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Thu Dec 16 00:54:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations are quite&n; *    similar.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      pc87108.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the NS PC87108 chip&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Nov  7 21:43:15 1998&n; * Modified at:   Tue Dec 21 21:51:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1998 Lichen Wang, &lt;lwang@actisys.com&gt;&n; *     Copyright (c) 1998 Actisys Corp., www.actisys.com&n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb(iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb(bank, iobase+BSR);&n; *&n; *    If you find bugs in this file, its very likely that the same bug&n; *    will also be in w83977af_ir.c since the implementations are quite&n; *    similar.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -346,17 +346,6 @@ r_struct
 id|pt_regs
 op_star
 id|regs
-)paren
-suffix:semicolon
-r_static
-r_void
-id|pc87108_wait_until_sent
-c_func
-(paren
-r_struct
-id|pc87108
-op_star
-id|self
 )paren
 suffix:semicolon
 r_static
@@ -1019,39 +1008,6 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/* dev_alloc doesn&squot;t clear the struct, so lets do a little hack */
-id|memset
-c_func
-(paren
-(paren
-(paren
-id|__u8
-op_star
-)paren
-id|dev
-)paren
-op_plus
-r_sizeof
-(paren
-r_char
-op_star
-)paren
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
-op_minus
-r_sizeof
-(paren
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
 id|dev-&gt;priv
 op_assign
 (paren
@@ -1209,13 +1165,6 @@ suffix:semicolon
 id|rtnl_unlock
 c_func
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/* Must free the old-style 2.2.x device */
-id|kfree
-c_func
-(paren
-id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -2780,10 +2729,12 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+l_string|&quot;(), speed=%d&bslash;n&quot;
+comma
+id|speed
 )paren
 suffix:semicolon
 id|ASSERT
@@ -3481,6 +3432,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|self-&gt;tx_buff.data
+op_assign
+id|self-&gt;tx_buff.head
+suffix:semicolon
 id|self-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
@@ -3492,10 +3447,6 @@ id|self-&gt;tx_buff.data
 comma
 id|self-&gt;tx_buff.truesize
 )paren
-suffix:semicolon
-id|self-&gt;tx_buff.data
-op_assign
-id|self-&gt;tx_buff.head
 suffix:semicolon
 multiline_comment|/* Add interrupt on tx low level (will fire immediately) */
 id|switch_bank
@@ -4107,6 +4058,10 @@ op_plus
 id|MCR
 )paren
 suffix:semicolon
+id|self-&gt;rx_buff.data
+op_assign
+id|self-&gt;rx_buff.head
+suffix:semicolon
 id|setup_dma
 c_func
 (paren
@@ -4123,10 +4078,6 @@ multiline_comment|/* driver-&gt;media_busy = FALSE; */
 id|self-&gt;io.direction
 op_assign
 id|IO_RECV
-suffix:semicolon
-id|self-&gt;rx_buff.data
-op_assign
-id|self-&gt;rx_buff.head
 suffix:semicolon
 multiline_comment|/* Reset Rx FIFO. This will also flush the ST_FIFO */
 id|outb
@@ -4924,6 +4875,35 @@ op_amp
 id|EIR_TXEMP_EV
 )paren
 (brace
+multiline_comment|/* Check if we need to change the speed? */
+r_if
+c_cond
+(paren
+id|self-&gt;new_speed
+)paren
+(brace
+id|IRDA_DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), Changing speed!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|pc87108_change_speed
+c_func
+(paren
+id|self
+comma
+id|self-&gt;new_speed
+)paren
+suffix:semicolon
+id|self-&gt;new_speed
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Turn around and get ready to receive some data */
 id|self-&gt;io.direction
 op_assign
@@ -5420,35 +5400,6 @@ multiline_comment|/* Restore bank register */
 id|dev-&gt;interrupt
 op_assign
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function pc87108_wait_until_sent (self)&n; *&n; *    This function should put the current thread to sleep until all data &n; *    have been sent, so it is safe to f.eks. change the speed.&n; */
-DECL|function|pc87108_wait_until_sent
-r_static
-r_void
-id|pc87108_wait_until_sent
-c_func
-(paren
-r_struct
-id|pc87108
-op_star
-id|self
-)paren
-(brace
-multiline_comment|/* Just delay 60 ms */
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|schedule_timeout
-c_func
-(paren
-id|MSECS_TO_JIFFIES
-c_func
-(paren
-l_int|60
-)paren
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function pc87108_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */

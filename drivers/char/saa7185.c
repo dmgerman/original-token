@@ -100,10 +100,6 @@ id|data
 r_int
 id|ack
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|LOCK_I2C_BUS
 c_func
 (paren
@@ -195,13 +191,11 @@ id|len
 (brace
 r_int
 id|ack
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|subaddr
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_while
 c_loop

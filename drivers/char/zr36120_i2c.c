@@ -3,8 +3,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/video_decoder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;linux/video_decoder.h&quot;
 macro_line|#include &quot;tuner.h&quot;
 macro_line|#include &quot;zr36120.h&quot;
 multiline_comment|/* ----------------------------------------------------------------------- */
@@ -167,6 +167,13 @@ op_star
 )paren
 id|bus-&gt;data
 suffix:semicolon
+r_struct
+id|video_decoder_capability
+id|dc
+suffix:semicolon
+r_int
+id|rv
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -176,22 +183,94 @@ id|id
 r_case
 id|I2C_DRIVERID_VIDEODECODER
 suffix:colon
-id|ztv-&gt;have_decoder
-op_assign
-l_int|1
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: decoder attached&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;decoder attached&bslash;n&quot;
 comma
 id|CARD
 )paren
 )paren
+suffix:semicolon
+multiline_comment|/* fetch the capabilites of the decoder */
+id|rv
+op_assign
+id|i2c_control_device
+c_func
+(paren
+op_amp
+id|ztv-&gt;i2c
+comma
+id|I2C_DRIVERID_VIDEODECODER
+comma
+id|DECODER_GET_CAPABILITIES
+comma
+op_amp
+id|dc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rv
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|CARD_DEBUG
+l_string|&quot;decoder is not V4L aware!&bslash;n&quot;
+comma
+id|CARD
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|DEBUG
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|CARD_DEBUG
+l_string|&quot;capabilities %d %d %d&bslash;n&quot;
+comma
+id|CARD
+comma
+id|dc.flags
+comma
+id|dc.inputs
+comma
+id|dc.outputs
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Test if the decoder can de VBI transfers */
+r_if
+c_cond
+(paren
+id|dc.flags
+op_amp
+l_int|16
+multiline_comment|/*VIDEO_DECODER_VBI*/
+)paren
+id|ztv-&gt;have_decoder
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+id|ztv-&gt;have_decoder
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -208,8 +287,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: tuner attached&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;tuner attached&bslash;n&quot;
 comma
 id|CARD
 )paren
@@ -248,8 +327,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: attach_inform; tuner wont be set to type %d&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;attach_inform; tuner wont be set to type %d&bslash;n&quot;
 comma
 id|CARD
 comma
@@ -268,8 +347,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: attach_inform; unknown device id=%d&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;attach_inform; unknown device id=%d&bslash;n&quot;
 comma
 id|CARD
 comma
@@ -327,8 +406,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: decoder detached&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;decoder detached&bslash;n&quot;
 comma
 id|CARD
 )paren
@@ -349,8 +428,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: tuner detached&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;tuner detached&bslash;n&quot;
 comma
 id|CARD
 )paren
@@ -366,8 +445,8 @@ c_func
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;%s: detach_inform; unknown device id=%d&bslash;n&quot;
+id|CARD_INFO
+l_string|&quot;detach_inform; unknown device id=%d&bslash;n&quot;
 comma
 id|CARD
 comma

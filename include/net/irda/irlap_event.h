@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; *                &n; * Filename:      irlap_event.h&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Wed Dec  8 10:49:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; *                &n; * Filename:      irlap_event.h&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Tue Dec 21 11:20:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRLAP_EVENT_H
 DECL|macro|IRLAP_EVENT_H
 mdefine_line|#define IRLAP_EVENT_H
@@ -121,6 +121,9 @@ comma
 DECL|enumerator|RECV_DM_RSP
 id|RECV_DM_RSP
 comma
+DECL|enumerator|RECV_RD_RSP
+id|RECV_RD_RSP
+comma
 DECL|enumerator|RECV_I_CMD
 id|RECV_I_CMD
 comma
@@ -139,11 +142,26 @@ comma
 DECL|enumerator|RECV_RR_RSP
 id|RECV_RR_RSP
 comma
-DECL|enumerator|RECV_RNR_FRAME
-id|RECV_RNR_FRAME
+DECL|enumerator|RECV_RNR_CMD
+id|RECV_RNR_CMD
 comma
-DECL|enumerator|RECV_DISC_FRAME
-id|RECV_DISC_FRAME
+DECL|enumerator|RECV_RNR_RSP
+id|RECV_RNR_RSP
+comma
+DECL|enumerator|RECV_REJ_CMD
+id|RECV_REJ_CMD
+comma
+DECL|enumerator|RECV_REJ_RSP
+id|RECV_REJ_RSP
+comma
+DECL|enumerator|RECV_SREJ_CMD
+id|RECV_SREJ_CMD
+comma
+DECL|enumerator|RECV_SREJ_RSP
+id|RECV_SREJ_RSP
+comma
+DECL|enumerator|RECV_DISC_CMD
+id|RECV_DISC_CMD
 comma
 multiline_comment|/* Timer events */
 DECL|enumerator|SLOT_TIMER_EXPIRED

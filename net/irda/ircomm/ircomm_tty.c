@@ -4013,7 +4013,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * If we receive data when hardware is stopped then something is wrong.&n;&t; * We try to poll the peers line settings to check if we are up todate.&n;&t; */
+multiline_comment|/* &n;&t; * If we receive data when hardware is stopped then something is wrong.&n;&t; * We try to poll the peers line settings to check if we are up todate.&n;&t; * Devices like WinCE can do this, and since they don&squot;t send any &n;&t; * params, we can just as well declare the hardware for running.&n;&t; */
 r_if
 c_cond
 (paren
@@ -4043,6 +4043,19 @@ comma
 id|IRCOMM_POLL
 comma
 id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* We can just as well declare the hardware for running */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 )brace

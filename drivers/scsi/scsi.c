@@ -892,6 +892,17 @@ id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* responds to all LUN */
+(brace
+l_string|&quot;MICROTEK&quot;
+comma
+l_string|&quot;ScanMaker II&quot;
+comma
+l_string|&quot;5.61&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* responds to all LUN */
 multiline_comment|/*&n; * Other types of devices that have special flags.&n; */
 (brace
 l_string|&quot;SONY&quot;

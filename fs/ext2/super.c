@@ -3864,7 +3864,7 @@ suffix:semicolon
 )brace
 DECL|function|exit_ext2_fs
 r_static
-r_int
+r_void
 id|__exit
 id|exit_ext2_fs
 c_func

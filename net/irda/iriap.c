@@ -428,7 +428,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -628,6 +628,17 @@ op_amp
 id|self-&gt;watchdog_timer
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|self-&gt;skb
+)paren
+suffix:semicolon
 id|self-&gt;magic
 op_assign
 l_int|0
@@ -659,7 +670,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -766,7 +777,7 @@ suffix:semicolon
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1023,6 +1034,12 @@ comma
 id|IAP_LM_DISCONNECT_INDICATION
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|iriap_close
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 )brace
@@ -2363,12 +2380,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|iriap_close
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function iriap_getvaluebyclass_indication (self, skb)&n; *&n; *    getvaluebyclass is requested from peer LM-IAS&n; *&n; */
 DECL|function|iriap_getvaluebyclass_indication
@@ -2534,13 +2545,13 @@ id|attr_len
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+multiline_comment|/* We do not need the buffer anymore */
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Now, do some advanced parsing! :-) &n;&t; */
 id|IRDA_DEBUG
 c_func
 (paren
@@ -2574,7 +2585,9 @@ c_func
 (paren
 l_int|2
 comma
-l_string|&quot;LM-IAS: Object not found&bslash;n&quot;
+l_string|&quot;LM-IAS: Object %s not found&bslash;n&quot;
+comma
+id|name
 )paren
 suffix:semicolon
 id|iriap_getvaluebyclass_response
@@ -2626,7 +2639,7 @@ l_int|NULL
 id|IRDA_DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;LM-IAS: Attribute %s not found&bslash;n&quot;
 comma
@@ -2649,17 +2662,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|IRDA_DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;LM-IAS: found %s&bslash;n&quot;
-comma
-id|attrib-&gt;name
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * We have a match; send the value.&n;&t; */
+multiline_comment|/* We have a match; send the value.  */
 id|iriap_getvaluebyclass_response
 c_func
 (paren

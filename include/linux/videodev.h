@@ -784,6 +784,50 @@ suffix:semicolon
 multiline_comment|/* Teletext minor */
 )brace
 suffix:semicolon
+DECL|struct|vbi_format
+r_struct
+id|vbi_format
+(brace
+DECL|member|sampling_rate
+id|__u32
+id|sampling_rate
+suffix:semicolon
+multiline_comment|/* in Hz */
+DECL|member|samples_per_line
+id|__u32
+id|samples_per_line
+suffix:semicolon
+DECL|member|sample_format
+id|__u32
+id|sample_format
+suffix:semicolon
+multiline_comment|/* VIDEO_PALETTE_RAW only (1 byte) */
+DECL|member|start
+id|__s32
+id|start
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* starting line for each frame */
+DECL|member|count
+id|__u32
+id|count
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* count of lines for each frame */
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+DECL|macro|VBI_UNSYNC
+mdefine_line|#define&t;VBI_UNSYNC&t;1&t;/* can distingues between top/bottom field */
+DECL|macro|VBI_INTERLACED
+mdefine_line|#define&t;VBI_INTERLACED&t;2&t;/* lines are interlaced */
+)brace
+suffix:semicolon
 multiline_comment|/* video_info is biased towards hardware mpeg encode/decode */
 multiline_comment|/* but it could apply generically to any hardware compressor/decompressor */
 DECL|struct|video_info
@@ -913,13 +957,13 @@ mdefine_line|#define VIDIOCSYNC&t;&t;_IOW(&squot;v&squot;,18, int)&t;&t;&t;/* Sy
 DECL|macro|VIDIOCMCAPTURE
 mdefine_line|#define VIDIOCMCAPTURE&t;&t;_IOW(&squot;v&squot;,19, struct video_mmap)&t;&t;/* Grab frames */
 DECL|macro|VIDIOCGMBUF
-mdefine_line|#define VIDIOCGMBUF&t;&t;_IOR(&squot;v&squot;, 20, struct video_mbuf)&t;/* Memory map buffer info */
+mdefine_line|#define VIDIOCGMBUF&t;&t;_IOR(&squot;v&squot;,20, struct video_mbuf)&t;&t;/* Memory map buffer info */
 DECL|macro|VIDIOCGUNIT
-mdefine_line|#define VIDIOCGUNIT&t;&t;_IOR(&squot;v&squot;, 21, struct video_unit)&t;/* Get attached units */
+mdefine_line|#define VIDIOCGUNIT&t;&t;_IOR(&squot;v&squot;,21, struct video_unit)&t;&t;/* Get attached units */
 DECL|macro|VIDIOCGCAPTURE
-mdefine_line|#define VIDIOCGCAPTURE&t;&t;_IOR(&squot;v&squot;,22, struct video_capture)&t;/* Get frame buffer */
+mdefine_line|#define VIDIOCGCAPTURE&t;&t;_IOR(&squot;v&squot;,22, struct video_capture)&t;/* Get subcapture */
 DECL|macro|VIDIOCSCAPTURE
-mdefine_line|#define VIDIOCSCAPTURE&t;&t;_IOW(&squot;v&squot;,23, struct video_capture)&t;/* Set frame buffer - root only */
+mdefine_line|#define VIDIOCSCAPTURE&t;&t;_IOW(&squot;v&squot;,23, struct video_capture)&t;/* Set subcapture */
 DECL|macro|VIDIOCSPLAYMODE
 mdefine_line|#define VIDIOCSPLAYMODE&t;&t;_IOW(&squot;v&squot;,24, struct video_play_mode)&t;/* Set output video mode/feature */
 DECL|macro|VIDIOCSWRITEMODE
@@ -928,6 +972,10 @@ DECL|macro|VIDIOCGPLAYINFO
 mdefine_line|#define VIDIOCGPLAYINFO&t;&t;_IOR(&squot;v&squot;,26, struct video_info)&t;&t;/* Get current playback info from hardware */
 DECL|macro|VIDIOCSMICROCODE
 mdefine_line|#define VIDIOCSMICROCODE&t;_IOW(&squot;v&squot;,27, struct video_code)&t;&t;/* Load microcode into hardware */
+DECL|macro|VIDIOCGVBIFMT
+mdefine_line|#define&t;VIDIOCGVBIFMT&t;&t;_IOR(&squot;v&squot;,28, struct vbi_format)&t;&t;/* Get VBI information */
+DECL|macro|VIDIOCSVBIFMT
+mdefine_line|#define&t;VIDIOCSVBIFMT&t;&t;_IOW(&squot;v&squot;,29, struct vbi_format)&t;&t;/* Set VBI information */
 DECL|macro|BASE_VIDIOCPRIVATE
 mdefine_line|#define BASE_VIDIOCPRIVATE&t;192&t;&t;/* 192-255 are private */
 multiline_comment|/* VIDIOCSWRITEMODE */

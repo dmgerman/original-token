@@ -1,5 +1,6 @@
 multiline_comment|/*&n;    i2c-dev.c - i2c-bus driver, char device interface  &n;&n;    Copyright (C) 1995-97 Simon G. Vogl&n;    Copyright (C) 1998-99 Frodo Looijaard &lt;frodol@dds.nl&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 multiline_comment|/* Note that this is a complete rewrite of Simon Vogl&squot;s i2c-dev module.&n;   But I have used so much of his original code and ideas that it seems&n;   only fair to recognize him as co-author -- Frodo */
+multiline_comment|/* $Id: i2c-dev.c,v 1.18 1999/12/21 23:45:58 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1075,6 +1076,9 @@ id|cmd
 r_case
 id|I2C_SLAVE
 suffix:colon
+r_case
+id|I2C_SLAVE_FORCE
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1103,6 +1107,27 @@ l_int|0x7f
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|cmd
+op_eq
+id|I2C_SLAVE
+)paren
+op_logical_and
+id|i2c_check_addr
+c_func
+(paren
+id|client-&gt;adapter
+comma
+id|arg
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 id|client-&gt;addr
 op_assign

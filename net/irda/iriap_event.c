@@ -810,6 +810,17 @@ comma
 id|S_CONNECTING
 )paren
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;skb
+op_eq
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
 id|self-&gt;skb
 op_assign
 id|skb

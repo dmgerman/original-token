@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Sun Dec 12 12:23:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     You probably need to include &lt;sys/types.h&gt; before this one if your&n; *     including this file from user-space &n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Mar  8 14:06:12 1999&n; * Modified at:   Tue Dec 21 09:00:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     You probably need to include &lt;sys/types.h&gt; before this one if your&n; *     including this file from user-space &n; *&n; ********************************************************************/
 macro_line|#ifndef KERNEL_IRDA_H
 DECL|macro|KERNEL_IRDA_H
 mdefine_line|#define KERNEL_IRDA_H
@@ -128,18 +128,20 @@ DECL|macro|IRLMP_ENUMDEVICES
 mdefine_line|#define IRLMP_ENUMDEVICES        1
 DECL|macro|IRLMP_IAS_SET
 mdefine_line|#define IRLMP_IAS_SET            2
-DECL|macro|IRLMP_IAS_GET
-mdefine_line|#define IRLMP_IAS_GET            3
 DECL|macro|IRLMP_IAS_QUERY
-mdefine_line|#define IRLMP_IAS_QUERY          4
+mdefine_line|#define IRLMP_IAS_QUERY          3
 DECL|macro|IRLMP_HINTS_SET
-mdefine_line|#define IRLMP_HINTS_SET          5
-DECL|macro|IRTTP_QOS_SET
-mdefine_line|#define IRTTP_QOS_SET            6
-DECL|macro|IRTTP_QOS_GET
-mdefine_line|#define IRTTP_QOS_GET            7
+mdefine_line|#define IRLMP_HINTS_SET          4
+DECL|macro|IRLMP_QOS_SET
+mdefine_line|#define IRLMP_QOS_SET            5
+DECL|macro|IRLMP_QOS_GET
+mdefine_line|#define IRLMP_QOS_GET            6
+DECL|macro|IRLMP_MAX_SDU_SIZE
+mdefine_line|#define IRLMP_MAX_SDU_SIZE       7
+DECL|macro|IRLMP_IAS_GET
+mdefine_line|#define IRLMP_IAS_GET            8
 DECL|macro|IRTTP_MAX_SDU_SIZE
-mdefine_line|#define IRTTP_MAX_SDU_SIZE       8
+mdefine_line|#define IRTTP_MAX_SDU_SIZE IRLMP_MAX_SDU_SIZE /* Compatibility */
 DECL|macro|IAS_MAX_STRING
 mdefine_line|#define IAS_MAX_STRING         256
 DECL|macro|IAS_MAX_OCTET_STRING
@@ -149,7 +151,7 @@ mdefine_line|#define IAS_MAX_CLASSNAME       64
 DECL|macro|IAS_MAX_ATTRIBNAME
 mdefine_line|#define IAS_MAX_ATTRIBNAME     256
 DECL|macro|LSAP_ANY
-mdefine_line|#define LSAP_ANY               0xff
+mdefine_line|#define LSAP_ANY              0xff
 DECL|struct|sockaddr_irda
 r_struct
 id|sockaddr_irda

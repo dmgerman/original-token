@@ -667,6 +667,15 @@ id|tsk-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|runqueue_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * Careful!&n; *&n; * This has to add the process to the _beginning_ of the&n; * run-queue, not the end. See the comment about &quot;This is&n; * subtle&quot; in the scheduler proper..&n; */

@@ -4031,6 +4031,30 @@ id|self-&gt;connected
 op_assign
 id|FALSE
 suffix:semicolon
+multiline_comment|/* Check if client has already tried to close the TSAP */
+r_if
+c_cond
+(paren
+id|self-&gt;close_pend
+)paren
+(brace
+id|irttp_close_tsap
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* No need to notify the client if has already tried to disconnect */
+r_if
+c_cond
+(paren
+id|self-&gt;disconnect_pend
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4051,7 +4075,6 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-(brace
 r_if
 c_cond
 (paren
@@ -4063,7 +4086,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irttp_do_data_indication (self, skb)&n; *&n; *    Try to deliver reassebled skb to layer above, and requeue it if that&n; *    for some reason should fail. We mark rx sdu as busy to apply back&n; *    pressure is necessary.&n; */
 DECL|function|irttp_do_data_indication
@@ -4085,6 +4107,24 @@ id|skb
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/* Check if client has already tried to close the TSAP */
+r_if
+c_cond
+(paren
+id|self-&gt;close_pend
+op_logical_or
+id|self-&gt;disconnect_pend
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|err
 op_assign
 id|self-&gt;notify

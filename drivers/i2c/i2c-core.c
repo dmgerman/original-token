@@ -2,10 +2,8 @@ multiline_comment|/* i2c-core.c - a device driver for the iic-bus interface&t;&t
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-DECL|macro|RCSID
-mdefine_line|#define RCSID &quot;$Id: i2c-core.c,v 1.42 1999/11/30 20:06:42 frodo Exp $&quot;
-multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt;.&n;   All SMBus-related things are written by Frodo Looijaard &lt;frodol@dds.nl&gt; */
+multiline_comment|/* $Id: i2c-core.c,v 1.44 1999/12/21 23:45:58 frodo Exp $ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1598,6 +1596,63 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|i2c_check_addr
+r_int
+id|i2c_check_addr
+(paren
+r_struct
+id|i2c_adapter
+op_star
+id|adapter
+comma
+r_int
+id|addr
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|I2C_CLIENT_MAX
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|adapter-&gt;clients
+(braket
+id|i
+)braket
+op_logical_and
+(paren
+id|adapter-&gt;clients
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|addr
+op_eq
+id|addr
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|i2c_attach_client
 r_int
 id|i2c_attach_client
@@ -1618,6 +1673,21 @@ id|client-&gt;adapter
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i2c_check_addr
+c_func
+(paren
+id|client-&gt;adapter
+comma
+id|client-&gt;addr
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 r_for
 c_loop
@@ -3394,6 +3464,20 @@ id|addr
 op_increment
 )paren
 (brace
+multiline_comment|/* Skip if already in use */
+r_if
+c_cond
+(paren
+id|i2c_check_addr
+c_func
+(paren
+id|adapter
+comma
+id|addr
+)paren
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* If it is in one of the force entries, we don&squot;t do any detection&n;       at all */
 id|found
 op_assign
@@ -5635,6 +5719,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|i2c_dec_use_client
+)paren
+suffix:semicolon
+DECL|variable|i2c_check_addr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|i2c_check_addr
 )paren
 suffix:semicolon
 DECL|variable|i2c_master_send
