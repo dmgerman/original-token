@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Kirk Petersen&n;&n;&t;Reorganized not to be a daemon by Adam Richter, with guidance&n;&t;from Greg Zornetzer.&n;&n;&t;Modified to avoid chroot and file sharing problems.&n;&t;Mikael Pettersson&n;&n;&t;Limit the concurrent number of kmod modprobes to catch loops from&n;&t;&quot;modprobe needs a service that is in a module&quot;.&n;&t;Keith Owens &lt;kaos@ocs.com.au&gt; December 1999&n;*/
+multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Kirk Petersen&n;&n;&t;Reorganized not to be a daemon by Adam Richter, with guidance&n;&t;from Greg Zornetzer.&n;&n;&t;Modified to avoid chroot and file sharing problems.&n;&t;Mikael Pettersson&n;&n;&t;Limit the concurrent number of kmod modprobes to catch loops from&n;&t;&quot;modprobe needs a service that is in a module&quot;.&n;&t;Keith Owens &lt;kaos@ocs.com.au&gt; December 1999&n;&n;&t;Unblock all signals when we exec a usermode process.&n;&t;Shuu Yamaguchi &lt;shuu@wondernetworkresources.com&gt; December 2000&n;*/
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -239,11 +239,18 @@ id|envp
 r_int
 id|i
 suffix:semicolon
-id|current-&gt;session
+r_struct
+id|task_struct
+op_star
+id|curtask
+op_assign
+id|current
+suffix:semicolon
+id|curtask-&gt;session
 op_assign
 l_int|1
 suffix:semicolon
-id|current-&gt;pgrp
+id|curtask-&gt;pgrp
 op_assign
 l_int|1
 suffix:semicolon
@@ -257,26 +264,39 @@ id|spin_lock_irq
 c_func
 (paren
 op_amp
-id|current-&gt;sigmask_lock
+id|curtask-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|sigemptyset
+c_func
+(paren
+op_amp
+id|curtask-&gt;blocked
 )paren
 suffix:semicolon
 id|flush_signals
 c_func
 (paren
-id|current
+id|curtask
 )paren
 suffix:semicolon
 id|flush_signal_handlers
 c_func
 (paren
-id|current
+id|curtask
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|curtask
 )paren
 suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
 op_amp
-id|current-&gt;sigmask_lock
+id|curtask-&gt;sigmask_lock
 )paren
 suffix:semicolon
 r_for
@@ -288,7 +308,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|current-&gt;files-&gt;max_fds
+id|curtask-&gt;files-&gt;max_fds
 suffix:semicolon
 id|i
 op_increment
@@ -297,7 +317,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|current-&gt;files-&gt;fd
+id|curtask-&gt;files-&gt;fd
 (braket
 id|i
 )braket
@@ -316,9 +336,9 @@ id|user_struct
 op_star
 id|user
 op_assign
-id|current-&gt;user
+id|curtask-&gt;user
 suffix:semicolon
-id|current-&gt;user
+id|curtask-&gt;user
 op_assign
 id|INIT_USER
 suffix:semicolon
@@ -351,22 +371,22 @@ id|user
 suffix:semicolon
 )brace
 multiline_comment|/* Give kmod all effective privileges.. */
-id|current-&gt;euid
+id|curtask-&gt;euid
 op_assign
-id|current-&gt;fsuid
+id|curtask-&gt;fsuid
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;egid
+id|curtask-&gt;egid
 op_assign
-id|current-&gt;fsgid
+id|curtask-&gt;fsgid
 op_assign
 l_int|0
 suffix:semicolon
 id|cap_set_full
 c_func
 (paren
-id|current-&gt;cap_effective
+id|curtask-&gt;cap_effective
 )paren
 suffix:semicolon
 multiline_comment|/* Allow execve args to be in kernel space. */

@@ -580,6 +580,14 @@ c_func
 r_void
 )paren
 (brace
+id|unregister_chrdev
+c_func
+(paren
+id|CPUID_MAJOR
+comma
+l_string|&quot;cpu/cpuid&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|variable|cpuid_init
 id|module_init

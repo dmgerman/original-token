@@ -98,10 +98,10 @@ DECL|member|coma_bug
 r_int
 id|coma_bug
 suffix:semicolon
-DECL|member|loops_per_sec
+DECL|member|loops_per_jiffy
 r_int
 r_int
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 DECL|member|pgd_quick
 r_int

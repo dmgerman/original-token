@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mtd/map.h&gt;
 macro_line|#include &lt;linux/mtd/cfi.h&gt;
-r_static
 r_struct
 id|mtd_info
 op_star
@@ -69,7 +68,6 @@ l_string|&quot;cfi_probe&quot;
 suffix:semicolon
 multiline_comment|/* This routine is made available to other mtd code via&n; * inter_module_register.  It must only be accessed through&n; * inter_module_get which will bump the use count of this module.  The&n; * addresses passed back in mtd are valid as long as the use count of&n; * this module is non-zero, i.e. between inter_module_get and&n; * inter_module_put.  Keith Owens &lt;kaos@ocs.com.au&gt; 29 Oct 2000.&n; */
 DECL|function|cfi_probe
-r_static
 r_struct
 id|mtd_info
 op_star

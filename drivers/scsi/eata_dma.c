@@ -3642,12 +3642,15 @@ id|resetflags
 id|uint
 id|x
 suffix:semicolon
+multiline_comment|/* 10 million PCI reads take at least one third of a second */
 id|ulong
 id|loop
 op_assign
-id|loops_per_sec
-op_div
-l_int|3
+l_int|10
+op_star
+l_int|1000
+op_star
+l_int|1000
 suffix:semicolon
 id|ulong
 id|flags

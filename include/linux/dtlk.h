@@ -14,7 +14,7 @@ mdefine_line|#define DTLK_STATUS 0xa391&t;/* get status from the DoubleTalk */
 DECL|macro|DTLK_CLEAR
 mdefine_line|#define DTLK_CLEAR 0x18&t;&t;/* stops speech */
 DECL|macro|DTLK_MAX_RETRIES
-mdefine_line|#define DTLK_MAX_RETRIES (loops_per_sec/10000)
+mdefine_line|#define DTLK_MAX_RETRIES (loops_per_jiffy/(10000/HZ))
 multiline_comment|/* TTS Port Status Flags */
 DECL|macro|TTS_READABLE
 mdefine_line|#define TTS_READABLE     0x80&t;/* mask for bit which is nonzero if a&n;&t;&t;&t;&t;   byte can be read from the TTS port */

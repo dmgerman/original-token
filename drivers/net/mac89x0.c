@@ -16,15 +16,7 @@ mdefine_line|#define NET_DEBUG 0
 macro_line|#endif
 multiline_comment|/* ======================= end of configuration ======================= */
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x) printk x
 multiline_comment|/*&n;  Sources:&n;&n;&t;Crynwr packet driver epktisa.&n;&n;&t;Crystal Semiconductor data sheets.&n;&n;*/
@@ -116,6 +108,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_extern
 r_void
 id|reset_chip
@@ -127,6 +120,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|net_open
@@ -441,6 +435,12 @@ suffix:semicolon
 r_int
 r_int
 id|sig
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1000,8 +1000,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* This is useful for something, but I don&squot;t know what yet. */
-DECL|function|reset_chip
 r_void
 id|__init
 id|reset_chip
@@ -1081,6 +1081,7 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine should set everything up anew at each open, even&n;   registers that &quot;should&quot; only need to be set once at boot, so that&n;   there is non-reboot way to recover if something goes wrong.&n;   */
 r_static
 r_int
@@ -1339,19 +1340,11 @@ op_or
 id|ENABLE_IRQ
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|MOD_INC_USE_COUNT
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2239,9 +2232,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|free_irq
 c_func
@@ -2252,8 +2247,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2564,54 +2557,16 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|namespace
-r_static
-r_char
-r_namespace
-(braket
-l_int|16
-)braket
-op_assign
-l_string|&quot;&quot;
-suffix:semicolon
 DECL|variable|dev_cs89x0
 r_static
 r_struct
 id|net_device
 id|dev_cs89x0
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|debug
 r_static
 r_int
 id|debug
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -2639,10 +2594,6 @@ suffix:semicolon
 id|net_debug
 op_assign
 id|debug
-suffix:semicolon
-id|dev_cs89x0.name
-op_assign
-r_namespace
 suffix:semicolon
 id|dev_cs89x0.init
 op_assign

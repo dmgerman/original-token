@@ -12283,7 +12283,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/* Make sure that /proc/sys/dev is there */
 DECL|variable|cdrom_root_table
 id|ctl_table
@@ -12292,6 +12291,7 @@ id|cdrom_root_table
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_PROC_FS
 (brace
 id|CTL_DEV
 comma
@@ -12306,12 +12306,12 @@ comma
 id|cdrom_cdrom_table
 )brace
 comma
+macro_line|#endif /* CONFIG_PROC_FS */
 (brace
 l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_PROC_FS */
 DECL|variable|cdrom_sysctl_header
 r_static
 r_struct

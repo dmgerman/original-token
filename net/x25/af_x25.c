@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-03-11&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-03-22&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-08-27&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; *&t;2000-09-04&t;Henner Eisen&t;Set sock-&gt;state in x25_accept(). &n; *&t;&t;&t;&t;&t;Fixed x25_output() related skb leakage.&n; *&t;2000-10-02&t;Henner Eisen&t;Made x25_kick() single threaded per socket.&n; *&t;2000-10-27&t;Henner Eisen    MSG_DONTWAIT for fragment allocation.&n; *&t;2000-11-14&t;Henner Eisen    Closing datalink from NETDEV_GOING_DOWN&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -66,8 +65,7 @@ id|sock
 op_star
 r_volatile
 id|x25_list
-op_assign
-l_int|NULL
+multiline_comment|/* = NULL initially */
 suffix:semicolon
 DECL|variable|x25_proto_ops
 r_static
@@ -5386,7 +5384,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_create
 c_func
 (paren
@@ -5407,7 +5404,6 @@ comma
 id|x25_routes_get_info
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 macro_line|#ifdef MODULE
 multiline_comment|/*&n;&t; *&t;Register any pre existing devices.&n;&t; */
 id|read_lock
@@ -5480,7 +5476,6 @@ c_func
 id|x25_init
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 id|MODULE_AUTHOR
@@ -5505,7 +5500,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_remove
 c_func
 (paren
@@ -5518,7 +5512,6 @@ c_func
 l_string|&quot;x25_routes&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|x25_link_free
 c_func
 (paren
@@ -5564,6 +5557,4 @@ c_func
 id|x25_exit
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 eof

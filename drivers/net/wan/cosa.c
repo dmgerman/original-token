@@ -270,12 +270,14 @@ multiline_comment|/* Downloaded, reseted, etc. */
 DECL|member|rxbitmap
 DECL|member|txbitmap
 r_int
+r_int
 id|rxbitmap
 comma
 id|txbitmap
 suffix:semicolon
 multiline_comment|/* Bitmap of channels who are willing to send/receive data */
 DECL|member|rxtx
+r_int
 r_int
 id|rxtx
 suffix:semicolon

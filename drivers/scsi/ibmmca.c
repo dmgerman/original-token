@@ -1,15 +1,9 @@
-multiline_comment|/*&n; * Low Level Driver for the IBM Microchannel SCSI Subsystem&n; *&n; * Copyright (c) 1995 Strom Systems, Inc. under the terms of the GNU &n; * General Public License. Written by Martin Kolinek, December 1995.&n; * Further development by: Chris Beauregard, Klaus Kudielka, Michael Lang&n; * See the file README.ibmmca for a detailed description of this driver,&n; * the commandline arguments and the history of its development.&n; * See the WWW-page: http://www.uni-mainz.de/~langm000/linux.html for latest&n; * updates, info and ADF-files for adapters supported by this driver.&n; */
-multiline_comment|/******************* HEADER FILE INCLUDES ************************************/
+multiline_comment|/*&n; Low Level Linux Driver for the IBM Microchannel SCSI Subsystem for&n; Linux Kernel &gt;= 2.4.0.&n; Copyright (c) 1995 Strom Systems, Inc. under the terms of the GNU&n; General Public License. Written by Martin Kolinek, December 1995.&n; Further development by: Chris Beauregard, Klaus Kudielka, Michael Lang&n; See the file README.ibmmca for a detailed description of this driver,&n; the commandline arguments and the history of its development.&n; See the WWW-page: http://www.uni-mainz.de/~langm000/linux.html for latest&n; updates, info and ADF-files for adapters supported by this driver.&n;*/
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
-multiline_comment|/* choose adaption for Kernellevel */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,65)
-DECL|macro|OLDKERN
-mdefine_line|#define OLDKERN
-macro_line|#else
-DECL|macro|OLDKERN
-macro_line|#undef OLDKERN
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,4,0)
+macro_line|#error &quot;This driver works only with kernel 2.4.0 or higher!&quot;
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -23,131 +17,123 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,17)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#elif LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;ibmmca.h&quot;
-macro_line|#include &lt;linux/config.h&gt;&t;&t;/* for CONFIG_SCSI_IBMMCA etc. */
-multiline_comment|/******************* LOCAL DEFINES *******************************************/
-multiline_comment|/* milliseconds of delay for timing out reset. */
-macro_line|#ifndef mdelay
-DECL|macro|mdelay
-mdefine_line|#define mdelay(a)    udelay((a) * 1000)
-macro_line|#endif
-multiline_comment|/*--------------------------------------------------------------------*/
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* current version of this driver-source: */
 DECL|macro|IBMMCA_SCSI_DRIVER_VERSION
-mdefine_line|#define IBMMCA_SCSI_DRIVER_VERSION &quot;3.2&quot;
-multiline_comment|/*--------------------------------------------------------------------*/
+mdefine_line|#define IBMMCA_SCSI_DRIVER_VERSION &quot;4.0&quot;
+DECL|macro|IBMLOCK
+mdefine_line|#define IBMLOCK spin_lock_irqsave(&amp;io_request_lock, flags);
+DECL|macro|IBMUNLOCK
+mdefine_line|#define IBMUNLOCK spin_unlock_irqrestore(&amp;io_request_lock, flags);
 multiline_comment|/* driver configuration */
 DECL|macro|IM_MAX_HOSTS
-mdefine_line|#define IM_MAX_HOSTS      8             /* maximum number of host adapters */
+mdefine_line|#define IM_MAX_HOSTS     8 /* maximum number of host adapters */
 DECL|macro|IM_RESET_DELAY
-mdefine_line|#define IM_RESET_DELAY    60            /* seconds allowed for a reset */
+mdefine_line|#define IM_RESET_DELAY&t;60 /* seconds allowed for a reset */
 multiline_comment|/* driver debugging - #undef all for normal operation */
 multiline_comment|/* if defined: count interrupts and ignore this special one: */
 DECL|macro|IM_DEBUG_TIMEOUT
-macro_line|#undef  IM_DEBUG_TIMEOUT  50            
+macro_line|#undef&t;IM_DEBUG_TIMEOUT&t;50            
 DECL|macro|TIMEOUT_PUN
-mdefine_line|#define TIMEOUT_PUN   0
+mdefine_line|#define TIMEOUT_PUN&t;0
 DECL|macro|TIMEOUT_LUN
-mdefine_line|#define TIMEOUT_LUN   0
+mdefine_line|#define TIMEOUT_LUN&t;0
 multiline_comment|/* verbose interrupt: */
 DECL|macro|IM_DEBUG_INT
-macro_line|#undef  IM_DEBUG_INT                   
+macro_line|#undef IM_DEBUG_INT                   
 multiline_comment|/* verbose queuecommand: */
 DECL|macro|IM_DEBUG_CMD
-macro_line|#undef  IM_DEBUG_CMD    
+macro_line|#undef IM_DEBUG_CMD    
 multiline_comment|/* verbose queucommand for specific SCSI-device type: */
 DECL|macro|IM_DEBUG_CMD_SPEC_DEV
-macro_line|#undef  IM_DEBUG_CMD_SPEC_DEV          
+macro_line|#undef IM_DEBUG_CMD_SPEC_DEV
 multiline_comment|/* verbose device probing */
 DECL|macro|IM_DEBUG_PROBE
-mdefine_line|#define  IM_DEBUG_PROBE
+macro_line|#undef IM_DEBUG_PROBE
 multiline_comment|/* device type that shall be displayed on syslog (only during debugging): */
 DECL|macro|IM_DEBUG_CMD_DEVICE
-mdefine_line|#define IM_DEBUG_CMD_DEVICE   TYPE_TAPE
+mdefine_line|#define IM_DEBUG_CMD_DEVICE&t;TYPE_TAPE
 multiline_comment|/* relative addresses of hardware registers on a subsystem */
 DECL|macro|IM_CMD_REG
-mdefine_line|#define IM_CMD_REG(hi)   (hosts[(hi)]-&gt;io_port)   /*Command Interface, (4 bytes long) */
+mdefine_line|#define IM_CMD_REG(hi)&t;(hosts[(hi)]-&gt;io_port)   /*Command Interface, (4 bytes long) */
 DECL|macro|IM_ATTN_REG
-mdefine_line|#define IM_ATTN_REG(hi)  (hosts[(hi)]-&gt;io_port+4) /*Attention (1 byte) */
+mdefine_line|#define IM_ATTN_REG(hi)&t;(hosts[(hi)]-&gt;io_port+4) /*Attention (1 byte) */
 DECL|macro|IM_CTR_REG
-mdefine_line|#define IM_CTR_REG(hi)   (hosts[(hi)]-&gt;io_port+5) /*Basic Control (1 byte) */
+mdefine_line|#define IM_CTR_REG(hi)&t;(hosts[(hi)]-&gt;io_port+5) /*Basic Control (1 byte) */
 DECL|macro|IM_INTR_REG
-mdefine_line|#define IM_INTR_REG(hi)  (hosts[(hi)]-&gt;io_port+6) /*Interrupt Status (1 byte, r/o) */
+mdefine_line|#define IM_INTR_REG(hi)&t;(hosts[(hi)]-&gt;io_port+6) /*Interrupt Status (1 byte, r/o) */
 DECL|macro|IM_STAT_REG
-mdefine_line|#define IM_STAT_REG(hi)  (hosts[(hi)]-&gt;io_port+7) /*Basic Status (1 byte, read only) */
+mdefine_line|#define IM_STAT_REG(hi)&t;(hosts[(hi)]-&gt;io_port+7) /*Basic Status (1 byte, read only) */
 multiline_comment|/* basic I/O-port of first adapter */
 DECL|macro|IM_IO_PORT
-mdefine_line|#define IM_IO_PORT   0x3540
+mdefine_line|#define IM_IO_PORT&t;0x3540
 multiline_comment|/* maximum number of hosts that can be found */
 DECL|macro|IM_N_IO_PORT
-mdefine_line|#define IM_N_IO_PORT 8
+mdefine_line|#define IM_N_IO_PORT&t;8
 multiline_comment|/*requests going into the upper nibble of the Attention register */
 multiline_comment|/*note: the lower nibble specifies the device(0-14), or subsystem(15) */
 DECL|macro|IM_IMM_CMD
-mdefine_line|#define IM_IMM_CMD   0x10&t;/*immediate command */
+mdefine_line|#define IM_IMM_CMD&t;0x10&t;/*immediate command */
 DECL|macro|IM_SCB
-mdefine_line|#define IM_SCB       0x30&t;/*Subsystem Control Block command */
+mdefine_line|#define IM_SCB&t;&t;0x30&t;/*Subsystem Control Block command */
 DECL|macro|IM_LONG_SCB
-mdefine_line|#define IM_LONG_SCB  0x40&t;/*long Subsystem Control Block command */
+mdefine_line|#define IM_LONG_SCB&t;0x40&t;/*long Subsystem Control Block command */
 DECL|macro|IM_EOI
-mdefine_line|#define IM_EOI       0xe0&t;/*end-of-interrupt request */
+mdefine_line|#define IM_EOI&t;&t;0xe0&t;/*end-of-interrupt request */
 multiline_comment|/*values for bits 7,1,0 of Basic Control reg. (bits 6-2 reserved) */
 DECL|macro|IM_HW_RESET
-mdefine_line|#define IM_HW_RESET     0x80&t;/*hardware reset */
+mdefine_line|#define IM_HW_RESET&t;0x80&t;/*hardware reset */
 DECL|macro|IM_ENABLE_DMA
-mdefine_line|#define IM_ENABLE_DMA   0x02&t;/*enable subsystem&squot;s busmaster DMA */
+mdefine_line|#define IM_ENABLE_DMA&t;0x02&t;/*enable subsystem&squot;s busmaster DMA */
 DECL|macro|IM_ENABLE_INTR
-mdefine_line|#define IM_ENABLE_INTR  0x01&t;/*enable interrupts to the system */
+mdefine_line|#define IM_ENABLE_INTR&t;0x01&t;/*enable interrupts to the system */
 multiline_comment|/*to interpret the upper nibble of Interrupt Status register */
 multiline_comment|/*note: the lower nibble specifies the device(0-14), or subsystem(15) */
 DECL|macro|IM_SCB_CMD_COMPLETED
-mdefine_line|#define IM_SCB_CMD_COMPLETED               0x10
+mdefine_line|#define IM_SCB_CMD_COMPLETED&t;&t;&t;0x10
 DECL|macro|IM_SCB_CMD_COMPLETED_WITH_RETRIES
-mdefine_line|#define IM_SCB_CMD_COMPLETED_WITH_RETRIES  0x50
+mdefine_line|#define IM_SCB_CMD_COMPLETED_WITH_RETRIES&t;0x50
 DECL|macro|IM_LOOP_SCATTER_BUFFER_FULL
-mdefine_line|#define IM_LOOP_SCATTER_BUFFER_FULL        0x60
+mdefine_line|#define IM_LOOP_SCATTER_BUFFER_FULL&t;&t;0x60
 DECL|macro|IM_ADAPTER_HW_FAILURE
-mdefine_line|#define IM_ADAPTER_HW_FAILURE              0x70
+mdefine_line|#define IM_ADAPTER_HW_FAILURE&t;&t;&t;0x70
 DECL|macro|IM_IMMEDIATE_CMD_COMPLETED
-mdefine_line|#define IM_IMMEDIATE_CMD_COMPLETED         0xa0
+mdefine_line|#define IM_IMMEDIATE_CMD_COMPLETED&t;&t;0xa0
 DECL|macro|IM_CMD_COMPLETED_WITH_FAILURE
-mdefine_line|#define IM_CMD_COMPLETED_WITH_FAILURE      0xc0
+mdefine_line|#define IM_CMD_COMPLETED_WITH_FAILURE&t;&t;0xc0
 DECL|macro|IM_CMD_ERROR
-mdefine_line|#define IM_CMD_ERROR                       0xe0
+mdefine_line|#define IM_CMD_ERROR&t;&t;&t;&t;0xe0
 DECL|macro|IM_SOFTWARE_SEQUENCING_ERROR
-mdefine_line|#define IM_SOFTWARE_SEQUENCING_ERROR       0xf0
+mdefine_line|#define IM_SOFTWARE_SEQUENCING_ERROR&t;&t;0xf0
 multiline_comment|/*to interpret bits 3-0 of Basic Status register (bits 7-4 reserved) */
 DECL|macro|IM_CMD_REG_FULL
-mdefine_line|#define IM_CMD_REG_FULL   0x08
+mdefine_line|#define IM_CMD_REG_FULL&t;&t;0x08
 DECL|macro|IM_CMD_REG_EMPTY
-mdefine_line|#define IM_CMD_REG_EMPTY  0x04
+mdefine_line|#define IM_CMD_REG_EMPTY&t;0x04
 DECL|macro|IM_INTR_REQUEST
-mdefine_line|#define IM_INTR_REQUEST   0x02
+mdefine_line|#define IM_INTR_REQUEST&t;&t;0x02
 DECL|macro|IM_BUSY
-mdefine_line|#define IM_BUSY           0x01
+mdefine_line|#define IM_BUSY&t;&t;&t;0x01
 multiline_comment|/*immediate commands (word written into low 2 bytes of command reg) */
 DECL|macro|IM_RESET_IMM_CMD
-mdefine_line|#define IM_RESET_IMM_CMD        0x0400
+mdefine_line|#define IM_RESET_IMM_CMD&t;0x0400
 DECL|macro|IM_FEATURE_CTR_IMM_CMD
-mdefine_line|#define IM_FEATURE_CTR_IMM_CMD  0x040c
+mdefine_line|#define IM_FEATURE_CTR_IMM_CMD&t;0x040c
 DECL|macro|IM_DMA_PACING_IMM_CMD
-mdefine_line|#define IM_DMA_PACING_IMM_CMD   0x040d
+mdefine_line|#define IM_DMA_PACING_IMM_CMD&t;0x040d
 DECL|macro|IM_ASSIGN_IMM_CMD
-mdefine_line|#define IM_ASSIGN_IMM_CMD       0x040e
+mdefine_line|#define IM_ASSIGN_IMM_CMD&t;0x040e
 DECL|macro|IM_ABORT_IMM_CMD
-mdefine_line|#define IM_ABORT_IMM_CMD        0x040f
+mdefine_line|#define IM_ABORT_IMM_CMD&t;0x040f
 DECL|macro|IM_FORMAT_PREP_IMM_CMD
-mdefine_line|#define IM_FORMAT_PREP_IMM_CMD  0x0417
+mdefine_line|#define IM_FORMAT_PREP_IMM_CMD&t;0x0417
 multiline_comment|/*SCB (Subsystem Control Block) structure */
 DECL|struct|im_scb
 r_struct
@@ -179,8 +165,8 @@ r_char
 id|scsi_cmd_length
 suffix:semicolon
 multiline_comment|/*6,10,12, for other scsi cmd */
-)brace
 DECL|member|u1
+)brace
 id|u1
 suffix:semicolon
 DECL|member|sys_buf_adr
@@ -223,8 +209,8 @@ r_int
 id|length
 suffix:semicolon
 multiline_comment|/*block length, on SCSI device */
-)brace
 DECL|member|blk
+)brace
 id|blk
 suffix:semicolon
 DECL|member|scsi_command
@@ -236,8 +222,8 @@ l_int|12
 )braket
 suffix:semicolon
 multiline_comment|/*other scsi command */
-)brace
 DECL|member|u2
+)brace
 id|u2
 suffix:semicolon
 )brace
@@ -513,8 +499,7 @@ mdefine_line|#define IM_IRQ     14
 multiline_comment|/*SCSI-2 F/W may evade to interrupt 11 */
 DECL|macro|IM_IRQ_FW
 mdefine_line|#define IM_IRQ_FW  11
-multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/*&n;&t;The model 95 doesn&squot;t have a standard activity light.  Instead it&n;&t;has a row of alphanumerial LEDs on the front.  We use the last one &n;        as the activity indicator if we think we&squot;re on a model 95.  I suspect&n;        the model id check will be either too narrow or too general, and some &n;        machines won&squot;t have an activity indicator.  Oh well...&n;&n;&t;The regular PS/2 disk led is turned on/off by bits 6,7 of system&n;&t;control port.&n;*/
+multiline_comment|/* Model 95 has an additional alphanumeric display, which can be used&n;   to display SCSI-activities. 8595 models do not have any disk led, which&n;   makes this feature quite useful.&n;   The regular PS/2 disk led is turned on/off by bits 6,7 of system&n;   control port. */
 multiline_comment|/* LED display-port (actually, last LED on display) */
 DECL|macro|MOD95_LED_PORT
 mdefine_line|#define MOD95_LED_PORT&t;   0x108
@@ -528,6 +513,7 @@ DECL|macro|LED_ADISP
 mdefine_line|#define LED_ADISP          2
 DECL|macro|LED_ACTIVITY
 mdefine_line|#define LED_ACTIVITY       4
+multiline_comment|/* failed intr */
 DECL|macro|CMD_FAIL
 mdefine_line|#define CMD_FAIL           255
 multiline_comment|/* The SCSI-ID(!) of the accessed SCSI-device is shown on PS/2-95 machines&squot; LED&n;   displays. ldn is no longer displayed here, because the ldn mapping is now &n;   done dynamically and the ldn &lt;-&gt; pun,lun maps can be looked-up at boottime &n;   or during uptime in /proc/scsi/ibmmca/&lt;host_no&gt; in case of trouble, &n;   interest, debugging or just for having fun. The left number gives the&n;   host-adapter number and the right shows the accessed SCSI-ID. */
@@ -568,12 +554,11 @@ suffix:semicolon
 multiline_comment|/* full speed by default */
 multiline_comment|/* Panel / LED on, do it right for F/W addressin, too. adisplay will&n; * just ignore ids&gt;7, as the panel has only 7 digits available */
 DECL|macro|PS2_DISK_LED_ON
-mdefine_line|#define PS2_DISK_LED_ON(ad,id) {&bslash;&n;        if (display_mode &amp; LED_DISP) { &bslash;&n;           if (id&gt;9) &bslash;&n;&t;     outw((ad+48)|((id+55)&lt;&lt;8), MOD95_LED_PORT ); &bslash;&n;           else &bslash;&n;             outw((ad+48)|((id+48)&lt;&lt;8), MOD95_LED_PORT ); } &bslash;&n;        else if (display_mode &amp; LED_ADISP) { &bslash;&n;           if (id&lt;7) outb((char)(id+48),MOD95_LED_PORT+1+id); &bslash;&n;           outb((char)(ad+48), MOD95_LED_PORT); } &bslash;&n;        if ((display_mode &amp; LED_ACTIVITY)||(!display_mode)) &bslash;&n;           outb(inb(PS2_SYS_CTR) | 0xc0, PS2_SYS_CTR); &bslash;&n;}
+mdefine_line|#define PS2_DISK_LED_ON(ad,id) { if (display_mode &amp; LED_DISP) { if (id&gt;9) &bslash;&n;    outw((ad+48)|((id+55)&lt;&lt;8), MOD95_LED_PORT ); else &bslash;&n;    outw((ad+48)|((id+48)&lt;&lt;8), MOD95_LED_PORT ); } else &bslash;&n;    if (display_mode &amp; LED_ADISP) { if (id&lt;7) outb((char)(id+48),MOD95_LED_PORT+1+id); &bslash;&n;    outb((char)(ad+48), MOD95_LED_PORT); } &bslash;&n;    if ((display_mode &amp; LED_ACTIVITY)||(!display_mode)) &bslash;&n;    outb(inb(PS2_SYS_CTR) | 0xc0, PS2_SYS_CTR); }
 multiline_comment|/* Panel / LED off */
 multiline_comment|/* bug fixed, Dec 15, 1997, where | was replaced by &amp; here */
 DECL|macro|PS2_DISK_LED_OFF
-mdefine_line|#define PS2_DISK_LED_OFF() {&bslash;&n;&t;if (display_mode &amp; LED_DISP) &bslash;&n;           outw(0x2020, MOD95_LED_PORT ); &bslash;&n;        else if (display_mode &amp; LED_ADISP) { &bslash;&n;           outl(0x20202020,MOD95_LED_PORT); &bslash;&n;           outl(0x20202020,MOD95_LED_PORT+4); } &bslash;&n;&t;if ((display_mode &amp; LED_ACTIVITY)||(!display_mode)) &bslash;&n;           outb(inb(PS2_SYS_CTR) &amp; 0x3f, PS2_SYS_CTR); &bslash;&n;}
-multiline_comment|/*--------------------------------------------------------------------*/
+mdefine_line|#define PS2_DISK_LED_OFF() { if (display_mode &amp; LED_DISP) &bslash;&n;    outw(0x2020, MOD95_LED_PORT ); else if (display_mode &amp; LED_ADISP) { &bslash;&n;    outl(0x20202020,MOD95_LED_PORT); outl(0x20202020,MOD95_LED_PORT+4); } &bslash;&n;    if ((display_mode &amp; LED_ACTIVITY)||(!display_mode)) &bslash;&n;    outb(inb(PS2_SYS_CTR) &amp; 0x3f, PS2_SYS_CTR); }
 multiline_comment|/*list of supported subsystems */
 DECL|struct|subsys_list_struct
 r_struct
@@ -653,50 +638,6 @@ comma
 multiline_comment|/* special = 4 */
 )brace
 suffix:semicolon
-multiline_comment|/*for /proc filesystem, only valid in older kernel releases */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,27)
-DECL|variable|proc_scsi_ibmmca
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ibmmca
-op_assign
-(brace
-id|PROC_SCSI_IBMMCA
-comma
-l_int|6
-comma
-l_string|&quot;ibmmca&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Max number of logical devices (can be up from 0 to 14).  15 is the address&n;of the adapter itself. */
 DECL|macro|MAX_LOG_DEV
 mdefine_line|#define MAX_LOG_DEV  15
@@ -745,7 +686,7 @@ DECL|member|device_type
 r_int
 id|device_type
 suffix:semicolon
-multiline_comment|/* type of the SCSI-device. See include/scsi/scsi.h&n;&t;&t;        for interpretation of the possible values */
+multiline_comment|/* type of the SCSI-device. See include/scsi/scsi.h&n;&t;&t;       for interpretation of the possible values */
 DECL|member|block_length
 r_int
 id|block_length
@@ -838,7 +779,7 @@ DECL|member|total_interrupts
 r_int
 id|total_interrupts
 suffix:semicolon
-multiline_comment|/* total interrupts (should be&n;&t;&t;&t;&t;&t;&t;same as total_accesses) */
+multiline_comment|/* total interrupts (should be&n;&t;&t;&t;&t;&t;     same as total_accesses) */
 DECL|member|total_errors
 r_int
 id|total_errors
@@ -869,7 +810,7 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/* number of remappings of each&n;&t;&t;&t;&t;&t;        ldn */
+multiline_comment|/* number of remappings of each&n;&t;&t;&t;&t;&t;     ldn */
 )brace
 suffix:semicolon
 multiline_comment|/* data structure for each host adapter */
@@ -973,7 +914,7 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/* Counter that points on the next reassignable ldn for dynamical &n;    remapping. The default value is 7, that is the first reassignable &n;    number in the list at boottime: */
+multiline_comment|/* Counter that points on the next reassignable ldn for dynamical&n;      remapping. The default value is 7, that is the first reassignable&n;      number in the list at boottime: */
 DECL|member|_next_ldn
 r_int
 id|_next_ldn
@@ -985,21 +926,13 @@ id|Driver_Statistics
 id|_IBM_DS
 suffix:semicolon
 multiline_comment|/* This hostadapters pos-registers pos2 until pos6 */
-DECL|member|_pos2
-DECL|member|_pos3
-DECL|member|_pos4
-DECL|member|_pos5
-DECL|member|_pos6
+DECL|member|_pos
 r_int
-id|_pos2
-comma
-id|_pos3
-comma
-id|_pos4
-comma
-id|_pos5
-comma
-id|_pos6
+r_int
+id|_pos
+(braket
+l_int|8
+)braket
 suffix:semicolon
 multiline_comment|/* assign a special variable, that contains dedicated info about the&n;    adaptertype */
 DECL|member|_special
@@ -1058,16 +991,16 @@ mdefine_line|#define subsystem_connector_size(hi) (((struct ibmmca_hostdata *) h
 DECL|macro|adapter_speed
 mdefine_line|#define adapter_speed(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_adapter_speed)
 DECL|macro|pos2
-mdefine_line|#define pos2(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos2)
+mdefine_line|#define pos2(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos[2])
 DECL|macro|pos3
-mdefine_line|#define pos3(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos3)
+mdefine_line|#define pos3(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos[3])
 DECL|macro|pos4
-mdefine_line|#define pos4(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos4)
+mdefine_line|#define pos4(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos[4])
 DECL|macro|pos5
-mdefine_line|#define pos5(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos5)
+mdefine_line|#define pos5(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos[5])
 DECL|macro|pos6
-mdefine_line|#define pos6(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos6)
-multiline_comment|/* Define a arbitrary number as subsystem-marker-type. This number is, as &n;   described in the ANSI-SCSI-standard, not occupied by other device-types. */
+mdefine_line|#define pos6(hi) (((struct ibmmca_hostdata *) hosts[(hi)]-&gt;hostdata)-&gt;_pos[6])
+multiline_comment|/* Define a arbitrary number as subsystem-marker-type. This number is, as&n;   described in the ANSI-SCSI-standard, not occupied by other device-types. */
 DECL|macro|TYPE_IBM_SCSI_ADAPTER
 mdefine_line|#define TYPE_IBM_SCSI_ADAPTER   0x2F
 multiline_comment|/* Define 0xFF for no device type, because this type is not defined within&n;   the ANSI-SCSI-standard, therefore, it can be used and should not cause any&n;   harm. */
@@ -1222,14 +1155,6 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|bypass
-comma
-l_string|&quot;1i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
 id|normal
 comma
 l_string|&quot;1i&quot;
@@ -1252,45 +1177,6 @@ id|disk_rw_in_progress
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* spinlock handling to avoid command clash while in operation */
-macro_line|#ifndef OLDKERN
-DECL|variable|info_lock
-id|spinlock_t
-id|info_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|variable|proc_lock
-id|spinlock_t
-id|proc_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|variable|abort_lock
-id|spinlock_t
-id|abort_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|variable|reset_lock
-id|spinlock_t
-id|reset_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|variable|issue_lock
-id|spinlock_t
-id|issue_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|variable|intr_lock
-id|spinlock_t
-id|intr_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* host information */
 DECL|variable|found
 r_static
@@ -1359,8 +1245,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*-----------------------------------------------------------------------*/
-multiline_comment|/******************* FUNCTIONS IN FORWARD DECLARATION ************************/
 r_static
 r_void
 id|interrupt_handler
@@ -1375,22 +1259,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef OLDKERN
-r_static
-r_void
-id|do_interrupt_handler
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|issue_cmd
@@ -1597,72 +1465,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-DECL|variable|bypass_controller
-r_static
-r_int
-id|bypass_controller
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* bypass integrated SCSI-cmd set flag */
-multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/******************* LOCAL FUNCTIONS IMPLEMENTATION *************************/
-macro_line|#ifndef OLDKERN
-multiline_comment|/* newer Kernels need the spinlock interrupt handler */
-DECL|function|do_interrupt_handler
-r_static
-r_void
-id|do_interrupt_handler
-(paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|interrupt_handler
-c_func
-(paren
-id|irq
-comma
-id|dev_id
-comma
-id|regs
-)paren
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|interrupt_handler
 r_static
 r_void
@@ -1683,6 +1485,8 @@ id|regs
 (brace
 r_int
 id|host_index
+comma
+id|ihost_index
 suffix:semicolon
 r_int
 r_int
@@ -1707,15 +1511,15 @@ suffix:semicolon
 r_int
 id|lastSCSI
 suffix:semicolon
+id|IBMLOCK
+multiline_comment|/* search for one adapter-response on shared interrupt */
+r_for
+c_loop
+(paren
 id|host_index
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* make sure, host_index is 0 */
-multiline_comment|/* search for one adapter-response on shared interrupt */
-r_while
-c_loop
-(paren
 id|hosts
 (braket
 id|host_index
@@ -1735,9 +1539,10 @@ id|host_index
 op_amp
 id|IM_INTR_REQUEST
 )paren
-)paren
+suffix:semicolon
 id|host_index
 op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* return if some other device on this IRQ caused the interrupt */
 r_if
@@ -1749,8 +1554,11 @@ id|hosts
 id|host_index
 )braket
 )paren
+(brace
+id|IBMUNLOCK
 r_return
 suffix:semicolon
+)brace
 multiline_comment|/* the reset-function already did all the job, even ints got&n;      renabled on the subsystem, so just return */
 r_if
 c_cond
@@ -1784,6 +1592,7 @@ id|host_index
 op_assign
 id|IM_RESET_NOT_IN_PROGRESS
 suffix:semicolon
+id|IBMUNLOCK
 r_return
 suffix:semicolon
 )brace
@@ -1794,36 +1603,12 @@ c_loop
 l_int|1
 )paren
 (brace
-macro_line|#ifdef OLDKERN
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-multiline_comment|/* if (!(inb (IM_STAT_REG(host_index)) &amp; IM_BUSY)) */
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
 id|inb
-c_func
 (paren
 id|IM_STAT_REG
 c_func
@@ -1832,36 +1617,19 @@ id|host_index
 )paren
 )paren
 op_amp
-l_int|0xf
-)paren
-op_eq
-(paren
-id|IM_CMD_REG_EMPTY
-op_or
-id|IM_INTR_REQUEST
+id|IM_BUSY
 )paren
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
+id|IBMUNLOCK
+multiline_comment|/* cycle interrupt */
+id|IBMLOCK
 )brace
+id|ihost_index
+op_assign
+id|host_index
+suffix:semicolon
 multiline_comment|/*get command result and logical device */
 id|intr_reg
 op_assign
@@ -1875,7 +1643,7 @@ id|inb
 id|IM_INTR_REG
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 )paren
 )paren
@@ -1898,12 +1666,26 @@ op_assign
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
 )braket
 suffix:semicolon
+id|outb
+(paren
+id|IM_EOI
+op_or
+id|ldn
+comma
+id|IM_ATTN_REG
+c_func
+(paren
+id|ihost_index
+)paren
+)paren
+suffix:semicolon
+id|IBMUNLOCK
 multiline_comment|/*these should never happen (hw fails, or a local programming bug) */
 r_if
 c_cond
@@ -1944,7 +1726,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -1959,7 +1741,7 @@ c_cond
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -1970,7 +1752,7 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;%ld/%ld&quot;
+l_string|&quot;%ld/%ld,&quot;
 comma
 (paren
 r_int
@@ -1979,7 +1761,7 @@ r_int
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -1995,7 +1777,7 @@ r_int
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2009,13 +1791,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;none&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;, &quot;
+l_string|&quot;none,&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2024,7 +1800,7 @@ c_cond
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2040,7 +1816,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2061,7 +1837,7 @@ c_func
 (paren
 l_string|&quot;, host=0x%x, ldn=0x%x&bslash;n&quot;
 comma
-id|host_index
+id|ihost_index
 comma
 id|ldn
 )paren
@@ -2072,7 +1848,7 @@ c_cond
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2089,7 +1865,7 @@ comma
 id|last_scsi_blockcount
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2098,7 +1874,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2115,7 +1891,7 @@ comma
 id|last_scsi_logical_block
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2124,7 +1900,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2184,7 +1960,7 @@ comma
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2201,7 +1977,7 @@ id|inb
 id|IM_ATTN_REG
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 )paren
 )paren
@@ -2216,7 +1992,7 @@ id|inb
 id|IM_CTR_REG
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 )paren
 )paren
@@ -2239,7 +2015,7 @@ id|inb
 id|IM_STAT_REG
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 )paren
 )paren
@@ -2251,7 +2027,7 @@ c_cond
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2264,7 +2040,7 @@ op_logical_or
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2282,7 +2058,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2299,7 +2075,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2316,7 +2092,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2333,7 +2109,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2350,7 +2126,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2367,7 +2143,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2384,7 +2160,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2401,7 +2177,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2418,7 +2194,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2450,7 +2226,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* The command error handling is made silent, but we tell the&n;&t;* calling function, that there is a reported error from the&n;&t;* adapter. */
+multiline_comment|/* The command error handling is made silent, but we tell the&n;       * calling function, that there is a reported error from the&n;       * adapter. */
 r_switch
 c_cond
 (paren
@@ -2486,7 +2262,7 @@ multiline_comment|/* if no panic appeared, increase the interrupt-counter */
 id|IBM_DS
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 dot
 id|total_interrupts
@@ -2499,14 +2275,14 @@ c_cond
 id|local_checking_phase_flag
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 )paren
 (brace
 id|stat_result
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|cmd_result
@@ -2514,7 +2290,7 @@ suffix:semicolon
 id|got_interrupt
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 l_int|1
@@ -2522,7 +2298,7 @@ suffix:semicolon
 id|reset_status
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|IM_RESET_FINISHED_OK
@@ -2530,7 +2306,7 @@ suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2538,50 +2314,17 @@ id|ldn
 op_assign
 id|NO_SCSI
 suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*handling of commands coming from upper level of scsi driver */
-r_else
-(brace
+multiline_comment|/* handling of commands coming from upper level of scsi driver */
 r_if
 c_cond
 (paren
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2590,7 +2333,7 @@ op_eq
 id|IM_IMM_CMD
 )paren
 (brace
-multiline_comment|/*verify ldn, and may handle rare reset immediate command */
+multiline_comment|/* verify ldn, and may handle rare reset immediate command */
 r_if
 c_cond
 (paren
@@ -2598,7 +2341,7 @@ c_cond
 id|reset_status
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_eq
 id|IM_RESET_IN_PROGRESS
@@ -2608,7 +2351,7 @@ op_logical_and
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2637,7 +2380,7 @@ suffix:semicolon
 id|reset_status
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|IM_RESET_FINISHED_FAIL
@@ -2657,7 +2400,7 @@ suffix:semicolon
 id|reset_status
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|IM_RESET_FINISHED_OK
@@ -2666,7 +2409,7 @@ suffix:semicolon
 id|stat_result
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|cmd_result
@@ -2674,7 +2417,7 @@ suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2685,7 +2428,7 @@ suffix:semicolon
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2693,37 +2436,6 @@ id|ldn
 op_assign
 l_int|0
 suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      
 r_return
 suffix:semicolon
 )brace
@@ -2734,7 +2446,7 @@ c_cond
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2751,7 +2463,7 @@ c_func
 l_string|&quot;IBM MCA SCSI: Interrupt from SCSI-abort.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 id|disk_rw_in_progress
 op_assign
 l_int|0
@@ -2766,7 +2478,7 @@ op_assign
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2777,7 +2489,7 @@ suffix:semicolon
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2810,7 +2522,7 @@ suffix:semicolon
 id|stat_result
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|cmd_result
@@ -2818,7 +2530,7 @@ suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2829,7 +2541,7 @@ suffix:semicolon
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2837,37 +2549,6 @@ id|ldn
 op_assign
 l_int|0
 suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      &t;&t;  
 r_if
 c_cond
 (paren
@@ -2897,7 +2578,7 @@ suffix:semicolon
 id|reset_status
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|IM_RESET_FINISHED_OK
@@ -2905,7 +2586,7 @@ suffix:semicolon
 id|stat_result
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 op_assign
 id|cmd_result
@@ -2913,7 +2594,7 @@ suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2921,37 +2602,6 @@ id|ldn
 op_assign
 id|NO_SCSI
 suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      &t;&t;  
 r_return
 suffix:semicolon
 )brace
@@ -2959,7 +2609,7 @@ suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2970,7 +2620,7 @@ suffix:semicolon
 id|last_scsi_type
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2983,7 +2633,7 @@ op_assign
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -2994,7 +2644,7 @@ suffix:semicolon
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3037,37 +2687,6 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      &t;&t;  &t;&t;  
 r_return
 suffix:semicolon
 )brace
@@ -3080,41 +2699,8 @@ c_cond
 op_logical_neg
 id|cmd
 )paren
-(brace
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      &t;&t;  
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef IM_DEBUG_INT
 id|printk
 c_func
@@ -3131,7 +2717,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3142,7 +2728,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3153,7 +2739,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3164,7 +2750,7 @@ comma
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3182,7 +2768,7 @@ c_cond
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3197,7 +2783,7 @@ op_logical_and
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3210,33 +2796,6 @@ id|TYPE_NO_DEVICE
 )paren
 (brace
 multiline_comment|/* only access this, if there was a valid device addressed */
-r_switch
-c_cond
-(paren
-id|cmd-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
-(brace
-r_case
-id|READ_6
-suffix:colon
-r_case
-id|WRITE_6
-suffix:colon
-r_case
-id|READ_10
-suffix:colon
-r_case
-id|WRITE_10
-suffix:colon
-r_case
-id|READ_12
-suffix:colon
-r_case
-id|WRITE_12
-suffix:colon
 r_if
 c_cond
 (paren
@@ -3250,8 +2809,7 @@ id|PS2_DISK_LED_OFF
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* IBM describes the status-mask to be 0x1e, but this is not conform&n;&t; * with SCSI-defintion, I suppose, the reason for it is that IBM &n;&t; * adapters do not support CMD_TERMINATED, TASK_SET_FULL and &n;&t; * ACA_ACTIVE as returning statusbyte information. (ML) */
+multiline_comment|/* IBM describes the status-mask to be 0x1e, but this is not conform&n;    * with SCSI-definition, I suppose, the reason for it is that IBM&n;    * adapters do not support CMD_TERMINATED, TASK_SET_FULL and&n;    * ACA_ACTIVE as returning statusbyte information. (ML) */
 r_if
 c_cond
 (paren
@@ -3270,7 +2828,7 @@ r_char
 id|ld
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 (braket
 id|ldn
@@ -3284,7 +2842,7 @@ suffix:semicolon
 id|IBM_DS
 c_func
 (paren
-id|host_index
+id|ihost_index
 )paren
 dot
 id|total_errors
@@ -3304,6 +2862,7 @@ id|lastSCSI
 op_eq
 id|NO_SCSI
 )paren
+(brace
 multiline_comment|/* unexpected interrupt :-( */
 id|cmd-&gt;result
 op_or_assign
@@ -3311,6 +2870,13 @@ id|DID_BAD_INTR
 op_lshift
 l_int|16
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: WARNING - Interrupt from non-pending SCSI-command!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_else
 multiline_comment|/* things went right :-) */
 id|cmd-&gt;result
@@ -3318,42 +2884,6 @@ op_or_assign
 id|DID_OK
 op_lshift
 l_int|16
-suffix:semicolon
-id|outb
-(paren
-id|IM_EOI
-op_or
-id|ldn
-comma
-id|IM_ATTN_REG
-c_func
-(paren
-id|host_index
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef OLDKERN
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|intr_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* This is for Kernel 2.2.x. Something weired happens here. &n;&t; * Between the command got queued and the interrupt is released,&n;&t; * the flags sometimes contain different values, which must&n;&t; * be a strange thing. E.g. it appears when cold-booting with a&n;&t; * tape drive at id0. */
-id|cmd-&gt;flags
-op_and_assign
-l_int|0x3f
 suffix:semicolon
 r_if
 c_cond
@@ -3367,24 +2897,9 @@ id|cmd-&gt;scsi_done
 id|cmd
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|lastSCSI
-op_eq
-id|NO_SCSI
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;IBM MCA SCSI: WARNING - Interrupt from non-pending SCSI-command!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|issue_cmd
 r_static
 r_void
@@ -3402,7 +2917,6 @@ r_char
 id|attn_reg
 )paren
 (brace
-r_static
 r_int
 r_int
 id|flags
@@ -3414,29 +2928,7 @@ c_loop
 l_int|1
 )paren
 (brace
-macro_line|#ifdef OLDKERN&t;
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|issue_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;
+id|IBMLOCK
 r_if
 c_cond
 (paren
@@ -3457,26 +2949,9 @@ id|IM_BUSY
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|issue_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;
+id|IBMUNLOCK
 )brace
-multiline_comment|/*write registers and enable system interrupts */
+multiline_comment|/* write registers and enable system interrupts */
 id|outl
 (paren
 id|cmd_reg
@@ -3499,28 +2974,10 @@ id|host_index
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|issue_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
+id|IBMUNLOCK
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|internal_done
 r_static
 r_void
@@ -3537,7 +2994,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 multiline_comment|/* SCSI-SCB-command for device_inquiry */
 DECL|function|device_inquiry
 r_static
@@ -3554,9 +3010,6 @@ id|ldn
 (brace
 r_int
 id|retries
-suffix:semicolon
-id|Scsi_Cmnd
-id|cmd
 suffix:semicolon
 r_struct
 id|im_scb
@@ -3641,52 +3094,7 @@ id|tsb.dev_status
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* prepare stusblock */
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-multiline_comment|/* fill the commonly known field for device-inquiry SCSI cmnd */
-id|cmd.cmd_len
-op_assign
-l_int|6
-suffix:semicolon
-id|memset
-(paren
-op_amp
-(paren
-id|cmd.cmnd
-)paren
-comma
-l_int|0x0
-comma
-r_sizeof
-(paren
-r_char
-)paren
-op_star
-id|cmd.cmd_len
-)paren
-suffix:semicolon
-id|cmd.cmnd
-(braket
-l_int|0
-)braket
-op_assign
-id|INQUIRY
-suffix:semicolon
-multiline_comment|/* device inquiry */
-id|cmd.cmnd
-(braket
-l_int|4
-)braket
-op_assign
-l_int|0xff
-suffix:semicolon
-multiline_comment|/* return buffer size = 255 */
-)brace
+multiline_comment|/* prepare statusblock */
 r_for
 c_loop
 (paren
@@ -3702,71 +3110,7 @@ id|retries
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-multiline_comment|/* bypass the hardware integrated command set */
-id|scb-&gt;command
-op_assign
-id|IM_OTHER_SCSI_CMD_CMD
-op_or
-id|IM_NO_DISCONNECT
-suffix:semicolon
-id|scb-&gt;enable
-op_assign
-id|IM_REPORT_TSB_ONLY_ON_ERROR
-op_or
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-op_or
-id|IM_BYPASS_BUFFER
-suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd.cmd_len
-suffix:semicolon
-id|memcpy
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-op_amp
-(paren
-id|cmd.cmnd
-)paren
-comma
-id|cmd.cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_command
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|INQUIRY
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/*fill scb with inquiry command */
+multiline_comment|/* fill scb with inquiry command */
 id|scb-&gt;command
 op_assign
 id|IM_DEVICE_INQUIRY_CMD
@@ -3780,6 +3124,10 @@ op_or
 id|IM_READ_CONTROL
 op_or
 id|IM_SUPRESS_EXCEPTION_SHORT
+op_or
+id|IM_RETRY_ENABLE
+op_or
+id|IM_BYPASS_BUFFER
 suffix:semicolon
 id|last_scsi_command
 c_func
@@ -3803,7 +3151,6 @@ id|ldn
 op_assign
 id|IM_SCB
 suffix:semicolon
-)brace
 id|scb-&gt;sys_buf_adr
 op_assign
 id|virt_to_bus
@@ -3825,7 +3172,7 @@ c_func
 id|tsb
 )paren
 suffix:semicolon
-multiline_comment|/*issue scb to passed ldn, and busy wait for interrupt */
+multiline_comment|/* issue scb to passed ldn, and busy wait for interrupt */
 id|got_interrupt
 c_func
 (paren
@@ -3834,33 +3181,6 @@ id|host_index
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|scb-&gt;command
-op_amp
-id|IM_OTHER_SCSI_CMD_CMD
-)paren
-op_eq
-id|IM_OTHER_SCSI_CMD_CMD
-)paren
-id|issue_cmd
-(paren
-id|host_index
-comma
-id|virt_to_bus
-c_func
-(paren
-id|scb
-)paren
-comma
-id|IM_LONG_SCB
-op_or
-id|ldn
-)paren
-suffix:semicolon
-r_else
 id|issue_cmd
 (paren
 id|host_index
@@ -3950,9 +3270,6 @@ id|ldn
 r_int
 id|retries
 suffix:semicolon
-id|Scsi_Cmnd
-id|cmd
-suffix:semicolon
 r_struct
 id|im_scb
 op_star
@@ -4036,43 +3353,6 @@ id|tsb.dev_status
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-multiline_comment|/* read capacity in commonly known default SCSI-format */
-id|cmd.cmd_len
-op_assign
-l_int|10
-suffix:semicolon
-id|memset
-(paren
-op_amp
-(paren
-id|cmd.cmnd
-)paren
-comma
-l_int|0x0
-comma
-r_sizeof
-(paren
-r_char
-)paren
-op_star
-id|cmd.cmd_len
-)paren
-suffix:semicolon
-id|cmd.cmnd
-(braket
-l_int|0
-)braket
-op_assign
-id|READ_CAPACITY
-suffix:semicolon
-multiline_comment|/* read capacity */
-)brace
 r_for
 c_loop
 (paren
@@ -4089,16 +3369,9 @@ op_increment
 )paren
 (brace
 multiline_comment|/*fill scb with read capacity command */
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-multiline_comment|/* bypass the SCSI-command */
 id|scb-&gt;command
 op_assign
-id|IM_OTHER_SCSI_CMD_CMD
+id|IM_READ_CAPACITY_CMD
 suffix:semicolon
 id|scb-&gt;enable
 op_assign
@@ -4106,63 +3379,10 @@ id|IM_REPORT_TSB_ONLY_ON_ERROR
 op_or
 id|IM_READ_CONTROL
 op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
+id|IM_RETRY_ENABLE
 op_or
 id|IM_BYPASS_BUFFER
 suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd.cmd_len
-suffix:semicolon
-id|memcpy
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-op_amp
-(paren
-id|cmd.cmnd
-)paren
-comma
-id|cmd.cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_command
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|READ_CAPACITY
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_SCB
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_READ_CAPACITY_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_assign
-id|IM_REPORT_TSB_ONLY_ON_ERROR
-op_or
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-suffix:semicolon
 id|last_scsi_command
 c_func
 (paren
@@ -4185,7 +3405,6 @@ id|ldn
 op_assign
 id|IM_SCB
 suffix:semicolon
-)brace
 id|scb-&gt;sys_buf_adr
 op_assign
 id|virt_to_bus
@@ -4215,33 +3434,6 @@ id|host_index
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|scb-&gt;command
-op_amp
-id|IM_OTHER_SCSI_CMD_CMD
-)paren
-op_eq
-id|IM_OTHER_SCSI_CMD_CMD
-)paren
-id|issue_cmd
-(paren
-id|host_index
-comma
-id|virt_to_bus
-c_func
-(paren
-id|scb
-)paren
-comma
-id|IM_LONG_SCB
-op_or
-id|ldn
-)paren
-suffix:semicolon
-r_else
 id|issue_cmd
 (paren
 id|host_index
@@ -4440,8 +3632,6 @@ op_or
 id|IM_RETRY_ENABLE
 op_or
 id|IM_BYPASS_BUFFER
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
 suffix:semicolon
 id|last_scsi_command
 c_func
@@ -4969,18 +4159,6 @@ op_increment
 )paren
 (brace
 multiline_comment|/* select mutation level of the SCSI-adapter */
-r_switch
-c_cond
-(paren
-id|special
-c_func
-(paren
-id|host_index
-)paren
-)paren
-(brace
-r_default
-suffix:colon
 id|imm_command
 op_assign
 id|IM_FEATURE_CTR_IMM_CMD
@@ -5017,9 +4195,6 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|last_scsi_command
 c_func
 (paren
@@ -5050,7 +4225,7 @@ id|host_index
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* we need to run into command errors in order to probe for the&n;&t; * right speed! */
+multiline_comment|/* we need to run into command errors in order to probe for the&n;       * right speed! */
 id|global_command_error_excuse
 op_assign
 l_int|1
@@ -5287,14 +4462,18 @@ op_decrement
 id|ticks
 )paren
 (brace
-id|mdelay
+id|udelay
 c_func
+(paren
 (paren
 l_int|1
 op_plus
 l_int|999
 op_div
 id|HZ
+)paren
+op_star
+l_int|1000
 )paren
 suffix:semicolon
 id|barrier
@@ -5303,7 +4482,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* if reset did not complete, just claim */
+multiline_comment|/* if reset did not complete, just complain */
 r_if
 c_cond
 (paren
@@ -5565,16 +4744,9 @@ r_int
 id|speed
 comma
 r_int
-id|adaptertype
+id|i
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-id|i
-op_assign
-id|adaptertype
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -6077,7 +5249,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef IM_DEBUG_PROBE&t;
+macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
 (paren
@@ -6162,13 +5334,13 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 )brace
 r_return
 id|num_bus
 suffix:semicolon
 )brace
-multiline_comment|/* &n; The following routine probes the SCSI-devices in four steps:&n; 1. The current ldn -&gt; pun,lun mapping is removed on the SCSI-adapter.&n; 2. ldn 0 is used to go through all possible combinations of pun,lun and&n; a device_inquiry is done to fiddle out whether there is a device&n; responding or not. This physical map is stored in get_scsi[][].&n; 3. The 15 available ldns (0-14) are mapped to existing pun,lun.&n; If there are more devices than ldns, it stops at 14 for the boot&n; time. Dynamical remapping will be done in ibmmca_queuecommand.&n; 4. If there are less than 15 valid pun,lun, the remaining ldns are&n; mapped to NON-existing pun,lun to satisfy the adapter. Information&n; about pun,lun -&gt; ldn is stored as before in get_ldn[][].&n; This method leads to the result, that the SCSI-pun,lun shown to Linux&n; mid-level- and higher-level-drivers is exactly corresponding to the&n; physical reality on the SCSI-bus. Therefore, it is possible that users&n; of older releases of this driver have to rewrite their fstab-file, because&n; the /dev/sdXXX could have changed due to the right pun,lun report, now.&n; The assignment of ALL ldns avoids dynamical remapping by the adapter&n; itself.&n; */
+multiline_comment|/* probing scsi devices */
 DECL|function|check_devices
 r_static
 r_void
@@ -6386,8 +5558,8 @@ suffix:semicolon
 id|lun
 op_increment
 )paren
-multiline_comment|/* mark the adapter at its pun on all luns*/
 (brace
+multiline_comment|/* mark the adapter at its pun on all luns*/
 id|get_scsi
 c_func
 (paren
@@ -6424,7 +5596,7 @@ id|lun
 op_assign
 id|MAX_LOG_DEV
 suffix:semicolon
-multiline_comment|/* make sure, the subsystem&n;&t;&t;&t;&t;&t;&t;&t;&t;ldn is active for all&n;&t;&t;&t;&t;&t;&t;&t;&t;luns. */
+multiline_comment|/* make sure, the subsystem&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;  ldn is active for all&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;  luns. */
 )brace
 id|probe_display
 c_func
@@ -6527,8 +5699,8 @@ id|adaptertype
 op_eq
 id|IBM_SCSI2_FW
 )paren
-multiline_comment|/* F/W SCSI adapter: */
 (brace
+multiline_comment|/* F/W SCSI adapter: */
 multiline_comment|/* F/W adapter PUN-space extension evaluation: */
 r_if
 c_cond
@@ -6617,13 +5789,29 @@ comma
 id|host_index
 )paren
 suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: Removing default logical SCSI-device mapping.&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: Dev. Order: %s, Mapping (takes &lt;2min): &quot;
+comma
+(paren
+id|ibm_ansi_order
+)paren
+ques
+c_cond
+l_string|&quot;ANSI&quot;
+suffix:colon
+l_string|&quot;New&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -6674,27 +5862,23 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* default lun is 0 */
-multiline_comment|/* STEP 2: */
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;nIBM MCA SCSI: Probing SCSI-devices&quot;
-)paren
-suffix:semicolon
 macro_line|#ifndef IM_DEBUG_PROBE
 id|printk
 c_func
 (paren
-l_string|&quot; (this can take up to 2 minutes)&quot;
+l_string|&quot;cleared,&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* STEP 2: */
+macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
 (paren
-l_string|&quot;.&quot;
+l_string|&quot;&bslash;nIBM MCA SCSI: Scanning SCSI-devices.&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -6753,7 +5937,7 @@ id|host_index
 )paren
 (brace
 multiline_comment|/* if pun is not the adapter: */
-multiline_comment|/*set ldn=0 to pun,lun*/
+multiline_comment|/* set ldn=0 to pun,lun*/
 id|immediate_assign
 c_func
 (paren
@@ -6779,8 +5963,8 @@ comma
 id|PROBE_LDN
 )paren
 )paren
-multiline_comment|/* probe device */
 (brace
+multiline_comment|/* probe device */
 id|get_scsi
 c_func
 (paren
@@ -6855,13 +6039,23 @@ id|REMOVE_LDN
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef IM_DEBUG_PROBE
+id|printk
+c_func
+(paren
+l_string|&quot;scanned,&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* STEP 3: */
+macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;nIBM MCA SCSI: Mapping SCSI-devices.&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ldn
 op_assign
 l_int|0
@@ -6870,7 +6064,7 @@ id|lun
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCSI_MULTI_LUN   
+macro_line|#ifdef CONFIG_SCSI_MULTI_LUN
 r_for
 c_loop
 (paren
@@ -6967,7 +6161,7 @@ op_ne
 id|TYPE_NO_DEVICE
 )paren
 (brace
-multiline_comment|/* Only map if accepted type. Always enter for &n;&t;&t;   lun == 0 to get no gaps into ldn-mapping for ldn&lt;7. */
+multiline_comment|/* Only map if accepted type. Always enter for&n;&t;       lun == 0 to get no gaps into ldn-mapping for ldn&lt;7. */
 id|immediate_assign
 c_func
 (paren
@@ -7056,7 +6250,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* device vanished, probably because we don&squot;t know how to&n;&t;&t;&t;* handle it or because it has problems */
+multiline_comment|/* device vanished, probably because we don&squot;t know how to&n;&t;&t;  * handle it or because it has problems */
 r_if
 c_cond
 (paren
@@ -7223,7 +6417,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* Map remaining ldns only to NON-existing pun,lun&n;&t;      combinations to make sure an inquiry will fail. &n;&t;      For MULTI_LUN, it is needed to avoid adapter autonome&n;&t;      SCSI-remapping. */
+multiline_comment|/* Map remaining ldns only to NON-existing pun,lun&n;&t;    combinations to make sure an inquiry will fail.&n;&t;    For MULTI_LUN, it is needed to avoid adapter autonome&n;&t;    SCSI-remapping. */
 id|immediate_assign
 c_func
 (paren
@@ -7257,12 +6451,21 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef IM_DEBUG_PROBE
+id|printk
+c_func
+(paren
+l_string|&quot;mapped.&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef IM_DEBUG_PROBE
 r_if
 c_cond
 (paren
@@ -7281,6 +6484,7 @@ c_func
 l_string|&quot;IBM MCA SCSI: Device order: New Industry Standard (pun=0 is first).&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef IM_DEBUG_PROBE
 multiline_comment|/* Show the physical and logical mapping during boot. */
 id|printk
@@ -7423,7 +6627,7 @@ id|total_scsi_devices
 op_assign
 id|count_devices
 suffix:semicolon
-multiline_comment|/* decide for output in /proc-filesystem, if the configuration of&n;    SCSI-devices makes dynamical reassignment of devices necessary */
+multiline_comment|/* decide for output in /proc-filesystem, if the configuration of&n;      SCSI-devices makes dynamical reassignment of devices necessary */
 r_if
 c_cond
 (paren
@@ -7672,7 +6876,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|device_exists
 r_static
 r_int
@@ -7739,7 +6942,6 @@ id|buf
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*if device is CD_ROM, assume block size 2048 and return */
 r_if
 c_cond
 (paren
@@ -7772,7 +6974,6 @@ id|buf
 op_eq
 id|TYPE_WORM
 )paren
-multiline_comment|/* CD-burner, WORM, Linux handles this as CD-ROM &n;&t;&t;&t;     therefore, the block_length is also 2048. */
 (brace
 op_star
 id|device_type
@@ -7788,7 +6989,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* if device is disk, use &quot;read capacity&quot; to find its block size */
 r_if
 c_cond
 (paren
@@ -7867,7 +7067,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* if this is a magneto-optical drive, treat it like a harddisk */
 r_if
 c_cond
 (paren
@@ -7954,7 +7153,6 @@ id|buf
 op_eq
 id|TYPE_TAPE
 )paren
-multiline_comment|/* TAPE-device found */
 (brace
 op_star
 id|device_type
@@ -7979,7 +7177,6 @@ id|buf
 op_eq
 id|TYPE_PROCESSOR
 )paren
-multiline_comment|/* HP-Scanners, diverse SCSI-processing units*/
 (brace
 op_star
 id|device_type
@@ -8004,7 +7201,6 @@ id|buf
 op_eq
 id|TYPE_SCANNER
 )paren
-multiline_comment|/* other SCSI-scanners */
 (brace
 op_star
 id|device_type
@@ -8029,7 +7225,6 @@ id|buf
 op_eq
 id|TYPE_MEDIUM_CHANGER
 )paren
-multiline_comment|/* Medium-Changer */
 (brace
 op_star
 id|device_type
@@ -8046,12 +7241,11 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Up to now, no SCSI-devices that are known up to kernel 2.1.31 are&n;      ignored! MO-drives are now supported and treated as harddisk. */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
+macro_line|#ifdef CONFIG_SCSI_IBMMCA
 DECL|function|internal_ibmmca_scsi_setup
 r_void
 id|internal_ibmmca_scsi_setup
@@ -8159,22 +7353,6 @@ l_string|&quot;adisplay&quot;
 id|display_mode
 op_or_assign
 id|LED_ADISP
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|token
-comma
-l_string|&quot;bypass&quot;
-)paren
-)paren
-id|bypass_controller
-op_assign
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -8421,7 +7599,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
+macro_line|#endif
 DECL|function|ibmmca_getinfo
 r_static
 r_int
@@ -8450,41 +7628,21 @@ comma
 id|speciale
 comma
 id|connectore
-suffix:semicolon
-r_int
-r_int
-id|pos2
 comma
-id|pos3
+id|k
 suffix:semicolon
-r_static
+r_int
+r_int
+id|pos
+(braket
+l_int|8
+)braket
+suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|info_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMLOCK
 id|shpnt
 op_assign
 id|dev
@@ -8522,20 +7680,24 @@ id|shpnt-&gt;hostdata
 op_member_access_from_pointer
 id|_connector_size
 suffix:semicolon
-id|pos2
+r_for
+c_loop
+(paren
+id|k
 op_assign
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos2
+l_int|2
 suffix:semicolon
-id|pos3
+id|k
+OL
+l_int|4
+suffix:semicolon
+id|k
+op_increment
+)paren
+id|pos
+(braket
+id|k
+)braket
 op_assign
 (paren
 (paren
@@ -8546,7 +7708,10 @@ op_star
 id|shpnt-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|_pos3
+id|_pos
+(braket
+id|k
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -8555,8 +7720,8 @@ id|speciale
 op_eq
 id|FORCED_DETECTION
 )paren
-multiline_comment|/* forced detection */
 (brace
+multiline_comment|/* forced detection */
 id|len
 op_add_assign
 id|sprintf
@@ -8566,53 +7731,9 @@ op_plus
 id|len
 comma
 l_string|&quot;Adapter category: forced detected&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;***************************************&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;***  Forced detected SCSI Adapter   ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;***  No chip-information available  ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;***************************************&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8636,41 +7757,28 @@ op_plus
 id|len
 comma
 l_string|&quot;Adapter category: integrated&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;Chip revision level: %d&bslash;n&quot;
+l_string|&quot;Chip status: %s&bslash;n&quot;
+l_string|&quot;8 kByte NVRAM status: %s&bslash;n&quot;
 comma
 (paren
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|0xf0
 )paren
 op_rshift
 l_int|4
 )paren
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;Chip status: %s&bslash;n&quot;
 comma
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|1
 )paren
@@ -8679,20 +7787,12 @@ c_cond
 l_string|&quot;enabled&quot;
 suffix:colon
 l_string|&quot;disabled&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;8 kByte NVRAM status: %s&bslash;n&quot;
 comma
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|2
 )paren
@@ -8742,16 +7842,6 @@ op_plus
 id|len
 comma
 l_string|&quot;Adapter category: slot-card&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-(paren
-id|buf
-op_plus
-id|len
-comma
 l_string|&quot;ROM Segment Address: &quot;
 )paren
 suffix:semicolon
@@ -8759,7 +7849,10 @@ r_if
 c_cond
 (paren
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|0xf0
 )paren
@@ -8790,7 +7883,10 @@ l_string|&quot;0x%x&bslash;n&quot;
 comma
 (paren
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|0xf0
 )paren
@@ -8812,7 +7908,10 @@ comma
 l_string|&quot;Chip status: %s&bslash;n&quot;
 comma
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|1
 )paren
@@ -8835,7 +7934,10 @@ l_string|&quot;Adapter I/O Offset: 0x%x&bslash;n&quot;
 comma
 (paren
 (paren
-id|pos2
+id|pos
+(braket
+l_int|2
+)braket
 op_amp
 l_int|0x0e
 )paren
@@ -8935,7 +8037,6 @@ op_minus
 l_int|1
 )paren
 )paren
-(brace
 id|len
 op_add_assign
 id|sprintf
@@ -8947,7 +8048,6 @@ comma
 l_string|&quot; &quot;
 )paren
 suffix:semicolon
-)brace
 id|len
 op_add_assign
 id|sprintf
@@ -8959,24 +8059,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|info_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMUNLOCK
 r_return
 id|len
 suffix:semicolon
@@ -9003,6 +8086,8 @@ comma
 id|i
 comma
 id|j
+comma
+id|k
 comma
 id|list_size
 comma
@@ -9033,7 +8118,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* make absolutely sure, that found is set to 0 */
-multiline_comment|/* First of all, print the version number of the driver. This is &n;    * important to allow better user bugreports in case of already&n;    * having problems with the MCA_bus probing. */
+multiline_comment|/* First of all, print the version number of the driver. This is&n;    * important to allow better user bugreports in case of already&n;    * having problems with the MCA_bus probing. */
 id|printk
 c_func
 (paren
@@ -9053,19 +8138,9 @@ id|MCA_bus
 id|printk
 c_func
 (paren
-l_string|&quot;IBM MCA SCSI: No Microchannel-bus present --&gt; Aborting.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;              This machine does not have any IBM MCA-bus&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;              or the MCA-Kernel-support is not enabled!&bslash;n&quot;
+l_string|&quot;IBM MCA SCSI:  No Microchannel-bus present --&gt; Aborting.&bslash;n&quot;
+l_string|&quot;      &t;     This machine does not have any IBM MCA-bus&bslash;n&quot;
+l_string|&quot;    &t;     or the MCA-Kernel-support is not enabled!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9085,9 +8160,8 @@ c_func
 id|boot_options
 )paren
 suffix:semicolon
-macro_line|#endif   
+macro_line|#endif
 multiline_comment|/* get interrupt request level */
-macro_line|#ifdef OLDKERN
 r_if
 c_cond
 (paren
@@ -9104,24 +8178,6 @@ comma
 id|hosts
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-(paren
-id|IM_IRQ
-comma
-id|do_interrupt_handler
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;ibmmcascsi&quot;
-comma
-id|hosts
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -9223,19 +8279,20 @@ l_string|&quot;forced detected SCSI Adapter&quot;
 )paren
 )paren
 (brace
+r_for
+c_loop
 (paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos2
+id|k
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
+id|k
+OL
+l_int|7
+suffix:semicolon
+id|k
+op_increment
+)paren
 (paren
 (paren
 r_struct
@@ -9245,46 +8302,10 @@ op_star
 id|shpnt-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|_pos3
-op_assign
-l_int|0
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos4
-op_assign
-l_int|0
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos5
-op_assign
-l_int|0
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos6
+id|_pos
+(braket
+id|k
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -9341,7 +8362,7 @@ id|found
 r_return
 id|found
 suffix:semicolon
-multiline_comment|/* The POS2-register of all PS/2 model SCSI-subsystems has the following&n;    * interpretation of bits:&n;    *                             Bit 7 - 4 : Chip Revision ID (Release)&n;    *                             Bit 3 - 2 : Reserved&n;    *                             Bit 1     : 8k NVRAM Disabled&n;    *                             Bit 0     : Chip Enable (EN-Signal)&n;    * The POS3-register is interpreted as follows:&n;    *                             Bit 7 - 5 : SCSI ID&n;    *                             Bit 4     : Reserved = 0&n;    *                             Bit 3 - 0 : Reserved = 0&n;    * (taken from &quot;IBM, PS/2 Hardware Interface Technical Reference, Common&n;    * Interfaces (1991)&quot;). &n;    * In short words, this means, that IBM PS/2 machines only support &n;    * 1 single subsystem by default. The slot-adapters must have another &n;    * configuration on pos2. Here, one has to assume the following&n;    * things for POS2-register:&n;    *                             Bit 7 - 4 : Chip Revision ID (Release)&n;    *                             Bit 3 - 1 : port offset factor&n;    *                             Bit 0     : Chip Enable (EN-Signal)&n;    * As I found a patch here, setting the IO-registers to 0x3540 forced,&n;    * as there was a 0x05 in POS2 on a model 56, I assume, that the &n;    * port 0x3540 must be fix for integrated SCSI-controllers.&n;    * Ok, this discovery leads to the following implementation: (M.Lang) */
+multiline_comment|/* The POS2-register of all PS/2 model SCSI-subsystems has the following&n;    * interpretation of bits:&n;    *                             Bit 7 - 4 : Chip Revision ID (Release)&n;    *                             Bit 3 - 2 : Reserved&n;    *                             Bit 1     : 8k NVRAM Disabled&n;    *                             Bit 0     : Chip Enable (EN-Signal)&n;    * The POS3-register is interpreted as follows:&n;    *                             Bit 7 - 5 : SCSI ID&n;    *                             Bit 4     : Reserved = 0&n;    *                             Bit 3 - 0 : Reserved = 0&n;    * (taken from &quot;IBM, PS/2 Hardware Interface Technical Reference, Common&n;    * Interfaces (1991)&quot;).&n;    * In short words, this means, that IBM PS/2 machines only support&n;    * 1 single subsystem by default. The slot-adapters must have another&n;    * configuration on pos2. Here, one has to assume the following&n;    * things for POS2-register:&n;    *                             Bit 7 - 4 : Chip Revision ID (Release)&n;    *                             Bit 3 - 1 : port offset factor&n;    *                             Bit 0     : Chip Enable (EN-Signal)&n;    * As I found a patch here, setting the IO-registers to 0x3540 forced,&n;    * as there was a 0x05 in POS2 on a model 56, I assume, that the&n;    * port 0x3540 must be fix for integrated SCSI-controllers.&n;    * Ok, this discovery leads to the following implementation: (M.Lang) */
 multiline_comment|/* first look for the IBM SCSI integrated subsystem on the motherboard */
 r_for
 c_loop
@@ -9371,9 +8392,8 @@ comma
 id|j
 )paren
 suffix:semicolon
-multiline_comment|/* pos2 = pos3 = 0xff if there is no integrated SCSI-subsystem present  */
-multiline_comment|/* if (( pos[2] != 0xff) || (pos[3] != 0xff )) */
-multiline_comment|/* Previous if-arguments do fail! Therefore, we use now the following to&n;    * make sure, we see a real integrated onboard SCSI-interface: */
+multiline_comment|/* pos2 = pos3 = 0xff if there is no integrated SCSI-subsystem present, but&n;    * if we ignore the settings of all surrounding pos registers, it is not&n;    * completely sufficient to only check pos2 and pos3. */
+multiline_comment|/* Therefore, now the following if statement is used to&n;    * make sure, we see a real integrated onboard SCSI-interface and no&n;    * internal system information, which gets mapped to some pos registers&n;    * on models 95xx. */
 r_if
 c_cond
 (paren
@@ -9509,7 +8529,7 @@ id|IM_IO_PORT
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/* if disabled, no IRQs will be generated, as the chip won&squot;t&n;&t;     * listen to the incomming commands and will do really nothing,&n;&t;     * except for listening to the pos-register settings. If this&n;&t;     * happens, I need to hugely think about it, as one has to&n;&t;     * write something to the MCA-Bus pos register in order to&n;&t;     * enable the chip. Normally, IBM-SCSI won&squot;t pass the POST,&n;&t;     * when the chip is disabled (see IBM tech. ref.). */
+multiline_comment|/* if disabled, no IRQs will be generated, as the chip won&squot;t&n;&t;      * listen to the incomming commands and will do really nothing,&n;&t;      * except for listening to the pos-register settings. If this&n;&t;      * happens, I need to hugely think about it, as one has to&n;&t;      * write something to the MCA-Bus pos register in order to&n;&t;      * enable the chip. Normally, IBM-SCSI won&squot;t pass the POST,&n;&t;      * when the chip is disabled (see IBM tech. ref.). */
 id|port
 op_assign
 id|IM_IO_PORT
@@ -9519,11 +8539,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: WARNING - Your SCSI-subsystem is disabled!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              SCSI-operations may not work.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9542,21 +8557,16 @@ op_rshift
 l_int|5
 suffix:semicolon
 multiline_comment|/* this is correct and represents the PUN */
-multiline_comment|/* give detailed information on the subsystem. This helps me &n;&t; * additionally during debugging and analyzing bug-reports. */
+multiline_comment|/* give detailed information on the subsystem. This helps me&n;       * additionally during debugging and analyzing bug-reports. */
 id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: IBM Integrated SCSI Controller found, io=0x%x, scsi id=%d,&bslash;n&quot;
+l_string|&quot;              chip rev.=%d, 8K NVRAM=%s, subsystem=%s&bslash;n&quot;
 comma
 id|port
 comma
 id|id
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;              chip rev.=%d, 8K NVRAM=%s, subsystem=%s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -9623,22 +8633,20 @@ l_string|&quot;IBM Integrated SCSI Controller&quot;
 )paren
 )paren
 (brace
+r_for
+c_loop
 (paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos2
+id|k
 op_assign
-id|pos
-(braket
 l_int|2
-)braket
 suffix:semicolon
+id|k
+OL
+l_int|7
+suffix:semicolon
+id|k
+op_increment
+)paren
 (paren
 (paren
 r_struct
@@ -9648,59 +8656,14 @@ op_star
 id|shpnt-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|_pos3
-op_assign
-id|pos
+id|_pos
 (braket
-l_int|3
+id|k
 )braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos4
 op_assign
 id|pos
 (braket
-l_int|4
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos5
-op_assign
-id|pos
-(braket
-l_int|5
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos6
-op_assign
-id|pos
-(braket
-l_int|6
+id|k
 )braket
 suffix:semicolon
 (paren
@@ -9852,7 +8815,6 @@ op_eq
 l_int|1
 )paren
 multiline_comment|/* is the subsystem chip enabled ? */
-(brace
 multiline_comment|/* (explanations see above) */
 id|port
 op_assign
@@ -9871,7 +8833,6 @@ op_lshift
 l_int|2
 )paren
 suffix:semicolon
-)brace
 r_else
 (brace
 multiline_comment|/* anyway, set the portnumber and warn */
@@ -9896,11 +8857,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: WARNING - Your SCSI-subsystem is disabled!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              SCSI-operations may not work.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9928,17 +8884,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: ERROR - Wrong POS(6)-register setting!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              Impossible to determine adapter PUN!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              Guessing adapter PUN = 7.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -9984,7 +8930,7 @@ l_int|0x10
 op_rshift
 l_int|1
 suffix:semicolon
-multiline_comment|/* get subsystem PUN high-bit&n;&t;&t;&t;&t;&t;&t;    * for F/W adapters */
+multiline_comment|/* get subsystem PUN high-bit&n;&t;&t;&t;&t;&t;    * for F/W adapters */
 )brace
 )brace
 r_if
@@ -10023,7 +8969,6 @@ l_string|&quot;IBM MCA SCSI: SCSI-2 F/W adapter needs IRQ 11.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* get interrupt request level */
-macro_line|#ifdef OLDKERN
 r_if
 c_cond
 (paren
@@ -10040,24 +8985,6 @@ comma
 id|hosts
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-(paren
-id|IM_IRQ_FW
-comma
-id|do_interrupt_handler
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;ibmmcascsi&quot;
-comma
-id|hosts
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -10197,22 +9124,20 @@ id|description
 )paren
 )paren
 (brace
+r_for
+c_loop
 (paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos2
+id|k
 op_assign
-id|pos
-(braket
 l_int|2
-)braket
 suffix:semicolon
+id|k
+OL
+l_int|8
+suffix:semicolon
+id|k
+op_increment
+)paren
 (paren
 (paren
 r_struct
@@ -10222,59 +9147,14 @@ op_star
 id|shpnt-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|_pos3
-op_assign
-id|pos
+id|_pos
 (braket
-l_int|3
+id|k
 )braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos4
 op_assign
 id|pos
 (braket
-l_int|4
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos5
-op_assign
-id|pos
-(braket
-l_int|5
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos6
-op_assign
-id|pos
-(braket
-l_int|6
+id|k
 )braket
 suffix:semicolon
 (paren
@@ -10362,7 +9242,7 @@ multiline_comment|/* advance to next slot */
 )brace
 multiline_comment|/* advance to next adapter id in the list of IBM-SCSI-subsystems*/
 )brace
-multiline_comment|/* now look for SCSI-adapters, by bugs mapped to the integrated SCSI&n;    * area. E.g. a W/Cache in MCA-slot 9 ???? Arrrrgh!! */
+multiline_comment|/* now check for SCSI-adapters, mapped to the integrated SCSI&n;    * area. E.g. a W/Cache in MCA-slot 9(!). Do the check correct here,&n;    * as this is a known effect on some models 95xx. */
 id|list_size
 op_assign
 r_sizeof
@@ -10458,8 +9338,8 @@ l_int|1
 op_eq
 l_int|1
 )paren
-multiline_comment|/* is the subsystem chip enabled ? */
 (brace
+multiline_comment|/* is the subsystem chip enabled ? */
 multiline_comment|/* (explanations see above) */
 id|port
 op_assign
@@ -10503,11 +9383,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: WARNING - Your SCSI-subsystem is disabled!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              SCSI-operations may not work.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10535,17 +9410,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: ERROR - Wrong POS(6)-register setting!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              Impossible to determine adapter PUN!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;              Guessing adapter PUN = 7.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -10577,7 +9442,6 @@ id|i
 op_eq
 id|IBM_SCSI2_FW
 )paren
-(brace
 id|id
 op_or_assign
 (paren
@@ -10591,8 +9455,7 @@ l_int|0x10
 op_rshift
 l_int|1
 suffix:semicolon
-multiline_comment|/* get subsystem PUN high-bit&n;&t;&t;&t;&t;&t;&t;    * for F/W adapters */
-)brace
+multiline_comment|/* get subsystem PUN high-bit&n;&t;&t;&t;&t;&t;   * for F/W adapters */
 )brace
 r_if
 c_cond
@@ -10630,7 +9493,6 @@ l_string|&quot;IBM MCA SCSI: SCSI-2 F/W adapter needs IRQ 11.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* get interrupt request level */
-macro_line|#ifdef OLDKERN
 r_if
 c_cond
 (paren
@@ -10647,25 +9509,6 @@ comma
 id|hosts
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-(paren
-id|IM_IRQ_FW
-comma
-id|do_interrupt_handler
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;ibmmcascsi&quot;
-comma
-id|hosts
-)paren
-)paren
-macro_line|#endif
-(brace
 id|printk
 c_func
 (paren
@@ -10674,7 +9517,6 @@ comma
 id|IM_IRQ_FW
 )paren
 suffix:semicolon
-)brace
 r_else
 id|IRQ11_registered
 op_increment
@@ -10804,22 +9646,20 @@ id|description
 )paren
 )paren
 (brace
+r_for
+c_loop
 (paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos2
+id|k
 op_assign
-id|pos
-(braket
 l_int|2
-)braket
 suffix:semicolon
+id|k
+OL
+l_int|7
+suffix:semicolon
+id|k
+op_increment
+)paren
 (paren
 (paren
 r_struct
@@ -10829,59 +9669,14 @@ op_star
 id|shpnt-&gt;hostdata
 )paren
 op_member_access_from_pointer
-id|_pos3
-op_assign
-id|pos
+id|_pos
 (braket
-l_int|3
+id|k
 )braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos4
 op_assign
 id|pos
 (braket
-l_int|4
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos5
-op_assign
-id|pos
-(braket
-l_int|5
-)braket
-suffix:semicolon
-(paren
-(paren
-r_struct
-id|ibmmca_hostdata
-op_star
-)paren
-id|shpnt-&gt;hostdata
-)paren
-op_member_access_from_pointer
-id|_pos6
-op_assign
-id|pos
-(braket
-l_int|6
+id|k
 )braket
 suffix:semicolon
 (paren
@@ -11263,17 +10058,6 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;IBM MCA SCSI: Subsystem SCSI-commands get bypassed.&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#endif
 id|reset_status
 c_func
@@ -11362,7 +10146,6 @@ r_return
 id|shpnt
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_command
 r_int
 id|ibmmca_command
@@ -11397,7 +10180,6 @@ r_return
 id|cmd-&gt;result
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_release
 r_int
 id|ibmmca_release
@@ -11438,8 +10220,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
-multiline_comment|/* The following routine is the SCSI command queue. The old edition is&n;   now improved by dynamical reassignment of ldn numbers that are &n;   currently not assigned. The mechanism works in a way, that first&n;   the physical structure is checked. If at a certain pun,lun a device&n;   should be present, the routine proceeds to the ldn check from&n;   get_ldn. An answer of 0xff would show-up, that the aimed device is&n;   currently not assigned any ldn. At this point, the dynamical &n;   remapping algorithm is called. It works in a way, that it goes in&n;   cyclic order through the ldns from 7 to 14. If a ldn is assigned,&n;   it takes 8 dynamical reassignment calls, until a device looses its&n;   ldn again. With this method it is assured, that while doing &n;   intense I/O between up to eight devices, no dynamical remapping is&n;   done there. ldns 0 through 6(!) are left untouched, which means, that&n;   puns 0 through 7(!) on lun=0 are always accessible without remapping.&n;   These ldns are statically assigned by this driver. The subsystem always &n;   occupies at least one pun, therefore 7 ldns (at lun=0) for other devices &n;   are sufficient. (The adapter uses always ldn=15, at whatever pun it is.) */
+multiline_comment|/* The following routine is the SCSI command queue for the midlevel driver */
 DECL|function|ibmmca_queuecommand
 r_int
 id|ibmmca_queuecommand
@@ -11644,7 +10425,7 @@ id|target
 op_assign
 id|cmd-&gt;target
 suffix:semicolon
-multiline_comment|/*if (target,lun) is NO LUN or not existing at all, return error */
+multiline_comment|/* if (target,lun) is NO LUN or not existing at all, return error */
 r_if
 c_cond
 (paren
@@ -11723,8 +10504,8 @@ id|ldn
 op_ge
 id|MAX_LOG_DEV
 )paren
-multiline_comment|/* on invalid ldn do special stuff */
 (brace
+multiline_comment|/* on invalid ldn do special stuff */
 r_if
 c_cond
 (paren
@@ -11732,8 +10513,8 @@ id|ldn
 OG
 id|MAX_LOG_DEV
 )paren
-multiline_comment|/* dynamical remapping if ldn unassigned */
 (brace
+multiline_comment|/* dynamical remapping if ldn unassigned */
 id|current_ldn
 op_assign
 id|next_ldn
@@ -11761,8 +10542,8 @@ id|host_index
 dot
 id|cmd
 )paren
-multiline_comment|/* search for a occupied, but not in */
 (brace
+multiline_comment|/* search for a occupied, but not in */
 multiline_comment|/* command-processing ldn. */
 id|next_ldn
 c_func
@@ -11801,24 +10582,16 @@ c_func
 id|host_index
 )paren
 )paren
-multiline_comment|/* One circle done ? */
 (brace
+multiline_comment|/* One circle done ? */
 multiline_comment|/* no non-processing ldn found */
 id|printk
 c_func
 (paren
 l_string|&quot;IBM MCA SCSI: Cannot assign SCSI-device dynamically!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
+"&bslash;"
 l_string|&quot;              On ldn 7-14 SCSI-commands everywhere in progress.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
+"&bslash;"
 l_string|&quot;              Reporting DID_NO_CONNECT for device (%d,%d).&bslash;n&quot;
 comma
 id|target
@@ -11914,6 +10687,20 @@ id|lun
 op_assign
 id|TYPE_NO_DEVICE
 suffix:semicolon
+id|get_scsi
+c_func
+(paren
+id|host_index
+)paren
+(braket
+id|id
+)braket
+(braket
+id|lun
+)braket
+op_assign
+id|TYPE_NO_DEVICE
+suffix:semicolon
 multiline_comment|/* unmap entry */
 )brace
 )brace
@@ -11925,44 +10712,6 @@ id|host_index
 )paren
 op_assign
 l_int|1
-suffix:semicolon
-multiline_comment|/* unassign found ldn (pun,lun does not matter for remove) */
-id|immediate_assign
-c_func
-(paren
-id|host_index
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|next_ldn
-c_func
-(paren
-id|host_index
-)paren
-comma
-id|REMOVE_LDN
-)paren
-suffix:semicolon
-multiline_comment|/* assign found ldn to aimed pun,lun */
-id|immediate_assign
-c_func
-(paren
-id|host_index
-comma
-id|target
-comma
-id|cmd-&gt;lun
-comma
-id|next_ldn
-c_func
-(paren
-id|host_index
-)paren
-comma
-id|SET_LDN
-)paren
 suffix:semicolon
 multiline_comment|/* map found ldn to pun,lun */
 id|get_ldn
@@ -11990,6 +10739,36 @@ id|next_ldn
 c_func
 (paren
 id|host_index
+)paren
+suffix:semicolon
+multiline_comment|/* unassign all ldns (pun,lun,ldn does not matter for remove) */
+id|immediate_assign
+c_func
+(paren
+id|host_index
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|REMOVE_LDN
+)paren
+suffix:semicolon
+multiline_comment|/* set only LDN for remapped device */
+id|immediate_assign
+c_func
+(paren
+id|host_index
+comma
+id|target
+comma
+id|cmd-&gt;lun
+comma
+id|ldn
+comma
+id|SET_LDN
 )paren
 suffix:semicolon
 multiline_comment|/* get device information for ld[ldn] */
@@ -12039,9 +10818,32 @@ id|ldn
 dot
 id|cmd
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
-multiline_comment|/* To prevent panic set 0, because&n;&t;&t;&t;&t;&t;&t;devices that were not assigned,&n;&t;&t;&t;&t;&t;&t;should have nothing in progress. */
+multiline_comment|/* To prevent panic set 0, because&n;&t;&t;&t;&t;&t;       devices that were not assigned,&n;&t;&t;&t;&t;&t;       should have nothing in progress. */
+id|get_scsi
+c_func
+(paren
+id|host_index
+)paren
+(braket
+id|target
+)braket
+(braket
+id|cmd-&gt;lun
+)braket
+op_assign
+id|ld
+c_func
+(paren
+id|host_index
+)paren
+(braket
+id|ldn
+)braket
+dot
+id|device_type
+suffix:semicolon
 multiline_comment|/* increase assignment counters for statistics in /proc */
 id|IBM_DS
 c_func
@@ -12066,7 +10868,7 @@ op_increment
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* panic here, because a device, found at boottime has &n;&t;&t;vanished */
+multiline_comment|/* panic here, because a device, found at boottime has&n;&t;      vanished */
 id|panic
 c_func
 (paren
@@ -12079,6 +10881,99 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
+multiline_comment|/* unassign again all ldns (pun,lun,ldn does not matter for remove) */
+id|immediate_assign
+c_func
+(paren
+id|host_index
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|REMOVE_LDN
+)paren
+suffix:semicolon
+multiline_comment|/* remap all ldns, as written in the pun/lun table */
+id|lun
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI_MULTI_LUN
+r_for
+c_loop
+(paren
+id|lun
+op_assign
+l_int|0
+suffix:semicolon
+id|lun
+OL
+l_int|8
+suffix:semicolon
+id|lun
+op_increment
+)paren
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|id
+op_assign
+l_int|0
+suffix:semicolon
+id|id
+OL
+id|max_pun
+suffix:semicolon
+id|id
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|get_ldn
+c_func
+(paren
+id|host_index
+)paren
+(braket
+id|id
+)braket
+(braket
+id|lun
+)braket
+op_le
+id|MAX_LOG_DEV
+)paren
+id|immediate_assign
+c_func
+(paren
+id|host_index
+comma
+id|id
+comma
+id|lun
+comma
+id|get_ldn
+c_func
+(paren
+id|host_index
+)paren
+(braket
+id|id
+)braket
+(braket
+id|lun
+)braket
+comma
+id|SET_LDN
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* set back to normal interrupt_handling */
 id|local_checking_phase_flag
 c_func
@@ -12088,6 +10983,7 @@ id|host_index
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef IM_DEBUG_PROBE
 multiline_comment|/* Information on syslog terminal */
 id|printk
 c_func
@@ -12101,6 +10997,7 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* increase next_ldn for next dynamical assignment */
 id|next_ldn
 c_func
@@ -12401,14 +11298,14 @@ c_func
 id|cmd-&gt;request_buffer
 )paren
 suffix:semicolon
-multiline_comment|/* recent Linux midlevel SCSI places 1024 byte for inquiry&n;&t; * command. Far too much for old PS/2 hardware. */
+multiline_comment|/* recent Linux midlevel SCSI places 1024 byte for inquiry&n;       * command. Far too much for old PS/2 hardware. */
 r_switch
 c_cond
 (paren
 id|scsi_cmd
 )paren
 (brace
-multiline_comment|/* avoid command errors by setting bufferlengths to&n;&t;     * ANSI-standard. */
+multiline_comment|/* avoid command errors by setting bufferlengths to&n;&t;  * ANSI-standard. Beware of forcing it to 255,&n;&t;  * this could SEGV the kernel!!! */
 r_case
 id|INQUIRY
 suffix:colon
@@ -12421,9 +11318,21 @@ suffix:colon
 r_case
 id|MODE_SELECT
 suffix:colon
+r_if
+c_cond
+(paren
+id|cmd-&gt;request_bufflen
+OG
+l_int|255
+)paren
 id|scb-&gt;sys_buf_length
 op_assign
 l_int|255
+suffix:semicolon
+r_else
+id|scb-&gt;sys_buf_length
+op_assign
+id|cmd-&gt;request_bufflen
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -12568,7 +11477,7 @@ suffix:colon
 r_case
 id|WRITE_12
 suffix:colon
-multiline_comment|/* Distinguish between disk and other devices. Only disks (that are the&n;&t;   most frequently accessed devices) should be supported by the &n;           IBM-SCSI-Subsystem commands. */
+multiline_comment|/* Distinguish between disk and other devices. Only disks (that are the&n;&t; most frequently accessed devices) should be supported by the&n;       IBM-SCSI-Subsystem commands. */
 r_switch
 c_cond
 (paren
@@ -12627,47 +11536,6 @@ id|ldn
 op_increment
 suffix:semicolon
 multiline_comment|/* increase READ-access on ldn stat. */
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_OTHER_SCSI_CMD_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_BYPASS_BUFFER
-suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd-&gt;cmd_len
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-id|cmd-&gt;cmnd
-comma
-id|cmd-&gt;cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
 id|scb-&gt;command
 op_assign
 id|IM_READ_DATA_CMD
@@ -12691,47 +11559,6 @@ id|ldn
 op_increment
 suffix:semicolon
 multiline_comment|/* increase write-count on ldn stat.*/
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_OTHER_SCSI_CMD_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_BYPASS_BUFFER
-suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd-&gt;cmd_len
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-id|cmd-&gt;cmnd
-comma
-id|cmd-&gt;cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
 id|scb-&gt;command
 op_assign
 id|IM_WRITE_DATA_CMD
@@ -12739,13 +11566,6 @@ op_or
 id|IM_NO_DISCONNECT
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|bypass_controller
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -12943,25 +11763,9 @@ id|ldn
 dot
 id|block_length
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_increment
-id|disk_rw_in_progress
-op_eq
-l_int|1
-)paren
-id|PS2_DISK_LED_ON
-(paren
-id|shpnt-&gt;host_no
-comma
-id|target
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* for other devices, enter here. Other types are not known by&n;&t;      Linux! TYPE_NO_LUN is forbidden as valid device. */
+multiline_comment|/* for other devices, enter here. Other types are not known by&n;&t;    Linux! TYPE_NO_LUN is forbidden as valid device. */
 r_case
 id|TYPE_ROM
 suffix:colon
@@ -12980,7 +11784,7 @@ suffix:colon
 r_case
 id|TYPE_MEDIUM_CHANGER
 suffix:colon
-multiline_comment|/* If there is a sequential-device, IBM recommends to use&n;&t;      IM_OTHER_SCSI_CMD_CMD instead of subsystem READ/WRITE. &n;&t;      Good/modern CD-ROM-drives are capable of&n;&t;      reading sequential AND random-access. This leads to the problem,&n;&t;      that random-accesses are covered by the subsystem, but &n;&t;      sequentials are not, as like for tape-drives. Therefore, it is&n;&t;      the easiest way to use IM_OTHER_SCSI_CMD_CMD for all read-ops&n;&t;      on CD-ROM-drives in order not to run into timing problems and&n;&t;      to have a stable state. In addition, data-access on CD-ROMs&n;&t;      works faster like that. Strange, but obvious. */
+multiline_comment|/* If there is a sequential-device, IBM recommends to use&n;&t;  IM_OTHER_SCSI_CMD_CMD instead of subsystem READ/WRITE.&n;&t;  This includes CD-ROM devices, too, due to the partial sequential&n;&t;  read capabilities. */
 id|scb-&gt;command
 op_assign
 id|IM_OTHER_SCSI_CMD_CMD
@@ -13033,22 +11837,7 @@ id|ldn
 op_assign
 id|IM_LONG_SCB
 suffix:semicolon
-multiline_comment|/* Read/write on this non-disk devices is also displayworthy, &n;&t;        so flash-up the LED/display. */
-r_if
-c_cond
-(paren
-op_increment
-id|disk_rw_in_progress
-op_eq
-l_int|1
-)paren
-id|PS2_DISK_LED_ON
-(paren
-id|shpnt-&gt;host_no
-comma
-id|target
-)paren
-suffix:semicolon
+multiline_comment|/* Read/write on this non-disk devices is also displayworthy,&n;&t;    so flash-up the LED/display. */
 r_break
 suffix:semicolon
 )brace
@@ -13069,15 +11858,9 @@ id|ldn
 )braket
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
 id|scb-&gt;command
 op_assign
-id|IM_OTHER_SCSI_CMD_CMD
+id|IM_DEVICE_INQUIRY_CMD
 suffix:semicolon
 id|scb-&gt;enable
 op_or_assign
@@ -13091,48 +11874,6 @@ id|scb-&gt;u1.log_blk_adr
 op_assign
 l_int|0
 suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd-&gt;cmd_len
-suffix:semicolon
-id|memcpy
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-id|cmd-&gt;cmnd
-comma
-id|cmd-&gt;cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_DEVICE_INQUIRY_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-suffix:semicolon
-id|scb-&gt;u1.log_blk_adr
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -13184,6 +11925,16 @@ r_case
 id|READ_CAPACITY
 suffix:colon
 multiline_comment|/* the length of system memory buffer must be exactly 8 bytes */
+id|scb-&gt;command
+op_assign
+id|IM_READ_CAPACITY_CMD
+suffix:semicolon
+id|scb-&gt;enable
+op_or_assign
+id|IM_READ_CONTROL
+op_or
+id|IM_BYPASS_BUFFER
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13195,113 +11946,12 @@ id|scb-&gt;sys_buf_length
 op_assign
 l_int|8
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_OTHER_SCSI_CMD_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-op_or
-id|IM_BYPASS_BUFFER
-suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd-&gt;cmd_len
-suffix:semicolon
-id|memcpy
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-id|cmd-&gt;cmnd
-comma
-id|cmd-&gt;cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_READ_CAPACITY_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 multiline_comment|/* Commands that need read-only-mode (system &lt;- device): */
 r_case
 id|REQUEST_SENSE
 suffix:colon
-r_if
-c_cond
-(paren
-id|bypass_controller
-)paren
-(brace
-id|scb-&gt;command
-op_assign
-id|IM_OTHER_SCSI_CMD_CMD
-suffix:semicolon
-id|scb-&gt;enable
-op_or_assign
-id|IM_READ_CONTROL
-op_or
-id|IM_SUPRESS_EXCEPTION_SHORT
-op_or
-id|IM_BYPASS_BUFFER
-suffix:semicolon
-id|scb-&gt;u1.scsi_cmd_length
-op_assign
-id|cmd-&gt;cmd_len
-suffix:semicolon
-id|memcpy
-(paren
-id|scb-&gt;u2.scsi_command
-comma
-id|cmd-&gt;cmnd
-comma
-id|cmd-&gt;cmd_len
-)paren
-suffix:semicolon
-id|last_scsi_type
-c_func
-(paren
-id|host_index
-)paren
-(braket
-id|ldn
-)braket
-op_assign
-id|IM_LONG_SCB
-suffix:semicolon
-)brace
-r_else
-(brace
 id|scb-&gt;command
 op_assign
 id|IM_REQUEST_SENSE_CMD
@@ -13311,8 +11961,9 @@ op_or_assign
 id|IM_READ_CONTROL
 op_or
 id|IM_SUPRESS_EXCEPTION_SHORT
+op_or
+id|IM_BYPASS_BUFFER
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 multiline_comment|/* Commands that need write-only-mode (system -&gt; device): */
@@ -13371,7 +12022,7 @@ id|IM_LONG_SCB
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* For other commands, read-only is useful. Most other commands are &n;&t; running without an input-data-block. */
+multiline_comment|/* For other commands, read-only is useful. Most other commands are&n;       running without an input-data-block. */
 r_default
 suffix:colon
 id|scb-&gt;command
@@ -13414,6 +12065,21 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*issue scb command, and return */
+r_if
+c_cond
+(paren
+op_increment
+id|disk_rw_in_progress
+op_eq
+l_int|1
+)paren
+id|PS2_DISK_LED_ON
+(paren
+id|shpnt-&gt;host_no
+comma
+id|target
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13485,7 +12151,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_abort
 r_int
 id|ibmmca_abort
@@ -13533,30 +12198,15 @@ r_int
 r_int
 id|imm_command
 suffix:semicolon
-multiline_comment|/* return SCSI_ABORT_SNOOZE ; */
-macro_line|#ifdef OLDKERN   
-id|save_flags
+macro_line|#ifdef IM_DEBUG_PROBE
+id|printk
 c_func
 (paren
-id|flags
+l_string|&quot;IBM MCA SCSI: Abort subroutine called...&bslash;n&quot;
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|abort_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif            
+macro_line|#endif
+id|IBMLOCK
 id|shpnt
 op_assign
 id|cmd-&gt;host
@@ -13616,6 +12266,19 @@ id|cmd-&gt;scsi_done
 id|cmd
 )paren
 suffix:semicolon
+id|shpnt
+op_assign
+id|cmd-&gt;host
+suffix:semicolon
+id|IBMUNLOCK
+macro_line|#ifdef IM_DEBUG_PROBE
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: Abort adapter selection failed!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
@@ -13701,7 +12364,7 @@ id|target
 op_assign
 id|cmd-&gt;target
 suffix:semicolon
-multiline_comment|/*get logical device number, and disable system interrupts */
+multiline_comment|/* get logical device number, and disable system interrupts */
 id|printk
 (paren
 l_string|&quot;IBM MCA SCSI: Sending abort to device pun=%d, lun=%d.&bslash;n&quot;
@@ -13742,29 +12405,12 @@ dot
 id|cmd
 )paren
 (brace
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|abort_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   &t;
+id|IBMUNLOCK
 r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/* Clear ld.cmd, save done function, install internal done, &n;    * send abort immediate command (this enables sys. interrupts), &n;    * and wait until the interrupt arrives. &n;    */
+multiline_comment|/* Clear ld.cmd, save done function, install internal done,&n;    * send abort immediate command (this enables sys. interrupts),&n;    * and wait until the interrupt arrives.&n;    */
 id|saved_done
 op_assign
 id|cmd-&gt;scsi_done
@@ -13858,48 +12504,10 @@ id|IM_BUSY
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|abort_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#ifdef OLDKERN   
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|abort_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMUNLOCK
+id|IBMLOCK
 )brace
-multiline_comment|/*write registers and enable system interrupts */
+multiline_comment|/* write registers and enable system interrupts */
 id|outl
 (paren
 id|imm_command
@@ -13924,31 +12532,15 @@ id|host_index
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|abort_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
+id|IBMUNLOCK
 macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
 (paren
-l_string|&quot;IBM MCA SCSI: Abort submitted, waiting for adapter response...&bslash;n&quot;
+l_string|&quot;IBM MCA SCSI: Abort queued to adapter...&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -13963,6 +12555,14 @@ id|cmd-&gt;scsi_done
 op_assign
 id|saved_done
 suffix:semicolon
+macro_line|#ifdef IM_DEBUG_PROBE
+id|printk
+c_func
+(paren
+l_string|&quot;IBM MCA SCSI: Abort returned with adapter response...&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*if abort went well, call saved done, then return success or error */
 r_if
 c_cond
@@ -13976,6 +12576,7 @@ l_int|16
 )paren
 )paren
 (brace
+id|IBMLOCK
 id|cmd-&gt;result
 op_or_assign
 id|DID_ABORT
@@ -14007,6 +12608,7 @@ id|cmd
 op_assign
 l_int|NULL
 suffix:semicolon
+id|IBMUNLOCK
 macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
@@ -14014,13 +12616,14 @@ c_func
 l_string|&quot;IBM MCA SCSI: Abort finished with success.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 r_return
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 r_else
 (brace
+id|IBMLOCK
 id|cmd-&gt;result
 op_or_assign
 id|DID_NO_CONNECT
@@ -14052,6 +12655,7 @@ id|cmd
 op_assign
 l_int|NULL
 suffix:semicolon
+id|IBMUNLOCK
 macro_line|#ifdef IM_DEBUG_PROBE
 id|printk
 c_func
@@ -14059,13 +12663,12 @@ c_func
 l_string|&quot;IBM MCA SCSI: Abort failed.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_return
 id|SCSI_ABORT_ERROR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_reset
 r_int
 id|ibmmca_reset
@@ -14123,29 +12726,7 @@ r_return
 id|SCSI_RESET_SNOOZE
 suffix:semicolon
 )brace
-macro_line|#ifdef OLDKERN   
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMLOCK
 id|ticks
 op_assign
 id|IM_RESET_DELAY
@@ -14191,71 +12772,10 @@ id|hosts
 id|host_index
 )braket
 )paren
-(brace
 multiline_comment|/* invalid hostadapter descriptor address */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|local_checking_phase_flag
-c_func
-(paren
-id|host_index
-)paren
-)paren
-(brace
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,132)
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|SCSI_RESET_SYNCHRONOUS
-)paren
-(brace
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;  
-id|cmd-&gt;result
-op_assign
-id|DID_NO_CONNECT
-op_lshift
-l_int|16
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cmd-&gt;scsi_done
-)paren
-(paren
-id|cmd-&gt;scsi_done
-)paren
-(paren
-id|cmd
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;     
-)brace
 r_return
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -14272,24 +12792,7 @@ c_func
 l_string|&quot;IBM MCA SCSI: unable to reset while checking devices.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;
+id|IBMUNLOCK
 r_return
 id|SCSI_RESET_SNOOZE
 suffix:semicolon
@@ -14390,47 +12893,8 @@ id|IM_BUSY
 )paren
 r_break
 suffix:semicolon
-macro_line|#ifdef OLDKERN&t;
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#ifdef OLDKERN   
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMUNLOCK
+id|IBMLOCK
 )brace
 multiline_comment|/*write registers and enable system interrupts */
 id|outl
@@ -14491,14 +12955,18 @@ l_int|0x8f
 )paren
 )paren
 (brace
-id|mdelay
+id|udelay
 c_func
+(paren
 (paren
 l_int|1
 op_plus
 l_int|999
 op_div
 id|HZ
+)paren
+op_star
+l_int|1000
 )paren
 suffix:semicolon
 id|barrier
@@ -14531,24 +12999,7 @@ id|host_index
 op_assign
 id|IM_RESET_FINISHED_FAIL
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMUNLOCK
 r_return
 id|SCSI_RESET_ERROR
 suffix:semicolon
@@ -14664,24 +13115,7 @@ c_func
 l_string|&quot;IBM MCA SCSI: reset failed.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif         
+id|IBMUNLOCK
 r_return
 id|SCSI_RESET_ERROR
 suffix:semicolon
@@ -14692,24 +13126,7 @@ id|printk
 l_string|&quot;IBM MCA SCSI: Reset successfully completed.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|reset_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif      
+id|IBMUNLOCK
 r_for
 c_loop
 (paren
@@ -14765,41 +13182,12 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,132)
-r_if
-c_cond
-(paren
-id|flags
-op_amp
-id|SCSI_RESET_SYNCHRONOUS
-)paren
-(brace
-id|cmd_aid-&gt;result
-op_assign
-id|DID_BUS_BUSY
-op_lshift
-l_int|16
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cmd_aid-&gt;scsi_done
-)paren
-(paren
-id|cmd_aid-&gt;scsi_done
-)paren
-(paren
-id|cmd_aid
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;     
 )brace
 )brace
 r_if
 c_cond
 (paren
-id|flags
+id|reset_flags
 op_amp
 id|SCSI_RESET_SUGGEST_HOST_RESET
 )paren
@@ -14814,7 +13202,7 @@ r_else
 r_if
 c_cond
 (paren
-id|flags
+id|reset_flags
 op_amp
 id|SCSI_RESET_SUGGEST_BUS_RESET
 )paren
@@ -14830,7 +13218,6 @@ r_return
 id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
-multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_biosparam
 r_int
 id|ibmmca_biosparam
@@ -15287,29 +13674,7 @@ suffix:semicolon
 r_int
 id|max_pun
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|proc_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMLOCK
 r_for
 c_loop
 (paren
@@ -15503,27 +13868,6 @@ comma
 l_string|&quot;               (Shared) IRQ.............: %d&bslash;n&quot;
 comma
 id|IM_IRQ
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;               SCSI-command set used....: %s&bslash;n&quot;
-comma
-(paren
-id|bypass_controller
-)paren
-ques
-c_cond
-l_string|&quot;software&quot;
-suffix:colon
-l_string|&quot;hardware integrated&quot;
 )paren
 suffix:semicolon
 id|len
@@ -16164,24 +14508,7 @@ id|len
 op_assign
 id|length
 suffix:semicolon
-macro_line|#ifdef OLDKERN   
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|proc_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif   
+id|IBMUNLOCK
 r_return
 id|len
 suffix:semicolon
@@ -16310,7 +14637,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,18)
 id|__setup
 c_func
 (paren
@@ -16319,15 +14645,14 @@ comma
 id|option_setup
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
 DECL|variable|driver_template
-r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|IBMMCA
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
-multiline_comment|/*--------------------------------------------------------------------*/
+macro_line|#endif
 eof

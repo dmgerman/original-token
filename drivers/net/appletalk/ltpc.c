@@ -529,9 +529,6 @@ multiline_comment|/* this uses base+6, but it&squot;s ok */
 r_int
 id|i
 suffix:semicolon
-r_int
-id|timeout
-suffix:semicolon
 multiline_comment|/* twenty second or so total */
 r_for
 c_loop
@@ -542,7 +539,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|20000
+l_int|200000
 suffix:semicolon
 id|i
 op_increment
@@ -564,25 +561,12 @@ l_int|6
 r_return
 l_int|0
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|timeout
-op_assign
-id|loops_per_sec
-op_div
-l_int|1000
-suffix:semicolon
-id|timeout
-OG
-l_int|0
-suffix:semicolon
-id|timeout
-op_decrement
+l_int|100
 )paren
-(brace
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|1

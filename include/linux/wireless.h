@@ -12,37 +12,37 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;9
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; *&n; * V7 to V8&n; * --------&n; *&t;- Changed my e-mail address&n; *&t;- More 802.11 support (nickname, rate, rts, frag)&n; *&t;- List index in frequencies&n; *&n; * V8 to V9&n; * --------&n; *&t;- Support for &squot;mode of operation&squot; (ad-hoc, managed...)&n; *&t;- Support for unicast and multicast power saving&n; *&t;- Change encoding to support larger tokens (&gt;64 bits)&n; *&t;- Updated iw_params (disable, flags) and use it for NWID&n; *&t;- Extracted iw_point from iwreq for clarity&n; */
+mdefine_line|#define WIRELESS_EXT&t;10
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; *&n; * V7 to V8&n; * --------&n; *&t;- Changed my e-mail address&n; *&t;- More 802.11 support (nickname, rate, rts, frag)&n; *&t;- List index in frequencies&n; *&n; * V8 to V9&n; * --------&n; *&t;- Support for &squot;mode of operation&squot; (ad-hoc, managed...)&n; *&t;- Support for unicast and multicast power saving&n; *&t;- Change encoding to support larger tokens (&gt;64 bits)&n; *&t;- Updated iw_params (disable, flags) and use it for NWID&n; *&t;- Extracted iw_point from iwreq for clarity&n; *&n; * V9 to V10&n; * ---------&n; *&t;- Add PM capability to range structure&n; *&t;- Add PM modifier : MAX/MIN/RELATIVE&n; *&t;- Add encoding option : IW_ENCODE_NOKEY&n; *&t;- Add TxPower ioctls (work like TxRate)&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
-mdefine_line|#define SIOCSIWNAME&t;0x8B00&t;&t;/* Unused ??? */
+mdefine_line|#define SIOCSIWNAME&t;0x8B00&t;&t;/* Unused */
 DECL|macro|SIOCGIWNAME
-mdefine_line|#define SIOCGIWNAME&t;0x8B01&t;&t;/* get name */
+mdefine_line|#define SIOCGIWNAME&t;0x8B01&t;&t;/* get name == wireless protocol */
 DECL|macro|SIOCSIWNWID
 mdefine_line|#define SIOCSIWNWID&t;0x8B02&t;&t;/* set network id (the cell) */
 DECL|macro|SIOCGIWNWID
 mdefine_line|#define SIOCGIWNWID&t;0x8B03&t;&t;/* get network id */
 DECL|macro|SIOCSIWFREQ
-mdefine_line|#define SIOCSIWFREQ&t;0x8B04&t;&t;/* set channel/frequency */
+mdefine_line|#define SIOCSIWFREQ&t;0x8B04&t;&t;/* set channel/frequency (Hz) */
 DECL|macro|SIOCGIWFREQ
-mdefine_line|#define SIOCGIWFREQ&t;0x8B05&t;&t;/* get channel/frequency */
+mdefine_line|#define SIOCGIWFREQ&t;0x8B05&t;&t;/* get channel/frequency (Hz) */
 DECL|macro|SIOCSIWMODE
 mdefine_line|#define SIOCSIWMODE&t;0x8B06&t;&t;/* set operation mode */
 DECL|macro|SIOCGIWMODE
 mdefine_line|#define SIOCGIWMODE&t;0x8B07&t;&t;/* get operation mode */
 DECL|macro|SIOCSIWSENS
-mdefine_line|#define SIOCSIWSENS&t;0x8B08&t;&t;/* set sensitivity */
+mdefine_line|#define SIOCSIWSENS&t;0x8B08&t;&t;/* set sensitivity (dBm) */
 DECL|macro|SIOCGIWSENS
-mdefine_line|#define SIOCGIWSENS&t;0x8B09&t;&t;/* get sensitivity */
+mdefine_line|#define SIOCGIWSENS&t;0x8B09&t;&t;/* get sensitivity (dBm) */
 multiline_comment|/* Informative stuff */
 DECL|macro|SIOCSIWRANGE
-mdefine_line|#define SIOCSIWRANGE&t;0x8B0A&t;&t;/* Unused ??? */
+mdefine_line|#define SIOCSIWRANGE&t;0x8B0A&t;&t;/* Unused */
 DECL|macro|SIOCGIWRANGE
 mdefine_line|#define SIOCGIWRANGE&t;0x8B0B&t;&t;/* Get range of parameters */
 DECL|macro|SIOCSIWPRIV
-mdefine_line|#define SIOCSIWPRIV&t;0x8B0C&t;&t;/* Unused ??? */
+mdefine_line|#define SIOCSIWPRIV&t;0x8B0C&t;&t;/* Unused */
 DECL|macro|SIOCGIWPRIV
 mdefine_line|#define SIOCGIWPRIV&t;0x8B0D&t;&t;/* get private ioctl interface info */
 multiline_comment|/* Mobile IP support */
@@ -80,6 +80,10 @@ DECL|macro|SIOCSIWFRAG
 mdefine_line|#define SIOCSIWFRAG&t;0x8B24&t;&t;/* set fragmentation thr (bytes) */
 DECL|macro|SIOCGIWFRAG
 mdefine_line|#define SIOCGIWFRAG&t;0x8B25&t;&t;/* get fragmentation thr (bytes) */
+DECL|macro|SIOCSIWTXPOW
+mdefine_line|#define SIOCSIWTXPOW&t;0x8B26&t;&t;/* set transmit power (dBm) */
+DECL|macro|SIOCGIWTXPOW
+mdefine_line|#define SIOCGIWTXPOW&t;0x8B27&t;&t;/* get transmit power (dBm) */
 multiline_comment|/* Encoding stuff (scrambling, hardware security, WEP...) */
 DECL|macro|SIOCSIWENCODE
 mdefine_line|#define SIOCSIWENCODE&t;0x8B2A&t;&t;/* set encoding token &amp; mode */
@@ -128,6 +132,9 @@ multiline_comment|/* Note : if you have something like 80 frequencies,&n; * don&
 multiline_comment|/* Maximum bit rates in the range struct */
 DECL|macro|IW_MAX_BITRATES
 mdefine_line|#define IW_MAX_BITRATES&t;&t;8
+multiline_comment|/* Maximum tx powers in the range struct */
+DECL|macro|IW_MAX_TXPOWER
+mdefine_line|#define IW_MAX_TXPOWER&t;&t;8
 multiline_comment|/* Maximum of address that you may set with SPY */
 DECL|macro|IW_MAX_SPY
 mdefine_line|#define IW_MAX_SPY&t;&t;8
@@ -160,7 +167,9 @@ multiline_comment|/* Flags for encoding (along with the token) */
 DECL|macro|IW_ENCODE_INDEX
 mdefine_line|#define IW_ENCODE_INDEX&t;&t;0x00FF&t;/* Token index (if needed) */
 DECL|macro|IW_ENCODE_FLAGS
-mdefine_line|#define IW_ENCODE_FLAGS&t;&t;0xF000&t;/* Flags defined below */
+mdefine_line|#define IW_ENCODE_FLAGS&t;&t;0xFF00&t;/* Flags defined below */
+DECL|macro|IW_ENCODE_MODE
+mdefine_line|#define IW_ENCODE_MODE&t;&t;0xF000&t;/* Modes defined below */
 DECL|macro|IW_ENCODE_DISABLED
 mdefine_line|#define IW_ENCODE_DISABLED&t;0x8000&t;/* Encoding disabled */
 DECL|macro|IW_ENCODE_ENABLED
@@ -169,6 +178,8 @@ DECL|macro|IW_ENCODE_RESTRICTED
 mdefine_line|#define IW_ENCODE_RESTRICTED&t;0x4000&t;/* Refuse non-encoded packets */
 DECL|macro|IW_ENCODE_OPEN
 mdefine_line|#define IW_ENCODE_OPEN&t;&t;0x2000&t;/* Accept non-encoded packets */
+DECL|macro|IW_ENCODE_NOKEY
+mdefine_line|#define IW_ENCODE_NOKEY         0x0800  /* Key is write only, so not present */
 multiline_comment|/* Power management flags available (along with the value, if any) */
 DECL|macro|IW_POWER_ON
 mdefine_line|#define IW_POWER_ON&t;&t;0x0000&t;/* No details... */
@@ -190,6 +201,19 @@ DECL|macro|IW_POWER_FORCE_S
 mdefine_line|#define IW_POWER_FORCE_S&t;0x0400&t;/* Force PM procedure for sending unicast */
 DECL|macro|IW_POWER_REPEATER
 mdefine_line|#define IW_POWER_REPEATER&t;0x0800&t;/* Repeat broadcast messages in PM period */
+DECL|macro|IW_POWER_MODIFIER
+mdefine_line|#define IW_POWER_MODIFIER&t;0x000F&t;/* Modify a parameter */
+DECL|macro|IW_POWER_MIN
+mdefine_line|#define IW_POWER_MIN&t;&t;0x0001&t;/* Value is a minimum  */
+DECL|macro|IW_POWER_MAX
+mdefine_line|#define IW_POWER_MAX&t;&t;0x0002&t;/* Value is a maximum */
+DECL|macro|IW_POWER_RELATIVE
+mdefine_line|#define IW_POWER_RELATIVE&t;0x0004&t;/* Value is not in seconds/ms/us */
+multiline_comment|/* Transmit Power flags available */
+DECL|macro|IW_TXPOW_DBM
+mdefine_line|#define IW_TXPOW_DBM&t;&t;0x0000&t;/* Value is in dBm */
+DECL|macro|IW_TXPOW_MWATT
+mdefine_line|#define IW_TXPOW_MWATT&t;&t;0x0001&t;/* Value is in mW */
 multiline_comment|/****************************** TYPES ******************************/
 multiline_comment|/* --------------------------- SUBTYPES --------------------------- */
 multiline_comment|/*&n; *&t;Generic format for most parameters that fit in an int&n; */
@@ -399,6 +423,12 @@ id|iw_param
 id|bitrate
 suffix:semicolon
 multiline_comment|/* default bit rate */
+DECL|member|txpower
+r_struct
+id|iw_param
+id|txpower
+suffix:semicolon
+multiline_comment|/* default transmit power */
 DECL|member|rts
 r_struct
 id|iw_param
@@ -541,16 +571,16 @@ id|max_frag
 suffix:semicolon
 multiline_comment|/* Maximal frag threshold */
 multiline_comment|/* Power Management duration &amp; timeout */
-DECL|member|min_pmd
+DECL|member|min_pmp
 id|__s32
-id|min_pmd
+id|min_pmp
 suffix:semicolon
-multiline_comment|/* Minimal PM duration */
-DECL|member|max_pmd
+multiline_comment|/* Minimal PM period */
+DECL|member|max_pmp
 id|__s32
-id|max_pmd
+id|max_pmp
 suffix:semicolon
-multiline_comment|/* Maximal PM duration */
+multiline_comment|/* Maximal PM period */
 DECL|member|min_pmt
 id|__s32
 id|min_pmt
@@ -561,6 +591,21 @@ id|__s32
 id|max_pmt
 suffix:semicolon
 multiline_comment|/* Maximal PM timeout */
+DECL|member|pmp_flags
+id|__u16
+id|pmp_flags
+suffix:semicolon
+multiline_comment|/* How to decode max/min PM period */
+DECL|member|pmt_flags
+id|__u16
+id|pmt_flags
+suffix:semicolon
+multiline_comment|/* How to decode max/min PM timeout */
+DECL|member|pm_capa
+id|__u16
+id|pm_capa
+suffix:semicolon
+multiline_comment|/* What PM options are supported */
 multiline_comment|/* Encoder stuff */
 DECL|member|encoding_size
 id|__u16
@@ -580,6 +625,25 @@ id|__u8
 id|max_encoding_tokens
 suffix:semicolon
 multiline_comment|/* Max number of tokens */
+multiline_comment|/* Transmit power */
+DECL|member|txpower_capa
+id|__u16
+id|txpower_capa
+suffix:semicolon
+multiline_comment|/* What options are supported */
+DECL|member|num_txpower
+id|__u8
+id|num_txpower
+suffix:semicolon
+multiline_comment|/* Number of entries in the list */
+DECL|member|txpower
+id|__s32
+id|txpower
+(braket
+id|IW_MAX_TXPOWER
+)braket
+suffix:semicolon
+multiline_comment|/* list, in bps */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private ioctl interface information&n; */

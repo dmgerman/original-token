@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;Generic watchdog defines. Derived from..&n; *&n; * Berkshire PC Watchdog Defines&n; * by Ken Hollis &lt;khollis@bitgate.com&gt;&n; *&n; */
+macro_line|#ifndef _LINUX_WATCHDOG_H
+DECL|macro|_LINUX_WATCHDOG_H
+mdefine_line|#define _LINUX_WATCHDOG_H
 macro_line|#include &lt;linux/ioctl.h&gt;
 DECL|macro|WATCHDOG_IOCTL_BASE
 mdefine_line|#define&t;WATCHDOG_IOCTL_BASE&t;&squot;W&squot;
@@ -7,17 +10,17 @@ r_struct
 id|watchdog_info
 (brace
 DECL|member|options
-id|u32
+id|__u32
 id|options
 suffix:semicolon
 multiline_comment|/* Options the card/driver supports */
 DECL|member|firmware_version
-id|u32
+id|__u32
 id|firmware_version
 suffix:semicolon
 multiline_comment|/* Firmware version of the card */
 DECL|member|identity
-id|u8
+id|__u8
 id|identity
 (braket
 l_int|32
@@ -64,4 +67,5 @@ DECL|macro|WDIOS_ENABLECARD
 mdefine_line|#define&t;WDIOS_ENABLECARD&t;0x0002&t;/* Turn on the watchdog timer */
 DECL|macro|WDIOS_TEMPPANIC
 mdefine_line|#define&t;WDIOS_TEMPPANIC&t;&t;0x0004&t;/* Kernel panic on temperature trip */
+macro_line|#endif  /* ifndef _LINUX_WATCHDOG_H */
 eof

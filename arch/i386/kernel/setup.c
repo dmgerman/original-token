@@ -4324,9 +4324,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|c-&gt;loops_per_sec
+id|c-&gt;loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 )brace
 )brace
@@ -6302,8 +6302,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+suffix:semicolon
 multiline_comment|/* TLB, or unknown */
 )brace
 r_break
@@ -7718,9 +7717,9 @@ id|xlvl
 comma
 id|tfms
 suffix:semicolon
-id|c-&gt;loops_per_sec
+id|c-&gt;loops_per_jiffy
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 suffix:semicolon
 id|c-&gt;x86_cache_size
 op_assign
@@ -9095,22 +9094,22 @@ id|p
 comma
 l_string|&quot;&bslash;nbogomips&bslash;t: %lu.%02lu&bslash;n&bslash;n&quot;
 comma
-(paren
-id|c-&gt;loops_per_sec
-op_plus
-l_int|2500
-)paren
+id|c-&gt;loops_per_jiffy
 op_div
+(paren
 l_int|500000
+op_div
+id|HZ
+)paren
 comma
 (paren
-(paren
-id|c-&gt;loops_per_sec
-op_plus
-l_int|2500
-)paren
+id|c-&gt;loops_per_jiffy
 op_div
+(paren
 l_int|5000
+op_div
+id|HZ
+)paren
 )paren
 op_mod
 l_int|100

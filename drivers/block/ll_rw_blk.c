@@ -3001,6 +3001,28 @@ comma
 id|bh
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|rw
+)paren
+(brace
+r_case
+id|WRITE
+suffix:colon
+id|kstat.pgpgout
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|kstat.pgpgin
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Default IO end handler, used by &quot;ll_rw_block()&quot;.&n; */
 DECL|function|end_buffer_io_sync
@@ -3053,11 +3075,6 @@ id|bhs
 )braket
 )paren
 (brace
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
 r_int
 r_int
 id|major
@@ -3140,6 +3157,11 @@ id|i
 op_increment
 )paren
 (brace
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
 id|bh
 op_assign
 id|bhs
@@ -3241,6 +3263,11 @@ id|i
 op_increment
 )paren
 (brace
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
 id|bh
 op_assign
 id|bhs
@@ -3297,9 +3324,6 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-id|kstat.pgpgout
-op_increment
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3320,9 +3344,6 @@ id|bh
 multiline_comment|/* Hmmph! Already have it */
 r_goto
 id|end_io
-suffix:semicolon
-id|kstat.pgpgin
-op_increment
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3368,6 +3389,7 @@ r_return
 suffix:semicolon
 id|sorry
 suffix:colon
+multiline_comment|/* Make sure we don&squot;t get infinite dirty retries.. */
 r_for
 c_loop
 (paren
@@ -3382,7 +3404,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|buffer_IO_error
+id|mark_buffer_clean
 c_func
 (paren
 id|bhs

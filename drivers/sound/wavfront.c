@@ -15,16 +15,16 @@ macro_line|#include &lt;linux/wavefront.h&gt;
 multiline_comment|/*&n; *&t;This sucks, hopefully it&squot;ll get standardised&n; */
 macro_line|#if defined(__alpha__)
 macro_line|#ifdef CONFIG_SMP
-DECL|macro|LOOPS_PER_SEC
-mdefine_line|#define LOOPS_PER_SEC cpu_data[smp_processor_id()].loops_per_sec
+DECL|macro|LOOPS_PER_TICK
+mdefine_line|#define LOOPS_PER_TICK cpu_data[smp_processor_id()].loops_per_jiffy
 macro_line|#else
-DECL|macro|LOOPS_PER_SEC
-mdefine_line|#define LOOPS_PER_SEC&t;loops_per_sec
+DECL|macro|LOOPS_PER_TICK
+mdefine_line|#define LOOPS_PER_TICK&t;loops_per_sec
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(__i386__)
-DECL|macro|LOOPS_PER_SEC
-mdefine_line|#define LOOPS_PER_SEC current_cpu_data.loops_per_sec
+DECL|macro|LOOPS_PER_TICK
+mdefine_line|#define LOOPS_PER_TICK current_cpu_data.loops_per_jiffy
 macro_line|#endif
 DECL|macro|_MIDI_SYNTH_C_
 mdefine_line|#define _MIDI_SYNTH_C_
@@ -1322,9 +1322,13 @@ op_assign
 id|wait_usecs
 op_star
 (paren
-id|LOOPS_PER_SEC
+id|LOOPS_PER_TICK
 op_div
+(paren
 l_int|1000000
+op_div
+id|HZ
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -126,6 +126,7 @@ id|usb_minors
 l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/**&n; *&t;usb_register - register a USB driver&n; *&t;@new_driver: USB operations for the driver&n; *&n; *&t;Registers a USB driver with the USB core.  The list of unattached&n; *&t;interfaces will be rescanned whenever a new driver is added, allowing&n; *&t;the new driver to attach to any recognized devices.&n; *&t;Returns a negative error code on failure and 0 on success.&n; */
 DECL|function|usb_register
 r_int
 id|usb_register
@@ -214,7 +215,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We go through all existing devices, and see if any of them would&n; * be acceptable to the new driver.. This is done using a depth-first&n; * search for devices without a registered driver already, then &n; * running &squot;probe&squot; with each of the drivers registered on every one &n; * of these.&n; */
+multiline_comment|/**&n; *&t;usb_scan_devices - scans all unclaimed USB interfaces&n; *&n; *&t;Goes through all unclaimed USB interfaces, and offers them to all&n; *&t;registered USB drivers through the &squot;probe&squot; function.&n; *&t;This will automatically be called after usb_register is called.&n; *&t;It is called by some of the USB subsystems after one of their subdrivers&n; *&t;are registered.&n; */
 DECL|function|usb_scan_devices
 r_void
 id|usb_scan_devices
@@ -425,7 +426,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Unlink a driver from the driver list when it is unloaded&n; */
+multiline_comment|/**&n; *&t;usb_deregister - unregister a USB driver&n; *&t;@driver: USB operations of the driver to unregister&n; *&n; *&t;Unlinks the specified driver from the internal USB driver list.&n; */
 DECL|function|usb_deregister
 r_void
 id|usb_deregister
@@ -1162,7 +1163,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * New functions for (de)registering a controller&n; */
+multiline_comment|/**&n; *&t;usb_alloc_bus - creates a new USB host controller structure&n; *&t;@op: pointer to a struct usb_operations that this bus structure should use&n; *&n; *&t;Creates a USB host controller bus structure with the specified &n; *&t;usb_operations and initializes all the necessary internal objects.&n; *&n; *&t;If no memory is available, NULL is returned.&n; *&n; *&t;The caller should call usb_free_bus() when it is finished with the structure.&n; */
 DECL|function|usb_alloc_bus
 r_struct
 id|usb_bus
@@ -1266,6 +1267,7 @@ r_return
 id|bus
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;usb_free_bus - frees the memory used by a bus structure&n; *&t;@bus: pointer to the bus to free&n; *&n; */
 DECL|function|usb_free_bus
 r_void
 id|usb_free_bus
@@ -1292,6 +1294,7 @@ id|bus
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;usb_register_bus - registers the USB host controller with the usb core&n; *&t;@bus: pointer to the bus to register&n; *&n; */
 DECL|function|usb_register_bus
 r_void
 id|usb_register_bus
@@ -2861,6 +2864,7 @@ id|dev-&gt;refcnt
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------------------- &n; * New USB Core Functions&n; * -------------------------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;usb_alloc_urb - creates a new urb for a USB driver to use&n; *&t;@iso_packets: number of iso packets for this urb&n; *&n; *&t;Creates an urb for the USB driver to use and returns a pointer to it.&n; *&t;If no memory is available, NULL is returned.&n; *&n; *&t;If the driver want to use this urb for interrupt, control, or bulk&n; *&t;endpoints, pass &squot;0&squot; as the number of iso packets.&n; *&n; *&t;The driver should call usb_free_urb() when it is finished with the urb.&n; */
 DECL|function|usb_alloc_urb
 id|urb_t
 op_star
@@ -2949,7 +2953,7 @@ r_return
 id|urb
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------*/
+multiline_comment|/**&n; *&t;usb_free_urb - frees the memory used by a urb&n; *&t;@urb: pointer to the urb to free&n; *&n; *&t;If an urb is created with a call to usb_create_urb() it should be&n; *&t;cleaned up with a call to usb_free_urb() when the driver is finished&n; *&t;with it.&n; */
 DECL|function|usb_free_urb
 r_void
 id|usb_free_urb
@@ -3414,11 +3418,7 @@ r_return
 id|length
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------*/
-multiline_comment|/* usb_control_msg() -  builds control urb, and waits for completion */
-multiline_comment|/* Synchronous behavior - don&squot;t use this function  from within an    */
-multiline_comment|/* interrupt context, (like a bottom half handler.)  In this case,   */
-multiline_comment|/* use usb_submit_urb() directly instead.                            */
+multiline_comment|/**&n; *&t;usb_control_msg - Builds a control urb, sends it off and waits for completion&n; *&t;@dev: pointer to the usb device to send the message to&n; *&t;@pipe: endpoint &quot;pipe&quot; to send the message to&n; *&t;@request: USB message request value&n; *&t;@requesttype: USB message request type value&n; *&t;@value: USB message value&n; *&t;@index: USB message index value&n; *&t;@data: pointer to the data to send&n; *&t;@size: length in bytes of the data to send&n; *&t;@timeout: time to wait for the message to complete before timing out (if 0 the wait is forever)&n; *&n; *&t;This function sends a simple control message to a specified endpoint&n; *&t;and waits for the message to complete, or timeout.&n; *&t;&n; *&t;If successful, it returns 0, othwise a negative error number.&n; *&n; *&t;Don&squot;t use this function from within an interrupt context, like a&n; *&t;bottom half handler.  If you need a asyncronous message, or need to send&n; *&t;a message from within interrupt context, use usb_submit_urb()&n; */
 DECL|function|usb_control_msg
 r_int
 id|usb_control_msg
@@ -3548,11 +3548,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*-------------------------------------------------------------------*/
-multiline_comment|/* usb_bulk_msg() Builds a bulk urb, and waits for completion.       */
-multiline_comment|/* Synchronous behavior - don&squot;t use this function  from within an    */
-multiline_comment|/* interrupt context, (like a bottom half handler.)  In this case,   */
-multiline_comment|/* use usb_submit_urb() directly instead.                            */
+multiline_comment|/**&n; *&t;usb_bulk_msg - Builds a bulk urb, sends it off and waits for completion&n; *&t;@usb_dev: pointer to the usb device to send the message to&n; *&t;@pipe: endpoint &quot;pipe&quot; to send the message to&n; *&t;@data: pointer to the data to send&n; *&t;@len: length in bytes of the data to send&n; *&t;@actual_length: pointer to a location to put the actual length transfered in bytes&n; *&t;@timeout: time to wait for the message to complete before timing out (if 0 the wait is forever)&n; *&n; *&t;This function sends a simple bulk message to a specified endpoint&n; *&t;and waits for the message to complete, or timeout.&n; *&t;&n; *&t;If successful, it returns 0, othwise a negative error number.&n; *&t;The number of actual bytes transferred will be plaed in the &n; *&t;actual_timeout paramater.&n; *&n; *&t;Don&squot;t use this function from within an interrupt context, like a&n; *&t;bottom half handler.  If you need a asyncronous message, or need to&n; *&t;send a message from within interrupt context, use usb_submit_urb()&n; */
 DECL|function|usb_bulk_msg
 r_int
 id|usb_bulk_msg

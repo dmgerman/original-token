@@ -488,7 +488,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Status/Action bit flags */
+multiline_comment|/* Status/Action bit flags: long for set_bit */
 DECL|typedef|idetape_pc_t
 )brace
 id|idetape_pc_t
@@ -1235,7 +1235,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Status/Action flags */
+multiline_comment|/* Status/Action flags: long for set_bit */
 DECL|member|spinlock
 id|spinlock_t
 id|spinlock

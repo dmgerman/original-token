@@ -13,7 +13,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Delay via TSC */
-multiline_comment|/*&n; *&t;Do a udelay using the TSC for any CPU that happens&n; *&t;to have one that we trust. This could be optimised to avoid&n; *&t;the multiply per loop but its a delay loop so who are we kidding...&n; */
+multiline_comment|/*&n; *&t;Do a udelay using the TSC for any CPU that happens&n; *&t;to have one that we trust.&n; */
 DECL|function|__rdtsc_delay
 r_static
 r_void
@@ -165,7 +165,7 @@ id|xloops
 comma
 l_string|&quot;0&quot;
 (paren
-id|current_cpu_data.loops_per_sec
+id|current_cpu_data.loops_per_jiffy
 )paren
 )paren
 suffix:semicolon
@@ -173,6 +173,8 @@ id|__delay
 c_func
 (paren
 id|xloops
+op_star
+id|HZ
 )paren
 suffix:semicolon
 )brace

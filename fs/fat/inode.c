@@ -5077,6 +5077,27 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
+multiline_comment|/* FAT cannot truncate to a longer file */
+r_if
+c_cond
+(paren
+id|attr-&gt;ia_valid
+op_amp
+id|ATTR_SIZE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|attr-&gt;ia_size
+OG
+id|inode-&gt;i_size
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|error
 op_assign
 id|inode_change_ok

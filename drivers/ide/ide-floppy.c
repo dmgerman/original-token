@@ -136,7 +136,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Status/Action bit flags */
+multiline_comment|/* Status/Action bit flags: long for set_bit */
 DECL|typedef|idefloppy_pc_t
 )brace
 id|idefloppy_pc_t

@@ -1,51 +1,62 @@
 multiline_comment|/***********************************************************************&n;;*&t;File Name : TMSCSIM.H&t;&t;&t;&t;&t;       *&n;;*&t;&t;    TEKRAM DC-390(T) PCI SCSI Bus Master Host Adapter  *&n;;*&t;&t;    Device Driver&t;&t;&t;&t;       *&n;;***********************************************************************/
-multiline_comment|/* $Id: tmscsim.h,v 2.4 1998/12/25 17:33:27 garloff Exp $ */
+multiline_comment|/* $Id: tmscsim.h,v 2.15.2.3 2000/11/17 20:52:27 garloff Exp $ */
 macro_line|#ifndef _TMSCSIM_H
 DECL|macro|_TMSCSIM_H
 mdefine_line|#define _TMSCSIM_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* 2.0 compat */
+macro_line|#if defined(__SMP__) &amp;&amp; !defined(CONFIG_SMP)
+macro_line|# if LINUX_VERSION_CODE &lt; KERNEL_VERSION (2,2,0)
+DECL|macro|CONFIG_SMP
+macro_line|#  define CONFIG_SMP
+macro_line|# else
+macro_line|#  error __SMP__ defined but not CONFIG_SMP
+macro_line|# endif
+macro_line|#endif
 DECL|macro|IRQ_NONE
 mdefine_line|#define IRQ_NONE 255
 DECL|macro|MAX_ADAPTER_NUM
 mdefine_line|#define MAX_ADAPTER_NUM &t;4
 DECL|macro|MAX_SG_LIST_BUF
-mdefine_line|#define MAX_SG_LIST_BUF &t;16
+mdefine_line|#define MAX_SG_LIST_BUF &t;16&t;/* Not used */
 DECL|macro|MAX_CMD_PER_LUN
-mdefine_line|#define MAX_CMD_PER_LUN &t;8
+mdefine_line|#define MAX_CMD_PER_LUN &t;32
 DECL|macro|MAX_CMD_QUEUE
-mdefine_line|#define MAX_CMD_QUEUE&t;&t;2*MAX_CMD_PER_LUN+1&t;
+mdefine_line|#define MAX_CMD_QUEUE&t;&t;MAX_CMD_PER_LUN+MAX_CMD_PER_LUN/2+1&t;
 DECL|macro|MAX_SCSI_ID
 mdefine_line|#define MAX_SCSI_ID&t;&t;8
 DECL|macro|MAX_SRB_CNT
 mdefine_line|#define MAX_SRB_CNT&t;&t;MAX_CMD_QUEUE+1&t;/* Max number of started commands */
-DECL|macro|END_SCAN
-mdefine_line|#define END_SCAN&t;&t;2
 DECL|macro|SEL_TIMEOUT
 mdefine_line|#define SEL_TIMEOUT&t;&t;153&t;/* 250 ms selection timeout (@ 40 MHz) */
+DECL|macro|END_SCAN
+mdefine_line|#define END_SCAN&t;&t;2
 DECL|typedef|UCHAR
 r_typedef
-r_int
-r_char
+id|u8
 id|UCHAR
 suffix:semicolon
+multiline_comment|/*  8 bits */
 DECL|typedef|USHORT
 r_typedef
-r_int
-r_int
+id|u16
 id|USHORT
 suffix:semicolon
+multiline_comment|/* 16 bits */
+DECL|typedef|UINT
+r_typedef
+id|u32
+id|UINT
+suffix:semicolon
+multiline_comment|/* 32 bits */
 DECL|typedef|ULONG
 r_typedef
 r_int
 r_int
 id|ULONG
 suffix:semicolon
-DECL|typedef|UINT
-r_typedef
-r_int
-r_int
-id|UINT
-suffix:semicolon
+multiline_comment|/* 32/64 bits */
 DECL|typedef|PUCHAR
 r_typedef
 id|UCHAR
@@ -57,6 +68,12 @@ r_typedef
 id|USHORT
 op_star
 id|PUSHORT
+suffix:semicolon
+DECL|typedef|PUINT
+r_typedef
+id|UINT
+op_star
+id|PUINT
 suffix:semicolon
 DECL|typedef|PULONG
 r_typedef
@@ -197,13 +214,7 @@ DECL|struct|_SRB
 r_struct
 id|_SRB
 (brace
-DECL|member|CmdBlock
-id|UCHAR
-id|CmdBlock
-(braket
-l_int|12
-)braket
-suffix:semicolon
+singleline_comment|//UCHAR&t;&t;CmdBlock[12];
 DECL|member|pNextSRB
 r_struct
 id|_SRB
@@ -224,25 +235,13 @@ DECL|member|pSegmentList
 id|PSGL
 id|pSegmentList
 suffix:semicolon
-DECL|member|Segment0
-id|ULONG
-id|Segment0
-(braket
-l_int|2
-)braket
+multiline_comment|/* 0x10: */
+DECL|member|Segmentx
+id|SGL
+id|Segmentx
 suffix:semicolon
-DECL|member|Segment1
-id|ULONG
-id|Segment1
-(braket
-l_int|2
-)braket
-suffix:semicolon
-multiline_comment|/* 0x2c:*/
-DECL|member|TotalXferredLen
-id|ULONG
-id|TotalXferredLen
-suffix:semicolon
+multiline_comment|/* make a one entry of S/G list table */
+multiline_comment|/* 0x1c: */
 DECL|member|SGBusAddr
 id|ULONG
 id|SGBusAddr
@@ -253,11 +252,75 @@ id|ULONG
 id|SGToBeXferLen
 suffix:semicolon
 multiline_comment|/*; to be xfer length */
-DECL|member|SRBState
+DECL|member|TotalXferredLen
 id|ULONG
+id|TotalXferredLen
+suffix:semicolon
+DECL|member|SavedTotXLen
+id|ULONG
+id|SavedTotXLen
+suffix:semicolon
+DECL|member|SRBState
+id|UINT
 id|SRBState
 suffix:semicolon
-multiline_comment|/* 0x3c: */
+multiline_comment|/* 0x30: */
+DECL|member|SRBStatus
+id|UCHAR
+id|SRBStatus
+suffix:semicolon
+DECL|member|SRBFlag
+id|UCHAR
+id|SRBFlag
+suffix:semicolon
+multiline_comment|/*; b0-AutoReqSense,b6-Read,b7-write */
+multiline_comment|/*; b4-settimeout,b5-Residual valid */
+DECL|member|AdaptStatus
+id|UCHAR
+id|AdaptStatus
+suffix:semicolon
+DECL|member|TargetStatus
+id|UCHAR
+id|TargetStatus
+suffix:semicolon
+DECL|member|ScsiPhase
+id|UCHAR
+id|ScsiPhase
+suffix:semicolon
+DECL|member|TagNumber
+id|UCHAR
+id|TagNumber
+suffix:semicolon
+DECL|member|SGIndex
+id|UCHAR
+id|SGIndex
+suffix:semicolon
+DECL|member|SGcount
+id|UCHAR
+id|SGcount
+suffix:semicolon
+multiline_comment|/* 0x38: */
+DECL|member|MsgCnt
+id|UCHAR
+id|MsgCnt
+suffix:semicolon
+DECL|member|EndMessage
+id|UCHAR
+id|EndMessage
+suffix:semicolon
+DECL|member|RetryCnt
+id|UCHAR
+id|RetryCnt
+suffix:semicolon
+DECL|member|SavedSGCount
+id|UCHAR
+id|SavedSGCount
+suffix:semicolon
+DECL|member|Saved_Ptr
+id|ULONG
+id|Saved_Ptr
+suffix:semicolon
+multiline_comment|/* 0x40: */
 DECL|member|MsgInBuf
 id|UCHAR
 id|MsgInBuf
@@ -272,65 +335,8 @@ id|MsgOutBuf
 l_int|6
 )braket
 suffix:semicolon
-multiline_comment|/* 0x48: */
-DECL|member|Segmentx
-id|SGL
-id|Segmentx
-suffix:semicolon
-multiline_comment|/* make a one entry of S/G list table */
-DECL|member|ScsiCmdLen
-id|UCHAR
-id|ScsiCmdLen
-suffix:semicolon
-DECL|member|ScsiPhase
-id|UCHAR
-id|ScsiPhase
-suffix:semicolon
-DECL|member|AdaptStatus
-id|UCHAR
-id|AdaptStatus
-suffix:semicolon
-DECL|member|TargetStatus
-id|UCHAR
-id|TargetStatus
-suffix:semicolon
-multiline_comment|/* 0x58: */
-DECL|member|MsgCnt
-id|UCHAR
-id|MsgCnt
-suffix:semicolon
-DECL|member|EndMessage
-id|UCHAR
-id|EndMessage
-suffix:semicolon
-DECL|member|RetryCnt
-id|UCHAR
-id|RetryCnt
-suffix:semicolon
-DECL|member|SRBFlag
-id|UCHAR
-id|SRBFlag
-suffix:semicolon
-multiline_comment|/*; b0-AutoReqSense,b6-Read,b7-write */
-multiline_comment|/*; b4-settimeout,b5-Residual valid */
-DECL|member|TagNumber
-id|UCHAR
-id|TagNumber
-suffix:semicolon
-DECL|member|SGcount
-id|UCHAR
-id|SGcount
-suffix:semicolon
-DECL|member|SGIndex
-id|UCHAR
-id|SGIndex
-suffix:semicolon
-DECL|member|SRBStatus
-id|UCHAR
-id|SRBStatus
-suffix:semicolon
 singleline_comment|//UCHAR&t;&t;IORBFlag;&t;/*;81h-Reset, 2-retry */
-multiline_comment|/* 0x60: */
+multiline_comment|/* 0x4c: */
 )brace
 suffix:semicolon
 DECL|typedef|DC390_SRB
@@ -360,31 +366,12 @@ id|_ACB
 op_star
 id|pDCBACB
 suffix:semicolon
-DECL|member|pQIORBhead
-id|PSCSICMD
-id|pQIORBhead
-suffix:semicolon
-DECL|member|pQIORBtail
-id|PSCSICMD
-id|pQIORBtail
-suffix:semicolon
-DECL|member|AboIORBhead
-id|PSCSICMD
-id|AboIORBhead
-suffix:semicolon
-DECL|member|AboIORBtail
-id|PSCSICMD
-id|AboIORBtail
-suffix:semicolon
-DECL|member|QIORBCnt
-id|ULONG
-id|QIORBCnt
-suffix:semicolon
-DECL|member|AboIORBcnt
-id|ULONG
-id|AboIORBcnt
-suffix:semicolon
-multiline_comment|/* 0x20: */
+multiline_comment|/* Aborted Commands */
+singleline_comment|//PSCSICMD&t;AboIORBhead;
+singleline_comment|//PSCSICMD&t;AboIORBtail;
+singleline_comment|//ULONG&t;&t;AboIORBcnt;
+multiline_comment|/* 0x08: */
+multiline_comment|/* Queued SRBs */
 DECL|member|pWaitingSRB
 id|PSRB
 id|pWaitingSRB
@@ -405,15 +392,15 @@ DECL|member|pActiveSRB
 id|PSRB
 id|pActiveSRB
 suffix:semicolon
-DECL|member|GoingSRBCnt
-id|UCHAR
-id|GoingSRBCnt
-suffix:semicolon
 DECL|member|WaitSRBCnt
 id|UCHAR
 id|WaitSRBCnt
 suffix:semicolon
-multiline_comment|/* ??? */
+multiline_comment|/* Not used */
+DECL|member|GoingSRBCnt
+id|UCHAR
+id|GoingSRBCnt
+suffix:semicolon
 DECL|member|DevType
 id|UCHAR
 id|DevType
@@ -422,28 +409,28 @@ DECL|member|MaxCommand
 id|UCHAR
 id|MaxCommand
 suffix:semicolon
-multiline_comment|/* 0x38: */
+multiline_comment|/* 0x20: */
 DECL|member|TagMask
-id|ULONG
+id|UINT
 id|TagMask
 suffix:semicolon
-DECL|member|UnitSCSIID
+DECL|member|TargetID
 id|UCHAR
-id|UnitSCSIID
+id|TargetID
 suffix:semicolon
 multiline_comment|/*; SCSI Target ID  (SCSI Only) */
-DECL|member|UnitSCSILUN
+DECL|member|TargetLUN
 id|UCHAR
-id|UnitSCSILUN
+id|TargetLUN
 suffix:semicolon
 multiline_comment|/*; SCSI Log.  Unit (SCSI Only) */
 DECL|member|DevMode
 id|UCHAR
 id|DevMode
 suffix:semicolon
-DECL|member|IdentifyMsg
+DECL|member|DCBFlag
 id|UCHAR
-id|IdentifyMsg
+id|DCBFlag
 suffix:semicolon
 DECL|member|CtrlR1
 id|UCHAR
@@ -457,11 +444,11 @@ DECL|member|CtrlR4
 id|UCHAR
 id|CtrlR4
 suffix:semicolon
-DECL|member|DCBFlag
+DECL|member|Inquiry7
 id|UCHAR
-id|DCBFlag
+id|Inquiry7
 suffix:semicolon
-multiline_comment|/* 0x44: */
+multiline_comment|/* 0x2c: */
 DECL|member|SyncMode
 id|UCHAR
 id|SyncMode
@@ -482,10 +469,10 @@ id|UCHAR
 id|SyncOffset
 suffix:semicolon
 multiline_comment|/*;for reg. and nego.(low nibble) */
-multiline_comment|/* 0x48:*/
+multiline_comment|/* 0x30:*/
 singleline_comment|//UCHAR&t;&t;InqDataBuf[8];
 singleline_comment|//UCHAR&t;&t;CapacityBuf[8];
-multiline_comment|/* 0x58: */
+singleline_comment|///* 0x40: */
 )brace
 suffix:semicolon
 DECL|typedef|DC390_DCB
@@ -584,6 +571,19 @@ id|PSRB
 id|pTmpSRB
 suffix:semicolon
 multiline_comment|/* 0x2c: */
+DECL|member|QueryCnt
+id|ULONG
+id|QueryCnt
+suffix:semicolon
+DECL|member|pQueryHead
+id|PSCSICMD
+id|pQueryHead
+suffix:semicolon
+DECL|member|pQueryTail
+id|PSCSICMD
+id|pQueryTail
+suffix:semicolon
+multiline_comment|/* 0x38: */
 DECL|member|msgin123
 id|UCHAR
 id|msgin123
@@ -598,6 +598,15 @@ id|DCBmap
 id|MAX_SCSI_ID
 )braket
 suffix:semicolon
+DECL|member|Connected
+id|UCHAR
+id|Connected
+suffix:semicolon
+DECL|member|pad
+id|UCHAR
+id|pad
+suffix:semicolon
+multiline_comment|/* 0x3c: */
 macro_line|#if defined(USE_SPINLOCKS) &amp;&amp; USE_SPINLOCKS &gt; 1 &amp;&amp; (defined(CONFIG_SMP) || DEBUG_SPINLOCKS &gt; 0)
 DECL|member|lock
 id|spinlock_t
@@ -625,29 +634,39 @@ DECL|member|PDEVDECL1
 id|PDEVDECL1
 suffix:semicolon
 multiline_comment|/* Pointer to PCI cfg. space */
-multiline_comment|/* 0x40/0x3c: */
+multiline_comment|/* 0x4c/0x48: */
 DECL|member|Cmds
 id|ULONG
 id|Cmds
 suffix:semicolon
+DECL|member|SelLost
+id|UINT
+id|SelLost
+suffix:semicolon
+DECL|member|SelConn
+id|UINT
+id|SelConn
+suffix:semicolon
 DECL|member|CmdInQ
-id|ULONG
+id|UINT
 id|CmdInQ
 suffix:semicolon
 DECL|member|CmdOutOfSRB
-id|ULONG
+id|UINT
 id|CmdOutOfSRB
 suffix:semicolon
-DECL|member|SelLost
-id|ULONG
-id|SelLost
+multiline_comment|/* 0x60/0x5c: */
+DECL|member|Waiting_Timer
+r_struct
+id|timer_list
+id|Waiting_Timer
 suffix:semicolon
-multiline_comment|/* 0x50/0x4c: */
+multiline_comment|/* 0x74/0x70: */
 DECL|member|TmpSRB
 id|DC390_SRB
 id|TmpSRB
 suffix:semicolon
-multiline_comment|/* 0xb4/0xb0: */
+multiline_comment|/* 0xd8/0xd4: */
 DECL|member|SRB_array
 id|DC390_SRB
 id|SRB_array
@@ -655,8 +674,8 @@ id|SRB_array
 id|MAX_SRB_CNT
 )braket
 suffix:semicolon
-multiline_comment|/* 18 SRBs */
-multiline_comment|/* 0x7bc/0x7b8: */
+multiline_comment|/* 50 SRBs */
+multiline_comment|/* 0xfb0/0xfac: */
 )brace
 suffix:semicolon
 DECL|typedef|DC390_ACB
@@ -845,31 +864,38 @@ mdefine_line|#define H_BAD_CCB_OR_SG  0x1A
 DECL|macro|H_ABORT
 mdefine_line|#define H_ABORT &t; 0x0FF
 multiline_comment|/*; SCSI Status byte codes*/
-multiline_comment|/* Twice the values defined in scsi/scsi.h */
-DECL|macro|SCSI_STAT_GOOD
-mdefine_line|#define SCSI_STAT_GOOD&t;&t;0x0&t;/*;  Good status */
-DECL|macro|SCSI_STAT_CHECKCOND
-mdefine_line|#define SCSI_STAT_CHECKCOND&t;0x02&t;/*;  SCSI Check Condition */
-DECL|macro|SCSI_STAT_CONDMET
-mdefine_line|#define SCSI_STAT_CONDMET&t;0x04&t;/*;  Condition Met */
-DECL|macro|SCSI_STAT_BUSY
-mdefine_line|#define SCSI_STAT_BUSY&t;&t;0x08&t;/*;  Target busy status */
-DECL|macro|SCSI_STAT_INTER
-mdefine_line|#define SCSI_STAT_INTER &t;0x10&t;/*;  Intermediate status */
-DECL|macro|SCSI_STAT_INTERCONDMET
-mdefine_line|#define SCSI_STAT_INTERCONDMET&t;0x14&t;/*;  Intermediate condition met */
-DECL|macro|SCSI_STAT_RESCONFLICT
-mdefine_line|#define SCSI_STAT_RESCONFLICT&t;0x18&t;/*;  Reservation conflict */
-DECL|macro|SCSI_STAT_CMDTERM
-mdefine_line|#define SCSI_STAT_CMDTERM&t;0x22&t;/*;  Command Terminated */
-DECL|macro|SCSI_STAT_QUEUEFULL
-mdefine_line|#define SCSI_STAT_QUEUEFULL&t;0x28&t;/*;  Queue Full */
+multiline_comment|/* The values defined in include/scsi/scsi.h, to be shifted &lt;&lt; 1 */
 DECL|macro|SCSI_STAT_UNEXP_BUS_F
 mdefine_line|#define SCSI_STAT_UNEXP_BUS_F&t;0xFD&t;/*;  Unexpect Bus Free */
 DECL|macro|SCSI_STAT_BUS_RST_DETECT
 mdefine_line|#define SCSI_STAT_BUS_RST_DETECT 0xFE&t;/*;  Scsi Bus Reset detected */
 DECL|macro|SCSI_STAT_SEL_TIMEOUT
 mdefine_line|#define SCSI_STAT_SEL_TIMEOUT&t;0xFF&t;/*;  Selection Time out */
+multiline_comment|/* cmd-&gt;result */
+DECL|macro|RES_TARGET
+mdefine_line|#define RES_TARGET&t;&t;0x000000FF&t;/* Target State */
+DECL|macro|RES_TARGET_LNX
+mdefine_line|#define RES_TARGET_LNX&t;&t;STATUS_MASK&t;/* Only official ... */
+DECL|macro|RES_ENDMSG
+mdefine_line|#define RES_ENDMSG&t;&t;0x0000FF00&t;/* End Message */
+DECL|macro|RES_DID
+mdefine_line|#define RES_DID&t;&t;&t;0x00FF0000&t;/* DID_ codes */
+DECL|macro|RES_DRV
+mdefine_line|#define RES_DRV&t;&t;&t;0xFF000000&t;/* DRIVER_ codes */
+DECL|macro|MK_RES
+mdefine_line|#define MK_RES(drv,did,msg,tgt) ((int)(drv)&lt;&lt;24 | (int)(did)&lt;&lt;16 | (int)(msg)&lt;&lt;8 | (int)(tgt))
+DECL|macro|MK_RES_LNX
+mdefine_line|#define MK_RES_LNX(drv,did,msg,tgt) ((int)(drv)&lt;&lt;24 | (int)(did)&lt;&lt;16 | (int)(msg)&lt;&lt;8 | (int)(tgt)&lt;&lt;1)
+DECL|macro|SET_RES_TARGET
+mdefine_line|#define SET_RES_TARGET(who,tgt) { who &amp;= ~RES_TARGET; who |= (int)(tgt); }
+DECL|macro|SET_RES_TARGET_LNX
+mdefine_line|#define SET_RES_TARGET_LNX(who,tgt) { who &amp;= ~RES_TARGET_LNX; who |= (int)(tgt) &lt;&lt; 1; }
+DECL|macro|SET_RES_MSG
+mdefine_line|#define SET_RES_MSG(who,msg) { who &amp;= ~RES_ENDMSG; who |= (int)(msg) &lt;&lt; 8; }
+DECL|macro|SET_RES_DID
+mdefine_line|#define SET_RES_DID(who,did) { who &amp;= ~RES_DID; who |= (int)(did) &lt;&lt; 16; }
+DECL|macro|SET_RES_DRV
+mdefine_line|#define SET_RES_DRV(who,drv) { who &amp;= ~RES_DRV; who |= (int)(drv) &lt;&lt; 24; }
 multiline_comment|/*;---Sync_Mode */
 DECL|macro|SYNC_DISABLE
 mdefine_line|#define SYNC_DISABLE&t;0
@@ -906,51 +932,9 @@ DECL|macro|SCSI_MSG_IN
 mdefine_line|#define SCSI_MSG_IN&t;7
 multiline_comment|/*;----SCSI MSG BYTE*/
 multiline_comment|/* see scsi/scsi.h */
-DECL|macro|MSG_COMPLETE
-mdefine_line|#define MSG_COMPLETE&t;&t;0x00
-DECL|macro|MSG_EXTENDED
-mdefine_line|#define MSG_EXTENDED&t;&t;0x01
-DECL|macro|MSG_SAVE_PTR
-mdefine_line|#define MSG_SAVE_PTR&t;&t;0x02
-DECL|macro|MSG_RESTORE_PTR
-mdefine_line|#define MSG_RESTORE_PTR &t;0x03
-DECL|macro|MSG_DISCONNECT
-mdefine_line|#define MSG_DISCONNECT&t;&t;0x04
-DECL|macro|MSG_INITIATOR_ERROR
-mdefine_line|#define MSG_INITIATOR_ERROR&t;0x05
-DECL|macro|MSG_ABORT
-mdefine_line|#define MSG_ABORT&t;&t;0x06
-DECL|macro|MSG_REJECT_
-mdefine_line|#define MSG_REJECT_&t;&t;0x07
-DECL|macro|MSG_NOP
-mdefine_line|#define MSG_NOP &t;&t;0x08
-DECL|macro|MSG_PARITY_ERROR
-mdefine_line|#define MSG_PARITY_ERROR&t;0x09
-DECL|macro|MSG_LINK_CMD_COMPL
-mdefine_line|#define MSG_LINK_CMD_COMPL&t;0x0A
-DECL|macro|MSG_LINK_CMD_COMPL_FLG
-mdefine_line|#define MSG_LINK_CMD_COMPL_FLG&t;0x0B
-DECL|macro|MSG_BUS_RESET
-mdefine_line|#define MSG_BUS_RESET&t;&t;0x0C
-DECL|macro|MSG_ABORT_TAG
-mdefine_line|#define MSG_ABORT_TAG&t;&t;0x0D
-DECL|macro|MSG_SIMPLE_QTAG
-mdefine_line|#define MSG_SIMPLE_QTAG &t;0x20
-DECL|macro|MSG_HEAD_QTAG
-mdefine_line|#define MSG_HEAD_QTAG&t;&t;0x21
-DECL|macro|MSG_ORDER_QTAG
-mdefine_line|#define MSG_ORDER_QTAG&t;&t;0x22
-DECL|macro|MSG_IDENTIFY
-mdefine_line|#define MSG_IDENTIFY&t;&t;0x80
-DECL|macro|MSG_HOST_ID
-mdefine_line|#define MSG_HOST_ID&t;&t;0x0C0
-multiline_comment|/* cmd-&gt;result */
-DECL|macro|STATUS_MASK_
-mdefine_line|#define STATUS_MASK_&t;&t;0xFF
-DECL|macro|MSG_MASK
-mdefine_line|#define MSG_MASK&t;&t;0xFF00
-DECL|macro|RETURN_MASK
-mdefine_line|#define RETURN_MASK&t;&t;0xFF0000
+multiline_comment|/* One is missing ! */
+DECL|macro|ABORT_TAG
+mdefine_line|#define ABORT_TAG&t;0x0d
 multiline_comment|/*&n;**  Inquiry Data format&n;*/
 DECL|struct|_SCSIInqData
 r_typedef
@@ -1042,8 +1026,14 @@ DECL|macro|SCSI_REMOVABLE_MEDIA
 mdefine_line|#define SCSI_REMOVABLE_MEDIA  0x80    /* Removable Media bit (1=removable)  */
 multiline_comment|/*  Peripheral Device Type definitions */
 multiline_comment|/*  see include/scsi/scsi.h for the rest */
+macro_line|#ifndef TYPE_PRINTER
 DECL|macro|TYPE_PRINTER
-mdefine_line|#define TYPE_PRINTER&t;&t; 0x02&t;   /* Printer device&t;&t;   */
+macro_line|# define TYPE_PRINTER&t;&t; 0x02&t;   /* Printer device&t;&t;   */
+macro_line|#endif
+macro_line|#ifndef TYPE_COMM
+DECL|macro|TYPE_COMM
+macro_line|# define TYPE_COMM&t;&t; 0x09&t;   /* Communications device&t;   */
+macro_line|#endif
 multiline_comment|/*&n;** Inquiry flag definitions (Inq data byte 7)&n;*/
 DECL|macro|SCSI_INQ_RELADR
 mdefine_line|#define SCSI_INQ_RELADR       0x80    /* device supports relative addressing*/

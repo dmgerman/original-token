@@ -5067,8 +5067,6 @@ multiline_comment|/* Begin pc_init */
 multiline_comment|/* ----------------------------------------------------------------&n;&t;&t;pc_init is called by the operating system during boot up prior to&n;&t;&t;any open calls being made.  In the older versions of Linux (Prior&n;&t;&t;to 2.0.0) an entry is made into tty_io.c.  A pointer to the last&n;&t;&t;memory location (from kernel space) used (kmem_start) is passed&n;&t;&t;to pc_init.  It is pc_inits responsibility to modify this value &n;&t;&t;for any memory that the Digi driver might need and then return&n;&t;&t;this value to the operating system.  For example if the driver&n;&t;&t;wishes to allocate 1K of kernel memory, pc_init would return &n;&t;&t;(kmem_start + 1024).  This memory (Between kmem_start and kmem_start&n;&t;&t;+ 1024) would then be available for use exclusively by the driver.  &n;&t;&t;In this case our driver does not allocate any of this kernel &n;&t;&t;memory.&n;&t;------------------------------------------------------------------*/
 id|ulong
 id|flags
-comma
-id|save_loops_per_sec
 suffix:semicolon
 r_int
 id|crd
@@ -5450,17 +5448,6 @@ suffix:semicolon
 id|pc_info.subtype
 op_assign
 id|SERIAL_TYPE_INFO
-suffix:semicolon
-multiline_comment|/* --------------------------------------------------------------------- &n;&t;   loops_per_sec hasn&squot;t been set at this point :-(, so fake it out... &n;&t;   I set it, so that I can use the __delay() function.&n;&t;------------------------------------------------------------------------ */
-id|save_loops_per_sec
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|loops_per_sec
-op_assign
-l_int|13L
-op_star
-l_int|500000L
 suffix:semicolon
 id|save_flags
 c_func
@@ -5860,11 +5847,6 @@ c_func
 l_string|&quot;Couldn&squot;t register Digi PC/ info &quot;
 )paren
 suffix:semicolon
-id|loops_per_sec
-op_assign
-id|save_loops_per_sec
-suffix:semicolon
-multiline_comment|/* reset it to what it should be */
 multiline_comment|/* -------------------------------------------------------------------&n;&t;   Start up the poller to check for events on all enabled boards&n;&t;---------------------------------------------------------------------- */
 id|init_timer
 c_func

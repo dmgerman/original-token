@@ -450,7 +450,7 @@ comma
 id|console_setup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Commands to do_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open the log. Currently a NOP.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read up to the last 4k of messages in the ring buffer.&n; * &t;4 -- Read and clear last 4k of messages in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; *&t;8 -- Set level of messages printed to console&n; */
+multiline_comment|/*&n; * Commands to do_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open the log. Currently a NOP.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read all messages remaining in the ring buffer.&n; * &t;4 -- Read and clear all messages remaining in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; *&t;8 -- Set level of messages printed to console&n; */
 DECL|function|do_syslog
 r_int
 id|do_syslog

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/keylargo.h&gt;
+macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/pmu.h&gt;
@@ -26,9 +27,9 @@ macro_line|#endif
 macro_line|#include &quot;gmac.h&quot;
 DECL|macro|DEBUG_PHY
 mdefine_line|#define DEBUG_PHY
-multiline_comment|/* Driver version 1.2, kernel 2.4.x */
+multiline_comment|/* Driver version 1.3, kernel 2.4.x */
 DECL|macro|GMAC_VERSION
-mdefine_line|#define GMAC_VERSION&t;&quot;v1.2k4&quot;
+mdefine_line|#define GMAC_VERSION&t;&quot;v1.3k4&quot;
 DECL|variable|dummy_buf
 r_static
 r_int
@@ -407,27 +408,6 @@ r_struct
 id|device_node
 op_star
 id|gmac
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|pci_device_loc
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dev
-comma
-r_int
-r_char
-op_star
-id|bus_ptr
-comma
-r_int
-r_char
-op_star
-id|devfn_ptr
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
@@ -3913,6 +3893,9 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 r_struct
 id|gmac
 op_star
@@ -3925,8 +3908,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* Power up and reset chip */
 r_if
 c_cond
@@ -3937,18 +3918,13 @@ c_func
 id|dev
 )paren
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-)brace
 multiline_comment|/* Get our interrupt */
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -3962,6 +3938,11 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
 (brace
 id|printk
@@ -3975,11 +3956,8 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
 )brace
 id|gm-&gt;full_duplex
@@ -4217,8 +4195,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6263,7 +6239,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-l_int|0
+l_int|NULL
 comma
 r_sizeof
 (paren
@@ -6301,13 +6277,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|gm
 op_assign
-(paren
-r_struct
-id|gmac
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|dev-&gt;base_addr
@@ -6367,7 +6344,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pci_device_loc
+id|pci_device_from_OF_node
 c_func
 (paren
 id|gmac

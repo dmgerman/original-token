@@ -2825,13 +2825,6 @@ id|written
 op_assign
 l_int|0
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2839,7 +2832,7 @@ id|down_interruptible
 c_func
 (paren
 op_amp
-id|inode-&gt;i_sem
+id|tty-&gt;atomic_write
 )paren
 )paren
 (brace
@@ -3020,7 +3013,7 @@ id|up
 c_func
 (paren
 op_amp
-id|inode-&gt;i_sem
+id|tty-&gt;atomic_write
 )paren
 suffix:semicolon
 r_return
@@ -8325,6 +8318,15 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|tty-&gt;atomic_write
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|spin_lock_init
 c_func
 (paren
@@ -9588,22 +9590,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_RISCOM8
-id|riscom8_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SPECIALIX
 id|specialix_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SX
-id|sx_init
 c_func
 (paren
 )paren

@@ -1255,7 +1255,7 @@ suffix:semicolon
 macro_line|#endif
 "&f;"
 multiline_comment|/***********************************************************************&n; *&n; *   ACSI primitives&n; *&n; **********************************************************************/
-multiline_comment|/*&n; * The following two functions wait for _IRQ to become Low or High,&n; * resp., with a timeout. The &squot;timeout&squot; parameter is in jiffies&n; * (10ms).&n; * If the functions are called with timer interrupts on (int level &lt;&n; * 6), the timeout is based on the &squot;jiffies&squot; variable to provide exact&n; * timeouts for device probing etc.&n; * If interrupts are disabled, the number of tries is based on the&n; * &squot;loops_per_sec&squot; variable. A rough estimation is sufficient here...&n; */
+multiline_comment|/*&n; * The following two functions wait for _IRQ to become Low or High,&n; * resp., with a timeout. The &squot;timeout&squot; parameter is in jiffies&n; * (10ms).&n; * If the functions are called with timer interrupts on (int level &lt;&n; * 6), the timeout is based on the &squot;jiffies&squot; variable to provide exact&n; * timeouts for device probing etc.&n; * If interrupts are disabled, the number of tries is based on the&n; * &squot;loops_per_jiffy&squot; variable. A rough estimation is sufficient here...&n; */
 DECL|macro|INT_LEVEL
 mdefine_line|#define INT_LEVEL&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;({&t;unsigned __sr;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ ( &quot;movew&t;%/sr,%0&quot; : &quot;=dm&quot; (__sr) );&t;&bslash;&n;&t;&t;(__sr &gt;&gt; 8) &amp; 7;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;})
 DECL|function|acsi_wait_for_IRQ
@@ -1313,9 +1313,7 @@ r_else
 r_int
 id|tries
 op_assign
-id|loops_per_sec
-op_div
-id|HZ
+id|loops_per_jiffy
 op_div
 l_int|8
 op_star
@@ -1400,11 +1398,9 @@ r_else
 r_int
 id|tries
 op_assign
-id|loops_per_sec
+id|loops_per_jiffy
 op_star
 id|timeout
-op_div
-id|HZ
 op_div
 l_int|8
 suffix:semicolon

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;&t;&t;/* for verify_area */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* for -EBUSY */
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* for check_region, request_region */
-macro_line|#include &lt;linux/delay.h&gt;&t;/* for loops_per_sec */
+macro_line|#include &lt;linux/delay.h&gt;&t;/* for loops_per_jiffy */
 macro_line|#include &lt;asm/segment.h&gt;&t;/* for put_user_byte */
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* for inb_p, outb_p, inb, outb, etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* for get_user, etc. */
@@ -419,9 +419,7 @@ l_int|0
 suffix:semicolon
 id|retries
 OL
-id|loops_per_sec
-op_div
-l_int|10
+id|loops_per_jiffy
 suffix:semicolon
 id|retries
 op_increment
@@ -491,7 +489,7 @@ suffix:semicolon
 id|dtlk_delay
 c_func
 (paren
-l_int|10
+l_int|100
 )paren
 suffix:semicolon
 )brace
@@ -500,7 +498,7 @@ c_cond
 (paren
 id|retries
 op_eq
-id|loops_per_sec
+id|loops_per_jiffy
 )paren
 id|printk
 c_func
@@ -743,9 +741,13 @@ l_int|0
 suffix:semicolon
 id|retries
 OL
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|4000
+op_div
+id|HZ
+)paren
 suffix:semicolon
 id|retries
 op_increment
@@ -1756,7 +1758,7 @@ macro_line|#ifdef INSCOPE
 (brace
 multiline_comment|/* This macro records ten samples read from the LPC port, for later display */
 DECL|macro|LOOK
-mdefine_line|#define LOOK&t;&t;&t;&t;&t;&bslash;&n;for (i = 0; i &lt; 10; i++)&t;&t;&t;&bslash;&n;  {&t;&t;&t;&t;&t;&t;&bslash;&n;    buffer[b++] = inb_p(dtlk_port_lpc);&t;&t;&bslash;&n;    __delay(loops_per_sec/1000000);             &bslash;&n;  }
+mdefine_line|#define LOOK&t;&t;&t;&t;&t;&bslash;&n;for (i = 0; i &lt; 10; i++)&t;&t;&t;&bslash;&n;  {&t;&t;&t;&t;&t;&t;&bslash;&n;    buffer[b++] = inb_p(dtlk_port_lpc);&t;&t;&bslash;&n;    __delay(loops_per_jiffy/(1000000/HZ));             &bslash;&n;  }
 r_char
 id|buffer
 (braket
@@ -1811,9 +1813,13 @@ c_func
 (paren
 l_int|50
 op_star
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|1000
+op_div
+id|HZ
+)paren
 )paren
 suffix:semicolon
 id|outb_p
@@ -1876,7 +1882,7 @@ macro_line|#ifdef OUTSCOPE
 (brace
 multiline_comment|/* This macro records ten samples read from the TTS port, for later display */
 DECL|macro|LOOK
-mdefine_line|#define LOOK&t;&t;&t;&t;&t;&bslash;&n;for (i = 0; i &lt; 10; i++)&t;&t;&t;&bslash;&n;  {&t;&t;&t;&t;&t;&t;&bslash;&n;    buffer[b++] = inb_p(dtlk_port_tts);&t;&t;&bslash;&n;    __delay(loops_per_sec/1000000);  /* 1 us */ &bslash;&n;  }
+mdefine_line|#define LOOK&t;&t;&t;&t;&t;&bslash;&n;for (i = 0; i &lt; 10; i++)&t;&t;&t;&bslash;&n;  {&t;&t;&t;&t;&t;&t;&bslash;&n;    buffer[b++] = inb_p(dtlk_port_tts);&t;&t;&bslash;&n;    __delay(loops_per_jiffy/(1000000/HZ));  /* 1 us */ &bslash;&n;  }
 r_char
 id|buffer
 (braket
@@ -1892,12 +1898,10 @@ id|i
 comma
 id|j
 suffix:semicolon
-id|__delay
+id|mdelay
 c_func
 (paren
-id|loops_per_sec
-op_div
-l_int|100
+l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* 10 ms */
@@ -2454,12 +2458,16 @@ multiline_comment|/* acknowledging a read takes 3-4&n;&t;   usec.  Here, we wait
 id|retries
 op_assign
 (paren
-id|loops_per_sec
+id|loops_per_jiffy
 op_star
 l_int|20
 )paren
 op_div
+(paren
 l_int|1000000
+op_div
+id|HZ
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -2664,9 +2672,13 @@ l_int|0
 suffix:semicolon
 id|retries
 OL
-id|loops_per_sec
+id|loops_per_jiffy
 op_div
+(paren
 l_int|100000
+op_div
+id|HZ
+)paren
 suffix:semicolon
 id|retries
 op_increment

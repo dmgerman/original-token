@@ -1058,6 +1058,14 @@ c_func
 r_void
 )paren
 (brace
+id|unregister_chrdev
+c_func
+(paren
+id|MSR_MAJOR
+comma
+l_string|&quot;cpu/msr&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|variable|msr_init
 id|module_init

@@ -8,7 +8,6 @@ id|version
 op_assign
 l_string|&quot;ncr885e.c:v1.0 02/10/00 dan@synergymicro.com, cort@fsmlabs.com&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -38,27 +37,8 @@ id|chipname
 op_assign
 l_string|&quot;ncr885e&quot;
 suffix:semicolon
-multiline_comment|/* debugging flags */
-macro_line|#if 0
-mdefine_line|#define DEBUG_FUNC    0x0001
-mdefine_line|#define DEBUG_PACKET  0x0002
-mdefine_line|#define DEBUG_CMD     0x0004
-mdefine_line|#define DEBUG_CHANNEL 0x0008
-mdefine_line|#define DEBUG_INT     0x0010
-mdefine_line|#define DEBUG_RX      0x0020
-mdefine_line|#define DEBUG_TX      0x0040
-mdefine_line|#define DEBUG_DMA     0x0080
-mdefine_line|#define DEBUG_MAC     0x0100
-mdefine_line|#define DEBUG_DRIVER  0x0200
-mdefine_line|#define DEBUG_ALL     0x1fff
-macro_line|#endif
-macro_line|#ifdef DEBUG_NCR885E
 DECL|macro|NCR885E_DEBUG
 mdefine_line|#define NCR885E_DEBUG   0
-macro_line|#else
-DECL|macro|NCR885E_DEBUG
-mdefine_line|#define NCR885E_DEBUG   0
-macro_line|#endif
 multiline_comment|/* The 885&squot;s Ethernet PCI device id. */
 macro_line|#ifndef PCI_DEVICE_ID_NCR_53C885_ETHERNET
 DECL|macro|PCI_DEVICE_ID_NCR_53C885_ETHERNET
@@ -427,6 +407,40 @@ DECL|macro|TX_RESET_FLAGS
 mdefine_line|#define TX_RESET_FLAGS    (TX_CHANNEL_RUN|TX_CHANNEL_PAUSE|TX_CHANNEL_WAKE)
 DECL|macro|RX_RESET_FLAGS
 mdefine_line|#define RX_RESET_FLAGS    (RX_CHANNEL_RUN|RX_CHANNEL_PAUSE|RX_CHANNEL_WAKE)
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_device_id
+id|ncr885e_pci_tbl
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|PCI_VENDOR_ID_NCR
+comma
+id|PCI_DEVICE_ID_NCR_53C885_ETHERNET
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|ncr885e_pci_tbl
+)paren
+suffix:semicolon
 macro_line|#if 0
 r_static
 r_int
@@ -4086,8 +4100,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4202,6 +4214,7 @@ id|next
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* mark ourselves as busy, even if we have too many packets waiting */
 id|netif_stop_queue
 c_func
@@ -4209,6 +4222,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* see if it&squot;s necessary to defer this packet */
 r_if
 c_cond
@@ -4698,8 +4712,6 @@ c_func
 id|np-&gt;head
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4918,6 +4930,12 @@ id|dev
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|sp
 op_assign
@@ -5138,19 +5156,11 @@ r_int
 r_int
 id|ioaddr
 comma
-id|chips
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|cmd
+id|ret
 suffix:semicolon
 r_int
 r_char
 id|irq
-comma
-id|latency
 suffix:semicolon
 multiline_comment|/* use &squot;if&squot; not &squot;while&squot; where because driver only supports one device */
 r_if
@@ -5202,7 +5212,9 @@ c_func
 id|pdev
 )paren
 )paren
-r_continue
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 multiline_comment|/* Use I/O space */
 id|ioaddr
@@ -5218,13 +5230,6 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-multiline_comment|/* Adjust around the Grackle... */
-macro_line|#ifdef CONFIG_GEMINI
-id|ioaddr
-op_or_assign
-l_int|0xfe000000
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5239,14 +5244,13 @@ comma
 l_string|&quot;ncr885e&quot;
 )paren
 )paren
-r_continue
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 multiline_comment|/* finish off the probe */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
+id|ret
+op_assign
 id|ncr885e_probe1
 c_func
 (paren
@@ -5254,19 +5258,12 @@ id|ioaddr
 comma
 id|irq
 )paren
-)paren
-)paren
-(brace
-id|chips
-op_increment
 suffix:semicolon
-id|pci_set_master
+r_if
+c_cond
 (paren
-id|pdev
+id|ret
 )paren
-suffix:semicolon
-)brace
-r_else
 id|release_region
 c_func
 (paren
@@ -5275,20 +5272,16 @@ comma
 id|NCR885E_TOTAL_SIZE
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|chips
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
 r_else
+id|pci_set_master
+c_func
+(paren
+id|pdev
+)paren
+suffix:semicolon
+)brace
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* debugging to peek at dma descriptors */
@@ -5965,5 +5958,5 @@ c_func
 id|ncr885e_cleanup
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O6 -c symba.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; *  c-basic-offset: 8&n; * End:&n; */
 eof

@@ -262,7 +262,7 @@ mdefine_line|#define  INTERRUPT_INTE        1&lt;&lt;15   /* interrupt enable */
 DECL|macro|INTERRUPT_WI
 mdefine_line|#define  INTERRUPT_WI          1&lt;&lt;9    /* wakeup interrupt */
 DECL|macro|INTERRUPT_ERI
-mdefine_line|#define  INTERRUPT_ERI         1&lt;&lt;8    /* early recieve interrupt */
+mdefine_line|#define  INTERRUPT_ERI         1&lt;&lt;8    /* early receive interrupt */
 DECL|macro|INTERRUPT_PPET
 mdefine_line|#define  INTERRUPT_PPET        1&lt;&lt;7    /* PCI Tx parity error */
 DECL|macro|INTERRUPT_PBFT
