@@ -2220,9 +2220,6 @@ r_static
 r_struct
 id|inode_operations
 id|ntfs_inode_operations_nobmap
-op_assign
-(brace
-)brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_NTFS_RW
 r_static
@@ -3020,9 +3017,6 @@ r_static
 r_struct
 id|inode_operations
 id|ntfs_inode_operations
-op_assign
-(brace
-)brace
 suffix:semicolon
 DECL|variable|ntfs_dir_operations
 r_static

@@ -357,8 +357,6 @@ DECL|variable|cy_next_channel
 r_static
 r_int
 id|cy_next_channel
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* next minor available */
 DECL|variable|serial_table
@@ -805,24 +803,18 @@ r_static
 r_int
 r_int
 id|cy_pci_nboard
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cy_isa_nboard
 r_static
 r_int
 r_int
 id|cy_isa_nboard
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cy_nboard
 r_static
 r_int
 r_int
 id|cy_nboard
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
 DECL|variable|cy_pci_dev_id

@@ -1003,6 +1003,7 @@ macro_line|#endif
 DECL|function|dnfb_init
 r_int
 r_int
+id|__init
 id|dnfb_init
 c_func
 (paren

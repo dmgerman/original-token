@@ -19,17 +19,17 @@ mdefine_line|#define __constant_htons(x) ((__u16)(x))
 DECL|macro|__constant_ntohs
 mdefine_line|#define __constant_ntohs(x) ((__u16)(x))
 DECL|macro|__constant_cpu_to_le64
-mdefine_line|#define __constant_cpu_to_le64(x) ___swab64((x))
+mdefine_line|#define __constant_cpu_to_le64(x) ___constant_swab64((x))
 DECL|macro|__constant_le64_to_cpu
-mdefine_line|#define __constant_le64_to_cpu(x) ___swab64((x))
+mdefine_line|#define __constant_le64_to_cpu(x) ___constant_swab64((x))
 DECL|macro|__constant_cpu_to_le32
-mdefine_line|#define __constant_cpu_to_le32(x) ___swab32((x))
+mdefine_line|#define __constant_cpu_to_le32(x) ___constant_swab32((x))
 DECL|macro|__constant_le32_to_cpu
-mdefine_line|#define __constant_le32_to_cpu(x) ___swab32((x))
+mdefine_line|#define __constant_le32_to_cpu(x) ___constant_swab32((x))
 DECL|macro|__constant_cpu_to_le16
-mdefine_line|#define __constant_cpu_to_le16(x) ___swab16((x))
+mdefine_line|#define __constant_cpu_to_le16(x) ___constant_swab16((x))
 DECL|macro|__constant_le16_to_cpu
-mdefine_line|#define __constant_le16_to_cpu(x) ___swab16((x))
+mdefine_line|#define __constant_le16_to_cpu(x) ___constant_swab16((x))
 DECL|macro|__constant_cpu_to_be64
 mdefine_line|#define __constant_cpu_to_be64(x) ((__u64)(x))
 DECL|macro|__constant_be64_to_cpu

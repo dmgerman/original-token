@@ -497,6 +497,17 @@ id|ia_valid
 op_assign
 id|attr-&gt;ia_valid
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 id|attr-&gt;ia_ctime
 op_assign
 id|now
@@ -537,8 +548,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode
-op_logical_and
 id|inode-&gt;i_op
 op_logical_and
 id|inode-&gt;i_op-&gt;setattr

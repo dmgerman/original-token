@@ -4966,8 +4966,6 @@ suffix:semicolon
 DECL|variable|funcbufleft
 r_int
 id|funcbufleft
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* space left */
 DECL|variable|func_table

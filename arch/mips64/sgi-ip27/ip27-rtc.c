@@ -94,8 +94,6 @@ r_static
 r_int
 r_char
 id|rtc_status
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* bitmapped status byte.&t;*/
 DECL|variable|rtc_freq
@@ -103,8 +101,6 @@ r_static
 r_int
 r_int
 id|rtc_freq
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Current periodic IRQ rate&t;*/
 DECL|variable|rtc

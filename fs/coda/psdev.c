@@ -38,8 +38,6 @@ multiline_comment|/* statistics */
 DECL|variable|coda_hard
 r_int
 id|coda_hard
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* allows signals during upcalls */
 DECL|variable|coda_timeout
@@ -1513,8 +1511,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|init_coda_psdev
 r_static

@@ -379,10 +379,9 @@ op_star
 id|timep
 )paren
 (brace
-op_star
-id|timep
+id|u64
+id|tmp
 op_assign
-(paren
 (paren
 id|u64
 )paren
@@ -395,7 +394,11 @@ op_increment
 )paren
 op_lshift
 l_int|32
-)paren
+suffix:semicolon
+op_star
+id|timep
+op_assign
+id|tmp
 op_plus
 (paren
 id|u64
@@ -661,7 +664,6 @@ suffix:semicolon
 multiline_comment|/* Turn remote device info into Linux-specific dev_t */
 id|fattr-&gt;rdev
 op_assign
-(paren
 id|ntohl
 c_func
 (paren
@@ -671,9 +673,9 @@ op_increment
 )paren
 op_lshift
 id|MINORBITS
-)paren
-op_or
-(paren
+suffix:semicolon
+id|fattr-&gt;rdev
+op_or_assign
 id|ntohl
 c_func
 (paren
@@ -683,7 +685,6 @@ op_increment
 )paren
 op_amp
 id|MINORMASK
-)paren
 suffix:semicolon
 id|p
 op_assign

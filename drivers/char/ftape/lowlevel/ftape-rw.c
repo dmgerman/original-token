@@ -16,8 +16,6 @@ multiline_comment|/*      Global vars.&n; */
 DECL|variable|ft_nr_buffers
 r_int
 id|ft_nr_buffers
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ft_buffer
 id|buffer_struct
@@ -26,11 +24,6 @@ id|ft_buffer
 (braket
 id|FT_MAX_NR_BUFFERS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|ft_head
 r_static
@@ -64,23 +57,17 @@ DECL|variable|ftape_tape_running
 r_volatile
 r_int
 id|ftape_tape_running
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*      Local vars.&n; */
 DECL|variable|overrun_count_offset
 r_static
 r_int
 id|overrun_count_offset
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|inhibit_correction
 r_static
 r_int
 id|inhibit_correction
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*  maxmimal allowed overshoot when fast seeking&n; */
 DECL|macro|OVERSHOOT_LIMIT

@@ -42,6 +42,13 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_PCMCIA
+macro_line|#include &lt;pcmcia/version.h&gt;
+macro_line|#include &lt;pcmcia/cs_types.h&gt;
+macro_line|#include &lt;pcmcia/cs.h&gt;
+macro_line|#include &lt;pcmcia/cistpl.h&gt;
+macro_line|#include &lt;pcmcia/ds.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_ISAPNP
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#endif
@@ -30564,27 +30571,16 @@ id|linkp
 op_assign
 id|link-&gt;next
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link-&gt;priv
-comma
-r_sizeof
-(paren
-id|ixj_info_t
-)paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|link
-comma
-r_sizeof
-(paren
-r_struct
-id|dev_link_t
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -31487,8 +31483,8 @@ id|DEV_CONFIG
 (brace
 id|link-&gt;release.expires
 op_assign
-id|RUN_AT
-c_func
+id|jiffies
+op_plus
 (paren
 id|HZ
 op_div

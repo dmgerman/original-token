@@ -440,11 +440,6 @@ suffix:semicolon
 macro_line|#endif
 r_extern
 r_struct
-id|consw
-id|fb_con
-suffix:semicolon
-r_extern
-r_struct
 id|fb_info
 op_star
 id|mac_fb_init

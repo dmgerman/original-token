@@ -37,8 +37,6 @@ r_struct
 id|proc_dir_entry
 op_star
 id|proc_scsi
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 r_static
@@ -84,15 +82,11 @@ DECL|variable|scsi_pid
 r_int
 r_int
 id|scsi_pid
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|last_cmnd
 id|Scsi_Cmnd
 op_star
 id|last_cmnd
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Command groups 3 and 4 are reserved and should never be used.  */
 DECL|variable|scsi_command_size
@@ -127,32 +121,24 @@ r_static
 r_int
 r_int
 id|serial_number
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|scsi_bh_queue_head
 r_static
 id|Scsi_Cmnd
 op_star
 id|scsi_bh_queue_head
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|scsi_bh_queue_tail
 r_static
 id|Scsi_Cmnd
 op_star
 id|scsi_bh_queue_tail
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Note - the initial logging level can be set here to log events at boot time.&n; * After the system is up, you may enable logging via the /proc interface.&n; */
 DECL|variable|scsi_logging_level
 r_int
 r_int
 id|scsi_logging_level
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|scsi_device_types
 r_const
@@ -1712,8 +1698,6 @@ suffix:semicolon
 DECL|variable|scsi_devfs_handle
 id|devfs_handle_t
 id|scsi_devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * scsi_do_cmd sends all the commands out to the low-level driver.  It&n; * handles the specifics required for each low level driver - ie queued&n; * or non queued.  It also prevents conflicts when different high level&n; * drivers go for the same host at the same time.&n; */
 DECL|function|scsi_wait_req
@@ -6665,6 +6649,14 @@ id|SHTp
 op_assign
 id|SHT-&gt;next
 suffix:semicolon
+id|remove_proc_entry
+c_func
+(paren
+id|tpnt-&gt;proc_name
+comma
+id|proc_scsi
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -6674,15 +6666,6 @@ op_amp
 id|SHT-&gt;next
 suffix:semicolon
 )brace
-multiline_comment|/* Rebuild the /proc/scsi directory entries */
-id|remove_proc_entry
-c_func
-(paren
-id|tpnt-&gt;proc_name
-comma
-id|proc_scsi
-)paren
-suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

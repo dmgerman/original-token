@@ -3511,6 +3511,7 @@ comma
 suffix:semicolon
 DECL|function|macfb_setup
 r_void
+id|__init
 id|macfb_setup
 c_func
 (paren

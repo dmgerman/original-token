@@ -51,22 +51,16 @@ r_static
 r_int
 r_int
 id|next_heartbeat
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|wdt_is_open
 r_static
 r_int
 id|wdt_is_open
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|wdt_expect_close
 r_static
 r_int
 id|wdt_expect_close
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Whack the dog&n; */
 DECL|function|wdt_timer_ping

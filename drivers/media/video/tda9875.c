@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the TDA9875 chip&n; * (The TDA9875 is used on the Diamond DTV2000 french version &n; * Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Guillaume Delvit based on Gerd Knorr source and&n; * Eric Sandeen &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * &n; *  Revision: 0.1 - original version&n; */
+multiline_comment|/*&n; * For the TDA9875 chip&n; * (The TDA9875 is used on the Diamond DTV2000 french version &n; * Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 2000 Guillaume Delvit based on Gerd Knorr source and&n; * Eric Sandeen &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * Contributors:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; (0.2)&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; * &n; *  Revision  0.2 - resource allocation fixes in tda9875_attach (08/14/2000)&n; *  Revision: 0.1 - original version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1012,10 +1012,18 @@ c_cond
 op_logical_neg
 id|t
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|client
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

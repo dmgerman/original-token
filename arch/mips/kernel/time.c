@@ -26,8 +26,6 @@ DECL|variable|r4k_interval
 r_int
 r_int
 id|r4k_interval
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 id|rwlock_t
@@ -46,12 +44,8 @@ r_static
 r_int
 r_int
 id|timerhi
-op_assign
-l_int|0
 comma
 id|timerlo
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * On MIPS only R4000 and better have a cycle counter.&n; *&n; * FIXME: Does playing with the RP bit in c0_status interfere with this code?&n; */
 DECL|function|do_fast_gettimeoffset
@@ -78,8 +72,6 @@ r_static
 r_int
 r_int
 id|last_jiffies
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -90,8 +82,6 @@ r_static
 r_int
 r_int
 id|cached_quotient
-op_assign
-l_int|0
 suffix:semicolon
 id|tmp
 op_assign
@@ -249,8 +239,6 @@ r_static
 r_int
 r_int
 id|jiffies_p
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * cache volatile jiffies temporarily; we have IRQs turned off. &n;&t; */
 r_int
@@ -786,8 +774,6 @@ DECL|variable|last_rtc_update
 r_static
 r_int
 id|last_rtc_update
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
 r_static
@@ -814,16 +800,10 @@ macro_line|#ifdef CONFIG_DDB5074
 r_static
 r_int
 id|cnt
-op_assign
-l_int|0
 comma
 id|period
-op_assign
-l_int|0
 comma
 id|dist
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -2475,15 +2475,13 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;Called during bootup.  We don&squot;t actually have to initialise&n; *&t;too much for this.&n; */
 DECL|function|rif_init
-r_void
+r_static
+r_int
 id|__init
 id|rif_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|unused
+r_void
 )paren
 (brace
 id|rif_timer.expires
@@ -2522,5 +2520,15 @@ comma
 id|rif_get_info
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|rif_init
+id|module_init
+c_func
+(paren
+id|rif_init
+)paren
+suffix:semicolon
 eof

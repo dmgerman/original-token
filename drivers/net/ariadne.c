@@ -512,14 +512,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Ariadne Ethernet Card and Parallel Ports&quot;
-)paren
-suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev

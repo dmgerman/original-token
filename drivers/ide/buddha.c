@@ -216,11 +216,6 @@ r_int
 r_int
 id|board
 suffix:semicolon
-r_const
-r_char
-op_star
-id|name
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -228,16 +223,10 @@ id|z-&gt;id
 op_eq
 id|ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA
 )paren
-(brace
 id|buddha_num_hwifs
 op_assign
 id|BUDDHA_NUM_HWIFS
 suffix:semicolon
-id|name
-op_assign
-l_string|&quot;Buddha IDE Interface&quot;
-suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -246,16 +235,10 @@ id|z-&gt;id
 op_eq
 id|ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL
 )paren
-(brace
 id|buddha_num_hwifs
 op_assign
 id|CATWEASEL_NUM_HWIFS
 suffix:semicolon
-id|name
-op_assign
-l_string|&quot;Catweasel IDE Interface and Floppy Controller&quot;
-suffix:semicolon
-)brace
 r_else
 r_continue
 suffix:semicolon
@@ -280,14 +263,6 @@ l_string|&quot;IDE&quot;
 )paren
 )paren
 r_continue
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-id|name
-)paren
 suffix:semicolon
 id|buddha_board
 op_assign

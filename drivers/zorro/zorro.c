@@ -7,17 +7,6 @@ macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-r_extern
-r_void
-id|zorro_namedevice
-c_func
-(paren
-r_struct
-id|zorro_dev
-op_star
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/*&n;     *  Zorro Expansion Devices&n;     */
 DECL|variable|zorro_num_autocon
 id|u_int
@@ -44,6 +33,7 @@ l_int|4
 )braket
 op_assign
 (brace
+multiline_comment|/* Zorro II regions (on Zorro II/III) */
 (brace
 l_string|&quot;Zorro II exp&quot;
 comma
@@ -60,6 +50,7 @@ comma
 l_int|0x009fffff
 )brace
 comma
+multiline_comment|/* Zorro III regions (on Zorro III only) */
 (brace
 l_string|&quot;Zorro III exp&quot;
 comma
@@ -77,11 +68,11 @@ l_int|0x7fffffff
 )brace
 )brace
 suffix:semicolon
-DECL|variable|zorro_num_res
+DECL|variable|__initdata
 r_static
 id|u_int
-id|__init
 id|zorro_num_res
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -123,6 +114,9 @@ id|ZORRO
 r_return
 l_int|NULL
 suffix:semicolon
+r_for
+c_loop
+(paren
 id|dev
 op_assign
 id|from
@@ -137,10 +131,6 @@ id|zorro_autocon
 (braket
 l_int|0
 )braket
-suffix:semicolon
-r_for
-c_loop
-(paren
 suffix:semicolon
 id|dev
 OL
@@ -538,15 +528,25 @@ op_amp
 id|GVP_PRODMASK
 suffix:semicolon
 )brace
-id|dev-&gt;resource.name
-op_assign
+id|sprintf
+c_func
+(paren
 id|dev-&gt;name
+comma
+l_string|&quot;Zorro device %08x&quot;
+comma
+id|dev-&gt;id
+)paren
 suffix:semicolon
-id|zorro_namedevice
+id|zorro_name_device
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|dev-&gt;resource.name
+op_assign
+id|dev-&gt;name
 suffix:semicolon
 r_if
 c_cond
@@ -567,9 +567,15 @@ id|dev-&gt;resource
 id|printk
 c_func
 (paren
-l_string|&quot;zorro_init: cannot request resource for board %d&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Zorro: Address space collision on device %s &quot;
+l_string|&quot;[%lx:%lx]&bslash;n&quot;
 comma
-id|i
+id|dev-&gt;name
+comma
+id|dev-&gt;resource.start
+comma
+id|dev-&gt;resource.end
 )paren
 suffix:semicolon
 )brace

@@ -52,15 +52,11 @@ suffix:semicolon
 DECL|variable|both_bap_lock
 r_int
 id|both_bap_lock
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* activated at awc_init in this */
 DECL|variable|bap_setup_spinlock
 r_int
 id|bap_setup_spinlock
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* file if numcpu &gt;1 */
 DECL|variable|bap_sleep
@@ -6235,8 +6231,6 @@ multiline_comment|/* &t;called from INTERRUPT context,&n;&n;&t;must deliver the 
 DECL|variable|parse_not_8023
 r_int
 id|parse_not_8023
-op_assign
-l_int|0
 suffix:semicolon
 r_void
 DECL|function|awc_802_11_router_rx
@@ -11359,38 +11353,22 @@ id|aironet4500_devices
 (braket
 id|MAX_AWCS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|awc_debug
 r_int
 id|awc_debug
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|//  0xffffff;
 DECL|variable|p802_11_send
 r_static
 r_int
 id|p802_11_send
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// 1
 DECL|variable|awc_process_tx_results
 r_static
 r_int
 id|awc_process_tx_results
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tx_queue_len
 r_int
@@ -11401,8 +11379,6 @@ suffix:semicolon
 DECL|variable|tx_rate
 r_int
 id|tx_rate
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|channel
 r_int
@@ -11410,7 +11386,7 @@ id|channel
 op_assign
 l_int|5
 suffix:semicolon
-singleline_comment|//static int tx_full_rate = 0;
+singleline_comment|//static int tx_full_rate;
 DECL|variable|max_mtu
 r_int
 id|max_mtu
@@ -11420,8 +11396,6 @@ suffix:semicolon
 DECL|variable|adhoc
 r_int
 id|adhoc
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|large_buff_mem
 r_int
@@ -11440,8 +11414,6 @@ suffix:semicolon
 DECL|variable|awc_full_stats
 r_int
 id|awc_full_stats
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|SSID
 r_char
@@ -11449,28 +11421,18 @@ id|SSID
 (braket
 l_int|33
 )braket
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|master
 r_int
 id|master
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|slave
 r_int
 id|slave
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|awc_simple_bridge
 r_int
 id|awc_simple_bridge
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// int debug =0;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
@@ -13755,8 +13717,6 @@ DECL|variable|last_tx_q_hack
 r_int
 r_int
 id|last_tx_q_hack
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|direction
 r_int
@@ -14394,8 +14354,6 @@ id|awc_proc_set_fun
 (paren
 r_int
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|awc_proc_unset_fun
 r_int
@@ -14406,8 +14364,6 @@ id|awc_proc_unset_fun
 (paren
 r_int
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|awc_register_proc
 r_int

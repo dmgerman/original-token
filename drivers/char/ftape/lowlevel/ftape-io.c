@@ -27,8 +27,6 @@ DECL|variable|ftape_tape_len
 r_int
 r_int
 id|ftape_tape_len
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ftape_current_command
 r_volatile
@@ -54,8 +52,6 @@ DECL|variable|diagnostic_mode
 r_static
 r_int
 id|diagnostic_mode
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ftape_udelay_count
 r_static
@@ -829,8 +825,6 @@ suffix:semicolon
 r_static
 r_int
 id|level
-op_assign
-l_int|0
 suffix:semicolon
 id|TRACE_FUN
 c_func
@@ -3376,8 +3370,6 @@ suffix:semicolon
 r_static
 r_int
 id|supported
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|rate_changed

@@ -1063,7 +1063,6 @@ id|ax25_cb
 op_star
 )paren
 suffix:semicolon
-macro_line|#include &lt;net/ax25call.h&gt;
 multiline_comment|/* ax25_iface.c */
 r_extern
 r_int

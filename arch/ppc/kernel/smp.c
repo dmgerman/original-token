@@ -30,15 +30,11 @@ macro_line|#include &quot;open_pic.h&quot;
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|smp_commenced
 r_volatile
 r_int
 id|smp_commenced
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|smp_num_cpus
 r_int
@@ -113,10 +109,6 @@ id|smp_hw_index
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/* all cpu mappings are 1-1 -- Cort */
 DECL|variable|cpu_callin_map
@@ -127,11 +119,6 @@ id|cpu_callin_map
 (braket
 id|NR_CPUS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 r_int
 id|start_secondary
@@ -690,8 +677,6 @@ DECL|variable|call_data
 )brace
 op_star
 id|call_data
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * this function sends a &squot;generic call function&squot; IPI to all other CPUs&n; * in the system.&n; */
 DECL|function|smp_call_function

@@ -695,8 +695,6 @@ r_struct
 id|trident_card
 op_star
 id|devs
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_void

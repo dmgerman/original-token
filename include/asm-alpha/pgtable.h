@@ -23,13 +23,13 @@ DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
-multiline_comment|/*&n; * Entries per page directory level:  the Alpha is three-level, with&n; * all levels having a one-page page table.&n; *&n; * The PGD is special:  the last entry is reserved for self-mapping.&n; */
+multiline_comment|/*&n; * Entries per page directory level:  the Alpha is three-level, with&n; * all levels having a one-page page table.&n; */
 DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PGD
-mdefine_line|#define PTRS_PER_PGD&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
+mdefine_line|#define PTRS_PER_PGD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SIZE)
 DECL|macro|FIRST_USER_PGD_NR
@@ -37,14 +37,17 @@ mdefine_line|#define FIRST_USER_PGD_NR&t;0
 multiline_comment|/* Number of pointers that fit on a page:  this will go away. */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
-DECL|macro|CONSOLE_REMAP_START
-mdefine_line|#define CONSOLE_REMAP_START    0xFFFFFE0000000000
+macro_line|#ifdef CONFIG_ALPHA_LARGE_VMALLOC
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START          (CONSOLE_REMAP_START + PMD_SIZE)
+mdefine_line|#define VMALLOC_START&t;&t;0xfffffe0000000000
+macro_line|#else
+DECL|macro|VMALLOC_START
+mdefine_line|#define VMALLOC_START&t;&t;(-2*PGDIR_SIZE)
+macro_line|#endif
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
 DECL|macro|VMALLOC_END
-mdefine_line|#define VMALLOC_END&t;&t;(~0UL)
+mdefine_line|#define VMALLOC_END&t;&t;(-PGDIR_SIZE)
 multiline_comment|/*&n; * OSF/1 PAL-code-imposed page table bits&n; */
 DECL|macro|_PAGE_VALID
 mdefine_line|#define _PAGE_VALID&t;0x0001
@@ -1044,7 +1047,7 @@ DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* to find an entry in a page-table-directory. */
 DECL|macro|pgd_index
-mdefine_line|#define pgd_index(address)&t;((address &gt;&gt; PGDIR_SHIFT) &amp; PTRS_PER_PGD)
+mdefine_line|#define pgd_index(address)&t;((address &gt;&gt; PGDIR_SHIFT) &amp; (PTRS_PER_PGD - 1))
 DECL|macro|__pgd_offset
 mdefine_line|#define __pgd_offset(address)&t;pgd_index(address)
 DECL|macro|pgd_offset
@@ -1245,5 +1248,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

@@ -25,8 +25,6 @@ macro_line|#endif /* CONFIG_FB_COMPAT_XPMAC */
 DECL|variable|vt_dont_switch
 r_char
 id|vt_dont_switch
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 r_struct

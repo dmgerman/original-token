@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/bfs/file.c&n; *&t;BFS file operations.&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@ocston.org&gt;&n; */
+multiline_comment|/*&n; *&t;fs/bfs/file.c&n; *&t;BFS file operations.&n; *&t;Copyright (C) 1999,2000 Tigran Aivazian &lt;tigran@veritas.com&gt;&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;
@@ -58,8 +58,6 @@ id|bh
 comma
 op_star
 r_new
-op_assign
-l_int|NULL
 suffix:semicolon
 id|bh
 op_assign
@@ -243,8 +241,6 @@ id|create
 (brace
 r_int
 id|phys
-comma
-id|next_free_block
 suffix:semicolon
 r_int
 id|err
@@ -252,16 +248,23 @@ suffix:semicolon
 r_struct
 id|super_block
 op_star
-id|s
+id|sb
 op_assign
 id|inode-&gt;i_sb
+suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|sbh
+op_assign
+id|sb-&gt;su_sbh
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|block
 template_param
-id|s-&gt;su_blocks
+id|sb-&gt;su_blocks
 )paren
 r_return
 op_minus
@@ -376,7 +379,7 @@ c_cond
 (paren
 id|inode-&gt;iu_eblock
 op_eq
-id|s-&gt;su_lf_eblk
+id|sb-&gt;su_lf_eblk
 )paren
 (brace
 id|dprintf
@@ -407,13 +410,17 @@ op_lshift
 id|BH_Mapped
 )paren
 suffix:semicolon
-id|s-&gt;su_lf_eblk
+id|sb-&gt;su_freeb
+op_sub_assign
+id|phys
+op_minus
+id|inode-&gt;iu_eblock
+suffix:semicolon
+id|sb-&gt;su_lf_eblk
 op_assign
 id|inode-&gt;iu_eblock
 op_assign
-id|inode-&gt;iu_sblock
-op_plus
-id|block
+id|phys
 suffix:semicolon
 id|mark_inode_dirty
 c_func
@@ -424,7 +431,7 @@ suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
-id|s-&gt;su_sbh
+id|sbh
 )paren
 suffix:semicolon
 id|err
@@ -436,9 +443,9 @@ id|out
 suffix:semicolon
 )brace
 multiline_comment|/* Ok, we have to move this entire file to the next free block */
-id|next_free_block
+id|phys
 op_assign
-id|s-&gt;su_lf_eblk
+id|sb-&gt;su_lf_eblk
 op_plus
 l_int|1
 suffix:semicolon
@@ -460,7 +467,7 @@ id|inode-&gt;iu_sblock
 comma
 id|inode-&gt;iu_eblock
 comma
-id|next_free_block
+id|phys
 )paren
 suffix:semicolon
 r_if
@@ -487,17 +494,42 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+id|dprintf
+c_func
+(paren
+l_string|&quot;c=%d, b=%08lx, phys=%08lx (moved)&bslash;n&quot;
+comma
+id|create
+comma
+id|block
+comma
+id|phys
+)paren
+suffix:semicolon
 id|inode-&gt;iu_sblock
 op_assign
-id|next_free_block
+id|phys
 suffix:semicolon
-id|s-&gt;su_lf_eblk
+id|phys
+op_add_assign
+id|block
+suffix:semicolon
+id|sb-&gt;su_lf_eblk
 op_assign
 id|inode-&gt;iu_eblock
 op_assign
-id|next_free_block
+id|phys
+suffix:semicolon
+multiline_comment|/* this assumes nothing can write the inode back while we are here&n;&t; * and thus update inode-&gt;i_blocks! (XXX)*/
+id|sb-&gt;su_freeb
+op_sub_assign
+id|inode-&gt;iu_eblock
+op_minus
+id|inode-&gt;iu_sblock
 op_plus
-id|block
+l_int|1
+op_minus
+id|inode-&gt;i_blocks
 suffix:semicolon
 id|mark_inode_dirty
 c_func
@@ -508,7 +540,7 @@ suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
-id|s-&gt;su_sbh
+id|sbh
 )paren
 suffix:semicolon
 id|bh_result-&gt;b_dev
@@ -517,9 +549,7 @@ id|inode-&gt;i_dev
 suffix:semicolon
 id|bh_result-&gt;b_blocknr
 op_assign
-id|inode-&gt;iu_sblock
-op_plus
-id|block
+id|phys
 suffix:semicolon
 id|bh_result-&gt;b_state
 op_or_assign
@@ -687,14 +717,12 @@ comma
 id|bmap
 suffix:colon
 id|bfs_bmap
+comma
 )brace
 suffix:semicolon
 DECL|variable|bfs_file_inops
 r_struct
 id|inode_operations
 id|bfs_file_inops
-op_assign
-(brace
-)brace
 suffix:semicolon
 eof

@@ -85,8 +85,6 @@ r_static
 id|kmem_cache_t
 op_star
 id|nfs_rdata_cachep
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|nfs_readdata_alloc
 r_static

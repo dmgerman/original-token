@@ -52,11 +52,6 @@ id|pers
 (braket
 id|MAX_PERSONALITY
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; * Current RAID-1,4,5 parallel reconstruction &squot;guaranteed speed limit&squot;&n; * is 100 KB/sec, so the extra system load does not show up that much.&n; * Increase it if you want to have more _guaranteed_ speed. Note that&n; * the RAID driver will use the maximum available bandwith if the IO&n; * subsystem is idle. There is also an &squot;absolute maximum&squot; reconstruction&n; * speed limit - in case reconstruction slows down your system despite&n; * idle IO detection.&n; *&n; * you can change it via /proc/sys/dev/raid/speed_limit_min and _max.&n; */
 DECL|variable|sysctl_speed_limit_min
@@ -227,8 +222,6 @@ r_static
 id|mdk_thread_t
 op_star
 id|md_recovery_thread
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|md_size
 r_int
@@ -236,11 +229,6 @@ id|md_size
 (braket
 id|MAX_MD_DEVS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 r_extern
 r_struct
@@ -251,8 +239,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|md_gendisk
 r_static
@@ -319,15 +305,6 @@ id|mddev_map
 (braket
 id|MAX_MD_DEVS
 )braket
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|0
-)brace
-comma
-)brace
 suffix:semicolon
 DECL|function|add_mddev_mapping
 r_void

@@ -63,8 +63,6 @@ DECL|variable|cache_initialized
 r_static
 r_int
 id|cache_initialized
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|cache_disabled
 r_static
@@ -852,8 +850,6 @@ l_int|NULL
 r_static
 r_int
 id|complaints
-op_assign
-l_int|0
 suffix:semicolon
 id|printk
 c_func

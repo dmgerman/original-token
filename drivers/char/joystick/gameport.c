@@ -78,8 +78,6 @@ r_struct
 id|gameport
 op_star
 id|gameport_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|gameport_dev
 r_static
@@ -87,15 +85,11 @@ r_struct
 id|gameport_dev
 op_star
 id|gameport_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|gameport_number
 r_static
 r_int
 id|gameport_number
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * gameport_measure_speed() measures the gameport i/o speed.&n; */
 DECL|function|gameport_measure_speed

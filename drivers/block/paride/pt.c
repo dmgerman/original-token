@@ -782,8 +782,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|pt_init
 r_int

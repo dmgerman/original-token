@@ -68,8 +68,6 @@ DECL|variable|active
 r_static
 r_int
 id|active
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* number of concurrent open()s */
 DECL|variable|reader_lock
@@ -114,29 +112,21 @@ DECL|variable|button_pending
 r_static
 r_int
 id|button_pending
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|recent_transition
 r_static
 r_int
 id|recent_transition
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|transition_count
 r_static
 r_int
 id|transition_count
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|synthesize_tap
 r_static
 r_int
 id|synthesize_tap
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -340,36 +330,26 @@ DECL|variable|raw_data_count
 r_static
 r_int
 id|raw_data_count
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|raw_x
 DECL|variable|raw_y
 r_static
 r_int
 id|raw_x
-op_assign
-l_int|0
 comma
 id|raw_y
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* most recent absolute co-ords read */
 DECL|variable|raw_down
 r_static
 r_int
 id|raw_down
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* raw up/down state */
 DECL|variable|debounced_down
 r_static
 r_int
 id|debounced_down
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* up/down state after debounce processing */
 DECL|enumerator|NO_BOUNCE
@@ -394,8 +374,6 @@ DECL|variable|xy_pending
 r_static
 r_int
 id|xy_pending
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* set if new data have not yet been read */
 multiline_comment|/* &n; * Timer goes off a short while after an up/down transition and copies&n; * the value of raw_down to debounced_down.&n; */
@@ -903,8 +881,6 @@ DECL|variable|read_byte_count
 r_static
 r_int
 id|read_byte_count
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/**&n; *&t;sample_raw:&n; *&t;@d: sample buffer&n; *&n; *&t;Retrieve a triple of sample data. &n; */
 DECL|function|sample_raw

@@ -2099,6 +2099,7 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 macro_line|#endif /* _ASM_PGTABLE_H */
 eof

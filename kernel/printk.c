@@ -73,8 +73,6 @@ r_struct
 id|console
 op_star
 id|console_drivers
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|log_buf
 r_static

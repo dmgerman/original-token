@@ -10,8 +10,6 @@ r_struct
 id|nls_table
 op_star
 id|p_nls
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|table
 r_static

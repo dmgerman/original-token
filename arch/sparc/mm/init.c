@@ -56,16 +56,6 @@ DECL|variable|pgt_quicklists
 r_struct
 id|pgtable_cache_struct
 id|pgt_quicklists
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/* References to section boundaries */
 r_extern

@@ -226,11 +226,6 @@ id|sx_table
 (braket
 id|SX_NPORTS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|sx_termios
 r_static
@@ -269,20 +264,14 @@ suffix:semicolon
 DECL|variable|sx_initialized
 r_int
 id|sx_initialized
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|sx_nports
 r_int
 id|sx_nports
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|sx_debug
 r_int
 id|sx_debug
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* You can have the driver poll your card. &n;    - Set sx_poll to 1 to poll every timer tick (10ms on Intel). &n;      This is used when the card cannot use an interrupt for some reason.&n;&n;    - set sx_slowpoll to 100 to do an extra poll once a second (on Intel). If &n;      the driver misses an interrupt (report this if it DOES happen to you!)&n;      everything will continue to work.... &n; */
 DECL|variable|sx_poll
@@ -294,8 +283,6 @@ suffix:semicolon
 DECL|variable|sx_slowpoll
 r_int
 id|sx_slowpoll
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* The card limits the number of interrupts per second. &n;   At 115k2 &quot;100&quot; should be sufficient. &n;   If you&squot;re using higher baudrates, you can increase this...&n; */
 DECL|variable|sx_maxints
@@ -7790,8 +7777,6 @@ r_void
 r_static
 r_int
 id|header_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -251,8 +251,6 @@ DECL|variable|lsr_break_flag
 r_static
 r_int
 id|lsr_break_flag
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_SERIAL_CONSOLE) &amp;&amp; defined(CONFIG_MAGIC_SYSRQ)
@@ -564,8 +562,6 @@ DECL|variable|serial_pci_board_idx
 r_static
 r_int
 id|serial_pci_board_idx
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifndef IS_PCI_REGION_IOPORT
 DECL|macro|IS_PCI_REGION_IOPORT
@@ -3329,8 +3325,6 @@ r_static
 r_int
 r_int
 id|last_strobe
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|async_struct

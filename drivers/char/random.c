@@ -1758,8 +1758,6 @@ r_static
 r_int
 r_char
 id|last_scancode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* ignore autorepeat (multiple key down w/o key up) */
 r_if
@@ -11182,14 +11180,10 @@ id|dport
 r_static
 id|__u32
 id|rekey_time
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
 id|count
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
@@ -11336,8 +11330,6 @@ id|daddr
 r_static
 id|time_t
 id|rekey_time
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
@@ -11418,14 +11410,10 @@ id|dport
 r_static
 id|__u32
 id|rekey_time
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
 id|count
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
@@ -11596,8 +11584,6 @@ id|daddr
 r_static
 id|time_t
 id|rekey_time
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|__u32
@@ -11680,8 +11666,6 @@ DECL|variable|syncookie_init
 r_static
 r_int
 id|syncookie_init
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|syncookie_secret
 r_static

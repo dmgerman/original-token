@@ -204,8 +204,10 @@ op_assign
 id|dn
 (braket
 id|i
-op_increment
 )braket
+comma
+id|i
+op_increment
 suffix:semicolon
 )brace
 id|str

@@ -69,9 +69,6 @@ multiline_comment|/* console.c */
 r_struct
 id|console_font_op
 suffix:semicolon
-r_struct
-id|consw
-suffix:semicolon
 r_int
 id|vc_allocate
 c_func

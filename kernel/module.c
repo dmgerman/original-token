@@ -45,22 +45,20 @@ id|module
 id|kernel_module
 op_assign
 (brace
+id|size_of_struct
+suffix:colon
 r_sizeof
 (paren
 r_struct
 id|module
 )paren
 comma
-multiline_comment|/* size_of_struct */
-l_int|NULL
-comma
-multiline_comment|/* next */
+id|name
+suffix:colon
 l_string|&quot;&quot;
 comma
-multiline_comment|/* name */
-l_int|0
-comma
-multiline_comment|/* size */
+id|uc
+suffix:colon
 (brace
 id|ATOMIC_INIT
 c_func
@@ -69,38 +67,21 @@ l_int|1
 )paren
 )brace
 comma
-multiline_comment|/* usecount */
+id|flags
+suffix:colon
 id|MOD_RUNNING
 comma
-multiline_comment|/* flags */
-l_int|0
-comma
-multiline_comment|/* nsyms -- to filled in in init_modules */
-l_int|0
-comma
-multiline_comment|/* ndeps */
+id|syms
+suffix:colon
 id|__start___ksymtab
 comma
-multiline_comment|/* syms */
-l_int|NULL
-comma
-multiline_comment|/* deps */
-l_int|NULL
-comma
-multiline_comment|/* refs */
-l_int|NULL
-comma
-multiline_comment|/* init */
-l_int|NULL
-comma
-multiline_comment|/* cleanup */
+id|ex_table_start
+suffix:colon
 id|__start___ex_table
 comma
-multiline_comment|/* ex_table_start */
+id|ex_table_end
+suffix:colon
 id|__stop___ex_table
-comma
-multiline_comment|/* ex_table_end */
-multiline_comment|/* Rest are NULL */
 )brace
 suffix:semicolon
 DECL|variable|module_list

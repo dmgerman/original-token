@@ -441,14 +441,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Hydra Ethernet Card&quot;
-)paren
-suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev

@@ -65,8 +65,6 @@ r_struct
 id|serio
 op_star
 id|serio_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|serio_dev
 r_static
@@ -74,15 +72,11 @@ r_struct
 id|serio_dev
 op_star
 id|serio_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|serio_number
 r_static
 r_int
 id|serio_number
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|serio_find_dev
 r_static

@@ -96,6 +96,7 @@ DECL|macro|DUMMY
 mdefine_line|#define DUMMY&t;(void *)dummycon_dummy
 multiline_comment|/*&n; *  The console `switch&squot; structure for the dummy console&n; *&n; *  Most of the operations are dummies.&n; */
 DECL|variable|dummy_con
+r_const
 r_struct
 id|consw
 id|dummy_con

@@ -109,8 +109,6 @@ DECL|variable|specialix_refcount
 r_static
 r_int
 id|specialix_refcount
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|specialix_table
 r_static
@@ -123,11 +121,6 @@ id|SX_NBOARD
 op_star
 id|SX_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|specialix_termios
 r_static
@@ -140,11 +133,6 @@ id|SX_NBOARD
 op_star
 id|SX_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|specialix_termios_locked
 r_static
@@ -157,11 +145,6 @@ id|SX_NBOARD
 op_star
 id|SX_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|tmp_buf
 r_static
@@ -169,8 +152,6 @@ r_int
 r_char
 op_star
 id|tmp_buf
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 id|DECLARE_MUTEX
@@ -286,14 +267,6 @@ id|SX_NBOARD
 op_star
 id|SX_NPORT
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-)brace
-comma
-)brace
 suffix:semicolon
 macro_line|#ifdef SPECIALIX_TIMER
 DECL|variable|missed_irq_timer
@@ -3913,8 +3886,6 @@ suffix:semicolon
 r_static
 r_int
 id|again
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

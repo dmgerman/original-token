@@ -1363,14 +1363,6 @@ l_string|&quot;PIA&quot;
 )paren
 r_continue
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;MultiFace III MC6821 PIA&quot;
-)paren
-suffix:semicolon
 id|pp
 op_assign
 (paren

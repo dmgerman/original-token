@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * for the TEA6300 chip (only found on Gateway STB TV/FM cards tho the best&n; * of my knowledge)&n; * WARNING: THIS DRIVER WILL LOAD WITHOUT COMPLAINTS EVEN IF THE WRONG&n; * CHIP (i.e., an MSP3400) IS ON I2C ADDRESS 0x80 (it relies on i2c to&n; * make sure that there is a device acknowledging that address).  This&n; * is a potential problem because the MSP3400 is very popular and does&n; * use this address!  You have been warned!&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; * All of this should work, though it would be nice to eventually support&n; * balance (different left,right values) and, if someone ever finds a card&n; * with the support (or if you&squot;re careful with a soldering iron), fade&n; * (front/back).&n; */
+multiline_comment|/*&n; * for the TEA6300 chip (only found on Gateway STB TV/FM cards tho the best&n; * of my knowledge)&n; * WARNING: THIS DRIVER WILL LOAD WITHOUT COMPLAINTS EVEN IF THE WRONG&n; * CHIP (i.e., an MSP3400) IS ON I2C ADDRESS 0x80 (it relies on i2c to&n; * make sure that there is a device acknowledging that address).  This&n; * is a potential problem because the MSP3400 is very popular and does&n; * use this address!  You have been warned!&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; * All of this should work, though it would be nice to eventually support&n; * balance (different left,right values) and, if someone ever finds a card&n; * with the support (or if you&squot;re careful with a soldering iron), fade&n; * (front/back).&n; *&n; * Changes:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/14/2000&n; * - resource allocation fixes in tea6300_attach&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -668,10 +668,18 @@ c_cond
 op_logical_neg
 id|tea
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|client
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

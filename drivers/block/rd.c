@@ -115,8 +115,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|rd_inode
 r_static
@@ -3100,39 +3098,29 @@ DECL|variable|insize
 r_static
 r_int
 id|insize
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* valid bytes in inbuf */
 DECL|variable|inptr
 r_static
 r_int
 id|inptr
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* index of next byte to be processed in inbuf */
 DECL|variable|outcnt
 r_static
 r_int
 id|outcnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* bytes in output buffer */
 DECL|variable|exit_code
 r_static
 r_int
 id|exit_code
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|bytes_out
 r_static
 r_int
 id|bytes_out
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|crd_infp
 DECL|variable|crd_outfp

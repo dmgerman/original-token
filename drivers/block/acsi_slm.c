@@ -3872,8 +3872,6 @@ id|lun
 r_static
 r_int
 id|did_register
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|len
@@ -4102,8 +4100,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|slm_init
 r_int

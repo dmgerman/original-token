@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 038&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - it&squot;s working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (it&squot;s not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&t;&t;Added digi-peating control ioctl.&n; *&t;&t;&t;&t;&t;&t;Added extended AX.25 support.&n; *&t;&t;&t;&t;&t;&t;Added AX.25 frame segmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;Changed connect(), recvfrom(), sendto() sockaddr/addrlen to&n; *&t;&t;&t;&t;&t;&t;fall inline with bind() and new policy.&n; *&t;&t;&t;&t;&t;&t;Moved digipeating ctl to new ax25_dev structs.&n; *&t;&t;&t;&t;&t;&t;Fixed ax25_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Cleaned up for single recvmsg methods.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Fixed not clearing error on connect failure.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;&t;Added binding to any device.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added DAMA support, fixed (?) digipeating, fixed buffer locking&n; *&t;&t;&t;&t;&t;&t;for &quot;virtual connect&quot; mode... Result: Probably the&n; *&t;&t;&t;&t;&t;&t;&quot;Most Buggiest Code You&squot;ve Ever Seen&quot; (TM)&n; *&t;&t;&t;HaJo(DD8NE)&t;&t;Implementation of a T5 (idle) timer&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Renamed T5 to IDLE and changed behaviour:&n; *&t;&t;&t;&t;&t;&t;the timer gets reloaded on every received or transmitted&n; *&t;&t;&t;&t;&t;&t;I frame for IP or NETROM. The idle timer is not active&n; *&t;&t;&t;&t;&t;&t;on &quot;vanilla AX.25&quot; connections. Furthermore added PACLEN&n; *&t;&t;&t;&t;&t;&t;to provide AX.25-layer based fragmentation (like WAMPES)&n; *      AX.25 032&t;Joerg(DL1BKE)&t;&t;Fixed DAMA timeout error.&n; *&t;&t;&t;&t;&t;&t;ax25_send_frame() limits the number of enqueued&n; *&t;&t;&t;&t;&t;&t;datagrams per socket.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;&t;Removed auto-router.&n; *&t;&t;&t;Hans(PE1AYX)&t;&t;Converted to Module.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Moved BPQ Ethernet to separate driver.&n; *&t;AX.25 034&t;Jonathan(G4KLX)&t;&t;2.1 changes&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Small POSIXisations&n; *&t;AX.25 035&t;Alan(GW4PTS)&t;&t;Started fixing to the new&n; *&t;&t;&t;&t;&t;&t;format.&n; *&t;&t;&t;Hans(PE1AYX)&t;&t;Fixed interface to IP layer.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added asynchronous support.&n; *&t;&t;&t;Frederic(F1OAT)&t;&t;Support for pseudo-digipeating.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Support for packet forwarding.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;&t;Major restructuring.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Fixed DAMA Slave.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Fix wildcard listen parameter setting.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;&t;New timer architecture.&n; *      AX.25 038       Matthias(DG2FEF)        Small fixes to the syscall interface to make kernel&n; *                                              independent of AX25_MAX_DIGIS used by applications.&n; *                      Tomi(OH2BNS)            Fixed ax25_getname().&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Starting to phase out the support for full_sockaddr_ax25&n; *&t;&t;&t;&t;&t;&t;with only 6 digipeaters and sockaddr_ax25 in ax25_bind(),&n; *&t;&t;&t;&t;&t;&t;ax25_connect() and ax25_sendmsg()&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added support for SO_BINDTODEVICE&n; *&t;&t;&t;Arnaldo C. Melo&t;&t;s/suser/capable(CAP_NET_ADMIN)/, some more cleanups&n; */
+multiline_comment|/*&n; *&t;AX.25 release 038&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 006&t;Alan(GW4PTS)&t;&t;Nearly died of shock - it&squot;s working 8-)&n; *&t;AX.25 007&t;Alan(GW4PTS)&t;&t;Removed the silliest bugs&n; *&t;AX.25 008&t;Alan(GW4PTS)&t;&t;Cleaned up, fixed a few state machine problems, added callbacks&n; *&t;AX.25 009&t;Alan(GW4PTS)&t;&t;Emergency patch kit to fix memory corruption&n; * &t;AX.25 010&t;Alan(GW4PTS)&t;&t;Added RAW sockets/Digipeat.&n; *&t;AX.25 011&t;Alan(GW4PTS)&t;&t;RAW socket and datagram fixes (thanks) - Raw sendto now gets PID right&n; *&t;&t;&t;&t;&t;&t;datagram sendto uses correct target address.&n; *&t;AX.25 012&t;Alan(GW4PTS)&t;&t;Correct incoming connection handling, send DM to failed connects.&n; *&t;&t;&t;&t;&t;&t;Use skb-&gt;data not skb+1. Support sk-&gt;priority correctly.&n; *&t;&t;&t;&t;&t;&t;Correct receive on SOCK_DGRAM.&n; *&t;AX.25 013&t;Alan(GW4PTS)&t;&t;Send DM to all unknown frames, missing initialiser fixed&n; *&t;&t;&t;&t;&t;&t;Leave spare SSID bits set (DAMA etc) - thanks for bug report,&n; *&t;&t;&t;&t;&t;&t;removed device registration (it&squot;s not used or needed). Clean up for&n; *&t;&t;&t;&t;&t;&t;gcc 2.5.8. PID to AX25_P_&n; *&t;AX.25 014&t;Alan(GW4PTS)&t;&t;Cleanup and NET3 merge&n; *&t;AX.25 015&t;Alan(GW4PTS)&t;&t;Internal test version.&n; *&t;AX.25 016&t;Alan(GW4PTS)&t;&t;Semi Internal version for PI card&n; *&t;&t;&t;&t;&t;&t;work.&n; *&t;AX.25 017&t;Alan(GW4PTS)&t;&t;Fixed some small bugs reported by&n; *&t;&t;&t;&t;&t;&t;G4KLX&n; *&t;AX.25 018&t;Alan(GW4PTS)&t;&t;Fixed a small error in SOCK_DGRAM&n; *&t;AX.25 019&t;Alan(GW4PTS)&t;&t;Clean ups for the non INET kernel and device ioctls in AX.25&n; *&t;AX.25 020&t;Jonathan(G4KLX)&t;&t;/proc support and other changes.&n; *&t;AX.25 021&t;Alan(GW4PTS)&t;&t;Added AX25_T1, AX25_N2, AX25_T3 as requested.&n; *&t;AX.25 022&t;Jonathan(G4KLX)&t;&t;More work on the ax25 auto router and /proc improved (again)!&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added TIOCINQ/OUTQ&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Fixed shutdown bug&n; *&t;AX.25 023&t;Alan(GW4PTS)&t;&t;Linus changed timers&n; *&t;AX.25 024&t;Alan(GW4PTS)&t;&t;Small bug fixes&n; *&t;AX.25 025&t;Alan(GW4PTS)&t;&t;More fixes, Linux 1.1.51 compatibility stuff, timers again!&n; *&t;AX.25 026&t;Alan(GW4PTS)&t;&t;Small state fix.&n; *&t;AX.25 027&t;Alan(GW4PTS)&t;&t;Socket close crash fixes.&n; *&t;AX.25 028&t;Alan(GW4PTS)&t;&t;Callsign control including settings per uid.&n; *&t;&t;&t;&t;&t;&t;Small bug fixes.&n; *&t;&t;&t;&t;&t;&t;Protocol set by sockets only.&n; *&t;&t;&t;&t;&t;&t;Small changes to allow for start of NET/ROM layer.&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;&t;Changes to state machine.&n; *&t;AX.25 028b&t;Jonathan(G4KLX)&t;&t;Extracted ax25 control block&n; *&t;&t;&t;&t;&t;&t;from sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;&t;Combined 028b and some KA9Q code&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;and removed all the old Berkeley, added IP mode registration.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;stuff. Cross-port digipeating. Minor fixes and enhancements.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Missed suser() on axassociate checks&n; *&t;AX.25 030&t;Alan(GW4PTS)&t;&t;Added variable length headers.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Added BPQ Ethernet interface.&n; *&t;&t;&t;Steven(GW7RRM)&t;&t;Added digi-peating control ioctl.&n; *&t;&t;&t;&t;&t;&t;Added extended AX.25 support.&n; *&t;&t;&t;&t;&t;&t;Added AX.25 frame segmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;&t;Changed connect(), recvfrom(), sendto() sockaddr/addrlen to&n; *&t;&t;&t;&t;&t;&t;fall inline with bind() and new policy.&n; *&t;&t;&t;&t;&t;&t;Moved digipeating ctl to new ax25_dev structs.&n; *&t;&t;&t;&t;&t;&t;Fixed ax25_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Cleaned up for single recvmsg methods.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Fixed not clearing error on connect failure.&n; *&t;AX.25 031&t;Jonathan(G4KLX)&t;&t;Added binding to any device.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added DAMA support, fixed (?) digipeating, fixed buffer locking&n; *&t;&t;&t;&t;&t;&t;for &quot;virtual connect&quot; mode... Result: Probably the&n; *&t;&t;&t;&t;&t;&t;&quot;Most Buggiest Code You&squot;ve Ever Seen&quot; (TM)&n; *&t;&t;&t;HaJo(DD8NE)&t;&t;Implementation of a T5 (idle) timer&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Renamed T5 to IDLE and changed behaviour:&n; *&t;&t;&t;&t;&t;&t;the timer gets reloaded on every received or transmitted&n; *&t;&t;&t;&t;&t;&t;I frame for IP or NETROM. The idle timer is not active&n; *&t;&t;&t;&t;&t;&t;on &quot;vanilla AX.25&quot; connections. Furthermore added PACLEN&n; *&t;&t;&t;&t;&t;&t;to provide AX.25-layer based fragmentation (like WAMPES)&n; *      AX.25 032&t;Joerg(DL1BKE)&t;&t;Fixed DAMA timeout error.&n; *&t;&t;&t;&t;&t;&t;ax25_send_frame() limits the number of enqueued&n; *&t;&t;&t;&t;&t;&t;datagrams per socket.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;&t;Removed auto-router.&n; *&t;&t;&t;Hans(PE1AYX)&t;&t;Converted to Module.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Moved BPQ Ethernet to separate driver.&n; *&t;AX.25 034&t;Jonathan(G4KLX)&t;&t;2.1 changes&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Small POSIXisations&n; *&t;AX.25 035&t;Alan(GW4PTS)&t;&t;Started fixing to the new&n; *&t;&t;&t;&t;&t;&t;format.&n; *&t;&t;&t;Hans(PE1AYX)&t;&t;Fixed interface to IP layer.&n; *&t;&t;&t;Alan(GW4PTS)&t;&t;Added asynchronous support.&n; *&t;&t;&t;Frederic(F1OAT)&t;&t;Support for pseudo-digipeating.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Support for packet forwarding.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;&t;Major restructuring.&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Fixed DAMA Slave.&n; *&t;&t;&t;Jonathan(G4KLX)&t;&t;Fix wildcard listen parameter setting.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;&t;New timer architecture.&n; *      AX.25 038       Matthias(DG2FEF)        Small fixes to the syscall interface to make kernel&n; *                                              independent of AX25_MAX_DIGIS used by applications.&n; *                      Tomi(OH2BNS)            Fixed ax25_getname().&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Starting to phase out the support for full_sockaddr_ax25&n; *&t;&t;&t;&t;&t;&t;with only 6 digipeaters and sockaddr_ax25 in ax25_bind(),&n; *&t;&t;&t;&t;&t;&t;ax25_connect() and ax25_sendmsg()&n; *&t;&t;&t;Joerg(DL1BKE)&t;&t;Added support for SO_BINDTODEVICE&n; *&t;&t;&t;Arnaldo C. Melo&t;&t;s/suser/capable(CAP_NET_ADMIN)/, some more cleanups&n; *&t;&t;&t;Michal Ostrowski&t;Module initialization cleanup.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -7354,16 +7354,14 @@ c_func
 id|ax25_display_timer
 )paren
 suffix:semicolon
-DECL|function|ax25_proto_init
-r_void
+DECL|function|ax25_init
+r_static
+r_int
 id|__init
-id|ax25_proto_init
+id|ax25_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 id|sock_register
@@ -7441,7 +7439,17 @@ id|KERN_INFO
 l_string|&quot;NET4: G4KLX/GW4PTS AX.25 for Linux. Version 0.37 for Linux NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|ax25_init
+id|module_init
+c_func
+(paren
+id|ax25_init
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
@@ -7455,27 +7463,11 @@ c_func
 l_string|&quot;The amateur radio AX.25 link layer protocol&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|ax25_exit
+r_static
 r_void
-)paren
-(brace
-id|ax25_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|ax25_exit
 c_func
 (paren
 r_void
@@ -7552,6 +7544,13 @@ id|PF_AX25
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|ax25_exit
+id|module_exit
+c_func
+(paren
+id|ax25_exit
+)paren
+suffix:semicolon
+macro_line|#endif /* MODULE */
 macro_line|#endif
 eof

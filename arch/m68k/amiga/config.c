@@ -8,7 +8,9 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#ifdef CONFIG_ZORRO
 macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -696,6 +698,7 @@ suffix:semicolon
 r_case
 id|BI_AMIGA_AUTOCON
 suffix:colon
+macro_line|#ifdef CONFIG_ZORRO
 r_if
 c_cond
 (paren
@@ -765,6 +768,7 @@ c_func
 l_string|&quot;amiga_parse_bootinfo: too many AutoConfig devices&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -4332,6 +4336,7 @@ comma
 l_string|&quot;PCMCIA Slot&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ZORRO
 r_if
 c_cond
 (paren
@@ -4376,6 +4381,7 @@ suffix:colon
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|macro|AMIGAHW_ANNOUNCE
 macro_line|#undef AMIGAHW_ANNOUNCE
 r_return

@@ -962,8 +962,6 @@ r_struct
 id|call_data_struct
 op_star
 id|call_data
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * this function sends a &squot;generic call function&squot; IPI to all other CPUs&n; * in the system.&n; */
 DECL|function|smp_call_function

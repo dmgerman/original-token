@@ -710,7 +710,7 @@ suffix:semicolon
 id|fputs
 c_func
 (paren
-l_string|&quot;&bslash;n#undef CLASS&quot;
+l_string|&quot;&bslash;n#undef CLASS&bslash;n&quot;
 comma
 id|clsf
 )paren

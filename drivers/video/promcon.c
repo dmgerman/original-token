@@ -3076,6 +3076,7 @@ suffix:semicolon
 DECL|macro|DUMMY
 mdefine_line|#define DUMMY (void *) promcon_dummy
 DECL|variable|prom_con
+r_const
 r_struct
 id|consw
 id|prom_con

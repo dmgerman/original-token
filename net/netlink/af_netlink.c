@@ -2,6 +2,7 @@ multiline_comment|/*&n; * NETLINK      Kernel-user communication protocol.&n; *&
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4450,14 +4451,13 @@ id|netlink_create
 )brace
 suffix:semicolon
 DECL|function|netlink_proto_init
-r_void
+r_static
+r_int
+id|__init
 id|netlink_proto_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 r_struct
@@ -4484,10 +4484,12 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;netlink_proto_init: panic&bslash;n&quot;
+l_string|&quot;netlink_init: panic&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|sock_register
@@ -4513,5 +4515,15 @@ l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|netlink_proto_init
+id|module_init
+c_func
+(paren
+id|netlink_proto_init
+)paren
+suffix:semicolon
 eof

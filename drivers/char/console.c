@@ -33,12 +33,11 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/linux_logo.h&gt;
 macro_line|#include &quot;console_macros.h&quot;
 DECL|variable|conswitchp
+r_const
 r_struct
 id|consw
 op_star
 id|conswitchp
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* A bitmap for codes &lt;32. A bit of 1 indicates that the code&n; * corresponding to that bit number invokes some special action&n; * (such as cursor movement) and should not be displayed as a&n; * glyph unless the disp_ctrl mode is explicitly enabled.&n; */
 DECL|macro|CTRL_ACTION
@@ -107,6 +106,7 @@ suffix:semicolon
 macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|con_driver_map
 r_static
+r_const
 r_struct
 id|consw
 op_star
@@ -250,28 +250,20 @@ DECL|variable|printable
 r_static
 r_int
 id|printable
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Is console ready for printing? */
 DECL|variable|do_poke_blanked_console
 r_int
 id|do_poke_blanked_console
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|console_blanked
 r_int
 id|console_blanked
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|vesa_blank_mode
 r_static
 r_int
 id|vesa_blank_mode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* 0:none 1:suspendV 2:suspendH 3:powerdown */
 DECL|variable|blankinterval
@@ -289,21 +281,15 @@ DECL|variable|vesa_off_interval
 r_static
 r_int
 id|vesa_off_interval
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one,&n; * want_console is the console we want to switch to,&n; * kmsg_redirect is the console for kernel messages,&n; */
 DECL|variable|fg_console
 r_int
 id|fg_console
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|last_console
 r_int
 id|last_console
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|want_console
 r_int
@@ -315,8 +301,6 @@ suffix:semicolon
 DECL|variable|kmsg_redirect
 r_int
 id|kmsg_redirect
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * For each existing display, we have a pointer to console currently visible&n; * on that display, allowing consoles other than fg_console to be refreshed&n; * appropriately. Unless the low-level driver supplies its own display_fg&n; * variable, we use this one for the &quot;master display&quot;.&n; */
 DECL|variable|master_display_fg
@@ -325,8 +309,6 @@ r_struct
 id|vc_data
 op_star
 id|master_display_fg
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Unfortunately, we need to delay tty echo when we&squot;re currently writing to the&n; * console since the code is (and always was) not re-entrant, so we insert&n; * all filp requests to con_task_queue instead of tq_timer and run it from&n; * the console_tasklet.  The console_tasklet is protected by the IRQ&n; * protected console_lock.&n; */
 DECL|variable|con_task_queue
@@ -341,8 +323,6 @@ DECL|variable|scrollback_delta
 r_static
 r_int
 id|scrollback_delta
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Hook so that the power management routines can (un)blank&n; * the console on our behalf.&n; */
 DECL|variable|console_blank_hook
@@ -354,8 +334,6 @@ id|console_blank_hook
 (paren
 r_int
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|console_timer
 r_static
@@ -399,8 +377,6 @@ r_struct
 id|pm_dev
 op_star
 id|pm_con
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|screenpos
 r_static
@@ -1695,26 +1671,18 @@ r_int
 r_int
 op_star
 id|p
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_int
 r_int
 id|old
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
 r_int
 id|oldx
-op_assign
-l_int|0
 comma
 id|oldy
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -10039,8 +10007,6 @@ r_static
 r_int
 r_int
 id|printing
-op_assign
-l_int|0
 suffix:semicolon
 r_const
 id|ushort
@@ -11947,6 +11913,7 @@ r_void
 id|take_over_console
 c_func
 (paren
+r_const
 r_struct
 id|consw
 op_star
@@ -12221,6 +12188,7 @@ r_void
 id|give_up_console
 c_func
 (paren
+r_const
 r_struct
 id|consw
 op_star

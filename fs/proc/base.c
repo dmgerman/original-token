@@ -1721,6 +1721,10 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+DECL|macro|mem_write
+mdefine_line|#define mem_write NULL
+macro_line|#ifndef mem_write
+multiline_comment|/* This is a security hazard */
 DECL|function|mem_write
 r_static
 id|ssize_t
@@ -1925,6 +1929,7 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|proc_mem_operations
 r_static
 r_struct

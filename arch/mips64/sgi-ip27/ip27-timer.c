@@ -41,8 +41,6 @@ DECL|variable|last_rtc_update
 r_static
 r_int
 id|last_rtc_update
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Last time the rtc clock got updated */
 r_extern

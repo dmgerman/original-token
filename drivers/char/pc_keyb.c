@@ -109,8 +109,6 @@ r_volatile
 r_int
 r_char
 id|reply_expected
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|acknowledge
 r_static
@@ -118,8 +116,6 @@ r_volatile
 r_int
 r_char
 id|acknowledge
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|resend
 r_static
@@ -127,8 +123,6 @@ r_volatile
 r_int
 r_char
 id|resend
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#if defined CONFIG_PSMOUSE
 multiline_comment|/*&n; *&t;PS/2 Auxiliary Device&n; */
@@ -155,8 +149,6 @@ DECL|variable|aux_count
 r_static
 r_int
 id|aux_count
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* used when we send commands to the mouse that expect an ACK. */
 DECL|variable|mouse_reply_expected
@@ -164,8 +156,6 @@ r_static
 r_int
 r_char
 id|mouse_reply_expected
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|AUX_INTS_OFF
 mdefine_line|#define AUX_INTS_OFF (KBD_MODE_KCC | KBD_MODE_DISABLE_MOUSE | KBD_MODE_SYS | KBD_MODE_KBD_INT)
@@ -918,8 +908,6 @@ id|raw_mode
 r_static
 r_int
 id|prev_scancode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* special prefix scancodes.. */
 r_if

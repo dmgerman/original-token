@@ -13461,6 +13461,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  The console `switch&squot; structure for the frame buffer based console&n; */
 DECL|variable|fb_con
+r_const
 r_struct
 id|consw
 id|fb_con

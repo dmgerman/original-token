@@ -23,8 +23,6 @@ multiline_comment|/*      Global vars.&n; */
 DECL|variable|ftape_motor
 r_int
 id|ftape_motor
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ftape_current_cylinder
 r_volatile
@@ -44,10 +42,6 @@ suffix:semicolon
 DECL|variable|fdc
 id|fdc_config_info
 id|fdc
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|ftape_wait_intr
 id|DECLARE_WAIT_QUEUE_HEAD
@@ -153,8 +147,6 @@ DECL|variable|fdc_rate_code
 r_static
 r_int
 id|fdc_rate_code
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* data rate code (0 == 500 Kbps) */
 DECL|variable|fdc_seek_rate
@@ -198,24 +190,18 @@ DECL|variable|fdc_fifo_locked
 r_static
 r_int
 id|fdc_fifo_locked
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* has fifo &amp;&amp; lock set ? */
 DECL|variable|fdc_precomp
 r_static
 id|__u8
 id|fdc_precomp
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* default precomp. value (nsec) */
 DECL|variable|fdc_prec_code
 r_static
 id|__u8
 id|fdc_prec_code
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* fdc precomp. select code */
 DECL|variable|ftape_id
@@ -631,8 +617,6 @@ r_static
 r_int
 r_int
 id|last_time
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -1351,8 +1335,6 @@ suffix:semicolon
 r_static
 r_int
 id|resetting
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|timeout
@@ -3430,8 +3412,6 @@ DECL|variable|perpend_mode
 r_static
 r_int
 id|perpend_mode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* set if fdc is in perpendicular mode */
 DECL|function|perpend_off
@@ -4747,12 +4727,6 @@ id|fdc_save_state
 (braket
 l_int|2
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|function|fdc_probe
 r_int
@@ -5602,8 +5576,6 @@ r_void
 r_static
 r_int
 id|already_done
-op_assign
-l_int|0
 suffix:semicolon
 id|TRACE_FUN
 c_func

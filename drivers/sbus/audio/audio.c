@@ -138,17 +138,11 @@ id|drivers
 (braket
 id|SPARCAUDIO_MAX_DEVICES
 )braket
-op_assign
-(brace
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* This crap to be pulled off into a local include file */
 macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100

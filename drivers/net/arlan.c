@@ -22,8 +22,6 @@ suffix:semicolon
 DECL|variable|last_arlan
 r_int
 id|last_arlan
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|SID
 r_static
@@ -139,15 +137,11 @@ DECL|variable|keyStart
 r_static
 r_int
 id|keyStart
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tx_delay_ms
 r_static
 r_int
 id|tx_delay_ms
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|retries
 r_static
@@ -174,29 +168,21 @@ DECL|variable|arlan_EEPROM_bad
 r_static
 r_int
 id|arlan_EEPROM_bad
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|arlan_entry_and_exit_debug
 r_int
 id|arlan_entry_and_exit_debug
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef ARLAN_DEBUGING
 DECL|variable|arlan_entry_debug
 r_static
 r_int
 id|arlan_entry_debug
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|arlan_exit_debug
 r_static
 r_int
 id|arlan_exit_debug
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|testMemory
 r_static
@@ -223,8 +209,6 @@ DECL|variable|mdebug
 r_static
 r_int
 id|mdebug
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt; 0x20100
@@ -457,8 +441,6 @@ suffix:semicolon
 DECL|variable|arlans_found
 r_int
 id|arlans_found
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int

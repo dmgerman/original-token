@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * for the TDA8425 chip (I don&squot;t know which cards have this)&n; * WARNING: THIS DRIVER WILL LOAD WITHOUT COMPLAINTS EVEN IF A DIFFERENT&n; * CHIP IS AT ADDRESS 0x82 (it relies on i2c to make sure that there is a&n; * device acknowledging that address)&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; * All of this should work, though it would be nice to eventually support&n; * balance (different left,right values).  Also, the chip seems (?) to have&n; * two stereo inputs, so if someone has this card, could they tell me if the&n; * second one can be used for anything (i.e., does it have an external input&n; * that you can&squot;t hear even if you set input to composite?)&n; */
+multiline_comment|/*&n; * for the TDA8425 chip (I don&squot;t know which cards have this)&n; * WARNING: THIS DRIVER WILL LOAD WITHOUT COMPLAINTS EVEN IF A DIFFERENT&n; * CHIP IS AT ADDRESS 0x82 (it relies on i2c to make sure that there is a&n; * device acknowledging that address)&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; * All of this should work, though it would be nice to eventually support&n; * balance (different left,right values).  Also, the chip seems (?) to have&n; * two stereo inputs, so if someone has this card, could they tell me if the&n; * second one can be used for anything (i.e., does it have an external input&n; * that you can&squot;t hear even if you set input to composite?)&n; *&n; * Changes:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/14/2000&n; * - resource allocation fixes in tda8425_attach&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -603,10 +603,18 @@ c_cond
 op_logical_neg
 id|tda
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|client
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

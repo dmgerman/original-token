@@ -4450,8 +4450,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module

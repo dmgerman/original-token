@@ -54,11 +54,6 @@ id|IRQ_to_board
 (braket
 l_int|16
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|riscom_driver
 DECL|variable|riscom_callout_driver
@@ -73,8 +68,6 @@ DECL|variable|riscom_refcount
 r_static
 r_int
 id|riscom_refcount
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|riscom_table
 r_static
@@ -87,11 +80,6 @@ id|RC_NBOARD
 op_star
 id|RC_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|riscom_termios
 r_static
@@ -104,11 +92,6 @@ id|RC_NBOARD
 op_star
 id|RC_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|riscom_termios_locked
 r_static
@@ -121,11 +104,6 @@ id|RC_NBOARD
 op_star
 id|RC_NPORT
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|tmp_buf
 r_static
@@ -133,8 +111,6 @@ r_int
 r_char
 op_star
 id|tmp_buf
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 id|DECLARE_MUTEX
@@ -250,14 +226,6 @@ id|RC_NBOARD
 op_star
 id|RC_NPORT
 )braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-)brace
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* RISCom/8 I/O ports addresses (without address translation) */
 DECL|variable|rc_ioport

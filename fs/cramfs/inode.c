@@ -249,8 +249,6 @@ DECL|variable|next_buffer
 r_static
 r_int
 id|next_buffer
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Returns a pointer to a buffer containing at least LEN bytes of&n; * filesystem starting at byte offset OFFSET into the filesystem.&n; */
 DECL|function|cramfs_read

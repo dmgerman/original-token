@@ -680,8 +680,6 @@ id|timer_list
 op_star
 r_volatile
 id|running_timer
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|macro|timer_enter
 mdefine_line|#define timer_enter(t) do { running_timer = t; mb(); } while (0)

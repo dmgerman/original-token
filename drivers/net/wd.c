@@ -2154,11 +2154,6 @@ id|io
 (braket
 id|MAX_WD_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|irq
 r_static
@@ -2167,11 +2162,6 @@ id|irq
 (braket
 id|MAX_WD_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|mem
 r_static
@@ -2180,11 +2170,6 @@ id|mem
 (braket
 id|MAX_WD_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|mem_end
 r_static
@@ -2193,11 +2178,6 @@ id|mem_end
 (braket
 id|MAX_WD_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* for non std. mem size */
 id|MODULE_PARM

@@ -1064,7 +1064,7 @@ c_cond
 id|z-&gt;free_pages
 op_plus
 id|z-&gt;inactive_clean_pages
-op_ge
+OG
 id|water_mark
 )paren
 (brace
@@ -1164,8 +1164,6 @@ r_struct
 id|page
 op_star
 id|page
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; * Allocations put pressure on the VM subsystem.&n;&t; */
 id|memory_pressure
@@ -1696,6 +1694,7 @@ c_cond
 (paren
 id|direct_reclaim
 )paren
+(brace
 id|page
 op_assign
 id|reclaim_page
@@ -1712,6 +1711,7 @@ id|page
 r_return
 id|page
 suffix:semicolon
+)brace
 multiline_comment|/* XXX: is pages_min/4 a good amount to reserve for this? */
 r_if
 c_cond
@@ -1731,12 +1731,6 @@ id|PF_MEMALLOC
 )paren
 r_continue
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
 id|page
 op_assign
 id|rmqueue
@@ -2732,14 +2726,6 @@ id|cumulative
 op_assign
 l_int|0
 suffix:semicolon
-id|pgdat-&gt;node_next
-op_assign
-id|pgdat_list
-suffix:semicolon
-id|pgdat_list
-op_assign
-id|pgdat
-suffix:semicolon
 id|totalpages
 op_assign
 l_int|0
@@ -2865,7 +2851,7 @@ op_star
 id|alloc_bootmem_node
 c_func
 (paren
-id|nid
+id|pgdat
 comma
 id|map_size
 )paren
@@ -3329,7 +3315,7 @@ op_star
 id|alloc_bootmem_node
 c_func
 (paren
-id|nid
+id|pgdat
 comma
 id|bitmap_size
 )paren

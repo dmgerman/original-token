@@ -484,7 +484,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|MODINC
-mdefine_line|#define MODINC(x,y) (x = x++ % y)
+mdefine_line|#define MODINC(x,y) ((x) = ((x) + 1) % (y))
 multiline_comment|/*&n; * I2O configuration spinlock. This isnt a big deal for contention&n; * so we have one only&n; */
 r_static
 id|DECLARE_MUTEX

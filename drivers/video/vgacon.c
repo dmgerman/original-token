@@ -4944,6 +4944,7 @@ suffix:semicolon
 DECL|macro|DUMMY
 mdefine_line|#define DUMMY (void *) vgacon_dummy
 DECL|variable|vga_con
+r_const
 r_struct
 id|consw
 id|vga_con

@@ -16,13 +16,6 @@ r_struct
 id|nls_table
 op_star
 id|tables
-op_assign
-(paren
-r_struct
-id|nls_table
-op_star
-)paren
-l_int|NULL
 suffix:semicolon
 DECL|variable|nls_lock
 r_static

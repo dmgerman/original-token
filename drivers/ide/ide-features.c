@@ -925,12 +925,24 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|drive-&gt;id-&gt;hw_config
 op_amp
 l_int|0x2000
 )paren
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+(paren
+id|drive-&gt;id-&gt;hw_config
+op_amp
+l_int|0x4000
+)paren
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 macro_line|#endif /* CONFIG_IDEDMA_IVB */
@@ -1043,7 +1055,7 @@ macro_line|#endif /* CONFIG_IDEDMA_IVB */
 (paren
 id|drive-&gt;id-&gt;hw_config
 op_amp
-l_int|0x2000
+l_int|0x6000
 )paren
 )paren
 ques

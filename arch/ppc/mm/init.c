@@ -90,15 +90,11 @@ DECL|variable|totalram_pages
 r_int
 r_int
 id|totalram_pages
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|totalhigh_pages
 r_int
 r_int
 id|totalhigh_pages
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 id|pgd_t
@@ -411,8 +407,6 @@ DECL|variable|Hash_end
 id|PTE
 op_star
 id|Hash
-op_assign
-l_int|0
 comma
 op_star
 id|Hash_end
@@ -422,8 +416,6 @@ DECL|variable|Hash_mask
 r_int
 r_int
 id|Hash_size
-op_assign
-l_int|0
 comma
 id|Hash_mask
 suffix:semicolon
@@ -432,8 +424,6 @@ DECL|variable|_SDR1
 r_int
 r_int
 id|_SDR1
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_void
@@ -683,8 +673,6 @@ multiline_comment|/*&n; * this tells the system to map all of ram with the segre
 DECL|variable|__map_without_bats
 r_int
 id|__map_without_bats
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* max amount of RAM to use */
 DECL|variable|__max_memory

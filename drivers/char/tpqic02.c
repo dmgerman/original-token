@@ -61,11 +61,6 @@ r_static
 r_struct
 id|qic02_ccb
 id|qic02_tape_ccb
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* private stuff */
 macro_line|#else
@@ -85,8 +80,6 @@ r_static
 r_volatile
 r_int
 id|ctlbits
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* control reg bits for tape interface */
 DECL|variable|qic02_tape_transfer
@@ -171,8 +164,6 @@ r_volatile
 r_int
 r_int
 id|status_cmd_pending
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* cmd in progress */
 DECL|variable|status_expect_int
@@ -198,8 +189,6 @@ r_static
 r_volatile
 r_int
 id|status_error
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* int handler may detect error */
 DECL|variable|status_eof_detected
@@ -264,8 +253,6 @@ r_static
 r_volatile
 r_int
 id|dma_mode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* !=0 also means DMA in use */
 DECL|variable|need_rewind
@@ -362,8 +349,6 @@ r_static
 r_int
 r_int
 id|buffaddr
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* physical address of buffer */
 multiline_comment|/* This translates minor numbers to the corresponding recording format: */

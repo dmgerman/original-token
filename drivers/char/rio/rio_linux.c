@@ -352,11 +352,6 @@ id|rio_table
 (braket
 id|RIO_NPORTS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
 suffix:semicolon
 DECL|variable|rio_termios
 r_static
@@ -395,20 +390,14 @@ suffix:semicolon
 DECL|variable|rio_initialized
 r_int
 id|rio_initialized
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rio_nports
 r_int
 id|rio_nports
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rio_debug
 r_int
 id|rio_debug
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* You can have the driver poll your card. &n;    - Set rio_poll to 1 to poll every timer tick (10ms on Intel). &n;      This is used when the card cannot use an interrupt for some reason.&n;*/
 DECL|variable|rio_poll

@@ -1173,5 +1173,6 @@ DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;(1)
 DECL|macro|io_remap_page_range
 mdefine_line|#define io_remap_page_range remap_page_range
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* _M68K_PGTABLE_H */
 eof

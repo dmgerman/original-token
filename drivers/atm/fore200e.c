@@ -12311,7 +12311,6 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 r_static
 r_int
-r_int
 id|__init
 DECL|function|fore200e_module_init
 id|fore200e_module_init

@@ -452,16 +452,14 @@ multiline_comment|/* no encrypt_net */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Initialize the ATM PVC protocol family&n; */
-DECL|function|atmpvc_proto_init
-r_void
+DECL|function|atmpvc_init
+r_static
+r_int
 id|__init
-id|atmpvc_proto_init
+id|atmpvc_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 r_int
@@ -525,5 +523,15 @@ id|error
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|atmpvc_init
+id|module_init
+c_func
+(paren
+id|atmpvc_init
+)paren
+suffix:semicolon
 eof

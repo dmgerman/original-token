@@ -10,8 +10,6 @@ r_struct
 id|nls_table
 op_star
 id|p_nls
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|macro|SS2
 mdefine_line|#define SS2&t;&t;(0x8E)&t;&t;/* Single Shift 2 */

@@ -11671,6 +11671,14 @@ c_func
 l_string|&quot;process_transfer: calling completion&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|urb-&gt;status
+op_ne
+op_minus
+id|EINPROGRESS
+)paren
 id|urb-&gt;dev
 op_assign
 l_int|NULL
@@ -11687,6 +11695,14 @@ id|urb
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|urb-&gt;status
+op_ne
+op_minus
+id|EINPROGRESS
+)paren
 id|urb-&gt;dev
 op_assign
 l_int|NULL

@@ -247,8 +247,6 @@ DECL|variable|mii_preamble_required
 r_static
 r_char
 id|mii_preamble_required
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|PFX
 mdefine_line|#define PFX &quot;3c59x: &quot;
@@ -3309,8 +3307,6 @@ r_struct
 id|net_device
 op_star
 id|root_vortex_eisa_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Variables to work-around the Compaq PCI BIOS32 problem. */
 DECL|variable|compaq_ioaddr
@@ -3319,12 +3315,8 @@ DECL|variable|compaq_device_id
 r_static
 r_int
 id|compaq_ioaddr
-op_assign
-l_int|0
 comma
 id|compaq_irq
-op_assign
-l_int|0
 comma
 id|compaq_device_id
 op_assign
@@ -3334,8 +3326,6 @@ DECL|variable|vortex_cards_found
 r_static
 r_int
 id|vortex_cards_found
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|vortex_suspend
 r_static
@@ -3795,8 +3785,6 @@ suffix:semicolon
 r_static
 r_int
 id|printed_version
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|retval
@@ -8277,8 +8265,6 @@ multiline_comment|/* Empty statistics. */
 r_static
 r_int
 id|DoneDidThat
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -13586,15 +13572,11 @@ DECL|variable|vortex_have_pci
 r_static
 r_int
 id|vortex_have_pci
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|vortex_have_eisa
 r_static
 r_int
 id|vortex_have_eisa
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|vortex_init
 r_static

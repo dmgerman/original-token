@@ -20,15 +20,11 @@ DECL|variable|last_write_failed
 r_static
 r_int
 id|last_write_failed
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|need_flush
 r_static
 r_int
 id|need_flush
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|zft_prevent_flush
 r_void

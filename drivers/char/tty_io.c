@@ -5689,8 +5689,6 @@ l_int|1
 r_static
 r_int
 id|nr_warns
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -6,6 +6,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/mmzone.h&gt;
 multiline_comment|/*&n; *  simple boot-time physical memory area allocator.&n; */
 r_extern
 r_int
@@ -147,8 +148,9 @@ r_int
 id|__init
 id|init_bootmem_node
 (paren
-r_int
-id|nid
+id|pg_data_t
+op_star
+id|pgdat
 comma
 r_int
 r_int
@@ -168,8 +170,9 @@ r_void
 id|__init
 id|reserve_bootmem_node
 (paren
-r_int
-id|nid
+id|pg_data_t
+op_star
+id|pgdat
 comma
 r_int
 r_int
@@ -185,8 +188,9 @@ r_void
 id|__init
 id|free_bootmem_node
 (paren
-r_int
-id|nid
+id|pg_data_t
+op_star
+id|pgdat
 comma
 r_int
 r_int
@@ -203,8 +207,9 @@ r_int
 id|__init
 id|free_all_bootmem_node
 (paren
-r_int
-id|nid
+id|pg_data_t
+op_star
+id|pgdat
 )paren
 suffix:semicolon
 r_extern
@@ -213,8 +218,9 @@ op_star
 id|__init
 id|__alloc_bootmem_node
 (paren
-r_int
-id|nid
+id|pg_data_t
+op_star
+id|pgdat
 comma
 r_int
 r_int
@@ -230,10 +236,10 @@ id|goal
 )paren
 suffix:semicolon
 DECL|macro|alloc_bootmem_node
-mdefine_line|#define alloc_bootmem_node(nid, x) &bslash;&n;&t;__alloc_bootmem_node((nid), (x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
+mdefine_line|#define alloc_bootmem_node(pgdat, x) &bslash;&n;&t;__alloc_bootmem_node((pgdat), (x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
 DECL|macro|alloc_bootmem_pages_node
-mdefine_line|#define alloc_bootmem_pages_node(nid, x) &bslash;&n;&t;__alloc_bootmem_node((nid), (x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
+mdefine_line|#define alloc_bootmem_pages_node(pgdat, x) &bslash;&n;&t;__alloc_bootmem_node((pgdat), (x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
 DECL|macro|alloc_bootmem_low_pages_node
-mdefine_line|#define alloc_bootmem_low_pages_node(nid, x) &bslash;&n;&t;__alloc_bootmem_node((nid), (x), PAGE_SIZE, 0)
+mdefine_line|#define alloc_bootmem_low_pages_node(pgdat, x) &bslash;&n;&t;__alloc_bootmem_node((pgdat), (x), PAGE_SIZE, 0)
 macro_line|#endif /* _LINUX_BOOTMEM_H */
 eof

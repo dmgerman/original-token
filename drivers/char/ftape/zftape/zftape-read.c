@@ -18,16 +18,12 @@ multiline_comment|/*      Global vars.&n; */
 DECL|variable|zft_just_before_eof
 r_int
 id|zft_just_before_eof
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*      Local vars.&n; */
 DECL|variable|buf_len_rd
 r_static
 r_int
 id|buf_len_rd
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|zft_zap_read_buffers
 r_void
@@ -591,8 +587,6 @@ id|pos
 r_static
 id|__s64
 id|remaining
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int

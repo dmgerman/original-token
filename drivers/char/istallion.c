@@ -132,8 +132,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Define some important driver characteristics. Device major numbers&n; *&t;allocated as per Linux Device Registry.&n; */
@@ -248,12 +246,6 @@ r_static
 r_char
 op_star
 id|stli_tmpwritebuf
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|NULL
 suffix:semicolon
 r_static
 id|DECLARE_MUTEX
@@ -270,26 +262,16 @@ r_static
 r_char
 op_star
 id|stli_txcookbuf
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|NULL
 suffix:semicolon
 DECL|variable|stli_txcooksize
 r_static
 r_int
 id|stli_txcooksize
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|stli_txcookrealsize
 r_static
 r_int
 id|stli_txcookrealsize
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|stli_txcooktty
 r_static
@@ -297,13 +279,6 @@ r_struct
 id|tty_struct
 op_star
 id|stli_txcooktty
-op_assign
-(paren
-r_struct
-id|tty_struct
-op_star
-)paren
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Define a local default termios struct. All ports will be created&n; *&t;with this termios initially. Basically all it defines is a raw port&n; *&t;at 9600 baud, 8 data bits, no parity, 1 stop bit.&n; */
 DECL|variable|stli_deftermios
@@ -376,8 +351,6 @@ DECL|variable|stli_shared
 r_static
 r_int
 id|stli_shared
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Per board state flags. Used with the state field of the board struct.&n; *&t;Not really much here... All we need to do is keep track of whether&n; *&t;the board has been detected, and whether it is actually running a slave&n; *&t;or not.&n; */
 DECL|macro|BST_FOUND
@@ -2734,8 +2707,6 @@ DECL|variable|stli_timeron
 r_static
 r_int
 id|stli_timeron
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Define the calculation for the timeout routine.&n; */
 DECL|macro|STLI_TIMEOUT

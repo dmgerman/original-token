@@ -352,36 +352,42 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
+r_const
 r_struct
 id|consw
 op_star
 id|conswitchp
 suffix:semicolon
 r_extern
+r_const
 r_struct
 id|consw
 id|dummy_con
 suffix:semicolon
 multiline_comment|/* dummy console buffer */
 r_extern
+r_const
 r_struct
 id|consw
 id|fb_con
 suffix:semicolon
 multiline_comment|/* frame buffer based console */
 r_extern
+r_const
 r_struct
 id|consw
 id|vga_con
 suffix:semicolon
 multiline_comment|/* VGA text console */
 r_extern
+r_const
 r_struct
 id|consw
 id|newport_con
 suffix:semicolon
 multiline_comment|/* SGI Newport console  */
 r_extern
+r_const
 r_struct
 id|consw
 id|prom_con
@@ -391,6 +397,7 @@ r_void
 id|take_over_console
 c_func
 (paren
+r_const
 r_struct
 id|consw
 op_star
@@ -410,6 +417,7 @@ r_void
 id|give_up_console
 c_func
 (paren
+r_const
 r_struct
 id|consw
 op_star

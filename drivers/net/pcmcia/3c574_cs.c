@@ -107,8 +107,6 @@ DECL|variable|full_duplex
 r_static
 r_int
 id|full_duplex
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* To minimize the size of the driver source and make the driver more&n;   readable not all constants are symbolically defined.&n;   You&squot;ll need the manual if you want to understand driver details anyway. */
 multiline_comment|/* Offsets from base I/O address. */

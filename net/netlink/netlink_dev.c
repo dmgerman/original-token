@@ -17,8 +17,6 @@ DECL|variable|open_map
 r_static
 r_int
 id|open_map
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|netlink_user
 r_static
@@ -701,8 +699,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|make_devfs_entries
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.102 2000/08/14 00:46:13 anton Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.103 2000/10/16 14:32:49 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1155,8 +1155,23 @@ comma
 id|pmd_t
 op_star
 )paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|pmd_set
+comma
+id|pmd_t
+op_star
+comma
+id|pte_t
+op_star
+)paren
 DECL|macro|pgd_set
 mdefine_line|#define pgd_set(pgdp,pmdp) BTFIXUP_CALL(pgd_set)(pgdp,pmdp)
+DECL|macro|pmd_set
+mdefine_line|#define pmd_set(pmdp,ptep) BTFIXUP_CALL(pmd_set)(pmdp,ptep)
 id|BTFIXUPDEF_INT
 c_func
 (paren
@@ -1599,6 +1614,7 @@ r_int
 id|space
 )paren
 suffix:semicolon
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* We provide our own get_unmapped_area to cope with VA holes for userland */
 DECL|macro|HAVE_ARCH_UNMAPPED_AREA

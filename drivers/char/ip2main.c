@@ -792,8 +792,6 @@ r_static
 r_int
 r_int
 id|i2nBoards
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// Number of boards here
 DECL|variable|i2BoardPtrTable
@@ -821,16 +819,6 @@ id|DevTableMem
 (braket
 id|IP2_MAX_BOARDS
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|TtyTable
 r_static
@@ -896,15 +884,11 @@ DECL|variable|irq_counter
 r_static
 r_int
 id|irq_counter
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|bh_counter
 r_static
 r_int
 id|bh_counter
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// Use immediate queue to service interrupts
 singleline_comment|//#define USE_IQI&t;// PCI&amp;2.2 needs work
@@ -928,8 +912,6 @@ DECL|variable|TimerOn
 r_static
 r_char
 id|TimerOn
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 multiline_comment|/* Trace (debug) buffer data */
@@ -948,22 +930,16 @@ DECL|variable|tracestuff
 r_static
 r_int
 id|tracestuff
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tracestrip
 r_static
 r_int
 id|tracestrip
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tracewrap
 r_static
 r_int
 id|tracewrap
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/**********/
@@ -1007,29 +983,21 @@ DECL|variable|poll_only
 r_static
 r_int
 id|poll_only
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|Eisa_irq
 r_static
 r_int
 id|Eisa_irq
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|Eisa_slot
 r_static
 r_int
 id|Eisa_slot
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|iindx
 r_static
 r_int
 id|iindx
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rirqs
 r_static
@@ -1038,11 +1006,6 @@ id|rirqs
 (braket
 id|IP2_MAX_BOARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|Valid_Irqs
 r_static
@@ -1834,8 +1797,6 @@ macro_line|#ifdef&t;CONFIG_DEVFS_FS
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|j
@@ -1857,8 +1818,6 @@ suffix:semicolon
 r_static
 r_int
 id|loaded
-op_assign
-l_int|0
 suffix:semicolon
 id|i2eBordStrPtr
 id|pB

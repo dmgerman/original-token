@@ -155,16 +155,10 @@ DECL|variable|queued_packet
 r_static
 r_int
 id|rx_nocopy
-op_assign
-l_int|0
 comma
 id|rx_copy
-op_assign
-l_int|0
 comma
 id|queued_packet
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Number of times to check to see if the Tx FIFO has space, used in some&n;   limited cases. */
 DECL|macro|WAIT_TX_AVAIL
@@ -1391,8 +1385,6 @@ DECL|variable|nopnp
 r_static
 r_int
 id|nopnp
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 r_static

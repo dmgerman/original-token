@@ -6408,55 +6408,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|proto_init
-r_void
-id|__init
-id|proto_init
-c_func
-(paren
-r_void
-)paren
-(brace
-r_extern
-r_struct
-id|net_proto
-id|protocols
-(braket
-)braket
-suffix:semicolon
-multiline_comment|/* Network protocols */
-r_struct
-id|net_proto
-op_star
-id|pro
-suffix:semicolon
-multiline_comment|/* Kick all configured protocols. */
-id|pro
-op_assign
-id|protocols
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|pro-&gt;name
-op_ne
-l_int|NULL
-)paren
-(brace
-(paren
-op_star
-id|pro-&gt;init_func
-)paren
-(paren
-id|pro
-)paren
-suffix:semicolon
-id|pro
-op_increment
-suffix:semicolon
-)brace
-multiline_comment|/* We&squot;re all done... */
-)brace
 r_extern
 r_void
 id|sk_init
@@ -6580,12 +6531,8 @@ op_amp
 id|sock_fs_type
 )paren
 suffix:semicolon
-id|proto_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The netlink device handler may be needed early.&n;&t; */
+multiline_comment|/* The real protocol initialization is performed when&n;&t; *  do_initcalls is run.  &n;&t; */
+multiline_comment|/*&n;&t; * The netlink device handler may be needed early.&n;&t; */
 macro_line|#ifdef  CONFIG_RTNETLINK
 id|rtnetlink_init
 c_func

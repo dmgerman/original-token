@@ -5251,18 +5251,23 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|x25_proto_init
-r_void
+DECL|function|x25_init
+r_static
+r_int
 id|__init
-id|x25_proto_init
+id|x25_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
+macro_line|#endif /* MODULE */
 id|sock_register
 c_func
 (paren
@@ -5328,41 +5333,7 @@ id|x25_routes_get_info
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-)brace
 macro_line|#ifdef MODULE
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Jonathan Naylor &lt;g4klx@g4klx.demon.co.uk&gt;&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;The X.25 Packet Layer network layer protocol&quot;
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|net_device
-op_star
-id|dev
-suffix:semicolon
-id|x25_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Register any pre existing devices.&n;&t; */
 id|read_lock
 c_func
@@ -5422,13 +5393,38 @@ op_amp
 id|dev_base_lock
 )paren
 suffix:semicolon
+macro_line|#endif /* MODULE */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|variable|x25_init
+id|module_init
+c_func
+(paren
+id|x25_init
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Jonathan Naylor &lt;g4klx@g4klx.demon.co.uk&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;The X.25 Packet Layer network layer protocol&quot;
+)paren
+suffix:semicolon
+DECL|function|x25_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|x25_exit
 c_func
 (paren
 r_void
@@ -5486,6 +5482,13 @@ id|AF_X25
 )paren
 suffix:semicolon
 )brace
+DECL|variable|x25_exit
+id|module_exit
+c_func
+(paren
+id|x25_exit
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

@@ -51,8 +51,6 @@ r_struct
 id|notifier_block
 op_star
 id|reboot_notifier_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|notifier_lock
 id|rwlock_t

@@ -23,15 +23,11 @@ DECL|variable|timer_alive
 r_static
 r_int
 id|timer_alive
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|testmode
 r_static
 r_int
 id|testmode
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Allow only one person to hold it open&n; */
 DECL|function|wdt977_open

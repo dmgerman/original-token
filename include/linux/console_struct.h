@@ -29,6 +29,7 @@ id|vc_size_row
 suffix:semicolon
 multiline_comment|/* Bytes per row */
 DECL|member|vc_sw
+r_const
 r_struct
 id|consw
 op_star

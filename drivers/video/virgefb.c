@@ -5160,14 +5160,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;CyberVision64-3D Graphics Board&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

@@ -3,6 +3,7 @@ macro_line|#ifndef RCLANMTL_H
 DECL|macro|RCLANMTL_H
 mdefine_line|#define RCLANMTL_H
 multiline_comment|/* Linux specific includes */
+macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|kprintf
 mdefine_line|#define kprintf printk
 macro_line|#ifdef RC_LINUX_MODULE     /* linux modules need non-library version of string functions */
@@ -46,40 +47,34 @@ mdefine_line|#define WARM_REBOOT_CAPABLE      0x01
 multiline_comment|/* scalar data types */
 DECL|typedef|U8
 r_typedef
-r_int
-r_char
+id|__u8
 id|U8
-suffix:semicolon
-DECL|typedef|PU8
-r_typedef
-r_int
-r_char
-op_star
-id|PU8
 suffix:semicolon
 DECL|typedef|U16
 r_typedef
-r_int
-r_int
+id|__u16
 id|U16
-suffix:semicolon
-DECL|typedef|PU16
-r_typedef
-r_int
-r_int
-op_star
-id|PU16
 suffix:semicolon
 DECL|typedef|U32
 r_typedef
-r_int
-r_int
+id|__u32
 id|U32
+suffix:semicolon
+DECL|typedef|PU8
+r_typedef
+id|__u8
+op_star
+id|PU8
+suffix:semicolon
+DECL|typedef|PU16
+r_typedef
+id|__u16
+op_star
+id|PU16
 suffix:semicolon
 DECL|typedef|PU32
 r_typedef
-r_int
-r_int
+id|__u32
 op_star
 id|PU32
 suffix:semicolon

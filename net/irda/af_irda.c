@@ -1,5 +1,6 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.9&n; * Description:   IrDA sockets implementation&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Sat Dec 25 21:10:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     Copyright (c) 1999 Jean Tourrilhes &lt;jeant@rockfort.hpl.hp.com&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     Linux-IrDA now supports four different types of IrDA sockets:&n; *&n; *     o SOCK_STREAM:    TinyTP connections with SAR disabled. The&n; *                       max SDU size is 0 for conn. of this type&n; *     o SOCK_SEQPACKET: TinyTP connections with SAR enabled. TTP may &n; *                       fragment the messages, but will preserve&n; *                       the message boundaries&n; *     o SOCK_DGRAM:     IRDAPROTO_UNITDATA: TinyTP connections with Unitdata &n; *                       (unreliable) transfers&n; *                       IRDAPROTO_ULTRA: Connectionless and unreliable data&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -7595,15 +7596,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Function irda_proto_init (pro)&n; *&n; *    Initialize IrDA protocol layer&n; *&n; */
 DECL|function|irda_proto_init
-r_void
+r_static
+r_int
 id|__init
 id|irda_proto_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 id|sock_register
@@ -7640,7 +7639,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|irda_proto_init
+id|module_init
+c_func
+(paren
+id|irda_proto_init
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Function irda_proto_cleanup (void)&n; *&n; *    Remove IrDA protocol layer&n; *&n; */
 macro_line|#ifdef MODULE
 DECL|function|irda_proto_cleanup
@@ -7687,5 +7696,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|variable|irda_proto_cleanup
+id|module_exit
+c_func
+(paren
+id|irda_proto_cleanup
+)paren
+suffix:semicolon
 macro_line|#endif /* MODULE */
 eof

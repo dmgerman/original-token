@@ -119,11 +119,10 @@ r_do
 (brace
 id|pte_t
 id|page
-op_assign
-op_star
-id|pte
 suffix:semicolon
-id|pte_clear
+id|page
+op_assign
+id|ptep_get_and_clear
 c_func
 (paren
 id|pte

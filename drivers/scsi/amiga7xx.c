@@ -252,14 +252,6 @@ l_string|&quot;ncr53c710&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Blizzard 603e+ Accelerator and SCSI Host Adapter&quot;
-)paren
-suffix:semicolon
 id|address
 op_assign
 id|ZTWO_VADDR
@@ -336,15 +328,6 @@ l_string|&quot;ncr53c710&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Warp Engine 40xx Accelerator, SCSI Host &quot;
-l_string|&quot;Adapter and RAM Expansion&quot;
-)paren
-suffix:semicolon
 id|address
 op_assign
 (paren
@@ -432,14 +415,6 @@ l_string|&quot;ncr53c710&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;A4091 SCSI Host Adapter&quot;
-)paren
-suffix:semicolon
 id|address
 op_assign
 (paren
@@ -524,15 +499,6 @@ l_string|&quot;ncr53c710&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;GForce 040/060 Accelerator and SCSI Host &quot;
-l_string|&quot;Adapter&quot;
-)paren
-suffix:semicolon
 id|address
 op_assign
 id|ZTWO_VADDR

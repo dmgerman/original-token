@@ -26,12 +26,6 @@ DECL|variable|dev
 id|isdn_dev
 op_star
 id|dev
-op_assign
-(paren
-id|isdn_dev
-op_star
-)paren
-l_int|0
 suffix:semicolon
 DECL|variable|isdn_revision
 r_static
@@ -93,8 +87,6 @@ DECL|variable|divert_if
 id|isdn_divert_if
 op_star
 id|divert_if
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* interface to diversion module */
 macro_line|#endif CONFIG_ISDN_DIVERSION
@@ -11523,8 +11515,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|isdn_register_devfs
 r_static

@@ -357,8 +357,6 @@ id|cvf_formats
 (braket
 id|MAX_CVF_FORMATS
 )braket
-op_assign
-initialization_block
 suffix:semicolon
 DECL|variable|cvf_format_use_count
 r_int
@@ -366,8 +364,6 @@ id|cvf_format_use_count
 (braket
 id|MAX_CVF_FORMATS
 )braket
-op_assign
-initialization_block
 suffix:semicolon
 DECL|function|register_cvf_format
 r_int

@@ -9,12 +9,6 @@ DECL|variable|sys_tz
 r_struct
 id|timezone
 id|sys_tz
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|function|do_normal_gettime
 r_static
@@ -593,19 +587,6 @@ r_struct
 id|timeval
 op_star
 )paren
-op_assign
-(paren
-r_void
-(paren
-op_star
-)paren
-(paren
-r_struct
-id|timeval
-op_star
-)paren
-)paren
-l_int|0
 suffix:semicolon
 multiline_comment|/* adjtimex mainly allows reading (and writing, if superuser) of&n; * kernel time-keeping variables. used by xntpd.&n; */
 DECL|function|do_adjtimex

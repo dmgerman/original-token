@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -31,7 +32,6 @@ macro_line|#include &lt;net/rose.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|rose_ndevs
 r_int
 id|rose_ndevs
@@ -6231,15 +6231,13 @@ op_star
 id|dev_rose
 suffix:semicolon
 DECL|function|rose_proto_init
-r_void
+r_static
+r_int
 id|__init
 id|rose_proto_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 r_int
@@ -6281,6 +6279,8 @@ l_string|&quot;ROSE: rose_proto_init - unable to allocate device structure&bslas
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|memset
@@ -6443,7 +6443,17 @@ id|rose_routes_get_info
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|rose_proto_init
+id|module_init
+c_func
+(paren
+id|rose_proto_init
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
@@ -6475,27 +6485,11 @@ c_func
 l_string|&quot;The amateur radio ROSE network layer protocol&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|rose_exit
+r_static
 r_void
-)paren
-(brace
-id|rose_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|rose_exit
 c_func
 (paren
 r_void
@@ -6674,6 +6668,13 @@ id|dev_rose
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|rose_exit
+id|module_exit
+c_func
+(paren
+id|rose_exit
+)paren
+suffix:semicolon
+macro_line|#endif /* MODULE */
 macro_line|#endif
 eof

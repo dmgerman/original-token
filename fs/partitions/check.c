@@ -1552,14 +1552,10 @@ r_static
 r_int
 r_int
 id|disc_counter
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond

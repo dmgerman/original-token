@@ -58,8 +58,6 @@ DECL|variable|timer_alive
 r_static
 r_int
 id|timer_alive
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;If the timer expires..&n; */
 DECL|function|watchdog_fire

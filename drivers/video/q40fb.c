@@ -1489,6 +1489,7 @@ macro_line|#endif
 )brace
 DECL|function|q40fb_init
 r_int
+id|__init
 id|q40fb_init
 c_func
 (paren

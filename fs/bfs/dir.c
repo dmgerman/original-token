@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/bfs/dir.c&n; *&t;BFS directory operations.&n; *&t;Copyright (C) 1999  Tigran Aivazian &lt;tigran@ocston.org&gt;&n; */
+multiline_comment|/*&n; *&t;fs/bfs/dir.c&n; *&t;BFS directory operations.&n; *&t;Copyright (C) 1999,2000  Tigran Aivazian &lt;tigran@veritas.com&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bfs_fs.h&gt;

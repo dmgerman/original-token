@@ -1297,7 +1297,11 @@ multiline_comment|/*&n;&t; * Register the kernel text and data with bootmem.&n;&
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 l_int|0
+)paren
 comma
 id|__pa
 c_func
@@ -1318,7 +1322,11 @@ multiline_comment|/*&n;&t; * Reserve the page tables.  These are already in use,
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 l_int|0
+)paren
 comma
 id|__pa
 c_func
@@ -1340,7 +1348,11 @@ multiline_comment|/*&n;&t; * Stop this memory from being grabbed - its special D
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 l_int|0
+)paren
 comma
 l_int|0x02000000
 comma
@@ -1352,7 +1364,11 @@ multiline_comment|/*&n;&t; * And don&squot;t forget to reserve the allocator bit
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 l_int|0
+)paren
 comma
 id|bootmap_pfn
 op_lshift
@@ -1413,7 +1429,11 @@ id|node
 id|free_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|mi-&gt;bank
 (braket
@@ -1549,7 +1569,11 @@ multiline_comment|/*&n;&t;&t; * Initialise the bootmem allocator.&n;&t;&t; */
 id|init_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|map_pg
 comma
@@ -1598,7 +1622,11 @@ l_int|0
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|initrd_node
+)paren
 comma
 id|__pa
 c_func
@@ -2042,7 +2070,11 @@ op_add_assign
 id|free_all_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Since our memory may not be contiguous, calculate the&n;&t; * real number of pages we have in this system&n;&t; */

@@ -22,8 +22,6 @@ r_struct
 id|dentry
 op_star
 id|saved_root
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Original root if changed */
 DECL|variable|pseudo_root
@@ -31,8 +29,6 @@ r_struct
 id|inode
 op_star
 id|pseudo_root
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Useful to simulate the pseudo DOS */
 multiline_comment|/* directory. See UMSDOS_readdir_x() */

@@ -1234,7 +1234,16 @@ l_int|1
 op_assign
 l_char|&squot;0&squot;
 op_plus
+(paren
 id|boot_cpu_data.x86
+OG
+l_int|6
+ques
+c_cond
+l_int|6
+suffix:colon
+id|boot_cpu_data.x86
+)paren
 suffix:semicolon
 )brace
 eof

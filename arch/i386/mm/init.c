@@ -40,16 +40,12 @@ r_static
 r_int
 r_int
 id|totalram_pages
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|totalhigh_pages
 r_static
 r_int
 r_int
 id|totalhigh_pages
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving an inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; *&n; * ZERO_PAGE is a special page that is used for zero-initialized&n; * data and COW.&n; */
 multiline_comment|/*&n; * These are allocated in head.S so that we get proper page alignment.&n; * If you change the size of these then change head.S as well.&n; */
@@ -2156,6 +2152,69 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Test if the WP bit works in supervisor mode. It isn&squot;t supported on 386&squot;s&n; * and also on some strange 486&squot;s (NexGen etc.). All 586+&squot;s are OK. The jumps&n; * before and after the test are here to work-around some nasty CPU bugs.&n; */
+multiline_comment|/*&n; * This function cannot be __init, since exceptions don&squot;t work in that&n; * section.&n; */
+DECL|function|do_test_wp_bit
+r_static
+r_int
+id|do_test_wp_bit
+c_func
+(paren
+r_int
+r_int
+id|vaddr
+)paren
+(brace
+r_char
+id|tmp_reg
+suffix:semicolon
+r_int
+id|flag
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&t;movb %0,%1&t;&bslash;n&quot;
+l_string|&quot;1:&t;movb %1,%0&t;&bslash;n&quot;
+l_string|&quot;&t;xorl %2,%2&t;&bslash;n&quot;
+l_string|&quot;2:&t;&t;&t;&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.align 4&t;&bslash;n&quot;
+l_string|&quot;&t;.long 1b,2b&t;&bslash;n&quot;
+l_string|&quot;.previous&t;&t;&bslash;n&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+(paren
+r_char
+op_star
+)paren
+id|vaddr
+)paren
+comma
+l_string|&quot;=q&quot;
+(paren
+id|tmp_reg
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|flag
+)paren
+suffix:colon
+l_string|&quot;2&quot;
+(paren
+l_int|1
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|flag
+suffix:semicolon
+)brace
 DECL|function|test_wp_bit
 r_void
 id|__init
@@ -2165,7 +2224,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n; * Ok, all PAE-capable CPUs are definitely handling the WP bit right.&n; */
+multiline_comment|/*&n; * Ok, all PSE-capable CPUs are definitely handling the WP bit right.&n; */
 r_const
 r_int
 r_int
@@ -2186,9 +2245,6 @@ op_star
 id|pte
 comma
 id|old_pte
-suffix:semicolon
-r_char
-id|tmp_reg
 suffix:semicolon
 id|printk
 c_func
@@ -2247,33 +2303,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|boot_cpu_data.wp_works_ok
+op_assign
+id|do_test_wp_bit
 c_func
 (paren
-l_string|&quot;jmp 1f; 1:&bslash;n&quot;
-l_string|&quot;movb %0,%1&bslash;n&quot;
-l_string|&quot;movb %1,%0&bslash;n&quot;
-l_string|&quot;jmp 1f; 1:&bslash;n&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-op_star
-(paren
-r_char
-op_star
-)paren
 id|vaddr
-)paren
-comma
-l_string|&quot;=q&quot;
-(paren
-id|tmp_reg
-)paren
-suffix:colon
-multiline_comment|/* no inputs */
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 op_star
@@ -2289,15 +2324,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|boot_cpu_data.wp_works_ok
-OL
-l_int|0
 )paren
 (brace
-id|boot_cpu_data.wp_works_ok
-op_assign
-l_int|0
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2314,12 +2344,14 @@ suffix:semicolon
 macro_line|#endif
 )brace
 r_else
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;.&bslash;n&quot;
+l_string|&quot;Ok.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|page_is_ram
 r_static

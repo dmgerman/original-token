@@ -219,6 +219,8 @@ DECL|macro|SELECT_READ_WRITE
 mdefine_line|#define SELECT_READ_WRITE(hwif,drive,func)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;rwproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;rwproc(drive,func);&t;&t;&t;&bslash;&n;}
 DECL|macro|QUIRK_LIST
 mdefine_line|#define QUIRK_LIST(hwif,drive)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;quirkproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(drive)-&gt;quirk_list = hwif-&gt;quirkproc(drive);&t;&bslash;&n;}
+DECL|macro|IDE_DEBUG
+mdefine_line|#define IDE_DEBUG(lineno) &bslash;&n;&t;printk(&quot;%s,%s,line=%d&bslash;n&quot;, __FILE__, __FUNCTION__, (lineno))
 multiline_comment|/*&n; * Check for an interrupt and acknowledge the interrupt status&n; */
 r_struct
 id|hwif_s

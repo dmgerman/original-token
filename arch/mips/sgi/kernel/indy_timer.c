@@ -228,15 +228,11 @@ DECL|variable|last_rtc_update
 r_static
 r_int
 id|last_rtc_update
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|missed_heart_beats
 r_int
 r_int
 id|missed_heart_beats
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|indy_timer_interrupt
 r_void

@@ -59,8 +59,6 @@ DECL|variable|reverse_probe
 r_static
 r_int
 id|reverse_probe
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -109,8 +107,6 @@ suffix:semicolon
 r_static
 r_int
 id|pci_index
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Static, for multiple probe calls. */
 id|u8
@@ -1922,7 +1918,7 @@ id|dev
 )paren
 (brace
 singleline_comment|//&t;int cards_found = 0;
-singleline_comment|//&t;static int isa_index = 0;&t;/* Static, for multiple probe calls. */
+singleline_comment|//&t;static int isa_index;&t;/* Static, for multiple probe calls. */
 r_int
 id|isa_irq_line
 op_assign

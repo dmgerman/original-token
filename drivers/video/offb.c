@@ -1784,6 +1784,7 @@ suffix:semicolon
 DECL|function|offb_init_fb
 r_static
 r_void
+id|__init
 id|offb_init_fb
 c_func
 (paren

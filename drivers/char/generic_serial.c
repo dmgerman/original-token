@@ -25,8 +25,6 @@ suffix:semicolon
 DECL|variable|gs_debug
 r_int
 id|gs_debug
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef DEBUG
 DECL|macro|gs_dprintk

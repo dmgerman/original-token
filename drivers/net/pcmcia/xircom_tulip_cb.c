@@ -33,11 +33,6 @@ id|full_duplex
 (braket
 id|MAX_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|options
 r_static
@@ -46,11 +41,6 @@ id|options
 (braket
 id|MAX_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|mtu
 r_static
@@ -59,11 +49,6 @@ id|mtu
 (braket
 id|MAX_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* Jumbo MTU for interfaces. */
 multiline_comment|/*  The possible media types that can be set in options[] are: */
@@ -2167,8 +2152,6 @@ id|board_idx
 r_static
 r_int
 id|did_version
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Already printed version info. */
 r_struct
@@ -2202,14 +2185,10 @@ suffix:semicolon
 r_static
 r_int
 id|last_irq
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
 id|multiport_cnt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* For four-port boards w/one EEPROM */
 id|u8
@@ -4695,22 +4674,16 @@ r_struct
 id|mediatable
 op_star
 id|last_mediatable
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_int
 r_char
 op_star
 id|last_ee_data
-op_assign
-l_int|NULL
 suffix:semicolon
 r_static
 r_int
 id|controller_index
-op_assign
-l_int|0
 suffix:semicolon
 r_struct
 id|tulip_private
@@ -18800,8 +18773,6 @@ suffix:semicolon
 r_static
 r_int
 id|board_idx
-op_assign
-l_int|0
 suffix:semicolon
 id|printk
 c_func

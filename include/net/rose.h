@@ -622,7 +622,6 @@ id|net_device
 op_star
 )paren
 suffix:semicolon
-macro_line|#include &lt;net/rosecall.h&gt;
 multiline_comment|/* rose_in.c */
 r_extern
 r_int

@@ -18104,6 +18104,7 @@ comma
 suffix:semicolon
 DECL|function|sisfb_setup
 r_int
+id|__init
 id|sisfb_setup
 c_func
 (paren

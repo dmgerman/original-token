@@ -383,8 +383,6 @@ DECL|variable|io_apic_irqs
 r_int
 r_int
 id|io_apic_irqs
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|disable_8259A_irq
 r_void
@@ -904,8 +902,6 @@ suffix:semicolon
 r_static
 r_int
 id|spurious_irq_mask
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * At this point we can be sure the IRQ is spurious,&n;&t;&t; * lets ACK and report it. [once per IRQ]&n;&t;&t; */
 r_if

@@ -57,8 +57,6 @@ id|sysrq_power_off
 (paren
 r_void
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|sysrq_power_off
 id|EXPORT_SYMBOL

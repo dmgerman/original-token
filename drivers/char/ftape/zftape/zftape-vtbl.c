@@ -24,15 +24,11 @@ multiline_comment|/* use the vtbl */
 DECL|variable|zft_old_ftape
 r_int
 id|zft_old_ftape
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* prevents old ftaped tapes to be overwritten */
 DECL|variable|zft_volume_table_changed
 r_int
 id|zft_volume_table_changed
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* for write_header_segments() */
 multiline_comment|/*&n; *  private variables (only exported for inline functions)&n; */
@@ -48,41 +44,17 @@ DECL|variable|tape_vtbl
 r_static
 id|zft_volinfo
 id|tape_vtbl
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|eot_vtbl
 r_static
 id|zft_volinfo
 id|eot_vtbl
-op_assign
-(brace
-(brace
-l_int|NULL
-comma
-l_int|NULL
-)brace
-comma
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|cur_vtbl
 r_static
 id|zft_volinfo
 op_star
 id|cur_vtbl
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|zft_new_vtbl_entry
 r_inline

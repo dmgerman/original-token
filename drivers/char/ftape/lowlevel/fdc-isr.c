@@ -18,29 +18,21 @@ DECL|variable|ft_expected_stray_interrupts
 r_volatile
 r_int
 id|ft_expected_stray_interrupts
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ft_interrupt_seen
 r_volatile
 r_int
 id|ft_interrupt_seen
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ft_seek_completed
 r_volatile
 r_int
 id|ft_seek_completed
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|ft_hide_interrupt
 r_volatile
 r_int
 id|ft_hide_interrupt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*      Local vars.&n; */
 r_typedef
@@ -89,8 +81,6 @@ DECL|variable|stop_read_ahead
 r_static
 r_int
 id|stop_read_ahead
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|print_error_cause
 r_static
@@ -2705,8 +2695,6 @@ id|buff
 r_static
 r_int
 id|no_data_error_count
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|retry
@@ -4094,8 +4082,6 @@ r_void
 r_static
 r_int
 id|isr_active
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef TESTING
 r_int

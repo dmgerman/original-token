@@ -12,16 +12,12 @@ r_static
 id|__u8
 op_star
 id|bad_sector_map
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|bsm_hash_ptr
 r_static
 id|SectorCount
 op_star
 id|bsm_hash_ptr
-op_assign
-l_int|NULL
 suffix:semicolon
 r_typedef
 r_enum
@@ -1995,8 +1991,6 @@ suffix:semicolon
 r_static
 id|SectorMap
 id|map
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

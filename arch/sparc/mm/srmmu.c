@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.222 2000/08/29 08:59:23 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.223 2000/10/16 14:32:49 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -87,21 +87,6 @@ mdefine_line|#define FLUSH_BEGIN(mm) if((mm)-&gt;context != NO_CONTEXT) {
 DECL|macro|FLUSH_END
 mdefine_line|#define FLUSH_END&t;}
 macro_line|#endif
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-r_void
-comma
-id|pmd_set
-comma
-id|pmd_t
-op_star
-comma
-id|pte_t
-op_star
-)paren
-DECL|macro|pmd_set
-mdefine_line|#define pmd_set(pmdp,ptep) BTFIXUP_CALL(pmd_set)(pmdp,ptep)
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -2643,66 +2628,6 @@ r_int
 id|pmd
 comma
 id|SRMMU_PMD_TABLE_SIZE
-)paren
-suffix:semicolon
-)brace
-DECL|function|srmmu_set_pgdir
-r_static
-r_void
-id|srmmu_set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-id|read_lock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p-&gt;mm
-)paren
-r_continue
-suffix:semicolon
-op_star
-id|srmmu_pgd_offset
-c_func
-(paren
-id|p-&gt;mm
-comma
-id|address
-)paren
-op_assign
-id|entry
-suffix:semicolon
-)brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
 )paren
 suffix:semicolon
 )brace
@@ -10954,16 +10879,6 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|set_pgdir
-comma
-id|srmmu_set_pgdir
-comma
-id|BTFIXUPCALL_NORM
-)paren
-suffix:semicolon
-id|BTFIXUPSET_CALL
-c_func
-(paren
 id|set_pte
 comma
 id|srmmu_set_pte
@@ -11146,6 +11061,16 @@ c_func
 id|pgd_set
 comma
 id|srmmu_pgd_set
+comma
+id|BTFIXUPCALL_NORM
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|pmd_set
+comma
+id|srmmu_pmd_set
 comma
 id|BTFIXUPCALL_NORM
 )paren
@@ -11425,17 +11350,6 @@ c_func
 id|get_task_struct
 comma
 id|srmmu_get_task_struct
-comma
-id|BTFIXUPCALL_NORM
-)paren
-suffix:semicolon
-multiline_comment|/* SRMMU specific. */
-id|BTFIXUPSET_CALL
-c_func
-(paren
-id|pmd_set
-comma
-id|srmmu_pmd_set
 comma
 id|BTFIXUPCALL_NORM
 )paren

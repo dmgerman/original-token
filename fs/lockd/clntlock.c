@@ -72,8 +72,6 @@ r_struct
 id|nlm_wait
 op_star
 id|nlm_blocked
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Block on a lock&n; */
 r_int

@@ -247,16 +247,12 @@ DECL|variable|ii2Safe
 r_static
 r_int
 id|ii2Safe
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// Safe I/O address for delay routine
 DECL|variable|iiDelayed
 r_static
 r_int
 id|iiDelayed
-op_assign
-l_int|0
 suffix:semicolon
 singleline_comment|// Set when the iiResetDelay function is
 singleline_comment|// called. Cleared when ANY board is reset.

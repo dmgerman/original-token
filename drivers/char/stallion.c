@@ -205,8 +205,6 @@ DECL|variable|stl_refcount
 r_static
 r_int
 id|stl_refcount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;We will need to allocate a temporary write buffer for chars that&n; *&t;come direct from user space. The problem is that a copy from user&n; *&t;space might cause a page fault (typically on a system that is&n; *&t;swapping!). All ports will share one buffer - since if the system&n; *&t;is already swapping a shared buffer won&squot;t make things any worse.&n; */
 DECL|variable|stl_tmpwritebuf
@@ -296,8 +294,6 @@ DECL|variable|stl_numintrs
 r_static
 r_int
 id|stl_numintrs
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*****************************************************************************/
 DECL|variable|stl_brds
@@ -2950,8 +2946,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Loadable module initialization stuff.&n; */

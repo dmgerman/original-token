@@ -269,10 +269,9 @@ op_star
 id|timep
 )paren
 (brace
-op_star
-id|timep
+id|u64
+id|tmp
 op_assign
-(paren
 (paren
 id|u64
 )paren
@@ -285,7 +284,11 @@ op_increment
 )paren
 op_lshift
 l_int|32
-)paren
+suffix:semicolon
+op_star
+id|timep
+op_assign
+id|tmp
 op_plus
 (paren
 id|u64

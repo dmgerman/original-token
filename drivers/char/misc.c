@@ -601,8 +601,6 @@ id|misc
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond

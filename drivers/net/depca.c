@@ -876,12 +876,8 @@ DECL|variable|loading_module
 r_static
 r_int
 id|autoprobed
-op_assign
-l_int|0
 comma
 id|loading_module
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif /* MODULE */
 DECL|variable|name
@@ -897,19 +893,13 @@ DECL|variable|num_eth
 r_static
 r_int
 id|num_depcas
-op_assign
-l_int|0
 comma
 id|num_eth
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|mem
 r_static
 r_int
 id|mem
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* For loadable module assignment&n;                                              use insmod mem=0x????? .... */
 DECL|variable|adapter_name
@@ -3029,6 +3019,7 @@ id|netif_wake_queue
 id|dev
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Unmask the DEPCA board interrupts and turn off the LED */
 id|nicsr
 op_assign
@@ -3049,7 +3040,6 @@ comma
 id|DEPCA_NICSR
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 (paren
 op_amp

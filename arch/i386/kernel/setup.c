@@ -6488,10 +6488,6 @@ op_eq
 l_int|15
 )paren
 (brace
-id|c-&gt;x86
-op_assign
-l_int|6
-suffix:semicolon
 id|get_model_name
 c_func
 (paren

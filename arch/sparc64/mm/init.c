@@ -4278,7 +4278,11 @@ op_assign
 id|init_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 l_int|0
+)paren
 comma
 id|bootmap_pfn
 comma

@@ -307,8 +307,6 @@ suffix:semicolon
 DECL|variable|coda_hasmknod
 r_int
 id|coda_hasmknod
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|coda_dentry_operations
 r_struct

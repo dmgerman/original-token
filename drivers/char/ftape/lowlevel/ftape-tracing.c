@@ -13,16 +13,12 @@ multiline_comment|/* Default level: information and up */
 DECL|variable|ftape_function_nest_level
 r_int
 id|ftape_function_nest_level
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*      Local vars.&n; */
 DECL|variable|trace_id
 r_static
 id|__u8
 id|trace_id
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|spacing
 r_static

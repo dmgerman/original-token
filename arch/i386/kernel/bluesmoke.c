@@ -8,8 +8,6 @@ DECL|variable|banks
 r_static
 r_int
 id|banks
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|mcheck_fault
 r_void
@@ -361,8 +359,6 @@ suffix:semicolon
 r_static
 r_int
 id|done
-op_assign
-l_int|0
 suffix:semicolon
 id|c
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.41 2000/09/04 19:41:27 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.42 2000/10/14 10:09:04 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -9308,7 +9308,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.41 $&quot;
+l_string|&quot;$Revision: 1.42 $&quot;
 suffix:semicolon
 r_char
 op_star

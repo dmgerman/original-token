@@ -3047,6 +3047,7 @@ suffix:semicolon
 DECL|macro|DUMMY
 mdefine_line|#define DUMMY (void *) newport_dummy
 DECL|variable|newport_con
+r_const
 r_struct
 id|consw
 id|newport_con

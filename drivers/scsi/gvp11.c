@@ -1005,14 +1005,6 @@ l_string|&quot;wd33c93&quot;
 )paren
 r_continue
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;GVP Series II SCSI&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef CHECK_WD33C93
 multiline_comment|/*&n;&t; * These darn GVP boards are a problem - it can be tough to tell&n;&t; * whether or not they include a SCSI controller. This is the&n;&t; * ultimate Yet-Another-GVP-Detection-Hack in that it actually&n;&t; * probes for a WD33c93 chip: If we find one, it&squot;s extremely&n;&t; * likely that this card supports SCSI, regardless of Product_&n;&t; * Code, Board_Size, etc. &n;&t; */
 multiline_comment|/* Get pointers to the presumed register locations and save contents */

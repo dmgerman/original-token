@@ -359,14 +359,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Bail out if address did not hold data */
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Blizzard 1230 SCSI IV&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Do command transfer with programmed I/O */
 id|esp-&gt;do_pio_cmds
 op_assign

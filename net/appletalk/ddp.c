@@ -7876,16 +7876,14 @@ id|atalk_find_dev_addr
 )paren
 suffix:semicolon
 multiline_comment|/* Called by proto.c on kernel start up */
-DECL|function|atalk_proto_init
-r_void
+DECL|function|atalk_init
+r_static
+r_int
 id|__init
-id|atalk_proto_init
+id|atalk_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 (paren
@@ -8017,32 +8015,24 @@ id|KERN_INFO
 l_string|&quot;NET4: AppleTalk 0.18 for Linux NET4.0&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|atalk_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
+DECL|variable|atalk_init
+id|module_init
+c_func
+(paren
+id|atalk_init
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * AppleTalk interfaces are not incremented untill atalkd is run&n; * and are only decremented when they are downed.&n; *&n; * Ergo, before the AppleTalk module can be removed, all AppleTalk&n; * sockets be closed from user space.&n; */
-DECL|function|cleanup_module
+DECL|function|atalk_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|atalk_exit
 c_func
 (paren
 r_void
@@ -8122,6 +8112,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|variable|atalk_exit
+id|module_exit
+c_func
+(paren
+id|atalk_exit
+)paren
+suffix:semicolon
 macro_line|#endif  /* MODULE */
 macro_line|#endif  /* CONFIG_ATALK || CONFIG_ATALK_MODULE */
 eof

@@ -1583,11 +1583,6 @@ id|io
 (braket
 id|MAX_E21_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|irq
 r_static
@@ -1596,11 +1591,6 @@ id|irq
 (braket
 id|MAX_E21_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|mem
 r_static
@@ -1609,11 +1599,6 @@ id|mem
 (braket
 id|MAX_E21_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|xcvr
 r_static
@@ -1622,11 +1607,6 @@ id|xcvr
 (braket
 id|MAX_E21_CARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* choose int. or ext. xcvr */
 id|MODULE_PARM

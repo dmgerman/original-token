@@ -131,8 +131,6 @@ suffix:semicolon
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Not used */
 DECL|variable|smp_commenced
@@ -374,8 +372,6 @@ DECL|variable|call_data
 )brace
 op_star
 id|call_data
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|smp_call_function
 r_int

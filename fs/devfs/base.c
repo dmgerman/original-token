@@ -420,8 +420,6 @@ r_struct
 id|devfs_entry
 op_star
 id|root_entry
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|struct|devfsd_buf_entry
 r_struct

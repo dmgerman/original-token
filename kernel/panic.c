@@ -34,8 +34,6 @@ r_struct
 id|notifier_block
 op_star
 id|panic_notifier_list
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|panic_setup
 r_static

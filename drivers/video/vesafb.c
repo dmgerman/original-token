@@ -1932,6 +1932,7 @@ comma
 suffix:semicolon
 DECL|function|vesafb_setup
 r_int
+id|__init
 id|vesafb_setup
 c_func
 (paren

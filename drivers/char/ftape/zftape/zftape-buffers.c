@@ -21,16 +21,12 @@ r_static
 r_int
 r_int
 id|used_memory
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|peak_memory
 r_static
 r_int
 r_int
 id|peak_memory
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|zft_memory_stats
 r_void

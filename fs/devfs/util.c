@@ -411,14 +411,10 @@ r_static
 r_int
 r_int
 id|tape_counter
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|devfs_handle_t
 id|tape_dir
-op_assign
-l_int|NULL
 suffix:semicolon
 r_if
 c_cond

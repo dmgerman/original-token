@@ -15,8 +15,6 @@ DECL|variable|congenb
 r_static
 r_int
 id|congenb
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Enable congestion control in the DP83840. */
 DECL|variable|txfifo
@@ -47,8 +45,6 @@ DECL|variable|rxdmacount
 r_static
 r_int
 id|rxdmacount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-buffer Rx method.&n;   Lower values use more memory, but are faster. */
 DECL|variable|rx_copybreak
@@ -2143,14 +2139,10 @@ suffix:semicolon
 r_static
 r_int
 id|cards_found
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_int
 id|did_version
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Already printed version info. */
 r_if

@@ -213,8 +213,6 @@ DECL|variable|active
 r_static
 r_int
 id|active
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* number of active cards */
 DECL|variable|card_array
@@ -222,8 +220,6 @@ r_static
 id|sdla_t
 op_star
 id|card_array
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* adapter data space */
 multiline_comment|/* Task queue element for creating a &squot;thread&squot; */

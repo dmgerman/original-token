@@ -44,8 +44,6 @@ DECL|variable|dongle_id
 r_static
 r_int
 id|dongle_id
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Use BIOS settions by default, but user may supply module parameters */
 DECL|variable|io

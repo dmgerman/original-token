@@ -317,7 +317,7 @@ op_star
 id|alloc_bootmem_node
 c_func
 (paren
-id|nid
+id|pgdat
 comma
 id|size
 )paren

@@ -71,16 +71,12 @@ DECL|variable|idebus_parameter
 r_static
 r_int
 id|idebus_parameter
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* holds the &quot;idebus=&quot; parameter */
 DECL|variable|system_bus_speed
 r_static
 r_int
 id|system_bus_speed
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* holds what we think is VESA/PCI bus speed */
 DECL|variable|initializing
@@ -94,8 +90,6 @@ DECL|variable|ide_scan_direction
 r_static
 r_int
 id|ide_scan_direction
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* THIS was formerly 2.2.x pci=reverse */
 macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
@@ -105,8 +99,6 @@ DECL|variable|ide_lock
 r_static
 r_int
 id|ide_lock
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif /* __mc68000__ || CONFIG_APUS */
 multiline_comment|/*&n; * ide_modules keeps track of the available IDE chipset/probe/driver modules.&n; */
@@ -114,15 +106,11 @@ DECL|variable|ide_modules
 id|ide_module_t
 op_star
 id|ide_modules
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|ide_probe
 id|ide_module_t
 op_star
 id|ide_probe
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * This is declared extern in ide.h, for access by other IDE modules:&n; */
 DECL|variable|ide_hwifs
@@ -6347,12 +6335,8 @@ r_static
 r_int
 r_int
 id|last_msgtime
-op_assign
-l_int|0
 comma
 id|count
-op_assign
-l_int|0
 suffix:semicolon
 op_increment
 id|count
@@ -16242,8 +16226,6 @@ multiline_comment|/*&n; * Probe module&n; */
 DECL|variable|ide_devfs_handle
 id|devfs_handle_t
 id|ide_devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|ide_probe
 id|EXPORT_SYMBOL
@@ -16589,8 +16571,6 @@ r_void
 r_static
 r_char
 id|banner_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|i

@@ -4447,7 +4447,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|econet_proto_init
 id|module_init
 c_func
@@ -4462,5 +4461,4 @@ c_func
 id|econet_proto_exit
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

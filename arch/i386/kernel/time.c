@@ -49,8 +49,6 @@ DECL|variable|fast_gettimeoffset_quotient
 r_int
 r_int
 id|fast_gettimeoffset_quotient
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 id|rwlock_t
@@ -816,14 +814,10 @@ DECL|variable|last_rtc_update
 r_static
 r_int
 id|last_rtc_update
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|timer_ack
 r_int
 id|timer_ack
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * timer_interrupt() needs to keep up the real-time clock,&n; * as well as call the &quot;do_timer()&quot; routine every clocktick&n; */
 DECL|function|do_timer_interrupt
@@ -1045,8 +1039,6 @@ DECL|variable|use_tsc
 r_static
 r_int
 id|use_tsc
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * Time Stamp Counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
 DECL|function|timer_interrupt

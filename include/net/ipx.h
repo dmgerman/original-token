@@ -99,7 +99,6 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#include &lt;net/ipxcall.h&gt;
 DECL|struct|ipx_interface
 r_typedef
 r_struct

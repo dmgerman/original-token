@@ -1,13 +1,98 @@
-multiline_comment|/*&n; *    $Id: zorro.c,v 1.1.2.1 1998/06/07 23:21:02 geert Exp $&n; *&n; *    Zorro Expansion Device Names&n; *&n; *    Copyright (C) 1999-2000 Geert Uytterhoeven&n; *&n; *    This file is subject to the terms and conditions of the GNU General Public&n; *    License.  See the file COPYING in the main directory of this archive&n; *    for more details.&n; */
+multiline_comment|/*&n; *&t;Zorro Device Name Tables&n; *&n; *&t;Copyright (C) 1999--2000 Geert Uytterhoeven&n; *&n; *&t;Based on the PCI version:&n; *&n; *&t;Copyright 1992--1999 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
-multiline_comment|/*&n;     *  Just for reference, these are the boards we have a driver for in the&n;     *  kernel:&n;     *&n;     *  ZORRO_PROD_AMERISTAR_A2065&n;     *  ZORRO_PROD_BSC_FRAMEMASTER_II&n;     *  ZORRO_PROD_BSC_MULTIFACE_III&n;     *  ZORRO_PROD_BSC_OKTAGON_2008&n;     *  ZORRO_PROD_CBM_A2065_1&n;     *  ZORRO_PROD_CBM_A2065_2&n;     *  ZORRO_PROD_CBM_A4091_1&n;     *  ZORRO_PROD_CBM_A4091_2&n;     *  ZORRO_PROD_CBM_A590_A2091_1&n;     *  ZORRO_PROD_CBM_A590_A2091_2&n;     *  ZORRO_PROD_GVP_A1291&n;     *  ZORRO_PROD_GVP_A530_SCSI&n;     *  ZORRO_PROD_GVP_COMBO_030_R3_SCSI&n;     *  ZORRO_PROD_GVP_COMBO_030_R4_SCSI&n;     *  ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM&n;     *  ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG&n;     *  ZORRO_PROD_GVP_GFORCE_030_SCSI&n;     *  ZORRO_PROD_GVP_GFORCE_040_060&n;     *  ZORRO_PROD_GVP_GFORCE_040_1&n;     *  ZORRO_PROD_GVP_GFORCE_040_SCSI_1&n;     *  ZORRO_PROD_GVP_IO_EXTENDER&n;     *  ZORRO_PROD_GVP_SERIES_II&n;     *  ZORRO_PROD_HELFRICH_PICCOLO_RAM&n;     *  ZORRO_PROD_HELFRICH_PICCOLO_REG&n;     *  ZORRO_PROD_HELFRICH_RAINBOW_II&n;     *  ZORRO_PROD_HELFRICH_SD64_RAM&n;     *  ZORRO_PROD_HELFRICH_SD64_REG&n;     *  ZORRO_PROD_HYDRA_SYSTEMS_AMIGANET&n;     *  ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA&n;     *  ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL&n;     *  ZORRO_PROD_MACROSYSTEMS_RETINA_Z3&n;     *  ZORRO_PROD_MACROSYSTEMS_WARP_ENGINE_40xx&n;     *  ZORRO_PROD_PHASE5_BLIZZARD_1220_CYBERSTORM&n;     *  ZORRO_PROD_PHASE5_BLIZZARD_1230_II_FASTLANE_Z3_CYBERSCSI_CYBERSTORM060&n;     *  ZORRO_PROD_PHASE5_BLIZZARD_1230_IV_1260&n;     *  ZORRO_PROD_PHASE5_BLIZZARD_2060&n;     *  ZORRO_PROD_PHASE5_BLIZZARD_603E_PLUS&n;     *  ZORRO_PROD_PHASE5_CYBERSTORM_MK_II&n;     *  ZORRO_PROD_PHASE5_CYBERVISION64&n;     *  ZORRO_PROD_PHASE5_CYBERVISION64_3D&n;     *  ZORRO_PROD_VILLAGE_TRONIC_ARIADNE&n;     *  ZORRO_PROD_VILLAGE_TRONIC_ARIADNE2&n;     *  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM&n;     *  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG&n;     *  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3&n;     *&n;     *  And I guess these are automagically supported as well :-)&n;     *&n;     *  ZORRO_PROD_CBM_A560_RAM&n;     *  ZORRO_PROD_CBM_A590_A2052_A2058_A2091&n;     */
-DECL|function|zorro_namedevice
+macro_line|#ifdef CONFIG_ZORRO_NAMES
+DECL|struct|zorro_prod_info
+r_struct
+id|zorro_prod_info
+(brace
+DECL|member|prod
+id|__u16
+id|prod
+suffix:semicolon
+DECL|member|seen
+r_int
+r_int
+id|seen
+suffix:semicolon
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|zorro_manuf_info
+r_struct
+id|zorro_manuf_info
+(brace
+DECL|member|manuf
+id|__u16
+id|manuf
+suffix:semicolon
+DECL|member|nr
+r_int
+r_int
+id|nr
+suffix:semicolon
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|prods
+r_struct
+id|zorro_prod_info
+op_star
+id|prods
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * This is ridiculous, but we want the strings in&n; * the .init section so that they don&squot;t take up&n; * real memory.. Parse the same file multiple times&n; * to get all the info.&n; */
+DECL|macro|MANUF
+mdefine_line|#define MANUF( manuf, name )&t;&t;static const char __manufstr_##manuf[] __initdata = name;
+DECL|macro|ENDMANUF
+mdefine_line|#define ENDMANUF()
+DECL|macro|PRODUCT
+mdefine_line|#define PRODUCT( manuf, prod, name ) &t;static const char __prodstr_##manuf##prod[] __initdata = name;
+macro_line|#include &quot;devlist.h&quot;
+DECL|macro|MANUF
+mdefine_line|#define MANUF( manuf, name )&t;&t;static struct zorro_prod_info __prods_##manuf[] __initdata = {
+DECL|macro|ENDMANUF
+mdefine_line|#define ENDMANUF()&t;&t;&t;};
+DECL|macro|PRODUCT
+mdefine_line|#define PRODUCT( manuf, prod, name )&t;{ 0x##prod, 0, __prodstr_##manuf##prod },
+macro_line|#include &quot;devlist.h&quot;
+DECL|variable|zorro_manuf_list
+r_static
+r_const
+r_struct
+id|zorro_manuf_info
+id|__initdata
+id|zorro_manuf_list
+(braket
+)braket
+op_assign
+(brace
+DECL|macro|MANUF
+mdefine_line|#define MANUF( manuf, name )&t;&t;{ 0x##manuf, sizeof(__prods_##manuf) / sizeof(struct zorro_prod_info), __manufstr_##manuf, __prods_##manuf },
+DECL|macro|ENDMANUF
+mdefine_line|#define ENDMANUF()
+DECL|macro|PRODUCT
+mdefine_line|#define PRODUCT( manuf, prod, name )
+macro_line|#include &quot;devlist.h&quot;
+)brace
+suffix:semicolon
+DECL|macro|MANUFS
+mdefine_line|#define MANUFS (sizeof(zorro_manuf_list)/sizeof(struct zorro_manuf_info))
+DECL|function|zorro_name_device
 r_void
 id|__init
-id|zorro_namedevice
+id|zorro_name_device
 c_func
 (paren
 r_struct
@@ -16,16 +101,202 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;     *  Nah, we&squot;re not that stupid to put name databases in the kernel ;-)&n;     *  That&squot;s why we have zorroutils...&n;     */
+r_const
+r_struct
+id|zorro_manuf_info
+op_star
+id|manuf_p
+op_assign
+id|zorro_manuf_list
+suffix:semicolon
+r_int
+id|i
+op_assign
+id|MANUFS
+suffix:semicolon
+r_char
+op_star
+id|name
+op_assign
+id|dev-&gt;name
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|manuf_p-&gt;manuf
+op_eq
+id|ZORRO_MANUF
+c_func
+(paren
+id|dev-&gt;id
+)paren
+)paren
+r_goto
+id|match_manuf
+suffix:semicolon
+id|manuf_p
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|i
+)paren
+suffix:semicolon
+multiline_comment|/* Couldn&squot;t find either the manufacturer nor the product */
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|name
 comma
 l_string|&quot;Zorro device %08x&quot;
 comma
 id|dev-&gt;id
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+id|match_manuf
+suffix:colon
+(brace
+r_struct
+id|zorro_prod_info
+op_star
+id|prod_p
+op_assign
+id|manuf_p-&gt;prods
+suffix:semicolon
+r_int
+id|i
+op_assign
+id|manuf_p-&gt;nr
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+OG
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|prod_p-&gt;prod
+op_eq
+(paren
+(paren
+id|ZORRO_PROD
+c_func
+(paren
+id|dev-&gt;id
+)paren
+op_lshift
+l_int|8
+)paren
+op_or
+id|ZORRO_EPC
+c_func
+(paren
+id|dev-&gt;id
+)paren
+)paren
+)paren
+r_goto
+id|match_prod
+suffix:semicolon
+id|prod_p
+op_increment
+suffix:semicolon
+id|i
+op_decrement
+suffix:semicolon
 )brace
+multiline_comment|/* Ok, found the manufacturer, but unknown product */
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;Zorro device %08x (%s)&quot;
+comma
+id|dev-&gt;id
+comma
+id|manuf_p-&gt;name
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+multiline_comment|/* Full match */
+id|match_prod
+suffix:colon
+(brace
+r_char
+op_star
+id|n
+op_assign
+id|name
+op_plus
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;%s %s&quot;
+comma
+id|manuf_p-&gt;name
+comma
+id|prod_p-&gt;name
+)paren
+suffix:semicolon
+r_int
+id|nr
+op_assign
+id|prod_p-&gt;seen
+op_plus
+l_int|1
+suffix:semicolon
+id|prod_p-&gt;seen
+op_assign
+id|nr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr
+OG
+l_int|1
+)paren
+id|sprintf
+c_func
+(paren
+id|n
+comma
+l_string|&quot; (#%d)&quot;
+comma
+id|nr
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#else
+DECL|function|zorro_name_device
+r_void
+id|__init
+id|zorro_name_device
+c_func
+(paren
+r_struct
+id|zorro_dev
+op_star
+id|dev
+)paren
+(brace
+)brace
+macro_line|#endif
 eof

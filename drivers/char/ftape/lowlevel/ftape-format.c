@@ -22,8 +22,6 @@ DECL|variable|switch_segment
 r_static
 r_int
 id|switch_segment
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *  at most 256 segments fit into one 32 kb buffer.  Even TR-1 cartridges have&n; *  more than this many segments per track, so better be careful.&n; *&n; *  buffer_struct *buff: buffer to store the formatting coordinates in&n; *  int  start: starting segment for this buffer.&n; *  int    spt: segments per track&n; *&n; *  Note: segment ids are relative to the start of the track here.&n; */
 DECL|function|setup_format_buffer

@@ -153,16 +153,12 @@ r_static
 id|kmem_cache_t
 op_star
 id|nfs_page_cachep
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|nfs_wdata_cachep
 r_static
 id|kmem_cache_t
 op_star
 id|nfs_wdata_cachep
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|nfs_page_alloc
 r_static
@@ -5099,8 +5095,6 @@ r_static
 r_int
 r_int
 id|complain
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -5155,8 +5149,6 @@ r_static
 r_int
 r_int
 id|complain
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

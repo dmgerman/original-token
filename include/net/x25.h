@@ -471,7 +471,6 @@ id|x25_neigh
 op_star
 )paren
 suffix:semicolon
-macro_line|#include &lt;net/x25call.h&gt;
 multiline_comment|/* x25_dev.c */
 r_extern
 r_void

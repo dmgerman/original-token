@@ -324,14 +324,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Fastlane Z3 SCSI Host Adapter&quot;
-)paren
-suffix:semicolon
 id|esp
 op_assign
 id|esp_allocate

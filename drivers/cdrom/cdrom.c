@@ -49,16 +49,12 @@ DECL|variable|debug
 r_static
 r_int
 id|debug
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* used to keep tray locked at all times */
 DECL|variable|keeplocked
 r_static
 r_int
 id|keeplocked
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* default compatibility mode */
 DECL|variable|autoclose
@@ -72,8 +68,6 @@ DECL|variable|autoeject
 r_static
 r_int
 id|autoeject
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|lockdoor
 r_static
@@ -87,8 +81,6 @@ DECL|variable|check_media_type
 r_static
 r_int
 id|check_media_type
-op_assign
-l_int|0
 suffix:semicolon
 id|MODULE_PARM
 c_func
@@ -318,15 +310,11 @@ r_struct
 id|cdrom_device_info
 op_star
 id|topCdromPtr
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|cdrom_fops
 r_struct
@@ -369,8 +357,6 @@ id|cdi
 r_static
 r_char
 id|banner_printed
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|major
@@ -410,8 +396,6 @@ r_static
 r_int
 r_int
 id|cdrom_counter
-op_assign
-l_int|0
 suffix:semicolon
 id|cdinfo
 c_func
@@ -12267,8 +12251,6 @@ r_void
 r_static
 r_int
 id|initialized
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

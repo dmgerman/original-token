@@ -85,8 +85,6 @@ r_struct
 id|raparms
 op_star
 id|raparml
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|raparm_cache
 r_static
@@ -94,8 +92,6 @@ r_struct
 id|raparms
 op_star
 id|raparm_cache
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Look up one component of a pathname.&n; * N.B. After this call _both_ fhp and resfh need an fh_put&n; *&n; * If the lookup would cross a mountpoint, and the mounted filesystem&n; * is exported to the client with NFSEXP_CROSSMNT, then the lookup is&n; * accepted as it stands and the mounted directory is&n; * returned. Otherwise the covered directory is returned.&n; * NOTE: this mountpoint crossing is not supported properly by all&n; *   clients and is explicitly disallowed for NFSv3&n; *      NeilBrown &lt;neilb@cse.unsw.edu.au&gt;&n; */
 r_int
@@ -2771,8 +2767,6 @@ r_static
 r_int
 r_int
 id|last_ino
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 id|kdev_t

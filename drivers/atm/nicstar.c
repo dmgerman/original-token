@@ -629,8 +629,6 @@ DECL|variable|num_cards
 r_static
 r_int
 id|num_cards
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|atm_ops
 r_static

@@ -32,8 +32,6 @@ DECL|variable|totalram_pages
 r_int
 r_int
 id|totalram_pages
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|__bad_pte_kernel
 r_void

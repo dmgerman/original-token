@@ -40,7 +40,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|unix_sysctl_header
 r_static
 r_struct
@@ -150,6 +149,5 @@ id|unix_sysctl_header
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* MODULE */
 macro_line|#endif&t;/* CONFIG_SYSCTL */
 eof

@@ -62,8 +62,6 @@ r_struct
 id|nlm_block
 op_star
 id|nlm_blocked
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Insert a blocked lock into the global list&n; */
 r_static

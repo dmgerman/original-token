@@ -42,8 +42,6 @@ r_int
 r_int
 id|led
 )paren
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|handle_scancode
 id|EXPORT_SYMBOL
@@ -109,11 +107,6 @@ id|k_down
 (braket
 id|NR_SHIFT
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/* keyboard key bitmap */
 DECL|variable|key_down
@@ -126,25 +119,16 @@ l_int|256
 op_div
 id|BITS_PER_LONG
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|dead_key_next
 r_static
 r_int
 id|dead_key_next
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* &n; * In order to retrieve the shift_state (for the mouse server), either&n; * the variable must be global, or a new procedure must be created to &n; * return the value. I chose the former way.&n; */
 DECL|variable|shift_state
 r_int
 id|shift_state
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|npadch
 r_static
@@ -160,15 +144,11 @@ r_static
 r_int
 r_char
 id|diacr
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|rep
 r_static
 r_char
 id|rep
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* flag telling character repeat */
 DECL|variable|kbd_table
@@ -202,8 +182,6 @@ r_struct
 id|tty_struct
 op_star
 id|tty
-op_assign
-l_int|NULL
 suffix:semicolon
 r_void
 id|compute_shiftstate
@@ -574,8 +552,6 @@ r_struct
 id|pm_dev
 op_star
 id|pm_kbd
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Many other routines do put_queue, but I think either&n; * they produce ASCII, or they produce some user-assigned&n; * string, and in both cases we might assume that it is&n; * in utf-8 already.&n; */
 DECL|function|to_utf8

@@ -18,15 +18,11 @@ DECL|variable|nfsd_nr_verified
 r_static
 r_int
 id|nfsd_nr_verified
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|nfsd_nr_put
 r_static
 r_int
 id|nfsd_nr_put
-op_assign
-l_int|0
 suffix:semicolon
 DECL|struct|nfsd_getdents_callback
 r_struct

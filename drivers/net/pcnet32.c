@@ -70,8 +70,6 @@ r_struct
 id|net_device
 op_star
 id|pcnet32_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|max_interrupt_work
 r_static
@@ -185,11 +183,6 @@ id|options
 (braket
 id|MAX_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|full_duplex
 r_static
@@ -198,11 +191,6 @@ id|full_duplex
 (braket
 id|MAX_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;&t;&t;&t;Theory of Operation&n; * &n; * This driver uses the same software structure as the normal lance&n; * driver. So look for a verbose description in lance.c. The differences&n; * to the normal lance driver is the use of the 32bit mode of PCnet32&n; * and PCnetPCI chips. Because these chips are 32bit chips, there is no&n; * 16MB limitation and we don&squot;t need bounce buffers.&n; */
 multiline_comment|/*&n; * History:&n; * v0.01:  Initial version&n; *&t;   only tested on Alpha Noname Board&n; * v0.02:  changed IRQ handling for new interrupt scheme (dev_id)&n; *&t;   tested on a ASUS SP3G&n; * v0.10:  fixed an odd problem with the 79C974 in a Compaq Deskpro XL&n; *&t;   looks like the 974 doesn&squot;t like stopping and restarting in a&n; *&t;   short period of time; now we do a reinit of the lance; the&n; *&t;   bug was triggered by doing ifconfig eth0 &lt;ip&gt; broadcast &lt;addr&gt;&n; *&t;   and hangs the machine (thanks to Klaus Liedl for debugging)&n; * v0.12:  by suggestion from Donald Becker: Renamed driver to pcnet32,&n; *&t;   made it standalone (no need for lance.c)&n; * v0.13:  added additional PCI detecting for special PCI devices (Compaq)&n; * v0.14:  stripped down additional PCI probe (thanks to David C Niemi&n; *&t;   and sveneric@xs4all.nl for testing this on their Compaq boxes)&n; * v0.15:  added 79C965 (VLB) probe&n; *&t;   added interrupt sharing for PCI chips&n; * v0.16:  fixed set_multicast_list on Alpha machines&n; * v0.17:  removed hack from dev.c; now pcnet32 uses ethif_probe in Space.c&n; * v0.19:  changed setting of autoselect bit&n; * v0.20:  removed additional Compaq PCI probe; there is now a working one&n; *&t;   in arch/i386/bios32.c&n; * v0.21:  added endian conversion for ppc, from work by cort@cs.nmt.edu&n; * v0.22:  added printing of status to ring dump&n; * v0.23:  changed enet_statistics to net_devive_stats&n; * v0.90:  added multicast filter&n; *&t;   added module support&n; *&t;   changed irq probe to new style&n; *&t;   added PCnetFast chip id&n; *&t;   added fix for receive stalls with Intel saturn chipsets&n; *&t;   added in-place rx skbs like in the tulip driver&n; *&t;   minor cleanups&n; * v0.91:  added PCnetFast+ chip id&n; *&t;   back port to 2.0.x&n; * v1.00:  added some stuff from Donald Becker&squot;s 2.0.34 version&n; *&t;   added support for byte counters in net_dev_stats&n; * v1.01:  do ring dumps, only when debugging the driver&n; *&t;   increased the transmit timeout&n; * v1.02:  fixed memory leak in pcnet32_init_ring()&n; * v1.10:  workaround for stopped transmitter&n; *&t;   added port selection for modules&n; *&t;   detect special T1/E1 WAN card and setup port selection&n; * v1.11:  fixed wrong checking of Tx errors&n; * v1.20:  added check of return value kmalloc (cpeterso@cs.washington.edu)&n; *&t;   added save original kmalloc addr for freeing (mcr@solidum.com)&n; *&t;   added support for PCnetHome chip (joe@MIT.EDU)&n; *&t;   rewritten PCI card detection&n; *&t;   added dwio mode to get driver working on some PPC machines&n; * v1.21:  added mii selection and mii ioctl&n; * v1.22:  changed pci scanning code to make PPC people happy&n; *&t;   fixed switching to 32bit mode in pcnet32_open() (thanks&n; *&t;   to Michael Richard &lt;mcr@solidum.com&gt; for noticing this one)&n; *&t;   added sub vendor/device id matching (thanks again to &n; *&t;   Michael Richard &lt;mcr@solidum.com&gt;)&n; *&t;   added chip id for 79c973/975 (thanks to Zach Brown &lt;zab@zabbo.net&gt;)&n; * v1.23   fixed small bug, when manual selecting MII speed/duplex&n; * v1.24   Applied Thomas&squot; patch to use TxStartPoint and thus decrease TxFIFO&n; *&t;   underflows.&t;Added tx_start_pt module parameter. Increased&n; *&t;   TX_RING_SIZE from 16 to 32.&t;Added #ifdef&squot;d code to use DXSUFLO&n; *&t;   for FAST[+] chipsets. &lt;kaf@fc.hp.com&gt;&n; * v1.24ac Added SMP spinlocking - Alan Cox &lt;alan@redhat.com&gt;&n; * v1.25kf Added No Interrupt on successful Tx for some Tx&squot;s &lt;kaf@fc.hp.com&gt;&n; * v1.26   Converted to pci_alloc_consistent, Jamey Hicks / George France&n; *                                           &lt;jamey@crl.dec.com&gt;&n; */
@@ -1668,8 +1656,6 @@ id|ent
 r_static
 r_int
 id|card_idx
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 id|ioaddr

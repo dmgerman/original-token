@@ -13,11 +13,19 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/vt_buffer.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/vga.h&gt;
+DECL|variable|mda_lock
+r_static
+id|spinlock_t
+id|mda_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* description of the hardware layout */
 DECL|variable|mda_vram_base
 r_static
@@ -228,15 +236,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|mda_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|outb_p
@@ -255,9 +261,12 @@ comma
 id|mda_value_port
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|mda_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -281,15 +290,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|mda_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|outb_p
@@ -330,6 +337,15 @@ comma
 id|mda_value_port
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|mda_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -356,15 +372,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|mda_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|outb_p
@@ -400,9 +414,12 @@ op_eq
 id|val
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|mda_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -1550,8 +1567,10 @@ op_xor
 l_int|0x0800
 comma
 id|p
-op_increment
 )paren
+suffix:semicolon
+id|p
+op_increment
 suffix:semicolon
 )brace
 )brace
@@ -2500,6 +2519,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  The console `switch&squot; structure for the MDA based console&n; */
 DECL|variable|mda_con
+r_const
 r_struct
 id|consw
 id|mda_con

@@ -284,14 +284,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;AriadNE2 Ethernet&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

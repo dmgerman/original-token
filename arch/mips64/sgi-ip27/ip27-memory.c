@@ -769,7 +769,11 @@ op_assign
 id|init_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|slot_freepfn
 comma
@@ -781,7 +785,11 @@ suffix:semicolon
 id|free_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|slot_firstpfn
 op_lshift
@@ -799,7 +807,11 @@ suffix:semicolon
 id|reserve_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|slot_firstpfn
 op_lshift
@@ -1221,7 +1233,11 @@ op_add_assign
 id|free_all_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|nid
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We need to manually do the other slots.&n;&t;&t; */

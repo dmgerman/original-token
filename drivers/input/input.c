@@ -89,8 +89,6 @@ r_struct
 id|input_dev
 op_star
 id|input_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|input_handler
 r_static
@@ -98,8 +96,6 @@ r_struct
 id|input_handler
 op_star
 id|input_handler
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|input_table
 r_static
@@ -110,26 +106,16 @@ id|input_table
 (braket
 l_int|8
 )braket
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* ... */
-)brace
 suffix:semicolon
 DECL|variable|input_devfs_handle
 r_static
 id|devfs_handle_t
 id|input_devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|input_number
 r_static
 r_int
 id|input_number
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|input_devices
 r_static
@@ -142,12 +128,6 @@ c_func
 id|INPUT_DEVICES
 )paren
 )braket
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* ... */
-)brace
 suffix:semicolon
 DECL|function|input_event
 r_void

@@ -9308,12 +9308,6 @@ id|irq
 (braket
 id|IBMTR_MAX_ADAPTERS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|mem
 r_static
@@ -9322,12 +9316,6 @@ id|mem
 (braket
 id|IBMTR_MAX_ADAPTERS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 id|MODULE_PARM
 c_func

@@ -34,8 +34,6 @@ DECL|variable|timer_alive
 r_static
 r_int
 id|timer_alive
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef ONLY_TESTING
 multiline_comment|/*&n; *&t;If the timer expires..&n; */

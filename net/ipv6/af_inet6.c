@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.58 2000/09/18 05:59:48 davem Exp $&n; *&n; * &t;Fixes:&n; * &t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; * &t;Arnaldo Melo&t;&t;: &t;check proc_net_create return, cleanups&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.59 2000/10/15 01:34:45 davem Exp $&n; *&n; * &t;Fixes:&n; * &t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; * &t;Arnaldo Melo&t;&t;: &t;check proc_net_create return, cleanups&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1965,26 +1965,15 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|inet6_init
+r_static
 r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
-r_void
 id|__init
-id|inet6_proto_init
+id|inet6_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|sk_buff
@@ -2047,15 +2036,10 @@ id|KERN_CRIT
 l_string|&quot;inet6_proto_init: size fault&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#else
-r_return
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n;&t; *&t;ipngwg API draft makes clear that the correct semantics&n;&t; *&t;for TCP and UDP is to consider one TCP and UDP instance&n;&t; *&t;in a host availiable by both INET and INET6 APIs and&n;&t; *&t;able to communicate via both network protocols.&n;&t; */
 macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_SYSCTL)
@@ -2261,14 +2245,9 @@ op_amp
 id|inet6_family_ops
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_return
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_snmp6_fail
 suffix:colon
@@ -2333,19 +2312,22 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 r_return
 id|err
 suffix:semicolon
-macro_line|#else
-r_return
-suffix:semicolon
-macro_line|#endif
 )brace
+DECL|variable|inet6_init
+id|module_init
+c_func
+(paren
+id|inet6_init
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|inet6_exit
+r_static
 r_void
-id|cleanup_module
+id|inet6_exit
 c_func
 (paren
 r_void
@@ -2444,5 +2426,12 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif&t;/* MODULE */
+DECL|variable|inet6_exit
+id|module_exit
+c_func
+(paren
+id|inet6_exit
+)paren
+suffix:semicolon
+macro_line|#endif /* MODULE */
 eof

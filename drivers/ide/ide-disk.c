@@ -57,7 +57,6 @@ op_decrement
 (brace
 op_star
 id|p
-op_increment
 op_assign
 op_star
 id|p
@@ -69,9 +68,11 @@ id|p
 op_rshift
 l_int|8
 suffix:semicolon
-op_star
 id|p
 op_increment
+suffix:semicolon
+op_star
+id|p
 op_assign
 op_star
 id|p
@@ -82,6 +83,9 @@ op_star
 id|p
 op_rshift
 l_int|8
+suffix:semicolon
+id|p
+op_increment
 suffix:semicolon
 )brace
 )brace

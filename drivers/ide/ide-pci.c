@@ -105,6 +105,8 @@ DECL|macro|DEVID_AMD7403
 mdefine_line|#define DEVID_AMD7403&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     PCI_DEVICE_ID_AMD_COBRA_7403})
 DECL|macro|DEVID_AMD7409
 mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     PCI_DEVICE_ID_AMD_VIPER_7409})
+DECL|macro|DEVID_SLC90E66
+mdefine_line|#define DEVID_SLC90E66&t;((ide_pci_devid_t){PCI_VENDOR_ID_EFAR,    PCI_DEVICE_ID_EFAR_SLC90E66_1})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define&t;IDE_IGNORE&t;((void *)-1)
 macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
@@ -756,6 +758,55 @@ DECL|macro|ATA66_SIS5513
 mdefine_line|#define ATA66_SIS5513&t;NULL
 DECL|macro|INIT_SIS5513
 mdefine_line|#define INIT_SIS5513&t;NULL
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_SLC90E66
+r_extern
+r_int
+r_int
+id|pci_init_slc90e66
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|ata66_slc90e66
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_slc90e66
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|PCI_SLC90E66
+mdefine_line|#define PCI_SLC90E66&t;&amp;pci_init_slc90e66
+DECL|macro|ATA66_SLC90E66
+mdefine_line|#define ATA66_SLC90E66&t;&amp;ata66_slc90e66
+DECL|macro|INIT_SLC90E66
+mdefine_line|#define INIT_SLC90E66&t;&amp;ide_init_slc90e66
+macro_line|#else
+DECL|macro|PCI_SLC90E66
+mdefine_line|#define PCI_SLC90E66&t;NULL
+DECL|macro|ATA66_SLC90E66
+mdefine_line|#define ATA66_SLC90E66&t;NULL
+DECL|macro|INIT_SLC90E66
+mdefine_line|#define INIT_SLC90E66&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_SL82C105
 r_extern
@@ -2654,6 +2705,42 @@ l_int|0
 )brace
 comma
 (brace
+id|DEVID_SLC90E66
+comma
+l_string|&quot;SLC90E66&quot;
+comma
+id|PCI_SLC90E66
+comma
+id|ATA66_SLC90E66
+comma
+id|INIT_SLC90E66
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
 id|IDE_PCI_DEVID_NULL
 comma
 l_string|&quot;PCI_IDE&quot;
@@ -3180,12 +3267,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|res-&gt;flags
 op_amp
-id|PCI_BASE_ADDRESS_SPACE_IO
+id|IORESOURCE_IO
 )paren
+op_eq
+l_int|0
 )paren
 r_continue
 suffix:semicolon
@@ -3276,13 +3364,23 @@ r_int
 r_int
 id|class_rev
 suffix:semicolon
-r_int
-id|pci_class_ide
-suffix:semicolon
 macro_line|#ifdef CONFIG_IDEDMA_AUTO
 id|autodma
 op_assign
 l_int|1
+suffix:semicolon
+macro_line|#endif
+macro_line|#if 1&t;/* what do do with this useful tool ??? */
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_return
 suffix:semicolon
 macro_line|#endif
 id|check_if_enabled
@@ -3470,25 +3568,29 @@ id|pciirq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
-id|pci_class_ide
-op_assign
+r_if
+c_cond
 (paren
 (paren
 id|dev
 op_member_access_from_pointer
 r_class
-op_rshift
+op_amp
+op_complement
+(paren
+l_int|0xfa
+)paren
+)paren
+op_ne
+(paren
+(paren
+id|PCI_CLASS_STORAGE_IDE
+op_lshift
 l_int|8
 )paren
-op_eq
-id|PCI_CLASS_STORAGE_IDE
+op_or
+l_int|5
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_class_ide
 )paren
 (brace
 id|printk
@@ -3536,7 +3638,6 @@ id|tried_config
 id|printk
 c_func
 (paren
-id|KERN_INFO
 l_string|&quot;%s: will probe irqs later&bslash;n&quot;
 comma
 id|d-&gt;name
@@ -3555,50 +3656,19 @@ op_logical_neg
 id|pciirq
 )paren
 (brace
-r_if
-c_cond
+id|printk
+c_func
 (paren
-id|pci_class_ide
+l_string|&quot;%s: bad irq (%d): will probe later&bslash;n&quot;
+comma
+id|d-&gt;name
+comma
+id|pciirq
 )paren
-(brace
-multiline_comment|/* this is the normal path for most IDE devices */
-r_if
-c_cond
-(paren
-id|d-&gt;init_chipset
-)paren
+suffix:semicolon
 id|pciirq
 op_assign
-id|d
-op_member_access_from_pointer
-id|init_chipset
-c_func
-(paren
-id|dev
-comma
-id|d-&gt;name
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s standard IDE storage device detected&bslash;n&quot;
-comma
-id|d-&gt;name
-)paren
-suffix:semicolon
-)brace
-r_else
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: bad irq (0): will probe later&bslash;n&quot;
-comma
-id|d-&gt;name
-)paren
+l_int|0
 suffix:semicolon
 )brace
 r_else

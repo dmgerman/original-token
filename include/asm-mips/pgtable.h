@@ -1989,6 +1989,7 @@ id|val
 )paren
 suffix:semicolon
 )brace
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|io_remap_page_range
 mdefine_line|#define io_remap_page_range remap_page_range

@@ -259,14 +259,6 @@ l_string|&quot;NCR53C9x&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Blizzard 2060 Accelerator&quot;
-)paren
-suffix:semicolon
 id|esp
 op_assign
 id|esp_allocate

@@ -1888,7 +1888,11 @@ suffix:semicolon
 id|free_bootmem_node
 c_func
 (paren
+id|NODE_DATA
+c_func
+(paren
 id|node
+)paren
 comma
 id|start
 comma

@@ -27,8 +27,6 @@ multiline_comment|/*&n; * Local NSM state&n; */
 DECL|variable|nsm_local_state
 id|u32
 id|nsm_local_state
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Common procedure for SM_MON/SM_UNMON calls&n; */
 r_static

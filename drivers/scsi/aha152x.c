@@ -5336,6 +5336,8 @@ op_minus
 id|IRQ_MIN
 )braket
 op_assign
+l_int|0
+suffix:semicolon
 id|shpnt
 op_assign
 l_int|0

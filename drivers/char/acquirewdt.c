@@ -23,8 +23,6 @@ DECL|variable|acq_is_open
 r_static
 r_int
 id|acq_is_open
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|acq_lock
 r_static

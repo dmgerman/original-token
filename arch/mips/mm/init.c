@@ -34,8 +34,6 @@ r_static
 r_int
 r_int
 id|totalram_pages
-op_assign
-l_int|0
 suffix:semicolon
 r_extern
 r_void

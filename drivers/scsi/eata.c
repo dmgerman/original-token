@@ -1160,8 +1160,6 @@ DECL|variable|link_statistics
 r_static
 r_int
 id|link_statistics
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|tag_mode
 r_static
@@ -1196,8 +1194,6 @@ r_static
 r_char
 op_star
 id|boot_options
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#if defined(CONFIG_SCSI_EATA_TAGGED_QUEUE)
 DECL|variable|tagged_comm

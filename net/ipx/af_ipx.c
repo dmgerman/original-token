@@ -9634,16 +9634,14 @@ comma
 l_int|0x37
 )brace
 suffix:semicolon
-multiline_comment|/* Called by protocols.c on kernel start up */
-DECL|function|ipx_proto_init
-r_void
-id|ipx_proto_init
+DECL|function|ipx_init
+r_static
+r_int
+id|__init
+id|ipx_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 (paren
@@ -9789,7 +9787,17 @@ id|KERN_INFO
 l_string|&quot;IPX Portions Copyright (c) 1995 Caldera, Inc.&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|ipx_init
+id|module_init
+c_func
+(paren
+id|ipx_init
+)paren
+suffix:semicolon
 multiline_comment|/* Higher layers need this info to prep tx pkts */
 DECL|function|ipx_if_offset
 r_int
@@ -9863,8 +9871,8 @@ c_func
 id|ipx_unregister_spx
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 multiline_comment|/* Note on MOD_{INC,DEC}_USE_COUNT:&n; *&n; * Use counts are incremented/decremented when&n; * sockets are created/deleted.&n; *&n; * Routes are always associated with an interface, and&n; * allocs/frees will remain properly accounted for by&n; * their associated interfaces.&n; *&n; * Ergo, before the ipx module can be removed, all IPX&n; * sockets be closed from user space.&n; */
+macro_line|#ifdef MODULE
 DECL|function|ipx_proto_finito
 r_static
 r_void
@@ -9996,42 +10004,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|ipx_proto_finito
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
-id|ipx_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
 id|ipx_proto_finito
-c_func
-(paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 macro_line|#endif /* MODULE */
 macro_line|#endif /* CONFIG_IPX || CONFIG_IPX_MODULE */
 eof

@@ -431,7 +431,6 @@ id|net_device
 op_star
 )paren
 suffix:semicolon
-macro_line|#include &lt;net/nrcall.h&gt;
 multiline_comment|/* nr_in.c */
 r_extern
 r_int

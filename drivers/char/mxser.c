@@ -230,16 +230,6 @@ id|ioaddr
 (braket
 id|MXSER_BOARDS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|ttymajor
 r_static
@@ -259,8 +249,6 @@ DECL|variable|verbose
 r_static
 r_int
 id|verbose
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Variables for insmod */
 id|MODULE_AUTHOR
@@ -684,8 +672,6 @@ r_int
 r_char
 op_star
 id|mxvar_tmp_buf
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|mxvar_tmp_buf_sem
 r_static

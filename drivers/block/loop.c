@@ -58,10 +58,8 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
-multiline_comment|/*  For the directory        */
+multiline_comment|/*  For the directory */
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE

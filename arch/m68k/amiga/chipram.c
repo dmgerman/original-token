@@ -2,7 +2,7 @@ multiline_comment|/*&n;**  linux/amiga/chipram.c&n;**&n;**      Modified 03-May-
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/zorro.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 DECL|struct|chip_desc
 r_struct

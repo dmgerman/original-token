@@ -14,8 +14,6 @@ DECL|variable|version_printed
 r_static
 r_int
 id|version_printed
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

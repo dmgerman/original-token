@@ -34,8 +34,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|host_info_list
 id|LIST_HEAD
@@ -48,8 +46,6 @@ DECL|variable|host_count
 r_static
 r_int
 id|host_count
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|host_info_lock
 id|spinlock_t
@@ -63,8 +59,6 @@ r_struct
 id|hpsb_highlevel
 op_star
 id|hl_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|iso_buffer_size
 r_static

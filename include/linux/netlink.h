@@ -546,17 +546,6 @@ op_star
 )paren
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|netlink_proto_init
-c_func
-(paren
-r_struct
-id|net_proto
-op_star
-id|pro
-)paren
-suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* __LINUX_NETLINK_H */
 eof

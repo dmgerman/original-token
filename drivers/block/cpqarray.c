@@ -58,8 +58,6 @@ DECL|variable|nr_ctlr
 r_static
 r_int
 id|nr_ctlr
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|hba
 r_static
@@ -69,24 +67,6 @@ id|hba
 (braket
 id|MAX_CTLR
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|eisa
 r_static
@@ -95,24 +75,6 @@ id|eisa
 (braket
 l_int|8
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|macro|NR_PRODUCTS
 mdefine_line|#define NR_PRODUCTS (sizeof(products)/sizeof(struct board_type))
@@ -303,8 +265,6 @@ r_struct
 id|proc_dir_entry
 op_star
 id|proc_array
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Debug... */
 DECL|macro|DBG

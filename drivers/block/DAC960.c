@@ -29,16 +29,12 @@ r_static
 r_int
 DECL|variable|DAC960_ControllerCount
 id|DAC960_ControllerCount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;  DAC960_ActiveControllerCount is the number of active DAC960 Controllers&n;  detected.&n;*/
 r_static
 r_int
 DECL|variable|DAC960_ActiveControllerCount
 id|DAC960_ActiveControllerCount
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;  DAC960_Controllers is an array of pointers to the DAC960 Controller&n;  structures.&n;*/
 r_static
@@ -49,10 +45,6 @@ id|DAC960_Controllers
 (braket
 id|DAC960_MaxControllers
 )braket
-op_assign
-(brace
-l_int|NULL
-)brace
 suffix:semicolon
 multiline_comment|/*&n;  DAC960_BlockDeviceOperations is the Block Device Operations structure for&n;  DAC960 Logical Disk Devices.&n;*/
 r_static
@@ -22286,8 +22278,6 @@ id|DAC960_AnnounceLevel
 r_static
 r_int
 id|AnnouncementLines
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -599,6 +599,7 @@ r_int
 id|space
 )paren
 suffix:semicolon
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* We provide our own get_unmapped_area to cope with VA holes for userland */
 DECL|macro|HAVE_ARCH_UNMAPPED_AREA

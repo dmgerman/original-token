@@ -2935,8 +2935,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Called at boot time if ppp is compiled into the kernel,&n;   or at module load time (from init_module) if compiled as a module. */
 DECL|function|ppp_init

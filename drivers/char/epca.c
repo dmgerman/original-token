@@ -62,16 +62,10 @@ r_int
 id|pc_refcount
 comma
 id|nbdevs
-op_assign
-l_int|0
 comma
 id|num_cards
-op_assign
-l_int|0
 comma
 id|liloconfig
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|digi_poller_inhibited
 r_static
@@ -84,15 +78,11 @@ DECL|variable|setup_error_code
 r_static
 r_int
 id|setup_error_code
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|invalid_lilo_config
 r_static
 r_int
 id|invalid_lilo_config
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* -----------------------------------------------------------------------&n;&t;MAXBOARDS is typically 12, but ISA and EISA cards are restricted to &n;&t;7 below.&n;--------------------------------------------------------------------------*/
 DECL|variable|boards

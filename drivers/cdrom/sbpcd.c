@@ -453,24 +453,18 @@ r_static
 r_int
 r_char
 id|setup_done
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|f_16bit
 r_static
 r_int
 r_char
 id|f_16bit
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|do_16bit
 r_static
 r_int
 r_char
 id|do_16bit
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|CDo_command
 DECL|variable|CDo_reset
@@ -546,8 +540,6 @@ r_static
 r_int
 r_char
 id|msgnum
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|msgbuf
 r_static
@@ -777,24 +769,18 @@ DECL|variable|recursion
 r_static
 id|u_int
 id|recursion
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* internal testing only */
 DECL|variable|fatal_err
 r_static
 id|u_int
 id|fatal_err
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* internal testing only */
 DECL|variable|response_count
 r_static
 id|u_int
 id|response_count
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|flags_cmd_out
 r_static
@@ -805,8 +791,6 @@ DECL|variable|cmd_type
 r_static
 id|u_char
 id|cmd_type
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|drvcmd
 r_static
@@ -846,16 +830,12 @@ r_static
 r_volatile
 id|u_char
 id|busy_data
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|busy_audio
 r_static
 r_volatile
 id|u_char
 id|busy_audio
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* true semaphores would be safer */
 macro_line|#endif OLD_BUSY
@@ -876,24 +856,18 @@ r_static
 r_volatile
 id|u_char
 id|timed_out_delay
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|timed_out_data
 r_static
 r_volatile
 id|u_char
 id|timed_out_data
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#if 0
 r_static
 r_volatile
 id|u_char
 id|timed_out_audio
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|variable|datarate
@@ -970,8 +944,6 @@ DECL|variable|ndrives
 r_static
 r_int
 id|ndrives
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|drv_pattern
 r_static
@@ -990,11 +962,6 @@ id|sbpcd_blocksizes
 (braket
 id|NR_SBPCD
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * drive space begins here (needed separate for each unit) &n; */
@@ -1002,8 +969,6 @@ DECL|variable|d
 r_static
 r_int
 id|d
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* DriveStruct index: drive number */
 r_static
@@ -32184,8 +32149,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|__SBPCD_INIT

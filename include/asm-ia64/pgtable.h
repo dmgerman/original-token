@@ -536,6 +536,7 @@ r_int
 suffix:semicolon
 DECL|macro|ZERO_PAGE
 mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
+macro_line|#include &lt;asm-generic/pgtable.h&gt;
 macro_line|# endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _ASM_IA64_PGTABLE_H */
 eof

@@ -3039,8 +3039,9 @@ r_else
 id|ogmb
 op_assign
 (paren
-op_increment
 id|ogmb
+op_plus
+l_int|1
 )paren
 op_mod
 id|OGMB_CNT

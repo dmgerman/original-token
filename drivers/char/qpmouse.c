@@ -216,15 +216,11 @@ DECL|variable|qp_present
 r_static
 r_int
 id|qp_present
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|qp_count
 r_static
 r_int
 id|qp_count
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|qp_data
 r_static

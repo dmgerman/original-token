@@ -892,14 +892,6 @@ l_string|&quot;wd33c93&quot;
 )paren
 r_continue
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;A590/A2091 SCSI Host Adapter&quot;
-)paren
-suffix:semicolon
 id|instance
 op_assign
 id|scsi_register

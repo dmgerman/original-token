@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * For the TDA9850 and TDA9855 chips&n; * (The TDA9855 is used on the Diamond DTV2000 and the TDA9850 is used &n; * on STB cards.  Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Gerd Knorr&n; * TDA9850 code and TDA9855.c merger by Eric Sandeen (eric_sandeen@bigfoot.com) &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; *         - set to 2 if you&squot;d like to be flooded with debug messages&n; * chip    - set to 9850 or 9855 to select your chip (default 9855)&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix. - Is this still here?&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; *&n; *  Revision  0.5 - cleaned up debugging messages, added debug level=2 &n; *  Revision: 0.4 - check for correct chip= insmod value&n; *                  also cleaned up comments a bit&n; *  Revision: 0.3 - took out extraneous tda985x_write in tda985x_command&n; *  Revision: 0.2 - added insmod option chip=&n; *  Revision: 0.1 - original version&n; */
+multiline_comment|/*&n; * For the TDA9850 and TDA9855 chips&n; * (The TDA9855 is used on the Diamond DTV2000 and the TDA9850 is used &n; * on STB cards.  Other cards probably use these chips as well.)&n; * This driver will not complain if used with any &n; * other i2c device with the same address.&n; *&n; * Copyright (c) 1999 Gerd Knorr&n; * TDA9850 code and TDA9855.c merger by Eric Sandeen (eric_sandeen@bigfoot.com) &n; * This code is placed under the terms of the GNU General Public License&n; * Based on tda9855.c by Steve VanDeBogart (vandebo@uclink.berkeley.edu)&n; * Which was based on tda8425.c by Greg Alexander (c) 1998&n; *&n; * Contributors:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; *&n; * OPTIONS:&n; * debug   - set to 1 if you&squot;d like to see debug messages&n; *         - set to 2 if you&squot;d like to be flooded with debug messages&n; * chip    - set to 9850 or 9855 to select your chip (default 9855)&n; *&n; * TODO:&n; *   Fix channel change bug - sound goes out when changeing channels, mute&n; *                            and unmote to fix. - Is this still here?&n; *   Fine tune sound&n; *   Get rest of capabilities into video_audio struct...&n; *&n; *  Revision  0.6 - resource allocation fixes in tda985x_attach (08/14/2000)&n; *  Revision  0.5 - cleaned up debugging messages, added debug level=2 &n; *  Revision: 0.4 - check for correct chip= insmod value&n; *                  also cleaned up comments a bit&n; *  Revision: 0.3 - took out extraneous tda985x_write in tda985x_command&n; *  Revision: 0.2 - added insmod option chip=&n; *  Revision: 0.1 - original version&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1073,10 +1073,18 @@ c_cond
 op_logical_neg
 id|t
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|client
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

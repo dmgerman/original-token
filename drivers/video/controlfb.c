@@ -6359,6 +6359,7 @@ suffix:semicolon
 DECL|function|control_init_info
 r_static
 r_void
+id|__init
 id|control_init_info
 c_func
 (paren

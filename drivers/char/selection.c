@@ -30,8 +30,6 @@ multiline_comment|/* Use a dynamic buffer, instead of static (Dec 1994) */
 DECL|variable|sel_cons
 r_int
 id|sel_cons
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* must not be disallocated */
 DECL|variable|sel_start
@@ -53,16 +51,12 @@ DECL|variable|sel_buffer_lth
 r_static
 r_int
 id|sel_buffer_lth
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|sel_buffer
 r_static
 r_char
 op_star
 id|sel_buffer
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* clear_selection, highlight and highlight_pointer can be called&n;   from interrupt (via scrollback/front) */
 multiline_comment|/* set reverse video on characters s-e of console with selection. */

@@ -14,7 +14,7 @@ mdefine_line|#define PTRS_PER_PMD&t;1
 DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;1024
 DECL|macro|pte_ERROR
-mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %08lx.&bslash;n&quot;, __FILE__, __LINE__, pte_val(e))
+mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %08lx.&bslash;n&quot;, __FILE__, __LINE__, (e).pte_low)
 DECL|macro|pmd_ERROR
 mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %08lx.&bslash;n&quot;, __FILE__, __LINE__, pmd_val(e))
 DECL|macro|pgd_ERROR
@@ -102,5 +102,15 @@ op_star
 id|dir
 suffix:semicolon
 )brace
+DECL|macro|ptep_get_and_clear
+mdefine_line|#define ptep_get_and_clear(xp)&t;__pte(xchg(&amp;(xp)-&gt;pte_low, 0))
+DECL|macro|pte_same
+mdefine_line|#define pte_same(a, b)&t;&t;((a).pte_low == (b).pte_low)
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+((unsigned long)(((x).pte_low &gt;&gt; PAGE_SHIFT))))
+DECL|macro|pte_none
+mdefine_line|#define pte_none(x)&t;&t;(!(x).pte_low)
+DECL|macro|__mk_pte
+mdefine_line|#define __mk_pte(page_nr,pgprot) __pte(((page_nr) &lt;&lt; PAGE_SHIFT) | pgprot_val(pgprot))
 macro_line|#endif /* _I386_PGTABLE_2LEVEL_H */
 eof

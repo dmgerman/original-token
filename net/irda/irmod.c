@@ -2034,39 +2034,12 @@ comma
 l_string|&quot;1l&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize the irda module&n; *&n; */
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|irda_proto_cleanup
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
-id|irda_proto_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Cleanup the irda module&n; *&n; */
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
 id|irda_proto_cleanup
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif /* MODULE */
 eof

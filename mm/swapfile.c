@@ -861,16 +861,10 @@ id|page
 r_return
 suffix:semicolon
 multiline_comment|/* We will be removing the swap cache in a moment, so... */
-id|set_pte
+id|ptep_mkdirty
 c_func
 (paren
 id|dir
-comma
-id|pte_mkdirty
-c_func
-(paren
-id|pte
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -879,11 +873,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pte_val
+id|pte_to_swp_entry
 c_func
 (paren
 id|pte
 )paren
+dot
+id|val
 op_ne
 id|entry.val
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.199 2000/08/29 08:59:23 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.200 2000/10/16 14:32:49 anton Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997-2000 Anton Blanchard (anton@linuxcare.com)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -8990,6 +8990,22 @@ id|pmdp
 )paren
 (brace
 )brace
+DECL|function|sun4c_pmd_set
+r_static
+r_void
+id|sun4c_pmd_set
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmdp
+comma
+id|pte_t
+op_star
+id|ptep
+)paren
+(brace
+)brace
 DECL|function|sun4c_mapioaddr
 r_void
 id|sun4c_mapioaddr
@@ -10734,22 +10750,6 @@ op_star
 )paren
 id|ret
 suffix:semicolon
-)brace
-DECL|function|sun4c_set_pgdir
-r_static
-r_void
-id|sun4c_set_pgdir
-c_func
-(paren
-r_int
-r_int
-id|address
-comma
-id|pgd_t
-id|entry
-)paren
-(brace
-multiline_comment|/* Nothing to do */
 )brace
 DECL|function|sun4c_free_pgd_fast
 r_extern
@@ -12586,16 +12586,6 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|set_pgdir
-comma
-id|sun4c_set_pgdir
-comma
-id|BTFIXUPCALL_NOP
-)paren
-suffix:semicolon
-id|BTFIXUPSET_CALL
-c_func
-(paren
 id|flush_cache_all
 comma
 id|sun4c_flush_cache_all
@@ -13376,6 +13366,16 @@ comma
 id|sun4c_pgd_page
 comma
 id|BTFIXUPCALL_RETO0
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|pmd_set
+comma
+id|sun4c_pmd_set
+comma
+id|BTFIXUPCALL_NOP
 )paren
 suffix:semicolon
 )brace

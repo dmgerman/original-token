@@ -402,8 +402,6 @@ DECL|variable|nr_cards
 r_static
 r_int
 id|nr_cards
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef COSA_ISA_AUTOPROBE
 DECL|variable|io
@@ -1413,8 +1411,6 @@ DECL|variable|devfs_handle
 r_static
 id|devfs_handle_t
 id|devfs_handle
-op_assign
-l_int|NULL
 suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -6374,8 +6370,6 @@ id|len
 r_static
 r_int
 id|count
-op_assign
-l_int|0
 suffix:semicolon
 r_int
 r_int

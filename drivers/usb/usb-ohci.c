@@ -24,6 +24,9 @@ DECL|macro|OHCI_USE_NPS
 mdefine_line|#define OHCI_USE_NPS&t;&t;
 singleline_comment|// force NoPowerSwitching mode
 singleline_comment|// #define OHCI_VERBOSE_DEBUG&t;/* not always helpful */
+DECL|macro|OHCI_MEM_SLAB
+mdefine_line|#define OHCI_MEM_SLAB
+singleline_comment|// #define OHCI_MEM_FLAGS&t;SLAB_POISON&t;/* no redzones; see mm/slab.c */
 macro_line|#include &quot;usb-ohci.h&quot;
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 multiline_comment|/* All this PMAC_PBOOK stuff should disappear when those&n; * platforms fully support the 2.4 kernel PCI APIs.&n; */
@@ -59,6 +62,11 @@ r_static
 r_void
 id|urb_free_priv
 (paren
+r_struct
+id|ohci
+op_star
+id|hc
+comma
 id|urb_priv_t
 op_star
 id|urb_priv
@@ -91,8 +99,10 @@ id|i
 )braket
 )paren
 (brace
-id|OHCI_FREE
+id|td_free
 (paren
+id|hc
+comma
 id|urb_priv-&gt;td
 (braket
 id|i
@@ -186,6 +196,13 @@ suffix:semicolon
 )brace
 id|urb_free_priv
 (paren
+(paren
+r_struct
+id|ohci
+op_star
+)paren
+id|urb-&gt;dev-&gt;bus
+comma
 id|urb_priv
 )paren
 suffix:semicolon
@@ -2274,17 +2291,14 @@ id|i
 op_increment
 )paren
 (brace
-id|OHCI_ALLOC
-(paren
 id|urb_priv-&gt;td
 (braket
 id|i
 )braket
-comma
-r_sizeof
+op_assign
+id|td_alloc
 (paren
-id|td_t
-)paren
+id|ohci
 )paren
 suffix:semicolon
 r_if
@@ -2299,6 +2313,8 @@ id|i
 (brace
 id|urb_free_priv
 (paren
+id|ohci
+comma
 id|urb_priv
 )paren
 suffix:semicolon
@@ -2329,6 +2345,8 @@ id|ED_DEL
 (brace
 id|urb_free_priv
 (paren
+id|ohci
+comma
 id|urb_priv
 )paren
 suffix:semicolon
@@ -2424,6 +2442,8 @@ l_int|0
 (brace
 id|urb_free_priv
 (paren
+id|ohci
+comma
 id|urb_priv
 )paren
 suffix:semicolon
@@ -2875,17 +2895,12 @@ id|ohci_device
 op_star
 id|dev
 suffix:semicolon
+multiline_comment|/* FIXME:  ED allocation with pci_consistent memory&n;&t; * must know the controller ... either pass it in here,&n;&t; * or decouple ED allocation from dev allocation.&n;&t; */
 id|dev
 op_assign
-id|kmalloc
+id|dev_alloc
 (paren
-r_sizeof
-(paren
-op_star
-id|dev
-)paren
-comma
-id|GFP_KERNEL
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -3208,7 +3223,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|kfree
+multiline_comment|/* free device, and associated EDs */
+id|dev_free
 (paren
 id|dev
 )paren
@@ -4718,18 +4734,14 @@ id|OHCI_ED_SKIP
 )paren
 suffix:semicolon
 multiline_comment|/* skip ed */
-id|OHCI_ALLOC
-(paren
+multiline_comment|/* dummy td; end of td list for ed */
 id|td
-comma
-r_sizeof
+op_assign
+id|td_alloc
 (paren
-op_star
-id|td
-)paren
+id|ohci
 )paren
 suffix:semicolon
-multiline_comment|/* dummy td; end of td list for ed */
 r_if
 c_cond
 (paren
@@ -6598,8 +6610,10 @@ l_int|0x7F
 )braket
 )paren
 suffix:semicolon
-id|OHCI_FREE
+id|td_free
 (paren
+id|ohci
+comma
 id|tdTailP
 )paren
 suffix:semicolon
@@ -6689,8 +6703,10 @@ comma
 id|ed
 )paren
 suffix:semicolon
-id|OHCI_FREE
+id|td_free
 (paren
+id|ohci
+comma
 id|tdTailP
 )paren
 suffix:semicolon
@@ -11165,21 +11181,48 @@ r_void
 (brace
 r_int
 id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|ohci_mem_init
+(paren
+)paren
+)paren
+OL
+l_int|0
+)paren
+r_return
+id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
 op_assign
 id|pci_module_init
 (paren
 op_amp
 id|ohci_pci_driver
 )paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC_PBOOK
-r_if
-c_cond
-(paren
-id|ret
-op_ge
+)paren
+OL
 l_int|0
 )paren
+(brace
+id|ohci_mem_cleanup
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_PMAC_PBOOK
 id|pmu_register_sleep_notifier
 (paren
 op_amp
@@ -11213,6 +11256,10 @@ id|pci_unregister_driver
 (paren
 op_amp
 id|ohci_pci_driver
+)paren
+suffix:semicolon
+id|ohci_mem_cleanup
+(paren
 )paren
 suffix:semicolon
 )brace

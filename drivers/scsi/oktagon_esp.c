@@ -508,14 +508,6 @@ l_string|&quot;NCR53C9x&quot;
 )paren
 )paren
 (brace
-id|strcpy
-c_func
-(paren
-id|z-&gt;name
-comma
-l_string|&quot;Oktagon 2008 SCSI Host Adapter&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; * It is a SCSI controller.&n;&t;&t; * Hardwire Host adapter to SCSI ID 7&n;&t;&t; */
 id|address
 op_assign
