@@ -194,15 +194,6 @@ c_func
 r_int
 )paren
 suffix:semicolon
-r_void
-id|requeue_sr_request
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-)paren
-suffix:semicolon
 r_static
 r_int
 id|sr_media_change
@@ -1234,6 +1225,10 @@ l_int|0
 op_assign
 id|WRITE_10
 suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_WRITE
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1245,6 +1240,10 @@ l_int|0
 )braket
 op_assign
 id|READ_10
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1804,9 +1803,9 @@ suffix:semicolon
 r_int
 id|sector_size
 suffix:semicolon
-id|Scsi_Cmnd
+id|Scsi_Request
 op_star
-id|SCpnt
+id|SRpnt
 suffix:semicolon
 id|buffer
 op_assign
@@ -1821,9 +1820,9 @@ c_func
 l_int|512
 )paren
 suffix:semicolon
-id|SCpnt
+id|SRpnt
 op_assign
-id|scsi_allocate_device
+id|scsi_allocate_request
 c_func
 (paren
 id|scsi_CDs
@@ -1832,10 +1831,6 @@ id|i
 )braket
 dot
 id|device
-comma
-l_int|1
-comma
-id|FALSE
 )paren
 suffix:semicolon
 id|retries
@@ -1887,12 +1882,12 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-id|SCpnt-&gt;request.rq_status
+id|SRpnt-&gt;sr_request.rq_status
 op_assign
 id|RQ_SCSI_BUSY
 suffix:semicolon
 multiline_comment|/* Mark as really busy */
-id|SCpnt-&gt;cmd_len
+id|SRpnt-&gt;sr_cmd_len
 op_assign
 l_int|0
 suffix:semicolon
@@ -1907,10 +1902,14 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Do the command and wait.. */
-id|scsi_wait_cmd
+id|SRpnt-&gt;sr_data_direction
+op_assign
+id|SCSI_DATA_READ
+suffix:semicolon
+id|scsi_wait_req
 c_func
 (paren
-id|SCpnt
+id|SRpnt
 comma
 (paren
 r_void
@@ -1933,7 +1932,7 @@ id|MAX_RETRIES
 suffix:semicolon
 id|the_result
 op_assign
-id|SCpnt-&gt;result
+id|SRpnt-&gt;sr_result
 suffix:semicolon
 id|retries
 op_decrement
@@ -1947,13 +1946,13 @@ op_logical_and
 id|retries
 )paren
 suffix:semicolon
-id|scsi_release_command
+id|scsi_release_request
 c_func
 (paren
-id|SCpnt
+id|SRpnt
 )paren
 suffix:semicolon
-id|SCpnt
+id|SRpnt
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2342,6 +2341,8 @@ comma
 l_int|128
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if
@@ -2839,9 +2840,9 @@ op_star
 id|cgc
 )paren
 (brace
-id|Scsi_Cmnd
+id|Scsi_Request
 op_star
-id|SCpnt
+id|SRpnt
 suffix:semicolon
 id|Scsi_Device
 op_star
@@ -2869,22 +2870,18 @@ r_int
 id|buflen
 suffix:semicolon
 multiline_comment|/* get the device */
-id|SCpnt
+id|SRpnt
 op_assign
-id|scsi_allocate_device
+id|scsi_allocate_request
 c_func
 (paren
 id|device
-comma
-l_int|1
-comma
-id|FALSE
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|SCpnt
+id|SRpnt
 op_eq
 l_int|NULL
 )paren
@@ -2910,7 +2907,7 @@ c_cond
 (paren
 id|cgc-&gt;buffer
 op_logical_and
-id|SCpnt-&gt;host-&gt;unchecked_isa_dma
+id|SRpnt-&gt;sr_host-&gt;unchecked_isa_dma
 op_logical_and
 (paren
 id|virt_to_phys
@@ -2976,19 +2973,24 @@ op_lshift
 l_int|5
 suffix:semicolon
 multiline_comment|/* do the locking and issue the command */
-id|SCpnt-&gt;request.rq_dev
+id|SRpnt-&gt;sr_request.rq_dev
 op_assign
 id|cdi-&gt;dev
 suffix:semicolon
 multiline_comment|/* scsi_wait_cmd sets the command length */
-id|SCpnt-&gt;cmd_len
+id|SRpnt-&gt;sr_cmd_len
 op_assign
 l_int|0
 suffix:semicolon
-id|scsi_wait_cmd
+multiline_comment|/*&n;&t; * FIXME(eric) - need to set the data direction here.&n;&t; */
+id|SRpnt-&gt;sr_data_direction
+op_assign
+id|SCSI_DATA_UNKNOWN
+suffix:semicolon
+id|scsi_wait_req
 c_func
 (paren
-id|SCpnt
+id|SRpnt
 comma
 (paren
 r_void
@@ -3015,7 +3017,7 @@ c_cond
 (paren
 id|cgc-&gt;stat
 op_assign
-id|SCpnt-&gt;result
+id|SRpnt-&gt;sr_result
 )paren
 )paren
 id|cgc-&gt;sense
@@ -3025,10 +3027,10 @@ r_struct
 id|request_sense
 op_star
 )paren
-id|SCpnt-&gt;sense_buffer
+id|SRpnt-&gt;sr_sense_buffer
 suffix:semicolon
 multiline_comment|/* release */
-id|SCpnt-&gt;request.rq_dev
+id|SRpnt-&gt;sr_request.rq_dev
 op_assign
 id|MKDEV
 c_func
@@ -3038,13 +3040,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|scsi_release_command
+id|scsi_release_request
 c_func
 (paren
-id|SCpnt
+id|SRpnt
 )paren
 suffix:semicolon
-id|SCpnt
+id|SRpnt
 op_assign
 l_int|NULL
 suffix:semicolon

@@ -1284,7 +1284,7 @@ id|length
 suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
-id|jiffied
+id|jiffies
 suffix:semicolon
 multiline_comment|/* If we just used up the very last entry in the&n;&t; * TX ring on this device, tell the queueing&n;&t; * layer to send no more.&n;&t; */
 r_if
@@ -1446,13 +1446,10 @@ multiline_comment|/* If we had stopped the queue due to a &quot;tx full&quot;&n;
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 op_logical_and
 op_logical_neg

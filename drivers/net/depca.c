@@ -3013,6 +3013,7 @@ id|depca_tx
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* Any resources available? */
 r_if
 c_cond
 (paren
@@ -3022,18 +3023,13 @@ op_ge
 l_int|0
 )paren
 op_logical_and
+id|netif_queue_stopped
+c_func
 (paren
-id|test_bit
-(paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;flags
-)paren
+id|dev
 )paren
 )paren
 (brace
-multiline_comment|/* any resources available? */
 id|netif_wake_queue
 (paren
 id|dev

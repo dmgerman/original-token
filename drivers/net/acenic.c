@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; */
+multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -188,9 +188,9 @@ mdefine_line|#define NET_BH&t;&t;&t;0
 DECL|macro|ace_mark_net_bh
 mdefine_line|#define ace_mark_net_bh(foo)&t;{do{} while(0);}
 DECL|macro|ace_if_busy
-mdefine_line|#define ace_if_busy(dev)&t;test_bit(LINK_STATE_XOFF, &amp;dev-&gt;state)
+mdefine_line|#define ace_if_busy(dev)&t;netif_queue_stopped(dev)
 DECL|macro|ace_if_running
-mdefine_line|#define ace_if_running(dev)&t;test_bit(LINK_STATE_START, &amp;dev-&gt;state)
+mdefine_line|#define ace_if_running(dev)&t;netif_running(dev)
 DECL|macro|ace_if_down
 mdefine_line|#define ace_if_down(dev)&t;{do{} while(0);}
 macro_line|#endif
@@ -240,14 +240,15 @@ DECL|macro|ACE_JUMBO_BUFSIZE
 mdefine_line|#define ACE_JUMBO_BUFSIZE&t;(ACE_JUMBO_MTU + ETH_HLEN + 2+4+16)
 DECL|macro|DEF_TX_RATIO
 mdefine_line|#define DEF_TX_RATIO&t;&t;24
+multiline_comment|/*&n; * There seems to be a magic difference in the effect between 995 and 996&n; * but little difference between 900 and 995 ... no idea why.&n; */
 DECL|macro|DEF_TX_COAL
-mdefine_line|#define DEF_TX_COAL&t;&t;1000
+mdefine_line|#define DEF_TX_COAL&t;&t;996
 DECL|macro|DEF_TX_MAX_DESC
 mdefine_line|#define DEF_TX_MAX_DESC&t;&t;40
 DECL|macro|DEF_RX_COAL
 mdefine_line|#define DEF_RX_COAL&t;&t;1000
 DECL|macro|DEF_RX_MAX_DESC
-mdefine_line|#define DEF_RX_MAX_DESC&t;&t;20
+mdefine_line|#define DEF_RX_MAX_DESC&t;&t;25
 DECL|macro|TX_COAL_INTS_ONLY
 mdefine_line|#define TX_COAL_INTS_ONLY&t;0&t;/* seems not worth it */
 DECL|macro|DEF_TRACE
@@ -379,7 +380,7 @@ id|__initdata
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.39 02/11/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
+l_string|&quot;acenic.c: v0.41 02/16/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
@@ -1077,13 +1078,34 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Gigabit Ethernet at 0x%08lx, irq %i&bslash;n&quot;
+l_string|&quot;Gigabit Ethernet at 0x%08lx, &quot;
 comma
 id|dev-&gt;base_addr
+)paren
+suffix:semicolon
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+l_string|&quot;irq %s&bslash;n&quot;
+comma
+id|__irq_itoa
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;irq %i&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ACENIC_OMIT_TIGON_I
 r_if
 c_cond
@@ -1395,7 +1417,7 @@ multiline_comment|/*&n;&t;&t; * This clears any pending interrupts&n;&t;&t; */
 id|writel
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 op_amp
 id|regs-&gt;Mb0Lo
@@ -1739,16 +1761,16 @@ comma
 id|root_dev
 )paren
 suffix:semicolon
-id|iounmap
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
 id|root_dev
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+id|regs
 )paren
 suffix:semicolon
 id|kfree
@@ -1763,38 +1785,6 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032b)
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|ace_module_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|ace_module_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
 DECL|function|ace_module_init
 r_int
 id|__init
@@ -1839,7 +1829,39 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032b)
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|ace_module_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|ace_module_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02032a)
 DECL|variable|ace_module_init
 id|module_init
 c_func
@@ -1916,6 +1938,10 @@ id|ap-&gt;rx_std_ring
 comma
 id|ap-&gt;rx_ring_base_dma
 )paren
+suffix:semicolon
+id|ap-&gt;rx_std_ring
+op_assign
+l_int|NULL
 suffix:semicolon
 id|ap-&gt;rx_jumbo_ring
 op_assign
@@ -2429,6 +2455,12 @@ id|writel
 c_func
 (paren
 id|HW_RESET
+op_or
+(paren
+id|HW_RESET
+op_lshift
+l_int|24
+)paren
 comma
 op_amp
 id|regs-&gt;HostCtrl
@@ -2446,11 +2478,9 @@ id|writel
 c_func
 (paren
 (paren
-(paren
 id|WORD_SWAP
 op_or
 id|CLR_INT
-)paren
 op_or
 (paren
 (paren
@@ -2607,7 +2637,7 @@ op_amp
 id|regs-&gt;CpuBCtrl
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The SRAM bank size does _not_ indicate the amount&n;&t;&t; * of memory on the card, it controls the bank size!&n;&t;&t; * Ie. a 1MB AceNIC will have two banks of 512KB.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The SRAM bank size does _not_ indicate the amount&n;&t;&t; * of memory on the card, it controls the _bank_ size!&n;&t;&t; * Ie. a 1MB AceNIC will have two banks of 512KB.&n;&t;&t; */
 id|writel
 c_func
 (paren
@@ -2653,17 +2683,19 @@ id|init_error
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * ModeStat _must_ be set after the SRAM settings as this change&n;&t; * seems to corrupt the ModeStat and possible other registers.&n;&t; * The SRAM settings survive resets and setting it to the same&n;&t; * value a second time works as well. This is what caused the&n;&t; * `Firmware not running&squot; problem on the Tigon II.&n;&t; */
-macro_line|#ifdef __LITTLE_ENDIAN
+macro_line|#ifdef __BIG_ENDIAN
 id|writel
 c_func
 (paren
-id|ACE_BYTE_SWAP_DATA
+id|ACE_BYTE_SWAP_DMA
 op_or
 id|ACE_WARN
 op_or
 id|ACE_FATAL
 op_or
-id|ACE_WORD_SWAP
+id|ACE_BYTE_SWAP_BD
+op_or
+id|ACE_WORD_SWAP_BD
 op_or
 id|ACE_NO_JUMBO_FRAG
 comma
@@ -2675,15 +2707,13 @@ macro_line|#else
 id|writel
 c_func
 (paren
-id|ACE_BYTE_SWAP_DATA
+id|ACE_BYTE_SWAP_DMA
 op_or
 id|ACE_WARN
 op_or
 id|ACE_FATAL
 op_or
-id|ACE_BYTE_SWAP
-op_or
-id|ACE_WORD_SWAP
+id|ACE_WORD_SWAP_BD
 op_or
 id|ACE_NO_JUMBO_FRAG
 comma
@@ -2692,6 +2722,11 @@ id|regs-&gt;ModeStat
 )paren
 suffix:semicolon
 macro_line|#endif
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mac1
 op_assign
 l_int|0
@@ -4807,6 +4842,18 @@ l_int|0
 suffix:semicolon
 id|init_error
 suffix:colon
+id|iounmap
+c_func
+(paren
+id|ap-&gt;regs
+)paren
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6004,6 +6051,11 @@ id|ap-&gt;fw_running
 op_assign
 l_int|1
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -6556,10 +6608,6 @@ id|rip-&gt;mapping
 comma
 id|mapsize
 )paren
-suffix:semicolon
-id|rxdesc-&gt;size
-op_assign
-l_int|0
 suffix:semicolon
 id|skb_put
 c_func

@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/concap.h&gt;
 macro_line|#include &quot;isdn_concap.h&quot;
 macro_line|#endif
 multiline_comment|/*&n; * Outline of new tbusy handling: &n; *&n; * Old method, roughly spoken, consisted of setting tbusy when entering&n; * isdn_net_start_xmit() and at several other locations and clearing&n; * it from isdn_net_start_xmit() thread when sending was successful.&n; *&n; * With 2.3.x multithreaded network core, to prevent problems, tbusy should&n; * only be set by the isdn_net_start_xmit() thread and only when a tx-busy&n; * condition is detected. Other threads (in particular isdn_net_stat_callb())&n; * are only allowed to clear tbusy.&n; *&n; * -HE&n; */
-multiline_comment|/*&n; * About SOFTNET:&n; * Most of the changes were pretty obvious and basically done by HE already.&n; *&n; * One problem of the isdn net device code is that is uses struct net_device&n; * for masters and slaves. However, only master interface are registered to &n; * the network layer, and therefore, it only makes sense to call netif_* &n; * functions on them.&n; *&n; * The old code abused the slaves dev-&gt;start to remember the corresponding &n; * master&squot;s interface state (ifup&squot;ed or not). This does not work with SOFTNET &n; * any more, because there&squot;s now dev-&gt;start anymore.&n; * Instead I chose to add isdn_net_started() which gives the state of the &n; * master in case of slaves.&n; * I&squot;m still not sure if this is how it&squot;s supposed to be done this way&n; * because it uses test_bit(LINK_STATE_START, &amp;dev-&gt;state) which might be &n; * considered private to the network layer. However, it works for now.&n; * Alternative: set a flag in _open() and clear it in _close() &n; *&n; * I left some dead code around in #if 0 which I&squot;m not absolutely sure about.&n; * If no problems turn up, it should be removed later&n; *&n; * --KG&n; */
+multiline_comment|/*&n; * About SOFTNET:&n; * Most of the changes were pretty obvious and basically done by HE already.&n; *&n; * One problem of the isdn net device code is that is uses struct net_device&n; * for masters and slaves. However, only master interface are registered to &n; * the network layer, and therefore, it only makes sense to call netif_* &n; * functions on them.&n; *&n; * The old code abused the slaves dev-&gt;start to remember the corresponding &n; * master&squot;s interface state (ifup&squot;ed or not). This does not work with SOFTNET &n; * any more, because there&squot;s now dev-&gt;start anymore.&n; * Instead I chose to add isdn_net_started() which gives the state of the &n; * master in case of slaves.&n; * I&squot;m still not sure if this is how it&squot;s supposed to be done this way&n; * because it uses netif_running(dev) which might be &n; * considered private to the network layer. However, it works for now.&n; * Alternative: set a flag in _open() and clear it in _close() &n; *&n; * I left some dead code around in #if 0 which I&squot;m not absolutely sure about.&n; * If no problems turn up, it should be removed later&n; *&n; * --KG&n; */
 multiline_comment|/* &n; * Find out if the netdevice has been ifup-ed yet.&n; * For slaves, look at the corresponding master.&n; */
 DECL|function|isdn_net_started
 r_static
@@ -59,13 +59,10 @@ op_amp
 id|n-&gt;dev
 suffix:semicolon
 r_return
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 suffix:semicolon
 )brace

@@ -425,6 +425,8 @@ id|modesel
 )paren
 comma
 l_int|0
+comma
+id|SCSI_DATA_WRITE
 )paren
 )paren
 )paren
@@ -633,6 +635,8 @@ comma
 l_int|12
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if
@@ -803,6 +807,8 @@ comma
 l_int|0x16
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if
@@ -961,6 +967,8 @@ comma
 l_int|4
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if
@@ -1129,6 +1137,8 @@ comma
 l_int|0x04
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if
@@ -1231,6 +1241,8 @@ comma
 l_int|12
 comma
 l_int|1
+comma
+id|SCSI_DATA_READ
 )paren
 suffix:semicolon
 r_if

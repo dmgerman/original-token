@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunbmac.c,v 1.15 2000/02/10 21:14:22 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunbmac.c,v 1.16 2000/02/16 10:36:18 davem Exp $&n; * sunbmac.c: Driver for Sparc BigMAC 100baseT ethernet adapters.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -3848,13 +3848,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 op_logical_and
 id|TX_BUFFS_AVAIL

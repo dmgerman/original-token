@@ -44,7 +44,7 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/* Don&squot;t do anything till we up the interface&n;&t;   [dev_open will call this function so the list will&n;&t;    stay sane] */
+multiline_comment|/* Don&squot;t do anything till we up the interface&n;&t; * [dev_open will call this function so the list will&n;&t; * stay sane]&n;&t; */
 r_if
 c_cond
 (paren
@@ -55,22 +55,25 @@ op_amp
 id|IFF_UP
 )paren
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;Devices with no set multicast don&squot;t get set &n;&t; */
+multiline_comment|/*&n;&t; *&t;Devices with no set multicast or which have been&n;&t; *&t;detached don&squot;t get set.&n;&t; */
 r_if
 c_cond
 (paren
 id|dev-&gt;set_multicast_list
 op_eq
 l_int|NULL
+op_logical_or
+op_logical_neg
+id|netif_device_present
+c_func
+(paren
+id|dev
 )paren
-(brace
+)paren
 r_return
 suffix:semicolon
-)brace
 id|read_lock_bh
 c_func
 (paren
@@ -238,11 +241,9 @@ c_cond
 op_decrement
 id|dmi-&gt;dmi_users
 )paren
-(brace
 r_goto
 id|done
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t;&t; *&t;Last user. So delete the entry.&n;&t;&t;&t; */
 op_star
 id|dmip
@@ -866,12 +867,10 @@ id|len
 OG
 id|length
 )paren
-(brace
 id|len
 op_assign
 id|length
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -879,12 +878,10 @@ id|len
 OL
 l_int|0
 )paren
-(brace
 id|len
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_return
 id|len
 suffix:semicolon

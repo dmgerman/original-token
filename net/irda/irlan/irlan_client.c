@@ -324,13 +324,11 @@ multiline_comment|/* Before we try to connect, we check if network device is up.
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
 op_amp
-id|self-&gt;dev.state
+id|self-&gt;dev
 )paren
 )paren
 (brace

@@ -5787,13 +5787,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;flags
+id|dev
 )paren
 )paren
 id|netif_wake_queue

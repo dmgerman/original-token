@@ -7505,13 +7505,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 )paren
 (brace

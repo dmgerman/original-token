@@ -2487,6 +2487,10 @@ id|SCpnt-&gt;channel
 op_assign
 id|SDpnt-&gt;channel
 suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_NONE
+suffix:semicolon
 id|scsi_wait_cmd
 (paren
 id|SCpnt
@@ -2750,6 +2754,10 @@ suffix:semicolon
 id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
 suffix:semicolon
 id|scsi_wait_cmd
 (paren
@@ -3412,6 +3420,10 @@ suffix:semicolon
 id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_NONE
 suffix:semicolon
 id|scsi_wait_cmd
 (paren

@@ -97,6 +97,16 @@ r_int
 id|cpu_present_mask
 suffix:semicolon
 multiline_comment|/* Which cpus ids came online.  */
+DECL|variable|__initdata
+r_static
+r_int
+r_int
+id|__cpu_present_mask
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* cpu reported in the hwrpb */
 DECL|variable|max_cpus
 r_static
 r_int
@@ -1733,7 +1743,7 @@ id|smp_num_probed
 op_increment
 suffix:semicolon
 multiline_comment|/* Assume here that &quot;whami&quot; == index */
-id|cpu_present_mask
+id|__cpu_present_mask
 op_or_assign
 (paren
 l_int|1L
@@ -1780,7 +1790,7 @@ id|smp_num_probed
 op_assign
 l_int|1
 suffix:semicolon
-id|cpu_present_mask
+id|__cpu_present_mask
 op_assign
 (paren
 l_int|1L
@@ -1789,6 +1799,12 @@ id|smp_boot_cpuid
 )paren
 suffix:semicolon
 )brace
+id|cpu_present_mask
+op_assign
+l_int|1L
+op_lshift
+id|smp_boot_cpuid
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1797,7 +1813,7 @@ l_string|&quot;SMP: %d CPUs probed -- cpu_present_mask = %lx&bslash;n&quot;
 comma
 id|smp_num_probed
 comma
-id|cpu_present_mask
+id|__cpu_present_mask
 )paren
 suffix:semicolon
 )brace
@@ -1978,7 +1994,7 @@ c_cond
 (paren
 (paren
 (paren
-id|cpu_present_mask
+id|__cpu_present_mask
 op_rshift
 id|i
 )paren
@@ -2002,6 +2018,12 @@ id|cpu_count
 )paren
 )paren
 r_continue
+suffix:semicolon
+id|cpu_present_mask
+op_or_assign
+l_int|1L
+op_lshift
+id|i
 suffix:semicolon
 id|cpu_count
 op_increment

@@ -453,7 +453,7 @@ id|ofs
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_sync_single is performed.  */
+multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_dma_sync_single is performed.  */
 id|dma_addr_t
 DECL|function|pci_map_single
 id|pci_map_single
@@ -1997,6 +1997,18 @@ id|out
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/* Mark the end of the list for pci_unmap_sg.  */
+r_if
+c_cond
+(paren
+id|out
+OL
+id|end
+)paren
+id|out-&gt;dma_length
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2151,14 +2163,6 @@ id|arena
 op_assign
 id|hose-&gt;sg_isa
 suffix:semicolon
-id|DBGA
-c_func
-(paren
-l_string|&quot;pci_unmap_sg: %d entries&bslash;n&quot;
-comma
-id|nents
-)paren
-suffix:semicolon
 id|fstart
 op_assign
 op_minus
@@ -2202,6 +2206,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|size
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|addr
 op_ge
 id|__direct_map_base
@@ -2240,6 +2252,22 @@ id|ofs
 suffix:semicolon
 id|dma_addr_t
 id|tend
+suffix:semicolon
+id|DBGA
+c_func
+(paren
+l_string|&quot;    (%ld) sg [%lx,%lx]&bslash;n&quot;
+comma
+id|sg
+op_minus
+id|end
+op_plus
+id|nents
+comma
+id|addr
+comma
+id|size
+)paren
 suffix:semicolon
 id|npages
 op_assign
@@ -2306,22 +2334,6 @@ id|fend
 op_assign
 id|tend
 suffix:semicolon
-id|DBGA
-c_func
-(paren
-l_string|&quot;    (%ld) sg [%lx,%lx]&bslash;n&quot;
-comma
-id|sg
-op_minus
-id|end
-op_plus
-id|nents
-comma
-id|addr
-comma
-id|size
-)paren
-suffix:semicolon
 )brace
 )brace
 r_if
@@ -2339,6 +2351,20 @@ comma
 id|fstart
 comma
 id|fend
+)paren
+suffix:semicolon
+id|DBGA
+c_func
+(paren
+l_string|&quot;pci_unmap_sg: %d entries&bslash;n&quot;
+comma
+id|nents
+op_minus
+(paren
+id|end
+op_minus
+id|sg
+)paren
 )paren
 suffix:semicolon
 )brace

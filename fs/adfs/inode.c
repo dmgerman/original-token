@@ -1147,11 +1147,6 @@ id|ia_valid
 op_amp
 id|ATTR_SIZE
 )paren
-(brace
-id|inode-&gt;i_size
-op_assign
-id|attr-&gt;ia_size
-suffix:semicolon
 id|vmtruncate
 c_func
 (paren
@@ -1160,7 +1155,6 @@ comma
 id|attr-&gt;ia_size
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

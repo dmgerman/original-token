@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy.h,v 1.26 2000/02/12 23:32:35 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: floppy.h,v 1.27 2000/02/15 02:58:40 davem Exp $&n; * asm-sparc64/floppy.h: Sparc specific parts of the Floppy driver.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Ultra/PCI support added: Sep 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef __ASM_SPARC64_FLOPPY_H
 DECL|macro|__ASM_SPARC64_FLOPPY_H
 mdefine_line|#define __ASM_SPARC64_FLOPPY_H
@@ -2195,15 +2195,6 @@ macro_line|#undef MSR
 DECL|macro|DOR
 macro_line|#undef DOR
 macro_line|#endif /* CONFIG_PCI */
-DECL|variable|fd_regs
-r_static
-r_struct
-id|linux_prom_registers
-id|fd_regs
-(braket
-l_int|2
-)braket
-suffix:semicolon
 DECL|function|sun_floppy_init
 r_static
 r_int
@@ -2220,11 +2211,6 @@ id|state
 (braket
 l_int|128
 )braket
-suffix:semicolon
-r_int
-id|fd_node
-comma
-id|num_regs
 suffix:semicolon
 r_struct
 id|sbus_bus
@@ -2813,14 +2799,10 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-id|fd_node
-op_assign
-id|sdev-&gt;prom_node
-suffix:semicolon
 id|prom_getproperty
 c_func
 (paren
-id|fd_node
+id|sdev-&gt;prom_node
 comma
 l_string|&quot;status&quot;
 comma
@@ -2851,42 +2833,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|num_regs
-op_assign
-id|prom_getproperty
-c_func
-(paren
-id|fd_node
-comma
-l_string|&quot;reg&quot;
-comma
-(paren
-r_char
-op_star
-)paren
-id|fd_regs
-comma
-r_sizeof
-(paren
-id|fd_regs
-)paren
-)paren
-suffix:semicolon
-id|num_regs
-op_assign
-(paren
-id|num_regs
-op_div
-r_sizeof
-(paren
-id|fd_regs
-(braket
-l_int|0
-)braket
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * We cannot do sparc_alloc_io here: it does request_region,&n;&t; * which the generic floppy driver tries to do once again.&n;&t; */
+multiline_comment|/*&n;&t; * We cannot do sbus_ioremap here: it does request_region,&n;&t; * which the generic floppy driver tries to do once again.&n;&t; * But we must use the sdev resource values as they have&n;&t; * had parent ranges applied.&n;&t; */
 id|sun_fdc
 op_assign
 (paren
@@ -2895,29 +2842,23 @@ id|sun_flpy_controller
 op_star
 )paren
 (paren
-(paren
-r_int
-r_int
-)paren
-id|fd_regs
+id|sdev-&gt;resource
 (braket
 l_int|0
 )braket
 dot
-id|phys_addr
+id|start
 op_plus
 (paren
 (paren
-(paren
-r_int
-r_int
-)paren
-id|fd_regs
+id|sdev-&gt;resource
 (braket
 l_int|0
 )braket
 dot
-id|which_io
+id|flags
+op_amp
+l_int|0x1ffUL
 )paren
 op_lshift
 l_int|32UL

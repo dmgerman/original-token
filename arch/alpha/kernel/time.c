@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
@@ -130,27 +132,7 @@ suffix:semicolon
 r_int
 id|nticks
 suffix:semicolon
-macro_line|#ifdef __SMP__
-multiline_comment|/* When SMP, do this for *all* CPUs, but only do the rest for&n;           the boot CPU.  */
-id|smp_percpu_timer_interrupt
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-op_ne
-id|smp_boot_cpuid
-)paren
-r_return
-suffix:semicolon
-macro_line|#else
+macro_line|#ifndef __SMP__
 multiline_comment|/* Not SMP, do kernel PC profiling here.  */
 r_if
 c_cond
@@ -431,10 +413,10 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
 macro_line|#ifdef CONFIG_RTC
 r_void
-DECL|function|rtc_init_pit
 id|rtc_init_pit
 c_func
 (paren
@@ -541,7 +523,6 @@ l_int|0x42
 suffix:semicolon
 )brace
 r_void
-DECL|function|rtc_kill_pit
 id|rtc_kill_pit
 c_func
 (paren
@@ -599,6 +580,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif
 r_void
 DECL|function|common_init_pit
@@ -771,22 +753,6 @@ c_func
 r_void
 )paren
 (brace
-r_void
-(paren
-op_star
-id|irq_handler
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 r_int
 r_int
 id|year
@@ -813,6 +779,33 @@ id|one_percent
 suffix:semicolon
 r_int
 id|diff
+suffix:semicolon
+r_static
+r_struct
+id|irqaction
+id|timer_irqaction
+op_assign
+(brace
+id|timer_interrupt
+comma
+id|SA_INTERRUPT
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+multiline_comment|/* Startup the timer source. */
+id|alpha_mv
+dot
+id|init_pit
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 r_do
@@ -1177,31 +1170,13 @@ op_assign
 l_int|0L
 suffix:semicolon
 multiline_comment|/* setup timer */
-id|irq_handler
-op_assign
-id|timer_interrupt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
+id|setup_irq
 c_func
 (paren
 id|TIMER_IRQ
 comma
-id|irq_handler
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Could not allocate timer IRQ!&quot;
+op_amp
+id|timer_irqaction
 )paren
 suffix:semicolon
 )brace

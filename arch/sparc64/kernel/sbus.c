@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.7 2000/01/28 13:41:58 jj Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.8 2000/02/16 07:31:34 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

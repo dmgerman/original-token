@@ -2199,7 +2199,8 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-id|netif_stop_queue
+id|netif_device_detach
+c_func
 (paren
 id|dev
 )paren
@@ -2265,13 +2266,12 @@ c_cond
 (paren
 id|link-&gt;open
 )paren
-(brace
-id|netif_stop_queue
+id|netif_device_detach
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 id|CardServices
 c_func
 (paren
@@ -2321,7 +2321,8 @@ id|link-&gt;open
 )paren
 (brace
 singleline_comment|// awc_reset(dev);
-id|netif_start_queue
+id|netif_device_attach
+c_func
 (paren
 id|dev
 )paren

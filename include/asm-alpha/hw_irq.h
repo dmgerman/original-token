@@ -6,16 +6,6 @@ macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|STANDARD_INIT_IRQ_PROLOG
 mdefine_line|#define STANDARD_INIT_IRQ_PROLOG&t;&bslash;&n;&t;outb(0, DMA1_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA2_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA1_CLR_MASK_REG);&t;&bslash;&n;&t;outb(0, DMA2_CLR_MASK_REG)
 r_extern
-r_int
-r_int
-id|_alpha_irq_masks
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|macro|alpha_irq_mask
-mdefine_line|#define alpha_irq_mask _alpha_irq_masks[0]
-r_extern
 r_void
 id|common_ack_irq
 c_func
@@ -63,9 +53,6 @@ c_func
 r_int
 id|irq
 comma
-r_int
-id|ack
-comma
 r_struct
 id|pt_regs
 op_star
@@ -74,9 +61,12 @@ id|regs
 suffix:semicolon
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ    8
+macro_line|#if 0 /* on Alpha we want to use only the RTC as timer for SMP issues */
 macro_line|#ifdef CONFIG_RTC
-DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ  0&t;&t;&t; /* timer is the pit */
+macro_line|#else
+mdefine_line|#define TIMER_IRQ  RTC_IRQ&t;&t; /* timer is the rtc */
+macro_line|#endif
 macro_line|#else
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ  RTC_IRQ&t;&t; /* timer is the rtc */
@@ -117,10 +107,6 @@ macro_line|#else
 DECL|macro|PROBE_MASK
 macro_line|# define PROBE_MASK&t;_PROBE_MASK(NR_IRQS)
 macro_line|#endif
-r_extern
-r_char
-id|_stext
-suffix:semicolon
 DECL|function|alpha_do_profile
 r_static
 r_inline
@@ -140,6 +126,10 @@ op_logical_and
 id|current-&gt;pid
 )paren
 (brace
+r_extern
+r_char
+id|_stext
+suffix:semicolon
 id|pc
 op_sub_assign
 (paren
@@ -185,5 +175,57 @@ id|pc
 suffix:semicolon
 )brace
 )brace
+DECL|function|hw_resend_irq
+r_static
+r_inline
+r_void
+id|hw_resend_irq
+c_func
+(paren
+r_struct
+id|hw_interrupt_type
+op_star
+id|h
+comma
+r_int
+r_int
+id|i
+)paren
+(brace
+)brace
+r_extern
+r_void
+id|no_action
+c_func
+(paren
+r_int
+id|cpl
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|init_ISA_irqs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|init_RTC_irq
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

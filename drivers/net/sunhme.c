@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.87 2000/02/10 21:14:22 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.90 2000/02/16 10:36:16 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; */
 DECL|variable|version
 r_static
 r_char
@@ -520,6 +520,7 @@ DECL|macro|DEFAULT_IPG2
 mdefine_line|#define DEFAULT_IPG2       4 /* For all modes */
 DECL|macro|DEFAULT_JAMSIZE
 mdefine_line|#define DEFAULT_JAMSIZE    4 /* Toe jam */
+multiline_comment|/* NOTE: In the descriptor writes one _must_ write the address&n; *&t; member _first_.  The card must not be allowed to see&n; *&t; the updated descriptor flags until the address is&n; *&t; correct.  I&squot;ve added a write memory barrier between&n; *&t; the two stores so that I can sleep well at night... -DaveM&n; */
 macro_line|#if defined(CONFIG_SBUS) &amp;&amp; defined(CONFIG_PCI)
 DECL|function|sbus_hme_write32
 r_static
@@ -585,6 +586,11 @@ id|rxd-&gt;rx_addr
 op_assign
 id|addr
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rxd-&gt;rx_flags
 op_assign
 id|flags
@@ -608,13 +614,18 @@ id|u32
 id|addr
 )paren
 (brace
-id|txd-&gt;tx_flags
-op_assign
-id|flags
-suffix:semicolon
 id|txd-&gt;tx_addr
 op_assign
 id|addr
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|txd-&gt;tx_flags
+op_assign
+id|flags
 suffix:semicolon
 )brace
 DECL|function|sbus_hme_read_desc32
@@ -701,6 +712,11 @@ c_func
 id|addr
 )paren
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rxd-&gt;rx_flags
 op_assign
 id|cpu_to_le32
@@ -728,20 +744,25 @@ id|u32
 id|addr
 )paren
 (brace
-id|txd-&gt;tx_flags
-op_assign
-id|cpu_to_le32
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|txd-&gt;tx_addr
 op_assign
 id|cpu_to_le32
 c_func
 (paren
 id|addr
+)paren
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|txd-&gt;tx_flags
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -757,10 +778,9 @@ id|p
 )paren
 (brace
 r_return
-id|cpu_to_le32
+id|cpu_to_le32p
 c_func
 (paren
-op_star
 id|p
 )paren
 suffix:semicolon
@@ -789,9 +809,9 @@ mdefine_line|#define hme_write32(__hp, __reg, __val) &bslash;&n;&t;sbus_writel((
 DECL|macro|hme_read32
 mdefine_line|#define hme_read32(__hp, __reg) &bslash;&n;&t;sbus_readl(__reg)
 DECL|macro|hme_write_rxd
-mdefine_line|#define hme_write_rxd(__hp, __rxd, __flags, __addr) &bslash;&n;do {&t;(__rxd)-&gt;rx_addr = (__addr); &bslash;&n;&t;(__rxd)-&gt;rx_flags = (__flags); &bslash;&n;} while(0)
+mdefine_line|#define hme_write_rxd(__hp, __rxd, __flags, __addr) &bslash;&n;do {&t;(__rxd)-&gt;rx_addr = (__addr); &bslash;&n;&t;wmb(); &bslash;&n;&t;(__rxd)-&gt;rx_flags = (__flags); &bslash;&n;} while(0)
 DECL|macro|hme_write_txd
-mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {&t;(__txd)-&gt;tx_addr = (__addr); &bslash;&n;&t;(__txd)-&gt;tx_flags = (__flags); &bslash;&n;} while(0)
+mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {&t;(__txd)-&gt;tx_addr = (__addr); &bslash;&n;&t;wmb(); &bslash;&n;&t;(__txd)-&gt;tx_flags = (__flags); &bslash;&n;} while(0)
 DECL|macro|hme_read_desc32
 mdefine_line|#define hme_read_desc32(__hp, __p)&t;(*(__p))
 DECL|macro|hme_dma_map
@@ -807,11 +827,11 @@ mdefine_line|#define hme_write32(__hp, __reg, __val) &bslash;&n;&t;writel((__val
 DECL|macro|hme_read32
 mdefine_line|#define hme_read32(__hp, __reg) &bslash;&n;&t;readl(__reg)
 DECL|macro|hme_write_rxd
-mdefine_line|#define hme_write_rxd(__hp, __rxd, __flags, __addr) &bslash;&n;do {&t;(__rxd)-&gt;rx_addr = cpu_to_le32(__addr); &bslash;&n;&t;(__rxd)-&gt;rx_flags = cpu_to_le32(__flags); &bslash;&n;} while(0)
+mdefine_line|#define hme_write_rxd(__hp, __rxd, __flags, __addr) &bslash;&n;do {&t;(__rxd)-&gt;rx_addr = cpu_to_le32(__addr); &bslash;&n;&t;wmb(); &bslash;&n;&t;(__rxd)-&gt;rx_flags = cpu_to_le32(__flags); &bslash;&n;} while(0)
 DECL|macro|hme_write_txd
-mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {&t;(__txd)-&gt;tx_addr = cpu_to_le32(__addr); &bslash;&n;&t;(__txd)-&gt;tx_flags = cpu_to_le32(__flags); &bslash;&n;} while(0)
+mdefine_line|#define hme_write_txd(__hp, __txd, __flags, __addr) &bslash;&n;do {&t;(__txd)-&gt;tx_addr = cpu_to_le32(__addr); &bslash;&n;&t;wmb(); &bslash;&n;&t;(__txd)-&gt;tx_flags = cpu_to_le32(__flags); &bslash;&n;} while(0)
 DECL|macro|hme_read_desc32
-mdefine_line|#define hme_read_desc32(__hp, __p)&t;cpu_to_le32(*(__p))
+mdefine_line|#define hme_read_desc32(__hp, __p)&t;cpu_to_le32p(__p)
 DECL|macro|hme_dma_map
 mdefine_line|#define hme_dma_map(__hp, __ptr, __size) &bslash;&n;&t;pci_map_single((__hp)-&gt;happy_dev, (__ptr), (__size))
 DECL|macro|hme_dma_unmap
@@ -8953,13 +8973,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 op_logical_and
 id|TX_BUFFS_AVAIL
@@ -10388,13 +10405,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|hp-&gt;happy_lock
-)paren
-suffix:semicolon
 multiline_comment|/* Get it going. */
 id|hme_write32
 c_func
@@ -10406,6 +10416,13 @@ op_plus
 id|ETX_PENDING
 comma
 id|ETX_TP_DMAWAKEUP
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|hp-&gt;happy_lock
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.189 2000/02/14 02:51:55 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.190 2000/02/14 04:52:34 jj Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997,99 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|NR_TASK_BUCKETS
 mdefine_line|#define NR_TASK_BUCKETS 512
 macro_line|#include &lt;linux/config.h&gt;
@@ -10322,6 +10322,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|function|sun4c_pgd_offset
+r_extern
+r_inline
 id|pgd_t
 op_star
 id|sun4c_pgd_offset
@@ -10724,7 +10726,7 @@ id|pgd_t
 suffix:semicolon
 id|init
 op_assign
-id|pgd_offset
+id|sun4c_pgd_offset
 c_func
 (paren
 op_amp
@@ -13126,16 +13128,6 @@ c_func
 id|pte_modify_mask
 comma
 id|_SUN4C_PAGE_CHG_MASK
-)paren
-suffix:semicolon
-id|BTFIXUPSET_CALL
-c_func
-(paren
-id|pgd_offset
-comma
-id|sun4c_pgd_offset
-comma
-id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 id|BTFIXUPSET_CALL

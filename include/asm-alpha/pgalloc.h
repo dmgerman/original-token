@@ -15,6 +15,8 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;do { } while (0)
 multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
 macro_line|#ifndef __EXTERN_INLINE
 DECL|macro|__EXTERN_INLINE

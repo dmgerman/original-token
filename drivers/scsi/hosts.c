@@ -1157,6 +1157,11 @@ id|retval-&gt;max_lun
 op_assign
 l_int|8
 suffix:semicolon
+multiline_comment|/*&n;     * All drivers right now should be able to handle 12 byte commands.&n;     * Every so often there are requests for 16 byte commands, but individual&n;     * low-level drivers need to certify that they actually do something&n;     * sensible with such commands.&n;     */
+id|retval-&gt;max_cmd_len
+op_assign
+l_int|12
+suffix:semicolon
 id|retval-&gt;unique_id
 op_assign
 l_int|0
@@ -1188,6 +1193,10 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* Who we notify when we exit. */
 id|retval-&gt;host_blocked
+op_assign
+id|FALSE
+suffix:semicolon
+id|retval-&gt;host_self_blocked
 op_assign
 id|FALSE
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: nosun4c.c,v 1.2 1999/08/31 06:54:36 davem Exp $&n; * nosun4c.c: This file is a bunch of dummies for SMP compiles, &n; *         so that it does not need sun4c and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: nosun4c.c,v 1.3 2000/02/14 04:52:36 jj Exp $&n; * nosun4c.c: This file is a bunch of dummies for SMP compiles, &n; *         so that it does not need sun4c and avoid ifdefs.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -163,26 +163,6 @@ c_func
 r_void
 )paren
 (brace
-)brace
-DECL|function|sun4c_pgd_offset
-id|pgd_t
-op_star
-id|sun4c_pgd_offset
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-l_int|NULL
-suffix:semicolon
 )brace
 DECL|function|sun4c_pte_offset
 id|pte_t

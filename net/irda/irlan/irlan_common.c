@@ -266,13 +266,11 @@ multiline_comment|/* Check if device still configured */
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
 op_amp
-id|self-&gt;dev.state
+id|self-&gt;dev
 )paren
 )paren
 (brace
@@ -1056,13 +1054,11 @@ multiline_comment|/* Check if device is still configured */
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
 op_amp
-id|self-&gt;dev.state
+id|self-&gt;dev
 )paren
 )paren
 (brace
@@ -4445,13 +4441,11 @@ id|len
 comma
 l_string|&quot;tx busy: %s&bslash;n&quot;
 comma
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
 op_amp
-id|self-&gt;dev.state
+id|self-&gt;dev
 )paren
 ques
 c_cond

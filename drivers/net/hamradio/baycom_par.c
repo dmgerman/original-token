@@ -1649,13 +1649,10 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 op_logical_or
 op_logical_neg

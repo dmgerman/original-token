@@ -1650,7 +1650,7 @@ op_increment
 r_char
 id|devname
 (braket
-l_int|8
+l_int|9
 )braket
 suffix:semicolon
 id|sprintf
@@ -2016,7 +2016,7 @@ suffix:semicolon
 r_char
 id|devname
 (braket
-l_int|8
+l_int|9
 )braket
 suffix:semicolon
 id|TRACE_FUN

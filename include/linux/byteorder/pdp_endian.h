@@ -20,6 +20,30 @@ DECL|macro|__constant_htons
 mdefine_line|#define __constant_htons(x) ___swab16((x))
 DECL|macro|__constant_ntohs
 mdefine_line|#define __constant_ntohs(x) ___swab16((x))
+DECL|macro|__constant_cpu_to_le64
+mdefine_line|#define __constant_cpu_to_le64(x) I DON&squot;T KNOW
+DECL|macro|__constant_le64_to_cpu
+mdefine_line|#define __constant_le64_to_cpu(x) I DON&squot;T KNOW
+DECL|macro|__constant_cpu_to_le32
+mdefine_line|#define __constant_cpu_to_le32(x) ___swahw32((x))
+DECL|macro|__constant_le32_to_cpu
+mdefine_line|#define __constant_le32_to_cpu(x) ___swahw32((x))
+DECL|macro|__constant_cpu_to_le16
+mdefine_line|#define __constant_cpu_to_le16(x) ((__u16)(x)
+DECL|macro|__constant_le16_to_cpu
+mdefine_line|#define __constant_le16_to_cpu(x) ((__u16)(x)
+DECL|macro|__constant_cpu_to_be64
+mdefine_line|#define __constant_cpu_to_be64(x) I DON&squot;T KNOW
+DECL|macro|__constant_be64_to_cpu
+mdefine_line|#define __constant_be64_to_cpu(x) I DON&squot;T KNOW
+DECL|macro|__constant_cpu_to_be32
+mdefine_line|#define __constant_cpu_to_be32(x) ___swahb32((x))
+DECL|macro|__constant_be32_to_cpu
+mdefine_line|#define __constant_be32_to_cpu(x) ___swahb32((x))
+DECL|macro|__constant_cpu_to_be16
+mdefine_line|#define __constant_cpu_to_be16(x) ___swab16((x))
+DECL|macro|__constant_be16_to_cpu
+mdefine_line|#define __constant_be16_to_cpu(x) ___swab16((x))
 DECL|macro|__cpu_to_le64
 mdefine_line|#define __cpu_to_le64(x) I DON&squot;T KNOW
 DECL|macro|__le64_to_cpu

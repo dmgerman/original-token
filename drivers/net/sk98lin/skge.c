@@ -61,7 +61,9 @@ singleline_comment|// #define ROLE_B&t;{&quot;Auto&quot;, }
 singleline_comment|// #define PREF_PORT&t;{&quot;A&quot;, }
 singleline_comment|// #define RLMT_MODE&t;{&quot;CheckLink&quot;, }
 DECL|macro|DEV_KFREE_SKB
-mdefine_line|#define DEV_KFREE_SKB(skb) dev_kfree_skb(skb);
+mdefine_line|#define DEV_KFREE_SKB(skb) dev_kfree_skb(skb)
+DECL|macro|DEV_KFREE_SKB_IRQ
+mdefine_line|#define DEV_KFREE_SKB_IRQ(skb) dev_kfree_skb_irq(skb)
 multiline_comment|/* function prototypes ******************************************************/
 r_static
 r_void
@@ -841,6 +843,53 @@ c_func
 id|pdev
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+multiline_comment|/* Set the proper cache line size value, plus enable&n;&t;&t; * write-invalidate and fast back-to-back on Sparc.&n;&t;&t; */
+(brace
+id|SK_U16
+id|pci_command
+suffix:semicolon
+id|SkPciWriteCfgByte
+c_func
+(paren
+id|pAC
+comma
+id|PCI_CACHE_LINE_SIZE
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+id|SkPciReadCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+id|pci_command
+op_or_assign
+(paren
+id|PCI_COMMAND_INVALIDATE
+op_or
+id|PCI_COMMAND_FAST_BACK
+)paren
+suffix:semicolon
+id|SkPciWriteCfgWord
+c_func
+(paren
+id|pAC
+comma
+id|PCI_COMMAND
+comma
+id|pci_command
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|base_address
 op_assign
 id|pdev-&gt;resource
@@ -5705,28 +5754,33 @@ comma
 id|skb
 )paren
 suffix:semicolon
+multiline_comment|/* Transmitter out of resources? */
 r_if
 c_cond
 (paren
 id|Rc
-op_eq
+op_le
 l_int|0
 )paren
-(brace
-multiline_comment|/* transmitter out of resources */
 id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* give buffer ownership back to the queueing layer */
+multiline_comment|/* If not taken, give buffer ownership back to the&n;&t; * queueing layer.&n;&t; */
+r_if
+c_cond
+(paren
+id|Rc
+OL
+l_int|0
+)paren
 r_return
 (paren
 l_int|1
 )paren
 suffix:semicolon
-)brace
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -5738,7 +5792,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* SkGeXmit */
-multiline_comment|/*****************************************************************************&n; *&n; * &t;XmitFrame - fill one socket buffer into the transmit ring&n; *&n; * Description:&n; *&t;This function puts a message into the transmit descriptor ring&n; *&t;if there is a descriptors left.&n; *&t;Linux skb&squot;s consist of only one continuous buffer.&n; *&t;The first step locks the ring. It is held locked&n; *&t;all time to avoid problems with SWITCH_../PORT_RESET.&n; *&t;Then the descriptoris allocated.&n; *&t;The second part is linking the buffer to the descriptor.&n; *&t;At the very last, the Control field of the descriptor&n; *&t;is made valid for the BMU and a start TX command is given&n; *&t;if necessary.&n; *&n; * Returns:&n; *&t;&gt; 0 - on succes: the number of bytes in the message&n; *&t;= 0 - on resource shortage: this frame sent or dropped, now&n; *        the ring is full ( -&gt; set tbusy)&n; *&t;&lt; 0 - on failure: other problems (not used)&n; */
+multiline_comment|/*****************************************************************************&n; *&n; * &t;XmitFrame - fill one socket buffer into the transmit ring&n; *&n; * Description:&n; *&t;This function puts a message into the transmit descriptor ring&n; *&t;if there is a descriptors left.&n; *&t;Linux skb&squot;s consist of only one continuous buffer.&n; *&t;The first step locks the ring. It is held locked&n; *&t;all time to avoid problems with SWITCH_../PORT_RESET.&n; *&t;Then the descriptoris allocated.&n; *&t;The second part is linking the buffer to the descriptor.&n; *&t;At the very last, the Control field of the descriptor&n; *&t;is made valid for the BMU and a start TX command is given&n; *&t;if necessary.&n; *&n; * Returns:&n; *&t;&gt; 0 - on succes: the number of bytes in the message&n; *&t;= 0 - on resource shortage: this frame sent or dropped, now&n; *        the ring is full ( -&gt; set tbusy)&n; *&t;&lt; 0 - on failure: other problems ( -&gt; return failure to upper layers)&n; */
 DECL|function|XmitFrame
 r_static
 r_int
@@ -5857,7 +5911,8 @@ suffix:semicolon
 multiline_comment|/* this message can not be sent now */
 r_return
 (paren
-l_int|0
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6173,6 +6228,22 @@ comma
 id|pTxd-&gt;pMBuf-&gt;len
 )paren
 suffix:semicolon
+multiline_comment|/* free message */
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|DEV_KFREE_SKB_IRQ
+c_func
+(paren
+id|pTxd-&gt;pMBuf
+)paren
+suffix:semicolon
+r_else
 id|DEV_KFREE_SKB
 c_func
 (paren
@@ -6902,12 +6973,19 @@ l_int|0x800
 (brace
 id|Csum1
 op_assign
+id|le16_to_cpu
+c_func
+(paren
 id|pRxd-&gt;TcpSums
 op_amp
 l_int|0xffff
+)paren
 suffix:semicolon
 id|Csum2
 op_assign
+id|le16_to_cpu
+c_func
+(paren
 (paren
 id|pRxd-&gt;TcpSums
 op_rshift
@@ -6915,6 +6993,7 @@ l_int|16
 )paren
 op_amp
 l_int|0xffff
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7234,7 +7313,7 @@ l_string|&quot;D&quot;
 )paren
 )paren
 suffix:semicolon
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_IRQ
 c_func
 (paren
 id|pMsg
@@ -7400,7 +7479,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_IRQ
 c_func
 (paren
 id|pMsg
@@ -7479,7 +7558,7 @@ id|FrameStat
 )paren
 )paren
 suffix:semicolon
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_IRQ
 c_func
 (paren
 id|pMsg
@@ -7570,7 +7649,7 @@ op_minus
 l_int|2
 )paren
 suffix:semicolon
-id|DEV_KFREE_SKB
+id|DEV_KFREE_SKB_IRQ
 c_func
 (paren
 id|pRxd-&gt;pMBuf
@@ -8252,13 +8331,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_START
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 )paren
 (brace
@@ -12065,6 +12141,21 @@ id|pNextMbuf
 op_assign
 id|pFreeMbuf-&gt;pNext
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|DEV_KFREE_SKB_IRQ
+c_func
+(paren
+id|pFreeMbuf-&gt;pOs
+)paren
+suffix:semicolon
+r_else
 id|DEV_KFREE_SKB
 c_func
 (paren
@@ -13519,6 +13610,9 @@ comma
 id|pRlmtMbuf-&gt;Length
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|XmitFrame
 c_func
 (paren
@@ -13533,6 +13627,14 @@ id|pRlmtMbuf-&gt;PortIdx
 id|TX_PRIO_LOW
 )braket
 comma
+id|pMsg
+)paren
+op_le
+l_int|0
+)paren
+id|DEV_KFREE_SKB
+c_func
+(paren
 id|pMsg
 )paren
 suffix:semicolon

@@ -3654,6 +3654,10 @@ id|mapping
 op_assign
 id|inode-&gt;i_mapping
 suffix:semicolon
+id|inode-&gt;i_size
+op_assign
+id|offset
+suffix:semicolon
 id|truncate_inode_pages
 c_func
 (paren

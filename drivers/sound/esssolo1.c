@@ -13057,6 +13057,11 @@ id|solo1_state
 op_star
 id|s
 suffix:semicolon
+r_struct
+id|pm_dev
+op_star
+id|pmdev
+suffix:semicolon
 r_if
 c_cond
 (paren

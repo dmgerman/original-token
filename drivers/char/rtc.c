@@ -126,6 +126,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+macro_line|#ifndef __alpha__
 r_static
 r_int
 r_int
@@ -142,6 +143,7 @@ op_star
 id|wait
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|get_rtc_time
@@ -162,6 +164,7 @@ op_star
 id|alm_tm
 )paren
 suffix:semicolon
+macro_line|#ifndef __alpha__
 r_static
 r_void
 id|rtc_dropped_irq
@@ -192,6 +195,7 @@ r_char
 id|bit
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_inline
 r_int
@@ -313,6 +317,7 @@ comma
 l_int|31
 )brace
 suffix:semicolon
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n; *&t;A very tiny interrupt handler. It runs with SA_INTERRUPT set,&n; *&t;so that there is no possibility of conflicting with the&n; *&t;set_rtc_mmss() call that happens during some timer interrupts.&n; *&t;(See ./arch/XXXX/kernel/time.c for the set_rtc_mmss() function.)&n; */
 DECL|function|rtc_interrupt
 r_static
@@ -420,6 +425,7 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Now all the various file operations that we export.&n; */
 DECL|function|rtc_llseek
 r_static
@@ -468,6 +474,12 @@ op_star
 id|ppos
 )paren
 (brace
+macro_line|#ifdef __alpha__
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+macro_line|#else
 id|DECLARE_WAITQUEUE
 c_func
 (paren
@@ -621,6 +633,7 @@ suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|rtc_ioctl
 r_static
@@ -661,6 +674,7 @@ c_cond
 id|cmd
 )paren
 (brace
+macro_line|#ifndef __alpha__
 r_case
 id|RTC_AIE_OFF
 suffix:colon
@@ -866,6 +880,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 r_case
 id|RTC_ALM_READ
 suffix:colon
@@ -1509,6 +1524,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
 r_case
 id|RTC_IRQP_READ
 suffix:colon
@@ -1668,7 +1684,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef __alpha__
+macro_line|#else
 r_case
 id|RTC_EPOCH_READ
 suffix:colon
@@ -1889,14 +1905,15 @@ op_star
 id|file
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n;&t; * Turn off all interrupts once the device is no longer&n;&t; * in use, and clear the data.&n;&t; */
 r_int
 r_char
 id|tmp
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -2010,6 +2027,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|spin_lock_irqsave
@@ -2053,6 +2071,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
 DECL|function|rtc_poll
 r_static
 r_int
@@ -2123,6 +2142,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;The various file operations we support.&n; */
 DECL|variable|rtc_fops
 r_static
@@ -2139,10 +2159,12 @@ id|read
 suffix:colon
 id|rtc_read
 comma
+macro_line|#ifndef __alpha__
 id|poll
 suffix:colon
 id|rtc_poll
 comma
+macro_line|#endif
 id|ioctl
 suffix:colon
 id|rtc_ioctl
@@ -2353,6 +2375,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#ifndef __alpha__
 r_if
 c_cond
 (paren
@@ -2386,6 +2409,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#endif
 id|request_region
 c_func
 (paren
@@ -2567,6 +2591,7 @@ id|epoch
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef __alpha__
 id|init_timer
 c_func
 (paren
@@ -2617,6 +2642,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 id|rtc_freq
 op_assign
 l_int|1024
@@ -2722,6 +2748,7 @@ id|rtc_exit
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * &t;At IRQ rates &gt;= 4096Hz, an interrupt may get lost altogether.&n; *&t;(usually during an IDE disk interrupt, with IRQ unmasking off)&n; *&t;Since the interrupt handler doesn&squot;t get called, the IRQ status&n; *&t;byte doesn&squot;t get read, and the RTC stops generating interrupts.&n; *&t;A timer is set, and will call this function if/when that happens.&n; *&t;To get it out of this stalled state, we just read the status.&n; *&t;At least a jiffy of interrupts (rtc_freq/HZ) will have been lost.&n; *&t;(You *really* shouldn&squot;t be trying to use a non-realtime system &n; *&t;for something that requires a steady &gt; 1KHz signal anyways.)&n; */
 DECL|function|rtc_dropped_irq
 r_static
@@ -2815,6 +2842,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Info exported via &quot;/proc/driver/rtc&quot;.&n; */
 DECL|function|rtc_proc_output
 r_static
@@ -3562,6 +3590,7 @@ id|alm_tm-&gt;tm_hour
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * Used to disable/enable interrupts for any one of UIE, AIE, PIE.&n; * Rumour has it that if you frob the interrupt enable/disable&n; * bits in RTC_CONTROL, you should read RTC_INTR_FLAGS, to&n; * ensure you actually start getting interrupts. Probably for&n; * compatibility with older/broken chipset RTC implementations.&n; * We also clear out any old irq data after an ioctl() that&n; * meddles with the interrupt enable/disable bits.&n; */
 DECL|function|mask_rtc_irq_bit
 r_static
@@ -3700,4 +3729,5 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

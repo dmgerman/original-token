@@ -152,7 +152,7 @@ comma
 id|dma_addr_t
 )paren
 suffix:semicolon
-multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_sync_single is performed.  */
+multiline_comment|/* Map a single buffer of the indicate size for PCI DMA in streaming&n;   mode.  The 32-bit PCI bus mastering address to use is returned.&n;   Once the device is given the dma address, the device owns this memory&n;   until either pci_unmap_single or pci_dma_sync_single is performed.  */
 r_extern
 id|dma_addr_t
 id|pci_map_single
@@ -221,8 +221,8 @@ multiline_comment|/* Make physical memory consistant for a single streaming mode
 r_extern
 r_inline
 r_void
-DECL|function|pci_sync_single
-id|pci_sync_single
+DECL|function|pci_dma_sync_single
+id|pci_dma_sync_single
 c_func
 (paren
 r_struct
@@ -243,8 +243,8 @@ multiline_comment|/* Make physical memory consistant for a set of streaming mode
 r_extern
 r_inline
 r_void
-DECL|function|pci_sync_sg
-id|pci_sync_sg
+DECL|function|pci_dma_sync_sg
+id|pci_dma_sync_sg
 c_func
 (paren
 r_struct
@@ -258,7 +258,7 @@ op_star
 id|sg
 comma
 r_int
-id|size
+id|nents
 )paren
 (brace
 multiline_comment|/* Nothing to do.  */

@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a, b) (((a) &lt;= (b)) ? (a) : (b))
@@ -1438,13 +1439,6 @@ id|port_no
 suffix:semicolon
 multiline_comment|/* (4.6.1.3.2(11)) */
 )brace
-multiline_comment|/* JRP: we want the frame to be xmitted even if no other traffic.&n; *&t;net_bh() will do a dev_transmit() that kicks all devices&n; */
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
 )brace
 DECL|function|root_bridge
 r_static
@@ -6464,7 +6458,11 @@ multiline_comment|/* Don&squot;t worry about a change of hardware broadcast addr
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 id|printk
@@ -10572,13 +10570,11 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -11369,13 +11365,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.88 2000/02/06 22:56:09 zaitcev Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.91 2000/02/16 08:44:52 anton Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1244,21 +1244,14 @@ id|newprot
 )paren
 suffix:semicolon
 )brace
-id|BTFIXUPDEF_CALL
-c_func
-(paren
-id|pgd_t
-op_star
-comma
-id|pgd_offset
-comma
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-)paren
+DECL|macro|pgd_index
+mdefine_line|#define pgd_index(address) ((address) &gt;&gt; PGDIR_SHIFT)
+multiline_comment|/* to find an entry in a page-table-directory */
+DECL|macro|pgd_offset
+mdefine_line|#define pgd_offset(mm, address) ((mm)-&gt;pgd + pgd_index(address))
+multiline_comment|/* to find an entry in a kernel page-table-directory */
+DECL|macro|pgd_offset_k
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 id|BTFIXUPDEF_CALL
 c_func
 (paren
@@ -1287,12 +1280,6 @@ comma
 r_int
 r_int
 )paren
-multiline_comment|/* to find an entry in a kernel page-table-directory */
-DECL|macro|pgd_offset_k
-mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
-multiline_comment|/* to find an entry in a page-table-directory */
-DECL|macro|pgd_offset
-mdefine_line|#define pgd_offset(mm,addr) BTFIXUP_CALL(pgd_offset)(mm,addr)
 multiline_comment|/* Find an entry in the second-level page table.. */
 DECL|macro|pmd_offset
 mdefine_line|#define pmd_offset(dir,addr) BTFIXUP_CALL(pmd_offset)(dir,addr)
@@ -1305,6 +1292,8 @@ r_int
 r_int
 id|pg_iobits
 suffix:semicolon
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, pg)      do { } while(0)
 multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 id|BTFIXUPDEF_CALL
 c_func

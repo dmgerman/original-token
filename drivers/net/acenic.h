@@ -605,14 +605,14 @@ mdefine_line|#define READ_CMD_MEM&t;&t;0x06000000
 DECL|macro|WRITE_CMD_MEM
 mdefine_line|#define WRITE_CMD_MEM&t;&t;0x70000000
 multiline_comment|/*&n; * Mode status&n; */
-DECL|macro|ACE_BYTE_SWAP_DATA
-mdefine_line|#define ACE_BYTE_SWAP_DATA&t;0x10
+DECL|macro|ACE_BYTE_SWAP_BD
+mdefine_line|#define ACE_BYTE_SWAP_BD&t;0x02
+DECL|macro|ACE_WORD_SWAP_BD
+mdefine_line|#define ACE_WORD_SWAP_BD&t;0x04&t;&t;/* not actually used */
 DECL|macro|ACE_WARN
 mdefine_line|#define ACE_WARN&t;&t;0x08
-DECL|macro|ACE_WORD_SWAP
-mdefine_line|#define ACE_WORD_SWAP&t;&t;0x04
-DECL|macro|ACE_BYTE_SWAP
-mdefine_line|#define ACE_BYTE_SWAP&t;&t;0x02
+DECL|macro|ACE_BYTE_SWAP_DMA
+mdefine_line|#define ACE_BYTE_SWAP_DMA&t;0x10
 DECL|macro|ACE_NO_JUMBO_FRAG
 mdefine_line|#define ACE_NO_JUMBO_FRAG&t;0x200
 DECL|macro|ACE_FATAL
@@ -667,7 +667,7 @@ DECL|struct|event
 r_struct
 id|event
 (brace
-macro_line|#ifdef __LITTLE_ENDIAN
+macro_line|#ifdef __LITTLE_ENDIAN_BITFIELD
 DECL|member|idx
 id|u32
 id|idx
@@ -747,7 +747,7 @@ DECL|struct|cmd
 r_struct
 id|cmd
 (brace
-macro_line|#ifdef __LITTLE_ENDIAN
+macro_line|#ifdef __LITTLE_ENDIAN_BITFIELD
 DECL|member|idx
 id|u32
 id|idx
@@ -1334,14 +1334,16 @@ op_star
 id|regs
 suffix:semicolon
 multiline_comment|/* register base */
-DECL|member|version
 DECL|member|fw_running
+r_volatile
+r_int
+id|fw_running
+suffix:semicolon
+DECL|member|version
 DECL|member|fw_up
 DECL|member|link
 r_int
 id|version
-comma
-id|fw_running
 comma
 id|fw_up
 comma
@@ -1590,16 +1592,26 @@ id|dma_addr_t
 id|addr
 )paren
 (brace
+r_int
+r_int
+id|baddr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|addr
+suffix:semicolon
 macro_line|#if (BITS_PER_LONG == 64)
 id|aa-&gt;addrlo
 op_assign
-id|addr
+id|baddr
 op_amp
 l_int|0xffffffff
 suffix:semicolon
 id|aa-&gt;addrhi
 op_assign
-id|addr
+id|baddr
 op_rshift
 l_int|32
 suffix:semicolon
@@ -1607,7 +1619,7 @@ macro_line|#else
 multiline_comment|/* Don&squot;t bother setting zero every time */
 id|aa-&gt;addrlo
 op_assign
-id|addr
+id|baddr
 suffix:semicolon
 macro_line|#endif
 id|mb
@@ -1616,7 +1628,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|get_aceaddr
+macro_line|#if 0
 r_static
 r_inline
 r_void
@@ -1657,61 +1669,14 @@ id|aa-&gt;addrlo
 suffix:semicolon
 macro_line|#endif
 r_return
-id|bus_to_virt
-c_func
 (paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-DECL|function|get_aceaddr_bus
-r_static
-r_inline
 r_void
 op_star
-id|get_aceaddr_bus
-c_func
-(paren
-id|aceaddr
-op_star
-id|aa
 )paren
-(brace
-r_int
-r_int
 id|addr
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
-id|addr
-op_assign
-(paren
-id|u64
-)paren
-id|aa-&gt;addrhi
-op_lshift
-l_int|32
-op_or
-id|aa-&gt;addrlo
-suffix:semicolon
-macro_line|#else
-id|addr
-op_assign
-id|aa-&gt;addrlo
-suffix:semicolon
+)brace
 macro_line|#endif
-r_return
-(paren
-r_void
-op_star
-)paren
-id|addr
-suffix:semicolon
-)brace
 DECL|function|ace_set_txprd
 r_static
 r_inline

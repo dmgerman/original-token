@@ -5150,13 +5150,10 @@ id|LOG_OVERFLOW
 r_if
 c_cond
 (paren
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 )paren
 id|ti-&gt;readlog_pending

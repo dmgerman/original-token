@@ -57,6 +57,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/threads.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 DECL|struct|cpuinfo_alpha
 r_struct
 id|cpuinfo_alpha
@@ -92,6 +93,19 @@ DECL|member|ipi_count
 r_int
 r_int
 id|ipi_count
+suffix:semicolon
+DECL|member|irq_attempt
+r_int
+r_int
+id|irq_attempt
+(braket
+id|NR_IRQS
+)braket
+suffix:semicolon
+DECL|member|smp_local_irq_count
+r_int
+r_int
+id|smp_local_irq_count
 suffix:semicolon
 DECL|member|prof_multiplier
 r_int

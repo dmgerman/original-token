@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.47 2000/01/29 00:41:49 anton Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.48 2000/02/16 07:34:51 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H

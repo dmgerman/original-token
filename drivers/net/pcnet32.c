@@ -5141,13 +5141,10 @@ c_cond
 (paren
 id|lp-&gt;tx_full
 op_logical_and
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;flags
+id|dev
 )paren
 op_logical_and
 id|dirty_tx

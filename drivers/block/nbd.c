@@ -999,10 +999,6 @@ id|request
 op_star
 id|req
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1759,11 +1755,13 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NBD device %d: queue_head = %p. Global: in %d, out %d&bslash;n&quot;
+l_string|&quot;NBD device %d: next = %p, prev = %p. Global: in %d, out %d&bslash;n&quot;
 comma
 id|dev
 comma
-id|lo-&gt;queue_head
+id|lo-&gt;queue_head.next
+comma
+id|lo-&gt;queue_head.prev
 comma
 id|requests_in
 comma

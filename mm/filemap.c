@@ -7450,17 +7450,6 @@ id|buf
 op_add_assign
 id|status
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pos
-OG
-id|inode-&gt;i_size
-)paren
-id|inode-&gt;i_size
-op_assign
-id|pos
-suffix:semicolon
 )brace
 id|unlock
 suffix:colon

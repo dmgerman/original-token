@@ -10,9 +10,20 @@ id|__local_irq_count
 suffix:semicolon
 DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count(cpu)  ((void)(cpu), __local_irq_count)
+r_extern
+r_int
+r_int
+id|__irq_attempt
+(braket
+)braket
+suffix:semicolon
+DECL|macro|irq_attempt
+mdefine_line|#define irq_attempt(cpu, irq)  ((void)(cpu), __irq_attempt[irq])
 macro_line|#else
 DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count(cpu)  (cpu_data[cpu].irq_count)
+DECL|macro|irq_attempt
+mdefine_line|#define irq_attempt(cpu, irq) (cpu_data[cpu].irq_attempt[irq])
 macro_line|#endif
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt

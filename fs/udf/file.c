@@ -558,6 +558,18 @@ c_func
 id|page
 )paren
 suffix:semicolon
+multiline_comment|/* only one page here */
+r_if
+c_cond
+(paren
+id|to
+OG
+id|inode-&gt;i_size
+)paren
+id|inode-&gt;i_size
+op_assign
+id|to
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -514,9 +514,6 @@ id|copy_size
 op_assign
 id|count
 suffix:semicolon
-r_int
-id|old_to
-suffix:semicolon
 macro_line|#ifdef LP_STATS
 r_if
 c_cond
@@ -620,8 +617,6 @@ comma
 id|IEEE1284_MODE_COMPAT
 )paren
 suffix:semicolon
-id|old_to
-op_assign
 id|parport_set_timeout
 (paren
 id|lp_table
@@ -824,19 +819,6 @@ c_loop
 id|count
 OG
 l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Not really necessary, but polite. */
-id|parport_set_timeout
-(paren
-id|lp_table
-(braket
-id|minor
-)braket
-dot
-id|dev
-comma
-id|old_to
 )paren
 suffix:semicolon
 id|parport_release
@@ -2066,10 +2048,6 @@ suffix:semicolon
 id|ssize_t
 id|written
 suffix:semicolon
-r_int
-r_int
-id|old_to
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2081,8 +2059,6 @@ id|dev
 multiline_comment|/* Nothing we can do. */
 r_return
 suffix:semicolon
-id|old_to
-op_assign
 id|parport_set_timeout
 (paren
 id|dev
@@ -2259,13 +2235,6 @@ id|written
 OG
 l_int|0
 )paren
-)paren
-suffix:semicolon
-id|parport_set_timeout
-(paren
-id|dev
-comma
-id|old_to
 )paren
 suffix:semicolon
 id|parport_release
@@ -3274,7 +3243,7 @@ id|KERN_INFO
 l_string|&quot;lp: driver loaded but no devices found&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_PARPORT_12843
+macro_line|#ifndef CONFIG_PARPORT_1284
 r_if
 c_cond
 (paren
@@ -3288,7 +3257,7 @@ id|LP_PARPORT_AUTO
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;lp: (is IEEE 1284.3 support enabled?)&bslash;n&quot;
+l_string|&quot;lp: (is IEEE 1284 support enabled?)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

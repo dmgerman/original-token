@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.11 2000/02/08 05:11:32 jj Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.12 2000/02/17 08:58:18 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -5661,10 +5661,8 @@ id|base
 op_assign
 id|p-&gt;controller_regs
 suffix:semicolon
-multiline_comment|/* Currently we don&squot;t even use it. */
-id|pbm-&gt;stc.strbuf_enabled
-op_assign
-l_int|0
+id|u64
+id|control
 suffix:semicolon
 r_if
 c_cond
@@ -5762,8 +5760,11 @@ c_func
 id|pbm-&gt;stc.strbuf_flushflag
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* And when we do enable it, these are the sorts of things&n;&t; * we&squot;ll do.&n;&t; */
+multiline_comment|/* Enable the streaming buffer.  We have to be careful&n;&t; * just in case OBP left it with LRU locking enabled.&n;&t; *&n;&t; * It is possible to control if PBM will be rerun on&n;&t; * line misses.  Currently I just retain whatever setting&n;&t; * OBP left us with.  All checks so far show it having&n;&t; * a value of zero.&n;&t; */
+DECL|macro|PSYCHO_STRBUF_RERUN_ENABLE
+macro_line|#undef PSYCHO_STRBUF_RERUN_ENABLE
+DECL|macro|PSYCHO_STRBUF_RERUN_DISABLE
+macro_line|#undef PSYCHO_STRBUF_RERUN_DISABLE
 id|control
 op_assign
 id|psycho_read
@@ -5774,8 +5775,33 @@ id|pbm-&gt;stc.strbuf_control
 suffix:semicolon
 id|control
 op_or_assign
-id|PSYCHO_SBUFCTRL_SB_EN
+id|PSYCHO_STRBUF_CTRL_ENAB
 suffix:semicolon
+id|control
+op_and_assign
+op_complement
+(paren
+id|PSYCHO_STRBUF_CTRL_LENAB
+op_or
+id|PSYCHO_STRBUF_CTRL_LPTR
+)paren
+suffix:semicolon
+macro_line|#ifdef PSYCHO_STRBUF_RERUN_ENABLE
+id|control
+op_and_assign
+op_complement
+(paren
+id|PSYCHO_STRBUF_CTRL_RRDIS
+)paren
+suffix:semicolon
+macro_line|#else
+macro_line|#ifdef PSYCHO_STRBUF_RERUN_DISABLE
+id|control
+op_or_assign
+id|PSYCHO_STRBUF_CTRL_RRDIS
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 id|psycho_write
 c_func
 (paren
@@ -5784,7 +5810,10 @@ comma
 id|control
 )paren
 suffix:semicolon
-macro_line|#endif
+id|pbm-&gt;stc.strbuf_enabled
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 DECL|macro|PSYCHO_IOSPACE_A
 mdefine_line|#define PSYCHO_IOSPACE_A&t;0x002000000UL

@@ -119,15 +119,5 @@ DECL|macro|AUTOFS_IOC_SETTIMEOUT
 mdefine_line|#define AUTOFS_IOC_SETTIMEOUT _IOWR(0x93,0x64,unsigned long)
 DECL|macro|AUTOFS_IOC_EXPIRE
 mdefine_line|#define AUTOFS_IOC_EXPIRE     _IOR(0x93,0x65,struct autofs_packet_expire)
-macro_line|#ifdef __KERNEL__
-multiline_comment|/* Init function */
-r_int
-id|init_autofs_fs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_AUTO_FS_H */
 eof

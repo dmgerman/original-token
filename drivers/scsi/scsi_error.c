@@ -869,6 +869,10 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
 suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCpnt-&gt;sc_old_data_direction
+suffix:semicolon
 id|scsi_send_eh_cmnd
 c_func
 (paren
@@ -1064,6 +1068,10 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
+suffix:semicolon
 id|scsi_send_eh_cmnd
 c_func
 (paren
@@ -1158,6 +1166,10 @@ suffix:semicolon
 id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
@@ -1345,6 +1357,10 @@ comma
 id|SENSE_TIMEOUT
 )paren
 suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_NONE
+suffix:semicolon
 multiline_comment|/* Last chance to have valid sense data */
 r_if
 c_cond
@@ -1431,6 +1447,10 @@ suffix:semicolon
 id|SCpnt-&gt;cmd_len
 op_assign
 id|SCpnt-&gt;old_cmd_len
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hey, we are done.  Let&squot;s look to see what happened.&n;&t; */
 r_return
@@ -1965,6 +1985,10 @@ multiline_comment|/*&n;&t; * Set this back so that the upper level can correctly
 id|SCpnt-&gt;use_sg
 op_assign
 id|SCpnt-&gt;old_use_sg
+suffix:semicolon
+id|SCpnt-&gt;sc_data_direction
+op_assign
+id|SCpnt-&gt;sc_old_data_direction
 suffix:semicolon
 op_star
 id|SClist
@@ -3100,6 +3124,10 @@ id|host-&gt;can_queue
 op_logical_or
 (paren
 id|host-&gt;host_blocked
+)paren
+op_logical_or
+(paren
+id|host-&gt;host_self_blocked
 )paren
 op_logical_or
 (paren

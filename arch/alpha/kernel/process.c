@@ -21,8 +21,10 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#if 0
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -364,6 +366,7 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#if 0
 macro_line|#ifdef CONFIG_RTC
 multiline_comment|/* Reset rtc to defaults.  */
 id|rtc_kill_pit
@@ -371,6 +374,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_if
 c_cond

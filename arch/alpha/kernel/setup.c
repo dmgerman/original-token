@@ -20,8 +20,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
+macro_line|#if 0
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
@@ -1630,6 +1632,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Initialize the timers.  */
 multiline_comment|/* ??? There is some circumstantial evidence that this needs&n;&t;   to be done now rather than later in time_init, which would&n;&t;   be more natural.  Someone please explain or refute.  */
 macro_line|#if defined(CONFIG_RTC)
@@ -1646,6 +1649,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* &n;&t; * Give us a default console.  TGA users will see nothing until&n;&t; * chr_dev_init is called, rather late in the boot sequence.&n;&t; */
 macro_line|#ifdef CONFIG_VT

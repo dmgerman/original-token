@@ -1290,7 +1290,6 @@ id|start
 suffix:semicolon
 )brace
 r_int
-id|__init
 DECL|function|pcibios_enable_device
 id|pcibios_enable_device
 c_func
@@ -1301,7 +1300,7 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/* Not needed, since we enable all devices at startup.  */
+multiline_comment|/* Nothing to do, since we enable all devices at startup.  */
 r_return
 l_int|0
 suffix:semicolon

@@ -11,6 +11,15 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; * These are the values that the SCpnt-&gt;sc_data_direction and &n; * SRpnt-&gt;sr_data_direction can take.  These need to be set&n; * The SCSI_DATA_UNKNOWN value is essentially the default.&n; * In the event that the command creator didn&squot;t bother to&n; * set a value, you will see SCSI_DATA_UNKNOWN.&n; */
+DECL|macro|SCSI_DATA_UNKNOWN
+mdefine_line|#define SCSI_DATA_UNKNOWN       0
+DECL|macro|SCSI_DATA_WRITE
+mdefine_line|#define SCSI_DATA_WRITE         1
+DECL|macro|SCSI_DATA_READ
+mdefine_line|#define SCSI_DATA_READ          2
+DECL|macro|SCSI_DATA_NONE
+mdefine_line|#define SCSI_DATA_NONE          3
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -271,6 +280,8 @@ DECL|macro|SUGGEST_MASK
 mdefine_line|#define SUGGEST_MASK        0xf0
 DECL|macro|MAX_COMMAND_SIZE
 mdefine_line|#define MAX_COMMAND_SIZE    12
+DECL|macro|SCSI_SENSE_BUFFERSIZE
+mdefine_line|#define SCSI_SENSE_BUFFERSIZE   64
 multiline_comment|/*&n; *  SCSI command sets&n; */
 DECL|macro|SCSI_UNKNOWN
 mdefine_line|#define SCSI_UNKNOWN    0
@@ -321,6 +332,16 @@ r_struct
 id|scsi_cmnd
 id|Scsi_Cmnd
 suffix:semicolon
+DECL|typedef|Scsi_Request
+r_typedef
+r_struct
+id|scsi_request
+id|Scsi_Request
+suffix:semicolon
+DECL|macro|SCSI_CMND_MAGIC
+mdefine_line|#define SCSI_CMND_MAGIC 0xE25C23A5
+DECL|macro|SCSI_REQ_MAGIC
+mdefine_line|#define SCSI_REQ_MAGIC  0x75F6D354
 multiline_comment|/*&n; * Here is where we prototype most of the mid-layer.&n; */
 multiline_comment|/*&n; *  Initializes all SCSI devices.  This scans all scsi busses.&n; */
 r_extern
@@ -821,6 +842,115 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Newer request-based interfaces.&n; */
+r_extern
+id|Scsi_Request
+op_star
+id|scsi_allocate_request
+c_func
+(paren
+id|Scsi_Device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_release_request
+c_func
+(paren
+id|Scsi_Request
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_wait_req
+c_func
+(paren
+id|Scsi_Request
+op_star
+comma
+r_const
+r_void
+op_star
+id|cmnd
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|bufflen
+comma
+r_int
+id|timeout
+comma
+r_int
+id|retries
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_do_req
+c_func
+(paren
+id|Scsi_Request
+op_star
+comma
+r_const
+r_void
+op_star
+id|cmnd
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|bufflen
+comma
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+comma
+r_int
+id|timeout
+comma
+r_int
+id|retries
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|scsi_insert_special_req
+c_func
+(paren
+id|Scsi_Request
+op_star
+id|SRpnt
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scsi_init_cmd_from_req
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+comma
+id|Scsi_Request
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Prototypes for functions/data in hosts.c&n; */
 r_extern
 r_int
@@ -871,6 +1001,19 @@ r_char
 op_star
 comma
 id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_req_sense
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+id|Scsi_Request
 op_star
 )paren
 suffix:semicolon
@@ -1270,11 +1413,129 @@ DECL|typedef|Scsi_Pointer
 )brace
 id|Scsi_Pointer
 suffix:semicolon
+multiline_comment|/*&n; * This is essentially a slimmed down version of Scsi_Cmnd.  The point of&n; * having this is that requests that are injected into the queue as result&n; * of things like ioctls and character devices shouldn&squot;t be using a&n; * Scsi_Cmnd until such a time that the command is actually at the head&n; * of the queue and being sent to the driver.&n; */
+DECL|struct|scsi_request
+r_struct
+id|scsi_request
+(brace
+DECL|member|sr_magic
+r_int
+id|sr_magic
+suffix:semicolon
+DECL|member|sr_result
+r_int
+id|sr_result
+suffix:semicolon
+multiline_comment|/* Status code from lower level driver */
+DECL|member|sr_sense_buffer
+r_int
+r_char
+id|sr_sense_buffer
+(braket
+id|SCSI_SENSE_BUFFERSIZE
+)braket
+suffix:semicolon
+multiline_comment|/* obtained by REQUEST SENSE&n;&t;&t;&t;&t;&t;&t; * when CHECK CONDITION is&n;&t;&t;&t;&t;&t;&t; * received on original command &n;&t;&t;&t;&t;&t;&t; * (auto-sense) */
+DECL|member|sr_host
+r_struct
+id|Scsi_Host
+op_star
+id|sr_host
+suffix:semicolon
+DECL|member|sr_device
+id|Scsi_Device
+op_star
+id|sr_device
+suffix:semicolon
+DECL|member|sr_command
+id|Scsi_Cmnd
+op_star
+id|sr_command
+suffix:semicolon
+DECL|member|sr_request
+r_struct
+id|request
+id|sr_request
+suffix:semicolon
+multiline_comment|/* A copy of the command we are&n;&t;&t;&t;&t;   working on */
+DECL|member|sr_bufflen
+r_int
+id|sr_bufflen
+suffix:semicolon
+multiline_comment|/* Size of data buffer */
+DECL|member|sr_buffer
+r_void
+op_star
+id|sr_buffer
+suffix:semicolon
+multiline_comment|/* Data buffer */
+DECL|member|sr_allowed
+r_int
+id|sr_allowed
+suffix:semicolon
+DECL|member|sr_data_direction
+r_int
+r_char
+id|sr_data_direction
+suffix:semicolon
+DECL|member|sr_cmd_len
+r_int
+r_char
+id|sr_cmd_len
+suffix:semicolon
+DECL|member|sr_cmnd
+r_int
+r_char
+id|sr_cmnd
+(braket
+id|MAX_COMMAND_SIZE
+)braket
+suffix:semicolon
+DECL|member|sr_done
+r_void
+(paren
+op_star
+id|sr_done
+)paren
+(paren
+r_struct
+id|scsi_cmnd
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Mid-level done function */
+DECL|member|sr_timeout_per_command
+r_int
+id|sr_timeout_per_command
+suffix:semicolon
+DECL|member|sr_use_sg
+r_int
+r_int
+id|sr_use_sg
+suffix:semicolon
+multiline_comment|/* Number of pieces of scatter-gather */
+DECL|member|sr_sglist_len
+r_int
+r_int
+id|sr_sglist_len
+suffix:semicolon
+multiline_comment|/* size of malloc&squot;d scatter-gather list */
+DECL|member|sr_underflow
+r_int
+id|sr_underflow
+suffix:semicolon
+multiline_comment|/* Return error if less than&n;&t;&t;&t;&t;   this amount is transfered */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * FIXME(eric) - one of the great regrets that I have is that I failed to define&n; * these structure elements as something like sc_foo instead of foo.  This would&n; * make it so much easier to grep through sources and so forth.  I propose that&n; * all new elements that get added to these structures follow this convention.&n; * As time goes on and as people have the stomach for it, it should be possible to &n; * go back and retrofit at least some of the elements here with with the prefix.&n; */
 DECL|struct|scsi_cmnd
 r_struct
 id|scsi_cmnd
 (brace
+DECL|member|sc_magic
+r_int
+id|sc_magic
+suffix:semicolon
 multiline_comment|/* private: */
 multiline_comment|/*&n;&t; * This information is private to the scsi mid-layer.  Wrapping it in a&n;&t; * struct private is a way of marking it in a sort of C++ type of way.&n;&t; */
 DECL|member|host
@@ -1297,6 +1558,11 @@ DECL|member|device
 id|Scsi_Device
 op_star
 id|device
+suffix:semicolon
+DECL|member|sc_request
+id|Scsi_Request
+op_star
+id|sc_request
 suffix:semicolon
 DECL|member|next
 r_struct
@@ -1399,6 +1665,16 @@ r_int
 r_char
 id|old_cmd_len
 suffix:semicolon
+DECL|member|sc_data_direction
+r_int
+r_char
+id|sc_data_direction
+suffix:semicolon
+DECL|member|sc_old_data_direction
+r_int
+r_char
+id|sc_old_data_direction
+suffix:semicolon
 multiline_comment|/* These elements define the operation we are about to perform */
 DECL|member|cmnd
 r_int
@@ -1495,7 +1771,7 @@ r_int
 r_char
 id|sense_buffer
 (braket
-l_int|64
+id|SCSI_SENSE_BUFFERSIZE
 )braket
 suffix:semicolon
 multiline_comment|/* obtained by REQUEST SENSE&n;&t;&t;&t;&t;&t;&t; * when CHECK CONDITION is&n;&t;&t;&t;&t;&t;&t; * received on original command &n;&t;&t;&t;&t;&t;&t; * (auto-sense) */

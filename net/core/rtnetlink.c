@@ -734,13 +734,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_bit
+op_logical_neg
+id|netif_running
 c_func
 (paren
-id|LINK_STATE_DOWN
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 )paren
 id|r-&gt;ifi_flags

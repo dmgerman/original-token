@@ -1362,13 +1362,10 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|test_bit
+id|netif_queue_stopped
 c_func
 (paren
-id|LINK_STATE_XOFF
-comma
-op_amp
-id|dev-&gt;state
+id|dev
 )paren
 op_logical_and
 id|qdisc_restart

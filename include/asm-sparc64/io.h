@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.31 2000/02/08 05:11:38 jj Exp $ */
+multiline_comment|/* $Id: io.h,v 1.32 2000/02/15 10:04:54 jj Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -304,6 +304,14 @@ DECL|macro|inb_p
 mdefine_line|#define inb_p inb
 DECL|macro|outb_p
 mdefine_line|#define outb_p outb
+DECL|macro|inw_p
+mdefine_line|#define inw_p inw
+DECL|macro|outw_p
+mdefine_line|#define outw_p outw
+DECL|macro|inl_p
+mdefine_line|#define inl_p inl
+DECL|macro|outl_p
+mdefine_line|#define outl_p outl
 r_extern
 r_void
 id|outsb

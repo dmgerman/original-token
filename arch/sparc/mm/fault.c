@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.113 2000/01/21 11:38:47 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.114 2000/02/14 04:52:36 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1389,20 +1389,6 @@ id|pte_t
 )paren
 suffix:semicolon
 r_extern
-id|pgd_t
-op_star
-id|sun4c_pgd_offset
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
 id|pte_t
 op_star
 id|sun4c_pte_offset
@@ -1511,7 +1497,7 @@ suffix:semicolon
 )brace
 id|pgdp
 op_assign
-id|sun4c_pgd_offset
+id|pgd_offset
 c_func
 (paren
 id|mm

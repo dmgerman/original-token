@@ -674,7 +674,7 @@ id|q-&gt;request_fn
 op_assign
 id|rfn
 suffix:semicolon
-id|q-&gt;back_merges_fn
+id|q-&gt;back_merge_fn
 op_assign
 id|ll_back_merge_fn
 suffix:semicolon
@@ -1705,7 +1705,6 @@ r_int
 id|after
 )paren
 (brace
-macro_line|#ifdef DEBUG_ELEVATOR
 r_int
 id|sequence
 op_assign
@@ -1739,19 +1738,12 @@ id|req-&gt;elevator_sequence
 )paren
 )paren
 (brace
-r_static
-r_int
-id|warned
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|warned
+id|after
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1768,17 +1760,11 @@ op_minus
 id|q-&gt;elevator.sequence
 )paren
 suffix:semicolon
-id|warned
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 id|req-&gt;elevator_sequence
 op_assign
 id|sequence
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 DECL|function|elevator_queue
 r_static
@@ -2572,6 +2558,8 @@ id|entry
 comma
 op_star
 id|__entry
+op_assign
+l_int|NULL
 suffix:semicolon
 id|count
 op_assign
