@@ -275,9 +275,15 @@ id|to-&gt;sat_addr.s_net
 op_eq
 id|s-&gt;protinfo.af_at.src_net
 op_logical_and
+(paren
 id|to-&gt;sat_addr.s_node
 op_eq
 id|s-&gt;protinfo.af_at.src_node
+op_logical_or
+id|to-&gt;sat_addr.s_node
+op_eq
+id|ATADDR_BCAST
+)paren
 )paren
 (brace
 r_break

@@ -1242,6 +1242,17 @@ op_increment
 suffix:semicolon
 id|max_req
 op_assign
+(paren
+id|major
+op_eq
+id|MD_MAJOR
+)paren
+ques
+c_cond
+id|NR_REQUEST
+op_div
+l_int|2
+suffix:colon
 id|NR_REQUEST
 suffix:semicolon
 multiline_comment|/* reads take precedence */
@@ -1289,6 +1300,17 @@ op_increment
 suffix:semicolon
 id|max_req
 op_assign
+(paren
+id|major
+op_eq
+id|MD_MAJOR
+)paren
+ques
+c_cond
+id|NR_REQUEST
+op_div
+l_int|3
+suffix:colon
 (paren
 id|NR_REQUEST
 op_star

@@ -5322,6 +5322,120 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|selected_options
+op_amp
+id|B
+(paren
+id|OPT_MAUI
+)paren
+)paren
+(brace
+id|oswf_again
+suffix:colon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_string|&quot;Do you have access to the OSWF.MOT file&quot;
+comma
+l_int|1
+comma
+l_string|&quot;TB Maui and Tropez have a microcontroller which needs to be initialized&bslash;n&quot;
+l_string|&quot;prior use. OSWF.MOT is a file distributed with card&squot;s DOS/Windows drivers&bslash;n&quot;
+l_string|&quot;which is required during initialization&bslash;n&quot;
+)paren
+)paren
+(brace
+r_char
+id|path
+(braket
+l_int|512
+)braket
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Enter full name of the OSWF.MOT file (pwd is sound): &quot;
+)paren
+suffix:semicolon
+id|scanf
+(paren
+l_string|&quot;%s&quot;
+comma
+id|path
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;including microcode file %s&bslash;n&quot;
+comma
+id|path
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bin2hex
+(paren
+id|path
+comma
+l_string|&quot;maui_boot.h&quot;
+comma
+l_string|&quot;maui_os&quot;
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;Couldn&squot;t open file %s&bslash;n&quot;
+comma
+id|path
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_string|&quot;Try again with correct path&quot;
+comma
+l_int|1
+comma
+l_string|&quot;The specified file could not be opened. Enter the correct path to the&bslash;n&quot;
+l_string|&quot;file.&bslash;n&quot;
+)paren
+)paren
+r_goto
+id|oswf_again
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printf
+(paren
+l_string|&quot;#define HAVE_MAUI_BOOT&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;/*build bin2hex %s maui_boot.h maui_os */&bslash;n&quot;
+comma
+id|path
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|selected_options

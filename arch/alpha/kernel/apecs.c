@@ -1653,7 +1653,86 @@ r_int
 id|mem_end
 )paren
 (brace
-multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 1 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
+macro_line|#ifdef CONFIG_ALPHA_XL
+multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For the XL we *must* use both windows, in order to&n;&t; * maximize the amount of physical memory that can be used&n;&t; * to DMA from the ISA bus, and still allow PCI bus devices&n;&t; * access to all of host memory.&n;&t; *&n;&t; * see &lt;asm/apecs.h&gt; for window bases and sizes.&n;&t; *&n;&t; * this restriction due to the true XL motherboards&squot; 82379AB SIO&n;&t; * PCI&lt;-&gt;ISA bridge chip which passes only 27 bits of address...&n;&t; */
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB1R
+op_assign
+l_int|1U
+op_lshift
+l_int|19
+op_or
+(paren
+id|APECS_XL_DMA_WIN1_BASE
+op_amp
+l_int|0xfff00000U
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM1R
+op_assign
+(paren
+id|APECS_XL_DMA_WIN1_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB1R
+op_assign
+l_int|0
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PB2R
+op_assign
+l_int|1U
+op_lshift
+l_int|19
+op_or
+(paren
+id|APECS_XL_DMA_WIN2_BASE
+op_amp
+l_int|0xfff00000U
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_PM2R
+op_assign
+(paren
+id|APECS_XL_DMA_WIN2_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+l_int|0xfff00000U
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|APECS_IOC_TB2R
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else  /* CONFIG_ALPHA_XL */
+multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, window 2 is disabled.  In the future, we may&n;&t; * want to use it to do scatter/gather DMA.  Window 1&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 op_star
 (paren
 id|vuip
@@ -1701,6 +1780,7 @@ id|APECS_IOC_TB1R
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif /* CONFIG_ALPHA_XL */
 macro_line|#ifdef CONFIG_ALPHA_CABRIOLET
 multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clockfrequency&n;&t; * right, so hardcode it for now.&n;&t; */
 r_if

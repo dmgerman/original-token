@@ -14,6 +14,9 @@ macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+macro_line|#include &lt;net/ip_masq.h&gt;
+macro_line|#endif
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;net/route.h&gt;
@@ -538,11 +541,11 @@ op_amp
 id|dev-&gt;pa_mask
 )paren
 op_logical_and
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_MODIFIED
-)paren
+multiline_comment|/* The daddr!=raddr test isnt obvious - what its doing&n;&t;&t;&t;   is avoiding sending a frame the receiver will not &n;&t;&t;&t;   believe anyway.. */
+id|iph-&gt;daddr
+op_ne
+id|raddr
+multiline_comment|/*ANK*/
 op_logical_and
 op_logical_neg
 id|opt-&gt;srr

@@ -30,6 +30,9 @@ macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+macro_line|#include &lt;net/ip_masq.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;net/netlink.h&gt;
@@ -866,7 +869,10 @@ c_cond
 id|ip_fw_demasquerade
 c_func
 (paren
+op_amp
 id|skb
+comma
+id|dev
 )paren
 )paren
 (brace

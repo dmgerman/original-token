@@ -32,6 +32,9 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#ifdef CONFIG_IP_MASQUERADE
+macro_line|#include &lt;net/ip_masq.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ALIAS
 macro_line|#include &lt;net/ip_alias.h&gt;
 macro_line|#endif

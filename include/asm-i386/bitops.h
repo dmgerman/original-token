@@ -247,82 +247,17 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-"&quot;"
-id|cld
-id|movl
-"$"
-op_minus
-l_int|1
-comma
-op_mod
-op_mod
-id|eax
-id|xorl
-op_mod
-op_mod
-id|edx
-comma
-op_mod
-op_mod
-id|edx
-id|repe
-suffix:semicolon
-id|scasl
-id|je
-l_float|1f
-id|xorl
-op_minus
-l_int|4
-(paren
-op_mod
-op_mod
-id|edi
-)paren
-comma
-op_mod
-op_mod
-id|eax
-id|subl
-"$"
-l_int|4
-comma
-op_mod
-op_mod
-id|edi
-id|bsfl
-op_mod
-op_mod
-id|eax
-comma
-op_mod
-op_mod
-id|edx
-l_int|1
-suffix:colon
-id|subl
-op_mod
-op_mod
-id|ebx
-comma
-op_mod
-op_mod
-id|edi
-id|shll
-"$"
-l_int|3
-comma
-op_mod
-op_mod
-id|edi
-id|addl
-op_mod
-op_mod
-id|edi
-comma
-op_mod
-op_mod
-id|edx
-"&quot;"
+l_string|&quot;cld&bslash;n&bslash;t&quot;
+l_string|&quot;movl $-1,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %%edx,%%edx&bslash;n&bslash;t&quot;
+l_string|&quot;repe; scasl&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
+l_string|&quot;xorl -4(%%edi),%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;subl $4,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;bsfl %%eax,%%edx&bslash;n&quot;
+l_string|&quot;1:&bslash;tsubl %%ebx,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;shll $3,%%edi&bslash;n&bslash;t&quot;
+l_string|&quot;addl %%edi,%%edx&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -421,24 +356,10 @@ multiline_comment|/*&n;&t;&t; * Look for zero in first byte&n;&t;&t; */
 id|__asm__
 c_func
 (paren
-"&quot;"
-id|bsfl
-op_mod
-l_int|1
-comma
-op_mod
-l_int|0
-id|jne
-l_float|1f
-id|movl
-"$"
-l_int|32
-comma
-op_mod
-l_int|0
-l_int|1
-suffix:colon
-"&quot;"
+l_string|&quot;bsfl %1,%0&bslash;n&bslash;t&quot;
+l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
+l_string|&quot;movl $32, %0&bslash;n&quot;
+l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

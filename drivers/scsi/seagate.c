@@ -1756,7 +1756,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|seagate_st0x_command
 r_int
 id|seagate_st0x_command
 (paren
@@ -4628,7 +4627,6 @@ id|st0x_aborted
 )paren
 suffix:semicolon
 )brace
-DECL|function|seagate_st0x_abort
 r_int
 id|seagate_st0x_abort
 (paren
@@ -4646,7 +4644,6 @@ id|SCSI_ABORT_PENDING
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;the seagate_st0x_reset function resets the SCSI bus&n;*/
-DECL|function|seagate_st0x_reset
 r_int
 id|seagate_st0x_reset
 (paren
@@ -4712,7 +4709,6 @@ suffix:semicolon
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
-DECL|function|seagate_st0x_biosparam
 r_int
 id|seagate_st0x_biosparam
 c_func
@@ -4770,6 +4766,9 @@ comma
 id|heads
 comma
 id|sectors
+suffix:semicolon
+r_int
+id|capacity
 suffix:semicolon
 multiline_comment|/*&n; * Only SCSI-I CCS drives and later implement the necessary mode sense &n; * pages.  &n; */
 r_if
@@ -5123,13 +5122,52 @@ OG
 l_int|64
 )paren
 )paren
-id|result
+multiline_comment|/* The Seagate&squot;s seem to have some mapping&n;&t; * Multiple heads * sectors * cyl to get capacity&n;&t; * Then start rounding down. */
+id|capacity
 op_assign
-op_minus
-l_int|1
+id|heads
+op_star
+id|sectors
+op_star
+id|cylinders
 suffix:semicolon
-r_else
+id|sectors
+op_assign
+l_int|17
+suffix:semicolon
+multiline_comment|/* Old MFM Drives use this, so does the Seagate */
+id|heads
+op_assign
+l_int|2
+suffix:semicolon
+id|capacity
+op_assign
+id|capacity
+op_div
+id|sectors
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|cylinders
+OG
+l_int|1024
+)paren
 (brace
+id|heads
+op_mul_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* For some reason, they go in multiples */
+id|cylinders
+op_assign
+id|capacity
+op_div
+id|heads
+suffix:semicolon
+)brace
+suffix:semicolon
+)brace
 id|ip
 (braket
 l_int|0
@@ -5151,7 +5189,6 @@ l_int|2
 op_assign
 id|cylinders
 suffix:semicolon
-)brace
 multiline_comment|/* &n; * There should be an alternate mapping for things the seagate doesn&squot;t&n; * understand, but I couldn&squot;t say what it is with reasonable certainty.&n; */
 )brace
 )brace
@@ -5161,7 +5198,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* Eventually this will go into an include file, but this will be later */
-DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign

@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 DECL|macro|WATCHDOG_MINOR
 mdefine_line|#define WATCHDOG_MINOR&t;130
 DECL|macro|TIMER_MARGIN
@@ -234,12 +234,12 @@ multiline_comment|/* Fasync */
 suffix:semicolon
 r_static
 r_struct
-id|mouse
+id|miscdevice
 id|softdog_mouse
 op_assign
 initialization_block
 suffix:semicolon
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp

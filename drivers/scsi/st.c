@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Mon Jan 29 21:18:12 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Fri Mar 29 20:55:05 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -108,6 +108,8 @@ id|new_tape_buffer
 c_func
 (paren
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -117,6 +119,8 @@ c_func
 (paren
 id|ST_buffer
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -589,6 +593,20 @@ id|recover_count
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+id|sense
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0xe0
+)paren
+op_eq
+l_int|0
+)paren
 r_return
 l_int|0
 suffix:semicolon
@@ -1954,6 +1972,8 @@ id|flags
 suffix:semicolon
 r_int
 id|i
+comma
+id|need_dma_buffer
 suffix:semicolon
 r_int
 r_char
@@ -2049,6 +2069,10 @@ op_eq
 l_int|0
 suffix:semicolon
 multiline_comment|/* Allocate buffer for this user */
+id|need_dma_buffer
+op_assign
+id|STp-&gt;restr_dma
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2073,6 +2097,18 @@ id|i
 )braket
 op_member_access_from_pointer
 id|in_use
+op_logical_and
+(paren
+op_logical_neg
+id|need_dma_buffer
+op_logical_or
+id|st_buffers
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|dma
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -2090,6 +2126,8 @@ id|new_tape_buffer
 c_func
 (paren
 id|FALSE
+comma
+id|need_dma_buffer
 )paren
 suffix:semicolon
 r_if
@@ -2104,7 +2142,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;st%d: No free buffers.&bslash;n&quot;
+l_string|&quot;st%d: Can&squot;t allocate tape buffer.&bslash;n&quot;
 comma
 id|dev
 )paren
@@ -2972,6 +3010,8 @@ c_func
 id|STp-&gt;buffer
 comma
 id|STp-&gt;block_size
+comma
+id|STp-&gt;restr_dma
 )paren
 )paren
 (brace
@@ -3795,6 +3835,8 @@ c_func
 id|STp-&gt;buffer
 comma
 id|count
+comma
+id|STp-&gt;restr_dma
 )paren
 )paren
 r_return
@@ -5091,6 +5133,8 @@ c_func
 id|STp-&gt;buffer
 comma
 id|count
+comma
+id|STp-&gt;restr_dma
 )paren
 )paren
 r_return
@@ -10578,6 +10622,9 @@ c_func
 (paren
 r_int
 id|from_initialization
+comma
+r_int
+id|need_dma
 )paren
 (brace
 r_int
@@ -10609,8 +10656,6 @@ id|from_initialization
 id|priority
 op_assign
 id|GFP_ATOMIC
-op_or
-id|GFP_DMA
 suffix:semicolon
 id|a_size
 op_assign
@@ -10622,8 +10667,6 @@ r_else
 id|priority
 op_assign
 id|GFP_KERNEL
-op_or
-id|GFP_DMA
 suffix:semicolon
 r_for
 c_loop
@@ -10666,6 +10709,15 @@ c_cond
 id|tb
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|need_dma
+)paren
+id|priority
+op_or_assign
+id|GFP_DMA
+suffix:semicolon
 id|tb-&gt;b_data
 op_assign
 (paren
@@ -10739,17 +10791,25 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st: Allocated tape buffer %d (%d bytes).&bslash;n&quot;
+l_string|&quot;st: Allocated tape buffer %d (%d bytes, dma: %d, a: %p).&bslash;n&quot;
 comma
 id|st_nbr_buffers
 comma
 id|a_size
+comma
+id|need_dma
+comma
+id|tb-&gt;b_data
 )paren
 suffix:semicolon
 macro_line|#endif
 id|tb-&gt;in_use
 op_assign
 l_int|0
+suffix:semicolon
+id|tb-&gt;dma
+op_assign
+id|need_dma
 suffix:semicolon
 id|tb-&gt;buffer_size
 op_assign
@@ -10788,10 +10848,15 @@ id|STbuffer
 comma
 r_int
 id|new_size
+comma
+r_int
+id|need_dma
 )paren
 (brace
 r_int
 id|a_size
+comma
+id|priority
 suffix:semicolon
 r_int
 r_char
@@ -10821,6 +10886,19 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure that we allocate efficiently */
+id|priority
+op_assign
+id|GFP_KERNEL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|need_dma
+)paren
+id|priority
+op_or_assign
+id|GFP_DMA
+suffix:semicolon
 id|tbd
 op_assign
 (paren
@@ -10833,9 +10911,7 @@ c_func
 (paren
 id|a_size
 comma
-id|GFP_DMA
-op_or
-id|GFP_KERNEL
+id|priority
 )paren
 suffix:semicolon
 r_if
@@ -10857,9 +10933,15 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st: Buffer enlarged to %d bytes.&bslash;n&quot;
+l_string|&quot;st: Buffer at %p enlarged to %d bytes (dma: %d, a: %p).&bslash;n&quot;
+comma
+id|STbuffer-&gt;b_data
 comma
 id|a_size
+comma
+id|need_dma
+comma
+id|tbd
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -10934,7 +11016,9 @@ id|printk
 c_func
 (paren
 id|ST_DEB_MSG
-l_string|&quot;st: Buffer normalized to %d bytes.&bslash;n&quot;
+l_string|&quot;st: Buffer at %p normalized to %d bytes.&bslash;n&quot;
+comma
+id|STbuffer-&gt;b_data
 comma
 id|STbuffer-&gt;buffer_size
 )paren
@@ -11245,6 +11329,14 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Try buffering if no mode sense */
+id|tpnt-&gt;restr_dma
+op_assign
+(paren
+id|SDp-&gt;host
+)paren
+op_member_access_from_pointer
+id|unchecked_isa_dma
+suffix:semicolon
 id|tpnt-&gt;density
 op_assign
 l_int|0
@@ -11279,7 +11371,10 @@ id|st_write_threshold
 suffix:semicolon
 id|tpnt-&gt;drv_block
 op_assign
-l_int|0
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|tpnt-&gt;moves_after_eof
 op_assign
@@ -11288,6 +11383,23 @@ suffix:semicolon
 id|tpnt-&gt;at_sm
 op_assign
 l_int|0
+suffix:semicolon
+(paren
+id|tpnt-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_assign
+(paren
+id|tpnt-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_blkno
+op_assign
+(paren
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|st_template.nr_dev
 op_increment
@@ -11772,6 +11884,8 @@ id|new_tape_buffer
 c_func
 (paren
 id|TRUE
+comma
+id|TRUE
 )paren
 )paren
 (brace
@@ -11783,6 +11897,7 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -11836,6 +11951,17 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;No tape buffers allocated at initialization.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 )brace
 id|printk
 c_func

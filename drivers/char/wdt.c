@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &quot;wd501p.h&quot;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -742,7 +742,7 @@ suffix:semicolon
 DECL|variable|wdt_mouse
 r_static
 r_struct
-id|mouse
+id|miscdevice
 id|wdt_mouse
 op_assign
 (brace
@@ -758,7 +758,7 @@ macro_line|#ifdef CONFIG_WDT_501
 DECL|variable|temp_mouse
 r_static
 r_struct
-id|mouse
+id|miscdevice
 id|temp_mouse
 op_assign
 (brace
@@ -867,7 +867,7 @@ id|wdt_mouse
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501&t;
-id|mouse_deregister
+id|misc_deregister
 c_func
 (paren
 op_amp
@@ -950,7 +950,7 @@ id|wdt_mouse
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_WDT_501&t;
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp

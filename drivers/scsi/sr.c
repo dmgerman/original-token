@@ -5131,6 +5131,9 @@ id|i
 dot
 id|capacity
 op_assign
+l_int|1
+op_plus
+(paren
 (paren
 id|buffer
 (braket
@@ -5162,6 +5165,7 @@ id|buffer
 (braket
 l_int|3
 )braket
+)paren
 suffix:semicolon
 id|scsi_CDs
 (braket
@@ -5306,6 +5310,12 @@ id|i
 )braket
 dot
 id|capacity
+op_rshift
+(paren
+id|BLOCK_SIZE_BITS
+op_minus
+l_int|9
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -5674,6 +5684,12 @@ id|i
 )braket
 dot
 id|capacity
+op_rshift
+(paren
+id|BLOCK_SIZE_BITS
+op_minus
+l_int|9
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* If our host adapter is capable of scatter-gather, then we increase&n;&t; * the read-ahead to 16 blocks (32 sectors).  If not, we use&n;&t; * a two block (4 sector) read ahead. */

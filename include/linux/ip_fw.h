@@ -272,104 +272,6 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_IP_MASQUERADE
-DECL|struct|ip_masq
-r_struct
-id|ip_masq
-(brace
-DECL|member|next
-r_struct
-id|ip_masq
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* next member in list */
-DECL|member|timer
-r_struct
-id|timer_list
-id|timer
-suffix:semicolon
-multiline_comment|/* Expiration timer */
-DECL|member|protocol
-id|__u16
-id|protocol
-suffix:semicolon
-multiline_comment|/* Which protocol are we talking? */
-DECL|member|src
-DECL|member|dst
-id|__u32
-id|src
-comma
-id|dst
-suffix:semicolon
-multiline_comment|/* Source and destination IP addresses */
-DECL|member|sport
-DECL|member|dport
-id|__u16
-id|sport
-comma
-id|dport
-suffix:semicolon
-multiline_comment|/* Source and destination ports */
-DECL|member|mport
-id|__u16
-id|mport
-suffix:semicolon
-multiline_comment|/* Masquaraded port */
-DECL|member|init_seq
-id|__u32
-id|init_seq
-suffix:semicolon
-multiline_comment|/* Add delta from this seq. on */
-DECL|member|delta
-r_int
-id|delta
-suffix:semicolon
-multiline_comment|/* Delta in sequence numbers */
-DECL|member|previous_delta
-r_int
-id|previous_delta
-suffix:semicolon
-multiline_comment|/* Delta in sequence numbers before last resized PORT command */
-DECL|member|sawfin
-r_char
-id|sawfin
-suffix:semicolon
-multiline_comment|/* Did we saw an FIN packet? */
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|ip_masq
-op_star
-id|ip_msq_hosts
-suffix:semicolon
-r_extern
-r_void
-id|ip_fw_masquerade
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-op_star
-comma
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_fw_demasquerade
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_extern
 r_struct
@@ -486,22 +388,5 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* KERNEL */
-macro_line|#ifdef CONFIG_IP_MASQUERADE
-DECL|macro|DEBUG_MASQ
-macro_line|#undef DEBUG_MASQ
-DECL|macro|MASQUERADE_EXPIRE_TCP
-mdefine_line|#define MASQUERADE_EXPIRE_TCP     15*60*HZ
-DECL|macro|MASQUERADE_EXPIRE_TCP_FIN
-mdefine_line|#define MASQUERADE_EXPIRE_TCP_FIN  2*60*HZ
-DECL|macro|MASQUERADE_EXPIRE_UDP
-mdefine_line|#define MASQUERADE_EXPIRE_UDP      5*60*HZ
-multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K. I used an extra 4K port-space&n; */
-DECL|macro|PORT_MASQ_BEGIN
-mdefine_line|#define PORT_MASQ_BEGIN&t;60000
-DECL|macro|PORT_MASQ_END
-mdefine_line|#define PORT_MASQ_END&t;(PORT_MASQ_BEGIN+4096)
-DECL|macro|FTP_DPORT_TBD
-mdefine_line|#define FTP_DPORT_TBD (PORT_MASQ_END+1) /* Avoid using hardcoded port 20 for ftp data connection */
-macro_line|#endif
 macro_line|#endif /* _IP_FW_H */
 eof

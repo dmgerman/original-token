@@ -1339,7 +1339,7 @@ id|SDLA_MODEM_DCD_LOW
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: Modem DCD unexpectedly low!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1356,7 +1356,7 @@ id|SDLA_MODEM_CTS_LOW
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: Modem CTS unexpectedly low!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1371,7 +1371,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: Channel became inoperative!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1386,7 +1386,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: Channel became operative!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1401,7 +1401,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: Status change reported by Access Node.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1480,7 +1480,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: DLCI %i: %s.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1500,7 +1500,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_INFO
 l_string|&quot;%s: Received unknown DLCIs:&quot;
 comma
 id|dev-&gt;name
@@ -1508,7 +1508,10 @@ id|dev-&gt;name
 suffix:semicolon
 id|len
 op_div_assign
-l_int|2
+r_sizeof
+(paren
+r_int
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4850,6 +4853,9 @@ id|i
 comma
 id|err
 suffix:semicolon
+r_int
+id|size
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5205,6 +5211,23 @@ id|err
 r_return
 id|err
 suffix:semicolon
+multiline_comment|/* no sense reading if the CPU isnt&squot; started */
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+)paren
+(brace
+id|size
+op_assign
+r_sizeof
+(paren
+id|data
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|sdla_cmd
 c_func
 (paren
@@ -5216,17 +5239,60 @@ l_int|0
 comma
 l_int|0
 comma
+l_int|NULL
+comma
+l_int|0
+comma
 op_amp
 id|data
 comma
+op_amp
+id|size
+)paren
+op_ne
+id|SDLA_RET_OK
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|flp-&gt;configured
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|data.config
+comma
+op_amp
+id|flp-&gt;config
+comma
 r_sizeof
 (paren
-id|data
+r_struct
+id|frad_conf
 )paren
+)paren
+suffix:semicolon
+r_else
+id|memset
+c_func
+(paren
+op_amp
+id|data.config
 comma
-l_int|NULL
+l_int|0
 comma
-l_int|NULL
+r_sizeof
+(paren
+r_struct
+id|frad_conf
+)paren
 )paren
 suffix:semicolon
 id|memcpy
@@ -5252,11 +5318,22 @@ id|SDLA_DIRECT_RECV
 suffix:semicolon
 id|data.config.mtu
 op_sub_assign
+id|data.config.mtu
+OG
 r_sizeof
 (paren
 r_struct
 id|fradhdr
 )paren
+ques
+c_cond
+r_sizeof
+(paren
+r_struct
+id|fradhdr
+)paren
+suffix:colon
+id|data.config.mtu
 suffix:semicolon
 id|memcpy_tofs
 c_func

@@ -6734,6 +6734,8 @@ c_func
 id|arg
 comma
 id|tty
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_case

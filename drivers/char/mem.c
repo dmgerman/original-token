@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
 macro_line|#include &lt;linux/ftape.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1523,8 +1523,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG)
-id|mouse_init
+macro_line|#if defined (CONFIG_BUSMOUSE) || defined(CONFIG_UMISC) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG)
+id|misc_init
 c_func
 (paren
 )paren

@@ -7,6 +7,9 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
+DECL|macro|FIFO_SUNOS_BRAINDAMAGE
+macro_line|#undef FIFO_SUNOS_BRAINDAMAGE
 multiline_comment|/* We don&squot;t use the head/tail construction any more. Now we use the start/len*/
 multiline_comment|/* construction providing full use of PIPE_BUF (multiple of PAGE_SIZE) */
 multiline_comment|/* Florian Coosmann (FGC)                                ^ current = 1       */
@@ -1010,6 +1013,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef FIFO_SUNOS_BRAINDAMAGE
 multiline_comment|/*&n; * Arggh. Why does SunOS have to have different select() behaviour&n; * for pipes and fifos? Hate-Hate-Hate. See difference in SEL_IN..&n; */
 DECL|function|fifo_select
 r_static
@@ -1159,6 +1163,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|fifo_select
+mdefine_line|#define fifo_select pipe_select
+macro_line|#endif /* FIFO_SUNOS_BRAINDAMAGE */
 multiline_comment|/*&n; * The &squot;connect_xxx()&squot; functions are needed for named pipes when&n; * the open() code hasn&squot;t guaranteed a connection (O_NONBLOCK),&n; * and we need to act differently until we do get a writer..&n; */
 DECL|function|connect_read
 r_static

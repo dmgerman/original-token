@@ -123,7 +123,7 @@ multiline_comment|/* Risto Kankkunen, risto.kankkunen@cs.helsinki.fi */
 (brace
 l_int|0x0010
 comma
-l_string|&quot;ST11 BIOS V1.7&quot;
+l_string|&quot;ST11 BIOS v1.7&quot;
 comma
 id|xd_seagate_init_controller
 comma

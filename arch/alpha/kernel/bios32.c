@@ -55,6 +55,19 @@ op_star
 id|KB
 suffix:semicolon
 multiline_comment|/* &lt;64KB are (E)ISA ports */
+macro_line|#if defined(CONFIG_ALPHA_XL)
+multiline_comment|/*&n;   an AVANTI *might* be an XL, and an XL has only 27 bits of ISA address&n;   that get passed through the PCI&lt;-&gt;ISA bridge chip. Because this causes&n;   us to set the PCI-&gt;Mem window bases lower than normal, we&squot;ve gotta allocate&n;   PCI bus devices&squot; memory addresses *above* the PCI&lt;-&gt;memory mapping windows,&n;   so that CPU memory DMA addresses issued by a bus device don&squot;t conflict&n;   with bus memory addresses, like frame buffer memory for graphics cards.&n;*/
+DECL|variable|mem_base
+r_static
+r_int
+r_int
+id|mem_base
+op_assign
+l_int|1024
+op_star
+id|MB
+suffix:semicolon
+macro_line|#else /* CONFIG_ALPHA_XL */
 DECL|variable|mem_base
 r_static
 r_int
@@ -66,6 +79,7 @@ op_star
 id|MB
 suffix:semicolon
 multiline_comment|/* &lt;16MB is ISA memory */
+macro_line|#endif /* CONFIG_ALPHA_XL */
 multiline_comment|/*&n; * Disable PCI device DEV so that it does not respond to I/O or memory&n; * accesses.&n; */
 DECL|function|disable_dev
 r_static
@@ -1239,7 +1253,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The SRM console *disables* the IDE interface, this code ensures its&n; * enabled.&n; *&n; * This code bangs on a control register of the 87312 Super I/O chip&n; * that implements parallel port/serial ports/IDE/FDI.  Depending on&n; * the motherboard, the Super I/O chip can be configured through a&n; * pair of registers that are located either at I/O ports 0x26e/0x26f&n; * or 0x398/0x399.  Unfortunately, autodetecting which base address is&n; * in use works only once (right after a reset).  The Super I/O chip&n; * has the additional quirk that configuration register data must be&n; * written twice (I believe this is a saftey feature to prevent&n; * accidental modification---fun, isn&squot;t it?).&n; */
+multiline_comment|/*&n; * The SRM console *disables* the IDE interface, this code ensures its&n; * enabled.&n; *&n; * This code bangs on a control register of the 87312 Super I/O chip&n; * that implements parallel port/serial ports/IDE/FDI.  Depending on&n; * the motherboard, the Super I/O chip can be configured through a&n; * pair of registers that are located either at I/O ports 0x26e/0x26f&n; * or 0x398/0x399.  Unfortunately, autodetecting which base address is&n; * in use works only once (right after a reset).  The Super I/O chip&n; * has the additional quirk that configuration register data must be&n; * written twice (I believe this is a safety feature to prevent&n; * accidental modification---fun, isn&squot;t it?).&n; */
 DECL|function|enable_ide
 r_static
 r_inline

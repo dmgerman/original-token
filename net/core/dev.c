@@ -3733,7 +3733,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
-macro_line|#if (defined(CONFIG_SLIP_COMPRESSED) || defined(CONFIG_PPP)) &amp;&amp; defined(CONFIG_SLHC_BUILTIN)
+macro_line|#if (defined(CONFIG_SLIP) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)) &bslash;&n;&t; || defined(CONFIG_PPP) &bslash;&n;    || (defined(CONFIG_ISDN) &amp;&amp; defined(CONFIG_ISDN_PPP))
 id|slhc_install
 c_func
 (paren

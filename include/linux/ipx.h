@@ -113,6 +113,8 @@ DECL|macro|IPX_FRAME_ETHERII
 mdefine_line|#define IPX_FRAME_ETHERII&t;3
 DECL|macro|IPX_FRAME_8023
 mdefine_line|#define IPX_FRAME_8023&t;&t;4
+DECL|macro|IPX_FRAME_TR_8022
+mdefine_line|#define IPX_FRAME_TR_8022&t;5
 DECL|member|ipx_special
 r_int
 r_char

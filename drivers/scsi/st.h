@@ -10,8 +10,15 @@ r_struct
 (brace
 DECL|member|in_use
 r_int
+r_char
 id|in_use
 suffix:semicolon
+DECL|member|dma
+r_int
+r_char
+id|dma
+suffix:semicolon
+multiline_comment|/* DMA-able buffer */
 DECL|member|buffer_size
 r_int
 id|buffer_size
@@ -126,6 +133,11 @@ DECL|member|drv_buffer
 r_int
 r_char
 id|drv_buffer
+suffix:semicolon
+DECL|member|restr_dma
+r_int
+r_char
+id|restr_dma
 suffix:semicolon
 DECL|member|do_buffer_writes
 r_int

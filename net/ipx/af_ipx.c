@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;&t;/* For TIOCOUTQ/INQ */
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;net/p8022.h&gt;
+macro_line|#include &lt;net/p8022tr.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -67,6 +68,15 @@ r_struct
 id|datalink_proto
 op_star
 id|p8022_datalink
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|p8022tr_datalink
+r_static
+r_struct
+id|datalink_proto
+op_star
+id|p8022tr_datalink
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2718,6 +2728,16 @@ id|ETH_P_802_2
 )paren
 suffix:semicolon
 r_case
+id|IPX_FRAME_TR_8022
+suffix:colon
+r_return
+id|htons
+c_func
+(paren
+id|ETH_P_TR_802_2
+)paren
+suffix:semicolon
+r_case
 id|IPX_FRAME_SNAP
 suffix:colon
 r_return
@@ -2851,6 +2871,23 @@ suffix:semicolon
 id|datalink
 op_assign
 id|pEII_datalink
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IPX_FRAME_TR_8022
+suffix:colon
+id|dlink_type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_TR_802_2
+)paren
+suffix:semicolon
+id|datalink
+op_assign
+id|p8022tr_datalink
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3309,6 +3346,15 @@ suffix:colon
 id|datalink
 op_assign
 id|p8022_datalink
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ETH_P_TR_802_2
+suffix:colon
+id|datalink
+op_assign
+id|p8022tr_datalink
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4986,6 +5032,12 @@ id|ETH_P_802_3
 suffix:colon
 r_return
 l_string|&quot;802.3&quot;
+suffix:semicolon
+r_case
+id|ETH_P_TR_802_2
+suffix:colon
+r_return
+l_string|&quot;802.2TR&quot;
 suffix:semicolon
 r_default
 suffix:colon
@@ -9576,6 +9628,29 @@ id|printk
 c_func
 (paren
 l_string|&quot;IPX: Unable to register with 802.2&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p8022tr_datalink
+op_assign
+id|register_8022tr_client
+c_func
+(paren
+id|ipx_8022_type
+comma
+id|ipx_rcv
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;IPX: Unable to register with 802.2TR&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

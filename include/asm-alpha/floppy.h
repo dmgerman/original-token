@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&
 macro_line|#ifndef __ASM_ALPHA_FLOPPY_H
 DECL|macro|__ASM_ALPHA_FLOPPY_H
 mdefine_line|#define __ASM_ALPHA_FLOPPY_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|fd_inb
 mdefine_line|#define fd_inb(port)&t;&t;&t;inb_p(port)
 DECL|macro|fd_outb
@@ -67,8 +68,13 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC 2
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE 8
-multiline_comment|/*&n; * The Alpha has no problems with floppy DMA crossing 64k borders.&n; */
+multiline_comment|/*&n; * Most Alphas have no problems with floppy DMA crossing 64k borders. Sigh...&n; */
+macro_line|#ifdef CONFIG_ALPHA_XL
 DECL|macro|CROSS_64KB
-mdefine_line|#define CROSS_64KB(a,s)&t;(0)
+mdefine_line|#define CROSS_64KB(a,s) &bslash;&n;    ((unsigned long)(a)/0x10000 != ((unsigned long)(a) + (s) - 1) / 0x10000)
+macro_line|#else /* CONFIG_ALPHA_XL */
+DECL|macro|CROSS_64KB
+mdefine_line|#define CROSS_64KB(a,s) (0)
+macro_line|#endif /* CONFIG_ALPHA_XL */
 macro_line|#endif /* __ASM_ALPHA_FLOPPY_H */
 eof

@@ -1819,7 +1819,7 @@ suffix:semicolon
 id|PRINTP
 c_func
 (paren
-l_string|&quot;destination target %d, lun %d&bslash;n&quot;
+l_string|&quot;host number %d destination target %d, lun %d&bslash;n&quot;
 id|ANDP
 id|cmd-&gt;host-&gt;host_no
 id|ANDP
@@ -1855,7 +1855,7 @@ r_const
 r_char
 op_star
 r_const
-id|scsi_device_types
+id|private_scsi_device_types
 (braket
 )braket
 op_assign
@@ -1882,7 +1882,7 @@ l_string|&quot;Communications   &quot;
 )brace
 suffix:semicolon
 DECL|macro|MAX_SCSI_DEVICE_CODE
-mdefine_line|#define MAX_SCSI_DEVICE_CODE sizeof(scsi_device_types)/sizeof(char*)
+mdefine_line|#define MAX_SCSI_DEVICE_CODE sizeof(private_scsi_device_types)/sizeof(char*)
 DECL|function|generic_NCR5380_proc_info
 r_int
 id|generic_NCR5380_proc_info
@@ -2235,7 +2235,7 @@ id|MAX_SCSI_DEVICE_CODE
 )paren
 ques
 c_cond
-id|scsi_device_types
+id|private_scsi_device_types
 (braket
 (paren
 r_int
@@ -2402,7 +2402,7 @@ suffix:semicolon
 id|PRINTP
 c_func
 (paren
-l_string|&quot;&bslash;n%10d kb read    in %5d secs&quot;
+l_string|&quot;&bslash;n%10ld kb read    in %5ld secs&quot;
 id|ANDP
 id|br
 op_div
@@ -2419,7 +2419,7 @@ id|tr
 id|PRINTP
 c_func
 (paren
-l_string|&quot; @ %5d bps&quot;
+l_string|&quot; @ %5ld bps&quot;
 id|ANDP
 id|br
 op_div
@@ -2429,7 +2429,7 @@ suffix:semicolon
 id|PRINTP
 c_func
 (paren
-l_string|&quot;&bslash;n%10d kb written in %5d secs&quot;
+l_string|&quot;&bslash;n%10ld kb written in %5ld secs&quot;
 id|ANDP
 id|bw
 op_div
@@ -2446,7 +2446,7 @@ id|tw
 id|PRINTP
 c_func
 (paren
-l_string|&quot; @ %5d bps&quot;
+l_string|&quot; @ %5ld bps&quot;
 id|ANDP
 id|bw
 op_div

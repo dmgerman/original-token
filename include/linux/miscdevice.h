@@ -1,6 +1,6 @@
-macro_line|#ifndef _LINUX_MOUSE_H
-DECL|macro|_LINUX_MOUSE_H
-mdefine_line|#define _LINUX_MOUSE_H
+macro_line|#ifndef _LINUX_MISCDEVICE_H
+DECL|macro|_LINUX_MISCDEVICE_H
+mdefine_line|#define _LINUX_MISCDEVICE_H
 DECL|macro|BUSMOUSE_MINOR
 mdefine_line|#define BUSMOUSE_MINOR 0
 DECL|macro|PSMOUSE_MINOR
@@ -9,17 +9,19 @@ DECL|macro|MS_BUSMOUSE_MINOR
 mdefine_line|#define MS_BUSMOUSE_MINOR 2
 DECL|macro|ATIXL_BUSMOUSE_MINOR
 mdefine_line|#define ATIXL_BUSMOUSE_MINOR 3
+DECL|macro|MISC_DYNAMIC_MINOR
+mdefine_line|#define MISC_DYNAMIC_MINOR 255
 r_extern
 r_int
-id|mouse_init
+id|misc_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-DECL|struct|mouse
+DECL|struct|miscdevice
 r_struct
-id|mouse
+id|miscdevice
 (brace
 DECL|member|minor
 r_int
@@ -40,7 +42,7 @@ suffix:semicolon
 DECL|member|next
 DECL|member|prev
 r_struct
-id|mouse
+id|miscdevice
 op_star
 id|next
 comma
@@ -55,9 +57,9 @@ id|mouse_register
 c_func
 (paren
 r_struct
-id|mouse
+id|miscdevice
 op_star
-id|mouse
+id|misc
 )paren
 suffix:semicolon
 r_extern
@@ -66,9 +68,9 @@ id|mouse_deregister
 c_func
 (paren
 r_struct
-id|mouse
+id|miscdevice
 op_star
-id|mouse
+id|misc
 )paren
 suffix:semicolon
 macro_line|#endif

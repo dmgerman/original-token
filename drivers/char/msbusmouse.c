@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/busmouse.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -703,7 +703,7 @@ suffix:semicolon
 DECL|variable|ms_bus_mouse
 r_static
 r_struct
-id|mouse
+id|miscdevice
 id|ms_bus_mouse
 op_assign
 (brace
@@ -872,7 +872,7 @@ c_func
 l_string|&quot;Microsoft BusMouse detected and installed.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp
@@ -907,7 +907,7 @@ c_func
 r_void
 )paren
 (brace
-id|mouse_deregister
+id|misc_deregister
 c_func
 (paren
 op_amp

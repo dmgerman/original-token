@@ -264,6 +264,9 @@ comma
 DECL|enumerator|PROC_NET_ALIASES
 id|PROC_NET_ALIASES
 comma
+DECL|enumerator|PROC_NET_IP_MASQ_APP
+id|PROC_NET_IP_MASQ_APP
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

@@ -75,6 +75,8 @@ DECL|macro|ETH_P_LOCALTALK
 mdefine_line|#define ETH_P_LOCALTALK 0x0009&t;&t;/* Localtalk pseudeo type &t;*/
 DECL|macro|ETH_P_PPPTALK
 mdefine_line|#define ETH_P_PPPTALK&t;0x0010&t;&t;/* Dummy type for Atalk over PPP*/
+DECL|macro|ETH_P_TR_802_2
+mdefine_line|#define ETH_P_TR_802_2&t;0x0011&t;&t;/* 802.2 frames &t;&t;*/
 multiline_comment|/*&n; *&t;This is an Ethernet frame header.&n; */
 DECL|struct|ethhdr
 r_struct

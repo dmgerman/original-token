@@ -1,0 +1,509 @@
+multiline_comment|/*&n; * &t;IP masquerading functionality definitions&n; */
+macro_line|#ifndef _IP_MASQ_H
+DECL|macro|_IP_MASQ_H
+mdefine_line|#define _IP_MASQ_H
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
+multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K.&n; *&t;I used an extra 4K port-space&n; */
+DECL|macro|PORT_MASQ_BEGIN
+mdefine_line|#define PORT_MASQ_BEGIN&t;60000
+DECL|macro|PORT_MASQ_END
+mdefine_line|#define PORT_MASQ_END&t;(PORT_MASQ_BEGIN+4096)
+DECL|macro|MASQUERADE_EXPIRE_TCP
+mdefine_line|#define MASQUERADE_EXPIRE_TCP     15*60*HZ
+DECL|macro|MASQUERADE_EXPIRE_TCP_FIN
+mdefine_line|#define MASQUERADE_EXPIRE_TCP_FIN  2*60*HZ
+DECL|macro|MASQUERADE_EXPIRE_UDP
+mdefine_line|#define MASQUERADE_EXPIRE_UDP      5*60*HZ
+DECL|macro|IP_MASQ_F_OUT_SEQ
+mdefine_line|#define IP_MASQ_F_OUT_SEQ              &t;0x01&t;/* must do output seq adjust */
+DECL|macro|IP_MASQ_F_IN_SEQ
+mdefine_line|#define IP_MASQ_F_IN_SEQ              &t;0x02&t;/* must do input seq adjust */
+DECL|macro|IP_MASQ_F_NO_DPORT
+mdefine_line|#define IP_MASQ_F_NO_DPORT    &t;&t;0x04&t;/* no dport set yet */
+DECL|macro|IP_MASQ_F_NO_DADDR
+mdefine_line|#define IP_MASQ_F_NO_DADDR      &t;0x08 &t;/* no daddr yet */
+DECL|macro|IP_MASQ_F_HASHED
+mdefine_line|#define IP_MASQ_F_HASHED&t;&t;0x10 &t;/* hashed entry */
+DECL|macro|IP_MASQ_F_SAW_FIN
+mdefine_line|#define IP_MASQ_F_SAW_FIN&t;&t;0x20 &t;/* tcp fin pkt seen */
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; *&t;Delta seq. info structure&n; *&t;Each MASQ struct has 2 (output AND input seq. changes).&n; */
+DECL|struct|ip_masq_seq
+r_struct
+id|ip_masq_seq
+(brace
+DECL|member|init_seq
+id|__u32
+id|init_seq
+suffix:semicolon
+multiline_comment|/* Add delta from this seq */
+DECL|member|delta
+r_int
+id|delta
+suffix:semicolon
+multiline_comment|/* Delta in sequence numbers */
+DECL|member|previous_delta
+r_int
+id|previous_delta
+suffix:semicolon
+multiline_comment|/* Delta in sequence numbers before last resized pkt */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;MASQ structure allocated for each masqueraded association&n; */
+DECL|struct|ip_masq
+r_struct
+id|ip_masq
+(brace
+DECL|member|m_link
+DECL|member|s_link
+r_struct
+id|ip_masq
+op_star
+id|m_link
+comma
+op_star
+id|s_link
+suffix:semicolon
+multiline_comment|/* hashed link ptrs */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+multiline_comment|/* Expiration timer */
+DECL|member|protocol
+id|__u16
+id|protocol
+suffix:semicolon
+multiline_comment|/* Which protocol are we talking? */
+DECL|member|sport
+DECL|member|dport
+DECL|member|mport
+id|__u16
+id|sport
+comma
+id|dport
+comma
+id|mport
+suffix:semicolon
+multiline_comment|/* src, dst &amp; masq ports */
+DECL|member|saddr
+DECL|member|daddr
+DECL|member|maddr
+id|__u32
+id|saddr
+comma
+id|daddr
+comma
+id|maddr
+suffix:semicolon
+multiline_comment|/* src, dst &amp; masq addresses */
+DECL|member|out_seq
+DECL|member|in_seq
+r_struct
+id|ip_masq_seq
+id|out_seq
+comma
+id|in_seq
+suffix:semicolon
+DECL|member|app
+r_struct
+id|ip_masq_app
+op_star
+id|app
+suffix:semicolon
+multiline_comment|/* bound ip_masq_app object */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* status flags */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;[0]: UDP free_ports&n; *&t;[1]: TCP free_ports&n; */
+r_extern
+r_int
+id|ip_masq_free_ports
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/*&n; *&t;ip_masq initializer (registers symbols and /proc/net entries)&n; */
+r_extern
+r_int
+id|ip_masq_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;functions called from ip layer&n; */
+r_extern
+r_void
+id|ip_fw_masquerade
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_fw_demasquerade
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;ip_masq obj creation/deletion functions.&n; */
+r_extern
+r_struct
+id|ip_masq
+op_star
+id|ip_masq_new
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_int
+id|proto
+comma
+id|__u32
+id|saddr
+comma
+id|__u16
+id|sport
+comma
+id|__u32
+id|daddr
+comma
+id|__u16
+id|dport
+comma
+r_int
+id|flags
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_masq_set_expire
+c_func
+(paren
+r_struct
+id|ip_masq
+op_star
+id|ms
+comma
+r_int
+r_int
+id|tout
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * &t;&n; *&t;IP_MASQ_APP: IP application masquerading definitions &n; *&n; */
+DECL|struct|ip_masq_app
+r_struct
+id|ip_masq_app
+(brace
+DECL|member|next
+r_struct
+id|ip_masq_app
+op_star
+id|next
+suffix:semicolon
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* type = proto&lt;&lt;16 | port (host byte order)*/
+DECL|member|n_attach
+r_int
+id|n_attach
+suffix:semicolon
+DECL|member|masq_init_1
+r_int
+(paren
+op_star
+id|masq_init_1
+)paren
+multiline_comment|/* ip_masq initializer */
+(paren
+r_struct
+id|ip_masq_app
+op_star
+comma
+r_struct
+id|ip_masq
+op_star
+)paren
+suffix:semicolon
+DECL|member|masq_done_1
+r_int
+(paren
+op_star
+id|masq_done_1
+)paren
+multiline_comment|/* ip_masq fin. */
+(paren
+r_struct
+id|ip_masq_app
+op_star
+comma
+r_struct
+id|ip_masq
+op_star
+)paren
+suffix:semicolon
+DECL|member|pkt_out
+r_int
+(paren
+op_star
+id|pkt_out
+)paren
+multiline_comment|/* output (masquerading) hook */
+(paren
+r_struct
+id|ip_masq_app
+op_star
+comma
+r_struct
+id|ip_masq
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|member|pkt_in
+r_int
+(paren
+op_star
+id|pkt_in
+)paren
+multiline_comment|/* input (demasq) hook */
+(paren
+r_struct
+id|ip_masq_app
+op_star
+comma
+r_struct
+id|ip_masq
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+comma
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;ip_masq_app initializer&n; */
+r_extern
+r_int
+id|ip_masq_app_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * &t;ip_masq_app object registration functions (port: host byte order)&n; */
+r_extern
+r_int
+id|register_ip_masq_app
+c_func
+(paren
+r_struct
+id|ip_masq_app
+op_star
+id|mapp
+comma
+r_int
+r_int
+id|proto
+comma
+id|__u16
+id|port
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|unregister_ip_masq_app
+c_func
+(paren
+r_struct
+id|ip_masq_app
+op_star
+id|mapp
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;get ip_masq_app obj by proto,port(net_byte_order)&n; */
+r_extern
+r_struct
+id|ip_masq_app
+op_star
+id|ip_masq_app_get
+c_func
+(paren
+r_int
+r_int
+id|proto
+comma
+id|__u16
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;ip_masq TO ip_masq_app (un)binding functions.&n; */
+r_extern
+r_struct
+id|ip_masq_app
+op_star
+id|ip_masq_bind_app
+c_func
+(paren
+r_struct
+id|ip_masq
+op_star
+id|ms
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_masq_unbind_app
+c_func
+(paren
+r_struct
+id|ip_masq
+op_star
+id|ms
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;output and input app. masquerading hooks.&n; *&t;&n; */
+r_extern
+r_int
+id|ip_masq_app_pkt_out
+c_func
+(paren
+r_struct
+id|ip_masq
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+id|skb_p
+comma
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_masq_app_pkt_in
+c_func
+(paren
+r_struct
+id|ip_masq
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+op_star
+id|skb_p
+comma
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;/proc/net entry&n; */
+r_extern
+r_int
+id|ip_masq_app_getinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;skb_replace function used by &quot;client&quot; modules to replace&n; *&t;a segment of skb.&n; */
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|ip_masq_skb_replace
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|pri
+comma
+r_char
+op_star
+id|o_buf
+comma
+r_int
+id|o_len
+comma
+r_char
+op_star
+id|n_buf
+comma
+r_int
+id|n_len
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _IP_MASQ_H */
+eof

@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 r_extern
 r_void
 id|die_if_kernel
@@ -634,6 +635,26 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|tmp
+op_ge
+id|MAX_DMA_ADDRESS
+)paren
+id|mem_map
+(braket
+id|MAP_NR
+c_func
+(paren
+id|tmp
+)paren
+)braket
+dot
+id|dma
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

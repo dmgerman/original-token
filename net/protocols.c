@@ -15,6 +15,7 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
 macro_line|#include &lt;net/ipxcall.h&gt;
 macro_line|#include &lt;net/p8022call.h&gt;
+macro_line|#include &lt;net/p8022trcall.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25call.h&gt;
@@ -25,6 +26,7 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#if ! ( defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE) )
 macro_line|#include &lt;net/p8022call.h&gt;
+macro_line|#include &lt;net/p8022trcall.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/atalkcall.h&gt;
 macro_line|#endif
@@ -66,6 +68,13 @@ macro_line|#if defined(CONFIG_IPX)   || defined(CONFIG_IPX_MODULE) || &bslash;&n
 l_string|&quot;802.2&quot;
 comma
 id|p8022_proto_init
+)brace
+comma
+multiline_comment|/* 802.2 demultiplexor&t;&t;*/
+(brace
+l_string|&quot;802.2TR&quot;
+comma
+id|p8022tr_proto_init
 )brace
 comma
 multiline_comment|/* 802.2 demultiplexor&t;&t;*/

@@ -14,7 +14,9 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 macro_line|#include &lt;net/netlink.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -4132,7 +4134,7 @@ l_int|NULL
 suffix:semicolon
 id|msg.msg_iovlen
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|msg.msg_iov
 op_assign

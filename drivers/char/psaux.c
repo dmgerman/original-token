@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1719,7 +1719,7 @@ multiline_comment|/*&n; * Initialize driver. First check for a 82C710 chip; if f
 DECL|variable|psaux_mouse
 r_static
 r_struct
-id|mouse
+id|miscdevice
 id|psaux_mouse
 op_assign
 (brace
@@ -1814,7 +1814,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|mouse_register
+id|misc_register
 c_func
 (paren
 op_amp
@@ -1987,7 +1987,7 @@ c_func
 r_void
 )paren
 (brace
-id|mouse_deregister
+id|misc_deregister
 c_func
 (paren
 op_amp

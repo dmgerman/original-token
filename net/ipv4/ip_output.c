@@ -799,7 +799,7 @@ ques
 c_cond
 id|rt-&gt;rt_gateway
 suffix:colon
-l_int|0
+id|daddr
 suffix:semicolon
 r_if
 c_cond
@@ -831,18 +831,6 @@ op_minus
 id|ENETUNREACH
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;No gateway so aim at the real destination&n;&t; */
-r_if
-c_cond
-(paren
-id|raddr
-op_eq
-l_int|0
-)paren
-id|raddr
-op_assign
-id|daddr
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now build the MAC header.&n;&t; */
 r_if
 c_cond

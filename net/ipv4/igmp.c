@@ -1835,12 +1835,9 @@ id|i
 op_member_access_from_pointer
 id|users
 )paren
+op_eq
+l_int|0
 )paren
-(brace
-r_return
-suffix:semicolon
-)brace
-r_else
 (brace
 r_struct
 id|ip_mc_list
@@ -1879,6 +1876,8 @@ id|tmp
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 )brace
 )brace

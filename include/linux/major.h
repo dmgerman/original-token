@@ -39,8 +39,8 @@ DECL|macro|SCSI_TAPE_MAJOR
 mdefine_line|#define SCSI_TAPE_MAJOR&t;9
 DECL|macro|MD_MAJOR
 mdefine_line|#define MD_MAJOR        9
-DECL|macro|MOUSE_MAJOR
-mdefine_line|#define MOUSE_MAJOR&t;10
+DECL|macro|MISC_MAJOR
+mdefine_line|#define MISC_MAJOR&t;10
 DECL|macro|SCSI_CDROM_MAJOR
 mdefine_line|#define SCSI_CDROM_MAJOR 11
 DECL|macro|QIC02_TAPE_MAJOR
@@ -51,16 +51,10 @@ DECL|macro|SOUND_MAJOR
 mdefine_line|#define SOUND_MAJOR&t;14
 DECL|macro|CDU31A_CDROM_MAJOR
 mdefine_line|#define CDU31A_CDROM_MAJOR 15
-DECL|macro|SOCKET_MAJOR
-mdefine_line|#define SOCKET_MAJOR&t;16
 DECL|macro|GOLDSTAR_CDROM_MAJOR
 mdefine_line|#define GOLDSTAR_CDROM_MAJOR 16
-DECL|macro|AF_UNIX_MAJOR
-mdefine_line|#define AF_UNIX_MAJOR&t;17
 DECL|macro|OPTICS_CDROM_MAJOR
 mdefine_line|#define OPTICS_CDROM_MAJOR 17
-DECL|macro|AF_INET_MAJOR
-mdefine_line|#define AF_INET_MAJOR&t;18
 DECL|macro|SANYO_CDROM_MAJOR
 mdefine_line|#define SANYO_CDROM_MAJOR 18
 DECL|macro|CYCLADES_MAJOR
