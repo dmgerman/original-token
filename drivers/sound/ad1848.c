@@ -2021,21 +2021,6 @@ id|mix_cvt
 id|right
 )braket
 suffix:semicolon
-multiline_comment|/* Scale it again */
-id|left
-op_assign
-id|mix_cvt
-(braket
-id|left
-)braket
-suffix:semicolon
-id|right
-op_assign
-id|mix_cvt
-(braket
-id|right
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5540,6 +5525,13 @@ suffix:semicolon
 r_int
 id|tmout
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|disable_dma
 c_func
 (paren
@@ -5551,6 +5543,7 @@ op_member_access_from_pointer
 id|dmap_in-&gt;dma
 )paren
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -5600,6 +5593,13 @@ l_int|0x02
 )paren
 suffix:semicolon
 multiline_comment|/* Stop capture */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|enable_dma
 c_func
 (paren
@@ -5611,6 +5611,7 @@ op_member_access_from_pointer
 id|dmap_in-&gt;dma
 )paren
 suffix:semicolon
+)brace
 id|devc-&gt;audio_mode
 op_and_assign
 op_complement
@@ -5724,6 +5725,13 @@ suffix:semicolon
 r_int
 id|tmout
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|disable_dma
 c_func
 (paren
@@ -5735,6 +5743,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;dma
 )paren
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -5784,6 +5793,13 @@ l_int|0x01
 )paren
 suffix:semicolon
 multiline_comment|/* Stop playback */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
 id|enable_dma
 c_func
 (paren
@@ -5795,6 +5811,7 @@ op_member_access_from_pointer
 id|dmap_out-&gt;dma
 )paren
 suffix:semicolon
+)brace
 id|devc-&gt;audio_mode
 op_and_assign
 op_complement

@@ -149,6 +149,13 @@ comma
 )brace
 )brace
 suffix:semicolon
+DECL|variable|probe_pci
+r_static
+r_int
+id|probe_pci
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef SUPPORT_NE_BAD_CLONES
 multiline_comment|/* A list of bad clones that we none-the-less recognize. */
@@ -598,6 +605,8 @@ multiline_comment|/* Then look for any installed PCI clones */
 r_if
 c_cond
 (paren
+id|probe_pci
+op_logical_and
 id|pci_present
 c_func
 (paren
@@ -807,6 +816,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ne.c: PCI BIOS reports %s at i/o %#x, irq %d.&bslash;n&quot;
 comma
 id|pci_clone_list
@@ -924,6 +934,8 @@ r_int
 id|neX000
 comma
 id|ctron
+comma
+id|copam
 comma
 id|bad_card
 suffix:semicolon
@@ -1109,12 +1121,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;NE*000 ethercard probe at %#3x:&quot;
 comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* A user with a poor card that fails to ack the reset, or that&n;       does not have a valid 0x57,0x57 signature can still use this&n;       without having to recompile. Specifying an i/o address along&n;       with an otherwise unused dev-&gt;mem_end value of &quot;0xBAD&quot; will&n;       cause the driver to skip these parts of the probe. */
+multiline_comment|/* A user with a poor card that fails to ack the reset, or that&n;&t;   does not have a valid 0x57,0x57 signature can still use this&n;&t;   without having to recompile. Specifying an i/o address along&n;&t;   with an otherwise unused dev-&gt;mem_end value of &quot;0xBAD&quot; will&n;&t;   cause the driver to skip these parts of the probe. */
 id|bad_card
 op_assign
 (paren
@@ -1227,7 +1240,7 @@ id|EN0_ISR
 suffix:semicolon
 multiline_comment|/* Ack all intr. */
 )brace
-multiline_comment|/* Read the 16 bytes of station address PROM.&n;       We must first initialize registers, similar to NS8390_init(eifdev, 0).&n;       We can&squot;t reliably read the SAPROM address without this.&n;       (I learned the hard way!). */
+multiline_comment|/* Read the 16 bytes of station address PROM.&n;&t;   We must first initialize registers, similar to NS8390_init(eifdev, 0).&n;&t;   We can&squot;t reliably read the SAPROM address without this.&n;&t;   (I learned the hard way!). */
 (brace
 r_struct
 (brace
@@ -1447,7 +1460,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&t;At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;request in program_seq above, and hence don&squot;t have doubled up values.&n;&t;These broken cards would otherwise be detected as an ne1000.  */
+multiline_comment|/* At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;   up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;   request in program_seq above, and hence don&squot;t have doubled up values.&n;&t;   These broken cards would otherwise be detected as an ne1000.  */
 r_if
 c_cond
 (paren
@@ -1577,6 +1590,24 @@ op_eq
 l_int|0x1d
 )paren
 suffix:semicolon
+id|copam
+op_assign
+(paren
+id|SA_prom
+(braket
+l_int|14
+)braket
+op_eq
+l_int|0x49
+op_logical_and
+id|SA_prom
+(braket
+l_int|15
+)braket
+op_eq
+l_int|0x00
+)paren
+suffix:semicolon
 multiline_comment|/* Set up the rest of the parameters. */
 r_if
 c_cond
@@ -1584,6 +1615,8 @@ c_cond
 id|neX000
 op_logical_or
 id|bad_card
+op_logical_or
+id|copam
 )paren
 (brace
 id|name
@@ -1641,7 +1674,7 @@ suffix:semicolon
 r_else
 (brace
 macro_line|#ifdef SUPPORT_NE_BAD_CLONES
-multiline_comment|/* Ack!  Well, there might be a *bad* NE*000 clone there.&n;&t;   Check for total bogus addresses. */
+multiline_comment|/* Ack!  Well, there might be a *bad* NE*000 clone there.&n;&t;&t;   Check for total bogus addresses. */
 r_for
 c_loop
 (paren
@@ -1903,7 +1936,7 @@ id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
-multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really IRQ 9,&n;&t;   or don&squot;t know which one to set. */
+multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really IRQ 9,&n;&t;&t;   or don&squot;t know which one to set. */
 id|dev-&gt;irq
 op_assign
 l_int|9
@@ -1946,7 +1979,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;       share and the board will usually be enabled. */
+multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
 (brace
 r_int
 id|irqval
@@ -2142,9 +2175,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ne_open
 r_static
 r_int
-DECL|function|ne_open
 id|ne_open
 c_func
 (paren
@@ -2166,9 +2199,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ne_close
 r_static
 r_int
-DECL|function|ne_close
 id|ne_close
 c_func
 (paren
@@ -2188,6 +2221,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Shutting down ethercard.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2206,9 +2240,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Hard reset the card.  This used to pause for the same period that a&n;   8390 reset command required, but that shouldn&squot;t be necessary. */
+DECL|function|ne_reset_8390
 r_static
 r_void
-DECL|function|ne_reset_8390
 id|ne_reset_8390
 c_func
 (paren
@@ -2234,6 +2268,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;resetting the 8390 t=%ld...&quot;
 comma
 id|jiffies
@@ -2299,6 +2334,7 @@ l_int|100
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: ne_reset_8390() did not complete.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2320,9 +2356,9 @@ suffix:semicolon
 multiline_comment|/* Ack intr. */
 )brace
 multiline_comment|/* Grab the 8390 specific header. Similar to the block_input routine, but&n;   we don&squot;t need to be concerned with ring wrap as the header will be at&n;   the start of a page, so we optimize accordingly. */
+DECL|function|ne_get_8390_hdr
 r_static
 r_void
-DECL|function|ne_get_8390_hdr
 id|ne_get_8390_hdr
 c_func
 (paren
@@ -2355,6 +2391,7 @@ id|ei_status.dmaing
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;%s: DMAing conflict in ne_get_8390_hdr &quot;
 l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
@@ -2503,9 +2540,9 @@ l_int|0x01
 suffix:semicolon
 )brace
 multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   are porting to a new ethercard, look at the packet driver source for hints.&n;   The NEx000 doesn&squot;t share the on-board packet memory -- you have to put&n;   the packet out through the &quot;remote DMA&quot; dataport using outb. */
+DECL|function|ne_block_input
 r_static
 r_void
-DECL|function|ne_block_input
 id|ne_block_input
 c_func
 (paren
@@ -2554,6 +2591,7 @@ id|ei_status.dmaing
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;%s: DMAing conflict in ne_block_input &quot;
 l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
 comma
@@ -2713,7 +2751,7 @@ id|count
 suffix:semicolon
 )brace
 macro_line|#ifdef NE_SANITY_CHECK
-multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here.  If you see&n;       this message you either 1) have a slightly incompatible clone&n;       or 2) have noise/speed problems with your bus. */
+multiline_comment|/* This was for the ALPHA version only, but enough people have&n;&t;   been encountering problems so it is still here.  If you see&n;&t;   this message you either 1) have a slightly incompatible clone&n;&t;   or 2) have noise/speed problems with your bus. */
 r_if
 c_cond
 (paren
@@ -2732,7 +2770,7 @@ l_int|20
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* DON&squot;T check for &squot;inb_p(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;       -- it&squot;s broken for Rx on some cards! */
+multiline_comment|/* DON&squot;T check for &squot;inb_p(EN0_ISR) &amp; ENISR_RDC&squot; here&n;&t;&t;&t;   -- it&squot;s broken for Rx on some cards! */
 r_int
 id|high
 op_assign
@@ -2802,6 +2840,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: RX transfer address mismatch,&quot;
 l_string|&quot;%#4.4x (expected) vs. %#4.4x (actual).&bslash;n&quot;
 comma
@@ -2833,9 +2872,9 @@ op_complement
 l_int|0x01
 suffix:semicolon
 )brace
+DECL|function|ne_block_output
 r_static
 r_void
-DECL|function|ne_block_output
 id|ne_block_output
 c_func
 (paren
@@ -2874,7 +2913,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;       What effect will an odd byte count have on the 8390?&n;       I should check someday. */
+multiline_comment|/* Round the count up for word writes.  Do we need to do this?&n;&t;   What effect will an odd byte count have on the 8390?&n;&t;   I should check someday. */
 r_if
 c_cond
 (paren
@@ -2899,6 +2938,7 @@ id|ei_status.dmaing
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;%s: DMAing conflict in ne_block_output.&quot;
 l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
 comma
@@ -2938,7 +2978,7 @@ id|retry
 suffix:colon
 macro_line|#endif
 macro_line|#ifdef NE8390_RW_BUGFIX
-multiline_comment|/* Handle the read-before-write bug the same way as the&n;       Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;       Actually this doesn&squot;t always work either, but if you have&n;       problems with your NEx000 this is better than nothing! */
+multiline_comment|/* Handle the read-before-write bug the same way as the&n;&t;   Crynwr packet driver -- the NatSemi method doesn&squot;t work.&n;&t;   Actually this doesn&squot;t always work either, but if you have&n;&t;   problems with your NEx000 this is better than nothing! */
 id|outb_p
 c_func
 (paren
@@ -3107,7 +3147,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 macro_line|#ifdef NE_SANITY_CHECK
-multiline_comment|/* This was for the ALPHA version only, but enough people have&n;       been encountering problems so it is still here. */
+multiline_comment|/* This was for the ALPHA version only, but enough people have&n;&t;   been encountering problems so it is still here. */
 r_if
 c_cond
 (paren
@@ -3194,6 +3234,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Tx packet transfer address mismatch,&quot;
 l_string|&quot;%#4.4x (expected) vs. %#4.4x (actual).&bslash;n&quot;
 comma
@@ -3259,6 +3300,7 @@ multiline_comment|/* 20ms */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: timeout waiting for Tx RDC.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3442,9 +3484,19 @@ id|MAX_NE_CARDS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+id|MODULE_PARM
+c_func
+(paren
+id|probe_pci
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This is set up so that no ISA autoprobe takes place. We can&squot;t guarantee&n;that the ne2k probe is the last 8390 based probe to take place (as it&n;is at boot) and so the probe will get confused by any other 8390 cards.&n;ISA device autoprobes on a running machine are not recommended anyway. */
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -3599,8 +3651,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
@@ -3665,10 +3717,6 @@ id|dev-&gt;base_addr
 comma
 id|NE_IO_EXTENT
 )paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
 suffix:semicolon
 id|unregister_netdev
 c_func

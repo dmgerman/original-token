@@ -1745,24 +1745,6 @@ suffix:semicolon
 r_int
 id|error
 suffix:semicolon
-id|error
-op_assign
-op_minus
-id|ENOTDIR
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
 multiline_comment|/*&n;&t; * Close the directory if it&squot;s open.&n;&t; */
 id|smb_close
 c_func

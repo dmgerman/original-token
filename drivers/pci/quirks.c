@@ -470,6 +470,53 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*  The VIA VP2/VP3/MVP3 seem to have some &squot;features&squot;. There may be a workaround&n;    but VIA don&squot;t answer queries. If you happen to have good contacts at VIA&n;    ask them for me please -- Alan &n;    &n;    This appears to be BIOS not version dependant. So presumably there is a &n;    chipset level fix */
+DECL|variable|isa_dma_bridge_buggy
+r_int
+id|isa_dma_bridge_buggy
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Exported */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|quirk_isa_dma_hangs
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_int
+id|arg
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|isa_dma_bridge_buggy
+)paren
+(brace
+id|isa_dma_bridge_buggy
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Activating ISA DMA hang workarounds.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|typedef|quirk_handler
 r_typedef
 r_void
@@ -523,6 +570,12 @@ macro_line|#endif
 id|quirk_passive_release
 comma
 l_string|&quot;Passive release enable&quot;
+)brace
+comma
+(brace
+id|quirk_isa_dma_hangs
+comma
+l_string|&quot;Work around ISA DMA hangs&quot;
 )brace
 comma
 )brace
@@ -683,6 +736,17 @@ comma
 id|PCI_DEVICE_ID_INTEL_82441
 comma
 id|quirk_passive_release
+comma
+l_int|0x00
+)brace
+comma
+multiline_comment|/*&n;&t; * Its not totally clear which chipsets are the problematic ones&n;&t; * This is the 82C586 variants. At the moment the 596 is an unknown&n;&t; * quantity &n;&t; */
+(brace
+id|PCI_VENDOR_ID_VIA
+comma
+id|PCI_DEVICE_ID_VIA_82C586_0
+comma
+id|quirk_isa_dma_hangs
 comma
 l_int|0x00
 )brace

@@ -1,11 +1,11 @@
-multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jiri Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; *&n; * Supported hardware:&n; *      Tested on SOC sbus card bought with SS1000 in Linux running on SS5 and Ultra1. &n; *      Should run on on-board SOC/SOC+ cards of Ex000 servers as well, but it is not&n; *      tested (let us know if you succeed).&n; *      For SOC sbus cards, you have to make sure your FCode is 1.52 or later.&n; *      If you have older FCode, you should try to upgrade or get SOC microcode from Sun&n; *      (the microcode is present in Solaris soc driver as well). In that case you need&n; *      to #define HAVE_SOC_UCODE and format the microcode into soc_asm.c. For the exact&n; *      format mail me and I will tell you. I cannot offer you the actual microcode though,&n; *      unless Sun confirms they don&squot;t mind.&n; */
+multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jirka Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; *&n; * Supported hardware:&n; *      Tested on SOC sbus card bought with SS1000 in Linux running on SS5 and Ultra1. &n; *      Should run on on-board SOC/SOC+ cards of Ex000 servers as well, but it is not&n; *      tested (let us know if you succeed).&n; *      For SOC sbus cards, you have to make sure your FCode is 1.52 or later.&n; *      If you have older FCode, you should try to upgrade or get SOC microcode from Sun&n; *      (the microcode is present in Solaris soc driver as well). In that case you need&n; *      to #define HAVE_SOC_UCODE and format the microcode into soc_asm.c. For the exact&n; *      format mail me and I will tell you. I cannot offer you the actual microcode though,&n; *      unless Sun confirms they don&squot;t mind.&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;soc.c:v1.2 27/Feb/98 Jakub Jelinek (jj@sunsite.mff.cuni.cz), Jiri Hanika (geo@ff.cuni.cz)&bslash;n&quot;
+l_string|&quot;soc.c:v1.2 27/Feb/98 Jakub Jelinek (jj@sunsite.mff.cuni.cz), Jirka Hanika (geo@ff.cuni.cz)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

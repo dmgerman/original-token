@@ -352,6 +352,8 @@ DECL|macro|AF_ATMSVC
 mdefine_line|#define AF_ATMSVC&t;20&t;/* ATM SVCs&t;&t;&t;*/
 DECL|macro|AF_SNA
 mdefine_line|#define AF_SNA&t;&t;22&t;/* Linux SNA Project (nutters!) */
+DECL|macro|AF_IRDA
+mdefine_line|#define AF_IRDA&t;&t;23&t;/* IRDA sockets&t;&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -403,6 +405,8 @@ DECL|macro|PF_ATMSVC
 mdefine_line|#define PF_ATMSVC&t;AF_ATMSVC
 DECL|macro|PF_SNA
 mdefine_line|#define PF_SNA&t;&t;AF_SNA
+DECL|macro|PF_IRDA
+mdefine_line|#define PF_IRDA&t;&t;AF_IRDA
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Maximum queue length specifiable by listen.  */
@@ -415,6 +419,8 @@ DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
 DECL|macro|MSG_DONTROUTE
 mdefine_line|#define MSG_DONTROUTE&t;4
+DECL|macro|MSG_TRYHARD
+mdefine_line|#define MSG_TRYHARD     4       /* Synonym for MSG_DONTROUTE for DECnet */
 DECL|macro|MSG_CTRUNC
 mdefine_line|#define MSG_CTRUNC&t;8
 DECL|macro|MSG_PROXY

@@ -26,6 +26,8 @@ DECL|macro|SNDCARD_OPL3SA2
 mdefine_line|#define SNDCARD_OPL3SA2                 42
 DECL|macro|SNDCARD_OPL3SA2_MPU
 mdefine_line|#define SNDCARD_OPL3SA2_MPU             43
+DECL|macro|SNDCARD_AD1816
+mdefine_line|#define SNDCARD_AD1816                  88
 r_void
 id|attach_opl3sa_wss
 (paren
@@ -808,6 +810,17 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Device spesific preprocessing for read data */
+DECL|member|mmap
+r_void
+(paren
+op_star
+id|mmap
+)paren
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|audio_operations
@@ -2176,6 +2189,24 @@ id|unload_sgalaxy
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_AD1816
+(brace
+l_string|&quot;AD1816&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_AD1816
+comma
+l_string|&quot;AD1816&quot;
+comma
+id|attach_ad1816
+comma
+id|probe_ad1816
+comma
+id|unload_ad1816
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_YM3812
 (brace
 l_string|&quot;OPL3&quot;
@@ -2509,7 +2540,7 @@ id|unload_v_midi
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_VIDC_SOUND
+macro_line|#ifdef CONFIG_SOUND_VIDC
 (brace
 l_string|&quot;VIDC&quot;
 comma
@@ -3267,7 +3298,7 @@ id|SND_DEFAULT_ENABLE
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_VIDC_SOUND
+macro_line|#ifdef CONFIG_SOUND_VIDC
 (brace
 id|SNDCARD_VIDC
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/awe_hw.h&n; *&n; * Access routines and definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.4.2; Sep. 15, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_hw.h&n; *&n; * Access routines and definitions for the low level driver for the &n; * Creative AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Mar. 1, 1998&n; *&n; * Copyright (C) 1996-1998 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_HW_H_DEF
 DECL|macro|AWE_HW_H_DEF
 mdefine_line|#define AWE_HW_H_DEF
@@ -6,15 +6,15 @@ multiline_comment|/*&n; * Emu-8000 control registers&n; * name(channel)&t;reg, p
 DECL|macro|awe_cmd_idx
 mdefine_line|#define awe_cmd_idx(reg,ch)&t;(((reg)&lt;&lt; 5) | (ch))
 DECL|macro|Data0
-mdefine_line|#define Data0    0x620&t;/* doubleword r/w */
+mdefine_line|#define Data0    0&t;&t;/* 0x620: doubleword r/w */
 DECL|macro|Data1
-mdefine_line|#define Data1    0xA20&t;/* doubleword r/w */
+mdefine_line|#define Data1    1&t;&t;/* 0xA20: doubleword r/w */
 DECL|macro|Data2
-mdefine_line|#define Data2    0xA22&t;/* word r/w */
+mdefine_line|#define Data2    2&t;&t;/* 0xA22: word r/w */
 DECL|macro|Data3
-mdefine_line|#define Data3    0xE20&t;/* word r/w */
+mdefine_line|#define Data3    3&t;&t;/* 0xE20: word r/w */
 DECL|macro|Pointer
-mdefine_line|#define Pointer  0xE22&t;/* register pointer r/w */
+mdefine_line|#define Pointer  4&t;&t;/* 0xE22 register pointer r/w */
 DECL|macro|AWE_CPF
 mdefine_line|#define AWE_CPF(ch)&t;awe_cmd_idx(0,ch), Data0&t;/* DW: current pitch and fractional address */
 DECL|macro|AWE_PTRX
@@ -23,6 +23,10 @@ DECL|macro|AWE_CVCF
 mdefine_line|#define AWE_CVCF(ch)&t;awe_cmd_idx(2,ch), Data0&t;/* DW: current volume and filter cutoff */
 DECL|macro|AWE_VTFT
 mdefine_line|#define AWE_VTFT(ch)&t;awe_cmd_idx(3,ch), Data0&t;/* DW: volume and filter cutoff targets */
+DECL|macro|AWE_0080
+mdefine_line|#define AWE_0080(ch)&t;awe_cmd_idx(4,ch), Data0&t;/* DW: ?? */
+DECL|macro|AWE_00A0
+mdefine_line|#define AWE_00A0(ch)&t;awe_cmd_idx(5,ch), Data0&t;/* DW: ?? */
 DECL|macro|AWE_PSST
 mdefine_line|#define AWE_PSST(ch)&t;awe_cmd_idx(6,ch), Data0&t;/* DW: pan send and loop start address */
 DECL|macro|AWE_CSL
@@ -114,9 +118,5 @@ DECL|macro|AWE_DRAM_OFFSET
 mdefine_line|#define AWE_DRAM_OFFSET&t;&t;0x200000
 DECL|macro|AWE_MAX_DRAM_SIZE
 mdefine_line|#define AWE_MAX_DRAM_SIZE&t;(28 * 1024)&t;/* 28 MB is max onboard memory */
-DECL|macro|AWE_DEFAULT_ATTENUATION
-mdefine_line|#define AWE_DEFAULT_ATTENUATION&t;32&t;/* 12dB below */
-DECL|macro|AWE_DEFAULT_MOD_SENSE
-mdefine_line|#define AWE_DEFAULT_MOD_SENSE&t;18
 macro_line|#endif
 eof

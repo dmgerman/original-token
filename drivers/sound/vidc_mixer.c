@@ -128,12 +128,10 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_READ_SYNTH
 suffix:colon
+singleline_comment|//&t;&t;&t;ret = vidc_synth_get_volume();
 id|ret
 op_assign
-id|vidc_synth_get_volume
-c_func
-(paren
-)paren
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -159,13 +157,10 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+singleline_comment|//&t;&t;&t;ret = vidc_synth_set_volume(ret);
 id|ret
 op_assign
-id|vidc_synth_set_volume
-c_func
-(paren
-id|ret
-)paren
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon

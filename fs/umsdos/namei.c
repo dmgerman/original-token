@@ -3310,38 +3310,6 @@ id|dentry-&gt;d_hash
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* check the sticky bit */
-id|ret
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|is_sticky
-c_func
-(paren
-id|dir
-comma
-id|dentry-&gt;d_inode-&gt;i_uid
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;umsdos_rmdir: %s/%s is sticky&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
 multiline_comment|/* check whether the EMD is empty */
 id|ret
 op_assign

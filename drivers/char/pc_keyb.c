@@ -95,7 +95,7 @@ id|resend
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined CONFIG_PSMOUSE
+macro_line|#if defined(CONFIG_PSMOUSE)
 multiline_comment|/*&n; *&t;PS/2 Auxiliary Device&n; */
 r_static
 r_int

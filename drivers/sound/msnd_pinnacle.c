@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.66 1998/10/09 19:54:39 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.73 1998/12/04 14:41:02 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
@@ -39,7 +39,7 @@ macro_line|#  define LOGNAME&t;&t;&t;&quot;msnd_pinnacle&quot;
 macro_line|#endif
 macro_line|#ifndef CONFIG_MSND_WRITE_NDELAY
 DECL|macro|CONFIG_MSND_WRITE_NDELAY
-macro_line|#  define CONFIG_MSND_WRITE_NDELAY&t;0
+macro_line|#  define CONFIG_MSND_WRITE_NDELAY&t;1
 macro_line|#endif
 DECL|macro|get_play_delay_jiffies
 mdefine_line|#define get_play_delay_jiffies(size)&t;((size) * HZ *&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_sample_size / 8 /&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_sample_rate /&t;&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_channels)
@@ -1664,25 +1664,25 @@ r_case
 id|SOUND_MIXER_VOLUME
 suffix:colon
 r_case
-id|SOUND_MIXER_SYNTH
-suffix:colon
-r_case
 id|SOUND_MIXER_PCM
 suffix:colon
 r_case
 id|SOUND_MIXER_LINE
 suffix:colon
-macro_line|#ifndef MSND_CLASSIC
-r_case
-id|SOUND_MIXER_MIC
-suffix:colon
-macro_line|#endif
 r_case
 id|SOUND_MIXER_IMIX
 suffix:colon
 r_case
 id|SOUND_MIXER_LINE1
 suffix:colon
+macro_line|#ifndef MSND_CLASSIC
+r_case
+id|SOUND_MIXER_MIC
+suffix:colon
+r_case
+id|SOUND_MIXER_SYNTH
+suffix:colon
+macro_line|#endif
 r_return
 (paren
 id|dev.left_levels
@@ -1723,10 +1723,12 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|macro|update_vol
-mdefine_line|#define update_vol(a,b,s)&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;writew(dev.left_levels[a] * readw(dev.SMA + SMA_wCurrMastVolLeft) / 0xffff / s,&t;&t;&bslash;&n;&t;       dev.SMA + SMA_##b##Left);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;writew(dev.right_levels[a] * readw(dev.SMA + SMA_wCurrMastVolRight) / 0xffff / s,&t;&bslash;&n;&t;       dev.SMA + SMA_##b##Right);
+DECL|macro|update_volm
+mdefine_line|#define update_volm(a,b)&t;&t;&t;&t;&t;&bslash;&n;&t;writew((dev.left_levels[a] &gt;&gt; 1) *&t;&t;&t;&bslash;&n;&t;       readw(dev.SMA + SMA_wCurrMastVolLeft) / 0xffff,&t;&bslash;&n;&t;       dev.SMA + SMA_##b##Left);&t;&t;&t;&bslash;&n;&t;writew((dev.right_levels[a] &gt;&gt; 1)  *&t;&t;&t;&bslash;&n;&t;       readw(dev.SMA + SMA_wCurrMastVolRight) / 0xffff,&t;&bslash;&n;&t;       dev.SMA + SMA_##b##Right);
+DECL|macro|update_potm
+mdefine_line|#define update_potm(d,s,ar)&t;&t;&t;&t;&t;&bslash;&n;&t;writeb((dev.left_levels[d] &gt;&gt; 8) *&t;&t;&t;&bslash;&n;&t;       readw(dev.SMA + SMA_wCurrMastVolLeft) / 0xffff,&t;&bslash;&n;&t;       dev.SMA + SMA_##s##Left);&t;&t;&t;&bslash;&n;&t;writeb((dev.right_levels[d] &gt;&gt; 8) *&t;&t;&t;&bslash;&n;&t;       readw(dev.SMA + SMA_wCurrMastVolRight) / 0xffff,&t;&bslash;&n;&t;       dev.SMA + SMA_##s##Right);&t;&t;&t;&bslash;&n;&t;if (msnd_send_word(&amp;dev, 0, 0, ar) == 0)&t;&t;&bslash;&n;&t;&t;chk_send_dsp_cmd(&amp;dev, HDEX_AUX_REQ);
 DECL|macro|update_pot
-mdefine_line|#define update_pot(d,s,ar)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;writeb(dev.left_levels[d] &gt;&gt; 8, dev.SMA + SMA_##s##Left);&t;&bslash;&n;&t;writeb(dev.right_levels[d] &gt;&gt; 8, dev.SMA + SMA_##s##Right);&t;&bslash;&n;&t;if (msnd_send_word(&amp;dev, 0, 0, ar) == 0)&t;&t;&t;&bslash;&n;&t;&t;chk_send_dsp_cmd(&amp;dev, HDEX_AUX_REQ);
+mdefine_line|#define update_pot(d,s,ar)&t;&t;&t;&t;&bslash;&n;&t;writeb(dev.left_levels[d] &gt;&gt; 8,&t;&t;&t;&bslash;&n;&t;       dev.SMA + SMA_##s##Left);&t;&t;&bslash;&n;&t;writeb(dev.right_levels[d] &gt;&gt; 8,&t;&t;&bslash;&n;&t;       dev.SMA + SMA_##s##Right);&t;&t;&bslash;&n;&t;if (msnd_send_word(&amp;dev, 0, 0, ar) == 0)&t;&bslash;&n;&t;&t;chk_send_dsp_cmd(&amp;dev, HDEX_AUX_REQ);
 DECL|function|mixer_set
 r_static
 r_int
@@ -1767,6 +1769,11 @@ r_int
 id|wLeft
 comma
 id|wRight
+suffix:semicolon
+r_int
+id|updatemaster
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1831,41 +1838,12 @@ c_cond
 id|d
 )paren
 (brace
-r_case
-id|SOUND_MIXER_VOLUME
-suffix:colon
-multiline_comment|/* master volume */
-id|writew
-c_func
-(paren
-id|wLeft
-op_div
-l_int|2
-comma
-id|dev.SMA
-op_plus
-id|SMA_wCurrMastVolLeft
-)paren
-suffix:semicolon
-id|writew
-c_func
-(paren
-id|wRight
-op_div
-l_int|2
-comma
-id|dev.SMA
-op_plus
-id|SMA_wCurrMastVolRight
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* pot controls */
+multiline_comment|/* master volume unscaled controls */
 r_case
 id|SOUND_MIXER_LINE
 suffix:colon
-multiline_comment|/* aux pot control */
+multiline_comment|/* line pot control */
+multiline_comment|/* scaled by IMIX in digital mix */
 id|writeb
 c_func
 (paren
@@ -1920,6 +1898,7 @@ r_case
 id|SOUND_MIXER_MIC
 suffix:colon
 multiline_comment|/* mic pot control */
+multiline_comment|/* scaled by IMIX in digital mix */
 id|writeb
 c_func
 (paren
@@ -1971,58 +1950,36 @@ r_break
 suffix:semicolon
 macro_line|#endif
 r_case
+id|SOUND_MIXER_VOLUME
+suffix:colon
+multiline_comment|/* master volume */
+id|writew
+c_func
+(paren
+id|wLeft
+comma
+id|dev.SMA
+op_plus
+id|SMA_wCurrMastVolLeft
+)paren
+suffix:semicolon
+id|writew
+c_func
+(paren
+id|wRight
+comma
+id|dev.SMA
+op_plus
+id|SMA_wCurrMastVolRight
+)paren
+suffix:semicolon
+multiline_comment|/* fall through */
+r_case
 id|SOUND_MIXER_LINE1
 suffix:colon
-multiline_comment|/* line pot control */
-id|writeb
-c_func
-(paren
-id|bLeft
-comma
-id|dev.SMA
-op_plus
-id|SMA_bAuxPotPosLeft
-)paren
-suffix:semicolon
-id|writeb
-c_func
-(paren
-id|bRight
-comma
-id|dev.SMA
-op_plus
-id|SMA_bAuxPotPosRight
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|msnd_send_word
-c_func
-(paren
-op_amp
-id|dev
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|HDEXAR_AUX_SET_POTS
-)paren
-op_eq
-l_int|0
-)paren
-id|chk_send_dsp_cmd
-c_func
-(paren
-op_amp
-id|dev
-comma
-id|HDEX_AUX_REQ
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
+multiline_comment|/* aux pot control */
+multiline_comment|/* scaled by master volume */
+multiline_comment|/* fall through */
 multiline_comment|/* digital controls */
 r_case
 id|SOUND_MIXER_SYNTH
@@ -2036,6 +1993,11 @@ r_case
 id|SOUND_MIXER_IMIX
 suffix:colon
 multiline_comment|/* input monitor (dsp mix) */
+multiline_comment|/* scaled by master volume */
+id|updatemaster
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
@@ -2044,39 +2006,50 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* update digital controls for master volume */
-id|update_vol
+r_if
+c_cond
+(paren
+id|updatemaster
+)paren
+(brace
+multiline_comment|/* update master volume scaled controls */
+id|update_volm
 c_func
 (paren
 id|SOUND_MIXER_PCM
 comma
 id|wCurrPlayVol
-comma
-l_int|1
 )paren
 suffix:semicolon
-id|update_vol
+id|update_volm
 c_func
 (paren
 id|SOUND_MIXER_IMIX
 comma
 id|wCurrInVol
-comma
-l_int|1
 )paren
 suffix:semicolon
 macro_line|#ifndef MSND_CLASSIC
-id|update_vol
+id|update_volm
 c_func
 (paren
 id|SOUND_MIXER_SYNTH
 comma
 id|wCurrMHdrVol
-comma
-l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
+id|update_potm
+c_func
+(paren
+id|SOUND_MIXER_LINE1
+comma
+id|bAuxPotPos
+comma
+id|HDEXAR_AUX_SET_POTS
+)paren
+suffix:semicolon
+)brace
 r_return
 id|mixer_get
 c_func
@@ -2104,6 +2077,32 @@ comma
 id|HDEXAR_IN_SET_POTS
 )paren
 suffix:semicolon
+id|update_potm
+c_func
+(paren
+id|SOUND_MIXER_LINE1
+comma
+id|bAuxPotPos
+comma
+id|HDEXAR_AUX_SET_POTS
+)paren
+suffix:semicolon
+id|update_volm
+c_func
+(paren
+id|SOUND_MIXER_PCM
+comma
+id|wCurrPlayVol
+)paren
+suffix:semicolon
+id|update_volm
+c_func
+(paren
+id|SOUND_MIXER_IMIX
+comma
+id|wCurrInVol
+)paren
+suffix:semicolon
 macro_line|#ifndef MSND_CLASSIC
 id|update_pot
 c_func
@@ -2115,46 +2114,12 @@ comma
 id|HDEXAR_MIC_SET_POTS
 )paren
 suffix:semicolon
-macro_line|#endif
-id|update_pot
-c_func
-(paren
-id|SOUND_MIXER_LINE1
-comma
-id|bAuxPotPos
-comma
-id|HDEXAR_AUX_SET_POTS
-)paren
-suffix:semicolon
-id|update_vol
-c_func
-(paren
-id|SOUND_MIXER_PCM
-comma
-id|wCurrPlayVol
-comma
-l_int|1
-)paren
-suffix:semicolon
-id|update_vol
-c_func
-(paren
-id|SOUND_MIXER_IMIX
-comma
-id|wCurrInVol
-comma
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#ifndef MSND_CLASSIC
-id|update_vol
+id|update_volm
 c_func
 (paren
 id|SOUND_MIXER_SYNTH
 comma
 id|wCurrMHdrVol
-comma
-l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2206,7 +2171,7 @@ c_cond
 (paren
 id|dev.recsrc
 op_amp
-id|SOUND_MASK_LINE
+id|SOUND_MASK_IMIX
 )paren
 (brace
 r_if
@@ -2333,7 +2298,7 @@ suffix:semicolon
 macro_line|#else
 id|dev.recsrc
 op_assign
-id|SOUND_MASK_LINE
+id|SOUND_MASK_IMIX
 suffix:semicolon
 r_if
 c_cond
@@ -2485,6 +2450,28 @@ r_sizeof
 id|info
 )paren
 )paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|SOUND_MIXER_PRIVATE1
+)paren
+(brace
+id|dev.nresets
+op_assign
+l_int|0
+suffix:semicolon
+id|dsp_full_reset
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -2643,19 +2630,21 @@ id|SOUND_MIXER_STEREODEVS
 suffix:colon
 id|val
 op_assign
-id|SOUND_MASK_VOLUME
-op_or
-macro_line|#ifndef MSND_CLASSIC
-id|SOUND_MASK_SYNTH
-op_or
-id|SOUND_MASK_MIC
-op_or
-macro_line|#endif
 id|SOUND_MASK_PCM
 op_or
 id|SOUND_MASK_LINE
 op_or
 id|SOUND_MASK_IMIX
+op_or
+id|SOUND_MASK_LINE1
+op_or
+macro_line|#ifndef MSND_CLASSIC
+id|SOUND_MASK_MIC
+op_or
+id|SOUND_MASK_SYNTH
+op_or
+macro_line|#endif
+id|SOUND_MASK_VOLUME
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2670,7 +2659,7 @@ suffix:semicolon
 macro_line|#else
 id|val
 op_assign
-id|SOUND_MASK_LINE
+id|SOUND_MASK_IMIX
 op_or
 id|SOUND_MASK_SYNTH
 suffix:semicolon
@@ -2902,10 +2891,6 @@ c_func
 (paren
 id|dev.DAPF.len
 )paren
-op_plus
-id|HZ
-op_div
-l_int|8
 )paren
 suffix:semicolon
 id|clear_bit
@@ -3370,6 +3355,30 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|mod_inc_ref
+r_static
+r_void
+id|mod_inc_ref
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+)brace
+DECL|function|mod_dec_ref
+r_static
+r_void
+id|mod_dec_ref
+c_func
+(paren
+r_void
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
 DECL|function|dev_open
 r_static
 r_int
@@ -3564,7 +3573,10 @@ id|err
 op_ge
 l_int|0
 )paren
-id|MOD_INC_USE_COUNT
+id|mod_inc_ref
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 id|err
@@ -3666,7 +3678,10 @@ op_ge
 l_int|0
 )paren
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
+id|mod_dec_ref
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#ifndef LINUX20&t;
 r_return
@@ -5054,7 +5069,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&t;&t;&t;printk(KERN_DEBUG LOGNAME &quot;: DSP message %d 0x%02x&bslash;n&quot;, LOBYTE(wMessage), LOBYTE(wMessage)); */
+multiline_comment|/*&t;&t;&t;printk(KERN_DEBUG LOGNAME &quot;: DSP message %d 0x%02x&bslash;n&quot;,&n;&t;&t;&t;LOBYTE(wMessage), LOBYTE(wMessage)); */
 r_break
 suffix:semicolon
 )brace
@@ -5466,14 +5481,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: DSP reset successful&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#ifdef MSND_CLASSIC
 id|dev.name
 op_assign
@@ -5483,7 +5490,7 @@ id|printk
 (paren
 id|KERN_INFO
 id|LOGNAME
-l_string|&quot;: Turtle Beach %s, &quot;
+l_string|&quot;: %s, &quot;
 macro_line|#else
 r_switch
 c_cond
@@ -5656,7 +5663,7 @@ c_func
 (paren
 id|KERN_INFO
 id|LOGNAME
-l_string|&quot;: Turtle Beach %s revision %s, Xilinx version %s, &quot;
+l_string|&quot;: %s revision %s, Xilinx version %s, &quot;
 macro_line|#endif /* MSND_CLASSIC */
 l_string|&quot;I/O 0x%x-0x%x, IRQ %d, memory mapped to 0x%p-0x%p&bslash;n&quot;
 comma
@@ -6161,21 +6168,23 @@ id|srate
 )paren
 )paren
 (brace
+id|writew
+c_func
+(paren
+id|srate
+comma
+id|dev.SMA
+op_plus
+id|SMA_wCalFreqAtoD
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|dev.calibrate_signal
+op_eq
+l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: ADC calibration to board ground &quot;
-)paren
-suffix:semicolon
 id|writew
 c_func
 (paren
@@ -6194,17 +6203,7 @@ op_plus
 id|SMA_wCurrHostStatusFlags
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: ADC calibration to signal ground &quot;
-)paren
-suffix:semicolon
 id|writew
 c_func
 (paren
@@ -6222,17 +6221,6 @@ comma
 id|dev.SMA
 op_plus
 id|SMA_wCurrHostStatusFlags
-)paren
-suffix:semicolon
-)brace
-id|writew
-c_func
-(paren
-id|srate
-comma
-id|dev.SMA
-op_plus
-id|SMA_wCalFreqAtoD
 )paren
 suffix:semicolon
 r_if
@@ -6277,12 +6265,6 @@ op_div
 l_int|3
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;successful&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6290,7 +6272,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;failed&bslash;n&quot;
+id|KERN_WARNING
+id|LOGNAME
+l_string|&quot;: ADC calibration failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6317,24 +6301,7 @@ op_plus
 id|HP_BLKS
 )paren
 suffix:semicolon
-macro_line|#ifdef HAVE_DSPCODEH
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Using resident Turtle Beach DSP code&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else&t;
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Loading Turtle Beach DSP code&bslash;n&quot;
-)paren
-suffix:semicolon
+macro_line|#ifndef HAVE_DSPCODEH
 id|INITCODESIZE
 op_assign
 id|mod_firmware_load
@@ -6446,6 +6413,25 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_DSPCODEH
+id|printk
+c_func
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;: DSP firmware uploaded (resident)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;: DSP firmware uploaded&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef HAVE_DSPCODEH
 id|vfree
 c_func
@@ -6620,15 +6606,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-r_else
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: DSP upload successful&bslash;n&quot;
-)paren
-suffix:semicolon
 id|timeout
 op_assign
 l_int|200
@@ -6712,14 +6689,6 @@ l_int|10
 r_return
 l_int|0
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Resetting DSP&bslash;n&quot;
-)paren
-suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -6727,6 +6696,14 @@ id|F_RESETTING
 comma
 op_amp
 id|dev.flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+id|LOGNAME
+l_string|&quot;: DSP reset&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dsp_halt
@@ -7040,18 +7017,6 @@ r_return
 id|dev.mixer_minor
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Using DSP minor %d, mixer minor %d&bslash;n&quot;
-comma
-id|dev.dsp_minor
-comma
-id|dev.mixer_minor
-)paren
-suffix:semicolon
 id|disable_irq
 c_func
 (paren
@@ -7065,18 +7030,10 @@ id|dev.play_sample_rate
 )paren
 suffix:semicolon
 macro_line|#ifndef MSND_CLASSIC
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Setting initial recording source to Line In&bslash;n&quot;
-)paren
-suffix:semicolon
 id|force_recsrc
 c_func
 (paren
-id|SOUND_MASK_LINE
+id|SOUND_MASK_IMIX
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -7132,30 +7089,6 @@ id|dev
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|mod_inc_ref
-r_static
-r_void
-id|mod_inc_ref
-c_func
-(paren
-r_void
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
-DECL|function|mod_dec_ref
-r_static
-r_void
-id|mod_dec_ref
-c_func
-(paren
-r_void
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 macro_line|#ifndef MSND_CLASSIC
 multiline_comment|/* Pinnacle/Fiji Logical Device Configuration */
 DECL|function|__initfunc
@@ -9267,7 +9200,6 @@ c_cond
 (paren
 id|digital
 )paren
-(brace
 id|set_bit
 c_func
 (paren
@@ -9277,15 +9209,6 @@ op_amp
 id|dev.flags
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Digital I/O access enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif
 id|init_waitqueue
 c_func
@@ -9336,7 +9259,7 @@ c_func
 (paren
 id|KERN_INFO
 id|LOGNAME
-l_string|&quot;: Using %u byte digital audio FIFOs (x2)&bslash;n&quot;
+l_string|&quot;: %u byte audio FIFOs (x2)&bslash;n&quot;
 comma
 id|dev.fifosize
 )paren
@@ -9505,14 +9428,6 @@ c_func
 r_void
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-id|LOGNAME
-l_string|&quot;: Unloading&bslash;n&quot;
-)paren
-suffix:semicolon
 id|unload_multisound
 c_func
 (paren

@@ -827,6 +827,13 @@ c_func
 id|get_unused_fd
 )paren
 suffix:semicolon
+DECL|variable|VFS_rmdir
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|VFS_rmdir
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL

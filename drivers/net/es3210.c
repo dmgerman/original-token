@@ -1847,10 +1847,6 @@ comma
 id|ES_IO_EXTENT
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
 id|unregister_netdev
 c_func
 (paren

@@ -1661,9 +1661,12 @@ op_rshift
 l_int|1
 )paren
 )paren
-multiline_comment|/* FIXME: last_reset == 0 is allowed */
 op_logical_and
-id|time_after
+op_logical_neg
+(paren
+id|SCpnt-&gt;host-&gt;resetting
+op_logical_and
+id|time_before
 c_func
 (paren
 id|jiffies
@@ -1671,6 +1674,7 @@ comma
 id|SCpnt-&gt;host-&gt;last_reset
 op_plus
 id|MIN_RESET_PERIOD
+)paren
 )paren
 op_logical_and
 op_logical_neg
@@ -2668,6 +2672,11 @@ id|host-&gt;last_reset
 op_assign
 id|jiffies
 suffix:semicolon
+id|host-&gt;resetting
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t; * flag here. -arca&n;&t;&t; */
 id|temp
 op_assign
 id|host-&gt;hostt
@@ -2712,6 +2721,10 @@ id|host-&gt;last_reset
 op_assign
 id|jiffies
 suffix:semicolon
+id|host-&gt;resetting
+op_assign
+l_int|1
+suffix:semicolon
 id|SCpnt-&gt;flags
 op_or_assign
 (paren
@@ -2720,6 +2733,7 @@ op_or
 id|IS_RESETTING
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * I suppose that the host reset callback will not play&n;&t;&t; * with the resetting field. We have just set the resetting&n;&t;&t; * flag here. -arca&n;&t;&t; */
 id|temp
 op_assign
 id|host-&gt;hostt

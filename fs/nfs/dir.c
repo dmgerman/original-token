@@ -2894,7 +2894,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * To avoid retaining a stale inode reference, we check the dentry&n; * use count prior to the operation, and return EBUSY if it has&n; * multiple users.&n; *&n; * We update inode-&gt;i_nlink and free the inode prior to the operation&n; * to avoid possible races if the server reuses the inode.&n; */
+multiline_comment|/*&n; * To avoid retaining a stale inode reference, we check the dentry&n; * use count prior to the operation, and return EBUSY if it has&n; * multiple users.&n; *&n; * We update inode-&gt;i_nlink and free the inode prior to the operation&n; * to avoid possible races if the server reuses the inode.&n; *&n; * FIXME! We don&squot;t do it anymore (2.1.131) - it interacts badly with&n; * new rmdir().  -- AV&n; */
 DECL|function|nfs_rmdir
 r_static
 r_int

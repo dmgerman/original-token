@@ -44,7 +44,6 @@ id|mpu_irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
 DECL|variable|synth_base
 DECL|variable|synth_irq
 r_static
@@ -57,7 +56,6 @@ id|synth_irq
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
 DECL|variable|mpu_detected
 r_static
 r_int
@@ -530,7 +528,13 @@ suffix:semicolon
 multiline_comment|/* Activate logical dev 3 */
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_SOUND_WAVEFRONT) || defined(CONFIG_SOUND_WAVEFRONT_MODULE)
+r_if
+c_cond
+(paren
+id|synth_base
+op_ne
+l_int|0
+)paren
 (brace
 id|CS_OUT2
 (paren
@@ -575,7 +579,6 @@ l_int|0x01
 suffix:semicolon
 multiline_comment|/* Activate logical dev 4 */
 )brace
-macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Finally activate the chip&n;&t;&t; */
 id|CS_OUT
 c_func
@@ -1096,7 +1099,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
 DECL|variable|synthio
 r_int
 id|synthio
@@ -1127,7 +1129,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 DECL|variable|cfg
@@ -1149,7 +1150,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef CONFIG_SOUND_WAVEFRONT_MODULE
 r_if
 c_cond
 (paren
@@ -1186,36 +1186,11 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#else 
+macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
 r_if
 c_cond
 (paren
 id|synthio
-op_eq
-op_minus
-l_int|1
-op_logical_or
-id|synthirq
-op_eq
-op_minus
-l_int|1
-op_logical_or
-id|io
-op_eq
-op_minus
-l_int|1
-op_logical_or
-id|irq
-op_eq
-op_minus
-l_int|1
-op_logical_or
-id|dma
-op_eq
-op_minus
-l_int|1
-op_logical_or
-id|dma2
 op_eq
 op_minus
 l_int|1
@@ -1224,17 +1199,41 @@ l_int|1
 id|printk
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;cs4232: synthio, synthirq, dma, dma2, &quot;
-l_string|&quot;irq and io must be set.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;cs4232: set synthio and synthirq to use the wavefront facilities.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
+)brace
+r_else
+(brace
+id|synth_base
+op_assign
+id|synthio
+suffix:semicolon
+id|synth_irq
+op_assign
+id|synthirq
 suffix:semicolon
 )brace
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE
+macro_line|#else
+r_if
+c_cond
+(paren
+id|synthio
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;cs4232: wavefront support not enabled in this driver.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|cfg.io_base
 op_assign
 id|io
@@ -1251,16 +1250,6 @@ id|cfg.dma2
 op_assign
 id|dma2
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_WAVEFRONT_MODULE
-id|synth_base
-op_assign
-id|synthio
-suffix:semicolon
-id|synth_irq
-op_assign
-id|synthirq
-suffix:semicolon
-macro_line|#endif CONFIG_SOUND_WAVEFRONT_MODULE&t;
 r_if
 c_cond
 (paren

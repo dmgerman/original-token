@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.8 1998/05/12 07:36:04 mj Exp $&n;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;&t;/* isa_dma_bridge_buggy */
 DECL|variable|pcibios_present
 id|EXPORT_SYMBOL
 c_func
@@ -166,4 +167,14 @@ c_func
 id|pcibios_find_device
 )paren
 suffix:semicolon
+multiline_comment|/* Quirk info */
+macro_line|#ifdef CONFIG_PCI_QUIRKS
+DECL|variable|isa_dma_bridge_buggy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|isa_dma_bridge_buggy
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

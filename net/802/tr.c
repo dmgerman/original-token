@@ -482,6 +482,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
@@ -499,6 +500,7 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif&t;
 (brace
 id|tr_source_route
 c_func

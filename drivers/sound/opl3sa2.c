@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA[2,3,x] based cards.&n; *&n; * Scott Murray, Jun 14, 1998&n; *&n; */
+multiline_comment|/*&n; * sound/opl3sa2.c&n; *&n; * A low level driver for Yamaha OPL3-SA[2,3,x] based cards.&n; *&n; * Scott Murray, Jun 14, 1998&n; *&n; *&n; * Changes&n; *      Paul J.Y. Lahaie        Changed probing / attach code order&n; *&n; */
 multiline_comment|/* Based on the CS4232 driver:&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -591,13 +591,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|attach_opl3sa2
-c_func
-(paren
-op_amp
-id|cfg
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -616,6 +609,13 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|attach_opl3sa2
+c_func
+(paren
+op_amp
+id|cfg
+)paren
+suffix:semicolon
 id|attach_opl3sa2_mss
 c_func
 (paren

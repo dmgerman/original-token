@@ -1,4 +1,4 @@
-multiline_comment|/* fc.c: Generic Fibre Channel and FC4 SCSI driver.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jiri Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; */
+multiline_comment|/* fc.c: Generic Fibre Channel and FC4 SCSI driver.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jirka Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

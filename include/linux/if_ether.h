@@ -79,6 +79,10 @@ DECL|macro|ETH_P_TR_802_2
 mdefine_line|#define ETH_P_TR_802_2&t;0x0011&t;&t;/* 802.2 frames &t;&t;*/
 DECL|macro|ETH_P_MOBITEX
 mdefine_line|#define ETH_P_MOBITEX&t;0x0015&t;&t;/* Mobitex (kaz@cafe.net)&t;*/
+DECL|macro|ETH_P_CONTROL
+mdefine_line|#define ETH_P_CONTROL&t;0x0016&t;&t;/* Card specific control frames */
+DECL|macro|ETH_P_IRDA
+mdefine_line|#define ETH_P_IRDA&t;0x0017&t;&t;/* Linux/IR&t;&t;&t;*/
 multiline_comment|/*&n; *&t;This is an Ethernet frame header.&n; */
 DECL|struct|ethhdr
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/awe_voice.h&n; *&n; * Voice information definitions for the low level driver for the &n; * AWE32/Sound Blaster 32 wave table synth.&n; *   version 0.4.2c; Oct. 7, 1997&n; *&n; * Copyright (C) 1996,1997 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; * sound/awe_voice.h&n; *&n; * Voice information definitions for the low level driver for the &n; * AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Mar. 1, 1998&n; *&n; * Copyright (C) 1996-1998 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#ifndef AWE_VOICE_H
 DECL|macro|AWE_VOICE_H
 mdefine_line|#define AWE_VOICE_H
@@ -64,6 +64,10 @@ DECL|macro|AWE_REPLACE_DATA
 mdefine_line|#define AWE_REPLACE_DATA&t;5&t;/* awe_sample_info (optarg=#channels)*/
 DECL|macro|AWE_MAP_PRESET
 mdefine_line|#define AWE_MAP_PRESET&t;&t;6&t;/* awe_voice_map */
+multiline_comment|/*#define AWE_PROBE_INFO&t;7*/
+multiline_comment|/* awe_voice_map (pat only) */
+DECL|macro|AWE_PROBE_DATA
+mdefine_line|#define AWE_PROBE_DATA&t;&t;8&t;/* optarg=sample */
 DECL|macro|AWE_LOAD_CHORUS_FX
 mdefine_line|#define AWE_LOAD_CHORUS_FX&t;0x10&t;/* awe_chorus_fx_rec (optarg=mode) */
 DECL|macro|AWE_LOAD_REVERB_FX
@@ -122,6 +126,8 @@ DECL|macro|AWE_PAT_TYPE_MAP
 mdefine_line|#define AWE_PAT_TYPE_MAP&t;7
 DECL|macro|AWE_PAT_LOCKED
 mdefine_line|#define AWE_PAT_LOCKED&t;&t;0x100&t;/* lock the samples */
+DECL|macro|AWE_PAT_SHARED
+mdefine_line|#define AWE_PAT_SHARED&t;&t;0x200&t;/* sample is shared */
 DECL|member|reserved
 r_int
 id|reserved
@@ -283,6 +289,168 @@ multiline_comment|/* not used */
 DECL|typedef|awe_voice_parm
 )brace
 id|awe_voice_parm
+suffix:semicolon
+DECL|struct|_awe_voice_parm_block
+r_typedef
+r_struct
+id|_awe_voice_parm_block
+(brace
+DECL|member|moddelay
+r_int
+r_int
+id|moddelay
+suffix:semicolon
+multiline_comment|/* modulation delay (0x8000) */
+DECL|member|modatk
+DECL|member|modhld
+r_int
+r_char
+id|modatk
+comma
+id|modhld
+suffix:semicolon
+DECL|member|moddcy
+DECL|member|modsus
+r_int
+r_char
+id|moddcy
+comma
+id|modsus
+suffix:semicolon
+DECL|member|modrel
+DECL|member|moddummy
+r_int
+r_int
+id|modrel
+comma
+id|moddummy
+suffix:semicolon
+DECL|member|modkeyhold
+DECL|member|modkeydecay
+r_int
+id|modkeyhold
+comma
+id|modkeydecay
+suffix:semicolon
+multiline_comment|/* envelope change per key (not used) */
+DECL|member|voldelay
+r_int
+r_int
+id|voldelay
+suffix:semicolon
+multiline_comment|/* volume delay (0x8000) */
+DECL|member|volatk
+DECL|member|volhld
+r_int
+r_char
+id|volatk
+comma
+id|volhld
+suffix:semicolon
+DECL|member|voldcy
+DECL|member|volsus
+r_int
+r_char
+id|voldcy
+comma
+id|volsus
+suffix:semicolon
+DECL|member|volrel
+DECL|member|voldummy
+r_int
+r_char
+id|volrel
+comma
+id|voldummy
+suffix:semicolon
+DECL|member|volkeyhold
+DECL|member|volkeydecay
+r_int
+id|volkeyhold
+comma
+id|volkeydecay
+suffix:semicolon
+multiline_comment|/* envelope change per key (not used) */
+DECL|member|lfo1delay
+r_int
+r_int
+id|lfo1delay
+suffix:semicolon
+multiline_comment|/* LFO1 delay (0x8000) */
+DECL|member|lfo2delay
+r_int
+r_int
+id|lfo2delay
+suffix:semicolon
+multiline_comment|/* LFO2 delay (0x8000) */
+DECL|member|env1fc
+DECL|member|env1pit
+r_int
+r_char
+id|env1fc
+comma
+id|env1pit
+suffix:semicolon
+DECL|member|lfo1fc
+DECL|member|lfo1pit
+r_int
+r_char
+id|lfo1fc
+comma
+id|lfo1pit
+suffix:semicolon
+DECL|member|lfo1freq
+DECL|member|lfo1vol
+r_int
+r_char
+id|lfo1freq
+comma
+id|lfo1vol
+suffix:semicolon
+DECL|member|lfo2freq
+DECL|member|lfo2pit
+r_int
+r_char
+id|lfo2freq
+comma
+id|lfo2pit
+suffix:semicolon
+DECL|member|cutoff
+r_int
+r_char
+id|cutoff
+suffix:semicolon
+multiline_comment|/* initial cutoff (0xff) */
+DECL|member|filterQ
+r_int
+r_char
+id|filterQ
+suffix:semicolon
+multiline_comment|/* initial filter Q [0-15] (0x0) */
+DECL|member|chorus
+r_int
+r_char
+id|chorus
+suffix:semicolon
+multiline_comment|/* chorus send (0x00) */
+DECL|member|reverb
+r_int
+r_char
+id|reverb
+suffix:semicolon
+multiline_comment|/* reverb send (0x00) */
+DECL|member|reserved
+r_int
+r_int
+id|reserved
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* not used */
+DECL|typedef|awe_voice_parm_block
+)brace
+id|awe_voice_parm_block
 suffix:semicolon
 DECL|macro|AWE_VOICE_PARM_SIZE
 mdefine_line|#define AWE_VOICE_PARM_SIZE&t;48
@@ -922,7 +1090,7 @@ DECL|enumerator|AWE_MD_EXCLUSIVE_SOUND
 multiline_comment|/* 3*/
 id|AWE_MD_EXCLUSIVE_SOUND
 comma
-multiline_comment|/* ignored */
+multiline_comment|/* 0/1: exclusive note on (default=1) */
 DECL|enumerator|AWE_MD_REALTIME_PAN
 multiline_comment|/* 4*/
 id|AWE_MD_REALTIME_PAN
@@ -973,6 +1141,41 @@ multiline_comment|/*13*/
 id|AWE_MD_TOGGLE_DRUM_BANK
 comma
 multiline_comment|/* 0/1: toggle drum flag with bank# (def=0) */
+DECL|enumerator|AWE_MD_NEW_VOLUME_CALC
+multiline_comment|/*14*/
+id|AWE_MD_NEW_VOLUME_CALC
+comma
+multiline_comment|/* 0/1: volume calculation mode (def=1) */
+DECL|enumerator|AWE_MD_CHORUS_MODE
+multiline_comment|/*15*/
+id|AWE_MD_CHORUS_MODE
+comma
+multiline_comment|/* integer: chorus mode (def=2) */
+DECL|enumerator|AWE_MD_REVERB_MODE
+multiline_comment|/*16*/
+id|AWE_MD_REVERB_MODE
+comma
+multiline_comment|/* integer: chorus mode (def=4) */
+DECL|enumerator|AWE_MD_BASS_LEVEL
+multiline_comment|/*17*/
+id|AWE_MD_BASS_LEVEL
+comma
+multiline_comment|/* integer: bass level (def=5) */
+DECL|enumerator|AWE_MD_TREBLE_LEVEL
+multiline_comment|/*18*/
+id|AWE_MD_TREBLE_LEVEL
+comma
+multiline_comment|/* integer: treble level (def=9) */
+DECL|enumerator|AWE_MD_DEBUG_MODE
+multiline_comment|/*19*/
+id|AWE_MD_DEBUG_MODE
+comma
+multiline_comment|/* integer: debug level (def=0) */
+DECL|enumerator|AWE_MD_PAN_EXCHANGE
+multiline_comment|/*20*/
+id|AWE_MD_PAN_EXCHANGE
+comma
+multiline_comment|/* 0/1: exchange panning direction (def=0) */
 DECL|enumerator|AWE_MD_END
 id|AWE_MD_END
 comma

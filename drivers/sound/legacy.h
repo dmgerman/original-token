@@ -44,6 +44,8 @@ DECL|macro|CONFIG_SOFTOSS
 mdefine_line|#define CONFIG_SOFTOSS
 DECL|macro|CONFIG_SSCAPE
 mdefine_line|#define CONFIG_SSCAPE
+DECL|macro|CONFIG_AD1816
+mdefine_line|#define CONFIG_AD1816
 DECL|macro|CONFIG_TRIX
 mdefine_line|#define CONFIG_TRIX
 DECL|macro|CONFIG_VMIDI

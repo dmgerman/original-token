@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * drivers/sound/vidc_audio.c&n; *&n; * Audio routines for the VIDC&n; *&n; * Copyright (C) 1997 Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;vidc.h&quot;
 multiline_comment|/*&n; * VIDC sound&n; *&n; * When using SERIAL SOUND mode (external DAC), the number of physical&n; * channels is fixed at 2.  Therefore, the sample rate = vidc sample rate.&n; */
@@ -19,10 +20,10 @@ r_static
 r_int
 id|vidc_audio_rate
 suffix:semicolon
-DECL|variable|vidc_audio_bits
+DECL|variable|vidc_audio_format
 r_static
 r_char
-id|vidc_audio_bits
+id|vidc_audio_format
 suffix:semicolon
 DECL|variable|vidc_audio_channels
 r_static
@@ -77,13 +78,21 @@ id|vidc_audio_set_bits
 c_func
 (paren
 r_int
-id|bits
+id|fmt
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;setting format: %d&bslash;n&quot;
+comma
+id|fmt
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
-id|bits
+id|fmt
 )paren
 (brace
 r_case
@@ -95,16 +104,19 @@ r_case
 id|AFMT_U8
 suffix:colon
 r_case
+id|AFMT_S8
+suffix:colon
+r_case
 id|AFMT_S16_LE
 suffix:colon
-id|vidc_audio_bits
+id|vidc_audio_format
 op_assign
-id|bits
+id|fmt
 suffix:semicolon
 id|vidc_update_filler
 c_func
 (paren
-id|vidc_audio_bits
+id|vidc_audio_format
 comma
 id|vidc_audio_channels
 )paren
@@ -113,14 +125,14 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|vidc_audio_bits
+id|vidc_audio_format
 op_assign
-l_int|16
+id|AFMT_S16_LE
 suffix:semicolon
 id|vidc_update_filler
 c_func
 (paren
-id|vidc_audio_bits
+id|vidc_audio_format
 comma
 id|vidc_audio_channels
 )paren
@@ -129,7 +141,7 @@ r_break
 suffix:semicolon
 )brace
 r_return
-id|vidc_audio_bits
+id|vidc_audio_format
 suffix:semicolon
 )brace
 DECL|function|vidc_audio_set_rate
@@ -200,7 +212,7 @@ l_int|2
 op_or
 l_int|0xb0000000
 comma
-id|VIDC_BASE
+id|IO_VIDC_BASE
 )paren
 suffix:semicolon
 id|outl
@@ -208,7 +220,7 @@ c_func
 (paren
 l_int|0xb1000003
 comma
-id|VIDC_BASE
+id|IO_VIDC_BASE
 )paren
 suffix:semicolon
 id|newsize
@@ -324,7 +336,7 @@ suffix:semicolon
 id|vidc_update_filler
 c_func
 (paren
-id|vidc_audio_bits
+id|vidc_audio_format
 comma
 id|vidc_audio_channels
 )paren
@@ -340,7 +352,7 @@ suffix:semicolon
 id|vidc_update_filler
 c_func
 (paren
-id|vidc_audio_bits
+id|vidc_audio_format
 comma
 id|vidc_audio_channels
 )paren
@@ -651,24 +663,6 @@ id|arg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Output a block via DMA to sound device&n; *&n; * dev          - device number&n; * buf          - physical address of buffer&n; * total_count  - total byte count in buffer&n; * intrflag     - set if this has been called from an interrupt (via DMAbuf_outputintr)&n; * restart_dma  - set if DMA needs to be re-initialised&n; *&n; * Called when:&n; *  1. Starting output                                  (dmabuf.c:1327)&n; *  2.                                                  (dmabuf.c:1504)&n; *  3. A new buffer needs to be sent to the device      (dmabuf.c:1579)&n; */
-DECL|function|vidc_audio_dma_interrupt
-r_static
-r_void
-id|vidc_audio_dma_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|DMAbuf_outputintr
-c_func
-(paren
-id|vidc_adev
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
 DECL|function|vidc_audio_output_block
 r_static
 r_void
@@ -689,9 +683,38 @@ r_int
 id|intrflag
 )paren
 (brace
+r_struct
+id|audio_operations
+op_star
+id|adev
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+suffix:semicolon
+r_struct
+id|dma_buffparms
+op_star
+id|dmap
+op_assign
+id|adev-&gt;dmap_out
+suffix:semicolon
 id|dma_start
 op_assign
 id|buf
+op_minus
+(paren
+r_int
+r_int
+)paren
+id|dmap-&gt;raw_buf_phys
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|dmap-&gt;raw_buf
 suffix:semicolon
 id|dma_count
 op_assign
@@ -701,12 +724,40 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|intrflag
+(paren
+id|adev-&gt;flags
+op_amp
+id|DMA_ACTIVE
+)paren
 )paren
 (brace
-id|dma_interrupt
-op_assign
-id|vidc_audio_dma_interrupt
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;kicking output: %lX+%lX [%lX]&bslash;n&quot;
+comma
+id|dma_start
+comma
+id|dma_count
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|dma_start
+)paren
+suffix:semicolon
+id|save_flags_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|vidc_sound_dma_irq
 c_func
@@ -721,11 +772,17 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|DMA_CR_D
-op_or
 id|DMA_CR_E
+op_or
+l_int|0x10
 comma
 id|IOMD_SD0CR
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -772,6 +829,24 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|vidc_audio_dma_interrupt
+r_static
+r_void
+id|vidc_audio_dma_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+id|DMAbuf_outputintr
+c_func
+(paren
+id|vidc_adev
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Prepare for outputting samples to `dev&squot;&n; *&n; * Each buffer that will be passed will be `bsize&squot; bytes long,&n; * with a total of `bcount&squot; buffers.&n; *&n; * Called when:&n; *  1. A trigger enables audio output                   (dmabuf.c:978)&n; *  2. We get a write buffer without dma_mode setup     (dmabuf.c:1152)&n; *  3. We restart a transfer                            (dmabuf.c:1324)&n; */
 DECL|function|vidc_audio_prepare_for_output
 r_static
@@ -789,10 +864,24 @@ r_int
 id|bcount
 )paren
 (brace
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap_out-&gt;flags
+op_or_assign
+id|DMA_NODMA
+suffix:semicolon
+id|dma_interrupt
+op_assign
+id|vidc_audio_dma_interrupt
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Stop our current operation.&n; */
 DECL|function|vidc_audio_reset
 r_static
 r_void
@@ -803,21 +892,10 @@ r_int
 id|dev
 )paren
 (brace
-)brace
-multiline_comment|/*&n; * Halt a DMA transfer to `dev&squot;&n; *&n; * Called when:&n; *  1. We close the DMAbuf                                      (dmabuf.c:476)&n; *  2. We run out of output buffers to output to the device.    (dmabuf.c:1456)&n; *  3. We run out of output buffers and we&squot;re closing down.     (dmabuf.c:1546)&n; *  4. We run out of input buffers in AUTOMODE.                 (dmabuf.c:1651)&n; */
-DECL|function|vidc_audio_halt_xfer
-r_static
-r_void
-id|vidc_audio_halt_xfer
-c_func
-(paren
-r_int
-id|dev
-)paren
-(brace
-id|dma_count
+multiline_comment|/* stop interrupts.  Our real interrupt routine&n;&t; * will close DMA down for us&n;&t; */
+id|dma_interrupt
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|vidc_audio_local_qlen
@@ -831,8 +909,7 @@ id|dev
 )paren
 (brace
 r_return
-id|dma_count
-op_ne
+multiline_comment|/*dma_count !=*/
 l_int|0
 suffix:semicolon
 )brace
@@ -867,9 +944,6 @@ multiline_comment|/* prepare_for_output   */
 id|vidc_audio_reset
 comma
 multiline_comment|/* reset                */
-id|vidc_audio_halt_xfer
-comma
-multiline_comment|/* halt_xfer            */
 id|vidc_audio_local_qlen
 comma
 multiline_comment|/*+local_qlen           */
@@ -881,7 +955,7 @@ comma
 multiline_comment|/*+halt_input           */
 l_int|NULL
 comma
-multiline_comment|/*+halt_output          */
+multiline_comment|/* halt_output          */
 l_int|NULL
 comma
 multiline_comment|/*+trigger              */
@@ -894,27 +968,6 @@ multiline_comment|/*+set_bits             */
 l_int|NULL
 comma
 multiline_comment|/*+set_channels         */
-)brace
-suffix:semicolon
-DECL|variable|vidc_audio_operations
-r_static
-r_struct
-id|audio_operations
-id|vidc_audio_operations
-op_assign
-(brace
-l_string|&quot;VIDCsound&quot;
-comma
-l_int|0
-comma
-id|AFMT_U8
-op_or
-id|AFMT_S16_LE
-comma
-l_int|NULL
-comma
-op_amp
-id|vidc_audio_driver
 )brace
 suffix:semicolon
 DECL|function|vidc_audio_init
@@ -944,24 +997,41 @@ c_cond
 (paren
 id|vidc_adev
 op_assign
-id|sound_alloc_audiodev
+id|sound_install_audiodrv
 c_func
 (paren
+id|AUDIO_DRIVER_VERSION
+comma
+l_string|&quot;VIDCsound&quot;
+comma
+op_amp
+id|vidc_audio_driver
+comma
+r_sizeof
+(paren
+r_struct
+id|audio_driver
+)paren
+comma
+id|DMA_AUTOMODE
+comma
+id|AFMT_U8
+op_or
+id|AFMT_S8
+op_or
+id|AFMT_S16_LE
+comma
+l_int|NULL
+comma
+id|hw_config-&gt;dma
+comma
+id|hw_config-&gt;dma2
 )paren
 )paren
-op_ne
-op_minus
-l_int|1
+op_ge
+l_int|0
 )paren
 (brace
-id|audio_devs
-(braket
-id|vidc_adev
-)braket
-op_assign
-op_amp
-id|vidc_audio_operations
-suffix:semicolon
 id|audio_devs
 (braket
 id|vidc_adev
@@ -980,15 +1050,6 @@ op_member_access_from_pointer
 id|mixer_dev
 op_assign
 id|num_mixers
-suffix:semicolon
-id|audio_devs
-(braket
-id|vidc_adev
-)braket
-op_member_access_from_pointer
-id|flags
-op_or_assign
-l_int|0
 suffix:semicolon
 )brace
 r_else

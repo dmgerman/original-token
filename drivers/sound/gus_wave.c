@@ -5662,12 +5662,6 @@ id|voice
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

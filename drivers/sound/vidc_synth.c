@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * drivers/sound/vidc_synth.c&n; *&n; * Synthesizer routines for the VIDC&n; *&n; * Copyright (C) 1997 Russell King &lt;rmk@arm.uk.linux.org&gt;&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;vidc.h&quot;
-DECL|variable|vidc_info
+macro_line|#if 0
 r_static
 r_struct
 id|synth_info
@@ -37,15 +37,12 @@ comma
 multiline_comment|/* capabilities         */
 )brace
 suffix:semicolon
-DECL|variable|vidc_sdev
 r_int
 id|vidc_sdev
 suffix:semicolon
-DECL|variable|vidc_synth_volume
 r_int
 id|vidc_synth_volume
 suffix:semicolon
-DECL|function|vidc_synth_open
 r_static
 r_int
 id|vidc_synth_open
@@ -75,7 +72,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|vidc_synth_close
 r_static
 r_void
 id|vidc_synth_close
@@ -90,87 +86,86 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|vidc_synth_operations
 r_static
 r_struct
 id|synth_operations
 id|vidc_synth_operations
 op_assign
 (brace
+l_string|&quot;VIDC Synth&quot;
+comma
+multiline_comment|/* name&t;&t;&t;*/
 op_amp
 id|vidc_info
 comma
-multiline_comment|/* info                 */
+multiline_comment|/* info &t;&t;*/
 l_int|0
 comma
-multiline_comment|/* midi_dev             */
+multiline_comment|/* midi_dev&t;&t;*/
 id|SYNTH_TYPE_SAMPLE
 comma
-multiline_comment|/* synth_type           */
+multiline_comment|/* synth_type&t;&t;*/
 multiline_comment|/*SAMPLE_TYPE_XXX */
 l_int|0
 comma
-multiline_comment|/* SAMPLE_TYPE GUS */
-multiline_comment|/* synth_subtype                */
+multiline_comment|/* synth_subtype&t;*/
 id|vidc_synth_open
 comma
-multiline_comment|/* open                 */
+multiline_comment|/* open &t;&t;*/
 id|vidc_synth_close
 comma
-multiline_comment|/* close                */
+multiline_comment|/* close&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* ioctl                */
+multiline_comment|/* ioctl&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* kill_note            */
+multiline_comment|/* kill_note&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* start_note           */
+multiline_comment|/* start_note&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* set_instr            */
+multiline_comment|/* set_instr&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* reset                */
+multiline_comment|/* reset&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* hw_control           */
+multiline_comment|/* hw_control&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* load_patch           */
+multiline_comment|/* load_patch&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* aftertouch           */
+multiline_comment|/* aftertouch&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* controller           */
+multiline_comment|/* controller&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* panning              */
+multiline_comment|/* panning&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* volume_method        */
+multiline_comment|/* volume_method&t;*/
 l_int|NULL
 comma
-multiline_comment|/* patchmgr             */
+multiline_comment|/* bender&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* bender               */
+multiline_comment|/* alloc_voice&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* alloc                */
+multiline_comment|/* setup_voice&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* setup_voice          */
-l_int|NULL
-comma
-multiline_comment|/* send_sysex           */
-multiline_comment|/* alloc                */
-multiline_comment|/* chn_info[16]         */
+multiline_comment|/* send_sysex&t;&t;*/
+multiline_comment|/* alloc&t;&t;*/
+multiline_comment|/* chn_info[16] &t;*/
+multiline_comment|/* syex_buf&t;&t;*/
+multiline_comment|/* syex_ptr&t;&t;*/
 )brace
 suffix:semicolon
-DECL|function|vidc_synth_get_volume
 r_int
 id|vidc_synth_get_volume
 c_func
@@ -182,7 +177,6 @@ r_return
 id|vidc_synth_volume
 suffix:semicolon
 )brace
-DECL|function|vidc_synth_set_volume
 r_int
 id|vidc_synth_set_volume
 c_func
@@ -197,7 +191,6 @@ op_assign
 id|newvol
 suffix:semicolon
 )brace
-DECL|function|vidc_synth_init
 r_void
 id|vidc_synth_init
 c_func
@@ -250,4 +243,5 @@ l_string|&quot;VIDCsound: Too many synthesizers&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

@@ -344,10 +344,6 @@ r_int
 )paren
 l_int|NULL
 suffix:semicolon
-id|SCset-&gt;eh_timeout.expires
-op_assign
-l_int|0
-suffix:semicolon
 id|SCset-&gt;eh_timeout.function
 op_assign
 l_int|NULL

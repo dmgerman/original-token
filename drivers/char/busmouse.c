@@ -29,6 +29,16 @@ id|mouse_irq
 op_assign
 id|MOUSE_IRQ
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|mouse_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func

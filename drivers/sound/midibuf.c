@@ -1133,7 +1133,26 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * No space just now. We have to sleep&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * No space just now.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -1325,6 +1344,25 @@ id|dev
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * No data yet, wait&n;&t;&t;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
 id|interruptible_sleep_on_timeout
 c_func
 (paren

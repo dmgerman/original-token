@@ -502,13 +502,14 @@ mdefine_line|#define VIDEO_SOUND_MONO&t;1
 DECL|macro|VIDEO_SOUND_STEREO
 mdefine_line|#define VIDEO_SOUND_STEREO&t;2
 DECL|macro|VIDEO_SOUND_LANG1
-mdefine_line|#define VIDEO_SOUND_LANG1&t;3
+mdefine_line|#define VIDEO_SOUND_LANG1&t;4
 DECL|macro|VIDEO_SOUND_LANG2
-mdefine_line|#define VIDEO_SOUND_LANG2&t;4
+mdefine_line|#define VIDEO_SOUND_LANG2&t;8
 DECL|member|mode
 id|__u16
 id|mode
 suffix:semicolon
+multiline_comment|/* detected audio carriers or one to set */
 DECL|member|balance
 id|__u16
 id|balance

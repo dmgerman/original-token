@@ -766,11 +766,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
+multiline_comment|/* Maybe it should be controlled by mount parameter? */
+id|inode-&gt;i_mode
+op_or_assign
+id|S_ISVTX
+suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|affs_dir_inode_operations
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

@@ -1259,18 +1259,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|parent
-op_eq
-id|inode
-)paren
-multiline_comment|/* can&squot;t delete . */
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|build_key
 c_func
 (paren

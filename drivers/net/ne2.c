@@ -2839,10 +2839,6 @@ c_func
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
 id|free_irq
 c_func
 (paren
@@ -2851,8 +2847,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* removed (temporary) fot */
-multiline_comment|/* irq2dev_map[dev-&gt;irq] = NULL; */
 id|release_region
 c_func
 (paren

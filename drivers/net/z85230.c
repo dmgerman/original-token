@@ -2122,6 +2122,8 @@ suffix:semicolon
 id|c-&gt;mtu
 op_assign
 id|dev-&gt;mtu
+op_plus
+l_int|64
 suffix:semicolon
 id|c-&gt;count
 op_assign
@@ -2290,6 +2292,8 @@ suffix:semicolon
 id|c-&gt;mtu
 op_assign
 id|dev-&gt;mtu
+op_plus
+l_int|64
 suffix:semicolon
 id|c-&gt;count
 op_assign
@@ -3101,6 +3105,8 @@ suffix:semicolon
 id|c-&gt;mtu
 op_assign
 id|dev-&gt;mtu
+op_plus
+l_int|64
 suffix:semicolon
 id|c-&gt;count
 op_assign

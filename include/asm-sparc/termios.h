@@ -172,6 +172,10 @@ DECL|macro|N_R3964
 mdefine_line|#define N_R3964&t;&t;9&t;/* Reserved for Simatic R3964 module */
 DECL|macro|N_PROFIBUS_FDL
 mdefine_line|#define N_PROFIBUS_FDL&t;10&t;/* Reserved for Profibus &lt;Dave@mvhi.com&gt; */
+DECL|macro|N_IRDA
+mdefine_line|#define N_IRDA&t;&t;11&t;/* Linux IrDa - http://www.cs.uit.no/~dagb/irda/irda.html */
+DECL|macro|N_SMSBLOCK
+mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM data cards about SMS messages */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * c_cc characters in the termio structure.  Oh, how I love being&n; * backwardly compatible.  Notice that character 4 and 5 are&n; * interpreted differently depending on whether ICANON is set in&n; * c_lflag.  If it&squot;s set, they are used as _VEOF and _VEOL, otherwise&n; * as _VMIN and V_TIME.  This is for compatibility with OSF/1 (which&n; * is compatible with sysV)...&n; */
 DECL|macro|_VMIN

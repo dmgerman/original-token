@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; *&n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; */
+multiline_comment|/*&n; *  hosts.h Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to low-level SCSI driver interface header&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to&n; *&t; add scatter-gather, multiple outstanding request, and other&n; *&t; enhancements.&n; *&n; *  Further modified by Eric Youngdale to support multiple host adapters&n; *  of the same type.&n; *&n; *  Jiffies wrap fixes (host-&gt;resetting), 3 Dec 1998 Andrea Arcangeli&n; */
 macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
@@ -451,6 +451,11 @@ r_int
 id|host_no
 suffix:semicolon
 multiline_comment|/* Used for IOCTL_GET_IDLUN, /proc/scsi et al. */
+DECL|member|resetting
+r_int
+id|resetting
+suffix:semicolon
+multiline_comment|/* if set, it means that last_reset is a valid value */
 DECL|member|last_reset
 r_int
 r_int

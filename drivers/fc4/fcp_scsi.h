@@ -1,4 +1,4 @@
-multiline_comment|/* fcp_scsi.h: Generic SCSI on top of FC4 - interface defines.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998 Jiri Hanika (geo@ff.cuni.cz)&n; */
+multiline_comment|/* fcp_scsi.h: Generic SCSI on top of FC4 - interface defines.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998 Jirka Hanika (geo@ff.cuni.cz)&n; */
 macro_line|#ifndef _FCP_SCSI_H
 DECL|macro|_FCP_SCSI_H
 mdefine_line|#define _FCP_SCSI_H

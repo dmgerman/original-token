@@ -151,6 +151,9 @@ id|JS_BH
 comma
 DECL|enumerator|MACSERIAL_BH
 id|MACSERIAL_BH
+comma
+DECL|enumerator|ISICOM_BH
+id|ISICOM_BH
 )brace
 suffix:semicolon
 macro_line|#include &lt;asm/hardirq.h&gt;
