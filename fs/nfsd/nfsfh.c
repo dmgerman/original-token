@@ -2391,6 +2391,9 @@ l_string|&quot;nfsd: fh_compose(exp %x/%ld %s/%s, ino=%ld)&bslash;n&quot;
 comma
 id|exp-&gt;ex_dev
 comma
+(paren
+r_int
+)paren
 id|exp-&gt;ex_ino
 comma
 id|parent-&gt;d_name.name

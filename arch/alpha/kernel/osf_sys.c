@@ -1737,6 +1737,7 @@ c_func
 (paren
 id|dentry
 )paren
+)paren
 r_goto
 id|out
 suffix:semicolon
@@ -1905,9 +1906,6 @@ r_int
 id|flags
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|procfs_args
 id|tmp

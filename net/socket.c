@@ -39,8 +39,7 @@ id|dontcare
 )paren
 suffix:semicolon
 r_static
-r_int
-r_int
+id|loff_t
 id|sock_lseek
 c_func
 (paren
@@ -49,8 +48,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int
@@ -1227,8 +1225,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Sockets are not seekable.&n; */
 DECL|function|sock_lseek
 r_static
-r_int
-r_int
+id|loff_t
 id|sock_lseek
 c_func
 (paren
@@ -1237,8 +1234,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int

@@ -1635,11 +1635,7 @@ r_void
 id|pci_assign_unassigned_resources
 c_func
 (paren
-id|u32
-id|min_io
-comma
-id|u32
-id|min_mem
+r_void
 )paren
 suffix:semicolon
 r_void
@@ -1682,6 +1678,47 @@ id|u8
 )paren
 suffix:semicolon
 multiline_comment|/* New-style probing supporting hot-pluggable devices */
+DECL|struct|pci_device_id
+r_struct
+id|pci_device_id
+(brace
+DECL|member|vendor
+DECL|member|device
+r_int
+r_int
+id|vendor
+comma
+id|device
+suffix:semicolon
+multiline_comment|/* Vendor and device ID or PCI_ANY_ID */
+DECL|member|subvendor
+DECL|member|subdevice
+r_int
+r_int
+id|subvendor
+comma
+id|subdevice
+suffix:semicolon
+multiline_comment|/* Subsystem ID&squot;s or PCI_ANY_ID */
+DECL|member|class
+DECL|member|class_mask
+r_int
+r_int
+r_class
+comma
+id|class_mask
+suffix:semicolon
+multiline_comment|/* (class,subclass,prog-if) triplet */
+DECL|member|driver_data
+r_int
+r_int
+id|driver_data
+suffix:semicolon
+multiline_comment|/* Data private to the driver */
+)brace
+suffix:semicolon
+DECL|macro|PCI_ID
+mdefine_line|#define PCI_ID(vendor,device) (((vendor)&lt;&lt;16) | (device))
 DECL|struct|pci_driver
 r_struct
 id|pci_driver
@@ -1696,6 +1733,13 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|id_table
+r_struct
+id|pci_device_id
+op_star
+id|id_table
+suffix:semicolon
+multiline_comment|/* NULL if wants all devices */
 DECL|member|probe
 r_int
 (paren
@@ -1707,9 +1751,14 @@ r_struct
 id|pci_dev
 op_star
 id|dev
+comma
+r_struct
+id|pci_device_id
+op_star
+id|id
 )paren
 suffix:semicolon
-multiline_comment|/* New device inserted, check if known */
+multiline_comment|/* New device inserted */
 DECL|member|remove
 r_void
 (paren

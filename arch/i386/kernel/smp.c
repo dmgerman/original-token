@@ -1003,10 +1003,6 @@ id|lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-r_int
-r_int
-id|timeout
-suffix:semicolon
 r_if
 c_cond
 (paren

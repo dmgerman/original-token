@@ -314,10 +314,14 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: bad fhandle size %x (should be %d)&bslash;n&quot;
+l_string|&quot;lockd: bad fhandle size %u (should be %lu)&bslash;n&quot;
 comma
 id|len
 comma
+(paren
+r_int
+r_int
+)paren
 r_sizeof
 (paren
 op_star

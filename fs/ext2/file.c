@@ -8,8 +8,7 @@ mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 r_static
-r_int
-r_int
+id|loff_t
 id|ext2_file_lseek
 c_func
 (paren
@@ -17,8 +16,7 @@ r_struct
 id|file
 op_star
 comma
-r_int
-r_int
+id|loff_t
 comma
 r_int
 )paren
@@ -95,8 +93,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Make sure the offset never goes beyond the 32-bit mark..&n; */
 DECL|function|ext2_file_lseek
 r_static
-r_int
-r_int
+id|loff_t
 id|ext2_file_lseek
 c_func
 (paren
@@ -105,8 +102,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int

@@ -62,30 +62,6 @@ mdefine_line|#define RF5C_MCTL3_DISABLE&t;0x01&t;/* Disable PCMCIA interface */
 DECL|macro|RF5C_MCTL3_DMA_ENA
 mdefine_line|#define RF5C_MCTL3_DMA_ENA&t;0x02
 multiline_comment|/* Register definitions for Ricoh PCI-to-CardBus bridges */
-macro_line|#ifndef PCI_VENDOR_ID_RICOH
-DECL|macro|PCI_VENDOR_ID_RICOH
-mdefine_line|#define PCI_VENDOR_ID_RICOH&t;&t;0x1180
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_RICOH_RL5C465
-DECL|macro|PCI_DEVICE_ID_RICOH_RL5C465
-mdefine_line|#define PCI_DEVICE_ID_RICOH_RL5C465&t;0x0465
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_RICOH_RL5C466
-DECL|macro|PCI_DEVICE_ID_RICOH_RL5C466
-mdefine_line|#define PCI_DEVICE_ID_RICOH_RL5C466&t;0x0466
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_RICOH_RL5C475
-DECL|macro|PCI_DEVICE_ID_RICOH_RL5C475
-mdefine_line|#define PCI_DEVICE_ID_RICOH_RL5C475&t;0x0475
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_RICOH_RL5C476
-DECL|macro|PCI_DEVICE_ID_RICOH_RL5C476
-mdefine_line|#define PCI_DEVICE_ID_RICOH_RL5C476&t;0x0476
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_RICOH_RL5C478
-DECL|macro|PCI_DEVICE_ID_RICOH_RL5C478
-mdefine_line|#define PCI_DEVICE_ID_RICOH_RL5C478&t;0x0478
-macro_line|#endif
 multiline_comment|/* Extra bits in CB_BRIDGE_CONTROL */
 DECL|macro|RL5C46X_BCR_3E0_ENA
 mdefine_line|#define RL5C46X_BCR_3E0_ENA&t;&t;0x0800
@@ -154,5 +130,207 @@ DECL|macro|RL5C4XX_HOLD_MASK
 mdefine_line|#define  RL5C4XX_HOLD_MASK&t;&t;0x1c00
 DECL|macro|RL5C4XX_HOLD_SHIFT
 mdefine_line|#define  RL5C4XX_HOLD_SHIFT&t;&t;10
+macro_line|#ifdef CONFIG_CARDBUS
+DECL|macro|rl_misc
+mdefine_line|#define rl_misc(socket)&t;&t;((socket)-&gt;private[0])
+DECL|macro|rl_ctl
+mdefine_line|#define rl_ctl(socket)&t;&t;((socket)-&gt;private[1])
+DECL|macro|rl_io
+mdefine_line|#define rl_io(socket)&t;&t;((socket)-&gt;private[2])
+DECL|macro|rl_mem
+mdefine_line|#define rl_mem(socket)&t;&t;((socket)-&gt;private[3])
+multiline_comment|/*&n; * Magic Ricoh initialization code.. Save state at&n; * beginning, re-initialize it after suspend.&n; */
+DECL|function|ricoh_open
+r_static
+r_int
+id|ricoh_open
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|rl_misc
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readw
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_MISC
+)paren
+suffix:semicolon
+id|rl_ctl
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readw
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_CTL
+)paren
+suffix:semicolon
+id|rl_io
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readw
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_IO_0
+)paren
+suffix:semicolon
+id|rl_mem
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readw
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_MEM_0
+)paren
+suffix:semicolon
+multiline_comment|/* Set the default timings, don&squot;t trust the original values */
+id|rl_ctl
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|RL5C4XX_16CTL_IO_TIMING
+op_or
+id|RL5C4XX_16CTL_MEM_TIMING
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ricoh_init
+r_static
+r_int
+id|ricoh_init
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|yenta_init
+c_func
+(paren
+id|socket
+)paren
+suffix:semicolon
+id|config_writew
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_MISC
+comma
+id|rl_misc
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+id|config_writew
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_CTL
+comma
+id|rl_ctl
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+id|config_writew
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_IO_0
+comma
+id|rl_io
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+id|config_writew
+c_func
+(paren
+id|socket
+comma
+id|RL5C4XX_16BIT_MEM_0
+comma
+id|rl_mem
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|ricoh_ops
+r_static
+r_struct
+id|pci_socket_ops
+id|ricoh_ops
+op_assign
+(brace
+id|ricoh_open
+comma
+id|yenta_close
+comma
+id|ricoh_init
+comma
+id|yenta_suspend
+comma
+id|yenta_get_status
+comma
+id|yenta_get_socket
+comma
+id|yenta_set_socket
+comma
+id|yenta_get_io_map
+comma
+id|yenta_set_io_map
+comma
+id|yenta_get_mem_map
+comma
+id|yenta_set_mem_map
+comma
+id|yenta_proc_setup
+)brace
+suffix:semicolon
+macro_line|#endif /* CONFIG_CARDBUS */
 macro_line|#endif /* _LINUX_RICOH_H */
 eof

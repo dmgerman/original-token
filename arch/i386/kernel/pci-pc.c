@@ -30,6 +30,13 @@ id|pci_bus
 op_star
 id|pci_root_bus
 suffix:semicolon
+DECL|variable|pci_root_ops
+r_static
+r_struct
+id|pci_ops
+op_star
+id|pci_root_ops
+suffix:semicolon
 multiline_comment|/*&n; * IRQ routing table provided by the BIOS&n; */
 DECL|struct|irq_info
 r_struct
@@ -3856,7 +3863,7 @@ c_func
 (paren
 id|busno
 comma
-id|pci_root_bus-&gt;ops
+id|pci_root_ops
 comma
 l_int|NULL
 )paren
@@ -3876,7 +3883,7 @@ id|suba
 op_plus
 l_int|1
 comma
-id|pci_root_bus-&gt;ops
+id|pci_root_ops
 comma
 l_int|NULL
 )paren
@@ -3925,7 +3932,7 @@ c_func
 (paren
 id|busno
 comma
-id|pci_root_bus-&gt;ops
+id|pci_root_ops
 comma
 l_int|NULL
 )paren
@@ -3972,7 +3979,7 @@ c_func
 (paren
 id|busno
 comma
-id|pci_root_bus-&gt;ops
+id|pci_root_ops
 comma
 l_int|NULL
 )paren
@@ -5334,11 +5341,6 @@ id|dir
 op_assign
 l_int|NULL
 suffix:semicolon
-r_struct
-id|pci_ops
-op_star
-id|ops
-suffix:semicolon
 macro_line|#ifdef CONFIG_PCI_BIOS
 r_if
 c_cond
@@ -5396,7 +5398,7 @@ c_cond
 (paren
 id|dir
 )paren
-id|ops
+id|pci_root_ops
 op_assign
 id|dir
 suffix:semicolon
@@ -5406,7 +5408,7 @@ c_cond
 (paren
 id|bios
 )paren
-id|ops
+id|pci_root_ops
 op_assign
 id|bios
 suffix:semicolon
@@ -5434,7 +5436,7 @@ c_func
 (paren
 l_int|0
 comma
-id|ops
+id|pci_root_ops
 comma
 l_int|NULL
 )paren

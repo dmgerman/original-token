@@ -4570,7 +4570,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;       key      semid perms nsems   uid   gid  cuid  cgid      otime      ctime&bslash;n&quot;
+l_string|&quot;       key      semid perms      nsems   uid   gid  cuid  cgid      otime      ctime&bslash;n&quot;
 )paren
 suffix:semicolon
 id|down
@@ -4623,7 +4623,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%10d %10d  %4o %5u %5u %5u %5u %5u %10lu %10lu&bslash;n&quot;
+l_string|&quot;%10d %10d  %4o %10lu %5u %5u %5u %5u %10lu %10lu&bslash;n&quot;
 comma
 id|sma-&gt;sem_perm.key
 comma

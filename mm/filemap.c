@@ -2047,7 +2047,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read in an entire cluster at once.  A cluster is usually a 64k-&n; * aligned block that includes the address requested in &quot;offset.&quot;&n; */
+multiline_comment|/*&n; * Read in an entire cluster at once.  A cluster is usually a 64k-&n; * aligned block that includes the page requested in &quot;offset.&quot;&n; */
 DECL|function|read_cluster_nonblocking
 r_static
 r_int
@@ -2062,27 +2062,12 @@ comma
 r_int
 r_int
 id|offset
-)paren
-(brace
-r_int
-id|error
-op_assign
-l_int|0
-suffix:semicolon
+comma
 r_int
 r_int
 id|filesize
-op_assign
-(paren
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_size
-op_plus
-id|PAGE_CACHE_SIZE
-op_minus
-l_int|1
 )paren
-op_rshift
-id|PAGE_CACHE_SHIFT
-suffix:semicolon
+(brace
 r_int
 r_int
 id|pages
@@ -2114,6 +2099,7 @@ id|filesize
 )paren
 )paren
 (brace
+r_int
 id|error
 op_assign
 id|page_cache_read
@@ -2128,18 +2114,18 @@ r_if
 c_cond
 (paren
 id|error
-op_ge
+OL
 l_int|0
 )paren
+r_return
+id|error
+suffix:semicolon
 id|offset
 op_increment
 suffix:semicolon
-r_else
-r_break
-suffix:semicolon
 )brace
 r_return
-id|error
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* &n; * Wait for a page to get unlocked.&n; *&n; * This must be called with the caller &quot;holding&quot; the page,&n; * ie with increased &quot;page-&gt;count&quot; so that the page won&squot;t&n; * go away during the wait..&n; */
@@ -4817,6 +4803,8 @@ c_func
 id|file
 comma
 id|pgoff
+comma
+id|size
 )paren
 suffix:semicolon
 r_else

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * &lt;asm/smplock.h&gt;&n; *&n; * i386 SMP lock implementation&n; */
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;asm/current.h&gt;
 r_extern
 id|spinlock_t
 id|kernel_flag

@@ -6,7 +6,9 @@ macro_line|#include &lt;sys/mman.h&gt;
 macro_line|#include &lt;sys/fcntl.h&gt;
 macro_line|#include &lt;dirent.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;string.h&gt;
+macro_line|#include &lt;assert.h&gt;
 multiline_comment|/* zlib required.. */
 macro_line|#include &lt;zlib.h&gt;
 DECL|typedef|u8
@@ -28,8 +30,6 @@ r_int
 id|u32
 suffix:semicolon
 macro_line|#include &quot;cramfs.h&quot;
-DECL|macro|PAGE_CACHE_SIZE
-mdefine_line|#define PAGE_CACHE_SIZE (4096)
 DECL|variable|progname
 r_static
 r_const
@@ -39,7 +39,9 @@ id|progname
 op_assign
 l_string|&quot;mkcramfs&quot;
 suffix:semicolon
+multiline_comment|/* N.B. If you change the disk format of cramfs, please update fs/cramfs/README. */
 DECL|function|usage
+r_static
 r_void
 id|usage
 c_func
@@ -65,6 +67,44 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * If DO_HOLES is defined, then mkcramfs can create explicit holes in the&n; * data, which saves 26 bytes per hole (which is a lot smaller a saving than&n; * most filesystems).&n; *&n; * Note that kernels up to at least 2.3.39 don&squot;t support cramfs holes, which&n; * is why this defaults to undefined at the moment.&n; */
+multiline_comment|/* #define DO_HOLES 1 */
+DECL|macro|PAGE_CACHE_SIZE
+mdefine_line|#define PAGE_CACHE_SIZE (4096)
+multiline_comment|/* The kernel assumes PAGE_CACHE_SIZE as block size. */
+DECL|variable|blksize
+r_static
+r_int
+r_int
+id|blksize
+op_assign
+id|PAGE_CACHE_SIZE
+suffix:semicolon
+DECL|variable|warn_dev
+DECL|variable|warn_gid
+DECL|variable|warn_link
+DECL|variable|warn_namelen
+DECL|variable|warn_size
+DECL|variable|warn_uid
+r_static
+r_int
+id|warn_dev
+comma
+id|warn_gid
+comma
+id|warn_link
+comma
+id|warn_namelen
+comma
+id|warn_size
+comma
+id|warn_uid
+suffix:semicolon
+macro_line|#ifndef MIN
+DECL|macro|MIN
+macro_line|# define MIN(_a,_b) ((_a) &lt; (_b) ? (_a) : (_b))
+macro_line|#endif
+multiline_comment|/* In-core version of inode / directory entry. */
 DECL|struct|entry
 r_struct
 id|entry
@@ -101,12 +141,6 @@ r_int
 id|dir_offset
 suffix:semicolon
 multiline_comment|/* Where in the archive is the directory entry? */
-DECL|member|data_offset
-r_int
-r_int
-id|data_offset
-suffix:semicolon
-multiline_comment|/* Where in the archive is the start of the data? */
 multiline_comment|/* organization */
 DECL|member|child
 r_struct
@@ -114,6 +148,7 @@ id|entry
 op_star
 id|child
 suffix:semicolon
+multiline_comment|/* null for non-directories and empty directories */
 DECL|member|next
 r_struct
 id|entry
@@ -122,7 +157,18 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * We should mind about memory leaks and&n; * checking for out-of-memory.&n; *&n; * We don&squot;t.&n; */
+multiline_comment|/*&n; * Width of various bitfields in struct cramfs_inode.&n; * Used only to generate warnings.&n; */
+DECL|macro|SIZE_WIDTH
+mdefine_line|#define SIZE_WIDTH 24
+DECL|macro|UID_WIDTH
+mdefine_line|#define UID_WIDTH 16
+DECL|macro|GID_WIDTH
+mdefine_line|#define GID_WIDTH 8
+DECL|macro|OFFSET_WIDTH
+mdefine_line|#define OFFSET_WIDTH 26
+multiline_comment|/*&n; * The longest file name component to allow for in the input directory tree.&n; * Ext2fs (and many others) allow up to 255 bytes.  A couple of filesystems&n; * allow longer (e.g. smbfs 1024), but there isn&squot;t much use in supporting&n; * &gt;255-byte names in the input directory tree given that such names get&n; * truncated to 255 bytes when written to cramfs.&n; */
+DECL|macro|MAX_INPUT_NAMELEN
+mdefine_line|#define MAX_INPUT_NAMELEN 255
 DECL|function|parse_directory
 r_static
 r_int
@@ -140,6 +186,10 @@ id|entry
 op_star
 op_star
 id|prev
+comma
+id|loff_t
+op_star
+id|fslen_ub
 )paren
 (brace
 id|DIR
@@ -203,15 +253,41 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Set up the path.. */
+multiline_comment|/* Set up the path. */
+multiline_comment|/* TODO: Reuse the parent&squot;s buffer to save memcpy&squot;ing and duplication. */
 id|path
 op_assign
 id|malloc
 c_func
 (paren
-l_int|4096
+id|len
+op_plus
+l_int|1
+op_plus
+id|MAX_INPUT_NAMELEN
+op_plus
+l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|path
+)paren
+(brace
+id|perror
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -262,9 +338,10 @@ id|stat
 id|st
 suffix:semicolon
 r_int
-id|fd
-comma
 id|size
+suffix:semicolon
+r_int
+id|namelen
 suffix:semicolon
 multiline_comment|/* Ignore &quot;.&quot; and &quot;..&quot; - we won&squot;t be adding them to the archive */
 r_if
@@ -315,12 +392,51 @@ r_continue
 suffix:semicolon
 )brace
 )brace
-id|strcpy
+id|namelen
+op_assign
+id|strlen
+c_func
+(paren
+id|dirent-&gt;d_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|namelen
+OG
+id|MAX_INPUT_NAMELEN
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Very long (%u bytes) filename `%s&squot; found.&bslash;n&quot;
+l_string|&quot; Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.&bslash;n&quot;
+comma
+id|namelen
+comma
+id|dirent-&gt;d_name
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+id|memcpy
 c_func
 (paren
 id|endpath
 comma
 id|dirent-&gt;d_name
+comma
+id|namelen
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -361,6 +477,25 @@ id|entry
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|entry
+)paren
+(brace
+id|perror
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|5
+)paren
+suffix:semicolon
+)brace
 id|entry-&gt;name
 op_assign
 id|strdup
@@ -369,6 +504,49 @@ c_func
 id|dirent-&gt;d_name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|entry-&gt;name
+)paren
+(brace
+id|perror
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|namelen
+OG
+l_int|255
+)paren
+(brace
+multiline_comment|/* Can&squot;t happen when reading from ext2fs. */
+multiline_comment|/* TODO: we ought to avoid chopping in half&n;&t;&t;&t;   multi-byte UTF8 characters. */
+id|entry-&gt;name
+(braket
+id|namelen
+op_assign
+l_int|255
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|warn_namelen
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 id|entry-&gt;mode
 op_assign
 id|st.st_mode
@@ -381,9 +559,36 @@ id|entry-&gt;uid
 op_assign
 id|st.st_uid
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry-&gt;uid
+op_ge
+l_int|1
+op_lshift
+id|UID_WIDTH
+)paren
+id|warn_uid
+op_assign
+l_int|1
+suffix:semicolon
 id|entry-&gt;gid
 op_assign
 id|st.st_gid
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry-&gt;gid
+op_ge
+l_int|1
+op_lshift
+id|GID_WIDTH
+)paren
+multiline_comment|/* TODO: We ought to replace with a default&n;                           gid instead of truncating; otherwise there&n;                           are security problems.  Maybe mode should&n;                           be &amp;= ~070.  Same goes for uid once Linux&n;                           supports &gt;16-bit uids. */
+id|warn_gid
+op_assign
+l_int|1
 suffix:semicolon
 id|size
 op_assign
@@ -394,19 +599,20 @@ id|cramfs_inode
 )paren
 op_plus
 (paren
-op_complement
-l_int|3
-op_amp
 (paren
-id|strlen
-c_func
-(paren
-id|entry-&gt;name
-)paren
+id|namelen
 op_plus
 l_int|3
 )paren
+op_amp
+op_complement
+l_int|3
 )paren
+suffix:semicolon
+op_star
+id|fslen_ub
+op_add_assign
+id|size
 suffix:semicolon
 r_if
 c_cond
@@ -427,6 +633,8 @@ id|path
 comma
 op_amp
 id|entry-&gt;child
+comma
+id|fslen_ub
 )paren
 suffix:semicolon
 )brace
@@ -441,6 +649,7 @@ id|st.st_mode
 )paren
 )paren
 (brace
+multiline_comment|/* TODO: We ought to open files in do_compress, one&n;&t;&t;&t;   at a time, instead of amassing all these memory&n;&t;&t;&t;   maps during parse_directory (which don&squot;t get used&n;&t;&t;&t;   until do_compress anyway).  As it is, we tend to&n;&t;&t;&t;   get EMFILE errors (especially if mkcramfs is run&n;&t;&t;&t;   by non-root).&n;&n;&t;&t;&t;   While we&squot;re at it, do analagously for symlinks&n;&t;&t;&t;   (which would just save a little memory). */
 r_int
 id|fd
 op_assign
@@ -474,6 +683,34 @@ c_cond
 (paren
 id|entry-&gt;size
 )paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|entry-&gt;size
+op_ge
+l_int|1
+op_lshift
+id|SIZE_WIDTH
+)paren
+)paren
+(brace
+id|warn_size
+op_assign
+l_int|1
+suffix:semicolon
+id|entry-&gt;size
+op_assign
+(paren
+l_int|1
+op_lshift
+id|SIZE_WIDTH
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|entry-&gt;uncompressed
 op_assign
 id|mmap
@@ -481,7 +718,7 @@ c_func
 (paren
 l_int|NULL
 comma
-id|st.st_size
+id|entry-&gt;size
 comma
 id|PROT_READ
 comma
@@ -519,6 +756,21 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|st.st_nlink
+OG
+l_int|1
+)paren
+(brace
+multiline_comment|/* TODO: Although cramfs doesn&squot;t&n;&t;&t;&t;&t;&t;   support hard links, we could still&n;&t;&t;&t;&t;&t;   share data offset values between&n;&t;&t;&t;&t;&t;   different inodes (safe because&n;&t;&t;&t;&t;&t;   read-only).  This would give at&n;&t;&t;&t;&t;&t;   least the space saving of hard&n;&t;&t;&t;&t;&t;   links.  Just keep a hash mapping&n;&t;&t;&t;&t;&t;   &lt;st_ino, st_dev&gt; onto struct&n;&t;&t;&t;&t;&t;   entry*.  Alternatively, steal some&n;&t;&t;&t;&t;&t;   code from Roger Wolff&squot;s `same&squot;&n;&t;&t;&t;&t;&t;   program, which creates a hash of&n;&t;&t;&t;&t;&t;   file data contents. */
+id|warn_link
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
 id|close
 c_func
 (paren
@@ -542,9 +794,28 @@ op_assign
 id|malloc
 c_func
 (paren
-id|st.st_size
+id|entry-&gt;size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|entry-&gt;uncompressed
+)paren
+(brace
+id|perror
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|5
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -555,7 +826,7 @@ id|path
 comma
 id|entry-&gt;uncompressed
 comma
-id|st.st_size
+id|entry-&gt;size
 )paren
 OL
 l_int|0
@@ -577,7 +848,74 @@ id|entry-&gt;size
 op_assign
 id|st.st_rdev
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry-&gt;size
+op_amp
+op_minus
+(paren
+l_int|1
+op_lshift
+id|SIZE_WIDTH
+)paren
+)paren
+id|warn_dev
+op_assign
+l_int|1
+suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|S_ISREG
+c_func
+(paren
+id|st.st_mode
+)paren
+op_logical_or
+id|S_ISLNK
+c_func
+(paren
+id|st.st_mode
+)paren
+)paren
+multiline_comment|/* block pointers &amp; data expansion allowance + data */
+op_star
+id|fslen_ub
+op_add_assign
+(paren
+(paren
+l_int|4
+op_plus
+l_int|26
+)paren
+op_star
+(paren
+(paren
+id|entry-&gt;size
+op_minus
+l_int|1
+)paren
+op_div
+id|blksize
+op_plus
+l_int|1
+)paren
+op_plus
+id|MIN
+c_func
+(paren
+id|entry-&gt;size
+op_plus
+l_int|3
+comma
+id|st.st_blocks
+op_lshift
+l_int|9
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Link it into the list */
 op_star
 id|prev
@@ -675,6 +1013,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Returns sizeof(struct cramfs_super), which includes the root inode. */
 DECL|function|write_superblock
 r_static
 r_int
@@ -722,6 +1061,7 @@ id|super-&gt;flags
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Note: 0x10000 is meaningless, which is a bug; but&n;&t;   super-&gt;size is never used anyway. */
 id|super-&gt;size
 op_assign
 l_int|0x10000
@@ -825,6 +1165,47 @@ op_plus
 id|entry-&gt;dir_offset
 )paren
 suffix:semicolon
+m_assert
+(paren
+(paren
+id|offset
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+op_ge
+(paren
+l_int|1
+op_lshift
+(paren
+l_int|2
+op_plus
+id|OFFSET_WIDTH
+)paren
+)paren
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;filesystem too big.  Exiting.&bslash;n&quot;
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|inode-&gt;offset
 op_assign
 (paren
@@ -837,23 +1218,6 @@ suffix:semicolon
 multiline_comment|/*&n; * We do a width-first printout of the directory&n; * entries, using a stack to remember the directories&n; * we&squot;ve seen.&n; */
 DECL|macro|MAXENTRIES
 mdefine_line|#define MAXENTRIES (100)
-DECL|variable|stack_entries
-r_static
-r_int
-id|stack_entries
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|entry_stack
-r_static
-r_struct
-id|entry
-op_star
-id|entry_stack
-(braket
-id|MAXENTRIES
-)braket
-suffix:semicolon
 DECL|function|write_directory_structure
 r_static
 r_int
@@ -875,6 +1239,19 @@ r_int
 id|offset
 )paren
 (brace
+r_int
+id|stack_entries
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|entry
+op_star
+id|entry_stack
+(braket
+id|MAXENTRIES
+)braket
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -882,6 +1259,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+r_int
+id|dir_start
+op_assign
+id|stack_entries
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -917,14 +1299,6 @@ id|entry-&gt;dir_offset
 op_assign
 id|offset
 suffix:semicolon
-id|offset
-op_add_assign
-r_sizeof
-(paren
-r_struct
-id|cramfs_inode
-)paren
-suffix:semicolon
 id|inode-&gt;mode
 op_assign
 id|entry-&gt;mode
@@ -945,7 +1319,15 @@ id|inode-&gt;offset
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Fill in later */
+multiline_comment|/* Non-empty directories, regfiles and symlinks will&n;&t;&t;&t;   write over inode-&gt;offset later. */
+id|offset
+op_add_assign
+r_sizeof
+(paren
+r_struct
+id|cramfs_inode
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -992,6 +1374,7 @@ id|offset
 op_add_assign
 id|len
 suffix:semicolon
+multiline_comment|/* TODO: this may get it wrong for chars &gt;= 0x80.&n;&t;&t;&t;   Most filesystems use UTF8 encoding for filenames,&n;&t;&t;&t;   whereas the console is a single-byte character&n;&t;&t;&t;   set like iso-latin-1. */
 id|printf
 c_func
 (paren
@@ -1006,6 +1389,28 @@ c_cond
 id|entry-&gt;child
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|stack_entries
+op_ge
+id|MAXENTRIES
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.&bslash;n&quot;
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|entry_stack
 (braket
 id|stack_entries
@@ -1022,6 +1427,62 @@ op_assign
 id|entry-&gt;next
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * Reverse the order the stack entries pushed during&n;                 * this directory, for a small optimization of disk&n;                 * access in the created fs.  This change makes things&n;                 * `ls -UR&squot; order.&n;&t;&t; */
+(brace
+r_struct
+id|entry
+op_star
+op_star
+id|lo
+op_assign
+id|entry_stack
+op_plus
+id|dir_start
+suffix:semicolon
+r_struct
+id|entry
+op_star
+op_star
+id|hi
+op_assign
+id|entry_stack
+op_plus
+id|stack_entries
+suffix:semicolon
+r_struct
+id|entry
+op_star
+id|tmp
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|lo
+OL
+op_decrement
+id|hi
+)paren
+(brace
+id|tmp
+op_assign
+op_star
+id|lo
+suffix:semicolon
+op_star
+id|lo
+op_increment
+op_assign
+op_star
+id|hi
+suffix:semicolon
+op_star
+id|hi
+op_assign
+id|tmp
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Pop a subdirectory entry from the stack, and recurse. */
 r_if
 c_cond
 (paren
@@ -1067,7 +1528,108 @@ r_return
 id|offset
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * One 4-byte pointer per block and then the actual blocked&n; * output. The first block does not need an offset pointer,&n; * as it will start immediately after the pointer block.&n; *&n; * Note that size &gt; 0, as a zero-sized file wouldn&squot;t ever&n; * have gotten here in the first place.&n; */
+macro_line|#ifdef DO_HOLES
+multiline_comment|/*&n; * Returns non-zero iff the first LEN bytes from BEGIN are all NULs.&n; */
+r_static
+r_int
+DECL|function|is_zero
+id|is_zero
+c_func
+(paren
+r_char
+r_const
+op_star
+id|begin
+comma
+r_int
+id|len
+)paren
+(brace
+r_return
+(paren
+id|len
+op_decrement
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|begin
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_and
+(paren
+id|len
+op_decrement
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|begin
+(braket
+l_int|1
+)braket
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_and
+(paren
+id|len
+op_decrement
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|begin
+(braket
+l_int|2
+)braket
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_and
+(paren
+id|len
+op_decrement
+op_eq
+l_int|0
+op_logical_or
+(paren
+id|begin
+(braket
+l_int|3
+)braket
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_and
+id|memcmp
+c_func
+(paren
+id|begin
+comma
+id|begin
+op_plus
+l_int|4
+comma
+id|len
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+)paren
+)paren
+)paren
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* !DO_HOLES */
+DECL|macro|is_zero
+macro_line|# define is_zero(_begin,_len) (0)  /* Never create holes. */
+macro_line|#endif /* !DO_HOLES */
+multiline_comment|/*&n; * One 4-byte pointer per block and then the actual blocked&n; * output. The first block does not need an offset pointer,&n; * as it will start immediately after the pointer block;&n; * so the i&squot;th pointer points to the end of the i&squot;th block&n; * (i.e. the start of the (i+1)&squot;th block or past EOF).&n; *&n; * Note that size &gt; 0, as a zero-sized file wouldn&squot;t ever&n; * have gotten here in the first place.&n; */
 DECL|function|do_compress
 r_static
 r_int
@@ -1082,6 +1644,11 @@ comma
 r_int
 r_int
 id|offset
+comma
+r_char
+r_const
+op_star
+id|name
 comma
 r_char
 op_star
@@ -1118,7 +1685,7 @@ op_minus
 l_int|1
 )paren
 op_div
-id|PAGE_CACHE_SIZE
+id|blksize
 op_plus
 l_int|1
 suffix:semicolon
@@ -1139,27 +1706,45 @@ r_do
 (brace
 r_int
 r_int
-id|input
+id|len
 op_assign
-id|size
+l_int|2
+op_star
+id|blksize
 suffix:semicolon
 r_int
 r_int
-id|len
+id|input
 op_assign
-l_int|8192
+id|size
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|input
 OG
-id|PAGE_CACHE_SIZE
+id|blksize
 )paren
 id|input
 op_assign
-id|PAGE_CACHE_SIZE
+id|blksize
 suffix:semicolon
+id|size
+op_sub_assign
+id|input
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|is_zero
+(paren
+id|uncompressed
+comma
+id|input
+)paren
+)paren
+(brace
 id|compress
 c_func
 (paren
@@ -1179,28 +1764,26 @@ id|uncompressed
 op_add_assign
 id|input
 suffix:semicolon
-id|size
-op_sub_assign
-id|input
-suffix:semicolon
 id|curr
 op_add_assign
 id|len
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|len
 OG
-id|PAGE_CACHE_SIZE
+id|blksize
 op_star
 l_int|2
 )paren
 (brace
+multiline_comment|/* (I don&squot;t think this can happen with zlib.) */
 id|printf
 c_func
 (paren
-l_string|&quot;AIEEE: block expanded to &gt; 2*blocklength (%d)&bslash;n&quot;
+l_string|&quot;AIEEE: block &bslash;&quot;compressed&bslash;&quot; to &gt; 2*blocklength (%ld)&bslash;n&quot;
 comma
 id|len
 )paren
@@ -1235,12 +1818,24 @@ c_loop
 id|size
 )paren
 suffix:semicolon
+id|curr
+op_assign
+(paren
+id|curr
+op_plus
+l_int|3
+)paren
+op_amp
+op_complement
+l_int|3
+suffix:semicolon
 id|new_size
 op_assign
 id|curr
 op_minus
 id|original_offset
 suffix:semicolon
+multiline_comment|/* TODO: Arguably, original_size in these 2 lines should be&n;&t;   st_blocks * 512.  But if you say that then perhaps&n;&t;   administrative data should also be included in both. */
 id|change
 op_assign
 id|new_size
@@ -1250,7 +1845,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;%4.2f %% (%d bytes)&bslash;n&quot;
+l_string|&quot;%5.2f%% (%d bytes)&bslash;t%s&bslash;n&quot;
 comma
 (paren
 id|change
@@ -1264,19 +1859,15 @@ r_float
 id|original_size
 comma
 id|change
+comma
+id|name
 )paren
 suffix:semicolon
 r_return
-(paren
 id|curr
-op_plus
-l_int|3
-)paren
-op_amp
-op_complement
-l_int|3
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Traverse the entry tree, writing data for every item that has&n; * non-null entry-&gt;compressed (i.e. every symlink and non-empty&n; * regfile).&n; *&n; * Frees the entry pointers as it goes.&n; */
 DECL|function|write_data
 r_static
 r_int
@@ -1325,12 +1916,15 @@ id|base
 comma
 id|offset
 comma
+id|entry-&gt;name
+comma
 id|entry-&gt;uncompressed
 comma
 id|entry-&gt;size
 )paren
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -1348,10 +1942,32 @@ comma
 id|offset
 )paren
 suffix:semicolon
+multiline_comment|/* Free the old before processing the next. */
+(brace
+r_struct
+id|entry
+op_star
+id|tmp
+op_assign
+id|entry
+suffix:semicolon
 id|entry
 op_assign
 id|entry-&gt;next
 suffix:semicolon
+id|free
+c_func
+(paren
+id|tmp-&gt;name
+)paren
+suffix:semicolon
+id|free
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -1363,10 +1979,10 @@ r_return
 id|offset
 suffix:semicolon
 )brace
-multiline_comment|/* This is the maximum rom-image you can create */
-DECL|macro|MAXROM
-mdefine_line|#define MAXROM (64*1024*1024)
-multiline_comment|/*&n; * Usage:&n; *&n; *      mkcramfs directory-name&n; *&n; * where &quot;directory-name&quot; is simply the root of the directory&n; * tree that we want to generate a compressed filesystem out&n; * of..&n; */
+multiline_comment|/*&n; * Maximum size fs you can create is roughly 256MB.  (The last file&squot;s&n; * data must begin within 256MB boundary but can extend beyond that.)&n; *&n; * Note that if you want it to fit in a ROM then you&squot;re limited to what the&n; * hardware and kernel can support (64MB?).&n; */
+DECL|macro|MAXFSLEN
+mdefine_line|#define MAXFSLEN ((((1 &lt;&lt; OFFSET_WIDTH) - 1) &lt;&lt; 2) /* offset */ &bslash;&n;&t;&t;  + (1 &lt;&lt; SIZE_WIDTH) - 1 /* filesize */ &bslash;&n;&t;&t;  + (1 &lt;&lt; SIZE_WIDTH) * 4 / PAGE_CACHE_SIZE /* block pointers */ )
+multiline_comment|/*&n; * Usage:&n; *&n; *      mkcramfs directory-name outfile&n; *&n; * where &quot;directory-name&quot; is simply the root of the directory&n; * tree that we want to generate a compressed filesystem out&n; * of.&n; */
 DECL|function|main
 r_int
 id|main
@@ -1397,11 +2013,23 @@ suffix:semicolon
 r_int
 r_int
 id|offset
-comma
+suffix:semicolon
+id|ssize_t
 id|written
 suffix:semicolon
 r_int
 id|fd
+suffix:semicolon
+id|loff_t
+id|fslen_ub
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* initial guess (upper-bound) of&n;&t;&t;&t;&t;required filesystem size */
+r_char
+r_const
+op_star
+id|dirname
 suffix:semicolon
 r_if
 c_cond
@@ -1433,6 +2061,8 @@ c_cond
 id|stat
 c_func
 (paren
+id|dirname
+op_assign
 id|argv
 (braket
 l_int|1
@@ -1493,6 +2123,25 @@ id|entry
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|root_entry
+)paren
+(brace
+id|perror
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+m_exit
+(paren
+l_int|5
+)paren
+suffix:semicolon
+)brace
 id|root_entry-&gt;mode
 op_assign
 id|st.st_mode
@@ -1504,10 +2153,6 @@ suffix:semicolon
 id|root_entry-&gt;gid
 op_assign
 id|st.st_gid
-suffix:semicolon
-id|root_entry-&gt;name
-op_assign
-l_string|&quot;&quot;
 suffix:semicolon
 id|root_entry-&gt;size
 op_assign
@@ -1521,8 +2166,47 @@ l_int|1
 comma
 op_amp
 id|root_entry-&gt;child
+comma
+op_amp
+id|fslen_ub
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fslen_ub
+OG
+id|MAXFSLEN
+)paren
+(brace
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;warning: guestimate of required size (upper bound) is %luMB, but maximum image size is %uMB.  We might die prematurely.&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|fslen_ub
+op_rshift
+l_int|20
+)paren
+comma
+id|MAXFSLEN
+op_rshift
+l_int|20
+)paren
+suffix:semicolon
+id|fslen_ub
+op_assign
+id|MAXFSLEN
+suffix:semicolon
+)brace
+multiline_comment|/* TODO: Why do we use a private/anonymous mapping here&n;           followed by a write below, instead of just a shared mapping&n;           and a couple of ftruncate calls?  Is it just to save us&n;           having to deal with removing the file afterwards?  If we&n;           really need this huge anonymous mapping, we ought to mmap&n;           in smaller chunks, so that the user doesn&squot;t need nn MB of&n;           RAM free.  If the reason is to be able to write to&n;           un-mmappable block devices, then we could try shared mmap&n;           and revert to anonymous mmap if the shared mmap fails. */
 id|rom_image
 op_assign
 id|mmap
@@ -1530,7 +2214,7 @@ c_func
 (paren
 l_int|NULL
 comma
-id|MAXROM
+id|fslen_ub
 comma
 id|PROT_READ
 op_or
@@ -1623,12 +2307,33 @@ comma
 id|offset
 )paren
 suffix:semicolon
+multiline_comment|/* We always write a multiple of blksize bytes, so that&n;           losetup works. */
+id|offset
+op_assign
+(paren
+(paren
+id|offset
+op_minus
+l_int|1
+)paren
+op_or
+(paren
+id|blksize
+op_minus
+l_int|1
+)paren
+)paren
+op_plus
+l_int|1
+suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;Everything: %d bytes&bslash;n&quot;
+l_string|&quot;Everything: %d kilobytes&bslash;n&quot;
 comma
 id|offset
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 id|written
@@ -1689,6 +2394,108 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* (These warnings used to come at the start, but they scroll off the&n;           screen too quickly.) */
+r_if
+c_cond
+(paren
+id|warn_namelen
+)paren
+multiline_comment|/* (can&squot;t happen when reading from ext2fs) */
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+multiline_comment|/* bytes, not chars: think UTF8. */
+l_string|&quot;warning: filenames truncated to 255 bytes.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn_link
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;warning: cramfs cannot represent hard links.  You may want to change hard links in&bslash;n&quot;
+l_string|&quot; %s with symlinks to other files in %s.&bslash;n&quot;
+comma
+id|dirname
+comma
+id|dirname
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn_size
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;warning: file sizes truncated to %luMB (minus 1 byte).&bslash;n&quot;
+comma
+l_int|1L
+op_lshift
+(paren
+id|SIZE_WIDTH
+op_minus
+l_int|20
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn_uid
+)paren
+multiline_comment|/* (not possible with current Linux versions) */
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;warning: uids truncated to %u bits.  (This may be a security concern.)&bslash;n&quot;
+comma
+id|UID_WIDTH
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn_gid
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;warning: gids truncated to %u bits.  (This may be a security concern.)&bslash;n&quot;
+comma
+id|GID_WIDTH
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|warn_dev
+)paren
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;WARNING: device numbers truncated to %u bits.  This almost certainly means&bslash;n&quot;
+l_string|&quot;that some device files will be wrong.&bslash;n&quot;
+comma
+id|OFFSET_WIDTH
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

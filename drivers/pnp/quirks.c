@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|function|quirk_awe32_resources
 r_static
 r_void

@@ -2452,11 +2452,45 @@ id|lock_super
 id|sb
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_UFS_FS_WRITE
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;flag %u&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+(paren
 id|sb-&gt;s_flags
-op_or_assign
+op_amp
 id|MS_RDONLY
+)paren
+)paren
+)paren
+macro_line|#ifndef CONFIG_UFS_FS_WRITE
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ufs was compiled with read-only support, &quot;
+l_string|&quot;can&squot;t be mounted as read-write&bslash;n&quot;
+)paren
 suffix:semicolon
+r_goto
+id|failed
+suffix:semicolon
+)brace
 macro_line|#endif
 multiline_comment|/*&n;&t; * Set default mount options&n;&t; * Parse mount options&n;&t; */
 id|sb-&gt;u.ufs_sb.s_mount_opt
@@ -3270,12 +3304,16 @@ op_logical_and
 id|uspi-&gt;s_bsize
 op_ne
 l_int|8192
+op_logical_and
+id|uspi-&gt;s_bsize
+op_ne
+l_int|32768
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: fs_bsize %u != {4096, 8192}&bslash;n&quot;
+l_string|&quot;ufs_read_super: fs_bsize %u != {4096, 8192, 32768}&bslash;n&quot;
 comma
 id|uspi-&gt;s_bsize
 )paren
@@ -3298,12 +3336,16 @@ op_logical_and
 id|uspi-&gt;s_fsize
 op_ne
 l_int|2048
+op_logical_and
+id|uspi-&gt;s_fsize
+op_ne
+l_int|4096
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;ufs_read_super: fs_fsize %u != {512, 1024, 2048}&bslash;n&quot;
+l_string|&quot;ufs_read_super: fs_fsize %u != {512, 1024, 2048. 4096}&bslash;n&quot;
 comma
 id|uspi-&gt;s_fsize
 )paren
@@ -4467,10 +4509,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|sb-&gt;u.ufs_sb.s_mount_opt
-op_assign
-id|new_mount_opt
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4487,9 +4525,16 @@ op_amp
 id|MS_RDONLY
 )paren
 )paren
+(brace
+id|sb-&gt;u.ufs_sb.s_mount_opt
+op_assign
+id|new_mount_opt
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * fs was mouted as rw, remounting ro&n;&t; */
 r_if
 c_cond
 (paren
@@ -4564,8 +4609,22 @@ op_or_assign
 id|MS_RDONLY
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * fs was mounted as ro, remounting rw&n;&t; */
 r_else
 (brace
+macro_line|#ifndef CONFIG_UFS_FS_WRITE
+id|printk
+c_func
+(paren
+l_string|&quot;ufs was compiled with read-only support, &quot;
+l_string|&quot;can&squot;t be mounted as read-write&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -4576,6 +4635,10 @@ op_logical_and
 id|ufstype
 op_ne
 id|UFS_MOUNT_UFSTYPE_44BSD
+op_logical_and
+id|ufstype
+op_ne
+id|UFS_MOUNT_UFSTYPE_SUNx86
 )paren
 (brace
 id|printk
@@ -4585,7 +4648,8 @@ l_string|&quot;this ufstype is read-only supported&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 r_if
@@ -4605,7 +4669,8 @@ l_string|&quot;failed during remounting&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+op_minus
+id|EPERM
 suffix:semicolon
 )brace
 id|sb-&gt;s_flags
@@ -4613,7 +4678,12 @@ op_and_assign
 op_complement
 id|MS_RDONLY
 suffix:semicolon
+macro_line|#endif
 )brace
+id|sb-&gt;u.ufs_sb.s_mount_opt
+op_assign
+id|new_mount_opt
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

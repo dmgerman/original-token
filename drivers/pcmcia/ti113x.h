@@ -2,62 +2,6 @@ multiline_comment|/*&n; * ti113x.h 1.16 1999/10/25 20:03:34&n; *&n; * The conten
 macro_line|#ifndef _LINUX_TI113X_H
 DECL|macro|_LINUX_TI113X_H
 mdefine_line|#define _LINUX_TI113X_H
-macro_line|#ifndef PCI_VENDOR_ID_TI
-DECL|macro|PCI_VENDOR_ID_TI
-mdefine_line|#define PCI_VENDOR_ID_TI&t;&t;0x104c
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1130
-DECL|macro|PCI_DEVICE_ID_TI_1130
-mdefine_line|#define PCI_DEVICE_ID_TI_1130&t;&t;0xac12
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1131
-DECL|macro|PCI_DEVICE_ID_TI_1131
-mdefine_line|#define PCI_DEVICE_ID_TI_1131&t;&t;0xac15
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1031
-DECL|macro|PCI_DEVICE_ID_TI_1031
-mdefine_line|#define PCI_DEVICE_ID_TI_1031&t;&t;0xac13
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1250A
-DECL|macro|PCI_DEVICE_ID_TI_1250A
-mdefine_line|#define PCI_DEVICE_ID_TI_1250A&t;&t;0xac16
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1220
-DECL|macro|PCI_DEVICE_ID_TI_1220
-mdefine_line|#define PCI_DEVICE_ID_TI_1220&t;&t;0xac17
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1221
-DECL|macro|PCI_DEVICE_ID_TI_1221
-mdefine_line|#define PCI_DEVICE_ID_TI_1221&t;&t;0xac19
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1210
-DECL|macro|PCI_DEVICE_ID_TI_1210
-mdefine_line|#define PCI_DEVICE_ID_TI_1210&t;&t;0xac1a
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1450
-DECL|macro|PCI_DEVICE_ID_TI_1450
-mdefine_line|#define PCI_DEVICE_ID_TI_1450&t;&t;0xac1b
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1225
-DECL|macro|PCI_DEVICE_ID_TI_1225
-mdefine_line|#define PCI_DEVICE_ID_TI_1225&t;&t;0xac1c
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1251A
-DECL|macro|PCI_DEVICE_ID_TI_1251A
-mdefine_line|#define PCI_DEVICE_ID_TI_1251A&t;&t;0xac1d
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1211
-DECL|macro|PCI_DEVICE_ID_TI_1211
-mdefine_line|#define PCI_DEVICE_ID_TI_1211&t;&t;0xac1e
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1251B
-DECL|macro|PCI_DEVICE_ID_TI_1251B
-mdefine_line|#define PCI_DEVICE_ID_TI_1251B&t;&t;0xac1f
-macro_line|#endif
-macro_line|#ifndef PCI_DEVICE_ID_TI_1420
-DECL|macro|PCI_DEVICE_ID_TI_1420
-mdefine_line|#define PCI_DEVICE_ID_TI_1420&t;&t;0xac51
-macro_line|#endif
 multiline_comment|/* Register definitions for TI 113X PCI-to-CardBus bridges */
 multiline_comment|/* System Control Register */
 DECL|macro|TI113X_SYSTEM_CONTROL
@@ -224,5 +168,323 @@ mdefine_line|#define TI113X_DMA_1&t;&t;&t;0x0098&t;/* 32 bit */
 multiline_comment|/* ExCA IO offset registers */
 DECL|macro|TI113X_IO_OFFSET
 mdefine_line|#define TI113X_IO_OFFSET(map)&t;&t;(0x36+((map)&lt;&lt;1))
+macro_line|#ifdef CONFIG_CARDBUS
+DECL|macro|ti_sysctl
+mdefine_line|#define ti_sysctl(socket)&t;((socket)-&gt;private[0])
+DECL|macro|ti_cardctl
+mdefine_line|#define ti_cardctl(socket)&t;((socket)-&gt;private[1])
+DECL|macro|ti_devctl
+mdefine_line|#define ti_devctl(socket)&t;((socket)-&gt;private[2])
+DECL|function|ti113x_open
+r_static
+r_int
+id|ti113x_open
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|ti_sysctl
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readl
+c_func
+(paren
+id|socket
+comma
+id|TI113X_SYSTEM_CONTROL
+)paren
+suffix:semicolon
+id|ti_cardctl
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readb
+c_func
+(paren
+id|socket
+comma
+id|TI113X_CARD_CONTROL
+)paren
+suffix:semicolon
+id|ti_devctl
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readb
+c_func
+(paren
+id|socket
+comma
+id|TI113X_DEVICE_CONTROL
+)paren
+suffix:semicolon
+id|ti_cardctl
+c_func
+(paren
+id|socket
+)paren
+op_and_assign
+op_complement
+(paren
+id|TI113X_CCR_PCI_IRQ_ENA
+op_or
+id|TI113X_CCR_PCI_IREQ
+op_or
+id|TI113X_CCR_PCI_CSC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|socket-&gt;cb_irq
+)paren
+id|ti_cardctl
+c_func
+(paren
+id|socket
+)paren
+op_or_assign
+id|TI113X_CCR_PCI_IRQ_ENA
+op_or
+id|TI113X_CCR_PCI_CSC
+op_or
+id|TI113X_CCR_PCI_IREQ
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ti113x_init
+r_static
+r_int
+id|ti113x_init
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|yenta_init
+c_func
+(paren
+id|socket
+)paren
+suffix:semicolon
+id|config_writel
+c_func
+(paren
+id|socket
+comma
+id|TI113X_SYSTEM_CONTROL
+comma
+id|ti_sysctl
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+id|config_writeb
+c_func
+(paren
+id|socket
+comma
+id|TI113X_CARD_CONTROL
+comma
+id|ti_cardctl
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+id|config_writeb
+c_func
+(paren
+id|socket
+comma
+id|TI113X_DEVICE_CONTROL
+comma
+id|ti_devctl
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|ti113x_ops
+r_static
+r_struct
+id|pci_socket_ops
+id|ti113x_ops
+op_assign
+(brace
+id|ti113x_open
+comma
+id|yenta_close
+comma
+id|ti113x_init
+comma
+id|yenta_suspend
+comma
+id|yenta_get_status
+comma
+id|yenta_get_socket
+comma
+id|yenta_set_socket
+comma
+id|yenta_get_io_map
+comma
+id|yenta_set_io_map
+comma
+id|yenta_get_mem_map
+comma
+id|yenta_set_mem_map
+comma
+id|yenta_proc_setup
+)brace
+suffix:semicolon
+DECL|macro|ti_diag
+mdefine_line|#define ti_diag(socket)&t;&t;((socket)-&gt;private[0])
+DECL|function|ti1250_open
+r_static
+r_int
+id|ti1250_open
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|ti_diag
+c_func
+(paren
+id|socket
+)paren
+op_assign
+id|config_readb
+c_func
+(paren
+id|socket
+comma
+id|TI1250_DIAGNOSTIC
+)paren
+suffix:semicolon
+id|ti_diag
+c_func
+(paren
+id|socket
+)paren
+op_and_assign
+op_complement
+(paren
+id|TI1250_DIAG_PCI_CSC
+op_or
+id|TI1250_DIAG_PCI_IREQ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|socket-&gt;cb_irq
+)paren
+id|ti_diag
+c_func
+(paren
+id|socket
+)paren
+op_or_assign
+id|TI1250_DIAG_PCI_CSC
+op_or
+id|TI1250_DIAG_PCI_IREQ
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ti1250_init
+r_static
+r_int
+id|ti1250_init
+c_func
+(paren
+id|pci_socket_t
+op_star
+id|socket
+)paren
+(brace
+id|yenta_init
+c_func
+(paren
+id|socket
+)paren
+suffix:semicolon
+id|config_writeb
+c_func
+(paren
+id|socket
+comma
+id|TI1250_DIAGNOSTIC
+comma
+id|ti_diag
+c_func
+(paren
+id|socket
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|ti1250_ops
+r_static
+r_struct
+id|pci_socket_ops
+id|ti1250_ops
+op_assign
+(brace
+id|ti1250_open
+comma
+id|yenta_close
+comma
+id|ti1250_init
+comma
+id|yenta_suspend
+comma
+id|yenta_get_status
+comma
+id|yenta_get_socket
+comma
+id|yenta_set_socket
+comma
+id|yenta_get_io_map
+comma
+id|yenta_set_io_map
+comma
+id|yenta_get_mem_map
+comma
+id|yenta_set_mem_map
+comma
+id|yenta_proc_setup
+)brace
+suffix:semicolon
+macro_line|#endif /* CONFIG_CARDBUS */
 macro_line|#endif /* _LINUX_TI113X_H */
 eof

@@ -1129,10 +1129,10 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|printk_memory_info
 r_static
 r_void
 id|__init
+DECL|function|printk_memory_info
 id|printk_memory_info
 c_func
 (paren

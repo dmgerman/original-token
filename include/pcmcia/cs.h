@@ -1343,9 +1343,9 @@ r_int
 id|pcmcia_get_first_window
 c_func
 (paren
-id|client_handle_t
+id|window_handle_t
 op_star
-id|handle
+id|win
 comma
 id|win_req_t
 op_star
@@ -1613,6 +1613,16 @@ comma
 id|error_info_t
 op_star
 id|err
+)paren
+suffix:semicolon
+r_struct
+id|pci_bus
+op_star
+id|pcmcia_lookup_bus
+c_func
+(paren
+id|client_handle_t
+id|handle
 )paren
 suffix:semicolon
 multiline_comment|/* rsrc_mgr.c */

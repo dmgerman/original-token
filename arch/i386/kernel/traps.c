@@ -382,9 +382,8 @@ r_int
 r_int
 )paren
 (paren
-l_int|1
-op_plus
-id|regs
+op_amp
+id|regs-&gt;esp
 )paren
 suffix:semicolon
 id|ss

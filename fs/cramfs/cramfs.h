@@ -5,7 +5,7 @@ DECL|macro|CRAMFS_MAGIC
 mdefine_line|#define CRAMFS_MAGIC&t;&t;0x28cd3d45&t;/* some random number */
 DECL|macro|CRAMFS_SIGNATURE
 mdefine_line|#define CRAMFS_SIGNATURE&t;&quot;Compressed ROMFS&quot;
-multiline_comment|/*&n; * Reasonably terse representation of the inode&n; * data.. When the mode of the inode indicates&n; * a special device node, the &quot;offset&quot; bits will&n; * encode i_rdev. In other cases, &quot;offset&quot; points&n; * to the ROM image for the actual file data&n; * (whether that data be directory or compressed&n; * file data depends on the inode type again)&n; */
+multiline_comment|/*&n; * Reasonably terse representation of the inode data.&n; */
 DECL|struct|cramfs_inode
 r_struct
 id|cramfs_inode
@@ -21,6 +21,7 @@ id|uid
 suffix:colon
 l_int|16
 suffix:semicolon
+multiline_comment|/* SIZE for device files is i_rdev */
 DECL|member|size
 DECL|member|gid
 id|u32
@@ -32,6 +33,8 @@ id|gid
 suffix:colon
 l_int|8
 suffix:semicolon
+multiline_comment|/* NAMELEN is the length of the file name, divided by 4 and&n;           rounded up.  (cramfs doesn&squot;t support hard links.) */
+multiline_comment|/* OFFSET: For symlinks and non-empty regular files, this&n;&t;   contains the offset (divided by 4) of the file data in&n;&t;   compressed form (starting with an array of block pointers;&n;&t;   see README).  For non-empty directories it is the offset&n;&t;   (divided by 4) of the inode of the first file in that&n;&t;   directory.  For anything else, offset is zero. */
 DECL|member|namelen
 DECL|member|offset
 id|u32
@@ -59,7 +62,7 @@ DECL|member|size
 id|u32
 id|size
 suffix:semicolon
-multiline_comment|/* &gt; offset, &lt; 2**26 */
+multiline_comment|/* Not used.  mkcramfs currently&n;                                   writes a constant 1&lt;&lt;16 here. */
 DECL|member|flags
 id|u32
 id|flags
@@ -102,6 +105,9 @@ suffix:semicolon
 multiline_comment|/* Root inode data */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Valid values in super.flags.  Currently we refuse to mount&n; * if (flags &amp; ~CRAMFS_SUPPORTED_FLAGS).  Maybe that should be&n; * changed to test super.future instead.&n; */
+DECL|macro|CRAMFS_SUPPORTED_FLAGS
+mdefine_line|#define CRAMFS_SUPPORTED_FLAGS (0xff)
 multiline_comment|/* Uncompression interfaces to the underlying zlib */
 r_int
 id|cramfs_uncompress_block

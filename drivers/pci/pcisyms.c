@@ -114,6 +114,21 @@ c_func
 id|pci_assign_resource
 )paren
 suffix:semicolon
+DECL|variable|pci_register_driver
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_register_driver
+)paren
+suffix:semicolon
+DECL|variable|pci_unregister_driver
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_unregister_driver
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_HOTPLUG
 DECL|variable|pci_setup_device
 id|EXPORT_SYMBOL
 c_func
@@ -135,20 +150,7 @@ c_func
 id|pci_remove_device
 )paren
 suffix:semicolon
-DECL|variable|pci_register_driver
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_register_driver
-)paren
-suffix:semicolon
-DECL|variable|pci_unregister_driver
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_unregister_driver
-)paren
-suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Obsolete functions */
 DECL|variable|pcibios_present
 id|EXPORT_SYMBOL

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&n; *    Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *&n; *    Module name: oaknet.c&n; *&n; *    Description:&n; *      Driver for the National Semiconductor DP83902AV Ethernet controller&n; *      on-board the IBM PowerPC &quot;Oak&quot; evaluation board. Adapted from the&n; *      various other 8390 drivers written by Donald Becker and Paul Gortmaker.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;

@@ -128,37 +128,37 @@ multiline_comment|/* was vm_pte (shared mem) */
 suffix:semicolon
 multiline_comment|/*&n; * vm_flags..&n; */
 DECL|macro|VM_READ
-mdefine_line|#define VM_READ&t;&t;0x0001&t;/* currently active flags */
+mdefine_line|#define VM_READ&t;&t;0x00000001&t;/* currently active flags */
 DECL|macro|VM_WRITE
-mdefine_line|#define VM_WRITE&t;0x0002
+mdefine_line|#define VM_WRITE&t;0x00000002
 DECL|macro|VM_EXEC
-mdefine_line|#define VM_EXEC&t;&t;0x0004
+mdefine_line|#define VM_EXEC&t;&t;0x00000004
 DECL|macro|VM_SHARED
-mdefine_line|#define VM_SHARED&t;0x0008
+mdefine_line|#define VM_SHARED&t;0x00000008
 DECL|macro|VM_MAYREAD
-mdefine_line|#define VM_MAYREAD&t;0x0010&t;/* limits for mprotect() etc */
+mdefine_line|#define VM_MAYREAD&t;0x00000010&t;/* limits for mprotect() etc */
 DECL|macro|VM_MAYWRITE
-mdefine_line|#define VM_MAYWRITE&t;0x0020
+mdefine_line|#define VM_MAYWRITE&t;0x00000020
 DECL|macro|VM_MAYEXEC
-mdefine_line|#define VM_MAYEXEC&t;0x0040
+mdefine_line|#define VM_MAYEXEC&t;0x00000040
 DECL|macro|VM_MAYSHARE
-mdefine_line|#define VM_MAYSHARE&t;0x0080
+mdefine_line|#define VM_MAYSHARE&t;0x00000080
 DECL|macro|VM_GROWSDOWN
-mdefine_line|#define VM_GROWSDOWN&t;0x0100&t;/* general info on the segment */
+mdefine_line|#define VM_GROWSDOWN&t;0x00000100&t;/* general info on the segment */
 DECL|macro|VM_GROWSUP
-mdefine_line|#define VM_GROWSUP&t;0x0200
+mdefine_line|#define VM_GROWSUP&t;0x00000200
 DECL|macro|VM_SHM
-mdefine_line|#define VM_SHM&t;&t;0x0400&t;/* shared memory area, don&squot;t swap out */
+mdefine_line|#define VM_SHM&t;&t;0x00000400&t;/* shared memory area, don&squot;t swap out */
 DECL|macro|VM_DENYWRITE
-mdefine_line|#define VM_DENYWRITE&t;0x0800&t;/* ETXTBSY on write attempts.. */
+mdefine_line|#define VM_DENYWRITE&t;0x00000800&t;/* ETXTBSY on write attempts.. */
 DECL|macro|VM_EXECUTABLE
-mdefine_line|#define VM_EXECUTABLE&t;0x1000
+mdefine_line|#define VM_EXECUTABLE&t;0x00001000
 DECL|macro|VM_LOCKED
-mdefine_line|#define VM_LOCKED&t;0x2000
+mdefine_line|#define VM_LOCKED&t;0x00002000
 DECL|macro|VM_IO
-mdefine_line|#define VM_IO           0x4000  /* Memory mapped I/O or similar */
+mdefine_line|#define VM_IO           0x00004000  /* Memory mapped I/O or similar */
 DECL|macro|VM_STACK_FLAGS
-mdefine_line|#define VM_STACK_FLAGS&t;0x0177
+mdefine_line|#define VM_STACK_FLAGS&t;0x00000177
 multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
 r_extern
 id|pgprot_t

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acm.c  Version 0.12&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 1999 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; */
+multiline_comment|/*&n; * acm.c  Version 0.13&n; *&n; * Copyright (c) 1999 Armin Fuerst&t;&lt;fuerst@in.tum.de&gt;&n; * Copyright (c) 1999 Pavel Machek&t;&lt;pavel@suse.cz&gt;&n; * Copyright (c) 1999 Johannes Erdfelt&t;&lt;jerdfelt@valinux.com&gt;&n; * Copyright (c) 1999 Vojtech Pavlik&t;&lt;vojtech@suse.cz&gt;&n; *&n; * USB Abstract Control Model driver for USB modems and ISDN adapters&n; *&n; * Sponsored by SuSE&n; *&n; * ChangeLog:&n; *&t;v0.9  - thorough cleaning, URBification, almost a rewrite&n; *&t;v0.10 - some more cleanups&n; *&t;v0.11 - fixed flow control, read error doesn&squot;t stop reads&n; *&t;v0.12 - added TIOCM ioctls, added break handling, made struct acm kmalloced&n; *&t;v0.13 - added termios, added hangup&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2213,7 +2213,7 @@ id|minor
 )braket
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
 l_string|&quot;no more free acm devices&quot;
@@ -2243,9 +2243,17 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;out of memory&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -2309,6 +2317,12 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
+id|err
+c_func
+(paren
+l_string|&quot;out of memory&quot;
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -2417,21 +2431,25 @@ comma
 id|acm-&gt;ctrlout
 )paren
 suffix:semicolon
-id|acm-&gt;linecoding.speed
+id|acm-&gt;line.speed
 op_assign
-l_int|115200
+id|cpu_to_le32
+c_func
+(paren
+l_int|9600
+)paren
 suffix:semicolon
-id|acm-&gt;linecoding.databits
+id|acm-&gt;line.databits
 op_assign
 l_int|8
 suffix:semicolon
-id|acm_set_coding
+id|acm_set_line
 c_func
 (paren
 id|acm
 comma
 op_amp
-id|acm-&gt;linecoding
+id|acm-&gt;line
 )paren
 suffix:semicolon
 id|usb_driver_claim_interface

@@ -27,11 +27,9 @@ multiline_comment|/* ISA-bus controllers */
 macro_line|#include &quot;i82365.h&quot;
 macro_line|#include &quot;cirrus.h&quot;
 macro_line|#include &quot;vg468.h&quot;
-macro_line|#include &quot;ricoh.h&quot;
 macro_line|#include &quot;o2micro.h&quot;
 multiline_comment|/* PCI-bus controllers */
 macro_line|#include &quot;old-yenta.h&quot;
-macro_line|#include &quot;ti113x.h&quot;
 macro_line|#include &quot;smc34c90.h&quot;
 macro_line|#include &quot;topic.h&quot;
 macro_line|#ifdef PCMCIA_DEBUG

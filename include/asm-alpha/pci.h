@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_PCI_H
 DECL|macro|__ALPHA_PCI_H
 mdefine_line|#define __ALPHA_PCI_H
+macro_line|#include &lt;asm/machvec.h&gt;
 multiline_comment|/*&n; * The following structure is used to manage multiple PCI busses.&n; */
 r_struct
 id|pci_bus
@@ -63,5 +64,9 @@ suffix:semicolon
 multiline_comment|/* Override the logic in pci_scan_bus for skipping already-configured&n;   bus numbers.  */
 DECL|macro|pcibios_assign_all_busses
 mdefine_line|#define pcibios_assign_all_busses()&t;1
+DECL|macro|PCIBIOS_MIN_IO
+mdefine_line|#define PCIBIOS_MIN_IO&t;&t;alpha_mv.min_io_address
+DECL|macro|PCIBIOS_MIN_MEM
+mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;alpha_mv.min_mem_address
 macro_line|#endif /* __ALPHA_PCI_H */
 eof

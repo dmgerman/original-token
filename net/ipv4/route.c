@@ -10381,10 +10381,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;IP: routing cache hash table of %u buckets, %dKbytes&bslash;n&quot;
+l_string|&quot;IP: routing cache hash table of %u buckets, %ldKbytes&bslash;n&quot;
 comma
 id|rt_hash_mask
 comma
+(paren
+r_int
+)paren
 (paren
 id|rt_hash_mask
 op_star

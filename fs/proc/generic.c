@@ -51,8 +51,7 @@ id|ppos
 )paren
 suffix:semicolon
 r_static
-r_int
-r_int
+id|loff_t
 id|proc_file_lseek
 c_func
 (paren
@@ -60,8 +59,7 @@ r_struct
 id|file
 op_star
 comma
-r_int
-r_int
+id|loff_t
 comma
 r_int
 )paren
@@ -577,8 +575,7 @@ id|dp-&gt;data
 suffix:semicolon
 )brace
 r_static
-r_int
-r_int
+id|loff_t
 DECL|function|proc_file_lseek
 id|proc_file_lseek
 c_func
@@ -588,8 +585,7 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
+id|loff_t
 id|offset
 comma
 r_int

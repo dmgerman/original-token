@@ -62,11 +62,11 @@ multiline_comment|/*&n; * Mark functions and data as being only used at initiali
 DECL|macro|__init
 mdefine_line|#define __init&t;&t;__attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__exit
-mdefine_line|#define __exit&t;&t;__attribute__ ((unused, __section__(&quot;.text.init&quot;)))
+mdefine_line|#define __exit&t;&t;__attribute__ ((unused, __section__(&quot;.text.exit&quot;)))
 DECL|macro|__initdata
 mdefine_line|#define __initdata&t;__attribute__ ((__section__ (&quot;.data.init&quot;)))
 DECL|macro|__exitdata
-mdefine_line|#define __exitdata&t;__attribute__ ((unused, __section__ (&quot;.data.init&quot;)))
+mdefine_line|#define __exitdata&t;__attribute__ ((unused, __section__ (&quot;.data.exit&quot;)))
 DECL|macro|__initsetup
 mdefine_line|#define __initsetup&t;__attribute__ ((unused,__section__ (&quot;.setup.init&quot;)))
 DECL|macro|__init_call
@@ -121,6 +121,25 @@ mdefine_line|#define __initlocaldata  __initdata
 macro_line|#else
 DECL|macro|__initlocaldata
 mdefine_line|#define __initlocaldata
+macro_line|#endif
+macro_line|#ifdef CONFIG_HOTPLUG
+DECL|macro|__devinit
+mdefine_line|#define __devinit
+DECL|macro|__devinitdata
+mdefine_line|#define __devinitdata
+DECL|macro|__devexit
+mdefine_line|#define __devexit
+DECL|macro|__devexitdata
+mdefine_line|#define __devexitdata
+macro_line|#else
+DECL|macro|__devinit
+mdefine_line|#define __devinit __init
+DECL|macro|__devinitdata
+mdefine_line|#define __devinitdata __initdata
+DECL|macro|__devexit
+mdefine_line|#define __devexit __exit
+DECL|macro|__devexitdata
+mdefine_line|#define __devexitdata __exitdata
 macro_line|#endif
 macro_line|#endif /* _LINUX_INIT_H */
 eof

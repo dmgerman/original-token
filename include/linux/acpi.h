@@ -995,5 +995,42 @@ DECL|macro|ACPI_PIIX4_PMREGMISC
 mdefine_line|#define ACPI_PIIX4_PMREGMISC&t;0x80
 DECL|macro|ACPI_PIIX4_PMIOSE
 mdefine_line|#define&t;  ACPI_PIIX4_PMIOSE&t;0x01
+multiline_comment|/*&n; * VIA-specific ACPI info (for systems with VT82C586B but no ACPI tables)&n; */
+DECL|macro|ACPI_VIA_INT_MODEL
+mdefine_line|#define ACPI_VIA_INT_MODEL     0x00
+DECL|macro|ACPI_VIA_SMI_CMD
+mdefine_line|#define ACPI_VIA_SMI_CMD       0x002f
+DECL|macro|ACPI_VIA_ACPI_ENABLE
+mdefine_line|#define ACPI_VIA_ACPI_ENABLE   0xa1
+DECL|macro|ACPI_VIA_ACPI_DISABLE
+mdefine_line|#define ACPI_VIA_ACPI_DISABLE  0xa0
+DECL|macro|ACPI_VIA_PM1_EVT
+mdefine_line|#define ACPI_VIA_PM1_EVT       0x0000
+DECL|macro|ACPI_VIA_PM1_CNT
+mdefine_line|#define ACPI_VIA_PM1_CNT       0x0004
+DECL|macro|ACPI_VIA_PM_TMR
+mdefine_line|#define ACPI_VIA_PM_TMR&t;       0x0008
+DECL|macro|ACPI_VIA_GPE0
+mdefine_line|#define ACPI_VIA_GPE0&t;       0x0020
+DECL|macro|ACPI_VIA_P_BLK
+mdefine_line|#define ACPI_VIA_P_BLK&t;       0x0010
+DECL|macro|ACPI_VIA_PM1_EVT_LEN
+mdefine_line|#define ACPI_VIA_PM1_EVT_LEN   0x04
+DECL|macro|ACPI_VIA_PM1_CNT_LEN
+mdefine_line|#define ACPI_VIA_PM1_CNT_LEN   0x02
+DECL|macro|ACPI_VIA_PM_TM_LEN
+mdefine_line|#define ACPI_VIA_PM_TM_LEN     0x04
+DECL|macro|ACPI_VIA_GPE0_LEN
+mdefine_line|#define ACPI_VIA_GPE0_LEN      0x04
+DECL|macro|ACPI_VIA_DUTY_OFFSET
+mdefine_line|#define ACPI_VIA_DUTY_OFFSET   1
+DECL|macro|ACPI_VIA_DUTY_WIDTH
+mdefine_line|#define ACPI_VIA_DUTY_WIDTH    3
+DECL|macro|ACPI_VIA_DAY_ALARM
+mdefine_line|#define ACPI_VIA_DAY_ALARM     0x7d
+DECL|macro|ACPI_VIA_MON_ALARM
+mdefine_line|#define ACPI_VIA_MON_ALARM     0x7e
+DECL|macro|ACPI_VIA_CENTURY
+mdefine_line|#define ACPI_VIA_CENTURY       0x7f
 macro_line|#endif /* _LINUX_ACPI_H */
 eof

@@ -335,6 +335,9 @@ DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)&t;&t;&t;&bslash;&n;const char __module_parm_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_&quot; __MODULE_STRING(var) &quot;=&quot; type
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)&t;&t;&bslash;&n;const char __module_parm_desc_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_desc_&quot; __MODULE_STRING(var) &quot;=&quot; desc
+DECL|macro|MODULE_DEVICE_TABLE
+mdefine_line|#define MODULE_DEVICE_TABLE(type,name)&t;&bslash;&n;const struct type##_device_id * __module_##type##_device_table = name
+multiline_comment|/* not put to .modinfo section to avoid section type conflicts */
 multiline_comment|/* The attributes of a section are set the first time the section is&n;   seen; we want .modinfo to not be allocated.  */
 id|__asm__
 c_func
@@ -413,6 +416,8 @@ DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)
+DECL|macro|MODULE_DEVICE_TABLE
+mdefine_line|#define MODULE_DEVICE_TABLE(type,name)
 macro_line|#ifndef __GENKSYMS__
 DECL|macro|THIS_MODULE
 mdefine_line|#define THIS_MODULE&t;&t;NULL

@@ -843,6 +843,9 @@ id|nxp-&gt;ex_path
 comma
 id|nxp-&gt;ex_dev
 comma
+(paren
+r_int
+)paren
 id|nxp-&gt;ex_ino
 comma
 id|nxp-&gt;ex_flags
@@ -1808,6 +1811,9 @@ id|clp-&gt;cl_ident
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 )paren
 suffix:semicolon
@@ -1835,6 +1841,9 @@ id|clp-&gt;cl_ident
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 )paren
 suffix:semicolon
@@ -1946,10 +1955,16 @@ l_string|&quot; inode[dev(%x):ino(%ld)]&bslash;n&quot;
 comma
 id|dev
 comma
+(paren
+r_int
+)paren
 id|ino
 comma
 id|inode-&gt;i_dev
 comma
+(paren
+r_int
+)paren
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
