@@ -5,31 +5,11 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-multiline_comment|/* Segment information */
-r_extern
-r_void
-id|destroy_context
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|init_new_context
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|mm_struct
-op_star
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * possibly do the LDT unload here?&n; */
+DECL|macro|destroy_context
+mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
+DECL|macro|init_new_context
+mdefine_line|#define init_new_context(tsk,mm)&t;0
 macro_line|#ifdef CONFIG_SMP
 DECL|function|enter_lazy_tlb
 r_static

@@ -3717,7 +3717,7 @@ id|dev_lec
 id|i
 )braket
 op_assign
-id|prepare_trdev
+id|init_trdev
 c_func
 (paren
 l_int|NULL
@@ -3732,7 +3732,7 @@ id|dev_lec
 id|i
 )braket
 op_assign
-id|prepare_etherdev
+id|init_etherdev
 c_func
 (paren
 l_int|NULL
@@ -3782,15 +3782,6 @@ id|i
 )paren
 suffix:semicolon
 id|lec_init
-c_func
-(paren
-id|dev_lec
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|publish_netdev
 c_func
 (paren
 id|dev_lec
@@ -4126,7 +4117,7 @@ id|i
 op_member_access_from_pointer
 id|priv
 suffix:semicolon
-id|unregister_netdev
+id|unregister_trdev
 c_func
 (paren
 id|dev_lec

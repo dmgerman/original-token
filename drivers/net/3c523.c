@@ -103,10 +103,10 @@ mdefine_line|#define NO_NOPCOMMANDS&t;&t;/* only possible with NUM_XMIT_BUFFS=1 
 macro_line|#endif
 multiline_comment|/**************************************************************************/
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) {int i=jiffies; &bslash;&n;                  if(loops_per_sec == 1) &bslash;&n;                     while(time_after(i+(x), jiffies)); &bslash;&n;                  else &bslash;&n;                     __delay((loops_per_sec&gt;&gt;5)*x); &bslash;&n;                 }
+mdefine_line|#define DELAY(x) { mdelay(32 * x); }
 multiline_comment|/* a much shorter delay: */
 DECL|macro|DELAY_16
-mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
+mdefine_line|#define DELAY_16(); { udelay(16) ; }
 multiline_comment|/* wait for command with timeout: */
 DECL|macro|WAIT_4_SCB_CMD
 mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;1024;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd) break; &bslash;&n;    DELAY_16(); &bslash;&n;    if(i == 1023) { &bslash;&n;      printk(KERN_WARNING &quot;%s:%d: scb_cmd timed out .. resetting i82586&bslash;n&quot;,&bslash;&n;      &t;dev-&gt;name,__LINE__); &bslash;&n;      elmc_id_reset586(); } } }

@@ -1386,18 +1386,18 @@ DECL|macro|PSTN_OFF_HOOK
 mdefine_line|#define PSTN_OFF_HOOK&t;2
 DECL|macro|PSTN_PULSE_DIAL
 mdefine_line|#define PSTN_PULSE_DIAL&t;3
-multiline_comment|/******************************************************************************&n;* &n;* The DAA Analog GAIN sets 2 parameters at one time, the recieve gain (AGRR), &n;* and the transmit gain (AGX).  OR together the components and pass them&n;* as the parameter to IXJCTL_DAA_AGAIN.  The default setting is both at 0dB.&n;* &n;******************************************************************************/
+multiline_comment|/******************************************************************************&n;* &n;* The DAA Analog GAIN sets 2 parameters at one time, the receive gain (AGRR), &n;* and the transmit gain (AGX).  OR together the components and pass them&n;* as the parameter to IXJCTL_DAA_AGAIN.  The default setting is both at 0dB.&n;* &n;******************************************************************************/
 DECL|macro|IXJCTL_DAA_AGAIN
 mdefine_line|#define IXJCTL_DAA_AGAIN&t;&t;_IOW (&squot;q&squot;, 0xD2, int)
 DECL|macro|AGRR00DB
 mdefine_line|#define AGRR00DB&t;0x00&t;
-singleline_comment|// Analog gain in recieve direction 0dB
+singleline_comment|// Analog gain in receive direction 0dB
 DECL|macro|AGRR3_5DB
 mdefine_line|#define AGRR3_5DB&t;0x10&t;
-singleline_comment|// Analog gain in recieve direction 3.5dB
+singleline_comment|// Analog gain in receive direction 3.5dB
 DECL|macro|AGRR06DB
 mdefine_line|#define AGRR06DB&t;0x30&t;
-singleline_comment|// Analog gain in recieve direction 6dB
+singleline_comment|// Analog gain in receive direction 6dB
 DECL|macro|AGX00DB
 mdefine_line|#define AGX00DB&t;&t;0x00&t;
 singleline_comment|// Analog gain in transmit direction 0dB

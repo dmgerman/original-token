@@ -421,11 +421,11 @@ r_int
 id|age_buffer
 suffix:semicolon
 multiline_comment|/* Time for normal buffer to age before we flush it */
-DECL|member|dummy1
+DECL|member|nfract_sync
 r_int
-id|dummy1
+id|nfract_sync
 suffix:semicolon
-multiline_comment|/* unused, was age_super */
+multiline_comment|/* Percentage of buffer cache dirty to &n;&t;&t;&t;&t;    activate bdflush synchronously */
 DECL|member|dummy2
 r_int
 id|dummy2
@@ -470,13 +470,11 @@ l_int|30
 op_star
 id|HZ
 comma
-l_int|5
-op_star
-id|HZ
+l_int|80
 comma
-l_int|1884
+l_int|0
 comma
-l_int|2
+l_int|0
 )brace
 )brace
 suffix:semicolon
@@ -503,13 +501,11 @@ l_int|1
 op_star
 id|HZ
 comma
-l_int|1
-op_star
-id|HZ
+l_int|0
 comma
-l_int|1
+l_int|0
 comma
-l_int|1
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|bdflush_max
@@ -536,13 +532,11 @@ l_int|6000
 op_star
 id|HZ
 comma
-l_int|6000
-op_star
-id|HZ
+l_int|100
 comma
-l_int|2047
+l_int|0
 comma
-l_int|5
+l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Rewrote the wait-routines to use the &quot;new&quot; wait-queue functionality,&n; * and getting rid of the cli-sti pairs. The wait-queue routines still&n; * need cli-sti, but now it&squot;s just a couple of 386 instructions or so.&n; *&n; * Note that the real wait_on_buffer() is an inline function that checks&n; * if &squot;b_wait&squot; is set before calling this, so that the queues aren&squot;t set&n; * up unnecessarily.&n; */
@@ -1265,7 +1259,7 @@ id|sb
 op_assign
 id|inode-&gt;i_sb
 suffix:semicolon
-id|wait_on_super
+id|lock_super
 c_func
 (paren
 id|sb
@@ -1281,6 +1275,12 @@ id|sb-&gt;s_op-&gt;write_super
 id|sb-&gt;s_op
 op_member_access_from_pointer
 id|write_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|unlock_super
 c_func
 (paren
 id|sb
@@ -4103,7 +4103,7 @@ c_func
 suffix:semicolon
 id|dirty
 op_mul_assign
-l_int|200
+l_int|100
 suffix:semicolon
 id|soft_dirty_limit
 op_assign
@@ -4113,9 +4113,9 @@ id|bdf_prm.b_un.nfract
 suffix:semicolon
 id|hard_dirty_limit
 op_assign
-id|soft_dirty_limit
+id|tot
 op_star
-l_int|2
+id|bdf_prm.b_un.nfract_sync
 suffix:semicolon
 multiline_comment|/* First, check for the &quot;real&quot; dirty limit. */
 r_if

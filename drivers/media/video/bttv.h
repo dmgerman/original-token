@@ -316,6 +316,44 @@ op_star
 id|btv
 )paren
 suffix:semicolon
+multiline_comment|/* kernel cmd line parse helper */
+r_extern
+r_int
+id|bttv_parse
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+id|max
+comma
+r_int
+op_star
+id|vals
+)paren
+suffix:semicolon
+multiline_comment|/* extra tweaks for some chipsets */
+r_extern
+r_void
+id|bttv_check_chipset
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|bttv_handle_chipset
+c_func
+(paren
+r_struct
+id|bttv
+op_star
+id|btv
+)paren
+suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------- */
 multiline_comment|/* exported by bttv-if.c                                      */
 multiline_comment|/* interface for gpio access by other modules                 */

@@ -176,6 +176,9 @@ comma
 DECL|enumerator|I21145
 id|I21145
 comma
+DECL|enumerator|DM910X
+id|DM910X
+comma
 )brace
 suffix:semicolon
 DECL|enum|MediaIs

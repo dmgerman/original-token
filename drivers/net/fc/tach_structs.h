@@ -1,4 +1,4 @@
-multiline_comment|/**********************************************************************&n; * iph5526.c: Structures for the Interphase 5526 PCI Fibre Channel &n; *&t;&t;&t;  IP/SCSI driver.&n; * Copyright (C) 1999 Vineet M Abraham &lt;vma@iol.unh.edu&gt;&n; **********************************************************************/
+multiline_comment|/**********************************************************************&n; * iph5526.c: Structures for the Interphase 5526 PCI Fibre Channel &n; *&t;&t;&t;  IP/SCSI driver.&n; * Copyright (C) 1999 Vineet M Abraham &lt;vmabraham@hotmail.com&gt;&n; **********************************************************************/
 macro_line|#ifndef _TACH_STRUCT_H
 DECL|macro|_TACH_STRUCT_H
 mdefine_line|#define _TACH_STRUCT_H

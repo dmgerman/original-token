@@ -166,6 +166,8 @@ DECL|macro|MT_ISDDS1
 mdefine_line|#define MT_ISDDS1&t;&t;0x51&t;/* DDS device without partitions */
 DECL|macro|MT_ISDDS2
 mdefine_line|#define MT_ISDDS2&t;&t;0x52&t;/* DDS device with partitions */
+DECL|macro|MT_ISONSTREAM_SC
+mdefine_line|#define MT_ISONSTREAM_SC        0x61   /* OnStream SCSI tape drives (SC-x0)&n;&t;&t;&t;&t;&t;  and SCSI emulated (DI, DP, USB) */
 DECL|macro|MT_ISSCSI1
 mdefine_line|#define MT_ISSCSI1&t;&t;0x71&t;/* Generic ANSI SCSI-1 tape unit */
 DECL|macro|MT_ISSCSI2
@@ -193,7 +195,7 @@ multiline_comment|/* descriptive name */
 )brace
 suffix:semicolon
 DECL|macro|MT_TAPE_INFO
-mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISARCHIVESC499,&t;&quot;Archive SC-499 QIC-36 controller&quot;}, &bslash;&n;&t;{MT_ISQIC02_ALL_FEATURES, &quot;Generic QIC-02 tape, all features&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISTEAC_MT2ST,&t;&quot;Teac MT-2ST 155mb data cassette drive&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{MT_ISSCSI2,&t;&t;&quot;Generic SCSI-2 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
+mdefine_line|#define MT_TAPE_INFO&t;{ &bslash;&n;&t;{MT_ISUNKNOWN,&t;&t;&quot;Unknown type of tape device&quot;}, &bslash;&n;&t;{MT_ISQIC02,&t;&t;&quot;Generic QIC-02 tape streamer&quot;}, &bslash;&n;&t;{MT_ISWT5150,&t;&t;&quot;Wangtek 5150, QIC-150&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_5945L2,&t;&quot;Archive 5945L-2&quot;}, &bslash;&n;&t;{MT_ISCMSJ500,&t;&t;&quot;CMS Jumbo 500&quot;}, &bslash;&n;&t;{MT_ISTDC3610,&t;&t;&quot;Tandberg TDC 3610, QIC-24&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_VP60I,&t;&quot;Archive VP60i, QIC-02&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2150L,&t;&quot;Archive Viper 2150L&quot;}, &bslash;&n;&t;{MT_ISARCHIVE_2060L,&t;&quot;Archive Viper 2060L&quot;}, &bslash;&n;&t;{MT_ISARCHIVESC499,&t;&quot;Archive SC-499 QIC-36 controller&quot;}, &bslash;&n;&t;{MT_ISQIC02_ALL_FEATURES, &quot;Generic QIC-02 tape, all features&quot;}, &bslash;&n;&t;{MT_ISWT5099EEN24,&t;&quot;Wangtek 5099-een24, 60MB&quot;}, &bslash;&n;&t;{MT_ISTEAC_MT2ST,&t;&quot;Teac MT-2ST 155mb data cassette drive&quot;}, &bslash;&n;&t;{MT_ISEVEREX_FT40A,&t;&quot;Everex FT40A, QIC-40&quot;}, &bslash;&n;&t;{MT_ISONSTREAM_SC,      &quot;OnStream SC-, DI-, DP-, or USB tape drive&quot;}, &bslash;&n;&t;{MT_ISSCSI1,&t;&t;&quot;Generic SCSI-1 tape&quot;}, &bslash;&n;&t;{MT_ISSCSI2,&t;&t;&quot;Generic SCSI-2 tape&quot;}, &bslash;&n;&t;{0, NULL} &bslash;&n;}
 multiline_comment|/* structure for MTIOCPOS - mag tape get position command */
 DECL|struct|mtpos
 r_struct

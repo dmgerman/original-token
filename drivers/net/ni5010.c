@@ -34,6 +34,7 @@ l_string|&quot;ni5010.c: v1.00 06/23/97 Jan-Pascal van Best and Andreas Mohr&bsl
 suffix:semicolon
 multiline_comment|/* bufsize_rcv == 0 means autoprobing */
 DECL|variable|bufsize_rcv
+r_static
 r_int
 r_int
 id|bufsize_rcv
@@ -251,7 +252,7 @@ id|dev
 suffix:semicolon
 DECL|macro|tx_done
 mdefine_line|#define tx_done(dev) 1
-r_extern
+r_static
 r_void
 id|hardware_send_packet
 c_func
@@ -269,7 +270,7 @@ r_int
 id|length
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|chipset_init
 c_func
@@ -326,12 +327,7 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
 suffix:semicolon
 id|PRINTK2
 c_func
@@ -342,6 +338,12 @@ l_string|&quot;%s: Entering ni5010_probe&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
+)paren
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -505,6 +507,7 @@ id|IE_SAPROM
 suffix:semicolon
 )brace
 DECL|function|trigger_irq
+r_static
 r_void
 id|__init
 id|trigger_irq
@@ -1732,8 +1735,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|PRINTK
 c_func
 (paren
@@ -2813,8 +2814,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|PRINTK
 c_func
 (paren
@@ -3009,7 +3008,7 @@ multiline_comment|/* Disable promiscuous mode, use normal mode */
 )brace
 )brace
 DECL|function|hardware_send_packet
-r_extern
+r_static
 r_void
 id|hardware_send_packet
 c_func
@@ -3262,7 +3261,7 @@ id|dev
 suffix:semicolon
 )brace
 DECL|function|chipset_init
-r_extern
+r_static
 r_void
 id|chipset_init
 c_func
@@ -3432,12 +3431,6 @@ r_static
 r_struct
 id|net_device
 id|dev_ni5010
-op_assign
-(brace
-id|init
-suffix:colon
-id|ni5010_probe
-)brace
 suffix:semicolon
 DECL|variable|io
 r_static
@@ -3528,6 +3521,10 @@ suffix:semicolon
 id|dev_ni5010.base_addr
 op_assign
 id|io
+suffix:semicolon
+id|dev_ni5010.init
+op_assign
+id|ni5010_probe
 suffix:semicolon
 r_if
 c_cond

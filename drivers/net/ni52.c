@@ -82,11 +82,11 @@ mdefine_line|#define NO_NOPCOMMANDS      /* only possible with NUM_XMIT_BUFFS=1 
 multiline_comment|/**************************************************************************/
 multiline_comment|/* different DELAYs */
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) __delay((loops_per_sec&gt;&gt;5)*(x));
+mdefine_line|#define DELAY(x) mdelay(32 * x);
 DECL|macro|DELAY_16
-mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
+mdefine_line|#define DELAY_16(); { udelay(16); }
 DECL|macro|DELAY_18
-mdefine_line|#define DELAY_18(); { __delay( (loops_per_sec&gt;&gt;18)+1 ); }
+mdefine_line|#define DELAY_18(); { udelay(4); }
 multiline_comment|/* wait for command with timeout: */
 DECL|macro|WAIT_4_SCB_CMD
 mdefine_line|#define WAIT_4_SCB_CMD() &bslash;&n;{ int i; &bslash;&n;  for(i=0;i&lt;16384;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd_cuc) break; &bslash;&n;    DELAY_18(); &bslash;&n;    if(i == 16383) { &bslash;&n;      printk(&quot;%s: scb_cmd timed out: %04x,%04x .. disabling i82586!!&bslash;n&quot;,dev-&gt;name,p-&gt;scb-&gt;cmd_cuc,p-&gt;scb-&gt;cus); &bslash;&n;       if(!p-&gt;reseted) { p-&gt;reseted = 1; ni_reset586(); } } } }
@@ -341,10 +341,12 @@ op_star
 id|memtop
 suffix:semicolon
 DECL|member|lock
-DECL|member|reseted
+r_int
 r_int
 id|lock
-comma
+suffix:semicolon
+DECL|member|reseted
+r_int
 id|reseted
 suffix:semicolon
 DECL|member|rfd_last
@@ -489,8 +491,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -508,6 +508,9 @@ op_star
 id|dev
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 id|ni_disint
 c_func
 (paren
@@ -536,9 +539,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -549,10 +551,15 @@ id|ni52_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;ni5210&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
 (brace
 id|ni_reset586
@@ -561,8 +568,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
 )brace
 id|netif_start_queue
@@ -570,8 +576,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -865,6 +869,7 @@ suffix:semicolon
 )brace
 multiline_comment|/******************************************************************&n; * set iscp at the right place, called by ni52_probe1 and open586.&n; */
 DECL|function|alloc586
+r_static
 r_void
 id|alloc586
 c_func
@@ -1103,6 +1108,12 @@ id|base_addr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1261,12 +1272,12 @@ id|ioaddr
 comma
 id|NI52_TOTAL_SIZE
 comma
-l_string|&quot;ni5210&quot;
+id|dev-&gt;name
 )paren
 )paren
 r_return
 op_minus
-id|ENODEV
+id|EBUSY
 suffix:semicolon
 r_if
 c_cond
@@ -5777,49 +5788,24 @@ r_static
 r_struct
 id|net_device
 id|dev_ni52
-op_assign
-(brace
-l_string|&quot;&quot;
-comma
-multiline_comment|/* device name inserted by net_init.c */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x300
-comma
-l_int|9
-comma
-multiline_comment|/* I/O address, IRQ */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|ni52_probe
-)brace
 suffix:semicolon
 multiline_comment|/* set: io,irq,memstart,memend or set it when calling insmod */
 DECL|variable|irq
+r_static
 r_int
 id|irq
 op_assign
 l_int|9
 suffix:semicolon
 DECL|variable|io
+r_static
 r_int
 id|io
 op_assign
 l_int|0x300
 suffix:semicolon
 DECL|variable|memstart
+r_static
 r_int
 id|memstart
 op_assign
@@ -5827,6 +5813,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* e.g 0xd0000 */
 DECL|variable|memend
+r_static
 r_int
 id|memend
 op_assign
@@ -5902,6 +5889,10 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|dev_ni52.init
+op_assign
+id|ni52_probe
+suffix:semicolon
 id|dev_ni52.irq
 op_assign
 id|irq

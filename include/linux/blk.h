@@ -514,6 +514,17 @@ DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_st  
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device) &amp; 0x7f)
+macro_line|#elif (MAJOR_NR == OSST_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;onstream&quot; 
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_osst
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &amp; 0x7f) 
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device) 
 macro_line|#elif (MAJOR_NR == SCSI_CDROM_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;CD-ROM&quot;
@@ -707,7 +718,7 @@ macro_line|#ifndef DEVICE_OFF
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device) do {} while (0)
 macro_line|#endif
-macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
+macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; (MAJOR_NR != OSST_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT

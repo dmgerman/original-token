@@ -5193,7 +5193,7 @@ r_return
 id|dmapage
 suffix:semicolon
 )brace
-macro_line|#ifndef VM_RESERVE
+macro_line|#ifndef VM_RESERVED
 DECL|function|via_mm_swapout
 r_static
 r_int
@@ -5214,7 +5214,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* VM_RESERVE */
+macro_line|#endif /* VM_RESERVED */
 DECL|variable|via_mm_ops
 r_struct
 id|vm_operations_struct
@@ -5225,7 +5225,7 @@ id|nopage
 suffix:colon
 id|via_mm_nopage
 comma
-macro_line|#ifndef VM_RESERVE
+macro_line|#ifndef VM_RESERVED
 id|swapout
 suffix:colon
 id|via_mm_swapout
@@ -5446,10 +5446,10 @@ id|vma-&gt;vm_private_data
 op_assign
 id|card
 suffix:semicolon
-macro_line|#ifdef VM_RESERVE
+macro_line|#ifdef VM_RESERVED
 id|vma-&gt;vm_flags
 op_or_assign
-id|VM_RESERVE
+id|VM_RESERVED
 suffix:semicolon
 macro_line|#endif
 r_if

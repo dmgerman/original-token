@@ -6685,10 +6685,10 @@ op_or
 id|ARLAN_COMMAND_LONG_WAIT_NOW
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|200000
+l_int|200
 )paren
 suffix:semicolon
 id|add_timer

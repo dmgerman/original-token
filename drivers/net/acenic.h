@@ -230,7 +230,6 @@ DECL|member|RxStdPrd
 id|u32
 id|RxStdPrd
 suffix:semicolon
-multiline_comment|/* RxStdPrd */
 DECL|member|Mb4Hi
 id|u32
 id|Mb4Hi
@@ -239,7 +238,6 @@ DECL|member|RxJumboPrd
 id|u32
 id|RxJumboPrd
 suffix:semicolon
-multiline_comment|/* RxJumboPrd */
 DECL|member|Mb5Hi
 id|u32
 id|Mb5Hi
@@ -859,6 +857,8 @@ DECL|macro|RCB_FLG_VLAN_ASSIST
 mdefine_line|#define RCB_FLG_VLAN_ASSIST&t;0x10
 DECL|macro|RCB_FLG_COAL_INT_ONLY
 mdefine_line|#define RCB_FLG_COAL_INT_ONLY&t;0x20
+DECL|macro|RCB_FLG_TX_HOST_RING
+mdefine_line|#define RCB_FLG_TX_HOST_RING&t;0x40
 DECL|macro|RCB_FLG_IEEE_SNAP_SUM
 mdefine_line|#define RCB_FLG_IEEE_SNAP_SUM&t;0x80
 DECL|macro|RCB_FLG_EXT_RX_BD
@@ -867,7 +867,7 @@ DECL|macro|RCB_FLG_RNG_DISABLE
 mdefine_line|#define RCB_FLG_RNG_DISABLE&t;0x200
 multiline_comment|/*&n; * TX ring&n; */
 DECL|macro|TX_RING_ENTRIES
-mdefine_line|#define TX_RING_ENTRIES&t;128
+mdefine_line|#define TX_RING_ENTRIES&t;256&t;
 DECL|macro|TX_RING_SIZE
 mdefine_line|#define TX_RING_SIZE&t;(TX_RING_ENTRIES * sizeof(struct tx_desc))
 DECL|macro|TX_RING_BASE
@@ -1323,11 +1323,11 @@ DECL|struct|ace_private
 r_struct
 id|ace_private
 (brace
-DECL|member|skb
+DECL|member|info
 r_struct
-id|ace_skb
+id|ace_info
 op_star
-id|skb
+id|info
 suffix:semicolon
 DECL|member|regs
 r_struct
@@ -1336,18 +1336,21 @@ op_star
 id|regs
 suffix:semicolon
 multiline_comment|/* register base */
-DECL|member|fw_running
-r_volatile
-r_int
-id|fw_running
+DECL|member|skb
+r_struct
+id|ace_skb
+op_star
+id|skb
 suffix:semicolon
+DECL|member|info_dma
+id|dma_addr_t
+id|info_dma
+suffix:semicolon
+multiline_comment|/* 32/64 bit */
 DECL|member|version
-DECL|member|fw_up
 DECL|member|link
 r_int
 id|version
-comma
-id|fw_up
 comma
 id|link
 suffix:semicolon
@@ -1358,23 +1361,28 @@ id|promisc
 comma
 id|mcast_all
 suffix:semicolon
-multiline_comment|/*&n;&t; * The send ring is located in the shared memory window&n;&t; */
-DECL|member|info
-r_struct
-id|ace_info
-op_star
-id|info
-suffix:semicolon
+multiline_comment|/*&n;&t; * TX elements&n;&t; */
 DECL|member|tx_ring
 r_struct
 id|tx_desc
 op_star
 id|tx_ring
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+id|SMP_CACHE_BYTES
+)paren
+)paren
+)paren
 suffix:semicolon
-DECL|member|info_dma
-id|dma_addr_t
-id|info_dma
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
 suffix:semicolon
+multiline_comment|/* used by TX handling only */
 DECL|member|tx_prd
 id|u32
 id|tx_prd
@@ -1387,11 +1395,7 @@ id|tx_full
 comma
 id|tx_ret_csm
 suffix:semicolon
-DECL|member|timer
-r_struct
-id|timer_list
-id|timer
-suffix:semicolon
+multiline_comment|/*&n;&t; * RX elements&n;&t; */
 DECL|member|std_refill_busy
 r_int
 r_int
@@ -1417,11 +1421,13 @@ suffix:semicolon
 DECL|member|cur_rx_bufs
 id|atomic_t
 id|cur_rx_bufs
-comma
+suffix:semicolon
 DECL|member|cur_mini_bufs
+id|atomic_t
 id|cur_mini_bufs
-comma
+suffix:semicolon
 DECL|member|cur_jumbo_bufs
+id|atomic_t
 id|cur_jumbo_bufs
 suffix:semicolon
 DECL|member|rx_std_skbprd
@@ -1438,19 +1444,6 @@ DECL|member|cur_rx
 id|u32
 id|cur_rx
 suffix:semicolon
-DECL|member|immediate
-r_struct
-id|tq_struct
-id|immediate
-suffix:semicolon
-DECL|member|bh_pending
-DECL|member|jumbo
-r_int
-id|bh_pending
-comma
-id|jumbo
-suffix:semicolon
-multiline_comment|/*&n;&t; * These elements are allocated using consistent PCI dma memory.&n;&t; */
 DECL|member|rx_std_ring
 r_struct
 id|rx_desc
@@ -1475,19 +1468,23 @@ id|rx_desc
 op_star
 id|rx_return_ring
 suffix:semicolon
-DECL|member|rx_ring_base_dma
-id|dma_addr_t
-id|rx_ring_base_dma
+DECL|member|tasklet_pending
+DECL|member|jumbo
+r_int
+id|tasklet_pending
+comma
+id|jumbo
+suffix:semicolon
+DECL|member|ace_tasklet
+r_struct
+id|tasklet_struct
+id|ace_tasklet
 suffix:semicolon
 DECL|member|evt_ring
 r_struct
 id|event
 op_star
 id|evt_ring
-suffix:semicolon
-DECL|member|evt_ring_dma
-id|dma_addr_t
-id|evt_ring_dma
 suffix:semicolon
 DECL|member|evt_prd
 DECL|member|rx_ret_prd
@@ -1502,6 +1499,19 @@ id|rx_ret_prd
 comma
 op_star
 id|tx_csm
+suffix:semicolon
+DECL|member|tx_ring_dma
+id|dma_addr_t
+id|tx_ring_dma
+suffix:semicolon
+multiline_comment|/* 32/64 bit */
+DECL|member|rx_ring_base_dma
+id|dma_addr_t
+id|rx_ring_base_dma
+suffix:semicolon
+DECL|member|evt_ring_dma
+id|dma_addr_t
+id|evt_ring_dma
 suffix:semicolon
 DECL|member|evt_prd_dma
 DECL|member|rx_ret_prd_dma
@@ -1530,6 +1540,11 @@ r_struct
 id|net_device
 op_star
 id|next
+suffix:semicolon
+DECL|member|fw_running
+r_volatile
+r_int
+id|fw_running
 suffix:semicolon
 DECL|member|board_idx
 r_int
@@ -1608,7 +1623,7 @@ r_int
 )paren
 id|addr
 suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
+macro_line|#ifdef ACE_64BIT_PTR
 id|aa-&gt;addrlo
 op_assign
 id|baddr
@@ -1656,7 +1671,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
+macro_line|#ifdef ACE_64BIT_PTR
 id|addr
 op_assign
 (paren
@@ -1907,12 +1922,11 @@ id|data
 suffix:semicolon
 r_static
 r_void
-id|ace_bh
+id|ace_tasklet
 c_func
 (paren
-r_struct
-id|net_device
-op_star
+r_int
+r_int
 id|dev
 )paren
 suffix:semicolon

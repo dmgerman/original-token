@@ -243,6 +243,8 @@ DECL|macro|MSR_MAJOR
 mdefine_line|#define MSR_MAJOR&t;&t;202
 DECL|macro|CPUID_MAJOR
 mdefine_line|#define CPUID_MAJOR&t;&t;203
+DECL|macro|OSST_MAJOR
+mdefine_line|#define OSST_MAJOR&t;206&t;/* OnStream-SCx0 SCSI tape */
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_DISK_MAJOR
 mdefine_line|#define SCSI_DISK_MAJOR(M) ((M) == SCSI_DISK0_MAJOR || &bslash;&n;  ((M) &gt;= SCSI_DISK1_MAJOR &amp;&amp; (M) &lt;= SCSI_DISK7_MAJOR))

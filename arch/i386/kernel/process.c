@@ -1236,9 +1236,9 @@ id|cr4
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * No need to lock the MM as we are the last user&n; */
-DECL|function|destroy_context
+DECL|function|release_segments
 r_void
-id|destroy_context
+id|release_segments
 c_func
 (paren
 r_struct
@@ -1475,9 +1475,9 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * we do not have to muck with descriptors here, that is&n; * done in switch_mm() as needed.&n; */
-DECL|function|init_new_context
-r_int
-id|init_new_context
+DECL|function|copy_segments
+r_void
+id|copy_segments
 c_func
 (paren
 r_struct
@@ -1542,10 +1542,14 @@ c_cond
 op_logical_neg
 id|ldt
 )paren
-r_return
-op_minus
-id|ENOMEM
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;ldt allocation failed&bslash;n&quot;
+)paren
 suffix:semicolon
+r_else
 id|memcpy
 c_func
 (paren
@@ -1562,9 +1566,6 @@ suffix:semicolon
 id|new_mm-&gt;context.segments
 op_assign
 id|ldt
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Save a segment.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; *   Matt Domsch &lt;Matt_Domsch@dell.com&gt;: Detect Alteon 1000baseT cards&n; *   Chip Salzenberg &lt;chip@valinux.com&gt;: Fix race condition between tx&n; *                                       handler and close() cleanup.&n; *   Ken Aaker &lt;kdaaker@rchland.vnet.ibm.com&gt;: Correct check for whether&n; *                                       memory mapped IO is enabled to&n; *                                       make the driver work on RS/6000.&n; *   Takayoshi Kouchi &lt;kouchi@hpc.bs1.fc.nec.co.jp&gt;: Identifying problem&n; *                                       where the driver would disable&n; *                                       bus master mode if it had to disable&n; *                                       write and invalidate.&n; */
+multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998-2000 by Jes Sorensen, &lt;jes@linuxcare.com&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional credits:&n; *   Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt;: Initial Linux/Alpha and trace&n; *       dump support. The trace dump support has not been&n; *       integrated yet however.&n; *   Troy Benjegerdes: Big Endian (PPC) patches.&n; *   Nate Stahl: Better out of memory handling and stats support.&n; *   Aman Singla: Nasty race between interrupt handler and tx code dealing&n; *                with &squot;testing the tx_ret_csm and setting tx_full&squot;&n; *   David S. Miller &lt;davem@redhat.com&gt;: conversion to new PCI dma mapping&n; *                                       infrastructure and Sparc support&n; *   Pierrick Pinasseau (CERN): For lending me an Ultra 5 to test the&n; *                              driver under Linux/Sparc64&n; *   Matt Domsch &lt;Matt_Domsch@dell.com&gt;: Detect Alteon 1000baseT cards&n; *   Chip Salzenberg &lt;chip@valinux.com&gt;: Fix race condition between tx&n; *                                       handler and close() cleanup.&n; *   Ken Aaker &lt;kdaaker@rchland.vnet.ibm.com&gt;: Correct check for whether&n; *                                       memory mapped IO is enabled to&n; *                                       make the driver work on RS/6000.&n; *   Takayoshi Kouchi &lt;kouchi@hpc.bs1.fc.nec.co.jp&gt;: Identifying problem&n; *                                       where the driver would disable&n; *                                       bus master mode if it had to disable&n; *                                       write and invalidate.&n; *   Stephen Hack &lt;stephen_hack@hp.com&gt;: Fixed ace_set_mac_addr for little&n; *                                       endian systems.&n; *   Val Henson &lt;vhenson@esscom.com&gt;:    Reset Jumbo skb producer and&n; *                                       rx producer index when&n; *                                       flushing the Jumbo ring.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -13,9 +13,10 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|INDEX_DEBUG
-macro_line|#undef INDEX_DEBUG
+macro_line|#include &lt;linux/sockios.h&gt;
+macro_line|#ifdef SIOCETHTOOL
 macro_line|#include &lt;linux/ethtool.h&gt;
+macro_line|#endif
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -23,6 +24,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|INDEX_DEBUG
+macro_line|#undef INDEX_DEBUG
+DECL|macro|TX_HOST_RING
+mdefine_line|#define TX_HOST_RING&t;1
 macro_line|#ifdef CONFIG_ACENIC_OMIT_TIGON_I
 DECL|macro|ACE_IS_TIGON_I
 mdefine_line|#define ACE_IS_TIGON_I(ap)&t;0
@@ -67,6 +72,150 @@ macro_line|#ifndef PCI_DEVICE_ID_SGI_ACENIC
 DECL|macro|PCI_DEVICE_ID_SGI_ACENIC
 mdefine_line|#define PCI_DEVICE_ID_SGI_ACENIC&t;0x0009
 macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20400
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_device_id
+id|acenic_pci_tbl
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|PCI_VENDOR_ID_ALTEON
+comma
+id|PCI_DEVICE_ID_ALTEON_ACENIC_FIBRE
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_ALTEON
+comma
+id|PCI_DEVICE_ID_ALTEON_ACENIC_COPPER
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_3COM
+comma
+id|PCI_DEVICE_ID_3COM_3C985
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_NETGEAR
+comma
+id|PCI_DEVICE_ID_NETGEAR_GA620
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_NETGEAR
+comma
+id|PCI_DEVICE_ID_NETGEAR_GA620T
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+multiline_comment|/*&n;&t; * Farallon used the DEC vendor ID on their cards incorrectly.&n;&t; */
+(brace
+id|PCI_VENDOR_ID_DEC
+comma
+id|PCI_DEVICE_ID_FARALLON_PN9000SX
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_SGI
+comma
+id|PCI_DEVICE_ID_SGI_ACENIC
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_CLASS_NETWORK_ETHERNET
+op_lshift
+l_int|8
+comma
+l_int|0xffff00
+comma
+)brace
+comma
+(brace
+)brace
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|acenic_pci_tbl
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef wmb
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;mb()
@@ -79,6 +228,23 @@ macro_line|#ifndef SMP_CACHE_BYTES
 DECL|macro|SMP_CACHE_BYTES
 mdefine_line|#define SMP_CACHE_BYTES&t;L1_CACHE_BYTES
 macro_line|#endif
+macro_line|#if (BITS_PER_LONG == 64)
+DECL|macro|ACE_64BIT_PTR
+mdefine_line|#define ACE_64BIT_PTR&t;1
+macro_line|#endif
+macro_line|#ifndef SET_MODULE_OWNER
+DECL|macro|SET_MODULE_OWNER
+mdefine_line|#define SET_MODULE_OWNER(dev)&t;&t;{do{} while(0);}
+DECL|macro|ACE_MOD_INC_USE_COUNT
+mdefine_line|#define ACE_MOD_INC_USE_COUNT&t;&t;MOD_INC_USE_COUNT
+DECL|macro|ACE_MOD_DEC_USE_COUNT
+mdefine_line|#define ACE_MOD_DEC_USE_COUNT&t;&t;MOD_DEC_USE_COUNT
+macro_line|#else
+DECL|macro|ACE_MOD_INC_USE_COUNT
+mdefine_line|#define ACE_MOD_INC_USE_COUNT&t;&t;{do{} while(0);}
+DECL|macro|ACE_MOD_DEC_USE_COUNT
+mdefine_line|#define ACE_MOD_DEC_USE_COUNT&t;&t;{do{} while(0);}
+macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030d)
 DECL|macro|pci_resource_start
 mdefine_line|#define pci_resource_start(dev, bar)&t;dev-&gt;base_address[bar]
@@ -89,10 +255,6 @@ macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030e)
 DECL|macro|net_device
 mdefine_line|#define net_device device
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02031b)
-DECL|macro|NEW_NETINIT
-mdefine_line|#define NEW_NETINIT
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
 DECL|typedef|dma_addr_t
@@ -156,13 +318,19 @@ DECL|macro|pci_unmap_single
 mdefine_line|#define pci_unmap_single(cookie, address, size, dir)
 macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032b)
-multiline_comment|/*&n; * SoftNet&n; */
+multiline_comment|/*&n; * SoftNet&n; *&n; * For pre-softnet kernels we need to tell the upper layer not to&n; * re-enter start_xmit() while we are in there. However softnet&n; * guarantees not to enter while we are in there so there is no need&n; * to do the netif_stop_queue() dance unless the transmit queue really&n; * gets stuck. This should also improve performance according to tests&n; * done by Aman Singla.&n; */
 DECL|macro|dev_kfree_skb_irq
-mdefine_line|#define dev_kfree_skb_irq(a)&t;dev_kfree_skb(a)
+mdefine_line|#define dev_kfree_skb_irq(a)&t;&t;&t;dev_kfree_skb(a)
 DECL|macro|netif_wake_queue
-mdefine_line|#define netif_wake_queue(dev)&t;clear_bit(0, &amp;dev-&gt;tbusy)
+mdefine_line|#define netif_wake_queue(dev)&t;&t;&t;clear_bit(0, &amp;dev-&gt;tbusy)
 DECL|macro|netif_stop_queue
-mdefine_line|#define netif_stop_queue(dev)&t;set_bit(0, &amp;dev-&gt;tbusy)
+mdefine_line|#define netif_stop_queue(dev)&t;&t;&t;set_bit(0, &amp;dev-&gt;tbusy)
+DECL|macro|late_stop_netif_stop_queue
+mdefine_line|#define late_stop_netif_stop_queue(dev)&t;&t;{do{} while(0);}
+DECL|macro|early_stop_netif_stop_queue
+mdefine_line|#define early_stop_netif_stop_queue(dev)&t;test_and_set_bit(0,&amp;dev-&gt;tbusy)
+DECL|macro|early_stop_netif_wake_queue
+mdefine_line|#define early_stop_netif_wake_queue(dev)&t;netif_wake_queue(dev)
 DECL|function|netif_start_queue
 r_static
 r_inline
@@ -190,20 +358,124 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|ace_mark_net_bh
-mdefine_line|#define ace_mark_net_bh(foo)&t;&t;mark_bh(foo)
+mdefine_line|#define ace_mark_net_bh()&t;&t;&t;mark_bh(NET_BH)
 DECL|macro|netif_queue_stopped
-mdefine_line|#define netif_queue_stopped(dev)&t;dev-&gt;tbusy
+mdefine_line|#define netif_queue_stopped(dev)&t;&t;dev-&gt;tbusy
 DECL|macro|netif_running
-mdefine_line|#define netif_running(dev)&t;&t;dev-&gt;start
+mdefine_line|#define netif_running(dev)&t;&t;&t;dev-&gt;start
 DECL|macro|ace_if_down
-mdefine_line|#define ace_if_down(dev)&t;&t;{do{dev-&gt;start = 0;}while (0);}
+mdefine_line|#define ace_if_down(dev)&t;&t;&t;{do{dev-&gt;start = 0;} while(0);}
+DECL|macro|tasklet_struct
+mdefine_line|#define tasklet_struct&t;&t;&t;&t;tq_struct
+DECL|function|tasklet_schedule
+r_static
+r_inline
+r_void
+id|tasklet_schedule
+c_func
+(paren
+r_struct
+id|tasklet_struct
+op_star
+id|tasklet
+)paren
+(brace
+id|queue_task
+c_func
+(paren
+id|tasklet
+comma
+op_amp
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
+suffix:semicolon
+)brace
+DECL|function|tasklet_init
+r_static
+r_inline
+r_void
+id|tasklet_init
+c_func
+(paren
+r_struct
+id|tasklet_struct
+op_star
+id|tasklet
+comma
+r_void
+(paren
+op_star
+id|func
+)paren
+(paren
+r_int
+r_int
+)paren
+comma
+r_int
+r_int
+id|data
+)paren
+(brace
+id|tasklet-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tasklet-&gt;sync
+op_assign
+l_int|0
+suffix:semicolon
+id|tasklet-&gt;routine
+op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+)paren
+id|func
+suffix:semicolon
+id|tasklet-&gt;data
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|data
+suffix:semicolon
+)brace
+DECL|macro|tasklet_kill
+mdefine_line|#define tasklet_kill(tasklet)&t;&t;&t;{do{} while(0);}
 macro_line|#else
-DECL|macro|NET_BH
-mdefine_line|#define NET_BH&t;&t;&t;0
+DECL|macro|late_stop_netif_stop_queue
+mdefine_line|#define late_stop_netif_stop_queue(dev)&t;&t;netif_stop_queue(dev)
+DECL|macro|early_stop_netif_stop_queue
+mdefine_line|#define early_stop_netif_stop_queue(dev)&t;0
+DECL|macro|early_stop_netif_wake_queue
+mdefine_line|#define early_stop_netif_wake_queue(dev)&t;{do{} while(0);}
 DECL|macro|ace_mark_net_bh
-mdefine_line|#define ace_mark_net_bh(foo)&t;{do{} while(0);}
+mdefine_line|#define ace_mark_net_bh()&t;&t;&t;{do{} while(0);}
 DECL|macro|ace_if_down
-mdefine_line|#define ace_if_down(dev)&t;{do{} while(0);}
+mdefine_line|#define ace_if_down(dev)&t;&t;&t;{do{} while(0);}
+macro_line|#endif
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x02031b)
+DECL|macro|NEW_NETINIT
+mdefine_line|#define NEW_NETINIT
+DECL|macro|ACE_PROBE_ARG
+mdefine_line|#define ACE_PROBE_ARG&t;&t;&t;&t;void
+macro_line|#else
+DECL|macro|ACE_PROBE_ARG
+mdefine_line|#define ACE_PROBE_ARG&t;&t;&t;&t;struct net_device *dev
 macro_line|#endif
 DECL|macro|ACE_MAX_MOD_PARMS
 mdefine_line|#define ACE_MAX_MOD_PARMS&t;8
@@ -372,7 +644,7 @@ id|version
 )braket
 id|__initdata
 op_assign
-l_string|&quot;acenic.c: v0.47 09/18/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
+l_string|&quot;acenic.c: v0.49 12/13/2000  Jes Sorensen, linux-acenic@SunSITE.auc.dk&bslash;n&quot;
 l_string|&quot;                            http://home.cern.ch/~jes/gige/acenic.html&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
@@ -381,6 +653,8 @@ r_struct
 id|net_device
 op_star
 id|root_dev
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -390,25 +664,13 @@ id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef NEW_NETINIT
 DECL|function|acenic_probe
 r_int
 id|__init
 id|acenic_probe
 (paren
-r_void
+id|ACE_PROBE_ARG
 )paren
-macro_line|#else
-r_int
-id|__init
-id|acenic_probe
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-macro_line|#endif
 (brace
 macro_line|#ifdef NEW_NETINIT
 r_struct
@@ -615,6 +877,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1201,7 +1469,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Jes Sorensen &lt;Jes.Sorensen@cern.ch&gt;&quot;
+l_string|&quot;Jes Sorensen &lt;jes@linuxcare.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -1328,22 +1596,13 @@ c_loop
 id|root_dev
 )paren
 (brace
-id|next
-op_assign
-(paren
-(paren
-r_struct
-id|ace_private
-op_star
-)paren
-id|root_dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|next
-suffix:semicolon
 id|ap
 op_assign
 id|root_dev-&gt;priv
+suffix:semicolon
+id|next
+op_assign
+id|ap-&gt;next
 suffix:semicolon
 id|regs
 op_assign
@@ -1736,8 +1995,8 @@ r_return
 id|status
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032a)
+macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
@@ -1767,6 +2026,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#else
 DECL|variable|ace_module_init
 id|module_init
@@ -1782,7 +2042,6 @@ c_func
 id|ace_module_cleanup
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 DECL|function|ace_free_descriptors
 r_static
@@ -2109,6 +2368,41 @@ r_if
 c_cond
 (paren
 id|ap-&gt;evt_ring
+op_eq
+l_int|NULL
+)paren
+r_goto
+id|fail
+suffix:semicolon
+id|size
+op_assign
+(paren
+r_sizeof
+(paren
+r_struct
+id|tx_desc
+)paren
+op_star
+id|TX_RING_ENTRIES
+)paren
+suffix:semicolon
+id|ap-&gt;tx_ring
+op_assign
+id|pci_alloc_consistent
+c_func
+(paren
+id|ap-&gt;pdev
+comma
+id|size
+comma
+op_amp
+id|ap-&gt;tx_ring_dma
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ap-&gt;tx_ring
 op_eq
 l_int|NULL
 )paren
@@ -3216,7 +3510,7 @@ l_string|&quot;  Cache line size %i not &quot;
 l_string|&quot;supported, PCI write and invalidate &quot;
 l_string|&quot;disabled&bslash;n&quot;
 comma
-id|L1_CACHE_BYTES
+id|SMP_CACHE_BYTES
 )paren
 suffix:semicolon
 id|ap-&gt;pci_command
@@ -3484,7 +3778,7 @@ r_int
 )paren
 id|ap-&gt;info_dma
 suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
+macro_line|#ifdef ACE_64BIT_PTR
 id|writel
 c_func
 (paren
@@ -4022,25 +4316,13 @@ op_amp
 id|regs-&gt;WinBase
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
 id|ap-&gt;tx_ring
-op_assign
-(paren
-r_struct
-id|tx_desc
-op_star
-)paren
-id|regs-&gt;Window
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
+comma
 l_int|0
-suffix:semicolon
-id|i
-OL
-(paren
+comma
 id|TX_RING_ENTRIES
 op_star
 r_sizeof
@@ -4048,55 +4330,39 @@ r_sizeof
 r_struct
 id|tx_desc
 )paren
-op_div
-l_int|4
 )paren
 suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|writel
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_int
-r_int
-)paren
-id|ap-&gt;tx_ring
-op_plus
-id|i
-op_star
-l_int|4
-)paren
-suffix:semicolon
-)brace
 id|set_aceaddr
 c_func
 (paren
 op_amp
 id|info-&gt;tx_ctrl.rngptr
 comma
-id|TX_RING_BASE
+id|ap-&gt;tx_ring_dma
 )paren
 suffix:semicolon
 id|info-&gt;tx_ctrl.max_len
 op_assign
 id|TX_RING_ENTRIES
 suffix:semicolon
-macro_line|#if TX_COAL_INTS_ONLY
-id|info-&gt;tx_ctrl.flags
-op_assign
-id|RCB_FLG_COAL_INT_ONLY
-suffix:semicolon
-macro_line|#else
-id|info-&gt;tx_ctrl.flags
+id|tmp
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if TX_COAL_INTS_ONLY
+id|tmp
+op_or_assign
+id|RCB_FLG_COAL_INT_ONLY
+suffix:semicolon
 macro_line|#endif
+id|tmp
+op_or_assign
+id|RCB_FLG_TX_HOST_RING
+suffix:semicolon
+id|info-&gt;tx_ctrl.flags
+op_assign
+id|tmp
+suffix:semicolon
 id|set_aceaddr
 c_func
 (paren
@@ -5231,15 +5497,14 @@ id|ap-&gt;timer
 )paren
 suffix:semicolon
 )brace
-DECL|function|ace_bh
+DECL|function|ace_tasklet
 r_static
 r_void
-id|ace_bh
+id|ace_tasklet
 c_func
 (paren
-r_struct
-id|net_device
-op_star
+r_int
+r_int
 id|dev
 )paren
 (brace
@@ -5248,7 +5513,16 @@ id|ace_private
 op_star
 id|ap
 op_assign
-id|dev-&gt;priv
+(paren
+(paren
+r_struct
+id|net_device
+op_star
+)paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|priv
 suffix:semicolon
 r_int
 id|cur_size
@@ -5415,7 +5689,7 @@ id|cur_size
 )paren
 suffix:semicolon
 )brace
-id|ap-&gt;bh_pending
+id|ap-&gt;tasklet_pending
 op_assign
 l_int|0
 suffix:semicolon
@@ -5460,7 +5734,7 @@ r_return
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Load the standard rx ring.&n; *&n; * Loading rings is safe without holding the spin lock since this is&n; * done only before the device is enabled, thus no interrupts are&n; * generated and by the interrupt handler/bh handler.&n; */
+multiline_comment|/*&n; * Load the standard rx ring.&n; *&n; * Loading rings is safe without holding the spin lock since this is&n; * done only before the device is enabled, thus no interrupts are&n; * generated and by the interrupt handler/tasklet handler.&n; */
 DECL|function|ace_load_std_rx_ring
 r_static
 r_void
@@ -6541,7 +6815,70 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|ACE_IS_TIGON_I
+c_func
+(paren
+id|ap
+)paren
+)paren
+(brace
+r_struct
+id|cmd
+id|cmd
+suffix:semicolon
+id|cmd.evt
+op_assign
+id|C_SET_RX_JUMBO_PRD_IDX
+suffix:semicolon
+id|cmd.code
+op_assign
+l_int|0
+suffix:semicolon
+id|cmd.idx
+op_assign
+l_int|0
+suffix:semicolon
+id|ace_issue_cmd
+c_func
+(paren
+id|ap-&gt;regs
+comma
+op_amp
+id|cmd
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|writel
+c_func
+(paren
+l_int|0
+comma
+op_amp
+(paren
+(paren
+id|ap-&gt;regs
+)paren
+op_member_access_from_pointer
+id|RxJumboPrd
+)paren
+)paren
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|ap-&gt;jumbo
+op_assign
+l_int|0
+suffix:semicolon
+id|ap-&gt;rx_jumbo_skbprd
 op_assign
 l_int|0
 suffix:semicolon
@@ -7249,49 +7586,34 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t;&t; * Question here is whether one should not skip&n;&t;&t;&t; * these writes - I have never seen any errors&n;&t;&t;&t; * caused by the NIC actually trying to access&n;&t;&t;&t; * these incorrectly.&n;&t;&t;&t; */
-macro_line|#if (BITS_PER_LONG == 64)
-id|writel
-c_func
-(paren
-l_int|0
-comma
-op_amp
+macro_line|#ifdef ACE_64BIT_PTR
 id|ap-&gt;tx_ring
 (braket
 id|idx
 )braket
 dot
 id|addr.addrhi
-)paren
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
-id|writel
-c_func
-(paren
-l_int|0
-comma
-op_amp
 id|ap-&gt;tx_ring
 (braket
 id|idx
 )braket
 dot
 id|addr.addrlo
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
+op_assign
 l_int|0
-comma
-op_amp
+suffix:semicolon
 id|ap-&gt;tx_ring
 (braket
 id|idx
 )braket
 dot
 id|flagsize
-)paren
+op_assign
+l_int|0
 suffix:semicolon
 id|idx
 op_assign
@@ -7342,7 +7664,6 @@ suffix:semicolon
 id|ace_mark_net_bh
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * TX ring is no longer full, aka the&n;&t;&t;&t; * transmitter is working fine - kill timer.&n;&t;&t;&t; */
@@ -7423,7 +7744,7 @@ r_int
 id|cur_size
 suffix:semicolon
 r_int
-id|run_bh
+id|run_tasklet
 op_assign
 l_int|0
 suffix:semicolon
@@ -7486,7 +7807,7 @@ id|cur_size
 suffix:semicolon
 )brace
 r_else
-id|run_bh
+id|run_tasklet
 op_assign
 l_int|1
 suffix:semicolon
@@ -7561,7 +7882,7 @@ id|cur_size
 suffix:semicolon
 )brace
 r_else
-id|run_bh
+id|run_tasklet
 op_assign
 l_int|1
 suffix:semicolon
@@ -7632,7 +7953,7 @@ id|cur_size
 suffix:semicolon
 )brace
 r_else
-id|run_bh
+id|run_tasklet
 op_assign
 l_int|1
 suffix:semicolon
@@ -7641,30 +7962,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|run_bh
+id|run_tasklet
 op_logical_and
 op_logical_neg
-id|ap-&gt;bh_pending
+id|ap-&gt;tasklet_pending
 )paren
 (brace
-id|ap-&gt;bh_pending
+id|ap-&gt;tasklet_pending
 op_assign
 l_int|1
 suffix:semicolon
-id|queue_task
+id|tasklet_schedule
 c_func
 (paren
 op_amp
-id|ap-&gt;immediate
-comma
-op_amp
-id|tq_immediate
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|IMMEDIATE_BH
+id|ap-&gt;ace_tasklet
 )paren
 suffix:semicolon
 )brace
@@ -7904,7 +8216,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
+id|ACE_MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/*&n;&t; * Setup the timer&n;&t; */
 id|init_timer
@@ -7927,32 +8239,20 @@ op_assign
 id|ace_timer
 suffix:semicolon
 multiline_comment|/*&n;&t; * Setup the bottom half rx ring refill handler&n;&t; */
-id|INIT_LIST_HEAD
+id|tasklet_init
 c_func
 (paren
 op_amp
-id|ap-&gt;immediate.list
-)paren
-suffix:semicolon
-id|ap-&gt;immediate.sync
-op_assign
-l_int|0
-suffix:semicolon
-id|ap-&gt;immediate.routine
-op_assign
+id|ap-&gt;ace_tasklet
+comma
+id|ace_tasklet
+comma
 (paren
-r_void
-op_star
+r_int
+r_int
 )paren
-(paren
-r_void
-op_star
-)paren
-id|ace_bh
-suffix:semicolon
-id|ap-&gt;immediate.data
-op_assign
 id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -8071,6 +8371,13 @@ op_amp
 id|cmd
 )paren
 suffix:semicolon
+id|tasklet_kill
+c_func
+(paren
+op_amp
+id|ap-&gt;ace_tasklet
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Make sure one CPU is not processing packets while&n;&t; * buffers are being released by another.&n;&t; */
 id|save_flags
 c_func
@@ -8130,46 +8437,24 @@ c_cond
 id|skb
 )paren
 (brace
-id|writel
+id|memset
 c_func
 (paren
-l_int|0
-comma
 op_amp
 id|ap-&gt;tx_ring
 (braket
 id|i
 )braket
 dot
-id|addr.addrhi
+id|addr
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|tx_desc
 )paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|ap-&gt;tx_ring
-(braket
-id|i
-)braket
-dot
-id|addr.addrlo
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|ap-&gt;tx_ring
-(braket
-id|i
-)braket
-dot
-id|flagsize
 )paren
 suffix:semicolon
 id|pci_unmap_single
@@ -8235,7 +8520,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
+id|ACE_MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -8281,31 +8566,19 @@ id|idx
 comma
 id|flagsize
 suffix:semicolon
-multiline_comment|/*&n;&t; * ARGH, there is just no pretty way to do this&n;&t; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02032b)
+multiline_comment|/*&n;&t; * This only happens with pre-softnet, ie. 2.2.x kernels.&n;&t; */
 r_if
 c_cond
 (paren
-id|test_and_set_bit
+id|early_stop_netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 )paren
 r_return
 l_int|1
 suffix:semicolon
-macro_line|#else
-id|netif_stop_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 id|idx
 op_assign
 id|ap-&gt;tx_prd
@@ -8384,40 +8657,6 @@ id|idx
 dot
 id|mapping
 suffix:semicolon
-macro_line|#if (BITS_PER_LONG == 64)
-id|writel
-c_func
-(paren
-id|addr
-op_rshift
-l_int|32
-comma
-op_amp
-id|ap-&gt;tx_ring
-(braket
-id|idx
-)braket
-dot
-id|addr.addrhi
-)paren
-suffix:semicolon
-macro_line|#endif
-id|writel
-c_func
-(paren
-id|addr
-op_amp
-l_int|0xffffffff
-comma
-op_amp
-id|ap-&gt;tx_ring
-(braket
-id|idx
-)braket
-dot
-id|addr.addrlo
-)paren
-suffix:semicolon
 id|flagsize
 op_assign
 (paren
@@ -8430,19 +8669,28 @@ op_or
 id|BD_FLG_END
 )paren
 suffix:semicolon
-id|writel
+id|set_aceaddr
 c_func
 (paren
-id|flagsize
-comma
 op_amp
 id|ap-&gt;tx_ring
 (braket
 id|idx
 )braket
 dot
-id|flagsize
+id|addr
+comma
+id|addr
 )paren
+suffix:semicolon
+id|ap-&gt;tx_ring
+(braket
+id|idx
+)braket
+dot
+id|flagsize
+op_assign
+id|flagsize
 suffix:semicolon
 id|wmb
 c_func
@@ -8508,7 +8756,7 @@ id|HZ
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The following check will fix a race between the interrupt&n;&t;&t; * handler increasing the tx_ret_csm and testing for tx_full&n;&t;&t; * and this tx routine&squot;s testing the tx_ret_csm and setting&n;&t;&t; * the tx_full; note that this fix makes assumptions on the&n;&t;&t; * ordering of writes (sequential consistency will fly; TSO&n;&t;&t; * processor order would work too) but that&squot;s what lock-less&n;&t;&t; * programming is all about&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The following check will fix a race between the interrupt&n;&t;&t; * handler increasing the tx_ret_csm and testing for tx_full&n;&t;&t; * and this tx routine&squot;s testing the tx_ret_csm and setting&n;&t;&t; * the tx_full; note that this fix makes assumptions on the&n;&t;&t; * ordering of writes (sequential consistency will fly; TSO&n;&t;&t; * processor order would work too) but that&squot;s what lock-less&n;&t;&t; * programming is all about&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -8541,7 +8789,17 @@ op_amp
 id|ap-&gt;timer
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * We may not need this one in the post softnet era&n;&t;&t;&t; * in this case this can be changed to a&n;&t;&t;&t; * early_stop_netif_wake_queue(dev);&n;&t;&t;&t; */
 id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|late_stop_netif_stop_queue
 c_func
 (paren
 id|dev
@@ -8551,8 +8809,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * No need for it to be atomic - seems it needs to be&n;&t;&t; */
-id|netif_wake_queue
+id|early_stop_netif_wake_queue
 c_func
 (paren
 id|dev
@@ -8785,6 +9042,7 @@ r_int
 id|cmd
 )paren
 (brace
+macro_line|#ifdef SIOCETHTOOL
 r_struct
 id|ace_private
 op_star
@@ -9060,6 +9318,7 @@ op_assign
 id|AUTONEG_DISABLE
 suffix:semicolon
 macro_line|#if 0
+multiline_comment|/*&n;&t;&t; * Current struct ethtool_cmd is insufficient&n;&t;&t; */
 id|ecmd.trace
 op_assign
 id|readl
@@ -9406,6 +9665,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 op_minus
 id|EOPNOTSUPP
@@ -9440,7 +9700,7 @@ id|ace_regs
 op_star
 id|regs
 suffix:semicolon
-id|u16
+id|u8
 op_star
 id|da
 suffix:semicolon
@@ -9476,7 +9736,7 @@ suffix:semicolon
 id|da
 op_assign
 (paren
-id|u16
+id|u8
 op_star
 )paren
 id|dev-&gt;dev_addr
@@ -9501,6 +9761,13 @@ id|da
 (braket
 l_int|0
 )braket
+op_lshift
+l_int|8
+op_or
+id|da
+(braket
+l_int|1
+)braket
 comma
 op_amp
 id|regs-&gt;MacAddrHi
@@ -9512,15 +9779,33 @@ c_func
 (paren
 id|da
 (braket
-l_int|1
+l_int|2
+)braket
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
+id|da
+(braket
+l_int|3
 )braket
 op_lshift
 l_int|16
 )paren
 op_or
+(paren
 id|da
 (braket
-l_int|2
+l_int|4
+)braket
+op_lshift
+l_int|8
+)paren
+op_or
+id|da
+(braket
+l_int|5
 )braket
 comma
 op_amp
@@ -11543,5 +11828,5 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
+multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -D__SMP__ -D__KERNEL__ -DMODULE -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -DMODVERSIONS -include ../../include/linux/modversions.h   -c -o acenic.o acenic.c&quot;&n; * End:&n; */
 eof

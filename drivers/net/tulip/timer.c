@@ -472,6 +472,9 @@ suffix:colon
 r_case
 id|COMPEX9881
 suffix:colon
+r_case
+id|DM910X
+suffix:colon
 r_default
 suffix:colon
 (brace

@@ -2440,6 +2440,8 @@ DECL|macro|PCIPCI_TRITON
 mdefine_line|#define PCIPCI_TRITON&t;&t;2
 DECL|macro|PCIPCI_NATOMA
 mdefine_line|#define PCIPCI_NATOMA&t;&t;4
+DECL|macro|PCIPCI_VIAETBF
+mdefine_line|#define PCIPCI_VIAETBF&t;&t;8
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* LINUX_PCI_H */
 eof

@@ -1002,10 +1002,10 @@ op_plus
 id|DAYNA_RESET
 )paren
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|333333
+l_int|333
 )paren
 suffix:semicolon
 )brace
@@ -1522,10 +1522,10 @@ suffix:semicolon
 )brace
 )brace
 r_else
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|333333
+l_int|333
 )paren
 suffix:semicolon
 )brace

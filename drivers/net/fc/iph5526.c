@@ -1,4 +1,4 @@
-multiline_comment|/**********************************************************************&n; * iph5526.c: IP/SCSI driver for the Interphase 5526 PCI Fibre Channel&n; *&t;&t;&t;  Card.&n; * Copyright (C) 1999 Vineet M Abraham &lt;vma@iol.unh.edu&gt;&n; *&n; * This program is free software; you can redistribute it and/or &n; * modify it under the terms of the GNU General Public License as &n; * published by the Free Software Foundation; either version 2, or &n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *********************************************************************/
+multiline_comment|/**********************************************************************&n; * iph5526.c: IP/SCSI driver for the Interphase 5526 PCI Fibre Channel&n; *&t;&t;&t;  Card.&n; * Copyright (C) 1999 Vineet M Abraham &lt;vmabraham@hotmail.com&gt;&n; *&n; * This program is free software; you can redistribute it and/or &n; * modify it under the terms of the GNU General Public License as &n; * published by the Free Software Foundation; either version 2, or &n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *********************************************************************/
 multiline_comment|/**********************************************************************&n;Log:&n;Vineet M Abraham&n;02.12.99 Support multiple cards.&n;03.15.99 Added Fabric support.&n;04.04.99 Added N_Port support.&n;04.15.99 Added SCSI support.&n;06.18.99 Added ABTS Protocol.&n;06.24.99 Fixed data corruption when multiple XFER_RDYs are received.&n;07.07.99 Can be loaded as part of the Kernel. Changed semaphores. Added&n;         more checks before invalidating SEST entries.&n;07.08.99 Added Broadcast IP stuff and fixed an unicast timeout bug.&n;***********************************************************************/
 multiline_comment|/* TODO:&n;&t;R_T_TOV set to 15msec in Loop topology. Need to be 100 msec.&n;    SMP testing.&n;&t;Fix ADISC Tx before completing FLOGI. &n;*/
 DECL|variable|version
@@ -8,10 +8,9 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;iph5526.c:v1.0 07.08.99 Vineet Abraham (vma@iol.unh.edu)&bslash;n&quot;
+l_string|&quot;iph5526.c:v1.0 07.08.99 Vineet Abraham (vmabraham@hotmail.com)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -81,6 +80,51 @@ DECL|macro|ALIGNED_SFS_ADDR
 mdefine_line|#define ALIGNED_SFS_ADDR(addr) ((((unsigned long)(addr) + (SFS_BUFFER_SIZE - 1)) &amp; ~(SFS_BUFFER_SIZE - 1)) - (unsigned long)(addr))
 DECL|macro|ALIGNED_ADDR
 mdefine_line|#define ALIGNED_ADDR(addr, len) ((((unsigned long)(addr) + (len - 1)) &amp; ~(len - 1)) - (unsigned long)(addr))
+DECL|variable|__initdata
+r_static
+r_struct
+id|pci_device_id
+id|iph5526_pci_tbl
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|PCI_VENDOR_ID_INTERPHASE
+comma
+id|PCI_DEVICE_ID_INTERPHASE_5526
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_INTERPHASE
+comma
+id|PCI_DEVICE_ID_INTERPHASE_55x6
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|iph5526_pci_tbl
+)paren
+suffix:semicolon
 DECL|macro|MAX_FC_CARDS
 mdefine_line|#define MAX_FC_CARDS 2
 DECL|variable|fc
@@ -100,8 +144,6 @@ r_static
 r_int
 r_int
 id|pci_irq_line
-op_assign
-l_int|0
 suffix:semicolon
 r_static
 r_struct
@@ -1351,7 +1393,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
 r_static
 r_int
 id|iph5526_probe_pci
@@ -1363,7 +1404,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|iph5526_probe
 r_int
 id|__init
@@ -1376,7 +1416,6 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
@@ -1398,13 +1437,11 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
 DECL|function|iph5526_probe_pci
 r_static
 r_int
@@ -1418,19 +1455,6 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifndef MODULE
-r_struct
-id|fc_info
-op_star
-id|fi
-suffix:semicolon
-r_static
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef MODULE
 r_struct
 id|fc_info
@@ -1444,8 +1468,18 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef MODULE
+macro_line|#else
+r_struct
+id|fc_info
+op_star
+id|fi
+suffix:semicolon
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1612,7 +1646,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif  /* CONFIG_PCI */
 DECL|function|fcdev_init
 r_static
 r_int
@@ -12686,10 +12719,10 @@ id|fi-&gt;i_r.ptr_ichip_hw_control_reg
 )paren
 suffix:semicolon
 multiline_comment|/*wait for chip to get reset */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/*de-assert reset */
@@ -22277,10 +22310,10 @@ id|no_of_hosts
 )paren
 suffix:semicolon
 multiline_comment|/* This is to make sure that the ACC to the PRLI comes in &n;&t; * for the last ALPA. &n;&t; */
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|1000000
+l_int|1000
 )paren
 suffix:semicolon
 multiline_comment|/* Ugly! Let the Gods forgive me */

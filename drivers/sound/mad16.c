@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OAK OTI-605&t;Mozart&t;&t;(later version with MPU401 Midi)&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928, although later&n; * issues of the card, using the OTI-605 chip, have an MPU-401 compatable Midi&n; * port. This port is configured differently to that of the OPTi audio chips.&n; *&n; * NOTE! If you want to set CD-ROM address and/or joystick enable, define&n; *       MAD16_CONF in local.h as combination of the following bits:&n; *&n; *      0x01    - joystick disabled&n; *&n; *      CD-ROM type selection (select just one):&n; *      0x00    - none&n; *      0x02    - Sony 31A&n; *      0x04    - Mitsumi&n; *      0x06    - Panasonic (type &quot;LaserMate&quot;, not &quot;Sound Blaster&quot;)&n; *      0x08    - Secondary IDE (address 0x170)&n; *      0x0a    - Primary IDE (address 0x1F0)&n; *      &n; *      For example Mitsumi with joystick disabled = 0x04|0x01 = 0x05&n; *      For example LaserMate (for use with sbpcd) plus joystick = 0x06&n; *      &n; *    MAD16_CDSEL:&n; *      This defaults to CD I/O 0x340, no IRQ and DMA3 &n; *      (DMA5 with Mitsumi or IDE). If you like to change these, define&n; *      MAD16_CDSEL with the following bits:&n; *&n; *      CD-ROM port: 0x00=340, 0x40=330, 0x80=360 or 0xc0=320&n; *      OPL4 select: 0x20=OPL4, 0x00=OPL3&n; *      CD-ROM irq: 0x00=disabled, 0x04=IRQ5, 0x08=IRQ7, 0x0c=IRQ3, 0x10=IRQ9,&n; *                  0x14=IRQ10 and 0x18=IRQ11.&n; *&n; *      CD-ROM DMA (Sony or Panasonic): 0x00=DMA3, 0x01=DMA2, 0x02=DMA1 or 0x03=disabled&n; *   or&n; *      CD-ROM DMA (Mitsumi or IDE):    0x00=DMA5, 0x01=DMA6, 0x02=DMA7 or 0x03=disabled&n; *&n; *      For use with sbpcd, address 0x340, set MAD16_CDSEL to 0x03 or 0x23.&n; *&n; *&t;Changes&n; *&t;&n; *&t;Alan Cox&t;&t;Clean up, added module selections.&n; *&n; *&t;A. Wik&t;&t;&t;Added support for Opti924 PnP.&n; *&t;&t;&t;&t;Improved debugging support.&t;16-May-1998&n; *&t;&t;&t;&t;Fixed bug.&t;&t;&t;16-Jun-1998&n; *&n; *      Torsten Duwe            Made Opti924 PnP support non-destructive&n; *                                                             &t;23-Dec-1998&n; *&n; *&t;Paul Grayson&t;&t;Added support for Midi on later Mozart cards.&n; *&t;&t;&t;&t;&t;&t;&t;&t;25-Nov-1999&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit.&n; *&t;Arnaldo C. de Melo&t;got rid of attach_uart401       21-Sep-2000&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * mad16.c&n; *&n; * Initialization code for OPTi MAD16 compatible audio chips. Including&n; *&n; *      OPTi 82C928     MAD16           (replaced by C929)&n; *      OAK OTI-601D    Mozart&n; *      OAK OTI-605&t;Mozart&t;&t;(later version with MPU401 Midi)&n; *      OPTi 82C929     MAD16 Pro&n; *      OPTi 82C930&n; *      OPTi 82C924&n; *&n; * These audio interface chips don&squot;t produce sound themselves. They just&n; * connect some other components (OPL-[234] and a WSS compatible codec)&n; * to the PC bus and perform I/O, DMA and IRQ address decoding. There is&n; * also a UART for the MPU-401 mode (not 82C928/Mozart).&n; * The Mozart chip appears to be compatible with the 82C928, although later&n; * issues of the card, using the OTI-605 chip, have an MPU-401 compatable Midi&n; * port. This port is configured differently to that of the OPTi audio chips.&n; *&n; *&t;Changes&n; *&t;&n; *&t;Alan Cox&t;&t;Clean up, added module selections.&n; *&n; *&t;A. Wik&t;&t;&t;Added support for Opti924 PnP.&n; *&t;&t;&t;&t;Improved debugging support.&t;16-May-1998&n; *&t;&t;&t;&t;Fixed bug.&t;&t;&t;16-Jun-1998&n; *&n; *      Torsten Duwe            Made Opti924 PnP support non-destructive&n; *                                                             &t;23-Dec-1998&n; *&n; *&t;Paul Grayson&t;&t;Added support for Midi on later Mozart cards.&n; *&t;&t;&t;&t;&t;&t;&t;&t;25-Nov-1999&n; *&t;Christoph Hellwig&t;Adapted to module_init/module_exit.&n; *&t;Arnaldo C. de Melo&t;got rid of attach_uart401       21-Sep-2000&n; *&n; *&t;Pavel Rabel&t;&t;Clean up                           Nov-2000&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -1319,16 +1319,6 @@ id|cfg
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MAD16_CONF
-id|cfg
-op_or_assign
-(paren
-l_int|0x0f
-op_amp
-id|MAD16_CONF
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1432,28 +1422,6 @@ l_int|0x04
 suffix:colon
 l_int|0x00
 suffix:semicolon
-macro_line|#ifdef MAD16_CDSEL
-r_if
-c_cond
-(paren
-id|MAD16_CDSEL
-op_amp
-l_int|0x20
-)paren
-(brace
-id|mad_write
-c_func
-(paren
-id|MC4_PORT
-comma
-l_int|0x62
-op_or
-id|cfg
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* opl4 */
-r_else
 id|mad_write
 c_func
 (paren
@@ -1464,19 +1432,6 @@ op_or
 id|cfg
 )paren
 suffix:semicolon
-multiline_comment|/* opl3 */
-macro_line|#else
-id|mad_write
-c_func
-(paren
-id|MC4_PORT
-comma
-l_int|0x52
-op_or
-id|cfg
-)paren
-suffix:semicolon
-macro_line|#endif
 id|mad_write
 c_func
 (paren
@@ -2108,19 +2063,6 @@ op_and_assign
 op_complement
 l_int|0x0f
 suffix:semicolon
-macro_line|#if defined(MAD16_CONF)
-id|tmp
-op_or_assign
-(paren
-(paren
-id|MAD16_CONF
-)paren
-op_amp
-l_int|0x0f
-)paren
-suffix:semicolon
-multiline_comment|/* CD-ROM and joystick bits */
-macro_line|#endif
 id|mad_write
 c_func
 (paren
@@ -2129,12 +2071,6 @@ comma
 id|tmp
 )paren
 suffix:semicolon
-macro_line|#if defined(MAD16_CONF) &amp;&amp; defined(MAD16_CDSEL)
-id|tmp
-op_assign
-id|MAD16_CDSEL
-suffix:semicolon
-macro_line|#else
 id|tmp
 op_assign
 id|mad_read
@@ -2143,14 +2079,6 @@ c_func
 id|MC2_PORT
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef MAD16_OPL4
-id|tmp
-op_or_assign
-l_int|0x20
-suffix:semicolon
-multiline_comment|/* Enable OPL4 access */
-macro_line|#endif
 id|mad_write
 c_func
 (paren
@@ -2767,46 +2695,10 @@ id|mpu_attached
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_int
-id|valid_ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x330
-comma
-l_int|0x320
-comma
-l_int|0x310
-comma
-l_int|0x300
-)brace
-suffix:semicolon
-r_static
-r_int
-id|valid_irqs
-(braket
-)braket
-op_assign
-(brace
-l_int|9
-comma
-l_int|10
-comma
-l_int|5
-comma
-l_int|7
-)brace
-suffix:semicolon
 r_int
 r_char
 id|tmp
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/* A variable with secret power */
 r_if
 c_cond
 (paren
@@ -2840,10 +2732,6 @@ id|C929
 multiline_comment|/* Early chip. No MPU support. Just SB MIDI */
 (brace
 macro_line|#ifdef CONFIG_MAD16_OLDCARD
-r_int
-r_char
-id|tmp
-suffix:semicolon
 id|tmp
 op_assign
 id|mad_read
@@ -3005,10 +2893,6 @@ l_int|1
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* assuming all later Mozart cards are identified as&n;&t;&t; * either 82C928 or Mozart. If so, following code attempts&n;&t;&t; * to set MPU register. TODO - add probing&n;&t;&t; */
-r_int
-r_char
-id|tmp
-suffix:semicolon
 id|tmp
 op_assign
 id|mad_read
@@ -3165,36 +3049,56 @@ op_or_assign
 l_int|0x80
 suffix:semicolon
 multiline_comment|/* MPU-401 enable */
-multiline_comment|/*&n; * Set the MPU base bits&n; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|5
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
+multiline_comment|/* Set the MPU base bits */
+r_switch
 c_cond
 (paren
-id|i
-OG
-l_int|3
+id|hw_config-&gt;io_base
 )paren
-multiline_comment|/* Out of array bounds */
 (brace
+r_case
+l_int|0x300
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x60
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x310
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x40
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x320
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x20
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x330
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;MAD16 / Mozart: Invalid MIDI port 0x%x&bslash;n&quot;
+l_string|&quot;MAD16: Invalid MIDI port 0x%x&bslash;n&quot;
 comma
 id|hw_config-&gt;io_base
 )paren
@@ -3203,85 +3107,62 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
+multiline_comment|/* Set the MPU IRQ bits */
+r_switch
 c_cond
 (paren
-id|valid_ports
-(braket
-id|i
-)braket
-op_eq
-id|hw_config-&gt;io_base
+id|hw_config-&gt;irq
 )paren
 (brace
+r_case
+l_int|5
+suffix:colon
 id|tmp
 op_or_assign
-id|i
-op_lshift
-l_int|5
+l_int|0x10
 suffix:semicolon
 r_break
 suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * Set the MPU IRQ bits&n; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
+r_case
+l_int|7
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x18
 suffix:semicolon
-id|i
-OL
-l_int|5
+r_break
 suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|i
-OG
-l_int|3
-)paren
-multiline_comment|/* Out of array bounds */
-(brace
+r_case
+l_int|9
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x00
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|10
+suffix:colon
+id|tmp
+op_or_assign
+l_int|0x08
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;MAD16 / Mozart: Invalid MIDI IRQ %d&bslash;n&quot;
+l_string|&quot;MAD16: Invalid MIDI IRQ %d&bslash;n&quot;
 comma
 id|hw_config-&gt;irq
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|valid_irqs
-(braket
-id|i
-)braket
-op_eq
-id|hw_config-&gt;irq
-)paren
-(brace
-id|tmp
-op_or_assign
-id|i
-op_lshift
-l_int|3
-suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 )brace
 id|mad_write
 c_func

@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTVP_H_
 DECL|macro|_BTTVP_H_
 mdefine_line|#define _BTTVP_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,48)
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,50)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
@@ -14,7 +14,7 @@ macro_line|#include &quot;audiochip.h&quot;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* ---------------------------------------------------------- */
 multiline_comment|/* bttv-driver.c                                              */
-multiline_comment|/* insmod options */
+multiline_comment|/* insmod options / kernel args */
 r_extern
 r_int
 r_int

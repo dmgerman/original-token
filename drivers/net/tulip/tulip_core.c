@@ -15,7 +15,7 @@ id|version
 )braket
 id|__devinitdata
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.11 (November 3, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.12 (December 17, 2000)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* A few user-configurable values. */
 multiline_comment|/* Maximum events (Rx packets, etc.) to handle at each interrupt. */
@@ -479,6 +479,24 @@ id|t21142_timer
 )brace
 comma
 (brace
+l_string|&quot;Davicom DM9102/DM9102A&quot;
+comma
+l_int|128
+comma
+l_int|0x0001ebef
+comma
+id|HAS_MII
+op_or
+id|HAS_MEDIA_TABLE
+op_or
+id|CSR12_IN_SROM
+op_or
+id|HAS_ACPI
+comma
+id|tulip_timer
+)brace
+comma
+(brace
 l_int|0
 )brace
 comma
@@ -796,7 +814,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DC21140
+id|DM910X
 )brace
 comma
 (brace
@@ -812,7 +830,7 @@ l_int|0
 comma
 l_int|0
 comma
-id|DC21140
+id|DM910X
 )brace
 comma
 (brace
@@ -2771,6 +2789,10 @@ op_logical_or
 id|tp-&gt;chip_id
 op_eq
 id|COMPEX9881
+op_logical_or
+id|tp-&gt;chip_id
+op_eq
+id|DM910X
 )paren
 (brace
 id|printk
@@ -8043,6 +8065,9 @@ r_break
 suffix:semicolon
 r_case
 id|DC21140
+suffix:colon
+r_case
+id|DM910X
 suffix:colon
 r_default
 suffix:colon
