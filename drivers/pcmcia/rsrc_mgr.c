@@ -172,9 +172,11 @@ multiline_comment|/* etc */
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*======================================================================&n;&n;    Linux resource management extensions&n;    &n;======================================================================*/
-DECL|macro|check_io_region
-mdefine_line|#define check_io_region(b,n) (0)
+multiline_comment|/*======================================================================&n;&n;    Linux resource management extensions&n;&n;======================================================================*/
+DECL|macro|check_io_resource
+mdefine_line|#define check_io_resource(b,n)&t;check_resource(&amp;ioport_resource, (b), (n))
+DECL|macro|check_mem_resource
+mdefine_line|#define check_mem_resource(b,n)&t;check_resource(&amp;iomem_resource, (b), (n))
 multiline_comment|/*======================================================================&n;&n;    These manage the internal databases of available resources.&n;    &n;======================================================================*/
 DECL|function|add_interval
 r_static
@@ -603,15 +605,7 @@ l_int|8
 r_if
 c_cond
 (paren
-id|check_region
-c_func
-(paren
-id|i
-comma
-l_int|8
-)paren
-op_logical_or
-id|check_io_region
+id|check_io_resource
 c_func
 (paren
 id|i
@@ -730,15 +724,7 @@ l_int|8
 r_if
 c_cond
 (paren
-id|check_region
-c_func
-(paren
-id|i
-comma
-l_int|8
-)paren
-op_logical_or
-id|check_io_region
+id|check_io_resource
 c_func
 (paren
 id|i
@@ -1065,7 +1051,7 @@ r_if
 c_cond
 (paren
 (paren
-id|check_mem_region
+id|check_mem_resource
 c_func
 (paren
 id|j
@@ -1132,7 +1118,7 @@ r_if
 c_cond
 (paren
 (paren
-id|check_mem_region
+id|check_mem_resource
 c_func
 (paren
 id|j
@@ -1795,8 +1781,7 @@ id|align
 r_if
 c_cond
 (paren
-(paren
-id|check_region
+id|check_io_resource
 c_func
 (paren
 r_try
@@ -1805,19 +1790,6 @@ id|num
 )paren
 op_eq
 l_int|0
-)paren
-op_logical_and
-(paren
-id|check_io_region
-c_func
-(paren
-r_try
-comma
-id|num
-)paren
-op_eq
-l_int|0
-)paren
 )paren
 (brace
 op_star
@@ -1983,7 +1955,7 @@ id|align
 r_if
 c_cond
 (paren
-id|check_mem_region
+id|check_mem_resource
 c_func
 (paren
 r_try

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerly uart401_midi.c)&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;Reformatted, removed sound_mem usage, use normal Linux&n; *&t;&t;&t;interrupt allocation. Protect against bogus unload&n; *&t;&t;&t;Fixed to allow IRQ &gt; 15&n; *&n; * Status:&n; *&t;&t;Untested&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;

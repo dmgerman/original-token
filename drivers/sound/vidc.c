@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * drivers/sound/vidc.c&n; *&n; * VIDC20 audio driver.&n; *&n; * Copyright (C) 1997-2000 by Russell King &lt;rmk@arm.linux.org.uk&gt;&n; *&n; * The VIDC20 sound hardware consists of the VIDC20 itself, a DAC and a DMA&n; * engine.  The DMA transfers fixed-format (16-bit little-endian linear)&n; * samples to the VIDC20, which then transfers this data serially to the&n; * DACs.  The samplerate is controlled by the VIDC.&n; *&n; * We currently support a mixer device, but it is currently non-functional.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;

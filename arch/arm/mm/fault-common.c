@@ -16,7 +16,6 @@ op_star
 id|regs
 comma
 r_int
-r_int
 id|err
 )paren
 suffix:semicolon

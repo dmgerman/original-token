@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: syscall.c,v 1.3 2000/02/04 07:40:24 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

@@ -5225,7 +5225,7 @@ id|ints
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Set the CHS from the ADFS boot block if it is present.  This is not ideal&n; * since if there are any non-ADFS partitions on the disk, this won&squot;t work!&n; * Hence, I want to get rid of this...&n; * &t;Please, do. It does seriously sucking things.&n; */
+multiline_comment|/*&n; * Set the CHS from the ADFS boot block if it is present.  This is not ideal&n; * since if there are any non-ADFS partitions on the disk, this won&squot;t work!&n; * Hence, I want to get rid of this...&n; */
 DECL|function|xd_set_geometry
 r_void
 id|xd_set_geometry

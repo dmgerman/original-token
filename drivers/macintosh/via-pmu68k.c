@@ -6283,31 +6283,22 @@ id|file_operations
 id|pmu_device_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no seek */
+id|read
+suffix:colon
 id|pmu_read
 comma
+id|write
+suffix:colon
 id|pmu_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* no readdir */
-l_int|NULL
-comma
-multiline_comment|/* no poll yet */
+id|ioctl
+suffix:colon
 id|pmu_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* no mmap */
+id|open
+suffix:colon
 id|pmu_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* no release */
 )brace
 suffix:semicolon
 r_static

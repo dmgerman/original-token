@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#ifdef CONFIG_MCA
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;

@@ -14320,8 +14320,6 @@ r_void
 (brace
 r_int
 id|ControllerNumber
-comma
-id|LogicalDriveNumber
 suffix:semicolon
 id|DAC960_Initialize
 c_func

@@ -7,7 +7,6 @@ macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
 macro_line|#include &lt;asm/ioc3.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-macro_line|#include &lt;asm/sn/klconfig.h&gt;
 macro_line|#include &lt;asm/sn/gda.h&gt;
 DECL|typedef|cpumask_t
 r_typedef

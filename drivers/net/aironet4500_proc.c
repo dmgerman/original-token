@@ -1540,7 +1540,7 @@ op_star
 id|rid_dir
 suffix:semicolon
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 op_assign

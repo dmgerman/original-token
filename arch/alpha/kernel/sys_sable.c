@@ -23,17 +23,19 @@ id|spinlock_t
 id|sable_irq_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
-suffix:colon
+suffix:semicolon
 multiline_comment|/*&n; *   For SABLE, which is really baroque, we manage 40 IRQ&squot;s, but the&n; *   hardware really only supports 24, not via normal ISA PIC,&n; *   but cascaded custom 8259&squot;s, etc.&n; *&t; 0-7  (char at 536)&n; *&t; 8-15 (char at 53a)&n; *&t;16-23 (char at 53c)&n; *&n; * Summary Registers (536/53a/53c):&n; *&n; * Bit      Meaning               Kernel IRQ&n; *------------------------------------------&n; * 0        PCI slot 0&t;&t;&t;34&n; * 1        NCR810 (builtin)&t;&t;33&n; * 2        TULIP (builtin)&t;&t;32&n; * 3        mouse&t;&t;&t;12&n; * 4        PCI slot 1&t;&t;&t;35&n; * 5        PCI slot 2&t;&t;&t;36&n; * 6        keyboard&t;&t;&t;1&n; * 7        floppy&t;&t;&t;6&n; * 8        COM2&t;&t;&t;3&n; * 9        parallel port&t;&t;7&n; *10        EISA irq 3&t;&t;&t;-&n; *11        EISA irq 4&t;&t;&t;-&n; *12        EISA irq 5&t;&t;&t;5&n; *13        EISA irq 6&t;&t;&t;-&n; *14        EISA irq 7&t;&t;&t;-&n; *15        COM1&t;&t;&t;4&n; *16        EISA irq 9&t;&t;&t;9&n; *17        EISA irq 10&t;&t;&t;10&n; *18        EISA irq 11&t;&t;&t;11&n; *19        EISA irq 12&t;&t;&t;-&n; *20        EISA irq 13&t;&t;&t;-&n; *21        EISA irq 14&t;&t;&t;14&n; *22        NC&t;&t;&t;&t;15&n; *23        IIC&t;&t;&t;&t;-&n; */
 r_static
 r_struct
 (brace
+DECL|member|irq_to_mask
 r_char
 id|irq_to_mask
 (braket
 l_int|40
 )braket
 suffix:semicolon
+DECL|member|mask_to_irq
 r_char
 id|mask_to_irq
 (braket
@@ -41,10 +43,12 @@ l_int|40
 )braket
 suffix:semicolon
 multiline_comment|/* Note mask bit is true for DISABLED irqs.  */
+DECL|member|shadow_mask
 r_int
 r_int
 id|shadow_mask
 suffix:semicolon
+DECL|variable|sable_irq_swizzle
 )brace
 id|sable_irq_swizzle
 op_assign
@@ -804,6 +808,8 @@ dot
 id|status
 op_assign
 id|IRQ_DISABLED
+op_or
+id|IRQ_LEVEL
 suffix:semicolon
 id|irq_desc
 (braket

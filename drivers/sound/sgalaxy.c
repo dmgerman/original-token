@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/sgalaxy.c&n; *&n; * Low level driver for Aztech Sound Galaxy cards.&n; * Copyright 1998 Artur Skawina &lt;skawina@geocities.com&gt;&n; *&n; * Supported cards:&n; *    Aztech Sound Galaxy Waverider Pro 32 - 3D&n; *    Aztech Sound Galaxy Washington 16&n; *&n; * Based on cs4232.c by Hannu Savolainen and Alan Cox.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;

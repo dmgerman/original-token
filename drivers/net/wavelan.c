@@ -15105,7 +15105,7 @@ multiline_comment|/* Release spinlock here so that wv_hw_reset() can grab it */
 id|spin_unlock
 (paren
 op_amp
-id|lp-&gt;lock
+id|lp-&gt;spinlock
 )paren
 suffix:semicolon
 multiline_comment|/* Check the state of the command unit. */
@@ -16023,7 +16023,7 @@ id|spin_lock_init
 c_func
 (paren
 op_amp
-id|lp-&gt;lock
+id|lp-&gt;spinlock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Fill in the fields of the device structure&n;&t; * with generic Ethernet values.&n;&t; */

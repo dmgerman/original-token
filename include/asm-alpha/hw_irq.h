@@ -1,6 +1,7 @@
 macro_line|#ifndef _ALPHA_HW_IRQ_H
 DECL|macro|_ALPHA_HW_IRQ_H
 mdefine_line|#define _ALPHA_HW_IRQ_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|function|hw_resend_irq
 r_static
 r_inline

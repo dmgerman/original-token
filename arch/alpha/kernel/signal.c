@@ -2565,6 +2565,14 @@ id|frame-&gt;extramask
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
 multiline_comment|/* Set up to return from userspace.  If provided, use a stub&n;&t;   already in userspace.  */
 r_if
 c_cond
@@ -2948,6 +2956,14 @@ op_star
 id|set
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
 multiline_comment|/* Set up to return from userspace.  If provided, use a stub&n;&t;   already in userspace.  */
 r_if

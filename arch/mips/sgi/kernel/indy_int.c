@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: indy_int.c,v 1.17 2000/02/04 07:40:23 ralf Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) &n; *                    - Indigo2 changes&n; *                    - Interrupt handling fixes&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;

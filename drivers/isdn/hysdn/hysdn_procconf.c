@@ -1716,33 +1716,26 @@ id|file_operations
 id|conf_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|hysdn_dummy_lseek
 comma
+id|read
+suffix:colon
 id|hysdn_conf_read
 comma
+id|write
+suffix:colon
 id|hysdn_conf_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|hysdn_conf_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|hysdn_conf_close
 comma
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*****************************/

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * parport.h: ARM-specific parport initialisation&n; *&n; * Copyright (C) 1999  Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&n; * This file should only be included by drivers/parport/parport_pc.c.&n; */
-macro_line|#ifndef __ASM_ARM_PARPORT_H
-DECL|macro|__ASM_ARM_PARPORT_H
-mdefine_line|#define __ASM_ARM_PARPORT_H
+macro_line|#ifndef __ASMARM_PARPORT_H
+DECL|macro|__ASMARM_PARPORT_H
+mdefine_line|#define __ASMARM_PARPORT_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
@@ -29,6 +29,15 @@ id|irq
 comma
 r_int
 id|dma
+)paren
+suffix:semicolon
+r_static
+r_int
+id|__devinit
+id|parport_pc_init_superio
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|variable|__maybe_initdata
@@ -156,12 +165,14 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#ifdef CONFIG_PCI
 id|count
 op_add_assign
 id|parport_pc_init_superio
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Probe all the likely ports. */
 r_if
 c_cond
@@ -241,6 +252,7 @@ l_int|NULL
 id|count
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 id|count
 op_add_assign
 id|parport_pc_init_pci
@@ -256,10 +268,11 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 id|count
 suffix:semicolon
 )brace
-macro_line|#endif /* !(_ASM_I386_PARPORT_H) */
+macro_line|#endif /* !(_ASMARM_PARPORT_H) */
 eof

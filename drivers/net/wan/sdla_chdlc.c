@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdla_chdlc.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver. Cisco HDLC module.&n;*&n;* Authors: &t;Nenad Corbic &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack  &n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 20, 1999  Nenad Corbic &t;Fixed zero length API bug.&n;* Sep 30, 1999  Nenad Corbic    Fixed dynamic IP and route setup.&n;* Sep 23, 1999  Nenad Corbic    Added SMP support, fixed tracing &n;* Sep 13, 1999  Nenad Corbic&t;Split up Port 0 and 1 into separate devices.&n;* Jun 02, 1999  Gideon Hack     Added support for the S514 adapter.&n;* Oct 30, 1998&t;Jaspreet Singh&t;Added Support for CHDLC API (HDLC STREAMING).&n;* Oct 28, 1998&t;Jaspreet Singh&t;Added Support for Dual Port CHDLC.&n;* Aug 07, 1998&t;David Fong&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdla_chdlc.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver. Cisco HDLC module.&n;*&n;* Authors: &t;Nenad Corbic &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack  &n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Feb 28, 2000  Jeff Garzik&t;softnet updates&n;* Nov 20, 1999  Nenad Corbic &t;Fixed zero length API bug.&n;* Sep 30, 1999  Nenad Corbic    Fixed dynamic IP and route setup.&n;* Sep 23, 1999  Nenad Corbic    Added SMP support, fixed tracing &n;* Sep 13, 1999  Nenad Corbic&t;Split up Port 0 and 1 into separate devices.&n;* Jun 02, 1999  Gideon Hack     Added support for the S514 adapter.&n;* Oct 30, 1998&t;Jaspreet Singh&t;Added Support for CHDLC API (HDLC STREAMING).&n;* Oct 28, 1998&t;Jaspreet Singh&t;Added Support for Dual Port CHDLC.&n;* Aug 07, 1998&t;David Fong&t;Initial version.&n;*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
@@ -44,6 +44,8 @@ DECL|macro|CHDLC_API
 mdefine_line|#define CHDLC_API 0x01
 DECL|macro|PORT
 mdefine_line|#define PORT(x)   (x == 0 ? &quot;PRIMARY&quot; : &quot;SECONDARY&quot; )
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT&t;(5*HZ)
 multiline_comment|/******Data Structures*****************************************************/
 multiline_comment|/* This structure is placed in the private data area of the device structure.&n; * The card structure used to occupy the private area but now the following &n; * structure will incorporate the card structure along with CHDLC specific data&n; */
 DECL|struct|chdlc_private_area
@@ -280,6 +282,16 @@ suffix:semicolon
 r_static
 r_int
 id|if_close
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|if_tx_timeout
 (paren
 r_struct
 id|net_device
@@ -1623,7 +1635,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 r_return
@@ -2239,6 +2255,15 @@ op_assign
 op_amp
 id|if_stats
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|if_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 multiline_comment|/* Initialize media-specific parameters */
 id|dev-&gt;flags
 op_or_assign
@@ -2388,7 +2413,11 @@ multiline_comment|/* Only one open per interface is allowed */
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 r_return
@@ -2665,17 +2694,11 @@ id|chdlc_priv_area-&gt;router_start_time
 op_assign
 id|tv.tv_sec
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev-&gt;flags
 op_or_assign
@@ -2737,9 +2760,11 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|wanpipe_close
 c_func
@@ -2877,6 +2902,49 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*============================================================================&n; * Handle transmit timeout event from netif watchdog&n; */
+DECL|function|if_tx_timeout
+r_static
+r_void
+id|if_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|chdlc_private_area_t
+op_star
+id|chdlc_priv_area
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+id|sdla_t
+op_star
+id|card
+op_assign
+id|chdlc_priv_area-&gt;card
+suffix:semicolon
+multiline_comment|/* If our device stays busy for at least 5 seconds then we will&n;&t; * kick start the device by making dev-&gt;tbusy = 0.  We expect &n;&t; * that our device never stays busy more than 5 seconds. So this&n;&t; * is only used as a last resort. &n;&t; */
+op_increment
+id|card-&gt;wandev.stats.collisions
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Transmit timeout !&bslash;n&quot;
+comma
+id|card-&gt;devname
+)paren
+suffix:semicolon
+multiline_comment|/* unbusy the interface */
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*============================================================================&n; * Send a packet on a network interface.&n; * o set tbusy flag (marks start of the transmission) to block a timer-based&n; *   transmit from overlapping.&n; * o check link state. If link is not up, then drop the packet.&n; * o execute adapter send command.&n; * o free socket buffer&n; *&n; * Return:&t;0&t;complete (socket buffer must be freed)&n; *&t;&t;non-0&t;packet may be re-transmitted (tbusy must be set)&n; *&n; * Notes:&n; * 1. This routine is called either by the protocol stack or by the &quot;net&n; *    bottom half&quot; (with interrupts enabled).&n; * 2. Setting tbusy flag will inhibit further transmit requests from the&n; *    protocol stack and can be used for flow control with protocol layer.&n; */
 DECL|function|if_send
 r_static
@@ -2948,57 +3016,13 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* If our device stays busy for at least 5 seconds then we will&n;&t;&t; * kick start the device by making dev-&gt;tbusy = 0.  We expect &n;&t;&t; * that our device never stays busy more than 5 seconds. So this&n;&t;&t; * is only used as a last resort. &n;&t;&t; */
-op_increment
-id|card-&gt;wandev.stats.collisions
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|jiffies
-op_minus
-id|chdlc_priv_area-&gt;tick_counter
-)paren
-OL
-(paren
-l_int|5
-op_star
-id|HZ
-)paren
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Transmit timeout !&bslash;n&quot;
-comma
-id|card-&gt;devname
-)paren
-suffix:semicolon
-multiline_comment|/* unbusy the interface */
-id|dev-&gt;tbusy
-op_assign
 l_int|0
 suffix:semicolon
 )brace
@@ -3331,9 +3355,11 @@ id|len
 )paren
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|chdlc_priv_area-&gt;tick_counter
 op_assign
@@ -3349,39 +3375,28 @@ r_else
 op_increment
 id|card-&gt;wandev.stats.tx_packets
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|card-&gt;wandev.stats.tx_bytes
 op_add_assign
 id|len
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
 )paren
-(brace
-macro_line|#ifdef LINUX_2_1
+)paren
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
 id|clear_bit
 c_func
 (paren
@@ -3414,7 +3429,11 @@ id|smp_flags
 suffix:semicolon
 )brace
 r_return
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Check to see if the packet to be transmitted contains a broadcast or&n; * multicast source IP address.&n; */
@@ -5205,14 +5224,10 @@ id|chdlc_priv_area
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_break
@@ -5575,7 +5590,11 @@ c_cond
 (paren
 id|dev
 op_logical_and
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 id|len

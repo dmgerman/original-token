@@ -2404,7 +2404,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;vesafb: framebuffer at 0x%lu, mapped to 0x%p, size %dk&bslash;n&quot;
+l_string|&quot;vesafb: framebuffer at 0x%lx, mapped to 0x%p, size %dk&bslash;n&quot;
 comma
 id|video_base
 comma

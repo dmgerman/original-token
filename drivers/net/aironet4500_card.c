@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t; Aironet 4500 PCI-ISA-i365 driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/*&n; *&t; Aironet 4500 PCI-ISA-i365 driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&t;Revision 0.2, Feb 27, 2000&n; *&t;&t;Jeff Garzik - softnet, cleanups&n; *&n; */
 macro_line|#ifdef MODULE
 DECL|variable|awc_version
 r_static
@@ -7,7 +7,7 @@ r_char
 op_star
 id|awc_version
 op_assign
-l_string|&quot;aironet4500_cards.c v0.1 28/03/99 Elmer Joandi, elmer@ylenurme.ee.&bslash;n&quot;
+l_string|&quot;aironet4500_cards.c v0.2  Feb 27, 2000  Elmer Joandi, elmer@ylenurme.ee.&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
@@ -30,9 +30,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &quot;aironet4500.h&quot;
 DECL|macro|PCI_VENDOR_ID_AIRONET
 mdefine_line|#define PCI_VENDOR_ID_AIRONET &t;0x14b9
@@ -71,15 +68,14 @@ id|awc_pci_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
-r_int
-id|pci_bus
-comma
-r_int
-id|device_nr
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -100,7 +96,7 @@ id|awc4500_pci_probe
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -133,7 +129,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -172,18 +168,11 @@ suffix:semicolon
 id|u32
 id|pci_cisaddr
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|u16
-id|pci_caps
-op_assign
-l_int|0
+r_struct
+id|pci_dev
+op_star
+id|pdev
 suffix:semicolon
-id|u8
-id|pci_caps_ptr
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -227,238 +216,63 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|pcibios_read_config_word
+id|pdev
+op_assign
+id|pci_find_slot
 c_func
 (paren
 id|awc_pci_bus
 comma
 id|awc_pci_dev
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+r_continue
+suffix:semicolon
 id|vendor
-)paren
+op_assign
+id|pdev-&gt;vendor
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
 id|device
-)paren
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20300
 id|pci_irq_line
 op_assign
-id|pci_find_slot
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|irq
+id|pdev-&gt;irq
 suffix:semicolon
 id|pci_memaddr
 op_assign
-id|pci_find_slot
-c_func
+id|pci_resource_start
 (paren
-id|awc_pci_bus
+id|pdev
 comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|resource
-(braket
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|pci_cisaddr
 op_assign
-id|pci_find_slot
-c_func
+id|pci_resource_start
 (paren
-id|awc_pci_bus
+id|pdev
 comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|resource
-(braket
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pci_find_slot
-c_func
+id|pci_resource_start
 (paren
-id|awc_pci_bus
+id|pdev
 comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|resource
-(braket
 l_int|2
-)braket
-dot
-id|start
-suffix:semicolon
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
-id|pci_irq_line
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|irq
-suffix:semicolon
-id|pci_memaddr
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|base_address
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|pci_cisaddr
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|base_address
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|pci_ioaddr
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-)paren
-op_member_access_from_pointer
-id|base_address
-(braket
-l_int|2
-)braket
-suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_dword
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pci_memaddr
 )paren
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|pci_cisaddr
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_BASE_ADDRESS_2
-comma
-op_amp
-id|pci_ioaddr
-)paren
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq_line
-)paren
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-id|PCI_STATUS
-comma
-op_amp
-id|pci_caps
-)paren
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
-comma
-l_int|0x34
-comma
-op_amp
-id|pci_caps_ptr
-)paren
-suffix:semicolon
-macro_line|#endif 
-singleline_comment|// 2.2
-macro_line|#endif 
-singleline_comment|// 2.3
 singleline_comment|//&t;&t;printk(&quot;&bslash;n pci capabilities %x and ptr %x &bslash;n&quot;,pci_caps,pci_caps_ptr);
 multiline_comment|/* Remove I/O space marker in bit 0. */
 r_if
@@ -487,46 +301,6 @@ id|PCI_DEVICE_AIRONET_4500
 )paren
 r_continue
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|pci_ioaddr
-op_amp
-l_int|1
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;awc4X00 ioaddr location mismatch &bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-suffix:semicolon
-id|pci_ioaddr
-op_and_assign
-op_complement
-l_int|3
-suffix:semicolon
-id|pci_cisaddr
-op_and_assign
-op_complement
-l_int|0xf
-suffix:semicolon
-id|pci_memaddr
-op_and_assign
-op_complement
-l_int|0xf
-suffix:semicolon
-macro_line|#endif&t;&t;
 singleline_comment|//&t;&t;if (check_region(pci_ioaddr, AIRONET4X00_IO_SIZE) ||
 singleline_comment|//&t;&t;&t;check_region(pci_cisaddr, AIRONET4X00_CIS_SIZE) ||
 singleline_comment|//&t;&t;&t;check_region(pci_memaddr, AIRONET4X00_MEM_SIZE)) {
@@ -545,20 +319,17 @@ l_string|&quot;aironet4x00 ioaddr&quot;
 suffix:semicolon
 singleline_comment|//&t;&t;request_region(pci_cisaddr, AIRONET4X00_CIS_SIZE, &quot;aironet4x00 cis&quot;);
 singleline_comment|//&t;&t;request_region(pci_memaddr, AIRONET4X00_MEM_SIZE, &quot;aironet4x00 mem&quot;);
-singleline_comment|//&t;&t;pcibios_write_config_word(awc_pci_bus, awc_pci_dev,
-singleline_comment|//&t;&t;&t;&t;&t;&t;  PCI_COMMAND, 0);
+singleline_comment|//&t;&t;pci_write_config_word(pdev, PCI_COMMAND, 0);
 id|udelay
 c_func
 (paren
 l_int|10000
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -596,12 +367,10 @@ comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -609,7 +378,7 @@ id|new_command
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&t;&t;if (device == PCI_DEVICE_AIRONET_4800)&n;&t;&t;&t;pcibios_write_config_dword(awc_pci_bus, awc_pci_dev,&n;&t;&t;&t;&t;0x40, 0x00000000);&n;&n;&t;&t;udelay(1000);&n;*/
+multiline_comment|/*&t;&t;if (device == PCI_DEVICE_AIRONET_4800)&n;&t;&t;&t;pci_write_config_dword(pdev, 0x40, 0x00000000);&n;&n;&t;&t;udelay(1000);&n;*/
 r_if
 c_cond
 (paren
@@ -617,12 +386,10 @@ id|device
 op_eq
 id|PCI_DEVICE_AIRONET_4800
 )paren
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 c_func
 (paren
-id|awc_pci_bus
-comma
-id|awc_pci_dev
+id|pdev
 comma
 l_int|0x40
 comma
@@ -637,9 +404,7 @@ c_func
 (paren
 id|dev
 comma
-id|awc_pci_bus
-comma
-id|awc_pci_dev
+id|pdev
 comma
 id|pci_ioaddr
 comma
@@ -686,15 +451,14 @@ id|awc_pci_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
-r_int
-id|pci_bus
-comma
-r_int
-id|device_nr
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -811,14 +575,6 @@ op_assign
 op_amp
 id|awc_close
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -827,7 +583,20 @@ id|dev-&gt;irq
 op_assign
 id|pci_irq_line
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20100
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|awc_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|request_irq
 c_func
 (paren
@@ -844,24 +613,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else 
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|awc_interrupt
-comma
-id|SA_SHIRQ
-op_or
-id|SA_INTERRUPT
-comma
-l_string|&quot;Aironet 4X00&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 id|awc_private_init
 c_func
 (paren
@@ -942,14 +693,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 singleline_comment|//&t;if (register_netdev(dev) != 0) {
 singleline_comment|//&t;&t;printk(KERN_NOTICE &quot;awc_cs: register_netdev() failed&bslash;n&quot;);
 singleline_comment|//&t;&t;goto failed;
@@ -1120,7 +863,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -1140,14 +883,9 @@ macro_line|#endif
 singleline_comment|//MODULE
 macro_line|#endif /* CONFIG_AIRONET4500_PCI */
 macro_line|#ifdef CONFIG_AIRONET4500_PNP
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 macro_line|#include &lt;linux/isapnp.h&gt;
-macro_line|#else
-macro_line|#include &quot;isapnp.h&quot;
-macro_line|#endif
 DECL|macro|AIRONET4X00_IO_SIZE
 mdefine_line|#define AIRONET4X00_IO_SIZE &t;0x40
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|macro|isapnp_logdev
 mdefine_line|#define isapnp_logdev pci_dev
 DECL|macro|isapnp_dev
@@ -1162,14 +900,6 @@ DECL|macro|PNP_BUS_NUMBER
 mdefine_line|#define PNP_BUS_NUMBER number
 DECL|macro|PNP_DEV_NUMBER
 mdefine_line|#define PNP_DEV_NUMBER devfn
-macro_line|#else 
-DECL|macro|PNP_BUS
-mdefine_line|#define PNP_BUS dev
-DECL|macro|PNP_BUS_NUMBER
-mdefine_line|#define PNP_BUS_NUMBER csn
-DECL|macro|PNP_DEV_NUMBER
-mdefine_line|#define PNP_DEV_NUMBER number
-macro_line|#endif
 DECL|function|awc4500_pnp_hw_reset
 r_int
 (def_block
@@ -1177,7 +907,7 @@ id|awc4500_pnp_hw_reset
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -1187,12 +917,6 @@ id|isapnp_logdev
 op_star
 id|logdev
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-r_struct
-id|isapnp_config
-id|cfg
-suffix:semicolon
-macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -1326,85 +1050,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-r_if
-c_cond
-(paren
-id|isapnp_config_init
-c_func
-(paren
-op_amp
-id|cfg
-comma
-id|logdev
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;cfg init failed &bslash;n&quot;
-)paren
-suffix:semicolon
-id|isapnp_cfg_end
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
-id|cfg.port
-(braket
-l_int|0
-)braket
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-id|cfg.irq
-(braket
-l_int|0
-)braket
-op_assign
-id|dev-&gt;irq
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|isapnp_configure
-c_func
-(paren
-op_amp
-id|cfg
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s hw_reset, isapnp configure failed (out of resources?)&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|isapnp_cfg_end
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-macro_line|#else
-macro_line|#endif
 id|isapnp_activate
 c_func
 (paren
@@ -1428,7 +1073,7 @@ id|awc4500_pnp_probe
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -1468,12 +1113,6 @@ id|isapnp_logdev
 op_star
 id|logdev
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-r_struct
-id|isapnp_config
-id|cfg
-suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -1501,11 +1140,7 @@ c_func
 l_int|1
 )paren
 comma
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300&t;&t;&t;&t;&t;&t;
-id|isa_index
-macro_line|#else
 l_int|0
-macro_line|#endif&t;&t;&t;&t;&t;&t; 
 )paren
 suffix:semicolon
 r_if
@@ -1592,68 +1227,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-r_if
-c_cond
-(paren
-id|isapnp_config_init
-c_func
-(paren
-op_amp
-id|cfg
-comma
-id|logdev
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;cfg init failed &bslash;n&quot;
-)paren
-suffix:semicolon
-id|isapnp_cfg_end
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|isapnp_configure
-c_func
-(paren
-op_amp
-id|cfg
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;isapnp configure failed (out of resources?)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|isapnp_cfg_end
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-macro_line|#endif
 id|isapnp_activate
 c_func
 (paren
@@ -1666,22 +1239,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300&t;&t;
-id|isa_ioaddr
-op_assign
-id|cfg.port
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|isa_irq_line
-op_assign
-id|cfg.irq
-(braket
-l_int|0
-)braket
-suffix:semicolon
-macro_line|#else
 id|isa_irq_line
 op_assign
 id|logdev-&gt;irq
@@ -1695,7 +1252,6 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-macro_line|#endif
 id|request_region
 c_func
 (paren
@@ -1818,14 +1374,6 @@ op_assign
 op_amp
 id|awc_close
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|isa_ioaddr
@@ -1834,7 +1382,20 @@ id|dev-&gt;irq
 op_assign
 id|isa_irq_line
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20100
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|awc_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|request_irq
 c_func
 (paren
@@ -1851,22 +1412,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|awc_interrupt
-comma
-id|SA_SHIRQ
-comma
-l_string|&quot;Aironet 4X00&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 id|awc_private_init
 c_func
 (paren
@@ -2036,14 +1581,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|card
 op_increment
 suffix:semicolon
@@ -2294,7 +1831,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -2353,7 +1890,6 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* &n;&t;EXPORT_SYMBOL(irq);&n;&t;EXPORT_SYMBOL(io);&n;*/
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|MODULE_PARM
 c_func
 (paren
@@ -2386,14 +1922,13 @@ comma
 l_string|&quot;Aironet 4x00 ISA non-PNP ioports,required&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|awc4500_isa_probe
 r_int
 id|awc4500_isa_probe
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -2603,14 +2138,6 @@ op_assign
 op_amp
 id|awc_close
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|isa_ioaddr
@@ -2619,7 +2146,20 @@ id|dev-&gt;irq
 op_assign
 id|isa_irq_line
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20100
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|awc_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|request_irq
 c_func
 (paren
@@ -2634,22 +2174,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#else
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|awc_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;Aironet 4X00&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 id|awc_private_init
 c_func
 (paren
@@ -2764,14 +2288,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|card
 op_increment
 suffix:semicolon
@@ -2953,7 +2469,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -3996,7 +3512,7 @@ id|s
 )paren
 (brace
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -4055,14 +3571,6 @@ op_assign
 op_amp
 id|awc_close
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|s-&gt;irq
@@ -4070,6 +3578,20 @@ suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|s-&gt;io
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|awc_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|awc_private_init
 c_func
@@ -4145,14 +3667,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4297,7 +3811,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon

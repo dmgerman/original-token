@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Brad Douglas &lt;brad@neruo.com&gt;&n; *&t;&t;&t;&t;- x86 support&n; *&t;&t;&t;&t;- MTRR&n; *&t;&t;&t;&t;- Probe ROM for PLL&n; *&t;&t;&t;&t;- modedb&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- PPLL_REF_DIV &amp; XTALIN calculation    -done for x86&n; *&t;&t;- determine MCLK from previous setting -done for x86            &n; *              - calculate XCLK, rather than probe BIOS&n; *&t;&t;- hardware cursor support&n; *              - acceleration&n; *&t;&t;- ioctl()&squot;s&n; */
+multiline_comment|/* $Id: aty128fb.c,v 1.1.1.1.36.1 1999/12/11 09:03:05 Exp $&n; *  linux/drivers/video/aty128fb.c -- Frame buffer device for ATI Rage128&n; *&n; *  Copyright (C) 1999-2000, Brad Douglas &lt;brad@neruo.com&gt;&n; *  Copyright (C) 1999, Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *                Ani Joshi / Jeff Garzik&n; *                      - Code cleanup&n; *&n; *  Based off of Geert&squot;s atyfb.c and vfb.c.&n; *&n; *  TODO:&n; *&t;&t;- panning&n; *&t;&t;- monitor sensing (DDC)&n; *              - virtual display&n; *&t;&t;- other platform support (only ppc/x86 supported)&n; *&t;&t;- PPLL_REF_DIV &amp; XTALIN calculation    -done for x86&n; *&t;&t;- determine MCLK from previous setting -done for x86            &n; *              - calculate XCLK, rather than probe BIOS&n; *&t;&t;- hardware cursor support&n; *              - acceleration (do not use with Rage128 Pro!)&n; *&t;&t;- ioctl()&squot;s&n; */
 multiline_comment|/*&n; * A special note of gratitude to ATI&squot;s devrel for providing documentation,&n; * example code and hardware. Thanks Nitya.&t;-atong and brad&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -22,7 +22,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#if defined(CONFIG_PPC)
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#ifdef CONFIG_NVRAM
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#endif
 macro_line|#include &lt;video/macmodes.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
@@ -37,14 +39,6 @@ macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#endif /* CONFIG_MTRR */
 macro_line|#include &quot;aty128.h&quot;
-multiline_comment|/* compatibility with older kernels */
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-mdefine_line|#define KERNEL_VERSION(x,y,z) (((x)&lt;&lt;16)+(y)&lt;&lt;8)+(z))
-macro_line|#endif
 multiline_comment|/* Debug flag */
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
@@ -143,7 +137,6 @@ comma
 id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 macro_line|#ifndef MODULE
 multiline_comment|/* default modedb mode */
 DECL|variable|__initdata
@@ -182,7 +175,6 @@ comma
 id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* chip description information */
 DECL|struct|aty128_chip_info
@@ -572,7 +564,25 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_PPC)
+macro_line|#ifdef CONFIG_PPC
+macro_line|#ifdef CONFIG_NVRAM_NOT_DEFINED
+DECL|variable|__initdata
+r_static
+r_int
+id|default_vmode
+id|__initdata
+op_assign
+id|VMODE_NVRAM
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|default_cmode
+id|__initdata
+op_assign
+id|CMODE_NVRAM
+suffix:semicolon
+macro_line|#else
 DECL|variable|__initdata
 r_static
 r_int
@@ -589,6 +599,7 @@ id|__initdata
 op_assign
 id|CMODE_8
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
 DECL|variable|mtrr
@@ -1123,25 +1134,13 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
-r_void
+r_int
 id|aty128fb_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_FB_OF
-r_void
-id|aty128fb_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|aty128fbcon_switch
@@ -1285,15 +1284,6 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_FB_OF
-r_static
-r_void
-id|aty128pci_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_static
 r_int
 id|aty128_pci_register
@@ -1311,7 +1301,6 @@ op_star
 id|aci
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_struct
 id|fb_info_aty128
@@ -6262,6 +6251,8 @@ comma
 id|aty128fb_name
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC /* why?  I don&squot;t know */
+op_star
 id|fix-&gt;smem_start
 op_assign
 (paren
@@ -6269,12 +6260,21 @@ r_int
 )paren
 id|info-&gt;frame_buffer_phys
 suffix:semicolon
-id|fix-&gt;smem_len
+op_star
+id|fix-&gt;mmio_start
 op_assign
 (paren
-id|u32
+r_int
 )paren
-id|info-&gt;vram_size
+id|info-&gt;regbase_phys
+suffix:semicolon
+macro_line|#else
+id|fix-&gt;smem_start
+op_assign
+(paren
+r_int
+)paren
+id|info-&gt;frame_buffer_phys
 suffix:semicolon
 id|fix-&gt;mmio_start
 op_assign
@@ -6282,6 +6282,14 @@ op_assign
 r_int
 )paren
 id|info-&gt;regbase_phys
+suffix:semicolon
+macro_line|#endif
+id|fix-&gt;smem_len
+op_assign
+(paren
+id|u32
+)paren
+id|info-&gt;vram_size
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
@@ -7341,7 +7349,7 @@ r_char
 op_star
 id|video_card
 op_assign
-l_int|NULL
+l_string|&quot;Rage128&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -7538,6 +7546,40 @@ id|var
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NVRAM
+r_if
+c_cond
+(paren
+id|default_vmode
+op_eq
+id|VMODE_NVRAM
+)paren
+(brace
+id|default_vmode
+op_assign
+id|nvram_read_byte
+c_func
+(paren
+id|NV_VMODE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|default_vmode
+op_le
+l_int|0
+op_logical_or
+id|default_vmode
+OG
+id|VMODE_MAX
+)paren
+id|default_vmode
+op_assign
+id|VMODE_CHOOSE
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
@@ -7552,7 +7594,6 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#endif /* CONFIG_PPC */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 r_if
 c_cond
 (paren
@@ -7582,31 +7623,26 @@ id|var
 op_assign
 id|default_var
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PPC
-)brace
-r_else
-(brace
+macro_line|#ifdef CONFIG_NVRAM
 r_if
 c_cond
 (paren
-id|mac_vmode_to_var
+id|default_cmode
+op_eq
+id|CMODE_NVRAM
+)paren
+id|default_cmode
+op_assign
+id|nvram_read_byte
 c_func
 (paren
-id|default_vmode
-comma
-id|default_cmode
-comma
-op_amp
-id|var
+id|NV_CMODE
 )paren
-)paren
-id|var
-op_assign
-id|default_var
 suffix:semicolon
+macro_line|#endif
 )brace
-macro_line|#endif /* CONFIG_PPC */
+macro_line|#endif
 macro_line|#endif /* MODULE */
 r_if
 c_cond
@@ -7643,7 +7679,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Cannot set default mode.&bslash;n&quot;
+l_string|&quot;aty128fb: Cannot set default mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7887,7 +7923,7 @@ r_return
 id|board_list
 suffix:semicolon
 )brace
-r_void
+r_int
 id|__init
 DECL|function|aty128fb_init
 id|aty128fb_init
@@ -7896,26 +7932,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if defined(CONFIG_FB_OF)
-multiline_comment|/* let offb handle init */
-macro_line|#elif defined (CONFIG_PCI)
-id|aty128pci_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-macro_line|#ifndef CONFIG_FB_OF
-r_void
-id|__init
-DECL|function|aty128pci_probe
-id|aty128pci_probe
-c_func
-(paren
-r_void
-)paren
-(brace
+macro_line|#ifdef CONFIG_PCI
 r_struct
 id|pci_dev
 op_star
@@ -7977,6 +7994,7 @@ op_eq
 l_int|0
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|pdev
 op_assign
@@ -7995,9 +8013,12 @@ id|aci
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
+l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/* register a card    ++ajoshi */
 r_static
 r_int
@@ -8036,7 +8057,6 @@ suffix:semicolon
 id|u16
 id|tmp
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 r_struct
 id|resource
 op_star
@@ -8058,6 +8078,10 @@ id|fb_addr
 op_and_assign
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|request_mem_region
 c_func
 (paren
@@ -8069,30 +8093,8 @@ id|rp-&gt;start
 op_plus
 l_int|1
 comma
-l_string|&quot;aty128fb&quot;
+l_string|&quot;aty128fb FB&quot;
 )paren
-suffix:semicolon
-id|rp
-op_assign
-op_amp
-id|pdev-&gt;resource
-(braket
-l_int|2
-)braket
-suffix:semicolon
-id|reg_addr
-op_assign
-id|rp-&gt;start
-suffix:semicolon
-id|reg_addr
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|reg_addr
 )paren
 (brace
 id|release_mem_region
@@ -8127,36 +8129,43 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#else
-id|fb_addr
+id|rp
 op_assign
-id|pdev-&gt;base_address
-(braket
-l_int|0
-)braket
 op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
-id|reg_addr
-op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|2
 )braket
-op_amp
+suffix:semicolon
+id|reg_addr
+op_assign
+id|rp-&gt;start
+suffix:semicolon
+id|reg_addr
+op_and_assign
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|reg_addr
-)paren
-r_return
+id|request_mem_region
+c_func
+(paren
+id|rp-&gt;start
+comma
+id|rp-&gt;end
 op_minus
+id|rp-&gt;start
+op_plus
 l_int|1
+comma
+l_string|&quot;aty128fb MMIO&quot;
+)paren
+)paren
+r_goto
+id|unmap_out
 suffix:semicolon
-macro_line|#endif
 id|info
 op_assign
 id|kmalloc
@@ -8423,7 +8432,6 @@ id|info
 suffix:semicolon
 id|unmap_out
 suffix:colon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 id|release_mem_region
 c_func
 (paren
@@ -8478,13 +8486,12 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif /* ! CONFIG_FB_OF */
+macro_line|#endif /* CONFIG_PCI */
 macro_line|#ifndef CONFIG_PPC
 r_static
 r_int
@@ -9062,329 +9069,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* ! CONFIG_PPC */
-macro_line|#ifdef CONFIG_FB_OF
-r_void
-id|__init
-DECL|function|aty128fb_of_init
-id|aty128fb_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-(brace
-r_int
-r_int
-id|addr
-comma
-id|reg_addr
-comma
-id|fb_addr
-suffix:semicolon
-r_struct
-id|fb_info_aty128
-op_star
-id|info
-suffix:semicolon
-id|u8
-id|bus
-comma
-id|devfn
-suffix:semicolon
-id|u16
-id|cmd
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|dp-&gt;n_addrs
-)paren
-(brace
-r_case
-l_int|3
-suffix:colon
-id|fb_addr
-op_assign
-id|dp-&gt;addrs
-(braket
-l_int|0
-)braket
-dot
-id|address
-suffix:semicolon
-id|reg_addr
-op_assign
-id|dp-&gt;addrs
-(braket
-l_int|2
-)braket
-dot
-id|address
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: TODO unexpected addresses&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|addr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|ioremap
-c_func
-(paren
-id|reg_addr
-comma
-l_int|0x1FFF
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|addr
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: can&squot;t map memory registers&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|info
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|fb_info_aty128
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: can&squot;t alloc fb_info_aty128&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|info
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|fb_info_aty128
-)paren
-)paren
-suffix:semicolon
-id|info-&gt;regbase_phys
-op_assign
-id|reg_addr
-suffix:semicolon
-id|info-&gt;regbase
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|addr
-suffix:semicolon
-multiline_comment|/* enabled memory-space accesses using config-space command register */
-r_if
-c_cond
-(paren
-id|pci_device_loc
-c_func
-(paren
-id|dp
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|devfn
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|cmd
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|cmd
-op_amp
-id|PCI_COMMAND_MEMORY
-)paren
-)paren
-(brace
-id|cmd
-op_or_assign
-id|PCI_COMMAND_MEMORY
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_COMMAND
-comma
-id|cmd
-)paren
-suffix:semicolon
-)brace
-)brace
-id|info-&gt;vram_size
-op_assign
-id|aty_ld_le32
-c_func
-(paren
-id|CONFIG_MEMSIZE
-)paren
-op_amp
-l_int|0x03FFFFFF
-suffix:semicolon
-id|info-&gt;frame_buffer_phys
-op_assign
-id|fb_addr
-suffix:semicolon
-id|info-&gt;frame_buffer
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|ioremap
-c_func
-(paren
-id|fb_addr
-comma
-id|info-&gt;vram_size
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;frame_buffer
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;aty128fb: can&squot;t map frame buffer&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* fall back to defaults */
-id|aty128_timings
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|aty128_init
-c_func
-(paren
-id|info
-comma
-id|dp-&gt;full_name
-)paren
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#ifdef CONFIG_FB_COMPAT_XPMAC
-r_if
-c_cond
-(paren
-op_logical_neg
-id|console_fb_info
-)paren
-id|console_fb_info
-op_assign
-op_amp
-id|info-&gt;fb_info
-suffix:semicolon
-macro_line|#endif
-)brace
-macro_line|#endif /* CONFIG_FB_OF */
 multiline_comment|/* fill in known card constants if pll_block is not available */
 r_static
 r_void
@@ -11600,7 +11284,7 @@ c_func
 r_void
 )paren
 (brace
-id|aty128pci_probe
+id|aty128fb_init
 c_func
 (paren
 )paren
@@ -11676,7 +11360,6 @@ op_amp
 id|info-&gt;frame_buffer
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,1)
 id|release_mem_region
 c_func
 (paren
@@ -11731,7 +11414,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#endif
 id|kfree
 c_func
 (paren

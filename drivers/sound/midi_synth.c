@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/midi_synth.c&n; *&n; * High level midi sequencer manager for dumb MIDI interfaces.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Andrew Veliath  : fixed running status in MIDI input state machine&n; */
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|USE_SEQ_MACROS
 mdefine_line|#define USE_SEQ_MACROS
 DECL|macro|USE_SIMPLE_MACROS

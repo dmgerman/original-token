@@ -403,6 +403,12 @@ DECL|macro|KEY_EXIT
 mdefine_line|#define KEY_EXIT&t;&t;174
 DECL|macro|KEY_MOVE
 mdefine_line|#define KEY_MOVE&t;&t;175
+DECL|macro|KEY_EDIT
+mdefine_line|#define KEY_EDIT&t;&t;176
+DECL|macro|KEY_SCROLLUP
+mdefine_line|#define KEY_SCROLLUP&t;&t;177
+DECL|macro|KEY_SCROLLDOWN
+mdefine_line|#define KEY_SCROLLDOWN&t;&t;178
 DECL|macro|KEY_UNKNOWN
 mdefine_line|#define KEY_UNKNOWN&t;&t;180
 DECL|macro|BTN_MISC
@@ -571,8 +577,12 @@ DECL|macro|ABS_PRESSURE
 mdefine_line|#define ABS_PRESSURE&t;&t;0x18
 DECL|macro|ABS_DISTANCE
 mdefine_line|#define ABS_DISTANCE&t;&t;0x19
+DECL|macro|ABS_TILT_X
+mdefine_line|#define ABS_TILT_X&t;&t;0x1a
+DECL|macro|ABS_TILT_Y
+mdefine_line|#define ABS_TILT_Y&t;&t;0x1b
 DECL|macro|ABS_MISC
-mdefine_line|#define ABS_MISC&t;&t;0x1a
+mdefine_line|#define ABS_MISC&t;&t;0x1c
 DECL|macro|ABS_MAX
 mdefine_line|#define ABS_MAX&t;&t;&t;0x1f
 multiline_comment|/*&n; * LEDs&n; */
@@ -979,34 +989,6 @@ id|hnext
 suffix:semicolon
 )brace
 suffix:semicolon
-r_int
-id|keybdev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|mousedev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|joydev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|evdev_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_void
 id|input_register_device
 c_func
@@ -1084,6 +1066,8 @@ id|value
 suffix:semicolon
 DECL|macro|input_report_key
 mdefine_line|#define input_report_key(a,b,c) input_event(a, EV_KEY, b, c)
+DECL|macro|input_report_btn
+mdefine_line|#define input_report_btn(a,b,c) input_event(a, EV_KEY, b, !!(c))
 DECL|macro|input_report_rel
 mdefine_line|#define input_report_rel(a,b,c) input_event(a, EV_REL, b, c)
 DECL|macro|input_report_abs

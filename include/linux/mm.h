@@ -1183,17 +1183,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|oom
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|si_meminfo
 c_func
 (paren

@@ -21,16 +21,6 @@ c_func
 id|superlist
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|usbdevfs_bus_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-id|usbdevfs_bus_file_operations
-suffix:semicolon
 DECL|struct|special
 r_struct
 id|special

@@ -74,7 +74,7 @@ mdefine_line|#define spin_unlock_wait(x)&t;do { barrier(); } while(((volatile sp
 DECL|macro|spin_is_locked
 mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
 DECL|macro|spin_lock_string
-mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; btsl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jc 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;testb $1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot;
+mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&quot;lock ; btsl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jc 2f&bslash;n&quot; &bslash;&n;&t;&quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;t&quot; &bslash;&n;&t;&quot;testb $1,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep;nop&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&quot;.previous&quot;
 multiline_comment|/*&n; * Sadly, some early PPro chips require the locked access,&n; * otherwise we could just always simply do&n; *&n; * &t;#define spin_unlock_string &bslash;&n; *&t;&t;&quot;movb $0,%0&quot;&n; *&n; * Which is noticeably faster.&n; */
 DECL|macro|spin_unlock_string
 mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;lock ; btrl $0,%0&quot;

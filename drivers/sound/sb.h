@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DSP_RESET
 mdefine_line|#define DSP_RESET&t;(devc-&gt;base + 0x6)
 DECL|macro|DSP_READ

@@ -242,44 +242,30 @@ id|file_operations
 id|flash_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|flash_llseek
 comma
-multiline_comment|/* llseek&t;&t;&t; */
+id|read
+suffix:colon
 id|flash_read
 comma
-multiline_comment|/* read&t;&t;&t;&t; */
+id|write
+suffix:colon
 id|flash_write
 comma
-multiline_comment|/* write&t;&t;&t; */
-l_int|NULL
-comma
-multiline_comment|/* no special readdir            */
-l_int|NULL
-comma
-multiline_comment|/* no special select             */
+id|ioctl
+suffix:colon
 id|flash_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special mmap               */
+id|open
+suffix:colon
 id|open_flash
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special flush&t;&t; */
+id|release
+suffix:colon
 id|release_flash
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special fsync              */
-l_int|NULL
-comma
-multiline_comment|/* no special fasync             */
-l_int|NULL
-comma
-multiline_comment|/* no special check_media_change */
-l_int|NULL
-multiline_comment|/* no special revaldate          */
 )brace
 suffix:semicolon
 DECL|variable|flash_miscdev

@@ -1,10 +1,12 @@
 multiline_comment|/*&n; * Dynamic DMA mapping support.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 multiline_comment|/*&n; * This allocates one page of cache-coherent memory space and returns&n; * both the virtual and a &quot;dma&quot; address to that space.  It is not clear&n; * whether this could be called from an interrupt context or not.  For&n; * now, we expressly forbid it, especially as some of the stuff we do&n; * here is not interrupt context safe.&n; */
@@ -162,6 +164,77 @@ c_func
 suffix:semicolon
 r_return
 l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|pci_alloc_consistent
+r_void
+op_star
+id|pci_alloc_consistent
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|hwdev
+comma
+r_int
+id|size
+comma
+id|dma_addr_t
+op_star
+id|handle
+)paren
+(brace
+r_void
+op_star
+id|__ret
+suffix:semicolon
+r_int
+id|__gfp
+op_assign
+id|GFP_KERNEL
+suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+(paren
+id|hwdev
+)paren
+op_eq
+l_int|NULL
+op_logical_or
+(paren
+id|hwdev
+)paren
+op_member_access_from_pointer
+id|dma_mask
+op_ne
+l_int|0xffffffff
+)paren
+macro_line|#endif
+id|__gfp
+op_or_assign
+id|GFP_DMA
+suffix:semicolon
+id|__ret
+op_assign
+id|consistent_alloc
+c_func
+(paren
+id|__gfp
+comma
+(paren
+id|size
+)paren
+comma
+(paren
+id|handle
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * free a page as defined by the above mapping.  We expressly forbid&n; * calling this from interrupt context.&n; */

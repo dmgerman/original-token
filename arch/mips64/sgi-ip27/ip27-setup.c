@@ -9,7 +9,6 @@ macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
 macro_line|#include &lt;asm/ioc3.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-macro_line|#include &lt;asm/sn/klconfig.h&gt;
 multiline_comment|/* Check against user dumbness.  */
 macro_line|#ifdef CONFIG_VT
 macro_line|#error CONFIG_VT not allowed for IP27.

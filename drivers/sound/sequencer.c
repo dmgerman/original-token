@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality manager.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;   : reformatted and fixed a pair of null pointer bugs&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C

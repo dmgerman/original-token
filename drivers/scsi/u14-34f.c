@@ -10217,9 +10217,7 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|block
-op_ne
-l_int|NULL
+id|unchecked_isa_dma
 )paren
 (brace
 id|scsi_deregister_blocked_host

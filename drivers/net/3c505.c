@@ -4612,7 +4612,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|lp-&gt;lock
+id|adapter-&gt;lock
 comma
 id|flags
 )paren
@@ -4639,7 +4639,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|lp-&gt;lock
+id|adapter-&gt;lock
 comma
 id|flags
 )paren

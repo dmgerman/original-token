@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: time.c,v 1.14 2000/01/26 00:07:44 ralf Exp $&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Copyright (C) 1996, 1997, 1998  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

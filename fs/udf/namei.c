@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * namei.c&n; *&n; * PURPOSE&n; *      Inode name handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *      E-mail regarding any portion of the Linux UDF file system should be&n; *      directed to the development team mailing list (run by majordomo):&n; *              linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *      This file is distributed under the terms of the GNU General Public&n; *      License (GPL). Copies of the GPL can be obtained from:&n; *              ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *      Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-2000 Ben Fennema&n; *  (C) 1999-2000 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  12/12/98 blf  Created. Split out the lookup code from dir.c&n; *  04/19/99 blf  link, mknod, symlink support&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
 macro_line|#include &quot;udf_sb.h&quot;

@@ -11,6 +11,11 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/amigaffs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+r_extern
+r_struct
+id|inode_operations
+id|affs_symlink_inode_operations
+suffix:semicolon
 multiline_comment|/* Simple toupper() for DOS&bslash;1 */
 r_static
 r_int

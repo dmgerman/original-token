@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/cs5530.c&t;&t;&t;Version 0.5&t;Feb 13, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Mark Lord &lt;mlord@pobox.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Development of this chipset driver was funded&n; * by the nice folks at National Semiconductor.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

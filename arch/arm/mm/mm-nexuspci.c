@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/arm/mm/mm-nexuspci.c&n; *  from arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the NexusPCI architecture&n; *&n; * Copyright (C) 1998 Phil Blundell&n; * Copyright (C) 1998-1999 Russell King&n; */
+multiline_comment|/*&n; * arch/arm/mm/mm-nexuspci.c&n; *  from arch/arm/mm/mm-ebsa110.c&n; *&n; * Extra MM routines for the FTV/PCI architecture&n; *&n; * Copyright (C) 1998-1999 Phil Blundell&n; * Copyright (C) 1998-1999 Russell King&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -6,10 +6,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;map.h&quot;
-DECL|macro|SIZE
-mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 DECL|variable|__initdata
-r_const
 r_struct
 id|map_desc
 id|io_desc
@@ -19,27 +16,9 @@ id|__initdata
 op_assign
 (brace
 (brace
-l_int|0xfff00000
+id|INTCONT_BASE
 comma
-l_int|0x10000000
-comma
-l_int|0x00001000
-comma
-id|DOMAIN_IO
-comma
-l_int|0
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-(brace
-l_int|0xffe00000
-comma
-l_int|0x20000000
+id|INTCONT_START
 comma
 l_int|0x00001000
 comma
@@ -55,9 +34,9 @@ l_int|0
 )brace
 comma
 (brace
-l_int|0xffc00000
+id|PLX_BASE
 comma
-l_int|0x60000000
+id|PLX_START
 comma
 l_int|0x00001000
 comma
@@ -73,9 +52,9 @@ l_int|0
 )brace
 comma
 (brace
-l_int|0xfe000000
+id|PCIO_BASE
 comma
-l_int|0x80000000
+id|PLX_IO_START
 comma
 l_int|0x00100000
 comma
@@ -91,11 +70,29 @@ l_int|0
 )brace
 comma
 (brace
-l_int|0xfd000000
+id|DUART_BASE
 comma
-l_int|0x88000000
+id|DUART_START
 comma
-l_int|0x00100000
+l_int|0x00001000
+comma
+id|DOMAIN_IO
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+id|STATUS_BASE
+comma
+id|STATUS_START
+comma
+l_int|0x00001000
 comma
 id|DOMAIN_IO
 comma
@@ -109,6 +106,8 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
+DECL|macro|SIZE
+mdefine_line|#define SIZE(x) (sizeof(x) / sizeof(x[0]))
 DECL|variable|io_desc_size
 r_int
 r_int

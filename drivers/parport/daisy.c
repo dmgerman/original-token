@@ -575,6 +575,7 @@ id|dev-&gt;port
 op_eq
 id|port
 )paren
+(brace
 id|prev-&gt;next
 op_assign
 id|dev-&gt;next
@@ -584,6 +585,7 @@ id|kfree
 id|dev
 )paren
 suffix:semicolon
+)brace
 id|prev
 op_assign
 id|prev-&gt;next

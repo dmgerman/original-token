@@ -3,7 +3,6 @@ macro_line|#ifndef _ASM_KEYBOARD_H
 DECL|macro|_ASM_KEYBOARD_H
 mdefine_line|#define _ASM_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      linux/arch/alpha/kernel/i8259.c&n; *&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; *&n; * Started hacking from linux-2.3.30pre6/arch/i386/kernel/i8259.c.&n; */
+multiline_comment|/*&n; *      linux/arch/alpha/kernel/irq_i8259.c&n; *&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; *&n; * Started hacking from linux-2.3.30pre6/arch/i386/kernel/i8259.c.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -427,4 +427,176 @@ id|cascade
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALPHA_GENERIC)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;alpha_mv.iack_sc
+macro_line|#elif defined(CONFIG_ALPHA_APECS)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;APECS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_LCA)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;LCA_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_CIA)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;CIA_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;PYXIS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;TSUNAMI_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC&t;POLARIS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_IRONGATE)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC        IRONGATE_IACK_SC
+macro_line|#endif
+macro_line|#if defined(IACK_SC)
+r_void
+DECL|function|isa_device_interrupt
+id|isa_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+multiline_comment|/*&n;&t; * Generate a PCI interrupt acknowledge cycle.  The PIC will&n;&t; * respond with the interrupt vector of the highest priority&n;&t; * interrupt that is pending.  The PALcode sets up the&n;&t; * interrupts vectors such that irq level L generates vector L.&n;&t; */
+r_int
+id|j
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|IACK_SC
+suffix:semicolon
+id|j
+op_and_assign
+l_int|0xff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|j
+op_eq
+l_int|7
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+multiline_comment|/* It&squot;s only a passive release... */
+r_return
+suffix:semicolon
+)brace
+)brace
+id|handle_irq
+c_func
+(paren
+id|j
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || !defined(IACK_SC)
+r_void
+DECL|function|isa_no_iack_sc_device_interrupt
+id|isa_no_iack_sc_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|pic
+suffix:semicolon
+multiline_comment|/*&n;&t; * It seems to me that the probability of two or more *device*&n;&t; * interrupts occurring at almost exactly the same time is&n;&t; * pretty low.  So why pay the price of checking for&n;&t; * additional interrupts here if the common case can be&n;&t; * handled so much easier?&n;&t; */
+multiline_comment|/* &n;&t; *  The first read of gives you *all* interrupting lines.&n;&t; *  Therefore, read the mask register and and out those lines&n;&t; *  not enabled.  Note that some documentation has 21 and a1 &n;&t; *  write only.  This is not true.&n;&t; */
+id|pic
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+l_int|0xA0
+)paren
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/* read isr */
+id|pic
+op_and_assign
+l_int|0xFFFB
+suffix:semicolon
+multiline_comment|/* mask out cascade &amp; hibits */
+r_while
+c_loop
+(paren
+id|pic
+)paren
+(brace
+r_int
+id|j
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|pic
+)paren
+suffix:semicolon
+id|pic
+op_and_assign
+id|pic
+op_minus
+l_int|1
+suffix:semicolon
+id|handle_irq
+c_func
+(paren
+id|j
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 eof

@@ -1,7 +1,6 @@
 multiline_comment|/* $Id: init.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * This file is subject to the terms and conditions of the GNU General Public+ &n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|macro|DEBUG_PROM_INIT
 macro_line|#undef DEBUG_PROM_INIT

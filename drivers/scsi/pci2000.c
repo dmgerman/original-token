@@ -2354,12 +2354,12 @@ suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 id|padapter-&gt;basePort
 op_assign
-id|pdev-&gt;base_address
-(braket
+id|pci_resource_start
+(paren
+id|pdev
+comma
 l_int|1
-)braket
-op_amp
-l_int|0xFFFE
+)paren
 suffix:semicolon
 macro_line|#else
 id|pcibios_read_config_word

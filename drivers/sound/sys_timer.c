@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/sys_timer.c&n; *&n; * The default timer for the Level 2 sequencer interface&n; * Uses the (1/HZ sec) timer of kernel.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Andrew Veliath  : adapted tmr2ticks from level 1 sequencer (avoid overflow)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|variable|opened
 DECL|variable|tmr_running

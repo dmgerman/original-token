@@ -252,7 +252,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * This is the local enviroment. It is resistent up the the next main-item.&n; */
 DECL|macro|MAX_USAGES
-mdefine_line|#define MAX_USAGES 512
+mdefine_line|#define MAX_USAGES 1024
 DECL|struct|hid_local
 r_struct
 id|hid_local

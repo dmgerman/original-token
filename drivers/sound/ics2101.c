@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * sound/ics2101.c&n; *&n; * Driver for the ICS2101 mixer of GUS v3.7.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;

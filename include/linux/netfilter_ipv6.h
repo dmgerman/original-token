@@ -2,7 +2,6 @@ macro_line|#ifndef __LINUX_IP6_NETFILTER_H
 DECL|macro|__LINUX_IP6_NETFILTER_H
 mdefine_line|#define __LINUX_IP6_NETFILTER_H
 multiline_comment|/* IPv6-specific defines for netfilter. &n; * (C)1998 Rusty Russell -- This code is GPL.&n; * (C)1999 David Jeffery&n; *   this header was blatantly ripped from netfilter_ipv4.h &n; *   it&squot;s amazing what adding a bunch of 6s can do =8^)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 multiline_comment|/* IP Cache bits. */
 multiline_comment|/* Src IP address. */

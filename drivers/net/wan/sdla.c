@@ -2428,7 +2428,7 @@ c_cond
 id|netif_running
 c_func
 (paren
-id|dev
+id|slave
 )paren
 )paren
 (brace

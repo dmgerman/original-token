@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *&t;Intel IO-APIC support for multi-Pentium hosts.&n; *&n; *&t;Copyright (C) 1997, 1998, 1999, 2000 Ingo Molnar, Hajnalka Szabo&n; *&n; *&t;Many thanks to Stig Venaas for trying out countless experimental&n; *&t;patches and reporting/debugging problems patiently!&n; *&n; *&t;(c) 1999, Multiple IO-APIC support, developed by&n; *&t;Ken-ichi Yaku &lt;yaku@css1.kbnes.nec.co.jp&gt; and&n; *      Hidemi Kishimoto &lt;kisimoto@css1.kbnes.nec.co.jp&gt;,&n; *&t;further tested and cleaned up by Zach Brown &lt;zab@redhat.com&gt;&n; *&t;and Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;Fixes&n; *&t;Maciej W. Rozycki&t;:&t;Bits for genuine 82489DX APICs&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

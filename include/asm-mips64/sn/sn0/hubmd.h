@@ -2,6 +2,7 @@ multiline_comment|/* $Id: hubmd.h,v 1.1 2000/01/13 00:17:02 ralf Exp $&n; *&n; *
 macro_line|#ifndef&t;_ASM_SN_SN0_HUBMD_H
 DECL|macro|_ASM_SN_SN0_HUBMD_H
 mdefine_line|#define&t;_ASM_SN_SN0_HUBMD_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Hub Memory/Directory interface registers&n; */
 DECL|macro|CACHE_SLINE_SIZE
 mdefine_line|#define CACHE_SLINE_SIZE        128&t;/* Secondary cache line size on SN0 */

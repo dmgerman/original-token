@@ -100,35 +100,6 @@ id|mem_map
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * oom() prints a message (so that the user knows why the process died),&n; * and gives the process an untrappable SIGKILL.&n; */
-DECL|function|oom
-r_void
-id|oom
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|task
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;nOut of memory for %s.&bslash;n&quot;
-comma
-id|task-&gt;comm
-)paren
-suffix:semicolon
-id|force_sig
-c_func
-(paren
-id|SIGKILL
-comma
-id|task
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Note: this doesn&squot;t free the actual pages themselves. That&n; * has been handled earlier when unmapping all the memory regions.&n; */
 DECL|function|free_one_pmd
 r_static

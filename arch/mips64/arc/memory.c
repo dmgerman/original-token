@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: memory.c,v 1.5 2000/01/27 23:21:57 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996 by David S. Miller&n; * Copyright (C) 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics, Inc.&n; *&n; * PROM library functions for acquiring/using memory descriptors given to us&n; * from the ARCS firmware.  This is only used when CONFIG_ARC_MEMORY is set&n; * because on some machines like SGI IP27 the ARC memory configuration data&n; * completly bogus and alternate easier to use mechanisms are available.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -7,7 +6,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;

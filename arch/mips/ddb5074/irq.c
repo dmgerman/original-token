@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  arch/mips/ddb5074/irq.c -- NEC DDB Vrc-5074 interrupt routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id: irq.c,v 1.1 2000/01/26 00:07:44 ralf Exp $&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

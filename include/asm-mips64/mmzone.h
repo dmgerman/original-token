@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Written by Kanoj Sarcar (kanoj@sgi.com) Aug 99&n; */
 macro_line|#ifndef _ASM_MMZONE_H_
 DECL|macro|_ASM_MMZONE_H_
 mdefine_line|#define _ASM_MMZONE_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 macro_line|#include &lt;asm/sn/arch.h&gt;

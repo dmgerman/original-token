@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: cmd64x.c,v 1.21 2000/01/30 23:23:16&n; *&n; * cmd64x.c: Enable interrupts at initialization time on Ultra/PCI machines.&n; *           Note, this driver is not used at all on other systems because&n; *           there the &quot;BIOS&quot; has done all of the following already.&n; *           Due to massive hardware bugs, UltraDMA is only supported&n; *           on the 646U2 and not on the 646U.&n; *&n; * Copyright (C) 1998       Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998       David S. Miller (davem@redhat.com)&n; * Copyright (C) 1999-2000  Andre Hedrick (andre@suse.com)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

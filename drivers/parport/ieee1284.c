@@ -472,6 +472,9 @@ op_star
 id|port
 )paren
 (brace
+r_int
+id|r
+suffix:semicolon
 id|port
 op_assign
 id|port-&gt;physport
@@ -557,6 +560,8 @@ id|PARPORT_CONTROL_AUTOFD
 )paren
 suffix:semicolon
 multiline_comment|/* Event 49: PError goes high */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -564,6 +569,19 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 comma
 id|PARPORT_STATUS_PAPEROUT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|DPRINTK
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Timeout at event 49&bslash;n&quot;
+comma
+id|port-&gt;name
 )paren
 suffix:semicolon
 id|parport_data_forward
@@ -601,6 +619,8 @@ id|PARPORT_CONTROL_SELECT
 )paren
 suffix:semicolon
 multiline_comment|/* Event 24: nAck goes low */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -608,6 +628,19 @@ comma
 id|PARPORT_STATUS_ACK
 comma
 l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|DPRINTK
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Timeout at event 24&bslash;n&quot;
+comma
+id|port-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Event 25: Set nAutoFd low */
@@ -621,6 +654,8 @@ id|PARPORT_CONTROL_AUTOFD
 )paren
 suffix:semicolon
 multiline_comment|/* Event 27: nAck goes high */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -628,6 +663,19 @@ comma
 id|PARPORT_STATUS_ACK
 comma
 id|PARPORT_STATUS_ACK
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|DPRINTK
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Timeout at event 27&bslash;n&quot;
+comma
+id|port-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Event 29: Set nAutoFd high */
@@ -702,6 +750,9 @@ id|mode
 op_amp
 op_complement
 id|IEEE1284_ADDR
+suffix:semicolon
+r_int
+id|r
 suffix:semicolon
 r_int
 r_char
@@ -1021,7 +1072,7 @@ multiline_comment|/* Mode not supported. */
 id|DPRINTK
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: Mode 0x%02x not supported&bslash;n&quot;
+l_string|&quot;%s: Mode 0x%02x rejected by peripheral&bslash;n&quot;
 comma
 id|port-&gt;name
 comma
@@ -1228,7 +1279,7 @@ id|IEEE1284_EXT_LINK
 )paren
 op_logical_and
 (paren
-id|mode
+id|m
 op_amp
 id|IEEE1284_MODE_ECP
 )paren
@@ -1249,6 +1300,8 @@ id|PARPORT_CONTROL_AUTOFD
 )paren
 suffix:semicolon
 multiline_comment|/* Event 31: PError goes high. */
+id|r
+op_assign
 id|parport_wait_peripheral
 (paren
 id|port
@@ -1258,7 +1311,17 @@ comma
 id|PARPORT_STATUS_PAPEROUT
 )paren
 suffix:semicolon
-multiline_comment|/* (Should check that this works..) */
+r_if
+c_cond
+(paren
+id|r
+)paren
+id|DPRINTK
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Timeout at event 31&bslash;n&quot;
+)paren
+suffix:semicolon
 id|port-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_IDLE

@@ -2,7 +2,6 @@ multiline_comment|/* $Id: mmu_context.h,v 1.4 2000/02/23 00:41:38 ralf Exp $&n; 
 macro_line|#ifndef _ASM_MMU_CONTEXT_H
 DECL|macro|_ASM_MMU_CONTEXT_H
 mdefine_line|#define _ASM_MMU_CONTEXT_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
 r_extern

@@ -49,7 +49,7 @@ DECL|macro|SCREEN1_BASE
 mdefine_line|#define SCREEN1_BASE&t;&t;0xd0000000
 DECL|macro|FLUSH_BASE
 mdefine_line|#define FLUSH_BASE&t;&t;0xdf000000
-macro_line|#ifndef __ASSEMBLER__
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * for use with inb/outb&n; */
 DECL|macro|IO_VIDC_AUDIO_BASE
 mdefine_line|#define IO_VIDC_AUDIO_BASE&t;0x80140000

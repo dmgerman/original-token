@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the Sound Blaster compatible cards.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer&t;&t;&t;&t;: ioctl code reworked (vmalloc/vfree removed)&n; * Rolf Fokkens (Dec 20 1998)&t;: Moved ESS stuff into sb_ess.[ch]&n; * Stanislav Voronyi &lt;stas@esc.kharkov.com&gt;&t;: Support for AWE 3DSE device (Jun 7 1999)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|macro|__SB_MIXER_C__
 mdefine_line|#define __SB_MIXER_C__

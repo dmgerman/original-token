@@ -174,9 +174,9 @@ r_int
 id|word
 )paren
 suffix:semicolon
+macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#if defined(CONFIG_CPU_HAS_LLSC)
 multiline_comment|/*&n; * These functions for MIPS ISA &gt; 1 are interrupt and SMP proof and&n; * interrupt friendly&n; */
-macro_line|#include &lt;asm/mipsregs.h&gt;
 multiline_comment|/*&n; * The following functions will only work for the R4000!&n; */
 DECL|function|set_bit
 r_extern
@@ -646,7 +646,6 @@ id|retval
 suffix:semicolon
 )brace
 macro_line|#else /* MIPS I */
-macro_line|#include &lt;asm/mipsregs.h&gt;
 DECL|function|set_bit
 r_extern
 id|__inline__

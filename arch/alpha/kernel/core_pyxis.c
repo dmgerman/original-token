@@ -1512,6 +1512,8 @@ dot
 id|status
 op_assign
 id|IRQ_DISABLED
+op_or
+id|IRQ_LEVEL
 suffix:semicolon
 id|irq_desc
 (braket
@@ -2257,6 +2259,10 @@ comma
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+id|alpha_mv.mv_pci_tbi
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Next, clear the PYXIS_CFG register, which gets used&n;&t; *  for PCI Config Space accesses. That is the way&n;&t; *  we want to use it, and we do not want to depend on&n;&t; *  what ARC or SRM might have left behind...&n;&t; */
 id|temp

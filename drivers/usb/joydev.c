@@ -2588,6 +2588,7 @@ suffix:semicolon
 DECL|function|joydev_init
 r_static
 r_int
+id|__init
 id|joydev_init
 c_func
 (paren
@@ -2637,6 +2638,7 @@ suffix:semicolon
 DECL|function|joydev_exit
 r_static
 r_void
+id|__exit
 id|joydev_exit
 c_func
 (paren

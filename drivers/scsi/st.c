@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sat Feb 19 17:22:34 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;   Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Tue Feb 29 20:47:03 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -465,12 +465,6 @@ id|SRpnt
 (brace
 r_int
 id|dev
-op_assign
-id|TAPE_NR
-c_func
-(paren
-id|SRpnt-&gt;sr_request.rq_dev
-)paren
 suffix:semicolon
 r_int
 id|result
@@ -501,9 +495,19 @@ c_cond
 op_logical_neg
 id|result
 )paren
+(brace
+id|sense
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* We don&squot;t have sense data if this byte is zero */
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -525,20 +529,18 @@ op_amp
 l_int|0x0f
 suffix:semicolon
 r_else
-(brace
-id|sense
-(braket
-l_int|0
-)braket
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* We don&squot;t have sense data if this byte is zero */
 id|scode
 op_assign
 l_int|0
 suffix:semicolon
-)brace
+id|dev
+op_assign
+id|TAPE_NR
+c_func
+(paren
+id|SRpnt-&gt;sr_request.rq_dev
+)paren
+suffix:semicolon
 id|DEB
 c_func
 (paren
@@ -1153,6 +1155,7 @@ id|SRpnt
 op_eq
 l_int|NULL
 )paren
+(brace
 id|SRpnt
 op_assign
 id|scsi_allocate_request
@@ -1222,6 +1225,7 @@ suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 id|cmd
 (braket

@@ -14,12 +14,12 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 DECL|macro|TX_BUFFERS
 mdefine_line|#define TX_BUFFERS 15
 DECL|macro|RX_BUFFERS

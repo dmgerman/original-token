@@ -283,7 +283,7 @@ id|awc_pcmcia_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -303,7 +303,7 @@ id|awc_pcmcia_open
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -379,7 +379,7 @@ id|awc_pcmcia_close
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -501,7 +501,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 op_assign
@@ -647,7 +647,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 comma
 id|GFP_KERNEL
@@ -663,7 +663,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -1140,7 +1140,7 @@ c_cond
 id|link-&gt;priv
 )paren
 (brace
-singleline_comment|//struct NET_DEVICE *dev = link-&gt;priv;
+singleline_comment|//struct net_device *dev = link-&gt;priv;
 singleline_comment|// dam dam damn mif (dev-&gt;priv)
 singleline_comment|//&t;kfree_s(dev-&gt;priv, sizeof(struct awc_private));
 id|kfree_s
@@ -1151,7 +1151,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 )paren
 )paren
 suffix:semicolon
@@ -1200,7 +1200,7 @@ id|client_handle_t
 id|handle
 suffix:semicolon
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -2027,7 +2027,7 @@ op_star
 id|arg
 suffix:semicolon
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 op_assign
@@ -2161,7 +2161,7 @@ op_assign
 id|args-&gt;client_data
 suffix:semicolon
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 op_assign

@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: setup.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; *&n; * setup.c: Baget/MIPS specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

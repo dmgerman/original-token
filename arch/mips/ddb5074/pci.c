@@ -1,11 +1,9 @@
 multiline_comment|/*&n; *  arch/mips/ddb5074/pci.c -- NEC DDB Vrc-5074 PCI access routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Albert Dorofeev &lt;albert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id: pci.c,v 1.4 2000/02/18 00:02:17 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm-mips/nile4.h&gt;
 DECL|function|nile4_pre_pci_access0

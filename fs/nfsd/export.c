@@ -2509,7 +2509,7 @@ comma
 id|NFSEXP_NOAUTHNLM
 comma
 (brace
-l_string|&quot;no_auth_nlm&quot;
+l_string|&quot;insecure_locks&quot;
 comma
 l_string|&quot;&quot;
 )brace

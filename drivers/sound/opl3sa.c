@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * sound/opl3sa.c&n; *&n; * Low level driver for Yamaha YMF701B aka OPL3-SA chip&n; * &n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Changes:&n; *&t;Alan Cox&t;&t;Modularisation&n; *&n; * FIXME:&n; * &t;Check for install of mpu etc is wrong, should check result of the mss stuff&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|SB_OK
 macro_line|#undef  SB_OK

@@ -5,18 +5,6 @@ mdefine_line|#define&t;AIRONET4500_H
 singleline_comment|// redefined to avoid PCMCIA includes
 macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/*#include &lt;linux/module.h&gt;&n; #include &lt;linux/kernel.h&gt;&n;*/
-macro_line|#if LINUX_VERSION_CODE &lt; 0x2030E
-DECL|macro|NET_DEVICE
-mdefine_line|#define NET_DEVICE device 
-macro_line|#error bad kernel version code
-macro_line|#else 
-DECL|macro|NET_DEVICE
-mdefine_line|#define NET_DEVICE net_device
-macro_line|#endif                         
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-DECL|macro|init_MUTEX
-mdefine_line|#define init_MUTEX(a)  *(a) = MUTEX;
-macro_line|#endif
 multiline_comment|/*&n;#include &lt;linux/types.h&gt;&n;#include &lt;linux/netdevice.h&gt;&n;#include &lt;linux/etherdevice.h&gt;&n;#include &lt;linux/delay.h&gt;&n;#include &lt;linux/time.h&gt;&n;*/
 macro_line|#include &lt;linux/802_11.h&gt;
 singleline_comment|//damn idiot PCMCIA stuff
@@ -70,10 +58,6 @@ DECL|macro|my_spin_lock_irqsave
 mdefine_line|#define my_spin_lock_irqsave(a,b) &t;spin_lock_irqsave(a,b)
 DECL|macro|my_spin_unlock_irqrestore
 mdefine_line|#define my_spin_unlock_irqrestore(a,b) &t;spin_unlock_irqrestore(a,b)
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20100
-DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() intr_count
-macro_line|#endif
 DECL|macro|AWC_ERROR
 mdefine_line|#define AWC_ERROR&t;-1
 DECL|macro|AWC_SUCCESS
@@ -115,6 +99,9 @@ id|socket_and_copy_register
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* timeout for transmit watchdog timer */
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT&t;&t;&t;(HZ * 3)
 multiline_comment|/***************************  REGISTER OFFSETS *********************/
 DECL|macro|awc_Command_register
 mdefine_line|#define awc_Command_register &t;&t;0x00
@@ -242,7 +229,7 @@ id|lock_state
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3197,7 +3184,7 @@ id|awc_rid_setup
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -3524,7 +3511,7 @@ id|rids
 suffix:semicolon
 DECL|member|dev
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 suffix:semicolon
@@ -3748,10 +3735,6 @@ DECL|member|small_buff_no
 r_int
 id|small_buff_no
 suffix:semicolon
-DECL|member|tx_timeout
-r_int
-id|tx_timeout
-suffix:semicolon
 DECL|member|mac_enabled
 r_volatile
 r_int
@@ -3913,7 +3896,7 @@ id|awc_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -3924,7 +3907,7 @@ id|awc_reset
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -3935,7 +3918,7 @@ id|awc_config
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -3946,7 +3929,7 @@ id|awc_open
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -3957,20 +3940,9 @@ id|awc_tx_timeout
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|awc_tx_done
-c_func
-(paren
-r_struct
-id|awc_fid
-op_star
-id|rx_fid
 )paren
 suffix:semicolon
 r_extern
@@ -3983,7 +3955,7 @@ id|sk_buff
 op_star
 comma
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 )paren
 suffix:semicolon
@@ -4013,7 +3985,7 @@ id|awc_get_stats
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4024,7 +3996,7 @@ id|awc_rx
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4040,7 +4012,7 @@ id|awc_set_multicast_list
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4051,7 +4023,7 @@ id|awc_change_mtu
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4065,7 +4037,7 @@ id|awc_close
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4076,7 +4048,7 @@ id|awc_private_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4139,7 +4111,7 @@ id|awc_interrupt_process
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4150,7 +4122,7 @@ id|awc_readrid
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4170,7 +4142,7 @@ id|awc_writerid
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4190,7 +4162,7 @@ id|awc_readrid_dir
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4206,7 +4178,7 @@ id|awc_writerid_dir
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4222,7 +4194,7 @@ id|awc_tx_alloc
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4233,7 +4205,7 @@ id|awc_tx_dealloc
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4246,7 +4218,7 @@ id|awc_tx_fid_lookup
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4260,7 +4232,7 @@ id|awc_issue_soft_reset
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4271,7 +4243,7 @@ id|awc_issue_noop
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4282,7 +4254,7 @@ id|awc_dump_registers
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4305,7 +4277,7 @@ id|awc_enable_MAC
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4316,7 +4288,7 @@ id|awc_disable_MAC
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4327,7 +4299,7 @@ id|awc_read_all_rids
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4338,7 +4310,7 @@ id|awc_write_all_rids
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4349,7 +4321,7 @@ id|awc_receive_packet
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4360,7 +4332,7 @@ id|awc_transmit_packet
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4376,7 +4348,7 @@ id|awc_tx_complete_check
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4387,7 +4359,7 @@ id|awc_interrupt_process
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4398,7 +4370,7 @@ id|awc_bh
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4409,7 +4381,7 @@ id|awc_802_11_find_copy_path
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4425,7 +4397,7 @@ id|awc_802_11_router_rx
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4441,7 +4413,7 @@ id|awc_802_11_tx_find_path_and_post
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4457,7 +4429,7 @@ id|awc_802_11_after_tx_packet_to_card_write
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4473,7 +4445,7 @@ id|awc_802_11_after_failed_tx_packet_to_card_write
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4489,7 +4461,7 @@ id|awc_802_11_after_tx_complete
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4505,7 +4477,7 @@ id|awc_802_11_failed_rx_copy
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4521,7 +4493,7 @@ id|awc_tx_alloc
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4532,7 +4504,7 @@ id|awc_tx_dealloc_fid
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4548,7 +4520,7 @@ id|awc_tx_dealloc
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4561,7 +4533,7 @@ id|awc_tx_fid_lookup_and_remove
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 comma
@@ -4575,7 +4547,7 @@ id|awc_queues_init
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4586,7 +4558,7 @@ id|awc_queues_destroy
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4597,7 +4569,7 @@ id|awc_rids_setup
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren
@@ -4650,7 +4622,7 @@ DECL|macro|MAX_AWCS
 mdefine_line|#define MAX_AWCS&t;4
 r_extern
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|aironet4500_devices
 (braket
@@ -4669,19 +4641,6 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG(a, args...)
 DECL|macro|AWC_ENTRY_EXIT_DEBUG
 mdefine_line|#define AWC_ENTRY_EXIT_DEBUG(a)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-macro_line|#ifndef test_and_set_bit
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(a,b)           set_bit(a,b)
-macro_line|#endif                         
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE  &lt; 0x20100
-DECL|macro|FREE_SKB
-mdefine_line|#define FREE_SKB(a) dev_kfree_skb(a, FREE_WRITE)
-macro_line|#else
-DECL|macro|FREE_SKB
-mdefine_line|#define FREE_SKB(a) dev_kfree_skb(a)
 macro_line|#endif
 macro_line|#endif /* AIRONET4500_H */
 eof

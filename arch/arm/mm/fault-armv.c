@@ -1522,6 +1522,7 @@ mdefine_line|#define do_sect_fault NULL
 macro_line|#endif
 DECL|struct|fsr_info
 r_static
+r_const
 r_struct
 id|fsr_info
 (brace
@@ -1716,6 +1717,7 @@ op_star
 id|regs
 )paren
 (brace
+r_const
 r_struct
 id|fsr_info
 op_star

@@ -421,6 +421,8 @@ dot
 id|status
 op_assign
 id|IRQ_DISABLED
+op_or
+id|IRQ_LEVEL
 suffix:semicolon
 id|irq_desc
 (braket

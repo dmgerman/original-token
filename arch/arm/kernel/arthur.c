@@ -1,36 +1,37 @@
-multiline_comment|/*&n; * Arthur personality&n; * Copyright (C) 1998 Philip Blundell&n; */
+multiline_comment|/*&n; * Arthur personality&n; * Copyright (C) 1998-1999 Philip Blundell&n; */
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/* RISC OS doesn&squot;t have many signals, and a lot of those that it does&n;   have don&squot;t map easily to any Linux equivalent.  Never mind.  */
-DECL|macro|RISCOS_SIGABRT
-mdefine_line|#define RISCOS_SIGABRT&t;&t;1
-DECL|macro|RISCOS_SIGFPE
-mdefine_line|#define RISCOS_SIGFPE&t;&t;2
-DECL|macro|RISCOS_SIGILL
-mdefine_line|#define RISCOS_SIGILL&t;&t;3
-DECL|macro|RISCOS_SIGINT
-mdefine_line|#define RISCOS_SIGINT&t;&t;4
-DECL|macro|RISCOS_SIGSEGV
-mdefine_line|#define RISCOS_SIGSEGV&t;&t;5
-DECL|macro|RISCOS_SIGTERM
-mdefine_line|#define RISCOS_SIGTERM&t;&t;6
-DECL|macro|RISCOS_SIGSTAK
-mdefine_line|#define RISCOS_SIGSTAK&t;&t;7
-DECL|macro|RISCOS_SIGUSR1
-mdefine_line|#define RISCOS_SIGUSR1&t;&t;8
-DECL|macro|RISCOS_SIGUSR2
-mdefine_line|#define RISCOS_SIGUSR2&t;&t;9
-DECL|macro|RISCOS_SIGOSERROR
-mdefine_line|#define RISCOS_SIGOSERROR&t;10
-DECL|variable|riscos_to_linux_signals
+multiline_comment|/* Arthur doesn&squot;t have many signals, and a lot of those that it does&n;   have don&squot;t map easily to any Linux equivalent.  Never mind.  */
+DECL|macro|ARTHUR_SIGABRT
+mdefine_line|#define ARTHUR_SIGABRT&t;&t;1
+DECL|macro|ARTHUR_SIGFPE
+mdefine_line|#define ARTHUR_SIGFPE&t;&t;2
+DECL|macro|ARTHUR_SIGILL
+mdefine_line|#define ARTHUR_SIGILL&t;&t;3
+DECL|macro|ARTHUR_SIGINT
+mdefine_line|#define ARTHUR_SIGINT&t;&t;4
+DECL|macro|ARTHUR_SIGSEGV
+mdefine_line|#define ARTHUR_SIGSEGV&t;&t;5
+DECL|macro|ARTHUR_SIGTERM
+mdefine_line|#define ARTHUR_SIGTERM&t;&t;6
+DECL|macro|ARTHUR_SIGSTAK
+mdefine_line|#define ARTHUR_SIGSTAK&t;&t;7
+DECL|macro|ARTHUR_SIGUSR1
+mdefine_line|#define ARTHUR_SIGUSR1&t;&t;8
+DECL|macro|ARTHUR_SIGUSR2
+mdefine_line|#define ARTHUR_SIGUSR2&t;&t;9
+DECL|macro|ARTHUR_SIGOSERROR
+mdefine_line|#define ARTHUR_SIGOSERROR&t;10
+DECL|variable|arthur_to_linux_signals
 r_static
 r_int
 r_int
-id|riscos_to_linux_signals
+id|arthur_to_linux_signals
 (braket
 l_int|32
 )braket
@@ -101,11 +102,11 @@ comma
 l_int|31
 )brace
 suffix:semicolon
-DECL|variable|linux_to_riscos_signals
+DECL|variable|linux_to_arthur_signals
 r_static
 r_int
 r_int
-id|linux_to_riscos_signals
+id|linux_to_arthur_signals
 (braket
 l_int|32
 )braket
@@ -116,34 +117,34 @@ comma
 op_minus
 l_int|1
 comma
-id|RISCOS_SIGINT
+id|ARTHUR_SIGINT
 comma
 op_minus
 l_int|1
 comma
-id|RISCOS_SIGILL
+id|ARTHUR_SIGILL
 comma
 l_int|5
 comma
-id|RISCOS_SIGABRT
+id|ARTHUR_SIGABRT
 comma
 l_int|7
 comma
-id|RISCOS_SIGFPE
+id|ARTHUR_SIGFPE
 comma
 l_int|9
 comma
-id|RISCOS_SIGUSR1
+id|ARTHUR_SIGUSR1
 comma
-id|RISCOS_SIGSEGV
+id|ARTHUR_SIGSEGV
 comma
-id|RISCOS_SIGUSR2
+id|ARTHUR_SIGUSR2
 comma
 l_int|13
 comma
 l_int|14
 comma
-id|RISCOS_SIGTERM
+id|ARTHUR_SIGTERM
 comma
 l_int|16
 comma
@@ -218,11 +219,11 @@ id|current
 )paren
 suffix:semicolon
 )brace
-DECL|variable|riscos_exec_domain
+DECL|variable|arthur_exec_domain
 r_static
 r_struct
 id|exec_domain
-id|riscos_exec_domain
+id|arthur_exec_domain
 op_assign
 (brace
 l_string|&quot;Arthur&quot;
@@ -237,9 +238,9 @@ id|PER_RISCOS
 comma
 id|PER_RISCOS
 comma
-id|riscos_to_linux_signals
+id|arthur_to_linux_signals
 comma
-id|linux_to_riscos_signals
+id|linux_to_arthur_signals
 comma
 macro_line|#ifdef MODULE
 op_amp
@@ -255,36 +256,28 @@ multiline_comment|/* Nothing after this in the list. */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * We could do with some locking to stop Arthur being removed while&n; * processes are using it.&n; */
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|arthur_init
 r_int
-id|init_module
+id|__init
+id|arthur_init
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|initialise_arthur
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 r_return
 id|register_exec_domain
 c_func
 (paren
 op_amp
-id|riscos_exec_domain
+id|arthur_exec_domain
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|arthur_exit
 r_void
-id|cleanup_module
+id|__exit
+id|arthur_exit
 c_func
 (paren
 r_void
@@ -294,9 +287,22 @@ id|unregister_exec_domain
 c_func
 (paren
 op_amp
-id|riscos_exec_domain
+id|arthur_exec_domain
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|arthur_init
+id|module_init
+c_func
+(paren
+id|arthur_init
+)paren
+suffix:semicolon
+DECL|variable|arthur_exit
+id|module_exit
+c_func
+(paren
+id|arthur_exit
+)paren
+suffix:semicolon
 eof

@@ -8500,33 +8500,34 @@ id|file_operations
 id|isdn_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|isdn_lseek
 comma
+id|read
+suffix:colon
 id|isdn_read
 comma
+id|write
+suffix:colon
 id|isdn_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* isdn_readdir */
+id|poll
+suffix:colon
 id|isdn_poll
 comma
-multiline_comment|/* isdn_poll */
+id|ioctl
+suffix:colon
 id|isdn_ioctl
 comma
-multiline_comment|/* isdn_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* isdn_mmap */
+id|open
+suffix:colon
 id|isdn_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|isdn_close
 comma
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 r_char

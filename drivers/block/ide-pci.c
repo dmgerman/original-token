@@ -735,11 +735,27 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_sl82c105
+c_func
+(paren
+id|ide_hwif_t
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|INIT_W82C105
 mdefine_line|#define INIT_W82C105&t;&amp;ide_init_sl82c105
+DECL|macro|DMA_W82C105
+mdefine_line|#define DMA_W82C105&t;&amp;ide_dmacapable_sl82c105
 macro_line|#else
 DECL|macro|INIT_W82C105
 mdefine_line|#define INIT_W82C105&t;IDE_IGNORE
+DECL|macro|DMA_W82C105
+mdefine_line|#define DMA_W82C105&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_TRM290
 r_extern
@@ -1897,7 +1913,7 @@ l_int|NULL
 comma
 id|INIT_W82C105
 comma
-l_int|NULL
+id|DMA_W82C105
 comma
 (brace
 (brace

@@ -1340,6 +1340,17 @@ id|driver_template
 op_assign
 id|IPH5526_SCSI_FC
 suffix:semicolon
+r_static
+r_void
+id|iph5526_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PCI
 r_static
 r_int
@@ -1638,6 +1649,16 @@ suffix:semicolon
 id|dev-&gt;change_mtu
 op_assign
 id|iph5526_change_mtu
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|iph5526_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+l_int|5
+op_star
+id|HZ
 suffix:semicolon
 macro_line|#ifndef MODULE
 id|fc_setup

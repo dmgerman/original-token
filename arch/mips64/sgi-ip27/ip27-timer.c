@@ -502,13 +502,10 @@ id|xtime_lock
 suffix:semicolon
 )brace
 multiline_comment|/* Includes for ioc3_init().  */
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
-macro_line|#include &lt;asm/sn/klconfig.h&gt;
-macro_line|#include &lt;asm/ioc3.h&gt;
 macro_line|#include &lt;asm/pci/bridge.h&gt;
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime

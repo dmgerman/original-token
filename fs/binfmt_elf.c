@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -2133,6 +2134,11 @@ id|current-&gt;personality
 op_assign
 id|PER_SVR4
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|interpreter_dentry
 op_assign
 id|open_namei
@@ -2143,6 +2149,11 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|current-&gt;personality
@@ -2151,7 +2162,13 @@ id|old_pers
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif&t;&t;&t;&t;&t;
+macro_line|#endif
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|interpreter_dentry
 op_assign
 id|open_namei
@@ -2164,6 +2181,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|set_fs
 c_func
 (paren
@@ -2907,10 +2930,20 @@ op_amp
 id|interp_load_addr
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|interpreter_dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|kfree
@@ -3329,10 +3362,20 @@ suffix:semicolon
 multiline_comment|/* error cleanup */
 id|out_free_dentry
 suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|interpreter_dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|out_free_interp

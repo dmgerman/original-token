@@ -1,6 +1,13 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-brutus/uncompress.h&n; *&n; * (C) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_SA1100_EMPEG) || &bslash;&n;    defined(CONFIG_SA1100_VICTOR) || &bslash;&n;    defined(CONFIG_SA1100_LART)
+macro_line|#if&t;defined(CONFIG_SA1100_EMPEG) || &bslash;&n;&t;defined(CONFIG_SA1100_VICTOR) || &bslash;&n;&t;defined(CONFIG_SA1100_LART)
+DECL|macro|SERBASE
+mdefine_line|#define SERBASE _Ser3UTCR0;
+macro_line|#elif&t;defined(CONFIG_SA1100_BRUTUS)
+DECL|macro|SERBASE
+mdefine_line|#define SERBASE _Ser1UTCR0;
+macro_line|#endif
+macro_line|#ifdef SERBASE
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;serial_reg.h&quot;
 DECL|variable|serial_port
@@ -16,7 +23,7 @@ r_int
 r_int
 op_star
 )paren
-id|_Ser3UTCR0
+id|SERBASE
 suffix:semicolon
 multiline_comment|/*&n; * The following code assumes the serial port has already been&n; * initialized by the bootloader or such...&n; */
 DECL|function|puts
@@ -114,8 +121,20 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-DECL|macro|puts
-mdefine_line|#define puts( x )
+DECL|function|puts
+r_static
+r_inline
+r_void
+id|puts
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+(brace
+)brace
 macro_line|#endif
 multiline_comment|/* Nothing to do for these */
 DECL|macro|arch_decomp_setup

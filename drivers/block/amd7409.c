@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/amd7409.c&t;&t;Version 0.03&t;Feb. 10, 2000&n; *&n; * Copyright (C) 2000&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

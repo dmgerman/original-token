@@ -100,12 +100,38 @@ mdefine_line|#define USB_ENDPOINT_XFER_BULK&t;&t;2
 DECL|macro|USB_ENDPOINT_XFER_INT
 mdefine_line|#define USB_ENDPOINT_XFER_INT&t;&t;3
 multiline_comment|/*&n; * USB Packet IDs (PIDs)&n; */
+DECL|macro|USB_PID_UNDEF_0
+mdefine_line|#define USB_PID_UNDEF_0                        0xf0
 DECL|macro|USB_PID_OUT
-mdefine_line|#define USB_PID_OUT&t;&t;&t;0xe1
+mdefine_line|#define USB_PID_OUT                            0xe1
+DECL|macro|USB_PID_ACK
+mdefine_line|#define USB_PID_ACK                            0xd2
+DECL|macro|USB_PID_DATA0
+mdefine_line|#define USB_PID_DATA0                          0xc3
+DECL|macro|USB_PID_UNDEF_4
+mdefine_line|#define USB_PID_UNDEF_4                        0xb4
+DECL|macro|USB_PID_SOF
+mdefine_line|#define USB_PID_SOF                            0xa5
+DECL|macro|USB_PID_UNDEF_6
+mdefine_line|#define USB_PID_UNDEF_6                        0x96
+DECL|macro|USB_PID_UNDEF_7
+mdefine_line|#define USB_PID_UNDEF_7                        0x87
+DECL|macro|USB_PID_UNDEF_8
+mdefine_line|#define USB_PID_UNDEF_8                        0x78
 DECL|macro|USB_PID_IN
-mdefine_line|#define USB_PID_IN&t;&t;&t;0x69
+mdefine_line|#define USB_PID_IN                             0x69
+DECL|macro|USB_PID_NAK
+mdefine_line|#define USB_PID_NAK                            0x5a
+DECL|macro|USB_PID_DATA1
+mdefine_line|#define USB_PID_DATA1                          0x4b
+DECL|macro|USB_PID_PREAMBLE
+mdefine_line|#define USB_PID_PREAMBLE                       0x3c
 DECL|macro|USB_PID_SETUP
-mdefine_line|#define USB_PID_SETUP&t;&t;&t;0x2d
+mdefine_line|#define USB_PID_SETUP                          0x2d
+DECL|macro|USB_PID_STALL
+mdefine_line|#define USB_PID_STALL                          0x1e
+DECL|macro|USB_PID_UNDEF_F
+mdefine_line|#define USB_PID_UNDEF_F                        0x0f
 multiline_comment|/*&n; * Standard requests&n; */
 DECL|macro|USB_REQ_GET_STATUS
 mdefine_line|#define USB_REQ_GET_STATUS&t;&t;0x00

@@ -195,7 +195,7 @@ id|entry
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#if defined(CONFIG_ACPI) || defined(CONFIG_APM) || defined(CONFIG_APM_MODULE)
+macro_line|#ifdef CONFIG_PM
 r_extern
 r_int
 id|pm_active
@@ -315,7 +315,7 @@ id|dev
 )paren
 (brace
 )brace
-macro_line|#else /* CONFIG_ACPI || CONFIG_APM || CONFIG_APM_MODULE */
+macro_line|#else /* CONFIG_PM */
 DECL|macro|PM_IS_ACTIVE
 mdefine_line|#define PM_IS_ACTIVE() 0
 DECL|function|pm_register
@@ -461,7 +461,7 @@ id|dev
 )paren
 (brace
 )brace
-macro_line|#endif /* CONFIG_ACPI || CONFIG_APM || CONFIG_APM_MODULE */
+macro_line|#endif /* CONFIG_PM */
 r_extern
 r_void
 (paren

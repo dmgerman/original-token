@@ -1455,42 +1455,22 @@ id|file_operations
 id|ds1620_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek&t;&t;*/
+id|read
+suffix:colon
 id|ds1620_read
 comma
-multiline_comment|/* read&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* write&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* readdir&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* select&t;&t;*/
+id|ioctl
+suffix:colon
 id|ds1620_ioctl
 comma
-multiline_comment|/* ioctl&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;&t;&t;*/
+id|open
+suffix:colon
 id|ds1620_open
 comma
-multiline_comment|/* open&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* flush&t;&t;*/
+id|release
+suffix:colon
 id|ds1620_release
 comma
-multiline_comment|/* release&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* fsync&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* fasync&t;&t;*/
 )brace
 suffix:semicolon
 DECL|variable|ds1620_miscdev

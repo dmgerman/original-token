@@ -2,8 +2,6 @@ multiline_comment|/* $Id: bootinfo.h,v 1.10 2000/01/26 00:07:45 ralf Exp $&n; *&
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
-multiline_comment|/* XXX */
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Values for machgroup&n; */
 DECL|macro|MACH_GROUP_UNKNOWN
 mdefine_line|#define MACH_GROUP_UNKNOWN      0 /* whatever... */

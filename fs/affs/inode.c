@@ -30,6 +30,11 @@ r_struct
 id|timezone
 id|sys_tz
 suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|affs_symlink_inode_operations
+suffix:semicolon
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
 r_int

@@ -1910,35 +1910,34 @@ id|file_operations
 id|capi_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|capi_llseek
 comma
+id|read
+suffix:colon
 id|capi_read
 comma
+id|write
+suffix:colon
 id|capi_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_readdir */
+id|poll
+suffix:colon
 id|capi_poll
 comma
+id|ioctl
+suffix:colon
 id|capi_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_mmap */
+id|open
+suffix:colon
 id|capi_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_flush */
+id|release
+suffix:colon
 id|capi_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_fsync */
-l_int|NULL
-comma
-multiline_comment|/* capi_fasync */
 )brace
 suffix:semicolon
 multiline_comment|/* -------- /proc functions ----------------------------------- */

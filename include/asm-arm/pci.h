@@ -14,8 +14,25 @@ r_struct
 id|pci_dev
 suffix:semicolon
 multiline_comment|/* Allocate and map kernel buffer using consistent mode DMA for a device.&n; * hwdev should be valid struct pci_dev pointer for PCI devices,&n; * NULL for PCI-like buses (ISA, EISA).&n; * Returns non-NULL cpu-view pointer to the buffer if successful and&n; * sets *dma_addrp to the pci side dma address as well, else *dma_addrp&n; * is undefined.&n; */
-DECL|macro|pci_alloc_consistent
-mdefine_line|#define pci_alloc_consistent(hwdev,size,handle)&t;&t;&bslash;&n;&t;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;void *__ret;&t;&t;&t;&t;&bslash;&n;&t;&t;int __gfp = GFP_KERNEL;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((hwdev) == NULL ||&t;&t;&t;&bslash;&n;&t;&t;    (hwdev)-&gt;dma_mask != 0xffffffff)&t;&bslash;&n;&t;&t;&t;__gfp |= GFP_DMA;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__ret = consistent_alloc(__gfp, (size),&t;&bslash;&n;&t;&t;&t;&t;&t; (handle));&t;&bslash;&n;&t;&t;__ret;&t;&t;&t;&t;&t;&bslash;&n;&t;})
+r_extern
+r_void
+op_star
+id|pci_alloc_consistent
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|hwdev
+comma
+r_int
+id|size
+comma
+id|dma_addr_t
+op_star
+id|handle
+)paren
+suffix:semicolon
 multiline_comment|/* Free and unmap a consistent DMA buffer.&n; * cpu_addr is what was returned from pci_alloc_consistent,&n; * size must be the same as what as passed into pci_alloc_consistent,&n; * and likewise dma_addr must be the same as what *dma_addrp was set to.&n; *&n; * References to the memory and mappings associated with cpu_addr/dma_addr&n; * past this call are illegal.&n; */
 r_extern
 r_inline

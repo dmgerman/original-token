@@ -123,6 +123,11 @@ r_int
 id|order_uv
 suffix:semicolon
 multiline_comment|/* True=UV False=VU */
+DECL|member|order_yc
+r_int
+id|order_yc
+suffix:semicolon
+multiline_comment|/* True=Yc False=cY (&squot;c&squot;=either U or V) */
 DECL|member|hdr_sig
 r_int
 r_char
@@ -182,6 +187,10 @@ suffix:semicolon
 multiline_comment|/* Processes waiting */
 )brace
 suffix:semicolon
+DECL|macro|IBMCAM_MODEL_1
+mdefine_line|#define&t;IBMCAM_MODEL_1&t;1&t;/* XVP-501, 3 interfaces, rev. 0.02 */
+DECL|macro|IBMCAM_MODEL_2
+mdefine_line|#define IBMCAM_MODEL_2&t;2&t;/* KSX-X9903, 2 interfaces, rev. 3.0a */
 DECL|struct|usb_ibmcam
 r_struct
 id|usb_ibmcam
@@ -233,6 +242,11 @@ r_int
 id|initialized
 suffix:semicolon
 multiline_comment|/* Had we already sent init sequence? */
+DECL|member|camera_model
+r_int
+id|camera_model
+suffix:semicolon
+multiline_comment|/* What type of IBM camera we got? */
 DECL|member|streaming
 r_int
 id|streaming
@@ -297,11 +311,6 @@ r_int
 id|remove_pending
 suffix:semicolon
 multiline_comment|/* If set then about to exit */
-DECL|member|remove_ok
-id|wait_queue_head_t
-id|remove_ok
-suffix:semicolon
-multiline_comment|/* Wait here until removal is safe */
 multiline_comment|/*&n;&t; * Scratch space from the Isochronous pipe.&n;&t; * Scratch buffer should contain at least one pair of lines&n;&t; * (CAMERA_IMAGE_LINE_SZ). We set it to two pairs here.&n;&t; * This will be approximately 2 KB. HOWEVER in reality this&n;&t; * buffer must be as large as hundred of KB because otherwise&n;&t; * you&squot;ll get lots of overflows because V4L client may request&n;&t; * frames not as uniformly as USB sources them.&n;&t; */
 DECL|member|scratch
 r_int

@@ -1,5 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdla_fr.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver. Frame relay module.&n;*&n;* Author(s):&t;Nenad Corbic  &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 08, 1999  Nenad Corbic    o Combined all debug UDP calls into one function&n;*                               o Removed the ARP support. This has to be done&n;*                                 in the next version.&n;*                               o Only a Node can implement NO signalling.&n;*                                 Initialize DLCI during if_open() if NO &n;*&t;&t;&t;&t;  signalling.&n;*&t;&t;&t;&t;o Took out IPX support, implement in next&n;*                                 version&n;* Sep 29, 1999  Nenad Corbic&t;o Added SMP support and changed the update&n;*                                 function to use timer interrupt.&n;*&t;&t;&t;&t;o Fixed the CIR bug:  Set the value of BC&n;*                                 to CIR when the CIR is enabled.&n;*  &t;&t;&t;&t;o Updated comments, statistics and tracing.&n;* Jun 02, 1999&t;Gideon Hack&t;o Updated for S514 support.&n;* Sep 18, 1998&t;Jaspreet Singh&t;o Updated for 2.2.X kernels.&n;* Jul 31, 1998&t;Jaspreet Singh&t;o Removed wpf_poll routine.  The channel/DLCI &n;*&t;&t;&t;&t;  status is received through an event interrupt.&n;* Jul 08, 1998&t;David Fong&t;o Added inverse ARP support.&n;* Mar 26, 1997&t;Jaspreet Singh&t;o Returning return codes for failed UDP cmds.&n;* Jan 28, 1997&t;Jaspreet Singh  o Improved handling of inactive DLCIs.&n;* Dec 30, 1997&t;Jaspreet Singh&t;o Replaced dev_tint() with mark_bh(NET_BH)&n;* Dec 16, 1997&t;Jaspreet Singh&t;o Implemented Multiple IPX support.&n;* Nov 26, 1997&t;Jaspreet Singh&t;o Improved load sharing with multiple boards&n;*&t;&t;&t;&t;o Added Cli() to protect enabling of interrupts&n;*&t;&t;&t;&t;  while polling is called.&n;* Nov 24, 1997&t;Jaspreet Singh&t;o Added counters to avoid enabling of interrupts&n;*&t;&t;&t;&t;  when they have been disabled by another&n;*&t;&t;&t;&t;  interface or routine (eg. wpf_poll).&n;* Nov 06, 1997&t;Jaspreet Singh&t;o Added INTR_TEST_MODE to avoid polling&t;&n;*&t;&t;&t;&t;  routine disable interrupts during interrupt&n;*&t;&t;&t;&t;  testing.&n;* Oct 20, 1997  Jaspreet Singh  o Added hooks in for Router UP time.&n;* Oct 16, 1997  Jaspreet Singh  o The critical flag is used to maintain flow&n;*                                 control by avoiding RACE conditions.  The&n;*                                 cli() and restore_flags() are taken out.&n;*                                 The fr_channel structure is appended for &n;*                                 Driver Statistics.&n;* Oct 15, 1997  Farhan Thawar    o updated if_send() and receive for IPX&n;* Aug 29, 1997  Farhan Thawar    o Removed most of the cli() and sti()&n;*                                o Abstracted the UDP management stuff&n;*                                o Now use tbusy and critical more intelligently&n;* Jul 21, 1997  Jaspreet Singh&t; o Can configure T391, T392, N391, N392 &amp; N393&n;*&t;&t;&t;&t;   through router.conf.&n;*&t;&t;&t;&t; o Protected calls to sdla_peek() by adDing &n;*&t;&t;&t;&t;   save_flags(), cli() and restore_flags().&n;*&t;&t;&t;&t; o Added error message for Inactive DLCIs in&n;*&t;&t;&t;&t;   fr_event() and update_chan_state().&n;*&t;&t;&t;&t; o Fixed freeing up of buffers using kfree() &n;*&t;&t;&t;           when packets are received.&n;* Jul 07, 1997&t;Jaspreet Singh&t; o Added configurable TTL for UDP packets &n;*&t;&t;&t;&t; o Added ability to discard multicast and &n;*&t;&t;&t;&t;   broadcast source addressed packets&n;* Jun 27, 1997&t;Jaspreet Singh&t; o Added FT1 monitor capabilities &n;*&t;&t;&t;&t;   New case (0x44) statement in if_send routine &n;*&t;&t;&t;&t;   Added a global variable rCount to keep track&n;*&t;&t;&t; &t;   of FT1 status enabled on the board.&n;* May 29, 1997&t;Jaspreet Singh&t; o Fixed major Flow Control Problem&n;*&t;&t;&t;&t;   With multiple boards a problem was seen where&n;*&t;&t;&t;&t;   the second board always stopped transmitting&n;*&t;&t;&t;&t;   packet after running for a while. The code&n;*&t;&t;&t;&t;   got into a stage where the interrupts were&n;*&t;&t;&t;&t;   disabled and dev-&gt;tbusy was set to 1.&n;*                  &t;&t;   This caused the If_send() routine to get into&n;*                                  the if clause for it(0,dev-&gt;tbusy) &n;*&t;&t;&t;&t;   forever.&n;*&t;&t;&t;&t;   The code got into this stage due to an &n;*&t;&t;&t;&t;   interrupt occuring within the if clause for &n;*&t;&t;&t;&t;   set_bit(0,dev-&gt;tbusy).  Since an interrupt &n;*&t;&t;&t;&t;   disables furhter transmit interrupt and &n;* &t;&t;&t;&t;   makes dev-&gt;tbusy = 0, this effect was undone &n;*                                  by making dev-&gt;tbusy = 1 in the if clause.&n;*&t;&t;&t;&t;   The Fix checks to see if Transmit interrupts&n;*&t;&t;&t;&t;   are disabled then do not make dev-&gt;tbusy = 1&n;* &t;   &t;&t;&t;   Introduced a global variable: int_occur and&n;*&t;&t;&t;&t;   added tx_int_enabled in the wan_device &n;*&t;&t;&t;&t;   structure.&t;&n;* May 21, 1997  Jaspreet Singh   o Fixed UDP Management for multiple&n;*                                  boards.&n;*&n;* Apr 25, 1997  Farhan Thawar    o added UDP Management stuff&n;*                                o fixed bug in if_send() and tx_intr() to&n;*                                  sleep and wakeup all devices&n;* Mar 11, 1997  Farhan Thawar   Version 3.1.1&n;*                                o fixed (+1) bug in fr508_rx_intr()&n;*                                o changed if_send() to return 0 if&n;*                                  wandev.critical() is true&n;*                                o free socket buffer in if_send() if&n;*                                  returning 0 &n;*                                o added tx_intr() routine&n;* Jan 30, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o implemented exec() entry point&n;*&t;&t;&t;&t; o fixed a bug causing driver configured as&n;*&t;&t;&t;&t;   a FR switch to be stuck in WAN_&n;*&t;&t;&t;&t;   mode&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
-macro_line|#include &lt;linux/version.h&gt;
+multiline_comment|/*****************************************************************************&n;* sdla_fr.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver. Frame relay module.&n;*&n;* Author(s):&t;Nenad Corbic  &lt;ncorbic@sangoma.com&gt;&n;*&t;&t;Gideon Hack&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Feb 28, 2000  Jeff Garzik&t;o softnet updates&n;* Nov 08, 1999  Nenad Corbic    o Combined all debug UDP calls into one function&n;*                               o Removed the ARP support. This has to be done&n;*                                 in the next version.&n;*                               o Only a Node can implement NO signalling.&n;*                                 Initialize DLCI during if_open() if NO &n;*&t;&t;&t;&t;  signalling.&n;*&t;&t;&t;&t;o Took out IPX support, implement in next&n;*                                 version&n;* Sep 29, 1999  Nenad Corbic&t;o Added SMP support and changed the update&n;*                                 function to use timer interrupt.&n;*&t;&t;&t;&t;o Fixed the CIR bug:  Set the value of BC&n;*                                 to CIR when the CIR is enabled.&n;*  &t;&t;&t;&t;o Updated comments, statistics and tracing.&n;* Jun 02, 1999&t;Gideon Hack&t;o Updated for S514 support.&n;* Sep 18, 1998&t;Jaspreet Singh&t;o Updated for 2.2.X kernels.&n;* Jul 31, 1998&t;Jaspreet Singh&t;o Removed wpf_poll routine.  The channel/DLCI &n;*&t;&t;&t;&t;  status is received through an event interrupt.&n;* Jul 08, 1998&t;David Fong&t;o Added inverse ARP support.&n;* Mar 26, 1997&t;Jaspreet Singh&t;o Returning return codes for failed UDP cmds.&n;* Jan 28, 1997&t;Jaspreet Singh  o Improved handling of inactive DLCIs.&n;* Dec 30, 1997&t;Jaspreet Singh&t;o Replaced dev_tint() with mark_bh(NET_BH)&n;* Dec 16, 1997&t;Jaspreet Singh&t;o Implemented Multiple IPX support.&n;* Nov 26, 1997&t;Jaspreet Singh&t;o Improved load sharing with multiple boards&n;*&t;&t;&t;&t;o Added Cli() to protect enabling of interrupts&n;*&t;&t;&t;&t;  while polling is called.&n;* Nov 24, 1997&t;Jaspreet Singh&t;o Added counters to avoid enabling of interrupts&n;*&t;&t;&t;&t;  when they have been disabled by another&n;*&t;&t;&t;&t;  interface or routine (eg. wpf_poll).&n;* Nov 06, 1997&t;Jaspreet Singh&t;o Added INTR_TEST_MODE to avoid polling&t;&n;*&t;&t;&t;&t;  routine disable interrupts during interrupt&n;*&t;&t;&t;&t;  testing.&n;* Oct 20, 1997  Jaspreet Singh  o Added hooks in for Router UP time.&n;* Oct 16, 1997  Jaspreet Singh  o The critical flag is used to maintain flow&n;*                                 control by avoiding RACE conditions.  The&n;*                                 cli() and restore_flags() are taken out.&n;*                                 The fr_channel structure is appended for &n;*                                 Driver Statistics.&n;* Oct 15, 1997  Farhan Thawar    o updated if_send() and receive for IPX&n;* Aug 29, 1997  Farhan Thawar    o Removed most of the cli() and sti()&n;*                                o Abstracted the UDP management stuff&n;*                                o Now use tbusy and critical more intelligently&n;* Jul 21, 1997  Jaspreet Singh&t; o Can configure T391, T392, N391, N392 &amp; N393&n;*&t;&t;&t;&t;   through router.conf.&n;*&t;&t;&t;&t; o Protected calls to sdla_peek() by adDing &n;*&t;&t;&t;&t;   save_flags(), cli() and restore_flags().&n;*&t;&t;&t;&t; o Added error message for Inactive DLCIs in&n;*&t;&t;&t;&t;   fr_event() and update_chan_state().&n;*&t;&t;&t;&t; o Fixed freeing up of buffers using kfree() &n;*&t;&t;&t;           when packets are received.&n;* Jul 07, 1997&t;Jaspreet Singh&t; o Added configurable TTL for UDP packets &n;*&t;&t;&t;&t; o Added ability to discard multicast and &n;*&t;&t;&t;&t;   broadcast source addressed packets&n;* Jun 27, 1997&t;Jaspreet Singh&t; o Added FT1 monitor capabilities &n;*&t;&t;&t;&t;   New case (0x44) statement in if_send routine &n;*&t;&t;&t;&t;   Added a global variable rCount to keep track&n;*&t;&t;&t; &t;   of FT1 status enabled on the board.&n;* May 29, 1997&t;Jaspreet Singh&t; o Fixed major Flow Control Problem&n;*&t;&t;&t;&t;   With multiple boards a problem was seen where&n;*&t;&t;&t;&t;   the second board always stopped transmitting&n;*&t;&t;&t;&t;   packet after running for a while. The code&n;*&t;&t;&t;&t;   got into a stage where the interrupts were&n;*&t;&t;&t;&t;   disabled and dev-&gt;tbusy was set to 1.&n;*                  &t;&t;   This caused the If_send() routine to get into&n;*                                  the if clause for it(0,dev-&gt;tbusy) &n;*&t;&t;&t;&t;   forever.&n;*&t;&t;&t;&t;   The code got into this stage due to an &n;*&t;&t;&t;&t;   interrupt occuring within the if clause for &n;*&t;&t;&t;&t;   set_bit(0,dev-&gt;tbusy).  Since an interrupt &n;*&t;&t;&t;&t;   disables furhter transmit interrupt and &n;* &t;&t;&t;&t;   makes dev-&gt;tbusy = 0, this effect was undone &n;*                                  by making dev-&gt;tbusy = 1 in the if clause.&n;*&t;&t;&t;&t;   The Fix checks to see if Transmit interrupts&n;*&t;&t;&t;&t;   are disabled then do not make dev-&gt;tbusy = 1&n;* &t;   &t;&t;&t;   Introduced a global variable: int_occur and&n;*&t;&t;&t;&t;   added tx_int_enabled in the wan_device &n;*&t;&t;&t;&t;   structure.&t;&n;* May 21, 1997  Jaspreet Singh   o Fixed UDP Management for multiple&n;*                                  boards.&n;*&n;* Apr 25, 1997  Farhan Thawar    o added UDP Management stuff&n;*                                o fixed bug in if_send() and tx_intr() to&n;*                                  sleep and wakeup all devices&n;* Mar 11, 1997  Farhan Thawar   Version 3.1.1&n;*                                o fixed (+1) bug in fr508_rx_intr()&n;*                                o changed if_send() to return 0 if&n;*                                  wandev.critical() is true&n;*                                o free socket buffer in if_send() if&n;*                                  returning 0 &n;*                                o added tx_intr() routine&n;* Jan 30, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o implemented exec() entry point&n;*&t;&t;&t;&t; o fixed a bug causing driver configured as&n;*&t;&t;&t;&t;   a FR switch to be stuck in WAN_&n;*&t;&t;&t;&t;   mode&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -19,10 +18,6 @@ macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;net/route.h&gt;          /* Dynamic Route Creation */
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/sdla_fr.h&gt;&t;/* frame relay firmware API definitions */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020125
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit set_bit
-macro_line|#endif
 multiline_comment|/****** Defines &amp; Macros ****************************************************/
 DECL|macro|MAX_CMD_RETRY
 mdefine_line|#define&t;MAX_CMD_RETRY&t;10&t;&t;/* max number of firmware retries */
@@ -53,6 +48,8 @@ DECL|macro|API
 mdefine_line|#define API     0x01
 DECL|macro|FRAME_RELAY_API
 mdefine_line|#define FRAME_RELAY_API 1
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT&t;(5*HZ)
 multiline_comment|/* For handle_IPXWAN() */
 DECL|macro|CVHexToAscii
 mdefine_line|#define CVHexToAscii(b) (((unsigned char)(b) &gt; (unsigned char)9) ? ((unsigned char)&squot;A&squot; + ((unsigned char)(b) - (unsigned char)10)) : ((unsigned char)&squot;0&squot; + (unsigned char)(b)))
@@ -538,6 +535,16 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|if_tx_timeout
+(paren
 r_struct
 id|net_device
 op_star
@@ -3215,6 +3222,15 @@ op_assign
 op_amp
 id|if_stats
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|if_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 multiline_comment|/* Initialize media-specific parameters */
 id|dev-&gt;type
 op_assign
@@ -3375,7 +3391,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 r_return
 op_minus
@@ -3477,17 +3497,11 @@ id|chan-&gt;dlci
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|wanpipe_open
 c_func
@@ -3573,9 +3587,11 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|wanpipe_close
 c_func
@@ -3752,6 +3768,48 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*============================================================================&n; * Handle transmit timeout event from netif watchdog&n; */
+DECL|function|if_tx_timeout
+r_static
+r_void
+id|if_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|fr_channel_t
+op_star
+id|chan
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+multiline_comment|/* If our device stays busy for at least 5 seconds then we will&n;&t; * kick start the device by making dev-&gt;tbusy = 0.  We expect&n;&t; * that our device never stays busy more than 5 seconds. So this                 &n;&t; * is only used as a last resort.&n;&t; */
+id|chan-&gt;drvstats_if_send.if_send_tbusy
+op_increment
+suffix:semicolon
+op_increment
+id|chan-&gt;ifstats.collisions
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Transmit timed out&bslash;n&quot;
+comma
+id|chan-&gt;name
+)paren
+suffix:semicolon
+id|chan-&gt;drvstats_if_send.if_send_tbusy_timeout
+op_increment
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*============================================================================&n; * Send a packet on a network interface.&n; * o set tbusy flag (marks start of the transmission) to block a timer-based&n; *   transmit from overlapping.&n; * o set critical flag when accessing board.&n; * o check link state. If link is not up, then drop the packet.&n; * o check channel status. If it&squot;s down then initiate a call.&n; * o pass a packet to corresponding WAN device.&n; * o free socket buffer&n; *&n; * Return:&t;0&t;complete (socket buffer must be freed)&n; *&t;&t;non-0&t;packet may be re-transmitted (tbusy must be set)&n; *&n; * Notes:&n; * 1. This routine is called either by the protocol stack or by the &quot;net&n; *    bottom half&quot; (with interrupts enabled).&n; * 2. Setting tbusy flag will inhibit further transmit requests from the&n; *    protocol stack and can be used for flow control with protocol layer.&n; */
 DECL|function|if_send
 r_static
@@ -3839,10 +3897,10 @@ suffix:semicolon
 id|chan-&gt;drvstats_if_send.if_send_skb_null
 op_increment
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -3869,9 +3927,11 @@ c_cond
 id|chan-&gt;transmit_length
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|chan-&gt;tick_counter
 op_assign
@@ -3907,56 +3967,6 @@ op_amp
 id|card-&gt;wandev.critical
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* If our device stays busy for at least 5 seconds then we will&n;                 * kick start the device by making dev-&gt;tbusy = 0.  We expect&n;                 * that our device never stays busy more than 5 seconds. So this                 &n;&t;&t; * is only used as a last resort.&n;                 */
-id|chan-&gt;drvstats_if_send.if_send_tbusy
-op_increment
-suffix:semicolon
-op_increment
-id|chan-&gt;ifstats.collisions
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|jiffies
-op_minus
-id|chan-&gt;tick_counter
-)paren
-OL
-(paren
-l_int|5
-op_star
-id|HZ
-)paren
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Transmit timed out&bslash;n&quot;
-comma
-id|chan-&gt;name
-)paren
-suffix:semicolon
-id|chan-&gt;drvstats_if_send.if_send_tbusy_timeout
-op_increment
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 id|data
 op_assign
 id|skb-&gt;data
@@ -4493,16 +4503,18 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
 )paren
-(brace
+)paren
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 id|clear_bit
 c_func
 (paren
@@ -4527,7 +4539,11 @@ id|smp_flags
 suffix:semicolon
 r_return
 (paren
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -6169,7 +6185,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 op_logical_or
 (paren
 id|skb
@@ -6184,7 +6204,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 id|printk
@@ -6830,14 +6854,9 @@ op_complement
 id|FR_INTR_TXRDY
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
+id|netif_wake_queue
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -9858,7 +9877,11 @@ c_cond
 (paren
 id|dev
 op_logical_and
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 id|set_chan_state
 c_func
@@ -9893,7 +9916,11 @@ c_cond
 (paren
 id|dev
 op_logical_and
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 (brace
 id|fr_channel_t
@@ -9966,7 +9993,11 @@ c_cond
 (paren
 id|dev
 op_logical_and
-id|dev-&gt;start
+id|netif_running
+c_func
+(paren
+id|dev
+)paren
 )paren
 id|set_chan_state
 c_func
@@ -10888,7 +10919,11 @@ r_if
 c_cond
 (paren
 (paren
-id|dev-&gt;tbusy
+id|netif_queue_stopped
+c_func
+(paren
+id|dev
+)paren
 )paren
 op_logical_or
 (paren

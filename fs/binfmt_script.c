@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|function|do_load_script
 r_static
 r_int
@@ -79,10 +80,20 @@ multiline_comment|/*&n;&t; * This section does the #! interpretation.&n;&t; * So
 id|bprm-&gt;sh_bang
 op_increment
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|bprm-&gt;dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|bprm-&gt;dentry
@@ -366,6 +377,11 @@ id|bprm-&gt;argc
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * OK, now restart the process with the interpreter&squot;s dentry.&n;&t; */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|open_namei
@@ -376,6 +392,11 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

@@ -2038,6 +2038,14 @@ op_amp
 id|frame-&gt;sig
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
 id|err
 op_or_assign
 id|setup_sigcontext
@@ -2056,6 +2064,14 @@ id|set-&gt;sig
 l_int|0
 )braket
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
 r_if
 c_cond
@@ -2085,6 +2101,14 @@ id|frame-&gt;extramask
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
 multiline_comment|/* Set up to return from userspace.  If provided, use a stub&n;&t;   already in userspace.  */
 r_if
 c_cond
@@ -2412,6 +2436,14 @@ id|info
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
+suffix:semicolon
 multiline_comment|/* Create the ucontext.  */
 id|err
 op_or_assign
@@ -2507,6 +2539,14 @@ op_star
 id|set
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_goto
+id|give_sigsegv
 suffix:semicolon
 multiline_comment|/* Set up to return from userspace.  If provided, use a stub&n;&t;   already in userspace.  */
 r_if

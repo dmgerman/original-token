@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * sound/v_midi.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; * ??&n; *&n; * Changes&n; *&t;Alan Cox&t;&t;Modularisation, changed memory allocations&n; *&n; * Status&n; *&t;Untested&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;

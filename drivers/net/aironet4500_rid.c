@@ -2385,7 +2385,7 @@ id|awc_rids_setup
 c_func
 (paren
 r_struct
-id|NET_DEVICE
+id|net_device
 op_star
 id|dev
 )paren

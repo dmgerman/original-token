@@ -221,6 +221,33 @@ DECL|macro|virt_to_le32desc
 mdefine_line|#define virt_to_le32desc(addr)  cpu_to_le32(virt_to_bus(addr))
 DECL|macro|le32desc_to_virt
 mdefine_line|#define le32desc_to_virt(addr)  bus_to_virt(le32_to_cpu(addr))
+macro_line|#ifdef USE_IO_OPS
+DECL|macro|YF_INB
+mdefine_line|#define YF_INB&t;inb
+DECL|macro|YF_INW
+mdefine_line|#define YF_INW&t;inw
+DECL|macro|YF_INL
+mdefine_line|#define YF_INL&t;inl
+DECL|macro|YF_OUTB
+mdefine_line|#define YF_OUTB&t;outb
+DECL|macro|YF_OUTW
+mdefine_line|#define YF_OUTW&t;outw
+DECL|macro|YF_OUTL
+mdefine_line|#define YF_OUTL&t;outl
+macro_line|#else
+DECL|macro|YF_INB
+mdefine_line|#define YF_INB&t;readb
+DECL|macro|YF_INW
+mdefine_line|#define YF_INW&t;readw
+DECL|macro|YF_INL
+mdefine_line|#define YF_INL&t;readl
+DECL|macro|YF_OUTB
+mdefine_line|#define YF_OUTB&t;writeb
+DECL|macro|YF_OUTW
+mdefine_line|#define YF_OUTW&t;writew
+DECL|macro|YF_OUTL
+mdefine_line|#define YF_OUTL&t;writel
+macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the Packet Engines &quot;Yellowfin&quot; Gigabit&n;Ethernet adapter.  The only PCA currently supported is the G-NIC 64-bit&n;PCI card.&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS preferably should assign the&n;PCI INTA signal to an otherwise unused system IRQ line.&n;Note: Kernel versions earlier than 1.3.73 do not support shared PCI&n;interrupt lines.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;The Yellowfin uses the Descriptor Based DMA Architecture specified by Apple.&n;This is a descriptor list scheme similar to that used by the EEPro100 and&n;Tulip.  This driver uses two statically allocated fixed-size descriptor lists&n;formed into rings by a branch from the final descriptor to the beginning of&n;the list.  The ring sizes are set at compile time by RX/TX_RING_SIZE.&n;&n;The driver allocates full frame size skbuffs for the Rx ring buffers at&n;open() time and passes the skb-&gt;data field to the Yellowfin as receive data&n;buffers.  When an incoming frame is less than RX_COPYBREAK bytes long,&n;a fresh skbuff is allocated and the frame is copied to the new skbuff.&n;When the incoming frame is larger, the skbuff is passed directly up the&n;protocol stack and replaced by a newly allocated skbuff.&n;&n;The RX_COPYBREAK value is chosen to trade-off the memory wasted by&n;using a full-sized skbuff for small frames vs. the copying costs of larger&n;frames.  For small frames the copying cost is negligible (esp. considering&n;that we are pre-loading the cache with immediately useful header&n;information).  For large frames the copying cost is non-trivial, and the&n;larger copy might flush the cache of useful data.&n;&n;IIIC. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;yp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;yp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;Thanks to Kim Stearns of Packet Engines for providing a pair of G-NIC boards.&n;Thanks to Bruce Faust of Digitalscape for providing both their SYM53C885 board&n;and an AlphaStation to verifty the Alpha port!&n;&n;IVb. References&n;&n;Yellowfin Engineering Design Specification, 4/23/97 Preliminary/Confidential&n;Symbios SYM53C885 PCI-SCSI/Fast Ethernet Multifunction Controller Preliminary&n;   Data Manual v3.0&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/100mbps.html&n;&n;IVc. Errata&n;&n;See Packet Engines confidential appendix (prototype chips only).&n;&n;*/
 "&f;"
 multiline_comment|/* A few values that may be tweaked. */
@@ -1280,7 +1307,7 @@ op_assign
 l_int|10000
 suffix:semicolon
 multiline_comment|/* Typical 33Mhz: 1050 ticks */
-id|outb
+id|YF_OUTB
 c_func
 (paren
 id|location
@@ -1290,7 +1317,7 @@ op_plus
 id|EEAddr
 )paren
 suffix:semicolon
-id|outb
+id|YF_OUTB
 c_func
 (paren
 l_int|0x30
@@ -1314,7 +1341,7 @@ r_while
 c_loop
 (paren
 (paren
-id|inb
+id|YF_INB
 c_func
 (paren
 id|ioaddr
@@ -1332,7 +1359,7 @@ l_int|0
 )paren
 suffix:semicolon
 r_return
-id|inb
+id|YF_INB
 c_func
 (paren
 id|ioaddr
@@ -1361,7 +1388,7 @@ id|location
 r_int
 id|i
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 (paren
@@ -1377,7 +1404,7 @@ op_plus
 id|MII_Addr
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|1
@@ -1405,7 +1432,7 @@ r_if
 c_cond
 (paren
 (paren
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -1421,7 +1448,7 @@ l_int|0
 r_break
 suffix:semicolon
 r_return
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -1452,7 +1479,7 @@ id|value
 r_int
 id|i
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 (paren
@@ -1468,7 +1495,7 @@ op_plus
 id|MII_Addr
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 id|value
@@ -1497,7 +1524,7 @@ r_if
 c_cond
 (paren
 (paren
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -1549,7 +1576,7 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* Reset the chip. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80000000
@@ -1607,7 +1634,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|outl
+id|YF_OUTL
 c_func
 (paren
 id|virt_to_bus
@@ -1621,7 +1648,7 @@ op_plus
 id|RxPtr
 )paren
 suffix:semicolon
-id|outl
+id|YF_OUTL
 c_func
 (paren
 id|virt_to_bus
@@ -1649,7 +1676,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|outb
+id|YF_OUTB
 c_func
 (paren
 id|dev-&gt;dev_addr
@@ -1665,7 +1692,7 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Set up various condition &squot;select&squot; registers.&n;&t;   There are no options here. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00800080
@@ -1676,7 +1703,7 @@ id|TxIntrSel
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt on Tx abort */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00800080
@@ -1687,7 +1714,7 @@ id|TxBranchSel
 )paren
 suffix:semicolon
 multiline_comment|/* Branch on Tx abort */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00400040
@@ -1698,7 +1725,7 @@ id|TxWaitSel
 )paren
 suffix:semicolon
 multiline_comment|/* Wait on Tx status */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00400040
@@ -1709,7 +1736,7 @@ id|RxIntrSel
 )paren
 suffix:semicolon
 multiline_comment|/* Interrupt on Rx done */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00400040
@@ -1720,7 +1747,7 @@ id|RxBranchSel
 )paren
 suffix:semicolon
 multiline_comment|/* Branch on Rx error */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x00400040
@@ -1732,7 +1759,7 @@ id|RxWaitSel
 suffix:semicolon
 multiline_comment|/* Wait on Rx done */
 multiline_comment|/* Initialize other registers: with so many this eventually this will&n;&t;   converted to an offset/value list. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 id|dma_ctrl
@@ -1742,7 +1769,7 @@ op_plus
 id|DMACtrl
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 id|fifo_cfg
@@ -1753,7 +1780,7 @@ id|FIFOcfg
 )paren
 suffix:semicolon
 multiline_comment|/* Enable automatic generation of flow control frames, period 0xffff. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x0030FFFF
@@ -1767,7 +1794,7 @@ id|yp-&gt;tx_threshold
 op_assign
 l_int|32
 suffix:semicolon
-id|outl
+id|YF_OUTL
 c_func
 (paren
 id|yp-&gt;tx_threshold
@@ -1807,7 +1834,7 @@ id|yp-&gt;full_duplex
 op_assign
 l_int|1
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x01CF
@@ -1820,7 +1847,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x0018
@@ -1831,7 +1858,7 @@ id|FrameGap0
 )paren
 suffix:semicolon
 multiline_comment|/* 0060/4060 for non-MII 10baseT */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x1018
@@ -1841,7 +1868,7 @@ op_plus
 id|FrameGap1
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x101C
@@ -1868,7 +1895,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x81ff
@@ -1879,7 +1906,7 @@ id|IntrEnb
 )paren
 suffix:semicolon
 multiline_comment|/* See enum intr_status_bits */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x0000
@@ -1890,7 +1917,7 @@ id|EventStatus
 )paren
 suffix:semicolon
 multiline_comment|/* Clear non-interrupting events */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80008000
@@ -1901,7 +1928,7 @@ id|RxCtrl
 )paren
 suffix:semicolon
 multiline_comment|/* Start Rx and Tx channels. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80008000
@@ -2033,7 +2060,7 @@ l_string|&quot;%s: Yellowfin timer tick, status %8.8x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -2144,7 +2171,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x101C
@@ -2240,7 +2267,7 @@ id|yp-&gt;cur_tx
 comma
 id|yp-&gt;dirty_tx
 comma
-id|inl
+id|YF_INL
 c_func
 (paren
 id|ioaddr
@@ -2248,7 +2275,7 @@ op_plus
 id|TxStatus
 )paren
 comma
-id|inl
+id|YF_INL
 c_func
 (paren
 id|ioaddr
@@ -2360,7 +2387,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Wake the potentially-idle transmit channel. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x10001000
@@ -3262,7 +3289,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Non-x86 Todo: explicitly flush cache lines here. */
 multiline_comment|/* Wake the potentially-idle transmit channel. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x10001000
@@ -3411,7 +3438,7 @@ r_do
 id|u16
 id|intr_status
 op_assign
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -3464,7 +3491,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x10001000
@@ -4004,7 +4031,7 @@ l_string|&quot;%s: exiting interrupt, status=%#4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -5111,7 +5138,7 @@ l_string|&quot;%s: Shutting down ethercard, status was Tx %4.4x Rx %4.4x Int %2.
 comma
 id|dev-&gt;name
 comma
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -5119,7 +5146,7 @@ op_plus
 id|TxStatus
 )paren
 comma
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -5127,7 +5154,7 @@ op_plus
 id|RxStatus
 )paren
 comma
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -5155,7 +5182,7 @@ id|yp-&gt;dirty_rx
 suffix:semicolon
 )brace
 multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x0000
@@ -5166,7 +5193,7 @@ id|IntrEnb
 )paren
 suffix:semicolon
 multiline_comment|/* Stop the chip&squot;s Tx and Rx processes. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80000000
@@ -5176,7 +5203,7 @@ op_plus
 id|RxCtrl
 )paren
 suffix:semicolon
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80000000
@@ -5240,7 +5267,7 @@ c_func
 (paren
 l_string|&quot; %c #%d desc. %8.8x %8.8x %8.8x %8.8x.&bslash;n&quot;
 comma
-id|inl
+id|YF_INL
 c_func
 (paren
 id|ioaddr
@@ -5390,7 +5417,7 @@ c_func
 id|KERN_DEBUG
 l_string|&quot; %c #%d desc. %8.8x %8.8x %8.8x&bslash;n&quot;
 comma
-id|inl
+id|YF_INL
 c_func
 (paren
 id|ioaddr
@@ -5825,7 +5852,7 @@ suffix:semicolon
 id|u16
 id|cfg_value
 op_assign
-id|inw
+id|YF_INW
 c_func
 (paren
 id|ioaddr
@@ -5834,7 +5861,7 @@ id|Cnfg
 )paren
 suffix:semicolon
 multiline_comment|/* Stop the Rx process to change any value. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 id|cfg_value
@@ -5866,7 +5893,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x000F
@@ -5895,7 +5922,7 @@ id|IFF_ALLMULTI
 )paren
 (brace
 multiline_comment|/* Too many to filter well, or accept all multicasts. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x000B
@@ -6074,7 +6101,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|outw
+id|YF_OUTW
 c_func
 (paren
 id|hash_table
@@ -6091,7 +6118,7 @@ op_star
 l_int|2
 )paren
 suffix:semicolon
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x0003
@@ -6105,7 +6132,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Normal, unicast/broadcast-only mode. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 l_int|0x0001
@@ -6117,7 +6144,7 @@ id|AddrMode
 suffix:semicolon
 )brace
 multiline_comment|/* Restart the Rx process. */
-id|outw
+id|YF_OUTW
 c_func
 (paren
 id|cfg_value
@@ -6339,6 +6366,8 @@ l_int|0
 suffix:semicolon
 r_int
 id|ioaddr
+comma
+id|real_ioaddr
 suffix:semicolon
 id|chip_idx
 op_assign
@@ -6522,6 +6551,8 @@ id|pdev
 )paren
 suffix:semicolon
 macro_line|#ifdef USE_IO_OPS
+id|real_ioaddr
+op_assign
 id|ioaddr
 op_assign
 id|pci_resource_start
@@ -6532,6 +6563,8 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#else
+id|real_ioaddr
+op_assign
 id|ioaddr
 op_assign
 id|pci_resource_start
@@ -6539,6 +6572,16 @@ id|pci_resource_start
 id|pdev
 comma
 l_int|1
+)paren
+suffix:semicolon
+id|ioaddr
+op_assign
+id|ioremap
+c_func
+(paren
+id|ioaddr
+comma
+id|YELLOWFIN_SIZE
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6561,7 +6604,7 @@ id|chip_idx
 dot
 id|name
 comma
-id|inl
+id|YF_INL
 c_func
 (paren
 id|ioaddr
@@ -6569,7 +6612,7 @@ op_plus
 id|ChipRev
 )paren
 comma
-id|ioaddr
+id|real_ioaddr
 )paren
 suffix:semicolon
 r_if
@@ -6598,7 +6641,7 @@ id|dev-&gt;dev_addr
 id|i
 )braket
 op_assign
-id|inb
+id|YF_INB
 c_func
 (paren
 id|ioaddr
@@ -6699,7 +6742,7 @@ id|irq
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the chip. */
-id|outl
+id|YF_OUTL
 c_func
 (paren
 l_int|0x80000000

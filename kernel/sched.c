@@ -511,17 +511,20 @@ l_int|0
 r_goto
 id|send_now
 suffix:semicolon
-multiline_comment|/*&n;&t; * We will get here often - or in the high CPU contention&n;&t; * case. No CPU is idle and this process is either lowprio or&n;&t; * the preferred CPU is highprio. Try to preemt some other CPU&n;&t; * only if it&squot;s RT or if it&squot;s iteractive and the preferred&n;&t; * cpu won&squot;t reschedule shortly.&n;&t; */
+multiline_comment|/*&n;&t; * We will get here often - or in the high CPU contention&n;&t; * case. No CPU is idle and this process is either lowprio or&n;&t; * the preferred CPU is highprio. Try to preempt some other CPU&n;&t; * only if it&squot;s RT or if it&squot;s iteractive and the preferred&n;&t; * cpu won&squot;t reschedule shortly.&n;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|p-&gt;avg_slice
-template_param
+OL
 id|cacheflush_time
-)paren
 op_logical_or
+(paren
 id|p-&gt;policy
+op_amp
+op_complement
+id|SCHED_YIELD
+)paren
 op_ne
 id|SCHED_OTHER
 )paren

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -19,7 +20,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#ifdef DEBUG
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK( when, msg... ) do { if ( (DEBUG &amp; (when)) == (when) ) printk( msg ); } while (0)

@@ -25,8 +25,10 @@ DECL|macro|MAY_TRUNC
 mdefine_line|#define MAY_TRUNC&t;&t;16
 DECL|macro|MAY_LOCK
 mdefine_line|#define MAY_LOCK&t;&t;32
-macro_line|#if (MAY_SATTR | MAY_TRUNC | MAY_LOCK) &amp; (MAY_READ | MAY_WRITE | MAY_EXEC)
-macro_line|# error &quot;please use a different value for MAY_SATTR or MAY_TRUNC or MAY_LOCK.&quot;
+DECL|macro|MAY_OWNER_OVERRIDE
+mdefine_line|#define MAY_OWNER_OVERRIDE&t;64
+macro_line|#if (MAY_SATTR | MAY_TRUNC | MAY_LOCK | MAX_OWNER_OVERRIDE) &amp; (MAY_READ | MAY_WRITE | MAY_EXEC | MAY_OWNER_OVERRIDE)
+macro_line|# error &quot;please use a different value for MAY_SATTR or MAY_TRUNC or MAY_LOCK or MAY_OWNER_OVERRIDE.&quot;
 macro_line|#endif
 DECL|macro|MAY_CREATE
 mdefine_line|#define MAY_CREATE&t;&t;(MAY_EXEC|MAY_WRITE)

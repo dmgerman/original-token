@@ -5902,7 +5902,7 @@ id|pb-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/* --- DMA detection -------------------------------------- */
-multiline_comment|/* Only if supports ECP mode */
+multiline_comment|/* Only if chipset conforms to ECP ISA Interface Standard */
 DECL|function|programmable_dma_support
 r_static
 r_int
@@ -5952,13 +5952,19 @@ id|p
 )paren
 )paren
 op_amp
-l_int|0x03
+l_int|0x07
 suffix:semicolon
+multiline_comment|/* 000: Indicates jumpered 8-bit DMA if read-only.&n;&t;   100: Indicates jumpered 16-bit DMA if read-only. */
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
 id|dma
+op_amp
+l_int|0x03
+)paren
+op_eq
+l_int|0
 )paren
 id|dma
 op_assign
@@ -6886,6 +6892,7 @@ r_return
 id|p
 suffix:semicolon
 )brace
+multiline_comment|/* Via support maintained by Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt; */
 DECL|function|sio_via_686a_probe
 r_static
 r_int
@@ -7323,6 +7330,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
 r_const
 r_struct
 id|pci_device_id
@@ -7370,6 +7378,7 @@ id|pdev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_PCI */
 r_return
 l_int|0
 suffix:semicolon
@@ -8514,6 +8523,26 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Phil Blundell, Tim Waugh, others&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;PC-style parallel port driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io
+comma
+l_string|&quot;Base I/O address (SPP regs)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -8526,6 +8555,14 @@ c_func
 id|PARPORT_PC_MAX_PORTS
 )paren
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|io_hi
+comma
+l_string|&quot;Base I/O address (ECR)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -8542,6 +8579,14 @@ id|PARPORT_PC_MAX_PORTS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;IRQ line&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -8554,6 +8599,14 @@ c_func
 id|PARPORT_PC_MAX_PORTS
 )paren
 l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;DMA channel&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
