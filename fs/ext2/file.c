@@ -1,12 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; *&n; *  64-bit file support on 64-bit platforms by Jakub Jelinek&n; * &t;(jj@sunsite.ms.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-DECL|macro|NBUF
-mdefine_line|#define&t;NBUF&t;32
-DECL|macro|MIN
-mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
-DECL|macro|MAX
-mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 r_static
 id|loff_t
 id|ext2_file_lseek
@@ -212,153 +206,6 @@ r_return
 id|offset
 suffix:semicolon
 )brace
-DECL|function|remove_suid
-r_static
-r_inline
-r_void
-id|remove_suid
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_int
-r_int
-id|mode
-suffix:semicolon
-multiline_comment|/* set S_IGID if S_IXGRP is set, and always set S_ISUID */
-id|mode
-op_assign
-(paren
-id|inode-&gt;i_mode
-op_amp
-id|S_IXGRP
-)paren
-op_star
-(paren
-id|S_ISGID
-op_div
-id|S_IXGRP
-)paren
-op_or
-id|S_ISUID
-suffix:semicolon
-multiline_comment|/* was any of the uid bits set? */
-id|mode
-op_and_assign
-id|inode-&gt;i_mode
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mode
-op_logical_and
-op_logical_neg
-id|capable
-c_func
-(paren
-id|CAP_FSETID
-)paren
-)paren
-(brace
-id|inode-&gt;i_mode
-op_and_assign
-op_complement
-id|mode
-suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n; * Write to a file (through the page cache).&n; */
-r_static
-id|ssize_t
-DECL|function|ext2_file_write
-id|ext2_file_write
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-comma
-id|loff_t
-op_star
-id|ppos
-)paren
-(brace
-id|ssize_t
-id|retval
-suffix:semicolon
-id|retval
-op_assign
-id|generic_file_write
-c_func
-(paren
-id|file
-comma
-id|buf
-comma
-id|count
-comma
-id|ppos
-comma
-id|block_write_partial_page
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-OG
-l_int|0
-)paren
-(brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
-id|remove_suid
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-id|inode-&gt;i_ctime
-op_assign
-id|inode-&gt;i_mtime
-op_assign
-id|CURRENT_TIME
-suffix:semicolon
-id|mark_inode_dirty
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-)brace
-r_return
-id|retval
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext2_file_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
 DECL|function|ext2_release_file
 r_static
@@ -447,7 +294,7 @@ id|generic_file_read
 comma
 id|write
 suffix:colon
-id|ext2_file_write
+id|generic_file_write
 comma
 id|ioctl
 suffix:colon
@@ -480,58 +327,10 @@ op_assign
 op_amp
 id|ext2_file_operations
 comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|ext2_get_block
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-id|block_write_full_page
-comma
-multiline_comment|/* writepage */
+id|truncate
+suffix:colon
 id|ext2_truncate
 comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

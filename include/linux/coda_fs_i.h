@@ -85,6 +85,27 @@ DECL|macro|C_INITED
 mdefine_line|#define C_INITED      0x20
 DECL|macro|C_FLUSH
 mdefine_line|#define C_FLUSH       0x2   /* used after a flush */
+r_struct
+id|inode
+op_star
+id|coda_iget
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+id|ViceFid
+op_star
+id|fid
+comma
+r_struct
+id|coda_vattr
+op_star
+id|attr
+)paren
+suffix:semicolon
 r_int
 id|coda_cnode_make
 c_func

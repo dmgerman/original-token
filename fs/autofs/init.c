@@ -55,18 +55,22 @@ id|autofs_fs_type
 )paren
 suffix:semicolon
 )brace
-DECL|function|module_init
+DECL|variable|init_autofs_fs
 id|module_init
 c_func
 (paren
 id|init_autofs_fs
 )paren
+suffix:semicolon
+DECL|variable|exit_autofs_fs
 id|module_exit
 c_func
 (paren
 id|exit_autofs_fs
 )paren
+suffix:semicolon
 macro_line|#ifdef DEBUG
+DECL|function|autofs_say
 r_void
 id|autofs_say
 c_func

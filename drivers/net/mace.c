@@ -1,14 +1,13 @@
 multiline_comment|/*&n; * Network device driver for the MACE ethernet controller on&n; * Apple Powermacs.  Assumes it&squot;s under a DBDMA controller.&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; */
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -441,9 +440,10 @@ id|d
 suffix:semicolon
 )brace
 DECL|function|mace_probe
+r_static
 r_int
+id|__init
 id|mace_probe
-c_func
 (paren
 r_void
 )paren
@@ -485,6 +485,21 @@ id|device_node
 op_star
 id|next_mace
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|mace_devs
+op_ne
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4948,8 +4963,6 @@ id|i
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20118
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -4962,50 +4975,16 @@ c_func
 l_string|&quot;PowerMac MACE driver.&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|function|init_module
-r_int
-id|init_module
-c_func
+DECL|function|mace_cleanup
+r_static
+r_void
+id|__exit
+id|mace_cleanup
 (paren
 r_void
 )paren
 (brace
-r_int
-id|res
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mace_devs
-op_ne
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-id|res
-op_assign
-id|mace_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
+macro_line|#ifdef MODULE
 r_struct
 id|mace_data
 op_star
@@ -5058,6 +5037,20 @@ id|mace_devs
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
+DECL|variable|mace_probe
+id|module_init
+c_func
+(paren
+id|mace_probe
+)paren
+suffix:semicolon
+DECL|variable|mace_cleanup
+id|module_exit
+c_func
+(paren
+id|mace_cleanup
+)paren
+suffix:semicolon
 eof

@@ -16,6 +16,7 @@ l_int|30110
 suffix:semicolon
 multiline_comment|/* 2 digits for each component */
 multiline_comment|/*&n; *  D. P. Gilbert (dgilbert@interlog.com, dougg@triode.net.au), notes:&n; *      - scsi logging is available via SCSI_LOG_TIMEOUT macros. First&n; *        the kernel/module needs to be built with CONFIG_SCSI_LOGGING&n; *        (otherwise the macros compile to empty statements).&n; *        Then before running the program to be debugged enter:&n; *          # echo &quot;scsi log timeout 7&quot; &gt; /proc/scsi/scsi&n; *        This will send copious output to the console and the log which&n; *        is usually /var/log/messages. To turn off debugging enter:&n; *          # echo &quot;scsi log timeout 0&quot; &gt; /proc/scsi/scsi&n; *        The &squot;timeout&squot; token was chosen because it is relatively unused.&n; *        The token &squot;hlcomplete&squot; should be used but that triggers too&n; *        much output from the sd device driver. To dump the current&n; *        state of the SCSI mid level data structures enter:&n; *          # echo &quot;scsi dump 1&quot; &gt; /proc/scsi/scsi&n; *        To dump the state of sg&squot;s data structures use:&n; *          # cat /proc/scsi/sg/debug&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -16993,6 +16993,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|smctr_probe1
 c_func
 (paren
@@ -17001,17 +17002,6 @@ comma
 id|ioaddr
 )paren
 )paren
-(brace
-macro_line|#ifndef MODULE
-id|tr_freedev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
 r_return
 (paren
 l_int|0

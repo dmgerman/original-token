@@ -106,8 +106,8 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_NCPFS_EXTRAS
 r_extern
 r_struct
-id|inode_operations
-id|ncp_symlink_inode_operations
+id|address_space_operations
+id|ncp_symlink_aops
 suffix:semicolon
 r_extern
 r_int
@@ -1000,7 +1000,12 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ncp_symlink_inode_operations
+id|page_symlink_inode_operations
+suffix:semicolon
+id|inode-&gt;i_data.a_ops
+op_assign
+op_amp
+id|ncp_symlink_aops
 suffix:semicolon
 macro_line|#endif
 )brace

@@ -26,6 +26,7 @@ op_assign
 l_string|&quot;@(#)SK-BUILD: 3.02 (19991111) PL: 01&quot;
 suffix:semicolon
 macro_line|#include&t;&lt;linux/module.h&gt;
+macro_line|#include&t;&lt;linux/init.h&gt;
 macro_line|#include&t;&quot;h/skdrv1st.h&quot;
 macro_line|#include&t;&quot;h/skdrv2nd.h&quot;
 multiline_comment|/* defines ******************************************************************/
@@ -581,14 +582,12 @@ l_int|0x480
 suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * &t;skge_probe - find all SK-98xx adapters&n; *&n; * Description:&n; *&t;This function scans the PCI bus for SK-98xx adapters. Resources for&n; *&t;each adapter are allocated and the adapter is brought into Init 1&n; *&t;state.&n; *&n; * Returns:&n; *&t;0, if everything is ok&n; *&t;!=0, on error&n; */
 DECL|function|skge_probe
+r_static
 r_int
 id|__init
 id|skge_probe
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -615,6 +614,13 @@ suffix:semicolon
 r_int
 r_int
 id|base_address
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -721,41 +727,7 @@ c_cond
 id|dev
 op_eq
 l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Unable to allocate etherdev &quot;
-l_string|&quot;structure!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;priv
-)paren
-id|dev-&gt;priv
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|SK_AC
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 id|dev-&gt;priv
 op_eq
 l_int|NULL
@@ -765,7 +737,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Unable to allocate adapter &quot;
+l_string|&quot;Unable to allocate etherdev &quot;
 l_string|&quot;structure!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1003,27 +975,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n;&t; * If we&squot;re at this point we&squot;re going through skge_probe() for&n;&t; * the first time.  Return success (0) if we&squot;ve initialized 1&n;&t; * or more boards. Otherwise, return failure (-ENODEV).&n;&t; */
-macro_line|#ifdef MODULE
 r_return
 id|boards_found
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|boards_found
-OG
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_else
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* skge_probe */
 multiline_comment|/*****************************************************************************&n; *&n; * &t;FreeResources - release resources allocated for adapter&n; *&n; * Description:&n; *&t;This function releases the IRQ, unmaps the IO and&n; *&t;frees the desriptor ring.&n; *&n; * Returns: N/A&n; *&t;&n; */
@@ -1110,7 +1064,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* FreeResources */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1286,8 +1239,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif 
-singleline_comment|// MODULE
 macro_line|#ifdef AUTO_NEG_A
 DECL|variable|AutoNeg_A
 r_static
@@ -1568,7 +1519,6 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef MODULE
 DECL|variable|debug
 r_static
 r_int
@@ -1591,10 +1541,12 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* not used */
-multiline_comment|/*****************************************************************************&n; *&n; * &t;init_module - module initialization function&n; *&n; * Description:&n; *&t;Very simple, only call skge_probe and return approriate result.&n; *&n; * Returns:&n; *&t;0, if everything is ok&n; *&t;!=0, on error&n; */
-DECL|function|init_module
+multiline_comment|/*****************************************************************************&n; *&n; * &t;skge_init_module - module initialization function&n; *&n; * Description:&n; *&t;Very simple, only call skge_probe and return approriate result.&n; *&n; * Returns:&n; *&t;0, if everything is ok&n; *&t;!=0, on error&n; */
+DECL|function|skge_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|skge_init_module
 c_func
 (paren
 r_void
@@ -1624,7 +1576,6 @@ op_assign
 id|skge_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1652,11 +1603,13 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* init_module */
-multiline_comment|/*****************************************************************************&n; *&n; * &t;cleanup_module - module unload function&n; *&n; * Description:&n; *&t;Disable adapter if it is still running, free resources,&n; *&t;free device struct.&n; *&n; * Returns: N/A&n; */
-DECL|function|cleanup_module
+multiline_comment|/* skge_init_module */
+multiline_comment|/*****************************************************************************&n; *&n; * &t;skge_cleanup_module - module unload function&n; *&n; * Description:&n; *&t;Disable adapter if it is still running, free resources,&n; *&t;free device struct.&n; *&n; * Returns: N/A&n; */
+DECL|function|skge_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|skge_cleanup_module
 c_func
 (paren
 r_void
@@ -1835,7 +1788,21 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* cleanup_module */
+multiline_comment|/* skge_cleanup_module */
+DECL|variable|skge_init_module
+id|module_init
+c_func
+(paren
+id|skge_init_module
+)paren
+suffix:semicolon
+DECL|variable|skge_cleanup_module
+id|module_exit
+c_func
+(paren
+id|skge_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*****************************************************************************&n; *&n; * &t;SkGeBoardInit - do level 0 and 1 initialization&n; *&n; * Description:&n; *&t;This function prepares the board hardware for running. The desriptor&n; *&t;ring is set up, the IRQ is allocated and the configuration settings&n; *&t;are examined.&n; *&n; * Returns:&n; *&t;0, if everything is ok&n; *&t;!=0, on error&n; */
 DECL|function|SkGeBoardInit
 r_static

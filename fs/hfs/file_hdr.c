@@ -127,23 +127,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block - XXX: not available since&n;&t;&t;&t;&t;   header part has no disk block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
 id|hdr_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|hfs_dbl_fil_hdr_layout

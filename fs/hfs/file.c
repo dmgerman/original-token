@@ -51,24 +51,6 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-r_static
-r_int
-id|hfs_get_block
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-comma
-r_struct
-id|buffer_head
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/*================ Global variables ================*/
 DECL|variable|hfs_file_operations
 r_static
@@ -138,23 +120,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|hfs_get_block
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
 id|hfs_file_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*================ Variable-like macros ================*/

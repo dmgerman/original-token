@@ -29,8 +29,13 @@ id|coda_ioctl_inode_operations
 suffix:semicolon
 r_extern
 r_struct
-id|inode_operations
-id|coda_symlink_inode_operations
+id|address_space_operations
+id|coda_file_aops
+suffix:semicolon
+r_extern
+r_struct
+id|address_space_operations
+id|coda_symlink_aops
 suffix:semicolon
 r_extern
 r_struct

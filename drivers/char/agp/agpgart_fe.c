@@ -22,6 +22,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
+macro_line|#include &quot;agp.h&quot;
 DECL|variable|agp_fe
 r_static
 r_struct
@@ -995,6 +996,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;memory : %p&bslash;n&quot;
 comma
 id|memory
@@ -3784,6 +3786,9 @@ id|file-&gt;private_data
 suffix:semicolon
 r_int
 id|ret_val
+op_assign
+op_minus
+id|ENOTTY
 suffix:semicolon
 id|AGP_LOCK
 c_func
@@ -3806,9 +3811,13 @@ id|AGPIOC_ACQUIRE
 )paren
 )paren
 (brace
-r_return
+id|ret_val
+op_assign
 op_minus
 id|EINVAL
+suffix:semicolon
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_if
@@ -3827,9 +3836,13 @@ id|AGPIOC_ACQUIRE
 )paren
 )paren
 (brace
-r_return
+id|ret_val
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_if
@@ -3856,9 +3869,13 @@ id|curr_priv-&gt;access_flags
 )paren
 )paren
 (brace
-r_return
+id|ret_val
+op_assign
 op_minus
 id|EPERM
+suffix:semicolon
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 multiline_comment|/* Use the original pid of the controller,&n;&t;&t; * in case it&squot;s threaded */
@@ -3870,9 +3887,13 @@ op_ne
 id|curr_priv-&gt;my_pid
 )paren
 (brace
-r_return
+id|ret_val
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 )brace
@@ -3896,13 +3917,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -3919,13 +3935,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -3942,13 +3953,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -3965,13 +3971,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -3988,13 +3989,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -4011,13 +4007,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -4034,13 +4025,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -4057,13 +4043,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -4080,13 +4061,8 @@ comma
 id|arg
 )paren
 suffix:semicolon
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret_val
+r_goto
+id|ioctl_out
 suffix:semicolon
 )brace
 r_case
@@ -4103,6 +4079,13 @@ comma
 id|arg
 )paren
 suffix:semicolon
+r_goto
+id|ioctl_out
+suffix:semicolon
+)brace
+)brace
+id|ioctl_out
+suffix:colon
 id|AGP_UNLOCK
 c_func
 (paren
@@ -4110,17 +4093,6 @@ c_func
 suffix:semicolon
 r_return
 id|ret_val
-suffix:semicolon
-)brace
-)brace
-id|AGP_UNLOCK
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOTTY
 suffix:semicolon
 )brace
 DECL|variable|agp_fops
@@ -4169,7 +4141,7 @@ op_assign
 (brace
 id|AGPGART_MINOR
 comma
-l_string|&quot;agpgart&quot;
+id|AGPGART_MODULE_NAME
 comma
 op_amp
 id|agp_fops
@@ -4177,6 +4149,7 @@ id|agp_fops
 suffix:semicolon
 DECL|function|agp_frontend_initialize
 r_int
+id|__init
 id|agp_frontend_initialize
 c_func
 (paren
@@ -4217,7 +4190,9 @@ id|agp_miscdev
 id|printk
 c_func
 (paren
-l_string|&quot;agpgart: unable to get minor: %d&bslash;n&quot;
+id|KERN_ERR
+id|PFX
+l_string|&quot;unable to get minor: %d&bslash;n&quot;
 comma
 id|AGPGART_MINOR
 )paren
@@ -4233,6 +4208,7 @@ suffix:semicolon
 )brace
 DECL|function|agp_frontend_cleanup
 r_void
+id|__exit
 id|agp_frontend_cleanup
 c_func
 (paren
@@ -4245,8 +4221,6 @@ c_func
 op_amp
 id|agp_miscdev
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 eof

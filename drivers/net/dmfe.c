@@ -1077,6 +1077,7 @@ l_int|0x2D02EF8DL
 )brace
 suffix:semicolon
 multiline_comment|/* function declaration ------------------------------------- */
+r_static
 r_int
 id|dmfe_reg_board
 c_func
@@ -1383,6 +1384,7 @@ suffix:semicolon
 multiline_comment|/* DM910X network board routine ---------------------------- */
 multiline_comment|/*&n; *&t;Search DM910X board, allocate space and register it&n; */
 DECL|function|dmfe_reg_board
+r_static
 r_int
 id|__init
 id|dmfe_reg_board
@@ -1478,9 +1480,6 @@ id|net_dev
 id|u32
 id|pci_id
 suffix:semicolon
-id|u8
-id|pci_cmd
-suffix:semicolon
 id|index
 op_increment
 suffix:semicolon
@@ -1524,41 +1523,30 @@ id|pci_irqline
 op_assign
 id|net_dev-&gt;irq
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|pci_iobase
+comma
+id|DM9102_IO_SIZE
+)paren
+)paren
+multiline_comment|/* IO range check */
+r_continue
+suffix:semicolon
 multiline_comment|/* Enable Master/IO access, Disable memory access */
+id|pci_enable_device
+(paren
+id|net_dev
+)paren
+suffix:semicolon
 id|pci_set_master
 c_func
 (paren
 id|net_dev
-)paren
-suffix:semicolon
-id|pci_read_config_byte
-c_func
-(paren
-id|net_dev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_cmd
-)paren
-suffix:semicolon
-id|pci_cmd
-op_or_assign
-id|PCI_COMMAND_IO
-suffix:semicolon
-id|pci_cmd
-op_and_assign
-op_complement
-id|PCI_COMMAND_MEMORY
-suffix:semicolon
-id|pci_write_config_byte
-c_func
-(paren
-id|net_dev
-comma
-id|PCI_COMMAND
-comma
-id|pci_cmd
 )paren
 suffix:semicolon
 multiline_comment|/* Set Latency Timer 80h */
@@ -1574,20 +1562,6 @@ l_int|0x80
 )paren
 suffix:semicolon
 multiline_comment|/* IO range and interrupt check */
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|pci_iobase
-comma
-id|DM9102_IO_SIZE
-)paren
-)paren
-multiline_comment|/* IO range check */
-r_continue
-suffix:semicolon
 multiline_comment|/* Found DM9102 card and PCI resource allocated OK */
 id|dm9102_count
 op_increment
@@ -1601,44 +1575,26 @@ c_func
 (paren
 l_int|NULL
 comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Allocated board information structure */
-id|db
-op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|kmalloc
-c_func
-(paren
 r_sizeof
 (paren
 op_star
 id|db
-)paren
-comma
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
 )paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|db
+id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
-multiline_comment|/* Out of memory */
+id|db
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1653,11 +1609,6 @@ id|db
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-id|db
-suffix:semicolon
-multiline_comment|/* link device and board info */
 id|db-&gt;next_dev
 op_assign
 id|dmfe_root_dev
@@ -1800,7 +1751,6 @@ id|i
 )braket
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
@@ -1814,7 +1764,6 @@ id|KERN_WARNING
 l_string|&quot;dmfe: Can&squot;t find DM910X board&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 r_return
 id|dm9102_count
 ques
@@ -6190,7 +6139,6 @@ op_complement
 id|Crc
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -6236,9 +6184,11 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&t;Description: &n; *&t;when user used insmod to add module, system invoked init_module()&n; *&t;to initilize and register.&n; */
-DECL|function|init_module
+DECL|function|dmfe_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|dmfe_init_module
 c_func
 (paren
 r_void
@@ -6315,9 +6265,11 @@ suffix:semicolon
 multiline_comment|/* search board and register */
 )brace
 multiline_comment|/*&n; *&t;Description: &n; *&t;when user used rmmod to delete module, system invoked clean_module()&n; *&t;to un-register device.&n; */
-DECL|function|cleanup_module
+DECL|function|dmfe_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|dmfe_cleanup_module
 c_func
 (paren
 r_void
@@ -6401,5 +6353,18 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;/* MODULE */
+DECL|variable|dmfe_init_module
+id|module_init
+c_func
+(paren
+id|dmfe_init_module
+)paren
+suffix:semicolon
+DECL|variable|dmfe_cleanup_module
+id|module_exit
+c_func
+(paren
+id|dmfe_cleanup_module
+)paren
+suffix:semicolon
 eof

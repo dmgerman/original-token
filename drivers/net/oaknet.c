@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/board.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;8390.h&quot;
@@ -39,15 +40,15 @@ id|name
 op_assign
 l_string|&quot;National DP83902AV&quot;
 suffix:semicolon
-macro_line|#if defined(MODULE)
 DECL|variable|oaknet_devs
 r_static
 r_struct
 id|net_device
 op_star
 id|oaknet_devs
+op_assign
+l_int|NULL
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Function Prototypes */
 r_static
 r_int
@@ -163,8 +164,10 @@ id|name
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * int oaknet_init()&n; *&n; * Description:&n; *   This routine performs all the necessary platform-specific initiali-&n; *   zation and set-up for the IBM &quot;Oak&quot; evaluation board&squot;s National&n; *   Semiconductor DP83902AV &quot;ST-NIC&quot; Ethernet controller.&n; *&n; * Input(s):&n; *   N/A&n; *&n; * Output(s):&n; *   N/A&n; *&n; * Returns:&n; *   0 if OK, otherwise system error number on error.&n; *&n; */
-r_int
 DECL|function|oaknet_init
+r_static
+r_int
+id|__init
 id|oaknet_init
 c_func
 (paren
@@ -230,6 +233,24 @@ op_assign
 op_amp
 id|tmp
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|OAKNET_IO_BASE
+comma
+id|OAKNET_IO_SIZE
+comma
+id|name
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 multiline_comment|/* Quick register check to see if the device is really there. */
 r_if
 c_cond
@@ -246,11 +267,21 @@ id|ioaddr
 op_eq
 l_int|0xFF
 )paren
+(brace
+id|release_region
+c_func
+(paren
+id|OAKNET_IO_BASE
+comma
+id|OAKNET_IO_SIZE
+)paren
+suffix:semicolon
 r_return
 (paren
 id|ENODEV
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * That worked. Now a more thorough check, using the multicast&n;&t; * address registers, that the device is definitely out there&n;&t; * and semi-functional.&n;&t; */
 id|ei_obp
 c_func
@@ -343,6 +374,14 @@ id|dev-&gt;base_addr
 op_assign
 l_int|0
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|OAKNET_IO_SIZE
+)paren
+suffix:semicolon
 r_return
 (paren
 id|ENODEV
@@ -359,12 +398,22 @@ c_func
 l_string|&quot;oaknet.c&quot;
 )paren
 )paren
+(brace
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|OAKNET_IO_SIZE
+)paren
+suffix:semicolon
 r_return
 (paren
 op_minus
 id|ENOSYS
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * We&squot;re not using the old-style probing API, so we have to allocate&n;&t; * our own device structure.&n;&t; */
 id|dev
 op_assign
@@ -376,12 +425,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#if defined(MODULE)
 id|oaknet_devs
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * This controller is on an embedded board, so the base address&n;&t; * and interrupt assignments are pre-assigned and unchageable.&n;&t; */
 id|dev-&gt;base_addr
 op_assign
@@ -406,6 +453,14 @@ id|printk
 c_func
 (paren
 l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|OAKNET_IO_SIZE
 )paren
 suffix:semicolon
 r_return
@@ -471,9 +526,13 @@ c_func
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|OAKNET_IO_SIZE
+)paren
 suffix:semicolon
 r_return
 (paren
@@ -481,16 +540,6 @@ id|EAGAIN
 )paren
 suffix:semicolon
 )brace
-id|request_region
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|OAKNET_IO_SIZE
-comma
-id|name
-)paren
-suffix:semicolon
 multiline_comment|/* Tell the world about what and where we&squot;ve found. */
 id|printk
 c_func
@@ -1947,12 +1996,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if defined(MODULE)
 multiline_comment|/*&n; * Oak Ethernet module load interface.&n; */
+DECL|function|oaknet_init_module
+r_static
 r_int
-DECL|function|init_module
-id|init_module
-c_func
+id|__init
+id|oaknet_init_module
 (paren
 r_void
 )paren
@@ -1979,6 +2028,13 @@ id|oaknet_init
 c_func
 (paren
 )paren
+r_if
+c_cond
+(paren
+id|status
+op_eq
+l_int|0
+)paren
 id|lock_8390_module
 c_func
 (paren
@@ -1991,10 +2047,11 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Oak Ethernet module unload interface.&n; */
+DECL|function|oaknet_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|oaknet_cleanup_module
 (paren
 r_void
 )paren
@@ -2065,8 +2122,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|oaknet_init_module
+id|module_init
+c_func
+(paren
+id|oaknet_init_module
+)paren
+suffix:semicolon
+DECL|variable|oaknet_cleanup_module
+id|module_exit
+c_func
+(paren
+id|oaknet_cleanup_module
+)paren
+suffix:semicolon
 eof

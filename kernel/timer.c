@@ -2432,12 +2432,6 @@ id|p-&gt;state
 op_amp
 id|TASK_UNINTERRUPTIBLE
 )paren
-op_logical_or
-(paren
-id|p-&gt;state
-op_amp
-id|TASK_SWAPPING
-)paren
 )paren
 )paren
 id|nr

@@ -2063,6 +2063,15 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* !CONFIG_PCI */
+multiline_comment|/* these helpers provide future and backwards compatibility&n; * for accessing popular PCI BAR info */
+DECL|macro|pci_resource_start
+mdefine_line|#define pci_resource_start(dev,bar)   ((dev)-&gt;resource[(bar)].start)
+DECL|macro|pci_resource_end
+mdefine_line|#define pci_resource_end(dev,bar)     ((dev)-&gt;resource[(bar)].end)
+DECL|macro|pci_resource_flags
+mdefine_line|#define pci_resource_flags(dev,bar)   ((dev)-&gt;resource[(bar)].flags)
+DECL|macro|pci_resource_len
+mdefine_line|#define pci_resource_len(dev,bar) &bslash;&n;&t;((pci_resource_start((dev),(bar)) == 0 &amp;&amp;&t;&bslash;&n;&t;  pci_resource_end((dev),(bar)) ==&t;&t;&bslash;&n;&t;  pci_resource_start((dev),(bar))) ? 0 :&t;&bslash;&n;&t;  &t;&t;&t;&t;&t;&t;&bslash;&n;&t; (pci_resource_end((dev),(bar)) -&t;&t;&bslash;&n;&t;  pci_resource_start((dev),(bar)) + 1))
 multiline_comment|/*&n; *  The world is not perfect and supplies us with broken PCI devices.&n; *  For at least a part of these bugs we need a work-around, so both&n; *  generic (drivers/pci/quirks.c) and per-architecture code can define&n; *  fixup hooks to be called for particular buggy devices.&n; */
 DECL|struct|pci_fixup
 r_struct

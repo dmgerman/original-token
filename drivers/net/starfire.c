@@ -160,20 +160,8 @@ macro_line|#warning  You must compile this file with the correct options!
 macro_line|#warning  See the last lines of the source file.
 macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
-multiline_comment|/* Include files, designed to support most kernel versions 2.0.0 and later. */
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -185,13 +173,13 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* Kernel compatibility defines, some common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -272,7 +260,6 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;State the chips and boards this driver is known to work with.&n;Note any similar chips or boards that will not work.&n;&n;This driver skeleton demonstrates the driver for an idealized&n;descriptor-based bus-master PCI chip.&n;&n;II. Board-specific settings&n;&n;No jumpers exist on most PCI boards, so this section is usually empty.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;The Starfire hardware uses multiple fixed-size descriptor queues/rings.  The&n;ring sizes are set fixed by the hardware, but may optionally be wrapped&n;earlier by the END bit in the descriptor.&n;This driver uses that hardware queue size for the Rx ring, where a large&n;number of entries has no ill effect beyond increases the potential backlog.&n;The Tx ring is wrapped with the END bit, since a large hardware Tx queue&n;disables the queue layer priority ordering and we have no mechanism to&n;utilize the hardware two-level priority queue.  When modifying the&n;RX/TX_RING_SIZE pay close attention to page sizes and the ring-empty warning&n;levels.&n;&n;IIIb/c. Transmit/Receive Structure&n;&n;See the Adaptec manual for the many possible structures, and options for&n;each structure.  There are far too many to document here.&n;&n;For transmit this driver uses type 1 transmit descriptors, and relies on&n;automatic minimum-length padding.  It does not use the completion queue&n;consumer index, but instead checks for non-zero status entries.&n;&n;For receive this driver uses type 0 receive descriptors.  The driver&n;allocates full frame size skbuffs for the Rx ring buffers, so all frames&n;should fit in a single descriptor.  The driver does not use the completion&n;queue consumer index, but instead checks for non-zero status entries.&n;&n;When an incoming frame is less than RX_COPYBREAK bytes long, a fresh skbuff&n;is allocated and the frame is copied to the new skbuff.  When the incoming&n;frame is larger, the skbuff is passed directly up the protocol stack.&n;Buffers consumed this way are replaced by newly allocated skbuffs in a later&n;phase of receive.&n;&n;A notable aspect of operation is that unaligned buffers are not permitted by&n;the Starfire hardware.  The IP header at offset 14 in an ethernet frame thus&n;isn&squot;t longword aligned, which may cause problems on some machine&n;e.g. Alphas.  Copied frames are put into the skbuff at an offset of &quot;+2&quot;,&n;16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;IVb. References&n;&n;The Adaptec Starfire manuals.&n;http://cesdis.gsfc.nasa.gov/linux/misc/100mbps.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;&n;IVc. Errata&n;&n;*/
 "&f;"
 multiline_comment|/* This table drives the PCI probe routines.  It&squot;s mostly boilerplate in all&n;   PCI drivers, and will likely be provided by some future kernel.&n;*/
@@ -1414,19 +1401,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1486,31 +1460,30 @@ id|PCIBIOS_SUCCESSFUL
 )paren
 r_break
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+id|pdev
+op_assign
+id|pci_find_slot
 (paren
 id|pci_bus
 comma
 id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+r_if
+c_cond
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device
+op_logical_neg
+id|pdev
 )paren
+r_continue
+suffix:semicolon
+id|vendor
+op_assign
+id|pdev-&gt;vendor
+suffix:semicolon
+id|device
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 r_for
 c_loop
@@ -1576,17 +1549,6 @@ l_int|0
 multiline_comment|/* Compiled out! */
 r_continue
 suffix:semicolon
-id|pdev
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
-suffix:semicolon
-(brace
 id|pciaddr
 op_assign
 id|pdev-&gt;resource
@@ -1616,7 +1578,6 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1717,12 +1678,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -1769,12 +1728,10 @@ comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -1827,12 +1784,10 @@ id|PCI_COMMAND_MASTER
 id|u8
 id|pci_latency
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1860,12 +1815,10 @@ comma
 id|min_pci_latency
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1886,46 +1839,6 @@ l_int|0
 suffix:colon
 op_minus
 id|ENODEV
-suffix:semicolon
-)brace
-DECL|function|starfire_probe
-r_int
-id|starfire_probe
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pci_etherdev_probe
-c_func
-(paren
-id|pci_tbl
-)paren
-OL
-l_int|0
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|versionA
-comma
-id|versionB
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1992,12 +1905,17 @@ c_func
 (paren
 l_int|NULL
 comma
-r_sizeof
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
 (paren
-r_struct
-id|netdev_private
+op_logical_neg
+id|dev
 )paren
-)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -4737,7 +4655,7 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* Scavenge the descriptor. */
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -5855,7 +5773,6 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/* We should lock this segment of code for SMP eventually, although&n;&t;   the vulnerability window is very small and statistics are&n;&t;   non-critical. */
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20119
 id|np-&gt;stats.tx_bytes
 op_assign
 id|readl
@@ -5876,7 +5793,6 @@ op_plus
 l_int|0x57044
 )paren
 suffix:semicolon
-macro_line|#endif
 id|np-&gt;stats.tx_packets
 op_assign
 id|readl
@@ -6999,7 +6915,7 @@ comma
 id|np-&gt;rx_buf_sz
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|np-&gt;rx_info
@@ -7080,7 +6996,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|kfree_skb
 c_func
 (paren
 id|skb
@@ -7112,12 +7028,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|starfire_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|starfire_init_module
 (paren
 r_void
 )paren
@@ -7180,10 +7095,11 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|cleanup_module
+DECL|function|starfire_cleanup_module
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|starfire_cleanup_module
 (paren
 r_void
 )paren
@@ -7321,7 +7237,19 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
+DECL|variable|starfire_init_module
+id|module_init
+c_func
+(paren
+id|starfire_init_module
+)paren
+suffix:semicolon
+DECL|variable|starfire_cleanup_module
+id|module_exit
+c_func
+(paren
+id|starfire_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c starfire.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -O6 -c starfire.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

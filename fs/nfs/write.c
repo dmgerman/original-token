@@ -1631,7 +1631,7 @@ id|page
 suffix:semicolon
 id|retval
 op_assign
-id|count
+l_int|0
 suffix:semicolon
 r_if
 c_cond

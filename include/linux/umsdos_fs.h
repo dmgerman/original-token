@@ -340,11 +340,6 @@ id|inode_operations
 id|umsdos_dir_inode_operations
 suffix:semicolon
 r_extern
-r_struct
-id|inode_operations
-id|umsdos_symlink_inode_operations
-suffix:semicolon
-r_extern
 r_int
 id|init_umsdos_fs
 (paren

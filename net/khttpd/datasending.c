@@ -285,23 +285,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|inode
-op_ne
-l_int|NULL
-)paren
 op_logical_and
-(paren
-id|inode-&gt;i_op
-op_ne
-l_int|NULL
-)paren
-op_logical_and
-(paren
-id|inode-&gt;i_op-&gt;readpage
-op_ne
-l_int|NULL
-)paren
+id|inode-&gt;i_mapping-&gt;a_ops-&gt;readpage
 )paren
 (brace
 multiline_comment|/* This does the actual transfer using sendfile */

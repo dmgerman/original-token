@@ -7,6 +7,11 @@ DECL|struct|adfs_inode_info
 r_struct
 id|adfs_inode_info
 (brace
+DECL|member|mmu_private
+r_int
+r_int
+id|mmu_private
+suffix:semicolon
 DECL|member|parent_id
 r_int
 r_int

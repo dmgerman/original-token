@@ -390,65 +390,16 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
-DECL|variable|udf_symlink_inode_operations
+DECL|variable|udf_symlink_aops
 r_struct
-id|inode_operations
-id|udf_symlink_inode_operations
+id|address_space_operations
+id|udf_symlink_aops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no file-operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-id|page_readlink
-comma
-multiline_comment|/* readlink */
-id|page_follow_link
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
+id|readpage
+suffix:colon
 id|udf_symlink_filler
 comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

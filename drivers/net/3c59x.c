@@ -1,12 +1,12 @@
-multiline_comment|/* EtherLinkXL.c: A 3Com EtherLink PCI III/XL ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1996-1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
+multiline_comment|/* 3c59x.c: A 3Com EtherLink PCI III/XL ethernet driver for linux. */
+multiline_comment|/*&n;&t;Written 1996-1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the 3Com &quot;Vortex&quot; and &quot;Boomerang&quot; series ethercards.&n;&t;Members of the series include Fast EtherLink 3c590/3c592/3c595/3c597&n;&t;and the EtherLink XL 3c900 and 3c905 cards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n; Version history:&n; &t;0.99H+lk1.0 - Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n;&t;&t;Remove compatibility defines for kernel versions &lt; 2.2.x.&n;&t;&t;Update for new 2.3.x module interface&n;&t;&t;&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c59x.c:v0.99H 11/17/98 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
+l_string|&quot;3c59x.c:v0.99H+lk1.0 Feb 9, 2000 The Linux Kernel Team http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* &quot;Knobs&quot; that adjust features and parameters. */
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames scheme.&n;   Setting to &gt; 1512 effectively disables this feature. */
@@ -89,23 +89,14 @@ DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -113,9 +104,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20155  ||  defined(CARDBUS)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;&t;&t;&t;/* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -123,43 +111,10 @@ multiline_comment|/* Kernel compatibility defines, some common to David Hinds&sq
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#if (LINUX_VERSION_CODE &lt;= 0x20100)
-macro_line|#ifndef __alpha__
-DECL|macro|ioremap
-mdefine_line|#define ioremap(a,b) &bslash;&n;&t;(((a)&lt;0x100000) ? (void *)((u_long)(a)) : vremap(a,b))
-DECL|macro|iounmap
-mdefine_line|#define iounmap(v) &bslash;&n;&t;do { if ((u_long)(v) &gt; 0x100000) vfree(v); } while (0)
-macro_line|#endif
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20139
-DECL|macro|net_device_stats
-mdefine_line|#define&t;net_device_stats enet_statistics
-DECL|macro|NETSTATS_VER2
-mdefine_line|#define NETSTATS_VER2
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20138
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
-DECL|macro|le32_to_cpu
-mdefine_line|#define le32_to_cpu(val) (val)
-DECL|macro|cpu_to_le32
-mdefine_line|#define cpu_to_le32(val) (val)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20155
-DECL|macro|PCI_SUPPORT_VER1
-mdefine_line|#define PCI_SUPPORT_VER1
-macro_line|#else
 DECL|macro|PCI_SUPPORT_VER2
 mdefine_line|#define PCI_SUPPORT_VER2
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb (skb, FREE_WRITE);
-macro_line|#else  /* Grrr, unneeded incompatible change. */
 DECL|macro|DEV_FREE_SKB
 mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
-macro_line|#endif
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -248,7 +203,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Operational parameter that usually are not changed. */
 multiline_comment|/* The Vortex size is twice that of the original EtherLinkIII series: the&n;   runtime register window, window 1, is now always mapped in.&n;   The Boomerang size is twice as large as the Vortex -- it has additional&n;   bus master control registers. */
 DECL|macro|VORTEX_TOTAL_SIZE
@@ -353,11 +307,10 @@ op_star
 id|probe1
 )paren
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -420,11 +373,10 @@ op_star
 id|vortex_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -2635,7 +2587,6 @@ id|root_vortex_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#ifndef CARDBUS
 multiline_comment|/* Variables to work-around the Compaq PCI BIOS32 problem. */
 DECL|variable|compaq_ioaddr
@@ -2679,16 +2630,17 @@ id|u32
 id|io
 suffix:semicolon
 id|u8
-id|bus
-comma
-id|devfn
-comma
 id|irq
 suffix:semicolon
 r_struct
 id|net_device
 op_star
 id|dev
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
 suffix:semicolon
 r_int
 id|chip_idx
@@ -2703,65 +2655,44 @@ id|LOC_PCI
 r_return
 l_int|NULL
 suffix:semicolon
-id|bus
+id|pdev
 op_assign
+id|pci_find_slot
+(paren
 id|loc-&gt;b.pci.bus
-suffix:semicolon
-id|devfn
-op_assign
+comma
 id|loc-&gt;b.pci.devfn
+)paren
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
+r_if
+c_cond
 (paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
+op_logical_neg
+id|pdev
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 id|io
-)paren
+op_assign
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|irq
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
 id|vendor_id
-)paren
+op_assign
+id|pdev-&gt;vendor
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
 id|dev_id
-)paren
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 id|printk
 c_func
@@ -2769,9 +2700,9 @@ c_func
 id|KERN_INFO
 l_string|&quot;vortex_attach(bus %d, function %d, device %4.4x)&bslash;n&quot;
 comma
-id|bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|devfn
+id|pdev-&gt;devfn
 comma
 id|dev_id
 )paren
@@ -2900,9 +2831,7 @@ op_assign
 id|vortex_probe1
 c_func
 (paren
-id|bus
-comma
-id|devfn
+id|pdev
 comma
 id|io
 comma
@@ -3157,10 +3086,11 @@ id|vortex_detach
 )brace
 suffix:semicolon
 macro_line|#endif  /* Cardbus support */
-DECL|function|init_module
+DECL|function|vortex_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|vortex_init_module
 (paren
 r_void
 )paren
@@ -3200,51 +3130,6 @@ id|pci_tbl
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#else
-DECL|function|tc59x_probe
-r_int
-id|tc59x_probe
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_int
-id|scanned
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scanned
-op_increment
-)paren
-(brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|version
-)paren
-suffix:semicolon
-r_return
-id|vortex_scan
-c_func
-(paren
-id|pci_tbl
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif  /* not MODULE */
 macro_line|#ifndef CARDBUS
 DECL|function|vortex_scan
 r_static
@@ -3275,7 +3160,7 @@ multiline_comment|/* Ideally we would detect all cards in slot order.  That woul
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -3324,6 +3209,11 @@ suffix:semicolon
 r_int
 id|ioaddr
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3346,31 +3236,30 @@ id|PCIBIOS_SUCCESSFUL
 )paren
 r_break
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+id|pdev
+op_assign
+id|pci_find_slot
 (paren
 id|pci_bus
 comma
 id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+r_if
+c_cond
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device
+op_logical_neg
+id|pdev
 )paren
+r_continue
+suffix:semicolon
+id|vendor
+op_assign
+id|pdev-&gt;vendor
+suffix:semicolon
+id|device
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 r_for
 c_loop
@@ -3465,12 +3354,10 @@ id|pdev-&gt;irq
 suffix:semicolon
 )brace
 multiline_comment|/* Power-up the card. */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 l_int|0xe0
 comma
@@ -3502,12 +3389,10 @@ op_complement
 l_int|3
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 l_int|0xe0
 comma
@@ -3528,24 +3413,20 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_INTERRUPT_LINE
 comma
 id|irq
 )paren
 suffix:semicolon
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_BASE_ADDRESS_0
 comma
@@ -3593,12 +3474,10 @@ id|io_size
 r_continue
 suffix:semicolon
 multiline_comment|/* Activate the card. */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -3638,12 +3517,10 @@ comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -3656,9 +3533,7 @@ op_assign
 id|vortex_probe1
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|ioaddr
 comma
@@ -3695,12 +3570,10 @@ l_int|248
 suffix:colon
 l_int|32
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -3730,12 +3603,10 @@ comma
 id|new_latency
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -3851,9 +3722,7 @@ suffix:semicolon
 id|vortex_probe1
 c_func
 (paren
-l_int|0
-comma
-l_int|0
+l_int|NULL
 comma
 id|ioaddr
 comma
@@ -3877,7 +3746,6 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/* Special code to work-around the Compaq PCI BIOS32 problem. */
 r_if
 c_cond
@@ -3888,9 +3756,7 @@ id|compaq_ioaddr
 id|vortex_probe1
 c_func
 (paren
-l_int|0
-comma
-l_int|0
+l_int|NULL
 comma
 id|compaq_ioaddr
 comma
@@ -3907,7 +3773,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|cards_found
 ques
@@ -3919,6 +3784,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif  /* ! Cardbus */
+multiline_comment|/*&n; * vortex_probe1 - initialize one vortex board, after probing&n; *&t;&t;   has located one during bus scan.&n; *&n; * NOTE: pdev==NULL is a valid condition, indicating&n; * non-PCI (generally EISA) bus device&n; */
 DECL|function|vortex_probe1
 r_static
 r_struct
@@ -3927,11 +3793,10 @@ op_star
 id|vortex_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -4061,28 +3926,36 @@ id|chip_idx
 suffix:semicolon
 id|vp-&gt;pci_bus
 op_assign
-id|pci_bus
+id|pdev
+op_eq
+l_int|NULL
+ques
+c_cond
+l_int|0
+suffix:colon
+id|pdev-&gt;bus-&gt;number
 suffix:semicolon
 id|vp-&gt;pci_devfn
 op_assign
-id|pci_devfn
+id|pdev
+op_eq
+l_int|NULL
+ques
+c_cond
+l_int|0
+suffix:colon
+id|pdev-&gt;devfn
 suffix:semicolon
 id|vp-&gt;pdev
 op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-)paren
+id|pdev
 suffix:semicolon
 id|vp-&gt;priv_addr
 op_assign
 id|pci_alloc_consistent
 c_func
 (paren
-id|vp-&gt;pdev
+id|pdev
 comma
 r_sizeof
 (paren
@@ -4612,18 +4485,21 @@ id|u32
 id|fn_st_addr
 suffix:semicolon
 multiline_comment|/* Cardbus function status space */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_BASE_ADDRESS_2
-comma
-op_amp
 id|fn_st_addr
-)paren
+op_assign
+id|pdev
+op_eq
+l_int|NULL
+ques
+c_cond
+l_int|0
+suffix:colon
+id|pdev-&gt;resource
+(braket
+l_int|2
+)braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond
@@ -10763,17 +10639,6 @@ id|i
 )braket
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|vp-&gt;rx_skbuff
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|pci_unmap_single
 c_func
 (paren
@@ -11910,12 +11775,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-"&f;"
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|vortex_cleanup_module
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|vortex_cleanup_module
 (paren
 r_void
 )paren
@@ -12033,7 +11897,19 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
+DECL|variable|vortex_init_module
+id|module_init
+c_func
+(paren
+id|vortex_init_module
+)paren
+suffix:semicolon
+DECL|variable|vortex_cleanup_module
+id|module_exit
+c_func
+(paren
+id|vortex_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c 3c59x.c -o 3c575_cb.o -I/usr/src/pcmcia-cs-3.0.5/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

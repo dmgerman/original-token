@@ -228,8 +228,6 @@ op_or
 id|TASK_ZOMBIE
 op_or
 id|TASK_STOPPED
-op_or
-id|TASK_SWAPPING
 )paren
 suffix:semicolon
 r_const

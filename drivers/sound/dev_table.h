@@ -3530,6 +3530,7 @@ op_star
 id|name
 )paren
 suffix:semicolon
+macro_line|#if FIXED_FOR_2_4_0
 r_void
 id|sound_setup
 (paren
@@ -3542,6 +3543,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|sound_map_buffer

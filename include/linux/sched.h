@@ -95,8 +95,6 @@ DECL|macro|TASK_ZOMBIE
 mdefine_line|#define TASK_ZOMBIE&t;&t;4
 DECL|macro|TASK_STOPPED
 mdefine_line|#define TASK_STOPPED&t;&t;8
-DECL|macro|TASK_SWAPPING
-mdefine_line|#define TASK_SWAPPING&t;&t;16
 DECL|macro|TASK_EXCLUSIVE
 mdefine_line|#define TASK_EXCLUSIVE&t;&t;32
 DECL|macro|__set_task_state

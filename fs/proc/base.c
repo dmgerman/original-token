@@ -1664,15 +1664,6 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 id|proc_permission
 comma
@@ -2093,42 +2084,13 @@ id|inode_operations
 id|proc_pid_link_inode_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* file-operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
+id|readlink
+suffix:colon
 id|proc_pid_readlink
 comma
-multiline_comment|/* readlink */
+id|follow_link
+suffix:colon
 id|proc_pid_follow_link
-comma
-multiline_comment|/* follow_link */
 )brace
 suffix:semicolon
 multiline_comment|/* reading from directory - bad */
@@ -3514,15 +3476,6 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* truncate */

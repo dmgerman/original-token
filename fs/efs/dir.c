@@ -28,24 +28,6 @@ id|efs_readdir
 comma
 )brace
 suffix:semicolon
-r_extern
-r_int
-id|efs_get_block
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-comma
-r_struct
-id|buffer_head
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|variable|efs_dir_inode_operations
 r_struct
 id|inode_operations
@@ -62,50 +44,6 @@ multiline_comment|/* create */
 id|efs_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|efs_get_block
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|efs_readdir

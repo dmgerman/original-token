@@ -1831,6 +1831,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* readpage() for symlinks: reads symlink contents into the page and either&n;   makes it uptodate and returns 0 or returns error (-EIO) */
 DECL|function|rock_ridge_symlink_readpage
+r_static
 r_int
 id|rock_ridge_symlink_readpage
 c_func
@@ -2291,4 +2292,15 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+DECL|variable|isofs_symlink_aops
+r_struct
+id|address_space_operations
+id|isofs_symlink_aops
+op_assign
+(brace
+id|readpage
+suffix:colon
+id|rock_ridge_symlink_readpage
+)brace
+suffix:semicolon
 eof

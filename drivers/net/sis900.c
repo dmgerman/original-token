@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;      /* Processor type for cache alignment. */
@@ -384,6 +385,10 @@ id|pci_dev
 op_star
 id|pci_dev
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|mac
 r_struct
 id|mac_chip_info
@@ -468,8 +473,6 @@ id|LinkOn
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -506,8 +509,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_static
 r_int
 id|sis900_open
@@ -788,13 +789,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* walk through every ethernet PCI devices to see if some of them are matched with our card list*/
 DECL|function|sis900_probe
+r_static
 r_int
+id|__init
 id|sis900_probe
 (paren
-r_struct
-id|net_device
-op_star
-id|net_dev
+r_void
 )paren
 (brace
 r_int
@@ -808,19 +808,6 @@ op_star
 id|pci_dev
 op_assign
 l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_present
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
 suffix:semicolon
 r_while
 c_loop
@@ -849,6 +836,13 @@ r_struct
 id|mac_chip_info
 op_star
 id|mac
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|net_dev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_for
 c_loop
@@ -918,6 +912,11 @@ id|mac-&gt;io_size
 r_continue
 suffix:semicolon
 multiline_comment|/* setup various bits in PCI command register */
+id|pci_enable_device
+(paren
+id|pci_dev
+)paren
+suffix:semicolon
 id|pci_set_master
 c_func
 (paren
@@ -1267,6 +1266,10 @@ id|sis_priv-&gt;mac
 op_assign
 id|mac
 suffix:semicolon
+id|sis_priv-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* probe for mii transciver */
 r_if
 c_cond
@@ -1342,6 +1345,14 @@ id|net_dev-&gt;do_ioctl
 op_assign
 op_amp
 id|mii_ioctl
+suffix:semicolon
+id|net_dev-&gt;tx_timeout
+op_assign
+id|sis900_tx_timeout
+suffix:semicolon
+id|net_dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
 suffix:semicolon
 r_return
 id|net_dev
@@ -2506,17 +2517,11 @@ c_func
 id|net_dev
 )paren
 suffix:semicolon
-id|net_dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|net_dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|net_dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 multiline_comment|/* Enable all known interrupts by setting the interrupt mask. */
 id|outl
@@ -4117,11 +4122,15 @@ id|net_dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|net_dev-&gt;tbusy
-op_assign
 id|sis_priv-&gt;tx_full
 op_assign
 l_int|0
+suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 multiline_comment|/* FIXME: Should we restart the transmission thread here  ?? */
 multiline_comment|/* Enable all known interrupts by setting the interrupt mask. */
@@ -4190,45 +4199,6 @@ r_int
 r_int
 id|entry
 suffix:semicolon
-multiline_comment|/* test tbusy to see if we have timeout situation then set it */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|net_dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|net_dev-&gt;trans_start
-OG
-id|TX_TIMEOUT
-)paren
-id|sis900_tx_timeout
-c_func
-(paren
-id|net_dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
 op_assign
@@ -4292,17 +4262,10 @@ id|NUM_TX_DESC
 )paren
 (brace
 multiline_comment|/* Typical path, clear tbusy to indicate more &n;&t;&t;   transmission is possible */
-id|clear_bit
+id|netif_start_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|net_dev-&gt;tbusy
+id|net_dev
 )paren
 suffix:semicolon
 )brace
@@ -4380,6 +4343,18 @@ op_star
 )paren
 id|dev_instance
 suffix:semicolon
+r_struct
+id|sis900_private
+op_star
+id|sis_priv
+op_assign
+(paren
+r_struct
+id|sis900_private
+op_star
+)paren
+id|net_dev-&gt;priv
+suffix:semicolon
 r_int
 id|boguscnt
 op_assign
@@ -4393,67 +4368,12 @@ suffix:semicolon
 id|u32
 id|status
 suffix:semicolon
-macro_line|#if defined(__i386__)
-multiline_comment|/* A lock to prevent simultaneous entry bug on Intel SMP machines. */
-r_if
-c_cond
+id|spin_lock
 (paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|net_dev-&gt;interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: SMP simultaneous entry of &quot;
-l_string|&quot;an interrupt handler.&bslash;n&quot;
-comma
-id|net_dev-&gt;name
+id|sis_priv-&gt;lock
 )paren
 suffix:semicolon
-id|net_dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Avoid halting machine. */
-r_return
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|net_dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|net_dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|net_dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|status
@@ -4615,26 +4535,12 @@ id|isr
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(__i386__)
-id|clear_bit
-c_func
+id|spin_unlock
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|net_dev-&gt;interrupt
+id|sis_priv-&gt;lock
 )paren
 suffix:semicolon
-macro_line|#else
-id|net_dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -5300,7 +5206,14 @@ c_cond
 (paren
 id|sis_priv-&gt;tx_full
 op_logical_and
-id|net_dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|net_dev-&gt;flags
+)paren
 op_logical_and
 id|sis_priv-&gt;cur_tx
 op_minus
@@ -5316,23 +5229,9 @@ id|sis_priv-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
-c_func
+id|netif_wake_queue
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|net_dev-&gt;tbusy
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
+id|net_dev
 )paren
 suffix:semicolon
 )brace
@@ -5369,13 +5268,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|net_dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|net_dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|net_dev
+)paren
 suffix:semicolon
 multiline_comment|/* Disable interrupts by clearing the interrupt mask. */
 id|outl
@@ -6257,26 +6154,11 @@ id|cfg
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|sis900_cleanup_module
+r_static
 r_void
-)paren
-(brace
-r_return
-id|sis900_probe
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+id|sis900_cleanup_module
 c_func
 (paren
 r_void
@@ -6340,5 +6222,18 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
+DECL|variable|sis900_probe
+id|module_init
+c_func
+(paren
+id|sis900_probe
+)paren
+suffix:semicolon
+DECL|variable|sis900_cleanup_module
+id|module_exit
+c_func
+(paren
+id|sis900_cleanup_module
+)paren
+suffix:semicolon
 eof

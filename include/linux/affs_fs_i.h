@@ -87,6 +87,11 @@ DECL|struct|affs_inode_info
 r_struct
 id|affs_inode_info
 (brace
+DECL|member|mmu_private
+r_int
+r_int
+id|mmu_private
+suffix:semicolon
 DECL|member|i_protect
 id|u32
 id|i_protect

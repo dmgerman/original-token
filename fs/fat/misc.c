@@ -1626,7 +1626,7 @@ c_func
 id|inode
 )paren
 op_member_access_from_pointer
-id|i_realsize
+id|mmu_private
 op_add_assign
 id|SECTOR_SIZE
 op_star

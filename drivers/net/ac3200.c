@@ -1451,14 +1451,6 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren

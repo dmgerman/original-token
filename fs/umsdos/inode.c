@@ -469,10 +469,11 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+multiline_comment|/* address_space operations already set */
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|umsdos_symlink_inode_operations
+id|page_symlink_inode_operations
 suffix:semicolon
 )brace
 r_else

@@ -342,12 +342,17 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * symlinks can&squot;t do much...&n; */
-DECL|variable|ncp_symlink_inode_operations
+DECL|variable|ncp_symlink_aops
 r_struct
-id|inode_operations
-id|ncp_symlink_inode_operations
+id|address_space_operations
+id|ncp_symlink_aops
 op_assign
-initialization_block
+(brace
+id|readpage
+suffix:colon
+id|ncp_symlink_readpage
+comma
+)brace
 suffix:semicolon
 multiline_comment|/* ----- create a new symbolic link -------------------------------------- */
 DECL|function|ncp_symlink

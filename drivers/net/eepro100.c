@@ -140,7 +140,6 @@ op_minus
 l_int|1
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|debug
 r_static
 r_int
@@ -150,7 +149,6 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* The debug level */
-macro_line|#endif
 multiline_comment|/* A few values that may be tweaked. */
 multiline_comment|/* The ring sizes should be a power of two for efficiency. */
 DECL|macro|TX_RING_SIZE
@@ -193,13 +191,13 @@ macro_line|#include &lt;linux/bios32.h&gt;&t;&t;/* Ignore the bogus warning in 2
 macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20118  &amp;&amp;  defined(MODULE)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -312,7 +310,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
@@ -2330,7 +2327,6 @@ id|acpi_idle_state
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef MODULE
 r_static
 r_int
 id|did_version
@@ -2356,7 +2352,6 @@ c_func
 id|version
 )paren
 suffix:semicolon
-macro_line|#endif
 id|pdev
 op_assign
 id|pci_find_slot
@@ -8810,11 +8805,11 @@ op_assign
 id|new_rx_mode
 suffix:semicolon
 )brace
-"&f;"
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|eepro100_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|eepro100_init_module
 c_func
 (paren
 r_void
@@ -8908,9 +8903,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|eepro100_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|eepro100_cleanup_module
 c_func
 (paren
 r_void
@@ -9005,54 +9002,19 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#else   /* not MODULE */
-DECL|function|eepro100_probe
-r_int
-id|eepro100_probe
+DECL|variable|eepro100_init_module
+id|module_init
 c_func
 (paren
-r_void
+id|eepro100_init_module
 )paren
-(brace
-r_int
-id|cards_found
-op_assign
-l_int|0
 suffix:semicolon
-id|cards_found
-op_assign
-id|eepro100_init
+DECL|variable|eepro100_cleanup_module
+id|module_exit
 c_func
 (paren
+id|eepro100_cleanup_module
 )paren
 suffix:semicolon
-multiline_comment|/* Only emit the version if the driver is being used. */
-r_if
-c_cond
-(paren
-id|speedo_debug
-OG
-l_int|0
-op_logical_and
-id|cards_found
-)paren
-id|printk
-c_func
-(paren
-id|version
-)paren
-suffix:semicolon
-r_return
-id|cards_found
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif  /* MODULE */
-"&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c eepro100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS` `[ -f ./pci-netif.h ] &amp;&amp; echo -DHAS_PCI_NETIF`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c eepro100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  simple-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -O6 -c eepro100.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

@@ -22,9 +22,7 @@ macro_line|#include &lt;linux/nfsd/xdr3.h&gt;
 macro_line|#endif /* CONFIG_NFSD_V3 */
 macro_line|#include &lt;linux/nfsd/nfsfh.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_FILEOP
 DECL|macro|NFSD_PARANOIA

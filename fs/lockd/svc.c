@@ -921,7 +921,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* New module support in 2.1.18 */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020112
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 id|MODULE_AUTHOR
@@ -954,7 +953,6 @@ comma
 l_string|&quot;3-20l&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_int
 DECL|function|init_module
 id|init_module

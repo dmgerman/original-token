@@ -193,7 +193,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Chain of device structures&n; */
-macro_line|#ifdef MODULE
 DECL|variable|dgrs_root_dev
 r_static
 r_struct
@@ -203,7 +202,6 @@ id|dgrs_root_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;Private per-board data structure (dev-&gt;priv)&n; */
 r_typedef
 r_struct
@@ -600,6 +598,8 @@ id|i
 suffix:semicolon
 id|ulong
 id|csr
+op_assign
+l_int|0
 suffix:semicolon
 id|DGRS_PRIV
 op_star
@@ -1728,9 +1728,11 @@ id|devN-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|devN-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|devN
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2020,22 +2022,14 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 l_int|0
@@ -2055,18 +2049,14 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 l_int|0
@@ -2588,20 +2578,20 @@ suffix:semicolon
 op_increment
 id|i
 )paren
+id|netif_wake_queue
+(paren
 id|priv0-&gt;devtbl
 (braket
 id|i
 )braket
-op_member_access_from_pointer
-id|tbusy
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 )brace
 r_else
-id|dev0-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+(paren
+id|dev0
+)paren
 suffix:semicolon
 multiline_comment|/* if (bd-&gt;flags &amp; TX_QUEUED)&n;&t;&t;&t;DL_sched(bd, bdd); */
 )brace
@@ -4618,9 +4608,7 @@ r_return
 id|cards_found
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Module/driver initialization points.  Two ways, depending on&n; *&t;whether we are a module or statically linked, ala Don Becker&squot;s&n; *&t;3c59x driver.&n; */
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Variables that can be overriden from command line&n; */
+multiline_comment|/*&n; *&t;Variables that can be overriden from module command line&n; */
 DECL|variable|debug
 r_static
 r_int
@@ -4759,10 +4747,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+DECL|function|dgrs_init_module
+r_static
 r_int
-DECL|function|init_module
-id|init_module
-c_func
+id|__init
+id|dgrs_init_module
 (paren
 r_void
 )paren
@@ -4956,10 +4945,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|dgrs_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|dgrs_cleanup_module
 (paren
 r_void
 )paren
@@ -5067,57 +5057,18 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#else
-r_int
-id|__init
-DECL|function|dgrs_probe
-id|dgrs_probe
+DECL|variable|dgrs_init_module
+id|module_init
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+id|dgrs_init_module
 )paren
-(brace
-r_int
-id|cards_found
 suffix:semicolon
-id|cards_found
-op_assign
-id|dgrs_scan
+DECL|variable|dgrs_cleanup_module
+id|module_exit
 c_func
 (paren
+id|dgrs_cleanup_module
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dgrs_debug
-op_logical_and
-id|cards_found
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;dgrs: SW=%s FW=Build %d %s&bslash;n&quot;
-comma
-id|version
-comma
-id|dgrs_firmnum
-comma
-id|dgrs_firmdate
-)paren
-suffix:semicolon
-r_return
-id|cards_found
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

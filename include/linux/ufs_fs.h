@@ -1429,6 +1429,11 @@ r_struct
 id|file_operations
 id|ufs_file_operations
 suffix:semicolon
+r_extern
+r_struct
+id|address_space_operations
+id|ufs_aops
+suffix:semicolon
 multiline_comment|/* ialloc.c */
 r_extern
 r_void
@@ -1539,23 +1544,6 @@ r_int
 comma
 r_int
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ufs_getfrag_block
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-comma
-r_struct
-id|buffer_head
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1852,11 +1840,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* symlink.c */
-r_extern
-r_struct
-id|inode_operations
-id|ufs_symlink_inode_operations
-suffix:semicolon
 r_extern
 r_struct
 id|inode_operations

@@ -1,4 +1,6 @@
-multiline_comment|/*&n; *&t;Linux driver for the PC110 pad&n; *&n; *&t;The pad provides triples of data. The first byte has&n; *&t;0x80=bit 8 X, 0x01=bit 7 X, 0x08=bit 8 Y, 0x01=still down&n; *&t;The second byte is bits 0-6 X&n; *&t;The third is bits 0-6 Y&n; *&n; *&t;This is read internally and used to synthesize a stream of&n; *&t;triples in the form expected from a PS/2 device.&n; *&n; *&t;0.0 1997-05-16 Alan Cox &lt;alan@redhat.com&gt; - Pad reader&n; *&t;0.1 1997-05-19 Robin O&squot;Leary &lt;robin@acm.org&gt; - PS/2 emulation&n; *&t;0.2 1997-06-03 Robin O&squot;Leary &lt;robin@acm.org&gt; - tap gesture&n; *&t;0.3 1997-06-27 Alan Cox &lt;alan@redhat.com&gt; - 2.1 commit&n; *&t;0.4 1997-11-09 Alan Cox &lt;alan@redhat.com&gt; - Single Unix VFS API changes&n; */
+multiline_comment|/*&n; *&t;Linux driver for the PC110 pad&n; */
+multiline_comment|/**&n; * &t;DOC: PC110 Digitizer Hardware&n; *&n; *&t;The pad provides triples of data. The first byte has&n; *&t;0x80=bit 8 X, 0x01=bit 7 X, 0x08=bit 8 Y, 0x01=still down&n; *&t;The second byte is bits 0-6 X&n; *&t;The third is bits 0-6 Y&n; *&n; *&t;This is read internally and used to synthesize a stream of&n; *&t;triples in the form expected from a PS/2 device. Specialist&n; *&t;applications can choose to obtain the pad data in other formats&n; *&t;including a debugging mode.&n; *&n; *&t;It would be good to add a joystick driver mode to this pad so&n; *&t;that doom and other game playing are better. One possible approach&n; *&t;would be to deactive the mouse mode while the joystick port is opened.&n; */
+multiline_comment|/*&n; *&t;History&n; *&n; *&t;0.0 1997-05-16 Alan Cox &lt;alan@redhat.com&gt; - Pad reader&n; *&t;0.1 1997-05-19 Robin O&squot;Leary &lt;robin@acm.org&gt; - PS/2 emulation&n; *&t;0.2 1997-06-03 Robin O&squot;Leary &lt;robin@acm.org&gt; - tap gesture&n; *&t;0.3 1997-06-27 Alan Cox &lt;alan@redhat.com&gt; - 2.1 commit&n; *&t;0.4 1997-11-09 Alan Cox &lt;alan@redhat.com&gt; - Single Unix VFS API changes&n; *&t;0.5 2000-02-10 Alan Cox &lt;alan@redhat.com&gt; - 2.3.x cleanup, documentation&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -75,7 +77,7 @@ r_struct
 id|semaphore
 id|reader_lock
 suffix:semicolon
-multiline_comment|/*&n; * Utility to reset a timer to go off some time in the future.&n; */
+multiline_comment|/*&n; *&t;set_timer_callback:&n; *&n; *&t;Utility to reset a timer to go off some time in the future.&n; */
 DECL|function|set_timer_callback
 r_static
 r_void
@@ -110,7 +112,7 @@ id|timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Take care of letting any waiting processes know that&n; * now would be a good time to do a read().  Called&n; * whenever a state transition occurs, real or synthetic.&n; */
+multiline_comment|/**&n; *&t;wake_readers:&n; *&n; *&t;Take care of letting any waiting processes know that&n; *&t;now would be a good time to do a read().  Called&n; *&t;whenever a state transition occurs, real or synthetic. Also&n; *&t;issue any SIGIO&squot;s to programs that use SIGIO on mice (eg&n; *&t;Executor)&n; */
 DECL|function|wake_readers
 r_static
 r_void
@@ -204,7 +206,7 @@ comma
 id|tap_timeout
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This callback goes off a short time after an up/down transition;&n; * before it goes off, transitions will be considered part of a&n; * single PS/2 event and counted in transition_count.  Once the&n; * timeout occurs the recent_transition flag is cleared and&n; * any synthetic mouse up/down events are generated.&n; */
+multiline_comment|/**&n; * tap_timeout:&n; * @data: Unused&n; *&n; * This callback goes off a short time after an up/down transition;&n; * before it goes off, transitions will be considered part of a&n; * single PS/2 event and counted in transition_count.  Once the&n; * timeout occurs the recent_transition flag is cleared and&n; * any synthetic mouse up/down events are generated.&n; */
 DECL|function|tap_timeout
 r_static
 r_void
@@ -265,7 +267,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Called by the raw pad read routines when a (debounced) up/down&n; * transition is detected.&n; */
+multiline_comment|/**&n; * notify_pad_up_down:&n; *&n; * Called by the raw pad read routines when a (debounced) up/down&n; * transition is detected.&n; */
 DECL|function|notify_pad_up_down
 r_void
 id|notify_pad_up_down
@@ -315,6 +317,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;read_button:&n; *&t;@b: pointer to the button status.&n; *&n; *&t;The actual button state depends on what we are seeing. We have to check&n; *&t;for the tap gesture and also for dragging.&n; */
 DECL|function|read_button
 r_static
 r_void
@@ -468,6 +471,7 @@ comma
 id|bounce_timeout
 )brace
 suffix:semicolon
+multiline_comment|/**&n; * bounce_timeout:&n; * @data: Unused&n; *&n; * No further up/down transitions happened within the&n; * bounce period, so treat this as a genuine transition.&n; */
 DECL|function|bounce_timeout
 r_static
 r_void
@@ -479,7 +483,6 @@ r_int
 id|data
 )paren
 (brace
-multiline_comment|/*&n;&t; * No further up/down transitions happened within the&n;&t; * bounce period, so treat this as a genuine transition.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -494,6 +497,7 @@ multiline_comment|/*&n;&t;&t;&t; * Strange; the timer callback should only go of
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;pc110pad, bounce_timeout: bounce flag not set!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -520,6 +524,7 @@ id|raw_down
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;pc110pad, bounce_timeout: raw already debounced!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -550,7 +555,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Callback when pad&squot;s irq goes off; copies values in to raw_* globals;&n; * initiates debounce processing.&n; */
+multiline_comment|/**&n; * pad_irq:&n; * @irq: Interrupt number&n; * @ptr: Unused&n; * @regs: Unused&n; *&n; * Callback when pad&squot;s irq goes off; copies values in to raw_* globals;&n; * initiates debounce processing. This isn&squot;t SMP safe however there are&n; * no SMP machines with a PC110 touchpad on them.&n; */
 DECL|function|pad_irq
 r_static
 r_void
@@ -866,6 +871,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;read_raw_pad:&n; *&t;@down: set if the pen is down&n; *&t;@debounced: set if the debounced pen position is down&n; *&t;@x: X position&n; *&t;@y: Y position&n; *&n; *&t;Retrieve the data saved by the interrupt handler and indicate we&n; *&t;have no more pending XY to do. &n; *&n; *&t;FIXME: We should switch to a spinlock for this.&n; */
 DECL|function|read_raw_pad
 r_static
 r_void
@@ -946,6 +952,7 @@ id|read_byte_count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/**&n; *&t;sample_raw:&n; *&t;@d: sample buffer&n; *&n; *&t;Retrieve a triple of sample data. &n; */
 DECL|function|sample_raw
 r_static
 r_void
@@ -990,6 +997,7 @@ l_int|2
 )braket
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sample_rare:&n; *&t;@d: sample buffer&n; *&n; *&t;Retrieve a triple of sample data and sanitize it. We do the needed&n; *&t;scaling and masking to get the current status.&n; */
 DECL|function|sample_rare
 r_static
 r_void
@@ -1084,6 +1092,7 @@ op_mod
 l_int|256
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sample_debug:&n; *&t;@d: sample buffer&n; *&n; *&t;Retrieve a triple of sample data and mix it up with the state &n; *&t;information in the gesture parser. Not useful for normal users but&n; *&t;handy when debugging&n; */
 DECL|function|sample_debug
 r_static
 r_void
@@ -1108,6 +1117,16 @@ id|thisy
 suffix:semicolon
 r_int
 id|b
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1198,12 +1217,14 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sample_ps2:&n; *&t;@d: sample buffer&n; *&n; *&t;Retrieve a triple of sample data and turn the debounced tap and&n; *&t;stroke information into what appears to be a PS/2 mouse. This means&n; *&t;the PC110 pad needs no funny application side support.&n; */
 DECL|function|sample_ps2
 r_static
 r_void
@@ -1381,6 +1402,7 @@ op_assign
 id|dy
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;fasync_pad:&n; *&t;@fd:&t;file number for the file &n; *&t;@filp:&t;file handle&n; *&t;@on:&t;1 to add, 0 to remove a notifier&n; *&n; *&t;Update the queue of asynchronous event notifiers. We can use the&n; *&t;same helper the mice do and that does almost everything we need.&n; */
 DECL|function|fasync_pad
 r_static
 r_int
@@ -1431,7 +1453,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * close access to the pad&n; */
+multiline_comment|/**&n; *&t;close_pad:&n; *&t;@inode: inode of pad&n; *&t;@file: file handle to pad&n; *&n; *&t;Close access to the pad. We turn the pad power off if this is the&n; *&t;last user of the pad. I&squot;ve not actually measured the power draw but&n; *&t;the DOS driver is careful to do this so we follow suit.&n; */
 DECL|function|close_pad
 r_static
 r_int
@@ -1486,7 +1508,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * open access to the pad&n; */
+multiline_comment|/**&n; *&t;open_pad:&n; *&t;@inode: inode of pad&n; *&t;@file: file handle to pad&n; *&n; *&t;Open access to the pad. We turn the pad off first (we turned it off&n; *&t;on close but if this is the first open after a crash the state is&n; *&t;indeterminate). The device has a small fifo so we empty that before&n; *&t;we kick it back into action.&n; */
 DECL|function|open_pad
 r_static
 r_int
@@ -1639,7 +1661,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * writes are disallowed&n; */
+multiline_comment|/**&n; *&t;write_pad:&n; *&t;@file: File handle to the pad&n; *&t;@buffer: Unused&n; *&t;@count: Unused&n; *&t;@ppos: Unused&n; *&n; *&t;Writes are disallowed. A true PS/2 mouse lets you write stuff. Everyone&n; *&t;seems happy with this and not faking the write modes.&n; */
 DECL|function|write_pad
 r_static
 id|ssize_t
@@ -1669,6 +1691,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;new_sample:&n; *&t;@d: sample buffer&n; *&n; *&t;Fetch a new sample according the current mouse mode the pad is &n; *&t;using.&n; */
 DECL|function|new_sample
 r_void
 id|new_sample
@@ -1733,7 +1756,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Read pad data.  Currently never blocks.&n; */
+multiline_comment|/**&n; * read_pad:&n; * @file: File handle to pad&n; * @buffer: Target for the mouse data&n; * @count: Buffer length&n; * @ppos: Offset (unused)&n; *&n; * Read data from the pad. We use the reader_lock to avoid mess when there are&n; * two readers. This shouldnt be happening anyway but we play safe.&n; */
 DECL|function|read_pad
 r_static
 id|ssize_t
@@ -1843,7 +1866,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * select for pad input&n; */
+multiline_comment|/**&n; * pad_poll:&n; * @file: File of the pad device&n; * @wait: Poll table&n; *&n; * The pad is ready to read if there is a button or any position change&n; * pending in the queue. The reading and interrupt routines maintain the&n; * required state for us and do needed wakeups.&n; */
 DECL|function|pad_poll
 r_static
 r_int
@@ -1890,6 +1913,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;pad_ioctl;&n; *&t;@inode: Inode of the pad&n; *&t;@file: File handle to the pad&n; *&t;@cmd: Ioctl command&n; *&t;@arg: Argument pointer&n; *&n; *&t;The PC110 pad supports two ioctls both of which use the pc110pad_params&n; *&t;structure. GETP queries the current pad status. SETP changes the pad&n; *&t;configuration. Changing configuration during normal mouse operations&n; *&t;may give momentarily odd results as things like tap gesture state&n; *&t;may be lost.&n; */
 DECL|function|pad_ioctl
 r_static
 r_int
@@ -2122,6 +2146,7 @@ op_amp
 id|pad_fops
 )brace
 suffix:semicolon
+multiline_comment|/**&n; *&t;pc110pad_init:&n; *&n; *&t;We configure the pad with the default parameters (that is PS/2 &n; *&t;emulation mode. We then claim the needed I/O and interrupt resources.&n; *&t;Finally as a matter of paranoia we turn the pad off until we are&n; *&t;asked to open it by an application.&n; */
 DECL|function|pc110pad_init
 r_int
 id|pc110pad_init
@@ -2244,6 +2269,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+multiline_comment|/**&n; *&t;pc110pad_unload:&n; *&n; *&t;Free the resources we acquired when the module was loaded. We also&n; *&t;turn the pad off to be sure we don&squot;t leave it using power.&n; */
 DECL|function|pc110pad_unload
 r_static
 r_void

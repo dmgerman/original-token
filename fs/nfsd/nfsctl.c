@@ -20,16 +20,7 @@ macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#include &lt;linux/nfsd/cache.h&gt;
 macro_line|#include &lt;linux/nfsd/xdr.h&gt;
 macro_line|#include &lt;linux/nfsd/syscall.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-DECL|macro|copy_from_user
-macro_line|# define copy_from_user&t;&t;memcpy_fromfs
-DECL|macro|copy_to_user
-macro_line|# define copy_to_user&t;&t;memcpy_tofs
-DECL|macro|access_ok
-macro_line|# define access_ok&t;&t;!verify_area
-macro_line|#endif
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 r_extern
@@ -1023,7 +1014,6 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* New-style module support since 2.1.18 */
-macro_line|#if LINUX_VERSION_CODE &gt;= 131346
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 id|MODULE_AUTHOR
@@ -1032,7 +1022,6 @@ c_func
 l_string|&quot;Olaf Kirch &lt;okir@monad.swb.de&gt;&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 (paren

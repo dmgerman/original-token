@@ -407,7 +407,10 @@ l_string|&quot;reintegrate &quot;
 comma
 multiline_comment|/* 33 */
 l_string|&quot;statfs      &quot;
+comma
 multiline_comment|/* 34 */
+l_string|&quot;make_cinode &quot;
+multiline_comment|/* 35 */
 )brace
 suffix:semicolon
 DECL|function|reset_coda_vfs_stats

@@ -1885,6 +1885,11 @@ op_assign
 op_amp
 id|ufs_file_inode_operations
 suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|ufs_aops
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|mode
@@ -3745,7 +3750,12 @@ multiline_comment|/* slow symlink */
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ufs_symlink_inode_operations
+id|page_symlink_inode_operations
+suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|ufs_aops
 suffix:semicolon
 id|err
 op_assign

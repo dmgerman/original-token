@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -6693,9 +6694,10 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|bmac_probe
+r_static
 r_int
+id|__init
 id|bmac_probe
-c_func
 (paren
 r_void
 )paren
@@ -6738,6 +6740,21 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|bmac_devs
+op_ne
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8685,7 +8702,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -8698,49 +8714,16 @@ c_func
 l_string|&quot;PowerMac BMAC ethernet driver.&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
+DECL|function|bmac_cleanup
+r_static
+r_void
+id|__exit
+id|bmac_cleanup
 (paren
 r_void
 )paren
 (brace
-r_int
-id|res
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bmac_devs
-op_ne
-l_int|NULL
-)paren
-(brace
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-id|res
-op_assign
-id|bmac_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|res
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
+macro_line|#ifdef MODULE
 r_struct
 id|bmac_data
 op_star
@@ -8819,6 +8802,20 @@ id|bmac_devs
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
+DECL|variable|bmac_probe
+id|module_init
+c_func
+(paren
+id|bmac_probe
+)paren
+suffix:semicolon
+DECL|variable|bmac_cleanup
+id|module_exit
+c_func
+(paren
+id|bmac_cleanup
+)paren
+suffix:semicolon
 eof

@@ -134,29 +134,6 @@ l_int|NULL
 comma
 multiline_comment|/* rename */
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * udf_readdir&n; *&n; * PURPOSE&n; *&t;Read a directory entry.&n; *&n; * DESCRIPTION&n; *&t;Optional - sys_getdents() will return -ENOTDIR if this routine is not&n; *&t;available.&n; *&n; *&t;Refer to sys_getdents() in fs/readdir.c&n; *&t;sys_getdents() -&gt; .&n; *&n; * PRE-CONDITIONS&n; *&t;filp&t;&t;&t;Pointer to directory file.&n; *&t;buf&t;&t;&t;Pointer to directory entry buffer.&n; *&t;filldir&t;&t;&t;Pointer to filldir function.&n; *&n; * POST-CONDITIONS&n; *&t;&lt;return&gt;&t;&t;&gt;=0 on success.&n; *&n; * HISTORY&n; *&t;July 1, 1997 - Andrew E. Mileski&n; *&t;Written, tested, and released.&n; */

@@ -1758,12 +1758,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Translate the low bits of the PCI base&n; * to the resource type&n; */
-DECL|function|pci_resource_flags
+DECL|function|pci_calc_resource_flags
 r_static
 r_inline
 r_int
 r_int
-id|pci_resource_flags
+id|pci_calc_resource_flags
 c_func
 (paren
 r_int
@@ -2048,7 +2048,7 @@ op_amp
 l_int|0xf
 )paren
 op_or
-id|pci_resource_flags
+id|pci_calc_resource_flags
 c_func
 (paren
 id|l

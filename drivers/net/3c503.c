@@ -1304,10 +1304,6 @@ id|ei_status.saved_irq
 op_assign
 id|dev-&gt;irq
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;open
 op_assign
 op_amp

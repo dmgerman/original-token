@@ -233,6 +233,7 @@ DECL|macro|NESM_START_PG
 mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
+r_static
 r_int
 id|ne2k_pci_probe
 c_func
@@ -392,10 +393,11 @@ id|ne2k_card_list
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
+DECL|function|ne2k_pci_init_module
+r_static
 r_int
-DECL|function|init_module
-id|init_module
+id|__init
+id|ne2k_pci_init_module
 c_func
 (paren
 r_void
@@ -446,9 +448,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ne2k_pci_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+id|ne2k_pci_cleanup_module
 c_func
 (paren
 r_void
@@ -516,7 +520,20 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif  /* MODULE */
+DECL|variable|ne2k_pci_init_module
+id|module_init
+c_func
+(paren
+id|ne2k_pci_init_module
+)paren
+suffix:semicolon
+DECL|variable|ne2k_pci_cleanup_module
+id|module_exit
+c_func
+(paren
+id|ne2k_pci_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n;  NEx000-clone boards have a Station Address (SA) PROM (SAPROM) in the packet&n;  buffer memory space.  By-the-spec NE2000 clones have 0x57,0x57 in bytes&n;  0x0e,0x0f of the SAPROM, while other supposed NE2000 clones must be&n;  detected by their SA prefix.&n;&n;  Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;  mode results in doubled values, which can be detected and compensated for.&n;&n;  The probe is also responsible for initializing the card and filling&n;  in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;*/
 macro_line|#ifdef HAVE_DEVLIST
 DECL|variable|netcard_drv
@@ -536,6 +553,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 DECL|function|ne2k_pci_probe
+r_static
 r_int
 id|__init
 id|ne2k_pci_probe
@@ -704,7 +722,6 @@ id|NE_IO_EXTENT
 )paren
 r_continue
 suffix:semicolon
-macro_line|#ifndef MODULE
 (brace
 r_static
 r_int
@@ -730,7 +747,6 @@ id|version
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Activate the card: fix for brain-damaged Win98 BIOSes. */
 id|new_command
 op_assign

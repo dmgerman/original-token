@@ -231,6 +231,11 @@ op_assign
 op_amp
 id|bfs_file_inops
 suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|bfs_aops
+suffix:semicolon
 )brace
 r_else
 id|inode-&gt;i_op

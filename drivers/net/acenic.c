@@ -1,7 +1,6 @@
 multiline_comment|/*&n; * acenic.c: Linux driver for the Alteon AceNIC Gigabit Ethernet card&n; *           and other Tigon based cards.&n; *&n; * Copyright 1998, 1999 by Jes Sorensen, &lt;Jes.Sorensen@cern.ch&gt;.&n; *&n; * Thanks to Alteon and 3Com for providing hardware and documentation&n; * enabling me to write this driver.&n; *&n; * A mailing list for discussing the use of this driver has been&n; * setup, please subscribe to the lists if you have any questions&n; * about the driver. Send mail to linux-acenic-help@sunsite.auc.dk to&n; * see how to subscribe.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * Additional work by Pete Wyckoff &lt;wyckoff@ca.sandia.gov&gt; for initial&n; * Alpha and trace dump support. The trace dump support has not been&n; * integrated yet however.&n; *&n; * Big-endian+Sparc fixes and conversion to new PCI dma mapping&n; * infrastructure by David S. Miller &lt;davem@redhat.com&gt;.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -62,10 +61,6 @@ macro_line|#endif
 macro_line|#ifndef wmb
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;mb()
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030e)
-DECL|macro|net_device
-mdefine_line|#define net_device device
 macro_line|#endif
 macro_line|#include &quot;acenic.h&quot;
 multiline_comment|/*&n; * These must be defined before the firmware is included.&n; */
@@ -707,6 +702,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|acenic_probe
+r_static
 r_int
 id|__init
 id|acenic_probe
@@ -1079,15 +1075,6 @@ l_int|0x10
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Remap the regs into kernel space - this is abuse of&n;&t;&t; * dev-&gt;base_addr since it was means for I/O port&n;&t;&t; * addresses but who gives a damn.&n;&t;&t; */
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x02030d)
-id|dev-&gt;base_addr
-op_assign
-id|pdev-&gt;base_address
-(braket
-l_int|0
-)braket
-suffix:semicolon
-macro_line|#else
 id|dev-&gt;base_addr
 op_assign
 id|pdev-&gt;resource
@@ -1097,7 +1084,6 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-macro_line|#endif
 id|ap-&gt;regs
 op_assign
 (paren
@@ -1405,8 +1391,6 @@ id|ENODEV
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20118
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1503,11 +1487,11 @@ l_int|8
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-DECL|function|init_module
+DECL|function|acenic_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|acenic_init_module
 (paren
 r_void
 )paren
@@ -1536,10 +1520,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|acenic_cleanup_module
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|acenic_cleanup_module
 (paren
 r_void
 )paren
@@ -1924,7 +1909,20 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+DECL|variable|acenic_init_module
+id|module_init
+c_func
+(paren
+id|acenic_init_module
+)paren
+suffix:semicolon
+DECL|variable|acenic_cleanup_module
+id|module_exit
+c_func
+(paren
+id|acenic_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Commands are considered to be slow.&n; */
 DECL|function|ace_issue_cmd
 r_static

@@ -143,7 +143,6 @@ DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -154,6 +153,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -195,17 +195,6 @@ macro_line|#endif
 multiline_comment|/* Kernel compatibility defines, some common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(MODULE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -278,34 +267,6 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20123
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20139
-DECL|macro|net_device_stats
-mdefine_line|#define&t;net_device_stats enet_statistics
-macro_line|#else
-DECL|macro|NETSTATS_VER2
-mdefine_line|#define NETSTATS_VER2
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20155  ||  defined(CARDBUS)
-multiline_comment|/* Grrrr, the PCI code changed, but did not consider CardBus... */
-macro_line|#include &lt;linux/bios32.h&gt;
-DECL|macro|PCI_SUPPORT_VER1
-mdefine_line|#define PCI_SUPPORT_VER1
-macro_line|#else
-DECL|macro|PCI_SUPPORT_VER2
-mdefine_line|#define PCI_SUPPORT_VER2
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb, FREE_WRITE);
-macro_line|#else
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb);
-macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This driver is designed for the VIA 86c100A Rhine-II PCI Fast Ethernet&n;controller.&n;&n;II. Board-specific settings&n;&n;Boards with this chip are functional only in a bus-master PCI slot.&n;&n;Many operational settings are loaded from the EEPROM to the Config word at&n;offset 0x78.  This driver assumes that they are correct.&n;If this driver is compiled to use PCI memory space operations the EEPROM&n;must be configured to enable memory ops.&n;&n;III. Driver operation&n;&n;IIIa. Ring buffers&n;&n;This driver uses two statically allocated fixed-size descriptor lists&n;formed into rings by a branch from the final descriptor to the beginning of&n;the list.  The ring sizes are set at compile time by RX/TX_RING_SIZE.&n;&n;IIIb/c. Transmit/Receive Structure&n;&n;This driver attempts to use a zero-copy receive and transmit scheme.&n;&n;Alas, all data buffers are required to start on a 32 bit boundary, so&n;the driver must often copy transmit packets into bounce buffers.&n;&n;The driver allocates full frame size skbuffs for the Rx ring buffers at&n;open() time and passes the skb-&gt;data field to the chip as receive data&n;buffers.  When an incoming frame is less than RX_COPYBREAK bytes long,&n;a fresh skbuff is allocated and the frame is copied to the new skbuff.&n;When the incoming frame is larger, the skbuff is passed directly up the&n;protocol stack.  Buffers consumed this way are replaced by newly allocated&n;skbuffs in the last phase of netdev_rx().&n;&n;The RX_COPYBREAK value is chosen to trade-off the memory wasted by&n;using a full-sized skbuff for small frames vs. the copying costs of larger&n;frames.  New boards are typically used in generously configured machines&n;and the underfilled buffers have negligible impact compared to the benefit of&n;a single allocation size, so the default value of zero results in never&n;copying packets.  When copying is done, the cost is usually mitigated by using&n;a combined copy/checksum routine.  Copying also preloads the cache, which is&n;most useful with small frames.&n;&n;Since the VIA chips are only able to transfer data to buffers on 32 bit&n;boundaries, the the IP header at offset 14 in an ethernet frame isn&squot;t&n;longword aligned for further processing.  Copying these unaligned buffers&n;has the beneficial effect of 16-byte aligning the IP header.&n;&n;IIId. Synchronization&n;&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and interrupt handling software.&n;&n;The send packet thread has partial control over the Tx ring and &squot;dev-&gt;tbusy&squot;&n;flag.  It sets the tbusy flag whenever it&squot;s queuing a Tx packet. If the next&n;queue slot is empty, it clears the tbusy flag when finished otherwise it sets&n;the &squot;lp-&gt;tx_full&squot; flag.&n;&n;The interrupt handler has exclusive control over the Rx ring and records stats&n;from the Tx ring.  After reaping the stats, it marks the Tx queue entry as&n;empty by incrementing the dirty_tx mark. Iff the &squot;lp-&gt;tx_full&squot; flag is set, it&n;clears both the tx_full and tbusy flags.&n;&n;IV. Notes&n;&n;IVb. References&n;&n;Preliminary VT86C100A manual from http://www.via.com.tw/&n;http://cesdis.gsfc.nasa.gov/linux/misc/100mbps.html&n;http://cesdis.gsfc.nasa.gov/linux/misc/NWay.html&n;&n;IVc. Errata&n;&n;The VT86C100A manual is not reliable information.&n;The chip does not handle unaligned transmit or receive buffers, resulting&n;in significant performance degradation for bounce buffer copies on transmit&n;and unaligned IP headers on receive.&n;The chip does not pad to minimum transmit length.&n;&n;*/
 "&f;"
 multiline_comment|/* This table drives the PCI probe routines.  It&squot;s mostly boilerplate in all&n;   of the drivers, and will likely be provided by some future kernel.&n;   Note the matching code -- the first table entry matchs all 56** cards but&n;   second only the 1234 card.&n;*/
@@ -394,11 +355,10 @@ op_star
 id|probe1
 )paren
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -422,11 +382,10 @@ op_star
 id|via_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -990,13 +949,9 @@ id|timer_list
 id|timer
 suffix:semicolon
 multiline_comment|/* Media monitoring timer. */
-DECL|member|pci_bus
-DECL|member|pci_devfn
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_devfn
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 multiline_comment|/* Frequently used values: keep some adjacent for cache effect. */
 DECL|member|chip_id
@@ -1361,19 +1316,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1406,6 +1348,11 @@ suffix:semicolon
 r_int
 id|ioaddr
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1428,31 +1375,30 @@ id|PCIBIOS_SUCCESSFUL
 )paren
 r_break
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+id|pdev
+op_assign
+id|pci_find_slot
 (paren
 id|pci_bus
 comma
 id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
+r_if
+c_cond
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device
+op_logical_neg
+id|pdev
 )paren
+r_continue
+suffix:semicolon
+id|vendor
+op_assign
+id|pdev-&gt;vendor
+suffix:semicolon
+id|device
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 r_for
 c_loop
@@ -1518,21 +1464,6 @@ l_int|0
 multiline_comment|/* Compiled out! */
 r_continue
 suffix:semicolon
-(brace
-macro_line|#if defined(PCI_SUPPORT_VER2)
-r_struct
-id|pci_dev
-op_star
-id|pdev
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
-suffix:semicolon
 macro_line|#ifdef VIA_USE_IO
 id|pciaddr
 op_assign
@@ -1558,69 +1489,6 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-macro_line|#else
-id|u32
-id|pci_memaddr
-suffix:semicolon
-id|u8
-id|pci_irq_line
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq_line
-)paren
-suffix:semicolon
-macro_line|#ifdef VIA_USE_IO
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pci_memaddr
-)paren
-suffix:semicolon
-id|pciaddr
-op_assign
-id|pci_memaddr
-suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|pci_memaddr
-)paren
-suffix:semicolon
-id|pciaddr
-op_assign
-id|pci_memaddr
-suffix:semicolon
-macro_line|#endif
-id|irq
-op_assign
-id|pci_irq_line
-suffix:semicolon
-macro_line|#endif
-)brace
 r_if
 c_cond
 (paren
@@ -1727,12 +1595,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -1770,21 +1636,19 @@ id|KERN_INFO
 l_string|&quot;  The PCI BIOS has not enabled the&quot;
 l_string|&quot; device at %d/%d!  Updating PCI command %4.4x-&gt;%4.4x.&bslash;n&quot;
 comma
-id|pci_bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|pci_device_fn
+id|pdev-&gt;devfn
 comma
 id|pci_command
 comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -1802,9 +1666,7 @@ dot
 id|probe1
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|ioaddr
 comma
@@ -1835,12 +1697,10 @@ id|PCI_COMMAND_MASTER
 id|u8
 id|pci_latency
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1868,12 +1728,10 @@ comma
 id|min_pci_latency
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1900,37 +1758,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
-DECL|function|via_rhine_probe
-r_int
-id|via_rhine_probe
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|versionA
-comma
-id|versionB
-)paren
-suffix:semicolon
-r_return
-id|pci_etherdev_probe
-c_func
-(paren
-id|pci_tbl
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|via_probe1
 r_static
 r_struct
@@ -1939,11 +1766,10 @@ op_star
 id|via_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -2025,6 +1851,42 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
+macro_line|#ifdef VIA_USE_IO
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|pci_tbl
+(braket
+id|chip_id
+)braket
+dot
+id|io_size
+comma
+id|dev-&gt;name
+)paren
+)paren
+(brace
+id|unregister_netdev
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* Ideally we would be read the EEPROM but access may be locked. */
 r_for
 c_loop
@@ -2093,23 +1955,6 @@ comma
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifdef VIA_USE_IO
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|pci_tbl
-(braket
-id|chip_id
-)braket
-dot
-id|io_size
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Reset the chip to erase previous misconfiguration. */
 id|writew
 c_func
@@ -2187,13 +2032,9 @@ id|root_net_dev
 op_assign
 id|dev
 suffix:semicolon
-id|np-&gt;pci_bus
+id|np-&gt;lock
 op_assign
-id|pci_bus
-suffix:semicolon
-id|np-&gt;pci_devfn
-op_assign
-id|pci_devfn
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 id|np-&gt;chip_id
 op_assign
@@ -2294,6 +2135,14 @@ id|dev-&gt;do_ioctl
 op_assign
 op_amp
 id|mii_ioctl
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
 suffix:semicolon
 r_if
 c_cond
@@ -2852,13 +2701,11 @@ id|dev-&gt;if_port
 op_assign
 id|np-&gt;default_port
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|np-&gt;in_interrupt
 op_assign
@@ -2869,10 +2716,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
 id|writew
@@ -3711,48 +3554,6 @@ suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-OL
-id|TX_TIMEOUT
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Caution: the write order is important here, set the field&n;&t;   with the &quot;ownership&quot; bits last. */
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
@@ -3911,17 +3712,10 @@ id|TX_RING_SIZE
 op_minus
 l_int|1
 )paren
-id|clear_bit
+id|netif_start_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Typical path */
@@ -4017,66 +3811,12 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#if defined(__i386__)
-multiline_comment|/* A lock to prevent simultaneous entry bug on Intel SMP machines. */
-r_if
-c_cond
+id|spin_lock
 (paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|dev-&gt;interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: SMP simultaneous entry of an interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|np-&gt;lock
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Avoid halting machine. */
-r_return
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|u32
@@ -4297,34 +4037,10 @@ l_int|0x0002
 id|np-&gt;stats.tx_fifo_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef ETHER_STATS
-r_if
-c_cond
-(paren
-id|txstatus
-op_amp
-l_int|0x0100
-)paren
-id|np-&gt;stats.collisions16
-op_increment
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Transmitter restarted in &squot;abnormal&squot; handler. */
 )brace
 r_else
 (brace
-macro_line|#ifdef ETHER_STATS
-r_if
-c_cond
-(paren
-id|txstatus
-op_amp
-l_int|0x0001
-)paren
-id|np-&gt;stats.tx_deferred
-op_increment
-suffix:semicolon
-macro_line|#endif
 id|np-&gt;stats.collisions
 op_add_assign
 (paren
@@ -4335,7 +4051,6 @@ l_int|3
 op_amp
 l_int|15
 suffix:semicolon
-macro_line|#if defined(NETSTATS_VER2)
 id|np-&gt;stats.tx_bytes
 op_add_assign
 id|np-&gt;tx_ring
@@ -4347,13 +4062,12 @@ id|desc_length
 op_amp
 l_int|0x7ff
 suffix:semicolon
-macro_line|#endif
 id|np-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|dev_free_skb
+id|kfree_skb
 c_func
 (paren
 id|np-&gt;tx_skbuff
@@ -4375,7 +4089,14 @@ c_cond
 (paren
 id|np-&gt;tx_full
 op_logical_and
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;flags
+)paren
 op_logical_and
 id|np-&gt;cur_tx
 op_minus
@@ -4391,23 +4112,9 @@ id|np-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
-c_func
+id|netif_wake_queue
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -4494,27 +4201,11 @@ id|IntrStatus
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(__i386__)
-id|clear_bit
-c_func
+id|spin_unlock
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|dev-&gt;interrupt
+id|np-&gt;lock
 )paren
-suffix:semicolon
-macro_line|#else
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* This routine is logically part of the interrupt handler, but isolated&n;   for clarity and better register allocation. */
@@ -5877,13 +5568,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -5990,18 +5679,7 @@ id|i
 )braket
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|np-&gt;rx_skbuff
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-id|dev_free_skb
+id|kfree_skb
 c_func
 (paren
 id|np-&gt;rx_skbuff
@@ -6042,7 +5720,7 @@ id|np-&gt;tx_skbuff
 id|i
 )braket
 )paren
-id|dev_free_skb
+id|kfree_skb
 c_func
 (paren
 id|np-&gt;tx_skbuff
@@ -6065,12 +5743,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|via_rhine_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|via_rhine_init_module
 (paren
 r_void
 )paren
@@ -6115,10 +5792,11 @@ id|pci_tbl
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|cleanup_module
+DECL|function|via_rhine_cleanup_module
+r_static
 r_void
-id|cleanup_module
-c_func
+id|__exit
+id|via_rhine_cleanup_module
 (paren
 r_void
 )paren
@@ -6208,7 +5886,19 @@ multiline_comment|/* Assumption: no struct realignment. */
 macro_line|#endif
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
+DECL|variable|via_rhine_init_module
+id|module_init
+c_func
+(paren
+id|via_rhine_init_module
+)paren
+suffix:semicolon
+DECL|variable|via_rhine_cleanup_module
+id|module_exit
+c_func
+(paren
+id|via_rhine_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c via-rhine.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c via-rhine.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

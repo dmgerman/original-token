@@ -685,10 +685,11 @@ suffix:semicolon
 macro_line|#else
 macro_line|#error &quot;Cannot generate rawmode keyboard for your architecture yet.&quot;
 macro_line|#endif
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

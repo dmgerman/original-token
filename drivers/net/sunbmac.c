@@ -6071,6 +6071,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|bigmac_probe
+r_static
 r_int
 id|__init
 id|bigmac_probe
@@ -6111,6 +6112,12 @@ l_int|0
 comma
 id|v
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|root_bigmac_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6192,34 +6199,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|bigmac_cleanup
+r_static
+r_void
+id|__exit
+id|bigmac_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
 macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|root_bigmac_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-id|bigmac_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
 multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 r_while
 c_loop
@@ -6302,6 +6292,20 @@ op_assign
 id|bp_nxt
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif /* MODULE */
+)brace
+DECL|variable|bigmac_probe
+id|module_init
+c_func
+(paren
+id|bigmac_probe
+)paren
+suffix:semicolon
+DECL|variable|bigmac_cleanup
+id|module_exit
+c_func
+(paren
+id|bigmac_cleanup
+)paren
+suffix:semicolon
 eof

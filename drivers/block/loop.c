@@ -1490,11 +1490,12 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * Total crap. We should just use pagecache instead of trying&n;&t;&t; * to redirect on block level.&n;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_op-&gt;get_block
+id|inode-&gt;i_mapping-&gt;a_ops-&gt;bmap
 )paren
 (brace
 id|printk

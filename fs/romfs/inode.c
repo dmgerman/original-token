@@ -1810,6 +1810,18 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Mapping from our types to the kernel */
+DECL|variable|romfs_aops
+r_static
+r_struct
+id|address_space_operations
+id|romfs_aops
+op_assign
+(brace
+id|readpage
+suffix:colon
+id|romfs_readpage
+)brace
+suffix:semicolon
 DECL|variable|romfs_file_operations
 r_static
 r_struct
@@ -1837,56 +1849,6 @@ op_assign
 op_amp
 id|romfs_file_operations
 comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block -- not really */
-id|romfs_readpage
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|romfs_dir_operations
@@ -1919,70 +1881,6 @@ multiline_comment|/* create */
 id|romfs_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
-DECL|variable|romfs_link_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|romfs_link_inode_operations
-op_assign
-(brace
-id|readlink
-suffix:colon
-id|page_readlink
-comma
-id|follow_link
-suffix:colon
-id|page_follow_link
-comma
-id|readpage
-suffix:colon
-id|romfs_readpage
 )brace
 suffix:semicolon
 DECL|variable|romfs_modemap
@@ -2044,7 +1942,7 @@ op_amp
 id|romfs_file_inode_operations
 comma
 op_amp
-id|romfs_link_inode_operations
+id|page_symlink_inode_operations
 comma
 l_int|NULL
 comma
@@ -2301,6 +2199,12 @@ id|ino
 id|i-&gt;i_size
 op_assign
 id|i-&gt;u.romfs_i.i_metasize
+suffix:semicolon
+r_else
+id|i-&gt;i_data.a_ops
+op_assign
+op_amp
+id|romfs_aops
 suffix:semicolon
 )brace
 r_else

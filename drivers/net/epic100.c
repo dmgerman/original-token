@@ -42,18 +42,7 @@ DECL|macro|TX_FIFO_THRESH
 mdefine_line|#define TX_FIFO_THRESH 256&t;&t;/* Rounded down to 4 byte units. */
 DECL|macro|RX_FIFO_THRESH
 mdefine_line|#define RX_FIFO_THRESH 1&t;&t;/* 0-3, 0==32, 64,96, or 3==128 bytes  */
-macro_line|#include &lt;linux/version.h&gt;&t;&t;/* Evil, but neccessary */
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -62,12 +51,9 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|PCI_SUPPORT_VER2
 mdefine_line|#define PCI_SUPPORT_VER2
-macro_line|#else
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -76,12 +62,8 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* Kernel compatibility defines, common to David Hind&squot;s PCMCIA package.&n;   This is only in the support-all-kernels source code. */
-macro_line|#if ! defined (LINUX_VERSION_CODE) || LINUX_VERSION_CODE &lt; 0x20000
-macro_line|#warning This driver version is only for kernel versions 2.0.0 and later.
-macro_line|#endif
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#if defined(MODULE) &amp;&amp; (LINUX_VERSION_CODE &gt;= 0x20115)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -146,24 +128,8 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20123
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20139
-DECL|macro|net_device_stats
-mdefine_line|#define&t;net_device_stats enet_statistics
-DECL|macro|NETSTATS_VER2
-mdefine_line|#define NETSTATS_VER2
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb, FREE_WRITE);
-macro_line|#else  /* Grrr, unneeded incompatible change. */
 DECL|macro|DEV_FREE_SKB
 mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
-macro_line|#endif
 multiline_comment|/* The I/O extent. */
 DECL|macro|EPIC_TOTAL_SIZE
 mdefine_line|#define EPIC_TOTAL_SIZE 0x100
@@ -185,11 +151,10 @@ op_star
 id|epic_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -292,11 +257,10 @@ op_star
 id|probe1
 )paren
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -671,6 +635,10 @@ r_struct
 id|net_device
 op_star
 id|next_module
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 multiline_comment|/* Tx and Rx rings here so that they remain paragraph aligned. */
 DECL|member|rx_ring
@@ -1116,7 +1084,9 @@ l_int|NULL
 suffix:semicolon
 macro_line|#ifndef CARDBUS
 DECL|function|epic100_probe
+r_static
 r_int
+id|__init
 id|epic100_probe
 c_func
 (paren
@@ -1149,7 +1119,6 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
-macro_line|#ifdef PCI_SUPPORT_VER2
 r_struct
 id|pci_dev
 op_star
@@ -1286,216 +1255,6 @@ id|irq
 op_assign
 id|pcidev-&gt;irq
 suffix:semicolon
-macro_line|#else
-r_int
-id|pci_index
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_index
-OL
-l_int|0xff
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-id|u8
-id|pci_irq_line
-suffix:semicolon
-id|u16
-id|vendor
-comma
-id|device
-suffix:semicolon
-id|u32
-id|pci_ioaddr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_class
-(paren
-id|PCI_CLASS_NETWORK_ETHERNET
-op_lshift
-l_int|8
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_ne
-id|PCIBIOS_SUCCESSFUL
-)paren
-r_break
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor
-)paren
-suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
-id|device
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|chip_idx
-op_assign
-l_int|0
-suffix:semicolon
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-suffix:semicolon
-id|chip_idx
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|vendor
-op_eq
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-op_logical_and
-(paren
-id|device
-op_amp
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|device_id_mask
-)paren
-op_eq
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|device_id
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|vendor_id
-op_eq
-l_int|0
-)paren
-multiline_comment|/* Compiled out! */
-r_continue
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pci_ioaddr
-)paren
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq_line
-)paren
-suffix:semicolon
-multiline_comment|/* Remove I/O space marker in bit 0. */
-id|pci_ioaddr
-op_and_assign
-op_complement
-l_int|3
-suffix:semicolon
-id|irq
-op_assign
-id|pci_irq_line
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|pci_ioaddr
-comma
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|io_size
-)paren
-)paren
-r_continue
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* EPIC-specific code: Soft-reset the chip ere setting as master. */
 id|outl
 c_func
@@ -1508,12 +1267,10 @@ id|GENCTL
 )paren
 suffix:semicolon
 multiline_comment|/* Activate the card: fix for brain-damaged Win98 BIOSes. */
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pcidev
 comma
 id|PCI_COMMAND
 comma
@@ -1554,12 +1311,10 @@ comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pcidev
 comma
 id|PCI_COMMAND
 comma
@@ -1577,9 +1332,7 @@ dot
 id|probe1
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pcidev
 comma
 id|pci_ioaddr
 comma
@@ -1600,12 +1353,10 @@ id|dev
 id|u8
 id|pci_latency
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pcidev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1643,12 +1394,10 @@ dot
 id|min_latency
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pcidev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -1689,11 +1438,10 @@ op_star
 id|epic_probe1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -2070,38 +1818,22 @@ id|root_epic_dev
 op_assign
 id|dev
 suffix:semicolon
+id|ep-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 id|ep-&gt;pci_bus
 op_assign
-id|pci_bus
+id|pdev-&gt;bus-&gt;number
 suffix:semicolon
 id|ep-&gt;pci_dev_fn
 op_assign
-id|pci_devfn
+id|pdev-&gt;devfn
 suffix:semicolon
-macro_line|#if defined(PCI_SUPPORT_VER2)
 id|ep-&gt;chip_id
 op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-)paren
-op_member_access_from_pointer
-id|device
+id|pdev-&gt;device
 suffix:semicolon
-macro_line|#else
-id|ep-&gt;chip_id
-op_assign
-id|chip_tbl
-(braket
-id|chip_idx
-)braket
-dot
-id|device_id
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Find the connected MII xcvrs.&n;&t;   Doing this in open() would allow detecting external xcvrs later, but&n;&t;   takes too much time. */
 (brace
 r_int
@@ -2331,6 +2063,14 @@ id|dev-&gt;do_ioctl
 op_assign
 op_amp
 id|mii_ioctl
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|epic_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
 suffix:semicolon
 r_return
 id|dev
@@ -3170,17 +2910,11 @@ op_plus
 id|COMMAND
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Enable interrupts by setting the interrupt mask. */
 id|outl
@@ -4398,48 +4132,6 @@ suffix:semicolon
 id|u32
 id|flag
 suffix:semicolon
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-OL
-id|TX_TIMEOUT
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|epic_tx_timeout
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
 multiline_comment|/* Calculate the next Tx descriptor entry. */
 id|entry
@@ -4523,17 +4215,10 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* No interrupt */
-id|clear_bit
+id|netif_start_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -4555,17 +4240,10 @@ op_assign
 l_int|0x14
 suffix:semicolon
 multiline_comment|/* Tx-done intr. */
-id|clear_bit
+id|netif_start_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -4587,17 +4265,10 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* No Tx-done intr. */
-id|clear_bit
+id|netif_start_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -4745,66 +4416,12 @@ id|boguscnt
 op_assign
 id|max_interrupt_work
 suffix:semicolon
-macro_line|#if defined(__i386__)
-multiline_comment|/* A lock to prevent simultaneous entry bug on Intel SMP machines. */
-r_if
-c_cond
+id|spin_lock
 (paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|dev-&gt;interrupt
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: SMP simultaneous entry of an interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|ep-&gt;lock
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Avoid halting machine. */
-r_return
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|status
@@ -5117,7 +4734,14 @@ c_cond
 (paren
 id|ep-&gt;tx_full
 op_logical_and
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;flags
+)paren
 op_logical_and
 id|dirty_tx
 OG
@@ -5133,23 +4757,9 @@ id|ep-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
-c_func
+id|netif_wake_queue
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5377,27 +4987,11 @@ id|INTSTAT
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(__i386__)
-id|clear_bit
-c_func
+id|spin_unlock
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
 op_amp
-id|dev-&gt;interrupt
+id|ep-&gt;lock
 )paren
-suffix:semicolon
-macro_line|#else
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-r_return
 suffix:semicolon
 )brace
 DECL|function|epic_rx
@@ -5870,13 +5464,11 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6038,12 +5630,6 @@ c_cond
 id|skb
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 id|DEV_FREE_SKB
 c_func
 (paren
@@ -6143,7 +5729,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 multiline_comment|/* Update the error counts. */
@@ -6645,7 +6238,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 id|outl
@@ -6711,7 +6311,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 macro_line|#ifdef notdef
@@ -6776,7 +6383,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 id|outl
@@ -6842,7 +6456,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 macro_line|#ifdef notdef
@@ -6925,6 +6546,11 @@ id|devfn
 comma
 id|irq
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6935,13 +6561,23 @@ id|LOC_PCI
 r_return
 l_int|NULL
 suffix:semicolon
-id|bus
+id|pdev
 op_assign
+id|pci_find_slot
+(paren
 id|loc-&gt;b.pci.bus
-suffix:semicolon
-id|devfn
-op_assign
+comma
 id|loc-&gt;b.pci.devfn
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -6954,44 +6590,22 @@ comma
 id|devfn
 )paren
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
 id|io
-)paren
+op_assign
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
 id|irq
-)paren
+op_assign
+id|pdev-&gt;irq
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
 id|dev_id
-)paren
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 id|io
 op_and_assign
@@ -7467,11 +7081,11 @@ id|epic_detach
 )brace
 suffix:semicolon
 macro_line|#endif  /* Cardbus support */
-"&f;"
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|epic100_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|epic100_init_module
 c_func
 (paren
 r_void
@@ -7511,9 +7125,11 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|cleanup_module
+DECL|function|epic100_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|epic100_cleanup_module
 c_func
 (paren
 r_void
@@ -7588,7 +7204,19 @@ id|ep
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
+DECL|variable|epic100_init_module
+id|module_init
+c_func
+(paren
+id|epic100_init_module
+)paren
+suffix:semicolon
+DECL|variable|epic100_cleanup_module
+id|module_exit
+c_func
+(paren
+id|epic100_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c epic100.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  cardbus-compile-command: &quot;gcc -DCARDBUS -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c epic100.c -o epic_cb.o -I/usr/src/pcmcia-cs-3.0.5/include/&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof

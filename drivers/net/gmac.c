@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -362,14 +363,12 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_static
 r_int
 id|gmac_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Stuff for talking to the physical-layer chip */
@@ -2741,14 +2740,13 @@ id|gm-&gt;stats
 suffix:semicolon
 )brace
 DECL|function|gmac_probe
+r_static
 r_int
+id|__init
 id|gmac_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_static
@@ -2782,6 +2780,17 @@ id|addr
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|gmacs
+op_ne
+l_int|NULL
+)paren
+r_return
+op_minus
+id|EBUSY
 suffix:semicolon
 multiline_comment|/*&n;&t; * We could (and maybe should) do this using PCI scanning&n;&t; * for vendor/net_device ID 0x106b/0x21.&n;&t; */
 r_if
@@ -3164,7 +3173,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -3177,36 +3185,11 @@ c_func
 l_string|&quot;PowerMac GMAC driver.&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|gmac_cleanup_module
+r_static
 r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|gmacs
-op_ne
-l_int|NULL
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-r_return
-id|gmac_probe
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|gmac_cleanup_module
 c_func
 (paren
 r_void
@@ -3267,5 +3250,18 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|gmac_probe
+id|module_init
+c_func
+(paren
+id|gmac_probe
+)paren
+suffix:semicolon
+DECL|variable|gmac_cleanup_module
+id|module_exit
+c_func
+(paren
+id|gmac_cleanup_module
+)paren
+suffix:semicolon
 eof

@@ -404,81 +404,6 @@ id|agp_memory
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Links to vendor/device specific setup functions */
-macro_line|#ifdef CONFIG_AGP_INTEL
-DECL|member|intel_generic_setup
-r_void
-(paren
-op_star
-id|intel_generic_setup
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AGP_I810
-DECL|member|intel_i810_setup
-r_void
-(paren
-op_star
-id|intel_i810_setup
-)paren
-(paren
-r_struct
-id|pci_dev
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AGP_VIA
-DECL|member|via_generic_setup
-r_void
-(paren
-op_star
-id|via_generic_setup
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AGP_SIS
-DECL|member|sis_generic_setup
-r_void
-(paren
-op_star
-id|sis_generic_setup
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AGP_AMD
-DECL|member|amd_irongate_setup
-r_void
-(paren
-op_star
-id|amd_irongate_setup
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_AGP_ALI
-DECL|member|ali_generic_setup
-r_void
-(paren
-op_star
-id|ali_generic_setup
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|OUTREG32
@@ -517,6 +442,12 @@ macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
 macro_line|#endif
+DECL|macro|arraysize
+mdefine_line|#define arraysize(x)            (sizeof(x)/sizeof(*(x)))
+DECL|macro|AGPGART_MODULE_NAME
+mdefine_line|#define AGPGART_MODULE_NAME&t;&quot;agpgart&quot;
+DECL|macro|PFX
+mdefine_line|#define PFX&t;&t;&t;AGPGART_MODULE_NAME &quot;: &quot;
 DECL|macro|PGE_EMPTY
 mdefine_line|#define PGE_EMPTY(p) (!(p) || (p) == (unsigned long) agp_bridge.scratch_page)
 macro_line|#ifndef PCI_DEVICE_ID_VIA_82C691_0

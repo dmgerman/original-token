@@ -9,18 +9,8 @@ op_assign
 l_string|&quot;ncr885e.c:v0.8 11/30/98 dan@synergymicro.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT 
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -107,6 +97,14 @@ id|print_version
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+id|NCR885E_DEBUG
+suffix:semicolon
+multiline_comment|/* module parm */
 DECL|struct|ncr885e_private
 r_struct
 id|ncr885e_private
@@ -214,7 +212,6 @@ id|lock
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|root_dev
 r_static
 r_struct
@@ -224,7 +221,6 @@ id|root_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|ncr885e_open
@@ -4944,6 +4940,24 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|NCR885E_TOTAL_SIZE
+comma
+id|dev-&gt;name
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev
@@ -4976,10 +4990,20 @@ id|dev-&gt;priv
 op_eq
 l_int|NULL
 )paren
+(brace
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|NCR885E_TOTAL_SIZE
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|sp
 op_assign
 (paren
@@ -5137,16 +5161,6 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|NCR885E_TOTAL_SIZE
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 multiline_comment|/* set up a timer */
 id|init_timer
 c_func
@@ -5198,12 +5212,17 @@ id|dev-&gt;set_mac_address
 op_assign
 id|ncr885e_set_address
 suffix:semicolon
+id|root_dev
+op_assign
+id|dev
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  Since the NCR 53C885 is a multi-function chip, I&squot;m not worrying about&n; *  trying to get the the device(s) in slot order.  For our (Synergy&squot;s)&n; *  purpose, there&squot;s just a single 53C885 on the board and we don&squot;t &n; *  worry about the rest.&n; */
 DECL|function|ncr885e_probe
+r_static
 r_int
 id|__init
 id|ncr885e_probe
@@ -5236,6 +5255,17 @@ r_char
 id|irq
 comma
 id|latency
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debug
+op_ge
+l_int|0
+)paren
+id|ncr885e_debug
+op_assign
+id|debug
 suffix:semicolon
 r_while
 c_loop
@@ -6097,8 +6127,6 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* NCR885E_DEBUG_MII */
-macro_line|#ifdef MODULE
-macro_line|#if defined(LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20118
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -6119,44 +6147,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif 
-DECL|variable|debug
+DECL|function|ncr885e_cleanup
 r_static
-r_int
-id|debug
-op_assign
-l_int|1
-suffix:semicolon
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
 r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|debug
-op_ge
-l_int|0
-)paren
-id|ncr885e_debug
-op_assign
-id|debug
-suffix:semicolon
-r_return
-id|ncr885e_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|ncr885e_cleanup
 (paren
 r_void
 )paren
@@ -6207,6 +6202,19 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|ncr885e_probe
+id|module_init
+c_func
+(paren
+id|ncr885e_probe
+)paren
+suffix:semicolon
+DECL|variable|ncr885e_cleanup
+id|module_exit
+c_func
+(paren
+id|ncr885e_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O6 -c symba.c&quot;&n; * End:&n; */
 eof

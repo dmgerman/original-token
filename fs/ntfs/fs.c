@@ -2200,57 +2200,6 @@ op_assign
 op_amp
 id|ntfs_file_operations_nommap
 comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_NTFS_RW
@@ -2976,6 +2925,40 @@ suffix:colon
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* It&squot;s fscking broken. */
+DECL|function|ntfs_get_block
+r_static
+r_int
+id|ntfs_get_block
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|block
+comma
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_int
+id|create
+)paren
+(brace
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 DECL|variable|ntfs_file_operations
 r_static
 r_struct
@@ -3009,57 +2992,6 @@ op_assign
 op_amp
 id|ntfs_file_operations
 comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-id|ntfs_bmap
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|ntfs_dir_operations
@@ -3122,30 +3054,158 @@ multiline_comment|/* mknod */
 l_int|NULL
 comma
 multiline_comment|/* rename */
-l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|ntfs_writepage
+r_static
+r_int
+id|ntfs_writepage
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
 comma
-multiline_comment|/* readlink */
-l_int|NULL
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_return
+id|block_write_full_page
+c_func
+(paren
+id|page
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
+id|ntfs_get_block
+)paren
+suffix:semicolon
+)brace
+DECL|function|ntfs_readpage
+r_static
+r_int
+id|ntfs_readpage
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
 comma
-multiline_comment|/* get_block */
-l_int|NULL
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_return
+id|block_read_full_page
+c_func
+(paren
+id|page
 comma
-multiline_comment|/* readpage */
-l_int|NULL
+id|ntfs_get_block
+)paren
+suffix:semicolon
+)brace
+DECL|function|ntfs_prepare_write
+r_static
+r_int
+id|ntfs_prepare_write
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
 comma
-multiline_comment|/* writepage */
-l_int|NULL
+r_int
+id|from
 comma
-multiline_comment|/* truncate */
-l_int|NULL
+r_int
+id|to
+)paren
+(brace
+r_return
+id|cont_prepare_write
+c_func
+(paren
+id|page
 comma
-multiline_comment|/* permission */
-l_int|NULL
+id|from
 comma
-multiline_comment|/* revalidate */
+id|to
+comma
+id|ntfs_get_block
+comma
+op_amp
+(paren
+(paren
+r_struct
+id|inode
+op_star
+)paren
+id|page-&gt;mapping-&gt;host
+)paren
+op_member_access_from_pointer
+id|u.ntfs_i.mmu_private
+)paren
+suffix:semicolon
+)brace
+DECL|function|_ntfs_bmap
+r_static
+r_int
+id|_ntfs_bmap
+c_func
+(paren
+r_struct
+id|address_space
+op_star
+id|mapping
+comma
+r_int
+id|block
+)paren
+(brace
+r_return
+id|generic_block_bmap
+c_func
+(paren
+id|mapping
+comma
+id|block
+comma
+id|ntfs_get_block
+)paren
+suffix:semicolon
+)brace
+DECL|variable|ntfs_aops
+r_struct
+id|address_space_operations
+id|ntfs_aops
+op_assign
+(brace
+id|readpage
+suffix:colon
+id|ntfs_readpage
+comma
+id|writepage
+suffix:colon
+id|ntfs_writepage
+comma
+id|prepare_write
+suffix:colon
+id|ntfs_prepare_write
+comma
+id|commit_write
+suffix:colon
+id|generic_commit_write
+comma
+id|bmap
+suffix:colon
+id|_ntfs_bmap
 )brace
 suffix:semicolon
 multiline_comment|/* ntfs_read_inode is called by the Virtual File System (the kernel layer that&n; * deals with filesystems) when iget is called requesting an inode not already&n; * present in the inode table. Typically filesystems have separate&n; * inode_operations for directories, files and symlinks.&n; */
@@ -3476,17 +3536,35 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|can_mmap
+)paren
+(brace
 id|inode-&gt;i_op
 op_assign
-id|can_mmap
-ques
-c_cond
 op_amp
 id|ntfs_inode_operations
-suffix:colon
+suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|ntfs_aops
+suffix:semicolon
+id|inode-&gt;u.ntfs_i.mmu_private
+op_assign
+id|inode-&gt;i_size
+suffix:semicolon
+)brace
+r_else
+(brace
+id|inode-&gt;i_op
+op_assign
 op_amp
 id|ntfs_inode_operations_nobmap
 suffix:semicolon
+)brace
 id|inode-&gt;i_mode
 op_assign
 id|S_IFREG

@@ -27,6 +27,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -149,6 +150,10 @@ id|hp100_eisa_id
 op_star
 id|id
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|chip
 id|u_short
 id|chip
@@ -207,7 +212,7 @@ id|mem_mapped
 suffix:semicolon
 multiline_comment|/* memory mapped access */
 DECL|member|mem_ptr_virt
-id|u32
+r_void
 op_star
 id|mem_ptr_virt
 suffix:semicolon
@@ -677,6 +682,11 @@ r_void
 id|hp100_clear_stats
 c_func
 (paren
+r_struct
+id|hp100_private
+op_star
+id|lp
+comma
 r_int
 id|ioaddr
 )paren
@@ -1928,7 +1938,7 @@ r_int
 r_int
 id|mem_ptr_phys
 suffix:semicolon
-id|u32
+r_void
 op_star
 op_star
 id|mem_ptr_virt
@@ -2959,7 +2969,7 @@ macro_line|#ifdef HP100_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;hp100: %s: remapped 0x%x bytes high PCI memory at 0x%lx to 0x%lx.&bslash;n&quot;
+l_string|&quot;hp100: %s: remapped 0x%x bytes high PCI memory at 0x%lx to %p.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2967,9 +2977,6 @@ id|virt_memory_size
 comma
 id|mem_ptr_phys
 comma
-(paren
-id|u_long
-)paren
 id|mem_ptr_virt
 )paren
 suffix:semicolon
@@ -3085,6 +3092,10 @@ r_struct
 id|hp100_private
 )paren
 )paren
+suffix:semicolon
+id|lp-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 id|lp-&gt;id
 op_assign
@@ -3330,6 +3341,8 @@ multiline_comment|/* Reset statistics (counters) */
 id|hp100_clear_stats
 c_func
 (paren
+id|lp
+comma
 id|ioaddr
 )paren
 suffix:semicolon
@@ -3595,11 +3608,8 @@ id|mem_ptr_virt
 id|printk
 c_func
 (paren
-l_string|&quot; (virtual base 0x%lx)&quot;
+l_string|&quot; (virtual base %p)&quot;
 comma
-(paren
-id|u_long
-)paren
 id|mem_ptr_virt
 )paren
 suffix:semicolon
@@ -4904,21 +4914,15 @@ suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|lp-&gt;lan_type
 op_assign
@@ -5057,13 +5061,11 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|free_irq
 c_func
@@ -6735,15 +6737,12 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * we have to turn int&squot;s off before modifying this, otherwise&n;   * a tx_pdl_cleanup could occur at the same time&n;   */
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|ringptr
@@ -6848,9 +6847,11 @@ multiline_comment|/* Low Prio. Queue */
 id|lp-&gt;txrcommit
 op_increment
 suffix:semicolon
-id|restore_flags
-c_func
+id|spin_unlock_irqrestore
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -7596,7 +7597,7 @@ id|lp-&gt;mem_ptr_virt
 multiline_comment|/* high pci memory was remapped */
 (brace
 multiline_comment|/* Note: The J2585B needs alignment to 32bits here!  */
-id|memcpy
+id|memcpy_toio
 c_func
 (paren
 id|lp-&gt;mem_ptr_virt
@@ -7619,7 +7620,7 @@ c_cond
 op_logical_neg
 id|ok_flag
 )paren
-id|memset
+id|memset_io
 c_func
 (paren
 id|lp-&gt;mem_ptr_virt
@@ -8095,7 +8096,7 @@ c_cond
 (paren
 id|lp-&gt;mem_ptr_virt
 )paren
-id|memcpy
+id|memcpy_fromio
 c_func
 (paren
 id|ptr
@@ -8967,6 +8968,11 @@ r_void
 id|hp100_clear_stats
 c_func
 (paren
+r_struct
+id|hp100_private
+op_star
+id|lp
+comma
 r_int
 id|ioaddr
 )paren
@@ -8993,15 +8999,12 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|hp100_page
@@ -9035,9 +9038,11 @@ c_func
 id|PERFORMANCE
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
+id|spin_unlock_irqrestore
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -9096,15 +9101,12 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|hp100_ints_off
@@ -9823,9 +9825,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
+id|spin_unlock_irqrestore
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -9894,17 +9898,10 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_if
-c_cond
+id|spin_lock
 (paren
-id|dev-&gt;interrupt
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;hp100: %s: re-entering the interrupt handler&bslash;n&quot;
-comma
-id|dev-&gt;name
+op_amp
+id|lp-&gt;lock
 )paren
 suffix:semicolon
 id|hp100_ints_off
@@ -9912,11 +9909,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* mark that we are inside the handler */
 macro_line|#ifdef HP100_DEBUG_B
 id|hp100_outw
 c_func
@@ -9986,9 +9978,11 @@ l_int|0
 )paren
 multiline_comment|/* might be a shared interrupt */
 (brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 id|hp100_ints_on
 c_func
@@ -10239,9 +10233,11 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 id|hp100_ints_on
 c_func
@@ -10302,15 +10298,12 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|save_flags
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Ensure the adapter does not want to request an interrupt when */
@@ -10498,9 +10491,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
+id|spin_unlock_irqrestore
 (paren
+op_amp
+id|lp-&gt;lock
+comma
 id|flags
 )paren
 suffix:semicolon

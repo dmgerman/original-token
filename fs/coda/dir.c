@@ -345,15 +345,6 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 id|coda_permission
 comma
@@ -2878,7 +2869,6 @@ c_cond
 (paren
 id|cnp-&gt;c_ovp
 )paren
-(brace
 id|iput
 c_func
 (paren
@@ -2887,12 +2877,11 @@ id|cnp-&gt;c_ovp
 suffix:semicolon
 id|cnp-&gt;c_ovp
 op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-id|cnp-&gt;c_ovp
-op_assign
 id|cont_inode
+suffix:semicolon
+id|i-&gt;i_mapping
+op_assign
+id|cont_inode-&gt;i_mapping
 suffix:semicolon
 id|cnp-&gt;c_ocount
 op_increment
@@ -2956,6 +2945,8 @@ id|cnp
 suffix:semicolon
 r_int
 id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 r_int
@@ -3059,11 +3050,18 @@ op_or
 id|O_RDWR
 )paren
 )paren
-(brace
 op_decrement
 id|cnp-&gt;c_owrite
 suffix:semicolon
-)brace
+multiline_comment|/* Venus closing a container file? don&squot;t bother making the upcall. */
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+id|coda_upc_comm.vc_pid
+)paren
+(brace
 id|error
 op_assign
 id|venus_release
@@ -3081,6 +3079,16 @@ comma
 id|cred
 )paren
 suffix:semicolon
+)brace
+id|f-&gt;private_data
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cred
+)paren
 id|CODA_FREE
 c_func
 (paren
@@ -3092,10 +3100,6 @@ op_star
 id|cred
 )paren
 )paren
-suffix:semicolon
-id|f-&gt;private_data
-op_assign
-l_int|NULL
 suffix:semicolon
 id|CDEBUG
 c_func
@@ -3866,6 +3870,17 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Venus accessing a container file, don&squot;t try to revalidate */
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_eq
+id|coda_upc_comm.vc_pid
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* Venus closed the device .... */
 r_if
 c_cond
@@ -3874,18 +3889,9 @@ id|cii-&gt;c_flags
 op_amp
 id|C_DYING
 )paren
-(brace
-id|make_bad_inode
-c_func
-(paren
-id|inode
-)paren
+r_goto
+id|return_bad_inode
 suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3921,18 +3927,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-id|make_bad_inode
-c_func
-(paren
-id|inode
-)paren
+r_goto
+id|return_bad_inode
 suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 multiline_comment|/* this inode may be lost if:&n;&t;&t;   - it&squot;s ino changed &n;&t;&t;   - type changes must be permitted for repair and&n;&t;&t;   missing mount points.&n;&t;&t;*/
 id|old_mode
 op_assign
@@ -3985,7 +3982,7 @@ id|cii-&gt;c_fid
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* the following can happen when a local fid is replaced &n;&t;&t;   with a global one, here we lose and declar the inode bad */
+multiline_comment|/* the following can happen when a local fid is replaced &n;&t;&t;   with a global one, here we lose and declare the inode bad */
 r_if
 c_cond
 (paren
@@ -3993,22 +3990,9 @@ id|inode-&gt;i_ino
 op_ne
 id|old_ino
 )paren
-(brace
-id|make_bad_inode
-c_func
-(paren
-id|inode
-)paren
+r_goto
+id|return_bad_inode
 suffix:semicolon
-id|inode-&gt;i_mode
-op_assign
-id|old_mode
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4036,6 +4020,40 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+id|return_bad_inode
+suffix:colon
+r_if
+c_cond
+(paren
+id|cii-&gt;c_ovp
+)paren
+(brace
+id|iput
+c_func
+(paren
+id|cii-&gt;c_ovp
+)paren
+suffix:semicolon
+id|inode-&gt;i_mapping
+op_assign
+op_amp
+id|inode-&gt;i_data
+suffix:semicolon
+id|cii-&gt;c_ovp
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|make_bad_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 eof

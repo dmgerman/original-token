@@ -1513,6 +1513,25 @@ id|hfs_fork
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* file.c */
+r_extern
+r_int
+id|hfs_get_block
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+comma
+r_struct
+id|buffer_head
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* mdb.c */
 r_extern
 r_struct

@@ -229,8 +229,7 @@ comma
 id|page_hash
 c_func
 (paren
-op_amp
-id|inode-&gt;i_data
+id|inode-&gt;i_mapping
 comma
 id|index
 )paren

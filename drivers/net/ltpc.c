@@ -4907,7 +4907,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* handles &quot;ltpc=io,irq,dma&quot; kernel command lines */
 DECL|function|ltpc_setup
-r_void
+r_static
+r_int
 id|__init
 id|ltpc_setup
 c_func
@@ -4915,12 +4916,30 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|5
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4962,6 +4981,7 @@ l_string|&quot;ltpc: usage: ltpc=auto|iobase[,irq[,dma]]&bslash;n&quot;
 suffix:semicolon
 )brace
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -4992,6 +5012,7 @@ l_int|2
 )braket
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -5013,13 +5034,23 @@ l_int|3
 )braket
 suffix:semicolon
 r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* ignore any other paramters */
 )brace
 r_return
+l_int|1
 suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;ltpc=&quot;
+comma
+id|ltpc_setup
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|variable|dev_name
 r_static

@@ -1289,6 +1289,15 @@ id|result-&gt;i_size
 op_assign
 id|de-&gt;file_size
 suffix:semicolon
+id|result-&gt;i_data.a_ops
+op_assign
+op_amp
+id|hpfs_aops
+suffix:semicolon
+id|result-&gt;u.hpfs_i.mmu_private
+op_assign
+id|result-&gt;i_size
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * i_blocks should count the fnode and any anodes.&n;&t;&t;&t; * We count 1 for the fnode and don&squot;t bother about&n;&t;&t;&t; * anodes -- the disk heads are on the directory band&n;&t;&t;&t; * and we want them to stay there.&n;&t;&t;&t; */
 id|result-&gt;i_blocks
 op_assign

@@ -83,25 +83,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-op_amp
-id|hpfs_get_block
-comma
-multiline_comment|/* get_block */
-id|block_read_full_page
-comma
-multiline_comment|/* readpage */
-id|block_write_full_page
-comma
-multiline_comment|/* writepage */
 id|hpfs_truncate
 comma
 multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|hpfs_dir_ops
@@ -181,46 +165,14 @@ multiline_comment|/* mknod */
 id|hpfs_rename
 comma
 multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-DECL|variable|hpfs_symlink_iops
-r_const
+DECL|variable|hpfs_symlink_aops
 r_struct
-id|inode_operations
-id|hpfs_symlink_iops
+id|address_space_operations
+id|hpfs_symlink_aops
 op_assign
 (brace
-id|readlink
-suffix:colon
-id|page_readlink
-comma
-id|follow_link
-suffix:colon
-id|page_follow_link
-comma
 id|readpage
 suffix:colon
 id|hpfs_symlink_readpage
@@ -601,13 +553,13 @@ l_int|0777
 suffix:semicolon
 id|i-&gt;i_op
 op_assign
-(paren
-r_struct
-id|inode_operations
-op_star
-)paren
 op_amp
-id|hpfs_symlink_iops
+id|page_symlink_inode_operations
+suffix:semicolon
+id|i-&gt;i_data.a_ops
+op_assign
+op_amp
+id|hpfs_symlink_aops
 suffix:semicolon
 id|i-&gt;i_nlink
 op_assign
@@ -1010,6 +962,15 @@ l_int|9
 )paren
 op_plus
 l_int|1
+suffix:semicolon
+id|i-&gt;i_data.a_ops
+op_assign
+op_amp
+id|hpfs_aops
+suffix:semicolon
+id|i-&gt;u.hpfs_i.mmu_private
+op_assign
+id|i-&gt;i_size
 suffix:semicolon
 )brace
 id|brelse

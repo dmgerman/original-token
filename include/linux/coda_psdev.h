@@ -676,6 +676,8 @@ DECL|macro|REQ_READ
 mdefine_line|#define REQ_READ   0x2
 DECL|macro|REQ_WRITE
 mdefine_line|#define REQ_WRITE  0x4
+DECL|macro|REQ_ABORT
+mdefine_line|#define REQ_ABORT  0x8
 multiline_comment|/*&n; * Statistics&n; */
 DECL|struct|coda_upcallstats
 r_struct

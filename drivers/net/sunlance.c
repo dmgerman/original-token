@@ -6895,6 +6895,7 @@ macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 multiline_comment|/* Find all the lance cards on the system and initialize them */
 DECL|function|sparc_lance_probe
+r_static
 r_int
 id|__init
 id|sparc_lance_probe
@@ -6914,6 +6915,12 @@ id|called
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|root_lance_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7001,6 +7008,7 @@ suffix:semicolon
 macro_line|#else /* !CONFIG_SUN4 */
 multiline_comment|/* Find all the lance cards on the system and initialize them */
 DECL|function|sparc_lance_probe
+r_static
 r_int
 id|__init
 id|sparc_lance_probe
@@ -7048,6 +7056,12 @@ l_int|0
 comma
 id|v
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|root_lance_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7232,34 +7246,17 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif /* !CONFIG_SUN4 */
+DECL|function|sparc_lance_cleanup
+r_static
+r_void
+id|__exit
+id|sparc_lance_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
 macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|root_lance_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-id|sparc_lance_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
 r_struct
 id|lance_private
 op_star
@@ -7298,6 +7295,20 @@ op_assign
 id|lp
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif /* MODULE */
+)brace
+DECL|variable|sparc_lance_probe
+id|module_init
+c_func
+(paren
+id|sparc_lance_probe
+)paren
+suffix:semicolon
+DECL|variable|sparc_lance_cleanup
+id|module_exit
+c_func
+(paren
+id|sparc_lance_cleanup
+)paren
+suffix:semicolon
 eof

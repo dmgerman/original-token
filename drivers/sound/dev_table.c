@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * sound/dev_table.c&n; *&n; * Device call tables.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|_DEV_TABLE_C_
 mdefine_line|#define _DEV_TABLE_C_
 macro_line|#include &quot;sound_config.h&quot;
@@ -1465,17 +1466,15 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sound_setup
-r_void
+r_static
+r_int
+id|__init
 id|sound_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_int
@@ -1484,6 +1483,28 @@ comma
 id|n
 op_assign
 id|num_sound_cards
+suffix:semicolon
+r_int
+id|ints
+(braket
+l_int|32
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;First disable all drivers&n;&t; */
 r_for
@@ -1534,6 +1555,7 @@ op_eq
 l_int|0
 )paren
 r_return
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Then enable them one by time&n;&t; */
 r_for
@@ -1604,6 +1626,7 @@ l_int|127
 (brace
 multiline_comment|/*&n;&t;&t;&t; * Add any future extensions here&n;&t;&t;&t; */
 r_return
+l_int|1
 suffix:semicolon
 )brace
 id|ioaddr
@@ -1806,7 +1829,18 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;sound=&quot;
+comma
+id|sound_setup
+)paren
+suffix:semicolon
 DECL|function|sound_getconf
 r_struct
 id|address_info

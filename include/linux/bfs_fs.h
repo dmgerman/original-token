@@ -190,6 +190,11 @@ r_struct
 id|inode_operations
 id|bfs_file_inops
 suffix:semicolon
+r_extern
+r_struct
+id|address_space_operations
+id|bfs_aops
+suffix:semicolon
 multiline_comment|/* dir.c */
 r_extern
 r_struct

@@ -1,6 +1,6 @@
 multiline_comment|/* 3c501.c: A 3Com 3c501 Ethernet driver for Linux. */
 multiline_comment|/*&n;    Written 1992,1993,1994  Donald Becker&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    This is a device driver for the 3Com Etherlink 3c501.&n;    Do not purchase this card, even as a joke.  It&squot;s performance is horrible,&n;    and it breaks in many ways.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    Fixed (again!) the missing interrupt locking on TX/RX shifting.&n;    &t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n;&n;    Removed calls to init_etherdev since they are no longer needed, and&n;    cleaned up modularization just a bit. The driver still allows only&n;    the default address for cards when loaded as a module, but that&squot;s&n;    really less braindead than anyone using a 3c501 board. :)&n;&t;&t;    19950208 (invid@msen.com)&n;&n;    Added traps for interrupts hitting the window as we clear and TX load&n;    the board. Now getting 150K/second FTP with a 3c501 card. Still playing&n;    with a TX-TX optimisation to see if we can touch 180-200K/second as seems&n;    theoretically maximum.&n;    &t;&t;19950402 Alan Cox &lt;Alan.Cox@linux.org&gt;&n;    &t;&t;&n;    Cleaned up for 2.3.x because we broke SMP now. &n;    &t;&t;20000208 Alan Cox &lt;alan@redhat.com&gt;&n;    &t;&t;&n;*/
-multiline_comment|/**&n; * DOC: 3c501 Card Notes&n; *&n; *  Some notes on this thing if you have to hack it.  [Alan]&n; *&n; *  Some documentation is available from 3Com. Due to the boards age&n; *  standard responses when you ask for this will range from &squot;be serious&squot;&n; *  to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n; *  of historical interest anyway. &n; *&n; *  The basic system is a single buffer which can be used to receive or&n; *  transmit a packet. A third command mode exists when you are setting&n; *  things up.&n; *&n; *  If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the&n; *  time to get the board back into useful state after an operation is&n; *  quite large.&n; *&n; *  The driver works by keeping the board in receive mode waiting for a&n; *  packet to arrive. When one arrives it is copied out of the buffer&n; *  and delivered to the kernel. The card is reloaded and off we go.&n; *&n; *  When transmitting dev-&gt;tbusy is set and the card is reset (from&n; *  receive mode) [possibly losing a packet just received] to command&n; *  mode. A packet is loaded and transmit mode triggered. The interrupt&n; *  handler runs different code for transmit interrupts and can handle&n; *  returning to receive mode or retransmissions (yes you have to help&n; *  out with those too).&n; *&n; * DOC: Problems&n; *  &n; *  There are a wide variety of undocumented error returns from the card&n; *  and you basically have to kick the board and pray if they turn up. Most&n; *  only occur under extreme load or if you do something the board doesn&squot;t&n; *  like (eg touching a register at the wrong time).&n; *&n; *  The driver is less efficient than it could be. It switches through&n; *  receive mode even if more transmits are queued. If this worries you buy&n; *  a real Ethernet card.&n; *&n; *  The combination of slow receive restart and no real multicast&n; *  filter makes the board unusable with a kernel compiled for IP&n; *  multicasting in a real multicast environment. That&squot;s down to the board,&n; *  but even with no multicast programs running a multicast IP kernel is&n; *  in group 224.0.0.1 and you will therefore be listening to all multicasts.&n; *  One nv conference running over that Ethernet and you can give up.&n; *&n; */
+multiline_comment|/**&n; * DOC: 3c501 Card Notes&n; *&n; *  Some notes on this thing if you have to hack it.  [Alan]&n; *&n; *  Some documentation is available from 3Com. Due to the boards age&n; *  standard responses when you ask for this will range from &squot;be serious&squot;&n; *  to &squot;give it to a museum&squot;. The documentation is incomplete and mostly&n; *  of historical interest anyway. &n; *&n; *  The basic system is a single buffer which can be used to receive or&n; *  transmit a packet. A third command mode exists when you are setting&n; *  things up.&n; *&n; *  If it&squot;s transmitting it&squot;s not receiving and vice versa. In fact the&n; *  time to get the board back into useful state after an operation is&n; *  quite large.&n; *&n; *  The driver works by keeping the board in receive mode waiting for a&n; *  packet to arrive. When one arrives it is copied out of the buffer&n; *  and delivered to the kernel. The card is reloaded and off we go.&n; *&n; *  When transmitting lp-&gt;txing is set and the card is reset (from&n; *  receive mode) [possibly losing a packet just received] to command&n; *  mode. A packet is loaded and transmit mode triggered. The interrupt&n; *  handler runs different code for transmit interrupts and can handle&n; *  returning to receive mode or retransmissions (yes you have to help&n; *  out with those too).&n; *&n; * DOC: Problems&n; *  &n; *  There are a wide variety of undocumented error returns from the card&n; *  and you basically have to kick the board and pray if they turn up. Most&n; *  only occur under extreme load or if you do something the board doesn&squot;t&n; *  like (eg touching a register at the wrong time).&n; *&n; *  The driver is less efficient than it could be. It switches through&n; *  receive mode even if more transmits are queued. If this worries you buy&n; *  a real Ethernet card.&n; *&n; *  The combination of slow receive restart and no real multicast&n; *  filter makes the board unusable with a kernel compiled for IP&n; *  multicasting in a real multicast environment. That&squot;s down to the board,&n; *  but even with no multicast programs running a multicast IP kernel is&n; *  in group 224.0.0.1 and you will therefore be listening to all multicasts.&n; *  One nv conference running over that Ethernet and you can give up.&n; *&n; */
 DECL|variable|version
 r_static
 r_const
@@ -76,6 +76,17 @@ suffix:semicolon
 r_static
 r_int
 id|el_open
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|el_timeout
 c_func
 (paren
 r_struct
@@ -213,6 +224,11 @@ r_int
 id|loading
 suffix:semicolon
 multiline_comment|/* Spot buffer load collisions */
+DECL|member|txing
+r_int
+id|txing
+suffix:semicolon
+multiline_comment|/* True if card is in TX mode */
 DECL|member|lock
 id|spinlock_t
 id|lock
@@ -815,6 +831,15 @@ op_assign
 op_amp
 id|el_start_xmit
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|el_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+suffix:semicolon
 id|dev-&gt;stop
 op_assign
 op_amp
@@ -936,10 +961,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|dev-&gt;start
+id|lp-&gt;txing
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
+multiline_comment|/* Board in RX mode */
 id|outb
 c_func
 (paren
@@ -949,24 +975,25 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Aux control, irq and receive enabled */
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * e1_start_xmit:&n; * @skb: The packet that is queued to be sent&n; * @dev: The 3c501 card we want to throw it down&n; *&n; * Attempt to send a packet to a 3c501 card. There are some interesting&n; * catches here because the 3c501 is an extremely old and therefore&n; * stupid piece of technology.&n; *&n; * If we are handling an interrupt on the other CPU we cannot load a packet&n; * as we may still be attempting to retrieve the last RX packet buffer.&n; *&n; * When a transmit times out we dump the card into control mode and just&n; * start again. It happens enough that it isnt worth logging.&n; *&n; * We avoid holding the spin locks when doing the packet load to the board.&n; * The device is very slow, and its DMA mode is even slower. If we held the&n; * lock while loading 1500 bytes onto the controller we would drop a lot of&n; * serial port characters. This requires we do extra locking, but we have&n; * no real choice.&n; */
-DECL|function|el_start_xmit
+multiline_comment|/**&n; * el_timeout:&n; * @dev: The 3c501 card that has timed out&n; *&n; * Attempt to restart the board. This is basically a mixture of extreme&n; * violence and prayer&n; *&n; */
+DECL|function|el_timeout
 r_static
-r_int
-id|el_start_xmit
+r_void
+id|el_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
@@ -990,55 +1017,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-multiline_comment|/* May be unloading, don&squot;t stamp on */
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* the packet buffer this time      */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-OL
-id|HZ
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|el_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; transmitter busy, deferred.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1046,6 +1024,7 @@ id|el_debug
 )paren
 id|printk
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: transmit timed out, txsr %#2x axsr=%02x rxsr=%02x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1106,16 +1085,58 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Aux control, irq and receive enabled */
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
+multiline_comment|/* Ripped back in to RX */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Avoid incoming interrupts between us flipping tbusy and flipping&n;&t; *&t;mode as the driver assumes tbusy is a faithful indicator of card&n;&t; *&t;state&n;&t; */
+multiline_comment|/**&n; * el_start_xmit:&n; * @skb: The packet that is queued to be sent&n; * @dev: The 3c501 card we want to throw it down&n; *&n; * Attempt to send a packet to a 3c501 card. There are some interesting&n; * catches here because the 3c501 is an extremely old and therefore&n; * stupid piece of technology.&n; *&n; * If we are handling an interrupt on the other CPU we cannot load a packet&n; * as we may still be attempting to retrieve the last RX packet buffer.&n; *&n; * When a transmit times out we dump the card into control mode and just&n; * start again. It happens enough that it isnt worth logging.&n; *&n; * We avoid holding the spin locks when doing the packet load to the board.&n; * The device is very slow, and its DMA mode is even slower. If we held the&n; * lock while loading 1500 bytes onto the controller we would drop a lot of&n; * serial port characters. This requires we do extra locking, but we have&n; * no real choice.&n; */
+DECL|function|el_start_xmit
+r_static
+r_int
+id|el_start_xmit
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Avoid incoming interrupts between us flipping txing and flipping&n;&t; *&t;mode as the driver assumes txing is a faithful indicator of card&n;&t; *&t;state&n;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1126,45 +1147,13 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Avoid timer-based retransmission conflicts.&n;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|lp-&gt;lock
-comma
-id|flags
+id|dev
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-r_else
+r_do
 (brace
 r_int
 id|gp_start
@@ -1189,8 +1178,6 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-id|load_it_again_sam
-suffix:colon
 id|lp-&gt;tx_pkt_start
 op_assign
 id|gp_start
@@ -1225,6 +1212,10 @@ id|TX_STATUS
 )paren
 suffix:semicolon
 id|lp-&gt;loading
+op_assign
+l_int|1
+suffix:semicolon
+id|lp-&gt;txing
 op_assign
 l_int|1
 suffix:semicolon
@@ -1280,11 +1271,50 @@ r_if
 c_cond
 (paren
 id|lp-&gt;loading
-op_eq
+op_ne
 l_int|2
 )paren
-multiline_comment|/* A receive upset our load, despite our best efforts */
 (brace
+id|outb
+c_func
+(paren
+id|AX_XMIT
+comma
+id|AX_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* fire ... Trigger xmit.  */
+id|lp-&gt;loading
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|el_debug
+OG
+l_int|2
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; queued xmit.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* A receive upset our load, despite our best efforts */
 r_if
 c_cond
 (paren
@@ -1311,50 +1341,15 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_goto
-id|load_it_again_sam
-suffix:semicolon
-multiline_comment|/* Sigh... */
 )brace
-id|outb
-c_func
+r_while
+c_loop
 (paren
-id|AX_XMIT
-comma
-id|AX_CMD
+l_int|1
 )paren
-suffix:semicolon
-multiline_comment|/* fire ... Trigger xmit.  */
-id|lp-&gt;loading
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
+(brace
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|el_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; queued xmit.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/**&n; * el_interrupt:&n; * @irq: Interrupt number&n; * @dev_id: The 3c501 that burped&n; * @regs: Register data (surplus to our requirements)&n; *&n; * Handle the ether interface interrupts. The 3c501 needs a lot more &n; * hand holding than most cards. In paticular we get a transmit interrupt&n; * with a collision error because the board firmware isnt capable of rewinding&n; * its own transmit buffer pointers. It can however count to 16 for us.&n; *&n; * On the receive side the card is also very dumb. It has no buffering to&n; * speak of. We simply pull the packet out of its PIO buffer (which is slow)&n; * and queue it for the kernel. Then we reset the card for the next packet.&n; *&n; * We sometimes get suprise interrupts late both because the SMP IRQ delivery&n; * is message passing and because the card sometimes seems to deliver late. I&n; * think if it is part way through a receive and the mode is changed it carries&n; * on receiving and sends us an interrupt. We have to band aid all these cases&n; * to get a sensible 150kbytes/second performance. Even then you want a small&n; * TCP window.&n; */
@@ -1396,29 +1391,6 @@ r_int
 id|axsr
 suffix:semicolon
 multiline_comment|/* Aux. status reg. */
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-op_logical_or
-id|dev-&gt;irq
-op_ne
-id|irq
-)paren
-(brace
-id|printk
-(paren
-id|KERN_ERR
-l_string|&quot;3c501 driver: irq %d for unknown device.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -1470,30 +1442,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;interrupt
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Reentering the interrupt driver!&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|lp-&gt;loading
 op_eq
 l_int|1
 op_logical_and
 op_logical_neg
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 )paren
 (brace
 id|printk
@@ -1509,7 +1463,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 )paren
 (brace
 multiline_comment|/*&n;    &t;&t; *&t;Board in transmit mode. May be loading. If we are&n;    &t;&t; *&t;loading we shouldn&squot;t have got this.&n;    &t;&t; */
@@ -1573,10 +1527,6 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Force a reload */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -1672,14 +1622,14 @@ id|EL1_RXPTR
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 op_assign
 l_int|0
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -1714,8 +1664,18 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
+id|lp-&gt;txing
+op_assign
+l_int|0
+suffix:semicolon
 id|lp-&gt;stats.tx_aborted_errors
 op_increment
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1769,10 +1729,6 @@ suffix:semicolon
 id|lp-&gt;stats.collisions
 op_increment
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -1814,14 +1770,14 @@ l_string|&quot;but tx is busy!&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;This is safe the interrupt is atomic WRT itself.&n;&t;&t;&t; */
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 op_assign
 l_int|0
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* In case more to transmit */
@@ -1991,10 +1947,6 @@ c_func
 (paren
 id|TX_STATUS
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 id|spin_unlock
 c_func
@@ -2226,6 +2178,18 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 id|ioaddr
 op_assign
@@ -2335,11 +2299,7 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
+id|lp-&gt;txing
 op_assign
 l_int|0
 suffix:semicolon
@@ -2379,13 +2339,11 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Free and disable the IRQ.&n;&t; */
 id|free_irq

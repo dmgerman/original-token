@@ -1169,62 +1169,6 @@ multiline_comment|/* create&t;&t;*/
 id|adfs_lookup
 comma
 multiline_comment|/* lookup&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* link&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* unlink&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* symlink&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* mkdir&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* rmdir&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* mknod&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* rename&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* read link&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* follow link&t;&t;*/
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
-l_int|NULL
-comma
-multiline_comment|/* bmap&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* read page&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* write page&t;&t;*/
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* read page&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* write page&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* bmap&t;&t;&t;*/
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* truncate&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* permission&t;&t;*/
-l_int|NULL
-multiline_comment|/* revalidate&t;&t;*/
 )brace
 suffix:semicolon
 eof

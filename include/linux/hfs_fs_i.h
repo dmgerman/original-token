@@ -12,6 +12,11 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* A magic number */
+DECL|member|mmu_private
+r_int
+r_int
+id|mmu_private
+suffix:semicolon
 DECL|member|entry
 r_struct
 id|hfs_cat_entry

@@ -43,7 +43,7 @@ suffix:semicolon
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
 macro_line|#ifndef MODULE
-multiline_comment|/*&n; *&t;Setup options&n; */
+multiline_comment|/**&n; *&t;wdt_setup:&n; *&t;@str: command line string&n; *&n; *&t;Setup options. The board isn&squot;t really probe-able so we have to&n; *&t;get the user to tell us the configuration. Sane people build it &n; *&t;modular but the others come here.&n; */
 DECL|function|wdt_setup
 r_static
 r_int
@@ -206,6 +206,7 @@ id|ctr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Kernel methods.&n; */
+multiline_comment|/**&n; *&t;wdt_status:&n; *&t;&n; *&t;Extract the status information from a WDT watchdog device. There are&n; *&t;several board variants so we have to know which bits are valid. Some&n; *&t;bits default to one and some to zero in order to be maximally painful.&n; *&n; *&t;we then map the bits onto the status ioctl flags.&n; */
 DECL|function|wdt_status
 r_static
 r_int
@@ -334,6 +335,7 @@ r_return
 id|flag
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;wdt_interrupt:&n; *&t;@irq:&t;&t;Interrupt number&n; *&t;@dev_id:&t;Unused as we don&squot;t allow multiple devices.&n; *&t;@regs:&t;&t;Unused.&n; *&n; *&t;Handle an interrupt from the board. These are raised when the status&n; *&t;map changes in what the board considers an interesting way. That means&n; *&t;a failure condition occuring.&n; *&n; *&t;FIXME:&t;We need to pass a dev_id as the PCI card can share irqs&n; *&t;although its arguably a _very_ dumb idea to share watchdog&n; *&t;irq lines&n; */
 DECL|function|wdt_interrupt
 r_void
 id|wdt_interrupt
@@ -352,7 +354,7 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; *&t;Read the status register see what is up and&n;&t; *&t;then printk it.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Read the status register see what is up and&n;&t; *&t;then printk it. &n;&t; */
 r_int
 r_char
 id|status
@@ -534,6 +536,7 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;wdt_ping:&n; *&n; *&t;Reload counter one with the watchdog timeout. We don&squot;t bother reloading&n; *&t;the cascade counter. &n; */
 DECL|function|wdt_ping
 r_static
 r_void
@@ -576,6 +579,7 @@ id|WDT_DC
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;wdt_write:&n; *&t;@file: file handle to the watchdog&n; *&t;@buf: buffer to write (unused as data does not matter here &n; *&t;@count: count of bytes&n; *&t;@ppos: pointer to the position to write. No seeks allowed&n; *&n; *&t;A write to a watchdog device is defined as a keepalive signal. Any&n; *&t;write of data will do, as we we don&squot;t define content meaning.&n; */
 DECL|function|wdt_write
 r_static
 id|ssize_t
@@ -632,7 +636,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Read reports the temperature in degrees Fahrenheit.&n; */
+multiline_comment|/**&n; *&t;wdt_read:&n; *&t;@file: file handle to the watchdog board&n; *&t;@buf: buffer to write 1 byte into&n; *&t;@count: length of buffer&n; *&t;@ptr: offset (no seek allowed)&n; *&n; *&t;Read reports the temperature in degrees Fahrenheit. The API is in&n; *&t;farenheit. It was designed by an imperial measurement luddite.&n; */
 DECL|function|wdt_read
 r_static
 id|ssize_t
@@ -741,6 +745,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;wdt_ioctl:&n; *&t;@inode: inode of the device&n; *&t;@file: file handle to the device&n; *&t;@cmd: watchdog command&n; *&t;@arg: argument pointer&n; *&n; *&t;The watchdog API defines a common set of functions for all watchdogs&n; *&t;according to their available features. We only actually usefully support&n; *&t;querying capabilities and current status. &n; */
 DECL|function|wdt_ioctl
 r_static
 r_int
@@ -882,6 +887,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;wdt_open:&n; *&t;@inode: inode of device&n; *&t;@file: file handle to device&n; *&n; *&t;One of our two misc devices has been opened. The watchdog device is&n; *&t;single open and on opening we load the counters. Counter zero is a &n; *&t;100Hz cascade, into counter 1 which downcounts to reboot. When the&n; *&t;counter triggers counter 2 downcounts the length of the reset pulse&n; *&t;which set set to be as long as possible. &n; */
 DECL|function|wdt_open
 r_static
 r_int
@@ -1015,6 +1021,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;wdt_close:&n; *&t;@inode: inode to board&n; *&t;@file: file handle to board&n; *&n; *&t;The watchdog has a configurable API. There is a religious dispute &n; *&t;between people who want their watchdog to be able to shut down and &n; *&t;those who want to be sure if the watchdog manager dies the machine&n; *&t;reboots. In the former case we disable the counters, in the latter&n; *&t;case you have to open it again very soon.&n; */
 DECL|function|wdt_release
 r_static
 r_int
@@ -1073,7 +1080,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Notifier for system down&n; */
+multiline_comment|/**&n; *&t;notify_sys:&n; *&t;@this: our notifier block&n; *&t;@code: the event being reported&n; *&t;@unused: unused&n; *&n; *&t;Our notifier is called on system shutdowns. We want to turn the card&n; *&t;off at reboot otherwise the machine will reboot again during memory&n; *&t;test or worse yet during the following fsck. This would suck, in fact&n; *&t;trust me - if it happens it does suck.&n; */
 DECL|function|wdt_notify_sys
 r_static
 r_int
@@ -1210,6 +1217,7 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|macro|wdt_init
 mdefine_line|#define wdt_init init_module
+multiline_comment|/**&n; *&t;cleanup_module:&n; *&n; *&t;Unload the watchdog. You cannot do this with any file handles open.&n; *&t;If your watchdog is set to continue ticking on close and you unload&n; *&t;it, well it keeps ticking. We won&squot;t get the interrupt but the board&n; *&t;will not touch PC memory so all is fine. You just have to load a new&n; *&t;module in 60 seconds or reboot.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -1259,6 +1267,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/**&n; * &t;wdt_init:&n; *&n; *&t;Set up the WDT watchdog board. All we have to do is grab the&n; *&t;resources we require and bitch if anyone beat us to them.&n; *&t;The open() function will actually kick the board off.&n; */
 DECL|function|wdt_init
 r_int
 id|__init

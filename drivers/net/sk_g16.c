@@ -23,6 +23,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt; 
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -360,6 +361,13 @@ op_star
 id|board
 suffix:semicolon
 multiline_comment|/* pointer to our memory mapped board components */
+DECL|variable|SK_lock
+r_static
+id|spinlock_t
+id|SK_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* Macros */
 "&f;"
 multiline_comment|/* Function Prototypes */
@@ -1985,17 +1993,11 @@ l_int|0
 )paren
 multiline_comment|/* LANCE init OK? */
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef SK_DEBUG
 multiline_comment|/* &n;         * This debug block tries to stop LANCE,&n;         * reinit LANCE with transmitter and receiver disabled,&n;         * then stop again and reinit with NORMAL_MODE&n;         */
@@ -2136,11 +2138,6 @@ id|CSR0
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Device not ready */
 r_return
 op_minus
 id|EAGAIN
@@ -2725,7 +2722,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;flags
+)paren
 )paren
 (brace
 multiline_comment|/* if Transmitter more than 150ms busy -&gt; time_out */
@@ -2766,9 +2770,11 @@ id|MODE_NORMAL
 )paren
 suffix:semicolon
 multiline_comment|/* Reinit LANCE */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Clear Transmitter flag */
 id|dev-&gt;trans_start
@@ -2794,36 +2800,11 @@ id|CSR0
 )paren
 suffix:semicolon
 multiline_comment|/* &n;     * Block a timer-based transmit from overlapping. &n;     * This means check if we are already in. &n;     */
-r_if
-c_cond
+id|netif_stop_queue
 (paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-multiline_comment|/* dev-&gt;tbusy already set ? */
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-)brace
-r_else
 (brace
 multiline_comment|/* Evaluate Packet length */
 r_int
@@ -2933,9 +2914,11 @@ id|TX_OWN
 )paren
 (brace
 multiline_comment|/* &n;&t;    * We own next buffer and are ready to transmit, so&n;&t;    * clear busy flag&n;&t;    */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|p-&gt;stats.tx_bytes
@@ -3030,21 +3013,12 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
+id|spin_lock
 (paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
+op_amp
+id|SK_lock
 )paren
 suffix:semicolon
-)brace
 id|csr0
 op_assign
 id|SK_read_reg
@@ -3054,11 +3028,6 @@ id|CSR0
 )paren
 suffix:semicolon
 multiline_comment|/* store register for checking */
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* We are handling an interrupt */
 multiline_comment|/* &n;     * Acknowledge all of the current interrupt sources, disable      &n;     * Interrupts (INEA = 0) &n;     */
 id|SK_write_reg
 c_func
@@ -3144,11 +3113,12 @@ id|CSR0_INEA
 )paren
 suffix:semicolon
 multiline_comment|/* Enable Interrupts */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|spin_unlock
+(paren
+op_amp
+id|SK_lock
+)paren
 suffix:semicolon
-multiline_comment|/* We are out */
 )brace
 multiline_comment|/* End of SK_interrupt() */
 "&f;"
@@ -3365,16 +3335,11 @@ id|p-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     * We mark transmitter not busy anymore, because now we have a free&n;     * transmit descriptor which can be filled by SK_send_packet and&n;     * afterwards sent by the LANCE&n;     */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* &n;     * mark_bh(NET_BH);&n;     * This will cause net_bh() to run after this interrupt handler.&n;     *&n;     * The function which do handle slow IRQ parts is do_bottom_half()&n;     * which runs at normal kernel priority, that means all interrupt are&n;     * enabled. (see kernel/irq.c)&n;     *  &n;     * net_bh does something like this:&n;     *  - check if already in net_bh&n;     *  - try to transmit something from the send queue&n;     *  - if something is in the receive queue send it up to higher &n;     *    levels if it is a known protocol&n;     *  - try to transmit something from the send queue&n;     */
-id|mark_bh
+multiline_comment|/* &n;     * We mark transmitter not busy anymore, because now we have a free&n;     * transmit descriptor which can be filled by SK_send_packet and&n;     * afterwards sent by the LANCE&n;     * &n;     * The function which do handle slow IRQ parts is do_bottom_half()&n;     * which runs at normal kernel priority, that means all interrupt are&n;     * enabled. (see kernel/irq.c)&n;     *  &n;     * net_bh does something like this:&n;     *  - check if already in net_bh&n;     *  - try to transmit something from the send queue&n;     *  - if something is in the receive queue send it up to higher &n;     *    levels if it is a known protocol&n;     *  - try to transmit something from the send queue&n;     */
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -3751,16 +3716,13 @@ id|CSR0
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Transmitter busy */
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Card down */
 id|printk
 c_func
 (paren
@@ -4584,18 +4546,6 @@ comma
 id|dev-&gt;base_addr
 comma
 id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;##   FLAGS: start: %d tbusy: %ld int: %ld&bslash;n&quot;
-comma
-id|dev-&gt;start
-comma
-id|dev-&gt;tbusy
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 id|printk

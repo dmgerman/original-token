@@ -13904,6 +13904,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|happy_meal_probe
+r_static
 r_int
 id|__init
 id|happy_meal_probe
@@ -13928,6 +13929,12 @@ suffix:semicolon
 r_int
 id|cards
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|root_happy_dev
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13987,34 +13994,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|root_happy_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-id|happy_meal_probe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_void
 DECL|function|cleanup_module
+r_static
+r_void
+id|__exit
 id|cleanup_module
 c_func
 (paren
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
 r_while
 c_loop
@@ -14144,6 +14134,20 @@ op_assign
 id|next
 suffix:semicolon
 )brace
-)brace
 macro_line|#endif /* MODULE */
+)brace
+DECL|variable|happy_meal_probe
+id|module_init
+c_func
+(paren
+id|happy_meal_probe
+)paren
+suffix:semicolon
+DECL|variable|happy_meal_cleanup_module
+id|module_exit
+c_func
+(paren
+id|happy_meal_cleanup_module
+)paren
+suffix:semicolon
 eof

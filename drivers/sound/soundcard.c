@@ -4133,6 +4133,7 @@ r_void
 r_int
 id|err
 suffix:semicolon
+macro_line|#if FIXED_FOR_2_4_0
 r_int
 id|ints
 (braket
@@ -4142,6 +4143,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 id|trace_init
 op_assign
 id|traceinit
@@ -4174,6 +4176,7 @@ l_string|&quot;sound: rebuild with PCI_QUIRKS enabled to configure this.&bslash;
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if FIXED_FOR_2_4_0
 multiline_comment|/*&n;&t; * &quot;sound=&quot; command line handling by Harald Milz.&n;&t; */
 id|i
 op_assign
@@ -4224,6 +4227,7 @@ comma
 id|ints
 )paren
 suffix:semicolon
+macro_line|#endif
 id|err
 op_assign
 id|create_special_devices

@@ -374,5 +374,5 @@ id|ac97_codec
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* _AC97_CODEC_H_ */
 eof

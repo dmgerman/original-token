@@ -30088,10 +30088,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|macro|MAXARGS
-mdefine_line|#define MAXARGS&t;&t;8&t;/* Should be sufficient for now */
 DECL|function|dmasound_setup
-r_void
+r_static
+r_int
 id|__init
 id|dmasound_setup
 c_func
@@ -30099,12 +30098,30 @@ c_func
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|6
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 multiline_comment|/* check the bootstrap parameter for &quot;dmasound=&quot; */
 r_switch
 c_cond
@@ -30226,8 +30243,22 @@ c_func
 l_string|&quot;dmasound_setup: illegal number of arguments&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;dmasound=&quot;
+comma
+id|dmasound_setup
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int

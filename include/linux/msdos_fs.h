@@ -1328,35 +1328,6 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* mmap.c */
-r_extern
-r_int
-id|fat_mmap
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_struct
-id|vm_area_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|fat_readpage
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_struct
-id|page
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/* vfat.c */
 r_extern
 r_int

@@ -94,6 +94,11 @@ id|__u8
 id|i_status
 suffix:semicolon
 multiline_comment|/*  1 */
+DECL|member|mmu_private
+r_int
+r_int
+id|mmu_private
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

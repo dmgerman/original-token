@@ -8,13 +8,13 @@ op_assign
 l_string|&quot;RedCreek Communications PCI linux driver version 2.02&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -23,13 +23,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;            /* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-DECL|macro|LINUX_2_1
-mdefine_line|#define LINUX_2_1
-macro_line|#endif
-macro_line|#ifdef LINUX_2_1
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -43,12 +37,6 @@ mdefine_line|#define RUN_AT(x) (jiffies + (x))
 DECL|macro|NEW_MULTICAST
 mdefine_line|#define NEW_MULTICAST
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#ifndef LINUX_2_1
-DECL|macro|ioremap
-mdefine_line|#define ioremap vremap
-DECL|macro|iounmap
-mdefine_line|#define iounmap vfree
-macro_line|#endif
 multiline_comment|/* PCI/45 Configuration space values */
 DECL|macro|RC_PCI45_VENDOR_ID
 mdefine_line|#define RC_PCI45_VENDOR_ID  0x4916
@@ -461,22 +449,14 @@ id|root_RCdev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|function|init_module
+DECL|function|rcpci_init_module
+r_static
 r_int
-id|init_module
-c_func
+id|__init
+id|rcpci_init_module
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|rcpci_probe
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 r_int
 id|cards_found
@@ -1874,21 +1854,11 @@ macro_line|#endif
 id|BufferContext
 op_increment
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 id|dev-&gt;tbusy
 op_assign
@@ -2381,16 +2351,6 @@ id|PacketDescBlock
 l_int|0
 )braket
 suffix:semicolon
-macro_line|#ifndef LINUX_2_1
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -2401,22 +2361,11 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pDpa-&gt;numOutRcvBuffers
 op_decrement
 suffix:semicolon
@@ -2605,26 +2554,11 @@ c_func
 l_string|&quot;rc: RCrecv_callback: post buffer failed!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -3751,7 +3685,6 @@ r_case
 id|RCU_COMMAND
 suffix:colon
 (brace
-macro_line|#ifdef LINUX_2_1
 r_if
 c_cond
 (paren
@@ -3775,50 +3708,6 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-macro_line|#else
-r_int
-id|error
-suffix:semicolon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|rq-&gt;ifr_data
-comma
-r_sizeof
-(paren
-id|RCuser
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-(brace
-r_return
-id|error
-suffix:semicolon
-)brace
-id|memcpy_fromfs
-c_func
-(paren
-op_amp
-id|RCuser
-comma
-id|rq-&gt;ifr_data
-comma
-r_sizeof
-(paren
-id|RCuser
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -4517,7 +4406,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef LINUX_2_1
 id|copy_to_user
 c_func
 (paren
@@ -4532,22 +4420,6 @@ id|RCuser
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-id|memcpy_tofs
-c_func
-(paren
-id|rq-&gt;ifr_data
-comma
-op_amp
-id|RCuser
-comma
-r_sizeof
-(paren
-id|RCuser
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4638,11 +4510,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
+DECL|function|rcpci_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|rcpci_cleanup_module
 (paren
 r_void
 )paren
@@ -4753,7 +4625,20 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+DECL|variable|rcpci_init_module
+id|module_init
+c_func
+(paren
+id|rcpci_init_module
+)paren
+suffix:semicolon
+DECL|variable|rcpci_clenaup_module
+id|module_exit
+c_func
+(paren
+id|rcpci_clenaup_module
+)paren
+suffix:semicolon
 r_static
 r_int
 DECL|function|RC_allocate_and_post_buffers
@@ -5153,12 +5038,6 @@ op_star
 )paren
 id|pB-&gt;context
 suffix:semicolon
-macro_line|#ifndef LINUX_2_1
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -5172,22 +5051,11 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-macro_line|#endif
 id|p
 (braket
 l_int|0

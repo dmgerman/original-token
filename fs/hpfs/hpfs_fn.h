@@ -2279,4 +2279,9 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|address_space_operations
+id|hpfs_aops
+suffix:semicolon
 eof

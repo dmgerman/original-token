@@ -144,7 +144,13 @@ id|coda_statfs
 comma
 multiline_comment|/* statfs */
 l_int|NULL
+comma
 multiline_comment|/* remount_fs */
+l_int|NULL
+comma
+multiline_comment|/* no clear inode */
+l_int|NULL
+multiline_comment|/* umount attempt begin */
 )brace
 suffix:semicolon
 DECL|function|coda_read_super
@@ -589,7 +595,7 @@ c_func
 r_struct
 id|inode
 op_star
-id|in
+id|inode
 )paren
 (brace
 id|ENTRY
@@ -601,22 +607,30 @@ id|D_INODE
 comma
 l_string|&quot;ino: %ld, count %d&bslash;n&quot;
 comma
-id|in-&gt;i_ino
+id|inode-&gt;i_ino
 comma
-id|in-&gt;i_count
+id|inode-&gt;i_count
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|in-&gt;i_count
+id|inode-&gt;i_count
 op_eq
 l_int|1
 )paren
-id|in-&gt;i_nlink
+(brace
+id|write_inode_now
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|inode-&gt;i_nlink
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 DECL|function|coda_delete_inode
 r_static
@@ -694,6 +708,7 @@ op_amp
 id|cii-&gt;c_volrootlist
 )paren
 )paren
+(brace
 id|list_del
 c_func
 (paren
@@ -701,6 +716,14 @@ op_amp
 id|cii-&gt;c_volrootlist
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|cii-&gt;c_volrootlist
+)paren
+suffix:semicolon
+)brace
 id|open_inode
 op_assign
 id|cii-&gt;c_ovp
@@ -726,6 +749,11 @@ suffix:semicolon
 id|cii-&gt;c_ovp
 op_assign
 l_int|NULL
+suffix:semicolon
+id|inode-&gt;i_mapping
+op_assign
+op_amp
+id|inode-&gt;i_data
 suffix:semicolon
 id|iput
 c_func

@@ -6,6 +6,11 @@ DECL|struct|msdos_inode_info
 r_struct
 id|msdos_inode_info
 (brace
+DECL|member|mmu_private
+r_int
+r_int
+id|mmu_private
+suffix:semicolon
 DECL|member|i_start
 r_int
 id|i_start
@@ -44,10 +49,6 @@ id|list_head
 id|i_fat_hash
 suffix:semicolon
 multiline_comment|/* hash by i_location */
-DECL|member|i_realsize
-r_int
-id|i_realsize
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif

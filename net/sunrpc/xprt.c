@@ -18,23 +18,9 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|SOCK_HAS_USER_DATA
-mdefine_line|#define SOCK_HAS_USER_DATA
 multiline_comment|/* Following value should be &gt; 32k + RPC overhead */
 DECL|macro|XPRT_MIN_WRITE_SPACE
 mdefine_line|#define XPRT_MIN_WRITE_SPACE 35000
-multiline_comment|/*&n; * Local variables&n; */
-macro_line|#ifndef SOCK_HAS_USER_DATA
-DECL|variable|sock_list
-r_static
-r_struct
-id|rpc_xprt
-op_star
-id|sock_list
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Spinlock for critical sections in the code. */
 DECL|variable|xprt_lock
 id|spinlock_t
@@ -335,34 +321,6 @@ op_star
 id|sk
 )paren
 (brace
-macro_line|#ifndef SOCK_HAS_USER_DATA
-r_struct
-id|rpc_xprt
-op_star
-id|xprt
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|xprt
-op_assign
-id|sock_list
-suffix:semicolon
-id|xprt
-op_logical_and
-id|sk
-op_ne
-id|xprt-&gt;inet
-suffix:semicolon
-id|xprt
-op_assign
-id|xprt-&gt;link
-)paren
-suffix:semicolon
-r_return
-id|xprt
-suffix:semicolon
-macro_line|#else
 r_return
 (paren
 r_struct
@@ -371,7 +329,6 @@ op_star
 )paren
 id|sk-&gt;user_data
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Adjust the iovec to move on &squot;n&squot; bytes&n; */
 r_extern
@@ -1199,12 +1156,10 @@ c_func
 id|xprt
 )paren
 suffix:semicolon
-macro_line|#ifdef SOCK_HAS_USER_DATA
 id|sk-&gt;user_data
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 id|sk-&gt;data_ready
 op_assign
 id|xprt-&gt;old_data_ready
@@ -1493,12 +1448,10 @@ id|inet-&gt;write_space
 op_assign
 id|xprt-&gt;inet-&gt;write_space
 suffix:semicolon
-macro_line|#ifdef SOCK_HAS_USER_DATA
 id|inet-&gt;user_data
 op_assign
 id|xprt
 suffix:semicolon
-macro_line|#endif
 id|dprintk
 c_func
 (paren
@@ -5516,21 +5469,10 @@ op_amp
 id|xprt-&gt;cong_wait
 )paren
 suffix:semicolon
-macro_line|#ifdef SOCK_HAS_USER_DATA
 id|inet-&gt;user_data
 op_assign
 id|xprt
 suffix:semicolon
-macro_line|#else
-id|xprt-&gt;link
-op_assign
-id|sock_list
-suffix:semicolon
-id|sock_list
-op_assign
-id|xprt
-suffix:semicolon
-macro_line|#endif
 id|xprt-&gt;old_data_ready
 op_assign
 id|inet-&gt;data_ready
@@ -6246,69 +6188,6 @@ op_star
 id|xprt
 )paren
 (brace
-macro_line|#ifndef SOCK_HAS_USER_DATA
-r_struct
-id|rpc_xprt
-op_star
-op_star
-id|q
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|q
-op_assign
-op_amp
-id|sock_list
-suffix:semicolon
-op_star
-id|q
-op_logical_and
-op_star
-id|q
-op_ne
-id|xprt
-suffix:semicolon
-id|q
-op_assign
-op_amp
-(paren
-(paren
-op_star
-id|q
-)paren
-op_member_access_from_pointer
-id|link
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-op_star
-id|q
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;xprt_destroy: unknown socket!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-multiline_comment|/* why is there no EBUGGYSOFTWARE */
-)brace
-op_star
-id|q
-op_assign
-id|xprt-&gt;link
-suffix:semicolon
-macro_line|#endif
 id|dprintk
 c_func
 (paren

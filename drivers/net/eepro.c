@@ -29,12 +29,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-multiline_comment|/* need to remove these asap      */
-multiline_comment|/* 2.1.xx compatibility macros... */
-multiline_comment|/*                                */
-macro_line|#include &lt;linux/version.h&gt;
-multiline_comment|/* For linux 2.1.xx */
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -46,17 +40,6 @@ mdefine_line|#define SLOW_DOWN inb(0x80)
 multiline_comment|/* udelay(2) */
 DECL|macro|compat_init_data
 mdefine_line|#define compat_init_data     __initdata
-macro_line|#else 
-multiline_comment|/* for 2.x */
-DECL|macro|compat_dev_kfree_skb
-mdefine_line|#define compat_dev_kfree_skb( skb, mode ) dev_kfree_skb( (skb), (mode) )
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(a,b) set_bit((a),(b))
-DECL|macro|SLOW_DOWN
-mdefine_line|#define SLOW_DOWN SLOW_DOWN_IO
-DECL|macro|compat_init_data
-mdefine_line|#define compat_init_data
-macro_line|#endif
 multiline_comment|/* First, a few definitions that the brave might change. */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|compat_init_data
@@ -159,13 +142,11 @@ DECL|member|stepping
 r_int
 id|stepping
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 DECL|member|lock
 id|spinlock_t
 id|lock
 suffix:semicolon
 multiline_comment|/* Serializing lock  */
-macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* The station (ethernet) address prefix, used for IDing the board. */
@@ -301,6 +282,8 @@ DECL|macro|ee_id_eepro10p0
 mdefine_line|#define ee_id_eepro10p0 0x10   /* ID for eepro/10+ */
 DECL|macro|ee_id_eepro10p1
 mdefine_line|#define ee_id_eepro10p1 0x31
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT 40
 multiline_comment|/* Index to functions, as function prototypes. */
 r_extern
 r_int
@@ -422,6 +405,16 @@ r_static
 r_void
 id|set_multicast_list
 c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|eepro_tx_timeout
 (paren
 r_struct
 id|net_device
@@ -2100,12 +2093,6 @@ id|eepro_local
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
-id|spin_lock_init
-c_func
-(paren
-op_amp
-(paren
 (paren
 (paren
 r_struct
@@ -2116,10 +2103,9 @@ id|dev-&gt;priv
 )paren
 op_member_access_from_pointer
 id|lock
-)paren
-)paren
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;open
 op_assign
 id|eepro_open
@@ -2140,6 +2126,14 @@ id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|eepro_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with&n;&t;&t;&t;   ethernet generic values */
 id|ether_setup
@@ -3578,17 +3572,11 @@ id|lp-&gt;tx_last
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3618,6 +3606,105 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|eepro_tx_timeout
+r_static
+r_void
+id|eepro_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|eepro_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|eepro_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_int
+id|rcv_ram
+op_assign
+id|dev-&gt;mem_end
+suffix:semicolon
+multiline_comment|/* if (net_debug &gt; 1) */
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+l_string|&quot;network cable problem&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* This is not a duplicate. One message for the console, &n;&t;   one for the the log file  */
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+l_string|&quot;network cable problem&quot;
+)paren
+suffix:semicolon
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+multiline_comment|/* Try to restart the adaptor. */
+id|outb
+(paren
+id|SEL_RESET_CMD
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
+id|SLOW_DOWN
+suffix:semicolon
+id|SLOW_DOWN
+suffix:semicolon
+multiline_comment|/* Do I also need to flush the transmit buffers here? YES? */
+id|lp-&gt;tx_start
+op_assign
+id|lp-&gt;tx_end
+op_assign
+id|rcv_ram
+suffix:semicolon
+id|lp-&gt;tx_last
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|outb
+(paren
+id|RCV_ENABLE_CMD
+comma
+id|ioaddr
+)paren
 suffix:semicolon
 )brace
 DECL|function|eepro_send_packet
@@ -3650,21 +3737,9 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-r_int
-id|rcv_ram
-op_assign
-id|dev-&gt;mem_end
-suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
-r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3681,105 +3756,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;&t;   There should really be a &quot;kick me&quot; function call instead. */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|40
-)paren
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* if (net_debug &gt; 1) */
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-l_string|&quot;network cable problem&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* This is not a duplicate. One message for the console, &n;&t;&t;   one for the the log file  */
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-l_string|&quot;network cable problem&quot;
-)paren
-suffix:semicolon
-id|lp-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-multiline_comment|/* Try to restart the adaptor. */
-id|outb
-c_func
-(paren
-id|SEL_RESET_CMD
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-multiline_comment|/* We are supposed to wait for 2 us after a SEL_RESET */
-id|SLOW_DOWN
-suffix:semicolon
-id|SLOW_DOWN
-suffix:semicolon
-multiline_comment|/* Do I also need to flush the transmit buffers here? YES? */
-id|lp-&gt;tx_start
-op_assign
-id|lp-&gt;tx_end
-op_assign
-id|rcv_ram
-suffix:semicolon
-id|lp-&gt;tx_last
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|RCV_ENABLE_CMD
-comma
-id|ioaddr
-)paren
-suffix:semicolon
-)brace
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20155
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
-multiline_comment|/*&t;if (skb == NULL) {&n;&t;&t;dev_tint(dev);&n;&t;  &t;return 0;&n;&t;}*/
-multiline_comment|/* according to A. Cox, this is obsolete since 1.0 */
-macro_line|#endif
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|spin_lock_irqsave
 c_func
 (paren
@@ -3789,49 +3765,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Block a timer-based transmit from overlapping. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|lp-&gt;lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
 (brace
 r_int
 id|length
@@ -3852,12 +3785,10 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-macro_line|#endif
 id|hardware_send_packet
 c_func
 (paren
@@ -3898,7 +3829,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -3908,7 +3838,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3986,46 +3915,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|spin_lock
 c_func
 (paren
 op_amp
 id|lp-&gt;lock
 )paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|lp-&gt;lock
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME : with the lock, could this ever happen ? */
-macro_line|#endif
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4164,10 +4059,6 @@ l_int|0x06
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4184,7 +4075,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|spin_unlock
 c_func
 (paren
@@ -4192,7 +4082,6 @@ op_amp
 id|lp-&gt;lock
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -4233,13 +4122,11 @@ suffix:semicolon
 r_int
 id|temp_reg
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|outb
 c_func
@@ -5454,35 +5341,6 @@ op_plus
 id|INT_MASK_REG
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-op_eq
-l_int|1
-)paren
-(brace
-multiline_comment|/* Enable RX and TX interrupts */
-id|outb
-c_func
-(paren
-id|ALL_MASK
-op_amp
-op_complement
-(paren
-id|RX_MASK
-op_or
-id|TX_MASK
-)paren
-comma
-id|ioaddr
-op_plus
-id|INT_MASK_REG
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
 multiline_comment|/* determine how much of the transmit buffer space is available */
 r_if
 c_cond
@@ -5926,14 +5784,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;flags
 )paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+)paren
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* Enable RX and TX interrupts */
 id|outb
 c_func
@@ -5971,9 +5836,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6141,12 +6008,10 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|lp-&gt;stats.rx_bytes
 op_add_assign
 id|rcv_size
 suffix:semicolon
-macro_line|#endif
 id|rcv_size
 op_and_assign
 l_int|0x3fff
@@ -6567,14 +6432,9 @@ op_plus
 id|IO_PORT
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
+id|netif_wake_queue
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -6669,7 +6529,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE
 DECL|macro|MAX_EEPRO
 mdefine_line|#define MAX_EEPRO 8
 DECL|variable|devicename
@@ -6779,7 +6638,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* For linux 2.1.xx */
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x20155
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -6834,7 +6692,7 @@ id|MAX_EEPRO
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif 
+macro_line|#ifdef MODULE
 r_int
 DECL|function|init_module
 id|init_module

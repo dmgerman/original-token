@@ -13,13 +13,12 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
 macro_line|#include &lt;linux/sunrpc/xdr.h&gt;
 macro_line|#include &lt;linux/sunrpc/svcsock.h&gt;
 macro_line|#include &lt;linux/sunrpc/stats.h&gt;
+multiline_comment|/* SMP locking strategy:&n; *&n; * &t;svc_sock-&gt;sk_lock and svc_serv-&gt;sv_lock protect their&n; *&t;respective structures.&n; *&n; *&t;Antideadlock ordering is sk_lock --&gt; sv_lock.&n; */
 DECL|macro|RPCDBG_FACILITY
 mdefine_line|#define RPCDBG_FACILITY&t;RPCDBG_SVCSOCK
 r_static
@@ -77,7 +76,7 @@ id|svc_rqst
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Queue up an idle server thread.&n; */
+multiline_comment|/*&n; * Queue up an idle server thread.  Must have serv-&gt;sv_lock held.&n; */
 r_static
 r_inline
 r_void
@@ -96,6 +95,17 @@ op_star
 id|rqstp
 )paren
 (brace
+id|BUG_TRAP
+c_func
+(paren
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+)paren
+suffix:semicolon
 id|rpc_append_list
 c_func
 (paren
@@ -106,7 +116,7 @@ id|rqstp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Dequeue an nfsd thread.&n; */
+multiline_comment|/*&n; * Dequeue an nfsd thread.  Must have serv-&gt;sv_lock held.&n; */
 r_static
 r_inline
 r_void
@@ -125,6 +135,17 @@ op_star
 id|rqstp
 )paren
 (brace
+id|BUG_TRAP
+c_func
+(paren
+id|spin_is_locked
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+)paren
+suffix:semicolon
 id|rpc_remove_list
 c_func
 (paren
@@ -187,7 +208,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Queue up a socket with data pending. If there are idle nfsd&n; * processes, wake &squot;em up.&n; * When calling this function, you should make sure it can&squot;t be interrupted&n; * by the network bottom half.&n; */
+multiline_comment|/*&n; * Queue up a socket with data pending. If there are idle nfsd&n; * processes, wake &squot;em up.&n; *&n; * This must be called with svsk-&gt;sk_lock held.&n; */
 r_static
 r_void
 DECL|function|svc_sock_enqueue
@@ -223,6 +244,14 @@ id|svsk-&gt;sk_lock
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* NOTE: Local BH is already disabled by our caller. */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -252,7 +281,8 @@ comma
 id|svsk-&gt;sk_sk
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 multiline_comment|/* Mark socket as busy. It will remain in this state until the&n;&t; * server has processed all pending data and put the socket back&n;&t; * on the idle list.&n;&t; */
@@ -345,8 +375,17 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|out_unlock
+suffix:colon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * Dequeue the first socket.&n; */
+multiline_comment|/*&n; * Dequeue the first socket.  Must be called with the serv-&gt;sv_lock held.&n; */
 r_static
 r_inline
 r_struct
@@ -367,11 +406,15 @@ id|svc_sock
 op_star
 id|svsk
 suffix:semicolon
-id|spin_lock_bh
+id|BUG_TRAP
+c_func
+(paren
+id|spin_is_locked
 c_func
 (paren
 op_amp
 id|serv-&gt;sv_lock
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -392,13 +435,6 @@ op_amp
 id|serv-&gt;sv_sockets
 comma
 id|svsk
-)paren
-suffix:semicolon
-id|spin_unlock_bh
-c_func
-(paren
-op_amp
-id|serv-&gt;sv_lock
 )paren
 suffix:semicolon
 r_if
@@ -665,6 +701,13 @@ id|svc_rqst
 op_star
 id|rqstp
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -694,6 +737,13 @@ id|rqstp-&gt;rq_wait
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Generic sendto routine&n; */
 r_static
@@ -790,7 +840,6 @@ id|msg.msg_controllen
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|msg.msg_flags
 op_assign
 id|MSG_DONTWAIT
@@ -827,50 +876,6 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
-macro_line|#else
-id|msg.msg_flags
-op_assign
-l_int|0
-suffix:semicolon
-id|oldfs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|sendmsg
-c_func
-(paren
-id|sock
-comma
-op_amp
-id|msg
-comma
-id|buflen
-comma
-l_int|1
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|oldfs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dprintk
 c_func
 (paren
@@ -1060,7 +1065,6 @@ id|msg.msg_controllen
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|msg.msg_flags
 op_assign
 id|MSG_DONTWAIT
@@ -1099,53 +1103,6 @@ c_func
 id|oldfs
 )paren
 suffix:semicolon
-macro_line|#else
-id|msg.msg_flags
-op_assign
-l_int|0
-suffix:semicolon
-id|oldfs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|recvmsg
-c_func
-(paren
-id|sock
-comma
-op_amp
-id|msg
-comma
-id|buflen
-comma
-l_int|0
-comma
-l_int|1
-comma
-op_amp
-id|rqstp-&gt;rq_addrlen
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|oldfs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dprintk
 c_func
 (paren
@@ -1414,17 +1371,10 @@ id|rqstp-&gt;rq_addr.sin_port
 op_assign
 id|skb-&gt;h.uh-&gt;source
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|rqstp-&gt;rq_addr.sin_addr.s_addr
 op_assign
 id|skb-&gt;nh.iph-&gt;saddr
 suffix:semicolon
-macro_line|#else
-id|rqstp-&gt;rq_addr.sin_addr.s_addr
-op_assign
-id|skb-&gt;saddr
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3345,22 +3295,10 @@ id|svsk
 )paren
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|inet
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
-macro_line|#else
-id|inet
-op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|sock-&gt;data
-suffix:semicolon
-macro_line|#endif
 id|inet-&gt;user_data
 op_assign
 id|svsk
@@ -3484,6 +3422,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 id|svsk-&gt;sk_list
 op_assign
 id|serv-&gt;sv_allsocks
@@ -3491,6 +3436,13 @@ suffix:semicolon
 id|serv-&gt;sv_allsocks
 op_assign
 id|svsk
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
 suffix:semicolon
 id|dprintk
 c_func
@@ -3803,6 +3755,13 @@ id|sk-&gt;data_ready
 op_assign
 id|svsk-&gt;sk_odata
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3843,8 +3802,17 @@ op_logical_neg
 op_star
 id|rsk
 )paren
+(brace
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 op_star
 id|rsk
 op_assign
@@ -3862,6 +3830,13 @@ op_amp
 id|serv-&gt;sv_sockets
 comma
 id|svsk
+)paren
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|serv-&gt;sv_lock
 )paren
 suffix:semicolon
 id|svsk-&gt;sk_dead

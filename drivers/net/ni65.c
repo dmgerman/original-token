@@ -3739,6 +3739,8 @@ id|regs
 (brace
 r_int
 id|csr0
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|net_device

@@ -1543,20 +1543,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|rock_ridge_symlink_readpage
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-comma
-r_struct
-id|page
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|find_rock_ridge_relocation
 c_func
 (paren
@@ -1680,23 +1666,8 @@ id|isofs_dir_inode_operations
 suffix:semicolon
 r_extern
 r_struct
-id|inode_operations
-id|isofs_symlink_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|isofs_chrdev_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|isofs_blkdev_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|isofs_fifo_inode_operations
+id|address_space_operations
+id|isofs_symlink_aops
 suffix:semicolon
 multiline_comment|/* The following macros are used to check for memory leaks. */
 macro_line|#ifdef LEAK_CHECK

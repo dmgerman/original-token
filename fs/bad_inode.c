@@ -162,15 +162,6 @@ comma
 multiline_comment|/* follow_link */
 id|EIO_ERROR
 comma
-multiline_comment|/* get_block */
-id|EIO_ERROR
-comma
-multiline_comment|/* readpage */
-id|EIO_ERROR
-comma
-multiline_comment|/* writepage */
-id|EIO_ERROR
-comma
 multiline_comment|/* truncate */
 id|EIO_ERROR
 comma

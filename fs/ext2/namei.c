@@ -1685,6 +1685,11 @@ op_assign
 op_amp
 id|ext2_file_inode_operations
 suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|ext2_aops
+suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|mode
@@ -3414,7 +3419,12 @@ id|inode-&gt;u.ext2_i.i_data
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ext2_symlink_inode_operations
+id|page_symlink_inode_operations
+suffix:semicolon
+id|inode-&gt;i_mapping-&gt;a_ops
+op_assign
+op_amp
+id|ext2_aops
 suffix:semicolon
 id|err
 op_assign

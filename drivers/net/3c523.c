@@ -111,7 +111,7 @@ DECL|macro|DELAY_16
 mdefine_line|#define DELAY_16(); { __delay( (loops_per_sec&gt;&gt;16)+1 ); }
 multiline_comment|/* wait for command with timeout: */
 DECL|macro|WAIT_4_SCB_CMD
-mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;1024;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd) break; &bslash;&n;    DELAY_16(); &bslash;&n;    if(i == 1023) { &bslash;&n;      printk(&quot;%s:%d: scb_cmd timed out .. resetting i82586&bslash;n&quot;,&bslash;&n;      &t;dev-&gt;name,__LINE__); &bslash;&n;      elmc_id_reset586(); } } }
+mdefine_line|#define WAIT_4_SCB_CMD() { int i; &bslash;&n;  for(i=0;i&lt;1024;i++) { &bslash;&n;    if(!p-&gt;scb-&gt;cmd) break; &bslash;&n;    DELAY_16(); &bslash;&n;    if(i == 1023) { &bslash;&n;      printk(KERN_WARNING &quot;%s:%d: scb_cmd timed out .. resetting i82586&bslash;n&quot;,&bslash;&n;      &t;dev-&gt;name,__LINE__); &bslash;&n;      elmc_id_reset586(); } } }
 r_static
 r_void
 id|elmc_interrupt
@@ -171,6 +171,17 @@ r_struct
 id|net_device_stats
 op_star
 id|elmc_get_stats
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|elmc_timeout
 c_func
 (paren
 r_struct
@@ -559,6 +570,12 @@ op_star
 id|dev
 )paren
 (brace
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|elmc_id_reset586
 c_func
 (paren
@@ -573,18 +590,8 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -632,6 +639,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: couldn&squot;t get irq %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -667,22 +675,14 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -1071,6 +1071,7 @@ id|p-&gt;iscp-&gt;busy
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Init-Problems (alloc).&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1540,6 +1541,7 @@ multiline_comment|/* if we get this far, adapter has been found - carry on */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: 3c523 adapter found in slot %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1708,6 +1710,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: 3Com 3c523 Rev 0x%x at %#lx&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1773,6 +1776,7 @@ id|size
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: memprobe, Can&squot;t find memory at 0x%lx!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1848,6 +1852,7 @@ multiline_comment|/* dump all the assorted information */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: IRQ %d, %sternal xcvr, memory %#lx-%#lx.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1872,6 +1877,7 @@ multiline_comment|/* The hardware address for the 3c523 is stored in the first s
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: hardware address &quot;
 comma
 id|dev-&gt;name
@@ -1943,6 +1949,15 @@ op_assign
 op_amp
 id|elmc_send_packet
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|elmc_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+suffix:semicolon
 macro_line|#ifdef ELMC_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
@@ -1960,18 +1975,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* note that we haven&squot;t actually requested the IRQ from the kernel.&n;&t;   That gets done in elmc_open().  I&squot;m not sure that&squot;s such a good idea,&n;&t;   but it works, so I&squot;ll go with it. */
 macro_line|#ifndef ELMC_MULTICAST
@@ -2244,6 +2247,7 @@ id|STAT_OK
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s (elmc): configure command failed: %x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2370,6 +2374,7 @@ id|STAT_COMPL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s (elmc): individual address setup command failed: %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2459,6 +2464,7 @@ l_int|100
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: %d Problems while running the TDR.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2526,6 +2532,7 @@ id|TDR_XCVR_PRB
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: TDR: Transceiver problem!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2544,6 +2551,7 @@ id|TDR_ET_OPN
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: TDR: No correct termination %d clocks away.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2574,6 +2582,7 @@ multiline_comment|/* time == 0 -&gt; strange :-) */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: TDR: Detected a short circuit %d clocks away.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2589,6 +2598,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: TDR: Unknown status %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2879,6 +2889,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Ooooops, no memory for MC-Setup!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2902,6 +2913,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Sorry, can only apply %d MC-Address(es).&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3038,6 +3050,7 @@ id|STAT_COMPL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Can&squot;t apply multicast-address-list.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3130,6 +3143,7 @@ id|p-&gt;iscp
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: not enough shared-mem for your configuration!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3654,6 +3668,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;elmc-interrupt: irq %d for unknown device.&bslash;n&quot;
 comma
 (paren
@@ -3684,7 +3699,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 multiline_comment|/* The 3c523 has this habit of generating interrupts during the&n;&t;&t;   reset.  I&squot;m not sure if the ni52 has this same problem, but it&squot;s&n;&t;&t;   really annoying if we haven&squot;t finished initializing it.  I was&n;&t;&t;   hoping all the elmc_id_* commands would disable this, but I&n;&t;&t;   might have missed a few. */
@@ -3728,10 +3750,6 @@ id|priv
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -3800,12 +3818,20 @@ multiline_comment|/* CU went &squot;not ready&squot; */
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: oops! CU has left active state. stat: %04x/%04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3862,6 +3888,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Receiver-Unit went &squot;NOT READY&squot;: %04x/%04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3902,10 +3929,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*******************************************************&n; * receive-interrupt&n; */
 DECL|function|elmc_rcv_int
@@ -4109,6 +4132,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: received oversized frame.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4125,6 +4149,7 @@ multiline_comment|/* frame !(ok), only with &squot;save-bad-frames&squot; */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: oops! rfd-error-status: %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4241,6 +4266,7 @@ multiline_comment|/* restart RU */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Receive-Unit restarted. Status: %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4300,6 +4326,7 @@ id|STAT_COMPL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: strange .. xmit-int without a &squot;COMPLETE&squot;&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4342,6 +4369,7 @@ id|TCMD_LATECOLL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: late collision detected.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4366,6 +4394,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: no carrier detected.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4384,6 +4413,7 @@ id|TCMD_LOSTCTS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: loss of CTS detected.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4405,6 +4435,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: DMA underrun detected.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4423,6 +4454,7 @@ id|TCMD_MAXCOLL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Max. collisions exceeded.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4452,14 +4484,10 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -4513,32 +4541,19 @@ c_func
 suffix:semicolon
 multiline_comment|/* wait for accept cmd. (no timeout!!) */
 )brace
-multiline_comment|/******************************************************&n; * send frame&n; */
-DECL|function|elmc_send_packet
+multiline_comment|/******************************************************&n; * timeout&n; */
+DECL|function|elmc_timeout
 r_static
-r_int
-id|elmc_send_packet
+r_void
+id|elmc_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
 id|dev
 )paren
 (brace
-r_int
-id|len
-suffix:semicolon
-macro_line|#ifndef NO_NOPCOMMANDS
-r_int
-id|next_nop
-suffix:semicolon
-macro_line|#endif
 r_struct
 id|priv
 op_star
@@ -4551,31 +4566,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* COMMAND-UNIT active? */
 r_if
 c_cond
@@ -4585,10 +4575,6 @@ op_amp
 id|CU_ACTIVE
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -4681,12 +4667,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-r_return
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -4738,44 +4723,51 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+multiline_comment|/******************************************************&n; * send frame&n; */
+DECL|function|elmc_send_packet
+r_static
+r_int
+id|elmc_send_packet
 c_func
 (paren
-l_int|0
+r_struct
+id|sk_buff
+op_star
+id|skb
 comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|len
+suffix:semicolon
+macro_line|#ifndef NO_NOPCOMMANDS
+r_int
+id|next_nop
+suffix:semicolon
+macro_line|#endif
+r_struct
+id|priv
+op_star
+id|p
+op_assign
 (paren
-r_void
+r_struct
+id|priv
 op_star
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
+id|dev-&gt;priv
+suffix:semicolon
+id|netif_stop_queue
 c_func
 (paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
 id|memcpy
 c_func
 (paren
@@ -4931,6 +4923,7 @@ l_int|15
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Can&squot;t start transmit-command.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5134,11 +5127,6 @@ id|p-&gt;xmit_count
 op_assign
 id|next_nop
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5146,15 +5134,10 @@ id|p-&gt;xmit_count
 op_ne
 id|p-&gt;xmit_last
 )paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|sti
+id|netif_wake_queue
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -5164,7 +5147,6 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 r_return
 l_int|0
 suffix:semicolon

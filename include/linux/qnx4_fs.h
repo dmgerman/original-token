@@ -354,11 +354,6 @@ id|inode_operations
 id|qnx4_dir_inode_operations
 suffix:semicolon
 r_extern
-r_struct
-id|inode_operations
-id|qnx4_symlink_inode_operations
-suffix:semicolon
-r_extern
 r_int
 id|qnx4_is_free
 c_func

@@ -3242,9 +3242,6 @@ r_char
 op_star
 id|tmp
 suffix:semicolon
-id|dma_addr_t
-id|dma_rx_bufs
-suffix:semicolon
 multiline_comment|/* Ensure we&squot;re not sleeping */
 r_if
 c_cond
@@ -3876,6 +3873,10 @@ suffix:semicolon
 multiline_comment|/* Dummy entry */
 )brace
 macro_line|#else
+(brace
+id|dma_addr_t
+id|dma_rx_bufs
+suffix:semicolon
 id|dma_rx_bufs
 op_assign
 id|lp-&gt;dma_rings
@@ -4005,6 +4006,7 @@ op_star
 l_int|1
 suffix:semicolon
 multiline_comment|/* Dummy entry */
+)brace
 )brace
 macro_line|#endif
 id|barrier

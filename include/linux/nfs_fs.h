@@ -683,6 +683,11 @@ r_struct
 id|inode_operations
 id|nfs_file_inode_operations
 suffix:semicolon
+r_extern
+r_struct
+id|address_space_operations
+id|nfs_file_aops
+suffix:semicolon
 multiline_comment|/*&n; * linux/fs/nfs/dir.c&n; */
 r_extern
 r_struct

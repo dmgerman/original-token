@@ -655,17 +655,17 @@ mdefine_line|#define CODA_VGET&t;22
 DECL|macro|CODA_SIGNAL
 mdefine_line|#define CODA_SIGNAL&t;23
 DECL|macro|CODA_REPLACE
-mdefine_line|#define CODA_REPLACE&t;24
+mdefine_line|#define CODA_REPLACE&t; 24 /* DOWNCALL */
 DECL|macro|CODA_FLUSH
-mdefine_line|#define CODA_FLUSH       25
+mdefine_line|#define CODA_FLUSH       25 /* DOWNCALL */
 DECL|macro|CODA_PURGEUSER
-mdefine_line|#define CODA_PURGEUSER   26
+mdefine_line|#define CODA_PURGEUSER   26 /* DOWNCALL */
 DECL|macro|CODA_ZAPFILE
-mdefine_line|#define CODA_ZAPFILE     27
+mdefine_line|#define CODA_ZAPFILE     27 /* DOWNCALL */
 DECL|macro|CODA_ZAPDIR
-mdefine_line|#define CODA_ZAPDIR      28
+mdefine_line|#define CODA_ZAPDIR      28 /* DOWNCALL */
 DECL|macro|CODA_PURGEFID
-mdefine_line|#define CODA_PURGEFID    30
+mdefine_line|#define CODA_PURGEFID    30 /* DOWNCALL */
 DECL|macro|CODA_OPEN_BY_PATH
 mdefine_line|#define CODA_OPEN_BY_PATH 31
 DECL|macro|CODA_RESOLVE
@@ -674,10 +674,12 @@ DECL|macro|CODA_REINTEGRATE
 mdefine_line|#define CODA_REINTEGRATE 33
 DECL|macro|CODA_STATFS
 mdefine_line|#define CODA_STATFS&t; 34
+DECL|macro|CODA_MAKE_CINODE
+mdefine_line|#define CODA_MAKE_CINODE 35 /* DOWNCALL */
 DECL|macro|CODA_NCALLS
-mdefine_line|#define CODA_NCALLS 35
+mdefine_line|#define CODA_NCALLS 36
 DECL|macro|DOWNCALL
-mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID)
+mdefine_line|#define DOWNCALL(opcode) &bslash;&n;&t;((opcode &gt;= CODA_REPLACE &amp;&amp; opcode &lt;= CODA_PURGEFID) || &bslash;&n;&t; opcode == CODA_MAKE_CINODE)
 DECL|macro|VC_MAXDATASIZE
 mdefine_line|#define VC_MAXDATASIZE&t;    8192
 DECL|macro|VC_MAXMSGSIZE
@@ -685,14 +687,12 @@ mdefine_line|#define VC_MAXMSGSIZE      sizeof(union inputArgs)+sizeof(union out
 DECL|macro|CIOC_KERNEL_VERSION
 mdefine_line|#define CIOC_KERNEL_VERSION _IOWR(&squot;c&squot;, 10, sizeof (int))
 macro_line|#if&t;0
-multiline_comment|/* don&squot;t care about kernel version number */
-mdefine_line|#define CODA_KERNEL_VERSION 0
-multiline_comment|/* The old venus 4.6 compatible interface */
-mdefine_line|#define CODA_KERNEL_VERSION 1
+mdefine_line|#define CODA_KERNEL_VERSION 0 /* don&squot;t care about kernel version number */
+mdefine_line|#define CODA_KERNEL_VERSION 1 /* The old venus 4.6 compatible interface */
+mdefine_line|#define CODA_KERNEL_VERSION 2 /* venus_lookup gets an extra parameter */
 macro_line|#endif
-multiline_comment|/* venus_lookup gets an extra parameter to aid windows.*/
 DECL|macro|CODA_KERNEL_VERSION
-mdefine_line|#define CODA_KERNEL_VERSION 2
+mdefine_line|#define CODA_KERNEL_VERSION 3 /* added CODA_MAKE_CINODE downcall */
 multiline_comment|/*&n; *        Venus &lt;-&gt; Coda  RPC arguments&n; */
 DECL|struct|coda_in_hdr
 r_struct
@@ -1585,6 +1585,30 @@ id|CodaFid
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|coda_make_cinode_out
+r_struct
+id|coda_make_cinode_out
+(brace
+DECL|member|oh
+r_struct
+id|coda_out_hdr
+id|oh
+suffix:semicolon
+DECL|member|CodaFid
+id|ViceFid
+id|CodaFid
+suffix:semicolon
+DECL|member|attr
+r_struct
+id|coda_vattr
+id|attr
+suffix:semicolon
+DECL|member|fd
+r_int
+id|fd
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* coda_rdwr: */
 DECL|struct|coda_rdwr_in
 r_struct
@@ -1950,6 +1974,11 @@ DECL|member|coda_replace
 r_struct
 id|coda_replace_out
 id|coda_replace
+suffix:semicolon
+DECL|member|coda_make_cinode
+r_struct
+id|coda_make_cinode_out
+id|coda_make_cinode
 suffix:semicolon
 DECL|member|coda_open_by_path
 r_struct

@@ -226,22 +226,6 @@ id|dev
 suffix:semicolon
 r_static
 r_int
-id|plip_config
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
-id|ifmap
-op_star
-id|map
-)paren
-suffix:semicolon
-r_static
-r_int
 id|plip_ioctl
 c_func
 (paren
@@ -5079,11 +5063,11 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
+DECL|function|plip_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|plip_cleanup_module
 (paren
 r_void
 )paren
@@ -5199,9 +5183,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|macro|plip_init
-mdefine_line|#define plip_init  init_module
-macro_line|#else /* !MODULE */
+macro_line|#ifndef MODULE
 DECL|variable|parport_ptr
 r_static
 r_int
@@ -5210,19 +5192,39 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|plip_setup
+r_static
 r_void
+id|__init
 id|plip_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|4
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 multiline_comment|/* Ugh. */
 r_if
 c_cond
@@ -5346,7 +5348,15 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* MODULE */
+id|__setup
+c_func
+(paren
+l_string|&quot;plip=&quot;
+comma
+id|plip_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 r_static
 r_int
 r_inline
@@ -5407,11 +5417,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|plip_init
+r_static
 r_int
 id|__init
-DECL|function|plip_init
 id|plip_init
-c_func
 (paren
 r_void
 )paren
@@ -5749,6 +5759,19 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
+DECL|variable|plip_init
+id|module_init
+c_func
+(paren
+id|plip_init
+)paren
+suffix:semicolon
+DECL|variable|plip_cleanup_module
+id|module_exit
+c_func
+(paren
+id|plip_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;gcc -DMODULE -DMODVERSIONS -D__KERNEL__ -Wall -Wstrict-prototypes -O2 -g -fomit-frame-pointer -pipe -c plip.c&quot;&n; * End:&n; */
 eof

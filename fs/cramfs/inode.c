@@ -26,11 +26,11 @@ r_struct
 id|inode_operations
 id|cramfs_dir_inode_operations
 suffix:semicolon
-DECL|variable|cramfs_symlink_inode_operations
+DECL|variable|cramfs_aops
 r_static
 r_struct
-id|inode_operations
-id|cramfs_symlink_inode_operations
+id|address_space_operations
+id|cramfs_aops
 suffix:semicolon
 multiline_comment|/* These two macros may change in future, to provide better st_ino&n;   semantics. */
 DECL|macro|CRAMINO
@@ -124,11 +124,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
 id|cramfs_file_inode_operations
 suffix:semicolon
+id|inode-&gt;i_data.a_ops
+op_assign
+op_amp
+id|cramfs_aops
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -154,11 +161,18 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
+(brace
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|cramfs_symlink_inode_operations
+id|page_symlink_inode_operations
 suffix:semicolon
+id|inode-&gt;i_data.a_ops
+op_assign
+op_amp
+id|cramfs_aops
+suffix:semicolon
+)brace
 r_else
 (brace
 id|inode-&gt;i_size
@@ -1566,290 +1580,18 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|get_symlink_page
+DECL|variable|cramfs_aops
 r_static
 r_struct
-id|page
-op_star
-id|get_symlink_page
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-)paren
+id|address_space_operations
+id|cramfs_aops
+op_assign
 (brace
-r_return
-id|read_cache_page
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_inode-&gt;i_data
-comma
-l_int|0
-comma
-(paren
-id|filler_t
-op_star
-)paren
+id|readpage
+suffix:colon
 id|cramfs_readpage
-comma
-id|dentry
-)paren
-suffix:semicolon
 )brace
-DECL|function|cramfs_readlink
-r_static
-r_int
-id|cramfs_readlink
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_char
-op_star
-id|buffer
-comma
-r_int
-id|len
-)paren
-(brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
-r_int
-id|retval
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-op_logical_or
-op_logical_neg
-id|S_ISLNK
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-id|retval
-op_assign
-id|inode-&gt;i_size
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-(brace
-r_int
-id|len
-suffix:semicolon
-r_struct
-id|page
-op_star
-id|page
-op_assign
-id|get_symlink_page
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IS_ERR
-c_func
-(paren
-id|page
-)paren
-)paren
-r_return
-id|PTR_ERR
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-id|wait_on_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-id|len
-op_assign
-id|retval
-suffix:semicolon
-id|retval
-op_assign
-op_minus
-id|EIO
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|Page_Uptodate
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|retval
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|copy_to_user
-c_func
-(paren
-id|buffer
-comma
-(paren
-r_void
-op_star
-)paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
-comma
-id|len
-)paren
-)paren
-id|retval
-op_assign
-id|len
-suffix:semicolon
-)brace
-id|page_cache_release
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-)brace
-r_return
-id|retval
-suffix:semicolon
-)brace
-DECL|function|cramfs_follow_link
-r_static
-r_struct
-id|dentry
-op_star
-id|cramfs_follow_link
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-r_struct
-id|dentry
-op_star
-id|base
-comma
-r_int
-r_int
-id|follow
-)paren
-(brace
-r_struct
-id|page
-op_star
-id|page
-op_assign
-id|get_symlink_page
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|result
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|IS_ERR
-c_func
-(paren
-id|page
-)paren
-)paren
-(brace
-id|dput
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-r_return
-id|ERR_PTR
-c_func
-(paren
-id|PTR_ERR
-c_func
-(paren
-id|page
-)paren
-)paren
-suffix:semicolon
-)brace
-id|result
-op_assign
-id|lookup_dentry
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
-comma
-id|base
-comma
-id|follow
-)paren
-suffix:semicolon
-id|page_cache_release
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Our operations:&n; *&n; * A regular file can be read and mmap&squot;ed.&n; */
 DECL|variable|cramfs_file_operations
 r_static
@@ -1892,56 +1634,6 @@ op_assign
 op_amp
 id|cramfs_file_operations
 comma
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-id|cramfs_readpage
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|cramfs_dir_inode_operations
@@ -1960,112 +1652,6 @@ multiline_comment|/* create */
 id|cramfs_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
-)brace
-suffix:semicolon
-DECL|variable|cramfs_symlink_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|cramfs_symlink_inode_operations
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* symlinks do not have files */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-id|cramfs_readlink
-comma
-multiline_comment|/* readlink */
-id|cramfs_follow_link
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|cramfs_ops

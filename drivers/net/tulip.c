@@ -166,6 +166,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -188,10 +189,6 @@ mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, dev_id, pt_regs)
 macro_line|#else
 DECL|macro|IRQ
 mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, pt_regs)
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
 macro_line|#endif
 multiline_comment|/* This my implementation of shared IRQs, now only used for 1.2.13. */
 macro_line|#ifdef HAVE_SHARED_IRQ
@@ -1184,19 +1181,11 @@ DECL|member|revision
 r_int
 id|revision
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20139
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-macro_line|#else
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-macro_line|#endif
 DECL|member|timer
 r_struct
 id|timer_list
@@ -1629,7 +1618,9 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* This 21040 probe no longer uses a large fixed contiguous Rx buffer region,&n;   but now receives directly into full-sized skbuffs that are allocated&n;   at open() time.&n;   This allows the probe routine to use the old driver initialization&n;   interface. */
 DECL|function|tulip_probe
+r_static
 r_int
+id|__init
 id|tulip_probe
 c_func
 (paren
@@ -1655,7 +1646,6 @@ comma
 id|pci_device_fn
 suffix:semicolon
 multiline_comment|/* Ideally we would detect all network cards in slot order.  That would&n;&t;   be best done a central PCI probe dispatch, which wouldn&squot;t work&n;&t;   well with the current structure.  So instead we detect just the&n;&t;   Tulip cards in slot order. */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
 r_if
 c_cond
 (paren
@@ -1669,21 +1659,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1715,6 +1690,11 @@ r_int
 id|chip_idx
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
 suffix:semicolon
 r_if
 c_cond
@@ -1755,31 +1735,22 @@ r_else
 r_break
 suffix:semicolon
 )brace
-id|pcibios_read_config_word
-c_func
+id|pdev
+op_assign
+id|pci_find_slot
 (paren
 id|pci_bus
 comma
 id|pci_device_fn
-comma
-id|PCI_VENDOR_ID
-comma
-op_amp
-id|vendor
 )paren
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
+id|vendor
+op_assign
+id|pdev-&gt;vendor
+suffix:semicolon
 id|device
-)paren
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 r_for
 c_loop
@@ -1860,7 +1831,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155
 id|pci_ioaddr
 op_assign
 id|pci_find_slot
@@ -1878,21 +1848,6 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pci_ioaddr
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_ioaddr
 op_and_assign
@@ -1940,12 +1895,10 @@ id|io_size
 )paren
 r_continue
 suffix:semicolon
-id|pcibios_read_config_word
+id|pci_read_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -1981,12 +1934,10 @@ comma
 id|new_command
 )paren
 suffix:semicolon
-id|pcibios_write_config_word
+id|pci_write_config_word
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_COMMAND
 comma
@@ -2015,12 +1966,10 @@ r_int
 r_char
 id|pci_latency
 suffix:semicolon
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -2046,12 +1995,10 @@ comma
 id|pci_latency
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|PCI_LATENCY_TIMER
 comma
@@ -2087,12 +2034,10 @@ id|device
 op_eq
 id|PCI_DEVICE_ID_DEC_TULIP_21142
 )paren
-id|pcibios_write_config_dword
+id|pci_write_config_dword
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 l_int|0x40
 comma
@@ -6111,9 +6056,7 @@ id|CSR0
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x2014c)
 mdefine_line|#define x86 boot_cpu_data.x86
-macro_line|#endif
 id|outl
 c_func
 (paren
@@ -12424,7 +12367,6 @@ id|tp-&gt;stats.tx_deferred
 op_increment
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20127
 id|tp-&gt;stats.tx_bytes
 op_add_assign
 id|tp-&gt;tx_ring
@@ -12436,7 +12378,6 @@ id|length
 op_amp
 l_int|0x7ff
 suffix:semicolon
-macro_line|#endif
 id|tp-&gt;stats.collisions
 op_add_assign
 (paren
@@ -12452,7 +12393,6 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x20155)
 id|dev_kfree_skb_irq
 c_func
 (paren
@@ -12462,19 +12402,6 @@ id|entry
 )braket
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|tp-&gt;tx_skbuff
-(braket
-id|entry
-)braket
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tp-&gt;tx_skbuff
 (braket
 id|entry
@@ -13332,12 +13259,10 @@ suffix:semicolon
 id|tp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20127
 id|tp-&gt;stats.rx_bytes
 op_add_assign
 id|pkt_len
 suffix:semicolon
-macro_line|#endif
 )brace
 id|entry
 op_assign
@@ -13666,29 +13591,12 @@ c_cond
 id|skb
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x20155)
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_for
@@ -13714,7 +13622,6 @@ id|tp-&gt;tx_skbuff
 id|i
 )braket
 )paren
-macro_line|#if (LINUX_VERSION_CODE &gt; 0x20155)
 id|dev_kfree_skb
 c_func
 (paren
@@ -13724,19 +13631,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|tp-&gt;tx_skbuff
-(braket
-id|i
-)braket
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 id|tp-&gt;tx_skbuff
 (braket
 id|i
@@ -15022,6 +14916,11 @@ id|net_device
 op_star
 id|dev
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -15032,13 +14931,23 @@ id|LOC_PCI
 r_return
 l_int|NULL
 suffix:semicolon
-id|bus
+id|pdev
 op_assign
+id|pci_find_slot
+(paren
 id|loc-&gt;b.pci.bus
-suffix:semicolon
-id|devfn
-op_assign
+comma
 id|loc-&gt;b.pci.devfn
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+r_return
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -15051,31 +14960,18 @@ comma
 id|devfn
 )paren
 suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
 id|io
-)paren
+op_assign
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
-id|pcibios_read_config_word
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_DEVICE_ID
-comma
-op_amp
 id|dev_id
-)paren
+op_assign
+id|pdev-&gt;device
 suffix:semicolon
 id|io
 op_and_assign
@@ -15287,9 +15183,6 @@ id|tulip_detach
 )brace
 suffix:semicolon
 macro_line|#endif  /* Cardbus support */
-"&f;"
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20118
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -15362,7 +15255,6 @@ id|MAX_UNITS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* An additional parameter that may be passed in... */
 DECL|variable|debug
 r_static
@@ -15372,10 +15264,11 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|function|tulip_init_module
+r_static
 r_int
-DECL|function|init_module
-id|init_module
-c_func
+id|__init
+id|tulip_init_module
 (paren
 r_void
 )paren
@@ -15411,10 +15304,11 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|tulip_cleanup_module
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
+id|__exit
+id|tulip_cleanup_module
 (paren
 r_void
 )paren
@@ -15479,7 +15373,19 @@ id|next_dev
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif  /* MODULE */
-"&f;"
+DECL|variable|tulip_init_module
+id|module_init
+c_func
+(paren
+id|tulip_init_module
+)paren
+suffix:semicolon
+DECL|variable|tulip_cleanup_module
+id|module_exit
+c_func
+(paren
+id|tulip_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  SMP-compile-command: &quot;gcc -D__SMP__ -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -c tulip.c `[ -f /usr/include/linux/modversions.h ] &amp;&amp; echo -DMODVERSIONS`&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; * End:&n; */
 eof
